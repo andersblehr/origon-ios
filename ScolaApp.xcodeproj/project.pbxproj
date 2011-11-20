@@ -7,6 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C276E691475A34900A6C500 /* Facebook.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C276E4E1475A34900A6C500 /* Facebook.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5C276E6A1475A34900A6C500 /* FBDialog.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5C276E511475A34900A6C500 /* FBDialog.bundle */; };
+		5C276E6B1475A34900A6C500 /* FBDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C276E531475A34900A6C500 /* FBDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5C276E6C1475A34900A6C500 /* FBLoginDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C276E551475A34900A6C500 /* FBLoginDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5C276E6D1475A34900A6C500 /* FBRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C276E571475A34900A6C500 /* FBRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5C276E6E1475A34900A6C500 /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C276E5B1475A34900A6C500 /* NSObject+SBJSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5C276E6F1475A34900A6C500 /* NSString+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C276E5D1475A34900A6C500 /* NSString+SBJSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5C276E701475A34900A6C500 /* SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C276E5F1475A34900A6C500 /* SBJSON.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5C276E711475A34900A6C500 /* SBJsonBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C276E611475A34900A6C500 /* SBJsonBase.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5C276E721475A34900A6C500 /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C276E631475A34900A6C500 /* SBJsonParser.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5C276E731475A34900A6C500 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C276E651475A34900A6C500 /* SBJsonWriter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5C2E11141469CDE5005BDE61 /* ScRestConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* ScRestConnection.m */; };
+		5C2E1137146C5119005BDE61 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5C2E1136146C5119005BDE61 /* Settings.bundle */; };
+		5C36BE8A146E9DA100DD3CEA /* ScAppEnv.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE89146E9DA100DD3CEA /* ScAppEnv.m */; };
+		5C36BE9914704E6800DD3CEA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C36BE9814704E6800DD3CEA /* CoreData.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		5C36BE9C1470507700DD3CEA /* ScolaApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */; };
+		5C770B181476F265009799C2 /* f_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C770B171476F265009799C2 /* f_logo.png */; };
+		5C770B281477109B009799C2 /* gmail_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C770B271477109B009799C2 /* gmail_logo.png */; };
+		5C770B2A1477136A009799C2 /* google_favicon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C770B291477136A009799C2 /* google_favicon.png */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
 		5CBB63BD146080DF00A9133A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BC146080DF00A9133A /* CoreGraphics.framework */; };
@@ -15,12 +34,16 @@
 		5CBB63C9146080DF00A9133A /* ScAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C8146080DF00A9133A /* ScAppDelegate.m */; };
 		5CBB63CC146080DF00A9133A /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CBB63CA146080DF00A9133A /* MainStoryboard_iPhone.storyboard */; };
 		5CBB63CF146080DF00A9133A /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CBB63CD146080DF00A9133A /* MainStoryboard_iPad.storyboard */; };
-		5CBB63D2146080DF00A9133A /* ScViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63D1146080DF00A9133A /* ScViewController.m */; };
+		5CBB63D2146080DF00A9133A /* ScRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63D1146080DF00A9133A /* ScRootViewController.m */; };
 		5CBB63DA146080E000A9133A /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63D9146080E000A9133A /* SenTestingKit.framework */; };
 		5CBB63DB146080E000A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63DC146080E000A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
 		5CBB63E4146080E000A9133A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5CBB63E2146080E000A9133A /* InfoPlist.strings */; };
 		5CBB63E7146080E000A9133A /* ScolaAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63E6146080E000A9133A /* ScolaAppTests.m */; };
+		5CCF08BE1463F12A00D41AB0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */; };
+		5CCF08C414644E0800D41AB0 /* typewriter.caf in Resources */ = {isa = PBXBuildFile; fileRef = 5CCF08C314644E0800D41AB0 /* typewriter.caf */; };
+		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
+		5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,26 +57,66 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5C276E4D1475A34900A6C500 /* Facebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Facebook.h; sourceTree = "<group>"; };
+		5C276E4E1475A34900A6C500 /* Facebook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Facebook.m; sourceTree = "<group>"; };
+		5C276E501475A34900A6C500 /* FBConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBConnect.h; sourceTree = "<group>"; };
+		5C276E511475A34900A6C500 /* FBDialog.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FBDialog.bundle; sourceTree = "<group>"; };
+		5C276E521475A34900A6C500 /* FBDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBDialog.h; sourceTree = "<group>"; };
+		5C276E531475A34900A6C500 /* FBDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBDialog.m; sourceTree = "<group>"; };
+		5C276E541475A34900A6C500 /* FBLoginDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBLoginDialog.h; sourceTree = "<group>"; };
+		5C276E551475A34900A6C500 /* FBLoginDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBLoginDialog.m; sourceTree = "<group>"; };
+		5C276E561475A34900A6C500 /* FBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBRequest.h; sourceTree = "<group>"; };
+		5C276E571475A34900A6C500 /* FBRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBRequest.m; sourceTree = "<group>"; };
+		5C276E591475A34900A6C500 /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
+		5C276E5A1475A34900A6C500 /* NSObject+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
+		5C276E5B1475A34900A6C500 /* NSObject+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJSON.m"; sourceTree = "<group>"; };
+		5C276E5C1475A34900A6C500 /* NSString+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SBJSON.h"; sourceTree = "<group>"; };
+		5C276E5D1475A34900A6C500 /* NSString+SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SBJSON.m"; sourceTree = "<group>"; };
+		5C276E5E1475A34900A6C500 /* SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJSON.h; sourceTree = "<group>"; };
+		5C276E5F1475A34900A6C500 /* SBJSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJSON.m; sourceTree = "<group>"; };
+		5C276E601475A34900A6C500 /* SBJsonBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonBase.h; sourceTree = "<group>"; };
+		5C276E611475A34900A6C500 /* SBJsonBase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonBase.m; sourceTree = "<group>"; };
+		5C276E621475A34900A6C500 /* SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonParser.h; sourceTree = "<group>"; };
+		5C276E631475A34900A6C500 /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonParser.m; sourceTree = "<group>"; };
+		5C276E641475A34900A6C500 /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
+		5C276E651475A34900A6C500 /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
+		5C2E11121469CDE5005BDE61 /* ScRestConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRestConnection.h; sourceTree = "<group>"; };
+		5C2E11131469CDE5005BDE61 /* ScRestConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRestConnection.m; sourceTree = "<group>"; };
+		5C2E1133146ACFA9005BDE61 /* ScRestConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRestConnectionDelegate.h; sourceTree = "<group>"; };
+		5C2E1136146C5119005BDE61 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		5C36BE88146E9DA100DD3CEA /* ScAppEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScAppEnv.h; sourceTree = "<group>"; };
+		5C36BE89146E9DA100DD3CEA /* ScAppEnv.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScAppEnv.m; sourceTree = "<group>"; };
+		5C36BE9814704E6800DD3CEA /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		5C36BE9B1470507700DD3CEA /* ScolaApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ScolaApp.xcdatamodel; sourceTree = "<group>"; };
+		5C770B171476F265009799C2 /* f_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = f_logo.png; sourceTree = "<group>"; };
+		5C770B271477109B009799C2 /* gmail_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gmail_logo.png; sourceTree = "<group>"; };
+		5C770B291477136A009799C2 /* google_favicon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = google_favicon.png; sourceTree = "<group>"; };
 		5CBB63B4146080DF00A9133A /* ScolaApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScolaApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63B8146080DF00A9133A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5CBB63BA146080DF00A9133A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5CBB63BC146080DF00A9133A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		5CBB63C0146080DF00A9133A /* ScolaApp-Info.plist */ = {isa = PBXFileReference; path = "ScolaApp-Info.plist"; sourceTree = "<group>"; };
+		5CBB63C0146080DF00A9133A /* ScolaApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ScolaApp-Info.plist"; sourceTree = "<group>"; };
 		5CBB63C2146080DF00A9133A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5CBB63C4146080DF00A9133A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		5CBB63C6146080DF00A9133A /* ScolaApp-Prefix.pch */ = {isa = PBXFileReference; path = "ScolaApp-Prefix.pch"; sourceTree = "<group>"; };
-		5CBB63C7146080DF00A9133A /* ScAppDelegate.h */ = {isa = PBXFileReference; path = ScAppDelegate.h; sourceTree = "<group>"; };
+		5CBB63C6146080DF00A9133A /* ScolaApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ScolaApp-Prefix.pch"; sourceTree = "<group>"; };
+		5CBB63C7146080DF00A9133A /* ScAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScAppDelegate.h; sourceTree = "<group>"; };
 		5CBB63C8146080DF00A9133A /* ScAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScAppDelegate.m; sourceTree = "<group>"; };
 		5CBB63CB146080DF00A9133A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5CBB63CE146080DF00A9133A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
-		5CBB63D0146080DF00A9133A /* ScViewController.h */ = {isa = PBXFileReference; path = ScViewController.h; sourceTree = "<group>"; };
-		5CBB63D1146080DF00A9133A /* ScViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScViewController.m; sourceTree = "<group>"; };
+		5CBB63D0146080DF00A9133A /* ScRootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScRootViewController.h; sourceTree = "<group>"; };
+		5CBB63D1146080DF00A9133A /* ScRootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScRootViewController.m; sourceTree = "<group>"; };
 		5CBB63D8146080E000A9133A /* ScolaAppTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScolaAppTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63D9146080E000A9133A /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		5CBB63E1146080E000A9133A /* ScolaAppTests-Info.plist */ = {isa = PBXFileReference; path = "ScolaAppTests-Info.plist"; sourceTree = "<group>"; };
+		5CBB63E1146080E000A9133A /* ScolaAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ScolaAppTests-Info.plist"; sourceTree = "<group>"; };
 		5CBB63E3146080E000A9133A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		5CBB63E5146080E000A9133A /* ScolaAppTests.h */ = {isa = PBXFileReference; path = ScolaAppTests.h; sourceTree = "<group>"; };
+		5CBB63E5146080E000A9133A /* ScolaAppTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScolaAppTests.h; sourceTree = "<group>"; };
 		5CBB63E6146080E000A9133A /* ScolaAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScolaAppTests.m; sourceTree = "<group>"; };
+		5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		5CCF08C314644E0800D41AB0 /* typewriter.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = typewriter.caf; path = soundbites/typewriter.caf; sourceTree = SOURCE_ROOT; };
+		5CCF08FC1465D5D800D41AB0 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		5CCF08FD1465D5D900D41AB0 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		5CCF09051466A0CB00D41AB0 /* ScLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScLogging.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +124,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C36BE9914704E6800DD3CEA /* CoreData.framework in Frameworks */,
+				5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */,
+				5CCF08BE1463F12A00D41AB0 /* AVFoundation.framework in Frameworks */,
 				5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */,
 				5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */,
 				5CBB63BD146080DF00A9133A /* CoreGraphics.framework in Frameworks */,
@@ -80,6 +146,64 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5C276E491475A34900A6C500 /* Facebook */ = {
+			isa = PBXGroup;
+			children = (
+				5C276E4D1475A34900A6C500 /* Facebook.h */,
+				5C276E4E1475A34900A6C500 /* Facebook.m */,
+				5C276E501475A34900A6C500 /* FBConnect.h */,
+				5C276E511475A34900A6C500 /* FBDialog.bundle */,
+				5C276E521475A34900A6C500 /* FBDialog.h */,
+				5C276E531475A34900A6C500 /* FBDialog.m */,
+				5C276E541475A34900A6C500 /* FBLoginDialog.h */,
+				5C276E551475A34900A6C500 /* FBLoginDialog.m */,
+				5C276E561475A34900A6C500 /* FBRequest.h */,
+				5C276E571475A34900A6C500 /* FBRequest.m */,
+				5C276E581475A34900A6C500 /* JSON */,
+			);
+			name = Facebook;
+			path = "../../../Utils/facebook-ios-sdk/src";
+			sourceTree = "<group>";
+		};
+		5C276E581475A34900A6C500 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				5C276E591475A34900A6C500 /* JSON.h */,
+				5C276E5A1475A34900A6C500 /* NSObject+SBJSON.h */,
+				5C276E5B1475A34900A6C500 /* NSObject+SBJSON.m */,
+				5C276E5C1475A34900A6C500 /* NSString+SBJSON.h */,
+				5C276E5D1475A34900A6C500 /* NSString+SBJSON.m */,
+				5C276E5E1475A34900A6C500 /* SBJSON.h */,
+				5C276E5F1475A34900A6C500 /* SBJSON.m */,
+				5C276E601475A34900A6C500 /* SBJsonBase.h */,
+				5C276E611475A34900A6C500 /* SBJsonBase.m */,
+				5C276E621475A34900A6C500 /* SBJsonParser.h */,
+				5C276E631475A34900A6C500 /* SBJsonParser.m */,
+				5C276E641475A34900A6C500 /* SBJsonWriter.h */,
+				5C276E651475A34900A6C500 /* SBJsonWriter.m */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
+		5C276E7A1475B9A800A6C500 /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				5C770B171476F265009799C2 /* f_logo.png */,
+				5C770B271477109B009799C2 /* gmail_logo.png */,
+				5C770B291477136A009799C2 /* google_favicon.png */,
+				5CCF08C314644E0800D41AB0 /* typewriter.caf */,
+			);
+			name = Media;
+			sourceTree = "<group>";
+		};
+		5C36BEA51471A05700DD3CEA /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
 		5CBB63A9146080DD00A9133A = {
 			isa = PBXGroup;
 			children = (
@@ -102,9 +226,12 @@
 		5CBB63B7146080DF00A9133A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5CBB63B8146080DF00A9133A /* UIKit.framework */,
-				5CBB63BA146080DF00A9133A /* Foundation.framework */,
+				5C36BE9814704E6800DD3CEA /* CoreData.framework */,
+				5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */,
+				5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */,
 				5CBB63BC146080DF00A9133A /* CoreGraphics.framework */,
+				5CBB63BA146080DF00A9133A /* Foundation.framework */,
+				5CBB63B8146080DF00A9133A /* UIKit.framework */,
 				5CBB63D9146080E000A9133A /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
@@ -113,12 +240,23 @@
 		5CBB63BE146080DF00A9133A /* ScolaApp */ = {
 			isa = PBXGroup;
 			children = (
+				5CBB63CD146080DF00A9133A /* MainStoryboard_iPad.storyboard */,
+				5CBB63CA146080DF00A9133A /* MainStoryboard_iPhone.storyboard */,
+				5CCF08FC1465D5D800D41AB0 /* Reachability.h */,
+				5CCF08FD1465D5D900D41AB0 /* Reachability.m */,
 				5CBB63C7146080DF00A9133A /* ScAppDelegate.h */,
 				5CBB63C8146080DF00A9133A /* ScAppDelegate.m */,
-				5CBB63CA146080DF00A9133A /* MainStoryboard_iPhone.storyboard */,
-				5CBB63CD146080DF00A9133A /* MainStoryboard_iPad.storyboard */,
-				5CBB63D0146080DF00A9133A /* ScViewController.h */,
-				5CBB63D1146080DF00A9133A /* ScViewController.m */,
+				5C36BE88146E9DA100DD3CEA /* ScAppEnv.h */,
+				5C36BE89146E9DA100DD3CEA /* ScAppEnv.m */,
+				5CCF09051466A0CB00D41AB0 /* ScLogging.h */,
+				5C2E11121469CDE5005BDE61 /* ScRestConnection.h */,
+				5C2E11131469CDE5005BDE61 /* ScRestConnection.m */,
+				5C2E1133146ACFA9005BDE61 /* ScRestConnectionDelegate.h */,
+				5CBB63D0146080DF00A9133A /* ScRootViewController.h */,
+				5CBB63D1146080DF00A9133A /* ScRootViewController.m */,
+				5C276E491475A34900A6C500 /* Facebook */,
+				5C276E7A1475B9A800A6C500 /* Media */,
+				5C36BEA51471A05700DD3CEA /* Model */,
 				5CBB63BF146080DF00A9133A /* Supporting Files */,
 			);
 			path = ScolaApp;
@@ -131,6 +269,7 @@
 				5CBB63C1146080DF00A9133A /* InfoPlist.strings */,
 				5CBB63C4146080DF00A9133A /* main.m */,
 				5CBB63C6146080DF00A9133A /* ScolaApp-Prefix.pch */,
+				5C2E1136146C5119005BDE61 /* Settings.bundle */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -228,6 +367,12 @@
 				5CBB63C3146080DF00A9133A /* InfoPlist.strings in Resources */,
 				5CBB63CC146080DF00A9133A /* MainStoryboard_iPhone.storyboard in Resources */,
 				5CBB63CF146080DF00A9133A /* MainStoryboard_iPad.storyboard in Resources */,
+				5CCF08C414644E0800D41AB0 /* typewriter.caf in Resources */,
+				5C2E1137146C5119005BDE61 /* Settings.bundle in Resources */,
+				5C276E6A1475A34900A6C500 /* FBDialog.bundle in Resources */,
+				5C770B181476F265009799C2 /* f_logo.png in Resources */,
+				5C770B281477109B009799C2 /* gmail_logo.png in Resources */,
+				5C770B2A1477136A009799C2 /* google_favicon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,7 +409,21 @@
 			files = (
 				5CBB63C5146080DF00A9133A /* main.m in Sources */,
 				5CBB63C9146080DF00A9133A /* ScAppDelegate.m in Sources */,
-				5CBB63D2146080DF00A9133A /* ScViewController.m in Sources */,
+				5CBB63D2146080DF00A9133A /* ScRootViewController.m in Sources */,
+				5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */,
+				5C2E11141469CDE5005BDE61 /* ScRestConnection.m in Sources */,
+				5C36BE8A146E9DA100DD3CEA /* ScAppEnv.m in Sources */,
+				5C36BE9C1470507700DD3CEA /* ScolaApp.xcdatamodeld in Sources */,
+				5C276E691475A34900A6C500 /* Facebook.m in Sources */,
+				5C276E6B1475A34900A6C500 /* FBDialog.m in Sources */,
+				5C276E6C1475A34900A6C500 /* FBLoginDialog.m in Sources */,
+				5C276E6D1475A34900A6C500 /* FBRequest.m in Sources */,
+				5C276E6E1475A34900A6C500 /* NSObject+SBJSON.m in Sources */,
+				5C276E6F1475A34900A6C500 /* NSString+SBJSON.m in Sources */,
+				5C276E701475A34900A6C500 /* SBJSON.m in Sources */,
+				5C276E711475A34900A6C500 /* SBJsonBase.m in Sources */,
+				5C276E721475A34900A6C500 /* SBJsonParser.m in Sources */,
+				5C276E731475A34900A6C500 /* SBJsonWriter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,6 +603,7 @@
 				5CBB63EC146080E000A9133A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5CBB63ED146080E000A9133A /* Build configuration list for PBXNativeTarget "ScolaAppTests" */ = {
 			isa = XCConfigurationList;
@@ -452,8 +612,22 @@
 				5CBB63EF146080E000A9133A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				5C36BE9B1470507700DD3CEA /* ScolaApp.xcdatamodel */,
+			);
+			currentVersion = 5C36BE9B1470507700DD3CEA /* ScolaApp.xcdatamodel */;
+			path = ScolaApp.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 5CBB63AB146080DD00A9133A /* Project object */;
 }
