@@ -1,0 +1,10 @@
+/* 
+  Localizable.strings
+  ScolaApp
+
+  Created by Anders Blehr on 27.11.11.
+  Copyright (c) 2011 Rhelba Software. All rights reserved.
+*/
+
+"strNoInternet" = "Hm. I need to connect to the internet right now. Please try again when you have an internet connection.";
+"strServerDown" = "Hm. The Scola service is not available right now. Please try again later.";

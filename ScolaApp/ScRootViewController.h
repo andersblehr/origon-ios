@@ -7,28 +7,36 @@
 //
 
 #import <AVFoundation/AVFoundation.h>
-#import <CoreData/CoreData.h>
 #import <UIKit/UIKit.h>
 
-#import "Facebook.h"
-#import "ScRestConnectionDelegate.h"
+#import "ScServerConnectionDelegate.h"
 
-@interface ScRootViewController : UIViewController <ScRestConnectionDelegate, FBSessionDelegate> {
+@interface ScRootViewController : UIViewController <UITextFieldDelegate> {
+    BOOL didRunSplashSequence;
+    
     AVAudioPlayer *typewriter1;
     AVAudioPlayer *typewriter2;
+    
+    int currentMembershipSegment;
+    NSString *nameAsEntered;
+    NSString *emailAsEntered;
+    NSString *passwordAsEntered;
+    NSString *invitationCodeAsEntered;
 }
 
-@property (weak, nonatomic) IBOutlet UILabel *scolaLabel;
-@property (weak, nonatomic) IBOutlet UILabel *loginLabel;
-@property (weak, nonatomic) IBOutlet UIButton *facebookLoginButton;
-@property (weak, nonatomic) IBOutlet UIButton *googleLoginButton;
+@property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
+
+@property (weak, nonatomic) IBOutlet UILabel *promptLabel;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *membershipStatus;
+@property (weak, nonatomic) IBOutlet UILabel *userHelpLabel;
+@property (weak, nonatomic) IBOutlet UITextField *nameOrEmailField;
+@property (weak, nonatomic) IBOutlet UITextField *emailOrPasswordOrInvitationCodeField;
+@property (weak, nonatomic) IBOutlet UITextField *chooseNewPasswordField;
+@property (weak, nonatomic) IBOutlet UILabel *scolaDescriptionHeadingLabel;
+@property (weak, nonatomic) IBOutlet UITextView *scolaDescriptionTextView;
+@property (weak, nonatomic) IBOutlet UILabel *scolaSplashLabel;
 @property (weak, nonatomic) IBOutlet UIButton *showInfoButton;
 
-@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
-
-- (IBAction)logInWithFacebook:(id)sender;
-- (IBAction)logInWithGoogle:(id)sender;
-- (IBAction)logOut:(id)sender;
 - (IBAction)showInfo:(id)sender;
 
 @end

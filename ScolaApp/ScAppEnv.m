@@ -8,23 +8,28 @@
 
 #import "ScAppEnv.h"
 
+#import "ScAppDelegate.h"
+#import "ScCrypto.h"
+#import "ScLogging.h"
+
 @implementation ScAppEnv
 
-@synthesize iPadDevice;
-@synthesize iPhoneDevice;
-@synthesize iPodTouchDevice;
+NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 
+@synthesize UUID;
+@synthesize is_iPadDevice;
+@synthesize is_iPhoneDevice;
+@synthesize is_iPodTouchDevice;
+@synthesize isInternetConnectionWiFi;
+@synthesize isInternetConnectionWWAN;
+@synthesize isServerAvailable;
+@synthesize isDeviceRegistered;
+@synthesize deviceType;
 @synthesize displayLanguage;
 
-@synthesize internetConnectionIsWiFi;
-@synthesize internetConnectionIsWWAN;
-
-@synthesize basePath;
-@synthesize stringHandler;
-@synthesize modelHandler;
-
-@synthesize isLoggedInWithFacebook;
-@synthesize isLoggedInWithGoogle;
+//@synthesize userName;
+//@synthesize userEmail;
+//@synthesize authToken;
 
 @synthesize managedObjectContext;
 
@@ -60,21 +65,16 @@ static ScAppEnv *env = nil;
     self = [super init];
     
     if (self) {
-        iPadDevice = NO;
-        iPhoneDevice = NO;
-        iPodTouchDevice = NO;
+        is_iPadDevice = NO;
+        is_iPhoneDevice = NO;
+        is_iPodTouchDevice = NO;
+        isInternetConnectionWiFi = NO;
+        isInternetConnectionWWAN = NO;
+        isServerAvailable = NO;
+        isDeviceRegistered = NO;
         
+        deviceType = @"Unknown device";
         displayLanguage = @"en";
-        
-        internetConnectionIsWiFi = NO;
-        internetConnectionIsWWAN = NO;
-        
-        basePath = @"http://localhost:8888";
-        stringHandler = @"strings";
-        modelHandler = @"model";
-        
-        isLoggedInWithFacebook = NO;
-        isLoggedInWithGoogle = NO;
     }
     
     return self;
@@ -83,15 +83,81 @@ static ScAppEnv *env = nil;
 
 #pragma mark - Accessors
 
-- (BOOL)internetConnectionAvailable
+- (NSString *)UUID
 {
-    return (internetConnectionIsWiFi || internetConnectionIsWWAN);
+    NSUserDefaults *userDefaults;
+    
+    if (!UUID) {
+        userDefaults = [NSUserDefaults standardUserDefaults];
+        UUID = [userDefaults objectForKey:@"scolaapp.uuid"];
+    }
+        
+    if (!UUID) {
+        CFUUIDRef newUUID = CFUUIDCreate(kCFAllocatorDefault);
+        CFStringRef newUUIDAsCFString = CFUUIDCreateString(kCFAllocatorDefault, newUUID);
+        UUID = (__bridge NSString *)newUUIDAsCFString;
+        
+        CFRelease(newUUID);
+        CFRelease(newUUIDAsCFString);
+        
+        [userDefaults setObject:UUID forKey:@"scolaapp.uuid"];
+    }
+    
+    return UUID;
 }
 
 
-- (BOOL)isLoggedIn
+- (void)setIs_iPadDevice:(BOOL)is_iPad
 {
-    return (isLoggedInWithFacebook || isLoggedInWithGoogle);
+    is_iPadDevice = is_iPad;
+    deviceType = @"iPad";
+}
+
+
+- (void)setIs_iPhoneDevice:(BOOL)is_iPhone
+{
+    is_iPhoneDevice = is_iPhone;
+    deviceType = @"iPhone";
+}
+
+
+- (void)setIs_iPodTouchDevice:(BOOL)is_iPodTouch
+{
+    is_iPodTouchDevice = is_iPodTouch;
+    deviceType = @"iPod touch";
+}
+
+/*
+- (NSString *)authToken
+{
+    NSString *todaysSalt = [ScCrypto todaysSalt];
+    
+    if (!authToken || ![authTokenSalt isEqualToString:todaysSalt]) {
+        authTokenSalt = todaysSalt;
+        authToken = [ScCrypto createAuthTokenForName:userName andEmail:userEmail usingSalt:authTokenSalt];
+    }
+    
+    return authToken;
+}
+*/
+
+- (ScManagedObjectContext *)managedObjectContext
+{
+    if (!managedObjectContext) {
+        ScAppDelegate *appDelegate = (ScAppDelegate *)[[UIApplication sharedApplication] delegate];
+        
+        managedObjectContext = [appDelegate managedObjectContext];
+    }
+    
+    return managedObjectContext;
+}
+
+
+#pragma mark - Interface implementations
+
+- (BOOL)isInternetConnectionAvailable
+{
+    return (isInternetConnectionWiFi || isInternetConnectionWWAN);
 }
 
 @end

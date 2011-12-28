@@ -1,0 +1,11 @@
+/* 
+  Localizable.strings
+  ScolaApp
+
+  Created by Anders Blehr on 27.11.11.
+  Copyright (c) 2011 Rhelba Software. All rights reserved.
+*/
+
+"strNoInternet" = "Hm. Jeg trenger å kople meg til internett akkurat nå. Vennligst prøv igjen når du har internettforbindelse.";
+"strServerDown" = "Hm. Scola-tjenesten er visst ikke tilgjengelig akkurat nå. Vennligst prøv igjen om en stund.";
+

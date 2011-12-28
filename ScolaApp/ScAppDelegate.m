@@ -8,45 +8,24 @@
 
 #import <CoreData/CoreData.h>
 
-#import "Facebook.h"
 #import "Reachability.h"
 
 #import "ScAppDelegate.h"
 #import "ScAppEnv.h"
 #import "ScLogging.h"
-
-#define kFacebookAppId @"223875737682972"
-
+#import "ScManagedObjectContext.h"
+#import "ScServerConnection.h"
 
 @implementation ScAppDelegate
 
 @synthesize window;
-
-@synthesize facebook;
 
 @synthesize managedObjectModel;
 @synthesize managedObjectContext;
 @synthesize persistentStoreCoordinator;
 
 
-#pragma mark - Accessors
-
-- (NSManagedObjectContext *)managedObjectContext
-{
-    if (managedObjectContext == nil) {
-        NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-        
-        if (coordinator != nil) {
-            managedObjectContext = [[NSManagedObjectContext alloc] init];
-            managedObjectContext.persistentStoreCoordinator = coordinator;
-            
-            [ScAppEnv env].managedObjectContext = managedObjectContext;
-        }
-    }
-    
-    return managedObjectContext;
-}
-
+#pragma mark - Core Data accessors
 
 - (NSManagedObjectModel *)managedObjectModel
 {
@@ -55,6 +34,21 @@
     }
     
     return managedObjectModel;
+}
+
+
+- (ScManagedObjectContext *)managedObjectContext
+{
+    if (managedObjectContext == nil) {
+        NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+        
+        if (coordinator != nil) {
+            managedObjectContext = [[ScManagedObjectContext alloc] init];
+            managedObjectContext.persistentStoreCoordinator = coordinator;
+        }
+    }
+    
+    return managedObjectContext;
 }
 
 
@@ -93,12 +87,16 @@
     
     if (internetStatus == ReachableViaWiFi) {
         ScLogInfo(@"Connected to the internet via Wi-Fi.");
-        [ScAppEnv env].internetConnectionIsWiFi = YES;
+        [ScAppEnv env].isInternetConnectionWiFi = YES;
     } else if (internetStatus == ReachableViaWWAN) {
         ScLogInfo(@"Connected to the internet via mobile web (WWAN).");
-        [ScAppEnv env].internetConnectionIsWWAN = YES;
+        [ScAppEnv env].isInternetConnectionWWAN = YES;
     } else {
         ScLogInfo(@"Not connected to the internet.");
+    }
+    
+    if ([ScAppEnv env].isInternetConnectionAvailable && ![ScAppEnv env].isServerAvailable) {
+        [ScAppEnv env].isServerAvailable = [ScServerConnection isServerAvailable];
     }
 }
 
@@ -109,63 +107,6 @@
 }
 
 
-#pragma mark - Methods for logging in and out
-
-- (void)logInWithFacebook
-{
-    [facebook authorize:nil];
-}
-
-
-- (void)logInWithGoogle
-{
-    //TODO: Implement for Google
-}
-
-
-- (void)logOut
-{
-    if ([ScAppEnv env].isLoggedInWithFacebook) {
-        [facebook logout:self];
-    } else if ([ScAppEnv env].isLoggedInWithGoogle) {
-        // TODO: Implement for Google
-        
-        [ScAppEnv env].isLoggedInWithGoogle = NO;
-    } else {
-        ScLogError(@"Attempt to log out when not logged in.");
-    }
-}
-
-
-#pragma mark - FBSessionDelegate implementations
-
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
-{
-    return [facebook handleOpenURL:url]; 
-}
-
-
-- (void)fbDidLogin
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    [defaults setObject:[facebook accessToken] forKey:@"FBAccessTokenKey"];
-    [defaults setObject:[facebook expirationDate] forKey:@"FBExpirationDateKey"];
-    [defaults synchronize];
-    
-    [ScAppEnv env].isLoggedInWithFacebook = YES;
-}
-
-
-- (void)fbDidLogout
-{
-    // TODO
-    
-    [ScAppEnv env].isLoggedInWithFacebook = NO;
-}
-
-
 #pragma mark - Lifecycle methods
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -173,14 +114,13 @@
     NSString *device = [UIDevice currentDevice].model;
 
     if ([device hasPrefix:@"iPad"]) {
-        [ScAppEnv env].iPadDevice = YES;
+        [ScAppEnv env].is_iPadDevice = YES;
     } else if ([device hasPrefix:@"iPhone"]) {
-        [ScAppEnv env].iPhoneDevice = YES;
+        [ScAppEnv env].is_iPhoneDevice = YES;
     } else if ([device hasPrefix:@"iPod"]) {
-        [ScAppEnv env].iPodTouchDevice = YES;
+        [ScAppEnv env].is_iPodTouchDevice = YES;
     } else {
         ScLogError(@"Unknown device: %@.", device);
-        return NO;
     }
 
     NSString *systemLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
@@ -194,27 +134,13 @@
     ScLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
     ScLogDebug(@"System language is '%@'", [ScAppEnv env].displayLanguage);
     
-    // Monitor internet connectivity
+    [self checkConnectivity:[Reachability reachabilityForInternetConnection]];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(reachabilityChanged:)
                                                  name:kReachabilityChangedNotification
                                                object:nil];
     
-    // Check if valid Facebook access token exists
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    facebook = [[Facebook alloc] initWithAppId:kFacebookAppId andDelegate:self];
-    
-    if ([defaults objectForKey:@"FBAccessTokenKey"] && [defaults objectForKey:@"FBExpirationDateKey"]) {
-        facebook.accessToken = [defaults objectForKey:@"FBAccessTokenKey"];
-        facebook.expirationDate = [defaults objectForKey:@"FBExpirationDateKey"];
-    }
-    
-    [ScAppEnv env].isLoggedInWithFacebook = [facebook isSessionValid];
-    
-    // If no valid Facebook access token, check for valid Google access token
-    if (![ScAppEnv env].isLoggedInWithFacebook) {
-        [ScAppEnv env].isLoggedInWithGoogle = NO; // TODO: Implement for Google
-    }
+    [ScAppEnv env].isDeviceRegistered = NO; // TODO: Need a mechanism here..
     
     return YES;
 }

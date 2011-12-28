@@ -1,28 +1,42 @@
 //
-//  ScViewController.m
+//  ScRegisterUserController.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 01.11.11.
+//  Created by Anders Blehr on 29.11.11.
 //  Copyright (c) 2011 Rhelba Software. All rights reserved.
 //
 
-#import "ScViewController.h"
+#import "ScRegisterScolaController.h"
 
-@implementation ScViewController
+#import "ScStrings.h"
+
+
+@implementation ScRegisterScolaController
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    return [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+}
+
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+    
     // Release any cached data, images, etc that aren't in use.
 }
+
 
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    
+    [self navigationController].navigationBar.barStyle = UIBarStyleBlack;
+    [self navigationController].navigationBarHidden = NO;
 }
+
 
 - (void)viewDidUnload
 {
@@ -31,34 +45,23 @@
     // e.g. self.myOutlet = nil;
 }
 
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
 }
+
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-	[super viewWillDisappear:animated];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
-}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
-    } else {
-        return YES;
-    }
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 @end

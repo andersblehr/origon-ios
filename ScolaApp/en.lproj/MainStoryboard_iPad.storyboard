@@ -25,7 +25,7 @@
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
                     <connections>
-                        <outlet property="scolaLabel" destination="Qd6-pY-dVB" id="xLi-AK-BsE"/>
+                        <outlet property="scolaSplashLabel" destination="Qd6-pY-dVB" id="D9C-um-EE8"/>
                     </connections>
                 </viewController>
             </objects>

@@ -8,29 +8,34 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ScAppEnv : NSObject
+#import "ScManagedObjectContext.h"
 
-@property BOOL iPadDevice;
-@property BOOL iPhoneDevice;
-@property BOOL iPodTouchDevice;
+@interface ScAppEnv : NSObject {
+@private
+    NSString *authTokenSalt;
+}
 
+extern NSString * const kBundleID;
+
+@property (strong, readonly) NSString *UUID;
+@property (nonatomic) BOOL is_iPadDevice;
+@property (nonatomic) BOOL is_iPhoneDevice;
+@property (nonatomic) BOOL is_iPodTouchDevice;
+@property (nonatomic) BOOL isInternetConnectionWiFi;
+@property (nonatomic) BOOL isInternetConnectionWWAN;
+@property (nonatomic) BOOL isServerAvailable;
+@property (nonatomic) BOOL isDeviceRegistered;
+@property (strong, readonly) NSString *deviceType;
 @property (strong) NSString *displayLanguage;
 
-@property BOOL internetConnectionIsWiFi;
-@property BOOL internetConnectionIsWWAN;
+//@property (strong, nonatomic) NSString *userName;
+//@property (strong, nonatomic) NSString *userEmail;
+//@property (strong, readonly) NSString *authToken;
 
-@property (strong, readonly) NSString *basePath;
-@property (strong, readonly) NSString *stringHandler;
-@property (strong, readonly) NSString *modelHandler;
-
-@property BOOL isLoggedInWithFacebook;
-@property BOOL isLoggedInWithGoogle;
-
-@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (strong, readonly) ScManagedObjectContext *managedObjectContext;
 
 + (ScAppEnv *)env;
 
-- (BOOL)internetConnectionAvailable;
-- (BOOL)isLoggedIn;
+- (BOOL)isInternetConnectionAvailable;
 
 @end
