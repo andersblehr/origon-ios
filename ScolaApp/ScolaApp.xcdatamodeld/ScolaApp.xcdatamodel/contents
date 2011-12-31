@@ -14,6 +14,11 @@
         <attribute name="dateExpires" attributeType="Date" syncable="YES"/>
         <attribute name="dateModified" attributeType="Date" syncable="YES"/>
     </entity>
+    <entity name="ScDevice" representedClassName="ScDevice" parentEntity="ScCachedEntity" syncable="YES">
+        <attribute name="deviceName" attributeType="String" syncable="YES"/>
+        <attribute name="uuid" attributeType="String" syncable="YES"/>
+        <relationship name="usedBy" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScolaMember" inverseName="devices" inverseEntity="ScScolaMember" syncable="YES"/>
+    </entity>
     <entity name="ScDocument" representedClassName="ScDocument" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="doesExpire" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isExternal" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -163,7 +168,7 @@
         <attribute name="descriptionText" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="name" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="picture" optional="YES" attributeType="Binary" syncable="YES"/>
-        <attribute name="shortName" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
+        <attribute name="shortname" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <relationship name="adminMessageBoard" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScMessageBoard" inverseName="scola" inverseEntity="ScMessageBoard" syncable="YES"/>
         <relationship name="admins" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScolaMember" inverseName="adminMemberships" inverseEntity="ScScolaMember" syncable="YES"/>
         <relationship name="coaches" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScPerson" inverseName="coachMemberships" inverseEntity="ScPerson" syncable="YES"/>
@@ -186,6 +191,7 @@
     <entity name="ScScolaMember" representedClassName="ScScolaMember" parentEntity="ScPerson" syncable="YES">
         <attribute name="memberSince" attributeType="Date" syncable="YES"/>
         <relationship name="adminMemberships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScScola" inverseName="admins" inverseEntity="ScScola" syncable="YES"/>
+        <relationship name="devices" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScDevice" inverseName="usedBy" inverseEntity="ScDevice" syncable="YES"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDocument" inverseName="author" inverseEntity="ScDocument" syncable="YES"/>
         <relationship name="messageItems" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMessageItem" inverseName="author" inverseEntity="ScMessageItem" syncable="YES"/>
         <relationship name="toDoAssignments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScToDoAssignment" inverseName="assignee" inverseEntity="ScToDoAssignment" syncable="YES"/>
@@ -248,5 +254,6 @@
         <element name="ScToDoAssignment" positionX="342" positionY="-405" width="128" height="105"/>
         <element name="ScToDoItem" positionX="333" positionY="-267" width="128" height="105"/>
         <element name="ScYearlySchedule" positionX="169" positionY="243" width="128" height="120"/>
+        <element name="ScDevice" positionX="322" positionY="-522" width="128" height="90"/>
     </elements>
 </model>

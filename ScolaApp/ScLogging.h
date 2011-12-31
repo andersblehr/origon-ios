@@ -30,9 +30,11 @@
 #if TRC_LEVEL >= 5
 #define ScLogEntry NSLog(@"ENTRY: %s", __PRETTY_FUNCTION__)
 #define ScLogExit NSLog(@"EXIT: %s", __PRETTY_FUNCTION__)
+#define ScLogVerbose(A, ...) NSLog(@"VERBOSE: %s[%d]: %@", __PRETTY_FUNCTION__, __LINE__, [NSString stringWithFormat:A, ## __VA_ARGS__])
 #else
 #define ScLogEntry
 #define ScLogExit
+#define ScLogVerbose(A, ...)
 #endif
 
 #if (TRC_LEVEL >= 4)

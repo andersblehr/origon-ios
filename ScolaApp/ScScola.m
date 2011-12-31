@@ -24,7 +24,7 @@
 @dynamic descriptionText;
 @dynamic name;
 @dynamic picture;
-@dynamic shortName;
+@dynamic shortname;
 @dynamic adminMessageBoard;
 @dynamic admins;
 @dynamic coaches;

@@ -17,7 +17,7 @@
 @property (nonatomic, strong) NSString * descriptionText;
 @property (nonatomic, strong) NSString * name;
 @property (nonatomic, strong) NSData * picture;
-@property (nonatomic, strong) NSString * shortName;
+@property (nonatomic, strong) NSString * shortname;
 @property (nonatomic, strong) ScMessageBoard *adminMessageBoard;
 @property (nonatomic, strong) NSSet *admins;
 @property (nonatomic, strong) NSSet *coaches;

@@ -11,7 +11,7 @@
 @protocol ScServerConnectionDelegate <NSObject>
 
 - (void)willSendRequest:(NSURLRequest *)request;
-- (void)didReceiveResponse:(NSURLResponse *)response;
-- (void)finishedReceivingData:(NSData *)data;
+- (void)didReceiveResponse:(NSHTTPURLResponse *)response;
+- (void)finishedReceivingData:(NSDictionary *)dataAsDictionary;
 
 @end

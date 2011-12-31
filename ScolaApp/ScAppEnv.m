@@ -16,7 +16,7 @@
 
 NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 
-@synthesize UUID;
+@synthesize deviceUUID;
 @synthesize is_iPadDevice;
 @synthesize is_iPhoneDevice;
 @synthesize is_iPodTouchDevice;
@@ -26,10 +26,6 @@ NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 @synthesize isDeviceRegistered;
 @synthesize deviceType;
 @synthesize displayLanguage;
-
-//@synthesize userName;
-//@synthesize userEmail;
-//@synthesize authToken;
 
 @synthesize managedObjectContext;
 
@@ -83,27 +79,27 @@ static ScAppEnv *env = nil;
 
 #pragma mark - Accessors
 
-- (NSString *)UUID
+- (NSString *)deviceUUID
 {
     NSUserDefaults *userDefaults;
     
-    if (!UUID) {
+    if (!deviceUUID) {
         userDefaults = [NSUserDefaults standardUserDefaults];
-        UUID = [userDefaults objectForKey:@"scolaapp.uuid"];
+        deviceUUID = [userDefaults objectForKey:@"scolaapp.uuid"];
     }
         
-    if (!UUID) {
+    if (!deviceUUID) {
         CFUUIDRef newUUID = CFUUIDCreate(kCFAllocatorDefault);
         CFStringRef newUUIDAsCFString = CFUUIDCreateString(kCFAllocatorDefault, newUUID);
-        UUID = (__bridge NSString *)newUUIDAsCFString;
+        deviceUUID = (__bridge NSString *)newUUIDAsCFString;
         
         CFRelease(newUUID);
         CFRelease(newUUIDAsCFString);
         
-        [userDefaults setObject:UUID forKey:@"scolaapp.uuid"];
+        [userDefaults setObject:deviceUUID forKey:@"scolaapp.uuid"];
     }
     
-    return UUID;
+    return deviceUUID;
 }
 
 
@@ -127,19 +123,6 @@ static ScAppEnv *env = nil;
     deviceType = @"iPod touch";
 }
 
-/*
-- (NSString *)authToken
-{
-    NSString *todaysSalt = [ScCrypto todaysSalt];
-    
-    if (!authToken || ![authTokenSalt isEqualToString:todaysSalt]) {
-        authTokenSalt = todaysSalt;
-        authToken = [ScCrypto createAuthTokenForName:userName andEmail:userEmail usingSalt:authTokenSalt];
-    }
-    
-    return authToken;
-}
-*/
 
 - (ScManagedObjectContext *)managedObjectContext
 {

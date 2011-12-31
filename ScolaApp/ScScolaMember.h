@@ -14,12 +14,12 @@
 
 @interface ScScolaMember : ScPerson
 
-@property (nonatomic, retain) NSDate * memberSince;
-@property (nonatomic, retain) NSSet *adminMemberships;
-@property (nonatomic, retain) NSSet *documents;
-@property (nonatomic, retain) ScMessageItem *messageItems;
-@property (nonatomic, retain) NSSet *toDoAssignments;
-@property (nonatomic, retain) NSSet *devices;
+@property (nonatomic, strong) NSDate * memberSince;
+@property (nonatomic, strong) NSSet *adminMemberships;
+@property (nonatomic, strong) NSSet *documents;
+@property (nonatomic, strong) ScMessageItem *messageItems;
+@property (nonatomic, strong) NSSet *toDoAssignments;
+@property (nonatomic, strong) NSSet *devices;
 @end
 
 @interface ScScolaMember (CoreDataGeneratedAccessors)

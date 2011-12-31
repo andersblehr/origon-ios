@@ -17,7 +17,7 @@
 
 extern NSString * const kBundleID;
 
-@property (strong, readonly) NSString *UUID;
+@property (strong, readonly) NSString *deviceUUID;
 @property (nonatomic) BOOL is_iPadDevice;
 @property (nonatomic) BOOL is_iPhoneDevice;
 @property (nonatomic) BOOL is_iPodTouchDevice;
@@ -27,10 +27,6 @@ extern NSString * const kBundleID;
 @property (nonatomic) BOOL isDeviceRegistered;
 @property (strong, readonly) NSString *deviceType;
 @property (strong) NSString *displayLanguage;
-
-//@property (strong, nonatomic) NSString *userName;
-//@property (strong, nonatomic) NSString *userEmail;
-//@property (strong, readonly) NSString *authToken;
 
 @property (strong, readonly) ScManagedObjectContext *managedObjectContext;
 

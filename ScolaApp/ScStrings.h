@@ -19,6 +19,14 @@ extern NSString * const strInvalidEmailAlert;
 extern NSString * const strInvalidPasswordAlert;
 extern NSString * const strInvalidInvitationCodeAlert;
 
+// Generic strings
+extern NSString * const strOK;
+extern NSString * const strCancel;
+extern NSString * const strContinue;
+extern NSString * const strLater;
+extern NSString * const strPleaseWait;
+extern NSString * const strPleaseProvide;
+
 // Root view (maintained in-app)
 extern NSString * const istrNoInternet;
 extern NSString * const istrServerDown;
@@ -32,14 +40,15 @@ extern NSString * const strUserHelpNew;
 extern NSString * const strUserHelpInvited;
 extern NSString * const strUserHelpMember;
 extern NSString * const strNamePrompt;
+extern NSString * const strNameAsReceivedPrompt;
 extern NSString * const strEmailPrompt;
 extern NSString * const strInvitationCodePrompt;
 extern NSString * const strPasswordPrompt;
 extern NSString * const strNewPasswordPrompt;
+extern NSString * const strEmailSentPopUp;
+extern NSString * const strRegistrationCodePrompt;
+extern NSString * const strRepeatPasswordPrompt;
 extern NSString * const strScolaDescription;
-
-// Register user
-extern NSString * const strFacebook;
 
 // Confirm new user
 extern NSString * const strUserWelcome;

@@ -20,6 +20,10 @@
 
 @implementation ScServerConnection
 
+static NSString * const kScolaServer = @"enceladus.local:8888";
+//static NSString * const kScolaServer = @"ganymede.local:8888";
+//static NSString * const kScolaServer = @"scolaapp.appspot.com";
+
 static NSString * const kRESTHandlerScola = @"scola";
 static NSString * const kRESTHandlerStrings = @"strings";
 static NSString * const kRESTHandlerAuth = @"auth";
@@ -29,14 +33,39 @@ static NSString * const kRESTRouteStatus = @"status";
 static NSString * const kRESTRouteAuthRegistration = @"register";
 static NSString * const kRESTRouteAuthHandshake = @"handshake";
 
-//static NSString * const kScolaServer = @"scolaapp.appspot.com";
-static NSString * const kScolaServer = @"localhost:8888";
-
 NSInteger const kHTTPStatusCodeOK           = 200;
 NSInteger const kHTTPStatusCodeUnauthorized = 401;
 NSInteger const kHTTPStatusCodeNotFound     = 404;
 
 @synthesize HTTPStatusCode;
+
+
+#pragma mark - Class methods
+
++ (BOOL)isServerAvailable
+{
+    NSString *scolaServerURL = [NSString stringWithFormat:@"http://%@", kScolaServer];
+    NSURL *statusURL = [[[NSURL URLWithString:scolaServerURL] URLByAppendingPathComponent:kRESTHandlerScola] URLByAppendingPathComponent:kRESTRouteStatus];
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:statusURL];
+    NSURLResponse *response;
+    NSError *error;
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    
+    BOOL isAvailable = (data != nil);
+    
+    if (isAvailable) {
+        ScLogDebug(@"The Scola server at %@ is available.", kScolaServer);
+    } else {
+        ScLogWarning(@"The Scola server is unavailable.");
+        ScLogDebug(@"Current Scola server URL is %@.", kScolaServer);
+    }
+    
+    return isAvailable;
+}
 
 
 #pragma mark - Private methods
@@ -55,16 +84,26 @@ NSInteger const kHTTPStatusCodeNotFound     = 404;
 }
 
 
-- (void)createURLRequestForHTTPMethod:(NSString *)HTTPMethod withLookupValue:(NSString *)lookupValue
+- (BOOL)doesRESTHandlerHandleClass:(NSString *)class
+{
+    BOOL doesHandleClass = [RESTHandler isEqualToString:kRESTHandlerModel] || ([class rangeOfString:RESTHandler options:NSCaseInsensitiveSearch].location != NSNotFound);
+    
+    if (!doesHandleClass) {
+        ScLogBreakage(@"Requested class %@ is incompatible with provided REST handler %@", class, RESTHandler);
+    }
+    
+    return doesHandleClass;
+}
+
+
+- (void)createURLRequestForHTTPMethod:(NSString *)HTTPMethod
 {
     NSURL *requestURL;
     NSURL *URLWithoutURLParameters = [[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute];
 
-    if (URLParameters) {
-        requestURL = [URLWithoutURLParameters URLByAppendingURLParameters:URLParameters];
-    } else {
-        requestURL = URLWithoutURLParameters;
-    }
+    [self setValue:[ScAppEnv env].deviceUUID forURLParameter:@"uuid"];
+    
+    requestURL = [URLWithoutURLParameters URLByAppendingURLParameters:URLParameters];
 
     if (URLRequest) {
         URLRequest.URL = requestURL;
@@ -75,32 +114,6 @@ NSInteger const kHTTPStatusCodeNotFound     = 404;
     [URLRequest setHTTPMethod:HTTPMethod];
     [URLRequest setValue:@"application/json;charset=utf-8" forHTTPHeaderField:@"Content-Type"];
     [URLRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-}
-
-
-- (NSData *)performGETWithLookupKey:(NSString *)lookupKey
-{
-    NSData *data = nil;
-    
-    NSError *error;
-    NSHTTPURLResponse *response;
-    [self createURLRequestForHTTPMethod:@"GET" withLookupValue:lookupKey];
-    
-    ScLogDebug(@"Starting synchronous GET request with URL %@.", [URLRequest URL]);
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    data = [NSURLConnection sendSynchronousRequest:URLRequest returningResponse:&response error:&error];
-    HTTPStatusCode = [response statusCode];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    
-    if (HTTPStatusCode == kHTTPStatusCodeOK) {
-        ScLogDebug(@"Received data: %@.", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    } else if ((HTTPStatusCode == kHTTPStatusCodeNotFound) || (HTTPStatusCode == kHTTPStatusCodeUnauthorized)) {
-        data = nil;
-    } else if (!data) {
-        ScLogError(@"Error during HTTP request: %@, %@", error, [error userInfo]);
-    }
-
-    return data;
 }
 
 
@@ -155,32 +168,6 @@ NSInteger const kHTTPStatusCodeNotFound     = 404;
 
 #pragma mark - Interface implementation
 
-+ (BOOL)isServerAvailable
-{
-    NSString *scolaServerURL = [NSString stringWithFormat:@"http://%@", kScolaServer];
-    NSURL *statusURL = [[[NSURL URLWithString:scolaServerURL] URLByAppendingPathComponent:kRESTHandlerScola] URLByAppendingPathComponent:kRESTRouteStatus];
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:statusURL];
-    NSURLResponse *response;
-    NSError *error;
-    
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    
-    BOOL isAvailable = (data != nil);
-    
-    if (isAvailable) {
-        ScLogDebug(@"The Scola server at %@ is available.", kScolaServer);
-    } else {
-        ScLogWarning(@"The Scola server is unavailable.");
-        ScLogDebug(@"Current Scola server URL is %@.", kScolaServer);
-    }
-    
-    return isAvailable;
-}
-
-
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field
 {
     if (!URLRequest) {
@@ -201,79 +188,81 @@ NSInteger const kHTTPStatusCodeNotFound     = 404;
 }
 
 
-- (NSDictionary *)getStrings
+- (void)setEntityLookupValue:(NSString *)value
 {
-    NSDictionary *strings = nil;
-    
-    if ([RESTHandler isEqualToString:kRESTHandlerStrings]) {
-        NSData *JSONData = [self performGETWithLookupKey:nil];
-        strings = [ScJSONUtil dictionaryFromJSON:JSONData forClass:kScStringsClass];
+    if (entityLookupKey) {
+        [self setValue:value forURLParameter:entityLookupKey];
     } else {
-        ScLogBreakage(@"Cannot query for strings under '%@' domain.", RESTHandler);
+        ScLogBreakage(@"Attempt to set entity lookup value when no entity key has been set");
     }
-    
-    return strings;
 }
 
 
-- (NSDictionary *)registerUser
+- (NSDictionary *)getRemoteClass:(NSString *)class
 {
-    NSDictionary *authResponse = nil;
+    NSDictionary *classAsDictionary = nil;
     
-    if ([RESTHandler isEqualToString:kRESTHandlerAuth]) {
-        NSData *JSONData = [self performGETWithLookupKey:nil];
-        authResponse = [ScJSONUtil dictionaryFromJSON:JSONData forClass:kScAuthResponseClass];
-    } else {
-        ScLogBreakage(@"Cannot authenticate under '%@' domain.", RESTHandler);
+    if ([ScAppEnv env].isServerAvailable && [self doesRESTHandlerHandleClass:class]) {
+        NSError *error;
+        NSHTTPURLResponse *response;
+        
+        [self createURLRequestForHTTPMethod:@"GET"];
+        
+        ScLogDebug(@"Starting synchronous GET request with URL %@.", URLRequest.URL);
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        NSData *data = [NSURLConnection sendSynchronousRequest:URLRequest returningResponse:&response error:&error];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        
+        HTTPStatusCode = response.statusCode;
+        
+        if (HTTPStatusCode == kHTTPStatusCodeOK) {
+            ScLogDebug(@"Received data: %@.", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+            
+            classAsDictionary = [ScJSONUtil dictionaryFromJSON:data forClass:class];
+        }
     }
     
-    return authResponse;
+    return classAsDictionary;
 }
 
 
-- (NSDictionary *)registerUser:(NSString *)name withInvitationCode:(NSString *)invitationCode andPassword:(NSString *)password
+- (void)getRemoteClass:(NSString *)class usingDelegate:(id)delegate
 {
-    return nil;
+    if ([ScAppEnv env].isServerAvailable && [self doesRESTHandlerHandleClass:class]) {
+        entityClass = class;
+        connectionDelegate = delegate;
+        responseData = [[NSMutableData alloc] init];
+        
+        [self createURLRequestForHTTPMethod:@"GET"];
+        [connectionDelegate willSendRequest:URLRequest];
+        
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
+        
+        if (!URLConnection) {
+            ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
+        }
+    }
 }
 
-/*
-- (NSDictionary *)performAuthHandshake
-{
-    NSDictionary *authResponse = nil;
-    
-    if ([scolaDomain isEqualToString:kScolaDomainAuth]) {
-        NSData *JSONData = [self performGETWithLookupKey:nil];
-        authResponse = [ScJSONUtil dictionaryFromJSON:JSONData forClass:kScAuthResponseClass];
-    } else {
-        ScLogBreakage(@"Cannot authenticate under '%@' domain.", scolaDomain);
-    }
-    
-    return authResponse;
-}
-*/
 
-- (NSDictionary *)getEntityWithId:(NSString *)lookupKey
+- (NSDictionary *)getRemoteEntity
 {
-    NSDictionary *entityAsDictionary = nil;
-    
-    if ([RESTHandler isEqualToString:kRESTHandlerModel]) {
-        NSData* JSONData = [self performGETWithLookupKey:lookupKey];
-        entityAsDictionary = [ScJSONUtil dictionaryFromJSON:JSONData forClass:entityClass];
-    } else {
-        ScLogBreakage(@"Cannot query for entities under '%@' domain.", RESTHandler);
-    }
-    
-    return entityAsDictionary;
+    return [self getRemoteClass:entityClass];
+}
+
+
+- (void)getRemoteEntityUsingDelegate:(id)delegate
+{
+    [self getRemoteClass:entityClass usingDelegate:delegate];
 }
 
 
 #pragma mark - Implicit NSURLConnectionDelegate implementations
 
-- (NSURLRequest *)connection:(NSURLConnection *)connection
-             willSendRequest:(NSURLRequest *)request
-            redirectResponse:(NSURLResponse *)response;
+- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)response;
 {
-    ScLogDebug(@"Received redirect request: %@", request);
+    ScLogDebug(@"Received redirect request: %@ (response: %@)", request, response);
 
 	return request;
 }
@@ -291,17 +280,17 @@ NSInteger const kHTTPStatusCodeNotFound     = 404;
 }
 
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response
 {
-	ScLogDebug(@"Received response: %@ with expected content length: %lld", [response URL], [response expectedContentLength]);
-
+    HTTPStatusCode = response.statusCode;
+    
     [connectionDelegate didReceiveResponse:response];
 }
 
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;
 {
-	ScLogDebug(@"Received data: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+	ScLogVerbose(@"Received data: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
 
 	[responseData appendData:data];
 }
@@ -309,10 +298,10 @@ NSInteger const kHTTPStatusCodeNotFound     = 404;
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
-	ScLogDebug(@"Connection finished loading, clearing connection.");
-    
-    [connectionDelegate finishedReceivingData:responseData];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData forClass:entityClass];
+    
+    [connectionDelegate finishedReceivingData:dataAsDictionary];
 }
 
 
@@ -324,7 +313,7 @@ NSInteger const kHTTPStatusCodeNotFound     = 404;
 
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse;
 {
-	ScLogDebug(@"Will cache response: %@", cachedResponse);
+	ScLogVerbose(@"Will cache response: %@", cachedResponse);
     
 	return cachedResponse;
 }

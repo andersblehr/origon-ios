@@ -12,10 +12,6 @@
 
 @implementation ScJSONUtil
 
-NSString * const kScStringsClass = @"ScStrings";
-NSString * const kScAuthResponseClass = @"ScAuthResponse";
-
-
 + (NSDictionary *)dictionaryFromJSON:(NSData *)JSONData forClass:(NSString *)expectedClass
 {
     NSDictionary *JSONDataAsDictionary = nil;

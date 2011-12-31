@@ -26,7 +26,7 @@ static int const kMembershipSegmentInvited = 1;
 static int const kMembershipSegmentMember  = 2;
 
 static int const kMinimumPassordLength        = 6;
-static int const kMinimumInvitationCodeLength = 4;
+static int const kMinimumScolaShortnameLength = 4;
 
 @implementation ScRootViewController
 
@@ -35,13 +35,14 @@ static int const kMinimumInvitationCodeLength = 4;
 @synthesize promptLabel;
 @synthesize membershipStatus;
 @synthesize userHelpLabel;
-@synthesize nameOrEmailField;
-@synthesize emailOrPasswordOrInvitationCodeField;
+@synthesize nameOrEmailOrRegistrationCodeField;
+@synthesize emailOrPasswordOrScolaShortnameField;
 @synthesize chooseNewPasswordField;
 @synthesize scolaDescriptionHeadingLabel;
 @synthesize scolaDescriptionTextView;
 @synthesize scolaSplashLabel;
 @synthesize showInfoButton;
+@synthesize activityIndicator;
 
 
 #pragma mark - Utility methods
@@ -78,7 +79,7 @@ static int const kMinimumInvitationCodeLength = 4;
     switch (membershipStatus.selectedSegmentIndex) {
         case kMembershipSegmentNew:
         case kMembershipSegmentInvited:
-            isValid = ([nameOrEmailField.text rangeOfString:@" "].location != NSNotFound);
+            isValid = ([nameOrEmailOrRegistrationCodeField.text rangeOfString:@" "].location != NSNotFound);
             break;
         
         case kMembershipSegmentMember:
@@ -100,7 +101,7 @@ static int const kMinimumInvitationCodeLength = 4;
     
     switch (membershipStatus.selectedSegmentIndex) {
         case kMembershipSegmentNew:
-            email = emailOrPasswordOrInvitationCodeField.text;
+            email = emailOrPasswordOrScolaShortnameField.text;
             break;
             
         case kMembershipSegmentInvited:
@@ -108,7 +109,7 @@ static int const kMinimumInvitationCodeLength = 4;
             break;
             
         case kMembershipSegmentMember:
-            email = nameOrEmailField.text;
+            email = nameOrEmailOrRegistrationCodeField.text;
             break;
             
         default:
@@ -131,11 +132,11 @@ static int const kMinimumInvitationCodeLength = 4;
     switch (membershipStatus.selectedSegmentIndex) {
         case kMembershipSegmentNew:
         case kMembershipSegmentInvited:
-            isValid = (chooseNewPasswordField.text.length > kMinimumPassordLength);
+            isValid = (chooseNewPasswordField.text.length >= kMinimumPassordLength);
             break;
             
         case kMembershipSegmentMember:
-            isValid = (emailOrPasswordOrInvitationCodeField.text.length > kMinimumPassordLength);
+            isValid = (emailOrPasswordOrScolaShortnameField.text.length > kMinimumPassordLength);
             break;
             
         default:
@@ -152,15 +153,15 @@ static int const kMinimumInvitationCodeLength = 4;
     
     switch (membershipStatus.selectedSegmentIndex) {
         case kMembershipSegmentNew:
-            ScLogBreakage(@"Attempt to validate invitation code while in 'New' segnemt");
+            ScLogBreakage(@"Attempt to validate Scola shortname while in 'New' segnemt");
             break;
             
         case kMembershipSegmentInvited:
-            isValid = (emailOrPasswordOrInvitationCodeField.text.length >= kMinimumInvitationCodeLength);
+            isValid = (emailOrPasswordOrScolaShortnameField.text.length >= kMinimumScolaShortnameLength);
             break;
             
         case kMembershipSegmentMember:
-            ScLogBreakage(@"Attempt to validate invitation code while in 'Member' segnemt");
+            ScLogBreakage(@"Attempt to validate Scola shortname while in 'Member' segnemt");
             break;
             
         default:
@@ -175,16 +176,28 @@ static int const kMinimumInvitationCodeLength = 4;
 
 - (void)registerNewUser
 {
+    NSString *userName = nameOrEmailOrRegistrationCodeField.text;
+    NSString *userEmail = emailOrPasswordOrScolaShortnameField.text;
+    NSString *userPassword = chooseNewPasswordField.text;
+    NSString *authString = [NSString stringWithFormat:@"%@:%@", userEmail, userPassword];
+    
     ScServerConnection *serverConnection = [[ScServerConnection alloc] initForUserRegistration];
     
-    [serverConnection setValue:[ScAppEnv env].UUID forURLParameter:@"uuid"];
-    [serverConnection setValue:nameOrEmailField.text forURLParameter:@"name"];
-    
-    NSString *authString = [NSString stringWithFormat:@"%@:%@", emailOrPasswordOrInvitationCodeField.text, chooseNewPasswordField.text];
-    
+    [serverConnection setValue:userName forURLParameter:@"name"];
     [serverConnection setValue:[NSString stringWithFormat:@"Basic %@", [authString base64EncodedString]] forHTTPHeaderField:@"Authorization"];
+    [serverConnection getRemoteClass:@"ScAuthState" usingDelegate:self];
     
-    NSDictionary *authResponse = [serverConnection registerUser];
+    isEditingAllowed = NO;
+    
+    membershipStatus.enabled = NO;
+    userHelpLabel.hidden = YES;
+    nameOrEmailOrRegistrationCodeField.text = @"";
+    nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strPleaseWait];
+    emailOrPasswordOrScolaShortnameField.text = @"";
+    emailOrPasswordOrScolaShortnameField.placeholder = [ScStrings stringForKey:strPleaseWait];
+    chooseNewPasswordField.hidden = YES;
+    
+    [activityIndicator startAnimating];
 }
 
 
@@ -259,41 +272,41 @@ static int const kMinimumInvitationCodeLength = 4;
 {
     switch (currentMembershipSegment) {
         case kMembershipSegmentNew:
-            nameAsEntered = nameOrEmailField.text;
-            emailAsEntered = emailOrPasswordOrInvitationCodeField.text;
+            nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
+            emailAsEntered = emailOrPasswordOrScolaShortnameField.text;
             passwordAsEntered = chooseNewPasswordField.text;
             break;
             
         case kMembershipSegmentInvited:
-            nameAsEntered = nameOrEmailField.text;
-            invitationCodeAsEntered = emailOrPasswordOrInvitationCodeField.text;
+            nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
+            invitationCodeAsEntered = emailOrPasswordOrScolaShortnameField.text;
             passwordAsEntered = chooseNewPasswordField.text;
             break;
             
         case kMembershipSegmentMember:
-            emailAsEntered = nameOrEmailField.text;
-            passwordAsEntered = emailOrPasswordOrInvitationCodeField.text;
+            emailAsEntered = nameOrEmailOrRegistrationCodeField.text;
+            passwordAsEntered = emailOrPasswordOrScolaShortnameField.text;
             break;
             
         default:
             break;
     }
     
-    if ([emailOrPasswordOrInvitationCodeField isFirstResponder] || [chooseNewPasswordField isFirstResponder]) {
-        [nameOrEmailField becomeFirstResponder];
+    if ([emailOrPasswordOrScolaShortnameField isFirstResponder] || [chooseNewPasswordField isFirstResponder]) {
+        [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
     }
     
     switch (membershipStatus.selectedSegmentIndex) {
         case kMembershipSegmentNew:
             userHelpLabel.text = [ScStrings stringForKey:strUserHelpNew];
             
-            nameOrEmailField.placeholder = [ScStrings stringForKey:strNamePrompt];
-            emailOrPasswordOrInvitationCodeField.placeholder = [ScStrings stringForKey:strEmailPrompt];
+            nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strNamePrompt];
+            emailOrPasswordOrScolaShortnameField.placeholder = [ScStrings stringForKey:strEmailPrompt];
             chooseNewPasswordField.hidden = NO;
             
-            nameOrEmailField.text = nameAsEntered;
-            emailOrPasswordOrInvitationCodeField.secureTextEntry = NO;
-            emailOrPasswordOrInvitationCodeField.text = emailAsEntered;
+            nameOrEmailOrRegistrationCodeField.text = nameAsEntered;
+            emailOrPasswordOrScolaShortnameField.secureTextEntry = NO;
+            emailOrPasswordOrScolaShortnameField.text = emailAsEntered;
             chooseNewPasswordField.text = passwordAsEntered;
             
             break;
@@ -301,13 +314,13 @@ static int const kMinimumInvitationCodeLength = 4;
         case kMembershipSegmentInvited:
             userHelpLabel.text = [ScStrings stringForKey:strUserHelpInvited];
             
-            nameOrEmailField.placeholder = [ScStrings stringForKey:strNamePrompt];
-            emailOrPasswordOrInvitationCodeField.placeholder = [ScStrings stringForKey:strInvitationCodePrompt];
+            nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strNameAsReceivedPrompt];
+            emailOrPasswordOrScolaShortnameField.placeholder = [ScStrings stringForKey:strInvitationCodePrompt];
             chooseNewPasswordField.hidden = NO;
             
-            nameOrEmailField.text = nameAsEntered;
-            emailOrPasswordOrInvitationCodeField.secureTextEntry = NO;
-            emailOrPasswordOrInvitationCodeField.text = invitationCodeAsEntered;
+            nameOrEmailOrRegistrationCodeField.text = nameAsEntered;
+            emailOrPasswordOrScolaShortnameField.secureTextEntry = NO;
+            emailOrPasswordOrScolaShortnameField.text = invitationCodeAsEntered;
             chooseNewPasswordField.text = passwordAsEntered;
             
             break;
@@ -315,13 +328,13 @@ static int const kMinimumInvitationCodeLength = 4;
         case kMembershipSegmentMember:
             userHelpLabel.text = [ScStrings stringForKey:strUserHelpMember];
 
-            nameOrEmailField.placeholder = [ScStrings stringForKey:strEmailPrompt];
-            emailOrPasswordOrInvitationCodeField.placeholder = [ScStrings stringForKey:strPasswordPrompt];
+            nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strEmailPrompt];
+            emailOrPasswordOrScolaShortnameField.placeholder = [ScStrings stringForKey:strPasswordPrompt];
             chooseNewPasswordField.hidden = YES;
             
-            nameOrEmailField.text = emailAsEntered;
-            emailOrPasswordOrInvitationCodeField.secureTextEntry = YES;
-            emailOrPasswordOrInvitationCodeField.text = passwordAsEntered;
+            nameOrEmailOrRegistrationCodeField.text = emailAsEntered;
+            emailOrPasswordOrScolaShortnameField.secureTextEntry = YES;
+            emailOrPasswordOrScolaShortnameField.text = passwordAsEntered;
             
             break;
             
@@ -337,10 +350,10 @@ static int const kMinimumInvitationCodeLength = 4;
 
 - (void)resignFirstResponder:(id)sender
 {
-    if ([nameOrEmailField isFirstResponder]) {
-        [nameOrEmailField resignFirstResponder];
-    } else if ([emailOrPasswordOrInvitationCodeField isFirstResponder]) {
-        [emailOrPasswordOrInvitationCodeField resignFirstResponder];
+    if ([nameOrEmailOrRegistrationCodeField isFirstResponder]) {
+        [nameOrEmailOrRegistrationCodeField resignFirstResponder];
+    } else if ([emailOrPasswordOrScolaShortnameField isFirstResponder]) {
+        [emailOrPasswordOrScolaShortnameField resignFirstResponder];
     } else if ([chooseNewPasswordField isFirstResponder]) {
         [chooseNewPasswordField resignFirstResponder];
     }
@@ -367,11 +380,12 @@ static int const kMinimumInvitationCodeLength = 4;
         
         didRunSplashSequence = NO;
         
-        //[self setUpTypewriterAudioForSplashSequence];
+        // [self setUpTypewriterAudioForSplashSequence]; // TODO: Comment back in!
         scolaSplashLabel.text = @"";
+        activityIndicator.hidesWhenStopped = YES;
         
-        nameOrEmailField.delegate = self;
-        emailOrPasswordOrInvitationCodeField.delegate = self;
+        nameOrEmailOrRegistrationCodeField.delegate = self;
+        emailOrPasswordOrScolaShortnameField.delegate = self;
         chooseNewPasswordField.delegate = self;
         
         BOOL areStringsAvailable = [ScStrings areStringsAvailable];
@@ -379,18 +393,19 @@ static int const kMinimumInvitationCodeLength = 4;
         promptLabel.hidden = !areStringsAvailable;
         membershipStatus.hidden = !areStringsAvailable;
         userHelpLabel.hidden = !areStringsAvailable;
-        nameOrEmailField.hidden = !areStringsAvailable;
-        emailOrPasswordOrInvitationCodeField.hidden = !areStringsAvailable;
+        nameOrEmailOrRegistrationCodeField.hidden = !areStringsAvailable;
+        emailOrPasswordOrScolaShortnameField.hidden = !areStringsAvailable;
         chooseNewPasswordField.hidden = !areStringsAvailable;
         scolaDescriptionHeadingLabel.hidden = !areStringsAvailable;
         
         chooseNewPasswordField.secureTextEntry = YES;
         
         if (areStringsAvailable) {
-            scolaDescriptionTextView.text = [ScStrings stringForKey:strScolaDescription];
+            isEditingAllowed = YES;
             
             promptLabel.text = [ScStrings stringForKey:strMembershipPrompt];
             chooseNewPasswordField.placeholder = [ScStrings stringForKey:strNewPasswordPrompt];
+            scolaDescriptionTextView.text = [ScStrings stringForKey:strScolaDescription];
             
             [membershipStatus setTitle:[ScStrings stringForKey:strIsNew] forSegmentAtIndex:kMembershipSegmentNew];
             [membershipStatus setTitle:[ScStrings stringForKey:strIsInvited] forSegmentAtIndex:kMembershipSegmentInvited];
@@ -456,7 +471,6 @@ static int const kMinimumInvitationCodeLength = 4;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
     } else {
@@ -465,7 +479,28 @@ static int const kMinimumInvitationCodeLength = 4;
 }
 
 
-#pragma mark - UITextFieldDelegate implementations
+#pragma mark - Segue handling
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+}
+
+
+#pragma mark - IBAction implementation
+
+- (IBAction)showInfo:(id)sender
+{
+    // TODO
+}
+
+
+#pragma mark - UITextFieldDelegate implementation
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    return isEditingAllowed;
+}
+
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
@@ -512,7 +547,7 @@ static int const kMinimumInvitationCodeLength = 4;
             shouldReturn = (isNameValid && isInvitationCodeValid && isPasswordValid);
             
             break;
-        
+            
         case kMembershipSegmentMember:
             isEmailValid = [self isEmailValid];
             isPasswordValid = [self isPasswordValid];
@@ -553,7 +588,7 @@ static int const kMinimumInvitationCodeLength = 4;
         
         //[self performSegueWithIdentifier:<#(NSString *)#> sender:<#(id)#>
     } else {
-        UIAlertView *popUpAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage   delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *popUpAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [popUpAlert show];
     }
     
@@ -561,18 +596,48 @@ static int const kMinimumInvitationCodeLength = 4;
 }
 
 
-#pragma mark - Segue handling
+#pragma mark - UIAlertViewDelegate implementation
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    ScLogDebug(@"Clicked button at index %d", buttonIndex);
 }
 
 
-#pragma mark - IBAction implementations
+#pragma mark - ScServerConnectionDelegate implementation
 
-- (IBAction)showInfo:(id)sender
+- (void)willSendRequest:(NSURLRequest *)request
 {
-    // TODO
+    ScLogInfo(@"Sending asynchronous HTTP request with URL: %@", request.URL);
 }
+
+
+- (void)didReceiveResponse:(NSHTTPURLResponse *)response
+{
+    ScLogInfo(@"Received HTTP response. Status code: %d", response.statusCode);
+}
+
+
+- (void)finishedReceivingData:(NSDictionary *)dataAsDictionary
+{
+    ScLogInfo(@"Received data: %@", dataAsDictionary);
+    
+    if (membershipStatus.selectedSegmentIndex == kMembershipSegmentNew) {
+        [activityIndicator stopAnimating];
+        
+        NSString *userEmail = [dataAsDictionary objectForKey:@"userEmail"];
+
+        UIAlertView *emailSentPopUp = [[UIAlertView alloc] initWithTitle:nil message:[NSString stringWithFormat:[ScStrings stringForKey:strEmailSentPopUp], userEmail] delegate:self cancelButtonTitle:[ScStrings stringForKey:strLater] otherButtonTitles:[ScStrings stringForKey:strContinue], nil];
+        [emailSentPopUp show];
+        
+        userHelpLabel.text = [ScStrings stringForKey:strPleaseProvide];
+        userHelpLabel.hidden = NO;
+        nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
+        emailOrPasswordOrScolaShortnameField.placeholder = [ScStrings stringForKey:strRepeatPasswordPrompt];
+        
+        isEditingAllowed = YES;
+    }
+}
+
 
 @end

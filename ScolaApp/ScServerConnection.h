@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
 
 #import "ScCachedEntity.h"
 #import "ScServerConnectionDelegate.h"
@@ -24,7 +23,6 @@
     
     NSMutableURLRequest *URLRequest;
     NSMutableDictionary *URLParameters;
-	NSURLConnection *URLConnection;
 	NSMutableData *responseData;
     
     NSInteger HTTPStatusCode;
@@ -36,18 +34,19 @@ extern NSInteger const kHTTPStatusCodeNotFound;
 
 @property (nonatomic, readonly) NSInteger HTTPStatusCode;
 
++ (BOOL)isServerAvailable;
+
 - (id)initForStrings;
 - (id)initForUserRegistration;
 - (id)initForEntity:(Class)class;
 
-+ (BOOL)isServerAvailable;
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
+- (void)setEntityLookupValue:(NSString *)value;
 
-- (NSDictionary *)getStrings;
-//- (NSDictionary *)performAuthHandshake;
-- (NSDictionary *)registerUser;
-- (NSDictionary *)registerUser:(NSString *)name withInvitationCode:(NSString *)invitationCode andPassword:(NSString *)password;
-- (NSDictionary *)getEntityWithId:(NSString *)lookupKey;
+- (NSDictionary *)getRemoteClass:(NSString *)class;
+- (void)getRemoteClass:(NSString *)class usingDelegate:(id)delegate;
+- (NSDictionary *)getRemoteEntity;
+- (void)getRemoteEntityUsingDelegate:(id)delegate;
 
 @end

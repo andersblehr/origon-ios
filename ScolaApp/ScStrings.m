@@ -9,7 +9,6 @@
 #import "ScStrings.h"
 
 #import "ScAppEnv.h"
-#import "ScJSONUtil.h"
 #import "ScLogging.h"
 #import "ScServerConnection.h"
 
@@ -26,6 +25,14 @@ NSString * const strInvalidEmailAlert          = @"strInvalidEmailAlert";
 NSString * const strInvalidPasswordAlert       = @"strInvalidPasswordAlert";
 NSString * const strInvalidInvitationCodeAlert = @"strInvalidInvitationCodeAlert";
 
+// Generic strings
+NSString * const strOK                         = @"strOK";
+NSString * const strCancel                     = @"strCancel";
+NSString * const strContinue                   = @"strContinue";
+NSString * const strLater                      = @"strLater";
+NSString * const strPleaseWait                 = @"strPleaseWait";
+NSString * const strPleaseProvide              = @"strPleaseProvide";
+
 // Root view (maintained in-app)
 NSString * const istrNoInternet                = @"strNoInternet";
 NSString * const istrServerDown                = @"strServerDown";
@@ -39,14 +46,15 @@ NSString * const strUserHelpNew                = @"strUserHelpNew";
 NSString * const strUserHelpInvited            = @"strUserHelpInvited";
 NSString * const strUserHelpMember             = @"strUserHelpMember";
 NSString * const strNamePrompt                 = @"strNamePrompt";
+NSString * const strNameAsReceivedPrompt       = @"strNameAsReceivedPrompt";
 NSString * const strEmailPrompt                = @"strEmailPrompt";
 NSString * const strInvitationCodePrompt       = @"strInvitationCodePrompt";
 NSString * const strPasswordPrompt             = @"strPasswordPrompt";
 NSString * const strNewPasswordPrompt          = @"strNewPasswordPrompt";
+NSString * const strEmailSentPopUp             = @"strEmailSentPopUp";
+NSString * const strRegistrationCodePrompt     = @"strRegistrationCodePrompt";
+NSString * const strRepeatPasswordPrompt       = @"strRepeatPasswordPrompt";
 NSString * const strScolaDescription           = @"strScolaDescription";
-
-// Register user
-NSString * const strFacebook                   = @"strFacebook";
 
 // Confirm new user
 NSString * const strUserWelcome                = @"strUserWelcome";
@@ -101,15 +109,15 @@ NSString * const strGenderMale                 = @"strMale";
         NSString *pathToPersistedStrings = [self fullPathToStringsPlist];
         strings = [NSDictionary dictionaryWithContentsOfFile:pathToPersistedStrings];
         
-        BOOL willGetStringsFromServer =
+        BOOL shouldGetStringsFromServer =
             [ScAppEnv env].isServerAvailable &&
-            (!strings || [ScAppEnv env].isInternetConnectionWiFi);
+            (!strings || [ScAppEnv env].isInternetConnectionWiFi); // TODO: Only if req'd
         
-        if (willGetStringsFromServer) {
-            ScLogDebug(@"Getting strings from server...");
-            strings = [[[ScServerConnection alloc] initForStrings] getStrings];
+        if (shouldGetStringsFromServer) {
+            ScLogVerbose(@"Getting strings from server...");
+            strings = [[[ScServerConnection alloc] initForStrings] getRemoteClass:@"ScStrings"];
             
-            ScLogDebug(@"Persisting strings to plist %@.", pathToPersistedStrings);
+            ScLogVerbose(@"Persisting strings to plist %@.", pathToPersistedStrings);
             [strings writeToFile:pathToPersistedStrings atomically:YES];
         }
     }

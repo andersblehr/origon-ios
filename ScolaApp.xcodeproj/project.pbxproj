@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C0D278F14AC75E400756A24 /* ScScolaMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D278E14AC75E400756A24 /* ScScolaMember.m */; };
+		5C0D279314AC75E500756A24 /* ScDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D279214AC75E500756A24 /* ScDevice.m */; };
 		5C17435B14ABA3DC006B859B /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5C17435A14ABA3DC006B859B /* Settings.bundle */; };
 		5C23431214812A3100164478 /* ScStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* ScStrings.m */; };
 		5C2343161481544A00164478 /* ScJSONUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2343151481544A00164478 /* ScJSONUtil.m */; };
@@ -42,7 +44,6 @@
 		5C4F976914952A31006E244F /* NSManagedObject+ScSerialisation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F976814952A31006E244F /* NSManagedObject+ScSerialisation.m */; };
 		5C4F976C14954BD5006E244F /* NSEntityDescription+ScRemotePersistenceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F976B14954BD5006E244F /* NSEntityDescription+ScRemotePersistenceHelper.m */; };
 		5C4F976F14954DEC006E244F /* ScManagedObjectContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F976E14954DEC006E244F /* ScManagedObjectContext.m */; };
-		5C4F97721496AE2F006E244F /* ScScolaMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F97711496AE2D006E244F /* ScScolaMember.m */; };
 		5C4F97751496AE36006E244F /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F97741496AE34006E244F /* ScScola.m */; };
 		5C4F97781496AE3B006E244F /* ScPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F97771496AE3A006E244F /* ScPerson.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */; };
@@ -83,6 +84,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5C0D278D14AC75E400756A24 /* ScScolaMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaMember.h; sourceTree = "<group>"; };
+		5C0D278E14AC75E400756A24 /* ScScolaMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMember.m; sourceTree = "<group>"; };
+		5C0D279114AC75E500756A24 /* ScDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDevice.h; sourceTree = "<group>"; };
+		5C0D279214AC75E500756A24 /* ScDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDevice.m; sourceTree = "<group>"; };
 		5C17435A14ABA3DC006B859B /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* ScStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScStrings.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* ScStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScStrings.m; sourceTree = "<group>"; };
@@ -150,8 +155,6 @@
 		5C4F976B14954BD5006E244F /* NSEntityDescription+ScRemotePersistenceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSEntityDescription+ScRemotePersistenceHelper.m"; sourceTree = "<group>"; };
 		5C4F976D14954DEC006E244F /* ScManagedObjectContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScManagedObjectContext.h; sourceTree = "<group>"; };
 		5C4F976E14954DEC006E244F /* ScManagedObjectContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScManagedObjectContext.m; sourceTree = "<group>"; };
-		5C4F97701496AE2C006E244F /* ScScolaMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaMember.h; sourceTree = "<group>"; };
-		5C4F97711496AE2D006E244F /* ScScolaMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMember.m; sourceTree = "<group>"; };
 		5C4F97731496AE31006E244F /* ScScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScola.h; sourceTree = "<group>"; };
 		5C4F97741496AE34006E244F /* ScScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScola.m; sourceTree = "<group>"; };
 		5C4F97761496AE38006E244F /* ScPerson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScPerson.h; sourceTree = "<group>"; };
@@ -242,6 +245,8 @@
 				5C4F972B14937AA4006E244F /* ScCachedAddress.m */,
 				5C4F973C14937AA5006E244F /* ScCachedEntity.h */,
 				5C4F973D14937AA5006E244F /* ScCachedEntity.m */,
+				5C0D279114AC75E500756A24 /* ScDevice.h */,
+				5C0D279214AC75E500756A24 /* ScDevice.m */,
 				5C4F972414937AA3006E244F /* ScDocument.h */,
 				5C4F972514937AA3006E244F /* ScDocument.m */,
 				5C4F972714937AA3006E244F /* ScDocumentElement.h */,
@@ -280,8 +285,8 @@
 				5C4F975214937AA7006E244F /* ScScheduleItem.m */,
 				5C4F97731496AE31006E244F /* ScScola.h */,
 				5C4F97741496AE34006E244F /* ScScola.m */,
-				5C4F97701496AE2C006E244F /* ScScolaMember.h */,
-				5C4F97711496AE2D006E244F /* ScScolaMember.m */,
+				5C0D278D14AC75E400756A24 /* ScScolaMember.h */,
+				5C0D278E14AC75E400756A24 /* ScScolaMember.m */,
 				5C4F975D14937AA8006E244F /* ScToDoAssignment.h */,
 				5C4F975E14937AA8006E244F /* ScToDoAssignment.m */,
 				5C4F971814937AA2006E244F /* ScToDoItem.h */,
@@ -611,13 +616,14 @@
 				5C4F976914952A31006E244F /* NSManagedObject+ScSerialisation.m in Sources */,
 				5C4F976C14954BD5006E244F /* NSEntityDescription+ScRemotePersistenceHelper.m in Sources */,
 				5C4F976F14954DEC006E244F /* ScManagedObjectContext.m in Sources */,
-				5C4F97721496AE2F006E244F /* ScScolaMember.m in Sources */,
 				5C4F97751496AE36006E244F /* ScScola.m in Sources */,
 				5C4F97781496AE3B006E244F /* ScPerson.m in Sources */,
 				5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */,
 				5C597A3B1499039200254422 /* ScCrypto.m in Sources */,
 				5C3E132B149DEE790068967F /* ScConfirmUserController.m in Sources */,
 				5CBE9C5314AB5160004FE2B7 /* NSString+ScStringExtensions.m in Sources */,
+				5C0D278F14AC75E400756A24 /* ScScolaMember.m in Sources */,
+				5C0D279314AC75E500756A24 /* ScDevice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
