@@ -12,6 +12,7 @@
 #import "ScServerConnectionDelegate.h"
 
 @interface ScRootViewController : UIViewController <UITextFieldDelegate, ScServerConnectionDelegate, UIAlertViewDelegate> {
+@private
     BOOL didRunSplashSequence;
     BOOL isEditingAllowed;
     
@@ -19,6 +20,7 @@
     AVAudioPlayer *typewriter2;
     
     int currentMembershipSegment;
+    
     NSString *nameAsEntered;
     NSString *emailAsEntered;
     NSString *passwordAsEntered;
@@ -26,7 +28,6 @@
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
-
 @property (weak, nonatomic) IBOutlet UILabel *promptLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *membershipStatus;
 @property (weak, nonatomic) IBOutlet UILabel *userHelpLabel;

@@ -9,7 +9,6 @@
 #import "ScAppEnv.h"
 
 #import "ScAppDelegate.h"
-#import "ScCrypto.h"
 #import "ScLogging.h"
 
 @implementation ScAppEnv

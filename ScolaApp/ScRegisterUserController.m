@@ -10,7 +10,6 @@
 
 #import "ScAppEnv.h"
 #import "ScConfirmUserController.h"
-#import "ScCrypto.h"
 #import "ScLogging.h"
 #import "ScScolaMember.h"
 #import "ScServerConnection.h"

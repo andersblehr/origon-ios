@@ -11,6 +11,8 @@
 
 #import "NSString+ScStringExtensions.h"
 
+#import "ScLogging.h"
+
 static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 
@@ -73,45 +75,25 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 
 - (NSString *)diff:(NSString *)otherString
 {
-    NSString *thisString = self;
+    NSString *thisStringHashed = [self hashUsingSHA1];
+    NSString *otherStringHashed = [otherString hashUsingSHA1];
     
-    NSMutableString *longestString;
-    NSMutableString *shortestString;
+    const char *thisCString = [thisStringHashed cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *otherCString = [otherStringHashed cStringUsingEncoding:NSUTF8StringEncoding];
     
-    if (thisString.length > otherString.length) {
-        longestString = [NSMutableString stringWithString:thisString];
-        shortestString = [NSMutableString stringWithString:otherString];
-    } else {
-        longestString = [NSMutableString stringWithString:otherString];
-        shortestString = [NSMutableString stringWithString:thisString];
-    }
+    size_t hashLength = strlen(thisCString);
     
-    NSString *originalShortestString = [NSString stringWithString:shortestString];
-    while (longestString.length > shortestString.length) {
-        [shortestString appendString:originalShortestString];
-    }
+    char diffedBytes[hashLength + 1];
+    diffedBytes[hashLength] = (char)0;
     
-    const char *longestCString = [shortestString cStringUsingEncoding:NSUTF8StringEncoding];
-    const char *shortestCString = [longestString cStringUsingEncoding:NSUTF8StringEncoding];
-    
-    size_t longest = strlen(longestCString);
-    size_t shortest = strlen(shortestCString);
-    
-    char diffedBytes[longest + 1];
-    diffedBytes[longest] = (char)0;
-    
-    for (int i = 0; i < longest; i++) {
-        if (longest - i > shortest) {
-            diffedBytes[i] = longestCString[i];
+    for (int i = 0; i < hashLength; i++) {
+        char char1 = thisCString[i];
+        char char2 = otherCString[hashLength - (i + 1)];
+        
+        if (char1 > char2) {
+            diffedBytes[i] = char1 - char2 + 33; // ASCII 33 = '!'
         } else {
-            char char1 = longestCString[i];
-            char char2 = shortestCString[longest - (i + 1)];
-            
-            if (char1 > char2) {
-                diffedBytes[i] = char1 - char2 + 33; // ASCII 33 = '!'
-            } else {
-                diffedBytes[i] = char2 - char1 + 33;
-            }
+            diffedBytes[i] = char2 - char1 + 33;
         }
     }
     

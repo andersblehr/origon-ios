@@ -18,12 +18,17 @@ extern NSString * const strInvalidNameAlert;
 extern NSString * const strInvalidEmailAlert;
 extern NSString * const strInvalidPasswordAlert;
 extern NSString * const strInvalidInvitationCodeAlert;
+extern NSString * const strPasswordsDoNotMatchAlert;
+extern NSString * const strRegistrationCodesDoNotMatchAlert;
+
 
 // Generic strings
 extern NSString * const strOK;
 extern NSString * const strCancel;
 extern NSString * const strContinue;
 extern NSString * const strLater;
+extern NSString * const strTryAgain;
+extern NSString * const strGoBack;
 extern NSString * const strPleaseWait;
 extern NSString * const strPleaseProvide;
 
@@ -45,7 +50,12 @@ extern NSString * const strEmailPrompt;
 extern NSString * const strInvitationCodePrompt;
 extern NSString * const strPasswordPrompt;
 extern NSString * const strNewPasswordPrompt;
-extern NSString * const strEmailSentPopUp;
+extern NSString * const strEmailSentPopUpTitle;
+extern NSString * const strEmailSentPopUpMessage;
+extern NSString * const strSeeYouLaterPopUpTitle;
+extern NSString * const strSeeYouLaterPopUpMessage;
+extern NSString * const strWelcomeBackPopUpTitle;
+extern NSString * const strWelcomeBackPopUpMessage;
 extern NSString * const strRegistrationCodePrompt;
 extern NSString * const strRepeatPasswordPrompt;
 extern NSString * const strScolaDescription;

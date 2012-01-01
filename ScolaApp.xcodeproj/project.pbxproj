@@ -47,7 +47,6 @@
 		5C4F97751496AE36006E244F /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F97741496AE34006E244F /* ScScola.m */; };
 		5C4F97781496AE3B006E244F /* ScPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F97771496AE3A006E244F /* ScPerson.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */; };
-		5C597A3B1499039200254422 /* ScCrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C597A3A1499039200254422 /* ScCrypto.m */; };
 		5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE011482877D001D90C6 /* Localizable.strings */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C88078F1484392B00ED5416 /* ScRegisterUserController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C88078E1484392A00ED5416 /* ScRegisterUserController.m */; };
@@ -161,8 +160,6 @@
 		5C4F97771496AE3A006E244F /* ScPerson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScPerson.m; sourceTree = "<group>"; };
 		5C4F97791496AF88006E244F /* NSURL+ScURLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ScURLExtensions.h"; sourceTree = "<group>"; };
 		5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ScURLExtensions.m"; sourceTree = "<group>"; };
-		5C597A391499039100254422 /* ScCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCrypto.h; sourceTree = "<group>"; };
-		5C597A3A1499039200254422 /* ScCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCrypto.m; sourceTree = "<group>"; };
 		5C71DE001482877D001D90C6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE03148287DE001D90C6 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
@@ -355,8 +352,6 @@
 			children = (
 				5C36BE88146E9DA100DD3CEA /* ScAppEnv.h */,
 				5C36BE89146E9DA100DD3CEA /* ScAppEnv.m */,
-				5C597A391499039100254422 /* ScCrypto.h */,
-				5C597A3A1499039200254422 /* ScCrypto.m */,
 				5C2343141481544A00164478 /* ScJSONUtil.h */,
 				5C2343151481544A00164478 /* ScJSONUtil.m */,
 				5CCF09051466A0CB00D41AB0 /* ScLogging.h */,
@@ -619,7 +614,6 @@
 				5C4F97751496AE36006E244F /* ScScola.m in Sources */,
 				5C4F97781496AE3B006E244F /* ScPerson.m in Sources */,
 				5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */,
-				5C597A3B1499039200254422 /* ScCrypto.m in Sources */,
 				5C3E132B149DEE790068967F /* ScConfirmUserController.m in Sources */,
 				5CBE9C5314AB5160004FE2B7 /* NSString+ScStringExtensions.m in Sources */,
 				5C0D278F14AC75E400756A24 /* ScScolaMember.m in Sources */,
