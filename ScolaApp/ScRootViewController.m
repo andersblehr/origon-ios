@@ -24,15 +24,24 @@ static NSString * const kSoundbiteTypewriter = @"typewriter.caf";
 
 static NSString * const kSegueToMainPage = @"rootViewToMainPage";
 
-static int const kMinimumPassordLength        = 6;
+static int const kMinimumPassordLength = 6;
 static int const kMinimumScolaShortnameLength = 4;
 
-static int const kMembershipSegmentNew     = 0;
+static int const kMembershipSegmentNew = 0;
 static int const kMembershipSegmentInvited = 1;
-static int const kMembershipSegmentMember  = 2;
+static int const kMembershipSegmentMember = 2;
 
-static int const kEmailSentPopUpButtonIndexLater    = 0;
+static int const kEmailSentPopUpTag = 0;
+static int const kRegistrationCodesDoNotMatchPopUpTag = 1;
+static int const kPasswordsDoNotMatchPopUpTag = 2;
+static int const kWelcomeBackPopUpTag = 3;
+
+static int const kEmailSentPopUpButtonIndexLater = 0;
 static int const kEmailSentPopUpButtonIndexContinue = 1;
+static int const kRegistrationCodesDoNotMatchPopUpButtonIndexTryAgain = 1;
+static int const kRegistrationCodesDoNotMatchPopUpButtonIndexGoBack = 0;
+static int const kPasswordsDoNotMatchPopUpButtonIndexTryAgain = 1;
+static int const kPasswordsDoNotMatchPopUpButtonIndexGoBack = 0;
 
 @implementation ScRootViewController
 
@@ -83,13 +92,19 @@ static int const kEmailSentPopUpButtonIndexContinue = 1;
 }
 
 
+- (void)setUpForUserRegistration
+{
+    ScLogDebug(@"Need to start factoring out this method tomorrow..");
+}
+
+
 - (void)setUpForUserConfirmation
 {
     membershipStatus.enabled = NO;
     userHelpLabel.hidden = YES;
     chooseNewPasswordField.hidden = YES;
     
-    userHelpLabel.text = [ScStrings stringForKey:strPleaseProvide];
+    userHelpLabel.text = [ScStrings stringForKey:strUserHelpCompleteRegistration];
     userHelpLabel.hidden = NO;
     nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
     emailOrPasswordOrScolaShortnameField.placeholder = [ScStrings stringForKey:strRepeatPasswordPrompt];
@@ -294,8 +309,6 @@ static int const kEmailSentPopUpButtonIndexContinue = 1;
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..scola.."
                                     waitUntilDone:YES];
-
-    didRunSplashSequence = YES;
 }
 
 
@@ -414,8 +427,6 @@ static int const kEmailSentPopUpButtonIndexContinue = 1;
     } else {
         [darkLinenView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignFirstResponder:)]];
         
-        didRunSplashSequence = NO;
-        
         // [self setUpTypewriterAudioForSplashSequence]; // TODO: Comment back in!
         scolaSplashLabel.text = @"";
         activityIndicator.hidesWhenStopped = YES;
@@ -502,6 +513,8 @@ static int const kEmailSentPopUpButtonIndexContinue = 1;
 {
     [super viewDidAppear:animated];
     
+    [self startSplashSequenceThread];
+    
     if ([ScStrings areStringsAvailable]) {
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         NSDictionary *authState = [userDefaults objectForKey:kUserDefaultsKeyAuthState];
@@ -513,9 +526,9 @@ static int const kEmailSentPopUpButtonIndexContinue = 1;
             NSString *OKButtonTitle = [ScStrings stringForKey:strOK];
             
             UIAlertView *welcomeBackPopUp = [[UIAlertView alloc] initWithTitle:popUpTitle message:popUpMessage delegate:self cancelButtonTitle:OKButtonTitle otherButtonTitles:nil];
+            welcomeBackPopUp.tag = kWelcomeBackPopUpTag;
+            
             [welcomeBackPopUp show];
-        } else if (!didRunSplashSequence) {
-            [self startSplashSequenceThread];
         }
     }
 }
@@ -670,7 +683,9 @@ static int const kEmailSentPopUpButtonIndexContinue = 1;
     
     NSString *registrationCodeAsSent = [[authState objectForKey:@"registrationCode"] lowercaseString];
     NSString *registrationCodeAsEntered = [nameOrEmailOrRegistrationCodeField.text lowercaseString];
+    
     NSString *alertMessage = nil;
+    int alertTag;
     
     doRegistrationCodesMatch = [registrationCodeAsEntered isEqualToString:registrationCodeAsSent];
     
@@ -682,11 +697,11 @@ static int const kEmailSentPopUpButtonIndexContinue = 1;
     }
     
     if (!doRegistrationCodesMatch) {
-        [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
         alertMessage = [ScStrings stringForKey:strRegistrationCodesDoNotMatchAlert];
+        alertTag = kRegistrationCodesDoNotMatchPopUpTag;
     } else if (!doPasswordsMatch) {
-        [emailOrPasswordOrScolaShortnameField becomeFirstResponder];
         alertMessage = [ScStrings stringForKey:strPasswordsDoNotMatchAlert];
+        alertTag = kPasswordsDoNotMatchPopUpTag;
     }
     
     BOOL shouldReturn = doRegistrationCodesMatch && doPasswordsMatch;
@@ -699,6 +714,8 @@ static int const kEmailSentPopUpButtonIndexContinue = 1;
         NSString *goBackTitle = [ScStrings stringForKey:strGoBack];
         
         UIAlertView *popUpAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:goBackTitle otherButtonTitles:tryAgainTitle, nil];
+        popUpAlert.tag = alertTag;
+        
         [popUpAlert show];
     }
     
@@ -727,8 +744,10 @@ static int const kEmailSentPopUpButtonIndexContinue = 1;
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if ([alertView.title isEqualToString:[ScStrings stringForKey:strEmailSentPopUpTitle]]) {
-        if (buttonIndex == kEmailSentPopUpButtonIndexLater) {
+    if (alertView.tag == kEmailSentPopUpTag) {
+        if (buttonIndex == kEmailSentPopUpButtonIndexContinue) {
+            [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
+        } else if (buttonIndex == kEmailSentPopUpButtonIndexLater) {
             NSString *popUpTitle = [ScStrings stringForKey:strSeeYouLaterPopUpTitle];
             NSString *popUpMessage = [ScStrings stringForKey:strSeeYouLaterPopUpMessage];
             NSString *OKButtonTitle = [ScStrings stringForKey:strOK];
@@ -736,8 +755,21 @@ static int const kEmailSentPopUpButtonIndexContinue = 1;
             UIAlertView *seeYouLaterPopUp = [[UIAlertView alloc] initWithTitle:popUpTitle message:popUpMessage delegate:nil cancelButtonTitle:OKButtonTitle otherButtonTitles:nil];
             [seeYouLaterPopUp show];
         }
-    } else if ([alertView.title isEqualToString:[ScStrings stringForKey:strWelcomeBackPopUpTitle]]) {
-        [self startSplashSequenceThread];
+    } else if (alertView.tag == kRegistrationCodesDoNotMatchPopUpTag) {
+        if (buttonIndex == kRegistrationCodesDoNotMatchPopUpButtonIndexTryAgain) {
+            [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
+        } else if (buttonIndex == kRegistrationCodesDoNotMatchPopUpButtonIndexGoBack) {
+            [self setUpForUserRegistration];
+        }
+    } else if (alertView.tag == kPasswordsDoNotMatchPopUpTag) {
+        if (buttonIndex == kPasswordsDoNotMatchPopUpButtonIndexTryAgain) {
+            emailOrPasswordOrScolaShortnameField.text = @"";
+            [emailOrPasswordOrScolaShortnameField becomeFirstResponder];
+        } else if (buttonIndex == kPasswordsDoNotMatchPopUpButtonIndexGoBack) {
+            [self setUpForUserRegistration];
+        }
+    } else if (alertView.tag == kWelcomeBackPopUpTag) {
+        [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
     }
 }
 
@@ -773,6 +805,8 @@ static int const kEmailSentPopUpButtonIndexContinue = 1;
         NSString *continueButtonTitle = [ScStrings stringForKey:strContinue];
         
         UIAlertView *emailSentPopUp = [[UIAlertView alloc] initWithTitle:popUpTitle message:popUpMessage delegate:self cancelButtonTitle:laterButtonTitle otherButtonTitles:continueButtonTitle, nil];
+        emailSentPopUp.tag = kEmailSentPopUpTag;
+        
         [emailSentPopUp show];
         
         isEditingAllowed = YES;

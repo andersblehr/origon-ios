@@ -43,13 +43,7 @@
     
     [self navigationController].navigationBar.barStyle = UIBarStyleBlack;
     [self navigationController].navigationBarHidden = NO;
-    
-    [self userWelcomeLabel].text = [NSString stringWithFormat:[ScStrings stringForKey:strUserWelcome], member.name];
-    [self enterRegistrationCodeLabel].text = [NSString stringWithFormat:[ScStrings stringForKey:strEnterRegistrationCode], member.email];
-    [self registrationCodeField].placeholder = [ScStrings stringForKey:strRegistrationCode];
-    [[self genderSelection] setTitle:[ScStrings stringForKey:strGenderFemale] forSegmentAtIndex:0];
-    [[self genderSelection] setTitle:[ScStrings stringForKey:strGenderMale] forSegmentAtIndex:1];
-    
+        
     if (member.gender) {
         if ([member.gender isEqualToString:@"female"]) {
             [self genderSelection].selectedSegmentIndex = 0;

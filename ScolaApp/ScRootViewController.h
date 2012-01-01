@@ -13,7 +13,6 @@
 
 @interface ScRootViewController : UIViewController <UITextFieldDelegate, ScServerConnectionDelegate, UIAlertViewDelegate> {
 @private
-    BOOL didRunSplashSequence;
     BOOL isEditingAllowed;
     
     AVAudioPlayer *typewriter1;

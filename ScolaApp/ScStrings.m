@@ -30,18 +30,16 @@ NSString * const strRegistrationCodesDoNotMatchAlert = @"strRegistrationCodesDoN
 // Generic strings
 NSString * const strOK                               = @"strOK";
 NSString * const strCancel                           = @"strCancel";
-NSString * const strContinue                         = @"strContinue";
-NSString * const strLater                            = @"strLater";
 NSString * const strTryAgain                         = @"strTryAgain";
 NSString * const strGoBack                           = @"strGoBack";
 NSString * const strPleaseWait                       = @"strPleaseWait";
-NSString * const strPleaseProvide                    = @"strPleaseProvide";
 
 // Root view (maintained in-app)
 NSString * const istrNoInternet                      = @"strNoInternet";
 NSString * const istrServerDown                      = @"strServerDown";
 
 // Root view
+NSString * const strScolaDescription                 = @"strScolaDescription";
 NSString * const strMembershipPrompt                 = @"strMembershipPrompt";
 NSString * const strIsMember                         = @"strIsMember";
 NSString * const strIsInvited                        = @"strIsInvited";
@@ -53,24 +51,19 @@ NSString * const strNamePrompt                       = @"strNamePrompt";
 NSString * const strNameAsReceivedPrompt             = @"strNameAsReceivedPrompt";
 NSString * const strEmailPrompt                      = @"strEmailPrompt";
 NSString * const strInvitationCodePrompt             = @"strInvitationCodePrompt";
-NSString * const strPasswordPrompt                   = @"strPasswordPrompt";
 NSString * const strNewPasswordPrompt                = @"strNewPasswordPrompt";
+NSString * const strPasswordPrompt                   = @"strPasswordPrompt";
+NSString * const strUserHelpCompleteRegistration     = @"strUserHelpCompleteRegistration";
 NSString * const strEmailSentPopUpTitle              = @"strEmailSentPopUpTitle";
 NSString * const strEmailSentPopUpMessage            = @"strEmailSentPopUpMessage";
+NSString * const strContinue                         = @"strContinue";
+NSString * const strLater                            = @"strLater";
 NSString * const strSeeYouLaterPopUpTitle            = @"strSeeYouLaterPopUpTitle";
 NSString * const strSeeYouLaterPopUpMessage          = @"strSeeYouLaterPopUpMessage";
 NSString * const strWelcomeBackPopUpTitle            = @"strWelcomeBackPopUpTitle";
 NSString * const strWelcomeBackPopUpMessage          = @"strWelcomeBackPopUpMessage";
 NSString * const strRegistrationCodePrompt           = @"strRegistrationCodePrompt";
 NSString * const strRepeatPasswordPrompt             = @"strRepeatPasswordPrompt";
-NSString * const strScolaDescription                 = @"strScolaDescription";
-
-// Confirm new user
-NSString * const strUserWelcome                      = @"strUserWelcome";
-NSString * const strEnterRegistrationCode            = @"strEnterRegistrationCode";
-NSString * const strRegistrationCode                 = @"strRegistrationCode";
-NSString * const strGenderFemale                     = @"strFemale";
-NSString * const strGenderMale                       = @"strMale";
 
 
 #pragma mark - Private methods
