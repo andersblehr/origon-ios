@@ -14,4 +14,6 @@
 - (NSString *)hashUsingSHA1;
 - (NSString *)diff:(NSString *)string;
 
+- (NSString *)removeLeadingAndTrailingSpaces;
+
 @end

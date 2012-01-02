@@ -101,5 +101,24 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
+- (NSString *)removeLeadingAndTrailingSpaces
+{
+    NSString *thisString = self;
+    NSUInteger spaceLocation = [thisString rangeOfString:@" "].location;
+    
+    while (spaceLocation == 0) {
+        thisString = [thisString substringFromIndex:1];
+        spaceLocation = [thisString rangeOfString:@" "].location;
+    }
+    
+    spaceLocation = [thisString rangeOfString:@" " options:NSBackwardsSearch].location;
+    
+    while (spaceLocation == thisString.length - 1) {
+        thisString = [thisString substringToIndex:spaceLocation];
+        spaceLocation = [thisString rangeOfString:@" " options:NSBackwardsSearch].location;
+    }
+    
+    return thisString;
+}
 
 @end

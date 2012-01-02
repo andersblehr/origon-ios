@@ -265,20 +265,19 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
 {
     BOOL isValid = NO;
     
-    switch (membershipStatusControl.selectedSegmentIndex) {
-        case kMembershipSegmentNew:
-        case kMembershipSegmentInvited:
-            isValid = ([nameOrEmailOrRegistrationCodeField.text rangeOfString:@" "].location != NSNotFound);
-            break;
-            
-        case kMembershipSegmentMember:
-            ScLogBreakage(@"Attempt to validate name while in 'Member' segment");
-            break;
-            
-        default:
-            break;
+    if (membershipStatusControl.selectedSegmentIndex == kMembershipSegmentMember) {
+        ScLogBreakage(@"Attempt to validate name while in 'Member' segment");
+    } else {
+        //NSString *name = [nameOrEmailOrRegistrationCodeField.text removeLeadingAndTrailingSpaces];
+        NSString *name = nameOrEmailOrRegistrationCodeField.text;
+        
+        isValid = ([name rangeOfString:@" "].location != NSNotFound);
+        
+        if (name.length < nameOrEmailOrRegistrationCodeField.text.length) {
+            nameOrEmailOrRegistrationCodeField.text = name;
+        }
     }
-
+    
     if (!isValid) {
         [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
     }
@@ -290,25 +289,32 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
 - (BOOL)isEmailValid
 {
     BOOL isValid = NO;
-    NSString *email = nil;
+    UITextField *emailField;
     
-    if (membershipStatusControl.selectedSegmentIndex == kMembershipSegmentNew) {
-        email = emailOrPasswordOrScolaShortnameField.text;
-        
-        NSUInteger atLocation = [email rangeOfString:@"@"].location;
-        NSUInteger dotLocation = [email rangeOfString:@"." options:NSBackwardsSearch].location;
-        NSUInteger spaceLocation = [email rangeOfString:@" "].location;
-        
-        isValid = (atLocation != NSNotFound);
-        isValid = isValid && (dotLocation != NSNotFound);
-        isValid = isValid && (dotLocation > atLocation);
-        isValid = isValid && (spaceLocation == NSNotFound);
+    if (membershipStatusControl.selectedSegmentIndex == kMembershipSegmentMember) {
+        emailField = nameOrEmailOrRegistrationCodeField;
     } else {
-        ScLogBreakage(@"Attempt to validate email while not in 'New' segment");
+        emailField = emailOrPasswordOrScolaShortnameField;
+    }
+    
+    //NSString *email = [emailField.text removeLeadingAndTrailingSpaces];
+    NSString *email = emailField.text;
+    
+    NSUInteger atLocation = [email rangeOfString:@"@"].location;
+    NSUInteger dotLocation = [email rangeOfString:@"." options:NSBackwardsSearch].location;
+    NSUInteger spaceLocation = [email rangeOfString:@" "].location;
+    
+    isValid = (atLocation != NSNotFound);
+    isValid = isValid && (dotLocation != NSNotFound);
+    isValid = isValid && (dotLocation > atLocation);
+    isValid = isValid && (spaceLocation == NSNotFound);
+
+    if (email.length < emailField.text.length) {
+        emailField.text = email;
     }
     
     if (!isValid) {
-        [emailOrPasswordOrScolaShortnameField becomeFirstResponder];
+        [emailField becomeFirstResponder];
     }
     
     return isValid;
@@ -318,41 +324,33 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
 - (BOOL)isPasswordValid
 {
     BOOL isValid = NO;
+    UITextField *passwordField;
     
     if (membershipStatusControl.selectedSegmentIndex == kMembershipSegmentMember) {
-        ScLogBreakage(@"Attempt to validate password while in 'Member' segment");
+        passwordField = emailOrPasswordOrScolaShortnameField;
     } else {
-        isValid = (chooseNewPasswordField.text.length >= kMinimumPassordLength);
+        passwordField = chooseNewPasswordField;
     }
     
+    isValid = (passwordField.text.length >= kMinimumPassordLength);
+    
     if (!isValid) {
-        chooseNewPasswordField.text = @"";
-        [chooseNewPasswordField becomeFirstResponder];
+        passwordField.text = @"";
+        [passwordField becomeFirstResponder];
     }
     
     return isValid;
 }
 
 
-- (BOOL)isInvitationCodeValid
+- (BOOL)isScolaShortnameValid
 {
     BOOL isValid = NO;
     
-    switch (membershipStatusControl.selectedSegmentIndex) {
-        case kMembershipSegmentNew:
-            ScLogBreakage(@"Attempt to validate Scola shortname while in 'New' segnemt");
-            break;
-            
-        case kMembershipSegmentInvited:
-            isValid = (emailOrPasswordOrScolaShortnameField.text.length >= kMinimumScolaShortnameLength);
-            break;
-            
-        case kMembershipSegmentMember:
-            ScLogBreakage(@"Attempt to validate Scola shortname while in 'Member' segnemt");
-            break;
-            
-        default:
-            break;
+    if (membershipStatusControl.selectedSegmentIndex == kMembershipSegmentInvited) {
+        isValid = (emailOrPasswordOrScolaShortnameField.text.length >= kMinimumScolaShortnameLength);
+    } else {
+        ScLogBreakage(@"Attempt to validate Scola shortname while not in 'Invited' segment");
     }
     
     if (!isValid) {
@@ -564,6 +562,15 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
 }
 
 
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
+{
+    NSString *text = textField.text;
+    textField.text = [text removeLeadingAndTrailingSpaces];
+    
+    return YES;
+}
+
+
 - (BOOL)userRegistrationTextFieldShouldReturn:(UITextField *)textField
 {
     BOOL shouldReturn = NO;
@@ -595,7 +602,7 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
             
         case kMembershipSegmentInvited:
             isNameValid = [self isNameValid];
-            isInvitationCodeValid = isNameValid && [self isInvitationCodeValid];
+            isInvitationCodeValid = isNameValid && [self isScolaShortnameValid];
             isPasswordValid = isInvitationCodeValid && [self isPasswordValid];
             
             if (!isNameValid) {
@@ -712,6 +719,8 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
 {
     BOOL shouldReturn = NO;
     
+    [self textFieldShouldEndEditing:textField];
+    
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *authState = [userDefaults objectForKey:kUserDefaultsKeyAuthState];
     
@@ -784,7 +793,13 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
 
 - (void)didReceiveResponse:(NSHTTPURLResponse *)response
 {
-    ScLogInfo(@"Received HTTP response. Status code: %d", response.statusCode);
+    if (response.statusCode == kHTTPStatusCodeNotFound) {
+        NSDictionary *responseHeaders = [response allHeaderFields];
+        NSString *reason = [responseHeaders objectForKey:@"reason"];
+        ScLogDebug(@"Received response. HTTP status code: 404. Reason: %@", reason);
+    } else {
+        ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
+    }
 }
 
 
