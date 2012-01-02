@@ -268,14 +268,7 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
     if (membershipStatusControl.selectedSegmentIndex == kMembershipSegmentMember) {
         ScLogBreakage(@"Attempt to validate name while in 'Member' segment");
     } else {
-        //NSString *name = [nameOrEmailOrRegistrationCodeField.text removeLeadingAndTrailingSpaces];
-        NSString *name = nameOrEmailOrRegistrationCodeField.text;
-        
-        isValid = ([name rangeOfString:@" "].location != NSNotFound);
-        
-        if (name.length < nameOrEmailOrRegistrationCodeField.text.length) {
-            nameOrEmailOrRegistrationCodeField.text = name;
-        }
+        isValid = ([nameOrEmailOrRegistrationCodeField.text rangeOfString:@" "].location != NSNotFound);
     }
     
     if (!isValid) {
@@ -297,22 +290,15 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
         emailField = emailOrPasswordOrScolaShortnameField;
     }
     
-    //NSString *email = [emailField.text removeLeadingAndTrailingSpaces];
-    NSString *email = emailField.text;
-    
-    NSUInteger atLocation = [email rangeOfString:@"@"].location;
-    NSUInteger dotLocation = [email rangeOfString:@"." options:NSBackwardsSearch].location;
-    NSUInteger spaceLocation = [email rangeOfString:@" "].location;
+    NSUInteger atLocation = [emailField.text rangeOfString:@"@"].location;
+    NSUInteger dotLocation = [emailField.text rangeOfString:@"." options:NSBackwardsSearch].location;
+    NSUInteger spaceLocation = [emailField.text rangeOfString:@" "].location;
     
     isValid = (atLocation != NSNotFound);
     isValid = isValid && (dotLocation != NSNotFound);
     isValid = isValid && (dotLocation > atLocation);
     isValid = isValid && (spaceLocation == NSNotFound);
 
-    if (email.length < emailField.text.length) {
-        emailField.text = email;
-    }
-    
     if (!isValid) {
         [emailField becomeFirstResponder];
     }
@@ -564,8 +550,18 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField
 {
-    NSString *text = textField.text;
-    textField.text = [text removeLeadingAndTrailingSpaces];
+    BOOL shouldRemove = YES;
+    
+    if (membershipStatusControl.selectedSegmentIndex == kMembershipSegmentMember) {
+        shouldRemove = (textField != emailOrPasswordOrScolaShortnameField);
+    } else {
+        shouldRemove = (textField != chooseNewPasswordField);
+    }
+
+    if (shouldRemove) {
+        NSString *text = textField.text;
+        textField.text = [text removeLeadingAndTrailingSpaces];
+    }
     
     return YES;
 }
