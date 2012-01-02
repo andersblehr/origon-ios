@@ -27,8 +27,8 @@
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
-@property (weak, nonatomic) IBOutlet UILabel *promptLabel;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *membershipStatus;
+@property (weak, nonatomic) IBOutlet UILabel *membershipPromptLabel;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *membershipStatusControl;
 @property (weak, nonatomic) IBOutlet UILabel *userHelpLabel;
 @property (weak, nonatomic) IBOutlet UITextField *nameOrEmailOrRegistrationCodeField;
 @property (weak, nonatomic) IBOutlet UITextField *emailOrPasswordOrScolaShortnameField;

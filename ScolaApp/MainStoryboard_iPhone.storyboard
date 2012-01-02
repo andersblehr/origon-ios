@@ -116,9 +116,9 @@
                         <outlet property="chooseNewPasswordField" destination="ICT-Aw-C0o" id="0BL-sw-E5M"/>
                         <outlet property="darkLinenView" destination="yd1-fr-ofq" id="c5L-Gh-UIO"/>
                         <outlet property="emailOrPasswordOrScolaShortnameField" destination="3mO-zd-MP5" id="VNa-WM-gAn"/>
-                        <outlet property="membershipStatus" destination="EJ9-fT-RAh" id="Mmb-Uf-04O"/>
+                        <outlet property="membershipPromptLabel" destination="cjW-Te-E8m" id="gg4-Mq-hRJ"/>
+                        <outlet property="membershipStatusControl" destination="EJ9-fT-RAh" id="Isk-lu-5jM"/>
                         <outlet property="nameOrEmailOrRegistrationCodeField" destination="Te7-qv-1FP" id="1Zb-Mo-fqV"/>
-                        <outlet property="promptLabel" destination="cjW-Te-E8m" id="bib-eF-tYl"/>
                         <outlet property="scolaDescriptionHeadingLabel" destination="ML5-84-G7a" id="IN1-Cb-hra"/>
                         <outlet property="scolaDescriptionTextView" destination="MKI-Bw-7dr" id="1d8-It-McQ"/>
                         <outlet property="scolaSplashLabel" destination="qJ8-cP-0gZ" id="ydN-WI-ai4"/>
