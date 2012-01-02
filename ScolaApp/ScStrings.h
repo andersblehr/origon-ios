@@ -44,7 +44,7 @@ extern NSString * const strUserHelpMember;
 extern NSString * const strNamePrompt;
 extern NSString * const strNameAsReceivedPrompt;
 extern NSString * const strEmailPrompt;
-extern NSString * const strInvitationCodePrompt;
+extern NSString * const strScolaShortnamePrompt;
 extern NSString * const strNewPasswordPrompt;
 extern NSString * const strPasswordPrompt;
 extern NSString * const strUserHelpCompleteRegistration;

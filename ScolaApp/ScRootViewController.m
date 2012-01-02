@@ -182,7 +182,7 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
             userHelpLabel.text = [ScStrings stringForKey:strUserHelpInvited];
             
             nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strNameAsReceivedPrompt];
-            emailOrPasswordOrScolaShortnameField.placeholder = [ScStrings stringForKey:strInvitationCodePrompt];
+            emailOrPasswordOrScolaShortnameField.placeholder = [ScStrings stringForKey:strScolaShortnamePrompt];
             chooseNewPasswordField.hidden = NO;
             
             nameOrEmailOrRegistrationCodeField.text = nameAsEntered;
@@ -803,9 +803,9 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
 {
     ScLogInfo(@"Received data: %@", authState);
     
+    [activityIndicator stopAnimating];
+    
     if (membershipStatusControl.selectedSegmentIndex == kMembershipSegmentNew) {
-        [activityIndicator stopAnimating];
-        
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         [userDefaults setObject:authState forKey:kUserDefaultsKeyAuthState];
         
