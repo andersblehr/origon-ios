@@ -10,10 +10,7 @@
 
 #import "ScManagedObjectContext.h"
 
-@interface ScAppEnv : NSObject {
-@private
-    NSString *authTokenSalt;
-}
+@interface ScAppEnv : NSObject
 
 extern NSString * const kBundleID;
 

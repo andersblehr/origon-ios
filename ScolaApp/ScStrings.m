@@ -23,9 +23,11 @@ static NSString * const kStringsPlist = @"strings.plist";
 NSString * const strInvalidNameAlert                 = @"strInvalidNameAlert";
 NSString * const strInvalidEmailAlert                = @"strInvalidEmailAlert";
 NSString * const strInvalidPasswordAlert             = @"strInvalidPasswordAlert";
-NSString * const strInvalidInvitationCodeAlert       = @"strInvalidInvitationCodeAlert";
+NSString * const strInvalidScolaShortnameAlert       = @"strInvalidScolaShortnameAlert";
 NSString * const strPasswordsDoNotMatchAlert         = @"strPasswordsDoNotMatchAlert";
 NSString * const strRegistrationCodesDoNotMatchAlert = @"strRegistrationCodesDoNotMatchAlert";
+NSString * const strNoScolaWithShortnameAlert        = @"strNoScolaWithShortnameAlert";
+NSString * const strScolaHasNoListingForNameAlert    = @"strScolaHasNoListingForNameAlert";
 
 // Generic strings
 NSString * const strOK                               = @"strOK";

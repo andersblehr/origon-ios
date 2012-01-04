@@ -9,11 +9,13 @@
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 
+#import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
 
 @interface ScRootViewController : UIViewController <UITextFieldDelegate, ScServerConnectionDelegate, UIAlertViewDelegate> {
 @private
     BOOL isEditingAllowed;
+    BOOL isEditing;
     
     AVAudioPlayer *typewriter1;
     AVAudioPlayer *typewriter2;
@@ -22,8 +24,9 @@
     
     NSString *nameAsEntered;
     NSString *emailAsEntered;
-    NSString *passwordAsEntered;
-    NSString *invitationCodeAsEntered;
+    NSString *scolaShortnameAsEntered;
+    
+    ScServerConnection *serverConnection;
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;

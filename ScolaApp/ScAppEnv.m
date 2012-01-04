@@ -90,7 +90,7 @@ static ScAppEnv *env = nil;
     if (!deviceUUID) {
         CFUUIDRef newUUID = CFUUIDCreate(kCFAllocatorDefault);
         CFStringRef newUUIDAsCFString = CFUUIDCreateString(kCFAllocatorDefault, newUUID);
-        deviceUUID = (__bridge NSString *)newUUIDAsCFString;
+        deviceUUID = [NSString stringWithString:(__bridge NSString *)newUUIDAsCFString];
         
         CFRelease(newUUID);
         CFRelease(newUUIDAsCFString);

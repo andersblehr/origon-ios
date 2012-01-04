@@ -8,18 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ScStrings : NSObject {
-@private
-    NSDictionary *strings;
-}
+@interface ScStrings : NSObject
 
 // Alert messages
 extern NSString * const strInvalidNameAlert;
 extern NSString * const strInvalidEmailAlert;
 extern NSString * const strInvalidPasswordAlert;
-extern NSString * const strInvalidInvitationCodeAlert;
+extern NSString * const strInvalidScolaShortnameAlert;
 extern NSString * const strPasswordsDoNotMatchAlert;
 extern NSString * const strRegistrationCodesDoNotMatchAlert;
+extern NSString * const strNoScolaWithShortnameAlert;
+extern NSString * const strScolaHasNoListingForNameAlert;
 
 
 // Generic strings

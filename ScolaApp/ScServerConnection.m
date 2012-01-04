@@ -299,9 +299,12 @@ NSInteger const kHTTPStatusCodeNotFound     = 404;
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData forClass:entityClass];
     
-    [connectionDelegate finishedReceivingData:dataAsDictionary];
+    if (HTTPStatusCode == kHTTPStatusCodeOK) {
+        NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData forClass:entityClass];
+        
+        [connectionDelegate finishedReceivingData:dataAsDictionary];
+    }
 }
 
 
