@@ -28,6 +28,10 @@
     NSInteger HTTPStatusCode;
 }
 
+extern int const kAuthPhaseRegistration;
+extern int const kAuthPhaseConfirmation;
+extern int const kAuthPhaseLogin;
+
 extern NSInteger const kHTTPStatusCodeOK;
 extern NSInteger const kHTTPStatusCodeUnauthorized;
 extern NSInteger const kHTTPStatusCodeNotFound;
@@ -37,9 +41,10 @@ extern NSInteger const kHTTPStatusCodeNotFound;
 + (BOOL)isServerAvailable;
 
 - (id)initForStrings;
-- (id)initForUserRegistration;
+- (id)initForAuthPhase:(int)authPhase;
 - (id)initForEntity:(Class)class;
 
+- (void)setAuthHeaderUsingIdent:(NSString *)ident andPassword:(NSString *)password;
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
 - (void)setEntityLookupValue:(NSString *)value;

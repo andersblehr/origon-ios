@@ -9,6 +9,7 @@
 #import "ScServerConnection.h"
 
 #import "NSEntityDescription+ScRemotePersistenceHelper.h"
+#import "NSString+ScStringExtensions.h"
 #import "NSURL+ScURLExtensions.h"
 
 #import "ScAppDelegate.h"
@@ -31,11 +32,16 @@ static NSString * const kRESTHandlerModel = @"model";
 
 static NSString * const kRESTRouteStatus = @"status";
 static NSString * const kRESTRouteAuthRegistration = @"register";
-static NSString * const kRESTRouteAuthHandshake = @"handshake";
+static NSString * const kRESTRouteAuthConfirmation = @"confirm";
+static NSString * const kRESTRouteAuthLogin = @"login";
 
-NSInteger const kHTTPStatusCodeOK           = 200;
+int const kAuthPhaseRegistration = 0;
+int const kAuthPhaseConfirmation = 1;
+int const kAuthPhaseLogin = 2;
+
+NSInteger const kHTTPStatusCodeOK = 200;
 NSInteger const kHTTPStatusCodeUnauthorized = 401;
-NSInteger const kHTTPStatusCodeNotFound     = 404;
+NSInteger const kHTTPStatusCodeNotFound = 404;
 
 @synthesize HTTPStatusCode;
 
@@ -98,12 +104,10 @@ NSInteger const kHTTPStatusCodeNotFound     = 404;
 
 - (void)createURLRequestForHTTPMethod:(NSString *)HTTPMethod
 {
-    NSURL *requestURL;
-    NSURL *URLWithoutURLParameters = [[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute];
-
     [self setValue:[ScAppEnv env].deviceUUID forURLParameter:@"uuid"];
     
-    requestURL = [URLWithoutURLParameters URLByAppendingURLParameters:URLParameters];
+    NSURL *URLWithoutURLParameters = [[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute];
+    NSURL *requestURL = [URLWithoutURLParameters URLByAppendingURLParameters:URLParameters];
 
     if (URLRequest) {
         URLRequest.URL = requestURL;
@@ -134,13 +138,21 @@ NSInteger const kHTTPStatusCodeNotFound     = 404;
 }
 
 
-- (id)initForUserRegistration
+- (id)initForAuthPhase:(int)authPhase
 {
 	self = [super init];
     
     if (self) {
         RESTHandler = kRESTHandlerAuth;
-        RESTRoute = kRESTRouteAuthRegistration;
+        
+        if (authPhase == kAuthPhaseRegistration) {
+            RESTRoute = kRESTRouteAuthRegistration;
+        } else if (authPhase == kAuthPhaseConfirmation) {
+            RESTRoute = kRESTRouteAuthConfirmation;
+        } else if (authPhase == kAuthPhaseLogin) {
+            RESTRoute = kRESTRouteAuthLogin;
+        }
+        
         entityLookupKey = nil;
         entityClass = nil;
     }
@@ -167,6 +179,13 @@ NSInteger const kHTTPStatusCodeNotFound     = 404;
 
 
 #pragma mark - Interface implementation
+
+- (void)setAuthHeaderUsingIdent:(NSString *)ident andPassword:(NSString *)password
+{
+    NSString *authString = [NSString stringWithFormat:@"%@:%@", ident, password];
+    [self setValue:[NSString stringWithFormat:@"Basic %@", [authString base64EncodedString]] forHTTPHeaderField:@"Authorization"];
+}
+
 
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field
 {

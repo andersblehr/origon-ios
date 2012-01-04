@@ -15,18 +15,19 @@
 @interface ScRootViewController : UIViewController <UITextFieldDelegate, ScServerConnectionDelegate, UIAlertViewDelegate> {
 @private
     BOOL isEditingAllowed;
-    BOOL isEditing;
     
     AVAudioPlayer *typewriter1;
     AVAudioPlayer *typewriter2;
     
     int currentMembershipSegment;
+    int authPhase;
     
     NSString *nameAsEntered;
     NSString *emailAsEntered;
     NSString *scolaShortnameAsEntered;
     
     ScServerConnection *serverConnection;
+    NSDictionary *authInfo;
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
