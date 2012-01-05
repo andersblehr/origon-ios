@@ -31,12 +31,13 @@ static int const kMembershipSegmentNew = 0;
 static int const kMembershipSegmentInvited = 1;
 static int const kMembershipSegmentMember = 2;
 
-static int const kEmailSentPopUpTag = 0;
-static int const kRegistrationCodesDoNotMatchPopUpTag = 1;
-static int const kPasswordsDoNotMatchPopUpTag = 2;
-static int const kWelcomeBackPopUpTag = 3;
-static int const kScolaNotFoundPopUpTag = 4;
-static int const kInvitationNotFoundPopUpTag = 5;
+static int const kInternalErrorPopUpTag = 0;
+static int const kEmailSentPopUpTag = 1;
+static int const kRegistrationCodesDoNotMatchPopUpTag = 2;
+static int const kPasswordsDoNotMatchPopUpTag = 3;
+static int const kWelcomeBackPopUpTag = 4;
+static int const kScolaNotFoundPopUpTag = 5;
+static int const kInvitationNotFoundPopUpTag = 6;
 
 static int const kEmailSentPopUpButtonIndexLater = 0;
 static int const kEmailSentPopUpButtonIndexContinue = 1;
@@ -397,7 +398,6 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
     
     NSString *email = emailAsEntered;
     NSString *password = emailOrPasswordOrScolaShortnameField.text;
-    NSString *passwordHash = [authInfo objectForKey:@"passwordHash"];
     
     nameOrEmailOrRegistrationCodeField.text = @"";
     nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strPleaseWait];
@@ -406,7 +406,7 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
     
     serverConnection = [[ScServerConnection alloc] initForAuthPhase:kAuthPhaseConfirmation];
     [serverConnection setAuthHeaderUsingIdent:email andPassword:password];
-    [serverConnection setValue:passwordHash forURLParameter:@"hash"];
+    [serverConnection getRemoteClass:@"ScScolaMember" usingDelegate:self];
 }
 
 
@@ -784,6 +784,10 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
+        case kInternalErrorPopUpTag:
+            [self setUpForUserRegistration:kMembershipSegmentNew];
+            break;
+            
         case kEmailSentPopUpTag:
             if (buttonIndex == kEmailSentPopUpButtonIndexContinue) {
                 [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
@@ -882,6 +886,13 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
         [notFoundAlert show];
         
         isEditingAllowed = YES;
+    } else if (serverConnection.HTTPStatusCode == kHTTPStatusCodeInternalServerError) {
+        [activityIndicator stopAnimating];
+        
+        UIAlertView *internalErrorAlert = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strInternalServerError] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+        internalErrorAlert.tag = kInternalErrorPopUpTag;
+        
+        [internalErrorAlert show];
     }
 }
 

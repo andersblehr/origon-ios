@@ -11,6 +11,7 @@
 @interface ScStrings : NSObject
 
 // Alert messages
+extern NSString * const strInternalServerError;
 extern NSString * const strInvalidNameAlert;
 extern NSString * const strInvalidEmailAlert;
 extern NSString * const strInvalidPasswordAlert;

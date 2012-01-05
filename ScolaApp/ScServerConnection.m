@@ -35,13 +35,15 @@ static NSString * const kRESTRouteAuthRegistration = @"register";
 static NSString * const kRESTRouteAuthConfirmation = @"confirm";
 static NSString * const kRESTRouteAuthLogin = @"login";
 
-int const kAuthPhaseRegistration = 0;
-int const kAuthPhaseConfirmation = 1;
-int const kAuthPhaseLogin = 2;
+int const kAuthPhaseNone = 0;
+int const kAuthPhaseRegistration = 1;
+int const kAuthPhaseConfirmation = 2;
+int const kAuthPhaseLogin = 3;
 
 NSInteger const kHTTPStatusCodeOK = 200;
 NSInteger const kHTTPStatusCodeUnauthorized = 401;
 NSInteger const kHTTPStatusCodeNotFound = 404;
+NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 @synthesize HTTPStatusCode;
 
@@ -98,13 +100,18 @@ NSInteger const kHTTPStatusCodeNotFound = 404;
         ScLogBreakage(@"Requested class %@ is incompatible with provided REST handler %@", class, RESTHandler);
     }
     
-    return doesHandleClass;
+    return YES; // TODO
+    //return doesHandleClass;
 }
 
 
 - (void)createURLRequestForHTTPMethod:(NSString *)HTTPMethod
 {
-    [self setValue:[ScAppEnv env].deviceUUID forURLParameter:@"uuid"];
+    if (authPhase == kAuthPhaseRegistration) {
+        [self setValue:[ScAppEnv env].deviceUUID forURLParameter:@"uuid"];
+    } else {
+        [self setValue:[[ScAppEnv env].deviceUUID hashUsingSHA1] forURLParameter:@"uuid"];
+    }
     
     NSURL *URLWithoutURLParameters = [[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute];
     NSURL *requestURL = [URLWithoutURLParameters URLByAppendingURLParameters:URLParameters];
@@ -138,11 +145,12 @@ NSInteger const kHTTPStatusCodeNotFound = 404;
 }
 
 
-- (id)initForAuthPhase:(int)authPhase
+- (id)initForAuthPhase:(int)phase
 {
 	self = [super init];
     
     if (self) {
+        authPhase = phase;
         RESTHandler = kRESTHandlerAuth;
         
         if (authPhase == kAuthPhaseRegistration) {

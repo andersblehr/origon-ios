@@ -16,6 +16,8 @@
 @private
     id<ScServerConnectionDelegate> connectionDelegate;
     
+    int authPhase;
+    
     NSString *RESTHandler;
     NSString *RESTRoute;
     NSString *entityLookupKey;
@@ -28,6 +30,7 @@
     NSInteger HTTPStatusCode;
 }
 
+extern int const kAuthPhaseNone;
 extern int const kAuthPhaseRegistration;
 extern int const kAuthPhaseConfirmation;
 extern int const kAuthPhaseLogin;
@@ -35,13 +38,14 @@ extern int const kAuthPhaseLogin;
 extern NSInteger const kHTTPStatusCodeOK;
 extern NSInteger const kHTTPStatusCodeUnauthorized;
 extern NSInteger const kHTTPStatusCodeNotFound;
+extern NSInteger const kHTTPStatusCodeInternalServerError;
 
 @property (nonatomic, readonly) NSInteger HTTPStatusCode;
 
 + (BOOL)isServerAvailable;
 
 - (id)initForStrings;
-- (id)initForAuthPhase:(int)authPhase;
+- (id)initForAuthPhase:(int)phase;
 - (id)initForEntity:(Class)class;
 
 - (void)setAuthHeaderUsingIdent:(NSString *)ident andPassword:(NSString *)password;

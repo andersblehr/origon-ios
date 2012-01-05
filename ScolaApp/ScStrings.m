@@ -20,6 +20,7 @@ static NSDictionary *strings = nil;
 static NSString * const kStringsPlist = @"strings.plist";
 
 // Alert messages
+NSString * const strInternalServerError              = @"strInternalServerError";
 NSString * const strInvalidNameAlert                 = @"strInvalidNameAlert";
 NSString * const strInvalidEmailAlert                = @"strInvalidEmailAlert";
 NSString * const strInvalidPasswordAlert             = @"strInvalidPasswordAlert";
