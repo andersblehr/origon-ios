@@ -396,7 +396,7 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
 {
     authPhase = kAuthPhaseConfirmation;
     
-    NSString *email = emailAsEntered;
+    NSString *email = [authInfo objectForKey:@"email"];
     NSString *password = emailOrPasswordOrScolaShortnameField.text;
     
     nameOrEmailOrRegistrationCodeField.text = @"";
@@ -889,7 +889,7 @@ static int const kValuesDoNotMatchPopUpButtonIndexTryAgain = 1;
     } else if (serverConnection.HTTPStatusCode == kHTTPStatusCodeInternalServerError) {
         [activityIndicator stopAnimating];
         
-        UIAlertView *internalErrorAlert = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strInternalServerError] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+        UIAlertView *internalErrorAlert = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strInternalServerError] delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
         internalErrorAlert.tag = kInternalErrorPopUpTag;
         
         [internalErrorAlert show];
