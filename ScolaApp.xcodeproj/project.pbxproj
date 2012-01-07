@@ -57,7 +57,7 @@
 		5CBB63C5146080DF00A9133A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C4146080DF00A9133A /* main.m */; };
 		5CBB63C9146080DF00A9133A /* ScAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C8146080DF00A9133A /* ScAppDelegate.m */; };
 		5CBB63CF146080DF00A9133A /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CBB63CD146080DF00A9133A /* MainStoryboard_iPad.storyboard */; };
-		5CBB63D2146080DF00A9133A /* ScRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63D1146080DF00A9133A /* ScRootViewController.m */; };
+		5CBB63D2146080DF00A9133A /* ScAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63D1146080DF00A9133A /* ScAuthViewController.m */; };
 		5CBB63DA146080E000A9133A /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63D9146080E000A9133A /* SenTestingKit.framework */; };
 		5CBB63DB146080E000A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63DC146080E000A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
@@ -176,8 +176,8 @@
 		5CBB63C7146080DF00A9133A /* ScAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScAppDelegate.h; sourceTree = "<group>"; };
 		5CBB63C8146080DF00A9133A /* ScAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScAppDelegate.m; sourceTree = "<group>"; };
 		5CBB63CE146080DF00A9133A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
-		5CBB63D0146080DF00A9133A /* ScRootViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScRootViewController.h; sourceTree = "<group>"; };
-		5CBB63D1146080DF00A9133A /* ScRootViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScRootViewController.m; sourceTree = "<group>"; };
+		5CBB63D0146080DF00A9133A /* ScAuthViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScAuthViewController.h; sourceTree = "<group>"; };
+		5CBB63D1146080DF00A9133A /* ScAuthViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScAuthViewController.m; sourceTree = "<group>"; };
 		5CBB63D8146080E000A9133A /* ScolaAppTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScolaAppTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63D9146080E000A9133A /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		5CBB63E1146080E000A9133A /* ScolaAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ScolaAppTests-Info.plist"; sourceTree = "<group>"; };
@@ -331,6 +331,8 @@
 		5CB49DCE14881EC6006EA2F8 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				5CBB63D0146080DF00A9133A /* ScAuthViewController.h */,
+				5CBB63D1146080DF00A9133A /* ScAuthViewController.m */,
 				5C3E1329149DEE790068967F /* ScConfirmUserController.h */,
 				5C3E132A149DEE790068967F /* ScConfirmUserController.m */,
 				5CE987BF14854FC6005A17C6 /* ScRegisterDeviceController.h */,
@@ -341,8 +343,6 @@
 				5C88078E1484392A00ED5416 /* ScRegisterUserController.m */,
 				5C3D42801485678E009A68E0 /* ScRootScolaController.h */,
 				5C3D42811485678F009A68E0 /* ScRootScolaController.m */,
-				5CBB63D0146080DF00A9133A /* ScRootViewController.h */,
-				5CBB63D1146080DF00A9133A /* ScRootViewController.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -575,7 +575,7 @@
 			files = (
 				5CBB63C5146080DF00A9133A /* main.m in Sources */,
 				5CBB63C9146080DF00A9133A /* ScAppDelegate.m in Sources */,
-				5CBB63D2146080DF00A9133A /* ScRootViewController.m in Sources */,
+				5CBB63D2146080DF00A9133A /* ScAuthViewController.m in Sources */,
 				5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */,
 				5C2E11141469CDE5005BDE61 /* ScServerConnection.m in Sources */,
 				5C36BE8A146E9DA100DD3CEA /* ScAppEnv.m in Sources */,

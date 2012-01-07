@@ -15,17 +15,20 @@
 
 NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 
-@synthesize deviceUUID;
+@synthesize isSimulatorDevice;
+
 @synthesize is_iPadDevice;
 @synthesize is_iPhoneDevice;
 @synthesize is_iPodTouchDevice;
 @synthesize isInternetConnectionWiFi;
 @synthesize isInternetConnectionWWAN;
 @synthesize isServerAvailable;
-@synthesize isDeviceRegistered;
-@synthesize deviceType;
-@synthesize displayLanguage;
 
+@synthesize deviceName;
+@synthesize deviceType;
+@synthesize deviceUUID;
+
+@synthesize displayLanguage;
 @synthesize managedObjectContext;
 
 static ScAppEnv *env = nil;
@@ -66,7 +69,6 @@ static ScAppEnv *env = nil;
         isInternetConnectionWiFi = NO;
         isInternetConnectionWWAN = NO;
         isServerAvailable = NO;
-        isDeviceRegistered = NO;
         
         deviceType = @"Unknown device";
         displayLanguage = @"en";
@@ -77,30 +79,6 @@ static ScAppEnv *env = nil;
 
 
 #pragma mark - Accessors
-
-- (NSString *)deviceUUID
-{
-    NSUserDefaults *userDefaults;
-    
-    if (!deviceUUID) {
-        userDefaults = [NSUserDefaults standardUserDefaults];
-        deviceUUID = [userDefaults objectForKey:@"scolaapp.uuid"];
-    }
-        
-    if (!deviceUUID) {
-        CFUUIDRef newUUID = CFUUIDCreate(kCFAllocatorDefault);
-        CFStringRef newUUIDAsCFString = CFUUIDCreateString(kCFAllocatorDefault, newUUID);
-        deviceUUID = [NSString stringWithString:(__bridge NSString *)newUUIDAsCFString];
-        
-        CFRelease(newUUID);
-        CFRelease(newUUIDAsCFString);
-        
-        [userDefaults setObject:deviceUUID forKey:@"scolaapp.uuid"];
-    }
-    
-    return deviceUUID;
-}
-
 
 - (void)setIs_iPadDevice:(BOOL)is_iPad
 {
@@ -120,6 +98,40 @@ static ScAppEnv *env = nil;
 {
     is_iPodTouchDevice = is_iPodTouch;
     deviceType = @"iPod touch";
+}
+
+
+- (NSString *)deviceName
+{
+    if (!deviceName) {
+        deviceName = [UIDevice currentDevice].name;
+    }
+    
+    return deviceName;
+}
+
+
+- (NSString *)deviceUUID
+{
+    NSUserDefaults *userDefaults;
+    
+    if (!deviceUUID) {
+        userDefaults = [NSUserDefaults standardUserDefaults];
+        deviceUUID = [userDefaults objectForKey:@"scolaapp.uuid"];
+    }
+    
+    if (!deviceUUID) {
+        CFUUIDRef newUUID = CFUUIDCreate(kCFAllocatorDefault);
+        CFStringRef newUUIDAsCFString = CFUUIDCreateString(kCFAllocatorDefault, newUUID);
+        deviceUUID = [NSString stringWithString:(__bridge NSString *)newUUIDAsCFString];
+        
+        CFRelease(newUUID);
+        CFRelease(newUUIDAsCFString);
+        
+        [userDefaults setObject:deviceUUID forKey:@"scolaapp.uuid"];
+    }
+    
+    return deviceUUID;
 }
 
 

@@ -14,17 +14,20 @@
 
 extern NSString * const kBundleID;
 
-@property (strong, readonly) NSString *deviceUUID;
+@property (nonatomic) BOOL isSimulatorDevice;
+
 @property (nonatomic) BOOL is_iPadDevice;
 @property (nonatomic) BOOL is_iPhoneDevice;
 @property (nonatomic) BOOL is_iPodTouchDevice;
 @property (nonatomic) BOOL isInternetConnectionWiFi;
 @property (nonatomic) BOOL isInternetConnectionWWAN;
 @property (nonatomic) BOOL isServerAvailable;
-@property (nonatomic) BOOL isDeviceRegistered;
-@property (strong, readonly) NSString *deviceType;
-@property (strong) NSString *displayLanguage;
 
+@property (strong, readonly) NSString *deviceName;
+@property (strong, readonly) NSString *deviceType;
+@property (strong, readonly) NSString *deviceUUID;
+
+@property (strong) NSString *displayLanguage;
 @property (strong, readonly) ScManagedObjectContext *managedObjectContext;
 
 + (ScAppEnv *)env;

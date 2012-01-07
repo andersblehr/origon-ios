@@ -14,8 +14,8 @@
 
 @interface ScDevice : ScCachedEntity
 
-@property (nonatomic, strong) NSString * uuid;
 @property (nonatomic, strong) NSString * deviceName;
+@property (nonatomic, strong) NSString * deviceUUID;
 @property (nonatomic, strong) NSSet *usedBy;
 @end
 

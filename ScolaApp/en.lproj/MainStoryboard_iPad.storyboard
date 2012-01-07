@@ -8,7 +8,7 @@
         <scene sceneID="ZHH-Fe-sb7">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="d7X-K6-bJT" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="JBm-96-9PQ" customClass="ScRootViewController" sceneMemberID="viewController">
+                <viewController id="JBm-96-9PQ" customClass="ScAuthViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qvh-Ms-3uU">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -32,14 +32,6 @@
             <point key="canvasLocation" x="83" y="18"/>
         </scene>
     </scenes>
-    <classes>
-        <class className="ScRootViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScRootViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="scolaLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

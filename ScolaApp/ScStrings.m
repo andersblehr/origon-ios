@@ -27,21 +27,25 @@ NSString * const strInvalidPasswordAlert             = @"strInvalidPasswordAlert
 NSString * const strInvalidScolaShortnameAlert       = @"strInvalidScolaShortnameAlert";
 NSString * const strPasswordsDoNotMatchAlert         = @"strPasswordsDoNotMatchAlert";
 NSString * const strRegistrationCodesDoNotMatchAlert = @"strRegistrationCodesDoNotMatchAlert";
-NSString * const strNoScolaWithShortnameAlert        = @"strNoScolaWithShortnameAlert";
-NSString * const strScolaHasNoListingForNameAlert    = @"strScolaHasNoListingForNameAlert";
+NSString * const strScolaNotFoundAlert               = @"strScolaNotFoundAlert";
+NSString * const strInvitationNotFoundAlert          = @"strInvitationNotFoundAlert";
+NSString * const strUserExistsAlertTitle             = @"strUserExistsAlertTitle";
+NSString * const strUserExistsButNotLoggedInAlert    = @"strUserExistsButNotLoggedInAlert";
+NSString * const strUserExistsAndLoggedInAlert       = @"strUserExistsAndLoggedInAlert";
 
-// Generic strings
+// Button titles
 NSString * const strOK                               = @"strOK";
 NSString * const strCancel                           = @"strCancel";
+NSString * const strHaveAccess                       = @"strHaveAccess";
+NSString * const strHaveCode                         = @"strHaveCode";
+NSString * const strLater                            = @"strLater";
 NSString * const strTryAgain                         = @"strTryAgain";
 NSString * const strGoBack                           = @"strGoBack";
-NSString * const strPleaseWait                       = @"strPleaseWait";
+NSString * const strContinue                         = @"strContinue";
 
-// Root view (maintained in-app)
+// Auth view
 NSString * const istrNoInternet                      = @"strNoInternet";
 NSString * const istrServerDown                      = @"strServerDown";
-
-// Root view
 NSString * const strScolaDescription                 = @"strScolaDescription";
 NSString * const strMembershipPrompt                 = @"strMembershipPrompt";
 NSString * const strIsMember                         = @"strIsMember";
@@ -56,11 +60,10 @@ NSString * const strEmailPrompt                      = @"strEmailPrompt";
 NSString * const strScolaShortnamePrompt             = @"strScolaShortnamePrompt";
 NSString * const strNewPasswordPrompt                = @"strNewPasswordPrompt";
 NSString * const strPasswordPrompt                   = @"strPasswordPrompt";
+NSString * const strPleaseWait                       = @"strPleaseWait";
 NSString * const strUserHelpCompleteRegistration     = @"strUserHelpCompleteRegistration";
 NSString * const strEmailSentPopUpTitle              = @"strEmailSentPopUpTitle";
 NSString * const strEmailSentPopUpMessage            = @"strEmailSentPopUpMessage";
-NSString * const strContinue                         = @"strContinue";
-NSString * const strLater                            = @"strLater";
 NSString * const strSeeYouLaterPopUpTitle            = @"strSeeYouLaterPopUpTitle";
 NSString * const strSeeYouLaterPopUpMessage          = @"strSeeYouLaterPopUpMessage";
 NSString * const strWelcomeBackPopUpTitle            = @"strWelcomeBackPopUpTitle";

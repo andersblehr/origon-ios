@@ -30,10 +30,12 @@
     NSInteger HTTPStatusCode;
 }
 
-extern int const kAuthPhaseNone;
 extern int const kAuthPhaseRegistration;
 extern int const kAuthPhaseConfirmation;
 extern int const kAuthPhaseLogin;
+
+extern NSString * const kURLParameterName;
+extern NSString * const kURLParameterUUID;
 
 extern NSInteger const kHTTPStatusCodeOK;
 extern NSInteger const kHTTPStatusCodeUnauthorized;

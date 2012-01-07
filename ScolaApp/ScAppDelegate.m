@@ -122,6 +122,10 @@
     } else {
         ScLogError(@"Unknown device: %@.", device);
     }
+    
+    if ([device rangeOfString:@"Simulator"].location != NSNotFound) {
+        [ScAppEnv env].isSimulatorDevice = YES;
+    }
 
     NSString *systemLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
     
@@ -130,6 +134,7 @@
     }
     
     ScLogDebug(@"Device is %@.", device);
+    ScLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);
     ScLogDebug(@"System name is %@.", [UIDevice currentDevice].systemName);
     ScLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
     ScLogDebug(@"System language is '%@'", [ScAppEnv env].displayLanguage);
@@ -139,8 +144,6 @@
                                              selector:@selector(reachabilityChanged:)
                                                  name:kReachabilityChangedNotification
                                                object:nil];
-    
-    [ScAppEnv env].isDeviceRegistered = NO; // TODO: Need a mechanism here..
     
     return YES;
 }

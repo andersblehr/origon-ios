@@ -12,8 +12,8 @@
 
 @implementation ScDevice
 
-@dynamic uuid;
 @dynamic deviceName;
+@dynamic deviceUUID;
 @dynamic usedBy;
 
 @end

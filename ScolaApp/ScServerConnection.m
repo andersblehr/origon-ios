@@ -21,9 +21,9 @@
 
 @implementation ScServerConnection
 
-static NSString * const kScolaServer = @"enceladus.local:8888";
-//static NSString * const kScolaServer = @"ganymede.local:8888";
-//static NSString * const kScolaServer = @"scolaapp.appspot.com";
+static NSString * const kScolaDevServer = @"enceladus.local:8888";
+//static NSString * const kScolaDevServer = @"ganymede.local:8888";
+static NSString * const kScolaProdServer = @"scolaapp.appspot.com";
 
 static NSString * const kRESTHandlerScola = @"scola";
 static NSString * const kRESTHandlerStrings = @"strings";
@@ -35,10 +35,12 @@ static NSString * const kRESTRouteAuthRegistration = @"register";
 static NSString * const kRESTRouteAuthConfirmation = @"confirm";
 static NSString * const kRESTRouteAuthLogin = @"login";
 
-int const kAuthPhaseNone = 0;
 int const kAuthPhaseRegistration = 1;
 int const kAuthPhaseConfirmation = 2;
 int const kAuthPhaseLogin = 3;
+
+NSString * const kURLParameterName = @"name";
+NSString * const kURLParameterUUID = @"uuid";
 
 NSInteger const kHTTPStatusCodeOK = 200;
 NSInteger const kHTTPStatusCodeUnauthorized = 401;
@@ -50,9 +52,19 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 #pragma mark - Class methods
 
++ (NSString *)scolaServer
+{
+    NSString *scolaServer = [ScAppEnv env].isSimulatorDevice ? kScolaDevServer : kScolaProdServer;
+
+    return scolaServer;
+}
+
+
 + (BOOL)isServerAvailable
 {
-    NSString *scolaServerURL = [NSString stringWithFormat:@"http://%@", kScolaServer];
+    NSString *scolaServer = [ScServerConnection scolaServer];
+    
+    NSString *scolaServerURL = [NSString stringWithFormat:@"http://%@", scolaServer];
     NSURL *statusURL = [[[NSURL URLWithString:scolaServerURL] URLByAppendingPathComponent:kRESTHandlerScola] URLByAppendingPathComponent:kRESTRouteStatus];
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:statusURL];
@@ -66,10 +78,10 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     BOOL isAvailable = (data != nil);
     
     if (isAvailable) {
-        ScLogDebug(@"The Scola server at %@ is available.", kScolaServer);
+        ScLogDebug(@"The Scola server at %@ is available.", scolaServer);
     } else {
         ScLogWarning(@"The Scola server is unavailable.");
-        ScLogDebug(@"Current Scola server URL is %@.", kScolaServer);
+        ScLogDebug(@"Current Scola server URL is %@.", scolaServer);
     }
     
     return isAvailable;
@@ -80,38 +92,20 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (NSString *)scolaServerURL
 {
-    NSString *protocol;
+    NSString *scolaServer = [ScServerConnection scolaServer];
+    NSMutableString *protocol = [NSMutableString stringWithString:@"http"];
     
-    if ([RESTHandler isEqualToString:kRESTHandlerAuth] && ([kScolaServer rangeOfString:@"scolaapp"].location != NSNotFound)) {
-        protocol = @"https";
-    } else {
-        protocol = @"http";
+    if ([scolaServer isEqualToString:kScolaProdServer] && [RESTHandler isEqualToString:kRESTHandlerAuth]) {
+        [protocol appendString:@"s"];
     }
     
-    return [NSString stringWithFormat:@"%@://%@", protocol, kScolaServer];
-}
-
-
-- (BOOL)doesRESTHandlerHandleClass:(NSString *)class
-{
-    BOOL doesHandleClass = [RESTHandler isEqualToString:kRESTHandlerModel] || ([class rangeOfString:RESTHandler options:NSCaseInsensitiveSearch].location != NSNotFound);
-    
-    if (!doesHandleClass) {
-        ScLogBreakage(@"Requested class %@ is incompatible with provided REST handler %@", class, RESTHandler);
-    }
-    
-    return YES; // TODO
-    //return doesHandleClass;
+    return [NSString stringWithFormat:@"%@://%@", protocol, scolaServer];
 }
 
 
 - (void)createURLRequestForHTTPMethod:(NSString *)HTTPMethod
 {
-    if (authPhase == kAuthPhaseRegistration) {
-        [self setValue:[ScAppEnv env].deviceUUID forURLParameter:@"uuid"];
-    } else {
-        [self setValue:[[ScAppEnv env].deviceUUID hashUsingSHA1] forURLParameter:@"uuid"];
-    }
+    [self setValue:[ScAppEnv env].deviceUUID forURLParameter:kURLParameterUUID];
     
     NSURL *URLWithoutURLParameters = [[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute];
     NSURL *requestURL = [URLWithoutURLParameters URLByAppendingURLParameters:URLParameters];
@@ -229,7 +223,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
     NSDictionary *classAsDictionary = nil;
     
-    if ([ScAppEnv env].isServerAvailable && [self doesRESTHandlerHandleClass:class]) {
+    if ([ScAppEnv env].isServerAvailable) {
         NSError *error;
         NSHTTPURLResponse *response;
         
@@ -255,7 +249,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)getRemoteClass:(NSString *)class usingDelegate:(id)delegate
 {
-    if ([ScAppEnv env].isServerAvailable && [self doesRESTHandlerHandleClass:class]) {
+    if ([ScAppEnv env].isServerAvailable) {
         entityClass = class;
         connectionDelegate = delegate;
         responseData = [[NSMutableData alloc] init];

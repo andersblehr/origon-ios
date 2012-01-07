@@ -18,22 +18,25 @@ extern NSString * const strInvalidPasswordAlert;
 extern NSString * const strInvalidScolaShortnameAlert;
 extern NSString * const strPasswordsDoNotMatchAlert;
 extern NSString * const strRegistrationCodesDoNotMatchAlert;
-extern NSString * const strNoScolaWithShortnameAlert;
-extern NSString * const strScolaHasNoListingForNameAlert;
+extern NSString * const strScolaNotFoundAlert;
+extern NSString * const strInvitationNotFoundAlert;
+extern NSString * const strUserExistsAlertTitle;
+extern NSString * const strUserExistsButNotLoggedInAlert;
+extern NSString * const strUserExistsAndLoggedInAlert;
 
-
-// Generic strings
+// Button titles
 extern NSString * const strOK;
 extern NSString * const strCancel;
+extern NSString * const strHaveAccess;
+extern NSString * const strHaveCode;
+extern NSString * const strLater;
 extern NSString * const strTryAgain;
 extern NSString * const strGoBack;
-extern NSString * const strPleaseWait;
+extern NSString * const strContinue;
 
-// Root view (maintained in-app)
-extern NSString * const istrNoInternet;
-extern NSString * const istrServerDown;
-
-// Root view
+// Auth view
+extern NSString * const istrNoInternet;  // Maintained in-app
+extern NSString * const istrServerDown;  // Maintained in-app
 extern NSString * const strMembershipPrompt;
 extern NSString * const strIsMember;
 extern NSString * const strIsInvited;
@@ -47,11 +50,10 @@ extern NSString * const strEmailPrompt;
 extern NSString * const strScolaShortnamePrompt;
 extern NSString * const strNewPasswordPrompt;
 extern NSString * const strPasswordPrompt;
+extern NSString * const strPleaseWait;
 extern NSString * const strUserHelpCompleteRegistration;
 extern NSString * const strEmailSentPopUpTitle;
 extern NSString * const strEmailSentPopUpMessage;
-extern NSString * const strContinue;
-extern NSString * const strLater;
 extern NSString * const strSeeYouLaterPopUpTitle;
 extern NSString * const strSeeYouLaterPopUpMessage;
 extern NSString * const strWelcomeBackPopUpTitle;

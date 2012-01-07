@@ -12,7 +12,7 @@
 #import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
 
-@interface ScRootViewController : UIViewController <UITextFieldDelegate, ScServerConnectionDelegate, UIAlertViewDelegate> {
+@interface ScAuthViewController : UIViewController <UITextFieldDelegate, UIAlertViewDelegate, ScServerConnectionDelegate> {
 @private
     BOOL isEditingAllowed;
     
@@ -25,6 +25,8 @@
     NSString *nameAsEntered;
     NSString *emailAsEntered;
     NSString *scolaShortnameAsEntered;
+    
+    NSMutableDictionary *UIState;
     
     ScServerConnection *serverConnection;
     NSDictionary *authInfo;
