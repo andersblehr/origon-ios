@@ -19,6 +19,11 @@ static NSDictionary *strings = nil;
 
 static NSString * const kStringsPlist = @"strings.plist";
 
+// Grammer snippets
+NSString * const strYourPhone                        = @"strYourPhone";
+NSString * const strYour_iPod                        = @"strYour_iPod";
+NSString * const strYour_iPad                        = @"strYour_iPad";
+
 // Alert messages
 NSString * const strInternalServerError              = @"strInternalServerError";
 NSString * const strInvalidNameAlert                 = @"strInvalidNameAlert";
@@ -27,11 +32,11 @@ NSString * const strInvalidPasswordAlert             = @"strInvalidPasswordAlert
 NSString * const strInvalidScolaShortnameAlert       = @"strInvalidScolaShortnameAlert";
 NSString * const strPasswordsDoNotMatchAlert         = @"strPasswordsDoNotMatchAlert";
 NSString * const strRegistrationCodesDoNotMatchAlert = @"strRegistrationCodesDoNotMatchAlert";
-NSString * const strScolaNotFoundAlert               = @"strScolaNotFoundAlert";
-NSString * const strInvitationNotFoundAlert          = @"strInvitationNotFoundAlert";
+NSString * const strScolaInvitationNotFoundAlert     = @"strScolaInvitationNotFoundAlert";
 NSString * const strUserExistsAlertTitle             = @"strUserExistsAlertTitle";
 NSString * const strUserExistsButNotLoggedInAlert    = @"strUserExistsButNotLoggedInAlert";
 NSString * const strUserExistsAndLoggedInAlert       = @"strUserExistsAndLoggedInAlert";
+NSString * const strNotLoggedInAlert                 = @"strNotLoggedInAlert";
 
 // Button titles
 NSString * const strOK                               = @"strOK";
@@ -70,6 +75,14 @@ NSString * const strWelcomeBackPopUpTitle            = @"strWelcomeBackPopUpTitl
 NSString * const strWelcomeBackPopUpMessage          = @"strWelcomeBackPopUpMessage";
 NSString * const strRegistrationCodePrompt           = @"strRegistrationCodePrompt";
 NSString * const strRepeatPasswordPrompt             = @"strRepeatPasswordPrompt";
+
+// Household view
+NSString * const strDeviceNameUserHelp               = @"strDeviceNameUserHelp";
+NSString * const strDeviceNamePrompt                 = @"strDeviceNamePrompt";
+NSString * const strAddressUserHelp                  = @"strAddressUserHelp";
+NSString * const strStreetAddressPrompt              = @"strStreetAddressPrompt";
+NSString * const strPostCodeAndCityPrompt            = @"strPostCodeAndCityPrompt";
+NSString * const strDateOfBirthUserHelp              = @"strDateOfBirthUserHelp";
 
 
 #pragma mark - Private methods

@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ScRootScolaController : UIViewController
+@interface ScMainViewController : UIViewController
+
+- (IBAction)showInfo:(id)sender;
 
 @end

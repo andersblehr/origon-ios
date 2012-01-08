@@ -21,7 +21,7 @@
 
 @implementation ScServerConnection
 
-static NSString * const kScolaDevServer = @"enceladus.local:8888";
+static NSString * const kScolaDevServer = @"localhost:8888";
 //static NSString * const kScolaDevServer = @"ganymede.local:8888";
 static NSString * const kScolaProdServer = @"scolaapp.appspot.com";
 
@@ -41,8 +41,11 @@ int const kAuthPhaseLogin = 3;
 
 NSString * const kURLParameterName = @"name";
 NSString * const kURLParameterUUID = @"uuid";
+NSString * const kURLParameterDevice = @"device";
+NSString * const kURLParameterVersion = @"version";
 
 NSInteger const kHTTPStatusCodeOK = 200;
+NSInteger const kHTTPStatusCodeNoContent = 204;
 NSInteger const kHTTPStatusCodeUnauthorized = 401;
 NSInteger const kHTTPStatusCodeNotFound = 404;
 NSInteger const kHTTPStatusCodeInternalServerError = 500;
@@ -80,7 +83,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     if (isAvailable) {
         ScLogDebug(@"The Scola server at %@ is available.", scolaServer);
     } else {
-        ScLogWarning(@"The Scola server is unavailable.");
+        ScLogWarning(@"The Scola server is unavailable. (Error: %@)", [error userInfo]);
         ScLogDebug(@"Current Scola server URL is %@.", scolaServer);
     }
     
@@ -105,6 +108,8 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)createURLRequestForHTTPMethod:(NSString *)HTTPMethod
 {
+    [self setValue:[ScAppEnv env].bundleVersion forURLParameter:kURLParameterVersion];
+    [self setValue:[ScAppEnv env].deviceType forURLParameter:kURLParameterDevice];
     [self setValue:[ScAppEnv env].deviceUUID forURLParameter:kURLParameterUUID];
     
     NSURL *URLWithoutURLParameters = [[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute];

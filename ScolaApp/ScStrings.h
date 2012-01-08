@@ -10,6 +10,11 @@
 
 @interface ScStrings : NSObject
 
+// Grammer snippets
+extern NSString * const strYourPhone;
+extern NSString * const strYour_iPod;
+extern NSString * const strYour_iPad;
+
 // Alert messages
 extern NSString * const strInternalServerError;
 extern NSString * const strInvalidNameAlert;
@@ -18,11 +23,11 @@ extern NSString * const strInvalidPasswordAlert;
 extern NSString * const strInvalidScolaShortnameAlert;
 extern NSString * const strPasswordsDoNotMatchAlert;
 extern NSString * const strRegistrationCodesDoNotMatchAlert;
-extern NSString * const strScolaNotFoundAlert;
-extern NSString * const strInvitationNotFoundAlert;
+extern NSString * const strScolaInvitationNotFoundAlert;
 extern NSString * const strUserExistsAlertTitle;
 extern NSString * const strUserExistsButNotLoggedInAlert;
 extern NSString * const strUserExistsAndLoggedInAlert;
+extern NSString * const strNotLoggedInAlert;
 
 // Button titles
 extern NSString * const strOK;
@@ -61,6 +66,14 @@ extern NSString * const strWelcomeBackPopUpMessage;
 extern NSString * const strRegistrationCodePrompt;
 extern NSString * const strRepeatPasswordPrompt;
 extern NSString * const strScolaDescription;
+
+// Household view
+extern NSString * const strDeviceNameUserHelp;
+extern NSString * const strDeviceNamePrompt;
+extern NSString * const strAddressUserHelp;
+extern NSString * const strStreetAddressPrompt;
+extern NSString * const strPostCodeAndCityPrompt;
+extern NSString * const strDateOfBirthUserHelp;
 
 + (BOOL)areStringsAvailable;
 + (NSString *)stringForKey:(NSString *)key;

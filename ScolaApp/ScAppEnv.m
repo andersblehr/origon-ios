@@ -16,7 +16,6 @@
 NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 
 @synthesize isSimulatorDevice;
-
 @synthesize is_iPadDevice;
 @synthesize is_iPhoneDevice;
 @synthesize is_iPodTouchDevice;
@@ -24,11 +23,14 @@ NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 @synthesize isInternetConnectionWWAN;
 @synthesize isServerAvailable;
 
+@synthesize displayLanguage;
+
 @synthesize deviceName;
 @synthesize deviceType;
 @synthesize deviceUUID;
+@synthesize bundleVersion;
 
-@synthesize displayLanguage;
+@synthesize appState;
 @synthesize managedObjectContext;
 
 static ScAppEnv *env = nil;
@@ -132,6 +134,26 @@ static ScAppEnv *env = nil;
     }
     
     return deviceUUID;
+}
+
+
+- (NSString *)bundleVersion
+{
+    if (!bundleVersion) {
+        bundleVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
+    }
+    
+    return bundleVersion;
+}
+
+
+- (NSMutableDictionary *)appState
+{
+    if (!appState) {
+        appState = [[NSMutableDictionary alloc] init];
+    }
+    
+    return appState;
 }
 
 

@@ -16,9 +16,9 @@
 		5C36BE8A146E9DA100DD3CEA /* ScAppEnv.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE89146E9DA100DD3CEA /* ScAppEnv.m */; };
 		5C36BE9914704E6800DD3CEA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C36BE9814704E6800DD3CEA /* CoreData.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		5C36BE9C1470507700DD3CEA /* ScolaApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */; };
-		5C3D42821485678F009A68E0 /* ScRootScolaController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D42811485678F009A68E0 /* ScRootScolaController.m */; };
-		5C3E132B149DEE790068967F /* ScConfirmUserController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3E132A149DEE790068967F /* ScConfirmUserController.m */; };
+		5C3D42821485678F009A68E0 /* ScMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D42811485678F009A68E0 /* ScMainViewController.m */; };
 		5C3E133214A39C8D0068967F /* dark-linen-640x960.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3E133114A39C8D0068967F /* dark-linen-640x960.png */; };
+		5C4D10C414BA4964002BE504 /* pen.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C4D10C314BA4964002BE504 /* pen.png */; };
 		5C4F971A14937AA2006E244F /* ScToDoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F971914937AA2006E244F /* ScToDoItem.m */; };
 		5C4F971D14937AA3006E244F /* ScOrganisationContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F971C14937AA3006E244F /* ScOrganisationContact.m */; };
 		5C4F972314937AA3006E244F /* ScEventInvitationScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F972214937AA3006E244F /* ScEventInvitationScola.m */; };
@@ -49,7 +49,7 @@
 		5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */; };
 		5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE011482877D001D90C6 /* Localizable.strings */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
-		5C88078F1484392B00ED5416 /* ScRegisterUserController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C88078E1484392A00ED5416 /* ScRegisterUserController.m */; };
+		5C88078F1484392B00ED5416 /* ScHouseholdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C88078E1484392A00ED5416 /* ScHouseholdViewController.m */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
 		5CBB63BD146080DF00A9133A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BC146080DF00A9133A /* CoreGraphics.framework */; };
@@ -99,11 +99,10 @@
 		5C36BE89146E9DA100DD3CEA /* ScAppEnv.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScAppEnv.m; sourceTree = "<group>"; };
 		5C36BE9814704E6800DD3CEA /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		5C36BE9B1470507700DD3CEA /* ScolaApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ScolaApp.xcdatamodel; sourceTree = "<group>"; };
-		5C3D42801485678E009A68E0 /* ScRootScolaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRootScolaController.h; sourceTree = "<group>"; };
-		5C3D42811485678F009A68E0 /* ScRootScolaController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRootScolaController.m; sourceTree = "<group>"; };
-		5C3E1329149DEE790068967F /* ScConfirmUserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScConfirmUserController.h; sourceTree = "<group>"; };
-		5C3E132A149DEE790068967F /* ScConfirmUserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScConfirmUserController.m; sourceTree = "<group>"; };
+		5C3D42801485678E009A68E0 /* ScMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMainViewController.h; sourceTree = "<group>"; };
+		5C3D42811485678F009A68E0 /* ScMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMainViewController.m; sourceTree = "<group>"; };
 		5C3E133114A39C8D0068967F /* dark-linen-640x960.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark-linen-640x960.png"; sourceTree = "<group>"; };
+		5C4D10C314BA4964002BE504 /* pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pen.png; sourceTree = "<group>"; };
 		5C4F971814937AA2006E244F /* ScToDoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScToDoItem.h; sourceTree = "<group>"; };
 		5C4F971914937AA2006E244F /* ScToDoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScToDoItem.m; sourceTree = "<group>"; };
 		5C4F971B14937AA3006E244F /* ScOrganisationContact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScOrganisationContact.h; sourceTree = "<group>"; };
@@ -163,8 +162,8 @@
 		5C71DE001482877D001D90C6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE03148287DE001D90C6 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
-		5C88078D1484392A00ED5416 /* ScRegisterUserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRegisterUserController.h; sourceTree = "<group>"; };
-		5C88078E1484392A00ED5416 /* ScRegisterUserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegisterUserController.m; sourceTree = "<group>"; };
+		5C88078D1484392A00ED5416 /* ScHouseholdViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScHouseholdViewController.h; sourceTree = "<group>"; };
+		5C88078E1484392A00ED5416 /* ScHouseholdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScHouseholdViewController.m; sourceTree = "<group>"; };
 		5CBB63B4146080DF00A9133A /* ScolaApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScolaApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63B8146080DF00A9133A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5CBB63BA146080DF00A9133A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -228,6 +227,7 @@
 		5C276E7A1475B9A800A6C500 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				5C4D10C314BA4964002BE504 /* pen.png */,
 				5C3E133114A39C8D0068967F /* dark-linen-640x960.png */,
 				5CCF08C314644E0800D41AB0 /* typewriter.caf */,
 			);
@@ -333,16 +333,14 @@
 			children = (
 				5CBB63D0146080DF00A9133A /* ScAuthViewController.h */,
 				5CBB63D1146080DF00A9133A /* ScAuthViewController.m */,
-				5C3E1329149DEE790068967F /* ScConfirmUserController.h */,
-				5C3E132A149DEE790068967F /* ScConfirmUserController.m */,
+				5C88078D1484392A00ED5416 /* ScHouseholdViewController.h */,
+				5C88078E1484392A00ED5416 /* ScHouseholdViewController.m */,
+				5C3D42801485678E009A68E0 /* ScMainViewController.h */,
+				5C3D42811485678F009A68E0 /* ScMainViewController.m */,
 				5CE987BF14854FC6005A17C6 /* ScRegisterDeviceController.h */,
 				5CE987C014854FC6005A17C6 /* ScRegisterDeviceController.m */,
 				5CE987C214856426005A17C6 /* ScRegisterScolaController.h */,
 				5CE987C314856426005A17C6 /* ScRegisterScolaController.m */,
-				5C88078D1484392A00ED5416 /* ScRegisterUserController.h */,
-				5C88078E1484392A00ED5416 /* ScRegisterUserController.m */,
-				5C3D42801485678E009A68E0 /* ScRootScolaController.h */,
-				5C3D42811485678F009A68E0 /* ScRootScolaController.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -539,6 +537,7 @@
 				5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */,
 				5C3E133214A39C8D0068967F /* dark-linen-640x960.png in Resources */,
 				5C17435B14ABA3DC006B859B /* Settings.bundle in Resources */,
+				5C4D10C414BA4964002BE504 /* pen.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,10 +581,10 @@
 				5C36BE9C1470507700DD3CEA /* ScolaApp.xcdatamodeld in Sources */,
 				5C23431214812A3100164478 /* ScStrings.m in Sources */,
 				5C2343161481544A00164478 /* ScJSONUtil.m in Sources */,
-				5C88078F1484392B00ED5416 /* ScRegisterUserController.m in Sources */,
+				5C88078F1484392B00ED5416 /* ScHouseholdViewController.m in Sources */,
 				5CE987C114854FC6005A17C6 /* ScRegisterDeviceController.m in Sources */,
 				5CE987C414856426005A17C6 /* ScRegisterScolaController.m in Sources */,
-				5C3D42821485678F009A68E0 /* ScRootScolaController.m in Sources */,
+				5C3D42821485678F009A68E0 /* ScMainViewController.m in Sources */,
 				5C4F971A14937AA2006E244F /* ScToDoItem.m in Sources */,
 				5C4F971D14937AA3006E244F /* ScOrganisationContact.m in Sources */,
 				5C4F972314937AA3006E244F /* ScEventInvitationScola.m in Sources */,
@@ -614,7 +613,6 @@
 				5C4F97751496AE36006E244F /* ScScola.m in Sources */,
 				5C4F97781496AE3B006E244F /* ScPerson.m in Sources */,
 				5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */,
-				5C3E132B149DEE790068967F /* ScConfirmUserController.m in Sources */,
 				5CBE9C5314AB5160004FE2B7 /* NSString+ScStringExtensions.m in Sources */,
 				5C0D278F14AC75E400756A24 /* ScScolaMember.m in Sources */,
 				5C0D279314AC75E500756A24 /* ScDevice.m in Sources */,

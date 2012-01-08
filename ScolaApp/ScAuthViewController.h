@@ -26,8 +26,6 @@
     NSString *emailAsEntered;
     NSString *scolaShortnameAsEntered;
     
-    NSMutableDictionary *UIState;
-    
     ScServerConnection *serverConnection;
     NSDictionary *authInfo;
 }

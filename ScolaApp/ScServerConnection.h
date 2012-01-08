@@ -38,6 +38,7 @@ extern NSString * const kURLParameterName;
 extern NSString * const kURLParameterUUID;
 
 extern NSInteger const kHTTPStatusCodeOK;
+extern NSInteger const kHTTPStatusCodeNoContent;
 extern NSInteger const kHTTPStatusCodeUnauthorized;
 extern NSInteger const kHTTPStatusCodeNotFound;
 extern NSInteger const kHTTPStatusCodeInternalServerError;
