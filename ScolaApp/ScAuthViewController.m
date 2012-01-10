@@ -288,13 +288,7 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)resignCurrentFirstResponder
 {
-    if ([nameOrEmailOrRegistrationCodeField isFirstResponder]) {
-        [nameOrEmailOrRegistrationCodeField resignFirstResponder];
-    } else if ([emailOrPasswordOrScolaShortnameField isFirstResponder]) {
-        [emailOrPasswordOrScolaShortnameField resignFirstResponder];
-    } else if ([chooseNewPasswordField isFirstResponder]) {
-        [chooseNewPasswordField resignFirstResponder];
-    }
+    [self.view endEditing:YES];
 }
 
 
@@ -786,7 +780,7 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    ScLogDebug(@"Preparing for segue...");
+    [segue.destinationViewController setDelegate:self];
 }
 
 

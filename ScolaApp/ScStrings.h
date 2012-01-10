@@ -11,9 +11,12 @@
 @interface ScStrings : NSObject
 
 // Grammer snippets
-extern NSString * const strYourPhone;
-extern NSString * const strYour_iPod;
-extern NSString * const strYour_iPad;
+extern NSString * const strPhoneDeterminate;
+extern NSString * const str_iPodDeterminate;
+extern NSString * const str_iPadDeterminate;
+extern NSString * const strThisPhone;
+extern NSString * const strThis_iPod;
+extern NSString * const strThis_iPad;
 
 // Alert messages
 extern NSString * const strInternalServerError;
@@ -68,12 +71,21 @@ extern NSString * const strRepeatPasswordPrompt;
 extern NSString * const strScolaDescription;
 
 // Household view
+extern NSString * const strNameUserHelp;
 extern NSString * const strDeviceNameUserHelp;
 extern NSString * const strDeviceNamePrompt;
-extern NSString * const strAddressUserHelp;
+extern NSString * const strProvideAddressUserHelp;
+extern NSString * const strVerifyAddressUserHelp;
 extern NSString * const strStreetAddressPrompt;
 extern NSString * const strPostCodeAndCityPrompt;
+
+// Date of birth view
+extern NSString * const strGenderUserHelp;
+extern NSString * const strFemale;
+extern NSString * const strMale;
+extern NSString * const strNeutral;
 extern NSString * const strDateOfBirthUserHelp;
+extern NSString * const strSkip;
 
 + (BOOL)areStringsAvailable;
 + (NSString *)stringForKey:(NSString *)key;

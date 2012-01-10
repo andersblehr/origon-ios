@@ -20,9 +20,12 @@ static NSDictionary *strings = nil;
 static NSString * const kStringsPlist = @"strings.plist";
 
 // Grammer snippets
-NSString * const strYourPhone                        = @"strYourPhone";
-NSString * const strYour_iPod                        = @"strYour_iPod";
-NSString * const strYour_iPad                        = @"strYour_iPad";
+NSString * const strPhoneDeterminate                 = @"strPhoneDeterminate";
+NSString * const str_iPodDeterminate                 = @"str_iPodDeterminate";
+NSString * const str_iPadDeterminate                 = @"str_iPadDeterminate";
+NSString * const strThisPhone                        = @"strThisPhone";
+NSString * const strThis_iPod                        = @"strThis_iPod";
+NSString * const strThis_iPad                        = @"strThis_iPad";
 
 // Alert messages
 NSString * const strInternalServerError              = @"strInternalServerError";
@@ -77,12 +80,21 @@ NSString * const strRegistrationCodePrompt           = @"strRegistrationCodeProm
 NSString * const strRepeatPasswordPrompt             = @"strRepeatPasswordPrompt";
 
 // Household view
+NSString * const strNameUserHelp                     = @"strNameUserHelp";
 NSString * const strDeviceNameUserHelp               = @"strDeviceNameUserHelp";
 NSString * const strDeviceNamePrompt                 = @"strDeviceNamePrompt";
-NSString * const strAddressUserHelp                  = @"strAddressUserHelp";
+NSString * const strProvideAddressUserHelp           = @"strProvideAddressUserHelp";
+NSString * const strVerifyAddressUserHelp            = @"strVerifyAddressUserHelp";
 NSString * const strStreetAddressPrompt              = @"strStreetAddressPrompt";
 NSString * const strPostCodeAndCityPrompt            = @"strPostCodeAndCityPrompt";
+
+// Date of birth view
+NSString * const strGenderUserHelp                   = @"strGenderUserHelp";
+NSString * const strFemale                           = @"strFemale";
+NSString * const strMale                             = @"strMale";
+NSString * const strNeutral                          = @"strNeutral";
 NSString * const strDateOfBirthUserHelp              = @"strDateOfBirthUserHelp";
+NSString * const strSkip                             = @"strSkip";
 
 
 #pragma mark - Private methods

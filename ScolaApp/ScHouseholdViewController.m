@@ -9,6 +9,7 @@
 #import "ScHouseholdViewController.h"
 
 #import "ScAppEnv.h"
+#import "ScDateOfBirthViewController.h"
 #import "ScLogging.h"
 #import "ScScolaMember.h"
 #import "ScServerConnection.h"
@@ -21,15 +22,19 @@ NSString * const kAppStateKeyUserInfo = @"userInfo";
 @implementation ScHouseholdViewController
 
 @synthesize darkLinenView;
+@synthesize nameUserHelpLabel;
+@synthesize nameField;
 @synthesize deviceNameUserHelpLabel;
 @synthesize deviceNameField;
 @synthesize addressUserHelpLabel;
-@synthesize nameField;
 @synthesize editNameButton;
 @synthesize streetAddressField;
 @synthesize postCodeAndCityField;
-@synthesize dateOfBirthUserHelpLabel;
-@synthesize dateOfBirthPicker;
+
+
+#pragma mark - Auxiliary methods
+
+// Placekeeper
 
 
 #pragma mark - View lifecycle
@@ -52,23 +57,29 @@ NSString * const kAppStateKeyUserInfo = @"userInfo";
 {
     [super viewDidLoad];
     
-    [darkLinenView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignCurrentFirstResponder)]];
-
+    nameField.delegate = self;
+    deviceNameField.delegate = self;
+    streetAddressField.delegate = self;
+    postCodeAndCityField.delegate = self;
+    
     NSDictionary *userInfo = [[ScAppEnv env].appState objectForKey:kAppStateKeyUserInfo];
     
-    deviceNameUserHelpLabel.text = [ScStrings stringForKey:strDeviceNameUserHelp];
+    nameUserHelpLabel.text = [ScStrings stringForKey:strNameUserHelp];
+    nameField.placeholder = [ScStrings stringForKey:strNamePrompt];
+    nameField.text = [userInfo objectForKey:@"name"];
+    isEditingOfNameAllowed = NO;
+    
+    deviceNameUserHelpLabel.text = [NSString stringWithFormat:[ScStrings stringForKey:strDeviceNameUserHelp], [ScStrings stringForKey:strThisPhone]];
     deviceNameField.placeholder = [ScStrings stringForKey:strDeviceNamePrompt];
     deviceNameField.text = [ScAppEnv env].deviceName;
     
-    addressUserHelpLabel.text = [ScStrings stringForKey:strAddressUserHelp];
-    nameField.placeholder = [userInfo objectForKey:@"name"];
-    nameField.text = @"";
+    addressUserHelpLabel.text = [ScStrings stringForKey:strProvideAddressUserHelp];
     streetAddressField.placeholder = [ScStrings stringForKey:strStreetAddressPrompt];
     streetAddressField.text = @"";
     postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
     postCodeAndCityField.text = @"";
     
-    dateOfBirthUserHelpLabel.text = [ScStrings stringForKey:strDateOfBirthUserHelp];
+    [deviceNameField becomeFirstResponder];
 }
 
 
@@ -92,6 +103,18 @@ NSString * const kAppStateKeyUserInfo = @"userInfo";
 }
 
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+	[super viewWillDisappear:animated];
+}
+
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+	[super viewDidDisappear:animated];
+}
+
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
@@ -103,6 +126,7 @@ NSString * const kAppStateKeyUserInfo = @"userInfo";
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    [segue.destinationViewController setDelegate:self];
 }
 
 
@@ -110,7 +134,8 @@ NSString * const kAppStateKeyUserInfo = @"userInfo";
 
 - (IBAction)editName:(id)sender
 {
-    isNameEditingAllowed = YES;
+    isEditingOfNameAllowed = YES;
+    [nameField becomeFirstResponder];
 }
 
 
@@ -118,7 +143,16 @@ NSString * const kAppStateKeyUserInfo = @"userInfo";
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    return (textField == nameField) ? isNameEditingAllowed : YES;
+    return (textField == nameField) ? isEditingOfNameAllowed : YES;
+}
+
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [self performSegueWithIdentifier:@"householdToDateOfBirthView" sender:self];
+    //[self dismissModalViewControllerAnimated:YES];
+    
+    return YES;
 }
 
 @end

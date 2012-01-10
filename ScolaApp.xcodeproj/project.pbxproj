@@ -68,7 +68,7 @@
 		5CCF08C414644E0800D41AB0 /* typewriter.caf in Resources */ = {isa = PBXBuildFile; fileRef = 5CCF08C314644E0800D41AB0 /* typewriter.caf */; };
 		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
 		5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */; };
-		5CE987C114854FC6005A17C6 /* ScRegisterDeviceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C014854FC6005A17C6 /* ScRegisterDeviceController.m */; };
+		5CE987C114854FC6005A17C6 /* ScDateOfBirthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C014854FC6005A17C6 /* ScDateOfBirthViewController.m */; };
 		5CE987C414856426005A17C6 /* ScRegisterScolaController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* ScRegisterScolaController.m */; };
 /* End PBXBuildFile section */
 
@@ -191,8 +191,8 @@
 		5CCF08FD1465D5D900D41AB0 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		5CCF09051466A0CB00D41AB0 /* ScLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScLogging.h; sourceTree = "<group>"; };
-		5CE987BF14854FC6005A17C6 /* ScRegisterDeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRegisterDeviceController.h; sourceTree = "<group>"; };
-		5CE987C014854FC6005A17C6 /* ScRegisterDeviceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegisterDeviceController.m; sourceTree = "<group>"; };
+		5CE987BF14854FC6005A17C6 /* ScDateOfBirthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDateOfBirthViewController.h; sourceTree = "<group>"; };
+		5CE987C014854FC6005A17C6 /* ScDateOfBirthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDateOfBirthViewController.m; sourceTree = "<group>"; };
 		5CE987C214856426005A17C6 /* ScRegisterScolaController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRegisterScolaController.h; sourceTree = "<group>"; };
 		5CE987C314856426005A17C6 /* ScRegisterScolaController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegisterScolaController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -333,12 +333,12 @@
 			children = (
 				5CBB63D0146080DF00A9133A /* ScAuthViewController.h */,
 				5CBB63D1146080DF00A9133A /* ScAuthViewController.m */,
+				5CE987BF14854FC6005A17C6 /* ScDateOfBirthViewController.h */,
+				5CE987C014854FC6005A17C6 /* ScDateOfBirthViewController.m */,
 				5C88078D1484392A00ED5416 /* ScHouseholdViewController.h */,
 				5C88078E1484392A00ED5416 /* ScHouseholdViewController.m */,
 				5C3D42801485678E009A68E0 /* ScMainViewController.h */,
 				5C3D42811485678F009A68E0 /* ScMainViewController.m */,
-				5CE987BF14854FC6005A17C6 /* ScRegisterDeviceController.h */,
-				5CE987C014854FC6005A17C6 /* ScRegisterDeviceController.m */,
 				5CE987C214856426005A17C6 /* ScRegisterScolaController.h */,
 				5CE987C314856426005A17C6 /* ScRegisterScolaController.m */,
 			);
@@ -582,7 +582,7 @@
 				5C23431214812A3100164478 /* ScStrings.m in Sources */,
 				5C2343161481544A00164478 /* ScJSONUtil.m in Sources */,
 				5C88078F1484392B00ED5416 /* ScHouseholdViewController.m in Sources */,
-				5CE987C114854FC6005A17C6 /* ScRegisterDeviceController.m in Sources */,
+				5CE987C114854FC6005A17C6 /* ScDateOfBirthViewController.m in Sources */,
 				5CE987C414856426005A17C6 /* ScRegisterScolaController.m in Sources */,
 				5C3D42821485678F009A68E0 /* ScMainViewController.m in Sources */,
 				5C4F971A14937AA2006E244F /* ScToDoItem.m in Sources */,

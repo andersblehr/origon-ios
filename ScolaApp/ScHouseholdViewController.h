@@ -7,21 +7,20 @@
 //
 
 @interface ScHouseholdViewController : UIViewController <UITextFieldDelegate> {
-    BOOL isNameEditingAllowed;
+    BOOL isEditingOfNameAllowed;
 }
 
 extern NSString * const kAppStateKeyUserInfo;
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
+@property (weak, nonatomic) IBOutlet UILabel *nameUserHelpLabel;
+@property (weak, nonatomic) IBOutlet UITextField *nameField;
 @property (weak, nonatomic) IBOutlet UILabel *deviceNameUserHelpLabel;
 @property (weak, nonatomic) IBOutlet UITextField *deviceNameField;
 @property (weak, nonatomic) IBOutlet UILabel *addressUserHelpLabel;
-@property (weak, nonatomic) IBOutlet UITextField *nameField;
 @property (weak, nonatomic) IBOutlet UIButton *editNameButton;
 @property (weak, nonatomic) IBOutlet UITextField *streetAddressField;
 @property (weak, nonatomic) IBOutlet UITextField *postCodeAndCityField;
-@property (weak, nonatomic) IBOutlet UILabel *dateOfBirthUserHelpLabel;
-@property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirthPicker;
 
 - (IBAction)editName:(id)sender;
 
