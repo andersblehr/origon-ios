@@ -12,7 +12,6 @@
 
 #import "ScAppDelegate.h"
 #import "ScAppEnv.h"
-#import "ScHouseholdViewController.h"
 #import "ScLogging.h"
 #import "ScServerConnection.h"
 #import "ScStrings.h"
@@ -26,7 +25,7 @@ static NSString * const kUserDefaultsKeyAuthInfo = @"scola.auth.info";
 static NSString * const kSoundbiteTypewriter = @"typewriter.caf";
 
 static NSString * const kSegueToMainView = @"authToMainView";
-static NSString * const kSegueToHousehouldView = @"authToHouseholdView";
+static NSString * const kSegueToHousehouldView = @"authToAddressView";
 
 static int const kMinimumPassordLength = 6;
 static int const kMinimumScolaShortnameLength = 4;
@@ -538,7 +537,8 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)processAuthenticatedUser:(NSDictionary *)userInfo isNewUser:(BOOL)isNew
 {
     NSString *authId = [userInfo objectForKey:kAuthInfoKeyEmail];
-    NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
+    NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:1];
+    //NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
     NSString *authToken = [self generateAuthToken:authExpiryDate];
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -780,7 +780,6 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    [segue.destinationViewController setDelegate:self];
 }
 
 
@@ -788,15 +787,9 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (IBAction)showInfo:(id)sender
 {
-    // TODO: Using this to log out for now, keep in mind to fix later
-    ScLogDebug(@"Logging out...");
+    // TODO: Using this for various test purposes now, keep in mind to fix later
     
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    [userDefaults removeObjectForKey:kUserDefaultsKeyAuthId];
-    [userDefaults removeObjectForKey:kUserDefaultsKeyAuthToken];
-    [userDefaults removeObjectForKey:kUserDefaultsKeyAuthExpiryDate];
-    
-    [self setUpForUserLogin];
+    [self performSegueWithIdentifier:kSegueToHousehouldView sender:self];
 }
 
 
@@ -945,7 +938,6 @@ static int const kPopUpButtonTryAgain = 1;
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         [userDefaults removeObjectForKey:kUserDefaultsKeyAuthInfo];
         
-        [textField resignFirstResponder];
         [self confirmNewUser];
     } else {        
         NSString *tryAgainTitle = [ScStrings stringForKey:strTryAgain];
@@ -963,6 +955,9 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+    [self performSegueWithIdentifier:kSegueToHousehouldView sender:self];
+    return YES;
+    /*
     BOOL shouldReturn = NO;
     
     [self textFieldShouldEndEditing:textField];
@@ -973,7 +968,7 @@ static int const kPopUpButtonTryAgain = 1;
         shouldReturn = [self textFieldShouldReturnForUserRegistration:textField];
     }
     
-    return shouldReturn;
+    return shouldReturn;*/
 }
 
 
@@ -989,6 +984,7 @@ static int const kPopUpButtonTryAgain = 1;
             [self setUpForUserConfirmation];
             
             if (buttonIndex == kPopUpButtonContinue) {
+                nameOrEmailOrRegistrationCodeField.autocapitalizationType = NO;
                 [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
             } else if (buttonIndex == kPopUpButtonLater) {
                 NSString *popUpTitle = [ScStrings stringForKey:strSeeYouLaterPopUpTitle];

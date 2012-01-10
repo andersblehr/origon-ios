@@ -14,6 +14,7 @@
 @implementation ScAppEnv
 
 NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
+NSString * const kAppStateKeyUserInfo = @"userInfo";
 
 @synthesize isSimulatorDevice;
 @synthesize is_iPadDevice;

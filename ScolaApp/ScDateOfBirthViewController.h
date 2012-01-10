@@ -8,18 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
-#import "ScHouseholdViewController.h"
 
-@interface ScDateOfBirthViewController : UIViewController
+@interface ScDateOfBirthViewController : UIViewController <UITextFieldDelegate> {
+    BOOL isSkipping;
+    
+    BOOL hasEditedGender;
+    BOOL hasEditedDateOfBirth;
+}
 
+@property (weak, nonatomic) IBOutlet UILabel *deviceNameUserHelpLabel;
+@property (weak, nonatomic) IBOutlet UITextField *deviceNameField;
 @property (weak, nonatomic) IBOutlet UILabel *genderUserHelpLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *genderControl;
 @property (weak, nonatomic) IBOutlet UILabel *dateOfBirthUserHelpLabel;
+@property (weak, nonatomic) IBOutlet UITextField *dateOfBirthField;
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirthPicker;
-@property (weak, nonatomic) IBOutlet UIButton *OKButton;
-@property (weak, nonatomic) IBOutlet UIButton *skipButton;
-
-- (IBAction)OKAction:(id)sender;
-- (IBAction)skipAction:(id)sender;
 
 @end

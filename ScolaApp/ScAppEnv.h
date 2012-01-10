@@ -13,6 +13,7 @@
 @interface ScAppEnv : NSObject
 
 extern NSString * const kBundleID;
+extern NSString * const kAppStateKeyUserInfo;
 
 @property (nonatomic) BOOL isSimulatorDevice;
 @property (nonatomic) BOOL is_iPadDevice;
