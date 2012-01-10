@@ -72,12 +72,10 @@ static int const kPopUpButtonUseNew = 1;
         } else {
             [userInfo setObject:deviceNameField.text forKey:@"deviceName"];
             
-            if (hasEditedGender) {
-                if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
-                    [userInfo setObject:@"F" forKey:@"gender"];
-                } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
-                    [userInfo setObject:@"M" forKey:@"gender"];
-                }
+            if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
+                [userInfo setObject:@"F" forKey:@"gender"];
+            } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
+                [userInfo setObject:@"M" forKey:@"gender"];
             }
             
             if (hasEditedDateOfBirth) { // TODO: Do some basic age validation

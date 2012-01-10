@@ -11,8 +11,6 @@
 
 @interface ScDateOfBirthViewController : UIViewController <UITextFieldDelegate> {
     BOOL isSkipping;
-    
-    BOOL hasEditedGender;
     BOOL hasEditedDateOfBirth;
 }
 
