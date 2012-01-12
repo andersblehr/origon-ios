@@ -40,6 +40,8 @@ extern NSString * const strUserExistsAndLoggedInAlert;
 extern NSString * const strNotLoggedInAlert;
 extern NSString * const strNoAddressAlert;
 extern NSString * const strNoDeviceNameAlert;
+extern NSString * const strNotBornAlert;
+extern NSString * const strUnrealisticAgeAlert;
 
 // Button titles
 extern NSString * const strOK;
@@ -53,7 +55,7 @@ extern NSString * const strContinue;
 extern NSString * const strSkipThis;
 extern NSString * const strDone;
 extern NSString * const strNext;
-extern NSString * const strUseBuiltIn;
+extern NSString * const strUseConfigured;
 extern NSString * const strUseNew;
 
 // Auth view
@@ -97,6 +99,8 @@ extern NSString * const strFemale;
 extern NSString * const strMale;
 extern NSString * const strNeutral;
 extern NSString * const strDateOfBirthUserHelp;
+extern NSString * const strDateOfBirthPrompt;
+extern NSString * const strDateOfBirthClickHerePrompt;
 
 + (BOOL)areStringsAvailable;
 + (NSString *)stringForKey:(NSString *)key;

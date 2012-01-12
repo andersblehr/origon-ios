@@ -82,10 +82,6 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
     addressLine2Field.placeholder = [ScStrings stringForKey:strAddressLine2Prompt];
     postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
     
-    addressLine1Field.autocapitalizationType = YES;
-    addressLine2Field.autocapitalizationType = YES;
-    postCodeAndCityField.autocapitalizationType = YES;
-    
     addressLine1Field.text = @"";
     addressLine2Field.text = @"";
     postCodeAndCityField.text = @"";

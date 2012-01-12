@@ -32,6 +32,8 @@ NSString * const kAppStateKeyUserInfo = @"userInfo";
 @synthesize bundleVersion;
 
 @synthesize appState;
+@synthesize userInfo;
+
 @synthesize managedObjectContext;
 
 static ScAppEnv *env = nil;
@@ -75,6 +77,12 @@ static ScAppEnv *env = nil;
         
         deviceType = @"Unknown device";
         displayLanguage = @"en";
+        
+        deviceName = [UIDevice currentDevice].name;
+        bundleVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
+        
+        appState = [[NSMutableDictionary alloc] init];
+        userInfo = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -104,57 +112,27 @@ static ScAppEnv *env = nil;
 }
 
 
-- (NSString *)deviceName
-{
-    if (!deviceName) {
-        deviceName = [UIDevice currentDevice].name;
-    }
-    
-    return deviceName;
-}
-
-
 - (NSString *)deviceUUID
 {
     NSUserDefaults *userDefaults;
     
     if (!deviceUUID) {
         userDefaults = [NSUserDefaults standardUserDefaults];
-        deviceUUID = [userDefaults objectForKey:@"scolaapp.uuid"];
+        deviceUUID = [userDefaults objectForKey:@"scola.device.uuid"];
     }
     
     if (!deviceUUID) {
         CFUUIDRef newUUID = CFUUIDCreate(kCFAllocatorDefault);
         CFStringRef newUUIDAsCFString = CFUUIDCreateString(kCFAllocatorDefault, newUUID);
-        deviceUUID = [NSString stringWithString:(__bridge NSString *)newUUIDAsCFString];
+        deviceUUID = [[NSString stringWithString:(__bridge NSString *)newUUIDAsCFString] lowercaseString];
         
         CFRelease(newUUID);
         CFRelease(newUUIDAsCFString);
         
-        [userDefaults setObject:deviceUUID forKey:@"scolaapp.uuid"];
+        [userDefaults setObject:deviceUUID forKey:@"scola.device.uuid"];
     }
     
     return deviceUUID;
-}
-
-
-- (NSString *)bundleVersion
-{
-    if (!bundleVersion) {
-        bundleVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
-    }
-    
-    return bundleVersion;
-}
-
-
-- (NSMutableDictionary *)appState
-{
-    if (!appState) {
-        appState = [[NSMutableDictionary alloc] init];
-    }
-    
-    return appState;
 }
 
 
@@ -176,5 +154,24 @@ static ScAppEnv *env = nil;
 {
     return (isInternetConnectionWiFi || isInternetConnectionWWAN);
 }
+
+
+- (void)setUserInfoObject:(id)object forKey:(id)key
+{
+    [userInfo setObject:object forKey:key];
+}
+
+
+- (id)userInfoObjectForKey:(id)key
+{
+    return [userInfo objectForKey:key];
+}
+
+
+- (void)removeUserInfoObjectForKey:(id)key
+{
+    [userInfo removeObjectForKey:key];
+}
+
 
 @end

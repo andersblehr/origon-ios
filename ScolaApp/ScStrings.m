@@ -50,6 +50,8 @@ NSString * const strUserExistsAndLoggedInAlert       = @"strUserExistsAndLoggedI
 NSString * const strNotLoggedInAlert                 = @"strNotLoggedInAlert";
 NSString * const strNoAddressAlert                   = @"strNoAddressAlert";
 NSString * const strNoDeviceNameAlert                = @"strNoDeviceNameAlert";
+NSString * const strNotBornAlert                     = @"strNotBornAlert";
+NSString * const strUnrealisticAgeAlert              = @"strUnrealisticAgeAlert";
 
 // Button titles
 NSString * const strOK                               = @"strOK";
@@ -63,7 +65,7 @@ NSString * const strContinue                         = @"strContinue";
 NSString * const strSkipThis                         = @"strSkipThis";
 NSString * const strDone                             = @"strDone";
 NSString * const strNext                             = @"strNext";
-NSString * const strUseBuiltIn                       = @"strUseBuiltIn";
+NSString * const strUseConfigured                    = @"strUseConfigured";
 NSString * const strUseNew                           = @"strUseNew";
 
 // Auth view
@@ -107,6 +109,8 @@ NSString * const strFemale                           = @"strFemale";
 NSString * const strMale                             = @"strMale";
 NSString * const strNeutral                          = @"strNeutral";
 NSString * const strDateOfBirthUserHelp              = @"strDateOfBirthUserHelp";
+NSString * const strDateOfBirthPrompt                = @"strDateOfBirthPrompt";
+NSString * const strDateOfBirthClickHerePrompt       = @"strDateOfBirthClickHerePrompt";
 
 
 #pragma mark - Private methods

@@ -31,10 +31,16 @@ extern NSString * const kAppStateKeyUserInfo;
 @property (strong, readonly) NSString *bundleVersion;
 
 @property (strong, readonly) NSMutableDictionary *appState;
+@property (strong, readonly) NSMutableDictionary *userInfo;
+
 @property (strong, readonly) ScManagedObjectContext *managedObjectContext;
 
 + (ScAppEnv *)env;
 
 - (BOOL)isInternetConnectionAvailable;
+
+- (void)setUserInfoObject:(id)object forKey:(id)key;
+- (id)userInfoObjectForKey:(id)key;
+- (void)removeUserInfoObjectForKey:(id)key;
 
 @end

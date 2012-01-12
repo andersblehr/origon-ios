@@ -9,10 +9,7 @@
 #import <UIKit/UIKit.h>
 
 
-@interface ScDateOfBirthViewController : UIViewController <UITextFieldDelegate> {
-    BOOL isSkipping;
-    BOOL hasEditedDateOfBirth;
-}
+@interface ScDateOfBirthViewController : UIViewController <UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UILabel *deviceNameUserHelpLabel;
 @property (weak, nonatomic) IBOutlet UITextField *deviceNameField;

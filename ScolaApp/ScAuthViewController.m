@@ -62,8 +62,8 @@ static int const kUserExistsAndLoggedInPopUpTag = 6;
 static int const kNotLoggedInPopUpTag = 7;
 
 static int const kPopUpButtonLater = 0;
-static int const kPopUpButtonGoBack = 0;
 static int const kPopUpButtonContinue = 1;
+static int const kPopUpButtonGoBack = 0;
 static int const kPopUpButtonTryAgain = 1;
 
 
@@ -196,7 +196,7 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
-- (void)membershipStatusChanged
+- (void)membershipStatusDidChange
 {
     NSString *namePrompt = [ScStrings stringForKey:strNamePrompt];
     NSString *nameAsReceivedPrompt = [ScStrings stringForKey:strNameAsReceivedPrompt];
@@ -307,7 +307,7 @@ static int const kPopUpButtonTryAgain = 1;
     chooseNewPasswordField.hidden = YES;
     
     membershipStatusControl.selectedSegmentIndex = kMembershipSegmentMember;
-    [self membershipStatusChanged];
+    [self membershipStatusDidChange];
 }
 
 
@@ -317,7 +317,7 @@ static int const kPopUpButtonTryAgain = 1;
     chooseNewPasswordField.hidden = NO;
     
     membershipStatusControl.selectedSegmentIndex = membershipSegment;
-    [self membershipStatusChanged];
+    [self membershipStatusDidChange];
 }
 
 
@@ -670,7 +670,7 @@ static int const kPopUpButtonTryAgain = 1;
             [membershipStatusControl setTitle:[ScStrings stringForKey:strIsNew] forSegmentAtIndex:kMembershipSegmentNew];
             [membershipStatusControl setTitle:[ScStrings stringForKey:strIsInvited] forSegmentAtIndex:kMembershipSegmentInvited];
             [membershipStatusControl setTitle:[ScStrings stringForKey:strIsMember] forSegmentAtIndex:kMembershipSegmentMember];
-            [membershipStatusControl addTarget:self action:@selector(membershipStatusChanged) forControlEvents:UIControlEventValueChanged];
+            [membershipStatusControl addTarget:self action:@selector(membershipStatusDidChange) forControlEvents:UIControlEventValueChanged];
             
             chooseNewPasswordField.placeholder = [ScStrings stringForKey:strNewPasswordPrompt];
             scolaDescriptionTextView.text = [ScStrings stringForKey:strScolaDescription];
@@ -824,65 +824,45 @@ static int const kPopUpButtonTryAgain = 1;
 {
     BOOL shouldReturn = NO;
     
-    BOOL isNameValid = NO;
-    BOOL isEmailValid = NO;
-    BOOL isPasswordValid = NO;
-    BOOL isScolaShortnameValid = NO;
-    
     NSString *alertMessage = nil;
     
     switch (currentMembershipSegment) {
         case kMembershipSegmentNew:
-            isNameValid = [self isNameValid];
-            isEmailValid = isNameValid && [self isEmailValid];
-            isPasswordValid = isEmailValid && [self isPasswordValid];
-            
-            if (!isNameValid) {
+            if (![self isNameValid]) {
                 alertMessage = [ScStrings stringForKey:strInvalidNameAlert];
-            } else if (!isEmailValid) {
+            } else if (![self isEmailValid]) {
                 alertMessage = [ScStrings stringForKey:strInvalidEmailAlert];
-            } else if (!isPasswordValid) {
+            } else if (![self isPasswordValid]) {
                 alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidPasswordAlert], kMinimumPassordLength];
             }
-            
-            shouldReturn = (isNameValid && isEmailValid && isPasswordValid);
             
             break;
             
         case kMembershipSegmentInvited:
-            isNameValid = [self isNameValid];
-            isScolaShortnameValid = isNameValid && [self isScolaShortnameValid];
-            isPasswordValid = isScolaShortnameValid && [self isPasswordValid];
-            
-            if (!isNameValid) {
+            if (![self isNameValid]) {
                 alertMessage = [ScStrings stringForKey:strInvalidNameAlert];
-            } else if (!isScolaShortnameValid) {
+            } else if (![self isScolaShortnameValid]) {
                 alertMessage = [ScStrings stringForKey:strInvalidScolaShortnameAlert];
-            } else if (!isPasswordValid) {
+            } else if (![self isPasswordValid]) {
                 alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidPasswordAlert], kMinimumPassordLength];
             }
-            
-            shouldReturn = (isNameValid && isScolaShortnameValid && isPasswordValid);
             
             break;
             
         case kMembershipSegmentMember:
-            isEmailValid = [self isEmailValid];
-            isPasswordValid = isEmailValid && [self isPasswordValid];
-            
-            if (!isEmailValid) {
+            if (![self isEmailValid]) {
                 alertMessage = [ScStrings stringForKey:strInvalidEmailAlert];
-            } else if (!isPasswordValid) {
+            } else if (![self isPasswordValid]) {
                 alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidPasswordAlert], kMinimumPassordLength];
             }
-            
-            shouldReturn = (isEmailValid && isPasswordValid);
             
             break;
             
         default:
             break;
     }
+    
+    shouldReturn = (!alertMessage);
     
     if (shouldReturn) {
         [textField resignFirstResponder];
