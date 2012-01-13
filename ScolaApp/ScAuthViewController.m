@@ -25,7 +25,7 @@ static NSString * const kUserDefaultsKeyAuthInfo = @"scola.auth.info";
 static NSString * const kSoundbiteTypewriter = @"typewriter.caf";
 
 static NSString * const kSegueToMainView = @"authToMainView";
-static NSString * const kSegueToHousehouldView = @"authToAddressView";
+static NSString * const kSegueToAddressView = @"authToAddressView";
 
 static int const kMinimumPassordLength = 6;
 static int const kMinimumScolaShortnameLength = 4;
@@ -551,7 +551,7 @@ static int const kPopUpButtonTryAgain = 1;
     if (isNew) {
         [[ScAppEnv env].appState setObject:userInfo forKey:kAppStateKeyUserInfo];
         
-        [self performSegueWithIdentifier:kSegueToHousehouldView sender:self];
+        [self performSegueWithIdentifier:kSegueToAddressView sender:self];
     } else {
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     }
@@ -789,7 +789,7 @@ static int const kPopUpButtonTryAgain = 1;
 {
     // TODO: Using this for various test purposes now, keep in mind to fix later
     
-    [self performSegueWithIdentifier:kSegueToHousehouldView sender:self];
+    [self performSegueWithIdentifier:kSegueToAddressView sender:self];
 }
 
 
@@ -935,9 +935,9 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [self performSegueWithIdentifier:kSegueToHousehouldView sender:self];
-    return YES;
-    /*
+    //[self performSegueWithIdentifier:kSegueToHousehouldView sender:self];
+    //return YES;
+    
     BOOL shouldReturn = NO;
     
     [self textFieldShouldEndEditing:textField];
@@ -948,7 +948,7 @@ static int const kPopUpButtonTryAgain = 1;
         shouldReturn = [self textFieldShouldReturnForUserRegistration:textField];
     }
     
-    return shouldReturn;*/
+    return shouldReturn;
 }
 
 

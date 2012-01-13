@@ -35,11 +35,9 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
     BOOL isDone = (addressLine1.length || addressLine2.length || postCodeAndCity.length);
     
     if (isDone) {
-        NSMutableDictionary *userInfo = [[ScAppEnv env].appState objectForKey:kAppStateKeyUserInfo];
-        
-        [userInfo setObject:addressLine1 forKey:@"addressLine1"];
-        [userInfo setObject:addressLine2 forKey:@"addressLine2"];
-        [userInfo setObject:postCodeAndCity forKey:@"postCodeAndCity"];
+        [[ScAppEnv env] setUserInfoObject:addressLine1 forKey:@"addressLine1"];
+        [[ScAppEnv env] setUserInfoObject:addressLine2 forKey:@"addressLine2"];
+        [[ScAppEnv env] setUserInfoObject:postCodeAndCity forKey:@"postCodeAndCity"];
         
         [self performSegueWithIdentifier:kSegueToDateOfBirthView sender:self];
     } else {
