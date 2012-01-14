@@ -14,27 +14,18 @@
 @implementation ScAppEnv
 
 NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
-NSString * const kAppStateKeyUserInfo = @"userInfo";
 
-@synthesize isSimulatorDevice;
-@synthesize is_iPadDevice;
-@synthesize is_iPhoneDevice;
-@synthesize is_iPodTouchDevice;
+@synthesize deviceType;
+@synthesize deviceName;
+@synthesize deviceUUID;
+
 @synthesize isInternetConnectionWiFi;
 @synthesize isInternetConnectionWWAN;
-@synthesize isServerAvailable;
 
-@synthesize displayLanguage;
-
-@synthesize deviceName;
-@synthesize deviceType;
-@synthesize deviceUUID;
-@synthesize bundleVersion;
-
-@synthesize appState;
-@synthesize userInfo;
-
+@synthesize serverAvailability;
 @synthesize managedObjectContext;
+
+@synthesize memberInfo;
 
 static ScAppEnv *env = nil;
 
@@ -68,21 +59,13 @@ static ScAppEnv *env = nil;
     self = [super init];
     
     if (self) {
-        is_iPadDevice = NO;
-        is_iPhoneDevice = NO;
-        is_iPodTouchDevice = NO;
+        deviceType = [UIDevice currentDevice].model;
+        deviceName = [UIDevice currentDevice].name;
+        
         isInternetConnectionWiFi = NO;
         isInternetConnectionWWAN = NO;
-        isServerAvailable = NO;
         
-        deviceType = @"Unknown device";
-        displayLanguage = @"en";
-        
-        deviceName = [UIDevice currentDevice].name;
-        bundleVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
-        
-        appState = [[NSMutableDictionary alloc] init];
-        userInfo = [[NSMutableDictionary alloc] init];
+        memberInfo = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -91,26 +74,19 @@ static ScAppEnv *env = nil;
 
 #pragma mark - Accessors
 
-- (void)setIs_iPadDevice:(BOOL)is_iPad
+- (ScManagedObjectContext *)managedObjectContext
 {
-    is_iPadDevice = is_iPad;
-    deviceType = @"iPad";
+    if (!managedObjectContext) {
+        ScAppDelegate *appDelegate = (ScAppDelegate *)[[UIApplication sharedApplication] delegate];
+        
+        managedObjectContext = [appDelegate managedObjectContext];
+    }
+    
+    return managedObjectContext;
 }
 
 
-- (void)setIs_iPhoneDevice:(BOOL)is_iPhone
-{
-    is_iPhoneDevice = is_iPhone;
-    deviceType = @"iPhone";
-}
-
-
-- (void)setIs_iPodTouchDevice:(BOOL)is_iPodTouch
-{
-    is_iPodTouchDevice = is_iPodTouch;
-    deviceType = @"iPod touch";
-}
-
+#pragma mark - Interface implementations
 
 - (NSString *)deviceUUID
 {
@@ -136,19 +112,41 @@ static ScAppEnv *env = nil;
 }
 
 
-- (ScManagedObjectContext *)managedObjectContext
+- (NSString *)bundleVersion
 {
-    if (!managedObjectContext) {
-        ScAppDelegate *appDelegate = (ScAppDelegate *)[[UIApplication sharedApplication] delegate];
-        
-        managedObjectContext = [appDelegate managedObjectContext];
-    }
-    
-    return managedObjectContext;
+    return [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
 }
 
 
-#pragma mark - Interface implementations
+- (NSString *)displayLanguage
+{
+    return [[NSLocale preferredLanguages] objectAtIndex:0];
+}
+
+
+- (BOOL)is_iPadDevice
+{
+    return [deviceType hasPrefix:@"iPad"];
+}
+
+
+- (BOOL)is_iPhoneDevice
+{
+    return [deviceType hasPrefix:@"iPhone"];
+}
+
+
+- (BOOL)is_iPodTouchDevice
+{
+    return [deviceType hasPrefix:@"iPod"];
+}
+
+
+- (BOOL)isSimulatorDevice
+{
+    return ([deviceType rangeOfString:@"Simulator"].location != NSNotFound);
+}
+
 
 - (BOOL)isInternetConnectionAvailable
 {
@@ -156,22 +154,9 @@ static ScAppEnv *env = nil;
 }
 
 
-- (void)setUserInfoObject:(id)object forKey:(id)key
+- (BOOL)isServerAvailable
 {
-    [userInfo setObject:object forKey:key];
+    return (serverAvailability == ScServerAvailabilityAvailable);
 }
-
-
-- (id)userInfoObjectForKey:(id)key
-{
-    return [userInfo objectForKey:key];
-}
-
-
-- (void)removeUserInfoObjectForKey:(id)key
-{
-    [userInfo removeObjectForKey:key];
-}
-
 
 @end

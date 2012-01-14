@@ -34,12 +34,6 @@ static int const kMembershipSegmentMember = 0;
 static int const kMembershipSegmentNew = 1;
 static int const kMembershipSegmentInvited = 2;
 
-static NSString * const kAppStateKeyName = @"name";
-static NSString * const kAppStateKeyNamePlaceholder = @"namePlaceholder";
-static NSString * const kAppStateKeyEmail = @"email";
-static NSString * const kAppStateKeyEmailPlaceholder = @"emailPlaceholder";
-static NSString * const kAppStateKeyMember = @"member";
-
 static NSString * const kAuthInfoKeyEmail = @"email";
 static NSString * const kAuthInfoKeyName = @"name";
 static NSString * const kAuthInfoKeyPasswordHash = @"passwordHash";
@@ -51,15 +45,6 @@ static NSString * const kAuthInfoKeyIsDeviceListed = @"isDeviceListed";
 static NSString * const kAuthInfoKeyMember = @"member";
 
 static NSTimeInterval kTimeIntervalTwoWeeks = 1209600;
-
-static int const kInternalServerErrorPopUpTag = 0;
-static int const kEmailSentPopUpTag = 1;
-static int const kRegistrationCodesDoNotMatchPopUpTag = 2;
-static int const kPasswordsDoNotMatchPopUpTag = 3;
-static int const kWelcomeBackPopUpTag = 4;
-static int const kScolaInvitationNotFoundPopUpTag = 5;
-static int const kUserExistsAndLoggedInPopUpTag = 6;
-static int const kNotLoggedInPopUpTag = 7;
 
 static int const kPopUpButtonLater = 0;
 static int const kPopUpButtonContinue = 1;
@@ -330,6 +315,7 @@ static int const kPopUpButtonTryAgain = 1;
     
     nameOrEmailOrRegistrationCodeField.text = @"";
     nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
+    nameOrEmailOrRegistrationCodeField.autocapitalizationType = NO;
     
     emailOrPasswordOrScolaShortnameField.text = @"";
     emailOrPasswordOrScolaShortnameField.placeholder = [ScStrings stringForKey:strRepeatPasswordPrompt];
@@ -362,13 +348,16 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)indicatePendingServerSession:(BOOL)isPending
 {
-    NSMutableDictionary *appState = [ScAppEnv env].appState;
+    static NSString *name;
+    static NSString *namePlaceholder;
+    static NSString *email;
+    static NSString *emailPlaceholder;
     
     if (isPending) {
-        [appState setObject:nameOrEmailOrRegistrationCodeField.text forKey:kAppStateKeyName];
-        [appState setObject:nameOrEmailOrRegistrationCodeField.placeholder forKey:kAppStateKeyNamePlaceholder];
-        [appState setObject:emailOrPasswordOrScolaShortnameField.text forKey:kAppStateKeyEmail];
-        [appState setObject:emailOrPasswordOrScolaShortnameField.placeholder forKey:kAppStateKeyEmailPlaceholder];
+        name = nameOrEmailOrRegistrationCodeField.text;
+        namePlaceholder = nameOrEmailOrRegistrationCodeField.placeholder;
+        email = emailOrPasswordOrScolaShortnameField.text;
+        emailPlaceholder = emailOrPasswordOrScolaShortnameField.placeholder;
         
         nameOrEmailOrRegistrationCodeField.text = @"";
         nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strPleaseWait];
@@ -381,10 +370,10 @@ static int const kPopUpButtonTryAgain = 1;
         isEditingAllowed = NO;
         [activityIndicator startAnimating];
     } else {
-        nameOrEmailOrRegistrationCodeField.text = [appState objectForKey:kAppStateKeyName];
-        nameOrEmailOrRegistrationCodeField.placeholder = [appState objectForKey:kAppStateKeyNamePlaceholder];
-        emailOrPasswordOrScolaShortnameField.text = [appState objectForKey:kAppStateKeyEmail];
-        emailOrPasswordOrScolaShortnameField.placeholder = [appState objectForKey:kAppStateKeyEmailPlaceholder];
+        nameOrEmailOrRegistrationCodeField.text = name;
+        nameOrEmailOrRegistrationCodeField.placeholder = namePlaceholder;
+        emailOrPasswordOrScolaShortnameField.text = email;
+        emailOrPasswordOrScolaShortnameField.placeholder = emailPlaceholder;
         
         isEditingAllowed = YES;
         [activityIndicator stopAnimating];
@@ -488,14 +477,14 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)loginUser
 {
-    authPhase = kAuthPhaseLogin;
+    authPhase = ScAuthPhaseLogin;
 
     NSString *email = nameOrEmailOrRegistrationCodeField.text;
     NSString *password = emailOrPasswordOrScolaShortnameField.text;
     
     [self indicatePendingServerSession:YES];
     
-    serverConnection = [[ScServerConnection alloc] initForAuthPhase:kAuthPhaseLogin];
+    serverConnection = [[ScServerConnection alloc] initForAuthPhase:ScAuthPhaseLogin];
     [serverConnection setAuthHeaderUsingIdent:email andPassword:password];
     [serverConnection setValue:[ScAppEnv env].deviceName forURLParameter:kURLParameterName];
     [serverConnection getRemoteClass:@"ScScolaMember" usingDelegate:self];
@@ -504,7 +493,7 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)registerNewUser
 {
-    authPhase = kAuthPhaseRegistration;
+    authPhase = ScAuthPhaseRegistration;
     
     NSString *name = nameOrEmailOrRegistrationCodeField.text;
     NSString *emailOrScolaShortname = emailOrPasswordOrScolaShortnameField.text;
@@ -512,7 +501,7 @@ static int const kPopUpButtonTryAgain = 1;
     
     [self indicatePendingServerSession:YES];
     
-    serverConnection = [[ScServerConnection alloc] initForAuthPhase:kAuthPhaseRegistration];
+    serverConnection = [[ScServerConnection alloc] initForAuthPhase:ScAuthPhaseRegistration];
     [serverConnection setAuthHeaderUsingIdent:emailOrScolaShortname andPassword:password];
     [serverConnection setValue:name forURLParameter:kURLParameterName];
     [serverConnection getRemoteClass:@"ScAuthInfo" usingDelegate:self];
@@ -521,20 +510,20 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)confirmNewUser
 {
-    authPhase = kAuthPhaseConfirmation;
+    authPhase = ScAuthPhaseConfirmation;
     
     NSString *email = [authInfo objectForKey:kAuthInfoKeyEmail];
     NSString *password = emailOrPasswordOrScolaShortnameField.text;
     
     [self indicatePendingServerSession:YES];
     
-    serverConnection = [[ScServerConnection alloc] initForAuthPhase:kAuthPhaseConfirmation];
+    serverConnection = [[ScServerConnection alloc] initForAuthPhase:ScAuthPhaseConfirmation];
     [serverConnection setAuthHeaderUsingIdent:email andPassword:password];
     [serverConnection getRemoteClass:@"ScScolaMember" usingDelegate:self];
 }
 
 
-- (void)processAuthenticatedUser:(NSDictionary *)userInfo isNewUser:(BOOL)isNew
+- (void)userDidLogIn:(NSDictionary *)userInfo isNewUser:(BOOL)isNew
 {
     NSString *authId = [userInfo objectForKey:kAuthInfoKeyEmail];
     NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:1];
@@ -546,11 +535,9 @@ static int const kPopUpButtonTryAgain = 1;
     [userDefaults setObject:authToken forKey:kUserDefaultsKeyAuthToken];
     [userDefaults setObject:authExpiryDate forKey:kUserDefaultsKeyAuthExpiryDate];
     
-    [[ScAppEnv env].appState removeAllObjects];
+    [ScAppEnv env].memberInfo = [NSMutableDictionary dictionaryWithDictionary:userInfo];
     
     if (isNew) {
-        [[ScAppEnv env].appState setObject:userInfo forKey:kAppStateKeyUserInfo];
-        
         [self performSegueWithIdentifier:kSegueToAddressView sender:self];
     } else {
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
@@ -560,6 +547,19 @@ static int const kPopUpButtonTryAgain = 1;
 
 #pragma mark - Process server response
 
+- (void)didReceiveServerAvailabilityStatus:(NSNotification *)notification
+{
+    if ([ScAppEnv env].serverAvailability == ScServerAvailabilityUnavailable) {
+        NSString *alertMessage = [ScStrings stringForKey:strServerUnavailableAlert];
+        
+        UIAlertView *serverUnavailableAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+        [serverUnavailableAlert show];
+        
+        isEditingAllowed = NO;
+    }
+}
+
+
 - (void)didReceiveLoginResponse:(NSHTTPURLResponse *)response
 {
     if (response.statusCode == kHTTPStatusCodeNoContent) {
@@ -568,7 +568,7 @@ static int const kPopUpButtonTryAgain = 1;
         NSString *alertMessage = [ScStrings stringForKey:strNotLoggedInAlert];
         
         UIAlertView *notLoggedInAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        notLoggedInAlert.tag = kNotLoggedInPopUpTag;
+        notLoggedInAlert.tag = ScAuthPopUpTagNotLoggedIn;
         
         [notLoggedInAlert show];
     }
@@ -581,7 +581,7 @@ static int const kPopUpButtonTryAgain = 1;
         NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strScolaInvitationNotFoundAlert], scolaShortnameAsEntered];
         
         UIAlertView *notFoundAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        notFoundAlert.tag = kScolaInvitationNotFoundPopUpTag;
+        notFoundAlert.tag = ScAuthPopUpTagScolaInvitationNotFound;
         
         [notFoundAlert show];
         
@@ -590,14 +590,14 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
-- (void)finishedReceivingRegistrationData:(NSDictionary *)responseInfo
+- (void)finishedReceivingRegistrationData:(NSDictionary *)authInfo_
 {
-    BOOL isActive = [[responseInfo objectForKey:kAuthInfoKeyIsActive] boolValue];
-    BOOL isAuthenticated = [[responseInfo objectForKey:kAuthInfoKeyIsAuthenticated] boolValue];
-    NSString *email = [responseInfo objectForKey:kAuthInfoKeyEmail];
+    BOOL isActive = [[authInfo_ objectForKey:kAuthInfoKeyIsActive] boolValue];
+    BOOL isAuthenticated = [[authInfo_ objectForKey:kAuthInfoKeyIsAuthenticated] boolValue];
+    NSString *email = [authInfo_ objectForKey:kAuthInfoKeyEmail];
 
     if (!isActive) {
-        authInfo = responseInfo;
+        authInfo = authInfo_;
         
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         [userDefaults setObject:authInfo forKey:kUserDefaultsKeyAuthInfo];
@@ -608,24 +608,23 @@ static int const kPopUpButtonTryAgain = 1;
         NSString *continueButtonTitle = [ScStrings stringForKey:strHaveAccess];
         
         UIAlertView *emailSentPopUp = [[UIAlertView alloc] initWithTitle:popUpTitle message:popUpMessage delegate:self cancelButtonTitle:laterButtonTitle otherButtonTitles:continueButtonTitle, nil];
-        emailSentPopUp.tag = kEmailSentPopUpTag;
+        emailSentPopUp.tag = ScAuthPopUpTagEmailSent;
         
         [emailSentPopUp show];
     } else {
         NSString *alertMessage;
-        int alertTag;
+        ScAuthPopUpTag alertTag;
         
         NSString *alertTitle = [ScStrings stringForKey:strUserExistsAlertTitle];
         
         if (isAuthenticated) {
-            NSDictionary *memberInfo = [responseInfo objectForKey:kAuthInfoKeyMember];
-            [[ScAppEnv env].appState setObject:memberInfo forKey:kAppStateKeyMember];
+            [ScAppEnv env].memberInfo = [NSMutableDictionary dictionaryWithDictionary:[authInfo_ objectForKey:kAuthInfoKeyMember]];
             
             alertMessage = [ScStrings stringForKey:strUserExistsAndLoggedInAlert];
-            alertTag = kUserExistsAndLoggedInPopUpTag;
+            alertTag = ScAuthPopUpTagUserExistsAndIsLoggedIn;
         } else {
             alertMessage = [ScStrings stringForKey:strUserExistsButNotLoggedInAlert];
-            alertTag = kNotLoggedInPopUpTag;
+            alertTag = ScAuthPopUpTagNotLoggedIn;
         }
         
         UIAlertView *userExistsAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
@@ -652,6 +651,14 @@ static int const kPopUpButtonTryAgain = 1;
     if ([self isAuthTokenValid]) {
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
+        if ([ScAppEnv env].isInternetConnectionAvailable) {
+            NSNotificationCenter *notificationCentre = [NSNotificationCenter defaultCenter];
+            serverConnection = [[ScServerConnection alloc] init];
+            
+            [notificationCentre addObserver:self selector:@selector(didReceiveServerAvailabilityStatus:) name:kServerAvailabilityNotification object:nil];
+            [serverConnection checkServerAvailability];
+        }
+        
         [darkLinenView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignCurrentFirstResponder)]];
         
         //[self setUpTypewriterAudioForSplashSequence]; // TODO: Comment back in!
@@ -663,10 +670,9 @@ static int const kPopUpButtonTryAgain = 1;
         chooseNewPasswordField.delegate = self;
         chooseNewPasswordField.secureTextEntry = YES;
         activityIndicator.hidesWhenStopped = YES;
-        
-        if ([ScServerConnection isServerAvailable]) {
+
+        if ([ScStrings areStringsAvailable]) {
             membershipPromptLabel.text = [ScStrings stringForKey:strMembershipPrompt];
-            
             [membershipStatusControl setTitle:[ScStrings stringForKey:strIsNew] forSegmentAtIndex:kMembershipSegmentNew];
             [membershipStatusControl setTitle:[ScStrings stringForKey:strIsInvited] forSegmentAtIndex:kMembershipSegmentInvited];
             [membershipStatusControl setTitle:[ScStrings stringForKey:strIsMember] forSegmentAtIndex:kMembershipSegmentMember];
@@ -747,7 +753,7 @@ static int const kPopUpButtonTryAgain = 1;
         NSString *goBackButtonTitle = [ScStrings stringForKey:strGoBack];
         
         UIAlertView *welcomeBackPopUp = [[UIAlertView alloc] initWithTitle:popUpTitle message:popUpMessage delegate:self cancelButtonTitle:goBackButtonTitle otherButtonTitles:continueButtonTitle, nil];
-        welcomeBackPopUp.tag = kWelcomeBackPopUpTag;
+        welcomeBackPopUp.tag = ScAuthPopUpTagWelcomeBack;
         
         [welcomeBackPopUp show];
     }
@@ -890,7 +896,7 @@ static int const kPopUpButtonTryAgain = 1;
     NSString *registrationCodeAsEntered = [nameOrEmailOrRegistrationCodeField.text lowercaseString];
     
     NSString *alertMessage = nil;
-    int alertTag;
+    ScAuthPopUpTag alertTag;
     
     doRegistrationCodesMatch = [registrationCodeAsEntered isEqualToString:registrationCodeAsSent];
     
@@ -906,10 +912,10 @@ static int const kPopUpButtonTryAgain = 1;
     
     if (!doRegistrationCodesMatch) {
         alertMessage = [ScStrings stringForKey:strRegistrationCodesDoNotMatchAlert];
-        alertTag = kRegistrationCodesDoNotMatchPopUpTag;
+        alertTag = ScAuthPopUpTagRegistrationCodesDoNotMatch;
     } else if (!doPasswordsMatch) {
         alertMessage = [ScStrings stringForKey:strPasswordsDoNotMatchAlert];
-        alertTag = kPasswordsDoNotMatchPopUpTag;
+        alertTag = ScAuthPopUpTagPasswordsDoNotMatch;
     }
     
     BOOL shouldReturn = doRegistrationCodesMatch && doPasswordsMatch;
@@ -957,14 +963,13 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
-        case kInternalServerErrorPopUpTag:
+        case ScAuthPopUpTagInternalServerError:
             break;
             
-        case kEmailSentPopUpTag:
+        case ScAuthPopUpTagEmailSent:
             [self setUpForUserConfirmation];
             
             if (buttonIndex == kPopUpButtonContinue) {
-                nameOrEmailOrRegistrationCodeField.autocapitalizationType = NO;
                 [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
             } else if (buttonIndex == kPopUpButtonLater) {
                 NSString *popUpTitle = [ScStrings stringForKey:strSeeYouLaterPopUpTitle];
@@ -976,12 +981,12 @@ static int const kPopUpButtonTryAgain = 1;
             
             break;
             
-        case kRegistrationCodesDoNotMatchPopUpTag:
-        case kPasswordsDoNotMatchPopUpTag:
+        case ScAuthPopUpTagRegistrationCodesDoNotMatch:
+        case ScAuthPopUpTagPasswordsDoNotMatch:
             if (buttonIndex == kPopUpButtonTryAgain) {
-                if (alertView.tag == kRegistrationCodesDoNotMatchPopUpTag) {
+                if (alertView.tag == ScAuthPopUpTagRegistrationCodesDoNotMatch) {
                     [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
-                } else if (alertView.tag == kPasswordsDoNotMatchPopUpTag) {
+                } else if (alertView.tag == ScAuthPopUpTagPasswordsDoNotMatch) {
                     emailOrPasswordOrScolaShortnameField.text = @"";
                     [emailOrPasswordOrScolaShortnameField becomeFirstResponder];
                 }
@@ -991,13 +996,13 @@ static int const kPopUpButtonTryAgain = 1;
             
             break;
 
-        case kScolaInvitationNotFoundPopUpTag:
+        case ScAuthPopUpTagScolaInvitationNotFound:
             [self setUpForUserRegistration:kMembershipSegmentInvited];
             [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
             
             break;
             
-        case kWelcomeBackPopUpTag:
+        case ScAuthPopUpTagWelcomeBack:
             if (buttonIndex == kPopUpButtonContinue) {
                 [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
             } else if (buttonIndex == kPopUpButtonGoBack) {
@@ -1006,12 +1011,12 @@ static int const kPopUpButtonTryAgain = 1;
             
             break;
         
-        case kUserExistsAndLoggedInPopUpTag:
-            [self processAuthenticatedUser:[[ScAppEnv env].appState objectForKey:kAppStateKeyMember] isNewUser:NO];
+        case ScAuthPopUpTagUserExistsAndIsLoggedIn:
+            [self userDidLogIn:[ScAppEnv env].memberInfo isNewUser:NO];
 
             break;
             
-        case kNotLoggedInPopUpTag:
+        case ScAuthPopUpTagNotLoggedIn:
             [self setUpForUserLogin];
             [emailOrPasswordOrScolaShortnameField becomeFirstResponder];
             
@@ -1041,13 +1046,13 @@ static int const kPopUpButtonTryAgain = 1;
     
     if (response.statusCode == kHTTPStatusCodeInternalServerError) {
         UIAlertView *internalErrorAlert = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strInternalServerError] delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        internalErrorAlert.tag = kInternalServerErrorPopUpTag;
+        internalErrorAlert.tag = ScAuthPopUpTagInternalServerError;
         
         [internalErrorAlert show];
     } else if (response.statusCode != kHTTPStatusCodeOK) {
-        if (authPhase == kAuthPhaseLogin) {
+        if (authPhase == ScAuthPhaseLogin) {
             [self didReceiveLoginResponse:response];
-        } else if (authPhase == kAuthPhaseRegistration) {
+        } else if (authPhase == ScAuthPhaseRegistration) {
             [self didReceiveRegistrationResponse:response];
         }
     }
@@ -1061,12 +1066,12 @@ static int const kPopUpButtonTryAgain = 1;
     if (serverConnection.HTTPStatusCode == kHTTPStatusCodeOK) {
         ScLogDebug(@"Received data: %@", dataAsDictionary);
         
-        if (authPhase == kAuthPhaseLogin) {
-            [self processAuthenticatedUser:dataAsDictionary isNewUser:NO];
-        } else if (authPhase == kAuthPhaseRegistration) {
+        if (authPhase == ScAuthPhaseLogin) {
+            [self userDidLogIn:dataAsDictionary isNewUser:NO];
+        } else if (authPhase == ScAuthPhaseRegistration) {
             [self finishedReceivingRegistrationData:dataAsDictionary];
-        } else if (authPhase == kAuthPhaseConfirmation) {
-            [self processAuthenticatedUser:dataAsDictionary isNewUser:YES];
+        } else if (authPhase == ScAuthPhaseConfirmation) {
+            [self userDidLogIn:dataAsDictionary isNewUser:YES];
         }
     }
 }

@@ -12,6 +12,17 @@
 #import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
 
+typedef enum {
+    ScAuthPopUpTagInternalServerError,
+    ScAuthPopUpTagEmailSent,
+    ScAuthPopUpTagRegistrationCodesDoNotMatch,
+    ScAuthPopUpTagPasswordsDoNotMatch,
+    ScAuthPopUpTagWelcomeBack,
+    ScAuthPopUpTagScolaInvitationNotFound,
+    ScAuthPopUpTagUserExistsAndIsLoggedIn,
+    ScAuthPopUpTagNotLoggedIn,
+} ScAuthPopUpTag;
+
 @interface ScAuthViewController : UIViewController <UITextFieldDelegate, UIAlertViewDelegate, ScServerConnectionDelegate> {
 @private
     BOOL isEditingAllowed;

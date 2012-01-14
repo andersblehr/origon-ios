@@ -8,9 +8,6 @@
 
 @interface ScAddressViewController : UIViewController <UITextFieldDelegate, UIAlertViewDelegate>
 
-extern NSString * const kAppStateKeyUserInfo;
-
-@property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *addressUserHelpLabel;
 @property (weak, nonatomic) IBOutlet UITextField *addressLine1Field;
 @property (weak, nonatomic) IBOutlet UITextField *addressLine2Field;

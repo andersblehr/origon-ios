@@ -9,38 +9,36 @@
 #import <Foundation/Foundation.h>
 
 #import "ScManagedObjectContext.h"
+#import "ScServerConnection.h"
 
 @interface ScAppEnv : NSObject
 
 extern NSString * const kBundleID;
-extern NSString * const kAppStateKeyUserInfo;
 
-@property (nonatomic) BOOL isSimulatorDevice;
-@property (nonatomic) BOOL is_iPadDevice;
-@property (nonatomic) BOOL is_iPhoneDevice;
-@property (nonatomic) BOOL is_iPodTouchDevice;
+@property (strong, readonly) NSString *deviceType;
+@property (strong, readonly) NSString *deviceName;
+@property (strong, readonly) NSString *deviceUUID;
+
 @property (nonatomic) BOOL isInternetConnectionWiFi;
 @property (nonatomic) BOOL isInternetConnectionWWAN;
-@property (nonatomic) BOOL isServerAvailable;
 
-@property (strong) NSString *displayLanguage;
-
-@property (strong, readonly) NSString *deviceName;
-@property (strong, readonly) NSString *deviceType;
-@property (strong, readonly) NSString *deviceUUID;
-@property (strong, readonly) NSString *bundleVersion;
-
-@property (strong, readonly) NSMutableDictionary *appState;
-@property (strong, readonly) NSMutableDictionary *userInfo;
-
+@property (nonatomic) ScServerAvailability serverAvailability;
 @property (strong, readonly) ScManagedObjectContext *managedObjectContext;
+
+@property (strong) NSMutableDictionary *memberInfo;
 
 + (ScAppEnv *)env;
 
-- (BOOL)isInternetConnectionAvailable;
+- (NSString *)deviceName;
+- (NSString *)bundleVersion;
+- (NSString *)displayLanguage;
 
-- (void)setUserInfoObject:(id)object forKey:(id)key;
-- (id)userInfoObjectForKey:(id)key;
-- (void)removeUserInfoObjectForKey:(id)key;
+- (BOOL)is_iPadDevice;
+- (BOOL)is_iPhoneDevice;
+- (BOOL)is_iPodTouchDevice;
+- (BOOL)isSimulatorDevice;
+
+- (BOOL)isInternetConnectionAvailable;
+- (BOOL)isServerAvailable;
 
 @end

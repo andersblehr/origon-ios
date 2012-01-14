@@ -11,12 +11,26 @@
 #import "ScCachedEntity.h"
 #import "ScServerConnectionDelegate.h"
 
+typedef enum {
+    ScAuthPhaseNone,
+    ScAuthPhaseRegistration,
+    ScAuthPhaseConfirmation,
+    ScAuthPhaseLogin,
+} ScAuthPhase;
+
+typedef enum {
+    ScServerAvailabilityUnknown,
+    ScServerAvailabilityChecking,
+    ScServerAvailabilityAvailable,
+    ScServerAvailabilityUnavailable,
+} ScServerAvailability;
 
 @interface ScServerConnection : NSObject {
 @private
     id<ScServerConnectionDelegate> connectionDelegate;
     
-    int authPhase;
+    ScServerAvailability serverAvailability;
+    ScAuthPhase authPhase;
     
     NSString *RESTHandler;
     NSString *RESTRoute;
@@ -30,12 +44,8 @@
     NSInteger HTTPStatusCode;
 }
 
-extern int const kAuthPhaseRegistration;
-extern int const kAuthPhaseConfirmation;
-extern int const kAuthPhaseLogin;
-
+extern NSString * const kServerAvailabilityNotification;
 extern NSString * const kURLParameterName;
-extern NSString * const kURLParameterUUID;
 
 extern NSInteger const kHTTPStatusCodeOK;
 extern NSInteger const kHTTPStatusCodeNoContent;
@@ -45,8 +55,9 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 
 @property (nonatomic, readonly) NSInteger HTTPStatusCode;
 
-+ (BOOL)isServerAvailable;
+- (void)checkServerAvailability;
 
+- (id)init;
 - (id)initForStrings;
 - (id)initForAuthPhase:(int)phase;
 - (id)initForEntity:(Class)class;

@@ -21,7 +21,8 @@
 
 @implementation ScServerConnection
 
-static NSString * const kScolaDevServer = @"localhost:8888";
+//static NSString * const kScolaDevServer = @"localhost:8888";
+static NSString * const kScolaDevServer = @"enceladus.local:8888";
 //static NSString * const kScolaDevServer = @"ganymede.local:8888";
 static NSString * const kScolaProdServer = @"scolaapp.appspot.com";
 
@@ -35,14 +36,12 @@ static NSString * const kRESTRouteAuthRegistration = @"register";
 static NSString * const kRESTRouteAuthConfirmation = @"confirm";
 static NSString * const kRESTRouteAuthLogin = @"login";
 
-int const kAuthPhaseRegistration = 1;
-int const kAuthPhaseConfirmation = 2;
-int const kAuthPhaseLogin = 3;
+static NSString * const kURLParameterUUID = @"uuid";
+static NSString * const kURLParameterDevice = @"device";
+static NSString * const kURLParameterVersion = @"version";
 
+NSString * const kServerAvailabilityNotification = @"serverAvailabilityNotification";
 NSString * const kURLParameterName = @"name";
-NSString * const kURLParameterUUID = @"uuid";
-NSString * const kURLParameterDevice = @"device";
-NSString * const kURLParameterVersion = @"version";
 
 NSInteger const kHTTPStatusCodeOK = 200;
 NSInteger const kHTTPStatusCodeNoContent = 204;
@@ -53,49 +52,17 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 @synthesize HTTPStatusCode;
 
 
-#pragma mark - Class methods
-
-+ (NSString *)scolaServer
-{
-    NSString *scolaServer = [ScAppEnv env].isSimulatorDevice ? kScolaDevServer : kScolaProdServer;
-
-    return scolaServer;
-}
-
-
-+ (BOOL)isServerAvailable
-{
-    NSString *scolaServer = [ScServerConnection scolaServer];
-    
-    NSString *scolaServerURL = [NSString stringWithFormat:@"http://%@", scolaServer];
-    NSURL *statusURL = [[[NSURL URLWithString:scolaServerURL] URLByAppendingPathComponent:kRESTHandlerScola] URLByAppendingPathComponent:kRESTRouteStatus];
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:statusURL];
-    NSURLResponse *response;
-    NSError *error;
-    
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    
-    BOOL isAvailable = (data != nil);
-    
-    if (isAvailable) {
-        ScLogDebug(@"The Scola server at %@ is available.", scolaServer);
-    } else {
-        ScLogWarning(@"The Scola server is unavailable. (Error: %@)", [error userInfo]);
-        ScLogDebug(@"Current Scola server URL is %@.", scolaServer);
-    }
-    
-    return isAvailable;
-}
-
-
 #pragma mark - Private methods
+
+- (NSString *)scolaServer
+{
+    return [ScAppEnv env].isSimulatorDevice ? kScolaDevServer : kScolaProdServer;
+}
+
 
 - (NSString *)scolaServerURL
 {
-    NSString *scolaServer = [ScServerConnection scolaServer];
+    NSString *scolaServer = [self scolaServer];
     NSMutableString *protocol = [NSMutableString stringWithString:@"http"];
     
     if ([scolaServer isEqualToString:kScolaProdServer] && [RESTHandler isEqualToString:kRESTHandlerAuth]) {
@@ -129,6 +96,12 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 #pragma mark - Initialisation
 
+- (id)init
+{
+    return [super init];
+}
+
+
 - (id)initForStrings
 {
 	self = [super init];
@@ -152,11 +125,11 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         authPhase = phase;
         RESTHandler = kRESTHandlerAuth;
         
-        if (authPhase == kAuthPhaseRegistration) {
+        if (authPhase == ScAuthPhaseRegistration) {
             RESTRoute = kRESTRouteAuthRegistration;
-        } else if (authPhase == kAuthPhaseConfirmation) {
+        } else if (authPhase == ScAuthPhaseConfirmation) {
             RESTRoute = kRESTRouteAuthConfirmation;
-        } else if (authPhase == kAuthPhaseLogin) {
+        } else if (authPhase == ScAuthPhaseLogin) {
             RESTRoute = kRESTRouteAuthLogin;
         }
         
@@ -186,6 +159,32 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 
 #pragma mark - Interface implementation
+
+- (void)checkServerAvailability
+{
+    if ([ScAppEnv env].isInternetConnectionAvailable) {
+        NSString *scolaServer = [self scolaServer];
+        
+        NSString *scolaServerURL = [NSString stringWithFormat:@"http://%@", scolaServer];
+        NSURL *statusURL = [[[NSURL URLWithString:scolaServerURL] URLByAppendingPathComponent:kRESTHandlerScola] URLByAppendingPathComponent:kRESTRouteStatus];
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:statusURL];
+        
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        [ScAppEnv env].serverAvailability = ScServerAvailabilityChecking;
+        NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:request delegate:self];
+        
+        if (!URLConnection) {
+            ScLogError(@"Failed to connect to the server.");
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+            
+            [ScAppEnv env].serverAvailability = ScServerAvailabilityUnavailable;
+            [[NSNotificationCenter defaultCenter] postNotificationName:kServerAvailabilityNotification object:nil];
+        }
+    } else {
+        [ScAppEnv env].serverAvailability = ScServerAvailabilityUnavailable;
+    }
+}
+
 
 - (void)setAuthHeaderUsingIdent:(NSString *)ident andPassword:(NSString *)password
 {
@@ -310,7 +309,9 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
     HTTPStatusCode = response.statusCode;
     
-    [connectionDelegate didReceiveResponse:response];
+    if ([ScAppEnv env].serverAvailability == ScServerAvailabilityAvailable) {
+        [connectionDelegate didReceiveResponse:response];
+    }
 }
 
 
@@ -326,17 +327,36 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    if (HTTPStatusCode == kHTTPStatusCodeOK) {
-        NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData forClass:entityClass];
+    if ([ScAppEnv env].serverAvailability == ScServerAvailabilityAvailable) {
+        if (HTTPStatusCode == kHTTPStatusCodeOK) {
+            NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData forClass:entityClass];
+            
+            [connectionDelegate finishedReceivingData:dataAsDictionary];
+        }
+    } else if ([ScAppEnv env].serverAvailability == ScServerAvailabilityChecking) {
+        NSString *scolaServer = [self scolaServer];
         
-        [connectionDelegate finishedReceivingData:dataAsDictionary];
+        if (HTTPStatusCode == kHTTPStatusCodeOK) {
+            [ScAppEnv env].serverAvailability = ScServerAvailabilityAvailable;
+            ScLogDebug(@"The Scola server at %@ is available.", scolaServer);
+        } else {
+            [ScAppEnv env].serverAvailability = ScServerAvailabilityUnavailable;
+            ScLogWarning(@"The Scola server is unavailable. HTTP status code: %d)", HTTPStatusCode);
+            ScLogDebug(@"The Scola server at %@ is unavailable.", scolaServer);
+        }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:kServerAvailabilityNotification object:nil];
     }
 }
 
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 {
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    [ScAppEnv env].serverAvailability = ScServerAvailabilityUnavailable;
+    
 	ScLogError(@"Connection failed with error: %@, %@", error, [error userInfo]);
+    [[NSNotificationCenter defaultCenter] postNotificationName:kServerAvailabilityNotification object:nil];
 }
 
 

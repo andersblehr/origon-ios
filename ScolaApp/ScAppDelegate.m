@@ -25,6 +25,30 @@
 @synthesize persistentStoreCoordinator;
 
 
+#pragma mark - Reachability changed notification handling
+
+- (void)checkConnectivity:(Reachability *)reachability
+{
+    NetworkStatus internetStatus = [reachability currentReachabilityStatus];
+    
+    if (internetStatus == ReachableViaWiFi) {
+        ScLogInfo(@"Connected to the internet via Wi-Fi.");
+        [ScAppEnv env].isInternetConnectionWiFi = YES;
+    } else if (internetStatus == ReachableViaWWAN) {
+        ScLogInfo(@"Connected to the internet via mobile web (WWAN).");
+        [ScAppEnv env].isInternetConnectionWWAN = YES;
+    } else {
+        ScLogInfo(@"Not connected to the internet.");
+    }
+}
+
+
+- (void)reachabilityChanged:(NSNotification *)notification
+{
+    [self checkConnectivity:(Reachability *)[notification object]];
+}
+
+
 #pragma mark - Core Data accessors
 
 - (NSManagedObjectModel *)managedObjectModel
@@ -73,37 +97,11 @@
 }
 
 
+#pragma mark - Interface implementation
+
 - (NSURL *)applicationDocumentsDirectory
 {
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-}
-
-
-#pragma mark - Reachability
-
-- (void)checkConnectivity:(Reachability *)reachability
-{
-    NetworkStatus internetStatus = [reachability currentReachabilityStatus];
-    
-    if (internetStatus == ReachableViaWiFi) {
-        ScLogInfo(@"Connected to the internet via Wi-Fi.");
-        [ScAppEnv env].isInternetConnectionWiFi = YES;
-    } else if (internetStatus == ReachableViaWWAN) {
-        ScLogInfo(@"Connected to the internet via mobile web (WWAN).");
-        [ScAppEnv env].isInternetConnectionWWAN = YES;
-    } else {
-        ScLogInfo(@"Not connected to the internet.");
-    }
-    
-    if ([ScAppEnv env].isInternetConnectionAvailable && ![ScAppEnv env].isServerAvailable) {
-        [ScAppEnv env].isServerAvailable = [ScServerConnection isServerAvailable];
-    }
-}
-
-
-- (void)reachabilityChanged:(NSNotification *)notification
-{
-    [self checkConnectivity:(Reachability *)[notification object]];
 }
 
 
@@ -111,30 +109,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    NSString *device = [UIDevice currentDevice].model;
-
-    if ([device hasPrefix:@"iPad"]) {
-        [ScAppEnv env].is_iPadDevice = YES;
-    } else if ([device hasPrefix:@"iPhone"]) {
-        [ScAppEnv env].is_iPhoneDevice = YES;
-    } else if ([device hasPrefix:@"iPod"]) {
-        [ScAppEnv env].is_iPodTouchDevice = YES;
-    } else {
-        ScLogError(@"Unknown device: %@.", device);
-    }
-    
-    if ([device rangeOfString:@"Simulator"].location != NSNotFound) {
-        [ScAppEnv env].isSimulatorDevice = YES;
-    }
-
-    NSString *systemLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
-    
-    if (YES) { // TODO: Only do this if app supports system language
-        [ScAppEnv env].displayLanguage = systemLanguage;
-    }
-    
-    ScLogDebug(@"Device is %@.", device);
-    ScLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);
+    ScLogDebug(@"Device is %@.", [ScAppEnv env].deviceType);
+    ScLogDebug(@"Device name is %@.", [ScAppEnv env].deviceName);
     ScLogDebug(@"System name is %@.", [UIDevice currentDevice].systemName);
     ScLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
     ScLogDebug(@"System language is '%@'", [ScAppEnv env].displayLanguage);

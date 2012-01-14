@@ -55,11 +55,11 @@ static int const kPopUpButtonUseNew = 1;
 - (void)genderDidChange
 {
     if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
-        [[ScAppEnv env] setUserInfoObject:kGenderFemale forKey:@"gender"];
+        [[ScAppEnv env].memberInfo setObject:kGenderFemale forKey:@"gender"];
     } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
-        [[ScAppEnv env] setUserInfoObject:kGenderMale forKey:@"gender"];
+        [[ScAppEnv env].memberInfo setObject:kGenderMale forKey:@"gender"];
     } else {
-        [[ScAppEnv env] setUserInfoObject:kGenderNeutral forKey:@"gender"];
+        [[ScAppEnv env].memberInfo setObject:kGenderNeutral forKey:@"gender"];
     }
 }
 
@@ -68,7 +68,7 @@ static int const kPopUpButtonUseNew = 1;
 {
     dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:dateOfBirthPicker.date dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
     
-    [[ScAppEnv env] setUserInfoObject:dateOfBirthPicker.date forKey:@"dateOfBirth"];
+    [[ScAppEnv env].memberInfo setObject:dateOfBirthPicker.date forKey:@"dateOfBirth"];
 }
 
 
@@ -218,9 +218,9 @@ static int const kPopUpButtonUseNew = 1;
 {
     [super viewWillAppear:animated];
     
-    NSString *userInfoDeviceName = [[ScAppEnv env] userInfoObjectForKey:@"deviceName"];
-    NSString *userInfoGender = [[ScAppEnv env] userInfoObjectForKey:@"gender"];
-    NSDate *userInfoDateOfBirth = [[ScAppEnv env] userInfoObjectForKey:@"dateOfBirth"];
+    NSString *userInfoDeviceName = [[ScAppEnv env].memberInfo objectForKey:@"deviceName"];
+    NSString *userInfoGender = [[ScAppEnv env].memberInfo objectForKey:@"gender"];
+    NSDate *userInfoDateOfBirth = [[ScAppEnv env].memberInfo objectForKey:@"dateOfBirth"];
     
     if (userInfoDeviceName) {
         deviceNameField.text = userInfoDeviceName;
@@ -293,7 +293,7 @@ static int const kPopUpButtonUseNew = 1;
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField
 {
-    [[ScAppEnv env] setUserInfoObject:deviceNameField.text forKey:@"deviceName"];
+    [[ScAppEnv env].memberInfo setObject:deviceNameField.text forKey:@"deviceName"];
     
     return YES;
 }
@@ -302,7 +302,7 @@ static int const kPopUpButtonUseNew = 1;
 - (BOOL)textFieldShouldClear:(UITextField *)textField
 {
     [self setDatePickerToFirstOfApril1976];
-    [[ScAppEnv env] removeUserInfoObjectForKey:@"dateOfBirth"];
+    [[ScAppEnv env].memberInfo removeObjectForKey:@"dateOfBirth"];
     
     return YES;
 }
@@ -320,7 +320,7 @@ static int const kPopUpButtonUseNew = 1;
 {
     if (buttonIndex == kPopUpButtonUseBuiltIn) {
         deviceNameField.text = [ScAppEnv env].deviceName;
-        [[ScAppEnv env] setUserInfoObject:deviceNameField.text forKey:@"deviceName"];
+        [[ScAppEnv env].memberInfo setObject:deviceNameField.text forKey:@"deviceName"];
     } else if (buttonIndex == kPopUpButtonUseNew) {
         [deviceNameField becomeFirstResponder];
     }
