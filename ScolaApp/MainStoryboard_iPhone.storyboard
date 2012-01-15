@@ -124,71 +124,12 @@
                         <outlet property="scolaSplashLabel" destination="qJ8-cP-0gZ" id="ydN-WI-ai4"/>
                         <outlet property="showInfoButton" destination="ri0-hK-pKu" id="3yN-XW-0jU"/>
                         <outlet property="userHelpLabel" destination="jNm-pK-L5b" id="4wX-Pj-ooy"/>
-                        <segue destination="6yD-M9-h9x" kind="push" identifier="authToMainView" id="OMb-Ra-mn6"/>
                         <segue destination="Rpw-Zc-nxs" kind="push" identifier="authToAddressView" id="3e8-Bg-zGA"/>
+                        <segue destination="6zV-2C-W4e" kind="push" identifier="authToMainView" id="XQ4-aH-OJr"/>
                     </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="-764" y="679"/>
-        </scene>
-        <scene sceneID="cBP-08-4bW">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dDD-KS-Q0v" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="b3d-Ej-avX" customClass="ScRegisterScolaController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="6eK-dM-PHx">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="rFj-tp-IeQ"/>
-                    <nil key="simulatedTopBarMetrics"/>
-                </viewController>
-            </objects>
-            <point key="canvasLocation" x="1544" y="679"/>
-        </scene>
-        <scene sceneID="UwA-gK-UXe">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="bfj-DR-Fx4" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="6yD-M9-h9x" customClass="ScMainViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="25y-N2-0wT">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="..scola.." textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" id="YEB-ID-EFd">
-                                <rect key="frame" x="79" y="20" width="163" height="56"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="CourierNewPS-BoldMT" family="Courier New" pointSize="30"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <nil key="highlightedColor"/>
-                                <color key="shadowColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                <size key="shadowOffset" width="0.0" height="7"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="Jje-TZ-W4h">
-                                <rect key="frame" x="294" y="430" width="18" height="19"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="showInfo:" destination="6yD-M9-h9x" eventType="touchUpInside" id="1hW-7f-m6b"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <color key="backgroundColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="v87-Ka-Wdk"/>
-                    <nil key="simulatedTopBarMetrics"/>
-                    <connections>
-                        <segue destination="b3d-Ej-avX" kind="push" identifier="createScola" id="Yg2-fs-pUV"/>
-                    </connections>
-                </viewController>
-            </objects>
-            <point key="canvasLocation" x="1077" y="679"/>
         </scene>
         <scene sceneID="ySI-2M-Xwp">
             <objects>
@@ -237,7 +178,6 @@
                         <outlet property="addressLine1Field" destination="QU0-Js-aPV" id="BoZ-35-sCu"/>
                         <outlet property="addressLine2Field" destination="G7z-BZ-jKX" id="siW-uh-ZkV"/>
                         <outlet property="addressUserHelpLabel" destination="9vT-BJ-Yx6" id="TuO-JK-GqS"/>
-                        <outlet property="darkLinenView" destination="nHE-um-hJp" id="Etq-Sw-M4A"/>
                         <outlet property="postCodeAndCityField" destination="sK7-Ud-q7Z" id="gue-v0-gxy"/>
                         <segue destination="Yhl-jH-qjX" kind="push" identifier="addressToDateOfBirthView" id="XTW-Cx-H2f"/>
                     </connections>
@@ -346,11 +286,125 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <outlet property="deviceNameUserHelpLabel" destination="bNR-sb-RCq" id="2dv-h2-Y00"/>
                         <outlet property="genderControl" destination="N5m-rd-YpH" id="6hI-8G-fVC"/>
                         <outlet property="genderUserHelpLabel" destination="vDt-8C-0oe" id="lfH-sq-Xep"/>
-                        <segue destination="6yD-M9-h9x" kind="push" identifier="dateOfBirthToMainView" id="VI2-D2-x6r"/>
+                        <segue destination="6zV-2C-W4e" kind="push" identifier="dateOfBirthToMainView" id="irO-Py-gWN"/>
                     </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="177" y="1139"/>
+        </scene>
+        <scene sceneID="uXo-MS-8t7">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rK3-ud-Tj0" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController id="Obd-WC-JAQ" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="TD0-mZ-lqW">
+                        <rect key="frame" x="0.0" y="20" width="320" height="411"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="dark-linen-640x960.png" id="8BB-d7-4Mk">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="411"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Item" id="dGG-Vw-nIP"/>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="1152" y="1294"/>
+        </scene>
+        <scene sceneID="FF8-Hh-UBk">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1Oo-i8-eWm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController id="EMg-2y-k0H" customClass="ScRegisterScolaController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="BTs-Oz-i0i">
+                        <rect key="frame" x="0.0" y="20" width="320" height="411"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="dark-linen-640x960.png" id="2YG-Je-n7N">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="411"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </imageView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="..scola.." textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" id="pm3-3i-6Gu">
+                                <rect key="frame" x="79" y="198" width="163" height="56"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="CourierNewPS-BoldMT" family="Courier New" pointSize="30"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                                <color key="shadowColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <size key="shadowOffset" width="0.0" height="7"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Item 2" id="l8k-jx-KV2"/>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="1152" y="679"/>
+        </scene>
+        <scene sceneID="SzQ-Uz-J3x">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nIi-HS-de2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController id="9Fa-Np-JO6" customClass="ScMainViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="7KU-WW-5NW">
+                        <rect key="frame" x="0.0" y="20" width="320" height="411"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="dark-linen-640x960.png" id="gAD-gd-OZn">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="411"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </imageView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="..scola.." textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" id="YEB-ID-EFd">
+                                <rect key="frame" x="79" y="15" width="163" height="56"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="CourierNewPS-BoldMT" family="Courier New" pointSize="30"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                                <color key="shadowColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <size key="shadowOffset" width="0.0" height="7"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="Jje-TZ-W4h">
+                                <rect key="frame" x="282" y="372" width="18" height="19"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="showInfo:" destination="9Fa-Np-JO6" eventType="touchUpInside" id="pif-Hq-NaX"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="&lt;strMyScolas>" id="5UB-Ce-2q1"/>
+                </viewController>
+            </objects>
+            <point key="canvasLocation" x="1152" y="70"/>
+        </scene>
+        <scene sceneID="VA0-NY-pMO">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="3dg-w1-80Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tabBarController definesPresentationContext="YES" id="6zV-2C-W4e" sceneMemberID="viewController">
+                    <navigationItem key="navigationItem" id="SpF-bP-02b"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="YN7-ug-lhI">
+                        <rect key="frame" x="129" y="330" width="163" height="49"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="9Fa-Np-JO6" kind="relationship" relationship="viewControllers" id="Z4S-tl-Y4L"/>
+                        <segue destination="EMg-2y-k0H" kind="relationship" relationship="viewControllers" id="mSt-Tf-Nyn"/>
+                        <segue destination="Obd-WC-JAQ" kind="relationship" relationship="viewControllers" id="MDk-Oe-sUD"/>
+                    </connections>
+                </tabBarController>
+            </objects>
+            <point key="canvasLocation" x="656" y="679"/>
         </scene>
         <scene sceneID="drI-5N-FJV">
             <objects>
@@ -380,6 +434,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="VI2-D2-x6r"/>
+        <segue reference="XQ4-aH-OJr"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -32,6 +32,7 @@ extern NSString * const strInvalidNameAlert;
 extern NSString * const strInvalidEmailAlert;
 extern NSString * const strInvalidPasswordAlert;
 extern NSString * const strInvalidScolaShortnameAlert;
+extern NSString * const strEmailAlreadyRegisteredAlert;
 extern NSString * const strPasswordsDoNotMatchAlert;
 extern NSString * const strRegistrationCodesDoNotMatchAlert;
 extern NSString * const strScolaInvitationNotFoundAlert;
@@ -47,13 +48,14 @@ extern NSString * const strUnrealisticAgeAlert;
 // Button titles
 extern NSString * const strOK;
 extern NSString * const strCancel;
+extern NSString * const strLogIn;
+extern NSString * const strNewUser;
 extern NSString * const strHaveAccess;
 extern NSString * const strHaveCode;
 extern NSString * const strLater;
 extern NSString * const strTryAgain;
 extern NSString * const strGoBack;
 extern NSString * const strContinue;
-extern NSString * const strSkipThis;
 extern NSString * const strDone;
 extern NSString * const strNext;
 extern NSString * const strUseConfigured;
@@ -103,7 +105,7 @@ extern NSString * const strDateOfBirthUserHelp;
 extern NSString * const strDateOfBirthPrompt;
 extern NSString * const strDateOfBirthClickHerePrompt;
 
-+ (BOOL)areStringsAvailable;
++ (void)refreshStrings;
 + (NSString *)stringForKey:(NSString *)key;
 
 @end

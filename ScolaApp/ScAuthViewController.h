@@ -14,6 +14,7 @@
 
 typedef enum {
     ScAuthPopUpTagInternalServerError,
+    ScAuthPopUpTagEmailAlreadyRegistered,
     ScAuthPopUpTagEmailSent,
     ScAuthPopUpTagRegistrationCodesDoNotMatch,
     ScAuthPopUpTagPasswordsDoNotMatch,

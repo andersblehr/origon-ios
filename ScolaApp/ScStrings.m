@@ -14,7 +14,6 @@
 
 @implementation ScStrings
 
-static ScStrings *stringsSingleton = nil;
 static NSDictionary *strings = nil;
 
 static NSString * const kStringsPlist = @"strings.plist";
@@ -42,6 +41,7 @@ NSString * const strInvalidNameAlert                 = @"strInvalidNameAlert";
 NSString * const strInvalidEmailAlert                = @"strInvalidEmailAlert";
 NSString * const strInvalidPasswordAlert             = @"strInvalidPasswordAlert";
 NSString * const strInvalidScolaShortnameAlert       = @"strInvalidScolaShortnameAlert";
+NSString * const strEmailAlreadyRegisteredAlert      = @"strEmailAlreadyRegisteredAlert";
 NSString * const strPasswordsDoNotMatchAlert         = @"strPasswordsDoNotMatchAlert";
 NSString * const strRegistrationCodesDoNotMatchAlert = @"strRegistrationCodesDoNotMatchAlert";
 NSString * const strScolaInvitationNotFoundAlert     = @"strScolaInvitationNotFoundAlert";
@@ -57,6 +57,8 @@ NSString * const strUnrealisticAgeAlert              = @"strUnrealisticAgeAlert"
 // Button titles
 NSString * const strOK                               = @"strOK";
 NSString * const strCancel                           = @"strCancel";
+NSString * const strLogIn                            = @"strLogIn";
+NSString * const strNewUser                          = @"strNewUser";
 NSString * const strHaveAccess                       = @"strHaveAccess";
 NSString * const strHaveCode                         = @"strHaveCode";
 NSString * const strLater                            = @"strLater";
@@ -114,7 +116,7 @@ NSString * const strDateOfBirthPrompt                = @"strDateOfBirthPrompt";
 NSString * const strDateOfBirthClickHerePrompt       = @"strDateOfBirthClickHerePrompt";
 
 
-#pragma mark - Private methods
+#pragma mark - Internal methods
 
 + (NSString *)fullPathToStringsPlist
 {
@@ -125,54 +127,36 @@ NSString * const strDateOfBirthClickHerePrompt       = @"strDateOfBirthClickHere
 }
 
 
-#pragma mark - Singleton instance handling
-
-+ (id)allocWithZone:(NSZone *)zone
++ (void)fetchStringsFromServer
 {
-    if (!stringsSingleton) {
-        stringsSingleton = [[super allocWithZone:nil] init];
-    }
+    NSDictionary *stringsFromServer =
+        [[[ScServerConnection alloc] initForStrings] getRemoteClass:@"ScStrings"];
     
-    return stringsSingleton;
+    if (stringsFromServer) {
+        strings = stringsFromServer;
+        [strings writeToFile:[self fullPathToStringsPlist] atomically:YES];
+    } else {
+        ScLogError(@"Could not fetch strings from server, reverting to cached strings.");
+    }
 }
 
 
-- (id)copyWithZone:(NSZone *)zone
+#pragma mark - Interface implementation
+
++ (void)refreshStrings
 {
-    return self;
-}
-
-
-- (id)init
-{
-    return [super init];
-}
-
-
-#pragma mark - String lookup
-
-+ (BOOL)areStringsAvailable
-{
-    if (!stringsSingleton) {
-        stringsSingleton = [[super allocWithZone:nil] init];
-        
-        NSString *pathToPersistedStrings = [self fullPathToStringsPlist];
-        strings = [NSDictionary dictionaryWithContentsOfFile:pathToPersistedStrings];
-        
-        BOOL shouldGetStringsFromServer =
-            [ScAppEnv env].isServerAvailable &&
+    if ([ScAppEnv env].isServerAvailable) {
+        BOOL shouldFetchStringsFromServer =
             (!strings || [ScAppEnv env].isInternetConnectionWiFi); // TODO: Only if req'd
         
-        if (shouldGetStringsFromServer) {
-            ScLogVerbose(@"Getting strings from server...");
-            strings = [[[ScServerConnection alloc] initForStrings] getRemoteClass:@"ScStrings"];
+        if (shouldFetchStringsFromServer) {
+            NSThread *fetchStringsThread = [[NSThread alloc] initWithTarget:self selector:@selector(fetchStringsFromServer) object:nil];
             
-            ScLogVerbose(@"Persisting strings to plist %@.", pathToPersistedStrings);
-            [strings writeToFile:pathToPersistedStrings atomically:YES];
+            [fetchStringsThread start];
         }
+    } else {
+        ScLogBreakage(@"Attempt to refresh strings when server is not available.");
     }
-    
-    return (strings != nil);
 }
 
 
@@ -180,14 +164,18 @@ NSString * const strDateOfBirthClickHerePrompt       = @"strDateOfBirthClickHere
 {
     NSString *string = nil;
     
-    if ([self areStringsAvailable]) {
+    if (!strings) {
+        strings = [NSDictionary dictionaryWithContentsOfFile:[self fullPathToStringsPlist]];
+    }
+    
+    if (strings) {
         string = [strings objectForKey:key];
         
         if (!string) {
             ScLogBreakage(@"No string with key '%@'.", key);
         }
     } else {
-        ScLogBreakage(@"Attempt to retrieve string when no strings are available.");
+        ScLogBreakage(@"Failed to instantiate strings from plist.");
     }
     
     return string;

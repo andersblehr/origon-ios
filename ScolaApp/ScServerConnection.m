@@ -21,8 +21,8 @@
 
 @implementation ScServerConnection
 
-//static NSString * const kScolaDevServer = @"localhost:8888";
-static NSString * const kScolaDevServer = @"enceladus.local:8888";
+static NSString * const kScolaDevServer = @"localhost:8888";
+//static NSString * const kScolaDevServer = @"enceladus.local:8888";
 //static NSString * const kScolaDevServer = @"ganymede.local:8888";
 static NSString * const kScolaProdServer = @"scolaapp.appspot.com";
 
@@ -327,13 +327,13 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    if ([ScAppEnv env].serverAvailability == ScServerAvailabilityAvailable) {
+    if ([ScAppEnv env].serverAvailability != ScServerAvailabilityChecking) {
         if (HTTPStatusCode == kHTTPStatusCodeOK) {
             NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData forClass:entityClass];
             
             [connectionDelegate finishedReceivingData:dataAsDictionary];
         }
-    } else if ([ScAppEnv env].serverAvailability == ScServerAvailabilityChecking) {
+    } else {
         NSString *scolaServer = [self scolaServer];
         
         if (HTTPStatusCode == kHTTPStatusCodeOK) {
