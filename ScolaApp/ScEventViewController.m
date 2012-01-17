@@ -6,12 +6,12 @@
 //  Copyright (c) 2011 Rhelba Software. All rights reserved.
 //
 
-#import "ScRegisterScolaController.h"
+#import "ScEventViewController.h"
 
 #import "ScStrings.h"
 
 
-@implementation ScRegisterScolaController
+@implementation ScEventViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -33,8 +33,6 @@
 {
     [super viewDidLoad];
     
-    [self navigationController].navigationBar.barStyle = UIBarStyleBlack;
-    [self navigationController].navigationBarHidden = NO;
 }
 
 

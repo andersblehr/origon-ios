@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ScRegisterScolaController : UIViewController
+@interface ScEventViewController : UIViewController
 
 @end
