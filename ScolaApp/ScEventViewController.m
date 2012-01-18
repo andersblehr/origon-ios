@@ -13,11 +13,8 @@
 
 @implementation ScEventViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    return [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-}
 
+#pragma mark - View lifecycle
 
 - (void)didReceiveMemoryWarning
 {
@@ -27,12 +24,12 @@
 }
 
 
-#pragma mark - View lifecycle
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBarHidden = NO;
 }
 
 

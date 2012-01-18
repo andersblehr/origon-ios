@@ -71,15 +71,15 @@
 
 #pragma mark - IBAction implementation
 
+- (IBAction)segueToScola:(id)sender
+{
+    [self performSegueWithIdentifier:@"mainToScolaView" sender:self];
+}
+
+
 - (IBAction)showInfo:(id)sender
 {
-    // TODO: Using this to log out for now, keep in mind to fix later
-    ScLogDebug(@"Logging out...");
-    
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    [userDefaults removeObjectForKey:@"scola.auth.id"];
-    [userDefaults removeObjectForKey:@"scola.auth.token"];
-    [userDefaults removeObjectForKey:@"scola.auth.expires"];
+    [self performSegueWithIdentifier:@"mainToScolaView" sender:self];
 }
 
 @end

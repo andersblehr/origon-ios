@@ -59,6 +59,8 @@
 		5C62A00514C627AB001DA01F /* 11-clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00314C627AB001DA01F /* 11-clock.png */; };
 		5C62A00614C627AB001DA01F /* 11-clock@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00414C627AB001DA01F /* 11-clock@2x.png */; };
 		5C62A00914C627D1001DA01F /* ScScheduleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C62A00814C627D1001DA01F /* ScScheduleViewController.m */; };
+		5C62A00E14C762D7001DA01F /* 53-house.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00C14C762D6001DA01F /* 53-house.png */; };
+		5C62A00F14C762D7001DA01F /* 53-house@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00D14C762D7001DA01F /* 53-house@2x.png */; };
 		5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE011482877D001D90C6 /* Localizable.strings */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C88078F1484392B00ED5416 /* ScAddressViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C88078E1484392A00ED5416 /* ScAddressViewController.m */; };
@@ -188,6 +190,8 @@
 		5C62A00414C627AB001DA01F /* 11-clock@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "11-clock@2x.png"; sourceTree = "<group>"; };
 		5C62A00714C627D1001DA01F /* ScScheduleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduleViewController.h; sourceTree = "<group>"; };
 		5C62A00814C627D1001DA01F /* ScScheduleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduleViewController.m; sourceTree = "<group>"; };
+		5C62A00C14C762D6001DA01F /* 53-house.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "53-house.png"; sourceTree = "<group>"; };
+		5C62A00D14C762D7001DA01F /* 53-house@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "53-house@2x.png"; sourceTree = "<group>"; };
 		5C71DE001482877D001D90C6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE03148287DE001D90C6 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
@@ -261,6 +265,8 @@
 				5C629FF214C62133001DA01F /* 08-chat@2x.png */,
 				5C62A00314C627AB001DA01F /* 11-clock.png */,
 				5C62A00414C627AB001DA01F /* 11-clock@2x.png */,
+				5C62A00C14C762D6001DA01F /* 53-house.png */,
+				5C62A00D14C762D7001DA01F /* 53-house@2x.png */,
 				5C629FE914C61F98001DA01F /* 83-calendar.png */,
 				5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */,
 				5C3A319214C4D967001A783E /* 112-group.png */,
@@ -594,6 +600,8 @@
 				5C629FFC14C62481001DA01F /* 258-checkmark@2x.png in Resources */,
 				5C62A00514C627AB001DA01F /* 11-clock.png in Resources */,
 				5C62A00614C627AB001DA01F /* 11-clock@2x.png in Resources */,
+				5C62A00E14C762D7001DA01F /* 53-house.png in Resources */,
+				5C62A00F14C762D7001DA01F /* 53-house@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

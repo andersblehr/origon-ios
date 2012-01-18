@@ -10,6 +10,7 @@
 
 @interface ScMainViewController : UIViewController
 
+- (IBAction)segueToScola:(id)sender;
 - (IBAction)showInfo:(id)sender;
 
 @end
