@@ -47,6 +47,7 @@
 		5C4F97751496AE36006E244F /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F97741496AE34006E244F /* ScScola.m */; };
 		5C4F97781496AE3B006E244F /* ScPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F97771496AE3A006E244F /* ScPerson.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */; };
+		5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C50581714CA1D05000D6587 /* QuartzCore.framework */; };
 		5C629FEB14C61F98001DA01F /* 83-calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FE914C61F98001DA01F /* 83-calendar.png */; };
 		5C629FEC14C61F98001DA01F /* 83-calendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */; };
 		5C629FF014C62038001DA01F /* ScScolaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C629FEF14C62038001DA01F /* ScScolaViewController.m */; };
@@ -174,6 +175,7 @@
 		5C4F97771496AE3A006E244F /* ScPerson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScPerson.m; sourceTree = "<group>"; };
 		5C4F97791496AF88006E244F /* NSURL+ScURLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ScURLExtensions.h"; sourceTree = "<group>"; };
 		5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ScURLExtensions.m"; sourceTree = "<group>"; };
+		5C50581714CA1D05000D6587 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		5C629FE914C61F98001DA01F /* 83-calendar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar.png"; sourceTree = "<group>"; };
 		5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar@2x.png"; sourceTree = "<group>"; };
 		5C629FEE14C62038001DA01F /* ScScolaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaViewController.h; sourceTree = "<group>"; };
@@ -236,6 +238,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */,
 				5C36BE9914704E6800DD3CEA /* CoreData.framework in Frameworks */,
 				5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */,
 				5CCF08BE1463F12A00D41AB0 /* AVFoundation.framework in Frameworks */,
@@ -444,6 +447,7 @@
 		5CBB63B7146080DF00A9133A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5C50581714CA1D05000D6587 /* QuartzCore.framework */,
 				5C36BE9814704E6800DD3CEA /* CoreData.framework */,
 				5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */,
 				5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */,

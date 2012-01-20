@@ -10,6 +10,8 @@
 
 @interface ScMainViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
+
 - (IBAction)segueToScola:(id)sender;
 - (IBAction)showInfo:(id)sender;
 

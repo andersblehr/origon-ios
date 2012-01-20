@@ -6,6 +6,8 @@
 //  Copyright (c) 2011 Rhelba Software. All rights reserved.
 //
 
+#import <QuartzCore/QuartzCore.h>
+
 #import "ScMainViewController.h"
 
 #import "ScLogging.h"
@@ -13,6 +15,9 @@
 
 
 @implementation ScMainViewController
+
+@synthesize darkLinenView;
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -34,8 +39,26 @@
 {
     [super viewDidLoad];
     
-    [self navigationController].navigationBar.barStyle = UIBarStyleBlack;
-    //[self navigationItem].title = [ScStrings stringForKey:strNewScola];
+    CGFloat boundsHeight = self.view.bounds.size.height;
+    CGFloat boundsWidth = self.view.bounds.size.width;
+    
+    CGRect bannerFrame = CGRectMake(0, boundsHeight/2, boundsWidth, boundsHeight/20);
+    CGRect shadowFrame = CGRectMake(0, boundsHeight/2 + boundsHeight/20, boundsWidth, boundsHeight/40);
+    
+    UIView *bannerView = [[UIView alloc] initWithFrame:bannerFrame];
+    
+    bannerView.backgroundColor = [UIColor whiteColor];
+    bannerView.alpha = 0.3;
+    
+    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    gradientLayer.frame = shadowFrame;
+    gradientLayer.colors = [NSArray arrayWithObjects:
+                            (id)[UIColor blackColor].CGColor,
+                            (id)[UIColor clearColor].CGColor,
+                            nil];
+
+    [darkLinenView.layer addSublayer:gradientLayer];
+    [darkLinenView addSubview:bannerView];
 }
 
 

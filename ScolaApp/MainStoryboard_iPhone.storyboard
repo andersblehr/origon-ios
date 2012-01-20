@@ -483,6 +483,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     <navigationItem key="navigationItem" id="2TD-LP-teE"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
+                        <outlet property="darkLinenView" destination="gAD-gd-OZn" id="z9c-D0-RlL"/>
                         <segue destination="6zV-2C-W4e" kind="push" identifier="mainToScolaView" id="12U-9T-575"/>
                     </connections>
                 </viewController>
