@@ -8,6 +8,8 @@
 
 #import "ScDateOfBirthViewController.h"
 
+#import "UIView+ScShadowEffects.h"
+
 #import "ScAppEnv.h"
 #import "ScLogging.h"
 #import "ScStrings.h"
@@ -32,6 +34,7 @@ static int const kPopUpButtonUseNew = 1;
 
 @implementation ScDateOfBirthViewController
 
+@synthesize darkLinenView;
 @synthesize deviceNameUserHelpLabel;
 @synthesize deviceNameField;
 @synthesize genderUserHelpLabel;
@@ -180,6 +183,8 @@ static int const kPopUpButtonUseNew = 1;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [darkLinenView addGradientLayer];
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;

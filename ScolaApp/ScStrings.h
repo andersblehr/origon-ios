@@ -105,6 +105,10 @@ extern NSString * const strDateOfBirthUserHelp;
 extern NSString * const strDateOfBirthPrompt;
 extern NSString * const strDateOfBirthClickHerePrompt;
 
+// Main view
+extern NSString * const strMyPlaceSingle;
+extern NSString * const strMyPlaceLiveIns;
+
 + (void)refreshStrings;
 + (NSString *)stringForKey:(NSString *)key;
 

@@ -1,5 +1,5 @@
 //
-//  ScRootScolaController.m
+//  ScMainViewController.m
 //  ScolaApp
 //
 //  Created by Anders Blehr on 29.11.11.
@@ -10,8 +10,15 @@
 
 #import "ScMainViewController.h"
 
+#import "UIView+ScShadowEffects.h"
+
 #import "ScLogging.h"
 #import "ScStrings.h"
+
+
+static CGFloat const kHeadingViewAlpha = 0.2f;
+static CGFloat const kIconButtonAlpha = 0.7f;
+static CGFloat const kHeadingLabelFontSize = 13;
 
 
 @implementation ScMainViewController
@@ -19,11 +26,70 @@
 @synthesize darkLinenView;
 
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+#pragma mark - Auxiliary methods
+
+- (void)addIcons:(NSArray *)icons forSection:(int)section withHeading:(NSString *)heading
 {
-    return [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    CGFloat headerHeight = 60/460.f * boundsHeight;
+    CGFloat headingHeight = 22/460.f * boundsHeight;
+    CGFloat iconGridLineHeight = 100/460.f * boundsHeight;
+    
+    CGFloat yOffset =
+        headerHeight + section * headingHeight + iconRows * iconGridLineHeight;
+    
+    CGFloat headingOriginY = yOffset;
+    CGRect headingFrame = CGRectMake(0, headingOriginY, boundsWidth, headingHeight);
+    
+    UIView *headingView = [[UIView alloc] initWithFrame:headingFrame];
+    headingView.backgroundColor = [UIColor whiteColor];
+    headingView.alpha = kHeadingViewAlpha;
+    [headingView addShadow];
+    
+    CGFloat headingLabelMargin = boundsWidth / 16.f;
+    CGFloat headingLabelWidth = boundsWidth - 2 * headingLabelMargin;
+    CGRect headingLabelFrame = CGRectMake(headingLabelMargin, headingOriginY, headingLabelWidth, headingHeight);
+    
+    UILabel *headingLabel = [[UILabel alloc] initWithFrame:headingLabelFrame];
+    headingLabel.backgroundColor = [UIColor clearColor];
+    headingLabel.textColor = [UIColor whiteColor];
+    headingLabel.shadowColor = [UIColor blackColor];
+    headingLabel.shadowOffset = CGSizeMake(0.f, 2.f);
+    headingLabel.font = [UIFont systemFontOfSize:kHeadingLabelFontSize];
+    headingLabel.text = heading;
+    
+    int iconGridLines = 1 + [icons count] % 3;
+    CGFloat iconGridOriginY = headingOriginY + headingHeight;
+    CGFloat iconGridHeight = iconGridLineHeight * iconGridLines;
+    CGRect iconGridFrame = CGRectMake(0, iconGridOriginY, boundsWidth, iconGridHeight);
+    
+    UIView *iconGridView = [[UIView alloc] initWithFrame:iconGridFrame];
+    iconGridView.backgroundColor = [UIColor clearColor];
+    
+    int iconCount = [icons count];
+    
+    for (int i = 0; i < iconCount; i++) {
+        CGFloat iconWidth = 40/320.f * boundsWidth;
+        CGFloat iconHeight = 40/460.f * boundsHeight;
+        CGFloat iconOriginX = (50 + i * 90)/320.f * boundsWidth;
+        CGFloat iconOriginY = iconGridOriginY + 20/460.f * boundsHeight;
+        CGRect iconFrame = CGRectMake(iconOriginX, iconOriginY, iconWidth, iconHeight);
+        
+        UIButton *iconButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        iconButton.frame = iconFrame;
+        iconButton.backgroundColor = [UIColor clearColor];
+        [iconButton setImage:[icons objectAtIndex:i] forState:UIControlStateNormal];
+        iconButton.alpha = kIconButtonAlpha;
+        
+        [iconGridView addSubview:iconButton];
+    }
+    
+    [darkLinenView addSubview:headingView];
+    [darkLinenView addSubview:headingLabel];
+    [darkLinenView addSubview:iconGridView];
 }
 
+
+#pragma mark - View lifecycle
 
 - (void)didReceiveMemoryWarning
 {
@@ -33,31 +99,29 @@
 }
 
 
-#pragma mark - View lifecycle
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    CGFloat boundsHeight = self.view.bounds.size.height;
-    CGFloat boundsWidth = self.view.bounds.size.width;
+    [darkLinenView addGradientLayer];
+
+    boundsWidth = darkLinenView.bounds.size.width;
+    boundsHeight = darkLinenView.bounds.size.height;
+    
+    NSString *householdHeading = [ScStrings stringForKey:strMyPlaceLiveIns];
+    UIImage *householdIcon = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"53-house@2x.png" ofType:nil]];
+    NSArray *iconArray = [NSArray arrayWithObject:householdIcon];
+
+    [self addIcons:iconArray forSection:0 withHeading:householdHeading];
     
     CGRect bannerFrame = CGRectMake(0, boundsHeight/2, boundsWidth, boundsHeight/20);
-    CGRect shadowFrame = CGRectMake(0, boundsHeight/2 + boundsHeight/20, boundsWidth, boundsHeight/40);
-    
     UIView *bannerView = [[UIView alloc] initWithFrame:bannerFrame];
-    
+    bannerView.layer.frame = bannerFrame;
     bannerView.backgroundColor = [UIColor whiteColor];
-    bannerView.alpha = 0.3;
-    
-    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-    gradientLayer.frame = shadowFrame;
-    gradientLayer.colors = [NSArray arrayWithObjects:
-                            (id)[UIColor blackColor].CGColor,
-                            (id)[UIColor clearColor].CGColor,
-                            nil];
+    bannerView.alpha = 0.2;
 
-    [darkLinenView.layer addSublayer:gradientLayer];
+    [bannerView addShadow];
+    
     [darkLinenView addSubview:bannerView];
 }
 

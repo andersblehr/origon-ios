@@ -178,6 +178,7 @@
                         <outlet property="addressLine1Field" destination="QU0-Js-aPV" id="BoZ-35-sCu"/>
                         <outlet property="addressLine2Field" destination="G7z-BZ-jKX" id="siW-uh-ZkV"/>
                         <outlet property="addressUserHelpLabel" destination="9vT-BJ-Yx6" id="TuO-JK-GqS"/>
+                        <outlet property="darkLinenView" destination="nHE-um-hJp" id="tYI-DX-RBe"/>
                         <outlet property="postCodeAndCityField" destination="sK7-Ud-q7Z" id="gue-v0-gxy"/>
                         <segue destination="Yhl-jH-qjX" kind="push" identifier="addressToDateOfBirthView" id="XTW-Cx-H2f"/>
                     </connections>
@@ -279,6 +280,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     </view>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
                     <connections>
+                        <outlet property="darkLinenView" destination="Psb-rA-lNL" id="5ex-Rw-DiO"/>
                         <outlet property="dateOfBirthField" destination="CT0-jU-d2Z" id="9J0-ck-zlW"/>
                         <outlet property="dateOfBirthPicker" destination="grl-BL-94K" id="n55-oz-eaz"/>
                         <outlet property="dateOfBirthUserHelpLabel" destination="9aR-9F-AMw" id="5Zh-pN-uf9"/>
@@ -431,29 +433,8 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                     <action selector="showInfo:" destination="9Fa-Np-JO6" eventType="touchUpInside" id="pif-Hq-NaX"/>
                                 </connections>
                             </button>
-                            <view contentMode="scaleToFill" id="n8s-0X-pbe">
-                                <rect key="frame" x="0.0" y="59" width="320" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Hjemme hos meg" lineBreakMode="tailTruncation" minimumFontSize="10" id="741-20-fVf">
-                                        <rect key="frame" x="20" y="0.0" width="280" height="21"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                        <color key="shadowColor" cocoaTouchSystemColor="darkTextColor"/>
-                                        <size key="shadowOffset" width="0.0" height="2"/>
-                                    </label>
-                                </subviews>
-                                <color key="backgroundColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
-                            </view>
-                            <view alpha="0.99999999999999989" contentMode="scaleToFill" id="6pz-Hm-cs2">
-                                <rect key="frame" x="0.0" y="177" width="320" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
-                            </view>
                             <button opaque="NO" alpha="0.70000000000000007" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" id="vCW-IK-6HX">
-                                <rect key="frame" x="55" y="101" width="40" height="37"/>
+                                <rect key="frame" x="83" y="315" width="40" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" image="53-house@2x.png">
@@ -468,7 +449,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                 </connections>
                             </button>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Heggesnaret 1 D" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" id="0OX-JA-fhH">
-                                <rect key="frame" x="20" y="146" width="110" height="15"/>
+                                <rect key="frame" x="48" y="364" width="110" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -480,8 +461,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="&lt;strMyScolas>" image="112-group.png" id="5UB-Ce-2q1"/>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" id="2TD-LP-teE"/>
                     <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="darkLinenView" destination="gAD-gd-OZn" id="z9c-D0-RlL"/>
                         <segue destination="6zV-2C-W4e" kind="push" identifier="mainToScolaView" id="12U-9T-575"/>
@@ -547,6 +530,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="FHF-lx-n1T"/>
+        <segue reference="t3w-Gq-L9a"/>
     </inferredMetricsTieBreakers>
 </document>

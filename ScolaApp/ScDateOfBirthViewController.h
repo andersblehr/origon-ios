@@ -11,6 +11,7 @@
 
 @interface ScDateOfBirthViewController : UIViewController <UITextFieldDelegate>
 
+@property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *deviceNameUserHelpLabel;
 @property (weak, nonatomic) IBOutlet UITextField *deviceNameField;
 @property (weak, nonatomic) IBOutlet UILabel *genderUserHelpLabel;

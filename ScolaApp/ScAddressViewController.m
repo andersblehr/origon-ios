@@ -8,6 +8,8 @@
 
 #import "ScAddressViewController.h"
 
+#import "UIView+ScShadowEffects.h"
+
 #import "ScAppEnv.h"
 #import "ScLogging.h"
 #import "ScStrings.h"
@@ -17,6 +19,7 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
 
 @implementation ScAddressViewController
 
+@synthesize darkLinenView;
 @synthesize addressUserHelpLabel;
 @synthesize addressLine1Field;
 @synthesize addressLine2Field;
@@ -62,13 +65,15 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
 {
     [super viewDidLoad];
     
+    [darkLinenView addGradientLayer];
+    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strNext] style:UIBarButtonItemStyleDone target:self action:@selector(isDoneEditing)];
+    UIBarButtonItem *nextButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strNext] style:UIBarButtonItemStyleDone target:self action:@selector(isDoneEditing)];
     
     self.navigationItem.hidesBackButton = YES;
-    self.navigationItem.rightBarButtonItem = doneButton;
+    self.navigationItem.rightBarButtonItem = nextButton;
     
     addressLine1Field.delegate = self;
     addressLine2Field.delegate = self;

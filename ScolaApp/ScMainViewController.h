@@ -1,5 +1,5 @@
 //
-//  ScRootScolaController.h
+//  ScMainViewController.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 29.11.11.
@@ -8,7 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ScMainViewController : UIViewController
+@interface ScMainViewController : UIViewController {
+    CGFloat boundsWidth;
+    CGFloat boundsHeight;
+    
+    int iconRows;
+}
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 

@@ -115,6 +115,10 @@ NSString * const strDateOfBirthUserHelp              = @"strDateOfBirthUserHelp"
 NSString * const strDateOfBirthPrompt                = @"strDateOfBirthPrompt";
 NSString * const strDateOfBirthClickHerePrompt       = @"strDateOfBirthClickHerePrompt";
 
+// Main view
+NSString * const strMyPlaceSingle                    = @"strMyPlaceSingle";
+NSString * const strMyPlaceLiveIns                   = @"strMyPlaceLiveIns";
+
 
 #pragma mark - Internal methods
 

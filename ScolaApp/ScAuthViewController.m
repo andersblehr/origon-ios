@@ -9,6 +9,7 @@
 #import "ScAuthViewController.h"
 
 #import "NSString+ScStringExtensions.h"
+#import "UIView+ScShadowEffects.h"
 
 #import "ScAppDelegate.h"
 #import "ScAppEnv.h"
@@ -663,6 +664,7 @@ static int const kPopUpButtonTryAgain = 1;
             [serverConnection checkServerAvailability];
         }
         
+        [darkLinenView addGradientLayer];
         [darkLinenView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignCurrentFirstResponder)]];
         
         //[self setUpTypewriterAudioForSplashSequence]; // TODO: Comment back in!
