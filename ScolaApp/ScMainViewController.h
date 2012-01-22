@@ -9,13 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @interface ScMainViewController : UIViewController {
-    CGFloat boundsWidth;
-    CGFloat boundsHeight;
-    
-    int iconRows;
+    NSMutableArray *iconSections;
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
+
+- (void)handlePanGesture:(UIPanGestureRecognizer *)sender;
 
 - (IBAction)segueToScola:(id)sender;
 - (IBAction)showInfo:(id)sender;

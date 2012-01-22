@@ -12,7 +12,9 @@
 
 #import "UIView+ScShadowEffects.h"
 
+#import "ScAppEnv.h"
 #import "ScLogging.h"
+#import "ScMainViewIconSection.h"
 #import "ScStrings.h"
 
 
@@ -24,69 +26,6 @@ static CGFloat const kHeadingLabelFontSize = 13;
 @implementation ScMainViewController
 
 @synthesize darkLinenView;
-
-
-#pragma mark - Auxiliary methods
-
-- (void)addIcons:(NSArray *)icons forSection:(int)section withHeading:(NSString *)heading
-{
-    CGFloat headerHeight = 60/460.f * boundsHeight;
-    CGFloat headingHeight = 22/460.f * boundsHeight;
-    CGFloat iconGridLineHeight = 100/460.f * boundsHeight;
-    
-    CGFloat yOffset =
-        headerHeight + section * headingHeight + iconRows * iconGridLineHeight;
-    
-    CGFloat headingOriginY = yOffset;
-    CGRect headingFrame = CGRectMake(0, headingOriginY, boundsWidth, headingHeight);
-    
-    UIView *headingView = [[UIView alloc] initWithFrame:headingFrame];
-    headingView.backgroundColor = [UIColor whiteColor];
-    headingView.alpha = kHeadingViewAlpha;
-    [headingView addShadow];
-    
-    CGFloat headingLabelMargin = boundsWidth / 16.f;
-    CGFloat headingLabelWidth = boundsWidth - 2 * headingLabelMargin;
-    CGRect headingLabelFrame = CGRectMake(headingLabelMargin, headingOriginY, headingLabelWidth, headingHeight);
-    
-    UILabel *headingLabel = [[UILabel alloc] initWithFrame:headingLabelFrame];
-    headingLabel.backgroundColor = [UIColor clearColor];
-    headingLabel.textColor = [UIColor whiteColor];
-    headingLabel.shadowColor = [UIColor blackColor];
-    headingLabel.shadowOffset = CGSizeMake(0.f, 2.f);
-    headingLabel.font = [UIFont systemFontOfSize:kHeadingLabelFontSize];
-    headingLabel.text = heading;
-    
-    int iconGridLines = 1 + [icons count] % 3;
-    CGFloat iconGridOriginY = headingOriginY + headingHeight;
-    CGFloat iconGridHeight = iconGridLineHeight * iconGridLines;
-    CGRect iconGridFrame = CGRectMake(0, iconGridOriginY, boundsWidth, iconGridHeight);
-    
-    UIView *iconGridView = [[UIView alloc] initWithFrame:iconGridFrame];
-    iconGridView.backgroundColor = [UIColor clearColor];
-    
-    int iconCount = [icons count];
-    
-    for (int i = 0; i < iconCount; i++) {
-        CGFloat iconWidth = 40/320.f * boundsWidth;
-        CGFloat iconHeight = 40/460.f * boundsHeight;
-        CGFloat iconOriginX = (50 + i * 90)/320.f * boundsWidth;
-        CGFloat iconOriginY = iconGridOriginY + 20/460.f * boundsHeight;
-        CGRect iconFrame = CGRectMake(iconOriginX, iconOriginY, iconWidth, iconHeight);
-        
-        UIButton *iconButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        iconButton.frame = iconFrame;
-        iconButton.backgroundColor = [UIColor clearColor];
-        [iconButton setImage:[icons objectAtIndex:i] forState:UIControlStateNormal];
-        iconButton.alpha = kIconButtonAlpha;
-        
-        [iconGridView addSubview:iconButton];
-    }
-    
-    [darkLinenView addSubview:headingView];
-    [darkLinenView addSubview:headingLabel];
-    [darkLinenView addSubview:iconGridView];
-}
 
 
 #pragma mark - View lifecycle
@@ -105,24 +44,27 @@ static CGFloat const kHeadingLabelFontSize = 13;
     
     [darkLinenView addGradientLayer];
 
-    boundsWidth = darkLinenView.bounds.size.width;
-    boundsHeight = darkLinenView.bounds.size.height;
+    ScMainViewIconSection *householdSection = [[ScMainViewIconSection alloc] initForViewController:self withPrecedingSection:nil];
     
-    NSString *householdHeading = [ScStrings stringForKey:strMyPlaceLiveIns];
-    UIImage *householdIcon = [UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"53-house@2x.png" ofType:nil]];
-    NSArray *iconArray = [NSArray arrayWithObject:householdIcon];
-
-    [self addIcons:iconArray forSection:0 withHeading:householdHeading];
+    UIImage *icon1 = [UIImage imageNamed:@"53-house@2x.png"];
+    UIImage *icon2 = [UIImage imageNamed:@"glyphicons_006_user_add_white@2x.png"];
+    UIImage *icon3 = [UIImage imageNamed:@"glyphicons_192_circle_remove_white@2x.png"];
     
-    CGRect bannerFrame = CGRectMake(0, boundsHeight/2, boundsWidth, boundsHeight/20);
-    UIView *bannerView = [[UIView alloc] initWithFrame:bannerFrame];
-    bannerView.layer.frame = bannerFrame;
-    bannerView.backgroundColor = [UIColor whiteColor];
-    bannerView.alpha = 0.2;
-
-    [bannerView addShadow];
+    householdSection.sectionHeading = [ScStrings stringForKey:strMyPlaceLiveIns];
+    [householdSection addIconButtonWithIcon:icon1 andCaption:@"Heggesnaret 1 D"];
+    [householdSection addIconButtonWithIcon:icon2 andCaption:@"Add co-habitants"];
+    [householdSection addIconButtonWithIcon:icon3 andCaption:@"Hide this"];
     
-    [darkLinenView addSubview:bannerView];
+    ScMainViewIconSection *otherScolasSection = [[ScMainViewIconSection alloc] initForViewController:self withPrecedingSection:householdSection];
+    
+    UIImage *icon4 = [UIImage imageNamed:@"glyphicons_190_circle_plus_white@2x.png"];
+    
+    otherScolasSection.sectionHeading = @"Other scolas";
+    [otherScolasSection addIconButtonWithIcon:icon4 andCaption:@"Add scola"];
+    
+    iconSections = [[NSMutableArray alloc] init];
+    [iconSections insertObject:householdSection atIndex:0];
+    [iconSections insertObject:otherScolasSection atIndex:1];
 }
 
 
@@ -153,6 +95,23 @@ static CGFloat const kHeadingLabelFontSize = 13;
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+
+#pragma mark - Gesture handling
+
+- (void)handlePanGesture:(UIPanGestureRecognizer *)sender
+{
+    UIView *pannedHeadingView = sender.view;
+    UIView *sectionViewToPan;
+    
+    for (ScMainViewIconSection *iconSection in iconSections) {
+        if (iconSection.headingView == pannedHeadingView) {
+            sectionViewToPan = iconSection.sectionView;
+            ScLogDebug(@"Panning icon section %d...", iconSection.sectionNumber);
+            break;
+        }
+    }
 }
 
 

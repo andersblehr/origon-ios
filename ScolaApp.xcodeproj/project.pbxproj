@@ -9,6 +9,13 @@
 /* Begin PBXBuildFile section */
 		5C0D278F14AC75E400756A24 /* ScScolaMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D278E14AC75E400756A24 /* ScScolaMember.m */; };
 		5C0D279314AC75E500756A24 /* ScDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D279214AC75E500756A24 /* ScDevice.m */; };
+		5C153EEF14CC668F003A6B61 /* glyphicons_006_user_add_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EED14CC668F003A6B61 /* glyphicons_006_user_add_white.png */; };
+		5C153EF014CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EEE14CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png */; };
+		5C153EF314CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF114CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png */; };
+		5C153EF414CC68B9003A6B61 /* glyphicons_192_circle_remove_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF214CC68B9003A6B61 /* glyphicons_192_circle_remove_white@2x.png */; };
+		5C153EF714CC68D3003A6B61 /* glyphicons_190_circle_plus_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF514CC68D3003A6B61 /* glyphicons_190_circle_plus_white.png */; };
+		5C153EF814CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF614CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png */; };
+		5C153EFB14CC9815003A6B61 /* ScMainViewIconSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C153EFA14CC9815003A6B61 /* ScMainViewIconSection.m */; };
 		5C17435B14ABA3DC006B859B /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5C17435A14ABA3DC006B859B /* Settings.bundle */; };
 		5C23431214812A3100164478 /* ScStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* ScStrings.m */; };
 		5C2343161481544A00164478 /* ScJSONUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2343151481544A00164478 /* ScJSONUtil.m */; };
@@ -104,6 +111,14 @@
 		5C0D278E14AC75E400756A24 /* ScScolaMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMember.m; sourceTree = "<group>"; };
 		5C0D279114AC75E500756A24 /* ScDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDevice.h; sourceTree = "<group>"; };
 		5C0D279214AC75E500756A24 /* ScDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDevice.m; sourceTree = "<group>"; };
+		5C153EED14CC668F003A6B61 /* glyphicons_006_user_add_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_006_user_add_white.png; sourceTree = "<group>"; };
+		5C153EEE14CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_006_user_add_white@2x.png"; sourceTree = "<group>"; };
+		5C153EF114CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_192_circle_remove_white.png; sourceTree = "<group>"; };
+		5C153EF214CC68B9003A6B61 /* glyphicons_192_circle_remove_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_192_circle_remove_white@2x.png"; sourceTree = "<group>"; };
+		5C153EF514CC68D3003A6B61 /* glyphicons_190_circle_plus_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_190_circle_plus_white.png; sourceTree = "<group>"; };
+		5C153EF614CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_190_circle_plus_white@2x.png"; sourceTree = "<group>"; };
+		5C153EF914CC9815003A6B61 /* ScMainViewIconSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMainViewIconSection.h; sourceTree = "<group>"; };
+		5C153EFA14CC9815003A6B61 /* ScMainViewIconSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMainViewIconSection.m; sourceTree = "<group>"; };
 		5C17435A14ABA3DC006B859B /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* ScStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScStrings.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* ScStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScStrings.m; sourceTree = "<group>"; };
@@ -264,6 +279,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5C153EE114CC3672003A6B61 /* Auxiliary Classes */ = {
+			isa = PBXGroup;
+			children = (
+				5C153EF914CC9815003A6B61 /* ScMainViewIconSection.h */,
+				5C153EFA14CC9815003A6B61 /* ScMainViewIconSection.m */,
+			);
+			name = "Auxiliary Classes";
+			sourceTree = "<group>";
+		};
 		5C276E7A1475B9A800A6C500 /* Media */ = {
 			isa = PBXGroup;
 			children = (
@@ -280,6 +304,12 @@
 				5C629FF914C62481001DA01F /* 258-checkmark.png */,
 				5C629FFA14C62481001DA01F /* 258-checkmark@2x.png */,
 				5C3A319514C61378001A783E /* dark_linen-640x960.png */,
+				5C153EED14CC668F003A6B61 /* glyphicons_006_user_add_white.png */,
+				5C153EEE14CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png */,
+				5C153EF514CC68D3003A6B61 /* glyphicons_190_circle_plus_white.png */,
+				5C153EF614CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png */,
+				5C153EF114CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png */,
+				5C153EF214CC68B9003A6B61 /* glyphicons_192_circle_remove_white@2x.png */,
 				5CCF08C314644E0800D41AB0 /* typewriter.caf */,
 			);
 			name = Media;
@@ -471,6 +501,7 @@
 				5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */,
 				5CBB63C7146080DF00A9133A /* ScAppDelegate.h */,
 				5CBB63C8146080DF00A9133A /* ScAppDelegate.m */,
+				5C153EE114CC3672003A6B61 /* Auxiliary Classes */,
 				5C4F9766149529BF006E244F /* Categories & Extensions */,
 				5C36BEA51471A05700DD3CEA /* Model */,
 				5CB49DCD14881E98006EA2F8 /* Protocols */,
@@ -611,6 +642,12 @@
 				5C62A00614C627AB001DA01F /* 11-clock@2x.png in Resources */,
 				5C62A00E14C762D7001DA01F /* 53-house.png in Resources */,
 				5C62A00F14C762D7001DA01F /* 53-house@2x.png in Resources */,
+				5C153EEF14CC668F003A6B61 /* glyphicons_006_user_add_white.png in Resources */,
+				5C153EF014CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png in Resources */,
+				5C153EF314CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png in Resources */,
+				5C153EF414CC68B9003A6B61 /* glyphicons_192_circle_remove_white@2x.png in Resources */,
+				5C153EF714CC68D3003A6B61 /* glyphicons_190_circle_plus_white.png in Resources */,
+				5C153EF814CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -694,6 +731,7 @@
 				5C62A00214C6252C001DA01F /* ScTaskViewController.m in Sources */,
 				5C62A00914C627D1001DA01F /* ScScheduleViewController.m in Sources */,
 				5C50581C14CAEC76000D6587 /* UIView+ScShadowEffects.m in Sources */,
+				5C153EFB14CC9815003A6B61 /* ScMainViewIconSection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
