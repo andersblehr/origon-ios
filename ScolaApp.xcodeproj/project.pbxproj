@@ -279,15 +279,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5C153EE114CC3672003A6B61 /* Auxiliary Classes */ = {
-			isa = PBXGroup;
-			children = (
-				5C153EF914CC9815003A6B61 /* ScMainViewIconSection.h */,
-				5C153EFA14CC9815003A6B61 /* ScMainViewIconSection.m */,
-			);
-			name = "Auxiliary Classes";
-			sourceTree = "<group>";
-		};
 		5C276E7A1475B9A800A6C500 /* Media */ = {
 			isa = PBXGroup;
 			children = (
@@ -436,7 +427,7 @@
 			name = "View Controllers";
 			sourceTree = "<group>";
 		};
-		5CB49DD014881F36006EA2F8 /* Utils */ = {
+		5CB49DD014881F36006EA2F8 /* Auxiliary Classes */ = {
 			isa = PBXGroup;
 			children = (
 				5C36BE88146E9DA100DD3CEA /* ScAppEnv.h */,
@@ -444,12 +435,14 @@
 				5C2343141481544A00164478 /* ScJSONUtil.h */,
 				5C2343151481544A00164478 /* ScJSONUtil.m */,
 				5CCF09051466A0CB00D41AB0 /* ScLogging.h */,
+				5C153EF914CC9815003A6B61 /* ScMainViewIconSection.h */,
+				5C153EFA14CC9815003A6B61 /* ScMainViewIconSection.m */,
 				5C2E11121469CDE5005BDE61 /* ScServerConnection.h */,
 				5C2E11131469CDE5005BDE61 /* ScServerConnection.m */,
 				5C23431014812A3000164478 /* ScStrings.h */,
 				5C23431114812A3000164478 /* ScStrings.m */,
 			);
-			name = Utils;
+			name = "Auxiliary Classes";
 			sourceTree = "<group>";
 		};
 		5CB49DD114882012006EA2F8 /* Third Party */ = {
@@ -501,11 +494,10 @@
 				5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */,
 				5CBB63C7146080DF00A9133A /* ScAppDelegate.h */,
 				5CBB63C8146080DF00A9133A /* ScAppDelegate.m */,
-				5C153EE114CC3672003A6B61 /* Auxiliary Classes */,
+				5CB49DD014881F36006EA2F8 /* Auxiliary Classes */,
 				5C4F9766149529BF006E244F /* Categories & Extensions */,
 				5C36BEA51471A05700DD3CEA /* Model */,
 				5CB49DCD14881E98006EA2F8 /* Protocols */,
-				5CB49DD014881F36006EA2F8 /* Utils */,
 				5CB49DCE14881EC6006EA2F8 /* View Controllers */,
 				5CBB63BF146080DF00A9133A /* Supporting Files */,
 				5CB49DD114882012006EA2F8 /* Third Party */,

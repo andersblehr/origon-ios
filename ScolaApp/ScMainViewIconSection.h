@@ -19,19 +19,26 @@
     CGFloat headingHeight;
     CGFloat iconGridLineHeight;
     
+    CGFloat fullHeight;
+    CGFloat actualHeight;
+    
     int numberOfIcons;
     int numberOfGridLines;
 }
+
+@property (nonatomic, readonly) int sectionNumber;
+@property (strong, nonatomic) NSString *sectionHeading;
 
 @property (strong, readonly) UIView *sectionView;
 @property (strong, readonly) UIView *headingView;
 @property (strong, readonly) UILabel *headingLabel;
 
-@property (nonatomic, readonly) int sectionNumber;
-@property (strong, nonatomic) NSString *sectionHeading;
-
 - (id)initForViewController:(UIViewController *)viewController withPrecedingSection:(ScMainViewIconSection *)section;
 - (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption;
 - (int)numberOfKnownGridLines;
+
+- (CGFloat)permissiblePan:(CGFloat)requestedPan;
+
+- (void)pan:(CGPoint)translation;
 
 @end

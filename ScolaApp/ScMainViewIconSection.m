@@ -21,15 +21,15 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 @implementation ScMainViewIconSection
 
+@synthesize sectionNumber;
+@synthesize sectionHeading;
+
 @synthesize sectionView;
 @synthesize headingView;
 @synthesize headingLabel;
 
-@synthesize sectionNumber;
-@synthesize sectionHeading;
 
-
-#pragma mark - Auxiliary methods
+#pragma mark - Auxiliary methods: Initialisation
 
 - (void)createSectionView
 {
@@ -40,13 +40,16 @@ static CGFloat const kCaptionLabelFontSize = 11;
             numberOfPrecedingGridLines = [precedingSection numberOfKnownGridLines];
         }
         
-        CGFloat sectionHeight = headingHeight + iconGridLineHeight;
+        fullHeight = headingHeight + iconGridLineHeight;
+        actualHeight = fullHeight;
+        
         CGFloat sectionOriginY =
             headerHeight + self.sectionNumber * headingHeight + numberOfPrecedingGridLines * iconGridLineHeight;
-        CGRect sectionFrame = CGRectMake(0, sectionOriginY, screenWidth, sectionHeight);
+        CGRect sectionFrame = CGRectMake(0, sectionOriginY, screenWidth, fullHeight);
         
         sectionView = [[UIView alloc] initWithFrame:sectionFrame];
         sectionView.backgroundColor = [UIColor clearColor];
+        sectionView.clipsToBounds = YES;
         
         [mainViewController.view addSubview:sectionView];
     } else {
@@ -63,6 +66,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         headingView = [[UIView alloc] initWithFrame:headingFrame];
         headingView.backgroundColor = [UIColor whiteColor];
         headingView.alpha = kHeadingViewAlpha;
+        headingView.tag = sectionNumber;
         [headingView addShadow];
         [headingView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:mainViewController action:@selector(handlePanGesture:)]];
         
@@ -94,7 +98,37 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-#pragma mark - Initialisation
+#pragma mark - Auxiliary methods: Panning
+
+- (void)moveFrame:(CGFloat)delta
+{
+    if (precedingSection) {
+        CGRect oldSectionFrame = sectionView.frame;
+        CGRect newSectionFrame = CGRectMake(oldSectionFrame.origin.x,
+                                            oldSectionFrame.origin.y + delta,
+                                            oldSectionFrame.size.width, 
+                                            oldSectionFrame.size.height);
+        
+        sectionView.frame = newSectionFrame;
+    }
+}
+
+
+- (void)adjustFrame:(CGFloat)delta
+{
+    actualHeight += delta;
+    
+    CGRect oldSectionFrame = sectionView.frame;
+    CGRect newSectionFrame = CGRectMake(oldSectionFrame.origin.x,
+                                        oldSectionFrame.origin.y,
+                                        oldSectionFrame.size.width, 
+                                        oldSectionFrame.size.height + delta);
+    
+    sectionView.frame = newSectionFrame;
+}
+
+
+#pragma mark - Interface implementation: Initialisation
 
 - (id)initForViewController:(UIViewController *)viewController withPrecedingSection:(ScMainViewIconSection *)section
 {
@@ -103,6 +137,8 @@ static CGFloat const kCaptionLabelFontSize = 11;
     if (self) {
         mainViewController = viewController;
         precedingSection = section;
+        
+        sectionNumber = (precedingSection) ? precedingSection.sectionNumber + 1 : 0;
         
         screenWidth = [ScAppEnv env].screenWidth;
         screenHeight = [ScAppEnv env].screenHeight;
@@ -123,8 +159,6 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-#pragma mark - Interface implementation
-
 - (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption
 {
     numberOfIcons++;
@@ -135,11 +169,14 @@ static CGFloat const kCaptionLabelFontSize = 11;
     if (1 + yOffset > numberOfGridLines) {
         numberOfGridLines++;
         
+        fullHeight += iconGridLineHeight;
+        actualHeight = fullHeight;
+        
         CGRect oldSectionFrame = sectionView.frame;
         CGRect newSectionFrame = CGRectMake(oldSectionFrame.origin.x,
                                             oldSectionFrame.origin.y,
                                             oldSectionFrame.size.width,
-                                            oldSectionFrame.size.height + iconGridLineHeight);
+                                            fullHeight);
         
         sectionView.frame = newSectionFrame;
     }
@@ -181,25 +218,86 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 - (int)numberOfKnownGridLines
 {
-    int knownGridLines;
+    int knownGridLines = numberOfGridLines;
     
     if (precedingSection) {
-        knownGridLines = numberOfGridLines + [precedingSection numberOfKnownGridLines];
-    } else {
-        knownGridLines = numberOfGridLines;
+        knownGridLines += [precedingSection numberOfKnownGridLines];
     }
     
     return knownGridLines;
 }
 
 
-#pragma mark - Accessors
+#pragma mark - Interface implementation: Panning
 
-- (int)sectionNumber
+- (CGFloat)permissiblePan:(CGFloat)requestedPan
 {
-    return (precedingSection) ? precedingSection.sectionNumber + 1 : 0;
+    CGFloat minimumHeight = headingHeight + 2/460.f * screenHeight;
+    CGFloat hiddenPixels = fullHeight - actualHeight;
+    CGFloat localPan = 0;
+    CGFloat permissiblePan = 0;
+    
+    if (requestedPan > 0) {
+        if (requestedPan <= hiddenPixels) {
+            permissiblePan = requestedPan;
+        } else if (hiddenPixels > 0) {
+            if (precedingSection) {
+                localPan = hiddenPixels;
+                
+                CGFloat restPan = requestedPan - localPan;
+                permissiblePan = hiddenPixels + [precedingSection permissiblePan:restPan];
+            } else {
+                permissiblePan = hiddenPixels;
+            }
+        }
+    } else if (requestedPan < 0) {
+        requestedPan = -requestedPan;
+        
+        if (actualHeight - requestedPan > minimumHeight) {
+            permissiblePan = requestedPan;
+        } else if (actualHeight >= minimumHeight) {
+            if (precedingSection) {
+                localPan = actualHeight - minimumHeight;
+                CGFloat restPan = requestedPan - localPan;
+                permissiblePan = localPan + -[precedingSection permissiblePan:-restPan];
+            } else {
+                permissiblePan = actualHeight - minimumHeight;
+            }
+        }
+        
+        localPan = -localPan;
+        permissiblePan = -permissiblePan;
+    }
+    
+    if (localPan != 0) {
+        [self adjustFrame:localPan];
+        [self moveFrame:(permissiblePan - localPan)];
+    } else if (permissiblePan != 0) {
+        if (actualHeight == minimumHeight) {
+            if (permissiblePan > 0) {
+                [self adjustFrame:permissiblePan];
+            } else {
+                [self moveFrame:permissiblePan];
+            }
+        } else {
+            [self adjustFrame:permissiblePan];
+        }
+    }
+    
+    return permissiblePan;
 }
 
+
+- (void)pan:(CGPoint)translation
+{
+    if (precedingSection) {
+        CGFloat pan = [precedingSection permissiblePan:translation.y];
+        [self moveFrame:pan];
+    }
+}
+
+
+#pragma mark - Accessors
 
 - (void)setSectionHeading:(NSString *)heading
 {

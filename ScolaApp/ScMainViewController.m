@@ -62,9 +62,16 @@ static CGFloat const kHeadingLabelFontSize = 13;
     otherScolasSection.sectionHeading = @"Other scolas";
     [otherScolasSection addButtonWithIcon:icon4 andCaption:@"Add scola"];
     
+    ScMainViewIconSection *moreIcons = [[ScMainViewIconSection alloc] initForViewController:self withPrecedingSection:otherScolasSection];
+    
+    moreIcons.sectionHeading = @"More icons";
+    [moreIcons addButtonWithIcon:icon1 andCaption:@"Heggesnaret 1 D"];
+    [moreIcons addButtonWithIcon:icon2 andCaption:@"Add co-habitants"];
+    
     iconSections = [[NSMutableArray alloc] init];
     [iconSections insertObject:householdSection atIndex:0];
     [iconSections insertObject:otherScolasSection atIndex:1];
+    [iconSections insertObject:moreIcons atIndex:2];
 }
 
 
@@ -102,16 +109,13 @@ static CGFloat const kHeadingLabelFontSize = 13;
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)sender
 {
-    UIView *pannedHeadingView = sender.view;
-    UIView *sectionViewToPan;
+    int sectionNumber = sender.view.tag;
+    ScMainViewIconSection *pannedSection = [iconSections objectAtIndex:sectionNumber];
     
-    for (ScMainViewIconSection *iconSection in iconSections) {
-        if (iconSection.headingView == pannedHeadingView) {
-            sectionViewToPan = iconSection.sectionView;
-            ScLogDebug(@"Panning icon section %d...", iconSection.sectionNumber);
-            break;
-        }
-    }
+    CGPoint translation = [sender translationInView:pannedSection.headingView];
+    [sender setTranslation:CGPointZero inView:pannedSection.headingView];
+    
+    [pannedSection pan:translation];
 }
 
 
