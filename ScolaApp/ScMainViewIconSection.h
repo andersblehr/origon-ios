@@ -10,9 +10,7 @@
 
 @interface ScMainViewIconSection : NSObject {
     UIViewController *mainViewController;
-    
     ScMainViewIconSection *precedingSection;
-    int sectionNumber;
     
     CGFloat screenWidth;
     CGFloat screenHeight;
@@ -33,7 +31,7 @@
 @property (strong, nonatomic) NSString *sectionHeading;
 
 - (id)initForViewController:(UIViewController *)viewController withPrecedingSection:(ScMainViewIconSection *)section;
-- (void)addIconButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption;
+- (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption;
 - (int)numberOfKnownGridLines;
 
 @end

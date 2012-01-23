@@ -125,10 +125,27 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 #pragma mark - Interface implementation
 
-- (void)addIconButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption
+- (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption
 {
-    CGFloat iconOriginX = (40 + numberOfIcons * 100)/320.f * screenWidth;
-    CGFloat iconOriginY = headingHeight + 20/100.f * iconGridLineHeight;
+    numberOfIcons++;
+    
+    int xOffset = (numberOfIcons - 1) % 3;
+    int yOffset = (numberOfIcons - 1) / 3;
+    
+    if (1 + yOffset > numberOfGridLines) {
+        numberOfGridLines++;
+        
+        CGRect oldSectionFrame = sectionView.frame;
+        CGRect newSectionFrame = CGRectMake(oldSectionFrame.origin.x,
+                                            oldSectionFrame.origin.y,
+                                            oldSectionFrame.size.width,
+                                            oldSectionFrame.size.height + iconGridLineHeight);
+        
+        sectionView.frame = newSectionFrame;
+    }
+    
+    CGFloat iconOriginX = (40 + xOffset * 100)/320.f * screenWidth;
+    CGFloat iconOriginY = headingHeight + (yOffset + 20/100.f) * iconGridLineHeight;
     CGFloat iconWidth = 40/320.f * screenWidth;
     CGFloat iconHeight = 40/460.f * screenHeight;
     CGRect iconFrame = CGRectMake(iconOriginX, iconOriginY, iconWidth, iconHeight);
@@ -142,9 +159,9 @@ static CGFloat const kCaptionLabelFontSize = 11;
     iconButton.showsTouchWhenHighlighted = YES;
     [iconButton addTarget:mainViewController action:@selector(segueToScola:) forControlEvents:UIControlEventTouchUpInside];
     
-    CGFloat captionOriginX = (20 + numberOfIcons * 100)/320.f * screenWidth;
+    CGFloat captionOriginX = (15 + xOffset * 100)/320.f * screenWidth;
     CGFloat captionOriginY = iconOriginY + iconHeight + 5/460.f * screenHeight;
-    CGFloat captionWidth = 80/320.f * screenWidth;
+    CGFloat captionWidth = 90/320.f * screenWidth;
     CGFloat captionHeight = 18/320.f * screenHeight;
     CGRect captionFrame = CGRectMake(captionOriginX, captionOriginY, captionWidth, captionHeight);
     
@@ -159,26 +176,20 @@ static CGFloat const kCaptionLabelFontSize = 11;
     
     [sectionView addSubview:iconButton];
     [sectionView addSubview:captionLabel];
-    
-    numberOfIcons++;
-    
-    if (1 + (numberOfIcons - 1) / 3 > numberOfGridLines) {
-        numberOfGridLines++;
-        
-        CGRect oldSectionFrame = sectionView.frame;
-        CGRect newSectionFrame = CGRectMake(oldSectionFrame.origin.x,
-                                            oldSectionFrame.origin.y,
-                                            oldSectionFrame.size.width,
-                                            oldSectionFrame.size.height + iconGridLineHeight);
-        
-        sectionView.frame = newSectionFrame; // TODO: Scaling out view is not working yet
-    }
 }
 
 
 - (int)numberOfKnownGridLines
 {
-    return numberOfGridLines + [precedingSection numberOfKnownGridLines];
+    int knownGridLines;
+    
+    if (precedingSection) {
+        knownGridLines = numberOfGridLines + [precedingSection numberOfKnownGridLines];
+    } else {
+        knownGridLines = numberOfGridLines;
+    }
+    
+    return knownGridLines;
 }
 
 
@@ -186,13 +197,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 - (int)sectionNumber
 {
-    int sectionIndex = 0;
-    
-    if (precedingSection) {
-        sectionIndex = precedingSection.sectionNumber + 1;
-    }
-    
-    return sectionIndex;
+    return (precedingSection) ? precedingSection.sectionNumber + 1 : 0;
 }
 
 

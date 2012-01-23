@@ -49,18 +49,18 @@ static CGFloat const kHeadingLabelFontSize = 13;
     UIImage *icon1 = [UIImage imageNamed:@"53-house@2x.png"];
     UIImage *icon2 = [UIImage imageNamed:@"glyphicons_006_user_add_white@2x.png"];
     UIImage *icon3 = [UIImage imageNamed:@"glyphicons_192_circle_remove_white@2x.png"];
+    UIImage *icon4 = [UIImage imageNamed:@"glyphicons_190_circle_plus_white@2x.png"];
     
     householdSection.sectionHeading = [ScStrings stringForKey:strMyPlaceLiveIns];
-    [householdSection addIconButtonWithIcon:icon1 andCaption:@"Heggesnaret 1 D"];
-    [householdSection addIconButtonWithIcon:icon2 andCaption:@"Add co-habitants"];
-    [householdSection addIconButtonWithIcon:icon3 andCaption:@"Hide this"];
+    [householdSection addButtonWithIcon:icon1 andCaption:@"Heggesnaret 1 D"];
+    [householdSection addButtonWithIcon:icon2 andCaption:@"Add co-habitants"];
+    [householdSection addButtonWithIcon:icon3 andCaption:@"Hide this"];
+    //[householdSection addButtonWithIcon:icon4 andCaption:@"Add scola"];
     
     ScMainViewIconSection *otherScolasSection = [[ScMainViewIconSection alloc] initForViewController:self withPrecedingSection:householdSection];
     
-    UIImage *icon4 = [UIImage imageNamed:@"glyphicons_190_circle_plus_white@2x.png"];
-    
     otherScolasSection.sectionHeading = @"Other scolas";
-    [otherScolasSection addIconButtonWithIcon:icon4 andCaption:@"Add scola"];
+    [otherScolasSection addButtonWithIcon:icon4 andCaption:@"Add scola"];
     
     iconSections = [[NSMutableArray alloc] init];
     [iconSections insertObject:householdSection atIndex:0];
