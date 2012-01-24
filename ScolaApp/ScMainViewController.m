@@ -68,10 +68,17 @@ static CGFloat const kHeadingLabelFontSize = 13;
     [moreIcons addButtonWithIcon:icon1 andCaption:@"Heggesnaret 1 D"];
     [moreIcons addButtonWithIcon:icon2 andCaption:@"Add co-habitants"];
     
+    ScMainViewIconSection *evenMoreIcons = [[ScMainViewIconSection alloc] initForViewController:self withPrecedingSection:moreIcons];
+    
+    evenMoreIcons.sectionHeading = @"Even more icons";
+    [evenMoreIcons addButtonWithIcon:icon3 andCaption:@"Hide this"];
+    [evenMoreIcons addButtonWithIcon:icon4 andCaption:@"Add scola"];
+    
     iconSections = [[NSMutableArray alloc] init];
     [iconSections insertObject:householdSection atIndex:0];
     [iconSections insertObject:otherScolasSection atIndex:1];
     [iconSections insertObject:moreIcons atIndex:2];
+    [iconSections insertObject:evenMoreIcons atIndex:3];
 }
 
 

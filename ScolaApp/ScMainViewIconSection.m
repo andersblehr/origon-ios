@@ -42,12 +42,14 @@ static CGFloat const kCaptionLabelFontSize = 11;
             numberOfPrecedingGridLines = [precedingSection numberOfKnownGridLines];
         }
         
+        CGFloat screenWidth = 320 * widthScaleFactor;
+        
         fullHeight = headingHeight + iconGridLineHeight;
         actualHeight = fullHeight;
         
-        CGFloat screenWidth = 320 * widthScaleFactor;
-        CGFloat sectionOriginY = headerHeight + self.sectionNumber * headingHeight + numberOfPrecedingGridLines * iconGridLineHeight;
-        CGRect sectionFrame = CGRectMake(0, sectionOriginY, screenWidth, fullHeight);
+        sectionOriginY = headerHeight + self.sectionNumber * headingHeight + numberOfPrecedingGridLines * iconGridLineHeight;
+        
+        CGRect sectionFrame = CGRectMake(0, sectionOriginY, screenWidth, actualHeight);
         
         sectionView = [[UIView alloc] initWithFrame:sectionFrame];
         sectionView.backgroundColor = [UIColor clearColor];
@@ -104,31 +106,25 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 #pragma mark - Auxiliary methods: Panning
 
-- (void)moveFrame:(CGFloat)delta
+- (void)moveFrame:(CGFloat)pan
 {
-    if (precedingSection) {
-        CGRect oldSectionFrame = sectionView.frame;
-        CGRect newSectionFrame = CGRectMake(oldSectionFrame.origin.x,
-                                            oldSectionFrame.origin.y + delta,
-                                            oldSectionFrame.size.width, 
-                                            oldSectionFrame.size.height);
-        
-        sectionView.frame = newSectionFrame;
-    }
+    sectionOriginY += pan;
+    sectionView.frame = CGRectMake(0, sectionOriginY, 320 * widthScaleFactor, actualHeight);
 }
 
 
 - (void)adjustFrame:(CGFloat)delta
 {
     actualHeight += delta;
-    
-    CGRect oldSectionFrame = sectionView.frame;
-    CGRect newSectionFrame = CGRectMake(oldSectionFrame.origin.x,
-                                        oldSectionFrame.origin.y,
-                                        oldSectionFrame.size.width, 
-                                        oldSectionFrame.size.height + delta);
-    
-    sectionView.frame = newSectionFrame;
+    sectionView.frame = CGRectMake(0, sectionOriginY, 320 * widthScaleFactor, actualHeight);
+}
+
+
+- (void)moveFrame:(CGFloat)pan withAdjustment:(CGFloat)delta
+{
+    sectionOriginY += pan;
+    actualHeight += delta;
+    sectionView.frame = CGRectMake(0, sectionOriginY, 320 * widthScaleFactor, actualHeight);
 }
 
 
@@ -176,17 +172,10 @@ static CGFloat const kCaptionLabelFontSize = 11;
     
     if (1 + yOffset > numberOfGridLines) {
         numberOfGridLines++;
-        
         fullHeight += iconGridLineHeight;
         actualHeight = fullHeight;
         
-        CGRect oldSectionFrame = sectionView.frame;
-        CGRect newSectionFrame = CGRectMake(oldSectionFrame.origin.x,
-                                            oldSectionFrame.origin.y,
-                                            oldSectionFrame.size.width,
-                                            fullHeight);
-        
-        sectionView.frame = newSectionFrame;
+        sectionView.frame = CGRectMake(0, sectionOriginY, 320 * widthScaleFactor, fullHeight);
     }
     
     CGFloat iconOriginX = (40 + xOffset * 100) * widthScaleFactor;
@@ -251,9 +240,9 @@ static CGFloat const kCaptionLabelFontSize = 11;
         } else if (hiddenPixels > 0) {
             if (precedingSection) {
                 localPan = hiddenPixels;
-                
                 CGFloat restPan = requestedPan - localPan;
-                permissiblePan = hiddenPixels + [precedingSection permissiblePan:restPan];
+                
+                permissiblePan = localPan + [precedingSection permissiblePan:restPan];
             } else {
                 permissiblePan = hiddenPixels;
             }
@@ -261,28 +250,22 @@ static CGFloat const kCaptionLabelFontSize = 11;
             permissiblePan = [precedingSection permissiblePan:requestedPan];
         }
     } else if (requestedPan < 0) {
-        requestedPan = -requestedPan;
-        
-        if (actualHeight - requestedPan > minimumHeight) {
+        if (actualHeight - abs(requestedPan) > minimumHeight) {
             permissiblePan = requestedPan;
         } else if (actualHeight >= minimumHeight) {
             if (precedingSection) {
-                localPan = actualHeight - minimumHeight;
-                
+                localPan = -(actualHeight - minimumHeight);
                 CGFloat restPan = requestedPan - localPan;
-                permissiblePan = localPan + -[precedingSection permissiblePan:-restPan];
+                
+                permissiblePan = localPan + [precedingSection permissiblePan:restPan];
             } else {
-                permissiblePan = actualHeight - minimumHeight;
+                permissiblePan = -(actualHeight - minimumHeight);
             }
         }
-        
-        localPan = -localPan;
-        permissiblePan = -permissiblePan;
     }
     
     if (localPan != 0) {
-        [self adjustFrame:localPan];
-        [self moveFrame:(permissiblePan - localPan)];
+        [self moveFrame:(permissiblePan - localPan) withAdjustment:localPan];
     } else if (permissiblePan != 0) {
         if (actualHeight == minimumHeight) {
             if (permissiblePan > 0) {
@@ -323,8 +306,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
             localPan = actualHeight - minimumHeight;
             transitivePan = pan - localPan;
             
-            [self adjustFrame:-localPan];
-            [self moveFrame:transitivePan];
+            [self moveFrame:transitivePan withAdjustment:-localPan];
         } else if (actualHeight == minimumHeight) {
             transitivePan = pan;
             
@@ -332,14 +314,12 @@ static CGFloat const kCaptionLabelFontSize = 11;
         }
     } else if (pan < 0) {
         if (abs(pan) <= hiddenPixels) {
-            [self adjustFrame:-pan];
-            [self moveFrame:pan];
+            [self moveFrame:pan withAdjustment:-pan];
         } else if (hiddenPixels > 0) {
             localPan = hiddenPixels;
             transitivePan = -(abs(pan) - localPan);
-            
-            [self adjustFrame:localPan];
-            [self moveFrame:transitivePan];
+
+            [self moveFrame:transitivePan withAdjustment:localPan];
         } else {
             transitivePan = pan;
             

@@ -18,12 +18,13 @@
     CGFloat widthScaleFactor;
     CGFloat heightScaleFactor;
     
+    CGFloat fullHeight;
+    CGFloat actualHeight;
+    CGFloat sectionOriginY;
+    
     CGFloat headerHeight;
     CGFloat headingHeight;
     CGFloat iconGridLineHeight;
-    
-    CGFloat fullHeight;
-    CGFloat actualHeight;
     
     int numberOfIcons;
     int numberOfGridLines;
