@@ -15,9 +15,6 @@
 
 NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 
-@synthesize screenWidth;
-@synthesize screenHeight;
-
 @synthesize deviceType;
 @synthesize deviceName;
 @synthesize deviceUUID;
@@ -62,9 +59,6 @@ static ScAppEnv *env = nil;
     self = [super init];
     
     if (self) {
-        screenWidth = [UIScreen mainScreen].applicationFrame.size.width;
-        screenHeight = [UIScreen mainScreen].applicationFrame.size.height;
-        
         deviceType = [UIDevice currentDevice].model;
         deviceName = [UIDevice currentDevice].name;
         

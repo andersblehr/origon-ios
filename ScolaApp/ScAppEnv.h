@@ -15,9 +15,6 @@
 
 extern NSString * const kBundleID;
 
-@property (nonatomic) CGFloat screenWidth;
-@property (nonatomic) CGFloat screenHeight;
-
 @property (strong, readonly) NSString *deviceType;
 @property (strong, readonly) NSString *deviceName;
 @property (strong, readonly) NSString *deviceUUID;

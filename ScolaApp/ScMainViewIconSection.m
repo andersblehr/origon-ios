@@ -28,6 +28,8 @@ static CGFloat const kCaptionLabelFontSize = 11;
 @synthesize headingView;
 @synthesize headingLabel;
 
+@synthesize followingSection;
+
 
 #pragma mark - Auxiliary methods: Initialisation
 
@@ -43,8 +45,8 @@ static CGFloat const kCaptionLabelFontSize = 11;
         fullHeight = headingHeight + iconGridLineHeight;
         actualHeight = fullHeight;
         
-        CGFloat sectionOriginY =
-            headerHeight + self.sectionNumber * headingHeight + numberOfPrecedingGridLines * iconGridLineHeight;
+        CGFloat screenWidth = 320 * widthScaleFactor;
+        CGFloat sectionOriginY = headerHeight + self.sectionNumber * headingHeight + numberOfPrecedingGridLines * iconGridLineHeight;
         CGRect sectionFrame = CGRectMake(0, sectionOriginY, screenWidth, fullHeight);
         
         sectionView = [[UIView alloc] initWithFrame:sectionFrame];
@@ -61,6 +63,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 - (void)createHeadingView
 {
     if (sectionView) {
+        CGFloat screenWidth = 320 * widthScaleFactor;
         CGRect headingFrame = CGRectMake(0, 0, screenWidth, headingHeight);
         
         headingView = [[UIView alloc] initWithFrame:headingFrame];
@@ -80,6 +83,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 - (void)createHeadingLabel
 {
     if (sectionView) {
+        CGFloat screenWidth = 320 * widthScaleFactor;
         CGFloat headingLabelMargin = screenWidth / 16.f;
         CGFloat headingLabelWidth = screenWidth - 2 * headingLabelMargin;
         CGRect headingLabelFrame = CGRectMake(headingLabelMargin, 0, headingLabelWidth, headingHeight);
@@ -130,22 +134,26 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 #pragma mark - Interface implementation: Initialisation
 
-- (id)initForViewController:(UIViewController *)viewController withPrecedingSection:(ScMainViewIconSection *)section
+- (id)initForViewController:(UIViewController *)viewController withPrecedingSection:(ScMainViewIconSection *)previousSection
 {
     self = [super init];
     
     if (self) {
         mainViewController = viewController;
-        precedingSection = section;
+        precedingSection = previousSection;
+        
+        if (precedingSection) {
+            precedingSection.followingSection = self;
+        }
         
         sectionNumber = (precedingSection) ? precedingSection.sectionNumber + 1 : 0;
         
-        screenWidth = [ScAppEnv env].screenWidth;
-        screenHeight = [ScAppEnv env].screenHeight;
+        widthScaleFactor = [UIScreen mainScreen].applicationFrame.size.width / 320;
+        heightScaleFactor = [UIScreen mainScreen].applicationFrame.size.height / 460;
         
-        headerHeight = 60/460.f * screenHeight;
-        headingHeight = 22/460.f * screenHeight;
-        iconGridLineHeight = 100/460.f * screenHeight;
+        headerHeight = 60 * heightScaleFactor;
+        headingHeight = 22 * heightScaleFactor;
+        iconGridLineHeight = 100 * heightScaleFactor;
         
         [self createSectionView];
         [self createHeadingView];
@@ -181,10 +189,10 @@ static CGFloat const kCaptionLabelFontSize = 11;
         sectionView.frame = newSectionFrame;
     }
     
-    CGFloat iconOriginX = (40 + xOffset * 100)/320.f * screenWidth;
+    CGFloat iconOriginX = (40 + xOffset * 100) * widthScaleFactor;
     CGFloat iconOriginY = headingHeight + (yOffset + 20/100.f) * iconGridLineHeight;
-    CGFloat iconWidth = 40/320.f * screenWidth;
-    CGFloat iconHeight = 40/460.f * screenHeight;
+    CGFloat iconWidth = 40 * widthScaleFactor;
+    CGFloat iconHeight = 40 * heightScaleFactor;
     CGRect iconFrame = CGRectMake(iconOriginX, iconOriginY, iconWidth, iconHeight);
     
     UIButton *iconButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -196,10 +204,10 @@ static CGFloat const kCaptionLabelFontSize = 11;
     iconButton.showsTouchWhenHighlighted = YES;
     [iconButton addTarget:mainViewController action:@selector(segueToScola:) forControlEvents:UIControlEventTouchUpInside];
     
-    CGFloat captionOriginX = (15 + xOffset * 100)/320.f * screenWidth;
-    CGFloat captionOriginY = iconOriginY + iconHeight + 5/460.f * screenHeight;
-    CGFloat captionWidth = 90/320.f * screenWidth;
-    CGFloat captionHeight = 18/320.f * screenHeight;
+    CGFloat captionOriginX = (15 + xOffset * 100) * widthScaleFactor;
+    CGFloat captionOriginY = iconOriginY + iconHeight + 5 * heightScaleFactor;
+    CGFloat captionWidth = 90 * widthScaleFactor;
+    CGFloat captionHeight = 18 * heightScaleFactor;
     CGRect captionFrame = CGRectMake(captionOriginX, captionOriginY, captionWidth, captionHeight);
     
     UILabel *captionLabel = [[UILabel alloc] initWithFrame:captionFrame];
@@ -232,7 +240,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 - (CGFloat)permissiblePan:(CGFloat)requestedPan
 {
-    CGFloat minimumHeight = headingHeight + 2/460.f * screenHeight;
+    CGFloat minimumHeight = headingHeight + 2 * heightScaleFactor;
     CGFloat hiddenPixels = fullHeight - actualHeight;
     CGFloat localPan = 0;
     CGFloat permissiblePan = 0;
@@ -249,6 +257,8 @@ static CGFloat const kCaptionLabelFontSize = 11;
             } else {
                 permissiblePan = hiddenPixels;
             }
+        } else {
+            permissiblePan = [precedingSection permissiblePan:requestedPan];
         }
     } else if (requestedPan < 0) {
         requestedPan = -requestedPan;
@@ -258,6 +268,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         } else if (actualHeight >= minimumHeight) {
             if (precedingSection) {
                 localPan = actualHeight - minimumHeight;
+                
                 CGFloat restPan = requestedPan - localPan;
                 permissiblePan = localPan + -[precedingSection permissiblePan:-restPan];
             } else {
@@ -279,6 +290,12 @@ static CGFloat const kCaptionLabelFontSize = 11;
             } else {
                 [self moveFrame:permissiblePan];
             }
+        } else if (actualHeight == fullHeight) {
+            if (permissiblePan > 0) {
+                [self moveFrame:permissiblePan];
+            } else {
+                [self adjustFrame:permissiblePan];
+            }
         } else {
             [self adjustFrame:permissiblePan];
         }
@@ -288,11 +305,58 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
+- (void)keepUp:(CGFloat)pan
+{
+    CGFloat minimumHeight = headingHeight + 2 * heightScaleFactor;
+    CGFloat hiddenPixels = fullHeight - actualHeight;
+    CGFloat localPan = 0;
+    CGFloat transitivePan = 0;
+    
+    if (pan > 0) {
+        if (actualHeight - pan >= minimumHeight) {
+            if (followingSection) {
+                [self adjustFrame:-pan];
+            }
+            
+            [self moveFrame:pan];
+        } else if (actualHeight > minimumHeight) {
+            localPan = actualHeight - minimumHeight;
+            transitivePan = pan - localPan;
+            
+            [self adjustFrame:-localPan];
+            [self moveFrame:transitivePan];
+        } else if (actualHeight == minimumHeight) {
+            transitivePan = pan;
+            
+            [self moveFrame:pan];
+        }
+    } else if (pan < 0) {
+        if (abs(pan) <= hiddenPixels) {
+            [self adjustFrame:-pan];
+            [self moveFrame:pan];
+        } else if (hiddenPixels > 0) {
+            localPan = hiddenPixels;
+            transitivePan = -(abs(pan) - localPan);
+            
+            [self adjustFrame:localPan];
+            [self moveFrame:transitivePan];
+        } else {
+            transitivePan = pan;
+            
+            [self moveFrame:pan];
+        }
+    }
+    
+    if (followingSection) {
+        [followingSection keepUp:transitivePan];
+    }
+}
+
+
 - (void)pan:(CGPoint)translation
 {
     if (precedingSection) {
-        CGFloat pan = [precedingSection permissiblePan:translation.y];
-        [self moveFrame:pan];
+        [self keepUp:[precedingSection permissiblePan:translation.y]];
     }
 }
 
