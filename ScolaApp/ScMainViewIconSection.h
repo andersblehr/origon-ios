@@ -15,16 +15,20 @@
     ScMainViewIconSection *precedingSection;
     ScMainViewIconSection *followingSection;
     
+    UIView *sectionView;
+    UILabel *headingLabel;
+    
     CGFloat widthScaleFactor;
     CGFloat heightScaleFactor;
     
-    CGFloat fullHeight;
-    CGFloat actualHeight;
     CGFloat sectionOriginY;
-    
     CGFloat headerHeight;
     CGFloat headingHeight;
     CGFloat iconGridLineHeight;
+    
+    CGFloat minimumHeight;
+    CGFloat fullHeight;
+    CGFloat actualHeight;
     
     int numberOfIcons;
     int numberOfGridLines;
@@ -32,21 +36,11 @@
 
 @property (nonatomic, readonly) int sectionNumber;
 @property (strong, nonatomic) NSString *sectionHeading;
-
-@property (strong, nonatomic, readonly) UIView *sectionView;
 @property (strong, nonatomic, readonly) UIView *headingView;
-@property (strong, nonatomic, readonly) UILabel *headingLabel;
 
-@property (strong, nonatomic) ScMainViewIconSection *followingSection;
-
-
-- (id)initForViewController:(UIViewController *)viewController withPrecedingSection:(ScMainViewIconSection *)previousSection;
+- (id)initForViewController:(UIViewController *)viewController
+       withPrecedingSection:(ScMainViewIconSection *)previousSection;
 - (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption;
-- (int)numberOfKnownGridLines;
-
-- (CGFloat)permissiblePan:(CGFloat)requestedPan;
-- (void)keepUp:(CGFloat)pan;
-
 - (void)pan:(CGPoint)translation;
 
 @end

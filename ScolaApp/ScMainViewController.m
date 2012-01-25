@@ -121,7 +121,6 @@ static CGFloat const kHeadingLabelFontSize = 13;
     
     CGPoint translation = [sender translationInView:pannedSection.headingView];
     [sender setTranslation:CGPointZero inView:pannedSection.headingView];
-    
     [pannedSection pan:translation];
 }
 
@@ -130,6 +129,11 @@ static CGFloat const kHeadingLabelFontSize = 13;
 
 - (IBAction)segueToScola:(id)sender
 {
+    UIButton *buttonTapped = (UIButton *)sender;
+    int sectionNumber = buttonTapped.tag / 100 + 1;
+    int buttonNumber = buttonTapped.tag % 100;
+    
+    ScLogDebug(@"Tapped button %d in icon section %d", buttonNumber, sectionNumber);
     [self performSegueWithIdentifier:@"mainToScolaView" sender:self];
 }
 

@@ -23,15 +23,24 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 @synthesize sectionNumber;
 @synthesize sectionHeading;
-
-@synthesize sectionView;
 @synthesize headingView;
-@synthesize headingLabel;
 
-@synthesize followingSection;
+//@synthesize followingSection;
 
 
 #pragma mark - Auxiliary methods: Initialisation
+
+- (int)numberOfKnownGridLines
+{
+    int knownGridLines = numberOfGridLines;
+    
+    if (precedingSection) {
+        knownGridLines += [precedingSection numberOfKnownGridLines];
+    }
+    
+    return knownGridLines;
+}
+
 
 - (void)createSectionView
 {
@@ -120,29 +129,142 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-- (void)moveFrame:(CGFloat)pan withAdjustment:(CGFloat)delta
+- (CGFloat)permissiblePan:(CGFloat)requestedPan
 {
-    sectionOriginY += pan;
-    actualHeight += delta;
-    sectionView.frame = CGRectMake(0, sectionOriginY, 320 * widthScaleFactor, actualHeight);
+    int hiddenPixels = fullHeight - actualHeight;
+    int localPan = 0;
+    int permissiblePan = 0;
+    
+    if (requestedPan > 0) {
+        if (requestedPan <= hiddenPixels) {
+            permissiblePan = requestedPan;
+        } else if (hiddenPixels > 0) {
+            if (precedingSection) {
+                localPan = hiddenPixels;
+                CGFloat restPan = requestedPan - localPan;
+                
+                permissiblePan = localPan + [precedingSection permissiblePan:restPan];
+            } else {
+                permissiblePan = hiddenPixels;
+            }
+        } else if (precedingSection) {
+            permissiblePan = [precedingSection permissiblePan:requestedPan];
+        }
+    } else if (requestedPan < 0) {
+        if (actualHeight - abs(requestedPan) > minimumHeight) {
+            permissiblePan = requestedPan;
+        } else if (actualHeight > minimumHeight) {
+            if (precedingSection) {
+                localPan = -(actualHeight - minimumHeight);
+                CGFloat restPan = requestedPan - localPan;
+                
+                permissiblePan = localPan + [precedingSection permissiblePan:restPan];
+            } else {
+                permissiblePan = -(actualHeight - minimumHeight);
+            }
+        } else if (precedingSection) {
+            permissiblePan = [precedingSection permissiblePan:requestedPan];
+        }
+    }
+    
+    if (localPan != 0) {
+        [self moveFrame:(permissiblePan - localPan)];
+        [self adjustFrame:localPan];
+    } else if (permissiblePan != 0) {
+        if (actualHeight == minimumHeight) {
+            if (permissiblePan > 0) {
+                [self adjustFrame:permissiblePan];
+            } else {
+                [self moveFrame:permissiblePan];
+            }
+        } else if (actualHeight == fullHeight) {
+            if (permissiblePan > 0) {
+                [self moveFrame:permissiblePan];
+            } else {
+                [self adjustFrame:permissiblePan];
+            }
+        } else {
+            [self adjustFrame:permissiblePan];
+        }
+    }
+    
+    return permissiblePan;
 }
 
 
-#pragma mark - Interface implementation: Initialisation
+- (void)keepUp:(CGFloat)pan
+{
+    int hiddenPixels = fullHeight - actualHeight;
+    int localPan = 0;
+    int transitivePan = 0;
+    
+    [self moveFrame:pan];
+    
+    if (pan > 0) {
+        if (actualHeight - pan > minimumHeight) {
+            if (followingSection) {
+                [self adjustFrame:-pan];
+            }
+        } else if (actualHeight > minimumHeight) {
+            localPan = actualHeight - minimumHeight;
+            transitivePan = pan - localPan;
+            
+            [self adjustFrame:-localPan];
+        } else {
+            transitivePan = pan;
+        }
+    } else if (pan < 0) {
+        if (abs(pan) <= hiddenPixels) {
+            [self adjustFrame:abs(pan)];
+        } else if (hiddenPixels > 0) {
+            localPan = -hiddenPixels;
+            transitivePan = pan - localPan;
+            
+            [self adjustFrame:-localPan];
+        } else {
+            transitivePan = pan;
+        }
+    }
+    
+    if (followingSection) {
+        [followingSection keepUp:transitivePan];
+    }
+}
 
-- (id)initForViewController:(UIViewController *)viewController withPrecedingSection:(ScMainViewIconSection *)previousSection
+
+#pragma mark - Accessors
+
+- (void)setFollowingSection:(ScMainViewIconSection *)section
+{
+    followingSection = section;
+}
+
+
+- (void)setSectionHeading:(NSString *)heading
+{
+    sectionHeading = heading;
+    headingLabel.text = sectionHeading;
+}
+
+
+#pragma mark - Interface implementation
+
+- (id)initForViewController:(UIViewController *)viewController
+       withPrecedingSection:(ScMainViewIconSection *)previousSection
 {
     self = [super init];
     
     if (self) {
         mainViewController = viewController;
         precedingSection = previousSection;
+        followingSection = nil;
         
         if (precedingSection) {
-            precedingSection.followingSection = self;
+            [precedingSection setFollowingSection:self];
+            sectionNumber = precedingSection.sectionNumber + 1;
+        } else {
+            sectionNumber = 0;
         }
-        
-        sectionNumber = (precedingSection) ? precedingSection.sectionNumber + 1 : 0;
         
         widthScaleFactor = [UIScreen mainScreen].applicationFrame.size.width / 320;
         heightScaleFactor = [UIScreen mainScreen].applicationFrame.size.height / 460;
@@ -150,6 +272,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         headerHeight = 60 * heightScaleFactor;
         headingHeight = 22 * heightScaleFactor;
         iconGridLineHeight = 100 * heightScaleFactor;
+        minimumHeight = headingHeight + 2 * heightScaleFactor;
         
         [self createSectionView];
         [self createHeadingView];
@@ -191,6 +314,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
     [iconButton setBackgroundImage:icon forState:UIControlStateNormal];
     iconButton.alpha = kIconButtonAlpha;
     iconButton.showsTouchWhenHighlighted = YES;
+    iconButton.tag = 100 * sectionNumber + numberOfIcons;
     [iconButton addTarget:mainViewController action:@selector(segueToScola:) forControlEvents:UIControlEventTouchUpInside];
     
     CGFloat captionOriginX = (15 + xOffset * 100) * widthScaleFactor;
@@ -213,140 +337,11 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-- (int)numberOfKnownGridLines
-{
-    int knownGridLines = numberOfGridLines;
-    
-    if (precedingSection) {
-        knownGridLines += [precedingSection numberOfKnownGridLines];
-    }
-    
-    return knownGridLines;
-}
-
-
-#pragma mark - Interface implementation: Panning
-
-- (CGFloat)permissiblePan:(CGFloat)requestedPan
-{
-    CGFloat minimumHeight = headingHeight + 2 * heightScaleFactor;
-    CGFloat hiddenPixels = fullHeight - actualHeight;
-    CGFloat localPan = 0;
-    CGFloat permissiblePan = 0;
-    
-    if (requestedPan > 0) {
-        if (requestedPan <= hiddenPixels) {
-            permissiblePan = requestedPan;
-        } else if (hiddenPixels > 0) {
-            if (precedingSection) {
-                localPan = hiddenPixels;
-                CGFloat restPan = requestedPan - localPan;
-                
-                permissiblePan = localPan + [precedingSection permissiblePan:restPan];
-            } else {
-                permissiblePan = hiddenPixels;
-            }
-        } else {
-            permissiblePan = [precedingSection permissiblePan:requestedPan];
-        }
-    } else if (requestedPan < 0) {
-        if (actualHeight - abs(requestedPan) > minimumHeight) {
-            permissiblePan = requestedPan;
-        } else if (actualHeight >= minimumHeight) {
-            if (precedingSection) {
-                localPan = -(actualHeight - minimumHeight);
-                CGFloat restPan = requestedPan - localPan;
-                
-                permissiblePan = localPan + [precedingSection permissiblePan:restPan];
-            } else {
-                permissiblePan = -(actualHeight - minimumHeight);
-            }
-        }
-    }
-    
-    if (localPan != 0) {
-        [self moveFrame:(permissiblePan - localPan) withAdjustment:localPan];
-    } else if (permissiblePan != 0) {
-        if (actualHeight == minimumHeight) {
-            if (permissiblePan > 0) {
-                [self adjustFrame:permissiblePan];
-            } else {
-                [self moveFrame:permissiblePan];
-            }
-        } else if (actualHeight == fullHeight) {
-            if (permissiblePan > 0) {
-                [self moveFrame:permissiblePan];
-            } else {
-                [self adjustFrame:permissiblePan];
-            }
-        } else {
-            [self adjustFrame:permissiblePan];
-        }
-    }
-    
-    return permissiblePan;
-}
-
-
-- (void)keepUp:(CGFloat)pan
-{
-    CGFloat minimumHeight = headingHeight + 2 * heightScaleFactor;
-    CGFloat hiddenPixels = fullHeight - actualHeight;
-    CGFloat localPan = 0;
-    CGFloat transitivePan = 0;
-    
-    if (pan > 0) {
-        if (actualHeight - pan >= minimumHeight) {
-            if (followingSection) {
-                [self adjustFrame:-pan];
-            }
-            
-            [self moveFrame:pan];
-        } else if (actualHeight > minimumHeight) {
-            localPan = actualHeight - minimumHeight;
-            transitivePan = pan - localPan;
-            
-            [self moveFrame:transitivePan withAdjustment:-localPan];
-        } else if (actualHeight == minimumHeight) {
-            transitivePan = pan;
-            
-            [self moveFrame:pan];
-        }
-    } else if (pan < 0) {
-        if (abs(pan) <= hiddenPixels) {
-            [self moveFrame:pan withAdjustment:-pan];
-        } else if (hiddenPixels > 0) {
-            localPan = hiddenPixels;
-            transitivePan = -(abs(pan) - localPan);
-
-            [self moveFrame:transitivePan withAdjustment:localPan];
-        } else {
-            transitivePan = pan;
-            
-            [self moveFrame:pan];
-        }
-    }
-    
-    if (followingSection) {
-        [followingSection keepUp:transitivePan];
-    }
-}
-
-
 - (void)pan:(CGPoint)translation
 {
     if (precedingSection) {
         [self keepUp:[precedingSection permissiblePan:translation.y]];
     }
-}
-
-
-#pragma mark - Accessors
-
-- (void)setSectionHeading:(NSString *)heading
-{
-    sectionHeading = heading;
-    headingLabel.text = sectionHeading;
 }
 
 @end
