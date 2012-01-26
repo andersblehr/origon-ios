@@ -24,8 +24,48 @@ static CGFloat const kCaptionLabelFontSize = 11;
 @synthesize sectionNumber;
 @synthesize sectionHeading;
 @synthesize headingView;
+@synthesize isCollapsed;
 
-//@synthesize followingSection;
+
+#pragma mark - Accessors
+
+- (void)setSectionHeading:(NSString *)heading
+{
+    sectionHeading = heading;
+    headingLabel.text = sectionHeading;
+}
+
+
+- (UIView *)sectionView
+{
+    return sectionView;
+}
+
+
+- (ScMainViewIconSection *)followingSection
+{
+    return followingSection;
+}
+
+
+- (void)setFollowingSection:(ScMainViewIconSection *)section
+{
+    followingSection = section;
+}
+
+
+- (BOOL)isCollapsed
+{
+    CGFloat percentageVisible = 100 * (actualHeight - headingHeight) / iconGridLineHeight;
+    
+    return (percentageVisible <= 15.f); 
+}
+
+
+- (CGRect)newSectionFrame
+{
+    return newSectionFrame;
+}
 
 
 #pragma mark - Auxiliary methods: Initialisation
@@ -82,7 +122,13 @@ static CGFloat const kCaptionLabelFontSize = 11;
         headingView.alpha = kHeadingViewAlpha;
         headingView.tag = sectionNumber;
         [headingView addShadow];
-        [headingView addGestureRecognizer:[[UIPanGestureRecognizer alloc] initWithTarget:mainViewController action:@selector(handlePanGesture:)]];
+        
+        UIPanGestureRecognizer *panGestureRecogniser = [[UIPanGestureRecognizer alloc] initWithTarget:mainViewController action:@selector(handlePanGesture:)];
+        UITapGestureRecognizer *tapGestureRecogniser = [[UITapGestureRecognizer alloc] initWithTarget:mainViewController action:@selector(handleTapGesture:)];
+        tapGestureRecogniser.numberOfTapsRequired = 2;
+        
+        [headingView addGestureRecognizer:panGestureRecogniser];
+        [headingView addGestureRecognizer:tapGestureRecogniser];
         
         [sectionView addSubview:headingView];
     } else {
@@ -113,19 +159,47 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-#pragma mark - Auxiliary methods: Panning
+#pragma mark - Auxiliary methods: Panning & resizing
+
+- (void)moveFrame:(CGFloat)pan withAdjustment:(CGFloat)delta prepareAnimation:(BOOL)prepare
+{
+    sectionOriginY += pan;
+    actualHeight += delta;
+    newSectionFrame = CGRectMake(0, sectionOriginY, 320 * widthScaleFactor, actualHeight);
+    
+    if (!prepare) {
+        sectionView.frame = newSectionFrame;
+    }
+}
+
+
+- (void)moveFrame:(CGFloat)pan withAdjustment:(CGFloat)delta
+{
+    [self moveFrame:pan withAdjustment:delta prepareAnimation:NO];
+}
+
+
+- (void)moveFrame:(CGFloat)pan prepareAnimation:(BOOL)prepare
+{
+    [self moveFrame:pan withAdjustment:0 prepareAnimation:prepare];
+}
+
 
 - (void)moveFrame:(CGFloat)pan
 {
-    sectionOriginY += pan;
-    sectionView.frame = CGRectMake(0, sectionOriginY, 320 * widthScaleFactor, actualHeight);
+    [self moveFrame:pan withAdjustment:0 prepareAnimation:NO];
+}
+
+
+- (void)adjustFrame:(CGFloat)delta prepareAnimation:(BOOL)prepare
+{
+    [self moveFrame:0 withAdjustment:delta prepareAnimation:prepare];
 }
 
 
 - (void)adjustFrame:(CGFloat)delta
 {
-    actualHeight += delta;
-    sectionView.frame = CGRectMake(0, sectionOriginY, 320 * widthScaleFactor, actualHeight);
+    [self moveFrame:0 withAdjustment:delta prepareAnimation:NO];
 }
 
 
@@ -192,58 +266,78 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-- (void)keepUp:(CGFloat)pan
+- (void)keepUp:(CGFloat)pan prepareAnimation:(BOOL)prepare
 {
-    int hiddenPixels = fullHeight - actualHeight;
-    int localPan = 0;
-    int transitivePan = 0;
+    int transitivePan = pan;
     
-    [self moveFrame:pan];
-    
-    if (pan > 0) {
-        if (actualHeight - pan > minimumHeight) {
-            if (followingSection) {
-                [self adjustFrame:-pan];
+    if (!prepare) {
+        int hiddenPixels = fullHeight - actualHeight;
+        int localPan = 0;
+        int frameAdjustment = 0;
+        
+        if (pan > 0) {
+            if (actualHeight - pan > minimumHeight) {
+                transitivePan = 0;
+                
+                if (followingSection) {
+                    frameAdjustment = -pan;
+                }
+            } else if (actualHeight > minimumHeight) {
+                localPan = actualHeight - minimumHeight;
+                transitivePan = pan - localPan;
+                frameAdjustment = -localPan;
+            } else {
+                transitivePan = pan;
             }
-        } else if (actualHeight > minimumHeight) {
-            localPan = actualHeight - minimumHeight;
-            transitivePan = pan - localPan;
-            
-            [self adjustFrame:-localPan];
-        } else {
-            transitivePan = pan;
+        } else if (pan < 0) {
+            if (abs(pan) <= hiddenPixels) {
+                transitivePan = 0;
+                frameAdjustment = abs(pan);
+            } else if (hiddenPixels > 0) {
+                localPan = -hiddenPixels;
+                transitivePan = pan - localPan;
+                frameAdjustment = -localPan;
+            } else {
+                transitivePan = pan;
+            }
         }
-    } else if (pan < 0) {
-        if (abs(pan) <= hiddenPixels) {
-            [self adjustFrame:abs(pan)];
-        } else if (hiddenPixels > 0) {
-            localPan = -hiddenPixels;
-            transitivePan = pan - localPan;
-            
-            [self adjustFrame:-localPan];
-        } else {
-            transitivePan = pan;
-        }
+        
+        [self moveFrame:pan withAdjustment:frameAdjustment];
+    } else {
+        [self moveFrame:pan prepareAnimation:YES];
     }
     
     if (followingSection) {
-        [followingSection keepUp:transitivePan];
+        [followingSection keepUp:transitivePan prepareAnimation:prepare];
     }
 }
 
 
-#pragma mark - Accessors
-
-- (void)setFollowingSection:(ScMainViewIconSection *)section
+- (void)keepUp:(CGFloat)pan
 {
-    followingSection = section;
+    [self keepUp:pan prepareAnimation:NO];
 }
 
 
-- (void)setSectionHeading:(NSString *)heading
+- (void)expandOrCollapse:(int)delta
 {
-    sectionHeading = heading;
-    headingLabel.text = sectionHeading;
+    if (followingSection) {
+        [self adjustFrame:delta prepareAnimation:YES];
+        
+        if (followingSection) {
+            [followingSection keepUp:delta prepareAnimation:YES];
+        }
+        
+        [UIView animateWithDuration:0.25 animations:^{
+            sectionView.frame = newSectionFrame;
+            
+            ScMainViewIconSection *nextSection = followingSection;
+            while (nextSection) {
+                nextSection.sectionView.frame = nextSection.newSectionFrame;
+                nextSection = nextSection.followingSection;
+            }
+        }];
+    }
 }
 
 
@@ -315,7 +409,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
     iconButton.alpha = kIconButtonAlpha;
     iconButton.showsTouchWhenHighlighted = YES;
     iconButton.tag = 100 * sectionNumber + numberOfIcons;
-    [iconButton addTarget:mainViewController action:@selector(segueToScola:) forControlEvents:UIControlEventTouchUpInside];
+    [iconButton addTarget:mainViewController action:@selector(handleButtonTap:) forControlEvents:UIControlEventTouchUpInside];
     
     CGFloat captionOriginX = (15 + xOffset * 100) * widthScaleFactor;
     CGFloat captionOriginY = iconOriginY + iconHeight + 5 * heightScaleFactor;
@@ -334,6 +428,22 @@ static CGFloat const kCaptionLabelFontSize = 11;
     
     [sectionView addSubview:iconButton];
     [sectionView addSubview:captionLabel];
+}
+
+
+- (void)expand
+{
+    int hiddenPixels = fullHeight - actualHeight;
+    
+    [self expandOrCollapse:hiddenPixels];
+}
+
+
+- (void)collapse
+{
+    int pixelsToHide = actualHeight - minimumHeight;
+    
+    [self expandOrCollapse:-pixelsToHide];
 }
 
 

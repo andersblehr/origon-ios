@@ -9,14 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @interface ScMainViewController : UIViewController {
+@private
     NSMutableArray *iconSections;
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 
-- (void)handlePanGesture:(UIPanGestureRecognizer *)sender;
-
-- (IBAction)segueToScola:(id)sender;
 - (IBAction)showInfo:(id)sender;
 
 @end

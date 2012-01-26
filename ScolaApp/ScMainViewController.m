@@ -112,22 +112,42 @@ static CGFloat const kHeadingLabelFontSize = 13;
 }
 
 
-#pragma mark - Gesture handling
+#pragma mark - Gesture and tap handling
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)sender
 {
-    int sectionNumber = sender.view.tag;
-    ScMainViewIconSection *pannedSection = [iconSections objectAtIndex:sectionNumber];
+    BOOL panGestureBegan = (sender.state == UIGestureRecognizerStateBegan);
+    BOOL panGestureChanged = (sender.state == UIGestureRecognizerStateChanged);
     
-    CGPoint translation = [sender translationInView:pannedSection.headingView];
-    [sender setTranslation:CGPointZero inView:pannedSection.headingView];
-    [pannedSection pan:translation];
+    if (panGestureBegan || panGestureChanged) {
+        int sectionNumber = sender.view.tag;
+        ScMainViewIconSection *pannedSection = [iconSections objectAtIndex:sectionNumber];
+        
+        CGPoint translation = [sender translationInView:pannedSection.headingView];
+        [pannedSection pan:translation];
+        [sender setTranslation:CGPointZero inView:pannedSection.headingView];
+    }
 }
 
 
-#pragma mark - IBAction implementation
+- (void)handleTapGesture:(UITapGestureRecognizer *)sender
+{
+    BOOL tapGestureEnded = (sender.state == UIGestureRecognizerStateEnded);
+    
+    if (tapGestureEnded) {
+        int sectionNumber = sender.view.tag;
+        ScMainViewIconSection *tappedSection = [iconSections objectAtIndex:sectionNumber];
+        
+        if (tappedSection.isCollapsed) {
+            [tappedSection expand];
+        } else {
+            [tappedSection collapse];
+        }
+    }
+}
 
-- (IBAction)segueToScola:(id)sender
+
+- (void)handleButtonTap:(id)sender
 {
     UIButton *buttonTapped = (UIButton *)sender;
     int sectionNumber = buttonTapped.tag / 100 + 1;
@@ -137,6 +157,8 @@ static CGFloat const kHeadingLabelFontSize = 13;
     [self performSegueWithIdentifier:@"mainToScolaView" sender:self];
 }
 
+
+#pragma mark - IBAction implementation
 
 - (IBAction)showInfo:(id)sender
 {

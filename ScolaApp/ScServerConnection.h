@@ -29,7 +29,6 @@ typedef enum {
 @private
     id<ScServerConnectionDelegate> connectionDelegate;
     
-    ScServerAvailability serverAvailability;
     ScAuthPhase authPhase;
     
     NSString *RESTHandler;

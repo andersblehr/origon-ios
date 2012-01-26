@@ -32,15 +32,21 @@
     
     int numberOfIcons;
     int numberOfGridLines;
+    
+    CGRect newSectionFrame;
 }
 
 @property (nonatomic, readonly) int sectionNumber;
 @property (strong, nonatomic) NSString *sectionHeading;
 @property (strong, nonatomic, readonly) UIView *headingView;
+@property (nonatomic, readonly) BOOL isCollapsed;
 
 - (id)initForViewController:(UIViewController *)viewController
        withPrecedingSection:(ScMainViewIconSection *)previousSection;
 - (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption;
+
+- (void)expand;
+- (void)collapse;
 - (void)pan:(CGPoint)translation;
 
 @end
