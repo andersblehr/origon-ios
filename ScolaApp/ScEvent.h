@@ -2,8 +2,8 @@
 //  ScEvent.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,17 +14,17 @@
 
 @interface ScEvent : ScCachedEntity
 
-@property (nonatomic, strong) NSDate * dateEnd;
-@property (nonatomic, strong) NSDate * dateStart;
-@property (nonatomic, strong) NSString * eventDescription;
-@property (nonatomic, strong) NSString * locationDescription;
-@property (nonatomic, strong) NSString * title;
-@property (nonatomic, strong) NSSet *eventContacts;
-@property (nonatomic, strong) ScHousehold *hostingHousehold;
-@property (nonatomic, strong) ScOrganisation *hostingOrganisation;
-@property (nonatomic, strong) NSSet *hostingScolas;
-@property (nonatomic, strong) NSSet *invitedIndividuals;
-@property (nonatomic, strong) NSSet *invitedScolas;
+@property (nonatomic, retain) NSDate * dateEnd;
+@property (nonatomic, retain) NSDate * dateStart;
+@property (nonatomic, retain) NSString * eventDescription;
+@property (nonatomic, retain) NSString * locationDescription;
+@property (nonatomic, retain) NSString * title;
+@property (nonatomic, retain) NSSet *eventContacts;
+@property (nonatomic, retain) ScHousehold *hostingHousehold;
+@property (nonatomic, retain) ScOrganisation *hostingOrganisation;
+@property (nonatomic, retain) NSSet *hostingScolas;
+@property (nonatomic, retain) NSSet *invitedIndividuals;
+@property (nonatomic, retain) NSSet *invitedScolas;
 @end
 
 @interface ScEvent (CoreDataGeneratedAccessors)

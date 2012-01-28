@@ -2,8 +2,8 @@
 //  ScScola.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 12.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,23 +14,23 @@
 
 @interface ScScola : ScCachedEntity
 
-@property (nonatomic, strong) NSString * descriptionText;
-@property (nonatomic, strong) NSString * name;
-@property (nonatomic, strong) NSData * picture;
-@property (nonatomic, strong) NSString * shortname;
-@property (nonatomic, strong) ScMessageBoard *adminMessageBoard;
-@property (nonatomic, strong) NSSet *admins;
-@property (nonatomic, strong) NSSet *coaches;
-@property (nonatomic, strong) NSSet *documentRepositories;
-@property (nonatomic, strong) NSSet *eventInvitations;
-@property (nonatomic, strong) ScScola *guardedScola;
-@property (nonatomic, strong) ScScola *guardianScola;
-@property (nonatomic, strong) NSSet *hostingEvents;
-@property (nonatomic, strong) NSSet *members;
-@property (nonatomic, strong) NSSet *memberToDoItems;
-@property (nonatomic, strong) NSSet *messageBoards;
-@property (nonatomic, strong) ScOrganisation *organisation;
-@property (nonatomic, strong) ScYearlySchedule *yearlySchedule;
+@property (nonatomic, retain) NSString * descriptionText;
+@property (nonatomic, retain) NSString * name;
+@property (nonatomic, retain) NSData * picture;
+@property (nonatomic, retain) NSString * shortname;
+@property (nonatomic, retain) ScMessageBoard *adminMessageBoard;
+@property (nonatomic, retain) NSSet *admins;
+@property (nonatomic, retain) NSSet *coaches;
+@property (nonatomic, retain) NSSet *documentRepositories;
+@property (nonatomic, retain) NSSet *eventInvitations;
+@property (nonatomic, retain) ScScola *guardedScola;
+@property (nonatomic, retain) ScScola *guardianScola;
+@property (nonatomic, retain) NSSet *hostingEvents;
+@property (nonatomic, retain) NSSet *members;
+@property (nonatomic, retain) NSSet *memberToDoItems;
+@property (nonatomic, retain) NSSet *messageBoards;
+@property (nonatomic, retain) ScOrganisation *organisation;
+@property (nonatomic, retain) ScYearlySchedule *yearlySchedule;
 @end
 
 @interface ScScola (CoreDataGeneratedAccessors)

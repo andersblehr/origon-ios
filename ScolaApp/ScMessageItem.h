@@ -2,8 +2,8 @@
 //  ScMessageItem.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,11 +13,11 @@
 
 @interface ScMessageItem : NSManagedObject
 
-@property (nonatomic, strong) NSDate * date;
-@property (nonatomic, strong) ScScolaMember *author;
-@property (nonatomic, strong) ScMessageItem *inReplyTo;
-@property (nonatomic, strong) ScMessageThread *messageThread;
-@property (nonatomic, strong) NSSet *replies;
+@property (nonatomic, retain) NSDate * date;
+@property (nonatomic, retain) ScScolaMember *author;
+@property (nonatomic, retain) ScMessageItem *inReplyTo;
+@property (nonatomic, retain) ScMessageThread *messageThread;
+@property (nonatomic, retain) NSSet *replies;
 @end
 
 @interface ScMessageItem (CoreDataGeneratedAccessors)

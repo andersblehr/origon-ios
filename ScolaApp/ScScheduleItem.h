@@ -2,8 +2,8 @@
 //  ScScheduleItem.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,10 +13,10 @@
 
 @interface ScScheduleItem : NSManagedObject
 
-@property (nonatomic, strong) NSDate * endTime;
-@property (nonatomic, strong) NSDate * startTime;
-@property (nonatomic, strong) NSString * title;
-@property (nonatomic, strong) NSString * weekday;
-@property (nonatomic, strong) ScYearlySchedule *yearlySchedule;
+@property (nonatomic, retain) NSDate * endTime;
+@property (nonatomic, retain) NSDate * startTime;
+@property (nonatomic, retain) NSString * title;
+@property (nonatomic, retain) NSString * weekday;
+@property (nonatomic, retain) ScYearlySchedule *yearlySchedule;
 
 @end

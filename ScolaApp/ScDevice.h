@@ -2,8 +2,8 @@
 //  ScDevice.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 29.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,9 +14,9 @@
 
 @interface ScDevice : ScCachedEntity
 
-@property (nonatomic, strong) NSString * deviceName;
-@property (nonatomic, strong) NSString * deviceUUID;
-@property (nonatomic, strong) NSSet *usedBy;
+@property (nonatomic, retain) NSString * deviceName;
+@property (nonatomic, retain) NSString * deviceUUID;
+@property (nonatomic, retain) NSSet *usedBy;
 @end
 
 @interface ScDevice (CoreDataGeneratedAccessors)

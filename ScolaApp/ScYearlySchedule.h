@@ -2,8 +2,8 @@
 //  ScYearlySchedule.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,11 +14,11 @@
 
 @interface ScYearlySchedule : ScCachedEntity
 
-@property (nonatomic, strong) NSDate * yearEnd;
-@property (nonatomic, strong) NSDate * yearStart;
-@property (nonatomic, strong) NSSet *scheduledBreaks;
-@property (nonatomic, strong) ScScola *scola;
-@property (nonatomic, strong) NSSet *weeklyScheduleItems;
+@property (nonatomic, retain) NSDate * yearEnd;
+@property (nonatomic, retain) NSDate * yearStart;
+@property (nonatomic, retain) NSSet *scheduledBreaks;
+@property (nonatomic, retain) ScScola *scola;
+@property (nonatomic, retain) NSSet *weeklyScheduleItems;
 @end
 
 @interface ScYearlySchedule (CoreDataGeneratedAccessors)

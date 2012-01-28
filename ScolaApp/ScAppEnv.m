@@ -25,8 +25,6 @@ NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 @synthesize serverAvailability;
 @synthesize managedObjectContext;
 
-@synthesize memberInfo;
-
 static ScAppEnv *env = nil;
 
 
@@ -64,8 +62,6 @@ static ScAppEnv *env = nil;
         
         isInternetConnectionWiFi = NO;
         isInternetConnectionWWAN = NO;
-        
-        memberInfo = [[NSMutableDictionary alloc] init];
     }
     
     return self;

@@ -10,7 +10,7 @@
 
 @interface ScManagedObjectContext : NSManagedObjectContext
 
-- (BOOL)save:(NSError *__autoreleasing *)error;
-- (NSEntityDescription *)entityForClass:(Class)class;
+- (BOOL)save;
+- (id)entityForClass:(Class)class;
 
 @end

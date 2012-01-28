@@ -2,23 +2,26 @@
 //  ScOrganisation.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScCachedAddress, ScEvent, ScOrganisationContact, ScScola;
+@class ScEvent, ScOrganisationContact, ScScola;
 
 @interface ScOrganisation : ScCachedEntity
 
-@property (nonatomic, strong) NSString * name;
-@property (nonatomic, strong) ScCachedAddress *address;
-@property (nonatomic, strong) NSSet *contacts;
-@property (nonatomic, strong) NSSet *events;
-@property (nonatomic, strong) NSSet *scolas;
+@property (nonatomic, retain) NSString * name;
+@property (nonatomic, retain) NSString * addressLine1;
+@property (nonatomic, retain) NSString * addressLine2;
+@property (nonatomic, retain) NSString * postCodeAndCity;
+@property (nonatomic, retain) NSString * phoneNumber;
+@property (nonatomic, retain) NSSet *contacts;
+@property (nonatomic, retain) NSSet *events;
+@property (nonatomic, retain) NSSet *scolas;
 @end
 
 @interface ScOrganisation (CoreDataGeneratedAccessors)

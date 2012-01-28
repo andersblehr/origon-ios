@@ -8,8 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+#import "ScDevice.h"
+#import "ScScolaMember.h"
 
-@interface ScDateOfBirthViewController : UIViewController <UITextFieldDelegate>
+
+@interface ScDateOfBirthViewController : UIViewController <UITextFieldDelegate> {
+@private
+    ScScolaMember *member;
+    ScDevice *device;
+}
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *deviceNameUserHelpLabel;

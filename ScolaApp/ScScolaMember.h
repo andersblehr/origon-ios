@@ -2,8 +2,8 @@
 //  ScScolaMember.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 29.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,12 +14,12 @@
 
 @interface ScScolaMember : ScPerson
 
-@property (nonatomic, strong) NSDate * memberSince;
-@property (nonatomic, strong) NSSet *adminMemberships;
-@property (nonatomic, strong) NSSet *documents;
-@property (nonatomic, strong) ScMessageItem *messageItems;
-@property (nonatomic, strong) NSSet *toDoAssignments;
-@property (nonatomic, strong) NSSet *devices;
+@property (nonatomic, retain) NSDate * memberSince;
+@property (nonatomic, retain) NSSet *adminMemberships;
+@property (nonatomic, retain) NSSet *devices;
+@property (nonatomic, retain) NSSet *documents;
+@property (nonatomic, retain) ScMessageItem *messageItems;
+@property (nonatomic, retain) NSSet *toDoAssignments;
 @end
 
 @interface ScScolaMember (CoreDataGeneratedAccessors)
@@ -28,6 +28,11 @@
 - (void)removeAdminMembershipsObject:(ScScola *)value;
 - (void)addAdminMemberships:(NSSet *)values;
 - (void)removeAdminMemberships:(NSSet *)values;
+
+- (void)addDevicesObject:(ScDevice *)value;
+- (void)removeDevicesObject:(ScDevice *)value;
+- (void)addDevices:(NSSet *)values;
+- (void)removeDevices:(NSSet *)values;
 
 - (void)addDocumentsObject:(ScDocument *)value;
 - (void)removeDocumentsObject:(ScDocument *)value;
@@ -38,10 +43,5 @@
 - (void)removeToDoAssignmentsObject:(ScToDoAssignment *)value;
 - (void)addToDoAssignments:(NSSet *)values;
 - (void)removeToDoAssignments:(NSSet *)values;
-
-- (void)addDevicesObject:(ScDevice *)value;
-- (void)removeDevicesObject:(ScDevice *)value;
-- (void)addDevices:(NSSet *)values;
-- (void)removeDevices:(NSSet *)values;
 
 @end

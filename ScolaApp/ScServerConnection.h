@@ -61,7 +61,7 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 - (id)initForAuthPhase:(int)phase;
 - (id)initForEntity:(Class)class;
 
-- (void)setAuthHeaderUsingIdent:(NSString *)ident andPassword:(NSString *)password;
+- (void)setAuthHeaderUsingId:(NSString *)userId andPassword:(NSString *)password;
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
 - (void)setEntityLookupValue:(NSString *)value;

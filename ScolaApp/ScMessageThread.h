@@ -2,8 +2,8 @@
 //  ScMessageThread.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,9 +13,9 @@
 
 @interface ScMessageThread : NSManagedObject
 
-@property (nonatomic, strong) NSString * subject;
-@property (nonatomic, strong) ScMessageBoard *messageBoard;
-@property (nonatomic, strong) NSSet *messageItems;
+@property (nonatomic, retain) NSString * subject;
+@property (nonatomic, retain) ScMessageBoard *messageBoard;
+@property (nonatomic, retain) NSSet *messageItems;
 @end
 
 @interface ScMessageThread (CoreDataGeneratedAccessors)

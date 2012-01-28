@@ -2,8 +2,8 @@
 //  ScDocument.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,13 +14,13 @@
 
 @interface ScDocument : ScCachedEntity
 
-@property (nonatomic, strong) NSNumber * doesExpire;
-@property (nonatomic, strong) NSNumber * isExternal;
-@property (nonatomic, strong) NSString * title;
-@property (nonatomic, strong) ScScolaMember *author;
-@property (nonatomic, strong) NSSet *documentElements;
-@property (nonatomic, strong) ScExternalDocument *externalDocument;
-@property (nonatomic, strong) ScDocumentRepository *repository;
+@property (nonatomic, retain) NSNumber * doesExpire;
+@property (nonatomic, retain) NSNumber * isExternal;
+@property (nonatomic, retain) NSString * title;
+@property (nonatomic, retain) ScScolaMember *author;
+@property (nonatomic, retain) NSSet *documentElements;
+@property (nonatomic, retain) ScExternalDocument *externalDocument;
+@property (nonatomic, retain) ScDocumentRepository *repository;
 @end
 
 @interface ScDocument (CoreDataGeneratedAccessors)

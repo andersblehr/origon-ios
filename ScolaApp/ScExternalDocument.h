@@ -2,8 +2,8 @@
 //  ScExternalDocument.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,7 +13,7 @@
 
 @interface ScExternalDocument : NSManagedObject
 
-@property (nonatomic, strong) NSData * embeddedDocument;
-@property (nonatomic, strong) ScDocument *document;
+@property (nonatomic, retain) NSData * embeddedDocument;
+@property (nonatomic, retain) ScDocument *document;
 
 @end

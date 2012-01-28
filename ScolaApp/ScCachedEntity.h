@@ -2,8 +2,8 @@
 //  ScCachedEntity.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,8 +12,8 @@
 
 @interface ScCachedEntity : NSManagedObject
 
-@property (nonatomic, strong) NSDate * dateCreated;
-@property (nonatomic, strong) NSDate * dateExpires;
-@property (nonatomic, strong) NSDate * dateModified;
+@property (nonatomic, retain) NSDate * dateCreated;
+@property (nonatomic, retain) NSDate * dateExpires;
+@property (nonatomic, retain) NSDate * dateModified;
 
 @end

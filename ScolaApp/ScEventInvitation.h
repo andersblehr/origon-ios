@@ -2,8 +2,8 @@
 //  ScEventInvitation.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -13,9 +13,9 @@
 
 @interface ScEventInvitation : NSManagedObject
 
-@property (nonatomic, strong) NSNumber * rsvp;
-@property (nonatomic, strong) ScEvent *event;
-@property (nonatomic, strong) ScPerson *invitee;
-@property (nonatomic, strong) ScEventInvitationScola *scolaInvitation;
+@property (nonatomic, retain) NSNumber * rsvp;
+@property (nonatomic, retain) ScEvent *event;
+@property (nonatomic, retain) ScPerson *invitee;
+@property (nonatomic, retain) ScEventInvitationScola *scolaInvitation;
 
 @end

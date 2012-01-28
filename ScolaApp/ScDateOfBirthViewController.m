@@ -58,11 +58,11 @@ static int const kPopUpButtonUseNew = 1;
 - (void)genderDidChange
 {
     if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
-        [[ScAppEnv env].memberInfo setObject:kGenderFemale forKey:@"gender"];
+        member.gender = kGenderFemale;
     } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
-        [[ScAppEnv env].memberInfo setObject:kGenderMale forKey:@"gender"];
+        member.gender = kGenderMale;
     } else {
-        [[ScAppEnv env].memberInfo setObject:kGenderNeutral forKey:@"gender"];
+        member.gender = kGenderNeutral;
     }
 }
 
@@ -71,7 +71,7 @@ static int const kPopUpButtonUseNew = 1;
 {
     dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:dateOfBirthPicker.date dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
     
-    [[ScAppEnv env].memberInfo setObject:dateOfBirthPicker.date forKey:@"dateOfBirth"];
+    member.dateOfBirth = dateOfBirthPicker.date;
 }
 
 
@@ -208,6 +208,10 @@ static int const kPopUpButtonUseNew = 1;
     dateOfBirthField.text = @"";
     
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
+    
+    ScManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
+    member = [context entityForClass:ScScolaMember.class]; // TODO: Fetch, do not create
+    device = [context entityForClass:ScDevice.class];
 }
 
 
@@ -223,20 +227,20 @@ static int const kPopUpButtonUseNew = 1;
 {
     [super viewWillAppear:animated];
     
-    NSString *userInfoDeviceName = [[ScAppEnv env].memberInfo objectForKey:@"deviceName"];
-    NSString *userInfoGender = [[ScAppEnv env].memberInfo objectForKey:@"gender"];
-    NSDate *userInfoDateOfBirth = [[ScAppEnv env].memberInfo objectForKey:@"dateOfBirth"];
+    NSString *persistedDeviceName = device.deviceName;
+    NSString *persistedGender = member.gender;
+    NSDate *persistedDateOfBirth = member.dateOfBirth;
     
-    if (userInfoDeviceName) {
-        deviceNameField.text = userInfoDeviceName;
+    if (persistedDeviceName) {
+        deviceNameField.text = persistedDeviceName;
     } else {
         deviceNameField.text = [ScAppEnv env].deviceName;
     }
     
-    if (userInfoGender) {
-        if ([userInfoGender isEqualToString:kGenderFemale]) {
+    if (persistedGender) {
+        if ([persistedGender isEqualToString:kGenderFemale]) {
             genderControl.selectedSegmentIndex = kGenderSegmentFemale;
-        } else if ([userInfoGender isEqualToString:kGenderMale]) {
+        } else if ([persistedGender isEqualToString:kGenderMale]) {
             genderControl.selectedSegmentIndex = kGenderSegmentMale;
         } else {
             genderControl.selectedSegmentIndex = kGenderSegmentNeutral;
@@ -245,8 +249,8 @@ static int const kPopUpButtonUseNew = 1;
         genderControl.selectedSegmentIndex = kGenderSegmentFemale;
     }
     
-    if (userInfoDateOfBirth) {
-        [dateOfBirthPicker setDate:userInfoDateOfBirth animated:YES];
+    if (persistedDateOfBirth) {
+        [dateOfBirthPicker setDate:persistedDateOfBirth animated:YES];
         [self dateOfBirthDidChange];
     } else {
         [self setDatePickerToFirstOfApril1976];
@@ -298,7 +302,7 @@ static int const kPopUpButtonUseNew = 1;
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField
 {
-    [[ScAppEnv env].memberInfo setObject:deviceNameField.text forKey:@"deviceName"];
+    device.deviceName = deviceNameField.text;
     
     return YES;
 }
@@ -307,7 +311,7 @@ static int const kPopUpButtonUseNew = 1;
 - (BOOL)textFieldShouldClear:(UITextField *)textField
 {
     [self setDatePickerToFirstOfApril1976];
-    [[ScAppEnv env].memberInfo removeObjectForKey:@"dateOfBirth"];
+    member.dateOfBirth = nil;
     
     return YES;
 }
@@ -325,7 +329,7 @@ static int const kPopUpButtonUseNew = 1;
 {
     if (buttonIndex == kPopUpButtonUseBuiltIn) {
         deviceNameField.text = [ScAppEnv env].deviceName;
-        [[ScAppEnv env].memberInfo setObject:deviceNameField.text forKey:@"deviceName"];
+        device.deviceName = deviceNameField.text;
     } else if (buttonIndex == kPopUpButtonUseNew) {
         [deviceNameField becomeFirstResponder];
     }

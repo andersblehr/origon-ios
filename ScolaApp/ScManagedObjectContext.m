@@ -14,27 +14,34 @@
 @implementation ScManagedObjectContext
 
 
-#pragma mark - Overridden methods
+#pragma mark - Convenience methods
 
-- (BOOL)save:(NSError *__autoreleasing *)error
+- (BOOL)save
 {
-    BOOL localSaveResult = [super save:error];
+    NSError *error = nil;
+    BOOL didSaveOK = [self save:&error];
     
-    // TODO: Save any new/changed entities to server
+    if (didSaveOK) {
+        // TODO: Save any new/changed entities to server
+    } else {
+        ScLogError(@"Error during save to managed object context: %@", [error userInfo]);
+    }
     
-    return localSaveResult;
+    return didSaveOK;
 }
 
 
-#pragma mark - Added methods
-
-- (NSEntityDescription *)entityForClass:(Class)class
+- (id)entityForClass:(Class)class
 {
+    id returnable = nil;
+    
     NSString *entityName = NSStringFromClass(class);
     NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:self];
     
-    if (!entity) {
-        ScLogBreakage(@"Attempt to obtain entity description for non-entity class %@.", entityName);
+    if (entity) {
+        returnable = [[class alloc] initWithEntity:entity insertIntoManagedObjectContext:self];
+    } else {
+        ScLogBreakage(@"Attempt to instantiate non-entity class '%@' as entity.", entityName);
     }
     
     return entity;

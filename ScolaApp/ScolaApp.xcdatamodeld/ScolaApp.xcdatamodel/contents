@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="878" systemVersion="11C74" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="ScCachedAddress" representedClassName="ScCachedAddress" syncable="YES">
-        <attribute name="addressLine1" attributeType="String" syncable="YES"/>
-        <attribute name="addressLine2" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="addressLine3" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="landline" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="households" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScHousehold" inverseName="address" inverseEntity="ScHousehold" syncable="YES"/>
-        <relationship name="organisations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScOrganisation" inverseName="address" inverseEntity="ScOrganisation" syncable="YES"/>
-    </entity>
     <entity name="ScCachedEntity" representedClassName="ScCachedEntity" isAbstract="YES" syncable="YES">
         <attribute name="dateCreated" attributeType="Date" syncable="YES"/>
         <attribute name="dateExpires" attributeType="Date" syncable="YES"/>
@@ -75,7 +66,10 @@
         <relationship name="document" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScDocument" inverseName="externalDocument" inverseEntity="ScDocument" syncable="YES"/>
     </entity>
     <entity name="ScHousehold" representedClassName="ScHousehold" parentEntity="ScCachedEntity" syncable="YES">
-        <relationship name="address" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScCachedAddress" inverseName="households" inverseEntity="ScCachedAddress" syncable="YES"/>
+        <attribute name="addressLine1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="addressLine2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="contry" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="postCodeAndCity" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="hostingHousehold" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="members" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScPerson" inverseName="household" inverseEntity="ScPerson" syncable="YES"/>
         <relationship name="parttimeMembers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScParttimeHousehold" inverseName="household" inverseEntity="ScParttimeHousehold" syncable="YES"/>
@@ -98,8 +92,11 @@
         <relationship name="messageItems" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScMessageItem" inverseName="messageThread" inverseEntity="ScMessageItem" syncable="YES"/>
     </entity>
     <entity name="ScOrganisation" representedClassName="ScOrganisation" parentEntity="ScCachedEntity" syncable="YES">
+        <attribute name="addressLine1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="addressLine2" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
-        <relationship name="address" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScCachedAddress" inverseName="organisations" inverseEntity="ScCachedAddress" syncable="YES"/>
+        <attribute name="phoneNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="postCodeAndCity" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="contacts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScOrganisationContact" inverseName="organisation" inverseEntity="ScOrganisationContact" syncable="YES"/>
         <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="hostingOrganisation" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="scolas" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScScola" inverseName="organisation" inverseEntity="ScScola" syncable="YES"/>
@@ -119,7 +116,7 @@
         <relationship name="parttimeMember" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScPerson" inverseName="parttimeHouseholds" inverseEntity="ScPerson" syncable="YES"/>
     </entity>
     <entity name="ScPerson" representedClassName="ScPerson" parentEntity="ScCachedEntity" syncable="YES">
-        <attribute name="birthday" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="dateOfBirth" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="email" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="gender" attributeType="String" syncable="YES"/>
         <attribute name="isActive" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -229,7 +226,6 @@
         </userInfo>
     </entity>
     <elements>
-        <element name="ScCachedAddress" positionX="-380" positionY="-375" width="128" height="150"/>
         <element name="ScCachedEntity" positionX="-369" positionY="423" width="128" height="90"/>
         <element name="ScDevice" positionX="322" positionY="-522" width="128" height="90"/>
         <element name="ScDocument" positionX="342" positionY="-141" width="128" height="150"/>

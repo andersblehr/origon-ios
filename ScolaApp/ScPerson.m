@@ -2,8 +2,8 @@
 //  ScPerson.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 12.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import "ScPerson.h"
@@ -18,7 +18,7 @@
 
 @implementation ScPerson
 
-@dynamic birthday;
+@dynamic dateOfBirth;
 @dynamic email;
 @dynamic gender;
 @dynamic isActive;

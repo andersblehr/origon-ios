@@ -25,8 +25,6 @@ extern NSString * const kBundleID;
 @property (nonatomic) ScServerAvailability serverAvailability;
 @property (strong, readonly) ScManagedObjectContext *managedObjectContext;
 
-@property (strong) NSMutableDictionary *memberInfo;
-
 + (ScAppEnv *)env;
 
 - (NSString *)deviceName;

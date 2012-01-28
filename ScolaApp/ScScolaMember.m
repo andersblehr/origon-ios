@@ -2,8 +2,8 @@
 //  ScScolaMember.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 29.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import "ScScolaMember.h"
@@ -18,9 +18,9 @@
 
 @dynamic memberSince;
 @dynamic adminMemberships;
+@dynamic devices;
 @dynamic documents;
 @dynamic messageItems;
 @dynamic toDoAssignments;
-@dynamic devices;
 
 @end

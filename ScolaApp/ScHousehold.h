@@ -2,22 +2,25 @@
 //  ScHousehold.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScCachedAddress, ScEvent, ScParttimeHousehold, ScPerson;
+@class ScEvent, ScParttimeHousehold, ScPerson;
 
 @interface ScHousehold : ScCachedEntity
 
-@property (nonatomic, strong) ScCachedAddress *address;
-@property (nonatomic, strong) NSSet *events;
-@property (nonatomic, strong) NSSet *members;
-@property (nonatomic, strong) NSSet *parttimeMembers;
+@property (nonatomic, retain) NSString * addressLine1;
+@property (nonatomic, retain) NSString * addressLine2;
+@property (nonatomic, retain) NSString * postCodeAndCity;
+@property (nonatomic, retain) NSString * contry;
+@property (nonatomic, retain) NSSet *events;
+@property (nonatomic, retain) NSSet *members;
+@property (nonatomic, retain) NSSet *parttimeMembers;
 @end
 
 @interface ScHousehold (CoreDataGeneratedAccessors)

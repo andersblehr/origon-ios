@@ -1,5 +1,5 @@
 //
-//  ScRegisterDeviceController.h
+//  ScAddressViewController.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 28.11.11.

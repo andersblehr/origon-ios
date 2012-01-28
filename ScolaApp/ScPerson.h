@@ -2,8 +2,8 @@
 //  ScPerson.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 12.12.11.
-//  Copyright (c) 2011 Rhelba Software. All rights reserved.
+//  Created by Anders Blehr on 28.01.12.
+//  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,23 +14,23 @@
 
 @interface ScPerson : ScCachedEntity
 
-@property (nonatomic, strong) NSDate * birthday;
-@property (nonatomic, strong) NSString * email;
-@property (nonatomic, strong) NSString * gender;
-@property (nonatomic, strong) NSNumber * isActive;
-@property (nonatomic, strong) NSNumber * isMinor;
-@property (nonatomic, strong) NSString * mobilePhone;
-@property (nonatomic, strong) NSString * name;
-@property (nonatomic, strong) NSData * picture;
-@property (nonatomic, strong) NSString * workPhone;
-@property (nonatomic, strong) NSSet *coachMemberships;
-@property (nonatomic, strong) NSSet *contactForEvents;
-@property (nonatomic, strong) NSSet *contactForOrganisations;
-@property (nonatomic, strong) NSSet *eventInvitations;
-@property (nonatomic, strong) ScHousehold *household;
-@property (nonatomic, strong) NSSet *memberships;
-@property (nonatomic, strong) NSSet *parttimeHouseholds;
-@property (nonatomic, strong) NSSet *scheduledAbsences;
+@property (nonatomic, retain) NSDate * dateOfBirth;
+@property (nonatomic, retain) NSString * email;
+@property (nonatomic, retain) NSString * gender;
+@property (nonatomic, retain) NSNumber * isActive;
+@property (nonatomic, retain) NSNumber * isMinor;
+@property (nonatomic, retain) NSString * mobilePhone;
+@property (nonatomic, retain) NSString * name;
+@property (nonatomic, retain) NSData * picture;
+@property (nonatomic, retain) NSString * workPhone;
+@property (nonatomic, retain) NSSet *coachMemberships;
+@property (nonatomic, retain) NSSet *contactForEvents;
+@property (nonatomic, retain) NSSet *contactForOrganisations;
+@property (nonatomic, retain) NSSet *eventInvitations;
+@property (nonatomic, retain) ScHousehold *household;
+@property (nonatomic, retain) NSSet *memberships;
+@property (nonatomic, retain) NSSet *parttimeHouseholds;
+@property (nonatomic, retain) NSSet *scheduledAbsences;
 @end
 
 @interface ScPerson (CoreDataGeneratedAccessors)

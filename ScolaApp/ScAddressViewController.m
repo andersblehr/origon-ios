@@ -1,5 +1,5 @@
 //
-//  ScRegisterDeviceController.m
+//  ScAddressViewController.m
 //  ScolaApp
 //
 //  Created by Anders Blehr on 28.11.11.
@@ -11,6 +11,7 @@
 #import "UIView+ScShadowEffects.h"
 
 #import "ScAppEnv.h"
+#import "ScHousehold.h"
 #import "ScLogging.h"
 #import "ScStrings.h"
 
@@ -37,9 +38,14 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
     BOOL isDone = (addressLine1.length || addressLine2.length || postCodeAndCity.length);
     
     if (isDone) {
-        [[ScAppEnv env].memberInfo setObject:addressLine1 forKey:@"addressLine1"];
-        [[ScAppEnv env].memberInfo setObject:addressLine2 forKey:@"addressLine2"];
-        [[ScAppEnv env].memberInfo setObject:postCodeAndCity forKey:@"postCodeAndCity"];
+        ScManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
+        ScHousehold *household = [context entityForClass:ScHousehold.class];
+        
+        household.addressLine1 = addressLine1Field.text;
+        household.addressLine2 = addressLine2Field.text;
+        household.postCodeAndCity = postCodeAndCityField.text;
+
+        [context save];
         
         [self performSegueWithIdentifier:kSegueToDateOfBirthView sender:self];
     } else {

@@ -186,9 +186,9 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
-- (void)setAuthHeaderUsingIdent:(NSString *)ident andPassword:(NSString *)password
+- (void)setAuthHeaderUsingId:(NSString *)userId andPassword:(NSString *)password
 {
-    NSString *authString = [NSString stringWithFormat:@"%@:%@", ident, password];
+    NSString *authString = [NSString stringWithFormat:@"%@:%@", userId, password];
     [self setValue:[NSString stringWithFormat:@"Basic %@", [authString base64EncodedString]] forHTTPHeaderField:@"Authorization"];
 }
 
