@@ -8,10 +8,11 @@
 
 #import "ScAuthViewController.h"
 
+#import "NSManagedObjectContext+ScPersistenceCache.h"
 #import "NSString+ScStringExtensions.h"
 #import "UIView+ScShadowEffects.h"
 
-#import "ScAppDelegate.h"
+#import "ScAddressViewController.h"
 #import "ScAppEnv.h"
 #import "ScLogging.h"
 #import "ScScolaMember.h"
@@ -70,6 +71,8 @@ static int const kPopUpButtonTryAgain = 1;
 @synthesize scolaSplashLabel;
 @synthesize showInfoButton;
 @synthesize activityIndicator;
+
+@synthesize member;
 
 
 #pragma mark - Auxiliary methods
@@ -546,13 +549,11 @@ static int const kPopUpButtonTryAgain = 1;
     [userDefaults setObject:authExpiryDate forKey:kUserDefaultsKeyAuthExpiryDate];
     
     if (isNew) {
-        ScManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
-        ScScolaMember *member = [context entityForClass:ScScolaMember.class];
+        NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
+        member = [context entityForClass:ScScolaMember.class];
         
         member.name = nameAsEntered;
         member.email = emailAsEntered;
-        
-        [context save];
         
         [self performSegueWithIdentifier:kSegueToAddressView sender:self];
     } else {
@@ -788,6 +789,17 @@ static int const kPopUpButtonTryAgain = 1;
         return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
     } else {
         return YES;
+    }
+}
+
+
+#pragma mark - Segue handling
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:kSegueToAddressView]) {
+        ScAddressViewController *nextViewController = segue.destinationViewController;
+        nextViewController.member = member;
     }
 }
 

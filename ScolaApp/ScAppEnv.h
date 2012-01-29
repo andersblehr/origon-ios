@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
-#import "ScManagedObjectContext.h"
 #import "ScServerConnection.h"
 
-@interface ScAppEnv : NSObject
+@interface ScAppEnv : NSObject {
+@private
+    UIManagedDocument *managedDocument;
+}
 
 extern NSString * const kBundleID;
 
@@ -23,7 +25,7 @@ extern NSString * const kBundleID;
 @property (nonatomic) BOOL isInternetConnectionWWAN;
 
 @property (nonatomic) ScServerAvailability serverAvailability;
-@property (strong, readonly) ScManagedObjectContext *managedObjectContext;
+@property (weak, readonly) NSManagedObjectContext *managedObjectContext;
 
 + (ScAppEnv *)env;
 

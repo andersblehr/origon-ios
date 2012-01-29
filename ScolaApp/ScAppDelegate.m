@@ -13,16 +13,11 @@
 #import "ScAppDelegate.h"
 #import "ScAppEnv.h"
 #import "ScLogging.h"
-#import "ScManagedObjectContext.h"
 #import "ScServerConnection.h"
 
 @implementation ScAppDelegate
 
 @synthesize window;
-
-@synthesize managedObjectModel;
-@synthesize managedObjectContext;
-@synthesize persistentStoreCoordinator;
 
 
 #pragma mark - Reachability changed notification handling
@@ -46,62 +41,6 @@
 - (void)reachabilityChanged:(NSNotification *)notification
 {
     [self checkConnectivity:(Reachability *)[notification object]];
-}
-
-
-#pragma mark - Core Data accessors
-
-- (NSManagedObjectModel *)managedObjectModel
-{
-    if (managedObjectModel == nil) {
-        managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil];
-    }
-    
-    return managedObjectModel;
-}
-
-
-- (ScManagedObjectContext *)managedObjectContext
-{
-    if (managedObjectContext == nil) {
-        NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-        
-        if (coordinator != nil) {
-            managedObjectContext = [[ScManagedObjectContext alloc] init];
-            managedObjectContext.persistentStoreCoordinator = coordinator;
-        }
-    }
-    
-    return managedObjectContext;
-}
-
-
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
-{
-    if (persistentStoreCoordinator == nil) {
-        NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"ScolaApp.sqlite"];
-        
-        NSError *error = nil;
-        persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-        
-        if(![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
-                                                     configuration:nil
-                                                               URL:storeURL
-                                                           options:nil
-                                                             error:&error]) {
-            ScLogError(@"Unresolved error %@, %@.", error, [error userInfo]);
-        }
-    }
-    
-    return persistentStoreCoordinator;
-}
-
-
-#pragma mark - Interface implementation
-
-- (NSURL *)applicationDocumentsDirectory
-{
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
 

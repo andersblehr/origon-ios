@@ -8,9 +8,11 @@
 
 #import "ScAddressViewController.h"
 
+#import "NSManagedObjectContext+ScPersistenceCache.h"
 #import "UIView+ScShadowEffects.h"
 
 #import "ScAppEnv.h"
+#import "ScDateOfBirthViewController.h"
 #import "ScHousehold.h"
 #import "ScLogging.h"
 #import "ScStrings.h"
@@ -26,6 +28,9 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
 @synthesize addressLine2Field;
 @synthesize postCodeAndCityField;
 
+@synthesize member;
+@synthesize household;
+
 
 #pragma mark - Auxiliary methods
 
@@ -38,8 +43,8 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
     BOOL isDone = (addressLine1.length || addressLine2.length || postCodeAndCity.length);
     
     if (isDone) {
-        ScManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
-        ScHousehold *household = [context entityForClass:ScHousehold.class];
+        NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
+        household = [context entityForClass:ScHousehold.class];
         
         household.addressLine1 = addressLine1Field.text;
         household.addressLine2 = addressLine2Field.text;
@@ -134,6 +139,18 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+
+#pragma mark - Segue handling
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:kSegueToDateOfBirthView]) {
+        ScDateOfBirthViewController *nextViewController = segue.destinationViewController;
+        nextViewController.member = member;
+        nextViewController.household = household;
+    }
 }
 
 

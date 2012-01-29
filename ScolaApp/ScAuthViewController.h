@@ -9,6 +9,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 
+#import "ScScolaMember.h"
 #import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
 
@@ -54,6 +55,8 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet UILabel *scolaSplashLabel;
 @property (weak, nonatomic) IBOutlet UIButton *showInfoButton;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+
+@property (strong, nonatomic) ScScolaMember *member;
 
 - (IBAction)showInfo:(id)sender;
 

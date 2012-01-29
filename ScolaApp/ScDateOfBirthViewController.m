@@ -8,6 +8,7 @@
 
 #import "ScDateOfBirthViewController.h"
 
+#import "NSManagedObjectContext+ScPersistenceCache.h"
 #import "UIView+ScShadowEffects.h"
 
 #import "ScAppEnv.h"
@@ -42,6 +43,10 @@ static int const kPopUpButtonUseNew = 1;
 @synthesize dateOfBirthUserHelpLabel;
 @synthesize dateOfBirthField;
 @synthesize dateOfBirthPicker;
+
+@synthesize member;
+@synthesize household;
+@synthesize device;
 
 
 #pragma mark - auxiliary methods
@@ -209,8 +214,7 @@ static int const kPopUpButtonUseNew = 1;
     
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
     
-    ScManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
-    member = [context entityForClass:ScScolaMember.class]; // TODO: Fetch, do not create
+    NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
     device = [context entityForClass:ScDevice.class];
 }
 

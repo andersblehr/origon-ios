@@ -8,8 +8,11 @@
 
 #import "ScAppEnv.h"
 
+#import "NSManagedObjectContext+ScPersistenceCache.h"
+
 #import "ScAppDelegate.h"
 #import "ScLogging.h"
+#import "ScScolaMember.h"
 
 @implementation ScAppEnv
 
@@ -26,6 +29,40 @@ NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 @synthesize managedObjectContext;
 
 static ScAppEnv *env = nil;
+
+
+#pragma mark - Auxiliary methods
+
+- (void)initialiseManagedDocument
+{
+    NSURL *applicationDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    NSURL *docURL = [applicationDocumentsDirectory URLByAppendingPathComponent:@"ScolaApp"];
+    
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                             [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
+                             [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+    
+    managedDocument = [[UIManagedDocument alloc] initWithFileURL:docURL];
+    managedDocument.persistentStoreOptions = options;
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[docURL path]]) {
+        [managedDocument openWithCompletionHandler:^(BOOL success){
+            if (success) {
+                managedObjectContext = managedDocument.managedObjectContext;
+            } else {
+                ScLogError(@"Error opening managed document (Core Data wrapper).");
+            }
+        }];
+    } else {
+        [managedDocument saveToURL:docURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
+            if (success) {
+                managedObjectContext = managedDocument.managedObjectContext;
+            } else {
+                ScLogError(@"Error creating managed document (Core Data wrapper).");
+            }
+        }];
+    }
+}
 
 
 #pragma mark - Singleton instance handling
@@ -62,6 +99,9 @@ static ScAppEnv *env = nil;
         
         isInternetConnectionWiFi = NO;
         isInternetConnectionWWAN = NO;
+
+        managedObjectContext = nil;
+        [self initialiseManagedDocument];
     }
     
     return self;
@@ -70,12 +110,10 @@ static ScAppEnv *env = nil;
 
 #pragma mark - Accessors
 
-- (ScManagedObjectContext *)managedObjectContext
+- (NSManagedObjectContext *)managedObjectContext
 {
     if (!managedObjectContext) {
-        ScAppDelegate *appDelegate = (ScAppDelegate *)[[UIApplication sharedApplication] delegate];
-        
-        managedObjectContext = [appDelegate managedObjectContext];
+        ScLogBreakage(@"Attempt to access Core Data before it's available");
     }
     
     return managedObjectContext;

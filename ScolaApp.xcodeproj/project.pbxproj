@@ -26,7 +26,6 @@
 		5C3D42821485678F009A68E0 /* ScMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D42811485678F009A68E0 /* ScMainViewController.m */; };
 		5C4F976914952A31006E244F /* NSManagedObject+ScSerialisation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F976814952A31006E244F /* NSManagedObject+ScSerialisation.m */; };
 		5C4F976C14954BD5006E244F /* NSEntityDescription+ScRemotePersistenceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F976B14954BD5006E244F /* NSEntityDescription+ScRemotePersistenceHelper.m */; };
-		5C4F976F14954DEC006E244F /* ScManagedObjectContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F976E14954DEC006E244F /* ScManagedObjectContext.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */; };
 		5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C50581714CA1D05000D6587 /* QuartzCore.framework */; };
 		5C50581C14CAEC76000D6587 /* UIView+ScShadowEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C50581B14CAEC76000D6587 /* UIView+ScShadowEffects.m */; };
@@ -90,6 +89,7 @@
 		5CD5B29414D4AD2F002021FB /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29314D4AD2F002021FB /* ScCachedEntity.m */; };
 		5CD5B29714D4AEDB002021FB /* ScHousehold.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29614D4AEDB002021FB /* ScHousehold.m */; };
 		5CD5B29A14D4AFC8002021FB /* ScPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29914D4AFC8002021FB /* ScPerson.m */; };
+		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScPersistenceCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScPersistenceCache.m */; };
 		5CE9812914C4D81600DD11D4 /* 112-group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE9812814C4D81600DD11D4 /* 112-group@2x.png */; };
 		5CE987C114854FC6005A17C6 /* ScDateOfBirthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C014854FC6005A17C6 /* ScDateOfBirthViewController.m */; };
 		5CE987C414856426005A17C6 /* ScEventViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* ScEventViewController.m */; };
@@ -134,8 +134,6 @@
 		5C4F976814952A31006E244F /* NSManagedObject+ScSerialisation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+ScSerialisation.m"; sourceTree = "<group>"; };
 		5C4F976A14954BD5006E244F /* NSEntityDescription+ScRemotePersistenceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSEntityDescription+ScRemotePersistenceHelper.h"; sourceTree = "<group>"; };
 		5C4F976B14954BD5006E244F /* NSEntityDescription+ScRemotePersistenceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSEntityDescription+ScRemotePersistenceHelper.m"; sourceTree = "<group>"; };
-		5C4F976D14954DEC006E244F /* ScManagedObjectContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScManagedObjectContext.h; sourceTree = "<group>"; };
-		5C4F976E14954DEC006E244F /* ScManagedObjectContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScManagedObjectContext.m; sourceTree = "<group>"; };
 		5C4F97791496AF88006E244F /* NSURL+ScURLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ScURLExtensions.h"; sourceTree = "<group>"; };
 		5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ScURLExtensions.m"; sourceTree = "<group>"; };
 		5C50581714CA1D05000D6587 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -241,6 +239,8 @@
 		5CD5B29614D4AEDB002021FB /* ScHousehold.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScHousehold.m; sourceTree = "<group>"; };
 		5CD5B29814D4AFC8002021FB /* ScPerson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScPerson.h; sourceTree = "<group>"; };
 		5CD5B29914D4AFC8002021FB /* ScPerson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScPerson.m; sourceTree = "<group>"; };
+		5CD5B29B14D56F7A002021FB /* NSManagedObjectContext+ScPersistenceCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+ScPersistenceCache.h"; sourceTree = "<group>"; };
+		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScPersistenceCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+ScPersistenceCache.m"; sourceTree = "<group>"; };
 		5CE9812814C4D81600DD11D4 /* 112-group@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group@2x.png"; sourceTree = "<group>"; };
 		5CE987BF14854FC6005A17C6 /* ScDateOfBirthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDateOfBirthViewController.h; sourceTree = "<group>"; };
 		5CE987C014854FC6005A17C6 /* ScDateOfBirthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDateOfBirthViewController.m; sourceTree = "<group>"; };
@@ -368,12 +368,12 @@
 				5C4F976B14954BD5006E244F /* NSEntityDescription+ScRemotePersistenceHelper.m */,
 				5C4F976714952A31006E244F /* NSManagedObject+ScSerialisation.h */,
 				5C4F976814952A31006E244F /* NSManagedObject+ScSerialisation.m */,
+				5CD5B29B14D56F7A002021FB /* NSManagedObjectContext+ScPersistenceCache.h */,
+				5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScPersistenceCache.m */,
 				5CBE9C5114AB515F004FE2B7 /* NSString+ScStringExtensions.h */,
 				5CBE9C5214AB515F004FE2B7 /* NSString+ScStringExtensions.m */,
 				5C4F97791496AF88006E244F /* NSURL+ScURLExtensions.h */,
 				5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */,
-				5C4F976D14954DEC006E244F /* ScManagedObjectContext.h */,
-				5C4F976E14954DEC006E244F /* ScManagedObjectContext.m */,
 				5C50581A14CAEC76000D6587 /* UIView+ScShadowEffects.h */,
 				5C50581B14CAEC76000D6587 /* UIView+ScShadowEffects.m */,
 			);
@@ -684,7 +684,6 @@
 				5C3D42821485678F009A68E0 /* ScMainViewController.m in Sources */,
 				5C4F976914952A31006E244F /* NSManagedObject+ScSerialisation.m in Sources */,
 				5C4F976C14954BD5006E244F /* NSEntityDescription+ScRemotePersistenceHelper.m in Sources */,
-				5C4F976F14954DEC006E244F /* ScManagedObjectContext.m in Sources */,
 				5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */,
 				5CBE9C5314AB5160004FE2B7 /* NSString+ScStringExtensions.m in Sources */,
 				5C629FF014C62038001DA01F /* ScScolaViewController.m in Sources */,
@@ -718,6 +717,7 @@
 				5CD5B29414D4AD2F002021FB /* ScCachedEntity.m in Sources */,
 				5CD5B29714D4AEDB002021FB /* ScHousehold.m in Sources */,
 				5CD5B29A14D4AFC8002021FB /* ScPerson.m in Sources */,
+				5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScPersistenceCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

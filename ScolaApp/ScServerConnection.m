@@ -9,6 +9,7 @@
 #import "ScServerConnection.h"
 
 #import "NSEntityDescription+ScRemotePersistenceHelper.h"
+#import "NSManagedObjectContext+ScPersistenceCache.h"
 #import "NSString+ScStringExtensions.h"
 #import "NSURL+ScURLExtensions.h"
 

@@ -6,6 +6,8 @@
 //  Copyright (c) 2011 Rhelba Software. All rights reserved.
 //
 
+#import "ScScolaMember.h"
+
 @interface ScAddressViewController : UIViewController <UITextFieldDelegate, UIAlertViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
@@ -13,5 +15,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *addressLine1Field;
 @property (weak, nonatomic) IBOutlet UITextField *addressLine2Field;
 @property (weak, nonatomic) IBOutlet UITextField *postCodeAndCityField;
+
+@property (strong, nonatomic) ScScolaMember *member;
+@property (strong, nonatomic) ScHousehold *household;
 
 @end
