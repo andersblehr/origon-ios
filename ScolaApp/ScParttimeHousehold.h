@@ -2,7 +2,7 @@
 //  ScParttimeHousehold.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 28.01.12.
+//  Created by Anders Blehr on 30.01.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -20,6 +20,6 @@
 @property (nonatomic, retain) NSNumber * switchDay;
 @property (nonatomic, retain) NSNumber * switchFrequency;
 @property (nonatomic, retain) ScHousehold *household;
-@property (nonatomic, retain) ScPerson *parttimeMember;
+@property (nonatomic, retain) ScPerson *partTimeResident;
 
 @end

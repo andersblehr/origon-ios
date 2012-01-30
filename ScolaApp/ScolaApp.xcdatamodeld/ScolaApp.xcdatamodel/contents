@@ -2,7 +2,7 @@
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="878" systemVersion="11C74" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="ScCachedEntity" representedClassName="ScCachedEntity" isAbstract="YES" syncable="YES">
         <attribute name="dateCreated" attributeType="Date" syncable="YES"/>
-        <attribute name="dateExpires" attributeType="Date" syncable="YES"/>
+        <attribute name="dateExpires" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="dateModified" attributeType="Date" syncable="YES"/>
     </entity>
     <entity name="ScDevice" representedClassName="ScDevice" parentEntity="ScCachedEntity" syncable="YES">
@@ -46,7 +46,7 @@
         <relationship name="invitedIndividuals" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScEventInvitation" inverseName="event" inverseEntity="ScEventInvitation" syncable="YES"/>
         <relationship name="invitedScolas" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScEventInvitationScola" inverseName="event" inverseEntity="ScEventInvitationScola" syncable="YES"/>
         <userInfo>
-            <entry key="expires" value="+30d"/>
+            <entry key="expires" value="dateStart+30d"/>
             <entry key="route" value="event"/>
         </userInfo>
     </entity>
@@ -71,8 +71,8 @@
         <attribute name="contry" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="postCodeAndCity" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="hostingHousehold" inverseEntity="ScEvent" syncable="YES"/>
-        <relationship name="members" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScPerson" inverseName="household" inverseEntity="ScPerson" syncable="YES"/>
-        <relationship name="parttimeMembers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScParttimeHousehold" inverseName="household" inverseEntity="ScParttimeHousehold" syncable="YES"/>
+        <relationship name="partTimeResidents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScPartTimeHousehold" inverseName="household" inverseEntity="ScPartTimeHousehold" syncable="YES"/>
+        <relationship name="residents" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScPerson" inverseName="household" inverseEntity="ScPerson" syncable="YES"/>
     </entity>
     <entity name="ScMessageBoard" representedClassName="ScMessageBoard" syncable="YES">
         <attribute name="title" attributeType="String" syncable="YES"/>
@@ -106,14 +106,14 @@
         <relationship name="contact" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScPerson" inverseName="contactForOrganisations" inverseEntity="ScPerson" syncable="YES"/>
         <relationship name="organisation" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScOrganisation" inverseName="contacts" inverseEntity="ScOrganisation" syncable="YES"/>
     </entity>
-    <entity name="ScParttimeHousehold" representedClassName="ScParttimeHousehold" parentEntity="ScCachedEntity" syncable="YES">
+    <entity name="ScPartTimeHousehold" representedClassName="ScParttimeHousehold" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="daysInHousehold" optional="YES" attributeType="Integer 16" defaultValueString="7" syncable="YES"/>
         <attribute name="descriptionText" attributeType="String" syncable="YES"/>
         <attribute name="presentOn01Jan" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="switchDay" optional="YES" attributeType="Integer 16" defaultValueString="1" syncable="YES"/>
         <attribute name="switchFrequency" optional="YES" attributeType="Integer 16" defaultValueString="1" syncable="YES"/>
-        <relationship name="household" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScHousehold" inverseName="parttimeMembers" inverseEntity="ScHousehold" syncable="YES"/>
-        <relationship name="parttimeMember" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScPerson" inverseName="parttimeHouseholds" inverseEntity="ScPerson" syncable="YES"/>
+        <relationship name="household" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScHousehold" inverseName="partTimeResidents" inverseEntity="ScHousehold" syncable="YES"/>
+        <relationship name="partTimeResident" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScPerson" inverseName="partTimeHouseholds" inverseEntity="ScPerson" syncable="YES"/>
     </entity>
     <entity name="ScPerson" representedClassName="ScPerson" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="dateOfBirth" optional="YES" attributeType="Date" syncable="YES"/>
@@ -129,9 +129,9 @@
         <relationship name="contactForEvents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="eventContacts" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="contactForOrganisations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScOrganisationContact" inverseName="contact" inverseEntity="ScOrganisationContact" syncable="YES"/>
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEventInvitation" inverseName="invitee" inverseEntity="ScEventInvitation" spotlightIndexingEnabled="YES" syncable="YES"/>
-        <relationship name="household" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScHousehold" inverseName="members" inverseEntity="ScHousehold" syncable="YES"/>
+        <relationship name="household" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScHousehold" inverseName="residents" inverseEntity="ScHousehold" syncable="YES"/>
         <relationship name="memberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="members" inverseEntity="ScScola" syncable="YES"/>
-        <relationship name="parttimeHouseholds" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScParttimeHousehold" inverseName="parttimeMember" inverseEntity="ScParttimeHousehold" syncable="YES"/>
+        <relationship name="partTimeHouseholds" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScPartTimeHousehold" inverseName="partTimeResident" inverseEntity="ScPartTimeHousehold" syncable="YES"/>
         <relationship name="scheduledAbsences" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScScheduledAbsence" inverseName="person" inverseEntity="ScScheduledAbsence" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="never"/>
@@ -145,7 +145,7 @@
         <attribute name="descriptionText" attributeType="String" syncable="YES"/>
         <relationship name="person" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScPerson" inverseName="scheduledAbsences" inverseEntity="ScPerson" syncable="YES"/>
         <userInfo>
-            <entry key="expires" value="+30d"/>
+            <entry key="expires" value="absenceEnd+30d"/>
             <entry key="route" value="absence"/>
         </userInfo>
     </entity>
@@ -210,7 +210,7 @@
         <relationship name="assignments" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScToDoAssignment" inverseName="toDoItem" inverseEntity="ScToDoAssignment" syncable="YES"/>
         <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="memberToDoItems" inverseEntity="ScScola" syncable="YES"/>
         <userInfo>
-            <entry key="expires" value="+7d"/>
+            <entry key="expires" value="dueDate+7d"/>
             <entry key="route" value="todo"/>
         </userInfo>
     </entity>
@@ -221,7 +221,7 @@
         <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="yearlySchedule" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="weeklyScheduleItems" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScScheduleItem" inverseName="yearlySchedule" inverseEntity="ScScheduleItem" syncable="YES"/>
         <userInfo>
-            <entry key="expires" value="+30d"/>
+            <entry key="expires" value="yearEnd+30d"/>
             <entry key="route" value="schedule"/>
         </userInfo>
     </entity>
@@ -241,7 +241,7 @@
         <element name="ScMessageThread" positionX="333" positionY="306" width="128" height="90"/>
         <element name="ScOrganisation" positionX="-207" positionY="51" width="128" height="120"/>
         <element name="ScOrganisationContact" positionX="-191" positionY="-72" width="128" height="90"/>
-        <element name="ScParttimeHousehold" positionX="-207" positionY="-243" width="128" height="150"/>
+        <element name="ScPartTimeHousehold" positionX="-207" positionY="-243" width="128" height="150"/>
         <element name="ScPerson" positionX="-11" positionY="-378" width="128" height="300"/>
         <element name="ScScheduledAbsence" positionX="169" positionY="-396" width="128" height="105"/>
         <element name="ScScheduledBreak" positionX="162" positionY="405" width="128" height="90"/>

@@ -45,13 +45,12 @@ static int const kPopUpButtonUseNew = 1;
 @synthesize dateOfBirthPicker;
 
 @synthesize member;
-@synthesize household;
 @synthesize device;
 
 
 #pragma mark - auxiliary methods
 
-- (void)setDatePickerToFirstOfApril1976
+- (void)setDatePickerToApril1st1976
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
@@ -257,7 +256,7 @@ static int const kPopUpButtonUseNew = 1;
         [dateOfBirthPicker setDate:persistedDateOfBirth animated:YES];
         [self dateOfBirthDidChange];
     } else {
-        [self setDatePickerToFirstOfApril1976];
+        [self setDatePickerToApril1st1976];
     }
 }
 
@@ -314,7 +313,7 @@ static int const kPopUpButtonUseNew = 1;
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField
 {
-    [self setDatePickerToFirstOfApril1976];
+    [self setDatePickerToApril1st1976];
     member.dateOfBirth = nil;
     
     return YES;

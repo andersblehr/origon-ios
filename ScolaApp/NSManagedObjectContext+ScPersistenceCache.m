@@ -8,6 +8,9 @@
 
 #import "NSManagedObjectContext+ScPersistenceCache.h"
 
+#import "NSEntityDescription+ScRemotePersistenceHelper.h"
+
+#import "ScCachedEntity.h"
 #import "ScLogging.h"
 
 
@@ -31,23 +34,24 @@
 
 - (id)entityForClass:(Class)class
 {
-    //id returnable = nil;
+    id entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
     
-    //NSString *entityName = NSStringFromClass(class);
-    //NSEntityDescription *entity = [NSEntityDescription entityForName:entityName inManagedObjectContext:self];
-
-    return [NSEntityDescription
-                              insertNewObjectForEntityForName:NSStringFromClass(class) 
-                              inManagedObjectContext:self];
-    
-    /*
-    if (entity) {
-        returnable = [[class alloc] initWithEntity:entity insertIntoManagedObjectContext:self];
-    } else {
-        ScLogBreakage(@"Attempt to instantiate non-entity class '%@' as entity.", entityName);
+    if ([entity isKindOfClass:ScCachedEntity.class]) {
+        ScCachedEntity *cachedEntity = (ScCachedEntity *)entity;
+        NSDate *now = [NSDate date];
+        
+        cachedEntity.dateCreated = now;
+        cachedEntity.dateModified = now;
+        cachedEntity.dateExpires = nil;
+        
+        NSString *expires = [[cachedEntity entity] expiresInTimeframe];
+        
+        if (expires) {
+            // TODO: Process expiry instructions
+        }
     }
     
-    return returnable; */
+    return entity;
 }
 
 @end

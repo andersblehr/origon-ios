@@ -37,4 +37,16 @@
     return lookupKey;
 }
 
+
+- (NSString *)expiresInTimeframe
+{
+    NSString *expires = [[self userInfo] objectForKey:@"expires"];
+    
+    if (!expires) {
+        ScLogBreakage(@"Attempt to retrieve expiry information from not aplicable entity %@", [self name]);
+    }
+    
+    return expires;
+}
+
 @end

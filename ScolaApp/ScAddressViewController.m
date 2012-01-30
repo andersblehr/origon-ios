@@ -36,11 +36,7 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
 
 - (BOOL)isDoneEditing
 {
-    NSString *addressLine1 = addressLine1Field.text;
-    NSString *addressLine2 = addressLine2Field.text;
-    NSString *postCodeAndCity = postCodeAndCityField.text;
-    
-    BOOL isDone = (addressLine1.length || addressLine2.length || postCodeAndCity.length);
+    BOOL isDone = (addressLine1Field.text.length || postCodeAndCityField.text.length);
     
     if (isDone) {
         NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
@@ -147,9 +143,10 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kSegueToDateOfBirthView]) {
+        member.household = household;
+        
         ScDateOfBirthViewController *nextViewController = segue.destinationViewController;
         nextViewController.member = member;
-        nextViewController.household = household;
     }
 }
 

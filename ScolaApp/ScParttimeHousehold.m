@@ -2,7 +2,7 @@
 //  ScParttimeHousehold.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 28.01.12.
+//  Created by Anders Blehr on 30.01.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -19,6 +19,6 @@
 @dynamic switchDay;
 @dynamic switchFrequency;
 @dynamic household;
-@dynamic parttimeMember;
+@dynamic partTimeResident;
 
 @end

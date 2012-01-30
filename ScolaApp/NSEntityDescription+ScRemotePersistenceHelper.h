@@ -12,5 +12,6 @@
 
 - (NSString *)route;
 - (NSString *)lookupKey;
+- (NSString *)expiresInTimeframe;
 
 @end

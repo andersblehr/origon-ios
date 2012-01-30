@@ -2,7 +2,7 @@
 //  ScPerson.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 28.01.12.
+//  Created by Anders Blehr on 30.01.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -29,7 +29,7 @@
 @property (nonatomic, retain) NSSet *eventInvitations;
 @property (nonatomic, retain) ScHousehold *household;
 @property (nonatomic, retain) NSSet *memberships;
-@property (nonatomic, retain) NSSet *parttimeHouseholds;
+@property (nonatomic, retain) NSSet *partTimeHouseholds;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @end
 
@@ -60,10 +60,10 @@
 - (void)addMemberships:(NSSet *)values;
 - (void)removeMemberships:(NSSet *)values;
 
-- (void)addParttimeHouseholdsObject:(ScParttimeHousehold *)value;
-- (void)removeParttimeHouseholdsObject:(ScParttimeHousehold *)value;
-- (void)addParttimeHouseholds:(NSSet *)values;
-- (void)removeParttimeHouseholds:(NSSet *)values;
+- (void)addPartTimeHouseholdsObject:(ScParttimeHousehold *)value;
+- (void)removePartTimeHouseholdsObject:(ScParttimeHousehold *)value;
+- (void)addPartTimeHouseholds:(NSSet *)values;
+- (void)removePartTimeHouseholds:(NSSet *)values;
 
 - (void)addScheduledAbsencesObject:(ScScheduledAbsence *)value;
 - (void)removeScheduledAbsencesObject:(ScScheduledAbsence *)value;
