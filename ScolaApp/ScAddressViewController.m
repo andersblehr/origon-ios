@@ -45,8 +45,6 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
         household.addressLine1 = addressLine1Field.text;
         household.addressLine2 = addressLine2Field.text;
         household.postCodeAndCity = postCodeAndCityField.text;
-
-        [context save];
         
         [self performSegueWithIdentifier:kSegueToDateOfBirthView sender:self];
     } else {

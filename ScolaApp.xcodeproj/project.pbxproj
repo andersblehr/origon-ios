@@ -72,7 +72,6 @@
 		5CD5B2AC14D7388B002021FB /* ScPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B2AB14D7388B002021FB /* ScPerson.m */; };
 		5CD5B2AF14D7388C002021FB /* ScScolaMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B2AE14D7388C002021FB /* ScScolaMember.m */; };
 		5CD5B2B214D7388C002021FB /* ScToDoAssignment.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B2B114D7388C002021FB /* ScToDoAssignment.m */; };
-		5CD5B2B514D7388D002021FB /* ScDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B2B414D7388D002021FB /* ScDevice.m */; };
 		5CD5B2B814D7388D002021FB /* ScDocumentElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B2B714D7388D002021FB /* ScDocumentElement.m */; };
 		5CD5B2BB14D7388E002021FB /* ScExternalDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B2BA14D7388E002021FB /* ScExternalDocument.m */; };
 		5CD5B2BE14D7388E002021FB /* ScDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B2BD14D7388E002021FB /* ScDocument.m */; };
@@ -90,6 +89,7 @@
 		5CD5B2E214D73894002021FB /* ScMessageThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B2E114D73894002021FB /* ScMessageThread.m */; };
 		5CD5B2E514D73894002021FB /* ScOrganisation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B2E414D73894002021FB /* ScOrganisation.m */; };
 		5CD5B2EB14D738D0002021FB /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B2EA14D738D0002021FB /* ScCachedEntity.m */; };
+		5CD5B2EE14D88F9E002021FB /* ScDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B2ED14D88F9E002021FB /* ScDevice.m */; };
 		5CE9812914C4D81600DD11D4 /* 112-group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE9812814C4D81600DD11D4 /* 112-group@2x.png */; };
 		5CE987C114854FC6005A17C6 /* ScDateOfBirthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C014854FC6005A17C6 /* ScDateOfBirthViewController.m */; };
 		5CE987C414856426005A17C6 /* ScEventViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* ScEventViewController.m */; };
@@ -205,8 +205,6 @@
 		5CD5B2AE14D7388C002021FB /* ScScolaMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMember.m; sourceTree = "<group>"; };
 		5CD5B2B014D7388C002021FB /* ScToDoAssignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScToDoAssignment.h; sourceTree = "<group>"; };
 		5CD5B2B114D7388C002021FB /* ScToDoAssignment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScToDoAssignment.m; sourceTree = "<group>"; };
-		5CD5B2B314D7388D002021FB /* ScDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDevice.h; sourceTree = "<group>"; };
-		5CD5B2B414D7388D002021FB /* ScDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDevice.m; sourceTree = "<group>"; };
 		5CD5B2B614D7388D002021FB /* ScDocumentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDocumentElement.h; sourceTree = "<group>"; };
 		5CD5B2B714D7388D002021FB /* ScDocumentElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDocumentElement.m; sourceTree = "<group>"; };
 		5CD5B2B914D7388E002021FB /* ScExternalDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScExternalDocument.h; sourceTree = "<group>"; };
@@ -241,6 +239,8 @@
 		5CD5B2E414D73894002021FB /* ScOrganisation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScOrganisation.m; sourceTree = "<group>"; };
 		5CD5B2E914D738D0002021FB /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
 		5CD5B2EA14D738D0002021FB /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
+		5CD5B2EC14D88F9E002021FB /* ScDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDevice.h; sourceTree = "<group>"; };
+		5CD5B2ED14D88F9E002021FB /* ScDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDevice.m; sourceTree = "<group>"; };
 		5CE9812814C4D81600DD11D4 /* 112-group@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group@2x.png"; sourceTree = "<group>"; };
 		5CE987BF14854FC6005A17C6 /* ScDateOfBirthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDateOfBirthViewController.h; sourceTree = "<group>"; };
 		5CE987C014854FC6005A17C6 /* ScDateOfBirthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDateOfBirthViewController.m; sourceTree = "<group>"; };
@@ -309,6 +309,8 @@
 				5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */,
 				5CD5B2E914D738D0002021FB /* ScCachedEntity.h */,
 				5CD5B2EA14D738D0002021FB /* ScCachedEntity.m */,
+				5CD5B2EC14D88F9E002021FB /* ScDevice.h */,
+				5CD5B2ED14D88F9E002021FB /* ScDevice.m */,
 				5CD5B29E14D73884002021FB /* ScParttimeHousehold.h */,
 				5CD5B29F14D73884002021FB /* ScParttimeHousehold.m */,
 				5CD5B2A114D73889002021FB /* ScYearlySchedule.h */,
@@ -322,8 +324,6 @@
 				5CD5B2AE14D7388C002021FB /* ScScolaMember.m */,
 				5CD5B2B014D7388C002021FB /* ScToDoAssignment.h */,
 				5CD5B2B114D7388C002021FB /* ScToDoAssignment.m */,
-				5CD5B2B314D7388D002021FB /* ScDevice.h */,
-				5CD5B2B414D7388D002021FB /* ScDevice.m */,
 				5CD5B2B614D7388D002021FB /* ScDocumentElement.h */,
 				5CD5B2B714D7388D002021FB /* ScDocumentElement.m */,
 				5CD5B2B914D7388E002021FB /* ScExternalDocument.h */,
@@ -700,7 +700,6 @@
 				5CD5B2AC14D7388B002021FB /* ScPerson.m in Sources */,
 				5CD5B2AF14D7388C002021FB /* ScScolaMember.m in Sources */,
 				5CD5B2B214D7388C002021FB /* ScToDoAssignment.m in Sources */,
-				5CD5B2B514D7388D002021FB /* ScDevice.m in Sources */,
 				5CD5B2B814D7388D002021FB /* ScDocumentElement.m in Sources */,
 				5CD5B2BB14D7388E002021FB /* ScExternalDocument.m in Sources */,
 				5CD5B2BE14D7388E002021FB /* ScDocument.m in Sources */,
@@ -718,6 +717,7 @@
 				5CD5B2E214D73894002021FB /* ScMessageThread.m in Sources */,
 				5CD5B2E514D73894002021FB /* ScOrganisation.m in Sources */,
 				5CD5B2EB14D738D0002021FB /* ScCachedEntity.m in Sources */,
+				5CD5B2EE14D88F9E002021FB /* ScDevice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

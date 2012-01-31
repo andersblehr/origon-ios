@@ -114,7 +114,7 @@ static int const kPopUpButtonUseNew = 1;
 }
 
 
-- (UIAlertView *)alertViewIfDateOfBirthIsInvalid
+- (UIAlertView *)alertViewIfUnrealisticDateOfBirth
 {
     UIAlertView *alertView = nil;
     
@@ -160,7 +160,7 @@ static int const kPopUpButtonUseNew = 1;
     UIAlertView *alertView = [self alertViewIfNoDeviceName];
 
     if (!alertView && (dateOfBirthField.text.length > 0)) {
-        alertView = [self alertViewIfDateOfBirthIsInvalid];
+        alertView = [self alertViewIfUnrealisticDateOfBirth];
     }
 
     BOOL isDone = (!alertView);
@@ -230,7 +230,7 @@ static int const kPopUpButtonUseNew = 1;
 {
     [super viewWillAppear:animated];
     
-    NSString *persistedDeviceName = device.deviceName;
+    NSString *persistedDeviceName = device.name;
     NSString *persistedGender = member.gender;
     NSDate *persistedDateOfBirth = member.dateOfBirth;
     
@@ -305,7 +305,7 @@ static int const kPopUpButtonUseNew = 1;
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField
 {
-    device.deviceName = deviceNameField.text;
+    device.name = deviceNameField.text;
     
     return YES;
 }
@@ -332,7 +332,7 @@ static int const kPopUpButtonUseNew = 1;
 {
     if (buttonIndex == kPopUpButtonUseBuiltIn) {
         deviceNameField.text = [ScAppEnv env].deviceName;
-        device.deviceName = deviceNameField.text;
+        device.name = deviceNameField.text;
     } else if (buttonIndex == kPopUpButtonUseNew) {
         [deviceNameField becomeFirstResponder];
     }

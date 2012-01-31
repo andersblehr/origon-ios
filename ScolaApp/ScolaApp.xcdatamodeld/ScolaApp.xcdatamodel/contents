@@ -6,8 +6,8 @@
         <attribute name="dateModified" attributeType="Date" syncable="YES"/>
     </entity>
     <entity name="ScDevice" representedClassName="ScDevice" parentEntity="ScCachedEntity" syncable="YES">
-        <attribute name="deviceName" attributeType="String" syncable="YES"/>
-        <attribute name="deviceUUID" attributeType="String" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="uuid" attributeType="String" syncable="YES"/>
         <relationship name="usedBy" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScolaMember" inverseName="devices" inverseEntity="ScScolaMember" syncable="YES"/>
     </entity>
     <entity name="ScDocument" representedClassName="ScDocument" parentEntity="ScCachedEntity" syncable="YES">

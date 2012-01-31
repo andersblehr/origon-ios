@@ -35,6 +35,7 @@ static ScAppEnv *env = nil;
 
 - (void)initialiseManagedDocument
 {
+    ScLogDebug(@"Initialising Core Data...");
     NSURL *applicationDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
     NSURL *docURL = [applicationDocumentsDirectory URLByAppendingPathComponent:@"ScolaApp"];
     
@@ -48,17 +49,19 @@ static ScAppEnv *env = nil;
     if ([[NSFileManager defaultManager] fileExistsAtPath:[docURL path]]) {
         [managedDocument openWithCompletionHandler:^(BOOL success){
             if (success) {
+                ScLogDebug(@"Core Data ready.");
                 managedObjectContext = managedDocument.managedObjectContext;
             } else {
-                ScLogError(@"Error opening managed document (Core Data wrapper).");
+                ScLogError(@"Error initialising Core Data.");
             }
         }];
     } else {
         [managedDocument saveToURL:docURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
             if (success) {
+                ScLogDebug(@"Core Data ready.");
                 managedObjectContext = managedDocument.managedObjectContext;
             } else {
-                ScLogError(@"Error creating managed document (Core Data wrapper).");
+                ScLogError(@"Error initialising Core Data.");
             }
         }];
     }

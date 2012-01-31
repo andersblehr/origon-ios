@@ -19,7 +19,7 @@
     NSString *route = [[self userInfo] objectForKey:@"route"];
     
     if (!route) {
-        ScLogBreakage(@"Attempt to retrieve route info from non-routed entity %@.", [self name]);
+        ScLogBreakage(@"Attempt to retrieve route info from non-routed entity '%@'.", [self name]);
     }
     
     return route;
@@ -31,7 +31,7 @@
     NSString *lookupKey = [[self userInfo] objectForKey:@"key"];
     
     if (!lookupKey) {
-        ScLogBreakage(@"Attempt to retrieve lookup key info from non-keyed entity %@.", [self name]);
+        ScLogBreakage(@"Attempt to retrieve lookup key info from non-keyed entity '%@'.", [self name]);
     }
     
     return lookupKey;
@@ -43,7 +43,7 @@
     NSString *expires = [[self userInfo] objectForKey:@"expires"];
     
     if (!expires) {
-        ScLogBreakage(@"Attempt to retrieve expiry information from not aplicable entity %@", [self name]);
+        ScLogBreakage(@"Expiry information missing for entity '%@'.", [self name]);
     }
     
     return expires;
