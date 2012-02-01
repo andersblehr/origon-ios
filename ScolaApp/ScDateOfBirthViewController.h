@@ -12,7 +12,9 @@
 #import "ScScolaMember.h"
 
 
-@interface ScDateOfBirthViewController : UIViewController <UITextFieldDelegate>
+@interface ScDateOfBirthViewController : UIViewController <UITextFieldDelegate> {
+    ScDevice *device;
+}
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *deviceNameUserHelpLabel;
@@ -24,6 +26,5 @@
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirthPicker;
 
 @property (strong, nonatomic) ScScolaMember *member;
-@property (strong, nonatomic) ScDevice *device;
 
 @end

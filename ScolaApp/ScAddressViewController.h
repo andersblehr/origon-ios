@@ -8,7 +8,9 @@
 
 #import "ScScolaMember.h"
 
-@interface ScAddressViewController : UIViewController <UITextFieldDelegate, UIAlertViewDelegate>
+@interface ScAddressViewController : UIViewController <UITextFieldDelegate, UIAlertViewDelegate> {
+    ScHousehold *household;
+}
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *addressUserHelpLabel;
@@ -17,6 +19,5 @@
 @property (weak, nonatomic) IBOutlet UITextField *postCodeAndCityField;
 
 @property (strong, nonatomic) ScScolaMember *member;
-@property (strong, nonatomic) ScHousehold *household;
 
 @end

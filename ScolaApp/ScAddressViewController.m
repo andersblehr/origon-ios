@@ -29,7 +29,6 @@ static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
 @synthesize postCodeAndCityField;
 
 @synthesize member;
-@synthesize household;
 
 
 #pragma mark - Auxiliary methods

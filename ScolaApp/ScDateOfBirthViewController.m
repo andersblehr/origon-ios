@@ -45,7 +45,6 @@ static int const kPopUpButtonUseNew = 1;
 @synthesize dateOfBirthPicker;
 
 @synthesize member;
-@synthesize device;
 
 
 #pragma mark - auxiliary methods
@@ -54,28 +53,15 @@ static int const kPopUpButtonUseNew = 1;
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
-    NSDate *firstOfApril1976 = [dateFormatter dateFromString:@"1976-04-01T20:00:00Z"];
-    [dateOfBirthPicker setDate:firstOfApril1976 animated:YES];
-}
-
-
-- (void)genderDidChange
-{
-    if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
-        member.gender = kGenderFemale;
-    } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
-        member.gender = kGenderMale;
-    } else {
-        member.gender = kGenderNeutral;
-    }
+    NSDate *april1st1976 = [dateFormatter dateFromString:@"1976-04-01T20:00:00Z"];
+    
+    [dateOfBirthPicker setDate:april1st1976 animated:YES];
 }
 
 
 - (void)dateOfBirthDidChange
 {
     dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:dateOfBirthPicker.date dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
-    
-    member.dateOfBirth = dateOfBirthPicker.date;
 }
 
 
@@ -155,8 +141,6 @@ static int const kPopUpButtonUseNew = 1;
 
 - (BOOL)isDoneEditing
 {
-    [self genderDidChange];
-    
     UIAlertView *alertView = [self alertViewIfNoDeviceName];
 
     if (!alertView && (dateOfBirthField.text.length > 0)) {
@@ -166,6 +150,27 @@ static int const kPopUpButtonUseNew = 1;
     BOOL isDone = (!alertView);
     
     if (isDone) {
+        NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
+        device = [context entityForClass:ScDevice.class];
+        
+        device.name = deviceNameField.text;
+        device.uuid = [ScAppEnv env].deviceUUID;
+        [member addDevicesObject:device];
+        
+        if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
+            member.gender = kGenderFemale;
+        } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
+            member.gender = kGenderMale;
+        } else {
+            member.gender = kGenderNeutral;
+        }
+        
+        if (dateOfBirthField.text.length > 0) {
+            member.dateOfBirth = dateOfBirthPicker.date;
+        }
+        
+        [context save];
+        
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
         [alertView show];
@@ -204,7 +209,6 @@ static int const kPopUpButtonUseNew = 1;
     [genderControl setTitle:[ScStrings stringForKey:strFemale] forSegmentAtIndex:kGenderSegmentFemale];
     [genderControl setTitle:[ScStrings stringForKey:strMale] forSegmentAtIndex:kGenderSegmentMale];
     [genderControl setTitle:[ScStrings stringForKey:strNeutral] forSegmentAtIndex:kGenderSegmentNeutral];
-    [genderControl addTarget:self action:@selector(genderDidChange) forControlEvents:UIControlEventValueChanged];
     
     dateOfBirthUserHelpLabel.text = [ScStrings stringForKey:strDateOfBirthUserHelp];
     dateOfBirthField.delegate = self;
@@ -212,9 +216,6 @@ static int const kPopUpButtonUseNew = 1;
     dateOfBirthField.text = @"";
     
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
-    
-    NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
-    device = [context entityForClass:ScDevice.class];
 }
 
 
@@ -230,32 +231,23 @@ static int const kPopUpButtonUseNew = 1;
 {
     [super viewWillAppear:animated];
     
-    NSString *persistedDeviceName = device.name;
-    NSString *persistedGender = member.gender;
-    NSDate *persistedDateOfBirth = member.dateOfBirth;
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *viewState = [userDefaults objectForKey:self.class.description];
     
-    if (persistedDeviceName) {
-        deviceNameField.text = persistedDeviceName;
+    if (viewState) {
+        NSString *deviceName = [viewState objectForKey:@"device.name"];
+        int genderIndex = [[viewState objectForKey:@"member.gender"] intValue];
+        NSDate *dateOfBirth = [viewState objectForKey:@"member.dateOfBirth"];
+        
+        deviceNameField.text = deviceName;
+        genderControl.selectedSegmentIndex = genderIndex;
+        [dateOfBirthPicker setDate:dateOfBirth animated:YES];
+        [self dateOfBirthDidChange];
+        
+        [userDefaults removeObjectForKey:self.class.description];
     } else {
         deviceNameField.text = [ScAppEnv env].deviceName;
-    }
-    
-    if (persistedGender) {
-        if ([persistedGender isEqualToString:kGenderFemale]) {
-            genderControl.selectedSegmentIndex = kGenderSegmentFemale;
-        } else if ([persistedGender isEqualToString:kGenderMale]) {
-            genderControl.selectedSegmentIndex = kGenderSegmentMale;
-        } else {
-            genderControl.selectedSegmentIndex = kGenderSegmentNeutral;
-        }
-    } else {
         genderControl.selectedSegmentIndex = kGenderSegmentFemale;
-    }
-    
-    if (persistedDateOfBirth) {
-        [dateOfBirthPicker setDate:persistedDateOfBirth animated:YES];
-        [self dateOfBirthDidChange];
-    } else {
         [self setDatePickerToApril1st1976];
     }
 }
@@ -269,6 +261,21 @@ static int const kPopUpButtonUseNew = 1;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+    BOOL backButtonPressed =
+        ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound);
+    
+    if (backButtonPressed) {
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        NSMutableDictionary *viewState = [[NSMutableDictionary alloc] init];
+        NSNumber *genderIndex = [NSNumber numberWithInt:genderControl.selectedSegmentIndex];
+        
+        [viewState setObject:deviceNameField.text forKey:@"device.name"];
+        [viewState setObject:genderIndex forKey:@"member.gender"];
+        [viewState setObject:dateOfBirthPicker.date forKey:@"member.dateOfBirth"];
+        
+        [userDefaults setObject:viewState forKey:self.class.description];
+    }
+    
 	[super viewWillDisappear:animated];
 }
 
@@ -303,18 +310,9 @@ static int const kPopUpButtonUseNew = 1;
 }
 
 
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
-{
-    device.name = deviceNameField.text;
-    
-    return YES;
-}
-
-
 - (BOOL)textFieldShouldClear:(UITextField *)textField
 {
     [self setDatePickerToApril1st1976];
-    member.dateOfBirth = nil;
     
     return YES;
 }
