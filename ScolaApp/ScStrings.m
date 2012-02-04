@@ -97,23 +97,26 @@ NSString * const strWelcomeBackPopUpMessage          = @"strWelcomeBackPopUpMess
 NSString * const strRegistrationCodePrompt           = @"strRegistrationCodePrompt";
 NSString * const strRepeatPasswordPrompt             = @"strRepeatPasswordPrompt";
 
-// Address view
+// Registration view 1
 NSString * const strProvideAddressUserHelp           = @"strProvideAddressUserHelp";
 NSString * const strVerifyAddressUserHelp            = @"strVerifyAddressUserHelp";
 NSString * const strAddressLine1Prompt               = @"strAddressLine1Prompt";
 NSString * const strAddressLine2Prompt               = @"strAddressLine2Prompt";
 NSString * const strPostCodeAndCityPrompt            = @"strPostCodeAndCityPrompt";
-
-// Date of birth view
-NSString * const strDeviceNameUserHelp               = @"strDeviceNameUserHelp";
-NSString * const strDeviceNamePrompt                 = @"strDeviceNamePrompt";
-NSString * const strGenderUserHelp                   = @"strGenderUserHelp";
-NSString * const strFemale                           = @"strFemale";
-NSString * const strMale                             = @"strMale";
-NSString * const strNeutral                          = @"strNeutral";
 NSString * const strDateOfBirthUserHelp              = @"strDateOfBirthUserHelp";
 NSString * const strDateOfBirthPrompt                = @"strDateOfBirthPrompt";
 NSString * const strDateOfBirthClickHerePrompt       = @"strDateOfBirthClickHerePrompt";
+
+// Registration view 2
+NSString * const strGenderUserHelp                   = @"strGenderUserHelp";
+NSString * const strFemaleAdult                      = @"strFemaleAdult";
+NSString * const strFemaleMinor                      = @"strFemaleMinor";
+NSString * const strMaleAdult                        = @"strMaleAdult";
+NSString * const strMaleMinor                        = @"strMaleMinor";
+NSString * const strMobileNumberUserHelp             = @"strMobileNumberUserHelp";
+NSString * const strMobileNumberPrompt               = @"strMobileNumberPrompt";
+NSString * const strDeviceNameUserHelp               = @"strDeviceNameUserHelp";
+NSString * const strDeviceNamePrompt                 = @"strDeviceNamePrompt";
 
 // Main view
 NSString * const strMyPlaceSingle                    = @"strMyPlaceSingle";

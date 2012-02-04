@@ -1,5 +1,5 @@
 //
-//  ScRootViewController.h
+//  ScAuthViewController.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 01.11.11.

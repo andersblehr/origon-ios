@@ -1,5 +1,5 @@
 //
-//  ScRegisterDeviceController.h
+//  ScRegistrationView2Controller.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 29.11.11.
@@ -12,18 +12,17 @@
 #import "ScScolaMember.h"
 
 
-@interface ScDateOfBirthViewController : UIViewController <UITextFieldDelegate> {
+@interface ScRegistrationView2Controller : UIViewController <UITextFieldDelegate> {
     ScDevice *device;
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
-@property (weak, nonatomic) IBOutlet UILabel *deviceNameUserHelpLabel;
-@property (weak, nonatomic) IBOutlet UITextField *deviceNameField;
 @property (weak, nonatomic) IBOutlet UILabel *genderUserHelpLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *genderControl;
-@property (weak, nonatomic) IBOutlet UILabel *dateOfBirthUserHelpLabel;
-@property (weak, nonatomic) IBOutlet UITextField *dateOfBirthField;
-@property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirthPicker;
+@property (weak, nonatomic) IBOutlet UILabel *mobileNumberLabel;
+@property (weak, nonatomic) IBOutlet UITextField *mobileNumberField;
+@property (weak, nonatomic) IBOutlet UILabel *deviceNameUserHelpLabel;
+@property (weak, nonatomic) IBOutlet UITextField *deviceNameField;
 
 @property (strong, nonatomic) ScScolaMember *member;
 

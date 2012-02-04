@@ -1,5 +1,5 @@
 //
-//  ScRootViewController.m
+//  ScAuthViewController.m
 //  ScolaApp
 //
 //  Created by Anders Blehr on 01.11.11.
@@ -12,7 +12,7 @@
 #import "NSString+ScStringExtensions.h"
 #import "UIView+ScShadowEffects.h"
 
-#import "ScAddressViewController.h"
+#import "ScRegistrationView1Controller.h"
 #import "ScAppEnv.h"
 #import "ScLogging.h"
 #import "ScScolaMember.h"
@@ -45,9 +45,8 @@ static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
 static NSString * const kAuthInfoKeyIsActive = @"isActive";
 static NSString * const kAuthInfoKeyIsAuthenticated = @"isAuthenticated";
 static NSString * const kAuthInfoKeyIsDeviceListed = @"isDeviceListed";
-static NSString * const kAuthInfoKeyMember = @"member";
 
-static NSTimeInterval kTimeIntervalTwoWeeks = 1209600;
+static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
 
 static int const kPopUpButtonLogIn = 0;
 static int const kPopUpButtonNewUser = 1;
@@ -332,8 +331,6 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)goBackToUserRegistration
 {
-    currentMembershipSegment = membershipStatusControl.selectedSegmentIndex;
-    
     [self resignCurrentFirstResponder];
     
     nameOrEmailOrRegistrationCodeField.text = [authInfo objectForKey:kAuthInfoKeyName];
@@ -493,7 +490,6 @@ static int const kPopUpButtonTryAgain = 1;
     
     serverConnection = [[ScServerConnection alloc] initForAuthPhase:ScAuthPhaseLogin];
     [serverConnection setAuthHeaderUsingId:emailAsEntered andPassword:password];
-    [serverConnection setValue:[ScAppEnv env].deviceName forURLParameter:kURLParameterName];
     [serverConnection getRemoteClass:@"ScScolaMember" usingDelegate:self];
 }
 
@@ -630,9 +626,8 @@ static int const kPopUpButtonTryAgain = 1;
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         [userDefaults setObject:authInfo forKey:kUserDefaultsKeyAuthInfo];
         
-        NSString *email = [authInfo objectForKey:kAuthInfoKeyEmail];
         NSString *popUpTitle = [ScStrings stringForKey:strEmailSentPopUpTitle];
-        NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentPopUpMessage], email];
+        NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentPopUpMessage], emailAsEntered];
         NSString *laterButtonTitle = [ScStrings stringForKey:strLater];
         NSString *continueButtonTitle = [ScStrings stringForKey:strHaveAccess];
         
@@ -798,7 +793,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kSegueToAddressView]) {
-        ScAddressViewController *nextViewController = segue.destinationViewController;
+        ScRegistrationView1Controller *nextViewController = segue.destinationViewController;
         nextViewController.member = member;
     }
 }
@@ -925,8 +920,8 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (BOOL)textFieldShouldReturnForUserConfirmation:(UITextField *)textField
 {
-    BOOL doRegistrationCodesMatch = NO;
-    BOOL doPasswordsMatch = NO;
+    BOOL registrationCodesDoMatch = NO;
+    BOOL passwordsDoMatch = NO;
     
     NSString *registrationCodeAsSent = [[authInfo objectForKey:kAuthInfoKeyRegistrationCode] lowercaseString];
     NSString *registrationCodeAsEntered = [nameOrEmailOrRegistrationCodeField.text lowercaseString];
@@ -934,27 +929,27 @@ static int const kPopUpButtonTryAgain = 1;
     NSString *alertMessage = nil;
     ScAuthPopUpTag alertTag;
     
-    doRegistrationCodesMatch = [registrationCodeAsEntered isEqualToString:registrationCodeAsSent];
+    registrationCodesDoMatch = [registrationCodeAsEntered isEqualToString:registrationCodeAsSent];
     
-    if (doRegistrationCodesMatch) {
+    if (registrationCodesDoMatch) {
         NSString *email = [authInfo objectForKey:kAuthInfoKeyEmail];
         NSString *password = emailOrPasswordOrScolaShortnameField.text;
         
         NSString *passwordHashFromServer = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
         NSString *passwordHashAsEntered = [self generatePasswordHash:password usingSalt:email];
         
-        doPasswordsMatch = [passwordHashAsEntered isEqualToString:passwordHashFromServer];
+        passwordsDoMatch = [passwordHashAsEntered isEqualToString:passwordHashFromServer];
     }
     
-    if (!doRegistrationCodesMatch) {
+    if (!registrationCodesDoMatch) {
         alertMessage = [ScStrings stringForKey:strRegistrationCodesDoNotMatchAlert];
         alertTag = ScAuthPopUpTagRegistrationCodesDoNotMatch;
-    } else if (!doPasswordsMatch) {
+    } else if (!passwordsDoMatch) {
         alertMessage = [ScStrings stringForKey:strPasswordsDoNotMatchAlert];
         alertTag = ScAuthPopUpTagPasswordsDoNotMatch;
     }
     
-    BOOL shouldReturn = doRegistrationCodesMatch && doPasswordsMatch;
+    BOOL shouldReturn = registrationCodesDoMatch && passwordsDoMatch;
     
     if (shouldReturn) {
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];

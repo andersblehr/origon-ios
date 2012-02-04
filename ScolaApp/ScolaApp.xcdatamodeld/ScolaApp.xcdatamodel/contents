@@ -68,7 +68,6 @@
     <entity name="ScHousehold" representedClassName="ScHousehold" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="addressLine1" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="addressLine2" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="contry" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="postCodeAndCity" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="hostingHousehold" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="partTimeResidents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScPartTimeHousehold" inverseName="household" inverseEntity="ScPartTimeHousehold" syncable="YES"/>
@@ -235,7 +234,7 @@
         <element name="ScEventInvitation" positionX="-200" positionY="198" width="128" height="105"/>
         <element name="ScEventInvitationScola" positionX="-20" positionY="198" width="128" height="90"/>
         <element name="ScExternalDocument" positionX="511" positionY="-81" width="128" height="75"/>
-        <element name="ScHousehold" positionX="-209" positionY="-378" width="128" height="105"/>
+        <element name="ScHousehold" positionX="-209" positionY="-378" width="128" height="135"/>
         <element name="ScMessageBoard" positionX="340" positionY="432" width="128" height="90"/>
         <element name="ScMessageItem" positionX="349" positionY="150" width="128" height="120"/>
         <element name="ScMessageThread" positionX="333" positionY="306" width="128" height="90"/>

@@ -13,7 +13,7 @@
 #import "ScAppEnv.h"
 #import "ScLogging.h"
 
-static CGFloat const kHeadingViewAlpha = 0.2f;
+static CGFloat const kHeadingViewAlpha = 0.3f;
 static CGFloat const kIconButtonAlpha = 0.7f;
 static CGFloat const kHeadingLabelFontSize = 13;
 static CGFloat const kCaptionLabelFontSize = 11;
@@ -118,7 +118,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         CGRect headingFrame = CGRectMake(0, 0, screenWidth, headingHeight);
         
         headingView = [[UIView alloc] initWithFrame:headingFrame];
-        headingView.backgroundColor = [UIColor whiteColor];
+        headingView.backgroundColor = [UIColor darkTextColor];
         headingView.alpha = kHeadingViewAlpha;
         headingView.tag = sectionNumber;
         [headingView addShadow];
@@ -422,7 +422,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
     captionLabel.textColor = [UIColor whiteColor];
     captionLabel.shadowColor = [UIColor blackColor];
     captionLabel.shadowOffset = CGSizeMake(0.f, 2.f);
-    captionLabel.font = [UIFont systemFontOfSize:kCaptionLabelFontSize];
+    captionLabel.font = [UIFont boldSystemFontOfSize:kCaptionLabelFontSize];
     captionLabel.textAlignment = UITextAlignmentCenter;
     captionLabel.text = caption;
     

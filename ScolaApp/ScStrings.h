@@ -87,23 +87,26 @@ extern NSString * const strRegistrationCodePrompt;
 extern NSString * const strRepeatPasswordPrompt;
 extern NSString * const strScolaDescription;
 
-// Address view
+// Registration view 1
 extern NSString * const strProvideAddressUserHelp;
 extern NSString * const strVerifyAddressUserHelp;
 extern NSString * const strAddressLine1Prompt;
 extern NSString * const strAddressLine2Prompt;
 extern NSString * const strPostCodeAndCityPrompt;
-
-// Date of birth view
-extern NSString * const strDeviceNameUserHelp;
-extern NSString * const strDeviceNamePrompt;
-extern NSString * const strGenderUserHelp;
-extern NSString * const strFemale;
-extern NSString * const strMale;
-extern NSString * const strNeutral;
 extern NSString * const strDateOfBirthUserHelp;
 extern NSString * const strDateOfBirthPrompt;
 extern NSString * const strDateOfBirthClickHerePrompt;
+
+// Registration view 2
+extern NSString * const strGenderUserHelp;
+extern NSString * const strFemaleAdult;
+extern NSString * const strFemaleMinor;
+extern NSString * const strMaleAdult;
+extern NSString * const strMaleMinor;
+extern NSString * const strMobileNumberUserHelp;
+extern NSString * const strMobileNumberPrompt;
+extern NSString * const strDeviceNameUserHelp;
+extern NSString * const strDeviceNamePrompt;
 
 // Main view
 extern NSString * const strMyPlaceSingle;
