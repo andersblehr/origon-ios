@@ -2,7 +2,7 @@
 //  ScHousehold.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 30.01.12.
+//  Created by Anders Blehr on 05.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -17,7 +17,6 @@
 @property (nonatomic, retain) NSString * addressLine1;
 @property (nonatomic, retain) NSString * addressLine2;
 @property (nonatomic, retain) NSString * postCodeAndCity;
-@property (nonatomic, retain) NSString * contry;
 @property (nonatomic, retain) NSSet *events;
 @property (nonatomic, retain) NSSet *residents;
 @property (nonatomic, retain) NSSet *partTimeResidents;

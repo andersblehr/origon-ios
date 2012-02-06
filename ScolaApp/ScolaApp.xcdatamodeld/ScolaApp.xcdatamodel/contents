@@ -123,13 +123,12 @@
         <attribute name="mobilePhone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="picture" optional="YES" attributeType="Binary" syncable="YES"/>
-        <attribute name="workPhone" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="coachMemberships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScScola" inverseName="coaches" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="contactForEvents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="eventContacts" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="contactForOrganisations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScOrganisationContact" inverseName="contact" inverseEntity="ScOrganisationContact" syncable="YES"/>
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEventInvitation" inverseName="invitee" inverseEntity="ScEventInvitation" spotlightIndexingEnabled="YES" syncable="YES"/>
         <relationship name="household" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScHousehold" inverseName="residents" inverseEntity="ScHousehold" syncable="YES"/>
-        <relationship name="memberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="members" inverseEntity="ScScola" syncable="YES"/>
+        <relationship name="listings" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScScola" inverseName="membersInactive" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="partTimeHouseholds" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScPartTimeHousehold" inverseName="partTimeResident" inverseEntity="ScPartTimeHousehold" syncable="YES"/>
         <relationship name="scheduledAbsences" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScScheduledAbsence" inverseName="person" inverseEntity="ScScheduledAbsence" syncable="YES"/>
         <userInfo>
@@ -173,7 +172,8 @@
         <relationship name="guardedScola" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScScola" inverseName="guardianScola" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="guardianScola" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScScola" inverseName="guardedScola" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="hostingEvents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScEvent" inverseName="hostingScolas" inverseEntity="ScEvent" syncable="YES"/>
-        <relationship name="members" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScPerson" inverseName="memberships" inverseEntity="ScPerson" syncable="YES"/>
+        <relationship name="membersActive" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScolaMember" inverseName="memberships" inverseEntity="ScScolaMember" syncable="YES"/>
+        <relationship name="membersInactive" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScPerson" inverseName="listings" inverseEntity="ScPerson" syncable="YES"/>
         <relationship name="memberToDoItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScToDoItem" inverseName="scola" inverseEntity="ScToDoItem" syncable="YES"/>
         <relationship name="messageBoards" optional="YES" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScMessageBoard" inverseName="scola" inverseEntity="ScMessageBoard" syncable="YES"/>
         <relationship name="organisation" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScOrganisation" inverseName="scolas" inverseEntity="ScOrganisation" syncable="YES"/>
@@ -189,6 +189,7 @@
         <relationship name="adminMemberships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScScola" inverseName="admins" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="devices" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScDevice" inverseName="usedBy" inverseEntity="ScDevice" syncable="YES"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDocument" inverseName="author" inverseEntity="ScDocument" syncable="YES"/>
+        <relationship name="memberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="membersActive" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="messageItems" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMessageItem" inverseName="author" inverseEntity="ScMessageItem" syncable="YES"/>
         <relationship name="toDoAssignments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScToDoAssignment" inverseName="assignee" inverseEntity="ScToDoAssignment" syncable="YES"/>
         <userInfo>
@@ -234,19 +235,19 @@
         <element name="ScEventInvitation" positionX="-200" positionY="198" width="128" height="105"/>
         <element name="ScEventInvitationScola" positionX="-20" positionY="198" width="128" height="90"/>
         <element name="ScExternalDocument" positionX="511" positionY="-81" width="128" height="75"/>
-        <element name="ScHousehold" positionX="-209" positionY="-378" width="128" height="135"/>
+        <element name="ScHousehold" positionX="-209" positionY="-378" width="128" height="105"/>
         <element name="ScMessageBoard" positionX="340" positionY="432" width="128" height="90"/>
         <element name="ScMessageItem" positionX="349" positionY="150" width="128" height="120"/>
         <element name="ScMessageThread" positionX="333" positionY="306" width="128" height="90"/>
         <element name="ScOrganisation" positionX="-207" positionY="51" width="128" height="120"/>
         <element name="ScOrganisationContact" positionX="-191" positionY="-72" width="128" height="90"/>
         <element name="ScPartTimeHousehold" positionX="-207" positionY="-243" width="128" height="150"/>
-        <element name="ScPerson" positionX="-11" positionY="-378" width="128" height="300"/>
+        <element name="ScPerson" positionX="-11" positionY="-378" width="128" height="285"/>
         <element name="ScScheduledAbsence" positionX="169" positionY="-396" width="128" height="105"/>
         <element name="ScScheduledBreak" positionX="162" positionY="405" width="128" height="90"/>
         <element name="ScScheduleItem" positionX="-20" positionY="306" width="128" height="120"/>
-        <element name="ScScola" positionX="160" positionY="-117" width="128" height="300"/>
-        <element name="ScScolaMember" positionX="169" positionY="-270" width="128" height="120"/>
+        <element name="ScScola" positionX="160" positionY="-117" width="128" height="315"/>
+        <element name="ScScolaMember" positionX="169" positionY="-270" width="128" height="150"/>
         <element name="ScToDoAssignment" positionX="342" positionY="-405" width="128" height="105"/>
         <element name="ScToDoItem" positionX="333" positionY="-267" width="128" height="105"/>
         <element name="ScYearlySchedule" positionX="169" positionY="243" width="128" height="120"/>

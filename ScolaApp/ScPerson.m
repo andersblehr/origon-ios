@@ -2,7 +2,7 @@
 //  ScPerson.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 30.01.12.
+//  Created by Anders Blehr on 05.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -26,13 +26,12 @@
 @dynamic mobilePhone;
 @dynamic name;
 @dynamic picture;
-@dynamic workPhone;
 @dynamic coachMemberships;
 @dynamic contactForEvents;
 @dynamic contactForOrganisations;
 @dynamic eventInvitations;
 @dynamic household;
-@dynamic memberships;
+@dynamic listings;
 @dynamic partTimeHouseholds;
 @dynamic scheduledAbsences;
 

@@ -2,7 +2,7 @@
 //  ScPerson.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 30.01.12.
+//  Created by Anders Blehr on 05.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -22,13 +22,12 @@
 @property (nonatomic, retain) NSString * mobilePhone;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSData * picture;
-@property (nonatomic, retain) NSString * workPhone;
 @property (nonatomic, retain) NSSet *coachMemberships;
 @property (nonatomic, retain) NSSet *contactForEvents;
 @property (nonatomic, retain) NSSet *contactForOrganisations;
 @property (nonatomic, retain) NSSet *eventInvitations;
 @property (nonatomic, retain) ScHousehold *household;
-@property (nonatomic, retain) NSSet *memberships;
+@property (nonatomic, retain) NSSet *listings;
 @property (nonatomic, retain) NSSet *partTimeHouseholds;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @end
@@ -55,10 +54,10 @@
 - (void)addEventInvitations:(NSSet *)values;
 - (void)removeEventInvitations:(NSSet *)values;
 
-- (void)addMembershipsObject:(ScScola *)value;
-- (void)removeMembershipsObject:(ScScola *)value;
-- (void)addMemberships:(NSSet *)values;
-- (void)removeMemberships:(NSSet *)values;
+- (void)addListingsObject:(ScScola *)value;
+- (void)removeListingsObject:(ScScola *)value;
+- (void)addListings:(NSSet *)values;
+- (void)removeListings:(NSSet *)values;
 
 - (void)addPartTimeHouseholdsObject:(ScParttimeHousehold *)value;
 - (void)removePartTimeHouseholdsObject:(ScParttimeHousehold *)value;

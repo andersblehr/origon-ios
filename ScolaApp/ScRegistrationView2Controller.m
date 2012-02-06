@@ -49,9 +49,7 @@ static int const kPopUpButtonUseNew = 1;
 {
     UIAlertView *alertView = nil;
     
-    BOOL isDeviceNameValid = (deviceNameField.text.length > 0);
-    
-    if (!isDeviceNameValid) {
+    if (deviceNameField.text.length == 0) {
         NSString *deviceType = [ScAppEnv env].deviceType;
         NSString *deviceTypeDeterminate;
         NSString *deviceTypePossessive;
@@ -80,7 +78,13 @@ static int const kPopUpButtonUseNew = 1;
 
 - (BOOL)isDoneEditing
 {
-    UIAlertView *alertView = [self alertViewIfNoDeviceName];
+    UIAlertView *alertView = nil;
+    
+    if (mobileNumberField.text.length == 0) {
+        alertView = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strNoMobileNumberAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+    } else {
+        alertView = [self alertViewIfNoDeviceName];
+    }
 
     BOOL isDone = (!alertView);
     
@@ -145,6 +149,7 @@ static int const kPopUpButtonUseNew = 1;
 
     mobileNumberLabel.text = [ScStrings stringForKey:strMobileNumberUserHelp];
     mobileNumberField.placeholder = [ScStrings stringForKey:strMobileNumberPrompt];
+    mobileNumberField.keyboardType = UIKeyboardTypeNumberPad;
     mobileNumberField.delegate = self;
     [mobileNumberField becomeFirstResponder];
     
@@ -176,7 +181,7 @@ static int const kPopUpButtonUseNew = 1;
         
         [userDefaults removeObjectForKey:self.class.description];
     } else {
-        genderControl.selectedSegmentIndex = kGenderSegmentFemale;
+        genderControl.selectedSegmentIndex = UISegmentedControlNoSegment;
         mobileNumberField.text = @"";
         deviceNameField.text = [ScAppEnv env].deviceName;
     }

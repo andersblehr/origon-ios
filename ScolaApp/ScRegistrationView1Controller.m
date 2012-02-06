@@ -36,6 +36,7 @@ static int const kMaximumRealisticAge = 110;
 @synthesize dateOfBirthPicker;
 
 @synthesize member;
+@synthesize household;
 
 
 #pragma mark - auxiliary methods

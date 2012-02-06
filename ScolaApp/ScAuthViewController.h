@@ -20,7 +20,6 @@ typedef enum {
     ScAuthPopUpTagRegistrationCodesDoNotMatch,
     ScAuthPopUpTagPasswordsDoNotMatch,
     ScAuthPopUpTagWelcomeBack,
-    ScAuthPopUpTagScolaInvitationNotFound,
     ScAuthPopUpTagUserExistsAndIsLoggedIn,
     ScAuthPopUpTagNotLoggedIn,
 } ScAuthPopUpTag;
@@ -37,10 +36,12 @@ typedef enum {
     
     NSString *nameAsEntered;
     NSString *emailAsEntered;
-    NSString *scolaShortnameAsEntered;
     
     ScServerConnection *serverConnection;
     NSDictionary *authInfo;
+    
+    ScScolaMember *member;
+    ScHousehold *household;
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
@@ -48,15 +49,13 @@ typedef enum {
 @property (weak, nonatomic) IBOutlet UISegmentedControl *membershipStatusControl;
 @property (weak, nonatomic) IBOutlet UILabel *userHelpLabel;
 @property (weak, nonatomic) IBOutlet UITextField *nameOrEmailOrRegistrationCodeField;
-@property (weak, nonatomic) IBOutlet UITextField *emailOrPasswordOrScolaShortnameField;
-@property (weak, nonatomic) IBOutlet UITextField *chooseNewPasswordField;
+@property (weak, nonatomic) IBOutlet UITextField *emailOrPasswordField;
+@property (weak, nonatomic) IBOutlet UITextField *passwordField;
 @property (weak, nonatomic) IBOutlet UILabel *scolaDescriptionHeadingLabel;
 @property (weak, nonatomic) IBOutlet UITextView *scolaDescriptionTextView;
 @property (weak, nonatomic) IBOutlet UILabel *scolaSplashLabel;
 @property (weak, nonatomic) IBOutlet UIButton *showInfoButton;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
-
-@property (strong, nonatomic) ScScolaMember *member;
 
 - (IBAction)showInfo:(id)sender;
 

@@ -2,7 +2,7 @@
 //  ScScola.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 30.01.12.
+//  Created by Anders Blehr on 05.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -26,11 +26,12 @@
 @property (nonatomic, retain) ScScola *guardedScola;
 @property (nonatomic, retain) ScScola *guardianScola;
 @property (nonatomic, retain) NSSet *hostingEvents;
-@property (nonatomic, retain) NSSet *members;
+@property (nonatomic, retain) NSSet *membersInactive;
 @property (nonatomic, retain) NSSet *memberToDoItems;
 @property (nonatomic, retain) NSSet *messageBoards;
 @property (nonatomic, retain) ScOrganisation *organisation;
 @property (nonatomic, retain) ScYearlySchedule *yearlySchedule;
+@property (nonatomic, retain) NSSet *membersActive;
 @end
 
 @interface ScScola (CoreDataGeneratedAccessors)
@@ -60,10 +61,10 @@
 - (void)addHostingEvents:(NSSet *)values;
 - (void)removeHostingEvents:(NSSet *)values;
 
-- (void)addMembersObject:(ScPerson *)value;
-- (void)removeMembersObject:(ScPerson *)value;
-- (void)addMembers:(NSSet *)values;
-- (void)removeMembers:(NSSet *)values;
+- (void)addMembersInactiveObject:(ScPerson *)value;
+- (void)removeMembersInactiveObject:(ScPerson *)value;
+- (void)addMembersInactive:(NSSet *)values;
+- (void)removeMembersInactive:(NSSet *)values;
 
 - (void)addMemberToDoItemsObject:(ScToDoItem *)value;
 - (void)removeMemberToDoItemsObject:(ScToDoItem *)value;
@@ -74,5 +75,10 @@
 - (void)removeMessageBoardsObject:(ScMessageBoard *)value;
 - (void)addMessageBoards:(NSSet *)values;
 - (void)removeMessageBoards:(NSSet *)values;
+
+- (void)addMembersActiveObject:(ScScolaMember *)value;
+- (void)removeMembersActiveObject:(ScScolaMember *)value;
+- (void)addMembersActive:(NSSet *)values;
+- (void)removeMembersActive:(NSSet *)values;
 
 @end

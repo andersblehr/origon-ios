@@ -31,12 +31,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <segments>
                                     <segment title="&lt;strIsMember>"/>
-                                    <segment title="&lt;strIsInvited>"/>
                                     <segment title="&lt;strIsNew>"/>
                                 </segments>
                                 <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                             </segmentedControl>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="&lt;strUserHelp[Member|Invited|New]>" lineBreakMode="tailTruncation" minimumFontSize="10" id="jNm-pK-L5b">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="&lt;strUserHelp[Member|New]>" lineBreakMode="tailTruncation" minimumFontSize="10" id="jNm-pK-L5b">
                                 <rect key="frame" x="20" y="93" width="280" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
@@ -51,7 +50,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="&lt;strEmailPrompt | strPasswordPrompt | strInvitationCodePrompt>" minimumFontSize="17" id="3mO-zd-MP5">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="&lt;strEmailPrompt | strPasswordPrompt>" minimumFontSize="17" id="3mO-zd-MP5">
                                 <rect key="frame" x="15" y="159" width="290" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -113,12 +112,12 @@
                     <navigationItem key="navigationItem" id="0on-4a-oid"/>
                     <connections>
                         <outlet property="activityIndicator" destination="Rm7-1I-bRI" id="FcS-D4-AtS"/>
-                        <outlet property="chooseNewPasswordField" destination="ICT-Aw-C0o" id="0BL-sw-E5M"/>
                         <outlet property="darkLinenView" destination="yd1-fr-ofq" id="c5L-Gh-UIO"/>
-                        <outlet property="emailOrPasswordOrScolaShortnameField" destination="3mO-zd-MP5" id="VNa-WM-gAn"/>
+                        <outlet property="emailOrPasswordField" destination="3mO-zd-MP5" id="5hc-U7-YEW"/>
                         <outlet property="membershipPromptLabel" destination="cjW-Te-E8m" id="gg4-Mq-hRJ"/>
                         <outlet property="membershipStatusControl" destination="EJ9-fT-RAh" id="Isk-lu-5jM"/>
                         <outlet property="nameOrEmailOrRegistrationCodeField" destination="Te7-qv-1FP" id="1Zb-Mo-fqV"/>
+                        <outlet property="passwordField" destination="ICT-Aw-C0o" id="wtQ-oA-UXV"/>
                         <outlet property="scolaDescriptionHeadingLabel" destination="ML5-84-G7a" id="IN1-Cb-hra"/>
                         <outlet property="scolaDescriptionTextView" destination="MKI-Bw-7dr" id="1d8-It-McQ"/>
                         <outlet property="scolaSplashLabel" destination="qJ8-cP-0gZ" id="ydN-WI-ai4"/>
@@ -521,6 +520,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="FHF-lx-n1T"/>
+        <segue reference="t3w-Gq-L9a"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -31,17 +31,16 @@ static NSString * const kSegueToMainView = @"authToMainView";
 static NSString * const kSegueToAddressView = @"authToAddressView";
 
 static int const kMinimumPassordLength = 6;
-static int const kMinimumScolaShortnameLength = 4;
 
 static int const kMembershipSegmentMember = 0;
 static int const kMembershipSegmentNew = 1;
-static int const kMembershipSegmentInvited = 2;
 
 static NSString * const kAuthInfoKeyEmail = @"email";
 static NSString * const kAuthInfoKeyName = @"name";
 static NSString * const kAuthInfoKeyPasswordHash = @"passwordHash";
 static NSString * const kAuthInfoKeyScolaShortname = @"scolaShortname";
 static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
+static NSString * const kAuthInfoKeyIsListed = @"isListed";
 static NSString * const kAuthInfoKeyIsActive = @"isActive";
 static NSString * const kAuthInfoKeyIsAuthenticated = @"isAuthenticated";
 static NSString * const kAuthInfoKeyIsDeviceListed = @"isDeviceListed";
@@ -63,15 +62,13 @@ static int const kPopUpButtonTryAgain = 1;
 @synthesize membershipStatusControl;
 @synthesize userHelpLabel;
 @synthesize nameOrEmailOrRegistrationCodeField;
-@synthesize emailOrPasswordOrScolaShortnameField;
-@synthesize chooseNewPasswordField;
+@synthesize emailOrPasswordField;
+@synthesize passwordField;
 @synthesize scolaDescriptionHeadingLabel;
 @synthesize scolaDescriptionTextView;
 @synthesize scolaSplashLabel;
 @synthesize showInfoButton;
 @synthesize activityIndicator;
-
-@synthesize member;
 
 
 #pragma mark - Auxiliary methods
@@ -190,10 +187,8 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)membershipStatusDidChange
 {
     NSString *namePrompt = [ScStrings stringForKey:strNamePrompt];
-    NSString *nameAsReceivedPrompt = [ScStrings stringForKey:strNameAsReceivedPrompt];
     NSString *emailPrompt = [ScStrings stringForKey:strEmailPrompt];
     NSString *passwordPrompt = [ScStrings stringForKey:strPasswordPrompt];
-    NSString *scolaShortnamePrompt = [ScStrings stringForKey:strScolaShortnamePrompt];
     
     switch (currentMembershipSegment) {
         case kMembershipSegmentMember:
@@ -202,12 +197,7 @@ static int const kPopUpButtonTryAgain = 1;
             
         case kMembershipSegmentNew:
             nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
-            emailAsEntered = emailOrPasswordOrScolaShortnameField.text;
-            break;
-            
-        case kMembershipSegmentInvited:
-            nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
-            scolaShortnameAsEntered = emailOrPasswordOrScolaShortnameField.text;
+            emailAsEntered = emailOrPasswordField.text;
             break;
             
         default:
@@ -225,12 +215,12 @@ static int const kPopUpButtonTryAgain = 1;
             nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeEmailAddress;
             nameOrEmailOrRegistrationCodeField.autocapitalizationType = NO;
 
-            emailOrPasswordOrScolaShortnameField.placeholder = passwordPrompt;
-            emailOrPasswordOrScolaShortnameField.text = @"";
-            emailOrPasswordOrScolaShortnameField.keyboardType = UIKeyboardTypeDefault;
-            emailOrPasswordOrScolaShortnameField.secureTextEntry = YES;
+            emailOrPasswordField.placeholder = passwordPrompt;
+            emailOrPasswordField.text = @"";
+            emailOrPasswordField.keyboardType = UIKeyboardTypeDefault;
+            emailOrPasswordField.secureTextEntry = YES;
             
-            chooseNewPasswordField.hidden = YES;
+            passwordField.hidden = YES;
             
             break;
             
@@ -242,31 +232,13 @@ static int const kPopUpButtonTryAgain = 1;
             nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeDefault;
             nameOrEmailOrRegistrationCodeField.autocapitalizationType = YES;
             
-            emailOrPasswordOrScolaShortnameField.placeholder = emailPrompt;
-            emailOrPasswordOrScolaShortnameField.text = emailAsEntered;
-            emailOrPasswordOrScolaShortnameField.keyboardType = UIKeyboardTypeEmailAddress;
-            emailOrPasswordOrScolaShortnameField.secureTextEntry = NO;
+            emailOrPasswordField.placeholder = emailPrompt;
+            emailOrPasswordField.text = emailAsEntered;
+            emailOrPasswordField.keyboardType = UIKeyboardTypeEmailAddress;
+            emailOrPasswordField.secureTextEntry = NO;
             
-            chooseNewPasswordField.text = @"";
-            chooseNewPasswordField.hidden = NO;
-            
-            break;
-            
-        case kMembershipSegmentInvited:
-            userHelpLabel.text = [ScStrings stringForKey:strUserHelpInvited];
-            
-            nameOrEmailOrRegistrationCodeField.placeholder = nameAsReceivedPrompt;
-            nameOrEmailOrRegistrationCodeField.text = nameAsEntered;
-            nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeDefault;
-            nameOrEmailOrRegistrationCodeField.autocapitalizationType = YES;
-            
-            emailOrPasswordOrScolaShortnameField.placeholder = scolaShortnamePrompt;
-            emailOrPasswordOrScolaShortnameField.text = scolaShortnameAsEntered;
-            emailOrPasswordOrScolaShortnameField.keyboardType = UIKeyboardTypeDefault;
-            emailOrPasswordOrScolaShortnameField.secureTextEntry = NO;
-            
-            chooseNewPasswordField.text = @"";
-            chooseNewPasswordField.hidden = NO;
+            passwordField.text = @"";
+            passwordField.hidden = NO;
             
             break;
             
@@ -295,7 +267,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)setUpForUserLogin
 {
     membershipStatusControl.enabled = YES;
-    chooseNewPasswordField.hidden = YES;
+    passwordField.hidden = YES;
     
     membershipStatusControl.selectedSegmentIndex = kMembershipSegmentMember;
     [self membershipStatusDidChange];
@@ -305,7 +277,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)setUpForUserRegistration:(int)membershipSegment;
 {
     membershipStatusControl.enabled = YES;
-    chooseNewPasswordField.hidden = NO;
+    passwordField.hidden = NO;
     
     membershipStatusControl.selectedSegmentIndex = membershipSegment;
     [self membershipStatusDidChange];
@@ -315,7 +287,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)setUpForUserConfirmation
 {
     membershipStatusControl.enabled = NO;
-    chooseNewPasswordField.hidden = YES;
+    passwordField.hidden = YES;
     
     userHelpLabel.text = [ScStrings stringForKey:strUserHelpCompleteRegistration];
     
@@ -323,9 +295,9 @@ static int const kPopUpButtonTryAgain = 1;
     nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
     nameOrEmailOrRegistrationCodeField.autocapitalizationType = NO;
     
-    emailOrPasswordOrScolaShortnameField.text = @"";
-    emailOrPasswordOrScolaShortnameField.placeholder = [ScStrings stringForKey:strRepeatPasswordPrompt];
-    emailOrPasswordOrScolaShortnameField.secureTextEntry = YES;
+    emailOrPasswordField.text = @"";
+    emailOrPasswordField.placeholder = [ScStrings stringForKey:strRepeatPasswordPrompt];
+    emailOrPasswordField.secureTextEntry = YES;
 }
 
 
@@ -334,15 +306,8 @@ static int const kPopUpButtonTryAgain = 1;
     [self resignCurrentFirstResponder];
     
     nameOrEmailOrRegistrationCodeField.text = [authInfo objectForKey:kAuthInfoKeyName];
-    NSString *scolaShortname = [authInfo objectForKey:kAuthInfoKeyScolaShortname];
-    
-    if (scolaShortname) {
-        emailOrPasswordOrScolaShortnameField.text = scolaShortname;
-        [self setUpForUserRegistration:kMembershipSegmentInvited];
-    } else {
-        emailOrPasswordOrScolaShortnameField.text = [authInfo objectForKey:kAuthInfoKeyEmail];
-        [self setUpForUserRegistration:kMembershipSegmentNew];
-    }
+    emailOrPasswordField.text = [authInfo objectForKey:kAuthInfoKeyEmail];
+    [self setUpForUserRegistration:kMembershipSegmentNew];
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults removeObjectForKey:kUserDefaultsKeyAuthInfo];
@@ -360,15 +325,15 @@ static int const kPopUpButtonTryAgain = 1;
     if (isPending) {
         nameEtc = nameOrEmailOrRegistrationCodeField.text;
         nameEtcPlaceholder = nameOrEmailOrRegistrationCodeField.placeholder;
-        emailEtc = emailOrPasswordOrScolaShortnameField.text;
-        emailEtcPlaceholder = emailOrPasswordOrScolaShortnameField.placeholder;
+        emailEtc = emailOrPasswordField.text;
+        emailEtcPlaceholder = emailOrPasswordField.placeholder;
         
         nameOrEmailOrRegistrationCodeField.text = @"";
         nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strPleaseWait];
-        emailOrPasswordOrScolaShortnameField.text = @"";
-        emailOrPasswordOrScolaShortnameField.placeholder = [ScStrings stringForKey:strPleaseWait];
+        emailOrPasswordField.text = @"";
+        emailOrPasswordField.placeholder = [ScStrings stringForKey:strPleaseWait];
         
-        chooseNewPasswordField.hidden = YES;
+        passwordField.hidden = YES;
         membershipStatusControl.enabled = NO;
         
         isEditingAllowed = NO;
@@ -376,8 +341,8 @@ static int const kPopUpButtonTryAgain = 1;
     } else {
         nameOrEmailOrRegistrationCodeField.text = nameEtc;
         nameOrEmailOrRegistrationCodeField.placeholder = nameEtcPlaceholder;
-        emailOrPasswordOrScolaShortnameField.text = emailEtc;
-        emailOrPasswordOrScolaShortnameField.placeholder = emailEtcPlaceholder;
+        emailOrPasswordField.text = emailEtc;
+        emailOrPasswordField.placeholder = emailEtcPlaceholder;
         
         isEditingAllowed = YES;
         [activityIndicator stopAnimating];
@@ -414,7 +379,7 @@ static int const kPopUpButtonTryAgain = 1;
     if (currentMembershipSegment == kMembershipSegmentMember) {
         emailField = nameOrEmailOrRegistrationCodeField;
     } else {
-        emailField = emailOrPasswordOrScolaShortnameField;
+        emailField = emailOrPasswordField;
     }
     
     emailAsEntered = emailField.text;
@@ -439,38 +404,19 @@ static int const kPopUpButtonTryAgain = 1;
 - (BOOL)isPasswordValid
 {
     BOOL isValid = NO;
-    UITextField *passwordField;
+    UITextField *currentPasswordField;
     
     if (currentMembershipSegment == kMembershipSegmentMember) {
-        passwordField = emailOrPasswordOrScolaShortnameField;
+        currentPasswordField = emailOrPasswordField;
     } else {
-        passwordField = chooseNewPasswordField;
+        currentPasswordField = passwordField;
     }
     
-    isValid = (passwordField.text.length >= kMinimumPassordLength);
+    isValid = (currentPasswordField.text.length >= kMinimumPassordLength);
     
     if (!isValid) {
-        passwordField.text = @"";
-        [passwordField becomeFirstResponder];
-    }
-    
-    return isValid;
-}
-
-
-- (BOOL)isScolaShortnameValid
-{
-    BOOL isValid = NO;
-    
-    if (currentMembershipSegment == kMembershipSegmentInvited) {
-        scolaShortnameAsEntered = emailOrPasswordOrScolaShortnameField.text;
-        isValid = (scolaShortnameAsEntered.length >= kMinimumScolaShortnameLength);
-    } else {
-        ScLogBreakage(@"Attempt to validate Scola shortname while not in 'Invited' segment");
-    }
-    
-    if (!isValid) {
-        [emailOrPasswordOrScolaShortnameField becomeFirstResponder];
+        currentPasswordField.text = @"";
+        [currentPasswordField becomeFirstResponder];
     }
     
     return isValid;
@@ -484,7 +430,7 @@ static int const kPopUpButtonTryAgain = 1;
     authPhase = ScAuthPhaseLogin;
 
     emailAsEntered = nameOrEmailOrRegistrationCodeField.text;
-    NSString *password = emailOrPasswordOrScolaShortnameField.text;
+    NSString *password = emailOrPasswordField.text;
     
     [self indicatePendingServerSession:YES];
     
@@ -499,8 +445,8 @@ static int const kPopUpButtonTryAgain = 1;
     authPhase = ScAuthPhaseRegistration;
     
     nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
-    emailAsEntered = emailOrPasswordOrScolaShortnameField.text;
-    NSString *password = chooseNewPasswordField.text;
+    emailAsEntered = emailOrPasswordField.text;
+    NSString *password = passwordField.text;
     
     [self indicatePendingServerSession:YES];
     
@@ -511,19 +457,13 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
-- (void)registerInvitedUser
-{
-    // TODO
-}
-
-
 - (void)confirmNewUser
 {
     authPhase = ScAuthPhaseConfirmation;
     
     nameAsEntered = [authInfo objectForKey:kAuthInfoKeyName];
     emailAsEntered = [authInfo objectForKey:kAuthInfoKeyEmail];
-    NSString *password = emailOrPasswordOrScolaShortnameField.text;
+    NSString *password = emailOrPasswordField.text;
     
     [self indicatePendingServerSession:YES];
     
@@ -550,6 +490,13 @@ static int const kPopUpButtonTryAgain = 1;
         
         member.name = nameAsEntered;
         member.email = emailAsEntered;
+        member.isActive = YES;
+        
+        BOOL userIsListed = [[authInfo objectForKey:kAuthInfoKeyIsListed] boolValue];
+        
+        if (userIsListed) {
+            
+        }
         
         [self performSegueWithIdentifier:kSegueToAddressView sender:self];
     } else {
@@ -590,21 +537,6 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
-- (void)didReceiveRegistrationResponse:(NSHTTPURLResponse *)response
-{
-    if (response.statusCode == kHTTPStatusCodeNotFound) {
-        NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strScolaInvitationNotFoundAlert], scolaShortnameAsEntered];
-        
-        UIAlertView *notFoundAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        notFoundAlert.tag = ScAuthPopUpTagScolaInvitationNotFound;
-        
-        [notFoundAlert show];
-        
-        isEditingAllowed = YES;
-    }
-}
-
-
 - (void)didReceiveConfirmationResponse:(NSHTTPURLResponse *)response
 {
     if (response.statusCode == kHTTPStatusCodeNoContent) {
@@ -619,27 +551,36 @@ static int const kPopUpButtonTryAgain = 1;
 {
     authInfo = data;
     
-    BOOL isActive = [[data objectForKey:kAuthInfoKeyIsActive] boolValue];
-    BOOL isAuthenticated = [[data objectForKey:kAuthInfoKeyIsAuthenticated] boolValue];
+    BOOL isListed = [[authInfo objectForKey:kAuthInfoKeyIsListed] boolValue];
+    BOOL isActive = [[authInfo objectForKey:kAuthInfoKeyIsActive] boolValue];
+    BOOL isAuthenticated = [[authInfo objectForKey:kAuthInfoKeyIsAuthenticated] boolValue];
 
     if (!isActive) {
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         [userDefaults setObject:authInfo forKey:kUserDefaultsKeyAuthInfo];
         
-        NSString *popUpTitle = [ScStrings stringForKey:strEmailSentPopUpTitle];
-        NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentPopUpMessage], emailAsEntered];
+        NSString *popUpTitle = nil;
+        NSString *popUpMessage = nil;
+        
+        if (isListed) {
+            popUpTitle = [ScStrings stringForKey:strEmailSentToInviteePopUpTitle];
+            popUpMessage = [ScStrings stringForKey:strEmailSentToInviteePopUpMessage];
+        } else {
+            popUpTitle = [ScStrings stringForKey:strEmailSentPopUpTitle];
+            popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentPopUpMessage], emailAsEntered];
+        }
+        
         NSString *laterButtonTitle = [ScStrings stringForKey:strLater];
         NSString *continueButtonTitle = [ScStrings stringForKey:strHaveAccess];
         
-        UIAlertView *emailSentPopUp = [[UIAlertView alloc] initWithTitle:popUpTitle message:popUpMessage delegate:self cancelButtonTitle:laterButtonTitle otherButtonTitles:continueButtonTitle, nil];
-        emailSentPopUp.tag = ScAuthPopUpTagEmailSent;
+        UIAlertView *emailSentAlert = [[UIAlertView alloc] initWithTitle:popUpTitle message:popUpMessage delegate:self cancelButtonTitle:laterButtonTitle otherButtonTitles:continueButtonTitle, nil];
+        emailSentAlert.tag = ScAuthPopUpTagEmailSent;
         
-        [emailSentPopUp show];
+        [emailSentAlert show];
     } else {
-        NSString *alertMessage;
-        ScAuthPopUpTag alertTag;
-        
         NSString *alertTitle = [ScStrings stringForKey:strUserExistsAlertTitle];
+        NSString *alertMessage = nil;
+        ScAuthPopUpTag alertTag;
         
         if (isAuthenticated) {
             alertMessage = [ScStrings stringForKey:strUserExistsAndLoggedInAlert];
@@ -689,18 +630,17 @@ static int const kPopUpButtonTryAgain = 1;
         
         isEditingAllowed = YES;
         nameOrEmailOrRegistrationCodeField.delegate = self;
-        emailOrPasswordOrScolaShortnameField.delegate = self;
-        chooseNewPasswordField.delegate = self;
-        chooseNewPasswordField.secureTextEntry = YES;
+        emailOrPasswordField.delegate = self;
+        passwordField.delegate = self;
+        passwordField.secureTextEntry = YES;
         activityIndicator.hidesWhenStopped = YES;
 
         membershipPromptLabel.text = [ScStrings stringForKey:strMembershipPrompt];
         [membershipStatusControl setTitle:[ScStrings stringForKey:strIsNew] forSegmentAtIndex:kMembershipSegmentNew];
-        [membershipStatusControl setTitle:[ScStrings stringForKey:strIsInvited] forSegmentAtIndex:kMembershipSegmentInvited];
         [membershipStatusControl setTitle:[ScStrings stringForKey:strIsMember] forSegmentAtIndex:kMembershipSegmentMember];
         [membershipStatusControl addTarget:self action:@selector(membershipStatusDidChange) forControlEvents:UIControlEventValueChanged];
         
-        chooseNewPasswordField.placeholder = [ScStrings stringForKey:strNewPasswordPrompt];
+        passwordField.placeholder = [ScStrings stringForKey:strNewPasswordPrompt];
         scolaDescriptionTextView.text = [ScStrings stringForKey:strScolaDescription];
     }
 }
@@ -725,13 +665,8 @@ static int const kPopUpButtonTryAgain = 1;
     authInfo = [userDefaults objectForKey:kUserDefaultsKeyAuthInfo];
     
     if (authInfo) {
-        if ([authInfo objectForKey:kAuthInfoKeyScolaShortname]) {
-            membershipStatusControl.selectedSegmentIndex = kMembershipSegmentInvited;
-        } else {
-            membershipStatusControl.selectedSegmentIndex = kMembershipSegmentNew;
-        }
-        
         [self setUpForUserConfirmation];
+        membershipStatusControl.selectedSegmentIndex = kMembershipSegmentNew;
     } else {
         [self setUpForUserLogin];
         
@@ -739,7 +674,7 @@ static int const kPopUpButtonTryAgain = 1;
         
         if (email) {
             nameOrEmailOrRegistrationCodeField.text = email;
-            [emailOrPasswordOrScolaShortnameField becomeFirstResponder];
+            [emailOrPasswordField becomeFirstResponder];
         }
     }
 }
@@ -822,9 +757,9 @@ static int const kPopUpButtonTryAgain = 1;
     BOOL shouldRemove = YES;
     
     if (currentMembershipSegment == kMembershipSegmentMember) {
-        shouldRemove = (textField != emailOrPasswordOrScolaShortnameField);
+        shouldRemove = (textField != emailOrPasswordField);
     } else {
-        shouldRemove = (textField != chooseNewPasswordField);
+        shouldRemove = (textField != passwordField);
     }
 
     if (shouldRemove) {
@@ -867,18 +802,7 @@ static int const kPopUpButtonTryAgain = 1;
                 NSString *userId = [userDefaults objectForKey:kUserDefaultsKeyAuthId];
                 
                 emailIsRegistered =
-                    [userId isEqualToString:emailOrPasswordOrScolaShortnameField.text];
-            }
-            
-            break;
-            
-        case kMembershipSegmentInvited:
-            if (![self isNameValid]) {
-                alertMessage = [ScStrings stringForKey:strInvalidNameAlert];
-            } else if (![self isScolaShortnameValid]) {
-                alertMessage = [ScStrings stringForKey:strInvalidScolaShortnameAlert];
-            } else if (![self isPasswordValid]) {
-                alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidPasswordAlert], kMinimumPassordLength];
+                    [userId isEqualToString:emailOrPasswordField.text];
             }
             
             break;
@@ -896,11 +820,9 @@ static int const kPopUpButtonTryAgain = 1;
             [self loginUser];
         } else if (currentMembershipSegment == kMembershipSegmentNew) {
             [self registerNewUser];
-        } else {
-            [self registerInvitedUser];
         }
     } else if (emailIsRegistered) {
-        NSString *email = emailOrPasswordOrScolaShortnameField.text;
+        NSString *email = emailOrPasswordField.text;
         alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailAlreadyRegisteredAlert], email];
         NSString *logInButtonTitle = [ScStrings stringForKey:strLogIn];
         NSString *newUserButtonTitle = [ScStrings stringForKey:strNewUser];
@@ -933,7 +855,7 @@ static int const kPopUpButtonTryAgain = 1;
     
     if (registrationCodesDoMatch) {
         NSString *email = [authInfo objectForKey:kAuthInfoKeyEmail];
-        NSString *password = emailOrPasswordOrScolaShortnameField.text;
+        NSString *password = emailOrPasswordField.text;
         
         NSString *passwordHashFromServer = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
         NSString *passwordHashAsEntered = [self generatePasswordHash:password usingSalt:email];
@@ -996,16 +918,16 @@ static int const kPopUpButtonTryAgain = 1;
         
         case ScAuthPopUpTagEmailAlreadyRegistered:
             if (buttonIndex == kPopUpButtonLogIn) {
-                NSString *password = chooseNewPasswordField.text;
+                NSString *password = passwordField.text;
                 
                 [self setUpForUserLogin];
-                emailOrPasswordOrScolaShortnameField.text = password;
+                emailOrPasswordField.text = password;
                 [self loginUser];
             } else if (buttonIndex == kPopUpButtonNewUser) {
                 [self setUpForUserRegistration:kMembershipSegmentNew];
                 
-                emailOrPasswordOrScolaShortnameField.text = @"";
-                [emailOrPasswordOrScolaShortnameField becomeFirstResponder];
+                emailOrPasswordField.text = @"";
+                [emailOrPasswordField becomeFirstResponder];
             }
             
             break;
@@ -1031,8 +953,8 @@ static int const kPopUpButtonTryAgain = 1;
                 if (alertView.tag == ScAuthPopUpTagRegistrationCodesDoNotMatch) {
                     [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
                 } else if (alertView.tag == ScAuthPopUpTagPasswordsDoNotMatch) {
-                    emailOrPasswordOrScolaShortnameField.text = @"";
-                    [emailOrPasswordOrScolaShortnameField becomeFirstResponder];
+                    emailOrPasswordField.text = @"";
+                    [emailOrPasswordField becomeFirstResponder];
                 }
             } else if (buttonIndex == kPopUpButtonGoBack) {
                 [self goBackToUserRegistration];
@@ -1040,12 +962,6 @@ static int const kPopUpButtonTryAgain = 1;
             
             break;
 
-        case ScAuthPopUpTagScolaInvitationNotFound:
-            [self setUpForUserRegistration:kMembershipSegmentInvited];
-            [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
-            
-            break;
-            
         case ScAuthPopUpTagWelcomeBack:
             if (buttonIndex == kPopUpButtonContinue) {
                 [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
@@ -1062,7 +978,7 @@ static int const kPopUpButtonTryAgain = 1;
             
         case ScAuthPopUpTagNotLoggedIn:
             [self setUpForUserLogin];
-            [emailOrPasswordOrScolaShortnameField becomeFirstResponder];
+            [emailOrPasswordField becomeFirstResponder];
             
             break;
             
@@ -1095,8 +1011,6 @@ static int const kPopUpButtonTryAgain = 1;
         [internalErrorAlert show];
     } else if (authPhase == ScAuthPhaseLogin) {
         [self didReceiveLoginResponse:response];
-    } else if (authPhase == ScAuthPhaseRegistration) {
-        [self didReceiveRegistrationResponse:response]; // TODO: Deal with invitation here
     } else if (authPhase == ScAuthPhaseConfirmation) {
         [self didReceiveConfirmationResponse:response];
     }
