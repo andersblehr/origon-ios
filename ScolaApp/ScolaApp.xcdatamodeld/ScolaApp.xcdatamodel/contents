@@ -242,12 +242,12 @@
         <element name="ScOrganisation" positionX="-207" positionY="51" width="128" height="120"/>
         <element name="ScOrganisationContact" positionX="-191" positionY="-72" width="128" height="90"/>
         <element name="ScPartTimeHousehold" positionX="-207" positionY="-243" width="128" height="150"/>
-        <element name="ScPerson" positionX="-11" positionY="-378" width="128" height="285"/>
+        <element name="ScPerson" positionX="-11" positionY="-378" width="128" height="300"/>
         <element name="ScScheduledAbsence" positionX="169" positionY="-396" width="128" height="105"/>
         <element name="ScScheduledBreak" positionX="162" positionY="405" width="128" height="90"/>
         <element name="ScScheduleItem" positionX="-20" positionY="306" width="128" height="120"/>
-        <element name="ScScola" positionX="160" positionY="-117" width="128" height="315"/>
-        <element name="ScScolaMember" positionX="169" positionY="-270" width="128" height="150"/>
+        <element name="ScScola" positionX="160" positionY="-117" width="128" height="300"/>
+        <element name="ScScolaMember" positionX="169" positionY="-270" width="128" height="120"/>
         <element name="ScToDoAssignment" positionX="342" positionY="-405" width="128" height="105"/>
         <element name="ScToDoItem" positionX="333" positionY="-267" width="128" height="105"/>
         <element name="ScYearlySchedule" positionX="169" positionY="243" width="128" height="120"/>

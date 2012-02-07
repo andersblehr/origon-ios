@@ -301,8 +301,8 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <outlet property="deviceNameUserHelpLabel" destination="bNR-sb-RCq" id="2dv-h2-Y00"/>
                         <outlet property="genderControl" destination="N5m-rd-YpH" id="6hI-8G-fVC"/>
                         <outlet property="genderUserHelpLabel" destination="vDt-8C-0oe" id="lfH-sq-Xep"/>
-                        <outlet property="mobileNumberField" destination="UzN-fr-oIM" id="AeX-Sr-3nm"/>
-                        <outlet property="mobileNumberLabel" destination="Bq5-QO-bDk" id="mxu-Wa-ZOy"/>
+                        <outlet property="mobilePhoneField" destination="UzN-fr-oIM" id="2E2-bh-OjV"/>
+                        <outlet property="mobilePhoneLabel" destination="Bq5-QO-bDk" id="zny-Fd-G2Y"/>
                         <segue destination="9Fa-Np-JO6" kind="push" identifier="dateOfBirthToMainView" id="FHF-lx-n1T"/>
                     </connections>
                 </viewController>

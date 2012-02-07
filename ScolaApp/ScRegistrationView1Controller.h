@@ -8,9 +8,7 @@
 
 #import "ScScolaMember.h"
 
-@interface ScRegistrationView1Controller : UIViewController <UITextFieldDelegate, UIAlertViewDelegate> {
-    ScHousehold *household;
-}
+@interface ScRegistrationView1Controller : UIViewController <UITextFieldDelegate, UIAlertViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *addressUserHelpLabel;
@@ -22,6 +20,6 @@
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirthPicker;
 
 @property (strong, nonatomic) ScScolaMember *member;
-@property (strong, nonatomic) ScHousehold *household;
+@property (nonatomic) BOOL userIsListed;
 
 @end

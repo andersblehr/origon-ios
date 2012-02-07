@@ -35,12 +35,13 @@ static int const kPopUpButtonUseNew = 1;
 @synthesize darkLinenView;
 @synthesize genderUserHelpLabel;
 @synthesize genderControl;
-@synthesize mobileNumberLabel;
-@synthesize mobileNumberField;
+@synthesize mobilePhoneLabel;
+@synthesize mobilePhoneField;
 @synthesize deviceNameUserHelpLabel;
 @synthesize deviceNameField;
 
 @synthesize member;
+@synthesize userIsListed;
 
 
 #pragma mark - Input validation
@@ -80,8 +81,8 @@ static int const kPopUpButtonUseNew = 1;
 {
     UIAlertView *alertView = nil;
     
-    if (mobileNumberField.text.length == 0) {
-        alertView = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strNoMobileNumberAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+    if (mobilePhoneField.text.length == 0) {
+        alertView = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strNoMobilePhoneAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
     } else {
         alertView = [self alertViewIfNoDeviceName];
     }
@@ -97,7 +98,7 @@ static int const kPopUpButtonUseNew = 1;
             member.gender = kGenderMale;
         }
 
-        member.mobilePhone = mobileNumberField.text;
+        member.mobilePhone = mobilePhoneField.text;
         
         device = [context entityForClass:ScDevice.class];
         device.name = deviceNameField.text;
@@ -144,18 +145,20 @@ static int const kPopUpButtonUseNew = 1;
     NSString *maleTerm = [ScStrings stringForKey:(isMinor ? strMaleMinor : strMaleAdult)];
 
     genderUserHelpLabel.text = [NSString stringWithFormat:[ScStrings stringForKey:strGenderUserHelp], [femaleTerm lowercaseString], [maleTerm lowercaseString]];
+    mobilePhoneLabel.text = [ScStrings stringForKey:strMobilePhoneUserHelp];
+    deviceNameUserHelpLabel.text = [NSString stringWithFormat:[ScStrings stringForKey:strDeviceNameUserHelp], [ScStrings stringForKey:strThisPhone]];
+    
+    mobilePhoneField.delegate = self;
+    deviceNameField.delegate = self;
+    
     [genderControl setTitle:femaleTerm forSegmentAtIndex:kGenderSegmentFemale];
     [genderControl setTitle:maleTerm forSegmentAtIndex:kGenderSegmentMale];
 
-    mobileNumberLabel.text = [ScStrings stringForKey:strMobileNumberUserHelp];
-    mobileNumberField.placeholder = [ScStrings stringForKey:strMobileNumberPrompt];
-    mobileNumberField.keyboardType = UIKeyboardTypeNumberPad;
-    mobileNumberField.delegate = self;
-    [mobileNumberField becomeFirstResponder];
+    mobilePhoneField.placeholder = [ScStrings stringForKey:strMobilePhonePrompt];
+    mobilePhoneField.keyboardType = UIKeyboardTypeNumberPad;
+    [mobilePhoneField becomeFirstResponder];
     
-    deviceNameUserHelpLabel.text = [NSString stringWithFormat:[ScStrings stringForKey:strDeviceNameUserHelp], [ScStrings stringForKey:strThisPhone]];
     deviceNameField.placeholder = [NSString stringWithFormat:[ScStrings stringForKey:strDeviceNamePrompt], [ScStrings stringForKey:strPhoneDeterminate]];
-    deviceNameField.delegate = self;
 }
 
 
@@ -174,15 +177,26 @@ static int const kPopUpButtonUseNew = 1;
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *viewState = [userDefaults objectForKey:self.class.description];
     
-    if (viewState) {
+    if (userIsListed) {
+        if ([member.gender isEqualToString:kGenderFemale]) {
+            genderControl.selectedSegmentIndex = kGenderSegmentFemale;
+        } else if ([member.gender isEqualToString:kGenderMale]) {
+            genderControl.selectedSegmentIndex = kGenderSegmentMale;
+        } else {
+            genderControl.selectedSegmentIndex = UISegmentedControlNoSegment;
+        }
+        
+        mobilePhoneField.text = member.mobilePhone;
+        deviceNameField.text = [ScAppEnv env].deviceName;
+    } else if (viewState) {
         genderControl.selectedSegmentIndex = [[viewState objectForKey:@"member.gender"] intValue];
-        mobileNumberField.text = [viewState objectForKey:@"member.mobilePhone"];
+        mobilePhoneField.text = [viewState objectForKey:@"member.mobilePhone"];
         deviceNameField.text = [viewState objectForKey:@"device.name"];
         
         [userDefaults removeObjectForKey:self.class.description];
     } else {
         genderControl.selectedSegmentIndex = UISegmentedControlNoSegment;
-        mobileNumberField.text = @"";
+        mobilePhoneField.text = @"";
         deviceNameField.text = [ScAppEnv env].deviceName;
     }
 }
@@ -205,7 +219,7 @@ static int const kPopUpButtonUseNew = 1;
         NSNumber *genderId = [NSNumber numberWithInt:genderControl.selectedSegmentIndex];
         
         [viewState setObject:genderId forKey:@"member.gender"];
-        [viewState setObject:mobileNumberField.text forKey:@"member.mobilePhone"];
+        [viewState setObject:mobilePhoneField.text forKey:@"member.mobilePhone"];
         [viewState setObject:deviceNameField.text forKey:@"device.name"];
         
         [userDefaults setObject:viewState forKey:self.class.description];

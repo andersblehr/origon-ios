@@ -34,7 +34,6 @@ extern NSString * const strInvalidPasswordAlert;
 extern NSString * const strEmailAlreadyRegisteredAlert;
 extern NSString * const strPasswordsDoNotMatchAlert;
 extern NSString * const strRegistrationCodesDoNotMatchAlert;
-extern NSString * const strScolaInvitationNotFoundAlert;
 extern NSString * const strUserExistsAlertTitle;
 extern NSString * const strUserExistsButNotLoggedInAlert;
 extern NSString * const strUserExistsAndLoggedInAlert;
@@ -43,7 +42,7 @@ extern NSString * const strNoAddressAlert;
 extern NSString * const strNoDeviceNameAlert;
 extern NSString * const strNotBornAlert;
 extern NSString * const strUnrealisticAgeAlert;
-extern NSString * const strNoMobileNumberAlert;
+extern NSString * const strNoMobilePhoneAlert;
 
 // Button titles
 extern NSString * const strOK;
@@ -66,7 +65,6 @@ extern NSString * const strMembershipPrompt;
 extern NSString * const strIsMember;
 extern NSString * const strIsNew;
 extern NSString * const strUserHelpNew;
-extern NSString * const strUserHelpInvited;
 extern NSString * const strUserHelpMember;
 extern NSString * const strNamePrompt;
 extern NSString * const strEmailPrompt;
@@ -102,8 +100,8 @@ extern NSString * const strFemaleAdult;
 extern NSString * const strFemaleMinor;
 extern NSString * const strMaleAdult;
 extern NSString * const strMaleMinor;
-extern NSString * const strMobileNumberUserHelp;
-extern NSString * const strMobileNumberPrompt;
+extern NSString * const strMobilePhoneUserHelp;
+extern NSString * const strMobilePhonePrompt;
 extern NSString * const strDeviceNameUserHelp;
 extern NSString * const strDeviceNamePrompt;
 

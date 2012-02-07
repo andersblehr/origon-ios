@@ -36,12 +36,12 @@ static int const kMaximumRealisticAge = 110;
 @synthesize dateOfBirthPicker;
 
 @synthesize member;
-@synthesize household;
+@synthesize userIsListed;
 
 
 #pragma mark - auxiliary methods
 
-- (void)setDatePickerToApril1st1976
+- (void)setDateOfBirthPickerToApril1st1976
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
@@ -101,15 +101,19 @@ static int const kMaximumRealisticAge = 110;
     BOOL isDone = (!alertView);
     
     if (isDone) {
-        NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
-        household = [context entityForClass:ScHousehold.class];
+        if (!userIsListed) {
+            NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
+            member.household = [context entityForClass:ScHousehold.class];
+        }
         
-        household.addressLine1 = addressLine1Field.text;
-        household.addressLine2 = addressLine2Field.text;
-        household.postCodeAndCity = postCodeAndCityField.text;
+        member.household.addressLine1 = addressLine1Field.text;
+        member.household.addressLine2 = addressLine2Field.text;
+        member.household.postCodeAndCity = postCodeAndCityField.text;
         
         if (dateOfBirthField.text.length > 0) {
             member.dateOfBirth = dateOfBirthPicker.date;
+        } else {
+            member.dateOfBirth = nil;
         }
         
         [self performSegueWithIdentifier:kSegueToDateOfBirthView sender:self];
@@ -145,27 +149,33 @@ static int const kMaximumRealisticAge = 110;
     self.navigationItem.hidesBackButton = YES;
     self.navigationItem.rightBarButtonItem = nextButton;
     
+    addressUserHelpLabel.text = [ScStrings stringForKey:strProvideAddressUserHelp];
+    dateOfBirthUserHelpLabel.text = [ScStrings stringForKey:strDateOfBirthUserHelp];
+    
     addressLine1Field.delegate = self;
     addressLine2Field.delegate = self;
     postCodeAndCityField.delegate = self;
+    dateOfBirthField.delegate = self;
     
-    addressUserHelpLabel.text = [ScStrings stringForKey:strProvideAddressUserHelp];
     addressLine1Field.placeholder = [ScStrings stringForKey:strAddressLine1Prompt];
     addressLine2Field.placeholder = [ScStrings stringForKey:strAddressLine2Prompt];
     postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
-    
-    addressLine1Field.text = @"";
-    addressLine2Field.text = @"";
-    postCodeAndCityField.text = @"";
-    
-    dateOfBirthUserHelpLabel.text = [ScStrings stringForKey:strDateOfBirthUserHelp];
-    dateOfBirthField.delegate = self;
     dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthClickHerePrompt];
-    dateOfBirthField.text = @"";
+    
+    addressLine1Field.text = userIsListed ? member.household.addressLine1 : @"";
+    addressLine2Field.text = userIsListed ? member.household.addressLine2 : @"";
+    postCodeAndCityField.text = userIsListed ? member.household.postCodeAndCity : @"";
     
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
-    [self setDatePickerToApril1st1976];
     
+    if (userIsListed) {
+        [dateOfBirthPicker setDate:member.dateOfBirth animated:YES];
+        [self dateOfBirthDidChange];
+    } else {
+        [self setDateOfBirthPickerToApril1st1976];
+        dateOfBirthField.text = @"";
+    }
+        
     [addressLine1Field becomeFirstResponder];
 }
 
@@ -214,10 +224,10 @@ static int const kMaximumRealisticAge = 110;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kSegueToDateOfBirthView]) {
-        member.household = household;
-        
         ScRegistrationView2Controller *nextViewController = segue.destinationViewController;
+
         nextViewController.member = member;
+        nextViewController.userIsListed = userIsListed;
     }
 }
 
@@ -241,7 +251,7 @@ static int const kMaximumRealisticAge = 110;
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField
 {
-    [self setDatePickerToApril1st1976];
+    [self setDateOfBirthPickerToApril1st1976];
     
     return YES;
 }

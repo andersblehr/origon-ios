@@ -9,6 +9,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 
+#import "ScHousehold.h"
 #import "ScScolaMember.h"
 #import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
@@ -41,7 +42,7 @@ typedef enum {
     NSDictionary *authInfo;
     
     ScScolaMember *member;
-    ScHousehold *household;
+    BOOL userIsListed;
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;

@@ -19,11 +19,12 @@
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *genderUserHelpLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *genderControl;
-@property (weak, nonatomic) IBOutlet UILabel *mobileNumberLabel;
-@property (weak, nonatomic) IBOutlet UITextField *mobileNumberField;
+@property (weak, nonatomic) IBOutlet UILabel *mobilePhoneLabel;
+@property (weak, nonatomic) IBOutlet UITextField *mobilePhoneField;
 @property (weak, nonatomic) IBOutlet UILabel *deviceNameUserHelpLabel;
 @property (weak, nonatomic) IBOutlet UITextField *deviceNameField;
 
 @property (strong, nonatomic) ScScolaMember *member;
+@property (nonatomic) BOOL userIsListed;
 
 @end
