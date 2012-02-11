@@ -105,9 +105,11 @@ extern NSString * const strMobilePhonePrompt;
 extern NSString * const strDeviceNameUserHelp;
 extern NSString * const strDeviceNamePrompt;
 
-// Main view
-extern NSString * const strMyPlaceSingle;
-extern NSString * const strMyPlaceLiveIns;
+// Generic Scola strings
+extern NSString * const strMyPlace;
+extern NSString * const strOurPlace;
+extern NSString * const strMyMessageBoard;
+extern NSString * const strOurMessageBoard;
 
 + (void)refreshStrings;
 + (NSString *)stringForKey:(NSString *)key;

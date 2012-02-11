@@ -9,12 +9,12 @@
 #import <UIKit/UIKit.h>
 
 #import "ScDevice.h"
+#import "ScMessageBoard.h"
+#import "ScScola.h"
 #import "ScScolaMember.h"
 
 
-@interface ScRegistrationView2Controller : UIViewController <UITextFieldDelegate> {
-    ScDevice *device;
-}
+@interface ScRegistrationView2Controller : UIViewController <UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *genderUserHelpLabel;

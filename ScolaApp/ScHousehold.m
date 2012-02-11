@@ -2,7 +2,7 @@
 //  ScHousehold.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 05.02.12.
+//  Created by Anders Blehr on 09.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -18,7 +18,7 @@
 @dynamic addressLine2;
 @dynamic postCodeAndCity;
 @dynamic events;
-@dynamic residents;
 @dynamic partTimeResidents;
+@dynamic residents;
 
 @end

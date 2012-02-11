@@ -51,7 +51,7 @@ static CGFloat const kHeadingLabelFontSize = 13;
     UIImage *icon3 = [UIImage imageNamed:@"glyphicons_192_circle_remove_white@2x.png"];
     UIImage *icon4 = [UIImage imageNamed:@"glyphicons_190_circle_plus_white@2x.png"];
     
-    householdSection.sectionHeading = [ScStrings stringForKey:strMyPlaceLiveIns];
+    householdSection.sectionHeading = [ScStrings stringForKey:strMyPlace];
     [householdSection addButtonWithIcon:icon1 andCaption:@"Heggesnaret 1 D"];
     [householdSection addButtonWithIcon:icon2 andCaption:@"Add co-habitants"];
     [householdSection addButtonWithIcon:icon3 andCaption:@"Hide this"];

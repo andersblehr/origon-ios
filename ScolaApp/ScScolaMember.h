@@ -2,7 +2,7 @@
 //  ScScolaMember.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 05.02.12.
+//  Created by Anders Blehr on 09.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -18,9 +18,9 @@
 @property (nonatomic, retain) NSSet *adminMemberships;
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;
+@property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) ScMessageItem *messageItems;
 @property (nonatomic, retain) NSSet *toDoAssignments;
-@property (nonatomic, retain) NSSet *memberships;
 @end
 
 @interface ScScolaMember (CoreDataGeneratedAccessors)
@@ -40,14 +40,14 @@
 - (void)addDocuments:(NSSet *)values;
 - (void)removeDocuments:(NSSet *)values;
 
-- (void)addToDoAssignmentsObject:(ScToDoAssignment *)value;
-- (void)removeToDoAssignmentsObject:(ScToDoAssignment *)value;
-- (void)addToDoAssignments:(NSSet *)values;
-- (void)removeToDoAssignments:(NSSet *)values;
-
 - (void)addMembershipsObject:(ScScola *)value;
 - (void)removeMembershipsObject:(ScScola *)value;
 - (void)addMemberships:(NSSet *)values;
 - (void)removeMemberships:(NSSet *)values;
+
+- (void)addToDoAssignmentsObject:(ScToDoAssignment *)value;
+- (void)removeToDoAssignmentsObject:(ScToDoAssignment *)value;
+- (void)addToDoAssignments:(NSSet *)values;
+- (void)removeToDoAssignments:(NSSet *)values;
 
 @end

@@ -2,7 +2,7 @@
 //  ScHousehold.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 05.02.12.
+//  Created by Anders Blehr on 09.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -18,8 +18,8 @@
 @property (nonatomic, retain) NSString * addressLine2;
 @property (nonatomic, retain) NSString * postCodeAndCity;
 @property (nonatomic, retain) NSSet *events;
-@property (nonatomic, retain) NSSet *residents;
 @property (nonatomic, retain) NSSet *partTimeResidents;
+@property (nonatomic, retain) NSSet *residents;
 @end
 
 @interface ScHousehold (CoreDataGeneratedAccessors)
@@ -29,14 +29,14 @@
 - (void)addEvents:(NSSet *)values;
 - (void)removeEvents:(NSSet *)values;
 
-- (void)addResidentsObject:(ScPerson *)value;
-- (void)removeResidentsObject:(ScPerson *)value;
-- (void)addResidents:(NSSet *)values;
-- (void)removeResidents:(NSSet *)values;
-
 - (void)addPartTimeResidentsObject:(ScParttimeHousehold *)value;
 - (void)removePartTimeResidentsObject:(ScParttimeHousehold *)value;
 - (void)addPartTimeResidents:(NSSet *)values;
 - (void)removePartTimeResidents:(NSSet *)values;
+
+- (void)addResidentsObject:(ScPerson *)value;
+- (void)removeResidentsObject:(ScPerson *)value;
+- (void)addResidents:(NSSet *)values;
+- (void)removeResidents:(NSSet *)values;
 
 @end

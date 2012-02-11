@@ -116,8 +116,10 @@ NSString * const strDeviceNameUserHelp               = @"strDeviceNameUserHelp";
 NSString * const strDeviceNamePrompt                 = @"strDeviceNamePrompt";
 
 // Main view
-NSString * const strMyPlaceSingle                    = @"strMyPlaceSingle";
-NSString * const strMyPlaceLiveIns                   = @"strMyPlaceLiveIns";
+NSString * const strMyPlace                          = @"strMyPlace";
+NSString * const strOurPlace                         = @"strOurPlace";
+NSString * const strMyMessageBoard                   = @"strMyMessageBoard";
+NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 
 #pragma mark - Internal methods

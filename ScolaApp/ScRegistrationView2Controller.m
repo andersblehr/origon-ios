@@ -99,10 +99,21 @@ static int const kPopUpButtonUseNew = 1;
         }
 
         member.mobilePhone = mobilePhoneField.text;
+        member.memberSince = [NSDate date];
         
-        device = [context entityForClass:ScDevice.class];
+        ScDevice *device = [context entityForClass:ScDevice.class];
         device.name = deviceNameField.text;
         device.uuid = [ScAppEnv env].deviceUUID;
+        
+        ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class];
+        defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
+        
+        ScScola *homeScola = [context entityForClass:ScScola.class];
+        homeScola.name = [ScStrings stringForKey:strMyPlace];
+        [homeScola addMessageBoardsObject:defaultMessageBoard];
+
+        [member addMembershipsObject:homeScola];
+        [member addAdminMembershipsObject:homeScola];
         [member addDevicesObject:device];
         
         [context save];
@@ -256,7 +267,6 @@ static int const kPopUpButtonUseNew = 1;
 {
     if (buttonIndex == kPopUpButtonUseBuiltIn) {
         deviceNameField.text = [ScAppEnv env].deviceName;
-        device.name = deviceNameField.text;
     } else if (buttonIndex == kPopUpButtonUseNew) {
         [deviceNameField becomeFirstResponder];
     }

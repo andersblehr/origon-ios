@@ -2,7 +2,7 @@
 //  ScScola.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 05.02.12.
+//  Created by Anders Blehr on 09.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -17,7 +17,6 @@
 @property (nonatomic, retain) NSString * descriptionText;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSData * picture;
-@property (nonatomic, retain) NSString * shortname;
 @property (nonatomic, retain) ScMessageBoard *adminMessageBoard;
 @property (nonatomic, retain) NSSet *admins;
 @property (nonatomic, retain) NSSet *coaches;
@@ -26,12 +25,12 @@
 @property (nonatomic, retain) ScScola *guardedScola;
 @property (nonatomic, retain) ScScola *guardianScola;
 @property (nonatomic, retain) NSSet *hostingEvents;
+@property (nonatomic, retain) NSSet *membersActive;
 @property (nonatomic, retain) NSSet *membersInactive;
 @property (nonatomic, retain) NSSet *memberToDoItems;
 @property (nonatomic, retain) NSSet *messageBoards;
 @property (nonatomic, retain) ScOrganisation *organisation;
 @property (nonatomic, retain) ScYearlySchedule *yearlySchedule;
-@property (nonatomic, retain) NSSet *membersActive;
 @end
 
 @interface ScScola (CoreDataGeneratedAccessors)
@@ -61,6 +60,11 @@
 - (void)addHostingEvents:(NSSet *)values;
 - (void)removeHostingEvents:(NSSet *)values;
 
+- (void)addMembersActiveObject:(ScScolaMember *)value;
+- (void)removeMembersActiveObject:(ScScolaMember *)value;
+- (void)addMembersActive:(NSSet *)values;
+- (void)removeMembersActive:(NSSet *)values;
+
 - (void)addMembersInactiveObject:(ScPerson *)value;
 - (void)removeMembersInactiveObject:(ScPerson *)value;
 - (void)addMembersInactive:(NSSet *)values;
@@ -75,10 +79,5 @@
 - (void)removeMessageBoardsObject:(ScMessageBoard *)value;
 - (void)addMessageBoards:(NSSet *)values;
 - (void)removeMessageBoards:(NSSet *)values;
-
-- (void)addMembersActiveObject:(ScScolaMember *)value;
-- (void)removeMembersActiveObject:(ScScolaMember *)value;
-- (void)addMembersActive:(NSSet *)values;
-- (void)removeMembersActive:(NSSet *)values;
 
 @end
