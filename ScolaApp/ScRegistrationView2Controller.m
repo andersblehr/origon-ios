@@ -8,7 +8,7 @@
 
 #import "ScRegistrationView2Controller.h"
 
-#import "NSManagedObjectContext+ScPersistenceCache.h"
+#import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "UIView+ScShadowEffects.h"
 
 #import "ScAppEnv.h"
@@ -92,19 +92,6 @@ static int const kPopUpButtonUseNew = 1;
     if (isDone) {
         NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
         
-        if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
-            member.gender = kGenderFemale;
-        } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
-            member.gender = kGenderMale;
-        }
-
-        member.mobilePhone = mobilePhoneField.text;
-        member.memberSince = [NSDate date];
-        
-        ScDevice *device = [context entityForClass:ScDevice.class];
-        device.name = deviceNameField.text;
-        device.uuid = [ScAppEnv env].deviceUUID;
-        
         ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class];
         defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
         
@@ -112,11 +99,29 @@ static int const kPopUpButtonUseNew = 1;
         homeScola.name = [ScStrings stringForKey:strMyPlace];
         [homeScola addMessageBoardsObject:defaultMessageBoard];
 
+        ScDevice *device = [context entityForClass:ScDevice.class];
+        device.name = deviceNameField.text;
+        device.uuid = [ScAppEnv env].deviceUUID;
+        
         [member addMembershipsObject:homeScola];
         [member addAdminMembershipsObject:homeScola];
         [member addDevicesObject:device];
         
-        [context save];
+        if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
+            member.gender = kGenderFemale;
+        } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
+            member.gender = kGenderMale;
+        }
+        
+        member.mobilePhone = mobilePhoneField.text;
+        member.memberSince = [NSDate date];
+        
+        [context saveUsingDelegate:self];
+        
+        /*
+        ScServerConnection *connection = [[ScServerConnection alloc] initForEntity:ScScolaMember.class];
+        [connection persistEntity:member usingDelegate:self];
+        */
         
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
@@ -148,9 +153,14 @@ static int const kPopUpButtonUseNew = 1;
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strDone] style:UIBarButtonItemStyleDone target:self action:@selector(isDoneEditing)];
     self.navigationItem.rightBarButtonItem = doneButton;
     
-    NSDate *now = [NSDate date];
-    NSDateComponents *ageComponents = [[NSCalendar currentCalendar] components:NSYearCalendarUnit fromDate:member.dateOfBirth toDate:now options:kNilOptions];
-    BOOL isMinor =  (ageComponents.year < kAgeOfMajority);
+    BOOL isMinor = NO;
+    
+    if (member.dateOfBirth) {
+        NSDate *now = [NSDate date];
+        NSDateComponents *ageComponents = [[NSCalendar currentCalendar] components:NSYearCalendarUnit fromDate:member.dateOfBirth toDate:now options:kNilOptions];
+        
+        isMinor =  (ageComponents.year < kAgeOfMajority);
+    }
     
     NSString *femaleTerm = [ScStrings stringForKey:(isMinor ? strFemaleMinor : strFemaleAdult)];
     NSString *maleTerm = [ScStrings stringForKey:(isMinor ? strMaleMinor : strMaleAdult)];
@@ -193,8 +203,6 @@ static int const kPopUpButtonUseNew = 1;
             genderControl.selectedSegmentIndex = kGenderSegmentFemale;
         } else if ([member.gender isEqualToString:kGenderMale]) {
             genderControl.selectedSegmentIndex = kGenderSegmentMale;
-        } else {
-            genderControl.selectedSegmentIndex = UISegmentedControlNoSegment;
         }
         
         mobilePhoneField.text = member.mobilePhone;
@@ -206,7 +214,7 @@ static int const kPopUpButtonUseNew = 1;
         
         [userDefaults removeObjectForKey:self.class.description];
     } else {
-        genderControl.selectedSegmentIndex = UISegmentedControlNoSegment;
+        genderControl.selectedSegmentIndex = kGenderSegmentFemale;
         mobilePhoneField.text = @"";
         deviceNameField.text = [ScAppEnv env].deviceName;
     }

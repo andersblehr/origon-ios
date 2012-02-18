@@ -13,6 +13,11 @@
 @interface ScAppEnv : NSObject {
 @private
     UIManagedDocument *managedDocument;
+    
+    NSMutableSet *entitiesToPersistToServer;
+    NSMutableSet *entitiesToDeleteFromServer;
+    NSMutableSet *entitiesScheduledForPersistence;
+    NSMutableSet *entitiesScheduledForDeletion;
 }
 
 extern NSString * const kBundleID;
@@ -25,7 +30,9 @@ extern NSString * const kBundleID;
 @property (nonatomic) BOOL isInternetConnectionWWAN;
 
 @property (nonatomic) ScServerAvailability serverAvailability;
+
 @property (weak, readonly) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, readonly) BOOL isModelPersisted;
 
 + (ScAppEnv *)env;
 
@@ -40,5 +47,12 @@ extern NSString * const kBundleID;
 
 - (BOOL)isInternetConnectionAvailable;
 - (BOOL)isServerAvailable;
+
+- (NSArray *)entitiesToPersistToServer;
+- (NSArray *)entitiesToDeleteFromServer;
+- (BOOL)canScheduleEntityForPersistence:(ScCachedEntity *)entity;
+- (BOOL)canScheduleEntityForDeletion:(ScCachedEntity *)entity;
+- (void)entitiesWerePersistedToServer;
+- (void)entitiesWereDeletedFromServer;
 
 @end

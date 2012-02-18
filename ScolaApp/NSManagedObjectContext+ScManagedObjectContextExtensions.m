@@ -6,23 +6,28 @@
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
-#import "NSManagedObjectContext+ScPersistenceCache.h"
-
-#import "NSEntityDescription+ScRemotePersistenceHelper.h"
+#import "NSManagedObject+ScManagedObjectExtensions.h"
+#import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
 #import "ScCachedEntity.h"
 #import "ScLogging.h"
+#import "ScServerConnection.h"
 
 
-@implementation NSManagedObjectContext (ScPersistenceCache)
+@implementation NSManagedObjectContext (ScManagedObjectContextExtensions)
 
 
-- (BOOL)save
+- (BOOL)saveUsingDelegate:(id)delegate
 {
+    [self processPendingChanges];
+    
     NSError *error = nil;
     BOOL didSaveOK = [self save:&error];
     
     if (didSaveOK) {
+        ScServerConnection *connection = [[ScServerConnection alloc] initForRemotePersistence];
+        [connection persistEntitiesUsingDelegate:delegate];
+        
         // TODO: Save any new/changed entities to server
     } else {
         ScLogError(@"Error during save to managed object context: %@", [error userInfo]);
@@ -44,7 +49,7 @@
         cachedEntity.dateModified = now;
         cachedEntity.dateExpires = nil;
         
-        NSString *expires = [[cachedEntity entity] expiresInTimeframe];
+        NSString *expires = [cachedEntity expiresInTimeframe];
         
         if (expires) {
             // TODO: Process expiry instructions

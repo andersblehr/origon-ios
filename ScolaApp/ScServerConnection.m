@@ -8,8 +8,8 @@
 
 #import "ScServerConnection.h"
 
-#import "NSEntityDescription+ScRemotePersistenceHelper.h"
-#import "NSManagedObjectContext+ScPersistenceCache.h"
+#import "NSManagedObject+ScManagedObjectExtensions.h"
+#import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "NSString+ScStringExtensions.h"
 #import "NSURL+ScURLExtensions.h"
 
@@ -22,10 +22,14 @@
 
 @implementation ScServerConnection
 
-static NSString * const kScolaDevServer = @"localhost:8888";
-//static NSString * const kScolaDevServer = @"enceladus.local:8888";
+//static NSString * const kScolaDevServer = @"localhost:8888";
+static NSString * const kScolaDevServer = @"enceladus.local:8888";
 //static NSString * const kScolaDevServer = @"ganymede.local:8888";
 static NSString * const kScolaProdServer = @"scolaapp.appspot.com";
+
+static NSString * const kHTTPMethodGET = @"GET";
+static NSString * const kHTTPMethodPOST = @"POST";
+static NSString * const kHTTPMethodDELETE = @"DELETE";
 
 static NSString * const kRESTHandlerScola = @"scola";
 static NSString * const kRESTHandlerStrings = @"strings";
@@ -36,6 +40,7 @@ static NSString * const kRESTRouteStatus = @"status";
 static NSString * const kRESTRouteAuthRegistration = @"register";
 static NSString * const kRESTRouteAuthConfirmation = @"confirm";
 static NSString * const kRESTRouteAuthLogin = @"login";
+static NSString * const kRESTRouteModelPersist = @"persist";
 
 static NSString * const kURLParameterUUID = @"uuid";
 static NSString * const kURLParameterDevice = @"device";
@@ -45,6 +50,7 @@ NSString * const kServerAvailabilityNotification = @"serverAvailabilityNotificat
 NSString * const kURLParameterName = @"name";
 
 NSInteger const kHTTPStatusCodeOK = 200;
+NSInteger const kHTTPStatusCodeCreated = 201;
 NSInteger const kHTTPStatusCodeNoContent = 204;
 NSInteger const kHTTPStatusCodeUnauthorized = 401;
 NSInteger const kHTTPStatusCodeNotFound = 404;
@@ -118,7 +124,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
-- (id)initForAuthPhase:(int)phase
+- (id)initForAuthPhase:(ScAuthPhase)phase
 {
 	self = [super init];
     
@@ -150,9 +156,23 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         RESTHandler = kRESTHandlerModel;
         entityClass = NSStringFromClass(class);
         
-        NSEntityDescription *entity = [[ScAppEnv env].managedObjectContext entityForClass:class];
+        ScCachedEntity *entity = [[ScAppEnv env].managedObjectContext entityForClass:class];
+        
         RESTRoute = [entity route];
         entityLookupKey = [entity lookupKey];
+    }
+    
+    return self;
+}
+
+
+- (id)initForRemotePersistence
+{
+    self = [super init];
+    
+    if (self) {
+        RESTHandler = kRESTHandlerModel;
+        RESTRoute = kRESTRouteModelPersist;
     }
     
     return self;
@@ -187,7 +207,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
-- (void)setAuthHeaderUsingId:(NSString *)userId andPassword:(NSString *)password
+- (void)setAuthHeaderForUser:(NSString *)userId withPassword:(NSString *)password
 {
     NSString *authString = [NSString stringWithFormat:@"%@:%@", userId, password];
     [self setValue:[NSString stringWithFormat:@"Basic %@", [authString base64EncodedString]] forHTTPHeaderField:@"Authorization"];
@@ -232,7 +252,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         NSError *error;
         NSHTTPURLResponse *response;
         
-        [self createURLRequestForHTTPMethod:@"GET"];
+        [self createURLRequestForHTTPMethod:kHTTPMethodGET];
         
         ScLogDebug(@"Starting synchronous GET request with URL %@.", URLRequest.URL);
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
@@ -259,7 +279,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         connectionDelegate = delegate;
         responseData = [[NSMutableData alloc] init];
         
-        [self createURLRequestForHTTPMethod:@"GET"];
+        [self createURLRequestForHTTPMethod:kHTTPMethodGET];
         [connectionDelegate willSendRequest:URLRequest];
         
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
@@ -281,6 +301,36 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 - (void)getRemoteEntityUsingDelegate:(id)delegate
 {
     [self getRemoteClass:entityClass usingDelegate:delegate];
+}
+
+
+- (void)persistEntitiesUsingDelegate:(id)delegate
+{
+    NSArray *entitiesToPersist = [[ScAppEnv env] entitiesToPersistToServer];
+    NSMutableArray *persistableArrayOfEntities = [[NSMutableArray alloc] init];
+    
+    for (NSManagedObject *entity in entitiesToPersist) {
+        NSDictionary *entityAsDictionary = [entity toDictionaryForRemotePersistence];
+        
+        if (entityAsDictionary) {
+            [persistableArrayOfEntities addObject:entityAsDictionary];
+        }
+    }
+    
+    NSError *error;
+    NSData *entitiesAsJSON = [NSJSONSerialization dataWithJSONObject:persistableArrayOfEntities options:NSJSONWritingPrettyPrinted error:&error];
+    
+    ScLogDebug(@"Entities as JSON: %@", [[NSString alloc] initWithData:entitiesAsJSON encoding:NSUTF8StringEncoding]);
+
+    [self createURLRequestForHTTPMethod:kHTTPMethodPOST];
+    [URLRequest setHTTPBody:entitiesAsJSON];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
+    
+    if (!URLConnection) {
+        ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
+    }
 }
 
 

@@ -2,7 +2,7 @@
 //  ScScolaMember.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 09.02.12.
+//  Created by Anders Blehr on 15.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -19,7 +19,7 @@
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;
 @property (nonatomic, retain) NSSet *memberships;
-@property (nonatomic, retain) ScMessageItem *messageItems;
+@property (nonatomic, retain) NSSet *messageItems;
 @property (nonatomic, retain) NSSet *toDoAssignments;
 @end
 
@@ -44,6 +44,11 @@
 - (void)removeMembershipsObject:(ScScola *)value;
 - (void)addMemberships:(NSSet *)values;
 - (void)removeMemberships:(NSSet *)values;
+
+- (void)addMessageItemsObject:(ScMessageItem *)value;
+- (void)removeMessageItemsObject:(ScMessageItem *)value;
+- (void)addMessageItems:(NSSet *)values;
+- (void)removeMessageItems:(NSSet *)values;
 
 - (void)addToDoAssignmentsObject:(ScToDoAssignment *)value;
 - (void)removeToDoAssignmentsObject:(ScToDoAssignment *)value;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="878" systemVersion="11C74" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="878" systemVersion="11D50b" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="ScCachedEntity" representedClassName="ScCachedEntity" isAbstract="YES" syncable="YES">
         <attribute name="dateCreated" attributeType="Date" syncable="YES"/>
         <attribute name="dateExpires" optional="YES" attributeType="Date" syncable="YES"/>
@@ -189,7 +189,7 @@
         <relationship name="devices" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScDevice" inverseName="usedBy" inverseEntity="ScDevice" syncable="YES"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDocument" inverseName="author" inverseEntity="ScDocument" syncable="YES"/>
         <relationship name="memberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="membersActive" inverseEntity="ScScola" syncable="YES"/>
-        <relationship name="messageItems" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMessageItem" inverseName="author" inverseEntity="ScMessageItem" syncable="YES"/>
+        <relationship name="messageItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScMessageItem" inverseName="author" inverseEntity="ScMessageItem" syncable="YES"/>
         <relationship name="toDoAssignments" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScToDoAssignment" inverseName="assignee" inverseEntity="ScToDoAssignment" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="never"/>

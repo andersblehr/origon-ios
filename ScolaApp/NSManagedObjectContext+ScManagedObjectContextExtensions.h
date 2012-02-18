@@ -8,9 +8,9 @@
 
 #import <CoreData/CoreData.h>
 
-@interface NSManagedObjectContext (ScPersistenceCache)
+@interface NSManagedObjectContext (ScManagedObjectContextExtensions)
 
-- (BOOL)save;
+- (BOOL)saveUsingDelegate:(id)delegate;
 - (id)entityForClass:(Class)class;
 
 @end

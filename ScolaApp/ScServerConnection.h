@@ -47,6 +47,7 @@ extern NSString * const kServerAvailabilityNotification;
 extern NSString * const kURLParameterName;
 
 extern NSInteger const kHTTPStatusCodeOK;
+extern NSInteger const kHTTPStatusCodeCreated;
 extern NSInteger const kHTTPStatusCodeNoContent;
 extern NSInteger const kHTTPStatusCodeUnauthorized;
 extern NSInteger const kHTTPStatusCodeNotFound;
@@ -54,14 +55,14 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 
 @property (nonatomic, readonly) NSInteger HTTPStatusCode;
 
-- (void)checkServerAvailability;
-
 - (id)init;
 - (id)initForStrings;
-- (id)initForAuthPhase:(int)phase;
+- (id)initForAuthPhase:(ScAuthPhase)phase;
 - (id)initForEntity:(Class)class;
+- (id)initForRemotePersistence;
 
-- (void)setAuthHeaderUsingId:(NSString *)userId andPassword:(NSString *)password;
+- (void)checkServerAvailability;
+- (void)setAuthHeaderForUser:(NSString *)userId withPassword:(NSString *)password;
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
 - (void)setEntityLookupValue:(NSString *)value;
@@ -70,5 +71,7 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 - (void)getRemoteClass:(NSString *)class usingDelegate:(id)delegate;
 - (NSDictionary *)getRemoteEntity;
 - (void)getRemoteEntityUsingDelegate:(id)delegate;
+
+- (void)persistEntitiesUsingDelegate:(id)delegate;
 
 @end

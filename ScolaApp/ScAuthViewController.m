@@ -8,7 +8,7 @@
 
 #import "ScAuthViewController.h"
 
-#import "NSManagedObjectContext+ScPersistenceCache.h"
+#import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "NSString+ScStringExtensions.h"
 #import "UIView+ScShadowEffects.h"
 
@@ -445,7 +445,7 @@ static int const kPopUpButtonTryAgain = 1;
     [self indicatePendingServerSession:YES];
     
     serverConnection = [[ScServerConnection alloc] initForAuthPhase:ScAuthPhaseLogin];
-    [serverConnection setAuthHeaderUsingId:emailAsEntered andPassword:password];
+    [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
     [serverConnection getRemoteClass:@"ScScolaMember" usingDelegate:self];
 }
 
@@ -461,7 +461,7 @@ static int const kPopUpButtonTryAgain = 1;
     [self indicatePendingServerSession:YES];
     
     serverConnection = [[ScServerConnection alloc] initForAuthPhase:ScAuthPhaseRegistration];
-    [serverConnection setAuthHeaderUsingId:emailAsEntered andPassword:password];
+    [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
     [serverConnection setValue:nameAsEntered forURLParameter:kURLParameterName];
     [serverConnection getRemoteClass:@"ScAuthInfo" usingDelegate:self];
 }
@@ -478,7 +478,7 @@ static int const kPopUpButtonTryAgain = 1;
     [self indicatePendingServerSession:YES];
     
     serverConnection = [[ScServerConnection alloc] initForAuthPhase:ScAuthPhaseConfirmation];
-    [serverConnection setAuthHeaderUsingId:emailAsEntered andPassword:password];
+    [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
     [serverConnection getRemoteClass:@"ScScolaMember" usingDelegate:self];
 }
 

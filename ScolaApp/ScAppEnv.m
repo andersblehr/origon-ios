@@ -8,7 +8,7 @@
 
 #import "ScAppEnv.h"
 
-#import "NSManagedObjectContext+ScPersistenceCache.h"
+#import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
 #import "ScAppDelegate.h"
 #import "ScLogging.h"
@@ -49,7 +49,7 @@ static ScAppEnv *env = nil;
     if ([[NSFileManager defaultManager] fileExistsAtPath:[docURL path]]) {
         [managedDocument openWithCompletionHandler:^(BOOL success){
             if (success) {
-                ScLogDebug(@"Core Data ready.");
+                ScLogDebug(@"Core Data initialised and ready.");
                 managedObjectContext = managedDocument.managedObjectContext;
             } else {
                 ScLogError(@"Error initialising Core Data.");
@@ -58,13 +58,27 @@ static ScAppEnv *env = nil;
     } else {
         [managedDocument saveToURL:docURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
             if (success) {
-                ScLogDebug(@"Core Data ready.");
+                ScLogDebug(@"Core Data instantiated and ready.");
                 managedObjectContext = managedDocument.managedObjectContext;
             } else {
-                ScLogError(@"Error initialising Core Data.");
+                ScLogError(@"Error instantiating Core Data.");
             }
         }];
     }
+}
+
+
+- (void)contextDidSave:(NSNotification *)notification
+{
+    NSDictionary *saveInfo = notification.userInfo;
+    
+    NSSet *entitiesInsertedSinceLastTime = [saveInfo objectForKey:NSInsertedObjectsKey];
+    NSSet *entitiesUpdatedSinceLastTime = [saveInfo objectForKey:NSUpdatedObjectsKey];
+    NSSet *entitiesDeletedSinceLastTime = [saveInfo objectForKey:NSDeletedObjectsKey];
+    
+    [entitiesToPersistToServer unionSet:entitiesInsertedSinceLastTime];
+    [entitiesToPersistToServer unionSet:entitiesUpdatedSinceLastTime];
+    [entitiesToDeleteFromServer unionSet:entitiesDeletedSinceLastTime];
 }
 
 
@@ -103,8 +117,15 @@ static ScAppEnv *env = nil;
         isInternetConnectionWiFi = NO;
         isInternetConnectionWWAN = NO;
 
-        managedObjectContext = nil;
         [self initialiseManagedDocument];
+        
+        entitiesToPersistToServer = [[NSMutableSet alloc] init];
+        entitiesToDeleteFromServer = [[NSMutableSet alloc] init];
+        entitiesScheduledForPersistence = [[NSMutableSet alloc] init];
+        entitiesScheduledForDeletion = [[NSMutableSet alloc] init];
+        
+        NSNotificationCenter *notificationCentre = [NSNotificationCenter defaultCenter];
+        [notificationCentre addObserver:self selector:@selector(contextDidSave:) name:NSManagedObjectContextDidSaveNotification object:nil];
     }
     
     return self;
@@ -120,6 +141,12 @@ static ScAppEnv *env = nil;
     }
     
     return managedObjectContext;
+}
+
+
+- (BOOL)isModelPersisted
+{
+    return (entitiesToPersistToServer.count + entitiesToDeleteFromServer.count == 0);
 }
 
 
@@ -194,6 +221,72 @@ static ScAppEnv *env = nil;
 - (BOOL)isServerAvailable
 {
     return (serverAvailability == ScServerAvailabilityAvailable);
+}
+
+
+- (NSArray *)entitiesToPersistToServer
+{
+    NSArray *entitiesToReturn = nil;
+    
+    if (entitiesToPersistToServer.count > 0) {
+        entitiesToReturn = [entitiesToPersistToServer allObjects];
+    }
+    
+    return entitiesToReturn;
+}
+
+
+- (NSArray *)entitiesToDeleteFromServer
+{
+    NSArray *entitiesToReturn = nil;
+
+    if (entitiesToDeleteFromServer.count > 0) {
+        entitiesToReturn = [entitiesToDeleteFromServer allObjects];
+    }
+    
+    return entitiesToReturn;
+}
+
+
+- (BOOL)canScheduleEntityForPersistence:(ScCachedEntity *)entity
+{
+    BOOL isScheduled = ([entitiesScheduledForPersistence member:entity] != nil);
+    
+    if (!isScheduled) {
+        if ([entitiesToPersistToServer member:entity]) {
+            [entitiesScheduledForPersistence addObject:entity];
+        }
+    }
+    
+    return !isScheduled;
+}
+
+
+- (BOOL)canScheduleEntityForDeletion:(ScCachedEntity *)entity
+{
+    BOOL isScheduled = ([entitiesScheduledForDeletion member:entity] != nil);
+    
+    if (!isScheduled) {
+        if ([entitiesToDeleteFromServer member:entity]) {
+            [entitiesScheduledForDeletion addObject:entity];
+        }
+    }
+    
+    return !isScheduled;
+}
+
+
+- (void)entitiesWerePersistedToServer
+{
+    [entitiesToPersistToServer minusSet:entitiesScheduledForPersistence];
+    [entitiesScheduledForPersistence removeAllObjects];
+}
+
+
+- (void)entitiesWereDeletedFromServer
+{
+    [entitiesToDeleteFromServer minusSet:entitiesScheduledForDeletion];
+    [entitiesScheduledForDeletion removeAllObjects];
 }
 
 @end

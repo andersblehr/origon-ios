@@ -8,7 +8,7 @@
 
 #import "ScRegistrationView1Controller.h"
 
-#import "NSManagedObjectContext+ScPersistenceCache.h"
+#import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "UIView+ScShadowEffects.h"
 
 #import "ScAppEnv.h"
