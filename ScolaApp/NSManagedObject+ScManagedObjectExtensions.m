@@ -80,7 +80,7 @@
                     [keyValueDictionary setObject:value forKey:key];
                 }
             }
-            
+            /*
             for (NSString *relationshipName in [relationshipsByName allKeys]) {
                 NSRelationshipDescription *relationship = [relationshipsByName objectForKey:relationshipName];
                 
@@ -101,7 +101,7 @@
                     NSManagedObject *relationshipObject = [self valueForKey:relationshipName];
                     [keyValueDictionary setValue:[relationshipObject toDictionaryForRemotePersistence] forKey:relationshipName];
                 }
-            }
+            } */
             
             [selfAsDictionary setObject:keyValueDictionary forKey:entityDescription.name];
         }

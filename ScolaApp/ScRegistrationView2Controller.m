@@ -52,21 +52,21 @@ static int const kPopUpButtonUseNew = 1;
     
     if (deviceNameField.text.length == 0) {
         NSString *deviceType = [ScAppEnv env].deviceType;
-        NSString *deviceTypeDeterminate;
+        NSString *deviceTypeDefinite;
         NSString *deviceTypePossessive;
         
         if ([deviceType isEqualToString:@"iPod"]) {
-            deviceTypeDeterminate = [ScStrings stringForKey:str_iPodDeterminate];
+            deviceTypeDefinite = [ScStrings stringForKey:str_iPodDefinite];
             deviceTypePossessive = [ScStrings stringForKey:str_iPodPossessive];
         } else if ([deviceType isEqualToString:@"iPad"]) {
-            deviceTypeDeterminate = [ScStrings stringForKey:str_iPadDeterminate];
+            deviceTypeDefinite = [ScStrings stringForKey:str_iPadDefinite];
             deviceTypePossessive = [ScStrings stringForKey:str_iPadPossessive];
         } else {
-            deviceTypeDeterminate = [ScStrings stringForKey:strPhoneDeterminate];
+            deviceTypeDefinite = [ScStrings stringForKey:strPhoneDefinite];
             deviceTypePossessive = [ScStrings stringForKey:strPhonePossessive];
         }
         
-        NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strNoDeviceNameAlert], deviceTypeDeterminate, deviceTypePossessive, [ScAppEnv env].deviceName];
+        NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strNoDeviceNameAlert], deviceTypeDefinite, deviceTypePossessive, [ScAppEnv env].deviceName];
         NSString *useConfiguredButtonTitle = [ScStrings stringForKey:strUseConfigured];
         NSString *useNewButtonTitle = [ScStrings stringForKey:strUseNew];
         
@@ -179,7 +179,7 @@ static int const kPopUpButtonUseNew = 1;
     mobilePhoneField.keyboardType = UIKeyboardTypeNumberPad;
     [mobilePhoneField becomeFirstResponder];
     
-    deviceNameField.placeholder = [NSString stringWithFormat:[ScStrings stringForKey:strDeviceNamePrompt], [ScStrings stringForKey:strPhoneDeterminate]];
+    deviceNameField.placeholder = [NSString stringWithFormat:[ScStrings stringForKey:strDeviceNamePrompt], [ScStrings stringForKey:strPhoneDefinite]];
 }
 
 

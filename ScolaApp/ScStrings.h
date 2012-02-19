@@ -15,9 +15,9 @@ extern NSString * const istrNoInternet;
 extern NSString * const istrServerDown;
 
 // Grammer snippets
-extern NSString * const strPhoneDeterminate;
-extern NSString * const str_iPodDeterminate;
-extern NSString * const str_iPadDeterminate;
+extern NSString * const strPhoneDefinite;
+extern NSString * const str_iPodDefinite;
+extern NSString * const str_iPadDefinite;
 extern NSString * const strPhonePossessive;
 extern NSString * const str_iPodPossessive;
 extern NSString * const str_iPadPossessive;

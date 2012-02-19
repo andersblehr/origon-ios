@@ -12,23 +12,15 @@
 
 @implementation ScJSONUtil
 
-+ (NSDictionary *)dictionaryFromJSON:(NSData *)JSONData forClass:(NSString *)expectedClass
++ (NSDictionary *)dictionaryFromJSON:(NSData *)JSONData
 {
     NSDictionary *JSONDataAsDictionary = nil;
     
     if (JSONData) {
         NSError *error;
-        NSDictionary *containerDictionary = [NSJSONSerialization JSONObjectWithData:JSONData options:kNilOptions error:&error];
+        JSONDataAsDictionary = [NSJSONSerialization JSONObjectWithData:JSONData options:kNilOptions error:&error];
         
-        if (containerDictionary) {
-            NSString *receivedClass = [[containerDictionary allKeys] objectAtIndex:0];
-            
-            if ([receivedClass isEqualToString:expectedClass]) {
-                JSONDataAsDictionary = [containerDictionary objectForKey:receivedClass];
-            } else {
-                ScLogBreakage(@"Received JSON for class %@, expected %@", receivedClass, expectedClass); 
-            }
-        } else {
+        if (!JSONDataAsDictionary) {
             ScLogError(@"Error parsing JSON data: %@, %@", error, [error userInfo]);
         }
     }

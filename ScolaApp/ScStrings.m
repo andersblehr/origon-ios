@@ -24,9 +24,9 @@ NSString * const istrNoInternet                      = @"strNoInternet";
 NSString * const istrServerDown                      = @"strServerDown";
 
 // Grammer snippets
-NSString * const strPhoneDeterminate                 = @"strPhoneDeterminate";
-NSString * const str_iPodDeterminate                 = @"str_iPodDeterminate";
-NSString * const str_iPadDeterminate                 = @"str_iPadDeterminate";
+NSString * const strPhoneDefinite                    = @"strPhoneDefinite";
+NSString * const str_iPodDefinite                    = @"str_iPodDefinite";
+NSString * const str_iPadDefinite                    = @"str_iPadDefinite";
 NSString * const strPhonePossessive                  = @"strPhonePossessive";
 NSString * const str_iPodPossessive                  = @"str_iPodPossessive";
 NSString * const str_iPadPossessive                  = @"str_iPadPossessive";

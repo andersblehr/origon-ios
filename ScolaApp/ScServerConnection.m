@@ -264,7 +264,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         if (HTTPStatusCode == kHTTPStatusCodeOK) {
             ScLogDebug(@"Received data: %@.", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             
-            classAsDictionary = [ScJSONUtil dictionaryFromJSON:data forClass:class];
+            classAsDictionary = [ScJSONUtil dictionaryFromJSON:data];
         }
     }
     
@@ -399,8 +399,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     
     if ([ScAppEnv env].serverAvailability != ScServerAvailabilityChecking) {
         if (HTTPStatusCode == kHTTPStatusCodeOK) {
-            NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData forClass:entityClass];
-            
+            NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData];
             [connectionDelegate finishedReceivingData:dataAsDictionary];
         }
     } else {

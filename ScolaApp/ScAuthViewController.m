@@ -574,8 +574,9 @@ static int const kPopUpButtonTryAgain = 1;
     BOOL isAuthenticated = [[authInfo objectForKey:kAuthInfoKeyIsAuthenticated] boolValue];
 
     if (!isActive) {
+        NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:authInfo];
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        [userDefaults setObject:authInfo forKey:kUserDefaultsKeyAuthInfo];
+        [userDefaults setObject:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
         
         NSString *popUpTitle = nil;
         NSString *popUpMessage = nil;
@@ -680,9 +681,11 @@ static int const kPopUpButtonTryAgain = 1;
     [self navigationController].navigationBarHidden = YES;
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    authInfo = [userDefaults objectForKey:kUserDefaultsKeyAuthInfo];
+    NSData *authInfoArchive = [userDefaults objectForKey:kUserDefaultsKeyAuthInfo];
     
-    if (authInfo) {
+    if (authInfoArchive) {
+        authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
+        
         [self setUpForUserConfirmation];
         membershipStatusControl.selectedSegmentIndex = kMembershipSegmentNew;
     } else {
