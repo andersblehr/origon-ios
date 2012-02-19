@@ -52,7 +52,7 @@ extern NSString * const kBundleID;
 - (NSArray *)entitiesToDeleteFromServer;
 - (BOOL)canScheduleEntityForPersistence:(ScCachedEntity *)entity;
 - (BOOL)canScheduleEntityForDeletion:(ScCachedEntity *)entity;
-- (void)entitiesWerePersistedToServer;
-- (void)entitiesWereDeletedFromServer;
+- (void)didPersistEntitiesToServer;
+- (void)didDeleteEntitiesFromServer;
 
 @end

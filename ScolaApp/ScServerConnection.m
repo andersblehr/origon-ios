@@ -304,6 +304,25 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
+- (void)persistEntity:(ScCachedEntity *)entity usingDelegate:(id)delegate
+{
+    NSError *error;
+    NSData *entityAsJSON = [NSJSONSerialization dataWithJSONObject:[entity toDictionaryForRemotePersistence] options:NSJSONWritingPrettyPrinted error:&error];
+
+    ScLogDebug(@"Entity as JSON: %@", [[NSString alloc] initWithData:entityAsJSON encoding:NSUTF8StringEncoding]);
+    
+    [self createURLRequestForHTTPMethod:kHTTPMethodPOST];
+    [URLRequest setHTTPBody:entityAsJSON];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+    NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
+    
+    if (!URLConnection) {
+        ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
+    }
+}
+
+
 - (void)persistEntitiesUsingDelegate:(id)delegate
 {
     NSArray *entitiesToPersist = [[ScAppEnv env] entitiesToPersistToServer];
@@ -321,7 +340,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     NSData *entitiesAsJSON = [NSJSONSerialization dataWithJSONObject:persistableArrayOfEntities options:NSJSONWritingPrettyPrinted error:&error];
     
     ScLogDebug(@"Entities as JSON: %@", [[NSString alloc] initWithData:entitiesAsJSON encoding:NSUTF8StringEncoding]);
-
+    
     [self createURLRequestForHTTPMethod:kHTTPMethodPOST];
     [URLRequest setHTTPBody:entitiesAsJSON];
     

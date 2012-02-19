@@ -276,14 +276,14 @@ static ScAppEnv *env = nil;
 }
 
 
-- (void)entitiesWerePersistedToServer
+- (void)didPersistEntitiesToServer
 {
     [entitiesToPersistToServer minusSet:entitiesScheduledForPersistence];
     [entitiesScheduledForPersistence removeAllObjects];
 }
 
 
-- (void)entitiesWereDeletedFromServer
+- (void)didDeleteEntitiesFromServer
 {
     [entitiesToDeleteFromServer minusSet:entitiesScheduledForDeletion];
     [entitiesScheduledForDeletion removeAllObjects];

@@ -63,27 +63,23 @@
         
         if ([env canScheduleEntityForPersistence:(ScCachedEntity *)self]) {
             selfAsDictionary = [[NSMutableDictionary alloc] init];
+            NSMutableDictionary *keyValueDictionary = [[NSMutableDictionary alloc] init];
             
             NSEntityDescription *entityDescription = self.entity;
             NSDictionary *attributesByName = [entityDescription attributesByName];
             NSDictionary *relationshipsByName = [entityDescription relationshipsByName];
-            
-            [selfAsDictionary setObject:entityDescription.name forKey:@"entityName"];
             
             for (NSString *key in [attributesByName allKeys]) {
                 id value = [self valueForKey:key];
                 
                 if (value) {
                     if ([value isKindOfClass:NSDate.class]) {
-                        value = [NSNumber numberWithDouble:[(NSDate *)value timeIntervalSinceReferenceDate]];
+                        value = [NSNumber numberWithDouble:[(NSDate *)value timeIntervalSince1970]];
                     }
                     
-                    [selfAsDictionary setObject:value forKey:key];
+                    [keyValueDictionary setObject:value forKey:key];
                 }
             }
-            
-            
-            //selfAsDictionary = [[self dictionaryWithValuesForKeys:[attributesByName allKeys]] mutableCopy];
             
             for (NSString *relationshipName in [relationshipsByName allKeys]) {
                 NSRelationshipDescription *relationship = [relationshipsByName objectForKey:relationshipName];
@@ -100,12 +96,14 @@
                         }
                     }
                     
-                    [selfAsDictionary setObject:relationshipArray forKey:relationshipName];
+                    [keyValueDictionary setObject:relationshipArray forKey:relationshipName];
                 } else {
                     NSManagedObject *relationshipObject = [self valueForKey:relationshipName];
-                    [selfAsDictionary setValue:[relationshipObject toDictionaryForRemotePersistence] forKey:relationshipName];
+                    [keyValueDictionary setValue:[relationshipObject toDictionaryForRemotePersistence] forKey:relationshipName];
                 }
             }
+            
+            [selfAsDictionary setObject:keyValueDictionary forKey:entityDescription.name];
         }
     }
     

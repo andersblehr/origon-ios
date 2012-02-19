@@ -9,6 +9,7 @@
 #import "NSManagedObject+ScManagedObjectExtensions.h"
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
+#import "ScAppEnv.h"
 #import "ScCachedEntity.h"
 #import "ScLogging.h"
 #import "ScServerConnection.h"
@@ -19,8 +20,6 @@
 
 - (BOOL)saveUsingDelegate:(id)delegate
 {
-    [self processPendingChanges];
-    
     NSError *error = nil;
     BOOL didSaveOK = [self save:&error];
     
@@ -28,7 +27,7 @@
         ScServerConnection *connection = [[ScServerConnection alloc] initForRemotePersistence];
         [connection persistEntitiesUsingDelegate:delegate];
         
-        // TODO: Save any new/changed entities to server
+        [[ScAppEnv env] didPersistEntitiesToServer];
     } else {
         ScLogError(@"Error during save to managed object context: %@", [error userInfo]);
     }

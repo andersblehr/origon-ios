@@ -72,6 +72,7 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 - (NSDictionary *)getRemoteEntity;
 - (void)getRemoteEntityUsingDelegate:(id)delegate;
 
+- (void)persistEntity:(ScCachedEntity *)entity usingDelegate:(id)delegate;
 - (void)persistEntitiesUsingDelegate:(id)delegate;
 
 @end
