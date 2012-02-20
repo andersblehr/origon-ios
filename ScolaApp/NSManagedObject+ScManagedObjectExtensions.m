@@ -56,31 +56,32 @@
 
 - (NSDictionary *)toDictionaryForRemotePersistence
 {
-    NSMutableDictionary *selfAsDictionary = nil;
+    NSMutableDictionary *keyValueDictionary = nil;
     
     if ([self isKindOfClass:ScCachedEntity.class]) {
         ScAppEnv *env = [ScAppEnv env];
         
         if ([env canScheduleEntityForPersistence:(ScCachedEntity *)self]) {
-            selfAsDictionary = [[NSMutableDictionary alloc] init];
-            NSMutableDictionary *keyValueDictionary = [[NSMutableDictionary alloc] init];
+            keyValueDictionary = [[NSMutableDictionary alloc] init];
             
             NSEntityDescription *entityDescription = self.entity;
             NSDictionary *attributesByName = [entityDescription attributesByName];
             NSDictionary *relationshipsByName = [entityDescription relationshipsByName];
+            
+            [keyValueDictionary setObject:entityDescription.name forKey:@"type"];
             
             for (NSString *key in [attributesByName allKeys]) {
                 id value = [self valueForKey:key];
                 
                 if (value) {
                     if ([value isKindOfClass:NSDate.class]) {
-                        value = [NSNumber numberWithDouble:[(NSDate *)value timeIntervalSince1970]];
+                        value = [NSNumber numberWithLong:(long)[(NSDate *)value timeIntervalSince1970]];
                     }
                     
                     [keyValueDictionary setObject:value forKey:key];
                 }
             }
-            /*
+            
             for (NSString *relationshipName in [relationshipsByName allKeys]) {
                 NSRelationshipDescription *relationship = [relationshipsByName objectForKey:relationshipName];
                 
@@ -101,13 +102,11 @@
                     NSManagedObject *relationshipObject = [self valueForKey:relationshipName];
                     [keyValueDictionary setValue:[relationshipObject toDictionaryForRemotePersistence] forKey:relationshipName];
                 }
-            } */
-            
-            [selfAsDictionary setObject:keyValueDictionary forKey:entityDescription.name];
+            }
         }
     }
     
-    return selfAsDictionary;
+    return keyValueDictionary;
 }
 
 @end
