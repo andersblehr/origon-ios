@@ -2,16 +2,17 @@
 //  ScDocumentElement.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 09.02.12.
+//  Created by Anders Blehr on 20.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "ScCachedEntity.h"
 
 @class ScDocument;
 
-@interface ScDocumentElement : NSManagedObject
+@interface ScDocumentElement : ScCachedEntity
 
 @property (nonatomic, retain) NSNumber * sequenceNumber;
 @property (nonatomic, retain) NSString * text;

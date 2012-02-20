@@ -6,12 +6,15 @@
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
-#import "NSManagedObject+ScManagedObjectExtensions.h"
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
 #import "ScAppEnv.h"
 #import "ScCachedEntity.h"
+#import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScLogging.h"
+#import "ScPerson.h"
+#import "ScScola.h"
+#import "ScScolaMember.h"
 #import "ScServerConnection.h"
 
 
@@ -38,21 +41,25 @@
 
 - (id)entityForClass:(Class)class
 {
-    id entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
+    ScCachedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
     
-    if ([entity isKindOfClass:ScCachedEntity.class]) {
-        ScCachedEntity *cachedEntity = (ScCachedEntity *)entity;
-        NSDate *now = [NSDate date];
-        
-        cachedEntity.dateCreated = now;
-        cachedEntity.dateModified = now;
-        cachedEntity.dateExpires = nil;
-        
-        NSString *expires = [cachedEntity expiresInTimeframe];
-        
-        if (expires) {
-            // TODO: Process expiry instructions
-        }
+    ScCachedEntity *cachedEntity = (ScCachedEntity *)entity;
+    NSDate *now = [NSDate date];
+    
+    cachedEntity.dateCreated = now;
+    cachedEntity.dateModified = now;
+    cachedEntity.dateExpires = nil;
+    
+    if ([entity isKindOfClass:ScPerson.class] ||
+        [entity isKindOfClass:ScScola.class] ||
+        [entity isKindOfClass:ScScolaMember.class]) {
+        entity.isCoreEntity = [NSNumber numberWithBool:YES];
+    }
+    
+    NSString *expires = [cachedEntity expiresInTimeframe];
+    
+    if (expires) {
+        // TODO: Process expiry instructions
     }
     
     return entity;

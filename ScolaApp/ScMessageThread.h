@@ -2,16 +2,17 @@
 //  ScMessageThread.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 09.02.12.
+//  Created by Anders Blehr on 20.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "ScCachedEntity.h"
 
 @class ScMessageBoard, ScMessageItem;
 
-@interface ScMessageThread : NSManagedObject
+@interface ScMessageThread : ScCachedEntity
 
 @property (nonatomic, retain) NSString * subject;
 @property (nonatomic, retain) ScMessageBoard *messageBoard;

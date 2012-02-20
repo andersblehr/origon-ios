@@ -1,14 +1,14 @@
 //
-//  NSManagedObject+ScManagedObjectExtensions.h
+//  ScCachedEntity+ScCachedEntityExtensions.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 17.02.12.
+//  Created by Anders Blehr on 20.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
-#import <CoreData/CoreData.h>
+#import "ScCachedEntity.h"
 
-@interface NSManagedObject (ScManagedObjectExtensions)
+@interface ScCachedEntity (ScCachedEntityExtensions)
 
 - (NSString *)route;
 - (NSString *)lookupKey;

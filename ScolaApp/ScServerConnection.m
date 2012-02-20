@@ -8,13 +8,13 @@
 
 #import "ScServerConnection.h"
 
-#import "NSManagedObject+ScManagedObjectExtensions.h"
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "NSString+ScStringExtensions.h"
 #import "NSURL+ScURLExtensions.h"
 
 #import "ScAppDelegate.h"
 #import "ScAppEnv.h"
+#import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScJSONUtil.h"
 #import "ScLogging.h"
 #import "ScStrings.h"
@@ -328,7 +328,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     NSArray *entitiesToPersist = [[ScAppEnv env] entitiesToPersistToServer];
     NSMutableArray *persistableArrayOfEntities = [[NSMutableArray alloc] init];
     
-    for (NSManagedObject *entity in entitiesToPersist) {
+    for (ScCachedEntity *entity in entitiesToPersist) {
         NSDictionary *entityAsDictionary = [entity toDictionaryForRemotePersistence];
         
         if (entityAsDictionary) {
