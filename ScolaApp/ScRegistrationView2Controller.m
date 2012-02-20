@@ -118,10 +118,8 @@ static int const kPopUpButtonUseNew = 1;
         
         [context saveUsingDelegate:self];
         
-        /*
-        ScServerConnection *connection = [[ScServerConnection alloc] initForEntity:ScScolaMember.class];
-        [connection persistEntity:member usingDelegate:self];
-        */
+        //ScServerConnection *connection = [[ScServerConnection alloc] initForEntity:ScScolaMember.class];
+        //[connection persistEntity:member usingDelegate:self];
         
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {

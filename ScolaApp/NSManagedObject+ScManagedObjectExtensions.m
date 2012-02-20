@@ -75,7 +75,7 @@
                 
                 if (value) {
                     if ([value isKindOfClass:NSDate.class]) {
-                        value = [NSNumber numberWithLong:(long)[(NSDate *)value timeIntervalSince1970]];
+                        value = [NSNumber numberWithLongLong:[value timeIntervalSince1970] * 1000];
                     }
                     
                     [keyValueDictionary setObject:value forKey:key];
