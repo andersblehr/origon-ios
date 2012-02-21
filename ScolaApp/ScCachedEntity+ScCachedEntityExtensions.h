@@ -12,7 +12,6 @@ typedef enum {
     ScRemotePersistenceStatePersisted,
     ScRemotePersistenceStateDirtyNotScheduled,
     ScRemotePersistenceStateDirtyScheduled,
-    ScRemotePersistenceStateDirtyInFlight,
     ScRemotePersistenceStateDeleted
 } ScRemotePersistenceState;
 
