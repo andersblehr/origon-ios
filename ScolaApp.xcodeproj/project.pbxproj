@@ -23,6 +23,7 @@
 		5C36BE9C1470507700DD3CEA /* ScolaApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */; };
 		5C3A319314C4D967001A783E /* 112-group.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3A319214C4D967001A783E /* 112-group.png */; };
 		5C3A319614C61378001A783E /* dark_linen-640x960.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3A319514C61378001A783E /* dark_linen-640x960.png */; };
+		5C3C665314F43E0B00514C57 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C665214F43E0B00514C57 /* ScCachedEntity.m */; };
 		5C3D42821485678F009A68E0 /* ScMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D42811485678F009A68E0 /* ScMainViewController.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */; };
 		5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C50581714CA1D05000D6587 /* QuartzCore.framework */; };
@@ -45,7 +46,6 @@
 		5C5ED5FB14F2F72F006BBDFB /* ScScheduleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED5FA14F2F72F006BBDFB /* ScScheduleItem.m */; };
 		5C5ED5FE14F2F730006BBDFB /* ScMessageBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED5FD14F2F730006BBDFB /* ScMessageBoard.m */; };
 		5C5ED60114F2F731006BBDFB /* ScOrganisation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED60014F2F731006BBDFB /* ScOrganisation.m */; };
-		5C5ED60414F2F731006BBDFB /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED60314F2F731006BBDFB /* ScCachedEntity.m */; };
 		5C5ED60714F2F732006BBDFB /* ScDocumentRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED60614F2F732006BBDFB /* ScDocumentRepository.m */; };
 		5C5ED60A14F2F732006BBDFB /* ScScolaMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED60914F2F732006BBDFB /* ScScolaMember.m */; };
 		5C5ED60D14F2F733006BBDFB /* ScYearlySchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED60C14F2F733006BBDFB /* ScYearlySchedule.m */; };
@@ -127,6 +127,8 @@
 		5C36BE9B1470507700DD3CEA /* ScolaApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ScolaApp.xcdatamodel; sourceTree = "<group>"; };
 		5C3A319214C4D967001A783E /* 112-group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group.png"; sourceTree = "<group>"; };
 		5C3A319514C61378001A783E /* dark_linen-640x960.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark_linen-640x960.png"; sourceTree = "<group>"; };
+		5C3C665114F43E0B00514C57 /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
+		5C3C665214F43E0B00514C57 /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
 		5C3D42801485678E009A68E0 /* ScMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMainViewController.h; sourceTree = "<group>"; };
 		5C3D42811485678F009A68E0 /* ScMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMainViewController.m; sourceTree = "<group>"; };
 		5C4F97791496AF88006E244F /* NSURL+ScURLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ScURLExtensions.h"; sourceTree = "<group>"; };
@@ -170,8 +172,6 @@
 		5C5ED5FD14F2F730006BBDFB /* ScMessageBoard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMessageBoard.m; sourceTree = "<group>"; };
 		5C5ED5FF14F2F731006BBDFB /* ScOrganisation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScOrganisation.h; sourceTree = "<group>"; };
 		5C5ED60014F2F731006BBDFB /* ScOrganisation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScOrganisation.m; sourceTree = "<group>"; };
-		5C5ED60214F2F731006BBDFB /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
-		5C5ED60314F2F731006BBDFB /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
 		5C5ED60514F2F732006BBDFB /* ScDocumentRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDocumentRepository.h; sourceTree = "<group>"; };
 		5C5ED60614F2F732006BBDFB /* ScDocumentRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDocumentRepository.m; sourceTree = "<group>"; };
 		5C5ED60814F2F732006BBDFB /* ScScolaMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaMember.h; sourceTree = "<group>"; };
@@ -304,8 +304,8 @@
 			isa = PBXGroup;
 			children = (
 				5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */,
-				5C5ED60214F2F731006BBDFB /* ScCachedEntity.h */,
-				5C5ED60314F2F731006BBDFB /* ScCachedEntity.m */,
+				5C3C665114F43E0B00514C57 /* ScCachedEntity.h */,
+				5C3C665214F43E0B00514C57 /* ScCachedEntity.m */,
 				5C5ED5D214F2F724006BBDFB /* ScDevice.h */,
 				5C5ED5D314F2F724006BBDFB /* ScDevice.m */,
 				5C5ED5F614F2F72E006BBDFB /* ScDocument.h */,
@@ -712,7 +712,6 @@
 				5C5ED5FB14F2F72F006BBDFB /* ScScheduleItem.m in Sources */,
 				5C5ED5FE14F2F730006BBDFB /* ScMessageBoard.m in Sources */,
 				5C5ED60114F2F731006BBDFB /* ScOrganisation.m in Sources */,
-				5C5ED60414F2F731006BBDFB /* ScCachedEntity.m in Sources */,
 				5C5ED60714F2F732006BBDFB /* ScDocumentRepository.m in Sources */,
 				5C5ED60A14F2F732006BBDFB /* ScScolaMember.m in Sources */,
 				5C5ED60D14F2F733006BBDFB /* ScYearlySchedule.m in Sources */,
@@ -720,6 +719,7 @@
 				5C5ED61314F2F733006BBDFB /* ScHousehold.m in Sources */,
 				5C5ED61614F2F734006BBDFB /* ScScola.m in Sources */,
 				5C5ED61914F2F734006BBDFB /* ScToDoAssignment.m in Sources */,
+				5C3C665314F43E0B00514C57 /* ScCachedEntity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

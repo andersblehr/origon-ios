@@ -16,8 +16,6 @@
     
     NSMutableSet *entitiesToPersistToServer;
     NSMutableSet *entitiesToDeleteFromServer;
-    NSMutableSet *entitiesScheduledForPersistence;
-    NSMutableSet *entitiesScheduledForDeletion;
 }
 
 extern NSString * const kBundleID;
@@ -50,8 +48,6 @@ extern NSString * const kBundleID;
 
 - (NSArray *)entitiesToPersistToServer;
 - (NSArray *)entitiesToDeleteFromServer;
-- (BOOL)canScheduleEntityForPersistence:(ScCachedEntity *)entity;
-- (BOOL)canScheduleEntityForDeletion:(ScCachedEntity *)entity;
 - (void)didPersistEntitiesToServer;
 - (void)didDeleteEntitiesFromServer;
 

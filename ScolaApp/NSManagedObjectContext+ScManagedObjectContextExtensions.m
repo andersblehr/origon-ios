@@ -53,7 +53,7 @@
     if ([entity isKindOfClass:ScPerson.class] ||
         [entity isKindOfClass:ScScola.class] ||
         [entity isKindOfClass:ScScolaMember.class]) {
-        entity.isCoreEntity = [NSNumber numberWithBool:YES];
+        entity._isCoreEntity = [NSNumber numberWithBool:YES];
     }
     
     NSString *expires = [cachedEntity expiresInTimeframe];

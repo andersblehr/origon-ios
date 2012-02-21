@@ -8,7 +8,19 @@
 
 #import "ScCachedEntity.h"
 
+typedef enum {
+    ScRemotePersistenceStatePersisted,
+    ScRemotePersistenceStateDirtyNotScheduled,
+    ScRemotePersistenceStateDirtyScheduled,
+    ScRemotePersistenceStateDirtyInFlight,
+    ScRemotePersistenceStateDeleted
+} ScRemotePersistenceState;
+
 @interface ScCachedEntity (ScCachedEntityExtensions)
+
+- (BOOL)isCoreEntity;
+- (ScRemotePersistenceState)remotePersistenceState;
+- (void)setRemotePersistenceState:(ScRemotePersistenceState)remotePersistenceState;
 
 - (NSString *)route;
 - (NSString *)lookupKey;

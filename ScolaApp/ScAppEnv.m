@@ -11,6 +11,7 @@
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
 #import "ScAppDelegate.h"
+#import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScLogging.h"
 #import "ScScolaMember.h"
 
@@ -76,6 +77,18 @@ static ScAppEnv *env = nil;
     NSSet *entitiesUpdatedSinceLastTime = [saveInfo objectForKey:NSUpdatedObjectsKey];
     NSSet *entitiesDeletedSinceLastTime = [saveInfo objectForKey:NSDeletedObjectsKey];
     
+    for (ScCachedEntity *entity in entitiesInsertedSinceLastTime) {
+        entity.remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
+    }
+    
+    for (ScCachedEntity *entity in entitiesUpdatedSinceLastTime) {
+        entity.remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
+    }
+    
+    for (ScCachedEntity *entity in entitiesDeletedSinceLastTime) {
+        entity.remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
+    }
+    
     [entitiesToPersistToServer unionSet:entitiesInsertedSinceLastTime];
     [entitiesToPersistToServer unionSet:entitiesUpdatedSinceLastTime];
     [entitiesToDeleteFromServer unionSet:entitiesDeletedSinceLastTime];
@@ -121,8 +134,6 @@ static ScAppEnv *env = nil;
         
         entitiesToPersistToServer = [[NSMutableSet alloc] init];
         entitiesToDeleteFromServer = [[NSMutableSet alloc] init];
-        entitiesScheduledForPersistence = [[NSMutableSet alloc] init];
-        entitiesScheduledForDeletion = [[NSMutableSet alloc] init];
         
         NSNotificationCenter *notificationCentre = [NSNotificationCenter defaultCenter];
         [notificationCentre addObserver:self selector:@selector(contextDidSave:) name:NSManagedObjectContextDidSaveNotification object:nil];
@@ -150,7 +161,7 @@ static ScAppEnv *env = nil;
 }
 
 
-#pragma mark - Interface implementations
+#pragma mark - Device information
 
 - (NSString *)deviceUUID
 {
@@ -212,6 +223,8 @@ static ScAppEnv *env = nil;
 }
 
 
+#pragma mark - Connection state
+
 - (BOOL)isInternetConnectionAvailable
 {
     return (isInternetConnectionWiFi || isInternetConnectionWWAN);
@@ -224,69 +237,51 @@ static ScAppEnv *env = nil;
 }
 
 
+#pragma mark - Remote persistence
+
 - (NSArray *)entitiesToPersistToServer
 {
-    NSArray *entitiesToReturn = nil;
+    NSArray *entitiesToPersist = nil;
     
     if (entitiesToPersistToServer.count > 0) {
-        entitiesToReturn = [entitiesToPersistToServer allObjects];
+        entitiesToPersist = [entitiesToPersistToServer allObjects];
     }
     
-    return entitiesToReturn;
+    return entitiesToPersist;
 }
 
 
 - (NSArray *)entitiesToDeleteFromServer
 {
-    NSArray *entitiesToReturn = nil;
+    NSArray *entitiesToDelete = nil;
 
     if (entitiesToDeleteFromServer.count > 0) {
-        entitiesToReturn = [entitiesToDeleteFromServer allObjects];
+        entitiesToDelete = [entitiesToDeleteFromServer allObjects];
     }
     
-    return entitiesToReturn;
-}
-
-
-- (BOOL)canScheduleEntityForPersistence:(ScCachedEntity *)entity
-{
-    BOOL isScheduled = ([entitiesScheduledForPersistence member:entity] != nil);
-    
-    if (!isScheduled) {
-        if ([entitiesToPersistToServer member:entity]) {
-            [entitiesScheduledForPersistence addObject:entity];
-        }
-    }
-    
-    return !isScheduled;
-}
-
-
-- (BOOL)canScheduleEntityForDeletion:(ScCachedEntity *)entity
-{
-    BOOL isScheduled = ([entitiesScheduledForDeletion member:entity] != nil);
-    
-    if (!isScheduled) {
-        if ([entitiesToDeleteFromServer member:entity]) {
-            [entitiesScheduledForDeletion addObject:entity];
-        }
-    }
-    
-    return !isScheduled;
+    return entitiesToDelete;
 }
 
 
 - (void)didPersistEntitiesToServer
 {
-    [entitiesToPersistToServer minusSet:entitiesScheduledForPersistence];
-    [entitiesScheduledForPersistence removeAllObjects];
+    for (ScCachedEntity *entity in entitiesToPersistToServer) {
+        if (entity.remotePersistenceState == ScRemotePersistenceStateDirtyInFlight) {
+            [entitiesToPersistToServer removeObject:entity];
+            entity.remotePersistenceState = ScRemotePersistenceStatePersisted;
+        }
+    }
 }
 
 
 - (void)didDeleteEntitiesFromServer
 {
-    [entitiesToDeleteFromServer minusSet:entitiesScheduledForDeletion];
-    [entitiesScheduledForDeletion removeAllObjects];
+    for (ScCachedEntity *entity in entitiesToDeleteFromServer) {
+        if (entity.remotePersistenceState == ScRemotePersistenceStateDirtyInFlight) {
+            [entitiesToDeleteFromServer removeObject:entity];
+            entity.remotePersistenceState = ScRemotePersistenceStateDeleted;
+        }
+    }
 }
 
 @end

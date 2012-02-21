@@ -12,9 +12,10 @@
 #import "ScMessageBoard.h"
 #import "ScScola.h"
 #import "ScScolaMember.h"
+#import "ScServerConnectionDelegate.h"
 
 
-@interface ScRegistrationView2Controller : UIViewController <UITextFieldDelegate>
+@interface ScRegistrationView2Controller : UIViewController <UITextFieldDelegate, ScServerConnectionDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *genderUserHelpLabel;

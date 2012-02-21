@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="878" systemVersion="11D50b" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="ScCachedEntity" representedClassName="ScCachedEntity" isAbstract="YES" syncable="YES">
+        <attribute name="_isCoreEntity" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="_remotePersistenceState" attributeType="Integer 16" defaultValueString="NO" syncable="YES"/>
         <attribute name="dateCreated" attributeType="Date" syncable="YES"/>
         <attribute name="dateExpires" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="dateModified" attributeType="Date" syncable="YES"/>
-        <attribute name="isCoreEntity" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="isScheduledForRemotePersistence" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
     </entity>
     <entity name="ScDevice" representedClassName="ScDevice" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="name" attributeType="String" syncable="YES"/>
@@ -227,7 +227,7 @@
         </userInfo>
     </entity>
     <elements>
-        <element name="ScCachedEntity" positionX="-369" positionY="423" width="128" height="90"/>
+        <element name="ScCachedEntity" positionX="-369" positionY="423" width="128" height="120"/>
         <element name="ScDevice" positionX="322" positionY="-522" width="128" height="90"/>
         <element name="ScDocument" positionX="342" positionY="-141" width="128" height="150"/>
         <element name="ScDocumentElement" positionX="511" positionY="-189" width="128" height="90"/>

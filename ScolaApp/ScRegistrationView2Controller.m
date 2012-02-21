@@ -275,4 +275,24 @@ static int const kPopUpButtonUseNew = 1;
     }
 }
 
+
+#pragma mark - ScServerConnectionDelegate implementation
+
+- (void)willSendRequest:(NSURLRequest *)request
+{
+    ScLogInfo(@"Sending asynchronous HTTP request with URL: %@", request.URL);
+}
+
+
+- (void)didReceiveResponse:(NSHTTPURLResponse *)response
+{
+    ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
+}
+
+
+- (void)finishedReceivingData:(NSDictionary *)data
+{
+    ScLogDebug(@"Received data: %@", data);
+}
+
 @end

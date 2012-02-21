@@ -15,6 +15,28 @@
 @implementation ScCachedEntity (ScCachedEntityExtensions)
 
 
+#pragma mark - Accessors
+
+- (BOOL)isCoreEntity
+{
+    return [self._isCoreEntity boolValue];
+}
+
+
+- (ScRemotePersistenceState)remotePersistenceState
+{
+    return [self._remotePersistenceState intValue];
+}
+
+
+- (void)setRemotePersistenceState:(ScRemotePersistenceState)remotePersistenceState
+{
+    self._remotePersistenceState = [NSNumber numberWithInt:remotePersistenceState];
+}
+
+
+#pragma mark - Entity metadata
+
 - (NSString *)route
 {
     NSEntityDescription *entity = self.entity;
@@ -54,12 +76,13 @@
 }
 
 
+#pragma mark - JSON serialisation
+
 - (NSDictionary *)toDictionaryForRemotePersistence
 {
-    ScAppEnv *env = [ScAppEnv env];
     NSMutableDictionary *keyValueDictionary = nil;
         
-    if ([env canScheduleEntityForPersistence:self]) {
+    if (self.remotePersistenceState == ScRemotePersistenceStateDirtyNotScheduled) {
         keyValueDictionary = [[NSMutableDictionary alloc] init];
         
         NSEntityDescription *entityDescription = self.entity;
@@ -83,24 +106,26 @@
         for (NSString *relationshipName in [relationshipsByName allKeys]) {
             NSRelationshipDescription *relationship = [relationshipsByName objectForKey:relationshipName];
             
-            if ([relationship isToMany]) {
-                NSSet *relationshipObjects = [self valueForKey:relationshipName];
-                NSMutableArray *relationshipArray = [[NSMutableArray alloc] init];
+            if (relationship.isToMany) {
+                NSSet *entitiesInRelationship = [self valueForKey:relationshipName];
+                NSMutableArray *entityDictionaryArray = [[NSMutableArray alloc] init];
                 
-                for (ScCachedEntity *relationshipObject in relationshipObjects) {
-                    NSDictionary *relationshipObjectAsDictionary = [relationshipObject toDictionaryForRemotePersistence];
+                for (ScCachedEntity *entity in entitiesInRelationship) {
+                    NSDictionary *entityAsDictionary = [entity toDictionaryForRemotePersistence];
                     
-                    if (relationshipObjectAsDictionary) {
-                        [relationshipArray addObject:relationshipObjectAsDictionary];
+                    if (entityAsDictionary) {
+                        [entityDictionaryArray addObject:entityAsDictionary];
                     }
                 }
                 
-                [keyValueDictionary setObject:relationshipArray forKey:relationshipName];
+                [keyValueDictionary setObject:entityDictionaryArray forKey:relationshipName];
             } else {
-                ScCachedEntity *relationshipObject = [self valueForKey:relationshipName];
-                [keyValueDictionary setValue:[relationshipObject toDictionaryForRemotePersistence] forKey:relationshipName];
+                ScCachedEntity *entity = [self valueForKey:relationshipName];
+                [keyValueDictionary setValue:[entity toDictionaryForRemotePersistence] forKey:relationshipName];
             }
         }
+        
+        self.remotePersistenceState = ScRemotePersistenceStateDirtyScheduled;
     }
     
     return keyValueDictionary;
