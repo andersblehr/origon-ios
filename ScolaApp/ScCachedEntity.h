@@ -2,7 +2,7 @@
 //  ScCachedEntity.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 21.02.12.
+//  Created by Anders Blehr on 22.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -12,8 +12,8 @@
 
 @interface ScCachedEntity : NSManagedObject
 
-@property (nonatomic, retain) NSNumber * _isCoreEntity;
-@property (nonatomic, retain) NSNumber * _remotePersistenceState;
+@property (nonatomic, retain) NSNumber * isCoreEntityN;
+@property (nonatomic, retain) NSNumber * remotePersistenceStateN;
 @property (nonatomic, retain) NSDate * dateCreated;
 @property (nonatomic, retain) NSDate * dateExpires;
 @property (nonatomic, retain) NSDate * dateModified;

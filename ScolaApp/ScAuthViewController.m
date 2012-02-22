@@ -370,7 +370,8 @@ static int const kPopUpButtonTryAgain = 1;
         ScLogBreakage(@"Attempt to validate name while in 'Member' segment");
     } else {
         nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
-        isValid = ([nameAsEntered rangeOfString:@" "].location != NSNotFound);
+        isValid = (nameAsEntered.length > 0);
+        isValid = isValid && ([nameAsEntered rangeOfString:@" "].location != NSNotFound);
     }
     
     if (!isValid) {
@@ -444,9 +445,9 @@ static int const kPopUpButtonTryAgain = 1;
     
     [self indicatePendingServerSession:YES];
     
-    serverConnection = [[ScServerConnection alloc] initForAuthPhase:ScAuthPhaseLogin];
+    serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
-    [serverConnection getRemoteClass:@"ScScolaMember" usingDelegate:self];
+    [serverConnection authenticateForPhase:ScAuthPhaseLogin usingDelegate:self];
 }
 
 
@@ -460,10 +461,10 @@ static int const kPopUpButtonTryAgain = 1;
     
     [self indicatePendingServerSession:YES];
     
-    serverConnection = [[ScServerConnection alloc] initForAuthPhase:ScAuthPhaseRegistration];
+    serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
     [serverConnection setValue:nameAsEntered forURLParameter:kURLParameterName];
-    [serverConnection getRemoteClass:@"ScAuthInfo" usingDelegate:self];
+    [serverConnection authenticateForPhase:ScAuthPhaseRegistration usingDelegate:self];
 }
 
 
@@ -477,9 +478,9 @@ static int const kPopUpButtonTryAgain = 1;
     
     [self indicatePendingServerSession:YES];
     
-    serverConnection = [[ScServerConnection alloc] initForAuthPhase:ScAuthPhaseConfirmation];
+    serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
-    [serverConnection getRemoteClass:@"ScScolaMember" usingDelegate:self];
+    [serverConnection authenticateForPhase:ScAuthPhaseConfirmation usingDelegate:self];
 }
 
 

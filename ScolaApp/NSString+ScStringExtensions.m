@@ -18,10 +18,9 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 
 @implementation NSString (ScStringExtensions)
 
+//  This code from public domain. Credits: http://www.cocoadev.com/index.pl?BaseSixtyFour
 - (NSString *)base64EncodedString;
 {
-    //  Public domain. Credits: http://www.cocoadev.com/index.pl?BaseSixtyFour
-    
 	NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];
     
     if ([data length] == 0)
@@ -40,7 +39,6 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 		while (bufferLength < 3 && i < [data length])
 			buffer[bufferLength++] = ((char *)[data bytes])[i++];
 		
-		//  Encode the bytes in the buffer to four characters, including padding "=" characters if necessary.
 		characters[length++] = base64EncodingTable[(buffer[0] & 0xFC) >> 2];
 		characters[length++] = base64EncodingTable[((buffer[0] & 0x03) << 4) | ((buffer[1] & 0xF0) >> 4)];
 		if (bufferLength > 1)

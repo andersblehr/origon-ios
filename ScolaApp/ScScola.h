@@ -2,7 +2,7 @@
 //  ScScola.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 20.02.12.
+//  Created by Anders Blehr on 22.02.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -17,6 +17,7 @@
 @property (nonatomic, retain) NSString * descriptionText;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSData * picture;
+@property (nonatomic, retain) NSString * entityId;
 @property (nonatomic, retain) ScMessageBoard *adminMessageBoard;
 @property (nonatomic, retain) NSSet *admins;
 @property (nonatomic, retain) NSSet *coaches;

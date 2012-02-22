@@ -14,6 +14,7 @@
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScLogging.h"
 #import "ScScolaMember.h"
+#import "ScUUIDGenerator.h"
 
 @implementation ScAppEnv
 
@@ -155,12 +156,6 @@ static ScAppEnv *env = nil;
 }
 
 
-- (BOOL)isModelPersisted
-{
-    return (entitiesToPersistToServer.count + entitiesToDeleteFromServer.count == 0);
-}
-
-
 #pragma mark - Device information
 
 - (NSString *)deviceUUID
@@ -173,13 +168,7 @@ static ScAppEnv *env = nil;
     }
     
     if (!deviceUUID) {
-        CFUUIDRef newUUID = CFUUIDCreate(kCFAllocatorDefault);
-        CFStringRef newUUIDAsCFString = CFUUIDCreateString(kCFAllocatorDefault, newUUID);
-        deviceUUID = [[NSString stringWithString:(__bridge NSString *)newUUIDAsCFString] lowercaseString];
-        
-        CFRelease(newUUID);
-        CFRelease(newUUIDAsCFString);
-        
+        deviceUUID = [ScUUIDGenerator generateUUID];
         [userDefaults setObject:deviceUUID forKey:@"scola.device.uuid"];
     }
     
@@ -267,8 +256,8 @@ static ScAppEnv *env = nil;
 {
     for (ScCachedEntity *entity in entitiesToPersistToServer) {
         if (entity.remotePersistenceState == ScRemotePersistenceStateDirtyScheduled) {
-            [entitiesToPersistToServer removeObject:entity];
             entity.remotePersistenceState = ScRemotePersistenceStatePersisted;
+            [entitiesToPersistToServer removeObject:entity];
         }
     }
 }
@@ -278,8 +267,8 @@ static ScAppEnv *env = nil;
 {
     for (ScCachedEntity *entity in entitiesToDeleteFromServer) {
         if (entity.remotePersistenceState == ScRemotePersistenceStateDirtyScheduled) {
-            [entitiesToDeleteFromServer removeObject:entity];
             entity.remotePersistenceState = ScRemotePersistenceStateDeleted;
+            [entitiesToDeleteFromServer removeObject:entity];
         }
     }
 }

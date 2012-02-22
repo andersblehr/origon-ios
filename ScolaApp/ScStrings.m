@@ -135,8 +135,7 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 + (void)fetchStringsFromServer
 {
-    NSDictionary *stringsFromServer =
-        [[[ScServerConnection alloc] initForStrings] getRemoteClass:@"ScStrings"];
+    NSDictionary *stringsFromServer = [[[ScServerConnection alloc] init] fetchStrings];
     
     if (stringsFromServer) {
         strings = stringsFromServer;

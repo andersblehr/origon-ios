@@ -14,6 +14,7 @@
 #import "ScAppEnv.h"
 #import "ScLogging.h"
 #import "ScStrings.h"
+#import "ScUUIDGenerator.h"
 
 
 static NSString * const kSegueToMainView = @"dateOfBirthToMainView";
@@ -96,6 +97,7 @@ static int const kPopUpButtonUseNew = 1;
         defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
         
         ScScola *homeScola = [context entityForClass:ScScola.class];
+        homeScola.entityId = [ScUUIDGenerator generateUUID];
         homeScola.name = [ScStrings stringForKey:strMyPlace];
         [homeScola addMessageBoardsObject:defaultMessageBoard];
 
@@ -287,6 +289,10 @@ static int const kPopUpButtonUseNew = 1;
 - (void)didReceiveResponse:(NSHTTPURLResponse *)response
 {
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
+    
+    if (response.statusCode == kHTTPStatusCodeNoContent) {
+        [[ScAppEnv env] didPersistEntitiesToServer];
+    }
 }
 
 

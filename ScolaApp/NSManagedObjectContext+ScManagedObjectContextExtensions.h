@@ -1,5 +1,5 @@
 //
-//  NSManagedObjectContext+ScPersistenceCache.h
+//  NSManagedObjectContext+ScManagedObjectContextExtensions.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 29.01.12.

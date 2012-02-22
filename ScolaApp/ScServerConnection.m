@@ -40,6 +40,7 @@ static NSString * const kRESTRouteStatus = @"status";
 static NSString * const kRESTRouteAuthRegistration = @"register";
 static NSString * const kRESTRouteAuthConfirmation = @"confirm";
 static NSString * const kRESTRouteAuthLogin = @"login";
+static NSString * const kRESTRouteModelFetch = @"fetch";
 static NSString * const kRESTRouteModelPersist = @"persist";
 
 static NSString * const kURLParameterUUID = @"uuid";
@@ -59,7 +60,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 @synthesize HTTPStatusCode;
 
 
-#pragma mark - Private methods
+#pragma mark - Auxiliary methods
 
 - (NSString *)scolaServer
 {
@@ -101,6 +102,25 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
+- (void)performFetchRequestUsingDelegate:(id)delegate
+{
+    if ([ScAppEnv env].isServerAvailable) {
+        connectionDelegate = delegate;
+        responseData = [[NSMutableData alloc] init];
+        
+        [self createURLRequestForHTTPMethod:kHTTPMethodGET];
+        [connectionDelegate willSendRequest:URLRequest];
+        
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
+        
+        if (!URLConnection) {
+            ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
+        }
+    }
+}
+
+
 #pragma mark - Initialisation
 
 - (id)init
@@ -109,77 +129,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
-- (id)initForStrings
-{
-	self = [super init];
-    
-    if (self) {
-        RESTHandler = kRESTHandlerStrings;
-        RESTRoute = [ScAppEnv env].displayLanguage;
-        entityLookupKey = nil;
-        entityClass = nil;
-    }
-    
-    return self;
-}
-
-
-- (id)initForAuthPhase:(ScAuthPhase)phase
-{
-	self = [super init];
-    
-    if (self) {
-        authPhase = phase;
-        RESTHandler = kRESTHandlerAuth;
-        
-        if (authPhase == ScAuthPhaseRegistration) {
-            RESTRoute = kRESTRouteAuthRegistration;
-        } else if (authPhase == ScAuthPhaseConfirmation) {
-            RESTRoute = kRESTRouteAuthConfirmation;
-        } else if (authPhase == ScAuthPhaseLogin) {
-            RESTRoute = kRESTRouteAuthLogin;
-        }
-        
-        entityLookupKey = nil;
-        entityClass = nil;
-    }
-    
-    return self;
-}
-
-
-- (id)initForEntity:(Class)class
-{
-	self = [super init];
-    
-    if (self) {
-        RESTHandler = kRESTHandlerModel;
-        entityClass = NSStringFromClass(class);
-        
-        ScCachedEntity *entity = [[ScAppEnv env].managedObjectContext entityForClass:class];
-        
-        RESTRoute = [entity route];
-        entityLookupKey = [entity lookupKey];
-    }
-    
-    return self;
-}
-
-
-- (id)initForRemotePersistence
-{
-    self = [super init];
-    
-    if (self) {
-        RESTHandler = kRESTHandlerModel;
-        RESTRoute = kRESTRouteModelPersist;
-    }
-    
-    return self;
-}
-
-
-#pragma mark - Interface implementation
+#pragma mark - Server availability
 
 - (void)checkServerAvailability
 {
@@ -206,6 +156,8 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     }
 }
 
+
+#pragma mark - HTTP headers & URL parameters
 
 - (void)setAuthHeaderForUser:(NSString *)userId withPassword:(NSString *)password
 {
@@ -234,27 +186,21 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
-- (void)setEntityLookupValue:(NSString *)value
-{
-    if (entityLookupKey) {
-        [self setValue:value forURLParameter:entityLookupKey];
-    } else {
-        ScLogBreakage(@"Attempt to set entity lookup value when no entity key has been set");
-    }
-}
+#pragma mark - Server requests
 
-
-- (NSDictionary *)getRemoteClass:(NSString *)class
+- (NSDictionary *)fetchStrings
 {
-    NSDictionary *classAsDictionary = nil;
+    NSDictionary *strings = nil;
     
     if ([ScAppEnv env].isServerAvailable) {
+        RESTHandler = kRESTHandlerStrings;
+        RESTRoute = [ScAppEnv env].displayLanguage;
+        
         NSError *error;
         NSHTTPURLResponse *response;
         
         [self createURLRequestForHTTPMethod:kHTTPMethodGET];
         
-        ScLogDebug(@"Starting synchronous GET request with URL %@.", URLRequest.URL);
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         NSData *data = [NSURLConnection sendSynchronousRequest:URLRequest returningResponse:&response error:&error];
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
@@ -264,67 +210,45 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         if (HTTPStatusCode == kHTTPStatusCodeOK) {
             ScLogDebug(@"Received data: %@.", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             
-            classAsDictionary = [ScJSONUtil dictionaryFromJSON:data];
+            strings = [ScJSONUtil dictionaryFromJSON:data];
         }
     }
     
-    return classAsDictionary;
+    return strings;
 }
 
 
-- (void)getRemoteClass:(NSString *)class usingDelegate:(id)delegate
+- (void)authenticateForPhase:(ScAuthPhase)phase usingDelegate:(id)delegate
 {
-    if ([ScAppEnv env].isServerAvailable) {
-        entityClass = class;
-        connectionDelegate = delegate;
-        responseData = [[NSMutableData alloc] init];
-        
-        [self createURLRequestForHTTPMethod:kHTTPMethodGET];
-        [connectionDelegate willSendRequest:URLRequest];
-        
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-        NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
-        
-        if (!URLConnection) {
-            ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
-        }
+    authPhase = phase;
+    RESTHandler = kRESTHandlerAuth;
+    
+    if (authPhase == ScAuthPhaseRegistration) {
+        RESTRoute = kRESTRouteAuthRegistration;
+    } else if (authPhase == ScAuthPhaseConfirmation) {
+        RESTRoute = kRESTRouteAuthConfirmation;
+    } else if (authPhase == ScAuthPhaseLogin) {
+        RESTRoute = kRESTRouteAuthLogin;
     }
+    
+    [self performFetchRequestUsingDelegate:delegate];
 }
 
 
-- (NSDictionary *)getRemoteEntity
+- (void)fetchEntitiesUsingDelegate:(id)delegate
 {
-    return [self getRemoteClass:entityClass];
-}
-
-
-- (void)getRemoteEntityUsingDelegate:(id)delegate
-{
-    [self getRemoteClass:entityClass usingDelegate:delegate];
-}
-
-
-- (void)persistEntity:(ScCachedEntity *)entity usingDelegate:(id)delegate
-{
-    NSError *error;
-    NSData *entityAsJSON = [NSJSONSerialization dataWithJSONObject:[entity toDictionaryForRemotePersistence] options:NSJSONWritingPrettyPrinted error:&error];
-
-    ScLogDebug(@"Entity as JSON: %@", [[NSString alloc] initWithData:entityAsJSON encoding:NSUTF8StringEncoding]);
+    RESTHandler = kRESTHandlerModel;
+    RESTRoute = kRESTRouteModelFetch;
     
-    [self createURLRequestForHTTPMethod:kHTTPMethodPOST];
-    [URLRequest setHTTPBody:entityAsJSON];
-    
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
-    
-    if (!URLConnection) {
-        ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
-    }
+    [self performFetchRequestUsingDelegate:delegate];
 }
 
 
 - (void)persistEntitiesUsingDelegate:(id)delegate
 {
+    RESTHandler = kRESTHandlerModel;
+    RESTRoute = kRESTRouteModelPersist;
+    
     NSArray *entitiesToPersist = [[ScAppEnv env] entitiesToPersistToServer];
     NSMutableArray *persistableArrayOfEntities = [[NSMutableArray alloc] init];
     

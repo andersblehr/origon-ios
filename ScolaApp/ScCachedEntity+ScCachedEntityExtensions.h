@@ -21,8 +21,6 @@ typedef enum {
 - (ScRemotePersistenceState)remotePersistenceState;
 - (void)setRemotePersistenceState:(ScRemotePersistenceState)remotePersistenceState;
 
-- (NSString *)route;
-- (NSString *)lookupKey;
 - (NSString *)expiresInTimeframe;
 
 - (NSDictionary *)toDictionaryForRemotePersistence;

@@ -1,5 +1,5 @@
 //
-//  NSManagedObjectContext+ScPersistenceCache.m
+//  NSManagedObjectContext+ScManagedObjectContextExtensions.m
 //  ScolaApp
 //
 //  Created by Anders Blehr on 29.01.12.
@@ -23,16 +23,13 @@
 
 - (BOOL)saveUsingDelegate:(id)delegate
 {
-    NSError *error = nil;
+    NSError *error;
     BOOL didSaveOK = [self save:&error];
     
     if (didSaveOK) {
-        ScServerConnection *connection = [[ScServerConnection alloc] initForRemotePersistence];
-        [connection persistEntitiesUsingDelegate:delegate];
-        
-        [[ScAppEnv env] didPersistEntitiesToServer];
+        [[[ScServerConnection alloc] init] persistEntitiesUsingDelegate:delegate];
     } else {
-        ScLogError(@"Error during save to managed object context: %@", [error userInfo]);
+        ScLogError(@"Error when saving managed object context: %@", [error userInfo]);
     }
     
     return didSaveOK;
@@ -50,10 +47,8 @@
     cachedEntity.dateModified = now;
     cachedEntity.dateExpires = nil;
     
-    if ([entity isKindOfClass:ScPerson.class] ||
-        [entity isKindOfClass:ScScola.class] ||
-        [entity isKindOfClass:ScScolaMember.class]) {
-        entity._isCoreEntity = [NSNumber numberWithBool:YES];
+    if ([entity isKindOfClass:ScPerson.class] || [entity isKindOfClass:ScScola.class] || [entity isKindOfClass:ScScolaMember.class]) {
+        entity.isCoreEntityN = [NSNumber numberWithBool:YES];
     }
     
     NSString *expires = [cachedEntity expiresInTimeframe];

@@ -33,8 +33,6 @@ typedef enum {
     
     NSString *RESTHandler;
     NSString *RESTRoute;
-    NSString *entityLookupKey;
-    NSString *entityClass;
     
     NSMutableURLRequest *URLRequest;
     NSMutableDictionary *URLParameters;
@@ -56,23 +54,15 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 @property (nonatomic, readonly) NSInteger HTTPStatusCode;
 
 - (id)init;
-- (id)initForStrings;
-- (id)initForAuthPhase:(ScAuthPhase)phase;
-- (id)initForEntity:(Class)class;
-- (id)initForRemotePersistence;
 
 - (void)checkServerAvailability;
 - (void)setAuthHeaderForUser:(NSString *)userId withPassword:(NSString *)password;
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
-- (void)setEntityLookupValue:(NSString *)value;
 
-- (NSDictionary *)getRemoteClass:(NSString *)class;
-- (void)getRemoteClass:(NSString *)class usingDelegate:(id)delegate;
-- (NSDictionary *)getRemoteEntity;
-- (void)getRemoteEntityUsingDelegate:(id)delegate;
-
-- (void)persistEntity:(ScCachedEntity *)entity usingDelegate:(id)delegate;
+- (NSDictionary *)fetchStrings;
+- (void)authenticateForPhase:(ScAuthPhase)authPhase usingDelegate:(id)delegate;
+- (void)fetchEntitiesUsingDelegate:(id)delegate;
 - (void)persistEntitiesUsingDelegate:(id)delegate;
 
 @end

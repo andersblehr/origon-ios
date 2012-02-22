@@ -15,53 +15,27 @@
 @implementation ScCachedEntity (ScCachedEntityExtensions)
 
 
-#pragma mark - Accessors
+#pragma mark - NSNumber attribute mappings
 
 - (BOOL)isCoreEntity
 {
-    return [self._isCoreEntity boolValue];
+    return [self.isCoreEntityN boolValue];
 }
 
 
 - (ScRemotePersistenceState)remotePersistenceState
 {
-    return [self._remotePersistenceState intValue];
+    return [self.remotePersistenceStateN intValue];
 }
 
 
 - (void)setRemotePersistenceState:(ScRemotePersistenceState)remotePersistenceState
 {
-    self._remotePersistenceState = [NSNumber numberWithInt:remotePersistenceState];
+    self.remotePersistenceStateN = [NSNumber numberWithInt:remotePersistenceState];
 }
 
 
 #pragma mark - Entity metadata
-
-- (NSString *)route
-{
-    NSEntityDescription *entity = self.entity;
-    NSString *route = [entity.userInfo objectForKey:@"route"];
-    
-    if (!route) {
-        ScLogBreakage(@"Attempt to retrieve route info from non-routed entity '%@'.", entity.name);
-    }
-    
-    return route;
-}
-
-
-- (NSString *)lookupKey
-{
-    NSEntityDescription *entity = self.entity;
-    NSString *lookupKey = [entity.userInfo objectForKey:@"key"];
-    
-    if (!lookupKey) {
-        ScLogBreakage(@"Attempt to retrieve lookup key info from non-keyed entity '%@'.", entity.name);
-    }
-    
-    return lookupKey;
-}
-
 
 - (NSString *)expiresInTimeframe
 {
@@ -76,7 +50,7 @@
 }
 
 
-#pragma mark - JSON serialisation
+#pragma mark - Serialisation to dictionary
 
 - (NSDictionary *)toDictionaryForRemotePersistence
 {
@@ -84,6 +58,7 @@
         
     if (self.remotePersistenceState == ScRemotePersistenceStateDirtyNotScheduled) {
         keyValueDictionary = [[NSMutableDictionary alloc] init];
+        self.remotePersistenceState = ScRemotePersistenceStateDirtyScheduled;
         
         NSEntityDescription *entityDescription = self.entity;
         NSDictionary *attributesByName = [entityDescription attributesByName];
@@ -124,8 +99,6 @@
                 [keyValueDictionary setValue:[entity toDictionaryForRemotePersistence] forKey:relationshipName];
             }
         }
-        
-        self.remotePersistenceState = ScRemotePersistenceStateDirtyScheduled;
     }
     
     return keyValueDictionary;

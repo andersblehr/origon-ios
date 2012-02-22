@@ -30,7 +30,6 @@ extern NSString * const kBundleID;
 @property (nonatomic) ScServerAvailability serverAvailability;
 
 @property (weak, readonly) NSManagedObjectContext *managedObjectContext;
-@property (nonatomic, readonly) BOOL isModelPersisted;
 
 + (ScAppEnv *)env;
 
