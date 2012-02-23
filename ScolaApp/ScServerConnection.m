@@ -43,7 +43,7 @@ static NSString * const kRESTRouteAuthLogin = @"login";
 static NSString * const kRESTRouteModelFetch = @"fetch";
 static NSString * const kRESTRouteModelPersist = @"persist";
 
-static NSString * const kURLParameterUUID = @"uuid";
+static NSString * const kURLParameterDeviceUUID = @"duid";
 static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
 
@@ -85,7 +85,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
     [self setValue:[ScAppEnv env].bundleVersion forURLParameter:kURLParameterVersion];
     [self setValue:[ScAppEnv env].deviceType forURLParameter:kURLParameterDevice];
-    [self setValue:[ScAppEnv env].deviceUUID forURLParameter:kURLParameterUUID];
+    [self setValue:[ScAppEnv env].deviceUUID forURLParameter:kURLParameterDeviceUUID];
     
     NSURL *URLWithoutURLParameters = [[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute];
     NSURL *requestURL = [URLWithoutURLParameters URLByAppendingURLParameters:URLParameters];
@@ -104,18 +104,23 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)performFetchRequestUsingDelegate:(id)delegate
 {
-    if ([ScAppEnv env].isServerAvailable) {
+    if ( [ScAppEnv env].isServerAvailable ||
+        ([ScAppEnv env].serverAvailability == ScServerAvailabilityChecking)) {
         connectionDelegate = delegate;
         responseData = [[NSMutableData alloc] init];
         
         [self createURLRequestForHTTPMethod:kHTTPMethodGET];
-        [connectionDelegate willSendRequest:URLRequest];
+        
+        if (connectionDelegate) {
+            [connectionDelegate willSendRequest:URLRequest];
+        }
         
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
         
         if (!URLConnection) {
             ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         }
     }
 }
@@ -134,23 +139,12 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 - (void)checkServerAvailability
 {
     if ([ScAppEnv env].isInternetConnectionAvailable) {
-        NSString *scolaServer = [self scolaServer];
-        
-        NSString *scolaServerURL = [NSString stringWithFormat:@"http://%@", scolaServer];
-        NSURL *statusURL = [[[NSURL URLWithString:scolaServerURL] URLByAppendingPathComponent:kRESTHandlerScola] URLByAppendingPathComponent:kRESTRouteStatus];
-        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:statusURL];
-        
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         [ScAppEnv env].serverAvailability = ScServerAvailabilityChecking;
-        NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:request delegate:self];
         
-        if (!URLConnection) {
-            ScLogError(@"Failed to connect to the server.");
-            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-            
-            [ScAppEnv env].serverAvailability = ScServerAvailabilityUnavailable;
-            [[NSNotificationCenter defaultCenter] postNotificationName:kServerAvailabilityNotification object:nil];
-        }
+        RESTHandler = kRESTHandlerScola;
+        RESTRoute = kRESTRouteStatus;
+        
+        [self performFetchRequestUsingDelegate:nil];
     } else {
         [ScAppEnv env].serverAvailability = ScServerAvailabilityUnavailable;
     }
@@ -188,33 +182,12 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 #pragma mark - Server requests
 
-- (NSDictionary *)fetchStrings
+- (void)fetchStringsUsingDelegate:(id)delegate
 {
-    NSDictionary *strings = nil;
+    RESTHandler = kRESTHandlerStrings;
+    RESTRoute = [ScAppEnv env].displayLanguage;
     
-    if ([ScAppEnv env].isServerAvailable) {
-        RESTHandler = kRESTHandlerStrings;
-        RESTRoute = [ScAppEnv env].displayLanguage;
-        
-        NSError *error;
-        NSHTTPURLResponse *response;
-        
-        [self createURLRequestForHTTPMethod:kHTTPMethodGET];
-        
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-        NSData *data = [NSURLConnection sendSynchronousRequest:URLRequest returningResponse:&response error:&error];
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        
-        HTTPStatusCode = response.statusCode;
-        
-        if (HTTPStatusCode == kHTTPStatusCodeOK) {
-            ScLogDebug(@"Received data: %@.", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-            
-            strings = [ScJSONUtil dictionaryFromJSON:data];
-        }
-    }
-    
-    return strings;
+    [self performFetchRequestUsingDelegate:delegate];
 }
 
 
@@ -246,45 +219,47 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)persistEntitiesUsingDelegate:(id)delegate
 {
-    RESTHandler = kRESTHandlerModel;
-    RESTRoute = kRESTRouteModelPersist;
-    
-    NSArray *entitiesToPersist = [[ScAppEnv env] entitiesToPersistToServer];
-    NSMutableArray *persistableArrayOfEntities = [[NSMutableArray alloc] init];
-    
-    for (ScCachedEntity *entity in entitiesToPersist) {
-        if (entity.isCoreEntity) {
-            NSDictionary *entityAsDictionary = [entity toDictionaryForRemotePersistence];
-            
-            if (entityAsDictionary) {
-                [persistableArrayOfEntities addObject:entityAsDictionary];
+    if ([ScAppEnv env].isServerAvailable) {
+        RESTHandler = kRESTHandlerModel;
+        RESTRoute = kRESTRouteModelPersist;
+        
+        NSArray *entitiesToPersist = [[ScAppEnv env] entitiesToPersistToServer];
+        NSMutableArray *persistableArrayOfEntities = [[NSMutableArray alloc] init];
+        
+        for (ScCachedEntity *entity in entitiesToPersist) {
+            if (entity.isCoreEntity) {
+                NSDictionary *entityAsDictionary = [entity toDictionaryForRemotePersistence];
+                
+                if (entityAsDictionary) {
+                    [persistableArrayOfEntities addObject:entityAsDictionary];
+                }
             }
         }
-    }
-    
-    for (ScCachedEntity *entity in entitiesToPersist) {
-        if (entity.remotePersistenceState == ScRemotePersistenceStateDirtyNotScheduled) {
-            NSDictionary *entityAsDictionary = [entity toDictionaryForRemotePersistence];
-            
-            if (entityAsDictionary) {
-                [persistableArrayOfEntities addObject:entityAsDictionary];
+        
+        for (ScCachedEntity *entity in entitiesToPersist) {
+            if (entity.remotePersistenceState == ScRemotePersistenceStateDirtyNotScheduled) {
+                NSDictionary *entityAsDictionary = [entity toDictionaryForRemotePersistence];
+                
+                if (entityAsDictionary) {
+                    [persistableArrayOfEntities addObject:entityAsDictionary];
+                }
             }
         }
-    }
-    
-    NSError *error;
-    NSData *entitiesAsJSON = [NSJSONSerialization dataWithJSONObject:persistableArrayOfEntities options:NSJSONWritingPrettyPrinted error:&error];
-    
-    ScLogDebug(@"Entities as JSON: %@", [[NSString alloc] initWithData:entitiesAsJSON encoding:NSUTF8StringEncoding]);
-    
-    [self createURLRequestForHTTPMethod:kHTTPMethodPOST];
-    [URLRequest setHTTPBody:entitiesAsJSON];
-    
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-    NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
-    
-    if (!URLConnection) {
-        ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
+        
+        NSError *error;
+        NSData *entitiesAsJSON = [NSJSONSerialization dataWithJSONObject:persistableArrayOfEntities options:NSJSONWritingPrettyPrinted error:&error];
+        
+        ScLogDebug(@"Entities as JSON: %@", [[NSString alloc] initWithData:entitiesAsJSON encoding:NSUTF8StringEncoding]);
+        
+        [self createURLRequestForHTTPMethod:kHTTPMethodPOST];
+        [URLRequest setHTTPBody:entitiesAsJSON];
+        
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+        NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
+        
+        if (!URLConnection) {
+            ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
+        }
     }
 }
 
@@ -315,7 +290,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
     HTTPStatusCode = response.statusCode;
     
-    if ([ScAppEnv env].serverAvailability == ScServerAvailabilityAvailable) {
+    if ([ScAppEnv env].serverAvailability != ScServerAvailabilityChecking) {
         [connectionDelegate didReceiveResponse:response];
     }
 }

@@ -23,9 +23,9 @@
 		5C36BE9C1470507700DD3CEA /* ScolaApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */; };
 		5C3A319314C4D967001A783E /* 112-group.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3A319214C4D967001A783E /* 112-group.png */; };
 		5C3A319614C61378001A783E /* dark_linen-640x960.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3A319514C61378001A783E /* dark_linen-640x960.png */; };
-		5C3C665614F56B6400514C57 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C665514F56B6400514C57 /* ScCachedEntity.m */; };
 		5C3C665914F56B6500514C57 /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C665814F56B6500514C57 /* ScScola.m */; };
 		5C3C665C14F56D6800514C57 /* ScUUIDGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C665B14F56D6800514C57 /* ScUUIDGenerator.m */; };
+		5C3C665F14F6CB4E00514C57 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C665E14F6CB4E00514C57 /* ScCachedEntity.m */; };
 		5C3D42821485678F009A68E0 /* ScMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D42811485678F009A68E0 /* ScMainViewController.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */; };
 		5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C50581714CA1D05000D6587 /* QuartzCore.framework */; };
@@ -128,12 +128,12 @@
 		5C36BE9B1470507700DD3CEA /* ScolaApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ScolaApp.xcdatamodel; sourceTree = "<group>"; };
 		5C3A319214C4D967001A783E /* 112-group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group.png"; sourceTree = "<group>"; };
 		5C3A319514C61378001A783E /* dark_linen-640x960.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark_linen-640x960.png"; sourceTree = "<group>"; };
-		5C3C665414F56B6400514C57 /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
-		5C3C665514F56B6400514C57 /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
 		5C3C665714F56B6500514C57 /* ScScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScola.h; sourceTree = "<group>"; };
 		5C3C665814F56B6500514C57 /* ScScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScola.m; sourceTree = "<group>"; };
 		5C3C665A14F56D6800514C57 /* ScUUIDGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScUUIDGenerator.h; sourceTree = "<group>"; };
 		5C3C665B14F56D6800514C57 /* ScUUIDGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScUUIDGenerator.m; sourceTree = "<group>"; };
+		5C3C665D14F6CB4E00514C57 /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
+		5C3C665E14F6CB4E00514C57 /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
 		5C3D42801485678E009A68E0 /* ScMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMainViewController.h; sourceTree = "<group>"; };
 		5C3D42811485678F009A68E0 /* ScMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMainViewController.m; sourceTree = "<group>"; };
 		5C4F97791496AF88006E244F /* NSURL+ScURLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ScURLExtensions.h"; sourceTree = "<group>"; };
@@ -307,8 +307,8 @@
 			isa = PBXGroup;
 			children = (
 				5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */,
-				5C3C665414F56B6400514C57 /* ScCachedEntity.h */,
-				5C3C665514F56B6400514C57 /* ScCachedEntity.m */,
+				5C3C665D14F6CB4E00514C57 /* ScCachedEntity.h */,
+				5C3C665E14F6CB4E00514C57 /* ScCachedEntity.m */,
 				5C5ED5D214F2F724006BBDFB /* ScDevice.h */,
 				5C5ED5D314F2F724006BBDFB /* ScDevice.m */,
 				5C5ED5F614F2F72E006BBDFB /* ScDocument.h */,
@@ -723,9 +723,9 @@
 				5C5ED61014F2F733006BBDFB /* ScParttimeHousehold.m in Sources */,
 				5C5ED61314F2F733006BBDFB /* ScHousehold.m in Sources */,
 				5C5ED61914F2F734006BBDFB /* ScToDoAssignment.m in Sources */,
-				5C3C665614F56B6400514C57 /* ScCachedEntity.m in Sources */,
 				5C3C665914F56B6500514C57 /* ScScola.m in Sources */,
 				5C3C665C14F56D6800514C57 /* ScUUIDGenerator.m in Sources */,
+				5C3C665F14F6CB4E00514C57 /* ScCachedEntity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

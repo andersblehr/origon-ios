@@ -122,7 +122,7 @@ NSString * const strMyMessageBoard                   = @"strMyMessageBoard";
 NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 
-#pragma mark - Internal methods
+#pragma mark - Auxiliary methods methods
 
 + (NSString *)fullPathToStringsPlist
 {
@@ -133,31 +133,13 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 }
 
 
-+ (void)fetchStringsFromServer
-{
-    NSDictionary *stringsFromServer = [[[ScServerConnection alloc] init] fetchStrings];
-    
-    if (stringsFromServer) {
-        strings = stringsFromServer;
-        [strings writeToFile:[self fullPathToStringsPlist] atomically:YES];
-    } else {
-        ScLogError(@"Could not fetch strings from server, reverting to cached strings.");
-    }
-}
-
-
 #pragma mark - Interface implementation
 
 + (void)refreshStrings
 {
     if ([ScAppEnv env].isServerAvailable) {
-        BOOL shouldFetchStringsFromServer =
-            (!strings || [ScAppEnv env].isInternetConnectionWiFi); // TODO: Only if req'd
-        
-        if (shouldFetchStringsFromServer) {
-            NSThread *fetchStringsThread = [[NSThread alloc] initWithTarget:self selector:@selector(fetchStringsFromServer) object:nil];
-            
-            [fetchStringsThread start];
+        if (!strings || [ScAppEnv env].isInternetConnectionWiFi) { // TODO: Only if req'd
+            [[[ScServerConnection alloc] init] fetchStringsUsingDelegate:self];
         }
     } else {
         ScLogBreakage(@"Attempt to refresh strings when server is not available.");
@@ -184,6 +166,29 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
     }
     
     return string;
+}
+
+
+#pragma mark - ScServerConnectionDelegate implementation
+
++ (void)willSendRequest:(NSURLRequest *)request
+{
+    ScLogInfo(@"Sending asynchronous HTTP request with URL: %@", request.URL);
+}
+
+
++ (void)didReceiveResponse:(NSHTTPURLResponse *)response
+{
+    ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
+}
+
+
++ (void)finishedReceivingData:(NSDictionary *)data
+{
+    ScLogDebug(@"Received strings: %@", data);
+    
+    strings = data;
+    [strings writeToFile:[self fullPathToStringsPlist] atomically:YES];
 }
 
 @end

@@ -4,6 +4,7 @@
         <attribute name="dateCreated" attributeType="Date" syncable="YES"/>
         <attribute name="dateExpires" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="dateModified" attributeType="Date" syncable="YES"/>
+        <attribute name="entityId" attributeType="String" syncable="YES"/>
         <attribute name="isCoreEntityN" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="remotePersistenceStateN" attributeType="Integer 16" defaultValueString="NO" syncable="YES"/>
     </entity>
@@ -163,7 +164,6 @@
     </entity>
     <entity name="ScScola" representedClassName="ScScola" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="descriptionText" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
-        <attribute name="entityId" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="picture" optional="YES" attributeType="Binary" syncable="YES"/>
         <relationship name="adminMessageBoard" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ScMessageBoard" inverseName="scola" inverseEntity="ScMessageBoard" syncable="YES"/>

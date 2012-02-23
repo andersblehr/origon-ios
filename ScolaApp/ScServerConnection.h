@@ -60,8 +60,8 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
 
-- (NSDictionary *)fetchStrings;
-- (void)authenticateForPhase:(ScAuthPhase)authPhase usingDelegate:(id)delegate;
+- (void)fetchStringsUsingDelegate:(id)delegate;
+- (void)authenticateForPhase:(ScAuthPhase)phase usingDelegate:(id)delegate;
 - (void)fetchEntitiesUsingDelegate:(id)delegate;
 - (void)persistEntitiesUsingDelegate:(id)delegate;
 

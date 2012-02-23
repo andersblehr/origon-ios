@@ -97,7 +97,6 @@ static int const kPopUpButtonUseNew = 1;
         defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
         
         ScScola *homeScola = [context entityForClass:ScScola.class];
-        homeScola.entityId = [ScUUIDGenerator generateUUID];
         homeScola.name = [ScStrings stringForKey:strMyPlace];
         [homeScola addMessageBoardsObject:defaultMessageBoard];
 

@@ -64,7 +64,7 @@
         NSDictionary *attributesByName = [entityDescription attributesByName];
         NSDictionary *relationshipsByName = [entityDescription relationshipsByName];
         
-        [keyValueDictionary setObject:entityDescription.name forKey:@"type"];
+        [keyValueDictionary setObject:entityDescription.name forKey:@"entityType"];
         
         for (NSString *key in [attributesByName allKeys]) {
             id value = [self valueForKey:key];
