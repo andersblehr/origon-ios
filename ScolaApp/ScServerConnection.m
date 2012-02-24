@@ -31,6 +31,15 @@ static NSString * const kHTTPMethodGET = @"GET";
 static NSString * const kHTTPMethodPOST = @"POST";
 static NSString * const kHTTPMethodDELETE = @"DELETE";
 
+static NSString * const kHTTPHeaderContentType = @"Content-Type";
+static NSString * const kHTTPHeaderAccept = @"Accept";
+static NSString * const kHTTPHeaderAcceptCharset = @"Accept-Charset";
+
+static NSString * const kMediaTypeJSONUTF8 = @"application/json;charset=utf-8";
+static NSString * const kMediaTypeJSON = @"application/json";
+
+static NSString * const kCharsetUTF8 = @"utf-8";
+
 static NSString * const kRESTHandlerScola = @"scola";
 static NSString * const kRESTHandlerStrings = @"strings";
 static NSString * const kRESTHandlerAuth = @"auth";
@@ -81,35 +90,31 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
-- (void)createURLRequestForHTTPMethod:(NSString *)HTTPMethod
-{
-    [self setValue:[ScAppEnv env].bundleVersion forURLParameter:kURLParameterVersion];
-    [self setValue:[ScAppEnv env].deviceType forURLParameter:kURLParameterDevice];
-    [self setValue:[ScAppEnv env].deviceUUID forURLParameter:kURLParameterDeviceUUID];
-    
-    NSURL *URLWithoutURLParameters = [[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute];
-    NSURL *requestURL = [URLWithoutURLParameters URLByAppendingURLParameters:URLParameters];
-
-    if (URLRequest) {
-        URLRequest.URL = requestURL;
-    } else {
-        URLRequest = [[NSMutableURLRequest alloc] initWithURL:requestURL];
-    }
-    
-    [URLRequest setHTTPMethod:HTTPMethod];
-    [URLRequest setValue:@"application/json;charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    [URLRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-}
-
-
-- (void)performFetchRequestUsingDelegate:(id)delegate
+- (void)performHTTPMethod:(NSString *)HTTPMethod withPayload:(NSArray *)payload usingDelegate:(id)delegate
 {
     if ( [ScAppEnv env].isServerAvailable ||
         ([ScAppEnv env].serverAvailability == ScServerAvailabilityChecking)) {
         connectionDelegate = delegate;
-        responseData = [[NSMutableData alloc] init];
         
-        [self createURLRequestForHTTPMethod:kHTTPMethodGET];
+        [URLParameters setValue:[ScAppEnv env].deviceUUID forKey:kURLParameterDeviceUUID];
+        [URLParameters setValue:[ScAppEnv env].deviceType forKey:kURLParameterDevice];
+        [URLParameters setValue:[ScAppEnv env].bundleVersion forKey:kURLParameterVersion];
+        
+        URLRequest.HTTPMethod = HTTPMethod;
+        URLRequest.URL = [[[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute] URLByAppendingURLParameters:URLParameters];
+        
+        [URLRequest setValue:kMediaTypeJSONUTF8 forHTTPHeaderField:kHTTPHeaderContentType];
+        [URLRequest setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
+        [URLRequest setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
+        
+        if (payload) {
+            NSError *error;
+            NSData *payloadAsJSON = [NSJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:&error];
+            
+            ScLogDebug(@"Payload as JSON: %@", [[NSString alloc] initWithData:payloadAsJSON encoding:NSUTF8StringEncoding]);
+            
+            URLRequest.HTTPBody = payloadAsJSON;
+        }
         
         if (connectionDelegate) {
             [connectionDelegate willSendRequest:URLRequest];
@@ -130,7 +135,15 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (id)init
 {
-    return [super init];
+    self = [super init];
+    
+    if (self) {
+        URLRequest = [[NSMutableURLRequest alloc] init];
+        URLParameters = [[NSMutableDictionary alloc] init];
+        responseData = [[NSMutableData alloc] init];
+    }
+    
+    return self;
 }
 
 
@@ -144,7 +157,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         RESTHandler = kRESTHandlerScola;
         RESTRoute = kRESTRouteStatus;
         
-        [self performFetchRequestUsingDelegate:nil];
+        [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:nil];
     } else {
         [ScAppEnv env].serverAvailability = ScServerAvailabilityUnavailable;
     }
@@ -162,20 +175,12 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field
 {
-    if (!URLRequest) {
-        URLRequest = [[NSMutableURLRequest alloc] init];
-    }
-    
     [URLRequest setValue:value forHTTPHeaderField:field];
 }
 
 
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter
 {
-    if (!URLParameters) {
-        URLParameters = [[NSMutableDictionary alloc] init];
-    }
-    
     [URLParameters setObject:value forKey:parameter];
 }
 
@@ -187,7 +192,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     RESTHandler = kRESTHandlerStrings;
     RESTRoute = [ScAppEnv env].displayLanguage;
     
-    [self performFetchRequestUsingDelegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
 }
 
 
@@ -204,7 +209,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         RESTRoute = kRESTRouteAuthLogin;
     }
     
-    [self performFetchRequestUsingDelegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
 }
 
 
@@ -213,7 +218,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     RESTHandler = kRESTHandlerModel;
     RESTRoute = kRESTRouteModelFetch;
     
-    [self performFetchRequestUsingDelegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
 }
 
 
@@ -246,20 +251,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             }
         }
         
-        NSError *error;
-        NSData *entitiesAsJSON = [NSJSONSerialization dataWithJSONObject:persistableArrayOfEntities options:NSJSONWritingPrettyPrinted error:&error];
-        
-        ScLogDebug(@"Entities as JSON: %@", [[NSString alloc] initWithData:entitiesAsJSON encoding:NSUTF8StringEncoding]);
-        
-        [self createURLRequestForHTTPMethod:kHTTPMethodPOST];
-        [URLRequest setHTTPBody:entitiesAsJSON];
-        
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-        NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
-        
-        if (!URLConnection) {
-            ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
-        }
+        [self performHTTPMethod:kHTTPMethodPOST withPayload:persistableArrayOfEntities usingDelegate:delegate];
     }
 }
 
