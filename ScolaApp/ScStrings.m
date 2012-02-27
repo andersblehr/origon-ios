@@ -173,7 +173,7 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 + (void)willSendRequest:(NSURLRequest *)request
 {
-    ScLogInfo(@"Sending asynchronous HTTP request with URL: %@", request.URL);
+    ScLogDebug(@"Sending asynchronous HTTP request with URL: %@", request.URL);
 }
 
 

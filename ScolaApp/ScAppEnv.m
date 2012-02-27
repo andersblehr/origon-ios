@@ -74,25 +74,25 @@ static ScAppEnv *env = nil;
 {
     NSDictionary *saveInfo = notification.userInfo;
     
-    NSSet *entitiesInsertedSinceLastTime = [saveInfo objectForKey:NSInsertedObjectsKey];
-    NSSet *entitiesUpdatedSinceLastTime = [saveInfo objectForKey:NSUpdatedObjectsKey];
-    NSSet *entitiesDeletedSinceLastTime = [saveInfo objectForKey:NSDeletedObjectsKey];
+    NSSet *entitiesInserted = [saveInfo objectForKey:NSInsertedObjectsKey];
+    NSSet *entitiesUpdated = [saveInfo objectForKey:NSUpdatedObjectsKey];
+    NSSet *entitiesDeleted = [saveInfo objectForKey:NSDeletedObjectsKey];
     
-    for (ScCachedEntity *entity in entitiesInsertedSinceLastTime) {
+    for (ScCachedEntity *entity in entitiesInserted) {
         entity.remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
     }
     
-    for (ScCachedEntity *entity in entitiesUpdatedSinceLastTime) {
+    for (ScCachedEntity *entity in entitiesUpdated) {
         entity.remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
     }
     
-    for (ScCachedEntity *entity in entitiesDeletedSinceLastTime) {
+    for (ScCachedEntity *entity in entitiesDeleted) {
         entity.remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
     }
     
-    [entitiesToPersistToServer unionSet:entitiesInsertedSinceLastTime];
-    [entitiesToPersistToServer unionSet:entitiesUpdatedSinceLastTime];
-    [entitiesToDeleteFromServer unionSet:entitiesDeletedSinceLastTime];
+    [entitiesToPersistToServer unionSet:entitiesInserted];
+    [entitiesToPersistToServer unionSet:entitiesUpdated];
+    [entitiesToDeleteFromServer unionSet:entitiesDeleted];
 }
 
 
@@ -136,8 +136,7 @@ static ScAppEnv *env = nil;
         entitiesToPersistToServer = [[NSMutableSet alloc] init];
         entitiesToDeleteFromServer = [[NSMutableSet alloc] init];
         
-        NSNotificationCenter *notificationCentre = [NSNotificationCenter defaultCenter];
-        [notificationCentre addObserver:self selector:@selector(contextDidSave:) name:NSManagedObjectContextDidSaveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contextDidSave:) name:NSManagedObjectContextDidSaveNotification object:nil];
     }
     
     return self;

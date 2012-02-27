@@ -44,11 +44,10 @@
     ScCachedEntity *cachedEntity = (ScCachedEntity *)entity;
     NSDate *now = [NSDate date];
     
+    cachedEntity.entityId = [ScUUIDGenerator generateUUID];
     cachedEntity.dateCreated = now;
     cachedEntity.dateModified = now;
     cachedEntity.dateExpires = nil;
-    
-    cachedEntity.entityId = [ScUUIDGenerator generateUUID];
     
     if ([entity isKindOfClass:ScPerson.class] || [entity isKindOfClass:ScScola.class] || [entity isKindOfClass:ScScolaMember.class]) {
         entity.isCoreEntityN = [NSNumber numberWithBool:YES];

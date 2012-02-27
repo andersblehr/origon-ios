@@ -101,8 +101,9 @@ static int const kPopUpButtonUseNew = 1;
         [homeScola addMessageBoardsObject:defaultMessageBoard];
 
         ScDevice *device = [context entityForClass:ScDevice.class];
-        device.name = deviceNameField.text;
         device.uuid = [ScAppEnv env].deviceUUID;
+        device.entityId = device.uuid;
+        device.name = deviceNameField.text;
         
         [member addMembershipsObject:homeScola];
         [member addAdminMembershipsObject:homeScola];
@@ -281,7 +282,7 @@ static int const kPopUpButtonUseNew = 1;
 
 - (void)willSendRequest:(NSURLRequest *)request
 {
-    ScLogInfo(@"Sending asynchronous HTTP request with URL: %@", request.URL);
+    ScLogDebug(@"Sending asynchronous HTTP request with URL: %@", request.URL);
 }
 
 
