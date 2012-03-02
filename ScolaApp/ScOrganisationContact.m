@@ -2,13 +2,13 @@
 //  ScOrganisationContact.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 20.02.12.
+//  Created by Anders Blehr on 02.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import "ScOrganisationContact.h"
 #import "ScOrganisation.h"
-#import "ScPerson.h"
+#import "ScScolaMember.h"
 
 
 @implementation ScOrganisationContact

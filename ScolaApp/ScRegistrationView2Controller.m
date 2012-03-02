@@ -100,13 +100,17 @@ static int const kPopUpButtonUseNew = 1;
         homeScola.name = [ScStrings stringForKey:strMyPlace];
         [homeScola addMessageBoardsObject:defaultMessageBoard];
 
+        ScScolaMembership *scolaMembership = [context entityForClass:ScScolaMembership.class];
+        scolaMembership.scola = homeScola;
+        scolaMembership.member = member;
+        scolaMembership.isActive = YES;
+        scolaMembership.isAdmin = YES;
+        
         ScDevice *device = [context entityForClass:ScDevice.class];
         device.uuid = [ScAppEnv env].deviceUUID;
         device.entityId = device.uuid;
         device.name = deviceNameField.text;
         
-        [member addMembershipsObject:homeScola];
-        [member addAdminMembershipsObject:homeScola];
         [member addDevicesObject:device];
         
         if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
@@ -116,7 +120,7 @@ static int const kPopUpButtonUseNew = 1;
         }
         
         member.mobilePhone = mobilePhoneField.text;
-        member.memberSince = [NSDate date];
+        member.activeSince = [NSDate date];
         
         [context saveUsingDelegate:self];
         

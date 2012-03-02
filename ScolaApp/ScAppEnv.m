@@ -13,7 +13,6 @@
 #import "ScAppDelegate.h"
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScLogging.h"
-#import "ScScolaMember.h"
 #import "ScUUIDGenerator.h"
 
 @implementation ScAppEnv

@@ -2,7 +2,7 @@
 //  ScScheduledAbsence.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 20.02.12.
+//  Created by Anders Blehr on 02.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,13 +10,13 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScPerson;
+@class ScScolaMember;
 
 @interface ScScheduledAbsence : ScCachedEntity
 
 @property (nonatomic, retain) NSDate * absenceEnd;
 @property (nonatomic, retain) NSDate * absenceStart;
 @property (nonatomic, retain) NSString * descriptionText;
-@property (nonatomic, retain) ScPerson *person;
+@property (nonatomic, retain) ScScolaMember *person;
 
 @end

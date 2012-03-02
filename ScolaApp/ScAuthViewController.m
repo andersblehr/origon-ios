@@ -502,7 +502,7 @@ static int const kPopUpButtonTryAgain = 1;
         member.name = nameAsEntered;
         member.email = emailAsEntered;
         member.entityId = member.email;
-        member.isActive = [NSNumber numberWithBool:YES];
+        member.isRegistered = [NSNumber numberWithBool:YES];
         
         if (userIsListed) {
             NSDictionary *memberListing = [authInfo objectForKey:kAuthInfoKeyListedPerson];

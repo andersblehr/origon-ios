@@ -12,6 +12,8 @@
 #import "ScMessageBoard.h"
 #import "ScScola.h"
 #import "ScScolaMember.h"
+#import "ScScolaMembership.h"
+#import "ScScolaMembership+ScScolaMembershipExtensions.h"
 #import "ScServerConnectionDelegate.h"
 
 

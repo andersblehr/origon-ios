@@ -2,7 +2,7 @@
 //  ScCachedEntity.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 25.02.12.
+//  Created by Anders Blehr on 02.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -11,11 +11,11 @@
 
 @implementation ScCachedEntity
 
-@dynamic isCoreEntityN;
-@dynamic remotePersistenceStateN;
 @dynamic dateCreated;
 @dynamic dateExpires;
 @dynamic dateModified;
 @dynamic entityId;
+@dynamic isCoreEntityN;
+@dynamic remotePersistenceStateN;
 
 @end

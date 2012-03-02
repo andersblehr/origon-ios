@@ -12,7 +12,6 @@
 #import "ScCachedEntity.h"
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScLogging.h"
-#import "ScPerson.h"
 #import "ScScola.h"
 #import "ScScolaMember.h"
 #import "ScServerConnection.h"
@@ -49,7 +48,7 @@
     cachedEntity.dateModified = now;
     cachedEntity.dateExpires = nil;
     
-    if ([entity isKindOfClass:ScPerson.class] || [entity isKindOfClass:ScScola.class] || [entity isKindOfClass:ScScolaMember.class]) {
+    if ([entity isKindOfClass:ScScola.class] || [entity isKindOfClass:ScScolaMember.class]) {
         entity.isCoreEntityN = [NSNumber numberWithBool:YES];
     }
     

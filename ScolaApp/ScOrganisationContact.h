@@ -2,7 +2,7 @@
 //  ScOrganisationContact.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 20.02.12.
+//  Created by Anders Blehr on 02.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,12 +10,12 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScOrganisation, ScPerson;
+@class ScOrganisation, ScScolaMember;
 
 @interface ScOrganisationContact : ScCachedEntity
 
 @property (nonatomic, retain) NSString * contactRole;
-@property (nonatomic, retain) ScPerson *contact;
+@property (nonatomic, retain) ScScolaMember *contact;
 @property (nonatomic, retain) ScOrganisation *organisation;
 
 @end

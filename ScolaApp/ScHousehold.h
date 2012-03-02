@@ -2,7 +2,7 @@
 //  ScHousehold.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 20.02.12.
+//  Created by Anders Blehr on 02.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScEvent, ScParttimeHousehold, ScPerson;
+@class ScEvent, ScParttimeHousehold, ScScolaMember;
 
 @interface ScHousehold : ScCachedEntity
 
@@ -34,8 +34,8 @@
 - (void)addPartTimeResidents:(NSSet *)values;
 - (void)removePartTimeResidents:(NSSet *)values;
 
-- (void)addResidentsObject:(ScPerson *)value;
-- (void)removeResidentsObject:(ScPerson *)value;
+- (void)addResidentsObject:(ScScolaMember *)value;
+- (void)removeResidentsObject:(ScScolaMember *)value;
 - (void)addResidents:(NSSet *)values;
 - (void)removeResidents:(NSSet *)values;
 
