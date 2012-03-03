@@ -15,23 +15,17 @@
 @implementation ScCachedEntity (ScCachedEntityExtensions)
 
 
-#pragma mark - Mapped accessors for NSNumber booleans
+#pragma mark - Mapped accessors for NSNumber booleans and ints
 
-- (BOOL)isCoreEntity
+- (ScRemotePersistenceState)_remotePersistenceState
 {
-    return [self.isCoreEntityN boolValue];
+    return [self.remotePersistenceState intValue];
 }
 
 
-- (ScRemotePersistenceState)remotePersistenceState
+- (void)set_remotePersistenceState:(ScRemotePersistenceState)remotePersistenceState
 {
-    return [self.remotePersistenceStateN intValue];
-}
-
-
-- (void)setRemotePersistenceState:(ScRemotePersistenceState)remotePersistenceState
-{
-    self.remotePersistenceStateN = [NSNumber numberWithInt:remotePersistenceState];
+    self.remotePersistenceState = [NSNumber numberWithInt:remotePersistenceState];
 }
 
 
@@ -56,15 +50,15 @@
 {
     NSMutableDictionary *keyValueDictionary = nil;
         
-    if (self.remotePersistenceState == ScRemotePersistenceStateDirtyNotScheduled) {
+    if (self._remotePersistenceState == ScRemotePersistenceStateDirtyNotScheduled) {
+        self._remotePersistenceState = ScRemotePersistenceStateDirtyScheduled;
         keyValueDictionary = [[NSMutableDictionary alloc] init];
-        self.remotePersistenceState = ScRemotePersistenceStateDirtyScheduled;
         
         NSEntityDescription *entityDescription = self.entity;
         NSDictionary *attributesByName = [entityDescription attributesByName];
         NSDictionary *relationshipsByName = [entityDescription relationshipsByName];
         
-        [keyValueDictionary setObject:entityDescription.name forKey:@"entityType"];
+        [keyValueDictionary setObject:entityDescription.name forKey:@"entityClass"];
         
         for (NSString *key in [attributesByName allKeys]) {
             id value = [self valueForKey:key];
@@ -86,26 +80,24 @@
                 NSMutableArray *entityDictionaryArray = [[NSMutableArray alloc] init];
                 
                 for (ScCachedEntity *entity in entitiesInRelationship) {
-                    if (entity.remotePersistenceState != ScRemotePersistenceStatePersisted) {
-                        NSMutableDictionary *entityAsDictionary = [[NSMutableDictionary alloc] init];
-                        [entityAsDictionary setObject:entity.entityId forKey:@"entityId"];
-                        [entityAsDictionary setObject:entity.entity.name forKey:@"entityType"];
-                        
-                        [entityDictionaryArray addObject:entityAsDictionary];
-                    }
+                    NSMutableDictionary *entityAsDictionary = [[NSMutableDictionary alloc] init];
+                    [entityAsDictionary setObject:entity.entityId forKey:@"entityId"];
+                    [entityAsDictionary setObject:entity.entity.name forKey:@"entityClass"];
+                    
+                    [entityDictionaryArray addObject:entityAsDictionary];
                 }
                 
                 [keyValueDictionary setObject:entityDictionaryArray forKey:relationshipName];
             } else {
                 ScCachedEntity *entity = [self valueForKey:relationshipName];
                 
-                if (entity.remotePersistenceState != ScRemotePersistenceStatePersisted) {
+                if (entity) {
                     NSMutableDictionary *entityAsDictionary = [[NSMutableDictionary alloc] init];
                     [entityAsDictionary setObject:entity.entityId forKey:@"entityId"];
-                    [entityAsDictionary setObject:entity.entity.name forKey:@"entityType"];
+                    [entityAsDictionary setObject:entity.entity.name forKey:@"entityClass"];
                     
                     [keyValueDictionary setObject:entityAsDictionary forKey:relationshipName];
-                }                
+                }
             }
         }
     }

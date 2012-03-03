@@ -5,13 +5,17 @@
         <attribute name="dateExpires" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="dateModified" attributeType="Date" syncable="YES"/>
         <attribute name="entityId" attributeType="String" syncable="YES"/>
-        <attribute name="isCoreEntityN" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="remotePersistenceStateN" transient="YES" attributeType="Integer 16" defaultValueString="NO" syncable="YES"/>
+        <attribute name="remotePersistenceState" transient="YES" attributeType="Integer 16" defaultValueString="NO" syncable="YES"/>
     </entity>
     <entity name="ScDevice" representedClassName="ScDevice" parentEntity="ScCachedEntity" syncable="YES">
-        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="type" attributeType="String" syncable="YES"/>
         <attribute name="uuid" attributeType="String" syncable="YES"/>
-        <relationship name="usedBy" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScolaMember" inverseName="devices" inverseEntity="ScScolaMember" syncable="YES"/>
+        <relationship name="listings" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScDeviceListing" inverseName="device" inverseEntity="ScDeviceListing" syncable="YES"/>
+    </entity>
+    <entity name="ScDeviceListing" representedClassName="ScDeviceListing" parentEntity="ScCachedEntity" syncable="YES">
+        <attribute name="displayName" attributeType="String" syncable="YES"/>
+        <relationship name="device" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScDevice" inverseName="listings" inverseEntity="ScDevice" syncable="YES"/>
+        <relationship name="member" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScolaMember" inverseName="devices" inverseEntity="ScScolaMember" syncable="YES"/>
     </entity>
     <entity name="ScDocument" representedClassName="ScDocument" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="doesExpire" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -71,15 +75,27 @@
     <entity name="ScHousehold" representedClassName="ScHousehold" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="addressLine1" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="addressLine2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="postCodeAndCity" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="hostingHousehold" inverseEntity="ScEvent" syncable="YES"/>
-        <relationship name="partTimeResidents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScPartTimeHousehold" inverseName="household" inverseEntity="ScPartTimeHousehold" syncable="YES"/>
-        <relationship name="residents" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScolaMember" inverseName="household" inverseEntity="ScScolaMember" syncable="YES"/>
+        <relationship name="residents" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScHouseholdResidency" inverseName="household" inverseEntity="ScHouseholdResidency" syncable="YES"/>
+    </entity>
+    <entity name="ScHouseholdResidency" representedClassName="ScHouseholdResidency" parentEntity="ScCachedEntity" syncable="YES">
+        <attribute name="daysAtATime" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="isPartTime" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="presentOn01Jan" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="switchDay" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="switchFrequency" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="household" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScHousehold" inverseName="residents" inverseEntity="ScHousehold" syncable="YES"/>
+        <relationship name="resident" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScolaMember" inverseName="households" inverseEntity="ScScolaMember" syncable="YES"/>
     </entity>
     <entity name="ScMessageBoard" representedClassName="ScMessageBoard" parentEntity="ScCachedEntity" syncable="YES">
+        <attribute name="isAdmin" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="roleRestriction" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" attributeType="String" syncable="YES"/>
         <relationship name="messageThreads" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScMessageThread" inverseName="messageBoard" inverseEntity="ScMessageThread" syncable="YES"/>
-        <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="adminMessageBoard" inverseEntity="ScScola" syncable="YES"/>
+        <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="messageBoards" inverseEntity="ScScola" syncable="YES"/>
     </entity>
     <entity name="ScMessageItem" representedClassName="ScMessageItem" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="date" attributeType="Date" syncable="YES"/>
@@ -108,15 +124,6 @@
         <relationship name="contact" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScolaMember" inverseName="contactForOrganisations" inverseEntity="ScScolaMember" syncable="YES"/>
         <relationship name="organisation" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScOrganisation" inverseName="contacts" inverseEntity="ScOrganisation" syncable="YES"/>
     </entity>
-    <entity name="ScPartTimeHousehold" representedClassName="ScParttimeHousehold" parentEntity="ScCachedEntity" syncable="YES">
-        <attribute name="daysInHousehold" optional="YES" attributeType="Integer 16" defaultValueString="7" syncable="YES"/>
-        <attribute name="descriptionText" attributeType="String" syncable="YES"/>
-        <attribute name="presentOn01Jan" optional="YES" attributeType="Boolean" syncable="YES"/>
-        <attribute name="switchDay" optional="YES" attributeType="Integer 16" defaultValueString="1" syncable="YES"/>
-        <attribute name="switchFrequency" optional="YES" attributeType="Integer 16" defaultValueString="1" syncable="YES"/>
-        <relationship name="household" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScHousehold" inverseName="partTimeResidents" inverseEntity="ScHousehold" syncable="YES"/>
-        <relationship name="partTimeResident" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScolaMember" inverseName="partTimeHouseholds" inverseEntity="ScScolaMember" syncable="YES"/>
-    </entity>
     <entity name="ScScheduledAbsence" representedClassName="ScScheduledAbsence" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="absenceEnd" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="absenceStart" attributeType="Date" syncable="YES"/>
@@ -143,7 +150,6 @@
         <attribute name="descriptionText" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="name" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="picture" optional="YES" attributeType="Binary" syncable="YES"/>
-        <relationship name="adminMessageBoard" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ScMessageBoard" inverseName="scola" inverseEntity="ScMessageBoard" syncable="YES"/>
         <relationship name="documentRepositories" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScDocumentRepository" inverseName="scola" inverseEntity="ScDocumentRepository" syncable="YES"/>
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEventInvitationScola" inverseName="scola" inverseEntity="ScEventInvitationScola" syncable="YES"/>
         <relationship name="guardedScola" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScScola" inverseName="guardianScola" inverseEntity="ScScola" syncable="YES"/>
@@ -163,21 +169,21 @@
     <entity name="ScScolaMember" representedClassName="ScScolaMember" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="activeSince" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="dateOfBirth" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="didRegister" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="email" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="gender" attributeType="String" syncable="YES"/>
         <attribute name="isMinor" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="isRegistered" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="mobilePhone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
+        <attribute name="passwordHash" attributeType="String" syncable="YES"/>
         <attribute name="picture" optional="YES" attributeType="Binary" syncable="YES"/>
         <relationship name="contactForEvents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="eventContacts" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="contactForOrganisations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScOrganisationContact" inverseName="contact" inverseEntity="ScOrganisationContact" syncable="YES"/>
-        <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDevice" inverseName="usedBy" inverseEntity="ScDevice" syncable="YES"/>
+        <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDeviceListing" inverseName="member" inverseEntity="ScDeviceListing" syncable="YES"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDocument" inverseName="author" inverseEntity="ScDocument" syncable="YES"/>
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEventInvitation" inverseName="invitee" inverseEntity="ScEventInvitation" spotlightIndexingEnabled="YES" syncable="YES"/>
-        <relationship name="household" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScHousehold" inverseName="residents" inverseEntity="ScHousehold" syncable="YES"/>
+        <relationship name="households" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScHouseholdResidency" inverseName="resident" inverseEntity="ScHouseholdResidency" syncable="YES"/>
         <relationship name="messageItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScMessageItem" inverseName="author" inverseEntity="ScMessageItem" syncable="YES"/>
-        <relationship name="partTimeHouseholds" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScPartTimeHousehold" inverseName="partTimeResident" inverseEntity="ScPartTimeHousehold" syncable="YES"/>
         <relationship name="scheduledAbsences" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScScheduledAbsence" inverseName="person" inverseEntity="ScScheduledAbsence" syncable="YES"/>
         <relationship name="scolaMemberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScolaMembership" inverseName="member" inverseEntity="ScScolaMembership" syncable="YES"/>
         <relationship name="toDoAssignments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScToDoAssignment" inverseName="assignee" inverseEntity="ScToDoAssignment" syncable="YES"/>
@@ -188,14 +194,10 @@
         </userInfo>
     </entity>
     <entity name="ScScolaMembership" representedClassName="ScScolaMembership" parentEntity="ScCachedEntity" syncable="YES">
-        <attribute name="isActiveN" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="isAdminN" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="isRole1N" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="isRole2N" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="isRole3N" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="role1Label" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="role2Label" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="role3Label" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isActive" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="isAdmin" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="isCoach" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="isTeacher" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <relationship name="member" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScolaMember" inverseName="scolaMemberships" inverseEntity="ScScolaMember" syncable="YES"/>
         <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="members" inverseEntity="ScScola" syncable="YES"/>
     </entity>
@@ -242,8 +244,7 @@
         <element name="ScMessageThread" positionX="333" positionY="306" width="128" height="90"/>
         <element name="ScOrganisation" positionX="-207" positionY="51" width="128" height="120"/>
         <element name="ScOrganisationContact" positionX="-191" positionY="-72" width="128" height="90"/>
-        <element name="ScPartTimeHousehold" positionX="-207" positionY="-243" width="128" height="150"/>
-        <element name="ScScolaMember" positionX="169" positionY="-270" width="128" height="120"/>
+        <element name="ScScolaMember" positionX="169" positionY="-270" width="128" height="345"/>
         <element name="ScScheduledAbsence" positionX="169" positionY="-396" width="128" height="105"/>
         <element name="ScScheduledBreak" positionX="162" positionY="405" width="128" height="90"/>
         <element name="ScScheduleItem" positionX="-20" positionY="306" width="128" height="120"/>
@@ -251,6 +252,8 @@
         <element name="ScToDoAssignment" positionX="342" positionY="-405" width="128" height="105"/>
         <element name="ScToDoItem" positionX="333" positionY="-267" width="128" height="105"/>
         <element name="ScYearlySchedule" positionX="169" positionY="243" width="128" height="120"/>
-        <element name="ScScolaMembership" positionX="151" positionY="99" width="128" height="195"/>
+        <element name="ScScolaMembership" positionX="151" positionY="99" width="128" height="135"/>
+        <element name="ScDeviceListing" positionX="160" positionY="192" width="128" height="90"/>
+        <element name="ScHouseholdResidency" positionX="160" positionY="192" width="128" height="165"/>
     </elements>
 </model>

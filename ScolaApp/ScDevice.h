@@ -2,7 +2,7 @@
 //  ScDevice.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.03.12.
+//  Created by Anders Blehr on 03.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,20 +10,20 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScScolaMember;
+@class ScDeviceListing;
 
 @interface ScDevice : ScCachedEntity
 
-@property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * uuid;
-@property (nonatomic, retain) NSSet *usedBy;
+@property (nonatomic, retain) NSString * type;
+@property (nonatomic, retain) NSSet *listings;
 @end
 
 @interface ScDevice (CoreDataGeneratedAccessors)
 
-- (void)addUsedByObject:(ScScolaMember *)value;
-- (void)removeUsedByObject:(ScScolaMember *)value;
-- (void)addUsedBy:(NSSet *)values;
-- (void)removeUsedBy:(NSSet *)values;
+- (void)addListingsObject:(ScDeviceListing *)value;
+- (void)removeListingsObject:(ScDeviceListing *)value;
+- (void)addListings:(NSSet *)values;
+- (void)removeListings:(NSSet *)values;
 
 @end

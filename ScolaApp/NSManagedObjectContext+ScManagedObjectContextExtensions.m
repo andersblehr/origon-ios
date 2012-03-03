@@ -48,10 +48,6 @@
     cachedEntity.dateModified = now;
     cachedEntity.dateExpires = nil;
     
-    if ([entity isKindOfClass:ScScola.class] || [entity isKindOfClass:ScScolaMember.class]) {
-        entity.isCoreEntityN = [NSNumber numberWithBool:YES];
-    }
-    
     NSString *expires = [cachedEntity expiresInTimeframe];
     
     if (expires) {

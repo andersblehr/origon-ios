@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 
 #import "ScHousehold.h"
+#import "ScHouseholdResidency.h"
 #import "ScScolaMember.h"
 #import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
@@ -42,6 +43,7 @@ typedef enum {
     NSDictionary *authInfo;
     
     ScScolaMember *member;
+    ScHouseholdResidency *residency;
     BOOL userIsListed;
 }
 

@@ -6,6 +6,7 @@
 //  Copyright (c) 2011 Rhelba Software. All rights reserved.
 //
 
+#import "ScHouseholdResidency.h"
 #import "ScScolaMember.h"
 
 @interface ScRegistrationView1Controller : UIViewController <UITextFieldDelegate, UIAlertViewDelegate>
@@ -20,6 +21,7 @@
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirthPicker;
 
 @property (strong, nonatomic) ScScolaMember *member;
+@property (strong, nonatomic) ScHouseholdResidency *residency;
 @property (nonatomic) BOOL userIsListed;
 
 @end

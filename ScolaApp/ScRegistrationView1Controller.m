@@ -36,6 +36,7 @@ static int const kMaximumRealisticAge = 110;
 @synthesize dateOfBirthPicker;
 
 @synthesize member;
+@synthesize residency;
 @synthesize userIsListed;
 
 
@@ -103,12 +104,15 @@ static int const kMaximumRealisticAge = 110;
     if (isDone) {
         if (!userIsListed) {
             NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
-            member.household = [context entityForClass:ScHousehold.class];
+            
+            residency = [context entityForClass:ScHouseholdResidency.class];
+            residency.household = [context entityForClass:ScHousehold.class];
+            residency.resident = member;
         }
         
-        member.household.addressLine1 = addressLine1Field.text;
-        member.household.addressLine2 = addressLine2Field.text;
-        member.household.postCodeAndCity = postCodeAndCityField.text;
+        residency.household.addressLine1 = addressLine1Field.text;
+        residency.household.addressLine2 = addressLine2Field.text;
+        residency.household.postCodeAndCity = postCodeAndCityField.text;
         
         if (dateOfBirthField.text.length > 0) {
             member.dateOfBirth = dateOfBirthPicker.date;
@@ -162,9 +166,9 @@ static int const kMaximumRealisticAge = 110;
     postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
     dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthClickHerePrompt];
     
-    addressLine1Field.text = userIsListed ? member.household.addressLine1 : @"";
-    addressLine2Field.text = userIsListed ? member.household.addressLine2 : @"";
-    postCodeAndCityField.text = userIsListed ? member.household.postCodeAndCity : @"";
+    addressLine1Field.text = userIsListed ? residency.household.addressLine1 : @"";
+    addressLine2Field.text = userIsListed ? residency.household.addressLine2 : @"";
+    postCodeAndCityField.text = userIsListed ? residency.household.postCodeAndCity : @"";
     
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
     

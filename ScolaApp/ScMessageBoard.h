@@ -2,7 +2,7 @@
 //  ScMessageBoard.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.03.12.
+//  Created by Anders Blehr on 03.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -15,6 +15,8 @@
 @interface ScMessageBoard : ScCachedEntity
 
 @property (nonatomic, retain) NSString * title;
+@property (nonatomic, retain) NSNumber * isAdmin;
+@property (nonatomic, retain) NSString * roleRestriction;
 @property (nonatomic, retain) NSSet *messageThreads;
 @property (nonatomic, retain) ScScola *scola;
 @end

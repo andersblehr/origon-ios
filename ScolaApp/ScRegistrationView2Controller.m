@@ -103,15 +103,18 @@ static int const kPopUpButtonUseNew = 1;
         ScScolaMembership *scolaMembership = [context entityForClass:ScScolaMembership.class];
         scolaMembership.scola = homeScola;
         scolaMembership.member = member;
-        scolaMembership.isActive = YES;
-        scolaMembership.isAdmin = YES;
+        scolaMembership.isActive = [NSNumber numberWithBool:YES];
+        scolaMembership.isAdmin = [NSNumber numberWithBool:YES];
         
         ScDevice *device = [context entityForClass:ScDevice.class];
         device.uuid = [ScAppEnv env].deviceUUID;
+        device.type = [ScAppEnv env].deviceType;
         device.entityId = device.uuid;
-        device.name = deviceNameField.text;
         
-        [member addDevicesObject:device];
+        ScDeviceListing *deviceListing = [context entityForClass:ScDeviceListing.class];
+        deviceListing.displayName = deviceNameField.text;
+        deviceListing.device = device;
+        deviceListing.member = member;
         
         if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
             member.gender = kGenderFemale;

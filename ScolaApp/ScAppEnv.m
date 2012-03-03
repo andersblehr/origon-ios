@@ -78,15 +78,15 @@ static ScAppEnv *env = nil;
     NSSet *entitiesDeleted = [saveInfo objectForKey:NSDeletedObjectsKey];
     
     for (ScCachedEntity *entity in entitiesInserted) {
-        entity.remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
+        entity._remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
     }
     
     for (ScCachedEntity *entity in entitiesUpdated) {
-        entity.remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
+        entity._remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
     }
     
     for (ScCachedEntity *entity in entitiesDeleted) {
-        entity.remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
+        entity._remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
     }
     
     [entitiesToPersistToServer unionSet:entitiesInserted];
@@ -253,8 +253,8 @@ static ScAppEnv *env = nil;
 - (void)didPersistEntitiesToServer
 {
     for (ScCachedEntity *entity in [entitiesToPersistToServer copy]) {
-        if (entity.remotePersistenceState == ScRemotePersistenceStateDirtyScheduled) {
-            entity.remotePersistenceState = ScRemotePersistenceStatePersisted;
+        if (entity._remotePersistenceState == ScRemotePersistenceStateDirtyScheduled) {
+            entity._remotePersistenceState = ScRemotePersistenceStatePersisted;
             [entitiesToPersistToServer removeObject:entity];
         }
     }
@@ -264,8 +264,8 @@ static ScAppEnv *env = nil;
 - (void)didDeleteEntitiesFromServer
 {
     for (ScCachedEntity *entity in [entitiesToDeleteFromServer copy]) {
-        if (entity.remotePersistenceState == ScRemotePersistenceStateDirtyScheduled) {
-            entity.remotePersistenceState = ScRemotePersistenceStateDeleted;
+        if (entity._remotePersistenceState == ScRemotePersistenceStateDirtyScheduled) {
+            entity._remotePersistenceState = ScRemotePersistenceStateDeleted;
             [entitiesToDeleteFromServer removeObject:entity];
         }
     }

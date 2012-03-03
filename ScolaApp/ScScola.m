@@ -2,7 +2,7 @@
 //  ScScola.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.03.12.
+//  Created by Anders Blehr on 03.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -23,7 +23,6 @@
 @dynamic descriptionText;
 @dynamic name;
 @dynamic picture;
-@dynamic adminMessageBoard;
 @dynamic documentRepositories;
 @dynamic eventInvitations;
 @dynamic guardedScola;

@@ -1,19 +1,20 @@
 //
-//  ScDevice.m
+//  ScDeviceListing.m
 //  ScolaApp
 //
 //  Created by Anders Blehr on 03.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
-#import "ScDevice.h"
 #import "ScDeviceListing.h"
+#import "ScDevice.h"
+#import "ScScolaMember.h"
 
 
-@implementation ScDevice
+@implementation ScDeviceListing
 
-@dynamic uuid;
-@dynamic type;
-@dynamic listings;
+@dynamic displayName;
+@dynamic member;
+@dynamic device;
 
 @end

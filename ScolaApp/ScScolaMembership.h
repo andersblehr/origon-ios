@@ -2,7 +2,7 @@
 //  ScScolaMembership.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.03.12.
+//  Created by Anders Blehr on 03.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -14,14 +14,10 @@
 
 @interface ScScolaMembership : ScCachedEntity
 
-@property (nonatomic, retain) NSNumber * isActiveN;
-@property (nonatomic, retain) NSNumber * isAdminN;
-@property (nonatomic, retain) NSNumber * isRole1N;
-@property (nonatomic, retain) NSString * role1Label;
-@property (nonatomic, retain) NSNumber * isRole2N;
-@property (nonatomic, retain) NSNumber * isRole3N;
-@property (nonatomic, retain) NSString * role2Label;
-@property (nonatomic, retain) NSString * role3Label;
+@property (nonatomic, retain) NSNumber * isActive;
+@property (nonatomic, retain) NSNumber * isAdmin;
+@property (nonatomic, retain) NSNumber * isCoach;
+@property (nonatomic, retain) NSNumber * isTeacher;
 @property (nonatomic, retain) ScScola *scola;
 @property (nonatomic, retain) ScScolaMember *member;
 

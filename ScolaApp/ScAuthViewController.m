@@ -44,12 +44,12 @@ static NSString * const kAuthInfoKeyIsListed = @"isListed";
 static NSString * const kAuthInfoKeyIsActive = @"isActive";
 static NSString * const kAuthInfoKeyIsAuthenticated = @"isAuthenticated";
 static NSString * const kAuthInfoKeyIsDeviceListed = @"isDeviceListed";
-static NSString * const kAuthInfoKeyListedPerson = @"listedPerson";
+static NSString * const kAuthInfoKeyMemberListing = @"member";
+static NSString * const kAuthInfoKeyMemberHousehold = @"household";
 
 static NSString * const kListedPersonKeyDateOfBirth = @"dateOfBirth";
 static NSString * const kListedPersonKeyGender = @"gender";
 static NSString * const kListedPersonKeyMobilePhone = @"mobilePhone";
-static NSString * const kListedPersonKeyHousehold = @"household";
 
 static NSString * const kHouseholdKeyAddressLine1 = @"addressLine1";
 static NSString * const kHouseholdKeyAddressLine2 = @"addressLine2";
@@ -502,20 +502,25 @@ static int const kPopUpButtonTryAgain = 1;
         member.name = nameAsEntered;
         member.email = emailAsEntered;
         member.entityId = member.email;
-        member.isRegistered = [NSNumber numberWithBool:YES];
+        member.didRegister = [NSNumber numberWithBool:YES];
+        member.passwordHash = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
         
         if (userIsListed) {
-            NSDictionary *memberListing = [authInfo objectForKey:kAuthInfoKeyListedPerson];
-            NSDictionary *householdEntry = [memberListing objectForKey:kListedPersonKeyHousehold];
+            NSDictionary *memberListing = [authInfo objectForKey:kAuthInfoKeyMemberListing];
+            NSDictionary *memberHousehold = [authInfo objectForKey:kAuthInfoKeyMemberHousehold];
             
-            member.household = [context entityForClass:ScHousehold.class];
             member.dateOfBirth = [memberListing objectForKey:kListedPersonKeyDateOfBirth];
             member.gender = [memberListing objectForKey:kListedPersonKeyGender];
             member.mobilePhone = [memberListing objectForKey:kListedPersonKeyMobilePhone];
             
-            member.household.addressLine1 = [householdEntry objectForKey:kHouseholdKeyAddressLine1];
-            member.household.addressLine2 = [householdEntry objectForKey:kHouseholdKeyAddressLine2];
-            member.household.postCodeAndCity = [householdEntry objectForKey:kHouseholdKeyPostCodeAndCity];
+            ScHousehold *household = [context entityForClass:ScHousehold.class];
+            household.addressLine1 = [memberHousehold objectForKey:kHouseholdKeyAddressLine1];
+            household.addressLine2 = [memberHousehold objectForKey:kHouseholdKeyAddressLine2];
+            household.postCodeAndCity = [memberHousehold objectForKey:kHouseholdKeyPostCodeAndCity];
+            
+            residency = [context entityForClass:ScHouseholdResidency.class];
+            residency.resident = member;
+            residency.household = household;
         }
         
         [self performSegueWithIdentifier:kSegueToAddressView sender:self];
@@ -753,8 +758,12 @@ static int const kPopUpButtonTryAgain = 1;
     if ([segue.identifier isEqualToString:kSegueToAddressView]) {
         ScRegistrationView1Controller *nextViewController = segue.destinationViewController;
         
-        nextViewController.member = member;
         nextViewController.userIsListed = userIsListed;
+        nextViewController.member = member;
+        
+        if (userIsListed) {
+            nextViewController.residency = residency;
+        }
     }
 }
 
