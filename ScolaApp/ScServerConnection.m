@@ -229,17 +229,14 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         RESTRoute = kRESTRouteModelPersist;
         
         NSArray *entitiesToPersist = [[ScAppEnv env] entitiesToPersistToServer];
-        NSMutableArray *persistableArrayOfEntities = [[NSMutableArray alloc] init];
         
-        for (ScCachedEntity *entity in entitiesToPersist) {
-            NSDictionary *entityAsDictionary = [entity toDictionary];
+        if (entitiesToPersist.count > 0) {
+            NSMutableArray *persistableArrayOfEntities = [[NSMutableArray alloc] init];
             
-            if (entityAsDictionary) {
-                [persistableArrayOfEntities addObject:entityAsDictionary];
+            for (ScCachedEntity *entity in entitiesToPersist) {
+                [persistableArrayOfEntities addObject:[entity toDictionary]];
             }
-        }
-        
-        if (persistableArrayOfEntities.count > 0) {
+            
             [self performHTTPMethod:kHTTPMethodPOST withPayload:persistableArrayOfEntities usingDelegate:delegate];
         }
     }
