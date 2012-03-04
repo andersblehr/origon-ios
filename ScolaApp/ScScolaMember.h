@@ -2,7 +2,7 @@
 //  ScScolaMember.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 03.03.12.
+//  Created by Anders Blehr on 04.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScDeviceListing, ScDocument, ScEvent, ScEventInvitation, ScHouseholdResidency, ScMessageItem, ScOrganisationContact, ScScheduledAbsence, ScScolaMembership, ScToDoAssignment;
+@class ScDeviceListing, ScDocument, ScEvent, ScEventInvitation, ScHousehold, ScHouseholdResidency, ScMessageItem, ScOrganisationContact, ScScheduledAbsence, ScScolaMembership, ScToDoAssignment;
 
 @interface ScScolaMember : ScCachedEntity
 
@@ -27,13 +27,14 @@
 @property (nonatomic, retain) NSSet *contactForEvents;
 @property (nonatomic, retain) NSSet *contactForOrganisations;
 @property (nonatomic, retain) NSSet *eventInvitations;
-@property (nonatomic, retain) NSSet *households;
+@property (nonatomic, retain) NSSet *otherResidences;
 @property (nonatomic, retain) NSSet *scolaMemberships;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;
 @property (nonatomic, retain) NSSet *messageItems;
 @property (nonatomic, retain) NSSet *toDoAssignments;
+@property (nonatomic, retain) ScHousehold *primaryResidence;
 @end
 
 @interface ScScolaMember (CoreDataGeneratedAccessors)
@@ -53,10 +54,10 @@
 - (void)addEventInvitations:(NSSet *)values;
 - (void)removeEventInvitations:(NSSet *)values;
 
-- (void)addHouseholdsObject:(ScHouseholdResidency *)value;
-- (void)removeHouseholdsObject:(ScHouseholdResidency *)value;
-- (void)addHouseholds:(NSSet *)values;
-- (void)removeHouseholds:(NSSet *)values;
+- (void)addOtherResidencesObject:(ScHouseholdResidency *)value;
+- (void)removeOtherResidencesObject:(ScHouseholdResidency *)value;
+- (void)addOtherResidences:(NSSet *)values;
+- (void)removeOtherResidences:(NSSet *)values;
 
 - (void)addScolaMembershipsObject:(ScScolaMembership *)value;
 - (void)removeScolaMembershipsObject:(ScScolaMembership *)value;

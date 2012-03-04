@@ -124,6 +124,7 @@ static int const kPopUpButtonUseNew = 1;
         
         member.mobilePhone = mobilePhoneField.text;
         member.activeSince = [NSDate date];
+        //member.didRegister = [NSNumber numberWithBool:YES]; // TODO: Comment in again!
         
         [context saveUsingDelegate:self];
         

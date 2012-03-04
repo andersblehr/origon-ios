@@ -38,9 +38,9 @@
 		5C2000DC15026EC3002A327C /* ScYearlySchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000DB15026EC3002A327C /* ScYearlySchedule.m */; };
 		5C2000DF15026EC3002A327C /* ScScolaMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000DE15026EC3002A327C /* ScScolaMembership.m */; };
 		5C2000E215026EC3002A327C /* ScExternalDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000E115026EC3002A327C /* ScExternalDocument.m */; };
-		5C2000E815026F25002A327C /* ScHousehold.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000E715026F25002A327C /* ScHousehold.m */; };
-		5C2000EB15028493002A327C /* ScHouseholdResidency.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000EA15028493002A327C /* ScHouseholdResidency.m */; };
-		5C2000EE15029FE2002A327C /* ScScolaMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000ED15029FE2002A327C /* ScScolaMember.m */; };
+		5C2000F115039F1D002A327C /* ScHouseholdResidency.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000F015039F1D002A327C /* ScHouseholdResidency.m */; };
+		5C2000F415039F20002A327C /* ScHousehold.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000F315039F20002A327C /* ScHousehold.m */; };
+		5C2000F715039F21002A327C /* ScScolaMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000F615039F21002A327C /* ScScolaMember.m */; };
 		5C23431214812A3100164478 /* ScStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* ScStrings.m */; };
 		5C2343161481544A00164478 /* ScJSONUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2343151481544A00164478 /* ScJSONUtil.m */; };
 		5C2E11141469CDE5005BDE61 /* ScServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* ScServerConnection.m */; };
@@ -162,12 +162,12 @@
 		5C2000DE15026EC3002A327C /* ScScolaMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMembership.m; sourceTree = "<group>"; };
 		5C2000E015026EC3002A327C /* ScExternalDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScExternalDocument.h; sourceTree = "<group>"; };
 		5C2000E115026EC3002A327C /* ScExternalDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScExternalDocument.m; sourceTree = "<group>"; };
-		5C2000E615026F25002A327C /* ScHousehold.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScHousehold.h; sourceTree = "<group>"; };
-		5C2000E715026F25002A327C /* ScHousehold.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScHousehold.m; sourceTree = "<group>"; };
-		5C2000E915028493002A327C /* ScHouseholdResidency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScHouseholdResidency.h; sourceTree = "<group>"; };
-		5C2000EA15028493002A327C /* ScHouseholdResidency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScHouseholdResidency.m; sourceTree = "<group>"; };
-		5C2000EC15029FE2002A327C /* ScScolaMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaMember.h; sourceTree = "<group>"; };
-		5C2000ED15029FE2002A327C /* ScScolaMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMember.m; sourceTree = "<group>"; };
+		5C2000EF15039F1D002A327C /* ScHouseholdResidency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScHouseholdResidency.h; sourceTree = "<group>"; };
+		5C2000F015039F1D002A327C /* ScHouseholdResidency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScHouseholdResidency.m; sourceTree = "<group>"; };
+		5C2000F215039F20002A327C /* ScHousehold.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScHousehold.h; sourceTree = "<group>"; };
+		5C2000F315039F20002A327C /* ScHousehold.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScHousehold.m; sourceTree = "<group>"; };
+		5C2000F515039F20002A327C /* ScScolaMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaMember.h; sourceTree = "<group>"; };
+		5C2000F615039F21002A327C /* ScScolaMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMember.m; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* ScStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScStrings.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* ScStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScStrings.m; sourceTree = "<group>"; };
 		5C2343141481544A00164478 /* ScJSONUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScJSONUtil.h; sourceTree = "<group>"; };
@@ -330,10 +330,10 @@
 				5C2000A215026EB9002A327C /* ScEventInvitationScola.m */,
 				5C2000E015026EC3002A327C /* ScExternalDocument.h */,
 				5C2000E115026EC3002A327C /* ScExternalDocument.m */,
-				5C2000E615026F25002A327C /* ScHousehold.h */,
-				5C2000E715026F25002A327C /* ScHousehold.m */,
-				5C2000E915028493002A327C /* ScHouseholdResidency.h */,
-				5C2000EA15028493002A327C /* ScHouseholdResidency.m */,
+				5C2000F215039F20002A327C /* ScHousehold.h */,
+				5C2000F315039F20002A327C /* ScHousehold.m */,
+				5C2000EF15039F1D002A327C /* ScHouseholdResidency.h */,
+				5C2000F015039F1D002A327C /* ScHouseholdResidency.m */,
 				5C2000CE15026EC1002A327C /* ScMessageBoard.h */,
 				5C2000CF15026EC1002A327C /* ScMessageBoard.m */,
 				5C2000BF15026EC0002A327C /* ScMessageItem.h */,
@@ -352,8 +352,8 @@
 				5C2000C615026EC0002A327C /* ScScheduleItem.m */,
 				5C2000D715026EC3002A327C /* ScScola.h */,
 				5C2000D815026EC3002A327C /* ScScola.m */,
-				5C2000EC15029FE2002A327C /* ScScolaMember.h */,
-				5C2000ED15029FE2002A327C /* ScScolaMember.m */,
+				5C2000F515039F20002A327C /* ScScolaMember.h */,
+				5C2000F615039F21002A327C /* ScScolaMember.m */,
 				5C2000DD15026EC3002A327C /* ScScolaMembership.h */,
 				5C2000DE15026EC3002A327C /* ScScolaMembership.m */,
 				5C2000B015026EBD002A327C /* ScToDoAssignment.h */,
@@ -729,9 +729,9 @@
 				5C2000DC15026EC3002A327C /* ScYearlySchedule.m in Sources */,
 				5C2000DF15026EC3002A327C /* ScScolaMembership.m in Sources */,
 				5C2000E215026EC3002A327C /* ScExternalDocument.m in Sources */,
-				5C2000E815026F25002A327C /* ScHousehold.m in Sources */,
-				5C2000EB15028493002A327C /* ScHouseholdResidency.m in Sources */,
-				5C2000EE15029FE2002A327C /* ScScolaMember.m in Sources */,
+				5C2000F115039F1D002A327C /* ScHouseholdResidency.m in Sources */,
+				5C2000F415039F20002A327C /* ScHousehold.m in Sources */,
+				5C2000F715039F21002A327C /* ScScolaMember.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

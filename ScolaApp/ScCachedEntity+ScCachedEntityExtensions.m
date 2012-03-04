@@ -12,18 +12,57 @@
 #import "ScLogging.h"
 
 
+static NSString const * kKeyEntityId = @"entityId";
+static NSString const * kKeyEntityClass = @"entityClass";
+
+
 @implementation ScCachedEntity (ScCachedEntityExtensions)
+
+
+#pragma mark - Auxiliary methods
+
+- (id)dictionaryValueForKey:(NSString *)key
+{
+    id value = [self valueForKey:key];
+    
+    if (value && [value isKindOfClass:NSDate.class]) {
+        value = [NSNumber numberWithLongLong:[value timeIntervalSince1970] * 1000];
+    }
+    
+    return value;
+}
+
+
+- (void)setValueFromDictionary:(id)value forKey:(NSString *)key
+{
+    if (value && [value isKindOfClass:NSDate.class]) {
+        value = [NSDate dateWithTimeIntervalSince1970:[value doubleValue] / 1000];
+    }
+    
+    [self setValue:value forKey:key];
+}
+
+
+- (NSDictionary *)entityRef
+{
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    
+    [dictionary setObject:self.entityId forKey:kKeyEntityId];
+    [dictionary setObject:self.entity.name forKey:kKeyEntityClass];
+    
+    return dictionary;
+}
 
 
 #pragma mark - Mapped accessors for NSNumber booleans and ints
 
-- (ScRemotePersistenceState)_remotePersistenceState
+- (ScRemotePersistenceState)persistenceState
 {
     return [self.remotePersistenceState intValue];
 }
 
 
-- (void)set_remotePersistenceState:(ScRemotePersistenceState)remotePersistenceState
+- (void)setPersistenceState:(ScRemotePersistenceState)remotePersistenceState
 {
     self.remotePersistenceState = [NSNumber numberWithInt:remotePersistenceState];
 }
@@ -46,63 +85,66 @@
 
 #pragma mark - Serialisation to dictionary
 
-- (NSDictionary *)toDictionaryForRemotePersistence
+- (NSDictionary *)toDictionary
 {
-    NSMutableDictionary *keyValueDictionary = nil;
+    NSMutableDictionary *properties = [[NSMutableDictionary alloc] init];
         
-    if (self._remotePersistenceState == ScRemotePersistenceStateDirtyNotScheduled) {
-        self._remotePersistenceState = ScRemotePersistenceStateDirtyScheduled;
-        keyValueDictionary = [[NSMutableDictionary alloc] init];
-        
+    if (self.persistenceState == ScRemotePersistenceStateDirtyNotScheduled) {
+        self.persistenceState = ScRemotePersistenceStateDirtyScheduled;
+
         NSEntityDescription *entityDescription = self.entity;
-        NSDictionary *attributesByName = [entityDescription attributesByName];
-        NSDictionary *relationshipsByName = [entityDescription relationshipsByName];
+        NSDictionary *attributes = [entityDescription attributesByName];
+        NSDictionary *relationships = [entityDescription relationshipsByName];
         
-        [keyValueDictionary setObject:entityDescription.name forKey:@"entityClass"];
+        [properties setObject:entityDescription.name forKey:kKeyEntityClass];
         
-        for (NSString *key in [attributesByName allKeys]) {
-            id value = [self valueForKey:key];
+        for (NSString *name in [attributes allKeys]) {
+            id value = [self dictionaryValueForKey:name];
             
             if (value) {
-                if ([value isKindOfClass:NSDate.class]) {
-                    value = [NSNumber numberWithLongLong:[value timeIntervalSince1970] * 1000];
-                }
-                
-                [keyValueDictionary setObject:value forKey:key];
+                [properties setObject:value forKey:name];
             }
         }
         
-        for (NSString *relationshipName in [relationshipsByName allKeys]) {
-            NSRelationshipDescription *relationship = [relationshipsByName objectForKey:relationshipName];
+        for (NSString *name in [relationships allKeys]) {
+            NSRelationshipDescription *relationship = [relationships objectForKey:name];
             
             if (relationship.isToMany) {
-                NSSet *entitiesInRelationship = [self valueForKey:relationshipName];
-                NSMutableArray *entityDictionaryArray = [[NSMutableArray alloc] init];
+                NSSet *targetEntities = [self valueForKey:name];
+                NSMutableArray *targetEntityRefs = [[NSMutableArray alloc] init];
                 
-                for (ScCachedEntity *entity in entitiesInRelationship) {
-                    NSMutableDictionary *entityAsDictionary = [[NSMutableDictionary alloc] init];
-                    [entityAsDictionary setObject:entity.entityId forKey:@"entityId"];
-                    [entityAsDictionary setObject:entity.entity.name forKey:@"entityClass"];
-                    
-                    [entityDictionaryArray addObject:entityAsDictionary];
+                for (ScCachedEntity *entity in targetEntities) {
+                    [targetEntityRefs addObject:[entity entityRef]];
                 }
                 
-                [keyValueDictionary setObject:entityDictionaryArray forKey:relationshipName];
+                [properties setObject:targetEntityRefs forKey:name];
             } else {
-                ScCachedEntity *entity = [self valueForKey:relationshipName];
+                ScCachedEntity *entity = [self valueForKey:name];
                 
                 if (entity) {
-                    NSMutableDictionary *entityAsDictionary = [[NSMutableDictionary alloc] init];
-                    [entityAsDictionary setObject:entity.entityId forKey:@"entityId"];
-                    [entityAsDictionary setObject:entity.entity.name forKey:@"entityClass"];
-                    
-                    [keyValueDictionary setObject:entityAsDictionary forKey:relationshipName];
+                    [properties setObject:[entity entityRef] forKey:name];
                 }
             }
         }
     }
     
-    return keyValueDictionary;
+    return properties;
+}
+
+
+- (void)fromDictionary:(NSDictionary *)dictionary
+{
+    NSEntityDescription *entityDescription = self.entity;
+    NSDictionary *attributes = [entityDescription attributesByName];
+    NSDictionary *relationships = [entityDescription relationshipsByName];
+    
+    for (NSString *key in [attributes allKeys]) {
+        [self setValueFromDictionary:[dictionary objectForKey:key] forKey:key];
+    }
+    
+    for (NSString *relationshipName in [relationships allKeys]) {
+        
+    }
 }
 
 @end

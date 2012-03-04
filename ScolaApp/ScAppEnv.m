@@ -78,15 +78,15 @@ static ScAppEnv *env = nil;
     NSSet *entitiesDeleted = [saveInfo objectForKey:NSDeletedObjectsKey];
     
     for (ScCachedEntity *entity in entitiesInserted) {
-        entity._remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
+        entity.persistenceState = ScRemotePersistenceStateDirtyNotScheduled;
     }
     
     for (ScCachedEntity *entity in entitiesUpdated) {
-        entity._remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
+        entity.persistenceState = ScRemotePersistenceStateDirtyNotScheduled;
     }
     
     for (ScCachedEntity *entity in entitiesDeleted) {
-        entity._remotePersistenceState = ScRemotePersistenceStateDirtyNotScheduled;
+        entity.persistenceState = ScRemotePersistenceStateDirtyNotScheduled;
     }
     
     [entitiesToPersistToServer unionSet:entitiesInserted];
@@ -228,33 +228,21 @@ static ScAppEnv *env = nil;
 
 - (NSArray *)entitiesToPersistToServer
 {
-    NSArray *entitiesToPersist = nil;
-    
-    if (entitiesToPersistToServer.count > 0) {
-        entitiesToPersist = [entitiesToPersistToServer allObjects];
-    }
-    
-    return entitiesToPersist;
+    return [entitiesToPersistToServer allObjects];
 }
 
 
 - (NSArray *)entitiesToDeleteFromServer
 {
-    NSArray *entitiesToDelete = nil;
-
-    if (entitiesToDeleteFromServer.count > 0) {
-        entitiesToDelete = [entitiesToDeleteFromServer allObjects];
-    }
-    
-    return entitiesToDelete;
+    return [entitiesToDeleteFromServer allObjects];
 }
 
 
 - (void)didPersistEntitiesToServer
 {
     for (ScCachedEntity *entity in [entitiesToPersistToServer copy]) {
-        if (entity._remotePersistenceState == ScRemotePersistenceStateDirtyScheduled) {
-            entity._remotePersistenceState = ScRemotePersistenceStatePersisted;
+        if (entity.persistenceState == ScRemotePersistenceStateDirtyScheduled) {
+            entity.persistenceState = ScRemotePersistenceStatePersisted;
             [entitiesToPersistToServer removeObject:entity];
         }
     }
@@ -264,8 +252,8 @@ static ScAppEnv *env = nil;
 - (void)didDeleteEntitiesFromServer
 {
     for (ScCachedEntity *entity in [entitiesToDeleteFromServer copy]) {
-        if (entity._remotePersistenceState == ScRemotePersistenceStateDirtyScheduled) {
-            entity._remotePersistenceState = ScRemotePersistenceStateDeleted;
+        if (entity.persistenceState == ScRemotePersistenceStateDirtyScheduled) {
+            entity.persistenceState = ScRemotePersistenceStateDeleted;
             [entitiesToDeleteFromServer removeObject:entity];
         }
     }

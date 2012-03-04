@@ -16,7 +16,7 @@
 #import "ScServerConnectionDelegate.h"
 
 typedef enum {
-    ScAuthPopUpTagInternalServerError,
+    ScAuthPopUpTagServerError,
     ScAuthPopUpTagEmailAlreadyRegistered,
     ScAuthPopUpTagEmailSent,
     ScAuthPopUpTagRegistrationCodesDoNotMatch,
@@ -43,8 +43,7 @@ typedef enum {
     NSDictionary *authInfo;
     
     ScScolaMember *member;
-    ScHouseholdResidency *residency;
-    BOOL userIsListed;
+    BOOL isUserListed;
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;

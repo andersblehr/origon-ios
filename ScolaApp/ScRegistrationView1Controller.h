@@ -21,7 +21,6 @@
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirthPicker;
 
 @property (strong, nonatomic) ScScolaMember *member;
-@property (strong, nonatomic) ScHouseholdResidency *residency;
 @property (nonatomic) BOOL userIsListed;
 
 @end

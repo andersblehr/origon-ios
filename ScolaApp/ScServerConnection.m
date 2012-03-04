@@ -232,15 +232,16 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         NSMutableArray *persistableArrayOfEntities = [[NSMutableArray alloc] init];
         
         for (ScCachedEntity *entity in entitiesToPersist) {
-            ScLogDebug(@"Serialising class: %@", entity.entity.name);
-            NSDictionary *entityAsDictionary = [entity toDictionaryForRemotePersistence];
+            NSDictionary *entityAsDictionary = [entity toDictionary];
             
             if (entityAsDictionary) {
                 [persistableArrayOfEntities addObject:entityAsDictionary];
             }
         }
         
-        [self performHTTPMethod:kHTTPMethodPOST withPayload:persistableArrayOfEntities usingDelegate:delegate];
+        if (persistableArrayOfEntities.count > 0) {
+            [self performHTTPMethod:kHTTPMethodPOST withPayload:persistableArrayOfEntities usingDelegate:delegate];
+        }
     }
 }
 

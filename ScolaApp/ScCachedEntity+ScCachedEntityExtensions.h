@@ -17,11 +17,12 @@ typedef enum {
 
 @interface ScCachedEntity (ScCachedEntityExtensions)
 
-- (ScRemotePersistenceState)_remotePersistenceState;
-- (void)set_remotePersistenceState:(ScRemotePersistenceState)remotePersistenceState;
+- (ScRemotePersistenceState)persistenceState;
+- (void)setPersistenceState:(ScRemotePersistenceState)remotePersistenceState;
 
 - (NSString *)expiresInTimeframe;
 
-- (NSDictionary *)toDictionaryForRemotePersistence;
+- (NSDictionary *)toDictionary;
+- (void)fromDictionary:(NSDictionary *)dictionary;
 
 @end

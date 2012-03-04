@@ -2,7 +2,7 @@
 //  ScHouseholdResidency.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 03.03.12.
+//  Created by Anders Blehr on 04.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -14,7 +14,6 @@
 
 @interface ScHouseholdResidency : ScCachedEntity
 
-@property (nonatomic, retain) NSNumber * isPartTime;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSNumber * switchDay;
 @property (nonatomic, retain) NSNumber * switchFrequency;

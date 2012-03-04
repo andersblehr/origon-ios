@@ -36,7 +36,6 @@ static int const kMaximumRealisticAge = 110;
 @synthesize dateOfBirthPicker;
 
 @synthesize member;
-@synthesize residency;
 @synthesize userIsListed;
 
 
@@ -104,15 +103,12 @@ static int const kMaximumRealisticAge = 110;
     if (isDone) {
         if (!userIsListed) {
             NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
-            
-            residency = [context entityForClass:ScHouseholdResidency.class];
-            residency.household = [context entityForClass:ScHousehold.class];
-            residency.resident = member;
+            member.primaryResidence = [context entityForClass:ScHousehold.class];
         }
         
-        residency.household.addressLine1 = addressLine1Field.text;
-        residency.household.addressLine2 = addressLine2Field.text;
-        residency.household.postCodeAndCity = postCodeAndCityField.text;
+        member.primaryResidence.addressLine1 = addressLine1Field.text;
+        member.primaryResidence.addressLine2 = addressLine2Field.text;
+        member.primaryResidence.postCodeAndCity = postCodeAndCityField.text;
         
         if (dateOfBirthField.text.length > 0) {
             member.dateOfBirth = dateOfBirthPicker.date;
@@ -166,9 +162,9 @@ static int const kMaximumRealisticAge = 110;
     postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
     dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthClickHerePrompt];
     
-    addressLine1Field.text = userIsListed ? residency.household.addressLine1 : @"";
-    addressLine2Field.text = userIsListed ? residency.household.addressLine2 : @"";
-    postCodeAndCityField.text = userIsListed ? residency.household.postCodeAndCity : @"";
+    addressLine1Field.text = userIsListed ? member.primaryResidence.addressLine1 : @"";
+    addressLine2Field.text = userIsListed ? member.primaryResidence.addressLine2 : @"";
+    postCodeAndCityField.text = userIsListed ? member.primaryResidence.postCodeAndCity : @"";
     
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
     

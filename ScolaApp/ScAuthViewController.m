@@ -41,11 +41,10 @@ static NSString * const kAuthInfoKeyPasswordHash = @"passwordHash";
 static NSString * const kAuthInfoKeyScolaShortname = @"scolaShortname";
 static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
 static NSString * const kAuthInfoKeyIsListed = @"isListed";
-static NSString * const kAuthInfoKeyIsActive = @"isActive";
+static NSString * const kAuthInfoKeyIsRegistered = @"isRegistered";
 static NSString * const kAuthInfoKeyIsAuthenticated = @"isAuthenticated";
-static NSString * const kAuthInfoKeyIsDeviceListed = @"isDeviceListed";
-static NSString * const kAuthInfoKeyMemberListing = @"member";
-static NSString * const kAuthInfoKeyMemberHousehold = @"household";
+static NSString * const kAuthInfoKeyMemberInfo = @"member";
+static NSString * const kAuthInfoKeyHouseholdInfo = @"household";
 
 static NSString * const kListedPersonKeyDateOfBirth = @"dateOfBirth";
 static NSString * const kListedPersonKeyGender = @"gender";
@@ -354,6 +353,8 @@ static int const kPopUpButtonTryAgain = 1;
         emailOrPasswordField.text = emailEtc;
         emailOrPasswordField.placeholder = emailEtcPlaceholder;
         
+        membershipStatusControl.enabled = YES;
+        
         isEditingAllowed = YES;
         [activityIndicator stopAnimating];
     }
@@ -502,25 +503,22 @@ static int const kPopUpButtonTryAgain = 1;
         member.name = nameAsEntered;
         member.email = emailAsEntered;
         member.entityId = member.email;
-        member.didRegister = [NSNumber numberWithBool:YES];
         member.passwordHash = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
         
-        if (userIsListed) {
-            NSDictionary *memberListing = [authInfo objectForKey:kAuthInfoKeyMemberListing];
-            NSDictionary *memberHousehold = [authInfo objectForKey:kAuthInfoKeyMemberHousehold];
+        if (isUserListed) {
+            NSDictionary *memberInfo = [authInfo objectForKey:kAuthInfoKeyMemberInfo];
+            NSDictionary *householdInfo = [authInfo objectForKey:kAuthInfoKeyHouseholdInfo];
             
-            member.dateOfBirth = [memberListing objectForKey:kListedPersonKeyDateOfBirth];
-            member.gender = [memberListing objectForKey:kListedPersonKeyGender];
-            member.mobilePhone = [memberListing objectForKey:kListedPersonKeyMobilePhone];
+            member.dateOfBirth = [NSDate dateWithTimeIntervalSince1970:[[memberInfo objectForKey:kListedPersonKeyDateOfBirth] doubleValue] / 1000];
+            member.gender = [memberInfo objectForKey:kListedPersonKeyGender];
+            member.mobilePhone = [memberInfo objectForKey:kListedPersonKeyMobilePhone];
             
             ScHousehold *household = [context entityForClass:ScHousehold.class];
-            household.addressLine1 = [memberHousehold objectForKey:kHouseholdKeyAddressLine1];
-            household.addressLine2 = [memberHousehold objectForKey:kHouseholdKeyAddressLine2];
-            household.postCodeAndCity = [memberHousehold objectForKey:kHouseholdKeyPostCodeAndCity];
+            household.addressLine1 = [householdInfo objectForKey:kHouseholdKeyAddressLine1];
+            //household.addressLine2 = [householdInfo objectForKey:kHouseholdKeyAddressLine2];
+            household.postCodeAndCity = [householdInfo objectForKey:kHouseholdKeyPostCodeAndCity];
             
-            residency = [context entityForClass:ScHouseholdResidency.class];
-            residency.resident = member;
-            residency.household = household;
+            member.primaryResidence = household;
         }
         
         [self performSegueWithIdentifier:kSegueToAddressView sender:self];
@@ -539,10 +537,10 @@ static int const kPopUpButtonTryAgain = 1;
     } else {
         NSString *alertMessage = [ScStrings stringForKey:strServerUnavailableAlert];
         
-        UIAlertView *serverUnavailableAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        [serverUnavailableAlert show];
+        UIAlertView *serverUnavailableAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+        serverUnavailableAlert.tag = ScAuthPopUpTagServerError;
         
-        isEditingAllowed = NO;
+        [serverUnavailableAlert show];
     }
 }
 
@@ -576,8 +574,8 @@ static int const kPopUpButtonTryAgain = 1;
 {
     authInfo = data;
     
-    userIsListed = [[authInfo objectForKey:kAuthInfoKeyIsListed] boolValue];
-    BOOL isActive = [[authInfo objectForKey:kAuthInfoKeyIsActive] boolValue];
+    isUserListed = [[authInfo objectForKey:kAuthInfoKeyIsListed] boolValue];
+    BOOL isActive = [[authInfo objectForKey:kAuthInfoKeyIsRegistered] boolValue];
     BOOL isAuthenticated = [[authInfo objectForKey:kAuthInfoKeyIsAuthenticated] boolValue];
 
     if (!isActive) {
@@ -588,9 +586,9 @@ static int const kPopUpButtonTryAgain = 1;
         NSString *popUpTitle = nil;
         NSString *popUpMessage = nil;
         
-        if (userIsListed) {
+        if (isUserListed) {
             popUpTitle = [ScStrings stringForKey:strEmailSentToInviteePopUpTitle];
-            popUpMessage = [ScStrings stringForKey:strEmailSentToInviteePopUpMessage];
+            popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentToInviteePopUpMessage], [authInfo objectForKey:kAuthInfoKeyEmail]];
         } else {
             popUpTitle = [ScStrings stringForKey:strEmailSentPopUpTitle];
             popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentPopUpMessage], emailAsEntered];
@@ -758,12 +756,8 @@ static int const kPopUpButtonTryAgain = 1;
     if ([segue.identifier isEqualToString:kSegueToAddressView]) {
         ScRegistrationView1Controller *nextViewController = segue.destinationViewController;
         
-        nextViewController.userIsListed = userIsListed;
+        nextViewController.userIsListed = isUserListed;
         nextViewController.member = member;
-        
-        if (userIsListed) {
-            nextViewController.residency = residency;
-        }
     }
 }
 
@@ -947,7 +941,9 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
-        case ScAuthPopUpTagInternalServerError:
+        case ScAuthPopUpTagServerError:
+            [self indicatePendingServerSession:NO];
+            
             break;
         
         case ScAuthPopUpTagEmailAlreadyRegistered:
@@ -1034,13 +1030,9 @@ static int const kPopUpButtonTryAgain = 1;
 {
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
 
-    if (response.statusCode != kHTTPStatusCodeOK) {
-        [self indicatePendingServerSession:NO];
-    }
-
     if (response.statusCode == kHTTPStatusCodeInternalServerError) {
         UIAlertView *internalErrorAlert = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strInternalServerError] delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        internalErrorAlert.tag = ScAuthPopUpTagInternalServerError;
+        internalErrorAlert.tag = ScAuthPopUpTagServerError;
         
         [internalErrorAlert show];
     } else if (authPhase == ScAuthPhaseLogin) {
