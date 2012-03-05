@@ -55,9 +55,7 @@ static NSString * const kRESTRouteModelPersist = @"persist";
 static NSString * const kURLParameterDeviceUUID = @"duid";
 static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
-
-NSString * const kServerAvailabilityNotification = @"serverAvailabilityNotification";
-NSString * const kURLParameterName = @"name";
+       NSString * const kURLParameterName = @"name";
 
 NSInteger const kHTTPStatusCodeOK = 200;
 NSInteger const kHTTPStatusCodeCreated = 201;
@@ -92,8 +90,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)performHTTPMethod:(NSString *)HTTPMethod withPayload:(NSArray *)payload usingDelegate:(id)delegate
 {
-    if ( [ScAppEnv env].isServerAvailable ||
-        ([ScAppEnv env].serverAvailability == ScServerAvailabilityChecking)) {
+    if ([ScAppEnv env].isInternetConnectionAvailable) {
         connectionDelegate = delegate;
         
         [URLParameters setValue:[ScAppEnv env].deviceUUID forKey:kURLParameterDeviceUUID];
@@ -116,7 +113,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             URLRequest.HTTPBody = payloadAsJSON;
         }
         
-        if (connectionDelegate) {
+        if ([connectionDelegate respondsToSelector:@selector(willSendRequest:)]) {
             [connectionDelegate willSendRequest:URLRequest];
         }
         
@@ -127,6 +124,8 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
             [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         }
+    } else {
+        [connectionDelegate didFailWithNoInternetConnection];
     }
 }
 
@@ -144,23 +143,6 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     }
     
     return self;
-}
-
-
-#pragma mark - Server availability
-
-- (void)checkServerAvailability
-{
-    if ([ScAppEnv env].isInternetConnectionAvailable) {
-        [ScAppEnv env].serverAvailability = ScServerAvailabilityChecking;
-        
-        RESTHandler = kRESTHandlerScola;
-        RESTRoute = kRESTRouteStatus;
-        
-        [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:nil];
-    } else {
-        [ScAppEnv env].serverAvailability = ScServerAvailabilityUnavailable;
-    }
 }
 
 
@@ -224,7 +206,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)persistEntitiesUsingDelegate:(id)delegate
 {
-    if ([ScAppEnv env].isServerAvailable) {
+    if ([ScAppEnv env].isInternetConnectionAvailable) {
         RESTHandler = kRESTHandlerModel;
         RESTRoute = kRESTRouteModelPersist;
         
@@ -239,6 +221,8 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             
             [self performHTTPMethod:kHTTPMethodPOST withPayload:persistableArrayOfEntities usingDelegate:delegate];
         }
+    } else {
+        [connectionDelegate didFailWithNoInternetConnection];
     }
 }
 
@@ -269,9 +253,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
     HTTPStatusCode = response.statusCode;
     
-    if ([ScAppEnv env].serverAvailability != ScServerAvailabilityChecking) {
-        [connectionDelegate didReceiveResponse:response];
-    }
+    [connectionDelegate didReceiveResponse:response];
 }
 
 
@@ -287,35 +269,21 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    if ([ScAppEnv env].serverAvailability != ScServerAvailabilityChecking) {
-        if (HTTPStatusCode == kHTTPStatusCodeOK) {
-            NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData];
-            [connectionDelegate finishedReceivingData:dataAsDictionary];
-        }
-    } else {
-        NSString *scolaServer = [self scolaServer];
-        
-        if (HTTPStatusCode == kHTTPStatusCodeOK) {
-            [ScAppEnv env].serverAvailability = ScServerAvailabilityAvailable;
-            ScLogDebug(@"The Scola server at %@ is available.", scolaServer);
-        } else {
-            [ScAppEnv env].serverAvailability = ScServerAvailabilityUnavailable;
-            ScLogWarning(@"The Scola server is unavailable. HTTP status code: %d)", HTTPStatusCode);
-            ScLogDebug(@"The Scola server at %@ is unavailable.", scolaServer);
-        }
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:kServerAvailabilityNotification object:nil];
+    if (HTTPStatusCode == kHTTPStatusCodeOK) {
+        NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData];
+        [connectionDelegate finishedReceivingData:dataAsDictionary];
     }
 }
 
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 {
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    [ScAppEnv env].serverAvailability = ScServerAvailabilityUnavailable;
-    
 	ScLogError(@"Connection failed with error: %@, %@", error, [error userInfo]);
-    [[NSNotificationCenter defaultCenter] postNotificationName:kServerAvailabilityNotification object:nil];
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    
+    if ([connectionDelegate respondsToSelector:@selector(didFailWithError:)]) {
+        [connectionDelegate didFailWithError:error];
+    }
 }
 
 

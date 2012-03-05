@@ -27,8 +27,6 @@ extern NSString * const kBundleID;
 @property (nonatomic) BOOL isInternetConnectionWiFi;
 @property (nonatomic) BOOL isInternetConnectionWWAN;
 
-@property (nonatomic) ScServerAvailability serverAvailability;
-
 @property (weak, readonly) NSManagedObjectContext *managedObjectContext;
 
 + (ScAppEnv *)env;
@@ -43,7 +41,6 @@ extern NSString * const kBundleID;
 - (BOOL)isSimulatorDevice;
 
 - (BOOL)isInternetConnectionAvailable;
-- (BOOL)isServerAvailable;
 
 - (NSArray *)entitiesToPersistToServer;
 - (NSArray *)entitiesToDeleteFromServer;

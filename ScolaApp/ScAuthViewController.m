@@ -530,21 +530,6 @@ static int const kPopUpButtonTryAgain = 1;
 
 #pragma mark - Process server response
 
-- (void)didReceiveServerAvailabilityStatus:(NSNotification *)notification
-{
-    if ([ScAppEnv env].isServerAvailable) {
-        [ScStrings refreshStrings];
-    } else {
-        NSString *alertMessage = [ScStrings stringForKey:strServerUnavailableAlert];
-        
-        UIAlertView *serverUnavailableAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        serverUnavailableAlert.tag = ScAuthPopUpTagServerError;
-        
-        [serverUnavailableAlert show];
-    }
-}
-
-
 - (void)didReceiveLoginResponse:(NSHTTPURLResponse *)response
 {
     if (response.statusCode == kHTTPStatusCodeNoContent) {
@@ -639,11 +624,7 @@ static int const kPopUpButtonTryAgain = 1;
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
         if ([ScAppEnv env].isInternetConnectionAvailable) {
-            NSNotificationCenter *notificationCentre = [NSNotificationCenter defaultCenter];
-            serverConnection = [[ScServerConnection alloc] init];
-            
-            [notificationCentre addObserver:self selector:@selector(didReceiveServerAvailabilityStatus:) name:kServerAvailabilityNotification object:nil];
-            [serverConnection checkServerAvailability];
+            [ScStrings refreshStrings];
         }
         
         [darkLinenView addGradientLayer];
@@ -1020,12 +1001,6 @@ static int const kPopUpButtonTryAgain = 1;
 
 #pragma mark - ScServerConnectionDelegate implementation
 
-- (void)willSendRequest:(NSURLRequest *)request
-{
-    ScLogInfo(@"Sending asynchronous HTTP request with URL: %@", request.URL);
-}
-
-
 - (void)didReceiveResponse:(NSHTTPURLResponse *)response
 {
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
@@ -1056,6 +1031,12 @@ static int const kPopUpButtonTryAgain = 1;
             ScLogBreakage(@"Received data for non-registration auth phase ($d)", authPhase);
         }
     }
+}
+
+
+- (void)didFailWithNoInternetConnection
+{
+    ScLogInfo(@"TODO: Define alert for no internet connection");
 }
 
 @end

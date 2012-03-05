@@ -26,7 +26,6 @@ NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 @synthesize isInternetConnectionWiFi;
 @synthesize isInternetConnectionWWAN;
 
-@synthesize serverAvailability;
 @synthesize managedObjectContext;
 
 static ScAppEnv *env = nil;
@@ -215,12 +214,6 @@ static ScAppEnv *env = nil;
 - (BOOL)isInternetConnectionAvailable
 {
     return (isInternetConnectionWiFi || isInternetConnectionWWAN);
-}
-
-
-- (BOOL)isServerAvailable
-{
-    return (serverAvailability == ScServerAvailabilityAvailable);
 }
 
 

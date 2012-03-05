@@ -10,8 +10,13 @@
 
 @protocol ScServerConnectionDelegate <NSObject>
 
-- (void)willSendRequest:(NSURLRequest *)request;
+@required
 - (void)didReceiveResponse:(NSHTTPURLResponse *)response;
 - (void)finishedReceivingData:(NSDictionary *)dataAsDictionary;
+- (void)didFailWithNoInternetConnection;
+
+@optional
+- (void)willSendRequest:(NSURLRequest *)request;
+- (void)didFailWithError:(NSError *)error;
 
 @end

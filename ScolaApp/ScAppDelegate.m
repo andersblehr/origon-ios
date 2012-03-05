@@ -20,7 +20,7 @@
 @synthesize window;
 
 
-#pragma mark - Reachability changed notification handling
+#pragma mark - Reachability change notification handling
 
 - (void)checkConnectivity:(Reachability *)reachability
 {
@@ -54,7 +54,6 @@
     ScLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
     ScLogDebug(@"System language is '%@'", [ScAppEnv env].displayLanguage);
     
-    [self checkConnectivity:[Reachability reachabilityForInternetConnection]];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(reachabilityChanged:)
                                                  name:kReachabilityChangedNotification

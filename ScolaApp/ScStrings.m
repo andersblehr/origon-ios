@@ -137,7 +137,7 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 + (void)refreshStrings
 {
-    if ([ScAppEnv env].isServerAvailable) {
+    if ([ScAppEnv env].isInternetConnectionAvailable) {
         if (!strings || [ScAppEnv env].isInternetConnectionWiFi) { // TODO: Only if req'd
             [[[ScServerConnection alloc] init] fetchStringsUsingDelegate:self];
         }

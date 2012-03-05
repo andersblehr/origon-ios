@@ -18,13 +18,6 @@ typedef enum {
     ScAuthPhaseLogin,
 } ScAuthPhase;
 
-typedef enum {
-    ScServerAvailabilityUnknown,
-    ScServerAvailabilityChecking,
-    ScServerAvailabilityAvailable,
-    ScServerAvailabilityUnavailable,
-} ScServerAvailability;
-
 @interface ScServerConnection : NSObject {
 @private
     id<ScServerConnectionDelegate> connectionDelegate;
@@ -41,7 +34,6 @@ typedef enum {
     NSInteger HTTPStatusCode;
 }
 
-extern NSString * const kServerAvailabilityNotification;
 extern NSString * const kURLParameterName;
 
 extern NSInteger const kHTTPStatusCodeOK;
@@ -55,7 +47,6 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 
 - (id)init;
 
-- (void)checkServerAvailability;
 - (void)setAuthHeaderForUser:(NSString *)userId withPassword:(NSString *)password;
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
