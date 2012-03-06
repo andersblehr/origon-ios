@@ -298,15 +298,9 @@ static int const kPopUpButtonUseNew = 1;
 }
 
 
-- (void)finishedReceivingData:(NSDictionary *)data
+- (void)didFailWithError:(NSError *)error
 {
-    ScLogDebug(@"Received data: %@", data);
-}
-
-
-- (void)didFailWithNoInternetConnection
-{
-    ScLogDebug(@"TODO: Define alert for no internet connection");
+    [ScServerConnection showConnectionErrorAlert];
 }
 
 @end

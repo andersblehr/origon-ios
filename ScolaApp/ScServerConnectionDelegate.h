@@ -12,11 +12,10 @@
 
 @required
 - (void)didReceiveResponse:(NSHTTPURLResponse *)response;
-- (void)finishedReceivingData:(NSDictionary *)dataAsDictionary;
-- (void)didFailWithNoInternetConnection;
+- (void)didFailWithError:(NSError *)error;
 
 @optional
 - (void)willSendRequest:(NSURLRequest *)request;
-- (void)didFailWithError:(NSError *)error;
+- (void)finishedReceivingData:(NSDictionary *)dataAsDictionary;
 
 @end

@@ -35,7 +35,8 @@ NSString * const strThis_iPod                        = @"strThis_iPod";
 NSString * const strThis_iPad                        = @"strThis_iPad";
 
 // Alert messages
-NSString * const strServerUnavailableAlert           = @"strServerUnavailableAlert";
+NSString * const strNoInternetAlertTitle             = @"strNoInternetAlertTitle";
+NSString * const strNoInternetAlert                  = @"strNoInternetAlert";
 NSString * const strInternalServerError              = @"strInternalServerError";
 NSString * const strInvalidNameAlert                 = @"strInvalidNameAlert";
 NSString * const strInvalidEmailAlert                = @"strInvalidEmailAlert";

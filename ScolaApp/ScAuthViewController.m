@@ -623,10 +623,6 @@ static int const kPopUpButtonTryAgain = 1;
     if ([self isAuthTokenValid]) {
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
-        if ([ScAppEnv env].isInternetConnectionAvailable) {
-            [ScStrings refreshStrings];
-        }
-        
         [darkLinenView addGradientLayer];
         [darkLinenView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignCurrentFirstResponder)]];
         
@@ -692,6 +688,10 @@ static int const kPopUpButtonTryAgain = 1;
     [super viewDidAppear:animated];
     
     [self startSplashSequenceThread];
+    
+    if ([ScAppEnv env].isInternetConnectionAvailable) {
+        [ScStrings refreshStrings];
+    }
     
     if (authInfo) {
         NSString *email = [authInfo objectForKey:kAuthInfoKeyEmail];
@@ -1034,9 +1034,9 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
-- (void)didFailWithNoInternetConnection
+- (void)didFailWithError:(NSError *)error
 {
-    ScLogInfo(@"TODO: Define alert for no internet connection");
+    [ScServerConnection showConnectionErrorAlertWithTag:ScAuthPopUpTagServerError usingDelegate:self];
 }
 
 @end

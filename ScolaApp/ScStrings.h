@@ -27,7 +27,8 @@ extern NSString * const strThis_iPod;
 extern NSString * const strThis_iPad;
 
 // Alert messages
-extern NSString * const strServerUnavailableAlert;
+extern NSString * const strNoInternetAlertTitle;
+extern NSString * const strNoInternetAlert;
 extern NSString * const strInternalServerError;
 extern NSString * const strInvalidNameAlert;
 extern NSString * const strInvalidEmailAlert;

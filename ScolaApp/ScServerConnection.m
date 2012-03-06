@@ -125,8 +125,34 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         }
     } else {
-        [connectionDelegate didFailWithNoInternetConnection];
+        [connectionDelegate didFailWithError:nil];
     }
+}
+
+
+#pragma mark - Generic connection error alerts
+
++ (void)showConnectionErrorAlertWithTag:(int)tag usingDelegate:(id)delegate
+{
+    UIAlertView *alert = nil;
+    
+    if ([ScAppEnv env].isInternetConnectionAvailable) {
+        alert = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strInternalServerError] delegate:delegate cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+    } else {
+        alert = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strNoInternetAlertTitle] message:[ScStrings stringForKey:strNoInternetAlert] delegate:delegate cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+    }
+    
+    if (tag != NSIntegerMax) {
+        alert.tag = tag;
+    }
+    
+    [alert show];
+}
+
+
++ (void)showConnectionErrorAlert
+{
+    [self showConnectionErrorAlertWithTag:NSIntegerMax usingDelegate:nil];
 }
 
 
@@ -222,7 +248,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             [self performHTTPMethod:kHTTPMethodPOST withPayload:persistableArrayOfEntities usingDelegate:delegate];
         }
     } else {
-        [connectionDelegate didFailWithNoInternetConnection];
+        [connectionDelegate didFailWithError:nil];
     }
 }
 
@@ -270,8 +296,10 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
     if (HTTPStatusCode == kHTTPStatusCodeOK) {
-        NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData];
-        [connectionDelegate finishedReceivingData:dataAsDictionary];
+        if ([connectionDelegate respondsToSelector:@selector(finishedReceivingData:)]) {
+            NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData];
+            [connectionDelegate finishedReceivingData:dataAsDictionary];
+        }
     }
 }
 
@@ -281,16 +309,13 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 	ScLogError(@"Connection failed with error: %@, %@", error, [error userInfo]);
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    if ([connectionDelegate respondsToSelector:@selector(didFailWithError:)]) {
-        [connectionDelegate didFailWithError:error];
-    }
+    [connectionDelegate didFailWithError:error];
 }
 
 
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse;
 {
 	ScLogVerbose(@"Will cache response: %@", cachedResponse);
-    
 	return cachedResponse;
 }
 

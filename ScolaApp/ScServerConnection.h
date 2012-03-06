@@ -45,6 +45,9 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 
 @property (nonatomic, readonly) NSInteger HTTPStatusCode;
 
++ (void)showConnectionErrorAlertWithTag:(int)tag usingDelegate:(id)delegate;
++ (void)showConnectionErrorAlert;
+
 - (id)init;
 
 - (void)setAuthHeaderForUser:(NSString *)userId withPassword:(NSString *)password;
