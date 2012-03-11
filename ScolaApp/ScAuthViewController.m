@@ -1019,7 +1019,7 @@ static int const kPopUpButtonTryAgain = 1;
         if (authPhase == ScAuthPhaseRegistration) {
             [self finishedReceivingRegistrationData:data];
         } else {
-            ScLogBreakage(@"Received data for non-registration auth phase ($d)", authPhase);
+            ScLogBreakage(@"Received data for non-registration auth phase (%d)", authPhase);
         }
     }
 }
