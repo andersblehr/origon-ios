@@ -9,11 +9,9 @@
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 
-#import "ScHousehold.h"
-#import "ScHouseholdResidency.h"
-#import "ScScolaMember.h"
-#import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
+
+@class ScScolaMember, ScServerConnection;
 
 typedef enum {
     ScAuthPopUpTagServerError,

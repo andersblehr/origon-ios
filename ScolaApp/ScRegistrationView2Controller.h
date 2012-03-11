@@ -8,14 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-#import "ScDevice.h"
-#import "ScDeviceListing.h"
-#import "ScMessageBoard.h"
-#import "ScScola.h"
-#import "ScScolaMember.h"
-#import "ScScolaMembership.h"
 #import "ScServerConnectionDelegate.h"
 
+@class ScScolaMember;
 
 @interface ScRegistrationView2Controller : UIViewController <UITextFieldDelegate, ScServerConnectionDelegate>
 

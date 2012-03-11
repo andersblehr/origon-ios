@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "ScCachedEntity.h"
 #import "ScServerConnectionDelegate.h"
 
 typedef enum {

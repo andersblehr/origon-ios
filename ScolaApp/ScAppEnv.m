@@ -10,9 +10,9 @@
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
-#import "ScAppDelegate.h"
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScLogging.h"
+#import "ScServerConnection.h"
 #import "ScUUIDGenerator.h"
 
 @implementation ScAppEnv

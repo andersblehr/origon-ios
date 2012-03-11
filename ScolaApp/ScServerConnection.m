@@ -14,10 +14,11 @@
 
 #import "ScAppDelegate.h"
 #import "ScAppEnv.h"
-#import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScJSONUtil.h"
 #import "ScLogging.h"
 #import "ScStrings.h"
+
+#import "ScCachedEntity+ScCachedEntityExtensions.h"
 
 
 @implementation ScServerConnection

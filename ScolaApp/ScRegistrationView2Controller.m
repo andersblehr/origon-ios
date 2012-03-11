@@ -14,7 +14,15 @@
 #import "ScAppEnv.h"
 #import "ScLogging.h"
 #import "ScStrings.h"
+#import "ScServerConnection.h"
 #import "ScUUIDGenerator.h"
+
+#import "ScDevice.h"
+#import "ScDeviceListing.h"
+#import "ScMessageBoard.h"
+#import "ScScola.h"
+#import "ScScolaMember.h"
+#import "ScScolaMembership.h"
 
 
 static NSString * const kSegueToMainView = @"dateOfBirthToMainView";

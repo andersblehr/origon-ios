@@ -6,8 +6,7 @@
 //  Copyright (c) 2011 Rhelba Software. All rights reserved.
 //
 
-#import "ScHouseholdResidency.h"
-#import "ScScolaMember.h"
+@class ScScolaMember;
 
 @interface ScRegistrationView1Controller : UIViewController <UITextFieldDelegate, UIAlertViewDelegate>
 

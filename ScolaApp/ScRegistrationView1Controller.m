@@ -12,10 +12,12 @@
 #import "UIView+ScShadowEffects.h"
 
 #import "ScAppEnv.h"
-#import "ScRegistrationView2Controller.h"
-#import "ScHousehold.h"
 #import "ScLogging.h"
+#import "ScRegistrationView2Controller.h"
 #import "ScStrings.h"
+
+#import "ScHousehold.h"
+#import "ScScolaMember.h"
 
 
 static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";

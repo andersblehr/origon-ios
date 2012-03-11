@@ -172,12 +172,6 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 #pragma mark - ScServerConnectionDelegate implementation
 
-+ (void)willSendRequest:(NSURLRequest *)request
-{
-    ScLogDebug(@"Sending asynchronous HTTP request with URL: %@", request.URL);
-}
-
-
 + (void)didReceiveResponse:(NSHTTPURLResponse *)response
 {
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
@@ -190,6 +184,12 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
     
     strings = data;
     [strings writeToFile:[self fullPathToStringsPlist] atomically:YES];
+}
+
+
++ (void)didFailWithError:(NSError *)error
+{
+    [ScServerConnection showConnectionErrorAlert];
 }
 
 @end

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "ScServerConnection.h"
+@class ScServerConnection;
 
 @interface ScAppEnv : NSObject {
 @private
