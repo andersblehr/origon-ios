@@ -34,10 +34,9 @@ NSString * const strThisPhone                        = @"strThisPhone";
 NSString * const strThis_iPod                        = @"strThis_iPod";
 NSString * const strThis_iPad                        = @"strThis_iPad";
 
-// Alert messages
-NSString * const strNoInternetAlertTitle             = @"strNoInternetAlertTitle";
-NSString * const strNoInternetAlert                  = @"strNoInternetAlert";
-NSString * const strInternalServerError              = @"strInternalServerError";
+// Error & alert messages
+NSString * const strNoInternetError                  = @"strNoInternetError";
+NSString * const strServerErrorAlert                 = @"strServerErrorAlert";
 NSString * const strInvalidNameAlert                 = @"strInvalidNameAlert";
 NSString * const strInvalidEmailAlert                = @"strInvalidEmailAlert";
 NSString * const strInvalidPasswordAlert             = @"strInvalidPasswordAlert";
@@ -189,7 +188,7 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 + (void)didFailWithError:(NSError *)error
 {
-    [ScServerConnection showConnectionErrorAlert];
+    [ScServerConnection showAlertForError:error];
 }
 
 @end

@@ -20,6 +20,11 @@
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 
+@interface ScServerConnection (Internal) 
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
+
+@end
 
 @implementation ScServerConnection
 
@@ -69,6 +74,20 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 
 #pragma mark - Auxiliary methods
+
++ (void)showAlertWithCode:(int)code message:(NSString *)message tag:(int)tag delegate:(id)delegate
+{
+    NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strServerErrorAlert], code, message];
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:delegate cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+    
+    if (tag != NSIntegerMax) {
+        alert.tag = tag;
+    }
+    
+    [alert show];
+}
+
 
 - (NSString *)scolaServer
 {
@@ -126,34 +145,34 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         }
     } else {
-        [connectionDelegate didFailWithError:nil];
+        [delegate didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:[ScStrings stringForKey:strNoInternetError] forKey:NSLocalizedDescriptionKey]]];
     }
 }
 
 
 #pragma mark - Generic connection error alerts
 
-+ (void)showConnectionErrorAlertWithTag:(int)tag usingDelegate:(id)delegate
++ (void)showAlertForError:(NSError *)error
 {
-    UIAlertView *alert = nil;
-    
-    if ([ScAppEnv env].isInternetConnectionAvailable) {
-        alert = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strInternalServerError] delegate:delegate cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-    } else {
-        alert = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strNoInternetAlertTitle] message:[ScStrings stringForKey:strNoInternetAlert] delegate:delegate cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-    }
-    
-    if (tag != NSIntegerMax) {
-        alert.tag = tag;
-    }
-    
-    [alert show];
+    [self showAlertForError:error tagWith:NSIntegerMax usingDelegate:nil];
 }
 
 
-+ (void)showConnectionErrorAlert
++ (void)showAlertForError:(NSError *)error tagWith:(int)tag usingDelegate:(id)delegate
 {
-    [self showConnectionErrorAlertWithTag:NSIntegerMax usingDelegate:nil];
+    [self showAlertWithCode:[error code] message:[error localizedDescription] tag:tag delegate:delegate];
+}
+
+
++ (void)showAlertForHTTPStatus:(int)status
+{
+    [self showAlertForHTTPStatus:status tagWith:NSIntegerMax usingDelegate:nil];
+}
+
+
++ (void)showAlertForHTTPStatus:(int)status tagWith:(int)tag usingDelegate:(id)delegate
+{
+    [self showAlertWithCode:status message:[NSHTTPURLResponse localizedStringForStatusCode:status] tag:tag delegate:delegate];
 }
 
 
@@ -233,23 +252,19 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)persistEntitiesUsingDelegate:(id)delegate
 {
-    if ([ScAppEnv env].isInternetConnectionAvailable) {
+    NSArray *entitiesToPersist = [[ScAppEnv env] entitiesToPersistToServer];
+    
+    if (entitiesToPersist.count > 0) {
         RESTHandler = kRESTHandlerModel;
         RESTRoute = kRESTRouteModelPersist;
         
-        NSArray *entitiesToPersist = [[ScAppEnv env] entitiesToPersistToServer];
+        NSMutableArray *persistableArrayOfEntities = [[NSMutableArray alloc] init];
         
-        if (entitiesToPersist.count > 0) {
-            NSMutableArray *persistableArrayOfEntities = [[NSMutableArray alloc] init];
-            
-            for (ScCachedEntity *entity in entitiesToPersist) {
-                [persistableArrayOfEntities addObject:[entity toDictionary]];
-            }
-            
-            [self performHTTPMethod:kHTTPMethodPOST withPayload:persistableArrayOfEntities usingDelegate:delegate];
+        for (ScCachedEntity *entity in entitiesToPersist) {
+            [persistableArrayOfEntities addObject:[entity toDictionary]];
         }
-    } else {
-        [connectionDelegate didFailWithError:nil];
+        
+        [self performHTTPMethod:kHTTPMethodPOST withPayload:persistableArrayOfEntities usingDelegate:delegate];
     }
 }
 
@@ -305,9 +320,9 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-	ScLogError(@"Connection failed with error: %@, %@", error, [error userInfo]);
+	ScLogError(@"Connection failed with error: %d [%@]", error.code, error.localizedDescription);
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
     [connectionDelegate didFailWithError:error];

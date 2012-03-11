@@ -308,7 +308,7 @@ static int const kPopUpButtonUseNew = 1;
 
 - (void)didFailWithError:(NSError *)error
 {
-    [ScServerConnection showConnectionErrorAlert];
+    [ScServerConnection showAlertForError:error];
 }
 
 @end

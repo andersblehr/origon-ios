@@ -1000,10 +1000,7 @@ static int const kPopUpButtonTryAgain = 1;
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
 
     if (response.statusCode == kHTTPStatusCodeInternalServerError) {
-        UIAlertView *internalErrorAlert = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strInternalServerError] delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        internalErrorAlert.tag = ScAuthPopUpTagServerError;
-        
-        [internalErrorAlert show];
+        [ScServerConnection showAlertForHTTPStatus:response.statusCode tagWith:ScAuthPopUpTagServerError usingDelegate:self];
     } else if (authPhase == ScAuthPhaseLogin) {
         [self didReceiveLoginResponse:response];
     } else if (authPhase == ScAuthPhaseConfirmation) {
@@ -1030,7 +1027,7 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)didFailWithError:(NSError *)error
 {
-    [ScServerConnection showConnectionErrorAlertWithTag:ScAuthPopUpTagServerError usingDelegate:self];
+    [ScServerConnection showAlertForError:error tagWith:ScAuthPopUpTagServerError usingDelegate:self];
 }
 
 @end

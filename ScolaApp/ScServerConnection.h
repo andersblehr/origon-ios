@@ -44,8 +44,10 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 
 @property (nonatomic, readonly) NSInteger HTTPStatusCode;
 
-+ (void)showConnectionErrorAlertWithTag:(int)tag usingDelegate:(id)delegate;
-+ (void)showConnectionErrorAlert;
++ (void)showAlertForError:(NSError *)error;
++ (void)showAlertForError:(NSError *)error tagWith:(int)tag usingDelegate:(id)delegate;
++ (void)showAlertForHTTPStatus:(int)status;
++ (void)showAlertForHTTPStatus:(int)status tagWith:(int)tag usingDelegate:(id)delegate;
 
 - (id)init;
 
