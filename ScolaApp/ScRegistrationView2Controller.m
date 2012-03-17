@@ -115,9 +115,9 @@ static int const kPopUpButtonUseNew = 1;
         scolaMembership.isAdmin = [NSNumber numberWithBool:YES];
         
         ScDevice *device = [context entityForClass:ScDevice.class];
-        device.uuid = [ScAppEnv env].deviceUUID;
+        device.deviceId = [ScAppEnv env].deviceId;
         device.type = [ScAppEnv env].deviceType;
-        device.entityId = device.uuid;
+        device.entityId = device.deviceId;
         
         ScDeviceListing *deviceListing = [context entityForClass:ScDeviceListing.class];
         deviceListing.displayName = deviceNameField.text;
@@ -132,7 +132,7 @@ static int const kPopUpButtonUseNew = 1;
         
         member.mobilePhone = mobilePhoneField.text;
         member.activeSince = [NSDate date];
-        //member.didRegister = [NSNumber numberWithBool:YES]; // TODO: Comment in again!
+        member.didRegister = [NSNumber numberWithBool:YES];
         
         [context saveUsingDelegate:self];
         
@@ -300,8 +300,10 @@ static int const kPopUpButtonUseNew = 1;
 {
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
     
-    if (response.statusCode == kHTTPStatusCodeNoContent) {
+    if (response.statusCode == kHTTPStatusCodeCreated) {
         [[ScAppEnv env] didPersistEntitiesToServer];
+    } else {
+        [ScServerConnection showAlertForHTTPStatus:response.statusCode];
     }
 }
 

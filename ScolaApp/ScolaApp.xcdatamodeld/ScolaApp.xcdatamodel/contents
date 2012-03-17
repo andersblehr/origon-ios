@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="878" systemVersion="11D50b" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1171" systemVersion="11D50b" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="ScCachedEntity" representedClassName="ScCachedEntity" isAbstract="YES" syncable="YES">
         <attribute name="dateCreated" attributeType="Date" syncable="YES"/>
         <attribute name="dateExpires" optional="YES" attributeType="Date" syncable="YES"/>
@@ -8,8 +8,8 @@
         <attribute name="remotePersistenceState" transient="YES" attributeType="Integer 16" defaultValueString="NO" syncable="YES"/>
     </entity>
     <entity name="ScDevice" representedClassName="ScDevice" parentEntity="ScCachedEntity" syncable="YES">
+        <attribute name="deviceId" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
-        <attribute name="uuid" attributeType="String" syncable="YES"/>
         <relationship name="listings" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScDeviceListing" inverseName="device" inverseEntity="ScDeviceListing" syncable="YES"/>
     </entity>
     <entity name="ScDeviceListing" representedClassName="ScDeviceListing" parentEntity="ScCachedEntity" syncable="YES">
@@ -232,6 +232,7 @@
     <elements>
         <element name="ScCachedEntity" positionX="-369" positionY="423" width="128" height="135"/>
         <element name="ScDevice" positionX="322" positionY="-522" width="128" height="90"/>
+        <element name="ScDeviceListing" positionX="160" positionY="192" width="128" height="90"/>
         <element name="ScDocument" positionX="342" positionY="-141" width="128" height="150"/>
         <element name="ScDocumentElement" positionX="511" positionY="-189" width="128" height="90"/>
         <element name="ScDocumentRepository" positionX="349" positionY="45" width="128" height="90"/>
@@ -240,21 +241,20 @@
         <element name="ScEventInvitationScola" positionX="-20" positionY="198" width="128" height="90"/>
         <element name="ScExternalDocument" positionX="511" positionY="-81" width="128" height="75"/>
         <element name="ScHousehold" positionX="-209" positionY="-378" width="128" height="105"/>
+        <element name="ScHouseholdResidency" positionX="160" positionY="192" width="128" height="150"/>
         <element name="ScMessageBoard" positionX="340" positionY="432" width="128" height="90"/>
         <element name="ScMessageItem" positionX="349" positionY="150" width="128" height="120"/>
         <element name="ScMessageThread" positionX="333" positionY="306" width="128" height="90"/>
         <element name="ScOrganisation" positionX="-207" positionY="51" width="128" height="120"/>
         <element name="ScOrganisationContact" positionX="-191" positionY="-72" width="128" height="90"/>
-        <element name="ScScolaMember" positionX="169" positionY="-270" width="128" height="120"/>
         <element name="ScScheduledAbsence" positionX="169" positionY="-396" width="128" height="105"/>
         <element name="ScScheduledBreak" positionX="162" positionY="405" width="128" height="90"/>
         <element name="ScScheduleItem" positionX="-20" positionY="306" width="128" height="120"/>
         <element name="ScScola" positionX="160" positionY="-117" width="128" height="300"/>
+        <element name="ScScolaMember" positionX="169" positionY="-270" width="128" height="120"/>
+        <element name="ScScolaMembership" positionX="151" positionY="99" width="128" height="135"/>
         <element name="ScToDoAssignment" positionX="342" positionY="-405" width="128" height="105"/>
         <element name="ScToDoItem" positionX="333" positionY="-267" width="128" height="105"/>
         <element name="ScYearlySchedule" positionX="169" positionY="243" width="128" height="120"/>
-        <element name="ScScolaMembership" positionX="151" positionY="99" width="128" height="135"/>
-        <element name="ScDeviceListing" positionX="160" positionY="192" width="128" height="90"/>
-        <element name="ScHouseholdResidency" positionX="160" positionY="192" width="128" height="150"/>
     </elements>
 </model>

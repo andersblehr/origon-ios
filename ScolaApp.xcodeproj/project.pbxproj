@@ -15,7 +15,6 @@
 		5C153EF814CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF614CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png */; };
 		5C153EFB14CC9815003A6B61 /* ScMainViewIconSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C153EFA14CC9815003A6B61 /* ScMainViewIconSection.m */; };
 		5C17435B14ABA3DC006B859B /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5C17435A14ABA3DC006B859B /* Settings.bundle */; };
-		5C20009A15026EB3002A327C /* ScDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C20009915026EB3002A327C /* ScDevice.m */; };
 		5C2000A015026EB8002A327C /* ScMessageThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C20009F15026EB8002A327C /* ScMessageThread.m */; };
 		5C2000A315026EB9002A327C /* ScEventInvitationScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000A215026EB9002A327C /* ScEventInvitationScola.m */; };
 		5C2000A615026EBA002A327C /* ScEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000A515026EBA002A327C /* ScEvent.m */; };
@@ -91,6 +90,7 @@
 		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
 		5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */; };
+		5CE68B2315149640006498F9 /* ScDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B2215149640006498F9 /* ScDevice.m */; };
 		5CE9812914C4D81600DD11D4 /* 112-group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE9812814C4D81600DD11D4 /* 112-group@2x.png */; };
 		5CE987C114854FC6005A17C6 /* ScRegistrationView2Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C014854FC6005A17C6 /* ScRegistrationView2Controller.m */; };
 		5CE987C414856426005A17C6 /* ScEventViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* ScEventViewController.m */; };
@@ -116,8 +116,6 @@
 		5C153EF914CC9815003A6B61 /* ScMainViewIconSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMainViewIconSection.h; sourceTree = "<group>"; };
 		5C153EFA14CC9815003A6B61 /* ScMainViewIconSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMainViewIconSection.m; sourceTree = "<group>"; };
 		5C17435A14ABA3DC006B859B /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
-		5C20009815026EB3002A327C /* ScDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDevice.h; sourceTree = "<group>"; };
-		5C20009915026EB3002A327C /* ScDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDevice.m; sourceTree = "<group>"; };
 		5C20009E15026EB8002A327C /* ScMessageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMessageThread.h; sourceTree = "<group>"; };
 		5C20009F15026EB8002A327C /* ScMessageThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMessageThread.m; sourceTree = "<group>"; };
 		5C2000A115026EB9002A327C /* ScEventInvitationScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEventInvitationScola.h; sourceTree = "<group>"; };
@@ -244,6 +242,8 @@
 		5CCF09051466A0CB00D41AB0 /* ScLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScLogging.h; sourceTree = "<group>"; };
 		5CD5B29B14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+ScManagedObjectContextExtensions.h"; sourceTree = "<group>"; };
 		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+ScManagedObjectContextExtensions.m"; sourceTree = "<group>"; };
+		5CE68B2115149640006498F9 /* ScDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDevice.h; sourceTree = "<group>"; };
+		5CE68B2215149640006498F9 /* ScDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDevice.m; sourceTree = "<group>"; };
 		5CE9812814C4D81600DD11D4 /* 112-group@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group@2x.png"; sourceTree = "<group>"; };
 		5CE987BF14854FC6005A17C6 /* ScRegistrationView2Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRegistrationView2Controller.h; sourceTree = "<group>"; };
 		5CE987C014854FC6005A17C6 /* ScRegistrationView2Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegistrationView2Controller.m; sourceTree = "<group>"; };
@@ -312,8 +312,8 @@
 				5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */,
 				5C2000C815026EC1002A327C /* ScCachedEntity.h */,
 				5C2000C915026EC1002A327C /* ScCachedEntity.m */,
-				5C20009815026EB3002A327C /* ScDevice.h */,
-				5C20009915026EB3002A327C /* ScDevice.m */,
+				5CE68B2115149640006498F9 /* ScDevice.h */,
+				5CE68B2215149640006498F9 /* ScDevice.m */,
 				5C2000B615026EBE002A327C /* ScDeviceListing.h */,
 				5C2000B715026EBE002A327C /* ScDeviceListing.m */,
 				5C2000B315026EBD002A327C /* ScDocument.h */,
@@ -591,7 +591,7 @@
 		5CBB63AB146080DD00A9133A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "Rhelba Software";
 			};
 			buildConfigurationList = 5CBB63AE146080DD00A9133A /* Build configuration list for PBXProject "ScolaApp" */;
@@ -706,7 +706,6 @@
 				5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */,
 				5C5ED5CE14F2E9FE006BBDFB /* ScCachedEntity+ScCachedEntityExtensions.m in Sources */,
 				5C3C665C14F56D6800514C57 /* ScUUIDGenerator.m in Sources */,
-				5C20009A15026EB3002A327C /* ScDevice.m in Sources */,
 				5C2000A015026EB8002A327C /* ScMessageThread.m in Sources */,
 				5C2000A315026EB9002A327C /* ScEventInvitationScola.m in Sources */,
 				5C2000A615026EBA002A327C /* ScEvent.m in Sources */,
@@ -732,6 +731,7 @@
 				5C2000F115039F1D002A327C /* ScHouseholdResidency.m in Sources */,
 				5C2000F415039F20002A327C /* ScHousehold.m in Sources */,
 				5C2000F715039F21002A327C /* ScScolaMember.m in Sources */,
+				5CE68B2315149640006498F9 /* ScDevice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

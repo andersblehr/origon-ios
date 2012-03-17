@@ -2,7 +2,7 @@
 //  ScDevice.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 03.03.12.
+//  Created by Anders Blehr on 17.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -14,8 +14,8 @@
 
 @interface ScDevice : ScCachedEntity
 
-@property (nonatomic, retain) NSString * uuid;
 @property (nonatomic, retain) NSString * type;
+@property (nonatomic, retain) NSString * deviceId;
 @property (nonatomic, retain) NSSet *listings;
 @end
 

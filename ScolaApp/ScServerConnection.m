@@ -58,7 +58,7 @@ static NSString * const kRESTRouteAuthLogin = @"login";
 static NSString * const kRESTRouteModelFetch = @"fetch";
 static NSString * const kRESTRouteModelPersist = @"persist";
 
-static NSString * const kURLParameterDeviceUUID = @"duid";
+static NSString * const kURLParameterDeviceId = @"duid";
 static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
        NSString * const kURLParameterName = @"name";
@@ -113,9 +113,9 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     if ([ScAppEnv env].isInternetConnectionAvailable) {
         connectionDelegate = delegate;
         
-        [URLParameters setValue:[ScAppEnv env].deviceUUID forKey:kURLParameterDeviceUUID];
+        [URLParameters setValue:[ScAppEnv env].deviceId forKey:kURLParameterDeviceId];
         [URLParameters setValue:[ScAppEnv env].deviceType forKey:kURLParameterDevice];
-        [URLParameters setValue:[ScAppEnv env].bundleVersion forKey:kURLParameterVersion];
+        [URLParameters setValue:[[ScAppEnv env] bundleVersion] forKey:kURLParameterVersion];
         
         URLRequest.HTTPMethod = HTTPMethod;
         URLRequest.URL = [[[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute] URLByAppendingURLParameters:URLParameters];

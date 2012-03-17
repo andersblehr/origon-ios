@@ -23,11 +23,6 @@
 #import "ScScolaMember.h"
 
 
-static NSString * const kUserDefaultsKeyAuthId = @"scola.auth.id";
-static NSString * const kUserDefaultsKeyAuthToken = @"scola.auth.token";
-static NSString * const kUserDefaultsKeyAuthExpiryDate = @"scola.auth.expires";
-static NSString * const kUserDefaultsKeyAuthInfo = @"scola.auth.info";
-
 static NSString * const kSoundbiteTypewriter = @"typewriter.caf";
 
 static NSString * const kSegueToMainView = @"authToMainView";
@@ -41,7 +36,6 @@ static int const kMembershipStatusNewUser = 1;
 static NSString * const kAuthInfoKeyEmail = @"email";
 static NSString * const kAuthInfoKeyName = @"name";
 static NSString * const kAuthInfoKeyPasswordHash = @"passwordHash";
-static NSString * const kAuthInfoKeyScolaShortname = @"scolaShortname";
 static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
 static NSString * const kAuthInfoKeyIsListed = @"isListed";
 static NSString * const kAuthInfoKeyIsRegistered = @"isRegistered";
@@ -87,9 +81,9 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (NSString *)generateAuthToken:(NSDate *)expiryDate
 {
-    NSString *deviceUUID = [ScAppEnv env].deviceUUID;
+    NSString *deviceId = [ScAppEnv env].deviceId;
     NSString *expiryDateAsString = expiryDate.description;
-    NSString *saltyDiff = [deviceUUID diff:expiryDateAsString];
+    NSString *saltyDiff = [deviceId diff:expiryDateAsString];
     
     return [saltyDiff hashUsingSHA1];
 }

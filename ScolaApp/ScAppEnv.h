@@ -20,9 +20,15 @@
 
 extern NSString * const kBundleID;
 
+extern NSString * const kUserDefaultsKeyAuthId;
+extern NSString * const kUserDefaultsKeyAuthToken;
+extern NSString * const kUserDefaultsKeyAuthExpiryDate;
+extern NSString * const kUserDefaultsKeyAuthInfo;
+extern NSString * const kUserDefaultsKeyDeviceId;
+
+@property (strong, readonly) NSString *deviceId;
 @property (strong, readonly) NSString *deviceType;
 @property (strong, readonly) NSString *deviceName;
-@property (strong, readonly) NSString *deviceUUID;
 
 @property (nonatomic) BOOL isInternetConnectionWiFi;
 @property (nonatomic) BOOL isInternetConnectionWWAN;
@@ -31,7 +37,6 @@ extern NSString * const kBundleID;
 
 + (ScAppEnv *)env;
 
-- (NSString *)deviceName;
 - (NSString *)bundleVersion;
 - (NSString *)displayLanguage;
 

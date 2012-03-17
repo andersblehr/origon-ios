@@ -2,7 +2,7 @@
 //  ScDevice.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 03.03.12.
+//  Created by Anders Blehr on 17.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -12,8 +12,8 @@
 
 @implementation ScDevice
 
-@dynamic uuid;
 @dynamic type;
+@dynamic deviceId;
 @dynamic listings;
 
 @end

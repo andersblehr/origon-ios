@@ -40,15 +40,14 @@
 {
     ScCachedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
     
-    ScCachedEntity *cachedEntity = (ScCachedEntity *)entity;
     NSDate *now = [NSDate date];
     
-    cachedEntity.entityId = [ScUUIDGenerator generateUUID];
-    cachedEntity.dateCreated = now;
-    cachedEntity.dateModified = now;
-    cachedEntity.dateExpires = nil;
+    entity.entityId = [ScUUIDGenerator generateUUID];
+    entity.dateCreated = now;
+    entity.dateModified = now;
+    entity.dateExpires = nil;
     
-    NSString *expires = [cachedEntity expiresInTimeframe];
+    NSString *expires = [entity expiresInTimeframe];
     
     if (expires) {
         // TODO: Process expiry instructions

@@ -19,9 +19,15 @@
 
 NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 
+NSString * const kUserDefaultsKeyAuthId = @"scola.auth.id";
+NSString * const kUserDefaultsKeyAuthToken = @"scola.auth.token";
+NSString * const kUserDefaultsKeyAuthExpiryDate = @"scola.auth.expires";
+NSString * const kUserDefaultsKeyAuthInfo = @"scola.auth.info";
+NSString * const kUserDefaultsKeyDeviceId = @"scola.device.id";
+
+@synthesize deviceId;
 @synthesize deviceType;
 @synthesize deviceName;
-@synthesize deviceUUID;
 
 @synthesize isInternetConnectionWiFi;
 @synthesize isInternetConnectionWWAN;
@@ -35,7 +41,6 @@ static ScAppEnv *env = nil;
 
 - (void)initialiseManagedDocument
 {
-    ScLogDebug(@"Initialising Core Data...");
     NSURL *applicationDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
     NSURL *docURL = [applicationDocumentsDirectory URLByAppendingPathComponent:@"ScolaApp"];
     
@@ -123,6 +128,14 @@ static ScAppEnv *env = nil;
     self = [super init];
     
     if (self) {
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        deviceId = [userDefaults objectForKey:kUserDefaultsKeyDeviceId];
+        
+        if (!deviceId) {
+            deviceId = [ScUUIDGenerator generateUUID];
+            [userDefaults setObject:deviceId forKey:kUserDefaultsKeyDeviceId];
+        }
+        
         deviceType = [UIDevice currentDevice].model;
         deviceName = [UIDevice currentDevice].name;
         
@@ -154,24 +167,6 @@ static ScAppEnv *env = nil;
 
 
 #pragma mark - Device information
-
-- (NSString *)deviceUUID
-{
-    NSUserDefaults *userDefaults;
-    
-    if (!deviceUUID) {
-        userDefaults = [NSUserDefaults standardUserDefaults];
-        deviceUUID = [userDefaults objectForKey:@"scola.device.uuid"];
-    }
-    
-    if (!deviceUUID) {
-        deviceUUID = [ScUUIDGenerator generateUUID];
-        [userDefaults setObject:deviceUUID forKey:@"scola.device.uuid"];
-    }
-    
-    return deviceUUID;
-}
-
 
 - (NSString *)bundleVersion
 {
