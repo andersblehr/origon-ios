@@ -11,6 +11,12 @@
 #import "ScAppEnv.h"
 #import "ScLogging.h"
 
+#import "ScDevice.h"
+#import "ScDeviceListing.h"
+#import "ScHousehold.h"
+#import "ScScolaMember.h"
+#import "ScSharedEntityRef.h"
+
 
 static NSString const * kKeyEntityId = @"entityId";
 static NSString const * kKeyEntityClass = @"entityClass";
@@ -69,6 +75,25 @@ static NSString const * kKeyEntityClass = @"entityClass";
 
 
 #pragma mark - Entity metadata
+
+- (BOOL)isSharedEntity
+{
+    BOOL isSharedEntity = NO;
+    
+    isSharedEntity = isSharedEntity || [self isKindOfClass:ScDevice.class];
+    isSharedEntity = isSharedEntity || [self isKindOfClass:ScDeviceListing.class];
+    isSharedEntity = isSharedEntity || [self isKindOfClass:ScHousehold.class];
+    isSharedEntity = isSharedEntity || [self isKindOfClass:ScScolaMember.class];
+    
+    return isSharedEntity;
+}
+
+
+- (BOOL)isReferenceToSharedEntity
+{
+    return [self isKindOfClass:ScSharedEntityRef.class];
+}
+
 
 - (NSString *)expiresInTimeframe
 {

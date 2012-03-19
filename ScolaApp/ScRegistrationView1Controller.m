@@ -38,6 +38,7 @@ static int const kMaximumRealisticAge = 110;
 @synthesize dateOfBirthPicker;
 
 @synthesize member;
+@synthesize homeScola;
 @synthesize userIsListed;
 
 
@@ -105,7 +106,7 @@ static int const kMaximumRealisticAge = 110;
     if (isDone) {
         if (!userIsListed) {
             NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
-            member.primaryResidence = [context entityForClass:ScHousehold.class];
+            member.primaryResidence = [context entityForClass:ScHousehold.class inScola:homeScola];
         }
         
         member.primaryResidence.addressLine1 = addressLine1Field.text;
@@ -229,6 +230,7 @@ static int const kMaximumRealisticAge = 110;
         ScRegistrationView2Controller *nextViewController = segue.destinationViewController;
 
         nextViewController.member = member;
+        nextViewController.homeScola = homeScola;
         nextViewController.userIsListed = userIsListed;
     }
 }

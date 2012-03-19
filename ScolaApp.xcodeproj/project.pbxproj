@@ -28,7 +28,6 @@
 		5C2000C115026EC0002A327C /* ScMessageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000C015026EC0002A327C /* ScMessageItem.m */; };
 		5C2000C415026EC0002A327C /* ScOrganisation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000C315026EC0002A327C /* ScOrganisation.m */; };
 		5C2000C715026EC0002A327C /* ScScheduleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000C615026EC0002A327C /* ScScheduleItem.m */; };
-		5C2000CA15026EC1002A327C /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000C915026EC1002A327C /* ScCachedEntity.m */; };
 		5C2000CD15026EC1002A327C /* ScScheduledBreak.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000CC15026EC1002A327C /* ScScheduledBreak.m */; };
 		5C2000D015026EC1002A327C /* ScMessageBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000CF15026EC1002A327C /* ScMessageBoard.m */; };
 		5C2000D315026EC2002A327C /* ScToDoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000D215026EC2002A327C /* ScToDoItem.m */; };
@@ -91,6 +90,8 @@
 		5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */; };
 		5CE68B2315149640006498F9 /* ScDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B2215149640006498F9 /* ScDevice.m */; };
+		5CE68B2F1517D1BC006498F9 /* ScSharedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B2E1517D1BC006498F9 /* ScSharedEntityRef.m */; };
+		5CE68B321517D1BD006498F9 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B311517D1BD006498F9 /* ScCachedEntity.m */; };
 		5CE9812914C4D81600DD11D4 /* 112-group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE9812814C4D81600DD11D4 /* 112-group@2x.png */; };
 		5CE987C114854FC6005A17C6 /* ScRegistrationView2Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C014854FC6005A17C6 /* ScRegistrationView2Controller.m */; };
 		5CE987C414856426005A17C6 /* ScEventViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* ScEventViewController.m */; };
@@ -142,8 +143,6 @@
 		5C2000C315026EC0002A327C /* ScOrganisation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScOrganisation.m; sourceTree = "<group>"; };
 		5C2000C515026EC0002A327C /* ScScheduleItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduleItem.h; sourceTree = "<group>"; };
 		5C2000C615026EC0002A327C /* ScScheduleItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduleItem.m; sourceTree = "<group>"; };
-		5C2000C815026EC1002A327C /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
-		5C2000C915026EC1002A327C /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
 		5C2000CB15026EC1002A327C /* ScScheduledBreak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduledBreak.h; sourceTree = "<group>"; };
 		5C2000CC15026EC1002A327C /* ScScheduledBreak.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduledBreak.m; sourceTree = "<group>"; };
 		5C2000CE15026EC1002A327C /* ScMessageBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMessageBoard.h; sourceTree = "<group>"; };
@@ -244,6 +243,10 @@
 		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+ScManagedObjectContextExtensions.m"; sourceTree = "<group>"; };
 		5CE68B2115149640006498F9 /* ScDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDevice.h; sourceTree = "<group>"; };
 		5CE68B2215149640006498F9 /* ScDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDevice.m; sourceTree = "<group>"; };
+		5CE68B2D1517D1BC006498F9 /* ScSharedEntityRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScSharedEntityRef.h; sourceTree = "<group>"; };
+		5CE68B2E1517D1BC006498F9 /* ScSharedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScSharedEntityRef.m; sourceTree = "<group>"; };
+		5CE68B301517D1BD006498F9 /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
+		5CE68B311517D1BD006498F9 /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
 		5CE9812814C4D81600DD11D4 /* 112-group@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group@2x.png"; sourceTree = "<group>"; };
 		5CE987BF14854FC6005A17C6 /* ScRegistrationView2Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRegistrationView2Controller.h; sourceTree = "<group>"; };
 		5CE987C014854FC6005A17C6 /* ScRegistrationView2Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegistrationView2Controller.m; sourceTree = "<group>"; };
@@ -310,8 +313,8 @@
 			isa = PBXGroup;
 			children = (
 				5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */,
-				5C2000C815026EC1002A327C /* ScCachedEntity.h */,
-				5C2000C915026EC1002A327C /* ScCachedEntity.m */,
+				5CE68B301517D1BD006498F9 /* ScCachedEntity.h */,
+				5CE68B311517D1BD006498F9 /* ScCachedEntity.m */,
 				5CE68B2115149640006498F9 /* ScDevice.h */,
 				5CE68B2215149640006498F9 /* ScDevice.m */,
 				5C2000B615026EBE002A327C /* ScDeviceListing.h */,
@@ -356,6 +359,8 @@
 				5C2000F615039F21002A327C /* ScScolaMember.m */,
 				5C2000DD15026EC3002A327C /* ScScolaMembership.h */,
 				5C2000DE15026EC3002A327C /* ScScolaMembership.m */,
+				5CE68B2D1517D1BC006498F9 /* ScSharedEntityRef.h */,
+				5CE68B2E1517D1BC006498F9 /* ScSharedEntityRef.m */,
 				5C2000B015026EBD002A327C /* ScToDoAssignment.h */,
 				5C2000B115026EBD002A327C /* ScToDoAssignment.m */,
 				5C2000D115026EC2002A327C /* ScToDoItem.h */,
@@ -719,7 +724,6 @@
 				5C2000C115026EC0002A327C /* ScMessageItem.m in Sources */,
 				5C2000C415026EC0002A327C /* ScOrganisation.m in Sources */,
 				5C2000C715026EC0002A327C /* ScScheduleItem.m in Sources */,
-				5C2000CA15026EC1002A327C /* ScCachedEntity.m in Sources */,
 				5C2000CD15026EC1002A327C /* ScScheduledBreak.m in Sources */,
 				5C2000D015026EC1002A327C /* ScMessageBoard.m in Sources */,
 				5C2000D315026EC2002A327C /* ScToDoItem.m in Sources */,
@@ -732,6 +736,8 @@
 				5C2000F415039F20002A327C /* ScHousehold.m in Sources */,
 				5C2000F715039F21002A327C /* ScScolaMember.m in Sources */,
 				5CE68B2315149640006498F9 /* ScDevice.m in Sources */,
+				5CE68B2F1517D1BC006498F9 /* ScSharedEntityRef.m in Sources */,
+				5CE68B321517D1BD006498F9 /* ScCachedEntity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

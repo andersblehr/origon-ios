@@ -8,9 +8,13 @@
 
 #import <CoreData/CoreData.h>
 
+@class ScScola;
+
 @interface NSManagedObjectContext (ScManagedObjectContextExtensions)
 
+- (ScScola *)newScolaWithName:(NSString *)name;
+- (id)entityForClass:(Class)class inScola:(ScScola *)scola;
+
 - (BOOL)saveUsingDelegate:(id)delegate;
-- (id)entityForClass:(Class)class;
 
 @end

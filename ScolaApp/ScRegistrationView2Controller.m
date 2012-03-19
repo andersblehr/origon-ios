@@ -50,6 +50,7 @@ static int const kPopUpButtonUseNew = 1;
 @synthesize deviceNameField;
 
 @synthesize member;
+@synthesize homeScola;
 @synthesize userIsListed;
 
 
@@ -101,25 +102,23 @@ static int const kPopUpButtonUseNew = 1;
     if (isDone) {
         NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
         
-        ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class];
+        ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
         defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
         
-        ScScola *homeScola = [context entityForClass:ScScola.class];
-        homeScola.name = [ScStrings stringForKey:strMyPlace];
         [homeScola addMessageBoardsObject:defaultMessageBoard];
 
-        ScScolaMembership *scolaMembership = [context entityForClass:ScScolaMembership.class];
+        ScScolaMembership *scolaMembership = [context entityForClass:ScScolaMembership.class inScola:homeScola];
         scolaMembership.scola = homeScola;
         scolaMembership.member = member;
         scolaMembership.isActive = [NSNumber numberWithBool:YES];
         scolaMembership.isAdmin = [NSNumber numberWithBool:YES];
         
-        ScDevice *device = [context entityForClass:ScDevice.class];
+        ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola];
         device.deviceId = [ScAppEnv env].deviceId;
         device.type = [ScAppEnv env].deviceType;
         device.entityId = device.deviceId;
         
-        ScDeviceListing *deviceListing = [context entityForClass:ScDeviceListing.class];
+        ScDeviceListing *deviceListing = [context entityForClass:ScDeviceListing.class inScola:homeScola];
         deviceListing.displayName = deviceNameField.text;
         deviceListing.device = device;
         deviceListing.member = member;

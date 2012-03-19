@@ -20,6 +20,7 @@
 
 #import "ScHousehold.h"
 #import "ScHouseholdResidency.h"
+#import "ScScola.h"
 #import "ScScolaMember.h"
 
 
@@ -482,10 +483,12 @@ static int const kPopUpButtonTryAgain = 1;
     [userDefaults setObject:authToken forKey:kUserDefaultsKeyAuthToken];
     [userDefaults setObject:authExpiryDate forKey:kUserDefaultsKeyAuthExpiryDate];
     
-    if (isNew) {
+    if (isNew) { // TODO: Need to handle that home scola already exists
         NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
-        member = [context entityForClass:ScScolaMember.class];
+
+        homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
         
+        member = [context entityForClass:ScScolaMember.class inScola:homeScola];
         member.name = nameAsEntered;
         member.email = emailAsEntered;
         member.entityId = member.email;
@@ -499,7 +502,7 @@ static int const kPopUpButtonTryAgain = 1;
             member.gender = [memberInfo objectForKey:kListedPersonKeyGender];
             member.mobilePhone = [memberInfo objectForKey:kListedPersonKeyMobilePhone];
             
-            ScHousehold *household = [context entityForClass:ScHousehold.class];
+            ScHousehold *household = [context entityForClass:ScHousehold.class inScola:homeScola];
             household.addressLine1 = [householdInfo objectForKey:kHouseholdKeyAddressLine1];
             //household.addressLine2 = [householdInfo objectForKey:kHouseholdKeyAddressLine2];
             household.postCodeAndCity = [householdInfo objectForKey:kHouseholdKeyPostCodeAndCity];
@@ -724,9 +727,10 @@ static int const kPopUpButtonTryAgain = 1;
 {
     if ([segue.identifier isEqualToString:kSegueToAddressView]) {
         ScRegistrationView1Controller *nextViewController = segue.destinationViewController;
-        
-        nextViewController.userIsListed = isUserListed;
+
         nextViewController.member = member;
+        nextViewController.homeScola = homeScola;
+        nextViewController.userIsListed = isUserListed;
     }
 }
 

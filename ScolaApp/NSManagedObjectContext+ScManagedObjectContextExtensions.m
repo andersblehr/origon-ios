@@ -9,17 +9,84 @@
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
 #import "ScAppEnv.h"
-#import "ScCachedEntity.h"
-#import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScLogging.h"
-#import "ScScola.h"
-#import "ScScolaMember.h"
 #import "ScServerConnection.h"
 #import "ScUUIDGenerator.h"
+
+#import "ScCachedEntity.h"
+#import "ScCachedEntity+ScCachedEntityExtensions.h"
+
+#import "ScScola.h"
+#import "ScScolaMember.h"
+#import "ScSharedEntityRef.h"
 
 
 @implementation NSManagedObjectContext (ScManagedObjectContextExtensions)
 
+
+#pragma mark - Auxiliary methods
+
+- (id)entityForClass:(Class)class
+{
+    ScCachedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
+    
+    NSDate *now = [NSDate date];
+    
+    entity.entityId = [ScUUIDGenerator generateUUID];
+    entity.dateCreated = now;
+    
+    if (![entity isSharedEntity]) {
+        entity.dateModified = now;
+        entity.dateExpires = nil;
+        
+        NSString *expires = [entity expiresInTimeframe];
+        
+        if (expires) {
+            // TODO: Process expiry instructions
+        }
+    }
+    
+    return entity;
+}
+
+
+#pragma mark - Entity creation
+
+- (ScScola *)newScolaWithName:(NSString *)name;
+{
+    ScScola *scola = [self entityForClass:ScScola.class];
+    
+    scola.scolaId = scola.entityId;
+    scola.name = name;
+    
+    return scola;
+}
+
+
+- (id)entityForClass:(Class)class inScola:(ScScola *)scola
+{
+    ScCachedEntity *entity = [self entityForClass:class];
+    
+    if ([entity isSharedEntity]) {
+        ScSharedEntityRef *entityRef = [self entityForClass:ScSharedEntityRef.class];
+        
+        entityRef.sharedEntityId = entity.entityId;
+        entityRef.scolaId = scola.entityId;
+    } else {
+        entity.scolaId = scola.entityId;
+    }
+    
+    NSString *expires = [entity expiresInTimeframe];
+    
+    if (expires) {
+        // TODO: Process expiry instructions
+    }
+    
+    return entity;
+}
+
+
+#pragma mark - Persistence
 
 - (BOOL)saveUsingDelegate:(id)delegate
 {
@@ -33,27 +100,6 @@
     }
     
     return didSaveOK;
-}
-
-
-- (id)entityForClass:(Class)class
-{
-    ScCachedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
-    
-    NSDate *now = [NSDate date];
-    
-    entity.entityId = [ScUUIDGenerator generateUUID];
-    entity.dateCreated = now;
-    entity.dateModified = now;
-    entity.dateExpires = nil;
-    
-    NSString *expires = [entity expiresInTimeframe];
-    
-    if (expires) {
-        // TODO: Process expiry instructions
-    }
-    
-    return entity;
 }
 
 @end
