@@ -25,6 +25,9 @@ NSString * const kUserDefaultsKeyAuthExpiryDate = @"scola.auth.expires";
 NSString * const kUserDefaultsKeyAuthInfo = @"scola.auth.info";
 NSString * const kUserDefaultsKeyDeviceId = @"scola.device.id";
 
+NSString * const kKeyEntityId = @"entityId";
+NSString * const kKeyEntityClass = @"entityClass";
+
 @synthesize deviceId;
 @synthesize deviceType;
 @synthesize deviceName;

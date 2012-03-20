@@ -27,7 +27,7 @@
 static NSString * const kSoundbiteTypewriter = @"typewriter.caf";
 
 static NSString * const kSegueToMainView = @"authToMainView";
-static NSString * const kSegueToAddressView = @"authToAddressView";
+static NSString * const kSegueToRegistrationView1 = @"authToRegistrationView1";
 
 static int const kMinimumPassordLength = 6;
 
@@ -43,6 +43,7 @@ static NSString * const kAuthInfoKeyIsRegistered = @"isRegistered";
 static NSString * const kAuthInfoKeyIsAuthenticated = @"isAuthenticated";
 static NSString * const kAuthInfoKeyMemberInfo = @"member";
 static NSString * const kAuthInfoKeyHouseholdInfo = @"household";
+static NSString * const kAuthInfoKeyHomeScolaInfo = @"homeScola";
 
 static NSString * const kListedPersonKeyDateOfBirth = @"dateOfBirth";
 static NSString * const kListedPersonKeyGender = @"gender";
@@ -472,7 +473,7 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
-- (void)userDidLogIn:(NSString *)authId isNewUser:(BOOL)isNew
+- (void)userDidLogIn:(NSString *)authId isNewUser:(BOOL)isNewUser
 {
     NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:1];
     //NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
@@ -483,34 +484,35 @@ static int const kPopUpButtonTryAgain = 1;
     [userDefaults setObject:authToken forKey:kUserDefaultsKeyAuthToken];
     [userDefaults setObject:authExpiryDate forKey:kUserDefaultsKeyAuthExpiryDate];
     
-    if (isNew) { // TODO: Need to handle that home scola already exists
+    if (isNewUser) {
         NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
 
-        homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
-        
-        member = [context entityForClass:ScScolaMember.class inScola:homeScola];
-        member.name = nameAsEntered;
-        member.email = emailAsEntered;
-        member.entityId = member.email;
-        member.passwordHash = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
-        
         if (isUserListed) {
             NSDictionary *memberInfo = [authInfo objectForKey:kAuthInfoKeyMemberInfo];
             NSDictionary *householdInfo = [authInfo objectForKey:kAuthInfoKeyHouseholdInfo];
+            NSDictionary *homeScolaInfo = [authInfo objectForKey:kAuthInfoKeyHomeScolaInfo];
+
+            member = [context entityFromDictionary:memberInfo];
+            member.primaryResidence = [context entityFromDictionary:householdInfo];
             
-            member.dateOfBirth = [NSDate dateWithTimeIntervalSince1970:[[memberInfo objectForKey:kListedPersonKeyDateOfBirth] doubleValue] / 1000];
-            member.gender = [memberInfo objectForKey:kListedPersonKeyGender];
-            member.mobilePhone = [memberInfo objectForKey:kListedPersonKeyMobilePhone];
-            
-            ScHousehold *household = [context entityForClass:ScHousehold.class inScola:homeScola];
-            household.addressLine1 = [householdInfo objectForKey:kHouseholdKeyAddressLine1];
-            //household.addressLine2 = [householdInfo objectForKey:kHouseholdKeyAddressLine2];
-            household.postCodeAndCity = [householdInfo objectForKey:kHouseholdKeyPostCodeAndCity];
-            
-            member.primaryResidence = household;
+            if (homeScolaInfo) {
+                homeScola = [context entityFromDictionary:homeScolaInfo];
+            } else {
+                homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
+            }
+        } else {
+            homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
+
+            member = [context entityForClass:ScScolaMember.class inScola:homeScola];
+            member.email = emailAsEntered;
+            member.entityId = member.email;
+            member.primaryResidence = [context entityForClass:ScHousehold.class inScola:homeScola];
         }
         
-        [self performSegueWithIdentifier:kSegueToAddressView sender:self];
+        member.name = nameAsEntered;
+        member.passwordHash = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
+        
+        [self performSegueWithIdentifier:kSegueToRegistrationView1 sender:self];
     } else {
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     }
@@ -725,7 +727,7 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kSegueToAddressView]) {
+    if ([segue.identifier isEqualToString:kSegueToRegistrationView1]) {
         ScRegistrationView1Controller *nextViewController = segue.destinationViewController;
 
         nextViewController.member = member;
@@ -741,7 +743,7 @@ static int const kPopUpButtonTryAgain = 1;
 {
     // TODO: Using this for various test purposes now, keep in mind to fix later
     
-    [self performSegueWithIdentifier:kSegueToAddressView sender:self];
+    [self performSegueWithIdentifier:kSegueToRegistrationView1 sender:self];
 }
 
 

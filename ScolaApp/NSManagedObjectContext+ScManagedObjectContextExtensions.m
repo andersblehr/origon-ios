@@ -16,6 +16,7 @@
 #import "ScCachedEntity.h"
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 
+#import "ScHousehold.h"
 #import "ScScola.h"
 #import "ScScolaMember.h"
 #import "ScSharedEntityRef.h"
@@ -56,8 +57,8 @@
 {
     ScScola *scola = [self entityForClass:ScScola.class];
     
-    scola.scolaId = scola.entityId;
     scola.name = name;
+    scola.scolaId = scola.entityId;
     
     return scola;
 }
@@ -72,14 +73,35 @@
         
         entityRef.sharedEntityId = entity.entityId;
         entityRef.scolaId = scola.entityId;
+        
+        if ([entity isKindOfClass:ScHousehold.class]) {
+            entity.scolaId = scola.entityId;
+        }
     } else {
         entity.scolaId = scola.entityId;
     }
     
-    NSString *expires = [entity expiresInTimeframe];
+    return entity;
+}
+
+
+- (id)entityFromDictionary:(NSDictionary *)dictionary
+{
+    // TODO: First check to see if entity exists locally!
     
-    if (expires) {
-        // TODO: Process expiry instructions
+    NSString *entityClassName = [dictionary objectForKey:kKeyEntityClass];
+    ScCachedEntity *entity = [self entityForClass:NSClassFromString(entityClassName)];
+    
+    NSEntityDescription *entityDescription = entity.entity;
+    NSDictionary *attributes = [entityDescription attributesByName];
+    NSDictionary *relationships = [entityDescription relationshipsByName];
+    
+    for (NSString *key in [attributes allKeys]) {
+        [entity setValueFromDictionary:[dictionary objectForKey:key] forKey:key];
+    }
+    
+    for (NSString *relationshipName in [relationships allKeys]) {
+        // TODO: Set relationships as well!
     }
     
     return entity;

@@ -18,10 +18,6 @@
 #import "ScSharedEntityRef.h"
 
 
-static NSString const * kKeyEntityId = @"entityId";
-static NSString const * kKeyEntityClass = @"entityClass";
-
-
 @implementation ScCachedEntity (ScCachedEntityExtensions)
 
 
@@ -39,16 +35,6 @@ static NSString const * kKeyEntityClass = @"entityClass";
 }
 
 
-- (void)setValueFromDictionary:(id)value forKey:(NSString *)key
-{
-    if (value && [value isKindOfClass:NSDate.class]) {
-        value = [NSDate dateWithTimeIntervalSince1970:[value doubleValue] / 1000];
-    }
-    
-    [self setValue:value forKey:key];
-}
-
-
 - (NSDictionary *)entityRef
 {
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
@@ -60,7 +46,7 @@ static NSString const * kKeyEntityClass = @"entityClass";
 }
 
 
-#pragma mark - Mapped accessors for NSNumber booleans and ints
+#pragma mark - Pseudo accessors
 
 - (ScRemotePersistenceState)persistenceState
 {
@@ -74,7 +60,17 @@ static NSString const * kKeyEntityClass = @"entityClass";
 }
 
 
-#pragma mark - Entity metadata
+- (void)setValueFromDictionary:(id)value forKey:(NSString *)key
+{
+    if (value && [value isKindOfClass:NSDate.class]) {
+        value = [NSDate dateWithTimeIntervalSince1970:[value doubleValue] / 1000];
+    }
+    
+    [self setValue:value forKey:key];
+}
+
+
+#pragma mark - Entity meta information
 
 - (BOOL)isSharedEntity
 {
@@ -154,22 +150,6 @@ static NSString const * kKeyEntityClass = @"entityClass";
     }
     
     return properties;
-}
-
-
-- (void)fromDictionary:(NSDictionary *)dictionary
-{
-    NSEntityDescription *entityDescription = self.entity;
-    NSDictionary *attributes = [entityDescription attributesByName];
-    NSDictionary *relationships = [entityDescription relationshipsByName];
-    
-    for (NSString *key in [attributes allKeys]) {
-        [self setValueFromDictionary:[dictionary objectForKey:key] forKey:key];
-    }
-    
-    for (NSString *relationshipName in [relationships allKeys]) {
-        
-    }
 }
 
 @end

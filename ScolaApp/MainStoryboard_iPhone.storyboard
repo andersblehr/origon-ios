@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11D50b" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="1Fs-qp-4hS">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.1" toolsVersion="2182" systemVersion="11D50b" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="1Fs-qp-4hS">
     <dependencies>
+        <deployment defaultVersion="1296" identifier="iOS"/>
         <development version="4200" defaultVersion="4200" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="933"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1179"/>
     </dependencies>
     <scenes>
+        <!--Sc Auth View Controller-->
         <scene sceneID="5">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
@@ -62,7 +64,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="sco·la |'skōla|" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" minimumFontSize="10" id="ML5-84-G7a">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="sco·la |'skōla|" lineBreakMode="tailTruncation" minimumFontSize="10" adjustsFontSizeToFit="NO" id="ML5-84-G7a">
                                 <rect key="frame" x="20" y="257" width="129" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="Baskerville-SemiBold" family="Baskerville" pointSize="17"/>
@@ -123,13 +125,14 @@
                         <outlet property="scolaSplashLabel" destination="qJ8-cP-0gZ" id="ydN-WI-ai4"/>
                         <outlet property="showInfoButton" destination="ri0-hK-pKu" id="3yN-XW-0jU"/>
                         <outlet property="userHelpLabel" destination="jNm-pK-L5b" id="4wX-Pj-ooy"/>
-                        <segue destination="Rpw-Zc-nxs" kind="push" identifier="authToAddressView" id="3e8-Bg-zGA"/>
+                        <segue destination="Rpw-Zc-nxs" kind="push" identifier="authToRegistrationView1" id="3e8-Bg-zGA"/>
                         <segue destination="9Fa-Np-JO6" kind="push" identifier="authToMainView" id="t3w-Gq-L9a"/>
                     </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="-764" y="679"/>
         </scene>
+        <!--Sc Registration View1 Controller-->
         <scene sceneID="ySI-2M-Xwp">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7Wh-Pb-8Lt" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -226,12 +229,13 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <outlet property="dateOfBirthPicker" destination="vjU-N2-5bN" id="IMX-LZ-UsN"/>
                         <outlet property="dateOfBirthUserHelpLabel" destination="Idy-qV-OHl" id="9Uy-dM-78K"/>
                         <outlet property="postCodeAndCityField" destination="sK7-Ud-q7Z" id="gue-v0-gxy"/>
-                        <segue destination="Yhl-jH-qjX" kind="push" identifier="addressToDateOfBirthView" id="XTW-Cx-H2f"/>
+                        <segue destination="Yhl-jH-qjX" kind="push" identifier="registrationView1ToRegistrationView2" id="XTW-Cx-H2f"/>
                     </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="-278" y="1139"/>
         </scene>
+        <!--Sc Registration View2 Controller-->
         <scene sceneID="nLG-01-8RX">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TFg-0b-Ke2" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -303,12 +307,13 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <outlet property="genderUserHelpLabel" destination="vDt-8C-0oe" id="lfH-sq-Xep"/>
                         <outlet property="mobilePhoneField" destination="UzN-fr-oIM" id="2E2-bh-OjV"/>
                         <outlet property="mobilePhoneLabel" destination="Bq5-QO-bDk" id="zny-Fd-G2Y"/>
-                        <segue destination="9Fa-Np-JO6" kind="push" identifier="dateOfBirthToMainView" id="FHF-lx-n1T"/>
+                        <segue destination="9Fa-Np-JO6" kind="push" identifier="registrationView2ToMainView" id="FHF-lx-n1T"/>
                     </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="177" y="1139"/>
         </scene>
+        <!--Sc Schedule View Controller - <strSchedule>-->
         <scene sceneID="JXA-tO-Wlm">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rWB-mD-KCx" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -331,6 +336,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
             </objects>
             <point key="canvasLocation" x="1653" y="63"/>
         </scene>
+        <!--Sc Task View Controller - <strTasks>-->
         <scene sceneID="FtR-nb-C3g">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="10p-0d-4gv" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -353,6 +359,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
             </objects>
             <point key="canvasLocation" x="1653" y="679"/>
         </scene>
+        <!--Sc Message Board View Controller - <strMessageBoard>-->
         <scene sceneID="uXo-MS-8t7">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rK3-ud-Tj0" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -375,6 +382,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
             </objects>
             <point key="canvasLocation" x="1653" y="1904"/>
         </scene>
+        <!--Sc Scola View Controller - <strPeople>-->
         <scene sceneID="5fB-zI-Tq9">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W7Y-2S-hfd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -390,6 +398,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
             </objects>
             <point key="canvasLocation" x="1653" y="-556"/>
         </scene>
+        <!--Sc Event View Controller - <strEvents>-->
         <scene sceneID="FF8-Hh-UBk">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Oo-i8-eWm" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -412,6 +421,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
             </objects>
             <point key="canvasLocation" x="1653" y="1289"/>
         </scene>
+        <!--Sc Main View Controller - <strMyScolas>-->
         <scene sceneID="SzQ-Uz-J3x">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nIi-HS-de2" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -464,6 +474,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
             </objects>
             <point key="canvasLocation" x="641" y="679"/>
         </scene>
+        <!--Tab Bar Controller-->
         <scene sceneID="VA0-NY-pMO">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3dg-w1-80Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -487,6 +498,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
             </objects>
             <point key="canvasLocation" x="1120" y="679"/>
         </scene>
+        <!--Navigation Controller-->
         <scene sceneID="drI-5N-FJV">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="d90-tY-QAs" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -520,6 +532,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="t3w-Gq-L9a"/>
+        <segue reference="FHF-lx-n1T"/>
     </inferredMetricsTieBreakers>
 </document>

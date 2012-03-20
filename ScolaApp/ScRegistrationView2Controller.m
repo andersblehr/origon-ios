@@ -25,7 +25,7 @@
 #import "ScScolaMembership.h"
 
 
-static NSString * const kSegueToMainView = @"dateOfBirthToMainView";
+static NSString * const kSegueToMainView = @"registrationView2ToMainView";
 
 static int const kGenderSegmentFemale = 0;
 static int const kGenderSegmentMale = 1;
@@ -110,7 +110,7 @@ static int const kPopUpButtonUseNew = 1;
         ScScolaMembership *scolaMembership = [context entityForClass:ScScolaMembership.class inScola:homeScola];
         scolaMembership.scola = homeScola;
         scolaMembership.member = member;
-        scolaMembership.isActive = [NSNumber numberWithBool:YES];
+        // scolaMembership.isActive = [NSNumber numberWithBool:YES];
         scolaMembership.isAdmin = [NSNumber numberWithBool:YES];
         
         ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola];

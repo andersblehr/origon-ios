@@ -20,7 +20,7 @@
 #import "ScScolaMember.h"
 
 
-static NSString * const kSegueToDateOfBirthView = @"addressToDateOfBirthView";
+static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistrationView2";
 
 static int const kMinimumRealisticAge = 5;
 static int const kMaximumRealisticAge = 110;
@@ -104,11 +104,6 @@ static int const kMaximumRealisticAge = 110;
     BOOL isDone = (!alertView);
     
     if (isDone) {
-        if (!userIsListed) {
-            NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
-            member.primaryResidence = [context entityForClass:ScHousehold.class inScola:homeScola];
-        }
-        
         member.primaryResidence.addressLine1 = addressLine1Field.text;
         member.primaryResidence.addressLine2 = addressLine2Field.text;
         member.primaryResidence.postCodeAndCity = postCodeAndCityField.text;
@@ -119,7 +114,7 @@ static int const kMaximumRealisticAge = 110;
             member.dateOfBirth = nil;
         }
         
-        [self performSegueWithIdentifier:kSegueToDateOfBirthView sender:self];
+        [self performSegueWithIdentifier:kSegueToRegistrationView2 sender:self];
     } else {
         [alertView show];
     }
@@ -226,7 +221,7 @@ static int const kMaximumRealisticAge = 110;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kSegueToDateOfBirthView]) {
+    if ([segue.identifier isEqualToString:kSegueToRegistrationView2]) {
         ScRegistrationView2Controller *nextViewController = segue.destinationViewController;
 
         nextViewController.member = member;

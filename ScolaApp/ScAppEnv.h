@@ -26,6 +26,9 @@ extern NSString * const kUserDefaultsKeyAuthExpiryDate;
 extern NSString * const kUserDefaultsKeyAuthInfo;
 extern NSString * const kUserDefaultsKeyDeviceId;
 
+extern NSString * const kKeyEntityId;
+extern NSString * const kKeyEntityClass;
+
 @property (strong, readonly) NSString *deviceId;
 @property (strong, readonly) NSString *deviceType;
 @property (strong, readonly) NSString *deviceName;

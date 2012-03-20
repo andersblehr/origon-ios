@@ -32,7 +32,6 @@
 		5C2000D015026EC1002A327C /* ScMessageBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000CF15026EC1002A327C /* ScMessageBoard.m */; };
 		5C2000D315026EC2002A327C /* ScToDoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000D215026EC2002A327C /* ScToDoItem.m */; };
 		5C2000D615026EC2002A327C /* ScOrganisationContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000D515026EC2002A327C /* ScOrganisationContact.m */; };
-		5C2000D915026EC3002A327C /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000D815026EC3002A327C /* ScScola.m */; };
 		5C2000DC15026EC3002A327C /* ScYearlySchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000DB15026EC3002A327C /* ScYearlySchedule.m */; };
 		5C2000DF15026EC3002A327C /* ScScolaMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000DE15026EC3002A327C /* ScScolaMembership.m */; };
 		5C2000E215026EC3002A327C /* ScExternalDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000E115026EC3002A327C /* ScExternalDocument.m */; };
@@ -92,6 +91,7 @@
 		5CE68B2315149640006498F9 /* ScDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B2215149640006498F9 /* ScDevice.m */; };
 		5CE68B2F1517D1BC006498F9 /* ScSharedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B2E1517D1BC006498F9 /* ScSharedEntityRef.m */; };
 		5CE68B321517D1BD006498F9 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B311517D1BD006498F9 /* ScCachedEntity.m */; };
+		5CE68B381518AE51006498F9 /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B371518AE51006498F9 /* ScScola.m */; };
 		5CE9812914C4D81600DD11D4 /* 112-group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE9812814C4D81600DD11D4 /* 112-group@2x.png */; };
 		5CE987C114854FC6005A17C6 /* ScRegistrationView2Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C014854FC6005A17C6 /* ScRegistrationView2Controller.m */; };
 		5CE987C414856426005A17C6 /* ScEventViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* ScEventViewController.m */; };
@@ -151,8 +151,6 @@
 		5C2000D215026EC2002A327C /* ScToDoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScToDoItem.m; sourceTree = "<group>"; };
 		5C2000D415026EC2002A327C /* ScOrganisationContact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScOrganisationContact.h; sourceTree = "<group>"; };
 		5C2000D515026EC2002A327C /* ScOrganisationContact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScOrganisationContact.m; sourceTree = "<group>"; };
-		5C2000D715026EC3002A327C /* ScScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScola.h; sourceTree = "<group>"; };
-		5C2000D815026EC3002A327C /* ScScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScola.m; sourceTree = "<group>"; };
 		5C2000DA15026EC3002A327C /* ScYearlySchedule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScYearlySchedule.h; sourceTree = "<group>"; };
 		5C2000DB15026EC3002A327C /* ScYearlySchedule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScYearlySchedule.m; sourceTree = "<group>"; };
 		5C2000DD15026EC3002A327C /* ScScolaMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaMembership.h; sourceTree = "<group>"; };
@@ -247,6 +245,8 @@
 		5CE68B2E1517D1BC006498F9 /* ScSharedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScSharedEntityRef.m; sourceTree = "<group>"; };
 		5CE68B301517D1BD006498F9 /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
 		5CE68B311517D1BD006498F9 /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
+		5CE68B361518AE51006498F9 /* ScScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScola.h; sourceTree = "<group>"; };
+		5CE68B371518AE51006498F9 /* ScScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScola.m; sourceTree = "<group>"; };
 		5CE9812814C4D81600DD11D4 /* 112-group@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group@2x.png"; sourceTree = "<group>"; };
 		5CE987BF14854FC6005A17C6 /* ScRegistrationView2Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRegistrationView2Controller.h; sourceTree = "<group>"; };
 		5CE987C014854FC6005A17C6 /* ScRegistrationView2Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegistrationView2Controller.m; sourceTree = "<group>"; };
@@ -353,8 +353,8 @@
 				5C2000CC15026EC1002A327C /* ScScheduledBreak.m */,
 				5C2000C515026EC0002A327C /* ScScheduleItem.h */,
 				5C2000C615026EC0002A327C /* ScScheduleItem.m */,
-				5C2000D715026EC3002A327C /* ScScola.h */,
-				5C2000D815026EC3002A327C /* ScScola.m */,
+				5CE68B361518AE51006498F9 /* ScScola.h */,
+				5CE68B371518AE51006498F9 /* ScScola.m */,
 				5C2000F515039F20002A327C /* ScScolaMember.h */,
 				5C2000F615039F21002A327C /* ScScolaMember.m */,
 				5C2000DD15026EC3002A327C /* ScScolaMembership.h */,
@@ -728,7 +728,6 @@
 				5C2000D015026EC1002A327C /* ScMessageBoard.m in Sources */,
 				5C2000D315026EC2002A327C /* ScToDoItem.m in Sources */,
 				5C2000D615026EC2002A327C /* ScOrganisationContact.m in Sources */,
-				5C2000D915026EC3002A327C /* ScScola.m in Sources */,
 				5C2000DC15026EC3002A327C /* ScYearlySchedule.m in Sources */,
 				5C2000DF15026EC3002A327C /* ScScolaMembership.m in Sources */,
 				5C2000E215026EC3002A327C /* ScExternalDocument.m in Sources */,
@@ -738,6 +737,7 @@
 				5CE68B2315149640006498F9 /* ScDevice.m in Sources */,
 				5CE68B2F1517D1BC006498F9 /* ScSharedEntityRef.m in Sources */,
 				5CE68B321517D1BD006498F9 /* ScCachedEntity.m in Sources */,
+				5CE68B381518AE51006498F9 /* ScScola.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
