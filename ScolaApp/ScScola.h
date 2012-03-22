@@ -2,7 +2,7 @@
 //  ScScola.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 20.03.12.
+//  Created by Anders Blehr on 22.03.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -19,13 +19,13 @@
 @property (nonatomic, retain) NSData * picture;
 @property (nonatomic, retain) NSSet *documentRepositories;
 @property (nonatomic, retain) NSSet *eventInvitations;
-@property (nonatomic, retain) ScScola *guardedScola;
-@property (nonatomic, retain) ScScola *guardianScola;
 @property (nonatomic, retain) NSSet *hostingEvents;
 @property (nonatomic, retain) NSSet *members;
 @property (nonatomic, retain) NSSet *memberToDoItems;
 @property (nonatomic, retain) NSSet *messageBoards;
 @property (nonatomic, retain) ScOrganisation *organisation;
+@property (nonatomic, retain) ScScola *parentScola;
+@property (nonatomic, retain) NSSet *subscolas;
 @property (nonatomic, retain) ScYearlySchedule *yearlySchedule;
 @end
 
@@ -60,5 +60,10 @@
 - (void)removeMessageBoardsObject:(ScMessageBoard *)value;
 - (void)addMessageBoards:(NSSet *)values;
 - (void)removeMessageBoards:(NSSet *)values;
+
+- (void)addSubscolasObject:(ScScola *)value;
+- (void)removeSubscolasObject:(ScScola *)value;
+- (void)addSubscolas:(NSSet *)values;
+- (void)removeSubscolas:(NSSet *)values;
 
 @end

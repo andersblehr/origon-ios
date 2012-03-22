@@ -34,6 +34,8 @@ typedef enum {
 }
 
 extern NSString * const kURLParameterName;
+extern NSString * const kURLParameterAuthToken;
+extern NSString * const kURLParameterLastFetchDate;
 
 extern NSInteger const kHTTPStatusCodeOK;
 extern NSInteger const kHTTPStatusCodeCreated;

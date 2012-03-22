@@ -153,13 +153,13 @@
         <attribute name="picture" optional="YES" attributeType="Binary" syncable="YES"/>
         <relationship name="documentRepositories" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScDocumentRepository" inverseName="scola" inverseEntity="ScDocumentRepository" syncable="YES"/>
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEventInvitationScola" inverseName="scola" inverseEntity="ScEventInvitationScola" syncable="YES"/>
-        <relationship name="guardedScola" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScScola" inverseName="guardianScola" inverseEntity="ScScola" syncable="YES"/>
-        <relationship name="guardianScola" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScScola" inverseName="guardedScola" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="hostingEvents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScEvent" inverseName="hostingScolas" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="members" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScolaMembership" inverseName="scola" inverseEntity="ScScolaMembership" syncable="YES"/>
         <relationship name="memberToDoItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScToDoItem" inverseName="scola" inverseEntity="ScToDoItem" syncable="YES"/>
         <relationship name="messageBoards" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScMessageBoard" inverseName="scola" inverseEntity="ScMessageBoard" syncable="YES"/>
         <relationship name="organisation" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScOrganisation" inverseName="scolas" inverseEntity="ScOrganisation" syncable="YES"/>
+        <relationship name="parentScola" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScScola" inverseName="subscolas" inverseEntity="ScScola" syncable="YES"/>
+        <relationship name="subscolas" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScScola" inverseName="parentScola" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="yearlySchedule" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScYearlySchedule" inverseName="scola" inverseEntity="ScYearlySchedule" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="never"/>
@@ -254,7 +254,7 @@
         <element name="ScScheduledAbsence" positionX="169" positionY="-396" width="128" height="105"/>
         <element name="ScScheduledBreak" positionX="162" positionY="405" width="128" height="90"/>
         <element name="ScScheduleItem" positionX="-20" positionY="306" width="128" height="120"/>
-        <element name="ScScola" positionX="160" positionY="-117" width="128" height="300"/>
+        <element name="ScScola" positionX="160" positionY="-117" width="128" height="240"/>
         <element name="ScScolaMember" positionX="169" positionY="-270" width="128" height="120"/>
         <element name="ScScolaMembership" positionX="151" positionY="99" width="128" height="135"/>
         <element name="ScToDoAssignment" positionX="342" positionY="-405" width="128" height="105"/>

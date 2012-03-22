@@ -41,17 +41,9 @@ static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
 static NSString * const kAuthInfoKeyIsListed = @"isListed";
 static NSString * const kAuthInfoKeyIsRegistered = @"isRegistered";
 static NSString * const kAuthInfoKeyIsAuthenticated = @"isAuthenticated";
-static NSString * const kAuthInfoKeyMemberInfo = @"member";
-static NSString * const kAuthInfoKeyHouseholdInfo = @"household";
-static NSString * const kAuthInfoKeyHomeScolaInfo = @"homeScola";
-
-static NSString * const kListedPersonKeyDateOfBirth = @"dateOfBirth";
-static NSString * const kListedPersonKeyGender = @"gender";
-static NSString * const kListedPersonKeyMobilePhone = @"mobilePhone";
-
-static NSString * const kHouseholdKeyAddressLine1 = @"addressLine1";
-static NSString * const kHouseholdKeyAddressLine2 = @"addressLine2";
-static NSString * const kHouseholdKeyPostCodeAndCity = @"postCodeAndCity";
+//static NSString * const kAuthInfoKeyMemberInfo = @"member";
+//static NSString * const kAuthInfoKeyHouseholdInfo = @"household";
+//static NSString * const kAuthInfoKeyHomeScolaInfo = @"homeScola";
 
 static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
 
@@ -80,43 +72,6 @@ static int const kPopUpButtonTryAgain = 1;
 
 
 #pragma mark - Auxiliary methods
-
-- (NSString *)generateAuthToken:(NSDate *)expiryDate
-{
-    NSString *deviceId = [ScAppEnv env].deviceId;
-    NSString *expiryDateAsString = expiryDate.description;
-    NSString *saltyDiff = [deviceId diff:expiryDateAsString];
-    
-    return [saltyDiff hashUsingSHA1];
-}
-
-
-- (BOOL)isAuthTokenValid
-{
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSString *authTokenAsStored = [userDefaults objectForKey:kUserDefaultsKeyAuthToken];
-    NSDate *authExpiryDate = [userDefaults objectForKey:kUserDefaultsKeyAuthExpiryDate];
-
-    BOOL isTokenValid = (authTokenAsStored && authExpiryDate);
-    
-    if (isTokenValid) {
-        NSDate *now = [NSDate date];
-        isTokenValid = ([now compare:authExpiryDate] == NSOrderedAscending);
-    }        
-    
-    if (isTokenValid) {
-        NSString *validToken = [self generateAuthToken:authExpiryDate];
-        isTokenValid = [authTokenAsStored isEqualToString:validToken];
-    }
-    
-    if (!isTokenValid) {
-        [userDefaults removeObjectForKey:kUserDefaultsKeyAuthToken];
-        [userDefaults removeObjectForKey:kUserDefaultsKeyAuthExpiryDate];
-    }
-    
-    return isTokenValid;
-}
-
 
 - (void)setUpTypewriterAudioForSplashSequence
 {
@@ -264,9 +219,69 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (NSString *)generatePasswordHash:(NSString *)password usingSalt:(NSString *)salt
 {
-    NSString *saltyDiff = [password diff:salt];
+    return [[password diff:salt] hashUsingSHA1];
+}
+
+
+#pragma mark - Auth token handling
+
+- (NSString *)generateAuthToken:(NSDate *)expiryDate
+{
+    NSString *deviceId = [ScAppEnv env].deviceId;
+    NSString *expiryDateAsString = expiryDate.description;
+    NSString *saltyDiff = [deviceId diff:expiryDateAsString];
     
     return [saltyDiff hashUsingSHA1];
+}
+
+
+- (NSString *)generateAndSetAuthTokenForUser:(NSString *)userId
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:1];
+    //NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
+    NSString *authToken = [self generateAuthToken:authExpiryDate];
+    
+    [userDefaults setObject:userId forKey:kUserDefaultsKeyAuthId];
+    [userDefaults setObject:authToken forKey:kUserDefaultsKeyAuthToken];
+    [userDefaults setObject:authExpiryDate forKey:kUserDefaultsKeyAuthExpiryDate];
+    
+    return authToken;
+}
+
+
+- (void)invalidateAuthToken
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    [userDefaults removeObjectForKey:kUserDefaultsKeyAuthToken];
+    [userDefaults removeObjectForKey:kUserDefaultsKeyAuthExpiryDate];
+}
+
+
+- (BOOL)isAuthTokenValid
+{
+    BOOL isTokenValid = NO;
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *authTokenAsStored = [userDefaults objectForKey:kUserDefaultsKeyAuthToken];
+    NSDate *authExpiryDate = [userDefaults objectForKey:kUserDefaultsKeyAuthExpiryDate];
+    
+    if (authTokenAsStored && authExpiryDate) {
+        NSDate *now = [NSDate date];
+        
+        if ([now compare:authExpiryDate] == NSOrderedAscending) {
+            NSString *validToken = [self generateAuthToken:authExpiryDate];
+            isTokenValid = [authTokenAsStored isEqualToString:validToken];
+        }
+    }        
+    
+    if (!isTokenValid) {
+        [self invalidateAuthToken];
+    }
+    
+    return isTokenValid;
 }
 
 
@@ -431,11 +446,14 @@ static int const kPopUpButtonTryAgain = 1;
 
     emailAsEntered = nameOrEmailOrRegistrationCodeField.text;
     NSString *password = emailOrPasswordField.text;
+    NSString *authToken = [self generateAndSetAuthTokenForUser:emailAsEntered];
     
     [self indicatePendingServerSession:YES];
     
     serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
+    [serverConnection setValue:authToken forURLParameter:kURLParameterAuthToken];
+    [serverConnection setValue:@"" forURLParameter:kURLParameterLastFetchDate];
     [serverConnection authenticateForPhase:ScAuthPhaseLogin usingDelegate:self];
 }
 
@@ -464,11 +482,13 @@ static int const kPopUpButtonTryAgain = 1;
     nameAsEntered = [authInfo objectForKey:kAuthInfoKeyName];
     emailAsEntered = [authInfo objectForKey:kAuthInfoKeyEmail];
     NSString *password = emailOrPasswordField.text;
+    NSString *authToken = [self generateAndSetAuthTokenForUser:emailAsEntered];
     
     [self indicatePendingServerSession:YES];
     
     serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
+    [serverConnection setValue:authToken forURLParameter:kURLParameterAuthToken];
     [serverConnection authenticateForPhase:ScAuthPhaseConfirmation usingDelegate:self];
 }
 
@@ -487,7 +507,7 @@ static int const kPopUpButtonTryAgain = 1;
     if (isNewUser) {
         NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
 
-        if (isUserListed) {
+        if (isUserListed) { /*
             NSDictionary *memberInfo = [authInfo objectForKey:kAuthInfoKeyMemberInfo];
             NSDictionary *householdInfo = [authInfo objectForKey:kAuthInfoKeyHouseholdInfo];
             NSDictionary *homeScolaInfo = [authInfo objectForKey:kAuthInfoKeyHomeScolaInfo];
@@ -499,14 +519,16 @@ static int const kPopUpButtonTryAgain = 1;
                 homeScola = [context entityFromDictionary:homeScolaInfo];
             } else {
                 homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
-            }
+            } */
         } else {
             homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
 
-            member = [context entityForClass:ScScolaMember.class inScola:homeScola];
+            member = [context entityForClass:ScScolaMember.class inScola:homeScola withId:emailAsEntered];
             member.email = emailAsEntered;
             member.entityId = member.email;
+            
             member.primaryResidence = [context entityForClass:ScHousehold.class inScola:homeScola];
+            member.primaryResidence.scolaId = homeScola.scolaId;
         }
         
         member.name = nameAsEntered;
@@ -519,29 +541,14 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
-#pragma mark - Process server response
+#pragma mark - Process data from server
 
-- (void)didReceiveLoginResponse:(NSHTTPURLResponse *)response
+- (void)finishedReceivingLoginData:(NSDictionary *)data
 {
-    if (response.statusCode == kHTTPStatusCodeNoContent) {
-        [self userDidLogIn:emailAsEntered isNewUser:NO];
-    } else if (response.statusCode == kHTTPStatusCodeUnauthorized) {
-        NSString *alertMessage = [ScStrings stringForKey:strNotLoggedInAlert];
-        
-        UIAlertView *notLoggedInAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        notLoggedInAlert.tag = ScAuthPopUpTagNotLoggedIn;
-        
-        [notLoggedInAlert show];
-    }
-}
-
-
-- (void)didReceiveConfirmationResponse:(NSHTTPURLResponse *)response
-{
-    if (response.statusCode == kHTTPStatusCodeNoContent) {
+    if (authPhase == ScAuthPhaseConfirmation) {
         [self userDidLogIn:emailAsEntered isNewUser:YES];
-    } else {
-        ScLogBreakage(@"Unexpected server response for user confirmation: %@", response);
+    } else if (authPhase == ScAuthPhaseLogin) {
+        [self userDidLogIn:emailAsEntered isNewUser:NO];
     }
 }
 
@@ -860,10 +867,10 @@ static int const kPopUpButtonTryAgain = 1;
         NSString *email = [authInfo objectForKey:kAuthInfoKeyEmail];
         NSString *password = emailOrPasswordField.text;
         
-        NSString *passwordHashFromServer = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
+        NSString *passwordHashAsPersisted = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
         NSString *passwordHashAsEntered = [self generatePasswordHash:password usingSalt:email];
         
-        passwordsDoMatch = [passwordHashAsEntered isEqualToString:passwordHashFromServer];
+        passwordsDoMatch = [passwordHashAsEntered isEqualToString:passwordHashAsPersisted];
     }
     
     if (!registrationCodesDoMatch) {
@@ -999,12 +1006,17 @@ static int const kPopUpButtonTryAgain = 1;
 {
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
 
-    if (response.statusCode == kHTTPStatusCodeInternalServerError) {
-        [ScServerConnection showAlertForHTTPStatus:response.statusCode tagWith:ScAuthPopUpTagServerError usingDelegate:self];
-    } else if (authPhase == ScAuthPhaseLogin) {
-        [self didReceiveLoginResponse:response];
-    } else if (authPhase == ScAuthPhaseConfirmation) {
-        [self didReceiveConfirmationResponse:response];
+    if (response.statusCode != kHTTPStatusCodeOK) {
+        if (response.statusCode == kHTTPStatusCodeUnauthorized) {
+            NSString *alertMessage = [ScStrings stringForKey:strNotLoggedInAlert];
+            
+            UIAlertView *notLoggedInAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+            notLoggedInAlert.tag = ScAuthPopUpTagNotLoggedIn;
+            
+            [notLoggedInAlert show];
+        } else {
+            [ScServerConnection showAlertForHTTPStatus:response.statusCode tagWith:ScAuthPopUpTagServerError usingDelegate:self];
+        }
     }
 }
 
@@ -1019,7 +1031,7 @@ static int const kPopUpButtonTryAgain = 1;
         if (authPhase == ScAuthPhaseRegistration) {
             [self finishedReceivingRegistrationData:data];
         } else {
-            ScLogBreakage(@"Received data for non-registration auth phase (%d)", authPhase);
+            [self finishedReceivingLoginData:data];
         }
     }
 }

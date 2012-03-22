@@ -110,13 +110,12 @@ static int const kPopUpButtonUseNew = 1;
         ScScolaMembership *scolaMembership = [context entityForClass:ScScolaMembership.class inScola:homeScola];
         scolaMembership.scola = homeScola;
         scolaMembership.member = member;
-        // scolaMembership.isActive = [NSNumber numberWithBool:YES];
+        scolaMembership.isActive = [NSNumber numberWithBool:YES];
         scolaMembership.isAdmin = [NSNumber numberWithBool:YES];
         
-        ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola];
-        device.deviceId = [ScAppEnv env].deviceId;
+        ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScAppEnv env].deviceId];
         device.type = [ScAppEnv env].deviceType;
-        device.entityId = device.deviceId;
+        device.deviceId = device.entityId;
         
         ScDeviceListing *deviceListing = [context entityForClass:ScDeviceListing.class inScola:homeScola];
         deviceListing.displayName = deviceNameField.text;
@@ -131,7 +130,7 @@ static int const kPopUpButtonUseNew = 1;
         
         member.mobilePhone = mobilePhoneField.text;
         member.activeSince = [NSDate date];
-        member.didRegister = [NSNumber numberWithBool:YES];
+        // member.didRegister = [NSNumber numberWithBool:YES];
         
         [context saveUsingDelegate:self];
         

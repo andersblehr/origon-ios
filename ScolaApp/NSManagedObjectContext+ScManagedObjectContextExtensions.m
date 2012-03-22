@@ -29,11 +29,17 @@
 
 - (id)entityForClass:(Class)class
 {
+    return [self entityForClass:class withId:[ScUUIDGenerator generateUUID]];
+}
+
+
+- (id)entityForClass:(Class)class withId:(NSString *)entityId
+{
     ScCachedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
     
     NSDate *now = [NSDate date];
     
-    entity.entityId = [ScUUIDGenerator generateUUID];
+    entity.entityId = entityId;
     entity.dateCreated = now;
     
     if (![entity isSharedEntity]) {
@@ -66,17 +72,19 @@
 
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola
 {
-    ScCachedEntity *entity = [self entityForClass:class];
+    return [self entityForClass:class inScola:scola withId:[ScUUIDGenerator generateUUID]];
+}
+
+
+- (id)entityForClass:(Class)class inScola:(ScScola *)scola withId:(NSString *)entityId
+{
+    ScCachedEntity *entity = [self entityForClass:class withId:entityId];
     
     if ([entity isSharedEntity]) {
         ScSharedEntityRef *entityRef = [self entityForClass:ScSharedEntityRef.class];
         
         entityRef.sharedEntityId = entity.entityId;
         entityRef.scolaId = scola.entityId;
-        
-        if ([entity isKindOfClass:ScHousehold.class]) {
-            entity.scolaId = scola.entityId;
-        }
     } else {
         entity.scolaId = scola.entityId;
     }

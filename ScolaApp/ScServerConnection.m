@@ -61,7 +61,10 @@ static NSString * const kRESTRouteModelPersist = @"persist";
 static NSString * const kURLParameterDeviceId = @"duid";
 static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
-       NSString * const kURLParameterName = @"name";
+
+NSString * const kURLParameterName = @"name";
+NSString * const kURLParameterAuthToken = @"token";
+NSString * const kURLParameterLastFetchDate = @"lastFetch";
 
 NSInteger const kHTTPStatusCodeOK = 200;
 NSInteger const kHTTPStatusCodeCreated = 201;
