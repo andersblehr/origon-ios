@@ -42,6 +42,7 @@ extern NSString * const kKeyEntityClass;
 
 - (NSString *)bundleVersion;
 - (NSString *)displayLanguage;
+- (NSString *)authToken;
 
 - (BOOL)is_iPadDevice;
 - (BOOL)is_iPhoneDevice;

@@ -115,7 +115,6 @@ static int const kPopUpButtonUseNew = 1;
         
         ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScAppEnv env].deviceId];
         device.type = [ScAppEnv env].deviceType;
-        device.deviceId = device.entityId;
         
         ScDeviceListing *deviceListing = [context entityForClass:ScDeviceListing.class inScola:homeScola];
         deviceListing.displayName = deviceNameField.text;

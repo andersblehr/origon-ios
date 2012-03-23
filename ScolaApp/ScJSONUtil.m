@@ -21,7 +21,8 @@
         JSONDataAsDictionary = [NSJSONSerialization JSONObjectWithData:JSONData options:kNilOptions error:&error];
         
         if (!JSONDataAsDictionary) {
-            ScLogError(@"Error parsing JSON data: %@, %@", error, [error userInfo]);
+            ScLogDebug(@"Error parsing JSON data: %@", [[NSString alloc] initWithData:JSONData encoding:NSUTF8StringEncoding]);
+            ScLogError(@"JSON error: %@, %@", error, [error userInfo]);
         }
     }
     

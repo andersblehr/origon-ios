@@ -169,7 +169,7 @@ static ScAppEnv *env = nil;
 }
 
 
-#pragma mark - Device information
+#pragma mark - Meta information
 
 - (NSString *)bundleVersion
 {
@@ -180,6 +180,19 @@ static ScAppEnv *env = nil;
 - (NSString *)displayLanguage
 {
     return [[NSLocale preferredLanguages] objectAtIndex:0];
+}
+
+
+- (NSString *)authToken
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *authToken = [userDefaults objectForKey:kUserDefaultsKeyAuthToken];
+    
+    if (!authToken) {
+        authToken = @"<null>";
+    }
+    
+    return authToken;
 }
 
 

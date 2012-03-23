@@ -41,9 +41,6 @@ static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
 static NSString * const kAuthInfoKeyIsListed = @"isListed";
 static NSString * const kAuthInfoKeyIsRegistered = @"isRegistered";
 static NSString * const kAuthInfoKeyIsAuthenticated = @"isAuthenticated";
-//static NSString * const kAuthInfoKeyMemberInfo = @"member";
-//static NSString * const kAuthInfoKeyHouseholdInfo = @"household";
-//static NSString * const kAuthInfoKeyHomeScolaInfo = @"homeScola";
 
 static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
 
@@ -235,7 +232,7 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
-- (NSString *)generateAndSetAuthTokenForUser:(NSString *)userId
+- (void)generateAndSetAuthTokenForUser:(NSString *)userId
 {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     
@@ -246,8 +243,6 @@ static int const kPopUpButtonTryAgain = 1;
     [userDefaults setObject:userId forKey:kUserDefaultsKeyAuthId];
     [userDefaults setObject:authToken forKey:kUserDefaultsKeyAuthToken];
     [userDefaults setObject:authExpiryDate forKey:kUserDefaultsKeyAuthExpiryDate];
-    
-    return authToken;
 }
 
 
@@ -446,14 +441,13 @@ static int const kPopUpButtonTryAgain = 1;
 
     emailAsEntered = nameOrEmailOrRegistrationCodeField.text;
     NSString *password = emailOrPasswordField.text;
-    NSString *authToken = [self generateAndSetAuthTokenForUser:emailAsEntered];
     
+    [self generateAndSetAuthTokenForUser:emailAsEntered];
     [self indicatePendingServerSession:YES];
     
     serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
-    [serverConnection setValue:authToken forURLParameter:kURLParameterAuthToken];
-    [serverConnection setValue:@"" forURLParameter:kURLParameterLastFetchDate];
+    //[serverConnection setValue:@"" forURLParameter:kURLParameterLastFetchDate];
     [serverConnection authenticateForPhase:ScAuthPhaseLogin usingDelegate:self];
 }
 
@@ -482,13 +476,12 @@ static int const kPopUpButtonTryAgain = 1;
     nameAsEntered = [authInfo objectForKey:kAuthInfoKeyName];
     emailAsEntered = [authInfo objectForKey:kAuthInfoKeyEmail];
     NSString *password = emailOrPasswordField.text;
-    NSString *authToken = [self generateAndSetAuthTokenForUser:emailAsEntered];
     
+    [self generateAndSetAuthTokenForUser:emailAsEntered];
     [self indicatePendingServerSession:YES];
     
     serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
-    [serverConnection setValue:authToken forURLParameter:kURLParameterAuthToken];
     [serverConnection authenticateForPhase:ScAuthPhaseConfirmation usingDelegate:self];
 }
 
@@ -524,8 +517,6 @@ static int const kPopUpButtonTryAgain = 1;
             homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
 
             member = [context entityForClass:ScScolaMember.class inScola:homeScola withId:emailAsEntered];
-            member.email = emailAsEntered;
-            member.entityId = member.email;
             
             member.primaryResidence = [context entityForClass:ScHousehold.class inScola:homeScola];
             member.primaryResidence.scolaId = homeScola.scolaId;
@@ -1007,6 +998,10 @@ static int const kPopUpButtonTryAgain = 1;
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
 
     if (response.statusCode != kHTTPStatusCodeOK) {
+        if ((authPhase = ScAuthPhaseLogin) || (authPhase == ScAuthPhaseConfirmation)) {
+            [self invalidateAuthToken];
+        }
+        
         if (response.statusCode == kHTTPStatusCodeUnauthorized) {
             NSString *alertMessage = [ScStrings stringForKey:strNotLoggedInAlert];
             

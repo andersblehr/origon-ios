@@ -9,6 +9,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 
+#import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
 
 @class ScScola, ScScolaMember, ScServerConnection;
@@ -32,7 +33,7 @@ typedef enum {
     AVAudioPlayer *typewriter2;
     
     int currentMembershipSegment;
-    int authPhase;
+    ScAuthPhase authPhase;
     
     NSString *nameAsEntered;
     NSString *emailAsEntered;

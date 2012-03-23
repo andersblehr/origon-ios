@@ -116,6 +116,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     if ([ScAppEnv env].isInternetConnectionAvailable) {
         connectionDelegate = delegate;
         
+        [URLParameters setValue:[[ScAppEnv env] authToken] forKey:kURLParameterAuthToken];
         [URLParameters setValue:[ScAppEnv env].deviceId forKey:kURLParameterDeviceId];
         [URLParameters setValue:[ScAppEnv env].deviceType forKey:kURLParameterDevice];
         [URLParameters setValue:[[ScAppEnv env] bundleVersion] forKey:kURLParameterVersion];
