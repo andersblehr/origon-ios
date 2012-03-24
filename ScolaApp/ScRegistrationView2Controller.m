@@ -205,8 +205,7 @@ static int const kPopUpButtonUseNew = 1;
 {
     [super viewWillAppear:animated];
     
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *viewState = [userDefaults objectForKey:self.class.description];
+    NSDictionary *viewState = [ScAppEnv userDefaultForKey:self.class.description];
     
     if (userIsListed) {
         if ([member.gender isEqualToString:kGenderFemale]) {
@@ -222,7 +221,7 @@ static int const kPopUpButtonUseNew = 1;
         mobilePhoneField.text = [viewState objectForKey:@"member.mobilePhone"];
         deviceNameField.text = [viewState objectForKey:@"device.name"];
         
-        [userDefaults removeObjectForKey:self.class.description];
+        [ScAppEnv removeUserDefaultForKey:self.class.description];
     } else {
         genderControl.selectedSegmentIndex = kGenderSegmentFemale;
         mobilePhoneField.text = @"";
@@ -243,7 +242,6 @@ static int const kPopUpButtonUseNew = 1;
         ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound);
     
     if (userDidTapBackButton) {
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         NSMutableDictionary *viewState = [[NSMutableDictionary alloc] init];
         NSNumber *genderId = [NSNumber numberWithInt:genderControl.selectedSegmentIndex];
         
@@ -251,7 +249,7 @@ static int const kPopUpButtonUseNew = 1;
         [viewState setObject:mobilePhoneField.text forKey:@"member.mobilePhone"];
         [viewState setObject:deviceNameField.text forKey:@"device.name"];
         
-        [userDefaults setObject:viewState forKey:self.class.description];
+        [ScAppEnv setUserDefault:viewState forKey:self.class.description];
     }
     
 	[super viewWillDisappear:animated];

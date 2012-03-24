@@ -25,6 +25,7 @@ extern NSString * const kUserDefaultsKeyAuthToken;
 extern NSString * const kUserDefaultsKeyAuthExpiryDate;
 extern NSString * const kUserDefaultsKeyAuthInfo;
 extern NSString * const kUserDefaultsKeyDeviceId;
+extern NSString * const kUserDefaultsKeyLastFetchDate;
 
 extern NSString * const kKeyEntityId;
 extern NSString * const kKeyEntityClass;
@@ -39,6 +40,10 @@ extern NSString * const kKeyEntityClass;
 @property (weak, readonly) NSManagedObjectContext *managedObjectContext;
 
 + (ScAppEnv *)env;
+
++ (void)setUserDefault:(id)object forKey:(NSString *)key;
++ (id)userDefaultForKey:(NSString *)key;
++ (void)removeUserDefaultForKey:(NSString *)key;
 
 - (NSString *)bundleVersion;
 - (NSString *)displayLanguage;

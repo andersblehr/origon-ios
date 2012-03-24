@@ -24,6 +24,7 @@ NSString * const kUserDefaultsKeyAuthToken = @"scola.auth.token";
 NSString * const kUserDefaultsKeyAuthExpiryDate = @"scola.auth.expires";
 NSString * const kUserDefaultsKeyAuthInfo = @"scola.auth.info";
 NSString * const kUserDefaultsKeyDeviceId = @"scola.device.id";
+NSString * const kUserDefaultsKeyLastFetchDate = @"scola.fetch.date";
 
 NSString * const kKeyEntityId = @"entityId";
 NSString * const kKeyEntityClass = @"entityClass";
@@ -102,17 +103,7 @@ static ScAppEnv *env = nil;
 }
 
 
-#pragma mark - Singleton instance handling
-
-+ (ScAppEnv *)env
-{
-    if (env == nil) {
-        env = [[super allocWithZone:nil] init];
-    }
-    
-    return env;
-}
-
+#pragma mark - Singleton initialisation
 
 + (id)allocWithZone:(NSZone *)zone
 {
@@ -144,7 +135,7 @@ static ScAppEnv *env = nil;
         
         isInternetConnectionWiFi = NO;
         isInternetConnectionWWAN = NO;
-
+        
         [self initialiseManagedDocument];
         
         entitiesToPersistToServer = [[NSMutableSet alloc] init];
@@ -154,6 +145,44 @@ static ScAppEnv *env = nil;
     }
     
     return self;
+}
+
+
+#pragma mark - Singleton instantiation
+
++ (ScAppEnv *)env
+{
+    if (env == nil) {
+        env = [[super allocWithZone:nil] init];
+    }
+    
+    return env;
+}
+
+
+#pragma mark - NSUserDefaults convenience accessors
+
++ (void)setUserDefault:(id)object forKey:(NSString *)key
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    [userDefaults setObject:object forKey:key];
+}
+
+
++ (id)userDefaultForKey:(NSString *)key
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    return [userDefaults objectForKey:key];
+}
+
+
++ (void)removeUserDefaultForKey:(NSString *)key
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    [userDefaults removeObjectForKey:key];
 }
 
 

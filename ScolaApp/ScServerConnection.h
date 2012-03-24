@@ -29,8 +29,6 @@ typedef enum {
     NSMutableURLRequest *URLRequest;
     NSMutableDictionary *URLParameters;
 	NSMutableData *responseData;
-    
-    NSInteger HTTPStatusCode;
 }
 
 extern NSString * const kURLParameterName;
@@ -40,7 +38,10 @@ extern NSString * const kURLParameterLastFetchDate;
 extern NSInteger const kHTTPStatusCodeOK;
 extern NSInteger const kHTTPStatusCodeCreated;
 extern NSInteger const kHTTPStatusCodeNoContent;
+extern NSInteger const kHTTPStatusCodeNotModified;
+extern NSInteger const kHTTPStatusCodeBadRequest;
 extern NSInteger const kHTTPStatusCodeUnauthorized;
+extern NSInteger const kHTTPStatusCodeForbidden;
 extern NSInteger const kHTTPStatusCodeNotFound;
 extern NSInteger const kHTTPStatusCodeInternalServerError;
 
@@ -48,8 +49,8 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 
 + (void)showAlertForError:(NSError *)error;
 + (void)showAlertForError:(NSError *)error tagWith:(int)tag usingDelegate:(id)delegate;
-+ (void)showAlertForHTTPStatus:(int)status;
-+ (void)showAlertForHTTPStatus:(int)status tagWith:(int)tag usingDelegate:(id)delegate;
++ (void)showAlertForHTTPStatus:(NSInteger)status;
++ (void)showAlertForHTTPStatus:(NSInteger)status tagWith:(int)tag usingDelegate:(id)delegate;
 
 - (id)init;
 

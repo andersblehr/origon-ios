@@ -10,6 +10,6 @@
 
 @interface ScJSONUtil : NSObject
 
-+ (NSDictionary *)dictionaryFromJSON:(NSData *)data;
++ (NSDictionary *)dictionaryFromJSON:(NSData *)JSONData;
 
 @end

@@ -37,21 +37,21 @@ static NSString * const kHTTPMethodGET = @"GET";
 static NSString * const kHTTPMethodPOST = @"POST";
 static NSString * const kHTTPMethodDELETE = @"DELETE";
 
-static NSString * const kHTTPHeaderContentType = @"Content-Type";
 static NSString * const kHTTPHeaderAccept = @"Accept";
 static NSString * const kHTTPHeaderAcceptCharset = @"Accept-Charset";
+static NSString * const kHTTPHeaderContentType = @"Content-Type";
+static NSString * const kHTTPHeaderIfModifiedSince = @"If-Modified-Since";
+static NSString * const kHTTPHeaderLastModified = @"Last-Modified";
 
 static NSString * const kMediaTypeJSONUTF8 = @"application/json;charset=utf-8";
 static NSString * const kMediaTypeJSON = @"application/json";
 
 static NSString * const kCharsetUTF8 = @"utf-8";
 
-static NSString * const kRESTHandlerScola = @"scola";
 static NSString * const kRESTHandlerStrings = @"strings";
 static NSString * const kRESTHandlerAuth = @"auth";
 static NSString * const kRESTHandlerModel = @"model";
 
-static NSString * const kRESTRouteStatus = @"status";
 static NSString * const kRESTRouteAuthRegistration = @"register";
 static NSString * const kRESTRouteAuthConfirmation = @"confirm";
 static NSString * const kRESTRouteAuthLogin = @"login";
@@ -64,12 +64,15 @@ static NSString * const kURLParameterVersion = @"version";
 
 NSString * const kURLParameterName = @"name";
 NSString * const kURLParameterAuthToken = @"token";
-NSString * const kURLParameterLastFetchDate = @"lastFetch";
+NSString * const kURLParameterLastFetchDate = @"since";
 
 NSInteger const kHTTPStatusCodeOK = 200;
 NSInteger const kHTTPStatusCodeCreated = 201;
 NSInteger const kHTTPStatusCodeNoContent = 204;
+NSInteger const kHTTPStatusCodeNotModified = 304;
+NSInteger const kHTTPStatusCodeBadRequest = 400;
 NSInteger const kHTTPStatusCodeUnauthorized = 401;
+NSInteger const kHTTPStatusCodeForbidden = 403;
 NSInteger const kHTTPStatusCodeNotFound = 404;
 NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
@@ -168,13 +171,13 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
-+ (void)showAlertForHTTPStatus:(int)status
++ (void)showAlertForHTTPStatus:(NSInteger)status
 {
     [self showAlertForHTTPStatus:status tagWith:NSIntegerMax usingDelegate:nil];
 }
 
 
-+ (void)showAlertForHTTPStatus:(int)status tagWith:(int)tag usingDelegate:(id)delegate
++ (void)showAlertForHTTPStatus:(NSInteger)status tagWith:(int)tag usingDelegate:(id)delegate
 {
     [self showAlertWithCode:status message:[NSHTTPURLResponse localizedStringForStatusCode:status] tag:tag delegate:delegate];
 }
@@ -239,6 +242,9 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         RESTRoute = kRESTRouteAuthConfirmation;
     } else if (authPhase == ScAuthPhaseLogin) {
         RESTRoute = kRESTRouteAuthLogin;
+        
+        NSString *lastFetchDate = [ScAppEnv userDefaultForKey:kUserDefaultsKeyLastFetchDate];
+        [self setValue:lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     }
     
     [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
@@ -249,6 +255,9 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
     RESTHandler = kRESTHandlerModel;
     RESTRoute = kRESTRouteModelFetch;
+    
+    NSString *lastFetchDate = [ScAppEnv userDefaultForKey:kUserDefaultsKeyLastFetchDate];
+    [self setValue:lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     
     [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
 }
@@ -298,6 +307,15 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response
 {
     HTTPStatusCode = response.statusCode;
+    
+    if (HTTPStatusCode == kHTTPStatusCodeOK) {
+        NSDictionary *responseHeaderFields = [response allHeaderFields];
+        NSString *fetchDate = [responseHeaderFields objectForKey:kHTTPHeaderLastModified];
+        
+        if (fetchDate) {
+            [ScAppEnv setUserDefault:fetchDate forKey:kUserDefaultsKeyLastFetchDate];
+        }
+    }
     
     [connectionDelegate didReceiveResponse:response];
 }

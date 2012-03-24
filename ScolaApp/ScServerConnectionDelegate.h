@@ -16,6 +16,6 @@
 
 @optional
 - (void)willSendRequest:(NSURLRequest *)request;
-- (void)finishedReceivingData:(NSDictionary *)dataAsDictionary;
+- (void)finishedReceivingData:(id)data;
 
 @end
