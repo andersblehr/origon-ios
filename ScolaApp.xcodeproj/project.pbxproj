@@ -38,7 +38,6 @@
 		5C2000F115039F1D002A327C /* ScHouseholdResidency.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000F015039F1D002A327C /* ScHouseholdResidency.m */; };
 		5C2000F415039F20002A327C /* ScHousehold.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000F315039F20002A327C /* ScHousehold.m */; };
 		5C23431214812A3100164478 /* ScStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* ScStrings.m */; };
-		5C2343161481544A00164478 /* ScJSONUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2343151481544A00164478 /* ScJSONUtil.m */; };
 		5C2E11141469CDE5005BDE61 /* ScServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* ScServerConnection.m */; };
 		5C36BE8A146E9DA100DD3CEA /* ScAppEnv.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE89146E9DA100DD3CEA /* ScAppEnv.m */; };
 		5C36BE9914704E6800DD3CEA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C36BE9814704E6800DD3CEA /* CoreData.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -49,7 +48,7 @@
 		5C3D42821485678F009A68E0 /* ScMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D42811485678F009A68E0 /* ScMainViewController.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */; };
 		5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C50581714CA1D05000D6587 /* QuartzCore.framework */; };
-		5C50581C14CAEC76000D6587 /* UIView+ScShadowEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C50581B14CAEC76000D6587 /* UIView+ScShadowEffects.m */; };
+		5C50581C14CAEC76000D6587 /* UIView+ScViewExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C50581B14CAEC76000D6587 /* UIView+ScViewExtensions.m */; };
 		5C5ED5CE14F2E9FE006BBDFB /* ScCachedEntity+ScCachedEntityExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED5CD14F2E9FE006BBDFB /* ScCachedEntity+ScCachedEntityExtensions.m */; };
 		5C629FEB14C61F98001DA01F /* 83-calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FE914C61F98001DA01F /* 83-calendar.png */; };
 		5C629FEC14C61F98001DA01F /* 83-calendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */; };
@@ -68,6 +67,7 @@
 		5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE011482877D001D90C6 /* Localizable.strings */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C88078F1484392B00ED5416 /* ScRegistrationView1Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C88078E1484392A00ED5416 /* ScRegistrationView1Controller.m */; };
+		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
 		5CBB63BD146080DF00A9133A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BC146080DF00A9133A /* CoreGraphics.framework */; };
@@ -163,8 +163,6 @@
 		5C2000F315039F20002A327C /* ScHousehold.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScHousehold.m; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* ScStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScStrings.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* ScStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScStrings.m; sourceTree = "<group>"; };
-		5C2343141481544A00164478 /* ScJSONUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScJSONUtil.h; sourceTree = "<group>"; };
-		5C2343151481544A00164478 /* ScJSONUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScJSONUtil.m; sourceTree = "<group>"; };
 		5C2E11121469CDE5005BDE61 /* ScServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScServerConnection.h; sourceTree = "<group>"; };
 		5C2E11131469CDE5005BDE61 /* ScServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScServerConnection.m; sourceTree = "<group>"; };
 		5C2E1133146ACFA9005BDE61 /* ScServerConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScServerConnectionDelegate.h; sourceTree = "<group>"; };
@@ -181,8 +179,8 @@
 		5C4F97791496AF88006E244F /* NSURL+ScURLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ScURLExtensions.h"; sourceTree = "<group>"; };
 		5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ScURLExtensions.m"; sourceTree = "<group>"; };
 		5C50581714CA1D05000D6587 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		5C50581A14CAEC76000D6587 /* UIView+ScShadowEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ScShadowEffects.h"; sourceTree = "<group>"; };
-		5C50581B14CAEC76000D6587 /* UIView+ScShadowEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ScShadowEffects.m"; sourceTree = "<group>"; };
+		5C50581A14CAEC76000D6587 /* UIView+ScViewExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "UIView+ScViewExtensions.h"; sourceTree = "<group>"; };
+		5C50581B14CAEC76000D6587 /* UIView+ScViewExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ScViewExtensions.m"; sourceTree = "<group>"; };
 		5C5ED5CC14F2E9FE006BBDFB /* ScCachedEntity+ScCachedEntityExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ScCachedEntity+ScCachedEntityExtensions.h"; sourceTree = "<group>"; };
 		5C5ED5CD14F2E9FE006BBDFB /* ScCachedEntity+ScCachedEntityExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ScCachedEntity+ScCachedEntityExtensions.m"; sourceTree = "<group>"; };
 		5C629FE914C61F98001DA01F /* 83-calendar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar.png"; sourceTree = "<group>"; };
@@ -208,6 +206,8 @@
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5C88078D1484392A00ED5416 /* ScRegistrationView1Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRegistrationView1Controller.h; sourceTree = "<group>"; };
 		5C88078E1484392A00ED5416 /* ScRegistrationView1Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegistrationView1Controller.m; sourceTree = "<group>"; };
+		5C9D3146151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+ScJSONSerializationExtensions.h"; sourceTree = "<group>"; };
+		5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+ScJSONSerializationExtensions.m"; sourceTree = "<group>"; };
 		5CBB63B4146080DF00A9133A /* ScolaApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScolaApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63B8146080DF00A9133A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5CBB63BA146080DF00A9133A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -374,14 +374,16 @@
 		5C4F9766149529BF006E244F /* Categories & Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				5C9D3146151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.h */,
+				5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m */,
 				5CD5B29B14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.h */,
 				5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */,
 				5CBE9C5114AB515F004FE2B7 /* NSString+ScStringExtensions.h */,
 				5CBE9C5214AB515F004FE2B7 /* NSString+ScStringExtensions.m */,
 				5C4F97791496AF88006E244F /* NSURL+ScURLExtensions.h */,
 				5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */,
-				5C50581A14CAEC76000D6587 /* UIView+ScShadowEffects.h */,
-				5C50581B14CAEC76000D6587 /* UIView+ScShadowEffects.m */,
+				5C50581A14CAEC76000D6587 /* UIView+ScViewExtensions.h */,
+				5C50581B14CAEC76000D6587 /* UIView+ScViewExtensions.m */,
 			);
 			name = "Categories & Extensions";
 			sourceTree = "<group>";
@@ -442,8 +444,6 @@
 			children = (
 				5C36BE88146E9DA100DD3CEA /* ScAppEnv.h */,
 				5C36BE89146E9DA100DD3CEA /* ScAppEnv.m */,
-				5C2343141481544A00164478 /* ScJSONUtil.h */,
-				5C2343151481544A00164478 /* ScJSONUtil.m */,
 				5CCF09051466A0CB00D41AB0 /* ScLogging.h */,
 				5C153EF914CC9815003A6B61 /* ScMainViewIconSection.h */,
 				5C153EFA14CC9815003A6B61 /* ScMainViewIconSection.m */,
@@ -695,7 +695,6 @@
 				5C36BE8A146E9DA100DD3CEA /* ScAppEnv.m in Sources */,
 				5C36BE9C1470507700DD3CEA /* ScolaApp.xcdatamodeld in Sources */,
 				5C23431214812A3100164478 /* ScStrings.m in Sources */,
-				5C2343161481544A00164478 /* ScJSONUtil.m in Sources */,
 				5C88078F1484392B00ED5416 /* ScRegistrationView1Controller.m in Sources */,
 				5CE987C114854FC6005A17C6 /* ScRegistrationView2Controller.m in Sources */,
 				5CE987C414856426005A17C6 /* ScEventViewController.m in Sources */,
@@ -706,7 +705,7 @@
 				5C629FFF14C624AD001DA01F /* ScMessageBoardViewController.m in Sources */,
 				5C62A00214C6252C001DA01F /* ScTaskViewController.m in Sources */,
 				5C62A00914C627D1001DA01F /* ScScheduleViewController.m in Sources */,
-				5C50581C14CAEC76000D6587 /* UIView+ScShadowEffects.m in Sources */,
+				5C50581C14CAEC76000D6587 /* UIView+ScViewExtensions.m in Sources */,
 				5C153EFB14CC9815003A6B61 /* ScMainViewIconSection.m in Sources */,
 				5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */,
 				5C5ED5CE14F2E9FE006BBDFB /* ScCachedEntity+ScCachedEntityExtensions.m in Sources */,
@@ -738,6 +737,7 @@
 				5CE68B3B151B8D4E006498F9 /* ScScola.m in Sources */,
 				5CE68B3E151C65FE006498F9 /* ScScolaMember.m in Sources */,
 				5CE68B41151C65FF006498F9 /* ScDevice.m in Sources */,
+				5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

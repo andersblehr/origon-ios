@@ -9,7 +9,7 @@
 #import "ScRegistrationView2Controller.h"
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
-#import "UIView+ScShadowEffects.h"
+#import "UIView+ScViewExtensions.h"
 
 #import "ScAppEnv.h"
 #import "ScLogging.h"

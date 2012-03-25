@@ -95,10 +95,13 @@
 
 - (id)entityFromDictionary:(NSDictionary *)dictionary
 {
-    // TODO: First check to see if entity exists locally!
+    NSString *entityId = [dictionary objectForKey:kKeyEntityId];
+    ScCachedEntity *entity = [self fetchEntityWithId:entityId];
     
-    NSString *entityClassName = [dictionary objectForKey:kKeyEntityClass];
-    ScCachedEntity *entity = [self entityForClass:NSClassFromString(entityClassName)];
+    if (!entity) {
+        NSString *entityClassName = [dictionary objectForKey:kKeyEntityClass];
+        entity = [self entityForClass:NSClassFromString(entityClassName) withId:entityId];
+    }
     
     NSEntityDescription *entityDescription = entity.entity;
     NSDictionary *attributes = [entityDescription attributesByName];
@@ -116,6 +119,29 @@
 }
 
 
+#pragma mark - Entity lookup
+
+- (id)fetchEntityWithId:(NSString *)entityId
+{
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"ScCachedEntity"];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"entityId == '%@'", entityId]];
+    
+    id entity = nil;
+    NSError *error = nil;
+    NSArray *resultsArray = [self executeFetchRequest:request error:&error];
+    
+    if (resultsArray == nil) {
+        ScLogError(@"Could not fetch entity: %@", [error localizedDescription]);
+    } else if ([resultsArray count] > 1) {
+        ScLogBreakage(@"Found more than one entity with entityId '%@'.", entityId);
+    } else if ([resultsArray count] == 1) {
+        entity = [resultsArray objectAtIndex:0];
+    }
+    
+    return entity;
+}
+
+
 #pragma mark - Persistence
 
 - (BOOL)saveUsingDelegate:(id)delegate
@@ -126,7 +152,7 @@
     if (didSaveOK) {
         [[[ScServerConnection alloc] init] persistEntitiesUsingDelegate:delegate];
     } else {
-        ScLogError(@"Error when saving managed object context: %@", [error userInfo]);
+        ScLogError(@"Error when saving managed object context: %@", [error localizedDescription]);
     }
     
     return didSaveOK;

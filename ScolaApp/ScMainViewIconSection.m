@@ -8,7 +8,7 @@
 
 #import "ScMainViewIconSection.h"
 
-#import "UIView+ScShadowEffects.h"
+#import "UIView+ScViewExtensions.h"
 
 #import "ScAppEnv.h"
 #import "ScLogging.h"

@@ -8,23 +8,17 @@
 
 #import "ScServerConnection.h"
 
+#import "NSJSONSerialization+ScJSONSerializationExtensions.h"
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "NSString+ScStringExtensions.h"
 #import "NSURL+ScURLExtensions.h"
 
 #import "ScAppDelegate.h"
 #import "ScAppEnv.h"
-#import "ScJSONUtil.h"
 #import "ScLogging.h"
 #import "ScStrings.h"
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
-
-@interface ScServerConnection (Internal) 
-
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
-
-@end
 
 @implementation ScServerConnection
 
@@ -132,12 +126,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         [URLRequest setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
         
         if (payload) {
-            NSError *error;
-            NSData *payloadAsJSON = [NSJSONSerialization dataWithJSONObject:payload options:NSJSONWritingPrettyPrinted error:&error];
-            
-            ScLogDebug(@"Payload as JSON: %@", [[NSString alloc] initWithData:payloadAsJSON encoding:NSUTF8StringEncoding]);
-            
-            URLRequest.HTTPBody = payloadAsJSON;
+            URLRequest.HTTPBody = [NSJSONSerialization serializeToJSON:payload];
         }
         
         if ([connectionDelegate respondsToSelector:@selector(willSendRequest:)]) {
@@ -335,8 +324,8 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     
     if (HTTPStatusCode == kHTTPStatusCodeOK) {
         if ([connectionDelegate respondsToSelector:@selector(finishedReceivingData:)]) {
-            NSDictionary *dataAsDictionary = [ScJSONUtil dictionaryFromJSON:responseData];
-            [connectionDelegate finishedReceivingData:dataAsDictionary];
+            id deserializedData = [NSJSONSerialization deserializeJSON:responseData];
+            [connectionDelegate finishedReceivingData:deserializedData];
         }
     }
 }
@@ -344,7 +333,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-	ScLogError(@"Connection failed with error: %d [%@]", error.code, error.localizedDescription);
+	ScLogError(@"Connection failed with error: %@ (%d)", error.localizedDescription, error.code);
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
     [connectionDelegate didFailWithError:error];

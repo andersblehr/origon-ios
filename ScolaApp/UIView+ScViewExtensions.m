@@ -1,5 +1,5 @@
 //
-//  UIView+ScShadowEffects.m
+//  UIView+ScViewExtensions.m
 //  ScolaApp
 //
 //  Created by Anders Blehr on 21.01.12.
@@ -8,7 +8,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#import "UIView+ScShadowEffects.h"
+#import "UIView+ScViewExtensions.h"
 
 
 @implementation UIView (ScShadowEffects)
@@ -16,10 +16,9 @@
 - (void)addGradientLayer
 {
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
+    
     gradientLayer.frame = self.bounds;
-    gradientLayer.colors = [NSArray arrayWithObjects:
-                       (id)[UIColor clearColor].CGColor,
-                       (id)[[UIColor blackColor] colorWithAlphaComponent:0.3].CGColor, nil];
+    gradientLayer.colors = [NSArray arrayWithObjects:(id)[UIColor clearColor].CGColor, (id)[[UIColor blackColor] colorWithAlphaComponent:0.3].CGColor, nil];
     
     [self.layer addSublayer:gradientLayer];
 }

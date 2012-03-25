@@ -12,12 +12,13 @@
 
 + (NSString *)generateUUID
 {
-    CFUUIDRef newUUID = CFUUIDCreate(kCFAllocatorDefault);
-    CFStringRef newUUIDAsCFString = CFUUIDCreateString(kCFAllocatorDefault, newUUID);
-    NSString *UUID = [[NSString stringWithString:(__bridge NSString *)newUUIDAsCFString] lowercaseString];
+    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
+    CFStringRef UUIDAsCFStringRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
     
-    CFRelease(newUUID);
-    CFRelease(newUUIDAsCFString);
+    NSString *UUID = [[NSString stringWithString:(__bridge NSString *)UUIDAsCFStringRef] lowercaseString];
+    
+    CFRelease(UUIDRef);
+    CFRelease(UUIDAsCFStringRef);
     
     return UUID;
 }

@@ -214,8 +214,7 @@ static ScAppEnv *env = nil;
 
 - (NSString *)authToken
 {
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    NSString *authToken = [userDefaults objectForKey:kUserDefaultsKeyAuthToken];
+    NSString *authToken = [ScAppEnv userDefaultForKey:kUserDefaultsKeyAuthToken];
     
     if (!authToken) {
         authToken = @"<null>";

@@ -10,7 +10,7 @@
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "NSString+ScStringExtensions.h"
-#import "UIView+ScShadowEffects.h"
+#import "UIView+ScViewExtensions.h"
 
 #import "ScAppEnv.h"
 #import "ScLogging.h"
@@ -34,8 +34,8 @@ static int const kMinimumPassordLength = 6;
 static int const kMembershipStatusMember = 0;
 static int const kMembershipStatusNewUser = 1;
 
-static NSString * const kAuthInfoKeyEmail = @"email";
 static NSString * const kAuthInfoKeyName = @"name";
+static NSString * const kAuthInfoKeyUserId = @"userId";
 static NSString * const kAuthInfoKeyPasswordHash = @"passwordHash";
 static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
 static NSString * const kAuthInfoKeyIsListed = @"isListed";
@@ -82,7 +82,7 @@ static int const kPopUpButtonTryAgain = 1;
         [typewriter1 prepareToPlay];
         [typewriter2 prepareToPlay];
     } else {
-        ScLogWarning(@"Error initialising audio: %@", error);
+        ScLogWarning(@"Error initialising audio: %@", [error localizedDescription]);
     }
 }
 
@@ -307,7 +307,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)goBackToUserRegistration
 {
     nameOrEmailOrRegistrationCodeField.text = [authInfo objectForKey:kAuthInfoKeyName];
-    emailOrPasswordField.text = [authInfo objectForKey:kAuthInfoKeyEmail];
+    emailOrPasswordField.text = [authInfo objectForKey:kAuthInfoKeyUserId];
     [self setUpForMembershipStatus:kMembershipStatusNewUser];
     [passwordField becomeFirstResponder];
     
@@ -468,7 +468,7 @@ static int const kPopUpButtonTryAgain = 1;
     authPhase = ScAuthPhaseConfirmation;
     
     nameAsEntered = [authInfo objectForKey:kAuthInfoKeyName];
-    emailAsEntered = [authInfo objectForKey:kAuthInfoKeyEmail];
+    emailAsEntered = [authInfo objectForKey:kAuthInfoKeyUserId];
     NSString *password = emailOrPasswordField.text;
     
     [self generateAndSetAuthTokenForUser:emailAsEntered];
@@ -482,14 +482,6 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)userDidLogIn:(NSString *)authId isNewUser:(BOOL)isNewUser
 {
-    NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:1];
-    //NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
-    NSString *authToken = [self generateAuthToken:authExpiryDate];
-    
-    [ScAppEnv setUserDefault:authId forKey:kUserDefaultsKeyAuthId];
-    [ScAppEnv setUserDefault:authToken forKey:kUserDefaultsKeyAuthToken];
-    [ScAppEnv setUserDefault:authExpiryDate forKey:kUserDefaultsKeyAuthExpiryDate];
-    
     if (isNewUser) {
         NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
 
@@ -556,7 +548,7 @@ static int const kPopUpButtonTryAgain = 1;
         
         if (isUserListed) {
             popUpTitle = [ScStrings stringForKey:strEmailSentToInviteePopUpTitle];
-            popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentToInviteePopUpMessage], [authInfo objectForKey:kAuthInfoKeyEmail]];
+            popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentToInviteePopUpMessage], [authInfo objectForKey:kAuthInfoKeyUserId]];
         } else {
             popUpTitle = [ScStrings stringForKey:strEmailSentPopUpTitle];
             popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentPopUpMessage], emailAsEntered];
@@ -678,7 +670,7 @@ static int const kPopUpButtonTryAgain = 1;
     if (authInfo) {
         [self setUpForMembershipStatus:kMembershipStatusNewUser];
         
-        NSString *email = [authInfo objectForKey:kAuthInfoKeyEmail];
+        NSString *email = [authInfo objectForKey:kAuthInfoKeyUserId];
         NSString *popUpTitle = [ScStrings stringForKey:strWelcomeBackPopUpTitle];
         NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strWelcomeBackPopUpMessage], email];
         NSString *continueButtonTitle = [ScStrings stringForKey:strHaveCode];
@@ -845,7 +837,7 @@ static int const kPopUpButtonTryAgain = 1;
     registrationCodesDoMatch = [registrationCodeAsEntered isEqualToString:registrationCodeAsSent];
     
     if (registrationCodesDoMatch) {
-        NSString *email = [authInfo objectForKey:kAuthInfoKeyEmail];
+        NSString *email = [authInfo objectForKey:kAuthInfoKeyUserId];
         NSString *password = emailOrPasswordField.text;
         
         NSString *passwordHashAsPersisted = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
@@ -1017,8 +1009,6 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)finishedReceivingData:(id)data
 {
-    ScLogDebug(@"Received data: %@", data);
-    
     [self indicatePendingServerSession:NO];
     
     if (authPhase == ScAuthPhaseRegistration) {
