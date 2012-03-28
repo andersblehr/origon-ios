@@ -11,7 +11,7 @@
 #import "Reachability.h"
 
 #import "ScAppDelegate.h"
-#import "ScAppEnv.h"
+#import "ScMeta.h"
 #import "ScLogging.h"
 #import "ScServerConnection.h"
 
@@ -28,10 +28,10 @@
     
     if (internetStatus == ReachableViaWiFi) {
         ScLogInfo(@"Connected to the internet via Wi-Fi.");
-        [ScAppEnv env].isInternetConnectionWiFi = YES;
+        [ScMeta m].isInternetConnectionWiFi = YES;
     } else if (internetStatus == ReachableViaWWAN) {
         ScLogInfo(@"Connected to the internet via mobile web (WWAN).");
-        [ScAppEnv env].isInternetConnectionWWAN = YES;
+        [ScMeta m].isInternetConnectionWWAN = YES;
     } else {
         ScLogInfo(@"Not connected to the internet.");
     }
@@ -48,11 +48,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    ScLogDebug(@"Device is %@.", [ScAppEnv env].deviceType);
-    ScLogDebug(@"Device name is %@.", [ScAppEnv env].deviceName);
+    ScLogDebug(@"Device is %@.", [ScMeta m].deviceType);
+    ScLogDebug(@"Device name is %@.", [ScMeta m].deviceName);
     ScLogDebug(@"System name is %@.", [UIDevice currentDevice].systemName);
     ScLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
-    ScLogDebug(@"System language is '%@'", [ScAppEnv env].displayLanguage);
+    ScLogDebug(@"System language is '%@'", [ScMeta m].displayLanguage);
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(reachabilityChanged:)

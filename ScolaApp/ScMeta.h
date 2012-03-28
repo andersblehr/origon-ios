@@ -10,7 +10,7 @@
 
 @class ScServerConnection;
 
-@interface ScAppEnv : NSObject {
+@interface ScMeta : NSObject {
 @private
     UIManagedDocument *managedDocument;
     
@@ -39,7 +39,7 @@ extern NSString * const kKeyEntityClass;
 
 @property (weak, readonly) NSManagedObjectContext *managedObjectContext;
 
-+ (ScAppEnv *)env;
++ (ScMeta *)m;
 
 + (void)setUserDefault:(id)object forKey:(NSString *)key;
 + (id)userDefaultForKey:(NSString *)key;

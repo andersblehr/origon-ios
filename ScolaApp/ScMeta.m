@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 Rhelba Software. All rights reserved.
 //
 
-#import "ScAppEnv.h"
+#import "ScMeta.h"
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
@@ -15,7 +15,7 @@
 #import "ScServerConnection.h"
 #import "ScUUIDGenerator.h"
 
-@implementation ScAppEnv
+@implementation ScMeta
 
 NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
 
@@ -38,7 +38,7 @@ NSString * const kKeyEntityClass = @"entityClass";
 
 @synthesize managedObjectContext;
 
-static ScAppEnv *env = nil;
+static ScMeta *env = nil;
 
 
 #pragma mark - Auxiliary methods
@@ -107,7 +107,7 @@ static ScAppEnv *env = nil;
 
 + (id)allocWithZone:(NSZone *)zone
 {
-    return [self env];
+    return [self m];
 }
 
 
@@ -150,7 +150,7 @@ static ScAppEnv *env = nil;
 
 #pragma mark - Singleton instantiation
 
-+ (ScAppEnv *)env
++ (ScMeta *)m
 {
     if (env == nil) {
         env = [[super allocWithZone:nil] init];
@@ -214,7 +214,7 @@ static ScAppEnv *env = nil;
 
 - (NSString *)authToken
 {
-    NSString *authToken = [ScAppEnv userDefaultForKey:kUserDefaultsKeyAuthToken];
+    NSString *authToken = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthToken];
     
     if (!authToken) {
         authToken = @"<null>";

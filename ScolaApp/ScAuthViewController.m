@@ -12,7 +12,7 @@
 #import "NSString+ScStringExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
-#import "ScAppEnv.h"
+#import "ScMeta.h"
 #import "ScLogging.h"
 #import "ScServerConnection.h"
 #import "ScRegistrationView1Controller.h"
@@ -224,7 +224,7 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (NSString *)generateAuthToken:(NSDate *)expiryDate
 {
-    NSString *deviceId = [ScAppEnv env].deviceId;
+    NSString *deviceId = [ScMeta m].deviceId;
     NSString *expiryDateAsString = expiryDate.description;
     NSString *saltyDiff = [deviceId diff:expiryDateAsString];
     
@@ -238,16 +238,16 @@ static int const kPopUpButtonTryAgain = 1;
     //NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
     NSString *authToken = [self generateAuthToken:authExpiryDate];
     
-    [ScAppEnv setUserDefault:userId forKey:kUserDefaultsKeyAuthId];
-    [ScAppEnv setUserDefault:authToken forKey:kUserDefaultsKeyAuthToken];
-    [ScAppEnv setUserDefault:authExpiryDate forKey:kUserDefaultsKeyAuthExpiryDate];
+    [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyAuthId];
+    [ScMeta setUserDefault:authToken forKey:kUserDefaultsKeyAuthToken];
+    [ScMeta setUserDefault:authExpiryDate forKey:kUserDefaultsKeyAuthExpiryDate];
 }
 
 
 - (void)invalidateAuthToken
 {
-    [ScAppEnv removeUserDefaultForKey:kUserDefaultsKeyAuthToken];
-    [ScAppEnv removeUserDefaultForKey:kUserDefaultsKeyAuthExpiryDate];
+    [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthToken];
+    [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthExpiryDate];
 }
 
 
@@ -255,8 +255,8 @@ static int const kPopUpButtonTryAgain = 1;
 {
     BOOL isTokenValid = NO;
     
-    NSString *authTokenAsStored = [ScAppEnv userDefaultForKey:kUserDefaultsKeyAuthToken];
-    NSDate *authExpiryDate = [ScAppEnv userDefaultForKey:kUserDefaultsKeyAuthExpiryDate];
+    NSString *authTokenAsStored = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthToken];
+    NSDate *authExpiryDate = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthExpiryDate];
     
     if (authTokenAsStored && authExpiryDate) {
         NSDate *now = [NSDate date];
@@ -311,7 +311,7 @@ static int const kPopUpButtonTryAgain = 1;
     [self setUpForMembershipStatus:kMembershipStatusNewUser];
     [passwordField becomeFirstResponder];
     
-    [ScAppEnv removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
+    [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
     authInfo = nil;
 }
 
@@ -441,7 +441,6 @@ static int const kPopUpButtonTryAgain = 1;
     
     serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
-    //[serverConnection setValue:@"" forURLParameter:kURLParameterLastFetchDate];
     [serverConnection authenticateForPhase:ScAuthPhaseLogin usingDelegate:self];
 }
 
@@ -483,7 +482,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)userDidLogIn:(NSString *)authId isNewUser:(BOOL)isNewUser
 {
     if (isNewUser) {
-        NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
+        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
 
         if (isUserListed) { /*
             NSDictionary *memberInfo = [authInfo objectForKey:kAuthInfoKeyMemberInfo];
@@ -541,7 +540,7 @@ static int const kPopUpButtonTryAgain = 1;
 
     if (!isActive) {
         NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:authInfo];
-        [ScAppEnv setUserDefault:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
+        [ScMeta setUserDefault:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
         
         NSString *popUpTitle = nil;
         NSString *popUpMessage = nil;
@@ -637,7 +636,7 @@ static int const kPopUpButtonTryAgain = 1;
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
     [self navigationController].navigationBarHidden = YES;
     
-    NSData *authInfoArchive = [ScAppEnv userDefaultForKey:kUserDefaultsKeyAuthInfo];
+    NSData *authInfoArchive = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthInfo];
     
     if (authInfoArchive) {
         authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
@@ -647,7 +646,7 @@ static int const kPopUpButtonTryAgain = 1;
     } else {
         [self setUpForMembershipStatus:kMembershipStatusMember];
         
-        NSString *email = [ScAppEnv userDefaultForKey:kUserDefaultsKeyAuthId];
+        NSString *email = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthId];
         
         if (email) {
             nameOrEmailOrRegistrationCodeField.text = email;
@@ -663,7 +662,7 @@ static int const kPopUpButtonTryAgain = 1;
     
     [self startSplashSequenceThread];
     
-    if ([ScAppEnv env].isInternetConnectionAvailable) {
+    if ([ScMeta m].isInternetConnectionAvailable) {
         [ScStrings refreshStrings];
     }
     
@@ -784,7 +783,7 @@ static int const kPopUpButtonTryAgain = 1;
             }
             
             if (!alertMessage) {
-                NSString *userId = [ScAppEnv userDefaultForKey:kUserDefaultsKeyAuthId];
+                NSString *userId = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthId];
                 emailIsRegistered = [userId isEqualToString:emailOrPasswordField.text];
             }
             
@@ -857,7 +856,7 @@ static int const kPopUpButtonTryAgain = 1;
     BOOL shouldReturn = registrationCodesDoMatch && passwordsDoMatch;
     
     if (shouldReturn) {
-        [ScAppEnv removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
+        [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
         [self confirmNewUser];
     } else {        
         NSString *tryAgainTitle = [ScStrings stringForKey:strTryAgain];

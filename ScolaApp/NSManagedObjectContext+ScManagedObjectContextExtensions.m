@@ -8,8 +8,8 @@
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
-#import "ScAppEnv.h"
 #import "ScLogging.h"
+#import "ScMeta.h"
 #import "ScServerConnection.h"
 #import "ScUUIDGenerator.h"
 

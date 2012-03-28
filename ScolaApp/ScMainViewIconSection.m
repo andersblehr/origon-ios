@@ -10,8 +10,8 @@
 
 #import "UIView+ScViewExtensions.h"
 
-#import "ScAppEnv.h"
 #import "ScLogging.h"
+#import "ScMeta.h"
 
 static CGFloat const kHeadingViewAlpha = 0.3f;
 static CGFloat const kIconButtonAlpha = 0.7f;

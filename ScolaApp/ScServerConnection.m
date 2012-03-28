@@ -14,8 +14,8 @@
 #import "NSURL+ScURLExtensions.h"
 
 #import "ScAppDelegate.h"
-#import "ScAppEnv.h"
 #import "ScLogging.h"
+#import "ScMeta.h"
 #import "ScStrings.h"
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
@@ -91,7 +91,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (NSString *)scolaServer
 {
-    return [ScAppEnv env].isSimulatorDevice ? kScolaDevServer : kScolaProdServer;
+    return [ScMeta m].isSimulatorDevice ? kScolaDevServer : kScolaProdServer;
 }
 
 
@@ -110,13 +110,13 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)performHTTPMethod:(NSString *)HTTPMethod withPayload:(NSArray *)payload usingDelegate:(id)delegate
 {
-    if ([ScAppEnv env].isInternetConnectionAvailable) {
+    if ([ScMeta m].isInternetConnectionAvailable) {
         connectionDelegate = delegate;
         
-        [URLParameters setValue:[[ScAppEnv env] authToken] forKey:kURLParameterAuthToken];
-        [URLParameters setValue:[ScAppEnv env].deviceId forKey:kURLParameterDeviceId];
-        [URLParameters setValue:[ScAppEnv env].deviceType forKey:kURLParameterDevice];
-        [URLParameters setValue:[[ScAppEnv env] bundleVersion] forKey:kURLParameterVersion];
+        [URLParameters setValue:[[ScMeta m] authToken] forKey:kURLParameterAuthToken];
+        [URLParameters setValue:[ScMeta m].deviceId forKey:kURLParameterDeviceId];
+        [URLParameters setValue:[ScMeta m].deviceType forKey:kURLParameterDevice];
+        [URLParameters setValue:[[ScMeta m] bundleVersion] forKey:kURLParameterVersion];
         
         URLRequest.HTTPMethod = HTTPMethod;
         URLRequest.URL = [[[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute] URLByAppendingURLParameters:URLParameters];
@@ -214,7 +214,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 - (void)fetchStringsUsingDelegate:(id)delegate
 {
     RESTHandler = kRESTHandlerStrings;
-    RESTRoute = [ScAppEnv env].displayLanguage;
+    RESTRoute = [ScMeta m].displayLanguage;
     
     [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
 }
@@ -232,7 +232,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     } else if (authPhase == ScAuthPhaseLogin) {
         RESTRoute = kRESTRouteAuthLogin;
         
-        NSString *lastFetchDate = [ScAppEnv userDefaultForKey:kUserDefaultsKeyLastFetchDate];
+        NSString *lastFetchDate = [ScMeta userDefaultForKey:kUserDefaultsKeyLastFetchDate];
         [self setValue:lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     }
     
@@ -245,7 +245,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     RESTHandler = kRESTHandlerModel;
     RESTRoute = kRESTRouteModelFetch;
     
-    NSString *lastFetchDate = [ScAppEnv userDefaultForKey:kUserDefaultsKeyLastFetchDate];
+    NSString *lastFetchDate = [ScMeta userDefaultForKey:kUserDefaultsKeyLastFetchDate];
     [self setValue:lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     
     [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
@@ -254,7 +254,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)persistEntitiesUsingDelegate:(id)delegate
 {
-    NSArray *entitiesToPersist = [[ScAppEnv env] entitiesToPersistToServer];
+    NSArray *entitiesToPersist = [[ScMeta m] entitiesToPersistToServer];
     
     if (entitiesToPersist.count > 0) {
         RESTHandler = kRESTHandlerModel;
@@ -302,7 +302,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         NSString *fetchDate = [responseHeaderFields objectForKey:kHTTPHeaderLastModified];
         
         if (fetchDate) {
-            [ScAppEnv setUserDefault:fetchDate forKey:kUserDefaultsKeyLastFetchDate];
+            [ScMeta setUserDefault:fetchDate forKey:kUserDefaultsKeyLastFetchDate];
         }
     }
     

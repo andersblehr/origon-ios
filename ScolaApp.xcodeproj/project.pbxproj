@@ -39,7 +39,7 @@
 		5C2000F415039F20002A327C /* ScHousehold.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000F315039F20002A327C /* ScHousehold.m */; };
 		5C23431214812A3100164478 /* ScStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* ScStrings.m */; };
 		5C2E11141469CDE5005BDE61 /* ScServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* ScServerConnection.m */; };
-		5C36BE8A146E9DA100DD3CEA /* ScAppEnv.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE89146E9DA100DD3CEA /* ScAppEnv.m */; };
+		5C36BE8A146E9DA100DD3CEA /* ScMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE89146E9DA100DD3CEA /* ScMeta.m */; };
 		5C36BE9914704E6800DD3CEA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C36BE9814704E6800DD3CEA /* CoreData.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		5C36BE9C1470507700DD3CEA /* ScolaApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */; };
 		5C3A319314C4D967001A783E /* 112-group.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3A319214C4D967001A783E /* 112-group.png */; };
@@ -166,8 +166,8 @@
 		5C2E11121469CDE5005BDE61 /* ScServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScServerConnection.h; sourceTree = "<group>"; };
 		5C2E11131469CDE5005BDE61 /* ScServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScServerConnection.m; sourceTree = "<group>"; };
 		5C2E1133146ACFA9005BDE61 /* ScServerConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScServerConnectionDelegate.h; sourceTree = "<group>"; };
-		5C36BE88146E9DA100DD3CEA /* ScAppEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScAppEnv.h; sourceTree = "<group>"; };
-		5C36BE89146E9DA100DD3CEA /* ScAppEnv.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScAppEnv.m; sourceTree = "<group>"; };
+		5C36BE88146E9DA100DD3CEA /* ScMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMeta.h; sourceTree = "<group>"; };
+		5C36BE89146E9DA100DD3CEA /* ScMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMeta.m; sourceTree = "<group>"; };
 		5C36BE9814704E6800DD3CEA /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		5C36BE9B1470507700DD3CEA /* ScolaApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ScolaApp.xcdatamodel; sourceTree = "<group>"; };
 		5C3A319214C4D967001A783E /* 112-group.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group.png"; sourceTree = "<group>"; };
@@ -442,11 +442,11 @@
 		5CB49DD014881F36006EA2F8 /* Auxiliary Classes */ = {
 			isa = PBXGroup;
 			children = (
-				5C36BE88146E9DA100DD3CEA /* ScAppEnv.h */,
-				5C36BE89146E9DA100DD3CEA /* ScAppEnv.m */,
 				5CCF09051466A0CB00D41AB0 /* ScLogging.h */,
 				5C153EF914CC9815003A6B61 /* ScMainViewIconSection.h */,
 				5C153EFA14CC9815003A6B61 /* ScMainViewIconSection.m */,
+				5C36BE88146E9DA100DD3CEA /* ScMeta.h */,
+				5C36BE89146E9DA100DD3CEA /* ScMeta.m */,
 				5C2E11121469CDE5005BDE61 /* ScServerConnection.h */,
 				5C2E11131469CDE5005BDE61 /* ScServerConnection.m */,
 				5C23431014812A3000164478 /* ScStrings.h */,
@@ -692,7 +692,7 @@
 				5CBB63D2146080DF00A9133A /* ScAuthViewController.m in Sources */,
 				5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */,
 				5C2E11141469CDE5005BDE61 /* ScServerConnection.m in Sources */,
-				5C36BE8A146E9DA100DD3CEA /* ScAppEnv.m in Sources */,
+				5C36BE8A146E9DA100DD3CEA /* ScMeta.m in Sources */,
 				5C36BE9C1470507700DD3CEA /* ScolaApp.xcdatamodeld in Sources */,
 				5C23431214812A3100164478 /* ScStrings.m in Sources */,
 				5C88078F1484392B00ED5416 /* ScRegistrationView1Controller.m in Sources */,

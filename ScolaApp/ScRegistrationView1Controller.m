@@ -11,8 +11,8 @@
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
-#import "ScAppEnv.h"
 #import "ScLogging.h"
+#import "ScMeta.h"
 #import "ScRegistrationView2Controller.h"
 #import "ScStrings.h"
 

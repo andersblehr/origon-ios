@@ -8,7 +8,7 @@
 
 #import "ScStrings.h"
 
-#import "ScAppEnv.h"
+#import "ScMeta.h"
 #import "ScLogging.h"
 #import "ScServerConnection.h"
 
@@ -137,8 +137,8 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 + (void)refreshStrings
 {
-    if ([ScAppEnv env].isInternetConnectionAvailable) {
-        if (!strings || [ScAppEnv env].isInternetConnectionWiFi) { // TODO: Only if req'd
+    if ([ScMeta m].isInternetConnectionAvailable) {
+        if (!strings || [ScMeta m].isInternetConnectionWiFi) { // TODO: Only if req'd
             [[[ScServerConnection alloc] init] fetchStringsUsingDelegate:self];
         }
     } else {

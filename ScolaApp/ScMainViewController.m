@@ -12,8 +12,8 @@
 
 #import "UIView+ScViewExtensions.h"
 
-#import "ScAppEnv.h"
 #import "ScLogging.h"
+#import "ScMeta.h"
 #import "ScMainViewIconSection.h"
 #import "ScStrings.h"
 

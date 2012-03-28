@@ -8,8 +8,8 @@
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 
-#import "ScAppEnv.h"
 #import "ScLogging.h"
+#import "ScMeta.h"
 
 #import "ScDevice.h"
 #import "ScDeviceListing.h"

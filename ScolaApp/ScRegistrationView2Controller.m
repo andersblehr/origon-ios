@@ -11,7 +11,7 @@
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
-#import "ScAppEnv.h"
+#import "ScMeta.h"
 #import "ScLogging.h"
 #import "ScStrings.h"
 #import "ScServerConnection.h"
@@ -61,7 +61,7 @@ static int const kPopUpButtonUseNew = 1;
     UIAlertView *alertView = nil;
     
     if (deviceNameField.text.length == 0) {
-        NSString *deviceType = [ScAppEnv env].deviceType;
+        NSString *deviceType = [ScMeta m].deviceType;
         NSString *deviceTypeDefinite;
         NSString *deviceTypePossessive;
         
@@ -76,7 +76,7 @@ static int const kPopUpButtonUseNew = 1;
             deviceTypePossessive = [ScStrings stringForKey:strPhonePossessive];
         }
         
-        NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strNoDeviceNameAlert], deviceTypeDefinite, deviceTypePossessive, [ScAppEnv env].deviceName];
+        NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strNoDeviceNameAlert], deviceTypeDefinite, deviceTypePossessive, [ScMeta m].deviceName];
         NSString *useConfiguredButtonTitle = [ScStrings stringForKey:strUseConfigured];
         NSString *useNewButtonTitle = [ScStrings stringForKey:strUseNew];
         
@@ -100,7 +100,7 @@ static int const kPopUpButtonUseNew = 1;
     BOOL isDone = (!alertView);
     
     if (isDone) {
-        NSManagedObjectContext *context = [ScAppEnv env].managedObjectContext;
+        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
         
         ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
         defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
@@ -113,8 +113,8 @@ static int const kPopUpButtonUseNew = 1;
         scolaMembership.isActive = [NSNumber numberWithBool:YES];
         scolaMembership.isAdmin = [NSNumber numberWithBool:YES];
         
-        ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScAppEnv env].deviceId];
-        device.type = [ScAppEnv env].deviceType;
+        ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
+        device.type = [ScMeta m].deviceType;
         
         ScDeviceListing *deviceListing = [context entityForClass:ScDeviceListing.class inScola:homeScola];
         deviceListing.displayName = deviceNameField.text;
@@ -129,7 +129,7 @@ static int const kPopUpButtonUseNew = 1;
         
         member.mobilePhone = mobilePhoneField.text;
         member.activeSince = [NSDate date];
-        // member.didRegister = [NSNumber numberWithBool:YES];
+        member.didRegister = [NSNumber numberWithBool:YES];
         
         [context saveUsingDelegate:self];
         
@@ -205,7 +205,7 @@ static int const kPopUpButtonUseNew = 1;
 {
     [super viewWillAppear:animated];
     
-    NSDictionary *viewState = [ScAppEnv userDefaultForKey:self.class.description];
+    NSDictionary *viewState = [ScMeta userDefaultForKey:self.class.description];
     
     if (userIsListed) {
         if ([member.gender isEqualToString:kGenderFemale]) {
@@ -215,17 +215,17 @@ static int const kPopUpButtonUseNew = 1;
         }
         
         mobilePhoneField.text = member.mobilePhone;
-        deviceNameField.text = [ScAppEnv env].deviceName;
+        deviceNameField.text = [ScMeta m].deviceName;
     } else if (viewState) {
         genderControl.selectedSegmentIndex = [[viewState objectForKey:@"member.gender"] intValue];
         mobilePhoneField.text = [viewState objectForKey:@"member.mobilePhone"];
         deviceNameField.text = [viewState objectForKey:@"device.name"];
         
-        [ScAppEnv removeUserDefaultForKey:self.class.description];
+        [ScMeta removeUserDefaultForKey:self.class.description];
     } else {
         genderControl.selectedSegmentIndex = kGenderSegmentFemale;
         mobilePhoneField.text = @"";
-        deviceNameField.text = [ScAppEnv env].deviceName;
+        deviceNameField.text = [ScMeta m].deviceName;
     }
 }
 
@@ -249,7 +249,7 @@ static int const kPopUpButtonUseNew = 1;
         [viewState setObject:mobilePhoneField.text forKey:@"member.mobilePhone"];
         [viewState setObject:deviceNameField.text forKey:@"device.name"];
         
-        [ScAppEnv setUserDefault:viewState forKey:self.class.description];
+        [ScMeta setUserDefault:viewState forKey:self.class.description];
     }
     
 	[super viewWillDisappear:animated];
@@ -282,7 +282,7 @@ static int const kPopUpButtonUseNew = 1;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == kPopUpButtonUseBuiltIn) {
-        deviceNameField.text = [ScAppEnv env].deviceName;
+        deviceNameField.text = [ScMeta m].deviceName;
     } else if (buttonIndex == kPopUpButtonUseNew) {
         [deviceNameField becomeFirstResponder];
     }
@@ -296,7 +296,7 @@ static int const kPopUpButtonUseNew = 1;
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
     
     if (response.statusCode == kHTTPStatusCodeCreated) {
-        [[ScAppEnv env] didPersistEntitiesToServer];
+        [[ScMeta m] didPersistEntitiesToServer];
     } else {
         [ScServerConnection showAlertForHTTPStatus:response.statusCode];
     }
