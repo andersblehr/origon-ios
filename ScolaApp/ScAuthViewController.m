@@ -520,8 +520,6 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)finishedReceivingLoginData:(NSArray *)data
 {
-    ScLogDebug(@"Received array: %@", data);
-    
     if (authPhase == ScAuthPhaseConfirmation) {
         [self userDidLogIn:emailAsEntered isNewUser:YES];
     } else if (authPhase == ScAuthPhaseLogin) {

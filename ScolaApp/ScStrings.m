@@ -179,9 +179,8 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 + (void)finishedReceivingData:(NSDictionary *)data
 {
-    ScLogDebug(@"Received strings: %@", data);
-    
     strings = data;
+    
     [strings writeToFile:[self fullPathToStringsPlist] atomically:YES];
 }
 
