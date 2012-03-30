@@ -115,7 +115,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         
         [URLParameters setValue:[[ScMeta m] authToken] forKey:kURLParameterAuthToken];
         [URLParameters setValue:[ScMeta m].deviceId forKey:kURLParameterDeviceId];
-        [URLParameters setValue:[ScMeta m].deviceType forKey:kURLParameterDevice];
+        [URLParameters setValue:[UIDevice currentDevice].model forKey:kURLParameterDevice];
         [URLParameters setValue:[[ScMeta m] bundleVersion] forKey:kURLParameterVersion];
         
         URLRequest.HTTPMethod = HTTPMethod;

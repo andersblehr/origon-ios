@@ -31,8 +31,11 @@ extern NSString * const kKeyEntityId;
 extern NSString * const kKeyEntityClass;
 
 @property (strong, readonly) NSString *deviceId;
-@property (strong, readonly) NSString *deviceType;
-@property (strong, readonly) NSString *deviceName;
+
+@property (nonatomic, readonly) BOOL is_iPadDevice;
+@property (nonatomic, readonly) BOOL is_iPodDevice;
+@property (nonatomic, readonly) BOOL is_iPhoneDevice;
+@property (nonatomic, readonly) BOOL isSimulatorDevice;
 
 @property (nonatomic) BOOL isInternetConnectionWiFi;
 @property (nonatomic) BOOL isInternetConnectionWWAN;
@@ -48,11 +51,6 @@ extern NSString * const kKeyEntityClass;
 - (NSString *)bundleVersion;
 - (NSString *)displayLanguage;
 - (NSString *)authToken;
-
-- (BOOL)is_iPadDevice;
-- (BOOL)is_iPhoneDevice;
-- (BOOL)is_iPodTouchDevice;
-- (BOOL)isSimulatorDevice;
 
 - (BOOL)isInternetConnectionAvailable;
 

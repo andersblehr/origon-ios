@@ -30,8 +30,11 @@ NSString * const kKeyEntityId = @"entityId";
 NSString * const kKeyEntityClass = @"entityClass";
 
 @synthesize deviceId;
-@synthesize deviceType;
-@synthesize deviceName;
+
+@synthesize is_iPadDevice;
+@synthesize is_iPodDevice;
+@synthesize is_iPhoneDevice;
+@synthesize isSimulatorDevice;
 
 @synthesize isInternetConnectionWiFi;
 @synthesize isInternetConnectionWWAN;
@@ -122,16 +125,17 @@ static ScMeta *env = nil;
     self = [super init];
     
     if (self) {
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        deviceId = [userDefaults objectForKey:kUserDefaultsKeyDeviceId];
+        deviceId = [ScMeta userDefaultForKey:kUserDefaultsKeyDeviceId];
         
         if (!deviceId) {
             deviceId = [ScUUIDGenerator generateUUID];
-            [userDefaults setObject:deviceId forKey:kUserDefaultsKeyDeviceId];
+            [ScMeta setUserDefault:deviceId forKey:kUserDefaultsKeyDeviceId];
         }
         
-        deviceType = [UIDevice currentDevice].model;
-        deviceName = [UIDevice currentDevice].name;
+        is_iPadDevice = [[UIDevice currentDevice].model hasPrefix:@"iPad"];
+        is_iPodDevice = [[UIDevice currentDevice].model hasPrefix:@"iPod"];
+        is_iPhoneDevice = [[UIDevice currentDevice].model hasPrefix:@"iPhone"];
+        isSimulatorDevice = ([[UIDevice currentDevice].model rangeOfString:@"Simulator"].location != NSNotFound);
         
         isInternetConnectionWiFi = NO;
         isInternetConnectionWWAN = NO;
@@ -221,30 +225,6 @@ static ScMeta *env = nil;
     }
     
     return authToken;
-}
-
-
-- (BOOL)is_iPadDevice
-{
-    return [deviceType hasPrefix:@"iPad"];
-}
-
-
-- (BOOL)is_iPhoneDevice
-{
-    return [deviceType hasPrefix:@"iPhone"];
-}
-
-
-- (BOOL)is_iPodTouchDevice
-{
-    return [deviceType hasPrefix:@"iPod"];
-}
-
-
-- (BOOL)isSimulatorDevice
-{
-    return ([deviceType rangeOfString:@"Simulator"].location != NSNotFound);
 }
 
 

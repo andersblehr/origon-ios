@@ -61,7 +61,7 @@ static int const kPopUpButtonUseNew = 1;
     UIAlertView *alertView = nil;
     
     if (deviceNameField.text.length == 0) {
-        NSString *deviceType = [ScMeta m].deviceType;
+        NSString *deviceType = [UIDevice currentDevice].model;
         NSString *deviceTypeDefinite;
         NSString *deviceTypePossessive;
         
@@ -76,7 +76,7 @@ static int const kPopUpButtonUseNew = 1;
             deviceTypePossessive = [ScStrings stringForKey:strPhonePossessive];
         }
         
-        NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strNoDeviceNameAlert], deviceTypeDefinite, deviceTypePossessive, [ScMeta m].deviceName];
+        NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strNoDeviceNameAlert], deviceTypeDefinite, deviceTypePossessive, [UIDevice currentDevice].name];
         NSString *useConfiguredButtonTitle = [ScStrings stringForKey:strUseConfigured];
         NSString *useNewButtonTitle = [ScStrings stringForKey:strUseNew];
         
@@ -114,7 +114,7 @@ static int const kPopUpButtonUseNew = 1;
         scolaMembership.isAdmin = [NSNumber numberWithBool:YES];
         
         ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
-        device.type = [ScMeta m].deviceType;
+        device.type = [UIDevice currentDevice].model;
         
         ScDeviceListing *deviceListing = [context entityForClass:ScDeviceListing.class inScola:homeScola];
         deviceListing.displayName = deviceNameField.text;
@@ -215,7 +215,7 @@ static int const kPopUpButtonUseNew = 1;
         }
         
         mobilePhoneField.text = member.mobilePhone;
-        deviceNameField.text = [ScMeta m].deviceName;
+        deviceNameField.text = [UIDevice currentDevice].name;
     } else if (viewState) {
         genderControl.selectedSegmentIndex = [[viewState objectForKey:@"member.gender"] intValue];
         mobilePhoneField.text = [viewState objectForKey:@"member.mobilePhone"];
@@ -225,7 +225,7 @@ static int const kPopUpButtonUseNew = 1;
     } else {
         genderControl.selectedSegmentIndex = kGenderSegmentFemale;
         mobilePhoneField.text = @"";
-        deviceNameField.text = [ScMeta m].deviceName;
+        deviceNameField.text = [UIDevice currentDevice].name;
     }
 }
 
@@ -282,7 +282,7 @@ static int const kPopUpButtonUseNew = 1;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == kPopUpButtonUseBuiltIn) {
-        deviceNameField.text = [ScMeta m].deviceName;
+        deviceNameField.text = [UIDevice currentDevice].name;
     } else if (buttonIndex == kPopUpButtonUseNew) {
         [deviceNameField becomeFirstResponder];
     }

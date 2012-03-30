@@ -48,8 +48,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    ScLogDebug(@"Device is %@.", [ScMeta m].deviceType);
-    ScLogDebug(@"Device name is %@.", [ScMeta m].deviceName);
+    ScLogDebug(@"Device is %@.", [UIDevice currentDevice].model);
+    ScLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);
     ScLogDebug(@"System name is %@.", [UIDevice currentDevice].systemName);
     ScLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
     ScLogDebug(@"System language is '%@'", [ScMeta m].displayLanguage);
