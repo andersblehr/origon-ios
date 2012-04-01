@@ -57,6 +57,49 @@
 }
 
 
+- (id)mergeEntityFromDictionary:(NSDictionary *)dictionary
+{
+    NSString *entityId = [dictionary objectForKey:kKeyEntityId];
+    NSString *entityClass = [dictionary objectForKey:kKeyEntityClass];
+    
+    ScCachedEntity *entity = [self fetchEntityWithId:entityId];
+    
+    if (!entity) {
+        entity = [self entityForClass:NSClassFromString(entityClass) withId:entityId];
+        ScLogDebug(@"Created new entity (id: %@; class: %@).", entityId, entityClass);
+    } else {
+        ScLogDebug(@"Found entity in CD cache (id: %@; class: %@).", entityId, entityClass);
+    }
+    
+    NSEntityDescription *entityDescription = entity.entity;
+    NSDictionary *attributes = [entityDescription attributesByName];
+    
+    for (NSString *name in [attributes allKeys]) {
+        id value = [dictionary objectForKey:name];
+        
+        if (value) {
+            [entity setValue:value forKey:name];
+            ScLogDebug(@"Setting attribute (attribute: %@, value: %@).", name, value);
+        }
+    }
+    
+    return entity;
+}
+
+
+- (BOOL)save
+{
+    NSError *error;
+    BOOL didSaveOK = [self save:&error];
+    
+    if (!didSaveOK) {
+        ScLogError(@"Error when saving managed object context: %@ [%@]", [error localizedDescription], [error userInfo]);
+    }
+    
+    return didSaveOK;
+}
+
+
 #pragma mark - Entity creation
 
 - (ScScola *)newScolaWithName:(NSString *)name;
@@ -93,32 +136,6 @@
 }
 
 
-- (id)entityFromDictionary:(NSDictionary *)dictionary
-{
-    NSString *entityId = [dictionary objectForKey:kKeyEntityId];
-    ScCachedEntity *entity = [self fetchEntityWithId:entityId];
-    
-    if (!entity) {
-        NSString *entityClassName = [dictionary objectForKey:kKeyEntityClass];
-        entity = [self entityForClass:NSClassFromString(entityClassName) withId:entityId];
-    }
-    
-    NSEntityDescription *entityDescription = entity.entity;
-    NSDictionary *attributes = [entityDescription attributesByName];
-    NSDictionary *relationships = [entityDescription relationshipsByName];
-    
-    for (NSString *key in [attributes allKeys]) {
-        [entity setValueFromDictionary:[dictionary objectForKey:key] forKey:key];
-    }
-    
-    for (NSString *relationshipName in [relationships allKeys]) {
-        // TODO: Set relationships as well!
-    }
-    
-    return entity;
-}
-
-
 #pragma mark - Entity lookup
 
 - (id)fetchEntityWithId:(NSString *)entityId
@@ -142,7 +159,32 @@
 }
 
 
-#pragma mark - Persistence
+#pragma mark - Local & remote persistence
+
+- (void)mergeEntitiesFromDictionaryArray:(NSArray *)dictionaryArray
+{
+    NSMutableDictionary *dictionaries = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *entities = [[NSMutableDictionary alloc] init];
+    
+    for (NSDictionary *entityDictionary in dictionaryArray) {
+        ScCachedEntity *entity = [self mergeEntityFromDictionary:entityDictionary];
+        
+        [dictionaries setObject:entityDictionary forKey:entity.entityId];
+        [entities setObject:entity forKey:entity.entityId];
+    }
+    
+    for (NSString *entityId in [entities allKeys]) {
+        ScCachedEntity *entity = [entities objectForKey:entityId];
+        NSDictionary *entityAsDictionary = [dictionaries objectForKey:entityId];
+        
+        [entity internaliseRelationships:entityAsDictionary entities:entities];
+    }
+    
+    if (![self save]) {
+        ScLogError(@"Entities from server could not be saved.");
+    }
+}
+
 
 - (BOOL)saveUsingDelegate:(id)delegate
 {

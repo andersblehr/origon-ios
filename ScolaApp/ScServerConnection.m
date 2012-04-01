@@ -113,20 +113,20 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     if ([ScMeta m].isInternetConnectionAvailable) {
         connectionDelegate = delegate;
         
-        [URLParameters setValue:[[ScMeta m] authToken] forKey:kURLParameterAuthToken];
-        [URLParameters setValue:[ScMeta m].deviceId forKey:kURLParameterDeviceId];
-        [URLParameters setValue:[UIDevice currentDevice].model forKey:kURLParameterDevice];
-        [URLParameters setValue:[[ScMeta m] bundleVersion] forKey:kURLParameterVersion];
+        [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
+        [self setValue:[ScMeta m].deviceId forURLParameter:kURLParameterDeviceId];
+        [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
+        [self setValue:[ScMeta m].appVersion forURLParameter:kURLParameterVersion];
         
         URLRequest.HTTPMethod = HTTPMethod;
         URLRequest.URL = [[[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute] URLByAppendingURLParameters:URLParameters];
         
-        [URLRequest setValue:kMediaTypeJSONUTF8 forHTTPHeaderField:kHTTPHeaderContentType];
-        [URLRequest setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
-        [URLRequest setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
+        [self setValue:kMediaTypeJSONUTF8 forHTTPHeaderField:kHTTPHeaderContentType];
+        [self setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
+        [self setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
         
         if (payload) {
-            URLRequest.HTTPBody = [NSJSONSerialization serializeToJSON:payload];
+            URLRequest.HTTPBody = [NSJSONSerialization serialiseToJSON:payload];
         }
         
         if ([connectionDelegate respondsToSelector:@selector(willSendRequest:)]) {
@@ -199,13 +199,17 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field
 {
-    [URLRequest setValue:value forHTTPHeaderField:field];
+    if (value) {
+        [URLRequest setValue:value forHTTPHeaderField:field];
+    }
 }
 
 
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter
 {
-    [URLParameters setObject:value forKey:parameter];
+    if (value) {
+        [URLParameters setObject:value forKey:parameter];
+    }
 }
 
 
@@ -324,8 +328,8 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     
     if (HTTPStatusCode == kHTTPStatusCodeOK) {
         if ([connectionDelegate respondsToSelector:@selector(finishedReceivingData:)]) {
-            id deserializedData = [NSJSONSerialization deserializeJSON:responseData];
-            [connectionDelegate finishedReceivingData:deserializedData];
+            id deserialisedData = [NSJSONSerialization deserialiseJSON:responseData];
+            [connectionDelegate finishedReceivingData:deserialisedData];
         }
     }
 }

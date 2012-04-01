@@ -20,30 +20,6 @@
 @synthesize window;
 
 
-#pragma mark - Reachability change notification handling
-
-- (void)checkConnectivity:(Reachability *)reachability
-{
-    NetworkStatus internetStatus = [reachability currentReachabilityStatus];
-    
-    if (internetStatus == ReachableViaWiFi) {
-        ScLogInfo(@"Connected to the internet via Wi-Fi.");
-        [ScMeta m].isInternetConnectionWiFi = YES;
-    } else if (internetStatus == ReachableViaWWAN) {
-        ScLogInfo(@"Connected to the internet via mobile web (WWAN).");
-        [ScMeta m].isInternetConnectionWWAN = YES;
-    } else {
-        ScLogInfo(@"Not connected to the internet.");
-    }
-}
-
-
-- (void)reachabilityChanged:(NSNotification *)notification
-{
-    [self checkConnectivity:(Reachability *)[notification object]];
-}
-
-
 #pragma mark - Lifecycle methods
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -52,12 +28,7 @@
     ScLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);
     ScLogDebug(@"System name is %@.", [UIDevice currentDevice].systemName);
     ScLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
-    ScLogDebug(@"System language is '%@'", [ScMeta m].displayLanguage);
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(reachabilityChanged:)
-                                                 name:kReachabilityChangedNotification
-                                               object:nil];
+    ScLogDebug(@"System language is '%@'", [[ScMeta m] displayLanguage]);
     
     return YES;
 }
@@ -91,10 +62,7 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
-    [self checkConnectivity:internetReachability];
-
-    [internetReachability startNotifier];
+    [[ScMeta m] checkInternetReachability];
 }
 
 

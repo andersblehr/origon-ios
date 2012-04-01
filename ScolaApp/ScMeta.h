@@ -1,5 +1,5 @@
 //
-//  ScAppEnv.h
+//  ScMeta.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 12.11.11.
@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#import "Reachability.h"
 
 @class ScServerConnection;
 
@@ -16,6 +18,8 @@
     
     NSMutableSet *entitiesToPersistToServer;
     NSMutableSet *entitiesToDeleteFromServer;
+    
+    Reachability *internetReachability;
 }
 
 extern NSString * const kBundleID;
@@ -30,15 +34,18 @@ extern NSString * const kUserDefaultsKeyLastFetchDate;
 extern NSString * const kKeyEntityId;
 extern NSString * const kKeyEntityClass;
 
-@property (strong, readonly) NSString *deviceId;
-
 @property (nonatomic, readonly) BOOL is_iPadDevice;
 @property (nonatomic, readonly) BOOL is_iPodDevice;
 @property (nonatomic, readonly) BOOL is_iPhoneDevice;
 @property (nonatomic, readonly) BOOL isSimulatorDevice;
 
-@property (nonatomic) BOOL isInternetConnectionWiFi;
-@property (nonatomic) BOOL isInternetConnectionWWAN;
+@property (nonatomic, readonly) BOOL isInternetConnectionWiFi;
+@property (nonatomic, readonly) BOOL isInternetConnectionWWAN;
+
+@property (strong, readonly) NSString *deviceId;
+@property (strong, readonly) NSString *appVersion;
+@property (strong, readonly) NSString *displayLanguage;
+@property (strong, readonly) NSString *authToken;
 
 @property (weak, readonly) NSManagedObjectContext *managedObjectContext;
 
@@ -48,10 +55,7 @@ extern NSString * const kKeyEntityClass;
 + (id)userDefaultForKey:(NSString *)key;
 + (void)removeUserDefaultForKey:(NSString *)key;
 
-- (NSString *)bundleVersion;
-- (NSString *)displayLanguage;
-- (NSString *)authToken;
-
+- (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;
 
 - (NSArray *)entitiesToPersistToServer;

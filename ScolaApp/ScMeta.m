@@ -1,5 +1,5 @@
 //
-//  ScAppEnv.m
+//  ScMeta.m
 //  ScolaApp
 //
 //  Created by Anders Blehr on 12.11.11.
@@ -39,14 +39,18 @@ NSString * const kKeyEntityClass = @"entityClass";
 @synthesize isInternetConnectionWiFi;
 @synthesize isInternetConnectionWWAN;
 
-@synthesize managedObjectContext;
+@synthesize appVersion;
+@synthesize displayLanguage;
+@synthesize authToken;
 
-static ScMeta *env = nil;
+@synthesize managedObjectContext = context;
+
+static ScMeta *m = nil;
 
 
 #pragma mark - Auxiliary methods
 
-- (void)initialiseManagedDocument
+- (void)initialiseCoreData
 {
     NSURL *applicationDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
     NSURL *docURL = [applicationDocumentsDirectory URLByAppendingPathComponent:@"ScolaApp"];
@@ -61,8 +65,8 @@ static ScMeta *env = nil;
     if ([[NSFileManager defaultManager] fileExistsAtPath:[docURL path]]) {
         [managedDocument openWithCompletionHandler:^(BOOL success){
             if (success) {
-                ScLogDebug(@"Core Data initialised and ready.");
-                managedObjectContext = managedDocument.managedObjectContext;
+                ScLogDebug(@"Core Data initialised and ready (location: %@).", docURL);
+                context = managedDocument.managedObjectContext;
             } else {
                 ScLogError(@"Error initialising Core Data.");
             }
@@ -70,8 +74,8 @@ static ScMeta *env = nil;
     } else {
         [managedDocument saveToURL:docURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
             if (success) {
-                ScLogDebug(@"Core Data instantiated and ready.");
-                managedObjectContext = managedDocument.managedObjectContext;
+                ScLogDebug(@"Core Data instantiated and ready (location: %@).", docURL);
+                context = managedDocument.managedObjectContext;
             } else {
                 ScLogError(@"Error instantiating Core Data.");
             }
@@ -106,7 +110,36 @@ static ScMeta *env = nil;
 }
 
 
-#pragma mark - Singleton initialisation
+- (void)checkReachability:(Reachability *)reachability
+{
+    if (reachability) {
+        internetReachability = reachability;
+    } else {
+        internetReachability = [Reachability reachabilityForInternetConnection];
+    }
+    
+    NetworkStatus internetStatus = [internetReachability currentReachabilityStatus];
+    
+    isInternetConnectionWiFi = (internetStatus == ReachableViaWiFi);
+    isInternetConnectionWWAN = (internetStatus == ReachableViaWWAN);
+    
+    if (internetStatus == ReachableViaWiFi) {
+        ScLogInfo(@"Connected to the internet via Wi-Fi.");
+    } else if (internetStatus == ReachableViaWWAN) {
+        ScLogInfo(@"Connected to the internet via mobile web (WWAN).");
+    } else {
+        ScLogInfo(@"Not connected to the internet.");
+    }
+}
+
+
+- (void)reachabilityChanged:(NSNotification *)notification
+{
+    [self checkReachability:(Reachability *)[notification object]];
+}
+
+
+#pragma mark - Singleton instantiation & initialisation
 
 + (id)allocWithZone:(NSZone *)zone
 {
@@ -125,6 +158,16 @@ static ScMeta *env = nil;
     self = [super init];
     
     if (self) {
+        NSString *deviceModel = [UIDevice currentDevice].model;
+        
+        is_iPadDevice = [deviceModel hasPrefix:@"iPad"];
+        is_iPodDevice = [deviceModel hasPrefix:@"iPod"];
+        is_iPhoneDevice = [deviceModel hasPrefix:@"iPhone"];
+        isSimulatorDevice = ([deviceModel rangeOfString:@"Simulator"].location != NSNotFound);
+        
+        isInternetConnectionWiFi = NO;
+        isInternetConnectionWWAN = NO;
+        
         deviceId = [ScMeta userDefaultForKey:kUserDefaultsKeyDeviceId];
         
         if (!deviceId) {
@@ -132,35 +175,30 @@ static ScMeta *env = nil;
             [ScMeta setUserDefault:deviceId forKey:kUserDefaultsKeyDeviceId];
         }
         
-        is_iPadDevice = [[UIDevice currentDevice].model hasPrefix:@"iPad"];
-        is_iPodDevice = [[UIDevice currentDevice].model hasPrefix:@"iPod"];
-        is_iPhoneDevice = [[UIDevice currentDevice].model hasPrefix:@"iPhone"];
-        isSimulatorDevice = ([[UIDevice currentDevice].model rangeOfString:@"Simulator"].location != NSNotFound);
+        appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
+        displayLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
         
-        isInternetConnectionWiFi = NO;
-        isInternetConnectionWWAN = NO;
-        
-        [self initialiseManagedDocument];
+        [self initialiseCoreData];
         
         entitiesToPersistToServer = [[NSMutableSet alloc] init];
         entitiesToDeleteFromServer = [[NSMutableSet alloc] init];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contextDidSave:) name:NSManagedObjectContextDidSaveNotification object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
     }
     
     return self;
 }
 
 
-#pragma mark - Singleton instantiation
-
 + (ScMeta *)m
 {
-    if (env == nil) {
-        env = [[super allocWithZone:nil] init];
+    if (m == nil) {
+        m = [[super allocWithZone:nil] init];
     }
     
-    return env;
+    return m;
 }
 
 
@@ -192,43 +230,36 @@ static ScMeta *env = nil;
 
 #pragma mark - Accessors
 
+- (NSString *)authToken
+{
+    return [ScMeta userDefaultForKey:kUserDefaultsKeyAuthToken];
+}
+
+
 - (NSManagedObjectContext *)managedObjectContext
 {
-    if (!managedObjectContext) {
+    if (!context) {
         ScLogBreakage(@"Attempt to access Core Data before it's available");
     }
     
-    return managedObjectContext;
-}
-
-
-#pragma mark - Meta information
-
-- (NSString *)bundleVersion
-{
-    return [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
-}
-
-
-- (NSString *)displayLanguage
-{
-    return [[NSLocale preferredLanguages] objectAtIndex:0];
-}
-
-
-- (NSString *)authToken
-{
-    NSString *authToken = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthToken];
-    
-    if (!authToken) {
-        authToken = @"<null>";
-    }
-    
-    return authToken;
+    return context;
 }
 
 
 #pragma mark - Connection state
+
+- (void)checkInternetReachability
+{
+    internetReachability = [Reachability reachabilityForInternetConnection];
+    [self checkReachability:internetReachability];
+    
+    if ([internetReachability startNotifier]) {
+        ScLogInfo(@"Reachability notifier is running.");
+    } else {
+        ScLogWarning(@"Could not start reachability notifier, checking internet connectivity at app activation only.");
+    }
+}
+
 
 - (BOOL)isInternetConnectionAvailable
 {
@@ -236,7 +267,7 @@ static ScMeta *env = nil;
 }
 
 
-#pragma mark - Remote persistence
+#pragma mark - Remote entity persistence
 
 - (NSArray *)entitiesToPersistToServer
 {

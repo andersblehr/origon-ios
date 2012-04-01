@@ -520,6 +520,8 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)finishedReceivingLoginData:(NSArray *)data
 {
+    [[ScMeta m].managedObjectContext mergeEntitiesFromDictionaryArray:data];
+    
     if (authPhase == ScAuthPhaseConfirmation) {
         [self userDidLogIn:emailAsEntered isNewUser:YES];
     } else if (authPhase == ScAuthPhaseLogin) {
@@ -595,6 +597,8 @@ static int const kPopUpButtonTryAgain = 1;
     if ([self isAuthTokenValid]) {
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
+        [self invalidateAuthToken];
+        
         [darkLinenView addGradientLayer];
         [darkLinenView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignCurrentFirstResponder)]];
         

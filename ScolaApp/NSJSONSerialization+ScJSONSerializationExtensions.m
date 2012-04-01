@@ -13,43 +13,43 @@
 
 @implementation NSJSONSerialization (ScJSONSerializationExtensions)
 
-+ (NSData *)serializeToJSON:(id)object
++ (NSData *)serialiseToJSON:(id)object
 {
-    NSData *serializedObject = nil;
+    NSData *serialisedObject = nil;
     
     if (object) {
         NSError *error;
-        serializedObject = [self dataWithJSONObject:object options:NSJSONWritingPrettyPrinted error:&error];
+        serialisedObject = [self dataWithJSONObject:object options:NSJSONWritingPrettyPrinted error:&error];
         
-        if (!serializedObject) {
+        if (!serialisedObject) {
             ScLogVerbose(@"Error serialising object to JSON: %@", object);
             ScLogError(@"JSON serialisation error: %@", [error localizedDescription]);
         }
     }
     
-    ScLogDebug(@"Produced JSON serialization: %@", [[NSString alloc] initWithData:serializedObject encoding:NSUTF8StringEncoding]);
+    ScLogDebug(@"Produced JSON serialisation: %@", [[NSString alloc] initWithData:serialisedObject encoding:NSUTF8StringEncoding]);
     
-    return serializedObject;
+    return serialisedObject;
 }
 
 
-+ (id)deserializeJSON:(NSData *)JSONData
++ (id)deserialiseJSON:(NSData *)JSONData
 {
-    id deserializedJSON = nil;
+    id deserialisedJSON = nil;
     
     if (JSONData) {
         NSError *error;
-        deserializedJSON = [self JSONObjectWithData:JSONData options:NSJSONWritingPrettyPrinted error:&error];
+        deserialisedJSON = [self JSONObjectWithData:JSONData options:NSJSONWritingPrettyPrinted error:&error];
         
-        if (!deserializedJSON) {
+        if (!deserialisedJSON) {
             ScLogVerbose(@"Error deserialising JSON data: %@", [[NSString alloc] initWithData:JSONData encoding:NSUTF8StringEncoding]);
             ScLogError(@"JSON deserialisation error: %@", [error localizedDescription]);
         }
     }
     
-    ScLogDebug(@"Deserialized JSON: %@", deserializedJSON);
+    ScLogDebug(@"Deserialised JSON: %@", deserialisedJSON);
     
-    return deserializedJSON;
+    return deserialisedJSON;
 }
 
 @end

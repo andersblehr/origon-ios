@@ -19,12 +19,12 @@ typedef enum {
 
 - (ScRemotePersistenceState)persistenceState;
 - (void)setPersistenceState:(ScRemotePersistenceState)remotePersistenceState;
-- (void)setValueFromDictionary:(id)value forKey:(NSString *)key;
 
 - (BOOL)isSharedEntity;
 - (BOOL)isReferenceToSharedEntity;
 - (NSString *)expiresInTimeframe;
 
 - (NSDictionary *)toDictionary;
+- (void)internaliseRelationships:(NSDictionary *)entityAsDictionary entities:(NSDictionary *)entityLookUp;
 
 @end

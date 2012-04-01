@@ -8,6 +8,8 @@
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 
+#import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
+
 #import "ScLogging.h"
 #import "ScMeta.h"
 
@@ -21,11 +23,11 @@
 @implementation ScCachedEntity (ScCachedEntityExtensions)
 
 
-#pragma mark - Auxiliary methods
+#pragma mark - Overridden methods
 
-- (id)dictionaryValueForKey:(NSString *)key
+- (id)valueForKey:(NSString *)key
 {
-    id value = [self valueForKey:key];
+    id value = [super valueForKey:key];
     
     if (value && [value isKindOfClass:NSDate.class]) {
         value = [NSNumber numberWithLongLong:[value timeIntervalSince1970] * 1000];
@@ -34,6 +36,20 @@
     return value;
 }
 
+
+- (void)setValue:(id)value forKey:(NSString *)key
+{
+    NSAttributeDescription *attribute = [[self.entity attributesByName] objectForKey:key];
+    
+    if (attribute.attributeType == NSDateAttributeType) {
+        value = [NSDate dateWithTimeIntervalSince1970:[value doubleValue] / 1000];
+    }
+    
+    [super setValue:value forKey:key];
+}
+
+
+#pragma mark - Auxiliary methods
 
 - (NSDictionary *)entityRef
 {
@@ -57,16 +73,6 @@
 - (void)setPersistenceState:(ScRemotePersistenceState)remotePersistenceState
 {
     self.remotePersistenceState = [NSNumber numberWithInt:remotePersistenceState];
-}
-
-
-- (void)setValueFromDictionary:(id)value forKey:(NSString *)key
-{
-    if (value && [value isKindOfClass:NSDate.class]) {
-        value = [NSDate dateWithTimeIntervalSince1970:[value doubleValue] / 1000];
-    }
-    
-    [self setValue:value forKey:key];
 }
 
 
@@ -104,11 +110,11 @@
 }
 
 
-#pragma mark - Serialisation to dictionary
+#pragma mark - Dictionary serialisation & deserialisation
 
 - (NSDictionary *)toDictionary
 {
-    NSMutableDictionary *properties = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *entityDictionary = [[NSMutableDictionary alloc] init];
         
     if (self.persistenceState == ScRemotePersistenceStateDirtyNotScheduled) {
         self.persistenceState = ScRemotePersistenceStateDirtyScheduled;
@@ -117,13 +123,13 @@
         NSDictionary *attributes = [entityDescription attributesByName];
         NSDictionary *relationships = [entityDescription relationshipsByName];
         
-        [properties setObject:entityDescription.name forKey:kKeyEntityClass];
+        [entityDictionary setObject:entityDescription.name forKey:kKeyEntityClass];
         
         for (NSString *name in [attributes allKeys]) {
-            id value = [self dictionaryValueForKey:name];
+            id value = [self valueForKey:name];
             
             if (value) {
-                [properties setObject:value forKey:name];
+                [entityDictionary setObject:value forKey:name];
             }
         }
         
@@ -138,18 +144,80 @@
                     [targetEntityRefs addObject:[entity entityRef]];
                 }
                 
-                [properties setObject:targetEntityRefs forKey:name];
+                [entityDictionary setObject:targetEntityRefs forKey:name];
             } else {
                 ScCachedEntity *entity = [self valueForKey:name];
                 
                 if (entity) {
-                    [properties setObject:[entity entityRef] forKey:name];
+                    [entityDictionary setObject:[entity entityRef] forKey:name];
                 }
             }
         }
     }
     
-    return properties;
+    return entityDictionary;
+}
+
+
+- (void)internaliseRelationships:(NSDictionary *)entityAsDictionary entities:(NSDictionary *)entityLookUp
+{
+    ScLogDebug(@"Internalising relationships for entity (id: %@; class: %@).", self.entityId, [entityAsDictionary objectForKey:kKeyEntityClass]);
+    
+    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+    NSEntityDescription *entityDescription = self.entity;
+    NSDictionary *relationships = [entityDescription relationshipsByName];
+    
+    for (NSString *name in [relationships allKeys]) {
+        NSRelationshipDescription *relationship = [relationships objectForKey:name];
+        
+        if (!relationship.isToMany) {
+            ScLogDebug(@"Internalising relationship '%@'.", name);
+            
+            NSString *entityRefName = [NSString stringWithFormat:@"%@%@", name, @"Ref"];
+            NSDictionary *entityRef = [entityAsDictionary objectForKey:entityRefName];
+            
+            if (entityRef) {
+                NSString *entityId = [entityRef objectForKey:kKeyEntityId];
+                NSString *entityClass = [entityRef objectForKey:kKeyEntityClass];
+                
+                ScLogDebug(@"Found entity ref (id: %@; class: %@).", entityId, entityClass);
+                
+                ScCachedEntity *entity = [entityLookUp objectForKey:entityId];
+                
+                if (!entity) {
+                    ScLogDebug(@"Ref'ed entity not in dictionary, looking in CD cache.");
+                    entity = [context fetchEntityWithId:entityId];
+                    
+                    if (!entity) {
+                        ScLogDebug(@"Ref'ed entity not in CD cache either.");
+                    }
+                } else {
+                    ScLogDebug(@"Found ref'ed entity in dictionary.");
+                }
+                
+                if (entity) {
+                    [self setValue:entity forKey:name];
+                    
+                    ScLogDebug(@"Relationship '%@' internalised OK.", name);
+                    
+                    NSRelationshipDescription *inverse = [relationship inverseRelationship];
+                    
+                    if (inverse.isToMany) {
+                        NSString *inverseName = inverse.name;
+                        NSMutableSet *inverseSet = [entity mutableSetValueForKey:inverseName];
+                        
+                        [inverseSet addObject:self];
+                        
+                        ScLogDebug(@"Inverse relationship '%@' internalised OK.", inverseName);
+                    }
+                } else {
+                    ScLogBreakage(@"Cannot internalise relationship to lost entity (id: %@).", entityId);
+                }
+            } else {
+                ScLogDebug(@"No entity ref for relationship (name: %@).", name);
+            }
+        }
+    }
 }
 
 @end

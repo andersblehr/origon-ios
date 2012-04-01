@@ -15,9 +15,10 @@
 - (ScScola *)newScolaWithName:(NSString *)name;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola withId:(NSString *)entityId;
-- (id)entityFromDictionary:(NSDictionary *)dictionary;
 
 - (id)fetchEntityWithId:(NSString *)entityId;
+
+- (void)mergeEntitiesFromDictionaryArray:(NSArray *)dictionaryArray;
 
 - (BOOL)saveUsingDelegate:(id)delegate;
 
