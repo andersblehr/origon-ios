@@ -141,7 +141,7 @@
         <attribute name="phoneNumber" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="postCodeAndCity" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="residencies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScScolaMemberResidency" inverseName="address" inverseEntity="ScScolaMemberResidency" syncable="YES"/>
-        <relationship name="scolas" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="address" inverseEntity="ScScola" syncable="YES"/>
+        <relationship name="scolas" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScScola" inverseName="address" inverseEntity="ScScola" syncable="YES"/>
     </entity>
     <entity name="ScScolaMember" representedClassName="ScScolaMember" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="activeSince" optional="YES" attributeType="Date" syncable="YES"/>
