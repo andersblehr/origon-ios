@@ -2,7 +2,7 @@
 //  ScScolaMember.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 23.03.12.
+//  Created by Anders Blehr on 02.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScDeviceListing, ScDocument, ScEvent, ScEventInvitation, ScHousehold, ScHouseholdResidency, ScMessageItem, ScOrganisationContact, ScScheduledAbsence, ScScolaMembership, ScToDoAssignment;
+@class ScDevice, ScDocument, ScEvent, ScEventInvitation, ScMessageItem, ScScheduledAbsence, ScScolaMemberResidency, ScScolaMembership, ScToDoAssignment;
 
 @interface ScScolaMember : ScCachedEntity
 
@@ -24,13 +24,11 @@
 @property (nonatomic, retain) NSString * passwordHash;
 @property (nonatomic, retain) NSData * picture;
 @property (nonatomic, retain) NSSet *contactForEvents;
-@property (nonatomic, retain) NSSet *contactForOrganisations;
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;
 @property (nonatomic, retain) NSSet *eventInvitations;
 @property (nonatomic, retain) NSSet *messageItems;
-@property (nonatomic, retain) NSSet *otherResidences;
-@property (nonatomic, retain) ScHousehold *primaryResidence;
+@property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @property (nonatomic, retain) NSSet *scolaMemberships;
 @property (nonatomic, retain) NSSet *toDoAssignments;
@@ -43,13 +41,8 @@
 - (void)addContactForEvents:(NSSet *)values;
 - (void)removeContactForEvents:(NSSet *)values;
 
-- (void)addContactForOrganisationsObject:(ScOrganisationContact *)value;
-- (void)removeContactForOrganisationsObject:(ScOrganisationContact *)value;
-- (void)addContactForOrganisations:(NSSet *)values;
-- (void)removeContactForOrganisations:(NSSet *)values;
-
-- (void)addDevicesObject:(ScDeviceListing *)value;
-- (void)removeDevicesObject:(ScDeviceListing *)value;
+- (void)addDevicesObject:(ScDevice *)value;
+- (void)removeDevicesObject:(ScDevice *)value;
 - (void)addDevices:(NSSet *)values;
 - (void)removeDevices:(NSSet *)values;
 
@@ -68,10 +61,10 @@
 - (void)addMessageItems:(NSSet *)values;
 - (void)removeMessageItems:(NSSet *)values;
 
-- (void)addOtherResidencesObject:(ScHouseholdResidency *)value;
-- (void)removeOtherResidencesObject:(ScHouseholdResidency *)value;
-- (void)addOtherResidences:(NSSet *)values;
-- (void)removeOtherResidences:(NSSet *)values;
+- (void)addResidenciesObject:(ScScolaMemberResidency *)value;
+- (void)removeResidenciesObject:(ScScolaMemberResidency *)value;
+- (void)addResidencies:(NSSet *)values;
+- (void)removeResidencies:(NSSet *)values;
 
 - (void)addScheduledAbsencesObject:(ScScheduledAbsence *)value;
 - (void)removeScheduledAbsencesObject:(ScScheduledAbsence *)value;

@@ -2,7 +2,7 @@
 //  ScScola.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 22.03.12.
+//  Created by Anders Blehr on 02.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,26 +10,33 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScDocumentRepository, ScEvent, ScEventInvitationScola, ScMessageBoard, ScOrganisation, ScScola, ScScolaMembership, ScToDoItem, ScYearlySchedule;
+@class ScCachedEntity, ScDocumentRepository, ScEvent, ScEventInvitationScola, ScMessageBoard, ScScola, ScScolaAddress, ScScolaMembership, ScToDoItem, ScYearlySchedule;
 
 @interface ScScola : ScCachedEntity
 
 @property (nonatomic, retain) NSString * descriptionText;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSData * picture;
+@property (nonatomic, retain) ScScolaAddress *address;
+@property (nonatomic, retain) NSSet *containedEntities;
 @property (nonatomic, retain) NSSet *documentRepositories;
 @property (nonatomic, retain) NSSet *eventInvitations;
 @property (nonatomic, retain) NSSet *hostingEvents;
 @property (nonatomic, retain) NSSet *members;
 @property (nonatomic, retain) NSSet *memberToDoItems;
 @property (nonatomic, retain) NSSet *messageBoards;
-@property (nonatomic, retain) ScOrganisation *organisation;
 @property (nonatomic, retain) ScScola *parentScola;
 @property (nonatomic, retain) NSSet *subscolas;
 @property (nonatomic, retain) ScYearlySchedule *yearlySchedule;
+@property (nonatomic, retain) NSSet *scolaEntities;
 @end
 
 @interface ScScola (CoreDataGeneratedAccessors)
+
+- (void)addContainedEntitiesObject:(ScCachedEntity *)value;
+- (void)removeContainedEntitiesObject:(ScCachedEntity *)value;
+- (void)addContainedEntities:(NSSet *)values;
+- (void)removeContainedEntities:(NSSet *)values;
 
 - (void)addDocumentRepositoriesObject:(ScDocumentRepository *)value;
 - (void)removeDocumentRepositoriesObject:(ScDocumentRepository *)value;
@@ -65,5 +72,10 @@
 - (void)removeSubscolasObject:(ScScola *)value;
 - (void)addSubscolas:(NSSet *)values;
 - (void)removeSubscolas:(NSSet *)values;
+
+- (void)addScolaEntitiesObject:(ScCachedEntity *)value;
+- (void)removeScolaEntitiesObject:(ScCachedEntity *)value;
+- (void)addScolaEntities:(NSSet *)values;
+- (void)removeScolaEntities:(NSSet *)values;
 
 @end

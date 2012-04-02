@@ -2,7 +2,7 @@
 //  ScEventInvitationScola.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 03.03.12.
+//  Created by Anders Blehr on 02.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,13 +10,12 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScEvent, ScEventInvitation, ScScola;
+@class ScEvent, ScEventInvitation;
 
 @interface ScEventInvitationScola : ScCachedEntity
 
 @property (nonatomic, retain) ScEvent *event;
 @property (nonatomic, retain) NSSet *memberInvitations;
-@property (nonatomic, retain) ScScola *scola;
 @end
 
 @interface ScEventInvitationScola (CoreDataGeneratedAccessors)

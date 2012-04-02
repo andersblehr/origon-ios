@@ -1,8 +1,8 @@
 //
-//  ScOrganisation.h
+//  ScScolaAddress.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 03.03.12.
+//  Created by Anders Blehr on 02.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,31 +10,25 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScEvent, ScOrganisationContact, ScScola;
+@class ScScola, ScScolaMemberResidency;
 
-@interface ScOrganisation : ScCachedEntity
+@interface ScScolaAddress : ScCachedEntity
 
 @property (nonatomic, retain) NSString * addressLine1;
 @property (nonatomic, retain) NSString * addressLine2;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * phoneNumber;
 @property (nonatomic, retain) NSString * postCodeAndCity;
-@property (nonatomic, retain) NSSet *contacts;
-@property (nonatomic, retain) NSSet *events;
+@property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *scolas;
 @end
 
-@interface ScOrganisation (CoreDataGeneratedAccessors)
+@interface ScScolaAddress (CoreDataGeneratedAccessors)
 
-- (void)addContactsObject:(ScOrganisationContact *)value;
-- (void)removeContactsObject:(ScOrganisationContact *)value;
-- (void)addContacts:(NSSet *)values;
-- (void)removeContacts:(NSSet *)values;
-
-- (void)addEventsObject:(ScEvent *)value;
-- (void)removeEventsObject:(ScEvent *)value;
-- (void)addEvents:(NSSet *)values;
-- (void)removeEvents:(NSSet *)values;
+- (void)addResidenciesObject:(ScScolaMemberResidency *)value;
+- (void)removeResidenciesObject:(ScScolaMemberResidency *)value;
+- (void)addResidencies:(NSSet *)values;
+- (void)removeResidencies:(NSSet *)values;
 
 - (void)addScolasObject:(ScScola *)value;
 - (void)removeScolasObject:(ScScola *)value;

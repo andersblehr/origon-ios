@@ -1,26 +1,24 @@
 //
-//  ScOrganisation.m
+//  ScScolaAddress.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 03.03.12.
+//  Created by Anders Blehr on 02.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
-#import "ScOrganisation.h"
-#import "ScEvent.h"
-#import "ScOrganisationContact.h"
+#import "ScScolaAddress.h"
 #import "ScScola.h"
+#import "ScScolaMemberResidency.h"
 
 
-@implementation ScOrganisation
+@implementation ScScolaAddress
 
 @dynamic addressLine1;
 @dynamic addressLine2;
 @dynamic name;
 @dynamic phoneNumber;
 @dynamic postCodeAndCity;
-@dynamic contacts;
-@dynamic events;
+@dynamic residencies;
 @dynamic scolas;
 
 @end

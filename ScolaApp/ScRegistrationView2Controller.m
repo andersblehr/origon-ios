@@ -18,7 +18,6 @@
 #import "ScUUIDGenerator.h"
 
 #import "ScDevice.h"
-#import "ScDeviceListing.h"
 #import "ScMessageBoard.h"
 #import "ScScola.h"
 #import "ScScolaMember.h"
@@ -115,11 +114,8 @@ static int const kPopUpButtonUseNew = 1;
         
         ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
         device.type = [UIDevice currentDevice].model;
-        
-        ScDeviceListing *deviceListing = [context entityForClass:ScDeviceListing.class inScola:homeScola];
-        deviceListing.displayName = deviceNameField.text;
-        deviceListing.device = device;
-        deviceListing.member = member;
+        device.displayName = deviceNameField.text;
+        device.member = member;
         
         if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
             member.gender = kGenderFemale;

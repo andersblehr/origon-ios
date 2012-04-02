@@ -2,7 +2,7 @@
 //  ScToDoItem.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 03.03.12.
+//  Created by Anders Blehr on 02.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,14 +10,13 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScScola, ScToDoAssignment;
+@class ScToDoAssignment;
 
 @interface ScToDoItem : ScCachedEntity
 
 @property (nonatomic, retain) NSString * descriptionText;
 @property (nonatomic, retain) NSDate * dueDate;
 @property (nonatomic, retain) NSSet *assignments;
-@property (nonatomic, retain) ScScola *scola;
 @end
 
 @interface ScToDoItem (CoreDataGeneratedAccessors)

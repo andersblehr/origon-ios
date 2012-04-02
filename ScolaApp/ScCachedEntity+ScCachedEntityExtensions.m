@@ -14,10 +14,10 @@
 #import "ScMeta.h"
 
 #import "ScDevice.h"
-#import "ScDeviceListing.h"
-#import "ScHousehold.h"
+#import "ScScolaAddress.h"
 #import "ScScolaMember.h"
-#import "ScSharedEntityRef.h"
+#import "ScScolaMemberResidency.h"
+#import "ScScolaMembership.h"
 
 
 @implementation ScCachedEntity (ScCachedEntityExtensions)
@@ -82,18 +82,11 @@
 {
     BOOL isSharedEntity = NO;
     
-    isSharedEntity = isSharedEntity || [self isKindOfClass:ScDevice.class];
-    isSharedEntity = isSharedEntity || [self isKindOfClass:ScDeviceListing.class];
-    isSharedEntity = isSharedEntity || [self isKindOfClass:ScHousehold.class];
+    isSharedEntity = isSharedEntity || [self isKindOfClass:ScScolaAddress.class];
     isSharedEntity = isSharedEntity || [self isKindOfClass:ScScolaMember.class];
+    isSharedEntity = isSharedEntity || [self isKindOfClass:ScScolaMemberResidency.class];
     
     return isSharedEntity;
-}
-
-
-- (BOOL)isReferenceToSharedEntity
-{
-    return [self isKindOfClass:ScSharedEntityRef.class];
 }
 
 

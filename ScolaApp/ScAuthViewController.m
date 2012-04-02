@@ -18,8 +18,6 @@
 #import "ScRegistrationView1Controller.h"
 #import "ScStrings.h"
 
-#import "ScHousehold.h"
-#import "ScHouseholdResidency.h"
 #import "ScScola.h"
 #import "ScScolaMember.h"
 
@@ -482,7 +480,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)userDidLogIn:(NSString *)authId isNewUser:(BOOL)isNewUser
 {
     if (isNewUser) {
-        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+        //NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
 
         if (isUserListed) { /*
             NSDictionary *memberInfo = [authInfo objectForKey:kAuthInfoKeyMemberInfo];
@@ -496,14 +494,13 @@ static int const kPopUpButtonTryAgain = 1;
                 homeScola = [context entityFromDictionary:homeScolaInfo];
             } else {
                 homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
-            } */
+            } 
         } else {
             homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
 
             member = [context entityForClass:ScScolaMember.class inScola:homeScola withId:emailAsEntered];
             
-            member.primaryResidence = [context entityForClass:ScHousehold.class inScola:homeScola];
-            member.primaryResidence.scolaId = homeScola.scolaId;
+            member.primaryResidence = [context entityForClass:ScHousehold.class inScola:homeScola]; */
         }
         
         member.name = nameAsEntered;

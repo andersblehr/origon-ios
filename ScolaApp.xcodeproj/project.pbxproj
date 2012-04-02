@@ -15,28 +15,6 @@
 		5C153EF814CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF614CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png */; };
 		5C153EFB14CC9815003A6B61 /* ScMainViewIconSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C153EFA14CC9815003A6B61 /* ScMainViewIconSection.m */; };
 		5C17435B14ABA3DC006B859B /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5C17435A14ABA3DC006B859B /* Settings.bundle */; };
-		5C2000A015026EB8002A327C /* ScMessageThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C20009F15026EB8002A327C /* ScMessageThread.m */; };
-		5C2000A315026EB9002A327C /* ScEventInvitationScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000A215026EB9002A327C /* ScEventInvitationScola.m */; };
-		5C2000A615026EBA002A327C /* ScEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000A515026EBA002A327C /* ScEvent.m */; };
-		5C2000A915026EBB002A327C /* ScScheduledAbsence.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000A815026EBB002A327C /* ScScheduledAbsence.m */; };
-		5C2000AC15026EBC002A327C /* ScDocumentRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000AB15026EBC002A327C /* ScDocumentRepository.m */; };
-		5C2000B215026EBD002A327C /* ScToDoAssignment.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000B115026EBD002A327C /* ScToDoAssignment.m */; };
-		5C2000B515026EBE002A327C /* ScDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000B415026EBE002A327C /* ScDocument.m */; };
-		5C2000B815026EBE002A327C /* ScDeviceListing.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000B715026EBE002A327C /* ScDeviceListing.m */; };
-		5C2000BB15026EBF002A327C /* ScDocumentElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000BA15026EBF002A327C /* ScDocumentElement.m */; };
-		5C2000BE15026EBF002A327C /* ScEventInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000BD15026EBF002A327C /* ScEventInvitation.m */; };
-		5C2000C115026EC0002A327C /* ScMessageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000C015026EC0002A327C /* ScMessageItem.m */; };
-		5C2000C415026EC0002A327C /* ScOrganisation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000C315026EC0002A327C /* ScOrganisation.m */; };
-		5C2000C715026EC0002A327C /* ScScheduleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000C615026EC0002A327C /* ScScheduleItem.m */; };
-		5C2000CD15026EC1002A327C /* ScScheduledBreak.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000CC15026EC1002A327C /* ScScheduledBreak.m */; };
-		5C2000D015026EC1002A327C /* ScMessageBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000CF15026EC1002A327C /* ScMessageBoard.m */; };
-		5C2000D315026EC2002A327C /* ScToDoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000D215026EC2002A327C /* ScToDoItem.m */; };
-		5C2000D615026EC2002A327C /* ScOrganisationContact.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000D515026EC2002A327C /* ScOrganisationContact.m */; };
-		5C2000DC15026EC3002A327C /* ScYearlySchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000DB15026EC3002A327C /* ScYearlySchedule.m */; };
-		5C2000DF15026EC3002A327C /* ScScolaMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000DE15026EC3002A327C /* ScScolaMembership.m */; };
-		5C2000E215026EC3002A327C /* ScExternalDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000E115026EC3002A327C /* ScExternalDocument.m */; };
-		5C2000F115039F1D002A327C /* ScHouseholdResidency.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000F015039F1D002A327C /* ScHouseholdResidency.m */; };
-		5C2000F415039F20002A327C /* ScHousehold.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2000F315039F20002A327C /* ScHousehold.m */; };
 		5C23431214812A3100164478 /* ScStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* ScStrings.m */; };
 		5C2E11141469CDE5005BDE61 /* ScServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* ScServerConnection.m */; };
 		5C36BE8A146E9DA100DD3CEA /* ScMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE89146E9DA100DD3CEA /* ScMeta.m */; };
@@ -67,6 +45,29 @@
 		5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE011482877D001D90C6 /* Localizable.strings */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C88078F1484392B00ED5416 /* ScRegistrationView1Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C88078E1484392A00ED5416 /* ScRegistrationView1Controller.m */; };
+		5C9CDFC5152A43AB006FAAE6 /* ScDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFC4152A43AB006FAAE6 /* ScDevice.m */; };
+		5C9CDFC8152A43AC006FAAE6 /* ScDocumentRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFC7152A43AC006FAAE6 /* ScDocumentRepository.m */; };
+		5C9CDFCB152A43AC006FAAE6 /* ScToDoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFCA152A43AC006FAAE6 /* ScToDoItem.m */; };
+		5C9CDFCE152A43AC006FAAE6 /* ScMessageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFCD152A43AC006FAAE6 /* ScMessageItem.m */; };
+		5C9CDFD1152A43AC006FAAE6 /* ScScheduleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFD0152A43AC006FAAE6 /* ScScheduleItem.m */; };
+		5C9CDFD4152A43AC006FAAE6 /* ScExternalDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFD3152A43AC006FAAE6 /* ScExternalDocument.m */; };
+		5C9CDFD7152A43AD006FAAE6 /* ScMessageBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFD6152A43AD006FAAE6 /* ScMessageBoard.m */; };
+		5C9CDFDA152A43AD006FAAE6 /* ScDocumentElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFD9152A43AD006FAAE6 /* ScDocumentElement.m */; };
+		5C9CDFDD152A43AD006FAAE6 /* ScMessageThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFDC152A43AD006FAAE6 /* ScMessageThread.m */; };
+		5C9CDFE0152A43AD006FAAE6 /* ScScheduledBreak.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFDF152A43AD006FAAE6 /* ScScheduledBreak.m */; };
+		5C9CDFE3152A43AD006FAAE6 /* ScScolaMemberResidency.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFE2152A43AD006FAAE6 /* ScScolaMemberResidency.m */; };
+		5C9CDFE6152A43AD006FAAE6 /* ScScolaMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFE5152A43AD006FAAE6 /* ScScolaMembership.m */; };
+		5C9CDFE9152A43AD006FAAE6 /* ScEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFE8152A43AD006FAAE6 /* ScEvent.m */; };
+		5C9CDFEC152A43AE006FAAE6 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFEB152A43AE006FAAE6 /* ScCachedEntity.m */; };
+		5C9CDFEF152A43AE006FAAE6 /* ScEventInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFEE152A43AE006FAAE6 /* ScEventInvitation.m */; };
+		5C9CDFF2152A43AE006FAAE6 /* ScScheduledAbsence.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFF1152A43AE006FAAE6 /* ScScheduledAbsence.m */; };
+		5C9CDFF5152A43AE006FAAE6 /* ScScolaMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFF4152A43AE006FAAE6 /* ScScolaMember.m */; };
+		5C9CDFF8152A43AE006FAAE6 /* ScYearlySchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFF7152A43AE006FAAE6 /* ScYearlySchedule.m */; };
+		5C9CDFFB152A43AE006FAAE6 /* ScDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFFA152A43AE006FAAE6 /* ScDocument.m */; };
+		5C9CDFFE152A43AE006FAAE6 /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CDFFD152A43AE006FAAE6 /* ScScola.m */; };
+		5C9CE001152A43AE006FAAE6 /* ScScolaAddress.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CE000152A43AE006FAAE6 /* ScScolaAddress.m */; };
+		5C9CE004152A43AF006FAAE6 /* ScToDoAssignment.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CE003152A43AF006FAAE6 /* ScToDoAssignment.m */; };
+		5C9CE007152A43AF006FAAE6 /* ScEventInvitationScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9CE006152A43AF006FAAE6 /* ScEventInvitationScola.m */; };
 		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
@@ -87,11 +88,6 @@
 		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
 		5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */; };
-		5CE68B2F1517D1BC006498F9 /* ScSharedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B2E1517D1BC006498F9 /* ScSharedEntityRef.m */; };
-		5CE68B321517D1BD006498F9 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B311517D1BD006498F9 /* ScCachedEntity.m */; };
-		5CE68B3B151B8D4E006498F9 /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B3A151B8D4E006498F9 /* ScScola.m */; };
-		5CE68B3E151C65FE006498F9 /* ScScolaMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B3D151C65FE006498F9 /* ScScolaMember.m */; };
-		5CE68B41151C65FF006498F9 /* ScDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE68B40151C65FF006498F9 /* ScDevice.m */; };
 		5CE9812914C4D81600DD11D4 /* 112-group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE9812814C4D81600DD11D4 /* 112-group@2x.png */; };
 		5CE987C114854FC6005A17C6 /* ScRegistrationView2Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C014854FC6005A17C6 /* ScRegistrationView2Controller.m */; };
 		5CE987C414856426005A17C6 /* ScEventViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* ScEventViewController.m */; };
@@ -117,50 +113,6 @@
 		5C153EF914CC9815003A6B61 /* ScMainViewIconSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMainViewIconSection.h; sourceTree = "<group>"; };
 		5C153EFA14CC9815003A6B61 /* ScMainViewIconSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMainViewIconSection.m; sourceTree = "<group>"; };
 		5C17435A14ABA3DC006B859B /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
-		5C20009E15026EB8002A327C /* ScMessageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMessageThread.h; sourceTree = "<group>"; };
-		5C20009F15026EB8002A327C /* ScMessageThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMessageThread.m; sourceTree = "<group>"; };
-		5C2000A115026EB9002A327C /* ScEventInvitationScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEventInvitationScola.h; sourceTree = "<group>"; };
-		5C2000A215026EB9002A327C /* ScEventInvitationScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScEventInvitationScola.m; sourceTree = "<group>"; };
-		5C2000A415026EBA002A327C /* ScEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEvent.h; sourceTree = "<group>"; };
-		5C2000A515026EBA002A327C /* ScEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScEvent.m; sourceTree = "<group>"; };
-		5C2000A715026EBB002A327C /* ScScheduledAbsence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduledAbsence.h; sourceTree = "<group>"; };
-		5C2000A815026EBB002A327C /* ScScheduledAbsence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduledAbsence.m; sourceTree = "<group>"; };
-		5C2000AA15026EBB002A327C /* ScDocumentRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDocumentRepository.h; sourceTree = "<group>"; };
-		5C2000AB15026EBC002A327C /* ScDocumentRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDocumentRepository.m; sourceTree = "<group>"; };
-		5C2000B015026EBD002A327C /* ScToDoAssignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScToDoAssignment.h; sourceTree = "<group>"; };
-		5C2000B115026EBD002A327C /* ScToDoAssignment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScToDoAssignment.m; sourceTree = "<group>"; };
-		5C2000B315026EBD002A327C /* ScDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDocument.h; sourceTree = "<group>"; };
-		5C2000B415026EBE002A327C /* ScDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDocument.m; sourceTree = "<group>"; };
-		5C2000B615026EBE002A327C /* ScDeviceListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDeviceListing.h; sourceTree = "<group>"; };
-		5C2000B715026EBE002A327C /* ScDeviceListing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDeviceListing.m; sourceTree = "<group>"; };
-		5C2000B915026EBF002A327C /* ScDocumentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDocumentElement.h; sourceTree = "<group>"; };
-		5C2000BA15026EBF002A327C /* ScDocumentElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDocumentElement.m; sourceTree = "<group>"; };
-		5C2000BC15026EBF002A327C /* ScEventInvitation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEventInvitation.h; sourceTree = "<group>"; };
-		5C2000BD15026EBF002A327C /* ScEventInvitation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScEventInvitation.m; sourceTree = "<group>"; };
-		5C2000BF15026EC0002A327C /* ScMessageItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMessageItem.h; sourceTree = "<group>"; };
-		5C2000C015026EC0002A327C /* ScMessageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMessageItem.m; sourceTree = "<group>"; };
-		5C2000C215026EC0002A327C /* ScOrganisation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScOrganisation.h; sourceTree = "<group>"; };
-		5C2000C315026EC0002A327C /* ScOrganisation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScOrganisation.m; sourceTree = "<group>"; };
-		5C2000C515026EC0002A327C /* ScScheduleItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduleItem.h; sourceTree = "<group>"; };
-		5C2000C615026EC0002A327C /* ScScheduleItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduleItem.m; sourceTree = "<group>"; };
-		5C2000CB15026EC1002A327C /* ScScheduledBreak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduledBreak.h; sourceTree = "<group>"; };
-		5C2000CC15026EC1002A327C /* ScScheduledBreak.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduledBreak.m; sourceTree = "<group>"; };
-		5C2000CE15026EC1002A327C /* ScMessageBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMessageBoard.h; sourceTree = "<group>"; };
-		5C2000CF15026EC1002A327C /* ScMessageBoard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMessageBoard.m; sourceTree = "<group>"; };
-		5C2000D115026EC2002A327C /* ScToDoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScToDoItem.h; sourceTree = "<group>"; };
-		5C2000D215026EC2002A327C /* ScToDoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScToDoItem.m; sourceTree = "<group>"; };
-		5C2000D415026EC2002A327C /* ScOrganisationContact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScOrganisationContact.h; sourceTree = "<group>"; };
-		5C2000D515026EC2002A327C /* ScOrganisationContact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScOrganisationContact.m; sourceTree = "<group>"; };
-		5C2000DA15026EC3002A327C /* ScYearlySchedule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScYearlySchedule.h; sourceTree = "<group>"; };
-		5C2000DB15026EC3002A327C /* ScYearlySchedule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScYearlySchedule.m; sourceTree = "<group>"; };
-		5C2000DD15026EC3002A327C /* ScScolaMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaMembership.h; sourceTree = "<group>"; };
-		5C2000DE15026EC3002A327C /* ScScolaMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMembership.m; sourceTree = "<group>"; };
-		5C2000E015026EC3002A327C /* ScExternalDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScExternalDocument.h; sourceTree = "<group>"; };
-		5C2000E115026EC3002A327C /* ScExternalDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScExternalDocument.m; sourceTree = "<group>"; };
-		5C2000EF15039F1D002A327C /* ScHouseholdResidency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScHouseholdResidency.h; sourceTree = "<group>"; };
-		5C2000F015039F1D002A327C /* ScHouseholdResidency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScHouseholdResidency.m; sourceTree = "<group>"; };
-		5C2000F215039F20002A327C /* ScHousehold.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScHousehold.h; sourceTree = "<group>"; };
-		5C2000F315039F20002A327C /* ScHousehold.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScHousehold.m; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* ScStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScStrings.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* ScStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScStrings.m; sourceTree = "<group>"; };
 		5C2E11121469CDE5005BDE61 /* ScServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScServerConnection.h; sourceTree = "<group>"; };
@@ -179,7 +131,7 @@
 		5C4F97791496AF88006E244F /* NSURL+ScURLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ScURLExtensions.h"; sourceTree = "<group>"; };
 		5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ScURLExtensions.m"; sourceTree = "<group>"; };
 		5C50581714CA1D05000D6587 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		5C50581A14CAEC76000D6587 /* UIView+ScViewExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "UIView+ScViewExtensions.h"; sourceTree = "<group>"; };
+		5C50581A14CAEC76000D6587 /* UIView+ScViewExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ScViewExtensions.h"; sourceTree = "<group>"; };
 		5C50581B14CAEC76000D6587 /* UIView+ScViewExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ScViewExtensions.m"; sourceTree = "<group>"; };
 		5C5ED5CC14F2E9FE006BBDFB /* ScCachedEntity+ScCachedEntityExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ScCachedEntity+ScCachedEntityExtensions.h"; sourceTree = "<group>"; };
 		5C5ED5CD14F2E9FE006BBDFB /* ScCachedEntity+ScCachedEntityExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ScCachedEntity+ScCachedEntityExtensions.m"; sourceTree = "<group>"; };
@@ -206,6 +158,52 @@
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5C88078D1484392A00ED5416 /* ScRegistrationView1Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRegistrationView1Controller.h; sourceTree = "<group>"; };
 		5C88078E1484392A00ED5416 /* ScRegistrationView1Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegistrationView1Controller.m; sourceTree = "<group>"; };
+		5C9CDFC3152A43AB006FAAE6 /* ScDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDevice.h; sourceTree = "<group>"; };
+		5C9CDFC4152A43AB006FAAE6 /* ScDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDevice.m; sourceTree = "<group>"; };
+		5C9CDFC6152A43AC006FAAE6 /* ScDocumentRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDocumentRepository.h; sourceTree = "<group>"; };
+		5C9CDFC7152A43AC006FAAE6 /* ScDocumentRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDocumentRepository.m; sourceTree = "<group>"; };
+		5C9CDFC9152A43AC006FAAE6 /* ScToDoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScToDoItem.h; sourceTree = "<group>"; };
+		5C9CDFCA152A43AC006FAAE6 /* ScToDoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScToDoItem.m; sourceTree = "<group>"; };
+		5C9CDFCC152A43AC006FAAE6 /* ScMessageItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMessageItem.h; sourceTree = "<group>"; };
+		5C9CDFCD152A43AC006FAAE6 /* ScMessageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMessageItem.m; sourceTree = "<group>"; };
+		5C9CDFCF152A43AC006FAAE6 /* ScScheduleItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduleItem.h; sourceTree = "<group>"; };
+		5C9CDFD0152A43AC006FAAE6 /* ScScheduleItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduleItem.m; sourceTree = "<group>"; };
+		5C9CDFD2152A43AC006FAAE6 /* ScExternalDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScExternalDocument.h; sourceTree = "<group>"; };
+		5C9CDFD3152A43AC006FAAE6 /* ScExternalDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScExternalDocument.m; sourceTree = "<group>"; };
+		5C9CDFD5152A43AD006FAAE6 /* ScMessageBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMessageBoard.h; sourceTree = "<group>"; };
+		5C9CDFD6152A43AD006FAAE6 /* ScMessageBoard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMessageBoard.m; sourceTree = "<group>"; };
+		5C9CDFD8152A43AD006FAAE6 /* ScDocumentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDocumentElement.h; sourceTree = "<group>"; };
+		5C9CDFD9152A43AD006FAAE6 /* ScDocumentElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDocumentElement.m; sourceTree = "<group>"; };
+		5C9CDFDB152A43AD006FAAE6 /* ScMessageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMessageThread.h; sourceTree = "<group>"; };
+		5C9CDFDC152A43AD006FAAE6 /* ScMessageThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMessageThread.m; sourceTree = "<group>"; };
+		5C9CDFDE152A43AD006FAAE6 /* ScScheduledBreak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduledBreak.h; sourceTree = "<group>"; };
+		5C9CDFDF152A43AD006FAAE6 /* ScScheduledBreak.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduledBreak.m; sourceTree = "<group>"; };
+		5C9CDFE1152A43AD006FAAE6 /* ScScolaMemberResidency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaMemberResidency.h; sourceTree = "<group>"; };
+		5C9CDFE2152A43AD006FAAE6 /* ScScolaMemberResidency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMemberResidency.m; sourceTree = "<group>"; };
+		5C9CDFE4152A43AD006FAAE6 /* ScScolaMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaMembership.h; sourceTree = "<group>"; };
+		5C9CDFE5152A43AD006FAAE6 /* ScScolaMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMembership.m; sourceTree = "<group>"; };
+		5C9CDFE7152A43AD006FAAE6 /* ScEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEvent.h; sourceTree = "<group>"; };
+		5C9CDFE8152A43AD006FAAE6 /* ScEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScEvent.m; sourceTree = "<group>"; };
+		5C9CDFEA152A43AE006FAAE6 /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
+		5C9CDFEB152A43AE006FAAE6 /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
+		5C9CDFED152A43AE006FAAE6 /* ScEventInvitation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEventInvitation.h; sourceTree = "<group>"; };
+		5C9CDFEE152A43AE006FAAE6 /* ScEventInvitation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScEventInvitation.m; sourceTree = "<group>"; };
+		5C9CDFF0152A43AE006FAAE6 /* ScScheduledAbsence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduledAbsence.h; sourceTree = "<group>"; };
+		5C9CDFF1152A43AE006FAAE6 /* ScScheduledAbsence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduledAbsence.m; sourceTree = "<group>"; };
+		5C9CDFF3152A43AE006FAAE6 /* ScScolaMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaMember.h; sourceTree = "<group>"; };
+		5C9CDFF4152A43AE006FAAE6 /* ScScolaMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMember.m; sourceTree = "<group>"; };
+		5C9CDFF6152A43AE006FAAE6 /* ScYearlySchedule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScYearlySchedule.h; sourceTree = "<group>"; };
+		5C9CDFF7152A43AE006FAAE6 /* ScYearlySchedule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScYearlySchedule.m; sourceTree = "<group>"; };
+		5C9CDFF9152A43AE006FAAE6 /* ScDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDocument.h; sourceTree = "<group>"; };
+		5C9CDFFA152A43AE006FAAE6 /* ScDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDocument.m; sourceTree = "<group>"; };
+		5C9CDFFC152A43AE006FAAE6 /* ScScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScola.h; sourceTree = "<group>"; };
+		5C9CDFFD152A43AE006FAAE6 /* ScScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScola.m; sourceTree = "<group>"; };
+		5C9CDFFF152A43AE006FAAE6 /* ScScolaAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaAddress.h; sourceTree = "<group>"; };
+		5C9CE000152A43AE006FAAE6 /* ScScolaAddress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaAddress.m; sourceTree = "<group>"; };
+		5C9CE002152A43AF006FAAE6 /* ScToDoAssignment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScToDoAssignment.h; sourceTree = "<group>"; };
+		5C9CE003152A43AF006FAAE6 /* ScToDoAssignment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScToDoAssignment.m; sourceTree = "<group>"; };
+		5C9CE005152A43AF006FAAE6 /* ScEventInvitationScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEventInvitationScola.h; sourceTree = "<group>"; };
+		5C9CE006152A43AF006FAAE6 /* ScEventInvitationScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScEventInvitationScola.m; sourceTree = "<group>"; };
 		5C9D3146151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+ScJSONSerializationExtensions.h"; sourceTree = "<group>"; };
 		5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+ScJSONSerializationExtensions.m"; sourceTree = "<group>"; };
 		5CBB63B4146080DF00A9133A /* ScolaApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScolaApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -237,16 +235,6 @@
 		5CCF09051466A0CB00D41AB0 /* ScLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScLogging.h; sourceTree = "<group>"; };
 		5CD5B29B14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+ScManagedObjectContextExtensions.h"; sourceTree = "<group>"; };
 		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+ScManagedObjectContextExtensions.m"; sourceTree = "<group>"; };
-		5CE68B2D1517D1BC006498F9 /* ScSharedEntityRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScSharedEntityRef.h; sourceTree = "<group>"; };
-		5CE68B2E1517D1BC006498F9 /* ScSharedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScSharedEntityRef.m; sourceTree = "<group>"; };
-		5CE68B301517D1BD006498F9 /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
-		5CE68B311517D1BD006498F9 /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
-		5CE68B39151B8D4E006498F9 /* ScScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScola.h; sourceTree = "<group>"; };
-		5CE68B3A151B8D4E006498F9 /* ScScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScola.m; sourceTree = "<group>"; };
-		5CE68B3C151C65FD006498F9 /* ScScolaMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaMember.h; sourceTree = "<group>"; };
-		5CE68B3D151C65FE006498F9 /* ScScolaMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaMember.m; sourceTree = "<group>"; };
-		5CE68B3F151C65FF006498F9 /* ScDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDevice.h; sourceTree = "<group>"; };
-		5CE68B40151C65FF006498F9 /* ScDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDevice.m; sourceTree = "<group>"; };
 		5CE9812814C4D81600DD11D4 /* 112-group@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group@2x.png"; sourceTree = "<group>"; };
 		5CE987BF14854FC6005A17C6 /* ScRegistrationView2Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRegistrationView2Controller.h; sourceTree = "<group>"; };
 		5CE987C014854FC6005A17C6 /* ScRegistrationView2Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegistrationView2Controller.m; sourceTree = "<group>"; };
@@ -313,60 +301,52 @@
 			isa = PBXGroup;
 			children = (
 				5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */,
-				5CE68B301517D1BD006498F9 /* ScCachedEntity.h */,
-				5CE68B311517D1BD006498F9 /* ScCachedEntity.m */,
-				5CE68B3F151C65FF006498F9 /* ScDevice.h */,
-				5CE68B40151C65FF006498F9 /* ScDevice.m */,
-				5C2000B615026EBE002A327C /* ScDeviceListing.h */,
-				5C2000B715026EBE002A327C /* ScDeviceListing.m */,
-				5C2000B315026EBD002A327C /* ScDocument.h */,
-				5C2000B415026EBE002A327C /* ScDocument.m */,
-				5C2000B915026EBF002A327C /* ScDocumentElement.h */,
-				5C2000BA15026EBF002A327C /* ScDocumentElement.m */,
-				5C2000AA15026EBB002A327C /* ScDocumentRepository.h */,
-				5C2000AB15026EBC002A327C /* ScDocumentRepository.m */,
-				5C2000A415026EBA002A327C /* ScEvent.h */,
-				5C2000A515026EBA002A327C /* ScEvent.m */,
-				5C2000BC15026EBF002A327C /* ScEventInvitation.h */,
-				5C2000BD15026EBF002A327C /* ScEventInvitation.m */,
-				5C2000A115026EB9002A327C /* ScEventInvitationScola.h */,
-				5C2000A215026EB9002A327C /* ScEventInvitationScola.m */,
-				5C2000E015026EC3002A327C /* ScExternalDocument.h */,
-				5C2000E115026EC3002A327C /* ScExternalDocument.m */,
-				5C2000F215039F20002A327C /* ScHousehold.h */,
-				5C2000F315039F20002A327C /* ScHousehold.m */,
-				5C2000EF15039F1D002A327C /* ScHouseholdResidency.h */,
-				5C2000F015039F1D002A327C /* ScHouseholdResidency.m */,
-				5C2000CE15026EC1002A327C /* ScMessageBoard.h */,
-				5C2000CF15026EC1002A327C /* ScMessageBoard.m */,
-				5C2000BF15026EC0002A327C /* ScMessageItem.h */,
-				5C2000C015026EC0002A327C /* ScMessageItem.m */,
-				5C20009E15026EB8002A327C /* ScMessageThread.h */,
-				5C20009F15026EB8002A327C /* ScMessageThread.m */,
-				5C2000C215026EC0002A327C /* ScOrganisation.h */,
-				5C2000C315026EC0002A327C /* ScOrganisation.m */,
-				5C2000D415026EC2002A327C /* ScOrganisationContact.h */,
-				5C2000D515026EC2002A327C /* ScOrganisationContact.m */,
-				5C2000A715026EBB002A327C /* ScScheduledAbsence.h */,
-				5C2000A815026EBB002A327C /* ScScheduledAbsence.m */,
-				5C2000CB15026EC1002A327C /* ScScheduledBreak.h */,
-				5C2000CC15026EC1002A327C /* ScScheduledBreak.m */,
-				5C2000C515026EC0002A327C /* ScScheduleItem.h */,
-				5C2000C615026EC0002A327C /* ScScheduleItem.m */,
-				5CE68B39151B8D4E006498F9 /* ScScola.h */,
-				5CE68B3A151B8D4E006498F9 /* ScScola.m */,
-				5CE68B3C151C65FD006498F9 /* ScScolaMember.h */,
-				5CE68B3D151C65FE006498F9 /* ScScolaMember.m */,
-				5C2000DD15026EC3002A327C /* ScScolaMembership.h */,
-				5C2000DE15026EC3002A327C /* ScScolaMembership.m */,
-				5CE68B2D1517D1BC006498F9 /* ScSharedEntityRef.h */,
-				5CE68B2E1517D1BC006498F9 /* ScSharedEntityRef.m */,
-				5C2000B015026EBD002A327C /* ScToDoAssignment.h */,
-				5C2000B115026EBD002A327C /* ScToDoAssignment.m */,
-				5C2000D115026EC2002A327C /* ScToDoItem.h */,
-				5C2000D215026EC2002A327C /* ScToDoItem.m */,
-				5C2000DA15026EC3002A327C /* ScYearlySchedule.h */,
-				5C2000DB15026EC3002A327C /* ScYearlySchedule.m */,
+				5C9CDFEA152A43AE006FAAE6 /* ScCachedEntity.h */,
+				5C9CDFEB152A43AE006FAAE6 /* ScCachedEntity.m */,
+				5C9CDFC3152A43AB006FAAE6 /* ScDevice.h */,
+				5C9CDFC4152A43AB006FAAE6 /* ScDevice.m */,
+				5C9CDFF9152A43AE006FAAE6 /* ScDocument.h */,
+				5C9CDFFA152A43AE006FAAE6 /* ScDocument.m */,
+				5C9CDFD8152A43AD006FAAE6 /* ScDocumentElement.h */,
+				5C9CDFD9152A43AD006FAAE6 /* ScDocumentElement.m */,
+				5C9CDFC6152A43AC006FAAE6 /* ScDocumentRepository.h */,
+				5C9CDFC7152A43AC006FAAE6 /* ScDocumentRepository.m */,
+				5C9CDFE7152A43AD006FAAE6 /* ScEvent.h */,
+				5C9CDFE8152A43AD006FAAE6 /* ScEvent.m */,
+				5C9CDFED152A43AE006FAAE6 /* ScEventInvitation.h */,
+				5C9CDFEE152A43AE006FAAE6 /* ScEventInvitation.m */,
+				5C9CE005152A43AF006FAAE6 /* ScEventInvitationScola.h */,
+				5C9CE006152A43AF006FAAE6 /* ScEventInvitationScola.m */,
+				5C9CDFD2152A43AC006FAAE6 /* ScExternalDocument.h */,
+				5C9CDFD3152A43AC006FAAE6 /* ScExternalDocument.m */,
+				5C9CDFD5152A43AD006FAAE6 /* ScMessageBoard.h */,
+				5C9CDFD6152A43AD006FAAE6 /* ScMessageBoard.m */,
+				5C9CDFCC152A43AC006FAAE6 /* ScMessageItem.h */,
+				5C9CDFCD152A43AC006FAAE6 /* ScMessageItem.m */,
+				5C9CDFDB152A43AD006FAAE6 /* ScMessageThread.h */,
+				5C9CDFDC152A43AD006FAAE6 /* ScMessageThread.m */,
+				5C9CDFF0152A43AE006FAAE6 /* ScScheduledAbsence.h */,
+				5C9CDFF1152A43AE006FAAE6 /* ScScheduledAbsence.m */,
+				5C9CDFDE152A43AD006FAAE6 /* ScScheduledBreak.h */,
+				5C9CDFDF152A43AD006FAAE6 /* ScScheduledBreak.m */,
+				5C9CDFCF152A43AC006FAAE6 /* ScScheduleItem.h */,
+				5C9CDFD0152A43AC006FAAE6 /* ScScheduleItem.m */,
+				5C9CDFFC152A43AE006FAAE6 /* ScScola.h */,
+				5C9CDFFD152A43AE006FAAE6 /* ScScola.m */,
+				5C9CDFFF152A43AE006FAAE6 /* ScScolaAddress.h */,
+				5C9CE000152A43AE006FAAE6 /* ScScolaAddress.m */,
+				5C9CDFF3152A43AE006FAAE6 /* ScScolaMember.h */,
+				5C9CDFF4152A43AE006FAAE6 /* ScScolaMember.m */,
+				5C9CDFE1152A43AD006FAAE6 /* ScScolaMemberResidency.h */,
+				5C9CDFE2152A43AD006FAAE6 /* ScScolaMemberResidency.m */,
+				5C9CDFE4152A43AD006FAAE6 /* ScScolaMembership.h */,
+				5C9CDFE5152A43AD006FAAE6 /* ScScolaMembership.m */,
+				5C9CE002152A43AF006FAAE6 /* ScToDoAssignment.h */,
+				5C9CE003152A43AF006FAAE6 /* ScToDoAssignment.m */,
+				5C9CDFC9152A43AC006FAAE6 /* ScToDoItem.h */,
+				5C9CDFCA152A43AC006FAAE6 /* ScToDoItem.m */,
+				5C9CDFF6152A43AE006FAAE6 /* ScYearlySchedule.h */,
+				5C9CDFF7152A43AE006FAAE6 /* ScYearlySchedule.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -710,34 +690,30 @@
 				5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */,
 				5C5ED5CE14F2E9FE006BBDFB /* ScCachedEntity+ScCachedEntityExtensions.m in Sources */,
 				5C3C665C14F56D6800514C57 /* ScUUIDGenerator.m in Sources */,
-				5C2000A015026EB8002A327C /* ScMessageThread.m in Sources */,
-				5C2000A315026EB9002A327C /* ScEventInvitationScola.m in Sources */,
-				5C2000A615026EBA002A327C /* ScEvent.m in Sources */,
-				5C2000A915026EBB002A327C /* ScScheduledAbsence.m in Sources */,
-				5C2000AC15026EBC002A327C /* ScDocumentRepository.m in Sources */,
-				5C2000B215026EBD002A327C /* ScToDoAssignment.m in Sources */,
-				5C2000B515026EBE002A327C /* ScDocument.m in Sources */,
-				5C2000B815026EBE002A327C /* ScDeviceListing.m in Sources */,
-				5C2000BB15026EBF002A327C /* ScDocumentElement.m in Sources */,
-				5C2000BE15026EBF002A327C /* ScEventInvitation.m in Sources */,
-				5C2000C115026EC0002A327C /* ScMessageItem.m in Sources */,
-				5C2000C415026EC0002A327C /* ScOrganisation.m in Sources */,
-				5C2000C715026EC0002A327C /* ScScheduleItem.m in Sources */,
-				5C2000CD15026EC1002A327C /* ScScheduledBreak.m in Sources */,
-				5C2000D015026EC1002A327C /* ScMessageBoard.m in Sources */,
-				5C2000D315026EC2002A327C /* ScToDoItem.m in Sources */,
-				5C2000D615026EC2002A327C /* ScOrganisationContact.m in Sources */,
-				5C2000DC15026EC3002A327C /* ScYearlySchedule.m in Sources */,
-				5C2000DF15026EC3002A327C /* ScScolaMembership.m in Sources */,
-				5C2000E215026EC3002A327C /* ScExternalDocument.m in Sources */,
-				5C2000F115039F1D002A327C /* ScHouseholdResidency.m in Sources */,
-				5C2000F415039F20002A327C /* ScHousehold.m in Sources */,
-				5CE68B2F1517D1BC006498F9 /* ScSharedEntityRef.m in Sources */,
-				5CE68B321517D1BD006498F9 /* ScCachedEntity.m in Sources */,
-				5CE68B3B151B8D4E006498F9 /* ScScola.m in Sources */,
-				5CE68B3E151C65FE006498F9 /* ScScolaMember.m in Sources */,
-				5CE68B41151C65FF006498F9 /* ScDevice.m in Sources */,
 				5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m in Sources */,
+				5C9CDFC5152A43AB006FAAE6 /* ScDevice.m in Sources */,
+				5C9CDFC8152A43AC006FAAE6 /* ScDocumentRepository.m in Sources */,
+				5C9CDFCB152A43AC006FAAE6 /* ScToDoItem.m in Sources */,
+				5C9CDFCE152A43AC006FAAE6 /* ScMessageItem.m in Sources */,
+				5C9CDFD1152A43AC006FAAE6 /* ScScheduleItem.m in Sources */,
+				5C9CDFD4152A43AC006FAAE6 /* ScExternalDocument.m in Sources */,
+				5C9CDFD7152A43AD006FAAE6 /* ScMessageBoard.m in Sources */,
+				5C9CDFDA152A43AD006FAAE6 /* ScDocumentElement.m in Sources */,
+				5C9CDFDD152A43AD006FAAE6 /* ScMessageThread.m in Sources */,
+				5C9CDFE0152A43AD006FAAE6 /* ScScheduledBreak.m in Sources */,
+				5C9CDFE3152A43AD006FAAE6 /* ScScolaMemberResidency.m in Sources */,
+				5C9CDFE6152A43AD006FAAE6 /* ScScolaMembership.m in Sources */,
+				5C9CDFE9152A43AD006FAAE6 /* ScEvent.m in Sources */,
+				5C9CDFEC152A43AE006FAAE6 /* ScCachedEntity.m in Sources */,
+				5C9CDFEF152A43AE006FAAE6 /* ScEventInvitation.m in Sources */,
+				5C9CDFF2152A43AE006FAAE6 /* ScScheduledAbsence.m in Sources */,
+				5C9CDFF5152A43AE006FAAE6 /* ScScolaMember.m in Sources */,
+				5C9CDFF8152A43AE006FAAE6 /* ScYearlySchedule.m in Sources */,
+				5C9CDFFB152A43AE006FAAE6 /* ScDocument.m in Sources */,
+				5C9CDFFE152A43AE006FAAE6 /* ScScola.m in Sources */,
+				5C9CE001152A43AE006FAAE6 /* ScScolaAddress.m in Sources */,
+				5C9CE004152A43AF006FAAE6 /* ScToDoAssignment.m in Sources */,
+				5C9CE007152A43AF006FAAE6 /* ScEventInvitationScola.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

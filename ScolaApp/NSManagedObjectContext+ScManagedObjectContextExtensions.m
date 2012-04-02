@@ -16,10 +16,8 @@
 #import "ScCachedEntity.h"
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 
-#import "ScHousehold.h"
 #import "ScScola.h"
 #import "ScScolaMember.h"
-#import "ScSharedEntityRef.h"
 
 
 @implementation NSManagedObjectContext (ScManagedObjectContextExtensions)
@@ -107,7 +105,7 @@
     ScScola *scola = [self entityForClass:ScScola.class];
     
     scola.name = name;
-    scola.scolaId = scola.entityId;
+    scola.scola = scola;
     
     return scola;
 }
@@ -124,12 +122,9 @@
     ScCachedEntity *entity = [self entityForClass:class withId:entityId];
     
     if ([entity isSharedEntity]) {
-        ScSharedEntityRef *entityRef = [self entityForClass:ScSharedEntityRef.class];
         
-        entityRef.sharedEntityId = entity.entityId;
-        entityRef.scolaId = scola.entityId;
     } else {
-        entity.scolaId = scola.entityId;
+        entity.scola = scola;
     }
     
     return entity;
@@ -188,13 +183,10 @@
 
 - (BOOL)saveUsingDelegate:(id)delegate
 {
-    NSError *error;
-    BOOL didSaveOK = [self save:&error];
+    BOOL didSaveOK = [self save];
     
     if (didSaveOK) {
         [[[ScServerConnection alloc] init] persistEntitiesUsingDelegate:delegate];
-    } else {
-        ScLogError(@"Error when saving managed object context: %@", [error localizedDescription]);
     }
     
     return didSaveOK;
