@@ -2,30 +2,30 @@
 //  ScScola.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.04.12.
+//  Created by Anders Blehr on 04.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import "ScScola.h"
-#import "ScCachedEntity.h"
 #import "ScDocumentRepository.h"
 #import "ScEvent.h"
-#import "ScEventInvitationScola.h"
+#import "ScEventScolaInvitation.h"
+#import "ScMembership.h"
 #import "ScMessageBoard.h"
 #import "ScScola.h"
-#import "ScScolaAddress.h"
-#import "ScScolaMembership.h"
 #import "ScToDoItem.h"
 #import "ScYearlySchedule.h"
 
 
 @implementation ScScola
 
+@dynamic addressLine1;
+@dynamic addressLine2;
 @dynamic descriptionText;
 @dynamic name;
+@dynamic phoneNumber;
 @dynamic picture;
-@dynamic address;
-@dynamic containedEntities;
+@dynamic postCodeAndCity;
 @dynamic documentRepositories;
 @dynamic eventInvitations;
 @dynamic hostingEvents;
@@ -35,6 +35,5 @@
 @dynamic parentScola;
 @dynamic subscolas;
 @dynamic yearlySchedule;
-@dynamic scolaEntities;
 
 @end

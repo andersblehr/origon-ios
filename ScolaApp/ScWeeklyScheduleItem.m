@@ -1,16 +1,16 @@
 //
-//  ScScheduleItem.m
+//  ScWeeklyScheduleItem.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.04.12.
+//  Created by Anders Blehr on 04.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
-#import "ScScheduleItem.h"
+#import "ScWeeklyScheduleItem.h"
 #import "ScYearlySchedule.h"
 
 
-@implementation ScScheduleItem
+@implementation ScWeeklyScheduleItem
 
 @dynamic endTime;
 @dynamic startTime;

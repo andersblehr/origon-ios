@@ -2,7 +2,7 @@
 //  ScDocument.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.04.12.
+//  Created by Anders Blehr on 04.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import "ScDocumentElement.h"
 #import "ScDocumentRepository.h"
 #import "ScExternalDocument.h"
-#import "ScScolaMember.h"
+#import "ScMember.h"
 
 
 @implementation ScDocument

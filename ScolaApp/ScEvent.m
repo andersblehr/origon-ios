@@ -2,15 +2,15 @@
 //  ScEvent.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.04.12.
+//  Created by Anders Blehr on 04.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import "ScEvent.h"
 #import "ScEventInvitation.h"
-#import "ScEventInvitationScola.h"
+#import "ScEventScolaInvitation.h"
+#import "ScMember.h"
 #import "ScScola.h"
-#import "ScScolaMember.h"
 
 
 @implementation ScEvent

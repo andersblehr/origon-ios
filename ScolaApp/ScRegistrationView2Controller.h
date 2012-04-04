@@ -10,7 +10,7 @@
 
 #import "ScServerConnectionDelegate.h"
 
-@class ScScola, ScScolaMember;
+@class ScScola, ScMember;
 
 @interface ScRegistrationView2Controller : UIViewController <UITextFieldDelegate, ScServerConnectionDelegate>
 
@@ -23,7 +23,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *deviceNameField;
 
 @property (strong, nonatomic) ScScola *homeScola;
-@property (strong, nonatomic) ScScolaMember *member;
+@property (strong, nonatomic) ScMember *member;
 @property (nonatomic) BOOL userIsListed;
 
 @end

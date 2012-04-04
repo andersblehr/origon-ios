@@ -1,19 +1,21 @@
 //
-//  ScEventInvitationScola.m
+//  ScEventScolaInvitation.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.04.12.
+//  Created by Anders Blehr on 04.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
-#import "ScEventInvitationScola.h"
+#import "ScEventScolaInvitation.h"
 #import "ScEvent.h"
 #import "ScEventInvitation.h"
+#import "ScScola.h"
 
 
-@implementation ScEventInvitationScola
+@implementation ScEventScolaInvitation
 
 @dynamic event;
 @dynamic memberInvitations;
+@dynamic scola;
 
 @end

@@ -16,7 +16,8 @@
 #import "ScRegistrationView2Controller.h"
 #import "ScStrings.h"
 
-#import "ScScolaMember.h"
+#import "ScMember.h"
+#import "ScScola.h"
 
 
 static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistrationView2";
@@ -103,9 +104,9 @@ static int const kMaximumRealisticAge = 110;
     BOOL isDone = (!alertView);
     
     if (isDone) {
-        //member.primaryResidence.addressLine1 = addressLine1Field.text;
-        //member.primaryResidence.addressLine2 = addressLine2Field.text;
-        //member.primaryResidence.postCodeAndCity = postCodeAndCityField.text;
+        homeScola.addressLine1 = addressLine1Field.text;
+        homeScola.addressLine2 = addressLine2Field.text;
+        homeScola.postCodeAndCity = postCodeAndCityField.text;
         
         if (dateOfBirthField.text.length > 0) {
             member.dateOfBirth = dateOfBirthPicker.date;
@@ -159,9 +160,9 @@ static int const kMaximumRealisticAge = 110;
     postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
     dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthClickHerePrompt];
     
-    //addressLine1Field.text = userIsListed ? member.primaryResidence.addressLine1 : @"";
-    //addressLine2Field.text = userIsListed ? member.primaryResidence.addressLine2 : @"";
-    //postCodeAndCityField.text = userIsListed ? member.primaryResidence.postCodeAndCity : @"";
+    addressLine1Field.text = userIsListed ? homeScola.addressLine1 : @"";
+    addressLine2Field.text = userIsListed ? homeScola.addressLine2 : @"";
+    postCodeAndCityField.text = userIsListed ? homeScola.postCodeAndCity : @"";
     
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
     

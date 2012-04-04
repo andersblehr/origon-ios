@@ -149,7 +149,7 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 + (NSString *)stringForKey:(NSString *)key
 {
-    NSString *string = nil;
+    NSString *string = @"";
     
     if (!strings) {
         strings = [NSDictionary dictionaryWithContentsOfFile:[self fullPathToStringsPlist]];

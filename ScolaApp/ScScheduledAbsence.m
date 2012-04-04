@@ -2,12 +2,12 @@
 //  ScScheduledAbsence.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.04.12.
+//  Created by Anders Blehr on 04.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
 #import "ScScheduledAbsence.h"
-#import "ScScolaMember.h"
+#import "ScMember.h"
 
 
 @implementation ScScheduledAbsence

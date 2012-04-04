@@ -11,13 +11,9 @@
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
 #import "ScLogging.h"
+#import "ScMember.h"
+#import "ScMemberResidency.h"
 #import "ScMeta.h"
-
-#import "ScDevice.h"
-#import "ScScolaAddress.h"
-#import "ScScolaMember.h"
-#import "ScScolaMemberResidency.h"
-#import "ScScolaMembership.h"
 
 
 @implementation ScCachedEntity (ScCachedEntityExtensions)
@@ -77,18 +73,6 @@
 
 
 #pragma mark - Entity meta information
-
-- (BOOL)isSharedEntity
-{
-    BOOL isSharedEntity = NO;
-    
-    isSharedEntity = isSharedEntity || [self isKindOfClass:ScScolaAddress.class];
-    isSharedEntity = isSharedEntity || [self isKindOfClass:ScScolaMember.class];
-    isSharedEntity = isSharedEntity || [self isKindOfClass:ScScolaMemberResidency.class];
-    
-    return isSharedEntity;
-}
-
 
 - (NSString *)expiresInTimeframe
 {

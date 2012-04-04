@@ -18,10 +18,10 @@
 #import "ScUUIDGenerator.h"
 
 #import "ScDevice.h"
+#import "ScMember.h"
+#import "ScMembership.h"
 #import "ScMessageBoard.h"
 #import "ScScola.h"
-#import "ScScolaMember.h"
-#import "ScScolaMembership.h"
 
 
 static NSString * const kSegueToMainView = @"registrationView2ToMainView";
@@ -103,12 +103,12 @@ static int const kPopUpButtonUseNew = 1;
         
         ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
         defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
+        defaultMessageBoard.scola = homeScola;
         
-        [homeScola addMessageBoardsObject:defaultMessageBoard];
-
-        ScScolaMembership *scolaMembership = [context entityForClass:ScScolaMembership.class inScola:homeScola];
+        ScMembership *scolaMembership = [context entityForClass:ScMembership.class inScola:homeScola];
         scolaMembership.scola = homeScola;
         scolaMembership.member = member;
+        scolaMembership.isResidency = [NSNumber numberWithBool:YES];
         scolaMembership.isActive = [NSNumber numberWithBool:YES];
         scolaMembership.isAdmin = [NSNumber numberWithBool:YES];
         

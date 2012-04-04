@@ -2,7 +2,7 @@
 //  ScEvent.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.04.12.
+//  Created by Anders Blehr on 04.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScEventInvitation, ScEventInvitationScola, ScScola, ScScolaMember;
+@class ScEventInvitation, ScEventScolaInvitation, ScMember, ScScola;
 
 @interface ScEvent : ScCachedEntity
 
@@ -27,8 +27,8 @@
 
 @interface ScEvent (CoreDataGeneratedAccessors)
 
-- (void)addEventContactsObject:(ScScolaMember *)value;
-- (void)removeEventContactsObject:(ScScolaMember *)value;
+- (void)addEventContactsObject:(ScMember *)value;
+- (void)removeEventContactsObject:(ScMember *)value;
 - (void)addEventContacts:(NSSet *)values;
 - (void)removeEventContacts:(NSSet *)values;
 
@@ -42,8 +42,8 @@
 - (void)addInvitedIndividuals:(NSSet *)values;
 - (void)removeInvitedIndividuals:(NSSet *)values;
 
-- (void)addInvitedScolasObject:(ScEventInvitationScola *)value;
-- (void)removeInvitedScolasObject:(ScEventInvitationScola *)value;
+- (void)addInvitedScolasObject:(ScEventScolaInvitation *)value;
+- (void)removeInvitedScolasObject:(ScEventScolaInvitation *)value;
 - (void)addInvitedScolas:(NSSet *)values;
 - (void)removeInvitedScolas:(NSSet *)values;
 

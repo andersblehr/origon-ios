@@ -2,7 +2,7 @@
 //  ScMessageItem.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.04.12.
+//  Created by Anders Blehr on 04.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,12 +10,12 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScMessageItem, ScMessageThread, ScScolaMember;
+@class ScMember, ScMessageItem, ScMessageThread;
 
 @interface ScMessageItem : ScCachedEntity
 
 @property (nonatomic, retain) NSDate * date;
-@property (nonatomic, retain) ScScolaMember *author;
+@property (nonatomic, retain) ScMember *author;
 @property (nonatomic, retain) ScMessageItem *inReplyTo;
 @property (nonatomic, retain) ScMessageThread *messageThread;
 @property (nonatomic, retain) NSSet *replies;

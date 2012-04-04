@@ -23,7 +23,7 @@ NSString * const kUserDefaultsKeyAuthId = @"scola.auth.id";
 NSString * const kUserDefaultsKeyAuthToken = @"scola.auth.token";
 NSString * const kUserDefaultsKeyAuthExpiryDate = @"scola.auth.expires";
 NSString * const kUserDefaultsKeyAuthInfo = @"scola.auth.info";
-NSString * const kUserDefaultsKeyDeviceId = @"scola.device.id";
+NSString * const kUserDefaultsKeyDeviceId = @"scola.device.id"; // TODO: Add userId to key
 NSString * const kUserDefaultsKeyLastFetchDate = @"scola.fetch.date";
 
 NSString * const kKeyEntityId = @"entityId";

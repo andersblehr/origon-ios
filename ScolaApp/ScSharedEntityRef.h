@@ -1,5 +1,5 @@
 //
-//  ScDevice.h
+//  ScSharedEntityRef.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 04.04.12.
@@ -10,12 +10,9 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScMember;
 
-@interface ScDevice : ScCachedEntity
+@interface ScSharedEntityRef : ScCachedEntity
 
-@property (nonatomic, retain) NSString * displayName;
-@property (nonatomic, retain) NSString * type;
-@property (nonatomic, retain) ScMember *member;
+@property (nonatomic, retain) NSString * entityRefId;
 
 @end

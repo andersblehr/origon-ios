@@ -12,7 +12,7 @@
 #import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
 
-@class ScScola, ScScolaMember, ScServerConnection;
+@class ScScola, ScMember, ScServerConnection;
 
 typedef enum {
     ScAuthPopUpTagServerError,
@@ -41,7 +41,7 @@ typedef enum {
     ScServerConnection *serverConnection;
     NSDictionary *authInfo;
     
-    ScScolaMember *member;
+    ScMember *member;
     ScScola *homeScola;
     BOOL isUserListed;
 }

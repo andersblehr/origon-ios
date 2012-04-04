@@ -2,7 +2,7 @@
 //  ScDocumentRepository.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.04.12.
+//  Created by Anders Blehr on 04.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,12 +10,13 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScDocument;
+@class ScDocument, ScScola;
 
 @interface ScDocumentRepository : ScCachedEntity
 
 @property (nonatomic, retain) NSString * title;
 @property (nonatomic, retain) NSSet *documents;
+@property (nonatomic, retain) ScScola *scola;
 @end
 
 @interface ScDocumentRepository (CoreDataGeneratedAccessors)

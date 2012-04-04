@@ -1,8 +1,8 @@
 //
-//  ScScolaMember.h
+//  ScMember.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.04.12.
+//  Created by Anders Blehr on 04.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,9 +10,9 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScDevice, ScDocument, ScEvent, ScEventInvitation, ScMessageItem, ScScheduledAbsence, ScScolaMemberResidency, ScScolaMembership, ScToDoAssignment;
+@class ScDevice, ScDocument, ScEvent, ScEventInvitation, ScMembership, ScMessageItem, ScScheduledAbsence, ScToDoAssignment;
 
-@interface ScScolaMember : ScCachedEntity
+@interface ScMember : ScCachedEntity
 
 @property (nonatomic, retain) NSDate * activeSince;
 @property (nonatomic, retain) NSDate * dateOfBirth;
@@ -28,13 +28,12 @@
 @property (nonatomic, retain) NSSet *documents;
 @property (nonatomic, retain) NSSet *eventInvitations;
 @property (nonatomic, retain) NSSet *messageItems;
-@property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
-@property (nonatomic, retain) NSSet *scolaMemberships;
+@property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) NSSet *toDoAssignments;
 @end
 
-@interface ScScolaMember (CoreDataGeneratedAccessors)
+@interface ScMember (CoreDataGeneratedAccessors)
 
 - (void)addContactForEventsObject:(ScEvent *)value;
 - (void)removeContactForEventsObject:(ScEvent *)value;
@@ -61,20 +60,15 @@
 - (void)addMessageItems:(NSSet *)values;
 - (void)removeMessageItems:(NSSet *)values;
 
-- (void)addResidenciesObject:(ScScolaMemberResidency *)value;
-- (void)removeResidenciesObject:(ScScolaMemberResidency *)value;
-- (void)addResidencies:(NSSet *)values;
-- (void)removeResidencies:(NSSet *)values;
-
 - (void)addScheduledAbsencesObject:(ScScheduledAbsence *)value;
 - (void)removeScheduledAbsencesObject:(ScScheduledAbsence *)value;
 - (void)addScheduledAbsences:(NSSet *)values;
 - (void)removeScheduledAbsences:(NSSet *)values;
 
-- (void)addScolaMembershipsObject:(ScScolaMembership *)value;
-- (void)removeScolaMembershipsObject:(ScScolaMembership *)value;
-- (void)addScolaMemberships:(NSSet *)values;
-- (void)removeScolaMemberships:(NSSet *)values;
+- (void)addMembershipsObject:(ScMembership *)value;
+- (void)removeMembershipsObject:(ScMembership *)value;
+- (void)addMemberships:(NSSet *)values;
+- (void)removeMemberships:(NSSet *)values;
 
 - (void)addToDoAssignmentsObject:(ScToDoAssignment *)value;
 - (void)removeToDoAssignmentsObject:(ScToDoAssignment *)value;

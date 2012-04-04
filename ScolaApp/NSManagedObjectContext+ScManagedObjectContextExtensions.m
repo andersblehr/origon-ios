@@ -16,8 +16,11 @@
 #import "ScCachedEntity.h"
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 
+#import "ScMember.h"
+#import "ScMemberResidency.h"
+#import "ScMembership.h"
 #import "ScScola.h"
-#import "ScScolaMember.h"
+#import "ScSharedEntityRef.h"
 
 
 @implementation NSManagedObjectContext (ScManagedObjectContextExtensions)
@@ -25,30 +28,17 @@
 
 #pragma mark - Auxiliary methods
 
-- (id)entityForClass:(Class)class
-{
-    return [self entityForClass:class withId:[ScUUIDGenerator generateUUID]];
-}
-
-
 - (id)entityForClass:(Class)class withId:(NSString *)entityId
 {
     ScCachedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
     
-    NSDate *now = [NSDate date];
-    
     entity.entityId = entityId;
-    entity.dateCreated = now;
+    entity.dateCreated = [NSDate date];
     
-    if (![entity isSharedEntity]) {
-        entity.dateModified = now;
-        entity.dateExpires = nil;
-        
-        NSString *expires = [entity expiresInTimeframe];
-        
-        if (expires) {
-            // TODO: Process expiry instructions
-        }
+    NSString *expires = [entity expiresInTimeframe];
+    
+    if (expires) {
+        // TODO: Process expiry instructions
     }
     
     return entity;
@@ -105,9 +95,15 @@
     ScScola *scola = [self entityForClass:ScScola.class];
     
     scola.name = name;
-    scola.scola = scola;
+    scola.scolaId = scola.entityId;
     
     return scola;
+}
+
+
+- (id)entityForClass:(Class)class
+{
+    return [self entityForClass:class withId:[ScUUIDGenerator generateUUID]];
 }
 
 
@@ -121,11 +117,7 @@
 {
     ScCachedEntity *entity = [self entityForClass:class withId:entityId];
     
-    if ([entity isSharedEntity]) {
-        
-    } else {
-        entity.scola = scola;
-    }
+    entity.scolaId = scola.entityId;
     
     return entity;
 }
@@ -154,7 +146,54 @@
 }
 
 
+#pragma mark - Object model consistency
+
+- (void)entityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola
+{
+    ScSharedEntityRef *entityRef = [self entityForClass:ScSharedEntityRef.class];
+    
+    entityRef.entityRefId = entity.entityId;
+    entityRef.scolaId = scola.entityId;
+}
+
+
+- (ScMembership *)addMember:(ScMember *)member toScola:(ScScola *)scola isActive:(BOOL)isActive
+{
+    [self entityRefForEntity:member inScola:scola];
+    
+    for (ScMembership *membership in member.memberships) {
+        if ([membership.isResidency boolValue]) {
+            [self entityRefForEntity:membership inScola:scola];
+            [self entityRefForEntity:membership.scola inScola:scola];
+            
+            if (membership.partTimeResidency) {
+                [self entityRefForEntity:membership.partTimeResidency inScola:scola];
+            }
+        }
+    }
+    
+    ScMembership *scolaMembership = [self entityForClass:ScMembership.class inScola:scola];
+    scolaMembership.member = member;
+    scolaMembership.scola = scola;
+    scolaMembership.isActive = [NSNumber numberWithBool:isActive];
+    
+    return scolaMembership;
+}
+
+
 #pragma mark - Local & remote persistence
+
+- (BOOL)saveUsingDelegate:(id)delegate
+{
+    BOOL didSaveOK = [self save];
+    
+    if (didSaveOK) {
+        [[[ScServerConnection alloc] init] persistEntitiesUsingDelegate:delegate];
+    }
+    
+    return didSaveOK;
+}
+
 
 - (void)mergeEntitiesFromDictionaryArray:(NSArray *)dictionaryArray
 {
@@ -178,18 +217,6 @@
     if (![self save]) {
         ScLogError(@"Entities from server could not be saved.");
     }
-}
-
-
-- (BOOL)saveUsingDelegate:(id)delegate
-{
-    BOOL didSaveOK = [self save];
-    
-    if (didSaveOK) {
-        [[[ScServerConnection alloc] init] persistEntitiesUsingDelegate:delegate];
-    }
-    
-    return didSaveOK;
 }
 
 @end

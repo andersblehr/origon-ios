@@ -6,7 +6,7 @@
 //  Copyright (c) 2011 Rhelba Software. All rights reserved.
 //
 
-@class ScScola, ScScolaMember;
+@class ScScola, ScMember;
 
 @interface ScRegistrationView1Controller : UIViewController <UITextFieldDelegate, UIAlertViewDelegate>
 
@@ -19,7 +19,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *dateOfBirthField;
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirthPicker;
 
-@property (strong, nonatomic) ScScolaMember *member;
+@property (strong, nonatomic) ScMember *member;
 @property (strong, nonatomic) ScScola *homeScola;
 @property (nonatomic) BOOL userIsListed;
 

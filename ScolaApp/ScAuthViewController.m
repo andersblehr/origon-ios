@@ -14,12 +14,13 @@
 
 #import "ScMeta.h"
 #import "ScLogging.h"
-#import "ScServerConnection.h"
 #import "ScRegistrationView1Controller.h"
+#import "ScServerConnection.h"
 #import "ScStrings.h"
 
+#import "ScMember.h"
+#import "ScMemberResidency.h"
 #import "ScScola.h"
-#import "ScScolaMember.h"
 
 
 static NSString * const kSoundbiteTypewriter = @"typewriter.caf";
@@ -480,7 +481,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)userDidLogIn:(NSString *)authId isNewUser:(BOOL)isNewUser
 {
     if (isNewUser) {
-        //NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
 
         if (isUserListed) { /*
             NSDictionary *memberInfo = [authInfo objectForKey:kAuthInfoKeyMemberInfo];
@@ -494,13 +495,10 @@ static int const kPopUpButtonTryAgain = 1;
                 homeScola = [context entityFromDictionary:homeScolaInfo];
             } else {
                 homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
-            } 
+            } */
         } else {
             homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
-
-            member = [context entityForClass:ScScolaMember.class inScola:homeScola withId:emailAsEntered];
-            
-            member.primaryResidence = [context entityForClass:ScHousehold.class inScola:homeScola]; */
+            member = [context entityForClass:ScMember.class inScola:homeScola withId:emailAsEntered];
         }
         
         member.name = nameAsEntered;

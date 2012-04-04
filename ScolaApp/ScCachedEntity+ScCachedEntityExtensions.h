@@ -20,7 +20,6 @@ typedef enum {
 - (ScRemotePersistenceState)persistenceState;
 - (void)setPersistenceState:(ScRemotePersistenceState)remotePersistenceState;
 
-- (BOOL)isSharedEntity;
 - (NSString *)expiresInTimeframe;
 
 - (NSDictionary *)toDictionary;
