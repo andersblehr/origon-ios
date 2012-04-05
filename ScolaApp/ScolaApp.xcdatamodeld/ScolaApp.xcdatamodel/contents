@@ -5,8 +5,9 @@
         <attribute name="dateExpires" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="dateModified" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="entityId" attributeType="String" syncable="YES"/>
+        <attribute name="isShared" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="parentScolaId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="remotePersistenceState" transient="YES" attributeType="Integer 16" defaultValueString="NO" syncable="YES"/>
-        <attribute name="scolaId" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="ScDevice" representedClassName="ScDevice" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="displayName" attributeType="String" syncable="YES"/>
@@ -209,7 +210,7 @@
         </userInfo>
     </entity>
     <elements>
-        <element name="ScCachedEntity" positionX="-369" positionY="423" width="128" height="135"/>
+        <element name="ScCachedEntity" positionX="-369" positionY="423" width="128" height="150"/>
         <element name="ScDevice" positionX="322" positionY="-522" width="128" height="90"/>
         <element name="ScDocument" positionX="342" positionY="-141" width="128" height="150"/>
         <element name="ScDocumentElement" positionX="511" positionY="-189" width="128" height="90"/>
@@ -226,11 +227,11 @@
         <element name="ScMessageThread" positionX="333" positionY="306" width="128" height="90"/>
         <element name="ScScheduledAbsence" positionX="169" positionY="-396" width="128" height="105"/>
         <element name="ScScheduledBreak" positionX="162" positionY="405" width="128" height="90"/>
-        <element name="ScWeeklyScheduleItem" positionX="-20" positionY="306" width="128" height="120"/>
         <element name="ScScola" positionX="160" positionY="-117" width="128" height="285"/>
+        <element name="ScSharedEntityRef" positionX="160" positionY="192" width="128" height="60"/>
         <element name="ScToDoAssignment" positionX="342" positionY="-405" width="128" height="105"/>
         <element name="ScToDoItem" positionX="333" positionY="-267" width="128" height="105"/>
+        <element name="ScWeeklyScheduleItem" positionX="-20" positionY="306" width="128" height="120"/>
         <element name="ScYearlySchedule" positionX="169" positionY="243" width="128" height="120"/>
-        <element name="ScSharedEntityRef" positionX="160" positionY="192" width="128" height="60"/>
     </elements>
 </model>

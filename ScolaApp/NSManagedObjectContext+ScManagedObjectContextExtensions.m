@@ -154,6 +154,8 @@
     
     entityRef.entityRefId = entity.entityId;
     entityRef.scolaId = scola.entityId;
+    
+    entity.isShared = [NSNumber numberWithBool:YES];
 }
 
 

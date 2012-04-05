@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C007F99152DA3FC00AF9448 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C007F98152DA3FC00AF9448 /* ScCachedEntity.m */; };
 		5C153EEF14CC668F003A6B61 /* glyphicons_006_user_add_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EED14CC668F003A6B61 /* glyphicons_006_user_add_white.png */; };
 		5C153EF014CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EEE14CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png */; };
 		5C153EF314CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF114CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png */; };
@@ -82,7 +83,6 @@
 		5CCB896C152CA68C00358C28 /* ScMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB896B152CA68C00358C28 /* ScMember.m */; };
 		5CCB896F152CAA9400358C28 /* ScMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB896E152CAA9400358C28 /* ScMembership.m */; };
 		5CCB8972152CB7CC00358C28 /* ScMemberResidency.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB8971152CB7CC00358C28 /* ScMemberResidency.m */; };
-		5CCB8975152CBB9B00358C28 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB8974152CBB9B00358C28 /* ScCachedEntity.m */; };
 		5CCF08BE1463F12A00D41AB0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */; };
 		5CCF08C414644E0800D41AB0 /* typewriter.caf in Resources */ = {isa = PBXBuildFile; fileRef = 5CCF08C314644E0800D41AB0 /* typewriter.caf */; };
 		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
@@ -104,6 +104,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5C007F97152DA3FC00AF9448 /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
+		5C007F98152DA3FC00AF9448 /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
 		5C153EED14CC668F003A6B61 /* glyphicons_006_user_add_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_006_user_add_white.png; sourceTree = "<group>"; };
 		5C153EEE14CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_006_user_add_white@2x.png"; sourceTree = "<group>"; };
 		5C153EF114CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_192_circle_remove_white.png; sourceTree = "<group>"; };
@@ -225,8 +227,6 @@
 		5CCB896E152CAA9400358C28 /* ScMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMembership.m; sourceTree = "<group>"; };
 		5CCB8970152CB7CC00358C28 /* ScMemberResidency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMemberResidency.h; sourceTree = "<group>"; };
 		5CCB8971152CB7CC00358C28 /* ScMemberResidency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMemberResidency.m; sourceTree = "<group>"; };
-		5CCB8973152CBB9B00358C28 /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
-		5CCB8974152CBB9B00358C28 /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
 		5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5CCF08C314644E0800D41AB0 /* typewriter.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = typewriter.caf; path = soundbites/typewriter.caf; sourceTree = SOURCE_ROOT; };
 		5CCF08FC1465D5D800D41AB0 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
@@ -301,8 +301,8 @@
 			isa = PBXGroup;
 			children = (
 				5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */,
-				5CCB8973152CBB9B00358C28 /* ScCachedEntity.h */,
-				5CCB8974152CBB9B00358C28 /* ScCachedEntity.m */,
+				5C007F97152DA3FC00AF9448 /* ScCachedEntity.h */,
+				5C007F98152DA3FC00AF9448 /* ScCachedEntity.m */,
 				5CCB895B152C7DDD00358C28 /* ScDevice.h */,
 				5CCB895C152C7DDD00358C28 /* ScDevice.m */,
 				5CCB891E152C7DD900358C28 /* ScDocument.h */,
@@ -713,7 +713,7 @@
 				5CCB896C152CA68C00358C28 /* ScMember.m in Sources */,
 				5CCB896F152CAA9400358C28 /* ScMembership.m in Sources */,
 				5CCB8972152CB7CC00358C28 /* ScMemberResidency.m in Sources */,
-				5CCB8975152CBB9B00358C28 /* ScCachedEntity.m in Sources */,
+				5C007F99152DA3FC00AF9448 /* ScCachedEntity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
