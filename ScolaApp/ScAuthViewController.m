@@ -464,6 +464,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)confirmNewUser
 {
     authPhase = ScAuthPhaseConfirmation;
+    homeScola = [[ScMeta m].managedObjectContext entityForScolaWithName:[ScStrings stringForKey:strMyPlace]];
     
     nameAsEntered = [authInfo objectForKey:kAuthInfoKeyName];
     emailAsEntered = [authInfo objectForKey:kAuthInfoKeyUserId];
@@ -474,6 +475,7 @@ static int const kPopUpButtonTryAgain = 1;
     
     serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
+    [serverConnection setValue:homeScola.scolaId forURLParameter:kURLParameterScolaId];
     [serverConnection authenticateForPhase:ScAuthPhaseConfirmation usingDelegate:self];
 }
 
@@ -497,7 +499,6 @@ static int const kPopUpButtonTryAgain = 1;
                 homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
             } */
         } else {
-            homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
             member = [context entityForClass:ScMember.class inScola:homeScola withId:emailAsEntered];
         }
         

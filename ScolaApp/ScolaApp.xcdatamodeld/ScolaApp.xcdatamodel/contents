@@ -6,8 +6,8 @@
         <attribute name="dateModified" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="entityId" attributeType="String" syncable="YES"/>
         <attribute name="isShared" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="parentScolaId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="remotePersistenceState" transient="YES" attributeType="Integer 16" defaultValueString="NO" syncable="YES"/>
+        <attribute name="scolaId" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="ScDevice" representedClassName="ScDevice" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="displayName" attributeType="String" syncable="YES"/>
@@ -85,27 +85,27 @@
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEventInvitation" inverseName="invitee" inverseEntity="ScEventInvitation" spotlightIndexingEnabled="YES" syncable="YES"/>
         <relationship name="memberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScMembership" inverseName="member" inverseEntity="ScMembership" syncable="YES"/>
         <relationship name="messageItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScMessageItem" inverseName="author" inverseEntity="ScMessageItem" syncable="YES"/>
+        <relationship name="residencies" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScMemberResidency" inverseName="resident" inverseEntity="ScMemberResidency" syncable="YES"/>
         <relationship name="scheduledAbsences" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScScheduledAbsence" inverseName="person" inverseEntity="ScScheduledAbsence" syncable="YES"/>
         <relationship name="toDoAssignments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScToDoAssignment" inverseName="assignee" inverseEntity="ScToDoAssignment" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="no"/>
         </userInfo>
     </entity>
-    <entity name="ScMemberResidency" representedClassName="ScMemberResidency" parentEntity="ScCachedEntity" syncable="YES">
+    <entity name="ScMemberResidency" representedClassName="ScMemberResidency" parentEntity="ScMembership" syncable="YES">
         <attribute name="daysAtATime" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="presentOn01Jan" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="switchDay" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="switchFrequency" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <relationship name="membership" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMembership" inverseName="partTimeResidency" inverseEntity="ScMembership" syncable="YES"/>
+        <relationship name="residence" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="residents" inverseEntity="ScScola" syncable="YES"/>
+        <relationship name="resident" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="residencies" inverseEntity="ScMember" syncable="YES"/>
     </entity>
     <entity name="ScMembership" representedClassName="ScMembership" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="isActive" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isAdmin" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isCoach" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="isResidency" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isTeacher" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <relationship name="member" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="memberships" inverseEntity="ScMember" syncable="YES"/>
-        <relationship name="partTimeResidency" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMemberResidency" inverseName="membership" inverseEntity="ScMemberResidency" syncable="YES"/>
         <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="members" inverseEntity="ScScola" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="no"/>
@@ -168,6 +168,7 @@
         <relationship name="memberToDoItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScToDoItem" inverseName="scola" inverseEntity="ScToDoItem" syncable="YES"/>
         <relationship name="messageBoards" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScMessageBoard" inverseName="scola" inverseEntity="ScMessageBoard" syncable="YES"/>
         <relationship name="parentScola" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScScola" inverseName="subscolas" inverseEntity="ScScola" syncable="YES"/>
+        <relationship name="residents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScMemberResidency" inverseName="residence" inverseEntity="ScMemberResidency" syncable="YES"/>
         <relationship name="subscolas" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScScola" inverseName="parentScola" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="yearlySchedule" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScYearlySchedule" inverseName="scola" inverseEntity="ScYearlySchedule" syncable="YES"/>
         <userInfo>
@@ -210,7 +211,7 @@
         </userInfo>
     </entity>
     <elements>
-        <element name="ScCachedEntity" positionX="-369" positionY="423" width="128" height="150"/>
+        <element name="ScCachedEntity" positionX="-369" positionY="423" width="128" height="135"/>
         <element name="ScDevice" positionX="322" positionY="-522" width="128" height="90"/>
         <element name="ScDocument" positionX="342" positionY="-141" width="128" height="150"/>
         <element name="ScDocumentElement" positionX="511" positionY="-189" width="128" height="90"/>
@@ -227,7 +228,7 @@
         <element name="ScMessageThread" positionX="333" positionY="306" width="128" height="90"/>
         <element name="ScScheduledAbsence" positionX="169" positionY="-396" width="128" height="105"/>
         <element name="ScScheduledBreak" positionX="162" positionY="405" width="128" height="90"/>
-        <element name="ScScola" positionX="160" positionY="-117" width="128" height="285"/>
+        <element name="ScScola" positionX="160" positionY="-117" width="128" height="300"/>
         <element name="ScSharedEntityRef" positionX="160" positionY="192" width="128" height="60"/>
         <element name="ScToDoAssignment" positionX="342" positionY="-405" width="128" height="105"/>
         <element name="ScToDoItem" positionX="333" positionY="-267" width="128" height="105"/>

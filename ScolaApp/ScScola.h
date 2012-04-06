@@ -2,7 +2,7 @@
 //  ScScola.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 04.04.12.
+//  Created by Anders Blehr on 06.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScDocumentRepository, ScEvent, ScEventScolaInvitation, ScMembership, ScMessageBoard, ScScola, ScToDoItem, ScYearlySchedule;
+@class ScDocumentRepository, ScEvent, ScEventScolaInvitation, ScMemberResidency, ScMembership, ScMessageBoard, ScScola, ScToDoItem, ScYearlySchedule;
 
 @interface ScScola : ScCachedEntity
 
@@ -30,6 +30,7 @@
 @property (nonatomic, retain) ScScola *parentScola;
 @property (nonatomic, retain) NSSet *subscolas;
 @property (nonatomic, retain) ScYearlySchedule *yearlySchedule;
+@property (nonatomic, retain) NSSet *residents;
 @end
 
 @interface ScScola (CoreDataGeneratedAccessors)
@@ -68,5 +69,10 @@
 - (void)removeSubscolasObject:(ScScola *)value;
 - (void)addSubscolas:(NSSet *)values;
 - (void)removeSubscolas:(NSSet *)values;
+
+- (void)addResidentsObject:(ScMemberResidency *)value;
+- (void)removeResidentsObject:(ScMemberResidency *)value;
+- (void)addResidents:(NSSet *)values;
+- (void)removeResidents:(NSSet *)values;
 
 @end

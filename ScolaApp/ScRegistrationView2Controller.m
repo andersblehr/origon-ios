@@ -19,7 +19,7 @@
 
 #import "ScDevice.h"
 #import "ScMember.h"
-#import "ScMembership.h"
+#import "ScMemberResidency.h"
 #import "ScMessageBoard.h"
 #import "ScScola.h"
 
@@ -105,12 +105,13 @@ static int const kPopUpButtonUseNew = 1;
         defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
         defaultMessageBoard.scola = homeScola;
         
-        ScMembership *scolaMembership = [context entityForClass:ScMembership.class inScola:homeScola];
-        scolaMembership.scola = homeScola;
-        scolaMembership.member = member;
-        scolaMembership.isResidency = [NSNumber numberWithBool:YES];
-        scolaMembership.isActive = [NSNumber numberWithBool:YES];
-        scolaMembership.isAdmin = [NSNumber numberWithBool:YES];
+        ScMemberResidency *memberResidency = [context entityForClass:ScMemberResidency.class inScola:homeScola];
+        memberResidency.scola = homeScola;
+        memberResidency.residence = homeScola;
+        memberResidency.member = member;
+        memberResidency.resident = member;
+        memberResidency.isActive = [NSNumber numberWithBool:YES];
+        memberResidency.isAdmin = [NSNumber numberWithBool:YES];
         
         ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
         device.type = [UIDevice currentDevice].model;

@@ -32,6 +32,7 @@ typedef enum {
 }
 
 extern NSString * const kURLParameterName;
+extern NSString * const kURLParameterScolaId;
 extern NSString * const kURLParameterAuthToken;
 extern NSString * const kURLParameterLastFetchDate;
 

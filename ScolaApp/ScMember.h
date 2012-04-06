@@ -2,7 +2,7 @@
 //  ScMember.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 04.04.12.
+//  Created by Anders Blehr on 06.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScDevice, ScDocument, ScEvent, ScEventInvitation, ScMembership, ScMessageItem, ScScheduledAbsence, ScToDoAssignment;
+@class ScDevice, ScDocument, ScEvent, ScEventInvitation, ScMemberResidency, ScMembership, ScMessageItem, ScScheduledAbsence, ScToDoAssignment;
 
 @interface ScMember : ScCachedEntity
 
@@ -27,10 +27,11 @@
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;
 @property (nonatomic, retain) NSSet *eventInvitations;
+@property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) NSSet *messageItems;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
-@property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) NSSet *toDoAssignments;
+@property (nonatomic, retain) NSSet *residencies;
 @end
 
 @interface ScMember (CoreDataGeneratedAccessors)
@@ -55,6 +56,11 @@
 - (void)addEventInvitations:(NSSet *)values;
 - (void)removeEventInvitations:(NSSet *)values;
 
+- (void)addMembershipsObject:(ScMembership *)value;
+- (void)removeMembershipsObject:(ScMembership *)value;
+- (void)addMemberships:(NSSet *)values;
+- (void)removeMemberships:(NSSet *)values;
+
 - (void)addMessageItemsObject:(ScMessageItem *)value;
 - (void)removeMessageItemsObject:(ScMessageItem *)value;
 - (void)addMessageItems:(NSSet *)values;
@@ -65,14 +71,14 @@
 - (void)addScheduledAbsences:(NSSet *)values;
 - (void)removeScheduledAbsences:(NSSet *)values;
 
-- (void)addMembershipsObject:(ScMembership *)value;
-- (void)removeMembershipsObject:(ScMembership *)value;
-- (void)addMemberships:(NSSet *)values;
-- (void)removeMemberships:(NSSet *)values;
-
 - (void)addToDoAssignmentsObject:(ScToDoAssignment *)value;
 - (void)removeToDoAssignmentsObject:(ScToDoAssignment *)value;
 - (void)addToDoAssignments:(NSSet *)values;
 - (void)removeToDoAssignments:(NSSet *)values;
+
+- (void)addResidenciesObject:(ScMemberResidency *)value;
+- (void)removeResidenciesObject:(ScMemberResidency *)value;
+- (void)addResidencies:(NSSet *)values;
+- (void)removeResidencies:(NSSet *)values;
 
 @end

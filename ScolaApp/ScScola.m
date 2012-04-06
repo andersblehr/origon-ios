@@ -2,7 +2,7 @@
 //  ScScola.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 04.04.12.
+//  Created by Anders Blehr on 06.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,6 +10,7 @@
 #import "ScDocumentRepository.h"
 #import "ScEvent.h"
 #import "ScEventScolaInvitation.h"
+#import "ScMemberResidency.h"
 #import "ScMembership.h"
 #import "ScMessageBoard.h"
 #import "ScScola.h"
@@ -35,5 +36,6 @@
 @dynamic parentScola;
 @dynamic subscolas;
 @dynamic yearlySchedule;
+@dynamic residents;
 
 @end

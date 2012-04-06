@@ -23,10 +23,19 @@
 #import "ScSharedEntityRef.h"
 
 
+static NSString * const kScolaRelationshipName = @"scola";
+
+
 @implementation NSManagedObjectContext (ScManagedObjectContextExtensions)
 
 
 #pragma mark - Auxiliary methods
+
+- (id)entityForClass:(Class)class
+{
+    return [self entityForClass:class withId:[ScUUIDGenerator generateUUID]];
+}
+
 
 - (id)entityForClass:(Class)class withId:(NSString *)entityId
 {
@@ -90,7 +99,7 @@
 
 #pragma mark - Entity creation
 
-- (ScScola *)newScolaWithName:(NSString *)name;
+- (ScScola *)entityForScolaWithName:(NSString *)name;
 {
     ScScola *scola = [self entityForClass:ScScola.class];
     
@@ -98,12 +107,6 @@
     scola.scolaId = scola.entityId;
     
     return scola;
-}
-
-
-- (id)entityForClass:(Class)class
-{
-    return [self entityForClass:class withId:[ScUUIDGenerator generateUUID]];
 }
 
 
@@ -118,6 +121,10 @@
     ScCachedEntity *entity = [self entityForClass:class withId:entityId];
     
     entity.scolaId = scola.entityId;
+    
+    if ([[entity.entity relationshipsByName] objectForKey:kScolaRelationshipName]) {
+        [entity setValue:scola forKey:kScolaRelationshipName];
+    }
     
     return entity;
 }
@@ -163,15 +170,9 @@
 {
     [self entityRefForEntity:member inScola:scola];
     
-    for (ScMembership *membership in member.memberships) {
-        if ([membership.isResidency boolValue]) {
-            [self entityRefForEntity:membership inScola:scola];
-            [self entityRefForEntity:membership.scola inScola:scola];
-            
-            if (membership.partTimeResidency) {
-                [self entityRefForEntity:membership.partTimeResidency inScola:scola];
-            }
-        }
+    for (ScMemberResidency *residency in member.residencies) {
+        [self entityRefForEntity:residency inScola:scola];
+        [self entityRefForEntity:residency.scola inScola:scola];
     }
     
     ScMembership *scolaMembership = [self entityForClass:ScMembership.class inScola:scola];

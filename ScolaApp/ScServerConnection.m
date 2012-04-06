@@ -57,6 +57,7 @@ static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
 
 NSString * const kURLParameterName = @"name";
+NSString * const kURLParameterScolaId = @"scola";
 NSString * const kURLParameterAuthToken = @"token";
 NSString * const kURLParameterLastFetchDate = @"since";
 

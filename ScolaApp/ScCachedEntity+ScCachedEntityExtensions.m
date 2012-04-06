@@ -113,16 +113,7 @@
         for (NSString *name in [relationships allKeys]) {
             NSRelationshipDescription *relationship = [relationships objectForKey:name];
             
-            if (relationship.isToMany) {
-                NSSet *targetEntities = [self valueForKey:name];
-                NSMutableArray *targetEntityRefs = [[NSMutableArray alloc] init];
-                
-                for (ScCachedEntity *entity in targetEntities) {
-                    [targetEntityRefs addObject:[entity entityRef]];
-                }
-                
-                [entityDictionary setObject:targetEntityRefs forKey:name];
-            } else {
+            if (!relationship.isToMany) {
                 ScCachedEntity *entity = [self valueForKey:name];
                 
                 if (entity) {
