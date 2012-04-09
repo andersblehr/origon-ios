@@ -176,7 +176,8 @@
         </userInfo>
     </entity>
     <entity name="ScSharedEntityRef" representedClassName="ScSharedEntityRef" parentEntity="ScCachedEntity" syncable="YES">
-        <attribute name="entityRefId" attributeType="String" syncable="YES"/>
+        <attribute name="sharedEntityId" attributeType="String" syncable="YES"/>
+        <attribute name="sharedEntityScolaId" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="ScToDoAssignment" representedClassName="ScToDoAssignment" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="declined" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>

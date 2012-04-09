@@ -2,7 +2,7 @@
 //  ScSharedEntityRef.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 06.04.12.
+//  Created by Anders Blehr on 09.04.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -13,6 +13,7 @@
 
 @interface ScSharedEntityRef : ScCachedEntity
 
-@property (nonatomic, retain) NSString * entityRefId;
+@property (nonatomic, retain) NSString * sharedEntityId;
+@property (nonatomic, retain) NSString * sharedEntityScolaId;
 
 @end

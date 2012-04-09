@@ -153,13 +153,14 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-#pragma mark - Object model consistency
+#pragma mark - Entity cross-referencing
 
 - (void)entityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola
 {
     ScSharedEntityRef *entityRef = [self entityForClass:ScSharedEntityRef.class];
     
-    entityRef.entityRefId = entity.entityId;
+    entityRef.sharedEntityId = entity.entityId;
+    entityRef.sharedEntityScolaId = entity.scolaId;
     entityRef.scolaId = scola.entityId;
     
     entity.isShared = [NSNumber numberWithBool:YES];
