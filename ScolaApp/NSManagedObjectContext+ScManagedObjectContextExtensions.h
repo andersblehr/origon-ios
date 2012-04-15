@@ -13,6 +13,7 @@
 @interface NSManagedObjectContext (ScManagedObjectContextExtensions)
 
 - (ScScola *)entityForScolaWithName:(NSString *)name;
+- (ScScola *)entityForScolaWithName:(NSString *)name andId:(NSString *)scolaId;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola withId:(NSString *)entityId;
 
@@ -20,6 +21,7 @@
 
 - (ScMembership *)addMember:(ScMember *)member toScola:(ScScola *)scola isActive:(BOOL)isActive;
 
+- (BOOL)save;
 - (BOOL)saveUsingDelegate:(id)delegate;
 - (void)mergeEntitiesFromDictionaryArray:(NSArray *)dictionaryArray;
 

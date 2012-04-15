@@ -237,8 +237,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     } else if (authPhase == ScAuthPhaseLogin) {
         RESTRoute = kRESTRouteAuthLogin;
         
-        NSString *lastFetchDate = [ScMeta userDefaultForKey:kUserDefaultsKeyLastFetchDate];
-        [self setValue:lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
+        [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     }
     
     [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
@@ -250,28 +249,24 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
     RESTHandler = kRESTHandlerModel;
     RESTRoute = kRESTRouteModelFetch;
     
-    NSString *lastFetchDate = [ScMeta userDefaultForKey:kUserDefaultsKeyLastFetchDate];
-    [self setValue:lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
-    
+    [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
 }
 
 
-- (void)persistEntitiesUsingDelegate:(id)delegate
+- (void)persistEntities:(NSSet *)entities usingDelegate:(id)delegate
 {
-    NSArray *entitiesToPersist = [[ScMeta m] entitiesToPersistToServer];
-    
-    if (entitiesToPersist.count > 0) {
+    if (entities.count > 0) {
         RESTHandler = kRESTHandlerModel;
         RESTRoute = kRESTRouteModelPersist;
         
-        NSMutableArray *persistableArrayOfEntities = [[NSMutableArray alloc] init];
+        NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
         
-        for (ScCachedEntity *entity in entitiesToPersist) {
-            [persistableArrayOfEntities addObject:[entity toDictionary]];
+        for (ScCachedEntity *entity in entities) {
+            [entityDictionaries addObject:[entity toDictionary]];
         }
         
-        [self performHTTPMethod:kHTTPMethodPOST withPayload:persistableArrayOfEntities usingDelegate:delegate];
+        [self performHTTPMethod:kHTTPMethodPOST withPayload:entityDictionaries usingDelegate:delegate];
     }
 }
 
@@ -307,7 +302,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
         NSString *fetchDate = [responseHeaderFields objectForKey:kHTTPHeaderLastModified];
         
         if (fetchDate) {
-            [ScMeta setUserDefault:fetchDate forKey:kUserDefaultsKeyLastFetchDate];
+            [ScMeta m].lastFetchDate = fetchDate;
         }
     }
     

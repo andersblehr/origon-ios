@@ -33,6 +33,8 @@ static int const kMinimumPassordLength = 6;
 static int const kMembershipStatusMember = 0;
 static int const kMembershipStatusNewUser = 1;
 
+static NSString * const kUserDefaultsKeyAuthInfo = @"scola.auth.info";
+
 static NSString * const kAuthInfoKeyName = @"name";
 static NSString * const kAuthInfoKeyUserId = @"userId";
 static NSString * const kAuthInfoKeyPasswordHash = @"passwordHash";
@@ -40,6 +42,7 @@ static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
 static NSString * const kAuthInfoKeyIsListed = @"isListed";
 static NSString * const kAuthInfoKeyIsRegistered = @"isRegistered";
 static NSString * const kAuthInfoKeyIsAuthenticated = @"isAuthenticated";
+static NSString * const kAuthInfoKeyHomeScolaId = @"homeScola";
 
 static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
 
@@ -219,61 +222,6 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
-#pragma mark - Auth token handling
-
-- (NSString *)generateAuthToken:(NSDate *)expiryDate
-{
-    NSString *deviceId = [ScMeta m].deviceId;
-    NSString *expiryDateAsString = expiryDate.description;
-    NSString *saltyDiff = [deviceId diff:expiryDateAsString];
-    
-    return [saltyDiff hashUsingSHA1];
-}
-
-
-- (void)generateAndSetAuthTokenForUser:(NSString *)userId
-{
-    NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:1];
-    //NSDate *authExpiryDate  = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
-    NSString *authToken = [self generateAuthToken:authExpiryDate];
-    
-    [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyAuthId];
-    [ScMeta setUserDefault:authToken forKey:kUserDefaultsKeyAuthToken];
-    [ScMeta setUserDefault:authExpiryDate forKey:kUserDefaultsKeyAuthExpiryDate];
-}
-
-
-- (void)invalidateAuthToken
-{
-    [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthToken];
-    [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthExpiryDate];
-}
-
-
-- (BOOL)isAuthTokenValid
-{
-    BOOL isTokenValid = NO;
-    
-    NSString *authTokenAsStored = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthToken];
-    NSDate *authExpiryDate = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthExpiryDate];
-    
-    if (authTokenAsStored && authExpiryDate) {
-        NSDate *now = [NSDate date];
-        
-        if ([now compare:authExpiryDate] == NSOrderedAscending) {
-            NSString *validToken = [self generateAuthToken:authExpiryDate];
-            isTokenValid = [authTokenAsStored isEqualToString:validToken];
-        }
-    }        
-    
-    if (!isTokenValid) {
-        [self invalidateAuthToken];
-    }
-    
-    return isTokenValid;
-}
-
-
 #pragma mark - View composition
 
 - (void)setUpForMembershipStatus:(int)membershipStatus;
@@ -435,12 +383,13 @@ static int const kPopUpButtonTryAgain = 1;
     emailAsEntered = nameOrEmailOrRegistrationCodeField.text;
     NSString *password = emailOrPasswordField.text;
     
-    [self generateAndSetAuthTokenForUser:emailAsEntered];
-    [self indicatePendingServerSession:YES];
+    [ScMeta m].userId = emailAsEntered;
     
     serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
     [serverConnection authenticateForPhase:ScAuthPhaseLogin usingDelegate:self];
+    
+    [self indicatePendingServerSession:YES];
 }
 
 
@@ -452,39 +401,39 @@ static int const kPopUpButtonTryAgain = 1;
     emailAsEntered = emailOrPasswordField.text;
     NSString *password = passwordField.text;
     
-    [self indicatePendingServerSession:YES];
-    
     serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
     [serverConnection setValue:nameAsEntered forURLParameter:kURLParameterName];
     [serverConnection authenticateForPhase:ScAuthPhaseRegistration usingDelegate:self];
+    
+    [self indicatePendingServerSession:YES];
 }
 
 
 - (void)confirmNewUser
 {
     authPhase = ScAuthPhaseConfirmation;
-    homeScola = [[ScMeta m].managedObjectContext entityForScolaWithName:[ScStrings stringForKey:strMyPlace]];
     
     nameAsEntered = [authInfo objectForKey:kAuthInfoKeyName];
     emailAsEntered = [authInfo objectForKey:kAuthInfoKeyUserId];
     NSString *password = emailOrPasswordField.text;
     
-    [self generateAndSetAuthTokenForUser:emailAsEntered];
-    [self indicatePendingServerSession:YES];
+    [ScMeta m].userId = emailAsEntered;
     
     serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
     [serverConnection setValue:homeScola.scolaId forURLParameter:kURLParameterScolaId];
     [serverConnection authenticateForPhase:ScAuthPhaseConfirmation usingDelegate:self];
+    
+    [self indicatePendingServerSession:YES];
 }
 
 
 - (void)userDidLogIn:(NSString *)authId isNewUser:(BOOL)isNewUser
 {
+    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+    
     if (isNewUser) {
-        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-
         if (isUserListed) { /*
             NSDictionary *memberInfo = [authInfo objectForKey:kAuthInfoKeyMemberInfo];
             NSDictionary *householdInfo = [authInfo objectForKey:kAuthInfoKeyHouseholdInfo];
@@ -538,13 +487,21 @@ static int const kPopUpButtonTryAgain = 1;
         NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:authInfo];
         [ScMeta setUserDefault:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
         
+        NSString *homeScolaName = [ScStrings stringForKey:strMyPlace];
         NSString *popUpTitle = nil;
         NSString *popUpMessage = nil;
         
+        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+        
         if (isUserListed) {
+            NSString *homeScolaId = [authInfo objectForKey:kAuthInfoKeyHomeScolaId];
+            homeScola = [context entityForScolaWithName:homeScolaName andId:homeScolaId];
+            
             popUpTitle = [ScStrings stringForKey:strEmailSentToInviteePopUpTitle];
             popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentToInviteePopUpMessage], [authInfo objectForKey:kAuthInfoKeyUserId]];
         } else {
+            homeScola = [context entityForScolaWithName:homeScolaName];
+            
             popUpTitle = [ScStrings stringForKey:strEmailSentPopUpTitle];
             popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentPopUpMessage], emailAsEntered];
         }
@@ -590,10 +547,10 @@ static int const kPopUpButtonTryAgain = 1;
 {
     [super viewDidLoad];
 
-    if ([self isAuthTokenValid]) {
+    if ([[ScMeta m] isAuthTokenValid]) {
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
-        [self invalidateAuthToken];
+        [[ScMeta m] invalidateAuthToken];
         
         [darkLinenView addGradientLayer];
         [darkLinenView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignCurrentFirstResponder)]];
@@ -644,7 +601,7 @@ static int const kPopUpButtonTryAgain = 1;
     } else {
         [self setUpForMembershipStatus:kMembershipStatusMember];
         
-        NSString *email = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthId];
+        NSString *email = [ScMeta m].userId;
         
         if (email) {
             nameOrEmailOrRegistrationCodeField.text = email;
@@ -781,8 +738,7 @@ static int const kPopUpButtonTryAgain = 1;
             }
             
             if (!alertMessage) {
-                NSString *userId = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthId];
-                emailIsRegistered = [userId isEqualToString:emailOrPasswordField.text];
+                emailIsRegistered = [[ScMeta m].userId isEqualToString:emailOrPasswordField.text];
             }
             
             break;
@@ -997,7 +953,7 @@ static int const kPopUpButtonTryAgain = 1;
             }
             
             if ((authPhase = ScAuthPhaseLogin) || (authPhase == ScAuthPhaseConfirmation)) {
-                [self invalidateAuthToken];
+                [[ScMeta m] invalidateAuthToken];
             }
         }
     }

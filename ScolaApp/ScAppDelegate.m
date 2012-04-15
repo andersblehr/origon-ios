@@ -19,6 +19,59 @@
 
 @synthesize window;
 
+@synthesize managedObjectModel;
+@synthesize managedObjectContext;
+@synthesize persistentStoreCoordinator;
+
+
+#pragma mark - Core Data accessors
+
+- (NSManagedObjectModel *)managedObjectModel
+{
+    if (managedObjectModel == nil) {
+        managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil];
+    }
+    
+    return managedObjectModel;
+}
+
+
+- (NSManagedObjectContext *)managedObjectContext
+{
+    if (managedObjectContext == nil) {
+        NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+        
+        if (coordinator != nil) {
+            managedObjectContext = [[NSManagedObjectContext alloc] init];
+            managedObjectContext.persistentStoreCoordinator = coordinator;
+        }
+    }
+    
+    return managedObjectContext;
+}
+
+
+- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
+{
+    if (persistentStoreCoordinator == nil) {
+        NSURL *applicationDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+        NSURL *storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent:@"ScolaApp.sqlite"];
+        
+        NSError *error = nil;
+        persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+        
+        if(![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
+                                                     configuration:nil
+                                                               URL:storeURL
+                                                           options:nil
+                                                             error:&error]) {
+            ScLogError(@"Unresolved error %@, %@.", error, [error userInfo]);
+        }
+    }
+    
+    return persistentStoreCoordinator;
+}
+
 
 #pragma mark - Lifecycle methods
 

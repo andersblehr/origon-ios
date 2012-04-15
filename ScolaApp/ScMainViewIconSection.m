@@ -32,7 +32,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 - (void)setSectionHeading:(NSString *)heading
 {
     sectionHeading = heading;
-    headingLabel.text = sectionHeading;
+    headingLabel.text = heading;
 }
 
 

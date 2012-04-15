@@ -292,9 +292,7 @@ static int const kPopUpButtonUseNew = 1;
 {
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
     
-    if (response.statusCode == kHTTPStatusCodeCreated) {
-        [[ScMeta m] didPersistEntitiesToServer];
-    } else {
+    if (response.statusCode != kHTTPStatusCodeCreated) {
         [ScServerConnection showAlertForHTTPStatus:response.statusCode];
     }
 }

@@ -14,25 +14,22 @@
 
 @interface ScMeta : NSObject {
 @private
-    UIManagedDocument *managedDocument;
-    
-    NSMutableSet *entitiesToPersistToServer;
-    NSMutableSet *entitiesToDeleteFromServer;
-    
     Reachability *internetReachability;
+    
+    NSDate *authTokenExpiryDate;
 }
 
 extern NSString * const kBundleID;
-
-extern NSString * const kUserDefaultsKeyAuthId;
-extern NSString * const kUserDefaultsKeyAuthToken;
-extern NSString * const kUserDefaultsKeyAuthExpiryDate;
-extern NSString * const kUserDefaultsKeyAuthInfo;
-extern NSString * const kUserDefaultsKeyDeviceId;
-extern NSString * const kUserDefaultsKeyLastFetchDate;
-
 extern NSString * const kKeyEntityId;
 extern NSString * const kKeyEntityClass;
+
+@property (strong, nonatomic) NSString *userId;
+@property (strong, nonatomic) NSString *lastFetchDate;
+
+@property (strong, readonly) NSString *deviceId;
+@property (strong, readonly) NSString *authToken;
+@property (strong, readonly) NSString *appVersion;
+@property (strong, readonly) NSString *displayLanguage;
 
 @property (nonatomic, readonly) BOOL is_iPadDevice;
 @property (nonatomic, readonly) BOOL is_iPodDevice;
@@ -41,11 +38,6 @@ extern NSString * const kKeyEntityClass;
 
 @property (nonatomic, readonly) BOOL isInternetConnectionWiFi;
 @property (nonatomic, readonly) BOOL isInternetConnectionWWAN;
-
-@property (strong, readonly) NSString *deviceId;
-@property (strong, readonly) NSString *appVersion;
-@property (strong, readonly) NSString *displayLanguage;
-@property (strong, readonly) NSString *authToken;
 
 @property (weak, readonly) NSManagedObjectContext *managedObjectContext;
 
@@ -58,9 +50,7 @@ extern NSString * const kKeyEntityClass;
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;
 
-- (NSArray *)entitiesToPersistToServer;
-- (NSArray *)entitiesToDeleteFromServer;
-- (void)didPersistEntitiesToServer;
-- (void)didDeleteEntitiesFromServer;
+- (BOOL)isAuthTokenValid;
+- (void)invalidateAuthToken;
 
 @end

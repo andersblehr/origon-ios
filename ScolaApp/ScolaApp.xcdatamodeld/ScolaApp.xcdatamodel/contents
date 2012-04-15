@@ -94,7 +94,7 @@
     </entity>
     <entity name="ScMemberResidency" representedClassName="ScMemberResidency" parentEntity="ScMembership" syncable="YES">
         <attribute name="daysAtATime" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="presentOn01Jan" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="presentOn01Jan" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="switchDay" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="switchFrequency" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <relationship name="residence" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="residents" inverseEntity="ScScola" syncable="YES"/>

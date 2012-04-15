@@ -92,33 +92,28 @@
 - (NSDictionary *)toDictionary
 {
     NSMutableDictionary *entityDictionary = [[NSMutableDictionary alloc] init];
+    NSEntityDescription *entityDescription = self.entity;
+    NSDictionary *attributes = [entityDescription attributesByName];
+    NSDictionary *relationships = [entityDescription relationshipsByName];
+    
+    [entityDictionary setObject:entityDescription.name forKey:kKeyEntityClass];
+    
+    for (NSString *name in [attributes allKeys]) {
+        id value = [self valueForKey:name];
         
-    if (self.persistenceState == ScRemotePersistenceStateDirtyNotScheduled) {
-        self.persistenceState = ScRemotePersistenceStateDirtyScheduled;
-
-        NSEntityDescription *entityDescription = self.entity;
-        NSDictionary *attributes = [entityDescription attributesByName];
-        NSDictionary *relationships = [entityDescription relationshipsByName];
-        
-        [entityDictionary setObject:entityDescription.name forKey:kKeyEntityClass];
-        
-        for (NSString *name in [attributes allKeys]) {
-            id value = [self valueForKey:name];
-            
-            if (value) {
-                [entityDictionary setObject:value forKey:name];
-            }
+        if (value) {
+            [entityDictionary setObject:value forKey:name];
         }
+    }
+    
+    for (NSString *name in [relationships allKeys]) {
+        NSRelationshipDescription *relationship = [relationships objectForKey:name];
         
-        for (NSString *name in [relationships allKeys]) {
-            NSRelationshipDescription *relationship = [relationships objectForKey:name];
+        if (!relationship.isToMany) {
+            ScCachedEntity *entity = [self valueForKey:name];
             
-            if (!relationship.isToMany) {
-                ScCachedEntity *entity = [self valueForKey:name];
-                
-                if (entity) {
-                    [entityDictionary setObject:[entity entityRef] forKey:name];
-                }
+            if (entity) {
+                [entityDictionary setObject:[entity entityRef] forKey:name];
             }
         }
     }

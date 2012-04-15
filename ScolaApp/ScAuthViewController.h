@@ -27,23 +27,23 @@ typedef enum {
 
 @interface ScAuthViewController : UIViewController <UITextFieldDelegate, UIAlertViewDelegate, ScServerConnectionDelegate> {
 @private
-    BOOL isEditingAllowed;
-    
     AVAudioPlayer *typewriter1;
     AVAudioPlayer *typewriter2;
     
+    BOOL isEditingAllowed;
+    BOOL isUserListed;
+
     int currentMembershipSegment;
-    ScAuthPhase authPhase;
     
     NSString *nameAsEntered;
     NSString *emailAsEntered;
-    
-    ScServerConnection *serverConnection;
     NSDictionary *authInfo;
+    
+    ScAuthPhase authPhase;
+    ScServerConnection *serverConnection;
     
     ScMember *member;
     ScScola *homeScola;
-    BOOL isUserListed;
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;

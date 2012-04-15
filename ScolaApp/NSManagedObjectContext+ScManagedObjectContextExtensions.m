@@ -84,24 +84,18 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-- (BOOL)save
+#pragma mark - Entity creation
+
+- (ScScola *)entityForScolaWithName:(NSString *)name
 {
-    NSError *error;
-    BOOL didSaveOK = [self save:&error];
-    
-    if (!didSaveOK) {
-        ScLogError(@"Error when saving managed object context: %@ [%@]", [error localizedDescription], [error userInfo]);
-    }
-    
-    return didSaveOK;
+    return [self entityForScolaWithName:name andId:[ScUUIDGenerator generateUUID]];
 }
 
 
-#pragma mark - Entity creation
-
-- (ScScola *)entityForScolaWithName:(NSString *)name;
+- (ScScola *)entityForScolaWithName:(NSString *)name andId:(NSString *)scolaId
 {
-    ScScola *scola = [self entityForClass:ScScola.class];
+    ScLogDebug(@"Creating ScScola entity with id: %@", scolaId);
+    ScScola *scola = [self entityForClass:ScScola.class withId:scolaId];
     
     scola.name = name;
     scola.scolaId = scola.entityId;
@@ -135,7 +129,7 @@ static NSString * const kScolaRelationshipName = @"scola";
 - (id)fetchEntityWithId:(NSString *)entityId
 {
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"ScCachedEntity"];
-    [request setPredicate:[NSPredicate predicateWithFormat:@"entityId == '%@'", entityId]];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"entityId == %@", entityId]];
     
     id entity = nil;
     NSError *error = nil;
@@ -187,12 +181,31 @@ static NSString * const kScolaRelationshipName = @"scola";
 
 #pragma mark - Local & remote persistence
 
+- (BOOL)save
+{
+    NSError *error;
+    BOOL didSaveOK = [self save:&error];
+    
+    if (!didSaveOK) {
+        ScLogError(@"Error when saving managed object context: %@ [%@]", [error localizedDescription], [error userInfo]);
+    }
+    
+    return didSaveOK;
+}
+
+
 - (BOOL)saveUsingDelegate:(id)delegate
 {
+    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+    NSMutableSet *entities = [[NSMutableSet alloc] init];
+    
+    [entities unionSet:[context insertedObjects]];
+    [entities unionSet:[context updatedObjects]];
+    
     BOOL didSaveOK = [self save];
     
     if (didSaveOK) {
-        [[[ScServerConnection alloc] init] persistEntitiesUsingDelegate:delegate];
+        [[[ScServerConnection alloc] init] persistEntities:entities usingDelegate:delegate];
     }
     
     return didSaveOK;

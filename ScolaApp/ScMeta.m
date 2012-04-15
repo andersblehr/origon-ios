@@ -9,7 +9,9 @@
 #import "ScMeta.h"
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
+#import "NSString+ScStringExtensions.h"
 
+#import "ScAppDelegate.h"
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScLogging.h"
 #import "ScServerConnection.h"
@@ -18,18 +20,23 @@
 @implementation ScMeta
 
 NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
-
-NSString * const kUserDefaultsKeyAuthId = @"scola.auth.id";
-NSString * const kUserDefaultsKeyAuthToken = @"scola.auth.token";
-NSString * const kUserDefaultsKeyAuthExpiryDate = @"scola.auth.expires";
-NSString * const kUserDefaultsKeyAuthInfo = @"scola.auth.info";
-NSString * const kUserDefaultsKeyDeviceId = @"scola.device.id"; // TODO: Add userId to key
-NSString * const kUserDefaultsKeyLastFetchDate = @"scola.fetch.date";
-
 NSString * const kKeyEntityId = @"entityId";
 NSString * const kKeyEntityClass = @"entityClass";
 
+static NSString * const kUserDefaultsKeyUserId = @"scola.user.id";
+static NSString * const kUserDefaultsKeyFormatDeviceId = @"scola.device.id$%@";
+static NSString * const kUserDefaultsKeyFormatAuthToken = @"scola.auth.token$%@";
+static NSString * const kUserDefaultsKeyFormatAuthExpiryDate = @"scola.auth.expires$%@";
+static NSString * const kUserDefaultsKeyFormatLastFetchDate = @"scola.fetch.date$%@";
+
+
+@synthesize userId;
+@synthesize authToken;
+@synthesize lastFetchDate;
+
 @synthesize deviceId;
+@synthesize appVersion;
+@synthesize displayLanguage;
 
 @synthesize is_iPadDevice;
 @synthesize is_iPodDevice;
@@ -39,86 +46,16 @@ NSString * const kKeyEntityClass = @"entityClass";
 @synthesize isInternetConnectionWiFi;
 @synthesize isInternetConnectionWWAN;
 
-@synthesize appVersion;
-@synthesize displayLanguage;
-@synthesize authToken;
-
-@synthesize managedObjectContext = context;
+@synthesize managedObjectContext;
 
 static ScMeta *m = nil;
 
 
 #pragma mark - Auxiliary methods
 
-- (void)initialiseCoreData
-{
-    NSURL *applicationDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-    NSURL *docURL = [applicationDocumentsDirectory URLByAppendingPathComponent:@"ScolaApp"];
-    
-    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-                             [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
-                             [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
-    
-    managedDocument = [[UIManagedDocument alloc] initWithFileURL:docURL];
-    managedDocument.persistentStoreOptions = options;
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:[docURL path]]) {
-        [managedDocument openWithCompletionHandler:^(BOOL success){
-            if (success) {
-                ScLogDebug(@"Core Data initialised and ready (location: %@).", docURL);
-                context = managedDocument.managedObjectContext;
-            } else {
-                ScLogError(@"Error initialising Core Data.");
-            }
-        }];
-    } else {
-        [managedDocument saveToURL:docURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
-            if (success) {
-                ScLogDebug(@"Core Data instantiated and ready (location: %@).", docURL);
-                context = managedDocument.managedObjectContext;
-            } else {
-                ScLogError(@"Error instantiating Core Data.");
-            }
-        }];
-    }
-}
-
-
-- (void)contextDidSave:(NSNotification *)notification
-{
-    NSDictionary *saveInfo = notification.userInfo;
-    
-    NSSet *entitiesInserted = [saveInfo objectForKey:NSInsertedObjectsKey];
-    NSSet *entitiesUpdated = [saveInfo objectForKey:NSUpdatedObjectsKey];
-    NSSet *entitiesDeleted = [saveInfo objectForKey:NSDeletedObjectsKey];
-    
-    for (ScCachedEntity *entity in entitiesInserted) {
-        entity.persistenceState = ScRemotePersistenceStateDirtyNotScheduled;
-    }
-    
-    for (ScCachedEntity *entity in entitiesUpdated) {
-        entity.persistenceState = ScRemotePersistenceStateDirtyNotScheduled;
-    }
-    
-    for (ScCachedEntity *entity in entitiesDeleted) {
-        entity.persistenceState = ScRemotePersistenceStateDirtyNotScheduled;
-    }
-    
-    [entitiesToPersistToServer unionSet:entitiesInserted];
-    [entitiesToPersistToServer unionSet:entitiesUpdated];
-    [entitiesToDeleteFromServer unionSet:entitiesDeleted];
-}
-
-
 - (void)checkReachability:(Reachability *)reachability
 {
-    if (reachability) {
-        internetReachability = reachability;
-    } else {
-        internetReachability = [Reachability reachabilityForInternetConnection];
-    }
-    
-    NetworkStatus internetStatus = [internetReachability currentReachabilityStatus];
+    NetworkStatus internetStatus = [reachability currentReachabilityStatus];
     
     isInternetConnectionWiFi = (internetStatus == ReachableViaWiFi);
     isInternetConnectionWWAN = (internetStatus == ReachableViaWWAN);
@@ -130,12 +67,33 @@ static ScMeta *m = nil;
     } else {
         ScLogInfo(@"Not connected to the internet.");
     }
+    
+    internetReachability = reachability;
 }
 
 
 - (void)reachabilityChanged:(NSNotification *)notification
 {
     [self checkReachability:(Reachability *)[notification object]];
+}
+
+
+- (NSString *)generateAuthToken:(NSDate *)expiryDate
+{
+    NSString *expiryDateAsString = expiryDate.description;
+    NSString *saltyDiff = [deviceId diff:expiryDateAsString];
+    
+    return [saltyDiff hashUsingSHA1];
+}
+
+
+- (void)invalidateAuthToken
+{
+    authToken = nil;
+    authTokenExpiryDate = nil;
+    
+    [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
+    [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
 }
 
 
@@ -168,22 +126,19 @@ static ScMeta *m = nil;
         isInternetConnectionWiFi = NO;
         isInternetConnectionWWAN = NO;
         
-        deviceId = [ScMeta userDefaultForKey:kUserDefaultsKeyDeviceId];
+        userId = [ScMeta userDefaultForKey:kUserDefaultsKeyUserId];
         
-        if (!deviceId) {
+        if (userId) {
+            deviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
+            authToken = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
+            authTokenExpiryDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
+            lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
+        } else {
             deviceId = [ScUUIDGenerator generateUUID];
-            [ScMeta setUserDefault:deviceId forKey:kUserDefaultsKeyDeviceId];
         }
         
         appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
         displayLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
-        
-        [self initialiseCoreData];
-        
-        entitiesToPersistToServer = [[NSMutableSet alloc] init];
-        entitiesToDeleteFromServer = [[NSMutableSet alloc] init];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(contextDidSave:) name:NSManagedObjectContextDidSaveNotification object:nil];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
     }
@@ -230,19 +185,33 @@ static ScMeta *m = nil;
 
 #pragma mark - Accessors
 
-- (NSString *)authToken
+- (void)setUserId:(NSString *)userIdentity
 {
-    return [ScMeta userDefaultForKey:kUserDefaultsKeyAuthToken];
+    userId = userIdentity;
+    
+    authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:1]; // kTimeIntervalTwoWeeks
+    authToken = [self generateAuthToken:authTokenExpiryDate];
+
+    [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyUserId];
+    [ScMeta setUserDefault:deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
+    [ScMeta setUserDefault:authToken forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
+    [ScMeta setUserDefault:authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
+}
+
+
+- (void)setLastFetchDate:(NSString *)fetchDate
+{
+    lastFetchDate = fetchDate;
+    
+    [ScMeta setUserDefault:fetchDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
 }
 
 
 - (NSManagedObjectContext *)managedObjectContext
 {
-    if (!context) {
-        ScLogBreakage(@"Attempt to access Core Data before it's available");
-    }
+    ScAppDelegate *delegate = (ScAppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    return context;
+    return delegate.managedObjectContext;
 }
 
 
@@ -250,8 +219,7 @@ static ScMeta *m = nil;
 
 - (void)checkInternetReachability
 {
-    internetReachability = [Reachability reachabilityForInternetConnection];
-    [self checkReachability:internetReachability];
+    [self checkReachability:[Reachability reachabilityForInternetConnection]];
     
     if ([internetReachability startNotifier]) {
         ScLogInfo(@"Reachability notifier is running.");
@@ -267,39 +235,24 @@ static ScMeta *m = nil;
 }
 
 
-#pragma mark - Remote entity persistence
-
-- (NSArray *)entitiesToPersistToServer
+- (BOOL)isAuthTokenValid
 {
-    return [entitiesToPersistToServer allObjects];
-}
-
-
-- (NSArray *)entitiesToDeleteFromServer
-{
-    return [entitiesToDeleteFromServer allObjects];
-}
-
-
-- (void)didPersistEntitiesToServer
-{
-    for (ScCachedEntity *entity in [entitiesToPersistToServer copy]) {
-        if (entity.persistenceState == ScRemotePersistenceStateDirtyScheduled) {
-            entity.persistenceState = ScRemotePersistenceStatePersisted;
-            [entitiesToPersistToServer removeObject:entity];
+    BOOL isTokenValid = NO;
+    
+    if (authToken && authTokenExpiryDate) {
+        NSDate *now = [NSDate date];
+        
+        if ([now compare:authTokenExpiryDate] == NSOrderedAscending) {
+            NSString *expectedToken = [self generateAuthToken:authTokenExpiryDate];
+            isTokenValid = [authToken isEqualToString:expectedToken];
         }
+    }        
+    
+    if (!isTokenValid) {
+        [self invalidateAuthToken];
     }
-}
-
-
-- (void)didDeleteEntitiesFromServer
-{
-    for (ScCachedEntity *entity in [entitiesToDeleteFromServer copy]) {
-        if (entity.persistenceState == ScRemotePersistenceStateDirtyScheduled) {
-            entity.persistenceState = ScRemotePersistenceStateDeleted;
-            [entitiesToDeleteFromServer removeObject:entity];
-        }
-    }
+    
+    return isTokenValid;
 }
 
 @end
