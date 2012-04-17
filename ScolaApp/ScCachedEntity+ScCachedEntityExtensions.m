@@ -58,20 +58,6 @@
 }
 
 
-#pragma mark - Pseudo accessors
-
-- (ScRemotePersistenceState)persistenceState
-{
-    return [self.remotePersistenceState intValue];
-}
-
-
-- (void)setPersistenceState:(ScRemotePersistenceState)remotePersistenceState
-{
-    self.remotePersistenceState = [NSNumber numberWithInt:remotePersistenceState];
-}
-
-
 #pragma mark - Entity meta information
 
 - (NSString *)expiresInTimeframe

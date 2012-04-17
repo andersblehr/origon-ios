@@ -20,6 +20,7 @@
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 
+
 @implementation ScServerConnection
 
 //static NSString * const kScolaDevServer = @"localhost:8888";
@@ -142,6 +143,10 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         }
     } else {
+        if (serverOperation == ScServerOperationPersist) {
+            [ScMeta m].nonPersistedEntities = entitiesScheduledForPersistence;
+        }
+        
         [delegate didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:[ScStrings stringForKey:strNoInternetError] forKey:NSLocalizedDescriptionKey]]];
     }
 }
@@ -218,6 +223,8 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)fetchStringsUsingDelegate:(id)delegate
 {
+    serverOperation = ScServerOperationStrings;
+    
     RESTHandler = kRESTHandlerStrings;
     RESTRoute = [ScMeta m].displayLanguage;
     
@@ -227,7 +234,9 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)authenticateForPhase:(ScAuthPhase)phase usingDelegate:(id)delegate
 {
+    serverOperation = ScServerOperationAuth;
     authPhase = phase;
+    
     RESTHandler = kRESTHandlerAuth;
     
     if (authPhase == ScAuthPhaseRegistration) {
@@ -246,6 +255,8 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)fetchEntitiesUsingDelegate:(id)delegate
 {
+    serverOperation = ScServerOperationFetch;
+    
     RESTHandler = kRESTHandlerModel;
     RESTRoute = kRESTRouteModelFetch;
     
@@ -257,8 +268,13 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 - (void)persistEntities:(NSSet *)entities usingDelegate:(id)delegate
 {
     if (entities.count > 0) {
+        serverOperation = ScServerOperationPersist;
+        
         RESTHandler = kRESTHandlerModel;
         RESTRoute = kRESTRouteModelPersist;
+        
+        entitiesScheduledForPersistence = [NSMutableSet setWithSet:entities];
+        [entitiesScheduledForPersistence unionSet:[ScMeta m].nonPersistedEntities];
         
         NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
         
@@ -297,13 +313,35 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
     HTTPStatusCode = response.statusCode;
     
-    if (HTTPStatusCode == kHTTPStatusCodeOK) {
-        NSDictionary *responseHeaderFields = [response allHeaderFields];
-        NSString *fetchDate = [responseHeaderFields objectForKey:kHTTPHeaderLastModified];
+    switch (serverOperation) {
+        case ScServerOperationFetch:
+            if (HTTPStatusCode == kHTTPStatusCodeOK) {
+                NSString *fetchDate = [[response allHeaderFields] objectForKey:kHTTPHeaderLastModified];
+                
+                if (fetchDate) {
+                    [ScMeta m].lastFetchDate = fetchDate;
+                }
+            }
+
+            break;
         
-        if (fetchDate) {
-            [ScMeta m].lastFetchDate = fetchDate;
-        }
+        case ScServerOperationPersist:
+            if (HTTPStatusCode == kHTTPStatusCodeCreated) {
+                NSDate *now = [NSDate date];
+                
+                for (ScCachedEntity *entity in entitiesScheduledForPersistence) {
+                    entity.dateModified = now;
+                }
+                
+                [[ScMeta m].managedObjectContext save];
+            } else {
+                [ScMeta m].nonPersistedEntities = entitiesScheduledForPersistence;
+            }
+            
+            break;
+            
+        default:
+            break;
     }
     
     [connectionDelegate didReceiveResponse:response];
@@ -335,6 +373,10 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
 	ScLogError(@"Connection failed with error: %@ (%d)", error.localizedDescription, error.code);
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    
+    if (serverOperation == ScServerOperationPersist) {
+        [ScMeta m].nonPersistedEntities = entitiesScheduledForPersistence;
+    }
     
     [connectionDelegate didFailWithError:error];
 }

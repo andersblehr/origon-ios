@@ -17,10 +17,18 @@ typedef enum {
     ScAuthPhaseLogin,
 } ScAuthPhase;
 
+typedef enum {
+    ScServerOperationStrings,
+    ScServerOperationAuth,
+    ScServerOperationFetch,
+    ScServerOperationPersist,
+} ScServerOperation;
+
 @interface ScServerConnection : NSObject {
 @private
     id<ScServerConnectionDelegate> connectionDelegate;
     
+    ScServerOperation serverOperation;
     ScAuthPhase authPhase;
     
     NSString *RESTHandler;
@@ -29,6 +37,8 @@ typedef enum {
     NSMutableURLRequest *URLRequest;
     NSMutableDictionary *URLParameters;
 	NSMutableData *responseData;
+    
+    NSMutableSet *entitiesScheduledForPersistence;
 }
 
 extern NSString * const kURLParameterName;

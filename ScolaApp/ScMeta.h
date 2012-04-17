@@ -17,6 +17,7 @@
     Reachability *internetReachability;
     
     NSDate *authTokenExpiryDate;
+    NSMutableSet *nonPersistedEntities;
 }
 
 extern NSString * const kBundleID;
@@ -24,6 +25,7 @@ extern NSString * const kKeyEntityId;
 extern NSString * const kKeyEntityClass;
 
 @property (strong, nonatomic) NSString *userId;
+@property (strong, nonatomic) NSString *homeScolaId;
 @property (strong, nonatomic) NSString *lastFetchDate;
 
 @property (strong, readonly) NSString *deviceId;
@@ -39,6 +41,8 @@ extern NSString * const kKeyEntityClass;
 @property (nonatomic, readonly) BOOL isInternetConnectionWiFi;
 @property (nonatomic, readonly) BOOL isInternetConnectionWWAN;
 
+@property (nonatomic) BOOL isUserLoggedIn;
+@property (strong, nonatomic) NSSet *nonPersistedEntities;
 @property (weak, readonly) NSManagedObjectContext *managedObjectContext;
 
 + (ScMeta *)m;
@@ -49,8 +53,5 @@ extern NSString * const kKeyEntityClass;
 
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;
-
-- (BOOL)isAuthTokenValid;
-- (void)invalidateAuthToken;
 
 @end

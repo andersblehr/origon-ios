@@ -17,6 +17,7 @@
 #import "ScRegistrationView1Controller.h"
 #import "ScServerConnection.h"
 #import "ScStrings.h"
+#import "ScUUIDGenerator.h"
 
 #import "ScMember.h"
 #import "ScMemberResidency.h"
@@ -421,19 +422,21 @@ static int const kPopUpButtonTryAgain = 1;
     [ScMeta m].userId = emailAsEntered;
     
     serverConnection = [[ScServerConnection alloc] init];
-    [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
-    [serverConnection setValue:homeScola.scolaId forURLParameter:kURLParameterScolaId];
+    [serverConnection setAuthHeaderForUser:[ScMeta m].userId withPassword:password];
+    [serverConnection setValue:[ScMeta m].homeScolaId forURLParameter:kURLParameterScolaId];
     [serverConnection authenticateForPhase:ScAuthPhaseConfirmation usingDelegate:self];
     
     [self indicatePendingServerSession:YES];
 }
 
 
-- (void)userDidLogIn:(NSString *)authId isNewUser:(BOOL)isNewUser
+- (void)userDidLogIn:(NSString *)userId isNewUser:(BOOL)isNewUser
 {
-    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+    [ScMeta m].isUserLoggedIn = YES;
     
     if (isNewUser) {
+        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+        
         if (isUserListed) { /*
             NSDictionary *memberInfo = [authInfo objectForKey:kAuthInfoKeyMemberInfo];
             NSDictionary *householdInfo = [authInfo objectForKey:kAuthInfoKeyHouseholdInfo];
@@ -448,6 +451,7 @@ static int const kPopUpButtonTryAgain = 1;
                 homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
             } */
         } else {
+            homeScola = [context entityForScolaWithName:[ScStrings stringForKey:strMyPlace] andId:[ScMeta m].homeScolaId];
             member = [context entityForClass:ScMember.class inScola:homeScola withId:emailAsEntered];
         }
         
@@ -487,20 +491,16 @@ static int const kPopUpButtonTryAgain = 1;
         NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:authInfo];
         [ScMeta setUserDefault:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
         
-        NSString *homeScolaName = [ScStrings stringForKey:strMyPlace];
         NSString *popUpTitle = nil;
         NSString *popUpMessage = nil;
         
-        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-        
         if (isUserListed) {
-            NSString *homeScolaId = [authInfo objectForKey:kAuthInfoKeyHomeScolaId];
-            homeScola = [context entityForScolaWithName:homeScolaName andId:homeScolaId];
+            [ScMeta m].homeScolaId = [authInfo objectForKey:kAuthInfoKeyHomeScolaId];
             
             popUpTitle = [ScStrings stringForKey:strEmailSentToInviteePopUpTitle];
             popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentToInviteePopUpMessage], [authInfo objectForKey:kAuthInfoKeyUserId]];
         } else {
-            homeScola = [context entityForScolaWithName:homeScolaName];
+            [ScMeta m].homeScolaId = [ScUUIDGenerator generateUUID];
             
             popUpTitle = [ScStrings stringForKey:strEmailSentPopUpTitle];
             popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentPopUpMessage], emailAsEntered];
@@ -547,11 +547,9 @@ static int const kPopUpButtonTryAgain = 1;
 {
     [super viewDidLoad];
 
-    if ([[ScMeta m] isAuthTokenValid]) {
+    if ([[ScMeta m] isUserLoggedIn]) {
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
-        [[ScMeta m] invalidateAuthToken];
-        
         [darkLinenView addGradientLayer];
         [darkLinenView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignCurrentFirstResponder)]];
         
@@ -601,10 +599,8 @@ static int const kPopUpButtonTryAgain = 1;
     } else {
         [self setUpForMembershipStatus:kMembershipStatusMember];
         
-        NSString *email = [ScMeta m].userId;
-        
-        if (email) {
-            nameOrEmailOrRegistrationCodeField.text = email;
+        if ([ScMeta m].userId) {
+            nameOrEmailOrRegistrationCodeField.text = [ScMeta m].userId;
             [emailOrPasswordField becomeFirstResponder];
         }
     }
@@ -941,6 +937,8 @@ static int const kPopUpButtonTryAgain = 1;
                 [self userDidLogIn:emailAsEntered isNewUser:YES];
             }
         } else if (response.statusCode >= kHTTPStatusCodeBadRequest) {
+            [ScMeta m].isUserLoggedIn = NO;
+            
             if (response.statusCode == kHTTPStatusCodeUnauthorized) {
                 NSString *alertMessage = [ScStrings stringForKey:strNotLoggedInAlert];
                 
@@ -950,10 +948,6 @@ static int const kPopUpButtonTryAgain = 1;
                 [notLoggedInAlert show];
             } else {
                 [ScServerConnection showAlertForHTTPStatus:response.statusCode tagWith:ScAuthPopUpTagServerError usingDelegate:self];
-            }
-            
-            if ((authPhase = ScAuthPhaseLogin) || (authPhase == ScAuthPhaseConfirmation)) {
-                [[ScMeta m] invalidateAuthToken];
             }
         }
     }

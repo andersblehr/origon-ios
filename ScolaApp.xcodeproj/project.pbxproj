@@ -21,7 +21,6 @@
 		5C008120152F264E00AF9448 /* ScDocumentRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C00811F152F264E00AF9448 /* ScDocumentRepository.m */; };
 		5C008123152F264E00AF9448 /* ScMessageThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C008122152F264E00AF9448 /* ScMessageThread.m */; };
 		5C008126152F264E00AF9448 /* ScEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C008125152F264E00AF9448 /* ScEvent.m */; };
-		5C008129152F264E00AF9448 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C008128152F264E00AF9448 /* ScCachedEntity.m */; };
 		5C00812C152F264F00AF9448 /* ScEventScolaInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C00812B152F264F00AF9448 /* ScEventScolaInvitation.m */; };
 		5C00812F152F264F00AF9448 /* ScMessageBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C00812E152F264F00AF9448 /* ScMessageBoard.m */; };
 		5C008132152F264F00AF9448 /* ScToDoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C008131152F264F00AF9448 /* ScToDoItem.m */; };
@@ -91,6 +90,7 @@
 		5CE9812914C4D81600DD11D4 /* 112-group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE9812814C4D81600DD11D4 /* 112-group@2x.png */; };
 		5CE987C114854FC6005A17C6 /* ScRegistrationView2Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C014854FC6005A17C6 /* ScRegistrationView2Controller.m */; };
 		5CE987C414856426005A17C6 /* ScEventViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* ScEventViewController.m */; };
+		5CFE418E153C8EC50049CD88 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CFE418D153C8EC50049CD88 /* ScCachedEntity.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,8 +132,6 @@
 		5C008122152F264E00AF9448 /* ScMessageThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMessageThread.m; sourceTree = "<group>"; };
 		5C008124152F264E00AF9448 /* ScEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEvent.h; sourceTree = "<group>"; };
 		5C008125152F264E00AF9448 /* ScEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScEvent.m; sourceTree = "<group>"; };
-		5C008127152F264E00AF9448 /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
-		5C008128152F264E00AF9448 /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
 		5C00812A152F264F00AF9448 /* ScEventScolaInvitation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEventScolaInvitation.h; sourceTree = "<group>"; };
 		5C00812B152F264F00AF9448 /* ScEventScolaInvitation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScEventScolaInvitation.m; sourceTree = "<group>"; };
 		5C00812D152F264F00AF9448 /* ScMessageBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMessageBoard.h; sourceTree = "<group>"; };
@@ -240,6 +238,8 @@
 		5CE987C014854FC6005A17C6 /* ScRegistrationView2Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegistrationView2Controller.m; sourceTree = "<group>"; };
 		5CE987C214856426005A17C6 /* ScEventViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEventViewController.h; sourceTree = "<group>"; };
 		5CE987C314856426005A17C6 /* ScEventViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScEventViewController.m; sourceTree = "<group>"; };
+		5CFE418C153C8EC50049CD88 /* ScCachedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntity.h; sourceTree = "<group>"; };
+		5CFE418D153C8EC50049CD88 /* ScCachedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntity.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -301,8 +301,8 @@
 			isa = PBXGroup;
 			children = (
 				5C36BE9A1470507700DD3CEA /* ScolaApp.xcdatamodeld */,
-				5C008127152F264E00AF9448 /* ScCachedEntity.h */,
-				5C008128152F264E00AF9448 /* ScCachedEntity.m */,
+				5CFE418C153C8EC50049CD88 /* ScCachedEntity.h */,
+				5CFE418D153C8EC50049CD88 /* ScCachedEntity.m */,
 				5C008112152F264D00AF9448 /* ScDevice.h */,
 				5C008113152F264D00AF9448 /* ScDevice.m */,
 				5C008109152F264D00AF9448 /* ScDocument.h */,
@@ -705,7 +705,6 @@
 				5C008120152F264E00AF9448 /* ScDocumentRepository.m in Sources */,
 				5C008123152F264E00AF9448 /* ScMessageThread.m in Sources */,
 				5C008126152F264E00AF9448 /* ScEvent.m in Sources */,
-				5C008129152F264E00AF9448 /* ScCachedEntity.m in Sources */,
 				5C00812C152F264F00AF9448 /* ScEventScolaInvitation.m in Sources */,
 				5C00812F152F264F00AF9448 /* ScMessageBoard.m in Sources */,
 				5C008132152F264F00AF9448 /* ScToDoItem.m in Sources */,
@@ -714,6 +713,7 @@
 				5C00813B152F265000AF9448 /* ScMember.m in Sources */,
 				5C00813E152F265000AF9448 /* ScScheduledAbsence.m in Sources */,
 				5C96F1C9153378FC00D2D847 /* ScSharedEntityRef.m in Sources */,
+				5CFE418E153C8EC50049CD88 /* ScCachedEntity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -6,7 +6,6 @@
         <attribute name="dateModified" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="entityId" attributeType="String" syncable="YES"/>
         <attribute name="isShared" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="remotePersistenceState" transient="YES" attributeType="Integer 16" defaultValueString="NO" syncable="YES"/>
         <attribute name="scolaId" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="ScDevice" representedClassName="ScDevice" parentEntity="ScCachedEntity" syncable="YES">

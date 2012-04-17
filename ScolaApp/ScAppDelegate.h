@@ -18,4 +18,6 @@
 @property (strong, nonatomic, readonly) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic, readonly) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
+- (void)releasePersistentStore;
+
 @end

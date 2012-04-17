@@ -94,7 +94,6 @@ static NSString * const kScolaRelationshipName = @"scola";
 
 - (ScScola *)entityForScolaWithName:(NSString *)name andId:(NSString *)scolaId
 {
-    ScLogDebug(@"Creating ScScola entity with id: %@", scolaId);
     ScScola *scola = [self entityForClass:ScScola.class withId:scolaId];
     
     scola.name = name;

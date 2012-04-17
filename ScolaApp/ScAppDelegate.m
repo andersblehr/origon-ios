@@ -17,11 +17,23 @@
 
 @implementation ScAppDelegate
 
+static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
+
 @synthesize window;
 
 @synthesize managedObjectModel;
 @synthesize managedObjectContext;
 @synthesize persistentStoreCoordinator;
+
+
+#pragma mark - Persistent store
+
+- (void)releasePersistentStore
+{
+    managedObjectModel = nil;
+    managedObjectContext= nil;
+    persistentStoreCoordinator = nil;
+}
 
 
 #pragma mark - Core Data accessors
@@ -55,17 +67,13 @@
 {
     if (persistentStoreCoordinator == nil) {
         NSURL *applicationDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent:@"ScolaApp.sqlite"];
+        NSURL *storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent: [NSString stringWithFormat:kPersistentStoreFormat, [ScMeta m].userId]];
         
         NSError *error = nil;
         persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
         
-        if(![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
-                                                     configuration:nil
-                                                               URL:storeURL
-                                                           options:nil
-                                                             error:&error]) {
-            ScLogError(@"Unresolved error %@, %@.", error, [error userInfo]);
+        if(![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
+            ScLogError(@"Error initiating Core Data: %@", [error localizedDescription]);
         }
     }
     
