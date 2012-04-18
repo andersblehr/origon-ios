@@ -128,7 +128,7 @@ static int const kPopUpButtonUseNew = 1;
         member.activeSince = [NSDate date];
         member.didRegister = [NSNumber numberWithBool:YES];
         
-        [context saveUsingDelegate:self];
+        [context cacheAndPersistEntities];
         
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
@@ -283,24 +283,6 @@ static int const kPopUpButtonUseNew = 1;
     } else if (buttonIndex == kPopUpButtonUseNew) {
         [deviceNameField becomeFirstResponder];
     }
-}
-
-
-#pragma mark - ScServerConnectionDelegate implementation
-
-- (void)didReceiveResponse:(NSHTTPURLResponse *)response
-{
-    ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
-    
-    if (response.statusCode != kHTTPStatusCodeCreated) {
-        [ScServerConnection showAlertForHTTPStatus:response.statusCode];
-    }
-}
-
-
-- (void)didFailWithError:(NSError *)error
-{
-    [ScServerConnection showAlertForError:error];
 }
 
 @end

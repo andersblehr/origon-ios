@@ -387,7 +387,7 @@ static int const kPopUpButtonTryAgain = 1;
     [ScMeta m].userId = emailAsEntered;
     
     serverConnection = [[ScServerConnection alloc] init];
-    [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
+    [serverConnection setAuthHeaderForUser:[ScMeta m].userId withPassword:password];
     [serverConnection authenticateForPhase:ScAuthPhaseLogin usingDelegate:self];
     
     [self indicatePendingServerSession:YES];
@@ -403,7 +403,7 @@ static int const kPopUpButtonTryAgain = 1;
     NSString *password = passwordField.text;
     
     serverConnection = [[ScServerConnection alloc] init];
-    [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
+    [serverConnection setAuthHeaderForUser:[ScMeta m].userId withPassword:password];
     [serverConnection setValue:nameAsEntered forURLParameter:kURLParameterName];
     [serverConnection authenticateForPhase:ScAuthPhaseRegistration usingDelegate:self];
     
@@ -418,8 +418,6 @@ static int const kPopUpButtonTryAgain = 1;
     nameAsEntered = [authInfo objectForKey:kAuthInfoKeyName];
     emailAsEntered = [authInfo objectForKey:kAuthInfoKeyUserId];
     NSString *password = emailOrPasswordField.text;
-    
-    [ScMeta m].userId = emailAsEntered;
     
     serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:[ScMeta m].userId withPassword:password];
@@ -469,7 +467,7 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)finishedReceivingLoginData:(NSArray *)data
 {
-    [[ScMeta m].managedObjectContext mergeEntitiesFromDictionaryArray:data];
+    [[ScMeta m].managedObjectContext entitiesFromDictionaries:data];
     
     if (authPhase == ScAuthPhaseConfirmation) {
         [self userDidLogIn:emailAsEntered isNewUser:YES];
@@ -618,8 +616,6 @@ static int const kPopUpButtonTryAgain = 1;
     }
     
     if (authInfo) {
-        [self setUpForMembershipStatus:kMembershipStatusNewUser];
-        
         NSString *email = [authInfo objectForKey:kAuthInfoKeyUserId];
         NSString *popUpTitle = [ScStrings stringForKey:strWelcomeBackPopUpTitle];
         NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strWelcomeBackPopUpMessage], email];
@@ -734,7 +730,11 @@ static int const kPopUpButtonTryAgain = 1;
             }
             
             if (!alertMessage) {
-                emailIsRegistered = [[ScMeta m].userId isEqualToString:emailOrPasswordField.text];
+                emailIsRegistered = [emailOrPasswordField.text isEqualToString:[ScMeta m].userId];
+                
+                if (!emailIsRegistered) {
+                    [ScMeta m].userId = emailOrPasswordField.text;
+                }
             }
             
             break;
@@ -921,6 +921,12 @@ static int const kPopUpButtonTryAgain = 1;
 
 
 #pragma mark - ScServerConnectionDelegate implementation
+
+- (BOOL)doUseAutomaticAlerts
+{
+    return NO;
+}
+
 
 - (void)didReceiveResponse:(NSHTTPURLResponse *)response
 {

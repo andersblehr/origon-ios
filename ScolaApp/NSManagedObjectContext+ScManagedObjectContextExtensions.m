@@ -63,9 +63,6 @@ static NSString * const kScolaRelationshipName = @"scola";
     
     if (!entity) {
         entity = [self entityForClass:NSClassFromString(entityClass) withId:entityId];
-        ScLogDebug(@"Created new entity (id: %@; class: %@).", entityId, entityClass);
-    } else {
-        ScLogDebug(@"Found entity in CD cache (id: %@; class: %@).", entityId, entityClass);
     }
     
     NSEntityDescription *entityDescription = entity.entity;
@@ -76,7 +73,6 @@ static NSString * const kScolaRelationshipName = @"scola";
         
         if (value) {
             [entity setValue:value forKey:name];
-            ScLogDebug(@"Setting attribute (attribute: %@, value: %@).", name, value);
         }
     }
     
@@ -123,6 +119,20 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
+- (id)entityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola
+{
+    ScSharedEntityRef *entityRef = [self entityForClass:ScSharedEntityRef.class];
+    
+    entityRef.sharedEntityId = entity.entityId;
+    entityRef.sharedEntityScolaId = entity.scolaId;
+    entityRef.scolaId = scola.entityId;
+    
+    entity.isShared = [NSNumber numberWithBool:YES];
+    
+    return entityRef;
+}
+
+
 #pragma mark - Entity lookup
 
 - (id)fetchEntityWithId:(NSString *)entityId
@@ -146,72 +156,30 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-#pragma mark - Entity cross-referencing
+#pragma mark - Entity caching & synchronization
 
-- (void)entityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola
-{
-    ScSharedEntityRef *entityRef = [self entityForClass:ScSharedEntityRef.class];
-    
-    entityRef.sharedEntityId = entity.entityId;
-    entityRef.sharedEntityScolaId = entity.scolaId;
-    entityRef.scolaId = scola.entityId;
-    
-    entity.isShared = [NSNumber numberWithBool:YES];
-}
-
-
-- (ScMembership *)addMember:(ScMember *)member toScola:(ScScola *)scola isActive:(BOOL)isActive
-{
-    [self entityRefForEntity:member inScola:scola];
-    
-    for (ScMemberResidency *residency in member.residencies) {
-        [self entityRefForEntity:residency inScola:scola];
-        [self entityRefForEntity:residency.scola inScola:scola];
-    }
-    
-    ScMembership *scolaMembership = [self entityForClass:ScMembership.class inScola:scola];
-    scolaMembership.member = member;
-    scolaMembership.scola = scola;
-    scolaMembership.isActive = [NSNumber numberWithBool:isActive];
-    
-    return scolaMembership;
-}
-
-
-#pragma mark - Local & remote persistence
-
-- (BOOL)save
+- (void)cacheEntities
 {
     NSError *error;
-    BOOL didSaveOK = [self save:&error];
     
-    if (!didSaveOK) {
-        ScLogError(@"Error when saving managed object context: %@ [%@]", [error localizedDescription], [error userInfo]);
+    if ([self save:&error]) {
+        ScLogDebug(@"Entities successfully cached.");
+    } else {
+        ScLogError(@"Error caching entities: %@ [%@]", [error localizedDescription], [error userInfo]);
     }
-    
-    return didSaveOK;
 }
 
 
-- (BOOL)saveUsingDelegate:(id)delegate
+- (void)cacheAndPersistEntities
 {
-    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-    NSMutableSet *entities = [[NSMutableSet alloc] init];
+    ScServerConnection *connection = [[ScServerConnection alloc] init];
     
-    [entities unionSet:[context insertedObjects]];
-    [entities unionSet:[context updatedObjects]];
-    
-    BOOL didSaveOK = [self save];
-    
-    if (didSaveOK) {
-        [[[ScServerConnection alloc] init] persistEntities:entities usingDelegate:delegate];
-    }
-    
-    return didSaveOK;
+    [connection persistEntities];
+    [self cacheEntities];
 }
 
 
-- (void)mergeEntitiesFromDictionaryArray:(NSArray *)dictionaryArray
+- (void)entitiesFromDictionaries:(NSArray *)dictionaryArray
 {
     NSMutableDictionary *dictionaries = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *entities = [[NSMutableDictionary alloc] init];
@@ -230,9 +198,7 @@ static NSString * const kScolaRelationshipName = @"scola";
         [entity internaliseRelationships:entityAsDictionary entities:entities];
     }
     
-    if (![self save]) {
-        ScLogError(@"Entities from server could not be saved.");
-    }
+    [self cacheEntities];
 }
 
 @end

@@ -65,6 +65,7 @@
 		5C62A00F14C762D7001DA01F /* 53-house@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00D14C762D7001DA01F /* 53-house@2x.png */; };
 		5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE011482877D001D90C6 /* Localizable.strings */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
+		5C83DF81153F59B800BB0B29 /* ScScola+ScScolaExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF80153F59B800BB0B29 /* ScScola+ScScolaExtensions.m */; };
 		5C88078F1484392B00ED5416 /* ScRegistrationView1Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C88078E1484392A00ED5416 /* ScRegistrationView1Controller.m */; };
 		5C96F1C9153378FC00D2D847 /* ScSharedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C96F1C8153378FC00D2D847 /* ScSharedEntityRef.m */; };
 		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m */; };
@@ -198,6 +199,8 @@
 		5C71DE001482877D001D90C6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE03148287DE001D90C6 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		5C83DF7F153F59B800BB0B29 /* ScScola+ScScolaExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ScScola+ScScolaExtensions.h"; sourceTree = "<group>"; };
+		5C83DF80153F59B800BB0B29 /* ScScola+ScScolaExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ScScola+ScScolaExtensions.m"; sourceTree = "<group>"; };
 		5C88078D1484392A00ED5416 /* ScRegistrationView1Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRegistrationView1Controller.h; sourceTree = "<group>"; };
 		5C88078E1484392A00ED5416 /* ScRegistrationView1Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegistrationView1Controller.m; sourceTree = "<group>"; };
 		5C96F1C7153378FC00D2D847 /* ScSharedEntityRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScSharedEntityRef.h; sourceTree = "<group>"; };
@@ -373,6 +376,8 @@
 			children = (
 				5C5ED5CC14F2E9FE006BBDFB /* ScCachedEntity+ScCachedEntityExtensions.h */,
 				5C5ED5CD14F2E9FE006BBDFB /* ScCachedEntity+ScCachedEntityExtensions.m */,
+				5C83DF7F153F59B800BB0B29 /* ScScola+ScScolaExtensions.h */,
+				5C83DF80153F59B800BB0B29 /* ScScola+ScScolaExtensions.m */,
 			);
 			name = "Model Categories";
 			sourceTree = "<group>";
@@ -714,6 +719,7 @@
 				5C00813E152F265000AF9448 /* ScScheduledAbsence.m in Sources */,
 				5C96F1C9153378FC00D2D847 /* ScSharedEntityRef.m in Sources */,
 				5CFE418E153C8EC50049CD88 /* ScCachedEntity.m in Sources */,
+				5C83DF81153F59B800BB0B29 /* ScScola+ScScolaExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

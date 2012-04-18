@@ -15,6 +15,7 @@
 - (void)didFailWithError:(NSError *)error;
 
 @optional
+- (BOOL)doUseAutomaticAlerts;
 - (void)willSendRequest:(NSURLRequest *)request;
 - (void)finishedReceivingData:(id)data;
 

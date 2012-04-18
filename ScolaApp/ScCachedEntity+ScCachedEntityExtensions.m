@@ -110,8 +110,6 @@
 
 - (void)internaliseRelationships:(NSDictionary *)entityAsDictionary entities:(NSDictionary *)entityLookUp
 {
-    ScLogDebug(@"Internalising relationships for entity (id: %@; class: %@).", self.entityId, [entityAsDictionary objectForKey:kKeyEntityClass]);
-    
     NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
     NSEntityDescription *entityDescription = self.entity;
     NSDictionary *relationships = [entityDescription relationshipsByName];
@@ -120,34 +118,19 @@
         NSRelationshipDescription *relationship = [relationships objectForKey:name];
         
         if (!relationship.isToMany) {
-            ScLogDebug(@"Internalising relationship '%@'.", name);
-            
             NSString *entityRefName = [NSString stringWithFormat:@"%@%@", name, @"Ref"];
             NSDictionary *entityRef = [entityAsDictionary objectForKey:entityRefName];
             
             if (entityRef) {
                 NSString *entityId = [entityRef objectForKey:kKeyEntityId];
-                NSString *entityClass = [entityRef objectForKey:kKeyEntityClass];
-                
-                ScLogDebug(@"Found entity ref (id: %@; class: %@).", entityId, entityClass);
-                
                 ScCachedEntity *entity = [entityLookUp objectForKey:entityId];
                 
                 if (!entity) {
-                    ScLogDebug(@"Ref'ed entity not in dictionary, looking in CD cache.");
                     entity = [context fetchEntityWithId:entityId];
-                    
-                    if (!entity) {
-                        ScLogDebug(@"Ref'ed entity not in CD cache either.");
-                    }
-                } else {
-                    ScLogDebug(@"Found ref'ed entity in dictionary.");
                 }
                 
                 if (entity) {
                     [self setValue:entity forKey:name];
-                    
-                    ScLogDebug(@"Relationship '%@' internalised OK.", name);
                     
                     NSRelationshipDescription *inverse = [relationship inverseRelationship];
                     
@@ -156,14 +139,10 @@
                         NSMutableSet *inverseSet = [entity mutableSetValueForKey:inverseName];
                         
                         [inverseSet addObject:self];
-                        
-                        ScLogDebug(@"Inverse relationship '%@' internalised OK.", inverseName);
                     }
                 } else {
                     ScLogBreakage(@"Cannot internalise relationship to lost entity (id: %@).", entityId);
                 }
-            } else {
-                ScLogDebug(@"No entity ref for relationship (name: %@).", name);
             }
         }
     }

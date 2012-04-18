@@ -32,6 +32,8 @@ static NSString * const kUserDefaultsKeyFormatLastFetchDate = @"scola.fetch.date
 
 static ScMeta *m = nil;
 
+@synthesize isUserLoggedIn;
+
 @synthesize userId;
 @synthesize homeScolaId;
 @synthesize lastFetchDate;
@@ -49,9 +51,8 @@ static ScMeta *m = nil;
 @synthesize isInternetConnectionWiFi;
 @synthesize isInternetConnectionWWAN;
 
-@synthesize isUserLoggedIn;
-@synthesize nonPersistedEntities;
 @synthesize managedObjectContext;
+@synthesize entitiesScheduledForPersistence;
 
 
 #pragma mark - Auxiliary methods
@@ -75,7 +76,7 @@ static ScMeta *m = nil;
 }
 
 
-- (void)reachabilityChanged:(NSNotification *)notification
+- (void)reachabilityDidChange:(NSNotification *)notification
 {
     [self checkReachability:(Reachability *)[notification object]];
 }
@@ -123,10 +124,10 @@ static ScMeta *m = nil;
         
         if (userId) {
             homeScolaId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatHomeScolaId, userId]];
+            lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
             deviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
             authToken = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
             authTokenExpiryDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
-            lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
         } else {
             deviceId = [ScUUIDGenerator generateUUID];
         }
@@ -134,9 +135,9 @@ static ScMeta *m = nil;
         appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
         displayLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
         
-        nonPersistedEntities = [[NSMutableSet alloc] init];
+        scheduledEntities = [[NSMutableSet alloc] init];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityDidChange:) name:kReachabilityChangedNotification object:nil];
     }
     
     return self;
@@ -175,31 +176,6 @@ static ScMeta *m = nil;
 
 #pragma mark - Accessors
 
-- (void)setUserId:(NSString *)userIdentity
-{
-    userId = userIdentity;
-    deviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
-    
-    if (deviceId) {
-        homeScolaId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatHomeScolaId, userId]];
-    } else {
-        deviceId = [ScUUIDGenerator generateUUID];
-        
-        [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyUserId];
-        [ScMeta setUserDefault:homeScolaId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatHomeScolaId, userId]];
-        [ScMeta setUserDefault:deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
-    }
-}
-
-
-- (void)setLastFetchDate:(NSString *)fetchDate
-{
-    lastFetchDate = fetchDate;
-    
-    [ScMeta setUserDefault:fetchDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
-}
-
-
 - (void)setIsUserLoggedIn:(BOOL)isLoggedIn
 {
     [(ScAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
@@ -218,17 +194,34 @@ static ScMeta *m = nil;
 }
 
 
-- (NSString *)authToken
+- (void)setUserId:(NSString *)userIdentity
 {
-    if (!authToken) {
-        authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:1]; // TODO: Two weeks
-        authToken = [self generateAuthToken:authTokenExpiryDate];
-        
-        [ScMeta setUserDefault:authToken forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
-        [ScMeta setUserDefault:authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
+    userId = userIdentity;
+    
+    NSString *storedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
+    
+    if (storedDeviceId) {
+        deviceId = storedDeviceId;
     }
     
-    return authToken;
+    [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyUserId];    
+    [ScMeta setUserDefault:deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
+}
+
+
+- (void)setHomeScolaId:(NSString *)scolaId
+{
+    homeScolaId = scolaId;
+    
+    [ScMeta setUserDefault:homeScolaId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatHomeScolaId, userId]];
+}
+
+
+- (void)setLastFetchDate:(NSString *)fetchDate
+{
+    lastFetchDate = fetchDate;
+    
+    [ScMeta setUserDefault:fetchDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
 }
 
 
@@ -252,11 +245,34 @@ static ScMeta *m = nil;
 }
 
 
+- (NSString *)authToken
+{
+    if (!authToken) {
+        authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:1]; // TODO: Two weeks
+        authToken = [self generateAuthToken:authTokenExpiryDate];
+        
+        [ScMeta setUserDefault:authToken forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
+        [ScMeta setUserDefault:authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
+    }
+    
+    return authToken;
+}
+
+
 - (NSManagedObjectContext *)managedObjectContext
 {
     ScAppDelegate *delegate = (ScAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     return delegate.managedObjectContext;
+}
+
+
+- (NSSet *)entitiesScheduledForPersistence
+{
+    [scheduledEntities unionSet:[self.managedObjectContext insertedObjects]];
+    [scheduledEntities unionSet:[self.managedObjectContext updatedObjects]];
+    
+    return [NSSet setWithSet:scheduledEntities];
 }
 
 
@@ -277,6 +293,31 @@ static ScMeta *m = nil;
 - (BOOL)isInternetConnectionAvailable
 {
     return (isInternetConnectionWiFi || isInternetConnectionWWAN);
+}
+
+
+#pragma mark - ScServerConnectionDelegate implementation
+
+- (void)didReceiveResponse:(NSHTTPURLResponse *)response
+{
+    if (response.statusCode == kHTTPStatusCodeCreated) {
+        ScLogDebug(@"Entities successfully persisted");
+        
+        NSDate *now = [NSDate date];
+        
+        for (ScCachedEntity *entity in scheduledEntities) {
+            entity.dateModified = now;
+        }
+        
+        [scheduledEntities removeAllObjects];
+        [self.managedObjectContext cacheEntities];
+    }
+}
+
+
+- (void)didFailWithError:(NSError *)error
+{
+    ScLogError(@"Error persisting entities (entities: %@)", scheduledEntities);
 }
 
 @end

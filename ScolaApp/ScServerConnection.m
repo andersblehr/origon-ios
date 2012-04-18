@@ -143,10 +143,6 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         }
     } else {
-        if (serverOperation == ScServerOperationPersist) {
-            [ScMeta m].nonPersistedEntities = entitiesScheduledForPersistence;
-        }
-        
         [delegate didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:[ScStrings stringForKey:strNoInternetError] forKey:NSLocalizedDescriptionKey]]];
     }
 }
@@ -223,8 +219,6 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)fetchStringsUsingDelegate:(id)delegate
 {
-    serverOperation = ScServerOperationStrings;
-    
     RESTHandler = kRESTHandlerStrings;
     RESTRoute = [ScMeta m].displayLanguage;
     
@@ -234,7 +228,6 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)authenticateForPhase:(ScAuthPhase)phase usingDelegate:(id)delegate
 {
-    serverOperation = ScServerOperationAuth;
     authPhase = phase;
     
     RESTHandler = kRESTHandlerAuth;
@@ -255,8 +248,6 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)fetchEntitiesUsingDelegate:(id)delegate
 {
-    serverOperation = ScServerOperationFetch;
-    
     RESTHandler = kRESTHandlerModel;
     RESTRoute = kRESTRouteModelFetch;
     
@@ -265,16 +256,13 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
-- (void)persistEntities:(NSSet *)entities usingDelegate:(id)delegate
+- (void)persistEntities
 {
+    NSSet *entities = [ScMeta m].entitiesScheduledForPersistence;
+    
     if (entities.count > 0) {
-        serverOperation = ScServerOperationPersist;
-        
         RESTHandler = kRESTHandlerModel;
         RESTRoute = kRESTRouteModelPersist;
-        
-        entitiesScheduledForPersistence = [NSMutableSet setWithSet:entities];
-        [entitiesScheduledForPersistence unionSet:[ScMeta m].nonPersistedEntities];
         
         NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
         
@@ -282,7 +270,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             [entityDictionaries addObject:[entity toDictionary]];
         }
         
-        [self performHTTPMethod:kHTTPMethodPOST withPayload:entityDictionaries usingDelegate:delegate];
+        [self performHTTPMethod:kHTTPMethodPOST withPayload:entityDictionaries usingDelegate:[ScMeta m]];
     }
 }
 
@@ -311,37 +299,28 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response
 {
+    ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
+    
     HTTPStatusCode = response.statusCode;
     
-    switch (serverOperation) {
-        case ScServerOperationFetch:
-            if (HTTPStatusCode == kHTTPStatusCodeOK) {
-                NSString *fetchDate = [[response allHeaderFields] objectForKey:kHTTPHeaderLastModified];
-                
-                if (fetchDate) {
-                    [ScMeta m].lastFetchDate = fetchDate;
-                }
-            }
-
-            break;
+    if (HTTPStatusCode == kHTTPStatusCodeOK) {
+        NSString *fetchDate = [[response allHeaderFields] objectForKey:kHTTPHeaderLastModified];
         
-        case ScServerOperationPersist:
-            if (HTTPStatusCode == kHTTPStatusCodeCreated) {
-                NSDate *now = [NSDate date];
-                
-                for (ScCachedEntity *entity in entitiesScheduledForPersistence) {
-                    entity.dateModified = now;
-                }
-                
-                [[ScMeta m].managedObjectContext save];
-            } else {
-                [ScMeta m].nonPersistedEntities = entitiesScheduledForPersistence;
-            }
-            
-            break;
-            
-        default:
-            break;
+        if (fetchDate) {
+            [ScMeta m].lastFetchDate = fetchDate;
+        }
+    }
+
+    if (response.statusCode >= kHTTPStatusCodeBadRequest) {
+        BOOL shouldShowAutomaticAlert = YES;
+        
+        if ([connectionDelegate respondsToSelector:@selector(doUseAutomaticAlerts)]) {
+            shouldShowAutomaticAlert = [connectionDelegate doUseAutomaticAlerts];
+        }
+        
+        if (shouldShowAutomaticAlert) {
+            [ScServerConnection showAlertForHTTPStatus:response.statusCode];
+        }
     }
     
     [connectionDelegate didReceiveResponse:response];
@@ -358,6 +337,8 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
+    ScLogVerbose(@"Connection finished loading");
+    
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
     if (HTTPStatusCode == kHTTPStatusCodeOK) {
@@ -372,10 +353,17 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
 	ScLogError(@"Connection failed with error: %@ (%d)", error.localizedDescription, error.code);
+    
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    if (serverOperation == ScServerOperationPersist) {
-        [ScMeta m].nonPersistedEntities = entitiesScheduledForPersistence;
+    BOOL shouldShowAutomaticAlert = YES;
+    
+    if ([connectionDelegate respondsToSelector:@selector(doUseAutomaticAlerts)]) {
+        shouldShowAutomaticAlert = [connectionDelegate doUseAutomaticAlerts];
+    }
+    
+    if (shouldShowAutomaticAlert) {
+        [ScServerConnection showAlertForError:error];
     }
     
     [connectionDelegate didFailWithError:error];

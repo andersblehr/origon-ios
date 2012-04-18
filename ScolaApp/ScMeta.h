@@ -10,19 +10,23 @@
 
 #import "Reachability.h"
 
+#import "ScServerConnectionDelegate.h"
+
 @class ScServerConnection;
 
-@interface ScMeta : NSObject {
+@interface ScMeta : NSObject <ScServerConnectionDelegate> {
 @private
     Reachability *internetReachability;
     
     NSDate *authTokenExpiryDate;
-    NSMutableSet *nonPersistedEntities;
+    NSMutableSet *scheduledEntities;
 }
 
 extern NSString * const kBundleID;
 extern NSString * const kKeyEntityId;
 extern NSString * const kKeyEntityClass;
+
+@property (nonatomic) BOOL isUserLoggedIn;
 
 @property (strong, nonatomic) NSString *userId;
 @property (strong, nonatomic) NSString *homeScolaId;
@@ -41,9 +45,8 @@ extern NSString * const kKeyEntityClass;
 @property (nonatomic, readonly) BOOL isInternetConnectionWiFi;
 @property (nonatomic, readonly) BOOL isInternetConnectionWWAN;
 
-@property (nonatomic) BOOL isUserLoggedIn;
-@property (strong, nonatomic) NSSet *nonPersistedEntities;
 @property (weak, readonly) NSManagedObjectContext *managedObjectContext;
+@property (strong, readonly) NSSet *entitiesScheduledForPersistence;
 
 + (ScMeta *)m;
 

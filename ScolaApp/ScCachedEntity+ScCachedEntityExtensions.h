@@ -8,13 +8,6 @@
 
 #import "ScCachedEntity.h"
 
-typedef enum {
-    ScRemotePersistenceStatePersisted,
-    ScRemotePersistenceStateDirtyNotScheduled,
-    ScRemotePersistenceStateDirtyScheduled,
-    ScRemotePersistenceStateDeleted
-} ScRemotePersistenceState;
-
 @interface ScCachedEntity (ScCachedEntityExtensions)
 
 - (NSString *)expiresInTimeframe;

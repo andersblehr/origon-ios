@@ -8,7 +8,7 @@
 
 #import <CoreData/CoreData.h>
 
-@class ScMember, ScMembership, ScScola;
+@class ScCachedEntity, ScMember, ScMembership, ScScola;
 
 @interface NSManagedObjectContext (ScManagedObjectContextExtensions)
 
@@ -16,13 +16,12 @@
 - (ScScola *)entityForScolaWithName:(NSString *)name andId:(NSString *)scolaId;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola withId:(NSString *)entityId;
+- (id)entityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola;
 
 - (id)fetchEntityWithId:(NSString *)entityId;
 
-- (ScMembership *)addMember:(ScMember *)member toScola:(ScScola *)scola isActive:(BOOL)isActive;
-
-- (BOOL)save;
-- (BOOL)saveUsingDelegate:(id)delegate;
-- (void)mergeEntitiesFromDictionaryArray:(NSArray *)dictionaryArray;
+- (void)cacheEntities;
+- (void)cacheAndPersistEntities;
+- (void)entitiesFromDictionaries:(NSArray *)dictionaryArray;
 
 @end
