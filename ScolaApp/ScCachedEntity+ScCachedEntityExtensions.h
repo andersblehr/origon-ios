@@ -10,9 +10,11 @@
 
 @interface ScCachedEntity (ScCachedEntityExtensions)
 
-- (NSString *)expiresInTimeframe;
-
++ (ScCachedEntity *)entityWithDictionary:(NSDictionary *)dictionary;
 - (NSDictionary *)toDictionary;
-- (void)internaliseRelationships:(NSDictionary *)entityAsDictionary entities:(NSDictionary *)entityLookUp;
+
+- (void)internaliseRelationships;
+
+- (NSString *)expiresInTimeframe;
 
 @end

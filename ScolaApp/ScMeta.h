@@ -12,19 +12,24 @@
 
 #import "ScServerConnectionDelegate.h"
 
-@class ScServerConnection;
+@class ScCachedEntity, ScServerConnection;
 
 @interface ScMeta : NSObject <ScServerConnectionDelegate> {
 @private
     Reachability *internetReachability;
     
     NSDate *authTokenExpiryDate;
+    
     NSMutableSet *scheduledEntities;
+    NSMutableDictionary *importedEntities;
+    NSMutableDictionary *importedEntityRefs;
 }
 
 extern NSString * const kBundleID;
+
 extern NSString * const kKeyEntityId;
 extern NSString * const kKeyEntityClass;
+extern NSString * const kKeyScolaId;
 
 @property (nonatomic) BOOL isUserLoggedIn;
 
@@ -56,5 +61,10 @@ extern NSString * const kKeyEntityClass;
 
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;
+
+- (void)addImportedEntity:(ScCachedEntity *)entity;
+- (void)addImportedEntityRefs:(NSDictionary *)entityRefs forEntity:(ScCachedEntity *)entity;
+- (ScCachedEntity *)importedEntityWithId:(NSString *)entityId;
+- (NSDictionary *)importedEntityRefsForEntity:(ScCachedEntity *)entity;
 
 @end

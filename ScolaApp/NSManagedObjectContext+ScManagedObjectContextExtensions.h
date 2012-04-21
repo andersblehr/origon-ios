@@ -14,14 +14,17 @@
 
 - (ScScola *)entityForScolaWithName:(NSString *)name;
 - (ScScola *)entityForScolaWithName:(NSString *)name andId:(NSString *)scolaId;
+- (id)entityForClass:(Class)class withId:(NSString *)entityId;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola withId:(NSString *)entityId;
 - (id)entityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola;
 
 - (id)fetchEntityWithId:(NSString *)entityId;
 
-- (void)cacheEntities;
-- (void)cacheAndPersistEntities;
+- (void)save;
+- (void)saveAndPersist;
+- (void)saveWithDictionaries:(NSArray *)dictionaries;
+
 - (void)entitiesFromDictionaries:(NSArray *)dictionaryArray;
 
 @end

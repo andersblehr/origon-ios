@@ -37,23 +37,6 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-- (id)entityForClass:(Class)class withId:(NSString *)entityId
-{
-    ScCachedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
-    
-    entity.entityId = entityId;
-    entity.dateCreated = [NSDate date];
-    
-    NSString *expires = [entity expiresInTimeframe];
-    
-    if (expires) {
-        // TODO: Process expiry instructions
-    }
-    
-    return entity;
-}
-
-
 - (id)mergeEntityFromDictionary:(NSDictionary *)dictionary
 {
     NSString *entityId = [dictionary objectForKey:kKeyEntityId];
@@ -96,6 +79,23 @@ static NSString * const kScolaRelationshipName = @"scola";
     scola.scolaId = scola.entityId;
     
     return scola;
+}
+
+
+- (id)entityForClass:(Class)class withId:(NSString *)entityId
+{
+    ScCachedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
+    
+    entity.entityId = entityId;
+    entity.dateCreated = [NSDate date];
+    
+    NSString *expires = [entity expiresInTimeframe];
+    
+    if (expires) {
+        // TODO: Process expiry instructions
+    }
+    
+    return entity;
 }
 
 
@@ -156,26 +156,41 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-#pragma mark - Entity caching & synchronization
+#pragma mark - Entity save & persistence
 
-- (void)cacheEntities
+- (void)save
 {
     NSError *error;
     
     if ([self save:&error]) {
-        ScLogDebug(@"Entities successfully cached.");
+        ScLogDebug(@"Entities successfully saved.");
     } else {
-        ScLogError(@"Error caching entities: %@ [%@]", [error localizedDescription], [error userInfo]);
+        ScLogError(@"Error saving entities: %@ [%@]", [error localizedDescription], [error userInfo]);
     }
 }
 
 
-- (void)cacheAndPersistEntities
+- (void)saveAndPersist
 {
-    ScServerConnection *connection = [[ScServerConnection alloc] init];
+    [[[ScServerConnection alloc] init] persistEntities];
     
-    [connection persistEntities];
-    [self cacheEntities];
+    [self save];
+}
+
+
+- (void)saveWithDictionaries:(NSArray *)dictionaries
+{
+    NSMutableSet *entities = [[NSMutableSet alloc] init];
+    
+    for (NSDictionary *dictionary in dictionaries) {
+        [entities addObject:[ScCachedEntity entityWithDictionary:dictionary]];
+    }
+    
+    for (ScCachedEntity *entity in entities) {
+        [entity internaliseRelationships];
+    }
+    
+    [self save];
 }
 
 
@@ -198,7 +213,7 @@ static NSString * const kScolaRelationshipName = @"scola";
         [entity internaliseRelationships:entityAsDictionary entities:entities];
     }
     
-    [self cacheEntities];
+    [self save];
 }
 
 @end

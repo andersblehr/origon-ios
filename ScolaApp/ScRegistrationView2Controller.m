@@ -128,7 +128,7 @@ static int const kPopUpButtonUseNew = 1;
         member.activeSince = [NSDate date];
         member.didRegister = [NSNumber numberWithBool:YES];
         
-        [context cacheAndPersistEntities];
+        [context saveAndPersist];
         
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {

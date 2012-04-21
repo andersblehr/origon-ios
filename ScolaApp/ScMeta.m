@@ -17,11 +17,15 @@
 #import "ScServerConnection.h"
 #import "ScUUIDGenerator.h"
 
+#import "ScCachedEntity.h"
+
 @implementation ScMeta
 
 NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
+
 NSString * const kKeyEntityId = @"entityId";
 NSString * const kKeyEntityClass = @"entityClass";
+NSString * const kKeyScolaId = @"scolaId";
 
 static NSString * const kUserDefaultsKeyUserId = @"scola.user.id";
 static NSString * const kUserDefaultsKeyFormatHomeScolaId = @"scola.scola.id$%@";
@@ -136,6 +140,8 @@ static ScMeta *m = nil;
         displayLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
         
         scheduledEntities = [[NSMutableSet alloc] init];
+        importedEntities = [[NSMutableDictionary alloc] init];
+        importedEntityRefs = [[NSMutableDictionary alloc] init];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityDidChange:) name:kReachabilityChangedNotification object:nil];
     }
@@ -296,6 +302,35 @@ static ScMeta *m = nil;
 }
 
 
+#pragma mark - Deserialisation housekeeping
+
+- (void)addImportedEntity:(ScCachedEntity *)entity
+{
+    [importedEntities setObject:entity forKey:entity.entityId];
+}
+
+
+- (void)addImportedEntityRefs:(NSDictionary *)entityRefs forEntity:(ScCachedEntity *)entity
+{
+    [importedEntityRefs setObject:entityRefs forKey:entity.entityId];
+}
+
+
+- (ScCachedEntity *)importedEntityWithId:(NSString *)entityId
+{
+    return [importedEntities objectForKey:entityId];
+}
+
+
+- (NSDictionary *)importedEntityRefsForEntity:(ScCachedEntity *)entity
+{
+    NSDictionary *entityRefs = [importedEntityRefs objectForKey:entity.entityId];
+    [importedEntityRefs removeObjectForKey:entity.entityId];
+    
+    return entityRefs;
+}
+
+
 #pragma mark - ScServerConnectionDelegate implementation
 
 - (void)didReceiveResponse:(NSHTTPURLResponse *)response
@@ -310,7 +345,7 @@ static ScMeta *m = nil;
         }
         
         [scheduledEntities removeAllObjects];
-        [self.managedObjectContext cacheEntities];
+        [self.managedObjectContext save];
     }
 }
 

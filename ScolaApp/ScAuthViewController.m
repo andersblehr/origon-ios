@@ -467,7 +467,7 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)finishedReceivingLoginData:(NSArray *)data
 {
-    [[ScMeta m].managedObjectContext entitiesFromDictionaries:data];
+    [[ScMeta m].managedObjectContext saveWithDictionaries:data];
     
     if (authPhase == ScAuthPhaseConfirmation) {
         [self userDidLogIn:emailAsEntered isNewUser:YES];
