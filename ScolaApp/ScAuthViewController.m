@@ -19,6 +19,7 @@
 #import "ScStrings.h"
 #import "ScUUIDGenerator.h"
 
+#import "ScDevice.h"
 #import "ScMember.h"
 #import "ScMemberResidency.h"
 #import "ScScola.h"
@@ -432,22 +433,12 @@ static int const kPopUpButtonTryAgain = 1;
 {
     [ScMeta m].isUserLoggedIn = YES;
     
+    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+    
     if (isNewUser) {
-        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-        
-        if (isUserListed) { /*
-            NSDictionary *memberInfo = [authInfo objectForKey:kAuthInfoKeyMemberInfo];
-            NSDictionary *householdInfo = [authInfo objectForKey:kAuthInfoKeyHouseholdInfo];
-            NSDictionary *homeScolaInfo = [authInfo objectForKey:kAuthInfoKeyHomeScolaInfo];
-
-            member = [context entityFromDictionary:memberInfo];
-            member.primaryResidence = [context entityFromDictionary:householdInfo];
-            
-            if (homeScolaInfo) {
-                homeScola = [context entityFromDictionary:homeScolaInfo];
-            } else {
-                homeScola = [context newScolaWithName:[ScStrings stringForKey:strMyPlace]];
-            } */
+        if (isUserListed) {
+            homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
+            member = [context fetchEntityWithId:[ScMeta m].userId];
         } else {
             homeScola = [context entityForScolaWithName:[ScStrings stringForKey:strMyPlace] andId:[ScMeta m].homeScolaId];
             member = [context entityForClass:ScMember.class inScola:homeScola withId:emailAsEntered];
@@ -458,6 +449,20 @@ static int const kPopUpButtonTryAgain = 1;
         
         [self performSegueWithIdentifier:kSegueToRegistrationView1 sender:self];
     } else {
+        ScDevice *device = [context fetchEntityWithId:[ScMeta m].deviceId];
+        
+        if (!device) {
+            homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
+            member = [context fetchEntityWithId:[ScMeta m].userId];
+            
+            device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
+            device.type = [UIDevice currentDevice].model;
+            device.displayName = [UIDevice currentDevice].name;
+            device.member = member;
+            
+            [context saveAndPersist];
+        }
+        
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     }
 }
@@ -934,27 +939,27 @@ static int const kPopUpButtonTryAgain = 1;
     
     if (response.statusCode != kHTTPStatusCodeOK) {
         [self indicatePendingServerSession:NO];
+    }
         
-        if ((response.statusCode == kHTTPStatusCodeNoContent) ||
-            (response.statusCode == kHTTPStatusCodeNotModified)) {
-            if (authPhase == ScAuthPhaseLogin) {
-                [self userDidLogIn:emailAsEntered isNewUser:NO];
-            } else if (authPhase == ScAuthPhaseConfirmation) {
-                [self userDidLogIn:emailAsEntered isNewUser:YES];
-            }
-        } else if (response.statusCode >= kHTTPStatusCodeBadRequest) {
-            [ScMeta m].isUserLoggedIn = NO;
+    if ((response.statusCode == kHTTPStatusCodeNoContent) ||
+        (response.statusCode == kHTTPStatusCodeNotModified)) {
+        if (authPhase == ScAuthPhaseLogin) {
+            [self userDidLogIn:emailAsEntered isNewUser:NO];
+        } else if (authPhase == ScAuthPhaseConfirmation) {
+            [self userDidLogIn:emailAsEntered isNewUser:YES];
+        }
+    } else if (response.statusCode >= kHTTPStatusCodeBadRequest) {
+        [ScMeta m].isUserLoggedIn = NO;
+        
+        if (response.statusCode == kHTTPStatusCodeUnauthorized) {
+            NSString *alertMessage = [ScStrings stringForKey:strNotLoggedInAlert];
             
-            if (response.statusCode == kHTTPStatusCodeUnauthorized) {
-                NSString *alertMessage = [ScStrings stringForKey:strNotLoggedInAlert];
-                
-                UIAlertView *notLoggedInAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-                notLoggedInAlert.tag = ScAuthPopUpTagNotLoggedIn;
-                
-                [notLoggedInAlert show];
-            } else {
-                [ScServerConnection showAlertForHTTPStatus:response.statusCode tagWith:ScAuthPopUpTagServerError usingDelegate:self];
-            }
+            UIAlertView *notLoggedInAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+            notLoggedInAlert.tag = ScAuthPopUpTagNotLoggedIn;
+            
+            [notLoggedInAlert show];
+        } else {
+            [ScServerConnection showAlertForHTTPStatus:response.statusCode tagWith:ScAuthPopUpTagServerError usingDelegate:self];
         }
     }
 }

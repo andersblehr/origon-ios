@@ -25,6 +25,4 @@
 - (void)saveAndPersist;
 - (void)saveWithDictionaries:(NSArray *)dictionaries;
 
-- (void)entitiesFromDictionaries:(NSArray *)dictionaryArray;
-
 @end

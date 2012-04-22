@@ -301,7 +301,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 {
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
     
-    HTTPStatusCode = response.statusCode;
+    [responseData setLength:0];
     
     if (HTTPStatusCode == kHTTPStatusCodeOK) {
         NSString *fetchDate = [[response allHeaderFields] objectForKey:kHTTPHeaderLastModified];
@@ -322,6 +322,8 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             [ScServerConnection showAlertForHTTPStatus:response.statusCode];
         }
     }
+    
+    HTTPStatusCode = response.statusCode;
     
     [connectionDelegate didReceiveResponse:response];
 }

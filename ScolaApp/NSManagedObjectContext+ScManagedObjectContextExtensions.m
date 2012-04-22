@@ -193,27 +193,4 @@ static NSString * const kScolaRelationshipName = @"scola";
     [self save];
 }
 
-
-- (void)entitiesFromDictionaries:(NSArray *)dictionaryArray
-{
-    NSMutableDictionary *dictionaries = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *entities = [[NSMutableDictionary alloc] init];
-    
-    for (NSDictionary *entityDictionary in dictionaryArray) {
-        ScCachedEntity *entity = [self mergeEntityFromDictionary:entityDictionary];
-        
-        [dictionaries setObject:entityDictionary forKey:entity.entityId];
-        [entities setObject:entity forKey:entity.entityId];
-    }
-    
-    for (NSString *entityId in [entities allKeys]) {
-        ScCachedEntity *entity = [entities objectForKey:entityId];
-        NSDictionary *entityAsDictionary = [dictionaries objectForKey:entityId];
-        
-        [entity internaliseRelationships:entityAsDictionary entities:entities];
-    }
-    
-    [self save];
-}
-
 @end

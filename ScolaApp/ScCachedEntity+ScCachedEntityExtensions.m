@@ -58,17 +58,37 @@
 }
 
 
-- (void)mergeWithDictionary:(NSDictionary *)dictionary
+- (BOOL)doPersistProperty:(NSString *)property
 {
-    NSDictionary *attributes = [self.entity attributesByName];
-    NSDictionary *relationships = [self.entity relationshipsByName];
+    return YES;
+}
+
+
+#pragma mark - Dictionary serialisation & deserialisation
+
++ (ScCachedEntity *)entityWithDictionary:(NSDictionary *)dictionary
+{
+    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
     NSMutableDictionary *entityRefs = [[NSMutableDictionary alloc] init];
+    NSString *entityId = [dictionary valueForKey:kKeyEntityId];
+    
+    ScCachedEntity *entity = [context fetchEntityWithId:entityId];
+    
+    if (!entity) {
+        NSString *entityClass = [dictionary objectForKey:kKeyEntityClass];
+        
+        entity = [context entityForClass:NSClassFromString(entityClass) withId:entityId];
+        entity.scolaId = [dictionary objectForKey:kKeyScolaId];
+    }
+    
+    NSDictionary *attributes = [entity.entity attributesByName];
+    NSDictionary *relationships = [entity.entity relationshipsByName];
     
     for (NSString *name in [attributes allKeys]) {
         id value = [dictionary objectForKey:name];
         
         if (value) {
-            [self setValue:value forKey:name];
+            [entity setValue:value forKey:name];
         }
     }
     
@@ -85,28 +105,11 @@
         }
     }
     
-    [[ScMeta m] addImportedEntity:self];
-    [[ScMeta m] addImportedEntityRefs:entityRefs forEntity:self];
-}
-
-
-#pragma mark - Dictionary serialisation & deserialisation
-
-+ (ScCachedEntity *)entityWithDictionary:(NSDictionary *)dictionary
-{
-    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-    NSString *entityId = [dictionary valueForKey:kKeyEntityId];
+    [[ScMeta m] addImportedEntity:entity];
     
-    ScCachedEntity *entity = [context fetchEntityWithId:entityId];
-    
-    if (!entity) {
-        NSString *entityClass = [dictionary objectForKey:kKeyEntityClass];
-        
-        entity = [context entityForClass:NSClassFromString(entityClass) withId:entityId];
-        entity.scolaId = [dictionary objectForKey:kKeyScolaId];
+    if ([entityRefs count] > 0) {
+        [[ScMeta m] addImportedEntityRefs:entityRefs forEntity:entity];
     }
-    
-    [entity mergeWithDictionary:dictionary];
     
     return entity;
 }
@@ -122,21 +125,25 @@
     [entityDictionary setObject:entityDescription.name forKey:kKeyEntityClass];
     
     for (NSString *name in [attributes allKeys]) {
-        id value = [self valueForKey:name];
-        
-        if (value) {
-            [entityDictionary setObject:value forKey:name];
+        if ([self doPersistProperty:name]) {
+            id value = [self valueForKey:name];
+            
+            if (value) {
+                [entityDictionary setObject:value forKey:name];
+            }
         }
     }
     
     for (NSString *name in [relationships allKeys]) {
-        NSRelationshipDescription *relationship = [relationships objectForKey:name];
-        
-        if (!relationship.isToMany) {
-            ScCachedEntity *entity = [self valueForKey:name];
+        if ([self doPersistProperty:name]) {
+            NSRelationshipDescription *relationship = [relationships objectForKey:name];
             
-            if (entity) {
-                [entityDictionary setObject:[entity entityRef] forKey:name];
+            if (!relationship.isToMany) {
+                ScCachedEntity *entity = [self valueForKey:name];
+                
+                if (entity) {
+                    [entityDictionary setObject:[entity entityRef] forKey:name];
+                }
             }
         }
     }
@@ -148,7 +155,6 @@
 - (void)internaliseRelationships
 {
     NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-    NSDictionary *relationships = [self.entity relationshipsByName];
     NSDictionary *entityRefs = [[ScMeta m] importedEntityRefsForEntity:self];
     
     for (NSString *name in [entityRefs allKeys]) {
@@ -163,20 +169,12 @@
         
         if (entity) {
             [self setValue:entity forKey:name];
-            
-            NSRelationshipDescription *relationship = [relationships valueForKey:name];
-            NSRelationshipDescription *inverse = [relationship inverseRelationship];
-            
-            if (inverse.isToMany) {
-                NSMutableSet *inverseSet = [entity mutableSetValueForKey:inverse.name];
-                [inverseSet addObject:self];
-            }
         }
     }
 }
 
 
-#pragma mark - Entity meta information
+#pragma mark - Entity meta data handling
 
 - (NSString *)expiresInTimeframe
 {

@@ -306,12 +306,20 @@ static ScMeta *m = nil;
 
 - (void)addImportedEntity:(ScCachedEntity *)entity
 {
+    if ([importedEntityRefs count] == 0) {
+        [importedEntities removeAllObjects];
+    }
+    
     [importedEntities setObject:entity forKey:entity.entityId];
 }
 
 
 - (void)addImportedEntityRefs:(NSDictionary *)entityRefs forEntity:(ScCachedEntity *)entity
 {
+    if ([importedEntityRefs count] == 0) {
+        [importedEntities removeAllObjects];
+    }
+    
     [importedEntityRefs setObject:entityRefs forKey:entity.entityId];
 }
 
