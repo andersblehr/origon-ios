@@ -19,12 +19,12 @@
 
 - (BOOL)doPersistProperty:(NSString *)property
 {
-    BOOL isIgnored = NO;
+    BOOL doIgnore = NO;
     
-    isIgnored = isIgnored || [property isEqualToString:@"resident"];
-    isIgnored = isIgnored || [property isEqualToString:@"residence"];
+    doIgnore = doIgnore || [property isEqualToString:@"resident"];
+    doIgnore = doIgnore || [property isEqualToString:@"residence"];
     
-    return !isIgnored;
+    return !doIgnore;
 }
 
 
