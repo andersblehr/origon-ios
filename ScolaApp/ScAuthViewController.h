@@ -14,17 +14,6 @@
 
 @class ScScola, ScMember, ScServerConnection;
 
-typedef enum {
-    ScAuthPopUpTagServerError,
-    ScAuthPopUpTagEmailAlreadyRegistered,
-    ScAuthPopUpTagEmailSent,
-    ScAuthPopUpTagRegistrationCodesDoNotMatch,
-    ScAuthPopUpTagPasswordsDoNotMatch,
-    ScAuthPopUpTagWelcomeBack,
-    ScAuthPopUpTagUserExistsAndIsLoggedIn,
-    ScAuthPopUpTagNotLoggedIn,
-} ScAuthPopUpTag;
-
 @interface ScAuthViewController : UIViewController <UITextFieldDelegate, UIAlertViewDelegate, ScServerConnectionDelegate> {
 @private
     AVAudioPlayer *typewriter1;
@@ -33,14 +22,14 @@ typedef enum {
     BOOL isEditingAllowed;
     BOOL isUserListed;
 
-    int currentMembershipSegment;
+    int currentUserIntention;
     
     NSString *nameAsEntered;
     NSString *emailAsEntered;
     NSDictionary *authInfo;
     
-    ScAuthPhase authPhase;
     ScServerConnection *serverConnection;
+    ScAuthPhase authPhase;
     
     ScMember *member;
     ScScola *homeScola;
@@ -48,7 +37,7 @@ typedef enum {
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *membershipPromptLabel;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *membershipStatusControl;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *userIntentionControl;
 @property (weak, nonatomic) IBOutlet UILabel *userHelpLabel;
 @property (weak, nonatomic) IBOutlet UITextField *nameOrEmailOrRegistrationCodeField;
 @property (weak, nonatomic) IBOutlet UITextField *emailOrPasswordField;

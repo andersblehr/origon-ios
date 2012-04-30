@@ -135,15 +135,13 @@
     }
     
     for (NSString *name in [relationships allKeys]) {
-        if ([self doPersistProperty:name]) {
-            NSRelationshipDescription *relationship = [relationships objectForKey:name];
+        NSRelationshipDescription *relationship = [relationships objectForKey:name];
+        
+        if (!relationship.isToMany && [self doPersistProperty:name]) {
+            ScCachedEntity *entity = [self valueForKey:name];
             
-            if (!relationship.isToMany) {
-                ScCachedEntity *entity = [self valueForKey:name];
-                
-                if (entity) {
-                    [entityDictionary setObject:[entity entityRef] forKey:name];
-                }
+            if (entity) {
+                [entityDictionary setObject:[entity entityRef] forKey:name];
             }
         }
     }
