@@ -61,7 +61,7 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 
 - (void)fetchStringsUsingDelegate:(id)delegate;
 - (void)authenticateForPhase:(ScAuthPhase)phase usingDelegate:(id)delegate;
-- (void)fetchEntitiesUsingDelegate:(id)delegate;
+- (void)fetchEntities;
 - (void)persistEntities;
 
 @end

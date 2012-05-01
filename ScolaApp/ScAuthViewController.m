@@ -14,7 +14,6 @@
 
 #import "ScMeta.h"
 #import "ScLogging.h"
-#import "ScRegistrationView1Controller.h"
 #import "ScServerConnection.h"
 #import "ScStrings.h"
 #import "ScUUIDGenerator.h"
@@ -23,6 +22,9 @@
 #import "ScMember.h"
 #import "ScMemberResidency.h"
 #import "ScScola.h"
+
+#import "ScMainViewController.h"
+#import "ScRegistrationView1Controller.h"
 
 typedef enum {
     ScAuthPopUpTagServerError,
@@ -69,7 +71,7 @@ static int const kPopUpButtonTryAgain = 1;
 @implementation ScAuthViewController
 
 @synthesize darkLinenView;
-@synthesize membershipPromptLabel;
+@synthesize userIntentionPromptLabel;
 @synthesize userIntentionControl;
 @synthesize userHelpLabel;
 @synthesize nameOrEmailOrRegistrationCodeField;
@@ -486,6 +488,8 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)finishedReceivingLoginData:(NSArray *)data
 {
+    isUpToDate = YES;
+    
     [[ScMeta m].managedObjectContext saveWithDictionaries:data];
     
     if (authPhase == ScAuthPhaseConfirmation) {
@@ -556,7 +560,6 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Release any cached data, images, etc that aren't in use.
 }
 
 
@@ -580,10 +583,10 @@ static int const kPopUpButtonTryAgain = 1;
         passwordField.secureTextEntry = YES;
         activityIndicator.hidesWhenStopped = YES;
 
-        membershipPromptLabel.text = [ScStrings stringForKey:strMembershipPrompt];
-        [userIntentionControl setTitle:[ScStrings stringForKey:strIsNew] forSegmentAtIndex:kUserIntentionRegistration];
-        [userIntentionControl setTitle:[ScStrings stringForKey:strIsMember] forSegmentAtIndex:kUserIntentionLogin];
-        [userIntentionControl addTarget:self action:@selector(membershipStatusDidChange) forControlEvents:UIControlEventValueChanged];
+        userIntentionPromptLabel.text = [ScStrings stringForKey:strUserIntentionPrompt];
+        [userIntentionControl setTitle:[ScStrings stringForKey:strUserIntentionRegistration] forSegmentAtIndex:kUserIntentionRegistration];
+        [userIntentionControl setTitle:[ScStrings stringForKey:strUserIntentionLogin] forSegmentAtIndex:kUserIntentionLogin];
+        [userIntentionControl addTarget:self action:@selector(userIntentionDidChange) forControlEvents:UIControlEventValueChanged];
         
         passwordField.placeholder = [ScStrings stringForKey:strNewPasswordPrompt];
         scolaDescriptionTextView.text = [ScStrings stringForKey:strScolaDescription];
@@ -594,8 +597,6 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 
@@ -674,12 +675,16 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kSegueToRegistrationView1]) {
+    if ([segue.identifier isEqualToString:kSegueToMainView]) {
+        if (!isUpToDate) {
+            [[[ScServerConnection alloc] init] fetchEntities];
+        }
+    } else if ([segue.identifier isEqualToString:kSegueToRegistrationView1]) {
         ScRegistrationView1Controller *nextViewController = segue.destinationViewController;
 
         nextViewController.member = member;
         nextViewController.homeScola = homeScola;
-        nextViewController.userIsListed = isUserListed;
+        nextViewController.isUserListed = isUserListed;
     }
 }
 

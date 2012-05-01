@@ -246,13 +246,13 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 }
 
 
-- (void)fetchEntitiesUsingDelegate:(id)delegate
+- (void)fetchEntities
 {
     RESTHandler = kRESTHandlerModel;
     RESTRoute = kRESTRouteModelFetch;
     
     [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
-    [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:[ScMeta m]];
 }
 
 

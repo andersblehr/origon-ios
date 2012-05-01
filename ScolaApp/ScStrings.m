@@ -71,10 +71,9 @@ NSString * const strUseConfigured                    = @"strUseConfigured";
 NSString * const strUseNew                           = @"strUseNew";
 
 // Auth view
-NSString * const strScolaDescription                 = @"strScolaDescription";
-NSString * const strMembershipPrompt                 = @"strMembershipPrompt";
-NSString * const strIsMember                         = @"strIsMember";
-NSString * const strIsNew                            = @"strIsNew";
+NSString * const strUserIntentionPrompt              = @"strUserIntentionPrompt";
+NSString * const strUserIntentionLogin               = @"strUserIntentionLogin";
+NSString * const strUserIntentionRegistration        = @"strUserIntentionRegistration";
 NSString * const strUserHelpNew                      = @"strUserHelpNew";
 NSString * const strUserHelpMember                   = @"strUserHelpMember";
 NSString * const strNamePrompt                       = @"strNamePrompt";
@@ -93,6 +92,7 @@ NSString * const strWelcomeBackPopUpTitle            = @"strWelcomeBackPopUpTitl
 NSString * const strWelcomeBackPopUpMessage          = @"strWelcomeBackPopUpMessage";
 NSString * const strRegistrationCodePrompt           = @"strRegistrationCodePrompt";
 NSString * const strRepeatPasswordPrompt             = @"strRepeatPasswordPrompt";
+NSString * const strScolaDescription                 = @"strScolaDescription";
 
 // Registration view 1
 NSString * const strProvideAddressUserHelp           = @"strProvideAddressUserHelp";

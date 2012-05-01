@@ -21,6 +21,7 @@
     
     BOOL isEditingAllowed;
     BOOL isUserListed;
+    BOOL isUpToDate;
 
     int currentUserIntention;
     
@@ -36,7 +37,7 @@
 }
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
-@property (weak, nonatomic) IBOutlet UILabel *membershipPromptLabel;
+@property (weak, nonatomic) IBOutlet UILabel *userIntentionPromptLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *userIntentionControl;
 @property (weak, nonatomic) IBOutlet UILabel *userHelpLabel;
 @property (weak, nonatomic) IBOutlet UITextField *nameOrEmailOrRegistrationCodeField;

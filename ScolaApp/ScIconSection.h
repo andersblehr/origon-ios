@@ -1,5 +1,5 @@
 //
-//  ScMainViewIconSection.h
+//  ScIconSection.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 22.01.12.
@@ -8,13 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ScMainViewIconSection : NSObject {
+#import "ScIconSectionDelegate.h"
+
+@interface ScIconSection : NSObject {
 @private
-    UIViewController *mainViewController;
+    UIViewController<ScIconSectionDelegate> *sectionDelegate;
     
-    ScMainViewIconSection *precedingSection;
-    ScMainViewIconSection *followingSection;
+    int sectionNumber;
     
+    ScIconSection *precedingSection;
+    ScIconSection *followingSection;
+    
+    NSString *sectionHeading;
     UIView *sectionView;
     UILabel *headingLabel;
     
@@ -36,13 +41,11 @@
     CGRect newSectionFrame;
 }
 
-@property (nonatomic, readonly) int sectionNumber;
-@property (strong, nonatomic) NSString *sectionHeading;
 @property (strong, nonatomic, readonly) UIView *headingView;
 @property (nonatomic, readonly) BOOL isCollapsed;
 
-- (id)initForViewController:(UIViewController *)viewController
-       withPrecedingSection:(ScMainViewIconSection *)previousSection;
+- (id)initWithHeading:(NSString *)heading andDelegate:(id)delegate;
+- (id)initWithHeading:(NSString *)heading andPrecedingSection:(ScIconSection *)section;
 - (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption;
 
 - (void)expand;

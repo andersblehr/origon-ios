@@ -52,7 +52,7 @@ static int const kPopUpButtonUseNew = 1;
 
 @synthesize member;
 @synthesize homeScola;
-@synthesize userIsListed;
+@synthesize isUserListed;
 
 
 #pragma mark - Input validation
@@ -211,7 +211,7 @@ static int const kPopUpButtonUseNew = 1;
     
     NSDictionary *viewState = [ScMeta userDefaultForKey:self.class.description];
     
-    if (userIsListed) {
+    if (isUserListed) {
         if ([member.gender isEqualToString:kGenderFemale]) {
             genderControl.selectedSegmentIndex = kGenderSegmentFemale;
         } else if ([member.gender isEqualToString:kGenderMale]) {

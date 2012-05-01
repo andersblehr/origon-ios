@@ -278,7 +278,17 @@ static ScMeta *m = nil;
     [scheduledEntities unionSet:[self.managedObjectContext insertedObjects]];
     [scheduledEntities unionSet:[self.managedObjectContext updatedObjects]];
     
-    return [NSSet setWithSet:scheduledEntities];
+    NSMutableSet *nonPersistedEntities = [[NSMutableSet alloc] init];
+    
+    for (ScCachedEntity *entity in scheduledEntities) {
+        if (![entity isPersisted]) {
+            [nonPersistedEntities addObject:entity];
+        }
+    }
+    
+    scheduledEntities = [NSMutableSet setWithSet:nonPersistedEntities];
+    
+    return scheduledEntities;
 }
 
 
@@ -350,11 +360,18 @@ static ScMeta *m = nil;
         
         for (ScCachedEntity *entity in scheduledEntities) {
             entity.dateModified = now;
+            entity.hashCode = [NSNumber numberWithInteger:[entity computeHashCode]];
         }
         
-        [scheduledEntities removeAllObjects];
         [self.managedObjectContext save];
+        [scheduledEntities removeAllObjects];
     }
+}
+
+
+- (void)finishedReceivingData:(id)data
+{
+    [self.managedObjectContext saveWithDictionaries:data];
 }
 
 

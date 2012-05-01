@@ -37,32 +37,6 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-- (id)mergeEntityFromDictionary:(NSDictionary *)dictionary
-{
-    NSString *entityId = [dictionary objectForKey:kKeyEntityId];
-    NSString *entityClass = [dictionary objectForKey:kKeyEntityClass];
-    
-    ScCachedEntity *entity = [self fetchEntityWithId:entityId];
-    
-    if (!entity) {
-        entity = [self entityForClass:NSClassFromString(entityClass) withId:entityId];
-    }
-    
-    NSEntityDescription *entityDescription = entity.entity;
-    NSDictionary *attributes = [entityDescription attributesByName];
-    
-    for (NSString *name in [attributes allKeys]) {
-        id value = [dictionary objectForKey:name];
-        
-        if (value) {
-            [entity setValue:value forKey:name];
-        }
-    }
-    
-    return entity;
-}
-
-
 #pragma mark - Entity creation
 
 - (ScScola *)entityForScolaWithName:(NSString *)name
@@ -133,7 +107,7 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-#pragma mark - Entity lookup
+#pragma mark - Fetching entities
 
 - (id)fetchEntityWithId:(NSString *)entityId
 {

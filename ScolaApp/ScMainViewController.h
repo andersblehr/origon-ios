@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ScMainViewController : UIViewController {
+#import "ScIconSectionDelegate.h"
+
+@interface ScMainViewController : UIViewController<ScIconSectionDelegate> {
 @private
     NSMutableArray *iconSections;
 }

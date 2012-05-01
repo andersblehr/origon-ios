@@ -17,14 +17,14 @@
 
 #pragma mark - ScCachedEntity (ScCachedEntityExtentions) overrides
 
-- (BOOL)doPersistProperty:(NSString *)property
+- (BOOL)isPersistedProperty:(NSString *)property
 {
-    BOOL doIgnore = NO;
+    BOOL doPersist = [super isPersistedProperty:property];
     
-    doIgnore = doIgnore || [property isEqualToString:@"resident"];
-    doIgnore = doIgnore || [property isEqualToString:@"residence"];
+    doPersist = doPersist && ![property isEqualToString:@"resident"];
+    doPersist = doPersist && ![property isEqualToString:@"residence"];
     
-    return !doIgnore;
+    return doPersist;
 }
 
 

@@ -39,7 +39,7 @@ static int const kMaximumRealisticAge = 110;
 
 @synthesize member;
 @synthesize homeScola;
-@synthesize userIsListed;
+@synthesize isUserListed;
 
 
 #pragma mark - auxiliary methods
@@ -160,13 +160,13 @@ static int const kMaximumRealisticAge = 110;
     postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
     dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthClickHerePrompt];
     
-    addressLine1Field.text = userIsListed ? homeScola.addressLine1 : @"";
-    addressLine2Field.text = userIsListed ? homeScola.addressLine2 : @"";
-    postCodeAndCityField.text = userIsListed ? homeScola.postCodeAndCity : @"";
+    addressLine1Field.text = isUserListed ? homeScola.addressLine1 : @"";
+    addressLine2Field.text = isUserListed ? homeScola.addressLine2 : @"";
+    postCodeAndCityField.text = isUserListed ? homeScola.postCodeAndCity : @"";
     
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
     
-    if (userIsListed) {
+    if (isUserListed) {
         [dateOfBirthPicker setDate:member.dateOfBirth animated:YES];
         [self dateOfBirthDidChange];
     } else {
@@ -226,7 +226,7 @@ static int const kMaximumRealisticAge = 110;
 
         nextViewController.member = member;
         nextViewController.homeScola = homeScola;
-        nextViewController.userIsListed = userIsListed;
+        nextViewController.isUserListed = isUserListed;
     }
 }
 

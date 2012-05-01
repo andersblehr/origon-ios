@@ -5,6 +5,7 @@
         <attribute name="dateExpires" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="dateModified" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="entityId" attributeType="String" syncable="YES"/>
+        <attribute name="hashCode" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="isShared" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="scolaId" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
@@ -211,7 +212,7 @@
         </userInfo>
     </entity>
     <elements>
-        <element name="ScCachedEntity" positionX="-369" positionY="423" width="128" height="135"/>
+        <element name="ScCachedEntity" positionX="-369" positionY="423" width="128" height="150"/>
         <element name="ScDevice" positionX="322" positionY="-522" width="128" height="90"/>
         <element name="ScDocument" positionX="342" positionY="-141" width="128" height="150"/>
         <element name="ScDocumentElement" positionX="511" positionY="-189" width="128" height="90"/>

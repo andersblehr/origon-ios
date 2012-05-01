@@ -58,12 +58,6 @@
 }
 
 
-- (BOOL)doPersistProperty:(NSString *)property
-{
-    return YES;
-}
-
-
 #pragma mark - Dictionary serialisation & deserialisation
 
 + (ScCachedEntity *)entityWithDictionary:(NSDictionary *)dictionary
@@ -118,14 +112,14 @@
 - (NSDictionary *)toDictionary
 {
     NSMutableDictionary *entityDictionary = [[NSMutableDictionary alloc] init];
-    NSEntityDescription *entityDescription = self.entity;
-    NSDictionary *attributes = [entityDescription attributesByName];
-    NSDictionary *relationships = [entityDescription relationshipsByName];
     
-    [entityDictionary setObject:entityDescription.name forKey:kKeyEntityClass];
+    NSDictionary *attributes = [self.entity attributesByName];
+    NSDictionary *relationships = [self.entity relationshipsByName];
+    
+    [entityDictionary setObject:self.entity.name forKey:kKeyEntityClass];
     
     for (NSString *name in [attributes allKeys]) {
-        if ([self doPersistProperty:name]) {
+        if ([self isPersistedProperty:name]) {
             id value = [self valueForKey:name];
             
             if (value) {
@@ -137,7 +131,7 @@
     for (NSString *name in [relationships allKeys]) {
         NSRelationshipDescription *relationship = [relationships objectForKey:name];
         
-        if (!relationship.isToMany && [self doPersistProperty:name]) {
+        if (!relationship.isToMany && [self isPersistedProperty:name]) {
             ScCachedEntity *entity = [self valueForKey:name];
             
             if (entity) {
@@ -150,8 +144,24 @@
 }
 
 
+#pragma mark - Internal consistency
+
+- (BOOL)isPersistedProperty:(NSString *)property
+{
+    return ![property isEqualToString:@"hashCode"];
+}
+
+
+- (BOOL)isPersisted
+{
+    return ([self.hashCode integerValue] == [self computeHashCode]);
+}
+
+
 - (void)internaliseRelationships
 {
+    self.hashCode = [NSNumber numberWithInteger:[self computeHashCode]];
+    
     NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
     NSDictionary *entityRefs = [[ScMeta m] importedEntityRefsForEntity:self];
     
@@ -169,6 +179,44 @@
             [self setValue:entity forKey:name];
         }
     }
+}
+
+
+- (NSUInteger)computeHashCode
+{
+    NSDictionary *attributes = [self.entity attributesByName];
+    NSDictionary *relationships = [self.entity relationshipsByName];
+    
+    NSArray *sortedAttributeKeys = [[attributes allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *sortedRelationshipKeys = [[relationships allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    
+    NSString *allProperties = @"";
+    
+    for (NSString *name in sortedAttributeKeys) {
+        if ([self isPersistedProperty:name]) {
+            id value = [self valueForKey:name];
+            
+            if (value) {
+                NSString *property = [NSString stringWithFormat:@"[%@:%@]", name, value];
+                allProperties = [allProperties stringByAppendingString:property];
+            }
+        }
+    }
+    
+    for (NSString *name in sortedRelationshipKeys) {
+        NSRelationshipDescription *relationship = [relationships objectForKey:name];
+        
+        if (!relationship.isToMany && [self isPersistedProperty:name]) {
+            ScCachedEntity *entity = [self valueForKey:name];
+            
+            if (entity) {
+                NSString *property = [NSString stringWithFormat:@"[%@:%@]", name, entity.entityId];
+                allProperties = [allProperties stringByAppendingString:property];
+            }
+        }
+    }
+    
+    return [allProperties hash];
 }
 
 

@@ -2,7 +2,7 @@
 //  ScCachedEntity.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 16.04.12.
+//  Created by Anders Blehr on 01.05.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -18,5 +18,6 @@
 @property (nonatomic, retain) NSString * entityId;
 @property (nonatomic, retain) NSNumber * isShared;
 @property (nonatomic, retain) NSString * scolaId;
+@property (nonatomic, retain) NSNumber * hashCode;
 
 @end

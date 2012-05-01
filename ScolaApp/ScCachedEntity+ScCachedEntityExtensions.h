@@ -13,7 +13,11 @@
 + (ScCachedEntity *)entityWithDictionary:(NSDictionary *)dictionary;
 - (NSDictionary *)toDictionary;
 
+- (BOOL)isPersistedProperty:(NSString *)property;
+- (BOOL)isPersisted;
+
 - (void)internaliseRelationships;
+- (NSUInteger)computeHashCode;
 
 - (NSString *)expiresInTimeframe;
 

@@ -91,7 +91,7 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
     ScLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);
     ScLogDebug(@"System name is %@.", [UIDevice currentDevice].systemName);
     ScLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
-    ScLogDebug(@"System language is '%@'", [[ScMeta m] displayLanguage]);
+    ScLogDebug(@"System language is '%@'.", [[ScMeta m] displayLanguage]);
     
     return YES;
 }

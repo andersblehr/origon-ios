@@ -25,7 +25,7 @@
 #endif
 
 /*****************************************************************************/
-/* Loggin macros for various log levels                                      */
+/* Logging macros for various log levels                                      */
 /*****************************************************************************/
 #if TRC_LEVEL >= 5
 #define ScLogEntry NSLog(@"ENTRY: %s", __PRETTY_FUNCTION__)

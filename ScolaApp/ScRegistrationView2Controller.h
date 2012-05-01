@@ -24,6 +24,6 @@
 
 @property (strong, nonatomic) ScScola *homeScola;
 @property (strong, nonatomic) ScMember *member;
-@property (nonatomic) BOOL userIsListed;
+@property (nonatomic) BOOL isUserListed;
 
 @end

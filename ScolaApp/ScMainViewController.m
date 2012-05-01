@@ -14,13 +14,9 @@
 
 #import "ScLogging.h"
 #import "ScMeta.h"
-#import "ScMainViewIconSection.h"
+#import "ScIconSection.h"
+#import "ScServerConnection.h"
 #import "ScStrings.h"
-
-
-static CGFloat const kHeadingViewAlpha = 0.2f;
-static CGFloat const kIconButtonAlpha = 0.7f;
-static CGFloat const kHeadingLabelFontSize = 13;
 
 
 @implementation ScMainViewController
@@ -33,44 +29,38 @@ static CGFloat const kHeadingLabelFontSize = 13;
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
 }
 
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     [darkLinenView addGradientLayer];
 
-    ScMainViewIconSection *householdSection = [[ScMainViewIconSection alloc] initForViewController:self withPrecedingSection:nil];
-    
     UIImage *icon1 = [UIImage imageNamed:@"53-house@2x.png"];
     UIImage *icon2 = [UIImage imageNamed:@"glyphicons_006_user_add_white@2x.png"];
     UIImage *icon3 = [UIImage imageNamed:@"glyphicons_192_circle_remove_white@2x.png"];
     UIImage *icon4 = [UIImage imageNamed:@"glyphicons_190_circle_plus_white@2x.png"];
     
-    householdSection.sectionHeading = [ScStrings stringForKey:strMyPlace];
+    ScIconSection *householdSection = [[ScIconSection alloc] initWithHeading:[ScStrings stringForKey:strMyPlace] andDelegate:self];
+    
     [householdSection addButtonWithIcon:icon1 andCaption:@"Heggesnaret 1 D"];
     [householdSection addButtonWithIcon:icon2 andCaption:@"Add co-habitants"];
     [householdSection addButtonWithIcon:icon3 andCaption:@"Hide this"];
     //[householdSection addButtonWithIcon:icon4 andCaption:@"Add scola"];
     
-    ScMainViewIconSection *otherScolasSection = [[ScMainViewIconSection alloc] initForViewController:self withPrecedingSection:householdSection];
+    ScIconSection *otherScolasSection = [[ScIconSection alloc] initWithHeading:@"Other scolas" andPrecedingSection:householdSection];
     
-    otherScolasSection.sectionHeading = @"Other scolas";
     [otherScolasSection addButtonWithIcon:icon4 andCaption:@"Add scola"];
     
-    ScMainViewIconSection *moreIcons = [[ScMainViewIconSection alloc] initForViewController:self withPrecedingSection:otherScolasSection];
+    ScIconSection *moreIcons = [[ScIconSection alloc] initWithHeading:@"More icons" andPrecedingSection:otherScolasSection];
     
-    moreIcons.sectionHeading = @"More icons";
     [moreIcons addButtonWithIcon:icon1 andCaption:@"Heggesnaret 1 D"];
     [moreIcons addButtonWithIcon:icon2 andCaption:@"Add co-habitants"];
     
-    ScMainViewIconSection *evenMoreIcons = [[ScMainViewIconSection alloc] initForViewController:self withPrecedingSection:moreIcons];
+    ScIconSection *evenMoreIcons = [[ScIconSection alloc] initWithHeading:@"Even more icons" andPrecedingSection:moreIcons];
     
-    evenMoreIcons.sectionHeading = @"Even more icons";
     [evenMoreIcons addButtonWithIcon:icon3 andCaption:@"Hide this"];
     [evenMoreIcons addButtonWithIcon:icon4 andCaption:@"Add scola"];
     
@@ -85,8 +75,6 @@ static CGFloat const kHeadingLabelFontSize = 13;
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 
@@ -107,7 +95,6 @@ static CGFloat const kHeadingLabelFontSize = 13;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
@@ -121,7 +108,7 @@ static CGFloat const kHeadingLabelFontSize = 13;
     
     if (panGestureBegan || panGestureChanged) {
         int sectionNumber = sender.view.tag;
-        ScMainViewIconSection *pannedSection = [iconSections objectAtIndex:sectionNumber];
+        ScIconSection *pannedSection = [iconSections objectAtIndex:sectionNumber];
         
         CGPoint translation = [sender translationInView:pannedSection.headingView];
         [pannedSection pan:translation];
@@ -136,7 +123,7 @@ static CGFloat const kHeadingLabelFontSize = 13;
     
     if (tapGestureEnded) {
         int sectionNumber = sender.view.tag;
-        ScMainViewIconSection *tappedSection = [iconSections objectAtIndex:sectionNumber];
+        ScIconSection *tappedSection = [iconSections objectAtIndex:sectionNumber];
         
         if (tappedSection.isCollapsed) {
             [tappedSection expand];

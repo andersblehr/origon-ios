@@ -1,12 +1,12 @@
 //
-//  ScMainViewIconSection.m
+//  ScIconSection.m
 //  ScolaApp
 //
 //  Created by Anders Blehr on 22.01.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
-#import "ScMainViewIconSection.h"
+#import "ScIconSection.h"
 
 #import "UIView+ScViewExtensions.h"
 
@@ -19,20 +19,23 @@ static CGFloat const kHeadingLabelFontSize = 13;
 static CGFloat const kCaptionLabelFontSize = 11;
 
 
-@implementation ScMainViewIconSection
+@implementation ScIconSection
 
-@synthesize sectionNumber;
-@synthesize sectionHeading;
 @synthesize headingView;
 @synthesize isCollapsed;
 
 
-#pragma mark - Accessors
+#pragma mark - Internal accessors
 
-- (void)setSectionHeading:(NSString *)heading
+- (id)sectionDelegate
 {
-    sectionHeading = heading;
-    headingLabel.text = heading;
+    return sectionDelegate;
+}
+
+
+- (int)sectionNumber
+{
+    return sectionNumber;
 }
 
 
@@ -42,13 +45,13 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-- (ScMainViewIconSection *)followingSection
+- (ScIconSection *)followingSection
 {
     return followingSection;
 }
 
 
-- (void)setFollowingSection:(ScMainViewIconSection *)section
+- (void)setFollowingSection:(ScIconSection *)section
 {
     followingSection = section;
 }
@@ -84,7 +87,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 - (void)createSectionView
 {
-    if (mainViewController) {
+    if (sectionDelegate) {
         int numberOfPrecedingGridLines = 0;
         
         if (precedingSection) {
@@ -96,7 +99,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         fullHeight = headingHeight + iconGridLineHeight;
         actualHeight = fullHeight;
         
-        sectionOriginY = headerHeight + self.sectionNumber * headingHeight + numberOfPrecedingGridLines * iconGridLineHeight;
+        sectionOriginY = headerHeight + sectionNumber * headingHeight + numberOfPrecedingGridLines * iconGridLineHeight;
         
         CGRect sectionFrame = CGRectMake(0, sectionOriginY, screenWidth, actualHeight);
         
@@ -104,7 +107,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         sectionView.backgroundColor = [UIColor clearColor];
         sectionView.clipsToBounds = YES;
         
-        [mainViewController.view addSubview:sectionView];
+        [sectionDelegate.view addSubview:sectionView];
     } else {
         ScLogBreakage(@"Cannot create section view within unknown main view.");
     }
@@ -123,8 +126,8 @@ static CGFloat const kCaptionLabelFontSize = 11;
         headingView.tag = sectionNumber;
         [headingView addShadow];
         
-        UIPanGestureRecognizer *panGestureRecogniser = [[UIPanGestureRecognizer alloc] initWithTarget:mainViewController action:@selector(handlePanGesture:)];
-        UITapGestureRecognizer *tapGestureRecogniser = [[UITapGestureRecognizer alloc] initWithTarget:mainViewController action:@selector(handleTapGesture:)];
+        UIPanGestureRecognizer *panGestureRecogniser = [[UIPanGestureRecognizer alloc] initWithTarget:sectionDelegate action:@selector(handlePanGesture:)];
+        UITapGestureRecognizer *tapGestureRecogniser = [[UITapGestureRecognizer alloc] initWithTarget:sectionDelegate action:@selector(handleTapGesture:)];
         tapGestureRecogniser.numberOfTapsRequired = 2;
         
         [headingView addGestureRecognizer:panGestureRecogniser];
@@ -151,6 +154,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         headingLabel.shadowColor = [UIColor blackColor];
         headingLabel.shadowOffset = CGSizeMake(0.f, 2.f);
         headingLabel.font = [UIFont systemFontOfSize:kHeadingLabelFontSize];
+        headingLabel.text = sectionHeading;
         
         [sectionView addSubview:headingLabel];
     } else {
@@ -331,7 +335,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         [UIView animateWithDuration:0.25 animations:^{
             sectionView.frame = newSectionFrame;
             
-            ScMainViewIconSection *nextSection = followingSection;
+            ScIconSection *nextSection = followingSection;
             while (nextSection) {
                 nextSection.sectionView.frame = nextSection.newSectionFrame;
                 nextSection = nextSection.followingSection;
@@ -341,24 +345,14 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-#pragma mark - Interface implementation
+#pragma mark - Initialisation
 
-- (id)initForViewController:(UIViewController *)viewController
-       withPrecedingSection:(ScMainViewIconSection *)previousSection
+- (id)initWithHeading:(NSString *)heading
 {
     self = [super init];
     
     if (self) {
-        mainViewController = viewController;
-        precedingSection = previousSection;
-        followingSection = nil;
-        
-        if (precedingSection) {
-            [precedingSection setFollowingSection:self];
-            sectionNumber = precedingSection.sectionNumber + 1;
-        } else {
-            sectionNumber = 0;
-        }
+        sectionHeading = heading;
         
         widthScaleFactor = [UIScreen mainScreen].applicationFrame.size.width / 320;
         heightScaleFactor = [UIScreen mainScreen].applicationFrame.size.height / 460;
@@ -368,10 +362,6 @@ static CGFloat const kCaptionLabelFontSize = 11;
         iconGridLineHeight = 100 * heightScaleFactor;
         minimumHeight = headingHeight + 2 * heightScaleFactor;
         
-        [self createSectionView];
-        [self createHeadingView];
-        [self createHeadingLabel];
-        
         numberOfIcons = 0;
         numberOfGridLines = 1;
     }
@@ -379,6 +369,50 @@ static CGFloat const kCaptionLabelFontSize = 11;
     return self;
 }
 
+
+- (id)initWithHeading:(NSString *)heading andDelegate:(id)delegate
+{
+    self = [self initWithHeading:heading];
+    
+    if (self) {
+        precedingSection = nil;
+        followingSection = nil;
+        
+        sectionDelegate = delegate;
+        sectionNumber = 0;
+        
+        [self createSectionView];
+        [self createHeadingView];
+        [self createHeadingLabel];
+    }
+    
+    return self;
+}
+
+
+- (id)initWithHeading:(NSString *)heading andPrecedingSection:(ScIconSection *)section
+{
+    self = [self initWithHeading:heading];
+    
+    if (self) {
+        precedingSection = section;
+        followingSection = nil;
+        
+        sectionDelegate = [section sectionDelegate];
+        sectionNumber = [section sectionNumber] + 1;
+        
+        [precedingSection setFollowingSection:self];
+        
+        [self createSectionView];
+        [self createHeadingView];
+        [self createHeadingLabel];
+    }
+    
+    return self;
+}
+
+
+#pragma mark - Section manipulation
 
 - (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption
 {
@@ -409,7 +443,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
     iconButton.alpha = kIconButtonAlpha;
     iconButton.showsTouchWhenHighlighted = YES;
     iconButton.tag = 100 * sectionNumber + numberOfIcons;
-    [iconButton addTarget:mainViewController action:@selector(handleButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+    [iconButton addTarget:sectionDelegate action:@selector(handleButtonTap:) forControlEvents:UIControlEventTouchUpInside];
     
     CGFloat captionOriginX = (15 + xOffset * 100) * widthScaleFactor;
     CGFloat captionOriginY = iconOriginY + iconHeight + 5 * heightScaleFactor;
