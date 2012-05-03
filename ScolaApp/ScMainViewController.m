@@ -99,40 +99,7 @@
 }
 
 
-#pragma mark - Gesture and tap handling
-
-- (void)handlePanGesture:(UIPanGestureRecognizer *)sender
-{
-    BOOL panGestureBegan = (sender.state == UIGestureRecognizerStateBegan);
-    BOOL panGestureChanged = (sender.state == UIGestureRecognizerStateChanged);
-    
-    if (panGestureBegan || panGestureChanged) {
-        int sectionNumber = sender.view.tag;
-        ScIconSection *pannedSection = [iconSections objectAtIndex:sectionNumber];
-        
-        CGPoint translation = [sender translationInView:pannedSection.headingView];
-        [pannedSection pan:translation];
-        [sender setTranslation:CGPointZero inView:pannedSection.headingView];
-    }
-}
-
-
-- (void)handleTapGesture:(UITapGestureRecognizer *)sender
-{
-    BOOL tapGestureEnded = (sender.state == UIGestureRecognizerStateEnded);
-    
-    if (tapGestureEnded) {
-        int sectionNumber = sender.view.tag;
-        ScIconSection *tappedSection = [iconSections objectAtIndex:sectionNumber];
-        
-        if (tappedSection.isCollapsed) {
-            [tappedSection expand];
-        } else {
-            [tappedSection collapse];
-        }
-    }
-}
-
+#pragma mark - ScIconSectionDelegate implementation
 
 - (void)handleButtonTap:(id)sender
 {

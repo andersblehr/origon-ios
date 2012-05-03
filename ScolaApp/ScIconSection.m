@@ -126,12 +126,12 @@ static CGFloat const kCaptionLabelFontSize = 11;
         headingView.tag = sectionNumber;
         [headingView addShadow];
         
-        UIPanGestureRecognizer *panGestureRecogniser = [[UIPanGestureRecognizer alloc] initWithTarget:sectionDelegate action:@selector(handlePanGesture:)];
-        UITapGestureRecognizer *tapGestureRecogniser = [[UITapGestureRecognizer alloc] initWithTarget:sectionDelegate action:@selector(handleTapGesture:)];
-        tapGestureRecogniser.numberOfTapsRequired = 2;
+        UIPanGestureRecognizer *panGestureRecogniser = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
+        UITapGestureRecognizer *doubleTapGestureRecogniser = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTapGesture:)];
+        doubleTapGestureRecogniser.numberOfTapsRequired = 2;
         
         [headingView addGestureRecognizer:panGestureRecogniser];
-        [headingView addGestureRecognizer:tapGestureRecogniser];
+        [headingView addGestureRecognizer:doubleTapGestureRecogniser];
         
         [sectionView addSubview:headingView];
     } else {
@@ -154,7 +154,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         headingLabel.shadowColor = [UIColor blackColor];
         headingLabel.shadowOffset = CGSizeMake(0.f, 2.f);
         headingLabel.font = [UIFont systemFontOfSize:kHeadingLabelFontSize];
-        headingLabel.text = sectionHeading;
+        headingLabel.text = headingLabelText;
         
         [sectionView addSubview:headingLabel];
     } else {
@@ -345,14 +345,42 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
+#pragma mark - Gesture handling
+
+- (void)handlePanGesture:(UIPanGestureRecognizer *)sender
+{
+    BOOL panGestureBegan = (sender.state == UIGestureRecognizerStateBegan);
+    BOOL panGestureChanged = (sender.state == UIGestureRecognizerStateChanged);
+    
+    if (panGestureBegan || panGestureChanged) {
+        CGPoint translation = [sender translationInView:self.headingView];
+        
+        [self pan:translation];
+        [sender setTranslation:CGPointZero inView:self.headingView];
+    }
+}
+
+
+- (void)handleDoubleTapGesture:(UITapGestureRecognizer *)sender
+{
+    if (sender.state == UIGestureRecognizerStateEnded) {
+        if (self.isCollapsed) {
+            [self expand];
+        } else {
+            [self collapse];
+        }
+    }
+}
+
+
 #pragma mark - Initialisation
 
-- (id)initWithHeading:(NSString *)heading
+- (id)initWithHeading:(NSString *)heading precedingSection:(ScIconSection *)section delegate:(id)delegate
 {
     self = [super init];
     
     if (self) {
-        sectionHeading = heading;
+        headingLabelText = heading;
         
         widthScaleFactor = [UIScreen mainScreen].applicationFrame.size.width / 320;
         heightScaleFactor = [UIScreen mainScreen].applicationFrame.size.height / 460;
@@ -364,6 +392,23 @@ static CGFloat const kCaptionLabelFontSize = 11;
         
         numberOfIcons = 0;
         numberOfGridLines = 1;
+        
+        precedingSection = section;
+        followingSection = nil;
+        
+        if (delegate) {
+            sectionDelegate = delegate;
+            sectionNumber = 0;
+        } else if (section) {
+            sectionDelegate = [section sectionDelegate];
+            sectionNumber = [section sectionNumber] + 1;
+            
+            [precedingSection setFollowingSection:self];
+        }
+        
+        [self createSectionView];
+        [self createHeadingView];
+        [self createHeadingLabel];
     }
     
     return self;
@@ -372,47 +417,17 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 - (id)initWithHeading:(NSString *)heading andDelegate:(id)delegate
 {
-    self = [self initWithHeading:heading];
-    
-    if (self) {
-        precedingSection = nil;
-        followingSection = nil;
-        
-        sectionDelegate = delegate;
-        sectionNumber = 0;
-        
-        [self createSectionView];
-        [self createHeadingView];
-        [self createHeadingLabel];
-    }
-    
-    return self;
+    return [self initWithHeading:heading precedingSection:nil delegate:delegate];
 }
 
 
 - (id)initWithHeading:(NSString *)heading andPrecedingSection:(ScIconSection *)section
-{
-    self = [self initWithHeading:heading];
-    
-    if (self) {
-        precedingSection = section;
-        followingSection = nil;
-        
-        sectionDelegate = [section sectionDelegate];
-        sectionNumber = [section sectionNumber] + 1;
-        
-        [precedingSection setFollowingSection:self];
-        
-        [self createSectionView];
-        [self createHeadingView];
-        [self createHeadingLabel];
-    }
-    
-    return self;
+{   
+    return [self initWithHeading:heading precedingSection:section delegate:nil];
 }
 
 
-#pragma mark - Section manipulation
+#pragma mark - Adding icon buttons
 
 - (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption
 {
@@ -464,6 +479,8 @@ static CGFloat const kCaptionLabelFontSize = 11;
     [sectionView addSubview:captionLabel];
 }
 
+
+#pragma mark - Expanding & collapsing
 
 - (void)expand
 {

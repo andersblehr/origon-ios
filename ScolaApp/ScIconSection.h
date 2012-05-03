@@ -19,9 +19,9 @@
     ScIconSection *precedingSection;
     ScIconSection *followingSection;
     
-    NSString *sectionHeading;
     UIView *sectionView;
     UILabel *headingLabel;
+    NSString *headingLabelText;
     
     CGFloat widthScaleFactor;
     CGFloat heightScaleFactor;
@@ -46,6 +46,7 @@
 
 - (id)initWithHeading:(NSString *)heading andDelegate:(id)delegate;
 - (id)initWithHeading:(NSString *)heading andPrecedingSection:(ScIconSection *)section;
+
 - (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption;
 
 - (void)expand;

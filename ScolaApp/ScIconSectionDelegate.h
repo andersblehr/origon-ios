@@ -11,8 +11,6 @@
 @protocol ScIconSectionDelegate <NSObject>
 
 @required
-- (void)handlePanGesture:(UIPanGestureRecognizer *)sender;
-- (void)handleTapGesture:(UITapGestureRecognizer *)sender;
 - (void)handleButtonTap:(id)sender;
 
 @end
