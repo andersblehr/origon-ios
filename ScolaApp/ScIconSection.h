@@ -42,7 +42,6 @@
 }
 
 @property (strong, nonatomic, readonly) UIView *headingView;
-@property (nonatomic, readonly) BOOL isCollapsed;
 
 - (id)initWithHeading:(NSString *)heading andDelegate:(id)delegate;
 - (id)initWithHeading:(NSString *)heading andPrecedingSection:(ScIconSection *)section;

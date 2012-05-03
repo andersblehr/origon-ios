@@ -22,7 +22,6 @@ static CGFloat const kCaptionLabelFontSize = 11;
 @implementation ScIconSection
 
 @synthesize headingView;
-@synthesize isCollapsed;
 
 
 #pragma mark - Internal accessors
@@ -54,14 +53,6 @@ static CGFloat const kCaptionLabelFontSize = 11;
 - (void)setFollowingSection:(ScIconSection *)section
 {
     followingSection = section;
-}
-
-
-- (BOOL)isCollapsed
-{
-    CGFloat percentageVisible = 100 * (actualHeight - headingHeight) / iconGridLineHeight;
-    
-    return (percentageVisible <= 15.f); 
 }
 
 
@@ -164,6 +155,14 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 
 #pragma mark - Auxiliary methods: Panning & resizing
+
+- (BOOL)isCollapsed
+{
+    CGFloat percentageVisible = 100 * (actualHeight - headingHeight) / iconGridLineHeight;
+    
+    return (percentageVisible <= 15.f); 
+}
+
 
 - (void)moveFrame:(CGFloat)pan withAdjustment:(CGFloat)delta prepareAnimation:(BOOL)prepare
 {
