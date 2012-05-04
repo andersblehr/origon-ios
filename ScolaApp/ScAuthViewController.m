@@ -454,7 +454,7 @@ static int const kPopUpButtonTryAgain = 1;
             homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
             member = [context fetchEntityWithId:[ScMeta m].userId];
         } else {
-            homeScola = [context entityForScolaWithName:[ScStrings stringForKey:strMyPlace] andId:[ScMeta m].homeScolaId];
+            homeScola = [context entityForScolaWithName:[ScStrings stringForKey:strMyPlace] scolaId:[ScMeta m].homeScolaId];
             member = [context entityForClass:ScMember.class inScola:homeScola withId:emailAsEntered];
         }
         

@@ -43,32 +43,26 @@
     UIImage *icon3 = [UIImage imageNamed:@"glyphicons_192_circle_remove_white@2x.png"];
     UIImage *icon4 = [UIImage imageNamed:@"glyphicons_190_circle_plus_white@2x.png"];
     
-    ScIconSection *householdSection = [[ScIconSection alloc] initWithHeading:[ScStrings stringForKey:strMyPlace] andDelegate:self];
+    ScIconSection *householdSection = [[ScIconSection alloc] initWithHeading:[ScStrings stringForKey:strMyPlace] delegate:self];
     
-    [householdSection addButtonWithIcon:icon1 andCaption:@"Heggesnaret 1 D"];
-    [householdSection addButtonWithIcon:icon2 andCaption:@"Add co-habitants"];
-    [householdSection addButtonWithIcon:icon3 andCaption:@"Hide this"];
-    //[householdSection addButtonWithIcon:icon4 andCaption:@"Add scola"];
+    [householdSection addButtonWithIcon:icon1 caption:@"Heggesnaret 1 D"];
+    [householdSection addButtonWithIcon:icon2 caption:@"Add co-habitants"];
+    [householdSection addButtonWithIcon:icon3 caption:@"Hide this"];
+    //[householdSection addButtonWithIcon:icon4 caption:@"Add scola"];
     
-    ScIconSection *otherScolasSection = [[ScIconSection alloc] initWithHeading:@"Other scolas" andPrecedingSection:householdSection];
+    ScIconSection *otherScolasSection = [[ScIconSection alloc] initWithHeading:@"Other scolas" precedingSection:householdSection];
     
-    [otherScolasSection addButtonWithIcon:icon4 andCaption:@"Add scola"];
+    [otherScolasSection addButtonWithIcon:icon4 caption:@"Add scola"];
     
-    ScIconSection *moreIcons = [[ScIconSection alloc] initWithHeading:@"More icons" andPrecedingSection:otherScolasSection];
+    ScIconSection *moreIcons = [[ScIconSection alloc] initWithHeading:@"More icons" precedingSection:otherScolasSection];
     
-    [moreIcons addButtonWithIcon:icon1 andCaption:@"Heggesnaret 1 D"];
-    [moreIcons addButtonWithIcon:icon2 andCaption:@"Add co-habitants"];
+    [moreIcons addButtonWithIcon:icon1 caption:@"Heggesnaret 1 D"];
+    [moreIcons addButtonWithIcon:icon2 caption:@"Add co-habitants"];
     
-    ScIconSection *evenMoreIcons = [[ScIconSection alloc] initWithHeading:@"Even more icons" andPrecedingSection:moreIcons];
+    ScIconSection *evenMoreIcons = [[ScIconSection alloc] initWithHeading:@"Even more icons" precedingSection:moreIcons];
     
-    [evenMoreIcons addButtonWithIcon:icon3 andCaption:@"Hide this"];
-    [evenMoreIcons addButtonWithIcon:icon4 andCaption:@"Add scola"];
-    
-    iconSections = [[NSMutableArray alloc] init];
-    [iconSections insertObject:householdSection atIndex:0];
-    [iconSections insertObject:otherScolasSection atIndex:1];
-    [iconSections insertObject:moreIcons atIndex:2];
-    [iconSections insertObject:evenMoreIcons atIndex:3];
+    [evenMoreIcons addButtonWithIcon:icon3 caption:@"Hide this"];
+    [evenMoreIcons addButtonWithIcon:icon4 caption:@"Add scola"];
 }
 
 

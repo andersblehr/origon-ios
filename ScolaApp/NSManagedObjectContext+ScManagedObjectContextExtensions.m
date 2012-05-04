@@ -41,11 +41,11 @@ static NSString * const kScolaRelationshipName = @"scola";
 
 - (ScScola *)entityForScolaWithName:(NSString *)name
 {
-    return [self entityForScolaWithName:name andId:[ScUUIDGenerator generateUUID]];
+    return [self entityForScolaWithName:name scolaId:[ScUUIDGenerator generateUUID]];
 }
 
 
-- (ScScola *)entityForScolaWithName:(NSString *)name andId:(NSString *)scolaId
+- (ScScola *)entityForScolaWithName:(NSString *)name scolaId:(NSString *)scolaId
 {
     ScScola *scola = [self entityForClass:ScScola.class withId:scolaId];
     

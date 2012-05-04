@@ -21,8 +21,6 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 @implementation ScIconSection
 
-@synthesize headingView;
-
 
 #pragma mark - Internal accessors
 
@@ -62,7 +60,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-#pragma mark - Auxiliary methods: Initialisation
+#pragma mark - Setup
 
 - (int)numberOfKnownGridLines
 {
@@ -154,7 +152,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-#pragma mark - Auxiliary methods: Panning & resizing
+#pragma mark - Panning & resizing
 
 - (BOOL)isCollapsed
 {
@@ -322,7 +320,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-- (void)expandOrCollapse:(int)delta
+- (void)adjust:(int)delta
 {
     if (followingSection) {
         [self adjustFrame:delta prepareAnimation:YES];
@@ -335,11 +333,38 @@ static CGFloat const kCaptionLabelFontSize = 11;
             sectionView.frame = newSectionFrame;
             
             ScIconSection *nextSection = followingSection;
+            
             while (nextSection) {
                 nextSection.sectionView.frame = nextSection.newSectionFrame;
                 nextSection = nextSection.followingSection;
             }
         }];
+    }
+}
+
+
+#pragma mark - Expanding & collapsing
+
+- (void)expand
+{
+    int hiddenPixels = fullHeight - actualHeight;
+    
+    [self adjust:hiddenPixels];
+}
+
+
+- (void)collapse
+{
+    int pixelsToHide = actualHeight - minimumHeight;
+    
+    [self adjust:-pixelsToHide];
+}
+
+
+- (void)pan:(CGPoint)translation
+{
+    if (precedingSection) {
+        [self keepUp:[precedingSection permissiblePan:translation.y]];
     }
 }
 
@@ -352,10 +377,10 @@ static CGFloat const kCaptionLabelFontSize = 11;
     BOOL panGestureChanged = (sender.state == UIGestureRecognizerStateChanged);
     
     if (panGestureBegan || panGestureChanged) {
-        CGPoint translation = [sender translationInView:self.headingView];
+        CGPoint translation = [sender translationInView:headingView];
         
         [self pan:translation];
-        [sender setTranslation:CGPointZero inView:self.headingView];
+        [sender setTranslation:CGPointZero inView:headingView];
     }
 }
 
@@ -414,13 +439,13 @@ static CGFloat const kCaptionLabelFontSize = 11;
 }
 
 
-- (id)initWithHeading:(NSString *)heading andDelegate:(id)delegate
+- (id)initWithHeading:(NSString *)heading delegate:(id)delegate
 {
     return [self initWithHeading:heading precedingSection:nil delegate:delegate];
 }
 
 
-- (id)initWithHeading:(NSString *)heading andPrecedingSection:(ScIconSection *)section
+- (id)initWithHeading:(NSString *)heading precedingSection:(ScIconSection *)section
 {   
     return [self initWithHeading:heading precedingSection:section delegate:nil];
 }
@@ -428,7 +453,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 #pragma mark - Adding icon buttons
 
-- (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption
+- (void)addButtonWithIcon:(UIImage *)icon caption:(NSString *)caption
 {
     numberOfIcons++;
     
@@ -476,32 +501,6 @@ static CGFloat const kCaptionLabelFontSize = 11;
     
     [sectionView addSubview:iconButton];
     [sectionView addSubview:captionLabel];
-}
-
-
-#pragma mark - Expanding & collapsing
-
-- (void)expand
-{
-    int hiddenPixels = fullHeight - actualHeight;
-    
-    [self expandOrCollapse:hiddenPixels];
-}
-
-
-- (void)collapse
-{
-    int pixelsToHide = actualHeight - minimumHeight;
-    
-    [self expandOrCollapse:-pixelsToHide];
-}
-
-
-- (void)pan:(CGPoint)translation
-{
-    if (precedingSection) {
-        [self keepUp:[precedingSection permissiblePan:translation.y]];
-    }
 }
 
 @end

@@ -13,7 +13,7 @@
 @interface NSManagedObjectContext (ScManagedObjectContextExtensions)
 
 - (ScScola *)entityForScolaWithName:(NSString *)name;
-- (ScScola *)entityForScolaWithName:(NSString *)name andId:(NSString *)scolaId;
+- (ScScola *)entityForScolaWithName:(NSString *)name scolaId:(NSString *)scolaId;
 - (id)entityForClass:(Class)class withId:(NSString *)entityId;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola withId:(NSString *)entityId;

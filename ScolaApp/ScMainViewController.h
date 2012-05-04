@@ -10,10 +10,7 @@
 
 #import "ScIconSectionDelegate.h"
 
-@interface ScMainViewController : UIViewController<ScIconSectionDelegate> {
-@private
-    NSMutableArray *iconSections;
-}
+@interface ScMainViewController : UIViewController<ScIconSectionDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 

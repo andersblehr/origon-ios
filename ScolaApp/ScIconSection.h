@@ -20,6 +20,7 @@
     ScIconSection *followingSection;
     
     UIView *sectionView;
+    UIView *headingView;
     UILabel *headingLabel;
     NSString *headingLabelText;
     
@@ -41,15 +42,9 @@
     CGRect newSectionFrame;
 }
 
-@property (strong, nonatomic, readonly) UIView *headingView;
+- (id)initWithHeading:(NSString *)heading delegate:(id)delegate;
+- (id)initWithHeading:(NSString *)heading precedingSection:(ScIconSection *)section;
 
-- (id)initWithHeading:(NSString *)heading andDelegate:(id)delegate;
-- (id)initWithHeading:(NSString *)heading andPrecedingSection:(ScIconSection *)section;
-
-- (void)addButtonWithIcon:(UIImage *)icon andCaption:(NSString *)caption;
-
-- (void)expand;
-- (void)collapse;
-- (void)pan:(CGPoint)translation;
+- (void)addButtonWithIcon:(UIImage *)icon caption:(NSString *)caption;
 
 @end
