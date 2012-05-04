@@ -330,9 +330,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         }
         
         [UIView animateWithDuration:0.25 animations:^{
-            sectionView.frame = newSectionFrame;
-            
-            ScIconSection *nextSection = followingSection;
+            ScIconSection *nextSection = self;
             
             while (nextSection) {
                 nextSection.sectionView.frame = nextSection.newSectionFrame;
