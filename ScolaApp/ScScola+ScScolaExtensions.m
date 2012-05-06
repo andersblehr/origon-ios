@@ -22,7 +22,7 @@
 
 #pragma mark - Relationship maintenance
 
-- (ScMembership *)addMember:(ScMember *)member isActive:(BOOL)isActive
+- (ScMembership *)addMember:(ScMember *)member
 {
     NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
     
@@ -33,12 +33,25 @@
         [context entityRefForEntity:residency.scola inScola:self];
     }
     
-    ScMembership *scolaMembership = [context entityForClass:ScMembership.class inScola:self];
-    scolaMembership.member = member;
-    scolaMembership.scola = self;
-    scolaMembership.isActive = [NSNumber numberWithBool:isActive];
+    ScMembership *membership = [context entityForClass:ScMembership.class inScola:self];
+    membership.member = member;
+    membership.scola = self;
     
-    return scolaMembership;
+    return membership;
+}
+
+
+- (ScMemberResidency *)addResident:(ScMember *)resident
+{
+    ScMemberResidency *residency = [[ScMeta m].managedObjectContext entityForClass:ScMemberResidency.class inScola:self];
+    
+    residency.resident = resident;
+    residency.residence = self;
+
+    residency.member = residency.resident;
+    residency.scola = residency.residence;
+    
+    return residency;
 }
 
 @end

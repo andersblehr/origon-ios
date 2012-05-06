@@ -271,7 +271,9 @@ static CGFloat const kCaptionLabelFontSize = 11;
 {
     int transitivePan = pan;
     
-    if (!prepare) {
+    if (prepare) {
+        [self moveFrame:pan prepareAnimation:YES];
+    } else {
         int hiddenPixels = fullHeight - actualHeight;
         int localPan = 0;
         int frameAdjustment = 0;
@@ -304,8 +306,6 @@ static CGFloat const kCaptionLabelFontSize = 11;
         }
         
         [self moveFrame:pan withAdjustment:frameAdjustment];
-    } else {
-        [self moveFrame:pan prepareAnimation:YES];
     }
     
     if (followingSection) {

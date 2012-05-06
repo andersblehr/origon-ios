@@ -12,6 +12,7 @@
 
 @interface ScScola (ScScolaExtensions)
 
-- (ScMembership *)addMember:(ScMember *)member isActive:(BOOL)isActive;
+- (ScMembership *)addMember:(ScMember *)member;
+- (ScMemberResidency *)addResident:(ScMember *)resident;
 
 @end

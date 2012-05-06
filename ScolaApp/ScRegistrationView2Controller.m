@@ -24,6 +24,7 @@
 #import "ScScola.h"
 
 #import "ScMemberResidency+ScMemberResidencyExtensions.h"
+#import "ScScola+ScScolaExtensions.h"
 
 
 static NSString * const kSegueToMainView = @"registrationView2ToMainView";
@@ -105,22 +106,20 @@ static int const kPopUpButtonUseNew = 1;
         
         if ([homeScola.messageBoards count] == 0) {
             ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
+            
             defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
             defaultMessageBoard.scola = homeScola;
         }
         
         if ([member.residencies count] == 0) {
-            ScMemberResidency *residency = [context entityForClass:ScMemberResidency.class inScola:homeScola];
+            ScMemberResidency *residency = [homeScola addResident:member];
             
-            residency.resident = member;
-            residency.residence = homeScola;
-            residency.member = member;
-            residency.scola = homeScola;
             residency.isActive = [NSNumber numberWithBool:YES];
             residency.isAdmin = [NSNumber numberWithBool:YES];
         }
         
         ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
+        
         device.type = [UIDevice currentDevice].model;
         device.displayName = deviceNameField.text;
         device.member = member;

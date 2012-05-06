@@ -56,7 +56,7 @@ static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
 static NSString * const kAuthInfoKeyIsListed = @"isListed";
 static NSString * const kAuthInfoKeyIsRegistered = @"isRegistered";
 static NSString * const kAuthInfoKeyIsAuthenticated = @"isAuthenticated";
-static NSString * const kAuthInfoKeyHomeScolaId = @"homeScola";
+static NSString * const kAuthInfoKeyHomeScolaId = @"homeScolaId";
 
 static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
 
