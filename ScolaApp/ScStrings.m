@@ -40,7 +40,6 @@ NSString * const strServerErrorAlert                 = @"strServerErrorAlert";
 NSString * const strInvalidNameAlert                 = @"strInvalidNameAlert";
 NSString * const strInvalidEmailAlert                = @"strInvalidEmailAlert";
 NSString * const strInvalidPasswordAlert             = @"strInvalidPasswordAlert";
-NSString * const strEmailAlreadyRegisteredAlert      = @"strEmailAlreadyRegisteredAlert";
 NSString * const strPasswordsDoNotMatchAlert         = @"strPasswordsDoNotMatchAlert";
 NSString * const strRegistrationCodesDoNotMatchAlert = @"strRegistrationCodesDoNotMatchAlert";
 NSString * const strUserExistsAlertTitle             = @"strUserExistsAlertTitle";
@@ -127,7 +126,7 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 + (NSString *)fullPathToStringsPlist
 {
     NSString *cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *relativePath = [kBundleID stringByAppendingPathComponent:kStringsPlist];
+    NSString *relativePath = [kBundleId stringByAppendingPathComponent:kStringsPlist];
     
     return [cachesDirectory stringByAppendingPathComponent:relativePath];
 }

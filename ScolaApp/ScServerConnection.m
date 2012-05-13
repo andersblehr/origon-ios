@@ -66,6 +66,7 @@ NSInteger const kHTTPStatusCodeOK = 200;
 NSInteger const kHTTPStatusCodeCreated = 201;
 NSInteger const kHTTPStatusCodeNoContent = 204;
 NSInteger const kHTTPStatusCodeNotModified = 304;
+NSInteger const kHTTPStatusCodeErrorRangeStart = 400;
 NSInteger const kHTTPStatusCodeBadRequest = 400;
 NSInteger const kHTTPStatusCodeUnauthorized = 401;
 NSInteger const kHTTPStatusCodeForbidden = 403;

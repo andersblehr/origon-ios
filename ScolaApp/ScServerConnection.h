@@ -40,6 +40,7 @@ extern NSInteger const kHTTPStatusCodeOK;
 extern NSInteger const kHTTPStatusCodeCreated;
 extern NSInteger const kHTTPStatusCodeNoContent;
 extern NSInteger const kHTTPStatusCodeNotModified;
+extern NSInteger const kHTTPStatusCodeErrorRangeStart;
 extern NSInteger const kHTTPStatusCodeBadRequest;
 extern NSInteger const kHTTPStatusCodeUnauthorized;
 extern NSInteger const kHTTPStatusCodeForbidden;

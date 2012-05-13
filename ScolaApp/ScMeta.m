@@ -21,8 +21,7 @@
 
 @implementation ScMeta
 
-NSString * const kBundleID = @"com.scolaapp.ios.ScolaApp";
-
+NSString * const kBundleId = @"com.scolaapp.ios.ScolaApp";
 NSString * const kKeyEntityId = @"entityId";
 NSString * const kKeyEntityClass = @"entityClass";
 NSString * const kKeyScolaId = @"scolaId";
@@ -195,8 +194,6 @@ static ScMeta *m = nil;
         [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
         [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
     }
-    
-    isUserLoggedIn = isLoggedIn;
 }
 
 
@@ -204,14 +201,16 @@ static ScMeta *m = nil;
 {
     userId = userIdentity;
     
-    NSString *storedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
-    
-    if (storedDeviceId) {
-        deviceId = storedDeviceId;
+    if (userId) {
+        NSString *storedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
+        
+        if (storedDeviceId) {
+            deviceId = storedDeviceId;
+        }
+        
+        [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyUserId];    
+        [ScMeta setUserDefault:deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
     }
-    
-    [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyUserId];    
-    [ScMeta setUserDefault:deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
 }
 
 
@@ -233,28 +232,25 @@ static ScMeta *m = nil;
 
 - (BOOL)isUserLoggedIn
 {
-    if (isUserLoggedIn) {
-        BOOL isAuthTokenValid = NO;
+    BOOL isAuthTokenValid = NO;
+    
+    if (authToken && authTokenExpiryDate) {
         NSDate *now = [NSDate date];
         
         if ([now compare:authTokenExpiryDate] == NSOrderedAscending) {
             NSString *expectedToken = [self generateAuthToken:authTokenExpiryDate];
             isAuthTokenValid = [authToken isEqualToString:expectedToken];
         }
-        
-        if (!isAuthTokenValid) {
-            self.isUserLoggedIn = NO;
-        }
     }
     
-    return isUserLoggedIn;
+    return isAuthTokenValid;
 }
 
 
 - (NSString *)authToken
 {
     if (!authToken) {
-        authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:1]; // TODO: Two weeks
+        authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:30]; // TODO: Two weeks
         authToken = [self generateAuthToken:authTokenExpiryDate];
         
         [ScMeta setUserDefault:authToken forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];

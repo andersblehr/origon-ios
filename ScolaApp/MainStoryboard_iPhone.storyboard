@@ -123,7 +123,7 @@
                         <outlet property="scolaSplashLabel" destination="qJ8-cP-0gZ" id="ydN-WI-ai4"/>
                         <outlet property="showInfoButton" destination="ri0-hK-pKu" id="3yN-XW-0jU"/>
                         <outlet property="userHelpLabel" destination="jNm-pK-L5b" id="4wX-Pj-ooy"/>
-                        <outlet property="userIntentionControl" destination="EJ9-fT-RAh" id="7pE-Cu-cdh"/>
+                        <outlet property="userIntentionControl" destination="EJ9-fT-RAh" id="mk9-H5-LlA"/>
                         <outlet property="userIntentionPromptLabel" destination="cjW-Te-E8m" id="IGu-p8-tFG"/>
                         <segue destination="Rpw-Zc-nxs" kind="push" identifier="authToRegistrationView1" id="3e8-Bg-zGA"/>
                         <segue destination="9Fa-Np-JO6" kind="push" identifier="authToMainView" id="t3w-Gq-L9a"/>
@@ -532,6 +532,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="FHF-lx-n1T"/>
+        <segue reference="t3w-Gq-L9a"/>
     </inferredMetricsTieBreakers>
 </document>

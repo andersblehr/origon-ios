@@ -25,8 +25,7 @@
     NSMutableDictionary *importedEntityRefs;
 }
 
-extern NSString * const kBundleID;
-
+extern NSString * const kBundleId;
 extern NSString * const kKeyEntityId;
 extern NSString * const kKeyEntityClass;
 extern NSString * const kKeyScolaId;

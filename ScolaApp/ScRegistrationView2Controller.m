@@ -104,11 +104,14 @@ static int const kPopUpButtonUseNew = 1;
     if (isDone) {
         NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
         
-        if ([homeScola.messageBoards count] == 0) {
-            ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
-            
-            defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
-            defaultMessageBoard.scola = homeScola;
+        member.mobilePhone = mobilePhoneField.text;
+        member.activeSince = [NSDate date];
+        member.didRegister = [NSNumber numberWithBool:YES];
+        
+        if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
+            member.gender = kGenderFemale;
+        } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
+            member.gender = kGenderMale;
         }
         
         if ([member.residencies count] == 0) {
@@ -118,21 +121,18 @@ static int const kPopUpButtonUseNew = 1;
             residency.isAdmin = [NSNumber numberWithBool:YES];
         }
         
+        if ([homeScola.messageBoards count] == 0) {
+            ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
+            
+            defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
+            defaultMessageBoard.scola = homeScola;
+        }
+        
         ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
         
         device.type = [UIDevice currentDevice].model;
         device.displayName = deviceNameField.text;
         device.member = member;
-        
-        if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
-            member.gender = kGenderFemale;
-        } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
-            member.gender = kGenderMale;
-        }
-        
-        member.mobilePhone = mobilePhoneField.text;
-        member.activeSince = [NSDate date];
-        member.didRegister = [NSNumber numberWithBool:YES];
         
         [context saveAndPersist];
         

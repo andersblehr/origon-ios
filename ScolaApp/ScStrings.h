@@ -32,7 +32,6 @@ extern NSString * const strServerErrorAlert;
 extern NSString * const strInvalidNameAlert;
 extern NSString * const strInvalidEmailAlert;
 extern NSString * const strInvalidPasswordAlert;
-extern NSString * const strEmailAlreadyRegisteredAlert;
 extern NSString * const strPasswordsDoNotMatchAlert;
 extern NSString * const strRegistrationCodesDoNotMatchAlert;
 extern NSString * const strUserExistsAlertTitle;
