@@ -27,12 +27,10 @@
 #import "ScRegistrationView1Controller.h"
 
 typedef enum {
-    ScAuthAlertTagServerError,
     ScAuthAlertTagEmailSent,
     ScAuthAlertTagRegistrationCodesDoNotMatch,
     ScAuthAlertTagPasswordsDoNotMatch,
     ScAuthAlertTagWelcomeBack,
-    ScAuthAlertTagUserExistsAndIsLoggedIn,
     ScAuthAlertTagNotLoggedIn,
 } ScAuthAlertTag;
 
@@ -54,7 +52,6 @@ static NSString * const kAuthInfoKeyPasswordHash = @"passwordHash";
 static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
 static NSString * const kAuthInfoKeyIsListed = @"isListed";
 static NSString * const kAuthInfoKeyIsRegistered = @"isRegistered";
-static NSString * const kAuthInfoKeyIsAuthenticated = @"isAuthenticated";
 static NSString * const kAuthInfoKeyHomeScolaId = @"homeScolaId";
 
 static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
@@ -85,66 +82,48 @@ static int const kPopUpButtonTryAgain = 1;
 
 #pragma mark - Auxiliary methods
 
-- (void)setUpTypewriterAudioForSplashSequence
-{
-    NSURL *typewriterURL = [NSURL fileURLWithPath:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:kSoundbiteTypewriter]];
-    
-    NSError *error;
-    typewriter1 = [[AVAudioPlayer alloc] initWithContentsOfURL:typewriterURL error:&error];
-    typewriter2 = [[AVAudioPlayer alloc] initWithContentsOfURL:typewriterURL error:&error];
-    
-    if (typewriter1 && typewriter2) {
-        [typewriter1 prepareToPlay];
-        [typewriter2 prepareToPlay];
-    } else {
-        ScLogWarning(@"Error initialising audio: %@", [error localizedDescription]);
-    }
-}
-
-
 - (void)runSplashSequence
 {   
-    [typewriter1 play];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"."
                                     waitUntilDone:YES];
+    
     [NSThread sleepForTimeInterval:0.2];
-    [typewriter2 play];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@".."
                                     waitUntilDone:YES];
+    
     [NSThread sleepForTimeInterval:0.6];
-    [typewriter1 play];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..s"
                                     waitUntilDone:YES];
+    
     [NSThread sleepForTimeInterval:0.3];
-    [typewriter2 play];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..sc"
                                     waitUntilDone:YES];
+    
     [NSThread sleepForTimeInterval:0.4];
-    [typewriter1 play];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..sco"
                                     waitUntilDone:YES];
+    
     [NSThread sleepForTimeInterval:0.3];
-    [typewriter2 play];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..scol"
                                     waitUntilDone:YES];
+    
     [NSThread sleepForTimeInterval:0.6];
-    [typewriter1 play];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..scola"
                                     waitUntilDone:YES];
+    
     [NSThread sleepForTimeInterval:0.4];
-    [typewriter2 play];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..scola."
                                     waitUntilDone:YES];
+    
     [NSThread sleepForTimeInterval:0.2];
-    [typewriter1 play];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..scola.."
                                     waitUntilDone:YES];
@@ -156,76 +135,6 @@ static int const kPopUpButtonTryAgain = 1;
     NSThread *splashSequenceThread = [[NSThread alloc] initWithTarget:self selector:@selector(runSplashSequence) object:nil];
     
     [splashSequenceThread start];
-}
-
-
-- (void)userIntentionDidChange
-{
-    NSString *namePrompt = [ScStrings stringForKey:strNamePrompt];
-    NSString *emailPrompt = [ScStrings stringForKey:strEmailPrompt];
-    NSString *passwordPrompt = [ScStrings stringForKey:strPasswordPrompt];
-    
-    if (authPhase == ScAuthPhaseConfirmation) {
-        authInfo = nil;
-    } else {
-        switch (currentUserIntention) {
-            case kUserIntentionLogin:
-                emailAsEntered = nameOrEmailOrRegistrationCodeField.text;
-                
-                break;
-                
-            case kUserIntentionRegistration:
-                nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
-                emailAsEntered = emailOrPasswordField.text;
-                
-                break;
-                
-            default:
-                break;
-        }
-    }
-    
-    currentUserIntention = userIntentionControl.selectedSegmentIndex;
-    
-    switch (currentUserIntention) {
-        case kUserIntentionLogin:
-            userHelpLabel.text = [ScStrings stringForKey:strUserHelpMember];
-            
-            nameOrEmailOrRegistrationCodeField.placeholder = emailPrompt;
-            nameOrEmailOrRegistrationCodeField.text = emailAsEntered;
-            nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeEmailAddress;
-            nameOrEmailOrRegistrationCodeField.autocapitalizationType = NO;
-
-            emailOrPasswordField.placeholder = passwordPrompt;
-            emailOrPasswordField.text = @"";
-            emailOrPasswordField.keyboardType = UIKeyboardTypeDefault;
-            emailOrPasswordField.secureTextEntry = YES;
-            
-            passwordField.hidden = YES;
-            
-            break;
-            
-        case kUserIntentionRegistration:
-            userHelpLabel.text = [ScStrings stringForKey:strUserHelpNew];
-            
-            nameOrEmailOrRegistrationCodeField.placeholder = namePrompt;
-            nameOrEmailOrRegistrationCodeField.text = nameAsEntered;
-            nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeDefault;
-            nameOrEmailOrRegistrationCodeField.autocapitalizationType = YES;
-            
-            emailOrPasswordField.placeholder = emailPrompt;
-            emailOrPasswordField.text = emailAsEntered;
-            emailOrPasswordField.keyboardType = UIKeyboardTypeEmailAddress;
-            emailOrPasswordField.secureTextEntry = NO;
-            
-            passwordField.text = @"";
-            passwordField.hidden = NO;
-            
-            break;
-            
-        default:
-            break;
-    }
 }
 
 
@@ -243,65 +152,123 @@ static int const kPopUpButtonTryAgain = 1;
 
 #pragma mark - View composition
 
-- (void)setUpForUserIntention:(int)userIntention;
+- (void)userIntentionDidChange
 {
-    passwordField.hidden = NO;
-    userIntentionControl.enabled = YES;
-    userIntentionControl.selectedSegmentIndex = userIntention;
+    if (authPhase == ScAuthPhaseLogin) {
+        emailAsEntered = nameOrEmailOrRegistrationCodeField.text;
+    } else if (authPhase == ScAuthPhaseRegistration) {
+        nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
+        emailAsEntered = emailOrPasswordField.text;
+    }
     
-    [self userIntentionDidChange];
+    if (userIntentionControl.selectedSegmentIndex == kUserIntentionLogin) {
+        [self setUpForUserLogin];
+    } else if (userIntentionControl.selectedSegmentIndex == kUserIntentionRegistration) {
+        [self setUpForUserRegistration];
+    }
+}
+
+
+- (void)setUpForUserLogin
+{
+    authPhase = ScAuthPhaseLogin;
+    
+    userHelpLabel.text = [ScStrings stringForKey:strUserHelpMember];
+    
+    userIntentionControl.enabled = YES;
+    userIntentionControl.selectedSegmentIndex = kUserIntentionLogin;
+    
+    nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strEmailPrompt];
+    nameOrEmailOrRegistrationCodeField.text = emailAsEntered;
+    nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeEmailAddress;
+    nameOrEmailOrRegistrationCodeField.autocapitalizationType = NO;
+    nameOrEmailOrRegistrationCodeField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    
+    emailOrPasswordField.placeholder = [ScStrings stringForKey:strPasswordPrompt];
+    emailOrPasswordField.text = @"";
+    emailOrPasswordField.keyboardType = UIKeyboardTypeDefault;
+    emailOrPasswordField.secureTextEntry = YES;
+    
+    passwordField.hidden = YES;
+    
+    if (authInfo) {
+        [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
+        authInfo = nil;
+    }
+}
+
+
+- (void)setUpForUserRegistration
+{
+    authPhase = ScAuthPhaseRegistration;
+    
+    userHelpLabel.text = [ScStrings stringForKey:strUserHelpNew];
+    
+    userIntentionControl.enabled = YES;
+    userIntentionControl.selectedSegmentIndex = kUserIntentionRegistration;
+    
+    nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strNamePrompt];
+    nameOrEmailOrRegistrationCodeField.text = nameAsEntered;
+    nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeDefault;
+    nameOrEmailOrRegistrationCodeField.autocapitalizationType = YES;
+    nameOrEmailOrRegistrationCodeField.clearButtonMode = UITextFieldViewModeNever;
+    
+    emailOrPasswordField.placeholder = [ScStrings stringForKey:strEmailPrompt];
+    emailOrPasswordField.text = emailAsEntered;
+    emailOrPasswordField.keyboardType = UIKeyboardTypeEmailAddress;
+    emailOrPasswordField.secureTextEntry = NO;
+    
+    passwordField.text = @"";
+    passwordField.hidden = NO;
+    
+    if (authInfo) {
+        [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
+        authInfo = nil;
+    }
 }
 
 
 - (void)setUpForUserConfirmation
 {
-    currentUserIntention = kUserIntentionRegistration;
-    userIntentionControl.selectedSegmentIndex = kUserIntentionRegistration;
-    userIntentionControl.enabled = NO;
-    passwordField.hidden = YES;
+    authPhase = ScAuthPhaseConfirmation;
     
     userHelpLabel.text = [ScStrings stringForKey:strUserHelpCompleteRegistration];
     
-    nameOrEmailOrRegistrationCodeField.text = @"";
+    userIntentionControl.enabled = NO;
+    userIntentionControl.selectedSegmentIndex = kUserIntentionRegistration;
+    
     nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
+    nameOrEmailOrRegistrationCodeField.text = @"";
+    nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeDefault;
     nameOrEmailOrRegistrationCodeField.autocapitalizationType = NO;
+    nameOrEmailOrRegistrationCodeField.clearButtonMode = UITextFieldViewModeNever;
     
-    emailOrPasswordField.text = @"";
     emailOrPasswordField.placeholder = [ScStrings stringForKey:strRepeatPasswordPrompt];
+    emailOrPasswordField.text = @"";
+    emailOrPasswordField.keyboardType = UIKeyboardTypeDefault;
     emailOrPasswordField.secureTextEntry = YES;
-}
-
-
-- (void)goBackToUserRegistration
-{
-    nameOrEmailOrRegistrationCodeField.text = nameAsEntered;
-    emailOrPasswordField.text = emailAsEntered;
     
-    [self setUpForUserIntention:kUserIntentionRegistration];
-    [passwordField becomeFirstResponder];
-    
-    [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
-    authInfo = nil;
+    passwordField.hidden = YES;
 }
 
 
 - (void)indicatePendingServerSession:(BOOL)isPending
 {
-    static NSString *nameEtc;
     static NSString *nameEtcPlaceholder;
-    static NSString *emailEtc;
+    static NSString *nameEtc;
     static NSString *emailEtcPlaceholder;
+    static NSString *emailEtc;
     
     if (isPending) {
-        nameEtc = nameOrEmailOrRegistrationCodeField.text;
         nameEtcPlaceholder = nameOrEmailOrRegistrationCodeField.placeholder;
-        emailEtc = emailOrPasswordField.text;
+        nameEtc = nameOrEmailOrRegistrationCodeField.text;
         emailEtcPlaceholder = emailOrPasswordField.placeholder;
+        emailEtc = emailOrPasswordField.text;
         
-        nameOrEmailOrRegistrationCodeField.text = @"";
         nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strPleaseWait];
-        emailOrPasswordField.text = @"";
+        nameOrEmailOrRegistrationCodeField.text = @"";
         emailOrPasswordField.placeholder = [ScStrings stringForKey:strPleaseWait];
+        emailOrPasswordField.text = @"";
         
         passwordField.hidden = YES;
         userIntentionControl.enabled = NO;
@@ -311,16 +278,18 @@ static int const kPopUpButtonTryAgain = 1;
     } else {
         [activityIndicator stopAnimating];
         
-        nameOrEmailOrRegistrationCodeField.text = nameEtc;
         nameOrEmailOrRegistrationCodeField.placeholder = nameEtcPlaceholder;
-        emailOrPasswordField.text = emailEtc;
+        nameOrEmailOrRegistrationCodeField.text = nameEtc;
         emailOrPasswordField.placeholder = emailEtcPlaceholder;
+        emailOrPasswordField.text = emailEtc;
         
         userIntentionControl.enabled = YES;
         isEditingAllowed = YES;
         
         if (authPhase == ScAuthPhaseRegistration) {
-            [self setUpForUserIntention:kUserIntentionRegistration];
+            [self setUpForUserRegistration];
+        } else if (authPhase == ScAuthPhaseConfirmation) {
+            userIntentionControl.selectedSegmentIndex = UISegmentedControlNoSegment;
         }
     }
 }
@@ -332,7 +301,7 @@ static int const kPopUpButtonTryAgain = 1;
 {
     BOOL isValid = NO;
     
-    if (currentUserIntention == kUserIntentionRegistration) {
+    if (authPhase == ScAuthPhaseRegistration) {
         nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
         
         isValid = (nameAsEntered.length > 0);
@@ -352,9 +321,9 @@ static int const kPopUpButtonTryAgain = 1;
     BOOL isValid = NO;
     UITextField *emailField;
     
-    if (currentUserIntention == kUserIntentionLogin) {
+    if (authPhase == ScAuthPhaseLogin) {
         emailField = nameOrEmailOrRegistrationCodeField;
-    } else if (currentUserIntention == kUserIntentionRegistration) {
+    } else if (authPhase == ScAuthPhaseRegistration) {
         emailField = emailOrPasswordField;
     }
     
@@ -382,13 +351,20 @@ static int const kPopUpButtonTryAgain = 1;
     BOOL isValid = NO;
     UITextField *currentPasswordField;
     
-    if (currentUserIntention == kUserIntentionLogin) {
+    if ((authPhase == ScAuthPhaseLogin) || (authPhase == ScAuthPhaseConfirmation)) {
         currentPasswordField = emailOrPasswordField;
-    } else {
+    } else if (authPhase == ScAuthPhaseRegistration) {
         currentPasswordField = passwordField;
     }
     
-    isValid = (currentPasswordField.text.length >= kMinimumPassordLength);
+    if (authPhase == ScAuthPhaseConfirmation) {
+        NSString *passwordHashAsPersisted = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
+        NSString *passwordHashAsEntered = [self generatePasswordHash:currentPasswordField.text usingSalt:emailAsEntered];
+        
+        isValid = [passwordHashAsEntered isEqualToString:passwordHashAsPersisted];
+    } else {
+        isValid = (currentPasswordField.text.length >= kMinimumPassordLength);
+    }
     
     if (!isValid) {
         currentPasswordField.text = @"";
@@ -399,12 +375,26 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
+- (BOOL)isRegistrationCodeValid
+{
+    NSString *registrationCodeAsSent = [[authInfo objectForKey:kAuthInfoKeyRegistrationCode] lowercaseString];
+    NSString *registrationCodeAsEntered = [nameOrEmailOrRegistrationCodeField.text lowercaseString];
+    
+    BOOL isValid = [registrationCodeAsEntered isEqualToString:registrationCodeAsSent];
+
+    if (!isValid) {
+        nameOrEmailOrRegistrationCodeField.text = @"";
+        [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
+    }
+    
+    return isValid;
+}
+
+
 #pragma mark - User registration and authentication
 
 - (void)loginUser
 {
-    authPhase = ScAuthPhaseLogin;
-
     [ScMeta m].userId = emailAsEntered;
     NSString *password = emailOrPasswordField.text;
     
@@ -418,14 +408,12 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)registerUser
 {
-    authPhase = ScAuthPhaseRegistration;
-    
     [ScMeta m].userId = emailAsEntered;
     NSString *password = passwordField.text;
     
     serverConnection = [[ScServerConnection alloc] init];
-    [serverConnection setValue:nameAsEntered forURLParameter:kURLParameterName];
     [serverConnection setAuthHeaderForUser:emailAsEntered withPassword:password];
+    [serverConnection setValue:nameAsEntered forURLParameter:kURLParameterName];
     [serverConnection authenticateForPhase:ScAuthPhaseRegistration usingDelegate:self];
     
     [self indicatePendingServerSession:YES];
@@ -434,8 +422,6 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)confirmUser
 {
-    authPhase = ScAuthPhaseConfirmation;
-    
     [ScMeta m].userId = emailAsEntered;
     NSString *password = emailOrPasswordField.text;
     
@@ -448,26 +434,13 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
-- (void)userDidLogIn:(NSString *)userId isNewUser:(BOOL)isNewUser
+- (void)userDidLogIn
 {
     [ScMeta m].isUserLoggedIn = YES;
     
     NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
     
-    if (isNewUser) {
-        if (isUserListed) {
-            homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
-            member = [context fetchEntityWithId:[ScMeta m].userId];
-        } else {
-            homeScola = [context entityForScolaWithName:[ScStrings stringForKey:strMyPlace] scolaId:[ScMeta m].homeScolaId];
-            member = [context entityForClass:ScMember.class inScola:homeScola withId:emailAsEntered];
-        }
-        
-        member.name = nameAsEntered;
-        member.passwordHash = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
-        
-        [self performSegueWithIdentifier:kSegueToRegistrationView1 sender:self];
-    } else {
+    if (authPhase == ScAuthPhaseLogin) {
         member = [context fetchEntityWithId:[ScMeta m].userId];
         homeScola = [context fetchEntityWithId:member.scolaId];
         
@@ -485,6 +458,22 @@ static int const kPopUpButtonTryAgain = 1;
         }
         
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
+    } else if (authPhase == ScAuthPhaseConfirmation) {
+        if (isUserListed) {
+            homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
+            member = [context fetchEntityWithId:[ScMeta m].userId];
+        } else {
+            homeScola = [context entityForScolaWithName:[ScStrings stringForKey:strMyPlace] scolaId:[ScMeta m].homeScolaId];
+            member = [context entityForClass:ScMember.class inScola:homeScola withId:emailAsEntered];
+        }
+        
+        member.name = nameAsEntered;
+        member.passwordHash = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
+        
+        [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
+        authInfo = nil;
+        
+        [self performSegueWithIdentifier:kSegueToRegistrationView1 sender:self];
     }
 }
 
@@ -493,15 +482,11 @@ static int const kPopUpButtonTryAgain = 1;
 
 - (void)finishedReceivingLoginData:(NSArray *)data
 {
-    isUpToDate = YES;
-    
     [[ScMeta m].managedObjectContext saveWithDictionaries:data];
     
-    if (authPhase == ScAuthPhaseConfirmation) {
-        [self userDidLogIn:emailAsEntered isNewUser:YES];
-    } else if (authPhase == ScAuthPhaseLogin) {
-        [self userDidLogIn:emailAsEntered isNewUser:NO];
-    }
+    isUpToDate = YES;
+    
+    [self userDidLogIn];
 }
 
 
@@ -510,10 +495,9 @@ static int const kPopUpButtonTryAgain = 1;
     authInfo = data;
     
     isUserListed = [[authInfo objectForKey:kAuthInfoKeyIsListed] boolValue];
-    BOOL isActive = [[authInfo objectForKey:kAuthInfoKeyIsRegistered] boolValue];
-    BOOL isAuthenticated = [[authInfo objectForKey:kAuthInfoKeyIsAuthenticated] boolValue];
+    BOOL userDidRegister = [[authInfo objectForKey:kAuthInfoKeyIsRegistered] boolValue];
 
-    if (!isActive) {
+    if (!userDidRegister) {
         NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:authInfo];
         [ScMeta setUserDefault:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
         
@@ -540,20 +524,8 @@ static int const kPopUpButtonTryAgain = 1;
         
         [emailSentAlert show];
     } else {
-        NSString *alertTitle = [ScStrings stringForKey:strUserExistsAlertTitle];
-        NSString *alertMessage = nil;
-        ScAuthAlertTag alertTag;
-        
-        if (isAuthenticated) {
-            alertMessage = [ScStrings stringForKey:strUserExistsAndLoggedInAlert];
-            alertTag = ScAuthAlertTagUserExistsAndIsLoggedIn;
-        } else {
-            alertMessage = [ScStrings stringForKey:strUserExistsButNotLoggedInAlert];
-            alertTag = ScAuthAlertTagNotLoggedIn;
-        }
-        
-        UIAlertView *userExistsAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        userExistsAlert.tag = alertTag;
+        UIAlertView *userExistsAlert = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strUserExistsMustLogIn] delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+        userExistsAlert.tag = ScAuthAlertTagNotLoggedIn;
         
         [userExistsAlert show];
     }
@@ -622,7 +594,7 @@ static int const kPopUpButtonTryAgain = 1;
         
         [self setUpForUserConfirmation];
     } else {
-        [self setUpForUserIntention:kUserIntentionLogin];
+        [self setUpForUserLogin];
         
         if ([ScMeta m].userId) {
             nameOrEmailOrRegistrationCodeField.text = [ScMeta m].userId;
@@ -642,7 +614,7 @@ static int const kPopUpButtonTryAgain = 1;
         [ScStrings refreshStrings];
     }
     
-    if (authInfo) {
+    if (authPhase == ScAuthPhaseConfirmation) {
         NSString *email = [authInfo objectForKey:kAuthInfoKeyUserId];
         NSString *popUpTitle = [ScStrings stringForKey:strWelcomeBackPopUpTitle];
         NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strWelcomeBackPopUpMessage], email];
@@ -719,7 +691,7 @@ static int const kPopUpButtonTryAgain = 1;
 {
     BOOL shouldRemove = YES;
     
-    if (currentUserIntention == kUserIntentionLogin) {
+    if (authPhase == ScAuthPhaseLogin) {
         shouldRemove = (textField != emailOrPasswordField);
     } else {
         shouldRemove = (textField != passwordField);
@@ -734,14 +706,16 @@ static int const kPopUpButtonTryAgain = 1;
 }
 
 
-- (BOOL)textFieldShouldReturnForLoginOrUserRegistration:(UITextField *)textField
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    BOOL shouldReturn = NO;
-    
     NSString *alertMessage = nil;
+    NSString *cancelButtonTitle = [ScStrings stringForKey:strOK];
+    ScAuthAlertTag alertTag;
     
-    switch (currentUserIntention) {
-        case kUserIntentionLogin:
+    [self textFieldShouldEndEditing:textField];
+    
+    switch (authPhase) {
+        case ScAuthPhaseLogin:
             if (![self isEmailValid]) {
                 alertMessage = [ScStrings stringForKey:strInvalidEmailAlert];
             } else if (![self isPasswordValid]) {
@@ -750,7 +724,7 @@ static int const kPopUpButtonTryAgain = 1;
             
             break;
             
-        case kUserIntentionRegistration:
+        case ScAuthPhaseRegistration:
             if (![self isNameValid]) {
                 alertMessage = [ScStrings stringForKey:strInvalidNameAlert];
             } else if (![self isEmailValid]) {
@@ -761,90 +735,48 @@ static int const kPopUpButtonTryAgain = 1;
             
             break;
             
+        case ScAuthPhaseConfirmation:
+            if (![self isRegistrationCodeValid]) {
+                alertMessage = [ScStrings stringForKey:strRegistrationCodesDoNotMatchAlert];
+                alertTag = ScAuthAlertTagRegistrationCodesDoNotMatch;
+            } else if (![self isPasswordValid]) {
+                alertMessage = [ScStrings stringForKey:strPasswordsDoNotMatchAlert];
+                alertTag = ScAuthAlertTagPasswordsDoNotMatch;
+            }
+            
+            cancelButtonTitle = [ScStrings stringForKey:strGoBack];
+            
+            break;
+            
         default:
             break;
     }
     
-    shouldReturn = !alertMessage;
+    BOOL shouldReturn = !alertMessage;
     
     if (shouldReturn) {
         [textField resignFirstResponder];
         
-        if (currentUserIntention == kUserIntentionLogin) {
+        if (authPhase == ScAuthPhaseLogin) {
             [self loginUser];
-        } else if (currentUserIntention == kUserIntentionRegistration) {
+        } else if (authPhase == ScAuthPhaseRegistration) {
             [self registerUser];
+        } else if (authPhase == ScAuthPhaseConfirmation) {
+            [self confirmUser];
         }
     } else {
-        UIAlertView *popUpAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        [popUpAlert show];
-    }
-    
-    return shouldReturn;
-}
-
-
-- (BOOL)textFieldShouldReturnForUserConfirmation:(UITextField *)textField
-{
-    BOOL registrationCodesDoMatch = NO;
-    BOOL passwordsDoMatch = NO;
-    
-    NSString *registrationCodeAsSent = [[authInfo objectForKey:kAuthInfoKeyRegistrationCode] lowercaseString];
-    NSString *registrationCodeAsEntered = [nameOrEmailOrRegistrationCodeField.text lowercaseString];
-    
-    NSString *alertMessage = nil;
-    ScAuthAlertTag alertTag;
-    
-    registrationCodesDoMatch = [registrationCodeAsEntered isEqualToString:registrationCodeAsSent];
-    
-    if (registrationCodesDoMatch) {
-        NSString *password = emailOrPasswordField.text;
+        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:nil cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
         
-        NSString *passwordHashAsPersisted = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
-        NSString *passwordHashAsEntered = [self generatePasswordHash:password usingSalt:emailAsEntered];
+        if (authPhase == ScAuthPhaseConfirmation) {
+            [validationAlert addButtonWithTitle:[ScStrings stringForKey:strTryAgain]];
+            
+            validationAlert.tag = alertTag;
+            validationAlert.delegate = self;
+        }
         
-        passwordsDoMatch = [passwordHashAsEntered isEqualToString:passwordHashAsPersisted];
+        [validationAlert show];
     }
-    
-    if (!registrationCodesDoMatch) {
-        alertMessage = [ScStrings stringForKey:strRegistrationCodesDoNotMatchAlert];
-        alertTag = ScAuthAlertTagRegistrationCodesDoNotMatch;
-    } else if (!passwordsDoMatch) {
-        alertMessage = [ScStrings stringForKey:strPasswordsDoNotMatchAlert];
-        alertTag = ScAuthAlertTagPasswordsDoNotMatch;
-    }
-    
-    BOOL shouldReturn = (registrationCodesDoMatch && passwordsDoMatch);
-    
-    if (shouldReturn) {
-        [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
-        [self confirmUser];
-    } else {        
-        NSString *tryAgainTitle = [ScStrings stringForKey:strTryAgain];
-        NSString *goBackTitle = [ScStrings stringForKey:strGoBack];
-        
-        UIAlertView *popUpAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:goBackTitle otherButtonTitles:tryAgainTitle, nil];
-        popUpAlert.tag = alertTag;
-        
-        [popUpAlert show];
-    }
-    
-    return shouldReturn;
-}
 
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    BOOL shouldReturn = NO;
-    
-    [self textFieldShouldEndEditing:textField];
-    
-    if (authInfo) {
-        shouldReturn = [self textFieldShouldReturnForUserConfirmation:textField];
-    } else {
-        shouldReturn = [self textFieldShouldReturnForLoginOrUserRegistration:textField];
-    }
-    
     return shouldReturn;
 }
 
@@ -854,9 +786,6 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
-        case ScAuthAlertTagServerError:
-            break;
-        
         case ScAuthAlertTagEmailSent:
             [self setUpForUserConfirmation];
             
@@ -882,7 +811,8 @@ static int const kPopUpButtonTryAgain = 1;
                     [emailOrPasswordField becomeFirstResponder];
                 }
             } else if (buttonIndex == kPopUpButtonGoBack) {
-                [self goBackToUserRegistration];
+                [self setUpForUserRegistration];
+                [passwordField becomeFirstResponder];
             }
             
             break;
@@ -891,18 +821,14 @@ static int const kPopUpButtonTryAgain = 1;
             if (buttonIndex == kPopUpButtonContinue) {
                 [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
             } else if (buttonIndex == kPopUpButtonGoBack) {
-                [self goBackToUserRegistration];
+                [self setUpForUserRegistration];
+                [passwordField becomeFirstResponder];
             }
             
             break;
         
-        case ScAuthAlertTagUserExistsAndIsLoggedIn:
-            [self userDidLogIn:emailAsEntered isNewUser:NO];
-
-            break;
-            
         case ScAuthAlertTagNotLoggedIn:
-            [self setUpForUserIntention:kUserIntentionLogin];
+            [self setUpForUserLogin];
             [emailOrPasswordField becomeFirstResponder];
             
             break;
@@ -925,24 +851,19 @@ static int const kPopUpButtonTryAgain = 1;
 {
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
     
-    if (response.statusCode != kHTTPStatusCodeOK) {
+    NSInteger status = response.statusCode;
+    
+    if (status != kHTTPStatusCodeOK) {
         [self indicatePendingServerSession:NO];
     }
     
-    if (response.statusCode < kHTTPStatusCodeErrorRangeStart) {
-        if (authPhase == ScAuthPhaseConfirmation) {
-            if (response.statusCode == kHTTPStatusCodeNoContent) {
-                [self userDidLogIn:emailAsEntered isNewUser:YES];
-            }
-        } else if (authPhase == ScAuthPhaseLogin) {
-            if (response.statusCode == kHTTPStatusCodeNotModified) {
-                [self userDidLogIn:emailAsEntered isNewUser:NO];
-            }
-        }
-    } else {
+    if (((authPhase == ScAuthPhaseLogin) && (status == kHTTPStatusCodeNotModified)) ||
+        ((authPhase == ScAuthPhaseConfirmation) && (status == kHTTPStatusCodeNoContent))) {
+        [self userDidLogIn];
+    } else if (status >= kHTTPStatusCodeErrorRangeStart) {
         [ScMeta m].userId = nil;
         
-        if (response.statusCode == kHTTPStatusCodeUnauthorized) {
+        if (status == kHTTPStatusCodeUnauthorized) {
             NSString *alertMessage = [ScStrings stringForKey:strNotLoggedInAlert];
             
             UIAlertView *notLoggedInAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
@@ -950,7 +871,7 @@ static int const kPopUpButtonTryAgain = 1;
             
             [notLoggedInAlert show];
         } else {
-            [ScServerConnection showAlertForHTTPStatus:response.statusCode tagWith:ScAuthAlertTagServerError usingDelegate:self];
+            [ScServerConnection showAlertForHTTPStatus:status];
         }
     }
 }
@@ -973,7 +894,7 @@ static int const kPopUpButtonTryAgain = 1;
     [self indicatePendingServerSession:NO];
     [ScMeta m].userId = nil;
     
-    [ScServerConnection showAlertForError:error tagWith:ScAuthAlertTagServerError usingDelegate:self];
+    [ScServerConnection showAlertForError:error];
 }
 
 @end

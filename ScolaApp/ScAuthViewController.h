@@ -6,7 +6,6 @@
 //  Copyright (c) 2011 Rhelba Software. All rights reserved.
 //
 
-#import <AVFoundation/AVFoundation.h>
 #import <UIKit/UIKit.h>
 
 #import "ScServerConnection.h"
@@ -16,15 +15,10 @@
 
 @interface ScAuthViewController : UIViewController <UITextFieldDelegate, UIAlertViewDelegate, ScServerConnectionDelegate> {
 @private
-    AVAudioPlayer *typewriter1;
-    AVAudioPlayer *typewriter2;
-    
     BOOL isEditingAllowed;
     BOOL isUserListed;
     BOOL isUpToDate;
 
-    int currentUserIntention;
-    
     NSString *nameAsEntered;
     NSString *emailAsEntered;
     NSDictionary *authInfo;
