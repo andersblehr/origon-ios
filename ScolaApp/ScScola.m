@@ -2,7 +2,7 @@
 //  ScScola.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 06.04.12.
+//  Created by Anders Blehr on 16.05.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -24,7 +24,7 @@
 @dynamic addressLine2;
 @dynamic descriptionText;
 @dynamic name;
-@dynamic phoneNumber;
+@dynamic landline;
 @dynamic picture;
 @dynamic postCodeAndCity;
 @dynamic documentRepositories;
@@ -34,8 +34,8 @@
 @dynamic memberToDoItems;
 @dynamic messageBoards;
 @dynamic parentScola;
+@dynamic residents;
 @dynamic subscolas;
 @dynamic yearlySchedule;
-@dynamic residents;
 
 @end

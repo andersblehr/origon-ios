@@ -39,10 +39,11 @@ static int const kMaximumRealisticAge = 110;
 
 @synthesize member;
 @synthesize homeScola;
+
 @synthesize isUserListed;
 
 
-#pragma mark - auxiliary methods
+#pragma mark - Auxiliary methods
 
 - (void)setDateOfBirthPickerToApril1st1976
 {
@@ -62,64 +63,46 @@ static int const kMaximumRealisticAge = 110;
 
 #pragma mark - Input validation
 
-- (UIAlertView *)alertViewIfUnrealisticDateOfBirth
+- (BOOL)isAddressValid
 {
-    NSString *alertMessage = nil;
-    UIAlertView *alertView = nil;
+    BOOL isValid = NO;
     
-    NSDate *dateOfBirth = dateOfBirthPicker.date;
-    NSDate *now = [NSDate date];
+    isValid = isValid || (addressLine1Field.text.length > 0);
+    isValid = isValid || (postCodeAndCityField.text.length > 0);
     
-    BOOL isDateOfBirthInThePast = ([dateOfBirth compare:now] == NSOrderedAscending);
-    
-    if (isDateOfBirthInThePast) {
-        NSDateComponents *ageComponents = [[NSCalendar currentCalendar] components:NSYearCalendarUnit fromDate:dateOfBirth toDate:now options:kNilOptions];
-        NSInteger apparentAge = ageComponents.year;
-        
-        if ((apparentAge < kMinimumRealisticAge) || (apparentAge > kMaximumRealisticAge)) {
-            alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strUnrealisticAgeAlert], apparentAge];
-        }
-    } else {
-        alertMessage = [ScStrings stringForKey:strNotBornAlert];
+    if (!isValid) {
+        [addressLine1Field becomeFirstResponder];
     }
     
-    if (alertMessage) {
-        alertView = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-    }
-    
-    return alertView;
+    return isValid;
 }
 
 
-- (BOOL)isDoneEditing
+- (BOOL)isDateOfBirthValid
 {
-    UIAlertView *alertView = nil;
+    BOOL isValid = (dateOfBirthField.text.length == 0);
     
-    if ((addressLine1Field.text.length > 0) || (postCodeAndCityField.text.length > 0)) {
-        alertView = [self alertViewIfUnrealisticDateOfBirth];
-    } else {
-        alertView = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strNoAddressAlert] delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-    }
-    
-    BOOL isDone = (!alertView);
-    
-    if (isDone) {
-        homeScola.addressLine1 = addressLine1Field.text;
-        homeScola.addressLine2 = addressLine2Field.text;
-        homeScola.postCodeAndCity = postCodeAndCityField.text;
+    if (!isValid) {
+        NSDate *dateOfBirth = dateOfBirthPicker.date;
+        NSDate *now = [NSDate date];
         
-        if (dateOfBirthField.text.length > 0) {
-            member.dateOfBirth = dateOfBirthPicker.date;
-        } else {
-            member.dateOfBirth = nil;
+        isValid = ([dateOfBirth compare:now] == NSOrderedAscending);
+        
+        if (isValid) {
+            NSDateComponents *ageComponents = [[NSCalendar currentCalendar] components:NSYearCalendarUnit fromDate:dateOfBirth toDate:now options:kNilOptions];
+            NSInteger providedAge = ageComponents.year;
+            
+            isValid = isValid && (providedAge >= kMinimumRealisticAge);
+            isValid = isValid && (providedAge <= kMaximumRealisticAge);
         }
-        
-        [self performSegueWithIdentifier:kSegueToRegistrationView2 sender:self];
-    } else {
-        [alertView show];
     }
-
-    return isDone;
+    
+    if (!isValid) {
+        [self.view endEditing:YES];
+        dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthPrompt];
+    }
+    
+    return isValid;
 }
 
 
@@ -128,8 +111,6 @@ static int const kMaximumRealisticAge = 110;
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
 }
 
 
@@ -142,7 +123,7 @@ static int const kMaximumRealisticAge = 110;
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    UIBarButtonItem *nextButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strNext] style:UIBarButtonItemStyleDone target:self action:@selector(isDoneEditing)];
+    UIBarButtonItem *nextButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strNext] style:UIBarButtonItemStyleDone target:self action:@selector(textFieldShouldReturn:)];
     
     self.navigationItem.hidesBackButton = YES;
     self.navigationItem.rightBarButtonItem = nextButton;
@@ -159,36 +140,34 @@ static int const kMaximumRealisticAge = 110;
     addressLine2Field.placeholder = [ScStrings stringForKey:strAddressLine2Prompt];
     postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
     dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthClickHerePrompt];
-    
-    addressLine1Field.text = isUserListed ? homeScola.addressLine1 : @"";
-    addressLine2Field.text = isUserListed ? homeScola.addressLine2 : @"";
-    postCodeAndCityField.text = isUserListed ? homeScola.postCodeAndCity : @"";
-    
-    [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
-    
-    if (isUserListed) {
-        [dateOfBirthPicker setDate:member.dateOfBirth animated:YES];
-        [self dateOfBirthDidChange];
-    } else {
-        [self setDateOfBirthPickerToApril1st1976];
-        dateOfBirthField.text = @"";
-    }
-        
-    [addressLine1Field becomeFirstResponder];
 }
 
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    addressLine1Field.text = homeScola.addressLine1;
+    addressLine2Field.text = homeScola.addressLine2;
+    postCodeAndCityField.text = homeScola.postCodeAndCity;
+    
+    [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
+    
+    if (member.dateOfBirth) {
+        [dateOfBirthPicker setDate:member.dateOfBirth animated:YES];
+        [self dateOfBirthDidChange];
+    } else {
+        [self setDateOfBirthPickerToApril1st1976];
+        dateOfBirthField.text = @"";
+    }
+    
+    [addressLine1Field becomeFirstResponder];
 }
 
 
@@ -212,7 +191,6 @@ static int const kMaximumRealisticAge = 110;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
@@ -250,7 +228,9 @@ static int const kMaximumRealisticAge = 110;
 
 - (BOOL)textFieldShouldClear:(UITextField *)textField
 {
-    [self setDateOfBirthPickerToApril1st1976];
+    if (textField == dateOfBirthField) {
+        [self setDateOfBirthPickerToApril1st1976];
+    }
     
     return YES;
 }
@@ -258,15 +238,35 @@ static int const kMaximumRealisticAge = 110;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    return [self isDoneEditing];
-}
-
-
-#pragma mark - UIAlertViewDelegate implementation
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    [addressLine1Field becomeFirstResponder];
+    NSString *alertMessage = nil;
+    
+    if (![self isAddressValid]) {
+        alertMessage = [ScStrings stringForKey:strNoAddressAlert];
+    } else if (![self isDateOfBirthValid]) {
+        alertMessage = [ScStrings stringForKey:strInvalidDateOfBirthAlert];
+    }
+    
+    BOOL shouldReturn = !alertMessage;
+    
+    if (shouldReturn) {
+        [self.view endEditing:YES];
+        
+        homeScola.addressLine1 = addressLine1Field.text;
+        homeScola.addressLine2 = addressLine2Field.text;
+        homeScola.postCodeAndCity = postCodeAndCityField.text;
+        
+        if (dateOfBirthField.text.length > 0) {
+            member.dateOfBirth = dateOfBirthPicker.date;
+        }
+        
+        [self performSegueWithIdentifier:kSegueToRegistrationView2 sender:self];
+    } else {
+        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK]otherButtonTitles:nil];
+        
+        [validationAlert show];
+    }
+    
+    return shouldReturn;
 }
 
 @end

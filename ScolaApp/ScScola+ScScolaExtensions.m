@@ -11,6 +11,7 @@
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
 #import "ScMeta.h"
+#import "ScStrings.h"
 
 #import "ScMember.h"
 #import "ScMemberResidency.h"
@@ -48,8 +49,14 @@
     residency.resident = resident;
     residency.residence = self;
 
-    residency.member = residency.resident;
-    residency.scola = residency.residence;
+    residency.member = resident;
+    residency.scola = self;
+    
+    if (self.residents.count > 1) {
+        if ([self.name isEqualToString:[ScStrings stringForKey:strMyPlace]]) {
+            self.name = [ScStrings stringForKey:strOurPlace];
+        }
+    }
     
     return residency;
 }

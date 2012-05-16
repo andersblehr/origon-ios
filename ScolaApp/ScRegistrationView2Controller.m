@@ -23,6 +23,7 @@
 #import "ScMessageBoard.h"
 #import "ScScola.h"
 
+#import "ScMember+ScMemberExtensions.h"
 #import "ScMemberResidency+ScMemberResidencyExtensions.h"
 #import "ScScola+ScScolaExtensions.h"
 
@@ -34,8 +35,7 @@ static int const kGenderSegmentMale = 1;
 
 static NSString * const kGenderFemale = @"F";
 static NSString * const kGenderMale = @"M";
-
-static NSInteger const kAgeOfMajority = 18;
+static NSString * const kGenderNoneGiven = @"N";
 
 static int const kPopUpButtonUseBuiltIn = 0;
 static int const kPopUpButtonUseNew = 1;
@@ -46,102 +46,48 @@ static int const kPopUpButtonUseNew = 1;
 @synthesize darkLinenView;
 @synthesize genderUserHelpLabel;
 @synthesize genderControl;
-@synthesize mobilePhoneLabel;
+@synthesize mobilePhoneUserHelpLabel;
 @synthesize mobilePhoneField;
-@synthesize deviceNameUserHelpLabel;
-@synthesize deviceNameField;
+@synthesize landlineUserHelpLabel;
+@synthesize landlineField;
 
 @synthesize member;
 @synthesize homeScola;
+
 @synthesize isUserListed;
+
+
+#pragma mark - Auxiiary methods
+
+- (void)syncViewState
+{
+    if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
+        member.gender = kGenderFemale;
+    } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
+        member.gender = kGenderMale;
+    } else {
+        member.gender = kGenderNoneGiven;
+    }
+    
+    member.mobilePhone = mobilePhoneField.text;
+    homeScola.landline = landlineField.text;
+}
 
 
 #pragma mark - Input validation
 
-- (UIAlertView *)alertViewIfNoDeviceName
+- (BOOL)isPhoneNumberGiven
 {
-    UIAlertView *alertView = nil;
+    BOOL isGiven = NO;
     
-    if (deviceNameField.text.length == 0) {
-        NSString *deviceType = [UIDevice currentDevice].model;
-        NSString *deviceTypeDefinite;
-        NSString *deviceTypePossessive;
-        
-        if ([deviceType isEqualToString:@"iPod"]) {
-            deviceTypeDefinite = [ScStrings stringForKey:str_iPodDefinite];
-            deviceTypePossessive = [ScStrings stringForKey:str_iPodPossessive];
-        } else if ([deviceType isEqualToString:@"iPad"]) {
-            deviceTypeDefinite = [ScStrings stringForKey:str_iPadDefinite];
-            deviceTypePossessive = [ScStrings stringForKey:str_iPadPossessive];
-        } else {
-            deviceTypeDefinite = [ScStrings stringForKey:strPhoneDefinite];
-            deviceTypePossessive = [ScStrings stringForKey:strPhonePossessive];
-        }
-        
-        NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strNoDeviceNameAlert], deviceTypeDefinite, deviceTypePossessive, [UIDevice currentDevice].name];
-        NSString *useConfiguredButtonTitle = [ScStrings stringForKey:strUseConfigured];
-        NSString *useNewButtonTitle = [ScStrings stringForKey:strUseNew];
-        
-        alertView = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:useConfiguredButtonTitle otherButtonTitles:useNewButtonTitle, nil];
+    isGiven = isGiven || (mobilePhoneField.text.length > 0);
+    isGiven = isGiven || (landlineField.text.length > 0);
+    
+    if (!isGiven) {
+        [mobilePhoneField becomeFirstResponder];
     }
     
-    return alertView;
-}
-
-
-- (BOOL)isDoneEditing
-{
-    UIAlertView *alertView = nil;
-    
-    if (mobilePhoneField.text.length == 0) {
-        alertView = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strNoMobilePhoneAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-    } else {
-        alertView = [self alertViewIfNoDeviceName];
-    }
-
-    BOOL isDone = (!alertView);
-    
-    if (isDone) {
-        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-        
-        member.mobilePhone = mobilePhoneField.text;
-        member.activeSince = [NSDate date];
-        member.didRegister = [NSNumber numberWithBool:YES];
-        
-        if (genderControl.selectedSegmentIndex == kGenderSegmentFemale) {
-            member.gender = kGenderFemale;
-        } else if (genderControl.selectedSegmentIndex == kGenderSegmentMale) {
-            member.gender = kGenderMale;
-        }
-        
-        if ([member.residencies count] == 0) {
-            ScMemberResidency *residency = [homeScola addResident:member];
-            
-            residency.isActive = [NSNumber numberWithBool:YES];
-            residency.isAdmin = [NSNumber numberWithBool:YES];
-        }
-        
-        if ([homeScola.messageBoards count] == 0) {
-            ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
-            
-            defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
-            defaultMessageBoard.scola = homeScola;
-        }
-        
-        ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
-        
-        device.type = [UIDevice currentDevice].model;
-        device.displayName = deviceNameField.text;
-        device.member = member;
-        
-        [context saveAndPersist];
-        
-        [self performSegueWithIdentifier:kSegueToMainView sender:self];
-    } else {
-        [alertView show];
-    }
-    
-    return isDone;
+    return isGiven;
 }
 
 
@@ -150,7 +96,6 @@ static int const kPopUpButtonUseNew = 1;
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Release any cached data, images, etc that aren't in use.
 }
 
 
@@ -163,44 +108,42 @@ static int const kPopUpButtonUseNew = 1;
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strDone] style:UIBarButtonItemStyleDone target:self action:@selector(isDoneEditing)];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strDone] style:UIBarButtonItemStyleDone target:self action:@selector(textFieldShouldReturn:)];
+    
     self.navigationItem.rightBarButtonItem = doneButton;
     
-    BOOL isMinor = NO;
+    NSString *femaleLabel;
+    NSString *maleLabel;
     
-    if (member.dateOfBirth) {
-        NSDate *now = [NSDate date];
-        NSDateComponents *ageComponents = [[NSCalendar currentCalendar] components:NSYearCalendarUnit fromDate:member.dateOfBirth toDate:now options:kNilOptions];
-        
-        isMinor =  (ageComponents.year < kAgeOfMajority);
+    if ([member isMinor]) {
+        femaleLabel = [ScStrings stringForKey:strFemaleMinor];
+        maleLabel = [ScStrings stringForKey:strMaleMinor];
+    } else {
+        femaleLabel = [ScStrings stringForKey:strFemaleAdult];
+        maleLabel = [ScStrings stringForKey:strMaleAdult];
     }
-    
-    NSString *femaleTerm = [ScStrings stringForKey:(isMinor ? strFemaleMinor : strFemaleAdult)];
-    NSString *maleTerm = [ScStrings stringForKey:(isMinor ? strMaleMinor : strMaleAdult)];
 
-    genderUserHelpLabel.text = [NSString stringWithFormat:[ScStrings stringForKey:strGenderUserHelp], [femaleTerm lowercaseString], [maleTerm lowercaseString]];
-    mobilePhoneLabel.text = [ScStrings stringForKey:strMobilePhoneUserHelp];
-    deviceNameUserHelpLabel.text = [NSString stringWithFormat:[ScStrings stringForKey:strDeviceNameUserHelp], [ScStrings stringForKey:strThisPhone]];
+    [genderControl setTitle:femaleLabel forSegmentAtIndex:kGenderSegmentFemale];
+    [genderControl setTitle:maleLabel forSegmentAtIndex:kGenderSegmentMale];
+    genderUserHelpLabel.text = [NSString stringWithFormat:[ScStrings stringForKey:strGenderUserHelp], [femaleLabel lowercaseString], [maleLabel lowercaseString]];
     
+    mobilePhoneUserHelpLabel.text = [ScStrings stringForKey:strMobilePhoneUserHelp];
     mobilePhoneField.delegate = self;
-    deviceNameField.delegate = self;
-    
-    [genderControl setTitle:femaleTerm forSegmentAtIndex:kGenderSegmentFemale];
-    [genderControl setTitle:maleTerm forSegmentAtIndex:kGenderSegmentMale];
-
     mobilePhoneField.placeholder = [ScStrings stringForKey:strMobilePhonePrompt];
     mobilePhoneField.keyboardType = UIKeyboardTypeNumberPad;
-    [mobilePhoneField becomeFirstResponder];
     
-    deviceNameField.placeholder = [NSString stringWithFormat:[ScStrings stringForKey:strDeviceNamePrompt], [ScStrings stringForKey:strPhoneDefinite]];
+    landlineUserHelpLabel.text = [ScStrings stringForKey:strLandlineUserHelp];
+    landlineField.delegate = self;
+    landlineField.placeholder = [ScStrings stringForKey:strLandlinePrompt];
+    landlineField.keyboardType = UIKeyboardTypeNumberPad;
+    
+    [mobilePhoneField becomeFirstResponder];
 }
 
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 
@@ -208,28 +151,16 @@ static int const kPopUpButtonUseNew = 1;
 {
     [super viewWillAppear:animated];
     
-    NSDictionary *viewState = [ScMeta userDefaultForKey:self.class.description];
-    
-    if (isUserListed) {
-        if ([member.gender isEqualToString:kGenderFemale]) {
-            genderControl.selectedSegmentIndex = kGenderSegmentFemale;
-        } else if ([member.gender isEqualToString:kGenderMale]) {
-            genderControl.selectedSegmentIndex = kGenderSegmentMale;
-        }
-        
-        mobilePhoneField.text = member.mobilePhone;
-        deviceNameField.text = [UIDevice currentDevice].name;
-    } else if (viewState) {
-        genderControl.selectedSegmentIndex = [[viewState objectForKey:@"member.gender"] intValue];
-        mobilePhoneField.text = [viewState objectForKey:@"member.mobilePhone"];
-        deviceNameField.text = [viewState objectForKey:@"device.name"];
-        
-        [ScMeta removeUserDefaultForKey:self.class.description];
-    } else {
+    if ([member.gender isEqualToString:kGenderFemale]) {
         genderControl.selectedSegmentIndex = kGenderSegmentFemale;
-        mobilePhoneField.text = @"";
-        deviceNameField.text = [UIDevice currentDevice].name;
+    } else if ([member.gender isEqualToString:kGenderMale]) {
+        genderControl.selectedSegmentIndex = kGenderSegmentMale;
+    } else {
+        genderControl.selectedSegmentIndex = UISegmentedControlNoSegment;
     }
+    
+    mobilePhoneField.text = member.mobilePhone;
+    landlineField.text = homeScola.landline;
 }
 
 
@@ -241,21 +172,11 @@ static int const kPopUpButtonUseNew = 1;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    BOOL userDidTapBackButton =
-        ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound);
-    
-    if (userDidTapBackButton) {
-        NSMutableDictionary *viewState = [[NSMutableDictionary alloc] init];
-        NSNumber *genderId = [NSNumber numberWithInt:genderControl.selectedSegmentIndex];
-        
-        [viewState setObject:genderId forKey:@"member.gender"];
-        [viewState setObject:mobilePhoneField.text forKey:@"member.mobilePhone"];
-        [viewState setObject:deviceNameField.text forKey:@"device.name"];
-        
-        [ScMeta setUserDefault:viewState forKey:self.class.description];
-    }
-    
 	[super viewWillDisappear:animated];
+    
+    if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
+        [self syncViewState];
+    }
 }
 
 
@@ -267,7 +188,6 @@ static int const kPopUpButtonUseNew = 1;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
@@ -276,19 +196,52 @@ static int const kPopUpButtonUseNew = 1;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    return [self isDoneEditing];
-}
-
-
-#pragma mark - UIAlertViewDelegate implementation
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == kPopUpButtonUseBuiltIn) {
-        deviceNameField.text = [UIDevice currentDevice].name;
-    } else if (buttonIndex == kPopUpButtonUseNew) {
-        [deviceNameField becomeFirstResponder];
+    NSString *alertMessage = nil;
+    
+    if (![self isPhoneNumberGiven]) {
+        alertMessage = [ScStrings stringForKey:strNoPhoneNumberAlert];
     }
+    
+    BOOL shouldReturn = !alertMessage;
+    
+    if (shouldReturn) {
+        [self syncViewState];
+        
+        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+        
+        member.activeSince = [NSDate date];
+        member.didRegister = [NSNumber numberWithBool:YES];
+        
+        if ([member.residencies count] == 0) {
+            ScMemberResidency *residency = [homeScola addResident:member];
+            
+            residency.isActive = [NSNumber numberWithBool:YES];
+            residency.isAdmin = [NSNumber numberWithBool:![member isMinor]];
+        }
+        
+        if ([homeScola.messageBoards count] == 0) {
+            ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
+            
+            defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
+            defaultMessageBoard.scola = homeScola;
+        }
+        
+        ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
+        
+        device.type = [UIDevice currentDevice].model;
+        device.displayName = [UIDevice currentDevice].name;
+        device.member = member;
+        
+        [context saveAndPersist];
+        
+        [self performSegueWithIdentifier:kSegueToMainView sender:self];
+    } else {
+        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+        
+        [validationAlert show];
+    }
+    
+    return shouldReturn;
 }
 
 @end

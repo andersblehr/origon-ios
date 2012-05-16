@@ -185,11 +185,13 @@ static ScMeta *m = nil;
 {
     [(ScAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
     
+    authToken = nil;
+    
     if (isLoggedIn) {
+        authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:30]; // TODO: Two weeks
         authToken = self.authToken;
     } else {
         authTokenExpiryDate = nil;
-        authToken = nil;
         
         [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
         [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
@@ -249,8 +251,7 @@ static ScMeta *m = nil;
 
 - (NSString *)authToken
 {
-    if (!authToken) {
-        authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:30]; // TODO: Two weeks
+    if (!authToken && authTokenExpiryDate) {
         authToken = [self generateAuthToken:authTokenExpiryDate];
         
         [ScMeta setUserDefault:authToken forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];

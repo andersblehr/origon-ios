@@ -40,15 +40,17 @@ NSString * const strServerErrorAlert                 = @"strServerErrorAlert";
 NSString * const strInvalidNameAlert                 = @"strInvalidNameAlert";
 NSString * const strInvalidEmailAlert                = @"strInvalidEmailAlert";
 NSString * const strInvalidPasswordAlert             = @"strInvalidPasswordAlert";
+NSString * const strEmailSentAlertTitle              = @"strEmailSentAlertTitle";
+NSString * const strEmailSentAlert                   = @"strEmailSentAlert";
+NSString * const strEmailSentToInviteeAlertTitle     = @"strEmailSentToInviteeAlertTitle";
+NSString * const strEmailSentToInviteeAlert          = @"strEmailSentToInviteeAlert";
 NSString * const strPasswordsDoNotMatchAlert         = @"strPasswordsDoNotMatchAlert";
 NSString * const strRegistrationCodesDoNotMatchAlert = @"strRegistrationCodesDoNotMatchAlert";
-NSString * const strUserExistsMustLogIn              = @"strUserExistsMustLogIn";
+NSString * const strUserExistsMustLogInAlert         = @"strUserExistsMustLogInAlert";
 NSString * const strNotLoggedInAlert                 = @"strNotLoggedInAlert";
 NSString * const strNoAddressAlert                   = @"strNoAddressAlert";
-NSString * const strNoDeviceNameAlert                = @"strNoDeviceNameAlert";
-NSString * const strNotBornAlert                     = @"strNotBornAlert";
-NSString * const strUnrealisticAgeAlert              = @"strUnrealisticAgeAlert";
-NSString * const strNoMobilePhoneAlert               = @"strNoMobilePhoneAlert";
+NSString * const strInvalidDateOfBirthAlert          = @"strInvalidDateOfBirthAlert";
+NSString * const strNoPhoneNumberAlert               = @"strNoPhoneNumberAlert";
 
 // Button titles
 NSString * const strOK                               = @"strOK";
@@ -79,10 +81,6 @@ NSString * const strNewPasswordPrompt                = @"strNewPasswordPrompt";
 NSString * const strPasswordPrompt                   = @"strPasswordPrompt";
 NSString * const strPleaseWait                       = @"strPleaseWait";
 NSString * const strUserHelpCompleteRegistration     = @"strUserHelpCompleteRegistration";
-NSString * const strEmailSentPopUpTitle              = @"strEmailSentPopUpTitle";
-NSString * const strEmailSentPopUpMessage            = @"strEmailSentPopUpMessage";
-NSString * const strEmailSentToInviteePopUpTitle     = @"strEmailSentToInviteePopUpTitle";
-NSString * const strEmailSentToInviteePopUpMessage   = @"strEmailSentToInviteePopUpMessage";
 NSString * const strSeeYouLaterPopUpTitle            = @"strSeeYouLaterPopUpTitle";
 NSString * const strSeeYouLaterPopUpMessage          = @"strSeeYouLaterPopUpMessage";
 NSString * const strWelcomeBackPopUpTitle            = @"strWelcomeBackPopUpTitle";
@@ -109,8 +107,8 @@ NSString * const strMaleAdult                        = @"strMaleAdult";
 NSString * const strMaleMinor                        = @"strMaleMinor";
 NSString * const strMobilePhoneUserHelp              = @"strMobilePhoneUserHelp";
 NSString * const strMobilePhonePrompt                = @"strMobilePhonePrompt";
-NSString * const strDeviceNameUserHelp               = @"strDeviceNameUserHelp";
-NSString * const strDeviceNamePrompt                 = @"strDeviceNamePrompt";
+NSString * const strLandlineUserHelp                 = @"strLandlineUserHelp";
+NSString * const strLandlinePrompt                   = @"strLandlinePrompt";
 
 // Main view
 NSString * const strMyPlace                          = @"strMyPlace";

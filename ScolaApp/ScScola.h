@@ -2,7 +2,7 @@
 //  ScScola.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 06.04.12.
+//  Created by Anders Blehr on 16.05.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -18,7 +18,7 @@
 @property (nonatomic, retain) NSString * addressLine2;
 @property (nonatomic, retain) NSString * descriptionText;
 @property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSString * phoneNumber;
+@property (nonatomic, retain) NSString * landline;
 @property (nonatomic, retain) NSData * picture;
 @property (nonatomic, retain) NSString * postCodeAndCity;
 @property (nonatomic, retain) NSSet *documentRepositories;
@@ -28,9 +28,9 @@
 @property (nonatomic, retain) NSSet *memberToDoItems;
 @property (nonatomic, retain) NSSet *messageBoards;
 @property (nonatomic, retain) ScScola *parentScola;
+@property (nonatomic, retain) NSSet *residents;
 @property (nonatomic, retain) NSSet *subscolas;
 @property (nonatomic, retain) ScYearlySchedule *yearlySchedule;
-@property (nonatomic, retain) NSSet *residents;
 @end
 
 @interface ScScola (CoreDataGeneratedAccessors)
@@ -65,14 +65,14 @@
 - (void)addMessageBoards:(NSSet *)values;
 - (void)removeMessageBoards:(NSSet *)values;
 
-- (void)addSubscolasObject:(ScScola *)value;
-- (void)removeSubscolasObject:(ScScola *)value;
-- (void)addSubscolas:(NSSet *)values;
-- (void)removeSubscolas:(NSSet *)values;
-
 - (void)addResidentsObject:(ScMemberResidency *)value;
 - (void)removeResidentsObject:(ScMemberResidency *)value;
 - (void)addResidents:(NSSet *)values;
 - (void)removeResidents:(NSSet *)values;
+
+- (void)addSubscolasObject:(ScScola *)value;
+- (void)removeSubscolasObject:(ScScola *)value;
+- (void)addSubscolas:(NSSet *)values;
+- (void)removeSubscolas:(NSSet *)values;
 
 @end

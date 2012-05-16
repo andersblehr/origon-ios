@@ -10,20 +10,21 @@
 
 #import "ScServerConnectionDelegate.h"
 
-@class ScScola, ScMember;
+@class ScScola, ScMember, ScDevice;
 
 @interface ScRegistrationView2Controller : UIViewController <UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *genderUserHelpLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *genderControl;
-@property (weak, nonatomic) IBOutlet UILabel *mobilePhoneLabel;
+@property (weak, nonatomic) IBOutlet UILabel *mobilePhoneUserHelpLabel;
 @property (weak, nonatomic) IBOutlet UITextField *mobilePhoneField;
-@property (weak, nonatomic) IBOutlet UILabel *deviceNameUserHelpLabel;
-@property (weak, nonatomic) IBOutlet UITextField *deviceNameField;
+@property (weak, nonatomic) IBOutlet UILabel *landlineUserHelpLabel;
+@property (weak, nonatomic) IBOutlet UITextField *landlineField;
 
 @property (strong, nonatomic) ScScola *homeScola;
 @property (strong, nonatomic) ScMember *member;
+
 @property (nonatomic) BOOL isUserListed;
 
 @end

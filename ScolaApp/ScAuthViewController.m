@@ -28,8 +28,7 @@
 
 typedef enum {
     ScAuthAlertTagEmailSent,
-    ScAuthAlertTagRegistrationCodesDoNotMatch,
-    ScAuthAlertTagPasswordsDoNotMatch,
+    ScAuthAlertTagConfirmationFailed,
     ScAuthAlertTagWelcomeBack,
     ScAuthAlertTagNotLoggedIn,
 } ScAuthAlertTag;
@@ -56,12 +55,9 @@ static NSString * const kAuthInfoKeyHomeScolaId = @"homeScolaId";
 
 static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
 
-static int const kPopUpButtonLogIn = 0;
-static int const kPopUpButtonNewUser = 1;
 static int const kPopUpButtonLater = 0;
 static int const kPopUpButtonContinue = 1;
 static int const kPopUpButtonGoBack = 0;
-static int const kPopUpButtonTryAgain = 1;
 
 
 @implementation ScAuthViewController
@@ -383,7 +379,6 @@ static int const kPopUpButtonTryAgain = 1;
     BOOL isValid = [registrationCodeAsEntered isEqualToString:registrationCodeAsSent];
 
     if (!isValid) {
-        nameOrEmailOrRegistrationCodeField.text = @"";
         [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
     }
     
@@ -396,6 +391,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)loginUser
 {
     [ScMeta m].userId = emailAsEntered;
+    
     NSString *password = emailOrPasswordField.text;
     
     serverConnection = [[ScServerConnection alloc] init];
@@ -409,6 +405,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)registerUser
 {
     [ScMeta m].userId = emailAsEntered;
+    
     NSString *password = passwordField.text;
     
     serverConnection = [[ScServerConnection alloc] init];
@@ -423,6 +420,8 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)confirmUser
 {
     [ScMeta m].userId = emailAsEntered;
+    [ScMeta m].isUserLoggedIn = YES;
+    
     NSString *password = emailOrPasswordField.text;
     
     serverConnection = [[ScServerConnection alloc] init];
@@ -501,30 +500,27 @@ static int const kPopUpButtonTryAgain = 1;
         NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:authInfo];
         [ScMeta setUserDefault:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
         
-        NSString *popUpTitle = nil;
-        NSString *popUpMessage = nil;
+        NSString *alertTitle = nil;
+        NSString *alertMessage = nil;
         
         if (isUserListed) {
             [ScMeta m].homeScolaId = [authInfo objectForKey:kAuthInfoKeyHomeScolaId];
             
-            popUpTitle = [ScStrings stringForKey:strEmailSentToInviteePopUpTitle];
-            popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentToInviteePopUpMessage], [authInfo objectForKey:kAuthInfoKeyUserId]];
+            alertTitle = [ScStrings stringForKey:strEmailSentToInviteeAlertTitle];
+            alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentToInviteeAlert], emailAsEntered];
         } else {
             [ScMeta m].homeScolaId = [ScUUIDGenerator generateUUID];
             
-            popUpTitle = [ScStrings stringForKey:strEmailSentPopUpTitle];
-            popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentPopUpMessage], emailAsEntered];
+            alertTitle = [ScStrings stringForKey:strEmailSentAlertTitle];
+            alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentAlert], emailAsEntered];
         }
         
-        NSString *laterButtonTitle = [ScStrings stringForKey:strLater];
-        NSString *continueButtonTitle = [ScStrings stringForKey:strHaveAccess];
-        
-        UIAlertView *emailSentAlert = [[UIAlertView alloc] initWithTitle:popUpTitle message:popUpMessage delegate:self cancelButtonTitle:laterButtonTitle otherButtonTitles:continueButtonTitle, nil];
+        UIAlertView *emailSentAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strLater] otherButtonTitles:[ScStrings stringForKey:strHaveAccess], nil];
         emailSentAlert.tag = ScAuthAlertTagEmailSent;
         
         [emailSentAlert show];
     } else {
-        UIAlertView *userExistsAlert = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strUserExistsMustLogIn] delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+        UIAlertView *userExistsAlert = [[UIAlertView alloc] initWithTitle:nil message:[ScStrings stringForKey:strUserExistsMustLogInAlert] delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
         userExistsAlert.tag = ScAuthAlertTagNotLoggedIn;
         
         [userExistsAlert show];
@@ -549,9 +545,6 @@ static int const kPopUpButtonTryAgain = 1;
     } else {
         [darkLinenView addGradientLayer];
         [darkLinenView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignCurrentFirstResponder)]];
-        
-        //[self setUpTypewriterAudioForSplashSequence]; // TODO: Comment back in!
-        scolaSplashLabel.text = @"";
         
         isEditingAllowed = YES;
         nameOrEmailOrRegistrationCodeField.delegate = self;
@@ -584,6 +577,8 @@ static int const kPopUpButtonTryAgain = 1;
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
     [self navigationController].navigationBarHidden = YES;
     
+    scolaSplashLabel.text = @"";
+    
     NSData *authInfoArchive = [ScMeta userDefaultForKey:kUserDefaultsKeyAuthInfo];
     
     if (authInfoArchive) {
@@ -615,13 +610,9 @@ static int const kPopUpButtonTryAgain = 1;
     }
     
     if (authPhase == ScAuthPhaseConfirmation) {
-        NSString *email = [authInfo objectForKey:kAuthInfoKeyUserId];
-        NSString *popUpTitle = [ScStrings stringForKey:strWelcomeBackPopUpTitle];
-        NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strWelcomeBackPopUpMessage], email];
-        NSString *continueButtonTitle = [ScStrings stringForKey:strHaveCode];
-        NSString *goBackButtonTitle = [ScStrings stringForKey:strGoBack];
+        NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strWelcomeBackPopUpMessage], [authInfo objectForKey:kAuthInfoKeyUserId]];
         
-        UIAlertView *welcomeBackPopUp = [[UIAlertView alloc] initWithTitle:popUpTitle message:popUpMessage delegate:self cancelButtonTitle:goBackButtonTitle otherButtonTitles:continueButtonTitle, nil];
+        UIAlertView *welcomeBackPopUp = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strWelcomeBackPopUpTitle] message:popUpMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strGoBack] otherButtonTitles:[ScStrings stringForKey:strHaveCode], nil];
         welcomeBackPopUp.tag = ScAuthAlertTagWelcomeBack;
         
         [welcomeBackPopUp show];
@@ -710,7 +701,6 @@ static int const kPopUpButtonTryAgain = 1;
 {
     NSString *alertMessage = nil;
     NSString *cancelButtonTitle = [ScStrings stringForKey:strOK];
-    ScAuthAlertTag alertTag;
     
     [self textFieldShouldEndEditing:textField];
     
@@ -738,10 +728,8 @@ static int const kPopUpButtonTryAgain = 1;
         case ScAuthPhaseConfirmation:
             if (![self isRegistrationCodeValid]) {
                 alertMessage = [ScStrings stringForKey:strRegistrationCodesDoNotMatchAlert];
-                alertTag = ScAuthAlertTagRegistrationCodesDoNotMatch;
             } else if (![self isPasswordValid]) {
                 alertMessage = [ScStrings stringForKey:strPasswordsDoNotMatchAlert];
-                alertTag = ScAuthAlertTagPasswordsDoNotMatch;
             }
             
             cancelButtonTitle = [ScStrings stringForKey:strGoBack];
@@ -769,8 +757,7 @@ static int const kPopUpButtonTryAgain = 1;
         
         if (authPhase == ScAuthPhaseConfirmation) {
             [validationAlert addButtonWithTitle:[ScStrings stringForKey:strTryAgain]];
-            
-            validationAlert.tag = alertTag;
+            validationAlert.tag = ScAuthAlertTagConfirmationFailed;
             validationAlert.delegate = self;
         }
         
@@ -792,25 +779,15 @@ static int const kPopUpButtonTryAgain = 1;
             if (buttonIndex == kPopUpButtonContinue) {
                 [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
             } else if (buttonIndex == kPopUpButtonLater) {
-                NSString *popUpTitle = [ScStrings stringForKey:strSeeYouLaterPopUpTitle];
-                NSString *popUpMessage = [ScStrings stringForKey:strSeeYouLaterPopUpMessage];
+                UIAlertView *seeYouLaterPopUp = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strSeeYouLaterPopUpTitle] message:[ScStrings stringForKey:strSeeYouLaterPopUpMessage] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
                 
-                UIAlertView *seeYouLaterPopUp = [[UIAlertView alloc] initWithTitle:popUpTitle message:popUpMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
                 [seeYouLaterPopUp show];
             }
             
             break;
             
-        case ScAuthAlertTagRegistrationCodesDoNotMatch:
-        case ScAuthAlertTagPasswordsDoNotMatch:
-            if (buttonIndex == kPopUpButtonTryAgain) {
-                if (alertView.tag == ScAuthAlertTagRegistrationCodesDoNotMatch) {
-                    [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
-                } else if (alertView.tag == ScAuthAlertTagPasswordsDoNotMatch) {
-                    emailOrPasswordField.text = @"";
-                    [emailOrPasswordField becomeFirstResponder];
-                }
-            } else if (buttonIndex == kPopUpButtonGoBack) {
+        case ScAuthAlertTagConfirmationFailed:
+            if (buttonIndex == kPopUpButtonGoBack) {
                 [self setUpForUserRegistration];
                 [passwordField becomeFirstResponder];
             }
@@ -861,7 +838,7 @@ static int const kPopUpButtonTryAgain = 1;
         ((authPhase == ScAuthPhaseConfirmation) && (status == kHTTPStatusCodeNoContent))) {
         [self userDidLogIn];
     } else if (status >= kHTTPStatusCodeErrorRangeStart) {
-        [ScMeta m].userId = nil;
+        [ScMeta m].isUserLoggedIn = NO;
         
         if (status == kHTTPStatusCodeUnauthorized) {
             NSString *alertMessage = [ScStrings stringForKey:strNotLoggedInAlert];
@@ -892,7 +869,7 @@ static int const kPopUpButtonTryAgain = 1;
 - (void)didFailWithError:(NSError *)error
 {
     [self indicatePendingServerSession:NO];
-    [ScMeta m].userId = nil;
+    [ScMeta m].isUserLoggedIn = NO;
     
     [ScServerConnection showAlertForError:error];
 }

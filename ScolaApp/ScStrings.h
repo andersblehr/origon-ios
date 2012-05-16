@@ -32,15 +32,17 @@ extern NSString * const strServerErrorAlert;
 extern NSString * const strInvalidNameAlert;
 extern NSString * const strInvalidEmailAlert;
 extern NSString * const strInvalidPasswordAlert;
+extern NSString * const strEmailSentAlertTitle;
+extern NSString * const strEmailSentAlert;
+extern NSString * const strEmailSentToInviteeAlertTitle;
+extern NSString * const strEmailSentToInviteeAlert;
 extern NSString * const strPasswordsDoNotMatchAlert;
 extern NSString * const strRegistrationCodesDoNotMatchAlert;
-extern NSString * const strUserExistsMustLogIn;
+extern NSString * const strUserExistsMustLogInAlert;
 extern NSString * const strNotLoggedInAlert;
 extern NSString * const strNoAddressAlert;
-extern NSString * const strNoDeviceNameAlert;
-extern NSString * const strNotBornAlert;
-extern NSString * const strUnrealisticAgeAlert;
-extern NSString * const strNoMobilePhoneAlert;
+extern NSString * const strInvalidDateOfBirthAlert;
+extern NSString * const strNoPhoneNumberAlert;
 
 // Button titles
 extern NSString * const strOK;
@@ -70,10 +72,6 @@ extern NSString * const strNewPasswordPrompt;
 extern NSString * const strPasswordPrompt;
 extern NSString * const strPleaseWait;
 extern NSString * const strUserHelpCompleteRegistration;
-extern NSString * const strEmailSentPopUpTitle;
-extern NSString * const strEmailSentPopUpMessage;
-extern NSString * const strEmailSentToInviteePopUpTitle;
-extern NSString * const strEmailSentToInviteePopUpMessage;
 extern NSString * const strSeeYouLaterPopUpTitle;
 extern NSString * const strSeeYouLaterPopUpMessage;
 extern NSString * const strWelcomeBackPopUpTitle;
@@ -100,8 +98,8 @@ extern NSString * const strMaleAdult;
 extern NSString * const strMaleMinor;
 extern NSString * const strMobilePhoneUserHelp;
 extern NSString * const strMobilePhonePrompt;
-extern NSString * const strDeviceNameUserHelp;
-extern NSString * const strDeviceNamePrompt;
+extern NSString * const strLandlineUserHelp;
+extern NSString * const strLandlinePrompt;
 
 // Generic Scola strings
 extern NSString * const strMyPlace;
