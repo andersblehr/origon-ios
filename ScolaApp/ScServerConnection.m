@@ -23,14 +23,30 @@
 
 @implementation ScServerConnection
 
+NSString * const kHTTPMethodGET = @"GET";
+NSString * const kHTTPMethodPOST = @"POST";
+NSString * const kHTTPMethodDELETE = @"DELETE";
+
+NSString * const kURLParameterName = @"name";
+NSString * const kURLParameterScolaId = @"scola";
+NSString * const kURLParameterAuthToken = @"token";
+NSString * const kURLParameterLastFetchDate = @"since";
+
+NSInteger const kHTTPStatusCodeOK = 200;
+NSInteger const kHTTPStatusCodeCreated = 201;
+NSInteger const kHTTPStatusCodeNoContent = 204;
+NSInteger const kHTTPStatusCodeNotModified = 304;
+NSInteger const kHTTPStatusCodeErrorRangeStart = 400;
+NSInteger const kHTTPStatusCodeBadRequest = 400;
+NSInteger const kHTTPStatusCodeUnauthorized = 401;
+NSInteger const kHTTPStatusCodeForbidden = 403;
+NSInteger const kHTTPStatusCodeNotFound = 404;
+NSInteger const kHTTPStatusCodeInternalServerError = 500;
+
 //static NSString * const kScolaDevServer = @"localhost:8888";
 static NSString * const kScolaDevServer = @"enceladus.local:8888";
 //static NSString * const kScolaDevServer = @"ganymede.local:8888";
 static NSString * const kScolaProdServer = @"scolaapp.appspot.com";
-
-static NSString * const kHTTPMethodGET = @"GET";
-static NSString * const kHTTPMethodPOST = @"POST";
-static NSString * const kHTTPMethodDELETE = @"DELETE";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";
 static NSString * const kHTTPHeaderAcceptCharset = @"Accept-Charset";
@@ -56,24 +72,6 @@ static NSString * const kRESTRouteModelPersist = @"persist";
 static NSString * const kURLParameterDeviceId = @"duid";
 static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
-
-NSString * const kURLParameterName = @"name";
-NSString * const kURLParameterScolaId = @"scola";
-NSString * const kURLParameterAuthToken = @"token";
-NSString * const kURLParameterLastFetchDate = @"since";
-
-NSInteger const kHTTPStatusCodeOK = 200;
-NSInteger const kHTTPStatusCodeCreated = 201;
-NSInteger const kHTTPStatusCodeNoContent = 204;
-NSInteger const kHTTPStatusCodeNotModified = 304;
-NSInteger const kHTTPStatusCodeErrorRangeStart = 400;
-NSInteger const kHTTPStatusCodeBadRequest = 400;
-NSInteger const kHTTPStatusCodeUnauthorized = 401;
-NSInteger const kHTTPStatusCodeForbidden = 403;
-NSInteger const kHTTPStatusCodeNotFound = 404;
-NSInteger const kHTTPStatusCodeInternalServerError = 500;
-
-@synthesize HTTPStatusCode;
 
 
 #pragma mark - Auxiliary methods
@@ -113,29 +111,29 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 - (void)performHTTPMethod:(NSString *)HTTPMethod withPayload:(NSArray *)payload usingDelegate:(id)delegate
 {
+    connectionDelegate = delegate;
+    
+    [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    [self setValue:[ScMeta m].deviceId forURLParameter:kURLParameterDeviceId];
+    [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
+    [self setValue:[ScMeta m].appVersion forURLParameter:kURLParameterVersion];
+    
+    URLRequest.HTTPMethod = HTTPMethod;
+    URLRequest.URL = [[[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute] URLByAppendingURLParameters:URLParameters];
+    
+    [self setValue:kMediaTypeJSONUTF8 forHTTPHeaderField:kHTTPHeaderContentType];
+    [self setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
+    [self setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
+    
+    if (payload) {
+        URLRequest.HTTPBody = [NSJSONSerialization serialiseToJSON:payload];
+    }
+    
+    if ([connectionDelegate respondsToSelector:@selector(willSendRequest:)]) {
+        [connectionDelegate willSendRequest:URLRequest];
+    }
+        
     if ([ScMeta m].isInternetConnectionAvailable) {
-        connectionDelegate = delegate;
-        
-        [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
-        [self setValue:[ScMeta m].deviceId forURLParameter:kURLParameterDeviceId];
-        [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
-        [self setValue:[ScMeta m].appVersion forURLParameter:kURLParameterVersion];
-        
-        URLRequest.HTTPMethod = HTTPMethod;
-        URLRequest.URL = [[[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute] URLByAppendingURLParameters:URLParameters];
-        
-        [self setValue:kMediaTypeJSONUTF8 forHTTPHeaderField:kHTTPHeaderContentType];
-        [self setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
-        [self setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
-        
-        if (payload) {
-            URLRequest.HTTPBody = [NSJSONSerialization serialiseToJSON:payload];
-        }
-        
-        if ([connectionDelegate respondsToSelector:@selector(willSendRequest:)]) {
-            [connectionDelegate willSendRequest:URLRequest];
-        }
-        
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
         
@@ -144,7 +142,7 @@ NSInteger const kHTTPStatusCodeInternalServerError = 500;
             [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         }
     } else {
-        [delegate didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:[ScStrings stringForKey:strNoInternetError] forKey:NSLocalizedDescriptionKey]]];
+        [self connection:nil didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:[ScStrings stringForKey:strNoInternetError] forKey:NSLocalizedDescriptionKey]]];
     }
 }
 

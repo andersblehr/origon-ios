@@ -23,6 +23,8 @@
     NSMutableSet *scheduledEntities;
     NSMutableDictionary *importedEntities;
     NSMutableDictionary *importedEntityRefs;
+    
+    NSString *delegateHTTPMethod;
 }
 
 extern NSString * const kBundleId;

@@ -494,9 +494,9 @@ static int const kPopUpButtonGoBack = 0;
     authInfo = data;
     
     isUserListed = [[authInfo objectForKey:kAuthInfoKeyIsListed] boolValue];
-    BOOL userDidRegister = [[authInfo objectForKey:kAuthInfoKeyIsRegistered] boolValue];
+    BOOL isUserRegistered = [[authInfo objectForKey:kAuthInfoKeyIsRegistered] boolValue];
 
-    if (!userDidRegister) {
+    if (!isUserRegistered) {
         NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:authInfo];
         [ScMeta setUserDefault:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
         

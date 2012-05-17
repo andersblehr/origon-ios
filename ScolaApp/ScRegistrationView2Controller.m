@@ -119,20 +119,30 @@ static int const kPopUpButtonUseNew = 1;
         femaleLabel = [ScStrings stringForKey:strFemaleMinor];
         maleLabel = [ScStrings stringForKey:strMaleMinor];
     } else {
-        femaleLabel = [ScStrings stringForKey:strFemaleAdult];
-        maleLabel = [ScStrings stringForKey:strMaleAdult];
+        femaleLabel = [ScStrings stringForKey:strFemale];
+        maleLabel = [ScStrings stringForKey:strMale];
     }
 
     [genderControl setTitle:femaleLabel forSegmentAtIndex:kGenderSegmentFemale];
     [genderControl setTitle:maleLabel forSegmentAtIndex:kGenderSegmentMale];
     genderUserHelpLabel.text = [NSString stringWithFormat:[ScStrings stringForKey:strGenderUserHelp], [femaleLabel lowercaseString], [maleLabel lowercaseString]];
     
-    mobilePhoneUserHelpLabel.text = [ScStrings stringForKey:strMobilePhoneUserHelp];
+    if (isUserListed && (member.mobilePhone.length > 0)) {
+        mobilePhoneUserHelpLabel.text = [ScStrings stringForKey:strMobilePhoneListedUserHelp];
+    } else {
+        mobilePhoneUserHelpLabel.text = [ScStrings stringForKey:strMobilePhoneUserHelp];
+    }
+    
+    if (isUserListed && (homeScola.landline.length > 0)) {
+        landlineUserHelpLabel.text = [ScStrings stringForKey:strLandlineListedUserHelp];
+    } else {
+        landlineUserHelpLabel.text = [ScStrings stringForKey:strLandlineUserHelp];
+    }
+    
     mobilePhoneField.delegate = self;
     mobilePhoneField.placeholder = [ScStrings stringForKey:strMobilePhonePrompt];
     mobilePhoneField.keyboardType = UIKeyboardTypeNumberPad;
     
-    landlineUserHelpLabel.text = [ScStrings stringForKey:strLandlineUserHelp];
     landlineField.delegate = self;
     landlineField.placeholder = [ScStrings stringForKey:strLandlinePrompt];
     landlineField.keyboardType = UIKeyboardTypeNumberPad;
@@ -226,7 +236,11 @@ static int const kPopUpButtonUseNew = 1;
             defaultMessageBoard.scola = homeScola;
         }
         
-        ScDevice *device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
+        ScDevice *device = [context fetchEntityWithId:[ScMeta m].deviceId];
+        
+        if (!device) {
+            device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
+        }
         
         device.type = [UIDevice currentDevice].model;
         device.displayName = [UIDevice currentDevice].name;

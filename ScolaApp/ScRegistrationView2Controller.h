@@ -10,7 +10,7 @@
 
 #import "ScServerConnectionDelegate.h"
 
-@class ScScola, ScMember, ScDevice;
+@class ScScola, ScMember;
 
 @interface ScRegistrationView2Controller : UIViewController <UITextFieldDelegate>
 

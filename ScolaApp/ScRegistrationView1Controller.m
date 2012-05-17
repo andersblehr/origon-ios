@@ -128,8 +128,17 @@ static int const kMaximumRealisticAge = 110;
     self.navigationItem.hidesBackButton = YES;
     self.navigationItem.rightBarButtonItem = nextButton;
     
-    addressUserHelpLabel.text = [ScStrings stringForKey:strProvideAddressUserHelp];
-    dateOfBirthUserHelpLabel.text = [ScStrings stringForKey:strDateOfBirthUserHelp];
+    if (isUserListed && ((homeScola.addressLine1.length > 0) || (homeScola.addressLine2.length > 0) || (homeScola.postCodeAndCity.length > 0))) {
+        addressUserHelpLabel.text = [ScStrings stringForKey:strAddressListedUserHelp];
+    } else {
+        addressUserHelpLabel.text = [ScStrings stringForKey:strAddressUserHelp];
+    }
+
+    if (isUserListed && member.dateOfBirth) {
+        dateOfBirthUserHelpLabel.text = [ScStrings stringForKey:strDateOfBirthListedUserHelp];
+    } else {
+        dateOfBirthUserHelpLabel.text = [ScStrings stringForKey:strDateOfBirthUserHelp];
+    }
     
     addressLine1Field.delegate = self;
     addressLine2Field.delegate = self;

@@ -185,13 +185,11 @@ static ScMeta *m = nil;
 {
     [(ScAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
     
-    authToken = nil;
-    
     if (isLoggedIn) {
-        authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:30]; // TODO: Two weeks
         authToken = self.authToken;
     } else {
         authTokenExpiryDate = nil;
+        authToken = nil;
         
         [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
         [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
@@ -199,9 +197,32 @@ static ScMeta *m = nil;
 }
 
 
+- (BOOL)isUserLoggedIn
+{
+    BOOL isAuthTokenValid = NO;
+    
+    if (authToken && authTokenExpiryDate) {
+        NSDate *now = [NSDate date];
+        
+        if ([now compare:authTokenExpiryDate] == NSOrderedAscending) {
+            NSString *expectedToken = [self generateAuthToken:authTokenExpiryDate];
+            isAuthTokenValid = [authToken isEqualToString:expectedToken];
+        }
+        
+        if (!isAuthTokenValid) {
+            self.isUserLoggedIn = NO;
+        }
+    }
+    
+    return isAuthTokenValid;
+}
+
+
 - (void)setUserId:(NSString *)userIdentity
 {
     userId = userIdentity;
+    
+    [ScMeta removeUserDefaultForKey:kUserDefaultsKeyUserId];
     
     if (userId) {
         NSString *storedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
@@ -232,26 +253,10 @@ static ScMeta *m = nil;
 }
 
 
-- (BOOL)isUserLoggedIn
-{
-    BOOL isAuthTokenValid = NO;
-    
-    if (authToken && authTokenExpiryDate) {
-        NSDate *now = [NSDate date];
-        
-        if ([now compare:authTokenExpiryDate] == NSOrderedAscending) {
-            NSString *expectedToken = [self generateAuthToken:authTokenExpiryDate];
-            isAuthTokenValid = [authToken isEqualToString:expectedToken];
-        }
-    }
-    
-    return isAuthTokenValid;
-}
-
-
 - (NSString *)authToken
 {
-    if (!authToken && authTokenExpiryDate) {
+    if (!authToken) {
+        authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:30]; // TODO: Two weeks
         authToken = [self generateAuthToken:authTokenExpiryDate];
         
         [ScMeta setUserDefault:authToken forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
@@ -348,6 +353,18 @@ static ScMeta *m = nil;
 
 #pragma mark - ScServerConnectionDelegate implementation
 
+- (BOOL)doUseAutomaticAlerts
+{
+    return NO;
+}
+
+
+- (void)willSendRequest:(NSURLRequest *)request
+{
+    delegateHTTPMethod = request.HTTPMethod;
+}
+
+
 - (void)didReceiveResponse:(NSHTTPURLResponse *)response
 {
     if (response.statusCode == kHTTPStatusCodeCreated) {
@@ -374,7 +391,11 @@ static ScMeta *m = nil;
 
 - (void)didFailWithError:(NSError *)error
 {
-    ScLogError(@"Error persisting entities (entities: %@)", scheduledEntities);
+    if ([delegateHTTPMethod isEqualToString:kHTTPMethodGET]) {
+        ScLogError(@"Error fetching new/updated entities");
+    } else if ([delegateHTTPMethod isEqualToString:kHTTPMethodPOST]) {
+        ScLogError(@"Error persisting entities (entities: %@)", scheduledEntities);
+    }
 }
 
 @end

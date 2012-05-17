@@ -81,24 +81,27 @@ extern NSString * const strRepeatPasswordPrompt;
 extern NSString * const strScolaDescription;
 
 // Registration view 1
-extern NSString * const strProvideAddressUserHelp;
-extern NSString * const strVerifyAddressUserHelp;
+extern NSString * const strAddressUserHelp;
+extern NSString * const strAddressListedUserHelp;
 extern NSString * const strAddressLine1Prompt;
 extern NSString * const strAddressLine2Prompt;
 extern NSString * const strPostCodeAndCityPrompt;
 extern NSString * const strDateOfBirthUserHelp;
+extern NSString * const strDateOfBirthListedUserHelp;
 extern NSString * const strDateOfBirthPrompt;
 extern NSString * const strDateOfBirthClickHerePrompt;
 
 // Registration view 2
-extern NSString * const strGenderUserHelp;
-extern NSString * const strFemaleAdult;
+extern NSString * const strFemale;
 extern NSString * const strFemaleMinor;
-extern NSString * const strMaleAdult;
+extern NSString * const strMale;
 extern NSString * const strMaleMinor;
+extern NSString * const strGenderUserHelp;
 extern NSString * const strMobilePhoneUserHelp;
+extern NSString * const strMobilePhoneListedUserHelp;
 extern NSString * const strMobilePhonePrompt;
 extern NSString * const strLandlineUserHelp;
+extern NSString * const strLandlineListedUserHelp;
 extern NSString * const strLandlinePrompt;
 
 // Generic Scola strings
