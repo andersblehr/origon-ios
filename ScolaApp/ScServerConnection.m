@@ -113,7 +113,10 @@ static NSString * const kURLParameterVersion = @"version";
 {
     connectionDelegate = delegate;
     
-    [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    if (authPhase != ScAuthPhaseRegistration) {
+        [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    }
+
     [self setValue:[ScMeta m].deviceId forURLParameter:kURLParameterDeviceId];
     [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
     [self setValue:[ScMeta m].appVersion forURLParameter:kURLParameterVersion];

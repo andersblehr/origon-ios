@@ -19,8 +19,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *dateOfBirthField;
 @property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirthPicker;
 
-@property (strong, nonatomic) ScMember *member;
-@property (strong, nonatomic) ScScola *homeScola;
+@property (weak, nonatomic) ScMember *member;
+@property (weak, nonatomic) ScScola *homeScola;
 
 @property (nonatomic) BOOL isUserListed;
 

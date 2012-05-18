@@ -22,8 +22,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *landlineUserHelpLabel;
 @property (weak, nonatomic) IBOutlet UITextField *landlineField;
 
-@property (strong, nonatomic) ScScola *homeScola;
-@property (strong, nonatomic) ScMember *member;
+@property (weak, nonatomic) ScScola *homeScola;
+@property (weak, nonatomic) ScMember *member;
 
 @property (nonatomic) BOOL isUserListed;
 

@@ -25,7 +25,6 @@
 		5C008132152F264F00AF9448 /* ScToDoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C008131152F264F00AF9448 /* ScToDoItem.m */; };
 		5C008135152F264F00AF9448 /* ScWeeklyScheduleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C008134152F264F00AF9448 /* ScWeeklyScheduleItem.m */; };
 		5C008138152F264F00AF9448 /* ScDocumentElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C008137152F264F00AF9448 /* ScDocumentElement.m */; };
-		5C00813B152F265000AF9448 /* ScMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C00813A152F265000AF9448 /* ScMember.m */; };
 		5C00813E152F265000AF9448 /* ScScheduledAbsence.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C00813D152F265000AF9448 /* ScScheduledAbsence.m */; };
 		5C153EEF14CC668F003A6B61 /* glyphicons_006_user_add_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EED14CC668F003A6B61 /* glyphicons_006_user_add_white.png */; };
 		5C153EF014CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EEE14CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png */; };
@@ -64,6 +63,7 @@
 		5C62A00914C627D1001DA01F /* ScScheduleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C62A00814C627D1001DA01F /* ScScheduleViewController.m */; };
 		5C62A00E14C762D7001DA01F /* 53-house.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00C14C762D6001DA01F /* 53-house.png */; };
 		5C62A00F14C762D7001DA01F /* 53-house@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00D14C762D7001DA01F /* 53-house@2x.png */; };
+		5C68C3C415666C8A00BBA8BE /* ScMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C68C3C315666C8A00BBA8BE /* ScMember.m */; };
 		5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE011482877D001D90C6 /* Localizable.strings */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C83DF81153F59B800BB0B29 /* ScScola+ScScolaExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF80153F59B800BB0B29 /* ScScola+ScScolaExtensions.m */; };
@@ -143,8 +143,6 @@
 		5C008134152F264F00AF9448 /* ScWeeklyScheduleItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScWeeklyScheduleItem.m; sourceTree = "<group>"; };
 		5C008136152F264F00AF9448 /* ScDocumentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDocumentElement.h; sourceTree = "<group>"; };
 		5C008137152F264F00AF9448 /* ScDocumentElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDocumentElement.m; sourceTree = "<group>"; };
-		5C008139152F265000AF9448 /* ScMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMember.h; sourceTree = "<group>"; };
-		5C00813A152F265000AF9448 /* ScMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMember.m; sourceTree = "<group>"; };
 		5C00813C152F265000AF9448 /* ScScheduledAbsence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduledAbsence.h; sourceTree = "<group>"; };
 		5C00813D152F265000AF9448 /* ScScheduledAbsence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduledAbsence.m; sourceTree = "<group>"; };
 		5C153EED14CC668F003A6B61 /* glyphicons_006_user_add_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_006_user_add_white.png; sourceTree = "<group>"; };
@@ -200,6 +198,8 @@
 		5C62A00814C627D1001DA01F /* ScScheduleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduleViewController.m; sourceTree = "<group>"; };
 		5C62A00C14C762D6001DA01F /* 53-house.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "53-house.png"; sourceTree = "<group>"; };
 		5C62A00D14C762D7001DA01F /* 53-house@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "53-house@2x.png"; sourceTree = "<group>"; };
+		5C68C3C215666C8A00BBA8BE /* ScMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMember.h; sourceTree = "<group>"; };
+		5C68C3C315666C8A00BBA8BE /* ScMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMember.m; sourceTree = "<group>"; };
 		5C71DE001482877D001D90C6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE03148287DE001D90C6 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
@@ -329,8 +329,8 @@
 				5C00812B152F264F00AF9448 /* ScEventScolaInvitation.m */,
 				5C0080FD152F264C00AF9448 /* ScExternalDocument.h */,
 				5C0080FE152F264C00AF9448 /* ScExternalDocument.m */,
-				5C008139152F265000AF9448 /* ScMember.h */,
-				5C00813A152F265000AF9448 /* ScMember.m */,
+				5C68C3C215666C8A00BBA8BE /* ScMember.h */,
+				5C68C3C315666C8A00BBA8BE /* ScMember.m */,
 				5C008100152F264C00AF9448 /* ScMemberResidency.h */,
 				5C008101152F264C00AF9448 /* ScMemberResidency.m */,
 				5C008103152F264D00AF9448 /* ScMembership.h */,
@@ -726,7 +726,6 @@
 				5C008132152F264F00AF9448 /* ScToDoItem.m in Sources */,
 				5C008135152F264F00AF9448 /* ScWeeklyScheduleItem.m in Sources */,
 				5C008138152F264F00AF9448 /* ScDocumentElement.m in Sources */,
-				5C00813B152F265000AF9448 /* ScMember.m in Sources */,
 				5C00813E152F265000AF9448 /* ScScheduledAbsence.m in Sources */,
 				5C96F1C9153378FC00D2D847 /* ScSharedEntityRef.m in Sources */,
 				5C83DF81153F59B800BB0B29 /* ScScola+ScScolaExtensions.m in Sources */,
@@ -734,6 +733,7 @@
 				5C83DF8A154FE38200BB0B29 /* ScCachedEntity.m in Sources */,
 				5C33747F1563F7BC00DEF67D /* ScScola.m in Sources */,
 				5C3374831563FBE200DEF67D /* ScMember+ScMemberExtensions.m in Sources */,
+				5C68C3C415666C8A00BBA8BE /* ScMember.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

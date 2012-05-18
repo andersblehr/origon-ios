@@ -2,7 +2,7 @@
 //  ScMember.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 06.04.12.
+//  Created by Anders Blehr on 18.05.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -18,7 +18,6 @@
 @property (nonatomic, retain) NSDate * dateOfBirth;
 @property (nonatomic, retain) NSNumber * didRegister;
 @property (nonatomic, retain) NSString * gender;
-@property (nonatomic, retain) NSNumber * isMinor;
 @property (nonatomic, retain) NSString * mobilePhone;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * passwordHash;
@@ -29,9 +28,9 @@
 @property (nonatomic, retain) NSSet *eventInvitations;
 @property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) NSSet *messageItems;
+@property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @property (nonatomic, retain) NSSet *toDoAssignments;
-@property (nonatomic, retain) NSSet *residencies;
 @end
 
 @interface ScMember (CoreDataGeneratedAccessors)
@@ -66,6 +65,11 @@
 - (void)addMessageItems:(NSSet *)values;
 - (void)removeMessageItems:(NSSet *)values;
 
+- (void)addResidenciesObject:(ScMemberResidency *)value;
+- (void)removeResidenciesObject:(ScMemberResidency *)value;
+- (void)addResidencies:(NSSet *)values;
+- (void)removeResidencies:(NSSet *)values;
+
 - (void)addScheduledAbsencesObject:(ScScheduledAbsence *)value;
 - (void)removeScheduledAbsencesObject:(ScScheduledAbsence *)value;
 - (void)addScheduledAbsences:(NSSet *)values;
@@ -75,10 +79,5 @@
 - (void)removeToDoAssignmentsObject:(ScToDoAssignment *)value;
 - (void)addToDoAssignments:(NSSet *)values;
 - (void)removeToDoAssignments:(NSSet *)values;
-
-- (void)addResidenciesObject:(ScMemberResidency *)value;
-- (void)removeResidenciesObject:(ScMemberResidency *)value;
-- (void)addResidencies:(NSSet *)values;
-- (void)removeResidencies:(NSSet *)values;
 
 @end

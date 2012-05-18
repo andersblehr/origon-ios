@@ -189,10 +189,8 @@ static ScMeta *m = nil;
         authToken = self.authToken;
     } else {
         authTokenExpiryDate = nil;
-        authToken = nil;
         
         [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
-        [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
     }
 }
 
@@ -222,17 +220,18 @@ static ScMeta *m = nil;
 {
     userId = userIdentity;
     
-    [ScMeta removeUserDefaultForKey:kUserDefaultsKeyUserId];
-    
     if (userId) {
+        [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyUserId];
+        
         NSString *storedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
         
         if (storedDeviceId) {
             deviceId = storedDeviceId;
+        } else {
+            [ScMeta setUserDefault:deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
         }
-        
-        [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyUserId];    
-        [ScMeta setUserDefault:deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
+    } else {
+        [ScMeta removeUserDefaultForKey:kUserDefaultsKeyUserId];
     }
 }
 
@@ -255,12 +254,12 @@ static ScMeta *m = nil;
 
 - (NSString *)authToken
 {
-    if (!authToken) {
+    if (!authTokenExpiryDate) {
         authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:30]; // TODO: Two weeks
         authToken = [self generateAuthToken:authTokenExpiryDate];
         
-        [ScMeta setUserDefault:authToken forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
         [ScMeta setUserDefault:authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
+        [ScMeta setUserDefault:authToken forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
     }
     
     return authToken;

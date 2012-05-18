@@ -74,7 +74,6 @@
         <attribute name="dateOfBirth" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="didRegister" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="gender" attributeType="String" syncable="YES"/>
-        <attribute name="isMinor" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="mobilePhone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="passwordHash" attributeType="String" syncable="YES"/>
