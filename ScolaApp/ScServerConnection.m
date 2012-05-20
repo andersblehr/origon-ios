@@ -43,8 +43,8 @@ NSInteger const kHTTPStatusCodeForbidden = 403;
 NSInteger const kHTTPStatusCodeNotFound = 404;
 NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
-//static NSString * const kScolaDevServer = @"localhost:8888";
-static NSString * const kScolaDevServer = @"enceladus.local:8888";
+static NSString * const kScolaDevServer = @"localhost:8888";
+//static NSString * const kScolaDevServer = @"enceladus.local:8888";
 //static NSString * const kScolaDevServer = @"ganymede.local:8888";
 static NSString * const kScolaProdServer = @"scolaapp.appspot.com";
 
@@ -305,7 +305,7 @@ static NSString * const kURLParameterVersion = @"version";
     
     [responseData setLength:0];
     
-    if (HTTPStatusCode == kHTTPStatusCodeOK) {
+    if (response.statusCode == kHTTPStatusCodeOK) {
         NSString *fetchDate = [[response allHeaderFields] objectForKey:kHTTPHeaderLastModified];
         
         if (fetchDate) {

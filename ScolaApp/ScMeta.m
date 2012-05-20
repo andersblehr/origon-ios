@@ -64,12 +64,13 @@ static ScMeta *m = nil;
 {
     NetworkStatus internetStatus = [reachability currentReachabilityStatus];
     
-    isInternetConnectionWiFi = (internetStatus == ReachableViaWiFi);
+    isInternetConnectionWiFi = YES;
+    //isInternetConnectionWiFi = (internetStatus == ReachableViaWiFi);
     isInternetConnectionWWAN = (internetStatus == ReachableViaWWAN);
     
-    if (internetStatus == ReachableViaWiFi) {
+    if (isInternetConnectionWiFi) {
         ScLogInfo(@"Connected to the internet via Wi-Fi.");
-    } else if (internetStatus == ReachableViaWWAN) {
+    } else if (isInternetConnectionWWAN) {
         ScLogInfo(@"Connected to the internet via mobile web (WWAN).");
     } else {
         ScLogInfo(@"Not connected to the internet.");
@@ -127,10 +128,10 @@ static ScMeta *m = nil;
         
         if (userId) {
             homeScolaId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatHomeScolaId, userId]];
-            lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
             deviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
             authToken = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
             authTokenExpiryDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
+            lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
         } else {
             deviceId = [ScUUIDGenerator generateUUID];
         }
@@ -190,7 +191,7 @@ static ScMeta *m = nil;
     } else {
         authTokenExpiryDate = nil;
         
-        [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
+        [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
     }
 }
 
