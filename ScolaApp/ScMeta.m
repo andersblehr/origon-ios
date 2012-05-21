@@ -8,6 +8,8 @@
 
 #import "ScMeta.h"
 
+#import "Reachability.h"
+
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "NSString+ScStringExtensions.h"
 
@@ -18,8 +20,6 @@
 #import "ScUUIDGenerator.h"
 
 #import "ScCachedEntity.h"
-
-@implementation ScMeta
 
 NSString * const kBundleId = @"com.scolaapp.ios.ScolaApp";
 NSString * const kKeyEntityId = @"entityId";
@@ -34,6 +34,9 @@ static NSString * const kUserDefaultsKeyFormatAuthExpiryDate = @"scola.auth.expi
 static NSString * const kUserDefaultsKeyFormatLastFetchDate = @"scola.fetch.date$%@";
 
 static ScMeta *m = nil;
+
+
+@implementation ScMeta
 
 @synthesize isUserLoggedIn;
 

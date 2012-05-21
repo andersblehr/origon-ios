@@ -17,22 +17,6 @@ typedef enum {
     ScAuthPhaseLogin,
 } ScAuthPhase;
 
-@interface ScServerConnection : NSObject {
-@private
-    id<ScServerConnectionDelegate> connectionDelegate;
-    
-    ScAuthPhase authPhase;
-    
-    NSString *RESTHandler;
-    NSString *RESTRoute;
-    
-    NSMutableURLRequest *URLRequest;
-    NSMutableDictionary *URLParameters;
-	NSMutableData *responseData;
-    
-    NSInteger HTTPStatusCode;
-}
-
 extern NSString * const kHTTPMethodGET;
 extern NSString * const kHTTPMethodPOST;
 extern NSString * const kHTTPMethodDELETE;
@@ -52,6 +36,22 @@ extern NSInteger const kHTTPStatusCodeUnauthorized;
 extern NSInteger const kHTTPStatusCodeForbidden;
 extern NSInteger const kHTTPStatusCodeNotFound;
 extern NSInteger const kHTTPStatusCodeInternalServerError;
+
+@interface ScServerConnection : NSObject {
+@private
+    id<ScServerConnectionDelegate> connectionDelegate;
+    
+    ScAuthPhase authPhase;
+    
+    NSString *RESTHandler;
+    NSString *RESTRoute;
+    
+    NSMutableURLRequest *URLRequest;
+    NSMutableDictionary *URLParameters;
+	NSMutableData *responseData;
+    
+    NSInteger HTTPStatusCode;
+}
 
 + (void)showAlertForError:(NSError *)error;
 + (void)showAlertForError:(NSError *)error tagWith:(int)tag usingDelegate:(id)delegate;

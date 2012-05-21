@@ -87,7 +87,6 @@
 		5CBB63E7146080E000A9133A /* ScolaAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63E6146080E000A9133A /* ScolaAppTests.m */; };
 		5CBE9C5314AB5160004FE2B7 /* NSString+ScStringExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE9C5214AB515F004FE2B7 /* NSString+ScStringExtensions.m */; };
 		5CCF08BE1463F12A00D41AB0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */; };
-		5CCF08C414644E0800D41AB0 /* typewriter.caf in Resources */ = {isa = PBXBuildFile; fileRef = 5CCF08C314644E0800D41AB0 /* typewriter.caf */; };
 		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
 		5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */; };
@@ -238,7 +237,6 @@
 		5CBE9C5114AB515F004FE2B7 /* NSString+ScStringExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ScStringExtensions.h"; sourceTree = "<group>"; };
 		5CBE9C5214AB515F004FE2B7 /* NSString+ScStringExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ScStringExtensions.m"; sourceTree = "<group>"; };
 		5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		5CCF08C314644E0800D41AB0 /* typewriter.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = typewriter.caf; path = soundbites/typewriter.caf; sourceTree = SOURCE_ROOT; };
 		5CCF08FC1465D5D800D41AB0 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		5CCF08FD1465D5D900D41AB0 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -302,7 +300,6 @@
 				5C153EF614CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png */,
 				5C153EF114CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png */,
 				5C153EF214CC68B9003A6B61 /* glyphicons_192_circle_remove_white@2x.png */,
-				5CCF08C314644E0800D41AB0 /* typewriter.caf */,
 			);
 			name = Media;
 			sourceTree = "<group>";
@@ -628,7 +625,6 @@
 				5CBB63C3146080DF00A9133A /* InfoPlist.strings in Resources */,
 				5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */,
 				5CBB63CF146080DF00A9133A /* MainStoryboard_iPad.storyboard in Resources */,
-				5CCF08C414644E0800D41AB0 /* typewriter.caf in Resources */,
 				5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */,
 				5C17435B14ABA3DC006B859B /* Settings.bundle in Resources */,
 				5CE9812914C4D81600DD11D4 /* 112-group@2x.png in Resources */,

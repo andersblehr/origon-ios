@@ -18,7 +18,7 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 
 @implementation NSString (ScStringExtensions)
 
-//  This code from public domain. Credits: http://www.cocoadev.com/index.pl?BaseSixtyFour
+//  This method from public domain. Credits: http://www.cocoadev.com/index.pl?BaseSixtyFour
 - (NSString *)base64EncodedString;
 {
 	NSData *data = [self dataUsingEncoding:NSUTF8StringEncoding];

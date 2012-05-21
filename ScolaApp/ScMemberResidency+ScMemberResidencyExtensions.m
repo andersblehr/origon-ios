@@ -12,6 +12,7 @@
 
 #import "ScScola.h"
 
+
 @implementation ScMemberResidency (ScMemberResidencyExtensions)
 
 

@@ -12,7 +12,6 @@
 #import "ScLogging.h"
 #import "ScServerConnection.h"
 
-@implementation ScStrings
 
 static NSDictionary *strings = nil;
 
@@ -119,6 +118,8 @@ NSString * const strOurPlace                         = @"strOurPlace";
 NSString * const strMyMessageBoard                   = @"strMyMessageBoard";
 NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
+
+@implementation ScStrings
 
 #pragma mark - Auxiliary methods methods
 

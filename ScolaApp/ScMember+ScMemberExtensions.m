@@ -8,9 +8,9 @@
 
 #import "ScMember+ScMemberExtensions.h"
 
-@implementation ScMember (ScMemberExtensions)
-
 static NSInteger const kAgeOfMajority = 18;
+
+@implementation ScMember (ScMemberExtensions)
 
 - (BOOL)isMinor
 {

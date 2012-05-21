@@ -8,11 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-#import "Reachability.h"
-
 #import "ScServerConnectionDelegate.h"
 
-@class ScCachedEntity, ScServerConnection;
+@class Reachability, ScCachedEntity, ScServerConnection;
 
 @interface ScMeta : NSObject <ScServerConnectionDelegate> {
 @private

@@ -9,8 +9,6 @@
 #import <Foundation/Foundation.h>
 
 
-@interface ScStrings : NSObject
-
 // Maintained in-app
 extern NSString * const istrNoInternet;
 extern NSString * const istrServerDown;
@@ -109,6 +107,8 @@ extern NSString * const strMyPlace;
 extern NSString * const strOurPlace;
 extern NSString * const strMyMessageBoard;
 extern NSString * const strOurMessageBoard;
+
+@interface ScStrings : NSObject
 
 + (void)refreshStrings;
 + (NSString *)stringForKey:(NSString *)key;

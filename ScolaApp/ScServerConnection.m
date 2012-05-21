@@ -20,9 +20,6 @@
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 
-
-@implementation ScServerConnection
-
 NSString * const kHTTPMethodGET = @"GET";
 NSString * const kHTTPMethodPOST = @"POST";
 NSString * const kHTTPMethodDELETE = @"DELETE";
@@ -73,6 +70,8 @@ static NSString * const kURLParameterDeviceId = @"duid";
 static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
 
+
+@implementation ScServerConnection
 
 #pragma mark - Auxiliary methods
 
