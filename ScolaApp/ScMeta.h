@@ -10,6 +10,11 @@
 
 #import "ScServerConnectionDelegate.h"
 
+extern NSString * const kBundleId;
+extern NSString * const kKeyEntityId;
+extern NSString * const kKeyEntityClass;
+extern NSString * const kKeyScolaId;
+
 @class Reachability, ScCachedEntity, ScServerConnection;
 
 @interface ScMeta : NSObject <ScServerConnectionDelegate> {
@@ -24,11 +29,6 @@
     
     NSString *delegateHTTPMethod;
 }
-
-extern NSString * const kBundleId;
-extern NSString * const kKeyEntityId;
-extern NSString * const kKeyEntityClass;
-extern NSString * const kKeyScolaId;
 
 @property (nonatomic) BOOL isUserLoggedIn;
 
