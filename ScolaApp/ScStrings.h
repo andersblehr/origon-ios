@@ -59,7 +59,6 @@ extern NSString * const strUseConfigured;
 extern NSString * const strUseNew;
 
 // Auth view
-extern NSString * const strUserIntentionPrompt;
 extern NSString * const strUserIntentionLogin;
 extern NSString * const strUserIntentionRegistration;
 extern NSString * const strUserHelpNew;

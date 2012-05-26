@@ -93,6 +93,8 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
     ScLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
     ScLogDebug(@"System language is '%@'.", [[ScMeta m] displayLanguage]);
     
+    [[ScMeta m] checkInternetReachability];
+    
     return YES;
 }
 							
@@ -109,7 +111,7 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [[ScMeta m].managedObjectContext saveAndPersist];
+    [[ScMeta m].managedObjectContext synchronise];
 }
 
 
@@ -123,7 +125,9 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    [[ScMeta m] checkInternetReachability];
+    /*
+     Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+     */
 }
 
 

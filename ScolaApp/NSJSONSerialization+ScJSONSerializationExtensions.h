@@ -10,7 +10,7 @@
 
 @interface NSJSONSerialization (ScJSONSerializationExtensions)
 
-+ (NSData *)serialiseToJSON:(id)object;
-+ (id)deserialiseJSON:(NSData *)JSONData;
++ (NSData *)serialise:(id)object;
++ (id)deserialise:(NSData *)JSONData;
 
 @end

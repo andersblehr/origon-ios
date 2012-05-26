@@ -13,7 +13,7 @@
 
 @implementation NSJSONSerialization (ScJSONSerializationExtensions)
 
-+ (NSData *)serialiseToJSON:(id)object
++ (NSData *)serialise:(id)object
 {
     NSData *serialisedObject = nil;
     
@@ -33,7 +33,7 @@
 }
 
 
-+ (id)deserialiseJSON:(NSData *)JSONData
++ (id)deserialise:(NSData *)JSONData
 {
     id deserialisedJSON = nil;
     

@@ -26,8 +26,6 @@ extern NSString * const kKeyScolaId;
     NSMutableSet *scheduledEntities;
     NSMutableDictionary *importedEntities;
     NSMutableDictionary *importedEntityRefs;
-    
-    NSString *delegateHTTPMethod;
 }
 
 @property (nonatomic) BOOL isUserLoggedIn;

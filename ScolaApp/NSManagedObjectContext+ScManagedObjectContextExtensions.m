@@ -144,14 +144,6 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-- (void)saveAndPersist
-{
-    [[[ScServerConnection alloc] init] persistEntities];
-    
-    [self save];
-}
-
-
 - (void)saveWithDictionaries:(NSArray *)dictionaries
 {
     NSMutableSet *entities = [[NSMutableSet alloc] init];
@@ -165,6 +157,12 @@ static NSString * const kScolaRelationshipName = @"scola";
     }
     
     [self save];
+}
+
+
+- (void)synchronise
+{
+    [[[ScServerConnection alloc] init] synchroniseEntities];
 }
 
 @end

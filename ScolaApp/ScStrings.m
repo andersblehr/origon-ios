@@ -69,7 +69,6 @@ NSString * const strUseConfigured                    = @"strUseConfigured";
 NSString * const strUseNew                           = @"strUseNew";
 
 // Auth view
-NSString * const strUserIntentionPrompt              = @"strUserIntentionPrompt";
 NSString * const strUserIntentionLogin               = @"strUserIntentionLogin";
 NSString * const strUserIntentionRegistration        = @"strUserIntentionRegistration";
 NSString * const strUserHelpNew                      = @"strUserHelpNew";

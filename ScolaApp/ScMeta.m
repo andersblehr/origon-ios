@@ -306,7 +306,7 @@ static ScMeta *m = nil;
     if ([internetReachability startNotifier]) {
         ScLogInfo(@"Reachability notifier is running.");
     } else {
-        ScLogWarning(@"Could not start reachability notifier, checking internet connectivity at app activation only.");
+        ScLogWarning(@"Could not start reachability notifier, checking internet connectivity only at startup.");
     }
 }
 
@@ -356,20 +356,10 @@ static ScMeta *m = nil;
 
 #pragma mark - ScServerConnectionDelegate implementation
 
-- (BOOL)doUseAutomaticAlerts
-{
-    return NO;
-}
-
-
-- (void)willSendRequest:(NSURLRequest *)request
-{
-    delegateHTTPMethod = request.HTTPMethod;
-}
-
-
 - (void)didReceiveResponse:(NSHTTPURLResponse *)response
 {
+    ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
+    
     if (response.statusCode == kHTTPStatusCodeCreated) {
         ScLogDebug(@"Entities successfully persisted");
         
@@ -394,11 +384,7 @@ static ScMeta *m = nil;
 
 - (void)didFailWithError:(NSError *)error
 {
-    if ([delegateHTTPMethod isEqualToString:kHTTPMethodGET]) {
-        ScLogError(@"Error fetching new/updated entities");
-    } else if ([delegateHTTPMethod isEqualToString:kHTTPMethodPOST]) {
-        ScLogError(@"Error persisting entities (entities: %@)", scheduledEntities);
-    }
+    ScLogError(@"Error synchronising entities.");
 }
 
 @end

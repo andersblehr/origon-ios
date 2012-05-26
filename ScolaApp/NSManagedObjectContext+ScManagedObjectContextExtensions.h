@@ -22,7 +22,7 @@
 - (id)fetchEntityWithId:(NSString *)entityId;
 
 - (void)save;
-- (void)saveAndPersist;
 - (void)saveWithDictionaries:(NSArray *)dictionaries;
+- (void)synchronise;
 
 @end

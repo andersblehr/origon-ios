@@ -63,8 +63,8 @@ static NSString * const kRESTHandlerModel = @"model";
 static NSString * const kRESTRouteAuthRegistration = @"register";
 static NSString * const kRESTRouteAuthConfirmation = @"confirm";
 static NSString * const kRESTRouteAuthLogin = @"login";
+static NSString * const kRESTRouteModelSync = @"sync";
 static NSString * const kRESTRouteModelFetch = @"fetch";
-static NSString * const kRESTRouteModelPersist = @"persist";
 
 static NSString * const kURLParameterDeviceId = @"duid";
 static NSString * const kURLParameterDevice = @"device";
@@ -108,14 +108,10 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-- (void)performHTTPMethod:(NSString *)HTTPMethod withPayload:(NSArray *)payload usingDelegate:(id)delegate
+- (void)performHTTPMethod:(NSString *)HTTPMethod withEntities:(NSArray *)entities usingDelegate:(id)delegate
 {
     connectionDelegate = delegate;
     
-    if (authPhase != ScAuthPhaseRegistration) {
-        [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    }
-
     [self setValue:[ScMeta m].deviceId forURLParameter:kURLParameterDeviceId];
     [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
     [self setValue:[ScMeta m].appVersion forURLParameter:kURLParameterVersion];
@@ -127,12 +123,8 @@ static NSString * const kURLParameterVersion = @"version";
     [self setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
     [self setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
     
-    if (payload) {
-        URLRequest.HTTPBody = [NSJSONSerialization serialiseToJSON:payload];
-    }
-    
-    if ([connectionDelegate respondsToSelector:@selector(willSendRequest:)]) {
-        [connectionDelegate willSendRequest:URLRequest];
+    if (entities) {
+        URLRequest.HTTPBody = [NSJSONSerialization serialise:entities];
     }
         
     if ([ScMeta m].isInternetConnectionAvailable) {
@@ -223,55 +215,54 @@ static NSString * const kURLParameterVersion = @"version";
     RESTHandler = kRESTHandlerStrings;
     RESTRoute = [ScMeta m].displayLanguage;
     
-    [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET withEntities:nil usingDelegate:delegate];
 }
 
 
-- (void)authenticateForPhase:(ScAuthPhase)phase usingDelegate:(id)delegate
+- (void)authenticateForPhase:(ScAuthPhase)authPhase usingDelegate:(id)delegate
 {
-    authPhase = phase;
-    
     RESTHandler = kRESTHandlerAuth;
-    
-    if (authPhase == ScAuthPhaseRegistration) {
+
+    if (authPhase == ScAuthPhaseLogin) {
+        RESTRoute = kRESTRouteAuthLogin;
+        
+        [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
+        [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
+    } else if (authPhase == ScAuthPhaseRegistration) {
         RESTRoute = kRESTRouteAuthRegistration;
     } else if (authPhase == ScAuthPhaseConfirmation) {
         RESTRoute = kRESTRouteAuthConfirmation;
-    } else if (authPhase == ScAuthPhaseLogin) {
-        RESTRoute = kRESTRouteAuthLogin;
         
-        [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
+        [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
     }
     
-    [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET withEntities:nil usingDelegate:delegate];
 }
 
 
-- (void)fetchEntities
+- (void)synchroniseEntities
 {
     RESTHandler = kRESTHandlerModel;
-    RESTRoute = kRESTRouteModelFetch;
     
+    [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
-    [self performHTTPMethod:kHTTPMethodGET withPayload:nil usingDelegate:[ScMeta m]];
-}
-
-
-- (void)persistEntities
-{
-    NSSet *entities = [ScMeta m].entitiesScheduledForPersistence;
     
-    if (entities.count > 0) {
-        RESTHandler = kRESTHandlerModel;
-        RESTRoute = kRESTRouteModelPersist;
+    NSSet *entitiesToPersist = [ScMeta m].entitiesScheduledForPersistence;
+    
+    if (entitiesToPersist.count > 0) {
+        RESTRoute = kRESTRouteModelSync;
         
         NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
         
-        for (ScCachedEntity *entity in entities) {
+        for (ScCachedEntity *entity in entitiesToPersist) {
             [entityDictionaries addObject:[entity toDictionary]];
         }
         
-        [self performHTTPMethod:kHTTPMethodPOST withPayload:entityDictionaries usingDelegate:[ScMeta m]];
+        [self performHTTPMethod:kHTTPMethodPOST withEntities:entityDictionaries usingDelegate:[ScMeta m]];
+    } else {
+        RESTRoute = kRESTRouteModelFetch;
+        
+        [self performHTTPMethod:kHTTPMethodGET withEntities:nil usingDelegate:[ScMeta m]];
     }
 }
 
@@ -280,7 +271,11 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)response;
 {
-    ScLogDebug(@"Received redirect request: %@ (response: %@)", request, response);
+    ScLogVerbose(@"Will send URL request: %@", request);
+    
+    if ([connectionDelegate respondsToSelector:@selector(willSendRequest:)]) {
+        [connectionDelegate willSendRequest:request];
+    }
 
 	return request;
 }
@@ -300,7 +295,7 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response
 {
-    ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
+    ScLogVerbose(@"Received response. HTTP status code: %d", response.statusCode);
     
     [responseData setLength:0];
     
@@ -312,8 +307,8 @@ static NSString * const kURLParameterVersion = @"version";
         }
     }
 
-    if (response.statusCode >= kHTTPStatusCodeBadRequest) {
-        BOOL shouldShowAutomaticAlert = YES;
+    if (response.statusCode >= kHTTPStatusCodeErrorRangeStart) {
+        BOOL shouldShowAutomaticAlert = NO;
         
         if ([connectionDelegate respondsToSelector:@selector(doUseAutomaticAlerts)]) {
             shouldShowAutomaticAlert = [connectionDelegate doUseAutomaticAlerts];
@@ -323,8 +318,6 @@ static NSString * const kURLParameterVersion = @"version";
             [ScServerConnection showAlertForHTTPStatus:response.statusCode];
         }
     }
-    
-    HTTPStatusCode = response.statusCode;
     
     [connectionDelegate didReceiveResponse:response];
 }
@@ -344,9 +337,9 @@ static NSString * const kURLParameterVersion = @"version";
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    if (HTTPStatusCode == kHTTPStatusCodeOK) {
+    if (responseData.length > 0) {
         if ([connectionDelegate respondsToSelector:@selector(finishedReceivingData:)]) {
-            id deserialisedData = [NSJSONSerialization deserialiseJSON:responseData];
+            id deserialisedData = [NSJSONSerialization deserialise:responseData];
             [connectionDelegate finishedReceivingData:deserialisedData];
         }
     }
@@ -359,7 +352,7 @@ static NSString * const kURLParameterVersion = @"version";
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    BOOL shouldShowAutomaticAlert = YES;
+    BOOL shouldShowAutomaticAlert = NO;
     
     if ([connectionDelegate respondsToSelector:@selector(doUseAutomaticAlerts)]) {
         shouldShowAutomaticAlert = [connectionDelegate doUseAutomaticAlerts];

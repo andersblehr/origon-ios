@@ -246,7 +246,7 @@ static int const kPopUpButtonUseNew = 1;
         device.displayName = [UIDevice currentDevice].name;
         device.member = member;
         
-        [context saveAndPersist];
+        [context synchronise];
         
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {

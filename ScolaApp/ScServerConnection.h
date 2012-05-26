@@ -41,16 +41,12 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 @private
     id<ScServerConnectionDelegate> connectionDelegate;
     
-    ScAuthPhase authPhase;
-    
     NSString *RESTHandler;
     NSString *RESTRoute;
     
     NSMutableURLRequest *URLRequest;
     NSMutableDictionary *URLParameters;
 	NSMutableData *responseData;
-    
-    NSInteger HTTPStatusCode;
 }
 
 + (void)showAlertForError:(NSError *)error;
@@ -65,8 +61,7 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
 
 - (void)fetchStringsUsingDelegate:(id)delegate;
-- (void)authenticateForPhase:(ScAuthPhase)phase usingDelegate:(id)delegate;
-- (void)fetchEntities;
-- (void)persistEntities;
+- (void)authenticateForPhase:(ScAuthPhase)authPhase usingDelegate:(id)delegate;
+- (void)synchroniseEntities;
 
 @end

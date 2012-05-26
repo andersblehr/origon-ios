@@ -33,8 +33,6 @@ typedef enum {
     ScAuthAlertTagNotLoggedIn,
 } ScAuthAlertTag;
 
-static NSString * const kSoundbiteTypewriter = @"typewriter.caf";
-
 static NSString * const kSegueToMainView = @"authToMainView";
 static NSString * const kSegueToRegistrationView1 = @"authToRegistrationView1";
 
@@ -63,7 +61,6 @@ static int const kPopUpButtonGoBack = 0;
 @implementation ScAuthViewController
 
 @synthesize darkLinenView;
-@synthesize userIntentionPromptLabel;
 @synthesize userIntentionControl;
 @synthesize userHelpLabel;
 @synthesize nameOrEmailOrRegistrationCodeField;
@@ -89,32 +86,32 @@ static int const kPopUpButtonGoBack = 0;
                                        withObject:@".."
                                     waitUntilDone:YES];
     
-    [NSThread sleepForTimeInterval:0.6];
+    [NSThread sleepForTimeInterval:0.2];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..s"
                                     waitUntilDone:YES];
     
-    [NSThread sleepForTimeInterval:0.3];
+    [NSThread sleepForTimeInterval:0.2];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..sc"
                                     waitUntilDone:YES];
     
-    [NSThread sleepForTimeInterval:0.4];
+    [NSThread sleepForTimeInterval:0.2];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..sco"
                                     waitUntilDone:YES];
     
-    [NSThread sleepForTimeInterval:0.3];
+    [NSThread sleepForTimeInterval:0.2];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..scol"
                                     waitUntilDone:YES];
     
-    [NSThread sleepForTimeInterval:0.6];
+    [NSThread sleepForTimeInterval:0.2];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..scola"
                                     waitUntilDone:YES];
     
-    [NSThread sleepForTimeInterval:0.4];
+    [NSThread sleepForTimeInterval:0.2];
     [scolaSplashLabel performSelectorOnMainThread:@selector(setText:)
                                        withObject:@"..scola."
                                     waitUntilDone:YES];
@@ -184,6 +181,7 @@ static int const kPopUpButtonGoBack = 0;
     emailOrPasswordField.text = @"";
     emailOrPasswordField.keyboardType = UIKeyboardTypeDefault;
     emailOrPasswordField.secureTextEntry = YES;
+    emailOrPasswordField.clearButtonMode = UITextFieldViewModeNever;
     
     passwordField.hidden = YES;
     
@@ -213,6 +211,7 @@ static int const kPopUpButtonGoBack = 0;
     emailOrPasswordField.text = emailAsEntered;
     emailOrPasswordField.keyboardType = UIKeyboardTypeEmailAddress;
     emailOrPasswordField.secureTextEntry = NO;
+    emailOrPasswordField.clearButtonMode = UITextFieldViewModeWhileEditing;
     
     passwordField.text = @"";
     passwordField.hidden = NO;
@@ -243,6 +242,7 @@ static int const kPopUpButtonGoBack = 0;
     emailOrPasswordField.text = @"";
     emailOrPasswordField.keyboardType = UIKeyboardTypeDefault;
     emailOrPasswordField.secureTextEntry = YES;
+    emailOrPasswordField.clearButtonMode = UITextFieldViewModeNever;
     
     passwordField.hidden = YES;
 }
@@ -453,7 +453,7 @@ static int const kPopUpButtonGoBack = 0;
             device.displayName = [UIDevice currentDevice].name;
             device.member = member;
             
-            [context saveAndPersist];
+            [context synchronise];
         }
         
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
@@ -553,7 +553,6 @@ static int const kPopUpButtonGoBack = 0;
         passwordField.secureTextEntry = YES;
         activityIndicator.hidesWhenStopped = YES;
 
-        userIntentionPromptLabel.text = [ScStrings stringForKey:strUserIntentionPrompt];
         [userIntentionControl setTitle:[ScStrings stringForKey:strUserIntentionRegistration] forSegmentAtIndex:kUserIntentionRegistration];
         [userIntentionControl setTitle:[ScStrings stringForKey:strUserIntentionLogin] forSegmentAtIndex:kUserIntentionLogin];
         [userIntentionControl addTarget:self action:@selector(userIntentionDidChange) forControlEvents:UIControlEventValueChanged];
@@ -589,11 +588,13 @@ static int const kPopUpButtonGoBack = 0;
         
         [self setUpForUserConfirmation];
     } else {
-        [self setUpForUserLogin];
-        
         if ([ScMeta m].userId) {
+            [self setUpForUserLogin];
+            
             nameOrEmailOrRegistrationCodeField.text = [ScMeta m].userId;
             [emailOrPasswordField becomeFirstResponder];
+        } else {
+            [self setUpForUserRegistration];
         }
     }
 }
@@ -637,7 +638,7 @@ static int const kPopUpButtonGoBack = 0;
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
     } else {
-        return YES;
+        return NO;
     }
 }
 
@@ -648,7 +649,7 @@ static int const kPopUpButtonGoBack = 0;
 {
     if ([segue.identifier isEqualToString:kSegueToMainView]) {
         if (!isUpToDate) {
-            [[[ScServerConnection alloc] init] fetchEntities];
+            [[ScMeta m].managedObjectContext synchronise];
         }
     } else if ([segue.identifier isEqualToString:kSegueToRegistrationView1]) {
         ScRegistrationView1Controller *nextViewController = segue.destinationViewController;
@@ -818,12 +819,6 @@ static int const kPopUpButtonGoBack = 0;
 
 #pragma mark - ScServerConnectionDelegate implementation
 
-- (BOOL)doUseAutomaticAlerts
-{
-    return NO;
-}
-
-
 - (void)didReceiveResponse:(NSHTTPURLResponse *)response
 {
     ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
@@ -832,6 +827,10 @@ static int const kPopUpButtonGoBack = 0;
     
     if (status != kHTTPStatusCodeOK) {
         [self indicatePendingServerSession:NO];
+        
+        if (status == kHTTPStatusCodeNotModified) {
+            isUpToDate = YES;
+        }
     }
     
     if (((authPhase == ScAuthPhaseLogin) && (status == kHTTPStatusCodeNotModified)) ||
