@@ -67,8 +67,7 @@ static ScMeta *m = nil;
 {
     NetworkStatus internetStatus = [reachability currentReachabilityStatus];
     
-    isInternetConnectionWiFi = YES;
-    //isInternetConnectionWiFi = (internetStatus == ReachableViaWiFi);
+    isInternetConnectionWiFi = (internetStatus == ReachableViaWiFi);
     isInternetConnectionWWAN = (internetStatus == ReachableViaWWAN);
     
     if (isInternetConnectionWiFi) {
