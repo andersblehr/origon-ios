@@ -32,6 +32,7 @@ NSString * const kURLParameterLastFetchDate = @"since";
 NSInteger const kHTTPStatusCodeOK = 200;
 NSInteger const kHTTPStatusCodeCreated = 201;
 NSInteger const kHTTPStatusCodeNoContent = 204;
+NSInteger const kHTTPStatusCodeMultiStatus = 207;
 NSInteger const kHTTPStatusCodeNotModified = 304;
 NSInteger const kHTTPStatusCodeErrorRangeStart = 400;
 NSInteger const kHTTPStatusCodeBadRequest = 400;
@@ -40,8 +41,8 @@ NSInteger const kHTTPStatusCodeForbidden = 403;
 NSInteger const kHTTPStatusCodeNotFound = 404;
 NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
-//static NSString * const kScolaDevServer = @"localhost:8888";
-static NSString * const kScolaDevServer = @"enceladus.local:8888";
+static NSString * const kScolaDevServer = @"localhost:8888";
+//static NSString * const kScolaDevServer = @"enceladus.local:8888";
 //static NSString * const kScolaDevServer = @"ganymede.local:8888";
 static NSString * const kScolaProdServer = @"scolaapp.appspot.com";
 
@@ -127,6 +128,10 @@ static NSString * const kURLParameterVersion = @"version";
         URLRequest.HTTPBody = [NSJSONSerialization serialise:entities];
     }
         
+    if ([connectionDelegate respondsToSelector:@selector(willSendRequest:)]) {
+        [connectionDelegate willSendRequest:URLRequest];
+    }
+    
     if ([ScMeta m].isInternetConnectionAvailable) {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
         NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
@@ -267,19 +272,7 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-#pragma mark - Implicit NSURLConnectionDelegate implementations
-
-- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)response;
-{
-    ScLogVerbose(@"Will send URL request: %@", request);
-    
-    if ([connectionDelegate respondsToSelector:@selector(willSendRequest:)]) {
-        [connectionDelegate willSendRequest:request];
-    }
-
-	return request;
-}
-
+#pragma mark - NSURLConnectionDelegate methods
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
@@ -299,7 +292,7 @@ static NSString * const kURLParameterVersion = @"version";
     
     [responseData setLength:0];
     
-    if (response.statusCode == kHTTPStatusCodeOK) {
+    if (response.statusCode < kHTTPStatusCodeErrorRangeStart) {
         NSString *fetchDate = [[response allHeaderFields] objectForKey:kHTTPHeaderLastModified];
         
         if (fetchDate) {
@@ -319,7 +312,7 @@ static NSString * const kURLParameterVersion = @"version";
         }
     }
     
-    [connectionDelegate didReceiveResponse:response];
+    HTTPResponse = response;
 }
 
 
@@ -333,16 +326,17 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
-    ScLogVerbose(@"Connection finished loading");
+    ScLogDebug(@"Server request completed. HTTP status code: %d", HTTPResponse.statusCode);
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
+    id deserialisedData = nil;
     
     if (responseData.length > 0) {
-        if ([connectionDelegate respondsToSelector:@selector(finishedReceivingData:)]) {
-            id deserialisedData = [NSJSONSerialization deserialise:responseData];
-            [connectionDelegate finishedReceivingData:deserialisedData];
-        }
+        deserialisedData = [NSJSONSerialization deserialise:responseData];
     }
+    
+    [connectionDelegate didCompleteWithResponse:HTTPResponse data:deserialisedData];
 }
 
 

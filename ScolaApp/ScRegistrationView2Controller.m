@@ -151,12 +151,6 @@ static int const kPopUpButtonUseNew = 1;
 }
 
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-}
-
-
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -174,12 +168,6 @@ static int const kPopUpButtonUseNew = 1;
 }
 
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
-
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
@@ -187,12 +175,6 @@ static int const kPopUpButtonUseNew = 1;
     if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
         [self syncViewState];
     }
-}
-
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
 }
 
 

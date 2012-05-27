@@ -11,12 +11,11 @@
 @protocol ScServerConnectionDelegate <NSObject>
 
 @required
-- (void)didReceiveResponse:(NSHTTPURLResponse *)response;
+- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data;
 - (void)didFailWithError:(NSError *)error;
 
 @optional
 - (BOOL)doUseAutomaticAlerts;
 - (void)willSendRequest:(NSURLRequest *)request;
-- (void)finishedReceivingData:(id)data;
 
 @end

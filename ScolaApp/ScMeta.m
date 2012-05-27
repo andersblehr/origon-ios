@@ -355,11 +355,16 @@ static ScMeta *m = nil;
 
 #pragma mark - ScServerConnectionDelegate implementation
 
-- (void)didReceiveResponse:(NSHTTPURLResponse *)response
+- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
+    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
     
-    if (response.statusCode == kHTTPStatusCodeCreated) {
+    if (data) {
+        [context saveWithDictionaries:data];
+    }
+
+    if ((response.statusCode == kHTTPStatusCodeCreated) ||
+        (response.statusCode == kHTTPStatusCodeMultiStatus)) {
         ScLogDebug(@"Entities successfully persisted");
         
         NSDate *now = [NSDate date];
@@ -369,15 +374,9 @@ static ScMeta *m = nil;
             entity.hashCode = [NSNumber numberWithInteger:[entity computeHashCode]];
         }
         
-        [self.managedObjectContext save];
+        [context save];
         [scheduledEntities removeAllObjects];
     }
-}
-
-
-- (void)finishedReceivingData:(id)data
-{
-    [self.managedObjectContext saveWithDictionaries:data];
 }
 
 

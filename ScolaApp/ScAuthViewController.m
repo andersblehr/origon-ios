@@ -433,11 +433,17 @@ static int const kPopUpButtonGoBack = 0;
 }
 
 
-- (void)userDidLogIn
+- (void)userDidLogInWithData:(NSArray *)data
 {
     [ScMeta m].isUserLoggedIn = YES;
     
     NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+    
+    if (data) {
+        [context saveWithDictionaries:data];
+    }
+    
+    isUpToDate = YES;
     
     if (authPhase == ScAuthPhaseLogin) {
         member = [context fetchEntityWithId:[ScMeta m].userId];
@@ -477,19 +483,7 @@ static int const kPopUpButtonGoBack = 0;
 }
 
 
-#pragma mark - Process data from server
-
-- (void)finishedReceivingLoginData:(NSArray *)data
-{
-    [[ScMeta m].managedObjectContext saveWithDictionaries:data];
-    
-    isUpToDate = YES;
-    
-    [self userDidLogIn];
-}
-
-
-- (void)finishedReceivingRegistrationData:(NSDictionary *)data
+- (void)userDidRegisterWithData:(NSDictionary *)data
 {
     authInfo = data;
     
@@ -563,12 +557,6 @@ static int const kPopUpButtonGoBack = 0;
 }
 
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-}
-
-
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -621,25 +609,9 @@ static int const kPopUpButtonGoBack = 0;
 }
 
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-	[super viewWillDisappear:animated];
-}
-
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
-}
-
-
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
-    } else {
-        return NO;
-    }
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 
@@ -819,27 +791,20 @@ static int const kPopUpButtonGoBack = 0;
 
 #pragma mark - ScServerConnectionDelegate implementation
 
-- (void)didReceiveResponse:(NSHTTPURLResponse *)response
+- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
+    [self indicatePendingServerSession:NO];
     
-    NSInteger status = response.statusCode;
-    
-    if (status != kHTTPStatusCodeOK) {
-        [self indicatePendingServerSession:NO];
-        
-        if (status == kHTTPStatusCodeNotModified) {
-            isUpToDate = YES;
+    if (response.statusCode < kHTTPStatusCodeErrorRangeStart) {
+        if (authPhase == ScAuthPhaseRegistration) {
+            [self userDidRegisterWithData:data];
+        } else {
+            [self userDidLogInWithData:data];
         }
-    }
-    
-    if (((authPhase == ScAuthPhaseLogin) && (status == kHTTPStatusCodeNotModified)) ||
-        ((authPhase == ScAuthPhaseConfirmation) && (status == kHTTPStatusCodeNoContent))) {
-        [self userDidLogIn];
-    } else if (status >= kHTTPStatusCodeErrorRangeStart) {
+    } else {
         [ScMeta m].isUserLoggedIn = NO;
         
-        if (status == kHTTPStatusCodeUnauthorized) {
+        if (response.statusCode == kHTTPStatusCodeUnauthorized) {
             NSString *alertMessage = [ScStrings stringForKey:strNotLoggedInAlert];
             
             UIAlertView *notLoggedInAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
@@ -847,20 +812,8 @@ static int const kPopUpButtonGoBack = 0;
             
             [notLoggedInAlert show];
         } else {
-            [ScServerConnection showAlertForHTTPStatus:status];
+            [ScServerConnection showAlertForHTTPStatus:response.statusCode];
         }
-    }
-}
-
-
-- (void)finishedReceivingData:(id)data
-{
-    [self indicatePendingServerSession:NO];
-    
-    if (authPhase == ScAuthPhaseRegistration) {
-        [self finishedReceivingRegistrationData:data];
-    } else {
-        [self finishedReceivingLoginData:data];
     }
 }
 
@@ -868,6 +821,7 @@ static int const kPopUpButtonGoBack = 0;
 - (void)didFailWithError:(NSError *)error
 {
     [self indicatePendingServerSession:NO];
+    
     [ScMeta m].isUserLoggedIn = NO;
     
     [ScServerConnection showAlertForError:error];

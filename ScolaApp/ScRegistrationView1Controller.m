@@ -152,12 +152,6 @@ static int const kMaximumRealisticAge = 110;
 }
 
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-}
-
-
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -177,24 +171,6 @@ static int const kMaximumRealisticAge = 110;
     }
     
     [addressLine1Field becomeFirstResponder];
-}
-
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-	[super viewWillDisappear:animated];
-}
-
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
 }
 
 

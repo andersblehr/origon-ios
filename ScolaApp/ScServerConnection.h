@@ -29,6 +29,7 @@ extern NSString * const kURLParameterLastFetchDate;
 extern NSInteger const kHTTPStatusCodeOK;
 extern NSInteger const kHTTPStatusCodeCreated;
 extern NSInteger const kHTTPStatusCodeNoContent;
+extern NSInteger const kHTTPStatusCodeMultiStatus;
 extern NSInteger const kHTTPStatusCodeNotModified;
 extern NSInteger const kHTTPStatusCodeErrorRangeStart;
 extern NSInteger const kHTTPStatusCodeBadRequest;
@@ -46,6 +47,7 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
     
     NSMutableURLRequest *URLRequest;
     NSMutableDictionary *URLParameters;
+    NSHTTPURLResponse *HTTPResponse;
 	NSMutableData *responseData;
 }
 

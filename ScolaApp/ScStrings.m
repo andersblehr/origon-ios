@@ -169,17 +169,12 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 #pragma mark - ScServerConnectionDelegate implementation
 
-+ (void)didReceiveResponse:(NSHTTPURLResponse *)response
++ (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    ScLogDebug(@"Received response. HTTP status code: %d", response.statusCode);
-}
-
-
-+ (void)finishedReceivingData:(NSDictionary *)data
-{
-    strings = data;
-    
-    [strings writeToFile:[self fullPathToStringsPlist] atomically:YES];
+    if (response.statusCode == kHTTPStatusCodeOK) {
+        strings = data;
+        [strings writeToFile:[self fullPathToStringsPlist] atomically:YES];
+    }
 }
 
 

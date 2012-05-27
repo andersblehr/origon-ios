@@ -66,24 +66,12 @@
 }
 
 
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-}
-
-
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
     [self navigationController].navigationBarHidden = YES;
-}
-
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
 }
 
 
