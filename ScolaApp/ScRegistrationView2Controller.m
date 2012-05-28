@@ -33,10 +33,6 @@ static NSString * const kSegueToMainView = @"registrationView2ToMainView";
 static int const kGenderSegmentFemale = 0;
 static int const kGenderSegmentMale = 1;
 
-static NSString * const kGenderFemale = @"F";
-static NSString * const kGenderMale = @"M";
-static NSString * const kGenderNoneGiven = @"N";
-
 static int const kPopUpButtonUseBuiltIn = 0;
 static int const kPopUpButtonUseNew = 1;
 
@@ -107,6 +103,7 @@ static int const kPopUpButtonUseNew = 1;
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
+    self.navigationItem.title = [ScStrings stringForKey:strRegView2NavItemTitle];
     
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strDone] style:UIBarButtonItemStyleDone target:self action:@selector(textFieldShouldReturn:)];
     
@@ -189,8 +186,10 @@ static int const kPopUpButtonUseNew = 1;
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     NSString *alertMessage = nil;
+    NSString *alertTitle = nil;
     
     if (![self isPhoneNumberGiven]) {
+        alertTitle = [ScStrings stringForKey:strNoPhoneNumberTitle];
         alertMessage = [ScStrings stringForKey:strNoPhoneNumberAlert];
     }
     
@@ -198,41 +197,11 @@ static int const kPopUpButtonUseNew = 1;
     
     if (shouldReturn) {
         [self syncViewState];
-        
-        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-        
-        member.activeSince = [NSDate date];
-        member.didRegister = [NSNumber numberWithBool:YES];
-        
-        if ([member.residencies count] == 0) {
-            ScMemberResidency *residency = [homeScola addResident:member];
-            
-            residency.isActive = [NSNumber numberWithBool:YES];
-            residency.isAdmin = [NSNumber numberWithBool:![member isMinor]];
-        }
-        
-        if ([homeScola.messageBoards count] == 0) {
-            ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
-            
-            defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
-            defaultMessageBoard.scola = homeScola;
-        }
-        
-        ScDevice *device = [context fetchEntityWithId:[ScMeta m].deviceId];
-        
-        if (!device) {
-            device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
-        }
-        
-        device.type = [UIDevice currentDevice].model;
-        device.displayName = [UIDevice currentDevice].name;
-        device.member = member;
-        
-        [context synchronise];
+        [[ScMeta m].managedObjectContext synchronise];
         
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
-        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
         
         [validationAlert show];
     }

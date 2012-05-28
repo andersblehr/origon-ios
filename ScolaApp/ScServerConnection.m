@@ -298,9 +298,7 @@ static NSString * const kURLParameterVersion = @"version";
         if (fetchDate) {
             [ScMeta m].lastFetchDate = fetchDate;
         }
-    }
-
-    if (response.statusCode >= kHTTPStatusCodeErrorRangeStart) {
+    } else {
         BOOL shouldShowAutomaticAlert = NO;
         
         if ([connectionDelegate respondsToSelector:@selector(doUseAutomaticAlerts)]) {

@@ -26,12 +26,17 @@ NSString * const kKeyEntityId = @"entityId";
 NSString * const kKeyEntityClass = @"entityClass";
 NSString * const kKeyScolaId = @"scolaId";
 
+NSString * const kGenderFemale = @"F";
+NSString * const kGenderMale = @"M";
+NSString * const kGenderNoneGiven = @"N";
+
 static NSString * const kUserDefaultsKeyUserId = @"scola.user.id";
 static NSString * const kUserDefaultsKeyFormatHomeScolaId = @"scola.scola.id$%@";
 static NSString * const kUserDefaultsKeyFormatDeviceId = @"scola.device.id$%@";
-static NSString * const kUserDefaultsKeyFormatAuthToken = @"scola.auth.token$%@";
 static NSString * const kUserDefaultsKeyFormatAuthExpiryDate = @"scola.auth.expires$%@";
 static NSString * const kUserDefaultsKeyFormatLastFetchDate = @"scola.fetch.date$%@";
+
+static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
 
 static ScMeta *m = nil;
 
@@ -131,11 +136,8 @@ static ScMeta *m = nil;
         if (userId) {
             homeScolaId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatHomeScolaId, userId]];
             deviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
-            authToken = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
             authTokenExpiryDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
             lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
-        } else {
-            deviceId = [ScUUIDGenerator generateUUID];
         }
         
         appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
@@ -189,33 +191,22 @@ static ScMeta *m = nil;
     [(ScAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
     
     if (isLoggedIn) {
-        authToken = self.authToken;
-    } else {
-        authTokenExpiryDate = nil;
-        
-        [ScMeta removeUserDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
+        [ScMeta setUserDefault:authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
     }
 }
 
 
 - (BOOL)isUserLoggedIn
 {
-    BOOL isAuthTokenValid = NO;
+    BOOL isLoggedIn = NO;
     
-    if (authToken && authTokenExpiryDate) {
+    if (authTokenExpiryDate) {
         NSDate *now = [NSDate date];
         
-        if ([now compare:authTokenExpiryDate] == NSOrderedAscending) {
-            NSString *expectedToken = [self generateAuthToken:authTokenExpiryDate];
-            isAuthTokenValid = [authToken isEqualToString:expectedToken];
-        }
-        
-        if (!isAuthTokenValid) {
-            self.isUserLoggedIn = NO;
-        }
+        isLoggedIn = ([now compare:authTokenExpiryDate] == NSOrderedAscending);
     }
     
-    return isAuthTokenValid;
+    return isLoggedIn;
 }
 
 
@@ -225,12 +216,12 @@ static ScMeta *m = nil;
     
     if (userId) {
         [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyUserId];
+
+        deviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
+        lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
         
-        NSString *storedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
-        
-        if (storedDeviceId) {
-            deviceId = storedDeviceId;
-        } else {
+        if (!deviceId) {
+            deviceId = [ScUUIDGenerator generateUUID];
             [ScMeta setUserDefault:deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
         }
     } else {
@@ -257,12 +248,13 @@ static ScMeta *m = nil;
 
 - (NSString *)authToken
 {
-    if (!authTokenExpiryDate) {
-        authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:30]; // TODO: Two weeks
-        authToken = [self generateAuthToken:authTokenExpiryDate];
+    if (!authToken) {
+        if (![self isUserLoggedIn]) {
+            //authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
+            authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:30];
+        }
         
-        [ScMeta setUserDefault:authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
-        [ScMeta setUserDefault:authToken forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthToken, userId]];
+        authToken = [self generateAuthToken:authTokenExpiryDate];
     }
     
     return authToken;

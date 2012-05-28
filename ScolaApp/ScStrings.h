@@ -9,38 +9,33 @@
 #import <Foundation/Foundation.h>
 
 
-// Maintained in-app
-extern NSString * const istrNoInternet;
-extern NSString * const istrServerDown;
-
-// Grammer snippets
-extern NSString * const strPhoneDefinite;
-extern NSString * const str_iPodDefinite;
-extern NSString * const str_iPadDefinite;
-extern NSString * const strPhonePossessive;
-extern NSString * const str_iPodPossessive;
-extern NSString * const str_iPadPossessive;
-extern NSString * const strThisPhone;
-extern NSString * const strThis_iPod;
-extern NSString * const strThis_iPad;
-
 // Error & alert messages
 extern NSString * const strNoInternetError;
 extern NSString * const strServerErrorAlert;
+extern NSString * const strInvalidNameTitle;
 extern NSString * const strInvalidNameAlert;
+extern NSString * const strInvalidEmailTitle;
 extern NSString * const strInvalidEmailAlert;
+extern NSString * const strInvalidPasswordTitle;
 extern NSString * const strInvalidPasswordAlert;
 extern NSString * const strEmailSentAlertTitle;
 extern NSString * const strEmailSentAlert;
-extern NSString * const strEmailSentToInviteeAlertTitle;
+extern NSString * const strEmailSentToInviteeTitle;
 extern NSString * const strEmailSentToInviteeAlert;
+extern NSString * const strPasswordsDoNotMatchTitle;
 extern NSString * const strPasswordsDoNotMatchAlert;
-extern NSString * const strRegistrationCodesDoNotMatchAlert;
+extern NSString * const strInvalidRegistrationCodeTitle;
+extern NSString * const strInvalidRegistrationCodeAlert;
 extern NSString * const strUserExistsMustLogInAlert;
 extern NSString * const strNotLoggedInAlert;
+extern NSString * const strNoAddressTitle;
 extern NSString * const strNoAddressAlert;
+extern NSString * const strInvalidDateOfBirthTitle;
 extern NSString * const strInvalidDateOfBirthAlert;
+extern NSString * const strNoPhoneNumberTitle;
 extern NSString * const strNoPhoneNumberAlert;
+extern NSString * const strIncompleteRegistrationTitle;
+extern NSString * const strIncompleteRegistrationAlert;
 
 // Button titles
 extern NSString * const strOK;
@@ -78,6 +73,8 @@ extern NSString * const strRepeatPasswordPrompt;
 extern NSString * const strScolaDescription;
 
 // Registration view 1
+extern NSString * const strRegView1NavItemTitle;
+extern NSString * const strRegView1BackButtonTitle;
 extern NSString * const strAddressUserHelp;
 extern NSString * const strAddressListedUserHelp;
 extern NSString * const strAddressLine1Prompt;
@@ -89,6 +86,7 @@ extern NSString * const strDateOfBirthPrompt;
 extern NSString * const strDateOfBirthClickHerePrompt;
 
 // Registration view 2
+extern NSString * const strRegView2NavItemTitle;
 extern NSString * const strFemale;
 extern NSString * const strFemaleMinor;
 extern NSString * const strMale;

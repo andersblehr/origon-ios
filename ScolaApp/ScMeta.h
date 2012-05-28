@@ -15,6 +15,10 @@ extern NSString * const kKeyEntityId;
 extern NSString * const kKeyEntityClass;
 extern NSString * const kKeyScolaId;
 
+extern NSString * const kGenderFemale;
+extern NSString * const kGenderMale;
+extern NSString * const kGenderNoneGiven;
+
 @class Reachability, ScCachedEntity, ScServerConnection;
 
 @interface ScMeta : NSObject <ScServerConnectionDelegate> {

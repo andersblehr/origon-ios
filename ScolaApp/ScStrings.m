@@ -18,38 +18,33 @@ static NSDictionary *strings = nil;
 static NSString * const kStringsPlist = @"strings.plist";
 
 
-// Maintained in-app
-NSString * const istrNoInternet                      = @"strNoInternet";
-NSString * const istrServerDown                      = @"strServerDown";
-
-// Grammer snippets
-NSString * const strPhoneDefinite                    = @"strPhoneDefinite";
-NSString * const str_iPodDefinite                    = @"str_iPodDefinite";
-NSString * const str_iPadDefinite                    = @"str_iPadDefinite";
-NSString * const strPhonePossessive                  = @"strPhonePossessive";
-NSString * const str_iPodPossessive                  = @"str_iPodPossessive";
-NSString * const str_iPadPossessive                  = @"str_iPadPossessive";
-NSString * const strThisPhone                        = @"strThisPhone";
-NSString * const strThis_iPod                        = @"strThis_iPod";
-NSString * const strThis_iPad                        = @"strThis_iPad";
-
 // Error & alert messages
 NSString * const strNoInternetError                  = @"strNoInternetError";
 NSString * const strServerErrorAlert                 = @"strServerErrorAlert";
+NSString * const strInvalidNameTitle                 = @"strInvalidNameTitle";
 NSString * const strInvalidNameAlert                 = @"strInvalidNameAlert";
+NSString * const strInvalidEmailTitle                = @"strInvalidEmailTitle";
 NSString * const strInvalidEmailAlert                = @"strInvalidEmailAlert";
+NSString * const strInvalidPasswordTitle             = @"strInvalidPasswordTitle";
 NSString * const strInvalidPasswordAlert             = @"strInvalidPasswordAlert";
 NSString * const strEmailSentAlertTitle              = @"strEmailSentAlertTitle";
 NSString * const strEmailSentAlert                   = @"strEmailSentAlert";
-NSString * const strEmailSentToInviteeAlertTitle     = @"strEmailSentToInviteeAlertTitle";
+NSString * const strEmailSentToInviteeTitle          = @"strEmailSentToInviteeTitle";
 NSString * const strEmailSentToInviteeAlert          = @"strEmailSentToInviteeAlert";
+NSString * const strPasswordsDoNotMatchTitle         = @"strPasswordsDoNotMatchTitle";
 NSString * const strPasswordsDoNotMatchAlert         = @"strPasswordsDoNotMatchAlert";
-NSString * const strRegistrationCodesDoNotMatchAlert = @"strRegistrationCodesDoNotMatchAlert";
+NSString * const strInvalidRegistrationCodeTitle     = @"strInvalidRegistrationCodeTitle";
+NSString * const strInvalidRegistrationCodeAlert     = @"strInvalidRegistrationCodeAlert";
 NSString * const strUserExistsMustLogInAlert         = @"strUserExistsMustLogInAlert";
 NSString * const strNotLoggedInAlert                 = @"strNotLoggedInAlert";
+NSString * const strNoAddressTitle                   = @"strNoAddressTitle";
 NSString * const strNoAddressAlert                   = @"strNoAddressAlert";
+NSString * const strInvalidDateOfBirthTitle          = @"strInvalidDateOfBirthTitle";
 NSString * const strInvalidDateOfBirthAlert          = @"strInvalidDateOfBirthAlert";
+NSString * const strNoPhoneNumberTitle               = @"strNoPhoneNumberTitle";
 NSString * const strNoPhoneNumberAlert               = @"strNoPhoneNumberAlert";
+NSString * const strIncompleteRegistrationTitle      = @"strIncompleteRegistrationTitle";
+NSString * const strIncompleteRegistrationAlert      = @"strIncompleteRegistrationAlert";
 
 // Button titles
 NSString * const strOK                               = @"strOK";
@@ -88,6 +83,8 @@ NSString * const strRepeatPasswordPrompt             = @"strRepeatPasswordPrompt
 NSString * const strScolaDescription                 = @"strScolaDescription";
 
 // Registration view 1
+NSString * const strRegView1NavItemTitle             = @"strRegView1NavItemTitle";
+NSString * const strRegView1BackButtonTitle          = @"strRegView1BackButtonTitle";
 NSString * const strAddressUserHelp                  = @"strAddressUserHelp";
 NSString * const strAddressListedUserHelp            = @"strAddressListedUserHelp";
 NSString * const strAddressLine1Prompt               = @"strAddressLine1Prompt";
@@ -99,6 +96,7 @@ NSString * const strDateOfBirthPrompt                = @"strDateOfBirthPrompt";
 NSString * const strDateOfBirthClickHerePrompt       = @"strDateOfBirthClickHerePrompt";
 
 // Registration view 2
+NSString * const strRegView2NavItemTitle             = @"strRegView2NavItemTitle";
 NSString * const strFemale                           = @"strFemale";
 NSString * const strFemaleMinor                      = @"strFemaleMinor";
 NSString * const strMale                             = @"strMale";

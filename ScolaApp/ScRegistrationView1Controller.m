@@ -68,6 +68,7 @@ static int const kMaximumRealisticAge = 110;
     BOOL isValid = NO;
     
     isValid = isValid || (addressLine1Field.text.length > 0);
+    isValid = isValid || (addressLine2Field.text.length > 0);
     isValid = isValid || (postCodeAndCityField.text.length > 0);
     
     if (!isValid) {
@@ -122,13 +123,18 @@ static int const kMaximumRealisticAge = 110;
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
-    
+    self.navigationItem.title = [ScStrings stringForKey:strRegView1NavItemTitle];
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] init];
+    self.navigationItem.backBarButtonItem.title = [ScStrings stringForKey:strRegView1BackButtonTitle];
+
     UIBarButtonItem *nextButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strNext] style:UIBarButtonItemStyleDone target:self action:@selector(textFieldShouldReturn:)];
     
     self.navigationItem.hidesBackButton = YES;
     self.navigationItem.rightBarButtonItem = nextButton;
     
-    if (isUserListed && ((homeScola.addressLine1.length > 0) || (homeScola.addressLine2.length > 0) || (homeScola.postCodeAndCity.length > 0))) {
+    if (isUserListed &&
+        ((homeScola.addressLine1.length > 0) || (homeScola.addressLine2.length > 0) || 
+         (homeScola.postCodeAndCity.length > 0))) {
         addressUserHelpLabel.text = [ScStrings stringForKey:strAddressListedUserHelp];
     } else {
         addressUserHelpLabel.text = [ScStrings stringForKey:strAddressUserHelp];
@@ -224,10 +230,13 @@ static int const kMaximumRealisticAge = 110;
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     NSString *alertMessage = nil;
+    NSString *alertTitle = nil;
     
     if (![self isAddressValid]) {
+        alertTitle = [ScStrings stringForKey:strNoAddressTitle];
         alertMessage = [ScStrings stringForKey:strNoAddressAlert];
     } else if (![self isDateOfBirthValid]) {
+        alertTitle = [ScStrings stringForKey:strInvalidDateOfBirthTitle];
         alertMessage = [ScStrings stringForKey:strInvalidDateOfBirthAlert];
     }
     
@@ -246,7 +255,7 @@ static int const kMaximumRealisticAge = 110;
         
         [self performSegueWithIdentifier:kSegueToRegistrationView2 sender:self];
     } else {
-        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK]otherButtonTitles:nil];
+        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK]otherButtonTitles:nil];
         
         [validationAlert show];
     }

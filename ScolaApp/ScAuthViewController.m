@@ -21,7 +21,11 @@
 #import "ScDevice.h"
 #import "ScMember.h"
 #import "ScMemberResidency.h"
+#import "ScMessageBoard.h"
 #import "ScScola.h"
+
+#import "ScMember+ScMemberExtensions.h"
+#import "ScScola+ScScolaExtensions.h"
 
 #import "ScMainViewController.h"
 #import "ScRegistrationView1Controller.h"
@@ -50,8 +54,6 @@ static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
 static NSString * const kAuthInfoKeyIsListed = @"isListed";
 static NSString * const kAuthInfoKeyIsRegistered = @"isRegistered";
 static NSString * const kAuthInfoKeyHomeScolaId = @"homeScolaId";
-
-static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
 
 static int const kPopUpButtonLater = 0;
 static int const kPopUpButtonContinue = 1;
@@ -143,6 +145,27 @@ static int const kPopUpButtonGoBack = 0;
 }
 
 
+- (BOOL)registerNewDevice
+{
+    BOOL didRegisterNewDevice = NO;
+    
+    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+    
+    ScDevice *device = [context fetchEntityWithId:[ScMeta m].deviceId];
+    
+    if (!device) {
+        device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
+        device.type = [UIDevice currentDevice].model;
+        device.displayName = [UIDevice currentDevice].name;
+        device.member = member;
+        
+        didRegisterNewDevice = YES;
+    }
+    
+    return didRegisterNewDevice;
+}
+
+
 #pragma mark - View composition
 
 - (void)userIntentionDidChange
@@ -151,7 +174,10 @@ static int const kPopUpButtonGoBack = 0;
         emailAsEntered = nameOrEmailOrRegistrationCodeField.text;
     } else if (authPhase == ScAuthPhaseRegistration) {
         nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
-        emailAsEntered = emailOrPasswordField.text;
+        
+        if (emailOrPasswordField.text.length > 0) {
+            emailAsEntered = emailOrPasswordField.text;
+        }
     }
     
     if (userIntentionControl.selectedSegmentIndex == kUserIntentionLogin) {
@@ -181,9 +207,14 @@ static int const kPopUpButtonGoBack = 0;
     emailOrPasswordField.text = @"";
     emailOrPasswordField.keyboardType = UIKeyboardTypeDefault;
     emailOrPasswordField.secureTextEntry = YES;
-    emailOrPasswordField.clearButtonMode = UITextFieldViewModeNever;
     
     passwordField.hidden = YES;
+
+    if (nameOrEmailOrRegistrationCodeField.text.length > 0) {
+        [emailOrPasswordField becomeFirstResponder];
+    } else {
+        [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
+    }
     
     if (authInfo) {
         [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
@@ -208,13 +239,14 @@ static int const kPopUpButtonGoBack = 0;
     nameOrEmailOrRegistrationCodeField.clearButtonMode = UITextFieldViewModeNever;
     
     emailOrPasswordField.placeholder = [ScStrings stringForKey:strEmailPrompt];
-    emailOrPasswordField.text = emailAsEntered;
+    emailOrPasswordField.text = @"";
     emailOrPasswordField.keyboardType = UIKeyboardTypeEmailAddress;
     emailOrPasswordField.secureTextEntry = NO;
-    emailOrPasswordField.clearButtonMode = UITextFieldViewModeWhileEditing;
     
     passwordField.text = @"";
     passwordField.hidden = NO;
+    
+    [self resignCurrentFirstResponder];
     
     if (authInfo) {
         [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
@@ -236,7 +268,6 @@ static int const kPopUpButtonGoBack = 0;
     nameOrEmailOrRegistrationCodeField.text = @"";
     nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeDefault;
     nameOrEmailOrRegistrationCodeField.autocapitalizationType = NO;
-    nameOrEmailOrRegistrationCodeField.clearButtonMode = UITextFieldViewModeNever;
     
     emailOrPasswordField.placeholder = [ScStrings stringForKey:strRepeatPasswordPrompt];
     emailOrPasswordField.text = @"";
@@ -274,6 +305,12 @@ static int const kPopUpButtonGoBack = 0;
     } else {
         [activityIndicator stopAnimating];
         
+        if (authPhase == ScAuthPhaseRegistration) {
+            [self setUpForUserRegistration];
+        } else if (authPhase == ScAuthPhaseConfirmation) {
+            userIntentionControl.selectedSegmentIndex = UISegmentedControlNoSegment;
+        }
+        
         nameOrEmailOrRegistrationCodeField.placeholder = nameEtcPlaceholder;
         nameOrEmailOrRegistrationCodeField.text = nameEtc;
         emailOrPasswordField.placeholder = emailEtcPlaceholder;
@@ -281,12 +318,6 @@ static int const kPopUpButtonGoBack = 0;
         
         userIntentionControl.enabled = YES;
         isEditingAllowed = YES;
-        
-        if (authPhase == ScAuthPhaseRegistration) {
-            [self setUpForUserRegistration];
-        } else if (authPhase == ScAuthPhaseConfirmation) {
-            userIntentionControl.selectedSegmentIndex = UISegmentedControlNoSegment;
-        }
     }
 }
 
@@ -449,20 +480,17 @@ static int const kPopUpButtonGoBack = 0;
         member = [context fetchEntityWithId:[ScMeta m].userId];
         homeScola = [context fetchEntityWithId:member.scolaId];
         
-        [ScMeta m].homeScolaId = homeScola.entityId;
+        [ScMeta m].homeScolaId = member.scolaId;
         
-        ScDevice *device = [context fetchEntityWithId:[ScMeta m].deviceId];
-        
-        if (!device) {
-            device = [context entityForClass:ScDevice.class inScola:homeScola withId:[ScMeta m].deviceId];
-            device.type = [UIDevice currentDevice].model;
-            device.displayName = [UIDevice currentDevice].name;
-            device.member = member;
-            
+        if ([self registerNewDevice]) {
             [context synchronise];
         }
         
-        [self performSegueWithIdentifier:kSegueToMainView sender:self];
+        if ([self isRegistrationComplete]) {
+            [self performSegueWithIdentifier:kSegueToMainView sender:self];
+        } else {
+            [self completeRegistration];
+        }
     } else if (authPhase == ScAuthPhaseConfirmation) {
         if (isUserListed) {
             homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
@@ -470,10 +498,26 @@ static int const kPopUpButtonGoBack = 0;
         } else {
             homeScola = [context entityForScolaWithName:[ScStrings stringForKey:strMyPlace] scolaId:[ScMeta m].homeScolaId];
             member = [context entityForClass:ScMember.class inScola:homeScola withId:emailAsEntered];
+            
+            ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
+            
+            defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
+            defaultMessageBoard.scola = homeScola;
         }
         
         member.name = nameAsEntered;
+        member.gender = kGenderNoneGiven;
         member.passwordHash = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
+        member.didRegister = [NSNumber numberWithBool:YES];
+        member.activeSince = [NSDate date];
+        
+        [self registerNewDevice];
+        
+        ScMemberResidency *residency = [homeScola addResident:member];
+        residency.isActive = [NSNumber numberWithBool:YES];
+        residency.isAdmin = [NSNumber numberWithBool:isUserListed ? ![member isMinor] : YES];
+
+        [context synchronise];
         
         [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
         authInfo = nil;
@@ -500,7 +544,7 @@ static int const kPopUpButtonGoBack = 0;
         if (isUserListed) {
             [ScMeta m].homeScolaId = [authInfo objectForKey:kAuthInfoKeyHomeScolaId];
             
-            alertTitle = [ScStrings stringForKey:strEmailSentToInviteeAlertTitle];
+            alertTitle = [ScStrings stringForKey:strEmailSentToInviteeTitle];
             alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strEmailSentToInviteeAlert], emailAsEntered];
         } else {
             [ScMeta m].homeScolaId = [ScUUIDGenerator generateUUID];
@@ -522,6 +566,38 @@ static int const kPopUpButtonGoBack = 0;
 }
 
 
+- (BOOL)isRegistrationComplete
+{
+    if (!member) {
+        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+        
+        member = [context fetchEntityWithId:[ScMeta m].userId];
+        homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
+    }
+    
+    BOOL isAddressValid = (homeScola.addressLine1.length > 0);
+    
+    isAddressValid = isAddressValid || (homeScola.addressLine2.length > 0);
+    isAddressValid = isAddressValid || (homeScola.postCodeAndCity.length > 0);
+    
+    BOOL isPhoneNumberGiven = (member.mobilePhone.length > 0);
+    
+    isPhoneNumberGiven = isPhoneNumberGiven || (homeScola.landline.length > 0);
+    
+    return (isAddressValid && isPhoneNumberGiven);
+}
+
+
+- (void)completeRegistration
+{
+    UIAlertView *incompleteRegistrationAlert = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strIncompleteRegistrationTitle] message:[ScStrings stringForKey:strIncompleteRegistrationAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+    
+    [incompleteRegistrationAlert show];
+    
+    [self performSegueWithIdentifier:kSegueToRegistrationView1 sender:self];
+}
+
+
 #pragma mark - View lifecycle
 
 - (void)didReceiveMemoryWarning
@@ -535,7 +611,11 @@ static int const kPopUpButtonGoBack = 0;
     [super viewDidLoad];
 
     if ([[ScMeta m] isUserLoggedIn]) {
-        [self performSegueWithIdentifier:kSegueToMainView sender:self];
+        if ([self isRegistrationComplete]) {
+            [self performSegueWithIdentifier:kSegueToMainView sender:self];
+        } else {
+            [self completeRegistration];
+        }
     } else {
         [darkLinenView addGradientLayer];
         [darkLinenView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignCurrentFirstResponder)]];
@@ -577,10 +657,9 @@ static int const kPopUpButtonGoBack = 0;
         [self setUpForUserConfirmation];
     } else {
         if ([ScMeta m].userId) {
-            [self setUpForUserLogin];
+            emailAsEntered = [ScMeta m].userId;
             
-            nameOrEmailOrRegistrationCodeField.text = [ScMeta m].userId;
-            [emailOrPasswordField becomeFirstResponder];
+            [self setUpForUserLogin];
         } else {
             [self setUpForUserRegistration];
         }
@@ -673,6 +752,7 @@ static int const kPopUpButtonGoBack = 0;
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     NSString *alertMessage = nil;
+    NSString *alertTitle = nil;
     NSString *cancelButtonTitle = [ScStrings stringForKey:strOK];
     
     [self textFieldShouldEndEditing:textField];
@@ -680,8 +760,10 @@ static int const kPopUpButtonGoBack = 0;
     switch (authPhase) {
         case ScAuthPhaseLogin:
             if (![self isEmailValid]) {
+                alertTitle = [ScStrings stringForKey:strInvalidEmailTitle];
                 alertMessage = [ScStrings stringForKey:strInvalidEmailAlert];
             } else if (![self isPasswordValid]) {
+                alertTitle = [ScStrings stringForKey:strInvalidPasswordTitle];
                 alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidPasswordAlert], kMinimumPassordLength];
             }
             
@@ -689,10 +771,13 @@ static int const kPopUpButtonGoBack = 0;
             
         case ScAuthPhaseRegistration:
             if (![self isNameValid]) {
+                alertTitle = [ScStrings stringForKey:strInvalidNameTitle];
                 alertMessage = [ScStrings stringForKey:strInvalidNameAlert];
             } else if (![self isEmailValid]) {
+                alertTitle = [ScStrings stringForKey:strInvalidEmailTitle];
                 alertMessage = [ScStrings stringForKey:strInvalidEmailAlert];
             } else if (![self isPasswordValid]) {
+                alertTitle = [ScStrings stringForKey:strInvalidPasswordTitle];
                 alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidPasswordAlert], kMinimumPassordLength];
             }
             
@@ -700,8 +785,10 @@ static int const kPopUpButtonGoBack = 0;
             
         case ScAuthPhaseConfirmation:
             if (![self isRegistrationCodeValid]) {
-                alertMessage = [ScStrings stringForKey:strRegistrationCodesDoNotMatchAlert];
+                alertTitle = [ScStrings stringForKey:strInvalidRegistrationCodeTitle];
+                alertMessage = [ScStrings stringForKey:strInvalidRegistrationCodeAlert];
             } else if (![self isPasswordValid]) {
+                alertTitle = [ScStrings stringForKey:strPasswordsDoNotMatchTitle];
                 alertMessage = [ScStrings stringForKey:strPasswordsDoNotMatchAlert];
             }
             
@@ -726,7 +813,7 @@ static int const kPopUpButtonGoBack = 0;
             [self confirmUser];
         }
     } else {
-        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:nil cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
+        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:nil cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
         
         if (authPhase == ScAuthPhaseConfirmation) {
             [validationAlert addButtonWithTitle:[ScStrings stringForKey:strTryAgain]];
@@ -760,18 +847,11 @@ static int const kPopUpButtonGoBack = 0;
             break;
             
         case ScAuthAlertTagConfirmationFailed:
+        case ScAuthAlertTagWelcomeBack:
             if (buttonIndex == kPopUpButtonGoBack) {
                 [self setUpForUserRegistration];
-                [passwordField becomeFirstResponder];
-            }
-            
-            break;
-
-        case ScAuthAlertTagWelcomeBack:
-            if (buttonIndex == kPopUpButtonContinue) {
-                [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
-            } else if (buttonIndex == kPopUpButtonGoBack) {
-                [self setUpForUserRegistration];
+                
+                emailOrPasswordField.text = emailAsEntered;
                 [passwordField becomeFirstResponder];
             }
             
@@ -779,7 +859,6 @@ static int const kPopUpButtonGoBack = 0;
         
         case ScAuthAlertTagNotLoggedIn:
             [self setUpForUserLogin];
-            [emailOrPasswordField becomeFirstResponder];
             
             break;
             
