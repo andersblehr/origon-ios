@@ -498,6 +498,10 @@ static int const kPopUpButtonGoBack = 0;
             homeScola = [context entityForScolaWithName:[ScStrings stringForKey:strMyPlace] scolaId:[ScMeta m].homeScolaId];
             member = [context entityForClass:ScMember.class inScola:homeScola withId:emailAsEntered];
             
+            ScMemberResidency *residency = [homeScola addResident:member];
+            residency.isActive = [NSNumber numberWithBool:YES];
+            residency.isAdmin = [NSNumber numberWithBool:YES];
+            
             ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
             
             defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
@@ -512,10 +516,6 @@ static int const kPopUpButtonGoBack = 0;
         
         [self registerNewDevice];
         
-        ScMemberResidency *residency = [homeScola addResident:member];
-        residency.isActive = [NSNumber numberWithBool:YES];
-        residency.isAdmin = [NSNumber numberWithBool:isUserListed ? ![member isMinor] : YES];
-
         [context synchronise];
         
         [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];

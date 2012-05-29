@@ -36,7 +36,8 @@ static NSString * const kUserDefaultsKeyFormatDeviceId = @"scola.device.id$%@";
 static NSString * const kUserDefaultsKeyFormatAuthExpiryDate = @"scola.auth.expires$%@";
 static NSString * const kUserDefaultsKeyFormatLastFetchDate = @"scola.fetch.date$%@";
 
-static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
+//static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
+static NSTimeInterval const kTimeIntervalTwoWeeks = 30;
 
 static ScMeta *m = nil;
 
@@ -249,8 +250,7 @@ static ScMeta *m = nil;
 - (NSString *)authToken
 {
     if (!authToken && ![self isUserLoggedIn]) {
-        //authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
-        authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:30];
+        authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
         authToken = [self generateAuthToken:authTokenExpiryDate];
     }
     
