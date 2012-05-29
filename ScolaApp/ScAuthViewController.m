@@ -451,7 +451,6 @@ static int const kPopUpButtonGoBack = 0;
 - (void)confirmUser
 {
     [ScMeta m].userId = emailAsEntered;
-    [ScMeta m].isUserLoggedIn = YES;
     
     NSString *password = emailOrPasswordField.text;
     

@@ -198,15 +198,15 @@ static ScMeta *m = nil;
 
 - (BOOL)isUserLoggedIn
 {
-    BOOL isLoggedIn = NO;
-    
-    if (authTokenExpiryDate) {
+    if (!authToken && authTokenExpiryDate) {
         NSDate *now = [NSDate date];
         
-        isLoggedIn = ([now compare:authTokenExpiryDate] == NSOrderedAscending);
+        if ([now compare:authTokenExpiryDate] == NSOrderedAscending) {
+            authToken = [self generateAuthToken:authTokenExpiryDate];
+        }
     }
     
-    return isLoggedIn;
+    return (authToken != nil);
 }
 
 
