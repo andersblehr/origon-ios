@@ -110,11 +110,13 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
     if ([ScMeta m].isUserLoggedIn) {
         [[ScMeta m].managedObjectContext save];
+    } else {
+        [ScMeta m].userId = nil;
     }
+    
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 

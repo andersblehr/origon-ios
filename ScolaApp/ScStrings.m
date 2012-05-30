@@ -86,12 +86,13 @@ NSString * const strScolaDescription                 = @"strScolaDescription";
 NSString * const strRegView1NavItemTitle             = @"strRegView1NavItemTitle";
 NSString * const strRegView1BackButtonTitle          = @"strRegView1BackButtonTitle";
 NSString * const strAddressUserHelp                  = @"strAddressUserHelp";
-NSString * const strAddressListedUserHelp            = @"strAddressListedUserHelp";
+NSString * const strProvideAddressUserHelp           = @"strProvideAddressUserHelp";
+NSString * const strVerifyAddressUserHelp            = @"strVerifyAddressUserHelp";
 NSString * const strAddressLine1Prompt               = @"strAddressLine1Prompt";
 NSString * const strAddressLine2Prompt               = @"strAddressLine2Prompt";
 NSString * const strPostCodeAndCityPrompt            = @"strPostCodeAndCityPrompt";
 NSString * const strDateOfBirthUserHelp              = @"strDateOfBirthUserHelp";
-NSString * const strDateOfBirthListedUserHelp        = @"strDateOfBirthListedUserHelp";
+NSString * const strVerifyDateOfBirthUserHelp        = @"strVerifyDateOfBirthUserHelp";
 NSString * const strDateOfBirthPrompt                = @"strDateOfBirthPrompt";
 NSString * const strDateOfBirthClickHerePrompt       = @"strDateOfBirthClickHerePrompt";
 
@@ -103,10 +104,11 @@ NSString * const strMale                             = @"strMale";
 NSString * const strMaleMinor                        = @"strMaleMinor";
 NSString * const strGenderUserHelp                   = @"strGenderUserHelp";
 NSString * const strMobilePhoneUserHelp              = @"strMobilePhoneUserHelp";
-NSString * const strMobilePhoneListedUserHelp        = @"strMobilePhoneListedUserHelp";
+NSString * const strVerifyMobilePhoneUserHelp        = @"strVerifyMobilePhoneUserHelp";
 NSString * const strMobilePhonePrompt                = @"strMobilePhonePrompt";
 NSString * const strLandlineUserHelp                 = @"strLandlineUserHelp";
-NSString * const strLandlineListedUserHelp           = @"strLandlineListedUserHelp";
+NSString * const strProvideLandlineUserHelp          = @"strProvideLandlineUserHelp";
+NSString * const strVerifyLandlineUserHelp           = @"strVerifyLandlineUserHelp";
 NSString * const strLandlinePrompt                   = @"strLandlinePrompt";
 
 // Main view

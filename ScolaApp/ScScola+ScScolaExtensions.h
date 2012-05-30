@@ -15,4 +15,7 @@
 - (ScMembership *)addMember:(ScMember *)member;
 - (ScMemberResidency *)addResident:(ScMember *)resident;
 
+- (BOOL)hasAddress;
+- (BOOL)hasLandline;
+
 @end

@@ -10,6 +10,8 @@
 
 @interface ScMemberResidency (ScMemberResidencyExtensions)
 
++ (ScMemberResidency *)residencyForMember:(NSString *)userId;
+
 - (void)internaliseRelationships;
 
 @end

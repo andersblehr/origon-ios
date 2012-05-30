@@ -61,4 +61,24 @@
     return residency;
 }
 
+
+#pragma mark - State validation
+
+- (BOOL)hasAddress
+{
+    BOOL isValid = NO;
+    
+    isValid = isValid || (self.addressLine1.length > 0);
+    isValid = isValid || (self.addressLine2.length > 0);
+    isValid = isValid || (self.postCodeAndCity.length > 0);
+    
+    return isValid;
+}
+
+
+- (BOOL)hasLandline
+{
+    return (self.landline.length > 0);
+}
+
 @end

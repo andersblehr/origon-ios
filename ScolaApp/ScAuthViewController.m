@@ -498,18 +498,18 @@ static int const kPopUpButtonGoBack = 0;
             homeScola = [context entityForScolaWithName:[ScStrings stringForKey:strMyPlace] scolaId:[ScMeta m].homeScolaId];
             member = [context entityForClass:ScMember.class inScola:homeScola withId:emailAsEntered];
             
+            member.gender = kGenderNoneGiven;
+            
             ScMemberResidency *residency = [homeScola addResident:member];
             residency.isActive = [NSNumber numberWithBool:YES];
             residency.isAdmin = [NSNumber numberWithBool:YES];
             
             ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:homeScola];
-            
             defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
             defaultMessageBoard.scola = homeScola;
         }
         
         member.name = nameAsEntered;
-        member.gender = kGenderNoneGiven;
         member.passwordHash = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
         member.didRegister = [NSNumber numberWithBool:YES];
         member.activeSince = [NSDate date];
@@ -574,16 +574,9 @@ static int const kPopUpButtonGoBack = 0;
         homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
     }
     
-    BOOL isAddressValid = (homeScola.addressLine1.length > 0);
+    BOOL isPhoneNumberGiven = ([member hasMobilPhone] || [homeScola hasLandline]);
     
-    isAddressValid = isAddressValid || (homeScola.addressLine2.length > 0);
-    isAddressValid = isAddressValid || (homeScola.postCodeAndCity.length > 0);
-    
-    BOOL isPhoneNumberGiven = (member.mobilePhone.length > 0);
-    
-    isPhoneNumberGiven = isPhoneNumberGiven || (homeScola.landline.length > 0);
-    
-    return (isAddressValid && isPhoneNumberGiven);
+    return (isPhoneNumberGiven && [homeScola hasAddress]);
 }
 
 

@@ -76,12 +76,13 @@ extern NSString * const strScolaDescription;
 extern NSString * const strRegView1NavItemTitle;
 extern NSString * const strRegView1BackButtonTitle;
 extern NSString * const strAddressUserHelp;
-extern NSString * const strAddressListedUserHelp;
+extern NSString * const strProvideAddressUserHelp;
+extern NSString * const strVerifyAddressUserHelp;
 extern NSString * const strAddressLine1Prompt;
 extern NSString * const strAddressLine2Prompt;
 extern NSString * const strPostCodeAndCityPrompt;
 extern NSString * const strDateOfBirthUserHelp;
-extern NSString * const strDateOfBirthListedUserHelp;
+extern NSString * const strVerifyDateOfBirthUserHelp;
 extern NSString * const strDateOfBirthPrompt;
 extern NSString * const strDateOfBirthClickHerePrompt;
 
@@ -93,10 +94,11 @@ extern NSString * const strMale;
 extern NSString * const strMaleMinor;
 extern NSString * const strGenderUserHelp;
 extern NSString * const strMobilePhoneUserHelp;
-extern NSString * const strMobilePhoneListedUserHelp;
+extern NSString * const strVerifyMobilePhoneUserHelp;
 extern NSString * const strMobilePhonePrompt;
 extern NSString * const strLandlineUserHelp;
-extern NSString * const strLandlineListedUserHelp;
+extern NSString * const strProvideLandlineUserHelp;
+extern NSString * const strVerifyLandlineUserHelp;
 extern NSString * const strLandlinePrompt;
 
 // Generic Scola strings

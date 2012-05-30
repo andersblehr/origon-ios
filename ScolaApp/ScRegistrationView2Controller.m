@@ -124,25 +124,35 @@ static int const kPopUpButtonUseNew = 1;
     [genderControl setTitle:maleLabel forSegmentAtIndex:kGenderSegmentMale];
     genderUserHelpLabel.text = [NSString stringWithFormat:[ScStrings stringForKey:strGenderUserHelp], [femaleLabel lowercaseString], [maleLabel lowercaseString]];
     
-    if (isUserListed && (member.mobilePhone.length > 0)) {
-        mobilePhoneUserHelpLabel.text = [ScStrings stringForKey:strMobilePhoneListedUserHelp];
+    if (isUserListed && [member hasMobilPhone]) {
+        mobilePhoneUserHelpLabel.text = [ScStrings stringForKey:strVerifyMobilePhoneUserHelp];
     } else {
         mobilePhoneUserHelpLabel.text = [ScStrings stringForKey:strMobilePhoneUserHelp];
     }
     
-    if (isUserListed && (homeScola.landline.length > 0)) {
-        landlineUserHelpLabel.text = [ScStrings stringForKey:strLandlineListedUserHelp];
+    ScMemberResidency *residency = [ScMemberResidency residencyForMember:[ScMeta m].userId];
+    BOOL isLandlineEditable = [[residency isAdmin] boolValue];
+    
+    if (isUserListed && isLandlineEditable && [homeScola hasLandline]) {
+        landlineUserHelpLabel.text = [ScStrings stringForKey:strVerifyLandlineUserHelp];
+    } else if (isLandlineEditable) {
+        landlineUserHelpLabel.text = [ScStrings stringForKey:strProvideLandlineUserHelp];
     } else {
         landlineUserHelpLabel.text = [ScStrings stringForKey:strLandlineUserHelp];
+    }
+    
+    if (isLandlineEditable) {
+        landlineField.delegate = self;
+        landlineField.placeholder = [ScStrings stringForKey:strLandlinePrompt];
+        landlineField.keyboardType = UIKeyboardTypeNumberPad;
+    } else {
+        landlineField.enabled = NO;
+        landlineField.textColor = [UIColor grayColor];
     }
     
     mobilePhoneField.delegate = self;
     mobilePhoneField.placeholder = [ScStrings stringForKey:strMobilePhonePrompt];
     mobilePhoneField.keyboardType = UIKeyboardTypeNumberPad;
-    
-    landlineField.delegate = self;
-    landlineField.placeholder = [ScStrings stringForKey:strLandlinePrompt];
-    landlineField.keyboardType = UIKeyboardTypeNumberPad;
     
     [mobilePhoneField becomeFirstResponder];
 }

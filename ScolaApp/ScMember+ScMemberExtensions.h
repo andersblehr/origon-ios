@@ -10,6 +10,8 @@
 
 @interface ScMember (ScMemberExtensions)
 
+- (BOOL)hasValidBirthDate;
+- (BOOL)hasMobilPhone;
 - (BOOL)isMinor;
 
 @end

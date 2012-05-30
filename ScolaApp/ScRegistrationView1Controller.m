@@ -17,13 +17,15 @@
 #import "ScStrings.h"
 
 #import "ScMember.h"
+#import "ScMemberResidency.h"
 #import "ScScola.h"
+
+#import "ScMember+ScMemberExtensions.h"
+#import "ScMemberResidency+ScMemberResidencyExtensions.h"
+#import "ScScola+ScScolaExtensions.h"
 
 
 static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistrationView2";
-
-static int const kMinimumRealisticAge = 5;
-static int const kMaximumRealisticAge = 110;
 
 
 @implementation ScRegistrationView1Controller
@@ -65,11 +67,11 @@ static int const kMaximumRealisticAge = 110;
 
 - (BOOL)isAddressValid
 {
-    BOOL isValid = NO;
+    homeScola.addressLine1 = addressLine1Field.text;
+    homeScola.addressLine2 = addressLine2Field.text;
+    homeScola.postCodeAndCity = postCodeAndCityField.text;
     
-    isValid = isValid || (addressLine1Field.text.length > 0);
-    isValid = isValid || (addressLine2Field.text.length > 0);
-    isValid = isValid || (postCodeAndCityField.text.length > 0);
+    BOOL isValid = [homeScola hasAddress];
     
     if (!isValid) {
         [addressLine1Field becomeFirstResponder];
@@ -84,18 +86,9 @@ static int const kMaximumRealisticAge = 110;
     BOOL isValid = (dateOfBirthField.text.length == 0);
     
     if (!isValid) {
-        NSDate *dateOfBirth = dateOfBirthPicker.date;
-        NSDate *now = [NSDate date];
+        member.dateOfBirth = dateOfBirthPicker.date;
         
-        isValid = ([dateOfBirth compare:now] == NSOrderedAscending);
-        
-        if (isValid) {
-            NSDateComponents *ageComponents = [[NSCalendar currentCalendar] components:NSYearCalendarUnit fromDate:dateOfBirth toDate:now options:kNilOptions];
-            NSInteger providedAge = ageComponents.year;
-            
-            isValid = isValid && (providedAge >= kMinimumRealisticAge);
-            isValid = isValid && (providedAge <= kMaximumRealisticAge);
-        }
+        isValid = [member hasValidBirthDate];
     }
     
     if (!isValid) {
@@ -132,28 +125,40 @@ static int const kMaximumRealisticAge = 110;
     self.navigationItem.hidesBackButton = YES;
     self.navigationItem.rightBarButtonItem = nextButton;
     
-    if (isUserListed &&
-        ((homeScola.addressLine1.length > 0) || (homeScola.addressLine2.length > 0) || 
-         (homeScola.postCodeAndCity.length > 0))) {
-        addressUserHelpLabel.text = [ScStrings stringForKey:strAddressListedUserHelp];
+    ScMemberResidency *residency = [ScMemberResidency residencyForMember:[ScMeta m].userId];
+    BOOL isAddressEditable = [[residency isAdmin] boolValue];
+    
+    if (isUserListed && isAddressEditable && [homeScola hasAddress]) {
+        addressUserHelpLabel.text = [ScStrings stringForKey:strVerifyAddressUserHelp];
+    } else if (isAddressEditable) {
+        addressUserHelpLabel.text = [ScStrings stringForKey:strProvideAddressUserHelp];
     } else {
         addressUserHelpLabel.text = [ScStrings stringForKey:strAddressUserHelp];
     }
 
+    if (isAddressEditable) {
+        addressLine1Field.delegate = self;
+        addressLine1Field.placeholder = [ScStrings stringForKey:strAddressLine1Prompt];
+        addressLine2Field.delegate = self;
+        addressLine2Field.placeholder = [ScStrings stringForKey:strAddressLine2Prompt];
+        postCodeAndCityField.delegate = self;
+        postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
+    } else {
+        addressLine1Field.enabled = NO;
+        addressLine1Field.textColor = [UIColor grayColor];
+        addressLine2Field.enabled = NO;
+        addressLine2Field.textColor = [UIColor grayColor];
+        postCodeAndCityField.enabled = NO;
+        postCodeAndCityField.textColor = [UIColor grayColor];
+    }
+    
     if (isUserListed && member.dateOfBirth) {
-        dateOfBirthUserHelpLabel.text = [ScStrings stringForKey:strDateOfBirthListedUserHelp];
+        dateOfBirthUserHelpLabel.text = [ScStrings stringForKey:strVerifyDateOfBirthUserHelp];
     } else {
         dateOfBirthUserHelpLabel.text = [ScStrings stringForKey:strDateOfBirthUserHelp];
     }
     
-    addressLine1Field.delegate = self;
-    addressLine2Field.delegate = self;
-    postCodeAndCityField.delegate = self;
     dateOfBirthField.delegate = self;
-    
-    addressLine1Field.placeholder = [ScStrings stringForKey:strAddressLine1Prompt];
-    addressLine2Field.placeholder = [ScStrings stringForKey:strAddressLine2Prompt];
-    postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
     dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthClickHerePrompt];
 }
 
@@ -176,7 +181,9 @@ static int const kMaximumRealisticAge = 110;
         dateOfBirthField.text = @"";
     }
     
-    [addressLine1Field becomeFirstResponder];
+    if (addressLine1Field.enabled) {
+        [addressLine1Field becomeFirstResponder];
+    }
 }
 
 
@@ -243,16 +250,6 @@ static int const kMaximumRealisticAge = 110;
     BOOL shouldReturn = !alertMessage;
     
     if (shouldReturn) {
-        [self.view endEditing:YES];
-        
-        homeScola.addressLine1 = addressLine1Field.text;
-        homeScola.addressLine2 = addressLine2Field.text;
-        homeScola.postCodeAndCity = postCodeAndCityField.text;
-        
-        if (dateOfBirthField.text.length > 0) {
-            member.dateOfBirth = dateOfBirthPicker.date;
-        }
-        
         [self performSegueWithIdentifier:kSegueToRegistrationView2 sender:self];
     } else {
         UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK]otherButtonTitles:nil];
