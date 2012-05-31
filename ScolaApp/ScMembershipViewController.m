@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
-#import "ScScheduleViewController.h"
+#import "ScMembershipViewController.h"
 
-@implementation ScScheduleViewController
+@implementation ScMembershipViewController
 
 
 #pragma mark - View lifecycle

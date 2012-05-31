@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ScScheduleViewController : UIViewController
+@interface ScMembershipViewController : UIViewController
 
 @end

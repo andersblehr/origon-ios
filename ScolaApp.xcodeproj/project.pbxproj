@@ -60,7 +60,7 @@
 		5C62A00214C6252C001DA01F /* ScTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C62A00114C6252C001DA01F /* ScTaskViewController.m */; };
 		5C62A00514C627AB001DA01F /* 11-clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00314C627AB001DA01F /* 11-clock.png */; };
 		5C62A00614C627AB001DA01F /* 11-clock@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00414C627AB001DA01F /* 11-clock@2x.png */; };
-		5C62A00914C627D1001DA01F /* ScScheduleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C62A00814C627D1001DA01F /* ScScheduleViewController.m */; };
+		5C62A00914C627D1001DA01F /* ScMembershipViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C62A00814C627D1001DA01F /* ScMembershipViewController.m */; };
 		5C62A00E14C762D7001DA01F /* 53-house.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00C14C762D6001DA01F /* 53-house.png */; };
 		5C62A00F14C762D7001DA01F /* 53-house@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00D14C762D7001DA01F /* 53-house@2x.png */; };
 		5C68C3C415666C8A00BBA8BE /* ScMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C68C3C315666C8A00BBA8BE /* ScMember.m */; };
@@ -193,8 +193,8 @@
 		5C62A00114C6252C001DA01F /* ScTaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScTaskViewController.m; sourceTree = "<group>"; };
 		5C62A00314C627AB001DA01F /* 11-clock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "11-clock.png"; sourceTree = "<group>"; };
 		5C62A00414C627AB001DA01F /* 11-clock@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "11-clock@2x.png"; sourceTree = "<group>"; };
-		5C62A00714C627D1001DA01F /* ScScheduleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduleViewController.h; sourceTree = "<group>"; };
-		5C62A00814C627D1001DA01F /* ScScheduleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduleViewController.m; sourceTree = "<group>"; };
+		5C62A00714C627D1001DA01F /* ScMembershipViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMembershipViewController.h; sourceTree = "<group>"; };
+		5C62A00814C627D1001DA01F /* ScMembershipViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMembershipViewController.m; sourceTree = "<group>"; };
 		5C62A00C14C762D6001DA01F /* 53-house.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "53-house.png"; sourceTree = "<group>"; };
 		5C62A00D14C762D7001DA01F /* 53-house@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "53-house@2x.png"; sourceTree = "<group>"; };
 		5C68C3C215666C8A00BBA8BE /* ScMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMember.h; sourceTree = "<group>"; };
@@ -417,14 +417,14 @@
 				5CE987C314856426005A17C6 /* ScEventViewController.m */,
 				5C3D42801485678E009A68E0 /* ScMainViewController.h */,
 				5C3D42811485678F009A68E0 /* ScMainViewController.m */,
+				5C62A00714C627D1001DA01F /* ScMembershipViewController.h */,
+				5C62A00814C627D1001DA01F /* ScMembershipViewController.m */,
 				5C629FFD14C624AD001DA01F /* ScMessageBoardViewController.h */,
 				5C629FFE14C624AD001DA01F /* ScMessageBoardViewController.m */,
 				5C88078D1484392A00ED5416 /* ScRegistrationView1Controller.h */,
 				5C88078E1484392A00ED5416 /* ScRegistrationView1Controller.m */,
 				5CE987BF14854FC6005A17C6 /* ScRegistrationView2Controller.h */,
 				5CE987C014854FC6005A17C6 /* ScRegistrationView2Controller.m */,
-				5C62A00714C627D1001DA01F /* ScScheduleViewController.h */,
-				5C62A00814C627D1001DA01F /* ScScheduleViewController.m */,
 				5C629FEE14C62038001DA01F /* ScScolaViewController.h */,
 				5C629FEF14C62038001DA01F /* ScScolaViewController.m */,
 				5C62A00014C6252C001DA01F /* ScTaskViewController.h */,
@@ -697,7 +697,7 @@
 				5C629FF014C62038001DA01F /* ScScolaViewController.m in Sources */,
 				5C629FFF14C624AD001DA01F /* ScMessageBoardViewController.m in Sources */,
 				5C62A00214C6252C001DA01F /* ScTaskViewController.m in Sources */,
-				5C62A00914C627D1001DA01F /* ScScheduleViewController.m in Sources */,
+				5C62A00914C627D1001DA01F /* ScMembershipViewController.m in Sources */,
 				5C50581C14CAEC76000D6587 /* UIView+ScViewExtensions.m in Sources */,
 				5C153EFB14CC9815003A6B61 /* ScIconSection.m in Sources */,
 				5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */,

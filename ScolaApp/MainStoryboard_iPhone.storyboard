@@ -298,16 +298,17 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <outlet property="mobilePhoneField" destination="UzN-fr-oIM" id="2E2-bh-OjV"/>
                         <outlet property="mobilePhoneUserHelpLabel" destination="Bq5-QO-bDk" id="GBr-Dy-KBf"/>
                         <segue destination="9Fa-Np-JO6" kind="push" identifier="registrationView2ToMainView" id="FHF-lx-n1T"/>
+                        <segue destination="7P3-L3-OOv" kind="push" identifier="registrationView2ToMembershipView" id="lLm-2C-oXL"/>
                     </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="177" y="1139"/>
         </scene>
-        <!--Sc Schedule View Controller - <strSchedule>-->
+        <!--Sc Membership View Controller - <strSchedule>-->
         <scene sceneID="JXA-tO-Wlm">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rWB-mD-KCx" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="39G-u8-xeK" customClass="ScScheduleViewController" sceneMemberID="viewController">
+                <viewController id="39G-u8-xeK" customClass="ScMembershipViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0uT-gc-hoA">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -387,6 +388,37 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 </viewController>
             </objects>
             <point key="canvasLocation" x="1653" y="-556"/>
+        </scene>
+        <!--Table View Controller-->
+        <scene sceneID="onk-AX-vI2">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Aby-I5-jV2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tableViewController id="7P3-L3-OOv" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Eyu-qY-Q9I">
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="uPe-Mp-4hv">
+                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <color key="backgroundColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="7P3-L3-OOv" id="ndY-Qt-SuM"/>
+                            <outlet property="delegate" destination="7P3-L3-OOv" id="tbV-FU-di2"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="UJP-6h-dEf"/>
+                </tableViewController>
+            </objects>
+            <point key="canvasLocation" x="814" y="1453"/>
         </scene>
         <!--Sc Event View Controller - <strEvents>-->
         <scene sceneID="FF8-Hh-UBk">
@@ -516,78 +548,12 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="83-calendar.png" width="23" height="25"/>
         <image name="dark_linen-640x960.png" width="640" height="960"/>
     </resources>
-    <classes>
-        <class className="ScAuthViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScAuthViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="showInfo:"/>
-                <relationship kind="outlet" name="activityIndicator" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="emailOrPasswordField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="nameOrEmailOrRegistrationCodeField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="scolaDescriptionHeadingLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="scolaDescriptionTextView" candidateClass="UITextView"/>
-                <relationship kind="outlet" name="scolaSplashLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="showInfoButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="userHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="userIntentionControl" candidateClass="UISegmentedControl"/>
-            </relationships>
-        </class>
-        <class className="ScEventViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScEventViewController.h"/>
-        </class>
-        <class className="ScMainViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMainViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="showInfo:"/>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-            </relationships>
-        </class>
-        <class className="ScMessageBoardViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMessageBoardViewController.h"/>
-        </class>
-        <class className="ScRegistrationView1Controller" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScRegistrationView1Controller.h"/>
-            <relationships>
-                <relationship kind="outlet" name="addressLine1Field" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="addressLine2Field" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="addressUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="dateOfBirthField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="dateOfBirthPicker" candidateClass="UIDatePicker"/>
-                <relationship kind="outlet" name="dateOfBirthUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="postCodeAndCityField" candidateClass="UITextField"/>
-            </relationships>
-        </class>
-        <class className="ScRegistrationView2Controller" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScRegistrationView2Controller.h"/>
-            <relationships>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="genderControl" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="genderUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="landlineField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="landlineUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="mobilePhoneField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="mobilePhoneUserHelpLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="ScScheduleViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScScheduleViewController.h"/>
-        </class>
-        <class className="ScScolaViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScScolaViewController.h"/>
-        </class>
-        <class className="ScTaskViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScTaskViewController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="t3w-Gq-L9a"/>
+        <segue reference="FHF-lx-n1T"/>
     </inferredMetricsTieBreakers>
 </document>

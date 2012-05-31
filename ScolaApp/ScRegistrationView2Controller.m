@@ -28,6 +28,7 @@
 #import "ScScola+ScScolaExtensions.h"
 
 
+static NSString * const kSegueToMembershipView = @"registrationView2ToMembershipView";
 static NSString * const kSegueToMainView = @"registrationView2ToMainView";
 
 static int const kGenderSegmentFemale = 0;
