@@ -17,6 +17,8 @@ static NSInteger const kAgeOfMajority = 18;
 @implementation ScMember (ScMemberExtensions)
 
 
+#pragma mark - Meta information
+
 - (BOOL)hasValidBirthDate
 {
     NSDate *now = [NSDate date];
@@ -53,6 +55,14 @@ static NSInteger const kAgeOfMajority = 18;
     }
     
     return isMinor;
+}
+
+
+#pragma mark - Comparison
+
+- (NSComparisonResult)compare:(ScMember *)other
+{
+    return [self.name compare:other.name];
 }
 
 @end

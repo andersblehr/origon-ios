@@ -9,6 +9,7 @@
 #import "ScScola+ScScolaExtensions.h"
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
+#import "NSString+ScStringExtensions.h"
 
 #import "ScMeta.h"
 #import "ScStrings.h"
@@ -52,13 +53,79 @@
     residency.member = resident;
     residency.scola = self;
     
-    if (self.residents.count > 1) {
+    if (self.residencies.count > 1) {
         if ([self.name isEqualToString:[ScStrings stringForKey:strMyPlace]]) {
             self.name = [ScStrings stringForKey:strOurPlace];
         }
     }
     
     return residency;
+}
+
+
+#pragma mark - String formatting
+
+- (NSString *)addressAsSingleLine
+{
+    NSString *address = @"";
+    
+    if ([self hasAddress]) {
+        if (self.addressLine1.length > 0) {
+            address = [address stringByAppendingString:self.addressLine1];
+        }
+        
+        if (self.addressLine2.length > 0) {
+            address = [address stringByAppendingStringWithComma:self.addressLine2];
+        }
+        
+        if (self.postCodeAndCity.length > 0) {
+            address = [address stringByAppendingStringWithComma:self.postCodeAndCity];
+        }
+    }
+    
+    return address;
+}
+
+
+- (NSString *)addressAsMultipleLines
+{
+    NSString *address = @"";
+    
+    if ([self hasAddress]) {
+        if (self.addressLine1.length > 0) {
+            address = [address stringByAppendingString:self.addressLine1];
+        }
+        
+        if (self.addressLine2.length > 0) {
+            address = [address stringByAppendingStringWithNewline:self.addressLine2];
+        }
+        
+        if (self.postCodeAndCity.length > 0) {
+            address = [address stringByAppendingStringWithNewline:self.postCodeAndCity];
+        }
+    }
+    
+    return address;
+}
+
+
+- (NSInteger)numberOfLinesInAddress
+{
+    NSInteger numberOfLines = 0;
+    
+    if (self.addressLine1.length > 0) {
+        numberOfLines++;
+    }
+    
+    if (self.addressLine2.length > 0) {
+        numberOfLines++;
+    }
+    
+    if (self.postCodeAndCity.length > 0) {
+        numberOfLines++;
+    }
+    
+    return numberOfLines;
 }
 
 

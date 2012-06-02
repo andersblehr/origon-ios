@@ -9,6 +9,68 @@
 #import <Foundation/Foundation.h>
 
 
+// Generic Scola strings
+extern NSString * const strAddress;
+extern NSString * const strLandline;
+extern NSString * const strMobilePhone;
+extern NSString * const strMyPlace;
+extern NSString * const strOurPlace;
+extern NSString * const strMyMessageBoard;
+extern NSString * const strOurMessageBoard;
+
+// Auth view
+extern NSString * const strUserIntentionLogin;
+extern NSString * const strUserIntentionRegistration;
+extern NSString * const strUserHelpNew;
+extern NSString * const strUserHelpMember;
+extern NSString * const strNamePrompt;
+extern NSString * const strEmailPrompt;
+extern NSString * const strNewPasswordPrompt;
+extern NSString * const strPasswordPrompt;
+extern NSString * const strPleaseWait;
+extern NSString * const strUserHelpCompleteRegistration;
+extern NSString * const strSeeYouLaterPopUpTitle;
+extern NSString * const strSeeYouLaterPopUpMessage;
+extern NSString * const strWelcomeBackPopUpTitle;
+extern NSString * const strWelcomeBackPopUpMessage;
+extern NSString * const strRegistrationCodePrompt;
+extern NSString * const strRepeatPasswordPrompt;
+extern NSString * const strScolaDescription;
+
+// Registration view 1
+extern NSString * const strRegistrationView1Title;
+extern NSString * const strRegistrationView1BackButtonTitle;
+extern NSString * const strAddressUserHelp;
+extern NSString * const strProvideAddressUserHelp;
+extern NSString * const strVerifyAddressUserHelp;
+extern NSString * const strAddressLine1Prompt;
+extern NSString * const strAddressLine2Prompt;
+extern NSString * const strPostCodeAndCityPrompt;
+extern NSString * const strDateOfBirthUserHelp;
+extern NSString * const strVerifyDateOfBirthUserHelp;
+extern NSString * const strDateOfBirthPrompt;
+extern NSString * const strDateOfBirthClickHerePrompt;
+
+// Registration view 2
+extern NSString * const strRegistrationView2Title;
+extern NSString * const strFemale;
+extern NSString * const strFemaleMinor;
+extern NSString * const strMale;
+extern NSString * const strMaleMinor;
+extern NSString * const strGenderUserHelp;
+extern NSString * const strMobilePhoneUserHelp;
+extern NSString * const strVerifyMobilePhoneUserHelp;
+extern NSString * const strMobilePhonePrompt;
+extern NSString * const strLandlineUserHelp;
+extern NSString * const strProvideLandlineUserHelp;
+extern NSString * const strVerifyLandlineUserHelp;
+extern NSString * const strLandlinePrompt;
+
+// Membership view
+extern NSString * const strMembershipViewHomeScolaTitle1;
+extern NSString * const strMembershipViewHomeScolaTitle2;
+extern NSString * const strMembershipViewDefaultTitle;
+
 // Error & alert messages
 extern NSString * const strNoInternetError;
 extern NSString * const strServerErrorAlert;
@@ -52,60 +114,6 @@ extern NSString * const strDone;
 extern NSString * const strNext;
 extern NSString * const strUseConfigured;
 extern NSString * const strUseNew;
-
-// Auth view
-extern NSString * const strUserIntentionLogin;
-extern NSString * const strUserIntentionRegistration;
-extern NSString * const strUserHelpNew;
-extern NSString * const strUserHelpMember;
-extern NSString * const strNamePrompt;
-extern NSString * const strEmailPrompt;
-extern NSString * const strNewPasswordPrompt;
-extern NSString * const strPasswordPrompt;
-extern NSString * const strPleaseWait;
-extern NSString * const strUserHelpCompleteRegistration;
-extern NSString * const strSeeYouLaterPopUpTitle;
-extern NSString * const strSeeYouLaterPopUpMessage;
-extern NSString * const strWelcomeBackPopUpTitle;
-extern NSString * const strWelcomeBackPopUpMessage;
-extern NSString * const strRegistrationCodePrompt;
-extern NSString * const strRepeatPasswordPrompt;
-extern NSString * const strScolaDescription;
-
-// Registration view 1
-extern NSString * const strRegView1NavItemTitle;
-extern NSString * const strRegView1BackButtonTitle;
-extern NSString * const strAddressUserHelp;
-extern NSString * const strProvideAddressUserHelp;
-extern NSString * const strVerifyAddressUserHelp;
-extern NSString * const strAddressLine1Prompt;
-extern NSString * const strAddressLine2Prompt;
-extern NSString * const strPostCodeAndCityPrompt;
-extern NSString * const strDateOfBirthUserHelp;
-extern NSString * const strVerifyDateOfBirthUserHelp;
-extern NSString * const strDateOfBirthPrompt;
-extern NSString * const strDateOfBirthClickHerePrompt;
-
-// Registration view 2
-extern NSString * const strRegView2NavItemTitle;
-extern NSString * const strFemale;
-extern NSString * const strFemaleMinor;
-extern NSString * const strMale;
-extern NSString * const strMaleMinor;
-extern NSString * const strGenderUserHelp;
-extern NSString * const strMobilePhoneUserHelp;
-extern NSString * const strVerifyMobilePhoneUserHelp;
-extern NSString * const strMobilePhonePrompt;
-extern NSString * const strLandlineUserHelp;
-extern NSString * const strProvideLandlineUserHelp;
-extern NSString * const strVerifyLandlineUserHelp;
-extern NSString * const strLandlinePrompt;
-
-// Generic Scola strings
-extern NSString * const strMyPlace;
-extern NSString * const strOurPlace;
-extern NSString * const strMyMessageBoard;
-extern NSString * const strOurMessageBoard;
 
 @interface ScStrings : NSObject
 

@@ -18,6 +18,9 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 
 @implementation NSString (ScStringExtensions)
 
+
+#pragma mark - Crypto stuff
+
 //  This method from public domain. Credits: http://www.cocoadev.com/index.pl?BaseSixtyFour
 - (NSString *)base64EncodedString;
 {
@@ -99,6 +102,8 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
+#pragma mark - String manipulation
+
 - (NSString *)removeLeadingAndTrailingSpaces
 {
     NSString *thisString = self;
@@ -117,6 +122,30 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
     }
     
     return thisString;
+}
+
+
+- (NSString *)stringByAppendingString:(NSString *)string withSeparator:(NSString *)separator
+{
+    NSString *returnString = self;
+    
+    if (self.length > 0) {
+        returnString = [returnString stringByAppendingString:separator];
+    }
+    
+    return [returnString stringByAppendingString:string];
+}
+
+
+- (NSString *)stringByAppendingStringWithComma:(NSString *)string
+{
+    return [self stringByAppendingString:string withSeparator:@", "];
+}
+
+
+- (NSString *)stringByAppendingStringWithNewline:(NSString *)string
+{
+    return [self stringByAppendingString:string withSeparator:@"\n"];
 }
 
 @end

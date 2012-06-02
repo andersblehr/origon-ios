@@ -10,6 +10,7 @@
 
 #import "ScMainViewController.h"
 
+#import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
 #import "ScLogging.h"
@@ -17,6 +18,10 @@
 #import "ScIconSection.h"
 #import "ScServerConnection.h"
 #import "ScStrings.h"
+
+#import "ScMembershipViewController.h"
+
+static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 
 
 @implementation ScMainViewController
@@ -37,6 +42,8 @@
     [super viewDidLoad];
 
     [darkLinenView addGradientLayer];
+    
+    self.title = @"Scola";
 
     UIImage *icon1 = [UIImage imageNamed:@"53-house@2x.png"];
     UIImage *icon2 = [UIImage imageNamed:@"glyphicons_006_user_add_white@2x.png"];
@@ -81,16 +88,29 @@
 }
 
 
+#pragma mark - Segue handling
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:kSegueToMembershipView]) {
+        UITabBarController *tabBarController = segue.destinationViewController;
+        ScMembershipViewController *nextViewController = [tabBarController.viewControllers objectAtIndex:0];
+        
+        nextViewController.scola = [[ScMeta m].managedObjectContext fetchEntityWithId:[ScMeta m].homeScolaId];
+    }
+}
+
+
 #pragma mark - ScIconSectionDelegate implementation
 
 - (void)handleButtonTap:(id)sender
 {
     UIButton *buttonTapped = (UIButton *)sender;
-    int sectionNumber = buttonTapped.tag / 100 + 1;
+    int sectionNumber = buttonTapped.tag / 100;
     int buttonNumber = buttonTapped.tag % 100;
     
     ScLogDebug(@"Tapped button %d in icon section %d", buttonNumber, sectionNumber);
-    [self performSegueWithIdentifier:@"mainToScolaView" sender:self];
+    [self performSegueWithIdentifier:kSegueToMembershipView sender:self];
 }
 
 
@@ -98,7 +118,7 @@
 
 - (IBAction)showInfo:(id)sender
 {
-    [self performSegueWithIdentifier:@"mainToScolaView" sender:self];
+    [self performSegueWithIdentifier:kSegueToMembershipView sender:self];
 }
 
 @end

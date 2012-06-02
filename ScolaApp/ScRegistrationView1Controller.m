@@ -114,11 +114,11 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
     
     [darkLinenView addGradientLayer];
     
+    self.title = [ScStrings stringForKey:strRegistrationView1Title];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
-    self.navigationItem.title = [ScStrings stringForKey:strRegView1NavItemTitle];
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] init];
-    self.navigationItem.backBarButtonItem.title = [ScStrings stringForKey:strRegView1BackButtonTitle];
+    self.navigationItem.backBarButtonItem.title = [ScStrings stringForKey:strRegistrationView1BackButtonTitle];
 
     UIBarButtonItem *nextButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strNext] style:UIBarButtonItemStyleDone target:self action:@selector(textFieldShouldReturn:)];
     
@@ -171,7 +171,7 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
     addressLine2Field.text = homeScola.addressLine2;
     postCodeAndCityField.text = homeScola.postCodeAndCity;
     
-    [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
+    [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventTouchUpInside | UIControlEventValueChanged];
     
     if (member.dateOfBirth) {
         [dateOfBirthPicker setDate:member.dateOfBirth animated:YES];

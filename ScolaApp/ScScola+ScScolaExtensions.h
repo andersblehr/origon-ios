@@ -18,4 +18,8 @@
 - (BOOL)hasAddress;
 - (BOOL)hasLandline;
 
+- (NSString *)addressAsSingleLine;
+- (NSString *)addressAsMultipleLines;
+- (NSInteger)numberOfLinesInAddress;
+
 @end

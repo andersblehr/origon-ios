@@ -2,7 +2,7 @@
 //  ScScola.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 16.05.12.
+//  Created by Anders Blehr on 02.06.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -17,18 +17,18 @@
 @property (nonatomic, retain) NSString * addressLine1;
 @property (nonatomic, retain) NSString * addressLine2;
 @property (nonatomic, retain) NSString * descriptionText;
-@property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * landline;
+@property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSData * picture;
 @property (nonatomic, retain) NSString * postCodeAndCity;
 @property (nonatomic, retain) NSSet *documentRepositories;
 @property (nonatomic, retain) NSSet *eventInvitations;
 @property (nonatomic, retain) NSSet *hostingEvents;
-@property (nonatomic, retain) NSSet *members;
+@property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) NSSet *memberToDoItems;
 @property (nonatomic, retain) NSSet *messageBoards;
 @property (nonatomic, retain) ScScola *parentScola;
-@property (nonatomic, retain) NSSet *residents;
+@property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *subscolas;
 @property (nonatomic, retain) ScYearlySchedule *yearlySchedule;
 @end
@@ -50,10 +50,10 @@
 - (void)addHostingEvents:(NSSet *)values;
 - (void)removeHostingEvents:(NSSet *)values;
 
-- (void)addMembersObject:(ScMembership *)value;
-- (void)removeMembersObject:(ScMembership *)value;
-- (void)addMembers:(NSSet *)values;
-- (void)removeMembers:(NSSet *)values;
+- (void)addMembershipsObject:(ScMembership *)value;
+- (void)removeMembershipsObject:(ScMembership *)value;
+- (void)addMemberships:(NSSet *)values;
+- (void)removeMemberships:(NSSet *)values;
 
 - (void)addMemberToDoItemsObject:(ScToDoItem *)value;
 - (void)removeMemberToDoItemsObject:(ScToDoItem *)value;
@@ -65,10 +65,10 @@
 - (void)addMessageBoards:(NSSet *)values;
 - (void)removeMessageBoards:(NSSet *)values;
 
-- (void)addResidentsObject:(ScMemberResidency *)value;
-- (void)removeResidentsObject:(ScMemberResidency *)value;
-- (void)addResidents:(NSSet *)values;
-- (void)removeResidents:(NSSet *)values;
+- (void)addResidenciesObject:(ScMemberResidency *)value;
+- (void)removeResidenciesObject:(ScMemberResidency *)value;
+- (void)addResidencies:(NSSet *)values;
+- (void)removeResidencies:(NSSet *)values;
 
 - (void)addSubscolasObject:(ScScola *)value;
 - (void)removeSubscolasObject:(ScScola *)value;

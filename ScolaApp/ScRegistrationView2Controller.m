@@ -27,8 +27,9 @@
 #import "ScMemberResidency+ScMemberResidencyExtensions.h"
 #import "ScScola+ScScolaExtensions.h"
 
+#import "ScMembershipViewController.h"
 
-static NSString * const kSegueToMembershipView = @"registrationView2ToMembershipView";
+
 static NSString * const kSegueToMainView = @"registrationView2ToMainView";
 
 static int const kGenderSegmentFemale = 0;
@@ -71,6 +72,20 @@ static int const kPopUpButtonUseNew = 1;
 }
 
 
+- (void)modallyShowMembershipView
+{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
+    ScMembershipViewController *membershipViewController = [storyboard instantiateViewControllerWithIdentifier:@"vcMembership"];
+    
+    membershipViewController.scola = homeScola;
+    membershipViewController.isRegistrationWizardStep = YES;
+    
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:membershipViewController];
+    
+    [self.navigationController presentModalViewController:navigationController animated:YES];
+}
+
+
 #pragma mark - Input validation
 
 - (BOOL)isPhoneNumberGiven
@@ -102,11 +117,11 @@ static int const kPopUpButtonUseNew = 1;
     
     [darkLinenView addGradientLayer];
     
+    self.title = [ScStrings stringForKey:strRegistrationView2Title];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
-    self.navigationItem.title = [ScStrings stringForKey:strRegView2NavItemTitle];
     
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strDone] style:UIBarButtonItemStyleDone target:self action:@selector(textFieldShouldReturn:)];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(textFieldShouldReturn:)];
     
     self.navigationItem.rightBarButtonItem = doneButton;
     
@@ -192,6 +207,14 @@ static int const kPopUpButtonUseNew = 1;
 }
 
 
+#pragma mark - Segue handling
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Do we need this?
+}
+
+
 #pragma mark - UITextFieldDelegate implementation
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -210,7 +233,13 @@ static int const kPopUpButtonUseNew = 1;
         [self syncViewState];
         [[ScMeta m].managedObjectContext synchronise];
         
-        [self performSegueWithIdentifier:kSegueToMainView sender:self];
+        ScMemberResidency *residency = [ScMemberResidency residencyForMember:[ScMeta m].userId];
+        
+        if ([[residency isAdmin] boolValue]) {
+            [self modallyShowMembershipView];
+        } else {
+            [self performSegueWithIdentifier:kSegueToMainView sender:self];
+        }
     } else {
         UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
         

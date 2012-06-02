@@ -1,5 +1,5 @@
 //
-//  ScScheduleViewController.h
+//  ScMembershipViewController.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 17.01.12.
@@ -8,6 +8,22 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ScMembershipViewController : UIViewController
+@class ScMember, ScScola;
+
+@interface ScMembershipViewController : UITableViewController<UITableViewDelegate, UITableViewDataSource>
+{
+    UIBarButtonItem *addButton;
+    
+    NSMutableSet *unsortedAdults;
+    NSMutableSet *unsortedMinors;
+    NSArray *adults;
+    NSArray *minors;
+    
+    BOOL isForHousehold;
+}
+
+@property (weak, nonatomic) ScScola *scola;
+
+@property (nonatomic) BOOL isRegistrationWizardStep;
 
 @end

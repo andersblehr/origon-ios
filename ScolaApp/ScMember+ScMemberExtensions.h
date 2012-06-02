@@ -14,4 +14,6 @@
 - (BOOL)hasMobilPhone;
 - (BOOL)isMinor;
 
+//- (NSComparisonResult)compare:(ScMember *)other;
+
 @end

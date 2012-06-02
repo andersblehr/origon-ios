@@ -1,5 +1,5 @@
 //
-//  ScScolaViewController.h
+//  ScScheduleViewController.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 17.01.12.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ScScolaViewController : UIViewController
+@interface ScScheduleViewController : UIViewController
 
 @end

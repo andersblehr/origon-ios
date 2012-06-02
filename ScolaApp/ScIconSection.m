@@ -479,7 +479,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
     [iconButton setBackgroundImage:icon forState:UIControlStateNormal];
     iconButton.alpha = kIconButtonAlpha;
     iconButton.showsTouchWhenHighlighted = YES;
-    iconButton.tag = 100 * sectionNumber + numberOfIcons;
+    iconButton.tag = 100 * (sectionNumber + 1) + numberOfIcons;
     [iconButton addTarget:sectionDelegate action:@selector(handleButtonTap:) forControlEvents:UIControlEventTouchUpInside];
     
     CGFloat captionOriginX = (15 + xOffset * 100) * widthScaleFactor;

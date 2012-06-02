@@ -96,7 +96,7 @@
         <attribute name="presentOn01Jan" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="switchDay" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="switchFrequency" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <relationship name="residence" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="residents" inverseEntity="ScScola" syncable="YES"/>
+        <relationship name="residence" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="residencies" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="resident" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="residencies" inverseEntity="ScMember" syncable="YES"/>
     </entity>
     <entity name="ScMembership" representedClassName="ScMembership" parentEntity="ScCachedEntity" syncable="YES">
@@ -105,7 +105,7 @@
         <attribute name="isCoach" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isTeacher" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <relationship name="member" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="memberships" inverseEntity="ScMember" syncable="YES"/>
-        <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="members" inverseEntity="ScScola" syncable="YES"/>
+        <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="memberships" inverseEntity="ScScola" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="no"/>
         </userInfo>
@@ -163,11 +163,11 @@
         <relationship name="documentRepositories" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScDocumentRepository" inverseName="scola" inverseEntity="ScDocumentRepository" syncable="YES"/>
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEventScolaInvitation" inverseName="scola" inverseEntity="ScEventScolaInvitation" syncable="YES"/>
         <relationship name="hostingEvents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScEvent" inverseName="hostingScolas" inverseEntity="ScEvent" syncable="YES"/>
-        <relationship name="members" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScMembership" inverseName="scola" inverseEntity="ScMembership" syncable="YES"/>
+        <relationship name="memberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScMembership" inverseName="scola" inverseEntity="ScMembership" syncable="YES"/>
         <relationship name="memberToDoItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScToDoItem" inverseName="scola" inverseEntity="ScToDoItem" syncable="YES"/>
         <relationship name="messageBoards" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScMessageBoard" inverseName="scola" inverseEntity="ScMessageBoard" syncable="YES"/>
         <relationship name="parentScola" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScScola" inverseName="subscolas" inverseEntity="ScScola" syncable="YES"/>
-        <relationship name="residents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScMemberResidency" inverseName="residence" inverseEntity="ScMemberResidency" syncable="YES"/>
+        <relationship name="residencies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScMemberResidency" inverseName="residence" inverseEntity="ScMemberResidency" syncable="YES"/>
         <relationship name="subscolas" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScScola" inverseName="parentScola" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="yearlySchedule" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScYearlySchedule" inverseName="scola" inverseEntity="ScYearlySchedule" syncable="YES"/>
         <userInfo>

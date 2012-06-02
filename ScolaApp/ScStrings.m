@@ -18,6 +18,68 @@ static NSDictionary *strings = nil;
 static NSString * const kStringsPlist = @"strings.plist";
 
 
+// Generic Scola strings
+NSString * const strAddress                          = @"strAddress";
+NSString * const strLandline                         = @"strLandline";
+NSString * const strMobilePhone                      = @"strMobilePhone";
+NSString * const strMyPlace                          = @"strMyPlace";
+NSString * const strOurPlace                         = @"strOurPlace";
+NSString * const strMyMessageBoard                   = @"strMyMessageBoard";
+NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
+
+// Auth view
+NSString * const strUserIntentionLogin               = @"strUserIntentionLogin";
+NSString * const strUserIntentionRegistration        = @"strUserIntentionRegistration";
+NSString * const strUserHelpNew                      = @"strUserHelpNew";
+NSString * const strUserHelpMember                   = @"strUserHelpMember";
+NSString * const strNamePrompt                       = @"strNamePrompt";
+NSString * const strEmailPrompt                      = @"strEmailPrompt";
+NSString * const strNewPasswordPrompt                = @"strNewPasswordPrompt";
+NSString * const strPasswordPrompt                   = @"strPasswordPrompt";
+NSString * const strPleaseWait                       = @"strPleaseWait";
+NSString * const strUserHelpCompleteRegistration     = @"strUserHelpCompleteRegistration";
+NSString * const strSeeYouLaterPopUpTitle            = @"strSeeYouLaterPopUpTitle";
+NSString * const strSeeYouLaterPopUpMessage          = @"strSeeYouLaterPopUpMessage";
+NSString * const strWelcomeBackPopUpTitle            = @"strWelcomeBackPopUpTitle";
+NSString * const strWelcomeBackPopUpMessage          = @"strWelcomeBackPopUpMessage";
+NSString * const strRegistrationCodePrompt           = @"strRegistrationCodePrompt";
+NSString * const strRepeatPasswordPrompt             = @"strRepeatPasswordPrompt";
+NSString * const strScolaDescription                 = @"strScolaDescription";
+
+// Registration view 1
+NSString * const strRegistrationView1Title           = @"strRegistrationView1Title";
+NSString * const strRegistrationView1BackButtonTitle = @"strRegistrationView1BackButtonTitle";
+NSString * const strAddressUserHelp                  = @"strAddressUserHelp";
+NSString * const strProvideAddressUserHelp           = @"strProvideAddressUserHelp";
+NSString * const strVerifyAddressUserHelp            = @"strVerifyAddressUserHelp";
+NSString * const strAddressLine1Prompt               = @"strAddressLine1Prompt";
+NSString * const strAddressLine2Prompt               = @"strAddressLine2Prompt";
+NSString * const strPostCodeAndCityPrompt            = @"strPostCodeAndCityPrompt";
+NSString * const strDateOfBirthUserHelp              = @"strDateOfBirthUserHelp";
+NSString * const strVerifyDateOfBirthUserHelp        = @"strVerifyDateOfBirthUserHelp";
+NSString * const strDateOfBirthPrompt                = @"strDateOfBirthPrompt";
+NSString * const strDateOfBirthClickHerePrompt       = @"strDateOfBirthClickHerePrompt";
+
+// Registration view 2
+NSString * const strRegistrationView2Title           = @"strRegistrationView2Title";
+NSString * const strFemale                           = @"strFemale";
+NSString * const strFemaleMinor                      = @"strFemaleMinor";
+NSString * const strMale                             = @"strMale";
+NSString * const strMaleMinor                        = @"strMaleMinor";
+NSString * const strGenderUserHelp                   = @"strGenderUserHelp";
+NSString * const strMobilePhoneUserHelp              = @"strMobilePhoneUserHelp";
+NSString * const strVerifyMobilePhoneUserHelp        = @"strVerifyMobilePhoneUserHelp";
+NSString * const strMobilePhonePrompt                = @"strMobilePhonePrompt";
+NSString * const strLandlineUserHelp                 = @"strLandlineUserHelp";
+NSString * const strProvideLandlineUserHelp          = @"strProvideLandlineUserHelp";
+NSString * const strVerifyLandlineUserHelp           = @"strVerifyLandlineUserHelp";
+NSString * const strLandlinePrompt                   = @"strLandlinePrompt";
+
+// Membership view
+NSString * const strMembershipViewHomeScolaTitle1    = @"strMembershipViewHomeScolaTitle1";
+NSString * const strMembershipViewHomeScolaTitle2    = @"strMembershipViewHomeScolaTitle2";
+NSString * const strMembershipViewDefaultTitle       = @"strMembershipViewDefaultTitle";
+
 // Error & alert messages
 NSString * const strNoInternetError                  = @"strNoInternetError";
 NSString * const strServerErrorAlert                 = @"strServerErrorAlert";
@@ -62,60 +124,6 @@ NSString * const strDone                             = @"strDone";
 NSString * const strNext                             = @"strNext";
 NSString * const strUseConfigured                    = @"strUseConfigured";
 NSString * const strUseNew                           = @"strUseNew";
-
-// Auth view
-NSString * const strUserIntentionLogin               = @"strUserIntentionLogin";
-NSString * const strUserIntentionRegistration        = @"strUserIntentionRegistration";
-NSString * const strUserHelpNew                      = @"strUserHelpNew";
-NSString * const strUserHelpMember                   = @"strUserHelpMember";
-NSString * const strNamePrompt                       = @"strNamePrompt";
-NSString * const strEmailPrompt                      = @"strEmailPrompt";
-NSString * const strNewPasswordPrompt                = @"strNewPasswordPrompt";
-NSString * const strPasswordPrompt                   = @"strPasswordPrompt";
-NSString * const strPleaseWait                       = @"strPleaseWait";
-NSString * const strUserHelpCompleteRegistration     = @"strUserHelpCompleteRegistration";
-NSString * const strSeeYouLaterPopUpTitle            = @"strSeeYouLaterPopUpTitle";
-NSString * const strSeeYouLaterPopUpMessage          = @"strSeeYouLaterPopUpMessage";
-NSString * const strWelcomeBackPopUpTitle            = @"strWelcomeBackPopUpTitle";
-NSString * const strWelcomeBackPopUpMessage          = @"strWelcomeBackPopUpMessage";
-NSString * const strRegistrationCodePrompt           = @"strRegistrationCodePrompt";
-NSString * const strRepeatPasswordPrompt             = @"strRepeatPasswordPrompt";
-NSString * const strScolaDescription                 = @"strScolaDescription";
-
-// Registration view 1
-NSString * const strRegView1NavItemTitle             = @"strRegView1NavItemTitle";
-NSString * const strRegView1BackButtonTitle          = @"strRegView1BackButtonTitle";
-NSString * const strAddressUserHelp                  = @"strAddressUserHelp";
-NSString * const strProvideAddressUserHelp           = @"strProvideAddressUserHelp";
-NSString * const strVerifyAddressUserHelp            = @"strVerifyAddressUserHelp";
-NSString * const strAddressLine1Prompt               = @"strAddressLine1Prompt";
-NSString * const strAddressLine2Prompt               = @"strAddressLine2Prompt";
-NSString * const strPostCodeAndCityPrompt            = @"strPostCodeAndCityPrompt";
-NSString * const strDateOfBirthUserHelp              = @"strDateOfBirthUserHelp";
-NSString * const strVerifyDateOfBirthUserHelp        = @"strVerifyDateOfBirthUserHelp";
-NSString * const strDateOfBirthPrompt                = @"strDateOfBirthPrompt";
-NSString * const strDateOfBirthClickHerePrompt       = @"strDateOfBirthClickHerePrompt";
-
-// Registration view 2
-NSString * const strRegView2NavItemTitle             = @"strRegView2NavItemTitle";
-NSString * const strFemale                           = @"strFemale";
-NSString * const strFemaleMinor                      = @"strFemaleMinor";
-NSString * const strMale                             = @"strMale";
-NSString * const strMaleMinor                        = @"strMaleMinor";
-NSString * const strGenderUserHelp                   = @"strGenderUserHelp";
-NSString * const strMobilePhoneUserHelp              = @"strMobilePhoneUserHelp";
-NSString * const strVerifyMobilePhoneUserHelp        = @"strVerifyMobilePhoneUserHelp";
-NSString * const strMobilePhonePrompt                = @"strMobilePhonePrompt";
-NSString * const strLandlineUserHelp                 = @"strLandlineUserHelp";
-NSString * const strProvideLandlineUserHelp          = @"strProvideLandlineUserHelp";
-NSString * const strVerifyLandlineUserHelp           = @"strVerifyLandlineUserHelp";
-NSString * const strLandlinePrompt                   = @"strLandlinePrompt";
-
-// Main view
-NSString * const strMyPlace                          = @"strMyPlace";
-NSString * const strOurPlace                         = @"strOurPlace";
-NSString * const strMyMessageBoard                   = @"strMyMessageBoard";
-NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 
 @implementation ScStrings
