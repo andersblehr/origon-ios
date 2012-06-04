@@ -253,29 +253,11 @@ static NSInteger kSectionMinors = 2;
 {
     CGFloat cellHeight = [self tableView:tableView heightForRowAtIndexPath:indexPath] + 1;
     
-    cell.backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, cell.frame.size.width, [self tableView:tableView heightForRowAtIndexPath:indexPath] + 1)];
-    
-    UIView *leftPadding = [[UIView alloc] initWithFrame:CGRectMake(-20.f, 0.f, 20.f, [self tableView:tableView heightForRowAtIndexPath:indexPath] + 1)];
-    UIView *rightPadding = [[UIView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 20.f, 0.f, 20.f, cellHeight)];
-    
-    [cell.backgroundView addSubview:leftPadding];
-    [cell.backgroundView addSubview:rightPadding];
-    
+    cell.backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, cell.backgroundView.frame.size.width, cellHeight)];
     cell.backgroundView.backgroundColor = [UIColor isabellineColor];
-    leftPadding.backgroundColor = [UIColor isabellineColor];
-    rightPadding.backgroundColor = [UIColor isabellineColor];
     
-    cell.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, cell.frame.size.width, cellHeight)];
-    
-    UIView *selectedLeftPadding = [[UIView alloc] initWithFrame:CGRectMake(-20.f, 0.f, 20.f, [self tableView:tableView heightForRowAtIndexPath:indexPath] + 1)];
-    UIView *selectedRightPadding = [[UIView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 20.f, 0.f, 20.f, cellHeight)];
-    
-    [cell.selectedBackgroundView addSubview:selectedLeftPadding];
-    [cell.selectedBackgroundView addSubview:selectedRightPadding];
-    
+    cell.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, cell.backgroundView.frame.size.width, cellHeight)];
     cell.selectedBackgroundView.backgroundColor = [UIColor ashGrayColor];
-    selectedLeftPadding.backgroundColor = [UIColor ashGrayColor];
-    selectedRightPadding.backgroundColor = [UIColor ashGrayColor];
     
     cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.detailTextLabel.backgroundColor = [UIColor clearColor];
@@ -283,7 +265,7 @@ static NSInteger kSectionMinors = 2;
     int logicSection = isRegistrationWizardStep ? indexPath.section + 1 : indexPath.section;
     
     if (!((logicSection == 0) && (indexPath.row == 0))) {
-        [cell addShadow];
+        [cell.backgroundView addShadow];
     }
 }
 
