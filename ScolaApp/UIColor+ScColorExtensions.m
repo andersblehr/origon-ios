@@ -11,15 +11,15 @@
 @implementation UIColor (ScColorExtensions)
 
 
-+ (UIColor *)isabellineColor
++ (UIColor *)ashGrayColor
 {
-    return [UIColor colorWithRed:240/255.f green:244/255.f blue:236/255.f alpha:1.f];
+    return [UIColor colorWithRed:178/255.f green:190/255.f blue:181/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)khakiColor
++ (UIColor *)isabellineColor
 {
-    return [UIColor colorWithRed:195/255.f green:176/255.f blue:145/255.f alpha:1.f];
+    return [UIColor colorWithRed:240/255.f green:244/255.f blue:236/255.f alpha:1.f];
 }
 
 @end

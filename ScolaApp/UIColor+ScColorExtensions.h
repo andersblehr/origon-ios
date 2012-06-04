@@ -10,7 +10,7 @@
 
 @interface UIColor (ScColorExtensions)
 
++ (UIColor *)ashGrayColor;
 + (UIColor *)isabellineColor;
-+ (UIColor *)khakiColor;
 
 @end

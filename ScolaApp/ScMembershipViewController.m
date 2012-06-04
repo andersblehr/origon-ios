@@ -273,9 +273,9 @@ static NSInteger kSectionMinors = 2;
     [cell.selectedBackgroundView addSubview:selectedLeftPadding];
     [cell.selectedBackgroundView addSubview:selectedRightPadding];
     
-    cell.selectedBackgroundView.backgroundColor = [UIColor khakiColor];
-    selectedLeftPadding.backgroundColor = [UIColor khakiColor];
-    selectedRightPadding.backgroundColor = [UIColor khakiColor];
+    cell.selectedBackgroundView.backgroundColor = [UIColor ashGrayColor];
+    selectedLeftPadding.backgroundColor = [UIColor ashGrayColor];
+    selectedRightPadding.backgroundColor = [UIColor ashGrayColor];
     
     cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.detailTextLabel.backgroundColor = [UIColor clearColor];
