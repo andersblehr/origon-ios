@@ -30,6 +30,7 @@
 #import "ScMembershipViewController.h"
 
 
+static NSString * const kMembershipViewController = @"vcMembership";
 static NSString * const kSegueToMainView = @"registrationView2ToMainView";
 
 static int const kGenderSegmentFemale = 0;
@@ -72,15 +73,15 @@ static int const kPopUpButtonUseNew = 1;
 }
 
 
-- (void)modallyShowMembershipView
+- (void)modallyAddHouseholdMembers
 {
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"MainStoryboard_iPhone" bundle:nil];
-    ScMembershipViewController *membershipViewController = [storyboard instantiateViewControllerWithIdentifier:@"vcMembership"];
+    ScMembershipViewController *membershipViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMembershipViewController];
     
     membershipViewController.scola = homeScola;
     membershipViewController.isRegistrationWizardStep = YES;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:membershipViewController];
+    navigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     
     [self.navigationController presentModalViewController:navigationController animated:YES];
 }
@@ -236,10 +237,10 @@ static int const kPopUpButtonUseNew = 1;
         ScMemberResidency *residency = [ScMemberResidency residencyForMember:[ScMeta m].userId];
         
         if ([[residency isAdmin] boolValue]) {
-            [self modallyShowMembershipView];
-        } else {
-            [self performSegueWithIdentifier:kSegueToMainView sender:self];
+            [self modallyAddHouseholdMembers];
         }
+        
+        [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
         UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
         

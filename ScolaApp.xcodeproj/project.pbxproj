@@ -44,6 +44,7 @@
 		5C3A319614C61378001A783E /* dark_linen-640x960.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3A319514C61378001A783E /* dark_linen-640x960.png */; };
 		5C3C665C14F56D6800514C57 /* ScUUIDGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C665B14F56D6800514C57 /* ScUUIDGenerator.m */; };
 		5C3D42821485678F009A68E0 /* ScMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D42811485678F009A68E0 /* ScMainViewController.m */; };
+		5C4955F6157D469000F2A885 /* UIColor+ScColorExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4955F5157D469000F2A885 /* UIColor+ScColorExtensions.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */; };
 		5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C50581714CA1D05000D6587 /* QuartzCore.framework */; };
 		5C50581C14CAEC76000D6587 /* UIView+ScViewExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C50581B14CAEC76000D6587 /* UIView+ScViewExtensions.m */; };
@@ -170,6 +171,8 @@
 		5C3C665B14F56D6800514C57 /* ScUUIDGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScUUIDGenerator.m; sourceTree = "<group>"; };
 		5C3D42801485678E009A68E0 /* ScMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMainViewController.h; sourceTree = "<group>"; };
 		5C3D42811485678F009A68E0 /* ScMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMainViewController.m; sourceTree = "<group>"; };
+		5C4955F4157D469000F2A885 /* UIColor+ScColorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "UIColor+ScColorExtensions.h"; sourceTree = "<group>"; };
+		5C4955F5157D469000F2A885 /* UIColor+ScColorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+ScColorExtensions.m"; sourceTree = "<group>"; };
 		5C4F97791496AF88006E244F /* NSURL+ScURLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+ScURLExtensions.h"; sourceTree = "<group>"; };
 		5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+ScURLExtensions.m"; sourceTree = "<group>"; };
 		5C50581714CA1D05000D6587 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -369,6 +372,8 @@
 				5CBE9C5214AB515F004FE2B7 /* NSString+ScStringExtensions.m */,
 				5C4F97791496AF88006E244F /* NSURL+ScURLExtensions.h */,
 				5C4F977A1496AF88006E244F /* NSURL+ScURLExtensions.m */,
+				5C4955F4157D469000F2A885 /* UIColor+ScColorExtensions.h */,
+				5C4955F5157D469000F2A885 /* UIColor+ScColorExtensions.m */,
 				5C50581A14CAEC76000D6587 /* UIView+ScViewExtensions.h */,
 				5C50581B14CAEC76000D6587 /* UIView+ScViewExtensions.m */,
 			);
@@ -730,6 +735,7 @@
 				5C3374831563FBE200DEF67D /* ScMember+ScMemberExtensions.m in Sources */,
 				5C68C3C415666C8A00BBA8BE /* ScMember.m in Sources */,
 				5CED158F157973530096807E /* ScScola.m in Sources */,
+				5C4955F6157D469000F2A885 /* UIColor+ScColorExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

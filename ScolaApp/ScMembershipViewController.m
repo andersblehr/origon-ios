@@ -9,6 +9,8 @@
 #import "ScMembershipViewController.h"
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
+#import "UIColor+ScColorExtensions.h"
+#import "UIView+ScViewExtensions.h"
 
 #import "ScLogging.h"
 #import "ScMeta.h"
@@ -50,11 +52,10 @@ static NSInteger kSectionMinors = 2;
 {
     [super viewDidLoad];
     
+    self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"dark_linen-640x960.png"]];
+    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
-    
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
     
     addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMember)];
     
@@ -93,10 +94,10 @@ static NSInteger kSectionMinors = 2;
     self.tabBarController.title = self.title;
     
     if (isRegistrationWizardStep) {
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(addMember)];
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishAddingMembers)];
         
-        self.navigationItem.rightBarButtonItem = addButton;
         self.navigationItem.leftBarButtonItem = doneButton;
+        self.navigationItem.rightBarButtonItem = addButton;
     } else {
         self.tabBarController.navigationItem.rightBarButtonItem = addButton;
     }
@@ -106,12 +107,44 @@ static NSInteger kSectionMinors = 2;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    //self.tableView.frame = CGRectMake(-20, 0, self.tableView.frame.size.width + 40, self.tableView.frame.size.height);
+}
+
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+	[super viewWillDisappear:animated];
+    
+    if (!isRegistrationWizardStep && didAddMembers) {
+        [self didFinishAddingMembers];
+    }
 }
 
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+
+#pragma mark - Adding members
+
+- (void)addMember
+{
+    
+}
+
+
+- (void)didFinishAddingMembers
+{
+    if (didAddMembers) {
+        [[ScMeta m].managedObjectContext synchronise];
+    }
+    
+    if (isRegistrationWizardStep) {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 
@@ -202,13 +235,57 @@ static NSInteger kSectionMinors = 2;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    int logicSection = isRegistrationWizardStep ? indexPath.section + 1 : indexPath.section;
+    
     CGFloat height = 1.1f * self.tableView.rowHeight;
     
-    if ((indexPath.section == 0) && (indexPath.row == 0)) {
+    if ((logicSection == 0) && (indexPath.row == 0)) {
         height = (height * 0.5f) * [scola numberOfLinesInAddress];
     }
     
     return height;
 }
+
+
+#pragma mark - UITableViewDelegate methods
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGFloat cellHeight = [self tableView:tableView heightForRowAtIndexPath:indexPath] + 1;
+    
+    cell.backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, cell.frame.size.width, [self tableView:tableView heightForRowAtIndexPath:indexPath] + 1)];
+    
+    UIView *leftPadding = [[UIView alloc] initWithFrame:CGRectMake(-20.f, 0.f, 20.f, [self tableView:tableView heightForRowAtIndexPath:indexPath] + 1)];
+    UIView *rightPadding = [[UIView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 20.f, 0.f, 20.f, cellHeight)];
+    
+    [cell.backgroundView addSubview:leftPadding];
+    [cell.backgroundView addSubview:rightPadding];
+    
+    cell.backgroundView.backgroundColor = [UIColor isabellineColor];
+    leftPadding.backgroundColor = [UIColor isabellineColor];
+    rightPadding.backgroundColor = [UIColor isabellineColor];
+    
+    cell.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, cell.frame.size.width, cellHeight)];
+    
+    UIView *selectedLeftPadding = [[UIView alloc] initWithFrame:CGRectMake(-20.f, 0.f, 20.f, [self tableView:tableView heightForRowAtIndexPath:indexPath] + 1)];
+    UIView *selectedRightPadding = [[UIView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 20.f, 0.f, 20.f, cellHeight)];
+    
+    [cell.selectedBackgroundView addSubview:selectedLeftPadding];
+    [cell.selectedBackgroundView addSubview:selectedRightPadding];
+    
+    cell.selectedBackgroundView.backgroundColor = [UIColor khakiColor];
+    selectedLeftPadding.backgroundColor = [UIColor khakiColor];
+    selectedRightPadding.backgroundColor = [UIColor khakiColor];
+    
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+    
+    int logicSection = isRegistrationWizardStep ? indexPath.section + 1 : indexPath.section;
+    
+    if (!((logicSection == 0) && (indexPath.row == 0))) {
+        [cell addShadow];
+    }
+}
+
 
 @end

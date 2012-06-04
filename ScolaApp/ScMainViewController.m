@@ -77,7 +77,6 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 {
     [super viewWillAppear:animated];
     
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
     [self navigationController].navigationBarHidden = YES;
 }
 

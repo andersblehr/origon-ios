@@ -18,7 +18,7 @@
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
     
     gradientLayer.frame = self.bounds;
-    gradientLayer.colors = [NSArray arrayWithObjects:(id)[UIColor clearColor].CGColor, (id)[[UIColor blackColor] colorWithAlphaComponent:0.3].CGColor, nil];
+    gradientLayer.colors = [NSArray arrayWithObjects:(id)[UIColor clearColor].CGColor, (id)[[UIColor blackColor] colorWithAlphaComponent:0.0].CGColor, nil];
     
     [self.layer addSublayer:gradientLayer];
 }

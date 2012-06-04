@@ -8,12 +8,12 @@
 
 #import "ScIconSection.h"
 
+#import "UIColor+ScColorExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
 #import "ScLogging.h"
 #import "ScMeta.h"
 
-static CGFloat const kHeadingViewAlpha = 0.3f;
 static CGFloat const kIconButtonAlpha = 0.7f;
 static CGFloat const kHeadingLabelFontSize = 13;
 static CGFloat const kCaptionLabelFontSize = 11;
@@ -110,8 +110,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         CGRect headingFrame = CGRectMake(0, 0, screenWidth, headingHeight);
         
         headingView = [[UIView alloc] initWithFrame:headingFrame];
-        headingView.backgroundColor = [UIColor darkTextColor];
-        headingView.alpha = kHeadingViewAlpha;
+        headingView.backgroundColor = [UIColor isabellineColor];
         headingView.tag = sectionNumber;
         [headingView addShadow];
         
@@ -138,10 +137,8 @@ static CGFloat const kCaptionLabelFontSize = 11;
         CGRect headingLabelFrame = CGRectMake(headingLabelMargin, 0, headingLabelWidth, headingHeight);
         
         headingLabel = [[UILabel alloc] initWithFrame:headingLabelFrame];
-        headingLabel.backgroundColor = [UIColor clearColor];
-        headingLabel.textColor = [UIColor whiteColor];
-        headingLabel.shadowColor = [UIColor blackColor];
-        headingLabel.shadowOffset = CGSizeMake(0.f, 2.f);
+        headingLabel.backgroundColor = [UIColor isabellineColor];
+        headingLabel.textColor = [UIColor darkTextColor];
         headingLabel.font = [UIFont systemFontOfSize:kHeadingLabelFontSize];
         headingLabel.text = headingLabelText;
         
@@ -479,7 +476,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
     [iconButton setBackgroundImage:icon forState:UIControlStateNormal];
     iconButton.alpha = kIconButtonAlpha;
     iconButton.showsTouchWhenHighlighted = YES;
-    iconButton.tag = 100 * (sectionNumber + 1) + numberOfIcons;
+    iconButton.tag = 100 * sectionNumber + (numberOfIcons - 1);
     [iconButton addTarget:sectionDelegate action:@selector(handleButtonTap:) forControlEvents:UIControlEventTouchUpInside];
     
     CGFloat captionOriginX = (15 + xOffset * 100) * widthScaleFactor;

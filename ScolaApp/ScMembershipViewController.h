@@ -20,6 +20,7 @@
     NSArray *minors;
     
     BOOL isForHousehold;
+    BOOL didAddMembers;
 }
 
 @property (weak, nonatomic) ScScola *scola;
