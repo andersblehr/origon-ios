@@ -12,5 +12,6 @@
 
 - (void)addGradientLayer;
 - (void)addShadow;
+- (void)addThinShadow;
 
 @end

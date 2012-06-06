@@ -11,6 +11,8 @@
 @interface UIColor (ScColorExtensions)
 
 + (UIColor *)ashGrayColor;
++ (UIColor *)ghostWhiteColor;
++ (UIColor *)slateGrayColor;
 + (UIColor *)isabellineColor;
 
 @end

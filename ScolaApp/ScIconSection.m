@@ -137,7 +137,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
         CGRect headingLabelFrame = CGRectMake(headingLabelMargin, 0, headingLabelWidth, headingHeight);
         
         headingLabel = [[UILabel alloc] initWithFrame:headingLabelFrame];
-        headingLabel.backgroundColor = [UIColor isabellineColor];
+        headingLabel.backgroundColor = [UIColor clearColor];
         headingLabel.textColor = [UIColor darkTextColor];
         headingLabel.font = [UIFont systemFontOfSize:kHeadingLabelFontSize];
         headingLabel.text = headingLabelText;

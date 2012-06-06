@@ -79,6 +79,8 @@ NSString * const strLandlinePrompt                   = @"strLandlinePrompt";
 NSString * const strMembershipViewHomeScolaTitle1    = @"strMembershipViewHomeScolaTitle1";
 NSString * const strMembershipViewHomeScolaTitle2    = @"strMembershipViewHomeScolaTitle2";
 NSString * const strMembershipViewDefaultTitle       = @"strMembershipViewDefaultTitle";
+NSString * const strHouseholdMembers                 = @"strHouseholdMembers";
+NSString * const strHouseholdMemberListFooter        = @"strHouseholdMemberListFooter";
 
 // Error & alert messages
 NSString * const strNoInternetError                  = @"strNoInternetError";

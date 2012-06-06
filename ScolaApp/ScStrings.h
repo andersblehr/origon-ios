@@ -70,6 +70,8 @@ extern NSString * const strLandlinePrompt;
 extern NSString * const strMembershipViewHomeScolaTitle1;
 extern NSString * const strMembershipViewHomeScolaTitle2;
 extern NSString * const strMembershipViewDefaultTitle;
+extern NSString * const strHouseholdMembers;
+extern NSString * const strHouseholdMemberListFooter;
 
 // Error & alert messages
 extern NSString * const strNoInternetError;

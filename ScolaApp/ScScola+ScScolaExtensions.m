@@ -65,7 +65,7 @@
 
 #pragma mark - String formatting
 
-- (NSString *)addressAsSingleLine
+- (NSString *)singleLineAddress
 {
     NSString *address = @"";
     
@@ -87,7 +87,7 @@
 }
 
 
-- (NSString *)addressAsMultipleLines
+- (NSString *)multiLineAddress
 {
     NSString *address = @"";
     
