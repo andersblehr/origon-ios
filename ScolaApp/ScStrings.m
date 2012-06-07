@@ -22,6 +22,7 @@ static NSString * const kStringsPlist = @"strings.plist";
 NSString * const strAddress                          = @"strAddress";
 NSString * const strLandline                         = @"strLandline";
 NSString * const strMobilePhone                      = @"strMobilePhone";
+NSString * const strHousehold                        = @"strHousehold";
 NSString * const strMyPlace                          = @"strMyPlace";
 NSString * const strOurPlace                         = @"strOurPlace";
 NSString * const strMyMessageBoard                   = @"strMyMessageBoard";
@@ -81,6 +82,7 @@ NSString * const strMembershipViewHomeScolaTitle2    = @"strMembershipViewHomeSc
 NSString * const strMembershipViewDefaultTitle       = @"strMembershipViewDefaultTitle";
 NSString * const strHouseholdMembers                 = @"strHouseholdMembers";
 NSString * const strHouseholdMemberListFooter        = @"strHouseholdMemberListFooter";
+NSString * const strDeleteConfirmation               = @"strDeleteConfirmation";
 
 // Error & alert messages
 NSString * const strNoInternetError                  = @"strNoInternetError";

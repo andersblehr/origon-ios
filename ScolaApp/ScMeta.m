@@ -21,6 +21,9 @@
 
 #import "ScCachedEntity.h"
 
+NSString * const kMemberViewController = @"vcMember";
+NSString * const kMembershipViewController = @"vcMembership";
+
 NSString * const kBundleId = @"com.scolaapp.ios.ScolaApp";
 NSString * const kKeyEntityId = @"entityId";
 NSString * const kKeyEntityClass = @"entityClass";

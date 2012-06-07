@@ -71,6 +71,7 @@
 		5C83DF871543EC8600BB0B29 /* ScMemberResidency+ScMemberResidencyExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF861543EC8600BB0B29 /* ScMemberResidency+ScMemberResidencyExtensions.m */; };
 		5C83DF8A154FE38200BB0B29 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF89154FE38200BB0B29 /* ScCachedEntity.m */; };
 		5C88078F1484392B00ED5416 /* ScRegistrationView1Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C88078E1484392A00ED5416 /* ScRegistrationView1Controller.m */; };
+		5C8B3AB615813DBB000B19FA /* ScMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* ScMemberViewController.m */; };
 		5C96F1C9153378FC00D2D847 /* ScSharedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C96F1C8153378FC00D2D847 /* ScSharedEntityRef.m */; };
 		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
@@ -215,6 +216,8 @@
 		5C83DF8B1550386400BB0B29 /* ScIconSectionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScIconSectionDelegate.h; sourceTree = "<group>"; };
 		5C88078D1484392A00ED5416 /* ScRegistrationView1Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScRegistrationView1Controller.h; sourceTree = "<group>"; };
 		5C88078E1484392A00ED5416 /* ScRegistrationView1Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScRegistrationView1Controller.m; sourceTree = "<group>"; };
+		5C8B3AB415813DBB000B19FA /* ScMemberViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMemberViewController.h; sourceTree = "<group>"; };
+		5C8B3AB515813DBB000B19FA /* ScMemberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMemberViewController.m; sourceTree = "<group>"; };
 		5C96F1C7153378FC00D2D847 /* ScSharedEntityRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScSharedEntityRef.h; sourceTree = "<group>"; };
 		5C96F1C8153378FC00D2D847 /* ScSharedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScSharedEntityRef.m; sourceTree = "<group>"; };
 		5C9D3146151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+ScJSONSerializationExtensions.h"; sourceTree = "<group>"; };
@@ -425,6 +428,8 @@
 				5CE987C314856426005A17C6 /* ScEventViewController.m */,
 				5C3D42801485678E009A68E0 /* ScMainViewController.h */,
 				5C3D42811485678F009A68E0 /* ScMainViewController.m */,
+				5C8B3AB415813DBB000B19FA /* ScMemberViewController.h */,
+				5C8B3AB515813DBB000B19FA /* ScMemberViewController.m */,
 				5C629FEE14C62038001DA01F /* ScMembershipViewController.h */,
 				5C629FEF14C62038001DA01F /* ScMembershipViewController.m */,
 				5C629FFD14C624AD001DA01F /* ScMessageBoardViewController.h */,
@@ -750,6 +755,7 @@
 				5CED158F157973530096807E /* ScScola.m in Sources */,
 				5C4955F6157D469000F2A885 /* UIColor+ScColorExtensions.m in Sources */,
 				5C4955FA157E90F100F2A885 /* ScAddressTableViewCell.m in Sources */,
+				5C8B3AB615813DBB000B19FA /* ScMemberViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

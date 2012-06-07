@@ -30,7 +30,6 @@
 #import "ScMembershipViewController.h"
 
 
-static NSString * const kMembershipViewController = @"vcMembership";
 static NSString * const kSegueToMainView = @"registrationView2ToMainView";
 
 static int const kGenderSegmentFemale = 0;

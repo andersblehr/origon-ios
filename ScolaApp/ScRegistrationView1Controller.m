@@ -139,10 +139,13 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
     if (isAddressEditable) {
         addressLine1Field.delegate = self;
         addressLine1Field.placeholder = [ScStrings stringForKey:strAddressLine1Prompt];
+        addressLine1Field.returnKeyType = UIReturnKeyNext;
         addressLine2Field.delegate = self;
         addressLine2Field.placeholder = [ScStrings stringForKey:strAddressLine2Prompt];
+        addressLine2Field.returnKeyType = UIReturnKeyNext;
         postCodeAndCityField.delegate = self;
         postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
+        postCodeAndCityField.returnKeyType = UIReturnKeyNext;
     } else {
         addressLine1Field.enabled = NO;
         addressLine1Field.textColor = [UIColor grayColor];

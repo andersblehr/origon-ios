@@ -13,6 +13,7 @@
 extern NSString * const strAddress;
 extern NSString * const strLandline;
 extern NSString * const strMobilePhone;
+extern NSString * const strHousehold;
 extern NSString * const strMyPlace;
 extern NSString * const strOurPlace;
 extern NSString * const strMyMessageBoard;
@@ -72,6 +73,7 @@ extern NSString * const strMembershipViewHomeScolaTitle2;
 extern NSString * const strMembershipViewDefaultTitle;
 extern NSString * const strHouseholdMembers;
 extern NSString * const strHouseholdMemberListFooter;
+extern NSString * const strDeleteConfirmation;
 
 // Error & alert messages
 extern NSString * const strNoInternetError;

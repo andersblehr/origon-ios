@@ -27,6 +27,6 @@ extern CGFloat kDetailFontSize;
     UILabel *landlineDetailLabel;
 }
 
-- (void)populateWithScola:(ScScola *)scola;
+- (void)populateWithScola:(ScScola *)scola isAdmin:(BOOL)isAdmin;
 
 @end

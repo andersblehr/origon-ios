@@ -34,8 +34,6 @@ static CGFloat kLabelWidth = 63.f;
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     
     if (self) {
-        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        
         UIFont *labelFont = [UIFont boldSystemFontOfSize:kLabelFontSize];
         UIFont *detailLabelFont = [UIFont boldSystemFontOfSize:kDetailFontSize];
         
@@ -83,7 +81,7 @@ static CGFloat kLabelWidth = 63.f;
 
 #pragma mark - Populating the cell
 
-- (void)populateWithScola:(ScScola *)scola
+- (void)populateWithScola:(ScScola *)scola isAdmin:(BOOL)isAdmin
 {
     addressLabel.frame = CGRectMake(5.f, 16.f, 5.f + kLabelWidth, 2.5 * addressLabel.font.xHeight);
     addressDetailLabel.frame = CGRectMake(82.f, 12.f, 195.f, 2.5 * addressDetailLabel.font.xHeight * [scola numberOfLinesInAddress]);
@@ -95,6 +93,10 @@ static CGFloat kLabelWidth = 63.f;
         landlineDetailLabel.frame = CGRectMake(82.f, 18.f + addressDetailLabel.frame.size.height, 195.f, 2.5 * landlineDetailLabel.font.xHeight);
         
         landlineDetailLabel.text = scola.landline;
+    }
+    
+    if (isAdmin) {
+        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
 }
 

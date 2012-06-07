@@ -10,6 +10,9 @@
 
 #import "ScServerConnectionDelegate.h"
 
+extern NSString * const kMemberViewController;
+extern NSString * const kMembershipViewController;
+
 extern NSString * const kBundleId;
 extern NSString * const kKeyEntityId;
 extern NSString * const kKeyEntityClass;
