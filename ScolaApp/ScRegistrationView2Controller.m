@@ -96,6 +96,8 @@ static int const kPopUpButtonUseNew = 1;
     isGiven = isGiven || (landlineField.text.length > 0);
     
     if (!isGiven) {
+        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strNoPhoneNumberTitle] message:[ScStrings stringForKey:strNoPhoneNumberAlert]];
+        
         [mobilePhoneField becomeFirstResponder];
     }
     
@@ -121,12 +123,9 @@ static int const kPopUpButtonUseNew = 1;
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(textFieldShouldReturn:)];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(completeRegistration)];
     
     self.navigationItem.rightBarButtonItem = doneButton;
-    
-    NSString *femaleLabel;
-    NSString *maleLabel;
     
     if ([member isMinor]) {
         femaleLabel = [ScStrings stringForKey:strFemaleMinor];
@@ -146,6 +145,9 @@ static int const kPopUpButtonUseNew = 1;
         mobilePhoneUserHelpLabel.text = [ScStrings stringForKey:strMobilePhoneUserHelp];
     }
     
+    mobilePhoneField.placeholder = [ScStrings stringForKey:strMobilePhonePrompt];
+    mobilePhoneField.keyboardType = UIKeyboardTypeNumberPad;
+    
     ScMemberResidency *residency = [ScMemberResidency residencyForMember:[ScMeta m].userId];
     BOOL isLandlineEditable = [[residency isAdmin] boolValue];
     
@@ -158,17 +160,12 @@ static int const kPopUpButtonUseNew = 1;
     }
     
     if (isLandlineEditable) {
-        landlineField.delegate = self;
         landlineField.placeholder = [ScStrings stringForKey:strLandlinePrompt];
         landlineField.keyboardType = UIKeyboardTypeNumberPad;
     } else {
         landlineField.enabled = NO;
         landlineField.textColor = [UIColor grayColor];
     }
-    
-    mobilePhoneField.delegate = self;
-    mobilePhoneField.placeholder = [ScStrings stringForKey:strMobilePhonePrompt];
-    mobilePhoneField.keyboardType = UIKeyboardTypeNumberPad;
     
     [mobilePhoneField becomeFirstResponder];
 }
@@ -207,29 +204,14 @@ static int const kPopUpButtonUseNew = 1;
 }
 
 
-#pragma mark - Segue handling
+#pragma mark - Selector implementations
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (void)completeRegistration
 {
-    // Do we need this?
-}
-
-
-#pragma mark - UITextFieldDelegate implementation
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    NSString *alertMessage = nil;
-    NSString *alertTitle = nil;
+    BOOL didComplete = [ScMeta isGenderGiven:genderControl.selectedSegmentIndex female:femaleLabel male:maleLabel];
+    didComplete = didComplete && [self isPhoneNumberGiven];
     
-    if (![self isPhoneNumberGiven]) {
-        alertTitle = [ScStrings stringForKey:strNoPhoneNumberTitle];
-        alertMessage = [ScStrings stringForKey:strNoPhoneNumberAlert];
-    }
-    
-    BOOL shouldReturn = !alertMessage;
-    
-    if (shouldReturn) {
+    if (didComplete) {
         [self syncViewState];
         [[ScMeta m].managedObjectContext synchronise];
         
@@ -240,13 +222,7 @@ static int const kPopUpButtonUseNew = 1;
         }
         
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
-    } else {
-        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-        
-        [validationAlert show];
     }
-    
-    return shouldReturn;
 }
 
 @end

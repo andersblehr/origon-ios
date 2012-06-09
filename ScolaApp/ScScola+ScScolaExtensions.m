@@ -133,13 +133,7 @@
 
 - (BOOL)hasAddress
 {
-    BOOL isValid = NO;
-    
-    isValid = isValid || (self.addressLine1.length > 0);
-    isValid = isValid || (self.addressLine2.length > 0);
-    isValid = isValid || (self.postCodeAndCity.length > 0);
-    
-    return isValid;
+    return [ScMeta isAddressValidWithLine1:self.addressLine1 line2:self.addressLine2 postCodeAndCity:self.postCodeAndCity];
 }
 
 

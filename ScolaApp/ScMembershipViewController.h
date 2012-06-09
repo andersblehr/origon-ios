@@ -10,8 +10,7 @@
 
 @class ScMember, ScScola;
 
-@interface ScMembershipViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate>
-{
+@interface ScMembershipViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate> {
 @private
     NSString *longTitle;
     UIBarButtonItem *addButton;

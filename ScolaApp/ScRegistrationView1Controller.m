@@ -9,6 +9,7 @@
 #import "ScRegistrationView1Controller.h"
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
+#import "UIDatePicker+ScDatePickerExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
 #import "ScLogging.h"
@@ -47,56 +48,9 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
 
 #pragma mark - Auxiliary methods
 
-- (void)setDateOfBirthPickerToApril1st1976
-{
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
-    NSDate *april1st1976 = [dateFormatter dateFromString:@"1976-04-01T20:00:00Z"];
-    
-    [dateOfBirthPicker setDate:april1st1976 animated:YES];
-}
-
-
 - (void)dateOfBirthDidChange
 {
     dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:dateOfBirthPicker.date dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
-}
-
-
-#pragma mark - Input validation
-
-- (BOOL)isAddressValid
-{
-    homeScola.addressLine1 = addressLine1Field.text;
-    homeScola.addressLine2 = addressLine2Field.text;
-    homeScola.postCodeAndCity = postCodeAndCityField.text;
-    
-    BOOL isValid = [homeScola hasAddress];
-    
-    if (!isValid) {
-        [addressLine1Field becomeFirstResponder];
-    }
-    
-    return isValid;
-}
-
-
-- (BOOL)isDateOfBirthValid
-{
-    BOOL isValid = (dateOfBirthField.text.length == 0);
-    
-    if (!isValid) {
-        member.dateOfBirth = dateOfBirthPicker.date;
-        
-        isValid = [member hasValidBirthDate];
-    }
-    
-    if (!isValid) {
-        [self.view endEditing:YES];
-        dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthPrompt];
-    }
-    
-    return isValid;
 }
 
 
@@ -120,7 +74,7 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] init];
     self.navigationItem.backBarButtonItem.title = [ScStrings stringForKey:strRegistrationView1BackButtonTitle];
 
-    UIBarButtonItem *nextButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strNext] style:UIBarButtonItemStyleDone target:self action:@selector(textFieldShouldReturn:)];
+    UIBarButtonItem *nextButton = [[UIBarButtonItem alloc] initWithTitle:[ScStrings stringForKey:strNext] style:UIBarButtonItemStyleDone target:self action:@selector(goToNext)];
     
     self.navigationItem.hidesBackButton = YES;
     self.navigationItem.rightBarButtonItem = nextButton;
@@ -137,15 +91,18 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
     }
 
     if (isAddressEditable) {
-        addressLine1Field.delegate = self;
         addressLine1Field.placeholder = [ScStrings stringForKey:strAddressLine1Prompt];
-        addressLine1Field.returnKeyType = UIReturnKeyNext;
-        addressLine2Field.delegate = self;
+        addressLine1Field.autocorrectionType = UITextAutocorrectionTypeNo;
+        addressLine1Field.returnKeyType = UIReturnKeyDefault;
+        addressLine1Field.delegate = self;
         addressLine2Field.placeholder = [ScStrings stringForKey:strAddressLine2Prompt];
-        addressLine2Field.returnKeyType = UIReturnKeyNext;
-        postCodeAndCityField.delegate = self;
+        addressLine2Field.autocorrectionType = UITextAutocorrectionTypeNo;
+        addressLine2Field.returnKeyType = UIReturnKeyDefault;
+        addressLine2Field.delegate = self;
         postCodeAndCityField.placeholder = [ScStrings stringForKey:strPostCodeAndCityPrompt];
-        postCodeAndCityField.returnKeyType = UIReturnKeyNext;
+        postCodeAndCityField.autocorrectionType = UITextAutocorrectionTypeNo;
+        postCodeAndCityField.returnKeyType = UIReturnKeyDefault;
+        postCodeAndCityField.delegate = self;
     } else {
         addressLine1Field.enabled = NO;
         addressLine1Field.textColor = [UIColor grayColor];
@@ -163,6 +120,7 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
     
     dateOfBirthField.delegate = self;
     dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthClickHerePrompt];
+    dateOfBirthField.inputView = dateOfBirthPicker;
 }
 
 
@@ -174,13 +132,15 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
     addressLine2Field.text = homeScola.addressLine2;
     postCodeAndCityField.text = homeScola.postCodeAndCity;
     
+    [dateOfBirthPicker setEarlistValidBirthDate];
+    [dateOfBirthPicker setLatestValidBirthDate];
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventTouchUpInside | UIControlEventValueChanged];
     
     if (member.dateOfBirth) {
         [dateOfBirthPicker setDate:member.dateOfBirth animated:YES];
         [self dateOfBirthDidChange];
     } else {
-        [self setDateOfBirthPickerToApril1st1976];
+        [dateOfBirthPicker setTo01April1976];
         dateOfBirthField.text = @"";
     }
     
@@ -193,6 +153,33 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+
+#pragma mark - Selector implementations
+
+- (void)goToNext
+{
+    BOOL isValid = [ScMeta isAddressValidWithLine1:addressLine1Field.text line2:addressLine2Field.text postCodeAndCity:postCodeAndCityField.text];
+    
+    if (isValid) {
+        isValid = [ScMeta isDateOfBirthValid:dateOfBirthField.text];
+        
+        if (!isValid) {
+            [dateOfBirthField becomeFirstResponder];
+        }
+    } else {
+        [addressLine1Field becomeFirstResponder];
+    }
+    
+    if (isValid) {
+        homeScola.addressLine1 = addressLine1Field.text;
+        homeScola.addressLine2 = addressLine2Field.text;
+        homeScola.postCodeAndCity = postCodeAndCityField.text;
+        member.dateOfBirth = dateOfBirthPicker.date;
+        
+        [self performSegueWithIdentifier:kSegueToRegistrationView2 sender:self];
+    }
 }
 
 
@@ -217,20 +204,9 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
     BOOL isDateOfBirthField = (textField == dateOfBirthField);
     
     if (isDateOfBirthField) {
-        [self.view endEditing:YES];
         dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthPrompt];
     } else {
         dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthClickHerePrompt];
-    }
-    
-    return !isDateOfBirthField;
-}
-
-
-- (BOOL)textFieldShouldClear:(UITextField *)textField
-{
-    if (textField == dateOfBirthField) {
-        [self setDateOfBirthPickerToApril1st1976];
     }
     
     return YES;
@@ -239,28 +215,15 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    NSString *alertMessage = nil;
-    NSString *alertTitle = nil;
-    
-    if (![self isAddressValid]) {
-        alertTitle = [ScStrings stringForKey:strNoAddressTitle];
-        alertMessage = [ScStrings stringForKey:strNoAddressAlert];
-    } else if (![self isDateOfBirthValid]) {
-        alertTitle = [ScStrings stringForKey:strInvalidDateOfBirthTitle];
-        alertMessage = [ScStrings stringForKey:strInvalidDateOfBirthAlert];
+    if (textField == addressLine1Field) {
+        [addressLine2Field becomeFirstResponder];
+    } else if (textField == addressLine2Field) {
+        [postCodeAndCityField becomeFirstResponder];
+    } else if (textField == postCodeAndCityField) {
+        [dateOfBirthField becomeFirstResponder];
     }
     
-    BOOL shouldReturn = !alertMessage;
-    
-    if (shouldReturn) {
-        [self performSegueWithIdentifier:kSegueToRegistrationView2 sender:self];
-    } else {
-        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK]otherButtonTitles:nil];
-        
-        [validationAlert show];
-    }
-    
-    return shouldReturn;
+    return YES;
 }
 
 @end

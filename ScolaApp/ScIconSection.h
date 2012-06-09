@@ -24,9 +24,6 @@
     UILabel *headingLabel;
     NSString *headingLabelText;
     
-    CGFloat widthScaleFactor;
-    CGFloat heightScaleFactor;
-    
     CGFloat sectionOriginY;
     CGFloat headerHeight;
     CGFloat headingHeight;

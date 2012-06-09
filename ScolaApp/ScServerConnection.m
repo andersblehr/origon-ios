@@ -66,6 +66,7 @@ static NSString * const kRESTRouteAuthConfirmation = @"confirm";
 static NSString * const kRESTRouteAuthLogin = @"login";
 static NSString * const kRESTRouteModelSync = @"sync";
 static NSString * const kRESTRouteModelFetch = @"fetch";
+static NSString * const kRESTRouteModelMember = @"member";
 
 static NSString * const kURLParameterDeviceId = @"duid";
 static NSString * const kURLParameterDevice = @"device";
@@ -269,6 +270,17 @@ static NSString * const kURLParameterVersion = @"version";
         
         [self performHTTPMethod:kHTTPMethodGET withEntities:nil usingDelegate:[ScMeta m]];
     }
+}
+
+
+- (void)fetchMemberWithId:(NSString *)memberId usingDelegate:(id)delegate
+{
+    RESTHandler = kRESTHandlerModel;
+    RESTRoute = [NSString stringWithFormat:@"%@/%@", kRESTRouteModelMember, memberId];
+    
+    [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    
+    [self performHTTPMethod:kHTTPMethodGET withEntities:nil usingDelegate:delegate];
 }
 
 

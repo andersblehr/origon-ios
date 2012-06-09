@@ -12,7 +12,11 @@
 
 @class ScScola, ScMember;
 
-@interface ScRegistrationView2Controller : UIViewController <UITextFieldDelegate>
+@interface ScRegistrationView2Controller : UIViewController {
+@private
+    NSString *femaleLabel;
+    NSString *maleLabel;
+}
 
 @property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
 @property (weak, nonatomic) IBOutlet UILabel *genderUserHelpLabel;

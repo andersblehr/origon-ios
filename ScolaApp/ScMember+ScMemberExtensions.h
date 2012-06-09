@@ -10,10 +10,7 @@
 
 @interface ScMember (ScMemberExtensions)
 
-- (BOOL)hasValidBirthDate;
 - (BOOL)hasMobilPhone;
 - (BOOL)isMinor;
-
-//- (NSComparisonResult)compare:(ScMember *)other;
 
 @end

@@ -18,10 +18,20 @@ static NSDictionary *strings = nil;
 static NSString * const kStringsPlist = @"strings.plist";
 
 
-// Generic Scola strings
+// Generic labels
+NSString * const strName                             = @"strName";
+NSString * const strNamePlaceholder                  = @"strNamePlaceholder";
+NSString * const strEmail                            = @"strEmail";
+NSString * const strEmailPlaceholder                 = @"strEmailPlaceholder";
 NSString * const strAddress                          = @"strAddress";
 NSString * const strLandline                         = @"strLandline";
-NSString * const strMobilePhone                      = @"strMobilePhone";
+NSString * const strLandlinePlaceholder              = @"strLandlinePlaceholder";
+NSString * const strMobile                           = @"strMobile";
+NSString * const strMobilePlaceholder                = @"strMobilePlaceholder";
+NSString * const strBorn                             = @"strBorn";
+NSString * const strBornPlaceholder                  = @"strBornPlaceholder";
+
+// Generic Scola strings
 NSString * const strHousehold                        = @"strHousehold";
 NSString * const strMyPlace                          = @"strMyPlace";
 NSString * const strOurPlace                         = @"strOurPlace";
@@ -84,6 +94,10 @@ NSString * const strHouseholdMembers                 = @"strHouseholdMembers";
 NSString * const strHouseholdMemberListFooter        = @"strHouseholdMemberListFooter";
 NSString * const strDeleteConfirmation               = @"strDeleteConfirmation";
 
+// Member view
+NSString * const strNewMemberViewTitle               = @"strNewMemberViewTitle";
+NSString * const strUnderOurRoofViewTitle            = @"strUnderOurRoofViewTitle";
+
 // Error & alert messages
 NSString * const strNoInternetError                  = @"strNoInternetError";
 NSString * const strServerErrorAlert                 = @"strServerErrorAlert";
@@ -93,6 +107,10 @@ NSString * const strInvalidEmailTitle                = @"strInvalidEmailTitle";
 NSString * const strInvalidEmailAlert                = @"strInvalidEmailAlert";
 NSString * const strInvalidPasswordTitle             = @"strInvalidPasswordTitle";
 NSString * const strInvalidPasswordAlert             = @"strInvalidPasswordAlert";
+NSString * const strInvalidDateOfBirthTitle          = @"strInvalidDateOfBirthTitle";
+NSString * const strInvalidDateOfBirthAlert          = @"strInvalidDateOfBirthAlert";
+NSString * const strInvalidGenderTitle               = @"strInvalidGenderTitle";
+NSString * const strInvalidGenderAlert               = @"strInvalidGenderAlert";
 NSString * const strEmailSentAlertTitle              = @"strEmailSentAlertTitle";
 NSString * const strEmailSentAlert                   = @"strEmailSentAlert";
 NSString * const strEmailSentToInviteeTitle          = @"strEmailSentToInviteeTitle";
@@ -105,8 +123,8 @@ NSString * const strUserExistsMustLogInAlert         = @"strUserExistsMustLogInA
 NSString * const strNotLoggedInAlert                 = @"strNotLoggedInAlert";
 NSString * const strNoAddressTitle                   = @"strNoAddressTitle";
 NSString * const strNoAddressAlert                   = @"strNoAddressAlert";
-NSString * const strInvalidDateOfBirthTitle          = @"strInvalidDateOfBirthTitle";
-NSString * const strInvalidDateOfBirthAlert          = @"strInvalidDateOfBirthAlert";
+NSString * const strNoMobileNumberTitle              = @"strNoMobileNumberTitle";
+NSString * const strNoMobileNumberAlert              = @"strNoMobileNumberAlert";
 NSString * const strNoPhoneNumberTitle               = @"strNoPhoneNumberTitle";
 NSString * const strNoPhoneNumberAlert               = @"strNoPhoneNumberAlert";
 NSString * const strIncompleteRegistrationTitle      = @"strIncompleteRegistrationTitle";

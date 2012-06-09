@@ -200,7 +200,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
 </data>
                                 </timeZone>
                             </datePicker>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="[Dynamic date display]" borderStyle="roundedRect" minimumFontSize="17" clearButtonMode="always" id="v0x-3o-zyV">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="[Dynamic date display]" borderStyle="roundedRect" minimumFontSize="17" id="v0x-3o-zyV">
                                 <rect key="frame" x="15" y="158" width="290" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -381,33 +381,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="gray" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ptCellMember" textLabel="g03-hp-m1h" detailTextLabel="kxs-GL-jFS" style="IBUITableViewCellStyleSubtitle" id="lZo-78-Zkq">
-                                <rect key="frame" x="0.0" y="46" width="320" height="46"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="10" y="1" width="280" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="g03-hp-m1h">
-                                            <rect key="frame" x="10" y="2" width="38" height="22"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Detail" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="kxs-GL-jFS">
-                                            <rect key="frame" x="10" y="24" width="36" height="18"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <color key="textColor" red="0.50196078431372548" green="0.50196078431372548" blue="0.50196078431372548" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        </label>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                            </tableViewCell>
-                        </prototypes>
                     </tableView>
                     <tabBarItem key="tabBarItem" title="&lt;strMembers>" image="112-group.png" id="6nt-ea-HKj"/>
                     <navigationItem key="navigationItem" title="&lt;strMembers>" id="PZV-fj-ium"/>
@@ -428,33 +401,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cellDefault" textLabel="DC5-jy-RPq" detailTextLabel="0fF-dr-8CS" style="IBUITableViewCellStyleValue2" id="PUe-SA-6Io">
-                                <rect key="frame" x="0.0" y="46" width="320" height="46"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="10" y="1" width="300" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="DC5-jy-RPq">
-                                            <rect key="frame" x="10" y="15" width="67" height="15"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="12"/>
-                                            <color key="textColor" red="0.32156862745098042" green="0.40000000000000002" blue="0.56862745098039214" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        </label>
-                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0fF-dr-8CS">
-                                            <rect key="frame" x="83" y="12" width="55" height="19"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        </label>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                            </tableViewCell>
-                        </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="T87-Bh-GzL" id="wla-Re-bhC"/>
                             <outlet property="delegate" destination="T87-Bh-GzL" id="GlC-bZ-Zjk"/>
@@ -593,81 +539,12 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="83-calendar.png" width="23" height="25"/>
         <image name="dark_linen-640x960.png" width="640" height="960"/>
     </resources>
-    <classes>
-        <class className="ScAuthViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScAuthViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="showInfo:"/>
-                <relationship kind="outlet" name="activityIndicator" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="emailOrPasswordField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="nameOrEmailOrRegistrationCodeField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="scolaDescriptionHeadingLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="scolaDescriptionTextView" candidateClass="UITextView"/>
-                <relationship kind="outlet" name="scolaSplashLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="showInfoButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="userHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="userIntentionControl" candidateClass="UISegmentedControl"/>
-            </relationships>
-        </class>
-        <class className="ScEventViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScEventViewController.h"/>
-        </class>
-        <class className="ScMainViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMainViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="showInfo:"/>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-            </relationships>
-        </class>
-        <class className="ScMemberViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMemberViewController.h"/>
-        </class>
-        <class className="ScMembershipViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMembershipViewController.h"/>
-        </class>
-        <class className="ScMessageBoardViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMessageBoardViewController.h"/>
-        </class>
-        <class className="ScRegistrationView1Controller" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScRegistrationView1Controller.h"/>
-            <relationships>
-                <relationship kind="outlet" name="addressLine1Field" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="addressLine2Field" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="addressUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="dateOfBirthField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="dateOfBirthPicker" candidateClass="UIDatePicker"/>
-                <relationship kind="outlet" name="dateOfBirthUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="postCodeAndCityField" candidateClass="UITextField"/>
-            </relationships>
-        </class>
-        <class className="ScRegistrationView2Controller" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScRegistrationView2Controller.h"/>
-            <relationships>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="genderControl" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="genderUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="landlineField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="landlineUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="mobilePhoneField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="mobilePhoneUserHelpLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="ScScheduleViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScScheduleViewController.h"/>
-        </class>
-        <class className="ScTaskViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScTaskViewController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="t3w-Gq-L9a"/>
+        <segue reference="FHF-lx-n1T"/>
     </inferredMetricsTieBreakers>
 </document>

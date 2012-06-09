@@ -59,9 +59,20 @@ extern NSString * const kGenderNoneGiven;
 
 + (ScMeta *)m;
 
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message tag:(NSInteger)tag delegate:(id)delegate;
+
 + (void)setUserDefault:(id)object forKey:(NSString *)key;
 + (id)userDefaultForKey:(NSString *)key;
 + (void)removeUserDefaultForKey:(NSString *)key;
+
++ (BOOL)isNameValid:(NSString *)name;
++ (BOOL)isEmailValid:(NSString *)email;
++ (BOOL)isEmailValid:(NSString *)email silent:(BOOL)silent;
++ (BOOL)isMobileNumberValid:(NSString *)mobileNumber;
++ (BOOL)isDateOfBirthValid:(NSString *)dateString;
++ (BOOL)isAddressValidWithLine1:(NSString *)line1 line2:(NSString *)line2 postCodeAndCity:(NSString *)postCodeAndCity;
++ (BOOL)isGenderGiven:(NSInteger)gender female:(NSString *)female male:(NSString *)male;
 
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;

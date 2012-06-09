@@ -9,10 +9,20 @@
 #import <Foundation/Foundation.h>
 
 
-// Generic Scola strings
+// Generic labels
+extern NSString * const strName;
+extern NSString * const strNamePlaceholder;
+extern NSString * const strEmail;
+extern NSString * const strEmailPlaceholder;
 extern NSString * const strAddress;
 extern NSString * const strLandline;
-extern NSString * const strMobilePhone;
+extern NSString * const strLandlinePlaceholder;
+extern NSString * const strMobile;
+extern NSString * const strMobilePlaceholder;
+extern NSString * const strBorn;
+extern NSString * const strBornPlaceholder;
+
+// Generic Scola strings
 extern NSString * const strHousehold;
 extern NSString * const strMyPlace;
 extern NSString * const strOurPlace;
@@ -75,6 +85,10 @@ extern NSString * const strHouseholdMembers;
 extern NSString * const strHouseholdMemberListFooter;
 extern NSString * const strDeleteConfirmation;
 
+// Member view
+extern NSString * const strNewMemberViewTitle;
+extern NSString * const strUnderOurRoofViewTitle;
+
 // Error & alert messages
 extern NSString * const strNoInternetError;
 extern NSString * const strServerErrorAlert;
@@ -84,6 +98,10 @@ extern NSString * const strInvalidEmailTitle;
 extern NSString * const strInvalidEmailAlert;
 extern NSString * const strInvalidPasswordTitle;
 extern NSString * const strInvalidPasswordAlert;
+extern NSString * const strInvalidDateOfBirthTitle;
+extern NSString * const strInvalidDateOfBirthAlert;
+extern NSString * const strInvalidGenderTitle;
+extern NSString * const strInvalidGenderAlert;
 extern NSString * const strEmailSentAlertTitle;
 extern NSString * const strEmailSentAlert;
 extern NSString * const strEmailSentToInviteeTitle;
@@ -96,8 +114,8 @@ extern NSString * const strUserExistsMustLogInAlert;
 extern NSString * const strNotLoggedInAlert;
 extern NSString * const strNoAddressTitle;
 extern NSString * const strNoAddressAlert;
-extern NSString * const strInvalidDateOfBirthTitle;
-extern NSString * const strInvalidDateOfBirthAlert;
+extern NSString * const strNoMobileNumberTitle;
+extern NSString * const strNoMobileNumberAlert;
 extern NSString * const strNoPhoneNumberTitle;
 extern NSString * const strNoPhoneNumberAlert;
 extern NSString * const strIncompleteRegistrationTitle;

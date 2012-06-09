@@ -15,8 +15,8 @@
 #import "ScMeta.h"
 
 static CGFloat const kIconButtonAlpha = 0.7f;
-static CGFloat const kHeadingLabelFontSize = 13;
-static CGFloat const kCaptionLabelFontSize = 11;
+static CGFloat const kHeadingLabelFontSize = 13.f;
+static CGFloat const kCaptionLabelFontSize = 11.f;
 
 
 @implementation ScIconSection
@@ -83,14 +83,14 @@ static CGFloat const kCaptionLabelFontSize = 11;
             numberOfPrecedingGridLines = [precedingSection numberOfKnownGridLines];
         }
         
-        CGFloat screenWidth = 320 * widthScaleFactor;
+        CGFloat screenWidth = 320.f;
         
         fullHeight = headingHeight + iconGridLineHeight;
         actualHeight = fullHeight;
         
         sectionOriginY = headerHeight + sectionNumber * headingHeight + numberOfPrecedingGridLines * iconGridLineHeight;
         
-        CGRect sectionFrame = CGRectMake(0, sectionOriginY, screenWidth, actualHeight);
+        CGRect sectionFrame = CGRectMake(0.f, sectionOriginY, screenWidth, actualHeight);
         
         sectionView = [[UIView alloc] initWithFrame:sectionFrame];
         sectionView.backgroundColor = [UIColor clearColor];
@@ -106,8 +106,8 @@ static CGFloat const kCaptionLabelFontSize = 11;
 - (void)createHeadingView
 {
     if (sectionView) {
-        CGFloat screenWidth = 320 * widthScaleFactor;
-        CGRect headingFrame = CGRectMake(0, 0, screenWidth, headingHeight);
+        CGFloat screenWidth = 320.f;
+        CGRect headingFrame = CGRectMake(0.f, 0.f, screenWidth, headingHeight);
         
         headingView = [[UIView alloc] initWithFrame:headingFrame];
         headingView.backgroundColor = [UIColor isabellineColor];
@@ -131,10 +131,10 @@ static CGFloat const kCaptionLabelFontSize = 11;
 - (void)createHeadingLabel
 {
     if (sectionView) {
-        CGFloat screenWidth = 320 * widthScaleFactor;
+        CGFloat screenWidth = 320.f;
         CGFloat headingLabelMargin = screenWidth / 16.f;
-        CGFloat headingLabelWidth = screenWidth - 2 * headingLabelMargin;
-        CGRect headingLabelFrame = CGRectMake(headingLabelMargin, 0, headingLabelWidth, headingHeight);
+        CGFloat headingLabelWidth = screenWidth - 2.f * headingLabelMargin;
+        CGRect headingLabelFrame = CGRectMake(headingLabelMargin, 0.f, headingLabelWidth, headingHeight);
         
         headingLabel = [[UILabel alloc] initWithFrame:headingLabelFrame];
         headingLabel.backgroundColor = [UIColor clearColor];
@@ -153,7 +153,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 
 - (BOOL)isCollapsed
 {
-    CGFloat percentageVisible = 100 * (actualHeight - headingHeight) / iconGridLineHeight;
+    CGFloat percentageVisible = 100.f * (actualHeight - headingHeight) / iconGridLineHeight;
     
     return (percentageVisible <= 15.f); 
 }
@@ -163,7 +163,7 @@ static CGFloat const kCaptionLabelFontSize = 11;
 {
     sectionOriginY += pan;
     actualHeight += delta;
-    newSectionFrame = CGRectMake(0, sectionOriginY, 320 * widthScaleFactor, actualHeight);
+    newSectionFrame = CGRectMake(0.f, sectionOriginY, 320.f, actualHeight);
     
     if (!prepare) {
         sectionView.frame = newSectionFrame;
@@ -401,13 +401,10 @@ static CGFloat const kCaptionLabelFontSize = 11;
     if (self) {
         headingLabelText = heading;
         
-        widthScaleFactor = [UIScreen mainScreen].applicationFrame.size.width / 320;
-        heightScaleFactor = [UIScreen mainScreen].applicationFrame.size.height / 460;
-        
-        headerHeight = 60 * heightScaleFactor;
-        headingHeight = 22 * heightScaleFactor;
-        iconGridLineHeight = 100 * heightScaleFactor;
-        minimumHeight = headingHeight + 2 * heightScaleFactor;
+        headerHeight = 60.f;
+        headingHeight = 22.f;
+        iconGridLineHeight = 100.f;
+        minimumHeight = headingHeight + 2.f;
         
         numberOfIcons = 0;
         numberOfGridLines = 1;
@@ -460,13 +457,13 @@ static CGFloat const kCaptionLabelFontSize = 11;
         fullHeight += iconGridLineHeight;
         actualHeight = fullHeight;
         
-        sectionView.frame = CGRectMake(0, sectionOriginY, 320 * widthScaleFactor, fullHeight);
+        sectionView.frame = CGRectMake(0.f, sectionOriginY, 320.f, fullHeight);
     }
     
-    CGFloat iconOriginX = (40 + xOffset * 100) * widthScaleFactor;
-    CGFloat iconOriginY = headingHeight + (yOffset + 20/100.f) * iconGridLineHeight;
-    CGFloat iconWidth = 40 * widthScaleFactor;
-    CGFloat iconHeight = 40 * heightScaleFactor;
+    CGFloat iconOriginX = (40.f + xOffset * 100.f);
+    CGFloat iconOriginY = headingHeight + (yOffset + 20.f/100.f) * iconGridLineHeight;
+    CGFloat iconWidth = 40.f;
+    CGFloat iconHeight = 40.f;
     CGRect iconFrame = CGRectMake(iconOriginX, iconOriginY, iconWidth, iconHeight);
     
     UIButton *iconButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -479,10 +476,10 @@ static CGFloat const kCaptionLabelFontSize = 11;
     iconButton.tag = 100 * sectionNumber + (numberOfIcons - 1);
     [iconButton addTarget:sectionDelegate action:@selector(handleButtonTap:) forControlEvents:UIControlEventTouchUpInside];
     
-    CGFloat captionOriginX = (15 + xOffset * 100) * widthScaleFactor;
-    CGFloat captionOriginY = iconOriginY + iconHeight + 5 * heightScaleFactor;
-    CGFloat captionWidth = 90 * widthScaleFactor;
-    CGFloat captionHeight = 18 * heightScaleFactor;
+    CGFloat captionOriginX = (15.f + xOffset * 100.f);
+    CGFloat captionOriginY = iconOriginY + iconHeight + 5.f;
+    CGFloat captionWidth = 90.f;
+    CGFloat captionHeight = 18.f;
     CGRect captionFrame = CGRectMake(captionOriginX, captionOriginY, captionWidth, captionHeight);
     
     UILabel *captionLabel = [[UILabel alloc] initWithFrame:captionFrame];

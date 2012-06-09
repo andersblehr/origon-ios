@@ -17,6 +17,7 @@
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScLogging.h"
 #import "ScServerConnection.h"
+#import "ScStrings.h"
 #import "ScUUIDGenerator.h"
 
 #import "ScCachedEntity.h"
@@ -168,6 +169,23 @@ static ScMeta *m = nil;
 }
 
 
+#pragma mark - Alerting shortcuts
+
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message
+{
+    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil] show];
+}
+
+
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message tag:(NSInteger)tag delegate:(id)delegate
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:delegate cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
+    alert.tag = tag;
+    
+    [alert show];
+}
+
+
 #pragma mark - NSUserDefaults convenience accessors
 
 + (void)setUserDefault:(id)object forKey:(NSString *)key
@@ -185,6 +203,109 @@ static ScMeta *m = nil;
 + (void)removeUserDefaultForKey:(NSString *)key
 {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
+}
+
+
+#pragma mark - Input validation
+
++ (BOOL)isNameValid:(NSString *)name
+{
+    BOOL isValid = (name.length > 0);
+    
+    if (isValid) {
+        NSUInteger spaceLocation = [name rangeOfString:@" "].location;
+        
+        isValid = isValid && (spaceLocation > 0);
+        isValid = isValid && (spaceLocation < name.length - 1);
+    }
+    
+    if (!isValid) {
+        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidNameTitle] message:[ScStrings stringForKey:strInvalidNameAlert]];
+    }
+    
+    return isValid;
+}
+
+
++ (BOOL)isEmailValid:(NSString *)email
+{
+    return [ScMeta isEmailValid:email silent:NO];
+}
+
+
++ (BOOL)isEmailValid:(NSString *)email silent:(BOOL)silent
+{
+    BOOL isValid = YES;
+    
+    NSUInteger atLocation = [email rangeOfString:@"@"].location;
+    NSUInteger dotLocation = [email rangeOfString:@"." options:NSBackwardsSearch].location;
+    NSUInteger spaceLocation = [email rangeOfString:@" "].location;
+    
+    isValid = (atLocation != NSNotFound);
+    isValid = isValid && (dotLocation != NSNotFound);
+    isValid = isValid && (dotLocation > atLocation);
+    isValid = isValid && (spaceLocation == NSNotFound);
+    
+    if (!isValid && !silent) {
+        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidEmailTitle] message:[ScStrings stringForKey:strInvalidEmailAlert]];
+    }
+    
+    return isValid;
+}
+
+
++ (BOOL)isMobileNumberValid:(NSString *)mobileNumber
+{
+    BOOL isValid = (mobileNumber.length > 0);
+    
+    if (!isValid) {
+        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strNoMobileNumberTitle] message:[ScStrings stringForKey:strNoMobileNumberAlert]];
+    }
+    
+    return isValid;
+}
+
+
++ (BOOL)isDateOfBirthValid:(NSString *)dateString
+{
+    BOOL isValid = (dateString.length > 0);
+    
+    if (!isValid) {
+        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidDateOfBirthTitle] message:[ScStrings stringForKey:strInvalidDateOfBirthAlert]];
+    }
+    
+    return isValid;
+}
+
+
++ (BOOL)isAddressValidWithLine1:(NSString *)line1 line2:(NSString *)line2 postCodeAndCity:(NSString *)postCodeAndCity
+{
+    BOOL isValid = NO;
+    
+    isValid = isValid || (line1.length > 0);
+    isValid = isValid || (line2.length > 0);
+    isValid = isValid || (postCodeAndCity.length > 0);
+    
+    if (!isValid) {
+        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strNoAddressTitle] message:[ScStrings stringForKey:strNoAddressAlert]];
+    }
+    
+    return isValid;
+}
+
+
++ (BOOL)isGenderGiven:(NSInteger)gender female:(NSString *)female male:(NSString *)male
+{
+    BOOL isGiven = (gender != UISegmentedControlNoSegment);
+    
+    if (!isGiven) {
+        NSString *alertTitle = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidGenderTitle], female, [male lowercaseString]];
+        NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidGenderAlert], [female lowercaseString], [male lowercaseString]];
+        
+        [ScMeta showAlertWithTitle:alertTitle message:alertMessage];
+    }
+    
+    return isGiven;
 }
 
 

@@ -145,6 +145,15 @@ static int const kPopUpButtonGoBack = 0;
 }
 
 
+- (void)showTryAgainOrGoBackAlertWithTitle:(NSString *)title message:(NSString *)message
+{
+    UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:[ScStrings stringForKey:strGoBack] otherButtonTitles:[ScStrings stringForKey:strTryAgain], nil];
+    validationAlert.tag = ScAuthAlertTagConfirmationFailed;
+    
+    [validationAlert show];
+}
+
+
 - (BOOL)registerNewDevice
 {
     BOOL didRegisterNewDevice = NO;
@@ -200,13 +209,15 @@ static int const kPopUpButtonGoBack = 0;
     nameOrEmailOrRegistrationCodeField.placeholder = [ScStrings stringForKey:strEmailPrompt];
     nameOrEmailOrRegistrationCodeField.text = emailAsEntered;
     nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeEmailAddress;
-    nameOrEmailOrRegistrationCodeField.autocapitalizationType = NO;
+    nameOrEmailOrRegistrationCodeField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     nameOrEmailOrRegistrationCodeField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    nameOrEmailOrRegistrationCodeField.returnKeyType = UIReturnKeyDefault;
     
     emailOrPasswordField.placeholder = [ScStrings stringForKey:strPasswordPrompt];
     emailOrPasswordField.text = @"";
     emailOrPasswordField.keyboardType = UIKeyboardTypeDefault;
     emailOrPasswordField.secureTextEntry = YES;
+    emailOrPasswordField.returnKeyType = UIReturnKeyGo;
     
     passwordField.hidden = YES;
 
@@ -237,11 +248,13 @@ static int const kPopUpButtonGoBack = 0;
     nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeDefault;
     nameOrEmailOrRegistrationCodeField.autocapitalizationType = YES;
     nameOrEmailOrRegistrationCodeField.clearButtonMode = UITextFieldViewModeNever;
+    nameOrEmailOrRegistrationCodeField.returnKeyType = UIReturnKeyDefault;
     
     emailOrPasswordField.placeholder = [ScStrings stringForKey:strEmailPrompt];
     emailOrPasswordField.text = @"";
     emailOrPasswordField.keyboardType = UIKeyboardTypeEmailAddress;
     emailOrPasswordField.secureTextEntry = NO;
+    emailOrPasswordField.returnKeyType = UIReturnKeyDefault;
     
     passwordField.text = @"";
     passwordField.hidden = NO;
@@ -268,12 +281,14 @@ static int const kPopUpButtonGoBack = 0;
     nameOrEmailOrRegistrationCodeField.text = @"";
     nameOrEmailOrRegistrationCodeField.keyboardType = UIKeyboardTypeDefault;
     nameOrEmailOrRegistrationCodeField.autocapitalizationType = NO;
+    nameOrEmailOrRegistrationCodeField.returnKeyType = UIReturnKeyDefault;
     
     emailOrPasswordField.placeholder = [ScStrings stringForKey:strRepeatPasswordPrompt];
     emailOrPasswordField.text = @"";
     emailOrPasswordField.keyboardType = UIKeyboardTypeDefault;
     emailOrPasswordField.secureTextEntry = YES;
     emailOrPasswordField.clearButtonMode = UITextFieldViewModeNever;
+    emailOrPasswordField.returnKeyType = UIReturnKeyGo;
     
     passwordField.hidden = YES;
 }
@@ -324,55 +339,6 @@ static int const kPopUpButtonGoBack = 0;
 
 #pragma mark - Input validation
 
-- (BOOL)isNameValid
-{
-    BOOL isValid = NO;
-    
-    if (authPhase == ScAuthPhaseRegistration) {
-        nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
-        
-        isValid = (nameAsEntered.length > 0);
-        isValid = isValid && ([nameAsEntered rangeOfString:@" "].location != NSNotFound);
-    }
-    
-    if (!isValid) {
-        [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
-    }
-    
-    return isValid;
-}
-
-
-- (BOOL)isEmailValid
-{
-    BOOL isValid = NO;
-    UITextField *emailField;
-    
-    if (authPhase == ScAuthPhaseLogin) {
-        emailField = nameOrEmailOrRegistrationCodeField;
-    } else if (authPhase == ScAuthPhaseRegistration) {
-        emailField = emailOrPasswordField;
-    }
-    
-    emailAsEntered = emailField.text;
-    
-    NSUInteger atLocation = [emailAsEntered rangeOfString:@"@"].location;
-    NSUInteger dotLocation = [emailAsEntered rangeOfString:@"." options:NSBackwardsSearch].location;
-    NSUInteger spaceLocation = [emailAsEntered rangeOfString:@" "].location;
-    
-    isValid = (atLocation != NSNotFound);
-    isValid = isValid && (dotLocation != NSNotFound);
-    isValid = isValid && (dotLocation > atLocation);
-    isValid = isValid && (spaceLocation == NSNotFound);
-
-    if (!isValid) {
-        [emailField becomeFirstResponder];
-    }
-    
-    return isValid;
-}
-
-
 - (BOOL)isPasswordValid
 {
     BOOL isValid = NO;
@@ -389,8 +355,16 @@ static int const kPopUpButtonGoBack = 0;
         NSString *passwordHashAsEntered = [self generatePasswordHash:currentPasswordField.text usingSalt:emailAsEntered];
         
         isValid = [passwordHashAsEntered isEqualToString:passwordHashAsPersisted];
+        
+        if (!isValid) {
+            [self showTryAgainOrGoBackAlertWithTitle:[ScStrings stringForKey:strPasswordsDoNotMatchTitle] message:[ScStrings stringForKey:strPasswordsDoNotMatchAlert]];
+        }
     } else {
         isValid = (currentPasswordField.text.length >= kMinimumPassordLength);
+        
+        if (!isValid) {
+            [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidPasswordTitle] message:[NSString stringWithFormat:[ScStrings stringForKey:strInvalidPasswordAlert], kMinimumPassordLength]];
+        }
     }
     
     if (!isValid) {
@@ -410,7 +384,50 @@ static int const kPopUpButtonGoBack = 0;
     BOOL isValid = [registrationCodeAsEntered isEqualToString:registrationCodeAsSent];
 
     if (!isValid) {
+        [self showTryAgainOrGoBackAlertWithTitle:[ScStrings stringForKey:strInvalidRegistrationCodeTitle] message:[ScStrings stringForKey:strInvalidRegistrationCodeAlert]];
+        
         [nameOrEmailOrRegistrationCodeField becomeFirstResponder];
+    }
+    
+    return isValid;
+}
+
+
+- (BOOL)isInputValid
+{
+    BOOL isValid = YES;
+    
+    switch (authPhase) {
+        case ScAuthPhaseLogin:
+            isValid = isValid && [ScMeta isEmailValid:nameOrEmailOrRegistrationCodeField.text];
+            isValid = isValid && [self isPasswordValid];
+            
+            if (isValid) {
+                emailAsEntered = nameOrEmailOrRegistrationCodeField.text;
+            }
+            
+            break;
+            
+        case ScAuthPhaseRegistration:
+            isValid = isValid && [ScMeta isNameValid:nameOrEmailOrRegistrationCodeField.text];
+            isValid = isValid && [ScMeta isEmailValid:emailOrPasswordField.text];
+            isValid = isValid && [self isPasswordValid];
+            
+            if (isValid) {
+                nameAsEntered = nameOrEmailOrRegistrationCodeField.text;
+                emailAsEntered = emailOrPasswordField.text;
+            }
+            
+            break;
+            
+        case ScAuthPhaseConfirmation:
+            isValid = isValid && [self isRegistrationCodeValid];
+            isValid = isValid && [self isPasswordValid];
+            
+            break;
+            
+        default:
+            break;
     }
     
     return isValid;
@@ -582,9 +599,7 @@ static int const kPopUpButtonGoBack = 0;
 
 - (void)completeRegistration
 {
-    UIAlertView *incompleteRegistrationAlert = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strIncompleteRegistrationTitle] message:[ScStrings stringForKey:strIncompleteRegistrationAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-    
-    [incompleteRegistrationAlert show];
+    [[[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strIncompleteRegistrationTitle] message:[ScStrings stringForKey:strIncompleteRegistrationAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil] show];
     
     [self performSegueWithIdentifier:kSegueToRegistrationView1 sender:self];
 }
@@ -613,18 +628,23 @@ static int const kPopUpButtonGoBack = 0;
         [darkLinenView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(resignCurrentFirstResponder)]];
         
         isEditingAllowed = YES;
-        nameOrEmailOrRegistrationCodeField.delegate = self;
-        emailOrPasswordField.delegate = self;
-        passwordField.delegate = self;
-        passwordField.secureTextEntry = YES;
-        activityIndicator.hidesWhenStopped = YES;
-
-        [userIntentionControl setTitle:[ScStrings stringForKey:strUserIntentionRegistration] forSegmentAtIndex:kUserIntentionRegistration];
+        
         [userIntentionControl setTitle:[ScStrings stringForKey:strUserIntentionLogin] forSegmentAtIndex:kUserIntentionLogin];
+        [userIntentionControl setTitle:[ScStrings stringForKey:strUserIntentionRegistration] forSegmentAtIndex:kUserIntentionRegistration];
         [userIntentionControl addTarget:self action:@selector(userIntentionDidChange) forControlEvents:UIControlEventValueChanged];
         
+        nameOrEmailOrRegistrationCodeField.autocorrectionType = UITextAutocorrectionTypeNo;
+        nameOrEmailOrRegistrationCodeField.delegate = self;
+        emailOrPasswordField.autocorrectionType = UITextAutocorrectionTypeNo;
+        emailOrPasswordField.delegate = self;
+        passwordField.autocorrectionType = UITextAutocorrectionTypeNo;
+        passwordField.secureTextEntry = YES;
         passwordField.placeholder = [ScStrings stringForKey:strNewPasswordPrompt];
+        passwordField.returnKeyType = UIReturnKeyGo;
+        passwordField.delegate = self;
         scolaDescriptionTextView.text = [ScStrings stringForKey:strScolaDescription];
+        
+        activityIndicator.hidesWhenStopped = YES;
     }
 }
 
@@ -726,15 +746,14 @@ static int const kPopUpButtonGoBack = 0;
 {
     BOOL shouldRemove = YES;
     
-    if (authPhase == ScAuthPhaseLogin) {
+    if ((authPhase == ScAuthPhaseLogin) || (authPhase == ScAuthPhaseConfirmation)) {
         shouldRemove = (textField != emailOrPasswordField);
     } else {
         shouldRemove = (textField != passwordField);
     }
 
     if (shouldRemove) {
-        NSString *text = textField.text;
-        textField.text = [text removeLeadingAndTrailingSpaces];
+        textField.text = [textField.text removeLeadingAndTrailingSpaces];
     }
     
     return YES;
@@ -743,80 +762,31 @@ static int const kPopUpButtonGoBack = 0;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    NSString *alertMessage = nil;
-    NSString *alertTitle = nil;
-    NSString *cancelButtonTitle = [ScStrings stringForKey:strOK];
+    BOOL canReturn = YES;
     
-    [self textFieldShouldEndEditing:textField];
-    
-    switch (authPhase) {
-        case ScAuthPhaseLogin:
-            if (![self isEmailValid]) {
-                alertTitle = [ScStrings stringForKey:strInvalidEmailTitle];
-                alertMessage = [ScStrings stringForKey:strInvalidEmailAlert];
-            } else if (![self isPasswordValid]) {
-                alertTitle = [ScStrings stringForKey:strInvalidPasswordTitle];
-                alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidPasswordAlert], kMinimumPassordLength];
-            }
-            
-            break;
-            
-        case ScAuthPhaseRegistration:
-            if (![self isNameValid]) {
-                alertTitle = [ScStrings stringForKey:strInvalidNameTitle];
-                alertMessage = [ScStrings stringForKey:strInvalidNameAlert];
-            } else if (![self isEmailValid]) {
-                alertTitle = [ScStrings stringForKey:strInvalidEmailTitle];
-                alertMessage = [ScStrings stringForKey:strInvalidEmailAlert];
-            } else if (![self isPasswordValid]) {
-                alertTitle = [ScStrings stringForKey:strInvalidPasswordTitle];
-                alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidPasswordAlert], kMinimumPassordLength];
-            }
-            
-            break;
-            
-        case ScAuthPhaseConfirmation:
-            if (![self isRegistrationCodeValid]) {
-                alertTitle = [ScStrings stringForKey:strInvalidRegistrationCodeTitle];
-                alertMessage = [ScStrings stringForKey:strInvalidRegistrationCodeAlert];
-            } else if (![self isPasswordValid]) {
-                alertTitle = [ScStrings stringForKey:strPasswordsDoNotMatchTitle];
-                alertMessage = [ScStrings stringForKey:strPasswordsDoNotMatchAlert];
-            }
-            
-            cancelButtonTitle = [ScStrings stringForKey:strGoBack];
-            
-            break;
-            
-        default:
-            break;
-    }
-    
-    BOOL shouldReturn = !alertMessage;
-    
-    if (shouldReturn) {
-        [textField resignFirstResponder];
+    if (textField.returnKeyType == UIReturnKeyGo) {
+        canReturn = [self isInputValid];
         
-        if (authPhase == ScAuthPhaseLogin) {
-            [self loginUser];
-        } else if (authPhase == ScAuthPhaseRegistration) {
-            [self registerUser];
-        } else if (authPhase == ScAuthPhaseConfirmation) {
-            [self confirmUser];
+        if (canReturn) {
+            [textField resignFirstResponder];
+            
+            if (authPhase == ScAuthPhaseLogin) {
+                [self loginUser];
+            } else if (authPhase == ScAuthPhaseRegistration) {
+                [self registerUser];
+            } else if (authPhase == ScAuthPhaseConfirmation) {
+                [self confirmUser];
+            }
         }
     } else {
-        UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:alertTitle message:alertMessage delegate:nil cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
-        
-        if (authPhase == ScAuthPhaseConfirmation) {
-            [validationAlert addButtonWithTitle:[ScStrings stringForKey:strTryAgain]];
-            validationAlert.tag = ScAuthAlertTagConfirmationFailed;
-            validationAlert.delegate = self;
+        if (textField == nameOrEmailOrRegistrationCodeField) {
+            [emailOrPasswordField becomeFirstResponder];
+        } else if (textField == emailOrPasswordField) {
+            [passwordField becomeFirstResponder];
         }
-        
-        [validationAlert show];
     }
 
-    return shouldReturn;
+    return canReturn;
 }
 
 
