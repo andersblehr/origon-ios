@@ -97,6 +97,7 @@ NSString * const strDeleteConfirmation               = @"strDeleteConfirmation";
 // Member view
 NSString * const strNewMemberViewTitle               = @"strNewMemberViewTitle";
 NSString * const strUnderOurRoofViewTitle            = @"strUnderOurRoofViewTitle";
+NSString * const strGenderActionSheetTitle           = @"strGenderActionSheetTitle";
 
 // Error & alert messages
 NSString * const strNoInternetError                  = @"strNoInternetError";

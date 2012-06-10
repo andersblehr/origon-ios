@@ -22,13 +22,20 @@
 
 #import "ScCachedEntity.h"
 
+NSString * const kBundleId = @"com.scolaapp.ios.ScolaApp";
+NSString * const kDarkLinenImageFile = @"dark_linen-640x960.png";
+
 NSString * const kMemberViewController = @"vcMember";
 NSString * const kMembershipViewController = @"vcMembership";
 
-NSString * const kBundleId = @"com.scolaapp.ios.ScolaApp";
 NSString * const kKeyEntityId = @"entityId";
 NSString * const kKeyEntityClass = @"entityClass";
 NSString * const kKeyScolaId = @"scolaId";
+NSString * const kKeyName = @"name";
+NSString * const kKeyDateOfBirth = @"dateOfBirth";
+NSString * const kKeyMobilePhone = @"mobilePhone";
+NSString * const kKeyGender = @"gender";
+NSString * const kKeyDidRegister = @"didRegister";
 
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";

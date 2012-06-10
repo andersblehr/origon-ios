@@ -27,9 +27,20 @@
 #import "ScMemberViewController.h"
 
 
-static NSInteger kSectionAddress = 0;
-static NSInteger kSectionAdultsOrMinors = 1;
-static NSInteger kSectionMinors = 2;
+static NSInteger kAddressSection = 0;
+static NSInteger kAdultsSection = 1;
+static NSInteger kMinorsSection = 2;
+
+static CGFloat kScreenWidth = 320.f;
+static CGFloat kHeaderWidth = 300.f;
+static CGFloat kFooterWidth = 280.f;
+static CGFloat kHeaderMargin = 10.f;
+static CGFloat kFooterMargin = 20.f;
+static CGFloat kFooterViewOffset = 10.f;
+
+static CGFloat kDefaultHeaderFooterHeight = 0.f;
+static CGFloat kMinimumHeaderFooterHeight = 1.f;
+static CGFloat kSectionSpacing = 10.f;
 
 static CGFloat kHeaderFontSize = 17.f;
 static CGFloat kFooterFontSize = 13.f;
@@ -54,7 +65,7 @@ static CGFloat kFooterFontSize = 13.f;
 {
     [super viewDidLoad];
     
-    self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"dark_linen-640x960.png"]];
+    self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
@@ -128,7 +139,7 @@ static CGFloat kFooterFontSize = 13.f;
 {
 	[super viewWillDisappear:animated];
     
-    if (!isRegistrationWizardStep && didAddMembers) {
+    if (didAddMembers && !isRegistrationWizardStep && !isViewModallyHidden) {
         [self didFinishAddingMembers];
     }
 }
@@ -146,12 +157,80 @@ static CGFloat kFooterFontSize = 13.f;
 {
     ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewController];
     
+    memberViewController.membershipViewController = self;
     memberViewController.isForHousehold = isForHousehold;
-    memberViewController.isEditing = YES;
+    memberViewController.isInserting = YES;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
     
     [self.navigationController presentModalViewController:navigationController animated:YES];
+    
+    isViewModallyHidden = YES;
+}
+
+
+- (void)insertAddedMemberInTableView:(ScMember *)member
+{
+    NSIndexPath *indexPath = nil;
+    
+    BOOL doAddTopShadowToPreceding = NO;
+    BOOL doAddCentreShadowToPreceding = NO;
+    BOOL doAddCentreShadowToFollowing = NO;
+    BOOL doAddBottomShadowToFollowing = NO;
+
+    NSInteger sectionCount;
+    NSInteger section;
+    NSInteger row;
+    
+    if ([member isMinor]) {
+        [unsortedMinors addObject:member];
+        minors = [[unsortedMinors allObjects] sortedArrayUsingSelector:@selector(compare:)];
+
+        sectionCount = [minors count];
+        section = kMinorsSection;
+        row = [minors indexOfObject:member];
+    } else {
+        [unsortedAdults addObject:member];
+        adults = [[unsortedAdults allObjects] sortedArrayUsingSelector:@selector(compare:)];
+
+        sectionCount = [adults count];
+        section = kAdultsSection;
+        row = [adults indexOfObject:member];
+    }
+    
+    doAddTopShadowToPreceding = ((row == 1) && (sectionCount == 2));
+    doAddCentreShadowToPreceding = ((row == sectionCount - 1) && (sectionCount > 2));
+    doAddCentreShadowToFollowing = ((row == 0) && (sectionCount > 2));
+    doAddBottomShadowToFollowing = ((row == 0) && (sectionCount == 2));
+    
+    indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+    
+    [self.tableView beginUpdates];
+    [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView endUpdates];
+
+    if (doAddTopShadowToPreceding || doAddCentreShadowToPreceding) {
+        UITableViewCell *precedingCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row - 1 inSection:section]];
+        
+        if (doAddTopShadowToPreceding) {
+            [precedingCell.backgroundView addTopShadow];
+        } else if (doAddCentreShadowToPreceding) {
+            [precedingCell.backgroundView addCentreShadow];
+        }
+    }
+    
+    if (doAddCentreShadowToFollowing || doAddBottomShadowToFollowing) {
+        UITableViewCell *followingCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row + 1 inSection:section]];
+        
+        if (doAddCentreShadowToFollowing) {
+            [followingCell.backgroundView addCentreShadow];
+        } else if (doAddBottomShadowToFollowing) {
+            [followingCell.backgroundView addBottomShadow];
+        }
+    }
+    
+    didAddMembers = YES;
+    isViewModallyHidden = NO;
 }
 
 
@@ -171,17 +250,7 @@ static CGFloat kFooterFontSize = 13.f;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    NSInteger numberOfSections = 1;
-    
-    if ([adults count]) {
-        numberOfSections++;
-    }
-    
-    if ([minors count]) {
-        numberOfSections++;
-    }
-    
-	return numberOfSections;
+	return 3;
 }
 
 
@@ -189,11 +258,11 @@ static CGFloat kFooterFontSize = 13.f;
 {
     NSInteger numberOfRows = 0;
     
-    if (section == kSectionAddress) {
+    if (section == kAddressSection) {
         numberOfRows = 1;
-    } else if (section == kSectionAdultsOrMinors) {
-        numberOfRows = [adults count] ? [adults count] : [minors count];
-    } else if (section == kSectionMinors) {
+    } else if (section == kAdultsSection) {
+        numberOfRows = [adults count];
+    } else if (section == kMinorsSection) {
         numberOfRows = [minors count];
     }
     
@@ -203,12 +272,12 @@ static CGFloat kFooterFontSize = 13.f;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = 0.f;
+    CGFloat height;
     
-    if (indexPath.section == kSectionAddress) {
+    if (indexPath.section == kAddressSection) {
         height = [ScTableViewCell heightForEntity:scola];
     } else {
-        height = 1.2 * self.tableView.rowHeight;
+        height = 1.1f * self.tableView.rowHeight;
     }
     
     return height;
@@ -219,7 +288,7 @@ static CGFloat kFooterFontSize = 13.f;
 {
     ScTableViewCell *cell = [ScTableViewCell defaultCellForTableView:tableView];
     
-    if (indexPath.section == kSectionAddress) {
+    if (indexPath.section == kAddressSection) {
         [cell populateWithEntity:scola];
         
         if (isUserScolaAdmin) {
@@ -228,9 +297,9 @@ static CGFloat kFooterFontSize = 13.f;
     } else {
         NSArray *memberSubset = nil;
         
-        if (indexPath.section == kSectionAdultsOrMinors) {
+        if (indexPath.section == kAdultsSection) {
             memberSubset = [adults count] ? adults : minors;
-        } else if (indexPath.section == kSectionMinors) {
+        } else if (indexPath.section == kMinorsSection) {
             memberSubset = minors;
         }
         
@@ -250,15 +319,11 @@ static CGFloat kFooterFontSize = 13.f;
 {
     BOOL canEdit = isUserScolaAdmin;
     
-    if (!canEdit && (indexPath.section != indexPath.section)) {
+    if (!canEdit) {
         ScMember *member = nil;
         
-        if (indexPath.section == kSectionAdultsOrMinors) {
-            if ([adults count]) {
-                member = [adults objectAtIndex:indexPath.row];
-            } else {
-                member = [minors objectAtIndex:indexPath.row];
-            }
+        if (indexPath.section == kAdultsSection) {
+            member = [adults objectAtIndex:indexPath.row];
         } else {
             member = [minors objectAtIndex:indexPath.row];
         }
@@ -273,11 +338,17 @@ static CGFloat kFooterFontSize = 13.f;
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
+        if (indexPath.section == kAdultsSection) {
+            [unsortedAdults removeObject:[adults objectAtIndex:indexPath.row]];
+            adults = [[unsortedAdults allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        } else if (indexPath.section == kMinorsSection) {
+            [unsortedMinors removeObject:[minors objectAtIndex:indexPath.row]];
+            minors = [[unsortedMinors allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        }
+        
+        // TODO: Remove from Core Data as well!
+        
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
 
@@ -286,16 +357,49 @@ static CGFloat kFooterFontSize = 13.f;
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {   
-    [cell.backgroundView addShadow];
+    NSInteger numberOfAdults = [adults count];
+    NSInteger numberOfMinors = [minors count];
+    
+    BOOL isOnlyRowInSection = NO;
+    BOOL isFirstRowInSection = NO;
+    BOOL isLastRowInSection = NO;
+    
+    if (indexPath.section == kAddressSection) {
+        isOnlyRowInSection = YES;
+    } else {
+        isFirstRowInSection = (indexPath.row == 0);
+        
+        if (indexPath.section == kAdultsSection) {
+            isOnlyRowInSection = (numberOfAdults == 1);
+            isLastRowInSection = (indexPath.row == numberOfAdults - 1);
+        } else {
+            isOnlyRowInSection = (numberOfMinors == 1);
+            isLastRowInSection = (indexPath.row == numberOfMinors - 1);
+        }
+    }
+    
+    if (isOnlyRowInSection) {
+        [cell.backgroundView addShadow];
+    } else {
+        if (isFirstRowInSection) {
+            [cell.backgroundView addTopShadow];
+        } else if (isLastRowInSection) {
+            [cell.backgroundView addBottomShadow];
+        } else {
+            [cell.backgroundView addCentreShadow];
+        }
+    }
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = 0;
+    CGFloat height = kDefaultHeaderFooterHeight;
     
-    if (section != kSectionAddress) {
+    if (section == kAdultsSection) {
         height = 4.f * [UIFont boldSystemFontOfSize:kHeaderFontSize].xHeight;
+    } else if ((section == kMinorsSection) && (![minors count])) {
+        height = kMinimumHeaderFooterHeight;
     }
     
     return height;
@@ -304,14 +408,20 @@ static CGFloat kFooterFontSize = 13.f;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    CGFloat height = 0;
-    
-    if (section != kSectionAddress) {
+    CGFloat height = kDefaultHeaderFooterHeight;
+
+    if (section == kAdultsSection) {
+        if ([adults count] && [minors count]) {
+            height = kSectionSpacing;
+        } else {
+            height = kMinimumHeaderFooterHeight;
+        }
+    } else if (section == kMinorsSection) {
         NSString *footer = [ScStrings stringForKey:strHouseholdMemberListFooter];
         UIFont *footerFont = [UIFont systemFontOfSize:kFooterFontSize];
         CGSize footerSize = [footer sizeWithFont:footerFont constrainedToSize:CGSizeMake(280.f, 10.f * footerFont.xHeight) lineBreakMode:UILineBreakModeWordWrap];
         
-        height = footerSize.height + 15.f;
+        height = footerSize.height + kSectionSpacing;
     }
     
     return height;
@@ -322,10 +432,10 @@ static CGFloat kFooterFontSize = 13.f;
 {
     UIView *headerView = nil;
     
-    if (section != kSectionAddress) {
+    if (section == kAdultsSection) {
         CGFloat headerHeight = [self tableView:tableView heightForHeaderInSection:section];
-        CGRect headerViewFrame = CGRectMake(0.f, 0.f, 320.f, headerHeight);
-        CGRect headerFrame = CGRectMake(10.f, 0.f, 300.f, headerHeight);
+        CGRect headerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, headerHeight);
+        CGRect headerFrame = CGRectMake(kHeaderMargin, 0.f, kHeaderWidth, headerHeight);
         
         headerView = [[UIView alloc] initWithFrame:headerViewFrame];
         UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
@@ -348,10 +458,10 @@ static CGFloat kFooterFontSize = 13.f;
 {
     UIView *footerView = nil;
     
-    if ((section != kSectionAddress) && isUserScolaAdmin) {
+    if ((section == kMinorsSection) && isUserScolaAdmin) {
         CGFloat footerHeight = [self tableView:tableView heightForFooterInSection:section];
-        CGRect footerViewFrame = CGRectMake(0.f, 0.f, 320.f, footerHeight);
-        CGRect footerFrame = CGRectMake(20.f, 10.f, 280.f, footerHeight);
+        CGRect footerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, footerHeight);
+        CGRect footerFrame = CGRectMake(kFooterMargin, kFooterViewOffset, kFooterWidth, footerHeight);
         
         footerView = [[UIView alloc] initWithFrame:footerViewFrame];
         UILabel *footerLabel = [[UILabel alloc] initWithFrame:footerFrame];
@@ -376,7 +486,7 @@ static CGFloat kFooterFontSize = 13.f;
 {
     NSString *deleteConfirmationTitle = nil;
     
-    if (indexPath.section != kSectionAddress) {
+    if (indexPath.section != kAddressSection) {
         deleteConfirmationTitle = [ScStrings stringForKey:strDeleteConfirmation];
     }
     

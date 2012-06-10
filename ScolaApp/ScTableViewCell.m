@@ -21,8 +21,8 @@
 
 static NSString * const kDefaultCell = @"cellDefault";
 
-static CGFloat kkLabelFontSize = 12.f;
-static CGFloat kkDetailFontSize = 14.f;
+static CGFloat kLabelFontSize = 12.f;
+static CGFloat kDetailFontSize = 14.f;
 
 static CGFloat kLabelOriginX = 5.f;
 static CGFloat kDetailOriginX = 82.f;
@@ -53,8 +53,9 @@ static CGFloat kLineSpacing = 5.f;
         selectedLabelColour = [UIColor lightTextColor];
         selectedDetailColour = [UIColor whiteColor];
         
-        labelFont = [UIFont boldSystemFontOfSize:kkLabelFontSize];
-        detailFont = [UIFont systemFontOfSize:kkDetailFontSize];
+        labelFont = [UIFont boldSystemFontOfSize:kLabelFontSize];
+        detailFont = [UIFont boldSystemFontOfSize:kDetailFontSize];
+        editableDetailFont = [UIFont systemFontOfSize:kDetailFontSize];
         
         labelLineHeight = 2.5 * labelFont.xHeight;
         detailLineHeight = 2.5 * detailFont.xHeight;
@@ -101,6 +102,8 @@ static CGFloat kLineSpacing = 5.f;
             
             [self addLabel:landlineLabel withDetail:scola.landline];
         }
+        
+        verticalOffset = kBezelSpace;
     }
 }
 
@@ -149,7 +152,7 @@ static CGFloat kLineSpacing = 5.f;
     
     if (editable) {
         UITextField *detailField = [[UITextField alloc] initWithFrame:detailFrame];
-        detailField.font = detailFont;
+        detailField.font = editableDetailFont;
         detailField.textAlignment = UITextAlignmentLeft;
         detailField.backgroundColor = editableDetailBackgroundColour;
         detailField.textColor = detailColour;
@@ -194,7 +197,7 @@ static CGFloat kLineSpacing = 5.f;
     
     if ([entity isKindOfClass:ScScola.class]) {
         ScScola *scola = (ScScola *)entity;
-        CGFloat lineHeight = 2.5 * [UIFont systemFontOfSize:kkDetailFontSize].xHeight;
+        CGFloat lineHeight = 2.5 * [UIFont systemFontOfSize:kDetailFontSize].xHeight;
         
         height += kBezelSpace;
         height += lineHeight * [scola numberOfLinesInAddress];
@@ -213,7 +216,7 @@ static CGFloat kLineSpacing = 5.f;
 
 + (CGFloat)heightForNumberOfLabels:(NSInteger)numberOfLabels
 {
-    CGFloat lineHeight = 2.5 * [UIFont systemFontOfSize:kkDetailFontSize].xHeight;
+    CGFloat lineHeight = 2.5 * [UIFont systemFontOfSize:kDetailFontSize].xHeight;
     CGFloat height = 0.f;
     
     height += kBezelSpace * 2;

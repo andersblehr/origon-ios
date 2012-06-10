@@ -23,6 +23,7 @@
     
     UIFont *labelFont;
     UIFont *detailFont;
+    UIFont *editableDetailFont;
     
     CGFloat labelLineHeight;
     CGFloat detailLineHeight;

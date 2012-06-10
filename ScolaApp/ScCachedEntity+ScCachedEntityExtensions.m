@@ -8,6 +8,7 @@
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 
+#import "NSDate+ScDateExtensions.h"
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
 #import "ScLogging.h"
@@ -38,7 +39,7 @@
     NSAttributeDescription *attribute = [[self.entity attributesByName] objectForKey:key];
     
     if (attribute.attributeType == NSDateAttributeType) {
-        value = [NSDate dateWithTimeIntervalSince1970:[value doubleValue] / 1000];
+        value = [NSDate dateWithDeserialisedDate:value];
     }
     
     [super setValue:value forKey:key];

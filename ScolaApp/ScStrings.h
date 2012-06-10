@@ -88,6 +88,7 @@ extern NSString * const strDeleteConfirmation;
 // Member view
 extern NSString * const strNewMemberViewTitle;
 extern NSString * const strUnderOurRoofViewTitle;
+extern NSString * const strGenderActionSheetTitle;
 
 // Error & alert messages
 extern NSString * const strNoInternetError;

@@ -10,10 +10,13 @@
 
 #import "ScServerConnectionDelegate.h"
 
-@class ScMember;
+@class ScMember, ScMembershipViewController, ScTableViewCell;
 
-@interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, ScServerConnectionDelegate> {
+@interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate> {
 @private
+    ScTableViewCell *dataEntryCell;
+    NSInteger numberOfLinesInDataEntryCell;
+    
     UIBarButtonItem *editButton;
     UIBarButtonItem *doneButton;
     UIBarButtonItem *cancelButton;
@@ -24,11 +27,16 @@
     UITextField *emailField;
     UITextField *mobileField;
     UITextField *bornField;
+    NSString *gender;
+    
+    NSArray *memberData;
 }
 
+@property (weak, nonatomic) ScMembershipViewController *membershipViewController;
 @property (weak, nonatomic) ScMember *member;
 
 @property (nonatomic) BOOL isForHousehold;
+@property (nonatomic) BOOL isInserting;
 @property (nonatomic) BOOL isEditing;
 
 @end

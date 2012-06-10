@@ -11,6 +11,11 @@
 @interface UIView (ScViewExtensions)
 
 - (void)addGradientLayer;
+
 - (void)addShadow;
+- (void)addTopShadow;
+- (void)addCentreShadow;
+- (void)addBottomShadow;
+- (void)addPencilShadow;
 
 @end

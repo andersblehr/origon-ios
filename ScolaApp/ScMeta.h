@@ -10,13 +10,20 @@
 
 #import "ScServerConnectionDelegate.h"
 
+extern NSString * const kBundleId;
+extern NSString * const kDarkLinenImageFile;
+
 extern NSString * const kMemberViewController;
 extern NSString * const kMembershipViewController;
 
-extern NSString * const kBundleId;
 extern NSString * const kKeyEntityId;
 extern NSString * const kKeyEntityClass;
 extern NSString * const kKeyScolaId;
+extern NSString * const kKeyName;
+extern NSString * const kKeyDateOfBirth;
+extern NSString * const kKeyMobilePhone;
+extern NSString * const kKeyGender;
+extern NSString * const kKeyDidRegister;
 
 extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;

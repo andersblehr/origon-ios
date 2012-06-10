@@ -10,6 +10,8 @@
 
 @interface NSDate (ScDateExtensions)
 
++ (NSDate *)dateWithDeserialisedDate:(NSNumber *)deserialisedDate;
+
 - (BOOL)isBirthDateOfMinor;
 
 @end

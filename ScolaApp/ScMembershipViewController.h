@@ -23,10 +23,14 @@
     
     BOOL isForHousehold;
     BOOL isUserScolaAdmin;
+    BOOL isViewModallyHidden;
+    
     BOOL didAddMembers;
 }
 
 @property (weak, nonatomic) ScScola *scola;
 @property (nonatomic) BOOL isRegistrationWizardStep;
+
+- (void)insertAddedMemberInTableView:(ScMember *)member;
 
 @end

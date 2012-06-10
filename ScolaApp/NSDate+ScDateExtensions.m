@@ -13,6 +13,12 @@ static NSInteger const kAgeOfMajority = 18;
 
 @implementation NSDate (ScDateExtensions)
 
++ (NSDate *)dateWithDeserialisedDate:(NSNumber *)deserialisedDate
+{
+    return [NSDate dateWithTimeIntervalSince1970:[deserialisedDate doubleValue] / 1000];
+}
+
+
 - (BOOL)isBirthDateOfMinor
 {
     NSDate *now = [NSDate date];
