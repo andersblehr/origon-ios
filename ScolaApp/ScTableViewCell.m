@@ -37,6 +37,27 @@ static CGFloat kLineSpacing = 5.f;
 @implementation ScTableViewCell
 
 
+#pragma mark - Auxiliary methods
+
+- (void)populateWithEntity:(ScCachedEntity *)entity
+{
+    if ([entity isKindOfClass:ScScola.class]) {
+        ScScola *scola = (ScScola *)entity;
+        NSString *addressLabel = [ScStrings stringForKey:strAddress];
+        
+        [self addLabel:addressLabel withDetail:[scola multiLineAddress]];
+        
+        if ([scola hasLandline]) {
+            NSString *landlineLabel = [ScStrings stringForKey:strLandline];
+            
+            [self addLabel:landlineLabel withDetail:scola.landline];
+        }
+        
+        verticalOffset = kBezelSpace;
+    }
+}
+
+
 #pragma mark - Initialisation
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
@@ -87,26 +108,24 @@ static CGFloat kLineSpacing = 5.f;
 }
 
 
-#pragma mark - Cell population
-
-- (void)populateWithEntity:(ScCachedEntity *)entity
++ (ScTableViewCell *)entityCellForEntity:(ScCachedEntity *)entity tableView:(UITableView *)tableView
 {
-    if ([entity isKindOfClass:ScScola.class]) {
-        ScScola *scola = (ScScola *)entity;
-        NSString *addressLabel = [ScStrings stringForKey:strAddress];
-        
-        [self addLabel:addressLabel withDetail:[scola multiLineAddress]];
-        
-        if ([scola hasLandline]) {
-            NSString *landlineLabel = [ScStrings stringForKey:strLandline];
+    NSString *entityClass = NSStringFromClass(entity.class);
+    ScTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:entityClass];
+    
+    if (!cell) {
+        if ([entity isKindOfClass:ScScola.class]) {
+            cell = [[ScTableViewCell alloc] initWithReuseIdentifier:entityClass];
             
-            [self addLabel:landlineLabel withDetail:scola.landline];
+            [cell populateWithEntity:entity];
         }
-        
-        verticalOffset = kBezelSpace;
     }
+    
+    return cell;
 }
 
+
+#pragma mark - Cell population
 
 - (void)addLabel:(NSString *)label withDetail:(NSString *)detail
 {

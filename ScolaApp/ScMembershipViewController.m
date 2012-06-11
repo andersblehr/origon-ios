@@ -286,15 +286,17 @@ static CGFloat kFooterFontSize = 13.f;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ScTableViewCell *cell = [ScTableViewCell defaultCellForTableView:tableView];
+    ScTableViewCell *cell = nil;
     
     if (indexPath.section == kAddressSection) {
-        [cell populateWithEntity:scola];
+        cell = [ScTableViewCell entityCellForEntity:scola tableView:tableView];
         
         if (isUserScolaAdmin) {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
     } else {
+        cell = [ScTableViewCell defaultCellForTableView:tableView];
+        
         NSArray *memberSubset = nil;
         
         if (indexPath.section == kAdultsSection) {
@@ -317,21 +319,7 @@ static CGFloat kFooterFontSize = 13.f;
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    BOOL canEdit = isUserScolaAdmin;
-    
-    if (!canEdit) {
-        ScMember *member = nil;
-        
-        if (indexPath.section == kAdultsSection) {
-            member = [adults objectAtIndex:indexPath.row];
-        } else {
-            member = [minors objectAtIndex:indexPath.row];
-        }
-        
-        canEdit = [member.entityId isEqualToString:[ScMeta m].userId];
-    }
-    
-    return canEdit;
+    return NO;
 }
 
 

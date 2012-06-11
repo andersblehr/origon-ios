@@ -45,6 +45,63 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 #pragma mark - Auxiliary methods
 
+- (void)populateFields
+{
+    BOOL didMemberRegister = NO;
+    
+    if (member) {
+        emailField.text = member.entityId;
+        nameField.text = member.name;
+        mobilePhoneField.text = member.mobilePhone;
+        gender = member.gender;
+        
+        [dateOfBirthPicker setDate:member.dateOfBirth animated:YES];
+        dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:member.dateOfBirth dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
+        
+        didMemberRegister = [member.didRegister boolValue];
+    } else {
+        NSDictionary *memberDictionary = nil;
+        
+        for (NSDictionary *entityDictionary in entityDictionaries) {
+            NSString *entityClass = [entityDictionary objectForKey:kKeyEntityClass];
+            
+            if ([entityClass isEqualToString:NSStringFromClass(ScMember.class)]) {
+                memberDictionary = entityDictionary;
+            }
+        }
+        
+        emailField.text = [memberDictionary objectForKey:kKeyEntityId];
+        nameField.text = [memberDictionary objectForKey:kKeyName];
+        mobilePhoneField.text = [memberDictionary objectForKey:kKeyMobilePhone];
+        gender = [memberDictionary objectForKey:kKeyGender];
+        
+        NSDate *dateOfBirth = [NSDate dateWithDeserialisedDate:[memberDictionary objectForKey:kKeyDateOfBirth]];
+        [dateOfBirthPicker setDate:dateOfBirth animated:YES];
+        dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:dateOfBirth dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
+        
+        didMemberRegister = [[memberDictionary objectForKey:kKeyDidRegister] boolValue];
+    }
+    
+    if (didMemberRegister) {
+        emailField.enabled = NO;
+        emailField.textColor = [UIColor grayColor];
+        nameField.enabled = NO;
+        nameField.textColor = [UIColor grayColor];
+        dateOfBirthField.enabled = NO;
+        dateOfBirthField.textColor = [UIColor grayColor];
+        mobilePhoneField.enabled = NO;
+        mobilePhoneField.textColor = [UIColor grayColor];
+        
+        numberOfLinesInDataEntryCell++;
+        
+        [self.tableView beginUpdates];
+        [self.tableView endUpdates];
+        
+        [dataEntryCell.backgroundView addShadow];
+    }
+}
+
+
 - (void)promptForGender
 {
     NSString *femaleLabel = nil;
@@ -72,10 +129,16 @@ static NSInteger const kActionSheetButtonCancel = 2;
     if (!member) {
         ScScola *homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
         
-        if (emailField.text.length > 0) {
-            member = [context entityForClass:ScMember.class inScola:homeScola withId:emailField.text];
+        if (entityDictionaries) {
+            [context saveWithDictionaries:entityDictionaries];
+            
+            member = [context fetchEntityWithId:emailField.text];
         } else {
-            member = [context entityForClass:ScMember.class inScola:homeScola];
+            if (emailField.text.length > 0) {
+                member = [context entityForClass:ScMember.class inScola:homeScola withId:emailField.text];
+            } else {
+                member = [context entityForClass:ScMember.class inScola:homeScola];
+            }
         }
         
         [homeScola addResident:member];
@@ -83,10 +146,11 @@ static NSInteger const kActionSheetButtonCancel = 2;
     
     member.name = nameField.text;
     member.dateOfBirth = dateOfBirthPicker.date;
-    member.mobilePhone = mobileField.text;
+    member.mobilePhone = mobilePhoneField.text;
     member.gender = gender;
     
     [membershipViewController insertAddedMemberInTableView:member];
+    
     [self dismissModalViewControllerAnimated:YES];
 }
 
@@ -105,7 +169,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     numberOfLinesInDataEntryCell = 4;
     
     editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
-    doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(endEditing)];
+    saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(endEditing)];
     cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEdit)];
     
     if (member) {
@@ -120,7 +184,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
     if (isEditing || isInserting) {
         self.navigationItem.leftBarButtonItem = cancelButton;
-        self.navigationItem.rightBarButtonItem = doneButton;
+        self.navigationItem.rightBarButtonItem = saveButton;
     } else {
         self.navigationItem.rightBarButtonItem = editButton;
     }
@@ -137,7 +201,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (void)dateOfBirthDidChange
 {
-    bornField.text = [NSDateFormatter localizedStringFromDate:dateOfBirthPicker.date dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
+    dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:dateOfBirthPicker.date dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
 }
 
 
@@ -152,11 +216,11 @@ static NSInteger const kActionSheetButtonCancel = 2;
     BOOL isValidInput = YES;
     
     isValidInput = isValidInput && [ScMeta isNameValid:nameField.text];
-    isValidInput = isValidInput && [ScMeta isDateOfBirthValid:bornField.text];
+    isValidInput = isValidInput && [ScMeta isDateOfBirthValid:dateOfBirthField.text];
     
     if (isValidInput && ![dateOfBirthPicker.date isBirthDateOfMinor]) {
         isValidInput = isValidInput && [ScMeta isEmailValid:emailField.text];
-        isValidInput = isValidInput && [ScMeta isMobileNumberValid:mobileField.text];
+        isValidInput = isValidInput && [ScMeta isMobileNumberValid:mobilePhoneField.text];
     } else if (isValidInput) {
         if (emailField.text.length > 0) {
             isValidInput = isValidInput && [ScMeta isEmailValid:emailField.text];
@@ -165,7 +229,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     
     if (isValidInput && !gender) {
         [self promptForGender];
-    } else {
+    } else if (isValidInput) {
         [self insertMemberAndDismissView];
     }
 }
@@ -209,8 +273,8 @@ static NSInteger const kActionSheetButtonCancel = 2;
     
     nameField = [dataEntryCell addLabel:[ScStrings stringForKey:strName] withEditableDetail:nil];
     emailField = [dataEntryCell addLabel:[ScStrings stringForKey:strEmail] withEditableDetail:nil];
-    bornField = [dataEntryCell addLabel:[ScStrings stringForKey:strBorn] withEditableDetail:nil];
-    mobileField = [dataEntryCell addLabel:[ScStrings stringForKey:strMobile] withEditableDetail:nil];
+    dateOfBirthField = [dataEntryCell addLabel:[ScStrings stringForKey:strBorn] withEditableDetail:nil];
+    mobilePhoneField = [dataEntryCell addLabel:[ScStrings stringForKey:strMobile] withEditableDetail:nil];
     
     nameField.placeholder = [ScStrings stringForKey:strNamePlaceholder];
     nameField.keyboardType = UIKeyboardTypeDefault;
@@ -222,13 +286,13 @@ static NSInteger const kActionSheetButtonCancel = 2;
     emailField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     emailField.delegate = self;
     
-    bornField.placeholder = [ScStrings stringForKey:strBornPlaceholder];
-    bornField.inputView = dateOfBirthPicker;
-    bornField.delegate = self;
+    dateOfBirthField.placeholder = [ScStrings stringForKey:strBornPlaceholder];
+    dateOfBirthField.inputView = dateOfBirthPicker;
+    dateOfBirthField.delegate = self;
     
-    mobileField.placeholder = [ScStrings stringForKey:strMobilePlaceholder];
-    mobileField.keyboardType = UIKeyboardTypeNumberPad;
-    mobileField.delegate = self;
+    mobilePhoneField.placeholder = [ScStrings stringForKey:strMobilePlaceholder];
+    mobilePhoneField.keyboardType = UIKeyboardTypeNumberPad;
+    mobilePhoneField.delegate = self;
     
     return dataEntryCell;
 }
@@ -259,7 +323,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
             member = [[ScMeta m].managedObjectContext fetchEntityWithId:emailField.text];
             
             if (member) {
-                // TODO: Populate fields from instance
+                [self populateFields];
             } else {
                 [[[ScServerConnection alloc] init] fetchMemberWithId:emailField.text usingDelegate:self];
             }
@@ -275,7 +339,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     if (textField == nameField) {
         [emailField becomeFirstResponder];
     } else if (textField == emailField) {
-        [bornField becomeFirstResponder];
+        [dateOfBirthField becomeFirstResponder];
     }
     
     return YES;
@@ -299,39 +363,9 @@ static NSInteger const kActionSheetButtonCancel = 2;
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(NSArray *)data
 {
     if (response.statusCode == kHTTPStatusCodeOK) {
-        memberData = data;
-        NSDictionary *memberDictionary = [data objectAtIndex:0];
+        entityDictionaries = data;
         
-        if (![[memberDictionary objectForKey:kKeyEntityClass] isEqualToString:NSStringFromClass(ScMember.class)]) {
-            memberDictionary = [data objectAtIndex:1];
-        }
-        
-        emailField.text = [memberDictionary objectForKey:kKeyEntityId];
-        nameField.text = [memberDictionary objectForKey:kKeyName];
-        mobileField.text = [memberDictionary objectForKey:kKeyMobilePhone];
-        gender = [memberDictionary objectForKey:kKeyGender];
-        
-        NSDate *bornDate = [NSDate dateWithDeserialisedDate:[memberDictionary objectForKey:kKeyDateOfBirth]];
-        [dateOfBirthPicker setDate:bornDate animated:YES];
-        bornField.text = [NSDateFormatter localizedStringFromDate:bornDate dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
-        
-        if ([[memberDictionary objectForKey:kKeyDidRegister] boolValue]) {
-            emailField.enabled = NO;
-            emailField.textColor = [UIColor grayColor];
-            nameField.enabled = NO;
-            nameField.textColor = [UIColor grayColor];
-            bornField.enabled = NO;
-            bornField.textColor = [UIColor grayColor];
-            mobileField.enabled = NO;
-            mobileField.textColor = [UIColor grayColor];
-            
-            numberOfLinesInDataEntryCell++;
-            
-            [self.tableView beginUpdates];
-            [self.tableView endUpdates];
-            
-            [dataEntryCell.backgroundView addShadow];
-        }
+        [self populateFields];
     }
 }
 

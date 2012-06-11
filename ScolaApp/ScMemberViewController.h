@@ -18,18 +18,18 @@
     NSInteger numberOfLinesInDataEntryCell;
     
     UIBarButtonItem *editButton;
-    UIBarButtonItem *doneButton;
+    UIBarButtonItem *saveButton;
     UIBarButtonItem *cancelButton;
     
     UIDatePicker *dateOfBirthPicker;
     
     UITextField *nameField;
     UITextField *emailField;
-    UITextField *mobileField;
-    UITextField *bornField;
+    UITextField *mobilePhoneField;
+    UITextField *dateOfBirthField;
     NSString *gender;
     
-    NSArray *memberData;
+    NSArray *entityDictionaries;
 }
 
 @property (weak, nonatomic) ScMembershipViewController *membershipViewController;

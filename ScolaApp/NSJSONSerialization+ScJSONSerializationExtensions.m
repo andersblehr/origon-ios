@@ -22,7 +22,7 @@
         serialisedObject = [self dataWithJSONObject:object options:NSJSONWritingPrettyPrinted error:&error];
         
         if (!serialisedObject) {
-            ScLogDebug(@"Error serialising object to JSON: %@", object);
+            ScLogVerbose(@"Error serialising object to JSON: %@", object);
             ScLogError(@"JSON serialisation error: %@", error);
         }
     }
@@ -42,7 +42,7 @@
         deserialisedJSON = [self JSONObjectWithData:JSONData options:NSJSONWritingPrettyPrinted error:&error];
         
         if (!deserialisedJSON) {
-            ScLogDebug(@"Error deserialising JSON data: %@", [[NSString alloc] initWithData:JSONData encoding:NSUTF8StringEncoding]);
+            ScLogVerbose(@"Error deserialising JSON data: %@", [[NSString alloc] initWithData:JSONData encoding:NSUTF8StringEncoding]);
             ScLogError(@"JSON deserialisation error: %@", error);
         }
     }

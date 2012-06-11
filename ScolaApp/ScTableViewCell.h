@@ -35,8 +35,8 @@
 }
 
 + (ScTableViewCell *)defaultCellForTableView:(UITableView *)tableView;
++ (ScTableViewCell *)entityCellForEntity:(ScCachedEntity *)entity tableView:(UITableView *)tableView;
 
-- (void)populateWithEntity:(ScCachedEntity *)entity;
 - (void)addLabel:(NSString *)label withDetail:(NSString *)detail;
 - (UITextField *)addLabel:(NSString *)label withEditableDetail:(NSString *)detail;
 

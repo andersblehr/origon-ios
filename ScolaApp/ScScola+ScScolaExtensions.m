@@ -45,7 +45,7 @@
 
 - (ScMemberResidency *)addResident:(ScMember *)resident
 {
-    ScMemberResidency *residency = [[ScMeta m].managedObjectContext entityForClass:ScMemberResidency.class inScola:self];
+    ScMemberResidency *residency = [[ScMeta m].managedObjectContext entityForClass:ScMemberResidency.class inScola:self withId:[self residencyIdForMember:resident]];
     
     residency.resident = resident;
     residency.residence = self;
@@ -60,6 +60,12 @@
     }
     
     return residency;
+}
+
+
+- (NSString *)residencyIdForMember:(ScMember *)member
+{
+    return [NSString stringWithFormat:@"%@$%@", member.entityId, self.entityId];
 }
 
 

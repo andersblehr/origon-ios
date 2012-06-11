@@ -14,6 +14,7 @@
 
 - (ScMembership *)addMember:(ScMember *)member;
 - (ScMemberResidency *)addResident:(ScMember *)resident;
+- (NSString *)residencyIdForMember:(ScMember *)member;
 
 - (BOOL)hasAddress;
 - (BOOL)hasLandline;
