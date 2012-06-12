@@ -49,6 +49,8 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
     NSMutableDictionary *URLParameters;
     NSHTTPURLResponse *HTTPResponse;
 	NSMutableData *responseData;
+    
+    BOOL canPerformRequest;
 }
 
 + (void)showAlertForError:(NSError *)error;

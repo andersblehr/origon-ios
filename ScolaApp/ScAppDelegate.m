@@ -117,8 +117,6 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
     } else {
         [ScMeta m].userId = nil;
     }
-    
-    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 

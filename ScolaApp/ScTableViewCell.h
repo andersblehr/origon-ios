@@ -10,20 +10,25 @@
 
 @class ScCachedEntity;
 
+typedef enum {
+    ScCellColourTypeBackground,
+    ScCellColourTypeSelectedBackground,
+    ScCellColourTypeEditableBackground,
+    ScCellColourTypeLabel,
+    ScCellColourTypeDetail,
+    ScCellColourTypeSelectedLabel,
+    ScCellColourTypeSelectedDetail,
+} ScCellColourType;
+
+typedef enum {
+    ScCellFontTypeLabel,
+    ScCellFontTypeDetail,
+    ScCellFontTypeEditableDetail,
+} ScCellFontType;
+
 @interface ScTableViewCell : UITableViewCell {
 @private
     BOOL isSelectable;
-    
-    UIColor *backgroundColour;
-    UIColor *editableDetailBackgroundColour;
-    UIColor *labelColour;
-    UIColor *detailColour;
-    UIColor *selectedLabelColour;
-    UIColor *selectedDetailColour;
-    
-    UIFont *labelFont;
-    UIFont *detailFont;
-    UIFont *editableDetailFont;
     
     CGFloat labelLineHeight;
     CGFloat detailLineHeight;
@@ -36,6 +41,9 @@
 
 + (ScTableViewCell *)defaultCellForTableView:(UITableView *)tableView;
 + (ScTableViewCell *)entityCellForEntity:(ScCachedEntity *)entity tableView:(UITableView *)tableView;
+
++ (UIColor *)colourOfType:(ScCellColourType)colourType;
++ (UIFont *)fontOfType:(ScCellFontType)fontType;
 
 - (void)addLabel:(NSString *)label withDetail:(NSString *)detail;
 - (UITextField *)addLabel:(NSString *)label withEditableDetail:(NSString *)detail;

@@ -198,6 +198,7 @@ static ScMeta *m = nil;
 + (void)setUserDefault:(id)object forKey:(NSString *)key
 {
     [[NSUserDefaults standardUserDefaults] setObject:object forKey:key];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 
@@ -210,6 +211,7 @@ static ScMeta *m = nil;
 + (void)removeUserDefaultForKey:(NSString *)key
 {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 

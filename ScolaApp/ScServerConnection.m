@@ -134,12 +134,16 @@ static NSString * const kURLParameterVersion = @"version";
     }
     
     if ([ScMeta m].isInternetConnectionAvailable) {
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-        NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
-        
-        if (!URLConnection) {
-            ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
-            [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        if (canPerformRequest) {
+            [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+            NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
+            
+            if (!URLConnection) {
+                ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
+                [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+            }
+        } else {
+            ScLogBreakage(@"Missing headers and/or parameters in request, aborting.");
         }
     } else {
         [self connection:nil didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:[ScStrings stringForKey:strNoInternetError] forKey:NSLocalizedDescriptionKey]]];
@@ -183,6 +187,8 @@ static NSString * const kURLParameterVersion = @"version";
         URLRequest = [[NSMutableURLRequest alloc] init];
         URLParameters = [[NSMutableDictionary alloc] init];
         responseData = [[NSMutableData alloc] init];
+        
+        canPerformRequest = YES;
     }
     
     return self;
@@ -200,16 +206,34 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field
 {
+    return [self setValue:value forHTTPHeaderField:field required:YES];
+}
+
+
+- (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field required:(BOOL)required
+{
     if (value) {
         [URLRequest setValue:value forHTTPHeaderField:field];
+    } else if (required) {
+        canPerformRequest = NO;
+        ScLogBreakage(@"Missing value for required HTTP header field '%@'.", field);
     }
 }
 
 
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter
 {
+    return [self setValue:value forURLParameter:parameter required:YES];
+}
+
+
+- (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter required:(BOOL)required
+{
     if (value) {
         [URLParameters setObject:value forKey:parameter];
+    } else if (required) {
+        canPerformRequest = NO;
+        ScLogBreakage(@"Missing value for required URL parameter '%@'.", parameter);
     }
 }
 
@@ -233,7 +257,7 @@ static NSString * const kURLParameterVersion = @"version";
         RESTRoute = kRESTRouteAuthLogin;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
-        [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
+        [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
     } else if (authPhase == ScAuthPhaseRegistration) {
         RESTRoute = kRESTRouteAuthRegistration;
     } else if (authPhase == ScAuthPhaseConfirmation) {

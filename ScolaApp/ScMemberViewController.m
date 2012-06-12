@@ -10,6 +10,7 @@
 
 #import "NSDate+ScDateExtensions.h"
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
+#import "UIColor+ScColorExtensions.h"
 #import "UIDatePicker+ScDatePickerExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
@@ -50,8 +51,8 @@ static NSInteger const kActionSheetButtonCancel = 2;
     BOOL didMemberRegister = NO;
     
     if (member) {
-        emailField.text = member.entityId;
         nameField.text = member.name;
+        emailField.text = member.entityId;
         mobilePhoneField.text = member.mobilePhone;
         gender = member.gender;
         
@@ -70,8 +71,8 @@ static NSInteger const kActionSheetButtonCancel = 2;
             }
         }
         
-        emailField.text = [memberDictionary objectForKey:kKeyEntityId];
         nameField.text = [memberDictionary objectForKey:kKeyName];
+        emailField.text = [memberDictionary objectForKey:kKeyEntityId];
         mobilePhoneField.text = [memberDictionary objectForKey:kKeyMobilePhone];
         gender = [memberDictionary objectForKey:kKeyGender];
         
@@ -83,14 +84,21 @@ static NSInteger const kActionSheetButtonCancel = 2;
     }
     
     if (didMemberRegister) {
-        emailField.enabled = NO;
-        emailField.textColor = [UIColor grayColor];
+        UIFont *nonEditableDetailFont = [ScTableViewCell fontOfType:ScCellFontTypeDetail];
+        UIColor *backgroundColour = [ScTableViewCell colourOfType:ScCellColourTypeBackground];
+        
         nameField.enabled = NO;
-        nameField.textColor = [UIColor grayColor];
+        nameField.font = nonEditableDetailFont;
+        nameField.backgroundColor = backgroundColour;
+        emailField.enabled = NO;
+        emailField.font = nonEditableDetailFont;
+        emailField.backgroundColor = backgroundColour;
         dateOfBirthField.enabled = NO;
-        dateOfBirthField.textColor = [UIColor grayColor];
+        dateOfBirthField.font = nonEditableDetailFont;
+        dateOfBirthField.backgroundColor = backgroundColour;
         mobilePhoneField.enabled = NO;
-        mobilePhoneField.textColor = [UIColor grayColor];
+        mobilePhoneField.font = nonEditableDetailFont;
+        mobilePhoneField.backgroundColor = backgroundColour;
         
         numberOfLinesInDataEntryCell++;
         
