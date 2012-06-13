@@ -84,8 +84,8 @@ static NSInteger const kActionSheetButtonCancel = 2;
     }
     
     if (didMemberRegister) {
-        UIFont *nonEditableDetailFont = [ScTableViewCell fontOfType:ScCellFontTypeDetail];
-        UIColor *backgroundColour = [ScTableViewCell colourOfType:ScCellColourTypeBackground];
+        UIFont *nonEditableDetailFont = [ScTableViewCell detailFont];
+        UIColor *backgroundColour = [ScTableViewCell backgroundColour];
         
         nameField.enabled = NO;
         nameField.font = nonEditableDetailFont;

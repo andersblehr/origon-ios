@@ -12,10 +12,12 @@
 
 
 static CGFloat const kShadowRadius = 5.f;
-static CGFloat const kShadowOffset = 5.f;
+static CGFloat const kVerticalShadowOffset = 5.f;
 
 
 @implementation UIView (ScShadowEffects)
+
+#pragma mark - Gradient layer
 
 - (void)addGradientLayer
 {
@@ -28,56 +30,28 @@ static CGFloat const kShadowOffset = 5.f;
 }
 
 
-- (void)addSHadowWithOffset:(CGFloat)yOffset pathRect:(CGRect)rect
+#pragma mark - Shadows
+
+- (void)projectShadowOfRectangle:(CGRect)rectangle
 {
     self.layer.masksToBounds = NO;
     self.layer.shadowColor = [UIColor blackColor].CGColor;
     self.layer.shadowOpacity = 1.f;
     self.layer.shadowRadius = kShadowRadius;
-    self.layer.shadowOffset = CGSizeMake(0.f, yOffset);
-    self.layer.shadowPath = [UIBezierPath bezierPathWithRect:rect].CGPath;
+    self.layer.shadowOffset = CGSizeMake(0.f, kVerticalShadowOffset);
+    self.layer.shadowPath = [UIBezierPath bezierPathWithRect:rectangle].CGPath;
 }
 
 
 - (void)addShadow
 {
-    [self addSHadowWithOffset:kShadowOffset pathRect:self.bounds];
+    [self projectShadowOfRectangle:self.bounds];
 }
 
 
-- (void)addTopShadow
+- (void)addShadowForMiddleOrTopTableViewCell
 {
-    CGRect shadowPathRect = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height - kShadowRadius);
-    
-    [self addSHadowWithOffset:0.f pathRect:shadowPathRect];
-}
-
-
-- (void)addCentreShadow
-{
-    CGRect shadowPathRect = CGRectMake(self.bounds.origin.x, self.bounds.origin.y + kShadowRadius, self.bounds.size.width, self.bounds.size.height - 2 * kShadowRadius);
-    
-    [self addSHadowWithOffset:0.f pathRect:shadowPathRect];
-}
-
-
-- (void)addBottomShadow
-{
-    CGRect shadowPathRect = CGRectMake(self.bounds.origin.x, self.bounds.origin.y + kShadowRadius, self.bounds.size.width, self.bounds.size.height - kShadowRadius);
-    
-    [self addSHadowWithOffset:kShadowOffset pathRect:shadowPathRect];
-    
-}
-
-
-- (void)addPencilShadow
-{
-    self.layer.masksToBounds = NO;
-    self.layer.shadowColor = [UIColor blackColor].CGColor;
-    self.layer.shadowOpacity = 0.7f;
-    self.layer.shadowRadius = 0.5f;
-    self.layer.shadowOffset = CGSizeMake(0.f, 0.5f);
-    self.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
+    [self projectShadowOfRectangle:CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height - 2.75f * kShadowRadius)];
 }
 
 @end

@@ -173,11 +173,6 @@ static CGFloat kFooterFontSize = 13.f;
 {
     NSIndexPath *indexPath = nil;
     
-    BOOL doAddTopShadowToPreceding = NO;
-    BOOL doAddCentreShadowToPreceding = NO;
-    BOOL doAddCentreShadowToFollowing = NO;
-    BOOL doAddBottomShadowToFollowing = NO;
-
     NSInteger sectionCount;
     NSInteger section;
     NSInteger row;
@@ -198,35 +193,18 @@ static CGFloat kFooterFontSize = 13.f;
         row = [adults indexOfObject:member];
     }
     
-    doAddTopShadowToPreceding = ((row == 1) && (sectionCount == 2));
-    doAddCentreShadowToPreceding = ((row == sectionCount - 1) && (sectionCount > 2));
-    doAddCentreShadowToFollowing = ((row == 0) && (sectionCount > 2));
-    doAddBottomShadowToFollowing = ((row == 0) && (sectionCount == 2));
-    
     indexPath = [NSIndexPath indexPathForRow:row inSection:section];
     
     [self.tableView beginUpdates];
     [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     [self.tableView endUpdates];
 
-    if (doAddTopShadowToPreceding || doAddCentreShadowToPreceding) {
+    BOOL isLastRowInSection = ((sectionCount > 1) && (row == sectionCount - 1));
+    
+    if (isLastRowInSection) {
         UITableViewCell *precedingCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row - 1 inSection:section]];
         
-        if (doAddTopShadowToPreceding) {
-            [precedingCell.backgroundView addTopShadow];
-        } else if (doAddCentreShadowToPreceding) {
-            [precedingCell.backgroundView addCentreShadow];
-        }
-    }
-    
-    if (doAddCentreShadowToFollowing || doAddBottomShadowToFollowing) {
-        UITableViewCell *followingCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row + 1 inSection:section]];
-        
-        if (doAddCentreShadowToFollowing) {
-            [followingCell.backgroundView addCentreShadow];
-        } else if (doAddBottomShadowToFollowing) {
-            [followingCell.backgroundView addBottomShadow];
-        }
+        [precedingCell.backgroundView addShadowForMiddleOrTopTableViewCell];
     }
     
     didAddMembers = YES;
@@ -345,37 +323,20 @@ static CGFloat kFooterFontSize = 13.f;
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {   
-    NSInteger numberOfAdults = [adults count];
-    NSInteger numberOfMinors = [minors count];
+    NSInteger numberOfRowsInSection = 1;
     
-    BOOL isOnlyRowInSection = NO;
-    BOOL isFirstRowInSection = NO;
-    BOOL isLastRowInSection = NO;
-    
-    if (indexPath.section == kAddressSection) {
-        isOnlyRowInSection = YES;
-    } else {
-        isFirstRowInSection = (indexPath.row == 0);
-        
-        if (indexPath.section == kAdultsSection) {
-            isOnlyRowInSection = (numberOfAdults == 1);
-            isLastRowInSection = (indexPath.row == numberOfAdults - 1);
-        } else {
-            isOnlyRowInSection = (numberOfMinors == 1);
-            isLastRowInSection = (indexPath.row == numberOfMinors - 1);
-        }
+    if (indexPath.section == kAdultsSection) {
+        numberOfRowsInSection = [adults count];
+    } else if (indexPath.section == kMinorsSection) {
+        numberOfRowsInSection = [minors count];
     }
     
-    if (isOnlyRowInSection) {
+    BOOL isLastRowInSection = (indexPath.row == numberOfRowsInSection - 1);
+    
+    if (isLastRowInSection) {
         [cell.backgroundView addShadow];
     } else {
-        if (isFirstRowInSection) {
-            [cell.backgroundView addTopShadow];
-        } else if (isLastRowInSection) {
-            [cell.backgroundView addBottomShadow];
-        } else {
-            [cell.backgroundView addCentreShadow];
-        }
+        [cell.backgroundView addShadowForMiddleOrTopTableViewCell];
     }
 }
 

@@ -21,25 +21,25 @@
 
 static NSString * const kDefaultCell = @"cellDefault";
 
-static CGFloat kLabelFontSize = 12.f;
-static CGFloat kDetailFontSize = 14.f;
+static CGFloat const kLabelFontSize = 12.f;
+static CGFloat const kDetailFontSize = 14.f;
 
-static CGFloat kLabelOriginX = 5.f;
-static CGFloat kDetailOriginX = 82.f;
-static CGFloat kLabelWidth = 63.f;
-static CGFloat kDetailWidth = 113.f;
+static CGFloat const kLabelOriginX = 5.f;
+static CGFloat const kDetailOriginX = 82.f;
+static CGFloat const kLabelWidth = 63.f;
+static CGFloat const kDetailWidth = 113.f;
 
-static CGFloat kBezelSpace = 12.f;
-static CGFloat kLabelFontVerticalOffset = 3.f;
-static CGFloat kLineSpacing = 5.f;
+static CGFloat const kBezelSpace = 12.f;
+static CGFloat const kLabelFontVerticalOffset = 3.f;
+static CGFloat const kLineSpacing = 5.f;
 
 static UIColor *backgroundColour = nil;
 static UIColor *selectedBackgroundColour = nil;
-static UIColor *editableBackgroundColour = nil;
 static UIColor *labelColour = nil;
 static UIColor *detailColour = nil;
 static UIColor *selectedLabelColour = nil;
 static UIColor *selectedDetailColour = nil;
+static UIColor *editableFieldBackgroundColour = nil;
 
 static UIFont *labelFont = nil;
 static UIFont *detailFont = nil;
@@ -71,6 +71,110 @@ static UIFont *editableDetailFont = nil;
 }
 
 
+#pragma mark - Table view cell colours
+
++ (UIColor *)backgroundColour
+{
+    if (!backgroundColour) {
+        backgroundColour = [UIColor isabellineColor];
+    }
+    
+    return backgroundColour;
+}
+
+
++ (UIColor *)labelColour
+{
+    if (!labelColour) {
+        labelColour = [UIColor slateGrayColor];
+    }
+    
+    return labelColour;
+}
+
+
++ (UIColor *)detailColour
+{
+    if (!detailColour) {
+        detailColour = [UIColor blackColor];
+    }
+    
+    return detailColour;
+}
+
+
++ (UIColor *)selectedBackgroundColour
+{
+    if (!selectedBackgroundColour) {
+        selectedBackgroundColour = [UIColor ashGrayColor];
+    }
+    
+    return selectedBackgroundColour;
+}
+
+
++ (UIColor *)selectedLabelColour
+{
+    if (!selectedLabelColour) {
+        selectedLabelColour = [UIColor lightTextColor];
+    }
+    
+    return selectedLabelColour;
+}
+
+
++ (UIColor *)selectedDetailColour
+{
+    if (!selectedDetailColour) {
+        selectedDetailColour = [UIColor whiteColor];
+    }
+    
+    return selectedDetailColour;
+}
+
+
++ (UIColor *)editableFieldBackgroundColour
+{
+    if (!editableFieldBackgroundColour) {
+        editableFieldBackgroundColour = [UIColor ghostWhiteColor];
+    }
+    
+    return editableFieldBackgroundColour;
+}
+
+
+#pragma mark - Table view cell fonts
+
++ (UIFont *)labelFont
+{
+    if (!labelFont) {
+        labelFont = [UIFont boldSystemFontOfSize:kLabelFontSize];
+    }
+    
+    return labelFont;
+}
+
+
++ (UIFont *)detailFont
+{
+    if (!detailFont) {
+        detailFont = [UIFont boldSystemFontOfSize:kDetailFontSize];
+    }
+    
+    return detailFont;
+}
+
+
++ (UIFont *)editableDetailFont
+{
+    if (!editableDetailFont) {
+        editableDetailFont = [UIFont systemFontOfSize:kDetailFontSize];
+    }
+    
+    return editableDetailFont;
+}
+
+
 #pragma mark - Initialisation
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
@@ -80,17 +184,17 @@ static UIFont *editableDetailFont = nil;
     if (self) {
         isSelectable = YES;
         
-        backgroundColour = [ScTableViewCell colourOfType:ScCellColourTypeBackground];
-        selectedBackgroundColour = [ScTableViewCell colourOfType:ScCellColourTypeSelectedBackground];
-        editableBackgroundColour = [ScTableViewCell colourOfType:ScCellColourTypeEditableBackground];
-        labelColour = [ScTableViewCell colourOfType:ScCellColourTypeLabel];
-        detailColour = [ScTableViewCell colourOfType:ScCellColourTypeDetail];
-        selectedLabelColour = [ScTableViewCell colourOfType:ScCellColourTypeSelectedLabel];
-        selectedDetailColour = [ScTableViewCell colourOfType:ScCellColourTypeSelectedDetail];
+        backgroundColour = [ScTableViewCell backgroundColour];
+        selectedBackgroundColour = [ScTableViewCell selectedBackgroundColour];
+        labelColour = [ScTableViewCell labelColour];
+        detailColour = [ScTableViewCell detailColour];
+        selectedLabelColour = [ScTableViewCell selectedLabelColour];
+        selectedDetailColour = [ScTableViewCell selectedDetailColour];
+        editableFieldBackgroundColour = [ScTableViewCell editableFieldBackgroundColour];
         
-        labelFont = [ScTableViewCell fontOfType:ScCellFontTypeLabel];
-        detailFont = [ScTableViewCell fontOfType:ScCellFontTypeDetail];
-        editableDetailFont = [ScTableViewCell fontOfType:ScCellFontTypeEditableDetail];
+        labelFont = [ScTableViewCell labelFont];
+        detailFont = [ScTableViewCell detailFont];
+        editableDetailFont = [ScTableViewCell editableDetailFont];
         
         labelLineHeight = 2.5 * labelFont.xHeight;
         detailLineHeight = 2.5 * detailFont.xHeight;
@@ -136,124 +240,6 @@ static UIFont *editableDetailFont = nil;
     }
     
     return cell;
-}
-
-
-#pragma mark - Preconfigured colours and fonts
-
-+ (UIColor *)colourOfType:(ScCellColourType)colourType
-{
-    UIColor *colour = nil;
-    
-    switch (colourType) {
-        case ScCellColourTypeBackground:
-            if (!backgroundColour) {
-                backgroundColour = [UIColor isabellineColor];
-            }
-            
-            colour = backgroundColour;
-            
-            break;
-            
-        case ScCellColourTypeSelectedBackground:
-            if (!selectedBackgroundColour) {
-                selectedBackgroundColour = [UIColor ashGrayColor];
-            }
-            
-            colour = selectedBackgroundColour;
-            
-            break;
-            
-        case ScCellColourTypeEditableBackground:
-            if (!editableBackgroundColour) {
-                editableBackgroundColour = [UIColor ghostWhiteColor];
-            }
-            
-            colour = editableBackgroundColour;
-            
-            break;
-            
-        case ScCellColourTypeLabel:
-            if (!labelColour) {
-                labelColour = [UIColor slateGrayColor];
-            }
-            
-            colour = labelColour;
-            
-            break;
-            
-        case ScCellColourTypeDetail:
-            if (!detailColour) {
-                detailColour = [UIColor blackColor];
-            }
-            
-            colour = detailColour;
-            
-            break;
-            
-        case ScCellColourTypeSelectedLabel:
-            if (!selectedLabelColour) {
-                selectedLabelColour = [UIColor lightTextColor];
-            }
-            
-            colour = selectedLabelColour;
-            
-            break;
-            
-        case ScCellColourTypeSelectedDetail:
-            if (!selectedDetailColour) {
-                selectedDetailColour = [UIColor whiteColor];
-            }
-            
-            colour = selectedDetailColour;
-            
-            break;
-            
-        default:
-            break;
-    }
-    
-    return colour;
-}
-
-
-+ (UIFont *)fontOfType:(ScCellFontType)fontType
-{
-    UIFont *font;
-    
-    switch (fontType) {
-        case ScCellFontTypeLabel:
-            if (!labelFont) {
-                labelFont = [UIFont boldSystemFontOfSize:kLabelFontSize];
-            }
-            
-            font = labelFont;
-            
-            break;
-            
-        case ScCellFontTypeDetail:
-            if (!detailFont) {
-                detailFont = [UIFont boldSystemFontOfSize:kDetailFontSize];
-            }
-            
-            font = detailFont;
-            
-            break;
-            
-        case ScCellFontTypeEditableDetail:
-            if (!editableDetailFont) {
-                editableDetailFont = [UIFont systemFontOfSize:kDetailFontSize];
-            }
-            
-            font = editableDetailFont;
-            
-            break;
-            
-        default:
-            break;
-    }
-
-    return font;
 }
 
 
@@ -305,7 +291,7 @@ static UIFont *editableDetailFont = nil;
         UITextField *detailField = [[UITextField alloc] initWithFrame:detailFrame];
         detailField.font = editableDetailFont;
         detailField.textAlignment = UITextAlignmentLeft;
-        detailField.backgroundColor = editableBackgroundColour;
+        detailField.backgroundColor = editableFieldBackgroundColour;
         detailField.textColor = detailColour;
         detailField.text = detail;
         

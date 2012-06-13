@@ -13,9 +13,6 @@
 - (void)addGradientLayer;
 
 - (void)addShadow;
-- (void)addTopShadow;
-- (void)addCentreShadow;
-- (void)addBottomShadow;
-- (void)addPencilShadow;
+- (void)addShadowForMiddleOrTopTableViewCell;
 
 @end

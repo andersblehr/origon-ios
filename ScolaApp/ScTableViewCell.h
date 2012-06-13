@@ -10,22 +10,6 @@
 
 @class ScCachedEntity;
 
-typedef enum {
-    ScCellColourTypeBackground,
-    ScCellColourTypeSelectedBackground,
-    ScCellColourTypeEditableBackground,
-    ScCellColourTypeLabel,
-    ScCellColourTypeDetail,
-    ScCellColourTypeSelectedLabel,
-    ScCellColourTypeSelectedDetail,
-} ScCellColourType;
-
-typedef enum {
-    ScCellFontTypeLabel,
-    ScCellFontTypeDetail,
-    ScCellFontTypeEditableDetail,
-} ScCellFontType;
-
 @interface ScTableViewCell : UITableViewCell {
 @private
     BOOL isSelectable;
@@ -39,11 +23,20 @@ typedef enum {
     CGFloat verticalOffset;
 }
 
++ (UIColor *)backgroundColour;
++ (UIColor *)labelColour;
++ (UIColor *)detailColour;
++ (UIColor *)selectedBackgroundColour;
++ (UIColor *)selectedLabelColour;
++ (UIColor *)selectedDetailColour;
++ (UIColor *)editableFieldBackgroundColour;
+
++ (UIFont *)labelFont;
++ (UIFont *)detailFont;
++ (UIFont *)editableDetailFont;
+
 + (ScTableViewCell *)defaultCellForTableView:(UITableView *)tableView;
 + (ScTableViewCell *)entityCellForEntity:(ScCachedEntity *)entity tableView:(UITableView *)tableView;
-
-+ (UIColor *)colourOfType:(ScCellColourType)colourType;
-+ (UIFont *)fontOfType:(ScCellFontType)fontType;
 
 - (void)addLabel:(NSString *)label withDetail:(NSString *)detail;
 - (UITextField *)addLabel:(NSString *)label withEditableDetail:(NSString *)detail;
