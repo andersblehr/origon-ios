@@ -22,7 +22,7 @@
 #import "ScStrings.h"
 #import "ScTableViewCell.h"
 
-#import "ScMember.h"
+#import "ScMembership.h"
 #import "ScScola.h"
 
 #import "ScMember+ScMemberExtensions.h"
@@ -37,7 +37,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
 @implementation ScMemberViewController
 
 @synthesize membershipViewController;
-@synthesize member;
+@synthesize membership;
 
 @synthesize isForHousehold;
 @synthesize isInserting;
@@ -130,11 +130,11 @@ static NSInteger const kActionSheetButtonCancel = 2;
 }
 
 
-- (void)insertMemberAndDismissView
+- (void)insertMembershipAndDismissView
 {
     NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
     
-    if (!member) {
+    if (!membership) {
         ScScola *homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
         
         if (entityDictionaries) {
@@ -149,15 +149,19 @@ static NSInteger const kActionSheetButtonCancel = 2;
             }
         }
         
-        [homeScola addResident:member];
+        if (isForHousehold) {
+            membership = (ScMembership *)[homeScola addResident:member];
+        } else {
+            membership = [homeScola addMember:member];
+        }
     }
     
-    member.name = nameField.text;
-    member.dateOfBirth = dateOfBirthPicker.date;
-    member.mobilePhone = mobilePhoneField.text;
-    member.gender = gender;
+    membership.member.name = nameField.text;
+    membership.member.dateOfBirth = dateOfBirthPicker.date;
+    membership.member.mobilePhone = mobilePhoneField.text;
+    membership.member.gender = gender;
     
-    [membershipViewController insertAddedMemberInTableView:member];
+    [membershipViewController insertMembershipInTableView:membership];
     
     [self dismissModalViewControllerAnimated:YES];
 }
@@ -180,8 +184,8 @@ static NSInteger const kActionSheetButtonCancel = 2;
     saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(endEditing)];
     cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEdit)];
     
-    if (member) {
-        self.title = member.name;
+    if (membership) {
+        self.title = membership.member.name;
     } else {
         if (isForHousehold) {
             self.title = [ScStrings stringForKey:strUnderOurRoofViewTitle];
@@ -238,7 +242,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     if (isValidInput && !gender) {
         [self promptForGender];
     } else if (isValidInput) {
-        [self insertMemberAndDismissView];
+        [self insertMembershipAndDismissView];
     }
 }
 
@@ -326,7 +330,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField
 {
-    if (!member && (textField == emailField) && (emailField.text.length > 0)) {
+    if (!membership && (textField == emailField) && (emailField.text.length > 0)) {
         if ([ScMeta isEmailValid:emailField.text silent:YES]) {
             member = [[ScMeta m].managedObjectContext fetchEntityWithId:emailField.text];
             
@@ -361,7 +365,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     if (buttonIndex != kActionSheetButtonCancel) {
         gender = (buttonIndex == kActionSheetButtonFemale) ? kGenderFemale : kGenderMale;
         
-        [self insertMemberAndDismissView];
+        [self insertMembershipAndDismissView];
     }
 }
 

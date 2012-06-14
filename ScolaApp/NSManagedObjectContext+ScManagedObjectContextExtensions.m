@@ -14,13 +14,14 @@
 #import "ScUUIDGenerator.h"
 
 #import "ScCachedEntity.h"
-#import "ScCachedEntity+ScCachedEntityExtensions.h"
-
+#import "ScCachedEntityGhost.h"
 #import "ScMember.h"
 #import "ScMemberResidency.h"
 #import "ScMembership.h"
 #import "ScScola.h"
 #import "ScSharedEntityRef.h"
+
+#import "ScCachedEntity+ScCachedEntityExtensions.h"
 
 
 static NSString * const kScolaRelationshipName = @"scola";
@@ -111,8 +112,8 @@ static NSString * const kScolaRelationshipName = @"scola";
 
 - (id)fetchEntityWithId:(NSString *)entityId
 {
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"ScCachedEntity"];
-    [request setPredicate:[NSPredicate predicateWithFormat:@"entityId == %@", entityId]];
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(ScCachedEntity.class)];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", kKeyEntityId, entityId]];
     
     id entity = nil;
     NSError *error = nil;
@@ -130,7 +131,7 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-#pragma mark - Entity save & persistence
+#pragma mark - Saving & persisting entities
 
 - (void)save
 {
@@ -163,6 +164,15 @@ static NSString * const kScolaRelationshipName = @"scola";
 - (void)synchronise
 {
     [[[ScServerConnection alloc] init] synchroniseEntities];
+}
+
+
+#pragma mark - Deleting entities
+
+- (void)deleteEntity:(ScCachedEntity *)entity
+{
+    [entity entityGhost];
+    [self deleteObject:entity];
 }
 
 @end

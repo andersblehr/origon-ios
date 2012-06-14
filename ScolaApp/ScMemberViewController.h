@@ -10,7 +10,7 @@
 
 #import "ScServerConnectionDelegate.h"
 
-@class ScMember, ScMembershipViewController, ScTableViewCell;
+@class ScMember, ScMembership, ScMembershipViewController, ScTableViewCell;
 
 @interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate> {
 @private
@@ -29,11 +29,12 @@
     UITextField *dateOfBirthField;
     NSString *gender;
     
+    ScMember *member;
     NSArray *entityDictionaries;
 }
 
 @property (weak, nonatomic) ScMembershipViewController *membershipViewController;
-@property (weak, nonatomic) ScMember *member;
+@property (weak, nonatomic) ScMembership *membership;
 
 @property (nonatomic) BOOL isForHousehold;
 @property (nonatomic) BOOL isInserting;

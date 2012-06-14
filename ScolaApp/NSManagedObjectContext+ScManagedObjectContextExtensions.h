@@ -24,5 +24,6 @@
 - (void)save;
 - (void)saveWithDictionaries:(NSArray *)dictionaries;
 - (void)synchronise;
+- (void)deleteEntity:(ScCachedEntity *)entity;
 
 @end

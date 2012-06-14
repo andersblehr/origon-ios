@@ -2,7 +2,7 @@
 //  ScWeeklyScheduleItem.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 06.04.12.
+//  Created by Anders Blehr on 14.06.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -12,8 +12,8 @@
 
 @implementation ScWeeklyScheduleItem
 
-@dynamic endTime;
-@dynamic startTime;
+@dynamic timeEnd;
+@dynamic timeStart;
 @dynamic title;
 @dynamic weekday;
 @dynamic yearlySchedule;

@@ -1,5 +1,5 @@
 //
-//  ScSharedEntityRef.h
+//  ScCachedEntityGhost.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 14.06.12.
@@ -11,9 +11,9 @@
 #import "ScCachedEntity.h"
 
 
-@interface ScSharedEntityRef : ScCachedEntity
+@interface ScCachedEntityGhost : ScCachedEntity
 
-@property (nonatomic, retain) NSString * sharedEntityId;
-@property (nonatomic, retain) NSString * sharedEntityScolaId;
+@property (nonatomic, retain) NSNumber * hasExpired;
+@property (nonatomic, retain) NSString * ghostedEntityClass;
 
 @end

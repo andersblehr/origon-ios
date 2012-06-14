@@ -14,8 +14,10 @@
 #import "ScLogging.h"
 #import "ScMeta.h"
 
+#import "ScCachedEntityGhost.h"
 #import "ScMember.h"
 #import "ScMemberResidency.h"
+
 
 @implementation ScCachedEntity (ScCachedEntityExtensions)
 
@@ -120,7 +122,7 @@
     [entityDictionary setObject:self.entity.name forKey:kKeyEntityClass];
     
     for (NSString *name in [attributes allKeys]) {
-        if ([self isPersistedProperty:name]) {
+        if ([self isPropertyPersistable:name]) {
             id value = [self valueForKey:name];
             
             if (value) {
@@ -132,7 +134,7 @@
     for (NSString *name in [relationships allKeys]) {
         NSRelationshipDescription *relationship = [relationships objectForKey:name];
         
-        if (!relationship.isToMany && [self isPersistedProperty:name]) {
+        if (!relationship.isToMany && [self isPropertyPersistable:name]) {
             ScCachedEntity *entity = [self valueForKey:name];
             
             if (entity) {
@@ -147,7 +149,7 @@
 
 #pragma mark - Internal consistency
 
-- (BOOL)isPersistedProperty:(NSString *)property
+- (BOOL)isPropertyPersistable:(NSString *)property
 {
     return ![property isEqualToString:@"hashCode"];
 }
@@ -194,7 +196,7 @@
     NSString *allProperties = @"";
     
     for (NSString *name in sortedAttributeKeys) {
-        if ([self isPersistedProperty:name]) {
+        if ([self isPropertyPersistable:name]) {
             id value = [self valueForKey:name];
             
             if (value) {
@@ -207,7 +209,7 @@
     for (NSString *name in sortedRelationshipKeys) {
         NSRelationshipDescription *relationship = [relationships objectForKey:name];
         
-        if (!relationship.isToMany && [self isPersistedProperty:name]) {
+        if (!relationship.isToMany && [self isPropertyPersistable:name]) {
             ScCachedEntity *entity = [self valueForKey:name];
             
             if (entity) {
@@ -230,9 +232,26 @@
     
     if (!expires) {
         ScLogBreakage(@"Expiry information missing for entity '%@'.", entity.name);
+        
+        // TODO: Keep track of and act on entity expiry dates
     }
     
     return expires;
+}
+
+
+#pragma mark - Entity ghost instantiation
+
+- (ScCachedEntityGhost *)entityGhost
+{
+    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+    
+    ScScola *entityScola = [context fetchEntityWithId:self.scolaId];
+    ScCachedEntityGhost *entityGhost = [context entityForClass:ScCachedEntityGhost.class inScola:entityScola withId:self.entityId];
+    
+    entityGhost.ghostedEntityClass = NSStringFromClass(self.class);
+    
+    return entityGhost;
 }
 
 @end

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@class ScMember, ScScola;
+@class ScMembership, ScScola;
 
 @interface ScMembershipViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate> {
 @private
@@ -25,12 +25,12 @@
     BOOL isUserScolaAdmin;
     BOOL isViewModallyHidden;
     
-    BOOL didAddMembers;
+    BOOL didAddOrRemoveMemberships;
 }
 
 @property (weak, nonatomic) ScScola *scola;
 @property (nonatomic) BOOL isRegistrationWizardStep;
 
-- (void)insertAddedMemberInTableView:(ScMember *)member;
+- (void)insertMembershipInTableView:(ScMembership *)membership;
 
 @end

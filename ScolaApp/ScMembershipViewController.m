@@ -10,6 +10,7 @@
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "UIColor+ScColorExtensions.h"
+#import "UITableView+UITableViewExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
 #import "ScLogging.h"
@@ -21,6 +22,7 @@
 #import "ScMembership.h"
 #import "ScScola.h"
 
+#import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScMember+ScMemberExtensions.h"
 #import "ScScola+ScScolaExtensions.h"
 
@@ -40,7 +42,7 @@ static CGFloat kFooterViewOffset = 10.f;
 
 static CGFloat kDefaultHeaderFooterHeight = 0.f;
 static CGFloat kMinimumHeaderFooterHeight = 1.f;
-static CGFloat kSectionSpacing = 10.f;
+static CGFloat kSectionSpacing = 5.f;
 
 static CGFloat kHeaderFontSize = 17.f;
 static CGFloat kFooterFontSize = 13.f;
@@ -84,9 +86,9 @@ static CGFloat kFooterFontSize = 13.f;
         }
              
         if ([membership.member isMinor]) {
-            [unsortedMinors addObject:membership.member];
+            [unsortedMinors addObject:membership];
         } else {
-            [unsortedAdults addObject:membership.member];
+            [unsortedAdults addObject:membership];
         }
     }
     
@@ -114,7 +116,7 @@ static CGFloat kFooterFontSize = 13.f;
     }
     
     if (isUserScolaAdmin) {
-        addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMember)];
+        addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMembership)];
     }
 }
 
@@ -124,7 +126,7 @@ static CGFloat kFooterFontSize = 13.f;
     [super viewWillAppear:animated];
     
     if (isRegistrationWizardStep) {
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishAddingMembers)];
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditingMemberships)];
         
         self.navigationItem.leftBarButtonItem = doneButton;
         self.navigationItem.rightBarButtonItem = addButton;
@@ -139,8 +141,8 @@ static CGFloat kFooterFontSize = 13.f;
 {
 	[super viewWillDisappear:animated];
     
-    if (didAddMembers && !isRegistrationWizardStep && !isViewModallyHidden) {
-        [self didFinishAddingMembers];
+    if (didAddOrRemoveMemberships && !isRegistrationWizardStep && !isViewModallyHidden) {
+        [self didFinishEditingMemberships];
     }
 }
 
@@ -151,9 +153,9 @@ static CGFloat kFooterFontSize = 13.f;
 }
 
 
-#pragma mark - Adding members
+#pragma mark - Adding memberships
 
-- (void)addMember
+- (void)addMembership
 {
     ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewController];
     
@@ -169,52 +171,35 @@ static CGFloat kFooterFontSize = 13.f;
 }
 
 
-- (void)insertAddedMemberInTableView:(ScMember *)member
+- (void)insertMembershipInTableView:(ScMembership *)membership
 {
-    NSIndexPath *indexPath = nil;
-    
-    NSInteger sectionCount;
     NSInteger section;
     NSInteger row;
     
-    if ([member isMinor]) {
-        [unsortedMinors addObject:member];
+    if ([membership.member isMinor]) {
+        [unsortedMinors addObject:membership];
         minors = [[unsortedMinors allObjects] sortedArrayUsingSelector:@selector(compare:)];
 
-        sectionCount = [minors count];
         section = kMinorsSection;
-        row = [minors indexOfObject:member];
+        row = [minors indexOfObject:membership];
     } else {
-        [unsortedAdults addObject:member];
+        [unsortedAdults addObject:membership];
         adults = [[unsortedAdults allObjects] sortedArrayUsingSelector:@selector(compare:)];
 
-        sectionCount = [adults count];
         section = kAdultsSection;
-        row = [adults indexOfObject:member];
+        row = [adults indexOfObject:membership];
     }
     
-    indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+    [self.tableView insertCellForRow:row inSection:section];
     
-    [self.tableView beginUpdates];
-    [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-    [self.tableView endUpdates];
-
-    BOOL isLastRowInSection = ((sectionCount > 1) && (row == sectionCount - 1));
-    
-    if (isLastRowInSection) {
-        UITableViewCell *precedingCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row - 1 inSection:section]];
-        
-        [precedingCell.backgroundView addShadowForMiddleOrTopTableViewCell];
-    }
-    
-    didAddMembers = YES;
+    didAddOrRemoveMemberships = YES;
     isViewModallyHidden = NO;
 }
 
 
-- (void)didFinishAddingMembers
+- (void)didFinishEditingMemberships
 {
-    if (didAddMembers) {
+    if (didAddOrRemoveMemberships) {
         [[ScMeta m].managedObjectContext synchronise];
     }
     
@@ -275,18 +260,12 @@ static CGFloat kFooterFontSize = 13.f;
     } else {
         cell = [ScTableViewCell defaultCellForTableView:tableView];
         
-        NSArray *memberSubset = nil;
+        NSArray *memberships = (indexPath.section == kAdultsSection) ? adults : minors;
         
-        if (indexPath.section == kAdultsSection) {
-            memberSubset = [adults count] ? adults : minors;
-        } else if (indexPath.section == kMinorsSection) {
-            memberSubset = minors;
-        }
+        ScMembership *membership = [memberships objectAtIndex:indexPath.row];
         
-        ScMember *member = [memberSubset objectAtIndex:indexPath.row];
-        
-        cell.textLabel.text = member.name;
-        cell.detailTextLabel.text = member.mobilePhone;
+        cell.textLabel.text = membership.member.name;
+        cell.detailTextLabel.text = membership.member.mobilePhone;
         
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
@@ -297,24 +276,32 @@ static CGFloat kFooterFontSize = 13.f;
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return NO;
+    return YES;
 }
 
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
+        ScMembership *membershipToDelete = nil;
+        
         if (indexPath.section == kAdultsSection) {
-            [unsortedAdults removeObject:[adults objectAtIndex:indexPath.row]];
+            membershipToDelete = [adults objectAtIndex:indexPath.row];
+            
+            [unsortedAdults removeObject:membershipToDelete];
             adults = [[unsortedAdults allObjects] sortedArrayUsingSelector:@selector(compare:)];
         } else if (indexPath.section == kMinorsSection) {
-            [unsortedMinors removeObject:[minors objectAtIndex:indexPath.row]];
+            membershipToDelete = [minors objectAtIndex:indexPath.row];
+            
+            [unsortedMinors removeObject:membershipToDelete];
             minors = [[unsortedMinors allObjects] sortedArrayUsingSelector:@selector(compare:)];
         }
         
-        // TODO: Remove from Core Data as well!
+        [[ScMeta m].managedObjectContext deleteEntity:membershipToDelete];
         
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        
+        didAddOrRemoveMemberships = YES;
     }   
 }
 
@@ -370,7 +357,7 @@ static CGFloat kFooterFontSize = 13.f;
         UIFont *footerFont = [UIFont systemFontOfSize:kFooterFontSize];
         CGSize footerSize = [footer sizeWithFont:footerFont constrainedToSize:CGSizeMake(280.f, 10.f * footerFont.xHeight) lineBreakMode:UILineBreakModeWordWrap];
         
-        height = footerSize.height + kSectionSpacing;
+        height = footerSize.height + 2 * kSectionSpacing;
     }
     
     return height;

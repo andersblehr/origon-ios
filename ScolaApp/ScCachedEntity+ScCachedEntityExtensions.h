@@ -8,17 +8,21 @@
 
 #import "ScCachedEntity.h"
 
+@class ScCachedEntityGhost;
+
 @interface ScCachedEntity (ScCachedEntityExtensions)
 
 + (ScCachedEntity *)entityWithDictionary:(NSDictionary *)dictionary;
 - (NSDictionary *)toDictionary;
 
-- (BOOL)isPersistedProperty:(NSString *)property;
+- (BOOL)isPropertyPersistable:(NSString *)property;
 - (BOOL)isPersisted;
 
 - (void)internaliseRelationships;
 - (NSUInteger)computeHashCode;
 
 - (NSString *)expiresInTimeframe;
+
+- (ScCachedEntityGhost *)entityGhost;
 
 @end

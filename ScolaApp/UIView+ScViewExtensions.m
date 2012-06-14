@@ -11,11 +11,11 @@
 #import "UIView+ScViewExtensions.h"
 
 
-static CGFloat const kShadowRadius = 5.f;
+static CGFloat const kShadowRadius = 3.75f;
 static CGFloat const kVerticalShadowOffset = 5.f;
 
 
-@implementation UIView (ScShadowEffects)
+@implementation UIView (ScViewExtensions)
 
 #pragma mark - Gradient layer
 

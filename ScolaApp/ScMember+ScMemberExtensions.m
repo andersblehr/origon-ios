@@ -27,12 +27,4 @@
     return [self.dateOfBirth isBirthDateOfMinor];
 }
 
-
-#pragma mark - Comparison
-
-- (NSComparisonResult)compare:(ScMember *)other
-{
-    return [self.name compare:other.name];
-}
-
 @end

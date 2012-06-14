@@ -150,6 +150,8 @@ static ScMeta *m = nil;
             deviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
             authTokenExpiryDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
             lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
+        } else {
+            deviceId = [ScUUIDGenerator generateUUID];
         }
         
         appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
@@ -351,11 +353,12 @@ static ScMeta *m = nil;
     if (userId) {
         [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyUserId];
 
-        deviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
+        NSString *persistedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
         lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
         
-        if (!deviceId) {
-            deviceId = [ScUUIDGenerator generateUUID];
+        if (persistedDeviceId) {
+            deviceId = persistedDeviceId;
+        } else {
             [ScMeta setUserDefault:deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
         }
     } else {

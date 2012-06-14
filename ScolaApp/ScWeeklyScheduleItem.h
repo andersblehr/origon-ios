@@ -2,7 +2,7 @@
 //  ScWeeklyScheduleItem.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 06.04.12.
+//  Created by Anders Blehr on 14.06.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -14,8 +14,8 @@
 
 @interface ScWeeklyScheduleItem : ScCachedEntity
 
-@property (nonatomic, retain) NSDate * endTime;
-@property (nonatomic, retain) NSDate * startTime;
+@property (nonatomic, retain) NSDate * timeEnd;
+@property (nonatomic, retain) NSDate * timeStart;
 @property (nonatomic, retain) NSString * title;
 @property (nonatomic, retain) NSString * weekday;
 @property (nonatomic, retain) ScYearlySchedule *yearlySchedule;

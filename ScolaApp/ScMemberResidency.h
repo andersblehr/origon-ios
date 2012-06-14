@@ -2,7 +2,7 @@
 //  ScMemberResidency.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 06.04.12.
+//  Created by Anders Blehr on 14.06.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -18,7 +18,7 @@
 @property (nonatomic, retain) NSNumber * presentOn01Jan;
 @property (nonatomic, retain) NSNumber * switchDay;
 @property (nonatomic, retain) NSNumber * switchFrequency;
-@property (nonatomic, retain) ScMember *resident;
 @property (nonatomic, retain) ScScola *residence;
+@property (nonatomic, retain) ScMember *resident;
 
 @end

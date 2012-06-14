@@ -9,12 +9,19 @@
         <attribute name="isShared" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="scolaId" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="ScCachedEntityGhost" representedClassName="ScCachedEntityGhost" parentEntity="ScCachedEntity" syncable="YES">
+        <attribute name="ghostedEntityClass" attributeType="String" syncable="YES"/>
+        <attribute name="hasExpired" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="+120d"/>
+        </userInfo>
+    </entity>
     <entity name="ScDevice" representedClassName="ScDevice" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="displayName" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="member" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="devices" inverseEntity="ScMember" syncable="YES"/>
         <userInfo>
-            <entry key="expires" value="never"/>
+            <entry key="expires" value="no"/>
         </userInfo>
     </entity>
     <entity name="ScDocument" representedClassName="ScDocument" parentEntity="ScCachedEntity" syncable="YES">
@@ -26,8 +33,7 @@
         <relationship name="externalDocument" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScExternalDocument" inverseName="document" inverseEntity="ScExternalDocument" syncable="YES"/>
         <relationship name="repository" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScDocumentRepository" inverseName="documents" inverseEntity="ScDocumentRepository" syncable="YES"/>
         <userInfo>
-            <entry key="expires" value="+30d"/>
-            <entry key="route" value="document"/>
+            <entry key="expires" value="yes"/>
         </userInfo>
     </entity>
     <entity name="ScDocumentElement" representedClassName="ScDocumentElement" parentEntity="ScCachedEntity" syncable="YES">
@@ -39,6 +45,9 @@
         <attribute name="title" attributeType="String" syncable="YES"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScDocument" inverseName="repository" inverseEntity="ScDocument" syncable="YES"/>
         <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="documentRepositories" inverseEntity="ScScola" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="no"/>
+        </userInfo>
     </entity>
     <entity name="ScEvent" representedClassName="ScEvent" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="dateEnd" attributeType="Date" syncable="YES"/>
@@ -51,7 +60,7 @@
         <relationship name="invitedIndividuals" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScEventInvitation" inverseName="event" inverseEntity="ScEventInvitation" syncable="YES"/>
         <relationship name="invitedScolas" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScEventScolaInvitation" inverseName="event" inverseEntity="ScEventScolaInvitation" syncable="YES"/>
         <userInfo>
-            <entry key="expires" value="yes"/>
+            <entry key="expires" value="dateEnd+7"/>
         </userInfo>
     </entity>
     <entity name="ScEventInvitation" representedClassName="ScEventInvitation" parentEntity="ScCachedEntity" syncable="YES">
@@ -59,15 +68,24 @@
         <relationship name="event" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="invitedIndividuals" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="invitee" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="eventInvitations" inverseEntity="ScMember" syncable="YES"/>
         <relationship name="scolaInvitation" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScEventScolaInvitation" inverseName="memberInvitations" inverseEntity="ScEventScolaInvitation" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="event.dateEnd"/>
+        </userInfo>
     </entity>
     <entity name="ScEventScolaInvitation" representedClassName="ScEventScolaInvitation" parentEntity="ScCachedEntity" syncable="YES">
         <relationship name="event" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="invitedScolas" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="memberInvitations" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScEventInvitation" inverseName="scolaInvitation" inverseEntity="ScEventInvitation" syncable="YES"/>
         <relationship name="scola" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="eventInvitations" inverseEntity="ScScola" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="event.dateEnd"/>
+        </userInfo>
     </entity>
     <entity name="ScExternalDocument" representedClassName="ScExternalDocument" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="embeddedDocument" attributeType="Binary" syncable="YES"/>
         <relationship name="document" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScDocument" inverseName="externalDocument" inverseEntity="ScDocument" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="yes"/>
+        </userInfo>
     </entity>
     <entity name="ScMember" representedClassName="ScMember" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="activeSince" optional="YES" attributeType="Date" syncable="YES"/>
@@ -98,6 +116,9 @@
         <attribute name="switchFrequency" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <relationship name="residence" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="residencies" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="resident" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="residencies" inverseEntity="ScMember" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="no"/>
+        </userInfo>
     </entity>
     <entity name="ScMembership" representedClassName="ScMembership" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="isActive" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -135,7 +156,7 @@
         <relationship name="messageBoard" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMessageBoard" inverseName="messageThreads" inverseEntity="ScMessageBoard" syncable="YES"/>
         <relationship name="messageItems" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScMessageItem" inverseName="messageThread" inverseEntity="ScMessageItem" syncable="YES"/>
         <userInfo>
-            <entry key="expires" value="yes"/>
+            <entry key="expires" value="messageItems.count=0"/>
         </userInfo>
     </entity>
     <entity name="ScScheduledAbsence" representedClassName="ScScheduledAbsence" parentEntity="ScCachedEntity" syncable="YES">
@@ -144,12 +165,16 @@
         <attribute name="descriptionText" attributeType="String" syncable="YES"/>
         <relationship name="person" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="scheduledAbsences" inverseEntity="ScMember" syncable="YES"/>
         <userInfo>
-            <entry key="expires" value="yes"/>
+            <entry key="expires" value="absenceEnd+7"/>
         </userInfo>
     </entity>
     <entity name="ScScheduledBreak" representedClassName="ScScheduledBreak" parentEntity="ScCachedEntity" syncable="YES">
-        <attribute name="endDate" attributeType="Date" syncable="YES"/>
-        <attribute name="startDate" attributeType="Date" syncable="YES"/>
+        <attribute name="dateEnd" attributeType="Date" syncable="YES"/>
+        <attribute name="dateStart" attributeType="Date" syncable="YES">
+            <userInfo>
+                <entry key="expires" value="dateEnd+7"/>
+            </userInfo>
+        </attribute>
         <relationship name="yearlySchedule" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScYearlySchedule" inverseName="scheduledBreaks" inverseEntity="ScYearlySchedule" syncable="YES"/>
     </entity>
     <entity name="ScScola" representedClassName="ScScola" parentEntity="ScCachedEntity" syncable="YES">
@@ -177,12 +202,18 @@
     <entity name="ScSharedEntityRef" representedClassName="ScSharedEntityRef" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="sharedEntityId" attributeType="String" syncable="YES"/>
         <attribute name="sharedEntityScolaId" attributeType="String" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="dynamic"/>
+        </userInfo>
     </entity>
     <entity name="ScToDoAssignment" representedClassName="ScToDoAssignment" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="declined" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="done" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <relationship name="assignee" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="toDoAssignments" inverseEntity="ScMember" syncable="YES"/>
         <relationship name="toDoItem" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScToDoItem" inverseName="assignments" inverseEntity="ScToDoItem" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="dynamic"/>
+        </userInfo>
     </entity>
     <entity name="ScToDoItem" representedClassName="ScToDoItem" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="descriptionText" attributeType="String" syncable="YES"/>
@@ -190,15 +221,18 @@
         <relationship name="assignments" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScToDoAssignment" inverseName="toDoItem" inverseEntity="ScToDoAssignment" syncable="YES"/>
         <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="memberToDoItems" inverseEntity="ScScola" syncable="YES"/>
         <userInfo>
-            <entry key="expires" value="yes"/>
+            <entry key="expires" value="dueDate+7"/>
         </userInfo>
     </entity>
     <entity name="ScWeeklyScheduleItem" representedClassName="ScWeeklyScheduleItem" parentEntity="ScCachedEntity" syncable="YES">
-        <attribute name="endTime" attributeType="Date" syncable="YES"/>
-        <attribute name="startTime" attributeType="Date" syncable="YES"/>
+        <attribute name="timeEnd" attributeType="Date" syncable="YES"/>
+        <attribute name="timeStart" attributeType="Date" syncable="YES"/>
         <attribute name="title" attributeType="String" syncable="YES"/>
         <attribute name="weekday" attributeType="String" syncable="YES"/>
         <relationship name="yearlySchedule" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScYearlySchedule" inverseName="weeklyScheduleItems" inverseEntity="ScYearlySchedule" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="dynamic"/>
+        </userInfo>
     </entity>
     <entity name="ScYearlySchedule" representedClassName="ScYearlySchedule" parentEntity="ScCachedEntity" syncable="YES">
         <attribute name="yearEnd" attributeType="Date" syncable="YES"/>
@@ -207,7 +241,7 @@
         <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="yearlySchedule" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="weeklyScheduleItems" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScWeeklyScheduleItem" inverseName="yearlySchedule" inverseEntity="ScWeeklyScheduleItem" syncable="YES"/>
         <userInfo>
-            <entry key="expires" value="yes"/>
+            <entry key="expires" value="yearEnd+30"/>
         </userInfo>
     </entity>
     <elements>
@@ -234,5 +268,6 @@
         <element name="ScToDoItem" positionX="333" positionY="-267" width="128" height="105"/>
         <element name="ScWeeklyScheduleItem" positionX="-20" positionY="306" width="128" height="120"/>
         <element name="ScYearlySchedule" positionX="169" positionY="243" width="128" height="120"/>
+        <element name="ScCachedEntityGhost" positionX="160" positionY="192" width="128" height="75"/>
     </elements>
 </model>

@@ -40,14 +40,14 @@
 
 #pragma mark - ScCachedEntity (ScCachedEntityExtentions) overrides
 
-- (BOOL)isPersistedProperty:(NSString *)property
+- (BOOL)isPropertyPersistable:(NSString *)property
 {
-    BOOL doPersist = [super isPersistedProperty:property];
+    BOOL isPersistable = [super isPropertyPersistable:property];
     
-    doPersist = doPersist && ![property isEqualToString:@"resident"];
-    doPersist = doPersist && ![property isEqualToString:@"residence"];
+    isPersistable = isPersistable && ![property isEqualToString:@"resident"];
+    isPersistable = isPersistable && ![property isEqualToString:@"residence"];
     
-    return doPersist;
+    return isPersistable;
 }
 
 
@@ -57,6 +57,14 @@
     
     self.resident = self.member;
     self.residence = self.scola;
+}
+
+
+#pragma mark - Comparison
+
+- (NSComparisonResult)compare:(ScMemberResidency *)other
+{
+    return [self.member.name compare:other.member.name];
 }
 
 @end
