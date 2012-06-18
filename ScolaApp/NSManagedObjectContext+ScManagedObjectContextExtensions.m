@@ -171,7 +171,7 @@ static NSString * const kScolaRelationshipName = @"scola";
 
 - (void)deleteEntity:(ScCachedEntity *)entity
 {
-    [entity entityGhost];
+    [entity spawnEntityGhost];
     [self deleteObject:entity];
 }
 

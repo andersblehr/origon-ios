@@ -242,7 +242,7 @@
 
 #pragma mark - Entity ghost instantiation
 
-- (ScCachedEntityGhost *)entityGhost
+- (ScCachedEntityGhost *)spawnEntityGhost
 {
     NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
     

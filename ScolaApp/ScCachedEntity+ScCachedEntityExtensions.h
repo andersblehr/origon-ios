@@ -23,6 +23,6 @@
 
 - (NSString *)expiresInTimeframe;
 
-- (ScCachedEntityGhost *)entityGhost;
+- (ScCachedEntityGhost *)spawnEntityGhost;
 
 @end
