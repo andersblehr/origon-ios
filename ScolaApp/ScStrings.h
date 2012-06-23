@@ -30,14 +30,18 @@ extern NSString * const strMyMessageBoard;
 extern NSString * const strOurMessageBoard;
 
 // Auth view
+extern NSString * const strSignInOrRegisterPrompt;
+extern NSString * const strEmailPrompt;
+extern NSString * const strPasswordPrompt;
+extern NSString * const strSignInOrRegisterFooter;
+
+// Old auth view
 extern NSString * const strUserIntentionLogin;
 extern NSString * const strUserIntentionRegistration;
 extern NSString * const strUserHelpNew;
 extern NSString * const strUserHelpMember;
 extern NSString * const strNamePrompt;
-extern NSString * const strEmailPrompt;
 extern NSString * const strNewPasswordPrompt;
-extern NSString * const strPasswordPrompt;
 extern NSString * const strPleaseWait;
 extern NSString * const strUserHelpCompleteRegistration;
 extern NSString * const strSeeYouLaterPopUpTitle;

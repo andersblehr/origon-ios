@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
+#import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 
 @interface UIView (ScViewExtensions)
@@ -14,5 +15,6 @@
 
 - (void)addShadow;
 - (void)addShadowForMiddleOrTopTableViewCell;
+- (void)addCurlShadow;
 
 @end

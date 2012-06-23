@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.0" toolsVersion="1938" systemVersion="11C74" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="JBm-96-9PQ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.1" toolsVersion="2182" systemVersion="11E53" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" initialViewController="JBm-96-9PQ">
     <dependencies>
         <development defaultVersion="4200" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="933"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1181"/>
     </dependencies>
     <scenes>
+        <!--Sc Old Auth View Controller-->
         <scene sceneID="ZHH-Fe-sb7">
             <objects>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="d7X-K6-bJT" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <viewController id="JBm-96-9PQ" customClass="ScAuthViewController" sceneMemberID="viewController">
+                <viewController id="JBm-96-9PQ" customClass="ScOldAuthViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qvh-Ms-3uU">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

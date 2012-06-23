@@ -12,6 +12,7 @@
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "UIColor+ScColorExtensions.h"
 #import "UIDatePicker+ScDatePickerExtensions.h"
+#import "UITableView+UITableViewExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
 #import "ScMembershipViewController.h"
@@ -21,6 +22,7 @@
 #import "ScServerConnection.h"
 #import "ScStrings.h"
 #import "ScTableViewCell.h"
+#import "ScTextField.h"
 
 #import "ScMembership.h"
 #import "ScScola.h"
@@ -84,7 +86,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     }
     
     if (didMemberRegister) {
-        UIFont *nonEditableDetailFont = [ScTableViewCell detailFont];
+        UIFont *nonEditableDetailFont = [ScTextField displayFont];
         UIColor *backgroundColour = [ScTableViewCell backgroundColour];
         
         nameField.enabled = NO;
@@ -227,15 +229,15 @@ static NSInteger const kActionSheetButtonCancel = 2;
 {
     BOOL isValidInput = YES;
     
-    isValidInput = isValidInput && [ScMeta isNameValid:nameField.text];
-    isValidInput = isValidInput && [ScMeta isDateOfBirthValid:dateOfBirthField.text];
+    isValidInput = isValidInput && [ScMeta isNameValid:nameField];
+    isValidInput = isValidInput && [ScMeta isDateOfBirthValid:dateOfBirthField];
     
     if (isValidInput && ![dateOfBirthPicker.date isBirthDateOfMinor]) {
-        isValidInput = isValidInput && [ScMeta isEmailValid:emailField.text];
-        isValidInput = isValidInput && [ScMeta isMobileNumberValid:mobilePhoneField.text];
+        isValidInput = isValidInput && [ScMeta isEmailValid:emailField];
+        isValidInput = isValidInput && [ScMeta isMobileNumberValid:mobilePhoneField];
     } else if (isValidInput) {
         if (emailField.text.length > 0) {
-            isValidInput = isValidInput && [ScMeta isEmailValid:emailField.text];
+            isValidInput = isValidInput && [ScMeta isEmailValid:emailField];
         }
     }
     
@@ -275,7 +277,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    dataEntryCell = [ScTableViewCell defaultCellForTableView:tableView];
+    dataEntryCell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
     
     dateOfBirthPicker = [[UIDatePicker alloc] init];
     dateOfBirthPicker.datePickerMode = UIDatePickerModeDate;
@@ -331,13 +333,13 @@ static NSInteger const kActionSheetButtonCancel = 2;
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField
 {
     if (!membership && (textField == emailField) && (emailField.text.length > 0)) {
-        if ([ScMeta isEmailValid:emailField.text silent:YES]) {
+        if ([ScMeta isEmailValid:emailField silent:YES]) {
             member = [[ScMeta m].managedObjectContext fetchEntityWithId:emailField.text];
             
             if (member) {
                 [self populateFields];
             } else {
-                [[[ScServerConnection alloc] init] fetchMemberWithId:emailField.text usingDelegate:self];
+                [[[ScServerConnection alloc] init] fetchMemberWithId:emailField.text delegate:self];
             }
         }
     }

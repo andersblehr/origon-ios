@@ -73,11 +73,12 @@ extern NSString * const kGenderNoneGiven;
 + (id)userDefaultForKey:(NSString *)key;
 + (void)removeUserDefaultForKey:(NSString *)key;
 
-+ (BOOL)isNameValid:(NSString *)name;
-+ (BOOL)isEmailValid:(NSString *)email;
-+ (BOOL)isEmailValid:(NSString *)email silent:(BOOL)silent;
-+ (BOOL)isMobileNumberValid:(NSString *)mobileNumber;
-+ (BOOL)isDateOfBirthValid:(NSString *)dateString;
++ (BOOL)isEmailValid:(UITextField *)emailField;
++ (BOOL)isEmailValid:(UITextField *)emailField silent:(BOOL)silent;
++ (BOOL)isPasswordValid:(UITextField *)passwordField;
++ (BOOL)isNameValid:(UITextField *)nameField;
++ (BOOL)isMobileNumberValid:(UITextField *)mobileNumberField;
++ (BOOL)isDateOfBirthValid:(UITextField *)dateField;
 + (BOOL)isAddressValidWithLine1:(NSString *)line1 line2:(NSString *)line2 postCodeAndCity:(NSString *)postCodeAndCity;
 + (BOOL)isGenderGiven:(NSInteger)gender female:(NSString *)female male:(NSString *)male;
 

@@ -110,7 +110,7 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-- (void)performHTTPMethod:(NSString *)HTTPMethod withEntities:(NSArray *)entities usingDelegate:(id)delegate
+- (void)performHTTPMethod:(NSString *)HTTPMethod withEntities:(NSArray *)entities delegate:(id)delegate
 {
     connectionDelegate = delegate;
     
@@ -240,16 +240,16 @@ static NSString * const kURLParameterVersion = @"version";
 
 #pragma mark - Server requests
 
-- (void)fetchStringsUsingDelegate:(id)delegate
+- (void)fetchStrings
 {
     RESTHandler = kRESTHandlerStrings;
     RESTRoute = [ScMeta m].displayLanguage;
     
-    [self performHTTPMethod:kHTTPMethodGET withEntities:nil usingDelegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:ScStrings.class];
 }
 
 
-- (void)authenticateForPhase:(ScAuthPhase)authPhase usingDelegate:(id)delegate
+- (void)authenticateForPhase:(ScAuthPhase)authPhase delegate:(id)delegate
 {
     RESTHandler = kRESTHandlerAuth;
 
@@ -266,7 +266,7 @@ static NSString * const kURLParameterVersion = @"version";
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
     }
     
-    [self performHTTPMethod:kHTTPMethodGET withEntities:nil usingDelegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:delegate];
 }
 
 
@@ -288,23 +288,23 @@ static NSString * const kURLParameterVersion = @"version";
             [entityDictionaries addObject:[entity toDictionary]];
         }
         
-        [self performHTTPMethod:kHTTPMethodPOST withEntities:entityDictionaries usingDelegate:[ScMeta m]];
+        [self performHTTPMethod:kHTTPMethodPOST withEntities:entityDictionaries delegate:[ScMeta m]];
     } else {
         RESTRoute = kRESTRouteModelFetch;
         
-        [self performHTTPMethod:kHTTPMethodGET withEntities:nil usingDelegate:[ScMeta m]];
+        [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:[ScMeta m]];
     }
 }
 
 
-- (void)fetchMemberWithId:(NSString *)memberId usingDelegate:(id)delegate
+- (void)fetchMemberWithId:(NSString *)memberId delegate:(id)delegate
 {
     RESTHandler = kRESTHandlerModel;
     RESTRoute = [NSString stringWithFormat:@"%@/%@", kRESTRouteModelMember, memberId];
     
     [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
     
-    [self performHTTPMethod:kHTTPMethodGET withEntities:nil usingDelegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:delegate];
 }
 
 

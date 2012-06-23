@@ -16,6 +16,7 @@
 		5C153EFB14CC9815003A6B61 /* ScIconSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C153EFA14CC9815003A6B61 /* ScIconSection.m */; };
 		5C17435B14ABA3DC006B859B /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5C17435A14ABA3DC006B859B /* Settings.bundle */; };
 		5C23431214812A3100164478 /* ScStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* ScStrings.m */; };
+		5C26291E158F27860012A74A /* ScAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* ScAuthViewController.m */; };
 		5C2E11141469CDE5005BDE61 /* ScServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* ScServerConnection.m */; };
 		5C3374831563FBE200DEF67D /* ScMember+ScMemberExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3374821563FBE200DEF67D /* ScMember+ScMemberExtensions.m */; };
 		5C36BE8A146E9DA100DD3CEA /* ScMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE89146E9DA100DD3CEA /* ScMeta.m */; };
@@ -71,6 +72,7 @@
 		5C6E6C5F158A5D090002FF84 /* ScCachedEntityGhost.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C5E158A5D090002FF84 /* ScCachedEntityGhost.m */; };
 		5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE011482877D001D90C6 /* Localizable.strings */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
+		5C7379FD1593111B0065AB4F /* ScTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7379FC1593111B0065AB4F /* ScTextField.m */; };
 		5C83DF81153F59B800BB0B29 /* ScScola+ScScolaExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF80153F59B800BB0B29 /* ScScola+ScScolaExtensions.m */; };
 		5C83DF871543EC8600BB0B29 /* ScMemberResidency+ScMemberResidencyExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF861543EC8600BB0B29 /* ScMemberResidency+ScMemberResidencyExtensions.m */; };
 		5C88078F1484392B00ED5416 /* ScRegistrationView1Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C88078E1484392A00ED5416 /* ScRegistrationView1Controller.m */; };
@@ -86,7 +88,7 @@
 		5CBB63C5146080DF00A9133A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C4146080DF00A9133A /* main.m */; };
 		5CBB63C9146080DF00A9133A /* ScAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C8146080DF00A9133A /* ScAppDelegate.m */; };
 		5CBB63CF146080DF00A9133A /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CBB63CD146080DF00A9133A /* MainStoryboard_iPad.storyboard */; };
-		5CBB63D2146080DF00A9133A /* ScAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63D1146080DF00A9133A /* ScAuthViewController.m */; };
+		5CBB63D2146080DF00A9133A /* ScOldAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63D1146080DF00A9133A /* ScOldAuthViewController.m */; };
 		5CBB63DA146080E000A9133A /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63D9146080E000A9133A /* SenTestingKit.framework */; };
 		5CBB63DB146080E000A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63DC146080E000A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
@@ -124,6 +126,8 @@
 		5C17435A14ABA3DC006B859B /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* ScStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScStrings.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* ScStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScStrings.m; sourceTree = "<group>"; };
+		5C26291C158F27860012A74A /* ScAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScAuthViewController.h; sourceTree = "<group>"; };
+		5C26291D158F27860012A74A /* ScAuthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScAuthViewController.m; sourceTree = "<group>"; };
 		5C2E11121469CDE5005BDE61 /* ScServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScServerConnection.h; sourceTree = "<group>"; };
 		5C2E11131469CDE5005BDE61 /* ScServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScServerConnection.m; sourceTree = "<group>"; };
 		5C2E1133146ACFA9005BDE61 /* ScServerConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScServerConnectionDelegate.h; sourceTree = "<group>"; };
@@ -219,6 +223,8 @@
 		5C71DE001482877D001D90C6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE03148287DE001D90C6 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		5C7379FB1593111B0065AB4F /* ScTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScTextField.h; sourceTree = "<group>"; };
+		5C7379FC1593111B0065AB4F /* ScTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScTextField.m; sourceTree = "<group>"; };
 		5C83DF7F153F59B800BB0B29 /* ScScola+ScScolaExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ScScola+ScScolaExtensions.h"; sourceTree = "<group>"; };
 		5C83DF80153F59B800BB0B29 /* ScScola+ScScolaExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ScScola+ScScolaExtensions.m"; sourceTree = "<group>"; };
 		5C83DF851543EC8600BB0B29 /* ScMemberResidency+ScMemberResidencyExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ScMemberResidency+ScMemberResidencyExtensions.h"; sourceTree = "<group>"; };
@@ -247,8 +253,8 @@
 		5CBB63C7146080DF00A9133A /* ScAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScAppDelegate.h; sourceTree = "<group>"; };
 		5CBB63C8146080DF00A9133A /* ScAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScAppDelegate.m; sourceTree = "<group>"; };
 		5CBB63CE146080DF00A9133A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
-		5CBB63D0146080DF00A9133A /* ScAuthViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScAuthViewController.h; sourceTree = "<group>"; };
-		5CBB63D1146080DF00A9133A /* ScAuthViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScAuthViewController.m; sourceTree = "<group>"; };
+		5CBB63D0146080DF00A9133A /* ScOldAuthViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScOldAuthViewController.h; sourceTree = "<group>"; };
+		5CBB63D1146080DF00A9133A /* ScOldAuthViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScOldAuthViewController.m; sourceTree = "<group>"; };
 		5CBB63D8146080E000A9133A /* ScolaAppTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScolaAppTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63D9146080E000A9133A /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		5CBB63E1146080E000A9133A /* ScolaAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ScolaAppTests-Info.plist"; sourceTree = "<group>"; };
@@ -442,8 +448,10 @@
 		5CB49DCE14881EC6006EA2F8 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				5CBB63D0146080DF00A9133A /* ScAuthViewController.h */,
-				5CBB63D1146080DF00A9133A /* ScAuthViewController.m */,
+				5C26291C158F27860012A74A /* ScAuthViewController.h */,
+				5C26291D158F27860012A74A /* ScAuthViewController.m */,
+				5CBB63D0146080DF00A9133A /* ScOldAuthViewController.h */,
+				5CBB63D1146080DF00A9133A /* ScOldAuthViewController.m */,
 				5CE987C214856426005A17C6 /* ScEventViewController.h */,
 				5CE987C314856426005A17C6 /* ScEventViewController.m */,
 				5C3D42801485678E009A68E0 /* ScMainViewController.h */,
@@ -535,10 +543,10 @@
 				5CBB63C8146080DF00A9133A /* ScAppDelegate.m */,
 				5CB49DD014881F36006EA2F8 /* Auxiliary Classes */,
 				5C4F9766149529BF006E244F /* Cocoa Categories */,
+				5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */,
 				5C36BEA51471A05700DD3CEA /* Model */,
 				5C5ED5CB14F2E95B006BBDFB /* Model Categories */,
 				5CB49DCD14881E98006EA2F8 /* Protocols */,
-				5CE85DA5157FF2940060B4DF /* Table View Classes */,
 				5CB49DCE14881EC6006EA2F8 /* View Controllers */,
 				5CBB63BF146080DF00A9133A /* Supporting Files */,
 				5CB49DD114882012006EA2F8 /* Third Party */,
@@ -579,13 +587,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		5CE85DA5157FF2940060B4DF /* Table View Classes */ = {
+		5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */ = {
 			isa = PBXGroup;
 			children = (
 				5C8B3AB81582493C000B19FA /* ScTableViewCell.h */,
 				5C8B3AB91582493C000B19FA /* ScTableViewCell.m */,
+				5C7379FB1593111B0065AB4F /* ScTextField.h */,
+				5C7379FC1593111B0065AB4F /* ScTextField.m */,
 			);
-			name = "Table View Classes";
+			name = "Cocoa Subclasses";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -725,7 +735,7 @@
 			files = (
 				5CBB63C5146080DF00A9133A /* main.m in Sources */,
 				5CBB63C9146080DF00A9133A /* ScAppDelegate.m in Sources */,
-				5CBB63D2146080DF00A9133A /* ScAuthViewController.m in Sources */,
+				5CBB63D2146080DF00A9133A /* ScOldAuthViewController.m in Sources */,
 				5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */,
 				5C2E11141469CDE5005BDE61 /* ScServerConnection.m in Sources */,
 				5C36BE8A146E9DA100DD3CEA /* ScMeta.m in Sources */,
@@ -780,6 +790,8 @@
 				5C6E6C59158A54F20002FF84 /* ScMessageBoard.m in Sources */,
 				5C6E6C5C158A54F20002FF84 /* ScExternalDocument.m in Sources */,
 				5C6E6C5F158A5D090002FF84 /* ScCachedEntityGhost.m in Sources */,
+				5C26291E158F27860012A74A /* ScAuthViewController.m in Sources */,
+				5C7379FD1593111B0065AB4F /* ScTextField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -64,9 +64,9 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
 
-- (void)fetchStringsUsingDelegate:(id)delegate;
-- (void)authenticateForPhase:(ScAuthPhase)authPhase usingDelegate:(id)delegate;
+- (void)fetchStrings;
+- (void)authenticateForPhase:(ScAuthPhase)authPhase delegate:(id)delegate;
 - (void)synchroniseEntities;
-- (void)fetchMemberWithId:(NSString *)entityId usingDelegate:(id)delegate;
+- (void)fetchMemberWithId:(NSString *)entityId delegate:(id)delegate;
 
 @end

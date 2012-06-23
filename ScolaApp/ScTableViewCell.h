@@ -8,40 +8,41 @@
 
 #import <UIKit/UIKit.h>
 
-@class ScCachedEntity;
+extern NSString * const kReuseIdentifierDefault;
+extern NSString * const kReuseIdentifierNewLogin;
+
+extern NSString * const kTextFieldKeyEmail;
+extern NSString * const kTextFieldKeyPassword;
+
+@class ScCachedEntity, ScTextField;
 
 @interface ScTableViewCell : UITableViewCell {
 @private
     BOOL isSelectable;
     
     CGFloat labelLineHeight;
-    CGFloat detailLineHeight;
+    CGFloat verticalOffset;
     
     NSMutableDictionary *labels;
     NSMutableDictionary *details;
-    
-    CGFloat verticalOffset;
+    NSMutableDictionary *textFields;
 }
 
 + (UIColor *)backgroundColour;
-+ (UIColor *)labelColour;
-+ (UIColor *)detailColour;
 + (UIColor *)selectedBackgroundColour;
++ (UIColor *)labelColour;
 + (UIColor *)selectedLabelColour;
-+ (UIColor *)selectedDetailColour;
-+ (UIColor *)editableFieldBackgroundColour;
-
 + (UIFont *)labelFont;
-+ (UIFont *)detailFont;
-+ (UIFont *)editableDetailFont;
 
-+ (ScTableViewCell *)defaultCellForTableView:(UITableView *)tableView;
-+ (ScTableViewCell *)entityCellForEntity:(ScCachedEntity *)entity tableView:(UITableView *)tableView;
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
+- (id)initWithEntity:(ScCachedEntity *)entity delegate:(id)delegate;
+
+- (ScTextField *)textFieldWithKey:(NSString *)key;
 
 - (void)addLabel:(NSString *)label withDetail:(NSString *)detail;
-- (UITextField *)addLabel:(NSString *)label withEditableDetail:(NSString *)detail;
-
-- (id)viewForLabel:(NSString *)label;
+- (ScTextField *)addLabel:(NSString *)label withEditableDetail:(NSString *)detail;
+- (ScTextField *)addEditableFieldWithOffset:(CGFloat)offset centred:(BOOL)centred;
 
 + (CGFloat)heightForEntity:(ScCachedEntity *)entity;
 + (CGFloat)heightForNumberOfLabels:(NSInteger)numberOfLabels;

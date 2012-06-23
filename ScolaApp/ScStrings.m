@@ -39,14 +39,18 @@ NSString * const strMyMessageBoard                   = @"strMyMessageBoard";
 NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 // Auth view
+NSString * const strSignInOrRegisterPrompt           = @"strSignInOrRegisterPrompt";
+NSString * const strEmailPrompt                      = @"strEmailPrompt";
+NSString * const strPasswordPrompt                   = @"strPasswordPrompt";
+NSString * const strSignInOrRegisterFooter           = @"strSignInOrRegisterFooter";
+
+// Old auth view
 NSString * const strUserIntentionLogin               = @"strUserIntentionLogin";
 NSString * const strUserIntentionRegistration        = @"strUserIntentionRegistration";
 NSString * const strUserHelpNew                      = @"strUserHelpNew";
 NSString * const strUserHelpMember                   = @"strUserHelpMember";
 NSString * const strNamePrompt                       = @"strNamePrompt";
-NSString * const strEmailPrompt                      = @"strEmailPrompt";
 NSString * const strNewPasswordPrompt                = @"strNewPasswordPrompt";
-NSString * const strPasswordPrompt                   = @"strPasswordPrompt";
 NSString * const strPleaseWait                       = @"strPleaseWait";
 NSString * const strUserHelpCompleteRegistration     = @"strUserHelpCompleteRegistration";
 NSString * const strSeeYouLaterPopUpTitle            = @"strSeeYouLaterPopUpTitle";
@@ -168,7 +172,7 @@ NSString * const strUseNew                           = @"strUseNew";
 {
     if ([ScMeta m].isInternetConnectionAvailable) {
         if (!strings || [ScMeta m].isInternetConnectionWiFi) { // TODO: Only if req'd
-            [[[ScServerConnection alloc] init] fetchStringsUsingDelegate:self];
+            [[[ScServerConnection alloc] init] fetchStrings];
         }
     } else {
         ScLogBreakage(@"Attempt to refresh strings when server is not available.");

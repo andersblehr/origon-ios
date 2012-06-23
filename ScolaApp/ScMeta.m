@@ -41,6 +41,8 @@ NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
 NSString * const kGenderNoneGiven = @"N";
 
+static NSInteger const kMinimumPassordLength = 6;
+
 static NSString * const kUserDefaultsKeyUserId = @"scola.user.id";
 static NSString * const kUserDefaultsKeyFormatHomeScolaId = @"scola.scola.id$%@";
 static NSString * const kUserDefaultsKeyFormatDeviceId = @"scola.device.id$%@";
@@ -219,8 +221,56 @@ static ScMeta *m = nil;
 
 #pragma mark - Input validation
 
-+ (BOOL)isNameValid:(NSString *)name
++ (BOOL)isEmailValid:(UITextField *)emailField
 {
+    return [ScMeta isEmailValid:emailField silent:NO];
+}
+
+
++ (BOOL)isEmailValid:(UITextField *)emailField silent:(BOOL)silent
+{
+    NSString *email = [emailField.text removeLeadingAndTrailingSpaces];
+    
+    NSUInteger atLocation = [email rangeOfString:@"@"].location;
+    NSUInteger dotLocation = [email rangeOfString:@"." options:NSBackwardsSearch].location;
+    NSUInteger spaceLocation = [email rangeOfString:@" "].location;
+    
+    BOOL isValid = (atLocation != NSNotFound);
+    
+    isValid = isValid && (dotLocation != NSNotFound);
+    isValid = isValid && (dotLocation > atLocation);
+    isValid = isValid && (spaceLocation == NSNotFound);
+    
+    if (!isValid && !silent) {
+        [emailField becomeFirstResponder];
+        
+        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidEmailTitle] message:[ScStrings stringForKey:strInvalidEmailAlert]];
+    }
+    
+    return isValid;
+}
+
+
++ (BOOL)isPasswordValid:(UITextField *)passwordField
+{
+    NSString *password = [passwordField.text removeLeadingAndTrailingSpaces];
+    
+    BOOL isValid = (password.length >= kMinimumPassordLength);
+    
+    if (!isValid) {
+        [passwordField becomeFirstResponder];
+        
+        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidPasswordTitle] message:[NSString stringWithFormat:[ScStrings stringForKey:strInvalidPasswordAlert], kMinimumPassordLength]];
+    }
+    
+    return isValid;
+}
+
+
++ (BOOL)isNameValid:(UITextField *)nameField
+{
+    NSString *name = [nameField.text removeLeadingAndTrailingSpaces];
+    
     BOOL isValid = (name.length > 0);
     
     if (isValid) {
@@ -231,6 +281,8 @@ static ScMeta *m = nil;
     }
     
     if (!isValid) {
+        [nameField becomeFirstResponder];
+        
         [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidNameTitle] message:[ScStrings stringForKey:strInvalidNameAlert]];
     }
     
@@ -238,38 +290,15 @@ static ScMeta *m = nil;
 }
 
 
-+ (BOOL)isEmailValid:(NSString *)email
++ (BOOL)isMobileNumberValid:(UITextField *)mobileNumberField
 {
-    return [ScMeta isEmailValid:email silent:NO];
-}
-
-
-+ (BOOL)isEmailValid:(NSString *)email silent:(BOOL)silent
-{
-    BOOL isValid = YES;
+    NSString *mobileNumber = [mobileNumberField.text removeLeadingAndTrailingSpaces];
     
-    NSUInteger atLocation = [email rangeOfString:@"@"].location;
-    NSUInteger dotLocation = [email rangeOfString:@"." options:NSBackwardsSearch].location;
-    NSUInteger spaceLocation = [email rangeOfString:@" "].location;
-    
-    isValid = (atLocation != NSNotFound);
-    isValid = isValid && (dotLocation != NSNotFound);
-    isValid = isValid && (dotLocation > atLocation);
-    isValid = isValid && (spaceLocation == NSNotFound);
-    
-    if (!isValid && !silent) {
-        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidEmailTitle] message:[ScStrings stringForKey:strInvalidEmailAlert]];
-    }
-    
-    return isValid;
-}
-
-
-+ (BOOL)isMobileNumberValid:(NSString *)mobileNumber
-{
     BOOL isValid = (mobileNumber.length > 0);
     
     if (!isValid) {
+        [mobileNumberField becomeFirstResponder];
+        
         [ScMeta showAlertWithTitle:[ScStrings stringForKey:strNoMobileNumberTitle] message:[ScStrings stringForKey:strNoMobileNumberAlert]];
     }
     
@@ -277,9 +306,9 @@ static ScMeta *m = nil;
 }
 
 
-+ (BOOL)isDateOfBirthValid:(NSString *)dateString
++ (BOOL)isDateOfBirthValid:(UITextField *)dateField
 {
-    BOOL isValid = (dateString.length > 0);
+    BOOL isValid = (dateField.text.length > 0);
     
     if (!isValid) {
         [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidDateOfBirthTitle] message:[ScStrings stringForKey:strInvalidDateOfBirthAlert]];
@@ -291,6 +320,10 @@ static ScMeta *m = nil;
 
 + (BOOL)isAddressValidWithLine1:(NSString *)line1 line2:(NSString *)line2 postCodeAndCity:(NSString *)postCodeAndCity
 {
+    line1 = [line1 removeLeadingAndTrailingSpaces];
+    line2 = [line2 removeLeadingAndTrailingSpaces];
+    postCodeAndCity = [postCodeAndCity removeLeadingAndTrailingSpaces];
+    
     BOOL isValid = NO;
     
     isValid = isValid || (line1.length > 0);

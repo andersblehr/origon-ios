@@ -163,7 +163,7 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
     BOOL isValid = [ScMeta isAddressValidWithLine1:addressLine1Field.text line2:addressLine2Field.text postCodeAndCity:postCodeAndCityField.text];
     
     if (isValid) {
-        isValid = [ScMeta isDateOfBirthValid:dateOfBirthField.text];
+        isValid = [ScMeta isDateOfBirthValid:dateOfBirthField];
         
         if (!isValid) {
             [dateOfBirthField becomeFirstResponder];

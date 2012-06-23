@@ -29,24 +29,24 @@
 #import "ScMemberViewController.h"
 
 
-static NSInteger kAddressSection = 0;
-static NSInteger kAdultsSection = 1;
-static NSInteger kMinorsSection = 2;
+static NSInteger const kAddressSection = 0;
+static NSInteger const kAdultsSection = 1;
+static NSInteger const kMinorsSection = 2;
 
-static CGFloat kScreenWidth = 320.f;
-static CGFloat kHeaderWidth = 300.f;
-static CGFloat kFooterWidth = 280.f;
-static CGFloat kHeaderMargin = 10.f;
-static CGFloat kFooterMargin = 20.f;
-static CGFloat kFooterViewOffset = 10.f;
+static CGFloat const kScreenWidth = 320.f;
 
-static CGFloat kDefaultHeaderFooterHeight = 0.f;
-static CGFloat kMinimumHeaderFooterHeight = 1.f;
-static CGFloat kSectionSpacing = 5.f;
+static CGFloat const kDefaultHeaderFooterHeight = 0.f;
+static CGFloat const kMinimumHeaderFooterHeight = 1.f;
+static CGFloat const kSectionSpacing = 5.f;
 
-static CGFloat kHeaderFontSize = 17.f;
-static CGFloat kFooterFontSize = 13.f;
+static CGFloat const kHeaderWidth = 300.f;
+static CGFloat const kFooterWidth = 280.f;
+static CGFloat const kHeaderPadding = 10.f;
+static CGFloat const kFooterPadding = 20.f;
+static CGFloat const kFooterViewOffset = 10.f;
 
+static CGFloat const kHeaderFontSize = 17.f;
+static CGFloat const kFooterFontSize = 13.f;
 
 @implementation ScMembershipViewController
 
@@ -252,13 +252,13 @@ static CGFloat kFooterFontSize = 13.f;
     ScTableViewCell *cell = nil;
     
     if (indexPath.section == kAddressSection) {
-        cell = [ScTableViewCell entityCellForEntity:scola tableView:tableView];
+        cell = [tableView cellForEntity:scola delegate:self];
         
         if (isUserScolaAdmin) {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
     } else {
-        cell = [ScTableViewCell defaultCellForTableView:tableView];
+        cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
         
         NSArray *memberships = (indexPath.section == kAdultsSection) ? adults : minors;
         
@@ -371,7 +371,7 @@ static CGFloat kFooterFontSize = 13.f;
     if (section == kAdultsSection) {
         CGFloat headerHeight = [self tableView:tableView heightForHeaderInSection:section];
         CGRect headerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, headerHeight);
-        CGRect headerFrame = CGRectMake(kHeaderMargin, 0.f, kHeaderWidth, headerHeight);
+        CGRect headerFrame = CGRectMake(kHeaderPadding, 0.f, kHeaderWidth, headerHeight);
         
         headerView = [[UIView alloc] initWithFrame:headerViewFrame];
         UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
@@ -397,7 +397,7 @@ static CGFloat kFooterFontSize = 13.f;
     if ((section == kMinorsSection) && isUserScolaAdmin) {
         CGFloat footerHeight = [self tableView:tableView heightForFooterInSection:section];
         CGRect footerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, footerHeight);
-        CGRect footerFrame = CGRectMake(kFooterMargin, kFooterViewOffset, kFooterWidth, footerHeight);
+        CGRect footerFrame = CGRectMake(kFooterPadding, kFooterViewOffset, kFooterWidth, footerHeight);
         
         footerView = [[UIView alloc] initWithFrame:footerViewFrame];
         UILabel *footerLabel = [[UILabel alloc] initWithFrame:footerFrame];
