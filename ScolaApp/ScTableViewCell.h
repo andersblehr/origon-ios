@@ -9,10 +9,16 @@
 #import <UIKit/UIKit.h>
 
 extern NSString * const kReuseIdentifierDefault;
-extern NSString * const kReuseIdentifierNewLogin;
+extern NSString * const kReuseIdentifierUserLogin;
+extern NSString * const kReuseIdentifierUserConfirmation;
 
 extern NSString * const kTextFieldKeyEmail;
 extern NSString * const kTextFieldKeyPassword;
+extern NSString * const kTextFieldKeyRegistrationCode;
+extern NSString * const kTextFieldKeyRepeatPassword;
+
+extern NSString * const kLabelKeyLoginLabel;
+extern NSString * const kLabelKeyConfirmationLabel;
 
 @class ScCachedEntity, ScTextField;
 

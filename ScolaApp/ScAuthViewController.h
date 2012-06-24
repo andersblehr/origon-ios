@@ -8,16 +8,27 @@
 
 #import <UIKit/UIKit.h>
 
+#import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
 
-@class ScTextField;
+@class ScMember, ScScola, ScTextField;
 
-@interface ScAuthViewController : UITableViewController<UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, ScServerConnectionDelegate> {
+@interface ScAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, ScServerConnectionDelegate> {
 @private
     BOOL isEditingAllowed;
+    BOOL isUserListed;
+    BOOL isModelUpToDate;
     
     ScTextField *emailField;
     ScTextField *passwordField;
+    ScTextField *registrationCodeField;
+    
+    ScAuthPhase authPhase;
+    ScMember *member;
+    ScScola *homeScola;
+    
+    UIActivityIndicatorView *spinner;
+    NSDictionary *authInfo;
 }
 
 @end

@@ -19,12 +19,21 @@
 
 #import "ScScola+ScScolaExtensions.h"
 
+typedef enum {
+    ScAuthEmailField,
+    ScAuthPasswordField,
+    ScAuthRepeatPasswordField,
+    ScAuthRegistrationCodeField,
+} ScAuthFieldType;
 
 NSString * const kReuseIdentifierDefault = @"ruiDefault";
-NSString * const kReuseIdentifierNewLogin = @"ruiNewLogin";
+NSString * const kReuseIdentifierUserLogin = @"ruiUserLogin";
+NSString * const kReuseIdentifierUserConfirmation = @"ruiUserConfirmation";
 
 NSString * const kTextFieldKeyEmail = @"email";
 NSString * const kTextFieldKeyPassword = @"password";
+NSString * const kTextFieldKeyRegistrationCode = @"registrationCode";
+NSString * const kTextFieldKeyRepeatPassword = @"repeatPassword";
 
 static CGFloat const kCellWidth = 300.f;
 
@@ -52,29 +61,35 @@ static UIFont *labelFont = nil;
 
 #pragma mark - Auxiliary methods
 
-- (void)populateWithLoginFields
+- (void)addAuthFieldOfType:(ScAuthFieldType)type delegate:(id)delegate
 {
-    [self addLabel:[ScStrings stringForKey:strSignInOrRegisterPrompt]];
+    NSString *textFieldKey = nil;
     
-    ScTextField *emailField = [self addEditableFieldWithOffset:0.15f centred:YES];
-    emailField.placeholder = [ScStrings stringForKey:strEmailPrompt];
-    emailField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    emailField.autocorrectionType = UITextAutocorrectionTypeNo;
-    emailField.keyboardType = UIKeyboardTypeEmailAddress;
-    emailField.returnKeyType = UIReturnKeyNext;
+    ScTextField *field = [self addEditableFieldWithOffset:0.15f centred:YES];
+    field.delegate = delegate;
     
-    UITextField *passwordField = [self addEditableFieldWithOffset:0.15f centred:YES];
-    passwordField.placeholder = [ScStrings stringForKey:strPasswordPrompt];
-    passwordField.secureTextEntry = YES;
-    passwordField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    passwordField.autocorrectionType = UITextAutocorrectionTypeNo;
-    passwordField.keyboardType = UIKeyboardTypeDefault;
-    passwordField.returnKeyType = UIReturnKeyJoin;
-    
-    [self->textFields setObject:emailField forKey:kTextFieldKeyEmail];
-    [self->textFields setObject:passwordField forKey:kTextFieldKeyPassword];
-    
-    self.selectionStyle = UITableViewCellSelectionStyleNone;
+    if (type == ScAuthEmailField) {
+        textFieldKey = kTextFieldKeyEmail;
+        field.placeholder = [ScStrings stringForKey:strEmailPrompt];
+        field.keyboardType = UIKeyboardTypeEmailAddress;
+    } else if ((type == ScAuthPasswordField) || (type == ScAuthRepeatPasswordField)) {
+        if (type == ScAuthPasswordField) {
+            textFieldKey = kTextFieldKeyPassword;
+            field.placeholder = [ScStrings stringForKey:strPasswordPrompt];
+        } else {
+            textFieldKey = kTextFieldKeyRepeatPassword;
+            field.placeholder = [ScStrings stringForKey:strRepeatPasswordPrompt];
+        }
+        
+        field.returnKeyType = UIReturnKeyJoin;
+        field.secureTextEntry = YES;
+        field.clearsOnBeginEditing = YES;
+    } else if (type == ScAuthRegistrationCodeField) {
+        textFieldKey = kTextFieldKeyRegistrationCode;
+        field.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
+    }
+
+    [textFields setObject:field forKey:textFieldKey];
 }
 
 
@@ -91,8 +106,6 @@ static UIFont *labelFont = nil;
             
             [self addLabel:landlineLabel withDetail:scola.landline];
         }
-        
-        verticalOffset = kVerticalMargin;
     }
 }
 
@@ -188,12 +201,19 @@ static UIFont *labelFont = nil;
     self = [self initWithReuseIdentifier:reuseIdentifier];
     
     if (self) {
-        if ([reuseIdentifier isEqualToString:kReuseIdentifierNewLogin]) {
-            [self populateWithLoginFields];
+        if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin]) {
+            [self addLabel:[ScStrings stringForKey:strSignInOrRegisterPrompt]];
             
-            [self textFieldWithKey:kTextFieldKeyEmail].delegate = delegate;
-            [self textFieldWithKey:kTextFieldKeyPassword].delegate = delegate;
+            [self addAuthFieldOfType:ScAuthEmailField delegate:delegate];
+            [self addAuthFieldOfType:ScAuthPasswordField delegate:delegate];
+        } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserConfirmation]) {
+            [self addLabel:[ScStrings stringForKey:strConfirmRegistrationPrompt]];
+
+            [self addAuthFieldOfType:ScAuthRegistrationCodeField delegate:delegate];
+            [self addAuthFieldOfType:ScAuthRepeatPasswordField delegate:delegate];
         }
+        
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     
     return self;
@@ -240,11 +260,17 @@ static UIFont *labelFont = nil;
 }
 
 
-#pragma mark - Embedded field access
+#pragma mark - Embedded view access
 
 - (ScTextField *)textFieldWithKey:(NSString *)key
 {
     return [textFields objectForKey:key];
+}
+
+
+- (UILabel *)labelWithKey:(NSString *)key
+{
+    return [labels objectForKey:key];
 }
 
 
@@ -287,6 +313,11 @@ static UIFont *labelFont = nil;
     CGFloat fieldWidth = centred ? kCellWidth - 2 * fieldOriginX : kCellWidth - fieldOriginX - kLabelOriginX;
     
     ScTextField *field = [[ScTextField alloc] initWithOrigin:CGPointMake(fieldOriginX, verticalOffset) width:fieldWidth editable:YES];
+    
+    field.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    field.autocorrectionType = UITextAutocorrectionTypeNo;
+    field.keyboardType = UIKeyboardTypeDefault;
+    field.returnKeyType = UIReturnKeyNext;
     
     [self.contentView addSubview:field];
     

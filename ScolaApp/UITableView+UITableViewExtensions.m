@@ -21,6 +21,7 @@ static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
 static NSString * const kLogoText = @"..scola..";
 
 static CGFloat const kScreenWidth = 320.f;
+static CGFloat const kKeyboardHeight = 216.f;
 
 static CGFloat const kLogoHeight = 55.f;
 static CGFloat const kLogoMarginX = 10.f;
@@ -88,7 +89,9 @@ static CGFloat const kSectionSpacing = 5.f;
     
     if ([reuseIdentifier isEqualToString:kReuseIdentifierDefault]) {
         height = self.rowHeight;
-    } else if ([reuseIdentifier isEqualToString:kReuseIdentifierNewLogin]) {
+    } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin]) {
+        height = [ScTableViewCell heightForNumberOfLabels:3];
+    } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserConfirmation]) {
         height = [ScTableViewCell heightForNumberOfLabels:3];
     }
         
@@ -117,6 +120,23 @@ static CGFloat const kSectionSpacing = 5.f;
     [containerView addSubview:logoLabel];
     
     self.tableHeaderView = containerView;
+}
+
+
+- (UIActivityIndicatorView *)addActivityIndicator
+{
+    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, kKeyboardHeight);
+    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
+
+    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    activityIndicatorView.center = containerView.center;
+    activityIndicatorView.hidesWhenStopped = YES;
+    
+    [containerView addSubview:activityIndicatorView];
+    
+    self.tableFooterView = containerView;
+    
+    return activityIndicatorView;
 }
 
 
@@ -153,10 +173,10 @@ static CGFloat const kSectionSpacing = 5.f;
     
     self.sectionFooterHeight = footerSize.height + 2 * kSectionSpacing;
 
-    CGRect footerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionFooterHeight);
+    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionFooterHeight);
     CGRect footerFrame = CGRectMake(kFooterMarginX, kFooterMarginY, kFooterWidth, self.sectionFooterHeight);
     
-    UIView *footerView = [[UIView alloc] initWithFrame:footerViewFrame];
+    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:footerFrame];
     
     footerLabel.font = footerFont;
@@ -168,9 +188,9 @@ static CGFloat const kSectionSpacing = 5.f;
     footerLabel.numberOfLines = 0;
     footerLabel.text = footerText;
     
-    [footerView addSubview:footerLabel];
+    [containerView addSubview:footerLabel];
     
-    return footerView;
+    return containerView;
 }
 
 

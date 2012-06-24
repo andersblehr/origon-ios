@@ -31,9 +31,11 @@ extern NSString * const strOurMessageBoard;
 
 // Auth view
 extern NSString * const strSignInOrRegisterPrompt;
+extern NSString * const strConfirmRegistrationPrompt;
 extern NSString * const strEmailPrompt;
 extern NSString * const strPasswordPrompt;
 extern NSString * const strSignInOrRegisterFooter;
+extern NSString * const strConfirmRegistrationFooter;
 
 // Old auth view
 extern NSString * const strUserIntentionLogin;

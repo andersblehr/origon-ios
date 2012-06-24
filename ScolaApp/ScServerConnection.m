@@ -45,6 +45,7 @@ static NSString * const kScolaDevServer = @"localhost:8888";
 //static NSString * const kScolaDevServer = @"enceladus.local:8888";
 //static NSString * const kScolaDevServer = @"ganymede.local:8888";
 static NSString * const kScolaProdServer = @"scolaapp.appspot.com";
+//static NSString * const kScolaProdServer = @"enceladus.local:8888";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";
 static NSString * const kHTTPHeaderAcceptCharset = @"Accept-Charset";

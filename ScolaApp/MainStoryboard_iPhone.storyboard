@@ -116,7 +116,7 @@
                         <outlet property="userHelpLabel" destination="jNm-pK-L5b" id="4wX-Pj-ooy"/>
                         <outlet property="userIntentionControl" destination="EJ9-fT-RAh" id="mk9-H5-LlA"/>
                         <segue destination="Rpw-Zc-nxs" kind="push" identifier="authToRegistrationView1" id="3e8-Bg-zGA"/>
-                        <segue destination="9Fa-Np-JO6" kind="push" identifier="authToMainView" id="t3w-Gq-L9a"/>
+                        <segue destination="9Fa-Np-JO6" kind="push" identifier="oldAuthToMainView" id="t3w-Gq-L9a"/>
                     </connections>
                 </viewController>
             </objects>
@@ -137,6 +137,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="lej-0U-7XK"/>
+                    <connections>
+                        <segue destination="9Fa-Np-JO6" kind="push" identifier="authToMainView" id="qqb-h7-3fc"/>
+                    </connections>
                 </tableViewController>
             </objects>
             <point key="canvasLocation" x="-764" y="1297"/>
@@ -578,12 +581,84 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="83-calendar.png" width="23" height="25"/>
         <image name="dark_linen-640x960.png" width="640" height="960"/>
     </resources>
+    <classes>
+        <class className="ScAuthViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScAuthViewController.h"/>
+        </class>
+        <class className="ScEventViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScEventViewController.h"/>
+        </class>
+        <class className="ScMainViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMainViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="showInfo:"/>
+                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
+            </relationships>
+        </class>
+        <class className="ScMemberViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMemberViewController.h"/>
+        </class>
+        <class className="ScMembershipViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMembershipViewController.h"/>
+        </class>
+        <class className="ScMessageBoardViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMessageBoardViewController.h"/>
+        </class>
+        <class className="ScOldAuthViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScOldAuthViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="showInfo:"/>
+                <relationship kind="outlet" name="activityIndicator" candidateClass="UIActivityIndicatorView"/>
+                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="emailOrPasswordField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="nameOrEmailOrRegistrationCodeField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="scolaDescriptionHeadingLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="scolaDescriptionTextView" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="scolaSplashLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="showInfoButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="userHelpLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="userIntentionControl" candidateClass="UISegmentedControl"/>
+            </relationships>
+        </class>
+        <class className="ScRegistrationView1Controller" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScRegistrationView1Controller.h"/>
+            <relationships>
+                <relationship kind="outlet" name="addressLine1Field" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="addressLine2Field" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="addressUserHelpLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="dateOfBirthField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="dateOfBirthPicker" candidateClass="UIDatePicker"/>
+                <relationship kind="outlet" name="dateOfBirthUserHelpLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="postCodeAndCityField" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="ScRegistrationView2Controller" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScRegistrationView2Controller.h"/>
+            <relationships>
+                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="genderControl" candidateClass="UISegmentedControl"/>
+                <relationship kind="outlet" name="genderUserHelpLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="landlineField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="landlineUserHelpLabel" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="mobilePhoneField" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="mobilePhoneUserHelpLabel" candidateClass="UILabel"/>
+            </relationships>
+        </class>
+        <class className="ScScheduleViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScScheduleViewController.h"/>
+        </class>
+        <class className="ScTaskViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScTaskViewController.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="t3w-Gq-L9a"/>
+        <segue reference="qqb-h7-3fc"/>
     </inferredMetricsTieBreakers>
 </document>

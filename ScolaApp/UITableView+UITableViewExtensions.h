@@ -19,8 +19,10 @@
 - (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier;
 
 - (void)addLogoBanner;
+- (UIActivityIndicatorView *)addActivityIndicator;
+
 - (UIView *)headerViewWithTitle:(NSString *)title;
-- (UIView *)footerViewWithText:(NSString *)footerText;
+- (UIView *)footerViewWithText:(NSString *)text;
 
 - (void)insertCellForRow:(NSInteger)row inSection:(NSInteger)section;
 

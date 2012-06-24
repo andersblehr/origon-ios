@@ -40,9 +40,11 @@ NSString * const strOurMessageBoard                  = @"strOurMessageBoard";
 
 // Auth view
 NSString * const strSignInOrRegisterPrompt           = @"strSignInOrRegisterPrompt";
+NSString * const strConfirmRegistrationPrompt        = @"strConfirmRegistrationPrompt";
 NSString * const strEmailPrompt                      = @"strEmailPrompt";
 NSString * const strPasswordPrompt                   = @"strPasswordPrompt";
 NSString * const strSignInOrRegisterFooter           = @"strSignInOrRegisterFooter";
+NSString * const strConfirmRegistrationFooter        = @"strConfirmRegistrationFooter";
 
 // Old auth view
 NSString * const strUserIntentionLogin               = @"strUserIntentionLogin";

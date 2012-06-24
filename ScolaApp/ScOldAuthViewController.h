@@ -24,6 +24,7 @@
     NSDictionary *authInfo;
     
     ScAuthPhase authPhase;
+    
     ScMember *member;
     ScScola *homeScola;
 }

@@ -37,7 +37,7 @@ typedef enum {
     ScAuthAlertTagNotLoggedIn,
 } ScAuthAlertTag;
 
-static NSString * const kSegueToMainView = @"authToMainView";
+static NSString * const kSegueToMainView = @"oldAuthToMainView";
 static NSString * const kSegueToRegistrationView1 = @"authToRegistrationView1";
 
 static int const kMinimumPassordLength = 6;
