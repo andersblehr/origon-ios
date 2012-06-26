@@ -11,19 +11,21 @@
 #import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
 
-@class ScMember, ScScola, ScTextField;
+@class ScMember, ScScola, ScTableViewCell, ScTextField;
 
-@interface ScAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, ScServerConnectionDelegate> {
+@interface ScAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, ScServerConnectionDelegate> {
 @private
     BOOL isEditingAllowed;
     BOOL isUserListed;
     BOOL isModelUpToDate;
     
+    ScAuthPhase authPhase;
+    ScTableViewCell *authCell;
+    
     ScTextField *emailField;
     ScTextField *passwordField;
     ScTextField *registrationCodeField;
     
-    ScAuthPhase authPhase;
     ScMember *member;
     ScScola *homeScola;
     

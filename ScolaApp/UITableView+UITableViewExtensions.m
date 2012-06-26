@@ -17,26 +17,18 @@
 #import "ScCachedEntity.h"
 
 
-static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
-static NSString * const kLogoText = @"..scola..";
-
-static CGFloat const kScreenWidth = 320.f;
-static CGFloat const kKeyboardHeight = 216.f;
-
 static CGFloat const kLogoHeight = 55.f;
 static CGFloat const kLogoMarginX = 10.f;
 static CGFloat const kLogoMarginY = 10.f;
 static CGFloat const kLogoFontSize = 30.f;
 static CGFloat const kLogoFontShadowOffset = 7.f;
 
-static CGFloat const kHeaderWidth = 300.f;
 static CGFloat const kHeaderMarginX = 10.f;
 static CGFloat const kHeaderMarginY = 0.f;
 static CGFloat const kHeaderFontSize = 17.f;
 static CGFloat const kHeaderFontShadowOffset = 3.f;
 static CGFloat const kHeaderFontScaleFactor = 4.f;
 
-static CGFloat const kFooterWidth = 280.f;
 static CGFloat const kFooterMarginX = 20.f;
 static CGFloat const kFooterMarginY = 10.f;
 static CGFloat const kFooterFontSize = 13.f;
@@ -45,19 +37,22 @@ static CGFloat const kFooterFontScaleFactor = 10.f;
 
 static CGFloat const kSectionSpacing = 5.f;
 
+static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
+static NSString * const kLogoText = @"..scola..";
+
 
 @implementation UITableView (UITableViewExtensions)
 
 
 #pragma mark - Cell instantiation
 
-- (ScTableViewCell *)cellWithReuseIdentifier:(NSString *)reuseIdentifier
+- (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier
 {
     return [self cellWithReuseIdentifier:reuseIdentifier delegate:nil];
 }
 
 
-- (ScTableViewCell *)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
+- (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
     ScTableViewCell *cell = [self dequeueReusableCellWithIdentifier:reuseIdentifier];
     
@@ -69,12 +64,32 @@ static CGFloat const kSectionSpacing = 5.f;
 }
 
 
-- (ScTableViewCell *)cellForEntity:(ScCachedEntity *)entity delegate:(id)delegate
+- (id)cellForEntity:(ScCachedEntity *)entity delegate:(id)delegate
+{
+    return [self cellForEntity:entity editable:NO delegate:delegate];
+}
+
+
+- (id)cellForEntity:(ScCachedEntity *)entity editable:(BOOL)editable delegate:(id)delegate
 {
     ScTableViewCell *cell = [self dequeueReusableCellWithIdentifier:entity.entityId];
     
     if (!cell) {
-        cell = [[ScTableViewCell alloc] initWithEntity:entity delegate:delegate];
+        cell = [[ScTableViewCell alloc] initWithEntity:entity editable:editable delegate:delegate];
+    }
+    
+    return cell;
+}
+
+
+- (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate
+{
+    NSString *entityName = NSStringFromClass(entityClass);
+    
+    ScTableViewCell *cell = [self dequeueReusableCellWithIdentifier:entityName];
+    
+    if (!cell) {
+        cell = [[ScTableViewCell alloc] initWithEntityClass:entityClass delegate:delegate];
     }
     
     return cell;
@@ -103,8 +118,8 @@ static CGFloat const kSectionSpacing = 5.f;
 
 - (void)addLogoBanner
 {
-    CGRect containerViewFrame = CGRectMake(kLogoMarginX, 0.f, kHeaderWidth, kLogoHeight);
-    CGRect logoFrame = CGRectMake(kLogoMarginX, kLogoMarginY, kHeaderWidth, kLogoHeight - kLogoMarginY);
+    CGRect containerViewFrame = CGRectMake(kLogoMarginX, 0.f, kCellWidth, kLogoHeight);
+    CGRect logoFrame = CGRectMake(kLogoMarginX, kLogoMarginY, kCellWidth, kLogoHeight - kLogoMarginY);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *logoLabel = [[UILabel alloc] initWithFrame:logoFrame];
@@ -147,7 +162,7 @@ static CGFloat const kSectionSpacing = 5.f;
     self.sectionHeaderHeight = kHeaderFontScaleFactor * headerFont.xHeight;
     
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionHeaderHeight);
-    CGRect headerFrame = CGRectMake(kHeaderMarginX, kHeaderMarginY, kHeaderWidth, self.sectionHeaderHeight);
+    CGRect headerFrame = CGRectMake(kHeaderMarginX, kHeaderMarginY, kCellWidth, self.sectionHeaderHeight);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
@@ -169,12 +184,12 @@ static CGFloat const kSectionSpacing = 5.f;
 - (UIView *)footerViewWithText:(NSString *)footerText
 {
     UIFont *footerFont = [UIFont systemFontOfSize:kFooterFontSize];
-    CGSize footerSize = [footerText sizeWithFont:footerFont constrainedToSize:CGSizeMake(kFooterWidth, kFooterFontScaleFactor * footerFont.xHeight) lineBreakMode:UILineBreakModeWordWrap];
+    CGSize footerSize = [footerText sizeWithFont:footerFont constrainedToSize:CGSizeMake(kContentWidth, kFooterFontScaleFactor * footerFont.xHeight) lineBreakMode:UILineBreakModeWordWrap];
     
     self.sectionFooterHeight = footerSize.height + 2 * kSectionSpacing;
 
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionFooterHeight);
-    CGRect footerFrame = CGRectMake(kFooterMarginX, kFooterMarginY, kFooterWidth, self.sectionFooterHeight);
+    CGRect footerFrame = CGRectMake(kFooterMarginX, kFooterMarginY, kContentWidth, self.sectionFooterHeight);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:footerFrame];

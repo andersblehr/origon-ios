@@ -113,7 +113,7 @@ static NSString * const kScolaRelationshipName = @"scola";
 - (id)fetchEntityWithId:(NSString *)entityId
 {
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(ScCachedEntity.class)];
-    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", kKeyEntityId, entityId]];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", kPropertyEntityId, entityId]];
     
     id entity = nil;
     NSError *error = nil;

@@ -14,7 +14,6 @@
 		5C153EF714CC68D3003A6B61 /* glyphicons_190_circle_plus_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF514CC68D3003A6B61 /* glyphicons_190_circle_plus_white.png */; };
 		5C153EF814CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF614CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png */; };
 		5C153EFB14CC9815003A6B61 /* ScIconSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C153EFA14CC9815003A6B61 /* ScIconSection.m */; };
-		5C17435B14ABA3DC006B859B /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5C17435A14ABA3DC006B859B /* Settings.bundle */; };
 		5C23431214812A3100164478 /* ScStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* ScStrings.m */; };
 		5C26291E158F27860012A74A /* ScAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* ScAuthViewController.m */; };
 		5C2E11141469CDE5005BDE61 /* ScServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* ScServerConnection.m */; };
@@ -57,7 +56,6 @@
 		5C6E6C32158A54F00002FF84 /* ScCachedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C31158A54F00002FF84 /* ScCachedEntity.m */; };
 		5C6E6C35158A54F00002FF84 /* ScYearlySchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C34158A54F00002FF84 /* ScYearlySchedule.m */; };
 		5C6E6C38158A54F00002FF84 /* ScEventInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C37158A54F00002FF84 /* ScEventInvitation.m */; };
-		5C6E6C3B158A54F00002FF84 /* ScMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C3A158A54F00002FF84 /* ScMember.m */; };
 		5C6E6C3E158A54F00002FF84 /* ScMemberResidency.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C3D158A54F00002FF84 /* ScMemberResidency.m */; };
 		5C6E6C41158A54F00002FF84 /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C40158A54F00002FF84 /* ScScola.m */; };
 		5C6E6C44158A54F00002FF84 /* ScDocumentElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C43158A54F00002FF84 /* ScDocumentElement.m */; };
@@ -70,7 +68,6 @@
 		5C6E6C59158A54F20002FF84 /* ScMessageBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C58158A54F20002FF84 /* ScMessageBoard.m */; };
 		5C6E6C5C158A54F20002FF84 /* ScExternalDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C5B158A54F20002FF84 /* ScExternalDocument.m */; };
 		5C6E6C5F158A5D090002FF84 /* ScCachedEntityGhost.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C5E158A5D090002FF84 /* ScCachedEntityGhost.m */; };
-		5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE011482877D001D90C6 /* Localizable.strings */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C7379FD1593111B0065AB4F /* ScTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7379FC1593111B0065AB4F /* ScTextField.m */; };
 		5C83DF81153F59B800BB0B29 /* ScScola+ScScolaExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF80153F59B800BB0B29 /* ScScola+ScScolaExtensions.m */; };
@@ -87,15 +84,16 @@
 		5CBB63C3146080DF00A9133A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5CBB63C1146080DF00A9133A /* InfoPlist.strings */; };
 		5CBB63C5146080DF00A9133A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C4146080DF00A9133A /* main.m */; };
 		5CBB63C9146080DF00A9133A /* ScAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C8146080DF00A9133A /* ScAppDelegate.m */; };
-		5CBB63CF146080DF00A9133A /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CBB63CD146080DF00A9133A /* MainStoryboard_iPad.storyboard */; };
 		5CBB63D2146080DF00A9133A /* ScOldAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63D1146080DF00A9133A /* ScOldAuthViewController.m */; };
 		5CBB63DA146080E000A9133A /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63D9146080E000A9133A /* SenTestingKit.framework */; };
 		5CBB63DB146080E000A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63DC146080E000A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
 		5CBB63E4146080E000A9133A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5CBB63E2146080E000A9133A /* InfoPlist.strings */; };
 		5CBB63E7146080E000A9133A /* ScolaAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63E6146080E000A9133A /* ScolaAppTests.m */; };
+		5CBE919F159909E200516C54 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBE919E159909E200516C54 /* AudioToolbox.framework */; };
+		5CBE91A31599823000516C54 /* UIFont+ScFontExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE91A21599823000516C54 /* UIFont+ScFontExtensions.m */; };
+		5CBE91AC159A11E600516C54 /* ScMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE91AB159A11E600516C54 /* ScMember.m */; };
 		5CBE9C5314AB5160004FE2B7 /* NSString+ScStringExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE9C5214AB515F004FE2B7 /* NSString+ScStringExtensions.m */; };
-		5CCF08BE1463F12A00D41AB0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */; };
 		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
 		5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */; };
@@ -123,7 +121,6 @@
 		5C153EF614CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_190_circle_plus_white@2x.png"; sourceTree = "<group>"; };
 		5C153EF914CC9815003A6B61 /* ScIconSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScIconSection.h; sourceTree = "<group>"; };
 		5C153EFA14CC9815003A6B61 /* ScIconSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScIconSection.m; sourceTree = "<group>"; };
-		5C17435A14ABA3DC006B859B /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* ScStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScStrings.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* ScStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScStrings.m; sourceTree = "<group>"; };
 		5C26291C158F27860012A74A /* ScAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScAuthViewController.h; sourceTree = "<group>"; };
@@ -194,8 +191,6 @@
 		5C6E6C34158A54F00002FF84 /* ScYearlySchedule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScYearlySchedule.m; sourceTree = "<group>"; };
 		5C6E6C36158A54F00002FF84 /* ScEventInvitation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEventInvitation.h; sourceTree = "<group>"; };
 		5C6E6C37158A54F00002FF84 /* ScEventInvitation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScEventInvitation.m; sourceTree = "<group>"; };
-		5C6E6C39158A54F00002FF84 /* ScMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMember.h; sourceTree = "<group>"; };
-		5C6E6C3A158A54F00002FF84 /* ScMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMember.m; sourceTree = "<group>"; };
 		5C6E6C3C158A54F00002FF84 /* ScMemberResidency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMemberResidency.h; sourceTree = "<group>"; };
 		5C6E6C3D158A54F00002FF84 /* ScMemberResidency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMemberResidency.m; sourceTree = "<group>"; };
 		5C6E6C3F158A54F00002FF84 /* ScScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScola.h; sourceTree = "<group>"; };
@@ -220,8 +215,6 @@
 		5C6E6C5B158A54F20002FF84 /* ScExternalDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScExternalDocument.m; sourceTree = "<group>"; };
 		5C6E6C5D158A5D090002FF84 /* ScCachedEntityGhost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCachedEntityGhost.h; sourceTree = "<group>"; };
 		5C6E6C5E158A5D090002FF84 /* ScCachedEntityGhost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCachedEntityGhost.m; sourceTree = "<group>"; };
-		5C71DE001482877D001D90C6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		5C71DE03148287DE001D90C6 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5C7379FB1593111B0065AB4F /* ScTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScTextField.h; sourceTree = "<group>"; };
 		5C7379FC1593111B0065AB4F /* ScTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScTextField.m; sourceTree = "<group>"; };
@@ -252,7 +245,6 @@
 		5CBB63C6146080DF00A9133A /* ScolaApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ScolaApp-Prefix.pch"; sourceTree = "<group>"; };
 		5CBB63C7146080DF00A9133A /* ScAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScAppDelegate.h; sourceTree = "<group>"; };
 		5CBB63C8146080DF00A9133A /* ScAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScAppDelegate.m; sourceTree = "<group>"; };
-		5CBB63CE146080DF00A9133A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		5CBB63D0146080DF00A9133A /* ScOldAuthViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScOldAuthViewController.h; sourceTree = "<group>"; };
 		5CBB63D1146080DF00A9133A /* ScOldAuthViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScOldAuthViewController.m; sourceTree = "<group>"; };
 		5CBB63D8146080E000A9133A /* ScolaAppTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScolaAppTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -261,6 +253,11 @@
 		5CBB63E3146080E000A9133A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5CBB63E5146080E000A9133A /* ScolaAppTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScolaAppTests.h; sourceTree = "<group>"; };
 		5CBB63E6146080E000A9133A /* ScolaAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScolaAppTests.m; sourceTree = "<group>"; };
+		5CBE919E159909E200516C54 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		5CBE91A11599823000516C54 /* UIFont+ScFontExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+ScFontExtensions.h"; sourceTree = "<group>"; };
+		5CBE91A21599823000516C54 /* UIFont+ScFontExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+ScFontExtensions.m"; sourceTree = "<group>"; };
+		5CBE91AA159A11E600516C54 /* ScMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMember.h; sourceTree = "<group>"; };
+		5CBE91AB159A11E600516C54 /* ScMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMember.m; sourceTree = "<group>"; };
 		5CBE9C5114AB515F004FE2B7 /* NSString+ScStringExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ScStringExtensions.h"; sourceTree = "<group>"; };
 		5CBE9C5214AB515F004FE2B7 /* NSString+ScStringExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+ScStringExtensions.m"; sourceTree = "<group>"; };
 		5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -282,10 +279,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CBE919F159909E200516C54 /* AudioToolbox.framework in Frameworks */,
 				5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */,
 				5C36BE9914704E6800DD3CEA /* CoreData.framework in Frameworks */,
 				5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */,
-				5CCF08BE1463F12A00D41AB0 /* AVFoundation.framework in Frameworks */,
 				5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */,
 				5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */,
 				5CBB63BD146080DF00A9133A /* CoreGraphics.framework in Frameworks */,
@@ -355,8 +352,8 @@
 				5C6E6C46158A54F10002FF84 /* ScEventScolaInvitation.m */,
 				5C6E6C5A158A54F20002FF84 /* ScExternalDocument.h */,
 				5C6E6C5B158A54F20002FF84 /* ScExternalDocument.m */,
-				5C6E6C39158A54F00002FF84 /* ScMember.h */,
-				5C6E6C3A158A54F00002FF84 /* ScMember.m */,
+				5CBE91AA159A11E600516C54 /* ScMember.h */,
+				5CBE91AB159A11E600516C54 /* ScMember.m */,
 				5C6E6C3C158A54F00002FF84 /* ScMemberResidency.h */,
 				5C6E6C3D158A54F00002FF84 /* ScMemberResidency.m */,
 				5C6E6C1E158A54EF0002FF84 /* ScMembership.h */,
@@ -404,6 +401,8 @@
 				5C4955F5157D469000F2A885 /* UIColor+ScColorExtensions.m */,
 				5CA94D9915834A9E008CD9EC /* UIDatePicker+ScDatePickerExtensions.h */,
 				5CA94D9A15834A9E008CD9EC /* UIDatePicker+ScDatePickerExtensions.m */,
+				5CBE91A11599823000516C54 /* UIFont+ScFontExtensions.h */,
+				5CBE91A21599823000516C54 /* UIFont+ScFontExtensions.m */,
 				5C6E6C111589AC820002FF84 /* UITableView+UITableViewExtensions.h */,
 				5C6E6C121589AC820002FF84 /* UITableView+UITableViewExtensions.m */,
 				5C50581A14CAEC76000D6587 /* UIView+ScViewExtensions.h */,
@@ -503,6 +502,7 @@
 		5CBB63A9146080DD00A9133A = {
 			isa = PBXGroup;
 			children = (
+				5CBE919E159909E200516C54 /* AudioToolbox.framework */,
 				5CBB63BE146080DF00A9133A /* ScolaApp */,
 				5CBB63DF146080E000A9133A /* ScolaAppTests */,
 				5CBB63B7146080DF00A9133A /* Frameworks */,
@@ -537,7 +537,6 @@
 		5CBB63BE146080DF00A9133A /* ScolaApp */ = {
 			isa = PBXGroup;
 			children = (
-				5CBB63CD146080DF00A9133A /* MainStoryboard_iPad.storyboard */,
 				5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */,
 				5CBB63C7146080DF00A9133A /* ScAppDelegate.h */,
 				5CBB63C8146080DF00A9133A /* ScAppDelegate.m */,
@@ -561,8 +560,6 @@
 				5CBB63C1146080DF00A9133A /* InfoPlist.strings */,
 				5CBB63C4146080DF00A9133A /* main.m */,
 				5CBB63C6146080DF00A9133A /* ScolaApp-Prefix.pch */,
-				5C17435A14ABA3DC006B859B /* Settings.bundle */,
-				5C71DE011482877D001D90C6 /* Localizable.strings */,
 				5C276E7A1475B9A800A6C500 /* Media */,
 			);
 			name = "Supporting Files";
@@ -677,9 +674,6 @@
 			files = (
 				5CBB63C3146080DF00A9133A /* InfoPlist.strings in Resources */,
 				5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */,
-				5CBB63CF146080DF00A9133A /* MainStoryboard_iPad.storyboard in Resources */,
-				5C71DDFF1482877D001D90C6 /* Localizable.strings in Resources */,
-				5C17435B14ABA3DC006B859B /* Settings.bundle in Resources */,
 				5CE9812914C4D81600DD11D4 /* 112-group@2x.png in Resources */,
 				5C3A319314C4D967001A783E /* 112-group.png in Resources */,
 				5C3A319614C61378001A783E /* dark_linen-640x960.png in Resources */,
@@ -777,7 +771,6 @@
 				5C6E6C32158A54F00002FF84 /* ScCachedEntity.m in Sources */,
 				5C6E6C35158A54F00002FF84 /* ScYearlySchedule.m in Sources */,
 				5C6E6C38158A54F00002FF84 /* ScEventInvitation.m in Sources */,
-				5C6E6C3B158A54F00002FF84 /* ScMember.m in Sources */,
 				5C6E6C3E158A54F00002FF84 /* ScMemberResidency.m in Sources */,
 				5C6E6C41158A54F00002FF84 /* ScScola.m in Sources */,
 				5C6E6C44158A54F00002FF84 /* ScDocumentElement.m in Sources */,
@@ -792,6 +785,8 @@
 				5C6E6C5F158A5D090002FF84 /* ScCachedEntityGhost.m in Sources */,
 				5C26291E158F27860012A74A /* ScAuthViewController.m in Sources */,
 				5C7379FD1593111B0065AB4F /* ScTextField.m in Sources */,
+				5CBE91A31599823000516C54 /* UIFont+ScFontExtensions.m in Sources */,
+				5CBE91AC159A11E600516C54 /* ScMember.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -814,29 +809,12 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		5C71DE011482877D001D90C6 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5C71DE001482877D001D90C6 /* en */,
-				5C71DE03148287DE001D90C6 /* nb */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
 		5CBB63C1146080DF00A9133A /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
 				5CBB63C2146080DF00A9133A /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		5CBB63CD146080DF00A9133A /* MainStoryboard_iPad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5CBB63CE146080DF00A9133A /* en */,
-			);
-			name = MainStoryboard_iPad.storyboard;
 			sourceTree = "<group>";
 		};
 		5CBB63E2146080E000A9133A /* InfoPlist.strings */ = {

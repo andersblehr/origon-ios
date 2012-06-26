@@ -12,9 +12,9 @@
 
 typedef enum {
     ScAuthPhaseNone,
-    ScAuthPhaseRegistration,
-    ScAuthPhaseConfirmation,
     ScAuthPhaseLogin,
+    ScAuthPhaseConfirmation,
+    ScAuthPhaseRegistration,
 } ScAuthPhase;
 
 extern NSString * const kHTTPMethodGET;

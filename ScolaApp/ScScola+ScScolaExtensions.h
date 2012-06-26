@@ -12,9 +12,10 @@
 
 @interface ScScola (ScScolaExtensions)
 
-- (ScMembership *)addMember:(ScMember *)member;
-- (ScMemberResidency *)addResident:(ScMember *)resident;
+- (id)addMember:(ScMember *)member;
+- (id)addResident:(ScMember *)resident;
 - (NSString *)residencyIdForMember:(ScMember *)member;
+- (ScMemberResidency *)residencyForMember:(ScMember *)member;
 
 - (BOOL)hasAddress;
 - (BOOL)hasLandline;

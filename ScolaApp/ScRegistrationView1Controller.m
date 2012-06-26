@@ -132,7 +132,7 @@ static NSString * const kSegueToRegistrationView2 = @"registrationView1ToRegistr
     addressLine2Field.text = homeScola.addressLine2;
     postCodeAndCityField.text = homeScola.postCodeAndCity;
     
-    [dateOfBirthPicker setEarlistValidBirthDate];
+    [dateOfBirthPicker setEarliestValidBirthDate];
     [dateOfBirthPicker setLatestValidBirthDate];
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventTouchUpInside | UIControlEventValueChanged];
     

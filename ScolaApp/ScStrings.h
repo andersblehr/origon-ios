@@ -9,6 +9,11 @@
 #import <Foundation/Foundation.h>
 
 
+// Scola EULA
+extern NSString * const strEULA;
+extern NSString * const strAgree;
+extern NSString * const strDisagree;
+
 // Generic labels
 extern NSString * const strName;
 extern NSString * const strNamePlaceholder;
@@ -23,6 +28,9 @@ extern NSString * const strBorn;
 extern NSString * const strBornPlaceholder;
 
 // Generic Scola strings
+extern NSString * const strAbout;
+extern NSString * const strYouSubject;
+extern NSString * const strYouObject;
 extern NSString * const strHousehold;
 extern NSString * const strMyPlace;
 extern NSString * const strOurPlace;
@@ -92,8 +100,9 @@ extern NSString * const strHouseholdMemberListFooter;
 extern NSString * const strDeleteConfirmation;
 
 // Member view
+extern NSString * const strAboutYouViewTitle;
 extern NSString * const strNewMemberViewTitle;
-extern NSString * const strUnderOurRoofViewTitle;
+extern NSString * const strNewHouseholdMemberViewTitle;
 extern NSString * const strGenderActionSheetTitle;
 
 // Error & alert messages
@@ -147,6 +156,8 @@ extern NSString * const strUseNew;
 @interface ScStrings : NSObject
 
 + (void)refreshStrings;
+
 + (NSString *)stringForKey:(NSString *)key;
++ (NSString *)lowercaseStringForKey:(NSString *)key;
 
 @end

@@ -14,7 +14,7 @@ static int const kMaximumRealisticAge = 110;
 
 @implementation UIDatePicker (ScDatePickerExtensions)
 
-- (void)setEarlistValidBirthDate
+- (void)setEarliestValidBirthDate
 {
     NSDateComponents *earliestBirthDateOffset = [[NSDateComponents alloc] init];
     earliestBirthDateOffset.year = -kMaximumRealisticAge;

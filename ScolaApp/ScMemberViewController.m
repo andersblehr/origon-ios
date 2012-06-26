@@ -10,8 +10,10 @@
 
 #import "NSDate+ScDateExtensions.h"
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
+#import "NSString+ScStringExtensions.h"
 #import "UIColor+ScColorExtensions.h"
 #import "UIDatePicker+ScDatePickerExtensions.h"
+#import "UIFont+ScFontExtensions.h"
 #import "UITableView+UITableViewExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
@@ -24,9 +26,11 @@
 #import "ScTableViewCell.h"
 #import "ScTextField.h"
 
+#import "ScMember.h"
 #import "ScMembership.h"
 #import "ScScola.h"
 
+#import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScMember+ScMemberExtensions.h"
 #import "ScScola+ScScolaExtensions.h"
 
@@ -38,55 +42,31 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 @implementation ScMemberViewController
 
-@synthesize membershipViewController;
+@synthesize scenario;
+
+@synthesize scola;
 @synthesize membership;
 
-@synthesize isForHousehold;
-@synthesize isInserting;
-@synthesize isEditing;
+@synthesize membershipViewController;
 
 
-#pragma mark - Auxiliary methods
+#pragma mark - Populating fields
 
-- (void)populateFields
+- (void)populateWithMember:(ScMember *)memberInstance
 {
-    BOOL didMemberRegister = NO;
-    
-    if (member) {
-        nameField.text = member.name;
-        emailField.text = member.entityId;
-        mobilePhoneField.text = member.mobilePhone;
-        gender = member.gender;
-        
-        [dateOfBirthPicker setDate:member.dateOfBirth animated:YES];
-        dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:member.dateOfBirth dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
-        
-        didMemberRegister = [member.didRegister boolValue];
-    } else {
-        NSDictionary *memberDictionary = nil;
-        
-        for (NSDictionary *entityDictionary in entityDictionaries) {
-            NSString *entityClass = [entityDictionary objectForKey:kKeyEntityClass];
-            
-            if ([entityClass isEqualToString:NSStringFromClass(ScMember.class)]) {
-                memberDictionary = entityDictionary;
-            }
-        }
-        
-        nameField.text = [memberDictionary objectForKey:kKeyName];
-        emailField.text = [memberDictionary objectForKey:kKeyEntityId];
-        mobilePhoneField.text = [memberDictionary objectForKey:kKeyMobilePhone];
-        gender = [memberDictionary objectForKey:kKeyGender];
-        
-        NSDate *dateOfBirth = [NSDate dateWithDeserialisedDate:[memberDictionary objectForKey:kKeyDateOfBirth]];
-        [dateOfBirthPicker setDate:dateOfBirth animated:YES];
-        dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:dateOfBirth dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
-        
-        didMemberRegister = [[memberDictionary objectForKey:kKeyDidRegister] boolValue];
+    if (![memberInstance.name isEqualToString:memberInstance.entityId]) {
+        nameField.text = memberInstance.name;
     }
     
-    if (didMemberRegister) {
-        UIFont *nonEditableDetailFont = [ScTextField displayFont];
+    emailField.text = memberInstance.entityId;
+    mobilePhoneField.text = memberInstance.mobilePhone;
+    gender = memberInstance.gender;
+    
+    [dateOfBirthPicker setDate:memberInstance.dateOfBirth animated:YES];
+    dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:memberInstance.dateOfBirth dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
+    
+    if ([memberInstance.didRegister boolValue]) {
+        UIFont *nonEditableDetailFont = [UIFont detailFont];
         UIColor *backgroundColour = [ScTableViewCell backgroundColour];
         
         nameField.enabled = NO;
@@ -102,15 +82,15 @@ static NSInteger const kActionSheetButtonCancel = 2;
         mobilePhoneField.font = nonEditableDetailFont;
         mobilePhoneField.backgroundColor = backgroundColour;
         
-        numberOfLinesInDataEntryCell++;
-        
         [self.tableView beginUpdates];
         [self.tableView endUpdates];
         
-        [dataEntryCell.backgroundView addShadow];
+        [memberCell.backgroundView addShadow];
     }
 }
 
+
+#pragma mark - Adding new members
 
 - (void)promptForGender
 {
@@ -125,7 +105,8 @@ static NSInteger const kActionSheetButtonCancel = 2;
         maleLabel = [ScStrings stringForKey:strMale];
     }
     
-    NSString *sheetTitle = [NSString stringWithFormat:[ScStrings stringForKey:strGenderActionSheetTitle], nameField.text, [femaleLabel lowercaseString], [maleLabel lowercaseString]];
+    NSString *memberRef = isRegistering ? [ScStrings lowercaseStringForKey:strYouSubject] : [NSString givenNameFromFullName:nameField.text];
+    NSString *sheetTitle = [NSString stringWithFormat:[ScStrings stringForKey:strGenderActionSheetTitle], memberRef, [femaleLabel lowercaseString], [maleLabel lowercaseString]];
     UIActionSheet *genderSheet = [[UIActionSheet alloc] initWithTitle:sheetTitle delegate:self cancelButtonTitle:[ScStrings stringForKey:strCancel] destructiveButtonTitle:nil otherButtonTitles:femaleLabel, maleLabel, nil];
     
     [genderSheet showInView:self.view];
@@ -136,25 +117,22 @@ static NSInteger const kActionSheetButtonCancel = 2;
 {
     NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
     
-    if (!membership) {
-        ScScola *homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
-        
-        if (entityDictionaries) {
-            [context saveWithDictionaries:entityDictionaries];
-            
+    if (isAdding) {
+        if (memberEntityDictionaries) {
+            [context saveWithDictionaries:memberEntityDictionaries];
             member = [context fetchEntityWithId:emailField.text];
         } else {
             if (emailField.text.length > 0) {
-                member = [context entityForClass:ScMember.class inScola:homeScola withId:emailField.text];
+                member = [context entityForClass:ScMember.class inScola:scola withId:emailField.text];
             } else {
-                member = [context entityForClass:ScMember.class inScola:homeScola];
+                member = [context entityForClass:ScMember.class inScola:scola];
             }
         }
         
-        if (isForHousehold) {
-            membership = (ScMembership *)[homeScola addResident:member];
+        if (scenario == ScMemberScenarioAddHouseholdMember) {
+            membership = [scola addResident:member];
         } else {
-            membership = [homeScola addMember:member];
+            membership = [scola addMember:member];
         }
     }
     
@@ -162,52 +140,14 @@ static NSInteger const kActionSheetButtonCancel = 2;
     membership.member.dateOfBirth = dateOfBirthPicker.date;
     membership.member.mobilePhone = mobilePhoneField.text;
     membership.member.gender = gender;
+
+    if (isRegistering || isAdding) {
+        membership.member.givenName = [NSString givenNameFromFullName:nameField.text];
+    }
     
     [membershipViewController insertMembershipInTableView:membership];
     
     [self dismissModalViewControllerAnimated:YES];
-}
-
-
-#pragma mark - View lifecycle
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-
-    self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
-    
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBarHidden = NO;
-    
-    numberOfLinesInDataEntryCell = 4;
-    
-    editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
-    saveButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(endEditing)];
-    cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEdit)];
-    
-    if (membership) {
-        self.title = membership.member.name;
-    } else {
-        if (isForHousehold) {
-            self.title = [ScStrings stringForKey:strUnderOurRoofViewTitle];
-        } else {
-            self.title = [ScStrings stringForKey:strNewMemberViewTitle];
-        }
-    }
-
-    if (isEditing || isInserting) {
-        self.navigationItem.leftBarButtonItem = cancelButton;
-        self.navigationItem.rightBarButtonItem = saveButton;
-    } else {
-        self.navigationItem.rightBarButtonItem = editButton;
-    }
-}
-
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 
@@ -249,9 +189,63 @@ static NSInteger const kActionSheetButtonCancel = 2;
 }
 
 
-- (void)cancelEdit
+- (void)cancelEditing
 {
     [self dismissModalViewControllerAnimated:YES];
+}
+
+
+#pragma mark - View lifecycle
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
+    
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBarHidden = NO;
+    
+    editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
+    doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(endEditing)];
+    cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
+    
+    if (membership) {
+        member = membership.member;
+        scola = membership.scola;
+    }
+    
+    isRegistering = (scenario == ScMemberScenarioRegisterUser);
+    
+    isAdding = (scenario == ScMemberScenarioAddHouseholdMember);
+    isAdding = isAdding || (scenario == ScMemberScenarioAddMember);
+    
+    isDisplaying = (scenario == ScMemberScenarioDisplayUser);
+    isDisplaying = isDisplaying || (scenario == ScMemberScenarioDisplayMember);
+    
+    if (isRegistering) {
+        self.title = [member about];
+        self.navigationItem.hidesBackButton = YES;
+        self.navigationItem.rightBarButtonItem = doneButton;
+    } else if (isAdding) {
+        if (scenario == ScMemberScenarioAddHouseholdMember) {
+            self.title = [ScStrings stringForKey:strNewHouseholdMemberViewTitle];
+        } else if (scenario == ScMemberScenarioAddMember) {
+            self.title = [ScStrings stringForKey:strNewMemberViewTitle];
+        }
+        
+        self.navigationItem.leftBarButtonItem = cancelButton;
+        self.navigationItem.rightBarButtonItem = doneButton;
+    } else if (isDisplaying) {
+        self.title = [member about];
+        self.navigationItem.rightBarButtonItem = editButton;
+    }
+}
+
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
 
@@ -271,24 +265,19 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [ScTableViewCell heightForNumberOfLabels:numberOfLinesInDataEntryCell];
+    return [ScTableViewCell heightForEntity:member];
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    dataEntryCell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
+    memberCell = [tableView cellForEntity:member editable:YES delegate:self];
     
     dateOfBirthPicker = [[UIDatePicker alloc] init];
     dateOfBirthPicker.datePickerMode = UIDatePickerModeDate;
-    [dateOfBirthPicker setEarlistValidBirthDate];
+    [dateOfBirthPicker setEarliestValidBirthDate];
     [dateOfBirthPicker setTo01April1976];
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
-    
-    nameField = [dataEntryCell addLabel:[ScStrings stringForKey:strName] withEditableDetail:nil];
-    emailField = [dataEntryCell addLabel:[ScStrings stringForKey:strEmail] withEditableDetail:nil];
-    dateOfBirthField = [dataEntryCell addLabel:[ScStrings stringForKey:strBorn] withEditableDetail:nil];
-    mobilePhoneField = [dataEntryCell addLabel:[ScStrings stringForKey:strMobile] withEditableDetail:nil];
     
     nameField.placeholder = [ScStrings stringForKey:strNamePlaceholder];
     nameField.keyboardType = UIKeyboardTypeDefault;
@@ -308,13 +297,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     mobilePhoneField.keyboardType = UIKeyboardTypeNumberPad;
     mobilePhoneField.delegate = self;
     
-    return dataEntryCell;
-}
-
-
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return YES; // TODO: Probably not needed
+    return memberCell;
 }
 
 
@@ -332,12 +315,12 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField
 {
-    if (!membership && (textField == emailField) && (emailField.text.length > 0)) {
+    if (isAdding && (textField == emailField) && (emailField.text.length > 0)) {
         if ([ScMeta isEmailValid:emailField silent:YES]) {
-            member = [[ScMeta m].managedObjectContext fetchEntityWithId:emailField.text];
+            ScMember *memberCandidate = [[ScMeta m].managedObjectContext fetchEntityWithId:emailField.text];
             
-            if (member) {
-                [self populateFields];
+            if (memberCandidate) {
+                [self populateWithMember:memberCandidate];
             } else {
                 [[[ScServerConnection alloc] init] fetchMemberWithId:emailField.text delegate:self];
             }
@@ -377,9 +360,20 @@ static NSInteger const kActionSheetButtonCancel = 2;
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(NSArray *)data
 {
     if (response.statusCode == kHTTPStatusCodeOK) {
-        entityDictionaries = data;
+        memberEntityDictionaries = data;
+        NSDictionary *memberDictionary = nil;
         
-        [self populateFields];
+        for (NSDictionary *entityDictionary in memberEntityDictionaries) {
+            NSString *entityClass = [entityDictionary objectForKey:kPropertyEntityClass];
+            
+            if ([entityClass isEqualToString:NSStringFromClass(ScMember.class)]) {
+                memberDictionary = entityDictionary;
+            }
+        }
+        
+        ScMember *memberCandidate = [ScCachedEntity entityWithDictionary:memberDictionary];
+        [self populateWithMember:memberCandidate];
+        [[ScMeta m].managedObjectContext deleteObject:memberCandidate];
     }
 }
 

@@ -18,4 +18,6 @@
 - (NSString *)stringByAppendingStringWithComma:(NSString *)string;
 - (NSString *)stringByAppendingStringWithNewline:(NSString *)string;
 
++ (NSString *)givenNameFromFullName:(NSString *)fullName;
+
 @end

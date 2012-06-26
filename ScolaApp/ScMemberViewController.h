@@ -10,34 +10,47 @@
 
 #import "ScServerConnectionDelegate.h"
 
-@class ScMember, ScMembership, ScMembershipViewController, ScTableViewCell;
+typedef enum {
+    ScMemberScenarioRegisterUser,
+    ScMemberScenarioAddHouseholdMember,
+    ScMemberScenarioAddMember,
+    ScMemberScenarioDisplayUser,
+    ScMemberScenarioDisplayMember,
+    ScMemberScenarioEditUser,
+    ScMemberScenarioEditMember,
+} ScMemberScenario;
+
+@class ScMember, ScMembership, ScMembershipViewController, ScScola, ScTableViewCell, ScTextField;
 
 @interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate> {
 @private
-    ScTableViewCell *dataEntryCell;
-    NSInteger numberOfLinesInDataEntryCell;
+    ScTableViewCell *memberCell;
+    ScMember *member;
     
-    UIBarButtonItem *editButton;
-    UIBarButtonItem *saveButton;
-    UIBarButtonItem *cancelButton;
+    ScTextField *nameField;
+    ScTextField *emailField;
+    ScTextField *mobilePhoneField;
+    ScTextField *dateOfBirthField;
     
     UIDatePicker *dateOfBirthPicker;
+    UIBarButtonItem *editButton;
+    UIBarButtonItem *doneButton;
+    UIBarButtonItem *cancelButton;
     
-    UITextField *nameField;
-    UITextField *emailField;
-    UITextField *mobilePhoneField;
-    UITextField *dateOfBirthField;
+    BOOL isRegistering;
+    BOOL isAdding;
+    BOOL isDisplaying;
+    BOOL isEditing;
+    
     NSString *gender;
-    
-    ScMember *member;
-    NSArray *entityDictionaries;
+    NSArray *memberEntityDictionaries;
 }
 
-@property (weak, nonatomic) ScMembershipViewController *membershipViewController;
+@property (nonatomic) ScMemberScenario scenario;
+
+@property (weak, nonatomic) ScScola *scola;
 @property (weak, nonatomic) ScMembership *membership;
 
-@property (nonatomic) BOOL isForHousehold;
-@property (nonatomic) BOOL isInserting;
-@property (nonatomic) BOOL isEditing;
+@property (weak, nonatomic) ScMembershipViewController *membershipViewController;
 
 @end

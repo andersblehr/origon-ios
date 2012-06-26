@@ -25,21 +25,23 @@
 NSString * const kBundleId = @"com.scolaapp.ios.ScolaApp";
 NSString * const kDarkLinenImageFile = @"dark_linen-640x960.png";
 
-NSString * const kMemberViewController = @"vcMember";
-NSString * const kMembershipViewController = @"vcMembership";
+NSString * const kMemberViewControllerId = @"vcMember";
+NSString * const kMembershipViewControllerId = @"vcMembership";
 
-NSString * const kKeyEntityId = @"entityId";
-NSString * const kKeyEntityClass = @"entityClass";
-NSString * const kKeyScolaId = @"scolaId";
-NSString * const kKeyName = @"name";
-NSString * const kKeyDateOfBirth = @"dateOfBirth";
-NSString * const kKeyMobilePhone = @"mobilePhone";
-NSString * const kKeyGender = @"gender";
-NSString * const kKeyDidRegister = @"didRegister";
+NSString * const kPropertyEntityId = @"entityId";
+NSString * const kPropertyEntityClass = @"entityClass";
+NSString * const kPropertyScolaId = @"scolaId";
+NSString * const kPropertyName = @"name";
+NSString * const kPropertyDateOfBirth = @"dateOfBirth";
+NSString * const kPropertyMobilePhone = @"mobilePhone";
+NSString * const kPropertyGender = @"gender";
+NSString * const kPropertyDidRegister = @"didRegister";
 
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
 NSString * const kGenderNoneGiven = @"N";
+
+NSString * const kLanguageHungarian = @"hu";
 
 static NSInteger const kMinimumPassordLength = 6;
 
@@ -338,21 +340,6 @@ static ScMeta *m = nil;
 }
 
 
-+ (BOOL)isGenderGiven:(NSInteger)gender female:(NSString *)female male:(NSString *)male
-{
-    BOOL isGiven = (gender != UISegmentedControlNoSegment);
-    
-    if (!isGiven) {
-        NSString *alertTitle = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidGenderTitle], female, [male lowercaseString]];
-        NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strInvalidGenderAlert], [female lowercaseString], [male lowercaseString]];
-        
-        [ScMeta showAlertWithTitle:alertTitle message:alertMessage];
-    }
-    
-    return isGiven;
-}
-
-
 #pragma mark - Accessors
 
 - (void)setIsUserLoggedIn:(BOOL)isLoggedIn
@@ -361,6 +348,8 @@ static ScMeta *m = nil;
     
     if (isLoggedIn) {
         [ScMeta setUserDefault:authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, userId]];
+    } else {
+        self.userId = nil;
     }
 }
 

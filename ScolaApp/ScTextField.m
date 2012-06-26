@@ -9,16 +9,13 @@
 #import "ScTextField.h"
 
 #import "UIColor+ScColorExtensions.h"
+#import "UIFont+ScFontExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
 #import "ScTableViewCell.h"
 
 static CGFloat const kRoundedCornerRadius = 2.5f;
 static CGFloat const kTextIndent = 4.f;
-static CGFloat const kDefaultFontSize = 14.f;
-
-static CGFloat const kDisplayFontToLineFactor = 2.5f;
-static CGFloat const kEditingFontToLineFactor = 3.f;
 
 static UIColor *textColour = nil;
 static UIColor *selectedTextColour = nil;
@@ -54,13 +51,13 @@ static UIFont *editingFont = nil;
         selectedTextColour = [ScTextField selectedTextColour];
         editingBackgroundColour = [ScTextField editingBackgroundColour];
         
-        displayFont = [ScTextField displayFont];
-        editingFont = [ScTextField editingFont];
+        displayFont = [UIFont detailFont];
+        editingFont = [UIFont editableDetailFont];
         
         didInitialise = YES;
     }
 
-    CGFloat height = editable ? [ScTextField editingLineHeight] : [ScTextField displayLineHeight];
+    CGFloat height = editable ? [editingFont editingLineHeight] : [displayFont displayLineHeight];
     
     self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, height)];
     
@@ -134,40 +131,6 @@ static UIFont *editingFont = nil;
     }
     
     return editingBackgroundColour;
-}
-
-
-+ (UIFont *)displayFont
-{
-    if (!displayFont) {
-        displayFont = [UIFont boldSystemFontOfSize:kDefaultFontSize];
-    }
-    
-    return displayFont;
-}
-
-
-+ (UIFont *)editingFont
-{
-    if (!editingFont) {
-        editingFont = [UIFont systemFontOfSize:kDefaultFontSize];
-    }
-    
-    return editingFont;
-}
-
-
-#pragma mark - Meta information
-
-+ (CGFloat)displayLineHeight
-{
-    return kDisplayFontToLineFactor * [ScTextField displayFont].xHeight;
-}
-
-
-+ (CGFloat)editingLineHeight
-{
-    return kEditingFontToLineFactor * [ScTextField editingFont].xHeight;
 }
 
 

@@ -12,6 +12,7 @@
 #import "NSString+ScStringExtensions.h"
 
 #import "ScLogging.h"
+#import "ScMeta.h"
 
 static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -146,6 +147,23 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 - (NSString *)stringByAppendingStringWithNewline:(NSString *)string
 {
     return [self stringByAppendingString:string withSeparator:@"\n"];
+}
+
+
+#pragma mark - Given name from full name
+
++ (NSString *)givenNameFromFullName:(NSString *)fullName
+{
+    NSString *givenName = nil;
+    NSArray *names = [fullName componentsSeparatedByString:@" "];
+    
+    if ([[ScMeta m].displayLanguage isEqualToString:kLanguageHungarian]) {
+        givenName = [names objectAtIndex:names.count - 1];
+    } else {
+        givenName = [names objectAtIndex:0];
+    }
+    
+    return givenName;
 }
 
 @end

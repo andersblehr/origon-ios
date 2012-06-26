@@ -92,6 +92,7 @@
         <attribute name="dateOfBirth" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="didRegister" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="gender" attributeType="String" syncable="YES"/>
+        <attribute name="givenName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="mobilePhone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="passwordHash" optional="YES" attributeType="String" syncable="YES"/>
@@ -246,6 +247,7 @@
     </entity>
     <elements>
         <element name="ScCachedEntity" positionX="-369" positionY="423" width="128" height="150"/>
+        <element name="ScCachedEntityGhost" positionX="160" positionY="192" width="128" height="75"/>
         <element name="ScDevice" positionX="322" positionY="-522" width="128" height="90"/>
         <element name="ScDocument" positionX="342" positionY="-141" width="128" height="150"/>
         <element name="ScDocumentElement" positionX="511" positionY="-189" width="128" height="90"/>
@@ -268,6 +270,5 @@
         <element name="ScToDoItem" positionX="333" positionY="-267" width="128" height="105"/>
         <element name="ScWeeklyScheduleItem" positionX="-20" positionY="306" width="128" height="120"/>
         <element name="ScYearlySchedule" positionX="169" positionY="243" width="128" height="120"/>
-        <element name="ScCachedEntityGhost" positionX="160" positionY="192" width="128" height="75"/>
     </elements>
 </model>

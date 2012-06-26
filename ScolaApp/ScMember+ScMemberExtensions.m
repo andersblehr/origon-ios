@@ -8,6 +8,9 @@
 
 #import "ScMember+ScMemberExtensions.h"
 
+#import "ScMeta.h"
+#import "ScStrings.h"
+
 #import "NSDate+ScDateExtensions.h"
 
 
@@ -15,6 +18,15 @@
 
 
 #pragma mark - Meta information
+
+- (NSString *)about
+{
+    BOOL isUser = [self.entityId isEqualToString:[ScMeta m].userId];
+    NSString *memberRef = isUser ? self.givenName : [ScStrings stringForKey:strYouObject];
+    
+    return [NSString stringWithFormat:@"%@ %@", [ScStrings stringForKey:strAbout], memberRef];
+}
+
 
 - (BOOL)hasMobilPhone
 {

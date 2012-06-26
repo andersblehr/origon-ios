@@ -33,8 +33,6 @@ static NSInteger const kAddressSection = 0;
 static NSInteger const kAdultsSection = 1;
 static NSInteger const kMinorsSection = 2;
 
-static CGFloat const kScreenWidth = 320.f;
-
 static CGFloat const kDefaultHeaderFooterHeight = 0.f;
 static CGFloat const kMinimumHeaderFooterHeight = 1.f;
 static CGFloat const kSectionSpacing = 5.f;
@@ -157,11 +155,10 @@ static CGFloat const kFooterFontSize = 13.f;
 
 - (void)addMembership
 {
-    ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewController];
+    ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
     
+    memberViewController.scenario = ScMemberScenarioAddHouseholdMember;
     memberViewController.membershipViewController = self;
-    memberViewController.isForHousehold = isForHousehold;
-    memberViewController.isInserting = YES;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
     

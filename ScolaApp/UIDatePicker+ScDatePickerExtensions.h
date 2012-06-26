@@ -10,7 +10,7 @@
 
 @interface UIDatePicker (ScDatePickerExtensions)
 
-- (void)setEarlistValidBirthDate;
+- (void)setEarliestValidBirthDate;
 - (void)setLatestValidBirthDate;
 - (void)setTo01April1976;
 

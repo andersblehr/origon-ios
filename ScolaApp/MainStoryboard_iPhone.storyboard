@@ -139,6 +139,7 @@
                     <navigationItem key="navigationItem" id="lej-0U-7XK"/>
                     <connections>
                         <segue destination="9Fa-Np-JO6" kind="push" identifier="authToMainView" id="qqb-h7-3fc"/>
+                        <segue destination="T87-Bh-GzL" kind="push" identifier="authToMemberView" id="gt5-sM-lTL"/>
                     </connections>
                 </tableViewController>
             </objects>
@@ -245,7 +246,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="-290" y="235"/>
+            <point key="canvasLocation" x="-758" y="55"/>
         </scene>
         <!--Sc Registration View2 Controller-->
         <scene sceneID="nLG-01-8RX">
@@ -323,7 +324,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="165" y="235"/>
+            <point key="canvasLocation" x="-303" y="55"/>
         </scene>
         <!--Sc Schedule View Controller - <strSchedule>-->
         <scene sceneID="JXA-tO-Wlm">
@@ -346,7 +347,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="1653" y="63"/>
+            <point key="canvasLocation" x="709" y="686"/>
         </scene>
         <!--Sc Task View Controller - <strTasks>-->
         <scene sceneID="FtR-nb-C3g">
@@ -369,7 +370,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="1653" y="679"/>
+            <point key="canvasLocation" x="709" y="1302"/>
         </scene>
         <!--Sc Message Board View Controller - <strMessageBoard>-->
         <scene sceneID="uXo-MS-8t7">
@@ -392,7 +393,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="1653" y="1904"/>
+            <point key="canvasLocation" x="709" y="2527"/>
         </scene>
         <!--Sc Membership View Controller - <strMemberships>-->
         <scene sceneID="5fB-zI-Tq9">
@@ -413,7 +414,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="1653" y="-555"/>
+            <point key="canvasLocation" x="709" y="68"/>
         </scene>
         <!--Sc Member View Controller - <strMember>-->
         <scene sceneID="x7u-en-eVb">
@@ -421,7 +422,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Br5-90-R22" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController storyboardIdentifier="vcMember" id="T87-Bh-GzL" customClass="ScMemberViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="WsN-Uc-XTj">
-                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -432,7 +433,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     <navigationItem key="navigationItem" title="&lt;strMember>" id="uRg-zS-kRb"/>
                 </tableViewController>
             </objects>
-            <point key="canvasLocation" x="2156" y="-556"/>
+            <point key="canvasLocation" x="1212" y="67"/>
         </scene>
         <!--Sc Event View Controller - <strEvents>-->
         <scene sceneID="FF8-Hh-UBk">
@@ -455,7 +456,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="1653" y="1297"/>
+            <point key="canvasLocation" x="709" y="1920"/>
         </scene>
         <!--Sc Main View Controller - <strMyScolas>-->
         <scene sceneID="SzQ-Uz-J3x">
@@ -508,7 +509,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="641" y="679"/>
+            <point key="canvasLocation" x="-303" y="1302"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="VA0-NY-pMO">
@@ -532,7 +533,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     </connections>
                 </tabBarController>
             </objects>
-            <point key="canvasLocation" x="1120" y="679"/>
+            <point key="canvasLocation" x="176" y="1302"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="drI-5N-FJV">
@@ -581,84 +582,13 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="83-calendar.png" width="23" height="25"/>
         <image name="dark_linen-640x960.png" width="640" height="960"/>
     </resources>
-    <classes>
-        <class className="ScAuthViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScAuthViewController.h"/>
-        </class>
-        <class className="ScEventViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScEventViewController.h"/>
-        </class>
-        <class className="ScMainViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMainViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="showInfo:"/>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-            </relationships>
-        </class>
-        <class className="ScMemberViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMemberViewController.h"/>
-        </class>
-        <class className="ScMembershipViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMembershipViewController.h"/>
-        </class>
-        <class className="ScMessageBoardViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMessageBoardViewController.h"/>
-        </class>
-        <class className="ScOldAuthViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScOldAuthViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="showInfo:"/>
-                <relationship kind="outlet" name="activityIndicator" candidateClass="UIActivityIndicatorView"/>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="emailOrPasswordField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="nameOrEmailOrRegistrationCodeField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="passwordField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="scolaDescriptionHeadingLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="scolaDescriptionTextView" candidateClass="UITextView"/>
-                <relationship kind="outlet" name="scolaSplashLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="showInfoButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="userHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="userIntentionControl" candidateClass="UISegmentedControl"/>
-            </relationships>
-        </class>
-        <class className="ScRegistrationView1Controller" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScRegistrationView1Controller.h"/>
-            <relationships>
-                <relationship kind="outlet" name="addressLine1Field" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="addressLine2Field" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="addressUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="dateOfBirthField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="dateOfBirthPicker" candidateClass="UIDatePicker"/>
-                <relationship kind="outlet" name="dateOfBirthUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="postCodeAndCityField" candidateClass="UITextField"/>
-            </relationships>
-        </class>
-        <class className="ScRegistrationView2Controller" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScRegistrationView2Controller.h"/>
-            <relationships>
-                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="genderControl" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="genderUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="landlineField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="landlineUserHelpLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="mobilePhoneField" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="mobilePhoneUserHelpLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-        <class className="ScScheduleViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScScheduleViewController.h"/>
-        </class>
-        <class className="ScTaskViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScTaskViewController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="qqb-h7-3fc"/>
+        <segue reference="FHF-lx-n1T"/>
+        <segue reference="gt5-sM-lTL"/>
     </inferredMetricsTieBreakers>
 </document>

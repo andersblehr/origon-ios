@@ -10,6 +10,8 @@
 
 @interface ScMember (ScMemberExtensions)
 
+- (NSString *)about;
+
 - (BOOL)hasMobilPhone;
 - (BOOL)isMinor;
 

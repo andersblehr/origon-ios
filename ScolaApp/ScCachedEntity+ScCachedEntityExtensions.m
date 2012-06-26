@@ -54,8 +54,8 @@
 {
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     
-    [dictionary setObject:self.entityId forKey:kKeyEntityId];
-    [dictionary setObject:self.entity.name forKey:kKeyEntityClass];
+    [dictionary setObject:self.entityId forKey:kPropertyEntityId];
+    [dictionary setObject:self.entity.name forKey:kPropertyEntityClass];
     
     return dictionary;
 }
@@ -63,19 +63,19 @@
 
 #pragma mark - Dictionary serialisation & deserialisation
 
-+ (ScCachedEntity *)entityWithDictionary:(NSDictionary *)dictionary
++ (id)entityWithDictionary:(NSDictionary *)dictionary
 {
     NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
     NSMutableDictionary *entityRefs = [[NSMutableDictionary alloc] init];
-    NSString *entityId = [dictionary valueForKey:kKeyEntityId];
+    NSString *entityId = [dictionary valueForKey:kPropertyEntityId];
     
     ScCachedEntity *entity = [context fetchEntityWithId:entityId];
     
     if (!entity) {
-        NSString *entityClass = [dictionary objectForKey:kKeyEntityClass];
+        NSString *entityClass = [dictionary objectForKey:kPropertyEntityClass];
         
         entity = [context entityForClass:NSClassFromString(entityClass) withId:entityId];
-        entity.scolaId = [dictionary objectForKey:kKeyScolaId];
+        entity.scolaId = [dictionary objectForKey:kPropertyScolaId];
     }
     
     NSDictionary *attributes = [entity.entity attributesByName];
@@ -119,7 +119,7 @@
     NSDictionary *attributes = [self.entity attributesByName];
     NSDictionary *relationships = [self.entity relationshipsByName];
     
-    [entityDictionary setObject:self.entity.name forKey:kKeyEntityClass];
+    [entityDictionary setObject:self.entity.name forKey:kPropertyEntityClass];
     
     for (NSString *name in [attributes allKeys]) {
         if ([self isPropertyPersistable:name]) {
@@ -170,7 +170,7 @@
     
     for (NSString *name in [entityRefs allKeys]) {
         NSDictionary *entityRef = [entityRefs objectForKey:name];
-        NSString *destinationId = [entityRef objectForKey:kKeyEntityId];
+        NSString *destinationId = [entityRef objectForKey:kPropertyEntityId];
         
         ScCachedEntity *entity = [[ScMeta m] importedEntityWithId:destinationId];
         

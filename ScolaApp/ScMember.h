@@ -2,7 +2,7 @@
 //  ScMember.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 14.06.12.
+//  Created by Anders Blehr on 26.06.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -22,6 +22,7 @@
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * passwordHash;
 @property (nonatomic, retain) NSData * picture;
+@property (nonatomic, retain) NSString * givenName;
 @property (nonatomic, retain) NSSet *contactForEvents;
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;

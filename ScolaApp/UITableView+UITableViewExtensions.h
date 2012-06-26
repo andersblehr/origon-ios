@@ -12,9 +12,11 @@
 
 @interface UITableView (UITableViewExtensions)
 
-- (ScTableViewCell *)cellWithReuseIdentifier:(NSString *)reuseIdentifier;
-- (ScTableViewCell *)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
-- (ScTableViewCell *)cellForEntity:(ScCachedEntity *)entity delegate:(id)delegate;
+- (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier;
+- (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
+- (id)cellForEntity:(ScCachedEntity *)entity delegate:(id)delegate;
+- (id)cellForEntity:(ScCachedEntity *)entity editable:(BOOL)editable delegate:(id)delegate;
+- (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate;
 
 - (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier;
 

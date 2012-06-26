@@ -13,21 +13,23 @@
 extern NSString * const kBundleId;
 extern NSString * const kDarkLinenImageFile;
 
-extern NSString * const kMemberViewController;
-extern NSString * const kMembershipViewController;
+extern NSString * const kMemberViewControllerId;
+extern NSString * const kMembershipViewControllerId;
 
-extern NSString * const kKeyEntityId;
-extern NSString * const kKeyEntityClass;
-extern NSString * const kKeyScolaId;
-extern NSString * const kKeyName;
-extern NSString * const kKeyDateOfBirth;
-extern NSString * const kKeyMobilePhone;
-extern NSString * const kKeyGender;
-extern NSString * const kKeyDidRegister;
+extern NSString * const kPropertyEntityId;
+extern NSString * const kPropertyEntityClass;
+extern NSString * const kPropertyScolaId;
+extern NSString * const kPropertyName;
+extern NSString * const kPropertyDateOfBirth;
+extern NSString * const kPropertyMobilePhone;
+extern NSString * const kPropertyGender;
+extern NSString * const kPropertyDidRegister;
 
 extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;
 extern NSString * const kGenderNoneGiven;
+
+extern NSString * const kLanguageHungarian;
 
 @class Reachability, ScCachedEntity, ScServerConnection;
 
@@ -80,7 +82,6 @@ extern NSString * const kGenderNoneGiven;
 + (BOOL)isMobileNumberValid:(UITextField *)mobileNumberField;
 + (BOOL)isDateOfBirthValid:(UITextField *)dateField;
 + (BOOL)isAddressValidWithLine1:(NSString *)line1 line2:(NSString *)line2 postCodeAndCity:(NSString *)postCodeAndCity;
-+ (BOOL)isGenderGiven:(NSInteger)gender female:(NSString *)female male:(NSString *)male;
 
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;

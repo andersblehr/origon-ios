@@ -17,8 +17,20 @@ extern NSString * const kTextFieldKeyPassword;
 extern NSString * const kTextFieldKeyRegistrationCode;
 extern NSString * const kTextFieldKeyRepeatPassword;
 
-extern NSString * const kLabelKeyLoginLabel;
-extern NSString * const kLabelKeyConfirmationLabel;
+extern NSString * const kTextFieldKeyName;
+extern NSString * const kTextFieldKeyMobilePhone;
+extern NSString * const kTextFieldKeyDateOfBirth;
+
+extern NSString * const kTextFieldKeyAddressLine1;
+extern NSString * const kTextFieldKeyAddressLine2;
+extern NSString * const kTextFieldKeyPostCodeAndCity;
+extern NSString * const kTextFieldKeyLandline;
+
+extern CGFloat const kScreenWidth;
+extern CGFloat const kCellWidth;
+extern CGFloat const kContentWidth;
+extern CGFloat const kContentMargin;
+extern CGFloat const kKeyboardHeight;
 
 @class ScCachedEntity, ScTextField;
 
@@ -26,7 +38,6 @@ extern NSString * const kLabelKeyConfirmationLabel;
 @private
     BOOL isSelectable;
     
-    CGFloat labelLineHeight;
     CGFloat verticalOffset;
     
     NSMutableDictionary *labels;
@@ -38,19 +49,17 @@ extern NSString * const kLabelKeyConfirmationLabel;
 + (UIColor *)selectedBackgroundColour;
 + (UIColor *)labelColour;
 + (UIColor *)selectedLabelColour;
-+ (UIFont *)labelFont;
-
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
-- (id)initWithEntity:(ScCachedEntity *)entity delegate:(id)delegate;
-
-- (ScTextField *)textFieldWithKey:(NSString *)key;
-
-- (void)addLabel:(NSString *)label withDetail:(NSString *)detail;
-- (ScTextField *)addLabel:(NSString *)label withEditableDetail:(NSString *)detail;
-- (ScTextField *)addEditableFieldWithOffset:(CGFloat)offset centred:(BOOL)centred;
 
 + (CGFloat)heightForEntity:(ScCachedEntity *)entity;
 + (CGFloat)heightForNumberOfLabels:(NSInteger)numberOfLabels;
+
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
+- (id)initWithEntity:(ScCachedEntity *)entity editable:(BOOL)editable delegate:(id)delegate;
+- (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
+
+- (ScTextField *)textFieldWithKey:(NSString *)key;
+
+- (void)shake;
 
 @end

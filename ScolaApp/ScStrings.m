@@ -18,6 +18,11 @@ static NSDictionary *strings = nil;
 static NSString * const kStringsPlist = @"strings.plist";
 
 
+// Scola EULA
+NSString * const strEULA                             = @"strEULA";
+NSString * const strAgree                            = @"strAgree";
+NSString * const strDisagree                         = @"strDisagree";
+
 // Generic labels
 NSString * const strName                             = @"strName";
 NSString * const strNamePlaceholder                  = @"strNamePlaceholder";
@@ -32,6 +37,9 @@ NSString * const strBorn                             = @"strBorn";
 NSString * const strBornPlaceholder                  = @"strBornPlaceholder";
 
 // Generic Scola strings
+NSString * const strAbout                            = @"strAbout";
+NSString * const strYouSubject                       = @"strYouSubject";
+NSString * const strYouObject                        = @"strYouObject";
 NSString * const strHousehold                        = @"strHousehold";
 NSString * const strMyPlace                          = @"strMyPlace";
 NSString * const strOurPlace                         = @"strOurPlace";
@@ -101,8 +109,9 @@ NSString * const strHouseholdMemberListFooter        = @"strHouseholdMemberListF
 NSString * const strDeleteConfirmation               = @"strDeleteConfirmation";
 
 // Member view
+NSString * const strAboutYouViewTitle                = @"strAboutYouViewTitle";
 NSString * const strNewMemberViewTitle               = @"strNewMemberViewTitle";
-NSString * const strUnderOurRoofViewTitle            = @"strUnderOurRoofViewTitle";
+NSString * const strNewHouseholdMemberViewTitle      = @"strNewHouseholdMemberViewTitle";
 NSString * const strGenderActionSheetTitle           = @"strGenderActionSheetTitle";
 
 // Error & alert messages
@@ -201,6 +210,12 @@ NSString * const strUseNew                           = @"strUseNew";
     }
     
     return string;
+}
+
+
++ (NSString *)lowercaseStringForKey:(NSString *)key
+{
+    return [[ScStrings stringForKey:key] lowercaseString];
 }
 
 

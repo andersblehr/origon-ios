@@ -12,7 +12,7 @@
 
 @interface ScCachedEntity (ScCachedEntityExtensions)
 
-+ (ScCachedEntity *)entityWithDictionary:(NSDictionary *)dictionary;
++ (id)entityWithDictionary:(NSDictionary *)dictionary;
 - (NSDictionary *)toDictionary;
 
 - (BOOL)isPropertyPersistable:(NSString *)property;

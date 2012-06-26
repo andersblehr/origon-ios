@@ -74,7 +74,7 @@ static int const kPopUpButtonUseNew = 1;
 
 - (void)modallyAddHouseholdMembers
 {
-    ScMembershipViewController *membershipViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMembershipViewController];
+    ScMembershipViewController *membershipViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMembershipViewControllerId];
     
     membershipViewController.scola = homeScola;
     membershipViewController.isRegistrationWizardStep = YES;
@@ -208,8 +208,7 @@ static int const kPopUpButtonUseNew = 1;
 
 - (void)completeRegistration
 {
-    BOOL didComplete = [ScMeta isGenderGiven:genderControl.selectedSegmentIndex female:femaleLabel male:maleLabel];
-    didComplete = didComplete && [self isPhoneNumberGiven];
+    BOOL didComplete = didComplete && [self isPhoneNumberGiven];
     
     if (didComplete) {
         [self syncViewState];
