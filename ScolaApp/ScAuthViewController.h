@@ -11,7 +11,8 @@
 #import "ScServerConnection.h"
 #import "ScServerConnectionDelegate.h"
 
-@class ScMember, ScScola, ScTableViewCell, ScTextField;
+@class ScMember, ScScola;
+@class ScTableViewCell, ScTextField;
 
 @interface ScAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, ScServerConnectionDelegate> {
 @private

@@ -64,18 +64,18 @@ static NSString * const kLogoText = @"..scola..";
 }
 
 
-- (id)cellForEntity:(ScCachedEntity *)entity delegate:(id)delegate
+- (id)cellForEntity:(ScCachedEntity *)entity
 {
-    return [self cellForEntity:entity editable:NO delegate:delegate];
+    return [self cellForEntity:entity delegate:nil];
 }
 
 
-- (id)cellForEntity:(ScCachedEntity *)entity editable:(BOOL)editable delegate:(id)delegate
+- (id)cellForEntity:(ScCachedEntity *)entity delegate:(id)delegate
 {
     ScTableViewCell *cell = [self dequeueReusableCellWithIdentifier:entity.entityId];
     
     if (!cell) {
-        cell = [[ScTableViewCell alloc] initWithEntity:entity editable:editable delegate:delegate];
+        cell = [[ScTableViewCell alloc] initWithEntity:entity delegate:delegate];
     }
     
     return cell;
@@ -138,23 +138,6 @@ static NSString * const kLogoText = @"..scola..";
 }
 
 
-- (UIActivityIndicatorView *)addActivityIndicator
-{
-    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, kKeyboardHeight);
-    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
-
-    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    activityIndicatorView.center = containerView.center;
-    activityIndicatorView.hidesWhenStopped = YES;
-    
-    [containerView addSubview:activityIndicatorView];
-    
-    self.tableFooterView = containerView;
-    
-    return activityIndicatorView;
-}
-
-
 - (UIView *)headerViewWithTitle:(NSString *)title
 {
     UIFont *headerFont = [UIFont boldSystemFontOfSize:kHeaderFontSize];
@@ -209,6 +192,23 @@ static NSString * const kLogoText = @"..scola..";
 }
 
 
+- (UIActivityIndicatorView *)addActivityIndicator
+{
+    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, kKeyboardHeight);
+    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
+    
+    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    activityIndicatorView.center = containerView.center;
+    activityIndicatorView.hidesWhenStopped = YES;
+    
+    [containerView addSubview:activityIndicatorView];
+    
+    self.tableFooterView = containerView;
+    
+    return activityIndicatorView;
+}
+
+
 #pragma mark - Cell insertion
 
 - (void)insertCellForRow:(NSInteger)row inSection:(NSInteger)section;
@@ -224,7 +224,7 @@ static NSString * const kLogoText = @"..scola..";
     if (isLastRowInSection) {
         UITableViewCell *precedingCell = [self cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row - 1 inSection:section]];
         
-        [precedingCell.backgroundView addShadowForMiddleOrTopTableViewCell];
+        [precedingCell.backgroundView addNonBottomCellShadow];
     }
 }
 

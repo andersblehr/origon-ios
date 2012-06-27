@@ -487,7 +487,7 @@ static NSInteger const kAlertButtonContinue = 1;
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [authCell.backgroundView addShadow];
+    [authCell.backgroundView addOnlyOrBottomCellShadow];
     
     if (authPhase == ScAuthPhaseLogin) {
         emailField = [authCell textFieldWithKey:kTextFieldKeyEmail];

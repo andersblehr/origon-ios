@@ -318,9 +318,9 @@ static CGFloat const kFooterFontSize = 13.f;
     BOOL isLastRowInSection = (indexPath.row == numberOfRowsInSection - 1);
     
     if (isLastRowInSection) {
-        [cell.backgroundView addShadow];
+        [cell.backgroundView addOnlyOrBottomCellShadow];
     } else {
-        [cell.backgroundView addShadowForMiddleOrTopTableViewCell];
+        [cell.backgroundView addNonBottomCellShadow];
     }
 }
 

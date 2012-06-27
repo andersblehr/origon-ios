@@ -17,13 +17,6 @@
 static CGFloat const kRoundedCornerRadius = 2.5f;
 static CGFloat const kTextIndent = 4.f;
 
-static UIColor *textColour = nil;
-static UIColor *selectedTextColour = nil;
-static UIColor *editingBackgroundColour = nil;
-
-static UIFont *displayFont = nil;
-static UIFont *editingFont = nil;
-
 
 @implementation ScTextField
 
@@ -44,37 +37,27 @@ static UIFont *editingFont = nil;
 
 - (id)initWithOrigin:(CGPoint)origin width:(CGFloat)width editable:(BOOL)editable
 {
-    static BOOL didInitialise = NO;
-    
-    if (!didInitialise) {
-        textColour = [ScTextField textColour];
-        selectedTextColour = [ScTextField selectedTextColour];
-        editingBackgroundColour = [ScTextField editingBackgroundColour];
-        
-        displayFont = [UIFont detailFont];
-        editingFont = [UIFont editableDetailFont];
-        
-        didInitialise = YES;
-    }
+    UIFont *displayFont = [UIFont fontWithType:ScFontTypeDetail];
+    UIFont *editingFont = [UIFont fontWithType:ScFontTypeEditableDetail];
 
     CGFloat height = editable ? [editingFont editingLineHeight] : [displayFont displayLineHeight];
     
     self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, height)];
     
     if (self) {
-        self.textColor = textColour;
+        self.textColor = [UIColor colorWithType:ScColorText];
         self.textAlignment = UITextAlignmentLeft;
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         self.layer.cornerRadius = kRoundedCornerRadius;
         
         if (editable) {
             self.font = editingFont;
-            self.backgroundColor = editingBackgroundColour;
+            self.backgroundColor = [UIColor colorWithType:ScColorFieldBackground];
             
-            [self addCurlShadow];
+            [self addEditableFieldShadow];
         } else {
             self.font = displayFont;
-            self.backgroundColor = [ScTableViewCell backgroundColour];
+            self.backgroundColor = [UIColor colorWithType:ScColorBackground];
         }
     }
     
@@ -99,38 +82,6 @@ static UIFont *editingFont = nil;
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
     return CGRectInset(bounds, kTextIndent, 0.f);
-}
-
-
-#pragma mark - Default colours and fonts
-
-+ (UIColor *)textColour
-{
-    if (!textColour) {
-        textColour = [UIColor darkTextColor];
-    }
-    
-    return textColour;
-}
-
-
-+ (UIColor *)selectedTextColour
-{
-    if (!selectedTextColour) {
-        selectedTextColour = [UIColor whiteColor];
-    }
-    
-    return selectedTextColour;
-}
-
-
-+ (UIColor *)editingBackgroundColour
-{
-    if (!editingBackgroundColour) {
-        editingBackgroundColour = [UIColor ghostWhiteColor];
-    }
-    
-    return editingBackgroundColour;
 }
 
 

@@ -8,15 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum {
+    ScFontTypeLabel,
+    ScFontTypeDetail,
+    ScFontTypeEditableDetail,
+    ScFontTypeTitle,
+    ScFontTypeEditableTitle,
+} ScFontType;
+
 @interface UIFont (ScFontExtensions)
 
-+ (UIFont *)labelFont;
-+ (UIFont *)detailFont;
-+ (UIFont *)editableDetailFont;
-
-+ (CGFloat)labelLineHeight;
-+ (CGFloat)detailLineHeight;
-+ (CGFloat)editableDetailLineHeight;
++ (UIFont *)fontWithType:(ScFontType)fontType;
++ (CGFloat)lineHeightForFontWithType:(ScFontType)fontType;
 
 - (CGFloat)displayLineHeight;
 - (CGFloat)editingLineHeight;

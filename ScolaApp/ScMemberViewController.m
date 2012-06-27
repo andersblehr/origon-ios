@@ -66,8 +66,8 @@ static NSInteger const kActionSheetButtonCancel = 2;
     dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:memberInstance.dateOfBirth dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
     
     if ([memberInstance.didRegister boolValue]) {
-        UIFont *nonEditableDetailFont = [UIFont detailFont];
-        UIColor *backgroundColour = [ScTableViewCell backgroundColour];
+        UIFont *nonEditableDetailFont = [UIFont fontWithType:ScFontTypeDetail];
+        UIColor *backgroundColour = [UIColor colorWithType:ScColorBackground];
         
         nameField.enabled = NO;
         nameField.font = nonEditableDetailFont;
@@ -85,7 +85,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
         [self.tableView beginUpdates];
         [self.tableView endUpdates];
         
-        [memberCell.backgroundView addShadow];
+        [memberCell.backgroundView addOnlyOrBottomCellShadow];
     }
 }
 
@@ -271,7 +271,13 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    memberCell = [tableView cellForEntity:member editable:YES delegate:self];
+    if (isDisplaying) {
+        memberCell = [tableView cellForEntity:member];
+    } else if (isRegistering || isEditing) {
+        memberCell = [tableView cellForEntity:member delegate:self];
+    } else if (isAdding) {
+        memberCell = [tableView cellForEntityClass:ScMember.class delegate:self];
+    }
     
     dateOfBirthPicker = [[UIDatePicker alloc] init];
     dateOfBirthPicker.datePickerMode = UIDatePickerModeDate;
@@ -305,7 +311,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [cell.backgroundView addShadow];
+    [cell.backgroundView addOnlyOrBottomCellShadow];
     
     [nameField becomeFirstResponder];
 }

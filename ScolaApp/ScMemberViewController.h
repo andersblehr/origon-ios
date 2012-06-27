@@ -20,7 +20,8 @@ typedef enum {
     ScMemberScenarioEditMember,
 } ScMemberScenario;
 
-@class ScMember, ScMembership, ScMembershipViewController, ScScola, ScTableViewCell, ScTextField;
+@class ScMember, ScMembership, ScScola;
+@class ScMembershipViewController, ScTableViewCell, ScTextField;
 
 @interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate> {
 @private

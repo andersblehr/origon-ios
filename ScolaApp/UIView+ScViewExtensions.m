@@ -11,8 +11,13 @@
 #import "UIColor+ScColorExtensions.h"
 
 
-static CGFloat const kShadowRadius = 3.75f;
-static CGFloat const kVerticalShadowOffset = 5.f;
+static CGFloat const kCellShadowRadius = 3.75f;
+static CGFloat const kCellShadowOffset = 5.f;
+static CGFloat const kFieldShadowRadius = 2.f;
+static CGFloat const kFieldShadowOffset = 3.f;
+static CGFloat const kFieldShadowCurlFactor = 7.f;
+static CGFloat const kImageShadowRadius = 1.f;
+static CGFloat const kImageShadowOffset = 1.5f;
 
 
 @implementation UIView (ScViewExtensions)
@@ -32,47 +37,49 @@ static CGFloat const kVerticalShadowOffset = 5.f;
 
 #pragma mark - Shadows
 
-- (void)projectShadowOfRectangle:(CGRect)rectangle
+- (void)addShadowWithPath:(UIBezierPath *)path colour:(UIColor *)colour radius:(CGFloat)radius offset:(CGFloat)offset
 {
+    self.layer.shadowPath = path.CGPath;
+    self.layer.shadowColor = colour.CGColor;
+    self.layer.shadowRadius = radius;
+    self.layer.shadowOffset = CGSizeMake(0.f, offset);
+    
     self.layer.masksToBounds = NO;
-    self.layer.shadowColor = [UIColor blackColor].CGColor;
     self.layer.shadowOpacity = 1.f;
-    self.layer.shadowRadius = kShadowRadius;
-    self.layer.shadowOffset = CGSizeMake(0.f, kVerticalShadowOffset);
-    self.layer.shadowPath = [UIBezierPath bezierPathWithRect:rectangle].CGPath;
 }
 
 
-- (void)addShadow
+- (void)addOnlyOrBottomCellShadow
 {
-    [self projectShadowOfRectangle:self.bounds];
+    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor blackColor] radius:kCellShadowRadius offset:kCellShadowOffset];
 }
 
 
-- (void)addShadowForMiddleOrTopTableViewCell
+- (void)addNonBottomCellShadow
 {
-    [self projectShadowOfRectangle:CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height - 2.75f * kShadowRadius)];
+    CGRect nonOverlappingShadowRect = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height - 2.75f * kCellShadowRadius);
+    
+    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:nonOverlappingShadowRect] colour:[UIColor blackColor] radius:kCellShadowRadius offset:kCellShadowOffset];
 }
 
 
-- (void)addCurlShadow
+- (void)addEditableFieldShadow
 {
     CGSize size = self.bounds.size;
-    CGFloat curlFactor = 7.0f;
-    CGFloat shadowDepth = 2.0f;
     
     UIBezierPath *path = [UIBezierPath bezierPath];
     [path moveToPoint:CGPointMake(0.f, 0.f)];
     [path addLineToPoint:CGPointMake(size.width, 0.f)];
-    [path addLineToPoint:CGPointMake(size.width, size.height + shadowDepth)];
-    [path addCurveToPoint:CGPointMake(0.f, size.height + shadowDepth) controlPoint1:CGPointMake(size.width - curlFactor, size.height + shadowDepth - curlFactor) controlPoint2:CGPointMake(curlFactor, size.height + shadowDepth - curlFactor)];
+    [path addLineToPoint:CGPointMake(size.width, size.height + kFieldShadowRadius)];
+    [path addCurveToPoint:CGPointMake(0.f, size.height + kFieldShadowRadius) controlPoint1:CGPointMake(size.width - kFieldShadowCurlFactor, size.height + kFieldShadowRadius - kFieldShadowCurlFactor) controlPoint2:CGPointMake(kFieldShadowCurlFactor, size.height + kFieldShadowRadius - kFieldShadowCurlFactor)];
     
-    self.layer.masksToBounds = NO;
-    self.layer.shadowColor = [UIColor darkGrayColor].CGColor;
-    self.layer.shadowOpacity = 1.f;
-    self.layer.shadowRadius = 2.f;
-    self.layer.shadowOffset = CGSizeMake(0.f, 3.f);
-    self.layer.shadowPath = path.CGPath;
+    [self addShadowWithPath:path colour:[UIColor darkGrayColor] radius:kFieldShadowRadius offset:kFieldShadowOffset];
+}
+
+
+- (void)addImageShadow
+{
+    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor darkGrayColor] radius:kImageShadowRadius offset:kImageShadowOffset];
 }
 
 @end

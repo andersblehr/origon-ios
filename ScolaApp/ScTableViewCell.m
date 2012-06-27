@@ -61,55 +61,10 @@ static CGFloat const kLabelFontVerticalOffset = 3.f;
 static CGFloat const kLineSpacing = 5.f;
 static CGFloat const kImageSideLength = 75.f;
 
-static UIColor *backgroundColour = nil;
-static UIColor *selectedBackgroundColour = nil;
-static UIColor *labelColour = nil;
-static UIColor *selectedLabelColour = nil;
-
 
 @implementation ScTableViewCell
 
-
-#pragma mark - Table view defaults
-
-+ (UIColor *)backgroundColour
-{
-    if (!backgroundColour) {
-        backgroundColour = [UIColor isabellineColor];
-    }
-    
-    return backgroundColour;
-}
-
-
-+ (UIColor *)selectedBackgroundColour
-{
-    if (!selectedBackgroundColour) {
-        selectedBackgroundColour = [UIColor ashGrayColor];
-    }
-    
-    return selectedBackgroundColour;
-}
-
-
-+ (UIColor *)labelColour
-{
-    if (!labelColour) {
-        labelColour = [UIColor slateGrayColor];
-    }
-    
-    return labelColour;
-}
-
-
-+ (UIColor *)selectedLabelColour
-{
-    if (!selectedLabelColour) {
-        selectedLabelColour = [UIColor lightTextColor];
-    }
-    
-    return selectedLabelColour;
-}
+@synthesize imageButton;
 
 
 #pragma mark - Metadata
@@ -118,9 +73,11 @@ static UIColor *selectedLabelColour = nil;
 {
     CGFloat height = 0.f;
     
-    if ([entity isKindOfClass:ScScola.class]) {
+    if ([entity isKindOfClass:ScMember.class]) {
+        height = 100.f;
+    } else if ([entity isKindOfClass:ScScola.class]) {
         ScScola *scola = (ScScola *)entity;
-        CGFloat lineHeight = [UIFont editableDetailLineHeight];
+        CGFloat lineHeight = [UIFont lineHeightForFontWithType:ScFontTypeEditableDetail];
         
         height += kVerticalMargin;
         height += lineHeight * [scola numberOfLinesInAddress];
@@ -142,14 +99,54 @@ static UIColor *selectedLabelColour = nil;
     CGFloat height = 0.f;
     
     height += kVerticalMargin * 2;
-    height += [UIFont editableDetailLineHeight] * numberOfLabels;
+    height += [UIFont lineHeightForFontWithType:ScFontTypeEditableDetail] * numberOfLabels;
     height += kLineSpacing * (numberOfLabels - 1);
     
     return height;
 }
 
 
-#pragma mark - Cell population
+#pragma mark - Adding labels, fields & buttons
+
+- (void)addCentredLabel:(NSString *)labelText
+{
+    UIFont *labelFont = [UIFont fontWithType:ScFontTypeLabel];
+    CGFloat labelLineHeight = [labelFont displayLineHeight];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(kContentMargin, verticalOffset, kContentWidth, labelLineHeight)];
+    label.font = labelFont;
+    label.textAlignment = UITextAlignmentCenter;
+    label.textColor = [UIColor colorWithType:ScColorLabel];
+    label.backgroundColor = [UIColor colorWithType:ScColorBackground];
+    label.text = labelText;
+    
+    verticalOffset += labelLineHeight + kLineSpacing;
+    
+    [self.contentView addSubview:label];
+}
+
+
+- (ScTextField *)addEditableFieldWithOffset:(CGFloat)offset centred:(BOOL)centred
+{
+    isSelectable = NO;
+    
+    CGFloat fieldOriginX = centred ? kCellWidth * offset : kLabelOriginX;
+    CGFloat fieldWidth = centred ? kCellWidth - 2 * fieldOriginX : kCellWidth - fieldOriginX - kLabelOriginX;
+    
+    ScTextField *field = [[ScTextField alloc] initWithOrigin:CGPointMake(fieldOriginX, verticalOffset) width:fieldWidth editable:YES];
+    
+    field.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    field.autocorrectionType = UITextAutocorrectionTypeNo;
+    field.keyboardType = UIKeyboardTypeDefault;
+    field.returnKeyType = UIReturnKeyNext;
+    
+    [self.contentView addSubview:field];
+    
+    verticalOffset += [UIFont lineHeightForFontWithType:ScFontTypeEditableDetail] + kLineSpacing;
+    
+    return field;
+}
+
 
 - (void)addAuthFieldOfType:(ScAuthFieldType)type delegate:(id)delegate
 {
@@ -183,91 +180,72 @@ static UIColor *selectedLabelColour = nil;
 }
 
 
-- (void)setUpForEntityClass:(Class)entityClass
+- (void)addImage:(UIImage *)image
+{
+    imageButton = [[UIButton alloc] initWithFrame:CGRectMake(contentMargin, verticalOffset, kImageSideLength, kImageSideLength)];
+    
+    contentMargin += kImageSideLength + kContentMargin;
+    
+    if (image) {
+        [imageButton setImage:image forState:UIControlStateNormal];
+    } else {
+        imageButton.backgroundColor = [UIColor ghostWhiteColor];
+    }
+
+    [imageButton addImageShadow];
+    [self.contentView addSubview:imageButton];
+}
+
+
+#pragma mark - Cell population
+
+- (void)setUpForEntityClass:(Class)entityClass delegate:delegate
 {
     if (entityClass == ScMember.class) {
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(kContentMargin, kVerticalMargin, kImageSideLength, kImageSideLength)];
+        [self addImage:nil];
     }
 }
 
 
-- (void)populateWithEntity:(ScCachedEntity *)entity editable:(BOOL)editable delegate:(id)delegate
+- (void)populateWithEntity:(ScCachedEntity *)entity delegate:(id)delegate
 {
+    BOOL editable = (delegate != nil);
+    
     if ([entity isKindOfClass:ScMember.class]) {
         ScMember *member = (ScMember *)entity;
         
-        //[self addImageViewForImage:member.picture];
+        [self addImage:[UIImage imageWithData:member.picture]];
     } else if ([entity isKindOfClass:ScScola.class]) {
         ScScola *scola = (ScScola *)entity;
         
-        //[self addLabel:[ScStrings stringForKey:strAddress] withDetail:[scola multiLineAddress]];
+        [self addLabel:[ScStrings stringForKey:strAddress] withDetail:[scola multiLineAddress]editable:editable];
         
         if ([scola hasLandline]) {
-            //[self addLabel:[ScStrings stringForKey:strLandline] withDetail:scola.landline];
+            [self addLabel:[ScStrings stringForKey:strLandline] withDetail:scola.landline editable:editable];
         }
     }
-}
-
-
-- (void)addCentredLabel:(NSString *)labelText
-{
-    UIFont *labelFont = [UIFont labelFont];
-    CGFloat labelLineHeight = [labelFont displayLineHeight];
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(kLabelOriginX, verticalOffset, 280.f, labelLineHeight)];
-    label.font = labelFont;
-    label.textAlignment = UITextAlignmentCenter;
-    label.textColor = labelColour;
-    label.backgroundColor = backgroundColour;
-    label.text = labelText;
-    
-    verticalOffset += labelLineHeight + kLineSpacing;
-    
-    [self.contentView addSubview:label];
-}
-
-
-- (ScTextField *)addEditableFieldWithOffset:(CGFloat)offset centred:(BOOL)centred
-{
-    isSelectable = NO;
-    
-    CGFloat fieldOriginX = centred ? kCellWidth * offset : kLabelOriginX;
-    CGFloat fieldWidth = centred ? kCellWidth - 2 * fieldOriginX : kCellWidth - fieldOriginX - kLabelOriginX;
-    
-    ScTextField *field = [[ScTextField alloc] initWithOrigin:CGPointMake(fieldOriginX, verticalOffset) width:fieldWidth editable:YES];
-    
-    field.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    field.autocorrectionType = UITextAutocorrectionTypeNo;
-    field.keyboardType = UIKeyboardTypeDefault;
-    field.returnKeyType = UIReturnKeyNext;
-    
-    [self.contentView addSubview:field];
-    
-    verticalOffset += [UIFont editableDetailLineHeight] + kLineSpacing;
-    
-    return field;
 }
 
 
 - (id)addLabel:(NSString *)label withDetail:(NSString *)detail editable:(BOOL)editable
 {
     NSUInteger numberOfLinesInDetail = 1;
-    CGFloat detailLineHeight = [UIFont editableDetailLineHeight];
+    CGFloat detailLineHeight = [UIFont lineHeightForFontWithType:ScFontTypeEditableDetail];
     
     if (detail && !editable) {
         numberOfLinesInDetail = [[NSMutableString stringWithString:detail] replaceOccurrencesOfString:@"\n" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, detail.length)] + 1;
     }
     
-    CGRect labelFrame = CGRectMake(kLabelOriginX, verticalOffset + kLabelFontVerticalOffset, kLabelOriginX + kLabelWidth, [UIFont labelLineHeight]);
+    CGRect labelFrame = CGRectMake(kLabelOriginX, verticalOffset + kLabelFontVerticalOffset, kLabelOriginX + kLabelWidth, [UIFont lineHeightForFontWithType:ScFontTypeLabel]);
     CGRect detailFrame = CGRectMake(kDetailOriginX, verticalOffset, kDetailOriginX + kDetailWidth, detailLineHeight * numberOfLinesInDetail);
     
     verticalOffset += detailLineHeight * numberOfLinesInDetail + kLineSpacing;
     
     UILabel *labelView = [[UILabel alloc] initWithFrame:labelFrame];
-    labelView.font = [UIFont labelFont];
+    labelView.font = [UIFont fontWithType:ScFontTypeLabel];
     labelView.textAlignment = UITextAlignmentRight;
-    labelView.backgroundColor = backgroundColour;
-    labelView.textColor = labelColour;
+    labelView.backgroundColor = [UIColor colorWithType:ScColorBackground];
+    labelView.textColor = [UIColor colorWithType:ScColorLabel];
     labelView.text = label;
     
     UIView *detailView = nil;
@@ -279,10 +257,10 @@ static UIColor *selectedLabelColour = nil;
         detailView = detailField;
     } else {
         UILabel *detailLabel = [[UILabel alloc] initWithFrame:detailFrame];
-        detailLabel.font = [UIFont detailFont];
+        detailLabel.font = [UIFont fontWithType:ScFontTypeDetail];
         detailLabel.textAlignment = UITextAlignmentLeft;
-        detailLabel.backgroundColor = backgroundColour;
-        detailLabel.textColor = [ScTextField textColour];
+        detailLabel.backgroundColor = [UIColor colorWithType:ScColorBackground];
+        detailLabel.textColor = [UIColor colorWithType:ScColorText];
         detailLabel.numberOfLines = 0;
         detailLabel.text = detail;
         
@@ -301,17 +279,14 @@ static UIColor *selectedLabelColour = nil;
 
 #pragma mark - Initialisation
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
+- (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     
     if (self) {
-        backgroundColour = [ScTableViewCell backgroundColour];
-        selectedBackgroundColour = [ScTableViewCell selectedBackgroundColour];
-        labelColour = [ScTableViewCell labelColour];
-        selectedLabelColour = [ScTableViewCell selectedLabelColour];
-        
         isSelectable = YES;
+        
+        contentMargin = kContentMargin;
         verticalOffset = kVerticalMargin;
         
         labels = [[NSMutableDictionary alloc] init];
@@ -319,19 +294,19 @@ static UIColor *selectedLabelColour = nil;
         textFields = [[NSMutableDictionary alloc] init];
         
         self.backgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
-        self.backgroundView.backgroundColor = backgroundColour;
+        self.backgroundView.backgroundColor = [UIColor colorWithType:ScColorBackground];
         self.selectedBackgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
-        self.selectedBackgroundView.backgroundColor = selectedBackgroundColour;
+        self.selectedBackgroundView.backgroundColor = [UIColor colorWithType:ScColorSelectedBackground];
         
-        self.textLabel.backgroundColor = backgroundColour;
-        self.detailTextLabel.backgroundColor = backgroundColour;
+        self.textLabel.backgroundColor = [UIColor colorWithType:ScColorBackground];
+        self.detailTextLabel.backgroundColor = [UIColor colorWithType:ScColorBackground];
     }
     
     return self;
 }
 
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
+- (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
     self = [self initWithReuseIdentifier:reuseIdentifier];
     
@@ -355,24 +330,24 @@ static UIColor *selectedLabelColour = nil;
 }
 
 
-- (id)initWithEntity:(ScCachedEntity *)entity editable:(BOOL)editable delegate:(id)delegate
+- (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity delegate:(id)delegate
 {
     self = [self initWithReuseIdentifier:entity.entityId];
     
     if (self) {
-        [self populateWithEntity:entity editable:editable delegate:delegate];
+        [self populateWithEntity:entity delegate:delegate];
     }
     
     return self;
 }
 
 
-- (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate
+- (ScTableViewCell *)initWithEntityClass:(Class)entityClass delegate:(id)delegate
 {
     self = [self initWithReuseIdentifier:NSStringFromClass(entityClass)];
     
     if (self) {
-        [self setUpForEntityClass:entityClass];
+        [self setUpForEntityClass:entityClass delegate:delegate];
     }
     
     return self;
@@ -419,8 +394,13 @@ static UIColor *selectedLabelColour = nil;
             UILabel *labelView = [labels objectForKey:label];
             UILabel *detailView = [details objectForKey:label];
             
-            labelView.textColor = selected ? selectedLabelColour : labelColour;
-            detailView.textColor = selected ? [ScTextField selectedTextColour] : [ScTextField textColour];
+            if (selected) {
+                labelView.textColor = [UIColor colorWithType:ScColorSelectedLabel];
+                detailView.textColor = [UIColor colorWithType:ScColorSelectedText];
+            } else {
+                labelView.textColor = [UIColor colorWithType:ScColorLabel];
+                detailView.textColor = [UIColor colorWithType:ScColorText];
+            }
         }
         
         [super setSelected:selected animated:animated];

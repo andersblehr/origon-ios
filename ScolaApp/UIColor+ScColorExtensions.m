@@ -11,6 +11,34 @@
 @implementation UIColor (ScColorExtensions)
 
 
+#pragma mark - Scola colour palette
+
++ (UIColor *)colorWithType:(ScColorType)colorType
+{
+    UIColor *color = nil;
+    
+    if (colorType == ScColorBackground) {
+        color = [UIColor isabellineColor];
+    } else if (colorType == ScColorSelectedBackground) {
+        color = [UIColor ashGrayColor];
+    } else if (colorType == ScColorFieldBackground) {
+        color = [UIColor ghostWhiteColor];
+    } else if (colorType == ScColorLabel) {
+        color = [UIColor slateGrayColor];
+    } else if (colorType == ScColorSelectedLabel) {
+        color = [UIColor lightTextColor];
+    } else if (colorType == ScColorText) {
+        color = [UIColor darkTextColor];
+    } else if (colorType == ScColorSelectedText) {
+        color = [UIColor whiteColor];
+    }
+    
+    return color;
+}
+
+
+#pragma mark - RGB shorthands
+
 + (UIColor *)ashGrayColor
 {
     return [UIColor colorWithRed:178/255.f green:190/255.f blue:181/255.f alpha:1.f];

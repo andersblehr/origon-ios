@@ -8,7 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum {
+    ScColorBackground,
+    ScColorSelectedBackground,
+    ScColorFieldBackground,
+    ScColorLabel,
+    ScColorSelectedLabel,
+    ScColorText,
+    ScColorSelectedText,
+} ScColorType;
+
 @interface UIColor (ScColorExtensions)
+
++ (UIColor *)colorWithType:(ScColorType)colorType;
 
 + (UIColor *)ashGrayColor;
 + (UIColor *)ghostWhiteColor;

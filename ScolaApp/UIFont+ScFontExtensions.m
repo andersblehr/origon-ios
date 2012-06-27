@@ -10,6 +10,7 @@
 
 static CGFloat const kLabelFontSize = 12.f;
 static CGFloat const kDetailFontSize = 14.f;
+static CGFloat const kTitleFontSize = 16.f;
 
 static CGFloat const kDisplayFontToLineHeightScaleFactor = 2.5f;
 static CGFloat const kEditingFontToLineHeightScaleFactor = 3.f;
@@ -18,43 +19,39 @@ static CGFloat const kEditingFontToLineHeightScaleFactor = 3.f;
 @implementation UIFont (ScFontExtensions)
 
 
-#pragma mark - Standard fonts
+#pragma mark - Font convenience methods
 
-+ (UIFont *)labelFont
++ (UIFont *)fontWithType:(ScFontType)fontType
 {
-    return [UIFont boldSystemFontOfSize:kLabelFontSize];
+    UIFont *font = nil;
+    
+    if (fontType == ScFontTypeLabel) {
+        font = [UIFont boldSystemFontOfSize:kLabelFontSize];
+    } else if (fontType == ScFontTypeDetail) {
+        font = [UIFont boldSystemFontOfSize:kDetailFontSize];
+    } else if (fontType == ScFontTypeEditableDetail) {
+        font = [UIFont systemFontOfSize:kDetailFontSize];
+    } else if (fontType == ScFontTypeTitle) {
+        font = [UIFont boldSystemFontOfSize:kTitleFontSize];
+    } else if (fontType == ScFontTypeEditableTitle) {
+        font = [UIFont systemFontOfSize:kTitleFontSize];
+    }
+    
+    return font;
 }
 
 
-+ (UIFont *)detailFont
++ (CGFloat)lineHeightForFontWithType:(ScFontType)fontType
 {
-    return [UIFont boldSystemFontOfSize:kDetailFontSize];
-}
-
-
-+ (UIFont *)editableDetailFont
-{
-    return [UIFont systemFontOfSize:kDetailFontSize];
-}
-
-
-#pragma mark - Font size implications
-
-+ (CGFloat)labelLineHeight
-{
-    return [[UIFont labelFont] displayLineHeight];
-}
-
-
-+ (CGFloat)detailLineHeight
-{
-    return [[UIFont detailFont] displayLineHeight];
-}
-
-
-+ (CGFloat)editableDetailLineHeight
-{
-    return [[UIFont editableDetailFont] editingLineHeight];
+    CGFloat height = 0.f;
+    
+    if ((fontType == ScFontTypeEditableDetail) || (fontType == ScFontTypeEditableTitle)) {
+        height = [[UIFont fontWithType:fontType] editingLineHeight];
+    } else {
+        height = [[UIFont fontWithType:fontType] displayLineHeight];
+    }
+    
+    return height;
 }
 
 

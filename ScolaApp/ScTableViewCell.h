@@ -32,12 +32,14 @@ extern CGFloat const kContentWidth;
 extern CGFloat const kContentMargin;
 extern CGFloat const kKeyboardHeight;
 
-@class ScCachedEntity, ScTextField;
+@class ScCachedEntity;
+@class ScTextField;
 
 @interface ScTableViewCell : UITableViewCell {
 @private
     BOOL isSelectable;
     
+    CGFloat contentMargin;
     CGFloat verticalOffset;
     
     NSMutableDictionary *labels;
@@ -45,18 +47,15 @@ extern CGFloat const kKeyboardHeight;
     NSMutableDictionary *textFields;
 }
 
-+ (UIColor *)backgroundColour;
-+ (UIColor *)selectedBackgroundColour;
-+ (UIColor *)labelColour;
-+ (UIColor *)selectedLabelColour;
+@property (strong, readonly) UIButton *imageButton;
 
 + (CGFloat)heightForEntity:(ScCachedEntity *)entity;
 + (CGFloat)heightForNumberOfLabels:(NSInteger)numberOfLabels;
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
-- (id)initWithEntity:(ScCachedEntity *)entity editable:(BOOL)editable delegate:(id)delegate;
-- (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
+- (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier;
+- (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
+- (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity delegate:(id)delegate;
+- (ScTableViewCell *)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
 
 - (ScTextField *)textFieldWithKey:(NSString *)key;
 
