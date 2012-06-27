@@ -66,7 +66,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     dateOfBirthField.text = [NSDateFormatter localizedStringFromDate:memberInstance.dateOfBirth dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
     
     if ([memberInstance.didRegister boolValue]) {
-        UIFont *nonEditableDetailFont = [UIFont fontWithType:ScFontTypeDetail];
+        UIFont *nonEditableDetailFont = [UIFont fontWithType:ScFontDetail];
         UIColor *backgroundColour = [UIColor colorWithType:ScColorBackground];
         
         nameField.enabled = NO;

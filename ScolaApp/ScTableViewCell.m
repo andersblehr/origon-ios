@@ -77,7 +77,7 @@ static CGFloat const kImageSideLength = 75.f;
         height = 100.f;
     } else if ([entity isKindOfClass:ScScola.class]) {
         ScScola *scola = (ScScola *)entity;
-        CGFloat lineHeight = [UIFont lineHeightForFontWithType:ScFontTypeEditableDetail];
+        CGFloat lineHeight = [UIFont lineHeightForFontWithType:ScFontEditableDetail];
         
         height += kVerticalMargin;
         height += lineHeight * [scola numberOfLinesInAddress];
@@ -99,7 +99,7 @@ static CGFloat const kImageSideLength = 75.f;
     CGFloat height = 0.f;
     
     height += kVerticalMargin * 2;
-    height += [UIFont lineHeightForFontWithType:ScFontTypeEditableDetail] * numberOfLabels;
+    height += [UIFont lineHeightForFontWithType:ScFontEditableDetail] * numberOfLabels;
     height += kLineSpacing * (numberOfLabels - 1);
     
     return height;
@@ -110,7 +110,7 @@ static CGFloat const kImageSideLength = 75.f;
 
 - (void)addCentredLabel:(NSString *)labelText
 {
-    UIFont *labelFont = [UIFont fontWithType:ScFontTypeLabel];
+    UIFont *labelFont = [UIFont fontWithType:ScFontLabel];
     CGFloat labelLineHeight = [labelFont displayLineHeight];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(kContentMargin, verticalOffset, kContentWidth, labelLineHeight)];
@@ -142,7 +142,7 @@ static CGFloat const kImageSideLength = 75.f;
     
     [self.contentView addSubview:field];
     
-    verticalOffset += [UIFont lineHeightForFontWithType:ScFontTypeEditableDetail] + kLineSpacing;
+    verticalOffset += [UIFont lineHeightForFontWithType:ScFontEditableDetail] + kLineSpacing;
     
     return field;
 }
@@ -230,19 +230,19 @@ static CGFloat const kImageSideLength = 75.f;
 - (id)addLabel:(NSString *)label withDetail:(NSString *)detail editable:(BOOL)editable
 {
     NSUInteger numberOfLinesInDetail = 1;
-    CGFloat detailLineHeight = [UIFont lineHeightForFontWithType:ScFontTypeEditableDetail];
+    CGFloat detailLineHeight = [UIFont lineHeightForFontWithType:ScFontEditableDetail];
     
     if (detail && !editable) {
         numberOfLinesInDetail = [[NSMutableString stringWithString:detail] replaceOccurrencesOfString:@"\n" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, detail.length)] + 1;
     }
     
-    CGRect labelFrame = CGRectMake(kLabelOriginX, verticalOffset + kLabelFontVerticalOffset, kLabelOriginX + kLabelWidth, [UIFont lineHeightForFontWithType:ScFontTypeLabel]);
+    CGRect labelFrame = CGRectMake(kLabelOriginX, verticalOffset + kLabelFontVerticalOffset, kLabelOriginX + kLabelWidth, [UIFont lineHeightForFontWithType:ScFontLabel]);
     CGRect detailFrame = CGRectMake(kDetailOriginX, verticalOffset, kDetailOriginX + kDetailWidth, detailLineHeight * numberOfLinesInDetail);
     
     verticalOffset += detailLineHeight * numberOfLinesInDetail + kLineSpacing;
     
     UILabel *labelView = [[UILabel alloc] initWithFrame:labelFrame];
-    labelView.font = [UIFont fontWithType:ScFontTypeLabel];
+    labelView.font = [UIFont fontWithType:ScFontLabel];
     labelView.textAlignment = UITextAlignmentRight;
     labelView.backgroundColor = [UIColor colorWithType:ScColorBackground];
     labelView.textColor = [UIColor colorWithType:ScColorLabel];
@@ -257,7 +257,7 @@ static CGFloat const kImageSideLength = 75.f;
         detailView = detailField;
     } else {
         UILabel *detailLabel = [[UILabel alloc] initWithFrame:detailFrame];
-        detailLabel.font = [UIFont fontWithType:ScFontTypeDetail];
+        detailLabel.font = [UIFont fontWithType:ScFontDetail];
         detailLabel.textAlignment = UITextAlignmentLeft;
         detailLabel.backgroundColor = [UIColor colorWithType:ScColorBackground];
         detailLabel.textColor = [UIColor colorWithType:ScColorText];

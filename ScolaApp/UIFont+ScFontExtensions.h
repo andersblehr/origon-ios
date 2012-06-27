@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 
 typedef enum {
-    ScFontTypeLabel,
-    ScFontTypeDetail,
-    ScFontTypeEditableDetail,
-    ScFontTypeTitle,
-    ScFontTypeEditableTitle,
+    ScFontLabel,
+    ScFontDetail,
+    ScFontEditableDetail,
+    ScFontTitle,
+    ScFontEditableTitle,
 } ScFontType;
 
 @interface UIFont (ScFontExtensions)

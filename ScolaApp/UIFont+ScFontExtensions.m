@@ -25,15 +25,15 @@ static CGFloat const kEditingFontToLineHeightScaleFactor = 3.f;
 {
     UIFont *font = nil;
     
-    if (fontType == ScFontTypeLabel) {
+    if (fontType == ScFontLabel) {
         font = [UIFont boldSystemFontOfSize:kLabelFontSize];
-    } else if (fontType == ScFontTypeDetail) {
+    } else if (fontType == ScFontDetail) {
         font = [UIFont boldSystemFontOfSize:kDetailFontSize];
-    } else if (fontType == ScFontTypeEditableDetail) {
+    } else if (fontType == ScFontEditableDetail) {
         font = [UIFont systemFontOfSize:kDetailFontSize];
-    } else if (fontType == ScFontTypeTitle) {
+    } else if (fontType == ScFontTitle) {
         font = [UIFont boldSystemFontOfSize:kTitleFontSize];
-    } else if (fontType == ScFontTypeEditableTitle) {
+    } else if (fontType == ScFontEditableTitle) {
         font = [UIFont systemFontOfSize:kTitleFontSize];
     }
     
@@ -45,7 +45,7 @@ static CGFloat const kEditingFontToLineHeightScaleFactor = 3.f;
 {
     CGFloat height = 0.f;
     
-    if ((fontType == ScFontTypeEditableDetail) || (fontType == ScFontTypeEditableTitle)) {
+    if ((fontType == ScFontEditableDetail) || (fontType == ScFontEditableTitle)) {
         height = [[UIFont fontWithType:fontType] editingLineHeight];
     } else {
         height = [[UIFont fontWithType:fontType] displayLineHeight];

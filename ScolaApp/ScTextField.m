@@ -37,8 +37,8 @@ static CGFloat const kTextIndent = 4.f;
 
 - (id)initWithOrigin:(CGPoint)origin width:(CGFloat)width editable:(BOOL)editable
 {
-    UIFont *displayFont = [UIFont fontWithType:ScFontTypeDetail];
-    UIFont *editingFont = [UIFont fontWithType:ScFontTypeEditableDetail];
+    UIFont *displayFont = [UIFont fontWithType:ScFontDetail];
+    UIFont *editingFont = [UIFont fontWithType:ScFontEditableDetail];
 
     CGFloat height = editable ? [editingFont editingLineHeight] : [displayFont displayLineHeight];
     
