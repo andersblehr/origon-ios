@@ -88,7 +88,7 @@ static NSInteger const kAlertButtonContinue = 1;
     } else {
         if (authPhase == ScAuthPhaseLogin) {
             emailField.text = email;
-            emailField.placeholder = [ScStrings stringForKey:strEmailPrompt];
+            emailField.placeholder = [ScStrings stringForKey:strAuthEmailPrompt];
         } else if (authPhase == ScAuthPhaseConfirmation) {
             registrationCodeField.text = registrationCode;
             registrationCodeField.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
@@ -112,7 +112,7 @@ static NSInteger const kAlertButtonContinue = 1;
 
 - (void)showTryAgainOrGoBackAlertWithTitle:(NSString *)title message:(NSString *)message
 {
-    UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:[ScStrings stringForKey:strGoBack] otherButtonTitles:[ScStrings stringForKey:strTryAgain], nil];
+    UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:[ScStrings stringForKey:strGoBack] otherButtonTitles:[ScStrings stringForKey:strRetry], nil];
     validationAlert.tag = ScAuthAlertConfirmationFailed;
     
     [validationAlert show];
@@ -121,8 +121,8 @@ static NSInteger const kAlertButtonContinue = 1;
 
 - (void)presentEULA
 {
-    UIActionSheet *EULASheet = [[UIActionSheet alloc] initWithTitle:[ScStrings stringForKey:strEULA] delegate:self cancelButtonTitle:nil destructiveButtonTitle:[ScStrings stringForKey:strDisagree] otherButtonTitles:[ScStrings stringForKey:strAgree], nil];
-    EULASheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    UIActionSheet *EULASheet = [[UIActionSheet alloc] initWithTitle:[ScStrings stringForKey:strEULA] delegate:self cancelButtonTitle:nil destructiveButtonTitle:[ScStrings stringForKey:strDecline] otherButtonTitles:[ScStrings stringForKey:strAccept], nil];
+    EULASheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     
     [EULASheet showInView:self.view];
 }
@@ -410,9 +410,9 @@ static NSInteger const kAlertButtonContinue = 1;
     }
     
     if (authPhase == ScAuthPhaseConfirmation) {
-        NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strWelcomeBackPopUpMessage], [authInfo objectForKey:kAuthInfoKeyUserId]];
+        NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strWelcomeBackAlert], [authInfo objectForKey:kAuthInfoKeyUserId]];
         
-        UIAlertView *welcomeBackPopUp = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strWelcomeBackPopUpTitle] message:popUpMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strGoBack] otherButtonTitles:[ScStrings stringForKey:strHaveCode], nil];
+        UIAlertView *welcomeBackPopUp = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strWelcomeBackTitle] message:popUpMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strGoBack] otherButtonTitles:[ScStrings stringForKey:strHaveCode], nil];
         welcomeBackPopUp.tag = ScAuthAlertWelcomeBack;
         
         [welcomeBackPopUp show];

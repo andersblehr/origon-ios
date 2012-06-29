@@ -114,11 +114,11 @@ static CGFloat const kImageSideLength = 75.f;
     CGFloat labelLineHeight = [labelFont displayLineHeight];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(kContentMargin, verticalOffset, kContentWidth, labelLineHeight)];
+    label.backgroundColor = [UIColor colorWithType:ScColorBackground];
     label.font = labelFont;
+    label.text = labelText;
     label.textAlignment = UITextAlignmentCenter;
     label.textColor = [UIColor colorWithType:ScColorLabel];
-    label.backgroundColor = [UIColor colorWithType:ScColorBackground];
-    label.text = labelText;
     
     verticalOffset += labelLineHeight + kLineSpacing;
     
@@ -126,17 +126,13 @@ static CGFloat const kImageSideLength = 75.f;
 }
 
 
-- (ScTextField *)addEditableFieldWithOffset:(CGFloat)offset centred:(BOOL)centred
+- (ScTextField *)addTextFieldWithWidth:(CGFloat)widthFraction centred:(BOOL)centred
 {
-    isSelectable = NO;
+    CGFloat contentWidth = kCellWidth - kContentMargin - contentMargin;
+    CGFloat fieldWidth = widthFraction * contentWidth;
+    CGFloat fieldOriginX = centred ? contentMargin + (contentWidth - fieldWidth) / 2 : contentMargin;
     
-    CGFloat fieldOriginX = centred ? kCellWidth * offset : kLabelOriginX;
-    CGFloat fieldWidth = centred ? kCellWidth - 2 * fieldOriginX : kCellWidth - fieldOriginX - kLabelOriginX;
-    
-    ScTextField *field = [[ScTextField alloc] initWithOrigin:CGPointMake(fieldOriginX, verticalOffset) width:fieldWidth editable:YES];
-    
-    field.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    field.autocorrectionType = UITextAutocorrectionTypeNo;
+    ScTextField *field = [[ScTextField alloc] initWithOrigin:CGPointMake(fieldOriginX, verticalOffset) width:fieldWidth editable:self.editing];
     field.keyboardType = UIKeyboardTypeDefault;
     field.returnKeyType = UIReturnKeyNext;
     
@@ -150,33 +146,33 @@ static CGFloat const kImageSideLength = 75.f;
 
 - (void)addAuthFieldOfType:(ScAuthFieldType)type delegate:(id)delegate
 {
-    NSString *textFieldKey = nil;
+    NSString *authFieldKey = nil;
     
-    ScTextField *field = [self addEditableFieldWithOffset:0.15f centred:YES];
-    field.delegate = delegate;
+    ScTextField *authField = [self addTextFieldWithWidth:0.7f centred:YES];
+    authField.delegate = delegate;
     
     if (type == ScAuthEmailField) {
-        textFieldKey = kTextFieldKeyEmail;
-        field.placeholder = [ScStrings stringForKey:strEmailPrompt];
-        field.keyboardType = UIKeyboardTypeEmailAddress;
+        authFieldKey = kTextFieldKeyEmail;
+        authField.keyboardType = UIKeyboardTypeEmailAddress;
+        authField.placeholder = [ScStrings stringForKey:strEmailPrompt];
     } else if ((type == ScAuthPasswordField) || (type == ScAuthRepeatPasswordField)) {
         if (type == ScAuthPasswordField) {
-            textFieldKey = kTextFieldKeyPassword;
-            field.placeholder = [ScStrings stringForKey:strPasswordPrompt];
+            authFieldKey = kTextFieldKeyPassword;
+            authField.placeholder = [ScStrings stringForKey:strPasswordPrompt];
         } else {
-            textFieldKey = kTextFieldKeyRepeatPassword;
-            field.placeholder = [ScStrings stringForKey:strRepeatPasswordPrompt];
+            authFieldKey = kTextFieldKeyRepeatPassword;
+            authField.placeholder = [ScStrings stringForKey:strRepeatPasswordPrompt];
         }
         
-        field.returnKeyType = UIReturnKeyJoin;
-        field.secureTextEntry = YES;
-        field.clearsOnBeginEditing = YES;
+        authField.clearsOnBeginEditing = YES;
+        authField.returnKeyType = UIReturnKeyJoin;
+        authField.secureTextEntry = YES;
     } else if (type == ScAuthRegistrationCodeField) {
-        textFieldKey = kTextFieldKeyRegistrationCode;
-        field.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
+        authFieldKey = kTextFieldKeyRegistrationCode;
+        authField.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
     }
     
-    [textFields setObject:field forKey:textFieldKey];
+    [textFields setObject:authField forKey:authFieldKey];
 }
 
 
@@ -184,44 +180,46 @@ static CGFloat const kImageSideLength = 75.f;
 {
     imageButton = [[UIButton alloc] initWithFrame:CGRectMake(contentMargin, verticalOffset, kImageSideLength, kImageSideLength)];
     
-    contentMargin += kImageSideLength + kContentMargin;
-    
     if (image) {
         [imageButton setImage:image forState:UIControlStateNormal];
     } else {
-        imageButton.backgroundColor = [UIColor ghostWhiteColor];
+        imageButton.backgroundColor = [UIColor colorWithType:ScColorImagePlaceholder];
+        
+        UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectInset(imageButton.bounds, kContentMargin, 2 * kContentMargin)];
+        photoPrompt.backgroundColor = imageButton.backgroundColor;
+        photoPrompt.font = [UIFont fontWithType:ScFontTitle];
+        photoPrompt.text = [ScStrings stringForKey:strPhotoPrompt];
+        photoPrompt.textAlignment = UITextAlignmentCenter;
+        photoPrompt.textColor = [UIColor colorWithType:ScColorImagePlaceholderText];;
+        
+        [imageButton addSubview:photoPrompt];
     }
 
     [imageButton addImageShadow];
     [self.contentView addSubview:imageButton];
+    
+    contentMargin += kImageSideLength + kContentMargin;
 }
 
 
 #pragma mark - Cell population
 
-- (void)setUpForEntityClass:(Class)entityClass delegate:delegate
+- (void)setUpForEntityClass:(Class)entityClass entity:(ScCachedEntity *)entity delegate:(id)delegate
 {
-    if (entityClass == ScMember.class) {
-        [self addImage:nil];
-    }
-}
-
-
-- (void)populateWithEntity:(ScCachedEntity *)entity delegate:(id)delegate
-{
-    BOOL editable = (delegate != nil);
+    selectable = NO;
     
-    if ([entity isKindOfClass:ScMember.class]) {
+    if (entityClass == ScMember.class) {
         ScMember *member = (ScMember *)entity;
         
         [self addImage:[UIImage imageWithData:member.picture]];
-    } else if ([entity isKindOfClass:ScScola.class]) {
+        //[self addTitle:member.name];
+    } else if (entityClass == ScScola.class) {
         ScScola *scola = (ScScola *)entity;
         
-        [self addLabel:[ScStrings stringForKey:strAddress] withDetail:[scola multiLineAddress]editable:editable];
+        [self addLabel:[ScStrings stringForKey:strAddressLabel] withDetail:[scola multiLineAddress] editable:self.editing];
         
         if ([scola hasLandline]) {
-            [self addLabel:[ScStrings stringForKey:strLandline] withDetail:scola.landline editable:editable];
+            [self addLabel:[ScStrings stringForKey:strLandlineLabel] withDetail:scola.landline editable:self.editing];
         }
     }
 }
@@ -242,11 +240,11 @@ static CGFloat const kImageSideLength = 75.f;
     verticalOffset += detailLineHeight * numberOfLinesInDetail + kLineSpacing;
     
     UILabel *labelView = [[UILabel alloc] initWithFrame:labelFrame];
-    labelView.font = [UIFont fontWithType:ScFontLabel];
-    labelView.textAlignment = UITextAlignmentRight;
     labelView.backgroundColor = [UIColor colorWithType:ScColorBackground];
-    labelView.textColor = [UIColor colorWithType:ScColorLabel];
+    labelView.font = [UIFont fontWithType:ScFontLabel];
     labelView.text = label;
+    labelView.textAlignment = UITextAlignmentRight;
+    labelView.textColor = [UIColor colorWithType:ScColorLabel];
     
     UIView *detailView = nil;
     
@@ -257,12 +255,12 @@ static CGFloat const kImageSideLength = 75.f;
         detailView = detailField;
     } else {
         UILabel *detailLabel = [[UILabel alloc] initWithFrame:detailFrame];
-        detailLabel.font = [UIFont fontWithType:ScFontDetail];
-        detailLabel.textAlignment = UITextAlignmentLeft;
         detailLabel.backgroundColor = [UIColor colorWithType:ScColorBackground];
-        detailLabel.textColor = [UIColor colorWithType:ScColorText];
+        detailLabel.font = [UIFont fontWithType:ScFontDetail];
         detailLabel.numberOfLines = 0;
         detailLabel.text = detail;
+        detailLabel.textAlignment = UITextAlignmentLeft;
+        detailLabel.textColor = [UIColor colorWithType:ScColorText];
         
         detailView = detailLabel;
     }
@@ -284,7 +282,7 @@ static CGFloat const kImageSideLength = 75.f;
     self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     
     if (self) {
-        isSelectable = YES;
+        selectable = YES;
         
         contentMargin = kContentMargin;
         verticalOffset = kVerticalMargin;
@@ -312,13 +310,15 @@ static CGFloat const kImageSideLength = 75.f;
     
     if (self) {
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin]) {
-            [self addCentredLabel:[ScStrings stringForKey:strSignInOrRegisterPrompt]];
+            self.editing = YES;
             
+            [self addCentredLabel:[ScStrings stringForKey:strSignInOrRegisterLabel]];
             [self addAuthFieldOfType:ScAuthEmailField delegate:delegate];
             [self addAuthFieldOfType:ScAuthPasswordField delegate:delegate];
         } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserConfirmation]) {
-            [self addCentredLabel:[ScStrings stringForKey:strConfirmRegistrationPrompt]];
+            self.editing = YES;
             
+            [self addCentredLabel:[ScStrings stringForKey:strConfirmRegistrationLabel]];
             [self addAuthFieldOfType:ScAuthRegistrationCodeField delegate:delegate];
             [self addAuthFieldOfType:ScAuthRepeatPasswordField delegate:delegate];
         }
@@ -330,12 +330,20 @@ static CGFloat const kImageSideLength = 75.f;
 }
 
 
-- (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity delegate:(id)delegate
+- (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity
+{
+    return [self initWithEntity:entity editing:NO delegate:nil];
+}
+
+
+- (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity editing:(BOOL)editing delegate:(id)delegate
 {
     self = [self initWithReuseIdentifier:entity.entityId];
     
     if (self) {
-        [self populateWithEntity:entity delegate:delegate];
+        self.editing = editing;
+        
+        [self setUpForEntityClass:entity.class entity:entity delegate:delegate];
     }
     
     return self;
@@ -347,7 +355,9 @@ static CGFloat const kImageSideLength = 75.f;
     self = [self initWithReuseIdentifier:NSStringFromClass(entityClass)];
     
     if (self) {
-        [self setUpForEntityClass:entityClass delegate:delegate];
+        self.editing = YES;
+        
+        [self setUpForEntityClass:entityClass entity:nil delegate:delegate];
     }
     
     return self;
@@ -387,9 +397,15 @@ static CGFloat const kImageSideLength = 75.f;
 
 #pragma mark - Overrides
 
+- (void)setEditing:(BOOL)editing
+{
+    [super setEditing:editing];
+}
+
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    if (isSelectable) {
+    if (selectable) {
         for (NSString *label in labels.allKeys) {
             UILabel *labelView = [labels objectForKey:label];
             UILabel *detailView = [details objectForKey:label];

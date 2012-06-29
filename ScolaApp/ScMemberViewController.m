@@ -229,9 +229,9 @@ static NSInteger const kActionSheetButtonCancel = 2;
         self.navigationItem.rightBarButtonItem = doneButton;
     } else if (isAdding) {
         if (scenario == ScMemberScenarioAddHouseholdMember) {
-            self.title = [ScStrings stringForKey:strNewHouseholdMemberViewTitle];
+            self.title = [ScStrings stringForKey:strMemberViewTitleNewHouseholdMember];
         } else if (scenario == ScMemberScenarioAddMember) {
-            self.title = [ScStrings stringForKey:strNewMemberViewTitle];
+            self.title = [ScStrings stringForKey:strMemberViewTitleNewMember];
         }
         
         self.navigationItem.leftBarButtonItem = cancelButton;
@@ -274,7 +274,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     if (isDisplaying) {
         memberCell = [tableView cellForEntity:member];
     } else if (isRegistering || isEditing) {
-        memberCell = [tableView cellForEntity:member delegate:self];
+        memberCell = [tableView cellForEntity:member editing:YES delegate:self];
     } else if (isAdding) {
         memberCell = [tableView cellForEntityClass:ScMember.class delegate:self];
     }
@@ -285,21 +285,20 @@ static NSInteger const kActionSheetButtonCancel = 2;
     [dateOfBirthPicker setTo01April1976];
     [dateOfBirthPicker addTarget:self action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
     
-    nameField.placeholder = [ScStrings stringForKey:strNamePlaceholder];
+    nameField.placeholder = [ScStrings stringForKey:strNamePrompt];
     nameField.keyboardType = UIKeyboardTypeDefault;
     nameField.autocapitalizationType = UITextAutocapitalizationTypeWords;
     nameField.delegate = self;
     
-    emailField.placeholder = [ScStrings stringForKey:strEmailPlaceholder];
+    emailField.placeholder = [ScStrings stringForKey:strEmailPrompt];
     emailField.keyboardType = UIKeyboardTypeEmailAddress;
-    emailField.autocapitalizationType = UITextAutocapitalizationTypeNone;
     emailField.delegate = self;
     
-    dateOfBirthField.placeholder = [ScStrings stringForKey:strBornPlaceholder];
+    dateOfBirthField.placeholder = [ScStrings stringForKey:strDateOfBirthPrompt];
     dateOfBirthField.inputView = dateOfBirthPicker;
     dateOfBirthField.delegate = self;
     
-    mobilePhoneField.placeholder = [ScStrings stringForKey:strMobilePlaceholder];
+    mobilePhoneField.placeholder = [ScStrings stringForKey:strMobilePhonePrompt];
     mobilePhoneField.keyboardType = UIKeyboardTypeNumberPad;
     mobilePhoneField.delegate = self;
     

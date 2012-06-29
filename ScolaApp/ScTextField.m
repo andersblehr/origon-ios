@@ -37,22 +37,26 @@ static CGFloat const kTextIndent = 4.f;
 
 - (id)initWithOrigin:(CGPoint)origin width:(CGFloat)width editable:(BOOL)editable
 {
+    editing = editable;
+    
     UIFont *displayFont = [UIFont fontWithType:ScFontDetail];
     UIFont *editingFont = [UIFont fontWithType:ScFontEditableDetail];
 
-    CGFloat height = editable ? [editingFont editingLineHeight] : [displayFont displayLineHeight];
+    CGFloat height = editing ? [editingFont editingLineHeight] : [displayFont displayLineHeight];
     
     self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, height)];
     
     if (self) {
-        self.textColor = [UIColor colorWithType:ScColorText];
-        self.textAlignment = UITextAlignmentLeft;
+        self.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+        self.textAlignment = UITextAlignmentLeft;
+        self.textColor = [UIColor colorWithType:ScColorText];
         self.layer.cornerRadius = kRoundedCornerRadius;
         
-        if (editable) {
+        if (editing) {
             self.font = editingFont;
-            self.backgroundColor = [UIColor colorWithType:ScColorFieldBackground];
+            self.backgroundColor = [UIColor colorWithType:ScColorEditingBackground];
             
             [self addEditableFieldShadow];
         } else {
@@ -65,7 +69,7 @@ static CGFloat const kTextIndent = 4.f;
 }
 
 
-#pragma mark - Setting text rectangle
+#pragma mark - Overrides
 
 - (CGRect)editingRectForBounds:(CGRect)bounds
 {

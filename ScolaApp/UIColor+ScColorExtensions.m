@@ -21,7 +21,7 @@
         color = [UIColor isabellineColor];
     } else if (colorType == ScColorSelectedBackground) {
         color = [UIColor ashGrayColor];
-    } else if (colorType == ScColorFieldBackground) {
+    } else if (colorType == ScColorEditingBackground) {
         color = [UIColor ghostWhiteColor];
     } else if (colorType == ScColorLabel) {
         color = [UIColor slateGrayColor];
@@ -31,6 +31,10 @@
         color = [UIColor darkTextColor];
     } else if (colorType == ScColorSelectedText) {
         color = [UIColor whiteColor];
+    } else if (colorType == ScColorImagePlaceholder) {
+        color = [UIColor ghostWhiteColor];
+    } else if (colorType == ScColorImagePlaceholderText) {
+        color = [UIColor colorWithWhite:0.85f alpha:1.f];
     }
     
     return color;

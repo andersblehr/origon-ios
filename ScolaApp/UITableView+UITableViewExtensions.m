@@ -66,16 +66,16 @@ static NSString * const kLogoText = @"..scola..";
 
 - (id)cellForEntity:(ScCachedEntity *)entity
 {
-    return [self cellForEntity:entity delegate:nil];
+    return [self cellForEntity:entity editing:NO delegate:nil];
 }
 
 
-- (id)cellForEntity:(ScCachedEntity *)entity delegate:(id)delegate
+- (id)cellForEntity:(ScCachedEntity *)entity editing:(BOOL)editing delegate:(id)delegate
 {
     ScTableViewCell *cell = [self dequeueReusableCellWithIdentifier:entity.entityId];
     
     if (!cell) {
-        cell = [[ScTableViewCell alloc] initWithEntity:entity delegate:delegate];
+        cell = [[ScTableViewCell alloc] initWithEntity:entity editing:editing delegate:delegate];
     }
     
     return cell;

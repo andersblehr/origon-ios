@@ -11,11 +11,13 @@
 typedef enum {
     ScColorBackground,
     ScColorSelectedBackground,
-    ScColorFieldBackground,
+    ScColorEditingBackground,
     ScColorLabel,
     ScColorSelectedLabel,
     ScColorText,
     ScColorSelectedText,
+    ScColorImagePlaceholder,
+    ScColorImagePlaceholderText,
 } ScColorType;
 
 @interface UIColor (ScColorExtensions)

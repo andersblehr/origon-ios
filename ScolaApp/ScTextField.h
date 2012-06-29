@@ -9,7 +9,9 @@
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 
-@interface ScTextField : UITextField
+@interface ScTextField : UITextField {
+    BOOL editing;
+}
 
 - (id)initWithFrame:(CGRect)frame;
 - (id)initWithOrigin:(CGPoint)origin width:(CGFloat)width;

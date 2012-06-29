@@ -37,7 +37,7 @@ extern CGFloat const kKeyboardHeight;
 
 @interface ScTableViewCell : UITableViewCell {
 @private
-    BOOL isSelectable;
+    BOOL selectable;
     
     CGFloat contentMargin;
     CGFloat verticalOffset;
@@ -54,7 +54,8 @@ extern CGFloat const kKeyboardHeight;
 
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
-- (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity delegate:(id)delegate;
+- (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity;
+- (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity editing:(BOOL)editing delegate:(id)delegate;
 - (ScTableViewCell *)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
 
 - (ScTextField *)textFieldWithKey:(NSString *)key;

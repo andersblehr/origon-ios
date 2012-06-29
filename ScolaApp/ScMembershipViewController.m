@@ -97,20 +97,20 @@ static CGFloat const kFooterFontSize = 13.f;
     
     if (isRegistrationWizardStep) {
         if ([scola.residencies count] == 1) {
-            self.title = [ScStrings stringForKey:strMembershipViewHomeScolaTitle1];
+            self.title = [ScStrings stringForKey:strMembershipViewTitleMyPlace];
         } else {
-            self.title = [ScStrings stringForKey:strMembershipViewHomeScolaTitle2];
+            self.title = [ScStrings stringForKey:strMembershipViewTitleOurPlace];
         }
     } else if (isForHousehold) {
         self.title = [ScStrings stringForKey:strHousehold];
         
         if ([scola.residencies count] == 1) {
-            longTitle = [ScStrings stringForKey:strMembershipViewHomeScolaTitle1];
+            longTitle = [ScStrings stringForKey:strMembershipViewTitleMyPlace];
         } else {
-            longTitle = [ScStrings stringForKey:strMembershipViewHomeScolaTitle2];
+            longTitle = [ScStrings stringForKey:strMembershipViewTitleOurPlace];
         }
     } else {
-        self.title = [ScStrings stringForKey:strMembershipViewDefaultTitle];
+        self.title = [ScStrings stringForKey:strMembershipViewTitleDefault];
     }
     
     if (isUserScolaAdmin) {
@@ -249,7 +249,7 @@ static CGFloat const kFooterFontSize = 13.f;
     ScTableViewCell *cell = nil;
     
     if (indexPath.section == kAddressSection) {
-        cell = [tableView cellForEntity:scola delegate:self];
+        cell = [tableView cellForEntity:scola];
         
         if (isUserScolaAdmin) {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
