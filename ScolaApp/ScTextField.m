@@ -25,24 +25,22 @@ static CGFloat const kTextIndent = 4.f;
 
 - (id)initWithFrame:(CGRect)frame
 {
-    return [self initWithOrigin:CGPointMake(frame.origin.x, frame.origin.y) width:frame.size.width];
+    return [self initForDetailAtOrigin:CGPointMake(frame.origin.x, frame.origin.y) width:frame.size.width editing:NO];
 }
 
 
-- (id)initWithOrigin:(CGPoint)origin width:(CGFloat)width
+- (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing
 {
-    return [self initWithOrigin:origin width:width editable:NO];
-}
-
-
-- (id)initWithOrigin:(CGPoint)origin width:(CGFloat)width editable:(BOOL)editable
-{
-    editing = editable;
     
-    UIFont *displayFont = [UIFont fontWithType:ScFontDetail];
-    UIFont *editingFont = [UIFont fontWithType:ScFontEditableDetail];
+}
 
-    CGFloat height = editing ? [editingFont editingLineHeight] : [displayFont displayLineHeight];
+
+- (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing
+{
+    isEditing = editing;
+    
+    UIFont *font = editing ? [UIFont editableDetailFont] : [UIFont detailFont];
+    CGFloat height = editing ? [font lineHeightWhenEditing] : [font lineHeight];
     
     self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, height)];
     
@@ -50,18 +48,19 @@ static CGFloat const kTextIndent = 4.f;
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-        self.textAlignment = UITextAlignmentLeft;
-        self.textColor = [UIColor colorWithType:ScColorText];
+        self.font = font;
+        self.keyboardType = UIKeyboardTypeDefault;
         self.layer.cornerRadius = kRoundedCornerRadius;
+        self.returnKeyType = UIReturnKeyNext;
+        self.textAlignment = UITextAlignmentLeft;
+        self.textColor = [UIColor detailTextColor];
         
         if (editing) {
-            self.font = editingFont;
-            self.backgroundColor = [UIColor colorWithType:ScColorEditingBackground];
+            self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
             
             [self addEditableFieldShadow];
         } else {
-            self.font = displayFont;
-            self.backgroundColor = [UIColor colorWithType:ScColorBackground];
+            self.backgroundColor = [UIColor cellBackgroundColor];
         }
     }
     

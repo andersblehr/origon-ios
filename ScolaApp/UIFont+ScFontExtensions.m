@@ -8,6 +8,14 @@
 
 #import "UIFont+ScFontExtensions.h"
 
+typedef enum {
+    ScFontStyleLabel,
+    ScFontStyleDetail,
+    ScFontStyleEditableDetail,
+    ScFontStyleTitle,
+    ScFontStyleEditableTitle,
+} ScFontStyle;
+
 static CGFloat const kLabelFontSize = 12.f;
 static CGFloat const kDetailFontSize = 14.f;
 static CGFloat const kTitleFontSize = 16.f;
@@ -19,49 +27,69 @@ static CGFloat const kEditingFontToLineHeightScaleFactor = 3.f;
 @implementation UIFont (ScFontExtensions)
 
 
-#pragma mark - Font convenience methods
+#pragma mark - Auxiliary methods
 
-+ (UIFont *)fontWithType:(ScFontType)fontType
++ (UIFont *)fontWithType:(ScFontStyle)fontType
 {
     UIFont *font = nil;
     
-    if (fontType == ScFontLabel) {
+    if (fontType == ScFontStyleLabel) {
         font = [UIFont boldSystemFontOfSize:kLabelFontSize];
-    } else if (fontType == ScFontDetail) {
+    } else if (fontType == ScFontStyleDetail) {
         font = [UIFont boldSystemFontOfSize:kDetailFontSize];
-    } else if (fontType == ScFontEditableDetail) {
+    } else if (fontType == ScFontStyleEditableDetail) {
         font = [UIFont systemFontOfSize:kDetailFontSize];
-    } else if (fontType == ScFontTitle) {
+    } else if (fontType == ScFontStyleTitle) {
         font = [UIFont boldSystemFontOfSize:kTitleFontSize];
-    } else if (fontType == ScFontEditableTitle) {
-        font = [UIFont systemFontOfSize:kTitleFontSize];
+    } else if (fontType == ScFontStyleEditableTitle) {
+        font = [UIFont boldSystemFontOfSize:kTitleFontSize];
     }
     
     return font;
 }
 
 
-+ (CGFloat)lineHeightForFontWithType:(ScFontType)fontType
+#pragma mark - Predefined Scola fonts
+
++ (UIFont *)labelFont
 {
-    CGFloat height = 0.f;
-    
-    if ((fontType == ScFontEditableDetail) || (fontType == ScFontEditableTitle)) {
-        height = [[UIFont fontWithType:fontType] editingLineHeight];
-    } else {
-        height = [[UIFont fontWithType:fontType] displayLineHeight];
-    }
-    
-    return height;
+    return [UIFont fontWithType:ScFontStyleLabel];
 }
 
 
-- (CGFloat)displayLineHeight
++ (UIFont *)detailFont
+{
+    return [UIFont fontWithType:ScFontStyleDetail];
+}
+
+
++ (UIFont *)editableDetailFont
+{
+    return [UIFont fontWithType:ScFontStyleEditableDetail];
+}
+
+
++ (UIFont *)titleFont
+{
+    return [UIFont fontWithType:ScFontStyleTitle];
+}
+
+
++ (UIFont *)editableTitleFont
+{
+    return [UIFont fontWithType:ScFontStyleEditableTitle];
+}
+
+
+#pragma mark - Font line height
+
+- (CGFloat)lineHeight
 {
     return kDisplayFontToLineHeightScaleFactor * self.xHeight;
 }
 
 
-- (CGFloat)editingLineHeight
+- (CGFloat)lineHeightWhenEditing
 {
     return kEditingFontToLineHeightScaleFactor * self.xHeight;
 }

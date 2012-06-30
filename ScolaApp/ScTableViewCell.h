@@ -12,12 +12,13 @@ extern NSString * const kReuseIdentifierDefault;
 extern NSString * const kReuseIdentifierUserLogin;
 extern NSString * const kReuseIdentifierUserConfirmation;
 
-extern NSString * const kTextFieldKeyEmail;
+extern NSString * const kTextFieldKeyAuthEmail;
 extern NSString * const kTextFieldKeyPassword;
 extern NSString * const kTextFieldKeyRegistrationCode;
 extern NSString * const kTextFieldKeyRepeatPassword;
 
 extern NSString * const kTextFieldKeyName;
+extern NSString * const kTextFieldKeyEmail;
 extern NSString * const kTextFieldKeyMobilePhone;
 extern NSString * const kTextFieldKeyDateOfBirth;
 
@@ -45,12 +46,11 @@ extern CGFloat const kKeyboardHeight;
     NSMutableDictionary *labels;
     NSMutableDictionary *details;
     NSMutableDictionary *textFields;
+    
+    id<UITextFieldDelegate> textFieldDelegate;
 }
 
 @property (strong, readonly) UIButton *imageButton;
-
-+ (CGFloat)heightForEntity:(ScCachedEntity *)entity;
-+ (CGFloat)heightForNumberOfLabels:(NSInteger)numberOfLabels;
 
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
@@ -61,5 +61,8 @@ extern CGFloat const kKeyboardHeight;
 - (ScTextField *)textFieldWithKey:(NSString *)key;
 
 - (void)shake;
+
++ (CGFloat)heightForEntity:(ScCachedEntity *)entity;
++ (CGFloat)heightForNumberOfLabels:(NSInteger)numberOfLabels;
 
 @end

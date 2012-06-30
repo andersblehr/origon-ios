@@ -8,21 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum {
-    ScColorBackground,
-    ScColorSelectedBackground,
-    ScColorEditingBackground,
-    ScColorLabel,
-    ScColorSelectedLabel,
-    ScColorText,
-    ScColorSelectedText,
-    ScColorImagePlaceholder,
-    ScColorImagePlaceholderText,
-} ScColorType;
-
 @interface UIColor (ScColorExtensions)
 
-+ (UIColor *)colorWithType:(ScColorType)colorType;
++ (UIColor *)cellBackgroundColor;
++ (UIColor *)selectedCellBackgroundColor;
++ (UIColor *)editableTextFieldBackgroundColor;
++ (UIColor *)labelTextColor;
++ (UIColor *)selectedLabelTextColor;
++ (UIColor *)detailTextColor;
++ (UIColor *)selectedDetailTextColor;
++ (UIColor *)imagePlaceholderBackgroundColor;
++ (UIColor *)imagePlaceholderTextColor;
 
 + (UIColor *)ashGrayColor;
 + (UIColor *)ghostWhiteColor;

@@ -8,36 +8,105 @@
 
 #import "UIColor+ScColorExtensions.h"
 
+typedef enum {
+    ScColorCellBackground,
+    ScColorSelectedCellBackground,
+    ScColorEditableTextFieldBackground,
+    ScColorLabelText,
+    ScColorSelectedLabelText,
+    ScColorDetailText,
+    ScColorSelectedDetailText,
+    ScColorImagePlaceholderBackground,
+    ScColorImagePlaceholderText,
+} ScColorStyle;
+
+
 @implementation UIColor (ScColorExtensions)
 
 
-#pragma mark - Scola colour palette
+#pragma mark - Auxiliary methods
 
-+ (UIColor *)colorWithType:(ScColorType)colorType
++ (UIColor *)colorWithType:(ScColorStyle)colorType
 {
     UIColor *color = nil;
     
-    if (colorType == ScColorBackground) {
+    if (colorType == ScColorCellBackground) {
         color = [UIColor isabellineColor];
-    } else if (colorType == ScColorSelectedBackground) {
+    } else if (colorType == ScColorSelectedCellBackground) {
         color = [UIColor ashGrayColor];
-    } else if (colorType == ScColorEditingBackground) {
+    } else if (colorType == ScColorEditableTextFieldBackground) {
         color = [UIColor ghostWhiteColor];
-    } else if (colorType == ScColorLabel) {
+    } else if (colorType == ScColorLabelText) {
         color = [UIColor slateGrayColor];
-    } else if (colorType == ScColorSelectedLabel) {
+    } else if (colorType == ScColorSelectedLabelText) {
         color = [UIColor lightTextColor];
-    } else if (colorType == ScColorText) {
+    } else if (colorType == ScColorDetailText) {
         color = [UIColor darkTextColor];
-    } else if (colorType == ScColorSelectedText) {
+    } else if (colorType == ScColorSelectedDetailText) {
         color = [UIColor whiteColor];
-    } else if (colorType == ScColorImagePlaceholder) {
+    } else if (colorType == ScColorImagePlaceholderBackground) {
         color = [UIColor ghostWhiteColor];
     } else if (colorType == ScColorImagePlaceholderText) {
         color = [UIColor colorWithWhite:0.85f alpha:1.f];
     }
     
     return color;
+}
+
+
+#pragma mark - Scola color palette
+
++ (UIColor *)cellBackgroundColor
+{
+    return [UIColor colorWithType:ScColorCellBackground];
+}
+
+
++ (UIColor *)selectedCellBackgroundColor
+{
+    return [UIColor colorWithType:ScColorSelectedCellBackground];
+}
+
+
++ (UIColor *)editableTextFieldBackgroundColor
+{
+    return [UIColor colorWithType:ScColorEditableTextFieldBackground];
+}
+
+
++ (UIColor *)labelTextColor
+{
+    return [UIColor colorWithType:ScColorLabelText];
+}
+
+
++ (UIColor *)selectedLabelTextColor
+{
+    return [UIColor colorWithType:ScColorSelectedLabelText];
+}
+
+
++ (UIColor *)detailTextColor
+{
+    return [UIColor colorWithType:ScColorDetailText];
+}
+
+
++ (UIColor *)selectedDetailTextColor
+{
+    return [UIColor colorWithType:ScColorSelectedDetailText];
+}
+
+
++ (UIColor *)imagePlaceholderBackgroundColor
+{
+    return [UIColor colorWithType:ScColorImagePlaceholderBackground];
+}
+
+
++ (UIColor *)imagePlaceholderTextColor
+{
+    return [UIColor colorWithType:ScColorImagePlaceholderText];
 }
 
 

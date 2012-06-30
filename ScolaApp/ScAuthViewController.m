@@ -35,11 +35,6 @@
 
 #import "ScMemberViewController.h"
 
-typedef enum {
-    ScAuthAlertConfirmationFailed,
-    ScAuthAlertWelcomeBack,
-} ScAuthAlertTag;
-
 static NSString * const kSegueToMainView = @"authToMainView";
 static NSString * const kSegueToMemberView = @"authToMemberView";
 
@@ -52,8 +47,8 @@ static NSString * const kAuthInfoKeyIsUserListed = @"isListed";
 static NSString * const kAuthInfoKeyIsRegistered = @"isRegistered";
 static NSString * const kAuthInfoKeyHomeScolaId = @"homeScolaId";
 
-static NSInteger const kAlertButtonGoBack = 0;
-static NSInteger const kAlertButtonContinue = 1;
+static NSInteger const kAlertButtonStartOver = 0;
+static NSInteger const kAlertTagWelcomeBack = 0;
 
 
 @implementation ScAuthViewController
@@ -110,12 +105,24 @@ static NSInteger const kAlertButtonContinue = 1;
 }
 
 
-- (void)showTryAgainOrGoBackAlertWithTitle:(NSString *)title message:(NSString *)message
+- (void)handleFailedConfirmationForField:(ScTextField *)field;
 {
-    UIAlertView *validationAlert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:[ScStrings stringForKey:strGoBack] otherButtonTitles:[ScStrings stringForKey:strRetry], nil];
-    validationAlert.tag = ScAuthAlertConfirmationFailed;
-    
-    [validationAlert show];
+    if (numberOfConfirmationAttempts < 3) {
+        [authCell shake];
+        
+        if (field == registrationCodeField) {
+            registrationCodeField.text = @"";
+        }
+        
+        passwordField.text = @"";
+        
+        [field becomeFirstResponder];
+    } else {
+        [[[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strUserConfirmationFailedTitle] message:[ScStrings stringForKey:strUserConfirmationFailedAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil] show];
+        
+        [self setUpForAuthPhase:ScAuthPhaseLogin];
+        numberOfConfirmationAttempts = 0;
+    }
 }
 
 
@@ -172,15 +179,13 @@ static NSInteger const kAlertButtonContinue = 1;
 
 - (BOOL)isRegistrationCodeValid
 {
-    NSString *registrationCodeAsSent = [[authInfo objectForKey:kAuthInfoKeyRegistrationCode] lowercaseString];
+    NSString *registrationCode = [[authInfo objectForKey:kAuthInfoKeyRegistrationCode] lowercaseString];
     NSString *registrationCodeAsEntered = [registrationCodeField.text lowercaseString];
     
-    BOOL isValid = [registrationCodeAsEntered isEqualToString:registrationCodeAsSent];
+    BOOL isValid = [registrationCodeAsEntered isEqualToString:registrationCode];
     
     if (!isValid) {
-        [self showTryAgainOrGoBackAlertWithTitle:[ScStrings stringForKey:strInvalidRegistrationCodeTitle] message:[ScStrings stringForKey:strInvalidRegistrationCodeAlert]];
-        
-        [registrationCodeField becomeFirstResponder];
+        [self handleFailedConfirmationForField:registrationCodeField];
     }
     
     return isValid;
@@ -198,13 +203,8 @@ static NSInteger const kAlertButtonContinue = 1;
         isValid = [passwordHashAsEntered isEqualToString:passwordHashAsPersisted];
         
         if (!isValid) {
-            [self showTryAgainOrGoBackAlertWithTitle:[ScStrings stringForKey:strPasswordsDoNotMatchTitle] message:[ScStrings stringForKey:strPasswordsDoNotMatchAlert]];
+            [self handleFailedConfirmationForField:passwordField];
         }
-    }
-    
-    if (!isValid) {
-        passwordField.text = @"";
-        [passwordField becomeFirstResponder];
     }
     
     return isValid;
@@ -412,8 +412,8 @@ static NSInteger const kAlertButtonContinue = 1;
     if (authPhase == ScAuthPhaseConfirmation) {
         NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strWelcomeBackAlert], [authInfo objectForKey:kAuthInfoKeyUserId]];
         
-        UIAlertView *welcomeBackPopUp = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strWelcomeBackTitle] message:popUpMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strGoBack] otherButtonTitles:[ScStrings stringForKey:strHaveCode], nil];
-        welcomeBackPopUp.tag = ScAuthAlertWelcomeBack;
+        UIAlertView *welcomeBackPopUp = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strWelcomeBackTitle] message:popUpMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strStartOver] otherButtonTitles:[ScStrings stringForKey:strHaveCode], nil];
+        welcomeBackPopUp.tag = kAlertTagWelcomeBack;
         
         [welcomeBackPopUp show];
     }
@@ -548,6 +548,8 @@ static NSInteger const kAlertButtonContinue = 1;
                 [self attemptUserLogin];
             }
         } else if (authPhase == ScAuthPhaseConfirmation) {
+            numberOfConfirmationAttempts++;
+            
             shouldReturn = shouldReturn && [self isRegistrationCodeValid];
             shouldReturn = shouldReturn && [self isPasswordValid];
             
@@ -570,9 +572,8 @@ static NSInteger const kAlertButtonContinue = 1;
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
-        case ScAuthAlertConfirmationFailed:
-        case ScAuthAlertWelcomeBack:
-            if (buttonIndex == kAlertButtonGoBack) {
+        case kAlertTagWelcomeBack:
+            if (buttonIndex == kAlertButtonStartOver) {
                 [self setUpForAuthPhase:ScAuthPhaseLogin];
             }
             

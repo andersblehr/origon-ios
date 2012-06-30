@@ -58,8 +58,8 @@ extern NSString * const strHouseholdMemberListFooter;
 extern NSString * const strOK;
 extern NSString * const strCancel;
 extern NSString * const strRetry;
+extern NSString * const strStartOver;
 extern NSString * const strHaveCode;
-extern NSString * const strGoBack;
 
 // Alerts & error messages
 extern NSString * const strNoInternetError;
@@ -72,10 +72,8 @@ extern NSString * const strInvalidPasswordTitle;
 extern NSString * const strInvalidPasswordAlert;
 extern NSString * const strInvalidDateOfBirthTitle;
 extern NSString * const strInvalidDateOfBirthAlert;
-extern NSString * const strInvalidRegistrationCodeTitle;
-extern NSString * const strInvalidRegistrationCodeAlert;
-extern NSString * const strPasswordsDoNotMatchTitle;
-extern NSString * const strPasswordsDoNotMatchAlert;
+extern NSString * const strUserConfirmationFailedTitle;
+extern NSString * const strUserConfirmationFailedAlert;
 extern NSString * const strNoAddressTitle;
 extern NSString * const strNoAddressAlert;
 extern NSString * const strNoMobileNumberTitle;

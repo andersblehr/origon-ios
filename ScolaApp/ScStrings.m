@@ -68,8 +68,8 @@ NSString * const strHouseholdMemberListFooter         = @"strHouseholdMemberList
 NSString * const strOK                                = @"strOK";
 NSString * const strCancel                            = @"strCancel";
 NSString * const strRetry                             = @"strRetry";
+NSString * const strStartOver                         = @"strStartOver";
 NSString * const strHaveCode                          = @"strHaveCode";
-NSString * const strGoBack                            = @"strGoBack";
 
 // Alerts & error messages
 NSString * const strNoInternetError                   = @"strNoInternetError";
@@ -82,10 +82,8 @@ NSString * const strInvalidPasswordTitle              = @"strInvalidPasswordTitl
 NSString * const strInvalidPasswordAlert              = @"strInvalidPasswordAlert";
 NSString * const strInvalidDateOfBirthTitle           = @"strInvalidDateOfBirthTitle";
 NSString * const strInvalidDateOfBirthAlert           = @"strInvalidDateOfBirthAlert";
-NSString * const strInvalidRegistrationCodeTitle      = @"strInvalidRegistrationCodeTitle";
-NSString * const strInvalidRegistrationCodeAlert      = @"strInvalidRegistrationCodeAlert";
-NSString * const strPasswordsDoNotMatchTitle          = @"strPasswordsDoNotMatchTitle";
-NSString * const strPasswordsDoNotMatchAlert          = @"strPasswordsDoNotMatchAlert";
+NSString * const strUserConfirmationFailedTitle       = @"strUserConfirmationFailedTitle";
+NSString * const strUserConfirmationFailedAlert       = @"strUserConfirmationFailedAlert";
 NSString * const strNoAddressTitle                    = @"strNoAddressTitle";
 NSString * const strNoAddressAlert                    = @"strNoAddressAlert";
 NSString * const strNoMobileNumberTitle               = @"strNoMobileNumberTitle";

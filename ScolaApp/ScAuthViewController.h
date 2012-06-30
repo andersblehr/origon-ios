@@ -30,8 +30,9 @@
     ScMember *member;
     ScScola *homeScola;
     
-    UIActivityIndicatorView *spinner;
     NSDictionary *authInfo;
+    UIActivityIndicatorView *spinner;
+    NSInteger numberOfConfirmationAttempts;
 }
 
 @end
