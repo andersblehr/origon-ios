@@ -62,7 +62,6 @@ static NSString * const kRESTHandlerStrings = @"strings";
 static NSString * const kRESTHandlerAuth = @"auth";
 static NSString * const kRESTHandlerModel = @"model";
 
-static NSString * const kRESTRouteAuthRegistration = @"register";
 static NSString * const kRESTRouteAuthConfirmation = @"confirm";
 static NSString * const kRESTRouteAuthLogin = @"login";
 static NSString * const kRESTRouteModelSync = @"sync";
@@ -250,18 +249,16 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-- (void)authenticateForPhase:(ScAuthPhase)authPhase delegate:(id)delegate
+- (void)authenticateUsingDelegate:(id)delegate
 {
     RESTHandler = kRESTHandlerAuth;
 
-    if (authPhase == ScAuthPhaseLogin) {
+    if ([ScMeta m].appState == ScAppStateUserLogin) {
         RESTRoute = kRESTRouteAuthLogin;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
         [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
-    } else if (authPhase == ScAuthPhaseRegistration) {
-        RESTRoute = kRESTRouteAuthRegistration;
-    } else if (authPhase == ScAuthPhaseConfirmation) {
+    } else if ([ScMeta m].appState == ScAppStateUserConfirmation) {
         RESTRoute = kRESTRouteAuthConfirmation;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];

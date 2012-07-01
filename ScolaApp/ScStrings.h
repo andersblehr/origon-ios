@@ -36,16 +36,22 @@ extern NSString * const strRepeatPasswordPrompt;
 extern NSString * const strPhotoPrompt;
 extern NSString * const strNamePrompt;
 extern NSString * const strEmailPrompt;
-extern NSString * const strDateOfBirthPrompt;
 extern NSString * const strMobilePhonePrompt;
-extern NSString * const strAddressLine1Prompt;
-extern NSString * const strAddressLine2Prompt;
-extern NSString * const strPostCodeAndCityPrompt;
+extern NSString * const strDateOfBirthPrompt;
+extern NSString * const strUserWebsitePrompt;
+extern NSString * const strAddressPrompt;
 extern NSString * const strLandlinePrompt;
+extern NSString * const strScolaWebsitePrompt;
 
 // Labels
 extern NSString * const strSignInOrRegisterLabel;
 extern NSString * const strConfirmRegistrationLabel;
+extern NSString * const strSingleLetterEmailLabel;
+extern NSString * const strSingleLetterMobilePhoneLabel;
+extern NSString * const strSingleLetterDateOfBirthLabel;
+extern NSString * const strSingleLetterAddressLabel;
+extern NSString * const strSingleLetterLandlineLabel;
+extern NSString * const strSingleLetterWebsiteLabel;
 extern NSString * const strAddressLabel;
 extern NSString * const strLandlineLabel;
 

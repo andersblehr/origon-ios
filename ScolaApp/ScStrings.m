@@ -46,16 +46,22 @@ NSString * const strRepeatPasswordPrompt              = @"strRepeatPasswordPromp
 NSString * const strPhotoPrompt                       = @"strPhotoPrompt";
 NSString * const strNamePrompt                        = @"strNamePrompt";
 NSString * const strEmailPrompt                       = @"strEmailPrompt";
-NSString * const strDateOfBirthPrompt                 = @"strDateOfBirthPrompt";
 NSString * const strMobilePhonePrompt                 = @"strMobilePhonePrompt";
-NSString * const strAddressLine1Prompt                = @"strAddressLine1Prompt";
-NSString * const strAddressLine2Prompt                = @"strAddressLine2Prompt";
-NSString * const strPostCodeAndCityPrompt             = @"strPostCodeAndCityPrompt";
+NSString * const strDateOfBirthPrompt                 = @"strDateOfBirthPrompt";
+NSString * const strUserWebsitePrompt                 = @"strUserWebsitePrompt";
+NSString * const strAddressPrompt                     = @"strAddressPrompt";
 NSString * const strLandlinePrompt                    = @"strLandlinePrompt";
+NSString * const strScolaWebsitePrompt                = @"strScolaWebsitePrompt";
 
 // Labels
 NSString * const strSignInOrRegisterLabel             = @"strSignInOrRegisterLabel";
 NSString * const strConfirmRegistrationLabel          = @"strConfirmRegistrationLabel";
+NSString * const strSingleLetterEmailLabel            = @"strSingleLetterEmailLabel";
+NSString * const strSingleLetterMobilePhoneLabel      = @"strSingleLetterMobilePhoneLabel";
+NSString * const strSingleLetterDateOfBirthLabel      = @"strSingleLetterDateOfBirthLabel";
+NSString * const strSingleLetterAddressLabel          = @"strSingleLetterAddressLabel";
+NSString * const strSingleLetterLandlineLabel         = @"strSingleLetterLandlineLabel";
+NSString * const strSingleLetterWebsiteLabel          = @"strSingleLetterWebsiteLabel";
 NSString * const strAddressLabel                      = @"strAddressLabel";
 NSString * const strLandlineLabel                     = @"strLandlineLabel";
 

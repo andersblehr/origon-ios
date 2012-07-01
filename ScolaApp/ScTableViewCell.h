@@ -21,11 +21,11 @@ extern NSString * const kTextFieldKeyName;
 extern NSString * const kTextFieldKeyEmail;
 extern NSString * const kTextFieldKeyMobilePhone;
 extern NSString * const kTextFieldKeyDateOfBirth;
+extern NSString * const kTextFieldKeyUserWebsite;
 
-extern NSString * const kTextFieldKeyAddressLine1;
-extern NSString * const kTextFieldKeyAddressLine2;
-extern NSString * const kTextFieldKeyPostCodeAndCity;
+extern NSString * const kTextFieldKeyAddress;
 extern NSString * const kTextFieldKeyLandline;
+extern NSString * const kTextFieldKeyScolaWebsite;
 
 extern CGFloat const kScreenWidth;
 extern CGFloat const kCellWidth;
@@ -41,6 +41,7 @@ extern CGFloat const kKeyboardHeight;
     BOOL selectable;
     
     CGFloat contentMargin;
+    CGFloat labelWidth;
     CGFloat verticalOffset;
     
     NSMutableDictionary *labels;
@@ -52,6 +53,9 @@ extern CGFloat const kKeyboardHeight;
 
 @property (strong, readonly) UIButton *imageButton;
 
++ (CGFloat)heightForEntity:(ScCachedEntity *)entity whenEditing:(BOOL)editing;
++ (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
+
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 - (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity;
@@ -61,8 +65,5 @@ extern CGFloat const kKeyboardHeight;
 - (ScTextField *)textFieldWithKey:(NSString *)key;
 
 - (void)shake;
-
-+ (CGFloat)heightForEntity:(ScCachedEntity *)entity;
-+ (CGFloat)heightForNumberOfLabels:(NSInteger)numberOfLabels;
 
 @end

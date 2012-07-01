@@ -156,8 +156,6 @@ static CGFloat const kFooterFontSize = 13.f;
 - (void)addMembership
 {
     ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
-    
-    memberViewController.scenario = ScMemberScenarioAddHouseholdMember;
     memberViewController.membershipViewController = self;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
@@ -235,7 +233,7 @@ static CGFloat const kFooterFontSize = 13.f;
     CGFloat height;
     
     if (indexPath.section == kAddressSection) {
-        height = [ScTableViewCell heightForEntity:scola];
+        height = [ScTableViewCell heightForEntity:scola whenEditing:YES];
     } else {
         height = 1.1f * self.tableView.rowHeight;
     }
@@ -318,9 +316,9 @@ static CGFloat const kFooterFontSize = 13.f;
     BOOL isLastRowInSection = (indexPath.row == numberOfRowsInSection - 1);
     
     if (isLastRowInSection) {
-        [cell.backgroundView addOnlyOrBottomCellShadow];
+        [cell.backgroundView addShadowForBottomTableViewCell];
     } else {
-        [cell.backgroundView addNonBottomCellShadow];
+        [cell.backgroundView addShadowForNonBottomTableViewCell];
     }
 }
 

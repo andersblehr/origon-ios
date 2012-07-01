@@ -10,11 +10,28 @@
 
 #import "ScServerConnectionDelegate.h"
 
+typedef enum {
+    ScAppStateStartingUp,
+    ScAppStateUserLogin,
+    ScAppStateUserConfirmation,
+    ScAppStateUserRegistration,
+    ScAppStateHouseholdRegistration,
+    ScAppStateHouseholdMemberRegistration,
+    ScAppStateScolaRegistration,
+    ScAppStateScolaMemberRegistration,
+    ScAppStateNormal,
+    ScAppStateDisplayMember,
+    ScAppStateDisplayUser,
+    ScAppStateEditMember,
+    ScAppStateEditUser,
+} ScAppState;
+
 extern NSString * const kBundleId;
 extern NSString * const kDarkLinenImageFile;
 
 extern NSString * const kMemberViewControllerId;
 extern NSString * const kMembershipViewControllerId;
+extern NSString * const kScolaViewControllerId;
 
 extern NSString * const kPropertyEntityId;
 extern NSString * const kPropertyEntityClass;
@@ -44,6 +61,7 @@ extern NSString * const kLanguageHungarian;
     NSMutableDictionary *importedEntityRefs;
 }
 
+@property (nonatomic) ScAppState appState;
 @property (nonatomic) BOOL isUserLoggedIn;
 
 @property (strong, nonatomic) NSString *userId;
@@ -81,7 +99,6 @@ extern NSString * const kLanguageHungarian;
 + (BOOL)isNameValid:(UITextField *)nameField;
 + (BOOL)isMobileNumberValid:(UITextField *)mobileNumberField;
 + (BOOL)isDateOfBirthValid:(UITextField *)dateField;
-+ (BOOL)isAddressValidWithLine1:(NSString *)line1 line2:(NSString *)line2 postCodeAndCity:(NSString *)postCodeAndCity;
 
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;

@@ -20,8 +20,7 @@ static CGFloat const kLabelFontSize = 12.f;
 static CGFloat const kDetailFontSize = 14.f;
 static CGFloat const kTitleFontSize = 16.f;
 
-static CGFloat const kDisplayFontToLineHeightScaleFactor = 2.5f;
-static CGFloat const kEditingFontToLineHeightScaleFactor = 3.f;
+static CGFloat const kEditingLineHeightScaleFactor = 1.22f;
 
 
 @implementation UIFont (ScFontExtensions)
@@ -81,17 +80,11 @@ static CGFloat const kEditingFontToLineHeightScaleFactor = 3.f;
 }
 
 
-#pragma mark - Font line height
-
-- (CGFloat)lineHeight
-{
-    return kDisplayFontToLineHeightScaleFactor * self.xHeight;
-}
-
+#pragma mark - Scale for editing
 
 - (CGFloat)lineHeightWhenEditing
 {
-    return kEditingFontToLineHeightScaleFactor * self.xHeight;
+    return kEditingLineHeightScaleFactor * self.lineHeight;
 }
 
 @end

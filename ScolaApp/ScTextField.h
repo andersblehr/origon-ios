@@ -10,11 +10,15 @@
 #import <UIKit/UIKit.h>
 
 @interface ScTextField : UITextField {
+    BOOL isTitle;
     BOOL isEditing;
 }
 
 - (id)initWithFrame:(CGRect)frame;
 - (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing;
 - (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing;
+
+- (CGFloat)lineHeight;
+- (CGFloat)lineSpacingBelow;
 
 @end

@@ -20,9 +20,7 @@
     BOOL isUserListed;
     BOOL isModelUpToDate;
     
-    ScAuthPhase authPhase;
     ScTableViewCell *authCell;
-    
     ScTextField *emailField;
     ScTextField *passwordField;
     ScTextField *registrationCodeField;

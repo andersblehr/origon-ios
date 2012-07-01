@@ -96,24 +96,6 @@ static NSString * const kLogoText = @"..scola..";
 }
 
 
-#pragma mark - Cell meta information
-
-- (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier
-{
-    CGFloat height = 0.f;
-    
-    if ([reuseIdentifier isEqualToString:kReuseIdentifierDefault]) {
-        height = self.rowHeight;
-    } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin]) {
-        height = [ScTableViewCell heightForNumberOfLabels:3];
-    } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserConfirmation]) {
-        height = [ScTableViewCell heightForNumberOfLabels:3];
-    }
-        
-    return height;
-}
-
-
 #pragma mark - Header & footer convenience methods
 
 - (void)addLogoBanner
@@ -224,7 +206,7 @@ static NSString * const kLogoText = @"..scola..";
     if (isLastRowInSection) {
         UITableViewCell *precedingCell = [self cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row - 1 inSection:section]];
         
-        [precedingCell.backgroundView addNonBottomCellShadow];
+        [precedingCell.backgroundView addShadowForNonBottomTableViewCell];
     }
 }
 

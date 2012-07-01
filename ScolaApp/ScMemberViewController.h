@@ -10,30 +10,19 @@
 
 #import "ScServerConnectionDelegate.h"
 
-typedef enum {
-    ScMemberScenarioRegisterUser,
-    ScMemberScenarioAddHouseholdMember,
-    ScMemberScenarioAddMember,
-    ScMemberScenarioDisplayUser,
-    ScMemberScenarioDisplayMember,
-    ScMemberScenarioEditUser,
-    ScMemberScenarioEditMember,
-} ScMemberScenario;
-
 @class ScMember, ScMembership, ScScola;
 @class ScMembershipViewController, ScTableViewCell, ScTextField;
 
 @interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate> {
 @private
-    ScTableViewCell *memberCell;
     ScMember *member;
     
     ScTextField *nameField;
     ScTextField *emailField;
     ScTextField *mobilePhoneField;
     ScTextField *dateOfBirthField;
-    
     UIDatePicker *dateOfBirthPicker;
+    
     UIBarButtonItem *editButton;
     UIBarButtonItem *doneButton;
     UIBarButtonItem *cancelButton;
@@ -47,10 +36,8 @@ typedef enum {
     NSArray *memberEntityDictionaries;
 }
 
-@property (nonatomic) ScMemberScenario scenario;
-
-@property (weak, nonatomic) ScScola *scola;
 @property (weak, nonatomic) ScMembership *membership;
+@property (weak, nonatomic) ScScola *scola;
 
 @property (weak, nonatomic) ScMembershipViewController *membershipViewController;
 

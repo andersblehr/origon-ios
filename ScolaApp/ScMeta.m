@@ -27,6 +27,7 @@ NSString * const kDarkLinenImageFile = @"dark_linen-640x960.png";
 
 NSString * const kMemberViewControllerId = @"vcMember";
 NSString * const kMembershipViewControllerId = @"vcMembership";
+NSString * const kScolaViewControllerId = @"vcScola";
 
 NSString * const kPropertyEntityId = @"entityId";
 NSString * const kPropertyEntityClass = @"entityClass";
@@ -59,6 +60,7 @@ static ScMeta *m = nil;
 
 @implementation ScMeta
 
+@synthesize appState;
 @synthesize isUserLoggedIn;
 
 @synthesize userId;
@@ -314,26 +316,6 @@ static ScMeta *m = nil;
     
     if (!isValid) {
         [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidDateOfBirthTitle] message:[ScStrings stringForKey:strInvalidDateOfBirthAlert]];
-    }
-    
-    return isValid;
-}
-
-
-+ (BOOL)isAddressValidWithLine1:(NSString *)line1 line2:(NSString *)line2 postCodeAndCity:(NSString *)postCodeAndCity
-{
-    line1 = [line1 removeLeadingAndTrailingSpaces];
-    line2 = [line2 removeLeadingAndTrailingSpaces];
-    postCodeAndCity = [postCodeAndCity removeLeadingAndTrailingSpaces];
-    
-    BOOL isValid = NO;
-    
-    isValid = isValid || (line1.length > 0);
-    isValid = isValid || (line2.length > 0);
-    isValid = isValid || (postCodeAndCity.length > 0);
-    
-    if (!isValid) {
-        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strNoAddressTitle] message:[ScStrings stringForKey:strNoAddressAlert]];
     }
     
     return isValid;

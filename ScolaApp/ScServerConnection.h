@@ -10,13 +10,6 @@
 
 #import "ScServerConnectionDelegate.h"
 
-typedef enum {
-    ScAuthPhaseNone,
-    ScAuthPhaseLogin,
-    ScAuthPhaseConfirmation,
-    ScAuthPhaseRegistration,
-} ScAuthPhase;
-
 extern NSString * const kHTTPMethodGET;
 extern NSString * const kHTTPMethodPOST;
 extern NSString * const kHTTPMethodDELETE;
@@ -65,7 +58,7 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
 
 - (void)fetchStrings;
-- (void)authenticateForPhase:(ScAuthPhase)authPhase delegate:(id)delegate;
+- (void)authenticateUsingDelegate:(id)delegate;
 - (void)synchroniseEntities;
 - (void)fetchMemberWithId:(NSString *)entityId delegate:(id)delegate;
 

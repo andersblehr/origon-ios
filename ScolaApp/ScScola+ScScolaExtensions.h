@@ -19,8 +19,8 @@
 
 - (BOOL)hasAddress;
 - (BOOL)hasLandline;
+- (BOOL)hasWebsite;
 
-- (NSString *)singleLineAddress;
 - (NSString *)multiLineAddress;
 - (NSInteger)numberOfLinesInAddress;
 

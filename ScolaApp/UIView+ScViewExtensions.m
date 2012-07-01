@@ -49,13 +49,13 @@ static CGFloat const kImageShadowOffset = 1.5f;
 }
 
 
-- (void)addOnlyOrBottomCellShadow
+- (void)addShadowForBottomTableViewCell
 {
     [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor blackColor] radius:kCellShadowRadius offset:kCellShadowOffset];
 }
 
 
-- (void)addNonBottomCellShadow
+- (void)addShadowForNonBottomTableViewCell
 {
     CGRect nonOverlappingShadowRect = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height - 2.75f * kCellShadowRadius);
     
@@ -63,7 +63,7 @@ static CGFloat const kImageShadowOffset = 1.5f;
 }
 
 
-- (void)addEditableFieldShadow
+- (void)addShadowForEditableTextField
 {
     CGSize size = self.bounds.size;
     
@@ -77,9 +77,15 @@ static CGFloat const kImageShadowOffset = 1.5f;
 }
 
 
-- (void)addImageShadow
+- (void)addShadowForPhotoFrame
 {
     [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor darkGrayColor] radius:kImageShadowRadius offset:kImageShadowOffset];
+}
+
+
+- (void)removeShadow
+{
+    [self addShadowWithPath:nil colour:nil radius:0.f offset:0.f];
 }
 
 @end

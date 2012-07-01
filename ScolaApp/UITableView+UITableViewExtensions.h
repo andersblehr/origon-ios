@@ -19,8 +19,6 @@
 - (id)cellForEntity:(ScCachedEntity *)entity editing:(BOOL)editing delegate:(id)delegate;
 - (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate;
 
-- (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier;
-
 - (void)addLogoBanner;
 - (UIActivityIndicatorView *)addActivityIndicator;
 

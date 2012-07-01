@@ -75,45 +75,20 @@
 }
 
 
-#pragma mark - String formatting
-
-- (NSString *)singleLineAddress
-{
-    NSString *address = @"";
-    
-    if ([self hasAddress]) {
-        if (self.addressLine1.length > 0) {
-            address = [address stringByAppendingString:self.addressLine1];
-        }
-        
-        if (self.addressLine2.length > 0) {
-            address = [address stringByAppendingStringWithComma:self.addressLine2];
-        }
-        
-        if (self.postCodeAndCity.length > 0) {
-            address = [address stringByAppendingStringWithComma:self.postCodeAndCity];
-        }
-    }
-    
-    return address;
-}
-
+#pragma mark - Address formatting
 
 - (NSString *)multiLineAddress
 {
     NSString *address = @"";
-    
-    if ([self hasAddress]) {
-        if (self.addressLine1.length > 0) {
-            address = [address stringByAppendingString:self.addressLine1];
-        }
+    NSArray *addressElements = [self.address componentsSeparatedByString:@","];
+
+    for (int i = 0; i < [addressElements count]; i++) {
+        NSString *addressElement = [[addressElements objectAtIndex:i] removeLeadingAndTrailingSpaces];
         
-        if (self.addressLine2.length > 0) {
-            address = [address stringByAppendingStringWithNewline:self.addressLine2];
-        }
-        
-        if (self.postCodeAndCity.length > 0) {
-            address = [address stringByAppendingStringWithNewline:self.postCodeAndCity];
+        if (i == 0) {
+            address = [address stringByAppendingString:addressElement];
+        } else {
+            address = [address stringByAppendingStringWithNewline:addressElement];
         }
     }
     
@@ -123,21 +98,7 @@
 
 - (NSInteger)numberOfLinesInAddress
 {
-    NSInteger numberOfLines = 0;
-    
-    if (self.addressLine1.length > 0) {
-        numberOfLines++;
-    }
-    
-    if (self.addressLine2.length > 0) {
-        numberOfLines++;
-    }
-    
-    if (self.postCodeAndCity.length > 0) {
-        numberOfLines++;
-    }
-    
-    return numberOfLines;
+    return [[NSMutableString stringWithString:self.address] replaceOccurrencesOfString:@"," withString:@"," options:NSLiteralSearch range:NSMakeRange(0, self.address.length)] + 1;
 }
 
 
@@ -145,13 +106,19 @@
 
 - (BOOL)hasAddress
 {
-    return [ScMeta isAddressValidWithLine1:self.addressLine1 line2:self.addressLine2 postCodeAndCity:self.postCodeAndCity];
+    return (self.address.length > 0);
 }
 
 
 - (BOOL)hasLandline
 {
     return (self.landline.length > 0);
+}
+
+
+- (BOOL)hasWebsite
+{
+    return (self.website.length > 0);
 }
 
 @end

@@ -112,7 +112,7 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
         headingView = [[UIView alloc] initWithFrame:headingFrame];
         headingView.backgroundColor = [UIColor isabellineColor];
         headingView.tag = sectionNumber;
-        [headingView addOnlyOrBottomCellShadow];
+        [headingView addShadowForBottomTableViewCell];
         
         UIPanGestureRecognizer *panGestureRecogniser = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
         UITapGestureRecognizer *doubleTapGestureRecogniser = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTapGesture:)];

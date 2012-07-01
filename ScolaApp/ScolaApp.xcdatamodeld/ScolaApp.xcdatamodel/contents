@@ -96,7 +96,8 @@
         <attribute name="mobilePhone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="passwordHash" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="picture" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="website" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="contactForEvents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="eventContacts" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDevice" inverseName="member" inverseEntity="ScDevice" syncable="YES"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDocument" inverseName="author" inverseEntity="ScDocument" syncable="YES"/>
@@ -179,13 +180,12 @@
         <relationship name="yearlySchedule" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScYearlySchedule" inverseName="scheduledBreaks" inverseEntity="ScYearlySchedule" syncable="YES"/>
     </entity>
     <entity name="ScScola" representedClassName="ScScola" parentEntity="ScCachedEntity" syncable="YES">
-        <attribute name="addressLine1" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="addressLine2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="descriptionText" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="landline" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
-        <attribute name="picture" optional="YES" attributeType="Binary" syncable="YES"/>
-        <attribute name="postCodeAndCity" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="website" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="documentRepositories" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScDocumentRepository" inverseName="scola" inverseEntity="ScDocumentRepository" syncable="YES"/>
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEventScolaInvitation" inverseName="scola" inverseEntity="ScEventScolaInvitation" syncable="YES"/>
         <relationship name="hostingEvents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScEvent" inverseName="hostingScolas" inverseEntity="ScEvent" syncable="YES"/>
@@ -256,7 +256,7 @@
         <element name="ScEventInvitation" positionX="-200" positionY="198" width="128" height="105"/>
         <element name="ScEventScolaInvitation" positionX="-20" positionY="198" width="128" height="90"/>
         <element name="ScExternalDocument" positionX="511" positionY="-81" width="128" height="75"/>
-        <element name="ScMember" positionX="169" positionY="-270" width="128" height="300"/>
+        <element name="ScMember" positionX="169" positionY="-270" width="128" height="330"/>
         <element name="ScMemberResidency" positionX="160" positionY="192" width="128" height="135"/>
         <element name="ScMembership" positionX="151" positionY="99" width="128" height="165"/>
         <element name="ScMessageBoard" positionX="340" positionY="432" width="128" height="120"/>
@@ -264,7 +264,7 @@
         <element name="ScMessageThread" positionX="333" positionY="306" width="128" height="90"/>
         <element name="ScScheduledAbsence" positionX="169" positionY="-396" width="128" height="105"/>
         <element name="ScScheduledBreak" positionX="162" positionY="405" width="128" height="90"/>
-        <element name="ScScola" positionX="160" positionY="-117" width="128" height="300"/>
+        <element name="ScScola" positionX="160" positionY="-117" width="128" height="285"/>
         <element name="ScSharedEntityRef" positionX="160" positionY="192" width="128" height="60"/>
         <element name="ScToDoAssignment" positionX="342" positionY="-405" width="128" height="105"/>
         <element name="ScToDoItem" positionX="333" positionY="-267" width="128" height="105"/>

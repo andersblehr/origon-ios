@@ -45,7 +45,7 @@ typedef enum {
     } else if (colorType == ScColorSelectedDetailText) {
         color = [UIColor whiteColor];
     } else if (colorType == ScColorImagePlaceholderBackground) {
-        color = [UIColor ghostWhiteColor];
+        color = [UIColor ashGrayColor];
     } else if (colorType == ScColorImagePlaceholderText) {
         color = [UIColor colorWithWhite:0.85f alpha:1.f];
     }

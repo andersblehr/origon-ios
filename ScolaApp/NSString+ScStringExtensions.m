@@ -138,12 +138,6 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
-- (NSString *)stringByAppendingStringWithComma:(NSString *)string
-{
-    return [self stringByAppendingString:string withSeparator:@", "];
-}
-
-
 - (NSString *)stringByAppendingStringWithNewline:(NSString *)string
 {
     return [self stringByAppendingString:string withSeparator:@"\n"];

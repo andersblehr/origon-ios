@@ -15,7 +15,8 @@
 #import "ScTableViewCell.h"
 
 static CGFloat const kRoundedCornerRadius = 2.5f;
-static CGFloat const kTextIndent = 4.f;
+static CGFloat const kTextInset = 4.f;
+static CGFloat const kLineSpacing = 5.f;
 
 
 @implementation ScTextField
@@ -29,22 +30,16 @@ static CGFloat const kTextIndent = 4.f;
 }
 
 
-- (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing
+- (id)initAtOrigin:(CGPoint)origin font:(UIFont *)font width:(CGFloat)width title:(BOOL)title editing:(BOOL)editing
 {
+    CGFloat lineHeight = editing ? font.lineHeightWhenEditing : font.lineHeight;
     
-}
-
-
-- (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing
-{
-    isEditing = editing;
-    
-    UIFont *font = editing ? [UIFont editableDetailFont] : [UIFont detailFont];
-    CGFloat height = editing ? [font lineHeightWhenEditing] : [font lineHeight];
-    
-    self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, height)];
+    self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, lineHeight)];
     
     if (self) {
+        isTitle = title;
+        isEditing = editing;
+        
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
@@ -55,16 +50,46 @@ static CGFloat const kTextIndent = 4.f;
         self.textAlignment = UITextAlignmentLeft;
         self.textColor = [UIColor detailTextColor];
         
-        if (editing) {
+        if (isEditing) {
             self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
             
-            [self addEditableFieldShadow];
+            [self addShadowForEditableTextField];
         } else {
             self.backgroundColor = [UIColor cellBackgroundColor];
         }
     }
     
     return self;
+}
+
+
+- (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing
+{
+    UIFont *font = editing ? [UIFont editableTitleFont] : [UIFont titleFont];
+    
+    return [self initAtOrigin:origin font:font width:width title:YES editing:editing];
+}
+
+
+- (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing
+{
+    UIFont *font = editing ? [UIFont editableDetailFont] : [UIFont detailFont];
+    
+    return [self initAtOrigin:origin font:font width:width title:NO editing:editing];
+}
+
+
+#pragma mark - Extent of field
+
+- (CGFloat)lineHeight
+{
+    return (isEditing ? self.font.lineHeightWhenEditing : self.font.lineHeight);
+}
+
+
+- (CGFloat)lineSpacingBelow
+{
+    return (isTitle ? 2 * kLineSpacing : kLineSpacing);
 }
 
 
@@ -84,7 +109,7 @@ static CGFloat const kTextIndent = 4.f;
 
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
-    return CGRectInset(bounds, kTextIndent, 0.f);
+    return self.enabled ? CGRectInset(bounds, kTextInset, 0.f) : bounds;
 }
 
 
@@ -95,9 +120,13 @@ static CGFloat const kTextIndent = 4.f;
     [super setEnabled:enabled];
     
     if (enabled) {
-        
+        self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
+        self.layer.cornerRadius = kRoundedCornerRadius;
+        [self addShadowForEditableTextField];
     } else {
-        
+        self.backgroundColor = [UIColor cellBackgroundColor];
+        self.layer.cornerRadius = 0.f;
+        [self removeShadow];
     }
 }
 

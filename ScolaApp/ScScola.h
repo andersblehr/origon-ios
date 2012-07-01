@@ -2,7 +2,7 @@
 //  ScScola.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 14.06.12.
+//  Created by Anders Blehr on 01.07.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -14,13 +14,12 @@
 
 @interface ScScola : ScCachedEntity
 
-@property (nonatomic, retain) NSString * addressLine1;
-@property (nonatomic, retain) NSString * addressLine2;
+@property (nonatomic, retain) NSString * address;
 @property (nonatomic, retain) NSString * descriptionText;
 @property (nonatomic, retain) NSString * landline;
 @property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSData * picture;
-@property (nonatomic, retain) NSString * postCodeAndCity;
+@property (nonatomic, retain) NSData * photo;
+@property (nonatomic, retain) NSString * website;
 @property (nonatomic, retain) NSSet *documentRepositories;
 @property (nonatomic, retain) NSSet *eventInvitations;
 @property (nonatomic, retain) NSSet *hostingEvents;
