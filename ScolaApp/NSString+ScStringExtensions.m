@@ -144,6 +144,12 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
+- (NSString *)stringByAppendingStringWithComma:(NSString *)string
+{
+    return [self stringByAppendingString:string withSeparator:@", "];
+}
+
+
 #pragma mark - Given name from full name
 
 + (NSString *)givenNameFromFullName:(NSString *)fullName

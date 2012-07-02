@@ -12,21 +12,6 @@ extern NSString * const kReuseIdentifierDefault;
 extern NSString * const kReuseIdentifierUserLogin;
 extern NSString * const kReuseIdentifierUserConfirmation;
 
-extern NSString * const kTextFieldKeyAuthEmail;
-extern NSString * const kTextFieldKeyPassword;
-extern NSString * const kTextFieldKeyRegistrationCode;
-extern NSString * const kTextFieldKeyRepeatPassword;
-
-extern NSString * const kTextFieldKeyName;
-extern NSString * const kTextFieldKeyEmail;
-extern NSString * const kTextFieldKeyMobilePhone;
-extern NSString * const kTextFieldKeyDateOfBirth;
-extern NSString * const kTextFieldKeyUserWebsite;
-
-extern NSString * const kTextFieldKeyAddress;
-extern NSString * const kTextFieldKeyLandline;
-extern NSString * const kTextFieldKeyScolaWebsite;
-
 extern CGFloat const kScreenWidth;
 extern CGFloat const kCellWidth;
 extern CGFloat const kContentWidth;
@@ -44,8 +29,7 @@ extern CGFloat const kKeyboardHeight;
     CGFloat labelWidth;
     CGFloat verticalOffset;
     
-    NSMutableDictionary *labels;
-    NSMutableDictionary *details;
+    NSMutableSet *labels;
     NSMutableDictionary *textFields;
     
     id<UITextFieldDelegate> textFieldDelegate;
@@ -53,8 +37,9 @@ extern CGFloat const kKeyboardHeight;
 
 @property (strong, readonly) UIButton *imageButton;
 
-+ (CGFloat)heightForEntity:(ScCachedEntity *)entity whenEditing:(BOOL)editing;
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
++ (CGFloat)heightForEntity:(ScCachedEntity *)entity whenEditing:(BOOL)editing;
++ (CGFloat)heightForEntityClass:(Class)entityClass;
 
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
@@ -65,5 +50,6 @@ extern CGFloat const kKeyboardHeight;
 - (ScTextField *)textFieldWithKey:(NSString *)key;
 
 - (void)shake;
+- (void)shakeWithVibration:(BOOL)doVibrate;
 
 @end

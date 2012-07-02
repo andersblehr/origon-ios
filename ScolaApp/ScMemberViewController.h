@@ -8,24 +8,27 @@
 
 #import <UIKit/UIKit.h>
 
+#import "ScMemberViewControllerDelegate.h"
+#import "ScModalViewControllerDelegate.h"
 #import "ScServerConnectionDelegate.h"
 
 @class ScMember, ScMembership, ScScola;
 @class ScMembershipViewController, ScTableViewCell, ScTextField;
 
-@interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate> {
+@interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate, ScModalViewControllerDelegate> {
 @private
     ScMember *member;
+    ScTableViewCell *memberCell;
+    
+    UIBarButtonItem *editButton;
+    UIBarButtonItem *doneButton;
+    UIBarButtonItem *cancelButton;
     
     ScTextField *nameField;
     ScTextField *emailField;
     ScTextField *mobilePhoneField;
     ScTextField *dateOfBirthField;
     UIDatePicker *dateOfBirthPicker;
-    
-    UIBarButtonItem *editButton;
-    UIBarButtonItem *doneButton;
-    UIBarButtonItem *cancelButton;
     
     BOOL isRegistering;
     BOOL isAdding;
@@ -36,9 +39,8 @@
     NSArray *memberEntityDictionaries;
 }
 
+@property (weak, nonatomic) id<ScMemberViewControllerDelegate> delegate;
 @property (weak, nonatomic) ScMembership *membership;
 @property (weak, nonatomic) ScScola *scola;
-
-@property (weak, nonatomic) ScMembershipViewController *membershipViewController;
 
 @end

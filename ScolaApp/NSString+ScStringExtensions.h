@@ -16,6 +16,7 @@
 
 - (NSString *)removeLeadingAndTrailingSpaces;
 - (NSString *)stringByAppendingStringWithNewline:(NSString *)string;
+- (NSString *)stringByAppendingStringWithComma:(NSString *)string;
 
 + (NSString *)givenNameFromFullName:(NSString *)fullName;
 

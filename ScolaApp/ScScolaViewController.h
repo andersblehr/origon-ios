@@ -8,16 +8,24 @@
 
 #import <UIKit/UIKit.h>
 
+#import "ScModalViewControllerDelegate.h"
+
 @class ScScola;
-@class ScTextField;
+@class ScTableViewCell, ScTextField;
 
 @interface ScScolaViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate> {
 @private
-    ScTextField *addressField;
+    ScTableViewCell *scolaCell;
+    
+    UIBarButtonItem *doneButton;
+    UIBarButtonItem *cancelButton;
+    
+    ScTextField *addressLine1Field;
+    ScTextField *addressLine2Field;
     ScTextField *landlineField;
-    ScTextField *websiteField;
 }
 
+@property (weak, nonatomic) id<ScModalViewControllerDelegate> delegate;
 @property (weak, nonatomic) ScScola *scola;
 
 @end

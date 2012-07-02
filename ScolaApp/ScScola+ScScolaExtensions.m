@@ -80,7 +80,16 @@
 - (NSString *)multiLineAddress
 {
     NSString *address = @"";
-    NSArray *addressElements = [self.address componentsSeparatedByString:@","];
+    
+    if (self.addressLine1.length > 0) {
+        address = [address stringByAppendingString:self.addressLine1];
+    }
+    
+    if (self.addressLine2.length > 0) {
+        address = [address stringByAppendingString:self.addressLine2];
+    }
+    
+    NSArray *addressElements = [address componentsSeparatedByString:@","];
 
     for (int i = 0; i < [addressElements count]; i++) {
         NSString *addressElement = [[addressElements objectAtIndex:i] removeLeadingAndTrailingSpaces];
@@ -98,7 +107,9 @@
 
 - (NSInteger)numberOfLinesInAddress
 {
-    return [[NSMutableString stringWithString:self.address] replaceOccurrencesOfString:@"," withString:@"," options:NSLiteralSearch range:NSMakeRange(0, self.address.length)] + 1;
+    NSString *multiLineAddress = [self multiLineAddress];
+    
+    return [[NSMutableString stringWithString:multiLineAddress] replaceOccurrencesOfString:@"," withString:@"," options:NSLiteralSearch range:NSMakeRange(0, multiLineAddress.length)] + 1;
 }
 
 
@@ -106,7 +117,7 @@
 
 - (BOOL)hasAddress
 {
-    return (self.address.length > 0);
+    return ((self.addressLine1.length > 0) || (self.addressLine2.length > 0));
 }
 
 

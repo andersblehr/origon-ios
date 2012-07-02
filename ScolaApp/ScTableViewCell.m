@@ -8,11 +8,14 @@
 
 #import "ScTableViewCell.h"
 
+#import <AudioToolbox/AudioToolbox.h>
+
 #import "UIColor+ScColorExtensions.h"
 #import "UIDatePicker+ScDatePickerExtensions.h"
 #import "UIFont+ScFontExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
+#import "ScMeta.h"
 #import "ScStrings.h"
 #import "ScTextField.h"
 
@@ -26,39 +29,22 @@ NSString * const kReuseIdentifierDefault = @"ruiDefault";
 NSString * const kReuseIdentifierUserLogin = @"ruiUserLogin";
 NSString * const kReuseIdentifierUserConfirmation = @"ruiUserConfirmation";
 
-NSString * const kTextFieldKeyAuthEmail = @"authEmail";
-NSString * const kTextFieldKeyPassword = @"password";
-NSString * const kTextFieldKeyRegistrationCode = @"registrationCode";
-NSString * const kTextFieldKeyRepeatPassword = @"repeatPassword";
-
-NSString * const kTextFieldKeyName = @"name";
-NSString * const kTextFieldKeyEmail = @"email";
-NSString * const kTextFieldKeyMobilePhone = @"mobilePhone";
-NSString * const kTextFieldKeyDateOfBirth = @"dateOfBirth";
-NSString * const kTextFieldKeyUserWebsite = @"userWebsite";
-
-NSString * const kTextFieldKeyAddress = @"address";
-NSString * const kTextFieldKeyLandline = @"landline";
-NSString * const kTextFieldKeyScolaWebsite = @"scolaWebsite";
-
 CGFloat const kScreenWidth = 320.f;
 CGFloat const kCellWidth = 300.f;
 CGFloat const kContentWidth = 280.f;
 CGFloat const kContentMargin = 10.f;
 CGFloat const kKeyboardHeight = 216.f;
 
-static CGFloat const kLabelWidth = 63.f;
-static CGFloat const kSingleLetterLabelWidth = 0.08f;
-static CGFloat const kDetailMargin = 87.f;
-static CGFloat const kDetailWidth = 193.f;
+static CGFloat const kVerticalMargin = 11.f;
 static CGFloat const kPhotoSideLength = 77.f;
 
-static CGFloat const kVerticalMargin = 11.f;
-static CGFloat const kDetailAlignmentPadding = 3.f;
+static CGFloat const kLabelWidth = 63.f;
+static CGFloat const kLabelToDetailAlignmentPadding = 3.f;
+static CGFloat const kLabelDetailSpacing = 10.f;
 static CGFloat const kLineSpacing = 5.f;
-static CGFloat const kLabelDetailSpacing = 5.f;
 
 static CGFloat const kAuthFieldWidthFraction = 0.7f;
+static CGFloat const kSingleLetterLabelWidthFraction = 0.08f;
 
 
 @implementation ScTableViewCell
@@ -117,6 +103,7 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
     UIDatePicker *dateOfBirthPicker = [[UIDatePicker alloc] init];
     dateOfBirthPicker.datePickerMode = UIDatePickerModeDate;
     [dateOfBirthPicker setEarliestValidBirthDate];
+    [dateOfBirthPicker setLatestValidBirthDate];
     [dateOfBirthPicker setTo01April1976];
     [dateOfBirthPicker addTarget:textFieldDelegate action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
     
@@ -125,32 +112,6 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
 
 
 #pragma mark - Metadata
-
-+ (CGFloat)heightForEntity:(ScCachedEntity *)entity whenEditing:(BOOL)editing
-{
-    CGFloat height = 0.f;
-    
-    if ([entity isKindOfClass:ScMember.class]) {
-        CGFloat titleHeight = editing ? [UIFont editableTitleFont].lineHeightWhenEditing : [UIFont titleFont].lineHeight;
-        
-        height += kVerticalMargin;
-        height += titleHeight;
-        height += 2 * kLineSpacing;
-        height += kPhotoSideLength;
-        height += kVerticalMargin;
-    } else if ([entity isKindOfClass:ScScola.class]) {
-        CGFloat lineHeight = editing ? [UIFont editableDetailFont].lineHeightWhenEditing : [UIFont detailFont].lineHeight;
-        
-        height += kVerticalMargin;
-        height += lineHeight;
-        height += kLineSpacing;
-        height += kPhotoSideLength;
-        height += kVerticalMargin;
-    }
-    
-    return height;
-}
-
 
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -169,11 +130,66 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
 }
 
 
++ (CGFloat)heightForEntity:(ScCachedEntity *)entity whenEditing:(BOOL)editing
+{
+    CGFloat height = 0.f;
+    
+    if ([entity isKindOfClass:ScMember.class]) {
+        height = [ScTableViewCell heightForEntityClass:ScMember.class];
+        
+        if (!editing) {
+            CGFloat titleHeight = [UIFont titleFont].lineHeight;
+            CGFloat editingTitleHeight = [UIFont editableTitleFont].lineHeightWhenEditing;
+            
+            height -= (editingTitleHeight - titleHeight);
+        }
+    } else if ([entity isKindOfClass:ScScola.class]) {
+        height = [ScTableViewCell heightForEntityClass:ScScola.class];
+        
+        if (!editing) {
+            CGFloat detailHeight = [UIFont detailFont].lineHeight;
+            CGFloat editingDetailHeight = [UIFont editableDetailFont].lineHeightWhenEditing;
+            
+            height -= 3 * (editingDetailHeight - detailHeight);
+        }
+    }
+    
+    return height;
+}
+
+
++ (CGFloat)heightForEntityClass:(Class)entityClass
+{
+    CGFloat height = 0.f;
+    
+    if (entityClass == ScMember.class) {
+        height += kVerticalMargin;
+        height += [UIFont editableTitleFont].lineHeightWhenEditing;
+        height += 2 * kLineSpacing;
+        height += kPhotoSideLength;
+        height += kVerticalMargin;
+    } else if (entityClass == ScScola.class) {
+        height += kVerticalMargin;
+        height += 3 * [UIFont editableDetailFont].lineHeightWhenEditing;
+        height += 2 * kLineSpacing;
+        height += kVerticalMargin;
+    }
+    
+    return height;
+}
+
+
 #pragma mark - Adding labels
 
 - (void)addSingleLetterLabel:(NSString *)labelText
 {
-    return [self addLabel:labelText width:kSingleLetterLabelWidth centred:NO];
+    return [self addLabel:labelText width:kSingleLetterLabelWidthFraction centred:NO];
+}
+
+
+- (void)addLabel:(NSString *)labelText
+{
+    return [self addLabel:labelText width:0.f centred:NO];
 }
 
 
@@ -195,7 +211,7 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
     
     CGFloat contentWidth = kCellWidth - kContentMargin - contentMargin;
     labelWidth = (widthFraction > 0.f) ? widthFraction * contentWidth : kLabelWidth;
-    CGFloat detailAlignmentPadding = centred ? 0.f : kDetailAlignmentPadding;
+    CGFloat detailAlignmentPadding = centred ? 0.f : kLabelToDetailAlignmentPadding;
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(contentMargin, verticalOffset + detailAlignmentPadding, labelWidth, labelFont.lineHeight)];
     label.backgroundColor = [UIColor cellBackgroundColor];
@@ -205,6 +221,7 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
     label.textColor = [UIColor labelTextColor];
     
     [self.contentView addSubview:label];
+    [labels addObject:label];
     
     if (centred) {
         labelWidth = 0.f;
@@ -239,31 +256,49 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
             textField = [[ScTextField alloc] initForDetailAtOrigin:CGPointMake(contentMargin + labelWidth, verticalOffset) width:textFieldWidth editing:self.editing];
         }
         
+        textField.delegate = textFieldDelegate;
+        textField.enabled = self.editing;
+        textField.key = key;
+        textField.text = text;
+        
         if ([key isEqualToString:kTextFieldKeyName]) {
             textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
             textField.placeholder = [ScStrings stringForKey:strNamePrompt];
+            
+            if ([ScMeta m].appState == ScAppStateUserRegistration) {
+                textField.text = nil;
+            }
         } else if ([key isEqualToString:kTextFieldKeyEmail]) {
             textField.keyboardType = UIKeyboardTypeEmailAddress;
             textField.placeholder = [ScStrings stringForKey:strEmailPrompt];
+            
+            if (self.editing && [ScMeta m].appState == ScAppStateUserRegistration) {
+                textField.enabled = NO;
+            }
         } else if ([key isEqualToString:kTextFieldKeyMobilePhone]) {
             textField.keyboardType = UIKeyboardTypeNumberPad;
             textField.placeholder = [ScStrings stringForKey:strMobilePhonePrompt];
         } else if ([key isEqualToString:kTextFieldKeyDateOfBirth]) {
             textField.inputView = [self dateOfBirthPicker];
             textField.placeholder = [ScStrings stringForKey:strDateOfBirthPrompt];
-        } else if ([key isEqualToString:kTextFieldKeyAddress]) {
-            textField.autocapitalizationType = UITextAutocorrectionTypeDefault;
-            textField.placeholder = [ScStrings stringForKey:strAddressPrompt];
+        } else if ([key isEqualToString:kTextFieldKeyAddressLine1]) {
+            textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
+            textField.placeholder = [ScStrings stringForKey:strAddressLine1Prompt];
+        } else if ([key isEqualToString:kTextFieldKeyAddressLine2]) {
+            textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
+            textField.placeholder = [ScStrings stringForKey:strAddressLine2Prompt];
         } else if ([key isEqualToString:kTextFieldKeyLandline]) {
             textField.keyboardType = UIKeyboardTypeNumberPad;
-            textField.placeholder = [ScStrings stringForKey:strLandlinePrompt];
+            
+            if ([ScMeta m].appState == ScAppStateHouseholdRegistration) {
+                textField.placeholder = [ScStrings stringForKey:strHouseholdLandlinePrompt];
+            } else {
+                textField.placeholder = [ScStrings stringForKey:strScolaLandlinePrompt];
+            }
         } else if ([key isEqualToString:kTextFieldKeyScolaWebsite]) {
             textField.keyboardType = UIKeyboardTypeURL;
             textField.placeholder = [ScStrings stringForKey:strScolaWebsitePrompt];
         }
-        
-        textField.delegate = textFieldDelegate;
-        textField.text = text;
         
         [self.contentView addSubview:textField];
         [textFields setObject:textField forKey:key];
@@ -308,7 +343,7 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
 
 - (void)setUpForEntityClass:(Class)entityClass entity:(ScCachedEntity *)entity delegate:(id)delegate
 {
-    selectable = NO;
+    selectable = !self.editing;
     
     if (entityClass == ScMember.class) {
         ScMember *member = (ScMember *)entity;
@@ -324,13 +359,12 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
     } else if (entityClass == ScScola.class) {
         ScScola *scola = (ScScola *)entity;
         
-        [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterAddressLabel]];
-        [self addTextFieldForKey:kTextFieldKeyAddress text:scola.address];
-        [self addPhotoFrame:[UIImage imageWithData:scola.photo]];
-        [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterLandlineLabel]];
+        [self addLabel:[ScStrings stringForKey:strAddressLabel]];
+        [self addTextFieldForKey:kTextFieldKeyAddressLine1 text:scola.addressLine1];
+        [self addLabel:@""];
+        [self addTextFieldForKey:kTextFieldKeyAddressLine2 text:scola.addressLine2];
+        [self addLabel:[ScStrings stringForKey:strLandlineLabel]];
         [self addTextFieldForKey:kTextFieldKeyLandline text:scola.landline];
-        [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterWebsiteLabel]];
-        [self addTextFieldForKey:kTextFieldKeyScolaWebsite text:scola.website];
     }
 }
 
@@ -342,22 +376,20 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
     self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     
     if (self) {
-        selectable = YES;
-        
         contentMargin = kContentMargin;
         verticalOffset = kVerticalMargin;
         
-        labels = [[NSMutableDictionary alloc] init];
-        details = [[NSMutableDictionary alloc] init];
+        labels = [[NSMutableSet alloc] init];
         textFields = [[NSMutableDictionary alloc] init];
         
         self.backgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
         self.backgroundView.backgroundColor = [UIColor cellBackgroundColor];
+        self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColor];
         self.selectedBackgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
         self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColor];
         
+        //self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
-        self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColor];
     }
     
     return self;
@@ -385,7 +417,7 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
             [self addTextFieldForKey:kTextFieldKeyRepeatPassword text:nil];
         }
         
-        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        selectable = !self.editing;
     }
     
     return self;
@@ -438,6 +470,16 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
 
 - (void)shake
 {
+    [self shakeWithVibration:YES];
+}
+
+
+- (void)shakeWithVibration:(BOOL)doVibrate
+{
+    if (doVibrate) {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+    }
+    
     CGFloat translation = 3.f;
     
     CGAffineTransform translateRight  = CGAffineTransformTranslate(CGAffineTransformIdentity, translation, translation);
@@ -468,20 +510,27 @@ static CGFloat const kAuthFieldWidthFraction = 0.7f;
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     if (selectable) {
-        for (NSString *label in labels.allKeys) {
-            UILabel *labelView = [labels objectForKey:label];
-            UILabel *detailView = [details objectForKey:label];
-            
+        [super setSelected:selected animated:animated];
+        
+        for (UILabel *label in labels) {
             if (selected) {
-                labelView.textColor = [UIColor selectedLabelTextColor];
-                detailView.textColor = [UIColor selectedDetailTextColor];
+                label.textColor = [UIColor selectedLabelTextColor];
             } else {
-                labelView.textColor = [UIColor labelTextColor];
-                detailView.textColor = [UIColor detailTextColor];
+                label.textColor = [UIColor labelTextColor];
             }
         }
         
-        [super setSelected:selected animated:animated];
+        for (NSString *key in textFields.allKeys) {
+            UITextField *textField = [textFields objectForKey:key];
+            
+            if (selected) {
+                textField.backgroundColor = [UIColor selectedCellBackgroundColor];
+                textField.textColor = [UIColor selectedDetailTextColor];
+            } else {
+                textField.backgroundColor = [UIColor cellBackgroundColor];
+                textField.textColor = [UIColor detailTextColor];
+            }
+        }
     }
 }
 

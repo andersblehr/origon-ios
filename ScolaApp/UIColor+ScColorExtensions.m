@@ -12,6 +12,7 @@ typedef enum {
     ScColorCellBackground,
     ScColorSelectedCellBackground,
     ScColorEditableTextFieldBackground,
+    ScColorDisabledEditableTextFieldBackground,
     ScColorLabelText,
     ScColorSelectedLabelText,
     ScColorDetailText,
@@ -36,6 +37,8 @@ typedef enum {
         color = [UIColor ashGrayColor];
     } else if (colorType == ScColorEditableTextFieldBackground) {
         color = [UIColor ghostWhiteColor];
+    } else if (colorType == ScColorDisabledEditableTextFieldBackground) {
+        color = [UIColor colorWithRed:248/255.f green:248/255.f blue:255/255.f alpha:0.99f];
     } else if (colorType == ScColorLabelText) {
         color = [UIColor slateGrayColor];
     } else if (colorType == ScColorSelectedLabelText) {
@@ -71,6 +74,12 @@ typedef enum {
 + (UIColor *)editableTextFieldBackgroundColor
 {
     return [UIColor colorWithType:ScColorEditableTextFieldBackground];
+}
+
+
++ (UIColor *)disabledEditableTextFieldBackgroundColor
+{
+    return [UIColor colorWithType:ScColorDisabledEditableTextFieldBackground];
 }
 
 

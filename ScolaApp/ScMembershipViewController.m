@@ -28,7 +28,6 @@
 
 #import "ScMemberViewController.h"
 
-
 static NSInteger const kAddressSection = 0;
 static NSInteger const kAdultsSection = 1;
 static NSInteger const kMinorsSection = 2;
@@ -46,11 +45,11 @@ static CGFloat const kFooterViewOffset = 10.f;
 static CGFloat const kHeaderFontSize = 17.f;
 static CGFloat const kFooterFontSize = 13.f;
 
+
 @implementation ScMembershipViewController
 
-
+@synthesize delegate;
 @synthesize scola;
-@synthesize isRegistrationWizardStep;
 
 
 #pragma mark - View lifecycle
@@ -95,7 +94,7 @@ static CGFloat const kFooterFontSize = 13.f;
     
     isForHousehold = ([scola.residencies count] > 0);
     
-    if (isRegistrationWizardStep) {
+    if ([ScMeta m].appState == ScAppStateHouseholdMemberRegistration) {
         if ([scola.residencies count] == 1) {
             self.title = [ScStrings stringForKey:strMembershipViewTitleMyPlace];
         } else {
@@ -123,7 +122,7 @@ static CGFloat const kFooterFontSize = 13.f;
 {
     [super viewWillAppear:animated];
     
-    if (isRegistrationWizardStep) {
+    if ([ScMeta m].appState == ScAppStateHouseholdMemberRegistration) {
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditingMemberships)];
         
         self.navigationItem.leftBarButtonItem = doneButton;
@@ -138,6 +137,8 @@ static CGFloat const kFooterFontSize = 13.f;
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
+    
+    BOOL isRegistrationWizardStep = ([ScMeta m].appState == ScAppStateHouseholdMemberRegistration);
     
     if (didAddOrRemoveMemberships && !isRegistrationWizardStep && !isViewModallyHidden) {
         [self didFinishEditingMemberships];
@@ -156,39 +157,20 @@ static CGFloat const kFooterFontSize = 13.f;
 - (void)addMembership
 {
     ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
-    memberViewController.membershipViewController = self;
+    memberViewController.delegate = self;
+    memberViewController.scola = scola;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
     
-    [self.navigationController presentModalViewController:navigationController animated:YES];
-    
-    isViewModallyHidden = YES;
-}
-
-
-- (void)insertMembershipInTableView:(ScMembership *)membership
-{
-    NSInteger section;
-    NSInteger row;
-    
-    if ([membership.member isMinor]) {
-        [unsortedMinors addObject:membership];
-        minors = [[unsortedMinors allObjects] sortedArrayUsingSelector:@selector(compare:)];
-
-        section = kMinorsSection;
-        row = [minors indexOfObject:membership];
-    } else {
-        [unsortedAdults addObject:membership];
-        adults = [[unsortedAdults allObjects] sortedArrayUsingSelector:@selector(compare:)];
-
-        section = kAdultsSection;
-        row = [adults indexOfObject:membership];
+    if ([ScMeta m].appState == ScAppStateDisplayScolaMemberships) {
+        [ScMeta m].appState = ScAppStateScolaMemberRegistration;
+    } else if ([ScMeta m].appState == ScAppStateDisplayHouseholdMemberships) {
+        [ScMeta m].appState = ScAppStateHouseholdMemberRegistration;
     }
     
-    [self.tableView insertCellForRow:row inSection:section];
+    [self.navigationController presentViewController:navigationController animated:YES completion:NULL];
     
-    didAddOrRemoveMemberships = YES;
-    isViewModallyHidden = NO;
+    isViewModallyHidden = YES;
 }
 
 
@@ -198,8 +180,8 @@ static CGFloat const kFooterFontSize = 13.f;
         [[ScMeta m].managedObjectContext synchronise];
     }
     
-    if (isRegistrationWizardStep) {
-        [self dismissModalViewControllerAnimated:YES];
+    if ([ScMeta m].appState == ScAppStateHouseholdMemberRegistration) {
+        [delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
     }
 }
 
@@ -422,6 +404,41 @@ static CGFloat const kFooterFontSize = 13.f;
     }
     
     return deleteConfirmationTitle;
+}
+
+
+#pragma mark - ScMemberViewControllerDelegate methods
+
+- (void)shouldDismissViewControllerWithIdentitifier:(NSString *)identitifier
+{
+    [self dismissViewControllerAnimated:YES completion:NULL];
+    
+    isViewModallyHidden = NO;
+}
+
+
+- (void)insertMembershipInTableView:(ScMembership *)membership
+{
+    NSInteger section;
+    NSInteger row;
+    
+    if ([membership.member isMinor]) {
+        [unsortedMinors addObject:membership];
+        minors = [[unsortedMinors allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        
+        section = kMinorsSection;
+        row = [minors indexOfObject:membership];
+    } else {
+        [unsortedAdults addObject:membership];
+        adults = [[unsortedAdults allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        
+        section = kAdultsSection;
+        row = [adults indexOfObject:membership];
+    }
+    
+    [self.tableView insertCellForRow:row inSection:section];
+    
+    didAddOrRemoveMemberships = YES;
 }
 
 @end

@@ -14,12 +14,30 @@
 
 #import "ScTableViewCell.h"
 
+NSString * const kTextFieldKeyAuthEmail = @"authEmail";
+NSString * const kTextFieldKeyPassword = @"password";
+NSString * const kTextFieldKeyRegistrationCode = @"registrationCode";
+NSString * const kTextFieldKeyRepeatPassword = @"repeatPassword";
+
+NSString * const kTextFieldKeyName = @"name";
+NSString * const kTextFieldKeyEmail = @"email";
+NSString * const kTextFieldKeyMobilePhone = @"mobilePhone";
+NSString * const kTextFieldKeyDateOfBirth = @"dateOfBirth";
+NSString * const kTextFieldKeyUserWebsite = @"userWebsite";
+
+NSString * const kTextFieldKeyAddressLine1 = @"addressLine1";
+NSString * const kTextFieldKeyAddressLine2 = @"addressLine2";
+NSString * const kTextFieldKeyLandline = @"landline";
+NSString * const kTextFieldKeyScolaWebsite = @"scolaWebsite";
+
 static CGFloat const kRoundedCornerRadius = 2.5f;
 static CGFloat const kTextInset = 4.f;
 static CGFloat const kLineSpacing = 5.f;
 
 
 @implementation ScTextField
+
+@synthesize key;
 
 
 #pragma mark - Initialisation
@@ -109,7 +127,19 @@ static CGFloat const kLineSpacing = 5.f;
 
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
-    return self.enabled ? CGRectInset(bounds, kTextInset, 0.f) : bounds;
+    return (self.enabled || isEditing) ? CGRectInset(bounds, kTextInset, 0.f) : bounds;
+}
+
+
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender
+{
+    BOOL canPerformAction = [super canPerformAction:action withSender:sender];
+    
+    if ([key isEqualToString:kTextFieldKeyDateOfBirth]) {
+        canPerformAction = canPerformAction && (action != @selector(paste:));
+    }
+    
+    return canPerformAction;
 }
 
 

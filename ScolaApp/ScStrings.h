@@ -16,8 +16,10 @@ extern NSString * const strDecline;
 // Generic strings
 extern NSString * const strPleaseWait;
 extern NSString * const strAbout;
-extern NSString * const strYouSubject;
-extern NSString * const strYouObject;
+extern NSString * const strToBe2ndPSg;
+extern NSString * const strToBe3rdPSg;
+extern NSString * const strYouNom;
+extern NSString * const strYouAcc;
 extern NSString * const strFemale;
 extern NSString * const strFemaleMinor;
 extern NSString * const strMale;
@@ -39,8 +41,10 @@ extern NSString * const strEmailPrompt;
 extern NSString * const strMobilePhonePrompt;
 extern NSString * const strDateOfBirthPrompt;
 extern NSString * const strUserWebsitePrompt;
-extern NSString * const strAddressPrompt;
-extern NSString * const strLandlinePrompt;
+extern NSString * const strAddressLine1Prompt;
+extern NSString * const strAddressLine2Prompt;
+extern NSString * const strHouseholdLandlinePrompt;
+extern NSString * const strScolaLandlinePrompt;
 extern NSString * const strScolaWebsitePrompt;
 
 // Labels
@@ -70,22 +74,8 @@ extern NSString * const strHaveCode;
 // Alerts & error messages
 extern NSString * const strNoInternetError;
 extern NSString * const strServerErrorAlert;
-extern NSString * const strInvalidNameTitle;
-extern NSString * const strInvalidNameAlert;
-extern NSString * const strInvalidEmailTitle;
-extern NSString * const strInvalidEmailAlert;
-extern NSString * const strInvalidPasswordTitle;
-extern NSString * const strInvalidPasswordAlert;
-extern NSString * const strInvalidDateOfBirthTitle;
-extern NSString * const strInvalidDateOfBirthAlert;
 extern NSString * const strUserConfirmationFailedTitle;
 extern NSString * const strUserConfirmationFailedAlert;
-extern NSString * const strNoAddressTitle;
-extern NSString * const strNoAddressAlert;
-extern NSString * const strNoMobileNumberTitle;
-extern NSString * const strNoMobileNumberAlert;
-extern NSString * const strNoPhoneNumberTitle;
-extern NSString * const strNoPhoneNumberAlert;
 extern NSString * const strWelcomeBackTitle;
 extern NSString * const strWelcomeBackAlert;
 extern NSString * const strIncompleteRegistrationTitle;

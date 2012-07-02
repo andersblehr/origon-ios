@@ -8,9 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+#import "ScMemberViewControllerDelegate.h"
+#import "ScModalViewControllerDelegate.h"
+
 @class ScMembership, ScScola;
 
-@interface ScMembershipViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate> {
+@interface ScMembershipViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, ScMemberViewControllerDelegate> {
 @private
     NSString *longTitle;
     UIBarButtonItem *addButton;
@@ -28,8 +31,8 @@
     BOOL didAddOrRemoveMemberships;
 }
 
+@property (weak, nonatomic) id<ScModalViewControllerDelegate> delegate;
 @property (weak, nonatomic) ScScola *scola;
-@property (nonatomic) BOOL isRegistrationWizardStep;
 
 - (void)insertMembershipInTableView:(ScMembership *)membership;
 

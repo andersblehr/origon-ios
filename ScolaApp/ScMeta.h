@@ -11,6 +11,7 @@
 #import "ScServerConnectionDelegate.h"
 
 typedef enum {
+    ScAppStateNeutral,
     ScAppStateStartingUp,
     ScAppStateUserLogin,
     ScAppStateUserConfirmation,
@@ -19,7 +20,9 @@ typedef enum {
     ScAppStateHouseholdMemberRegistration,
     ScAppStateScolaRegistration,
     ScAppStateScolaMemberRegistration,
-    ScAppStateNormal,
+    ScAppStateScolaMemberRegistrationLookup,
+    ScAppStateDisplayHouseholdMemberships,
+    ScAppStateDisplayScolaMemberships,
     ScAppStateDisplayMember,
     ScAppStateDisplayUser,
     ScAppStateEditMember,
@@ -87,18 +90,17 @@ extern NSString * const kLanguageHungarian;
 + (ScMeta *)m;
 
 + (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
-+ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message tag:(NSInteger)tag delegate:(id)delegate;
 
 + (void)setUserDefault:(id)object forKey:(NSString *)key;
 + (id)userDefaultForKey:(NSString *)key;
 + (void)removeUserDefaultForKey:(NSString *)key;
 
 + (BOOL)isEmailValid:(UITextField *)emailField;
-+ (BOOL)isEmailValid:(UITextField *)emailField silent:(BOOL)silent;
 + (BOOL)isPasswordValid:(UITextField *)passwordField;
 + (BOOL)isNameValid:(UITextField *)nameField;
 + (BOOL)isMobileNumberValid:(UITextField *)mobileNumberField;
 + (BOOL)isDateOfBirthValid:(UITextField *)dateField;
++ (BOOL)isAddressValidWithLine1:(UITextField *)line1Field line2:(UITextField *)line2Field;
 
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;

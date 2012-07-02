@@ -15,8 +15,8 @@
 		5C153EF814CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF614CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png */; };
 		5C153EFB14CC9815003A6B61 /* ScIconSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C153EFA14CC9815003A6B61 /* ScIconSection.m */; };
 		5C2262C415A0B47B00241C5F /* ScScolaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262C315A0B47B00241C5F /* ScScolaViewController.m */; };
-		5C2262C715A0D56900241C5F /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262C615A0D56900241C5F /* ScScola.m */; };
 		5C2262CA15A0D56A00241C5F /* ScMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262C915A0D56A00241C5F /* ScMember.m */; };
+		5C2262D315A1AC1B00241C5F /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262D215A1AC1B00241C5F /* ScScola.m */; };
 		5C23431214812A3100164478 /* ScStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* ScStrings.m */; };
 		5C26291E158F27860012A74A /* ScAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* ScAuthViewController.m */; };
 		5C2E11141469CDE5005BDE61 /* ScServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* ScServerConnection.m */; };
@@ -121,10 +121,10 @@
 		5C153EFA14CC9815003A6B61 /* ScIconSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScIconSection.m; sourceTree = "<group>"; };
 		5C2262C215A0B47B00241C5F /* ScScolaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaViewController.h; sourceTree = "<group>"; };
 		5C2262C315A0B47B00241C5F /* ScScolaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaViewController.m; sourceTree = "<group>"; };
-		5C2262C515A0D56900241C5F /* ScScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScola.h; sourceTree = "<group>"; };
-		5C2262C615A0D56900241C5F /* ScScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScola.m; sourceTree = "<group>"; };
 		5C2262C815A0D56A00241C5F /* ScMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMember.h; sourceTree = "<group>"; };
 		5C2262C915A0D56A00241C5F /* ScMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMember.m; sourceTree = "<group>"; };
+		5C2262D115A1AC1B00241C5F /* ScScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScola.h; sourceTree = "<group>"; };
+		5C2262D215A1AC1B00241C5F /* ScScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScola.m; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* ScStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScStrings.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* ScStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScStrings.m; sourceTree = "<group>"; };
 		5C26291C158F27860012A74A /* ScAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScAuthViewController.h; sourceTree = "<group>"; };
@@ -235,6 +235,8 @@
 		5CA94D9A15834A9E008CD9EC /* UIDatePicker+ScDatePickerExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDatePicker+ScDatePickerExtensions.m"; sourceTree = "<group>"; };
 		5CA94D9D15836BD9008CD9EC /* NSDate+ScDateExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+ScDateExtensions.h"; sourceTree = "<group>"; };
 		5CA94D9E15836BD9008CD9EC /* NSDate+ScDateExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+ScDateExtensions.m"; sourceTree = "<group>"; };
+		5CB9FF5A15A1ED1B0035B896 /* ScModalViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScModalViewControllerDelegate.h; sourceTree = "<group>"; };
+		5CB9FF5C15A1EF660035B896 /* ScMemberViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScMemberViewControllerDelegate.h; sourceTree = "<group>"; };
 		5CBB63B4146080DF00A9133A /* ScolaApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScolaApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63B8146080DF00A9133A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5CBB63BA146080DF00A9133A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -362,8 +364,8 @@
 				5C6E6C55158A54F20002FF84 /* ScScheduledAbsence.m */,
 				5C6E6C21158A54EF0002FF84 /* ScScheduledBreak.h */,
 				5C6E6C22158A54EF0002FF84 /* ScScheduledBreak.m */,
-				5C2262C515A0D56900241C5F /* ScScola.h */,
-				5C2262C615A0D56900241C5F /* ScScola.m */,
+				5C2262D115A1AC1B00241C5F /* ScScola.h */,
+				5C2262D215A1AC1B00241C5F /* ScScola.m */,
 				5C6E6C4B158A54F10002FF84 /* ScSharedEntityRef.h */,
 				5C6E6C4C158A54F10002FF84 /* ScSharedEntityRef.m */,
 				5C6E6C27158A54EF0002FF84 /* ScToDoAssignment.h */,
@@ -432,8 +434,10 @@
 		5CB49DCD14881E98006EA2F8 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				5C2E1133146ACFA9005BDE61 /* ScServerConnectionDelegate.h */,
 				5C83DF8B1550386400BB0B29 /* ScIconSectionDelegate.h */,
+				5CB9FF5A15A1ED1B0035B896 /* ScModalViewControllerDelegate.h */,
+				5CB9FF5C15A1EF660035B896 /* ScMemberViewControllerDelegate.h */,
+				5C2E1133146ACFA9005BDE61 /* ScServerConnectionDelegate.h */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -773,8 +777,8 @@
 				5C7379FD1593111B0065AB4F /* ScTextField.m in Sources */,
 				5CBE91A31599823000516C54 /* UIFont+ScFontExtensions.m in Sources */,
 				5C2262C415A0B47B00241C5F /* ScScolaViewController.m in Sources */,
-				5C2262C715A0D56900241C5F /* ScScola.m in Sources */,
 				5C2262CA15A0D56A00241C5F /* ScMember.m in Sources */,
+				5C2262D315A1AC1B00241C5F /* ScScola.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

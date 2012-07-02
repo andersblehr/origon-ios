@@ -168,6 +168,8 @@ static ScMeta *m = nil;
         importedEntityRefs = [[NSMutableDictionary alloc] init];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityDidChange:) name:kReachabilityChangedNotification object:nil];
+        
+        appState = ScAppStateNeutral;
     }
     
     return self;
@@ -184,20 +186,11 @@ static ScMeta *m = nil;
 }
 
 
-#pragma mark - Alerting shortcuts
+#pragma mark - Alerting shortcut
 
 + (void)showAlertWithTitle:(NSString *)title message:(NSString *)message
 {
     [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil] show];
-}
-
-
-+ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message tag:(NSInteger)tag delegate:(id)delegate
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title message:message delegate:delegate cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-    alert.tag = tag;
-    
-    [alert show];
 }
 
 
@@ -227,12 +220,6 @@ static ScMeta *m = nil;
 
 + (BOOL)isEmailValid:(UITextField *)emailField
 {
-    return [ScMeta isEmailValid:emailField silent:NO];
-}
-
-
-+ (BOOL)isEmailValid:(UITextField *)emailField silent:(BOOL)silent
-{
     NSString *email = [emailField.text removeLeadingAndTrailingSpaces];
     
     NSUInteger atLocation = [email rangeOfString:@"@"].location;
@@ -245,10 +232,8 @@ static ScMeta *m = nil;
     isValid = isValid && (dotLocation > atLocation);
     isValid = isValid && (spaceLocation == NSNotFound);
     
-    if (!isValid && !silent) {
+    if (!isValid) {
         [emailField becomeFirstResponder];
-        
-        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidEmailTitle] message:[ScStrings stringForKey:strInvalidEmailAlert]];
     }
     
     return isValid;
@@ -263,8 +248,6 @@ static ScMeta *m = nil;
     
     if (!isValid) {
         [passwordField becomeFirstResponder];
-        
-        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidPasswordTitle] message:[NSString stringWithFormat:[ScStrings stringForKey:strInvalidPasswordAlert], kMinimumPassordLength]];
     }
     
     return isValid;
@@ -286,8 +269,6 @@ static ScMeta *m = nil;
     
     if (!isValid) {
         [nameField becomeFirstResponder];
-        
-        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidNameTitle] message:[ScStrings stringForKey:strInvalidNameAlert]];
     }
     
     return isValid;
@@ -302,8 +283,6 @@ static ScMeta *m = nil;
     
     if (!isValid) {
         [mobileNumberField becomeFirstResponder];
-        
-        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strNoMobileNumberTitle] message:[ScStrings stringForKey:strNoMobileNumberAlert]];
     }
     
     return isValid;
@@ -315,7 +294,25 @@ static ScMeta *m = nil;
     BOOL isValid = (dateField.text.length > 0);
     
     if (!isValid) {
-        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strInvalidDateOfBirthTitle] message:[ScStrings stringForKey:strInvalidDateOfBirthAlert]];
+        [dateField becomeFirstResponder];
+    }
+    
+    return isValid;
+}
+
+
++ (BOOL)isAddressValidWithLine1:(UITextField *)line1Field line2:(UITextField *)line2Field
+{
+    NSString *line1 = [line1Field.text removeLeadingAndTrailingSpaces];
+    NSString *line2 = [line2Field.text removeLeadingAndTrailingSpaces];
+    
+    BOOL isValid = NO;
+    
+    isValid = isValid || (line1.length > 0);
+    isValid = isValid || (line2.length > 0);
+    
+    if (!isValid) {
+        [line1Field becomeFirstResponder];
     }
     
     return isValid;

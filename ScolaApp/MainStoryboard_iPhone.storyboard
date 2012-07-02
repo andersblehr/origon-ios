@@ -104,7 +104,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W7Y-2S-hfd" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="vcMembership" id="O0V-Ey-WLK" customClass="ScMembershipViewController" sceneMemberID="viewController">
                     <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lJb-0F-cm5">
-                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections/>
@@ -131,6 +131,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="&lt;strMember>" id="uRg-zS-kRb"/>
+                    <connections>
+                        <segue destination="O0V-Ey-WLK" kind="push" identifier="memberToMembershipView" id="99F-61-IG0"/>
+                    </connections>
                 </tableViewController>
             </objects>
             <point key="canvasLocation" x="-303" y="679"/>
@@ -151,7 +154,7 @@
                     </tableView>
                 </tableViewController>
             </objects>
-            <point key="canvasLocation" x="183" y="679"/>
+            <point key="canvasLocation" x="183" y="61"/>
         </scene>
         <!--Sc Event View Controller - <strEvents>-->
         <scene sceneID="FF8-Hh-UBk">
@@ -299,9 +302,45 @@
         <image name="83-calendar.png" width="23" height="25"/>
         <image name="dark_linen-640x960.png" width="640" height="960"/>
     </resources>
+    <classes>
+        <class className="ScAuthViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScAuthViewController.h"/>
+        </class>
+        <class className="ScEventViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScEventViewController.h"/>
+        </class>
+        <class className="ScMainViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMainViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="showInfo:"/>
+                <relationship kind="outlet" name="darkLinenView" candidateClass="UIImageView"/>
+            </relationships>
+        </class>
+        <class className="ScMemberViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMemberViewController.h"/>
+        </class>
+        <class className="ScMembershipViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMembershipViewController.h"/>
+        </class>
+        <class className="ScMessageBoardViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScMessageBoardViewController.h"/>
+        </class>
+        <class className="ScScheduleViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScScheduleViewController.h"/>
+        </class>
+        <class className="ScScolaViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScScolaViewController.h"/>
+        </class>
+        <class className="ScTaskViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/ScTaskViewController.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
+    <inferredMetricsTieBreakers>
+        <segue reference="99F-61-IG0"/>
+    </inferredMetricsTieBreakers>
 </document>

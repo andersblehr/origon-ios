@@ -13,6 +13,7 @@
 + (UIColor *)cellBackgroundColor;
 + (UIColor *)selectedCellBackgroundColor;
 + (UIColor *)editableTextFieldBackgroundColor;
++ (UIColor *)disabledEditableTextFieldBackgroundColor;
 + (UIColor *)labelTextColor;
 + (UIColor *)selectedLabelTextColor;
 + (UIColor *)detailTextColor;

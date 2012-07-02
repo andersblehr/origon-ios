@@ -22,7 +22,7 @@
 - (NSString *)about
 {
     BOOL isUser = [self.entityId isEqualToString:[ScMeta m].userId];
-    NSString *memberRef = isUser ? [ScStrings lowercaseStringForKey:strYouObject] : self.givenName;
+    NSString *memberRef = isUser ? [ScStrings lowercaseStringForKey:strYouNom] : self.givenName;
     
     return [NSString stringWithFormat:@"%@ %@", [ScStrings stringForKey:strAbout], memberRef];
 }

@@ -8,6 +8,8 @@
 
 #import "UIDatePicker+ScDatePickerExtensions.h"
 
+#import "ScMeta.h"
+
 static int const kMinimumRealisticAge = 5;
 static int const kMaximumRealisticAge = 110;
 
@@ -23,19 +25,22 @@ static int const kMaximumRealisticAge = 110;
     NSDate *now = [NSDate date];
     
     self.minimumDate = [calendar dateByAddingComponents:earliestBirthDateOffset toDate:now options:kNilOptions];
-    self.maximumDate = now;
 }
 
 
 - (void)setLatestValidBirthDate
 {
-    NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
-    latestBirthDateOffset.year = -kMinimumRealisticAge;
-    
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDate *now = [NSDate date];
     
-    self.maximumDate = [calendar dateByAddingComponents:latestBirthDateOffset toDate:now options:kNilOptions];
+    if ([ScMeta m].appState == ScAppStateUserRegistration) {
+        NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
+        latestBirthDateOffset.year = -kMinimumRealisticAge;
+        
+        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        self.maximumDate = [calendar dateByAddingComponents:latestBirthDateOffset toDate:now options:kNilOptions];
+    } else {
+        self.maximumDate = now;
+    }
 }
 
 

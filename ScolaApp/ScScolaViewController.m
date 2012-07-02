@@ -8,10 +8,12 @@
 
 #import "ScScolaViewController.h"
 
+#import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "UITableView+UITableViewExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
 #import "ScMeta.h"
+#import "ScStrings.h"
 #import "ScTableViewCell.h"
 #import "ScTextField.h"
 
@@ -20,7 +22,33 @@
 
 @implementation ScScolaViewController
 
+@synthesize delegate;
 @synthesize scola;
+
+
+#pragma mark - Selector implementations
+
+- (void)endEditing
+{
+    if ([ScMeta isAddressValidWithLine1:addressLine1Field line2:addressLine2Field]) {
+        scola.addressLine1 = addressLine1Field.text;
+        scola.addressLine2 = addressLine2Field.text;
+        scola.landline = landlineField.text;
+        
+        [[ScMeta m].managedObjectContext synchronise];
+        
+        [self.view endEditing:YES];
+        [delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
+    } else {
+        [scolaCell shake];
+    }
+}
+
+
+- (void)cancelEditing
+{
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
+}
 
 
 #pragma mark - View lifecycle
@@ -33,6 +61,13 @@
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
+    
+    doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(endEditing)];
+    cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
+    
+    self.title = [ScStrings stringForKey:strAddressLabel];
+    self.navigationItem.hidesBackButton = YES;
+    self.navigationItem.rightBarButtonItem = doneButton;
 }
 
 
@@ -64,13 +99,13 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    ScTableViewCell *scolaCell = [tableView cellForEntity:scola editing:YES delegate:self];
+    scolaCell = [tableView cellForEntity:scola editing:YES delegate:self];
     
-    addressField = [scolaCell textFieldWithKey:kTextFieldKeyAddress];
+    addressLine1Field = [scolaCell textFieldWithKey:kTextFieldKeyAddressLine1];
+    addressLine2Field = [scolaCell textFieldWithKey:kTextFieldKeyAddressLine2];
     landlineField = [scolaCell textFieldWithKey:kTextFieldKeyLandline];
-    websiteField = [scolaCell textFieldWithKey:kTextFieldKeyScolaWebsite];
     
-    [addressField becomeFirstResponder];
+    [addressLine1Field becomeFirstResponder];
     
     return scolaCell;
 }
@@ -81,6 +116,20 @@
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [cell.backgroundView addShadowForBottomTableViewCell];
+}
+
+
+#pragma mark - UITextFieldDelegate methods
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if (textField == addressLine1Field) {
+        [addressLine2Field becomeFirstResponder];
+    } else if (textField == addressLine2Field) {
+        [landlineField becomeFirstResponder];
+    }
+    
+    return YES;
 }
 
 @end

@@ -104,11 +104,11 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 
 - (void)handleButtonTap:(id)sender
 {
-    UIButton *buttonTapped = (UIButton *)sender;
-    int sectionNumber = buttonTapped.tag / 100;
-    int buttonNumber = buttonTapped.tag % 100;
+    //UIButton *buttonTapped = (UIButton *)sender;
+    //int sectionNumber = buttonTapped.tag / 100;
+    //int buttonNumber = buttonTapped.tag % 100;
     
-    ScLogDebug(@"Tapped button %d in icon section %d", buttonNumber, sectionNumber);
+    [ScMeta m].appState = ScAppStateDisplayHouseholdMemberships;
     [self performSegueWithIdentifier:kSegueToMembershipView sender:self];
 }
 

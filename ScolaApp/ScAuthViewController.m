@@ -8,8 +8,6 @@
 
 #import "ScAuthViewController.h"
 
-#import <AudioToolbox/AudioToolbox.h>
-
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "NSString+ScStringExtensions.h"
 #import "UIColor+ScColorExtensions.h"
@@ -36,7 +34,6 @@
 #import "ScMemberViewController.h"
 
 static NSString * const kSegueToMainView = @"authToMainView";
-static NSString * const kSegueToMemberView = @"authToMemberView";
 
 static NSString * const kUserDefaultsKeyAuthInfo = @"scola.auth.info";
 
@@ -259,6 +256,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if ([self isRegistrationComplete]) {
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
+        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strIncompleteRegistrationTitle] message:[ScStrings stringForKey:strIncompleteRegistrationAlert]];
+        
         [self completeRegistration];
     }
 }
@@ -332,7 +331,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
     authInfo = nil;
     
-    [self performSegueWithIdentifier:kSegueToMemberView sender:self];
+    [self completeRegistration];
 }
 
 
@@ -353,9 +352,16 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)completeRegistration
 {
-    [[[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strIncompleteRegistrationTitle] message:[ScStrings stringForKey:strIncompleteRegistrationAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil] show];
+    ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
+    memberViewController.delegate = self;
+    memberViewController.membership = [homeScola residencyForMember:member];
     
-    [self performSegueWithIdentifier:kSegueToMemberView sender:self];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
+    navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    
+    [ScMeta m].appState = ScAppStateUserRegistration;
+    
+    [self.navigationController presentViewController:navigationController animated:YES completion:NULL];
 }
 
 
@@ -375,6 +381,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         if ([self isRegistrationComplete]) {
             [self performSegueWithIdentifier:kSegueToMainView sender:self];
         } else {
+            [ScMeta showAlertWithTitle:[ScStrings stringForKey:strIncompleteRegistrationTitle] message:[ScStrings stringForKey:strIncompleteRegistrationAlert]];
+            
             [self completeRegistration];
         }
     } else {
@@ -434,12 +442,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [[ScMeta m].managedObjectContext synchronise];
         }
         
-        [ScMeta m].appState = ScAppStateNormal;
-    } else if ([segue.identifier isEqualToString:kSegueToMemberView]) {
-        ScMemberViewController *nextViewController = segue.destinationViewController;
-        nextViewController.membership = [homeScola residencyForMember:member];
-        
-        [ScMeta m].appState = ScAppStateUserRegistration;
+        [ScMeta m].appState = ScAppStateNeutral;
     }
 }
 
@@ -476,7 +479,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     if ([ScMeta m].appState == ScAppStateUserLogin) {
         authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserLogin delegate:self];
-    } else if ([ScMeta m].appState == ScAppStateUserConfirmation) {
+    } else {
         authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserConfirmation delegate:self];
     }
     
@@ -596,6 +599,15 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
+#pragma mark - ScMemberViewControllerDelegate methods
+
+- (void)shouldDismissViewControllerWithIdentitifier:(NSString *)identitifier
+{
+    [self dismissViewControllerAnimated:YES completion:NULL];
+    [self performSegueWithIdentifier:kSegueToMainView sender:self];
+}
+
+
 #pragma mark - ScServerConnectionDelegate methods
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
@@ -613,8 +625,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         
         if (response.statusCode == kHTTPStatusCodeUnauthorized) {
             [authCell shake];
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-            
             [passwordField becomeFirstResponder];
         } else {
             [ScServerConnection showAlertForHTTPStatus:response.statusCode];
