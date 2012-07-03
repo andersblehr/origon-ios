@@ -38,7 +38,7 @@ extern CGFloat const kKeyboardHeight;
 @property (strong, readonly) UIButton *imageButton;
 
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
-+ (CGFloat)heightForEntity:(ScCachedEntity *)entity whenEditing:(BOOL)editing;
++ (CGFloat)heightForEntity:(ScCachedEntity *)entity editing:(BOOL)editing;
 + (CGFloat)heightForEntityClass:(Class)entityClass;
 
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier;

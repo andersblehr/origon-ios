@@ -12,21 +12,28 @@
 
 typedef enum {
     ScAppStateNeutral,
-    ScAppStateStartingUp,
-    ScAppStateUserLogin,
-    ScAppStateUserConfirmation,
-    ScAppStateUserRegistration,
-    ScAppStateHouseholdRegistration,
-    ScAppStateHouseholdMemberRegistration,
-    ScAppStateScolaRegistration,
-    ScAppStateScolaMemberRegistration,
-    ScAppStateScolaMemberRegistrationLookup,
-    ScAppStateDisplayHouseholdMemberships,
-    ScAppStateDisplayScolaMemberships,
-    ScAppStateDisplayMember,
+    ScAppStateStartup,
+    ScAppStateLoginUser,
+    ScAppStateConfirmUser,
+    ScAppStateRegisterUser,
+    ScAppStateRegisterUserHousehold,
+    ScAppStateRegisterUserHouseholdMember,
+    ScAppStateRegisterScola,
+    ScAppStateRegisterScolaMember,
+    ScAppStateRegisterScolaMemberHousehold,
+    ScAppStateRegisterScolaMemberHouseholdMember,
     ScAppStateDisplayUser,
-    ScAppStateEditMember,
+    ScAppStateDisplayHousehold,
+    ScAppStateDisplayHouseholdMember,
+    ScAppStateDisplayHouseholdMemberships,
+    ScAppStateDisplayScola,
+    ScAppStateDisplayScolaMember,
+    ScAppStateDisplayScolaMemberships,
     ScAppStateEditUser,
+    ScAppStateEditHousehold,
+    ScAppStateEditHouseholdMember,
+    ScAppStateEditScola,
+    ScAppStateEditScolaMember,
 } ScAppState;
 
 extern NSString * const kBundleId;
@@ -56,12 +63,14 @@ extern NSString * const kLanguageHungarian;
 @interface ScMeta : NSObject <ScServerConnectionDelegate> {
 @private
     Reachability *internetReachability;
-    
-    NSDate *authTokenExpiryDate;
+
+    NSMutableArray *appStateStack;
     
     NSMutableSet *scheduledEntities;
     NSMutableDictionary *importedEntities;
     NSMutableDictionary *importedEntityRefs;
+    
+    NSDate *authTokenExpiryDate;
 }
 
 @property (nonatomic) ScAppState appState;
@@ -104,6 +113,9 @@ extern NSString * const kLanguageHungarian;
 
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;
+
+- (void)pushAppState;
+- (void)popAppState;
 
 - (void)addImportedEntity:(ScCachedEntity *)entity;
 - (void)addImportedEntityRefs:(NSDictionary *)entityRefs forEntity:(ScCachedEntity *)entity;

@@ -17,6 +17,7 @@
 #import "ScTableViewCell.h"
 #import "ScTextField.h"
 
+#import "ScMember.h"
 #import "ScScola.h"
 
 
@@ -28,26 +29,39 @@
 
 #pragma mark - Selector implementations
 
-- (void)endEditing
+- (void)startEditing
 {
-    if ([ScMeta isAddressValidWithLine1:addressLine1Field line2:addressLine2Field]) {
-        scola.addressLine1 = addressLine1Field.text;
-        scola.addressLine2 = addressLine2Field.text;
-        scola.landline = landlineField.text;
-        
-        [[ScMeta m].managedObjectContext synchronise];
-        
-        [self.view endEditing:YES];
-        [delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
-    } else {
-        [scolaCell shake];
-    }
+    
 }
 
 
 - (void)cancelEditing
 {
     [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
+}
+
+
+- (void)didFinishEditing
+{
+    if ([ScMeta isAddressValidWithLine1:addressLine1Field line2:addressLine2Field]) {
+        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+        
+        scola.addressLine1 = addressLine1Field.text;
+        scola.addressLine2 = addressLine2Field.text;
+        scola.landline = landlineField.text;
+        
+        if ([ScMeta m].appState == ScAppStateRegisterUserHousehold) {
+            ScMember *member = [context fetchEntityWithId:[ScMeta m].userId];
+            member.activeSince = [NSDate date];
+        }
+        
+        [context synchronise];
+        
+        [self.view endEditing:YES];
+        [delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
+    } else {
+        [scolaCell shake];
+    }
 }
 
 
@@ -62,12 +76,40 @@
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(endEditing)];
-    cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
+    isRegistering = ([ScMeta m].appState == ScAppStateRegisterUserHousehold);
+    isRegistering = isRegistering || ([ScMeta m].appState == ScAppStateRegisterScola);
+    isRegistering = isRegistering || ([ScMeta m].appState == ScAppStateRegisterScolaMemberHousehold);
     
-    self.title = [ScStrings stringForKey:strAddressLabel];
-    self.navigationItem.hidesBackButton = YES;
-    self.navigationItem.rightBarButtonItem = doneButton;
+    isDisplaying = ([ScMeta m].appState == ScAppStateDisplayHousehold);
+    isDisplaying = isDisplaying || ([ScMeta m].appState == ScAppStateDisplayScola);
+    
+    editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
+    cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
+    doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
+    
+    if (isRegistering) {
+        self.title = [ScStrings stringForKey:strAddressLabel];
+        self.navigationItem.rightBarButtonItem = doneButton;
+        
+        if ([ScMeta m].appState == ScAppStateRegisterUserHousehold) {
+            self.navigationItem.hidesBackButton = YES;
+        } else {
+            self.navigationItem.leftBarButtonItem = cancelButton;
+        }
+    } else if (isDisplaying) {
+        self.title = [ScStrings stringForKey:strAddressLabel];
+        self.navigationItem.rightBarButtonItem = editButton;
+    }
+}
+
+
+- (void) viewWillDisappear:(BOOL)animated
+{
+    if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
+        [[ScMeta m] popAppState];
+    }
+    
+    [super viewWillDisappear:animated];
 }
 
 
@@ -93,19 +135,23 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [ScTableViewCell heightForEntity:scola whenEditing:YES];
+    return [ScTableViewCell heightForEntity:scola editing:isRegistering];
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    scolaCell = [tableView cellForEntity:scola editing:YES delegate:self];
-    
-    addressLine1Field = [scolaCell textFieldWithKey:kTextFieldKeyAddressLine1];
-    addressLine2Field = [scolaCell textFieldWithKey:kTextFieldKeyAddressLine2];
-    landlineField = [scolaCell textFieldWithKey:kTextFieldKeyLandline];
-    
-    [addressLine1Field becomeFirstResponder];
+    if (isRegistering) {
+        scolaCell = [tableView cellForEntity:scola editing:YES delegate:self];
+        
+        addressLine1Field = [scolaCell textFieldWithKey:kTextFieldKeyAddressLine1];
+        addressLine2Field = [scolaCell textFieldWithKey:kTextFieldKeyAddressLine2];
+        landlineField = [scolaCell textFieldWithKey:kTextFieldKeyLandline];
+        
+        [addressLine1Field becomeFirstResponder];
+    } else if (isDisplaying) {
+        scolaCell = [tableView cellForEntity:scola];
+    }
     
     return scolaCell;
 }

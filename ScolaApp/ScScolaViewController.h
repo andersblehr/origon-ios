@@ -17,12 +17,16 @@
 @private
     ScTableViewCell *scolaCell;
     
-    UIBarButtonItem *doneButton;
+    UIBarButtonItem *editButton;
     UIBarButtonItem *cancelButton;
+    UIBarButtonItem *doneButton;
     
     ScTextField *addressLine1Field;
     ScTextField *addressLine2Field;
     ScTextField *landlineField;
+    
+    BOOL isRegistering;
+    BOOL isDisplaying;
 }
 
 @property (weak, nonatomic) id<ScModalViewControllerDelegate> delegate;

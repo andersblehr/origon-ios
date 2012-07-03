@@ -163,13 +163,12 @@ static ScMeta *m = nil;
         appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
         displayLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
         
+        appStateStack = [[NSMutableArray alloc] init];
         scheduledEntities = [[NSMutableSet alloc] init];
         importedEntities = [[NSMutableDictionary alloc] init];
         importedEntityRefs = [[NSMutableDictionary alloc] init];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityDidChange:) name:kReachabilityChangedNotification object:nil];
-        
-        appState = ScAppStateNeutral;
     }
     
     return self;
@@ -439,6 +438,21 @@ static ScMeta *m = nil;
 - (BOOL)isInternetConnectionAvailable
 {
     return (isInternetConnectionWiFi || isInternetConnectionWWAN);
+}
+
+
+#pragma mark - App state push & pop
+
+- (void)pushAppState
+{
+    [appStateStack addObject:[NSNumber numberWithInt:appState]];
+}
+
+
+- (void)popAppState
+{
+    appState = [[appStateStack lastObject] intValue];
+    [appStateStack removeLastObject];
 }
 
 

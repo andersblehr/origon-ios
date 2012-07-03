@@ -15,6 +15,8 @@
 + (UIFont *)editableDetailFont;
 + (UIFont *)titleFont;
 + (UIFont *)editableTitleFont;
++ (UIFont *)headerFont;
++ (UIFont *)footerFont;
 
 - (CGFloat)lineHeightWhenEditing;
 

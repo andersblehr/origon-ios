@@ -9,13 +9,20 @@
 #import "UITableView+UITableViewExtensions.h"
 
 #import "UIColor+ScColorExtensions.h"
+#import "UIFont+ScFontExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
+#import "ScLogging.h"
 #import "ScStrings.h"
 #import "ScTableViewCell.h"
 
 #import "ScCachedEntity.h"
 
+CGFloat const kDefaultSectionHeaderHeight = -1.f;
+CGFloat const kDefaultSectionFooterHeight = -1.f;
+CGFloat const kMinimumSectionHeaderHeight = 1.f;
+CGFloat const kMinimumSectionFooterHeight = 1.f;
+CGFloat const kSectionSpacing = 5.f;
 
 static CGFloat const kLogoHeight = 55.f;
 static CGFloat const kLogoMarginX = 10.f;
@@ -23,19 +30,15 @@ static CGFloat const kLogoMarginY = 10.f;
 static CGFloat const kLogoFontSize = 30.f;
 static CGFloat const kLogoFontShadowOffset = 7.f;
 
-static CGFloat const kHeaderMarginX = 10.f;
-static CGFloat const kHeaderMarginY = 0.f;
-static CGFloat const kHeaderFontSize = 17.f;
-static CGFloat const kHeaderFontShadowOffset = 3.f;
-static CGFloat const kHeaderFontScaleFactor = 4.f;
+static CGFloat const kHeaderMargin = 10.f;
+static CGFloat const kHeaderHeadRoom = 0.f;
+static CGFloat const kHeaderShadowOffset = 3.f;
+static CGFloat const kHeaderFontToHeightScaleFactor = 1.5f;
 
-static CGFloat const kFooterMarginX = 20.f;
-static CGFloat const kFooterMarginY = 10.f;
-static CGFloat const kFooterFontSize = 13.f;
-static CGFloat const kFooterFontShadowOffset = 2.f;
-static CGFloat const kFooterFontScaleFactor = 10.f;
-
-static CGFloat const kSectionSpacing = 5.f;
+static CGFloat const kFooterMargin = 20.f;
+static CGFloat const kFooterHeadRoom = 8.f;
+static CGFloat const kFooterShadowOffset = 2.f;
+static CGFloat const kFooterFontToHeightScaleFactor = 5.f;
 
 static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
 static NSString * const kLogoText = @"..scola..";
@@ -108,7 +111,7 @@ static NSString * const kLogoText = @"..scola..";
     
     logoLabel.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
     logoLabel.backgroundColor = [UIColor clearColor];
-    logoLabel.textColor = [UIColor ghostWhiteColor];
+    logoLabel.textColor = [UIColor headerTextColor];
     logoLabel.textAlignment = UITextAlignmentCenter;
     logoLabel.shadowColor = [UIColor darkTextColor];
     logoLabel.shadowOffset = CGSizeMake(0.f, kLogoFontShadowOffset);
@@ -120,25 +123,29 @@ static NSString * const kLogoText = @"..scola..";
 }
 
 
+- (CGFloat)standardHeaderHeight
+{
+    return kHeaderFontToHeightScaleFactor * [UIFont headerFont].lineHeight;
+}
+
+
 - (UIView *)headerViewWithTitle:(NSString *)title
 {
-    UIFont *headerFont = [UIFont boldSystemFontOfSize:kHeaderFontSize];
-    
-    self.sectionHeaderHeight = kHeaderFontScaleFactor * headerFont.xHeight;
+    self.sectionHeaderHeight = [self standardHeaderHeight];
     
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionHeaderHeight);
-    CGRect headerFrame = CGRectMake(kHeaderMarginX, kHeaderMarginY, kCellWidth, self.sectionHeaderHeight);
+    CGRect headerFrame = CGRectMake(kHeaderMargin, kHeaderHeadRoom, kCellWidth, self.sectionHeaderHeight);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
     
-    headerLabel.font = headerFont;
     headerLabel.backgroundColor = [UIColor clearColor];
-    headerLabel.textColor = [UIColor ghostWhiteColor];
-    headerLabel.textAlignment = UITextAlignmentLeft;
+    headerLabel.font = [UIFont headerFont];
     headerLabel.shadowColor = [UIColor darkTextColor];
-    headerLabel.shadowOffset = CGSizeMake(0.f, kHeaderFontShadowOffset);
+    headerLabel.shadowOffset = CGSizeMake(0.f, kHeaderShadowOffset);
     headerLabel.text = title;
+    headerLabel.textAlignment = UITextAlignmentLeft;
+    headerLabel.textColor = [UIColor headerTextColor];
     
     [containerView addSubview:headerLabel];
     
@@ -148,25 +155,25 @@ static NSString * const kLogoText = @"..scola..";
 
 - (UIView *)footerViewWithText:(NSString *)footerText
 {
-    UIFont *footerFont = [UIFont systemFontOfSize:kFooterFontSize];
-    CGSize footerSize = [footerText sizeWithFont:footerFont constrainedToSize:CGSizeMake(kContentWidth, kFooterFontScaleFactor * footerFont.xHeight) lineBreakMode:UILineBreakModeWordWrap];
+    UIFont *footerFont = [UIFont footerFont];
+    CGSize footerSize = [footerText sizeWithFont:footerFont constrainedToSize:CGSizeMake(kContentWidth, kFooterFontToHeightScaleFactor * footerFont.lineHeight) lineBreakMode:UILineBreakModeWordWrap];
     
-    self.sectionFooterHeight = footerSize.height + 2 * kSectionSpacing;
+    self.sectionFooterHeight = footerSize.height + kSectionSpacing;
 
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionFooterHeight);
-    CGRect footerFrame = CGRectMake(kFooterMarginX, kFooterMarginY, kContentWidth, self.sectionFooterHeight);
+    CGRect footerFrame = CGRectMake(kFooterMargin, kFooterHeadRoom, kContentWidth, self.sectionFooterHeight);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:footerFrame];
     
-    footerLabel.font = footerFont;
     footerLabel.backgroundColor = [UIColor clearColor];
-    footerLabel.textColor = [UIColor lightTextColor];
-    footerLabel.textAlignment = UITextAlignmentCenter;
-    footerLabel.shadowColor = [UIColor darkTextColor];
-    footerLabel.shadowOffset = CGSizeMake(0.f, kFooterFontShadowOffset);
+    footerLabel.font = footerFont;
     footerLabel.numberOfLines = 0;
+    footerLabel.shadowColor = [UIColor darkTextColor];
+    footerLabel.shadowOffset = CGSizeMake(0.f, kFooterShadowOffset);
     footerLabel.text = footerText;
+    footerLabel.textAlignment = UITextAlignmentCenter;
+    footerLabel.textColor = [UIColor footerTextColor];
     
     [containerView addSubview:footerLabel];
     

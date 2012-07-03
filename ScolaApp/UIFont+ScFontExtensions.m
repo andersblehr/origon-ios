@@ -14,11 +14,15 @@ typedef enum {
     ScFontStyleEditableDetail,
     ScFontStyleTitle,
     ScFontStyleEditableTitle,
+    ScFontStyleHeader,
+    ScFontStyleFooter,
 } ScFontStyle;
 
 static CGFloat const kLabelFontSize = 12.f;
 static CGFloat const kDetailFontSize = 14.f;
 static CGFloat const kTitleFontSize = 16.f;
+static CGFloat const kHeaderFontSize = 17.f;
+static CGFloat const kFooterFontSize = 13.f;
 
 static CGFloat const kEditingLineHeightScaleFactor = 1.22f;
 
@@ -42,6 +46,10 @@ static CGFloat const kEditingLineHeightScaleFactor = 1.22f;
         font = [UIFont boldSystemFontOfSize:kTitleFontSize];
     } else if (fontType == ScFontStyleEditableTitle) {
         font = [UIFont boldSystemFontOfSize:kTitleFontSize];
+    } else if (fontType == ScFontStyleHeader) {
+        font = [UIFont boldSystemFontOfSize:kHeaderFontSize];
+    } else if (fontType == ScFontStyleFooter) {
+        font = [UIFont systemFontOfSize:kFooterFontSize];
     }
     
     return font;
@@ -77,6 +85,18 @@ static CGFloat const kEditingLineHeightScaleFactor = 1.22f;
 + (UIFont *)editableTitleFont
 {
     return [UIFont fontWithType:ScFontStyleEditableTitle];
+}
+
+
++ (UIFont *)headerFont
+{
+    return [UIFont fontWithType:ScFontStyleHeader];
+}
+
+
++ (UIFont *)footerFont
+{
+    return [UIFont fontWithType:ScFontStyleFooter];
 }
 
 

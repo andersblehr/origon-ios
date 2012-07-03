@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+extern CGFloat const kDefaultSectionHeaderHeight;
+extern CGFloat const kDefaultSectionFooterHeight;
+extern CGFloat const kMinimumSectionHeaderHeight;
+extern CGFloat const kMinimumSectionFooterHeight;
+extern CGFloat const kSectionSpacing;
+
 @class ScCachedEntity;
 @class ScTableViewCell;
 
@@ -22,6 +28,7 @@
 - (void)addLogoBanner;
 - (UIActivityIndicatorView *)addActivityIndicator;
 
+- (CGFloat)standardHeaderHeight;
 - (UIView *)headerViewWithTitle:(NSString *)title;
 - (UIView *)footerViewWithText:(NSString *)text;
 

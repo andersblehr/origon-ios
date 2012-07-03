@@ -27,8 +27,9 @@
     BOOL isForHousehold;
     BOOL isUserScolaAdmin;
     BOOL isViewModallyHidden;
-    
     BOOL didAddOrRemoveMemberships;
+    
+    ScMembership *selectedMembership;
 }
 
 @property (weak, nonatomic) id<ScModalViewControllerDelegate> delegate;

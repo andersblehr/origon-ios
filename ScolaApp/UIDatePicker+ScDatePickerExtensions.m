@@ -32,7 +32,7 @@ static int const kMaximumRealisticAge = 110;
 {
     NSDate *now = [NSDate date];
     
-    if ([ScMeta m].appState == ScAppStateUserRegistration) {
+    if ([ScMeta m].appState == ScAppStateRegisterUser) {
         NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
         latestBirthDateOffset.year = -kMinimumRealisticAge;
         

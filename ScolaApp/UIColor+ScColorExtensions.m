@@ -19,6 +19,8 @@ typedef enum {
     ScColorSelectedDetailText,
     ScColorImagePlaceholderBackground,
     ScColorImagePlaceholderText,
+    ScColorHeaderText,
+    ScColorFooterText,
 } ScColorStyle;
 
 
@@ -51,6 +53,10 @@ typedef enum {
         color = [UIColor ashGrayColor];
     } else if (colorType == ScColorImagePlaceholderText) {
         color = [UIColor colorWithWhite:0.85f alpha:1.f];
+    } else if (colorType == ScColorHeaderText) {
+        color = [UIColor ghostWhiteColor];
+    } else if (colorType == ScColorFooterText) {
+        color = [UIColor lightTextColor];
     }
     
     return color;
@@ -116,6 +122,18 @@ typedef enum {
 + (UIColor *)imagePlaceholderTextColor
 {
     return [UIColor colorWithType:ScColorImagePlaceholderText];
+}
+
+
++ (UIColor *)headerTextColor
+{
+    return [UIColor colorWithType:ScColorHeaderText];
+}
+
+
++ (UIColor *)footerTextColor
+{
+    return [UIColor colorWithType:ScColorFooterText];
 }
 
 

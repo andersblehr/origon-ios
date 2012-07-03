@@ -19,6 +19,12 @@ static NSInteger const kAgeOfMajority = 18;
 }
 
 
+- (NSString *)localisedDateString
+{
+    return [NSDateFormatter localizedStringFromDate:self dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
+}
+
+
 - (BOOL)isBirthDateOfMinor
 {
     NSDate *now = [NSDate date];

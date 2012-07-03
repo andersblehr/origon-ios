@@ -21,8 +21,8 @@
     ScTableViewCell *memberCell;
     
     UIBarButtonItem *editButton;
-    UIBarButtonItem *doneButton;
     UIBarButtonItem *cancelButton;
+    UIBarButtonItem *doneButton;
     
     ScTextField *nameField;
     ScTextField *emailField;
@@ -30,8 +30,8 @@
     ScTextField *dateOfBirthField;
     UIDatePicker *dateOfBirthPicker;
     
-    BOOL isRegistering;
-    BOOL isAdding;
+    BOOL isRegisteringUser;
+    BOOL isRegisteringMember;
     BOOL isDisplaying;
     BOOL isEditing;
     

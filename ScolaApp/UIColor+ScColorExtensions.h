@@ -20,6 +20,8 @@
 + (UIColor *)selectedDetailTextColor;
 + (UIColor *)imagePlaceholderBackgroundColor;
 + (UIColor *)imagePlaceholderTextColor;
++ (UIColor *)headerTextColor;
++ (UIColor *)footerTextColor;
 
 + (UIColor *)ashGrayColor;
 + (UIColor *)ghostWhiteColor;

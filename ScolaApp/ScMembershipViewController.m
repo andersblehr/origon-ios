@@ -27,23 +27,14 @@
 #import "ScScola+ScScolaExtensions.h"
 
 #import "ScMemberViewController.h"
+#import "ScScolaViewController.h"
+
+static NSString * const kSegueToMemberView = @"membershipToMemberView";
+static NSString * const kSegueToScolaView = @"membershipToScolaView";
 
 static NSInteger const kAddressSection = 0;
 static NSInteger const kAdultsSection = 1;
 static NSInteger const kMinorsSection = 2;
-
-static CGFloat const kDefaultHeaderFooterHeight = 0.f;
-static CGFloat const kMinimumHeaderFooterHeight = 1.f;
-static CGFloat const kSectionSpacing = 5.f;
-
-static CGFloat const kHeaderWidth = 300.f;
-static CGFloat const kFooterWidth = 280.f;
-static CGFloat const kHeaderPadding = 10.f;
-static CGFloat const kFooterPadding = 20.f;
-static CGFloat const kFooterViewOffset = 10.f;
-
-static CGFloat const kHeaderFontSize = 17.f;
-static CGFloat const kFooterFontSize = 13.f;
 
 
 @implementation ScMembershipViewController
@@ -94,7 +85,7 @@ static CGFloat const kFooterFontSize = 13.f;
     
     isForHousehold = ([scola.residencies count] > 0);
     
-    if ([ScMeta m].appState == ScAppStateHouseholdMemberRegistration) {
+    if ([ScMeta m].appState == ScAppStateRegisterUserHouseholdMember) {
         if ([scola.residencies count] == 1) {
             self.title = [ScStrings stringForKey:strMembershipViewTitleMyPlace];
         } else {
@@ -122,8 +113,8 @@ static CGFloat const kFooterFontSize = 13.f;
 {
     [super viewWillAppear:animated];
     
-    if ([ScMeta m].appState == ScAppStateHouseholdMemberRegistration) {
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditingMemberships)];
+    if ([ScMeta m].appState == ScAppStateRegisterUserHouseholdMember) {
+        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
         
         self.navigationItem.leftBarButtonItem = doneButton;
         self.navigationItem.rightBarButtonItem = addButton;
@@ -138,10 +129,8 @@ static CGFloat const kFooterFontSize = 13.f;
 {
 	[super viewWillDisappear:animated];
     
-    BOOL isRegistrationWizardStep = ([ScMeta m].appState == ScAppStateHouseholdMemberRegistration);
-    
-    if (didAddOrRemoveMemberships && !isRegistrationWizardStep && !isViewModallyHidden) {
-        [self didFinishEditingMemberships];
+    if (didAddOrRemoveMemberships && !isViewModallyHidden) {
+        [self didFinishEditing];
     }
 }
 
@@ -163,9 +152,9 @@ static CGFloat const kFooterFontSize = 13.f;
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
     
     if ([ScMeta m].appState == ScAppStateDisplayScolaMemberships) {
-        [ScMeta m].appState = ScAppStateScolaMemberRegistration;
+        [ScMeta m].appState = ScAppStateRegisterScolaMember;
     } else if ([ScMeta m].appState == ScAppStateDisplayHouseholdMemberships) {
-        [ScMeta m].appState = ScAppStateHouseholdMemberRegistration;
+        [ScMeta m].appState = ScAppStateRegisterUserHouseholdMember;
     }
     
     [self.navigationController presentViewController:navigationController animated:YES completion:NULL];
@@ -174,14 +163,42 @@ static CGFloat const kFooterFontSize = 13.f;
 }
 
 
-- (void)didFinishEditingMemberships
+- (void)didFinishEditing
 {
     if (didAddOrRemoveMemberships) {
         [[ScMeta m].managedObjectContext synchronise];
     }
     
-    if ([ScMeta m].appState == ScAppStateHouseholdMemberRegistration) {
+    if ([ScMeta m].appState == ScAppStateRegisterUserHouseholdMember) {
         [delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
+    }
+}
+
+
+#pragma mark - Segue handling
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    [[ScMeta m] pushAppState];
+    
+    if ([segue.identifier isEqualToString:kSegueToScolaView]) {
+        ScScolaViewController *scolaViewController = segue.destinationViewController;
+        scolaViewController.scola = scola;
+        
+        if ([ScMeta m].appState == ScAppStateDisplayHouseholdMemberships) {
+            [ScMeta m].appState = ScAppStateDisplayHousehold;
+        } else if ([ScMeta m].appState == ScAppStateDisplayScolaMemberships) {
+            [ScMeta m].appState = ScAppStateDisplayScola;
+        }
+    } else if ([segue.identifier isEqualToString:kSegueToMemberView]) {
+        ScMemberViewController *memberViewController = segue.destinationViewController;
+        memberViewController.membership = selectedMembership;
+        
+        if ([ScMeta m].appState == ScAppStateDisplayHouseholdMemberships) {
+            [ScMeta m].appState = ScAppStateDisplayHouseholdMember;
+        } else if ([ScMeta m].appState == ScAppStateDisplayScolaMemberships) {
+            [ScMeta m].appState = ScAppStateDisplayScolaMember;
+        }
     }
 }
 
@@ -215,7 +232,7 @@ static CGFloat const kFooterFontSize = 13.f;
     CGFloat height;
     
     if (indexPath.section == kAddressSection) {
-        height = [ScTableViewCell heightForEntity:scola whenEditing:YES];
+        height = [ScTableViewCell heightForEntity:scola editing:NO];
     } else {
         height = 1.1f * self.tableView.rowHeight;
     }
@@ -235,25 +252,16 @@ static CGFloat const kFooterFontSize = 13.f;
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
     } else {
-        cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
-        
         NSArray *memberships = (indexPath.section == kAdultsSection) ? adults : minors;
-        
         ScMembership *membership = [memberships objectAtIndex:indexPath.row];
         
+        cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
         cell.textLabel.text = membership.member.name;
         cell.detailTextLabel.text = membership.member.mobilePhone;
-        
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     
     return cell;
-}
-
-
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return YES;
 }
 
 
@@ -275,7 +283,6 @@ static CGFloat const kFooterFontSize = 13.f;
         }
         
         [[ScMeta m].managedObjectContext deleteEntity:membershipToDelete];
-        
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
         didAddOrRemoveMemberships = YES;
@@ -284,6 +291,60 @@ static CGFloat const kFooterFontSize = 13.f;
 
 
 #pragma mark - UITableViewDelegate methods
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    CGFloat height = kDefaultSectionHeaderHeight;
+    
+    if (section == kAdultsSection) {
+        height = [tableView standardHeaderHeight];
+    } else if ((section == kMinorsSection) && (![minors count])) {
+        height = kMinimumSectionHeaderHeight;
+    }
+    
+    return height;
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    CGFloat height = kDefaultSectionFooterHeight;
+
+    if (section == kAdultsSection) {
+        if ([adults count] && [minors count]) {
+            height = kSectionSpacing;
+        } else {
+            height = kMinimumSectionFooterHeight;
+        }
+    }
+    
+    return height;
+}
+
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *headerView = nil;
+    
+    if (section == kAdultsSection) {
+        headerView = [tableView headerViewWithTitle:[ScStrings stringForKey:strHouseholdMembers]];
+    }
+    
+    return headerView;
+}
+
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    UIView *footerView = nil;
+    
+    if ((section == kMinorsSection) && isUserScolaAdmin) {
+        footerView = [tableView footerViewWithText:[ScStrings stringForKey:strHouseholdMemberListFooter]];
+    }
+    
+    return footerView;
+}
+
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {   
@@ -305,93 +366,19 @@ static CGFloat const kFooterFontSize = 13.f;
 }
 
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = kDefaultHeaderFooterHeight;
-    
-    if (section == kAdultsSection) {
-        height = 4.f * [UIFont boldSystemFontOfSize:kHeaderFontSize].xHeight;
-    } else if ((section == kMinorsSection) && (![minors count])) {
-        height = kMinimumHeaderFooterHeight;
-    }
-    
-    return height;
-}
-
-
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-{
-    CGFloat height = kDefaultHeaderFooterHeight;
-
-    if (section == kAdultsSection) {
-        if ([adults count] && [minors count]) {
-            height = kSectionSpacing;
-        } else {
-            height = kMinimumHeaderFooterHeight;
+    if (indexPath.section == kAddressSection) {
+        [self performSegueWithIdentifier:kSegueToScolaView sender:self];
+    } else {
+        if (indexPath.section == kAdultsSection) {
+            selectedMembership = [adults objectAtIndex:indexPath.row];
+        } else if (indexPath.section == kMinorsSection) {
+            selectedMembership = [minors objectAtIndex:indexPath.row];
         }
-    } else if (section == kMinorsSection) {
-        NSString *footer = [ScStrings stringForKey:strHouseholdMemberListFooter];
-        UIFont *footerFont = [UIFont systemFontOfSize:kFooterFontSize];
-        CGSize footerSize = [footer sizeWithFont:footerFont constrainedToSize:CGSizeMake(280.f, 10.f * footerFont.xHeight) lineBreakMode:UILineBreakModeWordWrap];
         
-        height = footerSize.height + 2 * kSectionSpacing;
+        [self performSegueWithIdentifier:kSegueToMemberView sender:self];
     }
-    
-    return height;
-}
-
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *headerView = nil;
-    
-    if (section == kAdultsSection) {
-        CGFloat headerHeight = [self tableView:tableView heightForHeaderInSection:section];
-        CGRect headerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, headerHeight);
-        CGRect headerFrame = CGRectMake(kHeaderPadding, 0.f, kHeaderWidth, headerHeight);
-        
-        headerView = [[UIView alloc] initWithFrame:headerViewFrame];
-        UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
-        
-        headerLabel.font = [UIFont boldSystemFontOfSize:kHeaderFontSize];
-        headerLabel.backgroundColor = [UIColor clearColor];
-        headerLabel.textColor = [UIColor ghostWhiteColor];
-        headerLabel.shadowColor = [UIColor blackColor];
-        headerLabel.shadowOffset = CGSizeMake(0.f, 3.f);
-        headerLabel.text = [ScStrings stringForKey:strHouseholdMembers];
-        
-        [headerView addSubview:headerLabel];
-    }
-    
-    return headerView;
-}
-
-
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    UIView *footerView = nil;
-    
-    if ((section == kMinorsSection) && isUserScolaAdmin) {
-        CGFloat footerHeight = [self tableView:tableView heightForFooterInSection:section];
-        CGRect footerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, footerHeight);
-        CGRect footerFrame = CGRectMake(kFooterPadding, kFooterViewOffset, kFooterWidth, footerHeight);
-        
-        footerView = [[UIView alloc] initWithFrame:footerViewFrame];
-        UILabel *footerLabel = [[UILabel alloc] initWithFrame:footerFrame];
-        
-        footerLabel.font = [UIFont systemFontOfSize:kFooterFontSize];
-        footerLabel.textAlignment = UITextAlignmentCenter;
-        footerLabel.backgroundColor = [UIColor clearColor];
-        footerLabel.textColor = [UIColor lightTextColor];
-        footerLabel.shadowColor = [UIColor blackColor];
-        footerLabel.shadowOffset = CGSizeMake(0.f, 2.f);
-        footerLabel.numberOfLines = 0;
-        footerLabel.text = [ScStrings stringForKey:strHouseholdMemberListFooter];
-        
-        [footerView addSubview:footerLabel];
-    }
-    
-    return footerView;
 }
 
 

@@ -10,6 +10,7 @@
 
 #import <AudioToolbox/AudioToolbox.h>
 
+#import "NSDate+ScDateExtensions.h"
 #import "UIColor+ScColorExtensions.h"
 #import "UIDatePicker+ScDatePickerExtensions.h"
 #import "UIFont+ScFontExtensions.h"
@@ -130,7 +131,7 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.08f;
 }
 
 
-+ (CGFloat)heightForEntity:(ScCachedEntity *)entity whenEditing:(BOOL)editing
++ (CGFloat)heightForEntity:(ScCachedEntity *)entity editing:(BOOL)editing
 {
     CGFloat height = 0.f;
     
@@ -265,14 +266,14 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.08f;
             textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
             textField.placeholder = [ScStrings stringForKey:strNamePrompt];
             
-            if ([ScMeta m].appState == ScAppStateUserRegistration) {
+            if ([ScMeta m].appState == ScAppStateRegisterUser) {
                 textField.text = nil;
             }
         } else if ([key isEqualToString:kTextFieldKeyEmail]) {
             textField.keyboardType = UIKeyboardTypeEmailAddress;
             textField.placeholder = [ScStrings stringForKey:strEmailPrompt];
             
-            if (self.editing && [ScMeta m].appState == ScAppStateUserRegistration) {
+            if (self.editing && [ScMeta m].appState == ScAppStateRegisterUser) {
                 textField.enabled = NO;
             }
         } else if ([key isEqualToString:kTextFieldKeyMobilePhone]) {
@@ -290,7 +291,7 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.08f;
         } else if ([key isEqualToString:kTextFieldKeyLandline]) {
             textField.keyboardType = UIKeyboardTypeNumberPad;
             
-            if ([ScMeta m].appState == ScAppStateHouseholdRegistration) {
+            if ([ScMeta m].appState == ScAppStateRegisterUserHousehold) {
                 textField.placeholder = [ScStrings stringForKey:strHouseholdLandlinePrompt];
             } else {
                 textField.placeholder = [ScStrings stringForKey:strScolaLandlinePrompt];
@@ -355,7 +356,7 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.08f;
         [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterMobilePhoneLabel]];
         [self addTextFieldForKey:kTextFieldKeyMobilePhone text:member.mobilePhone];
         [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterDateOfBirthLabel]];
-        [self addTextFieldForKey:kTextFieldKeyDateOfBirth text:nil];
+        [self addTextFieldForKey:kTextFieldKeyDateOfBirth text:[member.dateOfBirth localisedDateString]];
     } else if (entityClass == ScScola.class) {
         ScScola *scola = (ScScola *)entity;
         

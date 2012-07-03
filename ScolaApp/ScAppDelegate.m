@@ -89,7 +89,7 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 {
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
     
-    [ScMeta m].appState = ScAppStateStartingUp;
+    [ScMeta m].appState = ScAppStateStartup;
     
     ScLogDebug(@"Device is %@.", [UIDevice currentDevice].model);
     ScLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);

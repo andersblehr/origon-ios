@@ -253,12 +253,12 @@ static NSString * const kURLParameterVersion = @"version";
 {
     RESTHandler = kRESTHandlerAuth;
 
-    if ([ScMeta m].appState == ScAppStateUserLogin) {
+    if ([ScMeta m].appState == ScAppStateLoginUser) {
         RESTRoute = kRESTRouteAuthLogin;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
         [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
-    } else if ([ScMeta m].appState == ScAppStateUserConfirmation) {
+    } else if ([ScMeta m].appState == ScAppStateConfirmUser) {
         RESTRoute = kRESTRouteAuthConfirmation;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
