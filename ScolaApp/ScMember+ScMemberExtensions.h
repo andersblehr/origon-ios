@@ -12,7 +12,8 @@
 
 - (NSString *)about;
 
-- (BOOL)hasMobilPhone;
 - (BOOL)isMinor;
+- (BOOL)hasMobilPhone;
+- (BOOL)hasEmailAddress;
 
 @end

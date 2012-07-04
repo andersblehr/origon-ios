@@ -108,7 +108,7 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
     //int sectionNumber = buttonTapped.tag / 100;
     //int buttonNumber = buttonTapped.tag % 100;
     
-    [ScMeta m].appState = ScAppStateDisplayHouseholdMemberships;
+    [ScMeta pushAppState:ScAppStateDisplayHouseholdMemberships];
     [self performSegueWithIdentifier:kSegueToMembershipView sender:self];
 }
 

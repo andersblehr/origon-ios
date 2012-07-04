@@ -64,16 +64,14 @@ extern NSString * const kLanguageHungarian;
 @private
     Reachability *internetReachability;
 
+    NSDate *authTokenExpiryDate;
     NSMutableArray *appStateStack;
     
     NSMutableSet *scheduledEntities;
     NSMutableDictionary *importedEntities;
     NSMutableDictionary *importedEntityRefs;
-    
-    NSDate *authTokenExpiryDate;
 }
 
-@property (nonatomic) ScAppState appState;
 @property (nonatomic) BOOL isUserLoggedIn;
 
 @property (strong, nonatomic) NSString *userId;
@@ -98,6 +96,10 @@ extern NSString * const kLanguageHungarian;
 
 + (ScMeta *)m;
 
++ (void)pushAppState:(ScAppState)appState;
++ (void)popAppState;
++ (ScAppState)appState;
+
 + (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
 
 + (void)setUserDefault:(id)object forKey:(NSString *)key;
@@ -113,9 +115,6 @@ extern NSString * const kLanguageHungarian;
 
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;
-
-- (void)pushAppState;
-- (void)popAppState;
 
 - (void)addImportedEntity:(ScCachedEntity *)entity;
 - (void)addImportedEntityRefs:(NSDictionary *)entityRefs forEntity:(ScCachedEntity *)entity;

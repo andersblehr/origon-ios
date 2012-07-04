@@ -25,6 +25,7 @@ NSString * const kTextFieldKeyMobilePhone = @"mobilePhone";
 NSString * const kTextFieldKeyDateOfBirth = @"dateOfBirth";
 NSString * const kTextFieldKeyUserWebsite = @"userWebsite";
 
+NSString * const kTextFieldKeyAddress = @"address";
 NSString * const kTextFieldKeyAddressLine1 = @"addressLine1";
 NSString * const kTextFieldKeyAddressLine2 = @"addressLine2";
 NSString * const kTextFieldKeyLandline = @"landline";
@@ -66,14 +67,19 @@ static CGFloat const kLineSpacing = 5.f;
         self.layer.cornerRadius = kRoundedCornerRadius;
         self.returnKeyType = UIReturnKeyNext;
         self.textAlignment = UITextAlignmentLeft;
-        self.textColor = [UIColor detailTextColor];
+        
+        if (isTitle && !isEditing) {
+            self.textColor = [UIColor titleTextColor];
+        } else {
+            self.textColor = [UIColor detailTextColor];
+        }
         
         if (isEditing) {
             self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
             
             [self addShadowForEditableTextField];
         } else {
-            self.backgroundColor = [UIColor cellBackgroundColor];
+            self.backgroundColor = [UIColor clearColor];
         }
     }
     
@@ -143,8 +149,6 @@ static CGFloat const kLineSpacing = 5.f;
 }
 
 
-#pragma mark - Accessor overrides
-
 - (void)setEnabled:(BOOL)enabled
 {
     [super setEnabled:enabled];
@@ -154,9 +158,25 @@ static CGFloat const kLineSpacing = 5.f;
         self.layer.cornerRadius = kRoundedCornerRadius;
         [self addShadowForEditableTextField];
     } else {
-        self.backgroundColor = [UIColor cellBackgroundColor];
+        self.backgroundColor = [UIColor clearColor];
         self.layer.cornerRadius = 0.f;
         [self removeShadow];
+    }
+}
+
+
+- (void)setSelected:(BOOL)selected
+{
+    [super setSelected:selected];
+    
+    if (!isTitle) {
+        if (selected) {
+            self.backgroundColor = [UIColor selectedCellBackgroundColor];
+            self.textColor = [UIColor selectedDetailTextColor];
+        } else {
+            self.backgroundColor = [UIColor cellBackgroundColor];
+            self.textColor = [UIColor detailTextColor];
+        }
     }
 }
 

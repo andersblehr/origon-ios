@@ -23,10 +23,8 @@ extern CGFloat const kKeyboardHeight;
 
 @interface ScTableViewCell : UITableViewCell {
 @private
-    BOOL selectable;
-    
+    CGFloat hardContentMargin;
     CGFloat contentMargin;
-    CGFloat labelWidth;
     CGFloat verticalOffset;
     
     NSMutableSet *labels;
@@ -35,6 +33,7 @@ extern CGFloat const kKeyboardHeight;
     id<UITextFieldDelegate> textFieldDelegate;
 }
 
+@property (nonatomic) BOOL selectable;
 @property (strong, readonly) UIButton *imageButton;
 
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;

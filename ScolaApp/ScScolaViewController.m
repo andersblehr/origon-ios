@@ -37,7 +37,7 @@
 
 - (void)cancelEditing
 {
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
+    [delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
 }
 
 
@@ -50,7 +50,7 @@
         scola.addressLine2 = addressLine2Field.text;
         scola.landline = landlineField.text;
         
-        if ([ScMeta m].appState == ScAppStateRegisterUserHousehold) {
+        if ([ScMeta appState] == ScAppStateRegisterUserHousehold) {
             ScMember *member = [context fetchEntityWithId:[ScMeta m].userId];
             member.activeSince = [NSDate date];
         }
@@ -76,12 +76,12 @@
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    isRegistering = ([ScMeta m].appState == ScAppStateRegisterUserHousehold);
-    isRegistering = isRegistering || ([ScMeta m].appState == ScAppStateRegisterScola);
-    isRegistering = isRegistering || ([ScMeta m].appState == ScAppStateRegisterScolaMemberHousehold);
+    isRegistering = ([ScMeta appState] == ScAppStateRegisterUserHousehold);
+    isRegistering = isRegistering || ([ScMeta appState] == ScAppStateRegisterScola);
+    isRegistering = isRegistering || ([ScMeta appState] == ScAppStateRegisterScolaMemberHousehold);
     
-    isDisplaying = ([ScMeta m].appState == ScAppStateDisplayHousehold);
-    isDisplaying = isDisplaying || ([ScMeta m].appState == ScAppStateDisplayScola);
+    isDisplaying = ([ScMeta appState] == ScAppStateDisplayHousehold);
+    isDisplaying = isDisplaying || ([ScMeta appState] == ScAppStateDisplayScola);
     
     editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
     cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
@@ -91,7 +91,7 @@
         self.title = [ScStrings stringForKey:strAddressLabel];
         self.navigationItem.rightBarButtonItem = doneButton;
         
-        if ([ScMeta m].appState == ScAppStateRegisterUserHousehold) {
+        if ([ScMeta appState] == ScAppStateRegisterUserHousehold) {
             self.navigationItem.hidesBackButton = YES;
         } else {
             self.navigationItem.leftBarButtonItem = cancelButton;
@@ -106,7 +106,7 @@
 - (void) viewWillDisappear:(BOOL)animated
 {
     if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
-        [[ScMeta m] popAppState];
+        [ScMeta popAppState];
     }
     
     [super viewWillDisappear:animated];

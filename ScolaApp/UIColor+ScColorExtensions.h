@@ -10,10 +10,15 @@
 
 @interface UIColor (ScColorExtensions)
 
++ (UIColor *)ashGrayColor;
++ (UIColor *)ghostWhiteColor;
++ (UIColor *)slateGrayColor;
++ (UIColor *)isabellineColor;
+
 + (UIColor *)cellBackgroundColor;
 + (UIColor *)selectedCellBackgroundColor;
 + (UIColor *)editableTextFieldBackgroundColor;
-+ (UIColor *)disabledEditableTextFieldBackgroundColor;
++ (UIColor *)titleTextColor;
 + (UIColor *)labelTextColor;
 + (UIColor *)selectedLabelTextColor;
 + (UIColor *)detailTextColor;
@@ -22,10 +27,5 @@
 + (UIColor *)imagePlaceholderTextColor;
 + (UIColor *)headerTextColor;
 + (UIColor *)footerTextColor;
-
-+ (UIColor *)ashGrayColor;
-+ (UIColor *)ghostWhiteColor;
-+ (UIColor *)slateGrayColor;
-+ (UIColor *)isabellineColor;
 
 @end

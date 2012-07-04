@@ -12,6 +12,7 @@
 #import "ScStrings.h"
 
 #import "NSDate+ScDateExtensions.h"
+#import "NSString+ScStringExtensions.h"
 
 
 @implementation ScMember (ScMemberExtensions)
@@ -28,15 +29,21 @@
 }
 
 
+- (BOOL)isMinor
+{
+    return [self.dateOfBirth isBirthDateOfMinor];
+}
+
+
 - (BOOL)hasMobilPhone
 {
     return (self.mobilePhone.length > 0);
 }
 
 
-- (BOOL)isMinor
+- (BOOL)hasEmailAddress
 {
-    return [self.dateOfBirth isBirthDateOfMinor];
+    return [self.entityId isEmailAddress];
 }
 
 @end

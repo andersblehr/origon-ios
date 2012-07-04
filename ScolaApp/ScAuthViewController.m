@@ -60,11 +60,11 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     static NSString *registrationCode;
     
     if (isPending) {
-        if ([ScMeta m].appState == ScAppStateLoginUser) {
+        if ([ScMeta appState] == ScAppStateLoginUser) {
             email = emailField.text;
             emailField.placeholder = [ScStrings stringForKey:strPleaseWait];
             emailField.text = @"";
-        } else if ([ScMeta m].appState == ScAppStateConfirmUser) {
+        } else if ([ScMeta appState] == ScAppStateConfirmUser) {
             registrationCode = registrationCodeField.text;
             registrationCodeField.placeholder = [ScStrings stringForKey:strPleaseWait];
             registrationCodeField.text = @"";
@@ -78,10 +78,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         
         [spinner startAnimating];
     } else {
-        if ([ScMeta m].appState == ScAppStateLoginUser) {
+        if ([ScMeta appState] == ScAppStateLoginUser) {
             emailField.text = email;
             emailField.placeholder = [ScStrings stringForKey:strAuthEmailPrompt];
-        } else if ([ScMeta m].appState == ScAppStateConfirmUser) {
+        } else if ([ScMeta appState] == ScAppStateConfirmUser) {
             registrationCodeField.text = registrationCode;
             registrationCodeField.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
         }
@@ -157,16 +157,16 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)setUpForAppState:(ScAppState)appState
 {
-    [ScMeta m].appState = appState;
+    [ScMeta pushAppState:appState];
     
-    if ([ScMeta m].appState == ScAppStateLoginUser) {
+    if ([ScMeta appState] == ScAppStateLoginUser) {
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
         
         if (authInfo) {
             [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
             authInfo = nil;
         }
-    } else if ([ScMeta m].appState == ScAppStateConfirmUser) {
+    } else if ([ScMeta appState] == ScAppStateConfirmUser) {
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationLeft];
     }
 }
@@ -193,7 +193,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     BOOL isValid = NO;
     
-    if ([ScMeta m].appState == ScAppStateConfirmUser) {
+    if ([ScMeta appState] == ScAppStateConfirmUser) {
         NSString *passwordHashAsPersisted = [authInfo objectForKey:kAuthInfoKeyPasswordHash];
         NSString *passwordHashAsEntered = [self generatePasswordHash:passwordField.text usingSalt:[ScMeta m].userId];
         
@@ -232,9 +232,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     isModelUpToDate = YES;
     
-    if ([ScMeta m].appState == ScAppStateLoginUser) {
+    if ([ScMeta appState] == ScAppStateLoginUser) {
         [self processLoginData:data];
-    } else if ([ScMeta m].appState == ScAppStateConfirmUser) {
+    } else if ([ScMeta appState] == ScAppStateConfirmUser) {
         [self processConfirmationData:data];
     }
 }
@@ -352,14 +352,14 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)completeRegistration
 {
+    [ScMeta pushAppState:ScAppStateRegisterUser];
+    
     ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
     memberViewController.delegate = self;
     memberViewController.membership = [homeScola residencyForMember:member];
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
     navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    
-    [ScMeta m].appState = ScAppStateRegisterUser;
     
     [self.navigationController presentViewController:navigationController animated:YES completion:NULL];
 }
@@ -401,9 +401,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
         [ScMeta m].userId = [authInfo objectForKey:kAuthInfoKeyUserId];
         
-        [ScMeta m].appState = ScAppStateConfirmUser;
+        [ScMeta pushAppState:ScAppStateConfirmUser];
     } else {
-        [ScMeta m].appState = ScAppStateLoginUser;
+        [ScMeta pushAppState:ScAppStateLoginUser];
     }
 }
 
@@ -416,7 +416,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [ScStrings refreshStrings];
     }
     
-    if ([ScMeta m].appState == ScAppStateConfirmUser) {
+    if ([ScMeta appState] == ScAppStateConfirmUser) {
         NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strWelcomeBackAlert], [authInfo objectForKey:kAuthInfoKeyUserId]];
         
         UIAlertView *welcomeBackPopUp = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strWelcomeBackTitle] message:popUpMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strStartOver] otherButtonTitles:[ScStrings stringForKey:strHaveCode], nil];
@@ -442,7 +442,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [[ScMeta m].managedObjectContext synchronise];
         }
         
-        [ScMeta m].appState = ScAppStateNeutral;
+        [ScMeta pushAppState:ScAppStateNeutral];
     }
 }
 
@@ -465,9 +465,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     CGFloat height = 0.f;
     
-    if ([ScMeta m].appState == ScAppStateLoginUser) {
+    if ([ScMeta appState] == ScAppStateLoginUser) {
         height = [ScTableViewCell heightForReuseIdentifier:kReuseIdentifierUserLogin];
-    } else if ([ScMeta m].appState == ScAppStateConfirmUser) {
+    } else if ([ScMeta appState] == ScAppStateConfirmUser) {
         height = [ScTableViewCell heightForReuseIdentifier:kReuseIdentifierUserConfirmation];
     }
     
@@ -477,7 +477,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([ScMeta m].appState == ScAppStateLoginUser) {
+    if ([ScMeta appState] == ScAppStateLoginUser) {
         authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserLogin delegate:self];
     } else {
         authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserConfirmation delegate:self];
@@ -493,7 +493,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [authCell.backgroundView addShadowForBottomTableViewCell];
     
-    if ([ScMeta m].appState == ScAppStateLoginUser) {
+    if ([ScMeta appState] == ScAppStateLoginUser) {
         emailField = [authCell textFieldWithKey:kTextFieldKeyAuthEmail];
         passwordField = [authCell textFieldWithKey:kTextFieldKeyPassword];
         
@@ -503,7 +503,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         } else {
             [emailField becomeFirstResponder];
         }
-    } else if ([ScMeta m].appState == ScAppStateConfirmUser) {
+    } else if ([ScMeta appState] == ScAppStateConfirmUser) {
         registrationCodeField = [authCell textFieldWithKey:kTextFieldKeyRegistrationCode];
         passwordField = [authCell textFieldWithKey:kTextFieldKeyRepeatPassword];
         
@@ -519,9 +519,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     NSString *footerText = nil;
     
-    if ([ScMeta m].appState == ScAppStateLoginUser) {
+    if ([ScMeta appState] == ScAppStateLoginUser) {
         footerText = [ScStrings stringForKey:strSignInOrRegisterFooter];
-    } else if ([ScMeta m].appState == ScAppStateConfirmUser) {
+    } else if ([ScMeta appState] == ScAppStateConfirmUser) {
         footerText = [ScStrings stringForKey:strConfirmRegistrationFooter];
     }
     
@@ -544,14 +544,14 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if ((textField == emailField) || (textField == registrationCodeField)) {
         [passwordField becomeFirstResponder];
     } else if (textField == passwordField) {
-        if ([ScMeta m].appState == ScAppStateLoginUser) {
+        if ([ScMeta appState] == ScAppStateLoginUser) {
             shouldReturn = shouldReturn && [ScMeta isEmailValid:emailField];
             shouldReturn = shouldReturn && [ScMeta isPasswordValid:passwordField];
             
             if (shouldReturn) {
                 [self attemptUserLogin];
             }
-        } else if ([ScMeta m].appState == ScAppStateConfirmUser) {
+        } else if ([ScMeta appState] == ScAppStateConfirmUser) {
             numberOfConfirmationAttempts++;
             
             shouldReturn = shouldReturn && [self isRegistrationCodeValid];

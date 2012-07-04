@@ -85,7 +85,7 @@ static NSInteger const kMinorsSection = 2;
     
     isForHousehold = ([scola.residencies count] > 0);
     
-    if ([ScMeta m].appState == ScAppStateRegisterUserHouseholdMember) {
+    if ([ScMeta appState] == ScAppStateRegisterUserHouseholdMember) {
         if ([scola.residencies count] == 1) {
             self.title = [ScStrings stringForKey:strMembershipViewTitleMyPlace];
         } else {
@@ -113,7 +113,7 @@ static NSInteger const kMinorsSection = 2;
 {
     [super viewWillAppear:animated];
     
-    if ([ScMeta m].appState == ScAppStateRegisterUserHouseholdMember) {
+    if ([ScMeta appState] == ScAppStateRegisterUserHouseholdMember) {
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
         
         self.navigationItem.leftBarButtonItem = doneButton;
@@ -151,10 +151,10 @@ static NSInteger const kMinorsSection = 2;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
     
-    if ([ScMeta m].appState == ScAppStateDisplayScolaMemberships) {
-        [ScMeta m].appState = ScAppStateRegisterScolaMember;
-    } else if ([ScMeta m].appState == ScAppStateDisplayHouseholdMemberships) {
-        [ScMeta m].appState = ScAppStateRegisterUserHouseholdMember;
+    if ([ScMeta appState] == ScAppStateDisplayScolaMemberships) {
+        [ScMeta pushAppState:ScAppStateRegisterScolaMember];
+    } else if ([ScMeta appState] == ScAppStateDisplayHouseholdMemberships) {
+        [ScMeta pushAppState:ScAppStateRegisterUserHouseholdMember];
     }
     
     [self.navigationController presentViewController:navigationController animated:YES completion:NULL];
@@ -169,7 +169,7 @@ static NSInteger const kMinorsSection = 2;
         [[ScMeta m].managedObjectContext synchronise];
     }
     
-    if ([ScMeta m].appState == ScAppStateRegisterUserHouseholdMember) {
+    if ([ScMeta appState] == ScAppStateRegisterUserHouseholdMember) {
         [delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
     }
 }
@@ -179,25 +179,23 @@ static NSInteger const kMinorsSection = 2;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    [[ScMeta m] pushAppState];
-    
     if ([segue.identifier isEqualToString:kSegueToScolaView]) {
         ScScolaViewController *scolaViewController = segue.destinationViewController;
         scolaViewController.scola = scola;
         
-        if ([ScMeta m].appState == ScAppStateDisplayHouseholdMemberships) {
-            [ScMeta m].appState = ScAppStateDisplayHousehold;
-        } else if ([ScMeta m].appState == ScAppStateDisplayScolaMemberships) {
-            [ScMeta m].appState = ScAppStateDisplayScola;
+        if ([ScMeta appState] == ScAppStateDisplayHouseholdMemberships) {
+            [ScMeta pushAppState:ScAppStateDisplayHousehold];
+        } else if ([ScMeta appState] == ScAppStateDisplayScolaMemberships) {
+            [ScMeta pushAppState:ScAppStateDisplayScola];
         }
     } else if ([segue.identifier isEqualToString:kSegueToMemberView]) {
         ScMemberViewController *memberViewController = segue.destinationViewController;
         memberViewController.membership = selectedMembership;
         
-        if ([ScMeta m].appState == ScAppStateDisplayHouseholdMemberships) {
-            [ScMeta m].appState = ScAppStateDisplayHouseholdMember;
-        } else if ([ScMeta m].appState == ScAppStateDisplayScolaMemberships) {
-            [ScMeta m].appState = ScAppStateDisplayScolaMember;
+        if ([ScMeta appState] == ScAppStateDisplayHouseholdMemberships) {
+            [ScMeta pushAppState:ScAppStateDisplayHouseholdMember];
+        } else if ([ScMeta appState] == ScAppStateDisplayScolaMemberships) {
+            [ScMeta pushAppState:ScAppStateDisplayScolaMember];
         }
     }
 }

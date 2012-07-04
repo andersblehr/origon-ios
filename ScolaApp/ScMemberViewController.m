@@ -53,14 +53,14 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (void)registerHousehold
 {
+    [ScMeta pushAppState:ScAppStateRegisterUserHousehold];
+    
     ScScolaViewController *scolaViewController = [self.storyboard instantiateViewControllerWithIdentifier:kScolaViewControllerId];
     scolaViewController.delegate = self;
     scolaViewController.scola = scola;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:scolaViewController];
     navigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    
-    [ScMeta m].appState = ScAppStateRegisterUserHousehold;
     
     [self.navigationController presentViewController:navigationController animated:YES completion:NULL];
 }
@@ -143,7 +143,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
             }
         }
         
-        if ([ScMeta m].appState == ScAppStateRegisterUserHouseholdMember) {
+        if ([ScMeta appState] == ScAppStateRegisterUserHouseholdMember) {
             membership = [scola addResident:member];
         } else {
             membership = [scola addMember:member];
@@ -184,7 +184,8 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (void)cancelEditing
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [ScMeta popAppState];
+    [delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
 }
 
 
@@ -225,14 +226,14 @@ static NSInteger const kActionSheetButtonCancel = 2;
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    isRegisteringUser = ([ScMeta m].appState == ScAppStateRegisterUser);
+    isRegisteringUser = ([ScMeta appState] == ScAppStateRegisterUser);
     
-    isRegisteringMember = ([ScMeta m].appState == ScAppStateRegisterUserHouseholdMember);
-    isRegisteringMember = isRegisteringMember || ([ScMeta m].appState == ScAppStateRegisterScolaMember);
+    isRegisteringMember = ([ScMeta appState] == ScAppStateRegisterUserHouseholdMember);
+    isRegisteringMember = isRegisteringMember || ([ScMeta appState] == ScAppStateRegisterScolaMember);
     
-    isDisplaying = ([ScMeta m].appState == ScAppStateDisplayUser);
-    isDisplaying = isDisplaying || ([ScMeta m].appState == ScAppStateDisplayHouseholdMember);
-    isDisplaying = isDisplaying || ([ScMeta m].appState == ScAppStateDisplayScolaMember);
+    isDisplaying = ([ScMeta appState] == ScAppStateDisplayUser);
+    isDisplaying = isDisplaying || ([ScMeta appState] == ScAppStateDisplayHouseholdMember);
+    isDisplaying = isDisplaying || ([ScMeta appState] == ScAppStateDisplayScolaMember);
     
     editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
     cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
@@ -248,9 +249,9 @@ static NSInteger const kActionSheetButtonCancel = 2;
         self.navigationItem.hidesBackButton = YES;
         self.navigationItem.rightBarButtonItem = doneButton;
     } else if (isRegisteringMember) {
-        if ([ScMeta m].appState == ScAppStateRegisterUserHouseholdMember) {
+        if ([ScMeta appState] == ScAppStateRegisterUserHouseholdMember) {
             self.title = [ScStrings stringForKey:strMemberViewTitleNewHouseholdMember];
-        } else if ([ScMeta m].appState == ScAppStateRegisterScolaMember) {
+        } else if ([ScMeta appState] == ScAppStateRegisterScolaMember) {
             self.title = [ScStrings stringForKey:strMemberViewTitleNewMember];
         }
         
@@ -266,7 +267,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
 - (void) viewWillDisappear:(BOOL)animated
 {
     if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
-        [[ScMeta m] popAppState];
+        [ScMeta popAppState];
     }
     
     [super viewWillDisappear:animated];
@@ -288,10 +289,10 @@ static NSInteger const kActionSheetButtonCancel = 2;
         nextViewController.delegate = delegate;
         nextViewController.scola = scola;
     
-        if ([ScMeta m].appState == ScAppStateRegisterUserHousehold) {
-            [ScMeta m].appState = ScAppStateRegisterUserHouseholdMember;
-        } else if ([ScMeta m].appState == ScAppStateRegisterScola) {
-            [ScMeta m].appState = ScAppStateRegisterScolaMember;
+        if ([ScMeta appState] == ScAppStateRegisterUserHousehold) {
+            [ScMeta pushAppState:ScAppStateRegisterUserHouseholdMember];
+        } else if ([ScMeta appState] == ScAppStateRegisterScola) {
+            [ScMeta pushAppState:ScAppStateRegisterScolaMember];
         }
     }
 }

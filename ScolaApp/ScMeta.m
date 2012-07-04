@@ -60,7 +60,6 @@ static ScMeta *m = nil;
 
 @implementation ScMeta
 
-@synthesize appState;
 @synthesize isUserLoggedIn;
 
 @synthesize userId;
@@ -185,6 +184,26 @@ static ScMeta *m = nil;
 }
 
 
+#pragma mark - App state handling
+
++ (void)pushAppState:(ScAppState)appState
+{
+    [[ScMeta m]->appStateStack addObject:[NSNumber numberWithInt:appState]];
+}
+
+
++ (void)popAppState
+{
+    [[ScMeta m]->appStateStack removeLastObject];
+}
+
+
++ (ScAppState)appState
+{
+    return [[[ScMeta m]->appStateStack lastObject] intValue];
+}
+
+
 #pragma mark - Alerting shortcut
 
 + (void)showAlertWithTitle:(NSString *)title message:(NSString *)message
@@ -221,15 +240,7 @@ static ScMeta *m = nil;
 {
     NSString *email = [emailField.text removeLeadingAndTrailingSpaces];
     
-    NSUInteger atLocation = [email rangeOfString:@"@"].location;
-    NSUInteger dotLocation = [email rangeOfString:@"." options:NSBackwardsSearch].location;
-    NSUInteger spaceLocation = [email rangeOfString:@" "].location;
-    
-    BOOL isValid = (atLocation != NSNotFound);
-    
-    isValid = isValid && (dotLocation != NSNotFound);
-    isValid = isValid && (dotLocation > atLocation);
-    isValid = isValid && (spaceLocation == NSNotFound);
+    BOOL isValid = [email isEmailAddress];
     
     if (!isValid) {
         [emailField becomeFirstResponder];
@@ -438,21 +449,6 @@ static ScMeta *m = nil;
 - (BOOL)isInternetConnectionAvailable
 {
     return (isInternetConnectionWiFi || isInternetConnectionWWAN);
-}
-
-
-#pragma mark - App state push & pop
-
-- (void)pushAppState
-{
-    [appStateStack addObject:[NSNumber numberWithInt:appState]];
-}
-
-
-- (void)popAppState
-{
-    appState = [[appStateStack lastObject] intValue];
-    [appStateStack removeLastObject];
 }
 
 

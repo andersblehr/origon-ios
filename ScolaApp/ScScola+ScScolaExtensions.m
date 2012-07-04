@@ -77,7 +77,7 @@
 
 #pragma mark - Address formatting
 
-- (NSString *)multiLineAddress
+- (NSString *)singleLineAddress
 {
     NSString *address = @"";
     
@@ -86,10 +86,21 @@
     }
     
     if (self.addressLine2.length > 0) {
-        address = [address stringByAppendingString:self.addressLine2];
+        if (address.length > 0) {
+            address = [address stringByAppendingStringWithComma:self.addressLine2];
+        } else {
+            address = [address stringByAppendingString:self.addressLine2];
+        }
     }
-    
-    NSArray *addressElements = [address componentsSeparatedByString:@","];
+
+    return address;
+}
+
+
+- (NSString *)multiLineAddress
+{
+    NSString *address = @"";
+    NSArray *addressElements = [[self singleLineAddress] componentsSeparatedByString:@","];
 
     for (int i = 0; i < [addressElements count]; i++) {
         NSString *addressElement = [[addressElements objectAtIndex:i] removeLeadingAndTrailingSpaces];

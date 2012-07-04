@@ -39,7 +39,7 @@ static CGFloat const kEditingLineHeightScaleFactor = 1.22f;
     if (fontType == ScFontStyleLabel) {
         font = [UIFont boldSystemFontOfSize:kLabelFontSize];
     } else if (fontType == ScFontStyleDetail) {
-        font = [UIFont boldSystemFontOfSize:kDetailFontSize];
+        font = [UIFont systemFontOfSize:kDetailFontSize];
     } else if (fontType == ScFontStyleEditableDetail) {
         font = [UIFont systemFontOfSize:kDetailFontSize];
     } else if (fontType == ScFontStyleTitle) {

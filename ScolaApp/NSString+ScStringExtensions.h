@@ -18,6 +18,8 @@
 - (NSString *)stringByAppendingStringWithNewline:(NSString *)string;
 - (NSString *)stringByAppendingStringWithComma:(NSString *)string;
 
+- (BOOL)isEmailAddress;
+
 + (NSString *)givenNameFromFullName:(NSString *)fullName;
 
 @end

@@ -12,7 +12,7 @@ typedef enum {
     ScColorCellBackground,
     ScColorSelectedCellBackground,
     ScColorEditableTextFieldBackground,
-    ScColorDisabledEditableTextFieldBackground,
+    ScColorTitleText,
     ScColorLabelText,
     ScColorSelectedLabelText,
     ScColorDetailText,
@@ -21,7 +21,7 @@ typedef enum {
     ScColorImagePlaceholderText,
     ScColorHeaderText,
     ScColorFooterText,
-} ScColorStyle;
+} ScColorCategory;
 
 
 @implementation UIColor (ScColorExtensions)
@@ -29,111 +29,37 @@ typedef enum {
 
 #pragma mark - Auxiliary methods
 
-+ (UIColor *)colorWithType:(ScColorStyle)colorType
++ (UIColor *)colorForCategory:(ScColorCategory)colorCategory
 {
     UIColor *color = nil;
     
-    if (colorType == ScColorCellBackground) {
+    if (colorCategory == ScColorCellBackground) {
         color = [UIColor isabellineColor];
-    } else if (colorType == ScColorSelectedCellBackground) {
+    } else if (colorCategory == ScColorSelectedCellBackground) {
         color = [UIColor ashGrayColor];
-    } else if (colorType == ScColorEditableTextFieldBackground) {
+    } else if (colorCategory == ScColorEditableTextFieldBackground) {
         color = [UIColor ghostWhiteColor];
-    } else if (colorType == ScColorDisabledEditableTextFieldBackground) {
-        color = [UIColor colorWithRed:248/255.f green:248/255.f blue:255/255.f alpha:0.99f];
-    } else if (colorType == ScColorLabelText) {
-        color = [UIColor slateGrayColor];
-    } else if (colorType == ScColorSelectedLabelText) {
-        color = [UIColor lightTextColor];
-    } else if (colorType == ScColorDetailText) {
-        color = [UIColor darkTextColor];
-    } else if (colorType == ScColorSelectedDetailText) {
+    } else if (colorCategory == ScColorTitleText) {
         color = [UIColor whiteColor];
-    } else if (colorType == ScColorImagePlaceholderBackground) {
-        color = [UIColor ashGrayColor];
-    } else if (colorType == ScColorImagePlaceholderText) {
-        color = [UIColor colorWithWhite:0.85f alpha:1.f];
-    } else if (colorType == ScColorHeaderText) {
+    } else if (colorCategory == ScColorLabelText) {
+        color = [UIColor slateGrayColor];
+    } else if (colorCategory == ScColorSelectedLabelText) {
+        color = [UIColor lightTextColor];
+    } else if (colorCategory == ScColorDetailText) {
+        color = [UIColor darkTextColor];
+    } else if (colorCategory == ScColorSelectedDetailText) {
+        color = [UIColor whiteColor];
+    } else if (colorCategory == ScColorImagePlaceholderBackground) {
+        color = [UIColor colorWithWhite:0.93f alpha:1.f];
+    } else if (colorCategory == ScColorImagePlaceholderText) {
+        color = [UIColor whiteColor];
+    } else if (colorCategory == ScColorHeaderText) {
         color = [UIColor ghostWhiteColor];
-    } else if (colorType == ScColorFooterText) {
+    } else if (colorCategory == ScColorFooterText) {
         color = [UIColor lightTextColor];
     }
     
     return color;
-}
-
-
-#pragma mark - Scola color palette
-
-+ (UIColor *)cellBackgroundColor
-{
-    return [UIColor colorWithType:ScColorCellBackground];
-}
-
-
-+ (UIColor *)selectedCellBackgroundColor
-{
-    return [UIColor colorWithType:ScColorSelectedCellBackground];
-}
-
-
-+ (UIColor *)editableTextFieldBackgroundColor
-{
-    return [UIColor colorWithType:ScColorEditableTextFieldBackground];
-}
-
-
-+ (UIColor *)disabledEditableTextFieldBackgroundColor
-{
-    return [UIColor colorWithType:ScColorDisabledEditableTextFieldBackground];
-}
-
-
-+ (UIColor *)labelTextColor
-{
-    return [UIColor colorWithType:ScColorLabelText];
-}
-
-
-+ (UIColor *)selectedLabelTextColor
-{
-    return [UIColor colorWithType:ScColorSelectedLabelText];
-}
-
-
-+ (UIColor *)detailTextColor
-{
-    return [UIColor colorWithType:ScColorDetailText];
-}
-
-
-+ (UIColor *)selectedDetailTextColor
-{
-    return [UIColor colorWithType:ScColorSelectedDetailText];
-}
-
-
-+ (UIColor *)imagePlaceholderBackgroundColor
-{
-    return [UIColor colorWithType:ScColorImagePlaceholderBackground];
-}
-
-
-+ (UIColor *)imagePlaceholderTextColor
-{
-    return [UIColor colorWithType:ScColorImagePlaceholderText];
-}
-
-
-+ (UIColor *)headerTextColor
-{
-    return [UIColor colorWithType:ScColorHeaderText];
-}
-
-
-+ (UIColor *)footerTextColor
-{
-    return [UIColor colorWithType:ScColorFooterText];
 }
 
 
@@ -160,6 +86,80 @@ typedef enum {
 + (UIColor *)isabellineColor
 {
     return [UIColor colorWithRed:240/255.f green:244/255.f blue:236/255.f alpha:1.f];
+}
+
+
+#pragma mark - Scola colour palette
+
++ (UIColor *)cellBackgroundColor
+{
+    return [UIColor colorForCategory:ScColorCellBackground];
+}
+
+
++ (UIColor *)selectedCellBackgroundColor
+{
+    return [UIColor colorForCategory:ScColorSelectedCellBackground];
+}
+
+
++ (UIColor *)editableTextFieldBackgroundColor
+{
+    return [UIColor colorForCategory:ScColorEditableTextFieldBackground];
+}
+
+
++ (UIColor *)titleTextColor
+{
+    return [UIColor colorForCategory:ScColorTitleText];
+}
+
+
++ (UIColor *)labelTextColor
+{
+    return [UIColor colorForCategory:ScColorLabelText];
+}
+
+
++ (UIColor *)selectedLabelTextColor
+{
+    return [UIColor colorForCategory:ScColorSelectedLabelText];
+}
+
+
++ (UIColor *)detailTextColor
+{
+    return [UIColor colorForCategory:ScColorDetailText];
+}
+
+
++ (UIColor *)selectedDetailTextColor
+{
+    return [UIColor colorForCategory:ScColorSelectedDetailText];
+}
+
+
++ (UIColor *)imagePlaceholderBackgroundColor
+{
+    return [UIColor colorForCategory:ScColorImagePlaceholderBackground];
+}
+
+
++ (UIColor *)imagePlaceholderTextColor
+{
+    return [UIColor colorForCategory:ScColorImagePlaceholderText];
+}
+
+
++ (UIColor *)headerTextColor
+{
+    return [UIColor colorForCategory:ScColorHeaderText];
+}
+
+
++ (UIColor *)footerTextColor
+{
+    return [UIColor colorForCategory:ScColorFooterText];
 }
 
 @end

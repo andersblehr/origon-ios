@@ -150,6 +150,24 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
+#pragma mark - Devining tring content
+
+- (BOOL)isEmailAddress
+{
+    NSUInteger atLocation = [self rangeOfString:@"@"].location;
+    NSUInteger dotLocation = [self rangeOfString:@"." options:NSBackwardsSearch].location;
+    NSUInteger spaceLocation = [self rangeOfString:@" "].location;
+    
+    BOOL isEmailAddress = (atLocation != NSNotFound);
+    
+    isEmailAddress = isEmailAddress && (dotLocation != NSNotFound);
+    isEmailAddress = isEmailAddress && (dotLocation > atLocation);
+    isEmailAddress = isEmailAddress && (spaceLocation == NSNotFound);
+    
+    return isEmailAddress;
+}
+
+
 #pragma mark - Given name from full name
 
 + (NSString *)givenNameFromFullName:(NSString *)fullName
