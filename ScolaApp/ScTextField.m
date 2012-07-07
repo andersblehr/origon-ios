@@ -61,6 +61,7 @@ static CGFloat const kLineSpacing = 5.f;
         
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
+        self.backgroundColor = [UIColor clearColor];
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         self.font = font;
         self.keyboardType = UIKeyboardTypeDefault;
@@ -72,14 +73,6 @@ static CGFloat const kLineSpacing = 5.f;
             self.textColor = [UIColor titleTextColor];
         } else {
             self.textColor = [UIColor detailTextColor];
-        }
-        
-        if (isEditing) {
-            self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-            
-            [self addShadowForEditableTextField];
-        } else {
-            self.backgroundColor = [UIColor clearColor];
         }
     }
     
@@ -155,12 +148,14 @@ static CGFloat const kLineSpacing = 5.f;
     
     if (enabled) {
         self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-        self.layer.cornerRadius = kRoundedCornerRadius;
         [self addShadowForEditableTextField];
     } else {
         self.backgroundColor = [UIColor clearColor];
-        self.layer.cornerRadius = 0.f;
         [self removeShadow];
+        
+        if (isTitle) {
+            self.textColor = [UIColor titleTextColor];
+        }
     }
 }
 

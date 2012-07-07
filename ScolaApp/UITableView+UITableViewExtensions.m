@@ -18,8 +18,8 @@
 
 #import "ScCachedEntity.h"
 
-CGFloat const kDefaultSectionHeaderHeight = -1.f;
-CGFloat const kDefaultSectionFooterHeight = -1.f;
+CGFloat const kDefaultSectionHeaderHeight = 10.f;
+CGFloat const kDefaultSectionFooterHeight = 10.f;
 CGFloat const kMinimumSectionHeaderHeight = 1.f;
 CGFloat const kMinimumSectionFooterHeight = 1.f;
 CGFloat const kSectionSpacing = 5.f;

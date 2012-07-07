@@ -85,7 +85,7 @@ static CGFloat const kImageShadowOffset = 1.5f;
 
 - (void)removeShadow
 {
-    [self addShadowWithPath:nil colour:nil radius:0.f offset:0.f];
+    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor clearColor] radius:0.f offset:0.f];
 }
 
 @end

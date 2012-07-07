@@ -80,7 +80,7 @@
     isRegistering = isRegistering || ([ScMeta appState] == ScAppStateRegisterScola);
     isRegistering = isRegistering || ([ScMeta appState] == ScAppStateRegisterScolaMemberHousehold);
     
-    isDisplaying = ([ScMeta appState] == ScAppStateDisplayHousehold);
+    isDisplaying = ([ScMeta appState] == ScAppStateDisplayUserHousehold);
     isDisplaying = isDisplaying || ([ScMeta appState] == ScAppStateDisplayScola);
     
     editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];

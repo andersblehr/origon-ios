@@ -186,7 +186,13 @@ static ScMeta *m = nil;
 
 #pragma mark - App state handling
 
-+ (void)pushAppState:(ScAppState)appState
++ (ScAppState)appState
+{
+    return [[[ScMeta m]->appStateStack lastObject] intValue];
+}
+
+
++ (void)transitionToAppState:(ScAppState)appState
 {
     [[ScMeta m]->appStateStack addObject:[NSNumber numberWithInt:appState]];
 }
@@ -195,12 +201,6 @@ static ScMeta *m = nil;
 + (void)popAppState
 {
     [[ScMeta m]->appStateStack removeLastObject];
-}
-
-
-+ (ScAppState)appState
-{
-    return [[[ScMeta m]->appStateStack lastObject] intValue];
 }
 
 

@@ -17,12 +17,13 @@
 - (NSString *)residencyIdForMember:(ScMember *)member;
 - (ScMemberResidency *)residencyForMember:(ScMember *)member;
 
-- (BOOL)hasAddress;
-- (BOOL)hasLandline;
-- (BOOL)hasWebsite;
-
 - (NSString *)singleLineAddress;
 - (NSString *)multiLineAddress;
 - (NSInteger)numberOfLinesInAddress;
+
+- (BOOL)hasAddress;
+- (BOOL)hasLandline;
+- (BOOL)hasWebsite;
+- (BOOL)hasMultipleResidents;
 
 @end

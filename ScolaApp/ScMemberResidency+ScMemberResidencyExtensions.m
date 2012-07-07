@@ -21,23 +21,6 @@
 @implementation ScMemberResidency (ScMemberResidencyExtensions)
 
 
-#pragma mark - Residency lookup
-
-+ (ScMemberResidency *)residencyForMember:(NSString *)userId
-{
-    ScMember *member = [[ScMeta m].managedObjectContext fetchEntityWithId:userId];
-    ScMemberResidency *memberResidency = nil;
-    
-    for (ScMemberResidency *residency in member.residencies) {
-        if ([residency.residence.entityId isEqualToString:member.scolaId]) {
-            memberResidency = residency;
-        }
-    }
-    
-    return memberResidency;
-}
-
-
 #pragma mark - ScCachedEntity (ScCachedEntityExtentions) overrides
 
 - (BOOL)isPropertyPersistable:(NSString *)property
@@ -57,14 +40,6 @@
     
     self.resident = self.member;
     self.residence = self.scola;
-}
-
-
-#pragma mark - Comparison
-
-- (NSComparisonResult)compare:(ScMemberResidency *)other
-{
-    return [self.member.name compare:other.member.name];
 }
 
 @end

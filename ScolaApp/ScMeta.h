@@ -17,18 +17,24 @@ typedef enum {
     ScAppStateConfirmUser,
     ScAppStateRegisterUser,
     ScAppStateRegisterUserHousehold,
+    ScAppStateRegisterUserHouseholdMemberships,
     ScAppStateRegisterUserHouseholdMember,
     ScAppStateRegisterScola,
+    ScAppStateRegisterScolaMemberships,
     ScAppStateRegisterScolaMember,
     ScAppStateRegisterScolaMemberHousehold,
+    ScAppStateRegisterScolaMemberHouseholdMemberships,
     ScAppStateRegisterScolaMemberHouseholdMember,
     ScAppStateDisplayUser,
-    ScAppStateDisplayHousehold,
-    ScAppStateDisplayHouseholdMember,
-    ScAppStateDisplayHouseholdMemberships,
+    ScAppStateDisplayUserHousehold,
+    ScAppStateDisplayUserHouseholdMemberships,
+    ScAppStateDisplayUserHouseholdMember,
     ScAppStateDisplayScola,
-    ScAppStateDisplayScolaMember,
     ScAppStateDisplayScolaMemberships,
+    ScAppStateDisplayScolaMember,
+    ScAppStateDisplayScolaMemberHousehold,
+    ScAppStateDisplayScolaMemberHouseholdMemberships,
+    ScAppStateDisplayScolaMemberHouseholdMember,
     ScAppStateEditUser,
     ScAppStateEditHousehold,
     ScAppStateEditHouseholdMember,
@@ -96,9 +102,9 @@ extern NSString * const kLanguageHungarian;
 
 + (ScMeta *)m;
 
-+ (void)pushAppState:(ScAppState)appState;
-+ (void)popAppState;
 + (ScAppState)appState;
++ (void)transitionToAppState:(ScAppState)appState;
++ (void)popAppState;
 
 + (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
 

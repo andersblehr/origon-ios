@@ -49,7 +49,7 @@ static CGFloat const kLineSpacing = 5.f;
 
 static CGFloat const kAuthFieldWidthFraction = 0.7f;
 static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
-static CGFloat const kPhoneFieldWidthFraction = 0.34f;
+static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 
 @implementation ScTableViewCell
@@ -426,8 +426,10 @@ static CGFloat const kPhoneFieldWidthFraction = 0.34f;
     [self addLabel:[ScStrings stringForKey:strLandlineLabel]];
     [self addTextFieldForKey:kTextFieldKeyLandline text:scola.landline];
     
-    self.selectable = ([ScMeta appState] == ScAppStateDisplayHouseholdMemberships);
-    self.selectable = self.selectable || ([ScMeta appState] == ScAppStateDisplayScolaMemberships);
+    selectable =
+        ([ScMeta appState] == ScAppStateDisplayUserHouseholdMemberships) ||
+        ([ScMeta appState] == ScAppStateDisplayScolaMemberships) ||
+        ([ScMeta appState] == ScAppStateDisplayScolaMemberHouseholdMemberships);
 }
 
 
@@ -541,6 +543,12 @@ static CGFloat const kPhoneFieldWidthFraction = 0.34f;
 
 - (void)shake
 {
+    [self shakeWithVibration:NO];
+}
+
+
+- (void)shakeAndVibrate
+{
     [self shakeWithVibration:YES];
 }
 
@@ -590,6 +598,14 @@ static CGFloat const kPhoneFieldWidthFraction = 0.34f;
     
     if (editing) {
         self.selectable = NO;
+        
+        for (ScTextField *textField in [textFields allValues]) {
+            textField.enabled = YES;
+        }
+    } else {
+        for (ScTextField *textField in [textFields allValues]) {
+            textField.enabled = NO;
+        }
     }
 }
 

@@ -39,7 +39,7 @@
     
     if (JSONData) {
         NSError *error;
-        deserialisedJSON = [self JSONObjectWithData:JSONData options:NSJSONWritingPrettyPrinted error:&error];
+        deserialisedJSON = [self JSONObjectWithData:JSONData options:kNilOptions error:&error];
         
         if (!deserialisedJSON) {
             ScLogVerbose(@"Error deserialising JSON data: %@", [[NSString alloc] initWithData:JSONData encoding:NSUTF8StringEncoding]);

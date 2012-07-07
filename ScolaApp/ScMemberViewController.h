@@ -12,13 +12,17 @@
 #import "ScModalViewControllerDelegate.h"
 #import "ScServerConnectionDelegate.h"
 
-@class ScMember, ScMembership, ScScola;
+@class ScMember, ScMemberResidency, ScMembership, ScScola;
 @class ScMembershipViewController, ScTableViewCell, ScTextField;
 
 @interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate, ScModalViewControllerDelegate> {
 @private
-    ScMember *member;
     ScTableViewCell *memberCell;
+    ScMember *member;
+    
+    ScMember *candidate;
+    ScScola *candidateHousehold;
+    ScMemberResidency *candidateResidency;
     
     UIBarButtonItem *editButton;
     UIBarButtonItem *cancelButton;
@@ -28,19 +32,16 @@
     ScTextField *emailField;
     ScTextField *mobilePhoneField;
     ScTextField *dateOfBirthField;
-    UIDatePicker *dateOfBirthPicker;
     
-    BOOL isRegisteringUser;
-    BOOL isRegisteringMember;
-    BOOL isDisplaying;
-    BOOL isEditing;
+    UIDatePicker *dateOfBirthPicker;
+    UITextField *currentField;
     
     NSString *gender;
-    NSArray *memberEntityDictionaries;
 }
 
 @property (weak, nonatomic) id<ScMemberViewControllerDelegate> delegate;
-@property (weak, nonatomic) ScMembership *membership;
+
 @property (weak, nonatomic) ScScola *scola;
+@property (weak, nonatomic) ScMembership *membership;
 
 @end

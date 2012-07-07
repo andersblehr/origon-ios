@@ -17,7 +17,6 @@
 - (void)addShadowForNonBottomTableViewCell;
 - (void)addShadowForEditableTextField;
 - (void)addShadowForPhotoFrame;
-
 - (void)removeShadow;
 
 @end

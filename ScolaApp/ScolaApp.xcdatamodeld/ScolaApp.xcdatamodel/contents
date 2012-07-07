@@ -192,7 +192,7 @@
         <relationship name="hostingEvents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScEvent" inverseName="hostingScolas" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="memberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScMembership" inverseName="scola" inverseEntity="ScMembership" syncable="YES"/>
         <relationship name="memberToDoItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScToDoItem" inverseName="scola" inverseEntity="ScToDoItem" syncable="YES"/>
-        <relationship name="messageBoards" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="ScMessageBoard" inverseName="scola" inverseEntity="ScMessageBoard" syncable="YES"/>
+        <relationship name="messageBoards" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScMessageBoard" inverseName="scola" inverseEntity="ScMessageBoard" syncable="YES"/>
         <relationship name="parentScola" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="ScScola" inverseName="subscolas" inverseEntity="ScScola" syncable="YES"/>
         <relationship name="residencies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScMemberResidency" inverseName="residence" inverseEntity="ScMemberResidency" syncable="YES"/>
         <relationship name="subscolas" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScScola" inverseName="parentScola" inverseEntity="ScScola" syncable="YES"/>

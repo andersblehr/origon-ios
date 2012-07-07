@@ -124,7 +124,7 @@
 }
 
 
-#pragma mark - State validation
+#pragma mark - Meta information
 
 - (BOOL)hasAddress
 {
@@ -141,6 +141,12 @@
 - (BOOL)hasWebsite
 {
     return (self.website.length > 0);
+}
+
+
+- (BOOL)hasMultipleResidents
+{
+    return (self.residencies.count > 1);
 }
 
 @end

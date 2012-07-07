@@ -24,10 +24,9 @@
     NSArray *adults;
     NSArray *minors;
     
-    BOOL isForHousehold;
     BOOL isUserScolaAdmin;
     BOOL isViewModallyHidden;
-    BOOL didAddOrRemoveMemberships;
+    BOOL needsSynchronisation;
     
     ScMembership *selectedMembership;
 }
