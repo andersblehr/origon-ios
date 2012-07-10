@@ -233,29 +233,27 @@ static NSInteger const kMinorsSection = 2;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([self isDisplaying]) {
-        if ([segue.identifier isEqualToString:kSegueToScolaView]) {
-            ScScolaViewController *scolaViewController = segue.destinationViewController;
-            scolaViewController.scola = scola;
-
-            if ([self isForUser] && [self isForHousehold]) {
-                [ScMeta transitionToAppState:ScAppStateDisplayUserHousehold];
-            } else if ([self isForHousehold]) {
-                [ScMeta transitionToAppState:ScAppStateDisplayScolaMemberHousehold];
-            } else {
-                [ScMeta transitionToAppState:ScAppStateDisplayScola];
-            }
-        } else if ([segue.identifier isEqualToString:kSegueToMemberView]) {
-            ScMemberViewController *memberViewController = segue.destinationViewController;
-            memberViewController.membership = selectedMembership;
-
-            if ([self isForUser] && [self isForHousehold]) {
-                [ScMeta transitionToAppState:ScAppStateDisplayUserHouseholdMember];
-            } else if ([self isForHousehold]) {
-                [ScMeta transitionToAppState:ScAppStateDisplayScolaMemberHouseholdMember];
-            } else {
-                [ScMeta transitionToAppState:ScAppStateDisplayScolaMember];
-            }
+    if ([segue.identifier isEqualToString:kSegueToScolaView]) {
+        ScScolaViewController *scolaViewController = segue.destinationViewController;
+        scolaViewController.scola = scola;
+        
+        if ([self isForUser] && [self isForHousehold]) {
+            [ScMeta transitionToAppState:ScAppStateDisplayUserHousehold];
+        } else if ([self isForHousehold]) {
+            [ScMeta transitionToAppState:ScAppStateDisplayScolaMemberHousehold];
+        } else {
+            [ScMeta transitionToAppState:ScAppStateDisplayScola];
+        }
+    } else if ([segue.identifier isEqualToString:kSegueToMemberView]) {
+        ScMemberViewController *memberViewController = segue.destinationViewController;
+        memberViewController.membership = selectedMembership;
+        
+        if ([self isForUser] && [self isForHousehold]) {
+            [ScMeta transitionToAppState:ScAppStateDisplayUserHouseholdMember];
+        } else if ([self isForHousehold]) {
+            [ScMeta transitionToAppState:ScAppStateDisplayScolaMemberHouseholdMember];
+        } else {
+            [ScMeta transitionToAppState:ScAppStateDisplayScolaMember];
         }
     }
 }

@@ -258,7 +258,7 @@ static NSString * const kURLParameterVersion = @"version";
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
         [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
-    } else if ([ScMeta appState] == ScAppStateConfirmUser) {
+    } else if ([ScMeta appState] == ScAppStateConfirmSignUp) {
         RESTRoute = kRESTRouteAuthConfirmation;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];

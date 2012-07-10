@@ -275,7 +275,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     } else if (isValidInput) {
         [self updateOrRegisterMember];
     } else {
-        [memberCell shakeAndVibrate];
+        [memberCell shake];
     }
 }
 
@@ -393,13 +393,13 @@ static NSInteger const kActionSheetButtonCancel = 2;
         memberCell = [tableView cellForEntityClass:ScMember.class delegate:self];
     }
     
-    nameField = [memberCell textFieldWithKey:kTextFieldKeyName];
-    emailField = [memberCell textFieldWithKey:kTextFieldKeyEmail];
-    mobilePhoneField = [memberCell textFieldWithKey:kTextFieldKeyMobilePhone];
-    dateOfBirthField = [memberCell textFieldWithKey:kTextFieldKeyDateOfBirth];
-    dateOfBirthPicker = (UIDatePicker *)dateOfBirthField.inputView;
-    
     if (memberCell.editing) {
+        nameField = [memberCell textFieldWithKey:kTextFieldKeyName];
+        emailField = [memberCell textFieldWithKey:kTextFieldKeyEmail];
+        mobilePhoneField = [memberCell textFieldWithKey:kTextFieldKeyMobilePhone];
+        dateOfBirthField = [memberCell textFieldWithKey:kTextFieldKeyDateOfBirth];
+        dateOfBirthPicker = (UIDatePicker *)dateOfBirthField.inputView;
+        
         [nameField becomeFirstResponder];
     }
     

@@ -14,7 +14,7 @@ typedef enum {
     ScAppStateNeutral,
     ScAppStateStartup,
     ScAppStateLoginUser,
-    ScAppStateConfirmUser,
+    ScAppStateConfirmSignUp,
     ScAppStateRegisterUser,
     ScAppStateRegisterUserHousehold,
     ScAppStateRegisterUserHouseholdMemberships,

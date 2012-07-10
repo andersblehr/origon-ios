@@ -49,6 +49,6 @@ extern CGFloat const kKeyboardHeight;
 - (ScTextField *)textFieldWithKey:(NSString *)key;
 
 - (void)shake;
-- (void)shakeAndVibrate;
+- (void)shakeAndVibrateDevice;
 
 @end

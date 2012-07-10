@@ -547,7 +547,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 }
 
 
-- (void)shakeAndVibrate
+- (void)shakeAndVibrateDevice
 {
     [self shakeWithVibration:YES];
 }
