@@ -113,9 +113,9 @@ static NSInteger const kActionSheetButtonCancel = 2;
 - (void)registerHousehold
 {
     if ([self isForUser]) {
-        [ScMeta transitionToAppState:ScAppStateRegisterUserHousehold];
+        [ScMeta pushAppState:ScAppStateRegisterUserHousehold];
     } else {
-        [ScMeta transitionToAppState:ScAppStateRegisterScolaMemberHousehold];
+        [ScMeta pushAppState:ScAppStateRegisterScolaMemberHousehold];
     }
     
     ScScolaViewController *scolaViewController = [self.storyboard instantiateViewControllerWithIdentifier:kScolaViewControllerId];
@@ -347,9 +347,9 @@ static NSInteger const kActionSheetButtonCancel = 2;
         nextViewController.scola = scola;
     
         if ([ScMeta appState] == ScAppStateRegisterUserHousehold) {
-            [ScMeta transitionToAppState:ScAppStateRegisterUserHouseholdMemberships];
+            [ScMeta pushAppState:ScAppStateRegisterUserHouseholdMemberships];
         } else if ([ScMeta appState] == ScAppStateRegisterScola) {
-            [ScMeta transitionToAppState:ScAppStateRegisterScolaMember];
+            [ScMeta pushAppState:ScAppStateRegisterScolaMember];
         }
     }
 }
@@ -399,6 +399,11 @@ static NSInteger const kActionSheetButtonCancel = 2;
         mobilePhoneField = [memberCell textFieldWithKey:kTextFieldKeyMobilePhone];
         dateOfBirthField = [memberCell textFieldWithKey:kTextFieldKeyDateOfBirth];
         dateOfBirthPicker = (UIDatePicker *)dateOfBirthField.inputView;
+        
+        if (member.dateOfBirth) {
+            dateOfBirthPicker.date = member.dateOfBirth;
+            gender = member.gender;
+        }
         
         [nameField becomeFirstResponder];
     }
@@ -474,11 +479,11 @@ static NSInteger const kActionSheetButtonCancel = 2;
     [ScMeta popAppState];
     
     if ([self isRegistering] && [self isForUser]) {
-        [ScMeta transitionToAppState:ScAppStateRegisterUserHouseholdMemberships];
+        [ScMeta pushAppState:ScAppStateRegisterUserHouseholdMemberships];
     } else if ([self isRegistering] && [self isForHousehold]) {
-        [ScMeta transitionToAppState:ScAppStateRegisterScolaMemberHouseholdMemberships];
+        [ScMeta pushAppState:ScAppStateRegisterScolaMemberHouseholdMemberships];
     } else {
-        [ScMeta transitionToAppState:ScAppStateRegisterScolaMemberships];
+        [ScMeta pushAppState:ScAppStateRegisterScolaMemberships];
     }
     
     [self dismissViewControllerAnimated:YES completion:NULL];

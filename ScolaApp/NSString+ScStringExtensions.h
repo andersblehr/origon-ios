@@ -17,6 +17,7 @@
 - (NSString *)removeLeadingAndTrailingSpaces;
 - (NSString *)stringByAppendingStringWithNewline:(NSString *)string;
 - (NSString *)stringByAppendingStringWithComma:(NSString *)string;
+- (NSString *)stringByAppendingStringWithDollar:(NSString *)string;
 
 - (BOOL)isEmailAddress;
 

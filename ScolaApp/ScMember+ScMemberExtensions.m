@@ -14,6 +14,8 @@
 #import "NSDate+ScDateExtensions.h"
 #import "NSString+ScStringExtensions.h"
 
+#import "ScScola.h"
+
 
 @implementation ScMember (ScMemberExtensions)
 

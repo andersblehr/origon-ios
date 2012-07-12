@@ -17,7 +17,7 @@
 - (id)entityForClass:(Class)class withId:(NSString *)entityId;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola withId:(NSString *)entityId;
-- (id)entityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola;
+- (id)sharedEntityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola;
 
 - (id)fetchEntityWithId:(NSString *)entityId;
 

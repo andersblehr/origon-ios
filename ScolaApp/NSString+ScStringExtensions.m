@@ -150,6 +150,12 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
+- (NSString *)stringByAppendingStringWithDollar:(NSString *)string
+{
+    return [self stringByAppendingString:string withSeparator:@"$"];
+}
+
+
 #pragma mark - Devining tring content
 
 - (BOOL)isEmailAddress

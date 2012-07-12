@@ -94,17 +94,17 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-- (id)entityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola
+- (id)sharedEntityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola
 {
-    ScSharedEntityRef *entityRef = [self entityForClass:ScSharedEntityRef.class];
+    ScSharedEntityRef *sharedEntityRef = [self entityForClass:ScSharedEntityRef.class];
     
-    entityRef.sharedEntityId = entity.entityId;
-    entityRef.sharedEntityScolaId = entity.scolaId;
-    entityRef.scolaId = scola.entityId;
+    sharedEntityRef.sharedEntityId = entity.entityId;
+    sharedEntityRef.sharedEntityScolaId = entity.scolaId;
+    sharedEntityRef.scolaId = scola.entityId;
     
     entity.isShared = [NSNumber numberWithBool:YES];
     
-    return entityRef;
+    return sharedEntityRef;
 }
 
 

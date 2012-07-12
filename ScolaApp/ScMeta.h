@@ -11,35 +11,35 @@
 #import "ScServerConnectionDelegate.h"
 
 typedef enum {
-    ScAppStateNeutral,
-    ScAppStateStartup,
-    ScAppStateLoginUser,
-    ScAppStateConfirmSignUp,
-    ScAppStateRegisterUser,
-    ScAppStateRegisterUserHousehold,
-    ScAppStateRegisterUserHouseholdMemberships,
-    ScAppStateRegisterUserHouseholdMember,
-    ScAppStateRegisterScola,
-    ScAppStateRegisterScolaMemberships,
-    ScAppStateRegisterScolaMember,
-    ScAppStateRegisterScolaMemberHousehold,
-    ScAppStateRegisterScolaMemberHouseholdMemberships,
-    ScAppStateRegisterScolaMemberHouseholdMember,
-    ScAppStateDisplayUser,
-    ScAppStateDisplayUserHousehold,
-    ScAppStateDisplayUserHouseholdMemberships,
-    ScAppStateDisplayUserHouseholdMember,
-    ScAppStateDisplayScola,
-    ScAppStateDisplayScolaMemberships,
-    ScAppStateDisplayScolaMember,
-    ScAppStateDisplayScolaMemberHousehold,
-    ScAppStateDisplayScolaMemberHouseholdMemberships,
-    ScAppStateDisplayScolaMemberHouseholdMember,
-    ScAppStateEditUser,
-    ScAppStateEditHousehold,
-    ScAppStateEditHouseholdMember,
-    ScAppStateEditScola,
-    ScAppStateEditScolaMember,
+/*  0 */ ScAppStateNeutral,
+/*  1 */ ScAppStateStartup,
+/*  2 */ ScAppStateLoginUser,
+/*  3 */ ScAppStateConfirmSignUp,
+/*  4 */ ScAppStateRegisterUser,
+/*  5 */ ScAppStateRegisterUserHousehold,
+/*  6 */ ScAppStateRegisterUserHouseholdMemberships,
+/*  7 */ ScAppStateRegisterUserHouseholdMember,
+/*  8 */ ScAppStateRegisterScola,
+/*  9 */ ScAppStateRegisterScolaMemberships,
+/* 10 */ ScAppStateRegisterScolaMember,
+/* 11 */ ScAppStateRegisterScolaMemberHousehold,
+/* 12 */ ScAppStateRegisterScolaMemberHouseholdMemberships,
+/* 13 */ ScAppStateRegisterScolaMemberHouseholdMember,
+/* 14 */ ScAppStateDisplayUser,
+/* 15 */ ScAppStateDisplayUserHousehold,
+/* 16 */ ScAppStateDisplayUserHouseholdMemberships,
+/* 17 */ ScAppStateDisplayUserHouseholdMember,
+/* 18 */ ScAppStateDisplayScola,
+/* 19 */ ScAppStateDisplayScolaMemberships,
+/* 20 */ ScAppStateDisplayScolaMember,
+/* 21 */ ScAppStateDisplayScolaMemberHousehold,
+/* 22 */ ScAppStateDisplayScolaMemberHouseholdMemberships,
+/* 23 */ ScAppStateDisplayScolaMemberHouseholdMember,
+/* 24 */ ScAppStateEditUser,
+/* 25 */ ScAppStateEditHousehold,
+/* 26 */ ScAppStateEditHouseholdMember,
+/* 27 */ ScAppStateEditScola,
+/* 18 */ ScAppStateEditScolaMember,
 } ScAppState;
 
 extern NSString * const kBundleId;
@@ -103,7 +103,7 @@ extern NSString * const kLanguageHungarian;
 + (ScMeta *)m;
 
 + (ScAppState)appState;
-+ (void)transitionToAppState:(ScAppState)appState;
++ (void)pushAppState:(ScAppState)appState;
 + (void)popAppState;
 
 + (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;

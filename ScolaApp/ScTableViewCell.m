@@ -294,7 +294,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
             textField.placeholder = [ScStrings stringForKey:strNamePrompt];
             
             if ([ScMeta appState] == ScAppStateRegisterUser) {
-                textField.text = nil;
+                //textField.text = nil; // TODO: Bug, also blanks when member is registered
             }
         } else if ([key isEqualToString:kTextFieldKeyEmail]) {
             textField.keyboardType = UIKeyboardTypeEmailAddress;

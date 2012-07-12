@@ -8,6 +8,8 @@
 
 #import "ScMember.h"
 
+@class ScScola;
+
 @interface ScMember (ScMemberExtensions)
 
 - (NSString *)about;

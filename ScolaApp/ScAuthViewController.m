@@ -55,7 +55,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)setUpForAppState:(ScAppState)appState
 {
-    [ScMeta transitionToAppState:appState];
+    [ScMeta pushAppState:appState];
     
     if ([ScMeta appState] == ScAppStateLoginUser) {
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
@@ -352,7 +352,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)completeRegistration
 {
-    [ScMeta transitionToAppState:ScAppStateRegisterUser];
+    [ScMeta pushAppState:ScAppStateRegisterUser];
     
     ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
     memberViewController.delegate = self;
@@ -401,9 +401,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
         [ScMeta m].userId = [authInfo objectForKey:kAuthInfoKeyUserId];
         
-        [ScMeta transitionToAppState:ScAppStateConfirmSignUp];
+        [ScMeta pushAppState:ScAppStateConfirmSignUp];
     } else {
-        [ScMeta transitionToAppState:ScAppStateLoginUser];
+        [ScMeta pushAppState:ScAppStateLoginUser];
     }
 }
 
@@ -442,7 +442,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [[ScMeta m].managedObjectContext synchronise];
         }
         
-        [ScMeta transitionToAppState:ScAppStateNeutral];
+        [ScMeta pushAppState:ScAppStateNeutral];
     }
 }
 

@@ -108,11 +108,11 @@ static NSInteger const kMinorsSection = 2;
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
     
     if ([self isForUser] && [self isForHousehold]) {
-        [ScMeta transitionToAppState:ScAppStateRegisterUserHouseholdMember];
+        [ScMeta pushAppState:ScAppStateRegisterUserHouseholdMember];
     } else if ([self isForHousehold]) {
-        [ScMeta transitionToAppState:ScAppStateRegisterScolaMemberHouseholdMember];
+        [ScMeta pushAppState:ScAppStateRegisterScolaMemberHouseholdMember];
     } else {
-        [ScMeta transitionToAppState:ScAppStateRegisterScolaMember];
+        [ScMeta pushAppState:ScAppStateRegisterScolaMember];
     }
     
     [self.navigationController presentViewController:navigationController animated:YES completion:NULL];
@@ -215,11 +215,15 @@ static NSInteger const kMinorsSection = 2;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-	[super viewWillDisappear:animated];
+    if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
+        //[ScMeta popAppState];
+    }
     
     if (needsSynchronisation && !isViewModallyHidden) {
         [self didFinishEditing];
     }
+    
+	[super viewWillDisappear:animated];
 }
 
 
@@ -238,22 +242,22 @@ static NSInteger const kMinorsSection = 2;
         scolaViewController.scola = scola;
         
         if ([self isForUser] && [self isForHousehold]) {
-            [ScMeta transitionToAppState:ScAppStateDisplayUserHousehold];
+            [ScMeta pushAppState:ScAppStateDisplayUserHousehold];
         } else if ([self isForHousehold]) {
-            [ScMeta transitionToAppState:ScAppStateDisplayScolaMemberHousehold];
+            [ScMeta pushAppState:ScAppStateDisplayScolaMemberHousehold];
         } else {
-            [ScMeta transitionToAppState:ScAppStateDisplayScola];
+            [ScMeta pushAppState:ScAppStateDisplayScola];
         }
     } else if ([segue.identifier isEqualToString:kSegueToMemberView]) {
         ScMemberViewController *memberViewController = segue.destinationViewController;
         memberViewController.membership = selectedMembership;
         
         if ([self isForUser] && [self isForHousehold]) {
-            [ScMeta transitionToAppState:ScAppStateDisplayUserHouseholdMember];
+            [ScMeta pushAppState:ScAppStateDisplayUserHouseholdMember];
         } else if ([self isForHousehold]) {
-            [ScMeta transitionToAppState:ScAppStateDisplayScolaMemberHouseholdMember];
+            [ScMeta pushAppState:ScAppStateDisplayScolaMemberHouseholdMember];
         } else {
-            [ScMeta transitionToAppState:ScAppStateDisplayScolaMember];
+            [ScMeta pushAppState:ScAppStateDisplayScolaMember];
         }
     }
 }

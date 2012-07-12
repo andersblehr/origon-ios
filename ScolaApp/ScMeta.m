@@ -192,8 +192,10 @@ static ScMeta *m = nil;
 }
 
 
-+ (void)transitionToAppState:(ScAppState)appState
++ (void)pushAppState:(ScAppState)appState
 {
+    ScLogDebug(@"App state: %d", appState);
+    
     [[ScMeta m]->appStateStack addObject:[NSNumber numberWithInt:appState]];
 }
 
@@ -201,6 +203,8 @@ static ScMeta *m = nil;
 + (void)popAppState
 {
     [[ScMeta m]->appStateStack removeLastObject];
+    
+    ScLogDebug(@"App state: %d", [ScMeta appState]);
 }
 
 

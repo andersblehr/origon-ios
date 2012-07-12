@@ -18,26 +18,36 @@
 #import "ScMemberResidency.h"
 #import "ScMembership.h"
 
+#import "ScMember+ScMemberExtensions.h"
+
 
 @implementation ScScola (ScScolaExtensions)
+
+
+#pragma mark - Auxiliary methods
+
+- (void)createSharedEntitiesForAddedMember:(ScMember *)member
+{
+    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+    
+    [context sharedEntityRefForEntity:member inScola:self];
+    
+    for (ScMemberResidency *residency in member.residencies) {
+        [context sharedEntityRefForEntity:residency inScola:self];
+        [context sharedEntityRefForEntity:residency.scola inScola:self];
+    }
+}
 
 
 #pragma mark - Relationship maintenance
 
 - (id)addMember:(ScMember *)member
 {
-    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-    
-    [context entityRefForEntity:member inScola:self];
-    
-    for (ScMemberResidency *residency in member.residencies) {
-        [context entityRefForEntity:residency inScola:self];
-        [context entityRefForEntity:residency.scola inScola:self];
-    }
-    
-    ScMembership *membership = [context entityForClass:ScMembership.class inScola:self];
+    ScMembership *membership = [[ScMeta m].managedObjectContext entityForClass:ScMembership.class inScola:self];
     membership.member = member;
     membership.scola = self;
+    
+    [self createSharedEntitiesForAddedMember:member];
     
     return membership;
 }
@@ -53,6 +63,10 @@
     residency.member = resident;
     residency.scola = self;
     
+    if (![resident.scolaId isEqualToString:self.entityId]) {
+        [self createSharedEntitiesForAddedMember:resident];
+    }
+    
     if (self.residencies.count > 1) {
         if ([self.name isEqualToString:[ScStrings stringForKey:strMyPlace]]) {
             self.name = [ScStrings stringForKey:strOurPlace];
@@ -65,7 +79,7 @@
 
 - (NSString *)residencyIdForMember:(ScMember *)member
 {
-    return [NSString stringWithFormat:@"%@$%@", member.entityId, self.entityId];
+    return [member.entityId stringByAppendingStringWithDollar:self.entityId];
 }
 
 
@@ -86,11 +100,7 @@
     }
     
     if (self.addressLine2.length > 0) {
-        if (address.length > 0) {
-            address = [address stringByAppendingStringWithComma:self.addressLine2];
-        } else {
-            address = [address stringByAppendingString:self.addressLine2];
-        }
+        address = [address stringByAppendingStringWithComma:self.addressLine2];
     }
 
     return address;
@@ -105,11 +115,7 @@
     for (int i = 0; i < [addressElements count]; i++) {
         NSString *addressElement = [[addressElements objectAtIndex:i] removeLeadingAndTrailingSpaces];
         
-        if (i == 0) {
-            address = [address stringByAppendingString:addressElement];
-        } else {
-            address = [address stringByAppendingStringWithNewline:addressElement];
-        }
+        address = [address stringByAppendingStringWithNewline:addressElement];
     }
     
     return address;
