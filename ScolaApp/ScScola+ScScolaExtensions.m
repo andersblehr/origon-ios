@@ -33,8 +33,10 @@
     [context sharedEntityRefForEntity:member inScola:self];
     
     for (ScMemberResidency *residency in member.residencies) {
-        [context sharedEntityRefForEntity:residency inScola:self];
-        [context sharedEntityRefForEntity:residency.scola inScola:self];
+        if (![residency.scolaId isEqualToString:self.entityId]) {
+            [context sharedEntityRefForEntity:residency inScola:self];
+            [context sharedEntityRefForEntity:residency.scola inScola:self];
+        }
     }
 }
 

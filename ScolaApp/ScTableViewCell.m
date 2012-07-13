@@ -243,7 +243,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 #pragma mark - Adding text fields
 
-- (ScTextField *)addTitleFieldForKey:(NSString *)key text:(NSString *)text
+- (ScTextField *)addTitleFieldWithText:(NSString *)text key:(NSString *)key
 {
     CGFloat titleHeight = self.editing ? [UIFont editableTitleFont].lineHeightWhenEditing : [UIFont titleFont].lineHeight;
     
@@ -252,23 +252,41 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     
     [self.contentView addSubview:titleBackgroundView];
     
-    return [self addTextFieldForKey:key text:text width:1.f title:YES];
+    return [self addTextFieldWithText:text key:key width:1.f isTitle:YES];
 }
 
 
-- (ScTextField *)addTextFieldForKey:(NSString *)key text:(NSString *)text
+- (ScTextField *)addTextFieldWithKey:(NSString *)key
 {
-    return [self addTextFieldForKey:key text:text width:1.f title:NO];
+    return [self addTextFieldWithText:nil key:key];
 }
 
 
-- (ScTextField *)addTextFieldForKey:(NSString *)key text:(NSString *)text width:(CGFloat)widthFraction
+- (ScTextField *)addTextFieldWithText:(NSString *)text key:(NSString *)key
 {
-    return [self addTextFieldForKey:key text:text width:widthFraction title:NO];
+    return [self addTextFieldWithText:text key:key width:1.f isTitle:NO];
 }
 
 
-- (ScTextField *)addTextFieldForKey:(NSString *)key text:(NSString *)text width:(CGFloat)widthFraction title:(BOOL)title
+- (ScTextField *)addTextFieldWithDate:(NSDate *)date key:(NSString *)key
+{
+    ScTextField *textField = [self addTextFieldWithText:[date localisedDateString] key:key];
+    
+    if (date) {
+        ((UIDatePicker *)textField.inputView).date = date;
+    }
+    
+    return textField;
+}
+
+
+- (ScTextField *)addTextFieldWithText:(NSString *)text key:(NSString *)key width:(CGFloat)widthFraction
+{
+    return [self addTextFieldWithText:text key:key width:widthFraction isTitle:NO];
+}
+
+
+- (ScTextField *)addTextFieldWithText:(NSString *)text key:(NSString *)key width:(CGFloat)widthFraction isTitle:(BOOL)isTitle
 {
     ScTextField *textField = nil;
     
@@ -278,7 +296,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     if (text || self.editing) {
         if ([self isAuthFieldKey:key]) {
             textField = [self authFieldForKey:key];
-        } else if (title) {
+        } else if (isTitle) {
             textField = [[ScTextField alloc] initForTitleAtOrigin:CGPointMake(hardContentMargin + contentMargin, verticalOffset) width:textFieldWidth editing:self.editing];
         } else {
             textField = [[ScTextField alloc] initForDetailAtOrigin:CGPointMake(hardContentMargin + contentMargin, verticalOffset) width:textFieldWidth editing:self.editing];
@@ -376,40 +394,40 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 - (void)setUpForMemberEntity:(ScMember *)member
 {
-    [self addTitleFieldForKey:kTextFieldKeyName text:member.name];
+    [self addTitleFieldWithText:member.name key:kTextFieldKeyName];
     [self addPhotoFrame:[UIImage imageWithData:member.photo]];
     
     if (self.editing) {
         [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterEmailLabel]];
-        [self addTextFieldForKey:kTextFieldKeyEmail text:member.entityId];
+        [self addTextFieldWithText:member.entityId key:kTextFieldKeyEmail];
         [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterMobilePhoneLabel]];
-        [self addTextFieldForKey:kTextFieldKeyMobilePhone text:member.mobilePhone];
+        [self addTextFieldWithText:member.mobilePhone key:kTextFieldKeyMobilePhone];
         [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterDateOfBirthLabel]];
-        [self addTextFieldForKey:kTextFieldKeyDateOfBirth text:[member.dateOfBirth localisedDateString]];
+        [self addTextFieldWithText:[member.dateOfBirth localisedDateString] key:kTextFieldKeyDateOfBirth];
     } else {
         ScScola *homeScola = [[ScMeta m].managedObjectContext fetchEntityWithId:member.scolaId];
         
         [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterAddressLabel]];
-        [self addTextFieldForKey:kTextFieldKeyAddress text:[homeScola singleLineAddress]];
+        [self addTextFieldWithText:[homeScola singleLineAddress] key:kTextFieldKeyAddress];
         
         if ([homeScola hasLandline]) {
             [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterLandlineLabel]];
             
             if ([member hasMobilPhone]) {
-                [self addTextFieldForKey:kTextFieldKeyMobilePhone text:homeScola.landline width:kPhoneFieldWidthFraction];
+                [self addTextFieldWithText:homeScola.landline key:kTextFieldKeyMobilePhone width:kPhoneFieldWidthFraction];
             } else {
-                [self addTextFieldForKey:kTextFieldKeyMobilePhone text:homeScola.landline];
+                [self addTextFieldWithText:homeScola.landline key:kTextFieldKeyMobilePhone];
             }
         }
         
         if ([member hasMobilPhone]) {
             [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterMobilePhoneLabel]];
-            [self addTextFieldForKey:kTextFieldKeyMobilePhone text:member.mobilePhone];
+            [self addTextFieldWithText:member.mobilePhone key:kTextFieldKeyMobilePhone];
         }
         
         if ([member hasEmailAddress]) {
             [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterEmailLabel]];
-            [self addTextFieldForKey:kTextFieldKeyEmail text:member.entityId];
+            [self addTextFieldWithText:member.entityId key:kTextFieldKeyEmail];
         }
     }
     
@@ -420,11 +438,11 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 - (void)setUpForScolaEntity:(ScScola *)scola
 {
     [self addLabel:[ScStrings stringForKey:strAddressLabel]];
-    [self addTextFieldForKey:kTextFieldKeyAddressLine1 text:scola.addressLine1];
+    [self addTextFieldWithText:scola.addressLine1 key:kTextFieldKeyAddressLine1];
     [self addLabel:@""];
-    [self addTextFieldForKey:kTextFieldKeyAddressLine2 text:scola.addressLine2];
+    [self addTextFieldWithText:scola.addressLine2 key:kTextFieldKeyAddressLine2];
     [self addLabel:[ScStrings stringForKey:strLandlineLabel]];
-    [self addTextFieldForKey:kTextFieldKeyLandline text:scola.landline];
+    [self addTextFieldWithText:scola.landline key:kTextFieldKeyLandline];
     
     selectable =
         ([ScMeta appState] == ScAppStateDisplayUserHouseholdMemberships) ||
@@ -482,14 +500,14 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
             self.editing = YES;
             
             [self addLabel:[ScStrings stringForKey:strSignInOrRegisterLabel] centred:YES];
-            [self addTextFieldForKey:kTextFieldKeyAuthEmail text:nil];
-            [self addTextFieldForKey:kTextFieldKeyPassword text:nil];
+            [self addTextFieldWithKey:kTextFieldKeyAuthEmail];
+            [self addTextFieldWithKey:kTextFieldKeyPassword];
         } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserConfirmation]) {
             self.editing = YES;
             
             [self addLabel:[ScStrings stringForKey:strConfirmRegistrationLabel] centred:YES];
-            [self addTextFieldForKey:kTextFieldKeyRegistrationCode text:nil];
-            [self addTextFieldForKey:kTextFieldKeyRepeatPassword text:nil];
+            [self addTextFieldWithKey:kTextFieldKeyRegistrationCode];
+            [self addTextFieldWithKey:kTextFieldKeyRepeatPassword];
         }
     }
     

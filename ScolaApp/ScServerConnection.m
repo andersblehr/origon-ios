@@ -301,7 +301,6 @@ static NSString * const kURLParameterVersion = @"version";
     RESTRoute = [NSString stringWithFormat:@"%@/%@", kRESTRouteModelMember, memberId];
     
     [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    
     [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:delegate];
 }
 

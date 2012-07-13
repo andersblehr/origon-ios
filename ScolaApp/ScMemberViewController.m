@@ -211,7 +211,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     member.dateOfBirth = dateOfBirthPicker.date;
     member.mobilePhone = mobilePhoneField.text;
     member.gender = gender;
-
+    
     if ([self isRegistering]) {
         member.givenName = [NSString givenNameFromFullName:nameField.text];
     }

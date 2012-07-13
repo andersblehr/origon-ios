@@ -88,6 +88,7 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
+    [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
     
     [ScMeta pushAppState:ScAppStateStartup];
     

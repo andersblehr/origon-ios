@@ -32,11 +32,10 @@
     ScTextField *emailField;
     ScTextField *mobilePhoneField;
     ScTextField *dateOfBirthField;
-    
     UIDatePicker *dateOfBirthPicker;
-    UITextField *currentField;
-    
     NSString *gender;
+    
+    UITextField *currentField;
 }
 
 @property (weak, nonatomic) id<ScMemberViewControllerDelegate> delegate;
