@@ -311,14 +311,14 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
             textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
             textField.placeholder = [ScStrings stringForKey:strNamePrompt];
             
-            if ([ScMeta appState] == ScAppStateRegisterUser) {
-                //textField.text = nil; // TODO: Bug, also blanks when member is registered
+            if ([text rangeOfString:@"@"].location != NSNotFound) {
+                textField.text = nil;
             }
         } else if ([key isEqualToString:kTextFieldKeyEmail]) {
             textField.keyboardType = UIKeyboardTypeEmailAddress;
             textField.placeholder = [ScStrings stringForKey:strEmailPrompt];
             
-            if (self.editing && [ScMeta appState] == ScAppStateRegisterUser) {
+            if (self.editing && ([ScMeta appState] == ScAppStateRegisterUser)) {
                 textField.enabled = NO;
             }
         } else if ([key isEqualToString:kTextFieldKeyMobilePhone]) {

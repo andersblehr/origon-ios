@@ -300,6 +300,11 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if (isUserListed) {
         homeScola = [context fetchEntityWithId:[ScMeta m].homeScolaId];
         member = [context fetchEntityWithId:[ScMeta m].userId];
+        
+        for (ScMemberResidency *residency in member.residencies) {
+            residency.isActive = [NSNumber numberWithBool:YES];
+            residency.isAdmin = [NSNumber numberWithBool:![member isMinor]];
+        }
     } else {
         homeScola = [context entityForScolaWithName:[ScStrings stringForKey:strMyPlace] scolaId:[ScMeta m].homeScolaId];
         member = [context entityForClass:ScMember.class inScola:homeScola withId:[ScMeta m].userId];
