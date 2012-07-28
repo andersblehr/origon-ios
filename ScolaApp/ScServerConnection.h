@@ -8,8 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "ScServerConnectionDelegate.h"
-
 extern NSString * const kHTTPMethodGET;
 extern NSString * const kHTTPMethodPOST;
 extern NSString * const kHTTPMethodDELETE;
@@ -31,20 +29,7 @@ extern NSInteger const kHTTPStatusCodeForbidden;
 extern NSInteger const kHTTPStatusCodeNotFound;
 extern NSInteger const kHTTPStatusCodeInternalServerError;
 
-@interface ScServerConnection : NSObject {
-@private
-    id<ScServerConnectionDelegate> connectionDelegate;
-    
-    NSString *RESTHandler;
-    NSString *RESTRoute;
-    
-    NSMutableURLRequest *URLRequest;
-    NSMutableDictionary *URLParameters;
-    NSHTTPURLResponse *HTTPResponse;
-	NSMutableData *responseData;
-    
-    BOOL canPerformRequest;
-}
+@interface ScServerConnection : NSObject
 
 + (void)showAlertForError:(NSError *)error;
 + (void)showAlertForError:(NSError *)error tagWith:(int)tag usingDelegate:(id)delegate;

@@ -36,18 +36,19 @@ static CGFloat const kTextInset = 4.f;
 static CGFloat const kLineSpacing = 5.f;
 
 
-@implementation ScTextField
-
-@synthesize key;
-
-
-#pragma mark - Initialisation
-
-- (id)initWithFrame:(CGRect)frame
-{
-    return [self initForDetailAtOrigin:CGPointMake(frame.origin.x, frame.origin.y) width:frame.size.width editing:NO];
+@interface ScTextField () {
+    BOOL _isTitle;
+    BOOL _isEditing;
 }
 
+- (id)initAtOrigin:(CGPoint)origin font:(UIFont *)font width:(CGFloat)width title:(BOOL)title editing:(BOOL)editing;
+
+@end
+
+
+@implementation ScTextField
+
+#pragma mark - Private methods
 
 - (id)initAtOrigin:(CGPoint)origin font:(UIFont *)font width:(CGFloat)width title:(BOOL)title editing:(BOOL)editing
 {
@@ -56,8 +57,8 @@ static CGFloat const kLineSpacing = 5.f;
     self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, lineHeight)];
     
     if (self) {
-        isTitle = title;
-        isEditing = editing;
+        _isTitle = title;
+        _isEditing = editing;
         
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -69,7 +70,7 @@ static CGFloat const kLineSpacing = 5.f;
         self.returnKeyType = UIReturnKeyNext;
         self.textAlignment = UITextAlignmentLeft;
         
-        if (isTitle && !isEditing) {
+        if (_isTitle && !_isEditing) {
             self.textColor = [UIColor titleTextColor];
         } else {
             self.textColor = [UIColor detailTextColor];
@@ -77,6 +78,14 @@ static CGFloat const kLineSpacing = 5.f;
     }
     
     return self;
+}
+
+
+#pragma mark - Initialisation
+
+- (id)initWithFrame:(CGRect)frame
+{
+    return [self initForDetailAtOrigin:CGPointMake(frame.origin.x, frame.origin.y) width:frame.size.width editing:NO];
 }
 
 
@@ -100,13 +109,13 @@ static CGFloat const kLineSpacing = 5.f;
 
 - (CGFloat)lineHeight
 {
-    return (isEditing ? self.font.lineHeightWhenEditing : self.font.lineHeight);
+    return (_isEditing ? self.font.lineHeightWhenEditing : self.font.lineHeight);
 }
 
 
 - (CGFloat)lineSpacingBelow
 {
-    return (isTitle ? 2 * kLineSpacing : kLineSpacing);
+    return (_isTitle ? 2 * kLineSpacing : kLineSpacing);
 }
 
 
@@ -126,7 +135,7 @@ static CGFloat const kLineSpacing = 5.f;
 
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
-    return (self.enabled || isEditing) ? CGRectInset(bounds, kTextInset, 0.f) : bounds;
+    return (self.enabled || _isEditing) ? CGRectInset(bounds, kTextInset, 0.f) : bounds;
 }
 
 
@@ -134,7 +143,7 @@ static CGFloat const kLineSpacing = 5.f;
 {
     BOOL canPerformAction = [super canPerformAction:action withSender:sender];
     
-    if ([key isEqualToString:kTextFieldKeyDateOfBirth]) {
+    if ([self.key isEqualToString:kTextFieldKeyDateOfBirth]) {
         canPerformAction = canPerformAction && (action != @selector(paste:));
     }
     
@@ -153,7 +162,7 @@ static CGFloat const kLineSpacing = 5.f;
         self.backgroundColor = [UIColor clearColor];
         [self removeShadow];
         
-        if (isTitle) {
+        if (_isTitle) {
             self.textColor = [UIColor titleTextColor];
         }
     }
@@ -164,7 +173,7 @@ static CGFloat const kLineSpacing = 5.f;
 {
     [super setSelected:selected];
     
-    if (!isTitle) {
+    if (!_isTitle) {
         if (selected) {
             self.backgroundColor = [UIColor selectedCellBackgroundColor];
             self.textColor = [UIColor selectedDetailTextColor];

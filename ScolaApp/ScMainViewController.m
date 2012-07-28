@@ -26,8 +26,6 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 
 @implementation ScMainViewController
 
-@synthesize darkLinenView;
-
 
 #pragma mark - View lifecycle
 
@@ -40,8 +38,8 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    [darkLinenView addGradientLayer];
+    
+    [self.darkLinenView addGradientLayer];
     
     self.title = @"Scola";
 
@@ -77,6 +75,8 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 {
     [super viewWillAppear:animated];
     
+    [ScMeta pushAppState:ScAppStateNeutral];
+    
     [self navigationController].navigationBarHidden = YES;
 }
 
@@ -95,7 +95,7 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
         UITabBarController *tabBarController = segue.destinationViewController;
         ScMembershipViewController *nextViewController = [tabBarController.viewControllers objectAtIndex:0];
         
-        nextViewController.scola = [[ScMeta m].managedObjectContext fetchEntityWithId:[ScMeta m].homeScolaId];
+        nextViewController.scola = [[ScMeta m].managedObjectContext fetchEntityWithId:[ScMeta m].householdId];
     }
 }
 

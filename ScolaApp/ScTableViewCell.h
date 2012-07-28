@@ -18,20 +18,11 @@ extern CGFloat const kContentWidth;
 extern CGFloat const kContentMargin;
 extern CGFloat const kKeyboardHeight;
 
+
 @class ScCachedEntity;
 @class ScTextField;
 
-@interface ScTableViewCell : UITableViewCell {
-@private
-    CGFloat hardContentMargin;
-    CGFloat contentMargin;
-    CGFloat verticalOffset;
-    
-    NSMutableSet *labels;
-    NSMutableDictionary *textFields;
-    
-    id<UITextFieldDelegate> textFieldDelegate;
-}
+@interface ScTableViewCell : UITableViewCell
 
 @property (nonatomic) BOOL selectable;
 @property (strong, readonly) UIButton *imageButton;

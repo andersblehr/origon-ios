@@ -13,21 +13,7 @@
 @class ScScola;
 @class ScTableViewCell, ScTextField;
 
-@interface ScScolaViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate> {
-@private
-    ScTableViewCell *scolaCell;
-    
-    UIBarButtonItem *editButton;
-    UIBarButtonItem *cancelButton;
-    UIBarButtonItem *doneButton;
-    
-    ScTextField *addressLine1Field;
-    ScTextField *addressLine2Field;
-    ScTextField *landlineField;
-    
-    BOOL isRegistering;
-    BOOL isDisplaying;
-}
+@interface ScScolaViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 
 @property (weak, nonatomic) id<ScModalViewControllerDelegate> delegate;
 @property (weak, nonatomic) ScScola *scola;

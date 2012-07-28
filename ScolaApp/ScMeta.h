@@ -40,7 +40,7 @@ typedef enum {
 /* 26 */ ScAppStateEditHouseholdMember,
 /* 27 */ ScAppStateEditScola,
 /* 18 */ ScAppStateEditScolaMember,
-} ScAppState;
+} ScAppState_;
 
 extern NSString * const kBundleId;
 extern NSString * const kDarkLinenImageFile;
@@ -60,50 +60,38 @@ extern NSString * const kPropertyDidRegister;
 
 extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;
-extern NSString * const kGenderNoneGiven;
 
 extern NSString * const kLanguageHungarian;
 
-@class Reachability, ScCachedEntity, ScServerConnection;
 
-@interface ScMeta : NSObject <ScServerConnectionDelegate> {
-@private
-    Reachability *internetReachability;
+@class ScAppState, ScCachedEntity;
 
-    NSDate *authTokenExpiryDate;
-    NSMutableArray *appStateStack;
-    
-    NSMutableSet *scheduledEntities;
-    NSMutableDictionary *importedEntities;
-    NSMutableDictionary *importedEntityRefs;
-}
+@interface ScMeta : NSObject <ScServerConnectionDelegate>
 
-@property (nonatomic) BOOL isUserLoggedIn;
+@property (strong, nonatomic, readonly) ScAppState *appState;
 
 @property (strong, nonatomic) NSString *userId;
-@property (strong, nonatomic) NSString *homeScolaId;
+@property (strong, nonatomic) NSString *householdId;
 @property (strong, nonatomic) NSString *lastFetchDate;
 
-@property (strong, readonly) NSString *deviceId;
-@property (strong, readonly) NSString *authToken;
-@property (strong, readonly) NSString *appVersion;
-@property (strong, readonly) NSString *displayLanguage;
+@property (strong, nonatomic, readonly) NSString *deviceId;
+@property (strong, nonatomic, readonly) NSString *authToken;
+@property (strong, nonatomic, readonly) NSString *appVersion;
+@property (strong, nonatomic, readonly) NSString *displayLanguage;
 
 @property (nonatomic, readonly) BOOL is_iPadDevice;
 @property (nonatomic, readonly) BOOL is_iPodDevice;
 @property (nonatomic, readonly) BOOL is_iPhoneDevice;
 @property (nonatomic, readonly) BOOL isSimulatorDevice;
-
 @property (nonatomic, readonly) BOOL isInternetConnectionWiFi;
 @property (nonatomic, readonly) BOOL isInternetConnectionWWAN;
 
-@property (weak, readonly) NSManagedObjectContext *managedObjectContext;
-@property (strong, readonly) NSSet *entitiesScheduledForPersistence;
+@property (nonatomic) BOOL isUserLoggedIn;
 
 + (ScMeta *)m;
 
-+ (ScAppState)appState;
-+ (void)pushAppState:(ScAppState)appState;
++ (ScAppState_)appState_;
++ (void)pushAppState:(ScAppState_)appState;
 + (void)popAppState;
 
 + (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
@@ -121,6 +109,9 @@ extern NSString * const kLanguageHungarian;
 
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;
+
+- (NSManagedObjectContext *)managedObjectContext;
+- (NSSet *)entitiesScheduledForPersistence;
 
 - (void)addImportedEntity:(ScCachedEntity *)entity;
 - (void)addImportedEntityRefs:(NSDictionary *)entityRefs forEntity:(ScCachedEntity *)entity;

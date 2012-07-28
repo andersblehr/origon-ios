@@ -11,6 +11,7 @@
 #import "UIColor+ScColorExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
+#import "ScIconSectionDelegate.h"
 #import "ScLogging.h"
 #import "ScMeta.h"
 
@@ -19,55 +20,46 @@ static CGFloat const kHeadingLabelFontSize = 13.f;
 static CGFloat const kCaptionLabelFontSize = 11.f;
 
 
+@interface ScIconSection () {
+    UIView *_headingView;
+    UILabel *_headingLabel;
+    NSString *_headingLabelText;
+    
+    CGFloat _sectionOriginY;
+    CGFloat _headerHeight;
+    CGFloat _headingHeight;
+    CGFloat _iconGridLineHeight;
+    
+    CGFloat _minimumHeight;
+    CGFloat _fullHeight;
+    CGFloat _actualHeight;
+    
+    int _numberOfIcons;
+    int _numberOfGridLines;
+}
+
+@property (nonatomic) NSInteger sectionNumber;
+@property (weak, nonatomic) UIViewController<ScIconSectionDelegate> *delegate;
+
+@property (strong, nonatomic) UIView *sectionView;
+@property (strong, nonatomic) ScIconSection *precedingSection;
+@property (strong, nonatomic) ScIconSection *followingSection;
+
+@property (nonatomic) CGRect newSectionFrame;
+
+@end
+
+
 @implementation ScIconSection
-
-
-#pragma mark - Internal accessors
-
-- (id)sectionDelegate
-{
-    return sectionDelegate;
-}
-
-
-- (int)sectionNumber
-{
-    return sectionNumber;
-}
-
-
-- (UIView *)sectionView
-{
-    return sectionView;
-}
-
-
-- (ScIconSection *)followingSection
-{
-    return followingSection;
-}
-
-
-- (void)setFollowingSection:(ScIconSection *)section
-{
-    followingSection = section;
-}
-
-
-- (CGRect)newSectionFrame
-{
-    return newSectionFrame;
-}
-
 
 #pragma mark - Setup
 
 - (int)numberOfKnownGridLines
 {
-    int knownGridLines = numberOfGridLines;
+    int knownGridLines = _numberOfGridLines;
     
-    if (precedingSection) {
-        knownGridLines += [precedingSection numberOfKnownGridLines];
+    if (_precedingSection) {
+        knownGridLines += [_precedingSection numberOfKnownGridLines];
     }
     
     return knownGridLines;
@@ -76,27 +68,27 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 - (void)createSectionView
 {
-    if (sectionDelegate) {
+    if (_delegate) {
         int numberOfPrecedingGridLines = 0;
         
-        if (precedingSection) {
-            numberOfPrecedingGridLines = [precedingSection numberOfKnownGridLines];
+        if (_precedingSection) {
+            numberOfPrecedingGridLines = [_precedingSection numberOfKnownGridLines];
         }
         
         CGFloat screenWidth = 320.f;
         
-        fullHeight = headingHeight + iconGridLineHeight;
-        actualHeight = fullHeight;
+        _fullHeight = _headingHeight + _iconGridLineHeight;
+        _actualHeight = _fullHeight;
         
-        sectionOriginY = headerHeight + sectionNumber * headingHeight + numberOfPrecedingGridLines * iconGridLineHeight;
+        _sectionOriginY = _headerHeight + _sectionNumber * _headingHeight + numberOfPrecedingGridLines * _iconGridLineHeight;
         
-        CGRect sectionFrame = CGRectMake(0.f, sectionOriginY, screenWidth, actualHeight);
+        CGRect sectionFrame = CGRectMake(0.f, _sectionOriginY, screenWidth, _actualHeight);
         
-        sectionView = [[UIView alloc] initWithFrame:sectionFrame];
-        sectionView.backgroundColor = [UIColor clearColor];
-        sectionView.clipsToBounds = YES;
+        self.sectionView = [[UIView alloc] initWithFrame:sectionFrame];
+        _sectionView.backgroundColor = [UIColor clearColor];
+        _sectionView.clipsToBounds = YES;
         
-        [sectionDelegate.view addSubview:sectionView];
+        [_delegate.view addSubview:_sectionView];
     } else {
         ScLogBreakage(@"Cannot create section view within unknown main view.");
     }
@@ -105,23 +97,23 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 - (void)createHeadingView
 {
-    if (sectionView) {
+    if (_sectionView) {
         CGFloat screenWidth = 320.f;
-        CGRect headingFrame = CGRectMake(0.f, 0.f, screenWidth, headingHeight);
+        CGRect headingFrame = CGRectMake(0.f, 0.f, screenWidth, _headingHeight);
         
-        headingView = [[UIView alloc] initWithFrame:headingFrame];
-        headingView.backgroundColor = [UIColor isabellineColor];
-        headingView.tag = sectionNumber;
-        [headingView addShadowForBottomTableViewCell];
+        _headingView = [[UIView alloc] initWithFrame:headingFrame];
+        _headingView.backgroundColor = [UIColor isabellineColor];
+        _headingView.tag = _sectionNumber;
+        [_headingView addShadowForBottomTableViewCell];
         
         UIPanGestureRecognizer *panGestureRecogniser = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
         UITapGestureRecognizer *doubleTapGestureRecogniser = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTapGesture:)];
         doubleTapGestureRecogniser.numberOfTapsRequired = 2;
         
-        [headingView addGestureRecognizer:panGestureRecogniser];
-        [headingView addGestureRecognizer:doubleTapGestureRecogniser];
+        [_headingView addGestureRecognizer:panGestureRecogniser];
+        [_headingView addGestureRecognizer:doubleTapGestureRecogniser];
         
-        [sectionView addSubview:headingView];
+        [_sectionView addSubview:_headingView];
     } else {
         ScLogBreakage(@"Cannot create heading view before section view has been created.");
     }
@@ -130,19 +122,19 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 - (void)createHeadingLabel
 {
-    if (sectionView) {
+    if (_sectionView) {
         CGFloat screenWidth = 320.f;
         CGFloat headingLabelMargin = screenWidth / 16.f;
         CGFloat headingLabelWidth = screenWidth - 2.f * headingLabelMargin;
-        CGRect headingLabelFrame = CGRectMake(headingLabelMargin, 0.f, headingLabelWidth, headingHeight);
+        CGRect headingLabelFrame = CGRectMake(headingLabelMargin, 0.f, headingLabelWidth, _headingHeight);
         
-        headingLabel = [[UILabel alloc] initWithFrame:headingLabelFrame];
-        headingLabel.backgroundColor = [UIColor clearColor];
-        headingLabel.textColor = [UIColor darkTextColor];
-        headingLabel.font = [UIFont systemFontOfSize:kHeadingLabelFontSize];
-        headingLabel.text = headingLabelText;
+        _headingLabel = [[UILabel alloc] initWithFrame:headingLabelFrame];
+        _headingLabel.backgroundColor = [UIColor clearColor];
+        _headingLabel.textColor = [UIColor darkTextColor];
+        _headingLabel.font = [UIFont systemFontOfSize:kHeadingLabelFontSize];
+        _headingLabel.text = _headingLabelText;
         
-        [sectionView addSubview:headingLabel];
+        [_sectionView addSubview:_headingLabel];
     } else {
         ScLogBreakage(@"Cannot create heading label before section view has been created.");
     }
@@ -153,7 +145,7 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 - (BOOL)isCollapsed
 {
-    CGFloat percentageVisible = 100.f * (actualHeight - headingHeight) / iconGridLineHeight;
+    CGFloat percentageVisible = 100.f * (_actualHeight - _headingHeight) / _iconGridLineHeight;
     
     return (percentageVisible <= 15.f); 
 }
@@ -161,12 +153,12 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 - (void)moveFrame:(CGFloat)pan withAdjustment:(CGFloat)delta prepareAnimation:(BOOL)prepare
 {
-    sectionOriginY += pan;
-    actualHeight += delta;
-    newSectionFrame = CGRectMake(0.f, sectionOriginY, 320.f, actualHeight);
+    _sectionOriginY += pan;
+    _actualHeight += delta;
+    _newSectionFrame = CGRectMake(0.f, _sectionOriginY, 320.f, _actualHeight);
     
     if (!prepare) {
-        sectionView.frame = newSectionFrame;
+        _sectionView.frame = _newSectionFrame;
     }
 }
 
@@ -203,7 +195,7 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 - (CGFloat)permissiblePan:(CGFloat)requestedPan
 {
-    int hiddenPixels = fullHeight - actualHeight;
+    int hiddenPixels = _fullHeight - _actualHeight;
     int localPan = 0;
     int permissiblePan = 0;
     
@@ -211,31 +203,31 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
         if (requestedPan <= hiddenPixels) {
             permissiblePan = requestedPan;
         } else if (hiddenPixels > 0) {
-            if (precedingSection) {
+            if (_precedingSection) {
                 localPan = hiddenPixels;
                 CGFloat restPan = requestedPan - localPan;
                 
-                permissiblePan = localPan + [precedingSection permissiblePan:restPan];
+                permissiblePan = localPan + [_precedingSection permissiblePan:restPan];
             } else {
                 permissiblePan = hiddenPixels;
             }
-        } else if (precedingSection) {
-            permissiblePan = [precedingSection permissiblePan:requestedPan];
+        } else if (_precedingSection) {
+            permissiblePan = [_precedingSection permissiblePan:requestedPan];
         }
     } else if (requestedPan < 0) {
-        if (actualHeight - abs(requestedPan) > minimumHeight) {
+        if (_actualHeight - abs(requestedPan) > _minimumHeight) {
             permissiblePan = requestedPan;
-        } else if (actualHeight > minimumHeight) {
-            if (precedingSection) {
-                localPan = -(actualHeight - minimumHeight);
+        } else if (_actualHeight > _minimumHeight) {
+            if (_precedingSection) {
+                localPan = -(_actualHeight - _minimumHeight);
                 CGFloat restPan = requestedPan - localPan;
                 
-                permissiblePan = localPan + [precedingSection permissiblePan:restPan];
+                permissiblePan = localPan + [_precedingSection permissiblePan:restPan];
             } else {
-                permissiblePan = -(actualHeight - minimumHeight);
+                permissiblePan = -(_actualHeight - _minimumHeight);
             }
-        } else if (precedingSection) {
-            permissiblePan = [precedingSection permissiblePan:requestedPan];
+        } else if (_precedingSection) {
+            permissiblePan = [_precedingSection permissiblePan:requestedPan];
         }
     }
     
@@ -243,13 +235,13 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
         [self moveFrame:(permissiblePan - localPan)];
         [self adjustFrame:localPan];
     } else if (permissiblePan != 0) {
-        if (actualHeight == minimumHeight) {
+        if (_actualHeight == _minimumHeight) {
             if (permissiblePan > 0) {
                 [self adjustFrame:permissiblePan];
             } else {
                 [self moveFrame:permissiblePan];
             }
-        } else if (actualHeight == fullHeight) {
+        } else if (_actualHeight == _fullHeight) {
             if (permissiblePan > 0) {
                 [self moveFrame:permissiblePan];
             } else {
@@ -271,19 +263,19 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
     if (prepare) {
         [self moveFrame:pan prepareAnimation:YES];
     } else {
-        int hiddenPixels = fullHeight - actualHeight;
+        int hiddenPixels = _fullHeight - _actualHeight;
         int localPan = 0;
         int frameAdjustment = 0;
         
         if (pan > 0) {
-            if (actualHeight - pan > minimumHeight) {
+            if (_actualHeight - pan > _minimumHeight) {
                 transitivePan = 0;
                 
-                if (followingSection) {
+                if (_followingSection) {
                     frameAdjustment = -pan;
                 }
-            } else if (actualHeight > minimumHeight) {
-                localPan = actualHeight - minimumHeight;
+            } else if (_actualHeight > _minimumHeight) {
+                localPan = _actualHeight - _minimumHeight;
                 transitivePan = pan - localPan;
                 frameAdjustment = -localPan;
             } else {
@@ -305,8 +297,8 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
         [self moveFrame:pan withAdjustment:frameAdjustment];
     }
     
-    if (followingSection) {
-        [followingSection keepUp:transitivePan prepareAnimation:prepare];
+    if (_followingSection) {
+        [_followingSection keepUp:transitivePan prepareAnimation:prepare];
     }
 }
 
@@ -319,11 +311,11 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 - (void)adjust:(int)delta
 {
-    if (followingSection) {
+    if (_followingSection) {
         [self adjustFrame:delta prepareAnimation:YES];
         
-        if (followingSection) {
-            [followingSection keepUp:delta prepareAnimation:YES];
+        if (_followingSection) {
+            [_followingSection keepUp:delta prepareAnimation:YES];
         }
         
         [UIView animateWithDuration:0.25 animations:^{
@@ -342,7 +334,7 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 - (void)expand
 {
-    int hiddenPixels = fullHeight - actualHeight;
+    int hiddenPixels = _fullHeight - _actualHeight;
     
     [self adjust:hiddenPixels];
 }
@@ -350,7 +342,7 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 - (void)collapse
 {
-    int pixelsToHide = actualHeight - minimumHeight;
+    int pixelsToHide = _actualHeight - _minimumHeight;
     
     [self adjust:-pixelsToHide];
 }
@@ -358,8 +350,8 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 - (void)pan:(CGPoint)translation
 {
-    if (precedingSection) {
-        [self keepUp:[precedingSection permissiblePan:translation.y]];
+    if (_precedingSection) {
+        [self keepUp:[_precedingSection permissiblePan:translation.y]];
     }
 }
 
@@ -372,10 +364,10 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
     BOOL panGestureChanged = (sender.state == UIGestureRecognizerStateChanged);
     
     if (panGestureBegan || panGestureChanged) {
-        CGPoint translation = [sender translationInView:headingView];
+        CGPoint translation = [sender translationInView:_headingView];
         
         [self pan:translation];
-        [sender setTranslation:CGPointZero inView:headingView];
+        [sender setTranslation:CGPointZero inView:_headingView];
     }
 }
 
@@ -394,32 +386,31 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 #pragma mark - Initialisation
 
-- (id)initWithHeading:(NSString *)heading precedingSection:(ScIconSection *)section delegate:(id)delegate
+- (id)initWithHeading:(NSString *)heading precedingSection:(ScIconSection *)precedingSection delegate:(id)delegate
 {
     self = [super init];
     
     if (self) {
-        headingLabelText = heading;
+        _headingLabelText = heading;
         
-        headerHeight = 60.f;
-        headingHeight = 22.f;
-        iconGridLineHeight = 100.f;
-        minimumHeight = headingHeight + 2.f;
+        _headerHeight = 60.f;
+        _headingHeight = 22.f;
+        _iconGridLineHeight = 100.f;
+        _minimumHeight = _headingHeight + 2.f;
         
-        numberOfIcons = 0;
-        numberOfGridLines = 1;
+        _numberOfIcons = 0;
+        _numberOfGridLines = 1;
         
-        precedingSection = section;
-        followingSection = nil;
+        self.precedingSection = precedingSection;
+        self.followingSection = nil;
         
         if (delegate) {
-            sectionDelegate = delegate;
-            sectionNumber = 0;
-        } else if (section) {
-            sectionDelegate = [section sectionDelegate];
-            sectionNumber = [section sectionNumber] + 1;
-            
-            [precedingSection setFollowingSection:self];
+            self.delegate = delegate;
+            _sectionNumber = 0;
+        } else if (precedingSection) {
+            self.delegate = precedingSection.delegate;
+            _sectionNumber = precedingSection.sectionNumber + 1;
+            _precedingSection.followingSection = self;
         }
         
         [self createSectionView];
@@ -447,21 +438,21 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
 
 - (void)addButtonWithIcon:(UIImage *)icon caption:(NSString *)caption
 {
-    numberOfIcons++;
+    _numberOfIcons++;
     
-    int xOffset = (numberOfIcons - 1) % 3;
-    int yOffset = (numberOfIcons - 1) / 3;
+    int xOffset = (_numberOfIcons - 1) % 3;
+    int yOffset = (_numberOfIcons - 1) / 3;
     
-    if (1 + yOffset > numberOfGridLines) {
-        numberOfGridLines++;
-        fullHeight += iconGridLineHeight;
-        actualHeight = fullHeight;
+    if (1 + yOffset > _numberOfGridLines) {
+        _numberOfGridLines++;
+        _fullHeight += _iconGridLineHeight;
+        _actualHeight = _fullHeight;
         
-        sectionView.frame = CGRectMake(0.f, sectionOriginY, 320.f, fullHeight);
+        _sectionView.frame = CGRectMake(0.f, _sectionOriginY, 320.f, _fullHeight);
     }
     
     CGFloat iconOriginX = (40.f + xOffset * 100.f);
-    CGFloat iconOriginY = headingHeight + (yOffset + 20.f/100.f) * iconGridLineHeight;
+    CGFloat iconOriginY = _headingHeight + (yOffset + 20.f/100.f) * _iconGridLineHeight;
     CGFloat iconWidth = 40.f;
     CGFloat iconHeight = 40.f;
     CGRect iconFrame = CGRectMake(iconOriginX, iconOriginY, iconWidth, iconHeight);
@@ -473,8 +464,8 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
     [iconButton setBackgroundImage:icon forState:UIControlStateNormal];
     iconButton.alpha = kIconButtonAlpha;
     iconButton.showsTouchWhenHighlighted = YES;
-    iconButton.tag = 100 * sectionNumber + (numberOfIcons - 1);
-    [iconButton addTarget:sectionDelegate action:@selector(handleButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+    iconButton.tag = 100 * _sectionNumber + (_numberOfIcons - 1);
+    [iconButton addTarget:_delegate action:@selector(handleButtonTap:) forControlEvents:UIControlEventTouchUpInside];
     
     CGFloat captionOriginX = (15.f + xOffset * 100.f);
     CGFloat captionOriginY = iconOriginY + iconHeight + 5.f;
@@ -491,8 +482,8 @@ static CGFloat const kCaptionLabelFontSize = 11.f;
     captionLabel.textAlignment = UITextAlignmentCenter;
     captionLabel.text = caption;
     
-    [sectionView addSubview:iconButton];
-    [sectionView addSubview:captionLabel];
+    [_sectionView addSubview:iconButton];
+    [_sectionView addSubview:captionLabel];
 }
 
 @end

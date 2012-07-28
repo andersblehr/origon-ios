@@ -21,11 +21,25 @@
 #import "ScScola.h"
 
 
+@interface ScScolaViewController () {
+    ScTableViewCell *_scolaCell;
+    
+    UIBarButtonItem *_editButton;
+    UIBarButtonItem *_cancelButton;
+    UIBarButtonItem *_doneButton;
+    
+    ScTextField *_addressLine1Field;
+    ScTextField *_addressLine2Field;
+    ScTextField *_landlineField;
+    
+    BOOL _isRegistering;
+    BOOL _isDisplaying;
+}
+
+@end
+
+
 @implementation ScScolaViewController
-
-@synthesize delegate;
-@synthesize scola;
-
 
 #pragma mark - Selector implementations
 
@@ -37,20 +51,20 @@
 
 - (void)cancelEditing
 {
-    [delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
+    [_delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
 }
 
 
 - (void)didFinishEditing
 {
-    if ([ScMeta isAddressValidWithLine1:addressLine1Field line2:addressLine2Field]) {
+    if ([ScMeta isAddressValidWithLine1:_addressLine1Field line2:_addressLine2Field]) {
         NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
         
-        scola.addressLine1 = addressLine1Field.text;
-        scola.addressLine2 = addressLine2Field.text;
-        scola.landline = landlineField.text;
+        _scola.addressLine1 = _addressLine1Field.text;
+        _scola.addressLine2 = _addressLine2Field.text;
+        _scola.landline = _landlineField.text;
         
-        if ([ScMeta appState] == ScAppStateRegisterUserHousehold) {
+        if ([ScMeta appState_] == ScAppStateRegisterUserHousehold) {
             ScMember *member = [context fetchEntityWithId:[ScMeta m].userId];
             member.activeSince = [NSDate date];
         }
@@ -58,9 +72,9 @@
         [context synchronise];
         
         [self.view endEditing:YES];
-        [delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
+        [_delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
     } else {
-        [scolaCell shake];
+        [_scolaCell shake];
     }
 }
 
@@ -76,29 +90,29 @@
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    isRegistering = ([ScMeta appState] == ScAppStateRegisterUserHousehold);
-    isRegistering = isRegistering || ([ScMeta appState] == ScAppStateRegisterScola);
-    isRegistering = isRegistering || ([ScMeta appState] == ScAppStateRegisterScolaMemberHousehold);
+    _isRegistering = ([ScMeta appState_] == ScAppStateRegisterUserHousehold);
+    _isRegistering = _isRegistering || ([ScMeta appState_] == ScAppStateRegisterScola);
+    _isRegistering = _isRegistering || ([ScMeta appState_] == ScAppStateRegisterScolaMemberHousehold);
     
-    isDisplaying = ([ScMeta appState] == ScAppStateDisplayUserHousehold);
-    isDisplaying = isDisplaying || ([ScMeta appState] == ScAppStateDisplayScola);
+    _isDisplaying = ([ScMeta appState_] == ScAppStateDisplayUserHousehold);
+    _isDisplaying = _isDisplaying || ([ScMeta appState_] == ScAppStateDisplayScola);
     
-    editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
-    cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
-    doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
+    _editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
+    _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
+    _doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
     
-    if (isRegistering) {
+    if (_isRegistering) {
         self.title = [ScStrings stringForKey:strAddressLabel];
-        self.navigationItem.rightBarButtonItem = doneButton;
+        self.navigationItem.rightBarButtonItem = _doneButton;
         
-        if ([ScMeta appState] == ScAppStateRegisterUserHousehold) {
+        if ([ScMeta appState_] == ScAppStateRegisterUserHousehold) {
             self.navigationItem.hidesBackButton = YES;
         } else {
-            self.navigationItem.leftBarButtonItem = cancelButton;
+            self.navigationItem.leftBarButtonItem = _cancelButton;
         }
-    } else if (isDisplaying) {
+    } else if (_isDisplaying) {
         self.title = [ScStrings stringForKey:strAddressLabel];
-        self.navigationItem.rightBarButtonItem = editButton;
+        self.navigationItem.rightBarButtonItem = _editButton;
     }
 }
 
@@ -135,25 +149,25 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [ScTableViewCell heightForEntity:scola editing:isRegistering];
+    return [ScTableViewCell heightForEntity:_scola editing:_isRegistering];
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (isRegistering) {
-        scolaCell = [tableView cellForEntity:scola editing:YES delegate:self];
+    if (_isRegistering) {
+        _scolaCell = [tableView cellForEntity:_scola editing:YES delegate:self];
         
-        addressLine1Field = [scolaCell textFieldWithKey:kTextFieldKeyAddressLine1];
-        addressLine2Field = [scolaCell textFieldWithKey:kTextFieldKeyAddressLine2];
-        landlineField = [scolaCell textFieldWithKey:kTextFieldKeyLandline];
+        _addressLine1Field = [_scolaCell textFieldWithKey:kTextFieldKeyAddressLine1];
+        _addressLine2Field = [_scolaCell textFieldWithKey:kTextFieldKeyAddressLine2];
+        _landlineField = [_scolaCell textFieldWithKey:kTextFieldKeyLandline];
         
-        [addressLine1Field becomeFirstResponder];
-    } else if (isDisplaying) {
-        scolaCell = [tableView cellForEntity:scola];
+        [_addressLine1Field becomeFirstResponder];
+    } else if (_isDisplaying) {
+        _scolaCell = [tableView cellForEntity:_scola];
     }
     
-    return scolaCell;
+    return _scolaCell;
 }
 
 
@@ -169,10 +183,10 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if (textField == addressLine1Field) {
-        [addressLine2Field becomeFirstResponder];
-    } else if (textField == addressLine2Field) {
-        [landlineField becomeFirstResponder];
+    if (textField == _addressLine1Field) {
+        [_addressLine2Field becomeFirstResponder];
+    } else if (textField == _addressLine2Field) {
+        [_landlineField becomeFirstResponder];
     }
     
     return YES;

@@ -13,11 +13,6 @@
 #import "ScServerConnection.h"
 
 
-static NSDictionary *strings = nil;
-
-static NSString * const kStringsPlist = @"strings.plist";
-
-
 // EULA
 NSString * const strEULA                              = @"strEULA";
 NSString * const strAccept                            = @"strAccept";
@@ -103,6 +98,11 @@ NSString * const strMemberViewTitleAboutYou           = @"strMemberViewTitleAbou
 NSString * const strMemberViewTitleNewMember          = @"strMemberViewTitleNewMember";
 NSString * const strMemberViewTitleNewHouseholdMember = @"strMemberViewTitleNewHouseholdMember";
 NSString * const strGenderActionSheetTitle            = @"strGenderActionSheetTitle";
+
+
+static NSString * const kStringsPlist = @"strings.plist";
+
+static NSDictionary *strings = nil;
 
 
 @implementation ScStrings

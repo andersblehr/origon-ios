@@ -26,10 +26,8 @@ extern NSString * const kTextFieldKeyAddressLine2;
 extern NSString * const kTextFieldKeyLandline;
 extern NSString * const kTextFieldKeyScolaWebsite;
 
-@interface ScTextField : UITextField {
-    BOOL isTitle;
-    BOOL isEditing;
-}
+
+@interface ScTextField : UITextField
 
 @property (strong, nonatomic) NSString *key;
 

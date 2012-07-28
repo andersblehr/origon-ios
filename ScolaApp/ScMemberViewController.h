@@ -15,28 +15,7 @@
 @class ScMember, ScMemberResidency, ScMembership, ScScola;
 @class ScMembershipViewController, ScTableViewCell, ScTextField;
 
-@interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate, ScModalViewControllerDelegate> {
-@private
-    ScTableViewCell *memberCell;
-    ScMember *member;
-    
-    ScMember *candidate;
-    ScScola *candidateHousehold;
-    ScMemberResidency *candidateResidency;
-    
-    UIBarButtonItem *editButton;
-    UIBarButtonItem *cancelButton;
-    UIBarButtonItem *doneButton;
-    
-    ScTextField *nameField;
-    ScTextField *emailField;
-    ScTextField *mobilePhoneField;
-    ScTextField *dateOfBirthField;
-    UIDatePicker *dateOfBirthPicker;
-    NSString *gender;
-    
-    UITextField *currentField;
-}
+@interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate, ScModalViewControllerDelegate>
 
 @property (weak, nonatomic) id<ScMemberViewControllerDelegate> delegate;
 

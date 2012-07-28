@@ -17,24 +17,29 @@
 #import "ScLogging.h"
 #import "ScServerConnection.h"
 
-@implementation ScAppDelegate
 
 static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 
-@synthesize window;
 
-@synthesize managedObjectModel;
-@synthesize managedObjectContext;
-@synthesize persistentStoreCoordinator;
+@interface ScAppDelegate ()
+
+@property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
+@end
 
 
-#pragma mark - Persistent store
+@implementation ScAppDelegate
+
+
+#pragma mark - Persistent store release
 
 - (void)releasePersistentStore
 {
-    managedObjectModel = nil;
-    managedObjectContext= nil;
-    persistentStoreCoordinator = nil;
+    _managedObjectModel = nil;
+    _managedObjectContext= nil;
+    _persistentStoreCoordinator = nil;
 }
 
 
@@ -42,44 +47,44 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 
 - (NSManagedObjectModel *)managedObjectModel
 {
-    if (managedObjectModel == nil) {
-        managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil];
+    if (_managedObjectModel == nil) {
+        _managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil];
     }
     
-    return managedObjectModel;
+    return _managedObjectModel;
 }
 
 
 - (NSManagedObjectContext *)managedObjectContext
 {
-    if (managedObjectContext == nil) {
+    if (_managedObjectContext == nil) {
         NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
         
         if (coordinator != nil) {
-            managedObjectContext = [[NSManagedObjectContext alloc] init];
-            managedObjectContext.persistentStoreCoordinator = coordinator;
+            _managedObjectContext = [[NSManagedObjectContext alloc] init];
+            _managedObjectContext.persistentStoreCoordinator = coordinator;
         }
     }
     
-    return managedObjectContext;
+    return _managedObjectContext;
 }
 
 
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
-    if (persistentStoreCoordinator == nil) {
+    if (_persistentStoreCoordinator == nil) {
         NSURL *applicationDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
         NSURL *storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent: [NSString stringWithFormat:kPersistentStoreFormat, [ScMeta m].userId]];
         
         NSError *error = nil;
-        persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+        _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
         
-        if(![persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
+        if(![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
             ScLogError(@"Error initiating Core Data: %@", [error localizedDescription]);
         }
     }
     
-    return persistentStoreCoordinator;
+    return _persistentStoreCoordinator;
 }
 
 

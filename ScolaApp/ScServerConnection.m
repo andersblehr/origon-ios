@@ -16,6 +16,7 @@
 #import "ScAppDelegate.h"
 #import "ScLogging.h"
 #import "ScMeta.h"
+#import "ScServerConnectionDelegate.h"
 #import "ScStrings.h"
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
@@ -73,9 +74,33 @@ static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
 
 
+@interface ScServerConnection () {
+    id<ScServerConnectionDelegate> _delegate;
+    
+    NSString *_RESTHandler;
+    NSString *_RESTRoute;
+    
+    NSMutableURLRequest *_URLRequest;
+    NSMutableDictionary *_URLParameters;
+    NSHTTPURLResponse *_HTTPResponse;
+	NSMutableData *_responseData;
+    
+    BOOL _isRequestValid;
+}
+
++ (void)showAlertWithCode:(int)code message:(NSString *)message tag:(int)tag delegate:(id)delegate;
+
+- (NSString *)scolaServer;
+- (NSString *)scolaServerURL;
+
+- (void)performHTTPMethod:(NSString *)HTTPMethod withEntities:(NSArray *)entities delegate:(id)delegate;
+
+@end
+
+
 @implementation ScServerConnection
 
-#pragma mark - Auxiliary methods
+#pragma mark - Private methods
 
 + (void)showAlertWithCode:(int)code message:(NSString *)message tag:(int)tag delegate:(id)delegate
 {
@@ -102,7 +127,7 @@ static NSString * const kURLParameterVersion = @"version";
     NSString *scolaServer = [self scolaServer];
     NSMutableString *protocol = [NSMutableString stringWithString:@"http"];
     
-    if ([scolaServer isEqualToString:kScolaProdServer] && [RESTHandler isEqualToString:kRESTHandlerAuth]) {
+    if ([scolaServer isEqualToString:kScolaProdServer] && [_RESTHandler isEqualToString:kRESTHandlerAuth]) {
         [protocol appendString:@"s"];
     }
     
@@ -112,34 +137,34 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (void)performHTTPMethod:(NSString *)HTTPMethod withEntities:(NSArray *)entities delegate:(id)delegate
 {
-    connectionDelegate = delegate;
+    _delegate = delegate;
     
     [self setValue:[ScMeta m].deviceId forURLParameter:kURLParameterDeviceId];
     [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
     [self setValue:[ScMeta m].appVersion forURLParameter:kURLParameterVersion];
     
-    URLRequest.HTTPMethod = HTTPMethod;
-    URLRequest.URL = [[[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:RESTHandler] URLByAppendingPathComponent:RESTRoute] URLByAppendingURLParameters:URLParameters];
+    _URLRequest.HTTPMethod = HTTPMethod;
+    _URLRequest.URL = [[[[NSURL URLWithString:[self scolaServerURL]] URLByAppendingPathComponent:_RESTHandler] URLByAppendingPathComponent:_RESTRoute] URLByAppendingURLParameters:_URLParameters];
     
     [self setValue:kMediaTypeJSONUTF8 forHTTPHeaderField:kHTTPHeaderContentType];
     [self setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
     [self setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
     
     if (entities) {
-        URLRequest.HTTPBody = [NSJSONSerialization serialise:entities];
+        _URLRequest.HTTPBody = [NSJSONSerialization serialise:entities];
     }
         
-    if ([connectionDelegate respondsToSelector:@selector(willSendRequest:)]) {
-        [connectionDelegate willSendRequest:URLRequest];
+    if ([_delegate respondsToSelector:@selector(willSendRequest:)]) {
+        [_delegate willSendRequest:_URLRequest];
     }
     
     if ([ScMeta m].isInternetConnectionAvailable) {
-        if (canPerformRequest) {
+        if (_isRequestValid) {
             [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-            NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:URLRequest delegate:self];
+            NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:_URLRequest delegate:self];
             
             if (!URLConnection) {
-                ScLogError(@"Failed to connect to the server. URL request: %@", URLRequest);
+                ScLogError(@"Failed to connect to the server. URL request: %@", _URLRequest);
                 [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
             }
         } else {
@@ -184,11 +209,11 @@ static NSString * const kURLParameterVersion = @"version";
     self = [super init];
     
     if (self) {
-        URLRequest = [[NSMutableURLRequest alloc] init];
-        URLParameters = [[NSMutableDictionary alloc] init];
-        responseData = [[NSMutableData alloc] init];
+        _URLRequest = [[NSMutableURLRequest alloc] init];
+        _URLParameters = [[NSMutableDictionary alloc] init];
+        _responseData = [[NSMutableData alloc] init];
         
-        canPerformRequest = YES;
+        _isRequestValid = YES;
     }
     
     return self;
@@ -213,9 +238,9 @@ static NSString * const kURLParameterVersion = @"version";
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field required:(BOOL)required
 {
     if (value) {
-        [URLRequest setValue:value forHTTPHeaderField:field];
+        [_URLRequest setValue:value forHTTPHeaderField:field];
     } else if (required) {
-        canPerformRequest = NO;
+        _isRequestValid = NO;
         ScLogBreakage(@"Missing value for required HTTP header field '%@'.", field);
     }
 }
@@ -230,9 +255,9 @@ static NSString * const kURLParameterVersion = @"version";
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter required:(BOOL)required
 {
     if (value) {
-        [URLParameters setObject:value forKey:parameter];
+        [_URLParameters setObject:value forKey:parameter];
     } else if (required) {
-        canPerformRequest = NO;
+        _isRequestValid = NO;
         ScLogBreakage(@"Missing value for required URL parameter '%@'.", parameter);
     }
 }
@@ -242,8 +267,8 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (void)fetchStrings
 {
-    RESTHandler = kRESTHandlerStrings;
-    RESTRoute = [ScMeta m].displayLanguage;
+    _RESTHandler = kRESTHandlerStrings;
+    _RESTRoute = [ScMeta m].displayLanguage;
     
     [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:ScStrings.class];
 }
@@ -251,15 +276,15 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (void)authenticateUsingDelegate:(id)delegate
 {
-    RESTHandler = kRESTHandlerAuth;
+    _RESTHandler = kRESTHandlerAuth;
 
-    if ([ScMeta appState] == ScAppStateLoginUser) {
-        RESTRoute = kRESTRouteAuthLogin;
+    if ([ScMeta appState_] == ScAppStateLoginUser) {
+        _RESTRoute = kRESTRouteAuthLogin;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
         [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
-    } else if ([ScMeta appState] == ScAppStateConfirmSignUp) {
-        RESTRoute = kRESTRouteAuthConfirmation;
+    } else if ([ScMeta appState_] == ScAppStateConfirmSignUp) {
+        _RESTRoute = kRESTRouteAuthConfirmation;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
     }
@@ -270,7 +295,7 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (void)synchroniseEntities
 {
-    RESTHandler = kRESTHandlerModel;
+    _RESTHandler = kRESTHandlerModel;
     
     [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
@@ -278,7 +303,7 @@ static NSString * const kURLParameterVersion = @"version";
     NSSet *entitiesToPersist = [ScMeta m].entitiesScheduledForPersistence;
     
     if (entitiesToPersist.count > 0) {
-        RESTRoute = kRESTRouteModelSync;
+        _RESTRoute = kRESTRouteModelSync;
         
         NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
         
@@ -288,7 +313,7 @@ static NSString * const kURLParameterVersion = @"version";
         
         [self performHTTPMethod:kHTTPMethodPOST withEntities:entityDictionaries delegate:[ScMeta m]];
     } else {
-        RESTRoute = kRESTRouteModelFetch;
+        _RESTRoute = kRESTRouteModelFetch;
         
         [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:[ScMeta m]];
     }
@@ -297,8 +322,8 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (void)fetchMemberWithId:(NSString *)memberId delegate:(id)delegate
 {
-    RESTHandler = kRESTHandlerModel;
-    RESTRoute = [NSString stringWithFormat:@"%@/%@", kRESTRouteModelMember, memberId];
+    _RESTHandler = kRESTHandlerModel;
+    _RESTRoute = [NSString stringWithFormat:@"%@/%@", kRESTRouteModelMember, memberId];
     
     [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:delegate];
@@ -323,7 +348,7 @@ static NSString * const kURLParameterVersion = @"version";
 {
     ScLogVerbose(@"Received response. HTTP status code: %d", response.statusCode);
     
-    [responseData setLength:0];
+    [_responseData setLength:0];
     
     if (response.statusCode < kHTTPStatusCodeErrorRangeStart) {
         NSString *fetchDate = [[response allHeaderFields] objectForKey:kHTTPHeaderLastModified];
@@ -334,8 +359,8 @@ static NSString * const kURLParameterVersion = @"version";
     } else {
         BOOL shouldShowAutomaticAlert = NO;
         
-        if ([connectionDelegate respondsToSelector:@selector(doUseAutomaticAlerts)]) {
-            shouldShowAutomaticAlert = [connectionDelegate doUseAutomaticAlerts];
+        if ([_delegate respondsToSelector:@selector(doUseAutomaticAlerts)]) {
+            shouldShowAutomaticAlert = [_delegate doUseAutomaticAlerts];
         }
         
         if (shouldShowAutomaticAlert) {
@@ -343,7 +368,7 @@ static NSString * const kURLParameterVersion = @"version";
         }
     }
     
-    HTTPResponse = response;
+    _HTTPResponse = response;
 }
 
 
@@ -351,23 +376,23 @@ static NSString * const kURLParameterVersion = @"version";
 {
 	ScLogVerbose(@"Received data: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
 
-	[responseData appendData:data];
+	[_responseData appendData:data];
 }
 
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
-    ScLogDebug(@"Server request completed. HTTP status code: %d", HTTPResponse.statusCode);
+    ScLogDebug(@"Server request completed. HTTP status code: %d", _HTTPResponse.statusCode);
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
     id deserialisedData = nil;
     
-    if (responseData.length > 0) {
-        deserialisedData = [NSJSONSerialization deserialise:responseData];
+    if (_responseData.length > 0) {
+        deserialisedData = [NSJSONSerialization deserialise:_responseData];
     }
     
-    [connectionDelegate didCompleteWithResponse:HTTPResponse data:deserialisedData];
+    [_delegate didCompleteWithResponse:_HTTPResponse data:deserialisedData];
 }
 
 
@@ -379,15 +404,15 @@ static NSString * const kURLParameterVersion = @"version";
     
     BOOL shouldShowAutomaticAlert = NO;
     
-    if ([connectionDelegate respondsToSelector:@selector(doUseAutomaticAlerts)]) {
-        shouldShowAutomaticAlert = [connectionDelegate doUseAutomaticAlerts];
+    if ([_delegate respondsToSelector:@selector(doUseAutomaticAlerts)]) {
+        shouldShowAutomaticAlert = [_delegate doUseAutomaticAlerts];
     }
     
     if (shouldShowAutomaticAlert) {
         [ScServerConnection showAlertForError:error];
     }
     
-    [connectionDelegate didFailWithError:error];
+    [_delegate didFailWithError:error];
 }
 
 

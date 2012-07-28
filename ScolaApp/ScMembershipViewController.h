@@ -13,23 +13,7 @@
 
 @class ScMembership, ScScola;
 
-@interface ScMembershipViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, ScMemberViewControllerDelegate> {
-@private
-    NSString *longTitle;
-    UIBarButtonItem *addButton;
-    
-    NSMutableSet *adminIds;
-    NSMutableSet *unsortedAdults;
-    NSMutableSet *unsortedMinors;
-    NSArray *adults;
-    NSArray *minors;
-    
-    BOOL isUserScolaAdmin;
-    BOOL isViewModallyHidden;
-    BOOL needsSynchronisation;
-    
-    ScMembership *selectedMembership;
-}
+@interface ScMembershipViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, ScMemberViewControllerDelegate>
 
 @property (weak, nonatomic) id<ScModalViewControllerDelegate> delegate;
 @property (weak, nonatomic) ScScola *scola;

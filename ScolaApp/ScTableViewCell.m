@@ -52,13 +52,28 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 
+@interface ScTableViewCell () {
+    CGFloat _hardContentMargin;
+    CGFloat _contentMargin;
+    CGFloat _verticalOffset;
+    
+    NSMutableSet *_labels;
+    NSMutableDictionary *_textFields;
+    
+    id<UITextFieldDelegate> _textFieldDelegate;
+}
+
+- (BOOL)isAuthFieldKey:(NSString *)key;
+- (ScTextField *)authFieldForKey:(NSString *)key;
+
+- (UIDatePicker *)dateOfBirthPicker;
+
+@end
+
+
 @implementation ScTableViewCell
 
-@synthesize selectable;
-@synthesize imageButton;
-
-
-#pragma mark - Auxiliary methods
+#pragma mark - Private methods
 
 - (BOOL)isAuthFieldKey:(NSString *)key
 {
@@ -75,10 +90,10 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 - (ScTextField *)authFieldForKey:(NSString *)key
 {
-    CGFloat contentWidth = kCellWidth - kDefaultContentMargin - contentMargin;
+    CGFloat contentWidth = kCellWidth - kDefaultContentMargin - _contentMargin;
     CGFloat textFieldWidth = kAuthFieldWidthFraction * contentWidth;
     
-    ScTextField *textField = [[ScTextField alloc] initForDetailAtOrigin:CGPointMake(contentMargin + (contentWidth - textFieldWidth) / 2.f, verticalOffset) width:textFieldWidth editing:YES];
+    ScTextField *textField = [[ScTextField alloc] initForDetailAtOrigin:CGPointMake(_contentMargin + (contentWidth - textFieldWidth) / 2.f, _verticalOffset) width:textFieldWidth editing:YES];
     
     BOOL isPasswordField = [key isEqualToString:kTextFieldKeyRepeatPassword];
     isPasswordField = isPasswordField || [key isEqualToString:kTextFieldKeyPassword];
@@ -111,7 +126,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     [dateOfBirthPicker setEarliestValidBirthDate];
     [dateOfBirthPicker setLatestValidBirthDate];
     [dateOfBirthPicker setTo01April1976];
-    [dateOfBirthPicker addTarget:textFieldDelegate action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
+    [dateOfBirthPicker addTarget:_textFieldDelegate action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
     
     return dateOfBirthPicker;
 }
@@ -219,11 +234,11 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 {
     UIFont *labelFont = [UIFont labelFont];
     
-    CGFloat contentWidth = kCellWidth - kDefaultContentMargin - contentMargin;
+    CGFloat contentWidth = kCellWidth - kDefaultContentMargin - _contentMargin;
     CGFloat labelWidth = (widthFraction > 0.f) ? widthFraction * contentWidth : kLabelWidth;
     CGFloat detailAlignmentPadding = centred ? 0.f : kLabelToDetailAlignmentPadding;
     
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(hardContentMargin + contentMargin, verticalOffset + detailAlignmentPadding, labelWidth, labelFont.lineHeight)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(_hardContentMargin + _contentMargin, _verticalOffset + detailAlignmentPadding, labelWidth, labelFont.lineHeight)];
     label.backgroundColor = [UIColor clearColor];
     label.font = labelFont;
     label.text = labelText;
@@ -231,12 +246,12 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     label.textColor = [UIColor labelTextColor];
     
     [self.contentView addSubview:label];
-    [labels addObject:label];
+    [_labels addObject:label];
     
     if (centred) {
-        verticalOffset += labelFont.lineHeight + kLineSpacing;
+        _verticalOffset += labelFont.lineHeight + kLineSpacing;
     } else {
-        contentMargin += labelWidth + kLabelDetailSpacing;
+        _contentMargin += labelWidth + kLabelDetailSpacing;
     }
 }
 
@@ -290,19 +305,19 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 {
     ScTextField *textField = nil;
     
-    CGFloat contentWidth = kCellWidth - hardContentMargin - contentMargin - kDefaultContentMargin;
+    CGFloat contentWidth = kCellWidth - _hardContentMargin - _contentMargin - kDefaultContentMargin;
     CGFloat textFieldWidth = widthFraction * contentWidth;
     
     if (text || self.editing) {
         if ([self isAuthFieldKey:key]) {
             textField = [self authFieldForKey:key];
         } else if (isTitle) {
-            textField = [[ScTextField alloc] initForTitleAtOrigin:CGPointMake(hardContentMargin + contentMargin, verticalOffset) width:textFieldWidth editing:self.editing];
+            textField = [[ScTextField alloc] initForTitleAtOrigin:CGPointMake(_hardContentMargin + _contentMargin, _verticalOffset) width:textFieldWidth editing:self.editing];
         } else {
-            textField = [[ScTextField alloc] initForDetailAtOrigin:CGPointMake(hardContentMargin + contentMargin, verticalOffset) width:textFieldWidth editing:self.editing];
+            textField = [[ScTextField alloc] initForDetailAtOrigin:CGPointMake(_hardContentMargin + _contentMargin, _verticalOffset) width:textFieldWidth editing:self.editing];
         }
         
-        textField.delegate = textFieldDelegate;
+        textField.delegate = _textFieldDelegate;
         textField.enabled = self.editing;
         textField.key = key;
         textField.text = text;
@@ -310,15 +325,11 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         if ([key isEqualToString:kTextFieldKeyName]) {
             textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
             textField.placeholder = [ScStrings stringForKey:strNamePrompt];
-            
-            if ([text rangeOfString:@"@"].location != NSNotFound) {
-                textField.text = nil;
-            }
         } else if ([key isEqualToString:kTextFieldKeyEmail]) {
             textField.keyboardType = UIKeyboardTypeEmailAddress;
             textField.placeholder = [ScStrings stringForKey:strEmailPrompt];
             
-            if (self.editing && ([ScMeta appState] == ScAppStateRegisterUser)) {
+            if (self.editing && ([ScMeta appState_] == ScAppStateRegisterUser)) {
                 textField.enabled = NO;
             }
         } else if ([key isEqualToString:kTextFieldKeyMobilePhone]) {
@@ -336,7 +347,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         } else if ([key isEqualToString:kTextFieldKeyLandline]) {
             textField.keyboardType = UIKeyboardTypeNumberPad;
             
-            if ([ScMeta appState] == ScAppStateRegisterUserHousehold) {
+            if ([ScMeta appState_] == ScAppStateRegisterUserHousehold) {
                 textField.placeholder = [ScStrings stringForKey:strHouseholdLandlinePrompt];
             } else {
                 textField.placeholder = [ScStrings stringForKey:strScolaLandlinePrompt];
@@ -347,13 +358,13 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         }
         
         [self.contentView addSubview:textField];
-        [textFields setObject:textField forKey:key];
+        [_textFields setObject:textField forKey:key];
         
         if (widthFraction == 1.f) {
-            verticalOffset += [textField lineHeight] + [textField lineSpacingBelow];
-            contentMargin = kDefaultContentMargin;
+            _verticalOffset += [textField lineHeight] + [textField lineSpacingBelow];
+            _contentMargin = kDefaultContentMargin;
         } else {
-            contentMargin += textFieldWidth;
+            _contentMargin += textFieldWidth;
         }
     }
         
@@ -365,28 +376,28 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 - (void)addPhotoFrame:(UIImage *)photo
 {
-    imageButton = [[UIButton alloc] initWithFrame:CGRectMake(contentMargin, verticalOffset, kPhotoSideLength, kPhotoSideLength)];
+    _imageButton = [[UIButton alloc] initWithFrame:CGRectMake(_contentMargin, _verticalOffset, kPhotoSideLength, kPhotoSideLength)];
     
     if (photo) {
-        [imageButton setImage:photo forState:UIControlStateNormal];
+        [_imageButton setImage:photo forState:UIControlStateNormal];
     } else {
-        imageButton.backgroundColor = [UIColor whiteColor];
+        _imageButton.backgroundColor = [UIColor whiteColor];
         
-        UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectInset(imageButton.bounds, 3.f, 3.f)];
+        UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectInset(_imageButton.bounds, 3.f, 3.f)];
         photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
         photoPrompt.font = [UIFont titleFont];
         photoPrompt.text = [ScStrings stringForKey:strPhotoPrompt];
         photoPrompt.textAlignment = UITextAlignmentCenter;
         photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
         
-        [imageButton addSubview:photoPrompt];
+        [_imageButton addSubview:photoPrompt];
     }
 
-    [imageButton addShadowForPhotoFrame];
-    [self.contentView addSubview:imageButton];
+    [_imageButton addShadowForPhotoFrame];
+    [self.contentView addSubview:_imageButton];
     
-    hardContentMargin += kPhotoSideLength;
-    contentMargin = kDefaultContentMargin;
+    _hardContentMargin += kPhotoSideLength;
+    _contentMargin = kDefaultContentMargin;
 }
 
 
@@ -444,10 +455,10 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     [self addLabel:[ScStrings stringForKey:strLandlineLabel]];
     [self addTextFieldWithText:scola.landline key:kTextFieldKeyLandline];
     
-    selectable =
-        ([ScMeta appState] == ScAppStateDisplayUserHouseholdMemberships) ||
-        ([ScMeta appState] == ScAppStateDisplayScolaMemberships) ||
-        ([ScMeta appState] == ScAppStateDisplayScolaMemberHouseholdMemberships);
+    self.selectable =
+        ([ScMeta appState_] == ScAppStateDisplayUserHouseholdMemberships) ||
+        ([ScMeta appState_] == ScAppStateDisplayScolaMemberships) ||
+        ([ScMeta appState_] == ScAppStateDisplayScolaMemberHouseholdMemberships);
 }
 
 
@@ -468,12 +479,12 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     
     if (self) {
-        hardContentMargin = kDefaultHardContentMargin;
-        contentMargin = kDefaultContentMargin;
-        verticalOffset = kInitialVerticalMargin;
+        _hardContentMargin = kDefaultHardContentMargin;
+        _contentMargin = kDefaultContentMargin;
+        _verticalOffset = kInitialVerticalMargin;
         
-        labels = [[NSMutableSet alloc] init];
-        textFields = [[NSMutableDictionary alloc] init];
+        _labels = [[NSMutableSet alloc] init];
+        _textFields = [[NSMutableDictionary alloc] init];
         
         self.backgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
         self.backgroundView.backgroundColor = [UIColor cellBackgroundColor];
@@ -494,7 +505,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     self = [self initWithReuseIdentifier:reuseIdentifier];
     
     if (self) {
-        textFieldDelegate = delegate;
+        _textFieldDelegate = delegate;
         
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin]) {
             self.editing = YES;
@@ -553,7 +564,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 - (ScTextField *)textFieldWithKey:(NSString *)key
 {
-    return [textFields objectForKey:key];
+    return [_textFields objectForKey:key];
 }
 
 
@@ -596,19 +607,17 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 }
 
 
-#pragma mark - Accessors
+#pragma mark - Accessor overrides
 
-- (void)setSelectable:(BOOL)isSelectable
+- (void)setSelectable:(BOOL)selectable
 {
-    selectable = isSelectable;
+    _selectable = selectable;
     
-    if (!selectable) {
+    if (!_selectable) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 }
 
-
-#pragma mark - Overrides
 
 - (void)setEditing:(BOOL)editing
 {
@@ -617,11 +626,11 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     if (editing) {
         self.selectable = NO;
         
-        for (ScTextField *textField in [textFields allValues]) {
+        for (ScTextField *textField in [_textFields allValues]) {
             textField.enabled = YES;
         }
     } else {
-        for (ScTextField *textField in [textFields allValues]) {
+        for (ScTextField *textField in [_textFields allValues]) {
             textField.enabled = NO;
         }
     }
@@ -630,15 +639,15 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    if (selectable) {
+    if (self.selectable) {
         [super setSelected:selected animated:animated];
         
-        for (UILabel *label in labels) {
+        for (UILabel *label in _labels) {
             label.textColor = selected ? [UIColor selectedLabelTextColor] : [UIColor labelTextColor];
         }
         
-        for (NSString *key in textFields.allKeys) {
-            [[textFields objectForKey:key] setSelected:selected];
+        for (NSString *key in _textFields.allKeys) {
+            [[_textFields objectForKey:key] setSelected:selected];
         }
     }
 }

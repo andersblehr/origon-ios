@@ -95,6 +95,7 @@
 		5CBE9C5314AB5160004FE2B7 /* NSString+ScStringExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE9C5214AB515F004FE2B7 /* NSString+ScStringExtensions.m */; };
 		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
 		5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */; };
+		5CD3360E15C40A2F00ABBFE7 /* ScAppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD3360D15C40A2F00ABBFE7 /* ScAppState.m */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */; };
 		5CE5FFC115ACC550009C11C0 /* ScMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE5FFC015ACC550009C11C0 /* ScMember.m */; };
 		5CE9812914C4D81600DD11D4 /* 112-group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE9812814C4D81600DD11D4 /* 112-group@2x.png */; };
@@ -264,6 +265,8 @@
 		5CCF08FD1465D5D900D41AB0 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		5CCF09051466A0CB00D41AB0 /* ScLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScLogging.h; sourceTree = "<group>"; };
+		5CD3360C15C40A2F00ABBFE7 /* ScAppState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScAppState.h; sourceTree = "<group>"; };
+		5CD3360D15C40A2F00ABBFE7 /* ScAppState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScAppState.m; sourceTree = "<group>"; };
 		5CD5B29B14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+ScManagedObjectContextExtensions.h"; sourceTree = "<group>"; };
 		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+ScManagedObjectContextExtensions.m"; sourceTree = "<group>"; };
 		5CE5FFBF15ACC550009C11C0 /* ScMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMember.h; sourceTree = "<group>"; };
@@ -475,6 +478,8 @@
 		5CB49DD014881F36006EA2F8 /* Auxiliary Classes */ = {
 			isa = PBXGroup;
 			children = (
+				5CD3360C15C40A2F00ABBFE7 /* ScAppState.h */,
+				5CD3360D15C40A2F00ABBFE7 /* ScAppState.m */,
 				5C153EF914CC9815003A6B61 /* ScIconSection.h */,
 				5C153EFA14CC9815003A6B61 /* ScIconSection.m */,
 				5CCF09051466A0CB00D41AB0 /* ScLogging.h */,
@@ -639,7 +644,7 @@
 		5CBB63AB146080DD00A9133A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0440;
 				ORGANIZATIONNAME = "Rhelba Software";
 			};
 			buildConfigurationList = 5CBB63AE146080DD00A9133A /* Build configuration list for PBXProject "ScolaApp" */;
@@ -785,6 +790,7 @@
 				5C2262D315A1AC1B00241C5F /* ScScola.m in Sources */,
 				5C2E6B7E15A8501800638330 /* ScMembership+ScMembershipExtensions.m in Sources */,
 				5CE5FFC115ACC550009C11C0 /* ScMember.m in Sources */,
+				5CD3360E15C40A2F00ABBFE7 /* ScAppState.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
