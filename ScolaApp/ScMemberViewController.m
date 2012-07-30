@@ -23,6 +23,7 @@
 #import "ScLogging.h"
 #import "ScMeta.h"
 #import "ScServerConnection.h"
+#import "ScState.h"
 #import "ScStrings.h"
 #import "ScTableViewCell.h"
 #import "ScTextField.h"
@@ -66,85 +67,20 @@ static NSInteger const kActionSheetButtonCancel = 2;
     UITextField *_currentField;
 }
 
-- (void)registerHousehold;
-- (void)populateWithCandidate;
-- (void)promptForGender;
-- (void)updateOrRegisterMember;
-
 @end
 
 
 @implementation ScMemberViewController
 
-#pragma mark - State shorthands
-
-- (BOOL)isDisplaying
-{
-    ScAppState_ appState = [ScMeta appState_];
-    
-    BOOL isDisplaying = 
-        (appState == ScAppStateDisplayUser) ||
-        (appState == ScAppStateDisplayUserHouseholdMember) ||
-        (appState == ScAppStateDisplayScolaMember) ||
-        (appState == ScAppStateDisplayScolaMemberHouseholdMember);
-    
-    return isDisplaying;
-}
-
-
-- (BOOL)isRegistering
-{
-    ScAppState_ appState = [ScMeta appState_];
-    
-    BOOL isRegistering =
-        (appState == ScAppStateRegisterUser) ||
-        (appState == ScAppStateRegisterUserHouseholdMember) ||
-        (appState == ScAppStateRegisterScolaMember) ||
-        (appState == ScAppStateRegisterScolaMemberHouseholdMember);
-    
-    return isRegistering;
-}
-
-
-- (BOOL)isForHousehold
-{
-    ScAppState_ appState = [ScMeta appState_];
-    
-    BOOL isForHousehold =
-        (appState == ScAppStateDisplayUserHouseholdMember) ||
-        (appState == ScAppStateDisplayScolaMemberHouseholdMember) ||
-        (appState == ScAppStateRegisterUserHouseholdMember) ||
-        (appState == ScAppStateRegisterScolaMemberHouseholdMember);
-    
-    return isForHousehold;
-}
-
-
-- (BOOL)isForUser
-{
-    ScAppState_ appState = [ScMeta appState_];
-    
-    BOOL isForUser =
-        (appState == ScAppStateDisplayUser) ||
-        (appState == ScAppStateRegisterUser);
-    
-    return isForUser;
-}
-
-
 #pragma mark - Private methods
 
 - (void)registerHousehold
 {
-    if ([self isForUser]) {
-        [ScMeta pushAppState:ScAppStateRegisterUserHousehold];
-    } else {
-        [ScMeta pushAppState:ScAppStateRegisterScolaMemberHousehold];
-    }
+    [ScMeta state].target = ScStateTargetHousehold;
     
     ScScolaViewController *scolaViewController = [self.storyboard instantiateViewControllerWithIdentifier:kScolaViewControllerId];
-    scolaViewController.delegate = self;
     scolaViewController.scola = _scola;
+    scolaViewController.delegate = self;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:scolaViewController];
     navigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
@@ -187,7 +123,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
     NSString *questionVerb = nil;
     NSString *questionSubject = nil;
     
-    if ([self isRegistering] && [self isForUser]) {
+    if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsUser) {
         questionVerb = [ScStrings stringForKey:strToBe2ndPSg];
         questionSubject = [ScStrings lowercaseStringForKey:strYouNom];
     } else {
@@ -208,7 +144,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
 {
     NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
     
-    if ([self isRegistering] && ![self isForUser]) {
+    if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsMember) {
         if (_candidate) {
             _member = _candidate;
         } else {
@@ -219,7 +155,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
             }
         }
         
-        if ([self isForHousehold]) {
+        if ([ScMeta state].aspectIsHome || [ScMeta state].aspectIsHousehold) {
             if (_candidateHousehold != nil) {
                 // TODO: Alert that candidate is already member of a household
                 self.membership = [_scola addResident:_member]; // TODO: Only for testing, remove!
@@ -236,15 +172,17 @@ static NSInteger const kActionSheetButtonCancel = 2;
     _member.mobilePhone = _mobilePhoneField.text;
     _member.gender = _gender;
     
-    if ([self isRegistering]) {
+    if ([ScMeta state].actionIsRegister) {
         _member.givenName = [NSString givenNameFromFullName:_nameField.text];
     }
     
-    if ([self isRegistering] && [self isForUser]) {
-        [self registerHousehold];
-    } else if ([self isRegistering]) {
-        [_delegate insertMembershipInTableView:_membership];
-        [_delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
+    if ([ScMeta state].actionIsRegister) {
+        if ([ScMeta state].targetIsUser && [_membership.isAdmin boolValue]) {
+            [self registerHousehold];
+        } else {
+            [_delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
+            [_delegate insertMembershipInTableView:_membership];
+        }
     }
 }
 
@@ -273,7 +211,6 @@ static NSInteger const kActionSheetButtonCancel = 2;
         [context deleteEntity:_candidate];
     }
     
-    [ScMeta popAppState];
     [_delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
 }
 
@@ -310,6 +247,8 @@ static NSInteger const kActionSheetButtonCancel = 2;
 {
     [super viewDidLoad];
 
+    ScLogState;
+    
     self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
@@ -323,35 +262,25 @@ static NSInteger const kActionSheetButtonCancel = 2;
         _member = _membership.member;
         _scola = _membership.scola;
     }
-
-    if ([self isRegistering]) {
+    
+    if ([ScMeta state].actionIsRegister) {
         self.navigationItem.rightBarButtonItem = _doneButton;
         
-        if ([self isForUser]) {
+        if ([ScMeta state].targetIsUser) {
             self.title = [_member about];
         } else {
             self.navigationItem.leftBarButtonItem = _cancelButton;
             
-            if ([self isForHousehold]) {
+            if ([ScMeta state].aspectIsHome || [ScMeta state].aspectIsHousehold) {
                 self.title = [ScStrings stringForKey:strMemberViewTitleNewHouseholdMember];
             } else {
                 self.title = [ScStrings stringForKey:strMemberViewTitleNewMember];
             }
         }
-    } else if ([self isDisplaying]) {
+    } else if ([ScMeta state].actionIsDisplay) {
         self.navigationItem.rightBarButtonItem = _editButton;
         self.title = [_member about];
     }
-}
-
-
-- (void) viewWillDisappear:(BOOL)animated
-{
-    if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
-        [ScMeta popAppState];
-    }
-    
-    [super viewWillDisappear:animated];
 }
 
 
@@ -366,15 +295,11 @@ static NSInteger const kActionSheetButtonCancel = 2;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kSegueToMembershipView]) {
-        ScMembershipViewController *nextViewController = segue.destinationViewController;
-        nextViewController.delegate = _delegate;
-        nextViewController.scola = _scola;
-    
-        if ([ScMeta appState_] == ScAppStateRegisterUserHousehold) {
-            [ScMeta pushAppState:ScAppStateRegisterUserHouseholdMemberships];
-        } else if ([ScMeta appState_] == ScAppStateRegisterScola) {
-            [ScMeta pushAppState:ScAppStateRegisterScolaMember];
-        }
+        ScMembershipViewController *membershipViewController = segue.destinationViewController;
+        membershipViewController.delegate = _delegate;
+        membershipViewController.scola = _scola;
+        
+        [ScMeta state].target = ScStateTargetMemberships;
     }
 }
 
@@ -397,10 +322,10 @@ static NSInteger const kActionSheetButtonCancel = 2;
 {
     CGFloat height = 0.f;
     
-    if ([self isRegistering]) {
+    if ([ScMeta state].actionIsRegister) {
         height = [ScTableViewCell heightForEntityClass:ScMember.class];
     } else {
-        height = [ScTableViewCell heightForEntity:_member editing:![self isDisplaying]];
+        height = [ScTableViewCell heightForEntity:_member editing:[ScMeta state].actionIsEdit];
     }
     
     return height;
@@ -409,11 +334,11 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self isDisplaying]) {
+    if ([ScMeta state].actionIsDisplay) {
         _memberCell = [tableView cellForEntity:_member];
-    } else if ([self isRegistering] && [self isForUser]) {
+    } else if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsUser) {
         _memberCell = [tableView cellForEntity:_member editing:YES delegate:self];
-    } else if ([self isRegistering]) {
+    } else if ([ScMeta state].actionIsRegister) {
         _memberCell = [tableView cellForEntityClass:ScMember.class delegate:self];
     }
     
@@ -451,7 +376,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
     if ((_currentField == _emailField) && [ScMeta isEmailValid:_emailField]) {
-        if ([self isRegistering] && ![self isForUser]) {
+        if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsMember) {
             _candidate = [[ScMeta m].managedObjectContext fetchEntityWithId:_emailField.text];
             
             if (_candidate) {
@@ -500,18 +425,11 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (void)shouldDismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
-    [ScMeta popAppState];
-    
-    if ([self isRegistering] && [self isForUser]) {
-        [ScMeta pushAppState:ScAppStateRegisterUserHouseholdMemberships];
-    } else if ([self isRegistering] && [self isForHousehold]) {
-        [ScMeta pushAppState:ScAppStateRegisterScolaMemberHouseholdMemberships];
-    } else {
-        [ScMeta pushAppState:ScAppStateRegisterScolaMemberships];
-    }
-    
     [self dismissViewControllerAnimated:YES completion:NULL];
-    [self performSegueWithIdentifier:kSegueToMembershipView sender:self];
+    
+    if ([identitifier isEqualToString:kScolaViewControllerId]) {
+        [self performSegueWithIdentifier:kSegueToMembershipView sender:self];
+    }
 }
 
 

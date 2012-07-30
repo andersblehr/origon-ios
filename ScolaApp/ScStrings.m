@@ -123,7 +123,7 @@ static NSDictionary *strings = nil;
 + (void)refreshStrings
 {
     if ([ScMeta m].isInternetConnectionAvailable) {
-        if (!strings || [ScMeta m].isInternetConnectionWiFi) { // TODO: Only if req'd
+        if (!strings || [ScMeta m].isInternetConnectionWiFi) { // TODO: Only if required
             [[[ScServerConnection alloc] init] fetchStrings];
         }
     } else {

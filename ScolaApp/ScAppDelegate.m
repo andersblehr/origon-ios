@@ -6,16 +6,18 @@
 //  Copyright (c) 2011 Rhelba Software. All rights reserved.
 //
 
-#import <CoreData/CoreData.h>
+#import "ScAppDelegate.h"
 
-#import "Reachability.h"
+#import <CoreData/CoreData.h>
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 
-#import "ScAppDelegate.h"
+#import "Reachability.h"
+
 #import "ScMeta.h"
 #import "ScLogging.h"
 #import "ScServerConnection.h"
+#import "ScState.h"
 
 
 static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
@@ -95,8 +97,9 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
     
-    [ScMeta pushAppState:ScAppStateStartup];
+    [ScMeta state].action = ScStateActionStartup;
     
+    ScLogState;
     ScLogDebug(@"Device is %@.", [UIDevice currentDevice].model);
     ScLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);
     ScLogDebug(@"System name is %@.", [UIDevice currentDevice].systemName);

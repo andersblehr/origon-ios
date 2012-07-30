@@ -17,6 +17,7 @@
 #import "ScLogging.h"
 #import "ScMeta.h"
 #import "ScServerConnectionDelegate.h"
+#import "ScState.h"
 #import "ScStrings.h"
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
@@ -278,12 +279,12 @@ static NSString * const kURLParameterVersion = @"version";
 {
     _RESTHandler = kRESTHandlerAuth;
 
-    if ([ScMeta appState_] == ScAppStateLoginUser) {
+    if ([ScMeta state].actionIsLogin) {
         _RESTRoute = kRESTRouteAuthLogin;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
         [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
-    } else if ([ScMeta appState_] == ScAppStateConfirmSignUp) {
+    } else if ([ScMeta state].actionIsConfirm) {
         _RESTRoute = kRESTRouteAuthConfirmation;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];

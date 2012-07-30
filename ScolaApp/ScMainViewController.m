@@ -17,6 +17,7 @@
 #import "ScMeta.h"
 #import "ScIconSection.h"
 #import "ScServerConnection.h"
+#import "ScState.h"
 #import "ScStrings.h"
 
 #import "ScMembershipViewController.h"
@@ -26,14 +27,7 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 
 @implementation ScMainViewController
 
-
 #pragma mark - View lifecycle
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
-
 
 - (void)viewDidLoad
 {
@@ -75,7 +69,11 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 {
     [super viewWillAppear:animated];
     
-    [ScMeta pushAppState:ScAppStateNeutral];
+    [ScMeta state].action = ScStateActionDefault;
+    [ScMeta state].target = ScStateTargetDefault;
+    [ScMeta state].aspect = ScStateAspectDefault;
+    
+    ScLogState;
     
     [self navigationController].navigationBarHidden = YES;
 }
@@ -108,7 +106,10 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
     //int sectionNumber = buttonTapped.tag / 100;
     //int buttonNumber = buttonTapped.tag % 100;
     
-    [ScMeta pushAppState:ScAppStateDisplayUserHouseholdMemberships];
+    [ScMeta state].action = ScStateActionDisplay;
+    [ScMeta state].target = ScStateTargetMemberships;
+    [ScMeta state].aspect = ScStateAspectHome;
+    
     [self performSegueWithIdentifier:kSegueToMembershipView sender:self];
 }
 

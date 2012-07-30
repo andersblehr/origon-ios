@@ -14,7 +14,7 @@
 #import "NSString+ScStringExtensions.h"
 
 #import "ScAppDelegate.h"
-#import "ScAppState.h"
+#import "ScState.h"
 #import "ScLogging.h"
 #import "ScServerConnection.h"
 #import "ScStrings.h"
@@ -27,9 +27,11 @@
 NSString * const kBundleId = @"com.scolaapp.ios.ScolaApp";
 NSString * const kDarkLinenImageFile = @"dark_linen-640x960.png";
 
-NSString * const kMemberViewControllerId = @"vcMember";
-NSString * const kMembershipViewControllerId = @"vcMembership";
-NSString * const kScolaViewControllerId = @"vcScola";
+NSString * const kAuthViewControllerId = @"idAuth";
+NSString * const kMainViewControllerId = @"idMain";
+NSString * const kMemberViewControllerId = @"idMember";
+NSString * const kMembershipViewControllerId = @"idMembership";
+NSString * const kScolaViewControllerId = @"idScola";
 
 NSString * const kPropertyEntityId = @"entityId";
 NSString * const kPropertyEntityClass = @"entityClass";
@@ -137,7 +139,7 @@ static ScMeta *m = nil;
     self = [super init];
     
     if (self) {
-        _appState = [[ScAppState alloc] init];
+        _state = [[ScState alloc] init];
         
         NSString *deviceModel = [UIDevice currentDevice].model;
         _is_iPadDevice = [deviceModel hasPrefix:@"iPad"];
@@ -181,36 +183,6 @@ static ScMeta *m = nil;
     }
     
     return m;
-}
-
-
-#pragma mark - App state handling
-
-+ (ScAppState *)appState
-{
-    return [ScMeta m].appState;
-}
-
-
-+ (ScAppState_)appState_
-{
-    return [[[ScMeta m]->_appStateStack lastObject] intValue];
-}
-
-
-+ (void)pushAppState:(ScAppState_)appState
-{
-    ScLogDebug(@"App state: %d", appState);
-    
-    [[ScMeta m]->_appStateStack addObject:[NSNumber numberWithInt:appState]];
-}
-
-
-+ (void)popAppState
-{
-    [[ScMeta m]->_appStateStack removeLastObject];
-    
-    ScLogDebug(@"App state: %d", [ScMeta appState_]);
 }
 
 
@@ -348,8 +320,9 @@ static ScMeta *m = nil;
     if (userId) {
         [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyUserId];
         
-        NSString *persistedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
         _lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
+        
+        NSString *persistedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
         
         if (persistedDeviceId) {
             _deviceId = persistedDeviceId;
@@ -416,6 +389,12 @@ static ScMeta *m = nil;
 
 
 #pragma mark - Convenience accessors
+
++ (ScState *)state
+{
+    return [ScMeta m].state;
+}
+
 
 - (NSManagedObjectContext *)managedObjectContext
 {

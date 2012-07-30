@@ -12,14 +12,13 @@
 #import "ScModalViewControllerDelegate.h"
 #import "ScServerConnectionDelegate.h"
 
-@class ScMember, ScMemberResidency, ScMembership, ScScola;
-@class ScMembershipViewController, ScTableViewCell, ScTextField;
+@class ScMembership, ScScola;
 
 @interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate, ScModalViewControllerDelegate>
 
 @property (weak, nonatomic) id<ScMemberViewControllerDelegate> delegate;
 
-@property (weak, nonatomic) ScScola *scola;
 @property (weak, nonatomic) ScMembership *membership;
+@property (weak, nonatomic) ScScola *scola;
 
 @end

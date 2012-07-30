@@ -15,6 +15,7 @@
 
 #import "ScLogging.h"
 #import "ScMeta.h"
+#import "ScState.h"
 #import "ScStrings.h"
 #import "ScTableViewCell.h"
 
@@ -38,6 +39,8 @@ static NSInteger const kMinorsSection = 2;
 
 
 @interface ScMembershipViewController () {
+    ScState *_localState;
+    
     NSString *_longTitle;
     UIBarButtonItem *_addButton;
     
@@ -59,60 +62,6 @@ static NSInteger const kMinorsSection = 2;
 
 @implementation ScMembershipViewController
 
-#pragma mark - State shorthands
-
-- (BOOL)isDisplaying
-{
-    ScAppState_ appState = [ScMeta appState_];
-    
-    BOOL isDisplaying = 
-        (appState == ScAppStateDisplayUserHouseholdMemberships) ||
-        (appState == ScAppStateDisplayScolaMemberships) ||
-        (appState == ScAppStateDisplayScolaMemberHouseholdMemberships);
-    
-    return isDisplaying;
-}
-
-
-- (BOOL)isRegistering
-{
-    ScAppState_ appState = [ScMeta appState_];
-    
-    BOOL isRegistering =
-        (appState == ScAppStateRegisterUserHouseholdMemberships) ||
-        (appState == ScAppStateRegisterScolaMemberships) ||
-        (appState == ScAppStateRegisterScolaMemberHouseholdMemberships);
-    
-    return  isRegistering;
-}
-
-
-- (BOOL)isForHousehold
-{
-    ScAppState_ appState = [ScMeta appState_];
-    
-    BOOL isForHousehold =
-        (appState == ScAppStateRegisterUserHouseholdMemberships) ||
-        (appState == ScAppStateRegisterScolaMemberHouseholdMemberships) ||
-        (appState == ScAppStateDisplayUserHouseholdMemberships) ||
-        (appState == ScAppStateDisplayScolaMemberHouseholdMemberships);
-    
-    return isForHousehold;
-}
-
-
-- (BOOL)isForUser
-{
-    ScAppState_ appState = [ScMeta appState_];
-    
-    BOOL isForUser =
-        (appState == ScAppStateRegisterUserHouseholdMemberships) ||
-        (appState == ScAppStateDisplayUserHouseholdMemberships);
-    
-    return isForUser;
-}
-
-
 #pragma mark - Selector implementations
 
 - (void)addMembership
@@ -121,15 +70,10 @@ static NSInteger const kMinorsSection = 2;
     memberViewController.delegate = self;
     memberViewController.scola = _scola;
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
+    [ScMeta state].action = ScStateActionRegister;
+    [ScMeta state].target = ScStateTargetMember;
     
-    if ([self isForUser] && [self isForHousehold]) {
-        [ScMeta pushAppState:ScAppStateRegisterUserHouseholdMember];
-    } else if ([self isForHousehold]) {
-        [ScMeta pushAppState:ScAppStateRegisterScolaMemberHouseholdMember];
-    } else {
-        [ScMeta pushAppState:ScAppStateRegisterScolaMember];
-    }
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
     
     [self.navigationController presentViewController:navigationController animated:YES completion:NULL];
     
@@ -145,23 +89,19 @@ static NSInteger const kMinorsSection = 2;
         _needsSynchronisation = NO;
     }
     
-    if ([self isRegistering]) {
-        [_delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
+    if ([ScMeta state].actionIsRegister) {
+        [_delegate shouldDismissViewControllerWithIdentitifier:kMembershipViewControllerId];
     }
 }
 
 
 #pragma mark - View lifecycle
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
-
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _localState = [[ScMeta state] copy];
     
     self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
     
@@ -191,14 +131,14 @@ static NSInteger const kMinorsSection = 2;
     _adults = [[_unsortedAdults allObjects] sortedArrayUsingSelector:@selector(compare:)];
     _minors = [[_unsortedMinors allObjects] sortedArrayUsingSelector:@selector(compare:)];
     
-    if ([self isForUser]) {
+    if ([ScMeta state].aspectIsHome) {
         if ([_scola hasMultipleResidents]) {
             _longTitle = [ScStrings stringForKey:strMembershipViewTitleOurPlace];
         } else {
             _longTitle = [ScStrings stringForKey:strMembershipViewTitleMyPlace];
         }
         
-        if ([self isRegistering]) {
+        if ([ScMeta state].actionIsRegister) {
             self.title = _longTitle;
         } else {
             self.title = [ScStrings stringForKey:strHousehold];
@@ -217,13 +157,18 @@ static NSInteger const kMinorsSection = 2;
 {
     [super viewWillAppear:animated];
     
-    if ([self isRegistering]) {
+    [[ScMeta state] setToState:_localState];
+    ScLogState;
+    
+    if ([ScMeta state].actionIsRegister) {
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
         
         self.navigationItem.leftBarButtonItem = doneButton;
         self.navigationItem.rightBarButtonItem = _addButton;
     } else {
-        self.tabBarController.title = [self isForHousehold] ? _longTitle : self.title;
+        BOOL isForHousehold = ([ScMeta state].aspectIsHome || [ScMeta state].aspectIsHousehold);
+        
+        self.tabBarController.title = isForHousehold ? _longTitle : self.title;
         self.tabBarController.navigationItem.rightBarButtonItem = _addButton;
     }
 }
@@ -249,28 +194,22 @@ static NSInteger const kMinorsSection = 2;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    [ScMeta state].action = ScStateActionDisplay;
+    
     if ([segue.identifier isEqualToString:kSegueToScolaView]) {
         ScScolaViewController *scolaViewController = segue.destinationViewController;
         scolaViewController.scola = _scola;
         
-        if ([self isForUser] && [self isForHousehold]) {
-            [ScMeta pushAppState:ScAppStateDisplayUserHousehold];
-        } else if ([self isForHousehold]) {
-            [ScMeta pushAppState:ScAppStateDisplayScolaMemberHousehold];
+        if ([ScMeta state].aspect == ScStateAspectScola) {
+            [ScMeta state].target = ScStateTargetScola;
         } else {
-            [ScMeta pushAppState:ScAppStateDisplayScola];
+            [ScMeta state].target = ScStateTargetHousehold;
         }
     } else if ([segue.identifier isEqualToString:kSegueToMemberView]) {
         ScMemberViewController *memberViewController = segue.destinationViewController;
         memberViewController.membership = _selectedMembership;
         
-        if ([self isForUser] && [self isForHousehold]) {
-            [ScMeta pushAppState:ScAppStateDisplayUserHouseholdMember];
-        } else if ([self isForHousehold]) {
-            [ScMeta pushAppState:ScAppStateDisplayScolaMemberHouseholdMember];
-        } else {
-            [ScMeta pushAppState:ScAppStateDisplayScolaMember];
-        }
+        [ScMeta state].target = ScStateTargetMember;
     }
 }
 
@@ -470,10 +409,12 @@ static NSInteger const kMinorsSection = 2;
 
 - (void)shouldDismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
-    [self dismissViewControllerAnimated:YES completion:NULL];
-    [ScMeta popAppState];
-    
-    _isViewModallyHidden = NO;
+    if ([identitifier isEqualToString:kMemberViewControllerId]) {
+        [self dismissViewControllerAnimated:YES completion:NULL];
+        [ScMeta state].target = ScStateTargetMemberships;
+        
+        _isViewModallyHidden = NO;
+    }
 }
 
 

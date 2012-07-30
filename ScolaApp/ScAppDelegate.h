@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-#import "Reachability.h"
-
 @interface ScAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;

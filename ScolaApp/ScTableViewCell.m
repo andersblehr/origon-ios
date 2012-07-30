@@ -18,6 +18,7 @@
 #import "UIView+ScViewExtensions.h"
 
 #import "ScMeta.h"
+#import "ScState.h"
 #import "ScStrings.h"
 #import "ScTextField.h"
 
@@ -322,6 +323,8 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         textField.key = key;
         textField.text = text;
         
+        ScState *state = [ScMeta state];
+        
         if ([key isEqualToString:kTextFieldKeyName]) {
             textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
             textField.placeholder = [ScStrings stringForKey:strNamePrompt];
@@ -329,7 +332,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
             textField.keyboardType = UIKeyboardTypeEmailAddress;
             textField.placeholder = [ScStrings stringForKey:strEmailPrompt];
             
-            if (self.editing && ([ScMeta appState_] == ScAppStateRegisterUser)) {
+            if (self.editing && (state.actionIsRegister && state.targetIsUser)) {
                 textField.enabled = NO;
             }
         } else if ([key isEqualToString:kTextFieldKeyMobilePhone]) {
@@ -347,7 +350,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         } else if ([key isEqualToString:kTextFieldKeyLandline]) {
             textField.keyboardType = UIKeyboardTypeNumberPad;
             
-            if ([ScMeta appState_] == ScAppStateRegisterUserHousehold) {
+            if (state.actionIsRegister && state.targetIsHousehold) {
                 textField.placeholder = [ScStrings stringForKey:strHouseholdLandlinePrompt];
             } else {
                 textField.placeholder = [ScStrings stringForKey:strScolaLandlinePrompt];
@@ -455,10 +458,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     [self addLabel:[ScStrings stringForKey:strLandlineLabel]];
     [self addTextFieldWithText:scola.landline key:kTextFieldKeyLandline];
     
-    self.selectable =
-        ([ScMeta appState_] == ScAppStateDisplayUserHouseholdMemberships) ||
-        ([ScMeta appState_] == ScAppStateDisplayScolaMemberships) ||
-        ([ScMeta appState_] == ScAppStateDisplayScolaMemberHouseholdMemberships);
+    self.selectable = ([ScMeta state].actionIsDisplay && [ScMeta state].targetIsMemberships);
 }
 
 

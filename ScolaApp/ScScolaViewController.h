@@ -11,7 +11,6 @@
 #import "ScModalViewControllerDelegate.h"
 
 @class ScScola;
-@class ScTableViewCell, ScTextField;
 
 @interface ScScolaViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 

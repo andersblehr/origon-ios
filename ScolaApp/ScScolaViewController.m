@@ -12,7 +12,11 @@
 #import "UITableView+UITableViewExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
+#import "ScMembershipViewController.h"
+
+#import "ScLogging.h"
 #import "ScMeta.h"
+#import "ScState.h"
 #import "ScStrings.h"
 #import "ScTableViewCell.h"
 #import "ScTextField.h"
@@ -31,15 +35,13 @@
     ScTextField *_addressLine1Field;
     ScTextField *_addressLine2Field;
     ScTextField *_landlineField;
-    
-    BOOL _isRegistering;
-    BOOL _isDisplaying;
 }
 
 @end
 
 
 @implementation ScScolaViewController
+
 
 #pragma mark - Selector implementations
 
@@ -64,14 +66,16 @@
         _scola.addressLine2 = _addressLine2Field.text;
         _scola.landline = _landlineField.text;
         
-        if ([ScMeta appState_] == ScAppStateRegisterUserHousehold) {
+        ScState *state = [ScMeta state];
+        
+        if (state.actionIsRegister && state.targetIsHousehold && state.aspectIsHome) {
             ScMember *member = [context fetchEntityWithId:[ScMeta m].userId];
             member.activeSince = [NSDate date];
         }
         
+        [self.view endEditing:YES];
         [context synchronise];
         
-        [self.view endEditing:YES];
         [_delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
     } else {
         [_scolaCell shake];
@@ -85,51 +89,48 @@
 {
     [super viewDidLoad];
     
+    ScLogState;
+    
     self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    _isRegistering = ([ScMeta appState_] == ScAppStateRegisterUserHousehold);
-    _isRegistering = _isRegistering || ([ScMeta appState_] == ScAppStateRegisterScola);
-    _isRegistering = _isRegistering || ([ScMeta appState_] == ScAppStateRegisterScolaMemberHousehold);
-    
-    _isDisplaying = ([ScMeta appState_] == ScAppStateDisplayUserHousehold);
-    _isDisplaying = _isDisplaying || ([ScMeta appState_] == ScAppStateDisplayScola);
-    
     _editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
     _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
     _doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
     
-    if (_isRegistering) {
+    if ([ScMeta state].actionIsRegister) {
         self.title = [ScStrings stringForKey:strAddressLabel];
         self.navigationItem.rightBarButtonItem = _doneButton;
         
-        if ([ScMeta appState_] == ScAppStateRegisterUserHousehold) {
+        if ([ScMeta state].targetIsHousehold) {
             self.navigationItem.hidesBackButton = YES;
         } else {
             self.navigationItem.leftBarButtonItem = _cancelButton;
         }
-    } else if (_isDisplaying) {
+    } else if ([ScMeta state].actionIsDisplay) {
         self.title = [ScStrings stringForKey:strAddressLabel];
         self.navigationItem.rightBarButtonItem = _editButton;
     }
 }
 
 
-- (void) viewWillDisappear:(BOOL)animated
-{
-    if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
-        [ScMeta popAppState];
-    }
-    
-    [super viewWillDisappear:animated];
-}
-
-
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+
+#pragma mark - ScModalViewControllerDelegate methods
+
+- (void)shouldDismissViewControllerWithIdentitifier:(NSString *)identitifier
+{
+    if ([identitifier isEqualToString:kMembershipViewControllerId]) {
+        [self dismissViewControllerAnimated:YES completion:^{
+            [_delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
+        }];
+    }
 }
 
 
@@ -149,13 +150,13 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [ScTableViewCell heightForEntity:_scola editing:_isRegistering];
+    return [ScTableViewCell heightForEntity:_scola editing:[ScMeta state].actionIsRegister];
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_isRegistering) {
+    if ([ScMeta state].actionIsRegister) {
         _scolaCell = [tableView cellForEntity:_scola editing:YES delegate:self];
         
         _addressLine1Field = [_scolaCell textFieldWithKey:kTextFieldKeyAddressLine1];
@@ -163,7 +164,7 @@
         _landlineField = [_scolaCell textFieldWithKey:kTextFieldKeyLandline];
         
         [_addressLine1Field becomeFirstResponder];
-    } else if (_isDisplaying) {
+    } else if ([ScMeta state].actionIsDisplay) {
         _scolaCell = [tableView cellForEntity:_scola];
     }
     

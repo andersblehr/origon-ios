@@ -9,6 +9,7 @@
 #import "UIDatePicker+ScDatePickerExtensions.h"
 
 #import "ScMeta.h"
+#import "ScState.h"
 
 static int const kMinimumRealisticAge = 5;
 static int const kMaximumRealisticAge = 110;
@@ -32,7 +33,7 @@ static int const kMaximumRealisticAge = 110;
 {
     NSDate *now = [NSDate date];
     
-    if ([ScMeta appState_] == ScAppStateRegisterUser) {
+    if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsUser) {
         NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
         latestBirthDateOffset.year = -kMinimumRealisticAge;
         
