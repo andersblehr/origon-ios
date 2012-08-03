@@ -72,7 +72,7 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 @implementation ScMemberViewController
 
-#pragma mark - Private methods
+#pragma mark - Auxiliary methods
 
 - (void)registerHousehold
 {

@@ -8,6 +8,7 @@
 
 #import "ScStrings.h"
 
+#import "ScAlert.h"
 #import "ScMeta.h"
 #import "ScLogging.h"
 #import "ScServerConnection.h"
@@ -173,7 +174,7 @@ static NSDictionary *strings = nil;
 
 + (void)didFailWithError:(NSError *)error
 {
-    [ScServerConnection showAlertForError:error];
+    [ScAlert showAlertForError:error];
 }
 
 @end

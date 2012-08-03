@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C014A2415CA77320040A1D9 /* ScAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C014A2315CA77310040A1D9 /* ScAlert.m */; };
 		5C153EEF14CC668F003A6B61 /* glyphicons_006_user_add_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EED14CC668F003A6B61 /* glyphicons_006_user_add_white.png */; };
 		5C153EF014CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EEE14CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png */; };
 		5C153EF314CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF114CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png */; };
@@ -113,6 +114,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5C014A2215CA77310040A1D9 /* ScAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScAlert.h; sourceTree = "<group>"; };
+		5C014A2315CA77310040A1D9 /* ScAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScAlert.m; sourceTree = "<group>"; };
 		5C153EED14CC668F003A6B61 /* glyphicons_006_user_add_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_006_user_add_white.png; sourceTree = "<group>"; };
 		5C153EEE14CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_006_user_add_white@2x.png"; sourceTree = "<group>"; };
 		5C153EF114CC68B9003A6B61 /* glyphicons_192_circle_remove_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_192_circle_remove_white.png; sourceTree = "<group>"; };
@@ -478,6 +481,8 @@
 		5CB49DD014881F36006EA2F8 /* Auxiliary Classes */ = {
 			isa = PBXGroup;
 			children = (
+				5C014A2215CA77310040A1D9 /* ScAlert.h */,
+				5C014A2315CA77310040A1D9 /* ScAlert.m */,
 				5C153EF914CC9815003A6B61 /* ScIconSection.h */,
 				5C153EFA14CC9815003A6B61 /* ScIconSection.m */,
 				5CCF09051466A0CB00D41AB0 /* ScLogging.h */,
@@ -791,6 +796,7 @@
 				5C2E6B7E15A8501800638330 /* ScMembership+ScMembershipExtensions.m in Sources */,
 				5CE5FFC115ACC550009C11C0 /* ScMember.m in Sources */,
 				5CD3360E15C40A2F00ABBFE7 /* ScState.m in Sources */,
+				5C014A2415CA77320040A1D9 /* ScAlert.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -74,17 +74,12 @@ static ScMeta *m = nil;
 
 @property (strong, nonatomic) NSString *authToken;
 
-- (void)checkReachability:(Reachability *)reachability;
-- (void)reachabilityDidChange:(NSNotification *)notification;
-
-- (NSString *)generateAuthToken:(NSDate *)expiryDate;
-
 @end
 
 
 @implementation ScMeta
 
-#pragma mark - Private methods
+#pragma mark - Auxiliary methods
 
 - (void)checkReachability:(Reachability *)reachability
 {
@@ -183,14 +178,6 @@ static ScMeta *m = nil;
     }
     
     return m;
-}
-
-
-#pragma mark - Alerting shortcut
-
-+ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message
-{
-    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil] show];
 }
 
 

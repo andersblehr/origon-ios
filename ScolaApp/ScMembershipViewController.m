@@ -33,6 +33,7 @@
 static NSString * const kSegueToMemberView = @"membershipToMemberView";
 static NSString * const kSegueToScolaView = @"membershipToScolaView";
 
+static NSInteger const kNumberOfSections = 3;
 static NSInteger const kAddressSection = 0;
 static NSInteger const kAdultsSection = 1;
 static NSInteger const kMinorsSection = 2;
@@ -218,7 +219,7 @@ static NSInteger const kMinorsSection = 2;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return 3;
+	return kNumberOfSections;
 }
 
 

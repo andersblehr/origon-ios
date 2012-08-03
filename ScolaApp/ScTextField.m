@@ -41,14 +41,12 @@ static CGFloat const kLineSpacing = 5.f;
     BOOL _isEditing;
 }
 
-- (id)initAtOrigin:(CGPoint)origin font:(UIFont *)font width:(CGFloat)width title:(BOOL)title editing:(BOOL)editing;
-
 @end
 
 
 @implementation ScTextField
 
-#pragma mark - Private methods
+#pragma mark - Auxiliary methods
 
 - (id)initAtOrigin:(CGPoint)origin font:(UIFont *)font width:(CGFloat)width title:(BOOL)title editing:(BOOL)editing
 {

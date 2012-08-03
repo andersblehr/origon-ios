@@ -61,8 +61,6 @@ extern NSString * const kLanguageHungarian;
 + (ScMeta *)m;
 + (ScState *)state;
 
-+ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message;
-
 + (void)setUserDefault:(id)object forKey:(NSString *)key;
 + (id)userDefaultForKey:(NSString *)key;
 + (void)removeUserDefaultForKey:(NSString *)key;

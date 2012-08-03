@@ -64,17 +64,12 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     id<UITextFieldDelegate> _textFieldDelegate;
 }
 
-- (BOOL)isAuthFieldKey:(NSString *)key;
-- (ScTextField *)authFieldForKey:(NSString *)key;
-
-- (UIDatePicker *)dateOfBirthPicker;
-
 @end
 
 
 @implementation ScTableViewCell
 
-#pragma mark - Private methods
+#pragma mark - Auxiliary methods
 
 - (BOOL)isAuthFieldKey:(NSString *)key
 {
@@ -263,7 +258,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 {
     CGFloat titleHeight = self.editing ? [UIFont editableTitleFont].lineHeightWhenEditing : [UIFont titleFont].lineHeight;
     
-    UIView *titleBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, kCellWidth, kInitialVerticalMargin + titleHeight + kLineSpacing)];
+    UIView *titleBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(-1.f, -1.f, kCellWidth + 2, kInitialVerticalMargin + titleHeight + kLineSpacing)];
     titleBackgroundView.backgroundColor = [UIColor ashGrayColor];
     
     [self.contentView addSubview:titleBackgroundView];
@@ -590,7 +585,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     
     CGFloat translation = 3.f;
     
-    CGAffineTransform translateRight  = CGAffineTransformTranslate(CGAffineTransformIdentity, translation, translation);
+    CGAffineTransform translateRight = CGAffineTransformTranslate(CGAffineTransformIdentity, translation, translation);
     CGAffineTransform translateLeft = CGAffineTransformTranslate(CGAffineTransformIdentity, -translation, -translation);
     
     self.transform = translateLeft;

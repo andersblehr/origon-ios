@@ -31,11 +31,6 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 
 @interface ScServerConnection : NSObject
 
-+ (void)showAlertForError:(NSError *)error;
-+ (void)showAlertForError:(NSError *)error tagWith:(int)tag usingDelegate:(id)delegate;
-+ (void)showAlertForHTTPStatus:(NSInteger)status;
-+ (void)showAlertForHTTPStatus:(NSInteger)status tagWith:(int)tag usingDelegate:(id)delegate;
-
 - (id)init;
 
 - (void)setAuthHeaderForUser:(NSString *)userId withPassword:(NSString *)password;

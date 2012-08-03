@@ -14,6 +14,7 @@
 #import "UITableView+UITableViewExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
+#import "ScAlert.h"
 #import "ScMeta.h"
 #import "ScServerConnection.h"
 #import "ScState.h"
@@ -72,7 +73,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 @implementation ScAuthViewController
 
-#pragma mark - Private methods
+#pragma mark - Auxiliary methods
 
 - (void)reload
 {
@@ -277,7 +278,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if ([self isRegistrationComplete]) {
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
     } else {
-        [ScMeta showAlertWithTitle:[ScStrings stringForKey:strIncompleteRegistrationTitle] message:[ScStrings stringForKey:strIncompleteRegistrationAlert]];
+        [ScAlert showAlertWithTitle:[ScStrings stringForKey:strIncompleteRegistrationTitle] message:[ScStrings stringForKey:strIncompleteRegistrationAlert]];
         
         [self completeRegistration];
     }
@@ -413,7 +414,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         if ([self isRegistrationComplete]) {
             [self performSegueWithIdentifier:kSegueToMainView sender:self];
         } else {
-            [ScMeta showAlertWithTitle:[ScStrings stringForKey:strIncompleteRegistrationTitle] message:[ScStrings stringForKey:strIncompleteRegistrationAlert]];
+            [ScAlert showAlertWithTitle:[ScStrings stringForKey:strIncompleteRegistrationTitle] message:[ScStrings stringForKey:strIncompleteRegistrationAlert]];
             
             [self completeRegistration];
         }
@@ -654,7 +655,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [_authCell shake];
             [_passwordField becomeFirstResponder];
         } else {
-            [ScServerConnection showAlertForHTTPStatus:response.statusCode];
+            [ScAlert showAlertForHTTPStatus:response.statusCode];
         }
     }
 }

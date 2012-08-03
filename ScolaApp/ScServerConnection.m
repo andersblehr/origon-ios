@@ -14,6 +14,7 @@
 #import "NSURL+ScURLExtensions.h"
 
 #import "ScAppDelegate.h"
+#import "ScAlert.h"
 #import "ScLogging.h"
 #import "ScMeta.h"
 #import "ScServerConnectionDelegate.h"
@@ -89,33 +90,12 @@ static NSString * const kURLParameterVersion = @"version";
     BOOL _isRequestValid;
 }
 
-+ (void)showAlertWithCode:(int)code message:(NSString *)message tag:(int)tag delegate:(id)delegate;
-
-- (NSString *)scolaServer;
-- (NSString *)scolaServerURL;
-
-- (void)performHTTPMethod:(NSString *)HTTPMethod withEntities:(NSArray *)entities delegate:(id)delegate;
-
 @end
 
 
 @implementation ScServerConnection
 
-#pragma mark - Private methods
-
-+ (void)showAlertWithCode:(int)code message:(NSString *)message tag:(int)tag delegate:(id)delegate
-{
-    NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strServerErrorAlert], code, message];
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:delegate cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil];
-    
-    if (tag != NSIntegerMax) {
-        alert.tag = tag;
-    }
-    
-    [alert show];
-}
-
+#pragma mark - Auxiliary methods
 
 - (NSString *)scolaServer
 {
@@ -174,32 +154,6 @@ static NSString * const kURLParameterVersion = @"version";
     } else {
         [self connection:nil didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:[ScStrings stringForKey:strNoInternetError] forKey:NSLocalizedDescriptionKey]]];
     }
-}
-
-
-#pragma mark - Generic connection error alerts
-
-+ (void)showAlertForError:(NSError *)error
-{
-    [self showAlertForError:error tagWith:NSIntegerMax usingDelegate:nil];
-}
-
-
-+ (void)showAlertForError:(NSError *)error tagWith:(int)tag usingDelegate:(id)delegate
-{
-    [self showAlertWithCode:[error code] message:[error localizedDescription] tag:tag delegate:delegate];
-}
-
-
-+ (void)showAlertForHTTPStatus:(NSInteger)status
-{
-    [self showAlertForHTTPStatus:status tagWith:NSIntegerMax usingDelegate:nil];
-}
-
-
-+ (void)showAlertForHTTPStatus:(NSInteger)status tagWith:(int)tag usingDelegate:(id)delegate
-{
-    [self showAlertWithCode:status message:[NSHTTPURLResponse localizedStringForStatusCode:status] tag:tag delegate:delegate];
 }
 
 
@@ -365,7 +319,7 @@ static NSString * const kURLParameterVersion = @"version";
         }
         
         if (shouldShowAutomaticAlert) {
-            [ScServerConnection showAlertForHTTPStatus:response.statusCode];
+            [ScAlert showAlertForHTTPStatus:response.statusCode];
         }
     }
     
@@ -410,7 +364,7 @@ static NSString * const kURLParameterVersion = @"version";
     }
     
     if (shouldShowAutomaticAlert) {
-        [ScServerConnection showAlertForError:error];
+        [ScAlert showAlertForError:error];
     }
     
     [_delegate didFailWithError:error];
