@@ -12,9 +12,34 @@
 #import "ScModalViewControllerDelegate.h"
 #import "ScServerConnectionDelegate.h"
 
-@class ScMembership, ScScola;
+@class ScMemberResidency, ScMembership, ScScola;
+@class ScTableViewCell, ScTextField;
 
-@interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate, ScModalViewControllerDelegate>
+@interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate, ScModalViewControllerDelegate> {
+@private
+    ScTableViewCell *_memberCell;
+    ScMember *_member;
+    
+    ScMember *_candidate;
+    ScScola *_candidateHousehold;
+    ScMemberResidency *_candidateResidency;
+    
+    UIBarButtonItem *_editButton;
+    UIBarButtonItem *_cancelButton;
+    UIBarButtonItem *_doneButton;
+    
+    ScTextField *_nameField;
+    ScTextField *_emailField;
+    ScTextField *_mobilePhoneField;
+    ScTextField *_dateOfBirthField;
+    UIDatePicker *_dateOfBirthPicker;
+    NSString *_gender;
+    
+    UITextField *_currentField;
+    
+    NSMutableSet *_residencies;
+    NSArray *_sortedResidencies;
+}
 
 @property (weak, nonatomic) id<ScMemberViewControllerDelegate> delegate;
 

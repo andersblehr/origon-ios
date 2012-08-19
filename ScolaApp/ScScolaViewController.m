@@ -25,23 +25,7 @@
 #import "ScScola.h"
 
 
-@interface ScScolaViewController () {
-    ScTableViewCell *_scolaCell;
-    
-    UIBarButtonItem *_editButton;
-    UIBarButtonItem *_cancelButton;
-    UIBarButtonItem *_doneButton;
-    
-    ScTextField *_addressLine1Field;
-    ScTextField *_addressLine2Field;
-    ScTextField *_landlineField;
-}
-
-@end
-
-
 @implementation ScScolaViewController
-
 
 #pragma mark - Selector implementations
 
@@ -150,14 +134,14 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [ScTableViewCell heightForEntity:_scola editing:[ScMeta state].actionIsRegister];
+    return [ScTableViewCell heightForEntity:_scola];
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([ScMeta state].actionIsRegister) {
-        _scolaCell = [tableView cellForEntity:_scola editing:YES delegate:self];
+        _scolaCell = [tableView cellForEntity:_scola delegate:self];
         
         _addressLine1Field = [_scolaCell textFieldWithKey:kTextFieldKeyAddressLine1];
         _addressLine2Field = [_scolaCell textFieldWithKey:kTextFieldKeyAddressLine2];

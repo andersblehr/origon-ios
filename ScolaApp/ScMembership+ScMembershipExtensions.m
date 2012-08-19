@@ -10,8 +10,8 @@
 
 #import "ScMember.h"
 
-@implementation ScMembership (ScMembershipExtensions)
 
+@implementation ScMembership (ScMembershipExtensions)
 
 #pragma mark - Comparison
 

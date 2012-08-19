@@ -50,27 +50,6 @@ static NSInteger const kAlertButtonStartOver = 0;
 static NSInteger const kAlertTagWelcomeBack = 0;
 
 
-@interface ScAuthViewController () {
-    BOOL _isEditingAllowed;
-    BOOL _isUserListed;
-    BOOL _isModelUpToDate;
-    
-    ScTableViewCell *_authCell;
-    ScTextField *_emailField;
-    ScTextField *_passwordField;
-    ScTextField *_registrationCodeField;
-    
-    ScMember *_member;
-    ScScola *_household;
-    
-    NSDictionary *_authInfo;
-    UIActivityIndicatorView *_activityIndicator;
-    NSInteger _numberOfConfirmationAttempts;
-}
-
-@end
-
-
 @implementation ScAuthViewController
 
 #pragma mark - Auxiliary methods

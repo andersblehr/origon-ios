@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "Reachability.h"
+
 #import "ScServerConnectionDelegate.h"
 
 extern NSString * const kBundleId;
@@ -36,7 +38,17 @@ extern NSString * const kLanguageHungarian;
 
 @class ScState, ScCachedEntity;
 
-@interface ScMeta : NSObject <ScServerConnectionDelegate>
+@interface ScMeta : NSObject <ScServerConnectionDelegate> {
+@private
+    Reachability *_internetReachability;
+    
+    NSDate *_authTokenExpiryDate;
+    NSMutableArray *_appStateStack;
+    
+    NSMutableSet *_scheduledEntities;
+    NSMutableDictionary *_importedEntities;
+    NSMutableDictionary *_importedEntityRefs;
+}
 
 @property (strong, nonatomic, readonly) ScState *state;
 

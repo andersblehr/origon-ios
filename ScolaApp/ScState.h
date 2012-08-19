@@ -47,6 +47,7 @@ typedef enum {
 @property (nonatomic, readonly) BOOL actionIsRegister;
 @property (nonatomic, readonly) BOOL actionIsDisplay;
 @property (nonatomic, readonly) BOOL actionIsEdit;
+@property (nonatomic, readonly) BOOL actionIsInputAction;
 
 @property (nonatomic, readonly) BOOL targetIsUser;
 @property (nonatomic, readonly) BOOL targetIsHousehold;
@@ -59,8 +60,8 @@ typedef enum {
 @property (nonatomic, readonly) BOOL aspectIsScola;
 
 - (ScState *)copy;
-- (void)setToState:(ScState *)state;
+- (void)setState:(ScState *)state;
 
-- (NSString *)toString;
+- (NSString *)asString;
 
 @end

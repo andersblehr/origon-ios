@@ -8,8 +8,6 @@
 
 #import "ScMeta.h"
 
-#import "Reachability.h"
-
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "NSString+ScStringExtensions.h"
 
@@ -61,16 +59,7 @@ static NSTimeInterval const kTimeIntervalTwoWeeks = 30;
 static ScMeta *m = nil;
 
 
-@interface ScMeta () {
-    Reachability *_internetReachability;
-    
-    NSDate *_authTokenExpiryDate;
-    NSMutableArray *_appStateStack;
-    
-    NSMutableSet *_scheduledEntities;
-    NSMutableDictionary *_importedEntities;
-    NSMutableDictionary *_importedEntityRefs;
-}
+@interface ScMeta ()
 
 @property (strong, nonatomic) NSString *authToken;
 

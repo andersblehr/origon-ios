@@ -20,23 +20,7 @@ static CGFloat const kHeadingLabelFontSize = 13.f;
 static CGFloat const kCaptionLabelFontSize = 11.f;
 
 
-@interface ScIconSection () {
-    UIView *_headingView;
-    UILabel *_headingLabel;
-    NSString *_headingLabelText;
-    
-    CGFloat _sectionOriginY;
-    CGFloat _headerHeight;
-    CGFloat _headingHeight;
-    CGFloat _iconGridLineHeight;
-    
-    CGFloat _minimumHeight;
-    CGFloat _fullHeight;
-    CGFloat _actualHeight;
-    
-    int _numberOfIcons;
-    int _numberOfGridLines;
-}
+@interface ScIconSection ()
 
 @property (nonatomic) NSInteger sectionNumber;
 @property (weak, nonatomic) UIViewController<ScIconSectionDelegate> *delegate;

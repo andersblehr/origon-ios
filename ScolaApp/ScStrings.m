@@ -63,6 +63,7 @@ NSString * const strSingleLetterAddressLabel          = @"strSingleLetterAddress
 NSString * const strSingleLetterLandlineLabel         = @"strSingleLetterLandlineLabel";
 NSString * const strSingleLetterWebsiteLabel          = @"strSingleLetterWebsiteLabel";
 NSString * const strAddressLabel                      = @"strAddressLabel";
+NSString * const strAddressesLabel                    = @"strAddressesLabel";
 NSString * const strLandlineLabel                     = @"strLandlineLabel";
 
 // Header & footer strings

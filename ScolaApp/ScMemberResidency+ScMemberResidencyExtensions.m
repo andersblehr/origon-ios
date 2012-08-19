@@ -42,4 +42,12 @@
     self.residence = self.scola;
 }
 
+
+#pragma mark - Comparison
+
+- (NSComparisonResult)compare:(ScMemberResidency *)other
+{
+    return [self.residence.addressLine1 compare:other.residence.addressLine1];
+}
+
 @end

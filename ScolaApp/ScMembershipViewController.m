@@ -39,28 +39,6 @@ static NSInteger const kAdultsSection = 1;
 static NSInteger const kMinorsSection = 2;
 
 
-@interface ScMembershipViewController () {
-    ScState *_localState;
-    
-    NSString *_longTitle;
-    UIBarButtonItem *_addButton;
-    
-    NSMutableSet *_adminIds;
-    NSMutableSet *_unsortedAdults;
-    NSMutableSet *_unsortedMinors;
-    NSArray *_adults;
-    NSArray *_minors;
-    
-    BOOL _isUserScolaAdmin;
-    BOOL _isViewModallyHidden;
-    BOOL _needsSynchronisation;
-    
-    ScMembership *_selectedMembership;
-}
-
-@end
-
-
 @implementation ScMembershipViewController
 
 #pragma mark - Selector implementations
@@ -110,8 +88,8 @@ static NSInteger const kMinorsSection = 2;
     self.navigationController.navigationBarHidden = NO;
     
     _adminIds = [[NSMutableSet alloc] init];
-    _unsortedAdults = [[NSMutableSet alloc] init];
-    _unsortedMinors = [[NSMutableSet alloc] init];
+    _adults = [[NSMutableSet alloc] init];
+    _minors = [[NSMutableSet alloc] init];
     
     for (ScMembership *membership in _scola.memberships) {
         if ([[membership isAdmin] boolValue]) {
@@ -123,14 +101,14 @@ static NSInteger const kMinorsSection = 2;
         }
              
         if ([membership.member isMinor]) {
-            [_unsortedMinors addObject:membership];
+            [_minors addObject:membership];
         } else {
-            [_unsortedAdults addObject:membership];
+            [_adults addObject:membership];
         }
     }
     
-    _adults = [[_unsortedAdults allObjects] sortedArrayUsingSelector:@selector(compare:)];
-    _minors = [[_unsortedMinors allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    _sortedAdults = [[_adults allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    _sortedMinors = [[_minors allObjects] sortedArrayUsingSelector:@selector(compare:)];
     
     if ([ScMeta state].aspectIsHome) {
         if ([_scola hasMultipleResidents]) {
@@ -158,7 +136,7 @@ static NSInteger const kMinorsSection = 2;
 {
     [super viewWillAppear:animated];
     
-    [[ScMeta state] setToState:_localState];
+    [[ScMeta state] setState:_localState];
     ScLogState;
     
     if ([ScMeta state].actionIsRegister) {
@@ -230,9 +208,9 @@ static NSInteger const kMinorsSection = 2;
     if (section == kAddressSection) {
         numberOfRows = 1;
     } else if (section == kAdultsSection) {
-        numberOfRows = [_adults count];
+        numberOfRows = [_sortedAdults count];
     } else if (section == kMinorsSection) {
-        numberOfRows = [_minors count];
+        numberOfRows = [_sortedMinors count];
     }
     
 	return numberOfRows;
@@ -244,9 +222,9 @@ static NSInteger const kMinorsSection = 2;
     CGFloat height;
     
     if (indexPath.section == kAddressSection) {
-        height = [ScTableViewCell heightForEntity:_scola editing:NO];
+        height = [ScTableViewCell heightForEntity:_scola];
     } else {
-        height = 1.1f * self.tableView.rowHeight;
+        height = [ScTableViewCell defaultHeight];
     }
     
     return height;
@@ -264,7 +242,7 @@ static NSInteger const kMinorsSection = 2;
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
     } else {
-        NSArray *memberships = (indexPath.section == kAdultsSection) ? _adults : _minors;
+        NSArray *memberships = (indexPath.section == kAdultsSection) ? _sortedAdults : _sortedMinors;
         ScMembership *membership = [memberships objectAtIndex:indexPath.row];
         
         cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
@@ -283,15 +261,15 @@ static NSInteger const kMinorsSection = 2;
         ScMembership *membershipToDelete = nil;
         
         if (indexPath.section == kAdultsSection) {
-            membershipToDelete = [_adults objectAtIndex:indexPath.row];
+            membershipToDelete = [_sortedAdults objectAtIndex:indexPath.row];
             
-            [_unsortedAdults removeObject:membershipToDelete];
-            _adults = [[_unsortedAdults allObjects] sortedArrayUsingSelector:@selector(compare:)];
+            [_adults removeObject:membershipToDelete];
+            _sortedAdults = [[_adults allObjects] sortedArrayUsingSelector:@selector(compare:)];
         } else if (indexPath.section == kMinorsSection) {
-            membershipToDelete = [_minors objectAtIndex:indexPath.row];
+            membershipToDelete = [_sortedMinors objectAtIndex:indexPath.row];
             
-            [_unsortedMinors removeObject:membershipToDelete];
-            _minors = [[_unsortedMinors allObjects] sortedArrayUsingSelector:@selector(compare:)];
+            [_minors removeObject:membershipToDelete];
+            _sortedMinors = [[_minors allObjects] sortedArrayUsingSelector:@selector(compare:)];
         }
         
         [[ScMeta m].managedObjectContext deleteEntity:membershipToDelete];
@@ -310,7 +288,7 @@ static NSInteger const kMinorsSection = 2;
     
     if (section == kAdultsSection) {
         height = [tableView standardHeaderHeight];
-    } else if ((section == kMinorsSection) && (![_minors count])) {
+    } else if ((section == kMinorsSection) && (![_sortedMinors count])) {
         height = kMinimumSectionHeaderHeight;
     }
     
@@ -323,7 +301,7 @@ static NSInteger const kMinorsSection = 2;
     CGFloat height = kDefaultSectionFooterHeight;
 
     if (section == kAdultsSection) {
-        if ([_adults count] && [_minors count]) {
+        if ([_sortedAdults count] && [_sortedMinors count]) {
             height = kSectionSpacing;
         } else {
             height = kMinimumSectionFooterHeight;
@@ -363,9 +341,9 @@ static NSInteger const kMinorsSection = 2;
     NSInteger numberOfRowsInSection = 1;
     
     if (indexPath.section == kAdultsSection) {
-        numberOfRowsInSection = [_adults count];
+        numberOfRowsInSection = [_sortedAdults count];
     } else if (indexPath.section == kMinorsSection) {
-        numberOfRowsInSection = [_minors count];
+        numberOfRowsInSection = [_sortedMinors count];
     }
     
     BOOL isLastRowInSection = (indexPath.row == numberOfRowsInSection - 1);
@@ -384,9 +362,9 @@ static NSInteger const kMinorsSection = 2;
         [self performSegueWithIdentifier:kSegueToScolaView sender:self];
     } else {
         if (indexPath.section == kAdultsSection) {
-            _selectedMembership = [_adults objectAtIndex:indexPath.row];
+            _selectedMembership = [_sortedAdults objectAtIndex:indexPath.row];
         } else if (indexPath.section == kMinorsSection) {
-            _selectedMembership = [_minors objectAtIndex:indexPath.row];
+            _selectedMembership = [_sortedMinors objectAtIndex:indexPath.row];
         }
         
         [self performSegueWithIdentifier:kSegueToMemberView sender:self];
@@ -425,17 +403,17 @@ static NSInteger const kMinorsSection = 2;
     NSInteger row;
     
     if ([membership.member isMinor]) {
-        [_unsortedMinors addObject:membership];
-        _minors = [[_unsortedMinors allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        [_minors addObject:membership];
+        _sortedMinors = [[_minors allObjects] sortedArrayUsingSelector:@selector(compare:)];
         
         section = kMinorsSection;
-        row = [_minors indexOfObject:membership];
+        row = [_sortedMinors indexOfObject:membership];
     } else {
-        [_unsortedAdults addObject:membership];
-        _adults = [[_unsortedAdults allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        [_adults addObject:membership];
+        _sortedAdults = [[_adults allObjects] sortedArrayUsingSelector:@selector(compare:)];
         
         section = kAdultsSection;
-        row = [_adults indexOfObject:membership];
+        row = [_sortedAdults indexOfObject:membership];
     }
     
     [self.tableView insertCellForRow:row inSection:section];

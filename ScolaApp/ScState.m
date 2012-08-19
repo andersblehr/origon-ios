@@ -41,7 +41,7 @@
 }
 
 
-- (void)setToState:(ScState *)state
+- (void)setState:(ScState *)state
 {
     _action = state.action;
     _target = state.target;
@@ -51,7 +51,7 @@
 
 #pragma mark - Generate string representation
 
-- (NSString *)toString
+- (NSString *)asString
 {
     NSString *actionAsString = nil;
     NSString *targetAsString = nil;
@@ -101,7 +101,7 @@
 }
 
 
-#pragma mark - State action convenience getters
+#pragma mark - State action properties
 
 - (BOOL)actionIsStartup
 {
@@ -139,7 +139,13 @@
 }
 
 
-#pragma mark - State target convenience getters
+- (BOOL)actionIsInputAction
+{
+    return (self.actionIsLogin || self.actionIsConfirm || self.actionIsRegister || self.actionIsEdit);
+}
+
+
+#pragma mark - State target properties
 
 - (BOOL)targetIsUser
 {
@@ -171,7 +177,7 @@
 }
 
 
-#pragma mark - State aspect convenience getters
+#pragma mark - State aspect properties
 
 - (BOOL)aspectIsHome
 {

@@ -11,8 +11,20 @@
 #import "ScModalViewControllerDelegate.h"
 
 @class ScScola;
+@class ScTableViewCell, ScTextField;
 
-@interface ScScolaViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
+@interface ScScolaViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate> {
+@private
+    ScTableViewCell *_scolaCell;
+    
+    UIBarButtonItem *_editButton;
+    UIBarButtonItem *_cancelButton;
+    UIBarButtonItem *_doneButton;
+    
+    ScTextField *_addressLine1Field;
+    ScTextField *_addressLine2Field;
+    ScTextField *_landlineField;
+}
 
 @property (weak, nonatomic) id<ScModalViewControllerDelegate> delegate;
 @property (weak, nonatomic) ScScola *scola;

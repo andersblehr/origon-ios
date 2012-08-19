@@ -22,19 +22,30 @@ extern CGFloat const kKeyboardHeight;
 @class ScCachedEntity;
 @class ScTextField;
 
-@interface ScTableViewCell : UITableViewCell
+@interface ScTableViewCell : UITableViewCell {
+@private
+    CGFloat _contentOffset;
+    CGFloat _contentMargin;
+    CGFloat _verticalOffset;
+    
+    NSMutableSet *_labels;
+    NSMutableDictionary *_textFields;
+    
+    id<UITextFieldDelegate> _textFieldDelegate;
+}
 
 @property (nonatomic) BOOL selectable;
 @property (strong, readonly) UIButton *imageButton;
 
++ (CGFloat)defaultHeight;
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
-+ (CGFloat)heightForEntity:(ScCachedEntity *)entity editing:(BOOL)editing;
 + (CGFloat)heightForEntityClass:(Class)entityClass;
++ (CGFloat)heightForEntity:(ScCachedEntity *)entity;
 
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 - (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity;
-- (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity editing:(BOOL)editing delegate:(id)delegate;
+- (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity delegate:(id)delegate;
 - (ScTableViewCell *)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
 
 - (ScTextField *)textFieldWithKey:(NSString *)key;

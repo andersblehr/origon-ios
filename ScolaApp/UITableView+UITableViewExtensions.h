@@ -22,7 +22,7 @@ extern CGFloat const kSectionSpacing;
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 - (id)cellForEntity:(ScCachedEntity *)entity;
-- (id)cellForEntity:(ScCachedEntity *)entity editing:(BOOL)editing delegate:(id)delegate;
+- (id)cellForEntity:(ScCachedEntity *)entity delegate:(id)delegate;
 - (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate;
 
 - (void)addLogoBanner;

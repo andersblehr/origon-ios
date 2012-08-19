@@ -57,6 +57,7 @@ extern NSString * const strSingleLetterAddressLabel;
 extern NSString * const strSingleLetterLandlineLabel;
 extern NSString * const strSingleLetterWebsiteLabel;
 extern NSString * const strAddressLabel;
+extern NSString * const strAddressesLabel;
 extern NSString * const strLandlineLabel;
 
 // Header & footer strings

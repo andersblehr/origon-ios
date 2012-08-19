@@ -12,6 +12,8 @@
 #import "UIFont+ScFontExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
+#import "ScMeta.h"
+#import "ScState.h"
 #import "ScTableViewCell.h"
 
 NSString * const kTextFieldKeyAuthEmail = @"authEmail";
@@ -36,27 +38,19 @@ static CGFloat const kTextInset = 4.f;
 static CGFloat const kLineSpacing = 5.f;
 
 
-@interface ScTextField () {
-    BOOL _isTitle;
-    BOOL _isEditing;
-}
-
-@end
-
-
 @implementation ScTextField
 
 #pragma mark - Auxiliary methods
 
-- (id)initAtOrigin:(CGPoint)origin font:(UIFont *)font width:(CGFloat)width title:(BOOL)title editing:(BOOL)editing
+- (id)initAtOrigin:(CGPoint)origin font:(UIFont *)font width:(CGFloat)width title:(BOOL)title
 {
+    BOOL editing = [ScMeta state].actionIsInputAction;
     CGFloat lineHeight = editing ? font.lineHeightWhenEditing : font.lineHeight;
     
     self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, lineHeight)];
     
     if (self) {
         _isTitle = title;
-        _isEditing = editing;
         
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -68,7 +62,7 @@ static CGFloat const kLineSpacing = 5.f;
         self.returnKeyType = UIReturnKeyNext;
         self.textAlignment = UITextAlignmentLeft;
         
-        if (_isTitle && !_isEditing) {
+        if (_isTitle && !editing) {
             self.textColor = [UIColor titleTextColor];
         } else {
             self.textColor = [UIColor detailTextColor];
@@ -83,23 +77,23 @@ static CGFloat const kLineSpacing = 5.f;
 
 - (id)initWithFrame:(CGRect)frame
 {
-    return [self initForDetailAtOrigin:CGPointMake(frame.origin.x, frame.origin.y) width:frame.size.width editing:NO];
+    return [self initForDetailAtOrigin:CGPointMake(frame.origin.x, frame.origin.y) width:frame.size.width];
 }
 
 
-- (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing
+- (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width
 {
-    UIFont *font = editing ? [UIFont editableTitleFont] : [UIFont titleFont];
+    UIFont *font = [ScMeta state].actionIsInputAction ? [UIFont editableTitleFont] : [UIFont titleFont];
     
-    return [self initAtOrigin:origin font:font width:width title:YES editing:editing];
+    return [self initAtOrigin:origin font:font width:width title:YES];
 }
 
 
-- (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing
+- (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width
 {
-    UIFont *font = editing ? [UIFont editableDetailFont] : [UIFont detailFont];
+    UIFont *font = [ScMeta state].actionIsInputAction ? [UIFont editableDetailFont] : [UIFont detailFont];
     
-    return [self initAtOrigin:origin font:font width:width title:NO editing:editing];
+    return [self initAtOrigin:origin font:font width:width title:NO];
 }
 
 
@@ -107,7 +101,7 @@ static CGFloat const kLineSpacing = 5.f;
 
 - (CGFloat)lineHeight
 {
-    return (_isEditing ? self.font.lineHeightWhenEditing : self.font.lineHeight);
+    return ([ScMeta state].actionIsInputAction ? self.font.lineHeightWhenEditing : self.font.lineHeight);
 }
 
 
@@ -133,7 +127,7 @@ static CGFloat const kLineSpacing = 5.f;
 
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
-    return (self.enabled || _isEditing) ? CGRectInset(bounds, kTextInset, 0.f) : bounds;
+    return (self.enabled || [ScMeta state].actionIsInputAction) ? CGRectInset(bounds, kTextInset, 0.f) : bounds;
 }
 
 

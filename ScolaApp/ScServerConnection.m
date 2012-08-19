@@ -17,7 +17,6 @@
 #import "ScAlert.h"
 #import "ScLogging.h"
 #import "ScMeta.h"
-#import "ScServerConnectionDelegate.h"
 #import "ScState.h"
 #import "ScStrings.h"
 
@@ -74,23 +73,6 @@ static NSString * const kRESTRouteModelMember = @"member";
 static NSString * const kURLParameterDeviceId = @"duid";
 static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
-
-
-@interface ScServerConnection () {
-    id<ScServerConnectionDelegate> _delegate;
-    
-    NSString *_RESTHandler;
-    NSString *_RESTRoute;
-    
-    NSMutableURLRequest *_URLRequest;
-    NSMutableDictionary *_URLParameters;
-    NSHTTPURLResponse *_HTTPResponse;
-	NSMutableData *_responseData;
-    
-    BOOL _isRequestValid;
-}
-
-@end
 
 
 @implementation ScServerConnection

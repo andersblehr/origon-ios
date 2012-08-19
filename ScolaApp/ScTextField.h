@@ -27,17 +27,18 @@ extern NSString * const kTextFieldKeyLandline;
 extern NSString * const kTextFieldKeyScolaWebsite;
 
 
-@interface ScTextField : UITextField
+@interface ScTextField : UITextField {
+@private
+    BOOL _isTitle;
+}
 
 @property (strong, nonatomic) NSString *key;
 
 - (id)initWithFrame:(CGRect)frame;
-- (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing;
-- (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width editing:(BOOL)editing;
+- (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width;
+- (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width;
 
 - (CGFloat)lineHeight;
 - (CGFloat)lineSpacingBelow;
-
-
 
 @end

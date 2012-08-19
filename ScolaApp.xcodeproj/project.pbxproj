@@ -433,15 +433,6 @@
 			name = "Model Categories";
 			sourceTree = "<group>";
 		};
-		5CB49DCC14881D16006EA2F8 /* Reachability */ = {
-			isa = PBXGroup;
-			children = (
-				5CCF08FC1465D5D800D41AB0 /* Reachability.h */,
-				5CCF08FD1465D5D900D41AB0 /* Reachability.m */,
-			);
-			name = Reachability;
-			sourceTree = "<group>";
-		};
 		5CB49DCD14881E98006EA2F8 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
@@ -503,7 +494,8 @@
 		5CB49DD114882012006EA2F8 /* Third Party */ = {
 			isa = PBXGroup;
 			children = (
-				5CB49DCC14881D16006EA2F8 /* Reachability */,
+				5CCF08FC1465D5D800D41AB0 /* Reachability.h */,
+				5CCF08FD1465D5D900D41AB0 /* Reachability.m */,
 			);
 			name = "Third Party";
 			sourceTree = "<group>";
@@ -556,8 +548,8 @@
 				5C5ED5CB14F2E95B006BBDFB /* Model Categories */,
 				5CB49DCD14881E98006EA2F8 /* Protocols */,
 				5CB49DCE14881EC6006EA2F8 /* View Controllers */,
-				5CBB63BF146080DF00A9133A /* Supporting Files */,
 				5CB49DD114882012006EA2F8 /* Third Party */,
+				5CBB63BF146080DF00A9133A /* Supporting Files */,
 			);
 			path = ScolaApp;
 			sourceTree = "<group>";

@@ -11,6 +11,25 @@
 #import "ScMemberViewControllerDelegate.h"
 #import "ScServerConnectionDelegate.h"
 
-@interface ScAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, ScServerConnectionDelegate, ScMemberViewControllerDelegate>
+@class ScTableViewCell, ScTextField;
+
+@interface ScAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, ScServerConnectionDelegate, ScMemberViewControllerDelegate> {
+@private
+    BOOL _isEditingAllowed;
+    BOOL _isUserListed;
+    BOOL _isModelUpToDate;
+    
+    ScTableViewCell *_authCell;
+    ScTextField *_emailField;
+    ScTextField *_passwordField;
+    ScTextField *_registrationCodeField;
+    
+    ScMember *_member;
+    ScScola *_household;
+    
+    NSDictionary *_authInfo;
+    UIActivityIndicatorView *_activityIndicator;
+    NSInteger _numberOfConfirmationAttempts;
+}
 
 @end

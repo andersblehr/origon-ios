@@ -38,36 +38,17 @@
 #import "ScMemberResidency+ScMemberResidencyExtensions.h"
 #import "ScScola+ScScolaExtensions.h"
 
-static NSString * const kSegueToMembershipView = @"memberToMembershipView";
+static NSInteger const kMemberSection = 0;
+static NSInteger const kAddressSection = 1;
+static NSInteger const kNumberOfInputSections = 1;
+static NSInteger const kNumberOfDisplaySections = 2;
+static NSInteger const kNumberOfMemberRows = 1;
 
 static NSInteger const kActionSheetButtonFemale = 0;
 static NSInteger const kActionSheetButtonMale = 1;
 static NSInteger const kActionSheetButtonCancel = 2;
 
-
-@interface ScMemberViewController () {
-    ScTableViewCell *_memberCell;
-    ScMember *_member;
-    
-    ScMember *_candidate;
-    ScScola *_candidateHousehold;
-    ScMemberResidency *_candidateResidency;
-    
-    UIBarButtonItem *_editButton;
-    UIBarButtonItem *_cancelButton;
-    UIBarButtonItem *_doneButton;
-    
-    ScTextField *_nameField;
-    ScTextField *_emailField;
-    ScTextField *_mobilePhoneField;
-    ScTextField *_dateOfBirthField;
-    UIDatePicker *_dateOfBirthPicker;
-    NSString *_gender;
-    
-    UITextField *_currentField;
-}
-
-@end
+static NSString * const kSegueToMembershipView = @"memberToMembershipView";
 
 
 @implementation ScMemberViewController
@@ -280,6 +261,14 @@ static NSInteger const kActionSheetButtonCancel = 2;
     } else if ([ScMeta state].actionIsDisplay) {
         self.navigationItem.rightBarButtonItem = _editButton;
         self.title = [_member about];
+        
+        _residencies = [[NSMutableSet alloc] init];
+        
+        for (ScMemberResidency *residency in _member.residencies) {
+            [_residencies addObject:residency];
+        }
+        
+        _sortedResidencies = [[_residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
     }
 }
 
@@ -308,13 +297,21 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return ([ScMeta state].actionIsDisplay ? kNumberOfDisplaySections : kNumberOfInputSections);
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1;
+    NSInteger numberOfRows = 0;
+    
+    if (section == kMemberSection) {
+        numberOfRows = kNumberOfMemberRows;
+    } else if (section == kAddressSection) {
+        numberOfRows = [_member.residencies count];
+    }
+    
+    return numberOfRows;
 }
 
 
@@ -322,10 +319,14 @@ static NSInteger const kActionSheetButtonCancel = 2;
 {
     CGFloat height = 0.f;
     
-    if ([ScMeta state].actionIsRegister) {
-        height = [ScTableViewCell heightForEntityClass:ScMember.class];
-    } else {
-        height = [ScTableViewCell heightForEntity:_member editing:[ScMeta state].actionIsEdit];
+    if (indexPath.section == kMemberSection) {
+        if ([ScMeta state].actionIsRegister) {
+            height = [ScTableViewCell heightForEntityClass:ScMember.class];
+        } else {
+            height = [ScTableViewCell heightForEntity:_member];
+        }
+    } else if (indexPath.section == kAddressSection) {
+        height = [ScTableViewCell defaultHeight];
     }
     
     return height;
@@ -334,40 +335,91 @@ static NSInteger const kActionSheetButtonCancel = 2;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([ScMeta state].actionIsDisplay) {
-        _memberCell = [tableView cellForEntity:_member];
-    } else if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsUser) {
-        _memberCell = [tableView cellForEntity:_member editing:YES delegate:self];
-    } else if ([ScMeta state].actionIsRegister) {
-        _memberCell = [tableView cellForEntityClass:ScMember.class delegate:self];
-    }
+    UITableViewCell *cell = nil;
     
-    if (_memberCell.editing) {
-        _nameField = [_memberCell textFieldWithKey:kTextFieldKeyName];
-        _emailField = [_memberCell textFieldWithKey:kTextFieldKeyEmail];
-        _mobilePhoneField = [_memberCell textFieldWithKey:kTextFieldKeyMobilePhone];
-        _dateOfBirthField = [_memberCell textFieldWithKey:kTextFieldKeyDateOfBirth];
-        _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
-        
-        if (_member.dateOfBirth) {
-            _dateOfBirthPicker.date = _member.dateOfBirth;
-            _gender = _member.gender;
+    if (indexPath.section == kMemberSection) {
+        if ([ScMeta state].actionIsDisplay) {
+            _memberCell = [tableView cellForEntity:_member];
+        } else if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsUser) {
+            _memberCell = [tableView cellForEntity:_member delegate:self];
+        } else if ([ScMeta state].actionIsRegister) {
+            _memberCell = [tableView cellForEntityClass:ScMember.class delegate:self];
         }
         
-        [_nameField becomeFirstResponder];
+        if (_memberCell.editing) {
+            _nameField = [_memberCell textFieldWithKey:kTextFieldKeyName];
+            _emailField = [_memberCell textFieldWithKey:kTextFieldKeyEmail];
+            _mobilePhoneField = [_memberCell textFieldWithKey:kTextFieldKeyMobilePhone];
+            _dateOfBirthField = [_memberCell textFieldWithKey:kTextFieldKeyDateOfBirth];
+            _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
+            
+            if (_member.dateOfBirth) {
+                _dateOfBirthPicker.date = _member.dateOfBirth;
+                _gender = _member.gender;
+            }
+            
+            [_nameField becomeFirstResponder];
+        }
+        
+        cell = _memberCell;
+    } else if (indexPath.section == kAddressSection) {
+        ScMemberResidency *residency = [_sortedResidencies objectAtIndex:indexPath.row];
+        
+        cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
+        cell.textLabel.text = residency.residence.addressLine1;
+        cell.detailTextLabel.text = residency.residence.landline;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     
-    return _memberCell;
+    return cell;
 }
 
 
 #pragma mark - UITableViewDelegate methods
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    CGFloat height = kDefaultSectionHeaderHeight;
+    
+    if (section == kAddressSection) {
+        height = [tableView standardHeaderHeight];
+    }
+    
+    return height;
+}
+
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *headerView = nil;
+    
+    if (section == kAddressSection) {
+        if ([_member.residencies count] == 1) {
+            headerView = [tableView headerViewWithTitle:[ScStrings stringForKey:strAddressLabel]];
+        } else {
+            headerView = [tableView headerViewWithTitle:[ScStrings stringForKey:strAddressesLabel]];
+        }
+    }
+    
+    return headerView;
+}
+
+
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [cell.backgroundView addShadowForBottomTableViewCell];
-    
-    [_nameField becomeFirstResponder];
+    if (indexPath.section == kMemberSection) {
+        [cell.backgroundView addShadowForBottomTableViewCell];
+        
+        if ([ScMeta state].actionIsInputAction) {
+            [_nameField becomeFirstResponder];
+        }
+    } else {
+        if (indexPath.row == [_residencies count] - 1) {
+            [cell.backgroundView addShadowForBottomTableViewCell];
+        } else {
+            [cell.backgroundView addShadowForNonBottomTableViewCell];
+        }
+    }
 }
 
 

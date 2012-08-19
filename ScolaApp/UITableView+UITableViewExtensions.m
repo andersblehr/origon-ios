@@ -69,16 +69,16 @@ static NSString * const kLogoText = @"..scola..";
 
 - (id)cellForEntity:(ScCachedEntity *)entity
 {
-    return [self cellForEntity:entity editing:NO delegate:nil];
+    return [self cellForEntity:entity delegate:nil];
 }
 
 
-- (id)cellForEntity:(ScCachedEntity *)entity editing:(BOOL)editing delegate:(id)delegate
+- (id)cellForEntity:(ScCachedEntity *)entity delegate:(id)delegate
 {
     ScTableViewCell *cell = [self dequeueReusableCellWithIdentifier:entity.entityId];
     
     if (!cell) {
-        cell = [[ScTableViewCell alloc] initWithEntity:entity editing:editing delegate:delegate];
+        cell = [[ScTableViewCell alloc] initWithEntity:entity delegate:delegate];
     }
     
     return cell;
@@ -109,13 +109,13 @@ static NSString * const kLogoText = @"..scola..";
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *logoLabel = [[UILabel alloc] initWithFrame:logoFrame];
     
-    logoLabel.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
     logoLabel.backgroundColor = [UIColor clearColor];
-    logoLabel.textColor = [UIColor headerTextColor];
-    logoLabel.textAlignment = UITextAlignmentCenter;
+    logoLabel.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
     logoLabel.shadowColor = [UIColor darkTextColor];
     logoLabel.shadowOffset = CGSizeMake(0.f, kLogoFontShadowOffset);
     logoLabel.text = kLogoText;
+    logoLabel.textAlignment = UITextAlignmentCenter;
+    logoLabel.textColor = [UIColor headerTextColor];
     
     [containerView addSubview:logoLabel];
     
