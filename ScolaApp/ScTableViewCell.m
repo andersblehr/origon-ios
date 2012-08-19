@@ -29,24 +29,24 @@
 #import "ScMember+ScMemberExtensions.h"
 #import "ScScola+ScScolaExtensions.h"
 
-NSString * const kReuseIdentifierDefault = @"ruiDefault";
-NSString * const kReuseIdentifierUserLogin = @"ruiUserLogin";
-NSString * const kReuseIdentifierUserConfirmation = @"ruiUserConfirmation";
+NSString * const kReuseIdentifierDefault = @"idDefault";
+NSString * const kReuseIdentifierUserLogin = @"idUserLogin";
+NSString * const kReuseIdentifierUserConfirmation = @"idUserConfirmation";
 
 CGFloat const kScreenWidth = 320.f;
 CGFloat const kCellWidth = 300.f;
 CGFloat const kContentWidth = 280.f;
-CGFloat const kDefaultCellHeight = 48.4f;
-CGFloat const kDefaultContentMargin = 10.f;
 CGFloat const kKeyboardHeight = 216.f;
 
+static CGFloat const kVerticalPadding = 11.f;
+static CGFloat const kHorizontalPadding = 10.f;
+static CGFloat const kDefaultCellHeight = 47.f;
 static CGFloat const kDefaultContentOffset = 0.f;
-static CGFloat const kInitialVerticalMargin = 11.f;
 static CGFloat const kPhotoSideLength = 63.f;
 
 static CGFloat const kLabelWidth = 63.f;
-static CGFloat const kLabelToDetailAlignmentPadding = 3.f;
-static CGFloat const kLabelDetailSpacing = 5.f;
+static CGFloat const kLabelToDetailAlignmentPadding = 2.f;
+static CGFloat const kLabelDetailSpacing = 7.f;
 static CGFloat const kLineSpacing = 5.f;
 
 static CGFloat const kAuthFieldWidthFraction = 0.7f;
@@ -73,7 +73,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 - (ScTextField *)authFieldForKey:(NSString *)key
 {
-    CGFloat contentWidth = kCellWidth - kDefaultContentMargin - _contentMargin;
+    CGFloat contentWidth = kCellWidth - kHorizontalPadding - _contentMargin;
     CGFloat textFieldWidth = kAuthFieldWidthFraction * contentWidth;
     
     ScTextField *textField = [[ScTextField alloc] initForDetailAtOrigin:CGPointMake(_contentMargin + (contentWidth - textFieldWidth) / 2.f, _verticalOffset) width:textFieldWidth];
@@ -125,15 +125,15 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier
 {
-    CGFloat height = 0.f;
+    CGFloat height = [ScTableViewCell defaultHeight];
     
     if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin] ||
         [reuseIdentifier isEqualToString:kReuseIdentifierUserConfirmation]) {
-        height += kInitialVerticalMargin;
+        height = kVerticalPadding;
         height += [UIFont labelFont].lineHeight;
         height += 2.f * kLineSpacing;
         height += 2.f * [UIFont editableDetailFont].lineHeightWhenEditing;
-        height += 1.5f * kInitialVerticalMargin;
+        height += 1.5f * kVerticalPadding;
     }
     
     return height;
@@ -142,20 +142,27 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 + (CGFloat)heightForEntityClass:(Class)entityClass
 {
-    CGFloat height = 0.f;
+    CGFloat height = [ScTableViewCell defaultHeight];
     
     if (entityClass == ScMember.class) {
-        height += kInitialVerticalMargin;
-        height += [UIFont editableTitleFont].lineHeightWhenEditing;
-        height += 2 * kLineSpacing;
-        height += 3 * [UIFont editableDetailFont].lineHeightWhenEditing;
-        height += 2 * kLineSpacing;
-        height += kInitialVerticalMargin;
+        height = 2 * kVerticalPadding + 2 * kLineSpacing;
+        
+        if ([ScMeta state].actionIsInputAction) {
+            height += [UIFont editableTitleFont].lineHeightWhenEditing;
+            height += 3 * [UIFont editableDetailFont].lineHeightWhenEditing;
+            height += 2 * kLineSpacing;
+        } else {
+            height += [UIFont titleFont].lineHeight;
+            height += kPhotoSideLength;
+        }
     } else if (entityClass == ScScola.class) {
-        height += kInitialVerticalMargin;
-        height += 3 * [UIFont editableDetailFont].lineHeightWhenEditing;
-        height += 2 * kLineSpacing;
-        height += kInitialVerticalMargin;
+        height = 2 * kVerticalPadding + 2 * kLineSpacing;
+        
+        if ([ScMeta state].actionIsInputAction) {
+            height += 3 * [UIFont editableDetailFont].lineHeightWhenEditing;
+        } else {
+            height += 3 * [UIFont detailFont].lineHeight;
+        }
     }
     
     return height;
@@ -164,28 +171,19 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 + (CGFloat)heightForEntity:(ScCachedEntity *)entity
 {
-    CGFloat height = 0.f;
+    CGFloat height = [ScTableViewCell heightForEntityClass:entity.class];
     
-    if ([entity isKindOfClass:ScMember.class]) {
-        height = [ScTableViewCell heightForEntityClass:ScMember.class];
+    if ([entity isKindOfClass:ScScola.class]) {
+        ScScola *scola = (ScScola *)entity;
         
-        if (![ScMeta state].actionIsInputAction) {
-            CGFloat titleHeight = [UIFont titleFont].lineHeight;
-            CGFloat editingTitleHeight = [UIFont editableTitleFont].lineHeightWhenEditing;
-            CGFloat detailHeight = [UIFont detailFont].lineHeight;
-            CGFloat editingDetailHeight = [UIFont editableDetailFont].lineHeightWhenEditing;
+        if (![scola hasLandline]) {
+            if ([ScMeta state].actionIsInputAction) {
+                height -= [UIFont editableDetailFont].lineHeightWhenEditing;
+            } else {
+                height -= [UIFont detailFont].lineHeight;
+            }
             
-            height -= (editingTitleHeight - titleHeight);
-            height -= 3 * (editingDetailHeight - detailHeight);
-        }
-    } else if ([entity isKindOfClass:ScScola.class]) {
-        height = [ScTableViewCell heightForEntityClass:ScScola.class];
-        
-        if (![ScMeta state].actionIsInputAction) {
-            CGFloat detailHeight = [UIFont detailFont].lineHeight;
-            CGFloat editingDetailHeight = [UIFont editableDetailFont].lineHeightWhenEditing;
-            
-            height -= 3 * (editingDetailHeight - detailHeight);
+            height -= kLineSpacing;
         }
     }
     
@@ -223,7 +221,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 {
     UIFont *labelFont = [UIFont labelFont];
     
-    CGFloat contentWidth = kCellWidth - kDefaultContentMargin - _contentMargin;
+    CGFloat contentWidth = kCellWidth - kHorizontalPadding - _contentMargin;
     CGFloat labelWidth = (widthFraction > 0.f) ? widthFraction * contentWidth : kLabelWidth;
     CGFloat detailAlignmentPadding = centred ? 0.f : kLabelToDetailAlignmentPadding;
     
@@ -251,7 +249,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 {
     CGFloat titleHeight = self.editing ? [UIFont editableTitleFont].lineHeightWhenEditing : [UIFont titleFont].lineHeight;
     
-    UIView *titleBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(-1.f, -1.f, kCellWidth + 2, kInitialVerticalMargin + titleHeight + kLineSpacing)];
+    UIView *titleBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(-1.f, -1.f, kCellWidth + 2, kVerticalPadding + titleHeight + kLineSpacing)];
     titleBackgroundView.backgroundColor = [UIColor ashGrayColor];
     
     [self.contentView addSubview:titleBackgroundView];
@@ -294,7 +292,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 {
     ScTextField *textField = nil;
     
-    CGFloat contentWidth = kCellWidth - _contentOffset - _contentMargin - kDefaultContentMargin;
+    CGFloat contentWidth = kCellWidth - _contentOffset - _contentMargin - kHorizontalPadding;
     CGFloat textFieldWidth = widthFraction * contentWidth;
     
     if (text || self.editing) {
@@ -351,7 +349,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         
         if (widthFraction == 1.f) {
             _verticalOffset += [textField lineHeight] + [textField lineSpacingBelow];
-            _contentMargin = kDefaultContentMargin;
+            _contentMargin = kHorizontalPadding;
         } else {
             _contentMargin += textFieldWidth;
         }
@@ -386,7 +384,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     [self.contentView addSubview:_imageButton];
     
     _contentOffset += kPhotoSideLength;
-    _contentMargin = kDefaultContentMargin;
+    _contentMargin = kHorizontalPadding;
 }
 
 
@@ -396,10 +394,17 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 {
     [self addTitleFieldWithText:member.name key:kTextFieldKeyName];
     [self addPhotoFrame:[UIImage imageWithData:member.photo]];
-    [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterEmailLabel]];
-    [self addTextFieldWithText:member.entityId key:kTextFieldKeyEmail];
-    [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterMobilePhoneLabel]];
-    [self addTextFieldWithText:member.mobilePhone key:kTextFieldKeyMobilePhone];
+    
+    if ([member hasEmailAddress]) {
+        [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterEmailLabel]];
+        [self addTextFieldWithText:member.entityId key:kTextFieldKeyEmail];
+    }
+    
+    if ([member hasMobilPhone]) {
+        [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterMobilePhoneLabel]];
+        [self addTextFieldWithText:member.mobilePhone key:kTextFieldKeyMobilePhone];
+    }
+    
     [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterDateOfBirthLabel]];
     [self addTextFieldWithText:[member.dateOfBirth localisedDateString] key:kTextFieldKeyDateOfBirth];
     
@@ -432,48 +437,36 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 #pragma mark - Initialisation
 
-- (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier
+- (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
     self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     
     if (self) {
         _contentOffset = kDefaultContentOffset;
-        _contentMargin = kDefaultContentMargin;
-        _verticalOffset = kInitialVerticalMargin;
+        _contentMargin = kHorizontalPadding;
+        _verticalOffset = kVerticalPadding;
         
         _labels = [[NSMutableSet alloc] init];
         _textFields = [[NSMutableDictionary alloc] init];
+        _textFieldDelegate = delegate;
         
         self.backgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
         self.backgroundView.backgroundColor = [UIColor cellBackgroundColor];
         self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColor];
+        self.detailTextLabel.font = [UIFont detailFont];
         self.selectedBackgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
         self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColor];
         self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
+        self.textLabel.font = [UIFont titleFont];
         
         self.selectable = YES;
-    }
-    
-    return self;
-}
-
-
-- (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
-{
-    self = [self initWithReuseIdentifier:reuseIdentifier];
-    
-    if (self) {
         self.editing = [ScMeta state].actionIsInputAction;
-        
-        _textFieldDelegate = delegate;
         
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin]) {
             [self addLabel:[ScStrings stringForKey:strSignInOrRegisterLabel] centred:YES];
             [self addTextFieldWithKey:kTextFieldKeyAuthEmail];
             [self addTextFieldWithKey:kTextFieldKeyPassword];
         } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserConfirmation]) {
-            self.editing = YES;
-            
             [self addLabel:[ScStrings stringForKey:strConfirmRegistrationLabel] centred:YES];
             [self addTextFieldWithKey:kTextFieldKeyRegistrationCode];
             [self addTextFieldWithKey:kTextFieldKeyRepeatPassword];

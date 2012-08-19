@@ -268,7 +268,7 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
             [_residencies addObject:residency];
         }
         
-        _sortedResidencies = [[_residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        _sortedResidencies = [[_residencies allObjects] sortedArrayUsingSelector:@selector(compareByAddress:)];
     }
 }
 
@@ -367,7 +367,7 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
         
         cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
         cell.textLabel.text = residency.residence.addressLine1;
-        cell.detailTextLabel.text = residency.residence.landline;
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"t %@", residency.residence.landline];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     

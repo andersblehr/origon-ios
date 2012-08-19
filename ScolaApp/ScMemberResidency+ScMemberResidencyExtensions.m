@@ -45,7 +45,7 @@
 
 #pragma mark - Comparison
 
-- (NSComparisonResult)compare:(ScMemberResidency *)other
+- (NSComparisonResult)compareByAddress:(ScMemberResidency *)other
 {
     return [self.residence.addressLine1 compare:other.residence.addressLine1];
 }

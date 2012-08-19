@@ -15,7 +15,6 @@ extern NSString * const kReuseIdentifierUserConfirmation;
 extern CGFloat const kScreenWidth;
 extern CGFloat const kCellWidth;
 extern CGFloat const kContentWidth;
-extern CGFloat const kContentMargin;
 extern CGFloat const kKeyboardHeight;
 
 
@@ -42,7 +41,6 @@ extern CGFloat const kKeyboardHeight;
 + (CGFloat)heightForEntityClass:(Class)entityClass;
 + (CGFloat)heightForEntity:(ScCachedEntity *)entity;
 
-- (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (ScTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 - (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity;
 - (ScTableViewCell *)initWithEntity:(ScCachedEntity *)entity delegate:(id)delegate;

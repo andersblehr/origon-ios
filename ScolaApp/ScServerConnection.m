@@ -43,11 +43,11 @@ NSInteger const kHTTPStatusCodeForbidden = 403;
 NSInteger const kHTTPStatusCodeNotFound = 404;
 NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
-static NSString * const kScolaDevServer = @"localhost:8888";
-//static NSString * const kScolaDevServer = @"enceladus.local:8888";
-//static NSString * const kScolaDevServer = @"ganymede.local:8888";
-static NSString * const kScolaProdServer = @"scolaapp.appspot.com";
-//static NSString * const kScolaProdServer = @"enceladus.local:8888";
+static NSString * const kGAEServer = @"scolaapp.appspot.com";
+//static NSString * const kScolaDevServer = @"localhost:8888";
+static NSString * const kScolaDevServer = @"enceladus.local:8888";
+//static NSString * const kScolaProdServer = @"scolaapp.appspot.com";
+static NSString * const kScolaProdServer = @"enceladus.local:8888";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";
 static NSString * const kHTTPHeaderAcceptCharset = @"Accept-Charset";
@@ -90,7 +90,7 @@ static NSString * const kURLParameterVersion = @"version";
     NSString *scolaServer = [self scolaServer];
     NSMutableString *protocol = [NSMutableString stringWithString:@"http"];
     
-    if ([scolaServer isEqualToString:kScolaProdServer] && [_RESTHandler isEqualToString:kRESTHandlerAuth]) {
+    if ([scolaServer isEqualToString:kGAEServer] && [_RESTHandler isEqualToString:kRESTHandlerAuth]) {
         [protocol appendString:@"s"];
     }
     
