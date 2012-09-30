@@ -14,16 +14,18 @@
 
 - (id)addMember:(ScMember *)member;
 - (id)addResident:(ScMember *)resident;
-- (NSString *)residencyIdForMember:(ScMember *)member;
-- (ScMemberResidency *)residencyForMember:(ScMember *)member;
+
+- (BOOL)isMemberRoot;
+- (BOOL)isResidence;
+
+- (BOOL)hasAddress;
+- (BOOL)hasLandline;
+- (BOOL)hasMemberWithId:(NSString *)memberId;
 
 - (NSString *)singleLineAddress;
 - (NSString *)multiLineAddress;
 - (NSInteger)numberOfLinesInAddress;
 
-- (BOOL)hasAddress;
-- (BOOL)hasLandline;
-- (BOOL)hasWebsite;
-- (BOOL)hasMultipleResidents;
+- (NSComparisonResult)compare:(ScScola *)other;
 
 @end

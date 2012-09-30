@@ -25,6 +25,7 @@
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 #import "ScMember+ScMemberExtensions.h"
+#import "ScMembership+ScMembershipExtensions.h"
 #import "ScScola+ScScolaExtensions.h"
 
 #import "ScMemberViewController.h"
@@ -35,26 +36,27 @@ static NSString * const kSegueToScolaView = @"membershipToScolaView";
 
 static NSInteger const kNumberOfSections = 3;
 static NSInteger const kAddressSection = 0;
-static NSInteger const kAdultsSection = 1;
-static NSInteger const kMinorsSection = 2;
+static NSInteger const kContactSection = 1;
+static NSInteger const kMemberSection = 2;
 
 
 @implementation ScMembershipViewController
 
 #pragma mark - Selector implementations
 
-- (void)addMembership
+- (void)addMember
 {
     ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
     memberViewController.delegate = self;
     memberViewController.scola = _scola;
     
-    [ScMeta state].action = ScStateActionRegister;
-    [ScMeta state].target = ScStateTargetMember;
+    [ScState s].action = ScStateActionRegister;
+    [ScState s].target = ScStateTargetMember;
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
+    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
+    modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     
-    [self.navigationController presentViewController:navigationController animated:YES completion:NULL];
+    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
     
     _isViewModallyHidden = YES;
 }
@@ -63,12 +65,12 @@ static NSInteger const kMinorsSection = 2;
 - (void)didFinishEditing
 {
     if (_needsSynchronisation) {
-        [[ScMeta m].managedObjectContext synchronise];
+        [[ScMeta m].context synchronise];
         
         _needsSynchronisation = NO;
     }
     
-    if ([ScMeta state].actionIsRegister) {
+    if ([ScState s].actionIsRegister) {
         [_delegate shouldDismissViewControllerWithIdentitifier:kMembershipViewControllerId];
     }
 }
@@ -80,44 +82,38 @@ static NSInteger const kMinorsSection = 2;
 {
     [super viewDidLoad];
     
-    _localState = [[ScMeta state] copy];
+    [[ScState s] saveCurrentStateForViewController:kMembershipViewControllerId];
     
     self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
-    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    _adminIds = [[NSMutableSet alloc] init];
-    _adults = [[NSMutableSet alloc] init];
-    _minors = [[NSMutableSet alloc] init];
+    _contacts = [[NSMutableSet alloc] init];
+    _members = [[NSMutableSet alloc] init];
     
     for (ScMembership *membership in _scola.memberships) {
-        if ([[membership isAdmin] boolValue]) {
-            [_adminIds addObject:membership.member.entityId];
-            
-            if ([membership.member.entityId isEqualToString:[ScMeta m].userId]) {
-                _isUserScolaAdmin = YES;
-            }
+        if ([membership.member isUser] && (membership.isAdmin == @YES)) {
+            _isUserScolaAdmin = YES;
         }
              
-        if ([membership.member isMinor]) {
-            [_minors addObject:membership];
+        if ([membership hasContactRole]) {
+            [_contacts addObject:membership];
         } else {
-            [_adults addObject:membership];
+            [_members addObject:membership];
         }
     }
     
-    _sortedAdults = [[_adults allObjects] sortedArrayUsingSelector:@selector(compare:)];
-    _sortedMinors = [[_minors allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    _sortedContacts = [[_contacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
     
-    if ([ScMeta state].aspectIsHome) {
-        if ([_scola hasMultipleResidents]) {
+    if ([_scola isResidence] && [ScState s].aspectIsSelf) {
+        if ([_scola.residencies count] > 1) {
             _longTitle = [ScStrings stringForKey:strMembershipViewTitleOurPlace];
         } else {
             _longTitle = [ScStrings stringForKey:strMembershipViewTitleMyPlace];
         }
         
-        if ([ScMeta state].actionIsRegister) {
+        if ([ScState s].actionIsRegister) {
             self.title = _longTitle;
         } else {
             self.title = [ScStrings stringForKey:strHousehold];
@@ -127,7 +123,7 @@ static NSInteger const kMinorsSection = 2;
     }
     
     if (_isUserScolaAdmin) {
-        _addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMembership)];
+        _addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMember)];
     }
 }
 
@@ -136,18 +132,16 @@ static NSInteger const kMinorsSection = 2;
 {
     [super viewWillAppear:animated];
     
-    [[ScMeta state] setState:_localState];
+    [[ScState s] revertToSavedStateForViewController:kMembershipViewControllerId];
     ScLogState;
     
-    if ([ScMeta state].actionIsRegister) {
+    if ([ScState s].actionIsRegister) {
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
         
         self.navigationItem.leftBarButtonItem = doneButton;
         self.navigationItem.rightBarButtonItem = _addButton;
     } else {
-        BOOL isForHousehold = ([ScMeta state].aspectIsHome || [ScMeta state].aspectIsHousehold);
-        
-        self.tabBarController.title = isForHousehold ? _longTitle : self.title;
+        self.tabBarController.title = [_scola isResidence] ? _longTitle : self.title;
         self.tabBarController.navigationItem.rightBarButtonItem = _addButton;
     }
 }
@@ -173,22 +167,22 @@ static NSInteger const kMinorsSection = 2;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    [ScMeta state].action = ScStateActionDisplay;
+    [ScState s].action = ScStateActionDisplay;
     
     if ([segue.identifier isEqualToString:kSegueToScolaView]) {
         ScScolaViewController *scolaViewController = segue.destinationViewController;
         scolaViewController.scola = _scola;
         
-        if ([ScMeta state].aspect == ScStateAspectScola) {
-            [ScMeta state].target = ScStateTargetScola;
+        if ([_scola isResidence]) {
+            [ScState s].target = ScStateTargetResidence;
         } else {
-            [ScMeta state].target = ScStateTargetHousehold;
+            [ScState s].target = ScStateTargetScola;
         }
     } else if ([segue.identifier isEqualToString:kSegueToMemberView]) {
         ScMemberViewController *memberViewController = segue.destinationViewController;
         memberViewController.membership = _selectedMembership;
         
-        [ScMeta state].target = ScStateTargetMember;
+        [ScState s].target = ScStateTargetMember;
     }
 }
 
@@ -207,10 +201,10 @@ static NSInteger const kMinorsSection = 2;
     
     if (section == kAddressSection) {
         numberOfRows = 1;
-    } else if (section == kAdultsSection) {
-        numberOfRows = [_sortedAdults count];
-    } else if (section == kMinorsSection) {
-        numberOfRows = [_sortedMinors count];
+    } else if (section == kContactSection) {
+        numberOfRows = [_sortedContacts count];
+    } else if (section == kMemberSection) {
+        numberOfRows = [_sortedMembers count];
     }
     
 	return numberOfRows;
@@ -242,13 +236,13 @@ static NSInteger const kMinorsSection = 2;
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
     } else {
-        NSArray *memberships = (indexPath.section == kAdultsSection) ? _sortedAdults : _sortedMinors;
+        NSArray *memberships = (indexPath.section == kContactSection) ? _sortedContacts : _sortedMembers;
         ScMembership *membership = [memberships objectAtIndex:indexPath.row];
         
         cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
-        cell.textLabel.text = membership.member.name;
-        cell.detailTextLabel.text = membership.member.mobilePhone;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.textLabel.text = membership.member.name;
+        cell.detailTextLabel.text = [membership.member details];
     }
     
     return cell;
@@ -260,19 +254,19 @@ static NSInteger const kMinorsSection = 2;
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         ScMembership *membershipToDelete = nil;
         
-        if (indexPath.section == kAdultsSection) {
-            membershipToDelete = [_sortedAdults objectAtIndex:indexPath.row];
+        if (indexPath.section == kContactSection) {
+            membershipToDelete = [_sortedContacts objectAtIndex:indexPath.row];
             
-            [_adults removeObject:membershipToDelete];
-            _sortedAdults = [[_adults allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        } else if (indexPath.section == kMinorsSection) {
-            membershipToDelete = [_sortedMinors objectAtIndex:indexPath.row];
+            [_contacts removeObject:membershipToDelete];
+            _sortedContacts = [[_contacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        } else if (indexPath.section == kMemberSection) {
+            membershipToDelete = [_sortedMembers objectAtIndex:indexPath.row];
             
-            [_minors removeObject:membershipToDelete];
-            _sortedMinors = [[_minors allObjects] sortedArrayUsingSelector:@selector(compare:)];
+            [_members removeObject:membershipToDelete];
+            _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
         }
         
-        [[ScMeta m].managedObjectContext deleteEntity:membershipToDelete];
+        [[ScMeta m].context deleteEntity:membershipToDelete];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
         _needsSynchronisation = YES;
@@ -286,9 +280,9 @@ static NSInteger const kMinorsSection = 2;
 {
     CGFloat height = kDefaultSectionHeaderHeight;
     
-    if (section == kAdultsSection) {
+    if (section == kContactSection) {
         height = [tableView standardHeaderHeight];
-    } else if ((section == kMinorsSection) && (![_sortedMinors count])) {
+    } else if ((section == kMemberSection) && (![_sortedMembers count])) {
         height = kMinimumSectionHeaderHeight;
     }
     
@@ -300,8 +294,8 @@ static NSInteger const kMinorsSection = 2;
 {
     CGFloat height = kDefaultSectionFooterHeight;
 
-    if (section == kAdultsSection) {
-        if ([_sortedAdults count] && [_sortedMinors count]) {
+    if (section == kContactSection) {
+        if ([_sortedContacts count] && [_sortedMembers count]) {
             height = kSectionSpacing;
         } else {
             height = kMinimumSectionFooterHeight;
@@ -316,7 +310,7 @@ static NSInteger const kMinorsSection = 2;
 {
     UIView *headerView = nil;
     
-    if (section == kAdultsSection) {
+    if (section == kContactSection) {
         headerView = [tableView headerViewWithTitle:[ScStrings stringForKey:strHouseholdMembers]];
     }
     
@@ -328,7 +322,7 @@ static NSInteger const kMinorsSection = 2;
 {
     UIView *footerView = nil;
     
-    if ((section == kMinorsSection) && _isUserScolaAdmin) {
+    if ((section == kMemberSection) && _isUserScolaAdmin) {
         footerView = [tableView footerViewWithText:[ScStrings stringForKey:strHouseholdMemberListFooter]];
     }
     
@@ -340,10 +334,10 @@ static NSInteger const kMinorsSection = 2;
 {   
     NSInteger numberOfRowsInSection = 1;
     
-    if (indexPath.section == kAdultsSection) {
-        numberOfRowsInSection = [_sortedAdults count];
-    } else if (indexPath.section == kMinorsSection) {
-        numberOfRowsInSection = [_sortedMinors count];
+    if (indexPath.section == kContactSection) {
+        numberOfRowsInSection = [_sortedContacts count];
+    } else if (indexPath.section == kMemberSection) {
+        numberOfRowsInSection = [_sortedMembers count];
     }
     
     BOOL isLastRowInSection = (indexPath.row == numberOfRowsInSection - 1);
@@ -361,10 +355,10 @@ static NSInteger const kMinorsSection = 2;
     if (indexPath.section == kAddressSection) {
         [self performSegueWithIdentifier:kSegueToScolaView sender:self];
     } else {
-        if (indexPath.section == kAdultsSection) {
-            _selectedMembership = [_sortedAdults objectAtIndex:indexPath.row];
-        } else if (indexPath.section == kMinorsSection) {
-            _selectedMembership = [_sortedMinors objectAtIndex:indexPath.row];
+        if (indexPath.section == kContactSection) {
+            _selectedMembership = [_sortedContacts objectAtIndex:indexPath.row];
+        } else if (indexPath.section == kMemberSection) {
+            _selectedMembership = [_sortedMembers objectAtIndex:indexPath.row];
         }
         
         [self performSegueWithIdentifier:kSegueToMemberView sender:self];
@@ -390,7 +384,7 @@ static NSInteger const kMinorsSection = 2;
 {
     if ([identitifier isEqualToString:kMemberViewControllerId]) {
         [self dismissViewControllerAnimated:YES completion:NULL];
-        [ScMeta state].target = ScStateTargetMemberships;
+        [ScState s].target = ScStateTargetMemberships;
         
         _isViewModallyHidden = NO;
     }
@@ -402,18 +396,18 @@ static NSInteger const kMinorsSection = 2;
     NSInteger section;
     NSInteger row;
     
-    if ([membership.member isMinor]) {
-        [_minors addObject:membership];
-        _sortedMinors = [[_minors allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    if ([membership hasContactRole]) {
+        [_contacts addObject:membership];
+        _sortedContacts = [[_contacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
         
-        section = kMinorsSection;
-        row = [_sortedMinors indexOfObject:membership];
+        section = kContactSection;
+        row = [_sortedContacts indexOfObject:membership];
     } else {
-        [_adults addObject:membership];
-        _sortedAdults = [[_adults allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        [_members addObject:membership];
+        _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
         
-        section = kAdultsSection;
-        row = [_sortedAdults indexOfObject:membership];
+        section = kMemberSection;
+        row = [_sortedMembers indexOfObject:membership];
     }
     
     [self.tableView insertCellForRow:row inSection:section];

@@ -10,4 +10,6 @@
 
 @interface ScMembership (ScMembershipExtensions)
 
+- (BOOL)hasContactRole;
+
 @end

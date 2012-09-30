@@ -14,6 +14,7 @@
 
 extern NSString * const kBundleId;
 extern NSString * const kDarkLinenImageFile;
+extern NSString * const kLanguageHungarian;
 
 extern NSString * const kAuthViewControllerId;
 extern NSString * const kMainViewControllerId;
@@ -33,33 +34,44 @@ extern NSString * const kPropertyDidRegister;
 extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;
 
-extern NSString * const kLanguageHungarian;
+extern NSString * const kScolaTypeMemberRoot;
+extern NSString * const kScolaTypeResidence;
+extern NSString * const kScolaTypeSchoolClass;
+extern NSString * const kScolaTypePreschoolClass;
+extern NSString * const kScolaTypeSportsTeam;
+extern NSString * const kScolaTypeOther;
+
+extern NSString * const kGuardianRoleParent;
+extern NSString * const kGuardianRoleMother;
+extern NSString * const kGuardianRoleFather;
+extern NSString * const kGuardianRoleOther;
+
+extern NSString * const kContactRoleResidenceElder;
 
 
-@class ScState, ScCachedEntity;
+@class ScCachedEntity, ScMember;
+@class ScState;
 
 @interface ScMeta : NSObject <ScServerConnectionDelegate> {
 @private
     Reachability *_internetReachability;
-    
+
+    NSString *_userId;
     NSDate *_authTokenExpiryDate;
-    NSMutableArray *_appStateStack;
     
     NSMutableSet *_scheduledEntities;
     NSMutableDictionary *_importedEntities;
     NSMutableDictionary *_importedEntityRefs;
 }
 
-@property (strong, nonatomic, readonly) ScState *state;
-
-@property (strong, nonatomic) NSString *userId;
-@property (strong, nonatomic) NSString *householdId;
-@property (strong, nonatomic) NSString *lastFetchDate;
+@property (weak, nonatomic, readonly) NSManagedObjectContext *context;
+@property (weak, nonatomic) ScMember *user;
 
 @property (strong, nonatomic, readonly) NSString *deviceId;
 @property (strong, nonatomic, readonly) NSString *authToken;
 @property (strong, nonatomic, readonly) NSString *appVersion;
 @property (strong, nonatomic, readonly) NSString *displayLanguage;
+@property (strong, nonatomic) NSString *lastFetchDate;
 
 @property (nonatomic, readonly) BOOL is_iPadDevice;
 @property (nonatomic, readonly) BOOL is_iPodDevice;
@@ -71,7 +83,6 @@ extern NSString * const kLanguageHungarian;
 @property (nonatomic) BOOL isUserLoggedIn;
 
 + (ScMeta *)m;
-+ (ScState *)state;
 
 + (void)setUserDefault:(id)object forKey:(NSString *)key;
 + (id)userDefaultForKey:(NSString *)key;
@@ -87,7 +98,6 @@ extern NSString * const kLanguageHungarian;
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;
 
-- (NSManagedObjectContext *)managedObjectContext;
 - (NSSet *)entitiesScheduledForPersistence;
 
 - (void)addImportedEntity:(ScCachedEntity *)entity;

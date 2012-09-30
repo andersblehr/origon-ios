@@ -12,6 +12,6 @@
 
 - (void)setEarliestValidBirthDate;
 - (void)setLatestValidBirthDate;
-- (void)setTo01April1976;
+- (void)setToDefaultDate;
 
 @end

@@ -31,7 +31,7 @@
 
 NSString * const kReuseIdentifierDefault = @"idDefault";
 NSString * const kReuseIdentifierUserLogin = @"idUserLogin";
-NSString * const kReuseIdentifierUserConfirmation = @"idUserConfirmation";
+NSString * const kReuseIdentifierUserActivation = @"idUserConfirmation";
 
 CGFloat const kScreenWidth = 320.f;
 CGFloat const kCellWidth = 300.f;
@@ -95,7 +95,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         textField.keyboardType = UIKeyboardTypeEmailAddress;
         textField.placeholder = [ScStrings stringForKey:strAuthEmailPrompt];
     } else if ([key isEqualToString:kTextFieldKeyRegistrationCode]) {
-        textField.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
+        textField.placeholder = [ScStrings stringForKey:strActivationCodePrompt];
     }
     
     return textField;
@@ -108,7 +108,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     dateOfBirthPicker.datePickerMode = UIDatePickerModeDate;
     [dateOfBirthPicker setEarliestValidBirthDate];
     [dateOfBirthPicker setLatestValidBirthDate];
-    [dateOfBirthPicker setTo01April1976];
+    [dateOfBirthPicker setToDefaultDate];
     [dateOfBirthPicker addTarget:_textFieldDelegate action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
     
     return dateOfBirthPicker;
@@ -128,7 +128,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     CGFloat height = [ScTableViewCell defaultHeight];
     
     if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin] ||
-        [reuseIdentifier isEqualToString:kReuseIdentifierUserConfirmation]) {
+        [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
         height = kVerticalPadding;
         height += [UIFont labelFont].lineHeight;
         height += 2.f * kLineSpacing;
@@ -147,7 +147,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     if (entityClass == ScMember.class) {
         height = 2 * kVerticalPadding + 2 * kLineSpacing;
         
-        if ([ScMeta state].actionIsInputAction) {
+        if ([ScState s].actionIsInput) {
             height += [UIFont editableTitleFont].lineHeightWhenEditing;
             height += 3 * [UIFont editableDetailFont].lineHeightWhenEditing;
             height += 2 * kLineSpacing;
@@ -158,7 +158,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     } else if (entityClass == ScScola.class) {
         height = 2 * kVerticalPadding + 2 * kLineSpacing;
         
-        if ([ScMeta state].actionIsInputAction) {
+        if ([ScState s].actionIsInput) {
             height += 3 * [UIFont editableDetailFont].lineHeightWhenEditing;
         } else {
             height += 3 * [UIFont detailFont].lineHeight;
@@ -177,7 +177,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         ScScola *scola = (ScScola *)entity;
         
         if (![scola hasLandline]) {
-            if ([ScMeta state].actionIsInputAction) {
+            if ([ScState s].actionIsInput) {
                 height -= [UIFont editableDetailFont].lineHeightWhenEditing;
             } else {
                 height -= [UIFont detailFont].lineHeight;
@@ -316,7 +316,8 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
             textField.keyboardType = UIKeyboardTypeEmailAddress;
             textField.placeholder = [ScStrings stringForKey:strEmailPrompt];
             
-            if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsUser) {
+            if ([ScState s].actionIsRegister &&
+                [ScState s].targetIsMember && [ScState s].aspectIsSelf) {
                 textField.enabled = NO;
             }
         } else if ([key isEqualToString:kTextFieldKeyMobilePhone]) {
@@ -334,7 +335,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         } else if ([key isEqualToString:kTextFieldKeyLandline]) {
             textField.keyboardType = UIKeyboardTypeNumberPad;
             
-            if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsHousehold) {
+            if ([ScState s].actionIsRegister && [ScState s].targetIsResidence) {
                 textField.placeholder = [ScStrings stringForKey:strHouseholdLandlinePrompt];
             } else {
                 textField.placeholder = [ScStrings stringForKey:strScolaLandlinePrompt];
@@ -395,12 +396,12 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     [self addTitleFieldWithText:member.name key:kTextFieldKeyName];
     [self addPhotoFrame:[UIImage imageWithData:member.photo]];
     
-    if ([member hasEmailAddress]) {
+    if ([member hasEmailAddress] || [ScState s].actionIsInput) {
         [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterEmailLabel]];
         [self addTextFieldWithText:member.entityId key:kTextFieldKeyEmail];
     }
     
-    if ([member hasMobilPhone]) {
+    if ([member hasMobilePhone] || [ScState s].actionIsInput) {
         [self addSingleLetterLabel:[ScStrings stringForKey:strSingleLetterMobilePhoneLabel]];
         [self addTextFieldWithText:member.mobilePhone key:kTextFieldKeyMobilePhone];
     }
@@ -421,7 +422,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     [self addLabel:[ScStrings stringForKey:strLandlineLabel]];
     [self addTextFieldWithText:scola.landline key:kTextFieldKeyLandline];
     
-    self.selectable = ([ScMeta state].actionIsDisplay && [ScMeta state].targetIsMemberships);
+    self.selectable = ([ScState s].actionIsDisplay && [ScState s].targetIsMemberships);
 }
 
 
@@ -460,14 +461,14 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         self.textLabel.font = [UIFont titleFont];
         
         self.selectable = YES;
-        self.editing = [ScMeta state].actionIsInputAction;
+        self.editing = [ScState s].actionIsInput;
         
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin]) {
             [self addLabel:[ScStrings stringForKey:strSignInOrRegisterLabel] centred:YES];
             [self addTextFieldWithKey:kTextFieldKeyAuthEmail];
             [self addTextFieldWithKey:kTextFieldKeyPassword];
-        } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserConfirmation]) {
-            [self addLabel:[ScStrings stringForKey:strConfirmRegistrationLabel] centred:YES];
+        } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
+            [self addLabel:[ScStrings stringForKey:strActivateLabel] centred:YES];
             [self addTextFieldWithKey:kTextFieldKeyRegistrationCode];
             [self addTextFieldWithKey:kTextFieldKeyRepeatPassword];
         }

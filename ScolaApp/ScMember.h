@@ -2,7 +2,7 @@
 //  ScMember.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.07.12.
+//  Created by Anders Blehr on 02.09.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "ScCachedEntity.h"
 
-@class ScDevice, ScDocument, ScEvent, ScEventInvitation, ScMemberResidency, ScMembership, ScMessageItem, ScScheduledAbsence, ScToDoAssignment;
+@class ScDevice, ScDocument, ScEvent, ScEventInvitation, ScMemberGuardianship, ScMemberResidency, ScMembership, ScMessageItem, ScScheduledAbsence, ScToDoAssignment;
 
 @interface ScMember : ScCachedEntity
 
@@ -33,6 +33,8 @@
 @property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @property (nonatomic, retain) NSSet *toDoAssignments;
+@property (nonatomic, retain) NSSet *guardianships;
+@property (nonatomic, retain) NSSet *wardships;
 @end
 
 @interface ScMember (CoreDataGeneratedAccessors)
@@ -81,5 +83,15 @@
 - (void)removeToDoAssignmentsObject:(ScToDoAssignment *)value;
 - (void)addToDoAssignments:(NSSet *)values;
 - (void)removeToDoAssignments:(NSSet *)values;
+
+- (void)addGuardianshipsObject:(ScMemberGuardianship *)value;
+- (void)removeGuardianshipsObject:(ScMemberGuardianship *)value;
+- (void)addGuardianships:(NSSet *)values;
+- (void)removeGuardianships:(NSSet *)values;
+
+- (void)addWardshipsObject:(ScMemberGuardianship *)value;
+- (void)removeWardshipsObject:(ScMemberGuardianship *)value;
+- (void)addWardships:(NSSet *)values;
+- (void)removeWardships:(NSSet *)values;
 
 @end

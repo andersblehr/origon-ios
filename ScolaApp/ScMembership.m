@@ -2,7 +2,7 @@
 //  ScMembership.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 14.06.12.
+//  Created by Anders Blehr on 11.09.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -15,8 +15,7 @@
 
 @dynamic isActive;
 @dynamic isAdmin;
-@dynamic isCoach;
-@dynamic isTeacher;
+@dynamic contactRole;
 @dynamic member;
 @dynamic scola;
 

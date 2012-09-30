@@ -10,7 +10,7 @@
 
 extern NSString * const kReuseIdentifierDefault;
 extern NSString * const kReuseIdentifierUserLogin;
-extern NSString * const kReuseIdentifierUserConfirmation;
+extern NSString * const kReuseIdentifierUserActivation;
 
 extern CGFloat const kScreenWidth;
 extern CGFloat const kCellWidth;

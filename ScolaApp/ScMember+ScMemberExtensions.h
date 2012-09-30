@@ -12,10 +12,18 @@
 
 @interface ScMember (ScMemberExtensions)
 
-- (NSString *)about;
+- (ScScola *)memberRoot;
 
+- (NSString *)about;
+- (NSString *)details;
+
+- (BOOL)isMale;
 - (BOOL)isMinor;
-- (BOOL)hasMobilPhone;
+- (BOOL)isUser;
+
+- (BOOL)hasPhone;
+- (BOOL)hasMobilePhone;
+- (BOOL)hasAddress;
 - (BOOL)hasEmailAddress;
 
 @end

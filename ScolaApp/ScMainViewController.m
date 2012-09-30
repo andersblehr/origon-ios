@@ -11,16 +11,25 @@
 #import "ScMainViewController.h"
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
+#import "UITableView+UITableViewExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
 #import "ScLogging.h"
 #import "ScMeta.h"
-#import "ScIconSection.h"
-#import "ScServerConnection.h"
 #import "ScState.h"
 #import "ScStrings.h"
+#import "ScTableViewCell.h"
+
+#import "ScMemberGuardianship.h"
+#import "ScMember.h"
+#import "ScMemberResidency.h"
+#import "ScMembership.h"
 
 #import "ScMembershipViewController.h"
+
+static NSInteger const kResidenceSection = 0;
+static NSInteger const kWardSection = 1;
+static NSInteger const kScolaSection = 2;
 
 static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 
@@ -33,35 +42,33 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 {
     [super viewDidLoad];
     
-    [self.darkLinenView addGradientLayer];
+    self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBarHidden = NO;
     
     self.title = @"Scola";
 
-    UIImage *icon1 = [UIImage imageNamed:@"53-house@2x.png"];
-    UIImage *icon2 = [UIImage imageNamed:@"glyphicons_006_user_add_white@2x.png"];
-    UIImage *icon3 = [UIImage imageNamed:@"glyphicons_192_circle_remove_white@2x.png"];
-    UIImage *icon4 = [UIImage imageNamed:@"glyphicons_190_circle_plus_white@2x.png"];
+    NSMutableSet *residences = [[NSMutableSet alloc] init];
+    NSMutableSet *wards = [[NSMutableSet alloc] init];
+    _scolas = [[NSMutableSet alloc] init];
     
-    ScIconSection *householdSection = [[ScIconSection alloc] initWithHeading:[ScStrings stringForKey:strMyPlace] delegate:self];
+    for (ScMemberResidency *residency in _member.residencies) {
+        [residences addObject:residency.residence];
+    }
     
-    [householdSection addButtonWithIcon:icon1 caption:@"Heggesnaret 1 D"];
-    [householdSection addButtonWithIcon:icon2 caption:@"Add co-habitants"];
-    [householdSection addButtonWithIcon:icon3 caption:@"Hide this"];
-    //[householdSection addButtonWithIcon:icon4 caption:@"Add scola"];
+    for (ScMemberGuardianship *wardship in _member.wardships) {
+        [wards addObject:wardship.ward];
+    }
     
-    ScIconSection *otherScolasSection = [[ScIconSection alloc] initWithHeading:@"Other scolas" precedingSection:householdSection];
+    for (ScMembership *membership in _member.memberships) {
+        if (![_member.residencies containsObject:membership]) {
+            [_scolas addObject:membership.scola];
+        }
+    }
     
-    [otherScolasSection addButtonWithIcon:icon4 caption:@"Add scola"];
-    
-    ScIconSection *moreIcons = [[ScIconSection alloc] initWithHeading:@"More icons" precedingSection:otherScolasSection];
-    
-    [moreIcons addButtonWithIcon:icon1 caption:@"Heggesnaret 1 D"];
-    [moreIcons addButtonWithIcon:icon2 caption:@"Add co-habitants"];
-    
-    ScIconSection *evenMoreIcons = [[ScIconSection alloc] initWithHeading:@"Even more icons" precedingSection:moreIcons];
-    
-    [evenMoreIcons addButtonWithIcon:icon3 caption:@"Hide this"];
-    [evenMoreIcons addButtonWithIcon:icon4 caption:@"Add scola"];
+    _sortedResidences = [[residences allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    _sortedWards = [[wards allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    _sortedScolas = [[_scolas allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -69,9 +76,9 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 {
     [super viewWillAppear:animated];
     
-    [ScMeta state].action = ScStateActionDefault;
-    [ScMeta state].target = ScStateTargetDefault;
-    [ScMeta state].aspect = ScStateAspectDefault;
+    [ScState s].action = ScStateActionDefault;
+    [ScState s].target = ScStateTargetDefault;
+    [ScState s].aspect = ScStateAspectDefault;
     
     ScLogState;
     
@@ -93,32 +100,101 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
         UITabBarController *tabBarController = segue.destinationViewController;
         ScMembershipViewController *nextViewController = [tabBarController.viewControllers objectAtIndex:0];
         
-        nextViewController.scola = [[ScMeta m].managedObjectContext fetchEntityWithId:[ScMeta m].householdId];
+        nextViewController.scola = nil; // TODO: Figure this out!
     }
 }
 
+#pragma mark - UITableViewDataSource methods
 
-#pragma mark - ScIconSectionDelegate implementation
-
-- (void)handleButtonTap:(id)sender
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    //UIButton *buttonTapped = (UIButton *)sender;
-    //int sectionNumber = buttonTapped.tag / 100;
-    //int buttonNumber = buttonTapped.tag % 100;
-    
-    [ScMeta state].action = ScStateActionDisplay;
-    [ScMeta state].target = ScStateTargetMemberships;
-    [ScMeta state].aspect = ScStateAspectHome;
-    
-    [self performSegueWithIdentifier:kSegueToMembershipView sender:self];
+    return 3;
 }
 
 
-#pragma mark - IBAction implementation
-
-- (IBAction)showInfo:(id)sender
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    [self performSegueWithIdentifier:kSegueToMembershipView sender:self];
+    NSInteger numberOfRows = 0;
+    
+    if (section == kResidenceSection) {
+        numberOfRows = [_member.residencies count];
+    } else if (section == kWardSection) {
+        numberOfRows = [_member.guardianships count];
+    } else if (section == kScolaSection) {
+        numberOfRows = [_member.memberships count] - [_member.residencies count];
+    }
+    
+    return numberOfRows;
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [ScTableViewCell defaultHeight];
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = nil;
+    
+    cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
+    
+    if (indexPath.section == kResidenceSection) {
+        // TODO
+        
+        cell.textLabel.text = @"TODO";
+        cell.detailTextLabel.text = @"TODO";
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
+    
+    return cell;
+}
+
+
+#pragma mark - UITableViewDelegate methods
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    CGFloat height = 0.f;
+    
+    if (section > kResidenceSection) {
+        height = [tableView standardHeaderHeight];
+    }
+    
+    return height;
+}
+
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *headerView = nil;
+    
+    if (section == kWardSection) {
+        headerView = [tableView headerViewWithTitle:@"TODO"];
+    }
+    
+    return headerView;
+}
+
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL isLastCellInSection = NO;
+    
+    if (indexPath.section == kResidenceSection) {
+        isLastCellInSection = (indexPath.row == [_sortedResidences count] - 1);
+    } else if (indexPath.section == kWardSection) {
+        isLastCellInSection = (indexPath.row == [_sortedWards count] - 1);
+    } else if (indexPath.section == kScolaSection) {
+        isLastCellInSection = (indexPath.row == [_sortedScolas count] - 1);
+    }
+    
+    if (isLastCellInSection) {
+        [cell.backgroundView addShadowForBottomTableViewCell];
+    } else {
+        [cell.backgroundView addShadowForNonBottomTableViewCell];
+    }
 }
 
 @end

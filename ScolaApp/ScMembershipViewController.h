@@ -21,11 +21,10 @@
     NSString *_longTitle;
     UIBarButtonItem *_addButton;
     
-    NSMutableSet *_adminIds;
-    NSMutableSet *_adults;
-    NSMutableSet *_minors;
-    NSArray *_sortedAdults;
-    NSArray *_sortedMinors;
+    NSMutableSet *_contacts;
+    NSMutableSet *_members;
+    NSArray *_sortedContacts;
+    NSArray *_sortedMembers;
     
     BOOL _isUserScolaAdmin;
     BOOL _isViewModallyHidden;

@@ -11,9 +11,12 @@
 #import "ScMeta.h"
 
 
+static ScState *s = nil;
+
+
 @implementation ScState
 
-#pragma mark - Initialisation
+#pragma mark - Initialisation & factory method
 
 - (id)init {
     self = [super init];
@@ -28,28 +31,44 @@
 }
 
 
-#pragma mark - State handling
-
-- (ScState *)copy
++ (ScState *)s
 {
-    ScState *copy = [[ScState alloc] init];
-    copy.action = _action;
-    copy.target = _target;
-    copy.aspect = _aspect;
+    if (s == nil) {
+        s = [[super allocWithZone:nil] init];
+    }
     
-    return copy;
+    return s;
 }
 
 
-- (void)setState:(ScState *)state
+#pragma mark - Remember view initial state
+
+- (void)saveCurrentStateForViewController:(NSString *)viewControllerId
 {
-    _action = state.action;
-    _target = state.target;
-    _aspect = state.aspect;
+    ScState *currentState = [[ScState alloc] init];
+    currentState.action = _action;
+    currentState.target = _target;
+    currentState.aspect = _aspect;
+    
+    if (!_savedStates) {
+        _savedStates = [[NSMutableDictionary alloc] init];
+    }
+    
+    [_savedStates setObject:currentState forKey:viewControllerId];
 }
 
 
-#pragma mark - Generate string representation
+- (void)revertToSavedStateForViewController:(NSString *)viewControllerId
+{
+    ScState *savedState = [_savedStates objectForKey:viewControllerId];
+    
+    _action = savedState.action;
+    _target = savedState.target;
+    _aspect = savedState.aspect;
+}
+
+
+#pragma mark - State string representation
 
 - (NSString *)asString
 {
@@ -57,44 +76,40 @@
     NSString *targetAsString = nil;
     NSString *aspectAsString = nil;
     
-    if (_action == ScStateActionDefault) {
-        actionAsString = @"DEFAULT";
-    } else if (_action == ScStateActionStartup) {
+    if (_action == ScStateActionStartup) {
         actionAsString = @"STARTUP";
-    } else if (_action == ScStateActionLogin) {
+    } else if (self.actionIsLogin) {
         actionAsString = @"LOGIN";
-    } else if (_action == ScStateActionConfirm) {
+    } else if (self.actionIsActivate) {
         actionAsString = @"CONFIRM";
-    } else if (_action == ScStateActionRegister) {
+    } else if (self.actionIsRegister) {
         actionAsString = @"REGISTER";
-    } else if (_action == ScStateActionDisplay) {
+    } else if (self.actionIsDisplay) {
         actionAsString = @"DISPLAY";
-    } else if (_action == ScStateActionEdit) {
+    } else if (self.actionIsEdit) {
         actionAsString = @"EDIT";
+    } else {
+        actionAsString = @"DEFAULT";
     }
     
-    if (_target == ScStateTargetDefault) {
-        targetAsString = @"DEFAULT";
-    } else if (_target == ScStateTargetUser) {
-        targetAsString = @"USER";
-    } else if (_target == ScStateTargetHousehold) {
-        targetAsString = @"HOUSEHOLD";
-    } else if (_target == ScStateTargetMemberships) {
-        targetAsString = @"MEMBERSHIPS";
-    } else if (_target == ScStateTargetMember) {
+    if (self.targetIsMember) {
         targetAsString = @"MEMBER";
-    } else if (_target == ScStateTargetScola) {
+    } else if (self.targetIsMemberships) {
+        targetAsString = @"MEMBERSHIPS";
+    } else if (self.targetIsResidence) {
+        targetAsString = @"RESIDENCE";
+    } else if (self.targetIsResidence) {
         targetAsString = @"SCOLA";
+    } else {
+        targetAsString = @"DEFAULT";
     }
     
-    if (_aspect == ScStateAspectDefault) {
+    if (self.aspectIsSelf) {
+        aspectAsString = @"SELF";
+    } else if (self.aspectIsExternal) {
+        aspectAsString = @"EXTERNAL";
+    } else {
         aspectAsString = @"DEFAULT";
-    } else if (_aspect == ScStateAspectHome) {
-        aspectAsString = @"HOME";
-    } else if (_aspect == ScStateAspectHousehold) {
-        aspectAsString = @"HOUSEHOLD";
-    } else if (_aspect == ScStateAspectScola) {
-        aspectAsString = @"SCOLA";
     }
     
     return [NSString stringWithFormat:@"[%@][%@][%@]", actionAsString, targetAsString, aspectAsString];
@@ -103,21 +118,15 @@
 
 #pragma mark - State action properties
 
-- (BOOL)actionIsStartup
-{
-    return (_action == ScStateActionStartup);
-}
-
-
 - (BOOL)actionIsLogin
 {
     return (_action == ScStateActionLogin);
 }
 
 
-- (BOOL)actionIsConfirm
+- (BOOL)actionIsActivate
 {
-    return (_action == ScStateActionConfirm);
+    return (_action == ScStateActionActivate);
 }
 
 
@@ -139,23 +148,17 @@
 }
 
 
-- (BOOL)actionIsInputAction
+- (BOOL)actionIsInput
 {
-    return (self.actionIsLogin || self.actionIsConfirm || self.actionIsRegister || self.actionIsEdit);
+    return (self.actionIsLogin || self.actionIsActivate || self.actionIsRegister || self.actionIsEdit);
 }
 
 
 #pragma mark - State target properties
 
-- (BOOL)targetIsUser
+- (BOOL)targetIsMember
 {
-    return (_target == ScStateTargetUser);
-}
-
-
-- (BOOL)targetIsHousehold
-{
-    return (_target == ScStateTargetHousehold);
+    return (_target == ScStateTargetMember);
 }
 
 
@@ -165,9 +168,9 @@
 }
 
 
-- (BOOL)targetIsMember
+- (BOOL)targetIsResidence
 {
-    return (_target == ScStateTargetMember);
+    return (_target == ScStateTargetResidence);
 }
 
 
@@ -179,21 +182,15 @@
 
 #pragma mark - State aspect properties
 
-- (BOOL)aspectIsHome
+- (BOOL)aspectIsSelf
 {
-    return (_aspect == ScStateAspectHome);
+    return (_aspect == ScStateAspectSelf);
 }
 
 
-- (BOOL)aspectIsHousehold
+- (BOOL)aspectIsExternal
 {
-    return (_aspect == ScStateAspectHousehold);
-}
-
-
-- (BOOL)aspectIsScola
-{
-    return (_aspect == ScStateAspectScola);
+    return (_aspect == ScStateAspectExternal);
 }
 
 @end

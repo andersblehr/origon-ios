@@ -15,10 +15,12 @@
 		5C153EF714CC68D3003A6B61 /* glyphicons_190_circle_plus_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF514CC68D3003A6B61 /* glyphicons_190_circle_plus_white.png */; };
 		5C153EF814CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C153EF614CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png */; };
 		5C153EFB14CC9815003A6B61 /* ScIconSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C153EFA14CC9815003A6B61 /* ScIconSection.m */; };
+		5C1E00B91618D36300C01496 /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1E00B81618D36300C01496 /* ScScola.m */; };
 		5C2262C415A0B47B00241C5F /* ScScolaViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262C315A0B47B00241C5F /* ScScolaViewController.m */; };
-		5C2262D315A1AC1B00241C5F /* ScScola.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262D215A1AC1B00241C5F /* ScScola.m */; };
 		5C23431214812A3100164478 /* ScStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* ScStrings.m */; };
 		5C26291E158F27860012A74A /* ScAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* ScAuthViewController.m */; };
+		5C29EB6015FF44E5008F7C50 /* ScMemberGuardianship.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C29EB5F15FF44E5008F7C50 /* ScMemberGuardianship.m */; };
+		5C29EB6315FF4623008F7C50 /* ScMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C29EB6215FF4623008F7C50 /* ScMembership.m */; };
 		5C2E11141469CDE5005BDE61 /* ScServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* ScServerConnection.m */; };
 		5C2E6B7E15A8501800638330 /* ScMembership+ScMembershipExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E6B7D15A8501800638330 /* ScMembership+ScMembershipExtensions.m */; };
 		5C3374831563FBE200DEF67D /* ScMember+ScMemberExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3374821563FBE200DEF67D /* ScMember+ScMemberExtensions.m */; };
@@ -52,7 +54,6 @@
 		5C6E6C17158A54ED0002FF84 /* ScMessageThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C16158A54ED0002FF84 /* ScMessageThread.m */; };
 		5C6E6C1A158A54EF0002FF84 /* ScMessageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C19158A54EF0002FF84 /* ScMessageItem.m */; };
 		5C6E6C1D158A54EF0002FF84 /* ScDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C1C158A54EF0002FF84 /* ScDocument.m */; };
-		5C6E6C20158A54EF0002FF84 /* ScMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C1F158A54EF0002FF84 /* ScMembership.m */; };
 		5C6E6C23158A54EF0002FF84 /* ScScheduledBreak.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C22158A54EF0002FF84 /* ScScheduledBreak.m */; };
 		5C6E6C26158A54EF0002FF84 /* ScWeeklyScheduleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C25158A54EF0002FF84 /* ScWeeklyScheduleItem.m */; };
 		5C6E6C29158A54EF0002FF84 /* ScToDoAssignment.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C28158A54EF0002FF84 /* ScToDoAssignment.m */; };
@@ -80,6 +81,18 @@
 		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m */; };
 		5CA94D9B15834A9E008CD9EC /* UIDatePicker+ScDatePickerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9A15834A9E008CD9EC /* UIDatePicker+ScDatePickerExtensions.m */; };
 		5CA94D9F15836BD9008CD9EC /* NSDate+ScDateExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9E15836BD9008CD9EC /* NSDate+ScDateExtensions.m */; };
+		5CB7E92B15F27B6700FD53DF /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB7E92915F27B6700FD53DF /* glyphicons_020_home.png */; };
+		5CB7E92C15F27B6700FD53DF /* glyphicons_020_home@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB7E92A15F27B6700FD53DF /* glyphicons_020_home@2x.png */; };
+		5CB7E93015F27C6400FD53DF /* glyphicons_035_woman.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB7E92E15F27C6400FD53DF /* glyphicons_035_woman.png */; };
+		5CB7E93115F27C6400FD53DF /* glyphicons_035_woman@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB7E92F15F27C6400FD53DF /* glyphicons_035_woman@2x.png */; };
+		5CB7E93415F27C8F00FD53DF /* glyphicons_003_user.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB7E93215F27C8F00FD53DF /* glyphicons_003_user.png */; };
+		5CB7E93515F27C8F00FD53DF /* glyphicons_003_user@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB7E93315F27C8F00FD53DF /* glyphicons_003_user@2x.png */; };
+		5CB7E93815F3844600FD53DF /* glyphicons_019_cogwheel.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB7E93615F3844600FD53DF /* glyphicons_019_cogwheel.png */; };
+		5CB7E93915F3844600FD53DF /* glyphicons_019_cogwheel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB7E93715F3844600FD53DF /* glyphicons_019_cogwheel@2x.png */; };
+		5CB7E93C15F3886E00FD53DF /* glyphicons_045_calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB7E93A15F3886E00FD53DF /* glyphicons_045_calendar.png */; };
+		5CB7E93D15F3886E00FD53DF /* glyphicons_045_calendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB7E93B15F3886E00FD53DF /* glyphicons_045_calendar@2x.png */; };
+		5CB7E94015F38C1200FD53DF /* ScSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E93F15F38C1200FD53DF /* ScSettingsViewController.m */; };
+		5CB7E94915F3AAEF00FD53DF /* ScMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E94815F3AAEF00FD53DF /* ScMember.m */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
 		5CBB63BD146080DF00A9133A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BC146080DF00A9133A /* CoreGraphics.framework */; };
@@ -98,9 +111,8 @@
 		5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */; };
 		5CD3360E15C40A2F00ABBFE7 /* ScState.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD3360D15C40A2F00ABBFE7 /* ScState.m */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */; };
-		5CE5FFC115ACC550009C11C0 /* ScMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE5FFC015ACC550009C11C0 /* ScMember.m */; };
 		5CE9812914C4D81600DD11D4 /* 112-group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CE9812814C4D81600DD11D4 /* 112-group@2x.png */; };
-		5CE987C414856426005A17C6 /* ScEventViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* ScEventViewController.m */; };
+		5CE987C414856426005A17C6 /* ScCalendarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* ScCalendarViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,14 +136,18 @@
 		5C153EF614CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_190_circle_plus_white@2x.png"; sourceTree = "<group>"; };
 		5C153EF914CC9815003A6B61 /* ScIconSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScIconSection.h; sourceTree = "<group>"; };
 		5C153EFA14CC9815003A6B61 /* ScIconSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScIconSection.m; sourceTree = "<group>"; };
+		5C1E00B71618D36300C01496 /* ScScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScola.h; sourceTree = "<group>"; };
+		5C1E00B81618D36300C01496 /* ScScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScola.m; sourceTree = "<group>"; };
 		5C2262C215A0B47B00241C5F /* ScScolaViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScolaViewController.h; sourceTree = "<group>"; };
 		5C2262C315A0B47B00241C5F /* ScScolaViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScolaViewController.m; sourceTree = "<group>"; };
-		5C2262D115A1AC1B00241C5F /* ScScola.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScola.h; sourceTree = "<group>"; };
-		5C2262D215A1AC1B00241C5F /* ScScola.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScola.m; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* ScStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScStrings.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* ScStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScStrings.m; sourceTree = "<group>"; };
 		5C26291C158F27860012A74A /* ScAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScAuthViewController.h; sourceTree = "<group>"; };
 		5C26291D158F27860012A74A /* ScAuthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScAuthViewController.m; sourceTree = "<group>"; };
+		5C29EB5E15FF44E5008F7C50 /* ScMemberGuardianship.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMemberGuardianship.h; sourceTree = "<group>"; };
+		5C29EB5F15FF44E5008F7C50 /* ScMemberGuardianship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMemberGuardianship.m; sourceTree = "<group>"; };
+		5C29EB6115FF4622008F7C50 /* ScMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMembership.h; sourceTree = "<group>"; };
+		5C29EB6215FF4623008F7C50 /* ScMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMembership.m; sourceTree = "<group>"; };
 		5C2E11121469CDE5005BDE61 /* ScServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScServerConnection.h; sourceTree = "<group>"; };
 		5C2E11131469CDE5005BDE61 /* ScServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScServerConnection.m; sourceTree = "<group>"; };
 		5C2E1133146ACFA9005BDE61 /* ScServerConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScServerConnectionDelegate.h; sourceTree = "<group>"; };
@@ -184,8 +200,6 @@
 		5C6E6C19158A54EF0002FF84 /* ScMessageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMessageItem.m; sourceTree = "<group>"; };
 		5C6E6C1B158A54EF0002FF84 /* ScDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScDocument.h; sourceTree = "<group>"; };
 		5C6E6C1C158A54EF0002FF84 /* ScDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScDocument.m; sourceTree = "<group>"; };
-		5C6E6C1E158A54EF0002FF84 /* ScMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMembership.h; sourceTree = "<group>"; };
-		5C6E6C1F158A54EF0002FF84 /* ScMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMembership.m; sourceTree = "<group>"; };
 		5C6E6C21158A54EF0002FF84 /* ScScheduledBreak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduledBreak.h; sourceTree = "<group>"; };
 		5C6E6C22158A54EF0002FF84 /* ScScheduledBreak.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduledBreak.m; sourceTree = "<group>"; };
 		5C6E6C24158A54EF0002FF84 /* ScWeeklyScheduleItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScWeeklyScheduleItem.h; sourceTree = "<group>"; };
@@ -240,6 +254,20 @@
 		5CA94D9A15834A9E008CD9EC /* UIDatePicker+ScDatePickerExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDatePicker+ScDatePickerExtensions.m"; sourceTree = "<group>"; };
 		5CA94D9D15836BD9008CD9EC /* NSDate+ScDateExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+ScDateExtensions.h"; sourceTree = "<group>"; };
 		5CA94D9E15836BD9008CD9EC /* NSDate+ScDateExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+ScDateExtensions.m"; sourceTree = "<group>"; };
+		5CB7E92915F27B6700FD53DF /* glyphicons_020_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_020_home.png; sourceTree = "<group>"; };
+		5CB7E92A15F27B6700FD53DF /* glyphicons_020_home@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_020_home@2x.png"; sourceTree = "<group>"; };
+		5CB7E92E15F27C6400FD53DF /* glyphicons_035_woman.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_035_woman.png; sourceTree = "<group>"; };
+		5CB7E92F15F27C6400FD53DF /* glyphicons_035_woman@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_035_woman@2x.png"; sourceTree = "<group>"; };
+		5CB7E93215F27C8F00FD53DF /* glyphicons_003_user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_003_user.png; sourceTree = "<group>"; };
+		5CB7E93315F27C8F00FD53DF /* glyphicons_003_user@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_003_user@2x.png"; sourceTree = "<group>"; };
+		5CB7E93615F3844600FD53DF /* glyphicons_019_cogwheel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_019_cogwheel.png; sourceTree = "<group>"; };
+		5CB7E93715F3844600FD53DF /* glyphicons_019_cogwheel@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_019_cogwheel@2x.png"; sourceTree = "<group>"; };
+		5CB7E93A15F3886E00FD53DF /* glyphicons_045_calendar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_045_calendar.png; sourceTree = "<group>"; };
+		5CB7E93B15F3886E00FD53DF /* glyphicons_045_calendar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_045_calendar@2x.png"; sourceTree = "<group>"; };
+		5CB7E93E15F38C1200FD53DF /* ScSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScSettingsViewController.h; sourceTree = "<group>"; };
+		5CB7E93F15F38C1200FD53DF /* ScSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScSettingsViewController.m; sourceTree = "<group>"; };
+		5CB7E94715F3AAEF00FD53DF /* ScMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMember.h; sourceTree = "<group>"; };
+		5CB7E94815F3AAEF00FD53DF /* ScMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMember.m; sourceTree = "<group>"; };
 		5CB9FF5A15A1ED1B0035B896 /* ScModalViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScModalViewControllerDelegate.h; sourceTree = "<group>"; };
 		5CB9FF5C15A1EF660035B896 /* ScMemberViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScMemberViewControllerDelegate.h; sourceTree = "<group>"; };
 		5CBB63B4146080DF00A9133A /* ScolaApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScolaApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -272,11 +300,9 @@
 		5CD3360D15C40A2F00ABBFE7 /* ScState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScState.m; sourceTree = "<group>"; };
 		5CD5B29B14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+ScManagedObjectContextExtensions.h"; sourceTree = "<group>"; };
 		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+ScManagedObjectContextExtensions.m"; sourceTree = "<group>"; };
-		5CE5FFBF15ACC550009C11C0 /* ScMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScMember.h; sourceTree = "<group>"; };
-		5CE5FFC015ACC550009C11C0 /* ScMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMember.m; sourceTree = "<group>"; };
 		5CE9812814C4D81600DD11D4 /* 112-group@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group@2x.png"; sourceTree = "<group>"; };
-		5CE987C214856426005A17C6 /* ScEventViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScEventViewController.h; sourceTree = "<group>"; };
-		5CE987C314856426005A17C6 /* ScEventViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScEventViewController.m; sourceTree = "<group>"; };
+		5CE987C214856426005A17C6 /* ScCalendarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScCalendarViewController.h; sourceTree = "<group>"; };
+		5CE987C314856426005A17C6 /* ScCalendarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScCalendarViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -310,6 +336,12 @@
 		5C276E7A1475B9A800A6C500 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				5CB7E93215F27C8F00FD53DF /* glyphicons_003_user.png */,
+				5CB7E93315F27C8F00FD53DF /* glyphicons_003_user@2x.png */,
+				5CB7E92E15F27C6400FD53DF /* glyphicons_035_woman.png */,
+				5CB7E92F15F27C6400FD53DF /* glyphicons_035_woman@2x.png */,
+				5CB7E93A15F3886E00FD53DF /* glyphicons_045_calendar.png */,
+				5CB7E93B15F3886E00FD53DF /* glyphicons_045_calendar@2x.png */,
 				5C629FF114C62133001DA01F /* 08-chat.png */,
 				5C629FF214C62133001DA01F /* 08-chat@2x.png */,
 				5C62A00314C627AB001DA01F /* 11-clock.png */,
@@ -323,6 +355,10 @@
 				5C629FF914C62481001DA01F /* 258-checkmark.png */,
 				5C629FFA14C62481001DA01F /* 258-checkmark@2x.png */,
 				5C3A319514C61378001A783E /* dark_linen-640x960.png */,
+				5CB7E93615F3844600FD53DF /* glyphicons_019_cogwheel.png */,
+				5CB7E93715F3844600FD53DF /* glyphicons_019_cogwheel@2x.png */,
+				5CB7E92915F27B6700FD53DF /* glyphicons_020_home.png */,
+				5CB7E92A15F27B6700FD53DF /* glyphicons_020_home@2x.png */,
 				5C153EED14CC668F003A6B61 /* glyphicons_006_user_add_white.png */,
 				5C153EEE14CC668F003A6B61 /* glyphicons_006_user_add_white@2x.png */,
 				5C153EF514CC68D3003A6B61 /* glyphicons_190_circle_plus_white.png */,
@@ -357,12 +393,14 @@
 				5C6E6C46158A54F10002FF84 /* ScEventScolaInvitation.m */,
 				5C6E6C5A158A54F20002FF84 /* ScExternalDocument.h */,
 				5C6E6C5B158A54F20002FF84 /* ScExternalDocument.m */,
-				5CE5FFBF15ACC550009C11C0 /* ScMember.h */,
-				5CE5FFC015ACC550009C11C0 /* ScMember.m */,
+				5CB7E94715F3AAEF00FD53DF /* ScMember.h */,
+				5CB7E94815F3AAEF00FD53DF /* ScMember.m */,
+				5C29EB5E15FF44E5008F7C50 /* ScMemberGuardianship.h */,
+				5C29EB5F15FF44E5008F7C50 /* ScMemberGuardianship.m */,
+				5C29EB6115FF4622008F7C50 /* ScMembership.h */,
+				5C29EB6215FF4623008F7C50 /* ScMembership.m */,
 				5C6E6C3C158A54F00002FF84 /* ScMemberResidency.h */,
 				5C6E6C3D158A54F00002FF84 /* ScMemberResidency.m */,
-				5C6E6C1E158A54EF0002FF84 /* ScMembership.h */,
-				5C6E6C1F158A54EF0002FF84 /* ScMembership.m */,
 				5C6E6C57158A54F20002FF84 /* ScMessageBoard.h */,
 				5C6E6C58158A54F20002FF84 /* ScMessageBoard.m */,
 				5C6E6C18158A54EF0002FF84 /* ScMessageItem.h */,
@@ -373,8 +411,8 @@
 				5C6E6C55158A54F20002FF84 /* ScScheduledAbsence.m */,
 				5C6E6C21158A54EF0002FF84 /* ScScheduledBreak.h */,
 				5C6E6C22158A54EF0002FF84 /* ScScheduledBreak.m */,
-				5C2262D115A1AC1B00241C5F /* ScScola.h */,
-				5C2262D215A1AC1B00241C5F /* ScScola.m */,
+				5C1E00B71618D36300C01496 /* ScScola.h */,
+				5C1E00B81618D36300C01496 /* ScScola.m */,
 				5C6E6C4B158A54F10002FF84 /* ScSharedEntityRef.h */,
 				5C6E6C4C158A54F10002FF84 /* ScSharedEntityRef.m */,
 				5C6E6C27158A54EF0002FF84 /* ScToDoAssignment.h */,
@@ -449,8 +487,8 @@
 			children = (
 				5C26291C158F27860012A74A /* ScAuthViewController.h */,
 				5C26291D158F27860012A74A /* ScAuthViewController.m */,
-				5CE987C214856426005A17C6 /* ScEventViewController.h */,
-				5CE987C314856426005A17C6 /* ScEventViewController.m */,
+				5CE987C214856426005A17C6 /* ScCalendarViewController.h */,
+				5CE987C314856426005A17C6 /* ScCalendarViewController.m */,
 				5C3D42801485678E009A68E0 /* ScMainViewController.h */,
 				5C3D42811485678F009A68E0 /* ScMainViewController.m */,
 				5C8B3AB415813DBB000B19FA /* ScMemberViewController.h */,
@@ -463,6 +501,8 @@
 				5C62A00814C627D1001DA01F /* ScScheduleViewController.m */,
 				5C2262C215A0B47B00241C5F /* ScScolaViewController.h */,
 				5C2262C315A0B47B00241C5F /* ScScolaViewController.m */,
+				5CB7E93E15F38C1200FD53DF /* ScSettingsViewController.h */,
+				5CB7E93F15F38C1200FD53DF /* ScSettingsViewController.m */,
 				5C62A00014C6252C001DA01F /* ScTaskViewController.h */,
 				5C62A00114C6252C001DA01F /* ScTaskViewController.m */,
 			);
@@ -641,7 +681,7 @@
 		5CBB63AB146080DD00A9133A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0440;
+				LastUpgradeCheck = 0450;
 				ORGANIZATIONNAME = "Rhelba Software";
 			};
 			buildConfigurationList = 5CBB63AE146080DD00A9133A /* Build configuration list for PBXProject "ScolaApp" */;
@@ -694,6 +734,16 @@
 				5C153EF414CC68B9003A6B61 /* glyphicons_192_circle_remove_white@2x.png in Resources */,
 				5C153EF714CC68D3003A6B61 /* glyphicons_190_circle_plus_white.png in Resources */,
 				5C153EF814CC68D3003A6B61 /* glyphicons_190_circle_plus_white@2x.png in Resources */,
+				5CB7E92B15F27B6700FD53DF /* glyphicons_020_home.png in Resources */,
+				5CB7E92C15F27B6700FD53DF /* glyphicons_020_home@2x.png in Resources */,
+				5CB7E93015F27C6400FD53DF /* glyphicons_035_woman.png in Resources */,
+				5CB7E93115F27C6400FD53DF /* glyphicons_035_woman@2x.png in Resources */,
+				5CB7E93415F27C8F00FD53DF /* glyphicons_003_user.png in Resources */,
+				5CB7E93515F27C8F00FD53DF /* glyphicons_003_user@2x.png in Resources */,
+				5CB7E93815F3844600FD53DF /* glyphicons_019_cogwheel.png in Resources */,
+				5CB7E93915F3844600FD53DF /* glyphicons_019_cogwheel@2x.png in Resources */,
+				5CB7E93C15F3886E00FD53DF /* glyphicons_045_calendar.png in Resources */,
+				5CB7E93D15F3886E00FD53DF /* glyphicons_045_calendar@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -735,7 +785,7 @@
 				5C36BE8A146E9DA100DD3CEA /* ScMeta.m in Sources */,
 				5C36BE9C1470507700DD3CEA /* ScolaApp.xcdatamodeld in Sources */,
 				5C23431214812A3100164478 /* ScStrings.m in Sources */,
-				5CE987C414856426005A17C6 /* ScEventViewController.m in Sources */,
+				5CE987C414856426005A17C6 /* ScCalendarViewController.m in Sources */,
 				5C3D42821485678F009A68E0 /* ScMainViewController.m in Sources */,
 				5C4F977B1496AF88006E244F /* NSURL+ScURLExtensions.m in Sources */,
 				5CBE9C5314AB5160004FE2B7 /* NSString+ScStringExtensions.m in Sources */,
@@ -761,7 +811,6 @@
 				5C6E6C17158A54ED0002FF84 /* ScMessageThread.m in Sources */,
 				5C6E6C1A158A54EF0002FF84 /* ScMessageItem.m in Sources */,
 				5C6E6C1D158A54EF0002FF84 /* ScDocument.m in Sources */,
-				5C6E6C20158A54EF0002FF84 /* ScMembership.m in Sources */,
 				5C6E6C23158A54EF0002FF84 /* ScScheduledBreak.m in Sources */,
 				5C6E6C26158A54EF0002FF84 /* ScWeeklyScheduleItem.m in Sources */,
 				5C6E6C29158A54EF0002FF84 /* ScToDoAssignment.m in Sources */,
@@ -784,11 +833,14 @@
 				5C7379FD1593111B0065AB4F /* ScTextField.m in Sources */,
 				5CBE91A31599823000516C54 /* UIFont+ScFontExtensions.m in Sources */,
 				5C2262C415A0B47B00241C5F /* ScScolaViewController.m in Sources */,
-				5C2262D315A1AC1B00241C5F /* ScScola.m in Sources */,
 				5C2E6B7E15A8501800638330 /* ScMembership+ScMembershipExtensions.m in Sources */,
-				5CE5FFC115ACC550009C11C0 /* ScMember.m in Sources */,
 				5CD3360E15C40A2F00ABBFE7 /* ScState.m in Sources */,
 				5C014A2415CA77320040A1D9 /* ScAlert.m in Sources */,
+				5CB7E94015F38C1200FD53DF /* ScSettingsViewController.m in Sources */,
+				5CB7E94915F3AAEF00FD53DF /* ScMember.m in Sources */,
+				5C29EB6015FF44E5008F7C50 /* ScMemberGuardianship.m in Sources */,
+				5C29EB6315FF4623008F7C50 /* ScMembership.m in Sources */,
+				5C1E00B91618D36300C01496 /* ScScola.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

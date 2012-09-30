@@ -27,6 +27,7 @@
 #import "ScLogging.h"
 #import "ScMember.h"
 #import "ScMemberResidency.h"
+#import "ScMembership.h"
 #import "ScMessageBoard.h"
 #import "ScScola.h"
 
@@ -35,10 +36,12 @@
 
 #import "ScMemberViewController.h"
 
+static NSInteger const kNumberOfAuthSections = 1;
+static NSInteger const kNumberOfRowsInAuthSection = 1;
+
 static NSString * const kSegueToMainView = @"authToMainView";
 
 static NSString * const kUserDefaultsKeyAuthInfo = @"scola.auth.info";
-
 static NSString * const kAuthInfoKeyUserId = @"userId";
 static NSString * const kAuthInfoKeyPasswordHash = @"passwordHash";
 static NSString * const kAuthInfoKeyRegistrationCode = @"registrationCode";
@@ -56,22 +59,22 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)reload
 {
-    if ([ScMeta state].actionIsLogin) {
+    if ([ScState s].actionIsLogin) {
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
         
         if (_authInfo) {
             [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
             _authInfo = nil;
         }
-    } else if ([ScMeta state].actionIsConfirm) {
+    } else if ([ScState s].actionIsActivate) {
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationLeft];
     }
 }
 
 
-- (NSString *)generatePasswordHash:(NSString *)password usingSalt:(NSString *)salt
+- (NSString *)computePasswordHash:(NSString *)password
 {
-    return [[password diff:salt] hashUsingSHA1];
+    return [[password diff:_userId] hashUsingSHA1];
 }
 
 
@@ -82,60 +85,58 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     static NSString *registrationCode;
     
     if (isPending) {
-        if ([ScMeta state].actionIsLogin) {
+        if ([ScState s].actionIsLogin) {
             email = _emailField.text;
             _emailField.placeholder = [ScStrings stringForKey:strPleaseWait];
             _emailField.text = @"";
-        } else if ([ScMeta state].actionIsConfirm) {
-            registrationCode = _registrationCodeField.text;
-            _registrationCodeField.placeholder = [ScStrings stringForKey:strPleaseWait];
-            _registrationCodeField.text = @"";
+        } else if ([ScState s].actionIsActivate) {
+            registrationCode = _activationCodeField.text;
+            _activationCodeField.placeholder = [ScStrings stringForKey:strPleaseWait];
+            _activationCodeField.text = @"";
         }
         
         password = _passwordField.text;
         _passwordField.placeholder = [ScStrings stringForKey:strPleaseWait];
         _passwordField.text = @"";
         
-        _isEditingAllowed = NO;
-        
         [_activityIndicator startAnimating];
     } else {
-        if ([ScMeta state].actionIsLogin) {
+        if ([ScState s].actionIsLogin) {
             _emailField.text = email;
             _emailField.placeholder = [ScStrings stringForKey:strAuthEmailPrompt];
-        } else if ([ScMeta state].actionIsConfirm) {
-            _registrationCodeField.text = registrationCode;
-            _registrationCodeField.placeholder = [ScStrings stringForKey:strRegistrationCodePrompt];
+        } else if ([ScState s].actionIsActivate) {
+            _activationCodeField.text = registrationCode;
+            _activationCodeField.placeholder = [ScStrings stringForKey:strActivationCodePrompt];
         }
         
         _passwordField.text = password;
         _passwordField.placeholder = [ScStrings stringForKey:strPasswordPrompt];
         
-        _isEditingAllowed = YES;
-        
         [_activityIndicator stopAnimating];
     }
+    
+    _isEditingAllowed = !isPending;
 }
 
 
-- (void)handleFailedConfirmationForField:(ScTextField *)field;
+- (void)handleInvalidInputForField:(ScTextField *)field;
 {
-    if (_numberOfConfirmationAttempts < 3) {
+    if (_numberOfActivationAttempts < 3) {
         [_authCell shakeAndVibrateDevice];
         
-        if (field == _registrationCodeField) {
-            _registrationCodeField.text = @"";
+        if (field == _activationCodeField) {
+            _activationCodeField.text = @"";
         }
         
         _passwordField.text = @"";
         
         [field becomeFirstResponder];
     } else {
-        _numberOfConfirmationAttempts = 0;
+        _numberOfActivationAttempts = 0;
         
-        [[[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strUserConfirmationFailedTitle] message:[ScStrings stringForKey:strUserConfirmationFailedAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil] show];
+        [[[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strActivationFailedTitle] message:[ScStrings stringForKey:strActivationFailedAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil] show];
         
-        [ScMeta state].action = ScStateActionLogin;
+        [ScState s].action = ScStateActionLogin;
         [self reload];
         
         ScLogState;
@@ -156,15 +157,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     BOOL didRegisterNewDevice = NO;
     
-    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-    
-    ScDevice *device = [context fetchEntityWithId:[ScMeta m].deviceId];
+    ScDevice *device = [[ScMeta m].context fetchEntityWithId:[ScMeta m].deviceId];
     
     if (!device) {
-        device = [context entityForClass:ScDevice.class inScola:_household withId:[ScMeta m].deviceId];
+        device = [[ScMeta m].context entityForClass:ScDevice.class inScola:[[ScMeta m].user memberRoot] entityId:[ScMeta m].deviceId];
         device.type = [UIDevice currentDevice].model;
         device.displayName = [UIDevice currentDevice].name;
-        device.member = _member;
+        device.member = [ScMeta m].user;
         
         didRegisterNewDevice = YES;
     }
@@ -178,12 +177,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (BOOL)isRegistrationCodeValid
 {
     NSString *registrationCode = [[_authInfo objectForKey:kAuthInfoKeyRegistrationCode] lowercaseString];
-    NSString *registrationCodeAsEntered = [_registrationCodeField.text lowercaseString];
+    NSString *registrationCodeAsEntered = [_activationCodeField.text lowercaseString];
     
     BOOL isValid = [registrationCodeAsEntered isEqualToString:registrationCode];
     
     if (!isValid) {
-        [self handleFailedConfirmationForField:_registrationCodeField];
+        [self handleInvalidInputForField:_activationCodeField];
     }
     
     return isValid;
@@ -194,14 +193,14 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     BOOL isValid = NO;
     
-    if ([ScMeta state].actionIsConfirm) {
+    if ([ScState s].actionIsActivate) {
         NSString *passwordHashAsPersisted = [_authInfo objectForKey:kAuthInfoKeyPasswordHash];
-        NSString *passwordHashAsEntered = [self generatePasswordHash:_passwordField.text usingSalt:[ScMeta m].userId];
+        NSString *passwordHashAsEntered = [self computePasswordHash:_passwordField.text];
         
         isValid = [passwordHashAsEntered isEqualToString:passwordHashAsPersisted];
         
         if (!isValid) {
-            [self handleFailedConfirmationForField:_passwordField];
+            [self handleInvalidInputForField:_passwordField];
         }
     }
     
@@ -213,7 +212,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)attemptUserLogin
 {
-    [ScMeta m].userId = _emailField.text;
+    _userId = _emailField.text;
     
     ScServerConnection *serverConnection = [[ScServerConnection alloc] init];
     [serverConnection setAuthHeaderForUser:_emailField.text withPassword:_passwordField.text];
@@ -228,31 +227,26 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [ScMeta m].isUserLoggedIn = YES;
     
     if (data) {
-        [[ScMeta m].managedObjectContext saveWithDictionaries:data];
+        [[ScMeta m].context saveWithDictionaries:data];
     }
     
-    _isModelUpToDate = YES;
-    
-    if ([ScMeta state].actionIsLogin) {
+    if ([ScState s].actionIsActivate) {
+        [self completeActivation];
+    } else if ([ScState s].actionIsLogin) {
         [self completeLogin];
-    } else if ([ScMeta state].actionIsConfirm) {
-        [self completeSignUp];
     }
 }
 
 
 - (void)completeLogin
 {
-    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-    
-    _member = [context fetchEntityWithId:[ScMeta m].userId];
-    _household = [context fetchEntityWithId:_member.scolaId];
-    
-    [ScMeta m].householdId = _member.scolaId;
+    [ScMeta m].user = [[ScMeta m].context fetchEntityWithId:_userId];
     
     if ([self registerNewDevice]) {
-        [context synchronise];
+        [[ScMeta m].context synchronise];
     }
+    
+    _isModelUpToDate = YES;
     
     if ([self isRegistrationComplete]) {
         [self performSegueWithIdentifier:kSegueToMainView sender:self];
@@ -264,76 +258,72 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - User sign-up
+#pragma mark - User sign-up & activation
 
 - (void)userDidSignUpWithData:(NSDictionary *)data
 {
     _authInfo = data;
+    _isUserListed = ([_authInfo objectForKey:kAuthInfoKeyIsUserListed] == @YES);
     
     NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:_authInfo];
     [ScMeta setUserDefault:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
     
-    _isUserListed = [[_authInfo objectForKey:kAuthInfoKeyIsUserListed] boolValue];
-    
-    if (_isUserListed) {
-        [ScMeta m].householdId = [_authInfo objectForKey:kAuthInfoKeyHomeScolaId];
-    } else {
-        [ScMeta m].householdId = [ScUUIDGenerator generateUUID];
-    }
-    
-    [ScMeta state].action = ScStateActionConfirm;
+    [ScState s].action = ScStateActionActivate;
     [self reload];
     
     ScLogState;
 }
 
 
-- (void)confirmSignUp
+- (void)activateMembership
 {
     ScServerConnection *serverConnection = [[ScServerConnection alloc] init];
-    [serverConnection setAuthHeaderForUser:[ScMeta m].userId withPassword:_passwordField.text];
-    [serverConnection setValue:[ScMeta m].householdId forURLParameter:kURLParameterScolaId];
+    [serverConnection setAuthHeaderForUser:_userId withPassword:_passwordField.text];
     [serverConnection authenticateUsingDelegate:self];
     
     [self indicatePendingServerSession:YES];
 }
 
 
-- (void)completeSignUp
+- (void)completeActivation
 {
-    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-    
     if (_isUserListed) {
-        _household = [context fetchEntityWithId:[ScMeta m].householdId];
-        _member = [context fetchEntityWithId:[ScMeta m].userId];
+        [ScMeta m].user = [[ScMeta m].context fetchEntityWithId:_userId];
         
-        for (ScMemberResidency *residency in _member.residencies) {
-            residency.isActive = [NSNumber numberWithBool:YES];
-            residency.isAdmin = [NSNumber numberWithBool:![_member isMinor]];
+        for (ScMemberResidency *residency in [ScMeta m].user.residencies) {
+            residency.isActive = @YES;
+            
+            if ([[ScMeta m].user isMinor]) {
+                residency.isAdmin = @NO;
+            } else {
+                residency.isAdmin = @YES;
+                residency.contactRole = kContactRoleResidenceElder;
+            }
         }
     } else {
-        _household = [context entityForScolaWithName:[ScStrings stringForKey:strMyPlace] scolaId:[ScMeta m].householdId];
-        _member = [context entityForClass:ScMember.class inScola:_household withId:[ScMeta m].userId];
+        [ScMeta m].user = [[ScMeta m].context entityForMemberWithId:_userId];
         
-        ScMemberResidency *residency = [_household addResident:_member];
-        residency.isActive = [NSNumber numberWithBool:YES];
-        residency.isAdmin = [NSNumber numberWithBool:YES];
+        ScScola *residence = [[ScMeta m].context entityForScolaOfType:kScolaTypeResidence];
+        ScMemberResidency *residency = [residence addResident:[ScMeta m].user];
+        residency.isActive = @YES;
+        residency.isAdmin = @YES;
         
-        ScMessageBoard *defaultMessageBoard = [context entityForClass:ScMessageBoard.class inScola:_household];
-        defaultMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
-        defaultMessageBoard.scola = _household;
+        ScMessageBoard *residenceMessageBoard = [[ScMeta m].context entityForClass:ScMessageBoard.class inScola:residence];
+        residenceMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
     }
     
-    _member.passwordHash = [_authInfo objectForKey:kAuthInfoKeyPasswordHash];
-    _member.didRegister = [NSNumber numberWithBool:YES];
+    [ScMeta m].user.passwordHash = [_authInfo objectForKey:kAuthInfoKeyPasswordHash];
+    [ScMeta m].user.didRegister = @YES;
     
     [self registerNewDevice];
-    [context synchronise];
+    [[ScMeta m].context synchronise];
     
     [ScMeta removeUserDefaultForKey:kUserDefaultsKeyAuthInfo];
     _authInfo = nil;
     
-    [self completeRegistration];
+    if (![self isRegistrationComplete]) {
+        [self completeRegistration];
+    }
 }
 
 
@@ -341,33 +331,24 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (BOOL)isRegistrationComplete
 {
-    if (!_member) {
-        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-        
-        _member = [context fetchEntityWithId:[ScMeta m].userId];
-        _household = [context fetchEntityWithId:[ScMeta m].householdId];
-    }
-    
-    BOOL isPhoneNumberGiven = ([_member hasMobilPhone] || [_household hasLandline]);
-    
-    return (isPhoneNumberGiven && [_household hasAddress]);
+    return ([[ScMeta m].user hasPhone] && [[ScMeta m].user hasAddress]);
 }
 
 
 - (void)completeRegistration
 {
-    [ScMeta state].action = ScStateActionRegister;
-    [ScMeta state].target = ScStateTargetUser;
-    [ScMeta state].aspect = ScStateAspectHome;
+    [ScState s].action = ScStateActionRegister;
+    [ScState s].target = ScStateTargetMember;
+    [ScState s].aspect = ScStateAspectSelf;
     
     ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
-    memberViewController.membership = [_household residencyForMember:_member];
+    memberViewController.membership = [[ScMeta m].user.residencies anyObject];
     memberViewController.delegate = self;
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
-    navigationController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
+    modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     
-    [self.navigationController presentViewController:navigationController animated:YES completion:NULL];
+    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
 }
 
 
@@ -377,9 +358,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super viewDidLoad];
 
-    [ScMeta state].action = ScStateActionLogin;
-    [ScMeta state].target = ScStateTargetUser;
-    [ScMeta state].aspect = ScStateAspectDefault;
+    [ScState s].action = ScStateActionLogin;
+    [ScState s].target = ScStateTargetMember;
+    [ScState s].aspect = ScStateAspectSelf;
     
     ScLogState;
     
@@ -411,9 +392,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     if (authInfoArchive) {
         _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
-        [ScMeta m].userId = [_authInfo objectForKey:kAuthInfoKeyUserId];
+        _userId = [_authInfo objectForKey:kAuthInfoKeyUserId];
         
-        [ScMeta state].action = ScStateActionConfirm;
+        [ScState s].action = ScStateActionActivate;
         
         ScLogState;
     }
@@ -424,11 +405,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super viewDidAppear:animated];
 
-    if ([ScMeta m].isInternetConnectionAvailable) {
-        [ScStrings refreshStrings];
-    }
+    [ScStrings refreshIfPossible];
     
-    if ([ScMeta state].actionIsConfirm) {
+    if ([ScState s].actionIsActivate) {
         NSString *popUpMessage = [NSString stringWithFormat:[ScStrings stringForKey:strWelcomeBackAlert], [_authInfo objectForKey:kAuthInfoKeyUserId]];
         
         UIAlertView *welcomeBackPopUp = [[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strWelcomeBackTitle] message:popUpMessage delegate:self cancelButtonTitle:[ScStrings stringForKey:strStartOver] otherButtonTitles:[ScStrings stringForKey:strHaveCode], nil];
@@ -451,7 +430,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     if ([segue.identifier isEqualToString:kSegueToMainView]) {
         if (!_isModelUpToDate) {
-            [[ScMeta m].managedObjectContext synchronise];
+            [[ScMeta m].context synchronise];
         }
     }
 }
@@ -461,13 +440,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return kNumberOfAuthSections;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1;
+    return kNumberOfRowsInAuthSection;
 }
 
 
@@ -475,10 +454,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     CGFloat height = 0.f;
     
-    if ([ScMeta state].actionIsLogin) {
+    if ([ScState s].actionIsLogin) {
         height = [ScTableViewCell heightForReuseIdentifier:kReuseIdentifierUserLogin];
-    } else if ([ScMeta state].actionIsConfirm) {
-        height = [ScTableViewCell heightForReuseIdentifier:kReuseIdentifierUserConfirmation];
+    } else if ([ScState s].actionIsActivate) {
+        height = [ScTableViewCell heightForReuseIdentifier:kReuseIdentifierUserActivation];
     }
     
     return height;
@@ -487,10 +466,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([ScMeta state].actionIsLogin) {
+    if ([ScState s].actionIsLogin) {
         _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserLogin delegate:self];
     } else {
-        _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserConfirmation delegate:self];
+        _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserActivation delegate:self];
     }
     
     return _authCell;
@@ -503,22 +482,22 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [_authCell.backgroundView addShadowForBottomTableViewCell];
     
-    if ([ScMeta state].actionIsLogin) {
+    if ([ScState s].actionIsLogin) {
         _emailField = [_authCell textFieldWithKey:kTextFieldKeyAuthEmail];
         _passwordField = [_authCell textFieldWithKey:kTextFieldKeyPassword];
         
-        if ([ScMeta m].userId) {
-            _emailField.text = [ScMeta m].userId;
+        if (_userId) {
+            _emailField.text = _userId;
             [_passwordField becomeFirstResponder];
         } else {
             [_emailField becomeFirstResponder];
         }
-    } else if ([ScMeta state].actionIsConfirm) {
-        _registrationCodeField = [_authCell textFieldWithKey:kTextFieldKeyRegistrationCode];
+    } else if ([ScState s].actionIsActivate) {
+        _activationCodeField = [_authCell textFieldWithKey:kTextFieldKeyRegistrationCode];
         _passwordField = [_authCell textFieldWithKey:kTextFieldKeyRepeatPassword];
         
-        _registrationCodeField.text = @"";
-        [_registrationCodeField becomeFirstResponder];
+        _activationCodeField.text = @"";
+        [_activationCodeField becomeFirstResponder];
     }
     
     _passwordField.text = @"";
@@ -529,10 +508,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     NSString *footerText = nil;
     
-    if ([ScMeta state].actionIsLogin) {
+    if ([ScState s].actionIsLogin) {
         footerText = [ScStrings stringForKey:strSignInOrRegisterFooter];
-    } else if ([ScMeta state].actionIsConfirm) {
-        footerText = [ScStrings stringForKey:strConfirmRegistrationFooter];
+    } else if ([ScState s].actionIsActivate) {
+        footerText = [ScStrings stringForKey:strActivateFooter];
     }
     
     return [tableView footerViewWithText:footerText];
@@ -551,18 +530,18 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     BOOL shouldReturn = YES;
     
-    if ((textField == _emailField) || (textField == _registrationCodeField)) {
+    if ((textField == _emailField) || (textField == _activationCodeField)) {
         [_passwordField becomeFirstResponder];
     } else if (textField == _passwordField) {
-        if ([ScMeta state].actionIsLogin) {
+        if ([ScState s].actionIsLogin) {
             shouldReturn = shouldReturn && [ScMeta isEmailValid:_emailField];
             shouldReturn = shouldReturn && [ScMeta isPasswordValid:_passwordField];
             
             if (shouldReturn) {
                 [self attemptUserLogin];
             }
-        } else if ([ScMeta state].actionIsConfirm) {
-            _numberOfConfirmationAttempts++;
+        } else if ([ScState s].actionIsActivate) {
+            _numberOfActivationAttempts++;
             
             shouldReturn = shouldReturn && [self isRegistrationCodeValid];
             shouldReturn = shouldReturn && [self isPasswordValid];
@@ -587,7 +566,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     if (alertView.tag == kAlertTagWelcomeBack) {
         if (buttonIndex == kAlertButtonStartOver) {
-            [ScMeta state].action = ScStateActionLogin;
+            [ScState s].action = ScStateActionLogin;
             [self reload];
             
             ScLogState;
@@ -601,7 +580,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex != actionSheet.destructiveButtonIndex) {
-        [self confirmSignUp];
+        [self activateMembership];
     }
 }
 

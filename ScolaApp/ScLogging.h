@@ -38,7 +38,7 @@
 #endif
 
 #if (TRC_LEVEL >= 4)
-#define ScLogState NSLog(@"STATE: %s[%d]: %@", __PRETTY_FUNCTION__, __LINE__, [[ScMeta state] asString])
+#define ScLogState NSLog(@"STATE: %s[%d]: %@", __PRETTY_FUNCTION__, __LINE__, [[ScState s] asString])
 #define ScLogDebug(A, ...) NSLog(@"DEBUG: %s[%d]: %@", __PRETTY_FUNCTION__, __LINE__, [NSString stringWithFormat:A, ## __VA_ARGS__])
 #else
 #define ScLogState

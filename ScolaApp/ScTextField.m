@@ -44,7 +44,7 @@ static CGFloat const kLineSpacing = 5.f;
 
 - (id)initAtOrigin:(CGPoint)origin font:(UIFont *)font width:(CGFloat)width title:(BOOL)title
 {
-    BOOL editing = [ScMeta state].actionIsInputAction;
+    BOOL editing = [ScState s].actionIsInput;
     CGFloat lineHeight = editing ? font.lineHeightWhenEditing : font.lineHeight;
     
     self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, lineHeight)];
@@ -83,7 +83,7 @@ static CGFloat const kLineSpacing = 5.f;
 
 - (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width
 {
-    UIFont *font = [ScMeta state].actionIsInputAction ? [UIFont editableTitleFont] : [UIFont titleFont];
+    UIFont *font = [ScState s].actionIsInput ? [UIFont editableTitleFont] : [UIFont titleFont];
     
     return [self initAtOrigin:origin font:font width:width title:YES];
 }
@@ -91,7 +91,7 @@ static CGFloat const kLineSpacing = 5.f;
 
 - (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width
 {
-    UIFont *font = [ScMeta state].actionIsInputAction ? [UIFont editableDetailFont] : [UIFont detailFont];
+    UIFont *font = [ScState s].actionIsInput ? [UIFont editableDetailFont] : [UIFont detailFont];
     
     return [self initAtOrigin:origin font:font width:width title:NO];
 }
@@ -101,7 +101,7 @@ static CGFloat const kLineSpacing = 5.f;
 
 - (CGFloat)lineHeight
 {
-    return ([ScMeta state].actionIsInputAction ? self.font.lineHeightWhenEditing : self.font.lineHeight);
+    return ([ScState s].actionIsInput ? self.font.lineHeightWhenEditing : self.font.lineHeight);
 }
 
 
@@ -127,7 +127,7 @@ static CGFloat const kLineSpacing = 5.f;
 
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
-    return (self.enabled || [ScMeta state].actionIsInputAction) ? CGRectInset(bounds, kTextInset, 0.f) : bounds;
+    return (self.enabled || [ScState s].actionIsInput) ? CGRectInset(bounds, kTextInset, 0.f) : bounds;
 }
 
 

@@ -15,14 +15,13 @@
 @class ScMemberResidency, ScMembership, ScScola;
 @class ScTableViewCell, ScTextField;
 
-@interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, ScServerConnectionDelegate, ScModalViewControllerDelegate> {
+@interface ScMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ScServerConnectionDelegate, ScModalViewControllerDelegate> {
 @private
     ScTableViewCell *_memberCell;
     ScMember *_member;
-    
+
+    NSSet *_candidateEntities;
     ScMember *_candidate;
-    ScScola *_candidateHousehold;
-    ScMemberResidency *_candidateResidency;
     
     UIBarButtonItem *_editButton;
     UIBarButtonItem *_cancelButton;
@@ -32,13 +31,11 @@
     ScTextField *_emailField;
     ScTextField *_mobilePhoneField;
     ScTextField *_dateOfBirthField;
+    UITextField *_currentField;
     UIDatePicker *_dateOfBirthPicker;
     NSString *_gender;
     
-    UITextField *_currentField;
-    
-    NSMutableSet *_residencies;
-    NSArray *_sortedResidencies;
+    NSArray *_sortedResidences;
 }
 
 @property (weak, nonatomic) id<ScMemberViewControllerDelegate> delegate;

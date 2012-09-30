@@ -8,21 +8,21 @@
 
 #import <CoreData/CoreData.h>
 
-@class ScCachedEntity, ScMember, ScMembership, ScScola;
+@class ScCachedEntity, ScMember, ScScola;
 
 @interface NSManagedObjectContext (ScManagedObjectContextExtensions)
 
-- (ScScola *)entityForScolaWithName:(NSString *)name;
-- (ScScola *)entityForScolaWithName:(NSString *)name scolaId:(NSString *)scolaId;
-- (id)entityForClass:(Class)class withId:(NSString *)entityId;
+- (ScScola *)entityForScolaOfType:(NSString *)type;
+- (ScMember *)entityForMemberWithId:(NSString *)memberId;
+- (id)entityForClass:(Class)class entityId:(NSString *)entityId;
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola;
-- (id)entityForClass:(Class)class inScola:(ScScola *)scola withId:(NSString *)entityId;
+- (id)entityForClass:(Class)class inScola:(ScScola *)scola entityId:(NSString *)entityId;
 - (id)sharedEntityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola;
 
 - (id)fetchEntityWithId:(NSString *)entityId;
 
 - (void)save;
-- (void)saveWithDictionaries:(NSArray *)dictionaries;
+- (NSSet *)saveWithDictionaries:(NSArray *)dictionaries;
 - (void)synchronise;
 - (void)deleteEntity:(ScCachedEntity *)entity;
 

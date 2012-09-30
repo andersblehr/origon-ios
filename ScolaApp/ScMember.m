@@ -2,7 +2,7 @@
 //  ScMember.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 10.07.12.
+//  Created by Anders Blehr on 02.09.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -11,6 +11,7 @@
 #import "ScDocument.h"
 #import "ScEvent.h"
 #import "ScEventInvitation.h"
+#import "ScMemberGuardianship.h"
 #import "ScMemberResidency.h"
 #import "ScMembership.h"
 #import "ScMessageItem.h"
@@ -39,5 +40,7 @@
 @dynamic residencies;
 @dynamic scheduledAbsences;
 @dynamic toDoAssignments;
+@dynamic guardianships;
+@dynamic wardships;
 
 @end

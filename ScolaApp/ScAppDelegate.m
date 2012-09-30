@@ -19,6 +19,8 @@
 #import "ScServerConnection.h"
 #import "ScState.h"
 
+#import "ScMember.h"
+
 
 static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 
@@ -76,7 +78,7 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 {
     if (_persistentStoreCoordinator == nil) {
         NSURL *applicationDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent: [NSString stringWithFormat:kPersistentStoreFormat, [ScMeta m].userId]];
+        NSURL *storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent: [NSString stringWithFormat:kPersistentStoreFormat, [ScMeta m].user.entityId]];
         
         NSError *error = nil;
         _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
@@ -97,7 +99,7 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
     
-    [ScMeta state].action = ScStateActionStartup;
+    [ScState s].action = ScStateActionStartup;
     
     ScLogState;
     ScLogDebug(@"Device is %@.", [UIDevice currentDevice].model);
@@ -124,9 +126,9 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     if ([ScMeta m].isUserLoggedIn) {
-        [[ScMeta m].managedObjectContext save];
+        [[ScMeta m].context synchronise]; // TODO: Doesn't work. Move to appWillResignActive?
     } else {
-        [ScMeta m].userId = nil;
+        [ScMeta m].user = nil;
     }
 }
 

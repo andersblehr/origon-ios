@@ -20,6 +20,7 @@
 #import "ScMembershipViewController.h"
 #import "ScScolaViewController.h"
 
+#import "ScAlert.h"
 #import "ScLogging.h"
 #import "ScMeta.h"
 #import "ScServerConnection.h"
@@ -44,9 +45,14 @@ static NSInteger const kNumberOfInputSections = 1;
 static NSInteger const kNumberOfDisplaySections = 2;
 static NSInteger const kNumberOfMemberRows = 1;
 
-static NSInteger const kActionSheetButtonFemale = 0;
-static NSInteger const kActionSheetButtonMale = 1;
-static NSInteger const kActionSheetButtonCancel = 2;
+static NSInteger const kGenderSheetTag = 0;
+static NSInteger const kGenderSheetButtonFemale = 0;
+static NSInteger const kGenderSheetButtonCancel = 2;
+
+static NSInteger const kExistingResidenceSheetTag = 1;
+static NSInteger const kExistingResidenceButtonInviteToHousehold = 0;
+static NSInteger const kExistingResidenceButtonMergeHouseholds = 1;
+static NSInteger const kExistingResidenceButtonCancel = 2;
 
 static NSString * const kSegueToMembershipView = @"memberToMembershipView";
 
@@ -57,16 +63,16 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
 
 - (void)registerHousehold
 {
-    [ScMeta state].target = ScStateTargetHousehold;
+    [ScState s].target = ScStateTargetResidence;
     
     ScScolaViewController *scolaViewController = [self.storyboard instantiateViewControllerWithIdentifier:kScolaViewControllerId];
     scolaViewController.scola = _scola;
     scolaViewController.delegate = self;
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:scolaViewController];
-    navigationController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:scolaViewController];
+    modalController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     
-    [self.navigationController presentViewController:navigationController animated:YES completion:NULL];
+    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
 }
 
 
@@ -90,80 +96,88 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
 
 - (void)promptForGender
 {
+    NSString *titleQuestion = nil;
     NSString *femaleLabel = nil;
     NSString *maleLabel = nil;
     
     if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
+        if ([ScState s].aspectIsSelf) {
+            titleQuestion = [ScStrings stringForKey:strGenderActionSheetTitleSelfMinor];
+        } else {
+            titleQuestion = [NSString stringWithFormat:[ScStrings stringForKey:strGenderActionSheetTitleMemberMinor], [NSString givenNameFromFullName:_nameField.text]];
+        }
+        
         femaleLabel = [ScStrings stringForKey:strFemaleMinor];
         maleLabel = [ScStrings stringForKey:strMaleMinor];
     } else {
+        if ([ScState s].aspectIsSelf) {
+            titleQuestion = [ScStrings stringForKey:strGenderActionSheetTitleSelf];
+        } else {
+            titleQuestion = [NSString stringWithFormat:[ScStrings stringForKey:strGenderActionSheetTitleMember], [NSString givenNameFromFullName:_nameField.text]];
+        }
+        
         femaleLabel = [ScStrings stringForKey:strFemale];
         maleLabel = [ScStrings stringForKey:strMale];
     }
-    
-    NSString *questionVerb = nil;
-    NSString *questionSubject = nil;
-    
-    if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsUser) {
-        questionVerb = [ScStrings stringForKey:strToBe2ndPSg];
-        questionSubject = [ScStrings lowercaseStringForKey:strYouNom];
-    } else {
-        questionVerb = [ScStrings stringForKey:strToBe3rdPSg];
-        questionSubject = [NSString givenNameFromFullName:_nameField.text];
-    }
         
-    NSString *genderQuestion = [NSString stringWithFormat:[ScStrings stringForKey:strGenderActionSheetTitle], questionVerb, questionSubject, [femaleLabel lowercaseString], [maleLabel lowercaseString]];
-    
-    UIActionSheet *genderSheet = [[UIActionSheet alloc] initWithTitle:genderQuestion delegate:self cancelButtonTitle:[ScStrings stringForKey:strCancel] destructiveButtonTitle:nil otherButtonTitles:femaleLabel, maleLabel, nil];
-    
+    UIActionSheet *genderSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[ScStrings stringForKey:strCancel] destructiveButtonTitle:nil otherButtonTitles:femaleLabel, maleLabel, nil];
+    genderSheet.tag = kGenderSheetTag;
     [genderSheet showInView:self.view];
-    [_nameField becomeFirstResponder];
+    
+    [_nameField becomeFirstResponder]; // TODO: Why is this here?
 }
 
 
-- (void)updateOrRegisterMember
+- (void)promptForExistingResidenceAction
 {
-    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
+    NSString *titleQuestion = [NSString stringWithFormat:[ScStrings stringForKey:strExistingResidenceAlert], _candidate.name, _candidate.givenName];
     
-    if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsMember) {
+    UIActionSheet *existingResidenceSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[ScStrings stringForKey:strCancel] destructiveButtonTitle:nil otherButtonTitles:[ScStrings stringForKey:strInviteToHousehold], [ScStrings stringForKey:strMergeHouseholds], nil];
+    existingResidenceSheet.tag = kExistingResidenceSheetTag;
+    [existingResidenceSheet showInView:self.view];
+}
+
+
+- (void)registerMember
+{
+    if (!_member) {
         if (_candidate) {
             _member = _candidate;
         } else {
             if (_emailField.text.length > 0) {
-                _member = [context entityForClass:ScMember.class inScola:_scola withId:_emailField.text];
+                _member = [[ScMeta m].context entityForClass:ScMember.class inScola:_scola entityId:_emailField.text];
             } else {
-                _member = [context entityForClass:ScMember.class inScola:_scola];
+                _member = [[ScMeta m].context entityForClass:ScMember.class inScola:_scola];
             }
-        }
-        
-        if ([ScMeta state].aspectIsHome || [ScMeta state].aspectIsHousehold) {
-            if (_candidateHousehold != nil) {
-                // TODO: Alert that candidate is already member of a household
-                self.membership = [_scola addResident:_member]; // TODO: Only for testing, remove!
-            } else {
-                self.membership = [_scola addResident:_member];
-            }
-        } else {
-            self.membership = [_scola addMember:_member];
         }
     }
     
+    [self updateMember];
+    
+    if ([_scola isResidence]) {
+        _membership = [_scola addResident:_member];
+    } else {
+        _membership = [_scola addMember:_member];
+    }
+    
+    if ([ScState s].aspectIsSelf && (_membership.isAdmin == @YES)) { // TODO: Additional cases
+        [self registerHousehold];
+    } else {
+        [_delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
+        [_delegate insertMembershipInTableView:_membership];
+    }
+}
+
+
+- (void)updateMember
+{
     _member.name = _nameField.text;
     _member.dateOfBirth = _dateOfBirthPicker.date;
     _member.mobilePhone = _mobilePhoneField.text;
-    _member.gender = _gender;
     
-    if ([ScMeta state].actionIsRegister) {
-        _member.givenName = [NSString givenNameFromFullName:_nameField.text];
-    }
-    
-    if ([ScMeta state].actionIsRegister) {
-        if ([ScMeta state].targetIsUser && [_membership.isAdmin boolValue]) {
-            [self registerHousehold];
-        } else {
-            [_delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
-            [_delegate insertMembershipInTableView:_membership];
-        }
+    if (![_member isPersisted]) {
+        _member.givenName = [NSString givenNameFromFullName:_member.name];
+        _member.gender = _gender;
     }
 }
 
@@ -184,12 +198,13 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
 
 - (void)cancelEditing
 {
-    if (_candidateHousehold) {
-        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-
-        [context deleteEntity:_candidateResidency];
-        [context deleteEntity:_candidateHousehold];
-        [context deleteEntity:_candidate];
+    if (_candidate) {
+        for (ScCachedEntity *entity in _candidateEntities) {
+            [[ScMeta m].context deleteObject:entity];
+        }
+        
+        _candidateEntities = nil;
+        _candidate = nil;
     }
     
     [_delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
@@ -212,10 +227,20 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
         }
     }
     
-    if (isValidInput && !_gender) {
-        [self promptForGender];
-    } else if (isValidInput) {
-        [self updateOrRegisterMember];
+    if (isValidInput) {
+        if ([ScState s].actionIsRegister) {
+            if (_candidate) {
+                if ([_scola isResidence]) {
+                    [self promptForExistingResidenceAction];
+                } else {
+                    [self registerMember];
+                }
+            } else {
+                [self promptForGender];
+            }
+        } else {
+            [self updateMember];
+        }
     } else {
         [_memberCell shake];
     }
@@ -244,31 +269,31 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
         _scola = _membership.scola;
     }
     
-    if ([ScMeta state].actionIsRegister) {
+    if ([ScState s].actionIsRegister) {
         self.navigationItem.rightBarButtonItem = _doneButton;
         
-        if ([ScMeta state].targetIsUser) {
+        if ([ScState s].targetIsMember && [ScState s].aspectIsSelf) {
             self.title = [_member about];
         } else {
             self.navigationItem.leftBarButtonItem = _cancelButton;
             
-            if ([ScMeta state].aspectIsHome || [ScMeta state].aspectIsHousehold) {
+            if ([_scola isResidence]) {
                 self.title = [ScStrings stringForKey:strMemberViewTitleNewHouseholdMember];
             } else {
                 self.title = [ScStrings stringForKey:strMemberViewTitleNewMember];
             }
         }
-    } else if ([ScMeta state].actionIsDisplay) {
+    } else if ([ScState s].actionIsDisplay) {
         self.navigationItem.rightBarButtonItem = _editButton;
         self.title = [_member about];
         
-        _residencies = [[NSMutableSet alloc] init];
+        NSMutableSet *residences = [[NSMutableSet alloc] init];
         
         for (ScMemberResidency *residency in _member.residencies) {
-            [_residencies addObject:residency];
+            [residences addObject:residency.residence];
         }
         
-        _sortedResidencies = [[_residencies allObjects] sortedArrayUsingSelector:@selector(compareByAddress:)];
+        _sortedResidences = [[residences allObjects] sortedArrayUsingSelector:@selector(compare:)];
     }
 }
 
@@ -288,7 +313,7 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
         membershipViewController.delegate = _delegate;
         membershipViewController.scola = _scola;
         
-        [ScMeta state].target = ScStateTargetMemberships;
+        [ScState s].target = ScStateTargetMemberships;
     }
 }
 
@@ -297,7 +322,7 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return ([ScMeta state].actionIsDisplay ? kNumberOfDisplaySections : kNumberOfInputSections);
+    return ([ScState s].actionIsDisplay ? kNumberOfDisplaySections : kNumberOfInputSections);
 }
 
 
@@ -320,7 +345,7 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
     CGFloat height = 0.f;
     
     if (indexPath.section == kMemberSection) {
-        if ([ScMeta state].actionIsRegister) {
+        if ([ScState s].actionIsInput) {
             height = [ScTableViewCell heightForEntityClass:ScMember.class];
         } else {
             height = [ScTableViewCell heightForEntity:_member];
@@ -338,15 +363,17 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
     UITableViewCell *cell = nil;
     
     if (indexPath.section == kMemberSection) {
-        if ([ScMeta state].actionIsDisplay) {
+        if ([ScState s].actionIsDisplay) {
             _memberCell = [tableView cellForEntity:_member];
-        } else if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsUser) {
-            _memberCell = [tableView cellForEntity:_member delegate:self];
-        } else if ([ScMeta state].actionIsRegister) {
-            _memberCell = [tableView cellForEntityClass:ScMember.class delegate:self];
+        } else if ([ScState s].actionIsInput) {
+            if ([ScState s].targetIsMember && [ScState s].aspectIsSelf) {
+                _memberCell = [tableView cellForEntity:_member delegate:self];
+            } else if ([ScState s].actionIsInput) {
+                _memberCell = [tableView cellForEntityClass:ScMember.class delegate:self];
+            }
         }
         
-        if (_memberCell.editing) {
+        if ([ScState s].actionIsInput) {
             _nameField = [_memberCell textFieldWithKey:kTextFieldKeyName];
             _emailField = [_memberCell textFieldWithKey:kTextFieldKeyEmail];
             _mobilePhoneField = [_memberCell textFieldWithKey:kTextFieldKeyMobilePhone];
@@ -363,11 +390,11 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
         
         cell = _memberCell;
     } else if (indexPath.section == kAddressSection) {
-        ScMemberResidency *residency = [_sortedResidencies objectAtIndex:indexPath.row];
+        ScScola *residence = [_sortedResidences objectAtIndex:indexPath.row];
         
         cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
-        cell.textLabel.text = residency.residence.addressLine1;
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"t %@", residency.residence.landline];
+        cell.textLabel.text = residence.addressLine1;
+        cell.detailTextLabel.text = residence.landline;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     
@@ -410,11 +437,11 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
     if (indexPath.section == kMemberSection) {
         [cell.backgroundView addShadowForBottomTableViewCell];
         
-        if ([ScMeta state].actionIsInputAction) {
+        if ([ScState s].actionIsInput) {
             [_nameField becomeFirstResponder];
         }
     } else {
-        if (indexPath.row == [_residencies count] - 1) {
+        if (indexPath.row == [_sortedResidences count] - 1) {
             [cell.backgroundView addShadowForBottomTableViewCell];
         } else {
             [cell.backgroundView addShadowForNonBottomTableViewCell];
@@ -428,13 +455,22 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
     if ((_currentField == _emailField) && [ScMeta isEmailValid:_emailField]) {
-        if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsMember) {
-            _candidate = [[ScMeta m].managedObjectContext fetchEntityWithId:_emailField.text];
-            
-            if (_candidate) {
-                [self populateWithCandidate];
+        NSString *email = _emailField.text;
+        
+        if ([ScState s].actionIsRegister && [ScState s].targetIsMember) {
+            if ([_scola hasMemberWithId:email]) {
+                NSString *alertTitle = [ScStrings stringForKey:strMemberExistsTitle];
+                NSString *alertMessage = [NSString stringWithFormat:[ScStrings stringForKey:strMemberExistsAlert], email, _scola.name];
+                
+                [ScAlert showAlertWithTitle:alertTitle message:alertMessage];
             } else {
-                [[[ScServerConnection alloc] init] fetchMemberWithId:_emailField.text delegate:self];
+                _candidate = [[ScMeta m].context fetchEntityWithId:email];
+                
+                if (_candidate) {
+                    [self populateWithCandidate];
+                } else {
+                    [[[ScServerConnection alloc] init] fetchMemberWithId:email delegate:self];
+                }
             }
         }
     }
@@ -465,11 +501,37 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex != kActionSheetButtonCancel) {
-        _gender = (buttonIndex == kActionSheetButtonFemale) ? kGenderFemale : kGenderMale;
-        
-        [self updateOrRegisterMember];
+    switch (actionSheet.tag) {
+        case kGenderSheetTag:
+            if (buttonIndex != kGenderSheetButtonCancel) {
+                _gender = (buttonIndex == kGenderSheetButtonFemale) ? kGenderFemale : kGenderMale;
+                
+                [self registerMember];
+            }
+            
+            break;
+            
+        case kExistingResidenceSheetTag:
+            if (buttonIndex == kExistingResidenceButtonInviteToHousehold) {
+                [self registerMember];
+            } else if (buttonIndex == kExistingResidenceButtonMergeHouseholds) {
+                // TODO
+            }
+            
+            break;
+            
+        default:
+            break;
     }
+}
+
+
+#pragma mark - UIAlertViewDelegate methods
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    _emailField.text = @"";
+    [_emailField becomeFirstResponder];
 }
 
 
@@ -490,12 +552,8 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(NSArray *)data
 {
     if (response.statusCode == kHTTPStatusCodeOK) {
-        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-        
-        [context saveWithDictionaries:data];
-        _candidate = [context fetchEntityWithId:_emailField.text];
-        _candidateHousehold = [context fetchEntityWithId:_candidate.scolaId];
-        _candidateResidency = [_candidateHousehold residencyForMember:_candidate];
+        _candidateEntities = [[ScMeta m].context saveWithDictionaries:data];
+        _candidate = [[ScMeta m].context fetchEntityWithId:_emailField.text];
         
         [self populateWithCandidate];
     }

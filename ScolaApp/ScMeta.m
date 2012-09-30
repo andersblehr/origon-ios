@@ -19,11 +19,13 @@
 #import "ScUUIDGenerator.h"
 
 #import "ScCachedEntity.h"
+#import "ScMember.h"
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 
 NSString * const kBundleId = @"com.scolaapp.ios.ScolaApp";
 NSString * const kDarkLinenImageFile = @"dark_linen-640x960.png";
+NSString * const kLanguageHungarian = @"hu";
 
 NSString * const kAuthViewControllerId = @"idAuth";
 NSString * const kMainViewControllerId = @"idMain";
@@ -43,12 +45,23 @@ NSString * const kPropertyDidRegister = @"didRegister";
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
 
-NSString * const kLanguageHungarian = @"hu";
+NSString * const kScolaTypeMemberRoot = @"R";
+NSString * const kScolaTypeResidence = @"E";
+NSString * const kScolaTypeSchoolClass = @"S";
+NSString * const kScolaTypePreschoolClass = @"P";
+NSString * const kScolaTypeSportsTeam = @"T";
+NSString * const kScolaTypeOther = @"O";
+
+NSString * const kGuardianRoleParent = @"P";
+NSString * const kGuardianRoleMother = @"M";
+NSString * const kGuardianRoleFather = @"F";
+NSString * const kGuardianRoleOther = @"O";
+
+NSString * const kContactRoleResidenceElder = @"residenceElder";
 
 static NSInteger const kMinimumPassordLength = 6;
 
 static NSString * const kUserDefaultsKeyUserId = @"scola.user.id";
-static NSString * const kUserDefaultsKeyFormatHomeScolaId = @"scola.scola.id$%@";
 static NSString * const kUserDefaultsKeyFormatDeviceId = @"scola.device.id$%@";
 static NSString * const kUserDefaultsKeyFormatAuthExpiryDate = @"scola.auth.expires$%@";
 static NSString * const kUserDefaultsKeyFormatLastFetchDate = @"scola.fetch.date$%@";
@@ -123,8 +136,6 @@ static ScMeta *m = nil;
     self = [super init];
     
     if (self) {
-        _state = [[ScState alloc] init];
-        
         NSString *deviceModel = [UIDevice currentDevice].model;
         _is_iPadDevice = [deviceModel hasPrefix:@"iPad"];
         _is_iPodDevice = [deviceModel hasPrefix:@"iPod"];
@@ -137,7 +148,6 @@ static ScMeta *m = nil;
         _userId = [ScMeta userDefaultForKey:kUserDefaultsKeyUserId];
         
         if (_userId) {
-            _householdId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatHomeScolaId, _userId]];
             _deviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
             _authTokenExpiryDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
             _lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
@@ -148,7 +158,6 @@ static ScMeta *m = nil;
         _appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
         _displayLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
         
-        _appStateStack = [[NSMutableArray alloc] init];
         _scheduledEntities = [[NSMutableSet alloc] init];
         _importedEntities = [[NSMutableDictionary alloc] init];
         _importedEntityRefs = [[NSMutableDictionary alloc] init];
@@ -271,13 +280,10 @@ static ScMeta *m = nil;
 
 + (BOOL)isAddressValidWithLine1:(UITextField *)line1Field line2:(UITextField *)line2Field
 {
-    NSString *line1 = [line1Field.text removeLeadingAndTrailingSpaces];
-    NSString *line2 = [line2Field.text removeLeadingAndTrailingSpaces];
+    NSString *addressLine1 = [line1Field.text removeLeadingAndTrailingSpaces];
+    NSString *addressLine2 = [line2Field.text removeLeadingAndTrailingSpaces];
     
-    BOOL isValid = NO;
-    
-    isValid = isValid || (line1.length > 0);
-    isValid = isValid || (line2.length > 0);
+    BOOL isValid = ((addressLine1.length > 0) || (addressLine2.length > 0));
     
     if (!isValid) {
         [line1Field becomeFirstResponder];
@@ -287,18 +293,27 @@ static ScMeta *m = nil;
 }
 
 
-#pragma mark - Accessor overrides
+#pragma mark - Custom property accessors
 
-- (void)setUserId:(NSString *)userId
+- (NSManagedObjectContext *)context
 {
-    _userId = userId;
+    ScAppDelegate *appDelegate = (ScAppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    if (userId) {
-        [ScMeta setUserDefault:userId forKey:kUserDefaultsKeyUserId];
+    return appDelegate.managedObjectContext;
+}
+
+
+- (void)setUser:(ScMember *)user
+{
+    _user = user;
+    _userId = user.entityId;
+    
+    if (user) {
+        [ScMeta setUserDefault:_userId forKey:kUserDefaultsKeyUserId];
         
-        _lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, userId]];
+        _lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
         
-        NSString *persistedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, userId]];
+        NSString *persistedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
         
         if (persistedDeviceId) {
             _deviceId = persistedDeviceId;
@@ -311,11 +326,14 @@ static ScMeta *m = nil;
 }
 
 
-- (void)setHouseholdId:(NSString *)householdId
+- (NSString *)authToken
 {
-    _householdId = householdId;
+    if (!_authToken && !self.isUserLoggedIn) {
+        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
+        _authToken = [self generateAuthToken:_authTokenExpiryDate];
+    }
     
-    [ScMeta setUserDefault:_householdId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatHomeScolaId, _userId]];
+    return _authToken;
 }
 
 
@@ -327,17 +345,6 @@ static ScMeta *m = nil;
 }
 
 
-- (NSString *)authToken
-{
-    if (!_authToken && ![self isUserLoggedIn]) {
-        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
-        _authToken = [self generateAuthToken:_authTokenExpiryDate];
-    }
-    
-    return _authToken;
-}
-
-
 - (void)setIsUserLoggedIn:(BOOL)isLoggedIn
 {
     [(ScAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
@@ -345,7 +352,8 @@ static ScMeta *m = nil;
     if (isLoggedIn) {
         [ScMeta setUserDefault:_authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
     } else {
-        self.userId = nil;
+        _user = nil;
+        _userId = nil;
     }
 }
 
@@ -361,22 +369,6 @@ static ScMeta *m = nil;
     }
     
     return (_authToken != nil);
-}
-
-
-#pragma mark - Convenience accessors
-
-+ (ScState *)state
-{
-    return [ScMeta m].state;
-}
-
-
-- (NSManagedObjectContext *)managedObjectContext
-{
-    ScAppDelegate *appDelegate = (ScAppDelegate *)[[UIApplication sharedApplication] delegate];
-    
-    return appDelegate.managedObjectContext;
 }
 
 
@@ -404,13 +396,13 @@ static ScMeta *m = nil;
 
 - (NSSet *)entitiesScheduledForPersistence
 {
-    [_scheduledEntities unionSet:[self.managedObjectContext insertedObjects]];
-    [_scheduledEntities unionSet:[self.managedObjectContext updatedObjects]];
+    [_scheduledEntities unionSet:[self.context insertedObjects]];
+    [_scheduledEntities unionSet:[self.context updatedObjects]];
     
     NSMutableSet *nonPersistedEntities = [[NSMutableSet alloc] init];
     
     for (ScCachedEntity *entity in _scheduledEntities) {
-        if (![entity isPersisted]) {
+        if ([entity didChange]) {
             [nonPersistedEntities addObject:entity];
         }
     }
@@ -462,10 +454,8 @@ static ScMeta *m = nil;
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-    
     if (data) {
-        [context saveWithDictionaries:data];
+        [self.context saveWithDictionaries:data];
     }
 
     if ((response.statusCode == kHTTPStatusCodeCreated) ||
@@ -479,7 +469,7 @@ static ScMeta *m = nil;
             entity.hashCode = [NSNumber numberWithInteger:[entity computeHashCode]];
         }
         
-        [context save];
+        [self.context save];
         [_scheduledEntities removeAllObjects];
     }
 }

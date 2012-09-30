@@ -7,10 +7,13 @@
 //
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
+#import "NSString+ScStringExtensions.h"
 
 #import "ScLogging.h"
 #import "ScMeta.h"
 #import "ScServerConnection.h"
+#import "ScState.h"
+#import "ScStrings.h"
 #import "ScUUIDGenerator.h"
 
 #import "ScCachedEntity.h"
@@ -22,6 +25,7 @@
 #import "ScSharedEntityRef.h"
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
+#import "ScScola+ScScolaExtensions.h"
 
 
 static NSString * const kScolaRelationshipName = @"scola";
@@ -34,30 +38,52 @@ static NSString * const kScolaRelationshipName = @"scola";
 
 - (id)entityForClass:(Class)class
 {
-    return [self entityForClass:class withId:[ScUUIDGenerator generateUUID]];
+    return [self entityForClass:class entityId:[ScUUIDGenerator generateUUID]];
 }
 
 
-#pragma mark - Entity creation
-
-- (ScScola *)entityForScolaWithName:(NSString *)name
+- (ScScola *)entityForScolaOfType:(NSString *)type scolaId:(NSString *)scolaId
 {
-    return [self entityForScolaWithName:name scolaId:[ScUUIDGenerator generateUUID]];
-}
-
-
-- (ScScola *)entityForScolaWithName:(NSString *)name scolaId:(NSString *)scolaId
-{
-    ScScola *scola = [self entityForClass:ScScola.class withId:scolaId];
+    ScScola *scola = [self entityForClass:ScScola.class entityId:scolaId];
     
-    scola.name = name;
+    scola.type = type;
     scola.scolaId = scola.entityId;
+    
+    if ([scola.type isEqualToString:kScolaTypeResidence]) {
+        scola.name = [ScStrings stringForKey:strMyPlace];
+    }
     
     return scola;
 }
 
 
-- (id)entityForClass:(Class)class withId:(NSString *)entityId
+#pragma mark - Entity creation
+
+- (ScScola *)entityForScolaOfType:(NSString *)type
+{
+    return [self entityForScolaOfType:type scolaId:[ScUUIDGenerator generateUUID]];
+}
+
+
+- (ScMember *)entityForMemberWithId:(NSString *)memberId
+{
+    NSString *memberRootId = [memberId stringByAppendingStringWithDollar:@"root"];
+    
+    ScScola *memberRoot = [self entityForScolaOfType:kScolaTypeMemberRoot scolaId:memberRootId];
+    ScMember *member = [self entityForClass:ScMember.class inScola:memberRoot entityId:memberId];
+    
+    ScMembership *rootMembership = [memberRoot addMember:member];
+    
+    if ([ScState s].aspectIsSelf) {
+        rootMembership.isActive = @YES;
+        rootMembership.isAdmin = @YES;
+    }
+    
+    return member;
+}
+
+
+- (id)entityForClass:(Class)class entityId:(NSString *)entityId
 {
     ScCachedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
     
@@ -76,13 +102,13 @@ static NSString * const kScolaRelationshipName = @"scola";
 
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola
 {
-    return [self entityForClass:class inScola:scola withId:[ScUUIDGenerator generateUUID]];
+    return [self entityForClass:class inScola:scola entityId:[ScUUIDGenerator generateUUID]];
 }
 
 
-- (id)entityForClass:(Class)class inScola:(ScScola *)scola withId:(NSString *)entityId
+- (id)entityForClass:(Class)class inScola:(ScScola *)scola entityId:(NSString *)entityId
 {
-    ScCachedEntity *entity = [self entityForClass:class withId:entityId];
+    ScCachedEntity *entity = [self entityForClass:class entityId:entityId];
     
     entity.scolaId = scola.entityId;
     
@@ -102,7 +128,7 @@ static NSString * const kScolaRelationshipName = @"scola";
     sharedEntityRef.sharedEntityScolaId = entity.scolaId;
     sharedEntityRef.scolaId = scola.entityId;
     
-    entity.isShared = [NSNumber numberWithBool:YES];
+    entity.isShared = @YES;
     
     return sharedEntityRef;
 }
@@ -145,7 +171,7 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-- (void)saveWithDictionaries:(NSArray *)dictionaries
+- (NSSet *)saveWithDictionaries:(NSArray *)dictionaries
 {
     NSMutableSet *entities = [[NSMutableSet alloc] init];
     
@@ -158,6 +184,8 @@ static NSString * const kScolaRelationshipName = @"scola";
     }
     
     [self save];
+    
+    return [NSSet setWithSet:entities];
 }
 
 
@@ -171,7 +199,7 @@ static NSString * const kScolaRelationshipName = @"scola";
 
 - (void)deleteEntity:(ScCachedEntity *)entity
 {
-    if (entity.dateModified) {
+    if ([entity isPersisted]) {
         [entity spawnEntityGhost];
     }
     

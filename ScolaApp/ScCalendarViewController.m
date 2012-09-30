@@ -6,12 +6,12 @@
 //  Copyright (c) 2011 Rhelba Software. All rights reserved.
 //
 
-#import "ScEventViewController.h"
+#import "ScCalendarViewController.h"
 
 #import "ScStrings.h"
 
 
-@implementation ScEventViewController
+@implementation ScCalendarViewController
 
 
 #pragma mark - View lifecycle

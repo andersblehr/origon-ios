@@ -44,21 +44,17 @@
 - (void)didFinishEditing
 {
     if ([ScMeta isAddressValidWithLine1:_addressLine1Field line2:_addressLine2Field]) {
-        NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-        
         _scola.addressLine1 = _addressLine1Field.text;
         _scola.addressLine2 = _addressLine2Field.text;
         _scola.landline = _landlineField.text;
         
-        ScState *state = [ScMeta state];
-        
-        if (state.actionIsRegister && state.targetIsHousehold && state.aspectIsHome) {
-            ScMember *member = [context fetchEntityWithId:[ScMeta m].userId];
-            member.activeSince = [NSDate date];
+        if ([ScState s].actionIsRegister &&
+            [ScState s].targetIsResidence && [ScState s].aspectIsSelf) {
+            [ScMeta m].user.activeSince = [NSDate date];
         }
         
         [self.view endEditing:YES];
-        [context synchronise];
+        [[ScMeta m].context synchronise];
         
         [_delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
     } else {
@@ -84,16 +80,16 @@
     _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
     _doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
     
-    if ([ScMeta state].actionIsRegister) {
+    if ([ScState s].actionIsRegister) {
         self.title = [ScStrings stringForKey:strAddressLabel];
         self.navigationItem.rightBarButtonItem = _doneButton;
         
-        if ([ScMeta state].targetIsHousehold) {
+        if ([ScState s].targetIsResidence) {
             self.navigationItem.hidesBackButton = YES;
         } else {
             self.navigationItem.leftBarButtonItem = _cancelButton;
         }
-    } else if ([ScMeta state].actionIsDisplay) {
+    } else if ([ScState s].actionIsDisplay) {
         self.title = [ScStrings stringForKey:strAddressLabel];
         self.navigationItem.rightBarButtonItem = _editButton;
     }
@@ -140,7 +136,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([ScMeta state].actionIsRegister) {
+    if ([ScState s].actionIsRegister) {
         _scolaCell = [tableView cellForEntity:_scola delegate:self];
         
         _addressLine1Field = [_scolaCell textFieldWithKey:kTextFieldKeyAddressLine1];
@@ -148,7 +144,7 @@
         _landlineField = [_scolaCell textFieldWithKey:kTextFieldKeyLandline];
         
         [_addressLine1Field becomeFirstResponder];
-    } else if ([ScMeta state].actionIsDisplay) {
+    } else if ([ScState s].actionIsDisplay) {
         _scolaCell = [tableView cellForEntity:_scola];
     }
     

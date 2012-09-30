@@ -51,6 +51,7 @@ static NSString * const kScolaProdServer = @"enceladus.local:8888";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";
 static NSString * const kHTTPHeaderAcceptCharset = @"Accept-Charset";
+static NSString * const kHTTPHeaderAuthorization = @"Authorization";
 static NSString * const kHTTPHeaderContentType = @"Content-Type";
 static NSString * const kHTTPHeaderIfModifiedSince = @"If-Modified-Since";
 static NSString * const kHTTPHeaderLastModified = @"Last-Modified";
@@ -64,8 +65,8 @@ static NSString * const kRESTHandlerStrings = @"strings";
 static NSString * const kRESTHandlerAuth = @"auth";
 static NSString * const kRESTHandlerModel = @"model";
 
-static NSString * const kRESTRouteAuthConfirmation = @"confirm";
 static NSString * const kRESTRouteAuthLogin = @"login";
+static NSString * const kRESTRouteAuthActivate = @"activate";
 static NSString * const kRESTRouteModelSync = @"sync";
 static NSString * const kRESTRouteModelFetch = @"fetch";
 static NSString * const kRESTRouteModelMember = @"member";
@@ -162,7 +163,7 @@ static NSString * const kURLParameterVersion = @"version";
 - (void)setAuthHeaderForUser:(NSString *)userId withPassword:(NSString *)password
 {
     NSString *authString = [NSString stringWithFormat:@"%@:%@", userId, password];
-    [self setValue:[NSString stringWithFormat:@"Basic %@", [authString base64EncodedString]] forHTTPHeaderField:@"Authorization"];
+    [self setValue:[NSString stringWithFormat:@"Basic %@", [authString base64EncodedString]] forHTTPHeaderField:kHTTPHeaderAuthorization];
 }
 
 
@@ -215,13 +216,13 @@ static NSString * const kURLParameterVersion = @"version";
 {
     _RESTHandler = kRESTHandlerAuth;
 
-    if ([ScMeta state].actionIsLogin) {
+    if ([ScState s].actionIsLogin) {
         _RESTRoute = kRESTRouteAuthLogin;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
         [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
-    } else if ([ScMeta state].actionIsConfirm) {
-        _RESTRoute = kRESTRouteAuthConfirmation;
+    } else if ([ScState s].actionIsActivate) {
+        _RESTRoute = kRESTRouteAuthActivate;
         
         [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
     }

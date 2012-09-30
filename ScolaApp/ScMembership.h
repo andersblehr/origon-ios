@@ -2,7 +2,7 @@
 //  ScMembership.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 14.06.12.
+//  Created by Anders Blehr on 11.09.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -16,8 +16,7 @@
 
 @property (nonatomic, retain) NSNumber * isActive;
 @property (nonatomic, retain) NSNumber * isAdmin;
-@property (nonatomic, retain) NSNumber * isCoach;
-@property (nonatomic, retain) NSNumber * isTeacher;
+@property (nonatomic, retain) NSString * contactRole;
 @property (nonatomic, retain) ScMember *member;
 @property (nonatomic, retain) ScScola *scola;
 

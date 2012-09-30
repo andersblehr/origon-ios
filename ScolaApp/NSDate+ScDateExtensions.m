@@ -25,14 +25,20 @@ static NSInteger const kAgeOfMajority = 18;
 }
 
 
-- (BOOL)isBirthDateOfMinor
+- (NSInteger)yearsBeforeNow
 {
     NSDate *now = [NSDate date];
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     
     NSDateComponents *ageComponents = [calendar components:NSYearCalendarUnit fromDate:self toDate:now options:kNilOptions];
     
-    return (ageComponents.year < kAgeOfMajority);
+    return ageComponents.year;
+}
+
+
+- (BOOL)isBirthDateOfMinor
+{
+    return ([self yearsBeforeNow] < kAgeOfMajority);
 }
 
 @end

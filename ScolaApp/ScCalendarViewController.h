@@ -1,5 +1,5 @@
 //
-//  ScRegisterUserController.h
+//  ScCalendarViewController.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 29.11.11.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ScEventViewController : UIViewController
+@interface ScCalendarViewController : UIViewController
 
 @end

@@ -22,14 +22,13 @@
     ScTableViewCell *_authCell;
     ScTextField *_emailField;
     ScTextField *_passwordField;
-    ScTextField *_registrationCodeField;
-    
-    ScMember *_member;
-    ScScola *_household;
-    
+    ScTextField *_activationCodeField;
+
+    NSString *_userId;
     NSDictionary *_authInfo;
+    NSInteger _numberOfActivationAttempts;
+    
     UIActivityIndicatorView *_activityIndicator;
-    NSInteger _numberOfConfirmationAttempts;
 }
 
 @end

@@ -14,6 +14,16 @@
 #import "ScServerConnection.h"
 
 
+// Meta
+NSString * const strScolaTypeSchoolClass              = @"strScolaTypeSchoolClass";
+NSString * const strScolaTypePreschoolClass           = @"strScolaTypePreschoolClass";
+NSString * const strScolaTypeSportsTeam               = @"strScolaTypeSportsTeam";
+NSString * const strScolaTypeOther                    = @"strScolaTypeOther";
+
+NSString * const xstrContactRolesSchoolClass          = @"xstrContactRolesSchoolClass";
+NSString * const xstrContactRolesPreschoolClass       = @"xstrContactRolesPreschoolClass";
+NSString * const xstrContactRolesSportsTeam           = @"xstrContactRolesSportsTeam";
+
 // EULA
 NSString * const strEULA                              = @"strEULA";
 NSString * const strAccept                            = @"strAccept";
@@ -21,11 +31,8 @@ NSString * const strDecline                           = @"strDecline";
 
 // Generic strings
 NSString * const strPleaseWait                        = @"strPleaseWait";
-NSString * const strAbout                             = @"strAbout";
-NSString * const strToBe2ndPSg                        = @"strToBe2ndPSg";
-NSString * const strToBe3rdPSg                        = @"strToBe3rdPSg";
-NSString * const strYouNom                            = @"strYouNom";
-NSString * const strYouAcc                            = @"strYouAcc";
+NSString * const strAboutYou                          = @"strAboutYou";
+NSString * const strAboutMember                       = @"strAboutMember";
 NSString * const strFemale                            = @"strFemale";
 NSString * const strFemaleMinor                       = @"strFemaleMinor";
 NSString * const strMale                              = @"strMale";
@@ -39,7 +46,7 @@ NSString * const strOurMessageBoard                   = @"strOurMessageBoard";
 // Prompts
 NSString * const strAuthEmailPrompt                   = @"strAuthEmailPrompt";
 NSString * const strPasswordPrompt                    = @"strPasswordPrompt";
-NSString * const strRegistrationCodePrompt            = @"strRegistrationCodePrompt";
+NSString * const strActivationCodePrompt              = @"strActivationCodePrompt";
 NSString * const strRepeatPasswordPrompt              = @"strRepeatPasswordPrompt";
 NSString * const strPhotoPrompt                       = @"strPhotoPrompt";
 NSString * const strNamePrompt                        = @"strNamePrompt";
@@ -55,7 +62,7 @@ NSString * const strScolaWebsitePrompt                = @"strScolaWebsitePrompt"
 
 // Labels
 NSString * const strSignInOrRegisterLabel             = @"strSignInOrRegisterLabel";
-NSString * const strConfirmRegistrationLabel          = @"strConfirmRegistrationLabel";
+NSString * const strActivateLabel                     = @"strActivateLabel";
 NSString * const strSingleLetterEmailLabel            = @"strSingleLetterEmailLabel";
 NSString * const strSingleLetterMobilePhoneLabel      = @"strSingleLetterMobilePhoneLabel";
 NSString * const strSingleLetterDateOfBirthLabel      = @"strSingleLetterDateOfBirthLabel";
@@ -68,7 +75,7 @@ NSString * const strLandlineLabel                     = @"strLandlineLabel";
 
 // Header & footer strings
 NSString * const strSignInOrRegisterFooter            = @"strSignInOrRegisterFooter";
-NSString * const strConfirmRegistrationFooter         = @"strConfirmRegistrationFooter";
+NSString * const strActivateFooter                    = @"strActivateFooter";
 NSString * const strHouseholdMemberListFooter         = @"strHouseholdMemberListFooter";
 
 // Button titles
@@ -77,16 +84,21 @@ NSString * const strCancel                            = @"strCancel";
 NSString * const strRetry                             = @"strRetry";
 NSString * const strStartOver                         = @"strStartOver";
 NSString * const strHaveCode                          = @"strHaveCode";
+NSString * const strInviteToHousehold                 = @"strInviteToHousehold";
+NSString * const strMergeHouseholds                   = @"strMergeHouseholds";
 
 // Alerts & error messages
 NSString * const strNoInternetError                   = @"strNoInternetError";
 NSString * const strServerErrorAlert                  = @"strServerErrorAlert";
-NSString * const strUserConfirmationFailedTitle       = @"strUserConfirmationFailedTitle";
-NSString * const strUserConfirmationFailedAlert       = @"strUserConfirmationFailedAlert";
+NSString * const strActivationFailedTitle             = @"strActivationFailedTitle";
+NSString * const strActivationFailedAlert             = @"strActivationFailedAlert";
 NSString * const strWelcomeBackTitle                  = @"strWelcomeBackTitle";
 NSString * const strWelcomeBackAlert                  = @"strWelcomeBackAlert";
 NSString * const strIncompleteRegistrationTitle       = @"strIncompleteRegistrationTitle";
 NSString * const strIncompleteRegistrationAlert       = @"strIncompleteRegistrationAlert";
+NSString * const strMemberExistsTitle                 = @"strMemberExistsTitle";
+NSString * const strMemberExistsAlert                 = @"strMemberExistsAlert";
+NSString * const strExistingResidenceAlert            = @"strExistingResidenceAlert";
 
 // ScMembershipView strings
 NSString * const strMembershipViewTitleDefault        = @"strMembershipViewTitleDefault";
@@ -99,7 +111,10 @@ NSString * const strDeleteConfirmation                = @"strDeleteConfirmation"
 NSString * const strMemberViewTitleAboutYou           = @"strMemberViewTitleAboutYou";
 NSString * const strMemberViewTitleNewMember          = @"strMemberViewTitleNewMember";
 NSString * const strMemberViewTitleNewHouseholdMember = @"strMemberViewTitleNewHouseholdMember";
-NSString * const strGenderActionSheetTitle            = @"strGenderActionSheetTitle";
+NSString * const strGenderActionSheetTitleSelf        = @"strGenderActionSheetTitleSelf";
+NSString * const strGenderActionSheetTitleSelfMinor   = @"strGenderActionSheetTitleSelfMinor";
+NSString * const strGenderActionSheetTitleMember      = @"strGenderActionSheetTitleMember";
+NSString * const strGenderActionSheetTitleMemberMinor = @"strGenderActionSheetTitleMemberMinor";
 
 
 static NSString * const kStringsPlist = @"strings.plist";
@@ -109,7 +124,7 @@ static NSDictionary *strings = nil;
 
 @implementation ScStrings
 
-#pragma mark - Auxiliary methods methods
+#pragma mark - Auxiliary methods
 
 + (NSString *)fullPathToStringsPlist
 {
@@ -122,14 +137,12 @@ static NSDictionary *strings = nil;
 
 #pragma mark - Interface implementation
 
-+ (void)refreshStrings
++ (void)refreshIfPossible
 {
     if ([ScMeta m].isInternetConnectionAvailable) {
         if (!strings || [ScMeta m].isInternetConnectionWiFi) { // TODO: Only if required
             [[[ScServerConnection alloc] init] fetchStrings];
         }
-    } else {
-        ScLogBreakage(@"Attempt to refresh strings when server is not available.");
     }
 }
 

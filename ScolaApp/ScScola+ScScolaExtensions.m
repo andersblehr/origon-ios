@@ -23,21 +23,24 @@
 
 @implementation ScScola (ScScolaExtensions)
 
-
 #pragma mark - Auxiliary methods
 
 - (void)createSharedEntitiesForAddedMember:(ScMember *)member
 {
-    NSManagedObjectContext *context = [ScMeta m].managedObjectContext;
-    
-    [context sharedEntityRefForEntity:member inScola:self];
+    [[ScMeta m].context sharedEntityRefForEntity:member inScola:self];
     
     for (ScMemberResidency *residency in member.residencies) {
         if (![residency.scolaId isEqualToString:self.entityId]) {
-            [context sharedEntityRefForEntity:residency inScola:self];
-            [context sharedEntityRefForEntity:residency.scola inScola:self];
+            [[ScMeta m].context sharedEntityRefForEntity:residency inScola:self];
+            [[ScMeta m].context sharedEntityRefForEntity:residency.scola inScola:self];
         }
     }
+}
+
+
+- (NSString *)residencyIdForMember:(ScMember *)member
+{
+    return [member.entityId stringByAppendingStringWithDollar:self.entityId];
 }
 
 
@@ -45,7 +48,7 @@
 
 - (id)addMember:(ScMember *)member
 {
-    ScMembership *membership = [[ScMeta m].managedObjectContext entityForClass:ScMembership.class inScola:self];
+    ScMembership *membership = [[ScMeta m].context entityForClass:ScMembership.class inScola:self];
     membership.member = member;
     membership.scola = self;
     
@@ -57,13 +60,17 @@
 
 - (id)addResident:(ScMember *)resident
 {
-    ScMemberResidency *residency = [[ScMeta m].managedObjectContext entityForClass:ScMemberResidency.class inScola:self withId:[self residencyIdForMember:resident]];
+    ScMemberResidency *residency = [[ScMeta m].context entityForClass:ScMemberResidency.class inScola:self entityId:[self residencyIdForMember:resident]];
     
     residency.resident = resident;
     residency.residence = self;
 
     residency.member = resident;
     residency.scola = self;
+    
+    if (![resident isMinor]) {
+        residency.contactRole = kContactRoleResidenceElder;
+    }
     
     if (![resident.scolaId isEqualToString:self.entityId]) {
         [self createSharedEntitiesForAddedMember:resident];
@@ -79,19 +86,49 @@
 }
 
 
-- (NSString *)residencyIdForMember:(ScMember *)member
+#pragma mark - Scola type information
+
+- (BOOL)isMemberRoot
 {
-    return [member.entityId stringByAppendingStringWithDollar:self.entityId];
+    return [self.type isEqualToString:kScolaTypeMemberRoot];
 }
 
 
-- (ScMemberResidency *)residencyForMember:(ScMember *)member
+- (BOOL)isResidence
 {
-    return [[ScMeta m].managedObjectContext fetchEntityWithId:[self residencyIdForMember:member]];
+    return [self.type isEqualToString:kScolaTypeResidence];
 }
 
 
-#pragma mark - Address formatting
+#pragma mark - Meta information
+
+- (BOOL)hasAddress
+{
+    return ((self.addressLine1.length > 0) || (self.addressLine2.length > 0));
+}
+
+
+- (BOOL)hasLandline
+{
+    return (self.landline.length > 0);
+}
+
+
+- (BOOL)hasMemberWithId:(NSString *)memberId
+{
+    BOOL didFindMemberId = NO;
+    
+    for (ScMembership *membership in self.memberships) {
+        if (!didFindMemberId) {
+            didFindMemberId = [membership.member.entityId isEqualToString:memberId];
+        }
+    }
+    
+    return didFindMemberId;
+}
+
+
+#pragma mark - Address information
 
 - (NSString *)singleLineAddress
 {
@@ -104,7 +141,7 @@
     if (self.addressLine2.length > 0) {
         address = [address stringByAppendingStringWithComma:self.addressLine2];
     }
-
+    
     return address;
 }
 
@@ -113,7 +150,7 @@
 {
     NSString *address = @"";
     NSArray *addressElements = [[self singleLineAddress] componentsSeparatedByString:@","];
-
+    
     for (int i = 0; i < [addressElements count]; i++) {
         NSString *addressElement = [[addressElements objectAtIndex:i] removeLeadingAndTrailingSpaces];
         
@@ -132,29 +169,19 @@
 }
 
 
-#pragma mark - Meta information
+#pragma mark - Comparison
 
-- (BOOL)hasAddress
+- (NSComparisonResult)compare:(ScScola *)other
 {
-    return ((self.addressLine1.length > 0) || (self.addressLine2.length > 0));
-}
-
-
-- (BOOL)hasLandline
-{
-    return (self.landline.length > 0);
-}
-
-
-- (BOOL)hasWebsite
-{
-    return (self.website.length > 0);
-}
-
-
-- (BOOL)hasMultipleResidents
-{
-    return (self.residencies.count > 1);
+    NSComparisonResult comparisonResult = NSOrderedSame;
+    
+    if ([self.residencies count] > 0) {
+        comparisonResult = [self.addressLine1 localizedCaseInsensitiveCompare:other.addressLine1];
+    } else {
+        comparisonResult = [self.name localizedCaseInsensitiveCompare:other.name];
+    }
+    
+    return comparisonResult;
 }
 
 @end

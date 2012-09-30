@@ -10,10 +10,16 @@
 
 #import "ScIconSectionDelegate.h"
 
-@interface ScMainViewController : UIViewController<ScIconSectionDelegate>
+@class ScMember;
 
-@property (weak, nonatomic) IBOutlet UIImageView *darkLinenView;
+@interface ScMainViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate> {
+@private
+    NSMutableSet *_scolas;
+    NSArray *_sortedResidences;
+    NSArray *_sortedWards;
+    NSArray *_sortedScolas;
+}
 
-- (IBAction)showInfo:(id)sender;
+@property (strong, nonatomic) ScMember *member;
 
 @end

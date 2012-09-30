@@ -13,6 +13,8 @@
 + (NSDate *)dateWithDeserialisedDate:(NSNumber *)deserialisedDate;
 
 - (NSString *)localisedDateString;
+
+- (NSInteger)yearsBeforeNow;
 - (BOOL)isBirthDateOfMinor;
 
 @end

@@ -11,7 +11,7 @@
 #import "ScMeta.h"
 #import "ScState.h"
 
-static int const kMinimumRealisticAge = 5;
+static int const kMinimumRealisticAge = 6;
 static int const kMaximumRealisticAge = 110;
 
 
@@ -33,7 +33,8 @@ static int const kMaximumRealisticAge = 110;
 {
     NSDate *now = [NSDate date];
     
-    if ([ScMeta state].actionIsRegister && [ScMeta state].targetIsUser) {
+    if ([ScState s].actionIsRegister &&
+        [ScState s].targetIsMember && [ScState s].aspectIsSelf) {
         NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
         latestBirthDateOffset.year = -kMinimumRealisticAge;
         
@@ -45,7 +46,7 @@ static int const kMaximumRealisticAge = 110;
 }
 
 
-- (void)setTo01April1976
+- (void)setToDefaultDate
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'";

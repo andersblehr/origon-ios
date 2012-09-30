@@ -12,7 +12,7 @@ typedef enum {
     ScStateActionDefault,
     ScStateActionStartup,
     ScStateActionLogin,
-    ScStateActionConfirm,
+    ScStateActionActivate,
     ScStateActionRegister,
     ScStateActionDisplay,
     ScStateActionEdit,
@@ -20,47 +20,47 @@ typedef enum {
 
 typedef enum {
     ScStateTargetDefault,
-    ScStateTargetUser,
-    ScStateTargetHousehold,
-    ScStateTargetMemberships,
     ScStateTargetMember,
+    ScStateTargetMemberships,
+    ScStateTargetResidence,
     ScStateTargetScola,
 } ScStateTarget;
 
 typedef enum {
     ScStateAspectDefault,
-    ScStateAspectHome,
-    ScStateAspectHousehold,
-    ScStateAspectScola,
+    ScStateAspectSelf,
+    ScStateAspectExternal,
 } ScStateAspect;
 
 
-@interface ScState : NSObject
+@interface ScState : NSObject {
+@private
+    NSMutableDictionary *_savedStates;
+}
 
 @property (nonatomic) ScStateAction action;
 @property (nonatomic) ScStateTarget target;
 @property (nonatomic) ScStateAspect aspect;
 
-@property (nonatomic, readonly) BOOL actionIsStartup;
 @property (nonatomic, readonly) BOOL actionIsLogin;
-@property (nonatomic, readonly) BOOL actionIsConfirm;
+@property (nonatomic, readonly) BOOL actionIsActivate;
 @property (nonatomic, readonly) BOOL actionIsRegister;
 @property (nonatomic, readonly) BOOL actionIsDisplay;
 @property (nonatomic, readonly) BOOL actionIsEdit;
-@property (nonatomic, readonly) BOOL actionIsInputAction;
+@property (nonatomic, readonly) BOOL actionIsInput;
 
-@property (nonatomic, readonly) BOOL targetIsUser;
-@property (nonatomic, readonly) BOOL targetIsHousehold;
-@property (nonatomic, readonly) BOOL targetIsMemberships;
 @property (nonatomic, readonly) BOOL targetIsMember;
+@property (nonatomic, readonly) BOOL targetIsMemberships;
+@property (nonatomic, readonly) BOOL targetIsResidence;
 @property (nonatomic, readonly) BOOL targetIsScola;
 
-@property (nonatomic, readonly) BOOL aspectIsHome;
-@property (nonatomic, readonly) BOOL aspectIsHousehold;
-@property (nonatomic, readonly) BOOL aspectIsScola;
+@property (nonatomic, readonly) BOOL aspectIsSelf;
+@property (nonatomic, readonly) BOOL aspectIsExternal;
 
-- (ScState *)copy;
-- (void)setState:(ScState *)state;
++ (ScState *)s;
+
+- (void)saveCurrentStateForViewController:(NSString *)viewControllerId;
+- (void)revertToSavedStateForViewController:(NSString *)viewControllerId;
 
 - (NSString *)asString;
 

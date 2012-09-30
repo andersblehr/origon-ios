@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1487" systemVersion="12A269" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1810" systemVersion="12C54" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="ScCachedEntity" representedClassName="ScCachedEntity" isAbstract="YES" syncable="YES">
         <attribute name="dateCreated" attributeType="Date" syncable="YES"/>
         <attribute name="dateExpires" optional="YES" attributeType="Date" syncable="YES"/>
@@ -102,14 +102,21 @@
         <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDevice" inverseName="member" inverseEntity="ScDevice" syncable="YES"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDocument" inverseName="author" inverseEntity="ScDocument" syncable="YES"/>
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEventInvitation" inverseName="invitee" inverseEntity="ScEventInvitation" spotlightIndexingEnabled="YES" syncable="YES"/>
+        <relationship name="guardianships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScMemberGuardianship" inverseName="guardian" inverseEntity="ScMemberGuardianship" syncable="YES"/>
         <relationship name="memberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScMembership" inverseName="member" inverseEntity="ScMembership" syncable="YES"/>
         <relationship name="messageItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScMessageItem" inverseName="author" inverseEntity="ScMessageItem" syncable="YES"/>
         <relationship name="residencies" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="ScMemberResidency" inverseName="resident" inverseEntity="ScMemberResidency" syncable="YES"/>
         <relationship name="scheduledAbsences" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScScheduledAbsence" inverseName="person" inverseEntity="ScScheduledAbsence" syncable="YES"/>
         <relationship name="toDoAssignments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScToDoAssignment" inverseName="assignee" inverseEntity="ScToDoAssignment" syncable="YES"/>
+        <relationship name="wardships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScMemberGuardianship" inverseName="ward" inverseEntity="ScMemberGuardianship" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="no"/>
         </userInfo>
+    </entity>
+    <entity name="ScMemberGuardianship" representedClassName="ScMemberGuardianship" parentEntity="ScCachedEntity" syncable="YES">
+        <attribute name="guardianRole" attributeType="String" syncable="YES"/>
+        <relationship name="guardian" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="guardianships" inverseEntity="ScMember" syncable="YES"/>
+        <relationship name="ward" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="wardships" inverseEntity="ScMember" syncable="YES"/>
     </entity>
     <entity name="ScMemberResidency" representedClassName="ScMemberResidency" parentEntity="ScMembership" syncable="YES">
         <attribute name="daysAtATime" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
@@ -123,10 +130,9 @@
         </userInfo>
     </entity>
     <entity name="ScMembership" representedClassName="ScMembership" parentEntity="ScCachedEntity" syncable="YES">
+        <attribute name="contactRole" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isActive" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isAdmin" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="isCoach" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="isTeacher" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <relationship name="member" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="memberships" inverseEntity="ScMember" syncable="YES"/>
         <relationship name="scola" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScScola" inverseName="memberships" inverseEntity="ScScola" syncable="YES"/>
         <userInfo>
@@ -186,7 +192,7 @@
         <attribute name="landline" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
-        <attribute name="website" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="documentRepositories" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScDocumentRepository" inverseName="scola" inverseEntity="ScDocumentRepository" syncable="YES"/>
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEventScolaInvitation" inverseName="scola" inverseEntity="ScEventScolaInvitation" syncable="YES"/>
         <relationship name="hostingEvents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScEvent" inverseName="hostingScolas" inverseEntity="ScEvent" syncable="YES"/>
@@ -247,29 +253,30 @@
         </userInfo>
     </entity>
     <elements>
-        <element name="ScCachedEntity" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScCachedEntityGhost" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScDevice" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScDocument" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScDocumentElement" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScDocumentRepository" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScEvent" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScEventInvitation" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScEventScolaInvitation" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScExternalDocument" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScMember" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScMemberResidency" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScMembership" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScMessageBoard" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScMessageItem" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScMessageThread" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScScheduledAbsence" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScScheduledBreak" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScScola" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScSharedEntityRef" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScToDoAssignment" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScToDoItem" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScWeeklyScheduleItem" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ScYearlySchedule" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ScCachedEntity" positionX="0" positionY="0" width="128" height="150"/>
+        <element name="ScCachedEntityGhost" positionX="0" positionY="0" width="128" height="75"/>
+        <element name="ScDevice" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="ScDocument" positionX="0" positionY="0" width="128" height="150"/>
+        <element name="ScDocumentElement" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="ScDocumentRepository" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="ScEvent" positionX="0" positionY="0" width="128" height="180"/>
+        <element name="ScEventInvitation" positionX="0" positionY="0" width="128" height="105"/>
+        <element name="ScEventScolaInvitation" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="ScExternalDocument" positionX="0" positionY="0" width="128" height="75"/>
+        <element name="ScMember" positionX="0" positionY="0" width="128" height="360"/>
+        <element name="ScMemberGuardianship" positionX="160" positionY="192" width="128" height="90"/>
+        <element name="ScMemberResidency" positionX="0" positionY="0" width="128" height="135"/>
+        <element name="ScMembership" positionX="0" positionY="0" width="128" height="135"/>
+        <element name="ScMessageBoard" positionX="0" positionY="0" width="128" height="120"/>
+        <element name="ScMessageItem" positionX="0" positionY="0" width="128" height="120"/>
+        <element name="ScMessageThread" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="ScScheduledAbsence" positionX="0" positionY="0" width="128" height="105"/>
+        <element name="ScScheduledBreak" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="ScScola" positionX="0" positionY="0" width="128" height="300"/>
+        <element name="ScSharedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
+        <element name="ScToDoAssignment" positionX="0" positionY="0" width="128" height="105"/>
+        <element name="ScToDoItem" positionX="0" positionY="0" width="128" height="105"/>
+        <element name="ScWeeklyScheduleItem" positionX="0" positionY="0" width="128" height="120"/>
+        <element name="ScYearlySchedule" positionX="0" positionY="0" width="128" height="120"/>
     </elements>
 </model>

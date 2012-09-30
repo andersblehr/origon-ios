@@ -17,6 +17,7 @@
 
 - (BOOL)isPropertyPersistable:(NSString *)property;
 - (BOOL)isPersisted;
+- (BOOL)didChange;
 
 - (void)internaliseRelationships;
 - (NSUInteger)computeHashCode;
