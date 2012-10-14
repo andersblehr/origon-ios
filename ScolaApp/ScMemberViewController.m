@@ -314,7 +314,7 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
         ScMembershipViewController *membershipViewController = segue.destinationViewController;
         membershipViewController.delegate = _delegate;
         membershipViewController.scola = _scola;
-        
+    
         [ScState s].target = ScStateTargetMemberships;
     }
 }

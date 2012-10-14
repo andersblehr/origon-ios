@@ -320,7 +320,7 @@ static ScMeta *m = nil;
 
 - (NSString *)authToken
 {
-    if (!_authToken && !self.isUserLoggedIn) {
+    if (!_authToken) {
         _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
         _authToken = [self generateAuthToken:_authTokenExpiryDate];
     }

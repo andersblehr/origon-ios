@@ -95,6 +95,7 @@ static NSInteger const kMemberSection = 2;
     for (ScMembership *membership in _scola.memberships) {
         if ([membership.member isUser] && ([membership.isAdmin boolValue])) {
             _isUserScolaAdmin = YES;
+            _addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMember)];
         }
              
         if ([membership hasContactRole]) {
@@ -122,10 +123,6 @@ static NSInteger const kMemberSection = 2;
     } else {
         self.title = [ScStrings stringForKey:strMembershipViewTitleDefault];
     }
-    
-    if (_isUserScolaAdmin) {
-        _addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMember)];
-    }
 }
 
 
@@ -136,7 +133,7 @@ static NSInteger const kMemberSection = 2;
     [[ScState s] revertToSavedStateForViewController:kMembershipViewControllerId];
     ScLogState;
     
-    if ([ScState s].actionIsRegister) {
+    if ([ScState s].actionIsRegister && [ScState s].targetIsMemberships) {
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
         
         self.navigationItem.leftBarButtonItem = doneButton;

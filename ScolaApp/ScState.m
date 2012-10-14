@@ -150,7 +150,14 @@ static ScState *s = nil;
 
 - (BOOL)actionIsInput
 {
-    return (self.actionIsLogin || self.actionIsActivate || self.actionIsRegister || self.actionIsEdit);
+    BOOL actionIsInput = NO;
+    
+    actionIsInput = actionIsInput || self.actionIsLogin;
+    actionIsInput = actionIsInput || self.actionIsActivate;
+    actionIsInput = actionIsInput || (self.actionIsRegister && !self.targetIsMemberships);
+    actionIsInput = actionIsInput || (self.actionIsEdit && !self.targetIsMemberships);
+
+    return actionIsInput;
 }
 
 

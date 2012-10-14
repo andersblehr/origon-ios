@@ -99,7 +99,7 @@
 
 - (BOOL)isUser
 {
-    return [self.entityId isEqualToString:[ScMeta m].user.entityId];
+    return [self.entityId isEqualToString:[ScMeta m].userId];
 }
 
 
