@@ -141,7 +141,7 @@ static NSDictionary *strings = nil;
 {
     if ([ScMeta m].isInternetConnectionAvailable) {
         if (!strings || [ScMeta m].isInternetConnectionWiFi) { // TODO: Only if required
-            [[[ScServerConnection alloc] init] fetchStrings];
+            [[[ScServerConnection alloc] init] fetchStringsFromServer];
         }
     }
 }

@@ -24,7 +24,6 @@
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
 
 NSString * const kBundleId = @"com.scolaapp.ios.ScolaApp";
-NSString * const kDarkLinenImageFile = @"dark_linen-640x960.png";
 NSString * const kLanguageHungarian = @"hu";
 
 NSString * const kAuthViewControllerId = @"idAuth";
@@ -136,6 +135,17 @@ static ScMeta *m = nil;
     self = [super init];
     
     if (self) {
+        _userId = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyUserId];
+        _appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
+        _displayLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+        
+        if (_userId) {
+            _deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
+            _lastFetchDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
+        } else {
+            _deviceId = [ScUUIDGenerator generateUUID];
+        }
+        
         NSString *deviceModel = [UIDevice currentDevice].model;
         _is_iPadDevice = [deviceModel hasPrefix:@"iPad"];
         _is_iPodDevice = [deviceModel hasPrefix:@"iPod"];
@@ -145,22 +155,9 @@ static ScMeta *m = nil;
         _isInternetConnectionWiFi = NO;
         _isInternetConnectionWWAN = NO;
         
-        _userId = [ScMeta userDefaultForKey:kUserDefaultsKeyUserId];
-        
-        if (_userId) {
-            _deviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
-            _authTokenExpiryDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
-            _lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
-        } else {
-            _deviceId = [ScUUIDGenerator generateUUID];
-        }
-        
-        _appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
-        _displayLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
-        
-        _scheduledEntities = [[NSMutableSet alloc] init];
-        _importedEntities = [[NSMutableDictionary alloc] init];
-        _importedEntityRefs = [[NSMutableDictionary alloc] init];
+        _modifiedEntities = [[NSMutableSet alloc] init];
+        _stagedServerEntities = [[NSMutableDictionary alloc] init];
+        _stagedServerEntityRefs = [[NSMutableDictionary alloc] init];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityDidChange:) name:kReachabilityChangedNotification object:nil];
     }
@@ -176,28 +173,6 @@ static ScMeta *m = nil;
     }
     
     return m;
-}
-
-
-#pragma mark - NSUserDefaults convenience accessors
-
-+ (void)setUserDefault:(id)object forKey:(NSString *)key
-{
-    [[NSUserDefaults standardUserDefaults] setObject:object forKey:key];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-
-+ (id)userDefaultForKey:(NSString *)key
-{
-    return [[NSUserDefaults standardUserDefaults] objectForKey:key];
-}
-
-
-+ (void)removeUserDefaultForKey:(NSString *)key
-{
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
-    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 
@@ -295,33 +270,50 @@ static ScMeta *m = nil;
 
 #pragma mark - Custom property accessors
 
-- (NSManagedObjectContext *)context
+- (BOOL)isUserLoggedIn
 {
-    ScAppDelegate *appDelegate = (ScAppDelegate *)[[UIApplication sharedApplication] delegate];
+    if (!_user) {
+        _authTokenExpiryDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
+        
+        if (_authTokenExpiryDate) {
+            NSDate *now = [NSDate date];
+            
+            if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
+                _authToken = [self generateAuthToken:_authTokenExpiryDate];
+                _user = [self.context fetchEntityFromCache:_userId];
+            }
+        }
+    }
     
-    return appDelegate.managedObjectContext;
+    return (_user != nil);
 }
 
 
-- (void)setUser:(ScMember *)user
+- (void)setUserId:(NSString *)userId
 {
-    _user = user;
-    _userId = user.entityId;
+    [(ScAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
     
-    if (user) {
-        [ScMeta setUserDefault:_userId forKey:kUserDefaultsKeyUserId];
+    _userId = userId;
+    
+    if (_userId) {
+        [[NSUserDefaults standardUserDefaults] setObject:_userId forKey:kUserDefaultsKeyUserId];
         
-        _lastFetchDate = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
+        NSString *deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
+        NSString *lastFetchDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
         
-        NSString *persistedDeviceId = [ScMeta userDefaultForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
+        if (deviceId) {
+            _deviceId = deviceId;
+        } else if (_deviceId) {
+            [[NSUserDefaults standardUserDefaults] setObject:_deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
+        }
         
-        if (persistedDeviceId) {
-            _deviceId = persistedDeviceId;
-        } else {
-            [ScMeta setUserDefault:_deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
+        if (lastFetchDate) {
+            _lastFetchDate = lastFetchDate;
+        } else if (_lastFetchDate) {
+            [[NSUserDefaults standardUserDefaults] setObject:_lastFetchDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
         }
     } else {
-        [ScMeta removeUserDefaultForKey:kUserDefaultsKeyUserId];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyUserId];
     }
 }
 
@@ -341,34 +333,13 @@ static ScMeta *m = nil;
 {
     _lastFetchDate = fetchDate;
     
-    [ScMeta setUserDefault:fetchDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
+    [[NSUserDefaults standardUserDefaults] setObject:fetchDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
 }
 
 
-- (void)setIsUserLoggedIn:(BOOL)isLoggedIn
+- (NSManagedObjectContext *)context
 {
-    [(ScAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
-    
-    if (isLoggedIn) {
-        [ScMeta setUserDefault:_authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
-    } else {
-        _user = nil;
-        _userId = nil;
-    }
-}
-
-
-- (BOOL)isUserLoggedIn
-{
-    if (!_authToken && _authTokenExpiryDate) {
-        NSDate *now = [NSDate date];
-        
-        if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
-            _authToken = [self generateAuthToken:_authTokenExpiryDate];
-        }
-    }
-    
-    return (_authToken != nil);
+    return ((ScAppDelegate *)[[UIApplication sharedApplication] delegate]).managedObjectContext;
 }
 
 
@@ -392,59 +363,71 @@ static ScMeta *m = nil;
 }
 
 
-#pragma mark - Persistence scheduling
+#pragma mark - User login
 
-- (NSSet *)entitiesScheduledForPersistence
+- (void)userDidLogIn
 {
-    [_scheduledEntities unionSet:[self.context insertedObjects]];
-    [_scheduledEntities unionSet:[self.context updatedObjects]];
+    [[NSUserDefaults standardUserDefaults] setObject:_authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
     
-    NSMutableSet *nonPersistedEntities = [[NSMutableSet alloc] init];
+    _user = [self.context fetchEntityFromCache:_userId];
     
-    for (ScCachedEntity *entity in _scheduledEntities) {
-        if ([entity didChange]) {
-            [nonPersistedEntities addObject:entity];
+    if (!_user) {
+        _user = [self.context entityForMemberWithId:_userId];
+    }
+}
+
+
+#pragma mark - Cache & persistence housekeeping
+
+- (NSSet *)modifiedEntities
+{
+    [_modifiedEntities unionSet:[self.context insertedObjects]];
+    [_modifiedEntities unionSet:[self.context updatedObjects]];
+    
+    NSMutableSet *dirtyEntities = [[NSMutableSet alloc] init];
+    
+    for (ScCachedEntity *entity in _modifiedEntities) {
+        if ([entity isDirty]) {
+            [dirtyEntities addObject:entity];
         }
     }
     
-    _scheduledEntities = [NSMutableSet setWithSet:nonPersistedEntities];
+    _modifiedEntities = dirtyEntities;
     
-    return _scheduledEntities;
+    return _modifiedEntities;
 }
 
 
-#pragma mark - JSON deserialisation housekeeping
-
-- (void)addImportedEntity:(ScCachedEntity *)entity
+- (void)stageServerEntity:(ScCachedEntity *)entity
 {
-    if ([_importedEntityRefs count] == 0) {
-        [_importedEntities removeAllObjects];
+    if ([_stagedServerEntityRefs count] == 0) {
+        [_stagedServerEntities removeAllObjects];
     }
     
-    [_importedEntities setObject:entity forKey:entity.entityId];
+    [_stagedServerEntities setObject:entity forKey:entity.entityId];
 }
 
 
-- (void)addImportedEntityRefs:(NSDictionary *)entityRefs forEntity:(ScCachedEntity *)entity
+- (void)stageServerEntityRefs:(NSDictionary *)entityRefs forEntity:(ScCachedEntity *)entity
 {
-    if ([_importedEntityRefs count] == 0) {
-        [_importedEntities removeAllObjects];
+    if ([_stagedServerEntityRefs count] == 0) {
+        [_stagedServerEntities removeAllObjects];
     }
     
-    [_importedEntityRefs setObject:entityRefs forKey:entity.entityId];
+    [_stagedServerEntityRefs setObject:entityRefs forKey:entity.entityId];
 }
 
 
-- (ScCachedEntity *)importedEntityWithId:(NSString *)entityId
+- (ScCachedEntity *)stagedServerEntityWithId:(NSString *)entityId
 {
-    return [_importedEntities objectForKey:entityId];
+    return [_stagedServerEntities objectForKey:entityId];
 }
 
 
-- (NSDictionary *)importedEntityRefsForEntity:(ScCachedEntity *)entity
+- (NSDictionary *)stagedServerEntityRefsForEntity:(ScCachedEntity *)entity
 {
-    NSDictionary *entityRefs = [_importedEntityRefs objectForKey:entity.entityId];
-    [_importedEntityRefs removeObjectForKey:entity.entityId];
+    NSDictionary *entityRefs = [_stagedServerEntityRefs objectForKey:entity.entityId];
+    [_stagedServerEntityRefs removeObjectForKey:entity.entityId];
     
     return entityRefs;
 }
@@ -455,7 +438,7 @@ static ScMeta *m = nil;
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
     if (data) {
-        [self.context saveWithDictionaries:data];
+        [self.context saveServerEntitiesToCache:data];
     }
 
     if ((response.statusCode == kHTTPStatusCodeCreated) ||
@@ -464,20 +447,20 @@ static ScMeta *m = nil;
         
         NSDate *now = [NSDate date];
         
-        for (ScCachedEntity *entity in _scheduledEntities) {
+        for (ScCachedEntity *entity in _modifiedEntities) {
             entity.dateModified = now;
             entity.hashCode = [NSNumber numberWithInteger:[entity computeHashCode]];
         }
         
-        [self.context save];
-        [_scheduledEntities removeAllObjects];
+        [self.context saveToCache];
+        [_modifiedEntities removeAllObjects];
     }
 }
 
 
 - (void)didFailWithError:(NSError *)error
 {
-    ScLogError(@"Error synchronising entities.");
+    ScLogError(@"Error synchronising cache with server.");
 }
 
 @end

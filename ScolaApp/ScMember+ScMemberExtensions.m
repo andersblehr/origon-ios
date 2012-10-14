@@ -25,7 +25,6 @@
 
 @implementation ScMember (ScMemberExtensions)
 
-
 #pragma mark - Meta information
 
 - (ScScola *)memberRoot

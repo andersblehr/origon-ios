@@ -39,11 +39,11 @@
 
 + (void)showAlertForError:(NSError *)error
 {
-    [self showAlertForError:error tagWith:NSIntegerMax usingDelegate:nil];
+    [self showAlertForError:error tagWith:NSIntegerMax delegate:nil];
 }
 
 
-+ (void)showAlertForError:(NSError *)error tagWith:(int)tag usingDelegate:(id)delegate
++ (void)showAlertForError:(NSError *)error tagWith:(int)tag delegate:(id)delegate
 {
     [self showAlertWithCode:[error code] message:[error localizedDescription] tag:tag delegate:delegate];
 }
@@ -51,11 +51,11 @@
 
 + (void)showAlertForHTTPStatus:(NSInteger)status
 {
-    [self showAlertForHTTPStatus:status tagWith:NSIntegerMax usingDelegate:nil];
+    [self showAlertForHTTPStatus:status tagWith:NSIntegerMax delegate:nil];
 }
 
 
-+ (void)showAlertForHTTPStatus:(NSInteger)status tagWith:(int)tag usingDelegate:(id)delegate
++ (void)showAlertForHTTPStatus:(NSInteger)status tagWith:(int)tag delegate:(id)delegate
 {
     [self showAlertWithCode:status message:[NSHTTPURLResponse localizedStringForStatusCode:status] tag:tag delegate:delegate];
 }

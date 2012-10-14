@@ -54,7 +54,7 @@
         }
         
         [self.view endEditing:YES];
-        [[ScMeta m].context synchronise];
+        [[ScMeta m].context synchroniseCacheWithServer];
         
         [_delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
     } else {
@@ -71,10 +71,10 @@
     
     ScLogState;
     
-    self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
-    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
+    
+    [self.tableView addBackground];
     
     _editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
     _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];

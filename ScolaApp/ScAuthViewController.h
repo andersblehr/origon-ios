@@ -24,7 +24,6 @@
     ScTextField *_passwordField;
     ScTextField *_activationCodeField;
 
-    NSString *_userId;
     NSDictionary *_authInfo;
     NSInteger _numberOfActivationAttempts;
     

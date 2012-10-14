@@ -46,8 +46,8 @@ static NSString * const kScolaRelationshipName = @"scola";
 {
     ScScola *scola = [self entityForClass:ScScola.class entityId:scolaId];
     
+    scola.scolaId = scolaId;
     scola.type = type;
-    scola.scolaId = scola.entityId;
     
     if ([scola.type isEqualToString:kScolaTypeResidence]) {
         scola.name = [ScStrings stringForKey:strMyPlace];
@@ -134,9 +134,47 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-#pragma mark - Fetching entities
+#pragma mark - Entity caching and synchronisation
 
-- (id)fetchEntityWithId:(NSString *)entityId
+- (void)saveToCache
+{
+    NSError *error;
+    
+    if ([self save:&error]) {
+        ScLogDebug(@"Entities successfully saved to cache.");
+    } else {
+        ScLogError(@"Error saving entities to cache: %@ [%@]", [error localizedDescription], [error userInfo]);
+    }
+}
+
+
+- (NSSet *)saveServerEntitiesToCache:(NSArray *)entityDictionaries
+{
+    NSMutableSet *entities = [[NSMutableSet alloc] init];
+    
+    for (NSDictionary *entityDictionary in entityDictionaries) {
+        [entities addObject:[ScCachedEntity entityWithDictionary:entityDictionary]];
+    }
+    
+    for (ScCachedEntity *entity in entities) {
+        [entity internaliseRelationships];
+    }
+    
+    [self saveToCache];
+    
+    return [NSSet setWithSet:entities];
+}
+
+
+- (void)synchroniseCacheWithServer
+{
+    [[[ScServerConnection alloc] init] synchroniseCacheWithServer];
+}
+
+
+#pragma mark - Fetching & deleting entities from cache
+
+- (id)fetchEntityFromCache:(NSString *)entityId
 {
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(ScCachedEntity.class)];
     [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", kPropertyEntityId, entityId]];
@@ -146,9 +184,9 @@ static NSString * const kScolaRelationshipName = @"scola";
     NSArray *resultsArray = [self executeFetchRequest:request error:&error];
     
     if (resultsArray == nil) {
-        ScLogError(@"Could not fetch entity: %@", [error localizedDescription]);
+        ScLogError(@"Could not fetch entity from cache: %@", [error localizedDescription]);
     } else if ([resultsArray count] > 1) {
-        ScLogBreakage(@"Found more than one entity with entityId '%@'.", entityId);
+        ScLogBreakage(@"Found more than one entity in cache with entityId '%@'.", entityId);
     } else if ([resultsArray count] == 1) {
         entity = [resultsArray objectAtIndex:0];
     }
@@ -157,47 +195,7 @@ static NSString * const kScolaRelationshipName = @"scola";
 }
 
 
-#pragma mark - Saving & persisting entities
-
-- (void)save
-{
-    NSError *error;
-    
-    if ([self save:&error]) {
-        ScLogDebug(@"Entities successfully saved.");
-    } else {
-        ScLogError(@"Error saving entities: %@ [%@]", [error localizedDescription], [error userInfo]);
-    }
-}
-
-
-- (NSSet *)saveWithDictionaries:(NSArray *)dictionaries
-{
-    NSMutableSet *entities = [[NSMutableSet alloc] init];
-    
-    for (NSDictionary *dictionary in dictionaries) {
-        [entities addObject:[ScCachedEntity entityWithDictionary:dictionary]];
-    }
-    
-    for (ScCachedEntity *entity in entities) {
-        [entity internaliseRelationships];
-    }
-    
-    [self save];
-    
-    return [NSSet setWithSet:entities];
-}
-
-
-- (void)synchronise
-{
-    [[[ScServerConnection alloc] init] synchroniseEntities];
-}
-
-
-#pragma mark - Deleting entities
-
-- (void)deleteEntity:(ScCachedEntity *)entity
+- (void)deleteEntityFromCache:(ScCachedEntity *)entity
 {
     if ([entity isPersisted]) {
         [entity spawnEntityGhost];

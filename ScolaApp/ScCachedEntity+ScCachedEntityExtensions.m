@@ -68,7 +68,7 @@
     NSMutableDictionary *entityRefs = [[NSMutableDictionary alloc] init];
     NSString *entityId = [dictionary valueForKey:kPropertyEntityId];
     
-    ScCachedEntity *entity = [[ScMeta m].context fetchEntityWithId:entityId];
+    ScCachedEntity *entity = [[ScMeta m].context fetchEntityFromCache:entityId];
     
     if (!entity) {
         NSString *entityClass = [dictionary objectForKey:kPropertyEntityClass];
@@ -101,10 +101,10 @@
         }
     }
     
-    [[ScMeta m] addImportedEntity:entity];
+    [[ScMeta m] stageServerEntity:entity];
     
     if ([entityRefs count] > 0) {
-        [[ScMeta m] addImportedEntityRefs:entityRefs forEntity:entity];
+        [[ScMeta m] stageServerEntityRefs:entityRefs forEntity:entity];
     }
     
     return entity;
@@ -160,9 +160,9 @@
 }
 
 
-- (BOOL)didChange
+- (BOOL)isDirty
 {
-    return ([self.hashCode integerValue] == [self computeHashCode]);
+    return ([self.hashCode integerValue] != [self computeHashCode]);
 }
 
 
@@ -170,16 +170,16 @@
 {
     self.hashCode = [NSNumber numberWithInteger:[self computeHashCode]];
     
-    NSDictionary *entityRefs = [[ScMeta m] importedEntityRefsForEntity:self];
+    NSDictionary *entityRefs = [[ScMeta m] stagedServerEntityRefsForEntity:self];
     
     for (NSString *name in [entityRefs allKeys]) {
         NSDictionary *entityRef = [entityRefs objectForKey:name];
         NSString *destinationId = [entityRef objectForKey:kPropertyEntityId];
         
-        ScCachedEntity *entity = [[ScMeta m] importedEntityWithId:destinationId];
+        ScCachedEntity *entity = [[ScMeta m] stagedServerEntityWithId:destinationId];
         
         if (!entity) {
-            entity = [[ScMeta m].context fetchEntityWithId:destinationId];
+            entity = [[ScMeta m].context fetchEntityFromCache:destinationId];
         }
         
         if (entity) {
@@ -248,7 +248,7 @@
 
 - (ScCachedEntityGhost *)spawnEntityGhost
 {
-    ScScola *entityScola = [[ScMeta m].context fetchEntityWithId:self.scolaId];
+    ScScola *entityScola = [[ScMeta m].context fetchEntityFromCache:self.scolaId];
     ScCachedEntityGhost *entityGhost = [[ScMeta m].context entityForClass:ScCachedEntityGhost.class inScola:entityScola entityId:self.entityId];
     
     entityGhost.ghostedEntityClass = NSStringFromClass(self.class);

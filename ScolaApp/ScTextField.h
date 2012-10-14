@@ -11,7 +11,7 @@
 
 extern NSString * const kTextFieldKeyAuthEmail;
 extern NSString * const kTextFieldKeyPassword;
-extern NSString * const kTextFieldKeyRegistrationCode;
+extern NSString * const kTextFieldKeyActivationCode;
 extern NSString * const kTextFieldKeyRepeatPassword;
 
 extern NSString * const kTextFieldKeyName;

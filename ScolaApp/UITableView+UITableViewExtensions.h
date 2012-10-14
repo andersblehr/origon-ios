@@ -25,6 +25,7 @@ extern CGFloat const kSectionSpacing;
 - (id)cellForEntity:(ScCachedEntity *)entity delegate:(id)delegate;
 - (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate;
 
+- (void)addBackground;
 - (void)addLogoBanner;
 - (UIActivityIndicatorView *)addActivityIndicator;
 

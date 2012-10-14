@@ -19,11 +19,11 @@
 - (id)entityForClass:(Class)class inScola:(ScScola *)scola entityId:(NSString *)entityId;
 - (id)sharedEntityRefForEntity:(ScCachedEntity *)entity inScola:(ScScola *)scola;
 
-- (id)fetchEntityWithId:(NSString *)entityId;
+- (void)saveToCache;
+- (NSSet *)saveServerEntitiesToCache:(NSArray *)entityDictionaries;
+- (void)synchroniseCacheWithServer;
 
-- (void)save;
-- (NSSet *)saveWithDictionaries:(NSArray *)dictionaries;
-- (void)synchronise;
-- (void)deleteEntity:(ScCachedEntity *)entity;
+- (id)fetchEntityFromCache:(NSString *)entityId;
+- (void)deleteEntityFromCache:(ScCachedEntity *)entity;
 
 @end

@@ -42,12 +42,10 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 {
     [super viewDidLoad];
     
-    self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBarHidden = NO;
-    
     self.title = @"Scola";
-
+    
+    [self.tableView addBackground];
+    
     NSMutableSet *residences = [[NSMutableSet alloc] init];
     NSMutableSet *wards = [[NSMutableSet alloc] init];
     _scolas = [[NSMutableSet alloc] init];

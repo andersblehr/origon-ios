@@ -124,7 +124,7 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
     genderSheet.tag = kGenderSheetTag;
     [genderSheet showInView:self.view];
     
-    [_nameField becomeFirstResponder]; // TODO: Why is this here?
+    //[_nameField becomeFirstResponder]; // TODO: Why is this here?
 }
 
 
@@ -150,17 +150,17 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
                 _member = [[ScMeta m].context entityForClass:ScMember.class inScola:_scola];
             }
         }
+        
+        if ([_scola isResidence]) {
+            _membership = [_scola addResident:_member];
+        } else {
+            _membership = [_scola addMember:_member];
+        }
     }
     
     [self updateMember];
     
-    if ([_scola isResidence]) {
-        _membership = [_scola addResident:_member];
-    } else {
-        _membership = [_scola addMember:_member];
-    }
-    
-    if ([ScState s].aspectIsSelf && (_membership.isAdmin == @YES)) { // TODO: Additional cases
+    if ([ScState s].aspectIsSelf && [_membership.isAdmin boolValue]) { // TODO: Additional cases
         [self registerHousehold];
     } else {
         [_delegate shouldDismissViewControllerWithIdentitifier:kMemberViewControllerId];
@@ -228,6 +228,8 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
     }
     
     if (isValidInput) {
+        [self.view endEditing:YES];
+        
         if ([ScState s].actionIsRegister) {
             if (_candidate) {
                 if ([_scola isResidence]) {
@@ -255,10 +257,10 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
 
     ScLogState;
     
-    self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
-    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
+    
+    [self.tableView addBackground];
     
     _editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
     _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
@@ -464,12 +466,12 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
                 
                 [ScAlert showAlertWithTitle:alertTitle message:alertMessage];
             } else {
-                _candidate = [[ScMeta m].context fetchEntityWithId:email];
+                _candidate = [[ScMeta m].context fetchEntityFromCache:email];
                 
                 if (_candidate) {
                     [self populateWithCandidate];
                 } else {
-                    [[[ScServerConnection alloc] init] fetchMemberWithId:email delegate:self];
+                    [[[ScServerConnection alloc] init] fetchMemberEntitiesFromServer:email delegate:self];
                 }
             }
         }
@@ -552,8 +554,8 @@ static NSString * const kSegueToMembershipView = @"memberToMembershipView";
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(NSArray *)data
 {
     if (response.statusCode == kHTTPStatusCodeOK) {
-        _candidateEntities = [[ScMeta m].context saveWithDictionaries:data];
-        _candidate = [[ScMeta m].context fetchEntityWithId:_emailField.text];
+        _candidateEntities = [[ScMeta m].context saveServerEntitiesToCache:data];
+        _candidate = [[ScMeta m].context fetchEntityFromCache:_emailField.text];
         
         [self populateWithCandidate];
     }

@@ -78,7 +78,7 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 {
     if (_persistentStoreCoordinator == nil) {
         NSURL *applicationDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent: [NSString stringWithFormat:kPersistentStoreFormat, [ScMeta m].user.entityId]];
+        NSURL *storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent: [NSString stringWithFormat:kPersistentStoreFormat, [ScMeta m].userId]];
         
         NSError *error = nil;
         _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
@@ -116,46 +116,35 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    /*
-     Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-     Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-     */
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    if ([ScMeta m].isUserLoggedIn) {
+        [[ScMeta m].context synchroniseCacheWithServer];
+    }
 }
 
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    if ([ScMeta m].isUserLoggedIn) {
-        [[ScMeta m].context synchronise]; // TODO: Doesn't work. Move to appWillResignActive?
-    } else {
-        [ScMeta m].user = nil;
-    }
+    // TODO: Delete if not implemented.
 }
 
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-    /*
-     Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-     */
+    // TODO: Delete if not implemented.
 }
 
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    /*
-     Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-     */
+    // TODO: Delete if not implemented.
 }
 
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    /*
-     Called when the application is about to terminate.
-     Save data if appropriate.
-     See also applicationDidEnterBackground:.
-     */
+    // TODO: Delete if not implemented.
 }
 
 @end

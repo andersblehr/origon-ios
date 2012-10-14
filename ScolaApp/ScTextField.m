@@ -18,7 +18,7 @@
 
 NSString * const kTextFieldKeyAuthEmail = @"authEmail";
 NSString * const kTextFieldKeyPassword = @"password";
-NSString * const kTextFieldKeyRegistrationCode = @"registrationCode";
+NSString * const kTextFieldKeyActivationCode = @"activationCode";
 NSString * const kTextFieldKeyRepeatPassword = @"repeatPassword";
 
 NSString * const kTextFieldKeyName = @"name";

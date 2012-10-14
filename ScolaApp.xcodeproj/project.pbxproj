@@ -47,7 +47,6 @@
 		5C62A00214C6252C001DA01F /* ScTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C62A00114C6252C001DA01F /* ScTaskViewController.m */; };
 		5C62A00514C627AB001DA01F /* 11-clock.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00314C627AB001DA01F /* 11-clock.png */; };
 		5C62A00614C627AB001DA01F /* 11-clock@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00414C627AB001DA01F /* 11-clock@2x.png */; };
-		5C62A00914C627D1001DA01F /* ScScheduleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C62A00814C627D1001DA01F /* ScScheduleViewController.m */; };
 		5C62A00E14C762D7001DA01F /* 53-house.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00C14C762D6001DA01F /* 53-house.png */; };
 		5C62A00F14C762D7001DA01F /* 53-house@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C62A00D14C762D7001DA01F /* 53-house@2x.png */; };
 		5C6E6C131589AC820002FF84 /* UITableView+UITableViewExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C121589AC820002FF84 /* UITableView+UITableViewExtensions.m */; };
@@ -78,6 +77,7 @@
 		5C83DF871543EC8600BB0B29 /* ScMemberResidency+ScMemberResidencyExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF861543EC8600BB0B29 /* ScMemberResidency+ScMemberResidencyExtensions.m */; };
 		5C8B3AB615813DBB000B19FA /* ScMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* ScMemberViewController.m */; };
 		5C8B3ABA1582493D000B19FA /* ScTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB91582493C000B19FA /* ScTableViewCell.m */; };
+		5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C93DC741628100C009A66C4 /* Default-568h@2x.png */; };
 		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m */; };
 		5CA94D9B15834A9E008CD9EC /* UIDatePicker+ScDatePickerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9A15834A9E008CD9EC /* UIDatePicker+ScDatePickerExtensions.m */; };
 		5CA94D9F15836BD9008CD9EC /* NSDate+ScDateExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9E15836BD9008CD9EC /* NSDate+ScDateExtensions.m */; };
@@ -188,8 +188,6 @@
 		5C62A00114C6252C001DA01F /* ScTaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScTaskViewController.m; sourceTree = "<group>"; };
 		5C62A00314C627AB001DA01F /* 11-clock.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "11-clock.png"; sourceTree = "<group>"; };
 		5C62A00414C627AB001DA01F /* 11-clock@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "11-clock@2x.png"; sourceTree = "<group>"; };
-		5C62A00714C627D1001DA01F /* ScScheduleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScScheduleViewController.h; sourceTree = "<group>"; };
-		5C62A00814C627D1001DA01F /* ScScheduleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScScheduleViewController.m; sourceTree = "<group>"; };
 		5C62A00C14C762D6001DA01F /* 53-house.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "53-house.png"; sourceTree = "<group>"; };
 		5C62A00D14C762D7001DA01F /* 53-house@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "53-house@2x.png"; sourceTree = "<group>"; };
 		5C6E6C111589AC820002FF84 /* UITableView+UITableViewExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+UITableViewExtensions.h"; sourceTree = "<group>"; };
@@ -248,6 +246,7 @@
 		5C8B3AB515813DBB000B19FA /* ScMemberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScMemberViewController.m; sourceTree = "<group>"; };
 		5C8B3AB81582493C000B19FA /* ScTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScTableViewCell.h; sourceTree = "<group>"; };
 		5C8B3AB91582493C000B19FA /* ScTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScTableViewCell.m; sourceTree = "<group>"; };
+		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5C9D3146151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+ScJSONSerializationExtensions.h"; sourceTree = "<group>"; };
 		5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+ScJSONSerializationExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+ScJSONSerializationExtensions.m"; sourceTree = "<group>"; };
 		5CA94D9915834A9E008CD9EC /* UIDatePicker+ScDatePickerExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDatePicker+ScDatePickerExtensions.h"; sourceTree = "<group>"; };
@@ -497,8 +496,6 @@
 				5C629FEF14C62038001DA01F /* ScMembershipViewController.m */,
 				5C629FFD14C624AD001DA01F /* ScMessageBoardViewController.h */,
 				5C629FFE14C624AD001DA01F /* ScMessageBoardViewController.m */,
-				5C62A00714C627D1001DA01F /* ScScheduleViewController.h */,
-				5C62A00814C627D1001DA01F /* ScScheduleViewController.m */,
 				5C2262C215A0B47B00241C5F /* ScScolaViewController.h */,
 				5C2262C315A0B47B00241C5F /* ScScolaViewController.m */,
 				5CB7E93E15F38C1200FD53DF /* ScSettingsViewController.h */,
@@ -543,6 +540,7 @@
 		5CBB63A9146080DD00A9133A = {
 			isa = PBXGroup;
 			children = (
+				5C93DC741628100C009A66C4 /* Default-568h@2x.png */,
 				5CBE919E159909E200516C54 /* AudioToolbox.framework */,
 				5CBB63BE146080DF00A9133A /* ScolaApp */,
 				5CBB63DF146080E000A9133A /* ScolaAppTests */,
@@ -744,6 +742,7 @@
 				5CB7E93915F3844600FD53DF /* glyphicons_019_cogwheel@2x.png in Resources */,
 				5CB7E93C15F3886E00FD53DF /* glyphicons_045_calendar.png in Resources */,
 				5CB7E93D15F3886E00FD53DF /* glyphicons_045_calendar@2x.png in Resources */,
+				5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -792,7 +791,6 @@
 				5C629FF014C62038001DA01F /* ScMembershipViewController.m in Sources */,
 				5C629FFF14C624AD001DA01F /* ScMessageBoardViewController.m in Sources */,
 				5C62A00214C6252C001DA01F /* ScTaskViewController.m in Sources */,
-				5C62A00914C627D1001DA01F /* ScScheduleViewController.m in Sources */,
 				5C50581C14CAEC76000D6587 /* UIView+ScViewExtensions.m in Sources */,
 				5C153EFB14CC9815003A6B61 /* ScIconSection.m in Sources */,
 				5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+ScManagedObjectContextExtensions.m in Sources */,

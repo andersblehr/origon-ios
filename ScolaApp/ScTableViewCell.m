@@ -64,7 +64,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     
     isAuthFieldKey = isAuthFieldKey || [key isEqualToString:kTextFieldKeyAuthEmail];
     isAuthFieldKey = isAuthFieldKey || [key isEqualToString:kTextFieldKeyPassword];
-    isAuthFieldKey = isAuthFieldKey || [key isEqualToString:kTextFieldKeyRegistrationCode];
+    isAuthFieldKey = isAuthFieldKey || [key isEqualToString:kTextFieldKeyActivationCode];
     isAuthFieldKey = isAuthFieldKey || [key isEqualToString:kTextFieldKeyRepeatPassword];
     
     return isAuthFieldKey;
@@ -83,7 +83,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     
     if (isPasswordField) {
         textField.clearsOnBeginEditing = YES;
-        textField.returnKeyType = UIReturnKeyJoin;
+        textField.returnKeyType = UIReturnKeyDone;
         textField.secureTextEntry = YES;
         
         if ([key isEqualToString:kTextFieldKeyPassword]) {
@@ -94,7 +94,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     } else if ([key isEqualToString:kTextFieldKeyAuthEmail]) {
         textField.keyboardType = UIKeyboardTypeEmailAddress;
         textField.placeholder = [ScStrings stringForKey:strAuthEmailPrompt];
-    } else if ([key isEqualToString:kTextFieldKeyRegistrationCode]) {
+    } else if ([key isEqualToString:kTextFieldKeyActivationCode]) {
         textField.placeholder = [ScStrings stringForKey:strActivationCodePrompt];
     }
     
@@ -175,14 +175,9 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     
     if ([entity isKindOfClass:ScScola.class]) {
         ScScola *scola = (ScScola *)entity;
-        
-        if (![scola hasLandline]) {
-            if ([ScState s].actionIsInput) {
-                height -= [UIFont editableDetailFont].lineHeightWhenEditing;
-            } else {
-                height -= [UIFont detailFont].lineHeight;
-            }
-            
+
+        if (![scola hasLandline] && ![ScState s].actionIsInput) {
+            height -= [UIFont detailFont].lineHeight;
             height -= kLineSpacing;
         }
     }
@@ -469,7 +464,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
             [self addTextFieldWithKey:kTextFieldKeyPassword];
         } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
             [self addLabel:[ScStrings stringForKey:strActivateLabel] centred:YES];
-            [self addTextFieldWithKey:kTextFieldKeyRegistrationCode];
+            [self addTextFieldWithKey:kTextFieldKeyActivationCode];
             [self addTextFieldWithKey:kTextFieldKeyRepeatPassword];
         }
     }

@@ -99,7 +99,7 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-- (void)performHTTPMethod:(NSString *)HTTPMethod withEntities:(NSArray *)entities delegate:(id)delegate
+- (void)performHTTPMethod:(NSString *)HTTPMethod entities:(NSArray *)entities delegate:(id)delegate
 {
     _delegate = delegate;
     
@@ -169,7 +169,7 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field
 {
-    return [self setValue:value forHTTPHeaderField:field required:YES];
+    [self setValue:value forHTTPHeaderField:field required:YES];
 }
 
 
@@ -201,70 +201,71 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
+#pragma mark - Authentication
+
+- (void)authenticate:(id)delegate
+{
+    _RESTHandler = kRESTHandlerAuth;
+    
+    [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    
+    if ([ScState s].actionIsLogin) {
+        _RESTRoute = kRESTRouteAuthLogin;
+        
+        [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
+    } else if ([ScState s].actionIsActivate) {
+        _RESTRoute = kRESTRouteAuthActivate;
+    }
+    
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
+}
+
+
 #pragma mark - Server requests
 
-- (void)fetchStrings
+- (void)fetchStringsFromServer
 {
     _RESTHandler = kRESTHandlerStrings;
     _RESTRoute = [ScMeta m].displayLanguage;
     
-    [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:ScStrings.class];
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:ScStrings.class];
 }
 
 
-- (void)authenticateUsingDelegate:(id)delegate
-{
-    _RESTHandler = kRESTHandlerAuth;
-
-    if ([ScState s].actionIsLogin) {
-        _RESTRoute = kRESTRouteAuthLogin;
-        
-        [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
-        [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
-    } else if ([ScState s].actionIsActivate) {
-        _RESTRoute = kRESTRouteAuthActivate;
-        
-        [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    }
-    
-    [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:delegate];
-}
-
-
-- (void)synchroniseEntities
+- (void)synchroniseCacheWithServer
 {
     _RESTHandler = kRESTHandlerModel;
     
     [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[ScMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     
-    NSSet *entitiesToPersist = [ScMeta m].entitiesScheduledForPersistence;
+    NSSet *modifiedEntities = [ScMeta m].modifiedEntities;
     
-    if (entitiesToPersist.count > 0) {
+    if (modifiedEntities.count > 0) {
         _RESTRoute = kRESTRouteModelSync;
         
         NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
         
-        for (ScCachedEntity *entity in entitiesToPersist) {
+        for (ScCachedEntity *entity in modifiedEntities) {
             [entityDictionaries addObject:[entity toDictionary]];
         }
         
-        [self performHTTPMethod:kHTTPMethodPOST withEntities:entityDictionaries delegate:[ScMeta m]];
+        [self performHTTPMethod:kHTTPMethodPOST entities:entityDictionaries delegate:[ScMeta m]];
     } else {
         _RESTRoute = kRESTRouteModelFetch;
         
-        [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:[ScMeta m]];
+        [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[ScMeta m]];
     }
 }
 
 
-- (void)fetchMemberWithId:(NSString *)memberId delegate:(id)delegate
+- (void)fetchMemberEntitiesFromServer:(NSString *)memberId delegate:(id)delegate
 {
     _RESTHandler = kRESTHandlerModel;
     _RESTRoute = [NSString stringWithFormat:@"%@/%@", kRESTRouteModelMember, memberId];
     
     [self setValue:[ScMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    [self performHTTPMethod:kHTTPMethodGET withEntities:nil delegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
 }
 
 

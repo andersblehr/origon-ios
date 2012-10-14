@@ -25,7 +25,7 @@
 
 #pragma mark - Auxiliary methods
 
-- (void)createSharedEntitiesForAddedMember:(ScMember *)member
+- (void)createSharedEntityRefsForAddedMember:(ScMember *)member
 {
     [[ScMeta m].context sharedEntityRefForEntity:member inScola:self];
     
@@ -52,7 +52,9 @@
     membership.member = member;
     membership.scola = self;
     
-    [self createSharedEntitiesForAddedMember:member];
+    if (![self.type isEqualToString:kScolaTypeMemberRoot]) {
+        [self createSharedEntityRefsForAddedMember:member];
+    }
     
     return membership;
 }
@@ -64,16 +66,13 @@
     
     residency.resident = resident;
     residency.residence = self;
-
     residency.member = resident;
     residency.scola = self;
     
+    [self createSharedEntityRefsForAddedMember:resident];
+    
     if (![resident isMinor]) {
         residency.contactRole = kContactRoleResidenceElder;
-    }
-    
-    if (![resident.scolaId isEqualToString:self.entityId]) {
-        [self createSharedEntitiesForAddedMember:resident];
     }
     
     if (self.residencies.count > 1) {

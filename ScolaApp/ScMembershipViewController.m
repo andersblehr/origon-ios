@@ -65,7 +65,7 @@ static NSInteger const kMemberSection = 2;
 - (void)didFinishEditing
 {
     if (_needsSynchronisation) {
-        [[ScMeta m].context synchronise];
+        [[ScMeta m].context synchroniseCacheWithServer];
         
         _needsSynchronisation = NO;
     }
@@ -84,15 +84,16 @@ static NSInteger const kMemberSection = 2;
     
     [[ScState s] saveCurrentStateForViewController:kMembershipViewControllerId];
     
-    self.tableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
+    
+    [self.tableView addBackground];
     
     _contacts = [[NSMutableSet alloc] init];
     _members = [[NSMutableSet alloc] init];
     
     for (ScMembership *membership in _scola.memberships) {
-        if ([membership.member isUser] && (membership.isAdmin == @YES)) {
+        if ([membership.member isUser] && ([membership.isAdmin boolValue])) {
             _isUserScolaAdmin = YES;
         }
              
@@ -266,7 +267,7 @@ static NSInteger const kMemberSection = 2;
             _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
         }
         
-        [[ScMeta m].context deleteEntity:membershipToDelete];
+        [[ScMeta m].context deleteEntityFromCache:membershipToDelete];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
         _needsSynchronisation = YES;

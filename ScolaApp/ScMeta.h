@@ -13,7 +13,6 @@
 #import "ScServerConnectionDelegate.h"
 
 extern NSString * const kBundleId;
-extern NSString * const kDarkLinenImageFile;
 extern NSString * const kLanguageHungarian;
 
 extern NSString * const kAuthViewControllerId;
@@ -56,16 +55,15 @@ extern NSString * const kContactRoleResidenceElder;
 @private
     Reachability *_internetReachability;
 
-    NSString *_userId;
     NSDate *_authTokenExpiryDate;
-    
-    NSMutableSet *_scheduledEntities;
-    NSMutableDictionary *_importedEntities;
-    NSMutableDictionary *_importedEntityRefs;
+    NSMutableSet *_modifiedEntities;
+    NSMutableDictionary *_stagedServerEntities;
+    NSMutableDictionary *_stagedServerEntityRefs;
 }
 
-@property (weak, nonatomic, readonly) NSManagedObjectContext *context;
-@property (weak, nonatomic) ScMember *user;
+@property (nonatomic, readonly) BOOL isUserLoggedIn;
+@property (strong, nonatomic) NSString *userId;
+@property (weak, nonatomic, readonly) ScMember *user;
 
 @property (strong, nonatomic, readonly) NSString *deviceId;
 @property (strong, nonatomic, readonly) NSString *authToken;
@@ -80,13 +78,9 @@ extern NSString * const kContactRoleResidenceElder;
 @property (nonatomic, readonly) BOOL isInternetConnectionWiFi;
 @property (nonatomic, readonly) BOOL isInternetConnectionWWAN;
 
-@property (nonatomic) BOOL isUserLoggedIn;
+@property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 
 + (ScMeta *)m;
-
-+ (void)setUserDefault:(id)object forKey:(NSString *)key;
-+ (id)userDefaultForKey:(NSString *)key;
-+ (void)removeUserDefaultForKey:(NSString *)key;
 
 + (BOOL)isEmailValid:(UITextField *)emailField;
 + (BOOL)isPasswordValid:(UITextField *)passwordField;
@@ -98,11 +92,12 @@ extern NSString * const kContactRoleResidenceElder;
 - (void)checkInternetReachability;
 - (BOOL)isInternetConnectionAvailable;
 
-- (NSSet *)entitiesScheduledForPersistence;
+- (void)userDidLogIn;
 
-- (void)addImportedEntity:(ScCachedEntity *)entity;
-- (void)addImportedEntityRefs:(NSDictionary *)entityRefs forEntity:(ScCachedEntity *)entity;
-- (ScCachedEntity *)importedEntityWithId:(NSString *)entityId;
-- (NSDictionary *)importedEntityRefsForEntity:(ScCachedEntity *)entity;
+- (NSSet *)modifiedEntities;
+- (void)stageServerEntity:(ScCachedEntity *)entity;
+- (void)stageServerEntityRefs:(NSDictionary *)entityRefs forEntity:(ScCachedEntity *)entity;
+- (ScCachedEntity *)stagedServerEntityWithId:(NSString *)entityId;
+- (NSDictionary *)stagedServerEntityRefsForEntity:(ScCachedEntity *)entity;
 
 @end

@@ -40,6 +40,7 @@ static CGFloat const kFooterHeadRoom = 8.f;
 static CGFloat const kFooterShadowOffset = 2.f;
 static CGFloat const kFooterFontToHeightScaleFactor = 5.f;
 
+static NSString * const kDarkLinenImageFile = @"dark_linen-640x960.png";
 static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
 static NSString * const kLogoText = @"..scola..";
 
@@ -99,7 +100,14 @@ static NSString * const kLogoText = @"..scola..";
 }
 
 
-#pragma mark - Header & footer convenience methods
+#pragma mark - Appearance
+
+- (void)addBackground
+{
+    self.backgroundView = nil;
+    self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
+}
+
 
 - (void)addLogoBanner
 {
@@ -122,6 +130,25 @@ static NSString * const kLogoText = @"..scola..";
     self.tableHeaderView = containerView;
 }
 
+
+- (UIActivityIndicatorView *)addActivityIndicator
+{
+    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, kKeyboardHeight);
+    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
+    
+    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    activityIndicatorView.center = containerView.center;
+    activityIndicatorView.hidesWhenStopped = YES;
+    
+    [containerView addSubview:activityIndicatorView];
+    
+    self.tableFooterView = containerView;
+    
+    return activityIndicatorView;
+}
+
+
+#pragma mark - Header & footer convenience methods
 
 - (CGFloat)standardHeaderHeight
 {
@@ -178,23 +205,6 @@ static NSString * const kLogoText = @"..scola..";
     [containerView addSubview:footerLabel];
     
     return containerView;
-}
-
-
-- (UIActivityIndicatorView *)addActivityIndicator
-{
-    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, kKeyboardHeight);
-    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
-    
-    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    activityIndicatorView.center = containerView.center;
-    activityIndicatorView.hidesWhenStopped = YES;
-    
-    [containerView addSubview:activityIndicatorView];
-    
-    self.tableFooterView = containerView;
-    
-    return activityIndicatorView;
 }
 
 
