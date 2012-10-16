@@ -10,6 +10,11 @@
 
 @interface ScMembership (ScMembershipExtensions)
 
+- (void)setIsActive_:(BOOL)isActive;
+- (BOOL)isActive_;
+- (void)setIsAdmin_:(BOOL)isAdmin;
+- (BOOL)isAdmin_;
+
 - (BOOL)hasContactRole;
 
 @end

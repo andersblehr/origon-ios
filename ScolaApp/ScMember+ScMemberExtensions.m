@@ -25,6 +25,20 @@
 
 @implementation ScMember (ScMemberExtensions)
 
+#pragma mark - Wrapper accessors for NSNumber booleans
+
+- (void)setDidRegister_:(BOOL)didRegister_
+{
+    self.didRegister = [NSNumber numberWithBool:didRegister_];
+}
+
+
+- (BOOL)didRegister_
+{
+    return [self.didRegister boolValue];
+}
+
+
 #pragma mark - Meta information
 
 - (ScScola *)memberRoot
@@ -109,7 +123,7 @@
     
     if (!hasPhone) {
         for (ScMemberResidency *residency in self.residencies) {
-            hasPhone = hasPhone || [residency.residence hasLandline];
+            hasPhone = hasPhone || [residency.residence hasTelephone];
         }
     }
     

@@ -2,7 +2,7 @@
 //  ScMember.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.09.12.
+//  Created by Anders Blehr on 16.10.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -23,17 +23,16 @@
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * passwordHash;
 @property (nonatomic, retain) NSData * photo;
-@property (nonatomic, retain) NSString * website;
 @property (nonatomic, retain) NSSet *contactForEvents;
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;
 @property (nonatomic, retain) NSSet *eventInvitations;
+@property (nonatomic, retain) NSSet *guardianships;
 @property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) NSSet *messageItems;
 @property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @property (nonatomic, retain) NSSet *toDoAssignments;
-@property (nonatomic, retain) NSSet *guardianships;
 @property (nonatomic, retain) NSSet *wardships;
 @end
 
@@ -59,6 +58,11 @@
 - (void)addEventInvitations:(NSSet *)values;
 - (void)removeEventInvitations:(NSSet *)values;
 
+- (void)addGuardianshipsObject:(ScMemberGuardianship *)value;
+- (void)removeGuardianshipsObject:(ScMemberGuardianship *)value;
+- (void)addGuardianships:(NSSet *)values;
+- (void)removeGuardianships:(NSSet *)values;
+
 - (void)addMembershipsObject:(ScMembership *)value;
 - (void)removeMembershipsObject:(ScMembership *)value;
 - (void)addMemberships:(NSSet *)values;
@@ -83,11 +87,6 @@
 - (void)removeToDoAssignmentsObject:(ScToDoAssignment *)value;
 - (void)addToDoAssignments:(NSSet *)values;
 - (void)removeToDoAssignments:(NSSet *)values;
-
-- (void)addGuardianshipsObject:(ScMemberGuardianship *)value;
-- (void)removeGuardianshipsObject:(ScMemberGuardianship *)value;
-- (void)addGuardianships:(NSSet *)values;
-- (void)removeGuardianships:(NSSet *)values;
 
 - (void)addWardshipsObject:(ScMemberGuardianship *)value;
 - (void)removeWardshipsObject:(ScMemberGuardianship *)value;

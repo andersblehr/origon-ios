@@ -16,6 +16,31 @@
 
 @implementation ScMembership (ScMembershipExtensions)
 
+#pragma mark - Wrapper accessors for NSNumber booleans
+
+- (void)setIsActive_:(BOOL)isActive_
+{
+    self.isActive = [NSNumber numberWithBool:isActive_];
+}
+
+
+- (BOOL)isActive_
+{
+    return [self.isActive boolValue];
+}
+
+
+- (void)setIsAdmin_:(BOOL)isAdmin_
+{
+    self.isAdmin = [NSNumber numberWithBool:isAdmin_];
+}
+
+
+- (BOOL)isAdmin_
+{
+    return [self.isAdmin boolValue];
+}
+
 
 #pragma mark - Convenience methods
 

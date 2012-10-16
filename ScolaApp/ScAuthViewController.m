@@ -32,6 +32,7 @@
 #import "ScScola.h"
 
 #import "ScMember+ScMemberExtensions.h"
+#import "ScMembership+ScMembershipExtensions.h"
 #import "ScScola+ScScolaExtensions.h"
 
 #import "ScMemberViewController.h"
@@ -136,7 +137,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         
         [[[UIAlertView alloc] initWithTitle:[ScStrings stringForKey:strActivationFailedTitle] message:[ScStrings stringForKey:strActivationFailedAlert] delegate:nil cancelButtonTitle:[ScStrings stringForKey:strOK] otherButtonTitles:nil] show];
         
-        [ScState s].action = ScStateActionLogin;
+        [ScState s].actionIsLogin = YES;
         [self reload];
         
         ScLogState;
@@ -266,7 +267,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:_authInfo];
     [[NSUserDefaults standardUserDefaults] setObject:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
     
-    [ScState s].action = ScStateActionActivate;
+    [ScState s].actionIsActivate = YES;
     [self reload];
     
     ScLogState;
@@ -289,27 +290,27 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     if (_isUserListed) {
         for (ScMemberResidency *residency in [ScMeta m].user.residencies) {
-            residency.isActive = @YES;
+            residency.isActive_ = YES;
             
             if ([[ScMeta m].user isMinor]) {
-                residency.isAdmin = @NO;
+                residency.isAdmin_ = NO;
             } else {
-                residency.isAdmin = @YES;
+                residency.isAdmin_ = YES;
                 residency.contactRole = kContactRoleResidenceElder;
             }
         }
     } else {
         ScScola *residence = [[ScMeta m].context entityForScolaOfType:kScolaTypeResidence];
         ScMemberResidency *residency = [residence addResident:[ScMeta m].user];
-        residency.isActive = @YES;
-        residency.isAdmin = @YES;
+        residency.isActive_ = YES;
+        residency.isAdmin_ = YES;
         
         ScMessageBoard *residenceMessageBoard = [[ScMeta m].context entityForClass:ScMessageBoard.class inScola:residence];
         residenceMessageBoard.title = [ScStrings stringForKey:strMyMessageBoard];
     }
     
     [ScMeta m].user.passwordHash = [_authInfo objectForKey:kAuthInfoKeyPasswordHash];
-    [ScMeta m].user.didRegister = @YES;
+    [ScMeta m].user.didRegister_ = YES;
     
     [self registerNewDevice];
     [[ScMeta m].context synchroniseCacheWithServer];
@@ -333,9 +334,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)completeRegistration
 {
-    [ScState s].action = ScStateActionRegister;
-    [ScState s].target = ScStateTargetMember;
-    [ScState s].aspect = ScStateAspectSelf;
+    [ScState s].actionIsRegister = YES;
+    [ScState s].targetIsMember = YES;
+    [ScState s].aspectIsSelf = YES;
     
     ScMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
     memberViewController.membership = [[ScMeta m].user.residencies anyObject];
@@ -354,15 +355,15 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super viewDidLoad];
 
-    [ScState s].action = ScStateActionLogin;
-    [ScState s].target = ScStateTargetMember;
-    [ScState s].aspect = ScStateAspectSelf;
+    [ScState s].actionIsLogin = YES;
+    [ScState s].targetIsMember = YES;
+    [ScState s].aspectIsSelf = YES;
     
     ScLogState;
     
     self.navigationController.navigationBarHidden = YES;
     
-    [self.tableView addBackground];
+    [self.tableView setBackground];
     [self.tableView addLogoBanner];
     _activityIndicator = [self.tableView addActivityIndicator];
     
@@ -390,7 +391,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
         [ScMeta m].userId = [_authInfo objectForKey:kAuthInfoKeyUserId];
         
-        [ScState s].action = ScStateActionActivate;
+        [ScState s].actionIsActivate = YES;
         
         ScLogState;
     }
@@ -565,7 +566,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     if (alertView.tag == kAlertTagWelcomeBack) {
         if (buttonIndex == kAlertButtonStartOver) {
-            [ScState s].action = ScStateActionLogin;
+            [ScState s].actionIsLogin = YES;
             [self reload];
             
             ScLogState;
@@ -586,7 +587,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - ScMemberViewControllerDelegate methods
 
-- (void)shouldDismissViewControllerWithIdentitifier:(NSString *)identitifier
+- (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
     [self performSegueWithIdentifier:kSegueToMainView sender:self];

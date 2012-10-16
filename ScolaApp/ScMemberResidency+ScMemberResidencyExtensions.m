@@ -23,14 +23,14 @@
 
 #pragma mark - ScCachedEntity (ScCachedEntityExtentions) overrides
 
-- (BOOL)isPropertyPersistable:(NSString *)property
+- (BOOL)isTransientProperty:(NSString *)property
 {
-    BOOL isPersistable = [super isPropertyPersistable:property];
+    BOOL isTransient = [super isTransientProperty:property];
     
-    isPersistable = isPersistable && ![property isEqualToString:@"resident"];
-    isPersistable = isPersistable && ![property isEqualToString:@"residence"];
+    isTransient = isTransient || [property isEqualToString:@"resident"];
+    isTransient = isTransient || [property isEqualToString:@"residence"];
     
-    return isPersistable;
+    return isTransient;
 }
 
 

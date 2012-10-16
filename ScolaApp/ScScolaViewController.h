@@ -23,10 +23,10 @@
     
     ScTextField *_addressLine1Field;
     ScTextField *_addressLine2Field;
-    ScTextField *_landlineField;
+    ScTextField *_telephoneField;
 }
 
 @property (weak, nonatomic) id<ScModalViewControllerDelegate> delegate;
-@property (weak, nonatomic) ScScola *scola;
+@property (strong, nonatomic) ScScola *scola;
 
 @end

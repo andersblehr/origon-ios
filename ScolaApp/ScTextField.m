@@ -25,13 +25,11 @@ NSString * const kTextFieldKeyName = @"name";
 NSString * const kTextFieldKeyEmail = @"email";
 NSString * const kTextFieldKeyMobilePhone = @"mobilePhone";
 NSString * const kTextFieldKeyDateOfBirth = @"dateOfBirth";
-NSString * const kTextFieldKeyUserWebsite = @"userWebsite";
 
 NSString * const kTextFieldKeyAddress = @"address";
 NSString * const kTextFieldKeyAddressLine1 = @"addressLine1";
 NSString * const kTextFieldKeyAddressLine2 = @"addressLine2";
-NSString * const kTextFieldKeyLandline = @"landline";
-NSString * const kTextFieldKeyScolaWebsite = @"scolaWebsite";
+NSString * const kTextFieldKeyTelephone = @"telephone";
 
 static CGFloat const kRoundedCornerRadius = 2.5f;
 static CGFloat const kTextInset = 4.f;

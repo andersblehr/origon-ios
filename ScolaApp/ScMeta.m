@@ -27,10 +27,10 @@ NSString * const kBundleId = @"com.scolaapp.ios.ScolaApp";
 NSString * const kLanguageHungarian = @"hu";
 
 NSString * const kAuthViewControllerId = @"idAuth";
-NSString * const kMainViewControllerId = @"idMain";
-NSString * const kMemberViewControllerId = @"idMember";
-NSString * const kMembershipViewControllerId = @"idMembership";
+NSString * const kScolaListViewControllerId = @"idMain";
 NSString * const kScolaViewControllerId = @"idScola";
+NSString * const kMemberViewControllerId = @"idMember";
+NSString * const kMemberListViewControllerId = @"idMembership";
 
 NSString * const kPropertyEntityId = @"entityId";
 NSString * const kPropertyEntityClass = @"entityClass";
@@ -137,7 +137,7 @@ static ScMeta *m = nil;
     if (self) {
         _userId = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyUserId];
         _appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
-        _displayLanguage = [[NSLocale preferredLanguages] objectAtIndex:0];
+        _displayLanguage = [NSLocale preferredLanguages][0];
         
         if (_userId) {
             _deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];

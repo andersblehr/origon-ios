@@ -12,7 +12,7 @@
 #import "UITableView+UITableViewExtensions.h"
 #import "UIView+ScViewExtensions.h"
 
-#import "ScMembershipViewController.h"
+#import "ScMemberListViewController.h"
 
 #import "ScLogging.h"
 #import "ScMeta.h"
@@ -23,6 +23,8 @@
 
 #import "ScMember.h"
 #import "ScScola.h"
+
+#import "ScScola+ScScolaExtensions.h"
 
 
 @implementation ScScolaViewController
@@ -37,7 +39,7 @@
 
 - (void)cancelEditing
 {
-    [_delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
+    [_delegate dismissViewControllerWithIdentitifier:kScolaViewControllerId];
 }
 
 
@@ -46,17 +48,16 @@
     if ([ScMeta isAddressValidWithLine1:_addressLine1Field line2:_addressLine2Field]) {
         _scola.addressLine1 = _addressLine1Field.text;
         _scola.addressLine2 = _addressLine2Field.text;
-        _scola.landline = _landlineField.text;
+        _scola.telephone = _telephoneField.text;
         
-        if ([ScState s].actionIsRegister &&
-            [ScState s].targetIsResidence && [ScState s].aspectIsSelf) {
+        if ([ScState s].actionIsRegister && [_scola isResidence] && [ScState s].aspectIsSelf) {
             [ScMeta m].user.activeSince = [NSDate date];
         }
         
         [self.view endEditing:YES];
         [[ScMeta m].context synchroniseCacheWithServer];
         
-        [_delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
+        [_delegate dismissViewControllerWithIdentitifier:kScolaViewControllerId];
     } else {
         [_scolaCell shake];
     }
@@ -74,7 +75,7 @@
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    [self.tableView addBackground];
+    [self.tableView setBackground];
     
     _editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
     _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
@@ -84,7 +85,7 @@
         self.title = [ScStrings stringForKey:strAddressLabel];
         self.navigationItem.rightBarButtonItem = _doneButton;
         
-        if ([ScState s].targetIsResidence) {
+        if ([_scola isResidence]) {
             self.navigationItem.hidesBackButton = YES;
         } else {
             self.navigationItem.leftBarButtonItem = _cancelButton;
@@ -106,9 +107,9 @@
 
 - (void)shouldDismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
-    if ([identitifier isEqualToString:kMembershipViewControllerId]) {
+    if ([identitifier isEqualToString:kMemberListViewControllerId]) {
         [self dismissViewControllerAnimated:YES completion:^{
-            [_delegate shouldDismissViewControllerWithIdentitifier:kScolaViewControllerId];
+            [_delegate dismissViewControllerWithIdentitifier:kScolaViewControllerId];
         }];
     }
 }
@@ -141,7 +142,7 @@
         
         _addressLine1Field = [_scolaCell textFieldWithKey:kTextFieldKeyAddressLine1];
         _addressLine2Field = [_scolaCell textFieldWithKey:kTextFieldKeyAddressLine2];
-        _landlineField = [_scolaCell textFieldWithKey:kTextFieldKeyLandline];
+        _telephoneField = [_scolaCell textFieldWithKey:kTextFieldKeyTelephone];
         
         [_addressLine1Field becomeFirstResponder];
     } else if ([ScState s].actionIsDisplay) {
@@ -167,7 +168,7 @@
     if (textField == _addressLine1Field) {
         [_addressLine2Field becomeFirstResponder];
     } else if (textField == _addressLine2Field) {
-        [_landlineField becomeFirstResponder];
+        [_telephoneField becomeFirstResponder];
     }
     
     return YES;

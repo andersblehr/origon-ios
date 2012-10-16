@@ -18,9 +18,10 @@
 - (BOOL)isMemberRoot;
 - (BOOL)isResidence;
 
-- (BOOL)hasAddress;
-- (BOOL)hasLandline;
+- (BOOL)userIsAdmin;
 - (BOOL)hasMemberWithId:(NSString *)memberId;
+- (BOOL)hasAddress;
+- (BOOL)hasTelephone;
 
 - (NSString *)singleLineAddress;
 - (NSString *)multiLineAddress;

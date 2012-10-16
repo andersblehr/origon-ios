@@ -12,6 +12,9 @@
 
 @interface ScMember (ScMemberExtensions)
 
+- (void)setDidRegister_:(BOOL)didRegister_;
+- (BOOL)didRegister_;
+
 - (ScScola *)memberRoot;
 
 - (NSString *)about;

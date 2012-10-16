@@ -18,13 +18,11 @@ extern NSString * const kTextFieldKeyName;
 extern NSString * const kTextFieldKeyEmail;
 extern NSString * const kTextFieldKeyMobilePhone;
 extern NSString * const kTextFieldKeyDateOfBirth;
-extern NSString * const kTextFieldKeyUserWebsite;
 
 extern NSString * const kTextFieldKeyAddress;
 extern NSString * const kTextFieldKeyAddressLine1;
 extern NSString * const kTextFieldKeyAddressLine2;
-extern NSString * const kTextFieldKeyLandline;
-extern NSString * const kTextFieldKeyScolaWebsite;
+extern NSString * const kTextFieldKeyTelephone;
 
 
 @interface ScTextField : UITextField {

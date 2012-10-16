@@ -25,6 +25,7 @@
 #import "ScSharedEntityRef.h"
 
 #import "ScCachedEntity+ScCachedEntityExtensions.h"
+#import "ScMembership+ScMembershipExtensions.h"
 #import "ScScola+ScScolaExtensions.h"
 
 
@@ -50,7 +51,7 @@ static NSString * const kScolaRelationshipName = @"scola";
     scola.type = type;
     
     if ([scola.type isEqualToString:kScolaTypeResidence]) {
-        scola.name = [ScStrings stringForKey:strMyPlace];
+        scola.name = [ScStrings stringForKey:strMyHousehold];
     }
     
     return scola;
@@ -75,8 +76,8 @@ static NSString * const kScolaRelationshipName = @"scola";
     ScMembership *rootMembership = [memberRoot addMember:member];
     
     if ([ScState s].aspectIsSelf) {
-        rootMembership.isActive = @YES;
-        rootMembership.isAdmin = @YES;
+        rootMembership.isActive_ = YES;
+        rootMembership.isAdmin_ = YES;
     }
     
     return member;
@@ -188,7 +189,7 @@ static NSString * const kScolaRelationshipName = @"scola";
     } else if ([resultsArray count] > 1) {
         ScLogBreakage(@"Found more than one entity in cache with entityId '%@'.", entityId);
     } else if ([resultsArray count] == 1) {
-        entity = [resultsArray objectAtIndex:0];
+        entity = resultsArray[0];
     }
     
     return entity;

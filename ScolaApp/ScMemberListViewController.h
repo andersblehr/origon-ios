@@ -1,5 +1,5 @@
 //
-//  ScMembershipViewController.h
+//  ScMemberListViewController.h
 //  ScolaApp
 //
 //  Created by Anders Blehr on 17.01.12.
@@ -14,7 +14,7 @@
 @class ScMembership, ScScola;
 @class ScState;
 
-@interface ScMembershipViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, ScMemberViewControllerDelegate> {
+@interface ScMemberListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, ScMemberViewControllerDelegate> {
 @private
     ScState *_localState;
     
@@ -26,7 +26,6 @@
     NSArray *_sortedContacts;
     NSArray *_sortedMembers;
     
-    BOOL _isUserScolaAdmin;
     BOOL _isViewModallyHidden;
     BOOL _needsSynchronisation;
     
@@ -34,7 +33,7 @@
 }
 
 @property (weak, nonatomic) id<ScModalViewControllerDelegate> delegate;
-@property (weak, nonatomic) ScScola *scola;
+@property (strong, nonatomic) ScScola *scola;
 
 - (void)insertMembershipInTableView:(ScMembership *)membership;
 

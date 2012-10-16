@@ -45,7 +45,6 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="&lt;strTasks>" id="Acf-ca-xWd"/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="10p-0d-4gv" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -67,27 +66,25 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="&lt;strMessageBoard>" id="Pce-tb-tLA"/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rK3-ud-Tj0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="183" y="1922"/>
         </scene>
-        <!--Sc Membership View Controller - <strMemberships>-->
+        <!--Sc Member List View Controller - <strMemberships>-->
         <scene sceneID="5fB-zI-Tq9">
             <objects>
-                <viewController storyboardIdentifier="idMembership" id="O0V-Ey-WLK" customClass="ScMembershipViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="idMembership" id="O0V-Ey-WLK" customClass="ScMemberListViewController" sceneMemberID="viewController">
                     <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lJb-0F-cm5">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections/>
                     </tableView>
                     <navigationItem key="navigationItem" title="&lt;strMemberships>" id="PZV-fj-ium"/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
                     <connections>
-                        <segue destination="T87-Bh-GzL" kind="push" identifier="membershipToMemberView" id="fHV-uh-t7i"/>
-                        <segue destination="bxV-RT-yI4" kind="push" identifier="membershipToScolaView" id="a60-dm-1pX"/>
+                        <segue destination="T87-Bh-GzL" kind="push" identifier="memberListToMemberView" id="fHV-uh-t7i"/>
+                        <segue destination="bxV-RT-yI4" kind="push" identifier="memberListToScolaView" id="a60-dm-1pX"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W7Y-2S-hfd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -99,7 +96,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="idMember" id="T87-Bh-GzL" customClass="ScMemberViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="WsN-Uc-XTj">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -110,7 +107,7 @@
                     <tabBarItem key="tabBarItem" title="&lt;strProfile>" image="glyphicons_003_user.png" id="2f6-nA-Lyy"/>
                     <navigationItem key="navigationItem" title="&lt;strMember>" id="uRg-zS-kRb"/>
                     <connections>
-                        <segue destination="O0V-Ey-WLK" kind="push" identifier="memberToMembershipView" id="99F-61-IG0"/>
+                        <segue destination="O0V-Ey-WLK" kind="push" identifier="memberToMemberListView" id="99F-61-IG0"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Br5-90-R22" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -122,7 +119,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="idScola" id="bxV-RT-yI4" customClass="ScScolaViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="LnJ-T1-eEC">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -152,26 +149,24 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="&lt;strCalendar>" id="Em8-Gl-OL3"/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Oo-i8-eWm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="183" y="665"/>
         </scene>
-        <!--Sc Main View Controller-->
+        <!--Sc Scola List View Controller - <userName>-->
         <scene sceneID="SzQ-Uz-J3x">
             <objects>
-                <viewController storyboardIdentifier="idMain" id="9Fa-Np-JO6" customClass="ScMainViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="idMain" id="9Fa-Np-JO6" customClass="ScScolaListViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Nfe-mR-3nj">
-                        <rect key="frame" x="0.0" y="20" width="320" height="411"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" id="2TD-LP-teE"/>
-                    <nil key="simulatedTopBarMetrics"/>
+                    <navigationItem key="navigationItem" title="&lt;userName>" id="2TD-LP-teE"/>
                     <connections>
-                        <segue destination="O0V-Ey-WLK" kind="push" identifier="mainToMembershipView" id="gEQ-1g-oCH"/>
+                        <segue destination="O0V-Ey-WLK" kind="push" identifier="scolaListToMemberListView" id="gEQ-1g-oCH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nIi-HS-de2" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -219,11 +214,11 @@
             </objects>
             <point key="canvasLocation" x="-759" y="1297"/>
         </scene>
-        <!--Navigation Controller - Scola-->
+        <!--Navigation Controller - <givenName>-->
         <scene sceneID="0Xf-MH-Xiq">
             <objects>
                 <navigationController definesPresentationContext="YES" id="a3K-AG-mMk" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Scola" image="glyphicons_020_home.png" id="Hk3-Sp-L4U"/>
+                    <tabBarItem key="tabBarItem" title="&lt;givenName>" image="glyphicons_020_home.png" id="Hk3-Sp-L4U"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ram-2l-Dgq">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -330,7 +325,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="fHV-uh-t7i"/>
         <segue reference="99F-61-IG0"/>
+        <segue reference="fHV-uh-t7i"/>
     </inferredMetricsTieBreakers>
 </document>

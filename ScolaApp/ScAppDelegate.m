@@ -99,8 +99,6 @@ static NSString * const kPersistentStoreFormat = @"ScolaApp$%@.sqlite";
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
     
-    [ScState s].action = ScStateActionStartup;
-    
     ScLogState;
     ScLogDebug(@"Device is %@.", [UIDevice currentDevice].model);
     ScLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);

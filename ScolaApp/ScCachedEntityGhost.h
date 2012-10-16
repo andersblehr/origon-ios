@@ -2,7 +2,7 @@
 //  ScCachedEntityGhost.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 14.06.12.
+//  Created by Anders Blehr on 15.10.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -13,7 +13,7 @@
 
 @interface ScCachedEntityGhost : ScCachedEntity
 
-@property (nonatomic, retain) NSNumber * hasExpired;
 @property (nonatomic, retain) NSString * ghostedEntityClass;
+@property (nonatomic, retain) NSNumber * hasExpired;
 
 @end

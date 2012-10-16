@@ -37,9 +37,7 @@ NSString * const strFemale                            = @"strFemale";
 NSString * const strFemaleMinor                       = @"strFemaleMinor";
 NSString * const strMale                              = @"strMale";
 NSString * const strMaleMinor                         = @"strMaleMinor";
-NSString * const strHousehold                         = @"strHousehold";
-NSString * const strMyPlace                           = @"strMyPlace";
-NSString * const strOurPlace                          = @"strOurPlace";
+NSString * const strMyHousehold                       = @"strMyHousehold";
 NSString * const strMyMessageBoard                    = @"strMyMessageBoard";
 NSString * const strOurMessageBoard                   = @"strOurMessageBoard";
 
@@ -56,9 +54,7 @@ NSString * const strDateOfBirthPrompt                 = @"strDateOfBirthPrompt";
 NSString * const strUserWebsitePrompt                 = @"strUserWebsitePrompt";
 NSString * const strAddressLine1Prompt                = @"strAddressLine1Prompt";
 NSString * const strAddressLine2Prompt                = @"strAddressLine2Prompt";
-NSString * const strHouseholdLandlinePrompt           = @"strHouseholdLandlinePrompt";
-NSString * const strScolaLandlinePrompt               = @"strScolaLandlinePrompt";
-NSString * const strScolaWebsitePrompt                = @"strScolaWebsitePrompt";
+NSString * const strTelephonePrompt                   = @"strTelephonePrompt";
 
 // Labels
 NSString * const strSignInOrRegisterLabel             = @"strSignInOrRegisterLabel";
@@ -67,11 +63,11 @@ NSString * const strSingleLetterEmailLabel            = @"strSingleLetterEmailLa
 NSString * const strSingleLetterMobilePhoneLabel      = @"strSingleLetterMobilePhoneLabel";
 NSString * const strSingleLetterDateOfBirthLabel      = @"strSingleLetterDateOfBirthLabel";
 NSString * const strSingleLetterAddressLabel          = @"strSingleLetterAddressLabel";
-NSString * const strSingleLetterLandlineLabel         = @"strSingleLetterLandlineLabel";
+NSString * const strSingleLetterTelephoneLabel        = @"strSingleLetterTelephoneLabel";
 NSString * const strSingleLetterWebsiteLabel          = @"strSingleLetterWebsiteLabel";
 NSString * const strAddressLabel                      = @"strAddressLabel";
 NSString * const strAddressesLabel                    = @"strAddressesLabel";
-NSString * const strLandlineLabel                     = @"strLandlineLabel";
+NSString * const strTelephoneLabel                    = @"strTelephoneLabel";
 
 // Header & footer strings
 NSString * const strSignInOrRegisterFooter            = @"strSignInOrRegisterFooter";
@@ -100,10 +96,9 @@ NSString * const strMemberExistsTitle                 = @"strMemberExistsTitle";
 NSString * const strMemberExistsAlert                 = @"strMemberExistsAlert";
 NSString * const strExistingResidenceAlert            = @"strExistingResidenceAlert";
 
-// ScMembershipView strings
-NSString * const strMembershipViewTitleDefault        = @"strMembershipViewTitleDefault";
-NSString * const strMembershipViewTitleMyPlace        = @"strMembershipViewTitleMyPlace";
-NSString * const strMembershipViewTitleOurPlace       = @"strMembershipViewTitleOurPlace";
+// ScMemberListView strings
+NSString * const strMemberListViewTitleDefault        = @"strMemberListViewTitleDefault";
+NSString * const strMemberListViewTitleHousehold      = @"strMemberListViewTitleHousehold";
 NSString * const strHouseholdMembers                  = @"strHouseholdMembers";
 NSString * const strDeleteConfirmation                = @"strDeleteConfirmation";
 
@@ -128,7 +123,7 @@ static NSDictionary *strings = nil;
 
 + (NSString *)fullPathToStringsPlist
 {
-    NSString *cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *cachesDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
     NSString *relativePath = [kBundleId stringByAppendingPathComponent:kStringsPlist];
     
     return [cachesDirectory stringByAppendingPathComponent:relativePath];

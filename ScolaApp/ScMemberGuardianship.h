@@ -2,7 +2,7 @@
 //  ScMemberGuardianship.h
 //  ScolaApp
 //
-//  Created by Anders Blehr on 11.09.12.
+//  Created by Anders Blehr on 15.10.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 

@@ -14,7 +14,7 @@
 - (void)addGradientLayer;
 
 - (void)addShadowForBottomTableViewCell;
-- (void)addShadowForNonBottomTableViewCell;
+- (void)addShadowForContainedTableViewCell;
 - (void)addShadowForEditableTextField;
 - (void)addShadowForPhotoFrame;
 - (void)removeShadow;

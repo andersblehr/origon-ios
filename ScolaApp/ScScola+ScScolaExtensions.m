@@ -19,6 +19,7 @@
 #import "ScMembership.h"
 
 #import "ScMember+ScMemberExtensions.h"
+#import "ScMembership+ScMembershipExtensions.h"
 
 
 @implementation ScScola (ScScolaExtensions)
@@ -75,12 +76,6 @@
         residency.contactRole = kContactRoleResidenceElder;
     }
     
-    if (self.residencies.count > 1) {
-        if ([self.name isEqualToString:[ScStrings stringForKey:strMyPlace]]) {
-            self.name = [ScStrings stringForKey:strOurPlace];
-        }
-    }
-    
     return residency;
 }
 
@@ -101,15 +96,19 @@
 
 #pragma mark - Meta information
 
-- (BOOL)hasAddress
+- (BOOL)userIsAdmin
 {
-    return ((self.addressLine1.length > 0) || (self.addressLine2.length > 0));
-}
-
-
-- (BOOL)hasLandline
-{
-    return (self.landline.length > 0);
+    ScMembership *userMembership = nil;
+    
+    for (ScMembership *membership in self.memberships) {
+        if (!userMembership) {
+            if ([membership.member.entityId isEqualToString:[ScMeta m].user.entityId]) {
+                userMembership = membership;
+            }
+        }
+    }
+    
+    return userMembership.isAdmin_;
 }
 
 
@@ -124,6 +123,18 @@
     }
     
     return didFindMemberId;
+}
+
+
+- (BOOL)hasAddress
+{
+    return ((self.addressLine1.length > 0) || (self.addressLine2.length > 0));
+}
+
+
+- (BOOL)hasTelephone
+{
+    return (self.telephone.length > 0);
 }
 
 
@@ -151,7 +162,7 @@
     NSArray *addressElements = [[self singleLineAddress] componentsSeparatedByString:@","];
     
     for (int i = 0; i < [addressElements count]; i++) {
-        NSString *addressElement = [[addressElements objectAtIndex:i] removeLeadingAndTrailingSpaces];
+        NSString *addressElement = [addressElements[i] removeLeadingAndTrailingSpaces];
         
         address = [address stringByAppendingStringWithNewline:addressElement];
     }

@@ -9,26 +9,26 @@
 #import <Foundation/Foundation.h>
 
 typedef enum {
-    ScStateActionDefault,
-    ScStateActionStartup,
+    ScStateActionNone,
+    ScStateActionInit,
     ScStateActionLogin,
     ScStateActionActivate,
     ScStateActionRegister,
+    ScStateActionList,
     ScStateActionDisplay,
     ScStateActionEdit,
 } ScStateAction;
 
 typedef enum {
-    ScStateTargetDefault,
+    ScStateTargetNone,
     ScStateTargetMember,
-    ScStateTargetMemberships,
-    ScStateTargetResidence,
     ScStateTargetScola,
 } ScStateTarget;
 
 typedef enum {
-    ScStateAspectDefault,
+    ScStateAspectNone,
     ScStateAspectSelf,
+    ScStateAspectDependent,
     ScStateAspectExternal,
 } ScStateAspect;
 
@@ -38,24 +38,20 @@ typedef enum {
     NSMutableDictionary *_savedStates;
 }
 
-@property (nonatomic) ScStateAction action;
-@property (nonatomic) ScStateTarget target;
-@property (nonatomic) ScStateAspect aspect;
-
-@property (nonatomic, readonly) BOOL actionIsLogin;
-@property (nonatomic, readonly) BOOL actionIsActivate;
-@property (nonatomic, readonly) BOOL actionIsRegister;
-@property (nonatomic, readonly) BOOL actionIsDisplay;
-@property (nonatomic, readonly) BOOL actionIsEdit;
+@property (nonatomic) BOOL actionIsLogin;
+@property (nonatomic) BOOL actionIsActivate;
+@property (nonatomic) BOOL actionIsRegister;
+@property (nonatomic) BOOL actionIsList;
+@property (nonatomic) BOOL actionIsDisplay;
+@property (nonatomic) BOOL actionIsEdit;
 @property (nonatomic, readonly) BOOL actionIsInput;
 
-@property (nonatomic, readonly) BOOL targetIsMember;
-@property (nonatomic, readonly) BOOL targetIsMemberships;
-@property (nonatomic, readonly) BOOL targetIsResidence;
-@property (nonatomic, readonly) BOOL targetIsScola;
+@property (nonatomic) BOOL targetIsMember;
+@property (nonatomic) BOOL targetIsScola;
 
-@property (nonatomic, readonly) BOOL aspectIsSelf;
-@property (nonatomic, readonly) BOOL aspectIsExternal;
+@property (nonatomic) BOOL aspectIsSelf;
+@property (nonatomic) BOOL aspectIsDependent;
+@property (nonatomic) BOOL aspectIsExternal;
 
 + (ScState *)s;
 

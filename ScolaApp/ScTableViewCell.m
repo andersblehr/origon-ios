@@ -176,7 +176,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     if ([entity isKindOfClass:ScScola.class]) {
         ScScola *scola = (ScScola *)entity;
 
-        if (![scola hasLandline] && ![ScState s].actionIsInput) {
+        if (![scola hasTelephone] && ![ScState s].actionIsInput) {
             height -= [UIFont detailFont].lineHeight;
             height -= kLineSpacing;
         }
@@ -327,17 +327,9 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         } else if ([key isEqualToString:kTextFieldKeyAddressLine2]) {
             textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
             textField.placeholder = [ScStrings stringForKey:strAddressLine2Prompt];
-        } else if ([key isEqualToString:kTextFieldKeyLandline]) {
+        } else if ([key isEqualToString:kTextFieldKeyTelephone]) {
             textField.keyboardType = UIKeyboardTypeNumberPad;
-            
-            if ([ScState s].actionIsRegister && [ScState s].targetIsResidence) {
-                textField.placeholder = [ScStrings stringForKey:strHouseholdLandlinePrompt];
-            } else {
-                textField.placeholder = [ScStrings stringForKey:strScolaLandlinePrompt];
-            }
-        } else if ([key isEqualToString:kTextFieldKeyScolaWebsite]) {
-            textField.keyboardType = UIKeyboardTypeURL;
-            textField.placeholder = [ScStrings stringForKey:strScolaWebsitePrompt];
+            textField.placeholder = [ScStrings stringForKey:strTelephonePrompt];
         }
         
         [self.contentView addSubview:textField];
@@ -414,10 +406,13 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     [self addTextFieldWithText:scola.addressLine1 key:kTextFieldKeyAddressLine1];
     [self addLabel:@""];
     [self addTextFieldWithText:scola.addressLine2 key:kTextFieldKeyAddressLine2];
-    [self addLabel:[ScStrings stringForKey:strLandlineLabel]];
-    [self addTextFieldWithText:scola.landline key:kTextFieldKeyLandline];
     
-    self.selectable = ([ScState s].actionIsDisplay && [ScState s].targetIsMemberships);
+    if ([scola hasTelephone] || [ScState s].actionIsInput) {
+        [self addLabel:[ScStrings stringForKey:strTelephoneLabel]];
+        [self addTextFieldWithText:scola.telephone key:kTextFieldKeyTelephone];
+    }
+    
+    self.selectable = ([ScState s].actionIsList);
 }
 
 

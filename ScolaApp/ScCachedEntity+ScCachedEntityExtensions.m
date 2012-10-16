@@ -121,7 +121,7 @@
     [entityDictionary setObject:self.entity.name forKey:kPropertyEntityClass];
     
     for (NSString *name in [attributes allKeys]) {
-        if ([self isPropertyPersistable:name]) {
+        if (![self isTransientProperty:name]) {
             id value = [self valueForKey:name];
             
             if (value) {
@@ -133,7 +133,7 @@
     for (NSString *name in [relationships allKeys]) {
         NSRelationshipDescription *relationship = [relationships objectForKey:name];
         
-        if (!relationship.isToMany && [self isPropertyPersistable:name]) {
+        if (!relationship.isToMany && ![self isTransientProperty:name]) {
             ScCachedEntity *entity = [self valueForKey:name];
             
             if (entity) {
@@ -148,14 +148,15 @@
 
 #pragma mark - Internal consistency
 
-- (BOOL)isPropertyPersistable:(NSString *)property
+- (BOOL)isTransientProperty:(NSString *)property
 {
-    return ![property isEqualToString:@"hashCode"];
+    return [property isEqualToString:@"hashCode"];
 }
 
 
 - (BOOL)isPersisted
 {
+    ScLogDebug(@"Date modified: %@", self.dateModified);
     return (self.dateModified != nil);
 }
 
@@ -200,7 +201,7 @@
     NSString *allProperties = @"";
     
     for (NSString *name in sortedAttributeKeys) {
-        if ([self isPropertyPersistable:name]) {
+        if (![self isTransientProperty:name]) {
             id value = [self valueForKey:name];
             
             if (value) {
@@ -213,7 +214,7 @@
     for (NSString *name in sortedRelationshipKeys) {
         NSRelationshipDescription *relationship = [relationships objectForKey:name];
         
-        if (!relationship.isToMany && [self isPropertyPersistable:name]) {
+        if (!relationship.isToMany && ![self isTransientProperty:name]) {
             ScCachedEntity *entity = [self valueForKey:name];
             
             if (entity) {

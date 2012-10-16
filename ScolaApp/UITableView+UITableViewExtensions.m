@@ -102,7 +102,7 @@ static NSString * const kLogoText = @"..scola..";
 
 #pragma mark - Appearance
 
-- (void)addBackground
+- (void)setBackground
 {
     self.backgroundView = nil;
     self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
@@ -223,7 +223,7 @@ static NSString * const kLogoText = @"..scola..";
     if (isLastRowInSection) {
         UITableViewCell *precedingCell = [self cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row - 1 inSection:section]];
         
-        [precedingCell.backgroundView addShadowForNonBottomTableViewCell];
+        [precedingCell.backgroundView addShadowForContainedTableViewCell];
     }
 }
 

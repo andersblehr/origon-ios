@@ -11,6 +11,6 @@
 @protocol ScModalViewControllerDelegate <NSObject>
 
 @required
-- (void)shouldDismissViewControllerWithIdentitifier:(NSString *)identitifier;
+- (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier;
 
 @end

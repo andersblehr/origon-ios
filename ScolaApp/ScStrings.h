@@ -31,9 +31,7 @@ extern NSString * const strFemale;
 extern NSString * const strFemaleMinor;
 extern NSString * const strMale;
 extern NSString * const strMaleMinor;
-extern NSString * const strHousehold;
-extern NSString * const strMyPlace;
-extern NSString * const strOurPlace;
+extern NSString * const strMyHousehold;
 extern NSString * const strMyMessageBoard;
 extern NSString * const strOurMessageBoard;
 
@@ -50,9 +48,7 @@ extern NSString * const strDateOfBirthPrompt;
 extern NSString * const strUserWebsitePrompt;
 extern NSString * const strAddressLine1Prompt;
 extern NSString * const strAddressLine2Prompt;
-extern NSString * const strHouseholdLandlinePrompt;
-extern NSString * const strScolaLandlinePrompt;
-extern NSString * const strScolaWebsitePrompt;
+extern NSString * const strTelephonePrompt;
 
 // Labels
 extern NSString * const strSignInOrRegisterLabel;
@@ -61,11 +57,11 @@ extern NSString * const strSingleLetterEmailLabel;
 extern NSString * const strSingleLetterMobilePhoneLabel;
 extern NSString * const strSingleLetterDateOfBirthLabel;
 extern NSString * const strSingleLetterAddressLabel;
-extern NSString * const strSingleLetterLandlineLabel;
+extern NSString * const strSingleLetterTelephoneLabel;
 extern NSString * const strSingleLetterWebsiteLabel;
 extern NSString * const strAddressLabel;
 extern NSString * const strAddressesLabel;
-extern NSString * const strLandlineLabel;
+extern NSString * const strTelephoneLabel;
 
 // Header & footer strings
 extern NSString * const strSignInOrRegisterFooter;
@@ -94,10 +90,9 @@ extern NSString * const strMemberExistsTitle;
 extern NSString * const strMemberExistsAlert;
 extern NSString * const strExistingResidenceAlert;
 
-// ScMembershipView strings
-extern NSString * const strMembershipViewTitleDefault;
-extern NSString * const strMembershipViewTitleMyPlace;
-extern NSString * const strMembershipViewTitleOurPlace;
+// ScMemberListView strings
+extern NSString * const strMemberListViewTitleDefault;
+extern NSString * const strMemberListViewTitleHousehold;
 extern NSString * const strHouseholdMembers;
 extern NSString * const strDeleteConfirmation;
 

@@ -15,7 +15,7 @@
 + (id)entityWithDictionary:(NSDictionary *)dictionary;
 - (NSDictionary *)toDictionary;
 
-- (BOOL)isPropertyPersistable:(NSString *)property;
+- (BOOL)isTransientProperty:(NSString *)property;
 - (BOOL)isPersisted;
 - (BOOL)isDirty;
 

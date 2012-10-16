@@ -2,7 +2,7 @@
 //  ScMember.m
 //  ScolaApp
 //
-//  Created by Anders Blehr on 02.09.12.
+//  Created by Anders Blehr on 16.10.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
@@ -30,17 +30,16 @@
 @dynamic name;
 @dynamic passwordHash;
 @dynamic photo;
-@dynamic website;
 @dynamic contactForEvents;
 @dynamic devices;
 @dynamic documents;
 @dynamic eventInvitations;
+@dynamic guardianships;
 @dynamic memberships;
 @dynamic messageItems;
 @dynamic residencies;
 @dynamic scheduledAbsences;
 @dynamic toDoAssignments;
-@dynamic guardianships;
 @dynamic wardships;
 
 @end

@@ -55,7 +55,7 @@ static CGFloat const kImageShadowOffset = 1.5f;
 }
 
 
-- (void)addShadowForNonBottomTableViewCell
+- (void)addShadowForContainedTableViewCell
 {
     CGRect nonOverlappingShadowRect = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height - 2.75f * kCellShadowRadius);
     

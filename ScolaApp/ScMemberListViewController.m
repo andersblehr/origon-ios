@@ -1,12 +1,12 @@
 //
-//  ScMembershipViewController.m
+//  ScMemberListViewController.m
 //  ScolaApp
 //
 //  Created by Anders Blehr on 17.01.12.
 //  Copyright (c) 2012 Rhelba Software. All rights reserved.
 //
 
-#import "ScMembershipViewController.h"
+#import "ScMemberListViewController.h"
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "UIColor+ScColorExtensions.h"
@@ -31,8 +31,8 @@
 #import "ScMemberViewController.h"
 #import "ScScolaViewController.h"
 
-static NSString * const kSegueToMemberView = @"membershipToMemberView";
-static NSString * const kSegueToScolaView = @"membershipToScolaView";
+static NSString * const kSegueToMemberView = @"memberListToMemberView";
+static NSString * const kSegueToScolaView = @"memberListToScolaView";
 
 static NSInteger const kNumberOfSections = 3;
 static NSInteger const kAddressSection = 0;
@@ -40,7 +40,7 @@ static NSInteger const kContactSection = 1;
 static NSInteger const kMemberSection = 2;
 
 
-@implementation ScMembershipViewController
+@implementation ScMemberListViewController
 
 #pragma mark - Selector implementations
 
@@ -50,8 +50,9 @@ static NSInteger const kMemberSection = 2;
     memberViewController.delegate = self;
     memberViewController.scola = _scola;
     
-    [ScState s].action = ScStateActionRegister;
-    [ScState s].target = ScStateTargetMember;
+    [ScState s].actionIsRegister = YES;
+    [ScState s].targetIsMember = YES;
+    [ScState s].aspectIsExternal = YES;
     
     UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
     modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
@@ -70,8 +71,8 @@ static NSInteger const kMemberSection = 2;
         _needsSynchronisation = NO;
     }
     
-    if ([ScState s].actionIsRegister) {
-        [_delegate shouldDismissViewControllerWithIdentitifier:kMembershipViewControllerId];
+    if (_delegate) {
+        [_delegate dismissViewControllerWithIdentitifier:kMemberListViewControllerId];
     }
 }
 
@@ -82,22 +83,25 @@ static NSInteger const kMemberSection = 2;
 {
     [super viewDidLoad];
     
-    [[ScState s] saveCurrentStateForViewController:kMembershipViewControllerId];
+    [[ScState s] saveCurrentStateForViewController:kMemberListViewControllerId];
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    [self.tableView addBackground];
+    if ([_scola userIsAdmin]) {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMember)];
+        
+        if (_delegate) {
+            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
+        }
+    }
+    
+    [self.tableView setBackground];
     
     _contacts = [[NSMutableSet alloc] init];
     _members = [[NSMutableSet alloc] init];
     
     for (ScMembership *membership in _scola.memberships) {
-        if ([membership.member isUser] && ([membership.isAdmin boolValue])) {
-            _isUserScolaAdmin = YES;
-            _addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMember)];
-        }
-             
         if ([membership hasContactRole]) {
             [_contacts addObject:membership];
         } else {
@@ -108,20 +112,14 @@ static NSInteger const kMemberSection = 2;
     _sortedContacts = [[_contacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
     _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
     
-    if ([_scola isResidence] && [ScState s].aspectIsSelf) {
-        if ([_scola.residencies count] > 1) {
-            _longTitle = [ScStrings stringForKey:strMembershipViewTitleOurPlace];
+    if ([_scola isResidence]) {
+        if ([ScState s].aspectIsSelf) {
+            self.title = [ScStrings stringForKey:strMyHousehold];
         } else {
-            _longTitle = [ScStrings stringForKey:strMembershipViewTitleMyPlace];
-        }
-        
-        if ([ScState s].actionIsRegister) {
-            self.title = _longTitle;
-        } else {
-            self.title = [ScStrings stringForKey:strHousehold];
+            self.title = [ScStrings stringForKey:strMemberListViewTitleHousehold];
         }
     } else {
-        self.title = [ScStrings stringForKey:strMembershipViewTitleDefault];
+        self.title = [ScStrings stringForKey:strMemberListViewTitleDefault];
     }
 }
 
@@ -130,18 +128,8 @@ static NSInteger const kMemberSection = 2;
 {
     [super viewWillAppear:animated];
     
-    [[ScState s] revertToSavedStateForViewController:kMembershipViewControllerId];
+    [[ScState s] revertToSavedStateForViewController:kMemberListViewControllerId];
     ScLogState;
-    
-    if ([ScState s].actionIsRegister && [ScState s].targetIsMemberships) {
-        UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
-        
-        self.navigationItem.leftBarButtonItem = doneButton;
-        self.navigationItem.rightBarButtonItem = _addButton;
-    } else {
-        self.tabBarController.title = [_scola isResidence] ? _longTitle : self.title;
-        self.tabBarController.navigationItem.rightBarButtonItem = _addButton;
-    }
 }
 
 
@@ -165,22 +153,18 @@ static NSInteger const kMemberSection = 2;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    [ScState s].action = ScStateActionDisplay;
+    [ScState s].actionIsDisplay = YES;
     
     if ([segue.identifier isEqualToString:kSegueToScolaView]) {
         ScScolaViewController *scolaViewController = segue.destinationViewController;
         scolaViewController.scola = _scola;
         
-        if ([_scola isResidence]) {
-            [ScState s].target = ScStateTargetResidence;
-        } else {
-            [ScState s].target = ScStateTargetScola;
-        }
+        [ScState s].targetIsScola = YES;
     } else if ([segue.identifier isEqualToString:kSegueToMemberView]) {
         ScMemberViewController *memberViewController = segue.destinationViewController;
         memberViewController.membership = _selectedMembership;
         
-        [ScState s].target = ScStateTargetMember;
+        [ScState s].targetIsMember = YES;
     }
 }
 
@@ -230,12 +214,12 @@ static NSInteger const kMemberSection = 2;
     if (indexPath.section == kAddressSection) {
         cell = [tableView cellForEntity:_scola];
         
-        if (_isUserScolaAdmin) {
+        if ([_scola userIsAdmin]) {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
     } else {
         NSArray *memberships = (indexPath.section == kContactSection) ? _sortedContacts : _sortedMembers;
-        ScMembership *membership = [memberships objectAtIndex:indexPath.row];
+        ScMembership *membership = memberships[indexPath.row];
         
         cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -253,12 +237,12 @@ static NSInteger const kMemberSection = 2;
         ScMembership *membershipToDelete = nil;
         
         if (indexPath.section == kContactSection) {
-            membershipToDelete = [_sortedContacts objectAtIndex:indexPath.row];
+            membershipToDelete = _sortedContacts[indexPath.row];
             
             [_contacts removeObject:membershipToDelete];
             _sortedContacts = [[_contacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
         } else if (indexPath.section == kMemberSection) {
-            membershipToDelete = [_sortedMembers objectAtIndex:indexPath.row];
+            membershipToDelete = _sortedMembers[indexPath.row];
             
             [_members removeObject:membershipToDelete];
             _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
@@ -320,7 +304,7 @@ static NSInteger const kMemberSection = 2;
 {
     UIView *footerView = nil;
     
-    if ((section == kMemberSection) && _isUserScolaAdmin) {
+    if ((section == kMemberSection) && [_scola userIsAdmin]) {
         footerView = [tableView footerViewWithText:[ScStrings stringForKey:strHouseholdMemberListFooter]];
     }
     
@@ -343,7 +327,7 @@ static NSInteger const kMemberSection = 2;
     if (isLastRowInSection) {
         [cell.backgroundView addShadowForBottomTableViewCell];
     } else {
-        [cell.backgroundView addShadowForNonBottomTableViewCell];
+        [cell.backgroundView addShadowForContainedTableViewCell];
     }
 }
 
@@ -354,9 +338,9 @@ static NSInteger const kMemberSection = 2;
         [self performSegueWithIdentifier:kSegueToScolaView sender:self];
     } else {
         if (indexPath.section == kContactSection) {
-            _selectedMembership = [_sortedContacts objectAtIndex:indexPath.row];
+            _selectedMembership = _sortedContacts[indexPath.row];
         } else if (indexPath.section == kMemberSection) {
-            _selectedMembership = [_sortedMembers objectAtIndex:indexPath.row];
+            _selectedMembership = _sortedMembers[indexPath.row];
         }
         
         [self performSegueWithIdentifier:kSegueToMemberView sender:self];
@@ -378,11 +362,13 @@ static NSInteger const kMemberSection = 2;
 
 #pragma mark - ScMemberViewControllerDelegate methods
 
-- (void)shouldDismissViewControllerWithIdentitifier:(NSString *)identitifier
+- (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
     if ([identitifier isEqualToString:kMemberViewControllerId]) {
         [self dismissViewControllerAnimated:YES completion:NULL];
-        [ScState s].target = ScStateTargetMemberships;
+        
+        [ScState s].actionIsList = YES;
+        [ScState s].targetIsMember = YES;
         
         _isViewModallyHidden = NO;
     }

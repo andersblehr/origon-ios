@@ -97,7 +97,6 @@
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="passwordHash" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
-        <attribute name="website" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="contactForEvents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEvent" inverseName="eventContacts" inverseEntity="ScEvent" syncable="YES"/>
         <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDevice" inverseName="member" inverseEntity="ScDevice" syncable="YES"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScDocument" inverseName="author" inverseEntity="ScDocument" syncable="YES"/>
@@ -140,7 +139,6 @@
         </userInfo>
     </entity>
     <entity name="ScMessageBoard" representedClassName="ScMessageBoard" parentEntity="ScCachedEntity" syncable="YES">
-        <attribute name="isAdmin" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="roleRestriction" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" attributeType="String" syncable="YES"/>
         <relationship name="messageThreads" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScMessageThread" inverseName="messageBoard" inverseEntity="ScMessageThread" syncable="YES"/>
@@ -189,9 +187,9 @@
         <attribute name="addressLine1" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="addressLine2" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="descriptionText" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
-        <attribute name="landline" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="telephone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="documentRepositories" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScDocumentRepository" inverseName="scola" inverseEntity="ScDocumentRepository" syncable="YES"/>
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ScEventScolaInvitation" inverseName="scola" inverseEntity="ScEventScolaInvitation" syncable="YES"/>
@@ -215,8 +213,8 @@
         </userInfo>
     </entity>
     <entity name="ScToDoAssignment" representedClassName="ScToDoAssignment" parentEntity="ScCachedEntity" syncable="YES">
-        <attribute name="declined" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="done" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="assigneeDidDecline" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="isComplete" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <relationship name="assignee" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScMember" inverseName="toDoAssignments" inverseEntity="ScMember" syncable="YES"/>
         <relationship name="toDoItem" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ScToDoItem" inverseName="assignments" inverseEntity="ScToDoItem" syncable="YES"/>
         <userInfo>
@@ -263,11 +261,11 @@
         <element name="ScEventInvitation" positionX="0" positionY="0" width="128" height="105"/>
         <element name="ScEventScolaInvitation" positionX="0" positionY="0" width="128" height="90"/>
         <element name="ScExternalDocument" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="ScMember" positionX="0" positionY="0" width="128" height="360"/>
+        <element name="ScMember" positionX="0" positionY="0" width="128" height="345"/>
         <element name="ScMemberGuardianship" positionX="160" positionY="192" width="128" height="90"/>
         <element name="ScMemberResidency" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="ScMembership" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="ScMessageBoard" positionX="0" positionY="0" width="128" height="120"/>
+        <element name="ScMembership" positionX="0" positionY="0" width="128" height="120"/>
+        <element name="ScMessageBoard" positionX="0" positionY="0" width="128" height="105"/>
         <element name="ScMessageItem" positionX="0" positionY="0" width="128" height="120"/>
         <element name="ScMessageThread" positionX="0" positionY="0" width="128" height="90"/>
         <element name="ScScheduledAbsence" positionX="0" positionY="0" width="128" height="105"/>

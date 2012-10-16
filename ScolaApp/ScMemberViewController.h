@@ -40,7 +40,7 @@
 
 @property (weak, nonatomic) id<ScMemberViewControllerDelegate> delegate;
 
-@property (weak, nonatomic) ScMembership *membership;
-@property (weak, nonatomic) ScScola *scola;
+@property (strong, nonatomic) ScMembership *membership;
+@property (strong, nonatomic) ScScola *scola;
 
 @end

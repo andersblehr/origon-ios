@@ -16,10 +16,10 @@ extern NSString * const kBundleId;
 extern NSString * const kLanguageHungarian;
 
 extern NSString * const kAuthViewControllerId;
-extern NSString * const kMainViewControllerId;
-extern NSString * const kMemberViewControllerId;
-extern NSString * const kMembershipViewControllerId;
+extern NSString * const kScolaListViewControllerId;
 extern NSString * const kScolaViewControllerId;
+extern NSString * const kMemberListViewControllerId;
+extern NSString * const kMemberViewControllerId;
 
 extern NSString * const kPropertyEntityId;
 extern NSString * const kPropertyEntityClass;
@@ -63,7 +63,7 @@ extern NSString * const kContactRoleResidenceElder;
 
 @property (nonatomic, readonly) BOOL isUserLoggedIn;
 @property (strong, nonatomic) NSString *userId;
-@property (weak, nonatomic, readonly) ScMember *user;
+@property (strong, nonatomic, readonly) ScMember *user;
 
 @property (strong, nonatomic, readonly) NSString *deviceId;
 @property (strong, nonatomic, readonly) NSString *authToken;

@@ -1,5 +1,5 @@
 //
-//  ScMainViewController.m
+//  ScScolaListViewController.m
 //  ScolaApp
 //
 //  Created by Anders Blehr on 29.11.11.
@@ -8,7 +8,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#import "ScMainViewController.h"
+#import "ScScolaListViewController.h"
 
 #import "NSManagedObjectContext+ScManagedObjectContextExtensions.h"
 #import "UITableView+UITableViewExtensions.h"
@@ -25,16 +25,27 @@
 #import "ScMemberResidency.h"
 #import "ScMembership.h"
 
-#import "ScMembershipViewController.h"
+#import "ScScola+ScScolaExtensions.h"
+
+#import "ScMemberListViewController.h"
+
+static NSString * const kSegueToScolaListView = @"scolaListToScolaListView";
+static NSString * const kSegueToMemberListView = @"scolaListToMemberListView";
 
 static NSInteger const kResidenceSection = 0;
 static NSInteger const kWardSection = 1;
 static NSInteger const kScolaSection = 2;
 
-static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 
+@implementation ScScolaListViewController
 
-@implementation ScMainViewController
+#pragma mark - Selector implementations
+
+- (void)addScola
+{
+    
+}
+
 
 #pragma mark - View lifecycle
 
@@ -42,24 +53,31 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 {
     [super viewDidLoad];
     
-    self.title = @"Scola";
+    self.title = [ScMeta m].user.givenName;
     
-    [self.tableView addBackground];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBarHidden = NO;
+    
+    self.navigationItem.title = [ScMeta m].user.name;
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[ScMeta m].user.givenName style:UIBarButtonItemStylePlain target:nil action:nil];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addScola)];
+    
+    [self.tableView setBackground];
     
     NSMutableSet *residences = [[NSMutableSet alloc] init];
     NSMutableSet *wards = [[NSMutableSet alloc] init];
     _scolas = [[NSMutableSet alloc] init];
     
-    for (ScMemberResidency *residency in _member.residencies) {
+    for (ScMemberResidency *residency in [ScMeta m].user.residencies) {
         [residences addObject:residency.residence];
     }
     
-    for (ScMemberGuardianship *wardship in _member.wardships) {
+    for (ScMemberGuardianship *wardship in [ScMeta m].user.wardships) {
         [wards addObject:wardship.ward];
     }
     
-    for (ScMembership *membership in _member.memberships) {
-        if (![_member.residencies containsObject:membership]) {
+    for (ScMembership *membership in [ScMeta m].user.memberships) {
+        if (![[ScMeta m].user.residencies containsObject:membership]) {
             [_scolas addObject:membership.scola];
         }
     }
@@ -74,13 +92,11 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 {
     [super viewWillAppear:animated];
     
-    [ScState s].action = ScStateActionDefault;
-    [ScState s].target = ScStateTargetDefault;
-    [ScState s].aspect = ScStateAspectDefault;
+    [ScState s].actionIsList = YES;
+    [ScState s].targetIsScola = YES;
+    [ScState s].aspectIsSelf = YES;
     
     ScLogState;
-    
-    [self navigationController].navigationBarHidden = YES;
 }
 
 
@@ -94,11 +110,10 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kSegueToMembershipView]) {
-        UITabBarController *tabBarController = segue.destinationViewController;
-        ScMembershipViewController *nextViewController = [tabBarController.viewControllers objectAtIndex:0];
+    if ([segue.identifier isEqualToString:kSegueToMemberListView]) {
+        ScMemberListViewController *memberListViewController = segue.destinationViewController;
         
-        nextViewController.scola = nil; // TODO: Figure this out!
+        memberListViewController.scola = _selectedScola;
     }
 }
 
@@ -112,14 +127,16 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    ScMember *user = [ScMeta m].user;
+    
     NSInteger numberOfRows = 0;
     
     if (section == kResidenceSection) {
-        numberOfRows = [_member.residencies count];
+        numberOfRows = [user.residencies count];
     } else if (section == kWardSection) {
-        numberOfRows = [_member.guardianships count];
+        numberOfRows = [user.guardianships count];
     } else if (section == kScolaSection) {
-        numberOfRows = [_member.memberships count] - [_member.residencies count];
+        numberOfRows = [user.memberships count] - [user.residencies count] - 1;
     }
     
     return numberOfRows;
@@ -139,10 +156,10 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
     cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
     
     if (indexPath.section == kResidenceSection) {
-        // TODO
+        ScScola *residence = _sortedResidences[indexPath.row];
         
-        cell.textLabel.text = @"TODO";
-        cell.detailTextLabel.text = @"TODO";
+        cell.textLabel.text = [residence name];
+        cell.detailTextLabel.text = [residence singleLineAddress];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     
@@ -168,8 +185,8 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 {
     UIView *headerView = nil;
     
-    if (section == kWardSection) {
-        headerView = [tableView headerViewWithTitle:@"TODO"];
+    if (section == kWardSection && [_sortedWards count]) {
+        headerView = [tableView headerViewWithTitle:@"Mindreårige"];
     }
     
     return headerView;
@@ -178,20 +195,38 @@ static NSString * const kSegueToMembershipView = @"mainToMembershipView";
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    BOOL isLastCellInSection = NO;
+    BOOL isBottomCellInSection = NO;
     
     if (indexPath.section == kResidenceSection) {
-        isLastCellInSection = (indexPath.row == [_sortedResidences count] - 1);
+        isBottomCellInSection = (indexPath.row == [_sortedResidences count] - 1);
     } else if (indexPath.section == kWardSection) {
-        isLastCellInSection = (indexPath.row == [_sortedWards count] - 1);
+        isBottomCellInSection = (indexPath.row == [_sortedWards count] - 1);
     } else if (indexPath.section == kScolaSection) {
-        isLastCellInSection = (indexPath.row == [_sortedScolas count] - 1);
+        isBottomCellInSection = (indexPath.row == [_sortedScolas count] - 1);
     }
     
-    if (isLastCellInSection) {
+    if (isBottomCellInSection) {
         [cell.backgroundView addShadowForBottomTableViewCell];
     } else {
-        [cell.backgroundView addShadowForNonBottomTableViewCell];
+        [cell.backgroundView addShadowForContainedTableViewCell];
+    }
+}
+
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section == kWardSection) {
+        _selectedWard = _sortedWards[indexPath.row];
+    } else {
+        [ScState s].targetIsMember = YES;
+        
+        if (indexPath.section == kResidenceSection) {
+            _selectedScola = _sortedResidences[indexPath.row];
+        } else if (indexPath.section == kScolaSection) {
+            _selectedScola = _sortedScolas[indexPath.row];
+        }
+        
+        [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
     }
 }
 
