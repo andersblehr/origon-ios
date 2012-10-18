@@ -217,7 +217,7 @@
 		5C8B3AB515813DBB000B19FA /* OMemberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMemberViewController.m; sourceTree = "<group>"; };
 		5C8B3AB81582493C000B19FA /* OTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCell.h; sourceTree = "<group>"; };
 		5C8B3AB91582493C000B19FA /* OTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCell.m; sourceTree = "<group>"; };
-		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		5C9B9087162E0B8D004F530F /* 12-eye@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "12-eye@2x.png"; sourceTree = "<group>"; };
 		5C9B908A162E0C51004F530F /* 61-brightness@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "61-brightness@2x.png"; sourceTree = "<group>"; };
 		5C9B908C162E0CA0004F530F /* 61-brightness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "61-brightness.png"; sourceTree = "<group>"; };
@@ -303,6 +303,7 @@
 		5C276E7A1475B9A800A6C500 /* Media */ = {
 			isa = PBXGroup;
 			children = (
+				5C93DC741628100C009A66C4 /* Default-568h@2x.png */,
 				5C629FF114C62133001DA01F /* 08-chat.png */,
 				5C629FF214C62133001DA01F /* 08-chat@2x.png */,
 				5C9B908E162E0CAE004F530F /* 12-eye.png */,
@@ -491,8 +492,6 @@
 		5CBB63A9146080DD00A9133A = {
 			isa = PBXGroup;
 			children = (
-				5C93DC741628100C009A66C4 /* Default-568h@2x.png */,
-				5CBE919E159909E200516C54 /* AudioToolbox.framework */,
 				5CBB63BE146080DF00A9133A /* OrigoApp */,
 				5CBB63DF146080E000A9133A /* OrigoAppTests */,
 				5CBB63B7146080DF00A9133A /* Frameworks */,
@@ -512,6 +511,7 @@
 		5CBB63B7146080DF00A9133A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5CBE919E159909E200516C54 /* AudioToolbox.framework */,
 				5C50581714CA1D05000D6587 /* QuartzCore.framework */,
 				5C36BE9814704E6800DD3CEA /* CoreData.framework */,
 				5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */,
@@ -631,7 +631,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0450;
-				ORGANIZATIONNAME = "Rhelba Software";
+				ORGANIZATIONNAME = "Rhelba Creations";
 			};
 			buildConfigurationList = 5CBB63AE146080DD00A9133A /* Build configuration list for PBXProject "OrigoApp" */;
 			compatibilityVersion = "Xcode 3.2";

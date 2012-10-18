@@ -71,7 +71,7 @@
             </objects>
             <point key="canvasLocation" x="183" y="1922"/>
         </scene>
-        <!--Member List View Controller - <strMemberships>-->
+        <!--Member List View Controller - <strMemberList>-->
         <scene sceneID="5fB-zI-Tq9">
             <objects>
                 <viewController storyboardIdentifier="idMembership" id="O0V-Ey-WLK" customClass="OMemberListViewController" sceneMemberID="viewController">
@@ -81,7 +81,7 @@
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections/>
                     </tableView>
-                    <navigationItem key="navigationItem" title="&lt;strMemberships>" id="PZV-fj-ium"/>
+                    <navigationItem key="navigationItem" title="&lt;strMemberList>" id="PZV-fj-ium"/>
                     <connections>
                         <segue destination="T87-Bh-GzL" kind="push" identifier="memberListToMemberView" id="fHV-uh-t7i"/>
                         <segue destination="bxV-RT-yI4" kind="push" identifier="memberListToOrigoView" id="a60-dm-1pX"/>
@@ -104,7 +104,6 @@
                             <outlet property="delegate" destination="T87-Bh-GzL" id="GlC-bZ-Zjk"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="&lt;strProfile>" image="glyphicons_003_user.png" id="2f6-nA-Lyy"/>
                     <navigationItem key="navigationItem" title="&lt;strMember>" id="uRg-zS-kRb"/>
                     <connections>
                         <segue destination="O0V-Ey-WLK" kind="push" identifier="memberToMemberListView" id="99F-61-IG0"/>
@@ -114,7 +113,7 @@
             </objects>
             <point key="canvasLocation" x="643" y="665"/>
         </scene>
-        <!--Origo View Controller-->
+        <!--Origo View Controller - <strOrigo>-->
         <scene sceneID="WLp-CI-chb">
             <objects>
                 <tableViewController storyboardIdentifier="idOrigo" id="bxV-RT-yI4" customClass="OOrigoViewController" sceneMemberID="viewController">
@@ -127,7 +126,7 @@
                             <outlet property="delegate" destination="bxV-RT-yI4" id="iho-0T-1AH"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="dpB-kw-TiN"/>
+                    <navigationItem key="navigationItem" title="&lt;strOrigo>" id="dpB-kw-TiN"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kaR-KX-Z8X" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -154,17 +153,17 @@
             </objects>
             <point key="canvasLocation" x="183" y="665"/>
         </scene>
-        <!--Origo List View Controller - <userName>-->
+        <!--Origo List View Controller - <strOrigoList>-->
         <scene sceneID="SzQ-Uz-J3x">
             <objects>
-                <viewController storyboardIdentifier="idMain" id="9Fa-Np-JO6" customClass="OOrigoListViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="idOrigoList" id="9Fa-Np-JO6" customClass="OOrigoListViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Nfe-mR-3nj">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="&lt;userName>" id="2TD-LP-teE"/>
+                    <navigationItem key="navigationItem" title="&lt;strOrigoList>" id="2TD-LP-teE"/>
                     <connections>
                         <segue destination="O0V-Ey-WLK" kind="push" identifier="origoListToMemberListView" id="gEQ-1g-oCH"/>
                     </connections>
@@ -173,7 +172,7 @@
             </objects>
             <point key="canvasLocation" x="183" y="41"/>
         </scene>
-        <!--Settings View Controller-->
+        <!--Settings View Controller - <strSettings>-->
         <scene sceneID="sOz-jV-QHA">
             <objects>
                 <tableViewController id="Bf4-zU-a9P" customClass="OSettingsViewController" sceneMemberID="viewController">
@@ -186,7 +185,7 @@
                             <outlet property="delegate" destination="Bf4-zU-a9P" id="h0S-cp-pW5"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="pPk-Kr-fAc"/>
+                    <navigationItem key="navigationItem" title="&lt;strSettings>" id="pPk-Kr-fAc"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R31-Db-r3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -317,44 +316,14 @@
         <image name="258-checkmark.png" width="19" height="18"/>
         <image name="83-calendar.png" width="23" height="25"/>
         <image name="dark_linen-640x960.png" width="640" height="960"/>
-        <image name="glyphicons_003_user.png" width="16" height="16"/>
     </resources>
-    <classes>
-        <class className="OAuthViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OAuthViewController.h"/>
-        </class>
-        <class className="OCalendarViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OCalendarViewController.h"/>
-        </class>
-        <class className="OMemberListViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMemberListViewController.h"/>
-        </class>
-        <class className="OMemberViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMemberViewController.h"/>
-        </class>
-        <class className="OMessageBoardViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMessageBoardViewController.h"/>
-        </class>
-        <class className="OOrigoListViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OOrigoListViewController.h"/>
-        </class>
-        <class className="OOrigoViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OOrigoViewController.h"/>
-        </class>
-        <class className="OSettingsViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OSettingsViewController.h"/>
-        </class>
-        <class className="OTaskViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OTaskViewController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="gEQ-1g-oCH"/>
         <segue reference="fHV-uh-t7i"/>
+        <segue reference="gEQ-1g-oCH"/>
     </inferredMetricsTieBreakers>
 </document>
