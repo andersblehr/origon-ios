@@ -13,8 +13,8 @@
 #import "NSString+OStringExtensions.h"
 #import "NSURL+OURLExtensions.h"
 
-#import "OAppDelegate.h"
 #import "OAlert.h"
+#import "OAppDelegate.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
@@ -40,8 +40,8 @@ NSInteger const kHTTPStatusCodeNotFound = 404;
 NSInteger const kHTTPStatusCodeInternalServerError = 500;
 
 static NSString * const kGAEServer = @"origoapp.appspot.com";
-static NSString * const kOrigoDevServer = @"localhost:8888";
-//static NSString * const kOrigoDevServer = @"enceladus.local:8888";
+//static NSString * const kOrigoDevServer = @"localhost:8888";
+static NSString * const kOrigoDevServer = @"enceladus.local:8888";
 //static NSString * const kOrigoProdServer = @"origoapp.appspot.com";
 static NSString * const kOrigoProdServer = @"enceladus.local:8888";
 
