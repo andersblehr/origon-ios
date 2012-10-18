@@ -103,7 +103,7 @@
 }
 
 
-#pragma mark - ScModalViewControllerDelegate methods
+#pragma mark - OModalViewControllerDelegate methods
 
 - (void)shouldDismissViewControllerWithIdentitifier:(NSString *)identitifier
 {

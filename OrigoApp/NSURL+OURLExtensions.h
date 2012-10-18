@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSURL (OURLQueryParameters)
+@interface NSURL (OURLExtensions)
 
 + (NSString *)URLEscapeString:(NSString *)unencodedString;
 

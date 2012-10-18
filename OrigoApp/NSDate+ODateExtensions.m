@@ -11,7 +11,7 @@
 static NSInteger const kAgeOfMajority = 18;
 
 
-@implementation NSDate (ScDateExtensions)
+@implementation NSDate (ODateExtensions)
 
 + (NSDate *)dateWithDeserialisedDate:(NSNumber *)deserialisedDate
 {

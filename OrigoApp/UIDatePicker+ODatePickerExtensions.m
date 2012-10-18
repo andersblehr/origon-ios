@@ -15,7 +15,7 @@ static int const kMinimumRealisticAge = 6;
 static int const kMaximumRealisticAge = 110;
 
 
-@implementation UIDatePicker (ScDatePickerExtensions)
+@implementation UIDatePicker (ODatePickerExtensions)
 
 - (void)setEarliestValidBirthDate
 {

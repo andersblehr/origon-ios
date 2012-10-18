@@ -44,7 +44,7 @@ static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
 static NSString * const kLogoText = @"..origo..";
 
 
-@implementation UITableView (UITableViewExtensions)
+@implementation UITableView (OTableViewExtensions)
 
 
 #pragma mark - Cell instantiation

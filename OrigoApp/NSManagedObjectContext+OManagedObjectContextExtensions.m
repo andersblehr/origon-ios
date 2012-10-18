@@ -32,7 +32,7 @@
 static NSString * const kOrigoRelationshipName = @"origo";
 
 
-@implementation NSManagedObjectContext (ScManagedObjectContextExtensions)
+@implementation NSManagedObjectContext (OManagedObjectContextExtensions)
 
 
 #pragma mark - Auxiliary methods

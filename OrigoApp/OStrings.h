@@ -90,13 +90,13 @@ extern NSString * const strMemberExistsTitle;
 extern NSString * const strMemberExistsAlert;
 extern NSString * const strExistingResidenceAlert;
 
-// ScMemberListView strings
+// OMemberListView strings
 extern NSString * const strMemberListViewTitleDefault;
 extern NSString * const strMemberListViewTitleHousehold;
 extern NSString * const strHouseholdMembers;
 extern NSString * const strDeleteConfirmation;
 
-// ScMemberView strings
+// OMemberView strings
 extern NSString * const strMemberViewTitleAboutYou;
 extern NSString * const strMemberViewTitleNewMember;
 extern NSString * const strMemberViewTitleNewHouseholdMember;

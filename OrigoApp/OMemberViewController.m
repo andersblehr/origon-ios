@@ -535,7 +535,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-#pragma mark - ScModalViewControllerDelegate methods
+#pragma mark - OModalViewControllerDelegate methods
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
@@ -547,7 +547,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-#pragma mark - ScServerConnectionDelegate methods
+#pragma mark - OServerConnectionDelegate methods
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(NSArray *)data
 {

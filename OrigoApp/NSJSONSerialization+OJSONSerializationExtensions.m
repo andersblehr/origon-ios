@@ -11,7 +11,7 @@
 #import "OLogging.h"
 
 
-@implementation NSJSONSerialization (ScJSONSerializationExtensions)
+@implementation NSJSONSerialization (OJSONSerializationExtensions)
 
 + (NSData *)serialise:(id)object
 {

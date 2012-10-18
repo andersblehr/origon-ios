@@ -16,7 +16,7 @@
 static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 
-@implementation NSString (ScStringExtensions)
+@implementation NSString (OStringExtensions)
 
 
 #pragma mark - Crypto stuff
