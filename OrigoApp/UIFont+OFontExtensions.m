@@ -9,14 +9,14 @@
 #import "UIFont+OFontExtensions.h"
 
 typedef enum {
-    ScFontStyleLabel,
-    ScFontStyleDetail,
-    ScFontStyleEditableDetail,
-    ScFontStyleTitle,
-    ScFontStyleEditableTitle,
-    ScFontStyleHeader,
-    ScFontStyleFooter,
-} ScFontStyle;
+    OFontStyleLabel,
+    OFontStyleDetail,
+    OFontStyleEditableDetail,
+    OFontStyleTitle,
+    OFontStyleEditableTitle,
+    OFontStyleHeader,
+    OFontStyleFooter,
+} OFontStyle;
 
 static CGFloat const kLabelFontSize = 12.f;
 static CGFloat const kDetailFontSize = 14.f;
@@ -27,28 +27,28 @@ static CGFloat const kFooterFontSize = 13.f;
 static CGFloat const kEditingLineHeightScaleFactor = 1.22f;
 
 
-@implementation UIFont (ScFontExtensions)
+@implementation UIFont (OFontExtensions)
 
 
 #pragma mark - Auxiliary methods
 
-+ (UIFont *)fontWithType:(ScFontStyle)fontType
++ (UIFont *)fontWithType:(OFontStyle)fontType
 {
     UIFont *font = nil;
     
-    if (fontType == ScFontStyleLabel) {
+    if (fontType == OFontStyleLabel) {
         font = [UIFont boldSystemFontOfSize:kLabelFontSize];
-    } else if (fontType == ScFontStyleDetail) {
+    } else if (fontType == OFontStyleDetail) {
         font = [UIFont systemFontOfSize:kDetailFontSize];
-    } else if (fontType == ScFontStyleEditableDetail) {
+    } else if (fontType == OFontStyleEditableDetail) {
         font = [UIFont systemFontOfSize:kDetailFontSize];
-    } else if (fontType == ScFontStyleTitle) {
+    } else if (fontType == OFontStyleTitle) {
         font = [UIFont boldSystemFontOfSize:kTitleFontSize];
-    } else if (fontType == ScFontStyleEditableTitle) {
+    } else if (fontType == OFontStyleEditableTitle) {
         font = [UIFont boldSystemFontOfSize:kTitleFontSize];
-    } else if (fontType == ScFontStyleHeader) {
+    } else if (fontType == OFontStyleHeader) {
         font = [UIFont boldSystemFontOfSize:kHeaderFontSize];
-    } else if (fontType == ScFontStyleFooter) {
+    } else if (fontType == OFontStyleFooter) {
         font = [UIFont systemFontOfSize:kFooterFontSize];
     }
     
@@ -60,43 +60,43 @@ static CGFloat const kEditingLineHeightScaleFactor = 1.22f;
 
 + (UIFont *)labelFont
 {
-    return [UIFont fontWithType:ScFontStyleLabel];
+    return [UIFont fontWithType:OFontStyleLabel];
 }
 
 
 + (UIFont *)detailFont
 {
-    return [UIFont fontWithType:ScFontStyleDetail];
+    return [UIFont fontWithType:OFontStyleDetail];
 }
 
 
 + (UIFont *)editableDetailFont
 {
-    return [UIFont fontWithType:ScFontStyleEditableDetail];
+    return [UIFont fontWithType:OFontStyleEditableDetail];
 }
 
 
 + (UIFont *)titleFont
 {
-    return [UIFont fontWithType:ScFontStyleTitle];
+    return [UIFont fontWithType:OFontStyleTitle];
 }
 
 
 + (UIFont *)editableTitleFont
 {
-    return [UIFont fontWithType:ScFontStyleEditableTitle];
+    return [UIFont fontWithType:OFontStyleEditableTitle];
 }
 
 
 + (UIFont *)headerFont
 {
-    return [UIFont fontWithType:ScFontStyleHeader];
+    return [UIFont fontWithType:OFontStyleHeader];
 }
 
 
 + (UIFont *)footerFont
 {
-    return [UIFont fontWithType:ScFontStyleFooter];
+    return [UIFont fontWithType:OFontStyleFooter];
 }
 
 

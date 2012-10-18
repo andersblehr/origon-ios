@@ -433,7 +433,7 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - ScServerConnectionDelegate implementation
+#pragma mark - OServerConnectionDelegate implementation
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {

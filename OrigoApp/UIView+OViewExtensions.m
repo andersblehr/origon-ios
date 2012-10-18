@@ -20,7 +20,7 @@ static CGFloat const kImageShadowRadius = 1.f;
 static CGFloat const kImageShadowOffset = 1.5f;
 
 
-@implementation UIView (ScViewExtensions)
+@implementation UIView (OViewExtensions)
 
 #pragma mark - Gradient layer
 

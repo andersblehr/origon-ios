@@ -8,7 +8,7 @@
 
 #import "OCachedEntity.h"
 
-@class ScCachedEntityGhost;
+@class OCachedEntityGhost;
 
 @interface OCachedEntity (OCachedEntityExtensions)
 
@@ -24,6 +24,6 @@
 
 - (NSString *)expiresInTimeframe;
 
-- (ScCachedEntityGhost *)spawnEntityGhost;
+- (OCachedEntityGhost *)spawnEntityGhost;
 
 @end

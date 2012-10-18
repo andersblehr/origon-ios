@@ -21,7 +21,7 @@
 @implementation OMemberResidency (OMemberResidencyExtensions)
 
 
-#pragma mark - ScCachedEntity (ScCachedEntityExtentions) overrides
+#pragma mark - OCachedEntity (OCachedEntityExtentions) overrides
 
 - (BOOL)isTransientProperty:(NSString *)property
 {

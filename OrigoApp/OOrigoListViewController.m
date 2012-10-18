@@ -58,7 +58,7 @@ static NSInteger const kOrigoSection = 2;
     self.navigationController.navigationBarHidden = NO;
     
     self.navigationItem.title = @"Mine origo";
-    //self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[ScMeta m].user.givenName style:UIBarButtonItemStylePlain target:nil action:nil];
+    //self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OMeta m].user.givenName style:UIBarButtonItemStylePlain target:nil action:nil];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addOrigo)];
     
     [self.tableView setBackground];

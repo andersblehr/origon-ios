@@ -96,13 +96,13 @@ NSString * const strMemberExistsTitle                 = @"strMemberExistsTitle";
 NSString * const strMemberExistsAlert                 = @"strMemberExistsAlert";
 NSString * const strExistingResidenceAlert            = @"strExistingResidenceAlert";
 
-// ScMemberListView strings
+// OMemberListView strings
 NSString * const strMemberListViewTitleDefault        = @"strMemberListViewTitleDefault";
 NSString * const strMemberListViewTitleHousehold      = @"strMemberListViewTitleHousehold";
 NSString * const strHouseholdMembers                  = @"strHouseholdMembers";
 NSString * const strDeleteConfirmation                = @"strDeleteConfirmation";
 
-// ScMemberView strings
+// OMemberView strings
 NSString * const strMemberViewTitleAboutYou           = @"strMemberViewTitleAboutYou";
 NSString * const strMemberViewTitleNewMember          = @"strMemberViewTitleNewMember";
 NSString * const strMemberViewTitleNewHouseholdMember = @"strMemberViewTitleNewHouseholdMember";
@@ -170,7 +170,7 @@ static NSDictionary *strings = nil;
 }
 
 
-#pragma mark - ScServerConnectionDelegate implementation
+#pragma mark - OServerConnectionDelegate implementation
 
 + (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {

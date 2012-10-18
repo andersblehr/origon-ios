@@ -360,7 +360,7 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-#pragma mark - ScMemberViewControllerDelegate methods
+#pragma mark - OMemberViewControllerDelegate methods
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {

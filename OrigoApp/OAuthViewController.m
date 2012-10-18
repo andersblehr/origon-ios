@@ -584,7 +584,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - ScMemberViewControllerDelegate methods
+#pragma mark - OMemberViewControllerDelegate methods
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
@@ -593,7 +593,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - ScServerConnectionDelegate methods
+#pragma mark - OServerConnectionDelegate methods
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {

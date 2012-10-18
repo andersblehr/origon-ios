@@ -9,53 +9,53 @@
 #import "UIColor+OColorExtensions.h"
 
 typedef enum {
-    ScColorCellBackground,
-    ScColorSelectedCellBackground,
-    ScColorEditableTextFieldBackground,
-    ScColorTitleText,
-    ScColorLabelText,
-    ScColorSelectedLabelText,
-    ScColorDetailText,
-    ScColorSelectedDetailText,
-    ScColorImagePlaceholderBackground,
-    ScColorImagePlaceholderText,
-    ScColorHeaderText,
-    ScColorFooterText,
-} ScColorCategory;
+    OColorCellBackground,
+    OColorSelectedCellBackground,
+    OColorEditableTextFieldBackground,
+    OColorTitleText,
+    OColorLabelText,
+    OColorSelectedLabelText,
+    OColorDetailText,
+    OColorSelectedDetailText,
+    OColorImagePlaceholderBackground,
+    OColorImagePlaceholderText,
+    OColorHeaderText,
+    OColorFooterText,
+} OColorCategory;
 
 
-@implementation UIColor (ScColorExtensions)
+@implementation UIColor (OColorExtensions)
 
 
 #pragma mark - Auxiliary methods
 
-+ (UIColor *)colorForCategory:(ScColorCategory)colorCategory
++ (UIColor *)colorForCategory:(OColorCategory)colorCategory
 {
     UIColor *color = nil;
     
-    if (colorCategory == ScColorCellBackground) {
+    if (colorCategory == OColorCellBackground) {
         color = [UIColor isabellineColor];
-    } else if (colorCategory == ScColorSelectedCellBackground) {
+    } else if (colorCategory == OColorSelectedCellBackground) {
         color = [UIColor ashGrayColor];
-    } else if (colorCategory == ScColorEditableTextFieldBackground) {
+    } else if (colorCategory == OColorEditableTextFieldBackground) {
         color = [UIColor ghostWhiteColor];
-    } else if (colorCategory == ScColorTitleText) {
+    } else if (colorCategory == OColorTitleText) {
         color = [UIColor whiteColor];
-    } else if (colorCategory == ScColorLabelText) {
+    } else if (colorCategory == OColorLabelText) {
         color = [UIColor slateGrayColor];
-    } else if (colorCategory == ScColorSelectedLabelText) {
+    } else if (colorCategory == OColorSelectedLabelText) {
         color = [UIColor lightTextColor];
-    } else if (colorCategory == ScColorDetailText) {
+    } else if (colorCategory == OColorDetailText) {
         color = [UIColor darkTextColor];
-    } else if (colorCategory == ScColorSelectedDetailText) {
+    } else if (colorCategory == OColorSelectedDetailText) {
         color = [UIColor whiteColor];
-    } else if (colorCategory == ScColorImagePlaceholderBackground) {
+    } else if (colorCategory == OColorImagePlaceholderBackground) {
         color = [UIColor colorWithWhite:0.93f alpha:1.f];
-    } else if (colorCategory == ScColorImagePlaceholderText) {
+    } else if (colorCategory == OColorImagePlaceholderText) {
         color = [UIColor whiteColor];
-    } else if (colorCategory == ScColorHeaderText) {
+    } else if (colorCategory == OColorHeaderText) {
         color = [UIColor ghostWhiteColor];
-    } else if (colorCategory == ScColorFooterText) {
+    } else if (colorCategory == OColorFooterText) {
         color = [UIColor lightTextColor];
     }
     
@@ -93,73 +93,73 @@ typedef enum {
 
 + (UIColor *)cellBackgroundColor
 {
-    return [UIColor colorForCategory:ScColorCellBackground];
+    return [UIColor colorForCategory:OColorCellBackground];
 }
 
 
 + (UIColor *)selectedCellBackgroundColor
 {
-    return [UIColor colorForCategory:ScColorSelectedCellBackground];
+    return [UIColor colorForCategory:OColorSelectedCellBackground];
 }
 
 
 + (UIColor *)editableTextFieldBackgroundColor
 {
-    return [UIColor colorForCategory:ScColorEditableTextFieldBackground];
+    return [UIColor colorForCategory:OColorEditableTextFieldBackground];
 }
 
 
 + (UIColor *)titleTextColor
 {
-    return [UIColor colorForCategory:ScColorTitleText];
+    return [UIColor colorForCategory:OColorTitleText];
 }
 
 
 + (UIColor *)labelTextColor
 {
-    return [UIColor colorForCategory:ScColorLabelText];
+    return [UIColor colorForCategory:OColorLabelText];
 }
 
 
 + (UIColor *)selectedLabelTextColor
 {
-    return [UIColor colorForCategory:ScColorSelectedLabelText];
+    return [UIColor colorForCategory:OColorSelectedLabelText];
 }
 
 
 + (UIColor *)detailTextColor
 {
-    return [UIColor colorForCategory:ScColorDetailText];
+    return [UIColor colorForCategory:OColorDetailText];
 }
 
 
 + (UIColor *)selectedDetailTextColor
 {
-    return [UIColor colorForCategory:ScColorSelectedDetailText];
+    return [UIColor colorForCategory:OColorSelectedDetailText];
 }
 
 
 + (UIColor *)imagePlaceholderBackgroundColor
 {
-    return [UIColor colorForCategory:ScColorImagePlaceholderBackground];
+    return [UIColor colorForCategory:OColorImagePlaceholderBackground];
 }
 
 
 + (UIColor *)imagePlaceholderTextColor
 {
-    return [UIColor colorForCategory:ScColorImagePlaceholderText];
+    return [UIColor colorForCategory:OColorImagePlaceholderText];
 }
 
 
 + (UIColor *)headerTextColor
 {
-    return [UIColor colorForCategory:ScColorHeaderText];
+    return [UIColor colorForCategory:OColorHeaderText];
 }
 
 
 + (UIColor *)footerTextColor
 {
-    return [UIColor colorForCategory:ScColorFooterText];
+    return [UIColor colorForCategory:OColorFooterText];
 }
 
 @end

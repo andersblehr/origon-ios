@@ -8,7 +8,7 @@
 
 #import "NSURL+OURLExtensions.h"
 
-@implementation NSURL (ScURLExtensions)
+@implementation NSURL (OURLExtensions)
 
 
 + (NSString *)URLEscapeString:(NSString *)unencodedString 
