@@ -25,7 +25,7 @@
 @property (nonatomic) BOOL targetIsOrigo;
 
 @property (nonatomic) BOOL aspectIsSelf;
-@property (nonatomic) BOOL aspectIsDependent;
+@property (nonatomic) BOOL aspectIsWard;
 @property (nonatomic) BOOL aspectIsExternal;
 
 + (OState *)s;

@@ -88,10 +88,9 @@ extern NSString * const kContactRoleResidenceElder;
 + (BOOL)isDateOfBirthValid:(UITextField *)dateField;
 + (BOOL)isAddressValidWithLine1:(UITextField *)line1Field line2:(UITextField *)line2Field;
 
-- (void)checkInternetReachability;
-- (BOOL)isInternetConnectionAvailable;
-
 - (void)userDidLogIn;
+
+- (BOOL)isInternetConnectionAvailable;
 
 - (NSSet *)modifiedEntities;
 - (void)stageServerEntity:(OCachedEntity *)entity;

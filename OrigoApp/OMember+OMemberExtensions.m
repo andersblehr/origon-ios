@@ -71,7 +71,7 @@
 }
 
 
-- (NSString *)details
+- (NSString *)detail
 {
     BOOL separatorRequired = NO;
     NSString *details = @"";

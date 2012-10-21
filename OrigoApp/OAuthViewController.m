@@ -40,7 +40,7 @@
 static NSInteger const kNumberOfAuthSections = 1;
 static NSInteger const kNumberOfRowsInAuthSection = 1;
 
-static NSString * const kSegueToMainView = @"authToMainView";
+static NSString * const kSegueToOrigoListView = @"authToOrigoListView";
 
 static NSString * const kUserDefaultsKeyAuthInfo = @"origo.auth.info";
 static NSString * const kAuthInfoKeyUserId = @"userId";
@@ -215,7 +215,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [OMeta m].userId = _emailField.text;
     
     OServerConnection *serverConnection = [[OServerConnection alloc] init];
-    [serverConnection setAuthHeaderForUser:_emailField.text withPassword:_passwordField.text];
+    [serverConnection setAuthHeaderForUser:_emailField.text password:_passwordField.text];
     [serverConnection authenticate:self];
     
     [self indicatePendingServerSession:YES];
@@ -247,7 +247,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _isModelUpToDate = YES;
     
     if ([self isRegistrationComplete]) {
-        [self performSegueWithIdentifier:kSegueToMainView sender:self];
+        [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
     } else {
         [OAlert showAlertWithTitle:[OStrings stringForKey:strIncompleteRegistrationTitle] message:[OStrings stringForKey:strIncompleteRegistrationAlert]];
         
@@ -276,7 +276,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)activateMembership
 {
     OServerConnection *serverConnection = [[OServerConnection alloc] init];
-    [serverConnection setAuthHeaderForUser:[OMeta m].userId withPassword:_passwordField.text];
+    [serverConnection setAuthHeaderForUser:[OMeta m].userId password:_passwordField.text];
     [serverConnection authenticate:self];
     
     [self indicatePendingServerSession:YES];
@@ -368,7 +368,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     if ([OMeta m].isUserLoggedIn) {
         if ([self isRegistrationComplete]) {
-            [self performSegueWithIdentifier:kSegueToMainView sender:self];
+            [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
         } else {
             [OAlert showAlertWithTitle:[OStrings stringForKey:strIncompleteRegistrationTitle] message:[OStrings stringForKey:strIncompleteRegistrationAlert]];
             
@@ -424,7 +424,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kSegueToMainView]) {
+    if ([segue.identifier isEqualToString:kSegueToOrigoListView]) {
         if (!_isModelUpToDate) {
             [[OMeta m].context synchroniseCacheWithServer];
         }
@@ -589,7 +589,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
-    [self performSegueWithIdentifier:kSegueToMainView sender:self];
+    [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
 }
 
 

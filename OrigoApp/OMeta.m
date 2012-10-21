@@ -23,11 +23,13 @@
 
 #import "OCachedEntity+OCachedEntityExtensions.h"
 
+#import "OOrigoListViewController.h"
+
 NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 NSString * const kLanguageHungarian = @"hu";
 
 NSString * const kAuthViewControllerId = @"idAuth";
-NSString * const kOrigoListViewControllerId = @"idMain";
+NSString * const kOrigoListViewControllerId = @"idOrigoList";
 NSString * const kOrigoViewControllerId = @"idOrigo";
 NSString * const kMemberViewControllerId = @"idMember";
 NSString * const kMemberListViewControllerId = @"idMembership";
@@ -159,6 +161,13 @@ static OMeta *m = nil;
         _stagedServerEntities = [[NSMutableDictionary alloc] init];
         _stagedServerEntityRefs = [[NSMutableDictionary alloc] init];
         
+        [self checkReachability:[Reachability reachabilityForInternetConnection]];
+        
+        if ([_internetReachability startNotifier]) {
+            OLogInfo(@"Reachability notifier is running.");
+        } else {
+            OLogWarning(@"Could not start reachability notifier, checking internet connectivity only at startup.");
+        }
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityDidChange:) name:kReachabilityChangedNotification object:nil];
     }
     
@@ -343,26 +352,6 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - Connection state
-
-- (void)checkInternetReachability
-{
-    [self checkReachability:[Reachability reachabilityForInternetConnection]];
-    
-    if ([_internetReachability startNotifier]) {
-        OLogInfo(@"Reachability notifier is running.");
-    } else {
-        OLogWarning(@"Could not start reachability notifier, checking internet connectivity only at startup.");
-    }
-}
-
-
-- (BOOL)isInternetConnectionAvailable
-{
-    return (_isInternetConnectionWiFi || _isInternetConnectionWWAN);
-}
-
-
 #pragma mark - User login
 
 - (void)userDidLogIn
@@ -374,6 +363,14 @@ static OMeta *m = nil;
     if (!_user) {
         _user = [self.context entityForMemberWithId:_userId];
     }
+}
+
+
+#pragma mark - Convenience methods
+
+- (BOOL)isInternetConnectionAvailable
+{
+    return (_isInternetConnectionWiFi || _isInternetConnectionWWAN);
 }
 
 

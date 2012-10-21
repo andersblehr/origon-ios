@@ -1,14 +1,14 @@
 //
-//  OTaskViewController.m
+//  OTaskListViewController.m
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OTaskViewController.h"
+#import "OTaskListViewController.h"
 
-@implementation OTaskViewController
+@implementation OTaskListViewController
 
 
 #pragma mark - View lifecycle

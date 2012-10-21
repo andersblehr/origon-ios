@@ -34,8 +34,10 @@
 static NSString * const kSegueToMemberView = @"memberListToMemberView";
 static NSString * const kSegueToOrigoView = @"memberListToOrigoView";
 
-static NSInteger const kNumberOfSections = 3;
-static NSInteger const kAddressSection = 0;
+static NSInteger const kDefaultNumberOfSections = 3;
+static NSInteger const kReducedNumberOfSections = 2;
+
+static NSInteger const kOrigoSection = 0;
 static NSInteger const kContactSection = 1;
 static NSInteger const kMemberSection = 2;
 
@@ -83,10 +85,20 @@ static NSInteger const kMemberSection = 2;
 {
     [super viewDidLoad];
     
-    [[OState s] saveCurrentStateForViewController:kMemberListViewControllerId];
+    [self.tableView setBackground];
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
+    
+    if ([_origo isResidence]) {
+        if ([OState s].aspectIsSelf) {
+            self.title = [OStrings stringForKey:strMyHousehold];
+        } else {
+            self.title = [OStrings stringForKey:strMemberListViewTitleHousehold];
+        }
+    } else {
+        self.title = [OStrings stringForKey:strMemberListViewTitleDefault];
+    }
     
     if ([_origo userIsAdmin]) {
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMember)];
@@ -96,7 +108,7 @@ static NSInteger const kMemberSection = 2;
         }
     }
     
-    [self.tableView setBackground];
+    [[OState s] saveCurrentStateForViewController:kMemberListViewControllerId];
     
     _contacts = [[NSMutableSet alloc] init];
     _members = [[NSMutableSet alloc] init];
@@ -111,16 +123,6 @@ static NSInteger const kMemberSection = 2;
     
     _sortedContacts = [[_contacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
     _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
-    
-    if ([_origo isResidence]) {
-        if ([OState s].aspectIsSelf) {
-            self.title = [OStrings stringForKey:strMyHousehold];
-        } else {
-            self.title = [OStrings stringForKey:strMemberListViewTitleHousehold];
-        }
-    } else {
-        self.title = [OStrings stringForKey:strMemberListViewTitleDefault];
-    }
 }
 
 
@@ -173,7 +175,13 @@ static NSInteger const kMemberSection = 2;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return kNumberOfSections;
+    NSInteger numberOfSections = kDefaultNumberOfSections;
+    
+    if (![_contacts count] || ![_members count]) {
+        numberOfSections = kReducedNumberOfSections;
+    }
+    
+	return numberOfSections;
 }
 
 
@@ -181,14 +189,19 @@ static NSInteger const kMemberSection = 2;
 {
     NSInteger numberOfRows = 0;
     
-    if (section == kAddressSection) {
-        numberOfRows = 1;
-    } else if (section == kContactSection) {
-        numberOfRows = [_sortedContacts count];
-    } else if (section == kMemberSection) {
-        numberOfRows = [_sortedMembers count];
-    }
+    NSInteger numberOfContacts = [_contacts count];
+    NSInteger numberOfMembers = [_members count];
     
+    if (section == kOrigoSection) {
+        numberOfRows = 1;
+    } else {
+        if (numberOfContacts && numberOfMembers) {
+            numberOfRows = (section = kContactSection) ? numberOfContacts : numberOfMembers;
+        } else {
+            numberOfRows = numberOfContacts ? numberOfContacts : numberOfMembers;
+        }
+    }
+        
 	return numberOfRows;
 }
 
@@ -197,7 +210,7 @@ static NSInteger const kMemberSection = 2;
 {
     CGFloat height;
     
-    if (indexPath.section == kAddressSection) {
+    if (indexPath.section == kOrigoSection) {
         height = [OTableViewCell heightForEntity:_origo];
     } else {
         height = [OTableViewCell defaultHeight];
@@ -211,7 +224,7 @@ static NSInteger const kMemberSection = 2;
 {
     OTableViewCell *cell = nil;
     
-    if (indexPath.section == kAddressSection) {
+    if (indexPath.section == kOrigoSection) {
         cell = [tableView cellForEntity:_origo];
         
         if ([_origo userIsAdmin]) {
@@ -224,7 +237,7 @@ static NSInteger const kMemberSection = 2;
         cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.textLabel.text = membership.member.name;
-        cell.detailTextLabel.text = [membership.member details];
+        cell.detailTextLabel.text = [membership.member detail];
     }
     
     return cell;
@@ -334,7 +347,7 @@ static NSInteger const kMemberSection = 2;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kAddressSection) {
+    if (indexPath.section == kOrigoSection) {
         [self performSegueWithIdentifier:kSegueToOrigoView sender:self];
     } else {
         if (indexPath.section == kContactSection) {
@@ -352,7 +365,7 @@ static NSInteger const kMemberSection = 2;
 {
     NSString *deleteConfirmationTitle = nil;
     
-    if (indexPath.section != kAddressSection) {
+    if (indexPath.section != kOrigoSection) {
         deleteConfirmationTitle = [OStrings stringForKey:strDeleteConfirmation];
     }
     

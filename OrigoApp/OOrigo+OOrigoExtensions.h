@@ -23,6 +23,7 @@
 - (BOOL)hasAddress;
 - (BOOL)hasTelephone;
 
+- (NSString *)detail;
 - (NSString *)singleLineAddress;
 - (NSString *)multiLineAddress;
 - (NSInteger)numberOfLinesInAddress;

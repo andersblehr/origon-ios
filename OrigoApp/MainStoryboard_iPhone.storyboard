@@ -21,18 +21,17 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="lej-0U-7XK"/>
                     <connections>
-                        <segue destination="T87-Bh-GzL" kind="push" identifier="authToMemberView" id="gt5-sM-lTL"/>
-                        <segue destination="iqr-fd-qbX" kind="push" identifier="authToMainView" id="NTW-nN-Sx2"/>
+                        <segue destination="iqr-fd-qbX" kind="push" identifier="authToOrigoListView" id="NTW-nN-Sx2"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hiH-3x-2qe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1220" y="1297"/>
         </scene>
-        <!--Task View Controller - <strTasks>-->
+        <!--Task List View Controller - <strTasks>-->
         <scene sceneID="FtR-nb-C3g">
             <objects>
-                <viewController id="h9q-RG-XjV" customClass="OTaskViewController" sceneMemberID="viewController">
+                <viewController id="h9q-RG-XjV" customClass="OTaskListViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Mib-bo-bFV">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -89,7 +88,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W7Y-2S-hfd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="643" y="41"/>
+            <point key="canvasLocation" x="643" y="28"/>
         </scene>
         <!--Member View Controller - <strMember>-->
         <scene sceneID="x7u-en-eVb">
@@ -130,7 +129,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kaR-KX-Z8X" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1126" y="41"/>
+            <point key="canvasLocation" x="1102" y="28"/>
         </scene>
         <!--Calendar View Controller - <strCalendar>-->
         <scene sceneID="FF8-Hh-UBk">
@@ -170,7 +169,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nIi-HS-de2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="183" y="41"/>
+            <point key="canvasLocation" x="183" y="28"/>
         </scene>
         <!--Settings View Controller - <strSettings>-->
         <scene sceneID="sOz-jV-QHA">
@@ -202,11 +201,11 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </tabBar>
                     <connections>
-                        <segue destination="a3K-AG-mMk" kind="relationship" relationship="viewControllers" id="58r-Kf-asd"/>
-                        <segue destination="fi1-gf-Ked" kind="relationship" relationship="viewControllers" id="MSe-4o-Vm2"/>
-                        <segue destination="i0D-11-VGB" kind="relationship" relationship="viewControllers" id="2hW-cw-38q"/>
-                        <segue destination="PoV-i9-d4G" kind="relationship" relationship="viewControllers" id="QoM-is-ZQi"/>
-                        <segue destination="Pg2-Ow-ajP" kind="relationship" relationship="viewControllers" id="GBp-y3-H37"/>
+                        <segue destination="a3K-AG-mMk" kind="relationship" relationship="viewControllers" id="3Tn-Fn-W2a"/>
+                        <segue destination="fi1-gf-Ked" kind="relationship" relationship="viewControllers" id="kLL-Wl-PCP"/>
+                        <segue destination="i0D-11-VGB" kind="relationship" relationship="viewControllers" id="8l3-Ne-N2c"/>
+                        <segue destination="PoV-i9-d4G" kind="relationship" relationship="viewControllers" id="3RZ-J2-3pb"/>
+                        <segue destination="Pg2-Ow-ajP" kind="relationship" relationship="viewControllers" id="bqq-Ks-aBe"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dPF-b5-0mz" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -227,7 +226,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KIF-OZ-MfD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-279" y="41"/>
+            <point key="canvasLocation" x="-279" y="28"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="EIe-Th-KqO">
@@ -317,13 +316,41 @@
         <image name="83-calendar.png" width="23" height="25"/>
         <image name="dark_linen-640x960.png" width="640" height="960"/>
     </resources>
+    <classes>
+        <class className="OAuthViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OAuthViewController.h"/>
+        </class>
+        <class className="OCalendarViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OCalendarViewController.h"/>
+        </class>
+        <class className="OMemberListViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMemberListViewController.h"/>
+        </class>
+        <class className="OMemberViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMemberViewController.h"/>
+        </class>
+        <class className="OMessageBoardViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMessageBoardViewController.h"/>
+        </class>
+        <class className="OOrigoListViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OOrigoListViewController.h"/>
+        </class>
+        <class className="OOrigoViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OOrigoViewController.h"/>
+        </class>
+        <class className="OSettingsViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OSettingsViewController.h"/>
+        </class>
+        <class className="OTaskListViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OTaskListViewController.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="fHV-uh-t7i"/>
         <segue reference="gEQ-1g-oCH"/>
     </inferredMetricsTieBreakers>
 </document>

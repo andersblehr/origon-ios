@@ -30,7 +30,7 @@ typedef enum {
 typedef enum {
     OStateAspectNone,
     OStateAspectSelf,
-    OStateAspectDependent,
+    OStateAspectWard,
     OStateAspectExternal,
 } OStateAspect;
 
@@ -168,8 +168,8 @@ static OState *s = nil;
     
     if (self.aspectIsSelf) {
         aspectAsString = @"SELF";
-    } else if (self.aspectIsDependent) {
-        aspectAsString = @"DEPENDENT";
+    } else if (self.aspectIsWard) {
+        aspectAsString = @"WARD";
     } else if (self.aspectIsExternal) {
         aspectAsString = @"EXTERNAL";
     } else {
@@ -307,15 +307,15 @@ static OState *s = nil;
 }
 
 
-- (void)setAspectIsDependent:(BOOL)aspectIsDependent
+- (void)setAspectIsWard:(BOOL)aspectIsWard
 {
-    [self setAspect:OStateAspectDependent active:aspectIsDependent];
+    [self setAspect:OStateAspectWard active:aspectIsWard];
 }
 
 
-- (BOOL)aspectIsDependent
+- (BOOL)aspectIsWard
 {
-    return (_aspect == OStateAspectDependent);
+    return (_aspect == OStateAspectWard);
 }
 
 

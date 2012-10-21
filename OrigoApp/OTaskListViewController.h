@@ -1,5 +1,5 @@
 //
-//  OTaskViewController.h
+//  OTaskListViewController.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OTaskViewController : UIViewController
+@interface OTaskListViewController : UIViewController
 
 @end
