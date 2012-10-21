@@ -18,7 +18,7 @@
 - (OOrigo *)memberRoot;
 
 - (NSString *)about;
-- (NSString *)details;
+- (NSString *)detail;
 
 - (BOOL)isMale;
 - (BOOL)isMinor;

@@ -57,7 +57,7 @@
 		5C629FFB14C62481001DA01F /* 258-checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FF914C62481001DA01F /* 258-checkmark.png */; };
 		5C629FFC14C62481001DA01F /* 258-checkmark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FFA14C62481001DA01F /* 258-checkmark@2x.png */; };
 		5C629FFF14C624AD001DA01F /* OMessageBoardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C629FFE14C624AD001DA01F /* OMessageBoardViewController.m */; };
-		5C62A00214C6252C001DA01F /* OTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C62A00114C6252C001DA01F /* OTaskViewController.m */; };
+		5C62A00214C6252C001DA01F /* OTaskListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C62A00114C6252C001DA01F /* OTaskListViewController.m */; };
 		5C6E6C131589AC820002FF84 /* UITableView+OTableViewExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C121589AC820002FF84 /* UITableView+OTableViewExtensions.m */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C7379FD1593111B0065AB4F /* OTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7379FC1593111B0065AB4F /* OTextField.m */; };
@@ -66,10 +66,6 @@
 		5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* OMemberViewController.m */; };
 		5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB91582493C000B19FA /* OTableViewCell.m */; };
 		5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C93DC741628100C009A66C4 /* Default-568h@2x.png */; };
-		5C9B9088162E0B8D004F530F /* 12-eye@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9087162E0B8D004F530F /* 12-eye@2x.png */; };
-		5C9B908B162E0C51004F530F /* 61-brightness@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B908A162E0C51004F530F /* 61-brightness@2x.png */; };
-		5C9B908D162E0CA0004F530F /* 61-brightness.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B908C162E0CA0004F530F /* 61-brightness.png */; };
-		5C9B908F162E0CAE004F530F /* 12-eye.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B908E162E0CAE004F530F /* 12-eye.png */; };
 		5C9B9092162E9027004F530F /* 189-plant.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9090162E9027004F530F /* 189-plant.png */; };
 		5C9B9093162E9027004F530F /* 189-plant@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9091162E9027004F530F /* 189-plant@2x.png */; };
 		5C9B9096162E93BF004F530F /* 19-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9094162E93BF004F530F /* 19-gear.png */; };
@@ -202,8 +198,8 @@
 		5C629FFA14C62481001DA01F /* 258-checkmark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "258-checkmark@2x.png"; sourceTree = "<group>"; };
 		5C629FFD14C624AD001DA01F /* OMessageBoardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMessageBoardViewController.h; sourceTree = "<group>"; };
 		5C629FFE14C624AD001DA01F /* OMessageBoardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMessageBoardViewController.m; sourceTree = "<group>"; };
-		5C62A00014C6252C001DA01F /* OTaskViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTaskViewController.h; sourceTree = "<group>"; };
-		5C62A00114C6252C001DA01F /* OTaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTaskViewController.m; sourceTree = "<group>"; };
+		5C62A00014C6252C001DA01F /* OTaskListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTaskListViewController.h; sourceTree = "<group>"; };
+		5C62A00114C6252C001DA01F /* OTaskListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTaskListViewController.m; sourceTree = "<group>"; };
 		5C6E6C111589AC820002FF84 /* UITableView+OTableViewExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+OTableViewExtensions.h"; sourceTree = "<group>"; };
 		5C6E6C121589AC820002FF84 /* UITableView+OTableViewExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+OTableViewExtensions.m"; sourceTree = "<group>"; };
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
@@ -218,10 +214,6 @@
 		5C8B3AB81582493C000B19FA /* OTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCell.h; sourceTree = "<group>"; };
 		5C8B3AB91582493C000B19FA /* OTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCell.m; sourceTree = "<group>"; };
 		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
-		5C9B9087162E0B8D004F530F /* 12-eye@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "12-eye@2x.png"; sourceTree = "<group>"; };
-		5C9B908A162E0C51004F530F /* 61-brightness@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "61-brightness@2x.png"; sourceTree = "<group>"; };
-		5C9B908C162E0CA0004F530F /* 61-brightness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "61-brightness.png"; sourceTree = "<group>"; };
-		5C9B908E162E0CAE004F530F /* 12-eye.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "12-eye.png"; sourceTree = "<group>"; };
 		5C9B9090162E9027004F530F /* 189-plant.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "189-plant.png"; sourceTree = "<group>"; };
 		5C9B9091162E9027004F530F /* 189-plant@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "189-plant@2x.png"; sourceTree = "<group>"; };
 		5C9B9094162E93BF004F530F /* 19-gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19-gear.png"; sourceTree = "<group>"; };
@@ -306,12 +298,8 @@
 				5C93DC741628100C009A66C4 /* Default-568h@2x.png */,
 				5C629FF114C62133001DA01F /* 08-chat.png */,
 				5C629FF214C62133001DA01F /* 08-chat@2x.png */,
-				5C9B908E162E0CAE004F530F /* 12-eye.png */,
-				5C9B9087162E0B8D004F530F /* 12-eye@2x.png */,
 				5C9B9094162E93BF004F530F /* 19-gear.png */,
 				5C9B9095162E93BF004F530F /* 19-gear@2x.png */,
-				5C9B908C162E0CA0004F530F /* 61-brightness.png */,
-				5C9B908A162E0C51004F530F /* 61-brightness@2x.png */,
 				5C629FE914C61F98001DA01F /* 83-calendar.png */,
 				5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */,
 				5C9B9090162E9027004F530F /* 189-plant.png */,
@@ -454,8 +442,8 @@
 				5C2262C315A0B47B00241C5F /* OOrigoViewController.m */,
 				5CB7E93E15F38C1200FD53DF /* OSettingsViewController.h */,
 				5CB7E93F15F38C1200FD53DF /* OSettingsViewController.m */,
-				5C62A00014C6252C001DA01F /* OTaskViewController.h */,
-				5C62A00114C6252C001DA01F /* OTaskViewController.m */,
+				5C62A00014C6252C001DA01F /* OTaskListViewController.h */,
+				5C62A00114C6252C001DA01F /* OTaskListViewController.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -672,10 +660,6 @@
 				5C629FFB14C62481001DA01F /* 258-checkmark.png in Resources */,
 				5C629FFC14C62481001DA01F /* 258-checkmark@2x.png in Resources */,
 				5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */,
-				5C9B9088162E0B8D004F530F /* 12-eye@2x.png in Resources */,
-				5C9B908B162E0C51004F530F /* 61-brightness@2x.png in Resources */,
-				5C9B908D162E0CA0004F530F /* 61-brightness.png in Resources */,
-				5C9B908F162E0CAE004F530F /* 12-eye.png in Resources */,
 				5C9B9092162E9027004F530F /* 189-plant.png in Resources */,
 				5C9B9093162E9027004F530F /* 189-plant@2x.png in Resources */,
 				5C9B9096162E93BF004F530F /* 19-gear.png in Resources */,
@@ -727,7 +711,7 @@
 				5CBE9C5314AB5160004FE2B7 /* NSString+OStringExtensions.m in Sources */,
 				5C629FF014C62038001DA01F /* OMemberListViewController.m in Sources */,
 				5C629FFF14C624AD001DA01F /* OMessageBoardViewController.m in Sources */,
-				5C62A00214C6252C001DA01F /* OTaskViewController.m in Sources */,
+				5C62A00214C6252C001DA01F /* OTaskListViewController.m in Sources */,
 				5C50581C14CAEC76000D6587 /* UIView+OViewExtensions.m in Sources */,
 				5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+OManagedObjectContextExtensions.m in Sources */,
 				5C5ED5CE14F2E9FE006BBDFB /* OCachedEntity+OCachedEntityExtensions.m in Sources */,

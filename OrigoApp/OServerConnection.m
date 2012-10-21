@@ -150,7 +150,7 @@ static NSString * const kURLParameterVersion = @"version";
 
 #pragma mark - HTTP headers & URL parameters
 
-- (void)setAuthHeaderForUser:(NSString *)userId withPassword:(NSString *)password
+- (void)setAuthHeaderForUser:(NSString *)userId password:(NSString *)password
 {
     NSString *authString = [NSString stringWithFormat:@"%@:%@", userId, password];
     [self setValue:[NSString stringWithFormat:@"Basic %@", [authString base64EncodedString]] forHTTPHeaderField:kHTTPHeaderAuthorization];

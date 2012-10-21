@@ -13,12 +13,19 @@
 @interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate> {
 @private
     NSMutableSet *_origos;
+    
     NSArray *_sortedResidences;
     NSArray *_sortedWards;
     NSArray *_sortedOrigos;
     
+    BOOL _tableViewHasResidenceSection;
+    BOOL _tableViewHasWardSection;
+    BOOL _tableViewHasOrigoSection;
+    
+    NSInteger _numberOfSections;
+
+    OMember *_selectedMember;
     OOrigo *_selectedOrigo;
-    OMember *_selectedWard;
 }
 
 @end

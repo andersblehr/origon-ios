@@ -43,7 +43,7 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 
 - (id)init;
 
-- (void)setAuthHeaderForUser:(NSString *)userId withPassword:(NSString *)password;
+- (void)setAuthHeaderForUser:(NSString *)userId password:(NSString *)password;
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
 

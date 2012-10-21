@@ -106,8 +106,6 @@ static NSString * const kPersistentStoreFormat = @"OrigoApp$%@.sqlite";
     OLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
     OLogDebug(@"System language is '%@'.", [[OMeta m] displayLanguage]);
     
-    [[OMeta m] checkInternetReachability];
-    
     return YES;
 }
 							

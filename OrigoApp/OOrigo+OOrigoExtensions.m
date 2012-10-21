@@ -140,6 +140,22 @@
 
 #pragma mark - Address information
 
+- (NSString *)detail
+{
+    NSString *detailString = nil;
+    
+    if ([self isMemberRoot]) {
+        // TODO
+    } else if ([self isResidence]) {
+        detailString = [self singleLineAddress];
+    } else {
+        detailString = self.descriptionText;
+    }
+    
+    return detailString;
+}
+
+
 - (NSString *)singleLineAddress
 {
     NSString *address = @"";

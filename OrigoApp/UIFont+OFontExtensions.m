@@ -29,26 +29,25 @@ static CGFloat const kEditingLineHeightScaleFactor = 1.22f;
 
 @implementation UIFont (OFontExtensions)
 
-
 #pragma mark - Auxiliary methods
 
-+ (UIFont *)fontWithType:(OFontStyle)fontType
++ (UIFont *)fontWithStyle:(OFontStyle)fontStyle
 {
     UIFont *font = nil;
     
-    if (fontType == OFontStyleLabel) {
+    if (fontStyle == OFontStyleLabel) {
         font = [UIFont boldSystemFontOfSize:kLabelFontSize];
-    } else if (fontType == OFontStyleDetail) {
+    } else if (fontStyle == OFontStyleDetail) {
         font = [UIFont systemFontOfSize:kDetailFontSize];
-    } else if (fontType == OFontStyleEditableDetail) {
+    } else if (fontStyle == OFontStyleEditableDetail) {
         font = [UIFont systemFontOfSize:kDetailFontSize];
-    } else if (fontType == OFontStyleTitle) {
+    } else if (fontStyle == OFontStyleTitle) {
         font = [UIFont boldSystemFontOfSize:kTitleFontSize];
-    } else if (fontType == OFontStyleEditableTitle) {
+    } else if (fontStyle == OFontStyleEditableTitle) {
         font = [UIFont boldSystemFontOfSize:kTitleFontSize];
-    } else if (fontType == OFontStyleHeader) {
+    } else if (fontStyle == OFontStyleHeader) {
         font = [UIFont boldSystemFontOfSize:kHeaderFontSize];
-    } else if (fontType == OFontStyleFooter) {
+    } else if (fontStyle == OFontStyleFooter) {
         font = [UIFont systemFontOfSize:kFooterFontSize];
     }
     
@@ -60,43 +59,43 @@ static CGFloat const kEditingLineHeightScaleFactor = 1.22f;
 
 + (UIFont *)labelFont
 {
-    return [UIFont fontWithType:OFontStyleLabel];
+    return [UIFont fontWithStyle:OFontStyleLabel];
 }
 
 
 + (UIFont *)detailFont
 {
-    return [UIFont fontWithType:OFontStyleDetail];
+    return [UIFont fontWithStyle:OFontStyleDetail];
 }
 
 
 + (UIFont *)editableDetailFont
 {
-    return [UIFont fontWithType:OFontStyleEditableDetail];
+    return [UIFont fontWithStyle:OFontStyleEditableDetail];
 }
 
 
 + (UIFont *)titleFont
 {
-    return [UIFont fontWithType:OFontStyleTitle];
+    return [UIFont fontWithStyle:OFontStyleTitle];
 }
 
 
 + (UIFont *)editableTitleFont
 {
-    return [UIFont fontWithType:OFontStyleEditableTitle];
+    return [UIFont fontWithStyle:OFontStyleEditableTitle];
 }
 
 
 + (UIFont *)headerFont
 {
-    return [UIFont fontWithType:OFontStyleHeader];
+    return [UIFont fontWithStyle:OFontStyleHeader];
 }
 
 
 + (UIFont *)footerFont
 {
-    return [UIFont fontWithType:OFontStyleFooter];
+    return [UIFont fontWithStyle:OFontStyleFooter];
 }
 
 
