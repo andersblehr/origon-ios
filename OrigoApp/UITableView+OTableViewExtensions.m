@@ -46,6 +46,53 @@ static NSString * const kLogoText = @"..origo..";
 
 @implementation UITableView (OTableViewExtensions)
 
+#pragma mark - Appearance
+
+- (void)setBackground
+{
+    self.backgroundView = nil;
+    self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
+}
+
+
+- (void)addLogoBanner
+{
+    CGRect containerViewFrame = CGRectMake(kLogoMarginX, 0.f, kCellWidth, kLogoHeight);
+    CGRect logoFrame = CGRectMake(kLogoMarginX, kLogoMarginY, kCellWidth, kLogoHeight - kLogoMarginY);
+    
+    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
+    UILabel *logoLabel = [[UILabel alloc] initWithFrame:logoFrame];
+    
+    logoLabel.backgroundColor = [UIColor clearColor];
+    logoLabel.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
+    logoLabel.shadowColor = [UIColor darkTextColor];
+    logoLabel.shadowOffset = CGSizeMake(0.f, kLogoFontShadowOffset);
+    logoLabel.text = kLogoText;
+    logoLabel.textAlignment = UITextAlignmentCenter;
+    logoLabel.textColor = [UIColor headerTextColor];
+    
+    [containerView addSubview:logoLabel];
+    
+    self.tableHeaderView = containerView;
+}
+
+
+- (UIActivityIndicatorView *)addActivityIndicator
+{
+    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, kKeyboardHeight);
+    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
+    
+    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    activityIndicatorView.center = containerView.center;
+    activityIndicatorView.hidesWhenStopped = YES;
+    
+    [containerView addSubview:activityIndicatorView];
+    
+    self.tableFooterView = containerView;
+    
+    return activityIndicatorView;
+}
+
 
 #pragma mark - Cell instantiation
 
@@ -96,54 +143,6 @@ static NSString * const kLogoText = @"..origo..";
     }
     
     return cell;
-}
-
-
-#pragma mark - Appearance
-
-- (void)setBackground
-{
-    self.backgroundView = nil;
-    self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
-}
-
-
-- (void)addLogoBanner
-{
-    CGRect containerViewFrame = CGRectMake(kLogoMarginX, 0.f, kCellWidth, kLogoHeight);
-    CGRect logoFrame = CGRectMake(kLogoMarginX, kLogoMarginY, kCellWidth, kLogoHeight - kLogoMarginY);
-    
-    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
-    UILabel *logoLabel = [[UILabel alloc] initWithFrame:logoFrame];
-    
-    logoLabel.backgroundColor = [UIColor clearColor];
-    logoLabel.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
-    logoLabel.shadowColor = [UIColor darkTextColor];
-    logoLabel.shadowOffset = CGSizeMake(0.f, kLogoFontShadowOffset);
-    logoLabel.text = kLogoText;
-    logoLabel.textAlignment = UITextAlignmentCenter;
-    logoLabel.textColor = [UIColor headerTextColor];
-    
-    [containerView addSubview:logoLabel];
-    
-    self.tableHeaderView = containerView;
-}
-
-
-- (UIActivityIndicatorView *)addActivityIndicator
-{
-    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, kKeyboardHeight);
-    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
-    
-    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    activityIndicatorView.center = containerView.center;
-    activityIndicatorView.hidesWhenStopped = YES;
-    
-    [containerView addSubview:activityIndicatorView];
-    
-    self.tableFooterView = containerView;
-    
-    return activityIndicatorView;
 }
 
 
@@ -209,12 +208,15 @@ static NSString * const kLogoText = @"..origo..";
 
 #pragma mark - Cell insertion
 
-- (void)insertCellForRow:(NSInteger)row inSection:(NSInteger)section;
+- (void)insertRow:(NSInteger)row inSection:(NSInteger)section sectionIsNew:(BOOL)sectionIsNew
 {
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
-    
     [self beginUpdates];
-    [self insertRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    
+    if (sectionIsNew) {
+        [self insertSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+    
+    [self insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:section]] withRowAnimation:UITableViewRowAnimationAutomatic];
     [self endUpdates];
     
     BOOL isLastRowInSection = ([self cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row + 1 inSection:section]] == nil);
@@ -224,6 +226,18 @@ static NSString * const kLogoText = @"..origo..";
         
         [precedingCell.backgroundView addShadowForContainedTableViewCell];
     }
+}
+
+
+- (void)insertRowInNewSection:(NSInteger)section
+{
+    [self insertRow:0 inSection:section sectionIsNew:YES];
+}
+
+
+- (void)insertRow:(NSInteger)row inSection:(NSInteger)section;
+{
+    [self insertRow:row inSection:section sectionIsNew:NO];
 }
 
 @end

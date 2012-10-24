@@ -8,23 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
+#import "OState.h"
+
 @class OMember, OOrigo;
 
 @interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate> {
 @private
-    NSMutableSet *_origos;
+    OStateAspect _aspect;
     
     NSArray *_sortedResidences;
     NSArray *_sortedWards;
     NSArray *_sortedOrigos;
     
-    BOOL _tableViewHasResidenceSection;
-    BOOL _tableViewHasWardSection;
-    BOOL _tableViewHasOrigoSection;
-    
-    NSInteger _numberOfSections;
-
-    OMember *_selectedMember;
+    OMember *_selectedWard;
     OOrigo *_selectedOrigo;
 }
 

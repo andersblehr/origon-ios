@@ -70,8 +70,6 @@
 {
     [super viewDidLoad];
     
-    OLogState;
-    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
@@ -80,6 +78,17 @@
     _editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
     _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
     _doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [OState s].targetIsOrigo = YES;
+    [OState s].actionIsDisplay = ![OState s].actionIsInput;
+    
+    OLogState;
     
     if ([OState s].actionIsRegister) {
         self.title = [OStrings stringForKey:strAddressLabel];

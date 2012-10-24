@@ -10,40 +10,7 @@
 
 #import "OMeta.h"
 
-typedef enum {
-    OStateActionNone,
-    OStateActionInit,
-    OStateActionLogin,
-    OStateActionActivate,
-    OStateActionRegister,
-    OStateActionList,
-    OStateActionDisplay,
-    OStateActionEdit,
-} OStateAction;
-
-typedef enum {
-    OStateTargetNone,
-    OStateTargetMember,
-    OStateTargetOrigo,
-} OStateTarget;
-
-typedef enum {
-    OStateAspectNone,
-    OStateAspectSelf,
-    OStateAspectWard,
-    OStateAspectExternal,
-} OStateAspect;
-
 static OState *s = nil;
-
-
-@interface OState ()
-
-@property (nonatomic) OStateAction action;
-@property (nonatomic) OStateTarget target;
-@property (nonatomic) OStateAspect aspect;
-
-@end
 
 
 @implementation OState
@@ -54,7 +21,7 @@ static OState *s = nil;
 {
     if (active) {
         _action = action;
-    } else {
+    } else if (_action == action) {
         _action = OStateActionNone;
     }
 }
@@ -64,7 +31,7 @@ static OState *s = nil;
 {
     if (active) {
         _target = target;
-    } else {
+    } else if (_target == target) {
         _target = OStateTargetNone;
     }
 }
@@ -74,7 +41,7 @@ static OState *s = nil;
 {
     if (active) {
         _aspect = aspect;
-    } else {
+    } else if (_aspect == aspect) {
         _aspect = OStateAspectNone;
     }
 }
@@ -102,33 +69,6 @@ static OState *s = nil;
     }
     
     return s;
-}
-
-
-#pragma mark - Remember view initial state
-
-- (void)saveCurrentStateForViewController:(NSString *)viewControllerId
-{
-    OState *currentState = [[OState alloc] init];
-    currentState.action = _action;
-    currentState.target = _target;
-    currentState.aspect = _aspect;
-    
-    if (!_savedStates) {
-        _savedStates = [[NSMutableDictionary alloc] init];
-    }
-    
-    [_savedStates setObject:currentState forKey:viewControllerId];
-}
-
-
-- (void)revertToSavedStateForViewController:(NSString *)viewControllerId
-{
-    OState *savedState = [_savedStates objectForKey:viewControllerId];
-    
-    _action = savedState.action;
-    _target = savedState.target;
-    _aspect = savedState.aspect;
 }
 
 
@@ -180,7 +120,7 @@ static OState *s = nil;
 }
 
 
-#pragma mark - State action properties
+#pragma mark - Convenience property accessors
 
 - (void)setActionIsLogin:(BOOL)actionIsLogin
 {

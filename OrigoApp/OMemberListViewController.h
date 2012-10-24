@@ -8,30 +8,28 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OMemberViewControllerDelegate.h"
+#import "OModalInputViewControllerDelegate.h"
 #import "OModalViewControllerDelegate.h"
 
-@class OMembership, OOrigo;
-@class OState;
+#import "OState.h"
 
-@interface OMemberListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, OMemberViewControllerDelegate> {
+@class OMembership, OOrigo;
+
+@interface OMemberListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, OModalInputViewControllerDelegate> {
 @private
-    OState *_localState;
+    OStateAspect _aspect;
     
     NSMutableSet *_contacts;
     NSMutableSet *_members;
     NSArray *_sortedContacts;
     NSArray *_sortedMembers;
     
-    BOOL _isViewModallyHidden;
-    BOOL _needsSynchronisation;
-    
     OMembership *_selectedMembership;
+    
+    BOOL _needsSynchronisation;
 }
 
 @property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
 @property (strong, nonatomic) OOrigo *origo;
-
-- (void)insertMembershipInTableView:(OMembership *)membership;
 
 @end

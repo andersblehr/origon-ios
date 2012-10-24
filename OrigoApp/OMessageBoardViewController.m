@@ -8,6 +8,8 @@
 
 #import "OMessageBoardViewController.h"
 
+#import "OStrings.h"
+
 @implementation OMessageBoardViewController
 
 
@@ -28,6 +30,8 @@
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
+    
+    self.title = [OStrings stringForKey:strTabBarTitleMessages];
 }
 
 

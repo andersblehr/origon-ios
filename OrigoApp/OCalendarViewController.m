@@ -1,5 +1,5 @@
 //
-//  ORegisterUserController.m
+//  OCalendarViewController.m
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
@@ -30,6 +30,8 @@
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
+    
+    self.title = [OStrings stringForKey:strTabBarTitleCalendar];
 }
 
 

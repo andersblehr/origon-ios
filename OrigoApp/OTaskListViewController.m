@@ -8,6 +8,8 @@
 
 #import "OTaskListViewController.h"
 
+#import "OStrings.h"
+
 @implementation OTaskListViewController
 
 
@@ -28,6 +30,8 @@
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
+    
+    self.title = [OStrings stringForKey:strTabBarTitleTasks];
 }
 
 

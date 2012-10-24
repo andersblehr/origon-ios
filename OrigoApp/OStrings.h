@@ -8,6 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+// Tab bar titles
+extern NSString * const strTabBarTitleOrigo;
+extern NSString * const strTabBarTitleCalendar;
+extern NSString * const strTabBarTitleTasks;
+extern NSString * const strTabBarTitleMessages;
+extern NSString * const strTabBarTitleSettings;
+
 // Meta
 extern NSString * const strOrigoTypeSchoolClass;
 extern NSString * const strOrigoTypePreschoolClass;
@@ -26,7 +33,6 @@ extern NSString * const strDecline;
 // Generic strings
 extern NSString * const strPleaseWait;
 extern NSString * const strAboutYou;
-extern NSString * const strAboutMember;
 extern NSString * const strFemale;
 extern NSString * const strFemaleMinor;
 extern NSString * const strMale;
@@ -53,12 +59,10 @@ extern NSString * const strTelephonePrompt;
 // Labels
 extern NSString * const strSignInOrRegisterLabel;
 extern NSString * const strActivateLabel;
-extern NSString * const strSingleLetterEmailLabel;
-extern NSString * const strSingleLetterMobilePhoneLabel;
-extern NSString * const strSingleLetterDateOfBirthLabel;
-extern NSString * const strSingleLetterAddressLabel;
-extern NSString * const strSingleLetterTelephoneLabel;
-extern NSString * const strSingleLetterWebsiteLabel;
+extern NSString * const strAbbreviatedEmailLabel;
+extern NSString * const strAbbreviatedMobilePhoneLabel;
+extern NSString * const strAbbreviatedDateOfBirthLabel;
+extern NSString * const strAbbreviatedTelephoneLabel;
 extern NSString * const strAddressLabel;
 extern NSString * const strAddressesLabel;
 extern NSString * const strTelephoneLabel;

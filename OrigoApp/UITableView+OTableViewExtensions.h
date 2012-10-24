@@ -19,20 +19,21 @@ extern CGFloat const kSectionSpacing;
 
 @interface UITableView (OTableViewExtensions)
 
+- (void)setBackground;
+- (void)addLogoBanner;
+- (UIActivityIndicatorView *)addActivityIndicator;
+
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 - (id)cellForEntity:(OCachedEntity *)entity;
 - (id)cellForEntity:(OCachedEntity *)entity delegate:(id)delegate;
 - (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate;
 
-- (void)setBackground;
-- (void)addLogoBanner;
-- (UIActivityIndicatorView *)addActivityIndicator;
-
 - (CGFloat)standardHeaderHeight;
 - (UIView *)headerViewWithTitle:(NSString *)title;
 - (UIView *)footerViewWithText:(NSString *)text;
 
-- (void)insertCellForRow:(NSInteger)row inSection:(NSInteger)section;
+- (void)insertRowInNewSection:(NSInteger)section;
+- (void)insertRow:(NSInteger)row inSection:(NSInteger)section;
 
 @end

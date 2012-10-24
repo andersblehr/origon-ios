@@ -166,7 +166,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         [self registerHousehold];
     } else {
         [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
-        [_delegate insertMembershipInTableView:_membership];
+        [_delegate insertEntityInTableView:_membership];
     }
 }
 
@@ -257,8 +257,6 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 {
     [super viewDidLoad];
 
-    OLogState;
-    
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
@@ -272,12 +270,23 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         _member = _membership.member;
         _origo = _membership.origo;
     }
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [OState s].targetIsMember = YES;
+    [OState s].actionIsDisplay = ![OState s].actionIsInput;
+    
+    OLogState;
     
     if ([OState s].actionIsRegister) {
         self.navigationItem.rightBarButtonItem = _doneButton;
         
-        if ([OState s].targetIsMember && [OState s].aspectIsSelf) {
-            self.title = [_member about];
+        if ([OState s].aspectIsSelf) {
+            self.title = [OStrings stringForKey:strAboutYou];
         } else {
             self.navigationItem.leftBarButtonItem = _cancelButton;
             
@@ -289,7 +298,12 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         }
     } else if ([OState s].actionIsDisplay) {
         self.navigationItem.rightBarButtonItem = _editButton;
-        self.title = [_member about];
+        
+        if ([OState s].aspectIsSelf) {
+            self.title = [OStrings stringForKey:strAboutYou];
+        } else {
+            self.title = _member.givenName;
+        }
         
         NSMutableSet *residences = [[NSMutableSet alloc] init];
         
@@ -370,7 +384,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         if ([OState s].actionIsDisplay) {
             _memberCell = [tableView cellForEntity:_member];
         } else if ([OState s].actionIsInput) {
-            if ([OState s].targetIsMember && [OState s].aspectIsSelf) {
+            if ([OState s].aspectIsSelf) {
                 _memberCell = [tableView cellForEntity:_member delegate:self];
             } else if ([OState s].actionIsInput) {
                 _memberCell = [tableView cellForEntityClass:OMember.class delegate:self];
@@ -456,20 +470,24 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
-    if ((_currentField == _emailField) && [OMeta isEmailValid:_emailField]) {
-        if ([OState s].actionIsRegister) {
-            if ([_origo hasMemberWithId:_emailField.text]) {
-                NSString *alertTitle = [OStrings stringForKey:strMemberExistsTitle];
-                NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strMemberExistsAlert], _emailField.text, _origo.name];
-                
-                [OAlert showAlertWithTitle:alertTitle message:alertMessage];
+    if (_currentField == _emailField) {
+        if ((_emailField.text.length > 0) && [OMeta isEmailValid:_emailField]) {
+            if ([OState s].aspectIsSelf) {
+                // TODO: Handle user email change
             } else {
-                _candidate = [[OMeta m].context fetchEntityFromCache:_emailField.text];
-                
-                if (_candidate) {
-                    [self populateWithCandidate];
+                if ([_origo hasMemberWithId:_emailField.text]) {
+                    NSString *alertTitle = [OStrings stringForKey:strMemberExistsTitle];
+                    NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strMemberExistsAlert], _emailField.text, _origo.name];
+                    
+                    [OAlert showAlertWithTitle:alertTitle message:alertMessage];
                 } else {
-                    [[[OServerConnection alloc] init] fetchMemberEntitiesFromServer:_emailField.text delegate:self];
+                    _candidate = [[OMeta m].context fetchEntityFromCache:_emailField.text];
+                    
+                    if (_candidate) {
+                        [self populateWithCandidate];
+                    } else {
+                        [[[OServerConnection alloc] init] fetchMemberEntitiesFromServer:_emailField.text delegate:self];
+                    }
                 }
             }
         }

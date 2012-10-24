@@ -21,7 +21,6 @@
 
 #import "OMember.h"
 
-
 static NSString * const kPersistentStoreFormat = @"OrigoApp$%@.sqlite";
 
 
@@ -35,6 +34,12 @@ static NSString * const kPersistentStoreFormat = @"OrigoApp$%@.sqlite";
 
 
 @implementation OAppDelegate
+
+static void uncaughtExceptionHandler(NSException *exception)
+{
+    NSLog(@"CRASH: %@", exception);
+    NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
+}
 
 
 #pragma mark - Persistent store release
@@ -96,6 +101,8 @@ static NSString * const kPersistentStoreFormat = @"OrigoApp$%@.sqlite";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+    
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
     

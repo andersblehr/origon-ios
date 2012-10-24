@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OMemberViewControllerDelegate.h"
+#import "OModalInputViewControllerDelegate.h"
 #import "OServerConnectionDelegate.h"
 
 @class OTableViewCell, OTextField;
 
-@interface OAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, OServerConnectionDelegate, OMemberViewControllerDelegate> {
+@interface OAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, OServerConnectionDelegate, OModalInputViewControllerDelegate> {
 @private
     BOOL _isEditingAllowed;
     BOOL _isUserListed;

@@ -2,7 +2,7 @@
 //  OMember.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 17.10.12.
+//  Created by Anders Blehr on 23.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
@@ -11,7 +11,6 @@
 #import "ODocument.h"
 #import "OEvent.h"
 #import "OEventInvitation.h"
-#import "OMemberGuardianship.h"
 #import "OMemberResidency.h"
 #import "OMembership.h"
 #import "OMessageItem.h"
@@ -34,12 +33,10 @@
 @dynamic devices;
 @dynamic documents;
 @dynamic eventInvitations;
-@dynamic guardianships;
 @dynamic memberships;
 @dynamic messageItems;
 @dynamic residencies;
 @dynamic scheduledAbsences;
 @dynamic toDoAssignments;
-@dynamic wardships;
 
 @end

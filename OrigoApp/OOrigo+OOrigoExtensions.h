@@ -19,11 +19,11 @@
 - (BOOL)isResidence;
 
 - (BOOL)userIsAdmin;
-- (BOOL)hasMemberWithId:(NSString *)memberId;
 - (BOOL)hasAddress;
 - (BOOL)hasTelephone;
+- (BOOL)hasMemberWithId:(NSString *)memberId;
 
-- (NSString *)detail;
+- (NSString *)details;
 - (NSString *)singleLineAddress;
 - (NSString *)multiLineAddress;
 - (NSInteger)numberOfLinesInAddress;

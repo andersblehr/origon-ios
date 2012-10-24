@@ -1,5 +1,5 @@
 //
-//  OMemberViewControllerDelegate.h
+//  OModalInputViewControllerDelegate.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
@@ -12,9 +12,9 @@
 
 #import "OMembership.h"
 
-@protocol OMemberViewControllerDelegate <OModalViewControllerDelegate>
+@protocol OModalInputViewControllerDelegate <OModalViewControllerDelegate>
 
 @optional
-- (void)insertMembershipInTableView:(OMembership *)membership;
+- (void)insertEntityInTableView:(OCachedEntity *)entity;
 
 @end

@@ -28,6 +28,14 @@
 NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 NSString * const kLanguageHungarian = @"hu";
 
+NSString * const kIconFileOrigo = @"10-arrows-in_black.png";
+NSString * const kIconFileHousehold = @"glyphicons_020_home.png";
+NSString * const kIconFileMan = @"glyphicons_003_user.png";
+NSString * const kIconFileWoman = @"glyphicons_035_woman.png";
+NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
+NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
+NSString * const kIconFileInfant = @"76-baby_black.png";
+
 NSString * const kAuthViewControllerId = @"idAuth";
 NSString * const kOrigoListViewControllerId = @"idOrigoList";
 NSString * const kOrigoViewControllerId = @"idOrigo";
@@ -52,11 +60,6 @@ NSString * const kOrigoTypeSchoolClass = @"S";
 NSString * const kOrigoTypePreschoolClass = @"P";
 NSString * const kOrigoTypeSportsTeam = @"T";
 NSString * const kOrigoTypeOther = @"O";
-
-NSString * const kGuardianRoleParent = @"P";
-NSString * const kGuardianRoleMother = @"M";
-NSString * const kGuardianRoleFather = @"F";
-NSString * const kGuardianRoleOther = @"O";
 
 NSString * const kContactRoleResidenceElder = @"residenceElder";
 
