@@ -112,20 +112,6 @@
 }
 
 
-- (BOOL)hasMemberWithId:(NSString *)memberId
-{
-    BOOL didFindMemberId = NO;
-    
-    for (OMembership *membership in self.memberships) {
-        if (!didFindMemberId) {
-            didFindMemberId = [membership.member.entityId isEqualToString:memberId];
-        }
-    }
-    
-    return didFindMemberId;
-}
-
-
 - (BOOL)hasAddress
 {
     return ((self.addressLine1.length > 0) || (self.addressLine2.length > 0));
@@ -138,9 +124,23 @@
 }
 
 
+- (BOOL)hasMemberWithId:(NSString *)memberId
+{
+    BOOL didFindMember = NO;
+    
+    for (OMembership *membership in self.memberships) {
+        if (!didFindMember) {
+            didFindMember = [membership.member.entityId isEqualToString:memberId];
+        }
+    }
+    
+    return didFindMember;
+}
+
+
 #pragma mark - Address information
 
-- (NSString *)detail
+- (NSString *)details
 {
     NSString *detailString = nil;
     

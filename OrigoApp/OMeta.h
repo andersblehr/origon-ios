@@ -15,6 +15,14 @@
 extern NSString * const kBundleId;
 extern NSString * const kLanguageHungarian;
 
+extern NSString * const kIconFileOrigo;
+extern NSString * const kIconFileHousehold;
+extern NSString * const kIconFileMan;
+extern NSString * const kIconFileWoman;
+extern NSString * const kIconFileBoy;
+extern NSString * const kIconFileGirl;
+extern NSString * const kIconFileInfant;
+
 extern NSString * const kAuthViewControllerId;
 extern NSString * const kOrigoListViewControllerId;
 extern NSString * const kOrigoViewControllerId;
@@ -39,11 +47,6 @@ extern NSString * const kOrigoTypeSchoolClass;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeSportsTeam;
 extern NSString * const kOrigoTypeOther;
-
-extern NSString * const kGuardianRoleParent;
-extern NSString * const kGuardianRoleMother;
-extern NSString * const kGuardianRoleFather;
-extern NSString * const kGuardianRoleOther;
 
 extern NSString * const kContactRoleResidenceElder;
 

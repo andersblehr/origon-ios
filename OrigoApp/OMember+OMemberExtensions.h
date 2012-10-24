@@ -14,12 +14,14 @@
 
 - (void)setDidRegister_:(BOOL)didRegister_;
 - (BOOL)didRegister_;
+- (NSString *)name_;
 
 - (OOrigo *)memberRoot;
 
-- (NSString *)about;
-- (NSString *)detail;
+- (NSString *)details;
+- (UIImage *)image;
 
+- (BOOL)isFemale;
 - (BOOL)isMale;
 - (BOOL)isMinor;
 - (BOOL)isUser;
@@ -28,5 +30,7 @@
 - (BOOL)hasMobilePhone;
 - (BOOL)hasAddress;
 - (BOOL)hasEmailAddress;
+
+- (NSSet *)wards;
 
 @end

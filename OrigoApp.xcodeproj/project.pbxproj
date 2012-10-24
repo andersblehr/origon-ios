@@ -21,12 +21,28 @@
 		5C0D534C162EBAF80008CD11 /* OMemberResidency.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D534B162EBAF80008CD11 /* OMemberResidency.m */; };
 		5C0D534F162EBAF80008CD11 /* ODocumentElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D534E162EBAF80008CD11 /* ODocumentElement.m */; };
 		5C0D5355162EBAF80008CD11 /* OMessageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D5354162EBAF80008CD11 /* OMessageItem.m */; };
-		5C0D5358162EBAF80008CD11 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D5357162EBAF80008CD11 /* OMember.m */; };
 		5C0D535B162EBAF80008CD11 /* OWeeklyScheduleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D535A162EBAF80008CD11 /* OWeeklyScheduleItem.m */; };
 		5C0D535E162EBAF80008CD11 /* OExternalDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D535D162EBAF80008CD11 /* OExternalDocument.m */; };
 		5C0D5361162EBAF80008CD11 /* OCachedEntityGhost.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D5360162EBAF80008CD11 /* OCachedEntityGhost.m */; };
 		5C0D5364162EBAF80008CD11 /* ODocumentRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D5363162EBAF80008CD11 /* ODocumentRepository.m */; };
-		5C0D5367162EBAF80008CD11 /* OMemberGuardianship.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C0D5366162EBAF80008CD11 /* OMemberGuardianship.m */; };
+		5C15BFB016350CB300BB5254 /* glyphicons_003_user.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFAE16350CB300BB5254 /* glyphicons_003_user.png */; };
+		5C15BFB116350CB300BB5254 /* glyphicons_003_user@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFAF16350CB300BB5254 /* glyphicons_003_user@2x.png */; };
+		5C15BFB516350CCE00BB5254 /* glyphicons_035_woman.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFB316350CCE00BB5254 /* glyphicons_035_woman.png */; };
+		5C15BFB616350CCE00BB5254 /* glyphicons_035_woman@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFB416350CCE00BB5254 /* glyphicons_035_woman@2x.png */; };
+		5C15BFB916350FEE00BB5254 /* glyphicons_004_girl.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFB716350FEE00BB5254 /* glyphicons_004_girl.png */; };
+		5C15BFBA16350FEE00BB5254 /* glyphicons_004_girl@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFB816350FEE00BB5254 /* glyphicons_004_girl@2x.png */; };
+		5C15BFC51635181C00BB5254 /* 10-arrows-in.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFC31635181C00BB5254 /* 10-arrows-in.png */; };
+		5C15BFC61635181C00BB5254 /* 10-arrows-in@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFC41635181C00BB5254 /* 10-arrows-in@2x.png */; };
+		5C15BFC916367BCA00BB5254 /* OTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C15BFC816367BC900BB5254 /* OTabBarController.m */; };
+		5C15BFD01636C96200BB5254 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C15BFCF1636C96200BB5254 /* OMember.m */; };
+		5C15BFDF163805AE00BB5254 /* 10-arrows-in_black.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFDD163805AD00BB5254 /* 10-arrows-in_black.png */; };
+		5C15BFE0163805AE00BB5254 /* 10-arrows-in_black@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFDE163805AE00BB5254 /* 10-arrows-in_black@2x.png */; };
+		5C15BFF216385AB700BB5254 /* 76-baby_black@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFF116385AB600BB5254 /* 76-baby_black@2x.png */; };
+		5C15BFF516385D4800BB5254 /* glyphicons_020_home.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFF316385D4800BB5254 /* glyphicons_020_home.png */; };
+		5C15BFF616385D4800BB5254 /* glyphicons_020_home@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFF416385D4800BB5254 /* glyphicons_020_home@2x.png */; };
+		5C15BFF916386C6100BB5254 /* glyphicons_004_girl-as_boy.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFF716386C6000BB5254 /* glyphicons_004_girl-as_boy.png */; };
+		5C15BFFA16386C6100BB5254 /* glyphicons_004_girl-as_boy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFF816386C6000BB5254 /* glyphicons_004_girl-as_boy@2x.png */; };
+		5C15BFFE1638815300BB5254 /* 76-baby_black.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFFD1638815300BB5254 /* 76-baby_black.png */; };
 		5C2262C415A0B47B00241C5F /* OOrigoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262C315A0B47B00241C5F /* OOrigoViewController.m */; };
 		5C23431214812A3100164478 /* OStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* OStrings.m */; };
 		5C26291E158F27860012A74A /* OAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* OAuthViewController.m */; };
@@ -66,8 +82,6 @@
 		5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* OMemberViewController.m */; };
 		5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB91582493C000B19FA /* OTableViewCell.m */; };
 		5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C93DC741628100C009A66C4 /* Default-568h@2x.png */; };
-		5C9B9092162E9027004F530F /* 189-plant.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9090162E9027004F530F /* 189-plant.png */; };
-		5C9B9093162E9027004F530F /* 189-plant@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9091162E9027004F530F /* 189-plant@2x.png */; };
 		5C9B9096162E93BF004F530F /* 19-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9094162E93BF004F530F /* 19-gear.png */; };
 		5C9B9097162E93BF004F530F /* 19-gear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9095162E93BF004F530F /* 19-gear@2x.png */; };
 		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+OJSONSerializationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+OJSONSerializationExtensions.m */; };
@@ -135,8 +149,6 @@
 		5C0D534E162EBAF80008CD11 /* ODocumentElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ODocumentElement.m; sourceTree = "<group>"; };
 		5C0D5353162EBAF80008CD11 /* OMessageItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMessageItem.h; sourceTree = "<group>"; };
 		5C0D5354162EBAF80008CD11 /* OMessageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMessageItem.m; sourceTree = "<group>"; };
-		5C0D5356162EBAF80008CD11 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
-		5C0D5357162EBAF80008CD11 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
 		5C0D5359162EBAF80008CD11 /* OWeeklyScheduleItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OWeeklyScheduleItem.h; sourceTree = "<group>"; };
 		5C0D535A162EBAF80008CD11 /* OWeeklyScheduleItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OWeeklyScheduleItem.m; sourceTree = "<group>"; };
 		5C0D535C162EBAF80008CD11 /* OExternalDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OExternalDocument.h; sourceTree = "<group>"; };
@@ -145,8 +157,28 @@
 		5C0D5360162EBAF80008CD11 /* OCachedEntityGhost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCachedEntityGhost.m; sourceTree = "<group>"; };
 		5C0D5362162EBAF80008CD11 /* ODocumentRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODocumentRepository.h; sourceTree = "<group>"; };
 		5C0D5363162EBAF80008CD11 /* ODocumentRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ODocumentRepository.m; sourceTree = "<group>"; };
-		5C0D5365162EBAF80008CD11 /* OMemberGuardianship.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMemberGuardianship.h; sourceTree = "<group>"; };
-		5C0D5366162EBAF80008CD11 /* OMemberGuardianship.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMemberGuardianship.m; sourceTree = "<group>"; };
+		5C15BFAE16350CB300BB5254 /* glyphicons_003_user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_003_user.png; sourceTree = "<group>"; };
+		5C15BFAF16350CB300BB5254 /* glyphicons_003_user@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_003_user@2x.png"; sourceTree = "<group>"; };
+		5C15BFB316350CCE00BB5254 /* glyphicons_035_woman.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_035_woman.png; sourceTree = "<group>"; };
+		5C15BFB416350CCE00BB5254 /* glyphicons_035_woman@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_035_woman@2x.png"; sourceTree = "<group>"; };
+		5C15BFB716350FEE00BB5254 /* glyphicons_004_girl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_004_girl.png; sourceTree = "<group>"; };
+		5C15BFB816350FEE00BB5254 /* glyphicons_004_girl@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl@2x.png"; sourceTree = "<group>"; };
+		5C15BFC31635181C00BB5254 /* 10-arrows-in.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "10-arrows-in.png"; sourceTree = "<group>"; };
+		5C15BFC41635181C00BB5254 /* 10-arrows-in@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "10-arrows-in@2x.png"; sourceTree = "<group>"; };
+		5C15BFC716367BC900BB5254 /* OTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTabBarController.h; sourceTree = "<group>"; };
+		5C15BFC816367BC900BB5254 /* OTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTabBarController.m; sourceTree = "<group>"; };
+		5C15BFCE1636C96200BB5254 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
+		5C15BFCF1636C96200BB5254 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
+		5C15BFDD163805AD00BB5254 /* 10-arrows-in_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "10-arrows-in_black.png"; sourceTree = "<group>"; };
+		5C15BFDE163805AE00BB5254 /* 10-arrows-in_black@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "10-arrows-in_black@2x.png"; sourceTree = "<group>"; };
+		5C15BFF116385AB600BB5254 /* 76-baby_black@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "76-baby_black@2x.png"; sourceTree = "<group>"; };
+		5C15BFF316385D4800BB5254 /* glyphicons_020_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_020_home.png; sourceTree = "<group>"; };
+		5C15BFF416385D4800BB5254 /* glyphicons_020_home@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_020_home@2x.png"; sourceTree = "<group>"; };
+		5C15BFF716386C6000BB5254 /* glyphicons_004_girl-as_boy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy.png"; sourceTree = "<group>"; };
+		5C15BFF816386C6000BB5254 /* glyphicons_004_girl-as_boy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy@2x.png"; sourceTree = "<group>"; };
+		5C15BFFB16387FE300BB5254 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5C15BFFC16387FE300BB5254 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5C15BFFD1638815300BB5254 /* 76-baby_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "76-baby_black.png"; sourceTree = "<group>"; };
 		5C2262C215A0B47B00241C5F /* OOrigoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoViewController.h; sourceTree = "<group>"; };
 		5C2262C315A0B47B00241C5F /* OOrigoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoViewController.m; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* OStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OStrings.h; sourceTree = "<group>"; };
@@ -214,8 +246,6 @@
 		5C8B3AB81582493C000B19FA /* OTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCell.h; sourceTree = "<group>"; };
 		5C8B3AB91582493C000B19FA /* OTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCell.m; sourceTree = "<group>"; };
 		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
-		5C9B9090162E9027004F530F /* 189-plant.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "189-plant.png"; sourceTree = "<group>"; };
-		5C9B9091162E9027004F530F /* 189-plant@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "189-plant@2x.png"; sourceTree = "<group>"; };
 		5C9B9094162E93BF004F530F /* 19-gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19-gear.png"; sourceTree = "<group>"; };
 		5C9B9095162E93BF004F530F /* 19-gear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19-gear@2x.png"; sourceTree = "<group>"; };
 		5C9D3146151F1A0100DF6EB0 /* NSJSONSerialization+OJSONSerializationExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+OJSONSerializationExtensions.h"; sourceTree = "<group>"; };
@@ -227,7 +257,7 @@
 		5CB7E93E15F38C1200FD53DF /* OSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettingsViewController.h; sourceTree = "<group>"; };
 		5CB7E93F15F38C1200FD53DF /* OSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettingsViewController.m; sourceTree = "<group>"; };
 		5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OModalViewControllerDelegate.h; sourceTree = "<group>"; };
-		5CB9FF5C15A1EF660035B896 /* OMemberViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OMemberViewControllerDelegate.h; sourceTree = "<group>"; };
+		5CB9FF5C15A1EF660035B896 /* OModalInputViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OModalInputViewControllerDelegate.h; sourceTree = "<group>"; };
 		5CBB63B4146080DF00A9133A /* OrigoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OrigoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63B8146080DF00A9133A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5CBB63BA146080DF00A9133A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -298,15 +328,29 @@
 				5C93DC741628100C009A66C4 /* Default-568h@2x.png */,
 				5C629FF114C62133001DA01F /* 08-chat.png */,
 				5C629FF214C62133001DA01F /* 08-chat@2x.png */,
+				5C15BFC31635181C00BB5254 /* 10-arrows-in.png */,
+				5C15BFC41635181C00BB5254 /* 10-arrows-in@2x.png */,
+				5C15BFDD163805AD00BB5254 /* 10-arrows-in_black.png */,
+				5C15BFDE163805AE00BB5254 /* 10-arrows-in_black@2x.png */,
 				5C9B9094162E93BF004F530F /* 19-gear.png */,
 				5C9B9095162E93BF004F530F /* 19-gear@2x.png */,
+				5C15BFFD1638815300BB5254 /* 76-baby_black.png */,
+				5C15BFF116385AB600BB5254 /* 76-baby_black@2x.png */,
 				5C629FE914C61F98001DA01F /* 83-calendar.png */,
 				5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */,
-				5C9B9090162E9027004F530F /* 189-plant.png */,
-				5C9B9091162E9027004F530F /* 189-plant@2x.png */,
 				5C629FF914C62481001DA01F /* 258-checkmark.png */,
 				5C629FFA14C62481001DA01F /* 258-checkmark@2x.png */,
 				5C3A319514C61378001A783E /* dark_linen-640x960.png */,
+				5C15BFAE16350CB300BB5254 /* glyphicons_003_user.png */,
+				5C15BFAF16350CB300BB5254 /* glyphicons_003_user@2x.png */,
+				5C15BFB716350FEE00BB5254 /* glyphicons_004_girl.png */,
+				5C15BFB816350FEE00BB5254 /* glyphicons_004_girl@2x.png */,
+				5C15BFF716386C6000BB5254 /* glyphicons_004_girl-as_boy.png */,
+				5C15BFF816386C6000BB5254 /* glyphicons_004_girl-as_boy@2x.png */,
+				5C15BFF316385D4800BB5254 /* glyphicons_020_home.png */,
+				5C15BFF416385D4800BB5254 /* glyphicons_020_home@2x.png */,
+				5C15BFB316350CCE00BB5254 /* glyphicons_035_woman.png */,
+				5C15BFB416350CCE00BB5254 /* glyphicons_035_woman@2x.png */,
 			);
 			name = Media;
 			sourceTree = "<group>";
@@ -335,10 +379,8 @@
 				5C35E9E4162F50AB00464B29 /* OEventOrigoInvitation.m */,
 				5C0D535C162EBAF80008CD11 /* OExternalDocument.h */,
 				5C0D535D162EBAF80008CD11 /* OExternalDocument.m */,
-				5C0D5356162EBAF80008CD11 /* OMember.h */,
-				5C0D5357162EBAF80008CD11 /* OMember.m */,
-				5C0D5365162EBAF80008CD11 /* OMemberGuardianship.h */,
-				5C0D5366162EBAF80008CD11 /* OMemberGuardianship.m */,
+				5C15BFCE1636C96200BB5254 /* OMember.h */,
+				5C15BFCF1636C96200BB5254 /* OMember.m */,
 				5C0D534A162EBAF80008CD11 /* OMemberResidency.h */,
 				5C0D534B162EBAF80008CD11 /* OMemberResidency.m */,
 				5C0D5335162EBAF70008CD11 /* OMembership.h */,
@@ -417,7 +459,7 @@
 			isa = PBXGroup;
 			children = (
 				5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDelegate.h */,
-				5CB9FF5C15A1EF660035B896 /* OMemberViewControllerDelegate.h */,
+				5CB9FF5C15A1EF660035B896 /* OModalInputViewControllerDelegate.h */,
 				5C2E1133146ACFA9005BDE61 /* OServerConnectionDelegate.h */,
 			);
 			name = Protocols;
@@ -442,6 +484,8 @@
 				5C2262C315A0B47B00241C5F /* OOrigoViewController.m */,
 				5CB7E93E15F38C1200FD53DF /* OSettingsViewController.h */,
 				5CB7E93F15F38C1200FD53DF /* OSettingsViewController.m */,
+				5C15BFC716367BC900BB5254 /* OTabBarController.h */,
+				5C15BFC816367BC900BB5254 /* OTabBarController.m */,
 				5C62A00014C6252C001DA01F /* OTaskListViewController.h */,
 				5C62A00114C6252C001DA01F /* OTaskListViewController.m */,
 			);
@@ -660,10 +704,24 @@
 				5C629FFB14C62481001DA01F /* 258-checkmark.png in Resources */,
 				5C629FFC14C62481001DA01F /* 258-checkmark@2x.png in Resources */,
 				5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */,
-				5C9B9092162E9027004F530F /* 189-plant.png in Resources */,
-				5C9B9093162E9027004F530F /* 189-plant@2x.png in Resources */,
 				5C9B9096162E93BF004F530F /* 19-gear.png in Resources */,
 				5C9B9097162E93BF004F530F /* 19-gear@2x.png in Resources */,
+				5C15BFB016350CB300BB5254 /* glyphicons_003_user.png in Resources */,
+				5C15BFB116350CB300BB5254 /* glyphicons_003_user@2x.png in Resources */,
+				5C15BFB516350CCE00BB5254 /* glyphicons_035_woman.png in Resources */,
+				5C15BFB616350CCE00BB5254 /* glyphicons_035_woman@2x.png in Resources */,
+				5C15BFB916350FEE00BB5254 /* glyphicons_004_girl.png in Resources */,
+				5C15BFBA16350FEE00BB5254 /* glyphicons_004_girl@2x.png in Resources */,
+				5C15BFC51635181C00BB5254 /* 10-arrows-in.png in Resources */,
+				5C15BFC61635181C00BB5254 /* 10-arrows-in@2x.png in Resources */,
+				5C15BFDF163805AE00BB5254 /* 10-arrows-in_black.png in Resources */,
+				5C15BFE0163805AE00BB5254 /* 10-arrows-in_black@2x.png in Resources */,
+				5C15BFF216385AB700BB5254 /* 76-baby_black@2x.png in Resources */,
+				5C15BFF516385D4800BB5254 /* glyphicons_020_home.png in Resources */,
+				5C15BFF616385D4800BB5254 /* glyphicons_020_home@2x.png in Resources */,
+				5C15BFF916386C6100BB5254 /* glyphicons_004_girl-as_boy.png in Resources */,
+				5C15BFFA16386C6100BB5254 /* glyphicons_004_girl-as_boy@2x.png in Resources */,
+				5C15BFFE1638815300BB5254 /* 76-baby_black.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -747,18 +805,18 @@
 				5C0D534C162EBAF80008CD11 /* OMemberResidency.m in Sources */,
 				5C0D534F162EBAF80008CD11 /* ODocumentElement.m in Sources */,
 				5C0D5355162EBAF80008CD11 /* OMessageItem.m in Sources */,
-				5C0D5358162EBAF80008CD11 /* OMember.m in Sources */,
 				5C0D535B162EBAF80008CD11 /* OWeeklyScheduleItem.m in Sources */,
 				5C0D535E162EBAF80008CD11 /* OExternalDocument.m in Sources */,
 				5C0D5361162EBAF80008CD11 /* OCachedEntityGhost.m in Sources */,
 				5C0D5364162EBAF80008CD11 /* ODocumentRepository.m in Sources */,
-				5C0D5367162EBAF80008CD11 /* OMemberGuardianship.m in Sources */,
 				5CBC787A162ED717009E6756 /* OCachedEntity.m in Sources */,
 				5C35E9E1162F4F6800464B29 /* OSharedEntityRef.m in Sources */,
 				5C35E9E5162F50AB00464B29 /* OEventOrigoInvitation.m in Sources */,
 				5C35E9E8162F50F700464B29 /* OEvent.m in Sources */,
 				5C35E9EB162F515100464B29 /* OEventInvitation.m in Sources */,
 				5C35E9EE162F531600464B29 /* OOrigo.m in Sources */,
+				5C15BFC916367BCA00BB5254 /* OTabBarController.m in Sources */,
+				5C15BFD01636C96200BB5254 /* OMember.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -785,6 +843,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				5CBB63C2146080DF00A9133A /* en */,
+				5C15BFFB16387FE300BB5254 /* nb */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -793,6 +852,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				5CBB63E3146080E000A9133A /* en */,
+				5C15BFFC16387FE300BB5254 /* nb */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

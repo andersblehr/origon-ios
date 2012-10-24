@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OMemberViewControllerDelegate.h"
+#import "OModalInputViewControllerDelegate.h"
 #import "OModalViewControllerDelegate.h"
 #import "OServerConnectionDelegate.h"
 
@@ -38,7 +38,7 @@
     NSArray *_sortedResidences;
 }
 
-@property (weak, nonatomic) id<OMemberViewControllerDelegate> delegate;
+@property (weak, nonatomic) id<OModalInputViewControllerDelegate> delegate;
 
 @property (strong, nonatomic) OMembership *membership;
 @property (strong, nonatomic) OOrigo *origo;

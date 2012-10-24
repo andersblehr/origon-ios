@@ -334,8 +334,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)completeRegistration
 {
     [OState s].actionIsRegister = YES;
-    [OState s].targetIsMember = YES;
-    [OState s].aspectIsSelf = YES;
     
     OMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
     memberViewController.membership = [[OMeta m].user.residencies anyObject];
@@ -354,12 +352,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super viewDidLoad];
 
-    [OState s].actionIsLogin = YES;
-    [OState s].targetIsMember = YES;
-    [OState s].aspectIsSelf = YES;
-    
-    OLogState;
-    
     self.navigationController.navigationBarHidden = YES;
     
     [self.tableView setBackground];
@@ -383,6 +375,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    [OState s].targetIsMember = YES;
+    [OState s].actionIsLogin = YES;
+    [OState s].aspectIsSelf = YES;
+    
+    OLogState;
     
     NSData *authInfoArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyAuthInfo];
     

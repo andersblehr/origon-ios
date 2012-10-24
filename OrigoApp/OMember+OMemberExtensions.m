@@ -25,7 +25,7 @@
 
 @implementation OMember (OMemberExtensions)
 
-#pragma mark - Wrapper accessors for NSNumber booleans
+#pragma mark - Wrapper accessors
 
 - (void)setDidRegister_:(BOOL)didRegister_
 {
@@ -39,7 +39,25 @@
 }
 
 
-#pragma mark - Meta information
+- (NSString *)name_
+{
+    NSString *nameString = [NSString stringWithString:self.name];
+    
+    if ([self isMinor]) {
+        if ([OState s].aspectIsSelf) {
+            nameString = self.givenName;
+        }
+        
+        if ([OState s].actionIsList) {
+            nameString = [NSString stringWithFormat:@"%@ (%d)", nameString, [self.dateOfBirth yearsBeforeNow]];
+        }
+    }
+    
+    return nameString;
+}
+
+
+#pragma mark - Member root origo
 
 - (OOrigo *)memberRoot
 {
@@ -57,45 +75,57 @@
 }
 
 
-- (NSString *)about
-{
-    NSString *aboutString = nil;
-    
-    if ([self isUser]) {
-        aboutString = [OStrings stringForKey:strAboutYou];
-    } else {
-        aboutString = [NSString stringWithFormat:[OStrings stringForKey:strAboutMember], self.givenName];
-    }
-    
-    return aboutString;
-}
+#pragma mark - Meta information
 
-
-- (NSString *)detail
+- (NSString *)details
 {
-    BOOL separatorRequired = NO;
-    NSString *details = @"";
+    NSString *detailString = nil;
     
     if (![self isMinor] || [OState s].aspectIsSelf) {
         if ([self hasMobilePhone]) {
-            details = [details stringByAppendingString:self.mobilePhone];
-            separatorRequired = YES;
+            detailString = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strAbbreviatedMobilePhoneLabel], self.mobilePhone];
+        } else if ([self hasEmailAddress]) {
+            detailString = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strAbbreviatedEmailLabel], self.entityId];
         }
-        
-        if ([self hasEmailAddress]) {
-            if (separatorRequired) {
-                details = [details stringByAppendingString:@" | "];
-            }
-            
-            details = [details stringByAppendingString:self.entityId];
-        }
-    } else if ([self isMinor]) {
-        details = [details stringByAppendingFormat:@"(%d år) ", [self.dateOfBirth yearsBeforeNow]];
     }
     
+    return detailString;
+}
 
+
+- (UIImage *)image
+{
+    UIImage *image = nil;
     
-    return details;
+    if (self.photo) {
+        // TODO: Embed photo
+    } else {
+        if ([self.dateOfBirth yearsBeforeNow] < 2) {
+            image = [UIImage imageNamed:kIconFileInfant];
+        } else {
+            if ([self isMale]) {
+                if ([self isMinor]) {
+                    image = [UIImage imageNamed:kIconFileBoy];
+                } else {
+                    image = [UIImage imageNamed:kIconFileMan];
+                }
+            } else {
+                if ([self isMinor]) {
+                    image = [UIImage imageNamed:kIconFileGirl];
+                } else {
+                    image = [UIImage imageNamed:kIconFileWoman];
+                }
+            }
+        }
+    }
+    
+    return image;
+}
+
+
+- (BOOL)isFemale
+{
+    return [self.gender isEqualToString:kGenderFemale];
 }
 
 
@@ -152,6 +182,26 @@
 - (BOOL)hasEmailAddress
 {
     return [self.entityId isEmailAddress];
+}
+
+
+#pragma mark - Wards
+
+- (NSSet *)wards
+{
+    NSMutableSet *wards = [[NSMutableSet alloc] init];
+    
+    if (![self isMinor]) {
+        for (OMemberResidency *memberResidency in self.residencies) {
+            for (OMemberResidency *householdResidency in memberResidency.residence.residencies) {
+                if ([householdResidency.resident isMinor]) {
+                    [wards addObject:householdResidency.resident];
+                }
+            }
+        }
+    }
+    
+    return [NSSet setWithSet:wards];
 }
 
 

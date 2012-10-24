@@ -40,7 +40,7 @@ CGFloat const kKeyboardHeight = 216.f;
 
 static CGFloat const kVerticalPadding = 11.f;
 static CGFloat const kHorizontalPadding = 10.f;
-static CGFloat const kDefaultCellHeight = 47.f;
+static CGFloat const kDefaultCellHeight = 45.f;
 static CGFloat const kDefaultContentOffset = 0.f;
 static CGFloat const kPhotoSideLength = 63.f;
 
@@ -384,16 +384,16 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     [self addPhotoFrame:[UIImage imageWithData:member.photo]];
     
     if ([member hasEmailAddress] || [OState s].actionIsInput) {
-        [self addSingleLetterLabel:[OStrings stringForKey:strSingleLetterEmailLabel]];
+        [self addSingleLetterLabel:[OStrings stringForKey:strAbbreviatedEmailLabel]];
         [self addTextFieldWithText:member.entityId key:kTextFieldKeyEmail];
     }
     
     if ([member hasMobilePhone] || [OState s].actionIsInput) {
-        [self addSingleLetterLabel:[OStrings stringForKey:strSingleLetterMobilePhoneLabel]];
+        [self addSingleLetterLabel:[OStrings stringForKey:strAbbreviatedMobilePhoneLabel]];
         [self addTextFieldWithText:member.mobilePhone key:kTextFieldKeyMobilePhone];
     }
     
-    [self addSingleLetterLabel:[OStrings stringForKey:strSingleLetterDateOfBirthLabel]];
+    [self addSingleLetterLabel:[OStrings stringForKey:strAbbreviatedDateOfBirthLabel]];
     [self addTextFieldWithText:[member.dateOfBirth localisedDateString] key:kTextFieldKeyDateOfBirth];
     
     self.selectable = NO;

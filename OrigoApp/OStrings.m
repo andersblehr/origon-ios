@@ -14,6 +14,13 @@
 #import "OServerConnection.h"
 
 
+// Tab bar titles
+NSString * const strTabBarTitleOrigo                  = @"strTabBarTitleOrigo";
+NSString * const strTabBarTitleCalendar               = @"strTabBarTitleCalendar";
+NSString * const strTabBarTitleTasks                  = @"strTabBarTitleTasks";
+NSString * const strTabBarTitleMessages               = @"strTabBarTitleMessages";
+NSString * const strTabBarTitleSettings               = @"strTabBarTitleSettings";
+
 // Meta
 NSString * const strOrigoTypeSchoolClass              = @"strOrigoTypeSchoolClass";
 NSString * const strOrigoTypePreschoolClass           = @"strOrigoTypePreschoolClass";
@@ -32,7 +39,6 @@ NSString * const strDecline                           = @"strDecline";
 // Generic strings
 NSString * const strPleaseWait                        = @"strPleaseWait";
 NSString * const strAboutYou                          = @"strAboutYou";
-NSString * const strAboutMember                       = @"strAboutMember";
 NSString * const strFemale                            = @"strFemale";
 NSString * const strFemaleMinor                       = @"strFemaleMinor";
 NSString * const strMale                              = @"strMale";
@@ -59,12 +65,10 @@ NSString * const strTelephonePrompt                   = @"strTelephonePrompt";
 // Labels
 NSString * const strSignInOrRegisterLabel             = @"strSignInOrRegisterLabel";
 NSString * const strActivateLabel                     = @"strActivateLabel";
-NSString * const strSingleLetterEmailLabel            = @"strSingleLetterEmailLabel";
-NSString * const strSingleLetterMobilePhoneLabel      = @"strSingleLetterMobilePhoneLabel";
-NSString * const strSingleLetterDateOfBirthLabel      = @"strSingleLetterDateOfBirthLabel";
-NSString * const strSingleLetterAddressLabel          = @"strSingleLetterAddressLabel";
-NSString * const strSingleLetterTelephoneLabel        = @"strSingleLetterTelephoneLabel";
-NSString * const strSingleLetterWebsiteLabel          = @"strSingleLetterWebsiteLabel";
+NSString * const strAbbreviatedEmailLabel             = @"strAbbreviatedEmailLabel";
+NSString * const strAbbreviatedMobilePhoneLabel       = @"strAbbreviatedMobilePhoneLabel";
+NSString * const strAbbreviatedDateOfBirthLabel       = @"strAbbreviatedDateOfBirthLabel";
+NSString * const strAbbreviatedTelephoneLabel         = @"strAbbreviatedTelephoneLabel";
 NSString * const strAddressLabel                      = @"strAddressLabel";
 NSString * const strAddressesLabel                    = @"strAddressesLabel";
 NSString * const strTelephoneLabel                    = @"strTelephoneLabel";

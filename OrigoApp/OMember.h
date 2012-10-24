@@ -2,7 +2,7 @@
 //  OMember.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 17.10.12.
+//  Created by Anders Blehr on 23.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "OCachedEntity.h"
 
-@class ODevice, ODocument, OEvent, OEventInvitation, OMemberGuardianship, OMemberResidency, OMembership, OMessageItem, OScheduledAbsence, OToDoAssignment;
+@class ODevice, ODocument, OEvent, OEventInvitation, OMemberResidency, OMembership, OMessageItem, OScheduledAbsence, OToDoAssignment;
 
 @interface OMember : OCachedEntity
 
@@ -27,13 +27,11 @@
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;
 @property (nonatomic, retain) NSSet *eventInvitations;
-@property (nonatomic, retain) NSSet *guardianships;
 @property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) NSSet *messageItems;
 @property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @property (nonatomic, retain) NSSet *toDoAssignments;
-@property (nonatomic, retain) NSSet *wardships;
 @end
 
 @interface OMember (CoreDataGeneratedAccessors)
@@ -57,11 +55,6 @@
 - (void)removeEventInvitationsObject:(OEventInvitation *)value;
 - (void)addEventInvitations:(NSSet *)values;
 - (void)removeEventInvitations:(NSSet *)values;
-
-- (void)addGuardianshipsObject:(OMemberGuardianship *)value;
-- (void)removeGuardianshipsObject:(OMemberGuardianship *)value;
-- (void)addGuardianships:(NSSet *)values;
-- (void)removeGuardianships:(NSSet *)values;
 
 - (void)addMembershipsObject:(OMembership *)value;
 - (void)removeMembershipsObject:(OMembership *)value;
@@ -87,10 +80,5 @@
 - (void)removeToDoAssignmentsObject:(OToDoAssignment *)value;
 - (void)addToDoAssignments:(NSSet *)values;
 - (void)removeToDoAssignments:(NSSet *)values;
-
-- (void)addWardshipsObject:(OMemberGuardianship *)value;
-- (void)removeWardshipsObject:(OMemberGuardianship *)value;
-- (void)addWardships:(NSSet *)values;
-- (void)removeWardships:(NSSet *)values;
 
 @end

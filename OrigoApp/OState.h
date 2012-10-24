@@ -8,10 +8,35 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OState : NSObject {
-@private
-    NSMutableDictionary *_savedStates;
-}
+typedef enum {
+    OStateActionNone,
+    OStateActionInit,
+    OStateActionLogin,
+    OStateActionActivate,
+    OStateActionRegister,
+    OStateActionList,
+    OStateActionDisplay,
+    OStateActionEdit,
+} OStateAction;
+
+typedef enum {
+    OStateTargetNone,
+    OStateTargetMember,
+    OStateTargetOrigo,
+} OStateTarget;
+
+typedef enum {
+    OStateAspectNone,
+    OStateAspectSelf,
+    OStateAspectWard,
+    OStateAspectExternal,
+} OStateAspect;
+
+@interface OState : NSObject
+
+@property (nonatomic) OStateAction action;
+@property (nonatomic) OStateTarget target;
+@property (nonatomic) OStateAspect aspect;
 
 @property (nonatomic) BOOL actionIsLogin;
 @property (nonatomic) BOOL actionIsActivate;
@@ -29,9 +54,6 @@
 @property (nonatomic) BOOL aspectIsExternal;
 
 + (OState *)s;
-
-- (void)saveCurrentStateForViewController:(NSString *)viewControllerId;
-- (void)revertToSavedStateForViewController:(NSString *)viewControllerId;
 
 - (NSString *)asString;
 
