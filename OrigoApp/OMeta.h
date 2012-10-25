@@ -48,8 +48,6 @@ extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeSportsTeam;
 extern NSString * const kOrigoTypeOther;
 
-extern NSString * const kContactRoleResidenceElder;
-
 
 @class OCachedEntity, OMember;
 

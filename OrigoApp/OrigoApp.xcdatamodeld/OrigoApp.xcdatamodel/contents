@@ -103,7 +103,7 @@
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OEventInvitation" inverseName="invitee" inverseEntity="OEventInvitation" spotlightIndexingEnabled="YES" syncable="YES"/>
         <relationship name="memberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="OMembership" inverseName="member" inverseEntity="OMembership" syncable="YES"/>
         <relationship name="messageItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OMessageItem" inverseName="author" inverseEntity="OMessageItem" syncable="YES"/>
-        <relationship name="residencies" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="OMemberResidency" inverseName="resident" inverseEntity="OMemberResidency" syncable="YES"/>
+        <relationship name="residencies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OMemberResidency" inverseName="resident" inverseEntity="OMemberResidency" syncable="YES"/>
         <relationship name="scheduledAbsences" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="OScheduledAbsence" inverseName="person" inverseEntity="OScheduledAbsence" syncable="YES"/>
         <relationship name="toDoAssignments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OToDoAssignment" inverseName="assignee" inverseEntity="OToDoAssignment" syncable="YES"/>
         <userInfo>
@@ -123,6 +123,7 @@
     </entity>
     <entity name="OMembership" representedClassName="OMembership" parentEntity="OCachedEntity" syncable="YES">
         <attribute name="contactRole" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="contactType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isActive" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isAdmin" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <relationship name="member" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="memberships" inverseEntity="OMember" syncable="YES"/>
@@ -256,7 +257,7 @@
         <element name="OExternalDocument" positionX="0" positionY="0" width="128" height="75"/>
         <element name="OMember" positionX="0" positionY="0" width="128" height="315"/>
         <element name="OMemberResidency" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="OMembership" positionX="0" positionY="0" width="128" height="120"/>
+        <element name="OMembership" positionX="0" positionY="0" width="128" height="135"/>
         <element name="OMessageBoard" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OMessageItem" positionX="0" positionY="0" width="128" height="120"/>
         <element name="OMessageThread" positionX="0" positionY="0" width="128" height="90"/>

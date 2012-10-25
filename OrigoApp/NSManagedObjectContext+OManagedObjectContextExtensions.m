@@ -43,7 +43,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
 }
 
 
-- (OOrigo *)entityForOrigoOfType:(NSString *)type origoId:(NSString *)origoId
+- (OOrigo *)origoEntityOfType:(NSString *)type origoId:(NSString *)origoId
 {
     OOrigo *origo = [self entityForClass:OOrigo.class entityId:origoId];
     
@@ -60,17 +60,23 @@ static NSString * const kOrigoRelationshipName = @"origo";
 
 #pragma mark - Entity creation
 
-- (OOrigo *)entityForOrigoOfType:(NSString *)type
+- (OOrigo *)origoEntityOfType:(NSString *)type
 {
-    return [self entityForOrigoOfType:type origoId:[OUUIDGenerator generateUUID]];
+    return [self origoEntityOfType:type origoId:[OUUIDGenerator generateUUID]];
 }
 
 
-- (OMember *)entityForMemberWithId:(NSString *)memberId
+- (OMember *)memberEntity
+{
+    return [self memberEntityWithId:[OUUIDGenerator generateUUID]];
+}
+
+
+- (OMember *)memberEntityWithId:(NSString *)memberId
 {
     NSString *memberRootId = [memberId stringByAppendingStringWithDollar:@"root"];
     
-    OOrigo *memberRoot = [self entityForOrigoOfType:kOrigoTypeMemberRoot origoId:memberRootId];
+    OOrigo *memberRoot = [self origoEntityOfType:kOrigoTypeMemberRoot origoId:memberRootId];
     OMember *member = [self entityForClass:OMember.class inOrigo:memberRoot entityId:memberId];
     
     OMembership *rootMembership = [memberRoot addMember:member];
@@ -175,7 +181,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
 
 #pragma mark - Fetching & deleting entities from cache
 
-- (id)fetchEntityFromCache:(NSString *)entityId
+- (id)lookUpEntityInCache:(NSString *)entityId
 {
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(OCachedEntity.class)];
     [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", kPropertyEntityId, entityId]];
@@ -196,7 +202,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
 }
 
 
-- (void)deleteEntityFromCache:(OCachedEntity *)entity
+- (void)permanentlyDeleteEntity:(OCachedEntity *)entity
 {
     if ([entity isPersisted]) {
         [entity spawnEntityGhost];

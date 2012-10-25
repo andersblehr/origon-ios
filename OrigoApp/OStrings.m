@@ -38,7 +38,7 @@ NSString * const strDecline                           = @"strDecline";
 
 // Generic strings
 NSString * const strPleaseWait                        = @"strPleaseWait";
-NSString * const strAboutYou                          = @"strAboutYou";
+NSString * const strAboutMe                           = @"strAboutMe";
 NSString * const strFemale                            = @"strFemale";
 NSString * const strFemaleMinor                       = @"strFemaleMinor";
 NSString * const strMale                              = @"strMale";
@@ -46,6 +46,7 @@ NSString * const strMaleMinor                         = @"strMaleMinor";
 NSString * const strMyHousehold                       = @"strMyHousehold";
 NSString * const strMyMessageBoard                    = @"strMyMessageBoard";
 NSString * const strOurMessageBoard                   = @"strOurMessageBoard";
+NSString * const strDeleteConfirmation                = @"strDeleteConfirmation";
 
 // Prompts
 NSString * const strAuthEmailPrompt                   = @"strAuthEmailPrompt";
@@ -100,20 +101,25 @@ NSString * const strMemberExistsTitle                 = @"strMemberExistsTitle";
 NSString * const strMemberExistsAlert                 = @"strMemberExistsAlert";
 NSString * const strExistingResidenceAlert            = @"strExistingResidenceAlert";
 
+// OOrigoListView strings
+NSString * const strViewTitleWardOrigos               = @"strViewTitleWardOrigos";
+NSString * const strSectionHeaderWards                = @"strSectionHeaderWards";
+NSString * const strSectionHeaderOrigos               = @"strSectionHeaderOrigos";
+
 // OMemberListView strings
-NSString * const strMemberListViewTitleDefault        = @"strMemberListViewTitleDefault";
-NSString * const strMemberListViewTitleHousehold      = @"strMemberListViewTitleHousehold";
-NSString * const strHouseholdMembers                  = @"strHouseholdMembers";
-NSString * const strDeleteConfirmation                = @"strDeleteConfirmation";
+NSString * const strViewTitleMembers                  = @"strViewTitleMembers";
+NSString * const strViewTitleHousehold                = @"strViewTitleHousehold";
+NSString * const strSectionHeaderContacts             = @"strSectionHeaderContacts";
+NSString * const strSectionHeaderHouseholdMembers     = @"strSectionHeaderHouseholdMembers";
+NSString * const strSectionHeaderOrigoMembers         = @"strSectionHeaderOrigoMembers";
 
 // OMemberView strings
-NSString * const strMemberViewTitleAboutYou           = @"strMemberViewTitleAboutYou";
-NSString * const strMemberViewTitleNewMember          = @"strMemberViewTitleNewMember";
-NSString * const strMemberViewTitleNewHouseholdMember = @"strMemberViewTitleNewHouseholdMember";
-NSString * const strGenderActionSheetTitleSelf        = @"strGenderActionSheetTitleSelf";
-NSString * const strGenderActionSheetTitleSelfMinor   = @"strGenderActionSheetTitleSelfMinor";
-NSString * const strGenderActionSheetTitleMember      = @"strGenderActionSheetTitleMember";
-NSString * const strGenderActionSheetTitleMemberMinor = @"strGenderActionSheetTitleMemberMinor";
+NSString * const strViewTitleNewMember                = @"strViewTitleNewMember";
+NSString * const strViewTitleNewHouseholdMember       = @"strViewTitleNewHouseholdMember";
+NSString * const strGenderSheetTitleSelf              = @"strGenderSheetTitleSelf";
+NSString * const strGenderSheetTitleSelfMinor         = @"strGenderSheetTitleSelfMinor";
+NSString * const strGenderSheetTitleMember            = @"strGenderSheetTitleMember";
+NSString * const strGenderSheetTitleMemberMinor       = @"strGenderSheetTitleMemberMinor";
 
 
 static NSString * const kStringsPlist = @"strings.plist";
@@ -180,7 +186,10 @@ static NSDictionary *strings = nil;
 {
     if (response.statusCode == kHTTPStatusCodeOK) {
         strings = data;
-        [strings writeToFile:[self fullPathToStringsPlist] atomically:YES];
+        
+        if (![strings writeToFile:[self fullPathToStringsPlist] atomically:YES]) {
+            OLogError(@"Error writing strings from server to plist '%@'.", [self fullPathToStringsPlist]);
+        }
     }
 }
 

@@ -12,8 +12,10 @@
 
 @interface NSManagedObjectContext (OManagedObjectContextExtensions)
 
-- (OOrigo *)entityForOrigoOfType:(NSString *)type;
-- (OMember *)entityForMemberWithId:(NSString *)memberId;
+- (OOrigo *)origoEntityOfType:(NSString *)type;
+- (OMember *)memberEntity;
+- (OMember *)memberEntityWithId:(NSString *)memberId;
+
 - (id)entityForClass:(Class)class entityId:(NSString *)entityId;
 - (id)entityForClass:(Class)class inOrigo:(OOrigo *)origo;
 - (id)entityForClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
@@ -23,7 +25,7 @@
 - (NSSet *)saveServerEntitiesToCache:(NSArray *)entityDictionaries;
 - (void)synchroniseCacheWithServer;
 
-- (id)fetchEntityFromCache:(NSString *)entityId;
-- (void)deleteEntityFromCache:(OCachedEntity *)entity;
+- (id)lookUpEntityInCache:(NSString *)entityId;
+- (void)permanentlyDeleteEntity:(OCachedEntity *)entity;
 
 @end

@@ -72,10 +72,6 @@
     
     [self createSharedEntityRefsForAddedMember:resident];
     
-    if (![resident isMinor]) {
-        residency.contactRole = kContactRoleResidenceElder;
-    }
-    
     return residency;
 }
 

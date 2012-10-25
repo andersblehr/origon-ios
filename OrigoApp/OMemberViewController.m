@@ -104,18 +104,18 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     
     if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
         if ([OState s].aspectIsSelf) {
-            titleQuestion = [OStrings stringForKey:strGenderActionSheetTitleSelfMinor];
+            titleQuestion = [OStrings stringForKey:strGenderSheetTitleSelfMinor];
         } else {
-            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strGenderActionSheetTitleMemberMinor], [NSString givenNameFromFullName:_nameField.text]];
+            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strGenderSheetTitleMemberMinor], [NSString givenNameFromFullName:_nameField.text]];
         }
         
         femaleLabel = [OStrings stringForKey:strFemaleMinor];
         maleLabel = [OStrings stringForKey:strMaleMinor];
     } else {
         if ([OState s].aspectIsSelf) {
-            titleQuestion = [OStrings stringForKey:strGenderActionSheetTitleSelf];
+            titleQuestion = [OStrings stringForKey:strGenderSheetTitleSelf];
         } else {
-            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strGenderActionSheetTitleMember], [NSString givenNameFromFullName:_nameField.text]];
+            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strGenderSheetTitleMember], [NSString givenNameFromFullName:_nameField.text]];
         }
         
         femaleLabel = [OStrings stringForKey:strFemale];
@@ -145,9 +145,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             _member = _candidate;
         } else {
             if (_emailField.text.length > 0) {
-                _member = [[OMeta m].context entityForClass:OMember.class inOrigo:_origo entityId:_emailField.text];
+                _member = [[OMeta m].context memberEntityWithId:_emailField.text];
             } else {
-                _member = [[OMeta m].context entityForClass:OMember.class inOrigo:_origo];
+                _member = [[OMeta m].context memberEntity];
             }
         }
     }
@@ -257,10 +257,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 {
     [super viewDidLoad];
 
+    [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
-    
-    [self.tableView setBackground];
     
     _editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
     _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
@@ -286,21 +285,21 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         self.navigationItem.rightBarButtonItem = _doneButton;
         
         if ([OState s].aspectIsSelf) {
-            self.title = [OStrings stringForKey:strAboutYou];
+            self.title = [OStrings stringForKey:strAboutMe];
         } else {
             self.navigationItem.leftBarButtonItem = _cancelButton;
             
             if ([_origo isResidence]) {
-                self.title = [OStrings stringForKey:strMemberViewTitleNewHouseholdMember];
+                self.title = [OStrings stringForKey:strViewTitleNewHouseholdMember];
             } else {
-                self.title = [OStrings stringForKey:strMemberViewTitleNewMember];
+                self.title = [OStrings stringForKey:strViewTitleNewMember];
             }
         }
     } else if ([OState s].actionIsDisplay) {
         self.navigationItem.rightBarButtonItem = _editButton;
         
         if ([OState s].aspectIsSelf) {
-            self.title = [OStrings stringForKey:strAboutYou];
+            self.title = [OStrings stringForKey:strAboutMe];
         } else {
             self.title = _member.givenName;
         }
@@ -481,7 +480,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
                     
                     [OAlert showAlertWithTitle:alertTitle message:alertMessage];
                 } else {
-                    _candidate = [[OMeta m].context fetchEntityFromCache:_emailField.text];
+                    _candidate = [[OMeta m].context lookUpEntityInCache:_emailField.text];
                     
                     if (_candidate) {
                         [self populateWithCandidate];
@@ -571,7 +570,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 {
     if (response.statusCode == kHTTPStatusCodeOK) {
         _candidateEntities = [[OMeta m].context saveServerEntitiesToCache:data];
-        _candidate = [[OMeta m].context fetchEntityFromCache:_emailField.text];
+        _candidate = [[OMeta m].context lookUpEntityInCache:_emailField.text];
         
         [self populateWithCandidate];
     }
