@@ -32,7 +32,7 @@ extern NSString * const strDecline;
 
 // Generic strings
 extern NSString * const strPleaseWait;
-extern NSString * const strAboutYou;
+extern NSString * const strAboutMe;
 extern NSString * const strFemale;
 extern NSString * const strFemaleMinor;
 extern NSString * const strMale;
@@ -40,6 +40,7 @@ extern NSString * const strMaleMinor;
 extern NSString * const strMyHousehold;
 extern NSString * const strMyMessageBoard;
 extern NSString * const strOurMessageBoard;
+extern NSString * const strDeleteConfirmation;
 
 // Prompts
 extern NSString * const strAuthEmailPrompt;
@@ -94,20 +95,25 @@ extern NSString * const strMemberExistsTitle;
 extern NSString * const strMemberExistsAlert;
 extern NSString * const strExistingResidenceAlert;
 
+// OOrigoListView strings
+extern NSString * const strViewTitleWardOrigos;
+extern NSString * const strSectionHeaderWards;
+extern NSString * const strSectionHeaderOrigos;
+
 // OMemberListView strings
-extern NSString * const strMemberListViewTitleDefault;
-extern NSString * const strMemberListViewTitleHousehold;
-extern NSString * const strHouseholdMembers;
-extern NSString * const strDeleteConfirmation;
+extern NSString * const strViewTitleMembers;
+extern NSString * const strViewTitleHousehold;
+extern NSString * const strSectionHeaderContacts;
+extern NSString * const strSectionHeaderHouseholdMembers;
+extern NSString * const strSectionHeaderOrigoMembers;
 
 // OMemberView strings
-extern NSString * const strMemberViewTitleAboutYou;
-extern NSString * const strMemberViewTitleNewMember;
-extern NSString * const strMemberViewTitleNewHouseholdMember;
-extern NSString * const strGenderActionSheetTitleSelf;
-extern NSString * const strGenderActionSheetTitleSelfMinor;
-extern NSString * const strGenderActionSheetTitleMember;
-extern NSString * const strGenderActionSheetTitleMemberMinor;
+extern NSString * const strViewTitleNewMember;
+extern NSString * const strViewTitleNewHouseholdMember;
+extern NSString * const strGenderSheetTitleSelf;
+extern NSString * const strGenderSheetTitleSelfMinor;
+extern NSString * const strGenderSheetTitleMember;
+extern NSString * const strGenderSheetTitleMemberMinor;
 
 
 @interface OStrings : NSObject

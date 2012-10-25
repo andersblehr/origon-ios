@@ -157,7 +157,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     BOOL didRegisterNewDevice = NO;
     
-    ODevice *device = [[OMeta m].context fetchEntityFromCache:[OMeta m].deviceId];
+    ODevice *device = [[OMeta m].context lookUpEntityInCache:[OMeta m].deviceId];
     
     if (!device) {
         device = [[OMeta m].context entityForClass:ODevice.class inOrigo:[[OMeta m].user memberRoot] entityId:[OMeta m].deviceId];
@@ -295,11 +295,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
                 residency.isAdmin_ = NO;
             } else {
                 residency.isAdmin_ = YES;
-                residency.contactRole = kContactRoleResidenceElder;
             }
         }
     } else {
-        OOrigo *residence = [[OMeta m].context entityForOrigoOfType:kOrigoTypeResidence];
+        OOrigo *residence = [[OMeta m].context origoEntityOfType:kOrigoTypeResidence];
         OMemberResidency *residency = [residence addResident:[OMeta m].user];
         residency.isActive_ = YES;
         residency.isAdmin_ = YES;

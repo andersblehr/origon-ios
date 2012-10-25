@@ -8,11 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+#import "OModalInputViewControllerDelegate.h"
+
 #import "OState.h"
 
 @class OMember, OOrigo;
 
-@interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate> {
+@interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, OModalInputViewControllerDelegate> {
 @private
     OStateAspect _aspect;
     
@@ -22,6 +24,9 @@
     
     OMember *_selectedWard;
     OOrigo *_selectedOrigo;
+    
 }
+
+@property (strong, nonatomic) OMember *member;
 
 @end

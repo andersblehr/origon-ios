@@ -36,11 +36,11 @@ NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
 NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
 NSString * const kIconFileInfant = @"76-baby_black.png";
 
-NSString * const kAuthViewControllerId = @"idAuth";
-NSString * const kOrigoListViewControllerId = @"idOrigoList";
-NSString * const kOrigoViewControllerId = @"idOrigo";
-NSString * const kMemberViewControllerId = @"idMember";
-NSString * const kMemberListViewControllerId = @"idMembership";
+NSString * const kAuthViewControllerId = @"idAuthViewController";
+NSString * const kOrigoListViewControllerId = @"idOrigoListViewController";
+NSString * const kOrigoViewControllerId = @"idOrigoViewController";
+NSString * const kMemberViewControllerId = @"idMemberViewController";
+NSString * const kMemberListViewControllerId = @"idMemberListViewController";
 
 NSString * const kPropertyEntityId = @"entityId";
 NSString * const kPropertyEntityClass = @"entityClass";
@@ -60,8 +60,6 @@ NSString * const kOrigoTypeSchoolClass = @"S";
 NSString * const kOrigoTypePreschoolClass = @"P";
 NSString * const kOrigoTypeSportsTeam = @"T";
 NSString * const kOrigoTypeOther = @"O";
-
-NSString * const kContactRoleResidenceElder = @"residenceElder";
 
 static NSInteger const kMinimumPassordLength = 6;
 
@@ -292,7 +290,7 @@ static OMeta *m = nil;
             
             if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
                 _authToken = [self generateAuthToken:_authTokenExpiryDate];
-                _user = [self.context fetchEntityFromCache:_userId];
+                _user = [self.context lookUpEntityInCache:_userId];
             }
         }
     }
@@ -361,10 +359,10 @@ static OMeta *m = nil;
 {
     [[NSUserDefaults standardUserDefaults] setObject:_authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
     
-    _user = [self.context fetchEntityFromCache:_userId];
+    _user = [self.context lookUpEntityInCache:_userId];
     
     if (!_user) {
-        _user = [self.context entityForMemberWithId:_userId];
+        _user = [self.context memberEntityWithId:_userId];
     }
 }
 
@@ -433,7 +431,7 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - OServerConnectionDelegate implementation
+#pragma mark - OServerConnectionDelegate methods
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {

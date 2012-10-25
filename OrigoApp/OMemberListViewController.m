@@ -44,6 +44,36 @@ static NSInteger const kMemberSection = 2;
 
 @implementation OMemberListViewController
 
+#pragma mark - Auxiliary methods
+
+- (BOOL)sectionIsContactSection:(NSInteger)section
+{
+    BOOL isContactSection = NO;
+    
+    if ([_contacts count] && [_members count]) {
+        isContactSection = (section = kContactSection);
+    } else {
+        isContactSection = ((section == kOrigoSection + 1) && [_contacts count]);
+    }
+    
+    return isContactSection;
+}
+
+
+- (BOOL)sectionIsMemberSection:(NSInteger)section
+{
+    BOOL isMemberSection = NO;
+    
+    if ([_contacts count] && [_members count]) {
+        isMemberSection = (section == kMemberSection);
+    } else {
+        isMemberSection = ((section == kOrigoSection + 1) && [_members count]);
+    }
+    
+    return isMemberSection;
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)addMember
@@ -82,8 +112,9 @@ static NSInteger const kMemberSection = 2;
 {
     [super viewDidLoad];
     
-    [self.tableView setBackground];
+    _aspect = [OState s].aspect;
     
+    [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
@@ -91,10 +122,10 @@ static NSInteger const kMemberSection = 2;
         if ([OState s].aspectIsSelf) {
             self.title = [OStrings stringForKey:strMyHousehold];
         } else {
-            self.title = [OStrings stringForKey:strMemberListViewTitleHousehold];
+            self.title = [OStrings stringForKey:strViewTitleHousehold];
         }
     } else {
-        self.title = [OStrings stringForKey:strMemberListViewTitleDefault];
+        self.title = [OStrings stringForKey:strViewTitleMembers];
     }
     
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMember)];
@@ -121,8 +152,6 @@ static NSInteger const kMemberSection = 2;
     
     _sortedContacts = [[_contacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
     _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
-    
-    _aspect = [OState s].aspect;
 }
 
 
@@ -174,7 +203,7 @@ static NSInteger const kMemberSection = 2;
 {
     NSInteger numberOfSections = kDefaultNumberOfSections;
     
-    if (![_sortedContacts count] || ![_sortedMembers count]) {
+    if (![_contacts count] || ![_members count]) {
         numberOfSections = kReducedNumberOfSections;
     }
     
@@ -194,9 +223,9 @@ static NSInteger const kMemberSection = 2;
     } else if (section == kMemberSection) {
         numberOfRows = numberOfMembers;
     } else {
-        if ([_sortedContacts count]) {
+        if (numberOfContacts) {
             numberOfRows = numberOfContacts;
-        } else if ([_sortedMembers count]) {
+        } else if (numberOfMembers) {
             numberOfRows = numberOfMembers;
         }
     }
@@ -230,7 +259,7 @@ static NSInteger const kMemberSection = 2;
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
     } else {
-        NSArray *memberships = (indexPath.section == kContactSection) ? _sortedContacts : _sortedMembers;
+        NSArray *memberships = [self sectionIsContactSection:indexPath.section] ? _sortedContacts : _sortedMembers;
         OMembership *membership = memberships[indexPath.row];
         
         cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
@@ -249,19 +278,22 @@ static NSInteger const kMemberSection = 2;
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         OMembership *membershipToDelete = nil;
         
-        if (indexPath.section == kContactSection) {
+        if ([self sectionIsContactSection:indexPath.section]) {
             membershipToDelete = _sortedContacts[indexPath.row];
             
             [_contacts removeObject:membershipToDelete];
             _sortedContacts = [[_contacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        } else if (indexPath.section == kMemberSection) {
+        } else if ([self sectionIsMemberSection:indexPath.section]) {
             membershipToDelete = _sortedMembers[indexPath.row];
             
             [_members removeObject:membershipToDelete];
             _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
         }
         
-        [[OMeta m].context deleteEntityFromCache:membershipToDelete];
+        // TODO: Handle deletion of last remaining contact/member in origo
+        // TODO: Also delete member entity if inactive and no other memberships/residencies
+        
+        [[OMeta m].context permanentlyDeleteEntity:membershipToDelete];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
         _needsSynchronisation = YES;
@@ -277,7 +309,7 @@ static NSInteger const kMemberSection = 2;
     
     if (section == kOrigoSection) {
         height = kDefaultSectionHeaderHeight;
-    } else if (section == kContactSection) {
+    } else {
         height = [tableView standardHeaderHeight];
     }
     
@@ -295,8 +327,14 @@ static NSInteger const kMemberSection = 2;
 {
     UIView *headerView = nil;
     
-    if (section == kContactSection) {
-        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHouseholdMembers]];
+    if ([self sectionIsContactSection:section]) {
+        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strSectionHeaderContacts]];
+    } else if ([self sectionIsMemberSection:section]) {
+        if ([_origo isResidence]) {
+            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strSectionHeaderHouseholdMembers]];
+        } else {
+            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strSectionHeaderOrigoMembers]];
+        }
     }
     
     return headerView;
@@ -307,15 +345,8 @@ static NSInteger const kMemberSection = 2;
 {
     UIView *footerView = nil;
     
-    BOOL lastSection = ([_sortedContacts count] && [_sortedMembers count]) ? 2 : 1;
-    
-    if ((section == lastSection) && [_origo userIsAdmin]) {
-        BOOL hasFooter = (section == kMemberSection);
-        hasFooter = hasFooter || (![_sortedContacts count] || ![_sortedMembers count]);
-        
-        if (hasFooter) {
-            footerView = [tableView footerViewWithText:[OStrings stringForKey:strHouseholdMemberListFooter]];
-        }
+    if ([self sectionIsMemberSection:section] && [_origo userIsAdmin]) {
+        footerView = [tableView footerViewWithText:[OStrings stringForKey:strHouseholdMemberListFooter]];
     }
     
     return footerView;
@@ -326,10 +357,10 @@ static NSInteger const kMemberSection = 2;
 {   
     NSInteger numberOfRowsInSection = 1;
     
-    if (indexPath.section == kContactSection) {
-        numberOfRowsInSection = [_sortedContacts count];
-    } else if (indexPath.section == kMemberSection) {
-        numberOfRowsInSection = [_sortedMembers count];
+    if ([self sectionIsContactSection:indexPath.section]) {
+        numberOfRowsInSection = [_contacts count];
+    } else if ([self sectionIsMemberSection:indexPath.section]) {
+        numberOfRowsInSection = [_members count];
     }
     
     BOOL isLastRowInSection = (indexPath.row == numberOfRowsInSection - 1);
@@ -347,9 +378,9 @@ static NSInteger const kMemberSection = 2;
     if (indexPath.section == kOrigoSection) {
         [self performSegueWithIdentifier:kSegueToOrigoView sender:self];
     } else {
-        if (indexPath.section == kContactSection) {
+        if ([self sectionIsContactSection:indexPath.section]) {
             _selectedMembership = _sortedContacts[indexPath.row];
-        } else if (indexPath.section == kMemberSection) {
+        } else if ([self sectionIsMemberSection:indexPath.section]) {
             _selectedMembership = _sortedMembers[indexPath.row];
         }
         
@@ -376,7 +407,7 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-#pragma mark - OMemberViewControllerDelegate methods
+#pragma mark - OModalInputViewControllerDelegate methods
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
@@ -405,7 +436,7 @@ static NSInteger const kMemberSection = 2;
         [_members addObject:membership];
         _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
         
-        section = kMemberSection;
+        section = [_contacts count] ? kMemberSection : kMemberSection - 1;
         row = [_sortedMembers indexOfObject:membership];
         sectionIsNew = ![_sortedMembers count];
     }
