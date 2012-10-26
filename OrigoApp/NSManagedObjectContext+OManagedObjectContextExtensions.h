@@ -25,7 +25,7 @@
 - (NSSet *)saveServerEntitiesToCache:(NSArray *)entityDictionaries;
 - (void)synchroniseCacheWithServer;
 
-- (id)lookUpEntityInCache:(NSString *)entityId;
+- (id)cachedEntityWithId:(NSString *)entityId;
 - (void)permanentlyDeleteEntity:(OCachedEntity *)entity;
 
 @end

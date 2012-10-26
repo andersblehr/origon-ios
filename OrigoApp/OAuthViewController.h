@@ -23,6 +23,7 @@
     OTextField *_emailField;
     OTextField *_passwordField;
     OTextField *_activationCodeField;
+    OTextField *_repeatPasswordField;
 
     NSDictionary *_authInfo;
     NSInteger _numberOfActivationAttempts;

@@ -29,8 +29,9 @@ extern NSString * const kOrigoViewControllerId;
 extern NSString * const kMemberListViewControllerId;
 extern NSString * const kMemberViewControllerId;
 
-extern NSString * const kPropertyEntityId;
 extern NSString * const kPropertyEntityClass;
+extern NSString * const kPropertyEntityId;
+extern NSString * const kPropertySharedEntityId;
 extern NSString * const kPropertyOrigoId;
 extern NSString * const kPropertyName;
 extern NSString * const kPropertyDateOfBirth;

@@ -57,6 +57,26 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - Auxiliary methods
 
+- (void)initialiseFields
+{
+    if ([OState s].actionIsLogin) {
+        _passwordField.text = @"";
+        
+        if ([OMeta m].userId) {
+            _emailField.text = [OMeta m].userId;
+            [_passwordField becomeFirstResponder];
+        } else {
+            [_emailField becomeFirstResponder];
+        }
+    } else if ([OState s].actionIsActivate) {
+        _activationCodeField.text = @"";
+        _repeatPasswordField.text = @"";
+        
+        [_activationCodeField becomeFirstResponder];
+    }
+}
+
+
 - (void)reload
 {
     if ([OState s].actionIsLogin) {
@@ -69,6 +89,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     } else if ([OState s].actionIsActivate) {
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationLeft];
     }
+    
+    [self initialiseFields];
 }
 
 
@@ -119,18 +141,20 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (void)handleInvalidInputForField:(OTextField *)field;
+- (void)handleInvalidInputForField:(OTextField *)textField;
 {
+    _numberOfActivationAttempts++;
+    
     if (_numberOfActivationAttempts < 3) {
         [_authCell shakeAndVibrateDevice];
         
-        if (field == _activationCodeField) {
+        if (textField == _activationCodeField) {
             _activationCodeField.text = @"";
         }
         
         _passwordField.text = @"";
         
-        [field becomeFirstResponder];
+        [textField becomeFirstResponder];
     } else {
         _numberOfActivationAttempts = 0;
         
@@ -157,7 +181,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     BOOL didRegisterNewDevice = NO;
     
-    ODevice *device = [[OMeta m].context lookUpEntityInCache:[OMeta m].deviceId];
+    ODevice *device = [[OMeta m].context cachedEntityWithId:[OMeta m].deviceId];
     
     if (!device) {
         device = [[OMeta m].context entityForClass:ODevice.class inOrigo:[[OMeta m].user memberRoot] entityId:[OMeta m].deviceId];
@@ -177,9 +201,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (BOOL)isActivationCodeValid
 {
     NSString *activationCode = [[_authInfo objectForKey:kAuthInfoKeyActivationCode] lowercaseString];
-    NSString *registrationCodeAsEntered = [_activationCodeField.text lowercaseString];
+    NSString *activationCodeAsEntered = [_activationCodeField.text lowercaseString];
     
-    BOOL isValid = [registrationCodeAsEntered isEqualToString:activationCode];
+    BOOL isValid = [activationCodeAsEntered isEqualToString:activationCode];
     
     if (!isValid) {
         [self handleInvalidInputForField:_activationCodeField];
@@ -194,13 +218,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     BOOL isValid = NO;
     
     if ([OState s].actionIsActivate) {
-        NSString *passwordHashAsPersisted = [_authInfo objectForKey:kAuthInfoKeyPasswordHash];
-        NSString *passwordHashAsEntered = [self computePasswordHash:_passwordField.text];
+        NSString *passwordHash = [_authInfo objectForKey:kAuthInfoKeyPasswordHash];
+        NSString *passwordHashAsEntered = [self computePasswordHash:_repeatPasswordField.text];
         
-        isValid = [passwordHashAsEntered isEqualToString:passwordHashAsPersisted];
+        isValid = [passwordHashAsEntered isEqualToString:passwordHash];
         
         if (!isValid) {
-            [self handleInvalidInputForField:_passwordField];
+            [self handleInvalidInputForField:_repeatPasswordField];
         }
     }
     
@@ -276,7 +300,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)activateMembership
 {
     OServerConnection *serverConnection = [[OServerConnection alloc] init];
-    [serverConnection setAuthHeaderForUser:[OMeta m].userId password:_passwordField.text];
+    [serverConnection setAuthHeaderForUser:[OMeta m].userId password:_repeatPasswordField.text];
     [serverConnection authenticate:self];
     
     [self indicatePendingServerSession:YES];
@@ -379,18 +403,15 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [OState s].actionIsLogin = YES;
     [OState s].aspectIsSelf = YES;
     
-    OLogState;
-    
     NSData *authInfoArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyAuthInfo];
     
     if (authInfoArchive) {
         _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
         [OMeta m].userId = [_authInfo objectForKey:kAuthInfoKeyUserId];
-        
         [OState s].actionIsActivate = YES;
-        
-        OLogState;
     }
+    
+    OLogState;
 }
 
 
@@ -399,7 +420,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [super viewDidAppear:animated];
 
     [OStrings refreshIfPossible];
-    
+    [self initialiseFields];
+
     if ([OState s].actionIsActivate) {
         NSString *popUpMessage = [NSString stringWithFormat:[OStrings stringForKey:strWelcomeBackAlert], [_authInfo objectForKey:kAuthInfoKeyUserId]];
         
@@ -461,8 +483,14 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     if ([OState s].actionIsLogin) {
         _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserLogin delegate:self];
+        
+        _emailField = [_authCell textFieldWithKey:kTextFieldKeyAuthEmail];
+        _passwordField = [_authCell textFieldWithKey:kTextFieldKeyPassword];
     } else {
         _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserActivation delegate:self];
+        
+        _activationCodeField = [_authCell textFieldWithKey:kTextFieldKeyActivationCode];
+        _repeatPasswordField = [_authCell textFieldWithKey:kTextFieldKeyRepeatPassword];
     }
     
     return _authCell;
@@ -474,26 +502,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [_authCell.backgroundView addShadowForBottomTableViewCell];
-    
-    if ([OState s].actionIsLogin) {
-        _emailField = [_authCell textFieldWithKey:kTextFieldKeyAuthEmail];
-        _passwordField = [_authCell textFieldWithKey:kTextFieldKeyPassword];
-        
-        if ([OMeta m].userId) {
-            _emailField.text = [OMeta m].userId;
-            [_passwordField becomeFirstResponder];
-        } else {
-            [_emailField becomeFirstResponder];
-        }
-    } else if ([OState s].actionIsActivate) {
-        _activationCodeField = [_authCell textFieldWithKey:kTextFieldKeyActivationCode];
-        _passwordField = [_authCell textFieldWithKey:kTextFieldKeyRepeatPassword];
-        
-        _activationCodeField.text = @"";
-        [_activationCodeField becomeFirstResponder];
-    }
-    
-    _passwordField.text = @"";
 }
 
 
@@ -523,31 +531,26 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     BOOL shouldReturn = YES;
     
-    if ((textField == _emailField) || (textField == _activationCodeField)) {
+    if (textField == _emailField) {
         [_passwordField becomeFirstResponder];
     } else if (textField == _passwordField) {
-        if ([OState s].actionIsLogin) {
-            shouldReturn = shouldReturn && [OMeta isEmailValid:_emailField];
-            shouldReturn = shouldReturn && [OMeta isPasswordValid:_passwordField];
-            
-            if (shouldReturn) {
-                [self attemptUserLogin];
-            }
-        } else if ([OState s].actionIsActivate) {
-            _numberOfActivationAttempts++;
-            
-            shouldReturn = shouldReturn && [self isActivationCodeValid];
-            shouldReturn = shouldReturn && [self isPasswordValid];
-            
-            if (shouldReturn) {
-                [self presentEULA];
-            }
-        }
+        shouldReturn = [OMeta isEmailValid:_emailField] && [OMeta isPasswordValid:_passwordField];
         
         if (shouldReturn) {
-            [self.view endEditing:YES];
+            [self attemptUserLogin];
         } else {
             _passwordField.text = @"";
+            [_authCell shakeAndVibrateDevice];
+        }
+    } else if (textField == _activationCodeField) {
+        [_repeatPasswordField becomeFirstResponder];
+    } else if (textField == _repeatPasswordField) {
+        shouldReturn = [self isActivationCodeValid] && [self isPasswordValid];
+        
+        if (shouldReturn) {
+            [self presentEULA];
+        } else {
+            _repeatPasswordField.text = @"";
             [_authCell shakeAndVibrateDevice];
         }
     }
@@ -563,9 +566,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if (alertView.tag == kAlertTagWelcomeBack) {
         if (buttonIndex == kAlertButtonStartOver) {
             [OState s].actionIsLogin = YES;
-            [self reload];
-            
             OLogState;
+            
+            [self reload];
+            [_passwordField becomeFirstResponder];
         }
     }
 }

@@ -42,8 +42,9 @@ NSString * const kOrigoViewControllerId = @"idOrigoViewController";
 NSString * const kMemberViewControllerId = @"idMemberViewController";
 NSString * const kMemberListViewControllerId = @"idMemberListViewController";
 
-NSString * const kPropertyEntityId = @"entityId";
 NSString * const kPropertyEntityClass = @"entityClass";
+NSString * const kPropertyEntityId = @"entityId";
+NSString * const kPropertySharedEntityId = @"sharedEntityId";
 NSString * const kPropertyOrigoId = @"origoId";
 NSString * const kPropertyName = @"name";
 NSString * const kPropertyDateOfBirth = @"dateOfBirth";
@@ -290,7 +291,7 @@ static OMeta *m = nil;
             
             if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
                 _authToken = [self generateAuthToken:_authTokenExpiryDate];
-                _user = [self.context lookUpEntityInCache:_userId];
+                _user = [self.context cachedEntityWithId:_userId];
             }
         }
     }
@@ -359,7 +360,7 @@ static OMeta *m = nil;
 {
     [[NSUserDefaults standardUserDefaults] setObject:_authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
     
-    _user = [self.context lookUpEntityInCache:_userId];
+    _user = [self.context cachedEntityWithId:_userId];
     
     if (!_user) {
         _user = [self.context memberEntityWithId:_userId];

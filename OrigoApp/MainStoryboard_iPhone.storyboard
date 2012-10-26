@@ -32,17 +32,11 @@
         <scene sceneID="FtR-nb-C3g">
             <objects>
                 <viewController storyboardIdentifier="idTaskListViewController" id="h9q-RG-XjV" customClass="OTaskListViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Mib-bo-bFV">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Oe6-hP-CNg">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="dark_linen-640x960.png" id="o4H-0c-TwJ">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="367"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            </imageView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    </tableView>
                     <navigationItem key="navigationItem" title="&lt;strTasks>" id="Acf-ca-xWd"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="10p-0d-4gv" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -53,17 +47,11 @@
         <scene sceneID="uXo-MS-8t7">
             <objects>
                 <viewController storyboardIdentifier="idMessageBoardViewController" id="Obd-WC-JAQ" customClass="OMessageBoardViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="TD0-mZ-lqW">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="IPB-4W-cqx">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="dark_linen-640x960.png" id="8BB-d7-4Mk">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="367"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            </imageView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    </tableView>
                     <navigationItem key="navigationItem" title="&lt;strMessageBoard>" id="Pce-tb-tLA"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rK3-ud-Tj0" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -75,7 +63,7 @@
             <objects>
                 <viewController storyboardIdentifier="idMemberListViewController" id="O0V-Ey-WLK" customClass="OMemberListViewController" sceneMemberID="viewController">
                     <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lJb-0F-cm5">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections/>
@@ -95,7 +83,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="idMemberViewController" id="T87-Bh-GzL" customClass="OMemberViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="WsN-Uc-XTj">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -117,7 +105,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="idOrigoViewController" id="bxV-RT-yI4" customClass="OOrigoViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="LnJ-T1-eEC">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -135,17 +123,11 @@
         <scene sceneID="FF8-Hh-UBk">
             <objects>
                 <viewController storyboardIdentifier="idCalendarViewController" id="EMg-2y-k0H" customClass="OCalendarViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="BTs-Oz-i0i">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="a7X-Xm-nqx">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="dark_linen-640x960.png" id="2YG-Je-n7N">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="367"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                            </imageView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    </tableView>
                     <navigationItem key="navigationItem" title="&lt;strCalendar>" id="Em8-Gl-OL3"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Oo-i8-eWm" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -213,11 +195,11 @@
             </objects>
             <point key="canvasLocation" x="-759" y="1297"/>
         </scene>
-        <!--Navigation Controller - <givenName>-->
+        <!--Navigation Controller - Origo-->
         <scene sceneID="0Xf-MH-Xiq">
             <objects>
                 <navigationController definesPresentationContext="YES" id="a3K-AG-mMk" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="&lt;givenName>" image="10-arrows-in.png" id="Hk3-Sp-L4U"/>
+                    <tabBarItem key="tabBarItem" title="Origo" image="10-arrows-in.png" id="Hk3-Sp-L4U"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ram-2l-Dgq">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -315,15 +297,46 @@
         <image name="19-gear.png" width="26" height="26"/>
         <image name="258-checkmark.png" width="19" height="18"/>
         <image name="83-calendar.png" width="23" height="25"/>
-        <image name="dark_linen-640x960.png" width="640" height="960"/>
     </resources>
+    <classes>
+        <class className="OAuthViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OAuthViewController.h"/>
+        </class>
+        <class className="OCalendarViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OCalendarViewController.h"/>
+        </class>
+        <class className="OMemberListViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMemberListViewController.h"/>
+        </class>
+        <class className="OMemberViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMemberViewController.h"/>
+        </class>
+        <class className="OMessageBoardViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMessageBoardViewController.h"/>
+        </class>
+        <class className="OOrigoListViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OOrigoListViewController.h"/>
+        </class>
+        <class className="OOrigoViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OOrigoViewController.h"/>
+        </class>
+        <class className="OSettingsViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OSettingsViewController.h"/>
+        </class>
+        <class className="OTabBarController" superclassName="UITabBarController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OTabBarController.h"/>
+        </class>
+        <class className="OTaskListViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OTaskListViewController.h"/>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="99F-61-IG0"/>
-        <segue reference="fHV-uh-t7i"/>
+        <segue reference="Af6-hf-9Ni"/>
+        <segue reference="gEQ-1g-oCH"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -480,7 +480,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
                     
                     [OAlert showAlertWithTitle:alertTitle message:alertMessage];
                 } else {
-                    _candidate = [[OMeta m].context lookUpEntityInCache:_emailField.text];
+                    _candidate = [[OMeta m].context cachedEntityWithId:_emailField.text];
                     
                     if (_candidate) {
                         [self populateWithCandidate];
@@ -570,7 +570,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 {
     if (response.statusCode == kHTTPStatusCodeOK) {
         _candidateEntities = [[OMeta m].context saveServerEntitiesToCache:data];
-        _candidate = [[OMeta m].context lookUpEntityInCache:_emailField.text];
+        _candidate = [[OMeta m].context cachedEntityWithId:_emailField.text];
         
         [self populateWithCandidate];
     }

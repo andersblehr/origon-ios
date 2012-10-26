@@ -141,14 +141,17 @@ static NSInteger const kWardSection = 1;
         if ([wards count] != [_sortedWards count]) {
             _sortedWards = [[wards allObjects] sortedArrayUsingSelector:@selector(compare:)];
             
-            if (reloadRange.length) {
-                reloadRange.length++;
+            if ([wards count]) {
+                if (reloadRange.length) {
+                    reloadRange.length++;
+                } else {
+                    reloadRange.location = kWardSection;
+                    reloadRange.length = 1;
+                }
             } else {
-                reloadRange.location = kWardSection;
-                reloadRange.length = 1;
+                [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
             }
         }
-        
         
         if (reloadRange.length) {
             [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:reloadRange] withRowAnimation:UITableViewRowAnimationAutomatic];

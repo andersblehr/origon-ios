@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OMessageBoardViewController : UIViewController
+@interface OMessageBoardViewController : UITableViewController
 
 @end
