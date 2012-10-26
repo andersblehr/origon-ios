@@ -67,7 +67,7 @@
     NSMutableDictionary *entityRefs = [[NSMutableDictionary alloc] init];
     NSString *entityId = [dictionary valueForKey:kPropertyEntityId];
     
-    OCachedEntity *entity = [[OMeta m].context lookUpEntityInCache:entityId];
+    OCachedEntity *entity = [[OMeta m].context cachedEntityWithId:entityId];
     
     if (!entity) {
         NSString *entityClass = [dictionary objectForKey:kPropertyEntityClass];
@@ -178,7 +178,7 @@
         OCachedEntity *entity = [[OMeta m] stagedServerEntityWithId:destinationId];
         
         if (!entity) {
-            entity = [[OMeta m].context lookUpEntityInCache:destinationId];
+            entity = [[OMeta m].context cachedEntityWithId:destinationId];
         }
         
         if (entity) {
@@ -245,7 +245,7 @@
 
 - (OCachedEntityGhost *)spawnEntityGhost
 {
-    OOrigo *entityOrigo = [[OMeta m].context lookUpEntityInCache:self.origoId];
+    OOrigo *entityOrigo = [[OMeta m].context cachedEntityWithId:self.origoId];
     OCachedEntityGhost *entityGhost = [[OMeta m].context entityForClass:OCachedEntityGhost.class inOrigo:entityOrigo entityId:self.entityId];
     
     entityGhost.ghostedEntityClass = NSStringFromClass(self.class);

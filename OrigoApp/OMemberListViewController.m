@@ -22,6 +22,7 @@
 #import "OMember.h"
 #import "OMembership.h"
 #import "OOrigo.h"
+#import "OSharedEntityRef.h"
 
 #import "OCachedEntity+OCachedEntityExtensions.h"
 #import "OMember+OMemberExtensions.h"
@@ -276,24 +277,23 @@ static NSInteger const kMemberSection = 2;
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        OMembership *membershipToDelete = nil;
+        OMembership *revokedMembership = nil;
         
         if ([self sectionIsContactSection:indexPath.section]) {
-            membershipToDelete = _sortedContacts[indexPath.row];
+            revokedMembership = _sortedContacts[indexPath.row];
             
-            [_contacts removeObject:membershipToDelete];
+            [_contacts removeObject:revokedMembership];
             _sortedContacts = [[_contacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
         } else if ([self sectionIsMemberSection:indexPath.section]) {
-            membershipToDelete = _sortedMembers[indexPath.row];
+            revokedMembership = _sortedMembers[indexPath.row];
             
-            [_members removeObject:membershipToDelete];
+            [_members removeObject:revokedMembership];
             _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
         }
         
         // TODO: Handle deletion of last remaining contact/member in origo
-        // TODO: Also delete member entity if inactive and no other memberships/residencies
         
-        [[OMeta m].context permanentlyDeleteEntity:membershipToDelete];
+        [[OMeta m].context permanentlyDeleteEntity:revokedMembership];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
         _needsSynchronisation = YES;

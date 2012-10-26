@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OCalendarViewController : UIViewController
+@interface OCalendarViewController : UITableViewController
 
 @end

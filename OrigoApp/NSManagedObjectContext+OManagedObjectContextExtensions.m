@@ -58,6 +58,27 @@ static NSString * const kOrigoRelationshipName = @"origo";
 }
 
 
+- (id)lookUpEntityOfClass:(Class)class usingPredicate:(NSPredicate *)predicate
+{
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(class)];
+    [request setPredicate:predicate];
+    
+    id entity = nil;
+    NSError *error = nil;
+    NSArray *resultsArray = [self executeFetchRequest:request error:&error];
+    
+    if (resultsArray == nil) {
+        OLogError(@"Could not fetch entity from cache: %@", [error localizedDescription]);
+    } else if ([resultsArray count] > 1) {
+        OLogBreakage(@"Found more than one entity in cache for predicate '%@'.", [predicate predicateFormat]);
+    } else if ([resultsArray count] == 1) {
+        entity = resultsArray[0];
+    }
+    
+    return entity;
+}
+
+
 #pragma mark - Entity creation
 
 - (OOrigo *)origoEntityOfType:(NSString *)type
@@ -181,24 +202,9 @@ static NSString * const kOrigoRelationshipName = @"origo";
 
 #pragma mark - Fetching & deleting entities from cache
 
-- (id)lookUpEntityInCache:(NSString *)entityId
+- (id)cachedEntityWithId:(NSString *)entityId
 {
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(OCachedEntity.class)];
-    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", kPropertyEntityId, entityId]];
-    
-    id entity = nil;
-    NSError *error = nil;
-    NSArray *resultsArray = [self executeFetchRequest:request error:&error];
-    
-    if (resultsArray == nil) {
-        OLogError(@"Could not fetch entity from cache: %@", [error localizedDescription]);
-    } else if ([resultsArray count] > 1) {
-        OLogBreakage(@"Found more than one entity in cache with entityId '%@'.", entityId);
-    } else if ([resultsArray count] == 1) {
-        entity = resultsArray[0];
-    }
-    
-    return entity;
+    return [self lookUpEntityOfClass:OCachedEntity.class usingPredicate:[NSPredicate predicateWithFormat:@"%K = %@", kPropertyEntityId, entityId]];
 }
 
 
@@ -206,6 +212,42 @@ static NSString * const kOrigoRelationshipName = @"origo";
 {
     if ([entity isPersisted]) {
         [entity spawnEntityGhost];
+    }
+    
+    if ([entity isKindOfClass:OMembership.class]) {
+        OMember *member = ((OMembership *)entity).member;
+        
+        if ([member.memberships count] <= 2) {
+            NSInteger numberOfNonRootMemberships = 0;
+            OMembership *rootMembership = nil;
+            
+            for (OMembership *membership in member.memberships) {
+                if ([membership.origo isMemberRoot]) {
+                    rootMembership = membership;
+                } else {
+                    numberOfNonRootMemberships++;
+                }
+            }
+            
+            if (numberOfNonRootMemberships == 1) {
+                OSharedEntityRef *memberRef = [self lookUpEntityOfClass:OSharedEntityRef.class usingPredicate:[NSPredicate predicateWithFormat:@"%K = %@", kPropertySharedEntityId, member.entityId]];
+                
+                if (memberRef) {
+                    if ([memberRef isPersisted]) {
+                        [memberRef spawnEntityGhost];
+                    }
+                    
+                    [self deleteObject:memberRef];
+                }
+                
+                if (rootMembership) {
+                    [self deleteObject:rootMembership.origo];
+                    [self deleteObject:rootMembership];
+                }
+                
+                [self deleteObject:member];
+            }
+        }
     }
     
     [self deleteObject:entity];

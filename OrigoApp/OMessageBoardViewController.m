@@ -8,6 +8,8 @@
 
 #import "OMessageBoardViewController.h"
 
+#import "UITableView+OTableViewExtensions.h"
+
 #import "OStrings.h"
 
 @implementation OMessageBoardViewController
@@ -28,6 +30,7 @@
 {
     [super viewDidLoad];
     
+    [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     

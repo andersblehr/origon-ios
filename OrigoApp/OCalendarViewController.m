@@ -8,6 +8,8 @@
 
 #import "OCalendarViewController.h"
 
+#import "UITableView+OTableViewExtensions.h"
+
 #import "OStrings.h"
 
 
@@ -28,6 +30,7 @@
 {
     [super viewDidLoad];
     
+    [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
