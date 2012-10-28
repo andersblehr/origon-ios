@@ -12,7 +12,6 @@
 
 @interface OCachedEntity (OCachedEntityExtensions)
 
-+ (id)entityWithDictionary:(NSDictionary *)dictionary;
 - (NSDictionary *)toDictionary;
 
 - (BOOL)isTransientProperty:(NSString *)property;

@@ -28,12 +28,12 @@
 
 - (void)createSharedEntityRefsForAddedMember:(OMember *)member
 {
-    [[OMeta m].context sharedEntityRefForEntity:member inOrigo:self];
+    [[OMeta m].context insertSharedEntityRefForEntity:member inOrigo:self];
     
     for (OMemberResidency *residency in member.residencies) {
         if (![residency.origoId isEqualToString:self.entityId]) {
-            [[OMeta m].context sharedEntityRefForEntity:residency inOrigo:self];
-            [[OMeta m].context sharedEntityRefForEntity:residency.origo inOrigo:self];
+            [[OMeta m].context insertSharedEntityRefForEntity:residency inOrigo:self];
+            [[OMeta m].context insertSharedEntityRefForEntity:residency.origo inOrigo:self];
         }
     }
 }
@@ -49,7 +49,7 @@
 
 - (id)addMember:(OMember *)member
 {
-    OMembership *membership = [[OMeta m].context entityForClass:OMembership.class inOrigo:self];
+    OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self];
     membership.member = member;
     membership.origo = self;
     
@@ -63,7 +63,7 @@
 
 - (id)addResident:(OMember *)resident
 {
-    OMemberResidency *residency = [[OMeta m].context entityForClass:OMemberResidency.class inOrigo:self entityId:[self residencyIdForMember:resident]];
+    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self entityId:[self residencyIdForMember:resident]];
     
     residency.resident = resident;
     residency.residence = self;

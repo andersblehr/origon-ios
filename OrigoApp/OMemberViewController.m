@@ -145,9 +145,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             _member = _candidate;
         } else {
             if (_emailField.text.length > 0) {
-                _member = [[OMeta m].context memberEntityWithId:_emailField.text];
+                _member = [[OMeta m].context insertMemberEntityWithId:_emailField.text];
             } else {
-                _member = [[OMeta m].context memberEntity];
+                _member = [[OMeta m].context insertMemberEntity];
             }
         }
     }
@@ -569,7 +569,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(NSArray *)data
 {
     if (response.statusCode == kHTTPStatusCodeOK) {
-        _candidateEntities = [[OMeta m].context saveServerEntitiesToCache:data];
+        _candidateEntities = [[OMeta m].context saveToCacheFromDictionaries:data];
         _candidate = [[OMeta m].context cachedEntityWithId:_emailField.text];
         
         [self populateWithCandidate];

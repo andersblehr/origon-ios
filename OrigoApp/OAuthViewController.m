@@ -42,7 +42,6 @@ static NSInteger const kNumberOfRowsInAuthSection = 1;
 
 static NSString * const kSegueToOrigoListView = @"authToOrigoListView";
 
-static NSString * const kUserDefaultsKeyAuthInfo = @"origo.auth.info";
 static NSString * const kAuthInfoKeyUserId = @"userId";
 static NSString * const kAuthInfoKeyPasswordHash = @"passwordHash";
 static NSString * const kAuthInfoKeyActivationCode = @"activationCode";
@@ -177,22 +176,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (BOOL)registerNewDevice
+- (void)registerNewDevice
 {
-    BOOL didRegisterNewDevice = NO;
-    
-    ODevice *device = [[OMeta m].context cachedEntityWithId:[OMeta m].deviceId];
-    
-    if (!device) {
-        device = [[OMeta m].context entityForClass:ODevice.class inOrigo:[[OMeta m].user memberRoot] entityId:[OMeta m].deviceId];
-        device.type = [UIDevice currentDevice].model;
-        device.displayName = [UIDevice currentDevice].name;
-        device.member = [OMeta m].user;
-        
-        didRegisterNewDevice = YES;
-    }
-    
-    return didRegisterNewDevice;
+    ODevice *device = [[OMeta m].context insertEntityForClass:ODevice.class inOrigo:[[OMeta m].user memberRoot] entityId:[OMeta m].deviceId];
+    device.type = [UIDevice currentDevice].model;
+    device.displayName = [UIDevice currentDevice].name;
+    device.member = [OMeta m].user;
 }
 
 
@@ -249,7 +238,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)userDidAuthenticateWithData:(NSArray *)data
 {
     if (data) {
-        [[OMeta m].context saveServerEntitiesToCache:data];
+        [[OMeta m].context saveToCacheFromDictionaries:data];
     }
     
     if ([OState s].actionIsActivate) {
@@ -264,11 +253,15 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [[OMeta m] userDidLogIn];
     
-    if ([self registerNewDevice]) {
-        [[OMeta m].context synchroniseCacheWithServer];
+    BOOL deviceIsNew = ([[OMeta m].context cachedEntityWithId:[OMeta m].deviceId] == nil);
+    
+    if (deviceIsNew) {
+        [self registerNewDevice];
     }
     
-    _isModelUpToDate = YES;
+    if (deviceIsNew || [[OMeta m].context savedCacheStateIsDirty]) {
+        [[OMeta m].context synchroniseCacheWithServer];
+    }
     
     if ([self isRegistrationComplete]) {
         [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
@@ -322,12 +315,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             }
         }
     } else {
-        OOrigo *residence = [[OMeta m].context origoEntityOfType:kOrigoTypeResidence];
+        OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
         OMemberResidency *residency = [residence addResident:[OMeta m].user];
         residency.isActive_ = YES;
         residency.isAdmin_ = YES;
         
-        OMessageBoard *residenceMessageBoard = [[OMeta m].context entityForClass:OMessageBoard.class inOrigo:residence];
+        OMessageBoard *residenceMessageBoard = [[OMeta m].context insertEntityForClass:OMessageBoard.class inOrigo:residence];
         residenceMessageBoard.title = [OStrings stringForKey:strMyMessageBoard];
     }
     
@@ -375,10 +368,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super viewDidLoad];
 
-    self.navigationController.navigationBarHidden = YES;
-    
     [self.tableView setBackground];
     [self.tableView addLogoBanner];
+    self.navigationController.navigationBarHidden = YES;
+    
     _activityIndicator = [self.tableView addActivityIndicator];
     
     if ([OMeta m].isUserLoggedIn) {
@@ -436,18 +429,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
-
-#pragma mark - Segue handling
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:kSegueToOrigoListView]) {
-        if (!_isModelUpToDate) {
-            [[OMeta m].context synchroniseCacheWithServer];
-        }
-    }
 }
 
 
@@ -537,6 +518,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         shouldReturn = [OMeta isEmailValid:_emailField] && [OMeta isPasswordValid:_passwordField];
         
         if (shouldReturn) {
+            [self.view endEditing:YES];
             [self attemptUserLogin];
         } else {
             _passwordField.text = @"";
@@ -548,6 +530,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         shouldReturn = [self isActivationCodeValid] && [self isPasswordValid];
         
         if (shouldReturn) {
+            [self.view endEditing:YES];
             [self presentEULA];
         } else {
             _repeatPasswordField.text = @"";
@@ -585,7 +568,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - OMemberViewControllerDelegate methods
+#pragma mark - OModalInputViewControllerDelegate methods
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
@@ -619,7 +602,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)didFailWithError:(NSError *)error
 {
-    
+    [self indicatePendingServerSession:NO];
 }
 
 @end

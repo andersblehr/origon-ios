@@ -139,9 +139,14 @@ static NSInteger const kWardSection = 1;
         NSSet *wards = [_member wards];
         
         if ([wards count] != [_sortedWards count]) {
+            BOOL wardsSectionDoesExist = ([_sortedWards count] > 0);
             _sortedWards = [[wards allObjects] sortedArrayUsingSelector:@selector(compare:)];
             
             if ([wards count]) {
+                if (!wardsSectionDoesExist) {
+                    [self.tableView insertSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
+                }
+                
                 if (reloadRange.length) {
                     reloadRange.length++;
                 } else {

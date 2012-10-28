@@ -37,15 +37,80 @@ static NSString * const kOrigoRelationshipName = @"origo";
 
 #pragma mark - Auxiliary methods
 
-- (id)entityForClass:(Class)class
+- (id)insertEntityForClass:(Class)class
 {
-    return [self entityForClass:class entityId:[OUUIDGenerator generateUUID]];
+    return [self insertEntityForClass:class entityId:[OUUIDGenerator generateUUID]];
+}
+
+
+- (id)insertEntityFromDictionary:(NSDictionary *)entityDictionary
+{
+    NSMutableDictionary *entityRefs = [[NSMutableDictionary alloc] init];
+    NSString *entityId = [entityDictionary valueForKey:kPropertyEntityId];
+    
+    OCachedEntity *entity = [self cachedEntityWithId:entityId];
+    
+    if (!entity) {
+        NSString *entityClass = [entityDictionary objectForKey:kPropertyEntityClass];
+        
+        entity = [self insertEntityForClass:NSClassFromString(entityClass) entityId:entityId];
+        entity.origoId = [entityDictionary objectForKey:kPropertyOrigoId];
+    }
+    
+    NSDictionary *attributes = [entity.entity attributesByName];
+    NSDictionary *relationships = [entity.entity relationshipsByName];
+    
+    for (NSString *attributeKey in [attributes allKeys]) {
+        id attributeValue = [entityDictionary objectForKey:attributeKey];
+        
+        if (attributeValue) {
+            [entity setValue:attributeValue forKey:attributeKey];
+        }
+    }
+    
+    for (NSString *relationshipKey in [relationships allKeys]) {
+        NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
+        
+        if (!relationship.isToMany) {
+            NSString *entityRefName = [NSString stringWithFormat:@"%@Ref", relationshipKey];
+            NSDictionary *entityRef = [entityDictionary objectForKey:entityRefName];
+            
+            if (entityRef) {
+                [entityRefs setObject:entityRef forKey:relationshipKey];
+            }
+        }
+    }
+    
+    [[OMeta m] stageServerEntity:entity];
+    
+    if ([entityRefs count] > 0) {
+        [[OMeta m] stageServerEntityRefs:entityRefs forEntity:entity];
+    }
+    
+    return entity;
+}
+
+
+- (id)insertEntityForClass:(Class)class entityId:(NSString *)entityId
+{
+    OCachedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
+    
+    entity.entityId = entityId;
+    entity.dateCreated = [NSDate date];
+    
+    NSString *expires = [entity expiresInTimeframe];
+    
+    if (expires) {
+        // TODO: Process expiry instructions
+    }
+    
+    return entity;
 }
 
 
 - (OOrigo *)origoEntityOfType:(NSString *)type origoId:(NSString *)origoId
 {
-    OOrigo *origo = [self entityForClass:OOrigo.class entityId:origoId];
+    OOrigo *origo = [self insertEntityForClass:OOrigo.class entityId:origoId];
     
     origo.origoId = origoId;
     origo.type = type;
@@ -81,24 +146,24 @@ static NSString * const kOrigoRelationshipName = @"origo";
 
 #pragma mark - Entity creation
 
-- (OOrigo *)origoEntityOfType:(NSString *)type
+- (OOrigo *)insertOrigoEntityOfType:(NSString *)type
 {
     return [self origoEntityOfType:type origoId:[OUUIDGenerator generateUUID]];
 }
 
 
-- (OMember *)memberEntity
+- (OMember *)insertMemberEntity
 {
-    return [self memberEntityWithId:[OUUIDGenerator generateUUID]];
+    return [self insertMemberEntityWithId:[OUUIDGenerator generateUUID]];
 }
 
 
-- (OMember *)memberEntityWithId:(NSString *)memberId
+- (OMember *)insertMemberEntityWithId:(NSString *)memberId
 {
     NSString *memberRootId = [memberId stringByAppendingStringWithDollar:@"root"];
     
     OOrigo *memberRoot = [self origoEntityOfType:kOrigoTypeMemberRoot origoId:memberRootId];
-    OMember *member = [self entityForClass:OMember.class inOrigo:memberRoot entityId:memberId];
+    OMember *member = [self insertEntityForClass:OMember.class inOrigo:memberRoot entityId:memberId];
     
     OMembership *rootMembership = [memberRoot addMember:member];
     
@@ -111,32 +176,15 @@ static NSString * const kOrigoRelationshipName = @"origo";
 }
 
 
-- (id)entityForClass:(Class)class entityId:(NSString *)entityId
+- (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo
 {
-    OCachedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
-    
-    entity.entityId = entityId;
-    entity.dateCreated = [NSDate date];
-    
-    NSString *expires = [entity expiresInTimeframe];
-    
-    if (expires) {
-        // TODO: Process expiry instructions
-    }
-    
-    return entity;
+    return [self insertEntityForClass:class inOrigo:origo entityId:[OUUIDGenerator generateUUID]];
 }
 
 
-- (id)entityForClass:(Class)class inOrigo:(OOrigo *)origo
+- (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId
 {
-    return [self entityForClass:class inOrigo:origo entityId:[OUUIDGenerator generateUUID]];
-}
-
-
-- (id)entityForClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId
-{
-    OCachedEntity *entity = [self entityForClass:class entityId:entityId];
+    OCachedEntity *entity = [self insertEntityForClass:class entityId:entityId];
     
     entity.origoId = origo.entityId;
     
@@ -148,9 +196,9 @@ static NSString * const kOrigoRelationshipName = @"origo";
 }
 
 
-- (id)sharedEntityRefForEntity:(OCachedEntity *)entity inOrigo:(OOrigo *)origo
+- (id)insertSharedEntityRefForEntity:(OCachedEntity *)entity inOrigo:(OOrigo *)origo
 {
-    OSharedEntityRef *sharedEntityRef = [self entityForClass:OSharedEntityRef.class];
+    OSharedEntityRef *sharedEntityRef = [self insertEntityForClass:OSharedEntityRef.class];
     
     sharedEntityRef.sharedEntityId = entity.entityId;
     sharedEntityRef.sharedEntityOrigoId = entity.origoId;
@@ -171,17 +219,17 @@ static NSString * const kOrigoRelationshipName = @"origo";
     if ([self save:&error]) {
         OLogDebug(@"Entities successfully saved to cache.");
     } else {
-        OLogError(@"Error saving entities to cache: %@ [%@]", [error localizedDescription], [error userInfo]);
+        OLogError(@"Error saving to cache: %@ [%@]", [error localizedDescription], [error userInfo]);
     }
 }
 
 
-- (NSSet *)saveServerEntitiesToCache:(NSArray *)entityDictionaries
+- (NSSet *)saveToCacheFromDictionaries:(NSArray *)entityDictionaries
 {
     NSMutableSet *entities = [[NSMutableSet alloc] init];
     
     for (NSDictionary *entityDictionary in entityDictionaries) {
-        [entities addObject:[OCachedEntity entityWithDictionary:entityDictionary]];
+        [entities addObject:[self insertEntityFromDictionary:entityDictionary]];
     }
     
     for (OCachedEntity *entity in entities) {
@@ -190,13 +238,36 @@ static NSString * const kOrigoRelationshipName = @"origo";
     
     [self saveToCache];
     
-    return [NSSet setWithSet:entities];
+    return entities;
 }
 
 
 - (void)synchroniseCacheWithServer
 {
     [[[OServerConnection alloc] init] synchroniseCacheWithServer];
+}
+
+
+- (void)saveCacheState
+{
+    NSSet *dirtyEntities = [[OMeta m] dirtyEntities];
+    NSMutableSet *dirtyEntityURIs = [[NSMutableSet alloc] init];
+    
+    [self saveToCache];
+    
+    for (OCachedEntity *dirtyEntity in dirtyEntities) {
+        [dirtyEntityURIs addObject:[[dirtyEntity objectID] URIRepresentation]];
+    }
+    
+    NSData *dirtyEntityURIArchive = [NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs];
+    [[NSUserDefaults standardUserDefaults] setObject:dirtyEntityURIArchive forKey:kUserDefaultsKeyDirtyEntities];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
+- (BOOL)savedCacheStateIsDirty
+{
+    return ([[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyDirtyEntities] != nil);
 }
 
 

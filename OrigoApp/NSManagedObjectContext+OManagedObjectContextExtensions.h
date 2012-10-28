@@ -12,18 +12,19 @@
 
 @interface NSManagedObjectContext (OManagedObjectContextExtensions)
 
-- (OOrigo *)origoEntityOfType:(NSString *)type;
-- (OMember *)memberEntity;
-- (OMember *)memberEntityWithId:(NSString *)memberId;
+- (OOrigo *)insertOrigoEntityOfType:(NSString *)type;
+- (OMember *)insertMemberEntity;
+- (OMember *)insertMemberEntityWithId:(NSString *)memberId;
 
-- (id)entityForClass:(Class)class entityId:(NSString *)entityId;
-- (id)entityForClass:(Class)class inOrigo:(OOrigo *)origo;
-- (id)entityForClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
-- (id)sharedEntityRefForEntity:(OCachedEntity *)entity inOrigo:(OOrigo *)origo;
+- (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo;
+- (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
+- (id)insertSharedEntityRefForEntity:(OCachedEntity *)entity inOrigo:(OOrigo *)origo;
 
 - (void)saveToCache;
-- (NSSet *)saveServerEntitiesToCache:(NSArray *)entityDictionaries;
+- (NSSet *)saveToCacheFromDictionaries:(NSArray *)entityDictionaries;
 - (void)synchroniseCacheWithServer;
+- (void)saveCacheState;
+- (BOOL)savedCacheStateIsDirty;
 
 - (id)cachedEntityWithId:(NSString *)entityId;
 - (void)permanentlyDeleteEntity:(OCachedEntity *)entity;

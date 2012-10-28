@@ -36,6 +36,9 @@ NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
 NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
 NSString * const kIconFileInfant = @"76-baby_black.png";
 
+NSString * const kUserDefaultsKeyAuthInfo = @"origo.auth.info";
+NSString * const kUserDefaultsKeyDirtyEntities = @"origo.dirtyEntities";
+
 NSString * const kAuthViewControllerId = @"idAuthViewController";
 NSString * const kOrigoListViewControllerId = @"idOrigoListViewController";
 NSString * const kOrigoViewControllerId = @"idOrigoViewController";
@@ -159,7 +162,7 @@ static OMeta *m = nil;
         _isInternetConnectionWiFi = NO;
         _isInternetConnectionWWAN = NO;
         
-        _modifiedEntities = [[NSMutableSet alloc] init];
+        _dirtyEntities = [[NSMutableSet alloc] init];
         _stagedServerEntities = [[NSMutableDictionary alloc] init];
         _stagedServerEntityRefs = [[NSMutableDictionary alloc] init];
         
@@ -363,7 +366,7 @@ static OMeta *m = nil;
     _user = [self.context cachedEntityWithId:_userId];
     
     if (!_user) {
-        _user = [self.context memberEntityWithId:_userId];
+        _user = [self.context insertMemberEntityWithId:_userId];
     }
 }
 
@@ -378,22 +381,44 @@ static OMeta *m = nil;
 
 #pragma mark - Cache & persistence housekeeping
 
-- (NSSet *)modifiedEntities
+- (NSSet *)dirtyEntitiesFromEarlierSessions
 {
-    [_modifiedEntities unionSet:[self.context insertedObjects]];
-    [_modifiedEntities unionSet:[self.context updatedObjects]];
-    
     NSMutableSet *dirtyEntities = [[NSMutableSet alloc] init];
+    NSData *dirtyEntityURIArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyDirtyEntities];
     
-    for (OCachedEntity *entity in _modifiedEntities) {
+    if (dirtyEntityURIArchive) {
+        NSSet *dirtyEntityURIs = [NSKeyedUnarchiver unarchiveObjectWithData:dirtyEntityURIArchive];
+        
+        for (NSURL *dirtyEntityURI in dirtyEntityURIs) {
+            NSManagedObjectID *dirtyEntityID = [self.context.persistentStoreCoordinator managedObjectIDForURIRepresentation:dirtyEntityURI];
+            
+            [dirtyEntities addObject:[self.context objectWithID:dirtyEntityID]];
+        }
+        
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyDirtyEntities];
+    }
+    
+    return dirtyEntities;
+}
+
+
+- (NSSet *)dirtyEntities
+{
+    [_dirtyEntities unionSet:[self dirtyEntitiesFromEarlierSessions]];
+    [_dirtyEntities unionSet:[self.context insertedObjects]];
+    [_dirtyEntities unionSet:[self.context updatedObjects]];
+    
+    NSMutableSet *confirmedDirtyEntities = [[NSMutableSet alloc] init];
+    
+    for (OCachedEntity *entity in _dirtyEntities) {
         if ([entity isDirty]) {
-            [dirtyEntities addObject:entity];
+            [confirmedDirtyEntities addObject:entity];
         }
     }
     
-    _modifiedEntities = dirtyEntities;
+    _dirtyEntities = confirmedDirtyEntities;
     
-    return _modifiedEntities;
+    return _dirtyEntities;
 }
 
 
@@ -437,7 +462,7 @@ static OMeta *m = nil;
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
     if (data) {
-        [self.context saveServerEntitiesToCache:data];
+        [self.context saveToCacheFromDictionaries:data];
     }
 
     if ((response.statusCode == kHTTPStatusCodeCreated) ||
@@ -446,13 +471,13 @@ static OMeta *m = nil;
         
         NSDate *now = [NSDate date];
         
-        for (OCachedEntity *entity in _modifiedEntities) {
+        for (OCachedEntity *entity in _dirtyEntities) {
             entity.dateModified = now;
             entity.hashCode = [NSNumber numberWithInteger:[entity computeHashCode]];
         }
         
         [self.context saveToCache];
-        [_modifiedEntities removeAllObjects];
+        [_dirtyEntities removeAllObjects];
     }
 }
 
