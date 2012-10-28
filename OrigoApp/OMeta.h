@@ -23,6 +23,9 @@ extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
 
+extern NSString * const kUserDefaultsKeyAuthInfo;
+extern NSString * const kUserDefaultsKeyDirtyEntities;
+
 extern NSString * const kAuthViewControllerId;
 extern NSString * const kOrigoListViewControllerId;
 extern NSString * const kOrigoViewControllerId;
@@ -55,9 +58,9 @@ extern NSString * const kOrigoTypeOther;
 @interface OMeta : NSObject <OServerConnectionDelegate> {
 @private
     Reachability *_internetReachability;
-
     NSDate *_authTokenExpiryDate;
-    NSMutableSet *_modifiedEntities;
+    
+    NSMutableSet *_dirtyEntities;
     NSMutableDictionary *_stagedServerEntities;
     NSMutableDictionary *_stagedServerEntityRefs;
 }
@@ -94,7 +97,7 @@ extern NSString * const kOrigoTypeOther;
 
 - (BOOL)isInternetConnectionAvailable;
 
-- (NSSet *)modifiedEntities;
+- (NSSet *)dirtyEntities;
 - (void)stageServerEntity:(OCachedEntity *)entity;
 - (void)stageServerEntityRefs:(NSDictionary *)entityRefs forEntity:(OCachedEntity *)entity;
 - (OCachedEntity *)stagedServerEntityWithId:(NSString *)entityId;

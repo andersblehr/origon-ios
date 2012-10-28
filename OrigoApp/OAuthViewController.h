@@ -17,7 +17,6 @@
 @private
     BOOL _isEditingAllowed;
     BOOL _isUserListed;
-    BOOL _isModelUpToDate;
     
     OTableViewCell *_authCell;
     OTextField *_emailField;

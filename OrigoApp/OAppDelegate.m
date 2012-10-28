@@ -52,7 +52,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 }
 
 
-#pragma mark - Core Data accessors
+#pragma mark - Core Data properties
 
 - (NSManagedObjectModel *)managedObjectModel
 {
@@ -106,12 +106,12 @@ static void uncaughtExceptionHandler(NSException *exception)
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
     
-    OLogState;
     OLogDebug(@"Device is %@.", [UIDevice currentDevice].model);
     OLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);
     OLogDebug(@"System name is %@.", [UIDevice currentDevice].systemName);
     OLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
     OLogDebug(@"System language is '%@'.", [[OMeta m] displayLanguage]);
+    OLogState;
     
     return YES;
 }
@@ -119,17 +119,13 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    if ([OMeta m].isUserLoggedIn) {
-        [[OMeta m].context synchroniseCacheWithServer];
-    }
+    // TODO: Delete if not implemented.
 }
 
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    // TODO: Delete if not implemented.
+    [self.managedObjectContext saveCacheState];
 }
 
 
@@ -141,13 +137,15 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    // TODO: Delete if not implemented.
+    if ([OMeta m].isUserLoggedIn) {
+        [[OMeta m].context synchroniseCacheWithServer];
+    }
 }
 
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    // TODO: Delete if not implemented.
+    [self.managedObjectContext saveCacheState];
 }
 
 @end

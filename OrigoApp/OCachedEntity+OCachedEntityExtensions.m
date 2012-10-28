@@ -60,55 +60,7 @@
 }
 
 
-#pragma mark - Dictionary serialisation & deserialisation
-
-+ (id)entityWithDictionary:(NSDictionary *)dictionary
-{
-    NSMutableDictionary *entityRefs = [[NSMutableDictionary alloc] init];
-    NSString *entityId = [dictionary valueForKey:kPropertyEntityId];
-    
-    OCachedEntity *entity = [[OMeta m].context cachedEntityWithId:entityId];
-    
-    if (!entity) {
-        NSString *entityClass = [dictionary objectForKey:kPropertyEntityClass];
-        
-        entity = [[OMeta m].context entityForClass:NSClassFromString(entityClass) entityId:entityId];
-        entity.origoId = [dictionary objectForKey:kPropertyOrigoId];
-    }
-    
-    NSDictionary *attributes = [entity.entity attributesByName];
-    NSDictionary *relationships = [entity.entity relationshipsByName];
-    
-    for (NSString *name in [attributes allKeys]) {
-        id value = [dictionary objectForKey:name];
-        
-        if (value) {
-            [entity setValue:value forKey:name];
-        }
-    }
-    
-    for (NSString *name in [relationships allKeys]) {
-        NSRelationshipDescription *relationship = [relationships objectForKey:name];
-        
-        if (!relationship.isToMany) {
-            NSString *entityRefName = [NSString stringWithFormat:@"%@Ref", name];
-            NSDictionary *entityRef = [dictionary objectForKey:entityRefName];
-            
-            if (entityRef) {
-                [entityRefs setObject:entityRef forKey:name];
-            }
-        }
-    }
-    
-    [[OMeta m] stageServerEntity:entity];
-    
-    if ([entityRefs count] > 0) {
-        [[OMeta m] stageServerEntityRefs:entityRefs forEntity:entity];
-    }
-    
-    return entity;
-}
-
+#pragma mark - Dictionary serialisation
 
 - (NSDictionary *)toDictionary
 {
@@ -119,24 +71,24 @@
     
     [entityDictionary setObject:self.entity.name forKey:kPropertyEntityClass];
     
-    for (NSString *name in [attributes allKeys]) {
-        if (![self isTransientProperty:name]) {
-            id value = [self valueForKey:name];
+    for (NSString *attributeKey in [attributes allKeys]) {
+        if (![self isTransientProperty:attributeKey]) {
+            id attributeValue = [self valueForKey:attributeKey];
             
-            if (value) {
-                [entityDictionary setObject:value forKey:name];
+            if (attributeValue) {
+                [entityDictionary setObject:attributeValue forKey:attributeKey];
             }
         }
     }
     
-    for (NSString *name in [relationships allKeys]) {
-        NSRelationshipDescription *relationship = [relationships objectForKey:name];
+    for (NSString *relationshipKey in [relationships allKeys]) {
+        NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
         
-        if (!relationship.isToMany && ![self isTransientProperty:name]) {
-            OCachedEntity *entity = [self valueForKey:name];
+        if (!relationship.isToMany && ![self isTransientProperty:relationshipKey]) {
+            OCachedEntity *entity = [self valueForKey:relationshipKey];
             
             if (entity) {
-                [entityDictionary setObject:[entity entityRef] forKey:name];
+                [entityDictionary setObject:[entity entityRef] forKey:relationshipKey];
             }
         }
     }
@@ -246,7 +198,7 @@
 - (OCachedEntityGhost *)spawnEntityGhost
 {
     OOrigo *entityOrigo = [[OMeta m].context cachedEntityWithId:self.origoId];
-    OCachedEntityGhost *entityGhost = [[OMeta m].context entityForClass:OCachedEntityGhost.class inOrigo:entityOrigo entityId:self.entityId];
+    OCachedEntityGhost *entityGhost = [[OMeta m].context insertEntityForClass:OCachedEntityGhost.class inOrigo:entityOrigo entityId:self.entityId];
     
     entityGhost.ghostedEntityClass = NSStringFromClass(self.class);
     

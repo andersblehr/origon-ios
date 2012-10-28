@@ -274,6 +274,26 @@ static NSInteger const kMemberSection = 2;
 }
 
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL canDeleteRow = NO;
+    
+    if (indexPath.section != kOrigoSection) {
+        OMembership *membershipForRow = nil;
+        
+        if ([self sectionIsContactSection:indexPath.section]) {
+            membershipForRow = _sortedContacts[indexPath.row];
+        } else if ([self sectionIsMemberSection:indexPath.section]) {
+            membershipForRow = _sortedMembers[indexPath.row];
+        }
+        
+        canDeleteRow = ([_origo userIsAdmin] && ![membershipForRow.member isUser]);
+    }
+    
+    return canDeleteRow;
+}
+
+
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
@@ -291,10 +311,8 @@ static NSInteger const kMemberSection = 2;
             _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
         }
         
-        // TODO: Handle deletion of last remaining contact/member in origo
-        
         [[OMeta m].context permanentlyDeleteEntity:revokedMembership];
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];
         
         _needsSynchronisation = YES;
     }   
@@ -397,13 +415,7 @@ static NSInteger const kMemberSection = 2;
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *deleteConfirmationTitle = nil;
-    
-    if (indexPath.section != kOrigoSection) {
-        deleteConfirmationTitle = [OStrings stringForKey:strDeleteConfirmation];
-    }
-    
-    return deleteConfirmationTitle;
+    return [OStrings stringForKey:strDeleteConfirmation];
 }
 
 

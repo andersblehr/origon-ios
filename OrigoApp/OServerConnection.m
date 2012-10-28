@@ -118,7 +118,7 @@ static NSString * const kURLParameterVersion = @"version";
             NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:_URLRequest delegate:self];
             
             if (!URLConnection) {
-                OLogError(@"Failed to connect to the server. URL request: %@", _URLRequest);
+                OLogError(@"Failed to create URL connection. URL request: %@", _URLRequest);
                 [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
             }
         } else {
@@ -229,7 +229,7 @@ static NSString * const kURLParameterVersion = @"version";
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     
-    NSSet *modifiedEntities = [OMeta m].modifiedEntities;
+    NSSet *modifiedEntities = [OMeta m].dirtyEntities;
     
     if (modifiedEntities.count > 0) {
         _RESTRoute = kRESTRouteModelSync;
