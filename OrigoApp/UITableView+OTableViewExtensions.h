@@ -8,12 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-extern CGFloat const kDefaultSectionHeaderHeight;
-extern CGFloat const kDefaultSectionFooterHeight;
-extern CGFloat const kMinimumSectionHeaderHeight;
-extern CGFloat const kMinimumSectionFooterHeight;
-extern CGFloat const kSectionSpacing;
-
 @class OReplicatedEntity;
 @class OTableViewCell;
 
@@ -30,6 +24,7 @@ extern CGFloat const kSectionSpacing;
 - (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate;
 
 - (CGFloat)standardHeaderHeight;
+- (CGFloat)standardFooterHeight;
 - (UIView *)headerViewWithTitle:(NSString *)title;
 - (UIView *)footerViewWithText:(NSString *)text;
 

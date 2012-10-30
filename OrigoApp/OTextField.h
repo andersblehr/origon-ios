@@ -24,6 +24,7 @@ extern NSString * const kTextFieldKeyAddressLine1;
 extern NSString * const kTextFieldKeyAddressLine2;
 extern NSString * const kTextFieldKeyTelephone;
 
+extern CGFloat const kLineSpacing;
 
 @interface OTextField : UITextField {
 @private

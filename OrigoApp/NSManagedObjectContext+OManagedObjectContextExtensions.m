@@ -210,7 +210,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
         memberId = [OUUIDGenerator generateUUID];
     }
     
-    NSString *memberRootId = [memberId stringByAppendingStringWithCaret:@"root"];
+    NSString *memberRootId = [@"^" stringByAppendingString:memberId];
     
     OOrigo *memberRoot = [self insertOrigoEntityOfType:kOrigoTypeMemberRoot origoId:memberRootId];
     OMember *member = [self insertEntityForClass:OMember.class inOrigo:memberRoot entityId:memberId];

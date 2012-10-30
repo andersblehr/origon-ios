@@ -421,7 +421,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = kDefaultSectionHeaderHeight;
+    CGFloat height = kDefaultPadding;
     
     if (section == kAddressSection) {
         height = [tableView standardHeaderHeight];

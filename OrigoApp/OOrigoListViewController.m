@@ -236,7 +236,7 @@ static NSInteger const kWardSection = 1;
         origo = _sortedOrigos[indexPath.row];
     }
     
-    UITableViewCell *cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];;
+    UITableViewCell *cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     if (origo) {
@@ -261,21 +261,13 @@ static NSInteger const kWardSection = 1;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = kMinimumSectionHeaderHeight;
+    CGFloat height = kDefaultPadding;
     
-    if (section == 0) {
-        height = kDefaultSectionHeaderHeight;
-    } else if (section >= kWardSection) {
+    if (section >= kWardSection) {
         height = [tableView standardHeaderHeight];
     }
     
     return height;
-}
-
-
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-{
-    return kDefaultSectionFooterHeight;
 }
 
 
