@@ -8,25 +8,25 @@
 
 #import <CoreData/CoreData.h>
 
-@class OCachedEntity, OMember, OOrigo;
+@class OMember, OOrigo, OReplicatedEntity;
 
 @interface NSManagedObjectContext (OManagedObjectContextExtensions)
 
 - (OOrigo *)insertOrigoEntityOfType:(NSString *)type;
-- (OMember *)insertMemberEntity;
 - (OMember *)insertMemberEntityWithId:(NSString *)memberId;
 
 - (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo;
 - (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
-- (id)insertSharedEntityRefForEntity:(OCachedEntity *)entity inOrigo:(OOrigo *)origo;
+- (id)insertLinkedEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo;
 
-- (void)saveToCache;
-- (NSSet *)saveToCacheFromDictionaries:(NSArray *)entityDictionaries;
-- (void)synchroniseCacheWithServer;
-- (void)saveCacheState;
-- (BOOL)savedCacheStateIsDirty;
+- (void)save;
+- (NSSet *)saveServerReplicas:(NSArray *)replicaDictionaries;
 
-- (id)cachedEntityWithId:(NSString *)entityId;
-- (void)permanentlyDeleteEntity:(OCachedEntity *)entity;
+- (void)replicate;
+- (void)saveReplicationState;
+- (BOOL)savedReplicationStateIsDirty;
+
+- (id)entityWithId:(NSString *)entityId;
+- (void)deleteEntity:(OReplicatedEntity *)entity;
 
 @end

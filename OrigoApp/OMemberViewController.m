@@ -34,11 +34,11 @@
 #import "OMembership.h"
 #import "OOrigo.h"
 
-#import "OCachedEntity+OCachedEntityExtensions.h"
 #import "OMember+OMemberExtensions.h"
 #import "OMemberResidency+OMemberResidencyExtensions.h"
 #import "OMembership+OMembershipExtensions.h"
 #import "OOrigo+OOrigoExtensions.h"
+#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 static NSInteger const kMemberSection = 0;
 static NSInteger const kAddressSection = 1;
@@ -147,7 +147,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             if (_emailField.text.length > 0) {
                 _member = [[OMeta m].context insertMemberEntityWithId:_emailField.text];
             } else {
-                _member = [[OMeta m].context insertMemberEntity];
+                _member = [[OMeta m].context insertMemberEntityWithId:nil];
             }
         }
     }
@@ -201,7 +201,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 - (void)cancelEditing
 {
     if (_candidate) {
-        for (OCachedEntity *entity in _candidateEntities) {
+        for (OReplicatedEntity *entity in _candidateEntities) {
             [[OMeta m].context deleteObject:entity];
         }
         
@@ -345,7 +345,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger numberOfRows = 0;
+    NSUInteger numberOfRows = 0;
     
     if (section == kMemberSection) {
         numberOfRows = kNumberOfMemberRows;
@@ -480,12 +480,12 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
                     
                     [OAlert showAlertWithTitle:alertTitle message:alertMessage];
                 } else {
-                    _candidate = [[OMeta m].context cachedEntityWithId:_emailField.text];
+                    _candidate = [[OMeta m].context entityWithId:_emailField.text];
                     
                     if (_candidate) {
                         [self populateWithCandidate];
                     } else {
-                        [[[OServerConnection alloc] init] fetchMemberEntitiesFromServer:_emailField.text delegate:self];
+                        [[[OServerConnection alloc] init] lookUpMemberWithId:_emailField.text delegate:self];
                     }
                 }
             }
@@ -569,8 +569,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(NSArray *)data
 {
     if (response.statusCode == kHTTPStatusCodeOK) {
-        _candidateEntities = [[OMeta m].context saveToCacheFromDictionaries:data];
-        _candidate = [[OMeta m].context cachedEntityWithId:_emailField.text];
+        _candidateEntities = [[OMeta m].context saveServerReplicas:data];
+        _candidate = [[OMeta m].context entityWithId:_emailField.text];
         
         [self populateWithCandidate];
     }

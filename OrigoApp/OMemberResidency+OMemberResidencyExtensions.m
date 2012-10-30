@@ -15,13 +15,13 @@
 #import "OMember.h"
 #import "OOrigo.h"
 
-#import "OCachedEntity+OCachedEntityExtensions.h"
+#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 
 @implementation OMemberResidency (OMemberResidencyExtensions)
 
 
-#pragma mark - OCachedEntity (OCachedEntityExtentions) overrides
+#pragma mark - OReplicateEntity (OReplicateEntityExtentions) overrides
 
 - (BOOL)isTransientProperty:(NSString *)property
 {

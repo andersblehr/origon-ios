@@ -18,7 +18,7 @@ extern CGFloat const kContentWidth;
 extern CGFloat const kKeyboardHeight;
 
 
-@class OCachedEntity;
+@class OReplicatedEntity;
 @class OTextField;
 
 @interface OTableViewCell : UITableViewCell {
@@ -39,11 +39,11 @@ extern CGFloat const kKeyboardHeight;
 + (CGFloat)defaultHeight;
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
 + (CGFloat)heightForEntityClass:(Class)entityClass;
-+ (CGFloat)heightForEntity:(OCachedEntity *)entity;
++ (CGFloat)heightForEntity:(OReplicatedEntity *)entity;
 
 - (OTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
-- (OTableViewCell *)initWithEntity:(OCachedEntity *)entity;
-- (OTableViewCell *)initWithEntity:(OCachedEntity *)entity delegate:(id)delegate;
+- (OTableViewCell *)initWithEntity:(OReplicatedEntity *)entity;
+- (OTableViewCell *)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 - (OTableViewCell *)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
 
 - (OTextField *)textFieldWithKey:(NSString *)key;

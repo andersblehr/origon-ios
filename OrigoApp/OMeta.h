@@ -32,15 +32,16 @@ extern NSString * const kOrigoViewControllerId;
 extern NSString * const kMemberListViewControllerId;
 extern NSString * const kMemberViewControllerId;
 
+extern NSString * const kPropertyDateOfBirth;
+extern NSString * const kPropertyDidRegister;
 extern NSString * const kPropertyEntityClass;
 extern NSString * const kPropertyEntityId;
-extern NSString * const kPropertySharedEntityId;
-extern NSString * const kPropertyOrigoId;
-extern NSString * const kPropertyName;
-extern NSString * const kPropertyDateOfBirth;
-extern NSString * const kPropertyMobilePhone;
 extern NSString * const kPropertyGender;
-extern NSString * const kPropertyDidRegister;
+extern NSString * const kPropertyGhostedEntityClass;
+extern NSString * const kPropertyLinkedEntityId;
+extern NSString * const kPropertyMobilePhone;
+extern NSString * const kPropertyName;
+extern NSString * const kPropertyOrigoId;
 
 extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;
@@ -53,7 +54,7 @@ extern NSString * const kOrigoTypeSportsTeam;
 extern NSString * const kOrigoTypeOther;
 
 
-@class OCachedEntity, OMember;
+@class OMember, OReplicatedEntity;
 
 @interface OMeta : NSObject <OServerConnectionDelegate> {
 @private
@@ -73,7 +74,7 @@ extern NSString * const kOrigoTypeOther;
 @property (strong, nonatomic, readonly) NSString *authToken;
 @property (strong, nonatomic, readonly) NSString *appVersion;
 @property (strong, nonatomic, readonly) NSString *displayLanguage;
-@property (strong, nonatomic) NSString *lastFetchDate;
+@property (strong, nonatomic) NSString *lastReplicationDate;
 
 @property (nonatomic, readonly) BOOL is_iPadDevice;
 @property (nonatomic, readonly) BOOL is_iPodDevice;
@@ -98,9 +99,9 @@ extern NSString * const kOrigoTypeOther;
 - (BOOL)isInternetConnectionAvailable;
 
 - (NSSet *)dirtyEntities;
-- (void)stageServerEntity:(OCachedEntity *)entity;
-- (void)stageServerEntityRefs:(NSDictionary *)entityRefs forEntity:(OCachedEntity *)entity;
-- (OCachedEntity *)stagedServerEntityWithId:(NSString *)entityId;
-- (NSDictionary *)stagedServerEntityRefsForEntity:(OCachedEntity *)entity;
+- (void)stageServerEntity:(OReplicatedEntity *)entity;
+- (void)stageServerEntityRefs:(NSDictionary *)entityRefs forEntity:(OReplicatedEntity *)entity;
+- (OReplicatedEntity *)stagedServerEntityWithId:(NSString *)entityId;
+- (NSDictionary *)stagedServerEntityRefsForEntity:(OReplicatedEntity *)entity;
 
 @end

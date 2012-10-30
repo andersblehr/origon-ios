@@ -26,7 +26,7 @@
     
     OMembership *_selectedMembership;
     
-    BOOL _needsSynchronisation;
+    BOOL _needsReplication;
 }
 
 @property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;

@@ -1,24 +1,26 @@
 //
-//  OCachedEntity+OCachedEntityExtensions.m
+//  OReplicatedEntity+OReplicatedEntityExtensions.m
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OCachedEntity+OCachedEntityExtensions.h"
+#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 #import "NSDate+ODateExtensions.h"
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
+#import "NSString+OStringExtensions.h"
 
 #import "OMeta.h"
 
-#import "OCachedEntityGhost.h"
 #import "OMember.h"
 #import "OMemberResidency.h"
+#import "OOrigo.h"
+#import "OReplicatedEntityGhost.h"
 
 
-@implementation OCachedEntity (OCachedEntityExtensions)
+@implementation OReplicatedEntity (OReplicateEntityExtensions)
 
 
 #pragma mark - Overriddes
@@ -85,7 +87,7 @@
         NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
         
         if (!relationship.isToMany && ![self isTransientProperty:relationshipKey]) {
-            OCachedEntity *entity = [self valueForKey:relationshipKey];
+            OReplicatedEntity *entity = [self valueForKey:relationshipKey];
             
             if (entity) {
                 [entityDictionary setObject:[entity entityRef] forKey:relationshipKey];
@@ -105,9 +107,9 @@
 }
 
 
-- (BOOL)isPersisted
+- (BOOL)isReplicated
 {
-    return (self.dateModified != nil);
+    return (self.dateReplicated != nil);
 }
 
 
@@ -127,10 +129,10 @@
         NSDictionary *entityRef = [entityRefs objectForKey:name];
         NSString *destinationId = [entityRef objectForKey:kPropertyEntityId];
         
-        OCachedEntity *entity = [[OMeta m] stagedServerEntityWithId:destinationId];
+        OReplicatedEntity *entity = [[OMeta m] stagedServerEntityWithId:destinationId];
         
         if (!entity) {
-            entity = [[OMeta m].context cachedEntityWithId:destinationId];
+            entity = [[OMeta m].context entityWithId:destinationId];
         }
         
         if (entity) {
@@ -165,7 +167,7 @@
         NSRelationshipDescription *relationship = [relationships objectForKey:name];
         
         if (!relationship.isToMany && ![self isTransientProperty:name]) {
-            OCachedEntity *entity = [self valueForKey:name];
+            OReplicatedEntity *entity = [self valueForKey:name];
             
             if (entity) {
                 NSString *property = [NSString stringWithFormat:@"[%@:%@]", name, entity.entityId];
@@ -177,8 +179,6 @@
     return [allProperties hash];
 }
 
-
-#pragma mark - Entity meta data handling
 
 - (NSString *)expiresInTimeframe
 {
@@ -193,12 +193,18 @@
 }
 
 
-#pragma mark - Entity ghost instantiation
+#pragma mark - Entity sharing & deletion
 
-- (OCachedEntityGhost *)spawnEntityGhost
+- (OLinkedEntityRef *)linkedEntityRefForOrigo:(OOrigo *)origo
 {
-    OOrigo *entityOrigo = [[OMeta m].context cachedEntityWithId:self.origoId];
-    OCachedEntityGhost *entityGhost = [[OMeta m].context insertEntityForClass:OCachedEntityGhost.class inOrigo:entityOrigo entityId:self.entityId];
+    return [[OMeta m].context entityWithId:[self.entityId stringByAppendingStringWithHash:origo.entityId]];
+}
+
+
+- (OReplicatedEntityGhost *)spawnEntityGhost
+{
+    OOrigo *entityOrigo = [[OMeta m].context entityWithId:self.origoId];
+    OReplicatedEntityGhost *entityGhost = [[OMeta m].context insertEntityForClass:OReplicatedEntityGhost.class inOrigo:entityOrigo entityId:self.entityId];
     
     entityGhost.ghostedEntityClass = NSStringFromClass(self.class);
     

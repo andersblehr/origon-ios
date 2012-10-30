@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1811" systemVersion="12C60" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="OCachedEntity" representedClassName="OCachedEntity" isAbstract="YES" syncable="YES">
-        <attribute name="dateCreated" attributeType="Date" syncable="YES"/>
-        <attribute name="dateExpires" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="dateModified" optional="YES" attributeType="Date" syncable="YES"/>
-        <attribute name="entityId" attributeType="String" syncable="YES"/>
-        <attribute name="hashCode" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="isShared" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="origoId" optional="YES" attributeType="String" syncable="YES"/>
-    </entity>
-    <entity name="OCachedEntityGhost" representedClassName="OCachedEntityGhost" parentEntity="OCachedEntity" syncable="YES">
-        <attribute name="ghostedEntityClass" attributeType="String" syncable="YES"/>
-        <attribute name="hasExpired" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <userInfo>
-            <entry key="expires" value="+120d"/>
-        </userInfo>
-    </entity>
-    <entity name="ODevice" representedClassName="ODevice" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="ODevice" representedClassName="ODevice" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="displayName" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="member" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="devices" inverseEntity="OMember" syncable="YES"/>
@@ -24,7 +8,7 @@
             <entry key="expires" value="no"/>
         </userInfo>
     </entity>
-    <entity name="ODocument" representedClassName="ODocument" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="ODocument" representedClassName="ODocument" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="doesExpire" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isExternal" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="title" attributeType="String" syncable="YES"/>
@@ -36,12 +20,12 @@
             <entry key="expires" value="yes"/>
         </userInfo>
     </entity>
-    <entity name="ODocumentElement" representedClassName="ODocumentElement" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="ODocumentElement" representedClassName="ODocumentElement" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="sequenceNumber" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="text" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <relationship name="document" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ODocument" inverseName="documentElements" inverseEntity="ODocument" syncable="YES"/>
     </entity>
-    <entity name="ODocumentRepository" representedClassName="ODocumentRepository" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="ODocumentRepository" representedClassName="ODocumentRepository" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="title" attributeType="String" syncable="YES"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ODocument" inverseName="repository" inverseEntity="ODocument" syncable="YES"/>
         <relationship name="origo" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OOrigo" inverseName="documentRepositories" inverseEntity="OOrigo" syncable="YES"/>
@@ -49,7 +33,7 @@
             <entry key="expires" value="no"/>
         </userInfo>
     </entity>
-    <entity name="OEvent" representedClassName="OEvent" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OEvent" representedClassName="OEvent" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="dateEnd" attributeType="Date" syncable="YES"/>
         <attribute name="dateStart" attributeType="Date" syncable="YES"/>
         <attribute name="eventDescription" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
@@ -63,7 +47,7 @@
             <entry key="expires" value="dateEnd+7"/>
         </userInfo>
     </entity>
-    <entity name="OEventInvitation" representedClassName="OEventInvitation" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OEventInvitation" representedClassName="OEventInvitation" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="rsvp" optional="YES" attributeType="Boolean" syncable="YES"/>
         <relationship name="event" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OEvent" inverseName="invitedIndividuals" inverseEntity="OEvent" syncable="YES"/>
         <relationship name="invitee" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="eventInvitations" inverseEntity="OMember" syncable="YES"/>
@@ -72,7 +56,7 @@
             <entry key="expires" value="event.dateEnd"/>
         </userInfo>
     </entity>
-    <entity name="OEventOrigoInvitation" representedClassName="OEventOrigoInvitation" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OEventOrigoInvitation" representedClassName="OEventOrigoInvitation" parentEntity="OReplicatedEntity" syncable="YES">
         <relationship name="event" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OEvent" inverseName="invitedOrigos" inverseEntity="OEvent" syncable="YES"/>
         <relationship name="memberInvitations" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="OEventInvitation" inverseName="origoInvitation" inverseEntity="OEventInvitation" syncable="YES"/>
         <relationship name="origo" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OOrigo" inverseName="eventInvitations" inverseEntity="OOrigo" syncable="YES"/>
@@ -80,14 +64,21 @@
             <entry key="expires" value="event.dateEnd"/>
         </userInfo>
     </entity>
-    <entity name="OExternalDocument" representedClassName="OExternalDocument" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OExternalDocument" representedClassName="OExternalDocument" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="embeddedDocument" attributeType="Binary" syncable="YES"/>
         <relationship name="document" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="ODocument" inverseName="externalDocument" inverseEntity="ODocument" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="yes"/>
         </userInfo>
     </entity>
-    <entity name="OMember" representedClassName="OMember" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OLinkedEntityRef" representedClassName="OLinkedEntityRef" parentEntity="OReplicatedEntity" syncable="YES">
+        <attribute name="linkedEntityId" attributeType="String" syncable="YES"/>
+        <attribute name="linkedEntityOrigoId" attributeType="String" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="dynamic"/>
+        </userInfo>
+    </entity>
+    <entity name="OMember" representedClassName="OMember" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="activeSince" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="dateOfBirth" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="didRegister" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -121,7 +112,7 @@
             <entry key="expires" value="no"/>
         </userInfo>
     </entity>
-    <entity name="OMembership" representedClassName="OMembership" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OMembership" representedClassName="OMembership" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="contactRole" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="contactType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isActive" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -132,7 +123,7 @@
             <entry key="expires" value="no"/>
         </userInfo>
     </entity>
-    <entity name="OMessageBoard" representedClassName="OMessageBoard" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OMessageBoard" representedClassName="OMessageBoard" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="roleRestriction" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" attributeType="String" syncable="YES"/>
         <relationship name="messageThreads" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="OMessageThread" inverseName="messageBoard" inverseEntity="OMessageThread" syncable="YES"/>
@@ -141,7 +132,7 @@
             <entry key="expires" value="no"/>
         </userInfo>
     </entity>
-    <entity name="OMessageItem" representedClassName="OMessageItem" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OMessageItem" representedClassName="OMessageItem" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="date" attributeType="Date" syncable="YES"/>
         <relationship name="author" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="messageItems" inverseEntity="OMember" syncable="YES"/>
         <relationship name="inReplyTo" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMessageItem" inverseName="replies" inverseEntity="OMessageItem" syncable="YES"/>
@@ -151,7 +142,7 @@
             <entry key="expires" value="yes"/>
         </userInfo>
     </entity>
-    <entity name="OMessageThread" representedClassName="OMessageThread" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OMessageThread" representedClassName="OMessageThread" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="subject" attributeType="String" syncable="YES"/>
         <relationship name="messageBoard" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMessageBoard" inverseName="messageThreads" inverseEntity="OMessageBoard" syncable="YES"/>
         <relationship name="messageItems" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="OMessageItem" inverseName="messageThread" inverseEntity="OMessageItem" syncable="YES"/>
@@ -159,7 +150,7 @@
             <entry key="expires" value="messageItems.count=0"/>
         </userInfo>
     </entity>
-    <entity name="OOrigo" representedClassName="OOrigo" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OOrigo" representedClassName="OOrigo" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="addressLine1" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="addressLine2" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="descriptionText" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
@@ -181,7 +172,23 @@
             <entry key="expires" value="no"/>
         </userInfo>
     </entity>
-    <entity name="OScheduledAbsence" representedClassName="OScheduledAbsence" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OReplicatedEntity" representedClassName="OReplicatedEntity" isAbstract="YES" syncable="YES">
+        <attribute name="dateCreated" attributeType="Date" syncable="YES"/>
+        <attribute name="dateExpires" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="dateReplicated" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="entityId" attributeType="String" syncable="YES"/>
+        <attribute name="hashCode" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="isLinked" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="origoId" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="OReplicatedEntityGhost" representedClassName="OReplicatedEntityGhost" parentEntity="OReplicatedEntity" syncable="YES">
+        <attribute name="ghostedEntityClass" attributeType="String" syncable="YES"/>
+        <attribute name="hasExpired" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="+120d"/>
+        </userInfo>
+    </entity>
+    <entity name="OScheduledAbsence" representedClassName="OScheduledAbsence" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="absenceEnd" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="absenceStart" attributeType="Date" syncable="YES"/>
         <attribute name="descriptionText" attributeType="String" syncable="YES"/>
@@ -190,7 +197,7 @@
             <entry key="expires" value="absenceEnd+7"/>
         </userInfo>
     </entity>
-    <entity name="OScheduledBreak" representedClassName="OScheduledBreak" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OScheduledBreak" representedClassName="OScheduledBreak" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="dateEnd" attributeType="Date" syncable="YES"/>
         <attribute name="dateStart" attributeType="Date" syncable="YES">
             <userInfo>
@@ -199,14 +206,7 @@
         </attribute>
         <relationship name="yearlySchedule" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OYearlySchedule" inverseName="scheduledBreaks" inverseEntity="OYearlySchedule" syncable="YES"/>
     </entity>
-    <entity name="OSharedEntityRef" representedClassName="OSharedEntityRef" parentEntity="OCachedEntity" syncable="YES">
-        <attribute name="sharedEntityId" attributeType="String" syncable="YES"/>
-        <attribute name="sharedEntityOrigoId" attributeType="String" syncable="YES"/>
-        <userInfo>
-            <entry key="expires" value="dynamic"/>
-        </userInfo>
-    </entity>
-    <entity name="OToDoAssignment" representedClassName="OToDoAssignment" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OToDoAssignment" representedClassName="OToDoAssignment" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="assigneeDidDecline" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isComplete" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <relationship name="assignee" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="toDoAssignments" inverseEntity="OMember" syncable="YES"/>
@@ -215,7 +215,7 @@
             <entry key="expires" value="dynamic"/>
         </userInfo>
     </entity>
-    <entity name="OToDoItem" representedClassName="OToDoItem" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OToDoItem" representedClassName="OToDoItem" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="descriptionText" attributeType="String" syncable="YES"/>
         <attribute name="dueDate" attributeType="Date" syncable="YES"/>
         <relationship name="assignments" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="OToDoAssignment" inverseName="toDoItem" inverseEntity="OToDoAssignment" syncable="YES"/>
@@ -224,7 +224,7 @@
             <entry key="expires" value="dueDate+7"/>
         </userInfo>
     </entity>
-    <entity name="OWeeklyScheduleItem" representedClassName="OWeeklyScheduleItem" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OWeeklyScheduleItem" representedClassName="OWeeklyScheduleItem" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="timeEnd" attributeType="Date" syncable="YES"/>
         <attribute name="timeStart" attributeType="Date" syncable="YES"/>
         <attribute name="title" attributeType="String" syncable="YES"/>
@@ -234,7 +234,7 @@
             <entry key="expires" value="dynamic"/>
         </userInfo>
     </entity>
-    <entity name="OYearlySchedule" representedClassName="OYearlySchedule" parentEntity="OCachedEntity" syncable="YES">
+    <entity name="OYearlySchedule" representedClassName="OYearlySchedule" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="yearEnd" attributeType="Date" syncable="YES"/>
         <attribute name="yearStart" attributeType="Date" syncable="YES"/>
         <relationship name="origo" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OOrigo" inverseName="yearlySchedule" inverseEntity="OOrigo" syncable="YES"/>
@@ -245,29 +245,29 @@
         </userInfo>
     </entity>
     <elements>
-        <element name="OCachedEntity" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="OCachedEntityGhost" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="ODevice" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="ODocument" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="ODocumentElement" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="ODocumentRepository" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OEvent" positionX="0" positionY="0" width="128" height="180"/>
-        <element name="OEventInvitation" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OEventOrigoInvitation" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OExternalDocument" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="OMember" positionX="0" positionY="0" width="128" height="315"/>
-        <element name="OMemberResidency" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="OMembership" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="OMessageBoard" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OMessageItem" positionX="0" positionY="0" width="128" height="120"/>
-        <element name="OMessageThread" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OOrigo" positionX="0" positionY="0" width="128" height="300"/>
-        <element name="OScheduledAbsence" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OScheduledBreak" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OSharedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="OToDoAssignment" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OToDoItem" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OWeeklyScheduleItem" positionX="0" positionY="0" width="128" height="120"/>
-        <element name="OYearlySchedule" positionX="0" positionY="0" width="128" height="120"/>
+        <element name="ODevice" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ODocument" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ODocumentElement" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ODocumentRepository" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OEvent" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OEventInvitation" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OEventOrigoInvitation" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OExternalDocument" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OLinkedEntityRef" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMember" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMemberResidency" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMembership" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMessageBoard" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMessageItem" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMessageThread" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OOrigo" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OReplicatedEntity" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OReplicatedEntityGhost" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OScheduledAbsence" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OScheduledBreak" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OToDoAssignment" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OToDoItem" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OWeeklyScheduleItem" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OYearlySchedule" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>

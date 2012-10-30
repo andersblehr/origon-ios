@@ -2,17 +2,17 @@
 //  OOrigo.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 17.10.12.
+//  Created by Anders Blehr on 29.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import "OCachedEntity.h"
+#import "OReplicatedEntity.h"
 
 @class ODocumentRepository, OEvent, OEventOrigoInvitation, OMemberResidency, OMembership, OMessageBoard, OOrigo, OToDoItem, OYearlySchedule;
 
-@interface OOrigo : OCachedEntity
+@interface OOrigo : OReplicatedEntity
 
 @property (nonatomic, retain) NSString * addressLine1;
 @property (nonatomic, retain) NSString * addressLine2;

@@ -1,15 +1,15 @@
 //
-//  OCachedEntityGhost.m
+//  OReplicatedEntityGhost.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 17.10.12.
+//  Created by Anders Blehr on 29.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OCachedEntityGhost.h"
+#import "OReplicatedEntityGhost.h"
 
 
-@implementation OCachedEntityGhost
+@implementation OReplicatedEntityGhost
 
 @dynamic ghostedEntityClass;
 @dynamic hasExpired;

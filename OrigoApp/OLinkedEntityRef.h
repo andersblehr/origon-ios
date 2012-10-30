@@ -1,5 +1,5 @@
 //
-//  OExternalDocument.h
+//  OLinkedEntityRef.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 29.10.12.
@@ -10,11 +10,10 @@
 #import <CoreData/CoreData.h>
 #import "OReplicatedEntity.h"
 
-@class ODocument;
 
-@interface OExternalDocument : OReplicatedEntity
+@interface OLinkedEntityRef : OReplicatedEntity
 
-@property (nonatomic, retain) NSData * embeddedDocument;
-@property (nonatomic, retain) ODocument *document;
+@property (nonatomic, retain) NSString * linkedEntityId;
+@property (nonatomic, retain) NSString * linkedEntityOrigoId;
 
 @end

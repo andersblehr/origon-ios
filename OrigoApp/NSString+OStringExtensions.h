@@ -18,6 +18,8 @@
 - (NSString *)stringByAppendingStringWithNewline:(NSString *)string;
 - (NSString *)stringByAppendingStringWithComma:(NSString *)string;
 - (NSString *)stringByAppendingStringWithDollar:(NSString *)string;
+- (NSString *)stringByAppendingStringWithHash:(NSString *)string;
+- (NSString *)stringByAppendingStringWithCaret:(NSString *)string;
 
 - (BOOL)isEmailAddress;
 

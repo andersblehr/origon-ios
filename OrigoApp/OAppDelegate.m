@@ -125,7 +125,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    [self.managedObjectContext saveCacheState];
+    [self.managedObjectContext saveReplicationState];
 }
 
 
@@ -138,14 +138,14 @@ static void uncaughtExceptionHandler(NSException *exception)
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     if ([OMeta m].isUserLoggedIn) {
-        [[OMeta m].context synchroniseCacheWithServer];
+        [[OMeta m].context replicate];
     }
 }
 
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    [self.managedObjectContext saveCacheState];
+    [self.managedObjectContext saveReplicationState];
 }
 
 @end

@@ -2,19 +2,20 @@
 //  OMembership.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 17.10.12.
+//  Created by Anders Blehr on 29.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import "OCachedEntity.h"
+#import "OReplicatedEntity.h"
 
 @class OMember, OOrigo;
 
-@interface OMembership : OCachedEntity
+@interface OMembership : OReplicatedEntity
 
 @property (nonatomic, retain) NSString * contactRole;
+@property (nonatomic, retain) NSString * contactType;
 @property (nonatomic, retain) NSNumber * isActive;
 @property (nonatomic, retain) NSNumber * isAdmin;
 @property (nonatomic, retain) OMember *member;
