@@ -146,7 +146,7 @@ static NSDictionary *strings = nil;
 {
     if ([OMeta m].isInternetConnectionAvailable) {
         if (!strings || [OMeta m].isInternetConnectionWiFi) { // TODO: Only if required
-            [[[OServerConnection alloc] init] fetchStringsFromServer];
+            [[[OServerConnection alloc] init] fetchStrings];
         }
     }
 }

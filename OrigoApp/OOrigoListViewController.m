@@ -54,7 +54,7 @@ static NSInteger const kWardSection = 1;
 
 - (BOOL)sectionIsOrigoSection:(NSInteger)section
 {
-    NSInteger origoSection = [OState s].aspectIsSelf ? ([_sortedWards count] ? 2 : 1) : 0;
+    NSUInteger origoSection = [OState s].aspectIsSelf ? ([_sortedWards count] ? 2 : 1) : 0;
     
     return ([_sortedOrigos count] && (section == origoSection));
 }
@@ -203,7 +203,7 @@ static NSInteger const kWardSection = 1;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger numberOfRows = 0;
+    NSUInteger numberOfRows = 0;
     
     if ([self sectionIsResidenceSection:section]) {
         numberOfRows = [_sortedResidences count];
@@ -353,7 +353,7 @@ static NSInteger const kWardSection = 1;
 }
 
 
-- (void)insertEntityInTableView:(OCachedEntity *)entity
+- (void)insertEntityInTableView:(OReplicatedEntity *)entity
 {
     
 }

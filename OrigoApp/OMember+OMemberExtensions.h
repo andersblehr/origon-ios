@@ -16,8 +16,6 @@
 - (BOOL)didRegister_;
 - (NSString *)name_;
 
-- (OOrigo *)memberRoot;
-
 - (NSString *)details;
 - (UIImage *)image;
 
@@ -31,6 +29,10 @@
 - (BOOL)hasAddress;
 - (BOOL)hasEmailAddress;
 
+- (NSSet *)housemates;
 - (NSSet *)wards;
+
+- (OMembership *)rootMembership;
+- (NSSet *)origoMemberships;
 
 @end

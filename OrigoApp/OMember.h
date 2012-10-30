@@ -2,17 +2,17 @@
 //  OMember.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 23.10.12.
+//  Created by Anders Blehr on 29.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import "OCachedEntity.h"
+#import "OReplicatedEntity.h"
 
 @class ODevice, ODocument, OEvent, OEventInvitation, OMemberResidency, OMembership, OMessageItem, OScheduledAbsence, OToDoAssignment;
 
-@interface OMember : OCachedEntity
+@interface OMember : OReplicatedEntity
 
 @property (nonatomic, retain) NSDate * activeSince;
 @property (nonatomic, retain) NSDate * dateOfBirth;

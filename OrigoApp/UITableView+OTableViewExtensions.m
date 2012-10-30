@@ -15,7 +15,7 @@
 #import "OStrings.h"
 #import "OTableViewCell.h"
 
-#import "OCachedEntity.h"
+#import "OReplicatedEntity.h"
 
 CGFloat const kDefaultSectionHeaderHeight = 10.f;
 CGFloat const kDefaultSectionFooterHeight = 10.f;
@@ -114,13 +114,13 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (id)cellForEntity:(OCachedEntity *)entity
+- (id)cellForEntity:(OReplicatedEntity *)entity
 {
     return [self cellForEntity:entity delegate:nil];
 }
 
 
-- (id)cellForEntity:(OCachedEntity *)entity delegate:(id)delegate
+- (id)cellForEntity:(OReplicatedEntity *)entity delegate:(id)delegate
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:entity.entityId];
     

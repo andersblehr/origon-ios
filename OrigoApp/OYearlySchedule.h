@@ -2,22 +2,22 @@
 //  OYearlySchedule.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 17.10.12.
+//  Created by Anders Blehr on 29.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import "OCachedEntity.h"
+#import "OReplicatedEntity.h"
 
 @class OOrigo, OScheduledBreak, OWeeklyScheduleItem;
 
-@interface OYearlySchedule : OCachedEntity
+@interface OYearlySchedule : OReplicatedEntity
 
 @property (nonatomic, retain) NSDate * yearEnd;
 @property (nonatomic, retain) NSDate * yearStart;
-@property (nonatomic, retain) NSSet *scheduledBreaks;
 @property (nonatomic, retain) OOrigo *origo;
+@property (nonatomic, retain) NSSet *scheduledBreaks;
 @property (nonatomic, retain) NSSet *weeklyScheduleItems;
 @end
 

@@ -14,7 +14,7 @@ extern CGFloat const kMinimumSectionHeaderHeight;
 extern CGFloat const kMinimumSectionFooterHeight;
 extern CGFloat const kSectionSpacing;
 
-@class OCachedEntity;
+@class OReplicatedEntity;
 @class OTableViewCell;
 
 @interface UITableView (OTableViewExtensions)
@@ -25,8 +25,8 @@ extern CGFloat const kSectionSpacing;
 
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
-- (id)cellForEntity:(OCachedEntity *)entity;
-- (id)cellForEntity:(OCachedEntity *)entity delegate:(id)delegate;
+- (id)cellForEntity:(OReplicatedEntity *)entity;
+- (id)cellForEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 - (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate;
 
 - (CGFloat)standardHeaderHeight;

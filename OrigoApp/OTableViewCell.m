@@ -22,9 +22,9 @@
 #import "OStrings.h"
 #import "OTextField.h"
 
-#import "OCachedEntity.h"
 #import "OMember.h"
 #import "OOrigo.h"
+#import "OReplicatedEntity.h"
 
 #import "OMember+OMemberExtensions.h"
 #import "OOrigo+OOrigoExtensions.h"
@@ -169,7 +169,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 }
 
 
-+ (CGFloat)heightForEntity:(OCachedEntity *)entity
++ (CGFloat)heightForEntity:(OReplicatedEntity *)entity
 {
     CGFloat height = [OTableViewCell heightForEntityClass:entity.class];
     
@@ -416,7 +416,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 }
 
 
-- (void)setUpForEntityClass:(Class)entityClass entity:(OCachedEntity *)entity
+- (void)setUpForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
     if (entityClass == OMember.class) {
         [self setUpForMemberEntity:(OMember *)entity];
@@ -468,13 +468,13 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 }
 
 
-- (OTableViewCell *)initWithEntity:(OCachedEntity *)entity
+- (OTableViewCell *)initWithEntity:(OReplicatedEntity *)entity
 {
     return [self initWithEntity:entity delegate:nil];
 }
 
 
-- (OTableViewCell *)initWithEntity:(OCachedEntity *)entity delegate:(id)delegate
+- (OTableViewCell *)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate
 {
     self = [self initWithReuseIdentifier:entity.entityId delegate:delegate];
     

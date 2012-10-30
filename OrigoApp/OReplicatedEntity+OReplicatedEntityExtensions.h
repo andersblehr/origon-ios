@@ -1,28 +1,28 @@
 //
-//  OCachedEntity+OCachedEntityExtensions.h
+//  OReplicatedEntity+OReplicatedEntityExtensions.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OCachedEntity.h"
+#import "OReplicatedEntity.h"
 
-@class OCachedEntityGhost;
+@class OOrigo, OReplicatedEntityGhost, OLinkedEntityRef;
 
-@interface OCachedEntity (OCachedEntityExtensions)
+@interface OReplicatedEntity (OReplicateEntityExtensions)
 
 - (NSDictionary *)toDictionary;
 
 - (BOOL)isTransientProperty:(NSString *)property;
-- (BOOL)isPersisted;
+- (BOOL)isReplicated;
 - (BOOL)isDirty;
 
 - (void)internaliseRelationships;
 - (NSUInteger)computeHashCode;
-
 - (NSString *)expiresInTimeframe;
 
-- (OCachedEntityGhost *)spawnEntityGhost;
+- (OLinkedEntityRef *)linkedEntityRefForOrigo:(OOrigo *)origo;
+- (OReplicatedEntityGhost *)spawnEntityGhost;
 
 @end

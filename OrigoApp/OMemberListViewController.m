@@ -22,12 +22,12 @@
 #import "OMember.h"
 #import "OMembership.h"
 #import "OOrigo.h"
-#import "OSharedEntityRef.h"
+#import "OLinkedEntityRef.h"
 
-#import "OCachedEntity+OCachedEntityExtensions.h"
 #import "OMember+OMemberExtensions.h"
 #import "OMembership+OMembershipExtensions.h"
 #import "OOrigo+OOrigoExtensions.h"
+#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 #import "OMemberViewController.h"
 #import "OOrigoViewController.h"
@@ -95,10 +95,10 @@ static NSInteger const kMemberSection = 2;
 
 - (void)didFinishAdding
 {
-    if (_needsSynchronisation) {
-        [[OMeta m].context synchroniseCacheWithServer];
+    if (_needsReplication) {
+        [[OMeta m].context replicate];
         
-        _needsSynchronisation = NO;
+        _needsReplication = NO;
     }
     
     if (_delegate) {
@@ -170,7 +170,7 @@ static NSInteger const kMemberSection = 2;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    if (_needsSynchronisation && !self.navigationController.presentedViewController) {
+    if (_needsReplication && !self.navigationController.presentedViewController) {
         [self didFinishAdding];
     }
     
@@ -214,10 +214,10 @@ static NSInteger const kMemberSection = 2;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger numberOfRows = 0;
+    NSUInteger numberOfRows = 0;
     
-    NSInteger numberOfContacts = [_contacts count];
-    NSInteger numberOfMembers = [_members count];
+    NSUInteger numberOfContacts = [_contacts count];
+    NSUInteger numberOfMembers = [_members count];
     
     if (section == kOrigoSection) {
         numberOfRows = 1;
@@ -311,10 +311,10 @@ static NSInteger const kMemberSection = 2;
             _sortedMembers = [[_members allObjects] sortedArrayUsingSelector:@selector(compare:)];
         }
         
-        [[OMeta m].context permanentlyDeleteEntity:revokedMembership];
+        [[OMeta m].context deleteEntity:revokedMembership];
         [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];
         
-        _needsSynchronisation = YES;
+        _needsReplication = YES;
     }   
 }
 
@@ -373,7 +373,7 @@ static NSInteger const kMemberSection = 2;
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {   
-    NSInteger numberOfRowsInSection = 1;
+    NSUInteger numberOfRowsInSection = 1;
     
     if ([self sectionIsContactSection:indexPath.section]) {
         numberOfRowsInSection = [_contacts count];
@@ -429,7 +429,7 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-- (void)insertEntityInTableView:(OCachedEntity *)entity
+- (void)insertEntityInTableView:(OReplicatedEntity *)entity
 {
     NSInteger section;
     NSInteger row;
@@ -459,7 +459,7 @@ static NSInteger const kMemberSection = 2;
         [self.tableView insertRow:row inSection:section];
     }
     
-    _needsSynchronisation = YES;
+    _needsReplication = YES;
 }
 
 @end

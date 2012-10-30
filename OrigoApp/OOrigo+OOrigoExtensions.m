@@ -26,22 +26,16 @@
 
 #pragma mark - Auxiliary methods
 
-- (void)createSharedEntityRefsForAddedMember:(OMember *)member
+- (void)createLinkedEntityRefsForAddedMember:(OMember *)member
 {
-    [[OMeta m].context insertSharedEntityRefForEntity:member inOrigo:self];
+    [[OMeta m].context insertLinkedEntityRefForEntity:member inOrigo:self];
     
     for (OMemberResidency *residency in member.residencies) {
         if (![residency.origoId isEqualToString:self.entityId]) {
-            [[OMeta m].context insertSharedEntityRefForEntity:residency inOrigo:self];
-            [[OMeta m].context insertSharedEntityRefForEntity:residency.origo inOrigo:self];
+            [[OMeta m].context insertLinkedEntityRefForEntity:residency inOrigo:self];
+            [[OMeta m].context insertLinkedEntityRefForEntity:residency.origo inOrigo:self];
         }
     }
-}
-
-
-- (NSString *)residencyIdForMember:(OMember *)member
-{
-    return [member.entityId stringByAppendingStringWithDollar:self.entityId];
 }
 
 
@@ -49,12 +43,12 @@
 
 - (id)addMember:(OMember *)member
 {
-    OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self];
+    OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self entityId:[member.entityId stringByAppendingStringWithDollar:self.entityId]];
     membership.member = member;
     membership.origo = self;
     
     if (![self.type isEqualToString:kOrigoTypeMemberRoot]) {
-        [self createSharedEntityRefsForAddedMember:member];
+        [self createLinkedEntityRefsForAddedMember:member];
     }
     
     return membership;
@@ -63,14 +57,14 @@
 
 - (id)addResident:(OMember *)resident
 {
-    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self entityId:[self residencyIdForMember:resident]];
+    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self entityId:[resident.entityId stringByAppendingStringWithDollar:self.entityId]];
     
     residency.resident = resident;
     residency.residence = self;
     residency.member = resident;
     residency.origo = self;
     
-    [self createSharedEntityRefsForAddedMember:resident];
+    [self createLinkedEntityRefsForAddedMember:resident];
     
     return residency;
 }

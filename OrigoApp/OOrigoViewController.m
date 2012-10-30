@@ -55,7 +55,7 @@
         }
         
         [self.view endEditing:YES];
-        [[OMeta m].context synchroniseCacheWithServer];
+        [[OMeta m].context replicate];
         
         [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
     } else {

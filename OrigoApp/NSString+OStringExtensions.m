@@ -155,6 +155,18 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
+- (NSString *)stringByAppendingStringWithHash:(NSString *)string
+{
+    return [self stringByAppendingString:string withSeparator:@"#"];
+}
+
+
+- (NSString *)stringByAppendingStringWithCaret:(NSString *)string
+{
+    return [self stringByAppendingString:string withSeparator:@"^"];
+}
+
+
 #pragma mark - Devining tring content
 
 - (BOOL)isEmailAddress

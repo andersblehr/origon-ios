@@ -15,6 +15,6 @@
 @protocol OModalInputViewControllerDelegate <OModalViewControllerDelegate>
 
 @optional
-- (void)insertEntityInTableView:(OCachedEntity *)entity;
+- (void)insertEntityInTableView:(OReplicatedEntity *)entity;
 
 @end

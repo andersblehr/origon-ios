@@ -18,10 +18,11 @@
 #import "OStrings.h"
 #import "OUUIDGenerator.h"
 
-#import "OCachedEntity.h"
 #import "OMember.h"
+#import "OReplicatedEntity.h"
+#import "OReplicatedEntityGhost.h"
 
-#import "OCachedEntity+OCachedEntityExtensions.h"
+#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 #import "OOrigoListViewController.h"
 
@@ -45,15 +46,16 @@ NSString * const kOrigoViewControllerId = @"idOrigoViewController";
 NSString * const kMemberViewControllerId = @"idMemberViewController";
 NSString * const kMemberListViewControllerId = @"idMemberListViewController";
 
+NSString * const kPropertyDateOfBirth = @"dateOfBirth";
+NSString * const kPropertyDidRegister = @"didRegister";
 NSString * const kPropertyEntityClass = @"entityClass";
 NSString * const kPropertyEntityId = @"entityId";
-NSString * const kPropertySharedEntityId = @"sharedEntityId";
-NSString * const kPropertyOrigoId = @"origoId";
-NSString * const kPropertyName = @"name";
-NSString * const kPropertyDateOfBirth = @"dateOfBirth";
-NSString * const kPropertyMobilePhone = @"mobilePhone";
 NSString * const kPropertyGender = @"gender";
-NSString * const kPropertyDidRegister = @"didRegister";
+NSString * const kPropertyGhostedEntityClass = @"ghostedEntityClass";
+NSString * const kPropertyLinkedEntityId = @"linkedEntityId";
+NSString * const kPropertyMobilePhone = @"mobilePhone";
+NSString * const kPropertyName = @"name";
+NSString * const kPropertyOrigoId = @"origoId";
 
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
@@ -70,7 +72,7 @@ static NSInteger const kMinimumPassordLength = 6;
 static NSString * const kUserDefaultsKeyUserId = @"origo.user.id";
 static NSString * const kUserDefaultsKeyFormatDeviceId = @"origo.device.id$%@";
 static NSString * const kUserDefaultsKeyFormatAuthExpiryDate = @"origo.auth.expires$%@";
-static NSString * const kUserDefaultsKeyFormatLastFetchDate = @"origo.fetch.date$%@";
+static NSString * const kUserDefaultsKeyFormatLastReplicationDate = @"origo.replication.date$%@";
 
 //static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
 static NSTimeInterval const kTimeIntervalTwoWeeks = 30;
@@ -148,7 +150,7 @@ static OMeta *m = nil;
         
         if (_userId) {
             _deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
-            _lastFetchDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
+            _lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastReplicationDate, _userId]];
         } else {
             _deviceId = [OUUIDGenerator generateUUID];
         }
@@ -294,7 +296,7 @@ static OMeta *m = nil;
             
             if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
                 _authToken = [self generateAuthToken:_authTokenExpiryDate];
-                _user = [self.context cachedEntityWithId:_userId];
+                _user = [self.context entityWithId:_userId];
             }
         }
     }
@@ -313,7 +315,7 @@ static OMeta *m = nil;
         [[NSUserDefaults standardUserDefaults] setObject:_userId forKey:kUserDefaultsKeyUserId];
         
         NSString *deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
-        NSString *lastFetchDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
+        NSString *lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastReplicationDate, _userId]];
         
         if (deviceId) {
             _deviceId = deviceId;
@@ -321,10 +323,10 @@ static OMeta *m = nil;
             [[NSUserDefaults standardUserDefaults] setObject:_deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
         }
         
-        if (lastFetchDate) {
-            _lastFetchDate = lastFetchDate;
-        } else if (_lastFetchDate) {
-            [[NSUserDefaults standardUserDefaults] setObject:_lastFetchDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
+        if (lastReplicationDate) {
+            _lastReplicationDate = lastReplicationDate;
+        } else if (_lastReplicationDate) {
+            [[NSUserDefaults standardUserDefaults] setObject:_lastReplicationDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastReplicationDate, _userId]];
         }
     } else {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyUserId];
@@ -343,11 +345,11 @@ static OMeta *m = nil;
 }
 
 
-- (void)setLastFetchDate:(NSString *)fetchDate
+- (void)setLastReplicationDate:(NSString *)replicationDate
 {
-    _lastFetchDate = fetchDate;
+    _lastReplicationDate = replicationDate;
     
-    [[NSUserDefaults standardUserDefaults] setObject:fetchDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastFetchDate, _userId]];
+    [[NSUserDefaults standardUserDefaults] setObject:replicationDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastReplicationDate, _userId]];
 }
 
 
@@ -363,7 +365,7 @@ static OMeta *m = nil;
 {
     [[NSUserDefaults standardUserDefaults] setObject:_authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
     
-    _user = [self.context cachedEntityWithId:_userId];
+    _user = [self.context entityWithId:_userId];
     
     if (!_user) {
         _user = [self.context insertMemberEntityWithId:_userId];
@@ -379,7 +381,7 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - Cache & persistence housekeeping
+#pragma mark - Replication housekeeping
 
 - (NSSet *)dirtyEntitiesFromEarlierSessions
 {
@@ -410,7 +412,7 @@ static OMeta *m = nil;
     
     NSMutableSet *confirmedDirtyEntities = [[NSMutableSet alloc] init];
     
-    for (OCachedEntity *entity in _dirtyEntities) {
+    for (OReplicatedEntity *entity in _dirtyEntities) {
         if ([entity isDirty]) {
             [confirmedDirtyEntities addObject:entity];
         }
@@ -422,7 +424,7 @@ static OMeta *m = nil;
 }
 
 
-- (void)stageServerEntity:(OCachedEntity *)entity
+- (void)stageServerEntity:(OReplicatedEntity *)entity
 {
     if ([_stagedServerEntityRefs count] == 0) {
         [_stagedServerEntities removeAllObjects];
@@ -432,7 +434,7 @@ static OMeta *m = nil;
 }
 
 
-- (void)stageServerEntityRefs:(NSDictionary *)entityRefs forEntity:(OCachedEntity *)entity
+- (void)stageServerEntityRefs:(NSDictionary *)entityRefs forEntity:(OReplicatedEntity *)entity
 {
     if ([_stagedServerEntityRefs count] == 0) {
         [_stagedServerEntities removeAllObjects];
@@ -442,13 +444,13 @@ static OMeta *m = nil;
 }
 
 
-- (OCachedEntity *)stagedServerEntityWithId:(NSString *)entityId
+- (OReplicatedEntity *)stagedServerEntityWithId:(NSString *)entityId
 {
     return [_stagedServerEntities objectForKey:entityId];
 }
 
 
-- (NSDictionary *)stagedServerEntityRefsForEntity:(OCachedEntity *)entity
+- (NSDictionary *)stagedServerEntityRefsForEntity:(OReplicatedEntity *)entity
 {
     NSDictionary *entityRefs = [_stagedServerEntityRefs objectForKey:entity.entityId];
     [_stagedServerEntityRefs removeObjectForKey:entity.entityId];
@@ -462,21 +464,25 @@ static OMeta *m = nil;
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
     if (data) {
-        [self.context saveToCacheFromDictionaries:data];
+        [self.context saveServerReplicas:data];
     }
 
     if ((response.statusCode == kHTTPStatusCodeCreated) ||
         (response.statusCode == kHTTPStatusCodeMultiStatus)) {
-        OLogDebug(@"Entities successfully persisted");
+        OLogDebug(@"Entities successfully replicated to server.");
         
         NSDate *now = [NSDate date];
         
-        for (OCachedEntity *entity in _dirtyEntities) {
-            entity.dateModified = now;
-            entity.hashCode = [NSNumber numberWithInteger:[entity computeHashCode]];
+        for (OReplicatedEntity *entity in _dirtyEntities) {
+            if ([entity isKindOfClass:OReplicatedEntityGhost.class]) {
+                [self.context deleteObject:entity];
+            } else {
+                entity.dateReplicated = now;
+                entity.hashCode = [NSNumber numberWithInteger:[entity computeHashCode]];
+            }
         }
         
-        [self.context saveToCache];
+        [self.context save];
         [_dirtyEntities removeAllObjects];
     }
 }
@@ -484,7 +490,7 @@ static OMeta *m = nil;
 
 - (void)didFailWithError:(NSError *)error
 {
-    OLogError(@"Error synchronising cache with server.");
+    OLogError(@"Error replicating with server.");
 }
 
 @end

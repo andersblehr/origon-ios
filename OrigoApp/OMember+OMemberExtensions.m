@@ -13,6 +13,7 @@
 #import "OStrings.h"
 
 #import "NSDate+ODateExtensions.h"
+#import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
 #import "NSString+OStringExtensions.h"
 
 #import "OMember.h"
@@ -54,24 +55,6 @@
     }
     
     return nameString;
-}
-
-
-#pragma mark - Member root origo
-
-- (OOrigo *)memberRoot
-{
-    OOrigo *memberRoot = nil;
-    
-    for (OMembership *membership in self.memberships) {
-        if (!memberRoot) {
-            if ([membership.origo isMemberRoot]) {
-                memberRoot = membership.origo;
-            }
-        }
-    }
-    
-    return memberRoot;
 }
 
 
@@ -185,23 +168,66 @@
 }
 
 
-#pragma mark - Wards
+#pragma mark - In the same household
+
+- (NSSet *)housemates
+{
+    NSMutableSet *housemates = [[NSMutableSet alloc] init];
+    
+    for (OMemberResidency *memberResidency in self.residencies) {
+        for (OMemberResidency *householdResidency in memberResidency.residence.residencies) {
+            [housemates addObject:householdResidency.resident];
+        }
+    }
+    
+    return housemates;
+}
+
 
 - (NSSet *)wards
 {
     NSMutableSet *wards = [[NSMutableSet alloc] init];
     
     if (![self isMinor]) {
-        for (OMemberResidency *memberResidency in self.residencies) {
-            for (OMemberResidency *householdResidency in memberResidency.residence.residencies) {
-                if ([householdResidency.resident isMinor]) {
-                    [wards addObject:householdResidency.resident];
-                }
+        NSMutableSet *housemates = [NSSet setWithSet:[self housemates]];
+        
+        for (OMember *housemate in housemates) {
+            if ([housemate isMinor]) {
+                [wards addObject:housemate];
             }
         }
     }
     
-    return [NSSet setWithSet:wards];
+    return wards;
+}
+
+
+#pragma mark - Origo memberships
+
+- (OMembership *)rootMembership
+{
+    OMembership *rootMembership = nil;
+    OOrigo *memberRoot = [[OMeta m].context entityWithId:self.origoId];
+    
+    if (memberRoot) {
+        rootMembership = [memberRoot.memberships allObjects][0];
+    }
+    
+    return rootMembership;
+}
+
+
+- (NSSet *)origoMemberships
+{
+    NSMutableSet *origoMemberships = [[NSMutableSet alloc] init];
+    
+    for (OMembership *membership in self.memberships) {
+        if (![membership.origo isMemberRoot] && ![membership.origo isResidence]) {
+            [origoMemberships addObject:membership];
+        }
+    }
+    
+    return origoMemberships;
 }
 
 

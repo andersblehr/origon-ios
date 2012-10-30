@@ -178,7 +178,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)registerNewDevice
 {
-    ODevice *device = [[OMeta m].context insertEntityForClass:ODevice.class inOrigo:[[OMeta m].user memberRoot] entityId:[OMeta m].deviceId];
+    ODevice *device = [[OMeta m].context insertEntityForClass:ODevice.class inOrigo:[[OMeta m].user rootMembership].origo entityId:[OMeta m].deviceId];
     device.type = [UIDevice currentDevice].model;
     device.displayName = [UIDevice currentDevice].name;
     device.member = [OMeta m].user;
@@ -238,7 +238,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)userDidAuthenticateWithData:(NSArray *)data
 {
     if (data) {
-        [[OMeta m].context saveToCacheFromDictionaries:data];
+        [[OMeta m].context saveServerReplicas:data];
     }
     
     if ([OState s].actionIsActivate) {
@@ -253,14 +253,14 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [[OMeta m] userDidLogIn];
     
-    BOOL deviceIsNew = ([[OMeta m].context cachedEntityWithId:[OMeta m].deviceId] == nil);
+    BOOL deviceIsNew = ([[OMeta m].context entityWithId:[OMeta m].deviceId] == nil);
     
     if (deviceIsNew) {
         [self registerNewDevice];
     }
     
-    if (deviceIsNew || [[OMeta m].context savedCacheStateIsDirty]) {
-        [[OMeta m].context synchroniseCacheWithServer];
+    if (deviceIsNew || [[OMeta m].context savedReplicationStateIsDirty]) {
+        [[OMeta m].context replicate];
     }
     
     if ([self isRegistrationComplete]) {
@@ -328,7 +328,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [OMeta m].user.didRegister_ = YES;
     
     [self registerNewDevice];
-    [[OMeta m].context synchroniseCacheWithServer];
+    [[OMeta m].context replicate];
     
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyAuthInfo];
     _authInfo = nil;

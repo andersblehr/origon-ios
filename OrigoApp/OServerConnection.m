@@ -20,7 +20,7 @@
 #import "OState.h"
 #import "OStrings.h"
 
-#import "OCachedEntity+OCachedEntityExtensions.h"
+#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 
 NSString * const kHTTPMethodGET = @"GET";
@@ -62,7 +62,7 @@ static NSString * const kRESTHandlerModel = @"model";
 
 static NSString * const kRESTRouteAuthLogin = @"login";
 static NSString * const kRESTRouteAuthActivate = @"activate";
-static NSString * const kRESTRouteModelSync = @"sync";
+static NSString * const kRESTRouteModelReplicate = @"replicate";
 static NSString * const kRESTRouteModelFetch = @"fetch";
 static NSString * const kRESTRouteModelMember = @"member";
 
@@ -191,7 +191,7 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-#pragma mark - Authentication
+#pragma mark - Server requests
 
 - (void)authenticate:(id)delegate
 {
@@ -202,7 +202,7 @@ static NSString * const kURLParameterVersion = @"version";
     if ([OState s].actionIsLogin) {
         _RESTRoute = kRESTRouteAuthLogin;
         
-        [self setValue:[OMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
+        [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
     } else if ([OState s].actionIsActivate) {
         _RESTRoute = kRESTRouteAuthActivate;
     }
@@ -211,32 +211,21 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-#pragma mark - Server requests
-
-- (void)fetchStringsFromServer
-{
-    _RESTHandler = kRESTHandlerStrings;
-    _RESTRoute = [OMeta m].displayLanguage;
-    
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:OStrings.class];
-}
-
-
-- (void)synchroniseCacheWithServer
+- (void)replicate
 {
     _RESTHandler = kRESTHandlerModel;
     
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    [self setValue:[OMeta m].lastFetchDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
+    [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     
     NSSet *modifiedEntities = [OMeta m].dirtyEntities;
     
     if (modifiedEntities.count > 0) {
-        _RESTRoute = kRESTRouteModelSync;
+        _RESTRoute = kRESTRouteModelReplicate;
         
         NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
         
-        for (OCachedEntity *entity in modifiedEntities) {
+        for (OReplicatedEntity *entity in modifiedEntities) {
             [entityDictionaries addObject:[entity toDictionary]];
         }
         
@@ -249,7 +238,16 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-- (void)fetchMemberEntitiesFromServer:(NSString *)memberId delegate:(id)delegate
+- (void)fetchStrings
+{
+    _RESTHandler = kRESTHandlerStrings;
+    _RESTRoute = [OMeta m].displayLanguage;
+    
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:OStrings.class];
+}
+
+
+- (void)lookUpMemberWithId:(NSString *)memberId delegate:(id)delegate
 {
     _RESTHandler = kRESTHandlerModel;
     _RESTRoute = [NSString stringWithFormat:@"%@/%@", kRESTRouteModelMember, memberId];
@@ -280,10 +278,10 @@ static NSString * const kURLParameterVersion = @"version";
     [_responseData setLength:0];
     
     if (response.statusCode < kHTTPStatusCodeErrorRangeStart) {
-        NSString *fetchDate = [[response allHeaderFields] objectForKey:kHTTPHeaderLastModified];
+        NSString *replicationDate = [[response allHeaderFields] objectForKey:kHTTPHeaderLastModified];
         
-        if (fetchDate) {
-            [OMeta m].lastFetchDate = fetchDate;
+        if (replicationDate) {
+            [OMeta m].lastReplicationDate = replicationDate;
         }
     } else {
         BOOL shouldShowAutomaticAlert = NO;
