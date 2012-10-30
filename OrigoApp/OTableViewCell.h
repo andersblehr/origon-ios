@@ -12,11 +12,8 @@ extern NSString * const kReuseIdentifierDefault;
 extern NSString * const kReuseIdentifierUserLogin;
 extern NSString * const kReuseIdentifierUserActivation;
 
-extern CGFloat const kScreenWidth;
 extern CGFloat const kCellWidth;
-extern CGFloat const kContentWidth;
-extern CGFloat const kKeyboardHeight;
-
+extern CGFloat const kDefaultPadding;
 
 @class OReplicatedEntity;
 @class OTextField;

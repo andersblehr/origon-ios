@@ -118,7 +118,7 @@ extern NSString * const strGenderSheetTitleMemberMinor;
 
 @interface OStrings : NSObject
 
-+ (void)refreshIfPossible;
++ (void)conditionallyRefresh;
 
 + (NSString *)stringForKey:(NSString *)key;
 + (NSString *)lowercaseStringForKey:(NSString *)key;

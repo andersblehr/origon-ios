@@ -18,6 +18,7 @@
 #import "OMeta.h"
 #import "OServerConnection.h"
 #import "OState.h"
+#import "OStrings.h"
 
 #import "OMember.h"
 
@@ -37,8 +38,8 @@ static NSString * const kPersistentStoreFormat = @"OrigoApp$%@.sqlite";
 
 static void uncaughtExceptionHandler(NSException *exception)
 {
-    NSLog(@"CRASH: %@", exception);
-    NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
+    OLogError(@"CRASH: %@", exception);
+    OLogError(@"Stack Trace: %@", [exception callStackSymbols]);
 }
 
 
@@ -112,6 +113,8 @@ static void uncaughtExceptionHandler(NSException *exception)
     OLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
     OLogDebug(@"System language is '%@'.", [[OMeta m] displayLanguage]);
     OLogState;
+    
+    [OStrings conditionallyRefresh];
     
     return YES;
 }

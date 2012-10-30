@@ -57,8 +57,7 @@
 
 - (id)addResident:(OMember *)resident
 {
-    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self entityId:[resident.entityId stringByAppendingStringWithDollar:self.entityId]];
-    
+    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self entityId:[resident.entityId stringByAppendingStringWithCaret:self.entityId]];
     residency.resident = resident;
     residency.residence = self;
     residency.member = resident;

@@ -142,7 +142,7 @@ static NSDictionary *strings = nil;
 
 #pragma mark - Interface implementation
 
-+ (void)refreshIfPossible
++ (void)conditionallyRefresh
 {
     if ([OMeta m].isInternetConnectionAvailable) {
         if (!strings || [OMeta m].isInternetConnectionWiFi) { // TODO: Only if required

@@ -230,14 +230,14 @@ static NSInteger const kMemberSection = 2;
             numberOfRows = numberOfMembers;
         }
     }
-        
+    
 	return numberOfRows;
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height;
+    CGFloat height = 0;
     
     if (indexPath.section == kOrigoSection) {
         height = [OTableViewCell heightForEntity:_origo];
@@ -323,11 +323,9 @@ static NSInteger const kMemberSection = 2;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = kMinimumSectionHeaderHeight;
+    CGFloat height = kDefaultPadding;
     
-    if (section == kOrigoSection) {
-        height = kDefaultSectionHeaderHeight;
-    } else {
+    if (section > kOrigoSection) {
         height = [tableView standardHeaderHeight];
     }
     
@@ -337,7 +335,13 @@ static NSInteger const kMemberSection = 2;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    return kDefaultSectionFooterHeight;
+    CGFloat height = kDefaultPadding;
+    
+    if ([self sectionIsMemberSection:section] && [_origo userIsAdmin]) {
+        height = [tableView standardFooterHeight];
+    }
+    
+    return height;
 }
 
 

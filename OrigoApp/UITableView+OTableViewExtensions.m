@@ -17,24 +17,18 @@
 
 #import "OReplicatedEntity.h"
 
-CGFloat const kDefaultSectionHeaderHeight = 10.f;
-CGFloat const kDefaultSectionFooterHeight = 10.f;
-CGFloat const kMinimumSectionHeaderHeight = 1.f;
-CGFloat const kMinimumSectionFooterHeight = 1.f;
-CGFloat const kSectionSpacing = 5.f;
+static CGFloat const kScreenWidth = 320.f;
+static CGFloat const kContentWidth = 280.f;
+static CGFloat const kKeyboardHeight = 216.f;
 
 static CGFloat const kLogoHeight = 55.f;
-static CGFloat const kLogoMarginX = 10.f;
-static CGFloat const kLogoMarginY = 10.f;
 static CGFloat const kLogoFontSize = 30.f;
-static CGFloat const kLogoFontShadowOffset = 7.f;
+static CGFloat const kLogoShadowOffset = 7.f;
 
-static CGFloat const kHeaderMargin = 10.f;
 static CGFloat const kHeaderHeadRoom = 0.f;
 static CGFloat const kHeaderShadowOffset = 3.f;
 static CGFloat const kHeaderFontToHeightScaleFactor = 1.5f;
 
-static CGFloat const kFooterMargin = 20.f;
 static CGFloat const kFooterHeadRoom = 8.f;
 static CGFloat const kFooterShadowOffset = 2.f;
 static CGFloat const kFooterFontToHeightScaleFactor = 5.f;
@@ -57,8 +51,8 @@ static NSString * const kLogoText = @"..origo..";
 
 - (void)addLogoBanner
 {
-    CGRect containerViewFrame = CGRectMake(kLogoMarginX, 0.f, kCellWidth, kLogoHeight);
-    CGRect logoFrame = CGRectMake(kLogoMarginX, kLogoMarginY, kCellWidth, kLogoHeight - kLogoMarginY);
+    CGRect containerViewFrame = CGRectMake(kDefaultPadding, 0.f, kCellWidth, kLogoHeight);
+    CGRect logoFrame = CGRectMake(kDefaultPadding, kDefaultPadding, kCellWidth, kLogoHeight - kDefaultPadding);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *logoLabel = [[UILabel alloc] initWithFrame:logoFrame];
@@ -66,7 +60,7 @@ static NSString * const kLogoText = @"..origo..";
     logoLabel.backgroundColor = [UIColor clearColor];
     logoLabel.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
     logoLabel.shadowColor = [UIColor darkTextColor];
-    logoLabel.shadowOffset = CGSizeMake(0.f, kLogoFontShadowOffset);
+    logoLabel.shadowOffset = CGSizeMake(0.f, kLogoShadowOffset);
     logoLabel.text = kLogoText;
     logoLabel.textAlignment = UITextAlignmentCenter;
     logoLabel.textColor = [UIColor headerTextColor];
@@ -154,12 +148,18 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
+- (CGFloat)standardFooterHeight
+{
+    return kFooterFontToHeightScaleFactor * [UIFont footerFont].lineHeight;
+}
+
+
 - (UIView *)headerViewWithTitle:(NSString *)title
 {
     self.sectionHeaderHeight = [self standardHeaderHeight];
     
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionHeaderHeight);
-    CGRect headerFrame = CGRectMake(kHeaderMargin, kHeaderHeadRoom, kCellWidth, self.sectionHeaderHeight);
+    CGRect headerFrame = CGRectMake(kDefaultPadding, kHeaderHeadRoom, kCellWidth, self.sectionHeaderHeight);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
@@ -183,10 +183,10 @@ static NSString * const kLogoText = @"..origo..";
     UIFont *footerFont = [UIFont footerFont];
     CGSize footerSize = [footerText sizeWithFont:footerFont constrainedToSize:CGSizeMake(kContentWidth, kFooterFontToHeightScaleFactor * footerFont.lineHeight) lineBreakMode:UILineBreakModeWordWrap];
     
-    self.sectionFooterHeight = footerSize.height + kSectionSpacing;
+    self.sectionFooterHeight = footerSize.height + kDefaultPadding;
 
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionFooterHeight);
-    CGRect footerFrame = CGRectMake(kFooterMargin, kFooterHeadRoom, kContentWidth, self.sectionFooterHeight);
+    CGRect footerFrame = CGRectMake(kDefaultPadding * 2, kFooterHeadRoom, kContentWidth, self.sectionFooterHeight);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:footerFrame];
@@ -210,22 +210,25 @@ static NSString * const kLogoText = @"..origo..";
 
 - (void)insertRow:(NSInteger)row inSection:(NSInteger)section sectionIsNew:(BOOL)sectionIsNew
 {
-    [self beginUpdates];
+    //[self beginUpdates];
     
     if (sectionIsNew) {
         [self insertSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
     
-    [self insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:section]] withRowAnimation:UITableViewRowAnimationAutomatic];
-    [self endUpdates];
+    NSRange reloadRange = {section, 1};
+    [self reloadSections:[NSIndexSet indexSetWithIndexesInRange:reloadRange] withRowAnimation:UITableViewRowAnimationAutomatic];
     
-    BOOL isLastRowInSection = ([self cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row + 1 inSection:section]] == nil);
-    
-    if (isLastRowInSection) {
-        UITableViewCell *precedingCell = [self cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row - 1 inSection:section]];
-        
-        [precedingCell.backgroundView addShadowForContainedTableViewCell];
-    }
+//    [self insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:section]] withRowAnimation:UITableViewRowAnimationAutomatic];
+//    [self endUpdates];
+//    
+//    BOOL isLastRowInSection = ([self cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row + 1 inSection:section]] == nil);
+//    
+//    if (isLastRowInSection) {
+//        UITableViewCell *precedingCell = [self cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row - 1 inSection:section]];
+//        
+//        [precedingCell.backgroundView addShadowForContainedTableViewCell];
+//    }
 }
 
 

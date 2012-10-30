@@ -29,29 +29,22 @@
 #import "OMember+OMemberExtensions.h"
 #import "OOrigo+OOrigoExtensions.h"
 
-NSString * const kReuseIdentifierDefault = @"idDefault";
-NSString * const kReuseIdentifierUserLogin = @"idUserLogin";
-NSString * const kReuseIdentifierUserActivation = @"idUserConfirmation";
+NSString * const kReuseIdentifierDefault = @"idDefaultCell";
+NSString * const kReuseIdentifierUserLogin = @"idUserLoginCell";
+NSString * const kReuseIdentifierUserActivation = @"idUserActivationCell";
 
-CGFloat const kScreenWidth = 320.f;
 CGFloat const kCellWidth = 300.f;
-CGFloat const kContentWidth = 280.f;
-CGFloat const kKeyboardHeight = 216.f;
+CGFloat const kDefaultPadding = 10.f;
 
-static CGFloat const kVerticalPadding = 11.f;
-static CGFloat const kHorizontalPadding = 10.f;
 static CGFloat const kDefaultCellHeight = 45.f;
-static CGFloat const kDefaultContentOffset = 0.f;
 static CGFloat const kPhotoSideLength = 63.f;
 
 static CGFloat const kLabelWidth = 63.f;
 static CGFloat const kLabelToDetailAlignmentPadding = 2.f;
 static CGFloat const kLabelDetailSpacing = 7.f;
-static CGFloat const kLineSpacing = 5.f;
 
 static CGFloat const kAuthFieldWidthFraction = 0.7f;
 static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
-static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 
 @implementation OTableViewCell
@@ -73,7 +66,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 
 - (OTextField *)authFieldForKey:(NSString *)key
 {
-    CGFloat contentWidth = kCellWidth - kHorizontalPadding - _contentMargin;
+    CGFloat contentWidth = kCellWidth - kDefaultPadding - _contentMargin;
     CGFloat textFieldWidth = kAuthFieldWidthFraction * contentWidth;
     
     OTextField *textField = [[OTextField alloc] initForDetailAtOrigin:CGPointMake(_contentMargin + (contentWidth - textFieldWidth) / 2.f, _verticalOffset) width:textFieldWidth];
@@ -129,11 +122,11 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     
     if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin] ||
         [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-        height = kVerticalPadding;
+        height = kDefaultPadding;
         height += [UIFont labelFont].lineHeight;
         height += 2.f * kLineSpacing;
         height += 2.f * [UIFont editableDetailFont].lineHeightWhenEditing;
-        height += 1.5f * kVerticalPadding;
+        height += 1.5f * kDefaultPadding;
     }
     
     return height;
@@ -145,7 +138,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     CGFloat height = [OTableViewCell defaultHeight];
     
     if (entityClass == OMember.class) {
-        height = 2 * kVerticalPadding + 2 * kLineSpacing;
+        height = 2 * kDefaultPadding + 2 * kLineSpacing;
         
         if ([OState s].actionIsInput) {
             height += [UIFont editableTitleFont].lineHeightWhenEditing;
@@ -156,7 +149,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
             height += kPhotoSideLength;
         }
     } else if (entityClass == OOrigo.class) {
-        height = 2 * kVerticalPadding + 2 * kLineSpacing;
+        height = 2 * kDefaultPadding + 2 * kLineSpacing;
         
         if ([OState s].actionIsInput) {
             height += 3 * [UIFont editableDetailFont].lineHeightWhenEditing;
@@ -216,7 +209,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 {
     UIFont *labelFont = [UIFont labelFont];
     
-    CGFloat contentWidth = kCellWidth - kHorizontalPadding - _contentMargin;
+    CGFloat contentWidth = kCellWidth - kDefaultPadding - _contentMargin;
     CGFloat labelWidth = (widthFraction > 0.f) ? widthFraction * contentWidth : kLabelWidth;
     CGFloat detailAlignmentPadding = centred ? 0.f : kLabelToDetailAlignmentPadding;
     
@@ -244,7 +237,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 {
     CGFloat titleHeight = self.editing ? [UIFont editableTitleFont].lineHeightWhenEditing : [UIFont titleFont].lineHeight;
     
-    UIView *titleBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(-1.f, -1.f, kCellWidth + 2, kVerticalPadding + titleHeight + kLineSpacing)];
+    UIView *titleBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(-1.f, -1.f, kCellWidth + 2, kDefaultPadding + titleHeight + kLineSpacing)];
     titleBackgroundView.backgroundColor = [UIColor ashGrayColor];
     
     [self.contentView addSubview:titleBackgroundView];
@@ -287,7 +280,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
 {
     OTextField *textField = nil;
     
-    CGFloat contentWidth = kCellWidth - _contentOffset - _contentMargin - kHorizontalPadding;
+    CGFloat contentWidth = kCellWidth - _contentOffset - _contentMargin - kDefaultPadding;
     CGFloat textFieldWidth = widthFraction * contentWidth;
     
     if (text || self.editing) {
@@ -337,7 +330,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
         
         if (widthFraction == 1.f) {
             _verticalOffset += [textField lineHeight] + [textField lineSpacingBelow];
-            _contentMargin = kHorizontalPadding;
+            _contentMargin = kDefaultPadding;
         } else {
             _contentMargin += textFieldWidth;
         }
@@ -372,7 +365,7 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     [self.contentView addSubview:_imageButton];
     
     _contentOffset += kPhotoSideLength;
-    _contentMargin = kHorizontalPadding;
+    _contentMargin = kDefaultPadding;
 }
 
 
@@ -433,9 +426,9 @@ static CGFloat const kPhoneFieldWidthFraction = 0.45f;
     self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     
     if (self) {
-        _contentOffset = kDefaultContentOffset;
-        _contentMargin = kHorizontalPadding;
-        _verticalOffset = kVerticalPadding;
+        _contentOffset = 0.f;
+        _contentMargin = kDefaultPadding;
+        _verticalOffset = kDefaultPadding;
         
         _labels = [[NSMutableSet alloc] init];
         _textFields = [[NSMutableDictionary alloc] init];

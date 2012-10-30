@@ -372,7 +372,11 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [self.tableView addLogoBanner];
     self.navigationController.navigationBarHidden = YES;
     
-    _activityIndicator = [self.tableView addActivityIndicator];
+    [OState s].targetIsMember = YES;
+    [OState s].actionIsLogin = YES;
+    [OState s].aspectIsSelf = YES;
+    
+    OLogState;
     
     if ([OMeta m].isUserLoggedIn) {
         if ([self isRegistrationComplete]) {
@@ -392,19 +396,16 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super viewWillAppear:animated];
     
-    [OState s].targetIsMember = YES;
-    [OState s].actionIsLogin = YES;
-    [OState s].aspectIsSelf = YES;
+    _activityIndicator = [self.tableView addActivityIndicator];
     
     NSData *authInfoArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyAuthInfo];
     
     if (authInfoArchive) {
         _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
+        
         [OMeta m].userId = [_authInfo objectForKey:kAuthInfoKeyUserId];
         [OState s].actionIsActivate = YES;
     }
-    
-    OLogState;
 }
 
 
@@ -412,7 +413,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super viewDidAppear:animated];
 
-    [OStrings refreshIfPossible];
     [self initialiseFields];
 
     if ([OState s].actionIsActivate) {

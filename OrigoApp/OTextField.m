@@ -31,9 +31,10 @@ NSString * const kTextFieldKeyAddressLine1 = @"addressLine1";
 NSString * const kTextFieldKeyAddressLine2 = @"addressLine2";
 NSString * const kTextFieldKeyTelephone = @"telephone";
 
+CGFloat const kLineSpacing = 5.f;
+
 static CGFloat const kRoundedCornerRadius = 2.5f;
 static CGFloat const kTextInset = 4.f;
-static CGFloat const kLineSpacing = 5.f;
 
 
 @implementation OTextField
