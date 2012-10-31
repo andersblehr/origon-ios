@@ -136,7 +136,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [_activityIndicator stopAnimating];
     }
     
-    _isEditingAllowed = !isPending;
+    _editingIsAllowed = !isPending;
 }
 
 
@@ -187,7 +187,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - Input validation
 
-- (BOOL)isActivationCodeValid
+- (BOOL)isValidActivationCode
 {
     NSString *activationCode = [[_authInfo objectForKey:kAuthInfoKeyActivationCode] lowercaseString];
     NSString *activationCodeAsEntered = [_activationCodeField.text lowercaseString];
@@ -202,7 +202,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (BOOL)isPasswordValid
+- (BOOL)isValidPassword
 {
     BOOL isValid = NO;
     
@@ -263,7 +263,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [[OMeta m].context replicate];
     }
     
-    if ([self isRegistrationComplete]) {
+    if ([self registrationisComplete]) {
         [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
     } else {
         [OAlert showAlertWithTitle:[OStrings stringForKey:strIncompleteRegistrationTitle] message:[OStrings stringForKey:strIncompleteRegistrationAlert]];
@@ -278,7 +278,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)userDidSignUpWithData:(NSDictionary *)data
 {
     _authInfo = data;
-    _isUserListed = [[_authInfo objectForKey:kAuthInfoKeyIsUserListed] boolValue];
+    _userIsListed = [[_authInfo objectForKey:kAuthInfoKeyIsUserListed] boolValue];
     
     NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:_authInfo];
     [[NSUserDefaults standardUserDefaults] setObject:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
@@ -304,7 +304,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [[OMeta m] userDidLogIn];
     
-    if (_isUserListed) {
+    [self registerNewDevice];
+    
+    if (_userIsListed) {
         for (OMemberResidency *residency in [OMeta m].user.residencies) {
             residency.isActive_ = YES;
             
@@ -327,13 +329,14 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [OMeta m].user.passwordHash = [_authInfo objectForKey:kAuthInfoKeyPasswordHash];
     [OMeta m].user.didRegister_ = YES;
     
-    [self registerNewDevice];
     [[OMeta m].context replicate];
     
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyAuthInfo];
     _authInfo = nil;
     
-    if (![self isRegistrationComplete]) {
+    if ([self registrationisComplete] && [[OMeta m].user isMinor]) {
+        [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
+    } else {
         [self completeRegistration];
     }
 }
@@ -341,7 +344,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - User registration
 
-- (BOOL)isRegistrationComplete
+- (BOOL)registrationisComplete
 {
     return ([[OMeta m].user hasPhone] && [[OMeta m].user hasAddress]);
 }
@@ -352,7 +355,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [OState s].actionIsRegister = YES;
     
     OMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
-    memberViewController.membership = [[OMeta m].user.residencies anyObject];
+    memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
     memberViewController.delegate = self;
     
     UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
@@ -379,7 +382,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     OLogState;
     
     if ([OMeta m].isUserLoggedIn) {
-        if ([self isRegistrationComplete]) {
+        if ([self registrationisComplete]) {
             [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
         } else {
             [OAlert showAlertWithTitle:[OStrings stringForKey:strIncompleteRegistrationTitle] message:[OStrings stringForKey:strIncompleteRegistrationAlert]];
@@ -387,7 +390,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [self completeRegistration];
         }
     } else {
-        _isEditingAllowed = YES;
+        _editingIsAllowed = YES;
     }
 }
 
@@ -504,7 +507,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    return _isEditingAllowed;
+    return _editingIsAllowed;
 }
 
 
@@ -515,7 +518,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if (textField == _emailField) {
         [_passwordField becomeFirstResponder];
     } else if (textField == _passwordField) {
-        shouldReturn = [OMeta isEmailValid:_emailField] && [OMeta isPasswordValid:_passwordField];
+        shouldReturn = [OMeta isValidEmail:_emailField] && [OMeta isValidPassword:_passwordField];
         
         if (shouldReturn) {
             [self.view endEditing:YES];
@@ -527,7 +530,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     } else if (textField == _activationCodeField) {
         [_repeatPasswordField becomeFirstResponder];
     } else if (textField == _repeatPasswordField) {
-        shouldReturn = [self isActivationCodeValid] && [self isPasswordValid];
+        shouldReturn = [self isValidActivationCode] && [self isValidPassword];
         
         if (shouldReturn) {
             [self.view endEditing:YES];
@@ -589,7 +592,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         } else {
             [self userDidAuthenticateWithData:data];
         }
-    } else if (response.statusCode >= kHTTPStatusCodeErrorRangeStart) {
+    } else {
         if (response.statusCode == kHTTPStatusCodeUnauthorized) {
             [_authCell shake];
             [_passwordField becomeFirstResponder];

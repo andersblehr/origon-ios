@@ -2,7 +2,7 @@
 //  OReplicatedEntity.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 30.10.12.
+//  Created by Anders Blehr on 31.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
@@ -17,7 +17,6 @@
 @property (nonatomic, retain) NSDate * dateReplicated;
 @property (nonatomic, retain) NSString * entityId;
 @property (nonatomic, retain) NSNumber * hashCode;
-@property (nonatomic, retain) NSNumber * isLinked;
 @property (nonatomic, retain) NSString * origoId;
 
 @end

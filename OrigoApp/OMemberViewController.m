@@ -152,8 +152,6 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         }
     }
     
-    [self updateMember];
-
     if (!_membership) {
         if ([_origo isResidence]) {
             _membership = [_origo addResident:_member];
@@ -162,12 +160,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         }
     }
     
-    if ([OState s].aspectIsSelf && _membership.isAdmin_) { // TODO: Additional cases
-        [self registerHousehold];
-    } else {
-        [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
-        [_delegate insertEntityInTableView:_membership];
-    }
+    [self updateMember];
 }
 
 
@@ -180,6 +173,16 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     if ([OState s].actionIsRegister) {
         _member.givenName = [NSString givenNameFromFullName:_member.name];
         _member.gender = _gender;
+    }
+    
+    if (![_origo isResidence] || [_origo hasAddress]) {
+        [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
+        
+        if ([_delegate isKindOfClass:OMemberListViewController.class]) {
+            [_delegate insertEntityInTableView:_membership];
+        }
+    } else {
+        [self registerHousehold];
     }
 }
 
@@ -217,15 +220,15 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 {
     BOOL isValidInput = YES;
     
-    isValidInput = isValidInput && [OMeta isNameValid:_nameField];
-    isValidInput = isValidInput && [OMeta isDateOfBirthValid:_dateOfBirthField];
+    isValidInput = isValidInput && [OMeta isValidName:_nameField];
+    isValidInput = isValidInput && [OMeta isValidDateOfBirth:_dateOfBirthField];
     
     if (isValidInput && ![_dateOfBirthPicker.date isBirthDateOfMinor]) {
-        isValidInput = isValidInput && [OMeta isEmailValid:_emailField];
-        isValidInput = isValidInput && [OMeta isMobileNumberValid:_mobilePhoneField];
+        isValidInput = isValidInput && [OMeta isValidEmail:_emailField];
+        isValidInput = isValidInput && [OMeta isValidPhoneNumber:_mobilePhoneField];
     } else if (isValidInput) {
         if (_emailField.text.length > 0) {
-            isValidInput = isValidInput && [OMeta isEmailValid:_emailField];
+            isValidInput = isValidInput && [OMeta isValidEmail:_emailField];
         }
     }
     
@@ -234,13 +237,17 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         
         if ([OState s].actionIsRegister) {
             if (_candidate) {
-                if ([_origo isResidence]) {
+                if ([_candidate.residencies count]) {
                     [self promptForExistingResidenceAction];
                 } else {
                     [self registerMember];
                 }
             } else {
-                [self promptForGender];
+                if (!_gender) {
+                    [self promptForGender];
+                } else {
+                    [self updateMember];
+                }
             }
         } else {
             [self updateMember];
@@ -268,6 +275,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     if (_membership) {
         _member = _membership.member;
         _origo = _membership.origo;
+    } else {
+        
     }
 }
 
@@ -296,7 +305,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             }
         }
     } else if ([OState s].actionIsDisplay) {
-        self.navigationItem.rightBarButtonItem = _editButton;
+        if ([_origo userIsAdmin] || ([_member isUser] && [_member isTeenOrOlder])) {
+            self.navigationItem.rightBarButtonItem = _editButton;
+        }
         
         if ([OState s].aspectIsSelf) {
             self.title = [OStrings stringForKey:strAboutMe];
@@ -383,9 +394,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         if ([OState s].actionIsDisplay) {
             _memberCell = [tableView cellForEntity:_member];
         } else if ([OState s].actionIsInput) {
-            if ([OState s].aspectIsSelf) {
+            if (_member) {
                 _memberCell = [tableView cellForEntity:_member delegate:self];
-            } else if ([OState s].actionIsInput) {
+            } else {
                 _memberCell = [tableView cellForEntityClass:OMember.class delegate:self];
             }
             
@@ -395,7 +406,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             _dateOfBirthField = [_memberCell textFieldWithKey:kTextFieldKeyDateOfBirth];
             _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
             
-            if (_member.dateOfBirth) {
+            if (_member && _member.dateOfBirth) {
                 _dateOfBirthPicker.date = _member.dateOfBirth;
                 _gender = _member.gender;
             }
@@ -470,7 +481,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
     if (_currentField == _emailField) {
-        if ((_emailField.text.length > 0) && [OMeta isEmailValid:_emailField]) {
+        if ((_emailField.text.length > 0) && [OMeta isValidEmail:_emailField]) {
             if ([OState s].aspectIsSelf) {
                 // TODO: Handle user email change
             } else {
@@ -485,7 +496,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
                     if (_candidate) {
                         [self populateWithCandidate];
                     } else {
-                        [[[OServerConnection alloc] init] lookUpMemberWithId:_emailField.text delegate:self];
+                        [[[OServerConnection alloc] init] getMemberWithId:_emailField.text delegate:self];
                     }
                 }
             }

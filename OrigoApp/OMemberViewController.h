@@ -8,11 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OModalInputViewControllerDelegate.h"
 #import "OModalViewControllerDelegate.h"
 #import "OServerConnectionDelegate.h"
 
-@class OMembership, OOrigo;
+@class OMember, OMembership, OOrigo;
 @class OTableViewCell, OTextField;
 
 @interface OMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
@@ -31,6 +30,7 @@
     OTextField *_emailField;
     OTextField *_mobilePhoneField;
     OTextField *_dateOfBirthField;
+    
     UITextField *_currentField;
     UIDatePicker *_dateOfBirthPicker;
     NSString *_gender;
@@ -38,7 +38,7 @@
     NSArray *_sortedResidences;
 }
 
-@property (weak, nonatomic) id<OModalInputViewControllerDelegate> delegate;
+@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
 
 @property (strong, nonatomic) OMembership *membership;
 @property (strong, nonatomic) OOrigo *origo;

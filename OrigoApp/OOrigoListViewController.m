@@ -79,8 +79,7 @@ static NSInteger const kWardSection = 1;
     [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addOrigo)];
-
+    
     if ([OState s].aspectIsSelf) {
         self.title = [OStrings stringForKey:strTabBarTitleOrigo];
         self.member = [OMeta m].user;
@@ -96,6 +95,10 @@ static NSInteger const kWardSection = 1;
         _sortedWards = [[wards allObjects] sortedArrayUsingSelector:@selector(compare:)];
     } else {
         self.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigos], _member.givenName];
+    }
+
+    if ([_member isTeenOrOlder]) {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addOrigo)];
     }
     
     NSMutableSet *origos = [[NSMutableSet alloc] init];

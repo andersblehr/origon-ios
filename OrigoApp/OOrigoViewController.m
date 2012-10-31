@@ -45,7 +45,7 @@
 
 - (void)didFinishEditing
 {
-    if ([OMeta isAddressValidWithLine1:_addressLine1Field line2:_addressLine2Field]) {
+    if ([OMeta isValidAddressWithLine1:_addressLine1Field line2:_addressLine2Field]) {
         _origo.addressLine1 = _addressLine1Field.text;
         _origo.addressLine2 = _addressLine2Field.text;
         _origo.telephone = _telephoneField.text;
@@ -89,18 +89,18 @@
     
     OLogState;
     
+    self.title = [_origo isResidence] ? [OStrings stringForKey:strAddressLabel] : _origo.name;
+    
     if ([OState s].actionIsRegister) {
-        self.title = [OStrings stringForKey:strAddressLabel];
         self.navigationItem.rightBarButtonItem = _doneButton;
         
-        if ([_origo isResidence]) {
-            self.navigationItem.hidesBackButton = YES;
-        } else {
+        if (_delegate) {
             self.navigationItem.leftBarButtonItem = _cancelButton;
         }
     } else if ([OState s].actionIsDisplay) {
-        self.title = [OStrings stringForKey:strAddressLabel];
-        self.navigationItem.rightBarButtonItem = _editButton;
+        if ([_origo userIsAdmin]) {
+            self.navigationItem.rightBarButtonItem = _editButton;
+        }
     }
 }
 

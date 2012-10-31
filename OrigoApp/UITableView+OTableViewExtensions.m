@@ -210,25 +210,13 @@ static NSString * const kLogoText = @"..origo..";
 
 - (void)insertRow:(NSInteger)row inSection:(NSInteger)section sectionIsNew:(BOOL)sectionIsNew
 {
-    //[self beginUpdates];
+    NSRange reloadRange = {section, 1};
     
     if (sectionIsNew) {
         [self insertSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
     
-    NSRange reloadRange = {section, 1};
     [self reloadSections:[NSIndexSet indexSetWithIndexesInRange:reloadRange] withRowAnimation:UITableViewRowAnimationAutomatic];
-    
-//    [self insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:row inSection:section]] withRowAnimation:UITableViewRowAnimationAutomatic];
-//    [self endUpdates];
-//    
-//    BOOL isLastRowInSection = ([self cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row + 1 inSection:section]] == nil);
-//    
-//    if (isLastRowInSection) {
-//        UITableViewCell *precedingCell = [self cellForRowAtIndexPath:[NSIndexPath indexPathForRow:row - 1 inSection:section]];
-//        
-//        [precedingCell.backgroundView addShadowForContainedTableViewCell];
-//    }
 }
 
 

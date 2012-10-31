@@ -13,6 +13,9 @@
 #import "OMember.h"
 #import "OOrigo.h"
 
+#import "OMember+OMemberExtensions.h"
+#import "OOrigo+OOrigoExtensions.h"
+
 
 @implementation OMembership (OMembershipExtensions)
 
@@ -54,7 +57,20 @@
 
 - (NSComparisonResult)compare:(OMembership *)other
 {
-    return [self.member.name localizedCaseInsensitiveCompare:other.member.name];
+    NSComparisonResult comparisonResult = [self.member.name localizedCaseInsensitiveCompare:other.member.name];
+    
+    BOOL thisMemberIsMinor = [self.member isMinor];
+    BOOL otherMemberIsMinor = [other.member isMinor];
+    
+    if ([self.origo isResidence] && (thisMemberIsMinor != otherMemberIsMinor)) {
+        if (thisMemberIsMinor && !otherMemberIsMinor) {
+            comparisonResult = NSOrderedDescending;
+        } else {
+            comparisonResult = NSOrderedAscending;
+        }
+    }
+
+    return comparisonResult;
 }
 
 @end

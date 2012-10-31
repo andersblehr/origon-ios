@@ -170,11 +170,11 @@ static NSInteger const kMemberSection = 2;
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+	[super viewWillDisappear:animated];
+    
     if (_needsReplication && !self.navigationController.presentedViewController) {
         [self didFinishAdding];
     }
-    
-	[super viewWillDisappear:animated];
 }
 
 

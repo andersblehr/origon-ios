@@ -19,10 +19,11 @@
 - (NSString *)details;
 - (UIImage *)image;
 
+- (BOOL)isUser;
 - (BOOL)isFemale;
 - (BOOL)isMale;
 - (BOOL)isMinor;
-- (BOOL)isUser;
+- (BOOL)isTeenOrOlder;
 
 - (BOOL)hasPhone;
 - (BOOL)hasMobilePhone;

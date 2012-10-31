@@ -8,9 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+#import "OReplicatedEntity.h"
+
 @protocol OModalViewControllerDelegate <NSObject>
 
 @required
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier;
+
+@optional
+- (void)insertEntityInTableView:(OReplicatedEntity *)entity;
 
 @end
