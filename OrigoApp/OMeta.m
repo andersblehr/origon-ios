@@ -95,12 +95,12 @@ static OMeta *m = nil;
 {
     NetworkStatus internetStatus = [reachability currentReachabilityStatus];
     
-    _isInternetConnectionWiFi = (internetStatus == ReachableViaWiFi);
-    _isInternetConnectionWWAN = (internetStatus == ReachableViaWWAN);
+    _internetConnectionIsWiFi = (internetStatus == ReachableViaWiFi);
+    _internetConnectionIsWWAN = (internetStatus == ReachableViaWWAN);
     
-    if (_isInternetConnectionWiFi) {
+    if (_internetConnectionIsWiFi) {
         OLogInfo(@"Connected to the internet via Wi-Fi.");
-    } else if (_isInternetConnectionWWAN) {
+    } else if (_internetConnectionIsWWAN) {
         OLogInfo(@"Connected to the internet via mobile web (WWAN).");
     } else {
         OLogInfo(@"Not connected to the internet.");
@@ -161,8 +161,8 @@ static OMeta *m = nil;
         _is_iPhoneDevice = [deviceModel hasPrefix:@"iPhone"];
         _isSimulatorDevice = ([deviceModel rangeOfString:@"Simulator"].location != NSNotFound);
         
-        _isInternetConnectionWiFi = NO;
-        _isInternetConnectionWWAN = NO;
+        _internetConnectionIsWiFi = NO;
+        _internetConnectionIsWWAN = NO;
         
         _dirtyEntities = [[NSMutableSet alloc] init];
         _stagedServerEntities = [[NSMutableDictionary alloc] init];
@@ -194,7 +194,7 @@ static OMeta *m = nil;
 
 #pragma mark - Input validation
 
-+ (BOOL)isEmailValid:(UITextField *)emailField
++ (BOOL)isValidEmail:(UITextField *)emailField
 {
     NSString *email = [emailField.text removeLeadingAndTrailingSpaces];
     
@@ -208,7 +208,7 @@ static OMeta *m = nil;
 }
 
 
-+ (BOOL)isPasswordValid:(UITextField *)passwordField
++ (BOOL)isValidPassword:(UITextField *)passwordField
 {
     NSString *password = [passwordField.text removeLeadingAndTrailingSpaces];
     
@@ -222,7 +222,7 @@ static OMeta *m = nil;
 }
 
 
-+ (BOOL)isNameValid:(UITextField *)nameField
++ (BOOL)isValidName:(UITextField *)nameField
 {
     NSString *name = [nameField.text removeLeadingAndTrailingSpaces];
     
@@ -243,7 +243,7 @@ static OMeta *m = nil;
 }
 
 
-+ (BOOL)isMobileNumberValid:(UITextField *)mobileNumberField
++ (BOOL)isValidPhoneNumber:(UITextField *)mobileNumberField
 {
     NSString *mobileNumber = [mobileNumberField.text removeLeadingAndTrailingSpaces];
     
@@ -257,7 +257,7 @@ static OMeta *m = nil;
 }
 
 
-+ (BOOL)isDateOfBirthValid:(UITextField *)dateField
++ (BOOL)isValidDateOfBirth:(UITextField *)dateField
 {
     BOOL isValid = (dateField.text.length > 0);
     
@@ -269,7 +269,7 @@ static OMeta *m = nil;
 }
 
 
-+ (BOOL)isAddressValidWithLine1:(UITextField *)line1Field line2:(UITextField *)line2Field
++ (BOOL)isValidAddressWithLine1:(UITextField *)line1Field line2:(UITextField *)line2Field
 {
     NSString *addressLine1 = [line1Field.text removeLeadingAndTrailingSpaces];
     NSString *addressLine2 = [line2Field.text removeLeadingAndTrailingSpaces];
@@ -359,6 +359,14 @@ static OMeta *m = nil;
 }
 
 
+#pragma mark - Convenience methods
+
+- (BOOL)internetConnectionIsAvailable
+{
+    return (_internetConnectionIsWiFi || _internetConnectionIsWWAN);
+}
+
+
 #pragma mark - User login
 
 - (void)userDidLogIn
@@ -370,14 +378,6 @@ static OMeta *m = nil;
     if (!_user) {
         _user = [self.context insertMemberEntityWithId:_userId];
     }
-}
-
-
-#pragma mark - Convenience methods
-
-- (BOOL)isInternetConnectionAvailable
-{
-    return (_isInternetConnectionWiFi || _isInternetConnectionWWAN);
 }
 
 

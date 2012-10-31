@@ -8,15 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OModalInputViewControllerDelegate.h"
+#import "OModalViewControllerDelegate.h"
 #import "OServerConnectionDelegate.h"
 
 @class OTableViewCell, OTextField;
 
-@interface OAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, OServerConnectionDelegate, OModalInputViewControllerDelegate> {
+@interface OAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
 @private
-    BOOL _isEditingAllowed;
-    BOOL _isUserListed;
+    BOOL _editingIsAllowed;
+    BOOL _userIsListed;
     
     OTableViewCell *_authCell;
     OTextField *_emailField;

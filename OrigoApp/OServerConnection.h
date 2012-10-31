@@ -38,7 +38,7 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
     NSHTTPURLResponse *_HTTPResponse;
 	NSMutableData *_responseData;
     
-    BOOL _isRequestValid;
+    BOOL _requestIsValid;
 }
 
 - (id)init;
@@ -49,7 +49,7 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 
 - (void)authenticate:(id)delegate;
 - (void)replicate;
-- (void)lookUpMemberWithId:(NSString *)memberId delegate:(id)delegate;
-- (void)fetchStrings;
+- (void)getMemberWithId:(NSString *)memberId delegate:(id)delegate;
+- (void)getStrings;
 
 @end

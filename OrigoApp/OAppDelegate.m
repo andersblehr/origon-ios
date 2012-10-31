@@ -22,7 +22,7 @@
 
 #import "OMember.h"
 
-static NSString * const kPersistentStoreFormat = @"OrigoApp$%@.sqlite";
+static NSString * const kPersistentStoreFormat = @"OrigoApp^%@.sqlite";
 
 
 @interface OAppDelegate ()

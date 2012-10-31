@@ -112,8 +112,8 @@ static NSString * const kURLParameterVersion = @"version";
         [_delegate willSendRequest:_URLRequest];
     }
     
-    if ([OMeta m].isInternetConnectionAvailable) {
-        if (_isRequestValid) {
+    if ([OMeta m].internetConnectionIsAvailable) {
+        if (_requestIsValid) {
             [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
             NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:_URLRequest delegate:self];
             
@@ -141,7 +141,7 @@ static NSString * const kURLParameterVersion = @"version";
         _URLParameters = [[NSMutableDictionary alloc] init];
         _responseData = [[NSMutableData alloc] init];
         
-        _isRequestValid = YES;
+        _requestIsValid = YES;
     }
     
     return self;
@@ -168,7 +168,7 @@ static NSString * const kURLParameterVersion = @"version";
     if (value) {
         [_URLRequest setValue:value forHTTPHeaderField:field];
     } else if (required) {
-        _isRequestValid = NO;
+        _requestIsValid = NO;
         OLogBreakage(@"Missing value for required HTTP header field '%@'.", field);
     }
 }
@@ -185,7 +185,7 @@ static NSString * const kURLParameterVersion = @"version";
     if (value) {
         [_URLParameters setObject:value forKey:parameter];
     } else if (required) {
-        _isRequestValid = NO;
+        _requestIsValid = NO;
         OLogBreakage(@"Missing value for required URL parameter '%@'.", parameter);
     }
 }
@@ -238,22 +238,22 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-- (void)fetchStrings
-{
-    _RESTHandler = kRESTHandlerStrings;
-    _RESTRoute = [OMeta m].displayLanguage;
-    
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:OStrings.class];
-}
-
-
-- (void)lookUpMemberWithId:(NSString *)memberId delegate:(id)delegate
+- (void)getMemberWithId:(NSString *)memberId delegate:(id)delegate
 {
     _RESTHandler = kRESTHandlerModel;
     _RESTRoute = [NSString stringWithFormat:@"%@/%@", kRESTRouteModelMember, memberId];
     
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
+}
+
+
+- (void)getStrings
+{
+    _RESTHandler = kRESTHandlerStrings;
+    _RESTRoute = [OMeta m].displayLanguage;
+    
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:OStrings.class];
 }
 
 

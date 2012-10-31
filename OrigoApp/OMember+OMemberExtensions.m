@@ -8,6 +8,7 @@
 
 #import "OMember+OMemberExtensions.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
@@ -21,6 +22,7 @@
 #import "OMembership.h"
 #import "OOrigo.h"
 
+#import "OMembership+OMembershipExtensions.h"
 #import "OOrigo+OOrigoExtensions.h"
 
 
@@ -31,6 +33,8 @@
 - (void)setDidRegister_:(BOOL)didRegister_
 {
     self.didRegister = [NSNumber numberWithBool:didRegister_];
+    
+    [self rootMembership].isActive_ = YES;
 }
 
 
@@ -106,6 +110,12 @@
 }
 
 
+- (BOOL)isUser
+{
+    return [self.entityId isEqualToString:[OMeta m].userId];
+}
+
+
 - (BOOL)isFemale
 {
     return [self.gender isEqualToString:kGenderFemale];
@@ -124,9 +134,9 @@
 }
 
 
-- (BOOL)isUser
+- (BOOL)isTeenOrOlder
 {
-    return [self.entityId isEqualToString:[OMeta m].userId];
+    return ([self.dateOfBirth yearsBeforeNow] >= 13);
 }
 
 
@@ -211,6 +221,8 @@
     
     if (memberRoot) {
         rootMembership = [memberRoot.memberships allObjects][0];
+    } else {
+        OLogBreakage(@"Root membership for member '%@' does not exist on device.", self.entityId);
     }
     
     return rootMembership;

@@ -80,23 +80,23 @@ extern NSString * const kOrigoTypeOther;
 @property (nonatomic, readonly) BOOL is_iPodDevice;
 @property (nonatomic, readonly) BOOL is_iPhoneDevice;
 @property (nonatomic, readonly) BOOL isSimulatorDevice;
-@property (nonatomic, readonly) BOOL isInternetConnectionWiFi;
-@property (nonatomic, readonly) BOOL isInternetConnectionWWAN;
+
+@property (nonatomic, readonly) BOOL internetConnectionIsWiFi;
+@property (nonatomic, readonly) BOOL internetConnectionIsWWAN;
 
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 
 + (OMeta *)m;
 
-+ (BOOL)isEmailValid:(UITextField *)emailField;
-+ (BOOL)isPasswordValid:(UITextField *)passwordField;
-+ (BOOL)isNameValid:(UITextField *)nameField;
-+ (BOOL)isMobileNumberValid:(UITextField *)mobileNumberField;
-+ (BOOL)isDateOfBirthValid:(UITextField *)dateField;
-+ (BOOL)isAddressValidWithLine1:(UITextField *)line1Field line2:(UITextField *)line2Field;
++ (BOOL)isValidEmail:(UITextField *)emailField;
++ (BOOL)isValidPassword:(UITextField *)passwordField;
++ (BOOL)isValidName:(UITextField *)nameField;
++ (BOOL)isValidPhoneNumber:(UITextField *)mobileNumberField;
++ (BOOL)isValidDateOfBirth:(UITextField *)dateField;
++ (BOOL)isValidAddressWithLine1:(UITextField *)line1Field line2:(UITextField *)line2Field;
 
+- (BOOL)internetConnectionIsAvailable;
 - (void)userDidLogIn;
-
-- (BOOL)isInternetConnectionAvailable;
 
 - (NSSet *)dirtyEntities;
 - (void)stageServerEntity:(OReplicatedEntity *)entity;

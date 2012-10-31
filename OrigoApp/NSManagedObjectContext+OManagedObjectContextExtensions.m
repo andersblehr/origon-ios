@@ -210,7 +210,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
         memberId = [OUUIDGenerator generateUUID];
     }
     
-    NSString *memberRootId = [@"^" stringByAppendingString:memberId];
+    NSString *memberRootId = [NSString stringWithFormat:@"~%@", memberId];
     
     OOrigo *memberRoot = [self insertOrigoEntityOfType:kOrigoTypeMemberRoot origoId:memberRootId];
     OMember *member = [self insertEntityForClass:OMember.class inOrigo:memberRoot entityId:memberId];
@@ -251,8 +251,6 @@ static NSString * const kOrigoRelationshipName = @"origo";
     
     linkedEntityRef.linkedEntityId = entity.entityId;
     linkedEntityRef.linkedEntityOrigoId = entity.origoId;
-    
-    entity.isLinked = @YES;
     
     return linkedEntityRef;
 }

@@ -8,13 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OModalInputViewControllerDelegate.h"
+#import "OModalViewControllerDelegate.h"
 
 #import "OState.h"
 
 @class OMember, OOrigo;
 
-@interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, OModalInputViewControllerDelegate> {
+@interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, OModalViewControllerDelegate> {
 @private
     OStateAspect _aspect;
     
