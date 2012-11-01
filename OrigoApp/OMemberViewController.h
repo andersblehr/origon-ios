@@ -23,8 +23,8 @@
     OMember *_candidate;
     
     UIBarButtonItem *_editButton;
-    UIBarButtonItem *_cancelButton;
     UIBarButtonItem *_doneButton;
+    UIBarButtonItem *_cancelButton;
     
     OTextField *_nameField;
     OTextField *_emailField;

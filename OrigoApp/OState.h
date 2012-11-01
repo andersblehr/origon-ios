@@ -10,7 +10,6 @@
 
 typedef enum {
     OStateActionNone,
-    OStateActionInit,
     OStateActionLogin,
     OStateActionActivate,
     OStateActionRegister,
@@ -23,6 +22,7 @@ typedef enum {
     OStateTargetNone,
     OStateTargetMember,
     OStateTargetOrigo,
+    OStateTargetSetting,
 } OStateTarget;
 
 typedef enum {
@@ -48,7 +48,9 @@ typedef enum {
 
 @property (nonatomic) BOOL targetIsMember;
 @property (nonatomic) BOOL targetIsOrigo;
+@property (nonatomic) BOOL targetIsSetting;
 
+@property (nonatomic) BOOL aspectIsNone;
 @property (nonatomic) BOOL aspectIsSelf;
 @property (nonatomic) BOOL aspectIsWard;
 @property (nonatomic) BOOL aspectIsExternal;

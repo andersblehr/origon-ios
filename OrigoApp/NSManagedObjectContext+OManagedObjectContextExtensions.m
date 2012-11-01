@@ -35,7 +35,6 @@ static NSString * const kOrigoRelationshipName = @"origo";
 
 @implementation NSManagedObjectContext (OManagedObjectContextExtensions)
 
-
 #pragma mark - Auxiliary methods
 
 - (OOrigo *)insertOrigoEntityOfType:(NSString *)type origoId:(NSString *)origoId
@@ -46,7 +45,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
     origo.type = type;
     
     if ([origo.type isEqualToString:kOrigoTypeResidence]) {
-        origo.name = [OStrings stringForKey:strMyHousehold];
+        origo.name = [OStrings stringForKey:strNameMyHousehold];
     }
     
     return origo;

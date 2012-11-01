@@ -104,25 +104,25 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     
     if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
         if ([OState s].aspectIsSelf) {
-            titleQuestion = [OStrings stringForKey:strGenderSheetTitleSelfMinor];
+            titleQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
         } else {
-            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strGenderSheetTitleMemberMinor], [NSString givenNameFromFullName:_nameField.text]];
+            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [NSString givenNameFromFullName:_nameField.text]];
         }
         
-        femaleLabel = [OStrings stringForKey:strFemaleMinor];
-        maleLabel = [OStrings stringForKey:strMaleMinor];
+        femaleLabel = [OStrings stringForKey:strTermFemaleMinor];
+        maleLabel = [OStrings stringForKey:strTermMaleMinor];
     } else {
         if ([OState s].aspectIsSelf) {
-            titleQuestion = [OStrings stringForKey:strGenderSheetTitleSelf];
+            titleQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
         } else {
-            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strGenderSheetTitleMember], [NSString givenNameFromFullName:_nameField.text]];
+            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [NSString givenNameFromFullName:_nameField.text]];
         }
         
-        femaleLabel = [OStrings stringForKey:strFemale];
-        maleLabel = [OStrings stringForKey:strMale];
+        femaleLabel = [OStrings stringForKey:strTermFemale];
+        maleLabel = [OStrings stringForKey:strTermMale];
     }
         
-    UIActionSheet *genderSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strCancel] destructiveButtonTitle:nil otherButtonTitles:femaleLabel, maleLabel, nil];
+    UIActionSheet *genderSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:femaleLabel, maleLabel, nil];
     genderSheet.tag = kGenderSheetTag;
     [genderSheet showInView:self.view];
 }
@@ -130,9 +130,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)promptForExistingResidenceAction
 {
-    NSString *titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strExistingResidenceAlert], _candidate.name, _candidate.givenName];
+    NSString *titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleExistingResidence], _candidate.name, _candidate.givenName];
     
-    UIActionSheet *existingResidenceSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strInviteToHousehold], [OStrings stringForKey:strMergeHouseholds], nil];
+    UIActionSheet *existingResidenceSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonInviteToHousehold], [OStrings stringForKey:strButtonMergeHouseholds], nil];
     existingResidenceSheet.tag = kExistingResidenceSheetTag;
     [existingResidenceSheet showInView:self.view];
 }
@@ -268,9 +268,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    _editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
-    _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
-    _doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
+    _editButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonEdit] style:UIBarButtonItemStylePlain target:self action:@selector(startEditing)];
+    _doneButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:self action:@selector(didFinishEditing)];
+    _cancelButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonCancel] style:UIBarButtonItemStylePlain target:self action:@selector(cancelEditing)];
     
     if (_membership) {
         _member = _membership.member;
@@ -294,7 +294,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         self.navigationItem.rightBarButtonItem = _doneButton;
         
         if ([OState s].aspectIsSelf) {
-            self.title = [OStrings stringForKey:strAboutMe];
+            self.title = [OStrings stringForKey:strViewTitleAboutMe];
         } else {
             self.navigationItem.leftBarButtonItem = _cancelButton;
             
@@ -310,7 +310,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         }
         
         if ([OState s].aspectIsSelf) {
-            self.title = [OStrings stringForKey:strAboutMe];
+            self.title = [OStrings stringForKey:strViewTitleAboutMe];
         } else {
             self.title = _member.givenName;
         }
@@ -448,9 +448,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     
     if (section == kAddressSection) {
         if ([_member.residencies count] == 1) {
-            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strAddressLabel]];
+            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderAddress]];
         } else {
-            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strAddressesLabel]];
+            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderAddresses]];
         }
     }
     
@@ -486,8 +486,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
                 // TODO: Handle user email change
             } else {
                 if ([_origo hasMemberWithId:_emailField.text]) {
-                    NSString *alertTitle = [OStrings stringForKey:strMemberExistsTitle];
-                    NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strMemberExistsAlert], _emailField.text, _origo.name];
+                    NSString *alertTitle = [OStrings stringForKey:strAlertTitleMemberExists];
+                    NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _emailField.text, _origo.name];
                     
                     [OAlert showAlertWithTitle:alertTitle message:alertMessage];
                 } else {

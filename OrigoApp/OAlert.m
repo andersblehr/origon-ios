@@ -17,9 +17,9 @@
 
 + (void)showAlertWithCode:(int)code message:(NSString *)message tag:(int)tag delegate:(id)delegate
 {
-    NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strServerErrorAlert], code, message];
+    NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextServerError], code, message];
     
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:delegate cancelButtonTitle:[OStrings stringForKey:strOK] otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:delegate cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
     
     if (tag != NSIntegerMax) {
         alert.tag = tag;
@@ -33,7 +33,7 @@
 
 + (void)showAlertWithTitle:(NSString *)title message:(NSString *)message
 {
-    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:[OStrings stringForKey:strOK] otherButtonTitles:nil] show];
+    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil] show];
 }
 
 

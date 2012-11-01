@@ -66,7 +66,6 @@ extern NSString * const kOrigoTypeOther;
     NSMutableDictionary *_stagedServerEntityRefs;
 }
 
-@property (nonatomic, readonly) BOOL isUserLoggedIn;
 @property (strong, nonatomic) NSString *userId;
 @property (strong, nonatomic, readonly) OMember *user;
 
@@ -96,7 +95,10 @@ extern NSString * const kOrigoTypeOther;
 + (BOOL)isValidAddressWithLine1:(UITextField *)line1Field line2:(UITextField *)line2Field;
 
 - (BOOL)internetConnectionIsAvailable;
-- (void)userDidLogIn;
+
+- (void)userDidSignIn;
+- (void)userDidSignOut;
+- (BOOL)userIsSignedIn;
 
 - (NSSet *)dirtyEntities;
 - (void)stageServerEntity:(OReplicatedEntity *)entity;

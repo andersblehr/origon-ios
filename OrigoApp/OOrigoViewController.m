@@ -74,9 +74,9 @@
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    _editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(startEditing)];
-    _cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelEditing)];
-    _doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishEditing)];
+    _editButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonEdit] style:UIBarButtonItemStylePlain target:self action:@selector(startEditing)];
+    _doneButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:self action:@selector(didFinishEditing)];
+    _cancelButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonCancel] style:UIBarButtonItemStylePlain target:self action:@selector(cancelEditing)];
 }
 
 
@@ -89,7 +89,7 @@
     
     OLogState;
     
-    self.title = [_origo isResidence] ? [OStrings stringForKey:strAddressLabel] : _origo.name;
+    self.title = [_origo isResidence] ? [OStrings stringForKey:strHeaderAddress] : _origo.name;
     
     if ([OState s].actionIsRegister) {
         self.navigationItem.rightBarButtonItem = _doneButton;

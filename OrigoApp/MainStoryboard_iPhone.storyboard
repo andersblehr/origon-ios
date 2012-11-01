@@ -298,45 +298,13 @@
         <image name="258-checkmark.png" width="19" height="18"/>
         <image name="83-calendar.png" width="23" height="25"/>
     </resources>
-    <classes>
-        <class className="OAuthViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OAuthViewController.h"/>
-        </class>
-        <class className="OCalendarViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OCalendarViewController.h"/>
-        </class>
-        <class className="OMemberListViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMemberListViewController.h"/>
-        </class>
-        <class className="OMemberViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMemberViewController.h"/>
-        </class>
-        <class className="OMessageBoardViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMessageBoardViewController.h"/>
-        </class>
-        <class className="OOrigoListViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OOrigoListViewController.h"/>
-        </class>
-        <class className="OOrigoViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OOrigoViewController.h"/>
-        </class>
-        <class className="OSettingsViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OSettingsViewController.h"/>
-        </class>
-        <class className="OTabBarController" superclassName="UITabBarController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OTabBarController.h"/>
-        </class>
-        <class className="OTaskListViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OTaskListViewController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Af6-hf-9Ni"/>
         <segue reference="gEQ-1g-oCH"/>
+        <segue reference="Af6-hf-9Ni"/>
     </inferredMetricsTieBreakers>
 </document>

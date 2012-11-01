@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "OState.h"
+
 #import "OModalViewControllerDelegate.h"
 #import "OServerConnectionDelegate.h"
 
@@ -15,6 +17,8 @@
 
 @interface OAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
 @private
+    OStateAspect _aspect;
+    
     BOOL _editingIsAllowed;
     BOOL _userIsListed;
     

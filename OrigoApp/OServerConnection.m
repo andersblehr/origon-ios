@@ -125,7 +125,7 @@ static NSString * const kURLParameterVersion = @"version";
             OLogBreakage(@"Missing headers and/or parameters in request, aborting.");
         }
     } else {
-        [self connection:nil didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:[OStrings stringForKey:strNoInternetError] forKey:NSLocalizedDescriptionKey]]];
+        [self connection:nil didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:[OStrings stringForKey:strAlertTextNoInternet] forKey:NSLocalizedDescriptionKey]]];
     }
 }
 
