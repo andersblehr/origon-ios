@@ -11,6 +11,7 @@
 #import "OOrigoListViewController.h"
 
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
+#import "NSString+OStringExtensions.h"
 #import "UITableView+OTableViewExtensions.h"
 #import "UIView+OViewExtensions.h"
 
@@ -86,22 +87,18 @@ static NSInteger const kWardSection = 1;
         self.member = [OMeta m].user;
         
         NSMutableSet *residences = [[NSMutableSet alloc] init];
-        NSSet *wards = [_member wards];
         
         for (OMemberResidency *residency in _member.residencies) {
             [residences addObject:residency.residence];
         }
         
         _sortedResidences = [[residences allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        _sortedWards = [[wards allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:self.title style:UIBarButtonItemStylePlain target:nil action:nil];
+        _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
     } else if ([OState s].aspectIsWard) {
+        self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:_member.givenName style:UIBarButtonItemStylePlain target:nil action:nil];
     }
     
-    self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleOrigoList], _member.givenName];
-
     if ([_member isTeenOrOlder]) {
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addOrigo)];
     }
@@ -279,12 +276,24 @@ static NSInteger const kWardSection = 1;
 }
 
 
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    CGFloat height = kDefaultPadding;
+    
+    if (section == [tableView numberOfSections] - 1) {
+        height = [tableView standardFooterHeight];
+    }
+    
+    return height;
+}
+
+
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     UIView *headerView = nil;
     
     if ([self sectionIsWardSection:section]) {
-        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderWards]];
+        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderWardsOrigos]];
     } else if ([self sectionIsOrigoSection:section]) {
         headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderMyOrigos]];
     }
@@ -293,19 +302,55 @@ static NSInteger const kWardSection = 1;
 }
 
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    BOOL isBottomCellInSection = NO;
+    UIView *footerView = nil;
     
-    if ([self sectionIsResidenceSection:indexPath.section]) {
-        isBottomCellInSection = (indexPath.row == [_sortedResidences count] - 1);
-    } else if ([self sectionIsWardSection:indexPath.section]) {
-        isBottomCellInSection = (indexPath.row == [_sortedWards count] - 1);
-    } else if ([self sectionIsOrigoSection:indexPath.section]) {
-        isBottomCellInSection = (indexPath.row == [_sortedOrigos count] - 1);
+    if ((section == [tableView numberOfSections] - 1) && [_member isTeenOrOlder]) {
+        NSString *footerText = [OStrings stringForKey:strFooterOrigoCreation];
+        
+        if ([_sortedWards count]) {
+            NSString *yourChild = nil;
+            NSString *himOrHer = nil;
+            
+            BOOL allFemale = YES;
+            BOOL allMale = YES;
+            
+            if ([_sortedWards count] == 1) {
+                yourChild = ((OMember *)_sortedWards[0]).givenName;
+            } else {
+                yourChild = [OStrings stringForKey:strTermYourChild];
+            }
+            
+            for (OMember *ward in _sortedWards) {
+                allFemale = allFemale && [ward isFemale];
+                allMale = allMale && [ward isMale];
+            }
+            
+            if (allFemale) {
+                himOrHer = [OStrings stringForKey:strTermHer];
+            } else if (allMale) {
+                himOrHer = [OStrings stringForKey:strTermHim];
+            } else {
+                himOrHer = [OStrings stringForKey:strTermHimOrHer];
+            }
+            
+            NSString *footerAddendum = [NSString stringWithFormat:[OStrings stringForKey:strFooterOrigoCreationWards], yourChild, himOrHer];
+            footerText = [NSString stringWithFormat:@"%@ %@", footerText, footerAddendum];
+        } else {
+            footerText = [footerText stringByAppendingString:@"."];
+        }
+        
+        footerView = [tableView footerViewWithText:footerText];
     }
     
-    if (isBottomCellInSection) {
+    return footerView;
+}
+
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1) {
         [cell.backgroundView addShadowForBottomTableViewCell];
     } else {
         [cell.backgroundView addShadowForContainedTableViewCell];

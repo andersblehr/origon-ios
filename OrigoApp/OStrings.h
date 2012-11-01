@@ -44,9 +44,15 @@ extern NSString * const strSheetTitleEULA;
 
 // OOrigoListView strings
 extern NSString * const strTabBarTitleOrigo;
-extern NSString * const strViewTitleOrigoList;
-extern NSString * const strHeaderWards;
+extern NSString * const strViewTitleWardOrigoList;
+extern NSString * const strHeaderWardsOrigos;
 extern NSString * const strHeaderMyOrigos;
+extern NSString * const strFooterOrigoCreation;
+extern NSString * const strFooterOrigoCreationWards;
+extern NSString * const strTermYourChild;
+extern NSString * const strTermHim;
+extern NSString * const strTermHer;
+extern NSString * const strTermHimOrHer;
 
 // OMemberListView strings
 extern NSString * const strViewTitleMembers;

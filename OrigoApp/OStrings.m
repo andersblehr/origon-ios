@@ -49,9 +49,15 @@ NSString * const strSheetTitleEULA                   = @"strSheetTitleEULA";
 
 // OOrigoListView strings
 NSString * const strTabBarTitleOrigo                 = @"strTabBarTitleOrigo";
-NSString * const strViewTitleOrigoList               = @"strViewTitleOrigoList";
-NSString * const strHeaderWards                      = @"strHeaderWards";
+NSString * const strViewTitleWardOrigoList           = @"strViewTitleWardOrigoList";
+NSString * const strHeaderWardsOrigos                = @"strHeaderWardsOrigos";
 NSString * const strHeaderMyOrigos                   = @"strHeaderMyOrigos";
+NSString * const strFooterOrigoCreation              = @"strFooterOrigoCreation";
+NSString * const strFooterOrigoCreationWards         = @"strFooterOrigoCreationWards";
+NSString * const strTermYourChild                    = @"strTermYourChild";
+NSString * const strTermHim                          = @"strTermHim";
+NSString * const strTermHer                          = @"strTermHer";
+NSString * const strTermHimOrHer                     = @"strTermHimOrHer";
 
 // OMemberListView strings
 NSString * const strViewTitleMembers                 = @"strViewTitleMembers";

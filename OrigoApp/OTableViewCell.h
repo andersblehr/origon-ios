@@ -43,7 +43,7 @@ extern CGFloat const kDefaultPadding;
 - (OTableViewCell *)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 - (OTableViewCell *)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
 
-- (OTextField *)textFieldWithKey:(NSString *)key;
+- (OTextField *)textFieldForKey:(NSString *)key;
 
 - (void)shake;
 - (void)shakeAndVibrateDevice;

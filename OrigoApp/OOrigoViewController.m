@@ -148,9 +148,9 @@
     if ([OState s].actionIsRegister) {
         _origoCell = [tableView cellForEntity:_origo delegate:self];
         
-        _addressLine1Field = [_origoCell textFieldWithKey:kTextFieldKeyAddressLine1];
-        _addressLine2Field = [_origoCell textFieldWithKey:kTextFieldKeyAddressLine2];
-        _telephoneField = [_origoCell textFieldWithKey:kTextFieldKeyTelephone];
+        _addressLine1Field = [_origoCell textFieldForKey:kTextFieldAddressLine1];
+        _addressLine2Field = [_origoCell textFieldForKey:kTextFieldAddressLine2];
+        _telephoneField = [_origoCell textFieldForKey:kTextFieldTelephone];
         
         [_addressLine1Field becomeFirstResponder];
     } else if ([OState s].actionIsDisplay) {

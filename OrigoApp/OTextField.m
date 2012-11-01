@@ -16,20 +16,19 @@
 #import "OState.h"
 #import "OTableViewCell.h"
 
-NSString * const kTextFieldKeyAuthEmail = @"authEmail";
-NSString * const kTextFieldKeyPassword = @"password";
-NSString * const kTextFieldKeyActivationCode = @"activationCode";
-NSString * const kTextFieldKeyRepeatPassword = @"repeatPassword";
+NSString * const kTextFieldAuthEmail = @"authEmail";
+NSString * const kTextFieldPassword = @"password";
+NSString * const kTextFieldActivationCode = @"activationCode";
+NSString * const kTextFieldRepeatPassword = @"repeatPassword";
 
-NSString * const kTextFieldKeyName = @"name";
-NSString * const kTextFieldKeyEmail = @"email";
-NSString * const kTextFieldKeyMobilePhone = @"mobilePhone";
-NSString * const kTextFieldKeyDateOfBirth = @"dateOfBirth";
+NSString * const kTextFieldName = @"name";
+NSString * const kTextFieldEmail = @"email";
+NSString * const kTextFieldMobilePhone = @"mobilePhone";
+NSString * const kTextFieldDateOfBirth = @"dateOfBirth";
 
-NSString * const kTextFieldKeyAddress = @"address";
-NSString * const kTextFieldKeyAddressLine1 = @"addressLine1";
-NSString * const kTextFieldKeyAddressLine2 = @"addressLine2";
-NSString * const kTextFieldKeyTelephone = @"telephone";
+NSString * const kTextFieldAddressLine1 = @"addressLine1";
+NSString * const kTextFieldAddressLine2 = @"addressLine2";
+NSString * const kTextFieldTelephone = @"telephone";
 
 CGFloat const kLineSpacing = 5.f;
 
@@ -134,7 +133,7 @@ static CGFloat const kTextInset = 4.f;
 {
     BOOL canPerformAction = [super canPerformAction:action withSender:sender];
     
-    if ([self.key isEqualToString:kTextFieldKeyDateOfBirth]) {
+    if ([self.key isEqualToString:kTextFieldDateOfBirth]) {
         canPerformAction = canPerformAction && (action != @selector(paste:));
     }
     
