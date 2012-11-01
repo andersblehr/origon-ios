@@ -74,8 +74,8 @@ static NSString * const kUserDefaultsKeyFormatDeviceId = @"origo.device.id$%@";
 static NSString * const kUserDefaultsKeyFormatAuthExpiryDate = @"origo.auth.expires$%@";
 static NSString * const kUserDefaultsKeyFormatLastReplicationDate = @"origo.replication.date$%@";
 
-//static NSTimeInterval const kTimeIntervalTwoWeeks = 1209600;
-static NSTimeInterval const kTimeIntervalTwoWeeks = 30;
+static NSTimeInterval const kTimeInterval30Days = 2592000;
+//static NSTimeInterval const kTimeInterval30Days = 30;
 
 static OMeta *m = nil;
 
@@ -286,25 +286,6 @@ static OMeta *m = nil;
 
 #pragma mark - Custom property accessors
 
-- (BOOL)isUserLoggedIn
-{
-    if (!_user) {
-        _authTokenExpiryDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
-        
-        if (_authTokenExpiryDate) {
-            NSDate *now = [NSDate date];
-            
-            if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
-                _authToken = [self generateAuthToken:_authTokenExpiryDate];
-                _user = [self.context entityWithId:_userId];
-            }
-        }
-    }
-    
-    return (_user != nil);
-}
-
-
 - (void)setUserId:(NSString *)userId
 {
     [(OAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
@@ -337,7 +318,7 @@ static OMeta *m = nil;
 - (NSString *)authToken
 {
     if (!_authToken) {
-        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeIntervalTwoWeeks];
+        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeInterval30Days];
         _authToken = [self generateAuthToken:_authTokenExpiryDate];
     }
     
@@ -367,9 +348,9 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - User login
+#pragma mark - User sign in & sign out
 
-- (void)userDidLogIn
+- (void)userDidSignIn
 {
     [[NSUserDefaults standardUserDefaults] setObject:_authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
     
@@ -378,6 +359,33 @@ static OMeta *m = nil;
     if (!_user) {
         _user = [self.context insertMemberEntityWithId:_userId];
     }
+}
+
+
+- (void)userDidSignOut
+{
+    _user = nil;
+    
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
+}
+
+
+- (BOOL)userIsSignedIn
+{
+    if (!_user) {
+        _authTokenExpiryDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
+        
+        if (_authTokenExpiryDate) {
+            NSDate *now = [NSDate date];
+            
+            if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
+                _authToken = [self generateAuthToken:_authTokenExpiryDate];
+                _user = [self.context entityWithId:_userId];
+            }
+        }
+    }
+    
+    return (_user != nil);
 }
 
 

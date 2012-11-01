@@ -142,8 +142,6 @@
 		5C15BFF416385D4800BB5254 /* glyphicons_020_home@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_020_home@2x.png"; sourceTree = "<group>"; };
 		5C15BFF716386C6000BB5254 /* glyphicons_004_girl-as_boy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy.png"; sourceTree = "<group>"; };
 		5C15BFF816386C6000BB5254 /* glyphicons_004_girl-as_boy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy@2x.png"; sourceTree = "<group>"; };
-		5C15BFFB16387FE300BB5254 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		5C15BFFC16387FE300BB5254 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5C15BFFD1638815300BB5254 /* 76-baby_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "76-baby_black.png"; sourceTree = "<group>"; };
 		5C2262C215A0B47B00241C5F /* OOrigoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoViewController.h; sourceTree = "<group>"; };
 		5C2262C315A0B47B00241C5F /* OOrigoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoViewController.m; sourceTree = "<group>"; };
@@ -841,7 +839,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				5CBB63C2146080DF00A9133A /* en */,
-				5C15BFFB16387FE300BB5254 /* nb */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -850,7 +847,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				5CBB63E3146080E000A9133A /* en */,
-				5C15BFFC16387FE300BB5254 /* nb */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

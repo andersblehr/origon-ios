@@ -47,15 +47,27 @@ static OState *s = nil;
 }
 
 
-#pragma mark - Initialisation & factory method
+#pragma mark - Singleton instantiation & initialisation
+
++ (id)allocWithZone:(NSZone *)zone
+{
+    return [self s];
+}
+
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return self;
+}
+
 
 - (id)init {
     self = [super init];
     
     if (self) {
-        _action = OStateActionInit;
-        _target = OStateTargetNone;
-        _aspect = OStateAspectNone;
+        _action = OStateActionLogin;
+        _target = OStateTargetMember;
+        _aspect = OStateAspectSelf;
     }
     
     return self;
@@ -80,9 +92,7 @@ static OState *s = nil;
     NSString *targetAsString = nil;
     NSString *aspectAsString = nil;
     
-    if (_action == OStateActionInit) {
-        actionAsString = @"INIT";
-    } else if (self.actionIsLogin) {
+    if (self.actionIsLogin) {
         actionAsString = @"LOGIN";
     } else if (self.actionIsActivate) {
         actionAsString = @"ACTIVATE";
@@ -102,6 +112,8 @@ static OState *s = nil;
         targetAsString = @"MEMBER";
     } else if (self.targetIsOrigo) {
         targetAsString = @"ORIGO";
+    } else if (self.targetIsSetting) {
+        targetAsString = @"SETTING";
     } else {
         targetAsString = @"NONE";
     }
@@ -233,7 +245,31 @@ static OState *s = nil;
 }
 
 
+- (void)setTargetIsSetting:(BOOL)targetIsSetting
+{
+    [self setTarget:OStateTargetSetting active:targetIsSetting];
+}
+
+
+- (BOOL)targetIsSetting
+{
+    return (_target == OStateTargetSetting);
+}
+
+
 #pragma mark - State aspect properties
+
+- (void)setAspectIsNone:(BOOL)aspectIsNone
+{
+    [self setAspect:_aspect active:NO];
+}
+
+
+- (BOOL)aspectIsNone
+{
+    return (_aspect == OStateAspectNone);
+}
+
 
 - (void)setAspectIsSelf:(BOOL)aspectIsSelf
 {

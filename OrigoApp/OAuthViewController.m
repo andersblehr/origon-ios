@@ -108,30 +108,35 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if (isPending) {
         if ([OState s].actionIsLogin) {
             email = _emailField.text;
-            _emailField.placeholder = [OStrings stringForKey:strPleaseWait];
+            password = _passwordField.text;
+            
+            _emailField.placeholder = [OStrings stringForKey:strPromptPleaseWait];
             _emailField.text = @"";
+            _passwordField.placeholder = [OStrings stringForKey:strPromptPleaseWait];
+            _passwordField.text = @"";
         } else if ([OState s].actionIsActivate) {
             activationCode = _activationCodeField.text;
-            _activationCodeField.placeholder = [OStrings stringForKey:strPleaseWait];
+            password = _repeatPasswordField.text;
+            
+            _activationCodeField.placeholder = [OStrings stringForKey:strPromptPleaseWait];
             _activationCodeField.text = @"";
+            _repeatPasswordField.placeholder = [OStrings stringForKey:strPromptPleaseWait];
+            _repeatPasswordField.text = @"";
         }
-        
-        password = _passwordField.text;
-        _passwordField.placeholder = [OStrings stringForKey:strPleaseWait];
-        _passwordField.text = @"";
         
         [_activityIndicator startAnimating];
     } else {
         if ([OState s].actionIsLogin) {
             _emailField.text = email;
-            _emailField.placeholder = [OStrings stringForKey:strAuthEmailPrompt];
+            _emailField.placeholder = [OStrings stringForKey:strPromptAuthEmail];
+            _passwordField.text = password;
+            _passwordField.placeholder = [OStrings stringForKey:strPromptPassword];
         } else if ([OState s].actionIsActivate) {
             _activationCodeField.text = activationCode;
-            _activationCodeField.placeholder = [OStrings stringForKey:strActivationCodePrompt];
+            _activationCodeField.placeholder = [OStrings stringForKey:strPromptActivationCode];
+            _repeatPasswordField.text = password;
+            _repeatPasswordField.placeholder = [OStrings stringForKey:strPromptPassword];
         }
-        
-        _passwordField.text = password;
-        _passwordField.placeholder = [OStrings stringForKey:strPasswordPrompt];
         
         [_activityIndicator stopAnimating];
     }
@@ -157,7 +162,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     } else {
         _numberOfActivationAttempts = 0;
         
-        [[[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strActivationFailedTitle] message:[OStrings stringForKey:strActivationFailedAlert] delegate:nil cancelButtonTitle:[OStrings stringForKey:strOK] otherButtonTitles:nil] show];
+        [[[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] message:[OStrings stringForKey:strAlertTextActivationFailed] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil] show];
         
         [OState s].actionIsLogin = YES;
         [self reload];
@@ -169,7 +174,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)presentEULA
 {
-    UIActionSheet *EULASheet = [[UIActionSheet alloc] initWithTitle:[OStrings stringForKey:strEULA] delegate:self cancelButtonTitle:nil destructiveButtonTitle:[OStrings stringForKey:strDecline] otherButtonTitles:[OStrings stringForKey:strAccept], nil];
+    UIActionSheet *EULASheet = [[UIActionSheet alloc] initWithTitle:[OStrings stringForKey:strSheetTitleEULA] delegate:self cancelButtonTitle:nil destructiveButtonTitle:[OStrings stringForKey:strButtonDecline] otherButtonTitles:[OStrings stringForKey:strButtonAccept], nil];
     EULASheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     
     [EULASheet showInView:self.view];
@@ -251,7 +256,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)completeLogin
 {
-    [[OMeta m] userDidLogIn];
+    [[OMeta m] userDidSignIn];
     
     BOOL deviceIsNew = ([[OMeta m].context entityWithId:[OMeta m].deviceId] == nil);
     
@@ -266,7 +271,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if ([self registrationisComplete]) {
         [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
     } else {
-        [OAlert showAlertWithTitle:[OStrings stringForKey:strIncompleteRegistrationTitle] message:[OStrings stringForKey:strIncompleteRegistrationAlert]];
+        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
         
         [self completeRegistration];
     }
@@ -302,7 +307,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)completeActivation
 {
-    [[OMeta m] userDidLogIn];
+    [[OMeta m] userDidSignIn];
     
     [self registerNewDevice];
     
@@ -323,7 +328,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         residency.isAdmin_ = YES;
         
         OMessageBoard *residenceMessageBoard = [[OMeta m].context insertEntityForClass:OMessageBoard.class inOrigo:residence];
-        residenceMessageBoard.title = [OStrings stringForKey:strMyMessageBoard];
+        residenceMessageBoard.title = [OStrings stringForKey:strNameMyMessageBoard];
     }
     
     [OMeta m].user.passwordHash = [_authInfo objectForKey:kAuthInfoKeyPasswordHash];
@@ -370,27 +375,21 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    _aspect = [OState s].aspect;
 
     [self.tableView setBackground];
     [self.tableView addLogoBanner];
     self.navigationController.navigationBarHidden = YES;
     
-    [OState s].targetIsMember = YES;
-    [OState s].actionIsLogin = YES;
-    [OState s].aspectIsSelf = YES;
-    
-    OLogState;
-    
-    if ([OMeta m].isUserLoggedIn) {
+    if ([[OMeta m] userIsSignedIn]) {
         if ([self registrationisComplete]) {
             [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
         } else {
-            [OAlert showAlertWithTitle:[OStrings stringForKey:strIncompleteRegistrationTitle] message:[OStrings stringForKey:strIncompleteRegistrationAlert]];
+            [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
             
             [self completeRegistration];
         }
-    } else {
-        _editingIsAllowed = YES;
     }
 }
 
@@ -399,6 +398,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super viewWillAppear:animated];
     
+    [OState s].targetIsMember = YES;
+    [OState s].actionIsLogin = YES;
+    [OState s].aspect = _aspect;
+    
+    OLogState;
+    
+    _editingIsAllowed = YES;
     _activityIndicator = [self.tableView addActivityIndicator];
     
     NSData *authInfoArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyAuthInfo];
@@ -419,12 +425,11 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [self initialiseFields];
 
     if ([OState s].actionIsActivate) {
-        NSString *popUpMessage = [NSString stringWithFormat:[OStrings stringForKey:strWelcomeBackAlert], [_authInfo objectForKey:kAuthInfoKeyUserId]];
+        NSString *welcomeBackMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextWelcomeBack], [_authInfo objectForKey:kAuthInfoKeyUserId]];
         
-        UIAlertView *welcomeBackPopUp = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strWelcomeBackTitle] message:popUpMessage delegate:self cancelButtonTitle:[OStrings stringForKey:strStartOver] otherButtonTitles:[OStrings stringForKey:strHaveCode], nil];
-        welcomeBackPopUp.tag = kAlertTagWelcomeBack;
-        
-        [welcomeBackPopUp show];
+        UIAlertView *welcomeBackAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleWelcomeBack] message:welcomeBackMessage delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonStartOver] otherButtonTitles:[OStrings stringForKey:strButtonHaveCode], nil];
+        welcomeBackAlert.tag = kAlertTagWelcomeBack;
+        [welcomeBackAlert show];
     }
 }
 
@@ -494,9 +499,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     NSString *footerText = nil;
     
     if ([OState s].actionIsLogin) {
-        footerText = [OStrings stringForKey:strSignInOrRegisterFooter];
+        footerText = [OStrings stringForKey:strFooterSignInOrRegister];
     } else if ([OState s].actionIsActivate) {
-        footerText = [OStrings stringForKey:strActivateFooter];
+        footerText = [OStrings stringForKey:strFooterActivate];
     }
     
     return [tableView footerViewWithText:footerText];

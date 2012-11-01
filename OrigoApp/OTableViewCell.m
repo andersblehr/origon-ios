@@ -80,15 +80,15 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
         textField.secureTextEntry = YES;
         
         if ([key isEqualToString:kTextFieldKeyPassword]) {
-            textField.placeholder = [OStrings stringForKey:strPasswordPrompt];
+            textField.placeholder = [OStrings stringForKey:strPromptPassword];
         } else if ([key isEqualToString:kTextFieldKeyRepeatPassword]) {
-            textField.placeholder = [OStrings stringForKey:strRepeatPasswordPrompt];
+            textField.placeholder = [OStrings stringForKey:strPromptRepeatPassword];
         }
     } else if ([key isEqualToString:kTextFieldKeyAuthEmail]) {
         textField.keyboardType = UIKeyboardTypeEmailAddress;
-        textField.placeholder = [OStrings stringForKey:strAuthEmailPrompt];
+        textField.placeholder = [OStrings stringForKey:strPromptAuthEmail];
     } else if ([key isEqualToString:kTextFieldKeyActivationCode]) {
-        textField.placeholder = [OStrings stringForKey:strActivationCodePrompt];
+        textField.placeholder = [OStrings stringForKey:strPromptActivationCode];
     }
     
     return textField;
@@ -299,10 +299,10 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
         
         if ([key isEqualToString:kTextFieldKeyName]) {
             textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
-            textField.placeholder = [OStrings stringForKey:strNamePrompt];
+            textField.placeholder = [OStrings stringForKey:strPromptName];
         } else if ([key isEqualToString:kTextFieldKeyEmail]) {
             textField.keyboardType = UIKeyboardTypeEmailAddress;
-            textField.placeholder = [OStrings stringForKey:strEmailPrompt];
+            textField.placeholder = [OStrings stringForKey:strPromptEmail];
             
             if ([OState s].actionIsRegister &&
                 [OState s].targetIsMember && [OState s].aspectIsSelf) {
@@ -310,19 +310,19 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
             }
         } else if ([key isEqualToString:kTextFieldKeyMobilePhone]) {
             textField.keyboardType = UIKeyboardTypeNumberPad;
-            textField.placeholder = [OStrings stringForKey:strMobilePhonePrompt];
+            textField.placeholder = [OStrings stringForKey:strPromptMobilePhone];
         } else if ([key isEqualToString:kTextFieldKeyDateOfBirth]) {
             textField.inputView = [self dateOfBirthPicker];
-            textField.placeholder = [OStrings stringForKey:strDateOfBirthPrompt];
+            textField.placeholder = [OStrings stringForKey:strPromptDateOfBirth];
         } else if ([key isEqualToString:kTextFieldKeyAddressLine1]) {
             textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
-            textField.placeholder = [OStrings stringForKey:strAddressLine1Prompt];
+            textField.placeholder = [OStrings stringForKey:strPromptAddressLine1];
         } else if ([key isEqualToString:kTextFieldKeyAddressLine2]) {
             textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
-            textField.placeholder = [OStrings stringForKey:strAddressLine2Prompt];
+            textField.placeholder = [OStrings stringForKey:strPromptAddressLine2];
         } else if ([key isEqualToString:kTextFieldKeyTelephone]) {
             textField.keyboardType = UIKeyboardTypeNumberPad;
-            textField.placeholder = [OStrings stringForKey:strTelephonePrompt];
+            textField.placeholder = [OStrings stringForKey:strPromptTelephone];
         }
         
         [self.contentView addSubview:textField];
@@ -354,7 +354,7 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
         UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectInset(_imageButton.bounds, 3.f, 3.f)];
         photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
         photoPrompt.font = [UIFont titleFont];
-        photoPrompt.text = [OStrings stringForKey:strPhotoPrompt];
+        photoPrompt.text = [OStrings stringForKey:strPromptPhoto];
         photoPrompt.textAlignment = UITextAlignmentCenter;
         photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
         
@@ -377,16 +377,16 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
     [self addPhotoFrame:[UIImage imageWithData:member.photo]];
     
     if ([member hasEmailAddress] || [OState s].actionIsInput) {
-        [self addSingleLetterLabel:[OStrings stringForKey:strAbbreviatedEmailLabel]];
+        [self addSingleLetterLabel:[OStrings stringForKey:strLabelAbbreviatedEmail]];
         [self addTextFieldWithText:member.entityId key:kTextFieldKeyEmail];
     }
     
     if ([member hasMobilePhone] || [OState s].actionIsInput) {
-        [self addSingleLetterLabel:[OStrings stringForKey:strAbbreviatedMobilePhoneLabel]];
+        [self addSingleLetterLabel:[OStrings stringForKey:strLabelAbbreviatedMobilePhone]];
         [self addTextFieldWithText:member.mobilePhone key:kTextFieldKeyMobilePhone];
     }
     
-    [self addSingleLetterLabel:[OStrings stringForKey:strAbbreviatedDateOfBirthLabel]];
+    [self addSingleLetterLabel:[OStrings stringForKey:strLabelAbbreviatedDateOfBirth]];
     [self addTextFieldWithText:[member.dateOfBirth localisedDateString] key:kTextFieldKeyDateOfBirth];
     
     self.selectable = NO;
@@ -395,13 +395,13 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 
 - (void)setUpForOrigoEntity:(OOrigo *)origo
 {
-    [self addLabel:[OStrings stringForKey:strAddressLabel]];
+    [self addLabel:[OStrings stringForKey:strLabelAddress]];
     [self addTextFieldWithText:origo.addressLine1 key:kTextFieldKeyAddressLine1];
     [self addLabel:@""];
     [self addTextFieldWithText:origo.addressLine2 key:kTextFieldKeyAddressLine2];
     
     if ([origo hasTelephone] || [OState s].actionIsInput) {
-        [self addLabel:[OStrings stringForKey:strTelephoneLabel]];
+        [self addLabel:[OStrings stringForKey:strLabelTelephone]];
         [self addTextFieldWithText:origo.telephone key:kTextFieldKeyTelephone];
     }
     
@@ -447,11 +447,11 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
         self.editing = [OState s].actionIsInput;
         
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin]) {
-            [self addLabel:[OStrings stringForKey:strSignInOrRegisterLabel] centred:YES];
+            [self addLabel:[OStrings stringForKey:strLabelSignInOrRegister] centred:YES];
             [self addTextFieldWithKey:kTextFieldKeyAuthEmail];
             [self addTextFieldWithKey:kTextFieldKeyPassword];
         } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-            [self addLabel:[OStrings stringForKey:strActivateLabel] centred:YES];
+            [self addLabel:[OStrings stringForKey:strLabelActivate] centred:YES];
             [self addTextFieldWithKey:kTextFieldKeyActivationCode];
             [self addTextFieldWithKey:kTextFieldKeyRepeatPassword];
         }

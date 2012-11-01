@@ -112,7 +112,6 @@ static void uncaughtExceptionHandler(NSException *exception)
     OLogDebug(@"System name is %@.", [UIDevice currentDevice].systemName);
     OLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
     OLogDebug(@"System language is '%@'.", [[OMeta m] displayLanguage]);
-    OLogState;
     
     [OStrings conditionallyRefresh];
     
@@ -140,7 +139,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    if ([OMeta m].isUserLoggedIn) {
+    if ([[OMeta m] userIsSignedIn]) {
         [[OMeta m].context replicate];
     }
 }

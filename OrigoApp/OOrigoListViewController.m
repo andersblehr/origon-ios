@@ -80,8 +80,9 @@ static NSInteger const kWardSection = 1;
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
+    self.title = [OStrings stringForKey:strTabBarTitleOrigo];
+    
     if ([OState s].aspectIsSelf) {
-        self.title = [OStrings stringForKey:strTabBarTitleOrigo];
         self.member = [OMeta m].user;
         
         NSMutableSet *residences = [[NSMutableSet alloc] init];
@@ -93,9 +94,13 @@ static NSInteger const kWardSection = 1;
         
         _sortedResidences = [[residences allObjects] sortedArrayUsingSelector:@selector(compare:)];
         _sortedWards = [[wards allObjects] sortedArrayUsingSelector:@selector(compare:)];
-    } else {
-        self.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigos], _member.givenName];
+        
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:self.title style:UIBarButtonItemStylePlain target:nil action:nil];
+    } else if ([OState s].aspectIsWard) {
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:_member.givenName style:UIBarButtonItemStylePlain target:nil action:nil];
     }
+    
+    self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleOrigoList], _member.givenName];
 
     if ([_member isTeenOrOlder]) {
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addOrigo)];
@@ -279,9 +284,9 @@ static NSInteger const kWardSection = 1;
     UIView *headerView = nil;
     
     if ([self sectionIsWardSection:section]) {
-        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strSectionHeaderWards]];
+        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderWards]];
     } else if ([self sectionIsOrigoSection:section]) {
-        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strSectionHeaderOrigos]];
+        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderMyOrigos]];
     }
     
     return headerView;

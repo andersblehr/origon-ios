@@ -18,8 +18,8 @@
     OTableViewCell *_origoCell;
     
     UIBarButtonItem *_editButton;
-    UIBarButtonItem *_cancelButton;
     UIBarButtonItem *_doneButton;
+    UIBarButtonItem *_cancelButton;
     
     OTextField *_addressLine1Field;
     OTextField *_addressLine2Field;

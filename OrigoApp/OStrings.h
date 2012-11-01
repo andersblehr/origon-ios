@@ -8,14 +8,105 @@
 
 #import <Foundation/Foundation.h>
 
-// Tab bar titles
-extern NSString * const strTabBarTitleOrigo;
-extern NSString * const strTabBarTitleCalendar;
-extern NSString * const strTabBarTitleTasks;
-extern NSString * const strTabBarTitleMessages;
-extern NSString * const strTabBarTitleSettings;
+// Cross-view strings
+extern NSString * const strNameMyHousehold;
+extern NSString * const strNameOurHousehold;
+extern NSString * const strNameMyMessageBoard;
+extern NSString * const strNameOurMessageBoard;
+extern NSString * const strButtonOK;
+extern NSString * const strButtonEdit;
+extern NSString * const strButtonDone;
+extern NSString * const strButtonCancel;
+extern NSString * const strAlertTextNoInternet;
+extern NSString * const strAlertTextServerError;
 
-// Meta
+// OAuthView strings
+extern NSString * const strLabelSignInOrRegister;
+extern NSString * const strLabelActivate;
+extern NSString * const strFooterSignInOrRegister;
+extern NSString * const strFooterActivate;
+extern NSString * const strPromptAuthEmail;
+extern NSString * const strPromptPassword;
+extern NSString * const strPromptActivationCode;
+extern NSString * const strPromptRepeatPassword;
+extern NSString * const strPromptPleaseWait;
+extern NSString * const strButtonHaveCode;
+extern NSString * const strButtonStartOver;
+extern NSString * const strButtonAccept;
+extern NSString * const strButtonDecline;
+extern NSString * const strAlertTitleActivationFailed;
+extern NSString * const strAlertTextActivationFailed;
+extern NSString * const strAlertTitleWelcomeBack;
+extern NSString * const strAlertTextWelcomeBack;
+extern NSString * const strAlertTitleIncompleteRegistration;
+extern NSString * const strAlertTextIncompleteRegistration;
+extern NSString * const strSheetTitleEULA;
+
+// OOrigoListView strings
+extern NSString * const strTabBarTitleOrigo;
+extern NSString * const strViewTitleOrigoList;
+extern NSString * const strHeaderWards;
+extern NSString * const strHeaderMyOrigos;
+
+// OMemberListView strings
+extern NSString * const strViewTitleMembers;
+extern NSString * const strViewTitleHousehold;
+extern NSString * const strHeaderContacts;
+extern NSString * const strHeaderHouseholdMembers;
+extern NSString * const strHeaderOrigoMembers;
+extern NSString * const strFooterHousehold;
+extern NSString * const strButtonDeleteMember;
+
+// OOrigoView strings
+extern NSString * const strLabelAddress;
+extern NSString * const strLabelTelephone;
+extern NSString * const strHeaderAddress;
+extern NSString * const strHeaderAddresses;
+extern NSString * const strPromptAddressLine1;
+extern NSString * const strPromptAddressLine2;
+extern NSString * const strPromptTelephone;
+
+// OMemberView strings
+extern NSString * const strViewTitleAboutMe;
+extern NSString * const strViewTitleNewMember;
+extern NSString * const strViewTitleNewHouseholdMember;
+extern NSString * const strLabelAbbreviatedEmail;
+extern NSString * const strLabelAbbreviatedMobilePhone;
+extern NSString * const strLabelAbbreviatedDateOfBirth;
+extern NSString * const strLabelAbbreviatedTelephone;
+extern NSString * const strPromptPhoto;
+extern NSString * const strPromptName;
+extern NSString * const strPromptEmail;
+extern NSString * const strPromptDateOfBirth;
+extern NSString * const strPromptMobilePhone;
+extern NSString * const strButtonInviteToHousehold;
+extern NSString * const strButtonMergeHouseholds;
+extern NSString * const strAlertTitleMemberExists;
+extern NSString * const strAlertTextMemberExists;
+extern NSString * const strSheetTitleGenderSelf;
+extern NSString * const strSheetTitleGenderSelfMinor;
+extern NSString * const strSheetTitleGenderMember;
+extern NSString * const strSheetTitleGenderMinor;
+extern NSString * const strSheetTitleExistingResidence;
+extern NSString * const strTermFemale;
+extern NSString * const strTermFemaleMinor;
+extern NSString * const strTermMale;
+extern NSString * const strTermMaleMinor;
+
+// OCalendarView strings
+extern NSString * const strTabBarTitleCalendar;
+
+// OTaskView strings
+extern NSString * const strTabBarTitleTasks;
+
+// OMessageBoardView strings
+extern NSString * const strTabBarTitleMessages;
+
+// OSettingsView strings
+extern NSString * const strTabBarTitleSettings;
+extern NSString * const strButtonSignOut;
+
+// Meta strings
 extern NSString * const strOrigoTypeSchoolClass;
 extern NSString * const strOrigoTypePreschoolClass;
 extern NSString * const strOrigoTypeSportsTeam;
@@ -24,96 +115,6 @@ extern NSString * const strOrigoTypeOther;
 extern NSString * const xstrContactRolesSchoolClass;
 extern NSString * const xstrContactRolesPreschoolClass;
 extern NSString * const xstrContactRolesSportsTeam;
-
-// EULA
-extern NSString * const strEULA;
-extern NSString * const strAccept;
-extern NSString * const strDecline;
-
-// Generic strings
-extern NSString * const strPleaseWait;
-extern NSString * const strAboutMe;
-extern NSString * const strFemale;
-extern NSString * const strFemaleMinor;
-extern NSString * const strMale;
-extern NSString * const strMaleMinor;
-extern NSString * const strMyHousehold;
-extern NSString * const strMyMessageBoard;
-extern NSString * const strOurMessageBoard;
-extern NSString * const strDeleteConfirmation;
-
-// Prompts
-extern NSString * const strAuthEmailPrompt;
-extern NSString * const strPasswordPrompt;
-extern NSString * const strActivationCodePrompt;
-extern NSString * const strRepeatPasswordPrompt;
-extern NSString * const strPhotoPrompt;
-extern NSString * const strNamePrompt;
-extern NSString * const strEmailPrompt;
-extern NSString * const strMobilePhonePrompt;
-extern NSString * const strDateOfBirthPrompt;
-extern NSString * const strUserWebsitePrompt;
-extern NSString * const strAddressLine1Prompt;
-extern NSString * const strAddressLine2Prompt;
-extern NSString * const strTelephonePrompt;
-
-// Labels
-extern NSString * const strSignInOrRegisterLabel;
-extern NSString * const strActivateLabel;
-extern NSString * const strAbbreviatedEmailLabel;
-extern NSString * const strAbbreviatedMobilePhoneLabel;
-extern NSString * const strAbbreviatedDateOfBirthLabel;
-extern NSString * const strAbbreviatedTelephoneLabel;
-extern NSString * const strAddressLabel;
-extern NSString * const strAddressesLabel;
-extern NSString * const strTelephoneLabel;
-
-// Header & footer strings
-extern NSString * const strSignInOrRegisterFooter;
-extern NSString * const strActivateFooter;
-extern NSString * const strHouseholdMemberListFooter;
-
-// Button titles
-extern NSString * const strOK;
-extern NSString * const strCancel;
-extern NSString * const strRetry;
-extern NSString * const strStartOver;
-extern NSString * const strHaveCode;
-extern NSString * const strInviteToHousehold;
-extern NSString * const strMergeHouseholds;
-
-// Alerts & error messages
-extern NSString * const strNoInternetError;
-extern NSString * const strServerErrorAlert;
-extern NSString * const strActivationFailedTitle;
-extern NSString * const strActivationFailedAlert;
-extern NSString * const strWelcomeBackTitle;
-extern NSString * const strWelcomeBackAlert;
-extern NSString * const strIncompleteRegistrationTitle;
-extern NSString * const strIncompleteRegistrationAlert;
-extern NSString * const strMemberExistsTitle;
-extern NSString * const strMemberExistsAlert;
-extern NSString * const strExistingResidenceAlert;
-
-// OOrigoListView strings
-extern NSString * const strViewTitleWardOrigos;
-extern NSString * const strSectionHeaderWards;
-extern NSString * const strSectionHeaderOrigos;
-
-// OMemberListView strings
-extern NSString * const strViewTitleMembers;
-extern NSString * const strViewTitleHousehold;
-extern NSString * const strSectionHeaderContacts;
-extern NSString * const strSectionHeaderHouseholdMembers;
-extern NSString * const strSectionHeaderOrigoMembers;
-
-// OMemberView strings
-extern NSString * const strViewTitleNewMember;
-extern NSString * const strViewTitleNewHouseholdMember;
-extern NSString * const strGenderSheetTitleSelf;
-extern NSString * const strGenderSheetTitleSelfMinor;
-extern NSString * const strGenderSheetTitleMember;
-extern NSString * const strGenderSheetTitleMemberMinor;
 
 
 @interface OStrings : NSObject

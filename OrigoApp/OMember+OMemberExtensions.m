@@ -70,9 +70,9 @@
     
     if (![self isMinor] || [OState s].aspectIsSelf) {
         if ([self hasMobilePhone]) {
-            detailString = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strAbbreviatedMobilePhoneLabel], self.mobilePhone];
+            detailString = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
         } else if ([self hasEmailAddress]) {
-            detailString = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strAbbreviatedEmailLabel], self.entityId];
+            detailString = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.entityId];
         }
     }
     
@@ -221,8 +221,6 @@
     
     if (memberRoot) {
         rootMembership = [memberRoot.memberships allObjects][0];
-    } else {
-        OLogBreakage(@"Root membership for member '%@' does not exist on device.", self.entityId);
     }
     
     return rootMembership;

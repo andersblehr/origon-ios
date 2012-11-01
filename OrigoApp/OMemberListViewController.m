@@ -121,7 +121,7 @@ static NSInteger const kMemberSection = 2;
     
     if ([_origo isResidence]) {
         if ([OState s].aspectIsSelf) {
-            self.title = [OStrings stringForKey:strMyHousehold];
+            self.title = _origo.name;
         } else {
             self.title = [OStrings stringForKey:strViewTitleHousehold];
         }
@@ -130,7 +130,7 @@ static NSInteger const kMemberSection = 2;
     }
     
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMember)];
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(didFinishAdding)];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:self action:@selector(didFinishAdding)];
     
     if ([_origo userIsAdmin]) {
         self.navigationItem.rightBarButtonItem = addButton;
@@ -350,12 +350,12 @@ static NSInteger const kMemberSection = 2;
     UIView *headerView = nil;
     
     if ([self sectionIsContactSection:section]) {
-        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strSectionHeaderContacts]];
+        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderContacts]];
     } else if ([self sectionIsMemberSection:section]) {
         if ([_origo isResidence]) {
-            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strSectionHeaderHouseholdMembers]];
+            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderHouseholdMembers]];
         } else {
-            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strSectionHeaderOrigoMembers]];
+            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderOrigoMembers]];
         }
     }
     
@@ -368,7 +368,7 @@ static NSInteger const kMemberSection = 2;
     UIView *footerView = nil;
     
     if ([self sectionIsMemberSection:section] && [_origo userIsAdmin]) {
-        footerView = [tableView footerViewWithText:[OStrings stringForKey:strHouseholdMemberListFooter]];
+        footerView = [tableView footerViewWithText:[OStrings stringForKey:strFooterHousehold]];
     }
     
     return footerView;
@@ -419,7 +419,7 @@ static NSInteger const kMemberSection = 2;
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [OStrings stringForKey:strDeleteConfirmation];
+    return [OStrings stringForKey:strButtonDeleteMember];
 }
 
 
