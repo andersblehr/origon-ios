@@ -377,17 +377,7 @@ static NSInteger const kMemberSection = 2;
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {   
-    NSUInteger numberOfRowsInSection = 1;
-    
-    if ([self sectionIsContactSection:indexPath.section]) {
-        numberOfRowsInSection = [_contacts count];
-    } else if ([self sectionIsMemberSection:indexPath.section]) {
-        numberOfRowsInSection = [_members count];
-    }
-    
-    BOOL isLastRowInSection = (indexPath.row == numberOfRowsInSection - 1);
-    
-    if (isLastRowInSection) {
+    if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1) {
         [cell.backgroundView addShadowForBottomTableViewCell];
     } else {
         [cell.backgroundView addShadowForContainedTableViewCell];

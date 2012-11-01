@@ -268,7 +268,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [[OMeta m].context replicate];
     }
     
-    if ([self registrationisComplete]) {
+    if ([self registrationIsComplete]) {
         [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
     } else {
         [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
@@ -339,7 +339,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyAuthInfo];
     _authInfo = nil;
     
-    if ([self registrationisComplete] && [[OMeta m].user isMinor]) {
+    if ([self registrationIsComplete] && [[OMeta m].user isMinor]) {
         [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
     } else {
         [self completeRegistration];
@@ -349,7 +349,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - User registration
 
-- (BOOL)registrationisComplete
+- (BOOL)registrationIsComplete
 {
     return ([[OMeta m].user hasPhone] && [[OMeta m].user hasAddress]);
 }
@@ -383,7 +383,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     self.navigationController.navigationBarHidden = YES;
     
     if ([[OMeta m] userIsSignedIn]) {
-        if ([self registrationisComplete]) {
+        if ([self registrationIsComplete]) {
             [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
         } else {
             [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
@@ -473,13 +473,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if ([OState s].actionIsLogin) {
         _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserLogin delegate:self];
         
-        _emailField = [_authCell textFieldWithKey:kTextFieldKeyAuthEmail];
-        _passwordField = [_authCell textFieldWithKey:kTextFieldKeyPassword];
+        _emailField = [_authCell textFieldForKey:kTextFieldAuthEmail];
+        _passwordField = [_authCell textFieldForKey:kTextFieldPassword];
     } else {
         _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserActivation delegate:self];
         
-        _activationCodeField = [_authCell textFieldWithKey:kTextFieldKeyActivationCode];
-        _repeatPasswordField = [_authCell textFieldWithKey:kTextFieldKeyRepeatPassword];
+        _activationCodeField = [_authCell textFieldForKey:kTextFieldActivationCode];
+        _repeatPasswordField = [_authCell textFieldForKey:kTextFieldRepeatPassword];
     }
     
     return _authCell;

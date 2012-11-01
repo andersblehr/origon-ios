@@ -9,20 +9,19 @@
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 
-extern NSString * const kTextFieldKeyAuthEmail;
-extern NSString * const kTextFieldKeyPassword;
-extern NSString * const kTextFieldKeyActivationCode;
-extern NSString * const kTextFieldKeyRepeatPassword;
+extern NSString * const kTextFieldAuthEmail;
+extern NSString * const kTextFieldPassword;
+extern NSString * const kTextFieldActivationCode;
+extern NSString * const kTextFieldRepeatPassword;
 
-extern NSString * const kTextFieldKeyName;
-extern NSString * const kTextFieldKeyEmail;
-extern NSString * const kTextFieldKeyMobilePhone;
-extern NSString * const kTextFieldKeyDateOfBirth;
+extern NSString * const kTextFieldName;
+extern NSString * const kTextFieldEmail;
+extern NSString * const kTextFieldMobilePhone;
+extern NSString * const kTextFieldDateOfBirth;
 
-extern NSString * const kTextFieldKeyAddress;
-extern NSString * const kTextFieldKeyAddressLine1;
-extern NSString * const kTextFieldKeyAddressLine2;
-extern NSString * const kTextFieldKeyTelephone;
+extern NSString * const kTextFieldAddressLine1;
+extern NSString * const kTextFieldAddressLine2;
+extern NSString * const kTextFieldTelephone;
 
 extern CGFloat const kLineSpacing;
 
