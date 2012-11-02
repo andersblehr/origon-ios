@@ -45,7 +45,7 @@
 
 - (void)didFinishEditing
 {
-    if ([OMeta isValidAddressWithLine1:_addressLine1Field line2:_addressLine2Field]) {
+    if ([_addressLine1Field holdsValidAddressWith:_addressLine2Field]) {
         _origo.addressLine1 = _addressLine1Field.text;
         _origo.addressLine2 = _addressLine2Field.text;
         _origo.telephone = _telephoneField.text;
@@ -70,13 +70,26 @@
 {
     [super viewDidLoad];
     
+    [OState s].targetIsOrigo = YES;
+    [OState s].actionIsDisplay = ![OState s].actionIsInput;
+    
     [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    _editButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonEdit] style:UIBarButtonItemStylePlain target:self action:@selector(startEditing)];
-    _doneButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:self action:@selector(didFinishEditing)];
-    _cancelButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonCancel] style:UIBarButtonItemStylePlain target:self action:@selector(cancelEditing)];
+    self.title = [_origo isResidence] ? [OStrings stringForKey:strHeaderAddress] : _origo.name;
+    
+    if ([OState s].actionIsRegister) {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:self action:@selector(didFinishEditing)];
+        
+        if (![OState s].aspectIsSelf) {
+            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonCancel] style:UIBarButtonItemStylePlain target:self action:@selector(cancelEditing)];
+        }
+    } else if ([OState s].actionIsDisplay) {
+        if ([_origo userIsAdmin]) {
+            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonEdit] style:UIBarButtonItemStylePlain target:self action:@selector(startEditing)];
+        }
+    }
 }
 
 
@@ -84,24 +97,7 @@
 {
     [super viewWillAppear:animated];
     
-    [OState s].targetIsOrigo = YES;
-    [OState s].actionIsDisplay = ![OState s].actionIsInput;
-    
     OLogState;
-    
-    self.title = [_origo isResidence] ? [OStrings stringForKey:strHeaderAddress] : _origo.name;
-    
-    if ([OState s].actionIsRegister) {
-        self.navigationItem.rightBarButtonItem = _doneButton;
-        
-        if (_delegate) {
-            self.navigationItem.leftBarButtonItem = _cancelButton;
-        }
-    } else if ([OState s].actionIsDisplay) {
-        if ([_origo userIsAdmin]) {
-            self.navigationItem.rightBarButtonItem = _editButton;
-        }
-    }
 }
 
 

@@ -218,19 +218,20 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)didFinishEditing
 {
-    BOOL isValidInput = YES;
+    BOOL isValidInput = [_nameField holdsValidName];
     
-    isValidInput = isValidInput && [OMeta isValidName:_nameField];
-    isValidInput = isValidInput && [OMeta isValidDateOfBirth:_dateOfBirthField];
-    
-    if (isValidInput && ![_dateOfBirthPicker.date isBirthDateOfMinor]) {
-        isValidInput = isValidInput && [OMeta isValidEmail:_emailField];
-        isValidInput = isValidInput && [OMeta isValidPhoneNumber:_mobilePhoneField];
-    } else if (isValidInput) {
-        if (_emailField.text.length > 0) {
-            isValidInput = isValidInput && [OMeta isValidEmail:_emailField];
+    if (isValidInput) {
+        if ([OState s].aspectIsSelf || ![_dateOfBirthPicker.date isBirthDateOfMinor]) {
+            isValidInput = isValidInput && [_emailField holdsValidEmail];
+            isValidInput = isValidInput && [_mobilePhoneField holdsValidPhoneNumber];
+        } else if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
+            if (_emailField.text.length > 0) {
+                isValidInput = isValidInput && [_emailField holdsValidEmail];
+            }
         }
     }
+    
+    isValidInput = isValidInput && [_dateOfBirthField holdsValidDate];
     
     if (isValidInput) {
         [self.view endEditing:YES];
@@ -264,39 +265,25 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 {
     [super viewDidLoad];
 
+    [OState s].targetIsMember = YES;
+    [OState s].actionIsDisplay = ![OState s].actionIsInput;
+    
     [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    _editButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonEdit] style:UIBarButtonItemStylePlain target:self action:@selector(startEditing)];
-    _doneButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:self action:@selector(didFinishEditing)];
-    _cancelButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonCancel] style:UIBarButtonItemStylePlain target:self action:@selector(cancelEditing)];
-    
     if (_membership) {
         _member = _membership.member;
         _origo = _membership.origo;
-    } else {
-        
     }
-}
-
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    [OState s].targetIsMember = YES;
-    [OState s].actionIsDisplay = ![OState s].actionIsInput;
-    
-    OLogState;
     
     if ([OState s].actionIsRegister) {
-        self.navigationItem.rightBarButtonItem = _doneButton;
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:self action:@selector(didFinishEditing)];;
         
         if ([OState s].aspectIsSelf) {
             self.title = [OStrings stringForKey:strViewTitleAboutMe];
         } else {
-            self.navigationItem.leftBarButtonItem = _cancelButton;
+            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonCancel] style:UIBarButtonItemStylePlain target:self action:@selector(cancelEditing)];;
             
             if ([_origo isResidence]) {
                 self.title = [OStrings stringForKey:strViewTitleNewHouseholdMember];
@@ -306,7 +293,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         }
     } else if ([OState s].actionIsDisplay) {
         if ([_origo userIsAdmin] || ([_member isUser] && [_member isTeenOrOlder])) {
-            self.navigationItem.rightBarButtonItem = _editButton;
+            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonEdit] style:UIBarButtonItemStylePlain target:self action:@selector(startEditing)];;
         }
         
         if ([OState s].aspectIsSelf) {
@@ -323,6 +310,14 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         
         _sortedResidences = [[residences allObjects] sortedArrayUsingSelector:@selector(compare:)];
     }
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    OLogState;
 }
 
 
@@ -481,7 +476,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
     if (_currentField == _emailField) {
-        if ((_emailField.text.length > 0) && [OMeta isValidEmail:_emailField]) {
+        if ((_emailField.text.length > 0) && [_emailField holdsValidEmail]) {
             if ([OState s].aspectIsSelf) {
                 // TODO: Handle user email change
             } else {

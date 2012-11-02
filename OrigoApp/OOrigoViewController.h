@@ -17,10 +17,6 @@
 @private
     OTableViewCell *_origoCell;
     
-    UIBarButtonItem *_editButton;
-    UIBarButtonItem *_doneButton;
-    UIBarButtonItem *_cancelButton;
-    
     OTextField *_addressLine1Field;
     OTextField *_addressLine2Field;
     OTextField *_telephoneField;

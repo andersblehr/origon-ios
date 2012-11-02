@@ -67,8 +67,6 @@ NSString * const kOrigoTypePreschoolClass = @"P";
 NSString * const kOrigoTypeSportsTeam = @"T";
 NSString * const kOrigoTypeOther = @"O";
 
-static NSInteger const kMinimumPassordLength = 6;
-
 static NSString * const kUserDefaultsKeyUserId = @"origo.user.id";
 static NSString * const kUserDefaultsKeyFormatDeviceId = @"origo.device.id$%@";
 static NSString * const kUserDefaultsKeyFormatAuthExpiryDate = @"origo.auth.expires$%@";
@@ -189,98 +187,6 @@ static OMeta *m = nil;
     }
     
     return m;
-}
-
-
-#pragma mark - Input validation
-
-+ (BOOL)isValidEmail:(UITextField *)emailField
-{
-    NSString *email = [emailField.text removeLeadingAndTrailingSpaces];
-    
-    BOOL isValid = [email isEmailAddress];
-    
-    if (!isValid) {
-        [emailField becomeFirstResponder];
-    }
-    
-    return isValid;
-}
-
-
-+ (BOOL)isValidPassword:(UITextField *)passwordField
-{
-    NSString *password = [passwordField.text removeLeadingAndTrailingSpaces];
-    
-    BOOL isValid = (password.length >= kMinimumPassordLength);
-    
-    if (!isValid) {
-        [passwordField becomeFirstResponder];
-    }
-    
-    return isValid;
-}
-
-
-+ (BOOL)isValidName:(UITextField *)nameField
-{
-    NSString *name = [nameField.text removeLeadingAndTrailingSpaces];
-    
-    BOOL isValid = (name.length > 0);
-    
-    if (isValid) {
-        NSUInteger spaceLocation = [name rangeOfString:@" "].location;
-        
-        isValid = isValid && (spaceLocation > 0);
-        isValid = isValid && (spaceLocation < name.length - 1);
-    }
-    
-    if (!isValid) {
-        [nameField becomeFirstResponder];
-    }
-    
-    return isValid;
-}
-
-
-+ (BOOL)isValidPhoneNumber:(UITextField *)mobileNumberField
-{
-    NSString *mobileNumber = [mobileNumberField.text removeLeadingAndTrailingSpaces];
-    
-    BOOL isValid = (mobileNumber.length > 0);
-    
-    if (!isValid) {
-        [mobileNumberField becomeFirstResponder];
-    }
-    
-    return isValid;
-}
-
-
-+ (BOOL)isValidDateOfBirth:(UITextField *)dateField
-{
-    BOOL isValid = (dateField.text.length > 0);
-    
-    if (!isValid) {
-        [dateField becomeFirstResponder];
-    }
-    
-    return isValid;
-}
-
-
-+ (BOOL)isValidAddressWithLine1:(UITextField *)line1Field line2:(UITextField *)line2Field
-{
-    NSString *addressLine1 = [line1Field.text removeLeadingAndTrailingSpaces];
-    NSString *addressLine2 = [line2Field.text removeLeadingAndTrailingSpaces];
-    
-    BOOL isValid = ((addressLine1.length > 0) || (addressLine2.length > 0));
-    
-    if (!isValid) {
-        [line1Field becomeFirstResponder];
-    }
-    
-    return isValid;
 }
 
 

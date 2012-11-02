@@ -22,10 +22,6 @@
     NSSet *_candidateEntities;
     OMember *_candidate;
     
-    UIBarButtonItem *_editButton;
-    UIBarButtonItem *_doneButton;
-    UIBarButtonItem *_cancelButton;
-    
     OTextField *_nameField;
     OTextField *_emailField;
     OTextField *_mobilePhoneField;

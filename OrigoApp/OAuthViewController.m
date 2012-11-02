@@ -192,7 +192,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - Input validation
 
-- (BOOL)isValidActivationCode
+- (BOOL)activationCodeIsValid
 {
     NSString *activationCode = [[_authInfo objectForKey:kAuthInfoKeyActivationCode] lowercaseString];
     NSString *activationCodeAsEntered = [_activationCodeField.text lowercaseString];
@@ -207,7 +207,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (BOOL)isValidPassword
+- (BOOL)passwordIsValid
 {
     BOOL isValid = NO;
     
@@ -523,7 +523,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if (textField == _emailField) {
         [_passwordField becomeFirstResponder];
     } else if (textField == _passwordField) {
-        shouldReturn = [OMeta isValidEmail:_emailField] && [OMeta isValidPassword:_passwordField];
+        shouldReturn = [_emailField holdsValidEmail] && [_passwordField holdsValidPassword];
         
         if (shouldReturn) {
             [self.view endEditing:YES];
@@ -535,7 +535,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     } else if (textField == _activationCodeField) {
         [_repeatPasswordField becomeFirstResponder];
     } else if (textField == _repeatPasswordField) {
-        shouldReturn = [self isValidActivationCode] && [self isValidPassword];
+        shouldReturn = [self activationCodeIsValid] && [self passwordIsValid];
         
         if (shouldReturn) {
             [self.view endEditing:YES];

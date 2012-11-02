@@ -99,7 +99,7 @@ static NSInteger const kWardSection = 1;
         self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:_member.givenName style:UIBarButtonItemStylePlain target:nil action:nil];
     }
     
-    if ([_member isTeenOrOlder]) {
+    if ([[OMeta m].user isTeenOrOlder]) {
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addOrigo)];
     }
     
@@ -306,10 +306,16 @@ static NSInteger const kWardSection = 1;
 {
     UIView *footerView = nil;
     
-    if ((section == [tableView numberOfSections] - 1) && [_member isTeenOrOlder]) {
-        NSString *footerText = [OStrings stringForKey:strFooterOrigoCreation];
+    if ((section == [tableView numberOfSections] - 1) && [[OMeta m].user isTeenOrOlder]) {
+        NSString *footerText = nil;
         
-        if ([_sortedWards count]) {
+        if ([_sortedOrigos count]) {
+            footerText = [OStrings stringForKey:strFooterOrigoCreation];
+        } else {
+            footerText = [OStrings stringForKey:strFooterOrigoCreationFirst];
+        }
+        
+        if ([OState s].aspectIsSelf && [_sortedWards count]) {
             NSString *yourChild = nil;
             NSString *himOrHer = nil;
             
@@ -335,10 +341,13 @@ static NSInteger const kWardSection = 1;
                 himOrHer = [OStrings stringForKey:strTermHimOrHer];
             }
             
-            NSString *footerAddendum = [NSString stringWithFormat:[OStrings stringForKey:strFooterOrigoCreationWards], yourChild, himOrHer];
-            footerText = [NSString stringWithFormat:@"%@ %@", footerText, footerAddendum];
-        } else {
+            NSString *wardsAddendum = [NSString stringWithFormat:[OStrings stringForKey:strFooterOrigoCreationWards], yourChild, himOrHer];
+            footerText = [NSString stringWithFormat:@"%@ %@", footerText, wardsAddendum];
+        } else if ([OState s].aspectIsSelf) {
             footerText = [footerText stringByAppendingString:@"."];
+        } else if ([OState s].aspectIsWard) {
+            NSString *forName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], _member.givenName];
+            footerText = [NSString stringWithFormat:@"%@ %@", footerText, forName];
         }
         
         footerView = [tableView footerViewWithText:footerText];
