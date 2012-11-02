@@ -47,12 +47,14 @@ extern NSString * const strTabBarTitleOrigo;
 extern NSString * const strViewTitleWardOrigoList;
 extern NSString * const strHeaderWardsOrigos;
 extern NSString * const strHeaderMyOrigos;
+extern NSString * const strFooterOrigoCreationFirst;
 extern NSString * const strFooterOrigoCreation;
 extern NSString * const strFooterOrigoCreationWards;
 extern NSString * const strTermYourChild;
 extern NSString * const strTermHim;
 extern NSString * const strTermHer;
 extern NSString * const strTermHimOrHer;
+extern NSString * const strTermForName;
 
 // OMemberListView strings
 extern NSString * const strViewTitleMembers;

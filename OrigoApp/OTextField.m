@@ -8,6 +8,7 @@
 
 #import "OTextField.h"
 
+#import "NSString+OStringExtensions.h"
 #import "UIColor+OColorExtensions.h"
 #import "UIFont+OFontExtensions.h"
 #import "UIView+OViewExtensions.h"
@@ -34,6 +35,9 @@ CGFloat const kLineSpacing = 5.f;
 
 static CGFloat const kRoundedCornerRadius = 2.5f;
 static CGFloat const kTextInset = 4.f;
+
+static NSInteger const kMinimumPassordLength = 6;
+static NSInteger const kMinimumPhoneNumberLength = 5;
 
 
 @implementation OTextField
@@ -92,6 +96,98 @@ static CGFloat const kTextInset = 4.f;
     UIFont *font = [OState s].actionIsInput ? [UIFont editableDetailFont] : [UIFont detailFont];
     
     return [self initAtOrigin:origin font:font width:width isTitle:NO];
+}
+
+
+#pragma mark - Input validation
+
+- (BOOL)holdsValidEmail
+{
+    NSString *email = [self.text removeLeadingAndTrailingSpaces];
+    
+    BOOL isValid = [email isEmailAddress];
+    
+    if (!isValid) {
+        [self becomeFirstResponder];
+    }
+    
+    return isValid;
+}
+
+
+- (BOOL)holdsValidPassword
+{
+    NSString *password = [self.text removeLeadingAndTrailingSpaces];
+    
+    BOOL isValid = (password.length >= kMinimumPassordLength);
+    
+    if (!isValid) {
+        [self becomeFirstResponder];
+    }
+    
+    return isValid;
+}
+
+
+- (BOOL)holdsValidName
+{
+    NSString *name = [self.text removeLeadingAndTrailingSpaces];
+    
+    BOOL isValid = (name.length > 0);
+    
+    if (isValid) {
+        NSUInteger spaceLocation = [name rangeOfString:@" "].location;
+        
+        isValid = isValid && (spaceLocation > 0);
+        isValid = isValid && (spaceLocation < name.length - 1);
+    }
+    
+    if (!isValid) {
+        [self becomeFirstResponder];
+    }
+    
+    return isValid;
+}
+
+
+- (BOOL)holdsValidPhoneNumber
+{
+    NSString *mobileNumber = [self.text removeLeadingAndTrailingSpaces];
+    
+    BOOL isValid = (mobileNumber.length >= kMinimumPhoneNumberLength);
+    
+    if (!isValid) {
+        [self becomeFirstResponder];
+    }
+    
+    return isValid;
+}
+
+
+- (BOOL)holdsValidDate
+{
+    BOOL isValid = (self.text.length > 0);
+    
+    if (!isValid) {
+        [self becomeFirstResponder];
+    }
+    
+    return isValid;
+}
+
+
+- (BOOL)holdsValidAddressWith:(OTextField *)otherAddressField
+{
+    NSString *addressLine1 = [self.text removeLeadingAndTrailingSpaces];
+    NSString *addressLine2 = [otherAddressField.text removeLeadingAndTrailingSpaces];
+    
+    BOOL isValid = ((addressLine1.length > 0) || (addressLine2.length > 0));
+    
+    if (!isValid) {
+        [self becomeFirstResponder];
+    }
+    
+    return isValid;
 }
 
 

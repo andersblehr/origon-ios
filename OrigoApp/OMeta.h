@@ -87,13 +87,6 @@ extern NSString * const kOrigoTypeOther;
 
 + (OMeta *)m;
 
-+ (BOOL)isValidEmail:(UITextField *)emailField;
-+ (BOOL)isValidPassword:(UITextField *)passwordField;
-+ (BOOL)isValidName:(UITextField *)nameField;
-+ (BOOL)isValidPhoneNumber:(UITextField *)mobileNumberField;
-+ (BOOL)isValidDateOfBirth:(UITextField *)dateField;
-+ (BOOL)isValidAddressWithLine1:(UITextField *)line1Field line2:(UITextField *)line2Field;
-
 - (BOOL)internetConnectionIsAvailable;
 
 - (void)userDidSignIn;

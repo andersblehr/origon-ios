@@ -52,12 +52,14 @@ NSString * const strTabBarTitleOrigo                 = @"strTabBarTitleOrigo";
 NSString * const strViewTitleWardOrigoList           = @"strViewTitleWardOrigoList";
 NSString * const strHeaderWardsOrigos                = @"strHeaderWardsOrigos";
 NSString * const strHeaderMyOrigos                   = @"strHeaderMyOrigos";
+NSString * const strFooterOrigoCreationFirst         = @"strFooterOrigoCreationFirst";
 NSString * const strFooterOrigoCreation              = @"strFooterOrigoCreation";
 NSString * const strFooterOrigoCreationWards         = @"strFooterOrigoCreationWards";
 NSString * const strTermYourChild                    = @"strTermYourChild";
 NSString * const strTermHim                          = @"strTermHim";
 NSString * const strTermHer                          = @"strTermHer";
 NSString * const strTermHimOrHer                     = @"strTermHimOrHer";
+NSString * const strTermForName                      = @"strTermForName";
 
 // OMemberListView strings
 NSString * const strViewTitleMembers                 = @"strViewTitleMembers";
