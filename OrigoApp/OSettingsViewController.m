@@ -15,6 +15,8 @@
 #import "OState.h"
 #import "OStrings.h"
 
+#import "ONavigationController.h"
+
 
 @implementation OSettingsViewController
 
@@ -22,9 +24,7 @@
 
 - (void)signOut
 {
-    [[OMeta m] userDidSignOut];
-    
-    [self.tabBarController.navigationController popToRootViewControllerAnimated:YES];
+    [(ONavigationController *)self.tabBarController.navigationController popToAuthViewController];
 }
 
 

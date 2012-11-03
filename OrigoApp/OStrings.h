@@ -17,6 +17,7 @@ extern NSString * const strButtonOK;
 extern NSString * const strButtonEdit;
 extern NSString * const strButtonDone;
 extern NSString * const strButtonCancel;
+extern NSString * const strButtonSignOut;
 extern NSString * const strAlertTextNoInternet;
 extern NSString * const strAlertTextServerError;
 
@@ -112,14 +113,9 @@ extern NSString * const strTabBarTitleMessages;
 
 // OSettingsView strings
 extern NSString * const strTabBarTitleSettings;
-extern NSString * const strButtonSignOut;
 
 // Meta strings
-extern NSString * const strOrigoTypeSchoolClass;
-extern NSString * const strOrigoTypePreschoolClass;
-extern NSString * const strOrigoTypeSportsTeam;
-extern NSString * const strOrigoTypeOther;
-
+extern NSString * const xstrOrigoTypes;
 extern NSString * const xstrContactRolesSchoolClass;
 extern NSString * const xstrContactRolesPreschoolClass;
 extern NSString * const xstrContactRolesSportsTeam;

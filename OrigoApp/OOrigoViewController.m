@@ -9,6 +9,7 @@
 #import "OOrigoViewController.h"
 
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
+#import "UIBarButtonItem+OBarButtonItemExtensions.h"
 #import "UITableView+OTableViewExtensions.h"
 #import "UIView+OViewExtensions.h"
 
@@ -76,18 +77,22 @@
     [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
-    
-    self.title = [_origo isResidence] ? [OStrings stringForKey:strHeaderAddress] : _origo.name;
+
+    if (_origo) {
+        self.title = [_origo isResidence] ? [OStrings stringForKey:strHeaderAddress] : _origo.name;
+    } else {
+        self.title = [OStrings stringForKey:_origoType];
+    }
     
     if ([OState s].actionIsRegister) {
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:self action:@selector(didFinishEditing)];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         
-        if (![OState s].aspectIsSelf) {
-            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonCancel] style:UIBarButtonItemStylePlain target:self action:@selector(cancelEditing)];
+        if (!([_origo isResidence] && [OState s].aspectIsSelf)) {
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
         }
     } else if ([OState s].actionIsDisplay) {
         if ([_origo userIsAdmin]) {
-            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonEdit] style:UIBarButtonItemStylePlain target:self action:@selector(startEditing)];
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
         }
     }
 }

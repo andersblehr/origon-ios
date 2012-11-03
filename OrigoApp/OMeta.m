@@ -22,6 +22,7 @@
 #import "OReplicatedEntity.h"
 #import "OReplicatedEntityGhost.h"
 
+#import "OMember+OMemberExtensions.h"
 #import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 #import "OOrigoListViewController.h"
@@ -41,6 +42,7 @@ NSString * const kUserDefaultsKeyAuthInfo = @"origo.auth.info";
 NSString * const kUserDefaultsKeyDirtyEntities = @"origo.dirtyEntities";
 
 NSString * const kAuthViewControllerId = @"idAuthViewController";
+NSString * const kTabBarControllerId = @"idTabBarController";
 NSString * const kOrigoListViewControllerId = @"idOrigoListViewController";
 NSString * const kOrigoViewControllerId = @"idOrigoViewController";
 NSString * const kMemberViewControllerId = @"idMemberViewController";
@@ -292,6 +294,12 @@ static OMeta *m = nil;
     }
     
     return (_user != nil);
+}
+
+
+- (BOOL)registrationIsComplete
+{
+    return ([_user hasPhone] && [_user hasAddress]);
 }
 
 

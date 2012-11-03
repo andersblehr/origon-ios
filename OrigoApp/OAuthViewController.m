@@ -268,7 +268,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [[OMeta m].context replicate];
     }
     
-    if ([self registrationIsComplete]) {
+    if ([[OMeta m] registrationIsComplete]) {
         [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
     } else {
         [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
@@ -339,7 +339,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyAuthInfo];
     _authInfo = nil;
     
-    if ([self registrationIsComplete] && [[OMeta m].user isMinor]) {
+    if ([[OMeta m] registrationIsComplete] && [[OMeta m].user isMinor]) {
         [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
     } else {
         [self completeRegistration];
@@ -348,12 +348,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 
 #pragma mark - User registration
-
-- (BOOL)registrationIsComplete
-{
-    return ([[OMeta m].user hasPhone] && [[OMeta m].user hasAddress]);
-}
-
 
 - (void)completeRegistration
 {
@@ -376,20 +370,16 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super viewDidLoad];
     
-    _aspect = [OState s].aspect;
-
     [self.tableView setBackground];
     [self.tableView addLogoBanner];
     self.navigationController.navigationBarHidden = YES;
     
+    self.title = [OStrings stringForKey:strTabBarTitleOrigo];
+    
     if ([[OMeta m] userIsSignedIn]) {
-        if ([self registrationIsComplete]) {
-            [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
-        } else {
-            [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
-            
-            [self completeRegistration];
-        }
+        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
+        
+        [self completeRegistration];
     }
 }
 
@@ -400,7 +390,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     [OState s].targetIsMember = YES;
     [OState s].actionIsLogin = YES;
-    [OState s].aspect = _aspect;
+    [OState s].aspectIsSelf = YES;
     
     OLogState;
     
@@ -576,12 +566,19 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - OModalInputViewControllerDelegate methods
+#pragma mark - OModalViewControllerDelegate methods
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
-    [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
+    
+    if ([identitifier isEqualToString:kMemberListViewControllerId]) {
+        [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
+    } else if ([identitifier isEqualToString:kMemberViewControllerId]) {
+        [[OMeta m] userDidSignOut];
+        
+        [self reload];
+    }
 }
 
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.1" toolsVersion="2843" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="EqG-em-Sv2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="1.1" toolsVersion="2844" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="EqG-em-Sv2">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
         <development version="4200" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1929"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1930"/>
     </dependencies>
     <scenes>
         <!--Auth View Controller-->
@@ -11,7 +11,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="idAuthViewController" id="a73-0o-gAI" customClass="OAuthViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="IaI-4F-Chh">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -26,7 +26,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hiH-3x-2qe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1220" y="1297"/>
+            <point key="canvasLocation" x="-1230" y="661"/>
         </scene>
         <!--Task List View Controller - <strTasks>-->
         <scene sceneID="FtR-nb-C3g">
@@ -176,7 +176,7 @@
         <!--Tab Bar Controller-->
         <scene sceneID="uKK-ug-B0h">
             <objects>
-                <tabBarController id="iqr-fd-qbX" customClass="OTabBarController" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="idTabBarController" id="iqr-fd-qbX" customClass="OTabBarController" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="Mrx-dU-jA3"/>
                     <nil key="simulatedBottomBarMetrics"/>
@@ -214,17 +214,15 @@
         <!--Navigation Controller-->
         <scene sceneID="EIe-Th-KqO">
             <objects>
-                <navigationController definesPresentationContext="YES" id="EqG-em-Sv2" sceneMemberID="viewController">
+                <navigationController definesPresentationContext="YES" navigationBarHidden="YES" id="EqG-em-Sv2" customClass="ONavigationController" sceneMemberID="viewController">
+                    <nil key="simulatedTopBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="6xw-4O-gkG">
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
-                    <connections>
-                        <segue destination="a73-0o-gAI" kind="relationship" relationship="rootViewController" id="45O-0c-LeW"/>
-                    </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="l1v-9c-WIR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1679" y="1297"/>
+            <point key="canvasLocation" x="-1230" y="1301"/>
         </scene>
         <!--Navigation Controller - <strTasks>-->
         <scene sceneID="kO8-cQ-LYy">

@@ -27,6 +27,7 @@ extern NSString * const kUserDefaultsKeyAuthInfo;
 extern NSString * const kUserDefaultsKeyDirtyEntities;
 
 extern NSString * const kAuthViewControllerId;
+extern NSString * const kTabBarControllerId;
 extern NSString * const kOrigoListViewControllerId;
 extern NSString * const kOrigoViewControllerId;
 extern NSString * const kMemberListViewControllerId;
@@ -92,6 +93,7 @@ extern NSString * const kOrigoTypeOther;
 - (void)userDidSignIn;
 - (void)userDidSignOut;
 - (BOOL)userIsSignedIn;
+- (BOOL)registrationIsComplete;
 
 - (NSSet *)dirtyEntities;
 - (void)stageServerEntity:(OReplicatedEntity *)entity;
