@@ -12,6 +12,7 @@
 
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
 #import "NSString+OStringExtensions.h"
+#import "UIBarButtonItem+OBarButtonItemExtensions.h"
 #import "UITableView+OTableViewExtensions.h"
 #import "UIView+OViewExtensions.h"
 
@@ -29,6 +30,7 @@
 #import "OOrigo+OOrigoExtensions.h"
 
 #import "OMemberListViewController.h"
+#import "OOrigoViewController.h"
 
 static NSString * const kSegueToMemberListView = @"origoListToMemberListView";
 static NSString * const kSegueToMemberView = @"origoListToMemberView";
@@ -65,7 +67,15 @@ static NSInteger const kWardSection = 1;
 
 - (void)addOrigo
 {
+    [OState s].actionIsRegister = YES;
     
+    OOrigoViewController *origoViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoViewControllerId];
+    origoViewController.delegate = self;
+    
+    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:origoViewController];
+    modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    
+    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
 }
 
 
@@ -96,11 +106,12 @@ static NSInteger const kWardSection = 1;
         _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
     } else if ([OState s].aspectIsWard) {
         self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
-        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:_member.givenName style:UIBarButtonItemStylePlain target:nil action:nil];
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
     }
     
     if ([[OMeta m].user isTeenOrOlder]) {
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addOrigo)];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem.action = @selector(addOrigo);
     }
     
     NSMutableSet *origos = [[NSMutableSet alloc] init];
@@ -185,6 +196,7 @@ static NSInteger const kWardSection = 1;
         memberListViewController.origo = _selectedOrigo;
     }
 }
+
 
 #pragma mark - UITableViewDataSource methods
 
@@ -397,11 +409,11 @@ static NSInteger const kWardSection = 1;
 }
 
 
-#pragma mark - OModalInputViewControllerDelegate methods
+#pragma mark - OModalViewControllerDelegate methods
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
-    if ([identitifier isEqualToString:@"Identifier string"]) {
+    if ([identitifier isEqualToString:kOrigoViewControllerId]) {
         [self dismissViewControllerAnimated:YES completion:NULL];
     }
 }

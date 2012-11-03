@@ -23,6 +23,8 @@
 }
 
 @property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
+
 @property (strong, nonatomic) OOrigo *origo;
+@property (strong, nonatomic) NSString *origoType;
 
 @end

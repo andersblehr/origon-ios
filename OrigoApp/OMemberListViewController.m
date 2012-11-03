@@ -9,6 +9,7 @@
 #import "OMemberListViewController.h"
 
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
+#import "UIBarButtonItem+OBarButtonItemExtensions.h"
 #import "UIColor+OColorExtensions.h"
 #import "UITableView+OTableViewExtensions.h"
 #import "UIView+OViewExtensions.h"
@@ -93,7 +94,7 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-- (void)didFinishAdding
+- (void)didFinishEditing
 {
     if (_needsReplication) {
         [[OMeta m].context replicate];
@@ -129,14 +130,12 @@ static NSInteger const kMemberSection = 2;
         self.title = [OStrings stringForKey:strViewTitleMembers];
     }
     
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addMember)];
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:self action:@selector(didFinishAdding)];
-    
     if ([_origo userIsAdmin]) {
-        self.navigationItem.rightBarButtonItem = addButton;
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem.action = @selector(addMember);
         
         if (_delegate) {
-            self.navigationItem.leftBarButtonItem = doneButton;
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];;
         }
     }
     
@@ -173,7 +172,7 @@ static NSInteger const kMemberSection = 2;
 	[super viewWillDisappear:animated];
     
     if (_needsReplication && !self.navigationController.presentedViewController) {
-        [self didFinishAdding];
+        [self didFinishEditing];
     }
 }
 
@@ -413,7 +412,7 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-#pragma mark - OModalInputViewControllerDelegate methods
+#pragma mark - OModalViewControllerDelegate methods
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {

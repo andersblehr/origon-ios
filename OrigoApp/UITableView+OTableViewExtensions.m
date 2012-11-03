@@ -44,8 +44,10 @@ static NSString * const kLogoText = @"..origo..";
 
 - (void)setBackground
 {
-    self.backgroundView = nil;
-    self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
+    self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
+    
+    [self.backgroundView addGradientLayer];
 }
 
 

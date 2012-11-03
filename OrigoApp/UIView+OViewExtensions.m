@@ -29,7 +29,7 @@ static CGFloat const kImageShadowOffset = 1.5f;
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
     
     gradientLayer.frame = self.bounds;
-    gradientLayer.colors = [NSArray arrayWithObjects:(id)[UIColor clearColor].CGColor, (id)[[UIColor blackColor] colorWithAlphaComponent:0.f].CGColor, nil];
+    gradientLayer.colors = [NSArray arrayWithObjects:(id)[[UIColor blackColor] colorWithAlphaComponent:0.1f].CGColor, (id)[UIColor clearColor].CGColor, nil];
     
     [self.layer addSublayer:gradientLayer];
 }

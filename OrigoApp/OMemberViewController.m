@@ -11,6 +11,7 @@
 #import "NSDate+ODateExtensions.h"
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
 #import "NSString+OStringExtensions.h"
+#import "UIBarButtonItem+OBarButtonItemExtensions.h"
 #import "UIColor+OColorExtensions.h"
 #import "UIDatePicker+ODatePickerExtensions.h"
 #import "UIFont+OFontExtensions.h"
@@ -39,6 +40,8 @@
 #import "OMembership+OMembershipExtensions.h"
 #import "OOrigo+OOrigoExtensions.h"
 #import "OReplicatedEntity+OReplicatedEntityExtensions.h"
+
+#import "ONavigationController.h"
 
 static NSInteger const kMemberSection = 0;
 static NSInteger const kAddressSection = 1;
@@ -259,6 +262,12 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
+- (void)signOut
+{
+    [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
+}
+
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -278,12 +287,13 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     }
     
     if ([OState s].actionIsRegister) {
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:self action:@selector(didFinishEditing)];;
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         
         if ([OState s].aspectIsSelf) {
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
             self.title = [OStrings stringForKey:strViewTitleAboutMe];
         } else {
-            self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonCancel] style:UIBarButtonItemStylePlain target:self action:@selector(cancelEditing)];;
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
             
             if ([_origo isResidence]) {
                 self.title = [OStrings stringForKey:strViewTitleNewHouseholdMember];
@@ -293,7 +303,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         }
     } else if ([OState s].actionIsDisplay) {
         if ([_origo userIsAdmin] || ([_member isUser] && [_member isTeenOrOlder])) {
-            self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonEdit] style:UIBarButtonItemStylePlain target:self action:@selector(startEditing)];;
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
         }
         
         if ([OState s].aspectIsSelf) {

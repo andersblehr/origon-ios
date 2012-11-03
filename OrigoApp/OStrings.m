@@ -22,6 +22,7 @@ NSString * const strButtonOK                         = @"strButtonOK";
 NSString * const strButtonEdit                       = @"strButtonEdit";
 NSString * const strButtonDone                       = @"strButtonDone";
 NSString * const strButtonCancel                     = @"strButtonCancel";
+NSString * const strButtonSignOut                    = @"strButtonSignOut";
 NSString * const strAlertTextNoInternet              = @"strAlertTextNoInternet";
 NSString * const strAlertTextServerError             = @"strAlertTextServerError";
 
@@ -117,14 +118,9 @@ NSString * const strTabBarTitleMessages              = @"strTabBarTitleMessages"
 
 // OSettingsView strings
 NSString * const strTabBarTitleSettings              = @"strTabBarTitleSettings";
-NSString * const strButtonSignOut                    = @"strButtonSignOut";
 
 // Meta strings
-NSString * const strOrigoTypeSchoolClass             = @"strOrigoTypeSchoolClass";
-NSString * const strOrigoTypePreschoolClass          = @"strOrigoTypePreschoolClass";
-NSString * const strOrigoTypeSportsTeam              = @"strOrigoTypeSportsTeam";
-NSString * const strOrigoTypeOther                   = @"strOrigoTypeOther";
-
+NSString * const xstrOrigoTypes                      = @"xstrOrigoTypes";
 NSString * const xstrContactRolesSchoolClass         = @"xstrContactRolesSchoolClass";
 NSString * const xstrContactRolesPreschoolClass      = @"xstrContactRolesPreschoolClass";
 NSString * const xstrContactRolesSportsTeam          = @"xstrContactRolesSportsTeam";
