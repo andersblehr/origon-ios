@@ -395,7 +395,7 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 
 - (void)setUpForOrigoEntity:(OOrigo *)origo
 {
-    [self addLabel:[OStrings stringForKey:strLabelAddress]];
+    [self addLabel:[OStrings stringForKey:strTermAddress]];
     [self addTextFieldWithText:origo.addressLine1 key:kTextFieldAddressLine1];
     [self addLabel:@""];
     [self addTextFieldWithText:origo.addressLine2 key:kTextFieldAddressLine2];

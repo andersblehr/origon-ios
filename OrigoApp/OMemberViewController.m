@@ -66,21 +66,6 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 #pragma mark - Auxiliary methods
 
-- (void)registerHousehold
-{
-    [OState s].targetIsOrigo = YES;
-    
-    OOrigoViewController *origoViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoViewControllerId];
-    origoViewController.origo = _origo;
-    origoViewController.delegate = self;
-    
-    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:origoViewController];
-    modalController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    
-    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
-}
-
-
 - (void)populateWithCandidate
 {
     if (![_candidate.name isEqualToString:_candidate.entityId]) {
@@ -96,48 +81,6 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     if (_candidate.activeSince) {
         _memberCell.editing = NO;
     }
-}
-
-
-- (void)promptForGender
-{
-    NSString *titleQuestion = nil;
-    NSString *femaleLabel = nil;
-    NSString *maleLabel = nil;
-    
-    if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
-        if ([OState s].aspectIsSelf) {
-            titleQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
-        } else {
-            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [NSString givenNameFromFullName:_nameField.text]];
-        }
-        
-        femaleLabel = [OStrings stringForKey:strTermFemaleMinor];
-        maleLabel = [OStrings stringForKey:strTermMaleMinor];
-    } else {
-        if ([OState s].aspectIsSelf) {
-            titleQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
-        } else {
-            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [NSString givenNameFromFullName:_nameField.text]];
-        }
-        
-        femaleLabel = [OStrings stringForKey:strTermFemale];
-        maleLabel = [OStrings stringForKey:strTermMale];
-    }
-        
-    UIActionSheet *genderSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:femaleLabel, maleLabel, nil];
-    genderSheet.tag = kGenderSheetTag;
-    [genderSheet showInView:self.view];
-}
-
-
-- (void)promptForExistingResidenceAction
-{
-    NSString *titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleExistingResidence], _candidate.name, _candidate.givenName];
-    
-    UIActionSheet *existingResidenceSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonInviteToHousehold], [OStrings stringForKey:strButtonMergeHouseholds], nil];
-    existingResidenceSheet.tag = kExistingResidenceSheetTag;
-    [existingResidenceSheet showInView:self.view];
 }
 
 
@@ -187,6 +130,65 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     } else {
         [self registerHousehold];
     }
+}
+
+
+- (void)registerHousehold
+{
+    [OState s].targetIsOrigo = YES;
+    
+    OOrigoViewController *origoViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoViewControllerId];
+    origoViewController.origo = _origo;
+    origoViewController.delegate = self;
+    
+    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:origoViewController];
+    modalController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    
+    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
+}
+
+
+#pragma mark - Action sheets
+
+- (void)promptForGender
+{
+    NSString *titleQuestion = nil;
+    NSString *femaleLabel = nil;
+    NSString *maleLabel = nil;
+    
+    if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
+        if ([OState s].aspectIsSelf) {
+            titleQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
+        } else {
+            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [NSString givenNameFromFullName:_nameField.text]];
+        }
+        
+        femaleLabel = [OStrings stringForKey:strTermFemaleMinor];
+        maleLabel = [OStrings stringForKey:strTermMaleMinor];
+    } else {
+        if ([OState s].aspectIsSelf) {
+            titleQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
+        } else {
+            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [NSString givenNameFromFullName:_nameField.text]];
+        }
+        
+        femaleLabel = [OStrings stringForKey:strTermFemale];
+        maleLabel = [OStrings stringForKey:strTermMale];
+    }
+    
+    UIActionSheet *genderSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:femaleLabel, maleLabel, nil];
+    genderSheet.tag = kGenderSheetTag;
+    [genderSheet showInView:self.view];
+}
+
+
+- (void)promptForExistingResidenceAction
+{
+    NSString *titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleExistingResidence], _candidate.name, _candidate.givenName];
+    
+    UIActionSheet *existingResidenceSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonInviteToHousehold], [OStrings stringForKey:strButtonMergeHouseholds], nil];
+    existingResidenceSheet.tag = kExistingResidenceSheetTag;
+    [existingResidenceSheet showInView:self.view];
 }
 
 
@@ -264,6 +266,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)signOut
 {
+    [[OMeta m] userDidSignOut];
+    
     [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
 }
 
@@ -453,7 +457,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     
     if (section == kAddressSection) {
         if ([_member.residencies count] == 1) {
-            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderAddress]];
+            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strTermAddress]];
         } else {
             headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderAddresses]];
         }
@@ -532,7 +536,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 #pragma mark - UIActionSheetDelegate methods
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (actionSheet.tag) {
         case kGenderSheetTag:

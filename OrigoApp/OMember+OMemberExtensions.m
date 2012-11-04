@@ -140,6 +140,12 @@
 }
 
 
+- (BOOL)isOfPreschoolAge
+{
+    return ([self.dateOfBirth yearsBeforeNow] < kCertainSchoolAge);
+}
+
+
 - (BOOL)hasPhone
 {
     BOOL hasPhone = [self hasMobilePhone];
@@ -238,6 +244,18 @@
     }
     
     return origoMemberships;
+}
+
+
+- (BOOL)isMemberOfOrigoOfType:(NSString *)origoType
+{
+    BOOL isMember = NO;
+    
+    for (OMembership *membership in self.memberships) {
+        isMember = isMember || [membership.origo.type isEqualToString:origoType];
+    }
+    
+    return isMember;
 }
 
 

@@ -24,6 +24,7 @@
 - (BOOL)isMale;
 - (BOOL)isMinor;
 - (BOOL)isTeenOrOlder;
+- (BOOL)isOfPreschoolAge;
 
 - (BOOL)hasPhone;
 - (BOOL)hasMobilePhone;
@@ -35,5 +36,7 @@
 
 - (OMembership *)rootMembership;
 - (NSSet *)origoMemberships;
+
+- (BOOL)isMemberOfOrigoOfType:(NSString *)origoType;
 
 @end

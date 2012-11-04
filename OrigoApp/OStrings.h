@@ -20,6 +20,7 @@ extern NSString * const strButtonCancel;
 extern NSString * const strButtonSignOut;
 extern NSString * const strAlertTextNoInternet;
 extern NSString * const strAlertTextServerError;
+extern NSString * const strTermAddress;
 
 // OAuthView strings
 extern NSString * const strLabelSignInOrRegister;
@@ -51,6 +52,7 @@ extern NSString * const strHeaderMyOrigos;
 extern NSString * const strFooterOrigoCreationFirst;
 extern NSString * const strFooterOrigoCreation;
 extern NSString * const strFooterOrigoCreationWards;
+extern NSString * const strSheetTitleOrigoType;
 extern NSString * const strTermYourChild;
 extern NSString * const strTermHim;
 extern NSString * const strTermHer;
@@ -67,9 +69,8 @@ extern NSString * const strFooterHousehold;
 extern NSString * const strButtonDeleteMember;
 
 // OOrigoView strings
-extern NSString * const strLabelAddress;
+extern NSString * const strViewTitleNewOrigo;
 extern NSString * const strLabelTelephone;
-extern NSString * const strHeaderAddress;
 extern NSString * const strHeaderAddresses;
 extern NSString * const strPromptAddressLine1;
 extern NSString * const strPromptAddressLine2;
@@ -115,7 +116,13 @@ extern NSString * const strTabBarTitleMessages;
 extern NSString * const strTabBarTitleSettings;
 
 // Meta strings
-extern NSString * const xstrOrigoTypes;
+extern NSString * const origoTypeMemberRoot;
+extern NSString * const origoTypeResidence;
+extern NSString * const origoTypeSchoolClass;
+extern NSString * const origoTypePreschoolClass;
+extern NSString * const origoTypeSportsTeam;
+extern NSString * const origoTypeDefault;
+
 extern NSString * const xstrContactRolesSchoolClass;
 extern NSString * const xstrContactRolesPreschoolClass;
 extern NSString * const xstrContactRolesSportsTeam;
