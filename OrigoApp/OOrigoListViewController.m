@@ -69,13 +69,36 @@ static NSInteger const kWardSection = 1;
 {
     [OState s].actionIsRegister = YES;
     
-    OOrigoViewController *origoViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoViewControllerId];
-    origoViewController.delegate = self;
+    _origoTypes = [[NSMutableArray alloc] init];
     
-    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:origoViewController];
-    modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    NSString *sheetTitle = [OStrings stringForKey:strSheetTitleOrigoType];
     
-    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
+    if ([OState s].aspectIsSelf) {
+        sheetTitle = [sheetTitle stringByAppendingString:@"?"];
+    } else if ([OState s].aspectIsWard) {
+        NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], _member.givenName];
+        sheetTitle = [NSString stringWithFormat:@"%@ %@?", sheetTitle, forWardName];
+        
+        if ([_member isOfPreschoolAge] && ![_member isMemberOfOrigoOfType:kOrigoTypeSchoolClass]) {
+            [_origoTypes addObject:kOrigoTypePreschoolClass];
+        }
+        
+        [_origoTypes addObject:kOrigoTypeSchoolClass];
+    }
+    
+    [_origoTypes addObject:kOrigoTypeSportsTeam];
+    [_origoTypes addObject:kOrigoTypeDefault];
+    
+    UIActionSheet *origoTypeSheet = [[UIActionSheet alloc] initWithTitle:sheetTitle delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    
+    for (NSString *origoType in _origoTypes) {
+        [origoTypeSheet addButtonWithTitle:[OStrings stringForKey:origoType]];
+    }
+    
+    [origoTypeSheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
+    origoTypeSheet.cancelButtonIndex = [_origoTypes count];
+    
+    [origoTypeSheet showInView:self.tabBarController.view];
 }
 
 
@@ -94,7 +117,7 @@ static NSInteger const kWardSection = 1;
     self.title = [OStrings stringForKey:strTabBarTitleOrigo];
     
     if ([OState s].aspectIsSelf) {
-        self.member = [OMeta m].user;
+        _member = [OMeta m].user;
         
         NSMutableSet *residences = [[NSMutableSet alloc] init];
         
@@ -155,20 +178,18 @@ static NSInteger const kWardSection = 1;
         NSSet *wards = [_member wards];
         
         if ([wards count] != [_sortedWards count]) {
-            BOOL wardsSectionDoesExist = ([_sortedWards count] > 0);
             _sortedWards = [[wards allObjects] sortedArrayUsingSelector:@selector(compare:)];
             
             if ([wards count]) {
-                if (!wardsSectionDoesExist) {
+                if (![_sortedWards count]) {
                     [self.tableView insertSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
                 }
                 
-                if (reloadRange.length) {
-                    reloadRange.length++;
-                } else {
+                if (!reloadRange.length) {
                     reloadRange.location = kWardSection;
-                    reloadRange.length = 1;
                 }
+                
+                reloadRange.length++;
             } else {
                 [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
             }
@@ -358,8 +379,8 @@ static NSInteger const kWardSection = 1;
         } else if ([OState s].aspectIsSelf) {
             footerText = [footerText stringByAppendingString:@"."];
         } else if ([OState s].aspectIsWard) {
-            NSString *forName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], _member.givenName];
-            footerText = [NSString stringWithFormat:@"%@ %@", footerText, forName];
+            NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], _member.givenName];
+            footerText = [NSString stringWithFormat:@"%@ %@.", footerText, forWardName];
         }
         
         footerView = [tableView footerViewWithText:footerText];
@@ -405,6 +426,23 @@ static NSInteger const kWardSection = 1;
         wardOrigoListViewController.member = _selectedWard;
         
         [self.navigationController pushViewController:wardOrigoListViewController animated:YES];
+    }
+}
+
+
+#pragma mark - UIActionSheetDelegate methods
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex != actionSheet.cancelButtonIndex) {
+        OOrigoViewController *origoViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoViewControllerId];
+        origoViewController.delegate = self;
+        origoViewController.origoType = _origoTypes[buttonIndex];
+        
+        UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:origoViewController];
+        modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        
+        [self.navigationController presentViewController:modalController animated:YES completion:NULL];
     }
 }
 

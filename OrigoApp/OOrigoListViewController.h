@@ -14,7 +14,7 @@
 
 @class OMember, OOrigo;
 
-@interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, OModalViewControllerDelegate> {
+@interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
 @private
     OStateAspect _aspect;
     
@@ -25,6 +25,7 @@
     OMember *_selectedWard;
     OOrigo *_selectedOrigo;
     
+    NSMutableArray *_origoTypes;
 }
 
 @property (strong, nonatomic) OMember *member;

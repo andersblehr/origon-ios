@@ -8,6 +8,7 @@
 
 #import "OSettingsViewController.h"
 
+#import "UIBarButtonItem+OBarButtonItemExtensions.h"
 #import "UITableView+OTableViewExtensions.h"
 
 #import "OLogging.h"
@@ -39,8 +40,7 @@
     self.navigationController.navigationBarHidden = NO;
     
     self.title = [OStrings stringForKey:strTabBarTitleSettings];
-    
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonSignOut] style:UIBarButtonItemStyleDone target:self action:@selector(signOut)];
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
 }
 
 

@@ -25,6 +25,7 @@ NSString * const strButtonCancel                     = @"strButtonCancel";
 NSString * const strButtonSignOut                    = @"strButtonSignOut";
 NSString * const strAlertTextNoInternet              = @"strAlertTextNoInternet";
 NSString * const strAlertTextServerError             = @"strAlertTextServerError";
+NSString * const strTermAddress                      = @"strTermAddress";
 
 // OAuthView strings
 NSString * const strLabelSignInOrRegister            = @"strLabelSignInOrRegister";
@@ -56,6 +57,7 @@ NSString * const strHeaderMyOrigos                   = @"strHeaderMyOrigos";
 NSString * const strFooterOrigoCreationFirst         = @"strFooterOrigoCreationFirst";
 NSString * const strFooterOrigoCreation              = @"strFooterOrigoCreation";
 NSString * const strFooterOrigoCreationWards         = @"strFooterOrigoCreationWards";
+NSString * const strSheetTitleOrigoType              = @"strSheetTitleOrigoType";
 NSString * const strTermYourChild                    = @"strTermYourChild";
 NSString * const strTermHim                          = @"strTermHim";
 NSString * const strTermHer                          = @"strTermHer";
@@ -72,9 +74,8 @@ NSString * const strFooterHousehold                  = @"strFooterHousehold";
 NSString * const strButtonDeleteMember               = @"strButtonDeleteMember";
 
 // OOrigoView strings
-NSString * const strLabelAddress                     = @"strLabelAddress";
+NSString * const strViewTitleNewOrigo                = @"strViewTitleNewOrigo";
 NSString * const strLabelTelephone                   = @"strLabelTelephone";
-NSString * const strHeaderAddress                    = @"strHeaderAddress";
 NSString * const strHeaderAddresses                  = @"strHeaderAddresses";
 NSString * const strPromptAddressLine1               = @"strPromptAddressLine1";
 NSString * const strPromptAddressLine2               = @"strPromptAddressLine2";
@@ -120,7 +121,13 @@ NSString * const strTabBarTitleMessages              = @"strTabBarTitleMessages"
 NSString * const strTabBarTitleSettings              = @"strTabBarTitleSettings";
 
 // Meta strings
-NSString * const xstrOrigoTypes                      = @"xstrOrigoTypes";
+NSString * const origoTypeMemberRoot                 = @"origoTypeMemberRoot";
+NSString * const origoTypeResidence                  = @"origoTypeResidence";
+NSString * const origoTypeSchoolClass                = @"origoTypeSchoolClass";
+NSString * const origoTypePreschoolClass             = @"origoTypePreschoolClass";
+NSString * const origoTypeSportsTeam                 = @"origoTypeSportsTeam";
+NSString * const origoTypeDefault                    = @"origoTypeDefault";
+
 NSString * const xstrContactRolesSchoolClass         = @"xstrContactRolesSchoolClass";
 NSString * const xstrContactRolesPreschoolClass      = @"xstrContactRolesPreschoolClass";
 NSString * const xstrContactRolesSportsTeam          = @"xstrContactRolesSportsTeam";

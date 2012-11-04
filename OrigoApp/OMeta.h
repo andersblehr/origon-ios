@@ -12,6 +12,9 @@
 
 #import "OServerConnectionDelegate.h"
 
+extern NSUInteger const kCertainSchoolAge;
+extern NSUInteger const kAgeOfMajority;
+
 extern NSString * const kBundleId;
 extern NSString * const kLanguageHungarian;
 
@@ -52,7 +55,7 @@ extern NSString * const kOrigoTypeResidence;
 extern NSString * const kOrigoTypeSchoolClass;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeSportsTeam;
-extern NSString * const kOrigoTypeOther;
+extern NSString * const kOrigoTypeDefault;
 
 
 @class OMember, OReplicatedEntity;

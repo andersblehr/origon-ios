@@ -8,8 +8,7 @@
 
 #import "NSDate+ODateExtensions.h"
 
-static NSInteger const kAgeOfMajority = 18;
-
+#import "OMeta.h"
 
 @implementation NSDate (ODateExtensions)
 

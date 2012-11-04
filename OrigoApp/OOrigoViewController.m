@@ -79,9 +79,13 @@
     self.navigationController.navigationBarHidden = NO;
 
     if (_origo) {
-        self.title = [_origo isResidence] ? [OStrings stringForKey:strHeaderAddress] : _origo.name;
+        self.title = [_origo isResidence] ? [OStrings stringForKey:strTermAddress] : _origo.name;
     } else {
-        self.title = [OStrings stringForKey:_origoType];
+        if ([_origoType isEqualToString:kOrigoTypeDefault]) {
+            self.title = [OStrings stringForKey:strViewTitleNewOrigo];
+        } else {
+            self.title = [OStrings stringForKey:_origoType];
+        }
     }
     
     if ([OState s].actionIsRegister) {
@@ -112,18 +116,6 @@
 }
 
 
-#pragma mark - OModalViewControllerDelegate methods
-
-- (void)shouldDismissViewControllerWithIdentitifier:(NSString *)identitifier
-{
-    if ([identitifier isEqualToString:kMemberListViewControllerId]) {
-        [self dismissViewControllerAnimated:YES completion:^{
-            [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
-        }];
-    }
-}
-
-
 #pragma mark - UITableViewDataSource methods
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -147,7 +139,11 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([OState s].actionIsRegister) {
-        _origoCell = [tableView cellForEntity:_origo delegate:self];
+        if (_origo) {
+            _origoCell = [tableView cellForEntity:_origo delegate:self];
+        } else {
+            _origoCell = [tableView cellForEntityClass:OOrigo.class delegate:self];
+        }
         
         _addressLine1Field = [_origoCell textFieldForKey:kTextFieldAddressLine1];
         _addressLine2Field = [_origoCell textFieldForKey:kTextFieldAddressLine2];

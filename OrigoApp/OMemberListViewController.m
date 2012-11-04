@@ -102,9 +102,7 @@ static NSInteger const kMemberSection = 2;
         _needsReplication = NO;
     }
     
-    if (_delegate) {
-        [_delegate dismissViewControllerWithIdentitifier:kMemberListViewControllerId];
-    }
+    [_delegate dismissViewControllerWithIdentitifier:kMemberListViewControllerId];
 }
 
 

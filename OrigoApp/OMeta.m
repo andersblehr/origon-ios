@@ -27,6 +27,9 @@
 
 #import "OOrigoListViewController.h"
 
+NSUInteger const kCertainSchoolAge = 7;
+NSUInteger const kAgeOfMajority = 18;
+
 NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 NSString * const kLanguageHungarian = @"hu";
 
@@ -62,12 +65,12 @@ NSString * const kPropertyOrigoId = @"origoId";
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
 
-NSString * const kOrigoTypeMemberRoot = @"R";
-NSString * const kOrigoTypeResidence = @"E";
-NSString * const kOrigoTypeSchoolClass = @"S";
-NSString * const kOrigoTypePreschoolClass = @"P";
-NSString * const kOrigoTypeSportsTeam = @"T";
-NSString * const kOrigoTypeOther = @"O";
+NSString * const kOrigoTypeMemberRoot = @"origoTypeMemberRoot";
+NSString * const kOrigoTypeResidence = @"origoTypeResidence";
+NSString * const kOrigoTypeSchoolClass = @"origoTypeSchoolClass";
+NSString * const kOrigoTypePreschoolClass = @"origoTypePreschoolClass";
+NSString * const kOrigoTypeSportsTeam = @"origoTypeSportsTeam";
+NSString * const kOrigoTypeDefault = @"origoTypeDefault";
 
 static NSString * const kUserDefaultsKeyUserId = @"origo.user.id";
 static NSString * const kUserDefaultsKeyFormatDeviceId = @"origo.device.id$%@";
@@ -273,6 +276,7 @@ static OMeta *m = nil;
 - (void)userDidSignOut
 {
     _user = nil;
+    _authToken = nil;
     
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
 }

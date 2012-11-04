@@ -558,7 +558,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - UIActionSheetDelegate methods
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex != actionSheet.destructiveButtonIndex) {
         [self activateMembership];
@@ -575,9 +575,11 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if ([identitifier isEqualToString:kMemberListViewControllerId]) {
         [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
     } else if ([identitifier isEqualToString:kMemberViewControllerId]) {
-        [[OMeta m] userDidSignOut];
-        
-        [self reload];
+        if ([OMeta m].userIsSignedIn) {
+            [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
+        } else {
+            [self reload];
+        }
     }
 }
 
