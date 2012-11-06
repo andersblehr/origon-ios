@@ -41,6 +41,8 @@ extern CGFloat const kLineSpacing;
 - (BOOL)holdsValidDate;
 - (BOOL)holdsValidAddressWith:(OTextField *)otherAddressField;
 
-- (void)toggleEditing;
+- (void)emphasise;
+- (void)deemphasise;
+- (void)toggleEmphasis;
 
 @end
