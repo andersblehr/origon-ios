@@ -184,13 +184,13 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
-    [(OTextField *)textField toggleEditing];
+    [(OTextField *)textField toggleEmphasis];
 }
 
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    [(OTextField *)textField toggleEditing];
+    [(OTextField *)textField toggleEmphasis];
 }
 
 

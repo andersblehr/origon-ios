@@ -331,6 +331,7 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 {
     [self addTitleFieldWithText:member.name key:kTextFieldName];
     [self addPhotoFrame:[UIImage imageWithData:member.photo]];
+    [self.contentView bringSubviewToFront:[self textFieldForKey:kTextFieldName]];
     
     if ([member hasEmail] || [OState s].actionIsInput) {
         [self addSingleLetterLabel:[OStrings stringForKey:strLabelAbbreviatedEmail]];

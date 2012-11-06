@@ -481,6 +481,14 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [_authCell.backgroundView addDropShadowForTrailingTableViewCell];
+    
+    if ([OState s].actionIsLogin) {
+        [_emailField emphasise];
+        [_passwordField emphasise];
+    } else if ([OState s].actionIsActivate) {
+        [_activationCodeField emphasise];
+        [_repeatPasswordField emphasise];
+    }
 }
 
 

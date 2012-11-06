@@ -130,4 +130,18 @@
     return [UIColor lightTextColor];
 }
 
+
+#pragma mark - Placeholder colours
+
++ (UIColor *)defaultPlaceholderColor
+{
+    return [UIColor lightGrayColor];
+}
+
+
++ (UIColor *)lightPlaceholderColor
+{
+    return [UIColor lightTextColor];
+}
+
 @end

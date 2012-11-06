@@ -38,6 +38,8 @@ static CGFloat const kTextInset = 4.f;
 static NSInteger const kMinimumPassordLength = 6;
 static NSInteger const kMinimumPhoneNumberLength = 5;
 
+static NSString * const kPlaceholderColorPath = @"_placeholderLabel.textColor";
+
 
 @implementation OTextField
 
@@ -184,24 +186,38 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-#pragma mark - Toggle editing emphasis
+#pragma mark - Emphasising and deemphasising
 
-- (void)toggleEditing
+- (void)emphasise
+{
+    self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
+    [self addDropShadowForField];
+    
+    if (_isTitle) {
+        self.textColor = [UIColor editableTitleTextColor];
+        [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kPlaceholderColorPath];
+    }
+}
+
+
+- (void)deemphasise
+{
+    self.backgroundColor = [UIColor clearColor];
+    [self removeDropShadow];
+    
+    if (_isTitle) {
+        self.textColor = [UIColor titleTextColor];
+        [self setValue:[UIColor lightPlaceholderColor] forKeyPath:kPlaceholderColorPath];
+    }
+}
+
+
+- (void)toggleEmphasis
 {
     if (self.editing) {
-        self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-        [self addDropShadowForField];
-        
-        if (_isTitle) {
-            self.textColor = [UIColor editableTitleTextColor];
-        }
+        [self emphasise];
     } else {
-        self.backgroundColor = [UIColor clearColor];
-        [self removeDropShadow];
-        
-        if (_isTitle) {
-            self.textColor = [UIColor titleTextColor];
-        }
+        [self deemphasise];
     }
 }
 
@@ -222,7 +238,13 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
-    return (self.enabled || [OState s].actionIsInput) ? CGRectInset(bounds, kTextInset, 0.f) : bounds;
+    CGRect textRect = [super textRectForBounds:bounds];
+    
+    if (self.enabled || [OState s].actionIsInput) {
+        textRect = CGRectInset(textRect, kTextInset, 0.f);
+    }
+    
+    return textRect;
 }
 
 
