@@ -16,8 +16,6 @@
 
 @interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
 @private
-    OStateAspect _aspect;
-    
     NSArray *_sortedResidences;
     NSArray *_sortedWards;
     NSArray *_sortedOrigos;

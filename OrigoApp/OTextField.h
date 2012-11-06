@@ -25,12 +25,10 @@ extern NSString * const kTextFieldTelephone;
 
 extern CGFloat const kLineSpacing;
 
-@interface OTextField : UITextField {
-@private
-    BOOL _isTitle;
-}
+@interface OTextField : UITextField
 
 @property (strong, nonatomic) NSString *key;
+@property (nonatomic) BOOL isTitle;
 
 - (id)initWithFrame:(CGRect)frame;
 - (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width;
@@ -43,7 +41,6 @@ extern CGFloat const kLineSpacing;
 - (BOOL)holdsValidDate;
 - (BOOL)holdsValidAddressWith:(OTextField *)otherAddressField;
 
-- (CGFloat)lineHeight;
-- (CGFloat)lineSpacingBelow;
+- (void)toggleEditing;
 
 @end

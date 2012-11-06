@@ -10,6 +10,11 @@
 
 #import "OMeta.h"
 
+#import "OMember.h"
+#import "OOrigo.h"
+
+#import "OMember+OMemberExtensions.h"
+
 static OState *s = nil;
 
 
@@ -124,11 +129,63 @@ static OState *s = nil;
         aspectAsString = @"WARD";
     } else if (self.aspectIsExternal) {
         aspectAsString = @"EXTERNAL";
+    } else if (self.aspectIsResidence) {
+        aspectAsString = @"RESIDENCE";
+    } else if (self.aspectIsOrganisation) {
+        aspectAsString = @"ORGANISATION";
+    } else if (self.aspectIsClass) {
+        aspectAsString = @"CLASS";
+    } else if (self.aspectIsPreschool) {
+        aspectAsString = @"PRESCHOOL";
+    } else if (self.aspectIsTeam) {
+        aspectAsString = @"TEAM";
     } else {
         aspectAsString = @"NONE";
     }
     
     return [NSString stringWithFormat:@"[%@][%@][%@]", actionAsString, targetAsString, aspectAsString];
+}
+
+
+#pragma mark - Entity to aspect mappings
+
+- (void)setAspectForMember:(OMember *)member
+{
+    OStateAspect aspect = OStateAspectExternal;
+    
+    if ([member isUser]) {
+        aspect = OStateAspectSelf;
+    } else if ([[[OMeta m].user wards] containsObject:member]) {
+        aspect = OStateAspectWard;
+    }
+    
+    _aspect = aspect;
+}
+
+
+- (void)setAspectForOrigo:(OOrigo *)origo
+{
+    [self setAspectForOrigoType:origo.type];
+}
+
+
+- (void)setAspectForOrigoType:(NSString *)origoType
+{
+    OStateAspect aspect = OStateAspectNone;
+    
+    if ([origoType isEqualToString:kOrigoTypeResidence]) {
+        aspect = OStateAspectResidence;
+    } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
+        aspect = OStateAspectOrganisation;
+    } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
+        aspect = OStateAspectClass;
+    } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
+        aspect = OStateAspectPreschool;
+    } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
+        aspect = OStateAspectTeam;
+    }
+    
+    _aspect = aspect;
 }
 
 
@@ -304,6 +361,66 @@ static OState *s = nil;
 - (BOOL)aspectIsExternal
 {
     return (_aspect == OStateAspectExternal);
+}
+
+
+- (void)setAspectIsResidence:(BOOL)aspectIsResidence
+{
+    [self setAspect:OStateAspectResidence active:aspectIsResidence];
+}
+
+
+- (BOOL)aspectIsResidence
+{
+    return (_aspect == OStateAspectResidence);
+}
+
+
+- (void)setAspectIsOrganisation:(BOOL)aspectIsOrganisation
+{
+    [self setAspect:OStateAspectOrganisation active:aspectIsOrganisation];
+}
+
+
+- (BOOL)aspectIsOrganisation
+{
+    return (_aspect == OStateAspectOrganisation);
+}
+
+
+- (void)setAspectIsClass:(BOOL)aspectIsClass
+{
+    [self setAspect:OStateAspectClass active:aspectIsClass];
+}
+
+
+- (BOOL)aspectIsClass
+{
+    return (_aspect == OStateAspectClass);
+}
+
+
+- (void)setAspectIsPreschool:(BOOL)aspectIsPreschool
+{
+    [self setAspect:OStateAspectPreschool active:aspectIsPreschool];
+}
+
+
+- (BOOL)aspectIsPreschool
+{
+    return (_aspect == OStateAspectPreschool);
+}
+
+
+- (void)setAspectIsTeam:(BOOL)aspectIsTeam
+{
+    [self setAspect:OStateAspectTeam active:aspectIsTeam];
+}
+
+
+- (BOOL)aspectIsTeam
+{
+    return (_aspect == OStateAspectTeam);
 }
 
 @end

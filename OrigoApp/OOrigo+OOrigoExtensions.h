@@ -17,10 +17,12 @@
 
 - (BOOL)isMemberRoot;
 - (BOOL)isResidence;
-
-- (BOOL)userIsAdmin;
 - (BOOL)hasAddress;
 - (BOOL)hasTelephone;
+
+- (OMembership *)userMembership;
+- (BOOL)userIsMember;
+- (BOOL)userIsAdmin;
 - (BOOL)hasMemberWithId:(NSString *)memberId;
 
 - (NSString *)details;

@@ -480,7 +480,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [_authCell.backgroundView addShadowForBottomTableViewCell];
+    [_authCell.backgroundView addDropShadowForTrailingTableViewCell];
 }
 
 

@@ -108,74 +108,28 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 }
 
 
-#pragma mark - Metadata
-
-+ (CGFloat)defaultHeight
+- (void)shakeWithVibration:(BOOL)doVibrate
 {
-    return kDefaultCellHeight;
-}
-
-
-+ (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier
-{
-    CGFloat height = [OTableViewCell defaultHeight];
-    
-    if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin] ||
-        [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-        height = kDefaultPadding;
-        height += [UIFont labelFont].lineHeight;
-        height += 2.f * kLineSpacing;
-        height += 2.f * [UIFont editableDetailFont].lineHeightWhenEditing;
-        height += 1.5f * kDefaultPadding;
+    if (doVibrate) {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     }
     
-    return height;
-}
-
-
-+ (CGFloat)heightForEntityClass:(Class)entityClass
-{
-    CGFloat height = [OTableViewCell defaultHeight];
+    CGFloat translation = 3.f;
     
-    if (entityClass == OMember.class) {
-        height = 2 * kDefaultPadding + 2 * kLineSpacing;
+    CGAffineTransform translateRight = CGAffineTransformTranslate(CGAffineTransformIdentity, translation, 0.f);
+    CGAffineTransform translateLeft = CGAffineTransformTranslate(CGAffineTransformIdentity, -translation, 0.f);
+    
+    self.transform = translateLeft;
+    
+    [UIView animateWithDuration:0.05f delay:0.f options:UIViewAnimationOptionAutoreverse|UIViewAnimationOptionRepeat animations:^{
+        [UIView setAnimationRepeatCount:3.f];
         
-        if ([OState s].actionIsInput) {
-            height += [UIFont editableTitleFont].lineHeightWhenEditing;
-            height += 3 * [UIFont editableDetailFont].lineHeightWhenEditing;
-            height += 2 * kLineSpacing;
-        } else {
-            height += [UIFont titleFont].lineHeight;
-            height += kPhotoSideLength;
-        }
-    } else if (entityClass == OOrigo.class) {
-        height = 2 * kDefaultPadding + 2 * kLineSpacing;
-        
-        if ([OState s].actionIsInput) {
-            height += 3 * [UIFont editableDetailFont].lineHeightWhenEditing;
-        } else {
-            height += 3 * [UIFont detailFont].lineHeight;
-        }
-    }
-    
-    return height;
-}
-
-
-+ (CGFloat)heightForEntity:(OReplicatedEntity *)entity
-{
-    CGFloat height = [OTableViewCell heightForEntityClass:entity.class];
-    
-    if ([entity isKindOfClass:OOrigo.class]) {
-        OOrigo *origo = (OOrigo *)entity;
-
-        if (![origo hasTelephone] && ![OState s].actionIsInput) {
-            height -= [UIFont detailFont].lineHeight;
-            height -= kLineSpacing;
-        }
-    }
-    
-    return height;
+        self.transform = translateRight;
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.05f delay:0.f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+            self.transform = CGAffineTransformIdentity;
+        } completion:NULL];
+    }];
 }
 
 
@@ -235,10 +189,10 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 
 - (OTextField *)addTitleFieldWithText:(NSString *)text key:(NSString *)key
 {
-    CGFloat titleHeight = self.editing ? [UIFont editableTitleFont].lineHeightWhenEditing : [UIFont titleFont].lineHeight;
+    CGFloat titleHeight = [UIFont titleFont].lineHeight;
     
     UIView *titleBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(-1.f, -1.f, kCellWidth + 2, kDefaultPadding + titleHeight + kLineSpacing)];
-    titleBackgroundView.backgroundColor = [UIColor ashGrayColor];
+    titleBackgroundView.backgroundColor = [UIColor titleBackgroundColor];
     
     [self.contentView addSubview:titleBackgroundView];
     
@@ -283,7 +237,7 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
     CGFloat contentWidth = kCellWidth - _contentOffset - _contentMargin - kDefaultPadding;
     CGFloat textFieldWidth = widthFraction * contentWidth;
     
-    if (text || self.editing) {
+    if (text || [OState s].actionIsInput) {
         if ([self isAuthFieldKey:key]) {
             textField = [self authFieldForKey:key];
         } else if (isTitle) {
@@ -293,7 +247,7 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
         }
         
         textField.delegate = _textFieldDelegate;
-        textField.enabled = self.editing;
+        textField.enabled = [OState s].actionIsInput;
         textField.key = key;
         textField.text = text;
         
@@ -329,7 +283,9 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
         [_textFields setObject:textField forKey:key];
         
         if (widthFraction == 1.f) {
-            _verticalOffset += [textField lineHeight] + [textField lineSpacingBelow];
+            CGFloat lineSpacing = textField.isTitle ? 2 * kLineSpacing : kLineSpacing;
+            
+            _verticalOffset += textField.font.lineHeight + lineSpacing;
             _contentMargin = kDefaultPadding;
         } else {
             _contentMargin += textFieldWidth;
@@ -361,7 +317,7 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
         [_imageButton addSubview:photoPrompt];
     }
 
-    [_imageButton addShadowForPhotoFrame];
+    [_imageButton addDropShadowForPhotoFrame];
     [self.contentView addSubview:_imageButton];
     
     _contentOffset += kPhotoSideLength;
@@ -369,14 +325,14 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 }
 
 
-#pragma mark - Cell population
+#pragma mark - Cell composition
 
 - (void)setUpForMemberEntity:(OMember *)member
 {
     [self addTitleFieldWithText:member.name key:kTextFieldName];
     [self addPhotoFrame:[UIImage imageWithData:member.photo]];
     
-    if ([member hasEmailAddress] || [OState s].actionIsInput) {
+    if ([member hasEmail] || [OState s].actionIsInput) {
         [self addSingleLetterLabel:[OStrings stringForKey:strLabelAbbreviatedEmail]];
         [self addTextFieldWithText:member.entityId key:kTextFieldEmail];
     }
@@ -419,6 +375,72 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 }
 
 
+#pragma mark - Cell height
+
++ (CGFloat)defaultHeight
+{
+    return kDefaultCellHeight;
+}
+
+
++ (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier
+{
+    CGFloat height = [OTableViewCell defaultHeight];
+    
+    if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin] ||
+        [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
+        height = kDefaultPadding;
+        height += [UIFont labelFont].lineHeight;
+        height += 2.f * kLineSpacing;
+        height += 2.f * [UIFont detailFont].lineHeight;
+        height += 1.5f * kDefaultPadding;
+    }
+    
+    return height;
+}
+
+
++ (CGFloat)heightForEntityClass:(Class)entityClass
+{
+    CGFloat height = [OTableViewCell defaultHeight];
+    
+    if (entityClass == OMember.class) {
+        height = 2 * kDefaultPadding + 2 * kLineSpacing;
+        
+        if ([OState s].actionIsInput) {
+            height += [UIFont titleFont].lineHeight;
+            height += 3 * [UIFont detailFont].lineHeight;
+            height += 2 * kLineSpacing;
+        } else {
+            height += [UIFont titleFont].lineHeight;
+            height += kPhotoSideLength;
+        }
+    } else if (entityClass == OOrigo.class) {
+        height = 2 * kDefaultPadding + 2 * kLineSpacing;
+        height += 3 * [UIFont detailFont].lineHeight;
+    }
+    
+    return height;
+}
+
+
++ (CGFloat)heightForEntity:(OReplicatedEntity *)entity
+{
+    CGFloat height = [OTableViewCell heightForEntityClass:entity.class];
+    
+    if ([entity isKindOfClass:OOrigo.class]) {
+        OOrigo *origo = (OOrigo *)entity;
+        
+        if (![origo hasTelephone] && ![OState s].actionIsInput) {
+            height -= [UIFont detailFont].lineHeight;
+            height -= kLineSpacing;
+        }
+    }
+    
+    return height;
+}
+
+
 #pragma mark - Initialisation
 
 - (OTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
@@ -444,7 +466,6 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
         self.textLabel.font = [UIFont titleFont];
         
         self.selectable = YES;
-        self.editing = [OState s].actionIsInput;
         
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin]) {
             [self addLabel:[OStrings stringForKey:strLabelSignInOrRegister] centred:YES];
@@ -458,12 +479,6 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
     }
     
     return self;
-}
-
-
-- (OTableViewCell *)initWithEntity:(OReplicatedEntity *)entity
-{
-    return [self initWithEntity:entity delegate:nil];
 }
 
 
@@ -484,8 +499,6 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
     self = [self initWithReuseIdentifier:NSStringFromClass(entityClass) delegate:delegate];
     
     if (self) {
-        self.editing = YES;
-        
         [self setUpForEntityClass:entityClass entity:nil];
     }
     
@@ -512,31 +525,6 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 - (void)shakeAndVibrateDevice
 {
     [self shakeWithVibration:YES];
-}
-
-
-- (void)shakeWithVibration:(BOOL)doVibrate
-{
-    if (doVibrate) {
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-    }
-    
-    CGFloat translation = 3.f;
-    
-    CGAffineTransform translateRight = CGAffineTransformTranslate(CGAffineTransformIdentity, translation, 0.f);
-    CGAffineTransform translateLeft = CGAffineTransformTranslate(CGAffineTransformIdentity, -translation, 0.f);
-    
-    self.transform = translateLeft;
-    
-    [UIView animateWithDuration:0.05f delay:0.f options:UIViewAnimationOptionAutoreverse|UIViewAnimationOptionRepeat animations:^{
-        [UIView setAnimationRepeatCount:3.f];
-        
-        self.transform = translateRight;
-    } completion:^(BOOL finished) {
-        [UIView animateWithDuration:0.05f delay:0.f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-            self.transform = CGAffineTransformIdentity;
-        } completion:NULL];
-    }];
 }
 
 

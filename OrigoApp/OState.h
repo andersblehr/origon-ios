@@ -30,7 +30,14 @@ typedef enum {
     OStateAspectSelf,
     OStateAspectWard,
     OStateAspectExternal,
+    OStateAspectResidence,
+    OStateAspectOrganisation,
+    OStateAspectClass,
+    OStateAspectPreschool,
+    OStateAspectTeam,
 } OStateAspect;
+
+@class OMember, OOrigo;
 
 @interface OState : NSObject
 
@@ -54,9 +61,18 @@ typedef enum {
 @property (nonatomic) BOOL aspectIsSelf;
 @property (nonatomic) BOOL aspectIsWard;
 @property (nonatomic) BOOL aspectIsExternal;
+@property (nonatomic) BOOL aspectIsResidence;
+@property (nonatomic) BOOL aspectIsOrganisation;
+@property (nonatomic) BOOL aspectIsClass;
+@property (nonatomic) BOOL aspectIsPreschool;
+@property (nonatomic) BOOL aspectIsTeam;
 
 + (OState *)s;
 
 - (NSString *)asString;
+
+- (void)setAspectForMember:(OMember *)member;
+- (void)setAspectForOrigo:(OOrigo *)origo;
+- (void)setAspectForOrigoType:(NSString *)origoType;
 
 @end

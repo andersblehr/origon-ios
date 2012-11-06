@@ -30,9 +30,9 @@
 
 #pragma mark - Wrapper accessors
 
-- (void)setDidRegister_:(BOOL)didRegister_
+- (void)setDidRegister_:(BOOL)didRegister
 {
-    self.didRegister = [NSNumber numberWithBool:didRegister_];
+    self.didRegister = [NSNumber numberWithBool:didRegister];
     
     [self rootMembership].isActive_ = YES;
 }
@@ -49,12 +49,10 @@
     NSString *nameString = [NSString stringWithString:self.name];
     
     if ([self isMinor]) {
-        if ([OState s].aspectIsSelf) {
-            nameString = self.givenName;
-        }
+        nameString = self.givenName;
         
         if ([OState s].actionIsList) {
-            nameString = [NSString stringWithFormat:@"%@ (%d)", nameString, [self.dateOfBirth yearsBeforeNow]];
+            nameString = [nameString stringByAppendingFormat:@" (%d)", [self.dateOfBirth yearsBeforeNow]];
         }
     }
     
@@ -68,10 +66,10 @@
 {
     NSString *detailString = nil;
     
-    if (![self isMinor] || [OState s].aspectIsSelf) {
+    if (![self isMinor] || [[OMeta m].user hasWard:self]) {
         if ([self hasMobilePhone]) {
             detailString = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
-        } else if ([self hasEmailAddress]) {
+        } else if ([self hasEmail]) {
             detailString = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.entityId];
         }
     }
@@ -178,9 +176,15 @@
 }
 
 
-- (BOOL)hasEmailAddress
+- (BOOL)hasEmail
 {
     return [self.entityId isEmailAddress];
+}
+
+
+- (BOOL)hasWard:(OMember *)ward
+{
+    return [[self wards] containsObject:ward];
 }
 
 

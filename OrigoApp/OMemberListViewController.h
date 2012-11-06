@@ -16,8 +16,6 @@
 
 @interface OMemberListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, OModalViewControllerDelegate> {
 @private
-    OStateAspect _aspect;
-    
     NSMutableSet *_contacts;
     NSMutableSet *_members;
     NSArray *_sortedContacts;

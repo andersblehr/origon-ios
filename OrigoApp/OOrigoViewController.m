@@ -23,6 +23,7 @@
 #import "OTextField.h"
 
 #import "OMember.h"
+#import "OMembership.h"
 #import "OOrigo.h"
 
 #import "OOrigo+OOrigoExtensions.h"
@@ -71,16 +72,21 @@
 {
     [super viewDidLoad];
     
-    [OState s].targetIsOrigo = YES;
-    [OState s].actionIsDisplay = ![OState s].actionIsInput;
-    
     [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
 
-    if (_origo) {
+    [OState s].targetIsOrigo = YES;
+    [OState s].actionIsDisplay = ![OState s].actionIsInput;
+    
+    if (_membership) {
+        _origo = _membership.origo;
+        [[OState s] setAspectForOrigo:_origo];
+        
         self.title = [_origo isResidence] ? [OStrings stringForKey:strTermAddress] : _origo.name;
     } else {
+        [[OState s] setAspectForOrigoType:_origoType];
+        
         if ([_origoType isEqualToString:kOrigoTypeDefault]) {
             self.title = [OStrings stringForKey:strViewTitleNewOrigo];
         } else {
@@ -132,7 +138,15 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [OTableViewCell heightForEntity:_origo];
+    CGFloat height = 0.f;
+    
+    if (_origo) {
+        height = [OTableViewCell heightForEntity:_origo];
+    } else {
+        height = [OTableViewCell heightForEntityClass:OOrigo.class];
+    }
+    
+    return height;
 }
 
 
@@ -162,11 +176,23 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [cell.backgroundView addShadowForBottomTableViewCell];
+    [cell.backgroundView addDropShadowForTrailingTableViewCell];
 }
 
 
 #pragma mark - UITextFieldDelegate methods
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    [(OTextField *)textField toggleEditing];
+}
+
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    [(OTextField *)textField toggleEditing];
+}
+
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {

@@ -39,7 +39,7 @@
 }
 
 
-#pragma mark - Relationship maintenance
+#pragma mark - Adding members
 
 - (id)addMember:(OMember *)member
 {
@@ -69,7 +69,7 @@
 }
 
 
-#pragma mark - Origo type information
+#pragma mark - Origo meta information
 
 - (BOOL)isMemberRoot
 {
@@ -83,9 +83,21 @@
 }
 
 
-#pragma mark - Meta information
+- (BOOL)hasAddress
+{
+    return ((self.addressLine1.length > 0) || (self.addressLine2.length > 0));
+}
 
-- (BOOL)userIsAdmin
+
+- (BOOL)hasTelephone
+{
+    return (self.telephone.length > 0);
+}
+
+
+#pragma mark - Membership information
+
+- (OMembership *)userMembership
 {
     OMembership *userMembership = nil;
     
@@ -97,19 +109,19 @@
         }
     }
     
-    return userMembership.isAdmin_;
+    return userMembership;
 }
 
 
-- (BOOL)hasAddress
+- (BOOL)userIsMember
 {
-    return ((self.addressLine1.length > 0) || (self.addressLine2.length > 0));
+    return ([self userMembership] != nil);
 }
 
 
-- (BOOL)hasTelephone
+- (BOOL)userIsAdmin
 {
-    return (self.telephone.length > 0);
+    return [self userMembership].isAdmin_;
 }
 
 
