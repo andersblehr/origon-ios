@@ -81,7 +81,6 @@ static NSInteger const kMemberSection = 2;
 - (void)addMember
 {
     [OState s].actionIsRegister = YES;
-    [OState s].aspectIsExternal = YES;
     
     OMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
     memberViewController.delegate = self;
@@ -112,14 +111,16 @@ static NSInteger const kMemberSection = 2;
 {
     [super viewDidLoad];
     
-    _aspect = [OState s].aspect;
+    [OState s].targetIsMember = YES;
+    [OState s].actionIsList = YES;
+    [[OState s] setAspectForOrigo:_origo];
     
     [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
     if ([_origo isResidence]) {
-        if ([OState s].aspectIsSelf) {
+        if ([_origo userIsMember]) {
             self.title = _origo.name;
         } else {
             self.title = [OStrings stringForKey:strViewTitleHousehold];
@@ -157,9 +158,11 @@ static NSInteger const kMemberSection = 2;
 {
     [super viewWillAppear:animated];
     
-    [OState s].targetIsMember = YES;
-    [OState s].actionIsList = YES;
-    [OState s].aspect = _aspect;
+    if (![self isBeingPresented]) {
+        [OState s].targetIsMember = YES;
+        [OState s].actionIsList = YES;
+        [[OState s] setAspectForOrigo:_origo];
+    }
     
     OLogState;
 }
@@ -187,7 +190,7 @@ static NSInteger const kMemberSection = 2;
 {
     if ([segue.identifier isEqualToString:kSegueToOrigoView]) {
         OOrigoViewController *origoViewController = segue.destinationViewController;
-        origoViewController.origo = _origo;
+        origoViewController.membership = [_origo userMembership];
     } else if ([segue.identifier isEqualToString:kSegueToMemberView]) {
         OMemberViewController *memberViewController = segue.destinationViewController;
         memberViewController.membership = _selectedMembership;
@@ -375,9 +378,9 @@ static NSInteger const kMemberSection = 2;
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {   
     if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1) {
-        [cell.backgroundView addShadowForBottomTableViewCell];
+        [cell.backgroundView addDropShadowForTrailingTableViewCell];
     } else {
-        [cell.backgroundView addShadowForContainedTableViewCell];
+        [cell.backgroundView addDropShadowForInternalTableViewCell];
     }
 }
 
@@ -393,11 +396,7 @@ static NSInteger const kMemberSection = 2;
             _selectedMembership = _sortedMembers[indexPath.row];
         }
         
-        if ([_selectedMembership.member isUser]) {
-            [OState s].aspectIsSelf = YES;
-        } else {
-            [OState s].aspectIsExternal = YES;
-        }
+        [[OState s] setAspectForMember:_selectedMembership.member];
         
         [self performSegueWithIdentifier:kSegueToMemberView sender:self];
     }

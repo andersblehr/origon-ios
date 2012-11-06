@@ -33,7 +33,6 @@ NSString * const kTextFieldTelephone = @"telephone";
 
 CGFloat const kLineSpacing = 5.f;
 
-static CGFloat const kRoundedCornerRadius = 2.5f;
 static CGFloat const kTextInset = 4.f;
 
 static NSInteger const kMinimumPassordLength = 6;
@@ -47,9 +46,8 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 - (id)initAtOrigin:(CGPoint)origin font:(UIFont *)font width:(CGFloat)width isTitle:(BOOL)isTitle
 {
     BOOL editing = [OState s].actionIsInput;
-    CGFloat lineHeight = editing ? font.lineHeightWhenEditing : font.lineHeight;
     
-    self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, lineHeight)];
+    self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, [font textFieldHeight])];
     
     if (self) {
         _isTitle = isTitle;
@@ -60,7 +58,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         self.font = font;
         self.keyboardType = UIKeyboardTypeDefault;
-        self.layer.cornerRadius = kRoundedCornerRadius;
         self.returnKeyType = UIReturnKeyNext;
         self.textAlignment = UITextAlignmentLeft;
         
@@ -85,17 +82,13 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width
 {
-    UIFont *font = [OState s].actionIsInput ? [UIFont editableTitleFont] : [UIFont titleFont];
-    
-    return [self initAtOrigin:origin font:font width:width isTitle:YES];
+    return [self initAtOrigin:origin font:[UIFont titleFont] width:width isTitle:YES];
 }
 
 
 - (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width
 {
-    UIFont *font = [OState s].actionIsInput ? [UIFont editableDetailFont] : [UIFont detailFont];
-    
-    return [self initAtOrigin:origin font:font width:width isTitle:NO];
+    return [self initAtOrigin:origin font:[UIFont detailFont] width:width isTitle:NO];
 }
 
 
@@ -191,17 +184,25 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-#pragma mark - Extent of field
+#pragma mark - Toggle editing emphasis
 
-- (CGFloat)lineHeight
+- (void)toggleEditing
 {
-    return ([OState s].actionIsInput ? self.font.lineHeightWhenEditing : self.font.lineHeight);
-}
-
-
-- (CGFloat)lineSpacingBelow
-{
-    return (_isTitle ? 2 * kLineSpacing : kLineSpacing);
+    if (self.editing) {
+        self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
+        [self addDropShadowForField];
+        
+        if (_isTitle) {
+            self.textColor = [UIColor editableTitleTextColor];
+        }
+    } else {
+        self.backgroundColor = [UIColor clearColor];
+        [self removeDropShadow];
+        
+        if (_isTitle) {
+            self.textColor = [UIColor titleTextColor];
+        }
+    }
 }
 
 
@@ -234,24 +235,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     }
     
     return canPerformAction;
-}
-
-
-- (void)setEnabled:(BOOL)enabled
-{
-    [super setEnabled:enabled];
-    
-    if (enabled) {
-        self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-        [self addShadowForEditableTextField];
-    } else {
-        self.backgroundColor = [UIColor clearColor];
-        [self removeShadow];
-        
-        if (_isTitle) {
-            self.textColor = [UIColor titleTextColor];
-        }
-    }
 }
 
 

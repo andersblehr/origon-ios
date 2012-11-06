@@ -52,6 +52,7 @@ extern NSString * const kGenderMale;
 
 extern NSString * const kOrigoTypeMemberRoot;
 extern NSString * const kOrigoTypeResidence;
+extern NSString * const kOrigoTypeOrganisation;
 extern NSString * const kOrigoTypeSchoolClass;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeSportsTeam;

@@ -39,7 +39,6 @@ extern CGFloat const kDefaultPadding;
 + (CGFloat)heightForEntity:(OReplicatedEntity *)entity;
 
 - (OTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
-- (OTableViewCell *)initWithEntity:(OReplicatedEntity *)entity;
 - (OTableViewCell *)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 - (OTableViewCell *)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
 

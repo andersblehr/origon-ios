@@ -29,7 +29,8 @@
 - (BOOL)hasPhone;
 - (BOOL)hasMobilePhone;
 - (BOOL)hasAddress;
-- (BOOL)hasEmailAddress;
+- (BOOL)hasEmail;
+- (BOOL)hasWard:(OMember *)ward;
 
 - (NSSet *)housemates;
 - (NSSet *)wards;

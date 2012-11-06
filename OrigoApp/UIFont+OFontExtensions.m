@@ -8,102 +8,54 @@
 
 #import "UIFont+OFontExtensions.h"
 
-typedef enum {
-    OFontStyleLabel,
-    OFontStyleDetail,
-    OFontStyleEditableDetail,
-    OFontStyleTitle,
-    OFontStyleEditableTitle,
-    OFontStyleHeader,
-    OFontStyleFooter,
-} OFontStyle;
-
+static CGFloat const kTitleFontSize = 16.f;
 static CGFloat const kLabelFontSize = 12.f;
 static CGFloat const kDetailFontSize = 14.f;
-static CGFloat const kTitleFontSize = 16.f;
 static CGFloat const kHeaderFontSize = 17.f;
 static CGFloat const kFooterFontSize = 13.f;
 
-static CGFloat const kEditingLineHeightScaleFactor = 1.22f;
+static CGFloat const kFieldHeightScaleFactor = 1.22f;
 
 
 @implementation UIFont (OFontExtensions)
 
-#pragma mark - Auxiliary methods
+#pragma mark - Font shorthands
 
-+ (UIFont *)fontWithStyle:(OFontStyle)fontStyle
++ (UIFont *)titleFont
 {
-    UIFont *font = nil;
-    
-    if (fontStyle == OFontStyleLabel) {
-        font = [UIFont boldSystemFontOfSize:kLabelFontSize];
-    } else if (fontStyle == OFontStyleDetail) {
-        font = [UIFont systemFontOfSize:kDetailFontSize];
-    } else if (fontStyle == OFontStyleEditableDetail) {
-        font = [UIFont systemFontOfSize:kDetailFontSize];
-    } else if (fontStyle == OFontStyleTitle) {
-        font = [UIFont boldSystemFontOfSize:kTitleFontSize];
-    } else if (fontStyle == OFontStyleEditableTitle) {
-        font = [UIFont boldSystemFontOfSize:kTitleFontSize];
-    } else if (fontStyle == OFontStyleHeader) {
-        font = [UIFont boldSystemFontOfSize:kHeaderFontSize];
-    } else if (fontStyle == OFontStyleFooter) {
-        font = [UIFont systemFontOfSize:kFooterFontSize];
-    }
-    
-    return font;
+    return [UIFont boldSystemFontOfSize:kTitleFontSize];
 }
 
 
-#pragma mark - Predefined Origo fonts
-
 + (UIFont *)labelFont
 {
-    return [UIFont fontWithStyle:OFontStyleLabel];
+    return [UIFont boldSystemFontOfSize:kLabelFontSize];
 }
 
 
 + (UIFont *)detailFont
 {
-    return [UIFont fontWithStyle:OFontStyleDetail];
-}
-
-
-+ (UIFont *)editableDetailFont
-{
-    return [UIFont fontWithStyle:OFontStyleEditableDetail];
-}
-
-
-+ (UIFont *)titleFont
-{
-    return [UIFont fontWithStyle:OFontStyleTitle];
-}
-
-
-+ (UIFont *)editableTitleFont
-{
-    return [UIFont fontWithStyle:OFontStyleEditableTitle];
+    return [UIFont systemFontOfSize:kDetailFontSize];
 }
 
 
 + (UIFont *)headerFont
 {
-    return [UIFont fontWithStyle:OFontStyleHeader];
+    return [UIFont boldSystemFontOfSize:kHeaderFontSize];
 }
 
 
 + (UIFont *)footerFont
 {
-    return [UIFont fontWithStyle:OFontStyleFooter];
+    return [UIFont systemFontOfSize:kFooterFontSize];
 }
 
 
-#pragma mark - Scale for editing
+#pragma mark - Text field height
 
-- (CGFloat)lineHeightWhenEditing
+- (CGFloat)textFieldHeight
 {
-    return kEditingLineHeightScaleFactor * self.lineHeight;
+    return kFieldHeightScaleFactor * self.lineHeight;
 }
 
 @end

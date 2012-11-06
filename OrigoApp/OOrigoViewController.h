@@ -10,13 +10,14 @@
 
 #import "OModalViewControllerDelegate.h"
 
-@class OOrigo;
+@class OMembership, OOrigo;
 @class OTableViewCell, OTextField;
 
 @interface OOrigoViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate> {
 @private
-    OTableViewCell *_origoCell;
+    OOrigo *_origo;
     
+    OTableViewCell *_origoCell;
     OTextField *_addressLine1Field;
     OTextField *_addressLine2Field;
     OTextField *_telephoneField;
@@ -24,7 +25,7 @@
 
 @property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
 
-@property (strong, nonatomic) OOrigo *origo;
+@property (strong, nonatomic) OMembership *membership;
 @property (strong, nonatomic) NSString *origoType;
 
 @end

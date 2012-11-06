@@ -138,7 +138,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     [OState s].targetIsOrigo = YES;
     
     OOrigoViewController *origoViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoViewControllerId];
-    origoViewController.origo = _origo;
+    origoViewController.membership = [_origo userMembership];
     origoViewController.delegate = self;
     
     UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:origoViewController];
@@ -278,17 +278,18 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 {
     [super viewDidLoad];
 
-    [OState s].targetIsMember = YES;
-    [OState s].actionIsDisplay = ![OState s].actionIsInput;
-    
-    [self.tableView setBackground];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBarHidden = NO;
-    
     if (_membership) {
         _member = _membership.member;
         _origo = _membership.origo;
     }
+    
+    [OState s].targetIsMember = YES;
+    [OState s].actionIsDisplay = ![OState s].actionIsInput;
+    [[OState s] setAspectForMember:_member];
+    
+    [self.tableView setBackground];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBarHidden = NO;
     
     if ([OState s].actionIsRegister) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
@@ -470,16 +471,16 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == kMemberSection) {
-        [cell.backgroundView addShadowForBottomTableViewCell];
+        [cell.backgroundView addDropShadowForTrailingTableViewCell];
         
         if ([OState s].actionIsInput) {
             [_nameField becomeFirstResponder];
         }
     } else {
         if (indexPath.row == [_sortedResidences count] - 1) {
-            [cell.backgroundView addShadowForBottomTableViewCell];
+            [cell.backgroundView addDropShadowForTrailingTableViewCell];
         } else {
-            [cell.backgroundView addShadowForContainedTableViewCell];
+            [cell.backgroundView addDropShadowForInternalTableViewCell];
         }
     }
 }
@@ -489,6 +490,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
+    [(OTextField *)textField toggleEditing];
+    
     if (_currentField == _emailField) {
         if ((_emailField.text.length > 0) && [_emailField holdsValidEmail]) {
             if ([OState s].aspectIsSelf) {
@@ -513,6 +516,12 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     }
     
     _currentField = textField;
+}
+
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    [(OTextField *)textField toggleEditing];
 }
 
 

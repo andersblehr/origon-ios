@@ -67,6 +67,7 @@ NSString * const kGenderMale = @"M";
 
 NSString * const kOrigoTypeMemberRoot = @"origoTypeMemberRoot";
 NSString * const kOrigoTypeResidence = @"origoTypeResidence";
+NSString * const kOrigoTypeOrganisation = @"origoTypeOrganisation";
 NSString * const kOrigoTypeSchoolClass = @"origoTypeSchoolClass";
 NSString * const kOrigoTypePreschoolClass = @"origoTypePreschoolClass";
 NSString * const kOrigoTypeSportsTeam = @"origoTypeSportsTeam";

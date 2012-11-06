@@ -9,6 +9,7 @@
 #import "OMembership+OMembershipExtensions.h"
 
 #import "OMeta.h"
+#import "OState.h"
 
 #import "OMember.h"
 #import "OOrigo.h"
@@ -21,9 +22,9 @@
 
 #pragma mark - Wrapper accessors for NSNumber booleans
 
-- (void)setIsActive_:(BOOL)isActive_
+- (void)setIsActive_:(BOOL)isActive
 {
-    self.isActive = [NSNumber numberWithBool:isActive_];
+    self.isActive = [NSNumber numberWithBool:isActive];
 }
 
 
@@ -33,9 +34,9 @@
 }
 
 
-- (void)setIsAdmin_:(BOOL)isAdmin_
+- (void)setIsAdmin_:(BOOL)isAdmin
 {
-    self.isAdmin = [NSNumber numberWithBool:isAdmin_];
+    self.isAdmin = [NSNumber numberWithBool:isAdmin];
 }
 
 
@@ -57,17 +58,23 @@
 
 - (NSComparisonResult)compare:(OMembership *)other
 {
-    NSComparisonResult comparisonResult = [self.member.name localizedCaseInsensitiveCompare:other.member.name];
-    
-    BOOL thisMemberIsMinor = [self.member isMinor];
-    BOOL otherMemberIsMinor = [other.member isMinor];
-    
-    if ([self.origo isResidence] && (thisMemberIsMinor != otherMemberIsMinor)) {
-        if (thisMemberIsMinor && !otherMemberIsMinor) {
-            comparisonResult = NSOrderedDescending;
-        } else {
-            comparisonResult = NSOrderedAscending;
+    NSComparisonResult comparisonResult = NSOrderedSame;
+
+    if ([OState s].targetIsMember) {
+        comparisonResult = [self.member.name localizedCaseInsensitiveCompare:other.member.name];
+        
+        BOOL thisMemberIsMinor = [self.member isMinor];
+        BOOL otherMemberIsMinor = [other.member isMinor];
+        
+        if ([self.origo isResidence] && (thisMemberIsMinor != otherMemberIsMinor)) {
+            if (thisMemberIsMinor && !otherMemberIsMinor) {
+                comparisonResult = NSOrderedDescending;
+            } else {
+                comparisonResult = NSOrderedAscending;
+            }
         }
+    } else if ([OState s].targetIsOrigo) {
+        comparisonResult = [self.origo.name localizedCaseInsensitiveCompare:other.origo.name];
     }
 
     return comparisonResult;

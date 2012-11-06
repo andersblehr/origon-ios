@@ -8,60 +8,8 @@
 
 #import "UIColor+OColorExtensions.h"
 
-typedef enum {
-    OColorCellBackground,
-    OColorSelectedCellBackground,
-    OColorEditableTextFieldBackground,
-    OColorTitleText,
-    OColorLabelText,
-    OColorSelectedLabelText,
-    OColorDetailText,
-    OColorSelectedDetailText,
-    OColorImagePlaceholderBackground,
-    OColorImagePlaceholderText,
-    OColorHeaderText,
-    OColorFooterText,
-} OColorCategory;
-
 
 @implementation UIColor (OColorExtensions)
-
-
-#pragma mark - Auxiliary methods
-
-+ (UIColor *)colorForCategory:(OColorCategory)colorCategory
-{
-    UIColor *color = nil;
-    
-    if (colorCategory == OColorCellBackground) {
-        color = [UIColor isabellineColor];
-    } else if (colorCategory == OColorSelectedCellBackground) {
-        color = [UIColor ashGrayColor];
-    } else if (colorCategory == OColorEditableTextFieldBackground) {
-        color = [UIColor ghostWhiteColor];
-    } else if (colorCategory == OColorTitleText) {
-        color = [UIColor whiteColor];
-    } else if (colorCategory == OColorLabelText) {
-        color = [UIColor slateGrayColor];
-    } else if (colorCategory == OColorSelectedLabelText) {
-        color = [UIColor lightTextColor];
-    } else if (colorCategory == OColorDetailText) {
-        color = [UIColor darkTextColor];
-    } else if (colorCategory == OColorSelectedDetailText) {
-        color = [UIColor whiteColor];
-    } else if (colorCategory == OColorImagePlaceholderBackground) {
-        color = [UIColor colorWithWhite:0.93f alpha:1.f];
-    } else if (colorCategory == OColorImagePlaceholderText) {
-        color = [UIColor whiteColor];
-    } else if (colorCategory == OColorHeaderText) {
-        color = [UIColor ghostWhiteColor];
-    } else if (colorCategory == OColorFooterText) {
-        color = [UIColor lightTextColor];
-    }
-    
-    return color;
-}
-
 
 #pragma mark - RGB shorthands
 
@@ -89,77 +37,97 @@ typedef enum {
 }
 
 
-#pragma mark - Origo colour palette
++ (UIColor *)offWhiteColor
+{
+    return [UIColor colorWithWhite:0.93f alpha:1.f];
+}
+
+
+#pragma mark - Background colours
 
 + (UIColor *)cellBackgroundColor
 {
-    return [UIColor colorForCategory:OColorCellBackground];
+    return [UIColor isabellineColor];
 }
 
 
 + (UIColor *)selectedCellBackgroundColor
 {
-    return [UIColor colorForCategory:OColorSelectedCellBackground];
+    return [UIColor ashGrayColor];
+}
+
+
++ (UIColor *)titleBackgroundColor
+{
+    return [UIColor ashGrayColor];
 }
 
 
 + (UIColor *)editableTextFieldBackgroundColor
 {
-    return [UIColor colorForCategory:OColorEditableTextFieldBackground];
-}
-
-
-+ (UIColor *)titleTextColor
-{
-    return [UIColor colorForCategory:OColorTitleText];
-}
-
-
-+ (UIColor *)labelTextColor
-{
-    return [UIColor colorForCategory:OColorLabelText];
-}
-
-
-+ (UIColor *)selectedLabelTextColor
-{
-    return [UIColor colorForCategory:OColorSelectedLabelText];
-}
-
-
-+ (UIColor *)detailTextColor
-{
-    return [UIColor colorForCategory:OColorDetailText];
-}
-
-
-+ (UIColor *)selectedDetailTextColor
-{
-    return [UIColor colorForCategory:OColorSelectedDetailText];
+    return [UIColor ghostWhiteColor];
 }
 
 
 + (UIColor *)imagePlaceholderBackgroundColor
 {
-    return [UIColor colorForCategory:OColorImagePlaceholderBackground];
+    return [UIColor offWhiteColor];
+}
+
+
+#pragma mark - Text colours
+
++ (UIColor *)titleTextColor
+{
+    return [UIColor whiteColor];
+}
+
+
++ (UIColor *)editableTitleTextColor
+{
+    return [UIColor darkTextColor];
+}
+
+
++ (UIColor *)labelTextColor
+{
+    return [UIColor slateGrayColor];
+}
+
+
++ (UIColor *)selectedLabelTextColor
+{
+    return [UIColor lightTextColor];
+}
+
+
++ (UIColor *)detailTextColor
+{
+    return [UIColor darkTextColor];
+}
+
+
++ (UIColor *)selectedDetailTextColor
+{
+    return [UIColor whiteColor];
 }
 
 
 + (UIColor *)imagePlaceholderTextColor
 {
-    return [UIColor colorForCategory:OColorImagePlaceholderText];
+    return [UIColor whiteColor];
 }
 
 
 + (UIColor *)headerTextColor
 {
-    return [UIColor colorForCategory:OColorHeaderText];
+    return [UIColor ghostWhiteColor];
 }
 
 
 + (UIColor *)footerTextColor
 {
-    return [UIColor colorForCategory:OColorFooterText];
+    return [UIColor lightTextColor];
 }
 
 @end

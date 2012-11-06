@@ -108,28 +108,23 @@ static NSInteger const kWardSection = 1;
 {
     [super viewDidLoad];
     
-    _aspect = [OState s].aspect;
-    
     [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
     self.title = [OStrings stringForKey:strTabBarTitleOrigo];
     
-    if ([OState s].aspectIsSelf) {
-        _member = [OMeta m].user;
+    if (_member) {
+        [OState s].aspectIsWard = YES;
         
-        NSMutableSet *residences = [[NSMutableSet alloc] init];
-        
-        for (OMemberResidency *residency in _member.residencies) {
-            [residences addObject:residency.residence];
-        }
-        
-        _sortedResidences = [[residences allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
-    } else if ([OState s].aspectIsWard) {
         self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
+    } else {
+        [OState s].aspectIsSelf = YES;
+        
+        _member = [OMeta m].user;
+        _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
     }
     
     if ([[OMeta m].user isTeenOrOlder]) {
@@ -137,15 +132,7 @@ static NSInteger const kWardSection = 1;
         self.navigationItem.rightBarButtonItem.action = @selector(addOrigo);
     }
     
-    NSMutableSet *origos = [[NSMutableSet alloc] init];
-    
-    for (OMembership *membership in _member.memberships) {
-        if (![membership.origo isMemberRoot] && ![membership.origo isResidence]) {
-            [origos addObject:membership.origo];
-        }
-    }
-    
-    _sortedOrigos = [[origos allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -153,9 +140,11 @@ static NSInteger const kWardSection = 1;
 {
     [super viewWillAppear:animated];
     
-    [OState s].targetIsOrigo = YES;
-    [OState s].actionIsList = YES;
-    [OState s].aspect = _aspect;
+    if (![self isBeingPresented]) {
+        [OState s].targetIsOrigo = YES;
+        [OState s].actionIsList = YES;
+        [[OState s] setAspectForMember:_member];
+    }
     
     OLogState;
 
@@ -163,13 +152,7 @@ static NSInteger const kWardSection = 1;
         NSRange reloadRange = {0, 0};
         
         if ([_member.residencies count] != [_sortedResidences count]) {
-            NSMutableSet *residences = [[NSMutableSet alloc] init];
-            
-            for (OMemberResidency *residency in _member.residencies) {
-                [residences addObject:residency.residence];
-            }
-            
-            _sortedResidences = [[residences allObjects] sortedArrayUsingSelector:@selector(compare:)];
+            _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
             
             reloadRange.location = kResidenceSection;
             reloadRange.length = 1;
@@ -263,25 +246,25 @@ static NSInteger const kWardSection = 1;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    OOrigo *origo = nil;
+    OMembership *membership = nil;
     OMember *ward = nil;
     
     if ([self sectionIsResidenceSection:indexPath.section]) {
-        origo = _sortedResidences[indexPath.row];
+        membership = _sortedResidences[indexPath.row];
     } else if ([self sectionIsWardSection:indexPath.section]) {
         ward = _sortedWards[indexPath.row];
     } else if ([self sectionIsOrigoSection:indexPath.section]) {
-        origo = _sortedOrigos[indexPath.row];
+        membership = _sortedOrigos[indexPath.row];
     }
     
     UITableViewCell *cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    if (origo) {
-        cell.textLabel.text = origo.name;
-        cell.detailTextLabel.text = origo.details;
+    if (membership) {
+        cell.textLabel.text = membership.origo.name;
+        cell.detailTextLabel.text = membership.origo.details;
         
-        if ([origo isResidence]) {
+        if ([membership.origo isResidence]) {
             cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
         } else {
             // TODO: What icon to use for general origos?
@@ -393,9 +376,9 @@ static NSInteger const kWardSection = 1;
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1) {
-        [cell.backgroundView addShadowForBottomTableViewCell];
+        [cell.backgroundView addDropShadowForTrailingTableViewCell];
     } else {
-        [cell.backgroundView addShadowForContainedTableViewCell];
+        [cell.backgroundView addDropShadowForInternalTableViewCell];
     }
 }
 
@@ -406,17 +389,11 @@ static NSInteger const kWardSection = 1;
     _selectedWard = nil;
     
     if ([self sectionIsResidenceSection:indexPath.section]) {
-        _selectedOrigo = _sortedResidences[indexPath.row];
-        
-        [OState s].aspectIsSelf = YES;
+        _selectedOrigo = ((OMembership *)_sortedResidences[indexPath.row]).origo;
     } else if ([self sectionIsWardSection:indexPath.section]) {
         _selectedWard = _sortedWards[indexPath.row];
-        
-        [OState s].aspectIsWard = YES;
     } else if ([self sectionIsOrigoSection:indexPath.section]) {
-        _selectedOrigo = _sortedOrigos[indexPath.row];
-        
-        [OState s].aspectIsExternal = YES;
+        _selectedOrigo = ((OMembership *)_sortedOrigos[indexPath.row]).origo;
     }
     
     if (_selectedOrigo) {

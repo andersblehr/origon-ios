@@ -10,14 +10,12 @@
 
 @interface UIFont (OFontExtensions)
 
++ (UIFont *)titleFont;
 + (UIFont *)labelFont;
 + (UIFont *)detailFont;
-+ (UIFont *)editableDetailFont;
-+ (UIFont *)titleFont;
-+ (UIFont *)editableTitleFont;
 + (UIFont *)headerFont;
 + (UIFont *)footerFont;
 
-- (CGFloat)lineHeightWhenEditing;
+- (CGFloat)textFieldHeight;
 
 @end

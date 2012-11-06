@@ -13,10 +13,10 @@
 
 - (void)addGradientLayer;
 
-- (void)addShadowForBottomTableViewCell;
-- (void)addShadowForContainedTableViewCell;
-- (void)addShadowForEditableTextField;
-- (void)addShadowForPhotoFrame;
-- (void)removeShadow;
+- (void)addDropShadowForInternalTableViewCell;
+- (void)addDropShadowForTrailingTableViewCell;
+- (void)addDropShadowForField;
+- (void)addDropShadowForPhotoFrame;
+- (void)removeDropShadow;
 
 @end
