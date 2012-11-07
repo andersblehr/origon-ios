@@ -13,6 +13,7 @@
 #import "NSString+OStringExtensions.h"
 
 #import "OMeta.h"
+#import "OState.h"
 
 #import "OMember.h"
 #import "OMemberResidency.h"
@@ -74,7 +75,7 @@
     [entityDictionary setObject:self.entity.name forKey:kPropertyEntityClass];
     
     for (NSString *attributeKey in [attributes allKeys]) {
-        if (![self isTransientProperty:attributeKey]) {
+        if (![self propertyIsTransient:attributeKey]) {
             id attributeValue = [self valueForKey:attributeKey];
             
             if (attributeValue) {
@@ -86,7 +87,7 @@
     for (NSString *relationshipKey in [relationships allKeys]) {
         NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
         
-        if (!relationship.isToMany && ![self isTransientProperty:relationshipKey]) {
+        if (!relationship.isToMany && ![self propertyIsTransient:relationshipKey]) {
             OReplicatedEntity *entity = [self valueForKey:relationshipKey];
             
             if (entity) {
@@ -101,7 +102,7 @@
 
 #pragma mark - Internal consistency
 
-- (BOOL)isTransientProperty:(NSString *)property
+- (BOOL)propertyIsTransient:(NSString *)property
 {
     return [property isEqualToString:@"hashCode"];
 }
@@ -153,7 +154,7 @@
     NSString *allProperties = @"";
     
     for (NSString *name in sortedAttributeKeys) {
-        if (![self isTransientProperty:name]) {
+        if (![self propertyIsTransient:name]) {
             id value = [self valueForKey:name];
             
             if (value) {
@@ -166,7 +167,7 @@
     for (NSString *name in sortedRelationshipKeys) {
         NSRelationshipDescription *relationship = [relationships objectForKey:name];
         
-        if (!relationship.isToMany && ![self isTransientProperty:name]) {
+        if (!relationship.isToMany && ![self propertyIsTransient:name]) {
             OReplicatedEntity *entity = [self valueForKey:name];
             
             if (entity) {
@@ -209,6 +210,20 @@
     entityGhost.ghostedEntityClass = NSStringFromClass(self.class);
     
     return entityGhost;
+}
+
+
+#pragma mark - Table view cell reuse identifier
+
+- (NSString *)reuseIdentifier
+{
+    NSString *hashCode = [NSString stringWithFormat:@"%d", [self computeHashCode]];
+    
+    if ([OState s].actionIsInput) {
+        hashCode = [hashCode stringByAppendingString:@"-input"];
+    }
+    
+    return hashCode;
 }
 
 @end

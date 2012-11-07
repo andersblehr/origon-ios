@@ -46,10 +46,6 @@
 static NSInteger const kMemberSection = 0;
 static NSInteger const kAddressSection = 1;
 
-static NSInteger const kNumberOfInputSections = 1;
-static NSInteger const kNumberOfDisplaySections = 2;
-static NSInteger const kNumberOfMemberRows = 1;
-
 static NSInteger const kGenderSheetTag = 0;
 static NSInteger const kGenderSheetButtonFemale = 0;
 static NSInteger const kGenderSheetButtonCancel = 2;
@@ -110,29 +106,6 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-- (void)updateMember
-{
-    _member.name = _nameField.text;
-    _member.dateOfBirth = _dateOfBirthPicker.date;
-    _member.mobilePhone = _mobilePhoneField.text;
-    
-    if ([OState s].actionIsRegister) {
-        _member.givenName = [NSString givenNameFromFullName:_member.name];
-        _member.gender = _gender;
-    }
-    
-    if (![_origo isResidence] || [_origo hasAddress]) {
-        [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
-        
-        if ([_delegate isKindOfClass:OMemberListViewController.class]) {
-            [_delegate insertEntityInTableView:_membership];
-        }
-    } else {
-        [self registerHousehold];
-    }
-}
-
-
 - (void)registerHousehold
 {
     [OState s].targetIsOrigo = YES;
@@ -145,6 +118,46 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     modalController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     
     [self.navigationController presentViewController:modalController animated:YES completion:NULL];
+}
+
+
+- (void)updateMember
+{
+    _member.name = _nameField.text;
+    _member.dateOfBirth = _dateOfBirthPicker.date;
+    _member.mobilePhone = _mobilePhoneField.text;
+    
+    if ([OState s].actionIsRegister) {
+        _member.givenName = [NSString givenNameFromFullName:_member.name];
+        _member.gender = _gender;
+    }
+    
+    if ([OState s].actionIsRegister) {
+        if (![_origo isResidence] || [_origo hasAddress]) {
+            [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
+            
+            if ([_delegate isKindOfClass:OMemberListViewController.class]) {
+                [_delegate insertEntityInTableView:_membership];
+            }
+        } else {
+            [self registerHousehold];
+        }
+    } else if ([_member isDirty]) {
+        [[OMeta m].context replicate];
+    }
+}
+
+
+- (void)finishEditing
+{
+    [OState s].actionIsDisplay = YES;
+    
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kMemberSection] withRowAnimation:UITableViewRowAnimationFade];
+    
+    self.navigationItem.rightBarButtonItem = _editButton;
+    self.navigationItem.leftBarButtonItem = _backButton;
+    
+    OLogState;
 }
 
 
@@ -202,22 +215,36 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)startEditing
 {
+    _editButton = self.navigationItem.rightBarButtonItem;
+    _backButton = self.navigationItem.leftBarButtonItem;
     
+    [OState s].actionIsEdit = YES;
+    
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kMemberSection] withRowAnimation:UITableViewRowAnimationFade];
+    
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+    
+    OLogState;
 }
 
 
 - (void)cancelEditing
 {
-    if (_candidate) {
-        for (OReplicatedEntity *entity in _candidateEntities) {
-            [[OMeta m].context deleteObject:entity];
+    if ([OState s].actionIsRegister) {
+        if (_candidate) {
+            for (OReplicatedEntity *entity in _candidateEntities) {
+                [[OMeta m].context deleteObject:entity];
+            }
+            
+            _candidateEntities = nil;
+            _candidate = nil;
         }
         
-        _candidateEntities = nil;
-        _candidate = nil;
+        [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
+    } else if ([OState s].actionIsEdit) {
+        [self finishEditing];
     }
-    
-    [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
 }
 
 
@@ -255,7 +282,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
                     [self updateMember];
                 }
             }
-        } else {
+        } else if ([OState s].actionIsEdit) {
+            [self finishEditing];
             [self updateMember];
         }
     } else {
@@ -291,30 +319,29 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    if ([OState s].actionIsRegister) {
+    if ([OState s].aspectIsSelf) {
+        self.title = [OStrings stringForKey:strViewTitleAboutMe];
+    } else if ([OState s].actionIsRegister) {
+        if ([_origo isResidence]) {
+            self.title = [OStrings stringForKey:strViewTitleNewHouseholdMember];
+        } else {
+            self.title = [OStrings stringForKey:strViewTitleNewMember];
+        }
+    } else {
+        self.title = _member.givenName;
+    }
+    
+    if ([OState s].actionIsInput) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         
-        if ([OState s].aspectIsSelf) {
+        if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
-            self.title = [OStrings stringForKey:strViewTitleAboutMe];
         } else {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
-            
-            if ([_origo isResidence]) {
-                self.title = [OStrings stringForKey:strViewTitleNewHouseholdMember];
-            } else {
-                self.title = [OStrings stringForKey:strViewTitleNewMember];
-            }
         }
     } else if ([OState s].actionIsDisplay) {
         if ([_origo userIsAdmin] || ([_member isUser] && [_member isTeenOrOlder])) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
-        }
-        
-        if ([OState s].aspectIsSelf) {
-            self.title = [OStrings stringForKey:strViewTitleAboutMe];
-        } else {
-            self.title = _member.givenName;
         }
         
         NSMutableSet *residences = [[NSMutableSet alloc] init];
@@ -360,21 +387,13 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return ([OState s].actionIsDisplay ? kNumberOfDisplaySections : kNumberOfInputSections);
+    return [OState s].actionIsRegister ? 1 : 2;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSUInteger numberOfRows = 0;
-    
-    if (section == kMemberSection) {
-        numberOfRows = kNumberOfMemberRows;
-    } else if (section == kAddressSection) {
-        numberOfRows = [_member.residencies count];
-    }
-    
-    return numberOfRows;
+    return (section == kMemberSection) ? 1 : [_member.residencies count];
 }
 
 
@@ -401,27 +420,21 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     UITableViewCell *cell = nil;
     
     if (indexPath.section == kMemberSection) {
-        if ([OState s].actionIsDisplay) {
-            _memberCell = [tableView cellForEntity:_member];
-        } else if ([OState s].actionIsInput) {
-            if (_member) {
-                _memberCell = [tableView cellForEntity:_member delegate:self];
-            } else {
-                _memberCell = [tableView cellForEntityClass:OMember.class delegate:self];
-            }
-            
-            _nameField = [_memberCell textFieldForKey:kTextFieldName];
-            _emailField = [_memberCell textFieldForKey:kTextFieldEmail];
-            _mobilePhoneField = [_memberCell textFieldForKey:kTextFieldMobilePhone];
-            _dateOfBirthField = [_memberCell textFieldForKey:kTextFieldDateOfBirth];
-            _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
-            
-            if (_member && _member.dateOfBirth) {
-                _dateOfBirthPicker.date = _member.dateOfBirth;
-                _gender = _member.gender;
-            }
-            
-            [_nameField becomeFirstResponder];
+        if (_member) {
+            _memberCell = [tableView cellForEntity:_member delegate:self];
+        } else {
+            _memberCell = [tableView cellForEntityClass:OMember.class delegate:self];
+        }
+        
+        _nameField = [_memberCell textFieldForKey:kTextFieldName];
+        _emailField = [_memberCell textFieldForKey:kTextFieldEmail];
+        _mobilePhoneField = [_memberCell textFieldForKey:kTextFieldMobilePhone];
+        _dateOfBirthField = [_memberCell textFieldForKey:kTextFieldDateOfBirth];
+        _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
+        
+        if (_member && _member.dateOfBirth) {
+            _dateOfBirthPicker.date = _member.dateOfBirth;
+            _gender = _member.gender;
         }
         
         cell = _memberCell;
@@ -496,7 +509,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         if ((_emailField.text.length > 0) && [_emailField holdsValidEmail]) {
             if ([OState s].aspectIsSelf) {
                 // TODO: Handle user email change
-            } else {
+            } else if (![_emailField.text isEqualToString:_member.entityId]) {
                 if ([_origo hasMemberWithId:_emailField.text]) {
                     NSString *alertTitle = [OStrings stringForKey:strAlertTitleMemberExists];
                     NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _emailField.text, _origo.name];

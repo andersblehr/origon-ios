@@ -35,10 +35,10 @@ CGFloat const kLineSpacing = 5.f;
 
 static CGFloat const kTextInset = 4.f;
 
+static NSString * const kPlaceholderColorPath = @"_placeholderLabel.textColor";
+
 static NSInteger const kMinimumPassordLength = 6;
 static NSInteger const kMinimumPhoneNumberLength = 5;
-
-static NSString * const kPlaceholderColorPath = @"_placeholderLabel.textColor";
 
 
 @implementation OTextField
@@ -238,13 +238,7 @@ static NSString * const kPlaceholderColorPath = @"_placeholderLabel.textColor";
 
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
-    CGRect textRect = [super textRectForBounds:bounds];
-    
-    if (self.enabled || [OState s].actionIsInput) {
-        textRect = CGRectInset(textRect, kTextInset, 0.f);
-    }
-    
-    return textRect;
+    return CGRectInset([super textRectForBounds:bounds], kTextInset, 0.f);
 }
 
 

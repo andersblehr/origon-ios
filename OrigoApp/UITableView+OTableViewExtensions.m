@@ -17,6 +17,8 @@
 
 #import "OReplicatedEntity.h"
 
+#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
+
 static CGFloat const kScreenWidth = 320.f;
 static CGFloat const kContentWidth = 280.f;
 static CGFloat const kKeyboardHeight = 216.f;
@@ -118,7 +120,7 @@ static NSString * const kLogoText = @"..origo..";
 
 - (id)cellForEntity:(OReplicatedEntity *)entity delegate:(id)delegate
 {
-    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:entity.entityId];
+    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:[entity reuseIdentifier]];
     
     if (!cell) {
         cell = [[OTableViewCell alloc] initWithEntity:entity delegate:delegate];
@@ -130,9 +132,7 @@ static NSString * const kLogoText = @"..origo..";
 
 - (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate
 {
-    NSString *entityName = NSStringFromClass(entityClass);
-    
-    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:entityName];
+    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:NSStringFromClass(entityClass)];
     
     if (!cell) {
         cell = [[OTableViewCell alloc] initWithEntityClass:entityClass delegate:delegate];
