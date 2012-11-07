@@ -388,8 +388,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super viewWillAppear:animated];
     
-    [OState s].targetIsMember = YES;
     [OState s].actionIsLogin = YES;
+    [OState s].targetIsMember = YES;
     [OState s].aspectIsSelf = YES;
     
     OLogState;

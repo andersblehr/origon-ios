@@ -152,21 +152,15 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([OState s].actionIsRegister) {
-        if (_origo) {
-            _origoCell = [tableView cellForEntity:_origo delegate:self];
-        } else {
-            _origoCell = [tableView cellForEntityClass:OOrigo.class delegate:self];
-        }
-        
-        _addressLine1Field = [_origoCell textFieldForKey:kTextFieldAddressLine1];
-        _addressLine2Field = [_origoCell textFieldForKey:kTextFieldAddressLine2];
-        _telephoneField = [_origoCell textFieldForKey:kTextFieldTelephone];
-        
-        [_addressLine1Field becomeFirstResponder];
-    } else if ([OState s].actionIsDisplay) {
-        _origoCell = [tableView cellForEntity:_origo];
+    if (_origo) {
+        _origoCell = [tableView cellForEntity:_origo delegate:self];
+    } else {
+        _origoCell = [tableView cellForEntityClass:OOrigo.class delegate:self];
     }
+    
+    _addressLine1Field = [_origoCell textFieldForKey:kTextFieldAddressLine1];
+    _addressLine2Field = [_origoCell textFieldForKey:kTextFieldAddressLine2];
+    _telephoneField = [_origoCell textFieldForKey:kTextFieldTelephone];
     
     return _origoCell;
 }
@@ -177,6 +171,10 @@
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [cell.backgroundView addDropShadowForTrailingTableViewCell];
+    
+    if ([OState s].actionIsInput) {
+        [_addressLine1Field becomeFirstResponder];
+    }
 }
 
 

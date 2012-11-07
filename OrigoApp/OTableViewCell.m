@@ -37,11 +37,11 @@ CGFloat const kCellWidth = 300.f;
 CGFloat const kDefaultPadding = 10.f;
 
 static CGFloat const kDefaultCellHeight = 45.f;
-static CGFloat const kPhotoSideLength = 63.f;
+static CGFloat const kPhotoSideLength = 64.f;
 
 static CGFloat const kLabelWidth = 63.f;
 static CGFloat const kLabelToDetailAlignmentPadding = 2.f;
-static CGFloat const kLabelDetailSpacing = 7.f;
+static CGFloat const kLabelDetailSpacing = 3.f;
 
 static CGFloat const kAuthFieldWidthFraction = 0.7f;
 static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
@@ -189,9 +189,7 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 
 - (OTextField *)addTitleFieldWithText:(NSString *)text key:(NSString *)key
 {
-    CGFloat titleHeight = [UIFont titleFont].lineHeight;
-    
-    UIView *titleBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(-1.f, -1.f, kCellWidth + 2, kDefaultPadding + titleHeight + kLineSpacing)];
+    UIView *titleBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(-1.f, -1.f, kCellWidth + 2, kDefaultPadding + [UIFont titleFont].lineHeight + kLineSpacing)];
     titleBackgroundView.backgroundColor = [UIColor titleBackgroundColor];
     
     [self.contentView addSubview:titleBackgroundView];

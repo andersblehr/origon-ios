@@ -23,9 +23,9 @@
 
 #pragma mark - OReplicateEntity (OReplicateEntityExtentions) overrides
 
-- (BOOL)isTransientProperty:(NSString *)property
+- (BOOL)propertyIsTransient:(NSString *)property
 {
-    BOOL isTransient = [super isTransientProperty:property];
+    BOOL isTransient = [super propertyIsTransient:property];
     
     isTransient = isTransient || [property isEqualToString:@"resident"];
     isTransient = isTransient || [property isEqualToString:@"residence"];

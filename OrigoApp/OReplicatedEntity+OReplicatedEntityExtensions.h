@@ -14,7 +14,7 @@
 
 - (NSDictionary *)toDictionary;
 
-- (BOOL)isTransientProperty:(NSString *)property;
+- (BOOL)propertyIsTransient:(NSString *)property;
 - (BOOL)isReplicated;
 - (BOOL)isDirty;
 
@@ -24,5 +24,7 @@
 
 - (OLinkedEntityRef *)linkedEntityRefForOrigo:(OOrigo *)origo;
 - (OReplicatedEntityGhost *)spawnEntityGhost;
+
+- (NSString *)reuseIdentifier;
 
 @end
