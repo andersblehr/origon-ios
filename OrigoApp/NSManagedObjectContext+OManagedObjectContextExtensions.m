@@ -255,7 +255,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
 }
 
 
-#pragma mark - Saving and replication
+#pragma mark - Saving to device
 
 - (void)save
 {
@@ -299,6 +299,14 @@ static NSString * const kOrigoRelationshipName = @"origo";
 }
 
 
+#pragma mark - Server replication
+
+- (BOOL)needsReplication
+{
+    return ([[[OMeta m] dirtyEntities] count] > 0);
+}
+
+
 - (void)replicate
 {
     [[[OServerConnection alloc] init] replicate];
@@ -319,12 +327,6 @@ static NSString * const kOrigoRelationshipName = @"origo";
     NSData *dirtyEntityURIArchive = [NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs];
     [[NSUserDefaults standardUserDefaults] setObject:dirtyEntityURIArchive forKey:kUserDefaultsKeyDirtyEntities];
     [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-
-- (BOOL)savedReplicationStateIsDirty
-{
-    return ([[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyDirtyEntities] != nil);
 }
 
 

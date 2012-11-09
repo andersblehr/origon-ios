@@ -264,7 +264,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [self registerNewDevice];
     }
     
-    if (deviceIsNew || [[OMeta m].context savedReplicationStateIsDirty]) {
+    if (deviceIsNew || [[OMeta m].context needsReplication]) {
         [[OMeta m].context replicate];
     }
     
