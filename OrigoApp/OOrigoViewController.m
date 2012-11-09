@@ -57,7 +57,7 @@
         }
         
         [self.view endEditing:YES];
-        [[OMeta m].context replicate];
+        [[OMeta m].context replicateIfNeeded];
         
         [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
     } else {

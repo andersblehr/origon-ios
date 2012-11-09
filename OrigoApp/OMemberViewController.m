@@ -143,7 +143,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             [self registerHousehold];
         }
     } else if ([_member isDirty]) {
-        [[OMeta m].context replicate];
+        [[OMeta m].context replicateIfNeeded];
     }
 }
 
@@ -158,6 +158,27 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kMemberSection] withRowAnimation:UITableViewRowAnimationFade];
     
     OLogState;
+}
+
+
+#pragma mark - State handling
+
+- (void)setState
+{
+    [OState s].targetIsMember = YES;
+    [OState s].actionIsDisplay = ![OState s].actionIsInput;
+    
+    if (![OState s].actionIsRegister) {
+        [[OState s] setAspectForMember:_member];
+    }
+}
+
+
+- (void)restoreStateIfNeeded
+{
+    if (![self isBeingPresented] && ![self isMovingToParentViewController]) {
+        [self setState];
+    }
 }
 
 
@@ -315,10 +336,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         _origo = _membership.origo;
     }
     
-    [OState s].targetIsMember = YES;
-    [OState s].actionIsDisplay = ![OState s].actionIsInput;
-    [[OState s] setAspectForMember:_member];
-    
+    [self setState];
+     
     [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
@@ -362,6 +381,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    [self restoreStateIfNeeded];
     
     OLogState;
 }

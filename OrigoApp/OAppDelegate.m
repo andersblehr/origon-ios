@@ -140,7 +140,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     if ([[OMeta m] userIsSignedIn]) {
-        [[OMeta m].context replicate];
+        [[OMeta m].context replicateIfNeeded];
     }
 }
 

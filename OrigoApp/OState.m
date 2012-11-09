@@ -22,33 +22,21 @@ static OState *s = nil;
 
 #pragma mark - Auxiliary methods
 
-- (void)setAction:(OStateAction)action active:(BOOL)active
+- (void)setAction:(OStateAction)action activate:(BOOL)activate
 {
-    if (active) {
-        _action = action;
-    } else if (_action == action) {
-        _action = OStateActionNone;
-    }
+    _action = activate ? action : _action;
 }
 
 
-- (void)setTarget:(OStateTarget)target active:(BOOL)active
+- (void)setTarget:(OStateTarget)target activate:(BOOL)activate
 {
-    if (active) {
-        _target = target;
-    } else if (_target == target) {
-        _target = OStateTargetNone;
-    }
+    _target = activate ? target : _target;
 }
 
 
-- (void)setAspect:(OStateAspect)aspect active:(BOOL)active
+- (void)setAspect:(OStateAspect)aspect activate:(BOOL)activate
 {
-    if (active) {
-        _aspect = aspect;
-    } else if (_aspect == aspect) {
-        _aspect = OStateAspectNone;
-    }
+    _aspect = activate ? aspect : _aspect;
 }
 
 
@@ -193,7 +181,7 @@ static OState *s = nil;
 
 - (void)setActionIsLogin:(BOOL)actionIsLogin
 {
-    [self setAction:OStateActionLogin active:actionIsLogin];
+    [self setAction:OStateActionLogin activate:actionIsLogin];
 }
 
 
@@ -205,7 +193,7 @@ static OState *s = nil;
 
 - (void)setActionIsActivate:(BOOL)actionIsActivate
 {
-    [self setAction:OStateActionActivate active:actionIsActivate];
+    [self setAction:OStateActionActivate activate:actionIsActivate];
 }
 
 
@@ -217,7 +205,7 @@ static OState *s = nil;
 
 - (void)setActionIsRegister:(BOOL)actionIsRegister
 {
-    [self setAction:OStateActionRegister active:actionIsRegister];
+    [self setAction:OStateActionRegister activate:actionIsRegister];
 }
 
 
@@ -229,7 +217,7 @@ static OState *s = nil;
 
 - (void)setActionIsList:(BOOL)actionIsList
 {
-    [self setAction:OStateActionList active:actionIsList];
+    [self setAction:OStateActionList activate:actionIsList];
 }
 
 
@@ -241,7 +229,7 @@ static OState *s = nil;
 
 - (void)setActionIsDisplay:(BOOL)actionIsDisplay
 {
-    [self setAction:OStateActionDisplay active:actionIsDisplay];
+    [self setAction:OStateActionDisplay activate:actionIsDisplay];
 }
 
 
@@ -253,7 +241,7 @@ static OState *s = nil;
 
 - (void)setActionIsEdit:(BOOL)actionIsEdit
 {
-    [self setAction:OStateActionEdit active:actionIsEdit];
+    [self setAction:OStateActionEdit activate:actionIsEdit];
 }
 
 
@@ -280,7 +268,7 @@ static OState *s = nil;
 
 - (void)setTargetIsMember:(BOOL)targetIsMember
 {
-    [self setTarget:OStateTargetMember active:targetIsMember];
+    [self setTarget:OStateTargetMember activate:targetIsMember];
 }
 
 
@@ -292,7 +280,7 @@ static OState *s = nil;
 
 - (void)setTargetIsOrigo:(BOOL)targetIsOrigo
 {
-    [self setTarget:OStateTargetOrigo active:targetIsOrigo];
+    [self setTarget:OStateTargetOrigo activate:targetIsOrigo];
 }
 
 
@@ -304,7 +292,7 @@ static OState *s = nil;
 
 - (void)setTargetIsSetting:(BOOL)targetIsSetting
 {
-    [self setTarget:OStateTargetSetting active:targetIsSetting];
+    [self setTarget:OStateTargetSetting activate:targetIsSetting];
 }
 
 
@@ -318,7 +306,7 @@ static OState *s = nil;
 
 - (void)setAspectIsNone:(BOOL)aspectIsNone
 {
-    [self setAspect:_aspect active:NO];
+    [self setAspect:_aspect activate:NO];
 }
 
 
@@ -330,7 +318,7 @@ static OState *s = nil;
 
 - (void)setAspectIsSelf:(BOOL)aspectIsSelf
 {
-    [self setAspect:OStateAspectSelf active:aspectIsSelf];
+    [self setAspect:OStateAspectSelf activate:aspectIsSelf];
 }
 
 
@@ -342,7 +330,7 @@ static OState *s = nil;
 
 - (void)setAspectIsWard:(BOOL)aspectIsWard
 {
-    [self setAspect:OStateAspectWard active:aspectIsWard];
+    [self setAspect:OStateAspectWard activate:aspectIsWard];
 }
 
 
@@ -354,7 +342,7 @@ static OState *s = nil;
 
 - (void)setAspectIsExternal:(BOOL)aspectIsExternal
 {
-    [self setAspect:OStateAspectExternal active:aspectIsExternal];
+    [self setAspect:OStateAspectExternal activate:aspectIsExternal];
 }
 
 
@@ -366,7 +354,7 @@ static OState *s = nil;
 
 - (void)setAspectIsResidence:(BOOL)aspectIsResidence
 {
-    [self setAspect:OStateAspectResidence active:aspectIsResidence];
+    [self setAspect:OStateAspectResidence activate:aspectIsResidence];
 }
 
 
@@ -378,7 +366,7 @@ static OState *s = nil;
 
 - (void)setAspectIsOrganisation:(BOOL)aspectIsOrganisation
 {
-    [self setAspect:OStateAspectOrganisation active:aspectIsOrganisation];
+    [self setAspect:OStateAspectOrganisation activate:aspectIsOrganisation];
 }
 
 
@@ -390,7 +378,7 @@ static OState *s = nil;
 
 - (void)setAspectIsClass:(BOOL)aspectIsClass
 {
-    [self setAspect:OStateAspectClass active:aspectIsClass];
+    [self setAspect:OStateAspectClass activate:aspectIsClass];
 }
 
 
@@ -402,7 +390,7 @@ static OState *s = nil;
 
 - (void)setAspectIsPreschool:(BOOL)aspectIsPreschool
 {
-    [self setAspect:OStateAspectPreschool active:aspectIsPreschool];
+    [self setAspect:OStateAspectPreschool activate:aspectIsPreschool];
 }
 
 
@@ -414,7 +402,7 @@ static OState *s = nil;
 
 - (void)setAspectIsTeam:(BOOL)aspectIsTeam
 {
-    [self setAspect:OStateAspectTeam active:aspectIsTeam];
+    [self setAspect:OStateAspectTeam activate:aspectIsTeam];
 }
 
 

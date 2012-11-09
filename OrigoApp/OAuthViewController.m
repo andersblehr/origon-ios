@@ -265,7 +265,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     }
     
     if (deviceIsNew || [[OMeta m].context needsReplication]) {
-        [[OMeta m].context replicate];
+        [[OMeta m].context replicateIfNeeded];
     }
     
     if ([[OMeta m] registrationIsComplete]) {
@@ -334,7 +334,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [OMeta m].user.passwordHash = [_authInfo objectForKey:kAuthInfoKeyPasswordHash];
     [OMeta m].user.didRegister_ = YES;
     
-    [[OMeta m].context replicate];
+    [[OMeta m].context replicateIfNeeded];
     
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyAuthInfo];
     _authInfo = nil;
