@@ -22,9 +22,9 @@
 - (void)save;
 - (NSSet *)saveServerReplicas:(NSArray *)replicaDictionaries;
 
+- (BOOL)needsReplication;
 - (void)replicate;
 - (void)saveReplicationState;
-- (BOOL)savedReplicationStateIsDirty;
 
 - (id)entityWithId:(NSString *)entityId;
 - (void)deleteEntity:(OReplicatedEntity *)entity;
