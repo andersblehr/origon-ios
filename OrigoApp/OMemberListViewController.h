@@ -22,8 +22,6 @@
     NSArray *_sortedMembers;
     
     OMembership *_selectedMembership;
-    
-    BOOL _needsReplication;
 }
 
 @property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;

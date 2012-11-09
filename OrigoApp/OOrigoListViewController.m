@@ -140,11 +140,9 @@ static NSInteger const kWardSection = 1;
 {
     [super viewWillAppear:animated];
     
-    if (![self isBeingPresented]) {
-        [OState s].targetIsOrigo = YES;
-        [OState s].actionIsList = YES;
-        [[OState s] setAspectForMember:_member];
-    }
+    [OState s].targetIsOrigo = YES;
+    [OState s].actionIsList = YES;
+    [[OState s] setAspectForMember:_member];
     
     OLogState;
 

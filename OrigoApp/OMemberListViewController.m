@@ -76,6 +76,24 @@ static NSInteger const kMemberSection = 2;
 }
 
 
+#pragma mark - State handling
+
+- (void)setState
+{
+    [OState s].actionIsList = YES;
+    [OState s].targetIsMember = YES;
+    [[OState s] setAspectForOrigo:_origo];
+}
+
+
+- (void)restoreStateIfNeeded
+{
+    if (![self isBeingPresented] && ![self isMovingToParentViewController]) {
+        [self setState];
+    }
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)addMember
@@ -95,11 +113,7 @@ static NSInteger const kMemberSection = 2;
 
 - (void)didFinishEditing
 {
-    if (_needsReplication) {
-        [[OMeta m].context replicate];
-        
-        _needsReplication = NO;
-    }
+    [[OMeta m].context replicateIfNeeded];
     
     [_delegate dismissViewControllerWithIdentitifier:kMemberListViewControllerId];
 }
@@ -111,9 +125,7 @@ static NSInteger const kMemberSection = 2;
 {
     [super viewDidLoad];
     
-    [OState s].targetIsMember = YES;
-    [OState s].actionIsList = YES;
-    [[OState s] setAspectForOrigo:_origo];
+    [self setState];
     
     [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
@@ -158,11 +170,7 @@ static NSInteger const kMemberSection = 2;
 {
     [super viewWillAppear:animated];
     
-    if (![self isBeingPresented]) {
-        [OState s].targetIsMember = YES;
-        [OState s].actionIsList = YES;
-        [[OState s] setAspectForOrigo:_origo];
-    }
+    [self restoreStateIfNeeded];
     
     OLogState;
 }
@@ -172,8 +180,8 @@ static NSInteger const kMemberSection = 2;
 {
 	[super viewWillDisappear:animated];
     
-    if (_needsReplication && !self.navigationController.presentedViewController) {
-        [self didFinishEditing];
+    if (![self.navigationController.viewControllers containsObject:self]) {
+        [[OMeta m].context replicateIfNeeded];
     }
 }
 
@@ -313,9 +321,7 @@ static NSInteger const kMemberSection = 2;
         
         [[OMeta m].context deleteEntity:revokedMembership];
         [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];
-        
-        _needsReplication = YES;
-    }   
+    }
 }
 
 
@@ -448,8 +454,6 @@ static NSInteger const kMemberSection = 2;
     } else {
         [self.tableView insertRow:row inSection:section];
     }
-    
-    _needsReplication = YES;
 }
 
 @end

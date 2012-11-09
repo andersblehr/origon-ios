@@ -23,7 +23,7 @@
 - (NSSet *)saveServerReplicas:(NSArray *)replicaDictionaries;
 
 - (BOOL)needsReplication;
-- (void)replicate;
+- (void)replicateIfNeeded;
 - (void)saveReplicationState;
 
 - (id)entityWithId:(NSString *)entityId;

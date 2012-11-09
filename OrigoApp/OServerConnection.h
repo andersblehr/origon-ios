@@ -48,7 +48,7 @@ extern NSInteger const kHTTPStatusCodeInternalServerError;
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
 
 - (void)authenticate:(id)delegate;
-- (void)replicate;
+- (void)replicateIfNeeded;
 - (void)getMemberWithId:(NSString *)memberId delegate:(id)delegate;
 - (void)getStrings;
 
