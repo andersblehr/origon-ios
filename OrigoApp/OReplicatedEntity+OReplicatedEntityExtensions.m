@@ -21,7 +21,7 @@
 #import "OReplicatedEntityGhost.h"
 
 
-@implementation OReplicatedEntity (OReplicateEntityExtensions)
+@implementation OReplicatedEntity (OReplicatedEntityExtensions)
 
 
 #pragma mark - Overriddes
@@ -116,13 +116,13 @@
 
 - (BOOL)isDirty
 {
-    return ([self.hashCode integerValue] != [self computeHashCode]);
+    return ![self.hashCode isEqualToString:[self computeHashCode]];
 }
 
 
 - (void)internaliseRelationships
 {
-    self.hashCode = [NSNumber numberWithInteger:[self computeHashCode]];
+    self.hashCode = [self computeHashCode];
     
     NSDictionary *entityRefs = [[OMeta m] stagedServerEntityRefsForEntity:self];
     
@@ -143,7 +143,7 @@
 }
 
 
-- (NSUInteger)computeHashCode
+- (NSString *)computeHashCode
 {
     NSDictionary *attributes = [self.entity attributesByName];
     NSDictionary *relationships = [self.entity relationshipsByName];
@@ -151,33 +151,33 @@
     NSArray *sortedAttributeKeys = [[attributes allKeys] sortedArrayUsingSelector:@selector(compare:)];
     NSArray *sortedRelationshipKeys = [[relationships allKeys] sortedArrayUsingSelector:@selector(compare:)];
     
-    NSString *allProperties = @"";
+    NSString *propertyString = @"";
     
-    for (NSString *name in sortedAttributeKeys) {
-        if (![self propertyIsTransient:name]) {
-            id value = [self valueForKey:name];
+    for (NSString *attributeKey in sortedAttributeKeys) {
+        if (![self propertyIsTransient:attributeKey]) {
+            id value = [self valueForKey:attributeKey];
             
             if (value) {
-                NSString *property = [NSString stringWithFormat:@"[%@:%@]", name, value];
-                allProperties = [allProperties stringByAppendingString:property];
+                NSString *property = [NSString stringWithFormat:@"[%@:%@]", attributeKey, value];
+                propertyString = [propertyString stringByAppendingString:property];
             }
         }
     }
     
-    for (NSString *name in sortedRelationshipKeys) {
-        NSRelationshipDescription *relationship = [relationships objectForKey:name];
+    for (NSString *relationshipKey in sortedRelationshipKeys) {
+        NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
         
-        if (!relationship.isToMany && ![self propertyIsTransient:name]) {
-            OReplicatedEntity *entity = [self valueForKey:name];
+        if (!relationship.isToMany && ![self propertyIsTransient:relationshipKey]) {
+            OReplicatedEntity *entity = [self valueForKey:relationshipKey];
             
             if (entity) {
-                NSString *property = [NSString stringWithFormat:@"[%@:%@]", name, entity.entityId];
-                allProperties = [allProperties stringByAppendingString:property];
+                NSString *property = [NSString stringWithFormat:@"[%@:%@]", relationshipKey, entity.entityId];
+                propertyString = [propertyString stringByAppendingString:property];
             }
         }
     }
     
-    return [allProperties hash];
+    return [propertyString hashUsingSHA1];
 }
 
 
@@ -217,7 +217,7 @@
 
 - (NSString *)reuseIdentifier
 {
-    NSString *hashCode = [NSString stringWithFormat:@"%d", [self computeHashCode]];
+    NSString *hashCode = [self computeHashCode];
     
     if ([OState s].actionIsInput) {
         hashCode = [hashCode stringByAppendingString:@"-input"];

@@ -25,7 +25,7 @@
 
 - (CGFloat)standardHeaderHeight;
 - (CGFloat)standardFooterHeight;
-- (UIView *)headerViewWithTitle:(NSString *)title;
+- (UIView *)headerViewWithText:(NSString *)title;
 - (UIView *)footerViewWithText:(NSString *)text;
 
 - (void)insertRowInNewSection:(NSInteger)section;

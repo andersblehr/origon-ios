@@ -8,13 +8,16 @@
 
 #import "OTextField.h"
 
+#import "NSDate+ODateExtensions.h"
 #import "NSString+OStringExtensions.h"
 #import "UIColor+OColorExtensions.h"
+#import "UIDatePicker+ODatePickerExtensions.h"
 #import "UIFont+OFontExtensions.h"
 #import "UIView+OViewExtensions.h"
 
 #import "OMeta.h"
 #import "OState.h"
+#import "OStrings.h"
 #import "OTableViewCell.h"
 
 NSString * const kTextFieldAuthEmail = @"authEmail";
@@ -45,52 +48,107 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Auxiliary methods
 
-- (id)initAtOrigin:(CGPoint)origin font:(UIFont *)font width:(CGFloat)width isTitle:(BOOL)isTitle
+- (void)continueInitialisationWithKey:(NSString *)key text:(NSString *)text
 {
-    BOOL editing = [OState s].actionIsInput;
+    self.enabled = [OState s].actionIsInput;
+    self.key = key;
+    self.text = text;
     
-    self = [super initWithFrame:CGRectMake(origin.x, origin.y, width, [font textFieldHeight])];
+    if ([key isEqualToString:kTextFieldPassword] || [key isEqualToString:kTextFieldRepeatPassword]) {
+        self.clearsOnBeginEditing = YES;
+        self.returnKeyType = UIReturnKeyDone;
+        self.secureTextEntry = YES;
+        
+        if ([key isEqualToString:kTextFieldPassword]) {
+            self.placeholder = [OStrings stringForKey:strPromptPassword];
+        } else if ([key isEqualToString:kTextFieldRepeatPassword]) {
+            self.placeholder = [OStrings stringForKey:strPromptRepeatPassword];
+        }
+    } else if ([key isEqualToString:kTextFieldAuthEmail]) {
+        self.keyboardType = UIKeyboardTypeEmailAddress;
+        self.placeholder = [OStrings stringForKey:strPromptAuthEmail];
+    } else if ([key isEqualToString:kTextFieldActivationCode]) {
+        self.placeholder = [OStrings stringForKey:strPromptActivationCode];
+    } else if ([key isEqualToString:kTextFieldName]) {
+        self.autocapitalizationType = UITextAutocapitalizationTypeWords;
+        self.placeholder = [OStrings stringForKey:strPromptName];
+    } else if ([key isEqualToString:kTextFieldEmail]) {
+        self.keyboardType = UIKeyboardTypeEmailAddress;
+        self.placeholder = [OStrings stringForKey:strPromptEmail];
+        
+        if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
+            self.enabled = NO;
+        }
+    } else if ([key isEqualToString:kTextFieldMobilePhone]) {
+        self.keyboardType = UIKeyboardTypeNumberPad;
+        self.placeholder = [OStrings stringForKey:strPromptMobilePhone];
+    } else if ([key isEqualToString:kTextFieldDateOfBirth]) {
+        UIDatePicker *datePicker = [[UIDatePicker alloc] init];
+        datePicker.datePickerMode = UIDatePickerModeDate;
+        [datePicker setEarliestValidBirthDate];
+        [datePicker setLatestValidBirthDate];
+        [datePicker setToDefaultDate];
+        [datePicker addTarget:self.delegate action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
+        
+        self.inputView = datePicker;
+        self.placeholder = [OStrings stringForKey:strPromptDateOfBirth];
+    } else if ([key isEqualToString:kTextFieldAddressLine1]) {
+        self.autocapitalizationType = UITextAutocapitalizationTypeWords;
+        self.placeholder = [OStrings stringForKey:strPromptAddressLine1];
+    } else if ([key isEqualToString:kTextFieldAddressLine2]) {
+        self.autocapitalizationType = UITextAutocapitalizationTypeWords;
+        self.placeholder = [OStrings stringForKey:strPromptAddressLine2];
+    } else if ([key isEqualToString:kTextFieldTelephone]) {
+        self.keyboardType = UIKeyboardTypeNumberPad;
+        self.placeholder = [OStrings stringForKey:strPromptTelephone];
+    }
+}
+
+
+#pragma mark - Initialisation
+
+- (id)initWithKey:(NSString *)key text:(NSString *)text delegate:(id)delegate
+{
+    _isTitle = ([key isEqualToString:kTextFieldName] && [OState s].targetIsMember);
+    
+    self = [super initWithFrame:CGRectZero];
     
     if (self) {
-        _isTitle = isTitle;
-        
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.backgroundColor = [UIColor clearColor];
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-        self.font = font;
+        self.delegate = delegate;
+        self.font = _isTitle ? [UIFont titleFont] : [UIFont detailFont];
+        self.frame = CGRectMake(0.f, 0.f, 0.f, [self.font textFieldHeight]);
         self.keyboardType = UIKeyboardTypeDefault;
         self.returnKeyType = UIReturnKeyNext;
         self.textAlignment = UITextAlignmentLeft;
         
-        if (_isTitle && !editing) {
+        if (_isTitle && ![OState s].actionIsInput) {
             self.textColor = [UIColor titleTextColor];
         } else {
             self.textColor = [UIColor detailTextColor];
         }
+        
+        [self continueInitialisationWithKey:key text:text];
     }
     
     return self;
 }
 
 
-#pragma mark - Initialisation
+#pragma mark - Sizing & positioning
 
-- (id)initWithFrame:(CGRect)frame
+- (void)setOrigin:(CGPoint)origin
 {
-    return [self initForDetailAtOrigin:CGPointMake(frame.origin.x, frame.origin.y) width:frame.size.width];
+    self.frame = CGRectMake(origin.x, origin.y, self.frame.size.width, self.frame.size.height);
 }
 
 
-- (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width
+- (void)setWidth:(CGFloat)width
 {
-    return [self initAtOrigin:origin font:[UIFont titleFont] width:width isTitle:YES];
-}
-
-
-- (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width
-{
-    return [self initAtOrigin:origin font:[UIFont detailFont] width:width isTitle:NO];
+    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, width, self.frame.size.height);
 }
 
 

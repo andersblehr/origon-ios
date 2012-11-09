@@ -202,7 +202,7 @@ static NSInteger const kWardSection = 1;
 }
 
 
-#pragma mark - UITableViewDataSource methods
+#pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -278,7 +278,7 @@ static NSInteger const kWardSection = 1;
 }
 
 
-#pragma mark - UITableViewDelegate methods
+#pragma mark - UITableViewDelegate conformance
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
@@ -309,9 +309,9 @@ static NSInteger const kWardSection = 1;
     UIView *headerView = nil;
     
     if ([self sectionIsWardSection:section]) {
-        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderWardsOrigos]];
+        headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderWardsOrigos]];
     } else if ([self sectionIsOrigoSection:section]) {
-        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderMyOrigos]];
+        headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderMyOrigos]];
     }
     
     return headerView;
@@ -407,7 +407,7 @@ static NSInteger const kWardSection = 1;
 }
 
 
-#pragma mark - UIActionSheetDelegate methods
+#pragma mark - UIActionSheetDelegate conformance
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
@@ -424,7 +424,7 @@ static NSInteger const kWardSection = 1;
 }
 
 
-#pragma mark - OModalViewControllerDelegate methods
+#pragma mark - OModalViewControllerDelegate conformance
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {

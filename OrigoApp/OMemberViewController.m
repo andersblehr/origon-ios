@@ -150,12 +150,12 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)finishEditing
 {
+    self.navigationItem.rightBarButtonItem = _editButton;
+    self.navigationItem.leftBarButtonItem = _backButton;
+    
     [OState s].actionIsDisplay = YES;
     
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kMemberSection] withRowAnimation:UITableViewRowAnimationFade];
-    
-    self.navigationItem.rightBarButtonItem = _editButton;
-    self.navigationItem.leftBarButtonItem = _backButton;
     
     OLogState;
 }
@@ -218,12 +218,14 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     _editButton = self.navigationItem.rightBarButtonItem;
     _backButton = self.navigationItem.leftBarButtonItem;
     
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+    
     [OState s].actionIsEdit = YES;
     
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kMemberSection] withRowAnimation:UITableViewRowAnimationFade];
     
-    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+    [_nameField becomeFirstResponder];
     
     OLogState;
 }
@@ -231,6 +233,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)cancelEditing
 {
+    [self.view endEditing:YES];
+    
     if ([OState s].actionIsRegister) {
         if (_candidate) {
             for (OReplicatedEntity *entity in _candidateEntities) {
@@ -283,8 +287,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
                 }
             }
         } else if ([OState s].actionIsEdit) {
-            [self finishEditing];
             [self updateMember];
+            [self finishEditing];
         }
     } else {
         [_memberCell shake];
@@ -363,6 +367,16 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if ([OState s].actionIsInput) {
+        [_nameField becomeFirstResponder];
+    }
+}
+
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
@@ -383,7 +397,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-#pragma mark - UITableViewDataSource methods
+#pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -451,7 +465,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-#pragma mark - UITableViewDelegate methods
+#pragma mark - UITableViewDelegate conformance
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
@@ -471,9 +485,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     
     if (section == kAddressSection) {
         if ([_member.residencies count] == 1) {
-            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strTermAddress]];
+            headerView = [tableView headerViewWithText:[OStrings stringForKey:strTermAddress]];
         } else {
-            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderAddresses]];
+            headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderAddresses]];
         }
     }
     
@@ -485,10 +499,6 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 {
     if (indexPath.section == kMemberSection) {
         [cell.backgroundView addDropShadowForTrailingTableViewCell];
-        
-        if ([OState s].actionIsInput) {
-            [_nameField becomeFirstResponder];
-        }
     } else {
         if (indexPath.row == [_sortedResidences count] - 1) {
             [cell.backgroundView addDropShadowForTrailingTableViewCell];
@@ -499,7 +509,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-#pragma mark - UITextFieldDelegate methods
+#pragma mark - UITextFieldDelegate conformance
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
@@ -541,14 +551,14 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if (textField == _nameField) {
+        [_mobilePhoneField becomeFirstResponder];
+    } else if (textField == _mobilePhoneField) {
         if (_emailField.enabled) {
             [_emailField becomeFirstResponder];
         } else {
-            [_mobilePhoneField becomeFirstResponder];
+            [_dateOfBirthField becomeFirstResponder];
         }
     } else if (textField == _emailField) {
-        [_mobilePhoneField becomeFirstResponder];
-    } else if (textField == _mobilePhoneField) {
         [_dateOfBirthField becomeFirstResponder];
     }
     
@@ -556,7 +566,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-#pragma mark - UIActionSheetDelegate methods
+#pragma mark - UIActionSheetDelegate conformance
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
@@ -585,7 +595,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-#pragma mark - UIAlertViewDelegate methods
+#pragma mark - UIAlertViewDelegate conformance
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -594,7 +604,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-#pragma mark - OModalViewControllerDelegate methods
+#pragma mark - OModalViewControllerDelegate conformance
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
@@ -606,7 +616,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-#pragma mark - OServerConnectionDelegate methods
+#pragma mark - OServerConnectionDelegate conformance
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(NSArray *)data
 {

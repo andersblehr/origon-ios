@@ -10,7 +10,7 @@
 
 @class OOrigo, OReplicatedEntityGhost, OLinkedEntityRef;
 
-@interface OReplicatedEntity (OReplicateEntityExtensions)
+@interface OReplicatedEntity (OReplicatedEntityExtensions)
 
 - (NSDictionary *)toDictionary;
 
@@ -19,7 +19,7 @@
 - (BOOL)isDirty;
 
 - (void)internaliseRelationships;
-- (NSUInteger)computeHashCode;
+- (NSString *)computeHashCode;
 - (NSString *)expiresInTimeframe;
 
 - (OLinkedEntityRef *)linkedEntityRefForOrigo:(OOrigo *)origo;
