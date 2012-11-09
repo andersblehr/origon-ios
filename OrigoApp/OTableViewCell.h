@@ -12,7 +12,6 @@ extern NSString * const kReuseIdentifierDefault;
 extern NSString * const kReuseIdentifierUserLogin;
 extern NSString * const kReuseIdentifierUserActivation;
 
-extern CGFloat const kCellWidth;
 extern CGFloat const kDefaultPadding;
 
 @class OReplicatedEntity;
@@ -31,7 +30,6 @@ extern CGFloat const kDefaultPadding;
 }
 
 @property (nonatomic) BOOL selectable;
-@property (strong, readonly) UIButton *imageButton;
 
 + (CGFloat)defaultHeight;
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;

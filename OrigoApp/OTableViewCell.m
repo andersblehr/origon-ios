@@ -28,12 +28,12 @@
 
 #import "OMember+OMemberExtensions.h"
 #import "OOrigo+OOrigoExtensions.h"
+#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 NSString * const kReuseIdentifierDefault = @"idDefaultCell";
 NSString * const kReuseIdentifierUserLogin = @"idUserLoginCell";
 NSString * const kReuseIdentifierUserActivation = @"idUserActivationCell";
 
-CGFloat const kCellWidth = 300.f;
 CGFloat const kDefaultPadding = 10.f;
 
 static CGFloat const kDefaultCellHeight = 45.f;
@@ -43,7 +43,7 @@ static CGFloat const kLabelWidth = 63.f;
 static CGFloat const kLabelToDetailAlignmentPadding = 2.f;
 static CGFloat const kLabelDetailSpacing = 3.f;
 
-static CGFloat const kAuthFieldWidthFraction = 0.7f;
+static CGFloat const kAuthFieldExtent = 0.7f;
 static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 
 
@@ -61,50 +61,6 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
     isAuthFieldKey = isAuthFieldKey || [key isEqualToString:kTextFieldRepeatPassword];
     
     return isAuthFieldKey;
-}
-
-
-- (OTextField *)authFieldForKey:(NSString *)key
-{
-    CGFloat contentWidth = kCellWidth - kDefaultPadding - _contentMargin;
-    CGFloat textFieldWidth = kAuthFieldWidthFraction * contentWidth;
-    
-    OTextField *textField = [[OTextField alloc] initForDetailAtOrigin:CGPointMake(_contentMargin + (contentWidth - textFieldWidth) / 2.f, _verticalOffset) width:textFieldWidth];
-    
-    BOOL isPasswordField = [key isEqualToString:kTextFieldRepeatPassword];
-    isPasswordField = isPasswordField || [key isEqualToString:kTextFieldPassword];
-    
-    if (isPasswordField) {
-        textField.clearsOnBeginEditing = YES;
-        textField.returnKeyType = UIReturnKeyDone;
-        textField.secureTextEntry = YES;
-        
-        if ([key isEqualToString:kTextFieldPassword]) {
-            textField.placeholder = [OStrings stringForKey:strPromptPassword];
-        } else if ([key isEqualToString:kTextFieldRepeatPassword]) {
-            textField.placeholder = [OStrings stringForKey:strPromptRepeatPassword];
-        }
-    } else if ([key isEqualToString:kTextFieldAuthEmail]) {
-        textField.keyboardType = UIKeyboardTypeEmailAddress;
-        textField.placeholder = [OStrings stringForKey:strPromptAuthEmail];
-    } else if ([key isEqualToString:kTextFieldActivationCode]) {
-        textField.placeholder = [OStrings stringForKey:strPromptActivationCode];
-    }
-    
-    return textField;
-}
-
-
-- (UIDatePicker *)dateOfBirthPicker
-{
-    UIDatePicker *dateOfBirthPicker = [[UIDatePicker alloc] init];
-    dateOfBirthPicker.datePickerMode = UIDatePickerModeDate;
-    [dateOfBirthPicker setEarliestValidBirthDate];
-    [dateOfBirthPicker setLatestValidBirthDate];
-    [dateOfBirthPicker setToDefaultDate];
-    [dateOfBirthPicker addTarget:_textFieldDelegate action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
-    
-    return dateOfBirthPicker;
 }
 
 
@@ -135,36 +91,37 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 
 #pragma mark - Adding labels
 
-- (void)addLabel:(NSString *)labelText
+- (UILabel *)addLabel:(NSString *)labelText
 {
-    return [self addLabel:labelText width:0.f centred:NO];
+    return [self addLabel:labelText extent:0.f centred:NO];
 }
 
 
-- (void)addSingleLetterLabel:(NSString *)labelText
+- (UILabel *)addSingleLetterLabel:(NSString *)labelText
 {
-    return [self addLabel:labelText width:kSingleLetterLabelWidthFraction centred:NO];
+    return [self addLabel:labelText extent:kSingleLetterLabelWidthFraction centred:NO];
 }
 
 
-- (void)addLabel:(NSString *)labelText width:(CGFloat)widthFraction
+- (UILabel *)addLabel:(NSString *)labelText extent:(CGFloat)extent
 {
-    return [self addLabel:labelText width:widthFraction centred:NO];
+    return [self addLabel:labelText extent:extent centred:NO];
 }
 
 
-- (void)addLabel:(NSString *)labelText centred:(BOOL)centred
+- (UILabel *)addLabel:(NSString *)labelText centred:(BOOL)centred
 {
-    return [self addLabel:labelText width:1.f centred:centred];
+    return [self addLabel:labelText extent:1.f centred:centred];
 }
 
 
-- (void)addLabel:(NSString *)labelText width:(CGFloat)widthFraction centred:(BOOL)centred
+- (UILabel *)addLabel:(NSString *)labelText extent:(CGFloat)extent centred:(BOOL)centred
 {
     UIFont *labelFont = [UIFont labelFont];
     
-    CGFloat contentWidth = kCellWidth - kDefaultPadding - _contentMargin;
-    CGFloat labelWidth = (widthFraction > 0.f) ? widthFraction * contentWidth : kLabelWidth;
+    CGFloat cellWidth = self.contentView.bounds.size.width - 2 * kDefaultPadding;
+    CGFloat contentWidth = cellWidth - kDefaultPadding - _contentMargin;
+    CGFloat labelWidth = (extent > 0.f) ? extent * contentWidth : kLabelWidth;
     CGFloat detailAlignmentPadding = centred ? 0.f : kLabelToDetailAlignmentPadding;
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(_contentOffset + _contentMargin, _verticalOffset + detailAlignmentPadding, labelWidth, labelFont.lineHeight)];
@@ -182,37 +139,36 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
     } else {
         _contentMargin += labelWidth + kLabelDetailSpacing;
     }
+    
+    return label;
 }
 
 
 #pragma mark - Adding text fields
 
-- (OTextField *)addTitleFieldWithText:(NSString *)text key:(NSString *)key
+- (OTextField *)addTitleFieldWithKey:(NSString *)key text:(NSString *)text
 {
-    UIView *titleBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(-1.f, -1.f, kCellWidth + 2, kDefaultPadding + [UIFont titleFont].lineHeight + kLineSpacing)];
+    CGFloat bannerWidth = self.contentView.bounds.size.width - 2 * kDefaultPadding + 2;
+    CGFloat bannerHeight = kDefaultPadding + [UIFont titleFont].lineHeight + kLineSpacing;
+    
+    UIView *titleBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(-1.f, -1.f, bannerWidth, bannerHeight)];
     titleBackgroundView.backgroundColor = [UIColor titleBackgroundColor];
     
     [self.contentView addSubview:titleBackgroundView];
     
-    return [self addTextFieldWithText:text key:key width:1.f isTitle:YES];
+    return [self addTextFieldWithKey:key extent:1.f text:text];
 }
 
 
-- (OTextField *)addTextFieldWithKey:(NSString *)key
+- (OTextField *)addTextFieldWithKey:(NSString *)key text:(NSString *)text
 {
-    return [self addTextFieldWithText:nil key:key];
+    return [self addTextFieldWithKey:key extent:1.f text:text];
 }
 
 
-- (OTextField *)addTextFieldWithText:(NSString *)text key:(NSString *)key
+- (OTextField *)addTextFieldWithKey:(NSString *)key date:(NSDate *)date
 {
-    return [self addTextFieldWithText:text key:key width:1.f isTitle:NO];
-}
-
-
-- (OTextField *)addTextFieldWithDate:(NSDate *)date key:(NSString *)key
-{
-    OTextField *textField = [self addTextFieldWithText:[date localisedDateString] key:key];
+    OTextField *textField = [self addTextFieldWithKey:key text:[date localisedDateString]];
     
     if (date) {
         ((UIDatePicker *)textField.inputView).date = date;
@@ -222,104 +178,66 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 }
 
 
-- (OTextField *)addTextFieldWithText:(NSString *)text key:(NSString *)key width:(CGFloat)widthFraction
-{
-    return [self addTextFieldWithText:text key:key width:widthFraction isTitle:NO];
-}
-
-
-- (OTextField *)addTextFieldWithText:(NSString *)text key:(NSString *)key width:(CGFloat)widthFraction isTitle:(BOOL)isTitle
+- (OTextField *)addTextFieldWithKey:(NSString *)key extent:(CGFloat)extent text:(NSString *)text
 {
     OTextField *textField = nil;
     
-    CGFloat contentWidth = kCellWidth - _contentOffset - _contentMargin - kDefaultPadding;
-    CGFloat textFieldWidth = widthFraction * contentWidth;
-    
     if (text || [OState s].actionIsInput) {
+        CGPoint origin;
+        CGFloat cellWidth = self.contentView.bounds.size.width - 2 * kDefaultPadding;
+        CGFloat fieldWidth = extent * (cellWidth - kDefaultPadding - _contentOffset - _contentMargin);
+        
         if ([self isAuthFieldKey:key]) {
-            textField = [self authFieldForKey:key];
-        } else if (isTitle) {
-            textField = [[OTextField alloc] initForTitleAtOrigin:CGPointMake(_contentOffset + _contentMargin, _verticalOffset) width:textFieldWidth];
+            origin = CGPointMake((cellWidth - fieldWidth) / 2.f, _verticalOffset);
         } else {
-            textField = [[OTextField alloc] initForDetailAtOrigin:CGPointMake(_contentOffset + _contentMargin, _verticalOffset) width:textFieldWidth];
+            origin = CGPointMake(_contentOffset + _contentMargin, _verticalOffset);
         }
         
-        textField.delegate = _textFieldDelegate;
-        textField.enabled = [OState s].actionIsInput;
-        textField.key = key;
-        textField.text = text;
-        
-        if ([key isEqualToString:kTextFieldName]) {
-            textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
-            textField.placeholder = [OStrings stringForKey:strPromptName];
-        } else if ([key isEqualToString:kTextFieldEmail]) {
-            textField.keyboardType = UIKeyboardTypeEmailAddress;
-            textField.placeholder = [OStrings stringForKey:strPromptEmail];
-            
-            if ([OState s].actionIsRegister &&
-                [OState s].targetIsMember && [OState s].aspectIsSelf) {
-                textField.enabled = NO;
-            }
-        } else if ([key isEqualToString:kTextFieldMobilePhone]) {
-            textField.keyboardType = UIKeyboardTypeNumberPad;
-            textField.placeholder = [OStrings stringForKey:strPromptMobilePhone];
-        } else if ([key isEqualToString:kTextFieldDateOfBirth]) {
-            textField.inputView = [self dateOfBirthPicker];
-            textField.placeholder = [OStrings stringForKey:strPromptDateOfBirth];
-        } else if ([key isEqualToString:kTextFieldAddressLine1]) {
-            textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
-            textField.placeholder = [OStrings stringForKey:strPromptAddressLine1];
-        } else if ([key isEqualToString:kTextFieldAddressLine2]) {
-            textField.autocapitalizationType = UITextAutocapitalizationTypeWords;
-            textField.placeholder = [OStrings stringForKey:strPromptAddressLine2];
-        } else if ([key isEqualToString:kTextFieldTelephone]) {
-            textField.keyboardType = UIKeyboardTypeNumberPad;
-            textField.placeholder = [OStrings stringForKey:strPromptTelephone];
-        }
+        textField = [[OTextField alloc] initWithKey:key text:text delegate:_textFieldDelegate];
+        [textField setOrigin:origin];
+        [textField setWidth:fieldWidth];
         
         [self.contentView addSubview:textField];
         [_textFields setObject:textField forKey:key];
         
-        if (widthFraction == 1.f) {
-            CGFloat lineSpacing = textField.isTitle ? 2 * kLineSpacing : kLineSpacing;
-            
-            _verticalOffset += textField.font.lineHeight + lineSpacing;
-            _contentMargin = kDefaultPadding;
-        } else {
-            _contentMargin += textFieldWidth;
-        }
-    }
+        CGFloat lineSpacing = textField.isTitle ? 2 * kLineSpacing : kLineSpacing;
         
+        _verticalOffset += textField.font.lineHeight + lineSpacing;
+        _contentMargin = kDefaultPadding;
+    }
+    
     return textField;
 }
 
 
 #pragma mark - Adding photo frame
 
-- (void)addPhotoFrame:(UIImage *)photo
+- (UIButton *)addPhotoFrame:(UIImage *)photo
 {
-    _imageButton = [[UIButton alloc] initWithFrame:CGRectMake(_contentMargin, _verticalOffset, kPhotoSideLength, kPhotoSideLength)];
+    UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectMake(_contentMargin, _verticalOffset, kPhotoSideLength, kPhotoSideLength)];
     
     if (photo) {
-        [_imageButton setImage:photo forState:UIControlStateNormal];
+        [imageButton setImage:photo forState:UIControlStateNormal];
     } else {
-        _imageButton.backgroundColor = [UIColor whiteColor];
+        imageButton.backgroundColor = [UIColor whiteColor];
         
-        UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectInset(_imageButton.bounds, 3.f, 3.f)];
+        UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectInset(imageButton.bounds, 3.f, 3.f)];
         photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
         photoPrompt.font = [UIFont titleFont];
         photoPrompt.text = [OStrings stringForKey:strPromptPhoto];
         photoPrompt.textAlignment = UITextAlignmentCenter;
         photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
         
-        [_imageButton addSubview:photoPrompt];
+        [imageButton addSubview:photoPrompt];
     }
 
-    [_imageButton addDropShadowForPhotoFrame];
-    [self.contentView addSubview:_imageButton];
+    [imageButton addDropShadowForPhotoFrame];
+    [self.contentView addSubview:imageButton];
     
     _contentOffset += kPhotoSideLength;
     _contentMargin = kDefaultPadding;
+    
+    return imageButton;
 }
 
 
@@ -327,22 +245,22 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 
 - (void)setUpForMemberEntity:(OMember *)member
 {
-    [self addTitleFieldWithText:member.name key:kTextFieldName];
+    [self addTitleFieldWithKey:kTextFieldName text:member.name];
     [self addPhotoFrame:[UIImage imageWithData:member.photo]];
     [self.contentView bringSubviewToFront:[self textFieldForKey:kTextFieldName]];
     
-    if ([member hasEmail] || [OState s].actionIsInput) {
-        [self addSingleLetterLabel:[OStrings stringForKey:strLabelAbbreviatedEmail]];
-        [self addTextFieldWithText:member.entityId key:kTextFieldEmail];
-    }
-    
     if ([member hasMobilePhone] || [OState s].actionIsInput) {
         [self addSingleLetterLabel:[OStrings stringForKey:strLabelAbbreviatedMobilePhone]];
-        [self addTextFieldWithText:member.mobilePhone key:kTextFieldMobilePhone];
+        [self addTextFieldWithKey:kTextFieldMobilePhone text:member.mobilePhone];
+    }
+    
+    if ([member hasEmail] || [OState s].actionIsInput) {
+        [self addSingleLetterLabel:[OStrings stringForKey:strLabelAbbreviatedEmail]];
+        [self addTextFieldWithKey:kTextFieldEmail text:member.entityId];
     }
     
     [self addSingleLetterLabel:[OStrings stringForKey:strLabelAbbreviatedDateOfBirth]];
-    [self addTextFieldWithText:[member.dateOfBirth localisedDateString] key:kTextFieldDateOfBirth];
+    [self addTextFieldWithKey:kTextFieldDateOfBirth date:member.dateOfBirth];
     
     self.selectable = NO;
 }
@@ -351,13 +269,13 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 - (void)setUpForOrigoEntity:(OOrigo *)origo
 {
     [self addLabel:[OStrings stringForKey:strTermAddress]];
-    [self addTextFieldWithText:origo.addressLine1 key:kTextFieldAddressLine1];
+    [self addTextFieldWithKey:kTextFieldAddressLine1 text:origo.addressLine1];
     [self addLabel:@""];
-    [self addTextFieldWithText:origo.addressLine2 key:kTextFieldAddressLine2];
+    [self addTextFieldWithKey:kTextFieldAddressLine2 text:origo.addressLine2];
     
     if ([origo hasTelephone] || [OState s].actionIsInput) {
         [self addLabel:[OStrings stringForKey:strLabelTelephone]];
-        [self addTextFieldWithText:origo.telephone key:kTextFieldTelephone];
+        [self addTextFieldWithKey:kTextFieldTelephone text:origo.telephone];
     }
     
     self.selectable = ([OState s].actionIsList);
@@ -468,12 +386,12 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
         
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserLogin]) {
             [self addLabel:[OStrings stringForKey:strLabelSignInOrRegister] centred:YES];
-            [self addTextFieldWithKey:kTextFieldAuthEmail];
-            [self addTextFieldWithKey:kTextFieldPassword];
+            [self addTextFieldWithKey:kTextFieldAuthEmail extent:kAuthFieldExtent text:@""];
+            [self addTextFieldWithKey:kTextFieldPassword extent:kAuthFieldExtent text:@""];
         } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
             [self addLabel:[OStrings stringForKey:strLabelActivate] centred:YES];
-            [self addTextFieldWithKey:kTextFieldActivationCode];
-            [self addTextFieldWithKey:kTextFieldRepeatPassword];
+            [self addTextFieldWithKey:kTextFieldActivationCode extent:kAuthFieldExtent text:@""];
+            [self addTextFieldWithKey:kTextFieldRepeatPassword extent:kAuthFieldExtent text:@""];
         }
     }
     
@@ -483,7 +401,7 @@ static CGFloat const kSingleLetterLabelWidthFraction = 0.09f;
 
 - (OTableViewCell *)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate
 {
-    self = [self initWithReuseIdentifier:entity.entityId delegate:delegate];
+    self = [self initWithReuseIdentifier:[entity reuseIdentifier] delegate:delegate];
     
     if (self) {
         [self setUpForEntityClass:entity.class entity:entity];

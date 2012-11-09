@@ -62,7 +62,7 @@
 }
 
 
-#pragma mark - UITableViewDataSource methods
+#pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -89,7 +89,7 @@
 }
 
 
-#pragma mark - UITableViewDelegate methods
+#pragma mark - UITableViewDelegate conformance
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {

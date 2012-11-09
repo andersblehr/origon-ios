@@ -30,9 +30,10 @@ extern CGFloat const kLineSpacing;
 @property (strong, nonatomic) NSString *key;
 @property (nonatomic) BOOL isTitle;
 
-- (id)initWithFrame:(CGRect)frame;
-- (id)initForTitleAtOrigin:(CGPoint)origin width:(CGFloat)width;
-- (id)initForDetailAtOrigin:(CGPoint)origin width:(CGFloat)width;
+- (id)initWithKey:(NSString *)key text:(NSString *)text delegate:(id)delegate;
+
+- (void)setOrigin:(CGPoint)origin;
+- (void)setWidth:(CGFloat)width;
 
 - (BOOL)holdsValidEmail;
 - (BOOL)holdsValidPassword;

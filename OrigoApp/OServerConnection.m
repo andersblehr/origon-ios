@@ -257,7 +257,7 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-#pragma mark - NSURLConnectionDelegate methods
+#pragma mark - NSURLConnectionDelegate conformance
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {

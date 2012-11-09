@@ -55,8 +55,9 @@ static NSString * const kLogoText = @"..origo..";
 
 - (void)addLogoBanner
 {
-    CGRect containerViewFrame = CGRectMake(kDefaultPadding, 0.f, kCellWidth, kLogoHeight);
-    CGRect logoFrame = CGRectMake(kDefaultPadding, kDefaultPadding, kCellWidth, kLogoHeight - kDefaultPadding);
+    CGFloat cellWidth = self.bounds.size.width - 2 * kDefaultPadding;
+    CGRect containerViewFrame = CGRectMake(kDefaultPadding, 0.f, cellWidth, kLogoHeight);
+    CGRect logoFrame = CGRectMake(kDefaultPadding, kDefaultPadding, cellWidth, kLogoHeight - kDefaultPadding);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *logoLabel = [[UILabel alloc] initWithFrame:logoFrame];
@@ -156,12 +157,13 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (UIView *)headerViewWithTitle:(NSString *)title
+- (UIView *)headerViewWithText:(NSString *)text
 {
     self.sectionHeaderHeight = [self standardHeaderHeight];
     
+    CGFloat cellWidth = self.bounds.size.width - 2 * kDefaultPadding;
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionHeaderHeight);
-    CGRect headerFrame = CGRectMake(kDefaultPadding, kHeaderHeadRoom, kCellWidth, self.sectionHeaderHeight);
+    CGRect headerFrame = CGRectMake(kDefaultPadding, kHeaderHeadRoom, cellWidth, self.sectionHeaderHeight);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
@@ -170,7 +172,7 @@ static NSString * const kLogoText = @"..origo..";
     headerLabel.font = [UIFont headerFont];
     headerLabel.shadowColor = [UIColor darkTextColor];
     headerLabel.shadowOffset = CGSizeMake(0.f, kHeaderShadowOffset);
-    headerLabel.text = title;
+    headerLabel.text = text;
     headerLabel.textAlignment = UITextAlignmentLeft;
     headerLabel.textColor = [UIColor headerTextColor];
     

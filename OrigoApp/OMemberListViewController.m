@@ -198,7 +198,7 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-#pragma mark - UITableViewDataSource methods
+#pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -319,7 +319,7 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-#pragma mark - UITableViewDelegate methods
+#pragma mark - UITableViewDelegate conformance
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
@@ -350,12 +350,12 @@ static NSInteger const kMemberSection = 2;
     UIView *headerView = nil;
     
     if ([self sectionIsContactSection:section]) {
-        headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderContacts]];
+        headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderContacts]];
     } else if ([self sectionIsMemberSection:section]) {
         if ([_origo isResidence]) {
-            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderHouseholdMembers]];
+            headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderHouseholdMembers]];
         } else {
-            headerView = [tableView headerViewWithTitle:[OStrings stringForKey:strHeaderOrigoMembers]];
+            headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderOrigoMembers]];
         }
     }
     
@@ -409,7 +409,7 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-#pragma mark - OModalViewControllerDelegate methods
+#pragma mark - OModalViewControllerDelegate conformance
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {

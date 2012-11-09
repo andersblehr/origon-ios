@@ -386,7 +386,7 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - OServerConnectionDelegate methods
+#pragma mark - OServerConnectionDelegate conformance
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
@@ -405,7 +405,7 @@ static OMeta *m = nil;
                 [self.context deleteObject:entity];
             } else {
                 entity.dateReplicated = now;
-                entity.hashCode = [NSNumber numberWithInteger:[entity computeHashCode]];
+                entity.hashCode = [entity computeHashCode];
             }
         }
         

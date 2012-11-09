@@ -430,7 +430,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - UITableViewDataSource methods
+#pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -476,7 +476,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - UITableViewDelegate methods
+#pragma mark - UITableViewDelegate conformance
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -506,7 +506,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - UITextFieldDelegate methods
+#pragma mark - UITextFieldDelegate conformance
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
@@ -564,7 +564,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - UIActionSheetDelegate methods
+#pragma mark - UIActionSheetDelegate conformance
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
@@ -574,7 +574,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - OModalViewControllerDelegate methods
+#pragma mark - OModalViewControllerDelegate conformance
 
 - (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
 {
@@ -592,7 +592,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - OServerConnectionDelegate methods
+#pragma mark - OServerConnectionDelegate conformance
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {

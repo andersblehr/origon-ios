@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5C014A2415CA77320040A1D9 /* OAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C014A2315CA77310040A1D9 /* OAlert.m */; };
-		5C03780516411136002273E9 /* OReplicatedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C03780416411136002273E9 /* OReplicatedEntity.m */; };
 		5C15BFB016350CB300BB5254 /* glyphicons_003_user.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFAE16350CB300BB5254 /* glyphicons_003_user.png */; };
 		5C15BFB116350CB300BB5254 /* glyphicons_003_user@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFAF16350CB300BB5254 /* glyphicons_003_user@2x.png */; };
 		5C15BFB516350CCE00BB5254 /* glyphicons_035_woman.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFB316350CCE00BB5254 /* glyphicons_035_woman.png */; };
@@ -26,6 +25,7 @@
 		5C15BFF916386C6100BB5254 /* glyphicons_004_girl-as_boy.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFF716386C6000BB5254 /* glyphicons_004_girl-as_boy.png */; };
 		5C15BFFA16386C6100BB5254 /* glyphicons_004_girl-as_boy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFF816386C6000BB5254 /* glyphicons_004_girl-as_boy@2x.png */; };
 		5C15BFFE1638815300BB5254 /* 76-baby_black.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFFD1638815300BB5254 /* 76-baby_black.png */; };
+		5C17617C164CFBC2000770DC /* OReplicatedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C17617B164CFBC2000770DC /* OReplicatedEntity.m */; };
 		5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OBarButtonItemExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1A81BC1645CE22003DCCAF /* UIBarButtonItem+OBarButtonItemExtensions.m */; };
 		5C2262C415A0B47B00241C5F /* OOrigoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262C315A0B47B00241C5F /* OOrigoViewController.m */; };
 		5C23431214812A3100164478 /* OStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* OStrings.m */; };
@@ -125,8 +125,6 @@
 /* Begin PBXFileReference section */
 		5C014A2215CA77310040A1D9 /* OAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAlert.h; sourceTree = "<group>"; };
 		5C014A2315CA77310040A1D9 /* OAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAlert.m; sourceTree = "<group>"; };
-		5C03780316411136002273E9 /* OReplicatedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntity.h; sourceTree = "<group>"; };
-		5C03780416411136002273E9 /* OReplicatedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntity.m; sourceTree = "<group>"; };
 		5C15BFAE16350CB300BB5254 /* glyphicons_003_user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_003_user.png; sourceTree = "<group>"; };
 		5C15BFAF16350CB300BB5254 /* glyphicons_003_user@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_003_user@2x.png"; sourceTree = "<group>"; };
 		5C15BFB316350CCE00BB5254 /* glyphicons_035_woman.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_035_woman.png; sourceTree = "<group>"; };
@@ -145,6 +143,8 @@
 		5C15BFF716386C6000BB5254 /* glyphicons_004_girl-as_boy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy.png"; sourceTree = "<group>"; };
 		5C15BFF816386C6000BB5254 /* glyphicons_004_girl-as_boy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy@2x.png"; sourceTree = "<group>"; };
 		5C15BFFD1638815300BB5254 /* 76-baby_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "76-baby_black.png"; sourceTree = "<group>"; };
+		5C17617A164CFBC2000770DC /* OReplicatedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntity.h; sourceTree = "<group>"; };
+		5C17617B164CFBC2000770DC /* OReplicatedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntity.m; sourceTree = "<group>"; };
 		5C1A81BB1645CE22003DCCAF /* UIBarButtonItem+OBarButtonItemExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+OBarButtonItemExtensions.h"; sourceTree = "<group>"; };
 		5C1A81BC1645CE22003DCCAF /* UIBarButtonItem+OBarButtonItemExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+OBarButtonItemExtensions.m"; sourceTree = "<group>"; };
 		5C2262C215A0B47B00241C5F /* OOrigoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoViewController.h; sourceTree = "<group>"; };
@@ -394,8 +394,8 @@
 				5CAEE0BA163E513A00A9046B /* OMessageThread.m */,
 				5CAEE089163E513100A9046B /* OOrigo.h */,
 				5CAEE08A163E513100A9046B /* OOrigo.m */,
-				5C03780316411136002273E9 /* OReplicatedEntity.h */,
-				5C03780416411136002273E9 /* OReplicatedEntity.m */,
+				5C17617A164CFBC2000770DC /* OReplicatedEntity.h */,
+				5C17617B164CFBC2000770DC /* OReplicatedEntity.m */,
 				5CAEE0D7163F09DA00A9046B /* OReplicatedEntityGhost.h */,
 				5CAEE0D8163F09DA00A9046B /* OReplicatedEntityGhost.m */,
 				5CAEE0C2163E513A00A9046B /* OScheduledAbsence.h */,
@@ -822,9 +822,9 @@
 				5CAEE0CD163E513A00A9046B /* OToDoItem.m in Sources */,
 				5CAEE0D0163E513A00A9046B /* OMessageItem.m in Sources */,
 				5CAEE0D9163F09DA00A9046B /* OReplicatedEntityGhost.m in Sources */,
-				5C03780516411136002273E9 /* OReplicatedEntity.m in Sources */,
 				5C4255961645105D00D439D2 /* ONavigationController.m in Sources */,
 				5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OBarButtonItemExtensions.m in Sources */,
+				5C17617C164CFBC2000770DC /* OReplicatedEntity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
