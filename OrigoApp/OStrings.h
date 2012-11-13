@@ -23,7 +23,7 @@ extern NSString * const strAlertTextServerError;
 extern NSString * const strTermAddress;
 
 // OAuthView strings
-extern NSString * const strLabelSignInOrRegister;
+extern NSString * const strLabelSignIn;
 extern NSString * const strLabelActivate;
 extern NSString * const strFooterSignInOrRegister;
 extern NSString * const strFooterActivate;

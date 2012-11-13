@@ -23,8 +23,7 @@ extern CGFloat const kDefaultPadding;
     CGFloat _contentMargin;
     CGFloat _verticalOffset;
     
-    NSMutableSet *_labels;
-    NSMutableDictionary *_textFields;
+    NSMutableDictionary *_namedViews;
     
     id<UITextFieldDelegate> _textFieldDelegate;
 }
@@ -36,11 +35,11 @@ extern CGFloat const kDefaultPadding;
 + (CGFloat)heightForEntityClass:(Class)entityClass;
 + (CGFloat)heightForEntity:(OReplicatedEntity *)entity;
 
-- (OTableViewCell *)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
-- (OTableViewCell *)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
-- (OTableViewCell *)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
+- (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
+- (id)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 
-- (OTextField *)textFieldForKey:(NSString *)key;
+- (OTextField *)textFieldWithName:(NSString *)key;
 
 - (void)shake;
 - (void)shakeAndVibrateDevice;

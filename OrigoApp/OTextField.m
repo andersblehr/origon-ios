@@ -20,19 +20,19 @@
 #import "OStrings.h"
 #import "OTableViewCell.h"
 
-NSString * const kTextFieldAuthEmail = @"authEmail";
-NSString * const kTextFieldPassword = @"password";
-NSString * const kTextFieldActivationCode = @"activationCode";
-NSString * const kTextFieldRepeatPassword = @"repeatPassword";
+NSString * const kTextFieldAuthEmail = @"authEmailField";
+NSString * const kTextFieldPassword = @"passwordField";
+NSString * const kTextFieldActivationCode = @"activationCodeField";
+NSString * const kTextFieldRepeatPassword = @"repeatPasswordField";
 
-NSString * const kTextFieldName = @"name";
-NSString * const kTextFieldEmail = @"email";
-NSString * const kTextFieldMobilePhone = @"mobilePhone";
-NSString * const kTextFieldDateOfBirth = @"dateOfBirth";
+NSString * const kTextFieldName = @"nameField";
+NSString * const kTextFieldMobilePhone = @"mobilePhoneField";
+NSString * const kTextFieldEmail = @"emailField";
+NSString * const kTextFieldDateOfBirth = @"dateOfBirthField";
 
-NSString * const kTextFieldAddressLine1 = @"addressLine1";
-NSString * const kTextFieldAddressLine2 = @"addressLine2";
-NSString * const kTextFieldTelephone = @"telephone";
+NSString * const kTextFieldAddressLine1 = @"addressLine1Field";
+NSString * const kTextFieldAddressLine2 = @"addressLine2Field";
+NSString * const kTextFieldTelephone = @"telephoneField";
 
 CGFloat const kLineSpacing = 5.f;
 
@@ -48,41 +48,41 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Auxiliary methods
 
-- (void)continueInitialisationWithKey:(NSString *)key text:(NSString *)text
+- (void)setPropertiesForName:(NSString *)name text:(NSString *)text
 {
     self.enabled = [OState s].actionIsInput;
-    self.key = key;
+    self.name = name;
     self.text = text;
     
-    if ([key isEqualToString:kTextFieldPassword] || [key isEqualToString:kTextFieldRepeatPassword]) {
+    if ([name isEqualToString:kTextFieldPassword] || [name isEqualToString:kTextFieldRepeatPassword]) {
         self.clearsOnBeginEditing = YES;
         self.returnKeyType = UIReturnKeyDone;
         self.secureTextEntry = YES;
         
-        if ([key isEqualToString:kTextFieldPassword]) {
+        if ([name isEqualToString:kTextFieldPassword]) {
             self.placeholder = [OStrings stringForKey:strPromptPassword];
-        } else if ([key isEqualToString:kTextFieldRepeatPassword]) {
+        } else if ([name isEqualToString:kTextFieldRepeatPassword]) {
             self.placeholder = [OStrings stringForKey:strPromptRepeatPassword];
         }
-    } else if ([key isEqualToString:kTextFieldAuthEmail]) {
+    } else if ([name isEqualToString:kTextFieldAuthEmail]) {
         self.keyboardType = UIKeyboardTypeEmailAddress;
         self.placeholder = [OStrings stringForKey:strPromptAuthEmail];
-    } else if ([key isEqualToString:kTextFieldActivationCode]) {
+    } else if ([name isEqualToString:kTextFieldActivationCode]) {
         self.placeholder = [OStrings stringForKey:strPromptActivationCode];
-    } else if ([key isEqualToString:kTextFieldName]) {
+    } else if ([name isEqualToString:kTextFieldName]) {
         self.autocapitalizationType = UITextAutocapitalizationTypeWords;
         self.placeholder = [OStrings stringForKey:strPromptName];
-    } else if ([key isEqualToString:kTextFieldEmail]) {
+    } else if ([name isEqualToString:kTextFieldEmail]) {
         self.keyboardType = UIKeyboardTypeEmailAddress;
         self.placeholder = [OStrings stringForKey:strPromptEmail];
         
         if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
             self.enabled = NO;
         }
-    } else if ([key isEqualToString:kTextFieldMobilePhone]) {
+    } else if ([name isEqualToString:kTextFieldMobilePhone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
         self.placeholder = [OStrings stringForKey:strPromptMobilePhone];
-    } else if ([key isEqualToString:kTextFieldDateOfBirth]) {
+    } else if ([name isEqualToString:kTextFieldDateOfBirth]) {
         UIDatePicker *datePicker = [[UIDatePicker alloc] init];
         datePicker.datePickerMode = UIDatePickerModeDate;
         [datePicker setEarliestValidBirthDate];
@@ -92,13 +92,13 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         
         self.inputView = datePicker;
         self.placeholder = [OStrings stringForKey:strPromptDateOfBirth];
-    } else if ([key isEqualToString:kTextFieldAddressLine1]) {
+    } else if ([name isEqualToString:kTextFieldAddressLine1]) {
         self.autocapitalizationType = UITextAutocapitalizationTypeWords;
         self.placeholder = [OStrings stringForKey:strPromptAddressLine1];
-    } else if ([key isEqualToString:kTextFieldAddressLine2]) {
+    } else if ([name isEqualToString:kTextFieldAddressLine2]) {
         self.autocapitalizationType = UITextAutocapitalizationTypeWords;
         self.placeholder = [OStrings stringForKey:strPromptAddressLine2];
-    } else if ([key isEqualToString:kTextFieldTelephone]) {
+    } else if ([name isEqualToString:kTextFieldTelephone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
         self.placeholder = [OStrings stringForKey:strPromptTelephone];
     }
@@ -107,9 +107,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Initialisation
 
-- (id)initWithKey:(NSString *)key text:(NSString *)text delegate:(id)delegate
+- (id)initWithName:(NSString *)name text:(NSString *)text delegate:(id)delegate
 {
-    _isTitle = ([key isEqualToString:kTextFieldName] && [OState s].targetIsMember);
+    _isTitle = ([name isEqualToString:kTextFieldName] && [OState s].targetIsMember);
     
     self = [super initWithFrame:CGRectZero];
     
@@ -131,7 +131,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
             self.textColor = [UIColor detailTextColor];
         }
         
-        [self continueInitialisationWithKey:key text:text];
+        [self setPropertiesForName:name text:text];
     }
     
     return self;
@@ -304,7 +304,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 {
     BOOL canPerformAction = [super canPerformAction:action withSender:sender];
     
-    if ([self.key isEqualToString:kTextFieldDateOfBirth]) {
+    if ([self.name isEqualToString:kTextFieldDateOfBirth]) {
         canPerformAction = canPerformAction && (action != @selector(paste:));
     }
     
@@ -325,6 +325,15 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
             self.textColor = [UIColor detailTextColor];
         }
     }
+}
+
+
+- (CGSize)intrinsicContentSize
+{
+    CGFloat intrinsicContentWidth = [self.text sizeWithFont:self.font].width + 2 * kTextInset;
+    CGFloat intrinsicContentHeight = [self.font textFieldHeight];
+    
+    return CGSizeMake(intrinsicContentWidth, intrinsicContentHeight);
 }
 
 @end
