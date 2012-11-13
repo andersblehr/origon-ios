@@ -32,9 +32,6 @@
     NSString *_gender;
     
     NSArray *_sortedResidences;
-    
-    UIBarButtonItem *_editButton;
-    UIBarButtonItem *_backButton;
 }
 
 @property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;

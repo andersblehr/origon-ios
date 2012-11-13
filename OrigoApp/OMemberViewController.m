@@ -130,9 +130,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     if ([OState s].actionIsRegister) {
         _member.givenName = [NSString givenNameFromFullName:_member.name];
         _member.gender = _gender;
-    }
-    
-    if ([OState s].actionIsRegister) {
+        
         if (![_origo isResidence] || [_origo hasAddress]) {
             [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
             
@@ -142,18 +140,33 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         } else {
             [self registerHousehold];
         }
-    } else if ([_member isDirty]) {
+    } else {
         [[OMeta m].context replicateIfNeeded];
     }
 }
 
 
-- (void)finishEditing
+- (void)toggleEdit
 {
-    self.navigationItem.rightBarButtonItem = _editButton;
-    self.navigationItem.leftBarButtonItem = _backButton;
+    static UIBarButtonItem *editButton = nil;
+    static UIBarButtonItem *backButton = nil;
     
-    [OState s].actionIsDisplay = YES;
+    if ([OState s].actionIsDisplay) {
+        editButton = self.navigationItem.rightBarButtonItem;
+        backButton = self.navigationItem.leftBarButtonItem;
+        
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+        
+        [OState s].actionIsEdit = YES;
+    } else if ([OState s].actionIsEdit) {
+        [self.view endEditing:YES];
+        
+        self.navigationItem.rightBarButtonItem = editButton;
+        self.navigationItem.leftBarButtonItem = backButton;
+        
+        [OState s].actionIsDisplay = YES;
+    }
     
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kMemberSection] withRowAnimation:UITableViewRowAnimationFade];
     
@@ -236,26 +249,14 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)startEditing
 {
-    _editButton = self.navigationItem.rightBarButtonItem;
-    _backButton = self.navigationItem.leftBarButtonItem;
-    
-    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
-    
-    [OState s].actionIsEdit = YES;
-    
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kMemberSection] withRowAnimation:UITableViewRowAnimationFade];
+    [self toggleEdit];
     
     [_nameField becomeFirstResponder];
-    
-    OLogState;
 }
 
 
 - (void)cancelEditing
 {
-    [self.view endEditing:YES];
-    
     if ([OState s].actionIsRegister) {
         if (_candidate) {
             for (OReplicatedEntity *entity in _candidateEntities) {
@@ -268,31 +269,29 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         
         [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
     } else if ([OState s].actionIsEdit) {
-        [self finishEditing];
+        [self toggleEdit];
     }
 }
 
 
 - (void)didFinishEditing
 {
-    BOOL isValidInput = [_nameField holdsValidName];
+    BOOL inputIsValid = [_nameField holdsValidName];
     
-    if (isValidInput) {
+    if (inputIsValid) {
         if ([OState s].aspectIsSelf || ![_dateOfBirthPicker.date isBirthDateOfMinor]) {
-            isValidInput = isValidInput && [_emailField holdsValidEmail];
-            isValidInput = isValidInput && [_mobilePhoneField holdsValidPhoneNumber];
+            inputIsValid = inputIsValid && [_emailField holdsValidEmail];
+            inputIsValid = inputIsValid && [_mobilePhoneField holdsValidPhoneNumber];
         } else if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
             if (_emailField.text.length > 0) {
-                isValidInput = isValidInput && [_emailField holdsValidEmail];
+                inputIsValid = inputIsValid && [_emailField holdsValidEmail];
             }
         }
     }
     
-    isValidInput = isValidInput && [_dateOfBirthField holdsValidDate];
+    inputIsValid = inputIsValid && [_dateOfBirthField holdsValidDate];
     
-    if (isValidInput) {
-        [self.view endEditing:YES];
-        
+    if (inputIsValid) {
         if ([OState s].actionIsRegister) {
             if (_candidate) {
                 if ([_candidate.residencies count]) {
@@ -309,7 +308,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             }
         } else if ([OState s].actionIsEdit) {
             [self updateMember];
-            [self finishEditing];
+            [self toggleEdit];
         }
     } else {
         [_memberCell shake];
@@ -461,10 +460,10 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             _memberCell = [tableView cellForEntityClass:OMember.class delegate:self];
         }
         
-        _nameField = [_memberCell textFieldForKey:kTextFieldName];
-        _emailField = [_memberCell textFieldForKey:kTextFieldEmail];
-        _mobilePhoneField = [_memberCell textFieldForKey:kTextFieldMobilePhone];
-        _dateOfBirthField = [_memberCell textFieldForKey:kTextFieldDateOfBirth];
+        _nameField = [_memberCell textFieldWithName:kTextFieldName];
+        _emailField = [_memberCell textFieldWithName:kTextFieldEmail];
+        _mobilePhoneField = [_memberCell textFieldWithName:kTextFieldMobilePhone];
+        _dateOfBirthField = [_memberCell textFieldWithName:kTextFieldDateOfBirth];
         _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
         
         if (_member && _member.dateOfBirth) {

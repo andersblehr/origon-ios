@@ -28,7 +28,7 @@ NSString * const strAlertTextServerError             = @"strAlertTextServerError
 NSString * const strTermAddress                      = @"strTermAddress";
 
 // OAuthView strings
-NSString * const strLabelSignInOrRegister            = @"strLabelSignInOrRegister";
+NSString * const strLabelSignIn                      = @"strLabelSignIn";
 NSString * const strLabelActivate                    = @"strLabelActivate";
 NSString * const strFooterSignInOrRegister           = @"strFooterSignInOrRegister";
 NSString * const strFooterActivate                   = @"strFooterActivate";

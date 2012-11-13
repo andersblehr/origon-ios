@@ -13,7 +13,7 @@
 #import "UITableView+OTableViewExtensions.h"
 #import "UIView+OViewExtensions.h"
 
-#import "OMemberListViewController.h"
+#import "OModalViewControllerDelegate.h"
 
 #import "OLogging.h"
 #import "OMeta.h"
@@ -28,20 +28,58 @@
 
 #import "OOrigo+OOrigoExtensions.h"
 
+#import "OMemberListViewController.h"
+
 
 @implementation OOrigoViewController
+
+#pragma mark - Auxiliary methods
+
+- (void)toggleEdit
+{
+    static UIBarButtonItem *editButton = nil;
+    static UIBarButtonItem *backButton = nil;
+    
+    if ([OState s].actionIsDisplay) {
+        editButton = self.navigationItem.rightBarButtonItem;
+        backButton = self.navigationItem.leftBarButtonItem;
+        
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+        
+        [OState s].actionIsEdit = YES;
+    } else if ([OState s].actionIsEdit) {
+        [self.view endEditing:YES];
+        
+        self.navigationItem.rightBarButtonItem = editButton;
+        self.navigationItem.leftBarButtonItem = backButton;
+        
+        [OState s].actionIsDisplay = YES;
+    }
+    
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
+    
+    OLogState;
+}
+
 
 #pragma mark - Selector implementations
 
 - (void)startEditing
 {
+    [self toggleEdit];
     
+    [_addressLine1Field becomeFirstResponder];
 }
 
 
 - (void)cancelEditing
 {
-    [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
+    if ([OState s].actionIsRegister) {
+        [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
+    } else {
+        [self toggleEdit];
+    }
 }
 
 
@@ -52,14 +90,17 @@
         _origo.addressLine2 = _addressLine2Field.text;
         _origo.telephone = _telephoneField.text;
         
-        if ([OState s].actionIsRegister && [_origo isResidence] && [OState s].aspectIsSelf) {
-            [OMeta m].user.activeSince = [NSDate date];
+        if ([OState s].actionIsRegister) {
+            if ([_origo isResidence] && [OState s].aspectIsSelf) {
+                [OMeta m].user.activeSince = [NSDate date];
+            }
+            
+            [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
+        } else if ([OState s].actionIsEdit) {
+            [self toggleEdit];
         }
         
-        [self.view endEditing:YES];
         [[OMeta m].context replicateIfNeeded];
-        
-        [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
     } else {
         [_origoCell shake];
     }
@@ -158,9 +199,9 @@
         _origoCell = [tableView cellForEntityClass:OOrigo.class delegate:self];
     }
     
-    _addressLine1Field = [_origoCell textFieldForKey:kTextFieldAddressLine1];
-    _addressLine2Field = [_origoCell textFieldForKey:kTextFieldAddressLine2];
-    _telephoneField = [_origoCell textFieldForKey:kTextFieldTelephone];
+    _addressLine1Field = [_origoCell textFieldWithName:kTextFieldAddressLine1];
+    _addressLine2Field = [_origoCell textFieldWithName:kTextFieldAddressLine2];
+    _telephoneField = [_origoCell textFieldWithName:kTextFieldTelephone];
     
     return _origoCell;
 }

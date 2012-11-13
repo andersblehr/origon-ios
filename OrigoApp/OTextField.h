@@ -15,8 +15,8 @@ extern NSString * const kTextFieldActivationCode;
 extern NSString * const kTextFieldRepeatPassword;
 
 extern NSString * const kTextFieldName;
-extern NSString * const kTextFieldEmail;
 extern NSString * const kTextFieldMobilePhone;
+extern NSString * const kTextFieldEmail;
 extern NSString * const kTextFieldDateOfBirth;
 
 extern NSString * const kTextFieldAddressLine1;
@@ -27,10 +27,10 @@ extern CGFloat const kLineSpacing;
 
 @interface OTextField : UITextField
 
-@property (strong, nonatomic) NSString *key;
+@property (strong, nonatomic) NSString *name;
 @property (nonatomic) BOOL isTitle;
 
-- (id)initWithKey:(NSString *)key text:(NSString *)text delegate:(id)delegate;
+- (id)initWithName:(NSString *)name text:(NSString *)text delegate:(id)delegate;
 
 - (void)setOrigin:(CGPoint)origin;
 - (void)setWidth:(CGFloat)width;

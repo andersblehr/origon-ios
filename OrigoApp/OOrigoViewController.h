@@ -8,16 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OModalViewControllerDelegate.h"
+@protocol OModalViewControllerDelegate;
 
 @class OMembership, OOrigo;
 @class OTableViewCell, OTextField;
 
 @interface OOrigoViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate> {
 @private
+    OTableViewCell *_origoCell;
     OOrigo *_origo;
     
-    OTableViewCell *_origoCell;
     OTextField *_addressLine1Field;
     OTextField *_addressLine2Field;
     OTextField *_telephoneField;
