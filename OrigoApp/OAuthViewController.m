@@ -449,7 +449,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     CGFloat height = 0.f;
     
     if ([OState s].actionIsLogin) {
-        height = [OTableViewCell heightForReuseIdentifier:kReuseIdentifierUserLogin];
+        height = [OTableViewCell heightForReuseIdentifier:kReuseIdentifierUserSignIn];
     } else if ([OState s].actionIsActivate) {
         height = [OTableViewCell heightForReuseIdentifier:kReuseIdentifierUserActivation];
     }
@@ -461,15 +461,15 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([OState s].actionIsLogin) {
-        _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserLogin delegate:self];
+        _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserSignIn delegate:self];
         
-        _emailField = [_authCell textFieldWithName:kTextFieldAuthEmail];
-        _passwordField = [_authCell textFieldWithName:kTextFieldPassword];
+        _emailField = [_authCell textFieldWithName:kNameAuthEmail];
+        _passwordField = [_authCell textFieldWithName:kNamePassword];
     } else {
         _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserActivation delegate:self];
         
-        _activationCodeField = [_authCell textFieldWithName:kTextFieldActivationCode];
-        _repeatPasswordField = [_authCell textFieldWithName:kTextFieldRepeatPassword];
+        _activationCodeField = [_authCell textFieldWithName:kNameActivationCode];
+        _repeatPasswordField = [_authCell textFieldWithName:kNameRepeatPassword];
     }
     
     return _authCell;

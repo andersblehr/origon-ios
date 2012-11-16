@@ -9,21 +9,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 
-extern NSString * const kTextFieldAuthEmail;
-extern NSString * const kTextFieldPassword;
-extern NSString * const kTextFieldActivationCode;
-extern NSString * const kTextFieldRepeatPassword;
-
-extern NSString * const kTextFieldName;
-extern NSString * const kTextFieldMobilePhone;
-extern NSString * const kTextFieldEmail;
-extern NSString * const kTextFieldDateOfBirth;
-
-extern NSString * const kTextFieldAddressLine1;
-extern NSString * const kTextFieldAddressLine2;
-extern NSString * const kTextFieldTelephone;
-
-extern CGFloat const kLineSpacing;
+extern CGFloat const kTextInset;
 
 @interface OTextField : UITextField
 
@@ -40,7 +26,6 @@ extern CGFloat const kLineSpacing;
 - (BOOL)holdsValidName;
 - (BOOL)holdsValidPhoneNumber;
 - (BOOL)holdsValidDate;
-- (BOOL)holdsValidAddressWith:(OTextField *)otherAddressField;
 
 - (void)emphasise;
 - (void)deemphasise;

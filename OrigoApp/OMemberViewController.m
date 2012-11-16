@@ -269,6 +269,10 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         
         [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
     } else if ([OState s].actionIsEdit) {
+        _dateOfBirthField.text = [_member.dateOfBirth localisedDateString];
+        _mobilePhoneField.text = _member.mobilePhone;
+        _emailField.text = _member.entityId;
+        
         [self toggleEdit];
     }
 }
@@ -293,6 +297,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     
     if (inputIsValid) {
         if ([OState s].actionIsRegister) {
+            [self.view endEditing:YES];
+            
             if (_candidate) {
                 if ([_candidate.residencies count]) {
                     [self promptForExistingResidenceAction];
@@ -460,10 +466,10 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             _memberCell = [tableView cellForEntityClass:OMember.class delegate:self];
         }
         
-        _nameField = [_memberCell textFieldWithName:kTextFieldName];
-        _emailField = [_memberCell textFieldWithName:kTextFieldEmail];
-        _mobilePhoneField = [_memberCell textFieldWithName:kTextFieldMobilePhone];
-        _dateOfBirthField = [_memberCell textFieldWithName:kTextFieldDateOfBirth];
+        _nameField = [_memberCell textFieldWithName:kNameName];
+        _emailField = [_memberCell textFieldWithName:kNameEmail];
+        _mobilePhoneField = [_memberCell textFieldWithName:kNameMobilePhone];
+        _dateOfBirthField = [_memberCell textFieldWithName:kNameDateOfBirth];
         _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
         
         if (_member && _member.dateOfBirth) {
@@ -476,7 +482,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         OOrigo *residence = _sortedResidences[indexPath.row];
         
         cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
-        cell.textLabel.text = residence.addressLine1;
+        cell.textLabel.text = [residence.address lines][0];
         cell.detailTextLabel.text = residence.telephone;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }

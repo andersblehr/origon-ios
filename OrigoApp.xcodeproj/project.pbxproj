@@ -57,6 +57,8 @@
 		5C6E6C131589AC820002FF84 /* UITableView+OTableViewExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C121589AC820002FF84 /* UITableView+OTableViewExtensions.m */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C7379FD1593111B0065AB4F /* OTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7379FC1593111B0065AB4F /* OTextField.m */; };
+		5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78FAB91654E77E009A4BCF /* OTextView.m */; };
+		5C78FABE165508AE009A4BCF /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78FABD165508AD009A4BCF /* OOrigo.m */; };
 		5C83DF81153F59B800BB0B29 /* OOrigo+OOrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF80153F59B800BB0B29 /* OOrigo+OOrigoExtensions.m */; };
 		5C83DF871543EC8600BB0B29 /* OMemberResidency+OMemberResidencyExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF861543EC8600BB0B29 /* OMemberResidency+OMemberResidencyExtensions.m */; };
 		5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* OMemberViewController.m */; };
@@ -67,7 +69,6 @@
 		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+OJSONSerializationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+OJSONSerializationExtensions.m */; };
 		5CA94D9B15834A9E008CD9EC /* UIDatePicker+ODatePickerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9A15834A9E008CD9EC /* UIDatePicker+ODatePickerExtensions.m */; };
 		5CA94D9F15836BD9008CD9EC /* NSDate+ODateExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9E15836BD9008CD9EC /* NSDate+ODateExtensions.m */; };
-		5CAEE08B163E513100A9046B /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE08A163E513100A9046B /* OOrigo.m */; };
 		5CAEE08E163E513300A9046B /* OLinkedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE08D163E513300A9046B /* OLinkedEntityRef.m */; };
 		5CAEE091163E513300A9046B /* ODocumentElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE090163E513300A9046B /* ODocumentElement.m */; };
 		5CAEE094163E513400A9046B /* OMessageBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE093163E513400A9046B /* OMessageBoard.m */; };
@@ -197,6 +198,10 @@
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5C7379FB1593111B0065AB4F /* OTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextField.h; sourceTree = "<group>"; };
 		5C7379FC1593111B0065AB4F /* OTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextField.m; sourceTree = "<group>"; };
+		5C78FAB81654E77E009A4BCF /* OTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextView.h; sourceTree = "<group>"; };
+		5C78FAB91654E77E009A4BCF /* OTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextView.m; sourceTree = "<group>"; };
+		5C78FABC165508AD009A4BCF /* OOrigo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigo.h; sourceTree = "<group>"; };
+		5C78FABD165508AD009A4BCF /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
 		5C83DF7F153F59B800BB0B29 /* OOrigo+OOrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OOrigo+OOrigoExtensions.h"; sourceTree = "<group>"; };
 		5C83DF80153F59B800BB0B29 /* OOrigo+OOrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OOrigo+OOrigoExtensions.m"; sourceTree = "<group>"; };
 		5C83DF851543EC8600BB0B29 /* OMemberResidency+OMemberResidencyExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OMemberResidency+OMemberResidencyExtensions.h"; sourceTree = "<group>"; };
@@ -214,8 +219,6 @@
 		5CA94D9A15834A9E008CD9EC /* UIDatePicker+ODatePickerExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDatePicker+ODatePickerExtensions.m"; sourceTree = "<group>"; };
 		5CA94D9D15836BD9008CD9EC /* NSDate+ODateExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+ODateExtensions.h"; sourceTree = "<group>"; };
 		5CA94D9E15836BD9008CD9EC /* NSDate+ODateExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+ODateExtensions.m"; sourceTree = "<group>"; };
-		5CAEE089163E513100A9046B /* OOrigo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigo.h; sourceTree = "<group>"; };
-		5CAEE08A163E513100A9046B /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
 		5CAEE08C163E513300A9046B /* OLinkedEntityRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLinkedEntityRef.h; sourceTree = "<group>"; };
 		5CAEE08D163E513300A9046B /* OLinkedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLinkedEntityRef.m; sourceTree = "<group>"; };
 		5CAEE08F163E513300A9046B /* ODocumentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODocumentElement.h; sourceTree = "<group>"; };
@@ -392,8 +395,8 @@
 				5CAEE0CF163E513A00A9046B /* OMessageItem.m */,
 				5CAEE0B9163E513900A9046B /* OMessageThread.h */,
 				5CAEE0BA163E513A00A9046B /* OMessageThread.m */,
-				5CAEE089163E513100A9046B /* OOrigo.h */,
-				5CAEE08A163E513100A9046B /* OOrigo.m */,
+				5C78FABC165508AD009A4BCF /* OOrigo.h */,
+				5C78FABD165508AD009A4BCF /* OOrigo.m */,
 				5C17617A164CFBC2000770DC /* OReplicatedEntity.h */,
 				5C17617B164CFBC2000770DC /* OReplicatedEntity.m */,
 				5CAEE0D7163F09DA00A9046B /* OReplicatedEntityGhost.h */,
@@ -619,6 +622,8 @@
 				5C8B3AB91582493C000B19FA /* OTableViewCell.m */,
 				5C7379FB1593111B0065AB4F /* OTextField.h */,
 				5C7379FC1593111B0065AB4F /* OTextField.m */,
+				5C78FAB81654E77E009A4BCF /* OTextView.h */,
+				5C78FAB91654E77E009A4BCF /* OTextView.m */,
 			);
 			name = "Cocoa Subclasses";
 			sourceTree = "<group>";
@@ -799,7 +804,6 @@
 				5C014A2415CA77320040A1D9 /* OAlert.m in Sources */,
 				5CB7E94015F38C1200FD53DF /* OSettingsViewController.m in Sources */,
 				5C15BFC916367BCA00BB5254 /* OTabBarController.m in Sources */,
-				5CAEE08B163E513100A9046B /* OOrigo.m in Sources */,
 				5CAEE08E163E513300A9046B /* OLinkedEntityRef.m in Sources */,
 				5CAEE091163E513300A9046B /* ODocumentElement.m in Sources */,
 				5CAEE094163E513400A9046B /* OMessageBoard.m in Sources */,
@@ -825,6 +829,8 @@
 				5C4255961645105D00D439D2 /* ONavigationController.m in Sources */,
 				5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OBarButtonItemExtensions.m in Sources */,
 				5C17617C164CFBC2000770DC /* OReplicatedEntity.m in Sources */,
+				5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */,
+				5C78FABE165508AE009A4BCF /* OOrigo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

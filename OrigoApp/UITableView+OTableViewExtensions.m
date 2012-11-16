@@ -67,7 +67,7 @@ static NSString * const kLogoText = @"..origo..";
     logoLabel.shadowColor = [UIColor darkTextColor];
     logoLabel.shadowOffset = CGSizeMake(0.f, kLogoShadowOffset);
     logoLabel.text = kLogoText;
-    logoLabel.textAlignment = UITextAlignmentCenter;
+    logoLabel.textAlignment = NSTextAlignmentCenter;
     logoLabel.textColor = [UIColor headerTextColor];
     
     [containerView addSubview:logoLabel];
@@ -173,7 +173,7 @@ static NSString * const kLogoText = @"..origo..";
     headerLabel.shadowColor = [UIColor darkTextColor];
     headerLabel.shadowOffset = CGSizeMake(0.f, kHeaderShadowOffset);
     headerLabel.text = text;
-    headerLabel.textAlignment = UITextAlignmentLeft;
+    headerLabel.textAlignment = NSTextAlignmentLeft;
     headerLabel.textColor = [UIColor headerTextColor];
     
     [containerView addSubview:headerLabel];
@@ -201,7 +201,7 @@ static NSString * const kLogoText = @"..origo..";
     footerLabel.shadowColor = [UIColor darkTextColor];
     footerLabel.shadowOffset = CGSizeMake(0.f, kFooterShadowOffset);
     footerLabel.text = footerText;
-    footerLabel.textAlignment = UITextAlignmentCenter;
+    footerLabel.textAlignment = NSTextAlignmentCenter;
     footerLabel.textColor = [UIColor footerTextColor];
     
     [containerView addSubview:footerLabel];

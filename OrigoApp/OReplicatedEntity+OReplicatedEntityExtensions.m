@@ -217,13 +217,7 @@
 
 - (NSString *)reuseIdentifier
 {
-    NSString *hashCode = [self computeHashCode];
-    
-    if ([OState s].actionIsInput) {
-        hashCode = [hashCode stringByAppendingString:@"-input"];
-    }
-    
-    return hashCode;
+    return [self computeHashCode];
 }
 
 @end

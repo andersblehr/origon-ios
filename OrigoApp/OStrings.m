@@ -12,6 +12,7 @@
 #import "OMeta.h"
 #import "OLogging.h"
 #import "OServerConnection.h"
+#import "OTableViewCell.h"
 
 // Cross-view strings
 NSString * const strNameMyHousehold                  = @"strNameMyHousehold";
@@ -77,8 +78,7 @@ NSString * const strButtonDeleteMember               = @"strButtonDeleteMember";
 NSString * const strViewTitleNewOrigo                = @"strViewTitleNewOrigo";
 NSString * const strLabelTelephone                   = @"strLabelTelephone";
 NSString * const strHeaderAddresses                  = @"strHeaderAddresses";
-NSString * const strPromptAddressLine1               = @"strPromptAddressLine1";
-NSString * const strPromptAddressLine2               = @"strPromptAddressLine2";
+NSString * const strPromptAddress                    = @"strPromptAddress";
 NSString * const strPromptTelephone                  = @"strPromptTelephone";
 
 // OMemberView strings
@@ -186,9 +186,27 @@ static NSDictionary *strings = nil;
 }
 
 
-+ (NSString *)lowercaseStringForKey:(NSString *)key
++ (NSString *)stringForLabelWithName:(NSString *)name
 {
-    return [[OStrings stringForKey:key] lowercaseString];
+    NSString *stringKey = @"";
+    
+    if ([name isEqualToString:kNameSignIn]) {
+        stringKey = strLabelSignIn;
+    } else if ([name isEqualToString:kNameActivate]) {
+        stringKey = strLabelActivate;
+    } else if ([name isEqualToString:kNameMobilePhone]) {
+        stringKey = strLabelMobilePhone;
+    } else if ([name isEqualToString:kNameEmail]) {
+        stringKey = strLabelEmail;
+    } else if ([name isEqualToString:kNameDateOfBirth]) {
+        stringKey = strLabelDateOfBirth;
+    } else if ([name isEqualToString:kNameAddress]) {
+        stringKey = strTermAddress;
+    } else if ([name isEqualToString:kNameTelephone]) {
+        stringKey = strLabelTelephone;
+    }
+    
+    return [self stringForKey:stringKey];
 }
 
 

@@ -85,7 +85,7 @@
 
 - (BOOL)hasAddress
 {
-    return ((self.addressLine1.length > 0) || (self.addressLine2.length > 0));
+    return ([self.address length] > 0);
 }
 
 
@@ -145,9 +145,7 @@
 {
     NSString *detailString = nil;
     
-    if ([self isMemberRoot]) {
-        // TODO
-    } else if ([self isResidence]) {
+    if ([self isResidence]) {
         detailString = [self singleLineAddress];
     } else {
         detailString = self.descriptionText;
@@ -159,40 +157,11 @@
 
 - (NSString *)singleLineAddress
 {
-    NSString *address = @"";
+    NSMutableString *singleLineAddress = [NSMutableString stringWithString:self.address];
     
-    if (self.addressLine1.length > 0) {
-        address = [address stringByAppendingString:self.addressLine1];
-    }
+    [singleLineAddress replaceOccurrencesOfString:@"\n" withString:@", " options:NSLiteralSearch range:NSMakeRange(0, [self.address length])];
     
-    if (self.addressLine2.length > 0) {
-        address = [address stringByAppendingStringWithComma:self.addressLine2];
-    }
-    
-    return address;
-}
-
-
-- (NSString *)multiLineAddress
-{
-    NSString *address = @"";
-    NSArray *addressElements = [[self singleLineAddress] componentsSeparatedByString:@","];
-    
-    for (int i = 0; i < [addressElements count]; i++) {
-        NSString *addressElement = [addressElements[i] removeLeadingAndTrailingSpaces];
-        
-        address = [address stringByAppendingStringWithNewline:addressElement];
-    }
-    
-    return address;
-}
-
-
-- (NSInteger)numberOfLinesInAddress
-{
-    NSString *multiLineAddress = [self multiLineAddress];
-    
-    return [[NSMutableString stringWithString:multiLineAddress] replaceOccurrencesOfString:@"," withString:@"," options:NSLiteralSearch range:NSMakeRange(0, multiLineAddress.length)] + 1;
+    return singleLineAddress;
 }
 
 
@@ -203,7 +172,7 @@
     NSComparisonResult comparisonResult = NSOrderedSame;
     
     if ([self.residencies count] > 0) {
-        comparisonResult = [self.addressLine1 localizedCaseInsensitiveCompare:other.addressLine1];
+        comparisonResult = [self.address localizedCaseInsensitiveCompare:other.address];
     } else {
         comparisonResult = [self.name localizedCaseInsensitiveCompare:other.name];
     }
