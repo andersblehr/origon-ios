@@ -2,7 +2,7 @@
 //  OOrigo.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 29.10.12.
+//  Created by Anders Blehr on 15.11.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
@@ -14,8 +14,7 @@
 
 @interface OOrigo : OReplicatedEntity
 
-@property (nonatomic, retain) NSString * addressLine1;
-@property (nonatomic, retain) NSString * addressLine2;
+@property (nonatomic, retain) NSString * address;
 @property (nonatomic, retain) NSString * descriptionText;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSData * photo;

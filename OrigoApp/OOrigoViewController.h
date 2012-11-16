@@ -11,15 +11,14 @@
 @protocol OModalViewControllerDelegate;
 
 @class OMembership, OOrigo;
-@class OTableViewCell, OTextField;
+@class OTableViewCell, OTextField, OTextView;
 
-@interface OOrigoViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate> {
+@interface OOrigoViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate> {
 @private
     OTableViewCell *_origoCell;
     OOrigo *_origo;
     
-    OTextField *_addressLine1Field;
-    OTextField *_addressLine2Field;
+    OTextView *_addressView;
     OTextField *_telephoneField;
 }
 

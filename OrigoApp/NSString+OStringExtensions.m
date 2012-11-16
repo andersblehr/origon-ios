@@ -167,6 +167,20 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
+#pragma mark - Multi-line string support
+
+- (NSUInteger)numberOfLines
+{
+    return [[self lines] count];
+}
+
+
+- (NSArray *)lines
+{
+    return [self componentsSeparatedByString:@"\n"];
+}
+
+
 #pragma mark - Devining tring content
 
 - (BOOL)isEmailAddress

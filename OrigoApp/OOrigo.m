@@ -2,7 +2,7 @@
 //  OOrigo.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 29.10.12.
+//  Created by Anders Blehr on 15.11.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
@@ -20,8 +20,7 @@
 
 @implementation OOrigo
 
-@dynamic addressLine1;
-@dynamic addressLine2;
+@dynamic address;
 @dynamic descriptionText;
 @dynamic name;
 @dynamic photo;

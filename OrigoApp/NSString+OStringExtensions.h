@@ -21,6 +21,9 @@
 - (NSString *)stringByAppendingStringWithHash:(NSString *)string;
 - (NSString *)stringByAppendingStringWithCaret:(NSString *)string;
 
+- (NSUInteger)numberOfLines;
+- (NSArray *)lines;
+
 - (BOOL)isEmailAddress;
 
 + (NSString *)givenNameFromFullName:(NSString *)fullName;

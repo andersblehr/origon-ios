@@ -9,8 +9,21 @@
 #import <UIKit/UIKit.h>
 
 extern NSString * const kReuseIdentifierDefault;
-extern NSString * const kReuseIdentifierUserLogin;
+extern NSString * const kReuseIdentifierUserSignIn;
 extern NSString * const kReuseIdentifierUserActivation;
+
+extern NSString * const kNameSignIn;
+extern NSString * const kNameAuthEmail;
+extern NSString * const kNamePassword;
+extern NSString * const kNameActivate;
+extern NSString * const kNameActivationCode;
+extern NSString * const kNameRepeatPassword;
+extern NSString * const kNameName;
+extern NSString * const kNameMobilePhone;
+extern NSString * const kNameEmail;
+extern NSString * const kNameDateOfBirth;
+extern NSString * const kNameAddress;
+extern NSString * const kNameTelephone;
 
 extern CGFloat const kDefaultPadding;
 
@@ -19,16 +32,11 @@ extern CGFloat const kDefaultPadding;
 
 @interface OTableViewCell : UITableViewCell {
 @private
-    CGFloat _contentOffset;
-    CGFloat _contentMargin;
-    CGFloat _verticalOffset;
-    
+    BOOL _selectable;
     NSMutableDictionary *_namedViews;
     
-    id<UITextFieldDelegate> _textFieldDelegate;
+    id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
-
-@property (nonatomic) BOOL selectable;
 
 + (CGFloat)defaultHeight;
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
@@ -39,7 +47,8 @@ extern CGFloat const kDefaultPadding;
 - (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
 - (id)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 
-- (OTextField *)textFieldWithName:(NSString *)key;
+- (id)textFieldWithName:(NSString *)name;
+- (id)textViewWithName:(NSString *)name;
 
 - (void)shake;
 - (void)shakeAndVibrateDevice;

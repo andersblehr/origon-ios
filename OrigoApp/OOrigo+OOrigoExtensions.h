@@ -27,8 +27,6 @@
 
 - (NSString *)details;
 - (NSString *)singleLineAddress;
-- (NSString *)multiLineAddress;
-- (NSInteger)numberOfLinesInAddress;
 
 - (NSComparisonResult)compare:(OOrigo *)other;
 

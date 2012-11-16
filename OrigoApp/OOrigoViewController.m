@@ -21,6 +21,7 @@
 #import "OStrings.h"
 #import "OTableViewCell.h"
 #import "OTextField.h"
+#import "OTextView.h"
 
 #import "OMember.h"
 #import "OMembership.h"
@@ -69,7 +70,7 @@
 {
     [self toggleEdit];
     
-    [_addressLine1Field becomeFirstResponder];
+    [_addressView becomeFirstResponder];
 }
 
 
@@ -78,6 +79,9 @@
     if ([OState s].actionIsRegister) {
         [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
     } else {
+        _addressView.text = _origo.address;
+        _telephoneField.text = _origo.telephone;
+        
         [self toggleEdit];
     }
 }
@@ -85,9 +89,8 @@
 
 - (void)didFinishEditing
 {
-    if ([_addressLine1Field holdsValidAddressWith:_addressLine2Field]) {
-        _origo.addressLine1 = _addressLine1Field.text;
-        _origo.addressLine2 = _addressLine2Field.text;
+    if ([_addressView.text length] > 0) {
+        _origo.address = _addressView.text;
         _origo.telephone = _telephoneField.text;
         
         if ([OState s].actionIsRegister) {
@@ -199,9 +202,8 @@
         _origoCell = [tableView cellForEntityClass:OOrigo.class delegate:self];
     }
     
-    _addressLine1Field = [_origoCell textFieldWithName:kTextFieldAddressLine1];
-    _addressLine2Field = [_origoCell textFieldWithName:kTextFieldAddressLine2];
-    _telephoneField = [_origoCell textFieldWithName:kTextFieldTelephone];
+    _addressView = [_origoCell textViewWithName:kNameAddress];
+    _telephoneField = [_origoCell textFieldWithName:kNameTelephone];
     
     return _origoCell;
 }
@@ -214,7 +216,7 @@
     [cell.backgroundView addDropShadowForTrailingTableViewCell];
     
     if ([OState s].actionIsInput) {
-        [_addressLine1Field becomeFirstResponder];
+        [_addressView becomeFirstResponder];
     }
 }
 
@@ -233,15 +235,17 @@
 }
 
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
+#pragma mark - UITextViewDelegate conformance
+
+- (void)textViewDidBeginEditing:(UITextView *)textView
 {
-    if (textField == _addressLine1Field) {
-        [_addressLine2Field becomeFirstResponder];
-    } else if (textField == _addressLine2Field) {
-        [_telephoneField becomeFirstResponder];
-    }
-    
-    return YES;
+    [(OTextView *)textView toggleEmphasis];
+}
+
+
+- (void)textViewDidEndEditing:(UITextView *)textView
+{
+    [(OTextView *)textView toggleEmphasis];
 }
 
 @end

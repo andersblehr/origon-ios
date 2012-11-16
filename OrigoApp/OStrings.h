@@ -72,8 +72,7 @@ extern NSString * const strButtonDeleteMember;
 extern NSString * const strViewTitleNewOrigo;
 extern NSString * const strLabelTelephone;
 extern NSString * const strHeaderAddresses;
-extern NSString * const strPromptAddressLine1;
-extern NSString * const strPromptAddressLine2;
+extern NSString * const strPromptAddress;
 extern NSString * const strPromptTelephone;
 
 // OMemberView strings
@@ -136,6 +135,6 @@ extern NSString * const xstrContactRolesSportsTeam;
 + (void)conditionallyRefresh;
 
 + (NSString *)stringForKey:(NSString *)key;
-+ (NSString *)lowercaseStringForKey:(NSString *)key;
++ (NSString *)stringForLabelWithName:(NSString *)name;
 
 @end

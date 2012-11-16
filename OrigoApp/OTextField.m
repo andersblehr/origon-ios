@@ -20,23 +20,7 @@
 #import "OStrings.h"
 #import "OTableViewCell.h"
 
-NSString * const kTextFieldAuthEmail = @"authEmailField";
-NSString * const kTextFieldPassword = @"passwordField";
-NSString * const kTextFieldActivationCode = @"activationCodeField";
-NSString * const kTextFieldRepeatPassword = @"repeatPasswordField";
-
-NSString * const kTextFieldName = @"nameField";
-NSString * const kTextFieldMobilePhone = @"mobilePhoneField";
-NSString * const kTextFieldEmail = @"emailField";
-NSString * const kTextFieldDateOfBirth = @"dateOfBirthField";
-
-NSString * const kTextFieldAddressLine1 = @"addressLine1Field";
-NSString * const kTextFieldAddressLine2 = @"addressLine2Field";
-NSString * const kTextFieldTelephone = @"telephoneField";
-
-CGFloat const kLineSpacing = 5.f;
-
-static CGFloat const kTextInset = 4.f;
+CGFloat const kTextInset = 4.f;
 
 static NSString * const kPlaceholderColorPath = @"_placeholderLabel.textColor";
 
@@ -48,41 +32,39 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Auxiliary methods
 
-- (void)setPropertiesForName:(NSString *)name text:(NSString *)text
+- (void)setPropertiesForName:(NSString *)name
 {
-    self.enabled = [OState s].actionIsInput;
     self.name = name;
-    self.text = text;
     
-    if ([name isEqualToString:kTextFieldPassword] || [name isEqualToString:kTextFieldRepeatPassword]) {
+    if ([name isEqualToString:kNamePassword] || [name isEqualToString:kNameRepeatPassword]) {
         self.clearsOnBeginEditing = YES;
         self.returnKeyType = UIReturnKeyDone;
         self.secureTextEntry = YES;
         
-        if ([name isEqualToString:kTextFieldPassword]) {
+        if ([name isEqualToString:kNamePassword]) {
             self.placeholder = [OStrings stringForKey:strPromptPassword];
-        } else if ([name isEqualToString:kTextFieldRepeatPassword]) {
+        } else if ([name isEqualToString:kNameRepeatPassword]) {
             self.placeholder = [OStrings stringForKey:strPromptRepeatPassword];
         }
-    } else if ([name isEqualToString:kTextFieldAuthEmail]) {
+    } else if ([name isEqualToString:kNameAuthEmail]) {
         self.keyboardType = UIKeyboardTypeEmailAddress;
         self.placeholder = [OStrings stringForKey:strPromptAuthEmail];
-    } else if ([name isEqualToString:kTextFieldActivationCode]) {
+    } else if ([name isEqualToString:kNameActivationCode]) {
         self.placeholder = [OStrings stringForKey:strPromptActivationCode];
-    } else if ([name isEqualToString:kTextFieldName]) {
+    } else if ([name isEqualToString:kNameName]) {
         self.autocapitalizationType = UITextAutocapitalizationTypeWords;
         self.placeholder = [OStrings stringForKey:strPromptName];
-    } else if ([name isEqualToString:kTextFieldEmail]) {
+    } else if ([name isEqualToString:kNameEmail]) {
         self.keyboardType = UIKeyboardTypeEmailAddress;
         self.placeholder = [OStrings stringForKey:strPromptEmail];
         
         if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
             self.enabled = NO;
         }
-    } else if ([name isEqualToString:kTextFieldMobilePhone]) {
+    } else if ([name isEqualToString:kNameMobilePhone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
         self.placeholder = [OStrings stringForKey:strPromptMobilePhone];
-    } else if ([name isEqualToString:kTextFieldDateOfBirth]) {
+    } else if ([name isEqualToString:kNameDateOfBirth]) {
         UIDatePicker *datePicker = [[UIDatePicker alloc] init];
         datePicker.datePickerMode = UIDatePickerModeDate;
         [datePicker setEarliestValidBirthDate];
@@ -92,13 +74,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         
         self.inputView = datePicker;
         self.placeholder = [OStrings stringForKey:strPromptDateOfBirth];
-    } else if ([name isEqualToString:kTextFieldAddressLine1]) {
-        self.autocapitalizationType = UITextAutocapitalizationTypeWords;
-        self.placeholder = [OStrings stringForKey:strPromptAddressLine1];
-    } else if ([name isEqualToString:kTextFieldAddressLine2]) {
-        self.autocapitalizationType = UITextAutocapitalizationTypeWords;
-        self.placeholder = [OStrings stringForKey:strPromptAddressLine2];
-    } else if ([name isEqualToString:kTextFieldTelephone]) {
+    } else if ([name isEqualToString:kNameTelephone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
         self.placeholder = [OStrings stringForKey:strPromptTelephone];
     }
@@ -109,7 +85,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (id)initWithName:(NSString *)name text:(NSString *)text delegate:(id)delegate
 {
-    _isTitle = ([name isEqualToString:kTextFieldName] && [OState s].targetIsMember);
+    _isTitle = ([name isEqualToString:kNameName] && [OState s].targetIsMember);
     
     self = [super initWithFrame:CGRectZero];
     
@@ -119,19 +95,19 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         self.backgroundColor = [UIColor clearColor];
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         self.delegate = delegate;
+        self.enabled = [OState s].actionIsInput;
         self.font = _isTitle ? [UIFont titleFont] : [UIFont detailFont];
         self.frame = CGRectMake(0.f, 0.f, 0.f, [self.font textFieldHeight]);
         self.keyboardType = UIKeyboardTypeDefault;
         self.returnKeyType = UIReturnKeyNext;
-        self.textAlignment = UITextAlignmentLeft;
+        self.text = text;
+        self.textAlignment = NSTextAlignmentLeft;
+        self.textColor = _isTitle ? [UIColor titleTextColor] : [UIColor detailTextColor];
         
-        if (_isTitle && ![OState s].actionIsInput) {
-            self.textColor = [UIColor titleTextColor];
-        } else {
-            self.textColor = [UIColor detailTextColor];
-        }
+        [self setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
-        [self setPropertiesForName:name text:text];
+        [self setPropertiesForName:name];
     }
     
     return self;
@@ -229,21 +205,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-- (BOOL)holdsValidAddressWith:(OTextField *)otherAddressField
-{
-    NSString *addressLine1 = [self.text removeLeadingAndTrailingSpaces];
-    NSString *addressLine2 = [otherAddressField.text removeLeadingAndTrailingSpaces];
-    
-    BOOL isValid = ((addressLine1.length > 0) || (addressLine2.length > 0));
-    
-    if (!isValid) {
-        [self becomeFirstResponder];
-    }
-    
-    return isValid;
-}
-
-
 #pragma mark - Emphasising and deemphasising
 
 - (void)emphasise
@@ -304,7 +265,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 {
     BOOL canPerformAction = [super canPerformAction:action withSender:sender];
     
-    if ([self.name isEqualToString:kTextFieldDateOfBirth]) {
+    if ([self.name isEqualToString:kNameDateOfBirth]) {
         canPerformAction = canPerformAction && (action != @selector(paste:));
     }
     
@@ -321,8 +282,10 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
             self.backgroundColor = [UIColor selectedCellBackgroundColor];
             self.textColor = [UIColor selectedDetailTextColor];
         } else {
-            self.backgroundColor = [UIColor cellBackgroundColor];
-            self.textColor = [UIColor detailTextColor];
+            [UIView animateWithDuration:0.5f animations:^{
+                self.backgroundColor = [UIColor cellBackgroundColor];
+                self.textColor = [UIColor detailTextColor];
+            }];
         }
     }
 }
