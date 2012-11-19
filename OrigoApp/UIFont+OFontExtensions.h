@@ -17,5 +17,6 @@
 + (UIFont *)footerFont;
 
 - (CGFloat)textFieldHeight;
+- (CGFloat)textViewLineHeight;
 
 @end

@@ -394,8 +394,8 @@ static OMeta *m = nil;
         [self.context saveServerReplicas:data];
     }
 
-    if ((response.statusCode == kHTTPStatusCodeCreated) ||
-        (response.statusCode == kHTTPStatusCodeMultiStatus)) {
+    if ((response.statusCode == kHTTPStatusCreated) ||
+        (response.statusCode == kHTTPStatusMultiStatus)) {
         OLogDebug(@"Entities successfully replicated to server.");
         
         NSDate *now = [NSDate date];

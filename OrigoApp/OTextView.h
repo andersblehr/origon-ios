@@ -10,9 +10,10 @@
 
 @interface OTextView : UITextView<UITextViewDelegate> {
 @private
-    UITextView *_placeholderView;
-    
     BOOL _editing;
+    
+    UITextView *_placeholderView;
+    NSUInteger numberOfLines;
 }
 
 @property (strong, nonatomic) NSString *name;

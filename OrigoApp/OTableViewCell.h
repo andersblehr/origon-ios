@@ -25,15 +25,20 @@ extern NSString * const kNameDateOfBirth;
 extern NSString * const kNameAddress;
 extern NSString * const kNameTelephone;
 
+extern NSString * const kNameSuffixLabel;
+extern NSString * const kNameSuffixTextField;
+
 extern CGFloat const kDefaultPadding;
 
 @class OReplicatedEntity;
-@class OTextField;
+@class OTextField, OVisualConstraints;
 
 @interface OTableViewCell : UITableViewCell {
 @private
     BOOL _selectable;
+    
     NSMutableDictionary *_namedViews;
+    OVisualConstraints *_constraints;
     
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
@@ -48,8 +53,8 @@ extern CGFloat const kDefaultPadding;
 - (id)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 
 - (id)textFieldWithName:(NSString *)name;
-- (id)textViewWithName:(NSString *)name;
 
+- (void)adorn;
 - (void)shake;
 - (void)shakeAndVibrateDevice;
 

@@ -54,16 +54,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     } else if ([name isEqualToString:kNameName]) {
         self.autocapitalizationType = UITextAutocapitalizationTypeWords;
         self.placeholder = [OStrings stringForKey:strPromptName];
-    } else if ([name isEqualToString:kNameEmail]) {
-        self.keyboardType = UIKeyboardTypeEmailAddress;
-        self.placeholder = [OStrings stringForKey:strPromptEmail];
-        
-        if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
-            self.enabled = NO;
-        }
-    } else if ([name isEqualToString:kNameMobilePhone]) {
-        self.keyboardType = UIKeyboardTypeNumberPad;
-        self.placeholder = [OStrings stringForKey:strPromptMobilePhone];
     } else if ([name isEqualToString:kNameDateOfBirth]) {
         UIDatePicker *datePicker = [[UIDatePicker alloc] init];
         datePicker.datePickerMode = UIDatePickerModeDate;
@@ -74,6 +64,21 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         
         self.inputView = datePicker;
         self.placeholder = [OStrings stringForKey:strPromptDateOfBirth];
+    } else if ([name isEqualToString:kNameMobilePhone]) {
+        self.keyboardType = UIKeyboardTypeNumberPad;
+        self.placeholder = [OStrings stringForKey:strPromptMobilePhone];
+        
+        if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
+            self.returnKeyType = UIReturnKeyDone;
+        }
+    } else if ([name isEqualToString:kNameEmail]) {
+        self.keyboardType = UIKeyboardTypeEmailAddress;
+        self.returnKeyType = UIReturnKeyDone;
+        self.placeholder = [OStrings stringForKey:strPromptEmail];
+        
+        if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
+            self.enabled = NO;
+        }
     } else if ([name isEqualToString:kNameTelephone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
         self.placeholder = [OStrings stringForKey:strPromptTelephone];

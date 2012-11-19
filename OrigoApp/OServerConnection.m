@@ -27,21 +27,22 @@ NSString * const kHTTPMethodGET = @"GET";
 NSString * const kHTTPMethodPOST = @"POST";
 NSString * const kHTTPMethodDELETE = @"DELETE";
 
-NSInteger const kHTTPStatusCodeOK = 200;
-NSInteger const kHTTPStatusCodeCreated = 201;
-NSInteger const kHTTPStatusCodeNoContent = 204;
-NSInteger const kHTTPStatusCodeMultiStatus = 207;
-NSInteger const kHTTPStatusCodeNotModified = 304;
-NSInteger const kHTTPStatusCodeErrorRangeStart = 400;
-NSInteger const kHTTPStatusCodeBadRequest = 400;
-NSInteger const kHTTPStatusCodeUnauthorized = 401;
-NSInteger const kHTTPStatusCodeForbidden = 403;
-NSInteger const kHTTPStatusCodeNotFound = 404;
-NSInteger const kHTTPStatusCodeInternalServerError = 500;
+NSInteger const kHTTPStatusOK = 200;
+NSInteger const kHTTPStatusCreated = 201;
+NSInteger const kHTTPStatusNoContent = 204;
+NSInteger const kHTTPStatusMultiStatus = 207;
+NSInteger const kHTTPStatusNotModified = 304;
+
+NSInteger const kHTTPStatusErrorRangeStart = 400;
+NSInteger const kHTTPStatusBadRequest = 400;
+NSInteger const kHTTPStatusUnauthorized = 401;
+NSInteger const kHTTPStatusForbidden = 403;
+NSInteger const kHTTPStatusNotFound = 404;
+NSInteger const kHTTPStatusInternalServerError = 500;
 
 static NSString * const kGAEServer = @"origoapp.appspot.com";
-static NSString * const kOrigoDevServer = @"localhost:8888";
-//static NSString * const kOrigoDevServer = @"enceladus.local:8888";
+//static NSString * const kOrigoDevServer = @"localhost:8888";
+static NSString * const kOrigoDevServer = @"enceladus.local:8888";
 //static NSString * const kOrigoProdServer = @"origoapp.appspot.com";
 static NSString * const kOrigoProdServer = @"enceladus.local:8888";
 
@@ -277,7 +278,7 @@ static NSString * const kURLParameterVersion = @"version";
     
     [_responseData setLength:0];
     
-    if (response.statusCode < kHTTPStatusCodeErrorRangeStart) {
+    if (response.statusCode < kHTTPStatusErrorRangeStart) {
         NSString *replicationDate = [[response allHeaderFields] objectForKey:kHTTPHeaderLastModified];
         
         if (replicationDate) {

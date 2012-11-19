@@ -214,7 +214,7 @@ static NSDictionary *strings = nil;
 
 + (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    if (response.statusCode == kHTTPStatusCodeOK) {
+    if (response.statusCode == kHTTPStatusOK) {
         strings = data;
         
         if (![strings writeToFile:[self fullPathToStringsPlist] atomically:YES]) {

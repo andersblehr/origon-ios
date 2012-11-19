@@ -169,7 +169,7 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 
 #pragma mark - Multi-line string support
 
-- (NSUInteger)numberOfLines
+- (NSUInteger)lineCount
 {
     return [[self lines] count];
 }

@@ -478,9 +478,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - UITableViewDelegate conformance
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [_authCell.backgroundView addDropShadowForTrailingTableViewCell];
+    [cell adorn];
     
     if ([OState s].actionIsLogin) {
         [_emailField emphasise];
@@ -598,14 +598,14 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [self indicatePendingServerSession:NO];
     
-    if (response.statusCode < kHTTPStatusCodeErrorRangeStart) {
-        if (response.statusCode == kHTTPStatusCodeCreated) {
+    if (response.statusCode < kHTTPStatusErrorRangeStart) {
+        if (response.statusCode == kHTTPStatusCreated) {
             [self userDidSignUpWithData:data];
         } else {
             [self userDidAuthenticateWithData:data];
         }
     } else {
-        if (response.statusCode == kHTTPStatusCodeUnauthorized) {
+        if (response.statusCode == kHTTPStatusUnauthorized) {
             [_authCell shake];
             [_passwordField becomeFirstResponder];
         } else {

@@ -26,8 +26,8 @@
     OTextField *_emailField;
     OTextField *_mobilePhoneField;
     OTextField *_dateOfBirthField;
+    OTextField *_currentField;
     
-    UITextField *_currentField;
     UIDatePicker *_dateOfBirthPicker;
     NSString *_gender;
     

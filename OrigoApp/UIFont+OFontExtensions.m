@@ -58,4 +58,10 @@ static CGFloat const kFieldHeightScaleFactor = 1.22f;
     return kFieldHeightScaleFactor * self.lineHeight;
 }
 
+
+- (CGFloat)textViewLineHeight
+{
+    return [self textFieldHeight] - 1.f;
+}
+
 @end

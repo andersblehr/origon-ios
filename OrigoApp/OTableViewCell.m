@@ -23,6 +23,7 @@
 #import "OStrings.h"
 #import "OTextField.h"
 #import "OTextView.h"
+#import "OVisualConstraints.h"
 
 #import "OMember.h"
 #import "OOrigo.h"
@@ -57,16 +58,15 @@ NSString * const kNameDateOfBirth = @"dateOfBirth";
 NSString * const kNameAddress = @"address";
 NSString * const kNameTelephone = @"telephone";
 
+NSString * const kNameSuffixLabel = @"Label";
+NSString * const kNameSuffixTextField = @"Field";
+
 CGFloat const kDefaultPadding = 10.f;
 
 static NSString * const kNameTitleBanner = @"titleBanner";
 static NSString * const kNamePhotoFrame = @"photoFrame";
+static NSString * const kNamePhotoPrompt = @"photoPrompt";
 
-static NSString * const kNameSuffixLabel = @"Label";
-static NSString * const kNameSuffixTextField = @"Field";
-static NSString * const kNameSuffixTextView = @"View";
-
-static CGFloat const kLineSpacing = 5.f;
 static CGFloat const kDefaultCellHeight = 45.f;
 static CGFloat const kLabelDetailSpacing = 3.f;
 
@@ -112,9 +112,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Addint title & photo
+#pragma mark - Adding title banner
 
-- (void)addTitleBanner
+- (void)addTitleForName:(NSString *)name text:(NSString *)text
 {
     UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
     titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
@@ -122,85 +122,93 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     [self.contentView addSubview:titleBannerView];
     [_namedViews setObject:titleBannerView forKey:kNameTitleBanner];
+    [_constraints addTitleConstraintsForName:name];
+    
+    [self addTextFieldForName:name text:text constrained:NO];
 }
 
 
-- (void)addPhotoFrame:(UIImage *)photo
+- (void)addTitleForName:(NSString *)name text:(NSString *)text photo:(NSData *)photo
 {
+    [self addTitleForName:name text:text];
+
     UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
     
     if (photo) {
-        [imageButton setImage:photo forState:UIControlStateNormal];
+        [imageButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
     } else {
         imageButton.backgroundColor = [UIColor whiteColor];
         [imageButton setTranslatesAutoresizingMaskIntoConstraints:NO];
         
-        UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectInset(imageButton.bounds, 3.f, 3.f)];
+        UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
         photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
-        photoPrompt.font = [UIFont titleFont];
+        photoPrompt.font = [UIFont labelFont];
         photoPrompt.text = [OStrings stringForKey:strPromptPhoto];
         photoPrompt.textAlignment = NSTextAlignmentCenter;
         photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
         [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
         
         [imageButton addSubview:photoPrompt];
+        [_namedViews setObject:photoPrompt forKey:kNamePhotoPrompt];
     }
-    
-    [imageButton addDropShadowForPhotoFrame];
     
     [self.contentView addSubview:imageButton];
     [_namedViews setObject:imageButton forKey:kNamePhotoFrame];
+    
+    _constraints.titleBannerHasPhoto = YES;
 }
 
 
 #pragma mark - Adding labels
 
-- (void)addLabelForName:(NSString *)name
+- (void)addLabelForName:(NSString *)name constrained:(BOOL)constrained
 {
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
     label.backgroundColor = [UIColor clearColor];
     label.font = [UIFont labelFont];
     label.text = [OStrings stringForLabelWithName:name];
-    label.textAlignment = ([name isEqualToString:kNameSignIn] || [name isEqualToString:kNameActivate]) ? NSTextAlignmentCenter : NSTextAlignmentRight;
+    label.textAlignment = constrained ? NSTextAlignmentCenter : NSTextAlignmentRight;
     label.textColor = [UIColor labelTextColor];
     [label setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [self.contentView addSubview:label];
     [_namedViews setObject:label forKey:[name stringByAppendingString:kNameSuffixLabel]];
+    
+    if (constrained) {
+        [_constraints addLabelConstraintsForName:name];
+    }
 }
 
 
 #pragma mark - Adding text fields
 
-- (void)addTextFieldForName:(NSString *)name
+- (void)addTextFieldForName:(NSString *)name constrained:(BOOL)constrained
 {
-    [self addTextFieldForName:name text:nil];
+    [self addTextFieldForName:name text:nil constrained:constrained];
 }
 
 
-- (void)addTextFieldForName:(NSString *)name text:(NSString *)text
+- (void)addTextFieldForName:(NSString *)name text:(NSString *)text constrained:(BOOL)constrained
 {
     if (text || [OState s].actionIsInput) {
         OTextField *textField = [[OTextField alloc] initWithName:name text:text delegate:_inputDelegate];
         
         [self.contentView addSubview:textField];
         [_namedViews setObject:textField forKey:[name stringByAppendingString:kNameSuffixTextField]];
+        
+        if (constrained) {
+            [_constraints addTextFieldConstraintsForName:name];
+        }
     }
-}
-
-
-#pragma mark - Adding labeled text fields
-
-- (void)addLabeledTextFieldForName:(NSString *)name
-{
-    [self addLabeledTextFieldForName:name text:nil];
 }
 
 
 - (void)addLabeledTextFieldForName:(NSString *)name text:(NSString *)text
 {
-    [self addLabelForName:name];
-    [self addTextFieldForName:name text:text];
+    [self addLabelForName:name constrained:NO];
+    [self addTextFieldForName:name text:text constrained:NO];
+    
+    [_constraints addLabeledTextFieldConstraintsForName:name];
 }
 
 
@@ -215,36 +223,38 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Adding labeled text views
+#pragma mark - Adding text views
 
 - (void)addLabeledTextViewForName:(NSString *)name text:(NSString *)text
 {
-    [self addLabelForName:name];
+    [self addLabelForName:name constrained:NO];
     
     OTextView *textView = [[OTextView alloc] initWithName:name text:text delegate:_inputDelegate];
     
     [self.contentView addSubview:textView];
-    [_namedViews setObject:textView forKey:[name stringByAppendingString:kNameSuffixTextView]];
+    [_namedViews setObject:textView forKey:[name stringByAppendingString:kNameSuffixTextField]];
+    [_constraints addLabeledTextViewConstraintsForName:name lineCount:[text lineCount]];
 }
 
 
-#pragma mark - Cell composition
+#pragma mark - Adding UI elements
 
-- (void)layoutForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
+- (void)addElementsForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
     if (entityClass == OMember.class) {
-        [self layoutForMemberEntity:(OMember *)entity];
+        [self addElementsForMemberEntity:(OMember *)entity];
     } else if (entityClass == OOrigo.class) {
-        [self layoutForOrigoEntity:(OOrigo *)entity];
+        [self addElementsForOrigoEntity:(OOrigo *)entity];
     }
+    
+    [self.contentView setNeedsUpdateConstraints];
 }
 
 
-- (void)layoutForMemberEntity:(OMember *)member
+- (void)addElementsForMemberEntity:(OMember *)member
 {
-    [self addTitleBanner];
-    [self addTextFieldForName:kNameName text:member.name];
-    [self addPhotoFrame:[UIImage imageWithData:member.photo]];
+    [self addTitleForName:kNameName text:member.name photo:member.photo];
+    [self addLabeledTextFieldForName:kNameDateOfBirth date:member.dateOfBirth];
     
     if ([member hasMobilePhone] || [OState s].actionIsInput) {
         [self addLabeledTextFieldForName:kNameMobilePhone text:member.mobilePhone];
@@ -254,27 +264,21 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self addLabeledTextFieldForName:kNameEmail text:member.entityId];
     }
     
-    [self addLabeledTextFieldForName:kNameDateOfBirth date:member.dateOfBirth];
-    
     _cellType = OCellTypeMemberEntity;
     _selectable = NO;
-    
-    [self.contentView setNeedsUpdateConstraints];
 }
 
 
-- (void)layoutForOrigoEntity:(OOrigo *)origo
+- (void)addElementsForOrigoEntity:(OOrigo *)origo
 {
     [self addLabeledTextViewForName:kNameAddress text:origo.address];
     
-    //if ([origo hasTelephone] || [OState s].actionIsInput) {
+    if ([origo hasTelephone] || [OState s].actionIsInput) {
         [self addLabeledTextFieldForName:kNameTelephone text:origo.telephone];
-    //}
+    }
     
     _cellType = OCellTypeOrigoEntity;
     _selectable = ([OState s].actionIsList);
-    
-    [self.contentView setNeedsUpdateConstraints];
 }
 
 
@@ -292,11 +296,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn] ||
         [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-        height = kDefaultPadding;
+        height = 3 * kDefaultPadding;
         height += [UIFont labelFont].lineHeight;
-        height += 2.f * kLineSpacing;
-        height += 2.f * [UIFont detailFont].lineHeight;
-        height += 2.f * kDefaultPadding;
+        height += 2 * [[UIFont detailFont] textFieldHeight] + 1;
     }
     
     return height;
@@ -308,13 +310,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
     CGFloat height = [OTableViewCell defaultHeight];
     
     if (entityClass == OMember.class) {
-        height = 2 * kDefaultPadding + 2 * kLineSpacing;
-        height += [UIFont titleFont].lineHeight;
-        height += 3 * [UIFont detailFont].lineHeight;
-        height += 2 * kLineSpacing;
+        height = 3 * kDefaultPadding;
+        height += [[UIFont titleFont] textFieldHeight];
+        height += 3 * [[UIFont detailFont] textFieldHeight];
     } else if (entityClass == OOrigo.class) {
-        height = 2 * kDefaultPadding + 2 * kLineSpacing;
-        height += 3 * [UIFont detailFont].lineHeight;
+        height = 2 * kDefaultPadding;
+        height += 3 * [[UIFont detailFont] textFieldHeight] - 2;
     }
     
     return height;
@@ -324,13 +325,26 @@ static CGFloat const kShakeRepeatCount = 3.f;
 + (CGFloat)heightForEntity:(OReplicatedEntity *)entity
 {
     CGFloat height = [OTableViewCell heightForEntityClass:entity.class];
-    
-    if ([entity isKindOfClass:OOrigo.class]) {
+
+    if ([entity isKindOfClass:OMember.class]) {
+        if (![OState s].actionIsInput) {
+            OMember *member = (OMember *)entity;
+            
+            if (![member hasMobilePhone] && ![member hasEmail]) {
+                height -= 2 * [[UIFont detailFont] textFieldHeight];
+            } else if (!([member hasMobilePhone] && [member hasEmail])) {
+                height -= [[UIFont detailFont] textFieldHeight];
+            }
+        }
+    } else if ([entity isKindOfClass:OOrigo.class]) {
         OOrigo *origo = (OOrigo *)entity;
         
+        if ([origo.address lineCount] > 2) {
+            height += ([origo.address lineCount] - 2) * [[UIFont detailFont] textViewLineHeight];
+        }
+        
         if (![origo hasTelephone] && ![OState s].actionIsInput) {
-            height -= [UIFont detailFont].lineHeight;
-            height -= kLineSpacing;
+            height -= [[UIFont detailFont] textFieldHeight];
         }
     }
     
@@ -345,8 +359,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     
     if (self) {
-        _inputDelegate = delegate;
         _namedViews = [[NSMutableDictionary alloc] init];
+        _constraints = [[OVisualConstraints alloc] init];
+        _inputDelegate = delegate;
         
         self.backgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
         self.backgroundView.backgroundColor = [UIColor cellBackgroundColor];
@@ -360,17 +375,17 @@ static CGFloat const kShakeRepeatCount = 3.f;
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
             _cellType = OCellTypeSignIn;
             
-            [self addLabelForName:kNameSignIn];
-            [self addTextFieldForName:kNameAuthEmail];
-            [self addTextFieldForName:kNamePassword];
+            [self addLabelForName:kNameSignIn constrained:YES];
+            [self addTextFieldForName:kNameAuthEmail constrained:YES];
+            [self addTextFieldForName:kNamePassword constrained:YES];
             
             [self.contentView setNeedsUpdateConstraints];
         } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
             _cellType = OCellTypeActivate;
             
-            [self addLabelForName:kNameActivate];
-            [self addTextFieldForName:kNameActivationCode];
-            [self addTextFieldForName:kNameRepeatPassword];
+            [self addLabelForName:kNameActivate constrained:YES];
+            [self addTextFieldForName:kNameActivationCode constrained:YES];
+            [self addTextFieldForName:kNameRepeatPassword constrained:YES];
             
             [self.contentView setNeedsUpdateConstraints];
         } else {
@@ -388,7 +403,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [self initWithReuseIdentifier:NSStringFromClass(entityClass) delegate:delegate];
     
     if (self) {
-        [self layoutForEntityClass:entityClass entity:nil];
+        [self addElementsForEntityClass:entityClass entity:nil];
     }
     
     return self;
@@ -400,14 +415,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [self initWithReuseIdentifier:[entity reuseIdentifier] delegate:delegate];
     
     if (self) {
-        [self layoutForEntityClass:entity.class entity:entity];
+        [self addElementsForEntityClass:entity.class entity:entity];
     }
     
     return self;
 }
 
 
-#pragma mark - Named view retrieval
+#pragma mark - Text field & text view retrieval
 
 - (id)textFieldWithName:(NSString *)name
 {
@@ -415,13 +430,17 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (id)textViewWithName:(NSString *)name
+#pragma mark - Cell effects
+
+- (void)adorn
 {
-    return [_namedViews objectForKey:[name stringByAppendingString:kNameSuffixTextView]];
+    [self.backgroundView addDropShadowForTrailingTableViewCell];
+    
+    if (_cellType == OCellTypeMemberEntity) {
+        [[_namedViews objectForKey:kNamePhotoFrame] addDropShadowForPhotoFrame];
+    }
 }
 
-
-#pragma mark - Cell effects
 
 - (void)shake
 {
@@ -441,31 +460,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     [super updateConstraints];
     
-    if (_cellType == OCellTypeSignIn) {
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-10-[signInLabel(15)]-[authEmailField(22)]-1-[passwordField(22)]" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-25-[signInLabel]-25-|" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-55-[authEmailField]-55-|" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-55-[passwordField]-55-|" options:0 metrics:nil views:_namedViews]];
-    } else if (_cellType == OCellTypeActivate) {
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-10-[activationLabel(15)]-[activationCodeField(22)]-1-[repeatPasswordField(22)]" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-25-[activationCodeLabel]-25-|" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-55-[activationCodeField]-55-|" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-55-[repeatPasswordField]-55-|" options:0 metrics:nil views:_namedViews]];
-    } else if (_cellType == OCellTypeMemberEntity) {
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-1)-[titleBanner(39)]" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-44-[dateOfBirthLabel(22)][mobilePhoneLabel(22)][emailLabel(22)]" options:NSLayoutFormatAlignAllTrailing metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-10-[nameField(24)]-10-[dateOfBirthField(22)][mobilePhoneField(22)][emailField(22)]" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-10-[photoFrame(75)]" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(-1)-[titleBanner]-(-1)-|" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-6-[nameField]-6-[photoFrame(75)]-10-|" options:NSLayoutFormatAlignAllTop metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[dateOfBirthLabel(>=55)]-3-[dateOfBirthField]-6-[photoFrame]-10-|" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[mobilePhoneLabel(>=55)]-3-[mobilePhoneField]-6-[photoFrame]-10-|" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[emailLabel(>=55)]-3-[emailField]-6-|" options:0 metrics:nil views:_namedViews]];
-    } else if (_cellType == OCellTypeOrigoEntity) {
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-10-[addressLabel(22)]-(>=0)-[telephoneLabel(22)]" options:NSLayoutFormatAlignAllTrailing metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-10-[addressView(42)][telephoneField(22)]" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[addressLabel(>=55)]-3-[addressView]-6-|" options:0 metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[telephoneLabel(>=55)]-3-[telephoneField]-6-|" options:NSLayoutFormatAlignAllCenterY metrics:nil views:_namedViews]];
+    if (_cellType != OCellTypeDefault) {
+        for (NSString *constraint in [_constraints constraints]) {
+            [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:constraint options:0 metrics:nil views:_namedViews]];
+        }
     }
 }
 
