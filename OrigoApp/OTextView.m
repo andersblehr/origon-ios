@@ -139,11 +139,10 @@ static CGFloat const kTopInset = 5.f;
 
 - (void)setPlaceholder:(NSString *)placeholder
 {
-    _placeholderView.text = placeholder;
-    
     CGSize placeholderSize = [self intrinsicSizeOfText:placeholder];
     
     _placeholderView.frame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height);
+    _placeholderView.text = placeholder;
 }
 
 
@@ -164,7 +163,6 @@ static CGFloat const kTopInset = 5.f;
 - (void)setText:(NSString *)text
 {
     [super setText:text];
-    
     [self textChanged];
 }
 

@@ -521,10 +521,10 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == kMemberSection) {
-        [cell.backgroundView addDropShadowForTrailingTableViewCell];
+        [cell adorn];
     } else {
         if (indexPath.row == [_sortedResidences count] - 1) {
             [cell.backgroundView addDropShadowForTrailingTableViewCell];
@@ -537,9 +537,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 #pragma mark - UITextFieldDelegate conformance
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField
+- (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    [(OTextField *)textField toggleEmphasis];
+    [textField toggleEmphasis];
     
     if (_currentField == _emailField) {
         if ((_emailField.text.length > 0) && [_emailField holdsValidEmail]) {
@@ -568,24 +568,18 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-- (void)textFieldDidEndEditing:(UITextField *)textField
+- (void)textFieldDidEndEditing:(OTextField *)textField
 {
-    [(OTextField *)textField toggleEmphasis];
+    [textField toggleEmphasis];
 }
 
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
+- (BOOL)textFieldShouldReturn:(OTextField *)textField
 {
     if (textField == _nameField) {
-        [_mobilePhoneField becomeFirstResponder];
-    } else if (textField == _mobilePhoneField) {
-        if (_emailField.enabled) {
-            [_emailField becomeFirstResponder];
-        } else {
-            [_dateOfBirthField becomeFirstResponder];
-        }
-    } else if (textField == _emailField) {
         [_dateOfBirthField becomeFirstResponder];
+    } else if (textField == _emailField) {
+        [self didFinishEditing];
     }
     
     return YES;
@@ -646,7 +640,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(NSArray *)data
 {
-    if (response.statusCode == kHTTPStatusCodeOK) {
+    if (response.statusCode == kHTTPStatusOK) {
         _candidateEntities = [[OMeta m].context saveServerReplicas:data];
         _candidate = [[OMeta m].context entityWithId:_emailField.text];
         

@@ -14,17 +14,18 @@ extern NSString * const kHTTPMethodGET;
 extern NSString * const kHTTPMethodPOST;
 extern NSString * const kHTTPMethodDELETE;
 
-extern NSInteger const kHTTPStatusCodeOK;
-extern NSInteger const kHTTPStatusCodeCreated;
-extern NSInteger const kHTTPStatusCodeNoContent;
-extern NSInteger const kHTTPStatusCodeMultiStatus;
-extern NSInteger const kHTTPStatusCodeNotModified;
-extern NSInteger const kHTTPStatusCodeErrorRangeStart;
-extern NSInteger const kHTTPStatusCodeBadRequest;
-extern NSInteger const kHTTPStatusCodeUnauthorized;
-extern NSInteger const kHTTPStatusCodeForbidden;
-extern NSInteger const kHTTPStatusCodeNotFound;
-extern NSInteger const kHTTPStatusCodeInternalServerError;
+extern NSInteger const kHTTPStatusOK;
+extern NSInteger const kHTTPStatusCreated;
+extern NSInteger const kHTTPStatusNoContent;
+extern NSInteger const kHTTPStatusMultiStatus;
+extern NSInteger const kHTTPStatusNotModified;
+
+extern NSInteger const kHTTPStatusErrorRangeStart;
+extern NSInteger const kHTTPStatusBadRequest;
+extern NSInteger const kHTTPStatusUnauthorized;
+extern NSInteger const kHTTPStatusForbidden;
+extern NSInteger const kHTTPStatusNotFound;
+extern NSInteger const kHTTPStatusInternalServerError;
 
 @interface OServerConnection : NSObject {
 @private

@@ -147,6 +147,7 @@ static NSInteger const kWardSection = 1;
     OLogState;
 
     if ([OState s].aspectIsSelf) {
+        BOOL hasOnlyResidenceSection = ([self.tableView numberOfSections] == 1);
         NSRange reloadRange = {0, 0};
         
         if ([_member.residencies count] != [_sortedResidences count]) {
@@ -159,10 +160,11 @@ static NSInteger const kWardSection = 1;
         NSSet *wards = [_member wards];
         
         if ([wards count] != [_sortedWards count]) {
+            BOOL hasWardsSection = ([_sortedWards count] > 0);
             _sortedWards = [[wards allObjects] sortedArrayUsingSelector:@selector(compare:)];
             
             if ([wards count]) {
-                if (![_sortedWards count]) {
+                if (!hasWardsSection) {
                     [self.tableView insertSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
                 }
                 
@@ -177,6 +179,10 @@ static NSInteger const kWardSection = 1;
         }
         
         if (reloadRange.length) {
+            if ((reloadRange.location > kResidenceSection) && hasOnlyResidenceSection) {
+                [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kResidenceSection] withRowAnimation:UITableViewRowAnimationNone];
+            }
+            
             [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:reloadRange] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
     }

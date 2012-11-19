@@ -58,7 +58,7 @@
         [OState s].actionIsDisplay = YES;
     }
     
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
     
     OLogState;
 }
@@ -125,7 +125,10 @@
     
     if (_membership) {
         _origo = _membership.origo;
-        [[OState s] setAspectForOrigo:_origo];
+        
+        if (!([OState s].actionIsRegister && [OState s].aspectIsSelf)) {
+            [[OState s] setAspectForOrigo:_origo];
+        }
         
         self.title = [_origo isResidence] ? [OStrings stringForKey:strTermAddress] : _origo.name;
     } else {
@@ -202,7 +205,7 @@
         _origoCell = [tableView cellForEntityClass:OOrigo.class delegate:self];
     }
     
-    _addressView = [_origoCell textViewWithName:kNameAddress];
+    _addressView = [_origoCell textFieldWithName:kNameAddress];
     _telephoneField = [_origoCell textFieldWithName:kNameTelephone];
     
     return _origoCell;
@@ -211,9 +214,9 @@
 
 #pragma mark - UITableViewDelegate conformance
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [cell.backgroundView addDropShadowForTrailingTableViewCell];
+    [cell adorn];
     
     if ([OState s].actionIsInput) {
         [_addressView becomeFirstResponder];
@@ -223,29 +226,35 @@
 
 #pragma mark - UITextFieldDelegate conformance
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField
+- (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    [(OTextField *)textField toggleEmphasis];
+    [textField toggleEmphasis];
 }
 
 
-- (void)textFieldDidEndEditing:(UITextField *)textField
+- (void)textFieldDidEndEditing:(OTextField *)textField
 {
-    [(OTextField *)textField toggleEmphasis];
+    [textField toggleEmphasis];
 }
 
 
 #pragma mark - UITextViewDelegate conformance
 
-- (void)textViewDidBeginEditing:(UITextView *)textView
+- (void)textViewDidBeginEditing:(OTextView *)textView
 {
-    [(OTextView *)textView toggleEmphasis];
+    [textView toggleEmphasis];
 }
 
 
-- (void)textViewDidEndEditing:(UITextView *)textView
+- (void)textViewDidChange:(OTextView *)textView
 {
-    [(OTextView *)textView toggleEmphasis];
+    
+}
+
+
+- (void)textViewDidEndEditing:(OTextView *)textView
+{
+    [textView toggleEmphasis];
 }
 
 @end
