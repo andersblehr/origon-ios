@@ -15,31 +15,31 @@
 
 + (UIColor *)ashGrayColor
 {
-    return [UIColor colorWithRed:178/255.f green:190/255.f blue:181/255.f alpha:1.f];
+    return [self colorWithRed:178/255.f green:190/255.f blue:181/255.f alpha:1.f];
 }
 
 
 + (UIColor *)ghostWhiteColor
 {
-    return [UIColor colorWithRed:248/255.f green:248/255.f blue:255/255.f alpha:1.f];
+    return [self colorWithRed:248/255.f green:248/255.f blue:255/255.f alpha:1.f];
 }
 
 
 + (UIColor *)slateGrayColor
 {
-    return [UIColor colorWithRed:112/255.f green:128/255.f blue:144/255.f alpha:1.f];
+    return [self colorWithRed:112/255.f green:128/255.f blue:144/255.f alpha:1.f];
 }
 
 
 + (UIColor *)isabellineColor
 {
-    return [UIColor colorWithRed:240/255.f green:244/255.f blue:236/255.f alpha:1.f];
+    return [self colorWithRed:240/255.f green:244/255.f blue:236/255.f alpha:1.f];
 }
 
 
 + (UIColor *)offWhiteColor
 {
-    return [UIColor colorWithWhite:0.93f alpha:1.f];
+    return [self colorWithWhite:0.93f alpha:1.f];
 }
 
 
@@ -47,31 +47,31 @@
 
 + (UIColor *)cellBackgroundColor
 {
-    return [UIColor isabellineColor];
+    return [self isabellineColor];
 }
 
 
 + (UIColor *)selectedCellBackgroundColor
 {
-    return [UIColor ashGrayColor];
+    return [self ashGrayColor];
 }
 
 
 + (UIColor *)titleBackgroundColor
 {
-    return [UIColor ashGrayColor];
+    return [self ashGrayColor];
 }
 
 
 + (UIColor *)editableTextFieldBackgroundColor
 {
-    return [UIColor ghostWhiteColor];
+    return [self ghostWhiteColor];
 }
 
 
 + (UIColor *)imagePlaceholderBackgroundColor
 {
-    return [UIColor offWhiteColor];
+    return [self offWhiteColor];
 }
 
 
@@ -79,55 +79,55 @@
 
 + (UIColor *)titleTextColor
 {
-    return [UIColor whiteColor];
+    return [self whiteColor];
 }
 
 
 + (UIColor *)editableTitleTextColor
 {
-    return [UIColor darkTextColor];
+    return [self darkTextColor];
 }
 
 
 + (UIColor *)labelTextColor
 {
-    return [UIColor slateGrayColor];
+    return [self slateGrayColor];
 }
 
 
 + (UIColor *)selectedLabelTextColor
 {
-    return [UIColor lightTextColor];
+    return [self lightTextColor];
 }
 
 
 + (UIColor *)detailTextColor
 {
-    return [UIColor darkTextColor];
+    return [self darkTextColor];
 }
 
 
 + (UIColor *)selectedDetailTextColor
 {
-    return [UIColor whiteColor];
+    return [self whiteColor];
 }
 
 
 + (UIColor *)imagePlaceholderTextColor
 {
-    return [UIColor whiteColor];
+    return [self whiteColor];
 }
 
 
 + (UIColor *)headerTextColor
 {
-    return [UIColor ghostWhiteColor];
+    return [self ghostWhiteColor];
 }
 
 
 + (UIColor *)footerTextColor
 {
-    return [UIColor lightTextColor];
+    return [self lightTextColor];
 }
 
 
@@ -135,13 +135,13 @@
 
 + (UIColor *)defaultPlaceholderColor
 {
-    return [UIColor lightGrayColor];
+    return [self lightGrayColor];
 }
 
 
 + (UIColor *)lightPlaceholderColor
 {
-    return [UIColor lightTextColor];
+    return [self lightTextColor];
 }
 
 @end

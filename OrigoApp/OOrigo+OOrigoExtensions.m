@@ -43,7 +43,7 @@
 
 - (id)addMember:(OMember *)member
 {
-    OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self entityId:[member.entityId stringByAppendingStringWithDollar:self.entityId]];
+    OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self entityId:[member.entityId stringByAppendingString:self.entityId separator:kSeparatorDollar]];
     membership.member = member;
     membership.origo = self;
     
@@ -57,7 +57,7 @@
 
 - (id)addResident:(OMember *)resident
 {
-    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self entityId:[resident.entityId stringByAppendingStringWithCaret:self.entityId]];
+    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self entityId:[resident.entityId stringByAppendingString:self.entityId separator:kSeparatorCaret]];
     residency.resident = resident;
     residency.residence = self;
     residency.member = resident;

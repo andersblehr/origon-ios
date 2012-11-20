@@ -31,14 +31,15 @@ extern NSString * const kNameSuffixTextField;
 extern CGFloat const kDefaultPadding;
 
 @class OReplicatedEntity;
-@class OTextField, OVisualConstraints;
+@class OTextView, OVisualConstraints;
 
 @interface OTableViewCell : UITableViewCell {
 @private
     BOOL _selectable;
     
+    OVisualConstraints *_visualConstraints;
     NSMutableDictionary *_namedViews;
-    OVisualConstraints *_constraints;
+    NSMutableDictionary *_constraints;
     
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
@@ -54,8 +55,9 @@ extern CGFloat const kDefaultPadding;
 
 - (id)textFieldWithName:(NSString *)name;
 
-- (void)adorn;
 - (void)shake;
 - (void)shakeAndVibrateDevice;
+- (void)adorn;
+- (void)adjustHeightForTextViewLineCountChange:(NSInteger)lineCountChange textView:(OTextView *)textView;
 
 @end

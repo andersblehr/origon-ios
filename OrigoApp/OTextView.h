@@ -13,17 +13,18 @@
     BOOL _editing;
     
     UITextView *_placeholderView;
-    NSUInteger numberOfLines;
+    NSInteger _lastKnownLineCount;
 }
 
 @property (strong, nonatomic) NSString *name;
 @property (strong, nonatomic) NSString *placeholder;
 @property (nonatomic) BOOL selected;
 
++ (CGFloat)heightForLineCount:(NSUInteger)lineCount;
+
 - (id)initWithName:(NSString *)name text:(NSString *)text delegate:(id)delegate;
 
-- (void)emphasise;
-- (void)deemphasise;
 - (void)toggleEmphasis;
+- (NSInteger)lineCountChange;
 
 @end

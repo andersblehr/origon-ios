@@ -137,7 +137,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidEmail
 {
-    NSString *email = [self.text removeLeadingAndTrailingSpaces];
+    NSString *email = [self.text removeLeadingAndTrailingWhitespace];
     
     BOOL isValid = [email isEmailAddress];
     
@@ -151,7 +151,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidPassword
 {
-    NSString *password = [self.text removeLeadingAndTrailingSpaces];
+    NSString *password = [self.text removeLeadingAndTrailingWhitespace];
     
     BOOL isValid = (password.length >= kMinimumPassordLength);
     
@@ -165,7 +165,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidName
 {
-    NSString *name = [self.text removeLeadingAndTrailingSpaces];
+    NSString *name = [self.text removeLeadingAndTrailingWhitespace];
     
     BOOL isValid = (name.length > 0);
     
@@ -186,7 +186,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidPhoneNumber
 {
-    NSString *mobileNumber = [self.text removeLeadingAndTrailingSpaces];
+    NSString *mobileNumber = [self.text removeLeadingAndTrailingWhitespace];
     
     BOOL isValid = (mobileNumber.length >= kMinimumPhoneNumberLength);
     
@@ -224,24 +224,18 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-- (void)deemphasise
-{
-    self.backgroundColor = [UIColor clearColor];
-    [self removeDropShadow];
-    
-    if (_isTitle) {
-        self.textColor = [UIColor titleTextColor];
-        [self setValue:[UIColor lightPlaceholderColor] forKeyPath:kPlaceholderColorPath];
-    }
-}
-
-
 - (void)toggleEmphasis
 {
     if (self.editing) {
         [self emphasise];
     } else {
-        [self deemphasise];
+        self.backgroundColor = [UIColor clearColor];
+        [self removeDropShadow];
+        
+        if (_isTitle) {
+            self.textColor = [UIColor titleTextColor];
+            [self setValue:[UIColor lightPlaceholderColor] forKeyPath:kPlaceholderColorPath];
+        }
     }
 }
 

@@ -13,11 +13,16 @@
 
 #import "OMeta.h"
 
+NSString * const kSeparatorNewline = @"\n";
+NSString * const kSeparatorComma = @", ";
+NSString * const kSeparatorDollar = @"$";
+NSString * const kSeparatorHash = @"#";
+NSString * const kSeparatorCaret = @"^";
+
 static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 
 @implementation NSString (OStringExtensions)
-
 
 #pragma mark - Crypto stuff
 
@@ -102,10 +107,11 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
-#pragma mark - String manipulation
+#pragma mark - String operations
 
-- (NSString *)removeLeadingAndTrailingSpaces
+- (NSString *)removeLeadingAndTrailingWhitespace
 {
+    // TODO: Remove all whitespace, not only spaces
     NSString *thisString = self;
     NSUInteger spaceLocation = [thisString rangeOfString:@" "].location;
     
@@ -125,7 +131,7 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
-- (NSString *)stringByAppendingString:(NSString *)string withSeparator:(NSString *)separator
+- (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator
 {
     NSString *returnString = self;
     
@@ -134,36 +140,6 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
     }
     
     return [returnString stringByAppendingString:string];
-}
-
-
-- (NSString *)stringByAppendingStringWithNewline:(NSString *)string
-{
-    return [self stringByAppendingString:string withSeparator:@"\n"];
-}
-
-
-- (NSString *)stringByAppendingStringWithComma:(NSString *)string
-{
-    return [self stringByAppendingString:string withSeparator:@", "];
-}
-
-
-- (NSString *)stringByAppendingStringWithDollar:(NSString *)string
-{
-    return [self stringByAppendingString:string withSeparator:@"$"];
-}
-
-
-- (NSString *)stringByAppendingStringWithHash:(NSString *)string
-{
-    return [self stringByAppendingString:string withSeparator:@"#"];
-}
-
-
-- (NSString *)stringByAppendingStringWithCaret:(NSString *)string
-{
-    return [self stringByAppendingString:string withSeparator:@"^"];
 }
 
 

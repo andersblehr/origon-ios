@@ -20,13 +20,19 @@
 
 @property (nonatomic) BOOL titleBannerHasPhoto;
 
-- (void)addLabelConstraintsForName:(NSString *)name;
-- (void)addTextFieldConstraintsForName:(NSString *)name;
-
 - (void)addTitleConstraintsForName:(NSString *)name;
 - (void)addLabeledTextFieldConstraintsForName:(NSString *)name;
 - (void)addLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSUInteger)lineCount;
+- (void)addUnlabeledLabelConstraintsForName:(NSString *)name;
+- (void)addUnlabaledTextFieldConstraintsForName:(NSString *)name;
 
-- (NSArray *)constraints;
+- (void)updateLabeledTextViewConstraintForName:(NSString *)name lineCountChange:(NSInteger)lineCountChange;
+
+- (NSArray *)titleConstraints;
+- (NSString *)labeledVerticalLabelConstraints;
+- (NSString *)labeledVerticalTextFieldConstraints;
+- (NSArray *)labeledHorizontalConstraints;
+
+- (NSArray *)allConstraints;
 
 @end

@@ -8,18 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const kSeparatorNewline;
+extern NSString * const kSeparatorComma;
+extern NSString * const kSeparatorDollar;
+extern NSString * const kSeparatorHash;
+extern NSString * const kSeparatorCaret;
+
 @interface NSString (OStringExtensions)
 
 - (NSString *)base64EncodedString;
 - (NSString *)hashUsingSHA1;
 - (NSString *)diff:(NSString *)string;
 
-- (NSString *)removeLeadingAndTrailingSpaces;
-- (NSString *)stringByAppendingStringWithNewline:(NSString *)string;
-- (NSString *)stringByAppendingStringWithComma:(NSString *)string;
-- (NSString *)stringByAppendingStringWithDollar:(NSString *)string;
-- (NSString *)stringByAppendingStringWithHash:(NSString *)string;
-- (NSString *)stringByAppendingStringWithCaret:(NSString *)string;
+- (NSString *)removeLeadingAndTrailingWhitespace;
+- (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;
 
 - (NSUInteger)lineCount;
 - (NSArray *)lines;

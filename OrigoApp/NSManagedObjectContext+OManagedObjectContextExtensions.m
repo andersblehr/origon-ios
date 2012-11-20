@@ -246,7 +246,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
 
 - (id)insertLinkedEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo
 {
-    OLinkedEntityRef *linkedEntityRef = [self insertEntityForClass:OLinkedEntityRef.class inOrigo:origo entityId:[entity.entityId stringByAppendingStringWithHash:origo.entityId]];
+    OLinkedEntityRef *linkedEntityRef = [self insertEntityForClass:OLinkedEntityRef.class inOrigo:origo entityId:[entity.entityId stringByAppendingString:origo.entityId separator:kSeparatorHash]];
     
     linkedEntityRef.linkedEntityId = entity.entityId;
     linkedEntityRef.linkedEntityOrigoId = entity.origoId;
