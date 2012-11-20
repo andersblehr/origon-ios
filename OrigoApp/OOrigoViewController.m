@@ -9,6 +9,7 @@
 #import "OOrigoViewController.h"
 
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
+#import "NSString+OStringExtensions.h"
 #import "UIBarButtonItem+OBarButtonItemExtensions.h"
 #import "UITableView+OTableViewExtensions.h"
 #import "UIView+OViewExtensions.h"
@@ -90,8 +91,8 @@
 - (void)didFinishEditing
 {
     if ([_addressView.text length] > 0) {
-        _origo.address = _addressView.text;
-        _origo.telephone = _telephoneField.text;
+        _origo.address = [_addressView.text removeLeadingAndTrailingWhitespace];
+        _origo.telephone = [_telephoneField.text removeLeadingAndTrailingWhitespace];
         
         if ([OState s].actionIsRegister) {
             if ([_origo isResidence] && [OState s].aspectIsSelf) {
@@ -248,7 +249,11 @@
 
 - (void)textViewDidChange:(OTextView *)textView
 {
+    NSInteger lineCountChange = [textView lineCountChange];
     
+    if (lineCountChange) {
+        [_origoCell adjustHeightForTextViewLineCountChange:lineCountChange textView:textView];
+    }
 }
 
 

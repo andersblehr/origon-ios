@@ -67,6 +67,18 @@ static CGFloat const kTopInset = 5.f;
 }
 
 
+#pragma mark - Height calcultion
+
++ (CGFloat)heightForLineCount:(NSUInteger)lineCount
+{
+    if ([OState s].actionIsInput) {
+        lineCount = MAX(2, lineCount);
+    }
+    
+    return MAX(lineCount * [UIFont detailLineHeight] + 6.f, [UIFont detailFieldHeight]);
+}
+
+
 #pragma mark - Initialisation
 
 - (id)initWithName:(NSString *)name text:(NSString *)text delegate:(id)delegate
@@ -93,6 +105,7 @@ static CGFloat const kTopInset = 5.f;
         self.font = [UIFont detailFont];
         self.keyboardType = UIKeyboardTypeDefault;
         self.returnKeyType = UIReturnKeyDefault;
+        self.scrollEnabled = NO;
         self.text = text;
         self.textAlignment = NSTextAlignmentLeft;
         self.userInteractionEnabled = [OState s].actionIsInput;
@@ -107,31 +120,43 @@ static CGFloat const kTopInset = 5.f;
 }
 
 
-#pragma mark - Emphasising and deemphasising
-
-- (void)emphasise
-{
-    self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-    [self addDropShadowForField];
-}
-
-
-- (void)deemphasise
-{
-    self.backgroundColor = [UIColor clearColor];
-    [self removeDropShadow];
-}
-
+#pragma mark - Toggling emphasis
 
 - (void)toggleEmphasis
 {
     if (_editing) {
-        [self deemphasise];
+        self.backgroundColor = [UIColor clearColor];
+        [self removeDropShadow];
     } else {
-        [self emphasise];
+        self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
+        [self addDropShadowForField];
     }
     
     _editing = !_editing;
+    _lastKnownLineCount = (NSUInteger)(self.contentSize.height / [UIFont detailLineHeight]);
+}
+
+
+#pragma mark - Resizing to fit content
+
+- (NSInteger)lineCountChange
+{
+    NSUInteger lineCount = (NSUInteger)(self.contentSize.height / [UIFont detailLineHeight]);
+    NSInteger lineCountChange = 0;
+    
+    if (lineCount != _lastKnownLineCount) {
+        lineCountChange = lineCount - _lastKnownLineCount;
+        
+        [self removeDropShadow];
+        CGRect frame = self.frame;
+        frame.size.height += lineCountChange * [UIFont detailLineHeight];
+        self.frame = frame;
+        [self addDropShadowForField];
+        
+        _lastKnownLineCount = lineCount;
+    }
+    
+    return lineCountChange;
 }
 
 

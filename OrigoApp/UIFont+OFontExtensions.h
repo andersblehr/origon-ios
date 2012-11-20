@@ -16,7 +16,10 @@
 + (UIFont *)headerFont;
 + (UIFont *)footerFont;
 
++ (CGFloat)titleFieldHeight;
++ (CGFloat)detailFieldHeight;
++ (CGFloat)detailLineHeight;
+
 - (CGFloat)textFieldHeight;
-- (CGFloat)textViewLineHeight;
 
 @end

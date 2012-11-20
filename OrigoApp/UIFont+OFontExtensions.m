@@ -23,31 +23,51 @@ static CGFloat const kFieldHeightScaleFactor = 1.22f;
 
 + (UIFont *)titleFont
 {
-    return [UIFont boldSystemFontOfSize:kTitleFontSize];
+    return [self boldSystemFontOfSize:kTitleFontSize];
 }
 
 
 + (UIFont *)labelFont
 {
-    return [UIFont boldSystemFontOfSize:kLabelFontSize];
+    return [self boldSystemFontOfSize:kLabelFontSize];
 }
 
 
 + (UIFont *)detailFont
 {
-    return [UIFont systemFontOfSize:kDetailFontSize];
+    return [self systemFontOfSize:kDetailFontSize];
 }
 
 
 + (UIFont *)headerFont
 {
-    return [UIFont boldSystemFontOfSize:kHeaderFontSize];
+    return [self boldSystemFontOfSize:kHeaderFontSize];
 }
 
 
 + (UIFont *)footerFont
 {
-    return [UIFont systemFontOfSize:kFooterFontSize];
+    return [self systemFontOfSize:kFooterFontSize];
+}
+
+
+#pragma mark - Text field & line height
+
++ (CGFloat)titleFieldHeight
+{
+    return [[self titleFont] textFieldHeight];
+}
+
+
++ (CGFloat)detailFieldHeight
+{
+    return [[self detailFont] textFieldHeight];
+}
+
+
++ (CGFloat)detailLineHeight
+{
+    return [[self detailFont] textFieldHeight] - 4.f;
 }
 
 
@@ -56,12 +76,6 @@ static CGFloat const kFieldHeightScaleFactor = 1.22f;
 - (CGFloat)textFieldHeight
 {
     return kFieldHeightScaleFactor * self.lineHeight;
-}
-
-
-- (CGFloat)textViewLineHeight
-{
-    return [self textFieldHeight] - 1.f;
 }
 
 @end

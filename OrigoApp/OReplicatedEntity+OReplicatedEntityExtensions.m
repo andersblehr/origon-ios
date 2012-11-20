@@ -198,7 +198,7 @@
 
 - (OLinkedEntityRef *)linkedEntityRefForOrigo:(OOrigo *)origo
 {
-    return [[OMeta m].context entityWithId:[self.entityId stringByAppendingStringWithHash:origo.entityId]];
+    return [[OMeta m].context entityWithId:[self.entityId stringByAppendingString:origo.entityId separator:kSeparatorHash]];
 }
 
 

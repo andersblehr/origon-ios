@@ -40,11 +40,11 @@ static CGFloat const kImageShadowOffset = 1.5f;
 {
     self.layer.shadowPath = path.CGPath;
     self.layer.shadowColor = colour.CGColor;
+    self.layer.shadowOpacity = 1.f;
     self.layer.shadowRadius = radius;
     self.layer.shadowOffset = CGSizeMake(0.f, offset);
     
     self.layer.masksToBounds = NO;
-    self.layer.shadowOpacity = 1.f;
 }
 
 
