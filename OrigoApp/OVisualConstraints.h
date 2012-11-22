@@ -26,7 +26,7 @@
 - (void)addUnlabeledLabelConstraintsForName:(NSString *)name;
 - (void)addUnlabaledTextFieldConstraintsForName:(NSString *)name;
 
-- (void)updateLabeledTextViewConstraintForName:(NSString *)name lineCountChange:(NSInteger)lineCountChange;
+- (void)updateLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSInteger)lineCount;
 
 - (NSArray *)titleConstraints;
 - (NSString *)labeledVerticalLabelConstraints;

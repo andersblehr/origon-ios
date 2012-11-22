@@ -186,9 +186,9 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (NSUInteger)supportedInterfaceOrientations
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return UIInterfaceOrientationMaskPortrait;
 }
 
 
@@ -381,12 +381,12 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{   
+- (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
     if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1) {
-        [cell.backgroundView addDropShadowForTrailingTableViewCell];
+        [cell willAppearTrailing:YES];
     } else {
-        [cell.backgroundView addDropShadowForInternalTableViewCell];
+        [cell willAppearTrailing:NO];
     }
 }
 

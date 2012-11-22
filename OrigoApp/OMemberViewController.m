@@ -403,9 +403,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (NSUInteger)supportedInterfaceOrientations
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return UIInterfaceOrientationMaskPortrait;
 }
 
 
@@ -523,14 +523,10 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == kMemberSection) {
-        [cell adorn];
+    if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1) {
+        [cell willAppearTrailing:YES];
     } else {
-        if (indexPath.row == [_sortedResidences count] - 1) {
-            [cell.backgroundView addDropShadowForTrailingTableViewCell];
-        } else {
-            [cell.backgroundView addDropShadowForInternalTableViewCell];
-        }
+        [cell willAppearTrailing:NO];
     }
 }
 

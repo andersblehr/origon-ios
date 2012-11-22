@@ -112,7 +112,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Adding title banner
+#pragma mark - Adding UI elements
 
 - (void)addTitleForName:(NSString *)name text:(NSString *)text
 {
@@ -159,8 +159,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Adding labels
-
 - (void)addLabelForName:(NSString *)name constrained:(BOOL)constrained
 {
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -179,8 +177,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
 }
 
-
-#pragma mark - Adding text fields
 
 - (void)addTextFieldForName:(NSString *)name constrained:(BOOL)constrained
 {
@@ -223,8 +219,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Adding text views
-
 - (void)addLabeledTextViewForName:(NSString *)name text:(NSString *)text
 {
     [self addLabelForName:name constrained:NO];
@@ -233,25 +227,25 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     [self.contentView addSubview:textView];
     [_namedViews setObject:textView forKey:[name stringByAppendingString:kNameSuffixTextField]];
-    [_visualConstraints addLabeledTextViewConstraintsForName:name lineCount:[text lineCount]];
+    [_visualConstraints addLabeledTextViewConstraintsForName:name lineCount:[textView lineCount]];
 }
 
 
-#pragma mark - Adding UI elements
+#pragma mark - Cell composition
 
-- (void)addElementsForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
+- (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
     if (entityClass == OMember.class) {
-        [self addElementsForMemberEntity:(OMember *)entity];
+        [self composeForMemberEntity:(OMember *)entity];
     } else if (entityClass == OOrigo.class) {
-        [self addElementsForOrigoEntity:(OOrigo *)entity];
+        [self composeForOrigoEntity:(OOrigo *)entity];
     }
     
     [self.contentView setNeedsUpdateConstraints];
 }
 
 
-- (void)addElementsForMemberEntity:(OMember *)member
+- (void)composeForMemberEntity:(OMember *)member
 {
     [self addTitleForName:kNameName text:member.name photo:member.photo];
     [self addLabeledTextFieldForName:kNameDateOfBirth date:member.dateOfBirth];
@@ -269,7 +263,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)addElementsForOrigoEntity:(OOrigo *)origo
+- (void)composeForOrigoEntity:(OOrigo *)origo
 {
     [self addLabeledTextViewForName:kNameAddress text:origo.address];
     
@@ -339,8 +333,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
     } else if ([entity isKindOfClass:OOrigo.class]) {
         OOrigo *origo = (OOrigo *)entity;
         
-        if ([origo.address lineCount] > 2) {
-            height += ([origo.address lineCount] - 2) * [UIFont detailLineHeight];
+        if ([origo.address labeledTextViewLineCount] > 2) {
+            height += ([origo.address labeledTextViewLineCount] - 2) * [UIFont detailLineHeight];
         }
         
         if (![origo hasTelephone] && ![OState s].actionIsInput) {
@@ -404,7 +398,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [self initWithReuseIdentifier:NSStringFromClass(entityClass) delegate:delegate];
     
     if (self) {
-        [self addElementsForEntityClass:entityClass entity:nil];
+        [self composeForEntityClass:entityClass entity:nil];
     }
     
     return self;
@@ -416,7 +410,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [self initWithReuseIdentifier:[entity reuseIdentifier] delegate:delegate];
     
     if (self) {
-        [self addElementsForEntityClass:entity.class entity:entity];
+        [self composeForEntityClass:entity.class entity:entity];
     }
     
     return self;
@@ -431,6 +425,41 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+#pragma mark - Adjust cell display
+
+- (void)willAppearTrailing:(BOOL)trailing
+{
+    if (trailing) {
+        [self.backgroundView addDropShadowForTrailingTableViewCell];
+    } else {
+        [self.backgroundView addDropShadowForInternalTableViewCell];
+    }
+    
+    if (_cellType == OCellTypeMemberEntity) {
+        [[_namedViews objectForKey:kNamePhotoFrame] addDropShadowForPhotoFrame];
+    }
+}
+
+
+- (void)respondToTextViewLineCountChangeIfNeeded:(OTextView *)textView
+{
+    NSInteger lineCountChange = [textView lineCountChange];
+    
+    if (lineCountChange) {
+        CGRect frame = self.frame;
+        frame.size.height += lineCountChange * [UIFont detailLineHeight];
+        self.frame = frame;
+        
+        [self.contentView removeConstraints:[self.contentView constraints]];
+        [_constraints removeAllObjects];
+        
+        [_visualConstraints updateLabeledTextViewConstraintsForName:textView.name lineCount:[textView lineCount]];
+        
+        [self setNeedsUpdateConstraints];
+    }
+}
+
+
 #pragma mark - Cell effects
 
 - (void)shake
@@ -442,31 +471,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)shakeAndVibrateDevice
 {
     [self shakeWithVibration:YES];
-}
-
-
-- (void)adorn
-{
-    [self.backgroundView addDropShadowForTrailingTableViewCell];
-    
-    if (_cellType == OCellTypeMemberEntity) {
-        [[_namedViews objectForKey:kNamePhotoFrame] addDropShadowForPhotoFrame];
-    }
-}
-
-
-- (void)adjustHeightForTextViewLineCountChange:(NSInteger)lineCountChange textView:(OTextView *)textView
-{
-    CGRect frame = self.frame;
-    frame.size.height += lineCountChange * [UIFont detailLineHeight];
-    self.frame = frame;
-    
-    [self.contentView removeConstraints:[self.contentView constraints]];
-    [_constraints removeAllObjects];
-    
-    [_visualConstraints updateLabeledTextViewConstraintForName:textView.name lineCountChange:lineCountChange];
-    
-    [self setNeedsUpdateConstraints];
 }
 
 

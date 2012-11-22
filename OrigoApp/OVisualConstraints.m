@@ -90,16 +90,13 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 - (void)addLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSUInteger)lineCount
 {
     [self addLabeledTextFieldConstraintsForName:name];
-    [_textViewLineCounts setObject:[NSNumber numberWithInteger:lineCount] forKey:name];
+    [self updateLabeledTextViewConstraintsForName:name lineCount:lineCount];
 }
 
 
-- (void)updateLabeledTextViewConstraintForName:(NSString *)name lineCountChange:(NSInteger)lineCountChange
+- (void)updateLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSInteger)lineCount
 {
-    NSInteger oldLineCount = [[_textViewLineCounts objectForKey:name] intValue];
-    NSInteger newLineCount = oldLineCount + lineCountChange;
-    
-    [_textViewLineCounts setObject:[NSNumber numberWithInteger:newLineCount] forKey:name];
+    [_textViewLineCounts setObject:[NSNumber numberWithInteger:lineCount] forKey:name];
 }
 
 

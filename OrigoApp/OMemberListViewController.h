@@ -12,9 +12,10 @@
 
 #import "OState.h"
 
+@class OTableViewCell;
 @class OMembership, OOrigo;
 
-@interface OMemberListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, OModalViewControllerDelegate> {
+@interface OMemberListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, OModalViewControllerDelegate> {
 @private
     NSMutableSet *_contacts;
     NSMutableSet *_members;
