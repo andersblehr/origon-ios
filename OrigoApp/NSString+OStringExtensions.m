@@ -14,6 +14,7 @@
 #import "UIFont+OFontExtensions.h"
 
 #import "OMeta.h"
+#import "OState.h"
 
 NSString * const kSeparatorNewline = @"\n";
 NSString * const kSeparatorComma = @", ";
@@ -22,8 +23,6 @@ NSString * const kSeparatorHash = @"#";
 NSString * const kSeparatorCaret = @"^";
 
 static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 
 @implementation NSString (OStringExtensions)
@@ -107,7 +106,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         }
     }
     
-    return [NSString stringWithCString:diffedBytes encoding:NSUTF8StringEncoding];;
+    return [NSString stringWithCString:diffedBytes encoding:NSUTF8StringEncoding];
 }
 
 
@@ -158,12 +157,6 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 - (NSUInteger)lineCount
 {
     return [[self lines] count];
-}
-
-
-- (NSUInteger)labeledTextViewLineCount
-{
-    return [self sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)].height / [UIFont detailLineHeight];
 }
 
 

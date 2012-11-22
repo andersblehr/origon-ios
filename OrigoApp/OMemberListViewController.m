@@ -146,7 +146,7 @@ static NSInteger const kMemberSection = 2;
         self.navigationItem.rightBarButtonItem.action = @selector(addMember);
         
         if (_delegate) {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];;
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         }
     }
     

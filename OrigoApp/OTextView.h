@@ -22,6 +22,7 @@
 @property (strong, nonatomic) NSString *placeholder;
 @property (nonatomic) BOOL selected;
 
++ (NSInteger)lineCountGuesstimateWithText:(NSString *)text;
 + (CGFloat)heightForLineCount:(NSUInteger)lineCount;
 
 - (id)initWithName:(NSString *)name text:(NSString *)text delegate:(id)delegate;
