@@ -19,6 +19,7 @@
 #import "OTextField.h"
 
 NSInteger const kTextViewMinimumEditLines = 3;
+NSInteger const kTextViewMaximumEditLines = 5;
 
 static CGFloat const kTopInset = 5.f;
 static CGFloat const kDetailWidthGuesstimate = 210.f;
@@ -40,23 +41,23 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 - (NSInteger)transientLineCount
 {
-    NSInteger transientLineCount = 0;
+    NSInteger lineCount = 0;
     
     if (self.window) {
-        transientLineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
+        lineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
         
         if ([OState s].actionIsInput) {
-            if ((transientLineCount > 1) && (transientLineCount < 5)) {
-                transientLineCount++;
-            } else if (transientLineCount < 2) {
-                transientLineCount = kTextViewMinimumEditLines;
+            if ((lineCount > 1) && (lineCount < 5)) {
+                lineCount++;
+            } else if (lineCount < 2) {
+                lineCount = kTextViewMinimumEditLines;
             }
         }
     } else {
-        transientLineCount = [OTextView lineCountGuesstimateWithText:self.text];
+        lineCount = [OTextView lineCountGuesstimateWithText:self.text];
     }
     
-    return transientLineCount;
+    return lineCount;
 }
 
 
@@ -153,8 +154,8 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
     NSInteger lineCountGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)].height / [UIFont detailLineHeight];
     
     if ([OState s].actionIsInput) {
-        lineCountGuesstimate++;
-        lineCountGuesstimate = MAX(lineCountGuesstimate, 3);
+        lineCountGuesstimate = MIN(lineCountGuesstimate, kTextViewMaximumEditLines);
+        lineCountGuesstimate = MAX(lineCountGuesstimate, kTextViewMinimumEditLines);
     }
     
     return lineCountGuesstimate;
@@ -175,7 +176,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
     NSInteger lineCountChange = lineCount - _lastKnownLineCount;
     
     if (lineCountChange) {
-        if ((lineCount > 1) && (lineCount < 6)) {
+        if ((lineCount > 1) && (lineCount <= kTextViewMaximumEditLines)) {
             [self removeDropShadow];
             CGRect frame = self.frame;
             frame.size.height += lineCountChange * [UIFont detailLineHeight];
@@ -184,7 +185,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
             
             _lastKnownLineCount = lineCount;
         } else {
-            if (lineCount > 5) {
+            if (lineCount > kTextViewMaximumEditLines) {
                 self.text = _lastKnownText;
             }
             
