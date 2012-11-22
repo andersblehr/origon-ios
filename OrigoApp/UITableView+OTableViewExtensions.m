@@ -185,7 +185,7 @@ static NSString * const kLogoText = @"..origo..";
 - (UIView *)footerViewWithText:(NSString *)footerText
 {
     UIFont *footerFont = [UIFont footerFont];
-    CGSize footerSize = [footerText sizeWithFont:footerFont constrainedToSize:CGSizeMake(kContentWidth, kFooterFontToHeightScaleFactor * footerFont.lineHeight) lineBreakMode:UILineBreakModeWordWrap];
+    CGSize footerSize = [footerText sizeWithFont:footerFont constrainedToSize:CGSizeMake(kContentWidth, kFooterFontToHeightScaleFactor * footerFont.lineHeight) lineBreakMode:NSLineBreakByWordWrapping];
     
     self.sectionFooterHeight = footerSize.height + kDefaultPadding;
 

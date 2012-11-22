@@ -23,8 +23,9 @@ extern NSString * const kSeparatorCaret;
 - (NSString *)removeLeadingAndTrailingWhitespace;
 - (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;
 
-- (NSUInteger)lineCount;
 - (NSArray *)lines;
+- (NSUInteger)lineCount;
+- (NSUInteger)labeledTextViewLineCount;
 
 - (BOOL)isEmailAddress;
 

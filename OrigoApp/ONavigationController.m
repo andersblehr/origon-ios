@@ -13,7 +13,7 @@
 
 @implementation ONavigationController
 
-#pragma mark - Reset root view controller
+#pragma mark - Sign out and pop to authentication
 
 - (void)popToAuthViewController
 {

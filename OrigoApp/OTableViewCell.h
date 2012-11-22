@@ -55,9 +55,10 @@ extern CGFloat const kDefaultPadding;
 
 - (id)textFieldWithName:(NSString *)name;
 
+- (void)willAppearTrailing:(BOOL)trailing;
+- (void)respondToTextViewLineCountChangeIfNeeded:(OTextView *)textView;
+
 - (void)shake;
 - (void)shakeAndVibrateDevice;
-- (void)adorn;
-- (void)adjustHeightForTextViewLineCountChange:(NSInteger)lineCountChange textView:(OTextView *)textView;
 
 @end

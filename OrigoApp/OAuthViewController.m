@@ -424,9 +424,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (NSUInteger)supportedInterfaceOrientations
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return UIInterfaceOrientationMaskPortrait;
 }
 
 
@@ -480,7 +480,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [cell adorn];
+    [cell willAppearTrailing:YES];
     
     if ([OState s].actionIsLogin) {
         [_emailField emphasise];

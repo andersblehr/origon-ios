@@ -28,6 +28,8 @@ static NSInteger const kTabBarSettings = 4;
     [self.tabBar.items[kTabBarTasks] setTitle:[OStrings stringForKey:strTabBarTitleTasks]];
     [self.tabBar.items[kTabBarMessages] setTitle:[OStrings stringForKey:strTabBarTitleMessages]];
     [self.tabBar.items[kTabBarSettings] setTitle:[OStrings stringForKey:strTabBarTitleSettings]];
+    
+    self.selectedIndex = kTabBarOrigo;
 }
 
 @end

@@ -13,6 +13,8 @@
     BOOL _editing;
     
     UITextView *_placeholderView;
+    
+    NSString *_lastKnownText;
     NSInteger _lastKnownLineCount;
 }
 
@@ -24,7 +26,9 @@
 
 - (id)initWithName:(NSString *)name text:(NSString *)text delegate:(id)delegate;
 
-- (void)toggleEmphasis;
+- (NSInteger)lineCount;
 - (NSInteger)lineCountChange;
+
+- (void)toggleEmphasis;
 
 @end

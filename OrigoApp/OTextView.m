@@ -111,12 +111,63 @@ static CGFloat const kTopInset = 5.f;
         self.userInteractionEnabled = [OState s].actionIsInput;
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         
+        _lastKnownText = text;
+        
+        if ([OState s].actionIsList || [OState s].actionIsDisplay) {
+            _lastKnownLineCount = [text lineCount];
+        } else if ([OState s].actionIsInput) {
+            _lastKnownLineCount = MAX([text lineCount], 2);
+        }
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged) name:UITextViewTextDidChangeNotification object:nil];
         
         [self setPropertiesForName:name];
     }
     
     return self;
+}
+
+
+#pragma mark - Hooks for sizing & resizing
+
+- (NSInteger)lineCount
+{
+    if (self.window) {
+        _lastKnownLineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
+    } else {
+        _lastKnownLineCount = [self.text labeledTextViewLineCount];
+    }
+    
+    return _lastKnownLineCount;
+}
+
+
+- (NSInteger)lineCountChange
+{
+    NSInteger lineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
+    NSInteger lineCountChange = lineCount - _lastKnownLineCount;
+    
+    if (lineCountChange) {
+        if ((lineCount > 1) && (lineCount < 6)) {
+            [self removeDropShadow];
+            CGRect frame = self.frame;
+            frame.size.height += lineCountChange * [UIFont detailLineHeight];
+            self.frame = frame;
+            [self addDropShadowForField];
+            
+            _lastKnownLineCount = lineCount;
+        } else {
+            if (lineCount > 5) {
+                self.text = _lastKnownText;
+            }
+            
+            lineCountChange = 0;
+        }
+    }
+
+    _lastKnownText = self.text;
+    
+    return lineCountChange;
 }
 
 
@@ -133,30 +184,6 @@ static CGFloat const kTopInset = 5.f;
     }
     
     _editing = !_editing;
-    _lastKnownLineCount = (NSUInteger)(self.contentSize.height / [UIFont detailLineHeight]);
-}
-
-
-#pragma mark - Resizing to fit content
-
-- (NSInteger)lineCountChange
-{
-    NSUInteger lineCount = (NSUInteger)(self.contentSize.height / [UIFont detailLineHeight]);
-    NSInteger lineCountChange = 0;
-    
-    if (lineCount != _lastKnownLineCount) {
-        lineCountChange = lineCount - _lastKnownLineCount;
-        
-        [self removeDropShadow];
-        CGRect frame = self.frame;
-        frame.size.height += lineCountChange * [UIFont detailLineHeight];
-        self.frame = frame;
-        [self addDropShadowForField];
-        
-        _lastKnownLineCount = lineCount;
-    }
-    
-    return lineCountChange;
 }
 
 
