@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 extern NSInteger const kTextViewMinimumEditLines;
+extern NSInteger const kTextViewMaximumEditLines;
 
 @interface OTextView : UITextView<UITextViewDelegate> {
 @private
