@@ -19,6 +19,7 @@
 #import "OTextField.h"
 
 static CGFloat const kTopInset = 5.f;
+static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 
 @implementation OTextView
@@ -32,6 +33,28 @@ static CGFloat const kTopInset = 5.f;
     if ([name isEqualToString:kNameAddress]) {
         self.placeholder = [OStrings stringForKey:strPromptAddress];
     }
+}
+
+
+- (NSInteger)transientLineCount
+{
+    NSInteger transientLineCount = 0;
+    
+    if (self.window) {
+        transientLineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
+        
+        if ([OState s].actionIsInput) {
+            if ((transientLineCount > 1) && (transientLineCount < 5)) {
+                transientLineCount++;
+            } else if (transientLineCount < 2) {
+                transientLineCount = 3;
+            }
+        }
+    } else {
+        transientLineCount = [OTextView lineCountGuesstimateWithText:self.text];
+    }
+    
+    return transientLineCount;
 }
 
 
@@ -68,6 +91,18 @@ static CGFloat const kTopInset = 5.f;
 
 
 #pragma mark - Height calcultion
+
++ (NSInteger)lineCountGuesstimateWithText:(NSString *)text
+{
+    NSInteger lineCountGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)].height / [UIFont detailLineHeight];
+    
+    if ([OState s].actionIsInput) {
+        lineCountGuesstimate++;
+    }
+    
+    return lineCountGuesstimate;
+}
+
 
 + (CGFloat)heightForLineCount:(NSUInteger)lineCount
 {
@@ -132,11 +167,7 @@ static CGFloat const kTopInset = 5.f;
 
 - (NSInteger)lineCount
 {
-    if (self.window) {
-        _lastKnownLineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
-    } else {
-        _lastKnownLineCount = [self.text labeledTextViewLineCount];
-    }
+    _lastKnownLineCount = [self transientLineCount];
     
     return _lastKnownLineCount;
 }
@@ -144,7 +175,7 @@ static CGFloat const kTopInset = 5.f;
 
 - (NSInteger)lineCountChange
 {
-    NSInteger lineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
+    NSInteger lineCount = [self transientLineCount];
     NSInteger lineCountChange = lineCount - _lastKnownLineCount;
     
     if (lineCountChange) {

@@ -25,7 +25,6 @@ extern NSString * const kSeparatorCaret;
 
 - (NSArray *)lines;
 - (NSUInteger)lineCount;
-- (NSUInteger)labeledTextViewLineCount;
 
 - (BOOL)isEmailAddress;
 

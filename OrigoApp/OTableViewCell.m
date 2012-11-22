@@ -332,9 +332,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
     } else if ([entity isKindOfClass:OOrigo.class]) {
         OOrigo *origo = (OOrigo *)entity;
+        NSInteger addressViewLineCount = [OTextView lineCountGuesstimateWithText:origo.address];
         
-        if ([origo.address labeledTextViewLineCount] > 2) {
-            height += ([origo.address labeledTextViewLineCount] - 2) * [UIFont detailLineHeight];
+        if (addressViewLineCount > 2) {
+            height += (addressViewLineCount - 2) * [UIFont detailLineHeight];
         }
         
         if (![origo hasTelephone] && ![OState s].actionIsInput) {

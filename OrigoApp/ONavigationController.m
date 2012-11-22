@@ -40,4 +40,22 @@
     self.viewControllers = [NSArray arrayWithObject:rootViewController];
 }
 
+
+- (BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+    NSUInteger supportedOrientations = UIInterfaceOrientationMaskPortrait;
+    
+    if (self.visibleViewController) {
+        supportedOrientations = [self.visibleViewController supportedInterfaceOrientations];
+    }
+    
+    return supportedOrientations;
+}
+
 @end
