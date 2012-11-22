@@ -277,7 +277,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     }
     
     for (int i = 0; i < [constraints count]; i++) {
-        OLogDebug(@"\nVisual constraint (%d)>> %@", i, constraints[i]);
+        OLogVerbose(@"\nVisual constraint (%d)>> %@", i, constraints[i]);
     }
     
     return constraints;

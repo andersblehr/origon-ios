@@ -90,30 +90,6 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 }
 
 
-#pragma mark - Height calcultion
-
-+ (NSInteger)lineCountGuesstimateWithText:(NSString *)text
-{
-    NSInteger lineCountGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)].height / [UIFont detailLineHeight];
-    
-    if ([OState s].actionIsInput) {
-        lineCountGuesstimate++;
-    }
-    
-    return lineCountGuesstimate;
-}
-
-
-+ (CGFloat)heightForLineCount:(NSUInteger)lineCount
-{
-    if ([OState s].actionIsInput) {
-        lineCount = MAX(2, lineCount);
-    }
-    
-    return MAX(lineCount * [UIFont detailLineHeight] + 6.f, [UIFont detailFieldHeight]);
-}
-
-
 #pragma mark - Initialisation
 
 - (id)initWithName:(NSString *)name text:(NSString *)text delegate:(id)delegate
@@ -147,12 +123,13 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         
         _lastKnownText = text;
+        _lastKnownLineCount = [self lineCount];
         
-        if ([OState s].actionIsList || [OState s].actionIsDisplay) {
-            _lastKnownLineCount = [text lineCount];
-        } else if ([OState s].actionIsInput) {
-            _lastKnownLineCount = MAX([text lineCount], 2);
-        }
+//        if ([OState s].actionIsList || [OState s].actionIsDisplay) {
+//            _lastKnownLineCount = [text lineCount];
+//        } else if ([OState s].actionIsInput) {
+//            _lastKnownLineCount = MAX([text lineCount], 3);
+//        }
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged) name:UITextViewTextDidChangeNotification object:nil];
         
@@ -164,6 +141,29 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 
 #pragma mark - Hooks for sizing & resizing
+
++ (CGFloat)heightForLineCount:(NSUInteger)lineCount
+{
+    if ([OState s].actionIsInput) {
+        lineCount = MAX(3, lineCount);
+    }
+    
+    return MAX(lineCount * [UIFont detailLineHeight] + 6.f, [UIFont detailFieldHeight]);
+}
+
+
++ (NSInteger)lineCountGuesstimateWithText:(NSString *)text
+{
+    NSInteger lineCountGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)].height / [UIFont detailLineHeight];
+    
+    if ([OState s].actionIsInput) {
+        lineCountGuesstimate++;
+        lineCountGuesstimate = MAX(lineCountGuesstimate, 3);
+    }
+    
+    return lineCountGuesstimate;
+}
+
 
 - (NSInteger)lineCount
 {

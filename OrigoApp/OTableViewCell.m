@@ -334,7 +334,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         OOrigo *origo = (OOrigo *)entity;
         NSInteger addressViewLineCount = [OTextView lineCountGuesstimateWithText:origo.address];
         
-        if (addressViewLineCount > 2) {
+        if (addressViewLineCount > 3) {
             height += (addressViewLineCount - 2) * [UIFont detailLineHeight];
         }
         
