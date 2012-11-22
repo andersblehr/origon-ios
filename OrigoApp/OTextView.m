@@ -18,6 +18,8 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 
+NSInteger const kTextViewMinimumEditLines = 3;
+
 static CGFloat const kTopInset = 5.f;
 static CGFloat const kDetailWidthGuesstimate = 210.f;
 
@@ -47,7 +49,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
             if ((transientLineCount > 1) && (transientLineCount < 5)) {
                 transientLineCount++;
             } else if (transientLineCount < 2) {
-                transientLineCount = 3;
+                transientLineCount = kTextViewMinimumEditLines;
             }
         }
     } else {
@@ -125,12 +127,6 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         _lastKnownText = text;
         _lastKnownLineCount = [self lineCount];
         
-//        if ([OState s].actionIsList || [OState s].actionIsDisplay) {
-//            _lastKnownLineCount = [text lineCount];
-//        } else if ([OState s].actionIsInput) {
-//            _lastKnownLineCount = MAX([text lineCount], 3);
-//        }
-        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged) name:UITextViewTextDidChangeNotification object:nil];
         
         [self setPropertiesForName:name];
@@ -145,7 +141,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 + (CGFloat)heightForLineCount:(NSUInteger)lineCount
 {
     if ([OState s].actionIsInput) {
-        lineCount = MAX(3, lineCount);
+        lineCount = MAX(kTextViewMinimumEditLines, lineCount);
     }
     
     return MAX(lineCount * [UIFont detailLineHeight] + 6.f, [UIFont detailFieldHeight]);

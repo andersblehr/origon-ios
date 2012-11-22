@@ -309,7 +309,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     } else if (entityClass == OOrigo.class) {
         height = 2 * kDefaultPadding;
         height += [UIFont detailFieldHeight];
-        height += [OTextView heightForLineCount:2];
+        height += [OTextView heightForLineCount:kTextViewMinimumEditLines];
     }
     
     return height;
@@ -332,11 +332,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
     } else if ([entity isKindOfClass:OOrigo.class]) {
         OOrigo *origo = (OOrigo *)entity;
-        NSInteger addressViewLineCount = [OTextView lineCountGuesstimateWithText:origo.address];
         
-        if (addressViewLineCount > 3) {
-            height += (addressViewLineCount - 2) * [UIFont detailLineHeight];
-        }
+        NSInteger addressViewLineCount = [OTextView lineCountGuesstimateWithText:origo.address];
+        height += (addressViewLineCount - kTextViewMinimumEditLines) * [UIFont detailLineHeight];
         
         if (![origo hasTelephone] && ![OState s].actionIsInput) {
             height -= [UIFont detailFieldHeight];

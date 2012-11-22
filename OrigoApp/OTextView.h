@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+extern NSInteger const kTextViewMinimumEditLines;
+
 @interface OTextView : UITextView<UITextViewDelegate> {
 @private
     BOOL _editing;
