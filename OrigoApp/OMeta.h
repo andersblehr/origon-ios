@@ -59,6 +59,8 @@ extern NSString * const kKeyPathOrigoId;
     Reachability *_internetReachability;
     NSDate *_authTokenExpiryDate;
     
+    NSMutableDictionary *_contextObservers;
+    
     NSMutableSet *_dirtyEntities;
     NSMutableDictionary *_stagedServerEntities;
     NSMutableDictionary *_stagedServerEntityRefs;
@@ -91,6 +93,10 @@ extern NSString * const kKeyPathOrigoId;
 - (void)userDidSignOut;
 - (BOOL)userIsSignedIn;
 - (BOOL)registrationIsComplete;
+
+- (void)addObserver:(NSObject *)observer ofEntity:(OReplicatedEntity *)entity forKeyPath:(NSString *)keyPath context:(void *)context;
+- (void)removeEntityObserversInContext:(void *)context;
+- (void)removeAllEntityObservers;
 
 - (NSSet *)dirtyEntities;
 - (void)stageServerEntity:(OReplicatedEntity *)entity;

@@ -37,6 +37,7 @@ extern CGFloat const kDefaultPadding;
 @private
     BOOL _selectable;
     
+    OReplicatedEntity *_entity;
     OVisualConstraints *_visualConstraints;
     NSMutableDictionary *_namedViews;
     
@@ -57,7 +58,6 @@ extern CGFloat const kDefaultPadding;
 - (void)willAppearTrailing:(BOOL)trailing;
 - (void)respondToTextViewLineCountDelta:(OTextView *)textView;
 
-- (void)shake;
-- (void)shakeAndVibrateDevice;
+- (void)shakeCellVibrate:(BOOL)shouldVibrate;
 
 @end

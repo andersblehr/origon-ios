@@ -106,7 +106,7 @@
         
         [[OMeta m].context replicateIfNeeded];
     } else {
-        [_origoCell shake];
+        [_origoCell shakeCellVibrate:NO];
     }
 }
 

@@ -36,7 +36,7 @@
 typedef enum {
     OCellTypeDefault,
     OCellTypeSignIn,
-    OCellTypeActivate,
+    OCellTypeActivation,
     OCellTypeMemberEntity,
     OCellTypeOrigoEntity,
 } OCellType;
@@ -86,31 +86,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 
 @implementation OTableViewCell
-
-#pragma mark - Auxiliary methods
-
-- (void)shakeWithVibration:(BOOL)doVibrate
-{
-    if (doVibrate) {
-        AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
-    }
-    
-    CGAffineTransform translateRight = CGAffineTransformTranslate(CGAffineTransformIdentity, kShakeTranslationX, kShakeTranslationY);
-    CGAffineTransform translateLeft = CGAffineTransformTranslate(CGAffineTransformIdentity, -kShakeTranslationX, kShakeTranslationY);
-    
-    self.transform = translateLeft;
-    
-    [UIView animateWithDuration:kShakeDuration delay:kShakeDelay options:UIViewAnimationOptionAutoreverse|UIViewAnimationOptionRepeat animations:^{
-        [UIView setAnimationRepeatCount:kShakeRepeatCount];
-        
-        self.transform = translateRight;
-    } completion:^(BOOL finished) {
-        [UIView animateWithDuration:kShakeDuration delay:0.f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-            self.transform = CGAffineTransformIdentity;
-        } completion:NULL];
-    }];
-}
-
 
 #pragma mark - Adding UI elements
 
@@ -173,7 +148,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [_namedViews setObject:label forKey:[name stringByAppendingString:kNameSuffixLabel]];
     
     if (constrained) {
-        [_visualConstraints addUnlabeledLabelConstraintsForName:name];
+        [_visualConstraints addLabelConstraintsForName:name];
     }
 }
 
@@ -235,6 +210,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
+    _entity = entity;
+    
     if (entityClass == OMember.class) {
         [self composeForMemberEntity:(OMember *)entity];
     } else if (entityClass == OOrigo.class) {
@@ -272,7 +249,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
     
     _cellType = OCellTypeOrigoEntity;
-    _selectable = ([OState s].actionIsList);
+    _selectable = [OState s].actionIsList;
 }
 
 
@@ -371,20 +348,18 @@ static CGFloat const kShakeRepeatCount = 3.f;
             [self addLabelForName:kNameSignIn constrained:YES];
             [self addTextFieldForName:kNameAuthEmail constrained:YES];
             [self addTextFieldForName:kNamePassword constrained:YES];
-            
-            [self.contentView setNeedsUpdateConstraints];
         } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-            _cellType = OCellTypeActivate;
+            _cellType = OCellTypeActivation;
             
             [self addLabelForName:kNameActivation constrained:YES];
             [self addTextFieldForName:kNameActivationCode constrained:YES];
             [self addTextFieldForName:kNameRepeatPassword constrained:YES];
-            
-            [self.contentView setNeedsUpdateConstraints];
         } else {
             _cellType = OCellTypeDefault;
             _selectable = YES;
         }
+        
+        [self.contentView setNeedsUpdateConstraints];
     }
     
     return self;
@@ -460,15 +435,26 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Cell effects
 
-- (void)shake
+- (void)shakeCellVibrate:(BOOL)shouldVibrate
 {
-    [self shakeWithVibration:NO];
-}
-
-
-- (void)shakeAndVibrateDevice
-{
-    [self shakeWithVibration:YES];
+    if (shouldVibrate) {
+        AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
+    }
+    
+    CGAffineTransform translateRight = CGAffineTransformTranslate(CGAffineTransformIdentity, kShakeTranslationX, kShakeTranslationY);
+    CGAffineTransform translateLeft = CGAffineTransformTranslate(CGAffineTransformIdentity, -kShakeTranslationX, kShakeTranslationY);
+    
+    self.transform = translateLeft;
+    
+    [UIView animateWithDuration:kShakeDuration delay:kShakeDelay options:UIViewAnimationOptionAutoreverse|UIViewAnimationOptionRepeat animations:^{
+        [UIView setAnimationRepeatCount:kShakeRepeatCount];
+        
+        self.transform = translateRight;
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:kShakeDuration delay:0.f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+            self.transform = CGAffineTransformIdentity;
+        } completion:NULL];
+    }];
 }
 
 
@@ -478,14 +464,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     [super updateConstraints];
     
-    if ((_cellType == OCellTypeSignIn) && (_cellType == OCellTypeActivate)) {
-        for (NSString *visualConstraints in [_visualConstraints allConstraints]) {
-            [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:0 metrics:nil views:_namedViews]];
-        }
-    } else if (_cellType != OCellTypeDefault) {
+    if ([_visualConstraints elementsAreLabeled]) {
         [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[_visualConstraints labeledAlignmentConstraints] options:NSLayoutFormatAlignAllTrailing metrics:nil views:_namedViews]];
         
         for (NSString *visualConstraints in [_visualConstraints labeledSizeConstraints]) {
+            [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:0 metrics:nil views:_namedViews]];
+        }
+    } else if ([_visualConstraints elementsAreUnlabeled]) {
+        for (NSString *visualConstraints in [_visualConstraints unlabeledConstraints]) {
             [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:0 metrics:nil views:_namedViews]];
         }
     }

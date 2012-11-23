@@ -134,9 +134,8 @@ static void *localContext = &localContext;
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    [_origo addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:localContext];
-    [_origo addObserver:self forKeyPath:@"address" options:NSKeyValueObservingOptionNew context:localContext];
-    [_origo addObserver:self forKeyPath:@"telephone" options:NSKeyValueObservingOptionNew context:localContext];
+    [[OMeta m] addObserver:self ofEntity:_origo forKeyPath:@"address" context:localContext];
+    [[OMeta m] addObserver:self ofEntity:_origo forKeyPath:@"telephone" context:localContext];
     
     if ([_origo isResidence]) {
         if ([_origo userIsMember]) {
