@@ -48,7 +48,7 @@ NSString * const kReuseIdentifierUserActivation = @"idUserActivationCell";
 NSString * const kNameSignIn = @"signIn";
 NSString * const kNameAuthEmail = @"authEmail";
 NSString * const kNamePassword = @"password";
-NSString * const kNameActivate = @"activation";
+NSString * const kNameActivation = @"activation";
 NSString * const kNameActivationCode = @"activationCode";
 NSString * const kNameRepeatPassword = @"repeatPassword";
 NSString * const kNameName = @"name";
@@ -354,7 +354,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (self) {
         _visualConstraints = [[OVisualConstraints alloc] init];
         _namedViews = [[NSMutableDictionary alloc] init];
-        _constraints = [[NSMutableDictionary alloc] init];
         _inputDelegate = delegate;
         
         self.backgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
@@ -377,7 +376,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
             _cellType = OCellTypeActivate;
             
-            [self addLabelForName:kNameActivate constrained:YES];
+            [self addLabelForName:kNameActivation constrained:YES];
             [self addTextFieldForName:kNameActivationCode constrained:YES];
             [self addTextFieldForName:kNameRepeatPassword constrained:YES];
             
@@ -440,22 +439,20 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)respondToTextViewLineCountChangeIfNeeded:(OTextView *)textView
+- (void)respondToTextViewLineCountDelta:(OTextView *)textView
 {
-    NSInteger lineCountChange = [textView lineCountChange];
+    NSInteger textViewLineCountDelta = [textView lineCountDelta];
     
-    if (lineCountChange) {
+    if (textViewLineCountDelta) {
         [self.backgroundView removeDropShadow];
         CGRect frame = self.frame;
-        frame.size.height += lineCountChange * [UIFont detailLineHeight];
+        frame.size.height += textViewLineCountDelta * [UIFont detailLineHeight];
         self.frame = frame;
         [self.backgroundView addDropShadowForTrailingTableViewCell];
         
-        [self.contentView removeConstraints:[self.contentView constraints]];
-        [_constraints removeAllObjects];
-        
         [_visualConstraints updateLabeledTextViewConstraintsForName:textView.name lineCount:[textView lineCount]];
         
+        [self.contentView removeConstraints:[self.contentView constraints]];
         [self setNeedsUpdateConstraints];
     }
 }
@@ -481,19 +478,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     [super updateConstraints];
     
-    if ((_cellType != OCellTypeDefault) && (_cellType != OCellTypeOrigoEntity)) {
+    if ((_cellType == OCellTypeSignIn) && (_cellType == OCellTypeActivate)) {
         for (NSString *visualConstraints in [_visualConstraints allConstraints]) {
             [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:0 metrics:nil views:_namedViews]];
         }
-    } else if (_cellType == OCellTypeOrigoEntity) {
-        for (NSString *visualConstraints in [_visualConstraints titleConstraints]) {
-            [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:0 metrics:nil views:_namedViews]];
-        }
+    } else if (_cellType != OCellTypeDefault) {
+        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[_visualConstraints labeledAlignmentConstraints] options:NSLayoutFormatAlignAllTrailing metrics:nil views:_namedViews]];
         
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[_visualConstraints labeledVerticalLabelConstraints] options:NSLayoutFormatAlignAllTrailing metrics:nil views:_namedViews]];
-        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[_visualConstraints labeledVerticalTextFieldConstraints] options:0 metrics:nil views:_namedViews]];
-        
-        for (NSString *visualConstraints in [_visualConstraints labeledHorizontalConstraints]) {
+        for (NSString *visualConstraints in [_visualConstraints labeledSizeConstraints]) {
             [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:0 metrics:nil views:_namedViews]];
         }
     }

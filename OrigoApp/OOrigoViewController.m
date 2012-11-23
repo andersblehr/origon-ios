@@ -249,7 +249,7 @@
 
 - (void)textViewDidChange:(OTextView *)textView
 {
-    [_origoCell respondToTextViewLineCountChangeIfNeeded:textView];
+    [_origoCell respondToTextViewLineCountDelta:textView];
 }
 
 

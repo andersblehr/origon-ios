@@ -28,11 +28,8 @@
 
 - (void)updateLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSInteger)lineCount;
 
-- (NSArray *)titleConstraints;
-- (NSString *)labeledVerticalLabelConstraints;
-- (NSString *)labeledVerticalTextFieldConstraints;
-- (NSArray *)labeledHorizontalConstraints;
-
+- (NSString *)labeledAlignmentConstraints;
+- (NSArray *)labeledSizeConstraints;
 - (NSArray *)allConstraints;
 
 @end

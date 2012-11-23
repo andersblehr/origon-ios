@@ -22,7 +22,7 @@
 
 CGFloat const kTextInset = 4.f;
 
-static NSString * const kPlaceholderColorPath = @"_placeholderLabel.textColor";
+static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor";
 
 static NSInteger const kMinimumPassordLength = 6;
 static NSInteger const kMinimumPhoneNumberLength = 5;
@@ -219,7 +219,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     
     if (_isTitle) {
         self.textColor = [UIColor editableTitleTextColor];
-        [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kPlaceholderColorPath];
+        [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
     }
 }
 
@@ -234,7 +234,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         
         if (_isTitle) {
             self.textColor = [UIColor titleTextColor];
-            [self setValue:[UIColor lightPlaceholderColor] forKeyPath:kPlaceholderColorPath];
+            [self setValue:[UIColor lightPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
         }
     }
 }

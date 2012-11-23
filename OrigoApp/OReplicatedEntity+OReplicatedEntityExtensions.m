@@ -56,8 +56,8 @@
 {
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     
-    [dictionary setObject:self.entityId forKey:kPropertyEntityId];
-    [dictionary setObject:self.entity.name forKey:kPropertyEntityClass];
+    [dictionary setObject:self.entityId forKey:kKeyPathEntityId];
+    [dictionary setObject:self.entity.name forKey:kKeyPathEntityClass];
     
     return dictionary;
 }
@@ -72,7 +72,7 @@
     NSDictionary *attributes = [self.entity attributesByName];
     NSDictionary *relationships = [self.entity relationshipsByName];
     
-    [entityDictionary setObject:self.entity.name forKey:kPropertyEntityClass];
+    [entityDictionary setObject:self.entity.name forKey:kKeyPathEntityClass];
     
     for (NSString *attributeKey in [attributes allKeys]) {
         if (![self propertyIsTransient:attributeKey]) {
@@ -128,7 +128,7 @@
     
     for (NSString *name in [entityRefs allKeys]) {
         NSDictionary *entityRef = [entityRefs objectForKey:name];
-        NSString *destinationId = [entityRef objectForKey:kPropertyEntityId];
+        NSString *destinationId = [entityRef objectForKey:kKeyPathEntityId];
         
         OReplicatedEntity *entity = [[OMeta m] stagedServerEntityWithId:destinationId];
         

@@ -260,17 +260,33 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
-#pragma mark - Retrieving all constraints
+#pragma mark - Retrieving constraints
+
+- (NSString *)labeledAlignmentConstraints
+{
+    return [self labeledVerticalLabelConstraints];
+}
+
+
+- (NSArray *)labeledSizeConstraints
+{
+    NSMutableArray *constraints = [[NSMutableArray alloc] init];
+    
+    [constraints addObjectsFromArray:[self titleConstraints]];
+    [constraints addObject:[self labeledVerticalTextFieldConstraints]];
+    [constraints addObjectsFromArray:[self labeledHorizontalConstraints]];
+    
+    return constraints;
+}
+
 
 - (NSArray *)allConstraints
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
     if (_elementsAreLabeled) {
-        [constraints addObjectsFromArray:[self titleConstraints]];
-        [constraints addObject:[self labeledVerticalLabelConstraints]];
-        [constraints addObject:[self labeledVerticalTextFieldConstraints]];
-        [constraints addObjectsFromArray:[self labeledHorizontalConstraints]];
+        [constraints addObject:[self labeledAlignmentConstraints]];
+        [constraints addObjectsFromArray:[self labeledSizeConstraints]];
     } else {
         [constraints addObject:[self unlabeledVerticalConstraints]];
         [constraints addObjectsFromArray:[self unlabeledHorizontalConstraints]];

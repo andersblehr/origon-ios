@@ -15,7 +15,7 @@ extern NSString * const kReuseIdentifierUserActivation;
 extern NSString * const kNameSignIn;
 extern NSString * const kNameAuthEmail;
 extern NSString * const kNamePassword;
-extern NSString * const kNameActivate;
+extern NSString * const kNameActivation;
 extern NSString * const kNameActivationCode;
 extern NSString * const kNameRepeatPassword;
 extern NSString * const kNameName;
@@ -39,7 +39,6 @@ extern CGFloat const kDefaultPadding;
     
     OVisualConstraints *_visualConstraints;
     NSMutableDictionary *_namedViews;
-    NSMutableDictionary *_constraints;
     
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
@@ -56,7 +55,7 @@ extern CGFloat const kDefaultPadding;
 - (id)textFieldWithName:(NSString *)name;
 
 - (void)willAppearTrailing:(BOOL)trailing;
-- (void)respondToTextViewLineCountChangeIfNeeded:(OTextView *)textView;
+- (void)respondToTextViewLineCountDelta:(OTextView *)textView;
 
 - (void)shake;
 - (void)shakeAndVibrateDevice;

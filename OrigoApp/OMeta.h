@@ -26,8 +26,16 @@ extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
 
-extern NSString * const kUserDefaultsKeyAuthInfo;
-extern NSString * const kUserDefaultsKeyDirtyEntities;
+extern NSString * const kOrigoTypeMemberRoot;
+extern NSString * const kOrigoTypeResidence;
+extern NSString * const kOrigoTypeOrganisation;
+extern NSString * const kOrigoTypeSchoolClass;
+extern NSString * const kOrigoTypePreschoolClass;
+extern NSString * const kOrigoTypeSportsTeam;
+extern NSString * const kOrigoTypeDefault;
+
+extern NSString * const kGenderFemale;
+extern NSString * const kGenderMale;
 
 extern NSString * const kAuthViewControllerId;
 extern NSString * const kTabBarControllerId;
@@ -36,27 +44,12 @@ extern NSString * const kOrigoViewControllerId;
 extern NSString * const kMemberListViewControllerId;
 extern NSString * const kMemberViewControllerId;
 
-extern NSString * const kPropertyDateOfBirth;
-extern NSString * const kPropertyDidRegister;
-extern NSString * const kPropertyEntityClass;
-extern NSString * const kPropertyEntityId;
-extern NSString * const kPropertyGender;
-extern NSString * const kPropertyGhostedEntityClass;
-extern NSString * const kPropertyLinkedEntityId;
-extern NSString * const kPropertyMobilePhone;
-extern NSString * const kPropertyName;
-extern NSString * const kPropertyOrigoId;
+extern NSString * const kKeyPathAuthInfo;
+extern NSString * const kKeyPathDirtyEntities;
 
-extern NSString * const kGenderFemale;
-extern NSString * const kGenderMale;
-
-extern NSString * const kOrigoTypeMemberRoot;
-extern NSString * const kOrigoTypeResidence;
-extern NSString * const kOrigoTypeOrganisation;
-extern NSString * const kOrigoTypeSchoolClass;
-extern NSString * const kOrigoTypePreschoolClass;
-extern NSString * const kOrigoTypeSportsTeam;
-extern NSString * const kOrigoTypeDefault;
+extern NSString * const kKeyPathEntityClass;
+extern NSString * const kKeyPathEntityId;
+extern NSString * const kKeyPathOrigoId;
 
 
 @class OMember, OReplicatedEntity;

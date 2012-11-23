@@ -30,7 +30,7 @@ extern NSInteger const kTextViewMaximumEditLines;
 + (CGFloat)heightForLineCount:(NSUInteger)lineCount;
 + (NSInteger)lineCountGuesstimateWithText:(NSString *)text;
 - (NSInteger)lineCount;
-- (NSInteger)lineCountChange;
+- (NSInteger)lineCountDelta;
 
 - (void)toggleEmphasis;
 

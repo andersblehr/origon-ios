@@ -41,30 +41,6 @@ NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
 NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
 NSString * const kIconFileInfant = @"76-baby_black.png";
 
-NSString * const kUserDefaultsKeyAuthInfo = @"origo.auth.info";
-NSString * const kUserDefaultsKeyDirtyEntities = @"origo.dirtyEntities";
-
-NSString * const kAuthViewControllerId = @"idAuthViewController";
-NSString * const kTabBarControllerId = @"idTabBarController";
-NSString * const kOrigoListViewControllerId = @"idOrigoListViewController";
-NSString * const kOrigoViewControllerId = @"idOrigoViewController";
-NSString * const kMemberViewControllerId = @"idMemberViewController";
-NSString * const kMemberListViewControllerId = @"idMemberListViewController";
-
-NSString * const kPropertyDateOfBirth = @"dateOfBirth";
-NSString * const kPropertyDidRegister = @"didRegister";
-NSString * const kPropertyEntityClass = @"entityClass";
-NSString * const kPropertyEntityId = @"entityId";
-NSString * const kPropertyGender = @"gender";
-NSString * const kPropertyGhostedEntityClass = @"ghostedEntityClass";
-NSString * const kPropertyLinkedEntityId = @"linkedEntityId";
-NSString * const kPropertyMobilePhone = @"mobilePhone";
-NSString * const kPropertyName = @"name";
-NSString * const kPropertyOrigoId = @"origoId";
-
-NSString * const kGenderFemale = @"F";
-NSString * const kGenderMale = @"M";
-
 NSString * const kOrigoTypeMemberRoot = @"origoTypeMemberRoot";
 NSString * const kOrigoTypeResidence = @"origoTypeResidence";
 NSString * const kOrigoTypeOrganisation = @"origoTypeOrganisation";
@@ -73,10 +49,27 @@ NSString * const kOrigoTypePreschoolClass = @"origoTypePreschoolClass";
 NSString * const kOrigoTypeSportsTeam = @"origoTypeSportsTeam";
 NSString * const kOrigoTypeDefault = @"origoTypeDefault";
 
-static NSString * const kUserDefaultsKeyUserId = @"origo.user.id";
-static NSString * const kUserDefaultsKeyFormatDeviceId = @"origo.device.id$%@";
-static NSString * const kUserDefaultsKeyFormatAuthExpiryDate = @"origo.auth.expires$%@";
-static NSString * const kUserDefaultsKeyFormatLastReplicationDate = @"origo.replication.date$%@";
+NSString * const kGenderFemale = @"F";
+NSString * const kGenderMale = @"M";
+
+NSString * const kAuthViewControllerId = @"idAuthViewController";
+NSString * const kTabBarControllerId = @"idTabBarController";
+NSString * const kOrigoListViewControllerId = @"idOrigoListViewController";
+NSString * const kOrigoViewControllerId = @"idOrigoViewController";
+NSString * const kMemberViewControllerId = @"idMemberViewController";
+NSString * const kMemberListViewControllerId = @"idMemberListViewController";
+
+NSString * const kKeyPathAuthInfo = @"origo.auth.info";
+NSString * const kKeyPathDirtyEntities = @"origo.dirtyEntities";
+
+NSString * const kKeyPathEntityClass = @"entityClass";
+NSString * const kKeyPathEntityId = @"entityId";
+NSString * const kKeyPathOrigoId = @"origoId";
+
+static NSString * const kKeyPathUserId = @"origo.user.id";
+static NSString * const kKeyPathFormatDeviceId = @"origo.device.id$%@";
+static NSString * const kKeyPathFormatAuthExpiryDate = @"origo.auth.expires$%@";
+static NSString * const kKeyPathFormatLastReplicationDate = @"origo.replication.date$%@";
 
 static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
@@ -148,13 +141,13 @@ static OMeta *m = nil;
     self = [super init];
     
     if (self) {
-        _userId = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyUserId];
+        _userId = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathUserId];
         _appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
         _displayLanguage = [NSLocale preferredLanguages][0];
         
         if (_userId) {
-            _deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
-            _lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastReplicationDate, _userId]];
+            _deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userId]];
+            _lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userId]];
         } else {
             _deviceId = [OUUIDGenerator generateUUID];
         }
@@ -205,24 +198,24 @@ static OMeta *m = nil;
     _userId = userId;
     
     if (_userId) {
-        [[NSUserDefaults standardUserDefaults] setObject:_userId forKey:kUserDefaultsKeyUserId];
+        [[NSUserDefaults standardUserDefaults] setObject:_userId forKey:kKeyPathUserId];
         
-        NSString *deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
-        NSString *lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastReplicationDate, _userId]];
+        NSString *deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userId]];
+        NSString *lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userId]];
         
         if (deviceId) {
             _deviceId = deviceId;
         } else if (_deviceId) {
-            [[NSUserDefaults standardUserDefaults] setObject:_deviceId forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatDeviceId, _userId]];
+            [[NSUserDefaults standardUserDefaults] setObject:_deviceId forKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userId]];
         }
         
         if (lastReplicationDate) {
             _lastReplicationDate = lastReplicationDate;
         } else if (_lastReplicationDate) {
-            [[NSUserDefaults standardUserDefaults] setObject:_lastReplicationDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastReplicationDate, _userId]];
+            [[NSUserDefaults standardUserDefaults] setObject:_lastReplicationDate forKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userId]];
         }
     } else {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyUserId];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathUserId];
     }
 }
 
@@ -242,7 +235,7 @@ static OMeta *m = nil;
 {
     _lastReplicationDate = replicationDate;
     
-    [[NSUserDefaults standardUserDefaults] setObject:replicationDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatLastReplicationDate, _userId]];
+    [[NSUserDefaults standardUserDefaults] setObject:replicationDate forKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userId]];
 }
 
 
@@ -264,7 +257,7 @@ static OMeta *m = nil;
 
 - (void)userDidSignIn
 {
-    [[NSUserDefaults standardUserDefaults] setObject:_authTokenExpiryDate forKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
+    [[NSUserDefaults standardUserDefaults] setObject:_authTokenExpiryDate forKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userId]];
     
     _user = [self.context entityWithId:_userId];
     
@@ -279,14 +272,14 @@ static OMeta *m = nil;
     _user = nil;
     _authToken = nil;
     
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userId]];
 }
 
 
 - (BOOL)userIsSignedIn
 {
     if (!_user) {
-        _authTokenExpiryDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kUserDefaultsKeyFormatAuthExpiryDate, _userId]];
+        _authTokenExpiryDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userId]];
         
         if (_authTokenExpiryDate) {
             NSDate *now = [NSDate date];
@@ -313,7 +306,7 @@ static OMeta *m = nil;
 - (NSSet *)dirtyEntitiesFromEarlierSessions
 {
     NSMutableSet *dirtyEntities = [[NSMutableSet alloc] init];
-    NSData *dirtyEntityURIArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyDirtyEntities];
+    NSData *dirtyEntityURIArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathDirtyEntities];
     
     if (dirtyEntityURIArchive) {
         NSSet *dirtyEntityURIs = [NSKeyedUnarchiver unarchiveObjectWithData:dirtyEntityURIArchive];
@@ -324,7 +317,7 @@ static OMeta *m = nil;
             [dirtyEntities addObject:[self.context objectWithID:dirtyEntityID]];
         }
         
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyDirtyEntities];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathDirtyEntities];
     }
     
     return dirtyEntities;
