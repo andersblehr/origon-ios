@@ -50,6 +50,8 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     if (self) {
         _unlabeledElementNames = [[NSMutableArray alloc] init];
         _labeledElementNames = [[NSMutableArray alloc] init];
+        
+        _elementVisibility = [[NSMutableDictionary alloc] init];
         _textViewLineCounts = [[NSMutableDictionary alloc] init];
     }
     
@@ -59,7 +61,26 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 
 #pragma mark - Adding named constraints
 
-- (void)addUnlabeledLabelConstraintsForName:(NSString *)name
+- (void)addTitleConstraintsForName:(NSString *)name
+{
+    _titleName = [name stringByAppendingString:kNameSuffixTextField];
+}
+
+
+- (void)addLabeledTextFieldConstraintsForName:(NSString *)name
+{
+    [_labeledElementNames addObject:name];
+}
+
+
+- (void)addLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSUInteger)lineCount
+{
+    [self addLabeledTextFieldConstraintsForName:name];
+    [self updateLabeledTextViewConstraintsForName:name lineCount:lineCount];
+}
+
+
+- (void)addLabelConstraintsForName:(NSString *)name
 {
     [_unlabeledElementNames addObject:[name stringByAppendingString:kNameSuffixLabel]];
 }
@@ -71,28 +92,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
-- (void)addTitleConstraintsForName:(NSString *)name
-{
-    _titleName = [name stringByAppendingString:kNameSuffixTextField];
-}
-
-
-- (void)addLabeledTextFieldConstraintsForName:(NSString *)name
-{
-    [_labeledElementNames addObject:name];
-    
-    if (!_elementsAreLabeled) {
-        _elementsAreLabeled = YES;
-    }
-}
-
-
-- (void)addLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSUInteger)lineCount
-{
-    [self addLabeledTextFieldConstraintsForName:name];
-    [self updateLabeledTextViewConstraintsForName:name lineCount:lineCount];
-}
-
+#pragma mark - Updating named constraints
 
 - (void)updateLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSInteger)lineCount
 {
@@ -260,40 +260,49 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
+#pragma mark - Constraints type info
+
+- (BOOL)elementsAreLabeled
+{
+    return ([_labeledElementNames count] > 0);
+}
+
+
+- (BOOL)elementsAreUnlabeled
+{
+    return ([_unlabeledElementNames count] > 0);
+}
+
+
 #pragma mark - Retrieving constraints
 
 - (NSString *)labeledAlignmentConstraints
 {
-    return [self labeledVerticalLabelConstraints];
+    return [_labeledElementNames count] ? [self labeledVerticalLabelConstraints] : nil;
 }
 
 
 - (NSArray *)labeledSizeConstraints
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
-    
-    [constraints addObjectsFromArray:[self titleConstraints]];
-    [constraints addObject:[self labeledVerticalTextFieldConstraints]];
-    [constraints addObjectsFromArray:[self labeledHorizontalConstraints]];
+
+    if ([_labeledElementNames count]) {
+        [constraints addObjectsFromArray:[self titleConstraints]];
+        [constraints addObject:[self labeledVerticalTextFieldConstraints]];
+        [constraints addObjectsFromArray:[self labeledHorizontalConstraints]];
+    }
     
     return constraints;
 }
 
 
-- (NSArray *)allConstraints
+- (NSArray *)unlabeledConstraints
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
-    if (_elementsAreLabeled) {
-        [constraints addObject:[self labeledAlignmentConstraints]];
-        [constraints addObjectsFromArray:[self labeledSizeConstraints]];
-    } else {
+    if ([_unlabeledElementNames count]) {
         [constraints addObject:[self unlabeledVerticalConstraints]];
         [constraints addObjectsFromArray:[self unlabeledHorizontalConstraints]];
-    }
-    
-    for (int i = 0; i < [constraints count]; i++) {
-        OLogVerbose(@"\nVisual constraint (%d)>> %@", i, constraints[i]);
     }
     
     return constraints;

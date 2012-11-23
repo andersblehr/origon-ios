@@ -27,6 +27,12 @@
 
 #import "OOrigoListViewController.h"
 
+typedef struct {
+    __unsafe_unretained NSObject *observer;
+    __unsafe_unretained OReplicatedEntity *entity;
+    __unsafe_unretained NSString *keyPath;
+} OEntityObserverInfo;
+
 NSUInteger const kCertainSchoolAge = 7;
 NSUInteger const kAgeOfMajority = 18;
 
@@ -161,6 +167,8 @@ static OMeta *m = nil;
         _internetConnectionIsWiFi = NO;
         _internetConnectionIsWWAN = NO;
         
+        _contextObservers = [[NSMutableDictionary alloc] init];
+        
         _dirtyEntities = [[NSMutableSet alloc] init];
         _stagedServerEntities = [[NSMutableDictionary alloc] init];
         _stagedServerEntityRefs = [[NSMutableDictionary alloc] init];
@@ -193,8 +201,6 @@ static OMeta *m = nil;
 
 - (void)setUserId:(NSString *)userId
 {
-    [(OAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
-    
     _userId = userId;
     
     if (_userId) {
@@ -273,6 +279,8 @@ static OMeta *m = nil;
     _authToken = nil;
     
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userId]];
+    
+    [(OAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
 }
 
 
@@ -298,6 +306,55 @@ static OMeta *m = nil;
 - (BOOL)registrationIsComplete
 {
     return ([_user hasPhone] && [_user hasAddress]);
+}
+
+
+#pragma mark - Key-value observing & housekeeping
+
+- (void)addObserver:(NSObject *)observer ofEntity:(OReplicatedEntity *)entity forKeyPath:(NSString *)keyPath context:(void *)context
+{
+    [entity addObserver:observer forKeyPath:keyPath options:NSKeyValueObservingOptionNew context:context];
+    
+    OEntityObserverInfo observerInfo;
+    observerInfo.observer = observer;
+    observerInfo.entity = entity;
+    observerInfo.keyPath = keyPath;
+    
+    NSValue *contextValue = [NSValue valueWithPointer:context];
+    NSValue *observerInfoValue = [NSValue valueWithBytes:&observerInfo objCType:@encode(OEntityObserverInfo)];
+    
+    NSMutableArray *observersInContext = [_contextObservers objectForKey:contextValue];
+    
+    if (!observersInContext) {
+        observersInContext = [[NSMutableArray alloc] init];
+        [_contextObservers setObject:observersInContext forKey:contextValue];
+    }
+    
+    [observersInContext addObject:observerInfoValue];
+}
+
+
+- (void)removeEntityObserversInContext:(void *)context
+{
+    NSValue *contextValue = [NSValue valueWithPointer:context];
+    NSArray *observersInContext = [_contextObservers objectForKey:contextValue];
+    
+    for (NSValue *observerInfoValue in observersInContext) {
+        OEntityObserverInfo observerInfo;
+        [observerInfoValue getValue:&observerInfo];
+        
+        [observerInfo.entity removeObserver:observerInfo.observer forKeyPath:observerInfo.keyPath context:[contextValue pointerValue]];
+    }
+    
+    [_contextObservers removeObjectForKey:contextValue];
+}
+
+
+- (void)removeAllEntityObservers
+{
+    for (NSValue *contextValue in [_contextObservers allKeys]) {
+        [self removeEntityObserversInContext:[contextValue pointerValue]];
+    }
 }
 
 

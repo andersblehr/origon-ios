@@ -317,7 +317,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             [self toggleEdit];
         }
     } else {
-        [_memberCell shake];
+        [_memberCell shakeCellVibrate:NO];
     }
 }
 

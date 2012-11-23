@@ -150,7 +150,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _numberOfActivationAttempts++;
     
     if (_numberOfActivationAttempts < 3) {
-        [_authCell shakeAndVibrateDevice];
+        [_authCell shakeCellVibrate:YES];
         
         if (textField == _activationCodeField) {
             _activationCodeField.text = @"";
@@ -528,7 +528,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [self attemptUserLogin];
         } else {
             _passwordField.text = @"";
-            [_authCell shakeAndVibrateDevice];
+            [_authCell shakeCellVibrate:YES];
         }
     } else if (textField == _activationCodeField) {
         [_repeatPasswordField becomeFirstResponder];
@@ -540,7 +540,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [self presentEULA];
         } else {
             _repeatPasswordField.text = @"";
-            [_authCell shakeAndVibrateDevice];
+            [_authCell shakeCellVibrate:YES];
         }
     }
     
@@ -606,7 +606,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         }
     } else {
         if (response.statusCode == kHTTPStatusUnauthorized) {
-            [_authCell shake];
+            [_authCell shakeCellVibrate:NO];
             [_passwordField becomeFirstResponder];
         } else {
             [OAlert showAlertForHTTPStatus:response.statusCode];

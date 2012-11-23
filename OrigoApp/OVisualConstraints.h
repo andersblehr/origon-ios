@@ -11,11 +11,11 @@
 @interface OVisualConstraints : NSObject {
 @private
     NSString *_titleName;
-    NSMutableArray *_unlabeledElementNames;
     NSMutableArray *_labeledElementNames;
-    NSMutableDictionary *_textViewLineCounts;
+    NSMutableArray *_unlabeledElementNames;
     
-    BOOL _elementsAreLabeled;
+    NSMutableDictionary *_elementVisibility;
+    NSMutableDictionary *_textViewLineCounts;
 }
 
 @property (nonatomic) BOOL titleBannerHasPhoto;
@@ -23,13 +23,16 @@
 - (void)addTitleConstraintsForName:(NSString *)name;
 - (void)addLabeledTextFieldConstraintsForName:(NSString *)name;
 - (void)addLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSUInteger)lineCount;
-- (void)addUnlabeledLabelConstraintsForName:(NSString *)name;
+- (void)addLabelConstraintsForName:(NSString *)name;
 - (void)addUnlabaledTextFieldConstraintsForName:(NSString *)name;
 
 - (void)updateLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSInteger)lineCount;
 
+- (BOOL)elementsAreLabeled;
+- (BOOL)elementsAreUnlabeled;
+
 - (NSString *)labeledAlignmentConstraints;
 - (NSArray *)labeledSizeConstraints;
-- (NSArray *)allConstraints;
+- (NSArray *)unlabeledConstraints;
 
 @end
