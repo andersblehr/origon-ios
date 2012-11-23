@@ -19,6 +19,7 @@
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
+#import "OTextView.h"
 
 #import "OMember.h"
 #import "OMembership.h"
@@ -42,6 +43,8 @@ static NSInteger const kReducedNumberOfSections = 2;
 static NSInteger const kOrigoSection = 0;
 static NSInteger const kContactSection = 1;
 static NSInteger const kMemberSection = 2;
+
+static void *localContext = &localContext;
 
 
 @implementation OMemberListViewController
@@ -130,6 +133,10 @@ static NSInteger const kMemberSection = 2;
     [self.tableView setBackground];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
+    
+    [_origo addObserver:self forKeyPath:@"name" options:NSKeyValueObservingOptionNew context:localContext];
+    [_origo addObserver:self forKeyPath:@"address" options:NSKeyValueObservingOptionNew context:localContext];
+    [_origo addObserver:self forKeyPath:@"telephone" options:NSKeyValueObservingOptionNew context:localContext];
     
     if ([_origo isResidence]) {
         if ([_origo userIsMember]) {
@@ -262,11 +269,13 @@ static NSInteger const kMemberSection = 2;
     OTableViewCell *cell = nil;
     
     if (indexPath.section == kOrigoSection) {
-        cell = [tableView cellForEntity:_origo];
+        _origoCell = [tableView cellForEntity:_origo];
         
         if ([_origo userIsAdmin]) {
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            _origoCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
+        
+        cell = _origoCell;
     } else {
         NSArray *memberships = [self sectionIsContactSection:indexPath.section] ? _sortedContacts : _sortedMembers;
         OMembership *membership = memberships[indexPath.row];
@@ -412,6 +421,21 @@ static NSInteger const kMemberSection = 2;
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return [OStrings stringForKey:strButtonDeleteMember];
+}
+
+
+#pragma mark - NSKeyValueObserving conformance
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == localContext) {
+        if ([keyPath isEqualToString:@"address"]) {
+            OTextView *addressView = [_origoCell textFieldWithName:@"address"];
+            addressView.text = [change objectForKey:NSKeyValueChangeNewKey];
+        }
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 

@@ -110,7 +110,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         
         [self addSubview:_placeholderView];
         
-        self.autocapitalizationType = UITextAutocapitalizationTypeWords;
+        self.autocapitalizationType = UITextAutocapitalizationTypeSentences;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.backgroundColor = [UIColor clearColor];
         self.contentInset = UIEdgeInsetsMake(-kTopInset, -kTextInset, 0.f, 0.f);
@@ -154,6 +154,8 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
     NSInteger lineCountGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)].height / [UIFont detailLineHeight];
     
     if ([OState s].actionIsInput) {
+        lineCountGuesstimate++;
+        
         lineCountGuesstimate = MIN(lineCountGuesstimate, kTextViewMaximumEditLines);
         lineCountGuesstimate = MAX(lineCountGuesstimate, kTextViewMinimumEditLines);
     }
@@ -170,16 +172,16 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 }
 
 
-- (NSInteger)lineCountChange
+- (NSInteger)lineCountDelta
 {
     NSInteger lineCount = [self transientLineCount];
-    NSInteger lineCountChange = lineCount - _lastKnownLineCount;
+    NSInteger lineCountDelta = lineCount - _lastKnownLineCount;
     
-    if (lineCountChange) {
+    if (lineCountDelta) {
         if ((lineCount > 1) && (lineCount <= kTextViewMaximumEditLines)) {
             [self removeDropShadow];
             CGRect frame = self.frame;
-            frame.size.height += lineCountChange * [UIFont detailLineHeight];
+            frame.size.height += lineCountDelta * [UIFont detailLineHeight];
             self.frame = frame;
             [self addDropShadowForField];
             
@@ -189,13 +191,13 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
                 self.text = _lastKnownText;
             }
             
-            lineCountChange = 0;
+            lineCountDelta = 0;
         }
     }
 
     _lastKnownText = self.text;
     
-    return lineCountChange;
+    return lineCountDelta;
 }
 
 

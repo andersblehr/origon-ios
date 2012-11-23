@@ -82,7 +82,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
         
         if (_authInfo) {
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyAuthInfo];
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathAuthInfo];
             _authInfo = nil;
         }
     } else if ([OState s].actionIsActivate) {
@@ -286,7 +286,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _userIsListed = [[_authInfo objectForKey:kAuthInfoKeyIsUserListed] boolValue];
     
     NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:_authInfo];
-    [[NSUserDefaults standardUserDefaults] setObject:authInfoArchive forKey:kUserDefaultsKeyAuthInfo];
+    [[NSUserDefaults standardUserDefaults] setObject:authInfoArchive forKey:kKeyPathAuthInfo];
     
     [OState s].actionIsActivate = YES;
     [self reload];
@@ -336,7 +336,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     [[OMeta m].context replicateIfNeeded];
     
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kUserDefaultsKeyAuthInfo];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathAuthInfo];
     _authInfo = nil;
     
     if ([[OMeta m] registrationIsComplete] && [[OMeta m].user isMinor]) {
@@ -397,7 +397,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _editingIsAllowed = YES;
     _activityIndicator = [self.tableView addActivityIndicator];
     
-    NSData *authInfoArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsKeyAuthInfo];
+    NSData *authInfoArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathAuthInfo];
     
     if (authInfoArchive) {
         _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];

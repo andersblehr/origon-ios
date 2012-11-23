@@ -192,7 +192,7 @@ static NSDictionary *strings = nil;
     
     if ([name isEqualToString:kNameSignIn]) {
         stringKey = strLabelSignIn;
-    } else if ([name isEqualToString:kNameActivate]) {
+    } else if ([name isEqualToString:kNameActivation]) {
         stringKey = strLabelActivate;
     } else if ([name isEqualToString:kNameMobilePhone]) {
         stringKey = strLabelMobilePhone;

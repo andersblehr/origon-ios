@@ -78,15 +78,15 @@ static NSString * const kOrigoRelationshipName = @"origo";
 - (id)insertEntityFromDictionary:(NSDictionary *)entityDictionary
 {
     NSMutableDictionary *entityRefs = [[NSMutableDictionary alloc] init];
-    NSString *entityId = [entityDictionary valueForKey:kPropertyEntityId];
+    NSString *entityId = [entityDictionary valueForKey:kKeyPathEntityId];
     
     OReplicatedEntity *entity = [self entityWithId:entityId];
     
     if (!entity) {
-        NSString *entityClass = [entityDictionary objectForKey:kPropertyEntityClass];
+        NSString *entityClass = [entityDictionary objectForKey:kKeyPathEntityClass];
         
         entity = [self insertEntityForClass:NSClassFromString(entityClass) entityId:entityId];
-        entity.origoId = [entityDictionary objectForKey:kPropertyOrigoId];
+        entity.origoId = [entityDictionary objectForKey:kKeyPathOrigoId];
     }
     
     NSDictionary *attributes = [entity.entity attributesByName];
@@ -275,10 +275,10 @@ static NSString * const kOrigoRelationshipName = @"origo";
     NSMutableSet *entities = [[NSMutableSet alloc] init];
     
     for (NSDictionary *replicaDictionary in replicaDictionaries) {
-        NSString *replicaClass = [replicaDictionary objectForKey:kPropertyEntityClass];
+        NSString *replicaClass = [replicaDictionary objectForKey:kKeyPathEntityClass];
         
         if ([replicaClass isEqualToString:entityGhostClass]) {
-            NSString *ghostedEntityId = [replicaDictionary objectForKey:kPropertyEntityId];
+            NSString *ghostedEntityId = [replicaDictionary objectForKey:kKeyPathEntityId];
             OReplicatedEntity *ghostedEntity = [self entityWithId:ghostedEntityId];
 
             if (ghostedEntity) {
@@ -327,7 +327,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
     }
     
     NSData *dirtyEntityURIArchive = [NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs];
-    [[NSUserDefaults standardUserDefaults] setObject:dirtyEntityURIArchive forKey:kUserDefaultsKeyDirtyEntities];
+    [[NSUserDefaults standardUserDefaults] setObject:dirtyEntityURIArchive forKey:kKeyPathDirtyEntities];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
@@ -337,7 +337,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
 - (id)entityWithId:(NSString *)entityId
 {
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(OReplicatedEntity.class)];
-    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", kPropertyEntityId, entityId]];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", kKeyPathEntityId, entityId]];
     
     id entity = nil;
     NSError *error = nil;
