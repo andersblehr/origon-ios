@@ -135,6 +135,6 @@ extern NSString * const xstrContactRolesSportsTeam;
 + (void)conditionallyRefresh;
 
 + (NSString *)stringForKey:(NSString *)key;
-+ (NSString *)stringForLabelWithName:(NSString *)name;
++ (NSString *)stringForLabelWithKeyPath:(NSString *)keyPath;
 
 @end

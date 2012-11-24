@@ -12,26 +12,13 @@ extern NSString * const kReuseIdentifierDefault;
 extern NSString * const kReuseIdentifierUserSignIn;
 extern NSString * const kReuseIdentifierUserActivation;
 
-extern NSString * const kNameSignIn;
-extern NSString * const kNameAuthEmail;
-extern NSString * const kNamePassword;
-extern NSString * const kNameActivation;
-extern NSString * const kNameActivationCode;
-extern NSString * const kNameRepeatPassword;
-extern NSString * const kNameName;
-extern NSString * const kNameMobilePhone;
-extern NSString * const kNameEmail;
-extern NSString * const kNameDateOfBirth;
-extern NSString * const kNameAddress;
-extern NSString * const kNameTelephone;
-
-extern NSString * const kNameSuffixLabel;
-extern NSString * const kNameSuffixTextField;
+extern NSString * const kElementSuffixLabel;
+extern NSString * const kElementSuffixTextField;
 
 extern CGFloat const kDefaultPadding;
 
 @class OReplicatedEntity;
-@class OTextView, OVisualConstraints;
+@class OTextField, OTextView, OVisualConstraints;
 
 @interface OTableViewCell : UITableViewCell {
 @private
@@ -39,9 +26,11 @@ extern CGFloat const kDefaultPadding;
     
     OReplicatedEntity *_entity;
     OVisualConstraints *_visualConstraints;
-    NSMutableDictionary *_namedViews;
+    NSMutableDictionary *_views;
     
-    id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
+    id<UITextFieldDelegate, UITextViewDelegate> _delegate;
+    
+    void *_localContext;
 }
 
 + (CGFloat)defaultHeight;
@@ -53,10 +42,11 @@ extern CGFloat const kDefaultPadding;
 - (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
 - (id)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 
-- (id)textFieldWithName:(NSString *)name;
+- (id)labelForKeyPath:(NSString *)keyPath;
+- (id)textFieldForKeyPath:(NSString *)keyPath;
 
 - (void)willAppearTrailing:(BOOL)trailing;
-- (void)respondToTextViewLineCountDelta:(OTextView *)textView;
+- (void)respondToTextViewSizeChange:(OTextView *)textView;
 
 - (void)shakeCellVibrate:(BOOL)shouldVibrate;
 

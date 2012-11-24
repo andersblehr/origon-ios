@@ -466,10 +466,10 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             _memberCell = [tableView cellForEntityClass:OMember.class delegate:self];
         }
         
-        _nameField = [_memberCell textFieldWithName:kNameName];
-        _emailField = [_memberCell textFieldWithName:kNameEmail];
-        _mobilePhoneField = [_memberCell textFieldWithName:kNameMobilePhone];
-        _dateOfBirthField = [_memberCell textFieldWithName:kNameDateOfBirth];
+        _nameField = [_memberCell textFieldForKeyPath:kKeyPathName];
+        _emailField = [_memberCell textFieldForKeyPath:kKeyPathEmail];
+        _mobilePhoneField = [_memberCell textFieldForKeyPath:kKeyPathMobilePhone];
+        _dateOfBirthField = [_memberCell textFieldForKeyPath:kKeyPathDateOfBirth];
         _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
         
         if (_member && _member.dateOfBirth) {
