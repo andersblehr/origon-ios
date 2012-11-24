@@ -206,8 +206,8 @@
         _origoCell = [tableView cellForEntityClass:OOrigo.class delegate:self];
     }
     
-    _addressView = [_origoCell textFieldWithName:kNameAddress];
-    _telephoneField = [_origoCell textFieldWithName:kNameTelephone];
+    _addressView = [_origoCell textFieldForKeyPath:kKeyPathAddress];
+    _telephoneField = [_origoCell textFieldForKeyPath:kKeyPathTelephone];
     
     return _origoCell;
 }
@@ -249,7 +249,7 @@
 
 - (void)textViewDidChange:(OTextView *)textView
 {
-    [_origoCell respondToTextViewLineCountDelta:textView];
+    [_origoCell respondToTextViewSizeChange:textView];
 }
 
 

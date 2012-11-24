@@ -463,13 +463,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if ([OState s].actionIsLogin) {
         _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserSignIn delegate:self];
         
-        _emailField = [_authCell textFieldWithName:kNameAuthEmail];
-        _passwordField = [_authCell textFieldWithName:kNamePassword];
+        _emailField = [_authCell textFieldForKeyPath:kKeyPathAuthEmail];
+        _passwordField = [_authCell textFieldForKeyPath:kKeyPathPassword];
     } else {
         _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserActivation delegate:self];
         
-        _activationCodeField = [_authCell textFieldWithName:kNameActivationCode];
-        _repeatPasswordField = [_authCell textFieldWithName:kNameRepeatPassword];
+        _activationCodeField = [_authCell textFieldForKeyPath:kKeyPathActivationCode];
+        _repeatPasswordField = [_authCell textFieldForKeyPath:kKeyPathRepeatPassword];
     }
     
     return _authCell;

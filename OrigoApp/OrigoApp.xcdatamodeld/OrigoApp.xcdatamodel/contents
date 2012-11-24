@@ -243,29 +243,29 @@
         </userInfo>
     </entity>
     <elements>
-        <element name="ODevice" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="ODocument" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="ODocumentElement" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="ODocumentRepository" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OEvent" positionX="0" positionY="0" width="128" height="180"/>
-        <element name="OEventInvitation" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OEventOrigoInvitation" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OExternalDocument" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="OLinkedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="OMember" positionX="0" positionY="0" width="128" height="315"/>
-        <element name="OMemberResidency" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="OMembership" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="OMessageBoard" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OMessageItem" positionX="0" positionY="0" width="128" height="120"/>
-        <element name="OMessageThread" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OOrigo" positionX="0" positionY="0" width="128" height="285"/>
-        <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="OReplicatedEntityGhost" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="OScheduledAbsence" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OScheduledBreak" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OToDoAssignment" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OToDoItem" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="OWeeklyScheduleItem" positionX="0" positionY="0" width="128" height="120"/>
-        <element name="OYearlySchedule" positionX="0" positionY="0" width="128" height="120"/>
+        <element name="ODevice" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ODocument" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ODocumentElement" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ODocumentRepository" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OEvent" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OEventInvitation" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OEventOrigoInvitation" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OExternalDocument" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OLinkedEntityRef" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMember" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMemberResidency" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMembership" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMessageBoard" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMessageItem" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OMessageThread" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OOrigo" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OReplicatedEntity" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OReplicatedEntityGhost" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OScheduledAbsence" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OScheduledBreak" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OToDoAssignment" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OToDoItem" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OWeeklyScheduleItem" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OYearlySchedule" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>

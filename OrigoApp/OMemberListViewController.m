@@ -44,7 +44,7 @@ static NSInteger const kOrigoSection = 0;
 static NSInteger const kContactSection = 1;
 static NSInteger const kMemberSection = 2;
 
-static void *localContext = &localContext;
+//static void *localContext = &localContext;
 
 
 @implementation OMemberListViewController
@@ -134,8 +134,8 @@ static void *localContext = &localContext;
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    [[OMeta m] addObserver:self ofEntity:_origo forKeyPath:@"address" context:localContext];
-    [[OMeta m] addObserver:self ofEntity:_origo forKeyPath:@"telephone" context:localContext];
+//    [[OMeta m] addObserver:self ofEntity:_origo forKeyPath:@"address" context:localContext];
+//    [[OMeta m] addObserver:self ofEntity:_origo forKeyPath:@"telephone" context:localContext];
     
     if ([_origo isResidence]) {
         if ([_origo userIsMember]) {
@@ -425,17 +425,17 @@ static void *localContext = &localContext;
 
 #pragma mark - NSKeyValueObserving conformance
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context == localContext) {
-        if ([keyPath isEqualToString:@"address"]) {
-            OTextView *addressView = [_origoCell textFieldWithName:@"address"];
-            addressView.text = [change objectForKey:NSKeyValueChangeNewKey];
-        }
-    } else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
-}
+//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+//{
+//    if (context == localContext) {
+//        if ([keyPath isEqualToString:@"address"]) {
+//            OTextView *addressView = [_origoCell textFieldForKeyPath:@"address"];
+//            addressView.text = [change objectForKey:NSKeyValueChangeNewKey];
+//        }
+//    } else {
+//        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+//    }
+//}
 
 
 #pragma mark - OModalViewControllerDelegate conformance

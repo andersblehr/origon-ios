@@ -13,6 +13,7 @@
 #import "UIFont+OFontExtensions.h"
 #import "UIView+OViewExtensions.h"
 
+#import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
@@ -24,16 +25,18 @@ NSInteger const kTextViewMaximumEditLines = 5;
 static CGFloat const kTopInset = 5.f;
 static CGFloat const kDetailWidthGuesstimate = 210.f;
 
+static CGFloat const kDeselectAnimationDuration = 0.5f;
+
 
 @implementation OTextView
 
 #pragma mark - Auxiliary methods
 
-- (void)setPropertiesForName:(NSString *)name
+- (void)setPropertiesForKeyPath:(NSString *)keyPath
 {
-    _name = name;
+    _keyPath = keyPath;
     
-    if ([name isEqualToString:kNameAddress]) {
+    if ([keyPath isEqualToString:kKeyPathAddress]) {
         self.placeholder = [OStrings stringForKey:strPromptAddress];
     }
 }
@@ -46,7 +49,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
     if (self.window) {
         lineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
         
-        if ([OState s].actionIsInput) {
+        if (_editing) {
             if ((lineCount > 1) && (lineCount < 5)) {
                 lineCount++;
             } else if (lineCount < 2) {
@@ -95,7 +98,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 #pragma mark - Initialisation
 
-- (id)initWithName:(NSString *)name text:(NSString *)text delegate:(id)delegate
+- (id)initForKeyPath:(NSString *)keyPath text:(NSString *)text delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
@@ -130,7 +133,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged) name:UITextViewTextDidChangeNotification object:nil];
         
-        [self setPropertiesForName:name];
+        [self setPropertiesForKeyPath:keyPath];
     }
     
     return self;
@@ -205,15 +208,19 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 - (void)toggleEmphasis
 {
-    if (_editing) {
+    _editing = !_editing;
+    
+    if (!_editing) {
         self.backgroundColor = [UIColor clearColor];
+        
+        [self.delegate textViewDidChange:self];
         [self removeDropShadow];
     } else {
         self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
+        
+        [self.delegate textViewDidChange:self];
         [self addDropShadowForField];
     }
-    
-    _editing = !_editing;
 }
 
 
@@ -234,7 +241,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         self.backgroundColor = [UIColor selectedCellBackgroundColor];
         self.textColor = [UIColor selectedDetailTextColor];
     } else {
-        [UIView animateWithDuration:0.5f animations:^{
+        [UIView animateWithDuration:kDeselectAnimationDuration animations:^{
             self.backgroundColor = [UIColor cellBackgroundColor];
             self.textColor = [UIColor detailTextColor];
         }];

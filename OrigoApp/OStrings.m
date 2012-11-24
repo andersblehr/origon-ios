@@ -186,23 +186,23 @@ static NSDictionary *strings = nil;
 }
 
 
-+ (NSString *)stringForLabelWithName:(NSString *)name
++ (NSString *)stringForLabelWithKeyPath:(NSString *)keyPath
 {
     NSString *stringKey = @"";
     
-    if ([name isEqualToString:kNameSignIn]) {
+    if ([keyPath isEqualToString:kKeyPathSignIn]) {
         stringKey = strLabelSignIn;
-    } else if ([name isEqualToString:kNameActivation]) {
+    } else if ([keyPath isEqualToString:kKeyPathActivation]) {
         stringKey = strLabelActivate;
-    } else if ([name isEqualToString:kNameMobilePhone]) {
+    } else if ([keyPath isEqualToString:kKeyPathMobilePhone]) {
         stringKey = strLabelMobilePhone;
-    } else if ([name isEqualToString:kNameEmail]) {
+    } else if ([keyPath isEqualToString:kKeyPathEmail]) {
         stringKey = strLabelEmail;
-    } else if ([name isEqualToString:kNameDateOfBirth]) {
+    } else if ([keyPath isEqualToString:kKeyPathDateOfBirth]) {
         stringKey = strLabelDateOfBirth;
-    } else if ([name isEqualToString:kNameAddress]) {
+    } else if ([keyPath isEqualToString:kKeyPathAddress]) {
         stringKey = strTermAddress;
-    } else if ([name isEqualToString:kNameTelephone]) {
+    } else if ([keyPath isEqualToString:kKeyPathTelephone]) {
         stringKey = strLabelTelephone;
     }
     

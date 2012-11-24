@@ -8,11 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+@class OTableViewCell;
+
 @interface OVisualConstraints : NSObject {
 @private
-    NSString *_titleName;
-    NSMutableArray *_labeledElementNames;
-    NSMutableArray *_unlabeledElementNames;
+    OTableViewCell *_cell;
+    
+    NSString *_titleElement;
+    NSMutableArray *_labeledElementKeyPaths;
+    NSMutableArray *_unlabeledElements;
     
     NSMutableDictionary *_elementVisibility;
     NSMutableDictionary *_textViewLineCounts;
@@ -20,19 +24,16 @@
 
 @property (nonatomic) BOOL titleBannerHasPhoto;
 
-- (void)addTitleConstraintsForName:(NSString *)name;
-- (void)addLabeledTextFieldConstraintsForName:(NSString *)name;
-- (void)addLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSUInteger)lineCount;
-- (void)addLabelConstraintsForName:(NSString *)name;
-- (void)addUnlabaledTextFieldConstraintsForName:(NSString *)name;
+- (id)initForTableViewCell:(OTableViewCell *)cell;
 
-- (void)updateLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSInteger)lineCount;
+- (void)addTitleConstraintsForKeyPath:(NSString *)keyPath;
+- (void)addLabeledTextFieldConstraintsForKeyPath:(NSString *)keyPath visible:(BOOL)visible;
+- (void)addLabeledTextViewConstraintsForKeyPath:(NSString *)keyPath lineCount:(NSUInteger)lineCount;
+- (void)addLabelConstraintsForKeyPath:(NSString *)keyPath;
+- (void)addUnlabeledTextFieldConstraintsForKeyPath:(NSString *)keyPath;
 
-- (BOOL)elementsAreLabeled;
-- (BOOL)elementsAreUnlabeled;
+- (void)updateLabeledTextViewConstraintsForKeyPath:(NSString *)keyPath lineCount:(NSInteger)lineCount;
 
-- (NSString *)labeledAlignmentConstraints;
-- (NSArray *)labeledSizeConstraints;
-- (NSArray *)unlabeledConstraints;
+- (NSDictionary *)constraintsWithAlignmentOptions;
 
 @end

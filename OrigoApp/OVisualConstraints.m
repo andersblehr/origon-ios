@@ -13,6 +13,7 @@
 #import "OLogging.h"
 #import "OState.h"
 #import "OTableViewCell.h"
+#import "OTextField.h"
 #import "OTextView.h"
 
 static NSString * const kVConstraintsInitial          = @"V:|-10-";
@@ -43,13 +44,15 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 
 #pragma mark - Initialisation
 
-- (id)init
+- (id)initForTableViewCell:(OTableViewCell *)cell
 {
     self = [super init];
     
     if (self) {
-        _unlabeledElementNames = [[NSMutableArray alloc] init];
-        _labeledElementNames = [[NSMutableArray alloc] init];
+        _cell = cell;
+        
+        _unlabeledElements = [[NSMutableArray alloc] init];
+        _labeledElementKeyPaths = [[NSMutableArray alloc] init];
         
         _elementVisibility = [[NSMutableDictionary alloc] init];
         _textViewLineCounts = [[NSMutableDictionary alloc] init];
@@ -59,64 +62,68 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
-#pragma mark - Adding named constraints
+#pragma mark - Adding constraints
 
-- (void)addTitleConstraintsForName:(NSString *)name
+- (void)addTitleConstraintsForKeyPath:(NSString *)keyPath
 {
-    _titleName = [name stringByAppendingString:kNameSuffixTextField];
+    _titleElement = [keyPath stringByAppendingString:kElementSuffixTextField];
 }
 
 
-- (void)addLabeledTextFieldConstraintsForName:(NSString *)name
+- (void)addLabeledTextFieldConstraintsForKeyPath:(NSString *)keyPath visible:(BOOL)visible
 {
-    [_labeledElementNames addObject:name];
+    [_labeledElementKeyPaths addObject:keyPath];
+    [_elementVisibility setObject:[NSNumber numberWithBool:visible] forKey:keyPath];
+
+    ((UILabel *)[_cell labelForKeyPath:keyPath]).hidden = !visible;
+    ((OTextField *)[_cell textFieldForKeyPath:keyPath]).hidden = !visible;
 }
 
 
-- (void)addLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSUInteger)lineCount
+- (void)addLabeledTextViewConstraintsForKeyPath:(NSString *)keyPath lineCount:(NSUInteger)lineCount
 {
-    [self addLabeledTextFieldConstraintsForName:name];
-    [self updateLabeledTextViewConstraintsForName:name lineCount:lineCount];
+    [self addLabeledTextFieldConstraintsForKeyPath:keyPath visible:YES];
+    [self updateLabeledTextViewConstraintsForKeyPath:keyPath lineCount:lineCount];
 }
 
 
-- (void)addLabelConstraintsForName:(NSString *)name
+- (void)addLabelConstraintsForKeyPath:(NSString *)keyPath
 {
-    [_unlabeledElementNames addObject:[name stringByAppendingString:kNameSuffixLabel]];
+    [_unlabeledElements addObject:[keyPath stringByAppendingString:kElementSuffixLabel]];
 }
 
 
-- (void)addUnlabaledTextFieldConstraintsForName:(NSString *)name
+- (void)addUnlabeledTextFieldConstraintsForKeyPath:(NSString *)keyPath
 {
-    [_unlabeledElementNames addObject:[name stringByAppendingString:kNameSuffixTextField]];
+    [_unlabeledElements addObject:[keyPath stringByAppendingString:kElementSuffixTextField]];
 }
 
 
-#pragma mark - Updating named constraints
+#pragma mark - Updating constraints
 
-- (void)updateLabeledTextViewConstraintsForName:(NSString *)name lineCount:(NSInteger)lineCount
+- (void)updateLabeledTextViewConstraintsForKeyPath:(NSString *)keyPath lineCount:(NSInteger)lineCount
 {
-    [_textViewLineCounts setObject:[NSNumber numberWithInteger:lineCount] forKey:name];
+    [_textViewLineCounts setObject:[NSNumber numberWithInteger:lineCount] forKey:keyPath];
 }
 
 
-#pragma mark - Title constraints
+#pragma mark - Generating visual constraints strings
 
 - (NSArray *)titleConstraints
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
-    if (_titleName) {
+    if (_titleElement) {
         [constraints addObject:kVConstraintsTitleBanner];
         [constraints addObject:kHConstraintsTitleBanner];
         
         if (_titleBannerHasPhoto) {
-            [constraints addObject:[NSString stringWithFormat:kHConstraintsTitleWithPhoto, _titleName]];
+            [constraints addObject:[NSString stringWithFormat:kHConstraintsTitleWithPhoto, _titleElement]];
             [constraints addObject:kVConstraintsPhoto];
             [constraints addObject:kVConstraintsPhotoPrompt];
             [constraints addObject:kHConstraintsPhotoPrompt];
         } else {
-            [constraints addObject:[NSString stringWithFormat:kHConstraintsTitle, _titleName]];
+            [constraints addObject:[NSString stringWithFormat:kHConstraintsTitle, _titleElement]];
         }
     }
     
@@ -124,35 +131,35 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
-#pragma mark - Labeled element constraints
-
 - (NSString *)labeledVerticalLabelConstraints
 {
-    NSString *constraints = _titleName ? kVConstraintsInitialWithTitle : kVConstraintsInitial;
+    NSString *constraints = _titleElement ? kVConstraintsInitialWithTitle : kVConstraintsInitial;
     
     BOOL isTopmostLabel = YES;
     NSNumber *precedingLineCount = nil;
     
-    for (NSString *name in _labeledElementNames) {
-        NSString *labelName = [name stringByAppendingString:kNameSuffixLabel];
-        NSString *constraint = nil;
-        
-        if (isTopmostLabel) {
-            constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, labelName];
-            isTopmostLabel = NO;
-        } else {
-            CGFloat paddingToPrecedingRow = 0.f;
+    for (NSString *keyPath in _labeledElementKeyPaths) {
+        if ([[_elementVisibility objectForKey:keyPath] boolValue]) {
+            NSString *labelElement = [keyPath stringByAppendingString:kElementSuffixLabel];
+            NSString *constraint = nil;
             
-            if (precedingLineCount) {
-                paddingToPrecedingRow = [OTextView heightForLineCount:[precedingLineCount intValue]] - [UIFont detailFieldHeight];
+            if (isTopmostLabel) {
+                constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, labelElement];
+                isTopmostLabel = NO;
+            } else {
+                CGFloat paddingToPrecedingRow = 0.f;
+                
+                if (precedingLineCount) {
+                    paddingToPrecedingRow = [OTextView heightForLineCount:[precedingLineCount intValue]] - [UIFont detailFieldHeight];
+                }
+                
+                constraint = [NSString stringWithFormat:kVConstraintsLabel, paddingToPrecedingRow, labelElement];
             }
             
-            constraint = [NSString stringWithFormat:kVConstraintsLabel, paddingToPrecedingRow, labelName];
+            constraints = [constraints stringByAppendingString:constraint];
+            
+            precedingLineCount = [_textViewLineCounts objectForKey:keyPath];
         }
-        
-        constraints = [constraints stringByAppendingString:constraint];
-        
-        precedingLineCount = [_textViewLineCounts objectForKey:name];
     }
     
     return constraints;
@@ -163,20 +170,22 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     NSString *constraints = kVConstraintsInitial;
     
-    if (_titleName) {
-        NSString *constraint = [NSString stringWithFormat:kVConstraintsTitle, _titleName];
+    if (_titleElement) {
+        NSString *constraint = [NSString stringWithFormat:kVConstraintsTitle, _titleElement];
         
         constraints = [constraints stringByAppendingString:constraint];
     }
     
-    for (NSString *name in _labeledElementNames) {
-        NSNumber *lineCount = [_textViewLineCounts objectForKey:name];
-        CGFloat rowHeight = lineCount ? [OTextView heightForLineCount:[lineCount intValue]] : [UIFont detailFieldHeight];
-        
-        NSString *textFieldName = [name stringByAppendingString:kNameSuffixTextField];
-        NSString *constraint = [NSString stringWithFormat:kVConstraintsTextField, textFieldName, rowHeight];
-        
-        constraints = [constraints stringByAppendingString:constraint];
+    for (NSString *keyPath in _labeledElementKeyPaths) {
+        if ([[_elementVisibility objectForKey:keyPath] boolValue]) {
+            NSNumber *lineCount = [_textViewLineCounts objectForKey:keyPath];
+            CGFloat rowHeight = lineCount ? [OTextView heightForLineCount:[lineCount intValue]] : [UIFont detailFieldHeight];
+            
+            NSString *textFieldElement = [keyPath stringByAppendingString:kElementSuffixTextField];
+            NSString *constraint = [NSString stringWithFormat:kVConstraintsTextField, textFieldElement, rowHeight];
+            
+            constraints = [constraints stringByAppendingString:constraint];
+        }
     }
     
     return constraints;
@@ -189,30 +198,30 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     
     BOOL isTopmostRow = YES;
     
-    for (NSString *name in _labeledElementNames) {
-        NSString *labelName = [name stringByAppendingString:kNameSuffixLabel];
-        NSString *textFieldName = [name stringByAppendingString:kNameSuffixTextField];
-
-        NSString *constraint = nil;
-        
-        if (isTopmostRow && _titleBannerHasPhoto) {
-            constraint = [NSString stringWithFormat:kHConstraintsTopmostWithPhoto, labelName, textFieldName];
-        } else {
-            constraint = [NSString stringWithFormat:kHConstraints, labelName, textFieldName];
+    for (NSString *keyPath in _labeledElementKeyPaths) {
+        if ([[_elementVisibility objectForKey:keyPath] boolValue]) {
+            NSString *labelElement = [keyPath stringByAppendingString:kElementSuffixLabel];
+            NSString *textFieldElement = [keyPath stringByAppendingString:kElementSuffixTextField];
+            
+            NSString *constraint = nil;
+            
+            if (isTopmostRow && _titleBannerHasPhoto) {
+                constraint = [NSString stringWithFormat:kHConstraintsTopmostWithPhoto, labelElement, textFieldElement];
+            } else {
+                constraint = [NSString stringWithFormat:kHConstraints, labelElement, textFieldElement];
+            }
+            
+            if (isTopmostRow) {
+                isTopmostRow = NO;
+            }
+            
+            [constraints addObject:constraint];
         }
-        
-        if (isTopmostRow) {
-            isTopmostRow = NO;
-        }
-
-        [constraints addObject:constraint];
     }
     
     return constraints;
 }
 
-
-#pragma mark - Unlabeled element constraints
 
 - (NSString *)unlabeledVerticalConstraints
 {
@@ -221,19 +230,19 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     BOOL isTopmostElement = YES;
     BOOL isBelowLabel = NO;
     
-    for (NSString *elementName in _unlabeledElementNames) {
+    for (NSString *element in _unlabeledElements) {
         NSString *constraint = nil;
         
         if (isTopmostElement) {
-            constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, elementName];
+            constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, element];
             isTopmostElement = NO;
         } else {
             CGFloat spacing = isBelowLabel ? kDefaultPadding / 3 : 1.f;
-            constraint = [NSString stringWithFormat:kVConstraintsElement, spacing, elementName];
+            constraint = [NSString stringWithFormat:kVConstraintsElement, spacing, element];
         }
         
         constraints = [constraints stringByAppendingString:constraint];
-        isBelowLabel = [elementName hasSuffix:kNameSuffixLabel];
+        isBelowLabel = [element hasSuffix:kElementSuffixLabel];
     }
     
     return constraints;
@@ -244,13 +253,13 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
-    for (NSString *elementName in _unlabeledElementNames) {
+    for (NSString *element in _unlabeledElements) {
         NSString *constraint = nil;
         
-        if ([elementName hasSuffix:kNameSuffixLabel]) {
-            constraint = [NSString stringWithFormat:kHConstraintsLabel, elementName];
-        } else if ([elementName hasSuffix:kNameSuffixTextField]) {
-            constraint = [NSString stringWithFormat:kHConstraintsTextField, elementName];
+        if ([element hasSuffix:kElementSuffixLabel]) {
+            constraint = [NSString stringWithFormat:kHConstraintsLabel, element];
+        } else if ([element hasSuffix:kElementSuffixTextField]) {
+            constraint = [NSString stringWithFormat:kHConstraintsTextField, element];
         }
         
         [constraints addObject:constraint];
@@ -260,49 +269,32 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
-#pragma mark - Constraints type info
-
-- (BOOL)elementsAreLabeled
-{
-    return ([_labeledElementNames count] > 0);
-}
-
-
-- (BOOL)elementsAreUnlabeled
-{
-    return ([_unlabeledElementNames count] > 0);
-}
-
-
 #pragma mark - Retrieving constraints
 
-- (NSString *)labeledAlignmentConstraints
+- (NSDictionary *)constraintsWithAlignmentOptions
 {
-    return [_labeledElementNames count] ? [self labeledVerticalLabelConstraints] : nil;
-}
-
-
-- (NSArray *)labeledSizeConstraints
-{
-    NSMutableArray *constraints = [[NSMutableArray alloc] init];
-
-    if ([_labeledElementNames count]) {
-        [constraints addObjectsFromArray:[self titleConstraints]];
-        [constraints addObject:[self labeledVerticalTextFieldConstraints]];
-        [constraints addObjectsFromArray:[self labeledHorizontalConstraints]];
-    }
+    NSMutableDictionary *constraints = [[NSMutableDictionary alloc] init];
     
-    return constraints;
-}
-
-
-- (NSArray *)unlabeledConstraints
-{
-    NSMutableArray *constraints = [[NSMutableArray alloc] init];
+    NSNumber *allTrailingOptions = [NSNumber numberWithInteger:NSLayoutFormatAlignAllTrailing];
+    NSNumber *noAlignmentOptions = [NSNumber numberWithInteger:0];
     
-    if ([_unlabeledElementNames count]) {
-        [constraints addObject:[self unlabeledVerticalConstraints]];
-        [constraints addObjectsFromArray:[self unlabeledHorizontalConstraints]];
+    if ([_labeledElementKeyPaths count]) {
+        NSMutableArray *allTrailingConstraints = [[NSMutableArray alloc] init];
+        [allTrailingConstraints addObject:[self labeledVerticalLabelConstraints]];
+        
+        NSMutableArray *nonAlignedConstraints = [[NSMutableArray alloc] init];
+        [nonAlignedConstraints addObjectsFromArray:[self titleConstraints]];
+        [nonAlignedConstraints addObject:[self labeledVerticalTextFieldConstraints]];
+        [nonAlignedConstraints addObjectsFromArray:[self labeledHorizontalConstraints]];
+        
+        [constraints setObject:allTrailingConstraints forKey:allTrailingOptions];
+        [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
+    } else if ([_unlabeledElements count]) {
+        NSMutableArray *nonAlignedConstraints = [[NSMutableArray alloc] init];
+        [nonAlignedConstraints addObject:[self unlabeledVerticalConstraints]];
+        [nonAlignedConstraints addObjectsFromArray:[self unlabeledHorizontalConstraints]];
+        
+        [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
     }
     
     return constraints;
