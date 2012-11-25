@@ -411,11 +411,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
     NSInteger lineCountDelta = [textView lineCountDelta];
     
     if (lineCountDelta) {
-        [self.backgroundView removeDropShadow];
+        [self.backgroundView toggleDropShadow];
         CGRect frame = self.frame;
         frame.size.height += lineCountDelta * [UIFont detailLineHeight];
         self.frame = frame;
-        [self.backgroundView addDropShadowForTrailingTableViewCell];
+        [self.backgroundView toggleDropShadow];
         
         [_visualConstraints updateLabeledTextViewConstraintsForKeyPath:textView.keyPath lineCount:[textView lineCount]];
         

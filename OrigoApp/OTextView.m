@@ -152,6 +152,18 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
 }
 
 
+- (CGFloat)height
+{
+    CGFloat height = [OTextView heightForLineCount:[self lineCount]];
+    
+    if ([OState s].actionIsInput && !_editing) {
+        height -= [UIFont detailLineHeight];
+    }
+    
+    return height;
+}
+
+
 + (NSInteger)lineCountGuesstimateWithText:(NSString *)text
 {
     NSInteger lineCountGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)].height / [UIFont detailLineHeight];
@@ -182,11 +194,11 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
     
     if (lineCountDelta) {
         if ((lineCount > 1) && (lineCount <= kTextViewMaximumEditLines)) {
-            [self removeDropShadow];
+            [self toggleDropShadow];
             CGRect frame = self.frame;
             frame.size.height += lineCountDelta * [UIFont detailLineHeight];
             self.frame = frame;
-            [self addDropShadowForField];
+            [self toggleDropShadow];
             
             _lastKnownLineCount = lineCount;
         } else {
@@ -210,17 +222,14 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
 {
     _editing = !_editing;
     
-    if (!_editing) {
-        self.backgroundColor = [UIColor clearColor];
-        
-        [self.delegate textViewDidChange:self];
-        [self removeDropShadow];
-    } else {
+    if (_editing) {
         self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-        
-        [self.delegate textViewDidChange:self];
-        [self addDropShadowForField];
+    } else {
+        self.backgroundColor = [UIColor clearColor];
     }
+    
+    //[self.delegate textViewDidChange:self];
+    [self toggleDropShadow];
 }
 
 

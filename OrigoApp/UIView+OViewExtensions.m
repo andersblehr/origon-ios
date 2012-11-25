@@ -62,7 +62,7 @@ static CGFloat const kImageShadowOffset = 1.5f;
 }
 
 
-- (void)addDropShadowForField
+- (void)addDropShadowForTextField
 {
     CGFloat fieldShadowOriginY = self.bounds.origin.y + kFieldShadowOffset;
     CGFloat fieldShadowHeight = self.bounds.size.height - kFieldShadowHeightShrinkage;
@@ -80,6 +80,20 @@ static CGFloat const kImageShadowOffset = 1.5f;
 - (void)removeDropShadow
 {
     [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor clearColor] radius:0.f offset:0.f];
+}
+
+
+- (void)toggleDropShadow
+{
+    if ((self.layer.shadowRadius == 0.f) || (self.layer.shadowOpacity == 0.f)) {
+        if ([self isKindOfClass:UITextField.class] || [self isKindOfClass:UITextView.class]) {
+            [self addDropShadowForTextField];
+        } else {
+            [self addDropShadowForTrailingTableViewCell];
+        }
+    } else {
+        [self removeDropShadow];
+    }
 }
 
 @end
