@@ -137,6 +137,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     
     BOOL isTopmostLabel = YES;
     NSNumber *precedingLineCount = nil;
+    //NSString *precedingKeyPath = nil;
     
     for (NSString *keyPath in _labeledElementKeyPaths) {
         if ([[_elementVisibility objectForKey:keyPath] boolValue]) {
@@ -150,6 +151,9 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
                 CGFloat paddingToPrecedingRow = 0.f;
                 
                 if (precedingLineCount) {
+                    //OTextView *precedingTextView = [_cell textFieldForKeyPath:precedingKeyPath];
+                    //paddingToPrecedingRow = [precedingTextView height] - [UIFont detailFieldHeight];
+                    
                     paddingToPrecedingRow = [OTextView heightForLineCount:[precedingLineCount intValue]] - [UIFont detailFieldHeight];
                 }
                 
@@ -159,6 +163,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
             constraints = [constraints stringByAppendingString:constraint];
             
             precedingLineCount = [_textViewLineCounts objectForKey:keyPath];
+            //precedingKeyPath = keyPath;
         }
     }
     

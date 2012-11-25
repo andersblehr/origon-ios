@@ -13,10 +13,9 @@
 
 - (void)addGradientLayer;
 
+- (void)toggleDropShadow;
 - (void)addDropShadowForInternalTableViewCell;
 - (void)addDropShadowForTrailingTableViewCell;
-- (void)addDropShadowForField;
 - (void)addDropShadowForPhotoFrame;
-- (void)removeDropShadow;
 
 @end

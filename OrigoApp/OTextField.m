@@ -215,7 +215,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 - (void)emphasise
 {
     self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-    [self addDropShadowForField];
+    [self toggleDropShadow];
     
     if (_isTitle) {
         self.textColor = [UIColor editableTitleTextColor];
@@ -230,7 +230,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         [self emphasise];
     } else {
         self.backgroundColor = [UIColor clearColor];
-        [self removeDropShadow];
+        [self toggleDropShadow];
         
         if (_isTitle) {
             self.textColor = [UIColor titleTextColor];
