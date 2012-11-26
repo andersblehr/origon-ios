@@ -316,7 +316,7 @@ static OMeta *m = nil;
 
 - (BOOL)registrationIsComplete
 {
-    return ([_user hasPhone] && [_user hasAddress]);
+    return ([_user hasMobilePhone] && [_user hasAddress]);
 }
 
 

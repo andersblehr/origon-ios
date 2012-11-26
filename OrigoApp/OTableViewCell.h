@@ -15,6 +15,7 @@ extern NSString * const kReuseIdentifierUserActivation;
 extern NSString * const kElementSuffixLabel;
 extern NSString * const kElementSuffixTextField;
 
+extern CGFloat const kDefaultTableViewCellHeight;
 extern CGFloat const kDefaultPadding;
 
 @class OReplicatedEntity;
@@ -24,18 +25,17 @@ extern CGFloat const kDefaultPadding;
 @private
     BOOL _selectable;
     
-    OReplicatedEntity *_entity;
     OVisualConstraints *_visualConstraints;
     NSMutableDictionary *_views;
     
-    id<UITextFieldDelegate, UITextViewDelegate> _delegate;
+    id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
     
     void *_localContext;
 }
 
-+ (CGFloat)defaultHeight;
+@property (strong, nonatomic, readonly) OReplicatedEntity *entity;
+
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
-+ (CGFloat)heightForEntityClass:(Class)entityClass;
 + (CGFloat)heightForEntity:(OReplicatedEntity *)entity;
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
@@ -46,8 +46,9 @@ extern CGFloat const kDefaultPadding;
 - (id)textFieldForKeyPath:(NSString *)keyPath;
 
 - (void)willAppearTrailing:(BOOL)trailing;
+- (void)toggleEditMode;
 - (void)respondToTextViewSizeChange:(OTextView *)textView;
 
-- (void)shakeCellVibrate:(BOOL)shouldVibrate;
+- (void)shakeCellShouldVibrate:(BOOL)shouldVibrate;
 
 @end

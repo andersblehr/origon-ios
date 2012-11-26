@@ -8,6 +8,7 @@
 
 #import "OVisualConstraints.h"
 
+#import "NSDate+ODateExtensions.h"
 #import "UIFont+OFontExtensions.h"
 
 #import "OLogging.h"
@@ -15,6 +16,10 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 #import "OTextView.h"
+
+#import "OReplicatedEntity.h"
+
+#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 static NSString * const kVConstraintsInitial          = @"V:|-10-";
 static NSString * const kVConstraintsInitialWithTitle = @"V:|-44-";
@@ -39,8 +44,72 @@ static NSString * const kVConstraintsTextField        = @"[%@(%.f)]";
 static NSString * const kHConstraintsTopmostWithPhoto = @"H:|-10-[%@(>=55)]-3-[%@]-6-[photoFrame]-10-|";
 static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%@]-6-|";
 
+static NSString * const kKeyPathPrefixDate = @"date";
+
 
 @implementation OVisualConstraints
+
+#pragma mark - Auxiliary methods
+
+- (BOOL)elementsAreVisibleForKeyPath:(NSString *)keyPath
+{
+    BOOL elementsAreVisible = YES;
+    
+    if (_cell.entity) {
+        NSArray *entityAttributeKeys = [[[_cell.entity entity] attributesByName] allKeys];
+        
+        if ([entityAttributeKeys containsObject:keyPath]) {
+            id value = [_cell.entity valueForKey:keyPath];
+            
+            if (value && [value isKindOfClass:NSString.class]) {
+                elementsAreVisible = ([value length] > 0);
+            } else if (!value) {
+                elementsAreVisible = NO;
+            }
+            
+            elementsAreVisible = elementsAreVisible || [OState s].actionIsInput;
+        }
+    }
+    
+    return elementsAreVisible;
+}
+
+
+- (void)configureElementsIfNeededForKeyPath:(NSString *)keyPath
+{
+    id label = [_cell labelForKeyPath:keyPath];
+    id textField = [_cell textFieldForKeyPath:keyPath];
+    
+    if ([self elementsAreVisibleForKeyPath:keyPath]) {
+        if (label && [label isHidden]) {
+            [label setHidden:NO];
+        }
+        
+        if (textField && [textField isHidden]) {
+            [textField setHidden:NO];
+            
+            id value = [_cell.entity valueForKey:keyPath];
+            
+            if (value && (![[textField text] length])) {
+                if ([value isKindOfClass:NSString.class]) {
+                    [textField setText:value];
+                } else if ([value isKindOfClass:NSDate.class]) {
+                    [textField setText:[value localisedDateString]];
+                    ((UIDatePicker *)(((OTextField *)textField).inputView)).date = value;
+                }
+            }
+        }
+    } else {
+        if (label && ![label isHidden]) {
+            [label setHidden:YES];
+        }
+        
+        if (textField && [textField isHidden]) {
+            [textField setHidden:YES];
+        }
+    }
+}
+
 
 #pragma mark - Initialisation
 
@@ -51,11 +120,8 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     if (self) {
         _cell = cell;
         
-        _unlabeledElements = [[NSMutableArray alloc] init];
+        _unlabeledElementKeyPaths = [[NSMutableArray alloc] init];
         _labeledElementKeyPaths = [[NSMutableArray alloc] init];
-        
-        _elementVisibility = [[NSMutableDictionary alloc] init];
-        _textViewLineCounts = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -66,44 +132,19 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 
 - (void)addTitleConstraintsForKeyPath:(NSString *)keyPath
 {
-    _titleElement = [keyPath stringByAppendingString:kElementSuffixTextField];
+    _titleKeyPath = keyPath;
 }
 
 
-- (void)addLabeledTextFieldConstraintsForKeyPath:(NSString *)keyPath visible:(BOOL)visible
+- (void)addLabeledTextFieldConstraintsForKeyPath:(NSString *)keyPath
 {
     [_labeledElementKeyPaths addObject:keyPath];
-    [_elementVisibility setObject:[NSNumber numberWithBool:visible] forKey:keyPath];
-
-    ((UILabel *)[_cell labelForKeyPath:keyPath]).hidden = !visible;
-    ((OTextField *)[_cell textFieldForKeyPath:keyPath]).hidden = !visible;
 }
 
 
-- (void)addLabeledTextViewConstraintsForKeyPath:(NSString *)keyPath lineCount:(NSUInteger)lineCount
+- (void)addUnlabeledConstraintsForKeyPath:(NSString *)keyPath
 {
-    [self addLabeledTextFieldConstraintsForKeyPath:keyPath visible:YES];
-    [self updateLabeledTextViewConstraintsForKeyPath:keyPath lineCount:lineCount];
-}
-
-
-- (void)addLabelConstraintsForKeyPath:(NSString *)keyPath
-{
-    [_unlabeledElements addObject:[keyPath stringByAppendingString:kElementSuffixLabel]];
-}
-
-
-- (void)addUnlabeledTextFieldConstraintsForKeyPath:(NSString *)keyPath
-{
-    [_unlabeledElements addObject:[keyPath stringByAppendingString:kElementSuffixTextField]];
-}
-
-
-#pragma mark - Updating constraints
-
-- (void)updateLabeledTextViewConstraintsForKeyPath:(NSString *)keyPath lineCount:(NSInteger)lineCount
-{
-    [_textViewLineCounts setObject:[NSNumber numberWithInteger:lineCount] forKey:keyPath];
+    [_unlabeledElementKeyPaths addObject:keyPath];
 }
 
 
@@ -113,17 +154,21 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
-    if (_titleElement) {
+    if (_titleKeyPath) {
+        NSString *titleName = [_titleKeyPath stringByAppendingString:kElementSuffixTextField];
+        
+        [self configureElementsIfNeededForKeyPath:_titleKeyPath];
+        
         [constraints addObject:kVConstraintsTitleBanner];
         [constraints addObject:kHConstraintsTitleBanner];
         
         if (_titleBannerHasPhoto) {
-            [constraints addObject:[NSString stringWithFormat:kHConstraintsTitleWithPhoto, _titleElement]];
+            [constraints addObject:[NSString stringWithFormat:kHConstraintsTitleWithPhoto, titleName]];
             [constraints addObject:kVConstraintsPhoto];
             [constraints addObject:kVConstraintsPhotoPrompt];
             [constraints addObject:kHConstraintsPhotoPrompt];
         } else {
-            [constraints addObject:[NSString stringWithFormat:kHConstraintsTitle, _titleElement]];
+            [constraints addObject:[NSString stringWithFormat:kHConstraintsTitle, titleName]];
         }
     }
     
@@ -133,37 +178,33 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 
 - (NSString *)labeledVerticalLabelConstraints
 {
-    NSString *constraints = _titleElement ? kVConstraintsInitialWithTitle : kVConstraintsInitial;
+    NSString *constraints = _titleKeyPath ? kVConstraintsInitialWithTitle : kVConstraintsInitial;
     
     BOOL isTopmostLabel = YES;
-    NSNumber *precedingLineCount = nil;
-    //NSString *precedingKeyPath = nil;
+    id precedingTextField = nil;
     
     for (NSString *keyPath in _labeledElementKeyPaths) {
-        if ([[_elementVisibility objectForKey:keyPath] boolValue]) {
-            NSString *labelElement = [keyPath stringByAppendingString:kElementSuffixLabel];
+        [self configureElementsIfNeededForKeyPath:keyPath];
+        
+        if ([self elementsAreVisibleForKeyPath:keyPath]) {
             NSString *constraint = nil;
+            NSString *labelName = [keyPath stringByAppendingString:kElementSuffixLabel];
             
             if (isTopmostLabel) {
-                constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, labelElement];
+                constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, labelName];
                 isTopmostLabel = NO;
             } else {
-                CGFloat paddingToPrecedingRow = 0.f;
+                CGFloat padding = 0.f;
                 
-                if (precedingLineCount) {
-                    //OTextView *precedingTextView = [_cell textFieldForKeyPath:precedingKeyPath];
-                    //paddingToPrecedingRow = [precedingTextView height] - [UIFont detailFieldHeight];
-                    
-                    paddingToPrecedingRow = [OTextView heightForLineCount:[precedingLineCount intValue]] - [UIFont detailFieldHeight];
+                if (precedingTextField && [precedingTextField isKindOfClass:OTextView.class]) {
+                    padding = [(OTextView *)precedingTextField height] - [UIFont detailFieldHeight];
                 }
                 
-                constraint = [NSString stringWithFormat:kVConstraintsLabel, paddingToPrecedingRow, labelElement];
+                constraint = [NSString stringWithFormat:kVConstraintsLabel, padding, labelName];
             }
             
+            precedingTextField = [_cell textFieldForKeyPath:keyPath];
             constraints = [constraints stringByAppendingString:constraint];
-            
-            precedingLineCount = [_textViewLineCounts objectForKey:keyPath];
-            //precedingKeyPath = keyPath;
         }
     }
     
@@ -175,19 +216,27 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     NSString *constraints = kVConstraintsInitial;
     
-    if (_titleElement) {
-        NSString *constraint = [NSString stringWithFormat:kVConstraintsTitle, _titleElement];
+    if (_titleKeyPath) {
+        NSString *titleName = [_titleKeyPath stringByAppendingString:kElementSuffixTextField];
+        NSString *constraint = [NSString stringWithFormat:kVConstraintsTitle, titleName];
         
         constraints = [constraints stringByAppendingString:constraint];
     }
     
     for (NSString *keyPath in _labeledElementKeyPaths) {
-        if ([[_elementVisibility objectForKey:keyPath] boolValue]) {
-            NSNumber *lineCount = [_textViewLineCounts objectForKey:keyPath];
-            CGFloat rowHeight = lineCount ? [OTextView heightForLineCount:[lineCount intValue]] : [UIFont detailFieldHeight];
+        [self configureElementsIfNeededForKeyPath:keyPath];
+        
+        if ([self elementsAreVisibleForKeyPath:keyPath]) {
+            id textField = [_cell textFieldForKeyPath:keyPath];
             
-            NSString *textFieldElement = [keyPath stringByAppendingString:kElementSuffixTextField];
-            NSString *constraint = [NSString stringWithFormat:kVConstraintsTextField, textFieldElement, rowHeight];
+            CGFloat textFieldHeight = [UIFont detailFieldHeight];
+            
+            if ([textField isKindOfClass:OTextView.class]) {
+                textFieldHeight = [(OTextView *)textField height];
+            }
+            
+            NSString *textFieldName = [keyPath stringByAppendingString:kElementSuffixTextField];
+            NSString *constraint = [NSString stringWithFormat:kVConstraintsTextField, textFieldName, textFieldHeight];
             
             constraints = [constraints stringByAppendingString:constraint];
         }
@@ -204,20 +253,18 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     BOOL isTopmostRow = YES;
     
     for (NSString *keyPath in _labeledElementKeyPaths) {
-        if ([[_elementVisibility objectForKey:keyPath] boolValue]) {
-            NSString *labelElement = [keyPath stringByAppendingString:kElementSuffixLabel];
-            NSString *textFieldElement = [keyPath stringByAppendingString:kElementSuffixTextField];
-            
+        [self configureElementsIfNeededForKeyPath:keyPath];
+        
+        if ([self elementsAreVisibleForKeyPath:keyPath]) {
+            NSString *labelName = [keyPath stringByAppendingString:kElementSuffixLabel];
+            NSString *textFieldName = [keyPath stringByAppendingString:kElementSuffixTextField];
             NSString *constraint = nil;
             
             if (isTopmostRow && _titleBannerHasPhoto) {
-                constraint = [NSString stringWithFormat:kHConstraintsTopmostWithPhoto, labelElement, textFieldElement];
-            } else {
-                constraint = [NSString stringWithFormat:kHConstraints, labelElement, textFieldElement];
-            }
-            
-            if (isTopmostRow) {
+                constraint = [NSString stringWithFormat:kHConstraintsTopmostWithPhoto, labelName, textFieldName];
                 isTopmostRow = NO;
+            } else {
+                constraint = [NSString stringWithFormat:kHConstraints, labelName, textFieldName];
             }
             
             [constraints addObject:constraint];
@@ -235,19 +282,30 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     BOOL isTopmostElement = YES;
     BOOL isBelowLabel = NO;
     
-    for (NSString *element in _unlabeledElements) {
-        NSString *constraint = nil;
+    for (NSString *keyPath in _unlabeledElementKeyPaths) {
+        [self configureElementsIfNeededForKeyPath:keyPath];
         
-        if (isTopmostElement) {
-            constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, element];
-            isTopmostElement = NO;
-        } else {
-            CGFloat spacing = isBelowLabel ? kDefaultPadding / 3 : 1.f;
-            constraint = [NSString stringWithFormat:kVConstraintsElement, spacing, element];
+        if ([self elementsAreVisibleForKeyPath:keyPath]) {
+            NSString *constraint = nil;
+            NSString *elementName = nil;
+            
+            if ([_cell labelForKeyPath:keyPath]) {
+                elementName = [keyPath stringByAppendingString:kElementSuffixLabel];
+            } else if ([_cell textFieldForKeyPath:keyPath]) {
+                elementName = [keyPath stringByAppendingString:kElementSuffixTextField];
+            }
+            
+            if (isTopmostElement) {
+                constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, elementName];
+                isTopmostElement = NO;
+            } else {
+                CGFloat spacing = isBelowLabel ? kDefaultPadding / 3 : 1.f;
+                constraint = [NSString stringWithFormat:kVConstraintsElement, spacing, elementName];
+            }
+            
+            constraints = [constraints stringByAppendingString:constraint];
+            isBelowLabel = [elementName hasSuffix:kElementSuffixLabel];
         }
-        
-        constraints = [constraints stringByAppendingString:constraint];
-        isBelowLabel = [element hasSuffix:kElementSuffixLabel];
     }
     
     return constraints;
@@ -258,16 +316,22 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
-    for (NSString *element in _unlabeledElements) {
-        NSString *constraint = nil;
+    for (NSString *keyPath in _unlabeledElementKeyPaths) {
+        [self configureElementsIfNeededForKeyPath:keyPath];
         
-        if ([element hasSuffix:kElementSuffixLabel]) {
-            constraint = [NSString stringWithFormat:kHConstraintsLabel, element];
-        } else if ([element hasSuffix:kElementSuffixTextField]) {
-            constraint = [NSString stringWithFormat:kHConstraintsTextField, element];
+        if ([self elementsAreVisibleForKeyPath:keyPath]) {
+            NSString *constraint = nil;
+            
+            if ([_cell labelForKeyPath:keyPath]) {
+                NSString *elementName = [keyPath stringByAppendingString:kElementSuffixLabel];
+                constraint = [NSString stringWithFormat:kHConstraintsLabel, elementName];
+            } else if ([_cell textFieldForKeyPath:keyPath]) {
+                NSString *elementName = [keyPath stringByAppendingString:kElementSuffixTextField];
+                constraint = [NSString stringWithFormat:kHConstraintsTextField, elementName];
+            }
+            
+            [constraints addObject:constraint];
         }
-        
-        [constraints addObject:constraint];
     }
     
     return constraints;
@@ -294,12 +358,21 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
         
         [constraints setObject:allTrailingConstraints forKey:allTrailingOptions];
         [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
-    } else if ([_unlabeledElements count]) {
+    } else if ([_unlabeledElementKeyPaths count]) {
         NSMutableArray *nonAlignedConstraints = [[NSMutableArray alloc] init];
         [nonAlignedConstraints addObject:[self unlabeledVerticalConstraints]];
         [nonAlignedConstraints addObjectsFromArray:[self unlabeledHorizontalConstraints]];
         
         [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
+    }
+    
+    //int i = 0;
+    for (NSNumber *alignmentOptions in [constraints allKeys]) {
+        NSArray *constraintsWithOptions = [constraints objectForKey:alignmentOptions];
+        
+        for (NSString *visualConstraints in constraintsWithOptions) {
+            //OLogDebug(@"\nVisual constraint (%d): %@", i++, visualConstraints);
+        }
     }
     
     return constraints;

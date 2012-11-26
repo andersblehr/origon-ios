@@ -67,10 +67,10 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 - (NSString *)hashUsingSHA1
 {
     const char *charString = [self cStringUsingEncoding:NSUTF8StringEncoding];
-    NSData *bytes = [NSData dataWithBytes:charString length:self.length];
+    NSData *bytes = [NSData dataWithBytes:charString length:[self length]];
     
     uint8_t SHA1Digest[CC_SHA1_DIGEST_LENGTH];
-    CC_SHA1(bytes.bytes, bytes.length, SHA1Digest);
+    CC_SHA1(bytes.bytes, [bytes length], SHA1Digest);
     
     NSMutableString *hash = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
     
@@ -125,7 +125,7 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
     
     spaceLocation = [thisString rangeOfString:@" " options:NSBackwardsSearch].location;
     
-    while (spaceLocation == thisString.length - 1) {
+    while (spaceLocation == [thisString length] - 1) {
         thisString = [thisString substringToIndex:spaceLocation];
         spaceLocation = [thisString rangeOfString:@" " options:NSBackwardsSearch].location;
     }
@@ -138,7 +138,7 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 {
     NSString *returnString = self;
     
-    if (self.length > 0) {
+    if ([self length] > 0) {
         returnString = [returnString stringByAppendingString:separator];
     }
     

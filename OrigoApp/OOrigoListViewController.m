@@ -244,7 +244,7 @@ static NSInteger const kWardSection = 1;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [OTableViewCell defaultHeight];
+    return kDefaultTableViewCellHeight;
 }
 
 

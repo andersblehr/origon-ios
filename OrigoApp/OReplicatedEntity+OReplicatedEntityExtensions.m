@@ -14,6 +14,7 @@
 
 #import "OMeta.h"
 #import "OState.h"
+#import "OTableViewCell.h"
 
 #import "OMember.h"
 #import "OMemberResidency.h"
@@ -22,33 +23,6 @@
 
 
 @implementation OReplicatedEntity (OReplicatedEntityExtensions)
-
-
-#pragma mark - Overriddes
-
-- (id)valueForKey:(NSString *)key
-{
-    id value = [super valueForKey:key];
-    
-    if (value && [value isKindOfClass:NSDate.class]) {
-        value = [NSNumber numberWithLongLong:[value timeIntervalSince1970] * 1000];
-    }
-    
-    return value;
-}
-
-
-- (void)setValue:(id)value forKey:(NSString *)key
-{
-    NSAttributeDescription *attribute = [[self.entity attributesByName] objectForKey:key];
-    
-    if (attribute.attributeType == NSDateAttributeType) {
-        value = [NSDate dateWithDeserialisedDate:value];
-    }
-    
-    [super setValue:value forKey:key];
-}
-
 
 #pragma mark - Auxiliary methods
 
@@ -60,6 +34,32 @@
     [dictionary setObject:self.entity.name forKey:kKeyPathEntityClass];
     
     return dictionary;
+}
+
+
+#pragma mark - Key-value proxy methods
+
+- (id)serialisableValueForKey:(NSString *)key
+{
+    id value = [super valueForKey:key];
+    
+    if (value && [value isKindOfClass:NSDate.class]) {
+        value = [NSNumber numberWithLongLong:[value timeIntervalSince1970] * 1000];
+    }
+    
+    return value;
+}
+
+
+- (void)setDeserialisedValue:(id)value forKey:(NSString *)key
+{
+    NSAttributeDescription *attribute = [[self.entity attributesByName] objectForKey:key];
+    
+    if (attribute.attributeType == NSDateAttributeType) {
+        value = [NSDate dateWithDeserialisedDate:value];
+    }
+    
+    [super setValue:value forKey:key];
 }
 
 
@@ -76,7 +76,7 @@
     
     for (NSString *attributeKey in [attributes allKeys]) {
         if (![self propertyIsTransient:attributeKey]) {
-            id attributeValue = [self valueForKey:attributeKey];
+            id attributeValue = [self serialisableValueForKey:attributeKey];
             
             if (attributeValue) {
                 [entityDictionary setObject:attributeValue forKey:attributeKey];
@@ -194,7 +194,21 @@
 }
 
 
-#pragma mark - Entity sharing & deletion
+#pragma mark - Display cell height calculation
+
++ (CGFloat)defaultDisplayCellHeight
+{
+    return kDefaultTableViewCellHeight;
+}
+
+
+- (CGFloat)displayCellHeight
+{
+    return kDefaultTableViewCellHeight;
+}
+
+
+#pragma mark - Entity linking & deletion
 
 - (OLinkedEntityRef *)linkedEntityRefForOrigo:(OOrigo *)origo
 {

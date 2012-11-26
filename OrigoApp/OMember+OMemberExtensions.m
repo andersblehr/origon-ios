@@ -8,14 +8,16 @@
 
 #import "OMember+OMemberExtensions.h"
 
+#import "NSDate+ODateExtensions.h"
+#import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
+#import "NSString+OStringExtensions.h"
+#import "UIFont+OFontExtensions.h"
+
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
-
-#import "NSDate+ODateExtensions.h"
-#import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
-#import "NSString+OStringExtensions.h"
+#import "OTableViewCell.h"
 
 #import "OMember.h"
 #import "OMemberResidency.h"
@@ -144,23 +146,9 @@
 }
 
 
-- (BOOL)hasPhone
-{
-    BOOL hasPhone = [self hasMobilePhone];
-    
-    if (!hasPhone) {
-        for (OMemberResidency *residency in self.residencies) {
-            hasPhone = hasPhone || [residency.residence hasTelephone];
-        }
-    }
-    
-    return hasPhone;
-}
-
-
 - (BOOL)hasMobilePhone
 {
-    return (self.mobilePhone.length > 0);
+    return ([self.mobilePhone length] > 0);
 }
 
 
@@ -188,7 +176,7 @@
 }
 
 
-#pragma mark - In the same household
+#pragma mark - Household information
 
 - (NSSet *)housemates
 {
@@ -260,6 +248,42 @@
     }
     
     return isMember;
+}
+
+
+#pragma mark - Display cell height calculation
+
++ (CGFloat)defaultDisplayCellHeight
+{
+    CGFloat height = 3 * kDefaultPadding;
+    height += [UIFont titleFieldHeight];
+    height += 3 * [UIFont detailFieldHeight];
+    
+    return height;
+}
+
+
+- (CGFloat)displayCellHeight
+{
+    CGFloat height = 0.f;
+    
+    if ([OState s].actionIsInput) {
+        height = [OMember defaultDisplayCellHeight];
+    } else {
+        height = 3 * kDefaultPadding;
+        height += [UIFont titleFieldHeight];
+        height += [UIFont detailFieldHeight];
+        
+        if ([self.mobilePhone length] > 0) {
+            height += [UIFont detailFieldHeight];
+        }
+        
+        if ([self.email length] > 0) {
+            height += [UIFont detailFieldHeight];
+        }
+    }
+    
+    return height;
 }
 
 

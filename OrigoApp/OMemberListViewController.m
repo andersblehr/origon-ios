@@ -254,9 +254,9 @@ static NSInteger const kMemberSection = 2;
     CGFloat height = 0;
     
     if (indexPath.section == kOrigoSection) {
-        height = [OTableViewCell heightForEntity:_origo];
+        height = [_origo displayCellHeight];
     } else {
-        height = [OTableViewCell defaultHeight];
+        height = kDefaultTableViewCellHeight;
     }
     
     return height;

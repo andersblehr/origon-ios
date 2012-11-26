@@ -67,7 +67,7 @@ static CGFloat const kFieldHeightScaleFactor = 1.22f;
 
 + (CGFloat)detailLineHeight
 {
-    return [[self detailFont] textFieldHeight] - 4.f;
+    return [[self detailFont] textFieldHeight] - 3.f;
 }
 
 

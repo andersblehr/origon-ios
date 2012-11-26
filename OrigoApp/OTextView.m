@@ -19,8 +19,10 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 
-NSInteger const kTextViewMinimumEditLines = 3;
-NSInteger const kTextViewMaximumEditLines = 5;
+NSInteger const kTextViewMinimumEditLines = 2;
+NSInteger const kTextViewMaximumLines = 5;
+
+static NSInteger const kTextViewMinimumLines = 1;
 
 static CGFloat const kTopInset = 5.f;
 static CGFloat const kDetailWidthGuesstimate = 210.f;
@@ -32,13 +34,27 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
 
 #pragma mark - Auxiliary methods
 
-- (void)setPropertiesForKeyPath:(NSString *)keyPath
++ (NSInteger)lineCountGuesstimateWithText:(NSString *)text
 {
-    _keyPath = keyPath;
+    CGSize sizeGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)];
+    NSInteger lineCountGuesstimate = round(sizeGuesstimate.height / [UIFont detailLineHeight]);
     
-    if ([keyPath isEqualToString:kKeyPathAddress]) {
-        self.placeholder = [OStrings stringForKey:strPromptAddress];
+    lineCountGuesstimate = MAX(lineCountGuesstimate, kTextViewMinimumLines);
+    lineCountGuesstimate = MIN(lineCountGuesstimate, kTextViewMaximumLines);
+    
+    return lineCountGuesstimate;
+}
+
+
++ (CGFloat)heightForLineCount:(NSUInteger)lineCount
+{
+    if ([OState s].actionIsInput) {
+        lineCount = MAX(kTextViewMinimumEditLines, lineCount);
+    } else {
+        lineCount = MAX(kTextViewMinimumLines, lineCount);
     }
+    
+    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight];
 }
 
 
@@ -46,18 +62,20 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
 {
     NSInteger lineCount = 0;
     
-    if (self.window) {
+    if (self.window && self.text) {
         lineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
         
         if (_editing) {
-            if ((lineCount > 1) && (lineCount < 5)) {
+            if ((lineCount > 1) && (lineCount < kTextViewMaximumLines)) {
                 lineCount++;
-            } else if (lineCount < 2) {
+            } else if (lineCount < kTextViewMinimumEditLines) {
                 lineCount = kTextViewMinimumEditLines;
             }
         }
-    } else {
+    } else if (self.text) {
         lineCount = [OTextView lineCountGuesstimateWithText:self.text];
+    } else {
+        lineCount = [OTextView lineCountGuesstimateWithText:self.placeholder];
     }
     
     return lineCount;
@@ -98,19 +116,16 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
 
 #pragma mark - Initialisation
 
-- (id)initForKeyPath:(NSString *)keyPath text:(NSString *)text delegate:(id)delegate
+- (id)initForKeyPath:(NSString *)keyPath delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
     if (self) {
-        _editing = NO;
-        
         _placeholderView = [[UITextView alloc] initWithFrame:CGRectZero];
         _placeholderView.backgroundColor = [UIColor clearColor];
         _placeholderView.delegate = self;
         _placeholderView.font = [UIFont detailFont];
         _placeholderView.textColor = [UIColor lightGrayColor];
-        
         [self addSubview:_placeholderView];
         
         self.autocapitalizationType = UITextAutocapitalizationTypeSentences;
@@ -120,20 +135,22 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
         self.delegate = delegate;
         self.editable = [OState s].actionIsInput;
         self.font = [UIFont detailFont];
+        self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
+        self.placeholder = [OStrings placeholderForKeyPath:keyPath];
         self.returnKeyType = UIReturnKeyDefault;
         self.scrollEnabled = NO;
-        self.text = text;
         self.textAlignment = NSTextAlignmentLeft;
         self.userInteractionEnabled = [OState s].actionIsInput;
-        [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         
-        _lastKnownText = text;
-        _lastKnownLineCount = [self lineCount];
+        [self setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
+        
+        _editing = NO;
+        _keyPath = keyPath;
+        _lastKnownLineCount = [OTextView lineCountGuesstimateWithText:_placeholder];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged) name:UITextViewTextDidChangeNotification object:nil];
-        
-        [self setPropertiesForKeyPath:keyPath];
     }
     
     return self;
@@ -142,40 +159,17 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
 
 #pragma mark - Hooks for sizing & resizing
 
-+ (CGFloat)heightForLineCount:(NSUInteger)lineCount
++ (CGFloat)heightGuesstimateWithText:(NSString *)text
 {
-    if ([OState s].actionIsInput) {
-        lineCount = MAX(kTextViewMinimumEditLines, lineCount);
-    }
+    NSInteger lineCount = [self lineCountGuesstimateWithText:text];
     
-    return MAX(lineCount * [UIFont detailLineHeight] + 6.f, [UIFont detailFieldHeight]);
+    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight];
 }
 
 
 - (CGFloat)height
 {
-    CGFloat height = [OTextView heightForLineCount:[self lineCount]];
-    
-    if ([OState s].actionIsInput && !_editing) {
-        height -= [UIFont detailLineHeight];
-    }
-    
-    return height;
-}
-
-
-+ (NSInteger)lineCountGuesstimateWithText:(NSString *)text
-{
-    NSInteger lineCountGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)].height / [UIFont detailLineHeight];
-    
-    if ([OState s].actionIsInput) {
-        lineCountGuesstimate++;
-        
-        lineCountGuesstimate = MIN(lineCountGuesstimate, kTextViewMaximumEditLines);
-        lineCountGuesstimate = MAX(lineCountGuesstimate, kTextViewMinimumEditLines);
-    }
-    
-    return lineCountGuesstimate;
+    return [OTextView heightForLineCount:[self transientLineCount]];
 }
 
 
@@ -193,20 +187,17 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
     NSInteger lineCountDelta = lineCount - _lastKnownLineCount;
     
     if (lineCountDelta) {
-        if ((lineCount > 1) && (lineCount <= kTextViewMaximumEditLines)) {
-            [self toggleDropShadow];
-            CGRect frame = self.frame;
-            frame.size.height += lineCountDelta * [UIFont detailLineHeight];
-            self.frame = frame;
-            [self toggleDropShadow];
-            
-            _lastKnownLineCount = lineCount;
-        } else {
-            if (lineCount > kTextViewMaximumEditLines) {
-                self.text = _lastKnownText;
-            }
-            
-            lineCountDelta = 0;
+        if (lineCount + lineCountDelta > kTextViewMaximumLines) {
+            lineCountDelta = kTextViewMaximumLines - _lastKnownLineCount;
+        } else if (lineCount + lineCountDelta < kTextViewMinimumEditLines) {
+            lineCountDelta = kTextViewMinimumEditLines - _lastKnownLineCount;
+        }
+        
+        if (lineCountDelta) {
+            _lastKnownLineCount = MAX(lineCount, kTextViewMinimumEditLines);
+            _lastKnownLineCount = MIN(_lastKnownLineCount, kTextViewMaximumLines);
+        } else if (lineCount > kTextViewMaximumLines) {
+            self.text = _lastKnownText;
         }
     }
 
@@ -228,8 +219,8 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
         self.backgroundColor = [UIColor clearColor];
     }
     
-    //[self.delegate textViewDidChange:self];
-    [self toggleDropShadow];
+    [self.delegate textViewDidChange:self];
+    [self hasDropShadow:_editing];
 }
 
 
@@ -241,6 +232,7 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
     
     _placeholderView.frame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height);
     _placeholderView.text = placeholder;
+    _placeholder = placeholder;
 }
 
 
@@ -262,6 +254,9 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
 {
     [super setText:text];
     [self textChanged];
+    
+    _lastKnownText = text;
+    _lastKnownLineCount = [self lineCount];
 }
 
 
@@ -270,6 +265,16 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
 - (CGSize)intrinsicContentSize
 {
     return [self intrinsicSizeOfText:self.text];
+}
+
+
+- (void)drawRect:(CGRect)rect
+{
+    [super drawRect:rect];
+    
+    if (_editing) {
+        [self hasDropShadow:YES];
+    }
 }
 
 

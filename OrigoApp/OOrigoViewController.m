@@ -29,6 +29,7 @@
 #import "OOrigo.h"
 
 #import "OOrigo+OOrigoExtensions.h"
+#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 #import "OMemberListViewController.h"
 
@@ -42,24 +43,22 @@
     static UIBarButtonItem *editButton = nil;
     static UIBarButtonItem *backButton = nil;
     
-    if ([OState s].actionIsDisplay) {
+    [_origoCell toggleEditMode];
+    
+    if ([OState s].actionIsEdit) {
         editButton = self.navigationItem.rightBarButtonItem;
         backButton = self.navigationItem.leftBarButtonItem;
         
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
-        
-        [OState s].actionIsEdit = YES;
-    } else if ([OState s].actionIsEdit) {
+
+        [_addressView becomeFirstResponder];
+    } else if ([OState s].actionIsDisplay) {
         [self.view endEditing:YES];
         
         self.navigationItem.rightBarButtonItem = editButton;
         self.navigationItem.leftBarButtonItem = backButton;
-        
-        [OState s].actionIsDisplay = YES;
     }
-    
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
     
     OLogState;
 }
@@ -106,7 +105,7 @@
         
         [[OMeta m].context replicateIfNeeded];
     } else {
-        [_origoCell shakeCellVibrate:NO];
+        [_origoCell shakeCellShouldVibrate:NO];
     }
 }
 
@@ -164,6 +163,16 @@
 }
 
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if ([OState s].actionIsInput) {
+        [_addressView becomeFirstResponder];
+    }
+}
+
+
 - (NSUInteger)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskPortrait;
@@ -189,9 +198,9 @@
     CGFloat height = 0.f;
     
     if (_origo) {
-        height = [OTableViewCell heightForEntity:_origo];
+        height = [_origo displayCellHeight];
     } else {
-        height = [OTableViewCell heightForEntityClass:OOrigo.class];
+        height = [OOrigo defaultDisplayCellHeight];
     }
     
     return height;
@@ -218,10 +227,6 @@
 - (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [cell willAppearTrailing:YES];
-    
-    if ([OState s].actionIsInput) {
-        [_addressView becomeFirstResponder];
-    }
 }
 
 

@@ -21,6 +21,35 @@ static CGFloat const kImageShadowOffset = 1.5f;
 
 @implementation UIView (OViewExtensions)
 
+#pragma mark - Auxiliary methods
+
+- (void)addShadowWithPath:(UIBezierPath *)path colour:(UIColor *)colour radius:(CGFloat)radius offset:(CGFloat)offset
+{
+    self.layer.shadowPath = path.CGPath;
+    self.layer.shadowColor = colour.CGColor;
+    self.layer.shadowOpacity = 1.f;
+    self.layer.shadowRadius = radius;
+    self.layer.shadowOffset = CGSizeMake(0.f, offset);
+    
+    self.layer.masksToBounds = NO;
+}
+
+
+- (void)addDropShadowForTextField
+{
+    CGFloat fieldShadowOriginY = self.bounds.origin.y + kFieldShadowOffset;
+    CGFloat fieldShadowHeight = self.bounds.size.height - kFieldShadowHeightShrinkage;
+    
+    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:CGRectMake(self.bounds.origin.x, fieldShadowOriginY, self.bounds.size.width, fieldShadowHeight)] colour:[UIColor darkGrayColor] radius:kFieldShadowRadius offset:kFieldShadowOffset];
+}
+
+
+- (void)removeDropShadow
+{
+    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor clearColor] radius:0.f offset:0.f];
+}
+
+
 #pragma mark - Gradient layer
 
 - (void)addGradientLayer
@@ -36,18 +65,6 @@ static CGFloat const kImageShadowOffset = 1.5f;
 
 #pragma mark - Shadows
 
-- (void)addShadowWithPath:(UIBezierPath *)path colour:(UIColor *)colour radius:(CGFloat)radius offset:(CGFloat)offset
-{
-    self.layer.shadowPath = path.CGPath;
-    self.layer.shadowColor = colour.CGColor;
-    self.layer.shadowOpacity = 1.f;
-    self.layer.shadowRadius = radius;
-    self.layer.shadowOffset = CGSizeMake(0.f, offset);
-    
-    self.layer.masksToBounds = NO;
-}
-
-
 - (void)addDropShadowForInternalTableViewCell
 {
     CGRect nonOverlappingShadowRect = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height - 2.75f * kCellShadowRadius);
@@ -62,30 +79,15 @@ static CGFloat const kImageShadowOffset = 1.5f;
 }
 
 
-- (void)addDropShadowForTextField
-{
-    CGFloat fieldShadowOriginY = self.bounds.origin.y + kFieldShadowOffset;
-    CGFloat fieldShadowHeight = self.bounds.size.height - kFieldShadowHeightShrinkage;
-    
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:CGRectMake(self.bounds.origin.x, fieldShadowOriginY, self.bounds.size.width, fieldShadowHeight)] colour:[UIColor darkGrayColor] radius:kFieldShadowRadius offset:kFieldShadowOffset];
-}
-
-
 - (void)addDropShadowForPhotoFrame
 {
     [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor darkGrayColor] radius:kImageShadowRadius offset:kImageShadowOffset];
 }
 
 
-- (void)removeDropShadow
+- (void)hasDropShadow:(BOOL)hasShadow
 {
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor clearColor] radius:0.f offset:0.f];
-}
-
-
-- (void)toggleDropShadow
-{
-    if ((self.layer.shadowRadius == 0.f) || (self.layer.shadowOpacity == 0.f)) {
+    if (hasShadow) {
         if ([self isKindOfClass:UITextField.class] || [self isKindOfClass:UITextView.class]) {
             [self addDropShadowForTextField];
         } else {
@@ -94,6 +96,12 @@ static CGFloat const kImageShadowOffset = 1.5f;
     } else {
         [self removeDropShadow];
     }
+}
+
+
+- (void)redrawDropShadow
+{
+    [self hasDropShadow:YES];
 }
 
 @end
