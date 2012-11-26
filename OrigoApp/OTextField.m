@@ -32,28 +32,18 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Auxiliary methods
 
-- (void)setPropertiesForKeyPath:(NSString *)keyPath
+- (void)configureForKeyPath:(NSString *)keyPath
 {
     _keyPath = keyPath;
     
-    if ([keyPath isEqualToString:kKeyPathPassword] || [keyPath isEqualToString:kKeyPathRepeatPassword]) {
+    if ([keyPath isEqualToString:kKeyPathAuthEmail]) {
+        self.keyboardType = UIKeyboardTypeEmailAddress;
+    } else if ([keyPath isEqualToString:kKeyPathPassword] || [keyPath isEqualToString:kKeyPathRepeatPassword]) {
         self.clearsOnBeginEditing = YES;
         self.returnKeyType = UIReturnKeyDone;
         self.secureTextEntry = YES;
-        
-        if ([keyPath isEqualToString:kKeyPathPassword]) {
-            self.placeholder = [OStrings stringForKey:strPromptPassword];
-        } else if ([keyPath isEqualToString:kKeyPathRepeatPassword]) {
-            self.placeholder = [OStrings stringForKey:strPromptRepeatPassword];
-        }
-    } else if ([keyPath isEqualToString:kKeyPathAuthEmail]) {
-        self.keyboardType = UIKeyboardTypeEmailAddress;
-        self.placeholder = [OStrings stringForKey:strPromptAuthEmail];
-    } else if ([keyPath isEqualToString:kKeyPathActivationCode]) {
-        self.placeholder = [OStrings stringForKey:strPromptActivationCode];
     } else if ([keyPath isEqualToString:kKeyPathName]) {
         self.autocapitalizationType = UITextAutocapitalizationTypeWords;
-        self.placeholder = [OStrings stringForKey:strPromptName];
     } else if ([keyPath isEqualToString:kKeyPathDateOfBirth]) {
         UIDatePicker *datePicker = [[UIDatePicker alloc] init];
         datePicker.datePickerMode = UIDatePickerModeDate;
@@ -63,10 +53,8 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         [datePicker addTarget:self.delegate action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
         
         self.inputView = datePicker;
-        self.placeholder = [OStrings stringForKey:strPromptDateOfBirth];
     } else if ([keyPath isEqualToString:kKeyPathMobilePhone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
-        self.placeholder = [OStrings stringForKey:strPromptMobilePhone];
         
         if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
             self.returnKeyType = UIReturnKeyDone;
@@ -74,21 +62,19 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     } else if ([keyPath isEqualToString:kKeyPathEmail]) {
         self.keyboardType = UIKeyboardTypeEmailAddress;
         self.returnKeyType = UIReturnKeyDone;
-        self.placeholder = [OStrings stringForKey:strPromptEmail];
         
         if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
             self.enabled = NO;
         }
     } else if ([keyPath isEqualToString:kKeyPathTelephone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
-        self.placeholder = [OStrings stringForKey:strPromptTelephone];
     }
 }
 
 
 #pragma mark - Initialisation
 
-- (id)initForKeyPath:(NSString *)keyPath text:(NSString *)text delegate:(id)delegate
+- (id)initForKeyPath:(NSString *)keyPath delegate:(id)delegate
 {
     _isTitle = ([keyPath isEqualToString:kKeyPathName] && [OState s].targetIsMember);
     
@@ -102,17 +88,18 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         self.delegate = delegate;
         self.enabled = [OState s].actionIsInput;
         self.font = _isTitle ? [UIFont titleFont] : [UIFont detailFont];
-        self.frame = CGRectMake(0.f, 0.f, 0.f, [self.font textFieldHeight]);
+        //self.frame = CGRectMake(0.f, 0.f, 0.f, [self.font textFieldHeight]);
+        self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
+        self.placeholder = [OStrings placeholderForKeyPath:keyPath];
         self.returnKeyType = UIReturnKeyNext;
-        self.text = text;
         self.textAlignment = NSTextAlignmentLeft;
         self.textColor = _isTitle ? [UIColor titleTextColor] : [UIColor detailTextColor];
         
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
-        [self setPropertiesForKeyPath:keyPath];
+        [self configureForKeyPath:keyPath];
     }
     
     return self;
@@ -153,7 +140,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 {
     NSString *password = [self.text removeLeadingAndTrailingWhitespace];
     
-    BOOL isValid = (password.length >= kMinimumPassordLength);
+    BOOL isValid = ([password length] >= kMinimumPassordLength);
     
     if (!isValid) {
         [self becomeFirstResponder];
@@ -167,13 +154,13 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 {
     NSString *name = [self.text removeLeadingAndTrailingWhitespace];
     
-    BOOL isValid = (name.length > 0);
+    BOOL isValid = ([name length] > 0);
     
     if (isValid) {
         NSUInteger spaceLocation = [name rangeOfString:@" "].location;
         
         isValid = isValid && (spaceLocation > 0);
-        isValid = isValid && (spaceLocation < name.length - 1);
+        isValid = isValid && (spaceLocation < [name length] - 1);
     }
     
     if (!isValid) {
@@ -188,7 +175,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 {
     NSString *mobileNumber = [self.text removeLeadingAndTrailingWhitespace];
     
-    BOOL isValid = (mobileNumber.length >= kMinimumPhoneNumberLength);
+    BOOL isValid = ([mobileNumber length] >= kMinimumPhoneNumberLength);
     
     if (!isValid) {
         [self becomeFirstResponder];
@@ -200,7 +187,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidDate
 {
-    BOOL isValid = (self.text.length > 0);
+    BOOL isValid = ([self.text length] > 0);
     
     if (!isValid) {
         [self becomeFirstResponder];
@@ -215,7 +202,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 - (void)emphasise
 {
     self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-    [self toggleDropShadow];
+    [self hasDropShadow:YES];
     
     if (_isTitle) {
         self.textColor = [UIColor editableTitleTextColor];
@@ -230,7 +217,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         [self emphasise];
     } else {
         self.backgroundColor = [UIColor clearColor];
-        [self toggleDropShadow];
+        [self hasDropShadow:NO];
         
         if (_isTitle) {
             self.textColor = [UIColor titleTextColor];

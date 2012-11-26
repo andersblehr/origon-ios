@@ -26,7 +26,6 @@
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOfPreschoolAge;
 
-- (BOOL)hasPhone;
 - (BOOL)hasMobilePhone;
 - (BOOL)hasAddress;
 - (BOOL)hasEmail;

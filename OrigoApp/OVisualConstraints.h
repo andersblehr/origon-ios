@@ -14,12 +14,9 @@
 @private
     OTableViewCell *_cell;
     
-    NSString *_titleElement;
+    NSString *_titleKeyPath;
     NSMutableArray *_labeledElementKeyPaths;
-    NSMutableArray *_unlabeledElements;
-    
-    NSMutableDictionary *_elementVisibility;
-    NSMutableDictionary *_textViewLineCounts;
+    NSMutableArray *_unlabeledElementKeyPaths;
 }
 
 @property (nonatomic) BOOL titleBannerHasPhoto;
@@ -27,12 +24,8 @@
 - (id)initForTableViewCell:(OTableViewCell *)cell;
 
 - (void)addTitleConstraintsForKeyPath:(NSString *)keyPath;
-- (void)addLabeledTextFieldConstraintsForKeyPath:(NSString *)keyPath visible:(BOOL)visible;
-- (void)addLabeledTextViewConstraintsForKeyPath:(NSString *)keyPath lineCount:(NSUInteger)lineCount;
-- (void)addLabelConstraintsForKeyPath:(NSString *)keyPath;
-- (void)addUnlabeledTextFieldConstraintsForKeyPath:(NSString *)keyPath;
-
-- (void)updateLabeledTextViewConstraintsForKeyPath:(NSString *)keyPath lineCount:(NSInteger)lineCount;
+- (void)addLabeledTextFieldConstraintsForKeyPath:(NSString *)keyPath;
+- (void)addUnlabeledConstraintsForKeyPath:(NSString *)keyPath;
 
 - (NSDictionary *)constraintsWithAlignmentOptions;
 

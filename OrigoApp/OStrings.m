@@ -30,14 +30,14 @@ NSString * const strTermAddress                      = @"strTermAddress";
 
 // OAuthView strings
 NSString * const strLabelSignIn                      = @"strLabelSignIn";
-NSString * const strLabelActivate                    = @"strLabelActivate";
+NSString * const strLabelActivation                  = @"strLabelActivation";
 NSString * const strFooterSignInOrRegister           = @"strFooterSignInOrRegister";
 NSString * const strFooterActivate                   = @"strFooterActivate";
-NSString * const strPromptAuthEmail                  = @"strPromptAuthEmail";
-NSString * const strPromptPassword                   = @"strPromptPassword";
-NSString * const strPromptActivationCode             = @"strPromptActivationCode";
-NSString * const strPromptRepeatPassword             = @"strPromptRepeatPassword";
-NSString * const strPromptPleaseWait                 = @"strPromptPleaseWait";
+NSString * const strPlaceholderAuthEmail             = @"strPlaceholderAuthEmail";
+NSString * const strPlaceholderPassword              = @"strPlaceholderPassword";
+NSString * const strPlaceholderActivationCode        = @"strPlaceholderActivationCode";
+NSString * const strPlaceholderRepeatPassword        = @"strPlaceholderRepeatPassword";
+NSString * const strPlaceholderPleaseWait            = @"strPlaceholderPleaseWait";
 NSString * const strButtonHaveCode                   = @"strButtonHaveCode";
 NSString * const strButtonStartOver                  = @"strButtonStartOver";
 NSString * const strButtonAccept                     = @"strButtonAccept";
@@ -76,10 +76,11 @@ NSString * const strButtonDeleteMember               = @"strButtonDeleteMember";
 
 // OOrigoView strings
 NSString * const strViewTitleNewOrigo                = @"strViewTitleNewOrigo";
+NSString * const strLabelAddress                     = @"strLabelAddress";
 NSString * const strLabelTelephone                   = @"strLabelTelephone";
 NSString * const strHeaderAddresses                  = @"strHeaderAddresses";
-NSString * const strPromptAddress                    = @"strPromptAddress";
-NSString * const strPromptTelephone                  = @"strPromptTelephone";
+NSString * const strPlaceholderAddress               = @"strPlaceholderAddress";
+NSString * const strPlaceholderTelephone             = @"strPlaceholderTelephone";
 
 // OMemberView strings
 NSString * const strViewTitleAboutMe                 = @"strViewTitleAboutMe";
@@ -92,11 +93,11 @@ NSString * const strLabelAbbreviatedEmail            = @"strLabelAbbreviatedEmai
 NSString * const strLabelAbbreviatedMobilePhone      = @"strLabelAbbreviatedMobilePhone";
 NSString * const strLabelAbbreviatedDateOfBirth      = @"strLabelAbbreviatedDateOfBirth";
 NSString * const strLabelAbbreviatedTelephone        = @"strLabelAbbreviatedTelephone";
-NSString * const strPromptPhoto                      = @"strPromptPhoto";
-NSString * const strPromptName                       = @"strPromptName";
-NSString * const strPromptEmail                      = @"strPromptEmail";
-NSString * const strPromptDateOfBirth                = @"strPromptDateOfBirth";
-NSString * const strPromptMobilePhone                = @"strPromptMobilePhone";
+NSString * const strPlaceholderPhoto                 = @"strPlaceholderPhoto";
+NSString * const strPlaceholderName                  = @"strPlaceholderName";
+NSString * const strPlaceholderEmail                 = @"strPlaceholderEmail";
+NSString * const strPlaceholderDateOfBirth           = @"strPlaceholderDateOfBirth";
+NSString * const strPlaceholderMobilePhone           = @"strPlaceholderMobilePhone";
 NSString * const strButtonInviteToHousehold          = @"strButtonInviteToHousehold";
 NSString * const strButtonMergeHouseholds            = @"strButtonMergeHouseholds";
 NSString * const strAlertTitleMemberExists           = @"strAlertTitleMemberExists";
@@ -138,6 +139,9 @@ NSString * const xstrContactRolesSportsTeam          = @"xstrContactRolesSportsT
 static NSString * const kStringsPlist = @"strings.plist";
 static NSDictionary *strings = nil;
 
+static NSString * const kLabelKeyPrefix = @"strLabel";
+static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
+
 
 @implementation OStrings
 
@@ -149,6 +153,12 @@ static NSDictionary *strings = nil;
     NSString *relativePath = [kBundleId stringByAppendingPathComponent:kStringsPlist];
     
     return [cachesDirectory stringByAppendingPathComponent:relativePath];
+}
+
+
++ (NSString *)stringKeyWithPrefix:(NSString *)prefix forKeyPath:(NSString *)keyPath
+{
+    return [prefix stringByAppendingString:[[[keyPath substringWithRange:NSMakeRange(0, 1)] uppercaseString] stringByAppendingString:[keyPath substringFromIndex:1]]];
 }
 
 
@@ -186,31 +196,19 @@ static NSDictionary *strings = nil;
 }
 
 
-+ (NSString *)stringForLabelWithKeyPath:(NSString *)keyPath
++ (NSString *)labelForKeyPath:(NSString *)keyPath
 {
-    NSString *stringKey = @"";
-    
-    if ([keyPath isEqualToString:kKeyPathSignIn]) {
-        stringKey = strLabelSignIn;
-    } else if ([keyPath isEqualToString:kKeyPathActivation]) {
-        stringKey = strLabelActivate;
-    } else if ([keyPath isEqualToString:kKeyPathMobilePhone]) {
-        stringKey = strLabelMobilePhone;
-    } else if ([keyPath isEqualToString:kKeyPathEmail]) {
-        stringKey = strLabelEmail;
-    } else if ([keyPath isEqualToString:kKeyPathDateOfBirth]) {
-        stringKey = strLabelDateOfBirth;
-    } else if ([keyPath isEqualToString:kKeyPathAddress]) {
-        stringKey = strTermAddress;
-    } else if ([keyPath isEqualToString:kKeyPathTelephone]) {
-        stringKey = strLabelTelephone;
-    }
-    
-    return [self stringForKey:stringKey];
+    return [self stringForKey:[self stringKeyWithPrefix:kLabelKeyPrefix forKeyPath:keyPath]];
 }
 
 
-#pragma mark - OServerConnectionDelegate implementation
++ (NSString *)placeholderForKeyPath:(NSString *)keyPath
+{
+    return [self stringForKey:[self stringKeyWithPrefix:kPlaceholderKeyPrefix forKeyPath:keyPath]];
+}
+
+
+#pragma mark - OServerConnectionDelegate conformance
 
 + (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {

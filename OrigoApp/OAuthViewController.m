@@ -110,17 +110,17 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             email = _emailField.text;
             password = _passwordField.text;
             
-            _emailField.placeholder = [OStrings stringForKey:strPromptPleaseWait];
+            _emailField.placeholder = [OStrings stringForKey:strPlaceholderPleaseWait];
             _emailField.text = @"";
-            _passwordField.placeholder = [OStrings stringForKey:strPromptPleaseWait];
+            _passwordField.placeholder = [OStrings stringForKey:strPlaceholderPleaseWait];
             _passwordField.text = @"";
         } else if ([OState s].actionIsActivate) {
             activationCode = _activationCodeField.text;
             password = _repeatPasswordField.text;
             
-            _activationCodeField.placeholder = [OStrings stringForKey:strPromptPleaseWait];
+            _activationCodeField.placeholder = [OStrings stringForKey:strPlaceholderPleaseWait];
             _activationCodeField.text = @"";
-            _repeatPasswordField.placeholder = [OStrings stringForKey:strPromptPleaseWait];
+            _repeatPasswordField.placeholder = [OStrings stringForKey:strPlaceholderPleaseWait];
             _repeatPasswordField.text = @"";
         }
         
@@ -128,14 +128,14 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     } else {
         if ([OState s].actionIsLogin) {
             _emailField.text = email;
-            _emailField.placeholder = [OStrings stringForKey:strPromptAuthEmail];
+            _emailField.placeholder = [OStrings stringForKey:strPlaceholderAuthEmail];
             _passwordField.text = password;
-            _passwordField.placeholder = [OStrings stringForKey:strPromptPassword];
+            _passwordField.placeholder = [OStrings stringForKey:strPlaceholderPassword];
         } else if ([OState s].actionIsActivate) {
             _activationCodeField.text = activationCode;
-            _activationCodeField.placeholder = [OStrings stringForKey:strPromptActivationCode];
+            _activationCodeField.placeholder = [OStrings stringForKey:strPlaceholderActivationCode];
             _repeatPasswordField.text = password;
-            _repeatPasswordField.placeholder = [OStrings stringForKey:strPromptPassword];
+            _repeatPasswordField.placeholder = [OStrings stringForKey:strPlaceholderPassword];
         }
         
         [_activityIndicator stopAnimating];
@@ -150,7 +150,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _numberOfActivationAttempts++;
     
     if (_numberOfActivationAttempts < 3) {
-        [_authCell shakeCellVibrate:YES];
+        [_authCell shakeCellShouldVibrate:YES];
         
         if (textField == _activationCodeField) {
             _activationCodeField.text = @"";
@@ -528,7 +528,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [self attemptUserLogin];
         } else {
             _passwordField.text = @"";
-            [_authCell shakeCellVibrate:YES];
+            [_authCell shakeCellShouldVibrate:YES];
         }
     } else if (textField == _activationCodeField) {
         [_repeatPasswordField becomeFirstResponder];
@@ -540,7 +540,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [self presentEULA];
         } else {
             _repeatPasswordField.text = @"";
-            [_authCell shakeCellVibrate:YES];
+            [_authCell shakeCellShouldVibrate:YES];
         }
     }
     
@@ -606,7 +606,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         }
     } else {
         if (response.statusCode == kHTTPStatusUnauthorized) {
-            [_authCell shakeCellVibrate:NO];
+            [_authCell shakeCellShouldVibrate:NO];
             [_passwordField becomeFirstResponder];
         } else {
             [OAlert showAlertForHTTPStatus:response.statusCode];

@@ -78,7 +78,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
 - (id)insertEntityFromDictionary:(NSDictionary *)entityDictionary
 {
     NSMutableDictionary *entityRefs = [[NSMutableDictionary alloc] init];
-    NSString *entityId = [entityDictionary valueForKey:kKeyPathEntityId];
+    NSString *entityId = [entityDictionary objectForKey:kKeyPathEntityId];
     
     OReplicatedEntity *entity = [self entityWithId:entityId];
     
@@ -96,7 +96,7 @@ static NSString * const kOrigoRelationshipName = @"origo";
         id attributeValue = [entityDictionary objectForKey:attributeKey];
         
         if (attributeValue) {
-            [entity setValue:attributeValue forKey:attributeKey];
+            [entity setDeserialisedValue:attributeValue forKey:attributeKey];
         }
     }
     
@@ -214,6 +214,10 @@ static NSString * const kOrigoRelationshipName = @"origo";
     OOrigo *memberRoot = [self insertOrigoEntityOfType:kOrigoTypeMemberRoot origoId:memberRootId];
     OMember *member = [self insertEntityForClass:OMember.class inOrigo:memberRoot entityId:memberId];
     OMembership *rootMembership = [memberRoot addMember:member];
+    
+    if ([memberId isEmailAddress]) {
+        member.email = memberId;
+    }
     
     if ([OState s].aspectIsSelf) {
         rootMembership.isActive_ = YES;

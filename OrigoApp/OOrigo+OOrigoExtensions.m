@@ -10,9 +10,13 @@
 
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
 #import "NSString+OStringExtensions.h"
+#import "UIFont+OFontExtensions.h"
 
 #import "OMeta.h"
+#import "OState.h"
 #import "OStrings.h"
+#import "OTableViewCell.h"
+#import "OTextView.h"
 
 #import "OMember.h"
 #import "OMemberResidency.h"
@@ -91,7 +95,7 @@
 
 - (BOOL)hasTelephone
 {
-    return (self.telephone.length > 0);
+    return ([self.telephone length] > 0);
 }
 
 
@@ -162,6 +166,32 @@
     [singleLineAddress replaceOccurrencesOfString:@"\n" withString:@", " options:NSLiteralSearch range:NSMakeRange(0, [self.address length])];
     
     return singleLineAddress;
+}
+
+
+#pragma mark - Display cell height calculation
+
++ (CGFloat)defaultDisplayCellHeight
+{
+    return 2 * kDefaultPadding + 2 * [UIFont detailFieldHeight];
+}
+
+
+- (CGFloat)displayCellHeight
+{
+    CGFloat height = 2 * kDefaultPadding;
+    
+    if ([self.address length] > 0) {
+        height += [OTextView heightGuesstimateWithText:self.address];
+    } else {
+        height += [OTextView heightGuesstimateWithText:[OStrings placeholderForKeyPath:kKeyPathAddress]];
+    }
+    
+    if (([self.telephone length] > 0) || [OState s].actionIsInput) {
+        height += [UIFont detailFieldHeight];
+    }
+    
+    return height;
 }
 
 

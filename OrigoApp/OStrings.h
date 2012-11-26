@@ -24,14 +24,14 @@ extern NSString * const strTermAddress;
 
 // OAuthView strings
 extern NSString * const strLabelSignIn;
-extern NSString * const strLabelActivate;
+extern NSString * const strLabelActivation;
 extern NSString * const strFooterSignInOrRegister;
 extern NSString * const strFooterActivate;
-extern NSString * const strPromptAuthEmail;
-extern NSString * const strPromptPassword;
-extern NSString * const strPromptActivationCode;
-extern NSString * const strPromptRepeatPassword;
-extern NSString * const strPromptPleaseWait;
+extern NSString * const strPlaceholderAuthEmail;
+extern NSString * const strPlaceholderPassword;
+extern NSString * const strPlaceholderActivationCode;
+extern NSString * const strPlaceholderRepeatPassword;
+extern NSString * const strPlaceholderPleaseWait;
 extern NSString * const strButtonHaveCode;
 extern NSString * const strButtonStartOver;
 extern NSString * const strButtonAccept;
@@ -70,10 +70,11 @@ extern NSString * const strButtonDeleteMember;
 
 // OOrigoView strings
 extern NSString * const strViewTitleNewOrigo;
+extern NSString * const strLabelAddress;
 extern NSString * const strLabelTelephone;
 extern NSString * const strHeaderAddresses;
-extern NSString * const strPromptAddress;
-extern NSString * const strPromptTelephone;
+extern NSString * const strPlaceholderAddress;
+extern NSString * const strPlaceholderTelephone;
 
 // OMemberView strings
 extern NSString * const strViewTitleAboutMe;
@@ -86,11 +87,11 @@ extern NSString * const strLabelAbbreviatedEmail;
 extern NSString * const strLabelAbbreviatedMobilePhone;
 extern NSString * const strLabelAbbreviatedDateOfBirth;
 extern NSString * const strLabelAbbreviatedTelephone;
-extern NSString * const strPromptPhoto;
-extern NSString * const strPromptName;
-extern NSString * const strPromptEmail;
-extern NSString * const strPromptDateOfBirth;
-extern NSString * const strPromptMobilePhone;
+extern NSString * const strPlaceholderPhoto;
+extern NSString * const strPlaceholderName;
+extern NSString * const strPlaceholderEmail;
+extern NSString * const strPlaceholderDateOfBirth;
+extern NSString * const strPlaceholderMobilePhone;
 extern NSString * const strButtonInviteToHousehold;
 extern NSString * const strButtonMergeHouseholds;
 extern NSString * const strAlertTitleMemberExists;
@@ -135,6 +136,8 @@ extern NSString * const xstrContactRolesSportsTeam;
 + (void)conditionallyRefresh;
 
 + (NSString *)stringForKey:(NSString *)key;
-+ (NSString *)stringForLabelWithKeyPath:(NSString *)keyPath;
+
++ (NSString *)labelForKeyPath:(NSString *)keyPath;
++ (NSString *)placeholderForKeyPath:(NSString *)keyPath;
 
 @end

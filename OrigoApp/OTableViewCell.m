@@ -37,8 +37,6 @@ typedef enum {
     OCellTypeDefault,
     OCellTypeSignIn,
     OCellTypeActivation,
-    OCellTypeMemberEntity,
-    OCellTypeOrigoEntity,
 } OCellType;
 
 NSString * const kReuseIdentifierDefault = @"idDefaultCell";
@@ -48,13 +46,13 @@ NSString * const kReuseIdentifierUserActivation = @"idUserActivationCell";
 NSString * const kElementSuffixLabel = @"Label";
 NSString * const kElementSuffixTextField = @"Field";
 
+CGFloat const kDefaultTableViewCellHeight = 45.f;
 CGFloat const kDefaultPadding = 10.f;
 
 static NSString * const kKeyPathTitleBanner = @"titleBanner";
 static NSString * const kKeyPathPhotoFrame = @"photoFrame";
 static NSString * const kKeyPathPhotoPrompt = @"photoPrompt";
 
-static CGFloat const kDefaultCellHeight = 45.f;
 static CGFloat const kLabelDetailSpacing = 3.f;
 
 static CGFloat const kShakeDuration = 0.05f;
@@ -76,7 +74,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Adding UI elements
 
-- (void)addTitleForKeyPath:(NSString *)keyPath text:(NSString *)text
+- (void)addTitleForKeyPath:(NSString *)keyPath
 {
     UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
     titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
@@ -86,38 +84,35 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [_views setObject:titleBannerView forKey:kKeyPathTitleBanner];
     [_visualConstraints addTitleConstraintsForKeyPath:keyPath];
     
-    [self addTextFieldForKeyPath:keyPath text:text constrained:NO];
-}
-
-
-- (void)addTitleForKeyPath:(NSString *)keyPath text:(NSString *)text photo:(NSData *)photo
-{
-    [self addTitleForKeyPath:keyPath text:text];
+    [self addTextFieldForKeyPath:keyPath constrained:NO];
     
-    _visualConstraints.titleBannerHasPhoto = YES;
-
-    UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
-    
-    if (photo) {
-        [imageButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
-    } else {
-        imageButton.backgroundColor = [UIColor whiteColor];
-        [imageButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    if ([_entity isKindOfClass:OMember.class]) {
+        _visualConstraints.titleBannerHasPhoto = YES;
         
-        UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
-        photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
-        photoPrompt.font = [UIFont labelFont];
-        photoPrompt.text = [OStrings stringForKey:strPromptPhoto];
-        photoPrompt.textAlignment = NSTextAlignmentCenter;
-        photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
-        [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
+        UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        NSData *photo = ((OMember *)_entity).photo;
         
-        [imageButton addSubview:photoPrompt];
-        [_views setObject:photoPrompt forKey:kKeyPathPhotoPrompt];
+        if (photo) {
+            [imageButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
+        } else {
+            imageButton.backgroundColor = [UIColor whiteColor];
+            [imageButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+            
+            UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
+            photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
+            photoPrompt.font = [UIFont labelFont];
+            photoPrompt.text = [OStrings stringForKey:strPlaceholderPhoto];
+            photoPrompt.textAlignment = NSTextAlignmentCenter;
+            photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
+            [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
+            
+            [imageButton addSubview:photoPrompt];
+            [_views setObject:photoPrompt forKey:kKeyPathPhotoPrompt];
+        }
+        
+        [self.contentView addSubview:imageButton];
+        [_views setObject:imageButton forKey:kKeyPathPhotoFrame];
     }
-    
-    [self.contentView addSubview:imageButton];
-    [_views setObject:imageButton forKey:kKeyPathPhotoFrame];
 }
 
 
@@ -126,7 +121,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
     label.backgroundColor = [UIColor clearColor];
     label.font = [UIFont labelFont];
-    label.text = [OStrings stringForLabelWithKeyPath:keyPath];
+    label.hidden = YES;
+    label.text = [OStrings labelForKeyPath:keyPath];
     label.textAlignment = constrained ? NSTextAlignmentCenter : NSTextAlignmentRight;
     label.textColor = [UIColor labelTextColor];
     [label setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -135,61 +131,46 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [_views setObject:label forKey:[keyPath stringByAppendingString:kElementSuffixLabel]];
     
     if (constrained) {
-        [_visualConstraints addLabelConstraintsForKeyPath:keyPath];
+        [_visualConstraints addUnlabeledConstraintsForKeyPath:keyPath];
     }
 }
 
 
 - (void)addTextFieldForKeyPath:(NSString *)keyPath constrained:(BOOL)constrained
 {
-    [self addTextFieldForKeyPath:keyPath text:nil constrained:constrained];
-}
-
-
-- (void)addTextFieldForKeyPath:(NSString *)keyPath text:(NSString *)text constrained:(BOOL)constrained
-{
-    OTextField *textField = [[OTextField alloc] initForKeyPath:keyPath text:text delegate:_delegate];
+    OTextField *textField = [[OTextField alloc] initForKeyPath:keyPath delegate:_inputDelegate];
     
     [self.contentView addSubview:textField];
     [_views setObject:textField forKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
     
     if (constrained) {
-        [_visualConstraints addUnlabeledTextFieldConstraintsForKeyPath:keyPath];
+        [_visualConstraints addUnlabeledConstraintsForKeyPath:keyPath];
     }
     
-    [[OMeta m] addObserver:self ofEntity:_entity forKeyPath:keyPath context:_localContext];
-}
-
-
-- (void)addLabeledTextFieldForKeyPath:(NSString *)keyPath text:(NSString *)text visible:(BOOL)visible
-{
-    [self addLabelForKeyPath:keyPath constrained:NO];
-    [self addTextFieldForKeyPath:keyPath text:text constrained:NO];
-    
-    [_visualConstraints addLabeledTextFieldConstraintsForKeyPath:keyPath visible:visible];
-}
-
-
-- (void)addLabeledTextFieldForKeyPath:(NSString *)keyPath date:(NSDate *)date
-{
-    [self addLabeledTextFieldForKeyPath:keyPath text:[date localisedDateString] visible:YES];
-    
-    if (date) {
-        OTextField *textField = [_views objectForKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
-        ((UIDatePicker *)textField.inputView).date = date;
+    if (_entity) {
+        [[OMeta m] addObserver:self ofEntity:_entity forKeyPath:keyPath context:_localContext];
     }
 }
 
 
-- (void)addLabeledTextViewForKeyPath:(NSString *)keyPath text:(NSString *)text
+- (void)addLabeledTextFieldForKeyPath:(NSString *)keyPath
+{
+    [self addLabelForKeyPath:keyPath constrained:NO];
+    [self addTextFieldForKeyPath:keyPath constrained:NO];
+    
+    [_visualConstraints addLabeledTextFieldConstraintsForKeyPath:keyPath];
+}
+
+
+- (void)addLabeledTextViewForKeyPath:(NSString *)keyPath
 {
     [self addLabelForKeyPath:keyPath constrained:NO];
     
-    OTextView *textView = [[OTextView alloc] initForKeyPath:keyPath text:text delegate:_delegate];
+    OTextView *textView = [[OTextView alloc] initForKeyPath:keyPath delegate:_inputDelegate];
     
     [self.contentView addSubview:textView];
     [_views setObject:textView forKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
-    [_visualConstraints addLabeledTextViewConstraintsForKeyPath:keyPath lineCount:[textView lineCount]];
+    [_visualConstraints addLabeledTextFieldConstraintsForKeyPath:keyPath];
     
     [[OMeta m] addObserver:self ofEntity:_entity forKeyPath:keyPath context:_localContext];
 }
@@ -200,56 +181,28 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
     _entity = entity;
+    _selectable = [OState s].actionIsList;
     _localContext = &_localContext;
     
     if (entityClass == OMember.class) {
-        [self composeForMemberEntity:(OMember *)entity];
+        [self addTitleForKeyPath:kKeyPathName];
+        [self addLabeledTextFieldForKeyPath:kKeyPathDateOfBirth];
+        [self addLabeledTextFieldForKeyPath:kKeyPathMobilePhone];
+        [self addLabeledTextFieldForKeyPath:kKeyPathEmail];
     } else if (entityClass == OOrigo.class) {
-        [self composeForOrigoEntity:(OOrigo *)entity];
+        [self addLabeledTextViewForKeyPath:kKeyPathAddress];
+        [self addLabeledTextFieldForKeyPath:kKeyPathTelephone];
     }
     
     [self.contentView setNeedsUpdateConstraints];
 }
 
 
-- (void)composeForMemberEntity:(OMember *)member
-{
-    BOOL mobilePhoneFieldIsVisible = ([member hasMobilePhone] || [OState s].actionIsInput);
-    BOOL emailFieldIsVisible = ([member hasEmail] || [OState s].actionIsInput);
-    
-    [self addTitleForKeyPath:kKeyPathName text:member.name photo:member.photo];
-    [self addLabeledTextFieldForKeyPath:kKeyPathDateOfBirth date:member.dateOfBirth];
-    [self addLabeledTextFieldForKeyPath:kKeyPathMobilePhone text:member.mobilePhone visible:mobilePhoneFieldIsVisible];
-    [self addLabeledTextFieldForKeyPath:kKeyPathEmail text:member.entityId visible:emailFieldIsVisible];
-    
-    _cellType = OCellTypeMemberEntity;
-    _selectable = NO;
-}
-
-
-- (void)composeForOrigoEntity:(OOrigo *)origo
-{
-    BOOL telephoneFieldIsVisible = ([origo hasTelephone] || [OState s].actionIsInput);
-    
-    [self addLabeledTextViewForKeyPath:kKeyPathAddress text:origo.address];
-    [self addLabeledTextFieldForKeyPath:kKeyPathTelephone text:origo.telephone visible:telephoneFieldIsVisible];
-    
-    _cellType = OCellTypeOrigoEntity;
-    _selectable = [OState s].actionIsList;
-}
-
-
 #pragma mark - Cell height
-
-+ (CGFloat)defaultHeight
-{
-    return kDefaultCellHeight;
-}
-
 
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier
 {
-    CGFloat height = [OTableViewCell defaultHeight];
+    CGFloat height = kDefaultTableViewCellHeight;
     
     if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn] ||
         [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
@@ -261,50 +214,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-+ (CGFloat)heightForEntityClass:(Class)entityClass
-{
-    CGFloat height = [OTableViewCell defaultHeight];
-    
-    if (entityClass == OMember.class) {
-        height = 3 * kDefaultPadding;
-        height += [UIFont titleFieldHeight];
-        height += 3 * [UIFont detailFieldHeight];
-    } else if (entityClass == OOrigo.class) {
-        height = 2 * kDefaultPadding;
-        height += [UIFont detailFieldHeight];
-        height += [OTextView heightForLineCount:kTextViewMinimumEditLines];
-    }
-    
-    return height;
-}
-
-
 + (CGFloat)heightForEntity:(OReplicatedEntity *)entity
 {
-    CGFloat height = [OTableViewCell heightForEntityClass:entity.class];
-
-    if ([entity isKindOfClass:OMember.class]) {
-        if (![OState s].actionIsInput) {
-            OMember *member = (OMember *)entity;
-            
-            if (![member hasMobilePhone] && ![member hasEmail]) {
-                height -= 2 * [UIFont detailFieldHeight];
-            } else if (!([member hasMobilePhone] && [member hasEmail])) {
-                height -= [UIFont detailFieldHeight];
-            }
-        }
-    } else if ([entity isKindOfClass:OOrigo.class]) {
-        OOrigo *origo = (OOrigo *)entity;
-        
-        NSInteger addressViewLineCount = [OTextView lineCountGuesstimateWithText:origo.address];
-        height += (addressViewLineCount - kTextViewMinimumEditLines) * [UIFont detailLineHeight];
-        
-        if (![origo hasTelephone] && ![OState s].actionIsInput) {
-            height -= [UIFont detailFieldHeight];
-        }
-    }
-    
-    return height;
+    return [entity displayCellHeight];
 }
 
 
@@ -317,7 +229,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (self) {
         _visualConstraints = [[OVisualConstraints alloc] initForTableViewCell:self];
         _views = [[NSMutableDictionary alloc] init];
-        _delegate = delegate;
+        _inputDelegate = delegate;
         
         self.backgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
         self.backgroundView.backgroundColor = [UIColor cellBackgroundColor];
@@ -400,8 +312,38 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self.backgroundView addDropShadowForInternalTableViewCell];
     }
     
-    if (_cellType == OCellTypeMemberEntity) {
+    if ([_entity isKindOfClass:OMember.class]) {
         [[_views objectForKey:kKeyPathPhotoFrame] addDropShadowForPhotoFrame];
+    }
+}
+
+
+- (void)toggleEditMode
+{
+    if ([OState s].actionIsDisplay) {
+        [OState s].actionIsEdit = YES;
+    } else if ([OState s].actionIsEdit) {
+        [OState s].actionIsDisplay = YES;
+    }
+    
+    for (UIView *view in [_views allValues]) {
+        if ([view isKindOfClass:OTextField.class]) {
+            ((OTextField *)view).enabled = [OState s].actionIsEdit;
+        } else if ([view isKindOfClass:OTextView.class]) {
+            ((OTextView *)view).editable = [OState s].actionIsEdit;
+            ((OTextView *)view).userInteractionEnabled = [OState s].actionIsEdit;
+        }
+    }
+    
+    CGRect frame = self.frame;
+    CGFloat desiredFrameHeight = [_entity displayCellHeight];
+    
+    if (frame.size.height != desiredFrameHeight) {
+        frame.size.height = desiredFrameHeight;
+        self.frame = frame;
+        
+        [self setNeedsUpdateConstraints];
+        [self.backgroundView redrawDropShadow];
     }
 }
 
@@ -411,23 +353,19 @@ static CGFloat const kShakeRepeatCount = 3.f;
     NSInteger lineCountDelta = [textView lineCountDelta];
     
     if (lineCountDelta) {
-        [self.backgroundView toggleDropShadow];
         CGRect frame = self.frame;
         frame.size.height += lineCountDelta * [UIFont detailLineHeight];
         self.frame = frame;
-        [self.backgroundView toggleDropShadow];
         
-        [_visualConstraints updateLabeledTextViewConstraintsForKeyPath:textView.keyPath lineCount:[textView lineCount]];
-        
-        [self.contentView removeConstraints:[self.contentView constraints]];
         [self setNeedsUpdateConstraints];
+        [self.backgroundView redrawDropShadow];
     }
 }
 
 
 #pragma mark - Cell effects
 
-- (void)shakeCellVibrate:(BOOL)shouldVibrate
+- (void)shakeCellShouldVibrate:(BOOL)shouldVibrate
 {
     if (shouldVibrate) {
         AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
@@ -454,6 +392,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)updateConstraints
 {
+    [self.contentView removeConstraints:[self.contentView constraints]];
+    
     [super updateConstraints];
     
     NSDictionary *alignedConstraints = [_visualConstraints constraintsWithAlignmentOptions];

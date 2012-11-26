@@ -11,12 +11,14 @@
 
 extern CGFloat const kTextInset;
 
-@interface OTextField : UITextField
+@interface OTextField : UITextField {
+@private
+    BOOL _isTitle;
+}
 
 @property (strong, nonatomic) NSString *keyPath;
-@property (nonatomic) BOOL isTitle;
 
-- (id)initForKeyPath:(NSString *)keyPath text:(NSString *)text delegate:(id)delegate;
+- (id)initForKeyPath:(NSString *)keyPath delegate:(id)delegate;
 
 - (void)setOrigin:(CGPoint)origin;
 - (void)setWidth:(CGFloat)width;

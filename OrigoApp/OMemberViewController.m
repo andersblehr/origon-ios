@@ -86,7 +86,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         if (_candidate) {
             _member = _candidate;
         } else {
-            if (_emailField.text.length > 0) {
+            if ([_emailField.text length] > 0) {
                 _member = [[OMeta m].context insertMemberEntityWithId:_emailField.text];
             } else {
                 _member = [[OMeta m].context insertMemberEntityWithId:nil];
@@ -151,24 +151,22 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     static UIBarButtonItem *editButton = nil;
     static UIBarButtonItem *backButton = nil;
     
-    if ([OState s].actionIsDisplay) {
+    [_memberCell toggleEditMode];
+    
+    if ([OState s].actionIsEdit) {
         editButton = self.navigationItem.rightBarButtonItem;
         backButton = self.navigationItem.leftBarButtonItem;
         
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
         
-        [OState s].actionIsEdit = YES;
-    } else if ([OState s].actionIsEdit) {
+        [_nameField becomeFirstResponder];
+    } else if ([OState s].actionIsDisplay) {
         [self.view endEditing:YES];
         
         self.navigationItem.rightBarButtonItem = editButton;
         self.navigationItem.leftBarButtonItem = backButton;
-        
-        [OState s].actionIsDisplay = YES;
     }
-    
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kMemberSection] withRowAnimation:UITableViewRowAnimationFade];
     
     OLogState;
 }
@@ -287,7 +285,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             inputIsValid = inputIsValid && [_emailField holdsValidEmail];
             inputIsValid = inputIsValid && [_mobilePhoneField holdsValidPhoneNumber];
         } else if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
-            if (_emailField.text.length > 0) {
+            if ([_emailField.text length] > 0) {
                 inputIsValid = inputIsValid && [_emailField holdsValidEmail];
             }
         }
@@ -317,7 +315,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             [self toggleEdit];
         }
     } else {
-        [_memberCell shakeCellVibrate:NO];
+        [_memberCell shakeCellShouldVibrate:NO];
     }
 }
 
@@ -443,12 +441,12 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     
     if (indexPath.section == kMemberSection) {
         if ([OState s].actionIsInput) {
-            height = [OTableViewCell heightForEntityClass:OMember.class];
+            height = [OMember defaultDisplayCellHeight];
         } else {
-            height = [OTableViewCell heightForEntity:_member];
+            height = [_member displayCellHeight];
         }
     } else if (indexPath.section == kAddressSection) {
-        height = [OTableViewCell defaultHeight];
+        height = kDefaultTableViewCellHeight;
     }
     
     return height;
@@ -538,7 +536,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     [textField toggleEmphasis];
     
     if (_currentField == _emailField) {
-        if ((_emailField.text.length > 0) && [_emailField holdsValidEmail]) {
+        if (([_emailField.text length] > 0) && [_emailField holdsValidEmail]) {
             if ([OState s].aspectIsSelf) {
                 // TODO: Handle user email change
             } else if (![_emailField.text isEqualToString:_member.entityId]) {
