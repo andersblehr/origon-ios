@@ -10,6 +10,8 @@
 
 #import "UIColor+OColorExtensions.h"
 
+#import "OTableViewCell.h"
+
 static CGFloat const kCellShadowRadius = 3.75f;
 static CGFloat const kCellShadowOffset = 5.f;
 static CGFloat const kFieldShadowRadius = 3.f;
@@ -18,10 +20,21 @@ static CGFloat const kFieldShadowHeightShrinkage = 1.f;
 static CGFloat const kImageShadowRadius = 1.f;
 static CGFloat const kImageShadowOffset = 1.5f;
 
+static NSString * const kKeyPathShadowPath = @"shadowPath";
+
 
 @implementation UIView (OViewExtensions)
 
 #pragma mark - Auxiliary methods
+
+- (UIBezierPath *)shadowPathForTextField
+{
+    CGFloat fieldShadowOriginY = self.bounds.origin.y + kFieldShadowOffset;
+    CGFloat fieldShadowHeight = self.bounds.size.height - kFieldShadowHeightShrinkage;
+    
+    return [UIBezierPath bezierPathWithRect:CGRectMake(self.bounds.origin.x, fieldShadowOriginY, self.bounds.size.width, fieldShadowHeight)];
+}
+
 
 - (void)addShadowWithPath:(UIBezierPath *)path colour:(UIColor *)colour radius:(CGFloat)radius offset:(CGFloat)offset
 {
@@ -37,10 +50,7 @@ static CGFloat const kImageShadowOffset = 1.5f;
 
 - (void)addDropShadowForTextField
 {
-    CGFloat fieldShadowOriginY = self.bounds.origin.y + kFieldShadowOffset;
-    CGFloat fieldShadowHeight = self.bounds.size.height - kFieldShadowHeightShrinkage;
-    
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:CGRectMake(self.bounds.origin.x, fieldShadowOriginY, self.bounds.size.width, fieldShadowHeight)] colour:[UIColor darkGrayColor] radius:kFieldShadowRadius offset:kFieldShadowOffset];
+    [self addShadowWithPath:[self shadowPathForTextField] colour:[UIColor darkGrayColor] radius:kFieldShadowRadius offset:kFieldShadowOffset];
 }
 
 
@@ -101,7 +111,22 @@ static CGFloat const kImageShadowOffset = 1.5f;
 
 - (void)redrawDropShadow
 {
-    [self hasDropShadow:YES];
+    CGPathRef redrawnShadowPath;
+    
+    if ([self isKindOfClass:UITextField.class] || [self isKindOfClass:UITextView.class]) {
+        redrawnShadowPath = [self shadowPathForTextField].CGPath;
+    } else {
+        redrawnShadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
+    }
+    
+    CABasicAnimation *redrawAnimation = [CABasicAnimation animationWithKeyPath:kKeyPathShadowPath];
+    redrawAnimation.duration = kCellAnimationDuration;
+    redrawAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    redrawAnimation.fromValue = (__bridge id)self.layer.shadowPath;
+    redrawAnimation.toValue = (__bridge id)redrawnShadowPath;
+    
+    [self.layer addAnimation:redrawAnimation forKey:nil];
+    self.layer.shadowPath = redrawnShadowPath;
 }
 
 @end

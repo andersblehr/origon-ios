@@ -27,14 +27,14 @@ static NSInteger const kTextViewMinimumLines = 1;
 static CGFloat const kTopInset = 5.f;
 static CGFloat const kDetailWidthGuesstimate = 210.f;
 
-static CGFloat const kDeselectAnimationDuration = 0.5f;
+static CGFloat const kDeselectionAnimationDuration = 0.5f;
 
 
 @implementation OTextView
 
 #pragma mark - Auxiliary methods
 
-+ (NSInteger)lineCountGuesstimateWithText:(NSString *)text
++ (NSInteger)lineCountWithText:(NSString *)text
 {
     CGSize sizeGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)];
     NSInteger lineCountGuesstimate = round(sizeGuesstimate.height / [UIFont detailLineHeight]);
@@ -73,9 +73,9 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
             }
         }
     } else if (self.text) {
-        lineCount = [OTextView lineCountGuesstimateWithText:self.text];
+        lineCount = [OTextView lineCountWithText:self.text];
     } else {
-        lineCount = [OTextView lineCountGuesstimateWithText:self.placeholder];
+        lineCount = [OTextView lineCountWithText:self.placeholder];
     }
     
     return lineCount;
@@ -84,25 +84,7 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
 
 - (CGSize)intrinsicSizeOfText:(NSString *)text
 {
-    CGFloat lineHeight = [self.font textFieldHeight];
-    NSArray *lines = [text lines];
-    
-    CGFloat intrinsicContentWidth = 2 * kTextInset;
-    CGFloat intrinsicContentHeight = MAX([lines count], 1) * lineHeight + kTextInset;
-    
-    for (NSString *line in lines) {
-        CGFloat lineWidth = [line sizeWithFont:self.font].width + 4 * kTextInset;
-        
-        if (lineWidth > intrinsicContentWidth) {
-            intrinsicContentWidth = lineWidth;
-        }
-    }
-    
-    if ((intrinsicContentHeight < 2 * lineHeight + kTextInset) && [OState s].actionIsInput) {
-        intrinsicContentHeight = 2 * lineHeight + kTextInset;
-    }
-    
-    return CGSizeMake(intrinsicContentWidth, intrinsicContentHeight);
+    return CGSizeMake(kDetailWidthGuesstimate, [OTextView heightWithText:text]);
 }
 
 
@@ -148,7 +130,7 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
         
         _editing = NO;
         _keyPath = keyPath;
-        _lastKnownLineCount = [OTextView lineCountGuesstimateWithText:_placeholder];
+        _lastKnownLineCount = [OTextView lineCountWithText:_placeholder];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged) name:UITextViewTextDidChangeNotification object:nil];
     }
@@ -159,9 +141,9 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
 
 #pragma mark - Hooks for sizing & resizing
 
-+ (CGFloat)heightGuesstimateWithText:(NSString *)text
++ (CGFloat)heightWithText:(NSString *)text
 {
-    NSInteger lineCount = [self lineCountGuesstimateWithText:text];
+    NSInteger lineCount = [self lineCountWithText:text];
     
     return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight];
 }
@@ -219,8 +201,8 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
         self.backgroundColor = [UIColor clearColor];
     }
     
-    [self.delegate textViewDidChange:self];
     [self hasDropShadow:_editing];
+    [self.delegate textViewDidChange:self];
 }
 
 
@@ -239,13 +221,9 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
 - (void)setSelected:(BOOL)selected
 {
     if (selected) {
-        self.backgroundColor = [UIColor selectedCellBackgroundColor];
         self.textColor = [UIColor selectedDetailTextColor];
     } else {
-        [UIView animateWithDuration:kDeselectAnimationDuration animations:^{
-            self.backgroundColor = [UIColor cellBackgroundColor];
-            self.textColor = [UIColor detailTextColor];
-        }];
+        self.textColor = [UIColor detailTextColor];
     }
 }
 
@@ -273,7 +251,7 @@ static CGFloat const kDeselectAnimationDuration = 0.5f;
     [super drawRect:rect];
     
     if (_editing) {
-        [self hasDropShadow:YES];
+        [self redrawDropShadow];
     }
 }
 

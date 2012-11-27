@@ -173,7 +173,11 @@
 
 + (CGFloat)defaultDisplayCellHeight
 {
-    return 2 * kDefaultPadding + 2 * [UIFont detailFieldHeight];
+    CGFloat height = 2 * kDefaultPadding;
+    height += [OTextView heightWithText:[OStrings placeholderForKeyPath:kKeyPathAddress]];
+    height += [UIFont detailFieldHeight];
+    
+    return height;
 }
 
 
@@ -182,9 +186,9 @@
     CGFloat height = 2 * kDefaultPadding;
     
     if ([self.address length] > 0) {
-        height += [OTextView heightGuesstimateWithText:self.address];
+        height += [OTextView heightWithText:self.address];
     } else {
-        height += [OTextView heightGuesstimateWithText:[OStrings placeholderForKeyPath:kKeyPathAddress]];
+        height += [OTextView heightWithText:[OStrings placeholderForKeyPath:kKeyPathAddress]];
     }
     
     if (([self.telephone length] > 0) || [OState s].actionIsInput) {

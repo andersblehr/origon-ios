@@ -27,7 +27,7 @@ extern NSInteger const kTextViewMaximumEditLines;
 
 - (id)initForKeyPath:(NSString *)keyPath delegate:(id)delegate;
 
-+ (CGFloat)heightGuesstimateWithText:(NSString *)text;
++ (CGFloat)heightWithText:(NSString *)text;
 - (CGFloat)height;
 
 - (NSInteger)lineCount;

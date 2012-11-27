@@ -49,11 +49,14 @@ NSString * const kElementSuffixTextField = @"Field";
 CGFloat const kDefaultTableViewCellHeight = 45.f;
 CGFloat const kDefaultPadding = 10.f;
 
+CGFloat const kCellAnimationDuration = 0.1;
+
 static NSString * const kKeyPathTitleBanner = @"titleBanner";
 static NSString * const kKeyPathPhotoFrame = @"photoFrame";
 static NSString * const kKeyPathPhotoPrompt = @"photoPrompt";
 
 static CGFloat const kLabelDetailSpacing = 3.f;
+static CGFloat const kImplicitFramePadding = 2.f;
 
 static CGFloat const kShakeDuration = 0.05f;
 static CGFloat const kShakeDelay = 0.f;
@@ -193,8 +196,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self addLabeledTextViewForKeyPath:kKeyPathAddress];
         [self addLabeledTextFieldForKeyPath:kKeyPathTelephone];
     }
-    
-    [self.contentView setNeedsUpdateConstraints];
 }
 
 
@@ -335,16 +336,19 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
     }
     
-    CGRect frame = self.frame;
-    CGFloat desiredFrameHeight = [_entity displayCellHeight];
-    
-    if (frame.size.height != desiredFrameHeight) {
-        frame.size.height = desiredFrameHeight;
-        self.frame = frame;
+    [UIView animateWithDuration:kCellAnimationDuration animations:^{
+        CGFloat desiredFrameHeight = [_entity displayCellHeight];
+        CGRect frame = self.frame;
         
-        [self setNeedsUpdateConstraints];
-        [self.backgroundView redrawDropShadow];
-    }
+        if (frame.size.height != desiredFrameHeight + kImplicitFramePadding) {
+            frame.size.height = desiredFrameHeight + kImplicitFramePadding;
+            self.frame = frame;
+            
+            [self setNeedsUpdateConstraints];
+            [self layoutIfNeeded];
+            [self.backgroundView redrawDropShadow];
+        }
+    }];
 }
 
 
@@ -353,12 +357,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
     NSInteger lineCountDelta = [textView lineCountDelta];
     
     if (lineCountDelta) {
-        CGRect frame = self.frame;
-        frame.size.height += lineCountDelta * [UIFont detailLineHeight];
-        self.frame = frame;
-        
-        [self setNeedsUpdateConstraints];
-        [self.backgroundView redrawDropShadow];
+        [UIView animateWithDuration:kCellAnimationDuration animations:^{
+            CGRect frame = self.frame;
+            frame.size.height += lineCountDelta * [UIFont detailLineHeight];
+            self.frame = frame;
+            
+            [self setNeedsUpdateConstraints];
+            [self layoutIfNeeded];
+            [self.backgroundView redrawDropShadow];
+        }];
     }
 }
 

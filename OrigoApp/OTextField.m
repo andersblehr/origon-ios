@@ -88,7 +88,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         self.delegate = delegate;
         self.enabled = [OState s].actionIsInput;
         self.font = _isTitle ? [UIFont titleFont] : [UIFont detailFont];
-        //self.frame = CGRectMake(0.f, 0.f, 0.f, [self.font textFieldHeight]);
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
         self.placeholder = [OStrings placeholderForKeyPath:keyPath];
