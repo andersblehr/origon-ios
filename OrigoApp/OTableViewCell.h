@@ -18,6 +18,8 @@ extern NSString * const kElementSuffixTextField;
 extern CGFloat const kDefaultTableViewCellHeight;
 extern CGFloat const kDefaultPadding;
 
+extern CGFloat const kCellAnimationDuration;
+
 @class OReplicatedEntity;
 @class OTextField, OTextView, OVisualConstraints;
 

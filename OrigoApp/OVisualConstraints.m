@@ -41,7 +41,7 @@ static NSString * const kHConstraintsPhotoPrompt      = @"H:|-3-[photoPrompt]-3-
 static NSString * const kVConstraintsLabel            = @"-%.f-[%@(22)]";
 static NSString * const kVConstraintsTextField        = @"[%@(%.f)]";
 
-static NSString * const kHConstraintsTopmostWithPhoto = @"H:|-10-[%@(>=55)]-3-[%@]-6-[photoFrame]-10-|";
+static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%@]-6-[photoFrame]-10-|";
 static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%@]-6-|";
 
 static NSString * const kKeyPathPrefixDate = @"date";
@@ -250,7 +250,7 @@ static NSString * const kKeyPathPrefixDate = @"date";
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
-    BOOL isTopmostRow = YES;
+    NSInteger rowNumber = 0;
     
     for (NSString *keyPath in _labeledElementKeyPaths) {
         [self configureElementsIfNeededForKeyPath:keyPath];
@@ -260,9 +260,8 @@ static NSString * const kKeyPathPrefixDate = @"date";
             NSString *textFieldName = [keyPath stringByAppendingString:kElementSuffixTextField];
             NSString *constraint = nil;
             
-            if (isTopmostRow && _titleBannerHasPhoto) {
-                constraint = [NSString stringWithFormat:kHConstraintsTopmostWithPhoto, labelName, textFieldName];
-                isTopmostRow = NO;
+            if (_titleBannerHasPhoto && (rowNumber++ < 2)) {
+                constraint = [NSString stringWithFormat:kHConstraintsWithPhoto, labelName, textFieldName];
             } else {
                 constraint = [NSString stringWithFormat:kHConstraints, labelName, textFieldName];
             }
