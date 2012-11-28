@@ -18,8 +18,7 @@
 #import "UITableView+OTableViewExtensions.h"
 #import "UIView+OViewExtensions.h"
 
-#import "OMemberListViewController.h"
-#import "OOrigoViewController.h"
+#import "OEntityObservingDelegate.h"
 
 #import "OAlert.h"
 #import "OLogging.h"
@@ -41,7 +40,9 @@
 #import "OOrigo+OOrigoExtensions.h"
 #import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
+#import "OMemberListViewController.h"
 #import "ONavigationController.h"
+#import "OOrigoViewController.h"
 
 static NSInteger const kMemberSection = 0;
 static NSInteger const kAddressSection = 1;
@@ -313,6 +314,8 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         } else if ([OState s].actionIsEdit) {
             [self updateMember];
             [self toggleEdit];
+            
+            [_entityObservingDelegate refreshFromEntity];
         }
     } else {
         [_memberCell shakeCellShouldVibrate:NO];
@@ -470,19 +473,11 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         _dateOfBirthField = [_memberCell textFieldForKeyPath:kKeyPathDateOfBirth];
         _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
         
-        if (_member && _member.dateOfBirth) {
-            _dateOfBirthPicker.date = _member.dateOfBirth;
-            _gender = _member.gender;
-        }
-        
         cell = _memberCell;
     } else if (indexPath.section == kAddressSection) {
         OOrigo *residence = _sortedResidences[indexPath.row];
         
-        cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
-        cell.textLabel.text = [residence.address lines][0];
-        cell.detailTextLabel.text = residence.telephone;
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell = [tableView listCellForEntity:residence];
     }
     
     return cell;

@@ -46,69 +46,77 @@
 }
 
 
-- (NSString *)name_
+#pragma mark - Table view list display
+
+- (NSString *)listName
 {
-    NSString *nameString = [NSString stringWithString:self.name];
+    NSString *listName = self.givenName;
     
-    if ([self isMinor]) {
-        nameString = self.givenName;
-        
-        if ([OState s].actionIsList) {
-            nameString = [nameString stringByAppendingFormat:@" (%d)", [self.dateOfBirth yearsBeforeNow]];
-        }
-    }
-    
-    return nameString;
-}
-
-
-#pragma mark - Meta information
-
-- (NSString *)details
-{
-    NSString *detailString = nil;
-    
-    if (![self isMinor] || [[OMeta m].user hasWard:self]) {
-        if ([self hasMobilePhone]) {
-            detailString = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
-        } else if ([self hasEmail]) {
-            detailString = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.entityId];
-        }
-    }
-    
-    return detailString;
-}
-
-
-- (UIImage *)image
-{
-    UIImage *image = nil;
-    
-    if (self.photo) {
-        // TODO: Embed photo
-    } else {
-        if ([self.dateOfBirth yearsBeforeNow] < 2) {
-            image = [UIImage imageNamed:kIconFileInfant];
+    if ([OState s].targetIsMember) {
+        if ([self isMinor]) {
+            listName = [listName stringByAppendingFormat:@" (%d)", [self.dateOfBirth yearsBeforeNow]];
         } else {
-            if ([self isMale]) {
-                if ([self isMinor]) {
-                    image = [UIImage imageNamed:kIconFileBoy];
-                } else {
-                    image = [UIImage imageNamed:kIconFileMan];
-                }
-            } else {
-                if ([self isMinor]) {
-                    image = [UIImage imageNamed:kIconFileGirl];
-                } else {
-                    image = [UIImage imageNamed:kIconFileWoman];
-                }
+            listName = self.name;
+        }
+    }
+    
+    return listName;
+}
+
+
+- (NSString *)listDetails
+{
+    NSString *listDetails = nil;
+    
+    if ([OState s].targetIsMember) {
+        if (![self isMinor] || [[OMeta m].user hasWard:self]) {
+            if ([self hasMobilePhone]) {
+                listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
+            } else if ([self hasEmail]) {
+                listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.entityId];
             }
         }
     }
     
-    return image;
+    return listDetails;
 }
 
+
+- (UIImage *)listImage
+{
+    UIImage *listImage = nil;
+    
+    if ([OState s].targetIsMember) {
+        if (self.photo) {
+            // TODO: Embed photo
+        } else {
+            if ([self.dateOfBirth yearsBeforeNow] < 2) {
+                listImage = [UIImage imageNamed:kIconFileInfant];
+            } else {
+                if ([self isMale]) {
+                    if ([self isMinor]) {
+                        listImage = [UIImage imageNamed:kIconFileBoy];
+                    } else {
+                        listImage = [UIImage imageNamed:kIconFileMan];
+                    }
+                } else {
+                    if ([self isMinor]) {
+                        listImage = [UIImage imageNamed:kIconFileGirl];
+                    } else {
+                        listImage = [UIImage imageNamed:kIconFileWoman];
+                    }
+                }
+            }
+        }
+    } else if ([OState s].targetIsOrigo) {
+        listImage = [UIImage imageNamed:kIconFileOrigo];
+    }
+    
+    return listImage;
+}
+
+
+#pragma mark - Meta information
 
 - (BOOL)isUser
 {

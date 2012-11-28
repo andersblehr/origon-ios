@@ -95,12 +95,6 @@ static NSString * const kLogoText = @"..origo..";
 
 #pragma mark - Cell instantiation
 
-- (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier
-{
-    return [self cellWithReuseIdentifier:reuseIdentifier delegate:nil];
-}
-
-
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:reuseIdentifier];
@@ -138,6 +132,26 @@ static NSString * const kLogoText = @"..origo..";
     if (!cell) {
         cell = [[OTableViewCell alloc] initWithEntityClass:entityClass delegate:delegate];
     }
+    
+    return cell;
+}
+
+
+- (id)listCell
+{
+    return [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:nil];
+}
+
+
+- (id)listCellForEntity:(OReplicatedEntity *)entity
+{
+    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:kReuseIdentifierDefault];
+    
+    if (!cell) {
+        cell = [self listCell];
+    }
+    
+    cell.entity = entity;
     
     return cell;
 }

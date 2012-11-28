@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol OModalViewControllerDelegate;
+@protocol OEntityObservingDelegate, OModalViewControllerDelegate;
 
 @class OMembership, OOrigo;
 @class OTableViewCell, OTextField, OTextView;
@@ -22,9 +22,10 @@
     OTextField *_telephoneField;
 }
 
-@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
-
 @property (strong, nonatomic) OMembership *membership;
 @property (strong, nonatomic) NSString *origoType;
+
+@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
+@property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
 
 @end

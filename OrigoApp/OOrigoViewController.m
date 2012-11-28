@@ -14,6 +14,7 @@
 #import "UITableView+OTableViewExtensions.h"
 #import "UIView+OViewExtensions.h"
 
+#import "OEntityObservingDelegate.h"
 #import "OModalViewControllerDelegate.h"
 
 #import "OLogging.h"
@@ -101,6 +102,7 @@
             [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
         } else if ([OState s].actionIsEdit) {
             [self toggleEdit];
+            [_entityObservingDelegate refreshFromEntity];
         }
         
         [[OMeta m].context replicateIfNeeded];

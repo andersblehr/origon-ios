@@ -20,9 +20,6 @@ extern CGFloat const kTextInset;
 
 - (id)initForKeyPath:(NSString *)keyPath delegate:(id)delegate;
 
-- (void)setOrigin:(CGPoint)origin;
-- (void)setWidth:(CGFloat)width;
-
 - (BOOL)holdsValidEmail;
 - (BOOL)holdsValidPassword;
 - (BOOL)holdsValidName;

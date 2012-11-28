@@ -105,10 +105,6 @@ extern NSUInteger const kAgeOfMajority;
 - (BOOL)userIsSignedIn;
 - (BOOL)registrationIsComplete;
 
-- (void)addObserver:(NSObject *)observer ofEntity:(OReplicatedEntity *)entity forKeyPath:(NSString *)keyPath context:(void *)context;
-- (void)removeEntityObserversInContext:(void *)context;
-- (void)removeAllEntityObservers;
-
 - (NSSet *)dirtyEntities;
 - (void)stageServerEntity:(OReplicatedEntity *)entity;
 - (void)stageServerEntityRefs:(NSDictionary *)entityRefs forEntity:(OReplicatedEntity *)entity;
