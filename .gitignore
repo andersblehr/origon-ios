@@ -1,6 +1,6 @@
 # Xcode specific
 build/*
-xcuserdata/*
+xcuserdata/
 *.pbxuser
 *.mode2v3
 *.mode1v3
