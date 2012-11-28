@@ -27,17 +27,15 @@
 
 #import "OOrigoListViewController.h"
 
-typedef struct {
-    __unsafe_unretained NSObject *observer;
-    __unsafe_unretained OReplicatedEntity *entity;
-    __unsafe_unretained NSString *keyPath;
-} OEntityObserverInfo;
-
-NSUInteger const kCertainSchoolAge = 7;
-NSUInteger const kAgeOfMajority = 18;
-
 NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 NSString * const kLanguageHungarian = @"hu";
+
+NSString * const kAuthViewControllerId = @"idAuthViewController";
+NSString * const kTabBarControllerId = @"idTabBarController";
+NSString * const kOrigoListViewControllerId = @"idOrigoListViewController";
+NSString * const kOrigoViewControllerId = @"idOrigoViewController";
+NSString * const kMemberViewControllerId = @"idMemberViewController";
+NSString * const kMemberListViewControllerId = @"idMemberListViewController";
 
 NSString * const kIconFileOrigo = @"10-arrows-in_black.png";
 NSString * const kIconFileHousehold = @"glyphicons_020_home.png";
@@ -55,22 +53,29 @@ NSString * const kOrigoTypePreschoolClass = @"origoTypePreschoolClass";
 NSString * const kOrigoTypeSportsTeam = @"origoTypeSportsTeam";
 NSString * const kOrigoTypeDefault = @"origoTypeDefault";
 
-NSString * const kGenderFemale = @"F";
-NSString * const kGenderMale = @"M";
-
-NSString * const kAuthViewControllerId = @"idAuthViewController";
-NSString * const kTabBarControllerId = @"idTabBarController";
-NSString * const kOrigoListViewControllerId = @"idOrigoListViewController";
-NSString * const kOrigoViewControllerId = @"idOrigoViewController";
-NSString * const kMemberViewControllerId = @"idMemberViewController";
-NSString * const kMemberListViewControllerId = @"idMemberListViewController";
-
 NSString * const kKeyPathAuthInfo = @"origo.auth.info";
 NSString * const kKeyPathDirtyEntities = @"origo.dirtyEntities";
-
 NSString * const kKeyPathEntityClass = @"entityClass";
 NSString * const kKeyPathEntityId = @"entityId";
 NSString * const kKeyPathOrigoId = @"origoId";
+NSString * const kKeyPathSignIn = @"signIn";
+NSString * const kKeyPathAuthEmail = @"authEmail";
+NSString * const kKeyPathPassword = @"password";
+NSString * const kKeyPathActivation = @"activation";
+NSString * const kKeyPathActivationCode = @"activationCode";
+NSString * const kKeyPathRepeatPassword = @"repeatPassword";
+NSString * const kKeyPathName = @"name";
+NSString * const kKeyPathMobilePhone = @"mobilePhone";
+NSString * const kKeyPathEmail = @"email";
+NSString * const kKeyPathDateOfBirth = @"dateOfBirth";
+NSString * const kKeyPathAddress = @"address";
+NSString * const kKeyPathTelephone = @"telephone";
+
+NSString * const kGenderFemale = @"F";
+NSString * const kGenderMale = @"M";
+
+NSUInteger const kCertainSchoolAge = 7;
+NSUInteger const kAgeOfMajority = 18;
 
 static NSString * const kKeyPathUserId = @"origo.user.id";
 static NSString * const kKeyPathFormatDeviceId = @"origo.device.id$%@";
@@ -305,56 +310,7 @@ static OMeta *m = nil;
 
 - (BOOL)registrationIsComplete
 {
-    return ([_user hasPhone] && [_user hasAddress]);
-}
-
-
-#pragma mark - Key-value observing & housekeeping
-
-- (void)addObserver:(NSObject *)observer ofEntity:(OReplicatedEntity *)entity forKeyPath:(NSString *)keyPath context:(void *)context
-{
-    [entity addObserver:observer forKeyPath:keyPath options:NSKeyValueObservingOptionNew context:context];
-    
-    OEntityObserverInfo observerInfo;
-    observerInfo.observer = observer;
-    observerInfo.entity = entity;
-    observerInfo.keyPath = keyPath;
-    
-    NSValue *contextValue = [NSValue valueWithPointer:context];
-    NSValue *observerInfoValue = [NSValue valueWithBytes:&observerInfo objCType:@encode(OEntityObserverInfo)];
-    
-    NSMutableArray *observersInContext = [_contextObservers objectForKey:contextValue];
-    
-    if (!observersInContext) {
-        observersInContext = [[NSMutableArray alloc] init];
-        [_contextObservers setObject:observersInContext forKey:contextValue];
-    }
-    
-    [observersInContext addObject:observerInfoValue];
-}
-
-
-- (void)removeEntityObserversInContext:(void *)context
-{
-    NSValue *contextValue = [NSValue valueWithPointer:context];
-    NSArray *observersInContext = [_contextObservers objectForKey:contextValue];
-    
-    for (NSValue *observerInfoValue in observersInContext) {
-        OEntityObserverInfo observerInfo;
-        [observerInfoValue getValue:&observerInfo];
-        
-        [observerInfo.entity removeObserver:observerInfo.observer forKeyPath:observerInfo.keyPath context:[contextValue pointerValue]];
-    }
-    
-    [_contextObservers removeObjectForKey:contextValue];
-}
-
-
-- (void)removeAllEntityObservers
-{
-    for (NSValue *contextValue in [_contextObservers allKeys]) {
-        [self removeEntityObserversInContext:[contextValue pointerValue]];
-    }
+    return ([_user hasMobilePhone] && [_user hasAddress]);
 }
 
 

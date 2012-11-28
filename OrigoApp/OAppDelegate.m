@@ -47,8 +47,6 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)releasePersistentStore
 {
-    [[OMeta m] removeAllEntityObservers];
-    
     _managedObjectModel = nil;
     _managedObjectContext = nil;
     _persistentStoreCoordinator = nil;

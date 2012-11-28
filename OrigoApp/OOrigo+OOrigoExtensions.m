@@ -10,9 +10,13 @@
 
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
 #import "NSString+OStringExtensions.h"
+#import "UIFont+OFontExtensions.h"
 
 #import "OMeta.h"
+#import "OState.h"
 #import "OStrings.h"
+#import "OTableViewCell.h"
+#import "OTextView.h"
 
 #import "OMember.h"
 #import "OMemberResidency.h"
@@ -36,6 +40,50 @@
             [[OMeta m].context insertLinkedEntityRefForEntity:residency.origo inOrigo:self];
         }
     }
+}
+
+
+- (NSString *)singleLineAddress
+{
+    NSMutableString *singleLineAddress = [NSMutableString stringWithString:self.address];
+    
+    [singleLineAddress replaceOccurrencesOfString:kSeparatorNewline withString:kSeparatorComma options:NSLiteralSearch range:NSMakeRange(0, [self.address length])];
+    
+    return singleLineAddress;
+}
+
+
+#pragma mark - Table view list display
+
+- (NSString *)listName
+{
+    NSString *listName = [self.address lines][0];
+    
+    if ([OState s].targetIsOrigo) {
+        listName = self.name;
+    }
+    
+    return listName;
+}
+
+
+- (NSString *)listDetails
+{
+    NSString *listDetails = nil;
+    
+    if ([self hasTelephone]) {
+        listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedTelephone], self.telephone];
+    }
+    
+    if ([OState s].targetIsOrigo) {
+        if ([self isResidence]) {
+            listDetails = [self singleLineAddress];
+        } else {
+            listDetails = self.descriptionText;
+        }
+    }
+    
+    return listDetails;
 }
 
 
@@ -91,7 +139,7 @@
 
 - (BOOL)hasTelephone
 {
-    return (self.telephone.length > 0);
+    return ([self.telephone length] > 0);
 }
 
 
@@ -139,29 +187,33 @@
 }
 
 
-#pragma mark - Address information
+#pragma mark - Display cell height calculation
 
-- (NSString *)details
++ (CGFloat)defaultDisplayCellHeight
 {
-    NSString *detailString = nil;
+    CGFloat height = 2 * kDefaultPadding;
+    height += [OTextView heightWithText:[OStrings placeholderForKeyPath:kKeyPathAddress]];
+    height += [UIFont detailFieldHeight];
     
-    if ([self isResidence]) {
-        detailString = [self singleLineAddress];
-    } else {
-        detailString = self.descriptionText;
-    }
-    
-    return detailString;
+    return height;
 }
 
 
-- (NSString *)singleLineAddress
+- (CGFloat)displayCellHeight
 {
-    NSMutableString *singleLineAddress = [NSMutableString stringWithString:self.address];
+    CGFloat height = 2 * kDefaultPadding;
     
-    [singleLineAddress replaceOccurrencesOfString:@"\n" withString:@", " options:NSLiteralSearch range:NSMakeRange(0, [self.address length])];
+    if ([self.address length] > 0) {
+        height += [OTextView heightWithText:self.address];
+    } else {
+        height += [OTextView heightWithText:[OStrings placeholderForKeyPath:kKeyPathAddress]];
+    }
     
-    return singleLineAddress;
+    if (([self.telephone length] > 0) || [OState s].actionIsInput) {
+        height += [UIFont detailFieldHeight];
+    }
+    
+    return height;
 }
 
 

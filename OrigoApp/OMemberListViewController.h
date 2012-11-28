@@ -12,6 +12,8 @@
 
 #import "OState.h"
 
+@protocol OEntityObservingDelegate;
+
 @class OTableViewCell;
 @class OMembership, OOrigo;
 
@@ -19,15 +21,18 @@
 @private
     OTableViewCell *_origoCell;
     
-    NSMutableSet *_contacts;
-    NSMutableSet *_members;
-    NSArray *_sortedContacts;
-    NSArray *_sortedMembers;
+    NSMutableSet *_contactMemberships;
+    NSMutableSet *_regularMemberships;
+    NSArray *_sortedContactMemberships;
+    NSArray *_sortedRegularMemberships;
     
+    OTableViewCell *_selectedCell;
     OMembership *_selectedMembership;
 }
 
-@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
 @property (strong, nonatomic) OOrigo *origo;
+
+@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
+@property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
 
 @end

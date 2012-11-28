@@ -14,6 +14,7 @@
 
 #import "OMeta.h"
 #import "OState.h"
+#import "OTableViewCell.h"
 
 #import "OMember.h"
 #import "OMemberResidency.h"
@@ -22,33 +23,6 @@
 
 
 @implementation OReplicatedEntity (OReplicatedEntityExtensions)
-
-
-#pragma mark - Overriddes
-
-- (id)valueForKey:(NSString *)key
-{
-    id value = [super valueForKey:key];
-    
-    if (value && [value isKindOfClass:NSDate.class]) {
-        value = [NSNumber numberWithLongLong:[value timeIntervalSince1970] * 1000];
-    }
-    
-    return value;
-}
-
-
-- (void)setValue:(id)value forKey:(NSString *)key
-{
-    NSAttributeDescription *attribute = [[self.entity attributesByName] objectForKey:key];
-    
-    if (attribute.attributeType == NSDateAttributeType) {
-        value = [NSDate dateWithDeserialisedDate:value];
-    }
-    
-    [super setValue:value forKey:key];
-}
-
 
 #pragma mark - Auxiliary methods
 
@@ -63,7 +37,33 @@
 }
 
 
-#pragma mark - Dictionary serialisation
+#pragma mark - Key-value proxy methods
+
+- (id)serialisableValueForKey:(NSString *)key
+{
+    id value = [super valueForKey:key];
+    
+    if (value && [value isKindOfClass:NSDate.class]) {
+        value = [NSNumber numberWithLongLong:[value timeIntervalSince1970] * 1000];
+    }
+    
+    return value;
+}
+
+
+- (void)setDeserialisedValue:(id)value forKey:(NSString *)key
+{
+    NSAttributeDescription *attribute = [[self.entity attributesByName] objectForKey:key];
+    
+    if (attribute.attributeType == NSDateAttributeType) {
+        value = [NSDate dateWithDeserialisedDate:value];
+    }
+    
+    [super setValue:value forKey:key];
+}
+
+
+#pragma mark - Replication support
 
 - (NSDictionary *)toDictionary
 {
@@ -76,7 +76,7 @@
     
     for (NSString *attributeKey in [attributes allKeys]) {
         if (![self propertyIsTransient:attributeKey]) {
-            id attributeValue = [self valueForKey:attributeKey];
+            id attributeValue = [self serialisableValueForKey:attributeKey];
             
             if (attributeValue) {
                 [entityDictionary setObject:attributeValue forKey:attributeKey];
@@ -97,49 +97,6 @@
     }
     
     return entityDictionary;
-}
-
-
-#pragma mark - Internal consistency
-
-- (BOOL)propertyIsTransient:(NSString *)property
-{
-    return [property isEqualToString:@"hashCode"];
-}
-
-
-- (BOOL)isReplicated
-{
-    return (self.dateReplicated != nil);
-}
-
-
-- (BOOL)isDirty
-{
-    return ![self.hashCode isEqualToString:[self computeHashCode]];
-}
-
-
-- (void)internaliseRelationships
-{
-    self.hashCode = [self computeHashCode];
-    
-    NSDictionary *entityRefs = [[OMeta m] stagedServerEntityRefsForEntity:self];
-    
-    for (NSString *name in [entityRefs allKeys]) {
-        NSDictionary *entityRef = [entityRefs objectForKey:name];
-        NSString *destinationId = [entityRef objectForKey:kKeyPathEntityId];
-        
-        OReplicatedEntity *entity = [[OMeta m] stagedServerEntityWithId:destinationId];
-        
-        if (!entity) {
-            entity = [[OMeta m].context entityWithId:destinationId];
-        }
-        
-        if (entity) {
-            [self setValue:entity forKey:name];
-        }
-    }
 }
 
 
@@ -181,20 +138,86 @@
 }
 
 
-- (NSString *)expiresInTimeframe
+- (void)internaliseRelationships
 {
-    NSEntityDescription *entity = self.entity;
-    NSString *expires = [entity.userInfo objectForKey:@"expires"];
+    self.hashCode = [self computeHashCode];
     
-    if (!expires) {
-        // TODO: Keep track of and act on entity expiry dates
+    NSDictionary *entityRefs = [[OMeta m] stagedServerEntityRefsForEntity:self];
+    
+    for (NSString *name in [entityRefs allKeys]) {
+        NSDictionary *entityRef = [entityRefs objectForKey:name];
+        NSString *destinationId = [entityRef objectForKey:kKeyPathEntityId];
+        
+        OReplicatedEntity *entity = [[OMeta m] stagedServerEntityWithId:destinationId];
+        
+        if (!entity) {
+            entity = [[OMeta m].context entityWithId:destinationId];
+        }
+        
+        if (entity) {
+            [self setValue:entity forKey:name];
+        }
     }
-    
-    return expires;
 }
 
 
-#pragma mark - Entity sharing & deletion
+- (BOOL)propertyIsTransient:(NSString *)property
+{
+    return [property isEqualToString:@"hashCode"];
+}
+
+
+- (BOOL)isReplicated
+{
+    return (self.dateReplicated != nil);
+}
+
+
+- (BOOL)isDirty
+{
+    return ![self.hashCode isEqualToString:[self computeHashCode]];
+}
+
+
+#pragma mark - Table view support
+
++ (CGFloat)defaultDisplayCellHeight
+{
+    return kDefaultTableViewCellHeight;
+}
+
+
+- (CGFloat)displayCellHeight
+{
+    return kDefaultTableViewCellHeight;
+}
+
+
+- (NSString *)reuseIdentifier
+{
+    return [NSString stringWithFormat:@"%@-%@", self.entity, [[OState s] asString]];
+}
+
+
+- (NSString *)listName
+{
+    return @"BROKEN: Plase override in subclass";
+}
+
+
+- (NSString *)listDetails
+{
+    return @"BROKEN: Plase override in subclass";
+}
+
+
+- (UIImage *)listImage
+{
+    return nil;
+}
+
+
+#pragma mark - Entity linking & deletion
 
 - (OLinkedEntityRef *)linkedEntityRefForOrigo:(OOrigo *)origo
 {
@@ -213,11 +236,18 @@
 }
 
 
-#pragma mark - Table view cell reuse identifier
+#pragma mark - Miscellaneous
 
-- (NSString *)reuseIdentifier
+- (NSString *)expiresInTimeframe
 {
-    return [self computeHashCode];
+    NSEntityDescription *entity = self.entity;
+    NSString *expires = [entity.userInfo objectForKey:@"expires"];
+    
+    if (!expires) {
+        // TODO: Keep track of and act on entity expiry dates
+    }
+    
+    return expires;
 }
 
 @end
