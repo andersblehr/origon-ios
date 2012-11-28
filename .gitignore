@@ -5,6 +5,7 @@ build/*
 *.mode1v3
 *.perspective
 *.perspectivev3
+*.xcuserstate
 *~.nib
 
 # Ignore private workspace stuff
