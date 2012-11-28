@@ -12,11 +12,15 @@
 
 #import "OServerConnectionDelegate.h"
 
-extern NSUInteger const kCertainSchoolAge;
-extern NSUInteger const kAgeOfMajority;
-
 extern NSString * const kBundleId;
 extern NSString * const kLanguageHungarian;
+
+extern NSString * const kAuthViewControllerId;
+extern NSString * const kTabBarControllerId;
+extern NSString * const kOrigoListViewControllerId;
+extern NSString * const kOrigoViewControllerId;
+extern NSString * const kMemberListViewControllerId;
+extern NSString * const kMemberViewControllerId;
 
 extern NSString * const kIconFileOrigo;
 extern NSString * const kIconFileHousehold;
@@ -34,22 +38,29 @@ extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeSportsTeam;
 extern NSString * const kOrigoTypeDefault;
 
-extern NSString * const kGenderFemale;
-extern NSString * const kGenderMale;
-
-extern NSString * const kAuthViewControllerId;
-extern NSString * const kTabBarControllerId;
-extern NSString * const kOrigoListViewControllerId;
-extern NSString * const kOrigoViewControllerId;
-extern NSString * const kMemberListViewControllerId;
-extern NSString * const kMemberViewControllerId;
-
 extern NSString * const kKeyPathAuthInfo;
 extern NSString * const kKeyPathDirtyEntities;
-
 extern NSString * const kKeyPathEntityClass;
 extern NSString * const kKeyPathEntityId;
 extern NSString * const kKeyPathOrigoId;
+extern NSString * const kKeyPathSignIn;
+extern NSString * const kKeyPathAuthEmail;
+extern NSString * const kKeyPathPassword;
+extern NSString * const kKeyPathActivation;
+extern NSString * const kKeyPathActivationCode;
+extern NSString * const kKeyPathRepeatPassword;
+extern NSString * const kKeyPathName;
+extern NSString * const kKeyPathMobilePhone;
+extern NSString * const kKeyPathEmail;
+extern NSString * const kKeyPathDateOfBirth;
+extern NSString * const kKeyPathAddress;
+extern NSString * const kKeyPathTelephone;
+
+extern NSString * const kGenderFemale;
+extern NSString * const kGenderMale;
+
+extern NSUInteger const kCertainSchoolAge;
+extern NSUInteger const kAgeOfMajority;
 
 
 @class OMember, OReplicatedEntity;
@@ -93,10 +104,6 @@ extern NSString * const kKeyPathOrigoId;
 - (void)userDidSignOut;
 - (BOOL)userIsSignedIn;
 - (BOOL)registrationIsComplete;
-
-- (void)addObserver:(NSObject *)observer ofEntity:(OReplicatedEntity *)entity forKeyPath:(NSString *)keyPath context:(void *)context;
-- (void)removeEntityObserversInContext:(void *)context;
-- (void)removeAllEntityObservers;
 
 - (NSSet *)dirtyEntities;
 - (void)stageServerEntity:(OReplicatedEntity *)entity;

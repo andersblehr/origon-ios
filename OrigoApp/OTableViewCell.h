@@ -8,56 +8,50 @@
 
 #import <UIKit/UIKit.h>
 
+#import "OEntityObservingDelegate.h"
+
 extern NSString * const kReuseIdentifierDefault;
 extern NSString * const kReuseIdentifierUserSignIn;
 extern NSString * const kReuseIdentifierUserActivation;
 
-extern NSString * const kNameSignIn;
-extern NSString * const kNameAuthEmail;
-extern NSString * const kNamePassword;
-extern NSString * const kNameActivation;
-extern NSString * const kNameActivationCode;
-extern NSString * const kNameRepeatPassword;
-extern NSString * const kNameName;
-extern NSString * const kNameMobilePhone;
-extern NSString * const kNameEmail;
-extern NSString * const kNameDateOfBirth;
-extern NSString * const kNameAddress;
-extern NSString * const kNameTelephone;
+extern NSString * const kElementSuffixLabel;
+extern NSString * const kElementSuffixTextField;
 
-extern NSString * const kNameSuffixLabel;
-extern NSString * const kNameSuffixTextField;
-
+extern CGFloat const kDefaultTableViewCellHeight;
 extern CGFloat const kDefaultPadding;
 
-@class OReplicatedEntity;
-@class OTextView, OVisualConstraints;
+extern CGFloat const kCellAnimationDuration;
 
-@interface OTableViewCell : UITableViewCell {
+@class OReplicatedEntity;
+@class OTextField, OTextView, OVisualConstraints;
+
+@interface OTableViewCell : UITableViewCell<OEntityObservingDelegate> {
 @private
     BOOL _selectable;
     
-    OReplicatedEntity *_entity;
     OVisualConstraints *_visualConstraints;
-    NSMutableDictionary *_namedViews;
+    NSMutableDictionary *_views;
     
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
 
-+ (CGFloat)defaultHeight;
+@property (strong, nonatomic) OReplicatedEntity *entity;
+@property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
+
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
-+ (CGFloat)heightForEntityClass:(Class)entityClass;
 + (CGFloat)heightForEntity:(OReplicatedEntity *)entity;
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 - (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
 - (id)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 
-- (id)textFieldWithName:(NSString *)name;
+- (id)labelForKeyPath:(NSString *)keyPath;
+- (id)textFieldForKeyPath:(NSString *)keyPath;
 
 - (void)willAppearTrailing:(BOOL)trailing;
-- (void)respondToTextViewLineCountDelta:(OTextView *)textView;
+- (void)toggleEditMode;
+- (void)respondToTextViewSizeChange:(OTextView *)textView;
 
-- (void)shakeCellVibrate:(BOOL)shouldVibrate;
+- (void)shakeCellShouldVibrate:(BOOL)shouldVibrate;
 
 @end

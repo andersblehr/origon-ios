@@ -11,6 +11,8 @@
 #import "OModalViewControllerDelegate.h"
 #import "OServerConnectionDelegate.h"
 
+@protocol OEntityObservingDelegate;
+
 @class OMember, OMembership, OOrigo;
 @class OTableViewCell, OTextField;
 
@@ -34,9 +36,10 @@
     NSArray *_sortedResidences;
 }
 
-@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
-
 @property (strong, nonatomic) OMembership *membership;
 @property (strong, nonatomic) OOrigo *origo;
+
+@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
+@property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
 
 @end

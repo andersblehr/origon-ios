@@ -14,6 +14,7 @@
 #import "UITableView+OTableViewExtensions.h"
 #import "UIView+OViewExtensions.h"
 
+#import "OEntityObservingDelegate.h"
 #import "OModalViewControllerDelegate.h"
 
 #import "OLogging.h"
@@ -29,6 +30,7 @@
 #import "OOrigo.h"
 
 #import "OOrigo+OOrigoExtensions.h"
+#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 #import "OMemberListViewController.h"
 
@@ -42,24 +44,22 @@
     static UIBarButtonItem *editButton = nil;
     static UIBarButtonItem *backButton = nil;
     
-    if ([OState s].actionIsDisplay) {
+    [_origoCell toggleEditMode];
+    
+    if ([OState s].actionIsEdit) {
         editButton = self.navigationItem.rightBarButtonItem;
         backButton = self.navigationItem.leftBarButtonItem;
         
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
-        
-        [OState s].actionIsEdit = YES;
-    } else if ([OState s].actionIsEdit) {
+
+        [_addressView becomeFirstResponder];
+    } else if ([OState s].actionIsDisplay) {
         [self.view endEditing:YES];
         
         self.navigationItem.rightBarButtonItem = editButton;
         self.navigationItem.leftBarButtonItem = backButton;
-        
-        [OState s].actionIsDisplay = YES;
     }
-    
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
     
     OLogState;
 }
@@ -102,11 +102,12 @@
             [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
         } else if ([OState s].actionIsEdit) {
             [self toggleEdit];
+            [_entityObservingDelegate refreshFromEntity];
         }
         
         [[OMeta m].context replicateIfNeeded];
     } else {
-        [_origoCell shakeCellVibrate:NO];
+        [_origoCell shakeCellShouldVibrate:NO];
     }
 }
 
@@ -164,6 +165,16 @@
 }
 
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if ([OState s].actionIsInput) {
+        [_addressView becomeFirstResponder];
+    }
+}
+
+
 - (NSUInteger)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskPortrait;
@@ -189,9 +200,9 @@
     CGFloat height = 0.f;
     
     if (_origo) {
-        height = [OTableViewCell heightForEntity:_origo];
+        height = [_origo displayCellHeight];
     } else {
-        height = [OTableViewCell heightForEntityClass:OOrigo.class];
+        height = [OOrigo defaultDisplayCellHeight];
     }
     
     return height;
@@ -206,8 +217,8 @@
         _origoCell = [tableView cellForEntityClass:OOrigo.class delegate:self];
     }
     
-    _addressView = [_origoCell textFieldWithName:kNameAddress];
-    _telephoneField = [_origoCell textFieldWithName:kNameTelephone];
+    _addressView = [_origoCell textFieldForKeyPath:kKeyPathAddress];
+    _telephoneField = [_origoCell textFieldForKeyPath:kKeyPathTelephone];
     
     return _origoCell;
 }
@@ -218,10 +229,6 @@
 - (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [cell willAppearTrailing:YES];
-    
-    if ([OState s].actionIsInput) {
-        [_addressView becomeFirstResponder];
-    }
 }
 
 
@@ -249,7 +256,7 @@
 
 - (void)textViewDidChange:(OTextView *)textView
 {
-    [_origoCell respondToTextViewLineCountDelta:textView];
+    [_origoCell respondToTextViewSizeChange:textView];
 }
 
 
