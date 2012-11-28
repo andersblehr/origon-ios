@@ -510,9 +510,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
         
         [self redrawIfNeeded];
         
-        UITableView *tableView = (UITableView *)self.superview;
-        [tableView beginUpdates];
-        [tableView endUpdates];
+        [(UITableView *)self.superview beginUpdates];
+        [(UITableView *)self.superview endUpdates];
     }
     
     if (_entityObservingDelegate) {

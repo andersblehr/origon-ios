@@ -314,8 +314,14 @@ static NSString * const kOrigoRelationshipName = @"origo";
 - (void)replicateIfNeeded
 {
     if ([self needsReplication]) {
-        [[[OServerConnection alloc] init] replicateIfNeeded];
+        [self replicate];
     }
+}
+
+
+- (void)replicate
+{
+    [[[OServerConnection alloc] init] replicate];
 }
 
 

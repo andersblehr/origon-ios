@@ -43,8 +43,12 @@ NSInteger const kHTTPStatusInternalServerError = 500;
 static NSString * const kGAEServer = @"origoapp.appspot.com";
 //static NSString * const kOrigoDevServer = @"localhost:8888";
 static NSString * const kOrigoDevServer = @"enceladus.local:8888";
-//static NSString * const kOrigoProdServer = @"origoapp.appspot.com";
-static NSString * const kOrigoProdServer = @"enceladus.local:8888";
+static NSString * const kOrigoProdServer = @"origoapp.appspot.com";
+//static NSString * const kOrigoProdServer = @"enceladus.local:8888";
+
+static NSString * const kHTTPProtocol = @"http";
+static NSString * const kHTTPProtocolSuffixSSL = @"s";
+static NSString * const kHTTPURLFormat = @"%@://%@";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";
 static NSString * const kHTTPHeaderAcceptCharset = @"Accept-Charset";
@@ -80,13 +84,13 @@ static NSString * const kURLParameterVersion = @"version";
 - (NSString *)origoServerURL
 {
     NSString *origoServer = [OMeta m].isSimulatorDevice ? kOrigoDevServer : kOrigoProdServer;
-    NSMutableString *protocol = [NSMutableString stringWithString:@"http"];
+    NSMutableString *protocol = [NSMutableString stringWithString:kHTTPProtocol];
     
     if ([origoServer isEqualToString:kGAEServer] && [_RESTHandler isEqualToString:kRESTHandlerAuth]) {
-        [protocol appendString:@"s"];
+        [protocol appendString:kHTTPProtocolSuffixSSL];
     }
     
-    return [NSString stringWithFormat:@"%@://%@", protocol, origoServer];
+    return [NSString stringWithFormat:kHTTPURLFormat, protocol, origoServer];
 }
 
 
@@ -212,7 +216,7 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-- (void)replicateIfNeeded
+- (void)replicate
 {
     _RESTHandler = kRESTHandlerModel;
     
@@ -236,16 +240,6 @@ static NSString * const kURLParameterVersion = @"version";
         
         [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OMeta m]];
     }
-}
-
-
-- (void)getMemberWithId:(NSString *)memberId delegate:(id)delegate
-{
-    _RESTHandler = kRESTHandlerModel;
-    _RESTRoute = [NSString stringWithFormat:@"%@/%@", kRESTRouteModelMember, memberId];
-    
-    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
 }
 
 
