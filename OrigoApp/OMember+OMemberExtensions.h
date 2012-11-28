@@ -14,10 +14,10 @@
 
 - (void)setDidRegister_:(BOOL)didRegister_;
 - (BOOL)didRegister_;
-- (NSString *)name_;
 
-- (NSString *)details;
-- (UIImage *)image;
+- (NSString *)listName;
+- (NSString *)listDetails;
+- (UIImage *)listImage;
 
 - (BOOL)isUser;
 - (BOOL)isFemale;

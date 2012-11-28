@@ -43,6 +43,50 @@
 }
 
 
+- (NSString *)singleLineAddress
+{
+    NSMutableString *singleLineAddress = [NSMutableString stringWithString:self.address];
+    
+    [singleLineAddress replaceOccurrencesOfString:kSeparatorNewline withString:kSeparatorComma options:NSLiteralSearch range:NSMakeRange(0, [self.address length])];
+    
+    return singleLineAddress;
+}
+
+
+#pragma mark - Table view list display
+
+- (NSString *)listName
+{
+    NSString *listName = [self.address lines][0];
+    
+    if ([OState s].targetIsOrigo) {
+        listName = self.name;
+    }
+    
+    return listName;
+}
+
+
+- (NSString *)listDetails
+{
+    NSString *listDetails = nil;
+    
+    if ([self hasTelephone]) {
+        listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedTelephone], self.telephone];
+    }
+    
+    if ([OState s].targetIsOrigo) {
+        if ([self isResidence]) {
+            listDetails = [self singleLineAddress];
+        } else {
+            listDetails = self.descriptionText;
+        }
+    }
+    
+    return listDetails;
+}
+
+
 #pragma mark - Adding members
 
 - (id)addMember:(OMember *)member
@@ -140,32 +184,6 @@
     }
     
     return didFindMember;
-}
-
-
-#pragma mark - Address information
-
-- (NSString *)details
-{
-    NSString *detailString = nil;
-    
-    if ([self isResidence]) {
-        detailString = [self singleLineAddress];
-    } else {
-        detailString = self.descriptionText;
-    }
-    
-    return detailString;
-}
-
-
-- (NSString *)singleLineAddress
-{
-    NSMutableString *singleLineAddress = [NSMutableString stringWithString:self.address];
-    
-    [singleLineAddress replaceOccurrencesOfString:@"\n" withString:@", " options:NSLiteralSearch range:NSMakeRange(0, [self.address length])];
-    
-    return singleLineAddress;
 }
 
 

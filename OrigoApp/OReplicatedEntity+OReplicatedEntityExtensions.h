@@ -16,21 +16,23 @@
 - (void)setDeserialisedValue:(id)value forKey:(NSString *)key;
 
 - (NSDictionary *)toDictionary;
-
+- (NSString *)computeHashCode;
+- (void)internaliseRelationships;
 - (BOOL)propertyIsTransient:(NSString *)property;
 - (BOOL)isReplicated;
 - (BOOL)isDirty;
 
-- (void)internaliseRelationships;
-- (NSString *)computeHashCode;
-- (NSString *)expiresInTimeframe;
-
 + (CGFloat)defaultDisplayCellHeight;
 - (CGFloat)displayCellHeight;
+- (NSString *)reuseIdentifier;
+- (NSString *)listName;
+- (NSString *)listDetails;
+- (UIImage *)listImage;
+
+- (NSString *)expiresInTimeframe;
 
 - (OLinkedEntityRef *)linkedEntityRefForOrigo:(OOrigo *)origo;
 - (OReplicatedEntityGhost *)spawnEntityGhost;
 
-- (NSString *)reuseIdentifier;
 
 @end

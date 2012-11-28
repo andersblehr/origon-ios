@@ -12,6 +12,9 @@
 
 @interface OOrigo (OOrigoExtensions)
 
+- (NSString *)listName;
+- (NSString *)listDetails;
+
 - (id)addMember:(OMember *)member;
 - (id)addResident:(OMember *)resident;
 
@@ -24,9 +27,6 @@
 - (BOOL)userIsMember;
 - (BOOL)userIsAdmin;
 - (BOOL)hasMemberWithId:(NSString *)memberId;
-
-- (NSString *)details;
-- (NSString *)singleLineAddress;
 
 - (NSComparisonResult)compare:(OOrigo *)other;
 

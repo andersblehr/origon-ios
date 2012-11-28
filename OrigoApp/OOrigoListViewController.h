@@ -12,6 +12,7 @@
 
 #import "OState.h"
 
+@class OTableViewCell;
 @class OMember, OOrigo;
 
 @interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
@@ -20,6 +21,7 @@
     NSArray *_sortedWards;
     NSArray *_sortedOrigos;
     
+    OTableViewCell *_selectedCell;
     OMember *_selectedWard;
     OOrigo *_selectedOrigo;
     

@@ -75,9 +75,41 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 @implementation OTableViewCell
 
-#pragma mark - Adding UI elements
+#pragma mark - Auxiliary methods
 
-- (void)addTitleForKeyPath:(NSString *)keyPath
+- (BOOL)isListCell
+{
+    return [self.reuseIdentifier isEqualToString:kReuseIdentifierDefault];
+}
+
+
+- (void)redrawIfNeeded
+{
+    [UIView animateWithDuration:kCellAnimationDuration animations:^{
+        CGFloat desiredFrameHeight = [_entity displayCellHeight];
+        CGRect frame = self.frame;
+        
+        if (frame.size.height != desiredFrameHeight + kImplicitFramePadding) {
+            frame.size.height = desiredFrameHeight + kImplicitFramePadding;
+            self.frame = frame;
+            
+            [self redraw];
+        }
+    }];
+}
+
+
+- (void)redraw
+{
+    [self setNeedsUpdateConstraints];
+    [self layoutIfNeeded];
+    [self.backgroundView redrawDropShadow];
+}
+
+
+#pragma mark - Adding elements
+
+- (void)addTitleForKeyPath:(NSString *)keyPath hasPhoto:(BOOL)hasPhoto
 {
     UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
     titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
@@ -89,7 +121,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     [self addTextFieldForKeyPath:keyPath constrained:NO];
     
-    if ([_entity isKindOfClass:OMember.class]) {
+    if (hasPhoto) {
         _visualConstraints.titleBannerHasPhoto = YES;
         
         UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
@@ -149,10 +181,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (constrained) {
         [_visualConstraints addUnlabeledConstraintsForKeyPath:keyPath];
     }
-    
-    if (_entity) {
-        [[OMeta m] addObserver:self ofEntity:_entity forKeyPath:keyPath context:_localContext];
-    }
 }
 
 
@@ -174,8 +202,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [self.contentView addSubview:textView];
     [_views setObject:textView forKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
     [_visualConstraints addLabeledTextFieldConstraintsForKeyPath:keyPath];
-    
-    [[OMeta m] addObserver:self ofEntity:_entity forKeyPath:keyPath context:_localContext];
 }
 
 
@@ -183,12 +209,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
-    _entity = entity;
+    self.entity = entity;
     _selectable = [OState s].actionIsList;
-    _localContext = &_localContext;
     
     if (entityClass == OMember.class) {
-        [self addTitleForKeyPath:kKeyPathName];
+        [self addTitleForKeyPath:kKeyPathName hasPhoto:YES];
         [self addLabeledTextFieldForKeyPath:kKeyPathDateOfBirth];
         [self addLabeledTextFieldForKeyPath:kKeyPathMobilePhone];
         [self addLabeledTextFieldForKeyPath:kKeyPathEmail];
@@ -313,7 +338,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self.backgroundView addDropShadowForInternalTableViewCell];
     }
     
-    if ([_entity isKindOfClass:OMember.class]) {
+    if (_visualConstraints.titleBannerHasPhoto) {
         [[_views objectForKey:kKeyPathPhotoFrame] addDropShadowForPhotoFrame];
     }
 }
@@ -336,19 +361,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
     }
     
-    [UIView animateWithDuration:kCellAnimationDuration animations:^{
-        CGFloat desiredFrameHeight = [_entity displayCellHeight];
-        CGRect frame = self.frame;
-        
-        if (frame.size.height != desiredFrameHeight + kImplicitFramePadding) {
-            frame.size.height = desiredFrameHeight + kImplicitFramePadding;
-            self.frame = frame;
-            
-            [self setNeedsUpdateConstraints];
-            [self layoutIfNeeded];
-            [self.backgroundView redrawDropShadow];
-        }
-    }];
+    [self redrawIfNeeded];
 }
 
 
@@ -362,9 +375,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             frame.size.height += lineCountDelta * [UIFont detailLineHeight];
             self.frame = frame;
             
-            [self setNeedsUpdateConstraints];
-            [self layoutIfNeeded];
-            [self.backgroundView redrawDropShadow];
+            [self redraw];
         }];
     }
 }
@@ -418,6 +429,22 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Accessor overrides
 
+- (void)setEntity:(OReplicatedEntity *)entity
+{
+    _entity = entity;
+    
+    if ([self isListCell]) {
+        _selectable = YES;
+        
+        self.textLabel.text = [_entity listName];
+        self.detailTextLabel.text = [_entity listDetails];
+        self.imageView.image = [_entity listImage];
+        
+        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
+}
+
+
 - (void)setSelectable:(BOOL)selectable
 {
     _selectable = selectable;
@@ -462,23 +489,35 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - NSKeyValueObserving conformance
+#pragma mark - OEntityObservingDelegate conformance
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)refreshFromEntity
 {
-    if (context == _localContext) {
-        [[self textFieldForKeyPath:keyPath] setText:[change objectForKey:NSKeyValueChangeNewKey]];
+    if ([self isListCell]) {
+        self.textLabel.text = [_entity listName];
+        self.detailTextLabel.text = [_entity listDetails];
+        self.imageView.image = [_entity listImage];
     } else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        if ([_entity isKindOfClass:OOrigo.class]) {
+            [[self textFieldForKeyPath:kKeyPathAddress] setText:((OOrigo *)_entity).address];
+            [[self textFieldForKeyPath:kKeyPathTelephone] setText:((OOrigo *)_entity).telephone];
+        } else if ([_entity isKindOfClass:OMember.class]) {
+            [[self textFieldForKeyPath:kKeyPathName] setText:((OMember *)_entity).name];
+            [[self textFieldForKeyPath:kKeyPathDateOfBirth] setText:[((OMember *)_entity).dateOfBirth localisedDateString]];
+            [[self textFieldForKeyPath:kKeyPathMobilePhone] setText:((OMember *)_entity).mobilePhone];
+            [[self textFieldForKeyPath:kKeyPathEmail] setText:((OMember *)_entity).email];
+        }
+        
+        [self redrawIfNeeded];
+        
+        UITableView *tableView = (UITableView *)self.superview;
+        [tableView beginUpdates];
+        [tableView endUpdates];
     }
-}
-
-
-#pragma mark - Removing entity KVO observers
-
-- (void)dealloc
-{
-    [[OMeta m] removeEntityObserversInContext:_localContext];
+    
+    if (_entityObservingDelegate) {
+        [_entityObservingDelegate refreshFromEntity];
+    }
 }
 
 @end

@@ -65,7 +65,7 @@ static NSInteger const kWardSection = 1;
 
 #pragma mark - Selector implementations
 
-- (void)addOrigo
+- (void)addItem
 {
     [OState s].actionIsRegister = YES;
     
@@ -129,7 +129,6 @@ static NSInteger const kWardSection = 1;
     
     if ([[OMeta m].user isTeenOrOlder]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
-        self.navigationItem.rightBarButtonItem.action = @selector(addOrigo);
     }
     
     _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
@@ -202,6 +201,7 @@ static NSInteger const kWardSection = 1;
     if ([segue.identifier isEqualToString:kSegueToMemberListView]) {
         OMemberListViewController *memberListViewController = segue.destinationViewController;
         memberListViewController.origo = _selectedOrigo;
+        memberListViewController.entityObservingDelegate = _selectedCell;
     }
 }
 
@@ -250,6 +250,8 @@ static NSInteger const kWardSection = 1;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    OTableViewCell *cell = nil;
+    
     OMembership *membership = nil;
     OMember *ward = nil;
     
@@ -261,21 +263,10 @@ static NSInteger const kWardSection = 1;
         membership = _sortedOrigos[indexPath.row];
     }
     
-    UITableViewCell *cell = [tableView cellWithReuseIdentifier:kReuseIdentifierDefault];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    
     if (membership) {
-        cell.textLabel.text = membership.origo.name;
-        cell.detailTextLabel.text = membership.origo.details;
-        
-        if ([membership.origo isResidence]) {
-            cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
-        } else {
-            // TODO: What icon to use for general origos?
-        }
+        cell = [tableView listCellForEntity:membership.origo];
     } else if (ward) {
-        cell.textLabel.text = ward.givenName;
-        cell.imageView.image = [UIImage imageNamed:kIconFileOrigo];
+        cell = [tableView listCellForEntity:ward];
     }
     
     return cell;
@@ -389,6 +380,7 @@ static NSInteger const kWardSection = 1;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    _selectedCell = (OTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
     _selectedOrigo = nil;
     _selectedWard = nil;
     

@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "OEntityObservingDelegate.h"
+
 extern NSString * const kReuseIdentifierDefault;
 extern NSString * const kReuseIdentifierUserSignIn;
 extern NSString * const kReuseIdentifierUserActivation;
@@ -23,7 +25,7 @@ extern CGFloat const kCellAnimationDuration;
 @class OReplicatedEntity;
 @class OTextField, OTextView, OVisualConstraints;
 
-@interface OTableViewCell : UITableViewCell {
+@interface OTableViewCell : UITableViewCell<OEntityObservingDelegate> {
 @private
     BOOL _selectable;
     
@@ -31,11 +33,10 @@ extern CGFloat const kCellAnimationDuration;
     NSMutableDictionary *_views;
     
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
-    
-    void *_localContext;
 }
 
-@property (strong, nonatomic, readonly) OReplicatedEntity *entity;
+@property (strong, nonatomic) OReplicatedEntity *entity;
+@property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
 
 + (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
 + (CGFloat)heightForEntity:(OReplicatedEntity *)entity;

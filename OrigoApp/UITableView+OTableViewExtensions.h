@@ -17,11 +17,12 @@
 - (void)addLogoBanner;
 - (UIActivityIndicatorView *)addActivityIndicator;
 
-- (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 - (id)cellForEntity:(OReplicatedEntity *)entity;
 - (id)cellForEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 - (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate;
+- (id)listCell;
+- (id)listCellForEntity:(OReplicatedEntity *)entity;
 
 - (CGFloat)standardHeaderHeight;
 - (CGFloat)standardFooterHeight;

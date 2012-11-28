@@ -63,7 +63,7 @@
 }
 
 
-#pragma mark - Dictionary serialisation
+#pragma mark - Replication support
 
 - (NSDictionary *)toDictionary
 {
@@ -97,49 +97,6 @@
     }
     
     return entityDictionary;
-}
-
-
-#pragma mark - Internal consistency
-
-- (BOOL)propertyIsTransient:(NSString *)property
-{
-    return [property isEqualToString:@"hashCode"];
-}
-
-
-- (BOOL)isReplicated
-{
-    return (self.dateReplicated != nil);
-}
-
-
-- (BOOL)isDirty
-{
-    return ![self.hashCode isEqualToString:[self computeHashCode]];
-}
-
-
-- (void)internaliseRelationships
-{
-    self.hashCode = [self computeHashCode];
-    
-    NSDictionary *entityRefs = [[OMeta m] stagedServerEntityRefsForEntity:self];
-    
-    for (NSString *name in [entityRefs allKeys]) {
-        NSDictionary *entityRef = [entityRefs objectForKey:name];
-        NSString *destinationId = [entityRef objectForKey:kKeyPathEntityId];
-        
-        OReplicatedEntity *entity = [[OMeta m] stagedServerEntityWithId:destinationId];
-        
-        if (!entity) {
-            entity = [[OMeta m].context entityWithId:destinationId];
-        }
-        
-        if (entity) {
-            [self setValue:entity forKey:name];
-        }
-    }
 }
 
 
@@ -181,20 +138,48 @@
 }
 
 
-- (NSString *)expiresInTimeframe
+- (void)internaliseRelationships
 {
-    NSEntityDescription *entity = self.entity;
-    NSString *expires = [entity.userInfo objectForKey:@"expires"];
+    self.hashCode = [self computeHashCode];
     
-    if (!expires) {
-        // TODO: Keep track of and act on entity expiry dates
+    NSDictionary *entityRefs = [[OMeta m] stagedServerEntityRefsForEntity:self];
+    
+    for (NSString *name in [entityRefs allKeys]) {
+        NSDictionary *entityRef = [entityRefs objectForKey:name];
+        NSString *destinationId = [entityRef objectForKey:kKeyPathEntityId];
+        
+        OReplicatedEntity *entity = [[OMeta m] stagedServerEntityWithId:destinationId];
+        
+        if (!entity) {
+            entity = [[OMeta m].context entityWithId:destinationId];
+        }
+        
+        if (entity) {
+            [self setValue:entity forKey:name];
+        }
     }
-    
-    return expires;
 }
 
 
-#pragma mark - Display cell height calculation
+- (BOOL)propertyIsTransient:(NSString *)property
+{
+    return [property isEqualToString:@"hashCode"];
+}
+
+
+- (BOOL)isReplicated
+{
+    return (self.dateReplicated != nil);
+}
+
+
+- (BOOL)isDirty
+{
+    return ![self.hashCode isEqualToString:[self computeHashCode]];
+}
+
+
+#pragma mark - Table view support
 
 + (CGFloat)defaultDisplayCellHeight
 {
@@ -205,6 +190,30 @@
 - (CGFloat)displayCellHeight
 {
     return kDefaultTableViewCellHeight;
+}
+
+
+- (NSString *)reuseIdentifier
+{
+    return [NSString stringWithFormat:@"%@-%@", self.entity, [[OState s] asString]];
+}
+
+
+- (NSString *)listName
+{
+    return @"BROKEN: Plase override in subclass";
+}
+
+
+- (NSString *)listDetails
+{
+    return @"BROKEN: Plase override in subclass";
+}
+
+
+- (UIImage *)listImage
+{
+    return nil;
 }
 
 
@@ -227,11 +236,18 @@
 }
 
 
-#pragma mark - Table view cell reuse identifier
+#pragma mark - Miscellaneous
 
-- (NSString *)reuseIdentifier
+- (NSString *)expiresInTimeframe
 {
-    return [self computeHashCode];
+    NSEntityDescription *entity = self.entity;
+    NSString *expires = [entity.userInfo objectForKey:@"expires"];
+    
+    if (!expires) {
+        // TODO: Keep track of and act on entity expiry dates
+    }
+    
+    return expires;
 }
 
 @end

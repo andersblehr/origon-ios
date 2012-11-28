@@ -105,20 +105,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-#pragma mark - Sizing & positioning
-
-- (void)setOrigin:(CGPoint)origin
-{
-    self.frame = CGRectMake(origin.x, origin.y, self.frame.size.width, self.frame.size.height);
-}
-
-
-- (void)setWidth:(CGFloat)width
-{
-    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, width, self.frame.size.height);
-}
-
-
 #pragma mark - Input validation
 
 - (BOOL)holdsValidEmail
@@ -264,13 +250,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     
     if (!_isTitle) {
         if (selected) {
-            self.backgroundColor = [UIColor selectedCellBackgroundColor];
             self.textColor = [UIColor selectedDetailTextColor];
         } else {
-            [UIView animateWithDuration:0.5f animations:^{
-                self.backgroundColor = [UIColor cellBackgroundColor];
-                self.textColor = [UIColor detailTextColor];
-            }];
+            self.textColor = [UIColor detailTextColor];
         }
     }
 }
