@@ -545,8 +545,6 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
                     
                     if (_candidate) {
                         [self populateWithCandidate];
-                    } else {
-                        [[[OServerConnection alloc] init] getMemberWithId:_emailField.text delegate:self];
                     }
                 }
             }

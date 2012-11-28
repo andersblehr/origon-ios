@@ -24,6 +24,7 @@
 
 - (BOOL)needsReplication;
 - (void)replicateIfNeeded;
+- (void)replicate;
 - (void)saveReplicationState;
 
 - (id)entityWithId:(NSString *)entityId;
