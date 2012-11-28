@@ -8,14 +8,10 @@ xcuserdata/
 *.perspectivev3
 *~.nib
 
-# Ignore private workspace stuff
-ScolaApp.xcodeproj/xcuserdata
-ScolaApp.xcodeproj/project.xcworkspage
-
 # Media files
 *.wav
 
-## Generic files to ignore
+# Generic files to ignore
 *~
 *.lock
 *.DS_Store
