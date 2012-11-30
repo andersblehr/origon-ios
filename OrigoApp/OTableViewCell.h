@@ -38,9 +38,6 @@ extern CGFloat const kCellAnimationDuration;
 @property (strong, nonatomic) OReplicatedEntity *entity;
 @property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
 
-+ (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
-+ (CGFloat)heightForEntity:(OReplicatedEntity *)entity;
-
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 - (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
 - (id)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate;

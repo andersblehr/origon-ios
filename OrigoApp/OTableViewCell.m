@@ -226,28 +226,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Cell height
-
-+ (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier
-{
-    CGFloat height = kDefaultTableViewCellHeight;
-    
-    if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn] ||
-        [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-        height = 3 * kDefaultPadding;
-        height += 3 * [UIFont detailFieldHeight] + 1;
-    }
-    
-    return height;
-}
-
-
-+ (CGFloat)heightForEntity:(OReplicatedEntity *)entity
-{
-    return [entity displayCellHeight];
-}
-
-
 #pragma mark - Initialisation
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
@@ -358,8 +336,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
         if ([view isKindOfClass:OTextField.class]) {
             ((OTextField *)view).enabled = [OState s].actionIsEdit;
         } else if ([view isKindOfClass:OTextView.class]) {
-            ((OTextView *)view).editable = [OState s].actionIsEdit;
-            ((OTextView *)view).userInteractionEnabled = [OState s].actionIsEdit;
+            OTextView *textView = (OTextView *)view;
+            
+            textView.editable = [OState s].actionIsEdit;
+            textView.userInteractionEnabled = [OState s].actionIsEdit;
+            textView.editing = ([OState s].actionIsEdit && [OState s].targetIsOrigo);
         }
     }
     

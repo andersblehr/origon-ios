@@ -27,6 +27,6 @@ extern CGFloat const kTextInset;
 - (BOOL)holdsValidDate;
 
 - (void)emphasise;
-- (void)toggleEmphasis;
+- (void)deemphasise;
 
 @end

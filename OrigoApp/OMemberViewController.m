@@ -245,8 +245,6 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 - (void)startEditing
 {
     [self toggleEdit];
-    
-    [_nameField becomeFirstResponder];
 }
 
 
@@ -524,7 +522,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    [textField toggleEmphasis];
+    [textField emphasise];
     
     if (_currentField == _emailField) {
         if (([_emailField.text length] > 0) && [_emailField holdsValidEmail]) {
@@ -553,7 +551,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)textFieldDidEndEditing:(OTextField *)textField
 {
-    [textField toggleEmphasis];
+    [textField deemphasise];
 }
 
 

@@ -227,6 +227,12 @@
         height += [UIFont detailFieldHeight];
     }
     
+    if ([OState s].actionIsEdit) {
+        if ([OTextView lineCountWithText:self.address] < kTextViewMaximumLines) {
+            height += [UIFont detailLineHeight];
+        }
+    }
+    
     return height;
 }
 

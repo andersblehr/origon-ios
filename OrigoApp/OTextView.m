@@ -19,9 +19,9 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 
-NSInteger const kTextViewMinimumEditLines = 2;
 NSInteger const kTextViewMaximumLines = 5;
 
+static NSInteger const kTextViewMinimumEditLines = 2;
 static NSInteger const kTextViewMinimumLines = 1;
 
 static CGFloat const kTopInset = 5.f;
@@ -33,18 +33,6 @@ static CGFloat const kDeselectionAnimationDuration = 0.5f;
 @implementation OTextView
 
 #pragma mark - Auxiliary methods
-
-+ (NSInteger)lineCountWithText:(NSString *)text
-{
-    CGSize sizeGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)];
-    NSInteger lineCountGuesstimate = round(sizeGuesstimate.height / [UIFont detailLineHeight]);
-    
-    lineCountGuesstimate = MAX(lineCountGuesstimate, kTextViewMinimumLines);
-    lineCountGuesstimate = MIN(lineCountGuesstimate, kTextViewMaximumLines);
-    
-    return lineCountGuesstimate;
-}
-
 
 + (CGFloat)heightForLineCount:(NSUInteger)lineCount
 {
@@ -155,6 +143,18 @@ static CGFloat const kDeselectionAnimationDuration = 0.5f;
 }
 
 
++ (NSInteger)lineCountWithText:(NSString *)text
+{
+    CGSize sizeGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)];
+    NSInteger lineCountGuesstimate = round(sizeGuesstimate.height / [UIFont detailLineHeight]);
+    
+    lineCountGuesstimate = MAX(lineCountGuesstimate, kTextViewMinimumLines);
+    lineCountGuesstimate = MIN(lineCountGuesstimate, kTextViewMaximumLines);
+    
+    return lineCountGuesstimate;
+}
+
+
 - (NSInteger)lineCount
 {
     _lastKnownLineCount = [self transientLineCount];
@@ -191,18 +191,21 @@ static CGFloat const kDeselectionAnimationDuration = 0.5f;
 
 #pragma mark - Toggling emphasis
 
-- (void)toggleEmphasis
+- (void)emphasise
 {
-    _editing = !_editing;
+    _editing = YES;
     
-    if (_editing) {
-        self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-    } else {
-        self.backgroundColor = [UIColor clearColor];
-    }
+    self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
+    [self hasDropShadow:YES];
+}
+
+
+- (void)deemphasise
+{
+    _editing = NO;
     
-    [self hasDropShadow:_editing];
-    [self.delegate textViewDidChange:self];
+    self.backgroundColor = [UIColor clearColor];
+    [self hasDropShadow:NO];
 }
 
 

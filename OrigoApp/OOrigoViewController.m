@@ -70,8 +70,6 @@
 - (void)startEditing
 {
     [self toggleEdit];
-    
-    [_addressView becomeFirstResponder];
 }
 
 
@@ -236,13 +234,13 @@
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    [textField toggleEmphasis];
+    [textField emphasise];
 }
 
 
 - (void)textFieldDidEndEditing:(OTextField *)textField
 {
-    [textField toggleEmphasis];
+    [textField deemphasise];
 }
 
 
@@ -250,7 +248,7 @@
 
 - (void)textViewDidBeginEditing:(OTextView *)textView
 {
-    [textView toggleEmphasis];
+    [textView emphasise];
 }
 
 
@@ -262,7 +260,7 @@
 
 - (void)textViewDidEndEditing:(OTextView *)textView
 {
-    [textView toggleEmphasis];
+    [textView deemphasise];
 }
 
 @end

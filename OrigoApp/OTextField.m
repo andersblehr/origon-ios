@@ -196,18 +196,14 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-- (void)toggleEmphasis
+- (void)deemphasise
 {
-    if (self.editing) {
-        [self emphasise];
-    } else {
-        self.backgroundColor = [UIColor clearColor];
-        [self hasDropShadow:NO];
-        
-        if (_isTitle) {
-            self.textColor = [UIColor titleTextColor];
-            [self setValue:[UIColor lightPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
-        }
+    self.backgroundColor = [UIColor clearColor];
+    [self hasDropShadow:NO];
+    
+    if (_isTitle) {
+        self.textColor = [UIColor titleTextColor];
+        [self setValue:[UIColor lightPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
     }
 }
 
