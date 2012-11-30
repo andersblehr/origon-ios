@@ -2,7 +2,7 @@
 //  OReplicatedEntityGhost.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 29.10.12.
+//  Created by Anders Blehr on 30.11.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
@@ -15,5 +15,7 @@
 
 @property (nonatomic, retain) NSString * ghostedEntityClass;
 @property (nonatomic, retain) NSNumber * hasExpired;
+@property (nonatomic, retain) NSString * memberEmail;
+@property (nonatomic, retain) NSString * memberId;
 
 @end

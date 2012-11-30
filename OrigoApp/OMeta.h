@@ -42,6 +42,7 @@ extern NSString * const kKeyPathAuthInfo;
 extern NSString * const kKeyPathDirtyEntities;
 extern NSString * const kKeyPathEntityClass;
 extern NSString * const kKeyPathEntityId;
+extern NSString * const kKeyPathOrigo;
 extern NSString * const kKeyPathOrigoId;
 extern NSString * const kKeyPathSignIn;
 extern NSString * const kKeyPathAuthEmail;
@@ -49,6 +50,8 @@ extern NSString * const kKeyPathPassword;
 extern NSString * const kKeyPathActivation;
 extern NSString * const kKeyPathActivationCode;
 extern NSString * const kKeyPathRepeatPassword;
+extern NSString * const kKeyPathPasswordHash;
+extern NSString * const kKeyPathIsListed;
 extern NSString * const kKeyPathName;
 extern NSString * const kKeyPathMobilePhone;
 extern NSString * const kKeyPathEmail;
@@ -77,7 +80,7 @@ extern NSUInteger const kAgeOfMajority;
     NSMutableDictionary *_stagedServerEntityRefs;
 }
 
-@property (strong, nonatomic) NSString *userId;
+@property (strong, nonatomic) NSString *userEmail;
 @property (strong, nonatomic, readonly) OMember *user;
 
 @property (strong, nonatomic, readonly) NSString *deviceId;

@@ -73,7 +73,7 @@
             if ([self hasMobilePhone]) {
                 listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
             } else if ([self hasEmail]) {
-                listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.entityId];
+                listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.email];
             }
         }
     }
@@ -120,7 +120,7 @@
 
 - (BOOL)isUser
 {
-    return [self.entityId isEqualToString:[OMeta m].userId];
+    return [self.email isEqualToString:[OMeta m].userEmail];
 }
 
 
@@ -174,7 +174,7 @@
 
 - (BOOL)hasEmail
 {
-    return [self.entityId isEmailAddress];
+    return ([self.email length] > 0);
 }
 
 

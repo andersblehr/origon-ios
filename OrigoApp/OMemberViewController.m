@@ -87,11 +87,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         if (_candidate) {
             _member = _candidate;
         } else {
-            if ([_emailField.text length] > 0) {
-                _member = [[OMeta m].context insertMemberEntityWithId:_emailField.text];
-            } else {
-                _member = [[OMeta m].context insertMemberEntityWithId:nil];
-            }
+            _member = [[OMeta m].context insertMemberEntityWithEmail:_emailField.text];
         }
     }
     
@@ -270,7 +266,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     } else if ([OState s].actionIsEdit) {
         _dateOfBirthField.text = [_member.dateOfBirth localisedDateString];
         _mobilePhoneField.text = _member.mobilePhone;
-        _emailField.text = _member.entityId;
+        _emailField.text = _member.email;
         
         [self toggleEdit];
     }
@@ -534,7 +530,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         if (([_emailField.text length] > 0) && [_emailField holdsValidEmail]) {
             if ([OState s].aspectIsSelf) {
                 // TODO: Handle user email change
-            } else if (![_emailField.text isEqualToString:_member.entityId]) {
+            } else if (![_emailField.text isEqualToString:_member.email]) {
                 if ([_origo hasMemberWithId:_emailField.text]) {
                     NSString *alertTitle = [OStrings stringForKey:strAlertTitleMemberExists];
                     NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _emailField.text, _origo.name];

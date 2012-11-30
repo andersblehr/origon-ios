@@ -229,8 +229,14 @@
 {
     OOrigo *entityOrigo = [[OMeta m].context entityWithId:self.origoId];
     OReplicatedEntityGhost *entityGhost = [[OMeta m].context insertEntityForClass:OReplicatedEntityGhost.class inOrigo:entityOrigo entityId:self.entityId];
-    
     entityGhost.ghostedEntityClass = NSStringFromClass(self.class);
+    
+    if ([self isKindOfClass:OMembership.class]) {
+        OMembership *membership = (OMembership *)self;
+        
+        entityGhost.memberId = membership.member.entityId;
+        entityGhost.memberEmail = membership.member.email;
+    }
     
     return entityGhost;
 }

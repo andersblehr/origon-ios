@@ -29,8 +29,7 @@
 #import "OOrigo+OOrigoExtensions.h"
 #import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
-
-static NSString * const kOrigoRelationshipName = @"origo";
+static NSString * const kRootOrigoIdFormat = @"~%@";
 
 
 @implementation NSManagedObjectContext (OManagedObjectContextExtensions)
@@ -123,19 +122,19 @@ static NSString * const kOrigoRelationshipName = @"origo";
 }
 
 
-- (id)entityOfClass:(Class)class matchingPredicate:(NSPredicate *)predicate
+- (id)entityOfClass:(Class)class withValue:(NSString *)value forKeyPath:(NSString *)keyPath
 {
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(class)];
-    [request setPredicate:predicate];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", keyPath, value]];
     
     id entity = nil;
     NSError *error = nil;
     NSArray *resultsArray = [self executeFetchRequest:request error:&error];
     
     if (resultsArray == nil) {
-        OLogError(@"Could not fetch entity on device: %@", [error localizedDescription]);
+        OLogError(@"Error fetching entity on device: %@", [error localizedDescription]);
     } else if ([resultsArray count] > 1) {
-        OLogBreakage(@"Found more than one entity on device for predicate '%@'.", [predicate predicateFormat]);
+        OLogBreakage(@"Found more than one entity with key/value [%@/%@].", keyPath, value);
     } else if ([resultsArray count] == 1) {
         entity = resultsArray[0];
     }
@@ -203,26 +202,21 @@ static NSString * const kOrigoRelationshipName = @"origo";
 
 
 
-- (OMember *)insertMemberEntityWithId:(NSString *)memberId
+- (OMember *)insertMemberEntityWithEmail:(NSString *)email
 {
-    if (!memberId) {
-        memberId = [OUUIDGenerator generateUUID];
-    }
+    NSString *memberId = [OUUIDGenerator generateUUID];
+    NSString *rootId = [NSString stringWithFormat:kRootOrigoIdFormat, memberId];
     
-    NSString *memberRootId = [NSString stringWithFormat:@"~%@", memberId];
-    
-    OOrigo *memberRoot = [self insertOrigoEntityOfType:kOrigoTypeMemberRoot origoId:memberRootId];
-    OMember *member = [self insertEntityForClass:OMember.class inOrigo:memberRoot entityId:memberId];
-    OMembership *rootMembership = [memberRoot addMember:member];
-    
-    if ([memberId isEmailAddress]) {
-        member.email = memberId;
-    }
+    OOrigo *root = [self insertOrigoEntityOfType:kOrigoTypeMemberRoot origoId:rootId];
+    OMember *member = [self insertEntityForClass:OMember.class inOrigo:root entityId:memberId];
+    OMembership *rootMembership = [root addMember:member];
     
     if ([OState s].aspectIsSelf) {
         rootMembership.isActive_ = YES;
         rootMembership.isAdmin_ = YES;
     }
+    
+    member.email = email;
     
     return member;
 }
@@ -240,8 +234,8 @@ static NSString * const kOrigoRelationshipName = @"origo";
     
     entity.origoId = origo.entityId;
     
-    if ([[entity.entity relationshipsByName] objectForKey:kOrigoRelationshipName]) {
-        [entity setValue:origo forKey:kOrigoRelationshipName];
+    if ([[entity.entity relationshipsByName] objectForKey:kKeyPathOrigo]) {
+        [entity setValue:origo forKey:kKeyPathOrigo];
     }
     
     return entity;
@@ -346,22 +340,13 @@ static NSString * const kOrigoRelationshipName = @"origo";
 
 - (id)entityWithId:(NSString *)entityId
 {
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(OReplicatedEntity.class)];
-    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", kKeyPathEntityId, entityId]];
-    
-    id entity = nil;
-    NSError *error = nil;
-    NSArray *resultsArray = [self executeFetchRequest:request error:&error];
-    
-    if (resultsArray == nil) {
-        OLogError(@"Could not fetch entity on device: %@", [error localizedDescription]);
-    } else if ([resultsArray count] > 1) {
-        OLogBreakage(@"Found more than one entity on device for entityId '%@'.", entityId);
-    } else if ([resultsArray count] == 1) {
-        entity = resultsArray[0];
-    }
-    
-    return entity;
+    return [self entityOfClass:OReplicatedEntity.class withValue:entityId forKeyPath:kKeyPathEntityId];
+}
+
+
+- (id)memberEntityWithEmail:(NSString *)email
+{
+    return [self entityOfClass:OMember.class withValue:email forKeyPath:kKeyPathEmail];
 }
 
 

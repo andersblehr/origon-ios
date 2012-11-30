@@ -115,13 +115,9 @@ static NSInteger const kWardSection = 1;
     self.title = [OStrings stringForKey:strTabBarTitleOrigo];
     
     if (_member) {
-        [OState s].aspectIsWard = YES;
-        
         self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
     } else {
-        [OState s].aspectIsSelf = YES;
-        
         _member = [OMeta m].user;
         _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
         _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];

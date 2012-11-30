@@ -87,11 +87,25 @@
 }
 
 
+- (UIImage *)listImage
+{
+    UIImage *listImage = nil;
+    
+    if ([self isResidence]) {
+        listImage = [UIImage imageNamed:kIconFileHousehold];
+    } else {
+        // TODO: What icon to use for general origos?
+    }
+    
+    return listImage;
+}
+
+
 #pragma mark - Adding members
 
 - (id)addMember:(OMember *)member
 {
-    OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self entityId:[member.entityId stringByAppendingString:self.entityId separator:kSeparatorDollar]];
+    OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self entityId:[NSString stringWithFormat:kMembershipIdFormat, member.email, self.entityId]];
     membership.member = member;
     membership.origo = self;
     
@@ -105,7 +119,7 @@
 
 - (id)addResident:(OMember *)resident
 {
-    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self entityId:[resident.entityId stringByAppendingString:self.entityId separator:kSeparatorCaret]];
+    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self entityId:[NSString stringWithFormat:kResidencyIdFormat, resident.email, self.entityId]];
     residency.resident = resident;
     residency.residence = self;
     residency.member = resident;
