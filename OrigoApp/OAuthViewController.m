@@ -37,16 +37,10 @@
 
 #import "OMemberViewController.h"
 
-static NSInteger const kNumberOfAuthSections = 1;
-static NSInteger const kNumberOfRowsInAuthSection = 1;
-
 static NSString * const kSegueToOrigoListView = @"authToOrigoListView";
 
-static NSString * const kAuthInfoKeyUserId = @"userId";
-static NSString * const kAuthInfoKeyPasswordHash = @"passwordHash";
-static NSString * const kAuthInfoKeyActivationCode = @"activationCode";
-static NSString * const kAuthInfoKeyIsUserListed = @"isListed";
-static NSString * const kAuthInfoKeyIsRegistered = @"isRegistered";
+static NSInteger const kNumberOfAuthSections = 1;
+static NSInteger const kNumberOfRowsInAuthSection = 1;
 
 static NSInteger const kAlertButtonStartOver = 0;
 static NSInteger const kAlertTagWelcomeBack = 0;
@@ -61,8 +55,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if ([OState s].actionIsLogin) {
         _passwordField.text = @"";
         
-        if ([OMeta m].userId) {
-            _emailField.text = [OMeta m].userId;
+        if ([OMeta m].userEmail) {
+            _emailField.text = [OMeta m].userEmail;
             [_passwordField becomeFirstResponder];
         } else {
             [_emailField becomeFirstResponder];
@@ -95,7 +89,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (NSString *)computePasswordHash:(NSString *)password
 {
-    return [[password diff:[OMeta m].userId] hashUsingSHA1];
+    return [[password diff:[OMeta m].userEmail] hashUsingSHA1];
 }
 
 
@@ -194,7 +188,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (BOOL)activationCodeIsValid
 {
-    NSString *activationCode = [[_authInfo objectForKey:kAuthInfoKeyActivationCode] lowercaseString];
+    NSString *activationCode = [[_authInfo objectForKey:kKeyPathActivationCode] lowercaseString];
     NSString *activationCodeAsEntered = [_activationCodeField.text lowercaseString];
     
     BOOL isValid = [activationCodeAsEntered isEqualToString:activationCode];
@@ -212,7 +206,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     BOOL isValid = NO;
     
     if ([OState s].actionIsActivate) {
-        NSString *passwordHash = [_authInfo objectForKey:kAuthInfoKeyPasswordHash];
+        NSString *passwordHash = [_authInfo objectForKey:kKeyPathPasswordHash];
         NSString *passwordHashAsEntered = [self computePasswordHash:_repeatPasswordField.text];
         
         isValid = [passwordHashAsEntered isEqualToString:passwordHash];
@@ -230,10 +224,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)attemptUserLogin
 {
-    [OMeta m].userId = _emailField.text;
+    [OMeta m].userEmail = _emailField.text;
     
     OServerConnection *serverConnection = [[OServerConnection alloc] init];
-    [serverConnection setAuthHeaderForUser:_emailField.text password:_passwordField.text];
+    [serverConnection setAuthHeaderForEmail:_emailField.text password:_passwordField.text];
     [serverConnection authenticate:self];
     
     [self indicatePendingServerSession:YES];
@@ -283,7 +277,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)userDidSignUpWithData:(NSDictionary *)data
 {
     _authInfo = data;
-    _userIsListed = [[_authInfo objectForKey:kAuthInfoKeyIsUserListed] boolValue];
+    _userIsListed = [[_authInfo objectForKey:kKeyPathIsListed] boolValue];
     
     NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:_authInfo];
     [[NSUserDefaults standardUserDefaults] setObject:authInfoArchive forKey:kKeyPathAuthInfo];
@@ -298,7 +292,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)activateMembership
 {
     OServerConnection *serverConnection = [[OServerConnection alloc] init];
-    [serverConnection setAuthHeaderForUser:[OMeta m].userId password:_repeatPasswordField.text];
+    [serverConnection setAuthHeaderForEmail:[OMeta m].userEmail password:_repeatPasswordField.text];
     [serverConnection authenticate:self];
     
     [self indicatePendingServerSession:YES];
@@ -331,7 +325,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         residenceMessageBoard.title = [OStrings stringForKey:strNameMyMessageBoard];
     }
     
-    [OMeta m].user.passwordHash = [_authInfo objectForKey:kAuthInfoKeyPasswordHash];
+    [OMeta m].user.passwordHash = [_authInfo objectForKey:kKeyPathPasswordHash];
     [OMeta m].user.didRegister_ = YES;
     
     [[OMeta m].context replicateIfNeeded];
@@ -402,7 +396,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if (authInfoArchive) {
         _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
         
-        [OMeta m].userId = [_authInfo objectForKey:kAuthInfoKeyUserId];
+        [OMeta m].userEmail = [_authInfo objectForKey:kKeyPathEmail];
         [OState s].actionIsActivate = YES;
     }
 }
@@ -415,7 +409,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [self initialiseFields];
 
     if ([OState s].actionIsActivate) {
-        NSString *welcomeBackMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextWelcomeBack], [_authInfo objectForKey:kAuthInfoKeyUserId]];
+        NSString *welcomeBackMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextWelcomeBack], [_authInfo objectForKey:kKeyPathEmail]];
         
         UIAlertView *welcomeBackAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleWelcomeBack] message:welcomeBackMessage delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonStartOver] otherButtonTitles:[OStrings stringForKey:strButtonHaveCode], nil];
         welcomeBackAlert.tag = kAlertTagWelcomeBack;

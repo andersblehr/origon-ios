@@ -49,7 +49,7 @@ NSString * const kElementSuffixTextField = @"Field";
 CGFloat const kDefaultTableViewCellHeight = 45.f;
 CGFloat const kDefaultPadding = 10.f;
 
-CGFloat const kCellAnimationDuration = 0.1;
+CGFloat const kCellAnimationDuration = 0.3f;
 
 static NSString * const kKeyPathTitleBanner = @"titleBanner";
 static NSString * const kKeyPathPhotoFrame = @"photoFrame";
@@ -91,7 +91,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
         
         if (frame.size.height != desiredFrameHeight + kImplicitFramePadding) {
             frame.size.height = desiredFrameHeight + kImplicitFramePadding;
+            [(UITableView *)self.superview beginUpdates];
             self.frame = frame;
+            [(UITableView *)self.superview endUpdates];
             
             [self redraw];
         }
@@ -509,9 +511,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
         
         [self redrawIfNeeded];
-        
-        [(UITableView *)self.superview beginUpdates];
-        [(UITableView *)self.superview endUpdates];
     }
     
     if (_entityObservingDelegate) {

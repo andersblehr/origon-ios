@@ -8,6 +8,9 @@
 
 #import "OMembership.h"
 
+extern NSString * const kMembershipIdFormat;
+extern NSString * const kResidencyIdFormat;
+
 @interface OMembership (OMembershipExtensions)
 
 - (void)setIsActive_:(BOOL)isActive;

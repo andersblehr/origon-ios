@@ -13,7 +13,7 @@
 @interface NSManagedObjectContext (OManagedObjectContextExtensions)
 
 - (OOrigo *)insertOrigoEntityOfType:(NSString *)type;
-- (OMember *)insertMemberEntityWithId:(NSString *)memberId;
+- (OMember *)insertMemberEntityWithEmail:(NSString *)email;
 
 - (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo;
 - (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
@@ -28,6 +28,7 @@
 - (void)saveReplicationState;
 
 - (id)entityWithId:(NSString *)entityId;
+- (id)memberEntityWithEmail:(NSString *)email;
 - (void)deleteEntity:(OReplicatedEntity *)entity;
 
 @end

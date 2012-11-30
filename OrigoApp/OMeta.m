@@ -57,6 +57,7 @@ NSString * const kKeyPathAuthInfo = @"origo.auth.info";
 NSString * const kKeyPathDirtyEntities = @"origo.dirtyEntities";
 NSString * const kKeyPathEntityClass = @"entityClass";
 NSString * const kKeyPathEntityId = @"entityId";
+NSString * const kKeyPathOrigo = @"origo";
 NSString * const kKeyPathOrigoId = @"origoId";
 NSString * const kKeyPathSignIn = @"signIn";
 NSString * const kKeyPathAuthEmail = @"authEmail";
@@ -64,6 +65,8 @@ NSString * const kKeyPathPassword = @"password";
 NSString * const kKeyPathActivation = @"activation";
 NSString * const kKeyPathActivationCode = @"activationCode";
 NSString * const kKeyPathRepeatPassword = @"repeatPassword";
+NSString * const kKeyPathPasswordHash = @"passwordHash";
+NSString * const kKeyPathIsListed = @"isListed";
 NSString * const kKeyPathName = @"name";
 NSString * const kKeyPathMobilePhone = @"mobilePhone";
 NSString * const kKeyPathEmail = @"email";
@@ -77,7 +80,7 @@ NSString * const kGenderMale = @"M";
 NSUInteger const kCertainSchoolAge = 7;
 NSUInteger const kAgeOfMajority = 18;
 
-static NSString * const kKeyPathUserId = @"origo.user.id";
+static NSString * const kKeyPathUserEmail = @"origo.user.email";
 static NSString * const kKeyPathFormatDeviceId = @"origo.device.id$%@";
 static NSString * const kKeyPathFormatAuthExpiryDate = @"origo.auth.expires$%@";
 static NSString * const kKeyPathFormatLastReplicationDate = @"origo.replication.date$%@";
@@ -152,13 +155,13 @@ static OMeta *m = nil;
     self = [super init];
     
     if (self) {
-        _userId = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathUserId];
+        _userEmail = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathUserEmail];
         _appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
         _displayLanguage = [NSLocale preferredLanguages][0];
         
-        if (_userId) {
-            _deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userId]];
-            _lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userId]];
+        if (_userEmail) {
+            _deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userEmail]];
+            _lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userEmail]];
         } else {
             _deviceId = [OUUIDGenerator generateUUID];
         }
@@ -204,29 +207,29 @@ static OMeta *m = nil;
 
 #pragma mark - Custom property accessors
 
-- (void)setUserId:(NSString *)userId
+- (void)setUserEmail:(NSString *)userEmail
 {
-    _userId = userId;
+    _userEmail = userEmail;
     
-    if (_userId) {
-        [[NSUserDefaults standardUserDefaults] setObject:_userId forKey:kKeyPathUserId];
+    if (_userEmail) {
+        [[NSUserDefaults standardUserDefaults] setObject:_userEmail forKey:kKeyPathUserEmail];
         
-        NSString *deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userId]];
-        NSString *lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userId]];
+        NSString *deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userEmail]];
+        NSString *lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userEmail]];
         
         if (deviceId) {
             _deviceId = deviceId;
         } else if (_deviceId) {
-            [[NSUserDefaults standardUserDefaults] setObject:_deviceId forKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userId]];
+            [[NSUserDefaults standardUserDefaults] setObject:_deviceId forKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userEmail]];
         }
         
         if (lastReplicationDate) {
             _lastReplicationDate = lastReplicationDate;
         } else if (_lastReplicationDate) {
-            [[NSUserDefaults standardUserDefaults] setObject:_lastReplicationDate forKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userId]];
+            [[NSUserDefaults standardUserDefaults] setObject:_lastReplicationDate forKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userEmail]];
         }
     } else {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathUserId];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathUserEmail];
     }
 }
 
@@ -246,7 +249,7 @@ static OMeta *m = nil;
 {
     _lastReplicationDate = replicationDate;
     
-    [[NSUserDefaults standardUserDefaults] setObject:replicationDate forKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userId]];
+    [[NSUserDefaults standardUserDefaults] setObject:replicationDate forKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userEmail]];
 }
 
 
@@ -268,12 +271,12 @@ static OMeta *m = nil;
 
 - (void)userDidSignIn
 {
-    [[NSUserDefaults standardUserDefaults] setObject:_authTokenExpiryDate forKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userId]];
+    [[NSUserDefaults standardUserDefaults] setObject:_authTokenExpiryDate forKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userEmail]];
     
-    _user = [self.context entityWithId:_userId];
+    _user = [self.context memberEntityWithEmail:_userEmail];
     
     if (!_user) {
-        _user = [self.context insertMemberEntityWithId:_userId];
+        _user = [self.context insertMemberEntityWithEmail:_userEmail];
     }
 }
 
@@ -283,7 +286,7 @@ static OMeta *m = nil;
     _user = nil;
     _authToken = nil;
     
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userId]];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userEmail]];
     
     [(OAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
 }
@@ -292,14 +295,14 @@ static OMeta *m = nil;
 - (BOOL)userIsSignedIn
 {
     if (!_user) {
-        _authTokenExpiryDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userId]];
+        _authTokenExpiryDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userEmail]];
         
         if (_authTokenExpiryDate) {
             NSDate *now = [NSDate date];
             
             if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
                 _authToken = [self generateAuthToken:_authTokenExpiryDate];
-                _user = [self.context entityWithId:_userId];
+                _user = [self.context memberEntityWithEmail:_userEmail];
             }
         }
     }

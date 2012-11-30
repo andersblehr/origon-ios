@@ -30,6 +30,7 @@
 		5C2262C415A0B47B00241C5F /* OOrigoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262C315A0B47B00241C5F /* OOrigoViewController.m */; };
 		5C23431214812A3100164478 /* OStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* OStrings.m */; };
 		5C26291E158F27860012A74A /* OAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* OAuthViewController.m */; };
+		5C2A55C01668A4C300F3916C /* OReplicatedEntityGhost.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2A55BF1668A4C300F3916C /* OReplicatedEntityGhost.m */; };
 		5C2E11141469CDE5005BDE61 /* OServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* OServerConnection.m */; };
 		5C2E6B7E15A8501800638330 /* OMembership+OMembershipExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E6B7D15A8501800638330 /* OMembership+OMembershipExtensions.m */; };
 		5C3374831563FBE200DEF67D /* OMember+OMemberExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3374821563FBE200DEF67D /* OMember+OMemberExtensions.m */; };
@@ -90,7 +91,6 @@
 		5CAEE0CA163E513A00A9046B /* ODocumentRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE0C9163E513A00A9046B /* ODocumentRepository.m */; };
 		5CAEE0CD163E513A00A9046B /* OToDoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE0CC163E513A00A9046B /* OToDoItem.m */; };
 		5CAEE0D0163E513A00A9046B /* OMessageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE0CF163E513A00A9046B /* OMessageItem.m */; };
-		5CAEE0D9163F09DA00A9046B /* OReplicatedEntityGhost.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE0D8163F09DA00A9046B /* OReplicatedEntityGhost.m */; };
 		5CB7E94015F38C1200FD53DF /* OSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E93F15F38C1200FD53DF /* OSettingsViewController.m */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
@@ -155,6 +155,8 @@
 		5C23431114812A3000164478 /* OStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OStrings.m; sourceTree = "<group>"; };
 		5C26291C158F27860012A74A /* OAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthViewController.h; sourceTree = "<group>"; };
 		5C26291D158F27860012A74A /* OAuthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAuthViewController.m; sourceTree = "<group>"; };
+		5C2A55BE1668A4C300F3916C /* OReplicatedEntityGhost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntityGhost.h; sourceTree = "<group>"; };
+		5C2A55BF1668A4C300F3916C /* OReplicatedEntityGhost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntityGhost.m; sourceTree = "<group>"; };
 		5C2E11121469CDE5005BDE61 /* OServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OServerConnection.h; sourceTree = "<group>"; };
 		5C2E11131469CDE5005BDE61 /* OServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OServerConnection.m; sourceTree = "<group>"; };
 		5C2E1133146ACFA9005BDE61 /* OServerConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OServerConnectionDelegate.h; sourceTree = "<group>"; };
@@ -263,8 +265,6 @@
 		5CAEE0CC163E513A00A9046B /* OToDoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OToDoItem.m; sourceTree = "<group>"; };
 		5CAEE0CE163E513A00A9046B /* OMessageItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMessageItem.h; sourceTree = "<group>"; };
 		5CAEE0CF163E513A00A9046B /* OMessageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMessageItem.m; sourceTree = "<group>"; };
-		5CAEE0D7163F09DA00A9046B /* OReplicatedEntityGhost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntityGhost.h; sourceTree = "<group>"; };
-		5CAEE0D8163F09DA00A9046B /* OReplicatedEntityGhost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntityGhost.m; sourceTree = "<group>"; };
 		5CB7E93E15F38C1200FD53DF /* OSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettingsViewController.h; sourceTree = "<group>"; };
 		5CB7E93F15F38C1200FD53DF /* OSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettingsViewController.m; sourceTree = "<group>"; };
 		5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OModalViewControllerDelegate.h; sourceTree = "<group>"; };
@@ -403,8 +403,8 @@
 				5C78FABD165508AD009A4BCF /* OOrigo.m */,
 				5C17617A164CFBC2000770DC /* OReplicatedEntity.h */,
 				5C17617B164CFBC2000770DC /* OReplicatedEntity.m */,
-				5CAEE0D7163F09DA00A9046B /* OReplicatedEntityGhost.h */,
-				5CAEE0D8163F09DA00A9046B /* OReplicatedEntityGhost.m */,
+				5C2A55BE1668A4C300F3916C /* OReplicatedEntityGhost.h */,
+				5C2A55BF1668A4C300F3916C /* OReplicatedEntityGhost.m */,
 				5CAEE0C2163E513A00A9046B /* OScheduledAbsence.h */,
 				5CAEE0C3163E513A00A9046B /* OScheduledAbsence.m */,
 				5CAEE098163E513400A9046B /* OScheduledBreak.h */,
@@ -831,7 +831,6 @@
 				5CAEE0CA163E513A00A9046B /* ODocumentRepository.m in Sources */,
 				5CAEE0CD163E513A00A9046B /* OToDoItem.m in Sources */,
 				5CAEE0D0163E513A00A9046B /* OMessageItem.m in Sources */,
-				5CAEE0D9163F09DA00A9046B /* OReplicatedEntityGhost.m in Sources */,
 				5C4255961645105D00D439D2 /* ONavigationController.m in Sources */,
 				5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OBarButtonItemExtensions.m in Sources */,
 				5C17617C164CFBC2000770DC /* OReplicatedEntity.m in Sources */,
@@ -839,6 +838,7 @@
 				5C78FABE165508AE009A4BCF /* OOrigo.m in Sources */,
 				5CBDF78C1659175000D4681C /* OVisualConstraints.m in Sources */,
 				5C991C2116624C7400E1CF63 /* OMember.m in Sources */,
+				5C2A55C01668A4C300F3916C /* OReplicatedEntityGhost.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
