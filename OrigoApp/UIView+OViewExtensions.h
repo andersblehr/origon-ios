@@ -17,7 +17,8 @@
 - (void)addDropShadowForTrailingTableViewCell;
 - (void)addDropShadowForPhotoFrame;
 
-- (void)hasDropShadow:(BOOL)hasShadow;
+- (void)hasDropShadow:(BOOL)hasDropShadow;
+- (void)hasDropShadow:(BOOL)hasDropShadow;
 - (void)redrawDropShadow;
 
 @end

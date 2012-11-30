@@ -11,6 +11,7 @@
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
 #import "NSString+OStringExtensions.h"
 #import "UIColor+OColorExtensions.h"
+#import "UIFont+OFontExtensions.h"
 #import "UITableView+OTableViewExtensions.h"
 #import "UIView+OViewExtensions.h"
 
@@ -440,15 +441,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = 0.f;
-    
-    if ([OState s].actionIsLogin) {
-        height = [OTableViewCell heightForReuseIdentifier:kReuseIdentifierUserSignIn];
-    } else if ([OState s].actionIsActivate) {
-        height = [OTableViewCell heightForReuseIdentifier:kReuseIdentifierUserActivation];
-    }
-    
-    return height;
+    return 3 * (kDefaultPadding + [UIFont detailFieldHeight]) + 1;
 }
 
 

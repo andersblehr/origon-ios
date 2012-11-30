@@ -102,10 +102,12 @@ static NSString * const kKeyPathPrefixDate = @"date";
     } else {
         if (label && ![label isHidden]) {
             [label setHidden:YES];
+            [label setFrame:CGRectZero];
         }
         
         if (textField && [textField isHidden]) {
             [textField setHidden:YES];
+            [textField setFrame:CGRectZero];
         }
     }
 }

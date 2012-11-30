@@ -8,13 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-extern NSInteger const kTextViewMinimumEditLines;
-extern NSInteger const kTextViewMaximumEditLines;
+extern NSInteger const kTextViewMaximumLines;
 
 @interface OTextView : UITextView<UITextViewDelegate> {
 @private
-    BOOL _editing;
-    
     UITextView *_placeholderView;
     
     NSString *_lastKnownText;
@@ -23,6 +20,8 @@ extern NSInteger const kTextViewMaximumEditLines;
 
 @property (strong, nonatomic) NSString *keyPath;
 @property (strong, nonatomic) NSString *placeholder;
+
+@property (nonatomic) BOOL editing;
 @property (nonatomic) BOOL selected;
 
 - (id)initForKeyPath:(NSString *)keyPath delegate:(id)delegate;
@@ -30,9 +29,11 @@ extern NSInteger const kTextViewMaximumEditLines;
 + (CGFloat)heightWithText:(NSString *)text;
 - (CGFloat)height;
 
++ (NSInteger)lineCountWithText:(NSString *)text;
 - (NSInteger)lineCount;
 - (NSInteger)lineCountDelta;
 
-- (void)toggleEmphasis;
+- (void)emphasise;
+- (void)deemphasise;
 
 @end
