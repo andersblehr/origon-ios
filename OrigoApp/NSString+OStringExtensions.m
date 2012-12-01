@@ -112,25 +112,44 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 
 #pragma mark - String operations
 
-- (NSString *)removeLeadingAndTrailingWhitespace
+- (NSString *)removeSuperfluousWhitespace
 {
-    // TODO: Remove all whitespace, not only spaces
-    NSString *thisString = self;
-    NSUInteger spaceLocation = [thisString rangeOfString:@" "].location;
+    NSArray *whiteSpaceCharacters = @[@" ", @"\n"];
+    NSArray *lines = [self lines];
+    NSString *reconstructedString = nil;
     
-    while (spaceLocation == 0) {
-        thisString = [thisString substringFromIndex:1];
-        spaceLocation = [thisString rangeOfString:@" "].location;
+    for (NSString *line in lines) {
+        NSString *workingCopy = [NSString stringWithString:line];
+        NSString *workingCopyBeforePass = nil;
+        
+        while (![workingCopy isEqualToString:workingCopyBeforePass]) {
+            workingCopyBeforePass = workingCopy;
+            
+            for (NSString *space in whiteSpaceCharacters) {
+                NSUInteger spaceLocation = [workingCopy rangeOfString:space].location;
+                
+                while (spaceLocation == 0) {
+                    workingCopy = [workingCopy substringFromIndex:1];
+                    spaceLocation = [workingCopy rangeOfString:space].location;
+                }
+                
+                spaceLocation = [workingCopy rangeOfString:space options:NSBackwardsSearch].location;
+                
+                while (spaceLocation == [workingCopy length] - 1) {
+                    workingCopy = [workingCopy substringToIndex:spaceLocation];
+                    spaceLocation = [workingCopy rangeOfString:space options:NSBackwardsSearch].location;
+                }
+            }
+        }
+        
+        if (!reconstructedString) {
+            reconstructedString = workingCopy;
+        } else if ([workingCopy length] > 0) {
+            reconstructedString = [reconstructedString stringByAppendingString:workingCopy separator:kSeparatorNewline];
+        }
     }
     
-    spaceLocation = [thisString rangeOfString:@" " options:NSBackwardsSearch].location;
-    
-    while (spaceLocation == [thisString length] - 1) {
-        thisString = [thisString substringToIndex:spaceLocation];
-        spaceLocation = [thisString rangeOfString:@" " options:NSBackwardsSearch].location;
-    }
-    
-    return thisString;
+    return reconstructedString;
 }
 
 

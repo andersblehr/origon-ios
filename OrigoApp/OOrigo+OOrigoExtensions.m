@@ -217,7 +217,7 @@
 {
     CGFloat height = 2 * kDefaultPadding;
     
-    if ([OMeta m].participatingTextView) {
+    if ([[OMeta m].participatingTextView.keyPath isEqualToString:kKeyPathAddress]) {
         height += [[OMeta m].participatingTextView height];
     } else if ([self.address length] > 0) {
         height += [OTextView heightWithText:self.address];

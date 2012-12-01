@@ -207,10 +207,19 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 {
     _editing = NO;
     
+    self.text = [self finalText];
     self.backgroundColor = [UIColor clearColor];
     [self hasDropShadow:NO];
     
     [_containingCell redrawIfNeeded];
+}
+
+
+#pragma mark - Final text cleanup
+
+- (NSString *)finalText
+{
+    return [self.text removeSuperfluousWhitespace];
 }
 
 

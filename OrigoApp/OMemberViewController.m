@@ -87,7 +87,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         if (_candidate) {
             _member = _candidate;
         } else {
-            _member = [[OMeta m].context insertMemberEntityWithEmail:_emailField.text];
+            _member = [[OMeta m].context insertMemberEntityWithEmail:[_emailField finalText]];
         }
     }
     
@@ -120,9 +120,9 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)updateMember
 {
-    _member.name = _nameField.text;
+    _member.name = [_nameField finalText];
     _member.dateOfBirth = _dateOfBirthPicker.date;
-    _member.mobilePhone = _mobilePhoneField.text;
+    _member.mobilePhone = [_mobilePhoneField finalText];
     
     if ([OState s].actionIsRegister) {
         _member.givenName = [NSString givenNameFromFullName:_member.name];
@@ -202,7 +202,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         if ([OState s].aspectIsSelf) {
             titleQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
         } else {
-            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [NSString givenNameFromFullName:_nameField.text]];
+            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [NSString givenNameFromFullName:[_nameField finalText]]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemaleMinor];
@@ -211,7 +211,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         if ([OState s].aspectIsSelf) {
             titleQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
         } else {
-            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [NSString givenNameFromFullName:_nameField.text]];
+            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [NSString givenNameFromFullName:[_nameField finalText]]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemale];
@@ -280,7 +280,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             inputIsValid = inputIsValid && [_emailField holdsValidEmail];
             inputIsValid = inputIsValid && [_mobilePhoneField holdsValidPhoneNumber];
         } else if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
-            if ([_emailField.text length] > 0) {
+            if ([[_emailField finalText] length] > 0) {
                 inputIsValid = inputIsValid && [_emailField holdsValidEmail];
             }
         }
@@ -525,17 +525,19 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     [textField emphasise];
     
     if (_currentField == _emailField) {
-        if (([_emailField.text length] > 0) && [_emailField holdsValidEmail]) {
+        if (([[_emailField finalText] length] > 0) && [_emailField holdsValidEmail]) {
+            NSString *email = [_emailField finalText];
+            
             if ([OState s].aspectIsSelf) {
                 // TODO: Handle user email change
-            } else if (![_emailField.text isEqualToString:_member.email]) {
-                if ([_origo hasMemberWithId:_emailField.text]) {
+            } else if (![email isEqualToString:_member.email]) {
+                if ([_origo hasMemberWithId:email]) {
                     NSString *alertTitle = [OStrings stringForKey:strAlertTitleMemberExists];
-                    NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _emailField.text, _origo.name];
+                    NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], email, _origo.name];
                     
                     [OAlert showAlertWithTitle:alertTitle message:alertMessage];
                 } else {
-                    _candidate = [[OMeta m].context entityWithId:_emailField.text];
+                    _candidate = [[OMeta m].context memberEntityWithEmail:email];
                     
                     if (_candidate) {
                         [self populateWithCandidate];
@@ -623,7 +625,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 {
     if (response.statusCode == kHTTPStatusOK) {
         _candidateEntities = [[OMeta m].context saveServerReplicas:data];
-        _candidate = [[OMeta m].context entityWithId:_emailField.text];
+        _candidate = [[OMeta m].context memberEntityWithEmail:[_emailField finalText]];
         
         [self populateWithCandidate];
     }

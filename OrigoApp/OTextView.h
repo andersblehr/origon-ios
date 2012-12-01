@@ -39,4 +39,6 @@ extern NSInteger const kTextViewMaximumLines;
 - (void)emphasise;
 - (void)deemphasise;
 
+- (NSString *)finalText;
+
 @end

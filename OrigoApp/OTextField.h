@@ -33,4 +33,6 @@ extern CGFloat const kTextInset;
 - (void)emphasise;
 - (void)deemphasise;
 
+- (NSString *)finalText;
+
 @end

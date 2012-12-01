@@ -88,9 +88,9 @@
 
 - (void)didFinishEditing
 {
-    if ([_addressView.text length] > 0) {
-        _origo.address = [_addressView.text removeLeadingAndTrailingWhitespace];
-        _origo.telephone = [_telephoneField.text removeLeadingAndTrailingWhitespace];
+    if ([[_addressView finalText] length] > 0) {
+        _origo.address = [_addressView finalText];
+        _origo.telephone = [_telephoneField finalText];
         
         if ([OState s].actionIsRegister) {
             if ([_origo isResidence] && [OState s].aspectIsSelf) {
@@ -254,7 +254,7 @@
 
 - (void)textViewDidChange:(OTextView *)textView
 {
-    [_origoCell respondToTextViewSizeChange:textView];
+    [_origoCell redrawIfNeeded];
 }
 
 
