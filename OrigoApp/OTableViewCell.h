@@ -48,6 +48,7 @@ extern CGFloat const kCellAnimationDuration;
 - (void)willAppearTrailing:(BOOL)trailing;
 - (void)toggleEditMode;
 - (void)respondToTextViewSizeChange:(OTextView *)textView;
+- (void)redrawIfNeeded;
 
 - (void)shakeCellShouldVibrate:(BOOL)shouldVibrate;
 

@@ -217,7 +217,9 @@
 {
     CGFloat height = 2 * kDefaultPadding;
     
-    if ([self.address length] > 0) {
+    if ([OMeta m].participatingTextView) {
+        height += [[OMeta m].participatingTextView height];
+    } else if ([self.address length] > 0) {
         height += [OTextView heightWithText:self.address];
     } else {
         height += [OTextView heightWithText:[OStrings placeholderForKeyPath:kKeyPathAddress]];
@@ -225,12 +227,6 @@
     
     if (([self.telephone length] > 0) || [OState s].actionIsInput) {
         height += [UIFont detailFieldHeight];
-    }
-    
-    if ([OState s].actionIsEdit) {
-        if ([OTextView lineCountWithText:self.address] < kTextViewMaximumLines) {
-            height += [UIFont detailLineHeight];
-        }
     }
     
     return height;

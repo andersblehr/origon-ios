@@ -10,8 +10,11 @@
 
 extern NSInteger const kTextViewMaximumLines;
 
+@class OTableViewCell;
+
 @interface OTextView : UITextView<UITextViewDelegate> {
 @private
+    OTableViewCell *_containingCell;
     UITextView *_placeholderView;
     
     NSString *_lastKnownText;
@@ -24,7 +27,7 @@ extern NSInteger const kTextViewMaximumLines;
 @property (nonatomic) BOOL editing;
 @property (nonatomic) BOOL selected;
 
-- (id)initForKeyPath:(NSString *)keyPath delegate:(id)delegate;
+- (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate;
 
 + (CGFloat)heightWithText:(NSString *)text;
 - (CGFloat)height;

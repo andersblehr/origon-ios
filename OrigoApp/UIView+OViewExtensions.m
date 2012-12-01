@@ -9,10 +9,8 @@
 #import "UIView+OViewExtensions.h"
 
 #import "UIColor+OColorExtensions.h"
-#import "UIFont+OFontExtensions.h"
 
 #import "OTableViewCell.h"
-#import "OTextView.h"
 
 static CGFloat const kCellShadowRadius = 3.75f;
 static CGFloat const kCellShadowOffset = 5.f;
@@ -29,14 +27,10 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 
 #pragma mark - Auxiliary methods
 
-- (UIBezierPath *)shadowPathForTextFieldShouldGrow:(BOOL)shouldGrow
+- (UIBezierPath *)shadowPathForTextField
 {
     CGFloat fieldShadowOriginY = self.bounds.origin.y + kFieldShadowOffset;
     CGFloat fieldShadowHeight = self.bounds.size.height - kFieldShadowHeightShrinkage;
-    
-    if (shouldGrow) {
-        fieldShadowHeight -= [UIFont detailLineHeight];
-    }
     
     return [UIBezierPath bezierPathWithRect:CGRectMake(self.bounds.origin.x, fieldShadowOriginY, self.bounds.size.width, fieldShadowHeight)];
 }
@@ -56,15 +50,7 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 
 - (void)addDropShadowForTextField
 {
-    [self addShadowWithPath:[self shadowPathForTextFieldShouldGrow:NO] colour:[UIColor darkGrayColor] radius:kFieldShadowRadius offset:kFieldShadowOffset];
-}
-
-
-- (void)addDropShadowForTextView
-{
-    BOOL shouldGrow = ([(OTextView *)self lineCount] < kTextViewMaximumLines);
-    
-    [self addShadowWithPath:[self shadowPathForTextFieldShouldGrow:shouldGrow] colour:[UIColor darkGrayColor] radius:kFieldShadowRadius offset:kFieldShadowOffset];
+    [self addShadowWithPath:[self shadowPathForTextField] colour:[UIColor darkGrayColor] radius:kFieldShadowRadius offset:kFieldShadowOffset];
 }
 
 
@@ -112,10 +98,8 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 - (void)hasDropShadow:(BOOL)hasDropShadow
 {
     if (hasDropShadow) {
-        if ([self isKindOfClass:UITextField.class]) {
+        if ([self isKindOfClass:UITextField.class] || [self isKindOfClass:UITextView.class]) {
             [self addDropShadowForTextField];
-        } else if ([self isKindOfClass:UITextView.class]) {
-            [self addDropShadowForTextView];
         } else {
             [self addDropShadowForTrailingTableViewCell];
         }
@@ -130,7 +114,7 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
     CGPathRef redrawnShadowPath;
     
     if ([self isKindOfClass:UITextField.class] || [self isKindOfClass:UITextView.class]) {
-        redrawnShadowPath = [self shadowPathForTextFieldShouldGrow:NO].CGPath;
+        redrawnShadowPath = [self shadowPathForTextField].CGPath;
     } else {
         redrawnShadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
     }

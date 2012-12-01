@@ -11,14 +11,18 @@
 
 extern CGFloat const kTextInset;
 
+@class OTableViewCell;
+
 @interface OTextField : UITextField {
 @private
+    OTableViewCell *_containingCell;
+    
     BOOL _isTitle;
 }
 
 @property (strong, nonatomic) NSString *keyPath;
 
-- (id)initForKeyPath:(NSString *)keyPath delegate:(id)delegate;
+- (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate;
 
 - (BOOL)holdsValidEmail;
 - (BOOL)holdsValidPassword;
