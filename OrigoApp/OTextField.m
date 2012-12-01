@@ -110,7 +110,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidEmail
 {
-    NSString *email = [self.text removeLeadingAndTrailingWhitespace];
+    NSString *email = [self.text removeSuperfluousWhitespace];
     
     BOOL isValid = [email isEmailAddress];
     
@@ -124,7 +124,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidPassword
 {
-    NSString *password = [self.text removeLeadingAndTrailingWhitespace];
+    NSString *password = [self.text removeSuperfluousWhitespace];
     
     BOOL isValid = ([password length] >= kMinimumPassordLength);
     
@@ -138,7 +138,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidName
 {
-    NSString *name = [self.text removeLeadingAndTrailingWhitespace];
+    NSString *name = [self.text removeSuperfluousWhitespace];
     
     BOOL isValid = ([name length] > 0);
     
@@ -159,7 +159,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidPhoneNumber
 {
-    NSString *mobileNumber = [self.text removeLeadingAndTrailingWhitespace];
+    NSString *mobileNumber = [self.text removeSuperfluousWhitespace];
     
     BOOL isValid = ([mobileNumber length] >= kMinimumPhoneNumberLength);
     
@@ -201,6 +201,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (void)deemphasise
 {
+    self.text = [self finalText];
     self.backgroundColor = [UIColor clearColor];
     [self hasDropShadow:NO];
     
@@ -210,6 +211,14 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     }
     
     [_containingCell redrawIfNeeded];
+}
+
+
+#pragma mark - Final text cleanup
+
+- (NSString *)finalText
+{
+    return [self.text removeSuperfluousWhitespace];
 }
 
 

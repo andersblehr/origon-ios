@@ -20,7 +20,7 @@ extern NSString * const kSeparatorCaret;
 - (NSString *)hashUsingSHA1;
 - (NSString *)diff:(NSString *)string;
 
-- (NSString *)removeLeadingAndTrailingWhitespace;
+- (NSString *)removeSuperfluousWhitespace;
 - (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;
 
 - (NSArray *)lines;

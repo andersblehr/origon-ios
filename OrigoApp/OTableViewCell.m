@@ -83,14 +83,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)redraw
-{
-    [self setNeedsUpdateConstraints];
-    [self layoutIfNeeded];
-    [self.backgroundView redrawDropShadow];
-}
-
-
 #pragma mark - Adding elements
 
 - (void)addTitleForKeyPath:(NSString *)keyPath hasPhoto:(BOOL)hasPhoto
@@ -325,22 +317,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)respondToTextViewSizeChange:(OTextView *)textView
-{
-    NSInteger lineCountDelta = [textView lineCountDelta];
-    
-    if (lineCountDelta) {
-        [UIView animateWithDuration:kCellAnimationDuration animations:^{
-            CGRect frame = self.frame;
-            frame.size.height += lineCountDelta * [UIFont detailLineHeight];
-            self.frame = frame;
-            
-            [self redraw];
-        }];
-    }
-}
-
-
 - (void)redrawIfNeeded
 {
     [UIView animateWithDuration:kCellAnimationDuration animations:^{
@@ -348,12 +324,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
         CGRect frame = self.frame;
         
         if (frame.size.height != desiredFrameHeight + kImplicitFramePadding) {
-            frame.size.height = desiredFrameHeight + kImplicitFramePadding;
             [(UITableView *)self.superview beginUpdates];
+            frame.size.height = desiredFrameHeight + kImplicitFramePadding;
             self.frame = frame;
             [(UITableView *)self.superview endUpdates];
             
-            [self redraw];
+            [self setNeedsUpdateConstraints];
+            [self layoutIfNeeded];
+            [self.backgroundView redrawDropShadow];
         }
     }];
 }
