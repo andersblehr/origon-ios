@@ -27,8 +27,6 @@ static NSInteger const kTextViewMinimumLines = 1;
 static CGFloat const kTopInset = 5.f;
 static CGFloat const kDetailWidthGuesstimate = 210.f;
 
-static CGFloat const kDeselectionAnimationDuration = 0.5f;
-
 
 @implementation OTextView
 
@@ -86,11 +84,13 @@ static CGFloat const kDeselectionAnimationDuration = 0.5f;
 
 #pragma mark - Initialisation
 
-- (id)initForKeyPath:(NSString *)keyPath delegate:(id)delegate
+- (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
     if (self) {
+        _containingCell = cell;
+        
         _placeholderView = [[UITextView alloc] initWithFrame:CGRectZero];
         _placeholderView.backgroundColor = [UIColor clearColor];
         _placeholderView.delegate = self;
@@ -139,7 +139,7 @@ static CGFloat const kDeselectionAnimationDuration = 0.5f;
 
 - (CGFloat)height
 {
-    return [OTextView heightForLineCount:[self transientLineCount]];
+    return [OTextView heightForLineCount:[self lineCount]];
 }
 
 
@@ -197,6 +197,9 @@ static CGFloat const kDeselectionAnimationDuration = 0.5f;
     
     self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
     [self hasDropShadow:YES];
+    
+    [OMeta m].participatingTextView = self;
+    [_containingCell redrawIfNeeded];
 }
 
 
@@ -206,6 +209,8 @@ static CGFloat const kDeselectionAnimationDuration = 0.5f;
     
     self.backgroundColor = [UIColor clearColor];
     [self hasDropShadow:NO];
+    
+    [_containingCell redrawIfNeeded];
 }
 
 

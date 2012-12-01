@@ -74,13 +74,14 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Initialisation
 
-- (id)initForKeyPath:(NSString *)keyPath delegate:(id)delegate
+- (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate
 {
-    _isTitle = ([keyPath isEqualToString:kKeyPathName] && [OState s].targetIsMember);
-    
     self = [super initWithFrame:CGRectZero];
     
     if (self) {
+        _containingCell = cell;
+        _isTitle = ([keyPath isEqualToString:kKeyPathName] && [OState s].targetIsMember);
+        
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.backgroundColor = [UIColor clearColor];
@@ -193,6 +194,8 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         self.textColor = [UIColor editableTitleTextColor];
         [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
     }
+    
+    [_containingCell redrawIfNeeded];
 }
 
 
@@ -205,6 +208,8 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         self.textColor = [UIColor titleTextColor];
         [self setValue:[UIColor lightPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
     }
+    
+    [_containingCell redrawIfNeeded];
 }
 
 

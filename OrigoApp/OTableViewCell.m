@@ -83,24 +83,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)redrawIfNeeded
-{
-    [UIView animateWithDuration:kCellAnimationDuration animations:^{
-        CGFloat desiredFrameHeight = [_entity displayCellHeight];
-        CGRect frame = self.frame;
-        
-        if (frame.size.height != desiredFrameHeight + kImplicitFramePadding) {
-            frame.size.height = desiredFrameHeight + kImplicitFramePadding;
-            [(UITableView *)self.superview beginUpdates];
-            self.frame = frame;
-            [(UITableView *)self.superview endUpdates];
-            
-            [self redraw];
-        }
-    }];
-}
-
-
 - (void)redraw
 {
     [self setNeedsUpdateConstraints];
@@ -175,7 +157,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addTextFieldForKeyPath:(NSString *)keyPath constrained:(BOOL)constrained
 {
-    OTextField *textField = [[OTextField alloc] initForKeyPath:keyPath delegate:_inputDelegate];
+    OTextField *textField = [[OTextField alloc] initForKeyPath:keyPath cell:self delegate:_inputDelegate];
     
     [self.contentView addSubview:textField];
     [_views setObject:textField forKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
@@ -199,7 +181,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     [self addLabelForKeyPath:keyPath constrained:NO];
     
-    OTextView *textView = [[OTextView alloc] initForKeyPath:keyPath delegate:_inputDelegate];
+    OTextView *textView = [[OTextView alloc] initForKeyPath:keyPath cell:self delegate:_inputDelegate];
     
     [self.contentView addSubview:textView];
     [_views setObject:textView forKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
@@ -336,15 +318,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
         if ([view isKindOfClass:OTextField.class]) {
             ((OTextField *)view).enabled = [OState s].actionIsEdit;
         } else if ([view isKindOfClass:OTextView.class]) {
-            OTextView *textView = (OTextView *)view;
-            
-            textView.editable = [OState s].actionIsEdit;
-            textView.userInteractionEnabled = [OState s].actionIsEdit;
-            textView.editing = ([OState s].actionIsEdit && [OState s].targetIsOrigo);
+            ((OTextView *)view).editable = [OState s].actionIsEdit;
+            ((OTextView *)view).userInteractionEnabled = [OState s].actionIsEdit;
         }
     }
-    
-    [self redrawIfNeeded];
 }
 
 
@@ -361,6 +338,24 @@ static CGFloat const kShakeRepeatCount = 3.f;
             [self redraw];
         }];
     }
+}
+
+
+- (void)redrawIfNeeded
+{
+    [UIView animateWithDuration:kCellAnimationDuration animations:^{
+        CGFloat desiredFrameHeight = [_entity displayCellHeight];
+        CGRect frame = self.frame;
+        
+        if (frame.size.height != desiredFrameHeight + kImplicitFramePadding) {
+            frame.size.height = desiredFrameHeight + kImplicitFramePadding;
+            [(UITableView *)self.superview beginUpdates];
+            self.frame = frame;
+            [(UITableView *)self.superview endUpdates];
+            
+            [self redraw];
+        }
+    }];
 }
 
 
