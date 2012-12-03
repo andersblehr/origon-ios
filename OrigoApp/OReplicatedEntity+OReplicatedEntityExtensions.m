@@ -33,6 +33,10 @@
     [dictionary setObject:self.entityId forKey:kKeyPathEntityId];
     [dictionary setObject:self.entity.name forKey:kKeyPathEntityClass];
     
+    if ([self isKindOfClass:OMember.class] && ((OMember *)self).email) {
+        [dictionary setObject:((OMember *)self).email forKey:kKeyPathEmail];
+    }
+    
     return dictionary;
 }
 
@@ -229,13 +233,13 @@
 {
     OOrigo *entityOrigo = [[OMeta m].context entityWithId:self.origoId];
     OReplicatedEntityGhost *entityGhost = [[OMeta m].context insertEntityForClass:OReplicatedEntityGhost.class inOrigo:entityOrigo entityId:self.entityId];
-    entityGhost.ghostedEntityClass = NSStringFromClass(self.class);
+    entityGhost.ghostedEntityClass = self.entity.name;
     
     if ([self isKindOfClass:OMembership.class]) {
         OMembership *membership = (OMembership *)self;
         
-        entityGhost.memberId = membership.member.entityId;
-        entityGhost.memberEmail = membership.member.email;
+        entityGhost.ghostedMembershipMemberId = membership.member.entityId;
+        entityGhost.ghostedMembershipMemberEmail = membership.member.email;
     }
     
     return entityGhost;

@@ -418,7 +418,7 @@ static NSInteger const kWardSection = 1;
 
 #pragma mark - OModalViewControllerDelegate conformance
 
-- (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
     if ([identitifier isEqualToString:kOrigoViewControllerId]) {
         [self dismissViewControllerAnimated:YES completion:NULL];

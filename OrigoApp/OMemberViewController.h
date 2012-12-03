@@ -9,26 +9,22 @@
 #import <UIKit/UIKit.h>
 
 #import "OModalViewControllerDelegate.h"
-#import "OServerConnectionDelegate.h"
 
 @protocol OEntityObservingDelegate;
 
 @class OMember, OMembership, OOrigo;
 @class OTableViewCell, OTextField;
 
-@interface OMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
+@interface OMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
 @private
     OTableViewCell *_memberCell;
     OMember *_member;
-
-    NSSet *_candidateEntities;
     OMember *_candidate;
     
     OTextField *_nameField;
-    OTextField *_emailField;
-    OTextField *_mobilePhoneField;
     OTextField *_dateOfBirthField;
-    OTextField *_currentField;
+    OTextField *_mobilePhoneField;
+    OTextField *_emailField;
     
     UIDatePicker *_dateOfBirthPicker;
     NSString *_gender;

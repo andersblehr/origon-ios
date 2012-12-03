@@ -16,11 +16,10 @@
 #import "OMeta.h"
 #import "OState.h"
 
+NSString * const kSeparatorSpace = @" ";
 NSString * const kSeparatorNewline = @"\n";
 NSString * const kSeparatorComma = @", ";
-NSString * const kSeparatorDollar = @"$";
 NSString * const kSeparatorHash = @"#";
-NSString * const kSeparatorCaret = @"^";
 
 static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 

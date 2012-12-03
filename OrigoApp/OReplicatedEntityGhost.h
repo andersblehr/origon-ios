@@ -15,7 +15,7 @@
 
 @property (nonatomic, retain) NSString * ghostedEntityClass;
 @property (nonatomic, retain) NSNumber * hasExpired;
-@property (nonatomic, retain) NSString * memberEmail;
-@property (nonatomic, retain) NSString * memberId;
+@property (nonatomic, retain) NSString * ghostedMembershipMemberEmail;
+@property (nonatomic, retain) NSString * ghostedMembershipMemberId;
 
 @end

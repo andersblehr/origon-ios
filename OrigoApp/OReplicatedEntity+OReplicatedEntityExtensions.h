@@ -24,6 +24,7 @@
 
 + (CGFloat)defaultDisplayCellHeight;
 - (CGFloat)displayCellHeight;
+
 - (NSString *)reuseIdentifier;
 - (NSString *)listName;
 - (NSString *)listDetails;

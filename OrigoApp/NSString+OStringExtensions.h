@@ -8,11 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const kSeparatorSpace;
 extern NSString * const kSeparatorNewline;
 extern NSString * const kSeparatorComma;
-extern NSString * const kSeparatorDollar;
 extern NSString * const kSeparatorHash;
-extern NSString * const kSeparatorCaret;
 
 @interface NSString (OStringExtensions)
 

@@ -13,7 +13,7 @@
 
 @dynamic ghostedEntityClass;
 @dynamic hasExpired;
-@dynamic memberEmail;
-@dynamic memberId;
+@dynamic ghostedMembershipMemberEmail;
+@dynamic ghostedMembershipMemberId;
 
 @end

@@ -63,21 +63,40 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 #pragma mark - Auxiliary methods
 
-- (void)populateWithCandidate
+- (BOOL)emailIsEligible
 {
-    if (![_candidate.name isEqualToString:_candidate.entityId]) {
-        _nameField.text = _candidate.name;
+    BOOL emailIsEligible = [_emailField holdsValidEmail];
+    
+    if (emailIsEligible && [OState s].actionIsRegister && ![OState s].aspectIsSelf) {
+        NSString *email = [_emailField finalText];
+        
+        _candidate = [[OMeta m].context memberEntityWithEmail:email];
+        
+        if (_candidate) {
+            if ([_origo hasMemberWithEmail:email]) {
+                _emailField.text = @"";
+                [_emailField becomeFirstResponder];
+                
+                NSString *alertTitle = [OStrings stringForKey:strAlertTitleMemberExists];
+                NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, email, _origo.name];
+                [OAlert showAlertWithTitle:alertTitle message:alertMessage];
+                
+                _candidate = nil;
+                emailIsEligible = NO;
+            } else {
+                _mobilePhoneField.text = _candidate.mobilePhone;
+                [_dateOfBirthPicker setDate:_candidate.dateOfBirth animated:YES];
+                _dateOfBirthField.text = [_candidate.dateOfBirth localisedDateString];
+                _gender = _candidate.gender;
+                
+                if (_candidate.activeSince) {
+                    _memberCell.editing = NO;
+                }
+            }
+        }
     }
     
-    _emailField.text = _candidate.entityId;
-    _mobilePhoneField.text = _candidate.mobilePhone;
-    [_dateOfBirthPicker setDate:_candidate.dateOfBirth animated:YES];
-    _dateOfBirthField.text = [_candidate.dateOfBirth localisedDateString];
-    _gender = _candidate.gender;
-    
-    if (_candidate.activeSince) {
-        _memberCell.editing = NO;
-    }
+    return emailIsEligible;
 }
 
 
@@ -129,7 +148,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         _member.gender = _gender;
         
         if (![_origo isResidence] || [_origo hasAddress]) {
-            [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
+            [_delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
             
             if ([_delegate isKindOfClass:OMemberListViewController.class]) {
                 [_delegate insertEntityInTableView:_membership];
@@ -139,11 +158,12 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         }
     } else {
         [[OMeta m].context replicateIfNeeded];
+        [_entityObservingDelegate refresh];
     }
 }
 
 
-- (void)toggleEdit
+- (void)toggleEditMode
 {
     static UIBarButtonItem *editButton = nil;
     static UIBarButtonItem *backButton = nil;
@@ -159,8 +179,6 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         
         [_nameField becomeFirstResponder];
     } else if ([OState s].actionIsDisplay) {
-        [self.view endEditing:YES];
-        
         self.navigationItem.rightBarButtonItem = editButton;
         self.navigationItem.leftBarButtonItem = backButton;
     }
@@ -234,6 +252,18 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
+- (void)promptForUserEmailChangeConfirmation
+{
+    
+}
+
+
+- (void)promptForMemberEmailChangeConfirmation
+{
+    
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)dateOfBirthDidChange
@@ -244,40 +274,31 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 - (void)startEditing
 {
-    [self toggleEdit];
+    [self toggleEditMode];
 }
 
 
 - (void)cancelEditing
 {
     if ([OState s].actionIsRegister) {
-        if (_candidate) {
-            for (OReplicatedEntity *entity in _candidateEntities) {
-                [[OMeta m].context deleteObject:entity];
-            }
-            
-            _candidateEntities = nil;
-            _candidate = nil;
-        }
-        
-        [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
+        [_delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
     } else if ([OState s].actionIsEdit) {
         _dateOfBirthField.text = [_member.dateOfBirth localisedDateString];
         _mobilePhoneField.text = _member.mobilePhone;
         _emailField.text = _member.email;
         
-        [self toggleEdit];
+        [self toggleEditMode];
     }
 }
 
 
 - (void)didFinishEditing
 {
-    BOOL inputIsValid = [_nameField holdsValidName];
+    BOOL inputIsValid = ([_nameField holdsValidName] && [_dateOfBirthField holdsValidDate]);
     
     if (inputIsValid) {
         if ([OState s].aspectIsSelf || ![_dateOfBirthPicker.date isBirthDateOfMinor]) {
-            inputIsValid = inputIsValid && [_emailField holdsValidEmail];
+            inputIsValid = inputIsValid && [self emailIsEligible];
             inputIsValid = inputIsValid && [_mobilePhoneField holdsValidPhoneNumber];
         } else if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
             if ([[_emailField finalText] length] > 0) {
@@ -286,14 +307,12 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         }
     }
     
-    inputIsValid = inputIsValid && [_dateOfBirthField holdsValidDate];
-    
     if (inputIsValid) {
         if ([OState s].actionIsRegister) {
             [self.view endEditing:YES];
             
             if (_candidate) {
-                if ([_candidate.residencies count]) {
+                if ([_origo isResidence] && [_candidate.residencies count]) {
                     [self promptForExistingResidenceAction];
                 } else {
                     [self registerMember];
@@ -306,10 +325,16 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
                 }
             }
         } else if ([OState s].actionIsEdit) {
-            [self updateMember];
-            [self toggleEdit];
-            
-            [_entityObservingDelegate refreshFromEntity];
+            if (![[_emailField finalText] isEqualToString:_member.email]) {
+                if ([OState s].aspectIsSelf) {
+                    [self promptForUserEmailChangeConfirmation];
+                } else {
+                    [self promptForMemberEmailChangeConfirmation];
+                }
+            } else {
+                [self updateMember];
+                [self toggleEditMode];
+            }
         }
     } else {
         [_memberCell shakeCellShouldVibrate:NO];
@@ -321,7 +346,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 {
     [[OMeta m] userDidSignOut];
     
-    [_delegate dismissViewControllerWithIdentitifier:kMemberViewControllerId];
+    [_delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
 }
 
 
@@ -363,7 +388,11 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
         }
     } else if ([OState s].actionIsDisplay) {
-        if ([_origo userIsAdmin] || ([_member isUser] && [_member isTeenOrOlder])) {
+        BOOL memberIsUserAndTeen = ([_member isUser] && [_member isTeenOrOlder]);
+        BOOL memberIsWardOfUser = [[[OMeta m].user wards] containsObject:_member];
+        BOOL membershipIsInactiveAndUserIsAdmin = ([_origo userIsAdmin] && !_membership.isActive_);
+        
+        if (memberIsUserAndTeen || memberIsWardOfUser || membershipIsInactiveAndUserIsAdmin) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
         }
         
@@ -457,15 +486,16 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     if (indexPath.section == kMemberSection) {
         if (_member) {
             _memberCell = [tableView cellForEntity:_member delegate:self];
+            _gender = _member.gender;
         } else {
             _memberCell = [tableView cellForEntityClass:OMember.class delegate:self];
         }
         
         _nameField = [_memberCell textFieldForKeyPath:kKeyPathName];
-        _emailField = [_memberCell textFieldForKeyPath:kKeyPathEmail];
-        _mobilePhoneField = [_memberCell textFieldForKeyPath:kKeyPathMobilePhone];
         _dateOfBirthField = [_memberCell textFieldForKeyPath:kKeyPathDateOfBirth];
         _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
+        _mobilePhoneField = [_memberCell textFieldForKeyPath:kKeyPathMobilePhone];
+        _emailField = [_memberCell textFieldForKeyPath:kKeyPathEmail];
         
         cell = _memberCell;
     } else if (indexPath.section == kAddressSection) {
@@ -523,31 +553,6 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
     [textField emphasise];
-    
-    if (_currentField == _emailField) {
-        if (([[_emailField finalText] length] > 0) && [_emailField holdsValidEmail]) {
-            NSString *email = [_emailField finalText];
-            
-            if ([OState s].aspectIsSelf) {
-                // TODO: Handle user email change
-            } else if (![email isEqualToString:_member.email]) {
-                if ([_origo hasMemberWithId:email]) {
-                    NSString *alertTitle = [OStrings stringForKey:strAlertTitleMemberExists];
-                    NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], email, _origo.name];
-                    
-                    [OAlert showAlertWithTitle:alertTitle message:alertMessage];
-                } else {
-                    _candidate = [[OMeta m].context memberEntityWithEmail:email];
-                    
-                    if (_candidate) {
-                        [self populateWithCandidate];
-                    }
-                }
-            }
-        }
-    }
-    
-    _currentField = textField;
 }
 
 
@@ -557,15 +562,33 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
+{
+    BOOL shouldEndEditing = YES;
+    
+    if (textField == _emailField) {
+        shouldEndEditing = (![_emailField holdsValidEmail] || [self emailIsEligible]);
+    }
+    
+    return shouldEndEditing;
+}
+
+
 - (BOOL)textFieldShouldReturn:(OTextField *)textField
 {
+    BOOL shouldReturn = YES;
+    
     if (textField == _nameField) {
         [_dateOfBirthField becomeFirstResponder];
     } else if (textField == _emailField) {
-        [self didFinishEditing];
+        shouldReturn = [self textFieldShouldEndEditing:textField];
+        
+        if (shouldReturn) {
+            [self didFinishEditing];
+        }
     }
     
-    return YES;
+    return shouldReturn;
 }
 
 
@@ -598,43 +621,15 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-#pragma mark - UIAlertViewDelegate conformance
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    _emailField.text = @"";
-    [_emailField becomeFirstResponder];
-}
-
-
 #pragma mark - OModalViewControllerDelegate conformance
 
-- (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
     
     if ([identitifier isEqualToString:kOrigoViewControllerId]) {
         [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
     }
-}
-
-
-#pragma mark - OServerConnectionDelegate conformance
-
-- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(NSArray *)data
-{
-    if (response.statusCode == kHTTPStatusOK) {
-        _candidateEntities = [[OMeta m].context saveServerReplicas:data];
-        _candidate = [[OMeta m].context memberEntityWithEmail:[_emailField finalText]];
-        
-        [self populateWithCandidate];
-    }
-}
-
-
-- (void)didFailWithError:(NSError *)error
-{
-    
 }
 
 @end

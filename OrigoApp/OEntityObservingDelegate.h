@@ -11,6 +11,6 @@
 @protocol OEntityObservingDelegate <NSObject>
 
 @required
-- (void)refreshFromEntity;
+- (void)refresh;
 
 @end

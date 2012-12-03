@@ -255,11 +255,11 @@ static OMeta *m = nil;
 
 - (NSManagedObjectContext *)context
 {
-    return ((OAppDelegate *)[[UIApplication sharedApplication] delegate]).managedObjectContext;
+    return ((OAppDelegate *)[UIApplication sharedApplication].delegate).managedObjectContext;
 }
 
 
-#pragma mark - Convenience methods
+#pragma mark - Connection status
 
 - (BOOL)internetConnectionIsAvailable
 {
@@ -288,7 +288,7 @@ static OMeta *m = nil;
     
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userEmail]];
     
-    [(OAppDelegate *)[[UIApplication sharedApplication] delegate] releasePersistentStore];
+    [(OAppDelegate *)[UIApplication sharedApplication].delegate releasePersistentStore];
 }
 
 

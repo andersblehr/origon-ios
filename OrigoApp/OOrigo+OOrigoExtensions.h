@@ -26,7 +26,7 @@
 - (OMembership *)userMembership;
 - (BOOL)userIsMember;
 - (BOOL)userIsAdmin;
-- (BOOL)hasMemberWithId:(NSString *)memberId;
+- (BOOL)hasMemberWithEmail:(NSString *)email;
 
 - (NSComparisonResult)compare:(OOrigo *)other;
 

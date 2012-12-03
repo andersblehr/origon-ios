@@ -13,7 +13,7 @@
 @protocol OModalViewControllerDelegate <NSObject>
 
 @required
-- (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier;
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier;
 
 @optional
 - (void)insertEntityInTableView:(OReplicatedEntity *)entity;

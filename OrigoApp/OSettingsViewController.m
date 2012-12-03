@@ -21,11 +21,13 @@
 
 @implementation OSettingsViewController
 
-#pragma mark - Selection implementations
+#pragma mark - Selector implementations
 
 - (void)signOut
 {
-    [(ONavigationController *)self.tabBarController.navigationController popToAuthViewController];
+    // TODO: Handle the case where server request is in-flight when signing out
+    
+    [(ONavigationController *)self.tabBarController.navigationController signOut];
 }
 
 
