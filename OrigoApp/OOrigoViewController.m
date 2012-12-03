@@ -39,7 +39,7 @@
 
 #pragma mark - Auxiliary methods
 
-- (void)toggleEdit
+- (void)toggleEditMode
 {
     static UIBarButtonItem *editButton = nil;
     static UIBarButtonItem *backButton = nil;
@@ -55,8 +55,6 @@
 
         [_addressView becomeFirstResponder];
     } else if ([OState s].actionIsDisplay) {
-        [self.view endEditing:YES];
-        
         self.navigationItem.rightBarButtonItem = editButton;
         self.navigationItem.leftBarButtonItem = backButton;
     }
@@ -69,19 +67,19 @@
 
 - (void)startEditing
 {
-    [self toggleEdit];
+    [self toggleEditMode];
 }
 
 
 - (void)cancelEditing
 {
     if ([OState s].actionIsRegister) {
-        [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
+        [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
     } else {
         _addressView.text = _origo.address;
         _telephoneField.text = _origo.telephone;
         
-        [self toggleEdit];
+        [self toggleEditMode];
     }
 }
 
@@ -97,10 +95,10 @@
                 [OMeta m].user.activeSince = [NSDate date];
             }
             
-            [_delegate dismissViewControllerWithIdentitifier:kOrigoViewControllerId];
+            [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
         } else if ([OState s].actionIsEdit) {
-            [self toggleEdit];
-            [_entityObservingDelegate refreshFromEntity];
+            [self toggleEditMode];
+            [_entityObservingDelegate refresh];
         }
         
         [[OMeta m].context replicateIfNeeded];

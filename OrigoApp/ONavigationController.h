@@ -10,6 +10,6 @@
 
 @interface ONavigationController : UINavigationController
 
-- (void)popToAuthViewController;
+- (void)signOut;
 
 @end

@@ -15,7 +15,7 @@
 
 #pragma mark - Sign out and pop to authentication
 
-- (void)popToAuthViewController
+- (void)signOut
 {
     [[OMeta m] userDidSignOut];
     

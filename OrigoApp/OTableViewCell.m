@@ -319,21 +319,23 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)redrawIfNeeded
 {
-    [UIView animateWithDuration:kCellAnimationDuration animations:^{
+    if (_entity) {
         CGFloat desiredFrameHeight = [_entity displayCellHeight];
-        CGRect frame = self.frame;
         
-        if (frame.size.height != desiredFrameHeight + kImplicitFramePadding) {
-            [(UITableView *)self.superview beginUpdates];
-            frame.size.height = desiredFrameHeight + kImplicitFramePadding;
-            self.frame = frame;
-            [(UITableView *)self.superview endUpdates];
-            
-            [self setNeedsUpdateConstraints];
-            [self layoutIfNeeded];
-            [self.backgroundView redrawDropShadow];
+        if (self.frame.size.height != desiredFrameHeight + kImplicitFramePadding) {
+            [UIView animateWithDuration:kCellAnimationDuration animations:^{
+                [(UITableView *)self.superview beginUpdates];
+                CGRect frame = self.frame;
+                frame.size.height = desiredFrameHeight + kImplicitFramePadding;
+                self.frame = frame;
+                [(UITableView *)self.superview endUpdates];
+                
+                [self setNeedsUpdateConstraints];
+                [self layoutIfNeeded];
+                [self.backgroundView redrawDropShadow];
+            }];
         }
-    }];
+    }
 }
 
 
@@ -447,7 +449,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - OEntityObservingDelegate conformance
 
-- (void)refreshFromEntity
+- (void)refresh
 {
     if ([self isListCell]) {
         self.textLabel.text = [_entity listName];
@@ -468,7 +470,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
     
     if (_entityObservingDelegate) {
-        [_entityObservingDelegate refreshFromEntity];
+        [_entityObservingDelegate refresh];
     }
 }
 

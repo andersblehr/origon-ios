@@ -29,8 +29,8 @@ extern CGFloat const kCellAnimationDuration;
 @private
     BOOL _selectable;
     
-    OVisualConstraints *_visualConstraints;
     NSMutableDictionary *_views;
+    OVisualConstraints *_visualConstraints;
     
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }

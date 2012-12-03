@@ -17,9 +17,6 @@
 #import "OMember+OMemberExtensions.h"
 #import "OOrigo+OOrigoExtensions.h"
 
-NSString * const kMembershipIdFormat = @"%@$%@";
-NSString * const kResidencyIdFormat = @"%@^%@";
-
 
 @implementation OMembership (OMembershipExtensions)
 

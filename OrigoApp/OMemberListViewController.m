@@ -118,7 +118,7 @@ static NSInteger const kMemberSection = 2;
 {
     [[OMeta m].context replicateIfNeeded];
     
-    [_delegate dismissViewControllerWithIdentitifier:kMemberListViewControllerId];
+    [_delegate dismissModalViewControllerWithIdentitifier:kMemberListViewControllerId];
 }
 
 
@@ -183,7 +183,7 @@ static NSInteger const kMemberSection = 2;
 {
 	[super viewWillDisappear:animated];
     
-    if (![self.navigationController.viewControllers containsObject:self]) {
+    if (!self.presentedViewController) {
         [[OMeta m].context replicateIfNeeded];
     }
 }
@@ -428,7 +428,7 @@ static NSInteger const kMemberSection = 2;
 
 #pragma mark - OModalViewControllerDelegate conformance
 
-- (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
     if ([identitifier isEqualToString:kMemberViewControllerId]) {
         [self dismissViewControllerAnimated:YES completion:NULL];

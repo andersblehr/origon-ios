@@ -563,7 +563,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - OModalViewControllerDelegate conformance
 
-- (void)dismissViewControllerWithIdentitifier:(NSString *)identitifier
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
     
@@ -593,7 +593,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         }
     } else {
         if (response.statusCode == kHTTPStatusUnauthorized) {
-            [_authCell shakeCellShouldVibrate:NO];
+            [_authCell shakeCellShouldVibrate:YES];
             [_passwordField becomeFirstResponder];
         } else {
             [OAlert showAlertForHTTPStatus:response.statusCode];

@@ -143,10 +143,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     BOOL isValid = ([name length] > 0);
     
     if (isValid) {
-        NSUInteger spaceLocation = [name rangeOfString:@" "].location;
-        
-        isValid = isValid && (spaceLocation > 0);
-        isValid = isValid && (spaceLocation < [name length] - 1);
+        isValid = isValid && ([name rangeOfString:kSeparatorSpace].location > 0);
     }
     
     if (!isValid) {

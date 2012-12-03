@@ -105,7 +105,7 @@
 
 - (id)addMember:(OMember *)member
 {
-    OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self entityId:[NSString stringWithFormat:kMembershipIdFormat, member.email, self.entityId]];
+    OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self];
     membership.member = member;
     membership.origo = self;
     
@@ -119,7 +119,7 @@
 
 - (id)addResident:(OMember *)resident
 {
-    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self entityId:[NSString stringWithFormat:kResidencyIdFormat, resident.email, self.entityId]];
+    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self];
     residency.resident = resident;
     residency.residence = self;
     residency.member = resident;
@@ -187,13 +187,13 @@
 }
 
 
-- (BOOL)hasMemberWithId:(NSString *)memberId
+- (BOOL)hasMemberWithEmail:(NSString *)email
 {
     BOOL didFindMember = NO;
     
     for (OMembership *membership in self.memberships) {
         if (!didFindMember) {
-            didFindMember = [membership.member.entityId isEqualToString:memberId];
+            didFindMember = [membership.member.email isEqualToString:email];
         }
     }
     
