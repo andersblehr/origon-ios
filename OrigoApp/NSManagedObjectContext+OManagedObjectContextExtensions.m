@@ -267,7 +267,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 }
 
 
-- (NSSet *)saveServerReplicas:(NSArray *)replicaDictionaries
+- (void)saveServerReplicas:(NSArray *)replicaDictionaries
 {
     NSString *entityGhostClass = NSStringFromClass(OReplicatedEntityGhost.class);
     NSMutableSet *entities = [[NSMutableSet alloc] init];
@@ -292,8 +292,6 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
     }
     
     [self save];
-    
-    return entities;
 }
 
 

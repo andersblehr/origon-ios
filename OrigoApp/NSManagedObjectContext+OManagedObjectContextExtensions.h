@@ -20,7 +20,7 @@
 - (id)insertLinkedEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo;
 
 - (void)save;
-- (NSSet *)saveServerReplicas:(NSArray *)replicaDictionaries;
+- (void)saveServerReplicas:(NSArray *)replicaDictionaries;
 
 - (BOOL)needsReplication;
 - (void)replicateIfNeeded;

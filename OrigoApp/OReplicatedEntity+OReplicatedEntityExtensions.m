@@ -33,8 +33,8 @@
     [dictionary setObject:self.entityId forKey:kKeyPathEntityId];
     [dictionary setObject:self.entity.name forKey:kKeyPathEntityClass];
     
-    if ([self isKindOfClass:OMember.class] && ((OMember *)self).email) {
-        [dictionary setObject:((OMember *)self).email forKey:kKeyPathEmail];
+    if ([self isKindOfClass:OMember.class] && [self valueForKey:kKeyPathEmail]) {
+        [dictionary setObject:[self valueForKey:kKeyPathEmail] forKey:kKeyPathEmail];
     }
     
     return dictionary;
