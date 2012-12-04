@@ -116,8 +116,6 @@ static NSInteger const kMemberSection = 2;
 
 - (void)didFinishEditing
 {
-    [[OMeta m].context replicateIfNeeded];
-    
     [_delegate dismissModalViewControllerWithIdentitifier:kMemberListViewControllerId];
 }
 

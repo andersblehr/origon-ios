@@ -605,6 +605,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)didFailWithError:(NSError *)error
 {
     [self indicatePendingServerSession:NO];
+    
+    // TODO: Handle errors (-1001: Timeout, and others)
 }
 
 @end
