@@ -178,8 +178,8 @@ static OMeta *m = nil;
         _contextObservers = [[NSMutableDictionary alloc] init];
         
         _dirtyEntities = [[NSMutableSet alloc] init];
-        _stagedServerEntities = [[NSMutableDictionary alloc] init];
-        _stagedServerEntityRefs = [[NSMutableDictionary alloc] init];
+        _stagedEntities = [[NSMutableDictionary alloc] init];
+        _stagedRelationshipRefs = [[NSMutableDictionary alloc] init];
         
         [self checkReachability:[Reachability reachabilityForInternetConnection]];
         
@@ -360,38 +360,38 @@ static OMeta *m = nil;
 }
 
 
-- (void)stageServerEntity:(OReplicatedEntity *)entity
+- (void)stageEntity:(OReplicatedEntity *)entity
 {
-    if ([_stagedServerEntityRefs count] == 0) {
-        [_stagedServerEntities removeAllObjects];
+    if ([_stagedRelationshipRefs count] == 0) {
+        [_stagedEntities removeAllObjects];
     }
     
-    [_stagedServerEntities setObject:entity forKey:entity.entityId];
+    [_stagedEntities setObject:entity forKey:entity.entityId];
 }
 
 
-- (void)stageServerEntityRefs:(NSDictionary *)entityRefs forEntity:(OReplicatedEntity *)entity
+- (void)stageRelationshipRefs:(NSDictionary *)relationshipRefs forEntity:(OReplicatedEntity *)entity
 {
-    if ([_stagedServerEntityRefs count] == 0) {
-        [_stagedServerEntities removeAllObjects];
+    if ([_stagedRelationshipRefs count] == 0) {
+        [_stagedEntities removeAllObjects];
     }
     
-    [_stagedServerEntityRefs setObject:entityRefs forKey:entity.entityId];
+    [_stagedRelationshipRefs setObject:relationshipRefs forKey:entity.entityId];
 }
 
 
-- (OReplicatedEntity *)stagedServerEntityWithId:(NSString *)entityId
+- (OReplicatedEntity *)stagedEntityWithId:(NSString *)entityId
 {
-    return [_stagedServerEntities objectForKey:entityId];
+    return [_stagedEntities objectForKey:entityId];
 }
 
 
-- (NSDictionary *)stagedServerEntityRefsForEntity:(OReplicatedEntity *)entity
+- (NSDictionary *)stagedRelationshipRefsForEntity:(OReplicatedEntity *)entity
 {
-    NSDictionary *entityRefs = [_stagedServerEntityRefs objectForKey:entity.entityId];
-    [_stagedServerEntityRefs removeObjectForKey:entity.entityId];
+    NSDictionary *relationshipRefs = [_stagedRelationshipRefs objectForKey:entity.entityId];
+    [_stagedRelationshipRefs removeObjectForKey:entity.entityId];
     
-    return entityRefs;
+    return relationshipRefs;
 }
 
 

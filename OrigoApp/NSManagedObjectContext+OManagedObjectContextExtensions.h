@@ -17,7 +17,7 @@
 
 - (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo;
 - (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
-- (id)insertLinkedEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo;
+- (id)insertEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo;
 
 - (void)save;
 - (void)saveServerReplicas:(NSArray *)replicaDictionaries;

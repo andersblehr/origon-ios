@@ -71,7 +71,7 @@
 		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+OJSONSerializationExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+OJSONSerializationExtensions.m */; };
 		5CA94D9B15834A9E008CD9EC /* UIDatePicker+ODatePickerExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9A15834A9E008CD9EC /* UIDatePicker+ODatePickerExtensions.m */; };
 		5CA94D9F15836BD9008CD9EC /* NSDate+ODateExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9E15836BD9008CD9EC /* NSDate+ODateExtensions.m */; };
-		5CAEE08E163E513300A9046B /* OLinkedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE08D163E513300A9046B /* OLinkedEntityRef.m */; };
+		5CAEE08E163E513300A9046B /* OReplicatedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE08D163E513300A9046B /* OReplicatedEntityRef.m */; };
 		5CAEE091163E513300A9046B /* ODocumentElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE090163E513300A9046B /* ODocumentElement.m */; };
 		5CAEE094163E513400A9046B /* OMessageBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE093163E513400A9046B /* OMessageBoard.m */; };
 		5CAEE09A163E513400A9046B /* OScheduledBreak.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE099163E513400A9046B /* OScheduledBreak.m */; };
@@ -225,8 +225,8 @@
 		5CA94D9A15834A9E008CD9EC /* UIDatePicker+ODatePickerExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDatePicker+ODatePickerExtensions.m"; sourceTree = "<group>"; };
 		5CA94D9D15836BD9008CD9EC /* NSDate+ODateExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+ODateExtensions.h"; sourceTree = "<group>"; };
 		5CA94D9E15836BD9008CD9EC /* NSDate+ODateExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+ODateExtensions.m"; sourceTree = "<group>"; };
-		5CAEE08C163E513300A9046B /* OLinkedEntityRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLinkedEntityRef.h; sourceTree = "<group>"; };
-		5CAEE08D163E513300A9046B /* OLinkedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLinkedEntityRef.m; sourceTree = "<group>"; };
+		5CAEE08C163E513300A9046B /* OReplicatedEntityRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntityRef.h; sourceTree = "<group>"; };
+		5CAEE08D163E513300A9046B /* OReplicatedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntityRef.m; sourceTree = "<group>"; };
 		5CAEE08F163E513300A9046B /* ODocumentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODocumentElement.h; sourceTree = "<group>"; };
 		5CAEE090163E513300A9046B /* ODocumentElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ODocumentElement.m; sourceTree = "<group>"; };
 		5CAEE092163E513400A9046B /* OMessageBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMessageBoard.h; sourceTree = "<group>"; };
@@ -385,8 +385,6 @@
 				5CAEE0A5163E513700A9046B /* OEventOrigoInvitation.m */,
 				5CAEE09E163E513500A9046B /* OExternalDocument.h */,
 				5CAEE09F163E513500A9046B /* OExternalDocument.m */,
-				5CAEE08C163E513300A9046B /* OLinkedEntityRef.h */,
-				5CAEE08D163E513300A9046B /* OLinkedEntityRef.m */,
 				5C991C1F16624C7400E1CF63 /* OMember.h */,
 				5C991C2016624C7400E1CF63 /* OMember.m */,
 				5CAEE0AA163E513800A9046B /* OMemberResidency.h */,
@@ -405,6 +403,8 @@
 				5C17617B164CFBC2000770DC /* OReplicatedEntity.m */,
 				5C2A55BE1668A4C300F3916C /* OReplicatedEntityGhost.h */,
 				5C2A55BF1668A4C300F3916C /* OReplicatedEntityGhost.m */,
+				5CAEE08C163E513300A9046B /* OReplicatedEntityRef.h */,
+				5CAEE08D163E513300A9046B /* OReplicatedEntityRef.m */,
 				5CAEE0C2163E513A00A9046B /* OScheduledAbsence.h */,
 				5CAEE0C3163E513A00A9046B /* OScheduledAbsence.m */,
 				5CAEE098163E513400A9046B /* OScheduledBreak.h */,
@@ -811,7 +811,7 @@
 				5C014A2415CA77320040A1D9 /* OAlert.m in Sources */,
 				5CB7E94015F38C1200FD53DF /* OSettingsViewController.m in Sources */,
 				5C15BFC916367BCA00BB5254 /* OTabBarController.m in Sources */,
-				5CAEE08E163E513300A9046B /* OLinkedEntityRef.m in Sources */,
+				5CAEE08E163E513300A9046B /* OReplicatedEntityRef.m in Sources */,
 				5CAEE091163E513300A9046B /* ODocumentElement.m in Sources */,
 				5CAEE094163E513400A9046B /* OMessageBoard.m in Sources */,
 				5CAEE09A163E513400A9046B /* OScheduledBreak.m in Sources */,

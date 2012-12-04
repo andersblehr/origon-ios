@@ -26,7 +26,7 @@
 #import "OMember.h"
 #import "OMembership.h"
 #import "OOrigo.h"
-#import "OLinkedEntityRef.h"
+#import "OReplicatedEntityRef.h"
 
 #import "OMember+OMemberExtensions.h"
 #import "OMembership+OMembershipExtensions.h"

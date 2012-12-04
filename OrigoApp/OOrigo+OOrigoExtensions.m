@@ -30,14 +30,14 @@
 
 #pragma mark - Auxiliary methods
 
-- (void)createLinkedEntityRefsForAddedMember:(OMember *)member
+- (void)createEntityRefsForAddedMember:(OMember *)member
 {
-    [[OMeta m].context insertLinkedEntityRefForEntity:member inOrigo:self];
+    [[OMeta m].context insertEntityRefForEntity:member inOrigo:self];
     
     for (OMemberResidency *residency in member.residencies) {
         if (![residency.origoId isEqualToString:self.entityId]) {
-            [[OMeta m].context insertLinkedEntityRefForEntity:residency inOrigo:self];
-            [[OMeta m].context insertLinkedEntityRefForEntity:residency.origo inOrigo:self];
+            [[OMeta m].context insertEntityRefForEntity:residency inOrigo:self];
+            [[OMeta m].context insertEntityRefForEntity:residency.origo inOrigo:self];
         }
     }
 }
@@ -110,7 +110,7 @@
     membership.origo = self;
     
     if (![self.type isEqualToString:kOrigoTypeMemberRoot]) {
-        [self createLinkedEntityRefsForAddedMember:member];
+        [self createEntityRefsForAddedMember:member];
     }
     
     return membership;
@@ -125,7 +125,7 @@
     residency.member = resident;
     residency.origo = self;
     
-    [self createLinkedEntityRefsForAddedMember:resident];
+    [self createEntityRefsForAddedMember:resident];
     
     return residency;
 }
