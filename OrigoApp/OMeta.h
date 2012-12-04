@@ -76,8 +76,8 @@ extern NSUInteger const kAgeOfMajority;
     NSMutableDictionary *_contextObservers;
     
     NSMutableSet *_dirtyEntities;
-    NSMutableDictionary *_stagedServerEntities;
-    NSMutableDictionary *_stagedServerEntityRefs;
+    NSMutableDictionary *_stagedEntities;
+    NSMutableDictionary *_stagedRelationshipRefs;
 }
 
 @property (strong, nonatomic) NSString *userEmail;
@@ -110,9 +110,9 @@ extern NSUInteger const kAgeOfMajority;
 - (BOOL)registrationIsComplete;
 
 - (NSSet *)dirtyEntities;
-- (void)stageServerEntity:(OReplicatedEntity *)entity;
-- (void)stageServerEntityRefs:(NSDictionary *)entityRefs forEntity:(OReplicatedEntity *)entity;
-- (OReplicatedEntity *)stagedServerEntityWithId:(NSString *)entityId;
-- (NSDictionary *)stagedServerEntityRefsForEntity:(OReplicatedEntity *)entity;
+- (void)stageEntity:(OReplicatedEntity *)entity;
+- (void)stageRelationshipRefs:(NSDictionary *)relationshipRefs forEntity:(OReplicatedEntity *)entity;
+- (OReplicatedEntity *)stagedEntityWithId:(NSString *)entityId;
+- (NSDictionary *)stagedRelationshipRefsForEntity:(OReplicatedEntity *)entity;
 
 @end

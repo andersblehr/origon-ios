@@ -146,13 +146,13 @@
 {
     self.hashCode = [self computeHashCode];
     
-    NSDictionary *entityRefs = [[OMeta m] stagedServerEntityRefsForEntity:self];
+    NSDictionary *entityRefs = [[OMeta m] stagedRelationshipRefsForEntity:self];
     
     for (NSString *name in [entityRefs allKeys]) {
         NSDictionary *entityRef = [entityRefs objectForKey:name];
         NSString *destinationId = [entityRef objectForKey:kKeyPathEntityId];
         
-        OReplicatedEntity *entity = [[OMeta m] stagedServerEntityWithId:destinationId];
+        OReplicatedEntity *entity = [[OMeta m] stagedEntityWithId:destinationId];
         
         if (!entity) {
             entity = [[OMeta m].context entityWithId:destinationId];
@@ -223,7 +223,7 @@
 
 #pragma mark - Entity linking & deletion
 
-- (OLinkedEntityRef *)linkedEntityRefForOrigo:(OOrigo *)origo
+- (OReplicatedEntityRef *)entityRefForOrigo:(OOrigo *)origo
 {
     return [[OMeta m].context entityWithId:[self.entityId stringByAppendingString:origo.entityId separator:kSeparatorHash]];
 }

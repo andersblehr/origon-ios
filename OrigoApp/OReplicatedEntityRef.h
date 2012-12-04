@@ -1,5 +1,5 @@
 //
-//  OLinkedEntityRef.h
+//  OReplicatedEntityRef.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 29.10.12.
@@ -11,9 +11,9 @@
 #import "OReplicatedEntity.h"
 
 
-@interface OLinkedEntityRef : OReplicatedEntity
+@interface OReplicatedEntityRef : OReplicatedEntity
 
-@property (nonatomic, retain) NSString * linkedEntityId;
-@property (nonatomic, retain) NSString * linkedEntityOrigoId;
+@property (nonatomic, retain) NSString * referencedEntityId;
+@property (nonatomic, retain) NSString * referencedEntityOrigoId;
 
 @end

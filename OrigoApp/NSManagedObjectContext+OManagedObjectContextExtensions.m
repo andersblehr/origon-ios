@@ -22,7 +22,7 @@
 #import "OOrigo.h"
 #import "OReplicatedEntity.h"
 #import "OReplicatedEntityGhost.h"
-#import "OLinkedEntityRef.h"
+#import "OReplicatedEntityRef.h"
 
 #import "OMember+OMemberExtensions.h"
 #import "OMembership+OMembershipExtensions.h"
@@ -76,9 +76,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 
 - (id)insertEntityFromDictionary:(NSDictionary *)entityDictionary
 {
-    NSMutableDictionary *entityRefs = [[NSMutableDictionary alloc] init];
     NSString *entityId = [entityDictionary objectForKey:kKeyPathEntityId];
-    
     OReplicatedEntity *entity = [self entityWithId:entityId];
     
     if (!entity) {
@@ -99,23 +97,25 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
         }
     }
     
+    NSMutableDictionary *relationshipRefs = [[NSMutableDictionary alloc] init];
+    
     for (NSString *relationshipKey in [relationships allKeys]) {
         NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
         
         if (!relationship.isToMany) {
-            NSString *entityRefName = [NSString stringWithFormat:@"%@Ref", relationshipKey];
-            NSDictionary *entityRef = [entityDictionary objectForKey:entityRefName];
+            NSString *relationshipRefName = [NSString stringWithFormat:@"%@Ref", relationshipKey];
+            NSDictionary *relationshipRef = [entityDictionary objectForKey:relationshipRefName];
             
-            if (entityRef) {
-                [entityRefs setObject:entityRef forKey:relationshipKey];
+            if (relationshipRef) {
+                [relationshipRefs setObject:relationshipRef forKey:relationshipKey];
             }
         }
     }
     
-    [[OMeta m] stageServerEntity:entity];
+    [[OMeta m] stageEntity:entity];
     
-    if ([entityRefs count] > 0) {
-        [[OMeta m] stageServerEntityRefs:entityRefs forEntity:entity];
+    if ([relationshipRefs count] > 0) {
+        [[OMeta m] stageRelationshipRefs:relationshipRefs forEntity:entity];
     }
     
     return entity;
@@ -154,7 +154,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
         OMember *member = membership.member;
         OOrigo *origo = membership.origo;
         
-        [self deleteObject:[member linkedEntityRefForOrigo:origo]];
+        [self deleteObject:[member entityRefForOrigo:origo]];
         
         BOOL shouldDeleteMember = NO;
         
@@ -167,8 +167,8 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
         if (shouldDeleteMember) {
             for (OMemberResidency *residency in member.residencies) {
                 if (residency.residence != origo) {
-                    [self deleteObject:[residency.residence linkedEntityRefForOrigo:origo]];
-                    [self deleteObject:[residency linkedEntityRefForOrigo:origo]];
+                    [self deleteObject:[residency.residence entityRefForOrigo:origo]];
+                    [self deleteObject:[residency entityRefForOrigo:origo]];
                     
                     if ([residency.residence.residencies count] == 1) {
                         [self deleteObject:residency.residence];
@@ -242,14 +242,14 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 }
 
 
-- (id)insertLinkedEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo
+- (id)insertEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo
 {
-    OLinkedEntityRef *linkedEntityRef = [self insertEntityForClass:OLinkedEntityRef.class inOrigo:origo entityId:[entity.entityId stringByAppendingString:origo.entityId separator:kSeparatorHash]];
+    OReplicatedEntityRef *entityRef = [self insertEntityForClass:OReplicatedEntityRef.class inOrigo:origo entityId:[entity.entityId stringByAppendingString:origo.entityId separator:kSeparatorHash]];
     
-    linkedEntityRef.linkedEntityId = entity.entityId;
-    linkedEntityRef.linkedEntityOrigoId = entity.origoId;
+    entityRef.referencedEntityId = entity.entityId;
+    entityRef.referencedEntityOrigoId = entity.origoId;
     
-    return linkedEntityRef;
+    return entityRef;
 }
 
 

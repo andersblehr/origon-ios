@@ -71,13 +71,6 @@
             <entry key="expires" value="yes"/>
         </userInfo>
     </entity>
-    <entity name="OLinkedEntityRef" representedClassName="OLinkedEntityRef" parentEntity="OReplicatedEntity" syncable="YES">
-        <attribute name="linkedEntityId" attributeType="String" syncable="YES"/>
-        <attribute name="linkedEntityOrigoId" attributeType="String" syncable="YES"/>
-        <userInfo>
-            <entry key="expires" value="dynamic"/>
-        </userInfo>
-    </entity>
     <entity name="OMember" representedClassName="OMember" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="activeSince" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="dateOfBirth" optional="YES" attributeType="Date" syncable="YES"/>
@@ -189,6 +182,13 @@
             <entry key="expires" value="+120d"/>
         </userInfo>
     </entity>
+    <entity name="OReplicatedEntityRef" representedClassName="OReplicatedEntityRef" parentEntity="OReplicatedEntity" syncable="YES">
+        <attribute name="referencedEntityId" attributeType="String" syncable="YES"/>
+        <attribute name="referencedEntityOrigoId" attributeType="String" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="dynamic"/>
+        </userInfo>
+    </entity>
     <entity name="OScheduledAbsence" representedClassName="OScheduledAbsence" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="absenceEnd" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="absenceStart" attributeType="Date" syncable="YES"/>
@@ -254,7 +254,6 @@
         <element name="OEventInvitation" positionX="0" positionY="0" width="0" height="0"/>
         <element name="OEventOrigoInvitation" positionX="0" positionY="0" width="0" height="0"/>
         <element name="OExternalDocument" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="OLinkedEntityRef" positionX="0" positionY="0" width="0" height="0"/>
         <element name="OMember" positionX="0" positionY="0" width="0" height="0"/>
         <element name="OMemberResidency" positionX="0" positionY="0" width="0" height="0"/>
         <element name="OMembership" positionX="0" positionY="0" width="0" height="0"/>
@@ -264,6 +263,7 @@
         <element name="OOrigo" positionX="0" positionY="0" width="0" height="0"/>
         <element name="OReplicatedEntity" positionX="0" positionY="0" width="0" height="0"/>
         <element name="OReplicatedEntityGhost" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="0" height="0"/>
         <element name="OScheduledAbsence" positionX="0" positionY="0" width="0" height="0"/>
         <element name="OScheduledBreak" positionX="0" positionY="0" width="0" height="0"/>
         <element name="OToDoAssignment" positionX="0" positionY="0" width="0" height="0"/>

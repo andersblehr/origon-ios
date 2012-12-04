@@ -8,7 +8,7 @@
 
 #import "OReplicatedEntity.h"
 
-@class OOrigo, OReplicatedEntityGhost, OLinkedEntityRef;
+@class OOrigo, OReplicatedEntityGhost, OReplicatedEntityRef;
 
 @interface OReplicatedEntity (OReplicatedEntityExtensions)
 
@@ -32,7 +32,7 @@
 
 - (NSString *)expiresInTimeframe;
 
-- (OLinkedEntityRef *)linkedEntityRefForOrigo:(OOrigo *)origo;
+- (OReplicatedEntityRef *)entityRefForOrigo:(OOrigo *)origo;
 - (OReplicatedEntityGhost *)spawnEntityGhost;
 
 
