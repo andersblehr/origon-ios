@@ -89,10 +89,10 @@ extern NSUInteger const kAgeOfMajority;
 @property (strong, nonatomic, readonly) NSString *displayLanguage;
 @property (strong, nonatomic) NSString *lastReplicationDate;
 
-@property (nonatomic, readonly) BOOL is_iPadDevice;
-@property (nonatomic, readonly) BOOL is_iPodDevice;
-@property (nonatomic, readonly) BOOL is_iPhoneDevice;
-@property (nonatomic, readonly) BOOL isSimulatorDevice;
+@property (nonatomic, readonly) BOOL deviceIs_iPad;
+@property (nonatomic, readonly) BOOL deviceIs_iPod;
+@property (nonatomic, readonly) BOOL deviceIs_iPhone;
+@property (nonatomic, readonly) BOOL deviceIsSimulator;
 
 @property (nonatomic, readonly) BOOL internetConnectionIsWiFi;
 @property (nonatomic, readonly) BOOL internetConnectionIsWWAN;

@@ -83,7 +83,7 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (NSString *)origoServerURL
 {
-    NSString *origoServer = [OMeta m].isSimulatorDevice ? kOrigoDevServer : kOrigoProdServer;
+    NSString *origoServer = [OMeta m].deviceIsSimulator ? kOrigoDevServer : kOrigoProdServer;
     NSMutableString *protocol = [NSMutableString stringWithString:kHTTPProtocol];
     
     if ([origoServer isEqualToString:kGAEServer] && [_RESTHandler isEqualToString:kRESTHandlerAuth]) {
