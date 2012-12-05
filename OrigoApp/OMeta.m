@@ -167,10 +167,10 @@ static OMeta *m = nil;
         }
         
         NSString *deviceModel = [UIDevice currentDevice].model;
-        _is_iPadDevice = [deviceModel hasPrefix:@"iPad"];
-        _is_iPodDevice = [deviceModel hasPrefix:@"iPod"];
-        _is_iPhoneDevice = [deviceModel hasPrefix:@"iPhone"];
-        _isSimulatorDevice = ([deviceModel rangeOfString:@"Simulator"].location != NSNotFound);
+        _deviceIs_iPad = [deviceModel hasPrefix:@"iPad"];
+        _deviceIs_iPod = [deviceModel hasPrefix:@"iPod"];
+        _deviceIs_iPhone = [deviceModel hasPrefix:@"iPhone"];
+        _deviceIsSimulator = ([deviceModel rangeOfString:@"Simulator"].location != NSNotFound);
         
         _internetConnectionIsWiFi = NO;
         _internetConnectionIsWWAN = NO;
@@ -188,6 +188,7 @@ static OMeta *m = nil;
         } else {
             OLogWarning(@"Could not start reachability notifier, checking internet connectivity only at startup.");
         }
+        
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityDidChange:) name:kReachabilityChangedNotification object:nil];
     }
     
