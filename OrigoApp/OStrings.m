@@ -8,6 +8,9 @@
 
 #import "OStrings.h"
 
+#import "NSDate+ODateExtensions.h"
+#import "NSString+OStringExtensions.h"
+
 #import "OAlert.h"
 #import "OMeta.h"
 #import "OLogging.h"
@@ -136,8 +139,10 @@ NSString * const xstrContactRolesSchoolClass         = @"xstrContactRolesSchoolC
 NSString * const xstrContactRolesPreschoolClass      = @"xstrContactRolesPreschoolClass";
 NSString * const xstrContactRolesSportsTeam          = @"xstrContactRolesSportsTeam";
 
+static NSInteger const kDaysBetweenStringFetches = 14;
+static NSString * const kKeyPathStringDate = @"origo.date.strings";
 static NSString * const kStringsPlist = @"strings.plist";
-static NSDictionary *strings = nil;
+static NSDictionary const *strings = nil;
 
 static NSString * const kLabelKeyPrefix = @"strLabel";
 static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
@@ -146,6 +151,19 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 @implementation OStrings
 
 #pragma mark - Auxiliary methods
+
++ (NSString *)timestampToken
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:kDateTimeFormatZulu];
+    
+    NSString *timestamp = [dateFormatter stringFromDate:[NSDate date]];
+    NSString *saltedAndHashedTimestamp = [[timestamp diff:@"ogiro"] hashUsingSHA1];
+    NSString *base64EncodedTimestamp = [timestamp base64EncodedString];
+
+    return [base64EncodedTimestamp stringByAppendingString:saltedAndHashedTimestamp];
+}
+
 
 + (NSString *)fullPathToStringsPlist
 {
@@ -162,27 +180,51 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 }
 
 
-#pragma mark - Interface implementation
+#pragma mark - String fetching & refresh
+
++ (BOOL)hasStrings
+{
+    if (!strings) {
+        strings = [NSDictionary dictionaryWithContentsOfFile:[self fullPathToStringsPlist]];
+    }
+    
+    return (strings != nil);
+}
+
+
++ (void)fetchStrings
+{
+    if ([OMeta m].userIsSignedIn) {
+        [[[OServerConnection alloc] init] getStrings:[OMeta m].authToken];
+    } else {
+        [[[OServerConnection alloc] init] getStrings:[self timestampToken]];
+    }
+}
+
 
 + (void)conditionallyRefresh
 {
-    if ([[OMeta m] internetConnectionIsAvailable]) {
-        if (!strings || [OMeta m].internetConnectionIsWiFi) { // TODO: Only if required
-            [[[OServerConnection alloc] init] getStrings];
+    NSDate *stringDate = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathStringDate];
+    
+    if (!stringDate || ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
+        if (!strings || [[OMeta m] internetConnectionIsAvailable]) { // TODO: Only if required
+            if ([OMeta m].userIsSignedIn) {
+                [[[OServerConnection alloc] init] getStrings:[OMeta m].authToken];
+            } else {
+                [[[OServerConnection alloc] init] getStrings:[self timestampToken]];
+            }
         }
     }
 }
 
 
+#pragma mark - String lookup
+
 + (NSString *)stringForKey:(NSString *)key
 {
     NSString *string = @"";
     
-    if (!strings) {
-        strings = [NSDictionary dictionaryWithContentsOfFile:[self fullPathToStringsPlist]];
-    }
-    
-    if (strings) {
+    if ([self hasStrings]) {
         string = [strings objectForKey:key];
         
         if (!string) {

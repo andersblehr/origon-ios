@@ -8,12 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const kDateTimeFormatZulu;
+
 @interface NSDate (ODateExtensions)
 
 + (NSDate *)dateWithDeserialisedDate:(NSNumber *)deserialisedDate;
 
 - (NSString *)localisedDateString;
 
+- (NSInteger)daysBeforeNow;
 - (NSInteger)yearsBeforeNow;
 - (BOOL)isBirthDateOfMinor;
 

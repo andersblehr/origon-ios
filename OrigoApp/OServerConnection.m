@@ -71,6 +71,7 @@ static NSString * const kRESTRouteModelReplicate = @"replicate";
 static NSString * const kRESTRouteModelFetch = @"fetch";
 static NSString * const kRESTRouteModelMember = @"member";
 
+static NSString * const kURLParameterStringToken = @"token";
 static NSString * const kURLParameterAuthToken = @"token";
 static NSString * const kURLParameterDeviceId = @"duid";
 static NSString * const kURLParameterDevice = @"device";
@@ -198,6 +199,17 @@ static NSString * const kURLParameterVersion = @"version";
 
 #pragma mark - Server requests
 
+- (void)getStrings:(NSString *)stringToken
+{
+    _RESTHandler = kRESTHandlerStrings;
+    _RESTRoute = [OMeta m].displayLanguage;
+    
+    [self setValue:stringToken forURLParameter:kURLParameterStringToken];
+    
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:OStrings.class];
+}
+
+
 - (void)authenticate:(id)delegate
 {
     _RESTHandler = kRESTHandlerAuth;
@@ -243,15 +255,6 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-- (void)getStrings
-{
-    _RESTHandler = kRESTHandlerStrings;
-    _RESTRoute = [OMeta m].displayLanguage;
-    
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:OStrings.class];
-}
-
-
 #pragma mark - NSURLConnectionDelegate conformance
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -279,15 +282,7 @@ static NSString * const kURLParameterVersion = @"version";
             [OMeta m].lastReplicationDate = replicationDate;
         }
     } else {
-        BOOL shouldShowAutomaticAlert = NO;
-        
-        if ([_delegate respondsToSelector:@selector(doUseAutomaticAlerts)]) {
-            shouldShowAutomaticAlert = [_delegate doUseAutomaticAlerts];
-        }
-        
-        if (shouldShowAutomaticAlert) {
-            [OAlert showAlertForHTTPStatus:response.statusCode];
-        }
+        [OAlert showAlertForHTTPStatus:response.statusCode];
     }
     
     _HTTPResponse = response;
@@ -324,16 +319,7 @@ static NSString * const kURLParameterVersion = @"version";
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
-    BOOL shouldShowAutomaticAlert = NO;
-    
-    if ([_delegate respondsToSelector:@selector(doUseAutomaticAlerts)]) {
-        shouldShowAutomaticAlert = [_delegate doUseAutomaticAlerts];
-    }
-    
-    if (shouldShowAutomaticAlert) {
-        [OAlert showAlertForError:error];
-    }
-    
+    [OAlert showAlertForError:error];
     [_delegate didFailWithError:error];
 }
 
