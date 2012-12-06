@@ -11,8 +11,6 @@
 @interface NSURL (OURLExtensions)
 
 + (NSString *)URLEscapeString:(NSString *)unencodedString;
-
-- (NSURL *)URLByAppendingURLParameter:(NSString *)key withValue:(NSString *)value;
 - (NSURL *)URLByAppendingURLParameters:(NSDictionary *)queryParameters;
 
 @end

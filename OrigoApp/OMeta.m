@@ -81,9 +81,9 @@ NSUInteger const kCertainSchoolAge = 7;
 NSUInteger const kAgeOfMajority = 18;
 
 static NSString * const kKeyPathUserEmail = @"origo.user.email";
-static NSString * const kKeyPathFormatDeviceId = @"origo.device.id$%@";
-static NSString * const kKeyPathFormatAuthExpiryDate = @"origo.auth.expires$%@";
-static NSString * const kKeyPathFormatLastReplicationDate = @"origo.replication.date$%@";
+static NSString * const kKeyPathFormatDeviceId = @"origo.id.device.%@";
+static NSString * const kKeyPathFormatAuthExpiryDate = @"origo.date.authExpiry.%@";
+static NSString * const kKeyPathFormatLastReplicationDate = @"origo.date.lastReplication.%@";
 
 static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
@@ -206,60 +206,6 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - Custom property accessors
-
-- (void)setUserEmail:(NSString *)userEmail
-{
-    _userEmail = userEmail;
-    
-    if (_userEmail) {
-        [[NSUserDefaults standardUserDefaults] setObject:_userEmail forKey:kKeyPathUserEmail];
-        
-        NSString *deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userEmail]];
-        NSString *lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userEmail]];
-        
-        if (deviceId) {
-            _deviceId = deviceId;
-        } else if (_deviceId) {
-            [[NSUserDefaults standardUserDefaults] setObject:_deviceId forKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userEmail]];
-        }
-        
-        if (lastReplicationDate) {
-            _lastReplicationDate = lastReplicationDate;
-        } else if (_lastReplicationDate) {
-            [[NSUserDefaults standardUserDefaults] setObject:_lastReplicationDate forKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userEmail]];
-        }
-    } else {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathUserEmail];
-    }
-}
-
-
-- (NSString *)authToken
-{
-    if (!_authToken) {
-        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeInterval30Days];
-        _authToken = [self generateAuthToken:_authTokenExpiryDate];
-    }
-    
-    return _authToken;
-}
-
-
-- (void)setLastReplicationDate:(NSString *)replicationDate
-{
-    _lastReplicationDate = replicationDate;
-    
-    [[NSUserDefaults standardUserDefaults] setObject:replicationDate forKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userEmail]];
-}
-
-
-- (NSManagedObjectContext *)context
-{
-    return ((OAppDelegate *)[UIApplication sharedApplication].delegate).managedObjectContext;
-}
-
-
 #pragma mark - Connection status
 
 - (BOOL)internetConnectionIsAvailable
@@ -286,6 +232,7 @@ static OMeta *m = nil;
 {
     _user = nil;
     _authToken = nil;
+    _deviceId = nil;
     
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userEmail]];
     
@@ -393,6 +340,59 @@ static OMeta *m = nil;
     [_stagedRelationshipRefs removeObjectForKey:entity.entityId];
     
     return relationshipRefs;
+}
+
+
+#pragma mark - Accessors overrides
+
+- (void)setUserEmail:(NSString *)userEmail
+{
+    _userEmail = userEmail;
+    
+    if (_userEmail) {
+        [[NSUserDefaults standardUserDefaults] setObject:_userEmail forKey:kKeyPathUserEmail];
+        
+        NSString *deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userEmail]];
+        
+        if (deviceId) {
+            _deviceId = deviceId;
+        } else {
+            if (!_deviceId) {
+                _deviceId = [OUUIDGenerator generateUUID];
+            }
+            
+            [[NSUserDefaults standardUserDefaults] setObject:_deviceId forKey:[NSString stringWithFormat:kKeyPathFormatDeviceId, _userEmail]];
+        }
+        
+        _lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userEmail]];
+    } else {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathUserEmail];
+    }
+}
+
+
+- (NSString *)authToken
+{
+    if (!_authToken) {
+        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeInterval30Days];
+        _authToken = [self generateAuthToken:_authTokenExpiryDate];
+    }
+    
+    return _authToken;
+}
+
+
+- (void)setLastReplicationDate:(NSString *)replicationDate
+{
+    _lastReplicationDate = replicationDate;
+    
+    [[NSUserDefaults standardUserDefaults] setObject:replicationDate forKey:[NSString stringWithFormat:kKeyPathFormatLastReplicationDate, _userEmail]];
+}
+
+
+- (NSManagedObjectContext *)context
+{
+    return ((OAppDelegate *)[UIApplication sharedApplication].delegate).managedObjectContext;
 }
 
 

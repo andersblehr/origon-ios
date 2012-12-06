@@ -8,45 +8,29 @@
 
 #import "NSURL+OURLExtensions.h"
 
-@implementation NSURL (OURLExtensions)
+static NSString *kURLParameterFormat = @"%@%@=%@";
 
+@implementation NSURL (OURLExtensions)
 
 + (NSString *)URLEscapeString:(NSString *)unencodedString 
 {
     CFStringRef originalStringRef = (__bridge_retained CFStringRef)unencodedString;
-    NSString *URLEscapedString = (__bridge_transfer NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, originalStringRef, NULL, (CFStringRef)@"@", kCFStringEncodingUTF8);
+    NSString *URLEscapedString = (__bridge_transfer NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, originalStringRef, NULL, (CFStringRef)@"=@", kCFStringEncodingUTF8);
     CFRelease(originalStringRef);
     
     return URLEscapedString;
 }
 
 
-- (NSURL *)URLByAppendingURLParameter:(NSString *)key withValue:(NSString *)value
-{
-    NSString *URLEscapedKey = [NSURL URLEscapeString:key];
-    NSString *URLEscapedValue = [NSURL URLEscapeString:value];
-    
-    NSMutableString *URLAsString = [[NSMutableString alloc] initWithString:[self absoluteString]];
-    NSString *separator = ([URLAsString rangeOfString:@"?"].location == NSNotFound) ? @"?" : @"&";
-    
-    [URLAsString appendFormat:@"%@%@=%@", separator, URLEscapedKey, URLEscapedValue];
-    
-    return [NSURL URLWithString:URLAsString];
-}
-
-
 - (NSURL *)URLByAppendingURLParameters:(NSDictionary *)URLParameters
 {
     NSMutableString *URLAsString = [[NSMutableString alloc] initWithString:[self absoluteString]];
+    NSString *separator = ([URLAsString rangeOfString:@"?"].location == NSNotFound) ? @"?" : @"&";
     
     if ([URLParameters count] > 0) {
-        NSString *separator =
-            ([URLAsString rangeOfString:@"?"].location == NSNotFound) ? @"?" : @"&";
-        
-        for (id key in URLParameters) {
-            NSString *URLEscapedKey = [NSURL URLEscapeString:[key description]];
+        for (NSString *key in [URLParameters allKeys]) {
             NSString *URLEscapedValue = [NSURL URLEscapeString:[URLParameters objectForKey:key]];
-            [URLAsString appendFormat:@"%@%@=%@", separator, URLEscapedKey, URLEscapedValue];
+            [URLAsString appendFormat:kURLParameterFormat, separator, key, URLEscapedValue];
             
             separator = @"&";
         }

@@ -22,6 +22,7 @@
 
 #import "OMember.h"
 
+static NSString * const kTimeZoneNameUTC = @"UTC";
 static NSString * const kPersistentStoreFormat = @"OrigoApp^%@.sqlite";
 
 
@@ -105,15 +106,21 @@ static void uncaughtExceptionHandler(NSException *exception)
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
-    [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
+    [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:kTimeZoneNameUTC]];
     
     OLogDebug(@"Device is %@.", [UIDevice currentDevice].model);
+    OLogDebug(@"iOS version is %@.", [UIDevice currentDevice].systemVersion);
     OLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);
-    OLogDebug(@"System name is %@.", [UIDevice currentDevice].systemName);
-    OLogDebug(@"System version is %@.", [UIDevice currentDevice].systemVersion);
     OLogDebug(@"System language is '%@'.", [[OMeta m] displayLanguage]);
+
+    if (![OMeta m].userIsSignedIn && ![OStrings hasStrings]) {
+        [OStrings fetchStrings];
+    } else {
+        [OStrings conditionallyRefresh];
+    }
     
-    [OStrings conditionallyRefresh];
+    //NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
+    //[[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
     
     return YES;
 }

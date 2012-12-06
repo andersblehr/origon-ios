@@ -133,10 +133,11 @@ extern NSString * const xstrContactRolesSportsTeam;
 
 @interface OStrings : NSObject
 
++ (BOOL)hasStrings;
++ (void)fetchStrings;
 + (void)conditionallyRefresh;
 
 + (NSString *)stringForKey:(NSString *)key;
-
 + (NSString *)labelForKeyPath:(NSString *)keyPath;
 + (NSString *)placeholderForKeyPath:(NSString *)keyPath;
 
