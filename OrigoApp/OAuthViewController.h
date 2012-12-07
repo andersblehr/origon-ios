@@ -17,10 +17,11 @@
 
 @interface OAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
 @private
+    OTableViewCell *_authCell;
+    
     BOOL _editingIsAllowed;
     BOOL _userIsListed;
     
-    OTableViewCell *_authCell;
     OTextField *_emailField;
     OTextField *_passwordField;
     OTextField *_activationCodeField;
@@ -31,5 +32,7 @@
     
     UIActivityIndicatorView *_activityIndicator;
 }
+
+@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
 
 @end

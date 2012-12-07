@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2844" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="EqG-em-Sv2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2844" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="iqr-fd-qbX">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
         <development version="4500" identifier="xcode"/>
@@ -20,13 +20,10 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="lej-0U-7XK"/>
-                    <connections>
-                        <segue destination="iqr-fd-qbX" kind="push" identifier="authToOrigoListView" id="NTW-nN-Sx2"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hiH-3x-2qe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1230" y="661"/>
+            <point key="canvasLocation" x="183" y="-619"/>
         </scene>
         <!--Task List View Controller - <strTasks>-->
         <scene sceneID="FtR-nb-C3g">
@@ -147,7 +144,6 @@
                     <navigationItem key="navigationItem" title="&lt;strOrigoList>" id="2TD-LP-teE"/>
                     <connections>
                         <segue destination="O0V-Ey-WLK" kind="push" identifier="origoListToMemberListView" id="gEQ-1g-oCH"/>
-                        <segue destination="T87-Bh-GzL" kind="push" identifier="origoListToMemberView" id="Af6-hf-9Ni"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nIi-HS-de2" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -210,19 +206,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KIF-OZ-MfD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-279" y="28"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="EIe-Th-KqO">
-            <objects>
-                <navigationController definesPresentationContext="YES" navigationBarHidden="YES" id="EqG-em-Sv2" customClass="ONavigationController" sceneMemberID="viewController">
-                    <nil key="simulatedTopBarMetrics"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="6xw-4O-gkG">
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="l1v-9c-WIR" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1230" y="1301"/>
         </scene>
         <!--Navigation Controller - <strTasks>-->
         <scene sceneID="kO8-cQ-LYy">
@@ -296,48 +279,12 @@
         <image name="258-checkmark.png" width="19" height="18"/>
         <image name="83-calendar.png" width="23" height="25"/>
     </resources>
-    <classes>
-        <class className="OAuthViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OAuthViewController.h"/>
-        </class>
-        <class className="OCalendarViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OCalendarViewController.h"/>
-        </class>
-        <class className="OMemberListViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMemberListViewController.h"/>
-        </class>
-        <class className="OMemberViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMemberViewController.h"/>
-        </class>
-        <class className="OMessageBoardViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OMessageBoardViewController.h"/>
-        </class>
-        <class className="ONavigationController" superclassName="UINavigationController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ONavigationController.h"/>
-        </class>
-        <class className="OOrigoListViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OOrigoListViewController.h"/>
-        </class>
-        <class className="OOrigoViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OOrigoViewController.h"/>
-        </class>
-        <class className="OSettingsViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OSettingsViewController.h"/>
-        </class>
-        <class className="OTabBarController" superclassName="UITabBarController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OTabBarController.h"/>
-        </class>
-        <class className="OTaskListViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OTaskListViewController.h"/>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Af6-hf-9Ni"/>
-        <segue reference="99F-61-IG0"/>
+        <segue reference="gEQ-1g-oCH"/>
     </inferredMetricsTieBreakers>
 </document>
