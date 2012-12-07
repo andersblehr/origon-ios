@@ -14,6 +14,7 @@
 + (UIBarButtonItem *)editButtonWithTarget:(id)target;
 + (UIBarButtonItem *)doneButtonWithTarget:(id)target;
 + (UIBarButtonItem *)cancelButtonWithTarget:(id)target;
++ (UIBarButtonItem *)signInButtonWithTarget:(id)target;
 + (UIBarButtonItem *)signOutButtonWithTarget:(id)target;
 + (UIBarButtonItem *)backButtonWithTitle:(NSString *)title;
 

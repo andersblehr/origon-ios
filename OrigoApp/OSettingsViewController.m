@@ -21,16 +21,6 @@
 
 @implementation OSettingsViewController
 
-#pragma mark - Selector implementations
-
-- (void)signOut
-{
-    // TODO: Handle the case where server request is in-flight when signing out
-    
-    [(ONavigationController *)self.tabBarController.navigationController signOut];
-}
-
-
 #pragma mark - View life cycle
 
 - (void)viewDidLoad
@@ -42,7 +32,6 @@
     self.navigationController.navigationBarHidden = NO;
     
     self.title = [OStrings stringForKey:strTabBarTitleSettings];
-    self.navigationItem.rightBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
 }
 
 

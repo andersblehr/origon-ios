@@ -16,6 +16,7 @@
 #import "UITableView+OTableViewExtensions.h"
 #import "UIView+OViewExtensions.h"
 
+#import "OAlert.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
@@ -29,11 +30,12 @@
 #import "OMember+OMemberExtensions.h"
 #import "OOrigo+OOrigoExtensions.h"
 
+#import "OAuthViewController.h"
 #import "OMemberListViewController.h"
+#import "OMemberViewController.h"
 #import "OOrigoViewController.h"
 
 static NSString * const kSegueToMemberListView = @"origoListToMemberListView";
-static NSString * const kSegueToMemberView = @"origoListToMemberView";
 
 static NSInteger const kResidenceSection = 0;
 static NSInteger const kWardSection = 1;
@@ -42,6 +44,27 @@ static NSInteger const kWardSection = 1;
 @implementation OOrigoListViewController
 
 #pragma mark - Auxiliary methods
+
+- (void)configureViewAndDataSource
+{
+    if (_member) {
+        self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
+    } else {
+        _member = [OMeta m].user;
+        _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    }
+    
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
+    
+    if ([[OMeta m].user isTeenOrOlder]) {
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
+    }
+    
+    _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
+}
+
 
 - (BOOL)sectionIsResidenceSection:(NSInteger)section
 {
@@ -60,6 +83,37 @@ static NSInteger const kWardSection = 1;
     NSUInteger origoSection = [OState s].aspectIsSelf ? ([_sortedWards count] ? 2 : 1) : 0;
     
     return ([_sortedOrigos count] && (section == origoSection));
+}
+
+
+#pragma mark - User sign-in & registration
+
+- (void)signInUser
+{
+    OAuthViewController *authViewController = [self.storyboard instantiateViewControllerWithIdentifier:kAuthViewControllerId];
+    authViewController.delegate = self;
+    
+    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:authViewController];
+    modalController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    
+    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
+}
+
+
+- (void)registerUser
+{
+    [OState s].actionIsRegister = YES;
+    [OState s].targetIsMember = YES;
+    [OState s].aspectIsSelf = YES;
+    
+    OMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
+    memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
+    memberViewController.delegate = self;
+    
+    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
+    modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    
+    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
 }
 
 
@@ -102,6 +156,17 @@ static NSInteger const kWardSection = 1;
 }
 
 
+- (void)signOut
+{
+    // TODO: Handle the case where server request is in-flight when signing out
+    
+    [[OMeta m] userDidSignOut];
+    _member = nil;
+    
+    [self signInUser];
+}
+
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -112,22 +177,11 @@ static NSInteger const kWardSection = 1;
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = NO;
     
-    self.title = [OStrings stringForKey:strTabBarTitleOrigo];
+    self.title = @"Origo";
     
-    if (_member) {
-        self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
-        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
-    } else {
-        _member = [OMeta m].user;
-        _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    if ([OMeta m].userIsSignedIn && [OMeta m].registrationIsComplete) {
+        [self configureViewAndDataSource];
     }
-    
-    if ([[OMeta m].user isTeenOrOlder]) {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
-    }
-    
-    _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -137,11 +191,16 @@ static NSInteger const kWardSection = 1;
     
     [OState s].targetIsOrigo = YES;
     [OState s].actionIsList = YES;
-    [[OState s] setAspectForMember:_member];
+    
+    if (_member) {
+        [[OState s] setAspectForMember:_member];
+    } else {
+        [OState s].aspectIsSelf = YES;
+    }
     
     OLogState;
 
-    if ([OState s].aspectIsSelf) {
+    if (_member && [OState s].aspectIsSelf) {
         BOOL hasOnlyResidenceSection = ([self.tableView numberOfSections] == 1);
         NSRange reloadRange = {0, 0};
         
@@ -184,6 +243,20 @@ static NSInteger const kWardSection = 1;
 }
 
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if (![OMeta m].userIsSignedIn) {
+        [self signInUser];
+    } else if (![OMeta m].registrationIsComplete) {
+        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
+        
+        [self registerUser];
+    }
+}
+
+
 - (NSUInteger)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskPortrait;
@@ -206,15 +279,20 @@ static NSInteger const kWardSection = 1;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    NSInteger numberOfSections = 1;
+    OLogDebug(@"numberOfSectionsInTableView");
+    NSInteger numberOfSections = 0;
 
-    if ([OState s].aspectIsSelf) {
-        if ([_sortedWards count]) {
-            numberOfSections++;
-        }
+    if ([OMeta m].userIsSignedIn) {
+        numberOfSections++;
         
-        if ([_sortedOrigos count]) {
-            numberOfSections++;
+        if ([OState s].aspectIsSelf) {
+            if ([_sortedWards count]) {
+                numberOfSections++;
+            }
+            
+            if ([_sortedOrigos count]) {
+                numberOfSections++;
+            }
         }
     }
     
@@ -224,6 +302,7 @@ static NSInteger const kWardSection = 1;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    OLogDebug(@"numberOfRowsInSection");
     NSUInteger numberOfRows = 0;
     
     if ([self sectionIsResidenceSection:section]) {
@@ -246,6 +325,7 @@ static NSInteger const kWardSection = 1;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    OLogDebug(@"cellForRowAtIndexPath");
     OTableViewCell *cell = nil;
     
     OMembership *membership = nil;
@@ -420,9 +500,23 @@ static NSInteger const kWardSection = 1;
 
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
-    if ([identitifier isEqualToString:kOrigoViewControllerId]) {
-        [self dismissViewControllerAnimated:YES completion:NULL];
+    if ([identitifier isEqualToString:kAuthViewControllerId] ||
+        [identitifier isEqualToString:kMemberListViewControllerId]) {
+        [OState s].targetIsOrigo = YES;
+        [OState s].actionIsList = YES;
+        
+        if (_member) {
+            [[OState s] setAspectForMember:_member];
+        } else {
+            [OState s].aspectIsSelf = YES;
+        }
+        
+        OLogState;
+        [self configureViewAndDataSource];
+        [self.tableView reloadData];
     }
+    
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 

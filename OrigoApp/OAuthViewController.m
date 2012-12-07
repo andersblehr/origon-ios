@@ -10,6 +10,7 @@
 
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
 #import "NSString+OStringExtensions.h"
+#import "UIBarButtonItem+OBarButtonItemExtensions.h"
 #import "UIColor+OColorExtensions.h"
 #import "UIFont+OFontExtensions.h"
 #import "UITableView+OTableViewExtensions.h"
@@ -37,8 +38,6 @@
 #import "OOrigo+OOrigoExtensions.h"
 
 #import "OMemberViewController.h"
-
-static NSString * const kSegueToOrigoListView = @"authToOrigoListView";
 
 static NSInteger const kNumberOfAuthSections = 1;
 static NSInteger const kNumberOfRowsInAuthSection = 1;
@@ -264,11 +263,11 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     }
     
     if ([[OMeta m] registrationIsComplete]) {
-        [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
+        [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
     } else {
         [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
         
-        [self completeRegistration];
+        [self registerUser];
     }
 }
 
@@ -335,27 +334,51 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _authInfo = nil;
     
     if ([[OMeta m] registrationIsComplete] && [[OMeta m].user isMinor]) {
-        [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
+        [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
     } else {
-        [self completeRegistration];
+        [self registerUser];
     }
 }
 
 
 #pragma mark - User registration
 
-- (void)completeRegistration
+- (void)registerUser
 {
     [OState s].actionIsRegister = YES;
     
     OMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
     memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
-    memberViewController.delegate = self;
+    memberViewController.delegate = _delegate;
     
     UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
     modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     
     [self.navigationController presentViewController:modalController animated:YES completion:NULL];
+}
+
+
+#pragma mark - Selector implementations
+
+- (void)signIn
+{
+    if ([OState s].actionIsLogin) {
+        if ([_emailField holdsValidEmail] && [_passwordField holdsValidPassword]) {
+            [self.view endEditing:YES];
+            [self attemptUserLogin];
+        } else {
+            _passwordField.text = @"";
+            [_authCell shakeCellShouldVibrate:YES];
+        }
+    } else if ([OState s].actionIsActivate) {
+        if ([self activationCodeIsValid] && [self passwordIsValid]) {
+            [self.view endEditing:YES];
+            [self presentEULA];
+        } else {
+            _repeatPasswordField.text = @"";
+            [_authCell shakeCellShouldVibrate:YES];
+        }
+    }
 }
 
 
@@ -367,15 +390,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     [self.tableView setBackground];
     [self.tableView addLogoBanner];
+    //self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBarHidden = YES;
     
-    self.title = [OStrings stringForKey:strTabBarTitleOrigo];
+    //self.navigationItem.rightBarButtonItem = [UIBarButtonItem signInButtonWithTarget:self];
     
-    if ([[OMeta m] userIsSignedIn]) {
-        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
-        
-        [self completeRegistration];
-    }
+    self.title = @"Origo";
 }
 
 
@@ -503,35 +523,15 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    BOOL shouldReturn = YES;
-    
     if (textField == _emailField) {
         [_passwordField becomeFirstResponder];
-    } else if (textField == _passwordField) {
-        shouldReturn = [_emailField holdsValidEmail] && [_passwordField holdsValidPassword];
-        
-        if (shouldReturn) {
-            [self.view endEditing:YES];
-            [self attemptUserLogin];
-        } else {
-            _passwordField.text = @"";
-            [_authCell shakeCellShouldVibrate:YES];
-        }
     } else if (textField == _activationCodeField) {
         [_repeatPasswordField becomeFirstResponder];
-    } else if (textField == _repeatPasswordField) {
-        shouldReturn = [self activationCodeIsValid] && [self passwordIsValid];
-        
-        if (shouldReturn) {
-            [self.view endEditing:YES];
-            [self presentEULA];
-        } else {
-            _repeatPasswordField.text = @"";
-            [_authCell shakeCellShouldVibrate:YES];
-        }
+    } else {
+        [self signIn];
     }
     
-    return shouldReturn;
+    return YES;
 }
 
 
@@ -568,10 +568,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [self dismissViewControllerAnimated:YES completion:NULL];
     
     if ([identitifier isEqualToString:kMemberListViewControllerId]) {
-        [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
+        [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
     } else if ([identitifier isEqualToString:kMemberViewControllerId]) {
         if ([OMeta m].userIsSignedIn) {
-            [self performSegueWithIdentifier:kSegueToOrigoListView sender:self];
+            [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
         } else {
             [self reload];
         }

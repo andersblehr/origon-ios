@@ -37,6 +37,12 @@
 }
 
 
++ (UIBarButtonItem *)signInButtonWithTarget:(id)target
+{
+    return [[UIBarButtonItem alloc] initWithTitle:@"Logg på" style:UIBarButtonItemStyleDone target:target action:@selector(signIn)];
+}
+
+
 + (UIBarButtonItem *)signOutButtonWithTarget:(id)target
 {
     return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonSignOut] style:UIBarButtonItemStylePlain target:target action:@selector(signOut)];
