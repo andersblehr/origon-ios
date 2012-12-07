@@ -40,7 +40,6 @@
 		5C3A319614C61378001A783E /* dark_linen-640x960.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3A319514C61378001A783E /* dark_linen-640x960.png */; };
 		5C3C665C14F56D6800514C57 /* OUUIDGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C665B14F56D6800514C57 /* OUUIDGenerator.m */; };
 		5C3D42821485678F009A68E0 /* OOrigoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D42811485678F009A68E0 /* OOrigoListViewController.m */; };
-		5C4255961645105D00D439D2 /* ONavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4255951645105D00D439D2 /* ONavigationController.m */; };
 		5C4955F6157D469000F2A885 /* UIColor+OColorExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4955F5157D469000F2A885 /* UIColor+OColorExtensions.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+OURLExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+OURLExtensions.m */; };
 		5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C50581714CA1D05000D6587 /* QuartzCore.framework */; };
@@ -174,8 +173,6 @@
 		5C3C665B14F56D6800514C57 /* OUUIDGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUUIDGenerator.m; sourceTree = "<group>"; };
 		5C3D42801485678E009A68E0 /* OOrigoListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoListViewController.h; sourceTree = "<group>"; };
 		5C3D42811485678F009A68E0 /* OOrigoListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoListViewController.m; sourceTree = "<group>"; };
-		5C4255941645105D00D439D2 /* ONavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ONavigationController.h; sourceTree = "<group>"; };
-		5C4255951645105D00D439D2 /* ONavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ONavigationController.m; sourceTree = "<group>"; };
 		5C4955F4157D469000F2A885 /* UIColor+OColorExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+OColorExtensions.h"; sourceTree = "<group>"; };
 		5C4955F5157D469000F2A885 /* UIColor+OColorExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+OColorExtensions.m"; sourceTree = "<group>"; };
 		5C4F97791496AF88006E244F /* NSURL+OURLExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+OURLExtensions.h"; sourceTree = "<group>"; };
@@ -490,8 +487,6 @@
 				5C8B3AB515813DBB000B19FA /* OMemberViewController.m */,
 				5C629FFD14C624AD001DA01F /* OMessageBoardViewController.h */,
 				5C629FFE14C624AD001DA01F /* OMessageBoardViewController.m */,
-				5C4255941645105D00D439D2 /* ONavigationController.h */,
-				5C4255951645105D00D439D2 /* ONavigationController.m */,
 				5C3D42801485678E009A68E0 /* OOrigoListViewController.h */,
 				5C3D42811485678F009A68E0 /* OOrigoListViewController.m */,
 				5C2262C215A0B47B00241C5F /* OOrigoViewController.h */,
@@ -831,7 +826,6 @@
 				5CAEE0CA163E513A00A9046B /* ODocumentRepository.m in Sources */,
 				5CAEE0CD163E513A00A9046B /* OToDoItem.m in Sources */,
 				5CAEE0D0163E513A00A9046B /* OMessageItem.m in Sources */,
-				5C4255961645105D00D439D2 /* ONavigationController.m in Sources */,
 				5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OBarButtonItemExtensions.m in Sources */,
 				5C17617C164CFBC2000770DC /* OReplicatedEntity.m in Sources */,
 				5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */,

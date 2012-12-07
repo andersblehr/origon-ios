@@ -49,6 +49,6 @@ extern CGFloat const kCellAnimationDuration;
 - (void)toggleEditMode;
 - (void)redrawIfNeeded;
 
-- (void)shakeCellShouldVibrate:(BOOL)shouldVibrate;
+- (void)shakeCellVibrateDevice:(BOOL)shouldVibrate;
 
 @end

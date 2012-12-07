@@ -41,8 +41,10 @@
 #import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 #import "OMemberListViewController.h"
-#import "ONavigationController.h"
 #import "OOrigoViewController.h"
+
+static NSString * const kModalSegueToOrigoView = @"modalFromMemberToOrigoView";
+static NSString * const kPushSegueToMemberListView = @"pushFromMemberToMemberListView";
 
 static NSInteger const kMemberSection = 0;
 static NSInteger const kAddressSection = 1;
@@ -55,8 +57,6 @@ static NSInteger const kExistingResidenceSheetTag = 1;
 static NSInteger const kExistingResidenceButtonInviteToHousehold = 0;
 static NSInteger const kExistingResidenceButtonMergeHouseholds = 1;
 static NSInteger const kExistingResidenceButtonCancel = 2;
-
-static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 
 
 @implementation OMemberViewController
@@ -122,21 +122,6 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-- (void)registerHousehold
-{
-    [OState s].targetIsOrigo = YES;
-    
-    OOrigoViewController *origoViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoViewControllerId];
-    origoViewController.membership = [_origo userMembership];
-    origoViewController.delegate = self;
-    
-    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:origoViewController];
-    modalController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    
-    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
-}
-
-
 - (void)updateMember
 {
     _member.name = [_nameField finalText];
@@ -148,13 +133,17 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
         _member.gender = _gender;
         
         if (![_origo isResidence] || [_origo hasAddress]) {
+            if ([_origo isResidence] && [OState s].aspectIsSelf) {
+                [OMeta m].user.activeSince = [NSDate date];
+            }
+            
             [_delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
             
             if ([_delegate isKindOfClass:OMemberListViewController.class]) {
                 [_delegate insertEntityInTableView:_membership];
             }
         } else {
-            [self registerHousehold];
+            [self performSegueWithIdentifier:kModalSegueToOrigoView sender:self];
         }
     } else {
         [[OMeta m].context replicateIfNeeded];
@@ -337,7 +326,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
             }
         }
     } else {
-        [_memberCell shakeCellShouldVibrate:NO];
+        [_memberCell shakeCellVibrateDevice:NO];
     }
 }
 
@@ -356,16 +345,14 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 {
     [super viewDidLoad];
 
+    [self.tableView setBackground];
+    
     if (_membership) {
         _member = _membership.member;
         _origo = _membership.origo;
     }
     
     [self setState];
-     
-    [self.tableView setBackground];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBarHidden = NO;
     
     if ([OState s].aspectIsSelf) {
         self.title = [OStrings stringForKey:strViewTitleAboutMe];
@@ -427,17 +414,16 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
 }
 
 
-- (NSUInteger)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskPortrait;
-}
-
-
 #pragma mark - Segue handling
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kSegueToMemberListView]) {
+    if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
+        UINavigationController *navigationController = segue.destinationViewController;
+        OOrigoViewController *origoViewController = navigationController.viewControllers[0];
+        origoViewController.membership = [_origo userMembership];
+        origoViewController.delegate = self;
+    } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
         OMemberListViewController *memberListViewController = segue.destinationViewController;
         memberListViewController.delegate = _delegate;
         memberListViewController.origo = _origo;
@@ -628,7 +614,7 @@ static NSString * const kSegueToMemberListView = @"memberToMemberListView";
     [self dismissViewControllerAnimated:YES completion:NULL];
     
     if ([identitifier isEqualToString:kOrigoViewControllerId]) {
-        [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
+        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
     }
 }
 

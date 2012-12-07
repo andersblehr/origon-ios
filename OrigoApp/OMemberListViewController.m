@@ -36,8 +36,9 @@
 #import "OMemberViewController.h"
 #import "OOrigoViewController.h"
 
-static NSString * const kSegueToMemberView = @"memberListToMemberView";
-static NSString * const kSegueToOrigoView = @"memberListToOrigoView";
+static NSString * const kModalSegueToMemberView = @"modalFromMemberListToMemberView";
+static NSString * const kPushSegueToMemberView = @"pushFromMemberListToMemberView";
+static NSString * const kPushSegueToOrigoView = @"pushFromMemberListToOrigoView";
 
 static NSInteger const kDefaultNumberOfSections = 3;
 static NSInteger const kReducedNumberOfSections = 2;
@@ -101,16 +102,7 @@ static NSInteger const kMemberSection = 2;
 
 - (void)addMember
 {
-    [OState s].actionIsRegister = YES;
-    
-    OMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
-    memberViewController.delegate = self;
-    memberViewController.origo = _origo;
-    
-    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
-    modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    
-    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
+    [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
 }
 
 
@@ -129,8 +121,6 @@ static NSInteger const kMemberSection = 2;
     [self setState];
     
     [self.tableView setBackground];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBarHidden = NO;
     
     if ([_origo isResidence]) {
         if ([_origo userIsMember]) {
@@ -187,21 +177,22 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-- (NSUInteger)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskPortrait;
-}
-
-
 #pragma mark - Segue handling
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kSegueToOrigoView]) {
+    if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
+        [OState s].actionIsRegister = YES;
+        
+        UINavigationController *navigationController = segue.destinationViewController;
+        OMemberViewController *memberViewController = navigationController.viewControllers[0];
+        memberViewController.delegate = self;
+        memberViewController.origo = _origo;
+    } else if ([segue.identifier isEqualToString:kPushSegueToOrigoView]) {
         OOrigoViewController *origoViewController = segue.destinationViewController;
         origoViewController.membership = [_origo userMembership];
         origoViewController.entityObservingDelegate = _selectedCell;
-    } else if ([segue.identifier isEqualToString:kSegueToMemberView]) {
+    } else if ([segue.identifier isEqualToString:kPushSegueToMemberView]) {
         OMemberViewController *memberViewController = segue.destinationViewController;
         memberViewController.membership = _selectedMembership;
         memberViewController.entityObservingDelegate = _selectedCell;
@@ -403,7 +394,7 @@ static NSInteger const kMemberSection = 2;
     _selectedCell = (OTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
     
     if (indexPath.section == kOrigoSection) {
-        [self performSegueWithIdentifier:kSegueToOrigoView sender:self];
+        [self performSegueWithIdentifier:kPushSegueToOrigoView sender:self];
     } else {
         if ([self sectionIsContactSection:indexPath.section]) {
             _selectedMembership = _sortedContactMemberships[indexPath.row];
@@ -413,7 +404,7 @@ static NSInteger const kMemberSection = 2;
         
         [[OState s] setAspectForMember:_selectedMembership.member];
         
-        [self performSegueWithIdentifier:kSegueToMemberView sender:self];
+        [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];
     }
 }
 

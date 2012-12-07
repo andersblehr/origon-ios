@@ -259,7 +259,7 @@ static OMeta *m = nil;
 }
 
 
-- (BOOL)registrationIsComplete
+- (BOOL)userIsRegistered
 {
     return ([_user hasMobilePhone] && [_user hasAddress]);
 }

@@ -103,7 +103,7 @@
         
         [[OMeta m].context replicateIfNeeded];
     } else {
-        [_origoCell shakeCellShouldVibrate:NO];
+        [_origoCell shakeCellVibrateDevice:NO];
     }
 }
 
@@ -115,8 +115,6 @@
     [super viewDidLoad];
     
     [self.tableView setBackground];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBarHidden = NO;
 
     [OState s].targetIsOrigo = YES;
     [OState s].actionIsDisplay = ![OState s].actionIsInput;
@@ -168,12 +166,6 @@
     if ([OState s].actionIsInput) {
         [_addressView becomeFirstResponder];
     }
-}
-
-
-- (NSUInteger)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskPortrait;
 }
 
 

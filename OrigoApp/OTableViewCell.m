@@ -341,7 +341,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Cell effects
 
-- (void)shakeCellShouldVibrate:(BOOL)shouldVibrate
+- (void)shakeCellVibrateDevice:(BOOL)shouldVibrate
 {
     if (shouldVibrate) {
         AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);

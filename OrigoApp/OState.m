@@ -141,10 +141,14 @@ static OState *s = nil;
 {
     OStateAspect aspect = OStateAspectExternal;
     
-    if ([member isUser]) {
+    if (member) {
+        if ([member isUser]) {
+            aspect = OStateAspectSelf;
+        } else if ([[[OMeta m].user wards] containsObject:member]) {
+            aspect = OStateAspectWard;
+        }
+    } else {
         aspect = OStateAspectSelf;
-    } else if ([[[OMeta m].user wards] containsObject:member]) {
-        aspect = OStateAspectWard;
     }
     
     _aspect = aspect;

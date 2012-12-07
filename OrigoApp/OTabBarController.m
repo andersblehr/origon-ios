@@ -56,7 +56,11 @@ static NSInteger const kTabBarSettings = 4;
     NSUInteger supportedOrientations = UIInterfaceOrientationMaskPortrait;
     
     if (self.selectedViewController) {
-        supportedOrientations = [((UINavigationController *)self.selectedViewController).visibleViewController supportedInterfaceOrientations];
+        UIViewController *visibleViewController = ((UINavigationController *)self.selectedViewController).visibleViewController;
+        
+        if ([visibleViewController respondsToSelector:@selector(supportedInterfaceOrientations)]) {
+            supportedOrientations = [visibleViewController supportedInterfaceOrientations];
+        }
     }
     
     return supportedOrientations;

@@ -107,7 +107,7 @@ extern NSUInteger const kAgeOfMajority;
 - (void)userDidSignIn;
 - (void)userDidSignOut;
 - (BOOL)userIsSignedIn;
-- (BOOL)registrationIsComplete;
+- (BOOL)userIsRegistered;
 
 - (NSSet *)dirtyEntities;
 - (void)stageEntity:(OReplicatedEntity *)entity;
