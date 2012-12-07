@@ -39,8 +39,7 @@
 
 #import "OMemberViewController.h"
 
-static NSInteger const kNumberOfAuthSections = 1;
-static NSInteger const kNumberOfRowsInAuthSection = 1;
+static NSString * const kModalSegueToMemberView = @"modalFromAuthToMemberView";
 
 static NSInteger const kAlertButtonStartOver = 0;
 static NSInteger const kAlertTagWelcomeBack = 0;
@@ -144,7 +143,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _numberOfActivationAttempts++;
     
     if (_numberOfActivationAttempts < 3) {
-        [_authCell shakeCellShouldVibrate:YES];
+        [_authCell shakeCellVibrateDevice:YES];
         
         if (textField == _activationCodeField) {
             _activationCodeField.text = @"";
@@ -262,12 +261,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [[OMeta m].context replicateIfNeeded];
     }
     
-    if ([[OMeta m] registrationIsComplete]) {
+    if ([[OMeta m] userIsRegistered]) {
         [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
     } else {
         [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
         
-        [self registerUser];
+        [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
     }
 }
 
@@ -333,51 +332,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathAuthInfo];
     _authInfo = nil;
     
-    if ([[OMeta m] registrationIsComplete] && [[OMeta m].user isMinor]) {
+    if ([[OMeta m] userIsRegistered] && [[OMeta m].user isMinor]) {
         [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
     } else {
-        [self registerUser];
-    }
-}
-
-
-#pragma mark - User registration
-
-- (void)registerUser
-{
-    [OState s].actionIsRegister = YES;
-    
-    OMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
-    memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
-    memberViewController.delegate = _delegate;
-    
-    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
-    modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    
-    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
-}
-
-
-#pragma mark - Selector implementations
-
-- (void)signIn
-{
-    if ([OState s].actionIsLogin) {
-        if ([_emailField holdsValidEmail] && [_passwordField holdsValidPassword]) {
-            [self.view endEditing:YES];
-            [self attemptUserLogin];
-        } else {
-            _passwordField.text = @"";
-            [_authCell shakeCellShouldVibrate:YES];
-        }
-    } else if ([OState s].actionIsActivate) {
-        if ([self activationCodeIsValid] && [self passwordIsValid]) {
-            [self.view endEditing:YES];
-            [self presentEULA];
-        } else {
-            _repeatPasswordField.text = @"";
-            [_authCell shakeCellShouldVibrate:YES];
-        }
+        [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
     }
 }
 
@@ -390,10 +348,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     [self.tableView setBackground];
     [self.tableView addLogoBanner];
-    //self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBarHidden = YES;
-    
-    //self.navigationItem.rightBarButtonItem = [UIBarButtonItem signInButtonWithTarget:self];
     
     self.title = @"Origo";
 }
@@ -439,9 +393,18 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (NSUInteger)supportedInterfaceOrientations
+#pragma mark - Segue handling
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    return UIInterfaceOrientationMaskPortrait;
+    if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
+        [OState s].actionIsRegister = YES;
+        
+        UINavigationController *navigationController = segue.destinationViewController;
+        OMemberViewController *memberViewController = navigationController.viewControllers[0];
+        memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
+        memberViewController.delegate = _delegate;
+    }
 }
 
 
@@ -449,13 +412,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return kNumberOfAuthSections;
+    return 1;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return kNumberOfRowsInAuthSection;
+    return 1;
 }
 
 
@@ -523,15 +486,35 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+    BOOL shouldReturn = YES;
+    
     if (textField == _emailField) {
         [_passwordField becomeFirstResponder];
+    } else if (textField == _passwordField) {
+        shouldReturn = [_emailField holdsValidEmail] && [_passwordField holdsValidPassword];
+        
+        if (shouldReturn) {
+            [self.view endEditing:YES];
+            [self attemptUserLogin];
+        } else {
+            _passwordField.text = @"";
+            [_authCell shakeCellVibrateDevice:YES];
+        }
     } else if (textField == _activationCodeField) {
         [_repeatPasswordField becomeFirstResponder];
-    } else {
-        [self signIn];
+    } else if (textField == _repeatPasswordField) {
+        shouldReturn = [self activationCodeIsValid] && [self passwordIsValid];
+        
+        if (shouldReturn) {
+            [self.view endEditing:YES];
+            [self presentEULA];
+        } else {
+            _repeatPasswordField.text = @"";
+            [_authCell shakeCellVibrateDevice:YES];
+        }
     }
     
-    return YES;
+    return shouldReturn;
 }
 
 
@@ -570,7 +553,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if ([identitifier isEqualToString:kMemberListViewControllerId]) {
         [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
     } else if ([identitifier isEqualToString:kMemberViewControllerId]) {
-        if ([OMeta m].userIsSignedIn) {
+        if ([[OMeta m] userIsSignedIn]) {
             [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
         } else {
             [self reload];
@@ -593,7 +576,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         }
     } else {
         if (response.statusCode == kHTTPStatusUnauthorized) {
-            [_authCell shakeCellShouldVibrate:YES];
+            [_authCell shakeCellVibrateDevice:YES];
             [_passwordField becomeFirstResponder];
         } else {
             [OAlert showAlertForHTTPStatus:response.statusCode];

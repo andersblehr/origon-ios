@@ -26,6 +26,7 @@
     OOrigo *_selectedOrigo;
     
     NSMutableArray *_origoTypes;
+    NSInteger _indexOfSelectedOrigoType;
 }
 
 @property (strong, nonatomic) OMember *member;

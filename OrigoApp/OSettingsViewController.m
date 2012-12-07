@@ -8,15 +8,11 @@
 
 #import "OSettingsViewController.h"
 
-#import "UIBarButtonItem+OBarButtonItemExtensions.h"
 #import "UITableView+OTableViewExtensions.h"
 
 #import "OLogging.h"
-#import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
-
-#import "ONavigationController.h"
 
 
 @implementation OSettingsViewController
@@ -28,8 +24,6 @@
     [super viewDidLoad];
 
     [self.tableView setBackground];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBarHidden = NO;
     
     self.title = [OStrings stringForKey:strTabBarTitleSettings];
 }
@@ -44,12 +38,6 @@
     [OState s].aspectIsNone = YES;
     
     OLogState;
-}
-
-
-- (NSUInteger)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskPortrait;
 }
 
 

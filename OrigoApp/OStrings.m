@@ -194,7 +194,7 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 
 + (void)fetchStrings
 {
-    if ([OMeta m].userIsSignedIn) {
+    if ([[OMeta m] userIsSignedIn]) {
         [[[OServerConnection alloc] init] getStrings:[OMeta m].authToken];
     } else {
         [[[OServerConnection alloc] init] getStrings:[self timestampToken]];
@@ -208,11 +208,7 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
     
     if (!stringDate || ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
         if (!strings || [[OMeta m] internetConnectionIsAvailable]) { // TODO: Only if required
-            if ([OMeta m].userIsSignedIn) {
-                [[[OServerConnection alloc] init] getStrings:[OMeta m].authToken];
-            } else {
-                [[[OServerConnection alloc] init] getStrings:[self timestampToken]];
-            }
+            [self fetchStrings];
         }
     }
 }

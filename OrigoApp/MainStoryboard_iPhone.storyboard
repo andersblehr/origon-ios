@@ -20,10 +20,13 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="lej-0U-7XK"/>
+                    <connections>
+                        <segue destination="k5x-BU-bCK" kind="modal" identifier="modalFromAuthToMemberView" modalTransitionStyle="coverVertical" id="pNH-is-OiT"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hiH-3x-2qe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="183" y="-619"/>
+            <point key="canvasLocation" x="183" y="-615"/>
         </scene>
         <!--Task List View Controller - <strTasks>-->
         <scene sceneID="FtR-nb-C3g">
@@ -60,27 +63,28 @@
             <objects>
                 <viewController storyboardIdentifier="idMemberListViewController" id="O0V-Ey-WLK" customClass="OMemberListViewController" sceneMemberID="viewController">
                     <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lJb-0F-cm5">
-                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections/>
                     </tableView>
                     <navigationItem key="navigationItem" title="&lt;strMemberList>" id="PZV-fj-ium"/>
                     <connections>
-                        <segue destination="T87-Bh-GzL" kind="push" identifier="memberListToMemberView" id="fHV-uh-t7i"/>
-                        <segue destination="bxV-RT-yI4" kind="push" identifier="memberListToOrigoView" id="a60-dm-1pX"/>
+                        <segue destination="k5x-BU-bCK" kind="modal" identifier="modalFromMemberListToMemberView" modalTransitionStyle="coverVertical" id="gdX-lL-iZb"/>
+                        <segue destination="bxV-RT-yI4" kind="push" identifier="pushFromMemberListToOrigoView" id="KgS-ch-2ww"/>
+                        <segue destination="T87-Bh-GzL" kind="push" identifier="pushFromMemberListToMemberView" id="pI9-dP-sfi"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W7Y-2S-hfd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="643" y="28"/>
+            <point key="canvasLocation" x="633" y="31"/>
         </scene>
         <!--Member View Controller - <strMember>-->
         <scene sceneID="x7u-en-eVb">
             <objects>
                 <tableViewController storyboardIdentifier="idMemberViewController" id="T87-Bh-GzL" customClass="OMemberViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="209" sectionHeaderHeight="10" sectionFooterHeight="10" id="WsN-Uc-XTj">
-                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -90,19 +94,20 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="&lt;strMember>" id="uRg-zS-kRb"/>
                     <connections>
-                        <segue destination="O0V-Ey-WLK" kind="push" identifier="memberToMemberListView" id="99F-61-IG0"/>
+                        <segue destination="O0V-Ey-WLK" kind="push" identifier="pushFromMemberToMemberListView" id="99F-61-IG0"/>
+                        <segue destination="r2l-jP-T7e" kind="modal" identifier="modalFromMemberToOrigoView" modalTransitionStyle="flipHorizontal" id="zDY-cv-tVk"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Br5-90-R22" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="643" y="665"/>
+            <point key="canvasLocation" x="1084" y="-612"/>
         </scene>
         <!--Origo View Controller - <strOrigo>-->
         <scene sceneID="WLp-CI-chb">
             <objects>
                 <tableViewController storyboardIdentifier="idOrigoViewController" id="bxV-RT-yI4" customClass="OOrigoViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="LnJ-T1-eEC">
-                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -114,7 +119,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kaR-KX-Z8X" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1102" y="28"/>
+            <point key="canvasLocation" x="1084" y="668"/>
         </scene>
         <!--Calendar View Controller - <strCalendar>-->
         <scene sceneID="FF8-Hh-UBk">
@@ -143,7 +148,10 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="&lt;strOrigoList>" id="2TD-LP-teE"/>
                     <connections>
-                        <segue destination="O0V-Ey-WLK" kind="push" identifier="origoListToMemberListView" id="gEQ-1g-oCH"/>
+                        <segue destination="O0V-Ey-WLK" kind="push" identifier="pushFromOrigoListToMemberListView" id="gEQ-1g-oCH"/>
+                        <segue destination="k5x-BU-bCK" kind="modal" identifier="modalFromOrigoListToMemberView" modalTransitionStyle="coverVertical" id="CWK-o1-hmk"/>
+                        <segue destination="a73-0o-gAI" kind="modal" identifier="modalFromOrigoListToAuthView" modalTransitionStyle="flipHorizontal" id="HDP-sD-gJi"/>
+                        <segue destination="r2l-jP-T7e" kind="modal" identifier="modalFromOrigoListToOrigoView" modalTransitionStyle="coverVertical" id="5m6-Eg-aT0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nIi-HS-de2" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -196,7 +204,9 @@
             <objects>
                 <navigationController definesPresentationContext="YES" id="a3K-AG-mMk" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Origo" image="10-arrows-in.png" id="Hk3-Sp-L4U"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ram-2l-Dgq">
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="blackOpaque" id="ram-2l-Dgq">
+                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -212,7 +222,9 @@
             <objects>
                 <navigationController definesPresentationContext="YES" id="i0D-11-VGB" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="&lt;strTasks>" image="258-checkmark.png" id="I3X-wo-oRg"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="xCd-Vy-kYG">
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="blackOpaque" id="xCd-Vy-kYG">
+                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -228,7 +240,9 @@
             <objects>
                 <navigationController definesPresentationContext="YES" id="fi1-gf-Ked" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="&lt;strCalendar>" image="83-calendar.png" id="KVk-PD-lHe"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="PfJ-aA-gpS">
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="blackOpaque" id="PfJ-aA-gpS">
+                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -244,7 +258,9 @@
             <objects>
                 <navigationController definesPresentationContext="YES" id="Pg2-Ow-ajP" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="&lt;strSettings>" image="19-gear.png" id="q0y-8D-N7Q"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="dDY-vO-WTy">
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="blackOpaque" id="dDY-vO-WTy">
+                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -260,7 +276,9 @@
             <objects>
                 <navigationController definesPresentationContext="YES" id="PoV-i9-d4G" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" tag="4" title="&lt;strMessageBoard>" image="08-chat.png" id="7iE-Ld-MNZ"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="pXd-g1-oEf">
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="blackOpaque" id="pXd-g1-oEf">
+                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -270,6 +288,46 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ds3-Qp-VxC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-279" y="1918"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="FfH-m4-h3B">
+            <objects>
+                <navigationController id="r2l-jP-T7e" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="0RM-1g-JKf"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="blackOpaque" id="jKd-ax-5rA">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="bxV-RT-yI4" kind="relationship" relationship="rootViewController" id="whK-uw-InI"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gfj-XS-J0M" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="633" y="664"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Wub-8L-Cef">
+            <objects>
+                <navigationController id="k5x-BU-bCK" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="eOi-bV-mAv"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="blackOpaque" id="tUh-p4-I3K">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="T87-Bh-GzL" kind="relationship" relationship="rootViewController" id="dkx-IG-SeS"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="M2K-F4-KMG" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="633" y="-612"/>
         </scene>
     </scenes>
     <resources>
@@ -285,6 +343,10 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="gEQ-1g-oCH"/>
+        <segue reference="whK-uw-InI"/>
+        <segue reference="zDY-cv-tVk"/>
+        <segue reference="dkx-IG-SeS"/>
+        <segue reference="gdX-lL-iZb"/>
+        <segue reference="99F-61-IG0"/>
     </inferredMetricsTieBreakers>
 </document>

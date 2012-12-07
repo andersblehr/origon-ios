@@ -35,7 +35,10 @@
 #import "OMemberViewController.h"
 #import "OOrigoViewController.h"
 
-static NSString * const kSegueToMemberListView = @"origoListToMemberListView";
+static NSString * const kModalSegueToAuthView = @"modalFromOrigoListToAuthView";
+static NSString * const kModalSegueToMemberView = @"modalFromOrigoListToMemberView";
+static NSString * const kModalSegueToOrigoView = @"modalFromOrigoListToOrigoView";
+static NSString * const kPushSegueToMemberListView = @"pushFromOrigoListToMemberListView";
 
 static NSInteger const kResidenceSection = 0;
 static NSInteger const kWardSection = 1;
@@ -47,13 +50,16 @@ static NSInteger const kWardSection = 1;
 
 - (void)configureViewAndDataSource
 {
-    if (_member) {
-        self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
-        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
-    } else {
+    if (!_member) {
         _member = [OMeta m].user;
+    }
+    
+    if ([_member isUser]) {
         _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
         _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    } else {
+        self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
     }
     
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
@@ -86,34 +92,13 @@ static NSInteger const kWardSection = 1;
 }
 
 
-#pragma mark - User sign-in & registration
+#pragma mark - State handling
 
-- (void)signInUser
+- (void)setState
 {
-    OAuthViewController *authViewController = [self.storyboard instantiateViewControllerWithIdentifier:kAuthViewControllerId];
-    authViewController.delegate = self;
-    
-    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:authViewController];
-    modalController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    
-    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
-}
-
-
-- (void)registerUser
-{
-    [OState s].actionIsRegister = YES;
-    [OState s].targetIsMember = YES;
-    [OState s].aspectIsSelf = YES;
-    
-    OMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kMemberViewControllerId];
-    memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
-    memberViewController.delegate = self;
-    
-    UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:memberViewController];
-    modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    
-    [self.navigationController presentViewController:modalController animated:YES completion:NULL];
+    [OState s].actionIsList = YES;
+    [OState s].targetIsOrigo = YES;
+    [[OState s] setAspectForMember:_member];
 }
 
 
@@ -158,12 +143,11 @@ static NSInteger const kWardSection = 1;
 
 - (void)signOut
 {
-    // TODO: Handle the case where server request is in-flight when signing out
-    
     [[OMeta m] userDidSignOut];
     _member = nil;
     
-    [self signInUser];
+    [self.tableView reloadData];
+    [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
 }
 
 
@@ -174,12 +158,10 @@ static NSInteger const kWardSection = 1;
     [super viewDidLoad];
     
     [self.tableView setBackground];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBarHidden = NO;
     
     self.title = @"Origo";
     
-    if ([OMeta m].userIsSignedIn && [OMeta m].registrationIsComplete) {
+    if ([[OMeta m] userIsSignedIn] && [[OMeta m] userIsRegistered]) {
         [self configureViewAndDataSource];
     }
 }
@@ -189,18 +171,10 @@ static NSInteger const kWardSection = 1;
 {
     [super viewWillAppear:animated];
     
-    [OState s].targetIsOrigo = YES;
-    [OState s].actionIsList = YES;
-    
-    if (_member) {
-        [[OState s] setAspectForMember:_member];
-    } else {
-        [OState s].aspectIsSelf = YES;
-    }
-    
+    [self setState];
     OLogState;
 
-    if (_member && [OState s].aspectIsSelf) {
+    if ([[OMeta m] userIsSignedIn] && [[OMeta m] userIsRegistered] && [OState s].aspectIsSelf) {
         BOOL hasOnlyResidenceSection = ([self.tableView numberOfSections] == 1);
         NSRange reloadRange = {0, 0};
         
@@ -247,19 +221,13 @@ static NSInteger const kWardSection = 1;
 {
     [super viewDidAppear:animated];
     
-    if (![OMeta m].userIsSignedIn) {
-        [self signInUser];
-    } else if (![OMeta m].registrationIsComplete) {
+    if (![[OMeta m] userIsSignedIn]) {
+        [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
+    } else if (![[OMeta m] userIsRegistered]) {
         [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
         
-        [self registerUser];
+        [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
     }
-}
-
-
-- (NSUInteger)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskPortrait;
 }
 
 
@@ -267,7 +235,23 @@ static NSInteger const kWardSection = 1;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kSegueToMemberListView]) {
+    if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
+        OAuthViewController *authViewController = segue.destinationViewController;
+        authViewController.delegate = self;
+    } else if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
+        [OState s].actionIsRegister = YES;
+        [OState s].aspectIsSelf = YES;
+        
+        UINavigationController *navigationController = segue.destinationViewController;
+        OMemberViewController *memberViewController = navigationController.viewControllers[0];
+        memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
+        memberViewController.delegate = self;
+    } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
+        UINavigationController *navigationController = segue.destinationViewController;
+        OOrigoViewController *origoViewController = navigationController.viewControllers[0];
+        origoViewController.delegate = self;
+        origoViewController.origoType = _origoTypes[_indexOfSelectedOrigoType];
+    } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
         OMemberListViewController *memberListViewController = segue.destinationViewController;
         memberListViewController.origo = _selectedOrigo;
         memberListViewController.entityObservingDelegate = _selectedCell;
@@ -279,10 +263,9 @@ static NSInteger const kWardSection = 1;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    OLogDebug(@"numberOfSectionsInTableView");
     NSInteger numberOfSections = 0;
 
-    if ([OMeta m].userIsSignedIn) {
+    if ([[OMeta m] userIsSignedIn]) {
         numberOfSections++;
         
         if ([OState s].aspectIsSelf) {
@@ -302,7 +285,6 @@ static NSInteger const kWardSection = 1;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    OLogDebug(@"numberOfRowsInSection");
     NSUInteger numberOfRows = 0;
     
     if ([self sectionIsResidenceSection:section]) {
@@ -325,7 +307,6 @@ static NSInteger const kWardSection = 1;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    OLogDebug(@"cellForRowAtIndexPath");
     OTableViewCell *cell = nil;
     
     OMembership *membership = nil;
@@ -469,7 +450,7 @@ static NSInteger const kWardSection = 1;
     }
     
     if (_selectedOrigo) {
-        [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
+        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
     } else if (_selectedWard) {
         OOrigoListViewController *wardOrigoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId];
         wardOrigoListViewController.member = _selectedWard;
@@ -484,14 +465,9 @@ static NSInteger const kWardSection = 1;
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex != actionSheet.cancelButtonIndex) {
-        OOrigoViewController *origoViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoViewControllerId];
-        origoViewController.delegate = self;
-        origoViewController.origoType = _origoTypes[buttonIndex];
+        _indexOfSelectedOrigoType = buttonIndex;
         
-        UINavigationController *modalController = [[UINavigationController alloc] initWithRootViewController:origoViewController];
-        modalController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-        
-        [self.navigationController presentViewController:modalController animated:YES completion:NULL];
+        [self performSegueWithIdentifier:kModalSegueToOrigoView sender:self];
     }
 }
 
@@ -501,19 +477,13 @@ static NSInteger const kWardSection = 1;
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
     if ([identitifier isEqualToString:kAuthViewControllerId] ||
+        [identitifier isEqualToString:kMemberViewControllerId] ||
         [identitifier isEqualToString:kMemberListViewControllerId]) {
-        [OState s].targetIsOrigo = YES;
-        [OState s].actionIsList = YES;
-        
-        if (_member) {
-            [[OState s] setAspectForMember:_member];
-        } else {
-            [OState s].aspectIsSelf = YES;
-        }
-        
-        OLogState;
+        [self setState];
         [self configureViewAndDataSource];
         [self.tableView reloadData];
+    } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
+        
     }
     
     [self dismissViewControllerAnimated:YES completion:NULL];

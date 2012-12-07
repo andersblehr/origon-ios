@@ -31,8 +31,6 @@
     [super viewDidLoad];
     
     [self.tableView setBackground];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBarHidden = NO;
     
     self.title = [OStrings stringForKey:strTabBarTitleTasks];
 }
@@ -55,12 +53,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-}
-
-
-- (NSUInteger)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskPortrait;
 }
 
 @end
