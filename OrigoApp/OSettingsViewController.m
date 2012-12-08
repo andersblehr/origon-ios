@@ -8,14 +8,36 @@
 
 #import "OSettingsViewController.h"
 
+#import "UIBarButtonItem+OBarButtonItemExtensions.h"
 #import "UITableView+OTableViewExtensions.h"
 
 #import "OLogging.h"
+#import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
 
+#import "OAuthViewController.h"
+#import "OOrigoListViewController.h"
+#import "OTabBarController.h"
+
+static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
+
 
 @implementation OSettingsViewController
+
+#pragma mark - Selector implementations
+
+- (void)signOut
+{
+    [[OMeta m] userDidSignOut];
+    
+    OOrigoListViewController *origoListViewController = (OOrigoListViewController *)_origoNavigationController.viewControllers[0];
+    origoListViewController.member = nil;
+    [origoListViewController.tableView reloadData];
+    
+    [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
+}
+
 
 #pragma mark - View life cycle
 
@@ -26,6 +48,9 @@
     [self.tableView setBackground];
     
     self.title = [OStrings stringForKey:strTabBarTitleSettings];
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
+    
+    _origoNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
 }
 
 
@@ -38,6 +63,27 @@
     [OState s].aspectIsNone = YES;
     
     OLogState;
+}
+
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    
+    if (![[OMeta m] userIsSignedIn]) {
+        self.tabBarController.selectedIndex = kTabBarOrigo;
+    }
+}
+
+
+#pragma mark - Segue handling
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
+        OAuthViewController *authViewController = segue.destinationViewController;
+        authViewController.delegate = (OOrigoListViewController *)_origoNavigationController.viewControllers[0];
+    }
 }
 
 

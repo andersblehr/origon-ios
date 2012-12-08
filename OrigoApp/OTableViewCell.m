@@ -305,15 +305,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
     } else if ([OState s].actionIsEdit) {
         [OState s].actionIsDisplay = YES;
     }
-    
-    for (UIView *view in [_views allValues]) {
-        if ([view isKindOfClass:OTextField.class]) {
-            ((OTextField *)view).enabled = [OState s].actionIsEdit;
-        } else if ([view isKindOfClass:OTextView.class]) {
-            ((OTextView *)view).editable = [OState s].actionIsEdit;
-            ((OTextView *)view).userInteractionEnabled = [OState s].actionIsEdit;
-        }
-    }
+
+    self.editing = [OState s].actionIsEdit;
 }
 
 
@@ -420,6 +413,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
     for (UIView *view in [_views allValues]) {
         if ([view isKindOfClass:OTextField.class]) {
             ((OTextField *)view).enabled = editing;
+        } else if ([view isKindOfClass:OTextView.class]) {
+            ((OTextView *)view).editable = editing;
+            ((OTextView *)view).userInteractionEnabled = [OState s].actionIsEdit;
         }
     }
 }

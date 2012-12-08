@@ -172,6 +172,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="&lt;strSettings>" id="pPk-Kr-fAc"/>
+                    <connections>
+                        <segue destination="a73-0o-gAI" kind="modal" identifier="modalFromSettingsToAuthView" modalTransitionStyle="flipHorizontal" id="Ndx-VJ-qZG"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R31-Db-r3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -348,5 +351,6 @@
         <segue reference="dkx-IG-SeS"/>
         <segue reference="gdX-lL-iZb"/>
         <segue reference="99F-61-IG0"/>
+        <segue reference="HDP-sD-gJi"/>
     </inferredMetricsTieBreakers>
 </document>
