@@ -42,6 +42,7 @@
 
 #import "OMemberListViewController.h"
 #import "OOrigoViewController.h"
+#import "OTabBarController.h"
 
 static NSString * const kModalSegueToOrigoView = @"modalFromMemberToOrigoView";
 static NSString * const kPushSegueToMemberListView = @"pushFromMemberToMemberListView";
@@ -336,6 +337,7 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
 - (void)signOut
 {
     [[OMeta m] userDidSignOut];
+    _memberCell.entity = nil;
     
     [_delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
 }

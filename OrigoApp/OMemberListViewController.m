@@ -402,8 +402,6 @@ static NSInteger const kMemberSection = 2;
             _selectedMembership = _sortedRegularMemberships[indexPath.row];
         }
         
-        [[OState s] setAspectForMember:_selectedMembership.member];
-        
         [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];
     }
 }
