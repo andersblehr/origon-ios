@@ -62,10 +62,9 @@ static NSInteger const kWardSection = 1;
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
     }
     
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
-    
     if ([[OMeta m].user isTeenOrOlder]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem.action = @selector(addOrigo);
     }
     
     _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
@@ -104,7 +103,7 @@ static NSInteger const kWardSection = 1;
 
 #pragma mark - Selector implementations
 
-- (void)addItem
+- (void)addOrigo
 {
     [OState s].actionIsRegister = YES;
     
@@ -138,16 +137,6 @@ static NSInteger const kWardSection = 1;
     origoTypeSheet.cancelButtonIndex = [_origoTypes count];
     
     [origoTypeSheet showInView:self.tabBarController.view];
-}
-
-
-- (void)signOut
-{
-    [[OMeta m] userDidSignOut];
-    _member = nil;
-    
-    [self.tableView reloadData];
-    [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
 }
 
 

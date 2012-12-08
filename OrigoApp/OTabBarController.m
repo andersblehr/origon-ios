@@ -10,11 +10,11 @@
 
 #import "OStrings.h"
 
-static NSInteger const kTabBarOrigo = 0;
-static NSInteger const kTabBarCalendar = 1;
-static NSInteger const kTabBarTasks = 2;
-static NSInteger const kTabBarMessages = 3;
-static NSInteger const kTabBarSettings = 4;
+NSInteger const kTabBarOrigo = 0;
+NSInteger const kTabBarCalendar = 1;
+NSInteger const kTabBarTasks = 2;
+NSInteger const kTabBarMessages = 3;
+NSInteger const kTabBarSettings = 4;
 
 
 @implementation OTabBarController

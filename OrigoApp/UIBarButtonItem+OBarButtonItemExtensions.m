@@ -15,7 +15,7 @@
 
 + (UIBarButtonItem *)addButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:@selector(addItem)];
+    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:nil];
 }
 
 

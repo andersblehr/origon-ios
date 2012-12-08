@@ -133,7 +133,7 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
         _member.gender = _gender;
         
         if (![_origo isResidence] || [_origo hasAddress]) {
-            if ([_origo isResidence] && [OState s].aspectIsSelf) {
+            if ([_origo hasAddress] && [OState s].aspectIsSelf) {
                 [OMeta m].user.activeSince = [NSDate date];
             }
             
@@ -142,6 +142,8 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
             if ([_delegate isKindOfClass:OMemberListViewController.class]) {
                 [_delegate insertEntityInTableView:_membership];
             }
+            
+            [[OMeta m].context replicateIfNeeded];
         } else {
             [self performSegueWithIdentifier:kModalSegueToOrigoView sender:self];
         }

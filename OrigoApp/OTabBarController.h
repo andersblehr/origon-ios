@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+extern NSInteger const kTabBarOrigo;
+extern NSInteger const kTabBarCalendar;
+extern NSInteger const kTabBarTasks;
+extern NSInteger const kTabBarMessages;
+extern NSInteger const kTabBarSettings;
+
 @interface OTabBarController : UITabBarController
 
 @end
