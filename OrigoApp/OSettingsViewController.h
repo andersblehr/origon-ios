@@ -8,9 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OSettingsViewController : UITableViewController {
-@private
-    UINavigationController *_origoNavigationController;
-}
+@interface OSettingsViewController : UITableViewController
 
 @end

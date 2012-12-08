@@ -367,14 +367,14 @@ static NSString * const kKeyPathPrefixDate = @"date";
         [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
     }
     
-    //int i = 0;
-    for (NSNumber *alignmentOptions in [constraints allKeys]) {
-        NSArray *constraintsWithOptions = [constraints objectForKey:alignmentOptions];
-        
-        for (NSString *visualConstraints in constraintsWithOptions) {
-            //OLogDebug(@"\nVisual constraint (%d): %@", i++, visualConstraints);
-        }
-    }
+//    int i = 0;
+//    for (NSNumber *alignmentOptions in [constraints allKeys]) {
+//        NSArray *constraintsWithOptions = [constraints objectForKey:alignmentOptions];
+//        
+//        for (NSString *visualConstraints in constraintsWithOptions) {
+//            OLogDebug(@"\nVisual constraint (%d): %@", i++, visualConstraints);
+//        }
+//    }
     
     return constraints;
 }

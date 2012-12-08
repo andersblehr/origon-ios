@@ -465,17 +465,19 @@ static NSInteger const kWardSection = 1;
 
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
+    [self dismissViewControllerAnimated:YES completion:NULL];
+    
     if ([identitifier isEqualToString:kAuthViewControllerId] ||
         [identitifier isEqualToString:kMemberViewControllerId] ||
         [identitifier isEqualToString:kMemberListViewControllerId]) {
-        [self setState];
-        [self configureViewAndDataSource];
-        [self.tableView reloadData];
+        if ([[OMeta m] userIsSignedIn]) {
+            [self setState];
+            [self configureViewAndDataSource];
+            [self.tableView reloadData];
+        }
     } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
         
     }
-    
-    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 

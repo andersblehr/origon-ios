@@ -403,7 +403,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         UINavigationController *navigationController = segue.destinationViewController;
         OMemberViewController *memberViewController = navigationController.viewControllers[0];
         memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
-        memberViewController.delegate = _delegate;
+        memberViewController.delegate = self;
     }
 }
 
@@ -548,14 +548,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
-    [self dismissViewControllerAnimated:YES completion:NULL];
-    
     if ([identitifier isEqualToString:kMemberListViewControllerId]) {
         [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
     } else if ([identitifier isEqualToString:kMemberViewControllerId]) {
         if ([[OMeta m] userIsSignedIn]) {
             [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
         } else {
+            [self dismissViewControllerAnimated:YES completion:NULL];
             [self reload];
         }
     }

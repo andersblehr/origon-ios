@@ -26,6 +26,7 @@
 #import "OReplicatedEntity+OReplicatedEntityExtensions.h"
 
 #import "OOrigoListViewController.h"
+#import "OTabBarController.h"
 
 NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 NSString * const kLanguageHungarian = @"hu";
