@@ -77,7 +77,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W7Y-2S-hfd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="633" y="31"/>
+            <point key="canvasLocation" x="633" y="28"/>
         </scene>
         <!--Member View Controller - <strMember>-->
         <scene sceneID="x7u-en-eVb">
@@ -96,7 +96,6 @@
                     <connections>
                         <segue destination="O0V-Ey-WLK" kind="push" identifier="pushFromMemberToMemberListView" id="99F-61-IG0"/>
                         <segue destination="r2l-jP-T7e" kind="modal" identifier="modalFromMemberToOrigoView" modalTransitionStyle="flipHorizontal" id="zDY-cv-tVk"/>
-                        <segue destination="a73-0o-gAI" kind="modal" identifier="modalFromMemberToAuthView" modalTransitionStyle="flipHorizontal" id="gQ3-Fz-Sar"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Br5-90-R22" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -352,6 +351,6 @@
         <segue reference="dkx-IG-SeS"/>
         <segue reference="gdX-lL-iZb"/>
         <segue reference="99F-61-IG0"/>
-        <segue reference="gQ3-Fz-Sar"/>
+        <segue reference="HDP-sD-gJi"/>
     </inferredMetricsTieBreakers>
 </document>

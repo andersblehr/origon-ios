@@ -437,6 +437,14 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
 }
 
 
+#pragma mark - Overrides
+
+- (BOOL)hidesBottomBarWhenPushed
+{
+    return YES;
+}
+
+
 #pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -457,9 +465,9 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
     
     if (indexPath.section == kMemberSection) {
         if ([OState s].actionIsInput) {
-            height = [OMember defaultDisplayCellHeight];
+            height = [OMember defaultCellHeight];
         } else {
-            height = [_member displayCellHeight];
+            height = [_member cellHeight];
         }
     } else if (indexPath.section == kAddressSection) {
         height = kDefaultTableViewCellHeight;
@@ -542,13 +550,13 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    [textField emphasise];
+    textField.hasEmphasis = YES;
 }
 
 
 - (void)textFieldDidEndEditing:(OTextField *)textField
 {
-    [textField deemphasise];
+    textField.hasEmphasis = NO;
 }
 
 

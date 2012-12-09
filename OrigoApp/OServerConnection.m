@@ -199,14 +199,14 @@ static NSString * const kURLParameterVersion = @"version";
 
 #pragma mark - Server requests
 
-- (void)getStrings:(NSString *)stringToken
+- (void)getStrings:(NSString *)stringToken delegate:(id)delegate
 {
     _RESTHandler = kRESTHandlerStrings;
     _RESTRoute = [OMeta m].displayLanguage;
     
     [self setValue:stringToken forURLParameter:kURLParameterStringToken];
     
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:OStrings.class];
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
 }
 
 

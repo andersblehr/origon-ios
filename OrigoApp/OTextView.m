@@ -32,51 +32,51 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 #pragma mark - Auxiliary methods
 
-+ (CGFloat)heightForLineCount:(NSUInteger)lineCount
++ (NSInteger)lineCountWithText:(NSString *)text
 {
-    if ([OState s].actionIsInput) {
-        lineCount = MAX(kTextViewMinimumEditLines, lineCount);
-    } else {
-        lineCount = MAX(kTextViewMinimumLines, lineCount);
-    }
+    CGSize sizeGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)];
+    NSInteger lineCountGuesstimate = round(sizeGuesstimate.height / [UIFont detailLineHeight]);
     
-    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight];
+    lineCountGuesstimate = MAX(lineCountGuesstimate, kTextViewMinimumLines);
+    lineCountGuesstimate = MIN(lineCountGuesstimate, kTextViewMaximumLines);
+    
+    return lineCountGuesstimate;
 }
 
 
-- (NSInteger)transientLineCount
+- (NSInteger)lineCount
 {
     NSInteger lineCount = 0;
     
-    if (self.window && self.text) {
+    if (self.window && ([self.text length] > 0)) {
         lineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
         
-        if (_editing) {
+        if (_hasEmphasis) {
             if ((lineCount > 1) && (lineCount < kTextViewMaximumLines)) {
                 lineCount++;
+            } else if (lineCount > kTextViewMaximumLines) {
+                lineCount = kTextViewMaximumLines;
+                [super setText:_lastKnownText];
             } else if (lineCount < kTextViewMinimumEditLines) {
                 lineCount = kTextViewMinimumEditLines;
             }
         }
-    } else if (self.text) {
+    } else if ([self.text length] > 0) {
         lineCount = [OTextView lineCountWithText:self.text];
     } else {
         lineCount = [OTextView lineCountWithText:self.placeholder];
     }
     
+    _lastKnownLineCount = lineCount;
+    _lastKnownText = self.text;
+    
     return lineCount;
-}
-
-
-- (CGSize)intrinsicSizeOfText:(NSString *)text
-{
-    return CGSizeMake(kDetailWidthGuesstimate, [OTextView heightWithText:text]);
 }
 
 
 #pragma mark - Selector implementations
 
-- (void)textChanged
+- (void)textDidChange
 {
     _placeholderView.hidden = ([self.text length] > 0);
 }
@@ -116,11 +116,11 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
-        _editing = NO;
+        _hasEmphasis = NO;
         _keyPath = keyPath;
         _lastKnownLineCount = [OTextView lineCountWithText:_placeholder];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textChanged) name:UITextViewTextDidChangeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:nil];
     }
     
     return self;
@@ -132,86 +132,23 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 + (CGFloat)heightWithText:(NSString *)text
 {
     NSInteger lineCount = [self lineCountWithText:text];
+    NSInteger padding = 4.f / lineCount;
     
-    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight];
+    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight] + padding;
 }
 
 
 - (CGFloat)height
 {
-    return [OTextView heightForLineCount:[self lineCount]];
-}
-
-
-+ (NSInteger)lineCountWithText:(NSString *)text
-{
-    CGSize sizeGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)];
-    NSInteger lineCountGuesstimate = round(sizeGuesstimate.height / [UIFont detailLineHeight]);
+    NSInteger lineCount = [self lineCount];
     
-    lineCountGuesstimate = MAX(lineCountGuesstimate, kTextViewMinimumLines);
-    lineCountGuesstimate = MIN(lineCountGuesstimate, kTextViewMaximumLines);
-    
-    return lineCountGuesstimate;
-}
-
-
-- (NSInteger)lineCount
-{
-    _lastKnownLineCount = [self transientLineCount];
-    
-    return _lastKnownLineCount;
-}
-
-
-- (NSInteger)lineCountDelta
-{
-    NSInteger lineCount = [self transientLineCount];
-    NSInteger lineCountDelta = lineCount - _lastKnownLineCount;
-    
-    if (lineCountDelta) {
-        if (lineCount + lineCountDelta > kTextViewMaximumLines) {
-            lineCountDelta = kTextViewMaximumLines - _lastKnownLineCount;
-        } else if (lineCount + lineCountDelta < kTextViewMinimumEditLines) {
-            lineCountDelta = kTextViewMinimumEditLines - _lastKnownLineCount;
-        }
-        
-        if (lineCountDelta) {
-            _lastKnownLineCount = MAX(lineCount, kTextViewMinimumEditLines);
-            _lastKnownLineCount = MIN(_lastKnownLineCount, kTextViewMaximumLines);
-        } else if (lineCount > kTextViewMaximumLines) {
-            self.text = _lastKnownText;
-        }
+    if ([OState s].actionIsInput) {
+        lineCount = MAX(kTextViewMinimumEditLines, lineCount);
+    } else {
+        lineCount = MAX(kTextViewMinimumLines, lineCount);
     }
-
-    _lastKnownText = self.text;
     
-    return lineCountDelta;
-}
-
-
-#pragma mark - Toggling emphasis
-
-- (void)emphasise
-{
-    _editing = YES;
-    
-    self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-    [self hasDropShadow:YES];
-    
-    [OMeta m].participatingTextView = self;
-    [_containingCell redrawIfNeeded];
-}
-
-
-- (void)deemphasise
-{
-    _editing = NO;
-    
-    self.text = [self finalText];
-    self.backgroundColor = [UIColor clearColor];
-    [self hasDropShadow:NO];
-    
-    [_containingCell redrawIfNeeded];
+    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight];
 }
 
 
@@ -227,7 +164,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 - (void)setPlaceholder:(NSString *)placeholder
 {
-    CGSize placeholderSize = [self intrinsicSizeOfText:placeholder];
+    CGSize placeholderSize = CGSizeMake(kDetailWidthGuesstimate, [OTextView heightWithText:placeholder]);
     
     _placeholderView.frame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height);
     _placeholderView.text = placeholder;
@@ -245,10 +182,26 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 }
 
 
+- (void)setHasEmphasis:(BOOL)hasEmphasis
+{
+    _hasEmphasis = hasEmphasis;
+    
+    if (_hasEmphasis) {
+        self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
+    } else {
+        self.text = [self finalText];
+        self.backgroundColor = [UIColor clearColor];
+    }
+    
+    [self hasDropShadow:_hasEmphasis];
+    [_containingCell redrawIfNeeded];
+}
+
+
 - (void)setText:(NSString *)text
 {
     [super setText:text];
-    [self textChanged];
+    [self textDidChange];
     
     _lastKnownText = text;
     _lastKnownLineCount = [self lineCount];
@@ -257,17 +210,11 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 #pragma mark - Overrides
 
-- (CGSize)intrinsicContentSize
-{
-    return [self intrinsicSizeOfText:self.text];
-}
-
-
 - (void)drawRect:(CGRect)rect
 {
     [super drawRect:rect];
     
-    if (_editing) {
+    if (_hasEmphasis) {
         [self redrawDropShadow];
     }
 }

@@ -180,42 +180,53 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-#pragma mark - Emphasising and deemphasising
-
-- (void)emphasise
-{
-    self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-    [self hasDropShadow:YES];
-    
-    if (_isTitle) {
-        self.textColor = [UIColor editableTitleTextColor];
-        [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
-    }
-    
-    [_containingCell redrawIfNeeded];
-}
-
-
-- (void)deemphasise
-{
-    self.text = [self finalText];
-    self.backgroundColor = [UIColor clearColor];
-    [self hasDropShadow:NO];
-    
-    if (_isTitle) {
-        self.textColor = [UIColor titleTextColor];
-        [self setValue:[UIColor lightPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
-    }
-    
-    [_containingCell redrawIfNeeded];
-}
-
-
 #pragma mark - Final text cleanup
 
 - (NSString *)finalText
 {
     return [self.text removeSuperfluousWhitespace];
+}
+
+
+#pragma mark - Accessor overrides
+
+- (void)setHasEmphasis:(BOOL)hasEmphasis
+{
+    _hasEmphasis = hasEmphasis;
+    
+    if (_hasEmphasis) {
+        self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
+        
+        if (_isTitle) {
+            self.textColor = [UIColor editableTitleTextColor];
+            [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
+        }
+    } else {
+        self.text = [self finalText];
+        self.backgroundColor = [UIColor clearColor];
+        
+        if (_isTitle) {
+            self.textColor = [UIColor titleTextColor];
+            [self setValue:[UIColor lightPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
+        }
+    }
+    
+    [self hasDropShadow:_hasEmphasis];
+    [_containingCell redrawIfNeeded];
+}
+
+
+- (void)setSelected:(BOOL)selected
+{
+    [super setSelected:selected];
+    
+    if (!_isTitle) {
+        if (selected) {
+            self.textColor = [UIColor selectedDetailTextColor];
+        } else {
+            self.textColor = [UIColor detailTextColor];
+        }
+    }
 }
 
 
@@ -248,20 +259,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     }
     
     return canPerformAction;
-}
-
-
-- (void)setSelected:(BOOL)selected
-{
-    [super setSelected:selected];
-    
-    if (!_isTitle) {
-        if (selected) {
-            self.textColor = [UIColor selectedDetailTextColor];
-        } else {
-            self.textColor = [UIColor detailTextColor];
-        }
-    }
 }
 
 

@@ -22,6 +22,8 @@ extern CGFloat const kTextInset;
 
 @property (strong, nonatomic) NSString *keyPath;
 
+@property (nonatomic) BOOL hasEmphasis;
+
 - (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate;
 
 - (BOOL)holdsValidEmail;
@@ -29,9 +31,6 @@ extern CGFloat const kTextInset;
 - (BOOL)holdsValidName;
 - (BOOL)holdsValidPhoneNumber;
 - (BOOL)holdsValidDate;
-
-- (void)emphasise;
-- (void)deemphasise;
 
 - (NSString *)finalText;
 

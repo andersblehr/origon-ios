@@ -22,8 +22,8 @@
 - (BOOL)isReplicated;
 - (BOOL)isDirty;
 
-+ (CGFloat)defaultDisplayCellHeight;
-- (CGFloat)displayCellHeight;
++ (CGFloat)defaultCellHeight;
+- (CGFloat)cellHeight;
 
 - (NSString *)reuseIdentifier;
 - (NSString *)listName;

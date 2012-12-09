@@ -15,6 +15,7 @@
 #import "OMeta.h"
 #import "OLogging.h"
 #import "OServerConnection.h"
+#import "OState.h"
 #import "OTableViewCell.h"
 
 // Cross-view strings
@@ -192,12 +193,10 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 }
 
 
-+ (void)fetchStrings
++ (void)fetchStrings:(id)delegate
 {
-    if ([[OMeta m] userIsSignedIn]) {
-        [[[OServerConnection alloc] init] getStrings:[OMeta m].authToken];
-    } else {
-        [[[OServerConnection alloc] init] getStrings:[self timestampToken]];
+    if ([OState s].actionIsSetup) {
+        [[[OServerConnection alloc] init] getStrings:[self timestampToken] delegate:delegate];
     }
 }
 
@@ -206,9 +205,9 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 {
     NSDate *stringDate = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathStringDate];
     
-    if (!stringDate || ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
-        if (!strings || [[OMeta m] internetConnectionIsAvailable]) { // TODO: Only if required
-            [self fetchStrings];
+    if ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches) {
+        if ([self hasStrings] && [[OMeta m] internetConnectionIsAvailable]) {
+            [[[OServerConnection alloc] init] getStrings:[OMeta m].authToken delegate:self];
         }
     }
 }

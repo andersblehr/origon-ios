@@ -261,7 +261,7 @@
 
 #pragma mark - Display cell height calculation
 
-+ (CGFloat)defaultDisplayCellHeight
++ (CGFloat)defaultCellHeight
 {
     CGFloat height = 3 * kDefaultPadding;
     height += [UIFont titleFieldHeight];
@@ -271,12 +271,12 @@
 }
 
 
-- (CGFloat)displayCellHeight
+- (CGFloat)cellHeight
 {
     CGFloat height = 0.f;
     
     if ([OState s].actionIsInput) {
-        height = [OMember defaultDisplayCellHeight];
+        height = [OMember defaultCellHeight];
     } else {
         height = 3 * kDefaultPadding;
         height += [UIFont titleFieldHeight];

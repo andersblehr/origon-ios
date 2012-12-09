@@ -241,6 +241,12 @@ static OMeta *m = nil;
 }
 
 
+- (BOOL)userIsAllSet
+{
+    return ([self userIsSignedIn] && [self userIsRegistered]);
+}
+
+
 - (BOOL)userIsSignedIn
 {
     if (!_user) {

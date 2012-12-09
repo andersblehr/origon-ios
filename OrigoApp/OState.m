@@ -58,9 +58,9 @@ static OState *s = nil;
     self = [super init];
     
     if (self) {
-        _action = OStateActionLogin;
-        _target = OStateTargetMember;
-        _aspect = OStateAspectSelf;
+        _action = OStateActionNone;
+        _target = OStateTargetNone;
+        _aspect = OStateAspectNone;
     }
     
     return self;
@@ -85,7 +85,9 @@ static OState *s = nil;
     NSString *targetAsString = nil;
     NSString *aspectAsString = nil;
     
-    if (self.actionIsLogin) {
+    if (self.actionIsSetup) {
+        actionAsString = @"SETUP";
+    } else if (self.actionIsLogin) {
         actionAsString = @"LOGIN";
     } else if (self.actionIsActivate) {
         actionAsString = @"ACTIVATE";
@@ -182,6 +184,18 @@ static OState *s = nil;
 
 
 #pragma mark - Convenience property accessors
+
+- (void)setActionIsSetup:(BOOL)actionIsSetup
+{
+    [self setAction:OStateActionSetup activate:actionIsSetup];
+}
+
+
+- (BOOL)actionIsSetup
+{
+    return (_action == OStateActionSetup);
+}
+
 
 - (void)setActionIsLogin:(BOOL)actionIsLogin
 {

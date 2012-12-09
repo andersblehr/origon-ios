@@ -16,4 +16,6 @@ extern NSInteger const kTabBarSettings;
 
 @interface OTabBarController : UITabBarController
 
+- (void)setTabBarTitles;
+
 @end

@@ -24,20 +24,13 @@ extern NSInteger const kTextViewMaximumLines;
 @property (strong, nonatomic) NSString *keyPath;
 @property (strong, nonatomic) NSString *placeholder;
 
-@property (nonatomic) BOOL editing;
 @property (nonatomic) BOOL selected;
+@property (nonatomic) BOOL hasEmphasis;
 
 - (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate;
 
 + (CGFloat)heightWithText:(NSString *)text;
 - (CGFloat)height;
-
-+ (NSInteger)lineCountWithText:(NSString *)text;
-- (NSInteger)lineCount;
-- (NSInteger)lineCountDelta;
-
-- (void)emphasise;
-- (void)deemphasise;
 
 - (NSString *)finalText;
 

@@ -10,6 +10,7 @@
 
 typedef enum {
     OStateActionNone,
+    OStateActionSetup,
     OStateActionLogin,
     OStateActionActivate,
     OStateActionRegister,
@@ -45,6 +46,7 @@ typedef enum {
 @property (nonatomic) OStateTarget target;
 @property (nonatomic) OStateAspect aspect;
 
+@property (nonatomic) BOOL actionIsSetup;
 @property (nonatomic) BOOL actionIsLogin;
 @property (nonatomic) BOOL actionIsActivate;
 @property (nonatomic) BOOL actionIsRegister;
