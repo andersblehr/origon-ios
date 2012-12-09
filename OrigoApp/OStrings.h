@@ -134,7 +134,7 @@ extern NSString * const xstrContactRolesSportsTeam;
 @interface OStrings : NSObject
 
 + (BOOL)hasStrings;
-+ (void)fetchStrings;
++ (void)fetchStrings:(id)delegate;
 + (void)conditionallyRefresh;
 
 + (NSString *)stringForKey:(NSString *)key;

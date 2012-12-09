@@ -203,22 +203,26 @@
 
 #pragma mark - Display cell height calculation
 
-+ (CGFloat)defaultDisplayCellHeight
++ (CGFloat)defaultCellHeight
 {
     CGFloat height = 2 * kDefaultPadding;
-    height += [OTextView heightWithText:[OStrings placeholderForKeyPath:kKeyPathAddress]];
+    
+    if ([OMeta m].participatingCell.entityClass == self) {
+        height += [[[OMeta m].participatingCell textFieldForKeyPath:kKeyPathAddress] height];
+    }
+    
     height += [UIFont detailFieldHeight];
     
     return height;
 }
 
 
-- (CGFloat)displayCellHeight
+- (CGFloat)cellHeight
 {
     CGFloat height = 2 * kDefaultPadding;
     
-    if ([[OMeta m].participatingTextView.keyPath isEqualToString:kKeyPathAddress]) {
-        height += [[OMeta m].participatingTextView height];
+    if ([OMeta m].participatingCell.entity == self) {
+        height += [[[OMeta m].participatingCell textFieldForKeyPath:kKeyPathAddress] height];
     } else if ([self.address length] > 0) {
         height += [OTextView heightWithText:self.address];
     } else {

@@ -150,7 +150,7 @@ static NSInteger const kWardSection = 1;
     
     self.title = @"Origo";
     
-    if ([[OMeta m] userIsSignedIn] && [[OMeta m] userIsRegistered]) {
+    if ([[OMeta m] userIsAllSet]) {
         [self configureViewAndDataSource];
     }
 }
@@ -160,49 +160,52 @@ static NSInteger const kWardSection = 1;
 {
     [super viewWillAppear:animated];
     
-    [self setState];
-    OLogState;
-
-    if ([[OMeta m] userIsSignedIn] && [[OMeta m] userIsRegistered] && [OState s].aspectIsSelf) {
-        BOOL hasOnlyResidenceSection = ([self.tableView numberOfSections] == 1);
-        NSRange reloadRange = {0, 0};
+    if ([[OMeta m] userIsAllSet]) {
+        [self setState];
         
-        if ([_member.residencies count] != [_sortedResidences count]) {
-            _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        if ([OState s].aspectIsSelf) {
+            BOOL hasOnlyResidenceSection = ([self.tableView numberOfSections] == 1);
+            NSRange reloadRange = {0, 0};
             
-            reloadRange.location = kResidenceSection;
-            reloadRange.length = 1;
-        }
-        
-        NSSet *wards = [_member wards];
-        
-        if ([wards count] != [_sortedWards count]) {
-            BOOL hasWardsSection = ([_sortedWards count] > 0);
-            _sortedWards = [[wards allObjects] sortedArrayUsingSelector:@selector(compare:)];
-            
-            if ([wards count]) {
-                if (!hasWardsSection) {
-                    [self.tableView insertSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
-                }
+            if ([_member.residencies count] != [_sortedResidences count]) {
+                _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
                 
-                if (!reloadRange.length) {
-                    reloadRange.location = kWardSection;
-                }
-                
-                reloadRange.length++;
-            } else {
-                [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
-            }
-        }
-        
-        if (reloadRange.length) {
-            if ((reloadRange.location > kResidenceSection) && hasOnlyResidenceSection) {
-                [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kResidenceSection] withRowAnimation:UITableViewRowAnimationNone];
+                reloadRange.location = kResidenceSection;
+                reloadRange.length = 1;
             }
             
-            [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:reloadRange] withRowAnimation:UITableViewRowAnimationAutomatic];
+            NSSet *wards = [_member wards];
+            
+            if ([wards count] != [_sortedWards count]) {
+                BOOL hasWardsSection = ([_sortedWards count] > 0);
+                _sortedWards = [[wards allObjects] sortedArrayUsingSelector:@selector(compare:)];
+                
+                if ([wards count]) {
+                    if (!hasWardsSection) {
+                        [self.tableView insertSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
+                    }
+                    
+                    if (!reloadRange.length) {
+                        reloadRange.location = kWardSection;
+                    }
+                    
+                    reloadRange.length++;
+                } else {
+                    [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
+                }
+            }
+            
+            if (reloadRange.length) {
+                if ((reloadRange.location > kResidenceSection) && hasOnlyResidenceSection) {
+                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kResidenceSection] withRowAnimation:UITableViewRowAnimationNone];
+                }
+                
+                [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:reloadRange] withRowAnimation:UITableViewRowAnimationAutomatic];
+            }
         }
     }
+    
+    OLogState;
 }
 
 

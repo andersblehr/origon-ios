@@ -32,11 +32,7 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
     [[OMeta m] userDidSignOut];
     
     UINavigationController *origoNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
-    [origoNavigationController popToRootViewControllerAnimated:NO];
-    
-    OOrigoListViewController *origoListViewController = (OOrigoListViewController *)origoNavigationController.viewControllers[0];
-    origoListViewController.member = nil;
-    [origoListViewController.tableView reloadData];
+    [origoNavigationController setViewControllers:[NSArray arrayWithObject:[self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId]]];
     
     [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
 }

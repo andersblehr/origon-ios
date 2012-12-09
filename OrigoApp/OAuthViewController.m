@@ -38,6 +38,7 @@
 #import "OOrigo+OOrigoExtensions.h"
 
 #import "OMemberViewController.h"
+#import "OTabBarController.h"
 
 static NSString * const kModalSegueToMemberView = @"modalFromAuthToMemberView";
 
@@ -48,6 +49,14 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 @implementation OAuthViewController
 
 #pragma mark - Auxiliary methods
+
+- (void)setDefaultAuthState
+{
+    [OState s].actionIsLogin = YES;
+    [OState s].targetIsMember = YES;
+    [OState s].aspectIsSelf = YES;
+}
+
 
 - (void)initialiseFields
 {
@@ -71,7 +80,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)reload
 {
-    if ([OState s].actionIsLogin) {
+    if ([OState s].actionIsSetup) {
+        [self setDefaultAuthState];
+        [self.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
+    } else if ([OState s].actionIsLogin) {
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
         
         if (_authInfo) {
@@ -349,6 +361,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [self.tableView setBackground];
     [self.tableView addLogoBanner];
     
+    _activityIndicator = [self.tableView addActivityIndicator];
+    _editingIsAllowed = YES;
+    
     self.title = @"Origo";
 }
 
@@ -356,23 +371,25 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    [OState s].actionIsLogin = YES;
-    [OState s].targetIsMember = YES;
-    [OState s].aspectIsSelf = YES;
+
+    if (![OState s].actionIsSetup) {
+        [self setDefaultAuthState];
+    }
     
     OLogState;
     
-    _editingIsAllowed = YES;
-    _activityIndicator = [self.tableView addActivityIndicator];
-    
-    NSData *authInfoArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathAuthInfo];
-    
-    if (authInfoArchive) {
-        _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
+    if ([OState s].actionIsSetup) {
+        [_activityIndicator startAnimating];
+        [OStrings fetchStrings:self];
+    } else {
+        NSData *authInfoArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathAuthInfo];
         
-        [OMeta m].userEmail = [_authInfo objectForKey:kKeyPathEmail];
-        [OState s].actionIsActivate = YES;
+        if (authInfoArchive) {
+            _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
+            
+            [OMeta m].userEmail = [_authInfo objectForKey:kKeyPathEmail];
+            [OState s].actionIsActivate = YES;
+        }
     }
 }
 
@@ -412,7 +429,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return [OState s].actionIsSetup ? 0 : 1;
 }
 
 
@@ -453,11 +470,11 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [cell willAppearTrailing:YES];
     
     if ([OState s].actionIsLogin) {
-        [_emailField emphasise];
-        [_passwordField emphasise];
+        _emailField.hasEmphasis = YES;
+        _passwordField.hasEmphasis = YES;
     } else if ([OState s].actionIsActivate) {
-        [_activationCodeField emphasise];
-        [_repeatPasswordField emphasise];
+        _activationCodeField.hasEmphasis = YES;
+        _repeatPasswordField.hasEmphasis = YES;
     }
 }
 
@@ -565,20 +582,28 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    [self indicatePendingServerSession:NO];
-    
-    if (response.statusCode < kHTTPStatusErrorRangeStart) {
-        if (response.statusCode == kHTTPStatusCreated) {
-            [self userDidSignUpWithData:data];
-        } else {
-            [self userDidAuthenticateWithData:data];
-        }
+    if ([OState s].actionIsSetup) {
+        [_activityIndicator stopAnimating];
+        [OStrings.class didCompleteWithResponse:response data:data];
+        [(OTabBarController *)((UIViewController *)_delegate).tabBarController setTabBarTitles];
+        
+        [self reload];
     } else {
-        if (response.statusCode == kHTTPStatusUnauthorized) {
-            [_authCell shakeCellVibrateDevice:YES];
-            [_passwordField becomeFirstResponder];
+        [self indicatePendingServerSession:NO];
+        
+        if (response.statusCode < kHTTPStatusErrorRangeStart) {
+            if (response.statusCode == kHTTPStatusCreated) {
+                [self userDidSignUpWithData:data];
+            } else {
+                [self userDidAuthenticateWithData:data];
+            }
         } else {
-            [OAlert showAlertForHTTPStatus:response.statusCode];
+            if (response.statusCode == kHTTPStatusUnauthorized) {
+                [_authCell shakeCellVibrateDevice:YES];
+                [_passwordField becomeFirstResponder];
+            } else {
+                [OAlert showAlertForHTTPStatus:response.statusCode];
+            }
         }
     }
 }

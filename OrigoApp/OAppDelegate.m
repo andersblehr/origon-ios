@@ -113,10 +113,10 @@ static void uncaughtExceptionHandler(NSException *exception)
     OLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);
     OLogDebug(@"System language is '%@'.", [[OMeta m] displayLanguage]);
 
-    if (![[OMeta m] userIsSignedIn] && ![OStrings hasStrings]) {
-        [OStrings fetchStrings];
-    } else {
+    if ([OStrings hasStrings]) {
         [OStrings conditionallyRefresh];
+    } else {
+        [OState s].actionIsSetup = YES;
     }
     
     //NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];

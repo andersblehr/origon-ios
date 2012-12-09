@@ -186,6 +186,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
     self.entity = entity;
+    
+    _entityClass = entityClass;
     _selectable = [OState s].actionIsList;
     
     if (entityClass == OMember.class) {
@@ -288,6 +290,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     if (trailing) {
         [self.backgroundView addDropShadowForTrailingTableViewCell];
+        
+        if (![self isListCell]) {
+            [OMeta m].participatingCell = self;
+        }
     } else {
         [self.backgroundView addDropShadowForInternalTableViewCell];
     }
@@ -312,14 +318,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)redrawIfNeeded
 {
-    if (_entity) {
-        CGFloat desiredFrameHeight = [_entity displayCellHeight];
+    if (_entity || _entityClass) {
+        CGFloat desiredHeight = _entity ? [_entity cellHeight] : [_entityClass defaultCellHeight];
         
-        if (self.frame.size.height != desiredFrameHeight + kImplicitFramePadding) {
+        if (self.frame.size.height != desiredHeight + kImplicitFramePadding) {
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
                 [(UITableView *)self.superview beginUpdates];
                 CGRect frame = self.frame;
-                frame.size.height = desiredFrameHeight + kImplicitFramePadding;
+                frame.size.height = desiredHeight + kImplicitFramePadding;
                 self.frame = frame;
                 [(UITableView *)self.superview endUpdates];
                 

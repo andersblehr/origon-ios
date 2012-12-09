@@ -169,6 +169,14 @@
 }
 
 
+#pragma mark - Overrides
+
+- (BOOL)hidesBottomBarWhenPushed
+{
+    return YES;
+}
+
+
 #pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -188,9 +196,9 @@
     CGFloat height = 0.f;
     
     if (_origo) {
-        height = [_origo displayCellHeight];
+        height = [_origo cellHeight];
     } else {
-        height = [OOrigo defaultDisplayCellHeight];
+        height = [OOrigo defaultCellHeight];
     }
     
     return height;
@@ -224,13 +232,13 @@
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    [textField emphasise];
+    textField.hasEmphasis = YES;
 }
 
 
 - (void)textFieldDidEndEditing:(OTextField *)textField
 {
-    [textField deemphasise];
+    textField.hasEmphasis = NO;
 }
 
 
@@ -238,7 +246,7 @@
 
 - (void)textViewDidBeginEditing:(OTextView *)textView
 {
-    [textView emphasise];
+    textView.hasEmphasis = YES;;
 }
 
 
@@ -250,7 +258,7 @@
 
 - (void)textViewDidEndEditing:(OTextView *)textView
 {
-    [textView deemphasise];
+    textView.hasEmphasis = NO;;
 }
 
 @end

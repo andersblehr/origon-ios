@@ -185,13 +185,13 @@
 
 #pragma mark - Table view support
 
-+ (CGFloat)defaultDisplayCellHeight
++ (CGFloat)defaultCellHeight
 {
     return kDefaultTableViewCellHeight;
 }
 
 
-- (CGFloat)displayCellHeight
+- (CGFloat)cellHeight
 {
     return kDefaultTableViewCellHeight;
 }

@@ -65,7 +65,7 @@ extern NSString * const kGenderMale;
 extern NSUInteger const kCertainSchoolAge;
 extern NSUInteger const kAgeOfMajority;
 
-@class OTextView;
+@class OTableViewCell;
 @class OMember, OReplicatedEntity;
 
 @interface OMeta : NSObject <OServerConnectionDelegate> {
@@ -97,7 +97,7 @@ extern NSUInteger const kAgeOfMajority;
 @property (nonatomic, readonly) BOOL internetConnectionIsWiFi;
 @property (nonatomic, readonly) BOOL internetConnectionIsWWAN;
 
-@property (weak, nonatomic) OTextView *participatingTextView;
+@property (weak, nonatomic) OTableViewCell *participatingCell;
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 
 + (OMeta *)m;
@@ -106,6 +106,7 @@ extern NSUInteger const kAgeOfMajority;
 
 - (void)userDidSignIn;
 - (void)userDidSignOut;
+- (BOOL)userIsAllSet;
 - (BOOL)userIsSignedIn;
 - (BOOL)userIsRegistered;
 
