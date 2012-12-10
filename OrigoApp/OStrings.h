@@ -15,6 +15,7 @@ extern NSString * const strNameMyMessageBoard;
 extern NSString * const strNameOurMessageBoard;
 extern NSString * const strButtonOK;
 extern NSString * const strButtonEdit;
+extern NSString * const strButtonNext;
 extern NSString * const strButtonDone;
 extern NSString * const strButtonCancel;
 extern NSString * const strButtonSignOut;

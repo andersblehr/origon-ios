@@ -25,6 +25,12 @@
 }
 
 
++ (UIBarButtonItem *)nextButtonWithTarget:(id)target
+{
+    return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonNext] style:UIBarButtonItemStylePlain target:target action:@selector(moveToNextInputField)];
+}
+
+
 + (UIBarButtonItem *)doneButtonWithTarget:(id)target
 {
     return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:target action:@selector(didFinishEditing)];

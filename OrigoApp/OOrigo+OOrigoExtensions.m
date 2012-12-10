@@ -209,6 +209,8 @@
     
     if ([OMeta m].participatingCell.entityClass == self) {
         height += [[[OMeta m].participatingCell textFieldForKeyPath:kKeyPathAddress] height];
+    } else {
+        height += [OTextView heightWithText:[OStrings placeholderForKeyPath:kKeyPathAddress]];
     }
     
     height += [UIFont detailFieldHeight];

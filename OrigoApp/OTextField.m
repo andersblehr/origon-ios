@@ -203,7 +203,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         id value = [_containingCell.entity valueForKey:_keyPath];
         
         if (value && [value isKindOfClass:NSDate.class]) {
-            [(UIDatePicker *)self.inputView setDate:value animated:YES];
+            ((UIDatePicker *)self.inputView).date = value;
         }
     } else {
         self.text = [self finalText];

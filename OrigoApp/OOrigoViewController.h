@@ -20,6 +20,11 @@
     
     OTextView *_addressView;
     OTextField *_telephoneField;
+    
+    UIBarButtonItem *_cancelButton;
+    UIBarButtonItem *_nextButton;
+    UIBarButtonItem *_doneButton;
+    UIView *_currentField;
 }
 
 @property (strong, nonatomic) OMembership *membership;

@@ -50,8 +50,14 @@
         editButton = self.navigationItem.rightBarButtonItem;
         backButton = self.navigationItem.leftBarButtonItem;
         
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+        if (!_cancelButton) {
+            _cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
+            _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
+            _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
+        }
+        
+        self.navigationItem.rightBarButtonItem = _nextButton;
+        self.navigationItem.leftBarButtonItem = _cancelButton;
 
         [_addressView becomeFirstResponder];
     } else if ([OState s].actionIsDisplay) {
@@ -68,6 +74,14 @@
 - (void)startEditing
 {
     [self toggleEditMode];
+}
+
+
+- (void)moveToNextInputField
+{
+    if (_currentField == _addressView) {
+        [_telephoneField becomeFirstResponder];
+    }
 }
 
 
@@ -138,7 +152,10 @@
     }
     
     if ([OState s].actionIsRegister) {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+        _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
+        _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
+        
+        self.navigationItem.rightBarButtonItem = _nextButton;
         
         if (!([_origo isResidence] && [OState s].aspectIsSelf)) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
@@ -193,15 +210,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = 0.f;
-    
-    if (_origo) {
-        height = [_origo cellHeight];
-    } else {
-        height = [OOrigo defaultCellHeight];
-    }
-    
-    return height;
+    return _origo ? [_origo cellHeight] : [OOrigo defaultCellHeight];
 }
 
 
@@ -232,6 +241,10 @@
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
+    self.navigationItem.rightBarButtonItem = _doneButton;
+    
+    _currentField = textField;
+    
     textField.hasEmphasis = YES;
 }
 
@@ -246,6 +259,10 @@
 
 - (void)textViewDidBeginEditing:(OTextView *)textView
 {
+    self.navigationItem.rightBarButtonItem = _nextButton;
+    
+    _currentField = textView;
+    
     textView.hasEmphasis = YES;;
 }
 
