@@ -20,6 +20,8 @@
 #import "OStrings.h"
 #import "OTableViewCell.h"
 
+#import "OReplicatedEntity.h"
+
 CGFloat const kTextInset = 4.f;
 
 static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor";
@@ -45,11 +47,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     } else if ([keyPath isEqualToString:kKeyPathName]) {
         self.autocapitalizationType = UITextAutocapitalizationTypeWords;
     } else if ([keyPath isEqualToString:kKeyPathDateOfBirth]) {
-        UIDatePicker *datePicker = [[UIDatePicker alloc] init];
-        datePicker.datePickerMode = UIDatePickerModeDate;
-        [datePicker setEarliestValidBirthDate];
-        [datePicker setLatestValidBirthDate];
-        [datePicker setToDefaultDate];
+        UIDatePicker *datePicker = [OMeta m].sharedDatePicker;
         [datePicker addTarget:self.delegate action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
         
         self.inputView = datePicker;
@@ -200,6 +198,12 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         if (_isTitle) {
             self.textColor = [UIColor editableTitleTextColor];
             [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
+        }
+        
+        id value = [_containingCell.entity valueForKey:_keyPath];
+        
+        if (value && [value isKindOfClass:NSDate.class]) {
+            [(UIDatePicker *)self.inputView setDate:value animated:YES];
         }
     } else {
         self.text = [self finalText];

@@ -54,6 +54,8 @@ static NSInteger const kWardSection = 1;
         _member = [OMeta m].user;
     }
     
+    _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    
     if ([_member isUser]) {
         _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
         _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
@@ -66,8 +68,6 @@ static NSInteger const kWardSection = 1;
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
         self.navigationItem.rightBarButtonItem.action = @selector(addOrigo);
     }
-    
-    _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 

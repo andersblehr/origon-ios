@@ -10,6 +10,7 @@
 
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
 #import "NSString+OStringExtensions.h"
+#import "UIDatePicker+ODatePickerExtensions.h"
 
 #import "OAppDelegate.h"
 #import "OState.h"
@@ -176,7 +177,11 @@ static OMeta *m = nil;
         _internetConnectionIsWiFi = NO;
         _internetConnectionIsWWAN = NO;
         
-        _contextObservers = [[NSMutableDictionary alloc] init];
+        _sharedDatePicker = [[UIDatePicker alloc] init];
+        _sharedDatePicker.datePickerMode = UIDatePickerModeDate;
+        [_sharedDatePicker setEarliestValidBirthDate];
+        [_sharedDatePicker setLatestValidBirthDate];
+        [_sharedDatePicker setToDefaultDate];
         
         _dirtyEntities = [[NSMutableSet alloc] init];
         _stagedEntities = [[NSMutableDictionary alloc] init];

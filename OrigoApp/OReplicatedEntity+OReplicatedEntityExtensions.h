@@ -25,7 +25,6 @@
 + (CGFloat)defaultCellHeight;
 - (CGFloat)cellHeight;
 
-- (NSString *)reuseIdentifier;
 - (NSString *)listName;
 - (NSString *)listDetails;
 - (UIImage *)listImage;
