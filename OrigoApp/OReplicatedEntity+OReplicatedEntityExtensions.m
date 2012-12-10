@@ -197,12 +197,6 @@
 }
 
 
-- (NSString *)reuseIdentifier
-{
-    return [NSString stringWithFormat:@"%@-%@", self.entity, [[OState s] asString]];
-}
-
-
 - (NSString *)listName
 {
     return @"BROKEN: Plase override in subclass";

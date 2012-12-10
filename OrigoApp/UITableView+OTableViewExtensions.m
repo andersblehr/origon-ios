@@ -115,7 +115,7 @@ static NSString * const kLogoText = @"..origo..";
 
 - (id)cellForEntity:(OReplicatedEntity *)entity delegate:(id)delegate
 {
-    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:[entity reuseIdentifier]];
+    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:entity.entityId];
     
     if (!cell) {
         cell = [[OTableViewCell alloc] initWithEntity:entity delegate:delegate];

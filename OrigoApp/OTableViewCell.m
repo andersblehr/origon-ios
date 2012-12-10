@@ -260,7 +260,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (id)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate
 {
-    self = [self initWithReuseIdentifier:[entity reuseIdentifier] delegate:delegate];
+    self = [self initWithReuseIdentifier:entity.entityId delegate:delegate];
     
     if (self) {
         [self composeForEntityClass:entity.class entity:entity];
@@ -321,7 +321,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (_entity || _entityClass) {
         CGFloat desiredHeight = _entity ? [_entity cellHeight] : [_entityClass defaultCellHeight];
         
-        if (self.frame.size.height != desiredHeight + kImplicitFramePadding) {
+        if (abs(self.frame.size.height - (desiredHeight + kImplicitFramePadding)) > 0.5f) {
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
                 [(UITableView *)self.superview beginUpdates];
                 CGRect frame = self.frame;
@@ -367,18 +367,20 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)updateConstraints
 {
-    [self.contentView removeConstraints:[self.contentView constraints]];
-    
     [super updateConstraints];
-    
-    NSDictionary *alignedConstraints = [_visualConstraints constraintsWithAlignmentOptions];
-    
-    for (NSNumber *alignmentOptions in [alignedConstraints allKeys]) {
-        NSUInteger options = [alignmentOptions integerValue];
-        NSArray *constraintsWithOptions = [alignedConstraints objectForKey:alignmentOptions];
+
+    if (![self isListCell]) {
+        [self.contentView removeConstraints:[self.contentView constraints]];
         
-        for (NSString *visualConstraints in constraintsWithOptions) {
-            [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:options metrics:nil views:_views]];
+        NSDictionary *alignedConstraints = [_visualConstraints constraintsWithAlignmentOptions];
+        
+        for (NSNumber *alignmentOptions in [alignedConstraints allKeys]) {
+            NSUInteger options = [alignmentOptions integerValue];
+            NSArray *constraintsWithOptions = [alignedConstraints objectForKey:alignmentOptions];
+            
+            for (NSString *visualConstraints in constraintsWithOptions) {
+                [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:options metrics:nil views:_views]];
+            }
         }
     }
 }

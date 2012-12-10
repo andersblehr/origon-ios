@@ -8,11 +8,13 @@
 
 #import "UIDatePicker+ODatePickerExtensions.h"
 
+#import "NSDate+ODateExtensions.h"
+
 #import "OMeta.h"
 #import "OState.h"
 
 static int const kMinimumRealisticAge = 6;
-static int const kMaximumRealisticAge = 110;
+static int const kMaximumRealisticAge = 100;
 
 
 @implementation UIDatePicker (ODatePickerExtensions)
@@ -49,7 +51,7 @@ static int const kMaximumRealisticAge = 110;
 - (void)setToDefaultDate
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
+    dateFormatter.dateFormat = kDateTimeFormatZulu;
     NSDate *april1st1976 = [dateFormatter dateFromString:@"1976-04-01T20:00:00Z"];
     
     [self setDate:april1st1976 animated:YES];

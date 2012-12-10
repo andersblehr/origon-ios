@@ -73,8 +73,6 @@ extern NSUInteger const kAgeOfMajority;
     Reachability *_internetReachability;
     NSDate *_authTokenExpiryDate;
     
-    NSMutableDictionary *_contextObservers;
-    
     NSMutableSet *_dirtyEntities;
     NSMutableDictionary *_stagedEntities;
     NSMutableDictionary *_stagedRelationshipRefs;
@@ -97,7 +95,9 @@ extern NSUInteger const kAgeOfMajority;
 @property (nonatomic, readonly) BOOL internetConnectionIsWiFi;
 @property (nonatomic, readonly) BOOL internetConnectionIsWWAN;
 
+@property (strong, nonatomic, readonly) UIDatePicker *sharedDatePicker;
 @property (weak, nonatomic) OTableViewCell *participatingCell;
+
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 
 + (OMeta *)m;

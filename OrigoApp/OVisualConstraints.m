@@ -95,7 +95,6 @@ static NSString * const kKeyPathPrefixDate = @"date";
                     [textField setText:value];
                 } else if ([value isKindOfClass:NSDate.class]) {
                     [textField setText:[value localisedDateString]];
-                    ((UIDatePicker *)(((OTextField *)textField).inputView)).date = value;
                 }
             }
         }
@@ -105,7 +104,7 @@ static NSString * const kKeyPathPrefixDate = @"date";
             [label setFrame:CGRectZero];
         }
         
-        if (textField && [textField isHidden]) {
+        if (textField && ![textField isHidden]) {
             [textField setHidden:YES];
             [textField setFrame:CGRectZero];
         }
