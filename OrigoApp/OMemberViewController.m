@@ -166,8 +166,14 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
         editButton = self.navigationItem.rightBarButtonItem;
         backButton = self.navigationItem.leftBarButtonItem;
         
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+        if (!_cancelButton) {
+            _cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
+            _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
+            _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
+        }
+        
+        self.navigationItem.rightBarButtonItem = _nextButton;
+        self.navigationItem.leftBarButtonItem = _cancelButton;
         
         [_nameField becomeFirstResponder];
     } else if ([OState s].actionIsDisplay) {
@@ -258,15 +264,21 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
 
 #pragma mark - Selector implementations
 
-- (void)dateOfBirthDidChange
-{
-    _dateOfBirthField.text = [_dateOfBirthPicker.date localisedDateString];
-}
-
-
 - (void)startEditing
 {
     [self toggleEditMode];
+}
+
+
+- (void)moveToNextInputField
+{
+    if (_currentField == _nameField) {
+        [_dateOfBirthField becomeFirstResponder];
+    } else if (_currentField == _dateOfBirthField) {
+        [_mobilePhoneField becomeFirstResponder];
+    } else if (_currentField == _mobilePhoneField) {
+        [_emailField becomeFirstResponder];
+    }
 }
 
 
@@ -334,6 +346,12 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
 }
 
 
+- (void)dateOfBirthDidChange
+{
+    _dateOfBirthField.text = [_dateOfBirthPicker.date localisedDateString];
+}
+
+
 - (void)signOut
 {
     [[OMeta m] userDidSignOut];
@@ -370,13 +388,16 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
         self.title = _member.givenName;
     }
     
-    if ([OState s].actionIsInput) {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+    if ([OState s].actionIsRegister) {
+        _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
+        _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
         
-        if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
+        self.navigationItem.rightBarButtonItem = _nextButton;
+        
+        if ([OState s].aspectIsSelf) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
         } else {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];;
         }
     } else if ([OState s].actionIsDisplay) {
         BOOL memberIsUserAndTeen = ([_member isUser] && [_member isTeenOrOlder]);
@@ -464,11 +485,7 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
     CGFloat height = 0.f;
     
     if (indexPath.section == kMemberSection) {
-        if ([OState s].actionIsInput) {
-            height = [OMember defaultCellHeight];
-        } else {
-            height = [_member cellHeight];
-        }
+        height = _member ? [_member cellHeight] : [OMember defaultCellHeight];
     } else if (indexPath.section == kAddressSection) {
         height = kDefaultTableViewCellHeight;
     }
@@ -550,6 +567,14 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
+    if (textField == _emailField) {
+        self.navigationItem.rightBarButtonItem = _doneButton;
+    } else {
+        self.navigationItem.rightBarButtonItem = _nextButton;
+    }
+    
+    _currentField = textField;
+    
     textField.hasEmphasis = YES;
 }
 

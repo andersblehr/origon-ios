@@ -8,6 +8,7 @@
 
 #import "OServerConnection.h"
 
+#import "NSDate+ODateExtensions.h"
 #import "NSJSONSerialization+OJSONSerializationExtensions.h"
 #import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
 #import "NSString+OStringExtensions.h"
@@ -81,6 +82,19 @@ static NSString * const kURLParameterVersion = @"version";
 @implementation OServerConnection
 
 #pragma mark - Auxiliary methods
+
+- (NSString *)timestampToken
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:kDateTimeFormatZulu];
+    
+    NSString *timestamp = [dateFormatter stringFromDate:[NSDate date]];
+    NSString *saltedAndHashedTimestamp = [[timestamp diff:@"ogiro"] hashUsingSHA1];
+    NSString *base64EncodedTimestamp = [timestamp base64EncodedString];
+    
+    return [base64EncodedTimestamp stringByAppendingString:saltedAndHashedTimestamp];
+}
+
 
 - (NSString *)origoServerURL
 {
@@ -199,12 +213,16 @@ static NSString * const kURLParameterVersion = @"version";
 
 #pragma mark - Server requests
 
-- (void)getStrings:(NSString *)stringToken delegate:(id)delegate
+- (void)fetchStrings:(id)delegate
 {
     _RESTHandler = kRESTHandlerStrings;
     _RESTRoute = [OMeta m].displayLanguage;
     
-    [self setValue:stringToken forURLParameter:kURLParameterStringToken];
+    if ([[OMeta m] userIsSignedIn]) {
+        [self setValue:[OMeta m].authToken forURLParameter:kURLParameterStringToken];
+    } else {
+        [self setValue:[self timestampToken] forURLParameter:kURLParameterStringToken];
+    }
     
     [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
 }

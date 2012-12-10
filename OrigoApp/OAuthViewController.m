@@ -584,6 +584,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     if ([OState s].actionIsSetup) {
         [_activityIndicator stopAnimating];
+        
+        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:kKeyPathStringDate];
+        
         [OStrings.class didCompleteWithResponse:response data:data];
         [(OTabBarController *)((UIViewController *)_delegate).tabBarController setTabBarTitles];
         

@@ -25,6 +25,7 @@ NSString * const strNameMyMessageBoard               = @"strNameMyMessageBoard";
 NSString * const strNameOurMessageBoard              = @"strNameOurMessageBoard";
 NSString * const strButtonOK                         = @"strButtonOK";
 NSString * const strButtonEdit                       = @"strButtonEdit";
+NSString * const strButtonNext                       = @"strButtonNext";
 NSString * const strButtonDone                       = @"strButtonDone";
 NSString * const strButtonCancel                     = @"strButtonCancel";
 NSString * const strButtonSignOut                    = @"strButtonSignOut";
@@ -140,8 +141,7 @@ NSString * const xstrContactRolesSchoolClass         = @"xstrContactRolesSchoolC
 NSString * const xstrContactRolesPreschoolClass      = @"xstrContactRolesPreschoolClass";
 NSString * const xstrContactRolesSportsTeam          = @"xstrContactRolesSportsTeam";
 
-static NSInteger const kDaysBetweenStringFetches = 14;
-static NSString * const kKeyPathStringDate = @"origo.date.strings";
+static NSInteger const kDaysBetweenStringFetches = 0; // TODO: Set to 14
 static NSString * const kStringsPlist = @"strings.plist";
 static NSDictionary const *strings = nil;
 
@@ -152,19 +152,6 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 @implementation OStrings
 
 #pragma mark - Auxiliary methods
-
-+ (NSString *)timestampToken
-{
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:kDateTimeFormatZulu];
-    
-    NSString *timestamp = [dateFormatter stringFromDate:[NSDate date]];
-    NSString *saltedAndHashedTimestamp = [[timestamp diff:@"ogiro"] hashUsingSHA1];
-    NSString *base64EncodedTimestamp = [timestamp base64EncodedString];
-
-    return [base64EncodedTimestamp stringByAppendingString:saltedAndHashedTimestamp];
-}
-
 
 + (NSString *)fullPathToStringsPlist
 {
@@ -196,7 +183,7 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 + (void)fetchStrings:(id)delegate
 {
     if ([OState s].actionIsSetup) {
-        [[[OServerConnection alloc] init] getStrings:[self timestampToken] delegate:delegate];
+        [[[OServerConnection alloc] init] fetchStrings:delegate];
     }
 }
 
@@ -205,9 +192,9 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 {
     NSDate *stringDate = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathStringDate];
     
-    if ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches) {
+    if (stringDate && ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
         if ([self hasStrings] && [[OMeta m] internetConnectionIsAvailable]) {
-            [[[OServerConnection alloc] init] getStrings:[OMeta m].authToken delegate:self];
+            [[[OServerConnection alloc] init] fetchStrings:self];
         }
     }
 }

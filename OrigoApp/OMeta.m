@@ -29,6 +29,12 @@
 #import "OOrigoListViewController.h"
 #import "OTabBarController.h"
 
+NSString * const kGenderFemale = @"F";
+NSString * const kGenderMale = @"M";
+
+NSUInteger const kCertainSchoolAge = 7;
+NSUInteger const kAgeOfMajority = 18;
+
 NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 NSString * const kLanguageHungarian = @"hu";
 
@@ -76,11 +82,7 @@ NSString * const kKeyPathDateOfBirth = @"dateOfBirth";
 NSString * const kKeyPathAddress = @"address";
 NSString * const kKeyPathTelephone = @"telephone";
 
-NSString * const kGenderFemale = @"F";
-NSString * const kGenderMale = @"M";
-
-NSUInteger const kCertainSchoolAge = 7;
-NSUInteger const kAgeOfMajority = 18;
+NSString * const kKeyPathStringDate = @"origo.date.strings";
 
 static NSString * const kKeyPathUserEmail = @"origo.user.email";
 static NSString * const kKeyPathFormatDeviceId = @"origo.id.device.%@";

@@ -26,6 +26,11 @@
     OTextField *_mobilePhoneField;
     OTextField *_emailField;
     
+    UIBarButtonItem *_cancelButton;
+    UIBarButtonItem *_nextButton;
+    UIBarButtonItem *_doneButton;
+    OTextField *_currentField;
+    
     UIDatePicker *_dateOfBirthPicker;
     NSString *_gender;
     

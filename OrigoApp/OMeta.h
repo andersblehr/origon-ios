@@ -12,6 +12,12 @@
 
 #import "OServerConnectionDelegate.h"
 
+extern NSString * const kGenderFemale;
+extern NSString * const kGenderMale;
+
+extern NSUInteger const kCertainSchoolAge;
+extern NSUInteger const kAgeOfMajority;
+
 extern NSString * const kBundleId;
 extern NSString * const kLanguageHungarian;
 
@@ -59,11 +65,7 @@ extern NSString * const kKeyPathDateOfBirth;
 extern NSString * const kKeyPathAddress;
 extern NSString * const kKeyPathTelephone;
 
-extern NSString * const kGenderFemale;
-extern NSString * const kGenderMale;
-
-extern NSUInteger const kCertainSchoolAge;
-extern NSUInteger const kAgeOfMajority;
+extern NSString * const kKeyPathStringDate;
 
 @class OTableViewCell;
 @class OMember, OReplicatedEntity;
