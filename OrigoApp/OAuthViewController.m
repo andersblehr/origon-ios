@@ -8,13 +8,11 @@
 
 #import "OAuthViewController.h"
 
-#import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
-#import "NSString+OStringExtensions.h"
-#import "UIBarButtonItem+OBarButtonItemExtensions.h"
-#import "UIColor+OColorExtensions.h"
-#import "UIFont+OFontExtensions.h"
-#import "UITableView+OTableViewExtensions.h"
-#import "UIView+OViewExtensions.h"
+#import "NSManagedObjectContext+OrigoExtensions.h"
+#import "NSString+OrigoExtensions.h"
+#import "UIBarButtonItem+OrigoExtensions.h"
+#import "UIFont+OrigoExtensions.h"
+#import "UITableView+OrigoExtensions.h"
 
 #import "OAlert.h"
 #import "OLogging.h"
@@ -33,9 +31,9 @@
 #import "OMessageBoard.h"
 #import "OOrigo.h"
 
-#import "OMember+OMemberExtensions.h"
-#import "OMembership+OMembershipExtensions.h"
-#import "OOrigo+OOrigoExtensions.h"
+#import "OMember+OrigoExtensions.h"
+#import "OMembership+OrigoExtensions.h"
+#import "OOrigo+OrigoExtensions.h"
 
 #import "OMemberViewController.h"
 #import "OTabBarController.h"

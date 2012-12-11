@@ -8,7 +8,7 @@
 
 #import "OCalendarViewController.h"
 
-#import "UITableView+OTableViewExtensions.h"
+#import "UITableView+OrigoExtensions.h"
 
 #import "OStrings.h"
 

@@ -8,11 +8,10 @@
 
 #import "OOrigoViewController.h"
 
-#import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
-#import "NSString+OStringExtensions.h"
-#import "UIBarButtonItem+OBarButtonItemExtensions.h"
-#import "UITableView+OTableViewExtensions.h"
-#import "UIView+OViewExtensions.h"
+#import "NSManagedObjectContext+OrigoExtensions.h"
+#import "NSString+OrigoExtensions.h"
+#import "UIBarButtonItem+OrigoExtensions.h"
+#import "UITableView+OrigoExtensions.h"
 
 #import "OEntityObservingDelegate.h"
 #import "OModalViewControllerDelegate.h"
@@ -29,8 +28,8 @@
 #import "OMembership.h"
 #import "OOrigo.h"
 
-#import "OOrigo+OOrigoExtensions.h"
-#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
+#import "OOrigo+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 #import "OMemberListViewController.h"
 

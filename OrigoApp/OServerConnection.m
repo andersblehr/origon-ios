@@ -8,11 +8,11 @@
 
 #import "OServerConnection.h"
 
-#import "NSDate+ODateExtensions.h"
-#import "NSJSONSerialization+OJSONSerializationExtensions.h"
-#import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
-#import "NSString+OStringExtensions.h"
-#import "NSURL+OURLExtensions.h"
+#import "NSDate+OrigoExtensions.h"
+#import "NSJSONSerialization+OrigoExtensions.h"
+#import "NSManagedObjectContext+OrigoExtensions.h"
+#import "NSString+OrigoExtensions.h"
+#import "NSURL+OrigoExtensions.h"
 
 #import "OAlert.h"
 #import "OAppDelegate.h"
@@ -21,7 +21,7 @@
 #import "OState.h"
 #import "OStrings.h"
 
-#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 
 NSString * const kHTTPMethodGET = @"GET";

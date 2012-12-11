@@ -8,12 +8,11 @@
 
 #import "OTextField.h"
 
-#import "NSDate+ODateExtensions.h"
-#import "NSString+OStringExtensions.h"
-#import "UIColor+OColorExtensions.h"
-#import "UIDatePicker+ODatePickerExtensions.h"
-#import "UIFont+OFontExtensions.h"
-#import "UIView+OViewExtensions.h"
+#import "NSDate+OrigoExtensions.h"
+#import "NSString+OrigoExtensions.h"
+#import "UIColor+OrigoExtensions.h"
+#import "UIFont+OrigoExtensions.h"
+#import "UIView+OrigoExtensions.h"
 
 #import "OMeta.h"
 #import "OState.h"

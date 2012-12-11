@@ -8,15 +8,11 @@
 
 #import "OMemberViewController.h"
 
-#import "NSDate+ODateExtensions.h"
-#import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
-#import "NSString+OStringExtensions.h"
-#import "UIBarButtonItem+OBarButtonItemExtensions.h"
-#import "UIColor+OColorExtensions.h"
-#import "UIDatePicker+ODatePickerExtensions.h"
-#import "UIFont+OFontExtensions.h"
-#import "UITableView+OTableViewExtensions.h"
-#import "UIView+OViewExtensions.h"
+#import "NSDate+OrigoExtensions.h"
+#import "NSManagedObjectContext+OrigoExtensions.h"
+#import "NSString+OrigoExtensions.h"
+#import "UIBarButtonItem+OrigoExtensions.h"
+#import "UITableView+OrigoExtensions.h"
 
 #import "OEntityObservingDelegate.h"
 
@@ -34,16 +30,18 @@
 #import "OMembership.h"
 #import "OOrigo.h"
 
-#import "OMember+OMemberExtensions.h"
-#import "OMemberResidency+OMemberResidencyExtensions.h"
-#import "OMembership+OMembershipExtensions.h"
-#import "OOrigo+OOrigoExtensions.h"
-#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
+#import "OMember+OrigoExtensions.h"
+#import "OMemberResidency+OrigoExtensions.h"
+#import "OMembership+OrigoExtensions.h"
+#import "OOrigo+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
+#import "OAuthViewController.h"
 #import "OMemberListViewController.h"
 #import "OOrigoViewController.h"
 #import "OTabBarController.h"
 
+static NSString * const kModalSegueToAuthView = @"modalFromMemberToAuthView";
 static NSString * const kModalSegueToOrigoView = @"modalFromMemberToOrigoView";
 static NSString * const kPushSegueToMemberListView = @"pushFromMemberToMemberListView";
 
@@ -58,6 +56,10 @@ static NSInteger const kExistingResidenceSheetTag = 1;
 static NSInteger const kExistingResidenceButtonInviteToHousehold = 0;
 static NSInteger const kExistingResidenceButtonMergeHouseholds = 1;
 static NSInteger const kExistingResidenceButtonCancel = 2;
+
+static NSInteger const kEmailChangeSheetTag = 2;
+static NSInteger const kEmailChangeButtonContinue = 0;
+static NSInteger const kEmailChangeButtonCancel = 1;
 
 
 @implementation OMemberViewController
@@ -210,31 +212,31 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
 
 - (void)promptForGender
 {
-    NSString *titleQuestion = nil;
+    NSString *sheetQuestion = nil;
     NSString *femaleLabel = nil;
     NSString *maleLabel = nil;
     
     if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
         if ([OState s].aspectIsSelf) {
-            titleQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
+            sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
         } else {
-            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [NSString givenNameFromFullName:[_nameField finalText]]];
+            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [NSString givenNameFromFullName:[_nameField finalText]]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemaleMinor];
         maleLabel = [OStrings stringForKey:strTermMaleMinor];
     } else {
         if ([OState s].aspectIsSelf) {
-            titleQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
+            sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
         } else {
-            titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [NSString givenNameFromFullName:[_nameField finalText]]];
+            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [NSString givenNameFromFullName:[_nameField finalText]]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemale];
         maleLabel = [OStrings stringForKey:strTermMale];
     }
     
-    UIActionSheet *genderSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:femaleLabel, maleLabel, nil];
+    UIActionSheet *genderSheet = [[UIActionSheet alloc] initWithTitle:sheetQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:femaleLabel, maleLabel, nil];
     genderSheet.tag = kGenderSheetTag;
     [genderSheet showInView:self.view];
 }
@@ -242,9 +244,9 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
 
 - (void)promptForExistingResidenceAction
 {
-    NSString *titleQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleExistingResidence], _candidate.name, _candidate.givenName];
+    NSString *sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleExistingResidence], _candidate.name, _candidate.givenName];
     
-    UIActionSheet *existingResidenceSheet = [[UIActionSheet alloc] initWithTitle:titleQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonInviteToHousehold], [OStrings stringForKey:strButtonMergeHouseholds], nil];
+    UIActionSheet *existingResidenceSheet = [[UIActionSheet alloc] initWithTitle:sheetQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonInviteToHousehold], [OStrings stringForKey:strButtonMergeHouseholds], nil];
     existingResidenceSheet.tag = kExistingResidenceSheetTag;
     [existingResidenceSheet showInView:self.view];
 }
@@ -252,7 +254,11 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
 
 - (void)promptForUserEmailChangeConfirmation
 {
+    NSString *sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleUserEmailChange], _member.email, [_emailField finalText]];
     
+    UIActionSheet *emailChangeSheet = [[UIActionSheet alloc] initWithTitle:sheetQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
+    emailChangeSheet.tag = kEmailChangeSheetTag;
+    [emailChangeSheet showInView:self.view];
 }
 
 
@@ -329,7 +335,7 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
                 }
             }
         } else if ([OState s].actionIsEdit) {
-            if (![[_emailField finalText] isEqualToString:_member.email]) {
+            if ([_member hasEmail] && ![[_emailField finalText] isEqualToString:_member.email]) {
                 if ([OState s].aspectIsSelf) {
                     [self promptForUserEmailChangeConfirmation];
                 } else {
@@ -634,6 +640,13 @@ static NSInteger const kExistingResidenceButtonCancel = 2;
                 [self registerMember];
             } else if (buttonIndex == kExistingResidenceButtonMergeHouseholds) {
                 // TODO
+            }
+            
+            break;
+            
+        case kEmailChangeSheetTag:
+            if (buttonIndex == kEmailChangeButtonContinue) {
+                
             }
             
             break;

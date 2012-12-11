@@ -96,6 +96,7 @@
                     <connections>
                         <segue destination="O0V-Ey-WLK" kind="push" identifier="pushFromMemberToMemberListView" id="99F-61-IG0"/>
                         <segue destination="r2l-jP-T7e" kind="modal" identifier="modalFromMemberToOrigoView" modalTransitionStyle="flipHorizontal" id="zDY-cv-tVk"/>
+                        <segue destination="a73-0o-gAI" kind="modal" identifier="modalFromMemberToAuthView" modalTransitionStyle="flipHorizontal" id="Kbo-H7-0bI"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Br5-90-R22" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -351,6 +352,6 @@
         <segue reference="dkx-IG-SeS"/>
         <segue reference="gdX-lL-iZb"/>
         <segue reference="99F-61-IG0"/>
-        <segue reference="HDP-sD-gJi"/>
+        <segue reference="Kbo-H7-0bI"/>
     </inferredMetricsTieBreakers>
 </document>

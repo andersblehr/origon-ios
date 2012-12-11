@@ -8,8 +8,8 @@
 
 #import "OVisualConstraints.h"
 
-#import "NSDate+ODateExtensions.h"
-#import "UIFont+OFontExtensions.h"
+#import "NSDate+OrigoExtensions.h"
+#import "UIFont+OrigoExtensions.h"
 
 #import "OLogging.h"
 #import "OState.h"
@@ -19,7 +19,7 @@
 
 #import "OReplicatedEntity.h"
 
-#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 static NSString * const kVConstraintsInitial          = @"V:|-10-";
 static NSString * const kVConstraintsInitialWithTitle = @"V:|-44-";

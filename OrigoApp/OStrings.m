@@ -8,8 +8,8 @@
 
 #import "OStrings.h"
 
-#import "NSDate+ODateExtensions.h"
-#import "NSString+OStringExtensions.h"
+#import "NSDate+OrigoExtensions.h"
+#import "NSString+OrigoExtensions.h"
 
 #import "OAlert.h"
 #import "OMeta.h"
@@ -27,6 +27,7 @@ NSString * const strButtonOK                         = @"strButtonOK";
 NSString * const strButtonEdit                       = @"strButtonEdit";
 NSString * const strButtonNext                       = @"strButtonNext";
 NSString * const strButtonDone                       = @"strButtonDone";
+NSString * const strButtonContinue                   = @"strButtonContinue";
 NSString * const strButtonCancel                     = @"strButtonCancel";
 NSString * const strButtonSignOut                    = @"strButtonSignOut";
 NSString * const strAlertTextNoInternet              = @"strAlertTextNoInternet";
@@ -112,6 +113,7 @@ NSString * const strSheetTitleGenderSelfMinor        = @"strSheetTitleGenderSelf
 NSString * const strSheetTitleGenderMember           = @"strSheetTitleGenderMember";
 NSString * const strSheetTitleGenderMinor            = @"strSheetTitleGenderMinor";
 NSString * const strSheetTitleExistingResidence      = @"strSheetTitleExistingResidence";
+NSString * const strSheetTitleUserEmailChange        = @"strSheetTitleUserEmailChange";
 NSString * const strTermFemale                       = @"strTermFemale";
 NSString * const strTermFemaleMinor                  = @"strTermFemaleMinor";
 NSString * const strTermMale                         = @"strTermMale";

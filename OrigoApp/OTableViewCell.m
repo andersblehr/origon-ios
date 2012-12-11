@@ -10,13 +10,12 @@
 
 #import <AudioToolbox/AudioToolbox.h>
 
-#import "NSDate+ODateExtensions.h"
-#import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
-#import "NSString+OStringExtensions.h"
-#import "UIColor+OColorExtensions.h"
-#import "UIDatePicker+ODatePickerExtensions.h"
-#import "UIFont+OFontExtensions.h"
-#import "UIView+OViewExtensions.h"
+#import "NSDate+OrigoExtensions.h"
+#import "NSManagedObjectContext+OrigoExtensions.h"
+#import "NSString+OrigoExtensions.h"
+#import "UIColor+OrigoExtensions.h"
+#import "UIFont+OrigoExtensions.h"
+#import "UIView+OrigoExtensions.h"
 
 #import "OMeta.h"
 #import "OState.h"
@@ -29,15 +28,9 @@
 #import "OOrigo.h"
 #import "OReplicatedEntity.h"
 
-#import "OMember+OMemberExtensions.h"
-#import "OOrigo+OOrigoExtensions.h"
-#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
-
-typedef enum {
-    OCellTypeDefault,
-    OCellTypeSignIn,
-    OCellTypeActivation,
-} OCellType;
+#import "OMember+OrigoExtensions.h"
+#import "OOrigo+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 NSString * const kReuseIdentifierDefault = @"idDefaultCell";
 NSString * const kReuseIdentifierUserSignIn = @"idUserSignInCell";
@@ -63,14 +56,6 @@ static CGFloat const kShakeDelay = 0.f;
 static CGFloat const kShakeTranslationX = 3.f;
 static CGFloat const kShakeTranslationY = 0.f;
 static CGFloat const kShakeRepeatCount = 3.f;
-
-
-@interface OTableViewCell () {
-@private
-    OCellType _cellType;
-}
-
-@end
 
 
 @implementation OTableViewCell
@@ -223,19 +208,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.textLabel.font = [UIFont titleFont];
         
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
-            _cellType = OCellTypeSignIn;
-            
             [self addLabelForKeyPath:kKeyPathSignIn constrained:YES];
             [self addTextFieldForKeyPath:kKeyPathAuthEmail constrained:YES];
             [self addTextFieldForKeyPath:kKeyPathPassword constrained:YES];
         } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-            _cellType = OCellTypeActivation;
-            
             [self addLabelForKeyPath:kKeyPathActivation constrained:YES];
             [self addTextFieldForKeyPath:kKeyPathActivationCode constrained:YES];
             [self addTextFieldForKeyPath:kKeyPathRepeatPassword constrained:YES];
         } else {
-            _cellType = OCellTypeDefault;
             _selectable = YES;
         }
         

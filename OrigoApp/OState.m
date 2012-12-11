@@ -13,7 +13,7 @@
 #import "OMember.h"
 #import "OOrigo.h"
 
-#import "OMember+OMemberExtensions.h"
+#import "OMember+OrigoExtensions.h"
 
 static OState *s = nil;
 

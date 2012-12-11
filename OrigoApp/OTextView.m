@@ -8,10 +8,10 @@
 
 #import "OTextView.h"
 
-#import "NSString+OStringExtensions.h"
-#import "UIColor+OColorExtensions.h"
-#import "UIFont+OFontExtensions.h"
-#import "UIView+OViewExtensions.h"
+#import "NSString+OrigoExtensions.h"
+#import "UIColor+OrigoExtensions.h"
+#import "UIFont+OrigoExtensions.h"
+#import "UIView+OrigoExtensions.h"
 
 #import "OMeta.h"
 #import "OState.h"
