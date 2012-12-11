@@ -25,14 +25,10 @@
 #import "OUUIDGenerator.h"
 
 #import "ODevice.h"
-#import "OMember.h"
-#import "OMemberResidency.h"
-#import "OMembership.h"
-#import "OMessageBoard.h"
-#import "OOrigo.h"
-
 #import "OMember+OrigoExtensions.h"
 #import "OMembership+OrigoExtensions.h"
+#import "OMemberResidency.h"
+#import "OMessageBoard.h"
 #import "OOrigo+OrigoExtensions.h"
 
 #import "OMemberViewController.h"

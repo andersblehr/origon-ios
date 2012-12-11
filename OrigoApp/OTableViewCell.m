@@ -24,10 +24,6 @@
 #import "OTextView.h"
 #import "OVisualConstraints.h"
 
-#import "OMember.h"
-#import "OOrigo.h"
-#import "OReplicatedEntity.h"
-
 #import "OMember+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"

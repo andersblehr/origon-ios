@@ -11,9 +11,6 @@
 #import "OMeta.h"
 #import "OState.h"
 
-#import "OMember.h"
-#import "OOrigo.h"
-
 #import "OMember+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"
 

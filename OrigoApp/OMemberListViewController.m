@@ -21,11 +21,6 @@
 #import "OTableViewCell.h"
 #import "OTextView.h"
 
-#import "OMember.h"
-#import "OMembership.h"
-#import "OOrigo.h"
-#import "OReplicatedEntityRef.h"
-
 #import "OMember+OrigoExtensions.h"
 #import "OMembership+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"

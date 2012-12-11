@@ -25,11 +25,6 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 
-#import "OMember.h"
-#import "OMemberResidency.h"
-#import "OMembership.h"
-#import "OOrigo.h"
-
 #import "OMember+OrigoExtensions.h"
 #import "OMemberResidency+OrigoExtensions.h"
 #import "OMembership+OrigoExtensions.h"

@@ -17,8 +17,6 @@
 #import "OTextField.h"
 #import "OTextView.h"
 
-#import "OReplicatedEntity.h"
-
 #import "OReplicatedEntity+OrigoExtensions.h"
 
 static NSString * const kVConstraintsInitial          = @"V:|-10-";

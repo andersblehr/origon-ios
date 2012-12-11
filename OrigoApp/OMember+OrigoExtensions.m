@@ -21,9 +21,6 @@
 
 #import "OMember.h"
 #import "OMemberResidency.h"
-#import "OMembership.h"
-#import "OOrigo.h"
-
 #import "OMembership+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"
 

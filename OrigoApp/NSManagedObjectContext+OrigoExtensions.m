@@ -16,18 +16,13 @@
 #import "OStrings.h"
 #import "OUUIDGenerator.h"
 
-#import "OMember.h"
-#import "OMemberResidency.h"
-#import "OMembership.h"
-#import "OOrigo.h"
-#import "OReplicatedEntity.h"
-#import "OReplicatedEntityGhost.h"
-#import "OReplicatedEntityRef.h"
-
 #import "OMember+OrigoExtensions.h"
+#import "OMemberResidency.h"
 #import "OMembership+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
+#import "OReplicatedEntityGhost.h"
+#import "OReplicatedEntityRef.h"
 
 static NSString * const kRootOrigoIdFormat = @"~%@";
 

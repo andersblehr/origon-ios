@@ -19,12 +19,9 @@
 #import "OStrings.h"
 #import "OUUIDGenerator.h"
 
-#import "OMember.h"
-#import "OReplicatedEntity.h"
-#import "OReplicatedEntityGhost.h"
-
 #import "OMember+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
+#import "OReplicatedEntityGhost.h"
 
 #import "OOrigoListViewController.h"
 #import "OTabBarController.h"

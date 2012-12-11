@@ -18,11 +18,8 @@
 #import "OTableViewCell.h"
 #import "OTextView.h"
 
-#import "OMember.h"
-#import "OMemberResidency.h"
-#import "OMembership.h"
-
 #import "OMember+OrigoExtensions.h"
+#import "OMemberResidency.h"
 #import "OMembership+OrigoExtensions.h"
 
 
