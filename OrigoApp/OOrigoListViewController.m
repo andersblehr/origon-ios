@@ -22,11 +22,9 @@
 #import "OStrings.h"
 #import "OTableViewCell.h"
 
-#import "OMember.h"
+#import "OMember+OrigoExtensions.h"
 #import "OMemberResidency.h"
 #import "OMembership.h"
-
-#import "OMember+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"
 
 #import "OAuthViewController.h"

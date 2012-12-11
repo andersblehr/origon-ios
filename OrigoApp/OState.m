@@ -10,10 +10,8 @@
 
 #import "OMeta.h"
 
-#import "OMember.h"
-#import "OOrigo.h"
-
 #import "OMember+OrigoExtensions.h"
+#import "OOrigo.h"
 
 static OState *s = nil;
 
