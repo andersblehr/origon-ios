@@ -8,8 +8,8 @@
 
 #import "OSettingsViewController.h"
 
-#import "UIBarButtonItem+OBarButtonItemExtensions.h"
-#import "UITableView+OTableViewExtensions.h"
+#import "UIBarButtonItem+OrigoExtensions.h"
+#import "UITableView+OrigoExtensions.h"
 
 #import "OLogging.h"
 #import "OMeta.h"

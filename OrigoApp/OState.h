@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, OStateAction) {
     OStateActionNone,
     OStateActionSetup,
     OStateActionLogin,
@@ -17,16 +17,16 @@ typedef enum {
     OStateActionList,
     OStateActionDisplay,
     OStateActionEdit,
-} OStateAction;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, OStateTarget) {
     OStateTargetNone,
     OStateTargetMember,
     OStateTargetOrigo,
     OStateTargetSetting,
-} OStateTarget;
+};
 
-typedef enum {
+typedef NS_ENUM(NSInteger, OStateAspect) {
     OStateAspectNone,
     OStateAspectSelf,
     OStateAspectWard,
@@ -36,7 +36,7 @@ typedef enum {
     OStateAspectClass,
     OStateAspectPreschool,
     OStateAspectTeam,
-} OStateAspect;
+};
 
 @class OMember, OOrigo;
 

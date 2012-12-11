@@ -12,8 +12,8 @@
 
 @protocol OEntityObservingDelegate;
 
-@class OMember, OMembership, OOrigo;
 @class OTableViewCell, OTextField;
+@class OMember, OMembership, OOrigo;
 
 @interface OMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
 @private
@@ -40,7 +40,7 @@
 @property (strong, nonatomic) OMembership *membership;
 @property (strong, nonatomic) OOrigo *origo;
 
-@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
 @property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
+@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
 
 @end

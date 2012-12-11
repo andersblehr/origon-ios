@@ -8,9 +8,9 @@
 
 #import "OMeta.h"
 
-#import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
-#import "NSString+OStringExtensions.h"
-#import "UIDatePicker+ODatePickerExtensions.h"
+#import "NSManagedObjectContext+OrigoExtensions.h"
+#import "NSString+OrigoExtensions.h"
+#import "UIDatePicker+OrigoExtensions.h"
 
 #import "OAppDelegate.h"
 #import "OState.h"
@@ -23,8 +23,8 @@
 #import "OReplicatedEntity.h"
 #import "OReplicatedEntityGhost.h"
 
-#import "OMember+OMemberExtensions.h"
-#import "OReplicatedEntity+OReplicatedEntityExtensions.h"
+#import "OMember+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 #import "OOrigoListViewController.h"
 #import "OTabBarController.h"

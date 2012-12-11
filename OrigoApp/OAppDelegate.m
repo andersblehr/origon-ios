@@ -10,7 +10,7 @@
 
 #import <CoreData/CoreData.h>
 
-#import "NSManagedObjectContext+OManagedObjectContextExtensions.h"
+#import "NSManagedObjectContext+OrigoExtensions.h"
 
 #import "Reachability.h"
 
