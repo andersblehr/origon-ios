@@ -105,6 +105,8 @@ static OState *s = nil;
         targetAsString = @"MEMBER";
     } else if (self.targetIsOrigo) {
         targetAsString = @"ORIGO";
+    } else if (self.targetIsEmail) {
+        targetAsString = @"EMAIL";
     } else if (self.targetIsSetting) {
         targetAsString = @"SETTING";
     } else {
@@ -303,6 +305,18 @@ static OState *s = nil;
 - (BOOL)targetIsOrigo
 {
     return (_target == OStateTargetOrigo);
+}
+
+
+- (void)setTargetIsEmail:(BOOL)targetIsEmail
+{
+    [self setTarget:OStateTargetEmail activate:targetIsEmail];
+}
+
+
+- (BOOL)targetIsEmail
+{
+    return (_target == OStateTargetEmail);
 }
 
 

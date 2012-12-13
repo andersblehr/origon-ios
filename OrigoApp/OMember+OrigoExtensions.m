@@ -27,22 +27,6 @@
 
 @implementation OMember (OrigoExtensions)
 
-#pragma mark - Wrapper accessors
-
-- (void)setDidRegister_:(BOOL)didRegister
-{
-    self.didRegister = [NSNumber numberWithBool:didRegister];
-    
-    [self rootMembership].isActive_ = YES;
-}
-
-
-- (BOOL)didRegister_
-{
-    return [self.didRegister boolValue];
-}
-
-
 #pragma mark - Table view list display
 
 - (NSString *)listName
@@ -117,7 +101,7 @@
 
 - (BOOL)isUser
 {
-    return [self.email isEqualToString:[OMeta m].userEmail];
+    return [self.entityId isEqualToString:[OMeta m].user.entityId];
 }
 
 

@@ -15,7 +15,7 @@
 @class OTableViewCell, OTextField;
 @class OMember, OMembership, OOrigo;
 
-@interface OMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
+@interface OMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate, OModalViewControllerDelegate> {
 @private
     OTableViewCell *_memberCell;
     OMember *_member;

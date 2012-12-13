@@ -15,7 +15,7 @@
 
 @class OTableViewCell, OTextField;
 
-@interface OAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
+@interface OAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
 @private
     OTableViewCell *_authCell;
     
@@ -33,6 +33,7 @@
     UIActivityIndicatorView *_activityIndicator;
 }
 
+@property (strong, nonatomic) NSString *emailToActivate;
 @property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
 
 @end

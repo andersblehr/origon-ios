@@ -52,9 +52,8 @@ static NSInteger const kExistingResidenceButtonInviteToHousehold = 0;
 static NSInteger const kExistingResidenceButtonMergeHouseholds = 1;
 static NSInteger const kExistingResidenceButtonCancel = 2;
 
-static NSInteger const kEmailChangeSheetTag = 2;
-static NSInteger const kEmailChangeButtonContinue = 0;
-static NSInteger const kEmailChangeButtonCancel = 1;
+static NSInteger const kEmailChangeAlertTag = 2;
+static NSInteger const kEmailChangeButtonContinue = 1;
 
 
 @implementation OMemberViewController
@@ -171,8 +170,6 @@ static NSInteger const kEmailChangeButtonCancel = 1;
         
         self.navigationItem.rightBarButtonItem = _nextButton;
         self.navigationItem.leftBarButtonItem = _cancelButton;
-        
-        [_nameField becomeFirstResponder];
     } else if ([OState s].actionIsDisplay) {
         self.navigationItem.rightBarButtonItem = editButton;
         self.navigationItem.leftBarButtonItem = backButton;
@@ -187,8 +184,13 @@ static NSInteger const kEmailChangeButtonCancel = 1;
 - (void)setState
 {
     [OState s].targetIsMember = YES;
-    [OState s].actionIsDisplay = ![OState s].actionIsInput;
     
+    if ([OState s].actionIsActivate) {
+        [OState s].actionIsDisplay = YES;
+    } else {
+        [OState s].actionIsDisplay = ![OState s].actionIsInput;
+    }
+
     if (![OState s].actionIsRegister) {
         [[OState s] setAspectForMember:_member];
     }
@@ -249,11 +251,9 @@ static NSInteger const kEmailChangeButtonCancel = 1;
 
 - (void)promptForUserEmailChangeConfirmation
 {
-    NSString *sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleUserEmailChange], _member.email, [_emailField finalText]];
-    
-    UIActionSheet *emailChangeSheet = [[UIActionSheet alloc] initWithTitle:sheetQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
-    emailChangeSheet.tag = kEmailChangeSheetTag;
-    [emailChangeSheet showInView:self.view];
+    UIAlertView *emailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleUserEmailChange] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextUserEmailChange], _member.email, [_emailField finalText]] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
+    emailChangeAlert.tag = kEmailChangeAlertTag;
+    [emailChangeAlert show];
 }
 
 
@@ -268,6 +268,8 @@ static NSInteger const kEmailChangeButtonCancel = 1;
 - (void)startEditing
 {
     [self toggleEditMode];
+    
+    [_nameField becomeFirstResponder];
 }
 
 
@@ -434,7 +436,7 @@ static NSInteger const kEmailChangeButtonCancel = 1;
 {
     [super viewDidAppear:animated];
     
-    if ([OState s].actionIsInput) {
+    if (self.presentingViewController) {
         [_nameField becomeFirstResponder];
     }
 }
@@ -444,17 +446,19 @@ static NSInteger const kEmailChangeButtonCancel = 1;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
+    if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
+        OAuthViewController *authViewController = segue.destinationViewController;
+        authViewController.emailToActivate = [_emailField finalText];
+        authViewController.delegate = self;
+    } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
         UINavigationController *navigationController = segue.destinationViewController;
         OOrigoViewController *origoViewController = navigationController.viewControllers[0];
         origoViewController.membership = [_origo userMembership];
         origoViewController.delegate = self;
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
         OMemberListViewController *memberListViewController = segue.destinationViewController;
-        memberListViewController.delegate = _delegate;
         memberListViewController.origo = _origo;
-        
-        [OState s].actionIsList = YES;
+        memberListViewController.delegate = _delegate;
     }
 }
 
@@ -570,6 +574,12 @@ static NSInteger const kEmailChangeButtonCancel = 1;
 {
     if (textField == _emailField) {
         self.navigationItem.rightBarButtonItem = _doneButton;
+    } else if (textField == _mobilePhoneField) {
+        if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
+            self.navigationItem.rightBarButtonItem = _doneButton;
+        } else {
+            self.navigationItem.rightBarButtonItem = _nextButton;
+        }
     } else {
         self.navigationItem.rightBarButtonItem = _nextButton;
     }
@@ -624,7 +634,6 @@ static NSInteger const kEmailChangeButtonCancel = 1;
         case kGenderSheetTag:
             if (buttonIndex != kGenderSheetButtonCancel) {
                 _gender = (buttonIndex == kGenderSheetButtonFemale) ? kGenderFemale : kGenderMale;
-                
                 [self registerMember];
             }
             
@@ -639,9 +648,31 @@ static NSInteger const kEmailChangeButtonCancel = 1;
             
             break;
             
-        case kEmailChangeSheetTag:
+        case kEmailChangeAlertTag:
             if (buttonIndex == kEmailChangeButtonContinue) {
-                
+                [self toggleEditMode];
+                [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
+            }
+            
+            break;
+            
+        default:
+            break;
+    }
+}
+
+
+#pragma mark - UIAlertViewDelegate conformance
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    switch (alertView.tag) {
+        case kEmailChangeAlertTag:
+            if (buttonIndex == kEmailChangeButtonContinue) {
+                [self toggleEditMode];
+                [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
+            } else {
+                [_emailField becomeFirstResponder];
             }
             
             break;
@@ -658,7 +689,18 @@ static NSInteger const kEmailChangeButtonCancel = 1;
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
     
-    if ([identitifier isEqualToString:kOrigoViewControllerId]) {
+    if ([identitifier isEqualToString:kAuthViewControllerId]) {
+        if ([_member.email isEqualToString:[_emailField finalText]]) {
+            [OMeta m].userEmail = _member.email;
+            [self updateMember];
+        } else {
+            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleEmailChangeFailed] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextEmailChangeFailed], [_emailField finalText]] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
+            [failedEmailChangeAlert show];
+            
+            [self toggleEditMode];
+            [_emailField becomeFirstResponder];
+        }
+    } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
         [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
     }
 }

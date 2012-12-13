@@ -14,6 +14,8 @@
 #import "OMeta.h"
 #import "OState.h"
 
+NSString * const kOrigoSeasoning = @"socroilgao";
+
 NSString * const kSeparatorSpace = @" ";
 NSString * const kSeparatorNewline = @"\n";
 NSString * const kSeparatorComma = @", ";
@@ -79,31 +81,31 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
-- (NSString *)diff:(NSString *)otherString
+- (NSString *)seasonWith:(NSString *)seasoning
 {
-    NSString *thisStringHashed = [self hashUsingSHA1];
-    NSString *otherStringHashed = [otherString hashUsingSHA1];
+    NSString *selfHash = [self hashUsingSHA1];
+    NSString *seasoningHash = [seasoning hashUsingSHA1];
     
-    const char *thisCString = [thisStringHashed cStringUsingEncoding:NSUTF8StringEncoding];
-    const char *otherCString = [otherStringHashed cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *selfCString = [selfHash cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *seasoningCString = [seasoningHash cStringUsingEncoding:NSUTF8StringEncoding];
     
-    size_t hashLength = strlen(thisCString);
+    size_t hashLength = strlen(selfCString);
     
-    char diffedBytes[hashLength + 1];
-    diffedBytes[hashLength] = (char)0;
+    char seasonedBytes[hashLength + 1];
+    seasonedBytes[hashLength] = (char)0;
     
     for (int i = 0; i < hashLength; i++) {
-        char char1 = thisCString[i];
-        char char2 = otherCString[hashLength - (i + 1)];
+        char char1 = selfCString[i];
+        char char2 = seasoningCString[hashLength - (i + 1)];
         
         if (char1 > char2) {
-            diffedBytes[i] = char1 - char2 + 33; // ASCII 33 = '!'
+            seasonedBytes[i] = char1 - char2 + 33; // ASCII 33 = '!'
         } else {
-            diffedBytes[i] = char2 - char1 + 33;
+            seasonedBytes[i] = char2 - char1 + 33;
         }
     }
     
-    return [NSString stringWithCString:diffedBytes encoding:NSUTF8StringEncoding];
+    return [NSString stringWithCString:seasonedBytes encoding:NSUTF8StringEncoding];
 }
 
 

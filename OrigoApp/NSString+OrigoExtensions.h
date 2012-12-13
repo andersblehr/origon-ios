@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const kOrigoSeasoning;
+
 extern NSString * const kSeparatorSpace;
 extern NSString * const kSeparatorNewline;
 extern NSString * const kSeparatorComma;
@@ -17,7 +19,7 @@ extern NSString * const kSeparatorHash;
 
 - (NSString *)base64EncodedString;
 - (NSString *)hashUsingSHA1;
-- (NSString *)diff:(NSString *)string;
+- (NSString *)seasonWith:(NSString *)string;
 
 - (NSString *)removeSuperfluousWhitespace;
 - (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;

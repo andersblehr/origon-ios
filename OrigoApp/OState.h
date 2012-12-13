@@ -23,6 +23,7 @@ typedef NS_ENUM(NSInteger, OStateTarget) {
     OStateTargetNone,
     OStateTargetMember,
     OStateTargetOrigo,
+    OStateTargetEmail,
     OStateTargetSetting,
 };
 
@@ -57,6 +58,7 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
 
 @property (nonatomic) BOOL targetIsMember;
 @property (nonatomic) BOOL targetIsOrigo;
+@property (nonatomic) BOOL targetIsEmail;
 @property (nonatomic) BOOL targetIsSetting;
 
 @property (nonatomic) BOOL aspectIsNone;
