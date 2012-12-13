@@ -179,8 +179,8 @@ static NSInteger const kMemberSection = 2;
         
         UINavigationController *navigationController = segue.destinationViewController;
         OMemberViewController *memberViewController = navigationController.viewControllers[0];
-        memberViewController.delegate = self;
         memberViewController.origo = _origo;
+        memberViewController.delegate = self;
     } else if ([segue.identifier isEqualToString:kPushSegueToOrigoView]) {
         OOrigoViewController *origoViewController = segue.destinationViewController;
         origoViewController.membership = [_origo userMembership];

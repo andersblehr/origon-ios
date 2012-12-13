@@ -18,6 +18,7 @@ extern NSInteger const kHTTPStatusOK;
 extern NSInteger const kHTTPStatusCreated;
 extern NSInteger const kHTTPStatusNoContent;
 extern NSInteger const kHTTPStatusMultiStatus;
+extern NSInteger const kHTTPStatusFound;
 extern NSInteger const kHTTPStatusNotModified;
 
 extern NSInteger const kHTTPStatusErrorRangeStart;
@@ -51,5 +52,6 @@ extern NSInteger const kHTTPStatusInternalServerError;
 - (void)fetchStrings:(id)delegate;
 - (void)authenticate:(id)delegate;
 - (void)replicate;
+- (void)emailActivationCode:(id)delegate;
 
 @end

@@ -20,6 +20,7 @@
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
+#import "OUUIDGenerator.h"
 
 #import "OReplicatedEntity+OrigoExtensions.h"
 
@@ -32,6 +33,7 @@ NSInteger const kHTTPStatusOK = 200;
 NSInteger const kHTTPStatusCreated = 201;
 NSInteger const kHTTPStatusNoContent = 204;
 NSInteger const kHTTPStatusMultiStatus = 207;
+NSInteger const kHTTPStatusFound = 302;
 NSInteger const kHTTPStatusNotModified = 304;
 
 NSInteger const kHTTPStatusErrorRangeStart = 400;
@@ -57,6 +59,7 @@ static NSString * const kHTTPHeaderAuthorization = @"Authorization";
 static NSString * const kHTTPHeaderContentType = @"Content-Type";
 static NSString * const kHTTPHeaderIfModifiedSince = @"If-Modified-Since";
 static NSString * const kHTTPHeaderLastModified = @"Last-Modified";
+static NSString * const kHTTPHeaderLocation = @"Location";
 
 static NSString * const kCharsetUTF8 = @"utf-8";
 static NSString * const kMediaTypeJSONUTF8 = @"application/json;charset=utf-8";
@@ -68,9 +71,9 @@ static NSString * const kRESTHandlerModel = @"model";
 
 static NSString * const kRESTRouteAuthLogin = @"login";
 static NSString * const kRESTRouteAuthActivate = @"activate";
+static NSString * const kRESTRouteAuthEmailCode = @"emailcode";
 static NSString * const kRESTRouteModelReplicate = @"replicate";
 static NSString * const kRESTRouteModelFetch = @"fetch";
-static NSString * const kRESTRouteModelMember = @"member";
 
 static NSString * const kURLParameterStringToken = @"token";
 static NSString * const kURLParameterAuthToken = @"token";
@@ -89,7 +92,7 @@ static NSString * const kURLParameterVersion = @"version";
     [dateFormatter setDateFormat:kDateTimeFormatZulu];
     
     NSString *timestamp = [dateFormatter stringFromDate:[NSDate date]];
-    NSString *saltedAndHashedTimestamp = [[timestamp diff:@"ogiro"] hashUsingSHA1];
+    NSString *saltedAndHashedTimestamp = [[timestamp seasonWith:kOrigoSeasoning] hashUsingSHA1];
     NSString *base64EncodedTimestamp = [timestamp base64EncodedString];
     
     return [base64EncodedTimestamp stringByAppendingString:saltedAndHashedTimestamp];
@@ -236,6 +239,7 @@ static NSString * const kURLParameterVersion = @"version";
     
     if ([OState s].actionIsLogin) {
         _RESTRoute = kRESTRouteAuthLogin;
+        OLogDebug(@"Last replication date (outgoing): %@", [OMeta m].lastReplicationDate);
         
         [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
     } else if ([OState s].actionIsActivate) {
@@ -252,6 +256,7 @@ static NSString * const kURLParameterVersion = @"version";
     
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
+    OLogDebug(@"Last replication date (outgoing): %@", [OMeta m].lastReplicationDate);
     
     NSSet *modifiedEntities = [OMeta m].dirtyEntities;
     
@@ -270,6 +275,17 @@ static NSString * const kURLParameterVersion = @"version";
         
         [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OMeta m]];
     }
+}
+
+
+- (void)emailActivationCode:(id)delegate
+{
+    _RESTHandler = kRESTHandlerAuth;
+    _RESTRoute = kRESTRouteAuthEmailCode;
+    
+    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
 }
 
 
@@ -294,10 +310,21 @@ static NSString * const kURLParameterVersion = @"version";
     [_responseData setLength:0];
     
     if (response.statusCode < kHTTPStatusErrorRangeStart) {
-        NSString *replicationDate = [[response allHeaderFields] objectForKey:kHTTPHeaderLastModified];
+        NSDictionary *responseHeaders = [response allHeaderFields];
+        
+        if (![OMeta m].userId && ([OState s].actionIsLogin || [OState s].actionIsActivate)) {
+            if (response.statusCode == kHTTPStatusOK) {
+                [OMeta m].userId = [responseHeaders objectForKey:kHTTPHeaderLocation];
+            } else if (response.statusCode != kHTTPStatusCreated) {
+                [OMeta m].userId = [OUUIDGenerator generateUUID];
+            }
+        }
+        
+        NSString *replicationDate = [responseHeaders objectForKey:kHTTPHeaderLastModified];
         
         if (replicationDate) {
             [OMeta m].lastReplicationDate = replicationDate;
+            OLogDebug(@"Last replication date (incoming): %@", [OMeta m].lastReplicationDate);
         }
     } else {
         [OAlert showAlertForHTTPStatus:response.statusCode];

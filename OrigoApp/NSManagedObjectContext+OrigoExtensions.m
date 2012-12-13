@@ -199,7 +199,14 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 
 - (OMember *)insertMemberEntityWithEmail:(NSString *)email
 {
-    NSString *memberId = [OUUIDGenerator generateUUID];
+    NSString *memberId = nil;
+    
+    if ([email isEqualToString:[OMeta m].userEmail]) {
+        memberId = [OMeta m].userId;
+    } else {
+        memberId = [OUUIDGenerator generateUUID];
+    }
+    
     NSString *rootId = [NSString stringWithFormat:kRootOrigoIdFormat, memberId];
     
     OOrigo *root = [self insertOrigoEntityOfType:kOrigoTypeMemberRoot origoId:rootId];

@@ -12,9 +12,6 @@
 
 @interface OMember (OrigoExtensions)
 
-- (void)setDidRegister_:(BOOL)didRegister_;
-- (BOOL)didRegister_;
-
 - (NSString *)listName;
 - (NSString *)listDetails;
 - (UIImage *)listImage;

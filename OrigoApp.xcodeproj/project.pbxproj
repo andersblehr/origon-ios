@@ -64,7 +64,6 @@
 		5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* OMemberViewController.m */; };
 		5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB91582493C000B19FA /* OTableViewCell.m */; };
 		5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C93DC741628100C009A66C4 /* Default-568h@2x.png */; };
-		5C991C2116624C7400E1CF63 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C991C2016624C7400E1CF63 /* OMember.m */; };
 		5C9B9096162E93BF004F530F /* 19-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9094162E93BF004F530F /* 19-gear.png */; };
 		5C9B9097162E93BF004F530F /* 19-gear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9095162E93BF004F530F /* 19-gear@2x.png */; };
 		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+OrigoExtensions.m */; };
@@ -111,6 +110,7 @@
 		5CD3360E15C40A2F00ABBFE7 /* OState.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD3360D15C40A2F00ABBFE7 /* OState.m */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+OrigoExtensions.m */; };
 		5CE987C414856426005A17C6 /* OCalendarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* OCalendarViewController.m */; };
+		5CE9ED4A167A300600CA90F0 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9ED49167A300600CA90F0 /* OMember.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -212,8 +212,6 @@
 		5C8B3AB81582493C000B19FA /* OTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCell.h; sourceTree = "<group>"; };
 		5C8B3AB91582493C000B19FA /* OTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCell.m; sourceTree = "<group>"; };
 		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
-		5C991C1F16624C7400E1CF63 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
-		5C991C2016624C7400E1CF63 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
 		5C9B9094162E93BF004F530F /* 19-gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19-gear.png"; sourceTree = "<group>"; };
 		5C9B9095162E93BF004F530F /* 19-gear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19-gear@2x.png"; sourceTree = "<group>"; };
 		5C9D3146151F1A0100DF6EB0 /* NSJSONSerialization+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+OrigoExtensions.h"; sourceTree = "<group>"; };
@@ -299,6 +297,8 @@
 		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5CE987C214856426005A17C6 /* OCalendarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCalendarViewController.h; sourceTree = "<group>"; };
 		5CE987C314856426005A17C6 /* OCalendarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCalendarViewController.m; sourceTree = "<group>"; };
+		5CE9ED48167A300600CA90F0 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
+		5CE9ED49167A300600CA90F0 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -382,8 +382,8 @@
 				5CAEE0A5163E513700A9046B /* OEventOrigoInvitation.m */,
 				5CAEE09E163E513500A9046B /* OExternalDocument.h */,
 				5CAEE09F163E513500A9046B /* OExternalDocument.m */,
-				5C991C1F16624C7400E1CF63 /* OMember.h */,
-				5C991C2016624C7400E1CF63 /* OMember.m */,
+				5CE9ED48167A300600CA90F0 /* OMember.h */,
+				5CE9ED49167A300600CA90F0 /* OMember.m */,
 				5CAEE0AA163E513800A9046B /* OMemberResidency.h */,
 				5CAEE0AB163E513800A9046B /* OMemberResidency.m */,
 				5CAEE0BF163E513A00A9046B /* OMembership.h */,
@@ -831,8 +831,8 @@
 				5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */,
 				5C78FABE165508AE009A4BCF /* OOrigo.m in Sources */,
 				5CBDF78C1659175000D4681C /* OVisualConstraints.m in Sources */,
-				5C991C2116624C7400E1CF63 /* OMember.m in Sources */,
 				5C2A55C01668A4C300F3916C /* OReplicatedEntityGhost.m in Sources */,
+				5CE9ED4A167A300600CA90F0 /* OMember.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

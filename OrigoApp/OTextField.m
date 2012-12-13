@@ -11,6 +11,7 @@
 #import "NSDate+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
 #import "UIColor+OrigoExtensions.h"
+#import "UIDatePicker+OrigoExtensions.h"
 #import "UIFont+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 
@@ -181,7 +182,13 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (NSString *)finalText
 {
-    return [self.text removeSuperfluousWhitespace];
+    NSString *finalText = [self.text removeSuperfluousWhitespace];
+    
+    if ([finalText length] == 0) {
+        finalText = nil;
+    }
+    
+    return finalText;
 }
 
 
@@ -199,10 +206,14 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
             [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
         }
         
-        id value = [_containingCell.entity valueForKey:_keyPath];
-        
-        if (value && [value isKindOfClass:NSDate.class]) {
-            ((UIDatePicker *)self.inputView).date = value;
+        if ([self.inputView isKindOfClass:UIDatePicker.class]) {
+            id value = [_containingCell.entity valueForKey:_keyPath];
+            
+            if (value) {
+                ((UIDatePicker *)self.inputView).date = value;
+            } else {
+                [(UIDatePicker *)self.inputView setToDefaultDate];
+            }
         }
     } else {
         self.text = [self finalText];

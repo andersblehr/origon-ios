@@ -80,6 +80,7 @@ extern NSString * const kKeyPathStringDate;
     NSMutableDictionary *_stagedRelationshipRefs;
 }
 
+@property (strong, nonatomic) NSString *userId;
 @property (strong, nonatomic) NSString *userEmail;
 @property (strong, nonatomic, readonly) OMember *user;
 

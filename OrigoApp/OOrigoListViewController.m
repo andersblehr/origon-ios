@@ -238,8 +238,8 @@ static NSInteger const kWardSection = 1;
     } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
         UINavigationController *navigationController = segue.destinationViewController;
         OOrigoViewController *origoViewController = navigationController.viewControllers[0];
-        origoViewController.delegate = self;
         origoViewController.origoType = _origoTypes[_indexOfSelectedOrigoType];
+        origoViewController.delegate = self;
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
         OMemberListViewController *memberListViewController = segue.destinationViewController;
         memberListViewController.origo = _selectedOrigo;
