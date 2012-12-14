@@ -36,6 +36,8 @@
 
 static NSString * const kModalSegueToMemberView = @"modalFromAuthToMemberView";
 
+static NSString * const kHTTPHeaderLocation = @"Location";
+
 static NSInteger const kActivationCodeLength = 6;
 
 static NSInteger const kAlertButtonStartOver = 0;
@@ -313,20 +315,22 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [self registerNewDevice];
     
     if (_userIsListed) {
+        OMembership *rootMembership = [[OMeta m].user rootMembership];
+        rootMembership.isActive = @YES;
+        rootMembership.isAdmin = @YES;
+        
         for (OMemberResidency *residency in [OMeta m].user.residencies) {
-            residency.isActive_ = YES;
+            residency.isActive = @YES;
             
-            if ([[OMeta m].user isMinor]) {
-                residency.isAdmin_ = NO;
-            } else {
-                residency.isAdmin_ = YES;
+            if (![[OMeta m].user isMinor]) {
+                residency.isAdmin = @YES;
             }
         }
     } else {
         OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
         OMemberResidency *residency = [residence addResident:[OMeta m].user];
-        residency.isActive_ = YES;
-        residency.isAdmin_ = YES;
+        residency.isActive = @YES;
+        residency.isAdmin = @YES;
         
         OMessageBoard *residenceMessageBoard = [[OMeta m].context insertEntityForClass:OMessageBoard.class inOrigo:residence];
         residenceMessageBoard.title = [OStrings stringForKey:strNameMyMessageBoard];
@@ -606,6 +610,16 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             if (response.statusCode == kHTTPStatusCreated) {
                 [self didReceiveActivationData:data];
             } else {
+                NSDictionary *responseHeaders = [response allHeaderFields];
+                
+                if (![OMeta m].userId) {
+                    if (response.statusCode == kHTTPStatusOK) {
+                        [OMeta m].userId = [responseHeaders objectForKey:kHTTPHeaderLocation];
+                    } else {
+                        [OMeta m].userId = [OUUIDGenerator generateUUID];
+                    }
+                }
+                
                 [self userDidAuthenticateWithData:data];
             }
         } else {

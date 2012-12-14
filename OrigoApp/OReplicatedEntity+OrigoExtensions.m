@@ -26,7 +26,7 @@
 
 #pragma mark - Auxiliary methods
 
-- (NSDictionary *)entityRef
+- (NSDictionary *)relationshipRef
 {
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     
@@ -95,7 +95,7 @@
             OReplicatedEntity *entity = [self valueForKey:relationshipKey];
             
             if (entity) {
-                [entityDictionary setObject:[entity entityRef] forKey:relationshipKey];
+                [entityDictionary setObject:[entity relationshipRef] forKey:relationshipKey];
             }
         }
     }
@@ -146,11 +146,11 @@
 {
     self.hashCode = [self computeHashCode];
     
-    NSDictionary *entityRefs = [[OMeta m] stagedRelationshipRefsForEntity:self];
+    NSDictionary *relationshipRefs = [[OMeta m] stagedRelationshipRefsForEntity:self];
     
-    for (NSString *name in [entityRefs allKeys]) {
-        NSDictionary *entityRef = [entityRefs objectForKey:name];
-        NSString *destinationId = [entityRef objectForKey:kKeyPathEntityId];
+    for (NSString *relationshipKey in [relationshipRefs allKeys]) {
+        NSDictionary *relationshipRef = [relationshipRefs objectForKey:relationshipKey];
+        NSString *destinationId = [relationshipRef objectForKey:kKeyPathEntityId];
         
         OReplicatedEntity *entity = [[OMeta m] stagedEntityWithId:destinationId];
         
@@ -159,7 +159,7 @@
         }
         
         if (entity) {
-            [self setValue:entity forKey:name];
+            [self setValue:entity forKey:relationshipKey];
         }
     }
 }

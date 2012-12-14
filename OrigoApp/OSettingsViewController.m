@@ -31,8 +31,8 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
 {
     [[OMeta m] userDidSignOut];
     
-    UINavigationController *origoNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
-    [origoNavigationController setViewControllers:[NSArray arrayWithObject:[self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId]]];
+    UINavigationController *origoTabNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
+    [origoTabNavigationController setViewControllers:[NSArray arrayWithObject:[self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId]]];
     
     [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
 }
@@ -78,9 +78,10 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
-        UINavigationController *origoNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
+        UINavigationController *origoTabNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
+        
         OAuthViewController *authViewController = segue.destinationViewController;
-        authViewController.delegate = (OOrigoListViewController *)origoNavigationController.viewControllers[0];
+        authViewController.delegate = (OOrigoListViewController *)origoTabNavigationController.viewControllers[0];
     }
 }
 

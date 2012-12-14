@@ -237,6 +237,8 @@ static OMeta *m = nil;
 
 - (void)userDidSignOut
 {
+    [self.context saveReplicationState];
+    
     _user = nil;
     _userId = nil;
     _authToken = nil;

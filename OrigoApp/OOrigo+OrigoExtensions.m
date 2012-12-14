@@ -180,7 +180,7 @@
 
 - (BOOL)userIsAdmin
 {
-    return [self userMembership].isAdmin_;
+    return [[self userMembership].isAdmin boolValue];
 }
 
 
@@ -198,7 +198,7 @@
 }
 
 
-#pragma mark - Display cell height calculation
+#pragma mark - Table view cell height calculation
 
 + (CGFloat)defaultCellHeight
 {

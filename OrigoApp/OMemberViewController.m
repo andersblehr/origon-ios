@@ -405,7 +405,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     } else if ([OState s].actionIsDisplay) {
         BOOL memberIsUserAndTeen = ([_member isUser] && [_member isTeenOrOlder]);
         BOOL memberIsWardOfUser = [[[OMeta m].user wards] containsObject:_member];
-        BOOL membershipIsInactiveAndUserIsAdmin = ([_origo userIsAdmin] && !_membership.isActive_);
+        BOOL membershipIsInactiveAndUserIsAdmin = ([_origo userIsAdmin] && ![_membership.isActive boolValue]);
         
         if (memberIsUserAndTeen || memberIsWardOfUser || membershipIsInactiveAndUserIsAdmin) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
