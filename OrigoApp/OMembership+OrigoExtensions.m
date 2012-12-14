@@ -34,14 +34,16 @@
     if ([OState s].targetIsMember) {
         comparisonResult = [self.member.name localizedCaseInsensitiveCompare:other.member.name];
         
-        BOOL thisMemberIsMinor = [self.member isMinor];
-        BOOL otherMemberIsMinor = [other.member isMinor];
-        
-        if ([self.origo isResidence] && (thisMemberIsMinor != otherMemberIsMinor)) {
-            if (thisMemberIsMinor && !otherMemberIsMinor) {
-                comparisonResult = NSOrderedDescending;
-            } else {
-                comparisonResult = NSOrderedAscending;
+        if ([OState s].aspectIsResidence) {
+            BOOL thisMemberIsMinor = [self.member isMinor];
+            BOOL otherMemberIsMinor = [other.member isMinor];
+            
+            if ([self.origo isResidence] && (thisMemberIsMinor != otherMemberIsMinor)) {
+                if (thisMemberIsMinor && !otherMemberIsMinor) {
+                    comparisonResult = NSOrderedDescending;
+                } else {
+                    comparisonResult = NSOrderedAscending;
+                }
             }
         }
     } else if ([OState s].targetIsOrigo) {
