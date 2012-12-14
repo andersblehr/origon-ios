@@ -214,8 +214,8 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
     OMembership *rootMembership = [root addMember:member];
     
     if ([OState s].aspectIsSelf) {
-        rootMembership.isActive_ = YES;
-        rootMembership.isAdmin_ = YES;
+        rootMembership.isActive = @YES;
+        rootMembership.isAdmin = @YES;
     }
     
     member.email = email;

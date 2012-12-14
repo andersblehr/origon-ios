@@ -59,7 +59,6 @@ static NSString * const kHTTPHeaderAuthorization = @"Authorization";
 static NSString * const kHTTPHeaderContentType = @"Content-Type";
 static NSString * const kHTTPHeaderIfModifiedSince = @"If-Modified-Since";
 static NSString * const kHTTPHeaderLastModified = @"Last-Modified";
-static NSString * const kHTTPHeaderLocation = @"Location";
 
 static NSString * const kCharsetUTF8 = @"utf-8";
 static NSString * const kMediaTypeJSONUTF8 = @"application/json;charset=utf-8";
@@ -239,7 +238,6 @@ static NSString * const kURLParameterVersion = @"version";
     
     if ([OState s].actionIsLogin) {
         _RESTRoute = kRESTRouteAuthLogin;
-        OLogDebug(@"Last replication date (outgoing): %@", [OMeta m].lastReplicationDate);
         
         [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
     } else if ([OState s].actionIsActivate) {
@@ -256,7 +254,6 @@ static NSString * const kURLParameterVersion = @"version";
     
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
-    OLogDebug(@"Last replication date (outgoing): %@", [OMeta m].lastReplicationDate);
     
     NSSet *modifiedEntities = [OMeta m].dirtyEntities;
     
@@ -311,20 +308,10 @@ static NSString * const kURLParameterVersion = @"version";
     
     if (response.statusCode < kHTTPStatusErrorRangeStart) {
         NSDictionary *responseHeaders = [response allHeaderFields];
-        
-        if (![OMeta m].userId && ([OState s].actionIsLogin || [OState s].actionIsActivate)) {
-            if (response.statusCode == kHTTPStatusOK) {
-                [OMeta m].userId = [responseHeaders objectForKey:kHTTPHeaderLocation];
-            } else if (response.statusCode != kHTTPStatusCreated) {
-                [OMeta m].userId = [OUUIDGenerator generateUUID];
-            }
-        }
-        
         NSString *replicationDate = [responseHeaders objectForKey:kHTTPHeaderLastModified];
         
         if (replicationDate) {
             [OMeta m].lastReplicationDate = replicationDate;
-            OLogDebug(@"Last replication date (incoming): %@", [OMeta m].lastReplicationDate);
         }
     } else {
         [OAlert showAlertForHTTPStatus:response.statusCode];

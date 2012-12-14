@@ -17,32 +17,6 @@
 
 @implementation OMembership (OrigoExtensions)
 
-#pragma mark - Wrapper accessors for NSNumber booleans
-
-- (void)setIsActive_:(BOOL)isActive
-{
-    self.isActive = [NSNumber numberWithBool:isActive];
-}
-
-
-- (BOOL)isActive_
-{
-    return [self.isActive boolValue];
-}
-
-
-- (void)setIsAdmin_:(BOOL)isAdmin
-{
-    self.isAdmin = [NSNumber numberWithBool:isAdmin];
-}
-
-
-- (BOOL)isAdmin_
-{
-    return [self.isAdmin boolValue];
-}
-
-
 #pragma mark - Convenience methods
 
 - (BOOL)hasContactRole

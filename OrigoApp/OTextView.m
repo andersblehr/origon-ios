@@ -141,6 +141,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 - (CGFloat)height
 {
     NSInteger lineCount = [self lineCount];
+    NSInteger padding = 4.f / lineCount;
     
     if (_hasEmphasis) {
         lineCount = MAX(kTextViewMinimumEditLines, lineCount);
@@ -148,7 +149,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         lineCount = MAX(kTextViewMinimumLines, lineCount);
     }
     
-    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight];
+    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight] + padding;
 }
 
 
