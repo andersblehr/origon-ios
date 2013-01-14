@@ -170,16 +170,8 @@
         <attribute name="dateReplicated" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="entityId" attributeType="String" syncable="YES"/>
         <attribute name="hashCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isGhost" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="origoId" optional="YES" attributeType="String" syncable="YES"/>
-    </entity>
-    <entity name="OReplicatedEntityGhost" representedClassName="OReplicatedEntityGhost" parentEntity="OReplicatedEntity" syncable="YES">
-        <attribute name="ghostedEntityClass" attributeType="String" syncable="YES"/>
-        <attribute name="ghostedMembershipMemberEmail" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="ghostedMembershipMemberId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="hasExpired" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <userInfo>
-            <entry key="expires" value="+120d"/>
-        </userInfo>
     </entity>
     <entity name="OReplicatedEntityRef" representedClassName="OReplicatedEntityRef" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="referencedEntityId" attributeType="String" syncable="YES"/>
@@ -260,8 +252,7 @@
         <element name="OMessageItem" positionX="0" positionY="0" width="128" height="120"/>
         <element name="OMessageThread" positionX="0" positionY="0" width="128" height="90"/>
         <element name="OOrigo" positionX="0" positionY="0" width="128" height="285"/>
-        <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="OReplicatedEntityGhost" positionX="0" positionY="0" width="128" height="105"/>
+        <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="150"/>
         <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
         <element name="OScheduledAbsence" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OScheduledBreak" positionX="0" positionY="0" width="128" height="90"/>

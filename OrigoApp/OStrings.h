@@ -56,6 +56,7 @@ extern NSString * const strFooterOrigoCreationFirst;
 extern NSString * const strFooterOrigoCreation;
 extern NSString * const strFooterOrigoCreationWards;
 extern NSString * const strSheetTitleOrigoType;
+extern NSString * const strTermMe;
 extern NSString * const strTermYourChild;
 extern NSString * const strTermHim;
 extern NSString * const strTermHer;

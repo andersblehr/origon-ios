@@ -22,6 +22,26 @@
 
 #pragma mark - OReplicateEntity (OReplicateEntityExtentions) overrides
 
+- (void)internaliseRelationships
+{
+    [super internaliseRelationships];
+    
+    self.resident = self.member;
+    self.residence = self.origo;
+}
+
+
+- (void)makeGhost
+{
+    [super makeGhost];
+    
+    self.presentOn01Jan = @YES;
+    self.daysAtATime = 0;
+    self.switchDay = 0;
+    self.switchFrequency = 0;
+}
+
+
 - (BOOL)propertyIsTransient:(NSString *)property
 {
     BOOL isTransient = [super propertyIsTransient:property];
@@ -30,15 +50,6 @@
     isTransient = isTransient || [property isEqualToString:@"residence"];
     
     return isTransient;
-}
-
-
-- (void)internaliseRelationships
-{
-    [super internaliseRelationships];
-    
-    self.resident = self.member;
-    self.residence = self.origo;
 }
 
 @end

@@ -66,6 +66,7 @@ NSString * const strFooterOrigoCreationFirst         = @"strFooterOrigoCreationF
 NSString * const strFooterOrigoCreation              = @"strFooterOrigoCreation";
 NSString * const strFooterOrigoCreationWards         = @"strFooterOrigoCreationWards";
 NSString * const strSheetTitleOrigoType              = @"strSheetTitleOrigoType";
+NSString * const strTermMe                           = @"strTermMe";
 NSString * const strTermYourChild                    = @"strTermYourChild";
 NSString * const strTermHim                          = @"strTermHim";
 NSString * const strTermHer                          = @"strTermHer";

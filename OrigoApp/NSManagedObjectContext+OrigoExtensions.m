@@ -21,7 +21,6 @@
 #import "OMembership+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
-#import "OReplicatedEntityGhost.h"
 #import "OReplicatedEntityRef.h"
 
 static NSString * const kRootOrigoIdFormat = @"~%@";
@@ -138,12 +137,8 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 }
 
 
-- (void)deleteEntity:(OReplicatedEntity *)entity isGhosted:(BOOL)isGhosted
+- (void)deleteEntity:(OReplicatedEntity *)entity isGhost:(BOOL)isGhost
 {
-    if (!isGhosted && [entity isReplicated]) {
-        [entity spawnEntityGhost];
-    }
-    
     if ([entity isKindOfClass:OMembership.class]) {
         OMembership *membership = (OMembership *)entity;
         OMember *member = membership.member;
@@ -154,7 +149,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
         BOOL shouldDeleteMember = NO;
         
         if ([origo isResidence]) {
-            shouldDeleteMember = ([[member origoMemberships] count] == 0);
+            shouldDeleteMember = (([[member origoMemberships] count] == 0) && ![member isUser]);
         } else {
             shouldDeleteMember = (([[member origoMemberships] count] == 1) && ![[[OMeta m].user housemates] containsObject:member]);
         }
@@ -168,9 +163,9 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
                     if ([residency.residence.residencies count] == 1) {
                         [self deleteObject:residency.residence];
                     }
+                    
+                    [self deleteObject:residency];
                 }
-                
-                [self deleteObject:residency];
             }
             
             OMembership *rootMembership = [member rootMembership];
@@ -180,11 +175,19 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
                 [self deleteObject:rootMembership];
             }
             
-            [self deleteObject:member];
+            if (!isGhost && [member isReplicated]) {
+                [member makeGhost];
+            } else {
+                [self deleteObject:member];
+            }
+        }
+        
+        if (!isGhost && [entity isReplicated]) {
+            [entity makeGhost];
+        } else {
+            [self deleteObject:entity];
         }
     }
-    
-    [self deleteObject:entity];
 }
 
 
@@ -271,18 +274,15 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 
 - (void)saveServerReplicas:(NSArray *)replicaDictionaries
 {
-    NSString *entityGhostClass = NSStringFromClass(OReplicatedEntityGhost.class);
     NSMutableSet *entities = [[NSMutableSet alloc] init];
     
     for (NSDictionary *replicaDictionary in replicaDictionaries) {
-        NSString *replicaClass = [replicaDictionary objectForKey:kKeyPathEntityClass];
-        
-        if ([replicaClass isEqualToString:entityGhostClass]) {
+        if ([[replicaDictionary objectForKey:kKeyPathIsGhost] boolValue]) {
             NSString *ghostedEntityId = [replicaDictionary objectForKey:kKeyPathEntityId];
             OReplicatedEntity *ghostedEntity = [self entityWithId:ghostedEntityId];
 
             if (ghostedEntity) {
-                [self deleteEntity:ghostedEntity isGhosted:YES];
+                [self deleteEntity:ghostedEntity isGhost:YES];
             }
         } else {
             [entities addObject:[self insertEntityFromDictionary:replicaDictionary]];
@@ -352,7 +352,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 
 - (void)deleteEntity:(OReplicatedEntity *)entity
 {
-    [self deleteEntity:entity isGhosted:NO];
+    [self deleteEntity:entity isGhost:NO];
 }
 
 @end

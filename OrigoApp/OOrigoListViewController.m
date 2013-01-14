@@ -36,9 +36,11 @@ static NSString * const kModalSegueToAuthView = @"modalFromOrigoListToAuthView";
 static NSString * const kModalSegueToMemberView = @"modalFromOrigoListToMemberView";
 static NSString * const kModalSegueToOrigoView = @"modalFromOrigoListToOrigoView";
 static NSString * const kPushSegueToMemberListView = @"pushFromOrigoListToMemberListView";
+static NSString * const kPushSegueToMemberView = @"pushFromOrigoListToMemberView";
 
-static NSInteger const kResidenceSection = 0;
+static NSInteger const kUserSection = 0;
 static NSInteger const kWardSection = 1;
+static NSInteger const kUserRow = 0;
 
 
 @implementation OOrigoListViewController
@@ -47,7 +49,7 @@ static NSInteger const kWardSection = 1;
 
 - (void)configureViewAndDataSource
 {
-    if (!_member) {
+    if (!_member || [_member isFault]) {
         _member = [OMeta m].user;
     }
     
@@ -68,9 +70,9 @@ static NSInteger const kWardSection = 1;
 }
 
 
-- (BOOL)sectionIsResidenceSection:(NSInteger)section
+- (BOOL)sectionIsUserSection:(NSInteger)section
 {
-    return ([OState s].aspectIsSelf && section == kResidenceSection);
+    return ([OState s].aspectIsSelf && section == kUserSection);
 }
 
 
@@ -167,7 +169,7 @@ static NSInteger const kWardSection = 1;
             if ([_member.residencies count] != [_sortedResidences count]) {
                 _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
                 
-                reloadRange.location = kResidenceSection;
+                reloadRange.location = kUserSection;
                 reloadRange.length = 1;
             }
             
@@ -193,8 +195,8 @@ static NSInteger const kWardSection = 1;
             }
             
             if (reloadRange.length) {
-                if ((reloadRange.location > kResidenceSection) && hasOnlyResidenceSection) {
-                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kResidenceSection] withRowAnimation:UITableViewRowAnimationNone];
+                if ((reloadRange.location > kUserSection) && hasOnlyResidenceSection) {
+                    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:kUserSection] withRowAnimation:UITableViewRowAnimationNone];
                 }
                 
                 [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:reloadRange] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -240,6 +242,10 @@ static NSInteger const kWardSection = 1;
         OOrigoViewController *origoViewController = navigationController.viewControllers[0];
         origoViewController.origoType = _origoTypes[_indexOfSelectedOrigoType];
         origoViewController.delegate = self;
+    } else if ([segue.identifier isEqualToString:kPushSegueToMemberView]) {
+        OMemberViewController *memberViewController = segue.destinationViewController;
+        memberViewController.membership = [[OMeta m].user rootMembership];
+        memberViewController.entityObservingDelegate = _selectedCell;
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
         OMemberListViewController *memberListViewController = segue.destinationViewController;
         memberListViewController.origo = _selectedOrigo;
@@ -254,7 +260,7 @@ static NSInteger const kWardSection = 1;
 {
     NSInteger numberOfSections = 0;
 
-    if ([[OMeta m] userIsSignedIn]) {
+    if ([[OMeta m] userIsAllSet]) {
         numberOfSections++;
         
         if ([OState s].aspectIsSelf) {
@@ -276,8 +282,8 @@ static NSInteger const kWardSection = 1;
 {
     NSUInteger numberOfRows = 0;
     
-    if ([self sectionIsResidenceSection:section]) {
-        numberOfRows = [_sortedResidences count];
+    if ([self sectionIsUserSection:section]) {
+        numberOfRows = 1 + [_sortedResidences count];
     } else if ([self sectionIsWardSection:section]) {
         numberOfRows = [_sortedWards count];
     } else if ([self sectionIsOrigoSection:section]) {
@@ -299,20 +305,24 @@ static NSInteger const kWardSection = 1;
     OTableViewCell *cell = nil;
     
     OMembership *membership = nil;
-    OMember *ward = nil;
+    OMember *member = nil;
     
-    if ([self sectionIsResidenceSection:indexPath.section]) {
-        membership = _sortedResidences[indexPath.row];
+    if ([self sectionIsUserSection:indexPath.section]) {
+        if (indexPath.row == kUserRow) {
+            member = [OMeta m].user;
+        } else {
+            membership = _sortedResidences[indexPath.row - 1];
+        }
     } else if ([self sectionIsWardSection:indexPath.section]) {
-        ward = _sortedWards[indexPath.row];
+        member = _sortedWards[indexPath.row];
     } else if ([self sectionIsOrigoSection:indexPath.section]) {
         membership = _sortedOrigos[indexPath.row];
     }
     
     if (membership) {
         cell = [tableView listCellForEntity:membership.origo];
-    } else if (ward) {
-        cell = [tableView listCellForEntity:ward];
+    } else if (member) {
+        cell = [tableView listCellForEntity:member];
     }
     
     return cell;
@@ -428,23 +438,31 @@ static NSInteger const kWardSection = 1;
 {
     _selectedCell = (OTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
     _selectedOrigo = nil;
-    _selectedWard = nil;
+    _selectedMember = nil;
     
-    if ([self sectionIsResidenceSection:indexPath.section]) {
-        _selectedOrigo = ((OMembership *)_sortedResidences[indexPath.row]).origo;
+    if ([self sectionIsUserSection:indexPath.section]) {
+        if (indexPath.row == kUserRow) {
+            _selectedMember = [OMeta m].user;
+        } else {
+            _selectedOrigo = ((OMembership *)_sortedResidences[indexPath.row - 1]).origo;
+        }
     } else if ([self sectionIsWardSection:indexPath.section]) {
-        _selectedWard = _sortedWards[indexPath.row];
+        _selectedMember = _sortedWards[indexPath.row];
     } else if ([self sectionIsOrigoSection:indexPath.section]) {
         _selectedOrigo = ((OMembership *)_sortedOrigos[indexPath.row]).origo;
     }
     
     if (_selectedOrigo) {
         [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
-    } else if (_selectedWard) {
-        OOrigoListViewController *wardOrigoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId];
-        wardOrigoListViewController.member = _selectedWard;
-        
-        [self.navigationController pushViewController:wardOrigoListViewController animated:YES];
+    } else if (_selectedMember) {
+        if ([_selectedMember isUser]) {
+            [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];
+        } else {
+            OOrigoListViewController *wardOrigosViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId];
+            wardOrigosViewController.member = _selectedMember;
+            
+            [self.navigationController pushViewController:wardOrigosViewController animated:YES];
+        }
     }
 }
 

@@ -13,6 +13,7 @@
 
 #import "OMember+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 
 @implementation OMembership (OrigoExtensions)
@@ -22,6 +23,19 @@
 - (BOOL)hasContactRole
 {
     return (self.contactRole != nil);
+}
+
+
+#pragma mark - OReplicateEntity (OReplicateEntityExtentions) overrides
+
+- (void)makeGhost
+{
+    [super makeGhost];
+    
+    self.contactRole = nil;
+    self.contactType = nil;
+    self.isActive = @NO;
+    self.isAdmin = @NO;
 }
 
 

@@ -22,7 +22,7 @@
     NSArray *_sortedOrigos;
     
     OTableViewCell *_selectedCell;
-    OMember *_selectedWard;
+    OMember *_selectedMember;
     OOrigo *_selectedOrigo;
     
     NSMutableArray *_origoTypes;

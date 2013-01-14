@@ -63,7 +63,7 @@
             <objects>
                 <viewController storyboardIdentifier="idMemberListViewController" id="O0V-Ey-WLK" customClass="OMemberListViewController" sceneMemberID="viewController">
                     <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lJb-0F-cm5">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections/>
@@ -84,7 +84,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="idMemberViewController" id="T87-Bh-GzL" customClass="OMemberViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="209" sectionHeaderHeight="10" sectionFooterHeight="10" id="WsN-Uc-XTj">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -153,6 +153,7 @@
                         <segue destination="k5x-BU-bCK" kind="modal" identifier="modalFromOrigoListToMemberView" modalTransitionStyle="coverVertical" id="CWK-o1-hmk"/>
                         <segue destination="a73-0o-gAI" kind="modal" identifier="modalFromOrigoListToAuthView" modalTransitionStyle="flipHorizontal" id="HDP-sD-gJi"/>
                         <segue destination="r2l-jP-T7e" kind="modal" identifier="modalFromOrigoListToOrigoView" modalTransitionStyle="coverVertical" id="5m6-Eg-aT0"/>
+                        <segue destination="T87-Bh-GzL" kind="push" identifier="pushFromOrigoListToMemberView" id="Y6f-2P-abO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nIi-HS-de2" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -347,11 +348,11 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="CWK-o1-hmk"/>
+        <segue reference="5m6-Eg-aT0"/>
+        <segue reference="HDP-sD-gJi"/>
+        <segue reference="gEQ-1g-oCH"/>
+        <segue reference="Y6f-2P-abO"/>
         <segue reference="whK-uw-InI"/>
-        <segue reference="zDY-cv-tVk"/>
-        <segue reference="dkx-IG-SeS"/>
-        <segue reference="gdX-lL-iZb"/>
-        <segue reference="99F-61-IG0"/>
-        <segue reference="Kbo-H7-0bI"/>
     </inferredMetricsTieBreakers>
 </document>
