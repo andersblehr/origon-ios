@@ -47,6 +47,7 @@ extern NSString * const kOrigoTypeDefault;
 extern NSString * const kKeyPathAuthInfo;
 extern NSString * const kKeyPathDirtyEntities;
 extern NSString * const kKeyPathEntityClass;
+extern NSString * const kKeyPathIsGhost;
 extern NSString * const kKeyPathEntityId;
 extern NSString * const kKeyPathOrigo;
 extern NSString * const kKeyPathOrigoId;

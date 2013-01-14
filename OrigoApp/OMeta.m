@@ -21,7 +21,6 @@
 
 #import "OMember+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
-#import "OReplicatedEntityGhost.h"
 
 #import "OOrigoListViewController.h"
 #import "OTabBarController.h"
@@ -61,6 +60,7 @@ NSString * const kOrigoTypeDefault = @"origoTypeDefault";
 NSString * const kKeyPathAuthInfo = @"origo.auth.info";
 NSString * const kKeyPathDirtyEntities = @"origo.dirtyEntities";
 NSString * const kKeyPathEntityClass = @"entityClass";
+NSString * const kKeyPathIsGhost = @"isGhost";
 NSString * const kKeyPathEntityId = @"entityId";
 NSString * const kKeyPathOrigo = @"origo";
 NSString * const kKeyPathOrigoId = @"origoId";
@@ -446,7 +446,7 @@ static OMeta *m = nil;
         NSDate *now = [NSDate date];
         
         for (OReplicatedEntity *entity in _dirtyEntities) {
-            if ([entity isKindOfClass:OReplicatedEntityGhost.class]) {
+            if ([entity.isGhost boolValue]) {
                 [self.context deleteObject:entity];
             } else {
                 entity.dateReplicated = now;

@@ -19,7 +19,6 @@
 #import "OMember.h"
 #import "OMemberResidency.h"
 #import "OOrigo.h"
-#import "OReplicatedEntityGhost.h"
 
 
 @implementation OReplicatedEntity (OrigoExtensions)
@@ -165,6 +164,12 @@
 }
 
 
+- (void)makeGhost
+{
+    self.isGhost = @YES;
+}
+
+
 - (BOOL)propertyIsTransient:(NSString *)property
 {
     return [property isEqualToString:@"hashCode"];
@@ -220,23 +225,6 @@
 - (OReplicatedEntityRef *)entityRefForOrigo:(OOrigo *)origo
 {
     return [[OMeta m].context entityWithId:[self.entityId stringByAppendingString:origo.entityId separator:kSeparatorHash]];
-}
-
-
-- (OReplicatedEntityGhost *)spawnEntityGhost
-{
-    OOrigo *entityOrigo = [[OMeta m].context entityWithId:self.origoId];
-    OReplicatedEntityGhost *entityGhost = [[OMeta m].context insertEntityForClass:OReplicatedEntityGhost.class inOrigo:entityOrigo entityId:self.entityId];
-    entityGhost.ghostedEntityClass = self.entity.name;
-    
-    if ([self isKindOfClass:OMembership.class]) {
-        OMembership *membership = (OMembership *)self;
-        
-        entityGhost.ghostedMembershipMemberId = membership.member.entityId;
-        entityGhost.ghostedMembershipMemberEmail = membership.member.email;
-    }
-    
-    return entityGhost;
 }
 
 

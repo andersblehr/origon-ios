@@ -18,6 +18,8 @@
 - (NSDictionary *)toDictionary;
 - (NSString *)computeHashCode;
 - (void)internaliseRelationships;
+- (void)makeGhost;
+
 - (BOOL)propertyIsTransient:(NSString *)property;
 - (BOOL)isReplicated;
 - (BOOL)isDirty;
@@ -32,7 +34,5 @@
 - (NSString *)expiresInTimeframe;
 
 - (OReplicatedEntityRef *)entityRefForOrigo:(OOrigo *)origo;
-- (OReplicatedEntityGhost *)spawnEntityGhost;
-
 
 @end

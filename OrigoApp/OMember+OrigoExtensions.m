@@ -39,6 +39,8 @@
         } else {
             listName = self.name;
         }
+    } else if ([OState s].targetIsOrigo && [self isUser]) {
+        listName = [OStrings stringForKey:strTermMe];
     }
     
     return listName;
@@ -57,6 +59,8 @@
                 listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.email];
             }
         }
+    } else if ([OState s].targetIsOrigo && [self isUser]) {
+        listDetails = self.name;
     }
     
     return listDetails;
@@ -67,7 +71,7 @@
 {
     UIImage *listImage = nil;
     
-    if ([OState s].targetIsMember) {
+    if ([OState s].targetIsMember || ([OState s].targetIsOrigo && [self isUser])) {
         if (self.photo) {
             // TODO: Embed photo
         } else {
@@ -101,7 +105,7 @@
 
 - (BOOL)isUser
 {
-    return [self.entityId isEqualToString:[OMeta m].user.entityId];
+    return [self.email isEqualToString:[OMeta m].userEmail];
 }
 
 

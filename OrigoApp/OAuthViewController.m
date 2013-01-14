@@ -270,13 +270,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [[OMeta m].context replicateIfNeeded];
     }
     
-    if ([[OMeta m] userIsRegistered]) {
-        [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
-    } else {
-        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
-        
-        [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
-    }
+    [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
 }
 
 
@@ -610,11 +604,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             if (response.statusCode == kHTTPStatusCreated) {
                 [self didReceiveActivationData:data];
             } else {
-                NSDictionary *responseHeaders = [response allHeaderFields];
-                
                 if (![OMeta m].userId) {
                     if (response.statusCode == kHTTPStatusOK) {
-                        [OMeta m].userId = [responseHeaders objectForKey:kHTTPHeaderLocation];
+                        [OMeta m].userId = [[response allHeaderFields] objectForKey:kHTTPHeaderLocation];
                     } else {
                         [OMeta m].userId = [OUUIDGenerator generateUUID];
                     }

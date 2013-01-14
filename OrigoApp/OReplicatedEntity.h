@@ -2,8 +2,8 @@
 //  OReplicatedEntity.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 09.11.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 09.01.13.
+//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -18,5 +18,6 @@
 @property (nonatomic, retain) NSString * entityId;
 @property (nonatomic, retain) NSString * hashCode;
 @property (nonatomic, retain) NSString * origoId;
+@property (nonatomic, retain) NSNumber * isGhost;
 
 @end
