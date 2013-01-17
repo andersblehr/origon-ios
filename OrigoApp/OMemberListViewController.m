@@ -73,24 +73,6 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-#pragma mark - State handling
-
-- (void)setState
-{
-    [OState s].actionIsList = YES;
-    [OState s].targetIsMember = YES;
-    [[OState s] setAspectForOrigo:_origo];
-}
-
-
-- (void)restoreStateIfNeeded
-{
-    if (![self isMovingToParentViewController]) {
-        [self setState];
-    }
-}
-
-
 #pragma mark - Selector implementations
 
 - (void)addMember
@@ -110,8 +92,6 @@ static NSInteger const kMemberSection = 2;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    [self setState];
     
     [self.tableView setBackground];
     
@@ -150,11 +130,9 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    
-    [self restoreStateIfNeeded];
+    [super viewDidAppear:animated];
     
     OLogState;
 }
@@ -190,6 +168,16 @@ static NSInteger const kMemberSection = 2;
         memberViewController.membership = _selectedMembership;
         memberViewController.entityObservingDelegate = _selectedCell;
     }
+}
+
+
+#pragma mark - OStateDelegate conformance
+
+- (void)setState
+{
+    [OState s].actionIsList = YES;
+    [OState s].targetIsMember = YES;
+    [[OState s] setAspectForOrigoType:_origo.type];
 }
 
 

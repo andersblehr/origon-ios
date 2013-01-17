@@ -69,6 +69,7 @@
 		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+OrigoExtensions.m */; };
 		5CA10B8F16A40BB500031D81 /* glyphicons_309_comments.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA10B8D16A40BB500031D81 /* glyphicons_309_comments.png */; };
 		5CA10B9016A40BB500031D81 /* glyphicons_309_comments@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA10B8E16A40BB500031D81 /* glyphicons_309_comments@2x.png */; };
+		5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA10B9B16A7F49F00031D81 /* OTableViewController.m */; };
 		5CA94D9B15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9A15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m */; };
 		5CA94D9F15836BD9008CD9EC /* NSDate+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9E15836BD9008CD9EC /* NSDate+OrigoExtensions.m */; };
 		5CAEE08E163E513300A9046B /* OReplicatedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE08D163E513300A9046B /* OReplicatedEntityRef.m */; };
@@ -219,6 +220,9 @@
 		5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5CA10B8D16A40BB500031D81 /* glyphicons_309_comments.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_309_comments.png; sourceTree = "<group>"; };
 		5CA10B8E16A40BB500031D81 /* glyphicons_309_comments@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_309_comments@2x.png"; sourceTree = "<group>"; };
+		5CA10B9A16A7F49F00031D81 /* OTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewController.h; sourceTree = "<group>"; };
+		5CA10B9B16A7F49F00031D81 /* OTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewController.m; sourceTree = "<group>"; };
+		5CA10B9E16A7F9FD00031D81 /* OStateDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OStateDelegate.h; sourceTree = "<group>"; };
 		5CA94D9915834A9E008CD9EC /* UIDatePicker+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDatePicker+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5CA94D9A15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDatePicker+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5CA94D9D15836BD9008CD9EC /* NSDate+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+OrigoExtensions.h"; sourceTree = "<group>"; };
@@ -471,6 +475,7 @@
 				5C39EC1C166632570083DFEB /* OEntityObservingDelegate.h */,
 				5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDelegate.h */,
 				5C2E1133146ACFA9005BDE61 /* OServerConnectionDelegate.h */,
+				5CA10B9E16A7F9FD00031D81 /* OStateDelegate.h */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -496,6 +501,8 @@
 				5CB7E93F15F38C1200FD53DF /* OSettingsViewController.m */,
 				5C15BFC716367BC900BB5254 /* OTabBarController.h */,
 				5C15BFC816367BC900BB5254 /* OTabBarController.m */,
+				5CA10B9A16A7F49F00031D81 /* OTableViewController.h */,
+				5CA10B9B16A7F49F00031D81 /* OTableViewController.m */,
 				5C62A00014C6252C001DA01F /* OTaskListViewController.h */,
 				5C62A00114C6252C001DA01F /* OTaskListViewController.m */,
 			);
@@ -835,6 +842,7 @@
 				5CE9ED4A167A300600CA90F0 /* OMember.m in Sources */,
 				5C09D497169DABA0000C2229 /* OReplicatedEntity.m in Sources */,
 				5C09D49A169DAF84000C2229 /* OMembership.m in Sources */,
+				5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

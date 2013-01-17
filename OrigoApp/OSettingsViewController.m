@@ -51,13 +51,9 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
 }
 
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    
-    [OState s].actionIsList = YES;
-    [OState s].targetIsSetting = YES;
-    [OState s].aspectIsNone = YES;
+    [super viewDidAppear:animated];
     
     OLogState;
 }
@@ -83,6 +79,16 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
         OAuthViewController *authViewController = segue.destinationViewController;
         authViewController.delegate = (OOrigoListViewController *)origoTabNavigationController.viewControllers[0];
     }
+}
+
+
+#pragma mark - OStateDelegate conformance
+
+- (void)setState
+{
+    [OState s].actionIsList = YES;
+    [OState s].targetIsSetting = YES;
+    [OState s].aspectIsNone = YES;
 }
 
 

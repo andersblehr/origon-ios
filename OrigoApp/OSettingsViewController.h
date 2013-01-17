@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OSettingsViewController : UITableViewController
+#import "OTableViewController.h"
+
+@interface OSettingsViewController : OTableViewController
 
 @end

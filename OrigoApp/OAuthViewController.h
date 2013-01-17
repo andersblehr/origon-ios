@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "OTableViewController.h"
+
 #import "OState.h"
 
 #import "OModalViewControllerDelegate.h"
@@ -15,7 +17,7 @@
 
 @class OTableViewCell, OTextField;
 
-@interface OAuthViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
+@interface OAuthViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
 @private
     OTableViewCell *_authCell;
     

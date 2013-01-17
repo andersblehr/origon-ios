@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "OTableViewController.h"
+
 #import "OModalViewControllerDelegate.h"
 
 @protocol OEntityObservingDelegate;
@@ -15,9 +17,8 @@
 @class OState, OTableViewCell, OTextField;
 @class OMember, OMembership, OOrigo;
 
-@interface OMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate, OModalViewControllerDelegate> {
+@interface OMemberViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate, OModalViewControllerDelegate> {
 @private
-    OState *_intrinsicState;
     OTableViewCell *_memberCell;
     OMember *_member;
     OMember *_candidate;

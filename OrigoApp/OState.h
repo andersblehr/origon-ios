@@ -77,7 +77,6 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
 - (NSString *)asString;
 
 - (void)setAspectForMember:(OMember *)member;
-- (void)setAspectForOrigo:(OOrigo *)origo;
 - (void)setAspectForOrigoType:(NSString *)origoType;
 
 @end

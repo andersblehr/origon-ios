@@ -120,30 +120,10 @@
     [super viewDidLoad];
     
     [self.tableView setBackground];
-
-    [OState s].targetIsOrigo = YES;
     
-    if (![OState s].actionIsInput) {
-        if (self.presentingViewController) {
-            [OState s].actionIsRegister = YES;
-        } else {
-            [OState s].actionIsDisplay = YES;
-        }
-    }
-    
-    [OState s].actionIsDisplay = ![OState s].actionIsInput;
-    
-    if (_membership) {
-        _origo = _membership.origo;
-        
-        if (!([OState s].actionIsRegister && [OState s].aspectIsSelf)) {
-            [[OState s] setAspectForOrigo:_origo];
-        }
-        
+    if (_origo) {
         self.title = [_origo isResidence] ? [OStrings stringForKey:strTermAddress] : _origo.name;
     } else {
-        [[OState s] setAspectForOrigoType:_origoType];
-        
         if ([_origoType isEqualToString:kOrigoTypeDefault]) {
             self.title = [OStrings stringForKey:strViewTitleNewOrigo];
         } else {
@@ -183,6 +163,26 @@
 - (BOOL)hidesBottomBarWhenPushed
 {
     return YES;
+}
+
+
+#pragma mark - OStateDelegate conformance
+
+- (void)setStatePrerequisites
+{
+    if (_membership) {
+        _origo = _membership.origo;
+        _origoType = _origo.type;
+    }
+}
+
+
+- (void)setState
+{
+    [OState s].targetIsOrigo = YES;
+    [OState s].actionIsRegister = (self.presentingViewController != nil);
+    [OState s].actionIsDisplay = ![OState s].actionIsInput;
+    [[OState s] setAspectForOrigoType:_origoType];
 }
 
 
