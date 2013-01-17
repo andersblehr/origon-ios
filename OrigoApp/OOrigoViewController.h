@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+#import "OTableViewController.h"
+
 @protocol OEntityObservingDelegate, OModalViewControllerDelegate;
 
 @class OMembership, OOrigo;
 @class OTableViewCell, OTextField, OTextView;
 
-@interface OOrigoViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate> {
+@interface OOrigoViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate> {
 @private
     OTableViewCell *_origoCell;
     OOrigo *_origo;

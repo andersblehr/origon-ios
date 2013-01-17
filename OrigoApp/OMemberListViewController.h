@@ -8,16 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OModalViewControllerDelegate.h"
+#import "OTableViewController.h"
 
-#import "OState.h"
+#import "OModalViewControllerDelegate.h"
 
 @protocol OEntityObservingDelegate;
 
 @class OTableViewCell;
 @class OMembership, OOrigo;
 
-@interface OMemberListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, OModalViewControllerDelegate> {
+@interface OMemberListViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, OModalViewControllerDelegate> {
 @private
     OTableViewCell *_origoCell;
     

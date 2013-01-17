@@ -239,12 +239,12 @@ static OMeta *m = nil;
 {
     [self.context saveReplicationState];
     
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userId]];
+    
     _user = nil;
     _userId = nil;
     _authToken = nil;
     _deviceId = nil;
-    
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kKeyPathFormatAuthExpiryDate, _userId]];
     
     [(OAppDelegate *)[UIApplication sharedApplication].delegate releasePersistentStore];
 }

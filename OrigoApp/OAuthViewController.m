@@ -48,20 +48,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - Auxiliary methods
 
-- (void)initialiseState
-{
-    if (_emailToActivate) {
-        [OState s].actionIsActivate = YES;
-        [OState s].targetIsEmail = YES;
-    } else {
-        [OState s].actionIsLogin = YES;
-        [OState s].targetIsMember = YES;
-    }
-    
-    [OState s].aspectIsSelf = YES;
-}
-
-
 - (void)initialiseFields
 {
     if ([OState s].actionIsLogin) {
@@ -85,7 +71,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)reload
 {
     if ([OState s].actionIsSetup) {
-        [self initialiseState];
+        [self restoreState];
         [self.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
     } else if ([OState s].actionIsLogin) {
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
@@ -366,10 +352,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [self.tableView setBackground];
     [self.tableView addLogoBanner];
     
-    if (![OState s].actionIsSetup) {
-        [self initialiseState];
-    }
-    
     _activityIndicator = [self.tableView addActivityIndicator];
     _editingIsAllowed = YES;
 }
@@ -392,8 +374,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [OState s].actionIsActivate = YES;
         }
     }
-    
-    OLogState;
 }
 
 
@@ -414,6 +394,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [self emailActivationCode];
         }
     }
+    
+    OLogState;
 }
 
 
@@ -428,6 +410,28 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         OMemberViewController *memberViewController = navigationController.viewControllers[0];
         memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
         memberViewController.delegate = self;
+    }
+}
+
+
+#pragma mark - OStateDelegate conformance
+
+- (void)setState
+{
+    if ([OStrings hasStrings]) {
+        if (_emailToActivate) {
+            [OState s].actionIsActivate = YES;
+            [OState s].targetIsEmail = YES;
+        } else {
+            [OState s].actionIsLogin = YES;
+            [OState s].targetIsMember = YES;
+        }
+        
+        [OState s].aspectIsSelf = YES;
+    } else {
+        [OState s].actionIsSetup = YES;
+        
+        self.stateIsIntrinsic = NO;
     }
 }
 

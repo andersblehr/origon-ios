@@ -350,21 +350,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-#pragma mark - State handling
-
-- (void)setState
-{
-    [OState s].targetIsMember = YES;
-    [OState s].actionIsDisplay = [OState s].actionIsActivate ? YES : ![OState s].actionIsInput;
-    
-    if (![OState s].actionIsRegister) {
-        [[OState s] setAspectForMember:_member];
-    }
-    
-    _intrinsicState = [[OState s] copy];
-}
-
-
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -372,13 +357,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     [super viewDidLoad];
 
     [self.tableView setBackground];
-    
-    if (_membership) {
-        _member = _membership.member;
-        _origo = _membership.origo;
-    }
-    
-    [self setState];
     
     if ([OState s].aspectIsSelf) {
         self.title = [OStrings stringForKey:strViewTitleAboutMe];
@@ -465,6 +443,28 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (BOOL)hidesBottomBarWhenPushed
 {
     return YES;
+}
+
+
+#pragma mark - OStateDelegate conformance
+
+- (void)setStatePrerequisites
+{
+    if (_membership) {
+        _member = _membership.member;
+        _origo = _membership.origo;
+    }
+}
+
+
+- (void)setState
+{
+    [OState s].targetIsMember = YES;
+    [OState s].actionIsDisplay = [OState s].actionIsActivate ? YES : ![OState s].actionIsInput;
+    
+    if (![OState s].actionIsRegister) {
+        [[OState s] setAspectForMember:_member];
+    }
 }
 
 
@@ -702,7 +702,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             [_emailField becomeFirstResponder];
         }
     } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
-        [[OState s] restoreState:_intrinsicState];
+        [self restoreState];
         
         if ([OState s].actionIsRegister) {
             [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];

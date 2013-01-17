@@ -115,8 +115,6 @@ static void uncaughtExceptionHandler(NSException *exception)
 
     if ([OStrings hasStrings]) {
         [OStrings conditionallyRefresh];
-    } else {
-        [OState s].actionIsSetup = YES;
     }
     
     //NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];

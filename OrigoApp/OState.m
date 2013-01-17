@@ -166,29 +166,25 @@ static OState *s = nil;
 }
 
 
-- (void)setAspectForOrigo:(OOrigo *)origo
-{
-    [self setAspectForOrigoType:origo.type];
-}
-
-
 - (void)setAspectForOrigoType:(NSString *)origoType
 {
-    OStateAspect aspect = OStateAspectNone;
-    
-    if ([origoType isEqualToString:kOrigoTypeResidence]) {
-        aspect = OStateAspectResidence;
-    } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
-        aspect = OStateAspectOrganisation;
-    } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
-        aspect = OStateAspectClass;
-    } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
-        aspect = OStateAspectPreschool;
-    } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
-        aspect = OStateAspectTeam;
+    if (!(self.actionIsRegister && self.aspectIsSelf)) {
+        OStateAspect aspect = OStateAspectNone;
+        
+        if ([origoType isEqualToString:kOrigoTypeResidence]) {
+            aspect = OStateAspectResidence;
+        } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
+            aspect = OStateAspectOrganisation;
+        } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
+            aspect = OStateAspectClass;
+        } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
+            aspect = OStateAspectPreschool;
+        } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
+            aspect = OStateAspectTeam;
+        }
+        
+        _aspect = aspect;
     }
-    
-    _aspect = aspect;
 }
 
 

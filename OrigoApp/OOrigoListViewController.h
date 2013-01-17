@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "OTableViewController.h"
+
 #import "OModalViewControllerDelegate.h"
 
 #import "OState.h"
@@ -15,7 +17,7 @@
 @class OTableViewCell;
 @class OMember, OOrigo;
 
-@interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
+@interface OOrigoListViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
 @private
     NSArray *_sortedResidencies;
     NSArray *_sortedWards;

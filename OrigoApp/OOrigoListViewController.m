@@ -49,10 +49,6 @@ static NSInteger const kUserRow = 0;
 
 - (void)configureViewAndDataSource
 {
-    if (!_member || [_member isFault]) {
-        _member = [OMeta m].user;
-    }
-    
     _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
     
     if ([_member isUser]) {
@@ -87,16 +83,6 @@ static NSInteger const kUserRow = 0;
     NSUInteger origoSection = [OState s].aspectIsSelf ? ([_sortedWards count] ? 2 : 1) : 0;
     
     return ([_sortedOrigos count] && (section == origoSection));
-}
-
-
-#pragma mark - State handling
-
-- (void)setState
-{
-    [OState s].actionIsList = YES;
-    [OState s].targetIsOrigo = YES;
-    [[OState s] setAspectForMember:_member];
 }
 
 
@@ -160,8 +146,6 @@ static NSInteger const kUserRow = 0;
     [super viewWillAppear:animated];
     
     if ([[OMeta m] userIsAllSet]) {
-        [self setState];
-        
         if ([OState s].aspectIsSelf) {
             BOOL hasOnlyResidenceSection = ([self.tableView numberOfSections] == 1);
             NSRange reloadRange = {0, 0};
@@ -203,14 +187,14 @@ static NSInteger const kUserRow = 0;
             }
         }
     }
-    
-    OLogState;
 }
 
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+    OLogState;
     
     if (![[OMeta m] userIsSignedIn]) {
         [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
@@ -250,6 +234,30 @@ static NSInteger const kUserRow = 0;
         OMemberListViewController *memberListViewController = segue.destinationViewController;
         memberListViewController.origo = _selectedOrigo;
         memberListViewController.entityObservingDelegate = _selectedCell;
+    }
+}
+
+
+#pragma mark - OStateDelegate conformance
+
+- (void)setStatePrerequisites
+{
+    if ([[OMeta m] userIsAllSet]) {
+        if (!_member || [_member isFault]) {
+            _member = [OMeta m].user;
+        }
+    }
+}
+
+
+- (void)setState
+{
+    if ([[OMeta m] userIsAllSet]) {
+        [OState s].actionIsList = YES;
+        [OState s].targetIsOrigo = YES;
+        [[OState s] setAspectForMember:_member];
+    } else {
+        self.stateIsIntrinsic = NO;
     }
 }
 
@@ -489,7 +497,7 @@ static NSInteger const kUserRow = 0;
         [identitifier isEqualToString:kMemberViewControllerId] ||
         [identitifier isEqualToString:kMemberListViewControllerId]) {
         if ([[OMeta m] userIsSignedIn]) {
-            [self setState];
+            [self restoreState];
             [self configureViewAndDataSource];
             [self.tableView reloadData];
         }
