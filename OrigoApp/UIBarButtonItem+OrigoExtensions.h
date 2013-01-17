@@ -13,8 +13,8 @@
 + (UIBarButtonItem *)addButtonWithTarget:(id)target;
 + (UIBarButtonItem *)editButtonWithTarget:(id)target;
 + (UIBarButtonItem *)nextButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)doneButtonWithTarget:(id)target;
 + (UIBarButtonItem *)cancelButtonWithTarget:(id)target;
++ (UIBarButtonItem *)doneButtonWithTarget:(id)target;
 + (UIBarButtonItem *)signOutButtonWithTarget:(id)target;
 + (UIBarButtonItem *)backButtonWithTitle:(NSString *)title;
 

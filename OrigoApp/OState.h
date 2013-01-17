@@ -72,6 +72,7 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
 @property (nonatomic) BOOL aspectIsTeam;
 
 + (OState *)s;
+- (void)restoreState:(OState *)state;
 
 - (NSString *)asString;
 

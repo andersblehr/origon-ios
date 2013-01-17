@@ -10,6 +10,8 @@
 
 #import "OEntityObservingDelegate.h"
 
+#import "OState.h"
+
 extern NSString * const kReuseIdentifierDefault;
 extern NSString * const kReuseIdentifierUserSignIn;
 extern NSString * const kReuseIdentifierUserActivation;
@@ -29,6 +31,7 @@ extern CGFloat const kCellAnimationDuration;
 @private
     BOOL _selectable;
     
+    OStateTarget _intrinsicStateTarget;
     NSMutableDictionary *_views;
     OVisualConstraints *_visualConstraints;
     
@@ -37,6 +40,7 @@ extern CGFloat const kCellAnimationDuration;
 
 @property (strong, nonatomic) OReplicatedEntity *entity;
 @property (weak, nonatomic, readonly) Class entityClass;
+@property (nonatomic) BOOL editable;
 
 @property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
 

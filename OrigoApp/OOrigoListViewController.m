@@ -56,7 +56,7 @@ static NSInteger const kUserRow = 0;
     _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
     
     if ([_member isUser]) {
-        _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        _sortedResidencies = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
         _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
     } else {
         self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
@@ -166,8 +166,8 @@ static NSInteger const kUserRow = 0;
             BOOL hasOnlyResidenceSection = ([self.tableView numberOfSections] == 1);
             NSRange reloadRange = {0, 0};
             
-            if ([_member.residencies count] != [_sortedResidences count]) {
-                _sortedResidences = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
+            if ([_member.residencies count] != [_sortedResidencies count]) {
+                _sortedResidencies = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
                 
                 reloadRange.location = kUserSection;
                 reloadRange.length = 1;
@@ -283,7 +283,7 @@ static NSInteger const kUserRow = 0;
     NSUInteger numberOfRows = 0;
     
     if ([self sectionIsUserSection:section]) {
-        numberOfRows = 1 + [_sortedResidences count];
+        numberOfRows = 1 + [_sortedResidencies count];
     } else if ([self sectionIsWardSection:section]) {
         numberOfRows = [_sortedWards count];
     } else if ([self sectionIsOrigoSection:section]) {
@@ -311,7 +311,7 @@ static NSInteger const kUserRow = 0;
         if (indexPath.row == kUserRow) {
             member = [OMeta m].user;
         } else {
-            membership = _sortedResidences[indexPath.row - 1];
+            membership = _sortedResidencies[indexPath.row - 1];
         }
     } else if ([self sectionIsWardSection:indexPath.section]) {
         member = _sortedWards[indexPath.row];
@@ -444,7 +444,7 @@ static NSInteger const kUserRow = 0;
         if (indexPath.row == kUserRow) {
             _selectedMember = [OMeta m].user;
         } else {
-            _selectedOrigo = ((OMembership *)_sortedResidences[indexPath.row - 1]).origo;
+            _selectedOrigo = ((OMembership *)_sortedResidencies[indexPath.row - 1]).origo;
         }
     } else if ([self sectionIsWardSection:indexPath.section]) {
         _selectedMember = _sortedWards[indexPath.row];

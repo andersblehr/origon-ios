@@ -31,15 +31,15 @@
 }
 
 
-+ (UIBarButtonItem *)doneButtonWithTarget:(id)target
++ (UIBarButtonItem *)cancelButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:target action:@selector(didFinishEditing)];
+    return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonCancel] style:UIBarButtonItemStylePlain target:target action:@selector(didCancelEditing)];
 }
 
 
-+ (UIBarButtonItem *)cancelButtonWithTarget:(id)target
++ (UIBarButtonItem *)doneButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonCancel] style:UIBarButtonItemStylePlain target:target action:@selector(cancelEditing)];
+    return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:target action:@selector(didFinishEditing)];
 }
 
 

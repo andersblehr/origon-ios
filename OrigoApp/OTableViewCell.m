@@ -166,10 +166,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
-    self.entity = entity;
-    
     _entityClass = entityClass;
     _selectable = [OState s].actionIsList;
+    
+    self.entity = entity;
+    self.editing = !_selectable;
     
     if (entityClass == OMember.class) {
         [self addTitleForKeyPath:kKeyPathName hasPhoto:YES];
@@ -264,6 +265,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)willAppearTrailing:(BOOL)trailing
 {
+    _intrinsicStateTarget = [OState s].target;
+    
     if (trailing) {
         [self.backgroundView addDropShadowForTrailingTableViewCell];
         
@@ -288,7 +291,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [OState s].actionIsDisplay = YES;
     }
 
-    self.editing = [OState s].actionIsEdit;
+    self.editing = ([OState s].actionIsEdit || _editable);
 }
 
 
@@ -380,13 +383,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)setSelectable:(BOOL)selectable
+- (void)setEditable:(BOOL)editable
 {
-    _selectable = selectable;
+    _editable = editable;
     
-    if (!_selectable) {
-        self.selectionStyle = UITableViewCellSelectionStyleNone;
-    }
+    self.editing = editable;
 }
 
 
@@ -399,7 +400,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             ((OTextField *)view).enabled = editing;
         } else if ([view isKindOfClass:OTextView.class]) {
             ((OTextView *)view).editable = editing;
-            ((OTextView *)view).userInteractionEnabled = [OState s].actionIsEdit;
+            ((OTextView *)view).userInteractionEnabled = editing;
         }
     }
 }
@@ -431,6 +432,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)refresh
 {
+    OStateTarget actualStateTarget = [OState s].target;
+    [OState s].target = _intrinsicStateTarget;
+    
     if ([self isListCell]) {
         self.textLabel.text = [_entity listName];
         self.detailTextLabel.text = [_entity listDetails];
@@ -448,6 +452,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
         
         [self redrawIfNeeded];
     }
+    
+    [OState s].target = actualStateTarget;
     
     if (_entityObservingDelegate) {
         [_entityObservingDelegate refresh];

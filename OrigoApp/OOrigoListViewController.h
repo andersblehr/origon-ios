@@ -17,7 +17,7 @@
 
 @interface OOrigoListViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
 @private
-    NSArray *_sortedResidences;
+    NSArray *_sortedResidencies;
     NSArray *_sortedWards;
     NSArray *_sortedOrigos;
     
