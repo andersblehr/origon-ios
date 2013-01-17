@@ -12,11 +12,12 @@
 
 @protocol OEntityObservingDelegate;
 
-@class OTableViewCell, OTextField;
+@class OState, OTableViewCell, OTextField;
 @class OMember, OMembership, OOrigo;
 
 @interface OMemberViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate, OModalViewControllerDelegate> {
 @private
+    OState *_intrinsicState;
     OTableViewCell *_memberCell;
     OMember *_member;
     OMember *_candidate;

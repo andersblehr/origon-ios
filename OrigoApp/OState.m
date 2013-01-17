@@ -38,21 +38,22 @@ static OState *s = nil;
 }
 
 
-#pragma mark - Singleton instantiation & initialisation
-
-+ (id)allocWithZone:(NSZone *)zone
-{
-    return [self s];
-}
-
+#pragma mark - Instantiation & initialisation
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return self;
+    OState *copy = [[OState alloc] init];
+    
+    copy.action = _action;
+    copy.target = _target;
+    copy.aspect = _aspect;
+    
+    return copy;
 }
 
 
-- (id)init {
+- (id)init
+{
     self = [super init];
     
     if (self) {
@@ -67,11 +68,19 @@ static OState *s = nil;
 
 + (OState *)s
 {
-    if (s == nil) {
-        s = [[super allocWithZone:nil] init];
+    if (!s) {
+        s = [[self alloc] init];
     }
     
     return s;
+}
+
+
+- (void)restoreState:(OState *)state
+{
+    _action = state.action;
+    _target = state.target;
+    _aspect = state.aspect;
 }
 
 

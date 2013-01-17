@@ -95,8 +95,9 @@
                     <navigationItem key="navigationItem" title="&lt;strMember>" id="uRg-zS-kRb"/>
                     <connections>
                         <segue destination="O0V-Ey-WLK" kind="push" identifier="pushFromMemberToMemberListView" id="99F-61-IG0"/>
-                        <segue destination="r2l-jP-T7e" kind="modal" identifier="modalFromMemberToOrigoView" modalTransitionStyle="flipHorizontal" id="zDY-cv-tVk"/>
+                        <segue destination="r2l-jP-T7e" kind="modal" identifier="modalFromMemberToOrigoView1" modalTransitionStyle="flipHorizontal" id="zDY-cv-tVk"/>
                         <segue destination="a73-0o-gAI" kind="modal" identifier="modalFromMemberToAuthView" modalTransitionStyle="flipHorizontal" id="Kbo-H7-0bI"/>
+                        <segue destination="r2l-jP-T7e" kind="modal" identifier="modalFromMemberToOrigoView2" modalTransitionStyle="coverVertical" id="ssz-aT-8tC"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Br5-90-R22" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -108,7 +109,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="idOrigoViewController" id="bxV-RT-yI4" customClass="OOrigoViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="LnJ-T1-eEC">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -349,10 +350,10 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="CWK-o1-hmk"/>
-        <segue reference="5m6-Eg-aT0"/>
-        <segue reference="HDP-sD-gJi"/>
-        <segue reference="gEQ-1g-oCH"/>
         <segue reference="Y6f-2P-abO"/>
-        <segue reference="whK-uw-InI"/>
+        <segue reference="99F-61-IG0"/>
+        <segue reference="Kbo-H7-0bI"/>
+        <segue reference="ssz-aT-8tC"/>
+        <segue reference="KgS-ch-2ww"/>
     </inferredMetricsTieBreakers>
 </document>

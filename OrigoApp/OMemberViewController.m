@@ -37,7 +37,8 @@
 #import "OTabBarController.h"
 
 static NSString * const kModalSegueToAuthView = @"modalFromMemberToAuthView";
-static NSString * const kModalSegueToOrigoView = @"modalFromMemberToOrigoView";
+static NSString * const kModalSegueToOrigoView1 = @"modalFromMemberToOrigoView1";
+static NSString * const kModalSegueToOrigoView2 = @"modalFromMemberToOrigoView2";
 static NSString * const kPushSegueToMemberListView = @"pushFromMemberToMemberListView";
 
 static NSInteger const kMemberSection = 0;
@@ -124,6 +125,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     _member.name = [_nameField finalText];
     _member.dateOfBirth = _dateOfBirthPicker.date;
     _member.mobilePhone = [_mobilePhoneField finalText];
+    _member.email = [_emailField finalText];
     
     if ([OState s].actionIsRegister) {
         _member.givenName = [NSString givenNameFromFullName:_member.name];
@@ -142,7 +144,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             
             [[OMeta m].context replicateIfNeeded];
         } else {
-            [self performSegueWithIdentifier:kModalSegueToOrigoView sender:self];
+            [self performSegueWithIdentifier:kModalSegueToOrigoView1 sender:self];
         }
     } else {
         [[OMeta m].context replicateIfNeeded];
@@ -151,15 +153,25 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
+- (BOOL)canEdit
+{
+    BOOL memberIsUserAndTeen = ([_member isUser] && [_member isTeenOrOlder]);
+    BOOL memberIsWardOfUser = [[[OMeta m].user wards] containsObject:_member];
+    BOOL membershipIsInactiveAndUserIsAdmin = ([_origo userIsAdmin] && ![_membership.isActive boolValue]);
+    
+    return (memberIsUserAndTeen || memberIsWardOfUser || membershipIsInactiveAndUserIsAdmin);
+}
+
+
 - (void)toggleEditMode
 {
-    static UIBarButtonItem *editButton = nil;
+    static UIBarButtonItem *addButton = nil;
     static UIBarButtonItem *backButton = nil;
     
     [_memberCell toggleEditMode];
     
     if ([OState s].actionIsEdit) {
-        editButton = self.navigationItem.rightBarButtonItem;
+        addButton = self.navigationItem.rightBarButtonItem;
         backButton = self.navigationItem.leftBarButtonItem;
         
         if (!_cancelButton) {
@@ -171,37 +183,13 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         self.navigationItem.rightBarButtonItem = _nextButton;
         self.navigationItem.leftBarButtonItem = _cancelButton;
     } else if ([OState s].actionIsDisplay) {
-        self.navigationItem.rightBarButtonItem = editButton;
+        [self.view endEditing:YES];
+        
+        self.navigationItem.rightBarButtonItem = addButton;
         self.navigationItem.leftBarButtonItem = backButton;
     }
     
     OLogState;
-}
-
-
-#pragma mark - State handling
-
-- (void)setState
-{
-    [OState s].targetIsMember = YES;
-    
-    if ([OState s].actionIsActivate) {
-        [OState s].actionIsDisplay = YES;
-    } else {
-        [OState s].actionIsDisplay = ![OState s].actionIsInput;
-    }
-
-    if (![OState s].actionIsRegister) {
-        [[OState s] setAspectForMember:_member];
-    }
-}
-
-
-- (void)restoreStateIfNeeded
-{
-    if (![self isBeingPresented] && ![self isMovingToParentViewController]) {
-        [self setState];
-    }
 }
 
 
@@ -265,14 +253,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - Selector implementations
 
-- (void)startEditing
-{
-    [self toggleEditMode];
-    
-    [_nameField becomeFirstResponder];
-}
-
-
 - (void)moveToNextInputField
 {
     if (_currentField == _nameField) {
@@ -285,7 +265,13 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)cancelEditing
+- (void)dateOfBirthDidChange
+{
+    _dateOfBirthField.text = [_dateOfBirthPicker.date localisedDateString];
+}
+
+
+- (void)didCancelEditing
 {
     if ([OState s].actionIsRegister) {
         [_delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
@@ -349,9 +335,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)dateOfBirthDidChange
+- (void)addAddress
 {
-    _dateOfBirthField.text = [_dateOfBirthPicker.date localisedDateString];
+    [self performSegueWithIdentifier:kModalSegueToOrigoView2 sender:self];
 }
 
 
@@ -361,6 +347,21 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     _memberCell.entity = nil;
     
     [_delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
+}
+
+
+#pragma mark - State handling
+
+- (void)setState
+{
+    [OState s].targetIsMember = YES;
+    [OState s].actionIsDisplay = [OState s].actionIsActivate ? YES : ![OState s].actionIsInput;
+    
+    if (![OState s].actionIsRegister) {
+        [[OState s] setAspectForMember:_member];
+    }
+    
+    _intrinsicState = [[OState s] copy];
 }
 
 
@@ -400,15 +401,12 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if ([OState s].aspectIsSelf) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
         } else {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];;
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
         }
     } else if ([OState s].actionIsDisplay) {
-        BOOL memberIsUserAndTeen = ([_member isUser] && [_member isTeenOrOlder]);
-        BOOL memberIsWardOfUser = [[[OMeta m].user wards] containsObject:_member];
-        BOOL membershipIsInactiveAndUserIsAdmin = ([_origo userIsAdmin] && ![_membership.isActive boolValue]);
-        
-        if (memberIsUserAndTeen || memberIsWardOfUser || membershipIsInactiveAndUserIsAdmin) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
+        if ([self canEdit]) {
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
+            self.navigationItem.rightBarButtonItem.action = @selector(addAddress);
         }
         
         NSMutableSet *residences = [[NSMutableSet alloc] init];
@@ -422,23 +420,17 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    [self restoreStateIfNeeded];
-    
-    OLogState;
-}
-
-
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
-    if (self.presentingViewController) {
+    if ([OState s].actionIsInput) {
         [_nameField becomeFirstResponder];
+    } else if ([self canEdit]) {
+        _memberCell.editable = YES;
     }
+    
+    OLogState;
 }
 
 
@@ -450,10 +442,15 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         OAuthViewController *authViewController = segue.destinationViewController;
         authViewController.emailToActivate = [_emailField finalText];
         authViewController.delegate = self;
-    } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
+    } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView1]) {
         UINavigationController *navigationController = segue.destinationViewController;
         OOrigoViewController *origoViewController = navigationController.viewControllers[0];
         origoViewController.membership = [_origo userMembership];
+        origoViewController.delegate = self;
+    } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView2]) {
+        UINavigationController *navigationController = segue.destinationViewController;
+        OOrigoViewController *origoViewController = navigationController.viewControllers[0];
+        origoViewController.origoType = kOrigoTypeResidence;
         origoViewController.delegate = self;
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
         OMemberListViewController *memberListViewController = segue.destinationViewController;
@@ -572,6 +569,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
+    if ([OState s].actionIsDisplay) {
+        [self toggleEditMode];
+    }
+    
     if (textField == _emailField) {
         self.navigationItem.rightBarButtonItem = _doneButton;
     } else if (textField == _mobilePhoneField) {
@@ -701,7 +702,11 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             [_emailField becomeFirstResponder];
         }
     } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
-        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
+        [[OState s] restoreState:_intrinsicState];
+        
+        if ([OState s].actionIsRegister) {
+            [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
+        }
     }
 }
 

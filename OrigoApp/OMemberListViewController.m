@@ -85,7 +85,7 @@ static NSInteger const kMemberSection = 2;
 
 - (void)restoreStateIfNeeded
 {
-    if (![self isBeingPresented] && ![self isMovingToParentViewController]) {
+    if (![self isMovingToParentViewController]) {
         [self setState];
     }
 }
@@ -410,9 +410,7 @@ static NSInteger const kMemberSection = 2;
 
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
-    if ([identitifier isEqualToString:kMemberViewControllerId]) {
-        [self dismissViewControllerAnimated:YES completion:NULL];
-    }
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 

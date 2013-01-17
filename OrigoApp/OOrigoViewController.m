@@ -55,9 +55,9 @@
         
         self.navigationItem.rightBarButtonItem = _nextButton;
         self.navigationItem.leftBarButtonItem = _cancelButton;
-
-        [_addressView becomeFirstResponder];
     } else if ([OState s].actionIsDisplay) {
+        [self.view endEditing:YES];
+        
         self.navigationItem.rightBarButtonItem = editButton;
         self.navigationItem.leftBarButtonItem = backButton;
     }
@@ -68,12 +68,6 @@
 
 #pragma mark - Selector implementations
 
-- (void)startEditing
-{
-    [self toggleEditMode];
-}
-
-
 - (void)moveToNextInputField
 {
     if (_currentField == _addressView) {
@@ -82,7 +76,7 @@
 }
 
 
-- (void)cancelEditing
+- (void)didCancelEditing
 {
     if ([OState s].actionIsRegister) {
         [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
@@ -128,6 +122,15 @@
     [self.tableView setBackground];
 
     [OState s].targetIsOrigo = YES;
+    
+    if (![OState s].actionIsInput) {
+        if (self.presentingViewController) {
+            [OState s].actionIsRegister = YES;
+        } else {
+            [OState s].actionIsDisplay = YES;
+        }
+    }
+    
     [OState s].actionIsDisplay = ![OState s].actionIsInput;
     
     if (_membership) {
@@ -157,19 +160,7 @@
         if (!([_origo isResidence] && [OState s].aspectIsSelf)) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
         }
-    } else if ([OState s].actionIsDisplay) {
-        if ([_origo userIsAdmin]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
-        }
     }
-}
-
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    OLogState;
 }
 
 
@@ -179,7 +170,11 @@
     
     if ([OState s].actionIsInput) {
         [_addressView becomeFirstResponder];
+    } else if ([_origo userIsAdmin]) {
+        _origoCell.editable = YES;
     }
+    
+    OLogState;
 }
 
 
@@ -238,6 +233,10 @@
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
+    if ([OState s].actionIsDisplay) {
+        [self toggleEditMode];
+    }
+    
     self.navigationItem.rightBarButtonItem = _doneButton;
     
     _currentField = textField;
@@ -256,11 +255,15 @@
 
 - (void)textViewDidBeginEditing:(OTextView *)textView
 {
+    if ([OState s].actionIsDisplay) {
+        [self toggleEditMode];
+    }
+    
     self.navigationItem.rightBarButtonItem = _nextButton;
     
     _currentField = textView;
     
-    textView.hasEmphasis = YES;;
+    textView.hasEmphasis = YES;
 }
 
 
@@ -272,7 +275,7 @@
 
 - (void)textViewDidEndEditing:(OTextView *)textView
 {
-    textView.hasEmphasis = NO;;
+    textView.hasEmphasis = NO;
 }
 
 @end

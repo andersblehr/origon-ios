@@ -205,7 +205,7 @@ static OMeta *m = nil;
 
 + (OMeta *)m
 {
-    if (m == nil) {
+    if (!m) {
         m = [[super allocWithZone:nil] init];
     }
     
