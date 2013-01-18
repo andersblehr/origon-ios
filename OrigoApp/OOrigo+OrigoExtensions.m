@@ -50,54 +50,6 @@
 }
 
 
-#pragma mark - Table view list display
-
-- (NSString *)listName
-{
-    NSString *listName = [self.address lines][0];
-    
-    if ([OState s].targetIsOrigo) {
-        listName = self.name;
-    }
-    
-    return listName;
-}
-
-
-- (NSString *)listDetails
-{
-    NSString *listDetails = nil;
-    
-    if ([self hasTelephone]) {
-        listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedTelephone], self.telephone];
-    }
-    
-    if ([OState s].targetIsOrigo) {
-        if ([self isResidence]) {
-            listDetails = [self singleLineAddress];
-        } else {
-            listDetails = self.descriptionText;
-        }
-    }
-    
-    return listDetails;
-}
-
-
-- (UIImage *)listImage
-{
-    UIImage *listImage = nil;
-    
-    if ([self isResidence]) {
-        listImage = [UIImage imageNamed:kIconFileHousehold];
-    } else {
-        // TODO: What icon to use for general origos?
-    }
-    
-    return listImage;
-}
-
-
 #pragma mark - Adding members
 
 - (id)addMember:(OMember *)member
@@ -233,6 +185,54 @@
     }
     
     return height;
+}
+
+
+#pragma mark - OReplicatedEntity+OrigoExtensions overrides
+
+- (NSString *)listNameForState:(OState *)state
+{
+    NSString *listName = [self.address lines][0];
+    
+    if (state.targetIsOrigo) {
+        listName = self.name;
+    }
+    
+    return listName;
+}
+
+
+- (NSString *)listDetailsForState:(OState *)state
+{
+    NSString *listDetails = nil;
+    
+    if ([self hasTelephone]) {
+        listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedTelephone], self.telephone];
+    }
+    
+    if (state.targetIsOrigo) {
+        if ([self isResidence]) {
+            listDetails = [self singleLineAddress];
+        } else {
+            listDetails = self.descriptionText;
+        }
+    }
+    
+    return listDetails;
+}
+
+
+- (UIImage *)listImageForState:(OState *)state
+{
+    UIImage *listImage = nil;
+    
+    if ([self isResidence]) {
+        listImage = [UIImage imageNamed:kIconFileHousehold];
+    } else {
+        // TODO: What icon to use for general origos?
+    }
+    
+    return listImage;
 }
 
 

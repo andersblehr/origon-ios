@@ -8,7 +8,8 @@
 
 #import "OReplicatedEntity.h"
 
-@class OOrigo, OReplicatedEntityGhost, OReplicatedEntityRef;
+@class OState;
+@class OOrigo, OReplicatedEntityRef;
 
 @interface OReplicatedEntity (OrigoExtensions)
 
@@ -30,6 +31,9 @@
 - (NSString *)listName;
 - (NSString *)listDetails;
 - (UIImage *)listImage;
+- (NSString *)listNameForState:(OState *)state;
+- (NSString *)listDetailsForState:(OState *)state;
+- (UIImage *)listImageForState:(OState *)state;
 
 - (NSString *)expiresInTimeframe;
 

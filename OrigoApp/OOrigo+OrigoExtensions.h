@@ -12,9 +12,6 @@
 
 @interface OOrigo (OrigoExtensions)
 
-- (NSString *)listName;
-- (NSString *)listDetails;
-
 - (id)addMember:(OMember *)member;
 - (id)addResident:(OMember *)resident;
 

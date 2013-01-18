@@ -28,6 +28,8 @@
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 
+#import "OTableViewController.h"
+
 NSString * const kReuseIdentifierDefault = @"idDefaultCell";
 NSString * const kReuseIdentifierUserSignIn = @"idUserSignInCell";
 NSString * const kReuseIdentifierUserActivation = @"idUserActivationCell";
@@ -265,8 +267,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)willAppearTrailing:(BOOL)trailing
 {
-    _intrinsicStateTarget = [OState s].target;
-    
     if (trailing) {
         [self.backgroundView addDropShadowForTrailingTableViewCell];
         
@@ -430,15 +430,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - OEntityObservingDelegate conformance
 
-- (void)refresh
+- (void)reloadEntity
 {
-    OStateTarget actualStateTarget = [OState s].target;
-    [OState s].target = _intrinsicStateTarget;
+    id tableViewDelegate = ((UITableView *)self.superview).delegate;
+    OState *delegateState = ((OTableViewController *)tableViewDelegate).intrinsicState;
     
     if ([self isListCell]) {
-        self.textLabel.text = [_entity listName];
-        self.detailTextLabel.text = [_entity listDetails];
-        self.imageView.image = [_entity listImage];
+        self.textLabel.text = [_entity listNameForState:delegateState];
+        self.detailTextLabel.text = [_entity listDetailsForState:delegateState];
+        self.imageView.image = [_entity listImageForState:delegateState];
     } else {
         if ([_entity isKindOfClass:OOrigo.class]) {
             [[self textFieldForKeyPath:kKeyPathAddress] setText:((OOrigo *)_entity).address];
@@ -453,10 +453,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self redrawIfNeeded];
     }
     
-    [OState s].target = actualStateTarget;
-    
     if (_entityObservingDelegate) {
-        [_entityObservingDelegate refresh];
+        [_entityObservingDelegate reloadEntity];
     }
 }
 
