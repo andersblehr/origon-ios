@@ -27,80 +27,6 @@
 
 @implementation OMember (OrigoExtensions)
 
-#pragma mark - Table view list display
-
-- (NSString *)listName
-{
-    NSString *listName = self.givenName;
-    
-    if ([OState s].targetIsMember) {
-        if ([self isMinor]) {
-            listName = [listName stringByAppendingFormat:@" (%d)", [self.dateOfBirth yearsBeforeNow]];
-        } else {
-            listName = self.name;
-        }
-    } else if ([OState s].targetIsOrigo && [self isUser]) {
-        listName = [OStrings stringForKey:strTermMe];
-    }
-    
-    return listName;
-}
-
-
-- (NSString *)listDetails
-{
-    NSString *listDetails = nil;
-    
-    if ([OState s].targetIsMember) {
-        if (![self isMinor] || [[OMeta m].user hasWard:self]) {
-            if ([self hasMobilePhone]) {
-                listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
-            } else if ([self hasEmail]) {
-                listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.email];
-            }
-        }
-    } else if ([OState s].targetIsOrigo && [self isUser]) {
-        listDetails = self.name;
-    }
-    
-    return listDetails;
-}
-
-
-- (UIImage *)listImage
-{
-    UIImage *listImage = nil;
-    
-    if ([OState s].targetIsMember || ([OState s].targetIsOrigo && [self isUser])) {
-        if (self.photo) {
-            // TODO: Embed photo
-        } else {
-            if ([self.dateOfBirth yearsBeforeNow] < 2) {
-                listImage = [UIImage imageNamed:kIconFileInfant];
-            } else {
-                if ([self isMale]) {
-                    if ([self isMinor]) {
-                        listImage = [UIImage imageNamed:kIconFileBoy];
-                    } else {
-                        listImage = [UIImage imageNamed:kIconFileMan];
-                    }
-                } else {
-                    if ([self isMinor]) {
-                        listImage = [UIImage imageNamed:kIconFileGirl];
-                    } else {
-                        listImage = [UIImage imageNamed:kIconFileWoman];
-                    }
-                }
-            }
-        }
-    } else if ([OState s].targetIsOrigo) {
-        listImage = [UIImage imageNamed:kIconFileOrigo];
-    }
-    
-    return listImage;
-}
-
-
 #pragma mark - Meta information
 
 - (BOOL)isUser
@@ -277,6 +203,80 @@
     }
     
     return height;
+}
+
+
+#pragma mark - OReplicatedEntity+OrigoExtensions overrides
+
+- (NSString *)listNameForState:(OState *)state
+{
+    NSString *listName = self.givenName;
+    
+    if (state.targetIsMember) {
+        if ([self isMinor]) {
+            listName = [listName stringByAppendingFormat:@" (%d)", [self.dateOfBirth yearsBeforeNow]];
+        } else {
+            listName = self.name;
+        }
+    } else if (state.targetIsOrigo && [self isUser]) {
+        listName = [OStrings stringForKey:strTermMe];
+    }
+    
+    return listName;
+}
+
+
+- (NSString *)listDetailsForState:(OState *)state
+{
+    NSString *listDetails = nil;
+    
+    if (state.targetIsMember) {
+        if (![self isMinor] || [[OMeta m].user hasWard:self]) {
+            if ([self hasMobilePhone]) {
+                listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
+            } else if ([self hasEmail]) {
+                listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.email];
+            }
+        }
+    } else if (state.targetIsOrigo && [self isUser]) {
+        listDetails = self.name;
+    }
+    
+    return listDetails;
+}
+
+
+- (UIImage *)listImageForState:(OState *)state
+{
+    UIImage *listImage = nil;
+    
+    if (state.targetIsMember || (state.targetIsOrigo && [self isUser])) {
+        if (self.photo) {
+            // TODO: Embed photo
+        } else {
+            if ([self.dateOfBirth yearsBeforeNow] < 2) {
+                listImage = [UIImage imageNamed:kIconFileInfant];
+            } else {
+                if ([self isMale]) {
+                    if ([self isMinor]) {
+                        listImage = [UIImage imageNamed:kIconFileBoy];
+                    } else {
+                        listImage = [UIImage imageNamed:kIconFileMan];
+                    }
+                } else {
+                    if ([self isMinor]) {
+                        listImage = [UIImage imageNamed:kIconFileGirl];
+                    } else {
+                        listImage = [UIImage imageNamed:kIconFileWoman];
+                    }
+                }
+            }
+        }
+    } else if (state.targetIsOrigo) {
+        listImage = [UIImage imageNamed:kIconFileOrigo];
+    }
+    
+    return listImage;
 }
 
 

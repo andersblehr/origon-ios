@@ -103,7 +103,7 @@
             [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
         } else if ([OState s].actionIsEdit) {
             [self toggleEditMode];
-            [_entityObservingDelegate refresh];
+            [_entityObservingDelegate reloadEntity];
         }
         
         [[OMeta m].context replicateIfNeeded];

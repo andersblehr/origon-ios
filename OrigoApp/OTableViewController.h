@@ -12,12 +12,10 @@
 
 @class OState;
 
-@interface OTableViewController : UITableViewController<OStateDelegate> {
-@private
-    OState *_intrinsicState;
-}
+@interface OTableViewController : UITableViewController<OStateDelegate>
 
 @property (nonatomic) BOOL stateIsIntrinsic;
+@property (strong, nonatomic, readonly) OState *intrinsicState;
 
 - (void)restoreState;
 

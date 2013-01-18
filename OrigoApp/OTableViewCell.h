@@ -31,7 +31,6 @@ extern CGFloat const kCellAnimationDuration;
 @private
     BOOL _selectable;
     
-    OStateTarget _intrinsicStateTarget;
     NSMutableDictionary *_views;
     OVisualConstraints *_visualConstraints;
     

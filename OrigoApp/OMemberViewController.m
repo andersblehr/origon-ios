@@ -148,7 +148,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         }
     } else {
         [[OMeta m].context replicateIfNeeded];
-        [_entityObservingDelegate refresh];
+        [_entityObservingDelegate reloadEntity];
     }
 }
 

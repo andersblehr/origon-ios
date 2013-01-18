@@ -12,10 +12,6 @@
 
 @interface OMember (OrigoExtensions)
 
-- (NSString *)listName;
-- (NSString *)listDetails;
-- (UIImage *)listImage;
-
 - (BOOL)isUser;
 - (BOOL)isFemale;
 - (BOOL)isMale;
