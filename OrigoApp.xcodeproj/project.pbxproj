@@ -499,10 +499,6 @@
 				5C2262C315A0B47B00241C5F /* OOrigoViewController.m */,
 				5CB7E93E15F38C1200FD53DF /* OSettingsViewController.h */,
 				5CB7E93F15F38C1200FD53DF /* OSettingsViewController.m */,
-				5C15BFC716367BC900BB5254 /* OTabBarController.h */,
-				5C15BFC816367BC900BB5254 /* OTabBarController.m */,
-				5CA10B9A16A7F49F00031D81 /* OTableViewController.h */,
-				5CA10B9B16A7F49F00031D81 /* OTableViewController.m */,
 				5C62A00014C6252C001DA01F /* OTaskListViewController.h */,
 				5C62A00114C6252C001DA01F /* OTaskListViewController.m */,
 			);
@@ -628,8 +624,12 @@
 		5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */ = {
 			isa = PBXGroup;
 			children = (
+				5C15BFC716367BC900BB5254 /* OTabBarController.h */,
+				5C15BFC816367BC900BB5254 /* OTabBarController.m */,
 				5C8B3AB81582493C000B19FA /* OTableViewCell.h */,
 				5C8B3AB91582493C000B19FA /* OTableViewCell.m */,
+				5CA10B9A16A7F49F00031D81 /* OTableViewController.h */,
+				5CA10B9B16A7F49F00031D81 /* OTableViewController.m */,
 				5C7379FB1593111B0065AB4F /* OTextField.h */,
 				5C7379FC1593111B0065AB4F /* OTextField.m */,
 				5C78FAB81654E77E009A4BCF /* OTextView.h */,

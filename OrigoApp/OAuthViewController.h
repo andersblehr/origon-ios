@@ -10,14 +10,13 @@
 
 #import "OTableViewController.h"
 
-#import "OState.h"
-
+#import "OStateDelegate.h"
 #import "OModalViewControllerDelegate.h"
 #import "OServerConnectionDelegate.h"
 
 @class OTableViewCell, OTextField;
 
-@interface OAuthViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
+@interface OAuthViewController : OTableViewController<OStateDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
 @private
     OTableViewCell *_authCell;
     

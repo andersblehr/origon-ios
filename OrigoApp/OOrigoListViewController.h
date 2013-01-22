@@ -10,14 +10,13 @@
 
 #import "OTableViewController.h"
 
+#import "OStateDelegate.h"
 #import "OModalViewControllerDelegate.h"
-
-#import "OState.h"
 
 @class OTableViewCell;
 @class OMember, OOrigo;
 
-@interface OOrigoListViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
+@interface OOrigoListViewController : OTableViewController<OStateDelegate, UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
 @private
     NSArray *_sortedResidencies;
     NSArray *_sortedWards;

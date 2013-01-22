@@ -9,6 +9,7 @@
 #import "OTableViewController.h"
 
 #import "OState.h"
+#import "OStrings.h"
 
 
 @implementation OTableViewController
@@ -17,26 +18,28 @@
 
 - (void)loadState
 {
-    _stateIsIntrinsic = YES;
-    
-    if ([self respondsToSelector:@selector(setStatePrerequisites)]) {
-        [self setStatePrerequisites];
-    }
-    
-    [self setState];
-    
-    if (_stateIsIntrinsic) {
-        _intrinsicState = [[OState s] copy];
+    if ([OStrings hasStrings]) {
+        if ([self shouldSetState]) {
+            if ([self respondsToSelector:@selector(setStatePrerequisites)]) {
+                [self setStatePrerequisites];
+            }
+            
+            [self setState];
+            
+            _didLoadState = YES;
+        }
+    } else {
+        [OState s].actionIsSetup = YES;
     }
 }
 
 
-- (void)restoreState
+- (void)reflectState
 {
-    if (_intrinsicState) {
-        [[OState s] restoreState:_intrinsicState];
-    } else {
+    if (!_didLoadState) {
         [self loadState];
+    } else {
+        [[OState s] reflect:_state];
     }
 }
 
@@ -47,17 +50,62 @@
 {
     [super viewDidLoad];
 
+    _state = [[OState alloc] init];
+    _modalImpliesRegistration = YES;
+    
     [self loadState];
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if (!_didSetModal) {
+        _isModal = (self.presentingViewController && ![self isMovingToParentViewController]);
+        
+        if (_isModal && _modalImpliesRegistration) {
+            _state.actionIsRegister = YES;
+        }
+        
+        _didSetModal = YES;
+    }
+    
+    _wasHidden = _isHidden;
+    _isHidden = NO;
+    
+    _isPushed = [self isMovingToParentViewController];
+    _isPopped = (!_isPushed && !_isModal && !_wasHidden);
+    
+    [self reflectState];
 }
 
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+}
 
-    if (_intrinsicState) {
-        [self restoreState];
-    }
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    
+    _isHidden = (self.presentedViewController != nil);
+}
+
+
+#pragma mark - OStateDelegate conformance
+
+- (BOOL)shouldSetState
+{
+    return YES;
+}
+
+
+- (void)setState
+{
+    // Override in subclass
 }
 
 @end

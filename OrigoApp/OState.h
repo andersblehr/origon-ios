@@ -72,11 +72,13 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
 @property (nonatomic) BOOL aspectIsTeam;
 
 + (OState *)s;
-- (void)restoreState:(OState *)state;
-
-- (NSString *)asString;
+- (void)reflect:(OState *)state;
 
 - (void)setAspectForMember:(OMember *)member;
-- (void)setAspectForOrigoType:(NSString *)origoType;
+- (void)setAspectForOrigo:(OOrigo *)origo;
+
+- (void)toggleEdit;
+
+- (NSString *)asString;
 
 @end

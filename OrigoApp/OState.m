@@ -23,18 +23,30 @@ static OState *s = nil;
 - (void)setAction:(OStateAction)action activate:(BOOL)activate
 {
     _action = activate ? action : _action;
+
+    if (!(self == s)) {
+        [[OState s] setAction:action activate:activate];
+    }
 }
 
 
 - (void)setTarget:(OStateTarget)target activate:(BOOL)activate
 {
     _target = activate ? target : _target;
+    
+    if (!(self == s)) {
+        [[OState s] setTarget:target activate:activate];
+    }
 }
 
 
 - (void)setAspect:(OStateAspect)aspect activate:(BOOL)activate
 {
     _aspect = activate ? aspect : _aspect;
+    
+    if (!(self == s)) {
+        [[OState s] setAspect:aspect activate:activate];
+    }
 }
 
 
@@ -76,11 +88,65 @@ static OState *s = nil;
 }
 
 
-- (void)restoreState:(OState *)state
+- (void)reflect:(OState *)state
 {
     _action = state.action;
     _target = state.target;
     _aspect = state.aspect;
+}
+
+
+#pragma mark - Entity to aspect mappings
+
+- (void)setAspectForMember:(OMember *)member
+{
+    OStateAspect aspect = OStateAspectExternal;
+    
+    if (member) {
+        if ([member isUser]) {
+            aspect = OStateAspectSelf;
+        } else if ([[[OMeta m].user wards] containsObject:member]) {
+            aspect = OStateAspectWard;
+        }
+    } else {
+        aspect = OStateAspectSelf;
+    }
+    
+    [self setAspect:aspect activate:YES];
+}
+
+
+- (void)setAspectForOrigo:(OOrigo *)origo
+{
+    if (!(self.actionIsRegister && self.aspectIsSelf)) {
+        OStateAspect aspect = OStateAspectNone;
+        
+        if ([origo.type isEqualToString:kOrigoTypeResidence]) {
+            aspect = OStateAspectResidence;
+        } else if ([origo.type isEqualToString:kOrigoTypeOrganisation]) {
+            aspect = OStateAspectOrganisation;
+        } else if ([origo.type isEqualToString:kOrigoTypeSchoolClass]) {
+            aspect = OStateAspectClass;
+        } else if ([origo.type isEqualToString:kOrigoTypePreschoolClass]) {
+            aspect = OStateAspectPreschool;
+        } else if ([origo.type isEqualToString:kOrigoTypeSportsTeam]) {
+            aspect = OStateAspectTeam;
+        }
+        
+        [self setAspect:aspect activate:YES];
+    }
+}
+
+
+#pragma mark - Toggle between edit & display action
+
+- (void)toggleEdit
+{
+    if (self.actionIsDisplay) {
+        self.actionIsEdit = YES;
+    } else if (self.actionIsEdit) {
+        self.actionIsDisplay = YES;
+    }
 }
 
 
@@ -143,48 +209,6 @@ static OState *s = nil;
     }
     
     return [NSString stringWithFormat:@"[%@][%@][%@]", actionAsString, targetAsString, aspectAsString];
-}
-
-
-#pragma mark - Entity to aspect mappings
-
-- (void)setAspectForMember:(OMember *)member
-{
-    OStateAspect aspect = OStateAspectExternal;
-    
-    if (member) {
-        if ([member isUser]) {
-            aspect = OStateAspectSelf;
-        } else if ([[[OMeta m].user wards] containsObject:member]) {
-            aspect = OStateAspectWard;
-        }
-    } else {
-        aspect = OStateAspectSelf;
-    }
-    
-    _aspect = aspect;
-}
-
-
-- (void)setAspectForOrigoType:(NSString *)origoType
-{
-    if (!(self.actionIsRegister && self.aspectIsSelf)) {
-        OStateAspect aspect = OStateAspectNone;
-        
-        if ([origoType isEqualToString:kOrigoTypeResidence]) {
-            aspect = OStateAspectResidence;
-        } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
-            aspect = OStateAspectOrganisation;
-        } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
-            aspect = OStateAspectClass;
-        } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
-            aspect = OStateAspectPreschool;
-        } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
-            aspect = OStateAspectTeam;
-        }
-        
-        _aspect = aspect;
-    }
 }
 
 
