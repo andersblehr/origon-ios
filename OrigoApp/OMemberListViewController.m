@@ -153,8 +153,6 @@ static NSInteger const kMemberSection = 2;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        [OState s].actionIsRegister = YES;
-        
         UINavigationController *navigationController = segue.destinationViewController;
         OMemberViewController *memberViewController = navigationController.viewControllers[0];
         memberViewController.origo = _origo;
@@ -175,9 +173,9 @@ static NSInteger const kMemberSection = 2;
 
 - (void)setState
 {
-    [OState s].actionIsList = YES;
-    [OState s].targetIsMember = YES;
-    [[OState s] setAspectForOrigoType:_origo.type];
+    self.state.actionIsList = YES;
+    self.state.targetIsMember = YES;
+    [self.state setAspectForOrigo:_origo];
 }
 
 

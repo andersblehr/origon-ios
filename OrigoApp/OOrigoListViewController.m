@@ -54,7 +54,7 @@ static NSInteger const kUserRow = 0;
     if ([_member isUser]) {
         _sortedResidencies = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
         _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
-    } else {
+    } else if (_member) {
         self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
     }
@@ -68,19 +68,19 @@ static NSInteger const kUserRow = 0;
 
 - (BOOL)sectionIsUserSection:(NSInteger)section
 {
-    return ([OState s].aspectIsSelf && section == kUserSection);
+    return (self.state.aspectIsSelf && section == kUserSection);
 }
 
 
 - (BOOL)sectionIsWardSection:(NSInteger)section
 {
-    return ([OState s].aspectIsSelf && [_sortedWards count] && (section == kWardSection));
+    return (self.state.aspectIsSelf && [_sortedWards count] && (section == kWardSection));
 }
 
 
 - (BOOL)sectionIsOrigoSection:(NSInteger)section
 {
-    NSUInteger origoSection = [OState s].aspectIsSelf ? ([_sortedWards count] ? 2 : 1) : 0;
+    NSUInteger origoSection = self.state.aspectIsSelf ? ([_sortedWards count] ? 2 : 1) : 0;
     
     return ([_sortedOrigos count] && (section == origoSection));
 }
@@ -90,15 +90,13 @@ static NSInteger const kUserRow = 0;
 
 - (void)addOrigo
 {
-    [OState s].actionIsRegister = YES;
-    
     _origoTypes = [[NSMutableArray alloc] init];
     
     NSString *sheetTitle = [OStrings stringForKey:strSheetTitleOrigoType];
     
-    if ([OState s].aspectIsSelf) {
+    if (self.state.aspectIsSelf) {
         sheetTitle = [sheetTitle stringByAppendingString:@"?"];
-    } else if ([OState s].aspectIsWard) {
+    } else if (self.state.aspectIsWard) {
         NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], _member.givenName];
         sheetTitle = [NSString stringWithFormat:@"%@ %@?", sheetTitle, forWardName];
         
@@ -145,8 +143,8 @@ static NSInteger const kUserRow = 0;
 {
     [super viewWillAppear:animated];
     
-    if ([[OMeta m] userIsAllSet]) {
-        if ([OState s].aspectIsSelf) {
+    if ([[OMeta m] userIsAllSet] && self.isPopped) {
+        if (self.state.aspectIsSelf) {
             BOOL hasOnlyResidenceSection = ([self.tableView numberOfSections] == 1);
             NSRange reloadRange = {0, 0};
             
@@ -214,9 +212,6 @@ static NSInteger const kUserRow = 0;
         OAuthViewController *authViewController = segue.destinationViewController;
         authViewController.delegate = self;
     } else if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        [OState s].actionIsRegister = YES;
-        [OState s].aspectIsSelf = YES;
-        
         UINavigationController *navigationController = segue.destinationViewController;
         OMemberViewController *memberViewController = navigationController.viewControllers[0];
         memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
@@ -224,7 +219,8 @@ static NSInteger const kUserRow = 0;
     } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
         UINavigationController *navigationController = segue.destinationViewController;
         OOrigoViewController *origoViewController = navigationController.viewControllers[0];
-        origoViewController.origoType = _origoTypes[_indexOfSelectedOrigoType];
+        origoViewController.origo = [[OMeta m].context insertOrigoEntityOfType:_origoTypes[_indexOfSelectedOrigoType]];
+        origoViewController.member = _member;
         origoViewController.delegate = self;
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberView]) {
         OMemberViewController *memberViewController = segue.destinationViewController;
@@ -240,25 +236,25 @@ static NSInteger const kUserRow = 0;
 
 #pragma mark - OStateDelegate conformance
 
+- (BOOL)shouldSetState
+{
+    return [[OMeta m] userIsAllSet];
+}
+
+
 - (void)setStatePrerequisites
 {
-    if ([[OMeta m] userIsAllSet]) {
-        if (!_member || [_member isFault]) {
-            _member = [OMeta m].user;
-        }
+    if (!_member || [_member isFault]) {
+        _member = [OMeta m].user;
     }
 }
 
 
 - (void)setState
 {
-    if ([[OMeta m] userIsAllSet]) {
-        [OState s].actionIsList = YES;
-        [OState s].targetIsOrigo = YES;
-        [[OState s] setAspectForMember:_member];
-    } else {
-        self.stateIsIntrinsic = NO;
-    }
+    self.state.actionIsList = YES;
+    self.state.targetIsOrigo = YES;
+    [self.state setAspectForMember:_member];
 }
 
 
@@ -271,7 +267,7 @@ static NSInteger const kUserRow = 0;
     if ([[OMeta m] userIsAllSet]) {
         numberOfSections++;
         
-        if ([OState s].aspectIsSelf) {
+        if (self.state.aspectIsSelf) {
             if ([_sortedWards count]) {
                 numberOfSections++;
             }
@@ -390,7 +386,7 @@ static NSInteger const kUserRow = 0;
             footerText = [OStrings stringForKey:strFooterOrigoCreationFirst];
         }
         
-        if ([OState s].aspectIsSelf && [_sortedWards count]) {
+        if (self.state.aspectIsSelf && [_sortedWards count]) {
             NSString *yourChild = nil;
             NSString *himOrHer = nil;
             
@@ -418,9 +414,9 @@ static NSInteger const kUserRow = 0;
             
             NSString *wardsAddendum = [NSString stringWithFormat:[OStrings stringForKey:strFooterOrigoCreationWards], yourChild, himOrHer];
             footerText = [NSString stringWithFormat:@"%@ %@", footerText, wardsAddendum];
-        } else if ([OState s].aspectIsSelf) {
+        } else if (self.state.aspectIsSelf) {
             footerText = [footerText stringByAppendingString:@"."];
-        } else if ([OState s].aspectIsWard) {
+        } else if (self.state.aspectIsWard) {
             NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], _member.givenName];
             footerText = [NSString stringWithFormat:@"%@ %@.", footerText, forWardName];
         }
@@ -497,7 +493,6 @@ static NSInteger const kUserRow = 0;
         [identitifier isEqualToString:kMemberViewControllerId] ||
         [identitifier isEqualToString:kMemberListViewControllerId]) {
         if ([[OMeta m] userIsSignedIn]) {
-            [self restoreState];
             [self configureViewAndDataSource];
             [self.tableView reloadData];
         }

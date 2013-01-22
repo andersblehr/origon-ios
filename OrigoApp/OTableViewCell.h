@@ -24,8 +24,8 @@ extern CGFloat const kDefaultPadding;
 
 extern CGFloat const kCellAnimationDuration;
 
+@class OState, OTextField, OTextView, OVisualConstraints;
 @class OReplicatedEntity;
-@class OTextField, OTextView, OVisualConstraints;
 
 @interface OTableViewCell : UITableViewCell<OEntityObservingDelegate> {
 @private
@@ -39,6 +39,7 @@ extern CGFloat const kCellAnimationDuration;
 
 @property (strong, nonatomic) OReplicatedEntity *entity;
 @property (weak, nonatomic, readonly) Class entityClass;
+@property (weak, nonatomic, readonly) OState *viewState;
 @property (nonatomic) BOOL editable;
 
 @property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;

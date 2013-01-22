@@ -10,6 +10,8 @@
 
 #import "OTableViewController.h"
 
-@interface OSettingsViewController : OTableViewController
+#import "OStateDelegate.h"
+
+@interface OSettingsViewController : OTableViewController<OStateDelegate>
 
 @end

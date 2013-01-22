@@ -11,7 +11,10 @@
 @protocol OStateDelegate <NSObject>
 
 @optional
-- (void)setState;
+- (BOOL)shouldSetState;
 - (void)setStatePrerequisites;
+
+@required
+- (void)setState;
 
 @end

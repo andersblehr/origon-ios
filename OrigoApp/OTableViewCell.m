@@ -169,7 +169,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
     _entityClass = entityClass;
-    _selectable = [OState s].actionIsList;
+    _selectable = self.viewState.actionIsList;
     
     self.entity = entity;
     self.editing = !_selectable;
@@ -285,13 +285,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)toggleEditMode
 {
-    if ([OState s].actionIsDisplay) {
-        [OState s].actionIsEdit = YES;
-    } else if ([OState s].actionIsEdit) {
-        [OState s].actionIsDisplay = YES;
-    }
-
-    self.editing = ([OState s].actionIsEdit || _editable);
+    [self.viewState toggleEdit];
+    
+    self.editing = (self.viewState.actionIsEdit || _editable);
 }
 
 
@@ -383,6 +379,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (OState *)viewState
+{
+    id tableViewDelegate = ((UITableView *)self.superview).delegate;
+    
+    return tableViewDelegate ? ((OTableViewController *)tableViewDelegate).state : [OState s];
+}
+
+
 - (void)setEditable:(BOOL)editable
 {
     _editable = editable;
@@ -432,13 +436,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)reloadEntity
 {
-    id tableViewDelegate = ((UITableView *)self.superview).delegate;
-    OState *delegateState = ((OTableViewController *)tableViewDelegate).intrinsicState;
-    
     if ([self isListCell]) {
-        self.textLabel.text = [_entity listNameForState:delegateState];
-        self.detailTextLabel.text = [_entity listDetailsForState:delegateState];
-        self.imageView.image = [_entity listImageForState:delegateState];
+        self.textLabel.text = [_entity listNameForState:self.viewState];
+        self.detailTextLabel.text = [_entity listDetailsForState:self.viewState];
+        self.imageView.image = [_entity listImageForState:self.viewState];
     } else {
         if ([_entity isKindOfClass:OOrigo.class]) {
             [[self textFieldForKeyPath:kKeyPathAddress] setText:((OOrigo *)_entity).address];

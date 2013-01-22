@@ -12,7 +12,6 @@
 #import "UIFont+OrigoExtensions.h"
 
 #import "OLogging.h"
-#import "OState.h"
 #import "OTableViewCell.h"
 #import "OTextField.h"
 #import "OTextView.h"
@@ -65,7 +64,7 @@ static NSString * const kKeyPathPrefixDate = @"date";
                 elementsAreVisible = NO;
             }
             
-            elementsAreVisible = elementsAreVisible || [OState s].actionIsInput;
+            elementsAreVisible = elementsAreVisible || _cell.viewState.actionIsInput;
         }
     }
     

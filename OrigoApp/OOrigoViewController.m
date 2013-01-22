@@ -31,6 +31,8 @@
 
 #import "OMemberListViewController.h"
 
+static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberListView";
+
 
 @implementation OOrigoViewController
 
@@ -43,7 +45,7 @@
     
     [_origoCell toggleEditMode];
     
-    if ([OState s].actionIsEdit) {
+    if (self.state.actionIsEdit) {
         editButton = self.navigationItem.rightBarButtonItem;
         backButton = self.navigationItem.leftBarButtonItem;
         
@@ -55,7 +57,7 @@
         
         self.navigationItem.rightBarButtonItem = _nextButton;
         self.navigationItem.leftBarButtonItem = _cancelButton;
-    } else if ([OState s].actionIsDisplay) {
+    } else if (self.state.actionIsDisplay) {
         [self.view endEditing:YES];
         
         self.navigationItem.rightBarButtonItem = editButton;
@@ -78,7 +80,7 @@
 
 - (void)didCancelEditing
 {
-    if ([OState s].actionIsRegister) {
+    if (self.state.actionIsRegister) {
         [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
     } else {
         _addressView.text = _origo.address;
@@ -95,13 +97,13 @@
         _origo.address = [_addressView finalText];
         _origo.telephone = [_telephoneField finalText];
         
-        if ([OState s].actionIsRegister) {
-            if ([_origo isResidence] && [OState s].aspectIsSelf) {
+        if (self.state.actionIsRegister) {
+            if ([_origo isResidence] && self.state.aspectIsSelf) {
                 [OMeta m].user.activeSince = [NSDate date];
             }
             
             [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
-        } else if ([OState s].actionIsEdit) {
+        } else if (self.state.actionIsEdit) {
             [self toggleEditMode];
             [_entityObservingDelegate reloadEntity];
         }
@@ -124,20 +126,26 @@
     if (_origo) {
         self.title = [_origo isResidence] ? [OStrings stringForKey:strTermAddress] : _origo.name;
     } else {
-        if ([_origoType isEqualToString:kOrigoTypeDefault]) {
+        if ([_origo.type isEqualToString:kOrigoTypeDefault]) {
             self.title = [OStrings stringForKey:strViewTitleNewOrigo];
         } else {
-            self.title = [OStrings stringForKey:_origoType];
+            self.title = [OStrings stringForKey:_origo.type];
         }
     }
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     
-    if ([OState s].actionIsRegister) {
+    if (self.state.actionIsRegister) {
         _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
         _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
         
         self.navigationItem.rightBarButtonItem = _nextButton;
         
-        if (!([_origo isResidence] && [OState s].aspectIsSelf)) {
+        if (!([_origo isResidence] && self.state.aspectIsSelf)) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
         }
     }
@@ -148,7 +156,7 @@
 {
     [super viewDidAppear:animated];
     
-    if ([OState s].actionIsInput) {
+    if (self.state.actionIsInput) {
         [_addressView becomeFirstResponder];
     } else if ([_origo userIsAdmin]) {
         _origoCell.editable = YES;
@@ -172,17 +180,16 @@
 {
     if (_membership) {
         _origo = _membership.origo;
-        _origoType = _origo.type;
+        _member = _membership.member;
     }
 }
 
 
 - (void)setState
 {
-    [OState s].targetIsOrigo = YES;
-    [OState s].actionIsRegister = (self.presentingViewController != nil);
-    [OState s].actionIsDisplay = ![OState s].actionIsInput;
-    [[OState s] setAspectForOrigoType:_origoType];
+    self.state.targetIsOrigo = YES;
+    self.state.actionIsDisplay = ![OState s].actionIsInput;
+    [self.state setAspectForOrigo:_origo];
 }
 
 
@@ -233,7 +240,7 @@
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    if ([OState s].actionIsDisplay) {
+    if (self.state.actionIsDisplay) {
         [self toggleEditMode];
     }
     
@@ -255,7 +262,7 @@
 
 - (void)textViewDidBeginEditing:(OTextView *)textView
 {
-    if ([OState s].actionIsDisplay) {
+    if (self.state.actionIsDisplay) {
         [self toggleEditMode];
     }
     

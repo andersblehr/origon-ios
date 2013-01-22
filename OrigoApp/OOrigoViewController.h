@@ -10,12 +10,14 @@
 
 #import "OTableViewController.h"
 
+#import "OStateDelegate.h"
+
 @protocol OEntityObservingDelegate, OModalViewControllerDelegate;
 
-@class OMembership, OOrigo;
+@class OMember, OMembership, OOrigo;
 @class OTableViewCell, OTextField, OTextView;
 
-@interface OOrigoViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate> {
+@interface OOrigoViewController : OTableViewController<OStateDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate> {
 @private
     OTableViewCell *_origoCell;
     OOrigo *_origo;
@@ -29,8 +31,9 @@
     UIView *_currentField;
 }
 
+@property (strong, nonatomic) OOrigo *origo;
+@property (strong, nonatomic) OMember *member;
 @property (strong, nonatomic) OMembership *membership;
-@property (strong, nonatomic) NSString *origoType;
 
 @property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
 @property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
