@@ -68,34 +68,26 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (void)reload
+- (void)toggleAuthState
 {
     if ([OState s].actionIsSetup) {
         [self reflectState];
         [self.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
     } else if (self.state.actionIsLogin) {
+        self.state.actionIsActivate = YES;
+        
+        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationLeft];
+    } else if (self.state.actionIsActivate) {
+        self.state.actionIsLogin = YES;
+        
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
         
         if (_authInfo) {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathAuthInfo];
         }
-    } else if (self.state.actionIsActivate) {
-        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationLeft];
     }
     
     [self initialiseFields];
-}
-
-
-- (void)toggleAuthState
-{
-    if (self.state.actionIsLogin) {
-        self.state.actionIsActivate = YES;
-    } else if (self.state.actionIsActivate) {
-        self.state.actionIsLogin = YES;
-    }
-    
-    [self reload];
     
     OLogState;
 }
@@ -339,7 +331,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - User email activation
 
-- (void)emailActivationCode
+- (void)sendActivationCode
 {
     NSString *activationCode = [[OUUIDGenerator generateUUID] substringToIndex:kActivationCodeLength];
     
@@ -390,7 +382,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             welcomeBackAlert.tag = kAlertTagWelcomeBack;
             [welcomeBackAlert show];
         } else if (self.state.targetIsEmail) {
-            [self emailActivationCode];
+            [self sendActivationCode];
         }
     }
     
@@ -599,7 +591,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [OStrings.class didCompleteWithResponse:response data:data];
         [(OTabBarController *)((UIViewController *)_delegate).tabBarController setTabBarTitles];
         
-        [self reload];
+        [self toggleAuthState];
     } else {
         [self indicatePendingServerSession:NO];
         
