@@ -18,7 +18,9 @@
 
 - (void)loadState
 {
-    if ([OStrings hasStrings]) {
+    if (![OStrings hasStrings]) {
+        [OState s].actionIsSetup = YES;
+    } else {
         if ([self shouldSetState]) {
             if ([self respondsToSelector:@selector(setStatePrerequisites)]) {
                 [self setStatePrerequisites];
@@ -28,8 +30,6 @@
             
             _didLoadState = YES;
         }
-    } else {
-        [OState s].actionIsSetup = YES;
     }
 }
 
@@ -78,12 +78,6 @@
     _isPopped = (!_isPushed && !_isModal && !_wasHidden);
     
     [self reflectState];
-}
-
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
 }
 
 

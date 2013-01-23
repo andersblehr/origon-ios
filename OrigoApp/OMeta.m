@@ -245,6 +245,7 @@ static OMeta *m = nil;
     _userId = nil;
     _authToken = nil;
     _deviceId = nil;
+    _lastReplicationDate = nil;
     
     [(OAppDelegate *)[UIApplication sharedApplication].delegate releasePersistentStore];
 }
