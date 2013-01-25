@@ -10,6 +10,8 @@
 
 #import "OTableViewControllerDelegate.h"
 
+extern NSInteger const kNoSection;
+
 @class OState;
 @class OReplicatedEntity;
 
@@ -19,8 +21,8 @@
     BOOL _didSetModal;
     BOOL _isHidden;
     
-    NSMutableArray *_tableData;
-    NSMutableArray *_sectionDeltas;
+    NSMutableDictionary *_tableData;
+    NSMutableDictionary *_sectionDeltas;
 }
 
 @property (strong, nonatomic, readonly) OState *state;
@@ -38,7 +40,7 @@
 - (void)addData:(id)data toSection:(NSInteger)section;
 
 - (id)entityForIndexPath:(NSIndexPath *)indexPath;
-- (BOOL)sectionIsEmpty:(NSInteger)section;
 - (void)reloadSectionsIfNeeded;
+- (NSInteger)sectionNumberForSection:(NSInteger)section;
 
 @end

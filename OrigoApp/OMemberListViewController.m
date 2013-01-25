@@ -209,7 +209,7 @@ static NSInteger const kMemberSection = 2;
     
     if (section == kOrigoSection) {
         height = kDefaultPadding;
-    } else if (![self sectionIsEmpty:section]) {
+    } else {
         height = [tableView standardHeaderHeight];
     }
     
@@ -223,8 +223,10 @@ static NSInteger const kMemberSection = 2;
     
     if (section == kOrigoSection) {
         height = kDefaultPadding;
-    } else if ((section == kMemberSection) && [_origo userIsAdmin]) {
-        height = [tableView standardFooterHeight];
+    } else if (section == [self sectionNumberForSection:kMemberSection]) {
+        if ([_origo userIsAdmin]) {
+            height = [tableView standardFooterHeight];
+        }
     }
     
     return height;
@@ -235,10 +237,10 @@ static NSInteger const kMemberSection = 2;
 {
     UIView *headerView = nil;
     
-    if ((section != kOrigoSection) && ![self sectionIsEmpty:section]) {
-        if (section == kContactSection) {
+    if (section != kOrigoSection) {
+        if (section == [self sectionNumberForSection:kContactSection]) {
             headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderContacts]];
-        } else if (section == kMemberSection) {
+        } else if (section == [self sectionNumberForSection:kMemberSection]) {
             if ([_origo isResidence]) {
                 headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderHouseholdMembers]];
             } else {
@@ -255,8 +257,10 @@ static NSInteger const kMemberSection = 2;
 {
     UIView *footerView = nil;
     
-    if ((section == kMemberSection) && [_origo userIsAdmin]) {
-        footerView = [tableView footerViewWithText:[OStrings stringForKey:strFooterHousehold]];
+    if (section == [self sectionNumberForSection:kMemberSection]) {
+        if ([_origo userIsAdmin]) {
+            footerView = [tableView footerViewWithText:[OStrings stringForKey:strFooterHousehold]];
+        }
     }
     
     return footerView;
