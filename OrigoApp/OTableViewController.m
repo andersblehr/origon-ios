@@ -16,6 +16,8 @@
 
 #import "OReplicatedEntity.h"
 
+NSInteger const kNoSection = -1;
+
 
 @implementation OTableViewController
 
@@ -57,24 +59,24 @@
 
 - (void)setData:(id)data forSection:(NSInteger)section
 {
-    BOOL hasDataForSection = ([_tableData count] > section);
+    BOOL hasDataForSection = (_tableData[@(section)] != nil);
     
     if ([data isKindOfClass:OReplicatedEntity.class]) {
         if (!hasDataForSection) {
-            _tableData[section] = data;
-            _sectionDeltas[section] = @0;
+            _tableData[@(section)] = data;
+            _sectionDeltas[@(section)] = @0;
         }
-    } else {
-        NSMutableArray *entityArray = [NSMutableArray arrayWithArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
+    } else if ([data count] > 0) {
+        NSMutableArray *entities = [NSMutableArray arrayWithArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
         
-        if (!hasDataForSection || ([entityArray count] != [_tableData[section] count])) {
+        if (!hasDataForSection || ([entities count] != [_tableData[@(section)] count])) {
             if (hasDataForSection) {
-                _sectionDeltas[section] = @([_tableData[section] count] - [entityArray count]);
+                _sectionDeltas[@(section)] = @([_tableData[@(section)] count] - [entities count]);
             } else {
-                _sectionDeltas[section] = @0;
+                _sectionDeltas[@(section)] = @0;
             }
             
-            _tableData[section] = entityArray;
+            _tableData[@(section)] = entities;
         }
     }
 }
@@ -88,13 +90,9 @@
 
 - (id)entityForIndexPath:(NSIndexPath *)indexPath
 {
-    return _tableData[indexPath.section][indexPath.row];
-}
-
-
-- (BOOL)sectionIsEmpty:(NSInteger)section
-{
-    return ([(NSArray *)_tableData[section] count] == 0);
+    NSNumber *sectionKey = [NSArray arrayWithArray:[[_tableData allKeys] sortedArrayUsingSelector:@selector(compare:)]][indexPath.section];
+    
+    return _tableData[sectionKey][indexPath.row];
 }
 
 
@@ -103,7 +101,7 @@
     NSRange reloadRange = {0, 0};
     
     for (NSInteger section = 0; section < [_tableData count]; section++) {
-        if (_sectionDeltas[section] != @0) {
+        if (_sectionDeltas[@(section)] != @0) {
             reloadRange.location = reloadRange.length ? reloadRange.location : section;
             reloadRange.length = (section - reloadRange.location) + 1;
         }
@@ -115,14 +113,31 @@
 }
 
 
+- (NSInteger)sectionNumberForSection:(NSInteger)section
+{
+    NSInteger sectionNumber = kNoSection;
+    NSArray *sortedSectionKeys = [NSArray arrayWithArray:[[_tableData allKeys] sortedArrayUsingSelector:@selector(compare:)]];
+    
+    for (NSInteger i = 0; i < [sortedSectionKeys count]; i++) {
+        NSNumber *sectionKey = sortedSectionKeys[i];
+        
+        if ([sectionKey integerValue] == section) {
+            sectionNumber = i;
+        }
+    }
+    
+    return sectionNumber;
+}
+
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
-    _tableData = [[NSMutableArray alloc] init];
-    _sectionDeltas = [[NSMutableArray alloc] init];
+    _tableData = [[NSMutableDictionary alloc] init];
+    _sectionDeltas = [[NSMutableDictionary alloc] init];
     
     _state = [[OState alloc] init];
     _modalImpliesRegistration = YES;
@@ -193,8 +208,9 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger numberOfRows = 0;
+    NSNumber *sectionKey = [NSArray arrayWithArray:[[_tableData allKeys] sortedArrayUsingSelector:@selector(compare:)]][section];
     
-    id sectionData = _tableData[section];
+    id sectionData = _tableData[sectionKey];
     
     if ([sectionData isKindOfClass:OReplicatedEntity.class]) {
         numberOfRows = 1;
@@ -209,7 +225,9 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        NSMutableArray *sectionData = _tableData[indexPath.section];
+        NSNumber *sectionKey = [NSArray arrayWithArray:[[_tableData allKeys] sortedArrayUsingSelector:@selector(compare:)]][indexPath.section];
+        
+        NSMutableArray *sectionData = _tableData[sectionKey];
         OReplicatedEntity *entity = sectionData[indexPath.row];
         
         [sectionData removeObjectAtIndex:indexPath.row];
