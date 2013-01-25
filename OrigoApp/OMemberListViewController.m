@@ -33,45 +33,12 @@ static NSString * const kModalSegueToMemberView = @"modalFromMemberListToMemberV
 static NSString * const kPushSegueToMemberView = @"pushFromMemberListToMemberView";
 static NSString * const kPushSegueToOrigoView = @"pushFromMemberListToOrigoView";
 
-static NSInteger const kDefaultNumberOfSections = 3;
-static NSInteger const kReducedNumberOfSections = 2;
-
 static NSInteger const kOrigoSection = 0;
 static NSInteger const kContactSection = 1;
 static NSInteger const kMemberSection = 2;
 
 
 @implementation OMemberListViewController
-
-#pragma mark - Auxiliary methods
-
-- (BOOL)sectionIsContactSection:(NSInteger)section
-{
-    BOOL isContactSection = NO;
-    
-    if ([_contactMemberships count] && [_regularMemberships count]) {
-        isContactSection = (section = kContactSection);
-    } else {
-        isContactSection = ((section == kOrigoSection + 1) && [_contactMemberships count]);
-    }
-    
-    return isContactSection;
-}
-
-
-- (BOOL)sectionIsMemberSection:(NSInteger)section
-{
-    BOOL isMemberSection = NO;
-    
-    if ([_contactMemberships count] && [_regularMemberships count]) {
-        isMemberSection = (section == kMemberSection);
-    } else {
-        isMemberSection = ((section == kOrigoSection + 1) && [_regularMemberships count]);
-    }
-    
-    return isMemberSection;
-}
-
 
 #pragma mark - Selector implementations
 
@@ -113,20 +80,6 @@ static NSInteger const kMemberSection = 2;
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         }
     }
-    
-    _contactMemberships = [[NSMutableSet alloc] init];
-    _regularMemberships = [[NSMutableSet alloc] init];
-    
-    for (OMembership *membership in _origo.memberships) {
-        if ([membership hasContactRole]) {
-            [_contactMemberships addObject:membership];
-        } else {
-            [_regularMemberships addObject:membership];
-        }
-    }
-    
-    _sortedContactMemberships = [[_contactMemberships allObjects] sortedArrayUsingSelector:@selector(compare:)];
-    _sortedRegularMemberships = [[_regularMemberships allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -169,7 +122,7 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-#pragma mark - OStateDelegate conformance
+#pragma mark - OTableViewControllerDelegate conformance
 
 - (void)setState
 {
@@ -179,46 +132,30 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-#pragma mark - UITableViewDataSource conformance
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+- (void)loadData
 {
-    NSInteger numberOfSections = kDefaultNumberOfSections;
+    NSMutableSet *contactMemberships = [[NSMutableSet alloc] init];
+    NSMutableSet *regularMemberships = [[NSMutableSet alloc] init];
     
-    if (![_contactMemberships count] || ![_regularMemberships count]) {
-        numberOfSections = kReducedNumberOfSections;
-    }
-    
-	return numberOfSections;
-}
-
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    NSUInteger numberOfRows = 0;
-    
-    NSUInteger numberOfContacts = [_contactMemberships count];
-    NSUInteger numberOfMembers = [_regularMemberships count];
-    
-    if (section == kOrigoSection) {
-        numberOfRows = 1;
-    } else if (section == kMemberSection) {
-        numberOfRows = numberOfMembers;
-    } else {
-        if (numberOfContacts) {
-            numberOfRows = numberOfContacts;
-        } else if (numberOfMembers) {
-            numberOfRows = numberOfMembers;
+    for (OMembership *membership in _origo.memberships) {
+        if ([membership hasContactRole]) {
+            [contactMemberships addObject:membership];
+        } else {
+            [regularMemberships addObject:membership];
         }
     }
     
-	return numberOfRows;
+    [self setData:_origo forSection:kOrigoSection];
+    [self setData:contactMemberships forSection:kContactSection];
+    [self setData:regularMemberships forSection:kMemberSection];
 }
 
 
+#pragma mark - UITableViewDataSource conformance
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = 0;
+    CGFloat height = 0.f;
     
     if (indexPath.section == kOrigoSection) {
         height = [_origo cellHeight];
@@ -244,15 +181,7 @@ static NSInteger const kMemberSection = 2;
         
         cell = _origoCell;
     } else {
-        OMembership *membership = nil;
-        
-        if ([self sectionIsContactSection:indexPath.section]) {
-            membership = _sortedContactMemberships[indexPath.row];
-        } else {
-            membership = _sortedRegularMemberships[indexPath.row];
-        }
-        
-        cell = [tableView listCellForEntity:membership.member];
+        cell = [tableView listCellForEntity:[[self entityForIndexPath:indexPath] member]];
     }
     
     return cell;
@@ -264,14 +193,7 @@ static NSInteger const kMemberSection = 2;
     BOOL canDeleteRow = NO;
     
     if (indexPath.section != kOrigoSection) {
-        OMembership *membershipForRow = nil;
-        
-        if ([self sectionIsContactSection:indexPath.section]) {
-            membershipForRow = _sortedContactMemberships[indexPath.row];
-        } else if ([self sectionIsMemberSection:indexPath.section]) {
-            membershipForRow = _sortedRegularMemberships[indexPath.row];
-        }
-        
+        OMembership *membershipForRow = [self entityForIndexPath:indexPath];
         canDeleteRow = ([_origo userIsAdmin] && ![membershipForRow.member isUser]);
     }
     
@@ -279,36 +201,15 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        OMembership *revokedMembership = nil;
-        
-        if ([self sectionIsContactSection:indexPath.section]) {
-            revokedMembership = _sortedContactMemberships[indexPath.row];
-            
-            [_contactMemberships removeObject:revokedMembership];
-            _sortedContactMemberships = [[_contactMemberships allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        } else if ([self sectionIsMemberSection:indexPath.section]) {
-            revokedMembership = _sortedRegularMemberships[indexPath.row];
-            
-            [_regularMemberships removeObject:revokedMembership];
-            _sortedRegularMemberships = [[_regularMemberships allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        }
-        
-        [[OMeta m].context deleteEntity:revokedMembership];
-        [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];
-    }
-}
-
-
 #pragma mark - UITableViewDelegate conformance
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = kDefaultPadding;
+    CGFloat height = kMinimumPadding;
     
-    if (section > kOrigoSection) {
+    if (section == kOrigoSection) {
+        height = kDefaultPadding;
+    } else if (![self sectionIsEmpty:section]) {
         height = [tableView standardHeaderHeight];
     }
     
@@ -318,9 +219,11 @@ static NSInteger const kMemberSection = 2;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    CGFloat height = kDefaultPadding;
+    CGFloat height = kMinimumPadding;
     
-    if ([self sectionIsMemberSection:section] && [_origo userIsAdmin]) {
+    if (section == kOrigoSection) {
+        height = kDefaultPadding;
+    } else if ((section == kMemberSection) && [_origo userIsAdmin]) {
         height = [tableView standardFooterHeight];
     }
     
@@ -332,13 +235,15 @@ static NSInteger const kMemberSection = 2;
 {
     UIView *headerView = nil;
     
-    if ([self sectionIsContactSection:section]) {
-        headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderContacts]];
-    } else if ([self sectionIsMemberSection:section]) {
-        if ([_origo isResidence]) {
-            headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderHouseholdMembers]];
-        } else {
-            headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderOrigoMembers]];
+    if ((section != kOrigoSection) && ![self sectionIsEmpty:section]) {
+        if (section == kContactSection) {
+            headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderContacts]];
+        } else if (section == kMemberSection) {
+            if ([_origo isResidence]) {
+                headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderHouseholdMembers]];
+            } else {
+                headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderOrigoMembers]];
+            }
         }
     }
     
@@ -350,7 +255,7 @@ static NSInteger const kMemberSection = 2;
 {
     UIView *footerView = nil;
     
-    if ([self sectionIsMemberSection:section] && [_origo userIsAdmin]) {
+    if ((section == kMemberSection) && [_origo userIsAdmin]) {
         footerView = [tableView footerViewWithText:[OStrings stringForKey:strFooterHousehold]];
     }
     
@@ -375,11 +280,7 @@ static NSInteger const kMemberSection = 2;
     if (indexPath.section == kOrigoSection) {
         [self performSegueWithIdentifier:kPushSegueToOrigoView sender:self];
     } else {
-        if ([self sectionIsContactSection:indexPath.section]) {
-            _selectedMembership = _sortedContactMemberships[indexPath.row];
-        } else if ([self sectionIsMemberSection:indexPath.section]) {
-            _selectedMembership = _sortedRegularMemberships[indexPath.row];
-        }
+        _selectedMembership = [self entityForIndexPath:indexPath];
         
         [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];
     }
@@ -397,38 +298,6 @@ static NSInteger const kMemberSection = 2;
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
-}
-
-
-- (void)insertEntityInTableView:(OReplicatedEntity *)entity
-{
-    NSInteger section;
-    NSInteger row;
-    BOOL sectionIsNew = NO;
-    
-    OMembership *membership = (OMembership *)entity;
-    
-    if ([membership hasContactRole]) {
-        [_contactMemberships addObject:membership];
-        _sortedContactMemberships = [[_contactMemberships allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        
-        section = kContactSection;
-        row = [_sortedContactMemberships indexOfObject:membership];
-        sectionIsNew = ![_sortedContactMemberships count];
-    } else {
-        [_regularMemberships addObject:membership];
-        _sortedRegularMemberships = [[_regularMemberships allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        
-        section = [_contactMemberships count] ? kMemberSection : kMemberSection - 1;
-        row = [_sortedRegularMemberships indexOfObject:membership];
-        sectionIsNew = ![_sortedRegularMemberships count];
-    }
-
-    if (sectionIsNew) {
-        [self.tableView insertRowInNewSection:section];
-    } else {
-        [self.tableView insertRow:row inSection:section];
-    }
 }
 
 @end

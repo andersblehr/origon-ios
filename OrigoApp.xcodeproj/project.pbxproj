@@ -222,7 +222,7 @@
 		5CA10B8E16A40BB500031D81 /* glyphicons_309_comments@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_309_comments@2x.png"; sourceTree = "<group>"; };
 		5CA10B9A16A7F49F00031D81 /* OTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewController.h; sourceTree = "<group>"; };
 		5CA10B9B16A7F49F00031D81 /* OTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewController.m; sourceTree = "<group>"; };
-		5CA10B9E16A7F9FD00031D81 /* OStateDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OStateDelegate.h; sourceTree = "<group>"; };
+		5CA10B9E16A7F9FD00031D81 /* OTableViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTableViewControllerDelegate.h; sourceTree = "<group>"; };
 		5CA94D9915834A9E008CD9EC /* UIDatePicker+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDatePicker+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5CA94D9A15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDatePicker+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5CA94D9D15836BD9008CD9EC /* NSDate+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+OrigoExtensions.h"; sourceTree = "<group>"; };
@@ -475,7 +475,7 @@
 				5C39EC1C166632570083DFEB /* OEntityObservingDelegate.h */,
 				5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDelegate.h */,
 				5C2E1133146ACFA9005BDE61 /* OServerConnectionDelegate.h */,
-				5CA10B9E16A7F9FD00031D81 /* OStateDelegate.h */,
+				5CA10B9E16A7F9FD00031D81 /* OTableViewControllerDelegate.h */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";

@@ -8,27 +8,36 @@
 
 #import "OTableViewController.h"
 
+#import "NSManagedObjectContext+OrigoExtensions.h"
+
+#import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
+
+#import "OReplicatedEntity.h"
 
 
 @implementation OTableViewController
 
 #pragma mark - State handling
 
-- (void)loadState
+- (void)initialise
 {
     if (![OStrings hasStrings]) {
         [OState s].actionIsSetup = YES;
     } else {
-        if ([self shouldSetState]) {
-            if ([self respondsToSelector:@selector(setStatePrerequisites)]) {
-                [self setStatePrerequisites];
+        if ([self shouldInitialise]) {
+            if ([self respondsToSelector:@selector(setPrerequisites)]) {
+                [self setPrerequisites];
             }
             
             [self setState];
             
-            _didLoadState = YES;
+            if ([self respondsToSelector:@selector(loadData)]) {
+                [self loadData];
+            }
+            
+            _didInitialise = YES;
         }
     }
 }
@@ -36,10 +45,72 @@
 
 - (void)reflectState
 {
-    if (!_didLoadState) {
-        [self loadState];
+    if (!_didInitialise) {
+        [self initialise];
     } else {
         [[OState s] reflect:_state];
+    }
+}
+
+
+#pragma mark - Section data management
+
+- (void)setData:(id)data forSection:(NSInteger)section
+{
+    BOOL hasDataForSection = ([_tableData count] > section);
+    
+    if ([data isKindOfClass:OReplicatedEntity.class]) {
+        if (!hasDataForSection) {
+            _tableData[section] = data;
+            _sectionDeltas[section] = @0;
+        }
+    } else {
+        NSMutableArray *entityArray = [NSMutableArray arrayWithArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
+        
+        if (!hasDataForSection || ([entityArray count] != [_tableData[section] count])) {
+            if (hasDataForSection) {
+                _sectionDeltas[section] = @([_tableData[section] count] - [entityArray count]);
+            } else {
+                _sectionDeltas[section] = @0;
+            }
+            
+            _tableData[section] = entityArray;
+        }
+    }
+}
+
+
+- (void)addData:(id)data toSection:(NSInteger)section
+{
+    
+}
+
+
+- (id)entityForIndexPath:(NSIndexPath *)indexPath
+{
+    return _tableData[indexPath.section][indexPath.row];
+}
+
+
+- (BOOL)sectionIsEmpty:(NSInteger)section
+{
+    return ([(NSArray *)_tableData[section] count] == 0);
+}
+
+
+- (void)reloadSectionsIfNeeded
+{
+    NSRange reloadRange = {0, 0};
+    
+    for (NSInteger section = 0; section < [_tableData count]; section++) {
+        if (_sectionDeltas[section] != @0) {
+            reloadRange.location = reloadRange.length ? reloadRange.location : section;
+            reloadRange.length = (section - reloadRange.location) + 1;
+        }
+    }
+    
+    if (reloadRange.length) {
+        [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:reloadRange] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
 
@@ -50,10 +121,13 @@
 {
     [super viewDidLoad];
 
+    _tableData = [[NSMutableArray alloc] init];
+    _sectionDeltas = [[NSMutableArray alloc] init];
+    
     _state = [[OState alloc] init];
     _modalImpliesRegistration = YES;
     
-    [self loadState];
+    [self initialise];
 }
 
 
@@ -78,6 +152,11 @@
     _isPopped = (!_isPushed && !_isModal && !_wasHidden);
     
     [self reflectState];
+    
+    if ([self respondsToSelector:@selector(loadData)] && (_isPopped || _wasHidden)) {
+        [self loadData];
+        [self reloadSectionsIfNeeded];
+    }
 }
 
 
@@ -89,9 +168,9 @@
 }
 
 
-#pragma mark - OStateDelegate conformance
+#pragma mark - OTableViewControllerDelegate conformance
 
-- (BOOL)shouldSetState
+- (BOOL)shouldInitialise
 {
     return YES;
 }
@@ -100,6 +179,44 @@
 - (void)setState
 {
     // Override in subclass
+}
+
+
+#pragma mark - UITableViewDataSource conformance
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return [_tableData count];
+}
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    NSInteger numberOfRows = 0;
+    
+    id sectionData = _tableData[section];
+    
+    if ([sectionData isKindOfClass:OReplicatedEntity.class]) {
+        numberOfRows = 1;
+    } else {
+        numberOfRows = [sectionData count];
+    }
+    
+    return numberOfRows;
+}
+
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        NSMutableArray *sectionData = _tableData[indexPath.section];
+        OReplicatedEntity *entity = sectionData[indexPath.row];
+        
+        [sectionData removeObjectAtIndex:indexPath.row];
+        [[OMeta m].context deleteEntity:entity];
+        
+        [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
 }
 
 @end

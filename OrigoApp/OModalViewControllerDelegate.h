@@ -15,7 +15,4 @@
 @required
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier;
 
-@optional
-- (void)insertEntityInTableView:(OReplicatedEntity *)entity;
-
 @end

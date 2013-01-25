@@ -38,9 +38,8 @@ static NSString * const kModalSegueToOrigoView = @"modalFromOrigoListToOrigoView
 static NSString * const kPushSegueToMemberListView = @"pushFromOrigoListToMemberListView";
 static NSString * const kPushSegueToMemberView = @"pushFromOrigoListToMemberView";
 
-static NSInteger const kSectionNone = -1;
-static NSInteger const kSectionUser = 0;
-static NSInteger const kSectionWard = 1;
+static NSInteger const kUserSection = 0;
+static NSInteger const kWardSection = 1;
 static NSInteger const kUserRow = 0;
 
 
@@ -48,26 +47,15 @@ static NSInteger const kUserRow = 0;
 
 #pragma mark - Auxiliary methods
 
-- (void)loadData
-{
-    _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
-    
-    if ([_member isUser]) {
-        _sortedResidencies = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
-    }
-}
-
-
 - (BOOL)sectionIsUserSection:(NSInteger)section
 {
-    return (self.state.aspectIsSelf && section == kSectionUser);
+    return (self.state.aspectIsSelf && section == kUserSection);
 }
 
 
 - (BOOL)sectionIsWardSection:(NSInteger)section
 {
-    return (self.state.aspectIsSelf && [_sortedWards count] && (section == kSectionWard));
+    return (self.state.aspectIsSelf && [_sortedWards count] && (section == kWardSection));
 }
 
 
@@ -126,7 +114,7 @@ static NSInteger const kUserRow = 0;
     
     self.title = @"Origo";
     
-    if ([[OMeta m] userIsAllSet]) {
+    if ([self shouldInitialise]) {
         if (![_member isUser]) {
             self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
             self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
@@ -144,29 +132,27 @@ static NSInteger const kUserRow = 0;
 {
     [super viewWillAppear:animated];
     
-    if (self.state.aspectIsSelf && self.isPopped) {
-        [self loadData];
-        
+    if (self.wasHidden || (self.state.aspectIsSelf && self.isPopped)) {
         NSRange reloadRange = {0, 0};
         
         BOOL hasOrigoSection = ([_sortedOrigos count] > 0);
         BOOL hasWardSection = [self.tableView numberOfSections] == (hasOrigoSection ? 3 : 2);
         BOOL needsWardSection = ([_sortedWards count] > 0);
-        BOOL userSectionNeedsReload = ([_sortedResidencies count] != [self.tableView numberOfRowsInSection:kSectionUser] - 1);
-        BOOL wardSectionNeedsReload = (hasWardSection && ([_sortedWards count] != [self.tableView numberOfRowsInSection:kSectionWard]));
+        BOOL userSectionNeedsReload = ([_sortedResidencies count] != [self.tableView numberOfRowsInSection:kUserSection] - 1);
+        BOOL wardSectionNeedsReload = (hasWardSection && ([_sortedWards count] != [self.tableView numberOfRowsInSection:kWardSection]));
 
         if (userSectionNeedsReload || (needsWardSection && !hasWardSection && !hasOrigoSection)) {
-            reloadRange.location = kSectionUser;
+            reloadRange.location = kUserSection;
             reloadRange.length = 1;
         }
         
         if (wardSectionNeedsReload) {
-            reloadRange.location = reloadRange.length ? reloadRange.location : kSectionWard;
+            reloadRange.location = reloadRange.length ? reloadRange.location : kWardSection;
             reloadRange.length++;
         } else if (needsWardSection && !hasWardSection) {
-            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:kSectionWard] withRowAnimation:UITableViewRowAnimationAutomatic];
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
         } else if (!needsWardSection && hasWardSection) {
-            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:kSectionWard] withRowAnimation:UITableViewRowAnimationAutomatic];
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
         
         if (reloadRange.length) {
@@ -222,21 +208,19 @@ static NSInteger const kUserRow = 0;
 }
 
 
-#pragma mark - OStateDelegate conformance
+#pragma mark - OTableViewControllerDelegate conformance
 
-- (BOOL)shouldSetState
+- (BOOL)shouldInitialise
 {
     return [[OMeta m] userIsAllSet];
 }
 
 
-- (void)setStatePrerequisites
+- (void)setPrerequisites
 {
     if (!_member || [_member isFault]) {
         _member = [OMeta m].user;
     }
-    
-    [self loadData];
 }
 
 
@@ -245,6 +229,17 @@ static NSInteger const kUserRow = 0;
     self.state.actionIsList = YES;
     self.state.targetIsOrigo = YES;
     [self.state setAspectForMember:_member];
+}
+
+
+- (void)loadData
+{
+    _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    
+    if ([_member isUser]) {
+        _sortedResidencies = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    }
 }
 
 
@@ -329,7 +324,7 @@ static NSInteger const kUserRow = 0;
 {
     CGFloat height = kDefaultPadding;
     
-    if (section >= kSectionWard) {
+    if (section >= kWardSection) {
         height = [tableView standardHeaderHeight];
     }
     

@@ -10,14 +10,12 @@
 
 #import "OTableViewController.h"
 
-#import "OStateDelegate.h"
-
 @protocol OEntityObservingDelegate, OModalViewControllerDelegate;
 
 @class OMember, OMembership, OOrigo;
 @class OTableViewCell, OTextField, OTextView;
 
-@interface OOrigoViewController : OTableViewController<OStateDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate> {
+@interface OOrigoViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate> {
 @private
     OTableViewCell *_origoCell;
     OOrigo *_origo;

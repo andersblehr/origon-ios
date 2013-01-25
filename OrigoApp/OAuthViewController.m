@@ -403,7 +403,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - OStateDelegate conformance
+#pragma mark - OTableViewControllerDelegate conformance
 
 - (void)setState
 {

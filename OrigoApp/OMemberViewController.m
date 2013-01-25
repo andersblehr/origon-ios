@@ -137,11 +137,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             }
             
             [_delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
-            
-            if ([_delegate isKindOfClass:OMemberListViewController.class]) {
-                [_delegate insertEntityInTableView:_membership];
-            }
-            
             [[OMeta m].context replicateIfNeeded];
         } else {
             [self performSegueWithIdentifier:kModalSegueToOrigoView1 sender:self];
@@ -455,9 +450,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-#pragma mark - OStateDelegate conformance
+#pragma mark - OTableViewControllerDelegate conformance
 
-- (void)setStatePrerequisites
+- (void)setPrerequisites
 {
     if (_membership) {
         _member = _membership.member;
