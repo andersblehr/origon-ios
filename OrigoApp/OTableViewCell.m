@@ -39,6 +39,7 @@ NSString * const kElementSuffixTextField = @"Field";
 
 CGFloat const kDefaultTableViewCellHeight = 45.f;
 CGFloat const kDefaultPadding = 10.f;
+CGFloat const kMinimumPadding = 0.1f;
 
 CGFloat const kCellAnimationDuration = 0.3f;
 

@@ -82,7 +82,7 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
 }
 
 
-#pragma mark - OStateDelegate conformance
+#pragma mark - OTableViewControllerDelegate conformance
 
 - (void)setState
 {

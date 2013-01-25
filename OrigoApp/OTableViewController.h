@@ -8,15 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OStateDelegate.h"
+#import "OTableViewControllerDelegate.h"
 
 @class OState;
+@class OReplicatedEntity;
 
-@interface OTableViewController : UITableViewController<OStateDelegate> {
+@interface OTableViewController : UITableViewController<OTableViewControllerDelegate> {
 @private
+    BOOL _didInitialise;
     BOOL _didSetModal;
-    BOOL _didLoadState;
     BOOL _isHidden;
+    
+    NSMutableArray *_tableData;
+    NSMutableArray *_sectionDeltas;
 }
 
 @property (strong, nonatomic, readonly) OState *state;
@@ -29,5 +33,12 @@
 @property (nonatomic) BOOL modalImpliesRegistration;
 
 - (void)reflectState;
+
+- (void)setData:(id)data forSection:(NSInteger)section;
+- (void)addData:(id)data toSection:(NSInteger)section;
+
+- (id)entityForIndexPath:(NSIndexPath *)indexPath;
+- (BOOL)sectionIsEmpty:(NSInteger)section;
+- (void)reloadSectionsIfNeeded;
 
 @end

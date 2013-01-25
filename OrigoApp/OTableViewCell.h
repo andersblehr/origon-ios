@@ -21,6 +21,7 @@ extern NSString * const kElementSuffixTextField;
 
 extern CGFloat const kDefaultTableViewCellHeight;
 extern CGFloat const kDefaultPadding;
+extern CGFloat const kMinimumPadding;
 
 extern CGFloat const kCellAnimationDuration;
 

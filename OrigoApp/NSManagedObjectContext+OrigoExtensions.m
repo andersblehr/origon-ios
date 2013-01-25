@@ -187,6 +187,8 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
         } else {
             [self deleteObject:entity];
         }
+    } else {
+        [self deleteObject:entity];
     }
 }
 

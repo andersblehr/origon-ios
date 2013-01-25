@@ -10,15 +10,14 @@
 
 #import "OTableViewController.h"
 
-#import "OStateDelegate.h"
 #import "OModalViewControllerDelegate.h"
 
 @protocol OEntityObservingDelegate;
 
-@class OState, OTableViewCell, OTextField;
+@class OTableViewCell, OTextField;
 @class OMember, OMembership, OOrigo;
 
-@interface OMemberViewController : OTableViewController<OStateDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate, OModalViewControllerDelegate> {
+@interface OMemberViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate, OModalViewControllerDelegate> {
 @private
     OTableViewCell *_memberCell;
     OMember *_member;

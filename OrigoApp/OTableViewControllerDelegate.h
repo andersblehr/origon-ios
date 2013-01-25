@@ -1,5 +1,5 @@
 //
-//  OStateDelegate.h
+//  OTableViewControllerDelegate.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.01.13.
@@ -8,13 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol OStateDelegate <NSObject>
-
-@optional
-- (BOOL)shouldSetState;
-- (void)setStatePrerequisites;
+@protocol OTableViewControllerDelegate <NSObject>
 
 @required
 - (void)setState;
+
+@optional
+- (BOOL)shouldInitialise;
+- (void)setPrerequisites;
+- (void)loadData;
 
 @end

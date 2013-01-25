@@ -81,6 +81,8 @@ static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberLi
 - (void)didCancelEditing
 {
     if (self.state.actionIsRegister) {
+        [[OMeta m].context deleteEntity:_origo];
+        
         [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
     } else {
         _addressView.text = _origo.address;
@@ -98,11 +100,18 @@ static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberLi
         _origo.telephone = [_telephoneField finalText];
         
         if (self.state.actionIsRegister) {
-            if ([_origo isResidence] && self.state.aspectIsSelf) {
+            if (_membership && [_origo isResidence] && self.state.aspectIsSelf) {
                 [OMeta m].user.activeSince = [NSDate date];
+                [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
+            } else {
+                if ([_origo isResidence]) {
+                    _membership = [_origo addResident:_member];
+                } else {
+                    _membership = [_origo addMember:_member];
+                }
+                
+                [self performSegueWithIdentifier:kModalSegueToMemberListView sender:self];
             }
-            
-            [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
         } else if (self.state.actionIsEdit) {
             [self toggleEditMode];
             [_entityObservingDelegate reloadEntity];
@@ -166,6 +175,18 @@ static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberLi
 }
 
 
+#pragma mark - Segue handling
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:kModalSegueToMemberListView]) {
+        OMemberListViewController *memberListViewController = segue.destinationViewController;
+        memberListViewController.origo = self.origo;
+        memberListViewController.delegate = self.delegate;
+    }
+}
+
+
 #pragma mark - Overrides
 
 - (BOOL)hidesBottomBarWhenPushed
@@ -174,9 +195,9 @@ static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberLi
 }
 
 
-#pragma mark - OStateDelegate conformance
+#pragma mark - OTableViewControllerDelegate conformance
 
-- (void)setStatePrerequisites
+- (void)setPrerequisites
 {
     if (_membership) {
         _origo = _membership.origo;
