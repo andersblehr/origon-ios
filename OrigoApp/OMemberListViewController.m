@@ -145,9 +145,9 @@ static NSInteger const kMemberSection = 2;
         }
     }
     
-    [self setData:_origo forSection:kOrigoSection];
-    [self setData:contactMemberships forSection:kContactSection];
-    [self setData:regularMemberships forSection:kMemberSection];
+    [self setData:_origo forSectionWithKey:kOrigoSection];
+    [self setData:contactMemberships forSectionWithKey:kContactSection];
+    [self setData:regularMemberships forSectionWithKey:kMemberSection];
 }
 
 
@@ -223,7 +223,7 @@ static NSInteger const kMemberSection = 2;
     
     if (section == kOrigoSection) {
         height = kDefaultPadding;
-    } else if (section == [self sectionNumberForSection:kMemberSection]) {
+    } else if (section == [self sectionNumberForSectionKey:kMemberSection]) {
         if ([_origo userIsAdmin]) {
             height = [tableView standardFooterHeight];
         }
@@ -238,9 +238,9 @@ static NSInteger const kMemberSection = 2;
     UIView *headerView = nil;
     
     if (section != kOrigoSection) {
-        if (section == [self sectionNumberForSection:kContactSection]) {
+        if (section == [self sectionNumberForSectionKey:kContactSection]) {
             headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderContacts]];
-        } else if (section == [self sectionNumberForSection:kMemberSection]) {
+        } else if (section == [self sectionNumberForSectionKey:kMemberSection]) {
             if ([_origo isResidence]) {
                 headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderHouseholdMembers]];
             } else {
@@ -257,7 +257,7 @@ static NSInteger const kMemberSection = 2;
 {
     UIView *footerView = nil;
     
-    if (section == [self sectionNumberForSection:kMemberSection]) {
+    if (section == [self sectionNumberForSectionKey:kMemberSection]) {
         if ([_origo userIsAdmin]) {
             footerView = [tableView footerViewWithText:[OStrings stringForKey:strFooterHousehold]];
         }

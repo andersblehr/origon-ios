@@ -16,12 +16,10 @@
 
 #import "OReplicatedEntity.h"
 
-NSInteger const kNoSection = -1;
-
 
 @implementation OTableViewController
 
-#pragma mark - State handling
+#pragma mark - Initialisation & state handling
 
 - (void)initialise
 {
@@ -57,76 +55,114 @@ NSInteger const kNoSection = -1;
 
 #pragma mark - Section data management
 
-- (void)setData:(id)data forSection:(NSInteger)section
+- (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
-    BOOL hasDataForSection = (_tableData[@(section)] != nil);
-    
     if ([data isKindOfClass:OReplicatedEntity.class]) {
-        if (!hasDataForSection) {
-            _tableData[@(section)] = data;
-            _sectionDeltas[@(section)] = @0;
+        _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
+    } else {
+        _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
+    }
+    
+    if ([_sectionData[@(sectionKey)] count]) {
+        if (![_sectionKeys containsObject:@(sectionKey)]) {
+            [_sectionKeys addObject:@(sectionKey)];
+            [_sectionKeys sortUsingSelector:@selector(compare:)];
         }
-    } else if ([data count] > 0) {
-        NSMutableArray *entities = [NSMutableArray arrayWithArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
-        
-        if (!hasDataForSection || ([entities count] != [_tableData[@(section)] count])) {
-            if (hasDataForSection) {
-                _sectionDeltas[@(section)] = @([_tableData[@(section)] count] - [entities count]);
-            } else {
-                _sectionDeltas[@(section)] = @0;
-            }
-            
-            _tableData[@(section)] = entities;
-        }
+    } else if (!_sectionCounts[@(sectionKey)]) {
+        _sectionCounts[@(sectionKey)] = @0;
     }
 }
 
 
-- (void)addData:(id)data toSection:(NSInteger)section
+- (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey
 {
+    NSMutableArray *mergedData = _sectionData[@(sectionKey)];
     
+    if ([data isKindOfClass:OReplicatedEntity.class]) {
+        [mergedData addObject:data];
+    } else {
+        [mergedData addObjectsFromArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
+    }
+}
+
+
+- (NSArray *)entitiesInSectionWithKey:(NSInteger)sectionKey
+{
+    return _sectionData[@(sectionKey)];
 }
 
 
 - (id)entityForIndexPath:(NSIndexPath *)indexPath
 {
-    NSNumber *sectionKey = [NSArray arrayWithArray:[[_tableData allKeys] sortedArrayUsingSelector:@selector(compare:)]][indexPath.section];
+    NSInteger sectionKey = [_sectionKeys[indexPath.section] integerValue];
     
-    return _tableData[sectionKey][indexPath.row];
+    return [self entitiesInSectionWithKey:sectionKey][indexPath.row];
+}
+
+
+#pragma mark - Section handling
+
+- (BOOL)hasSectionWithKey:(NSInteger)sectionKey
+{
+    return [_sectionKeys containsObject:@(sectionKey)];
+}
+
+
+- (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey
+{
+    if (!_sectionCounts[@(sectionKey)]) {
+        _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
+    }
+    
+    return [_sectionCounts[@(sectionKey)] integerValue];
+}
+
+
+- (NSInteger)sectionNumberForSectionKey:(NSInteger)sectionKey
+{
+    return [_sectionKeys indexOfObject:@(sectionKey)];
 }
 
 
 - (void)reloadSectionsIfNeeded
 {
-    NSRange reloadRange = {0, 0};
-    
-    for (NSInteger section = 0; section < [_tableData count]; section++) {
-        if (_sectionDeltas[@(section)] != @0) {
-            reloadRange.location = reloadRange.length ? reloadRange.location : section;
-            reloadRange.length = (section - reloadRange.location) + 1;
-        }
-    }
-    
-    if (reloadRange.length) {
-        [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:reloadRange] withRowAnimation:UITableViewRowAnimationAutomatic];
-    }
-}
+    NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
+    NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
 
-
-- (NSInteger)sectionNumberForSection:(NSInteger)section
-{
-    NSInteger sectionNumber = kNoSection;
-    NSArray *sortedSectionKeys = [NSArray arrayWithArray:[[_tableData allKeys] sortedArrayUsingSelector:@selector(compare:)]];
-    
-    for (NSInteger i = 0; i < [sortedSectionKeys count]; i++) {
-        NSNumber *sectionKey = sortedSectionKeys[i];
+    for (NSNumber *sectionKey in [_sectionData allKeys]) {
+        NSInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
+        NSInteger oldSectionCount = [_sectionCounts[sectionKey] integerValue];
+        NSInteger newSectionCount = [_sectionData[sectionKey] count];
         
-        if ([sectionKey integerValue] == section) {
-            sectionNumber = i;
+        if (oldSectionCount) {
+            if (newSectionCount && (newSectionCount != oldSectionCount)) {
+                [sectionsToReload addIndex:section];
+            } else if (!newSectionCount) {
+                [_sectionKeys removeObject:sectionKey];
+                [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
+            }
+        } else if (newSectionCount) {
+            [sectionsToInsert addIndex:section];
         }
+        
+        _sectionCounts[sectionKey] = @(newSectionCount);
+    }
+
+    if (![_lastSectionKey isEqualToNumber:[_sectionKeys lastObject]]) {
+        if ([_sectionKeys containsObject:_lastSectionKey]) {
+            [sectionsToReload addIndex:[self sectionNumberForSectionKey:[_lastSectionKey integerValue]]];
+        }
+        
+        _lastSectionKey = [_sectionKeys lastObject];
     }
     
-    return sectionNumber;
+    if ([sectionsToInsert count]) {
+        [self.tableView insertSections:sectionsToInsert withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+    
+    if ([sectionsToReload count]) {
+        [self.tableView reloadSections:sectionsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
 }
 
 
@@ -136,11 +172,13 @@ NSInteger const kNoSection = -1;
 {
     [super viewDidLoad];
 
-    _tableData = [[NSMutableDictionary alloc] init];
-    _sectionDeltas = [[NSMutableDictionary alloc] init];
+    _sectionKeys = [[NSMutableArray alloc] init];
+    _sectionData = [[NSMutableDictionary alloc] init];
+    _sectionCounts = [[NSMutableDictionary alloc] init];
     
     _state = [[OState alloc] init];
     _modalImpliesRegistration = YES;
+    _didJustLoad = YES;
     
     [self initialise];
 }
@@ -150,21 +188,20 @@ NSInteger const kNoSection = -1;
 {
     [super viewWillAppear:animated];
     
-    if (!_didSetModal) {
+    if (_didJustLoad) {
         _isModal = (self.presentingViewController && ![self isMovingToParentViewController]);
         
         if (_isModal && _modalImpliesRegistration) {
             _state.actionIsRegister = YES;
         }
-        
-        _didSetModal = YES;
     }
     
     _wasHidden = _isHidden;
     _isHidden = NO;
     
     _isPushed = [self isMovingToParentViewController];
-    _isPopped = (!_isPushed && !_isModal && !_wasHidden);
+    _isPopped = (!_isPushed && !_isModal && !_wasHidden && !_didJustLoad);
+    _didJustLoad = NO;
     
     [self reflectState];
     
@@ -201,36 +238,30 @@ NSInteger const kNoSection = -1;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [_tableData count];
+    if (!_lastSectionKey) {
+        _lastSectionKey = [_sectionKeys lastObject];
+    }
+    
+    return [_sectionKeys count];
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger numberOfRows = 0;
-    NSNumber *sectionKey = [NSArray arrayWithArray:[[_tableData allKeys] sortedArrayUsingSelector:@selector(compare:)]][section];
-    
-    id sectionData = _tableData[sectionKey];
-    
-    if ([sectionData isKindOfClass:OReplicatedEntity.class]) {
-        numberOfRows = 1;
-    } else {
-        numberOfRows = [sectionData count];
-    }
-    
-    return numberOfRows;
+    return [self numberOfRowsInSectionWithKey:[_sectionKeys[section] integerValue]];
 }
 
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        NSNumber *sectionKey = [NSArray arrayWithArray:[[_tableData allKeys] sortedArrayUsingSelector:@selector(compare:)]][indexPath.section];
+        NSNumber *sectionKey = _sectionKeys[indexPath.section];
         
-        NSMutableArray *sectionData = _tableData[sectionKey];
+        NSMutableArray *sectionData = _sectionData[sectionKey];
         OReplicatedEntity *entity = sectionData[indexPath.row];
         
         [sectionData removeObjectAtIndex:indexPath.row];
+        _sectionCounts[sectionKey] = @([_sectionCounts[sectionKey] integerValue] - 1);
         [[OMeta m].context deleteEntity:entity];
         
         [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];

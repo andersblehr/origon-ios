@@ -10,19 +10,19 @@
 
 #import "OTableViewControllerDelegate.h"
 
-extern NSInteger const kNoSection;
-
 @class OState;
 @class OReplicatedEntity;
 
 @interface OTableViewController : UITableViewController<OTableViewControllerDelegate> {
 @private
+    BOOL _didJustLoad;
     BOOL _didInitialise;
-    BOOL _didSetModal;
     BOOL _isHidden;
     
-    NSMutableDictionary *_tableData;
-    NSMutableDictionary *_sectionDeltas;
+    NSMutableArray *_sectionKeys;
+    NSMutableDictionary *_sectionData;
+    NSMutableDictionary *_sectionCounts;
+    NSNumber *_lastSectionKey;
 }
 
 @property (strong, nonatomic, readonly) OState *state;
@@ -36,11 +36,13 @@ extern NSInteger const kNoSection;
 
 - (void)reflectState;
 
-- (void)setData:(id)data forSection:(NSInteger)section;
-- (void)addData:(id)data toSection:(NSInteger)section;
-
+- (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
+- (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey;
+- (NSArray *)entitiesInSectionWithKey:(NSInteger)sectionKey;
 - (id)entityForIndexPath:(NSIndexPath *)indexPath;
-- (void)reloadSectionsIfNeeded;
-- (NSInteger)sectionNumberForSection:(NSInteger)section;
+
+- (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
+- (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
+- (NSInteger)sectionNumberForSectionKey:(NSInteger)sectionKey;
 
 @end

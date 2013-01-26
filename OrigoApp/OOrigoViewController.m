@@ -100,7 +100,7 @@ static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberLi
         _origo.telephone = [_telephoneField finalText];
         
         if (self.state.actionIsRegister) {
-            if (_membership && [_origo isResidence] && self.state.aspectIsSelf) {
+            if (_membership && [_origo isResidence]) { // TODO: Use aspect for this?
                 [OMeta m].user.activeSince = [NSDate date];
                 [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
             } else {
