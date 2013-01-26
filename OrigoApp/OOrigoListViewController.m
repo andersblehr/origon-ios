@@ -40,32 +40,12 @@ static NSString * const kPushSegueToMemberView = @"pushFromOrigoListToMemberView
 
 static NSInteger const kUserSection = 0;
 static NSInteger const kWardSection = 1;
+static NSInteger const kOrigoSection = 2;
+
 static NSInteger const kUserRow = 0;
 
 
 @implementation OOrigoListViewController
-
-#pragma mark - Auxiliary methods
-
-- (BOOL)sectionIsUserSection:(NSInteger)section
-{
-    return (self.state.aspectIsSelf && section == kUserSection);
-}
-
-
-- (BOOL)sectionIsWardSection:(NSInteger)section
-{
-    return (self.state.aspectIsSelf && [_sortedWards count] && (section == kWardSection));
-}
-
-
-- (BOOL)sectionIsOrigoSection:(NSInteger)section
-{
-    NSUInteger origoSection = self.state.aspectIsSelf ? ([_sortedWards count] ? 2 : 1) : 0;
-    
-    return ([_sortedOrigos count] && (section == origoSection));
-}
-
 
 #pragma mark - Selector implementations
 
@@ -123,40 +103,6 @@ static NSInteger const kUserRow = 0;
         if ([[OMeta m].user isTeenOrOlder]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
             self.navigationItem.rightBarButtonItem.action = @selector(addOrigo);
-        }
-    }
-}
-
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    if (self.wasHidden || (self.state.aspectIsSelf && self.isPopped)) {
-        NSRange reloadRange = {0, 0};
-        
-        BOOL hasOrigoSection = ([_sortedOrigos count] > 0);
-        BOOL hasWardSection = [self.tableView numberOfSections] == (hasOrigoSection ? 3 : 2);
-        BOOL needsWardSection = ([_sortedWards count] > 0);
-        BOOL userSectionNeedsReload = ([_sortedResidencies count] != [self.tableView numberOfRowsInSection:kUserSection] - 1);
-        BOOL wardSectionNeedsReload = (hasWardSection && ([_sortedWards count] != [self.tableView numberOfRowsInSection:kWardSection]));
-
-        if (userSectionNeedsReload || (needsWardSection && !hasWardSection && !hasOrigoSection)) {
-            reloadRange.location = kUserSection;
-            reloadRange.length = 1;
-        }
-        
-        if (wardSectionNeedsReload) {
-            reloadRange.location = reloadRange.length ? reloadRange.location : kWardSection;
-            reloadRange.length++;
-        } else if (needsWardSection && !hasWardSection) {
-            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
-        } else if (!needsWardSection && hasWardSection) {
-            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:kWardSection] withRowAnimation:UITableViewRowAnimationAutomatic];
-        }
-        
-        if (reloadRange.length) {
-            [self.tableView reloadSections:[NSIndexSet indexSetWithIndexesInRange:reloadRange] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
     }
 }
@@ -234,54 +180,17 @@ static NSInteger const kUserRow = 0;
 
 - (void)loadData
 {
-    _sortedOrigos = [[[_member origoMemberships] allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    [self setData:[_member origoMemberships] forSectionWithKey:kOrigoSection];
     
     if ([_member isUser]) {
-        _sortedResidencies = [[_member.residencies allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        _sortedWards = [[[_member wards] allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        [self setData:_member forSectionWithKey:kUserSection];
+        [self appendData:_member.residencies toSectionWithKey:kUserSection];
+        [self setData:[_member wards] forSectionWithKey:kWardSection];
     }
 }
 
 
 #pragma mark - UITableViewDataSource conformance
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    NSInteger numberOfSections = 0;
-
-    if ([[OMeta m] userIsAllSet]) {
-        numberOfSections++;
-        
-        if (self.state.aspectIsSelf) {
-            if ([_sortedWards count]) {
-                numberOfSections++;
-            }
-            
-            if ([_sortedOrigos count]) {
-                numberOfSections++;
-            }
-        }
-    }
-    
-    return numberOfSections;
-}
-
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    NSUInteger numberOfRows = 0;
-    
-    if ([self sectionIsUserSection:section]) {
-        numberOfRows = 1 + [_sortedResidencies count];
-    } else if ([self sectionIsWardSection:section]) {
-        numberOfRows = [_sortedWards count];
-    } else if ([self sectionIsOrigoSection:section]) {
-        numberOfRows = [_sortedOrigos count];
-    }
-    
-    return numberOfRows;
-}
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -296,16 +205,16 @@ static NSInteger const kUserRow = 0;
     OMembership *membership = nil;
     OMember *member = nil;
     
-    if ([self sectionIsUserSection:indexPath.section]) {
+    if (indexPath.section == [self sectionNumberForSectionKey:kUserSection]) {
         if (indexPath.row == kUserRow) {
             member = [OMeta m].user;
         } else {
-            membership = _sortedResidencies[indexPath.row - 1];
+            membership = [self entityForIndexPath:indexPath];
         }
-    } else if ([self sectionIsWardSection:indexPath.section]) {
-        member = _sortedWards[indexPath.row];
-    } else if ([self sectionIsOrigoSection:indexPath.section]) {
-        membership = _sortedOrigos[indexPath.row];
+    } else if (indexPath.section == [self sectionNumberForSectionKey:kWardSection]) {
+        member = [self entityForIndexPath:indexPath];
+    } else if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
+        membership = [self entityForIndexPath:indexPath];
     }
     
     if (membership) {
@@ -322,9 +231,11 @@ static NSInteger const kUserRow = 0;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = kDefaultPadding;
+    CGFloat height = kMinimumPadding;
     
-    if (section >= kWardSection) {
+    if (section == [self sectionNumberForSectionKey:kUserSection]) {
+        height = kDefaultPadding;
+    } else if ([self hasSectionWithKey:section]) {
         height = [tableView standardHeaderHeight];
     }
     
@@ -348,9 +259,9 @@ static NSInteger const kUserRow = 0;
 {
     UIView *headerView = nil;
     
-    if ([self sectionIsWardSection:section]) {
+    if (section == [self sectionNumberForSectionKey:kWardSection]) {
         headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderWardsOrigos]];
-    } else if ([self sectionIsOrigoSection:section]) {
+    } else if (section == [self sectionNumberForSectionKey:kOrigoSection]) {
         headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderMyOrigos]];
     }
     
@@ -365,26 +276,26 @@ static NSInteger const kUserRow = 0;
     if ((section == [tableView numberOfSections] - 1) && [[OMeta m].user isTeenOrOlder]) {
         NSString *footerText = nil;
         
-        if ([_sortedOrigos count]) {
+        if ([self hasSectionWithKey:kOrigoSection]) {
             footerText = [OStrings stringForKey:strFooterOrigoCreation];
         } else {
             footerText = [OStrings stringForKey:strFooterOrigoCreationFirst];
         }
         
-        if (self.state.aspectIsSelf && [_sortedWards count]) {
+        if (self.state.aspectIsSelf && [self hasSectionWithKey:kWardSection]) {
             NSString *yourChild = nil;
             NSString *himOrHer = nil;
             
             BOOL allFemale = YES;
             BOOL allMale = YES;
             
-            if ([_sortedWards count] == 1) {
-                yourChild = ((OMember *)_sortedWards[0]).givenName;
+            if ([self numberOfRowsInSectionWithKey:kWardSection] == 1) {
+                yourChild = ((OMember *)[self entitiesInSectionWithKey:kWardSection][0]).givenName;
             } else {
                 yourChild = [OStrings stringForKey:strTermYourChild];
             }
             
-            for (OMember *ward in _sortedWards) {
+            for (OMember *ward in [self entitiesInSectionWithKey:kWardSection]) {
                 allFemale = allFemale && [ward isFemale];
                 allMale = allMale && [ward isMale];
             }
@@ -429,16 +340,16 @@ static NSInteger const kUserRow = 0;
     _selectedOrigo = nil;
     _selectedMember = nil;
     
-    if ([self sectionIsUserSection:indexPath.section]) {
+    if (indexPath.section == [self sectionNumberForSectionKey:kUserSection]) {
         if (indexPath.row == kUserRow) {
             _selectedMember = [OMeta m].user;
         } else {
-            _selectedOrigo = ((OMembership *)_sortedResidencies[indexPath.row - 1]).origo;
+            _selectedOrigo = ((OMembership *)[self entityForIndexPath:indexPath]).origo;
         }
-    } else if ([self sectionIsWardSection:indexPath.section]) {
-        _selectedMember = _sortedWards[indexPath.row];
-    } else if ([self sectionIsOrigoSection:indexPath.section]) {
-        _selectedOrigo = ((OMembership *)_sortedOrigos[indexPath.row]).origo;
+    } else if (indexPath.section == [self sectionNumberForSectionKey:kWardSection]) {
+        _selectedMember = [self entityForIndexPath:indexPath];
+    } else if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
+        _selectedOrigo = ((OMembership *)[self entityForIndexPath:indexPath]).origo;
     }
     
     if (_selectedOrigo) {
@@ -478,18 +389,11 @@ static NSInteger const kUserRow = 0;
         [identitifier isEqualToString:kMemberViewControllerId] ||
         [identitifier isEqualToString:kMemberListViewControllerId]) {
         if ([[OMeta m] userIsSignedIn]) {
-            //[self configureViewAndDataSource];
             [self.tableView reloadData];
         }
     } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
         
     }
-}
-
-
-- (void)insertEntityInTableView:(OReplicatedEntity *)entity
-{
-    
 }
 
 @end
