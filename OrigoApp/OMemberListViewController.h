@@ -17,7 +17,7 @@
 @class OTableViewCell;
 @class OMembership, OOrigo;
 
-@interface OMemberListViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UITextViewDelegate, OModalViewControllerDelegate> {
+@interface OMemberListViewController : OTableViewController<UITextViewDelegate, OModalViewControllerDelegate> {
 @private
     OTableViewCell *_origoCell;
     OTableViewCell *_selectedCell;

@@ -472,6 +472,12 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
+- (void)loadData
+{
+    
+}
+
+
 #pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -556,16 +562,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     return headerView;
-}
-
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1) {
-        [cell willAppearTrailing:YES];
-    } else {
-        [cell willAppearTrailing:NO];
-    }
 }
 
 

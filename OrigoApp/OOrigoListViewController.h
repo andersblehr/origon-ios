@@ -15,7 +15,7 @@
 @class OTableViewCell;
 @class OMember, OOrigo;
 
-@interface OOrigoListViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate, OModalViewControllerDelegate> {
+@interface OOrigoListViewController : OTableViewController<UIActionSheetDelegate, OModalViewControllerDelegate> {
 @private
     OTableViewCell *_selectedCell;
     OMember *_selectedMember;

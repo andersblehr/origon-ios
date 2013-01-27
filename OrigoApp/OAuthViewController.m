@@ -472,7 +472,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [cell willAppearTrailing:YES];
+    [super tableView:tableView willDisplayCell:cell forRowAtIndexPath:indexPath];
     
     if (self.state.actionIsLogin) {
         _emailField.hasEmphasis = YES;
