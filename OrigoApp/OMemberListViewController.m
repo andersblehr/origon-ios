@@ -267,16 +267,6 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1) {
-        [cell willAppearTrailing:YES];
-    } else {
-        [cell willAppearTrailing:NO];
-    }
-}
-
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     _selectedCell = (OTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];

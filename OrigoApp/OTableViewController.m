@@ -13,6 +13,7 @@
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
+#import "OTableViewCell.h"
 
 #import "OReplicatedEntity.h"
 
@@ -242,13 +243,19 @@
         _lastSectionKey = [_sectionKeys lastObject];
     }
     
-    return [_sectionKeys count];
+    return [_sectionKeys count] ? [_sectionKeys count] : 1;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self numberOfRowsInSectionWithKey:[_sectionKeys[section] integerValue]];
+    NSInteger numberOfRows = 0;
+    
+    if ([_sectionKeys count]) {
+        numberOfRows = [self numberOfRowsInSectionWithKey:[_sectionKeys[section] integerValue]];
+    }
+    
+    return numberOfRows;
 }
 
 
@@ -265,6 +272,18 @@
         [[OMeta m].context deleteEntity:entity];
         
         [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+}
+
+
+#pragma mark - UITableViewDelegate conformance
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1) {
+        [cell willAppearTrailing:YES];
+    } else {
+        [cell willAppearTrailing:NO];
     }
 }
 

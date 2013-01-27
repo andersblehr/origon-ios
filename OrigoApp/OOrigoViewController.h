@@ -15,7 +15,7 @@
 @class OMember, OMembership, OOrigo;
 @class OTableViewCell, OTextField, OTextView;
 
-@interface OOrigoViewController : OTableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate> {
+@interface OOrigoViewController : OTableViewController<UITextViewDelegate> {
 @private
     OTableViewCell *_origoCell;
     OOrigo *_origo;

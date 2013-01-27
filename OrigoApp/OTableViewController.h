@@ -13,7 +13,7 @@
 @class OState;
 @class OReplicatedEntity;
 
-@interface OTableViewController : UITableViewController<OTableViewControllerDelegate> {
+@interface OTableViewController : UITableViewController<OTableViewControllerDelegate, UITableViewDataSource, UITableViewDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;

@@ -249,14 +249,6 @@ static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberLi
 }
 
 
-#pragma mark - UITableViewDelegate conformance
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [cell willAppearTrailing:YES];
-}
-
-
 #pragma mark - UITextFieldDelegate conformance
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
