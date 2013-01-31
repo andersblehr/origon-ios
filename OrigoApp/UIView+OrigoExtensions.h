@@ -18,7 +18,6 @@
 - (void)addDropShadowForPhotoFrame;
 
 - (void)hasDropShadow:(BOOL)hasDropShadow;
-- (void)hasDropShadow:(BOOL)hasDropShadow;
 - (void)redrawDropShadow;
 
 @end

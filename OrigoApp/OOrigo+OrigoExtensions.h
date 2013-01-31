@@ -12,6 +12,7 @@
 
 @interface OOrigo (OrigoExtensions)
 
+- (id)addNewMember;
 - (id)addMember:(OMember *)member;
 - (id)addResident:(OMember *)resident;
 

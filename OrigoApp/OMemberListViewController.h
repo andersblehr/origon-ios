@@ -10,23 +10,18 @@
 
 #import "OTableViewController.h"
 
-#import "OModalViewControllerDelegate.h"
-
 @protocol OEntityObservingDelegate;
 
 @class OTableViewCell;
 @class OMembership, OOrigo;
 
-@interface OMemberListViewController : OTableViewController<UITextViewDelegate, OModalViewControllerDelegate> {
+@interface OMemberListViewController : OTableViewController<UITextViewDelegate> {
 @private
+    OOrigo *_origo;
+    
     OTableViewCell *_origoCell;
     OTableViewCell *_selectedCell;
     OMembership *_selectedMembership;
 }
-
-@property (strong, nonatomic) OOrigo *origo;
-
-@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
-@property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
 
 @end

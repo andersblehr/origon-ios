@@ -17,9 +17,11 @@
 
 @interface OOrigoViewController : OTableViewController<UITextViewDelegate> {
 @private
-    OTableViewCell *_origoCell;
+    OMembership *_membership;
+    OMember *_member;
     OOrigo *_origo;
     
+    OTableViewCell *_origoCell;
     OTextView *_addressView;
     OTextField *_telephoneField;
     
@@ -28,12 +30,5 @@
     UIBarButtonItem *_doneButton;
     UIView *_currentField;
 }
-
-@property (strong, nonatomic) OOrigo *origo;
-@property (strong, nonatomic) OMember *member;
-@property (strong, nonatomic) OMembership *membership;
-
-@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
-@property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
 
 @end

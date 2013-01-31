@@ -11,11 +11,10 @@
 @protocol OTableViewControllerDelegate <NSObject>
 
 @required
-- (void)setState;
+- (void)loadState;
+- (void)loadData;
 
 @optional
 - (BOOL)shouldInitialise;
-- (void)setPrerequisites;
-- (void)loadData;
 
 @end

@@ -28,14 +28,16 @@
         [OState s].actionIsSetup = YES;
     } else {
         if ([self shouldInitialise]) {
-            if ([self respondsToSelector:@selector(setPrerequisites)]) {
-                [self setPrerequisites];
+            [self loadState];
+            
+            if (_isModal && self.modalImpliesRegistration) {
+                _state.actionIsRegister = YES;
             }
             
-            [self setState];
+            [self loadData];
             
-            if ([self respondsToSelector:@selector(loadData)]) {
-                [self loadData];
+            for (NSNumber *sectionKey in [_sectionData allKeys]) {
+                _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
             }
             
             _didInitialise = YES;
@@ -69,8 +71,6 @@
             [_sectionKeys addObject:@(sectionKey)];
             [_sectionKeys sortUsingSelector:@selector(compare:)];
         }
-    } else if (!_sectionCounts[@(sectionKey)]) {
-        _sectionCounts[@(sectionKey)] = @0;
     }
 }
 
@@ -111,10 +111,6 @@
 
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey
 {
-    if (!_sectionCounts[@(sectionKey)]) {
-        _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
-    }
-    
     return [_sectionCounts[@(sectionKey)] integerValue];
 }
 
@@ -181,6 +177,10 @@
     _modalImpliesRegistration = YES;
     _didJustLoad = YES;
     
+    if ([self.navigationController.viewControllers count] == 1) {
+        _isModal = (self.presentingViewController != nil);
+    }
+    
     [self initialise];
 }
 
@@ -189,24 +189,15 @@
 {
     [super viewWillAppear:animated];
     
-    if (_didJustLoad) {
-        _isModal = (self.presentingViewController && ![self isMovingToParentViewController]);
-        
-        if (_isModal && _modalImpliesRegistration) {
-            _state.actionIsRegister = YES;
-        }
-    }
-    
     _wasHidden = _isHidden;
     _isHidden = NO;
-    
-    _isPushed = [self isMovingToParentViewController];
-    _isPopped = (!_isPushed && !_isModal && !_wasHidden && !_didJustLoad);
+    _isPushed = [self isMovingToParentViewController] || (_didJustLoad && !_isModal);
+    _isPopped = (!_isPushed && !_isModal && !_wasHidden);
     _didJustLoad = NO;
     
     [self reflectState];
     
-    if ([self respondsToSelector:@selector(loadData)] && (_isPopped || _wasHidden)) {
+    if (_isPopped || _needsReloadData) {
         [self loadData];
         [self reloadSectionsIfNeeded];
     }
@@ -221,17 +212,55 @@
 }
 
 
+#pragma mark - Segue handling
+
+- (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data
+{
+    [self prepareForPushSegue:segue data:data observer:nil];
+}
+
+
+- (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data observer:(id)observer
+{
+    OTableViewController *destinationViewController = segue.destinationViewController;
+    destinationViewController.data = data;
+    destinationViewController.observer = observer;
+}
+
+
+- (void)prepareForModalSegue:(UIStoryboardSegue *)segue data:(id)data delegate:(id)delegate
+{
+    OTableViewController *destinationViewController = nil;
+    
+    if ([segue.destinationViewController isKindOfClass:OTableViewController.class]) {
+        destinationViewController = segue.destinationViewController;
+    } else {
+        UINavigationController *navigationController = segue.destinationViewController;
+        destinationViewController = navigationController.viewControllers[0];
+    }
+    
+    destinationViewController.data = data;
+    destinationViewController.delegate = delegate;
+}
+
+
 #pragma mark - OTableViewControllerDelegate conformance
+
+- (void)loadState
+{
+    // Override in subclass
+}
+
+
+- (void)loadData
+{
+    // Override in subclass
+}
+
 
 - (BOOL)shouldInitialise
 {
     return YES;
-}
-
-
-- (void)setState
-{
-    // Override in subclass
 }
 
 
@@ -243,7 +272,7 @@
         _lastSectionKey = [_sectionKeys lastObject];
     }
     
-    return [_sectionKeys count] ? [_sectionKeys count] : 1;
+    return [_sectionKeys count];
 }
 
 
@@ -285,6 +314,24 @@
     } else {
         [cell willAppearTrailing:NO];
     }
+}
+
+
+#pragma mark - OModalViewControllerDelegate conformance
+
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
+{
+    [self dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:YES];
+}
+
+
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier needsReloadData:(BOOL)needsReloadData
+{
+    _needsReloadData = needsReloadData;
+    
+    [self dismissViewControllerAnimated:YES completion:^{
+        _needsReloadData = NO;
+    }];
 }
 
 @end

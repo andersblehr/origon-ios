@@ -36,7 +36,7 @@
 
 static NSString * const kModalSegueToMemberView = @"modalFromAuthToMemberView";
 
-static NSString * const kHTTPHeaderLocation = @"Location";
+static NSInteger const kAuthSection = 0;
 
 static NSInteger const kActivationCodeLength = 6;
 
@@ -167,7 +167,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
             [self toggleAuthState];
         } else if (self.state.targetIsEmail) {
-            [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+            [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
         }
     }
 }
@@ -205,7 +205,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         passwordIsValid = [passwordHashAsEntered isEqualToString:passwordHash];
         
         if (passwordIsValid && self.state.targetIsEmail) {
-            [OMeta m].user.email = _emailToActivate;
+            [OMeta m].user.email = self.data;
         } else if (!passwordIsValid) {
             [self handleInvalidInputForField:_repeatPasswordField];
         }
@@ -259,7 +259,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [[OMeta m].context replicateIfNeeded];
     }
     
-    [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+    [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
 }
 
 
@@ -322,7 +322,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathAuthInfo];
     
     if ([[OMeta m] userIsRegistered] && [[OMeta m].user isMinor]) {
-        [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+        [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
     } else {
         [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
     }
@@ -336,7 +336,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     NSString *activationCode = [[OUUIDGenerator generateUUID] substringToIndex:kActivationCodeLength];
     
     OServerConnection *serverConnection = [[OServerConnection alloc] init];
-    [serverConnection setAuthHeaderForEmail:_emailToActivate password:activationCode];
+    [serverConnection setAuthHeaderForEmail:self.data password:activationCode];
     [serverConnection emailActivationCode:self];
     
     [self indicatePendingServerSession:YES];
@@ -395,19 +395,24 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        UINavigationController *navigationController = segue.destinationViewController;
-        OMemberViewController *memberViewController = navigationController.viewControllers[0];
-        memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
-        memberViewController.delegate = self;
+        [self prepareForModalSegue:segue data:[[OMeta m].user.residencies anyObject] delegate:self];
     }
+}
+
+
+#pragma mark - Overrides
+
+- (BOOL)modalImpliesRegistration
+{
+    return NO;
 }
 
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)setState
+- (void)loadState
 {
-    if (_emailToActivate) {
+    if (self.data) {
         self.state.actionIsActivate = YES;
         self.state.targetIsEmail = YES;
     } else {
@@ -415,8 +420,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         
         if (authInfoArchive) {
             _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
-            
             [OMeta m].userEmail = [_authInfo objectForKey:kKeyPathEmail];
+            
             self.state.actionIsActivate = YES;
         } else {
             self.state.actionIsLogin = YES;
@@ -426,7 +431,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     }
     
     self.state.aspectIsSelf = YES;
-    self.modalImpliesRegistration = NO;
 }
 
 
@@ -494,7 +498,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         if (self.state.targetIsMember) {
             footerText = [OStrings stringForKey:strFooterActivate];
         } else if (self.state.targetIsEmail) {
-            footerText = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivateEmail], _emailToActivate];
+            footerText = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivateEmail], self.data];
         }
     }
     
@@ -537,7 +541,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             if (self.state.targetIsMember) {
                 [self activateMembership];
             } else if (self.state.targetIsEmail) {
-                [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+                [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
             }
         } else {
             _repeatPasswordField.text = @"";
@@ -567,10 +571,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
     if ([identitifier isEqualToString:kMemberListViewControllerId]) {
-        [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+        [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
     } else if ([identitifier isEqualToString:kMemberViewControllerId]) {
         if ([[OMeta m] userIsSignedIn]) {
-            [_delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+            [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
         } else {
             [self dismissViewControllerAnimated:YES completion:NULL];
             [self toggleAuthState];
@@ -586,10 +590,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if ([OState s].actionIsSetup) {
         [_activityIndicator stopAnimating];
         
-        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:kKeyPathStringDate];
-        
         [OStrings.class didCompleteWithResponse:response data:data];
-        [(OTabBarController *)((UIViewController *)_delegate).tabBarController setTabBarTitles];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:kKeyPathStringDate];
+        [(OTabBarController *)((UIViewController *)self.delegate).tabBarController setTabBarTitles];
         
         [self toggleAuthState];
     } else {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2844" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="iqr-fd-qbX">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="iqr-fd-qbX">
     <dependencies>
-        <deployment defaultVersion="1536" identifier="iOS"/>
+        <deployment defaultVersion="1552" identifier="iOS"/>
         <development version="4500" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1930"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
     <scenes>
         <!--Auth View Controller-->
@@ -63,7 +63,7 @@
             <objects>
                 <viewController storyboardIdentifier="idMemberListViewController" id="O0V-Ey-WLK" customClass="OMemberListViewController" sceneMemberID="viewController">
                     <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lJb-0F-cm5">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections/>
@@ -84,7 +84,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="idMemberViewController" id="T87-Bh-GzL" customClass="OMemberViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="209" sectionHeaderHeight="10" sectionFooterHeight="10" id="WsN-Uc-XTj">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -95,9 +95,10 @@
                     <navigationItem key="navigationItem" title="&lt;strMember>" id="uRg-zS-kRb"/>
                     <connections>
                         <segue destination="O0V-Ey-WLK" kind="push" identifier="pushFromMemberToMemberListView" id="99F-61-IG0"/>
-                        <segue destination="r2l-jP-T7e" kind="modal" identifier="modalFromMemberToOrigoView1" modalTransitionStyle="flipHorizontal" id="zDY-cv-tVk"/>
+                        <segue destination="r2l-jP-T7e" kind="modal" identifier="modal1FromMemberToOrigoView" modalTransitionStyle="flipHorizontal" id="zDY-cv-tVk"/>
                         <segue destination="a73-0o-gAI" kind="modal" identifier="modalFromMemberToAuthView" modalTransitionStyle="flipHorizontal" id="Kbo-H7-0bI"/>
-                        <segue destination="r2l-jP-T7e" kind="modal" identifier="modalFromMemberToOrigoView2" modalTransitionStyle="coverVertical" id="ssz-aT-8tC"/>
+                        <segue destination="r2l-jP-T7e" kind="modal" identifier="modal2FromMemberToOrigoView" modalTransitionStyle="coverVertical" id="ssz-aT-8tC"/>
+                        <segue destination="r2l-jP-T7e" kind="push" identifier="pushFromMemberToOrigoView" id="AF0-ne-r5k"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Br5-90-R22" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -109,7 +110,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="idOrigoViewController" id="bxV-RT-yI4" customClass="OOrigoViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="LnJ-T1-eEC">
-                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -119,12 +120,29 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="&lt;strOrigo>" id="dpB-kw-TiN"/>
                     <connections>
-                        <segue destination="O0V-Ey-WLK" kind="modal" identifier="modalFromOrigoToMemberListView" modalTransitionStyle="flipHorizontal" id="ein-cf-GOr"/>
+                        <segue destination="yv9-z4-EET" kind="modal" identifier="modalFromOrigoToMemberListView" modalTransitionStyle="flipHorizontal" id="wr1-Pv-yc9"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kaR-KX-Z8X" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1084" y="668"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="zIn-HV-qeo">
+            <objects>
+                <navigationController id="yv9-z4-EET" sceneMemberID="viewController">
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="blackOpaque" prompted="NO"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="blackOpaque" id="sut-bT-MGw">
+                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="O0V-Ey-WLK" kind="relationship" relationship="rootViewController" id="k6T-Ar-Hpj"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qd4-ff-en7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="633" y="28"/>
         </scene>
         <!--Calendar View Controller - <strCalendar>-->
         <scene sceneID="FF8-Hh-UBk">
@@ -352,11 +370,11 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="ein-cf-GOr"/>
-        <segue reference="KgS-ch-2ww"/>
-        <segue reference="gdX-lL-iZb"/>
-        <segue reference="pI9-dP-sfi"/>
+        <segue reference="CWK-o1-hmk"/>
+        <segue reference="Y6f-2P-abO"/>
         <segue reference="Kbo-H7-0bI"/>
-        <segue reference="ssz-aT-8tC"/>
+        <segue reference="zDY-cv-tVk"/>
+        <segue reference="99F-61-IG0"/>
+        <segue reference="whK-uw-InI"/>
     </inferredMetricsTieBreakers>
 </document>

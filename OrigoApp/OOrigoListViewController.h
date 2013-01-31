@@ -10,21 +10,18 @@
 
 #import "OTableViewController.h"
 
-#import "OModalViewControllerDelegate.h"
-
 @class OTableViewCell;
 @class OMember, OOrigo;
 
-@interface OOrigoListViewController : OTableViewController<UIActionSheetDelegate, OModalViewControllerDelegate> {
+@interface OOrigoListViewController : OTableViewController<UIActionSheetDelegate> {
 @private
+    OMember *_member;
+    
     OTableViewCell *_selectedCell;
-    OMember *_selectedMember;
     OOrigo *_selectedOrigo;
     
     NSMutableArray *_origoTypes;
     NSInteger _indexOfSelectedOrigoType;
 }
-
-@property (strong, nonatomic) OMember *member;
 
 @end

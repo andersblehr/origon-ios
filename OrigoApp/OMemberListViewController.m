@@ -50,7 +50,7 @@ static NSInteger const kMemberSection = 2;
 
 - (void)didFinishEditing
 {
-    [_delegate dismissModalViewControllerWithIdentitifier:kMemberListViewControllerId];
+    [self.delegate dismissModalViewControllerWithIdentitifier:kMemberListViewControllerId];
 }
 
 
@@ -76,7 +76,7 @@ static NSInteger const kMemberSection = 2;
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
         self.navigationItem.rightBarButtonItem.action = @selector(addMember);
         
-        if (_delegate) {
+        if (self.delegate) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         }
     }
@@ -106,26 +106,21 @@ static NSInteger const kMemberSection = 2;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        UINavigationController *navigationController = segue.destinationViewController;
-        OMemberViewController *memberViewController = navigationController.viewControllers[0];
-        memberViewController.origo = _origo;
-        memberViewController.delegate = self;
-    } else if ([segue.identifier isEqualToString:kPushSegueToOrigoView]) {
-        OOrigoViewController *origoViewController = segue.destinationViewController;
-        origoViewController.membership = [_origo userMembership];
-        origoViewController.entityObservingDelegate = _selectedCell;
+        [self prepareForModalSegue:segue data:[_origo addNewMember] delegate:self];
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberView]) {
-        OMemberViewController *memberViewController = segue.destinationViewController;
-        memberViewController.membership = _selectedMembership;
-        memberViewController.entityObservingDelegate = _selectedCell;
+        [self prepareForPushSegue:segue data:_selectedMembership observer:_selectedCell];
+    } else if ([segue.identifier isEqualToString:kPushSegueToOrigoView]) {
+        [self prepareForPushSegue:segue data:[_origo userMembership] observer:_selectedCell];
     }
 }
 
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)setState
+- (void)loadState
 {
+    _origo = self.data;
+    
     self.state.actionIsList = YES;
     self.state.targetIsMember = YES;
     [self.state setAspectForOrigo:_origo];
@@ -173,7 +168,7 @@ static NSInteger const kMemberSection = 2;
     
     if (indexPath.section == kOrigoSection) {
         _origoCell = [tableView cellForEntity:_origo];
-        _origoCell.entityObservingDelegate = _entityObservingDelegate;
+        _origoCell.entityObservingDelegate = self.observer;
         
         if ([_origo userIsAdmin]) {
             _origoCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -284,14 +279,6 @@ static NSInteger const kMemberSection = 2;
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return [OStrings stringForKey:strButtonDeleteMember];
-}
-
-
-#pragma mark - OModalViewControllerDelegate conformance
-
-- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
-{
-    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 @end

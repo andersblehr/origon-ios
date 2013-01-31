@@ -28,6 +28,7 @@
 NSString * const kHTTPMethodGET = @"GET";
 NSString * const kHTTPMethodPOST = @"POST";
 NSString * const kHTTPMethodDELETE = @"DELETE";
+NSString * const kHTTPHeaderLocation = @"Location";
 
 NSInteger const kHTTPStatusOK = 200;
 NSInteger const kHTTPStatusCreated = 201;
