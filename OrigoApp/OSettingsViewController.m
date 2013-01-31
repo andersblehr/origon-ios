@@ -74,39 +74,24 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
-        UINavigationController *origoTabNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
+        UINavigationController *origoNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
         
-        OAuthViewController *authViewController = segue.destinationViewController;
-        authViewController.delegate = (OOrigoListViewController *)origoTabNavigationController.viewControllers[0];
+        [self prepareForModalSegue:segue data:nil delegate:origoNavigationController.viewControllers[0]];
     }
 }
 
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)setState
+- (void)loadState
 {
-    [OState s].actionIsList = YES;
-    [OState s].targetIsSetting = YES;
-    [OState s].aspectIsNone = YES;
+    self.state.actionIsList = YES;
+    self.state.targetIsSetting = YES;
+    self.state.aspectIsNone = YES;
 }
 
 
 #pragma mark - UITableViewDataSource conformance
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    // Return the number of sections.
-    return 0;
-}
-
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    // Return the number of rows in the section.
-    return 0;
-}
-
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {

@@ -10,12 +10,11 @@
 
 #import "OTableViewController.h"
 
-#import "OModalViewControllerDelegate.h"
 #import "OServerConnectionDelegate.h"
 
 @class OTableViewCell, OTextField;
 
-@interface OAuthViewController : OTableViewController<UITextFieldDelegate, UIAlertViewDelegate, OServerConnectionDelegate, OModalViewControllerDelegate> {
+@interface OAuthViewController : OTableViewController<UITextFieldDelegate, UIAlertViewDelegate, OServerConnectionDelegate> {
 @private
     OTableViewCell *_authCell;
     
@@ -32,8 +31,5 @@
     
     UIActivityIndicatorView *_activityIndicator;
 }
-
-@property (strong, nonatomic) NSString *emailToActivate;
-@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
 
 @end

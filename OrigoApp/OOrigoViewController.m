@@ -24,7 +24,7 @@
 #import "OTextField.h"
 #import "OTextView.h"
 
-#import "OMember.h"
+#import "OMember+OrigoExtensions.h"
 #import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
@@ -32,6 +32,8 @@
 #import "OMemberListViewController.h"
 
 static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberListView";
+
+static NSInteger const kOrigoSection = 0;
 
 
 @implementation OOrigoViewController
@@ -81,9 +83,9 @@ static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberLi
 - (void)didCancelEditing
 {
     if (self.state.actionIsRegister) {
-        [[OMeta m].context deleteEntity:_origo];
+        [[OMeta m].context deleteEntity:_membership];
         
-        [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
+        [self.delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId needsReloadData:NO];
     } else {
         _addressView.text = _origo.address;
         _telephoneField.text = _origo.telephone;
@@ -100,21 +102,15 @@ static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberLi
         _origo.telephone = [_telephoneField finalText];
         
         if (self.state.actionIsRegister) {
-            if (_membership && [_origo isResidence]) { // TODO: Use aspect for this?
-                [OMeta m].user.activeSince = [NSDate date];
-                [_delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
+            if ([_member isUser] && !_member.activeSince) {
+                _member.activeSince = [NSDate date];
+                [self.delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
             } else {
-                if ([_origo isResidence]) {
-                    _membership = [_origo addResident:_member];
-                } else {
-                    _membership = [_origo addMember:_member];
-                }
-                
                 [self performSegueWithIdentifier:kModalSegueToMemberListView sender:self];
             }
         } else if (self.state.actionIsEdit) {
             [self toggleEditMode];
-            [_entityObservingDelegate reloadEntity];
+            [self.observer reloadEntity];
         }
         
         [[OMeta m].context replicateIfNeeded];
@@ -180,9 +176,7 @@ static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberLi
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToMemberListView]) {
-        OMemberListViewController *memberListViewController = segue.destinationViewController;
-        memberListViewController.origo = self.origo;
-        memberListViewController.delegate = self.delegate;
+        [self prepareForModalSegue:segue data:_origo delegate:self.delegate];
     }
 }
 
@@ -197,50 +191,35 @@ static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberLi
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)setPrerequisites
+- (void)loadState
 {
-    if (_membership) {
-        _origo = _membership.origo;
-        _member = _membership.member;
-    }
-}
-
-
-- (void)setState
-{
+    _membership = self.data;
+    _origo = _membership.origo;
+    _member = _membership.member;
+    
     self.state.targetIsOrigo = YES;
     self.state.actionIsDisplay = ![OState s].actionIsInput;
     [self.state setAspectForOrigo:_origo];
 }
 
 
+- (void)loadData
+{
+    [self setData:_origo forSectionWithKey:kOrigoSection];
+}
+
+
 #pragma mark - UITableViewDataSource conformance
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
-}
-
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return 1;
-}
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return _origo ? [_origo cellHeight] : [OOrigo defaultCellHeight];
+    return [_origo cellHeight];
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_origo) {
-        _origoCell = [tableView cellForEntity:_origo delegate:self];
-    } else {
-        _origoCell = [tableView cellForEntityClass:OOrigo.class delegate:self];
-    }
+    _origoCell = [tableView cellForEntity:_origo delegate:self];
     
     _addressView = [_origoCell textFieldForKeyPath:kKeyPathAddress];
     _telephoneField = [_origoCell textFieldForKeyPath:kKeyPathTelephone];

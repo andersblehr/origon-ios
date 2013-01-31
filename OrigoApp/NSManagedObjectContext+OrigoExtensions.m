@@ -182,10 +182,10 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
             }
         }
         
-        if (!isGhost && [entity isReplicated]) {
-            [entity makeGhost];
+        if (!isGhost && [membership isReplicated]) {
+            [membership makeGhost];
         } else {
-            [self deleteObject:entity];
+            [self deleteObject:membership];
         }
     } else {
         [self deleteObject:entity];
@@ -199,7 +199,6 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 {
     return [self insertOrigoEntityOfType:type origoId:[OUUIDGenerator generateUUID]];
 }
-
 
 
 - (OMember *)insertMemberEntityWithEmail:(NSString *)email

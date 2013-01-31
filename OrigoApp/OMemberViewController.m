@@ -37,8 +37,8 @@
 #import "OTabBarController.h"
 
 static NSString * const kModalSegueToAuthView = @"modalFromMemberToAuthView";
-static NSString * const kModalSegueToOrigoView1 = @"modalFromMemberToOrigoView1";
-static NSString * const kModalSegueToOrigoView2 = @"modalFromMemberToOrigoView2";
+static NSString * const kModalSegue1ToOrigoView = @"modal1FromMemberToOrigoView";
+static NSString * const kModalSegue2ToOrigoView = @"modal2FromMemberToOrigoView";
 static NSString * const kPushSegueToMemberListView = @"pushFromMemberToMemberListView";
 
 static NSInteger const kMemberSection = 0;
@@ -98,23 +98,12 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)registerMember
+- (void)registerCandidate
 {
-    if (!_member) {
-        if (_candidate) {
-            _member = _candidate;
-        } else {
-            _member = [[OMeta m].context insertMemberEntityWithEmail:[_emailField finalText]];
-        }
-    }
+    [[OMeta m].context deleteEntity:_membership];
     
-    if (!_membership) {
-        if ([_origo isResidence]) {
-            _membership = [_origo addResident:_member];
-        } else {
-            _membership = [_origo addMember:_member];
-        }
-    }
+    _member = _candidate;
+    _membership = [_origo isResidence] ? [_origo addResident:_member] : [_origo addMember:_candidate];
     
     [self updateMember];
 }
@@ -136,14 +125,14 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 [OMeta m].user.activeSince = [NSDate date];
             }
             
-            [_delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
+            [self.delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
             [[OMeta m].context replicateIfNeeded];
         } else {
-            [self performSegueWithIdentifier:kModalSegueToOrigoView1 sender:self];
+            [self performSegueWithIdentifier:kModalSegue1ToOrigoView sender:self];
         }
     } else {
         [[OMeta m].context replicateIfNeeded];
-        [_entityObservingDelegate reloadEntity];
+        [self.observer reloadEntity];
     }
 }
 
@@ -269,7 +258,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)didCancelEditing
 {
     if (self.state.actionIsRegister) {
-        [_delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
+        [[OMeta m].context deleteEntity:_membership];
+        
+        [self.delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId needsReloadData:NO];
     } else if (self.state.actionIsEdit) {
         _dateOfBirthField.text = [_member.dateOfBirth localisedDateString];
         _mobilePhoneField.text = _member.mobilePhone;
@@ -303,7 +294,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 if ([_origo isResidence] && [_candidate.residencies count]) {
                     [self promptForExistingResidenceAction];
                 } else {
-                    [self registerMember];
+                    [self registerCandidate];
                 }
             } else {
                 if (!_gender) {
@@ -332,7 +323,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)addAddress
 {
-    [self performSegueWithIdentifier:kModalSegueToOrigoView2 sender:self];
+    [self performSegueWithIdentifier:kModalSegue2ToOrigoView sender:self];
 }
 
 
@@ -341,7 +332,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     [[OMeta m] userDidSignOut];
     _memberCell.entity = nil;
     
-    [_delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
+    [self.delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
 }
 
 
@@ -364,14 +355,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
             self.navigationItem.rightBarButtonItem.action = @selector(addAddress);
         }
-        
-        NSMutableSet *residences = [[NSMutableSet alloc] init];
-        
-        for (OMemberResidency *residency in _member.residencies) {
-            [residences addObject:residency.residence];
-        }
-        
-        _sortedResidences = [[residences allObjects] sortedArrayUsingSelector:@selector(compare:)];
     }
 }
 
@@ -420,24 +403,14 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
-        OAuthViewController *authViewController = segue.destinationViewController;
-        authViewController.emailToActivate = [_emailField finalText];
-        authViewController.delegate = self;
-    } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView1]) {
-        UINavigationController *navigationController = segue.destinationViewController;
-        OOrigoViewController *origoViewController = navigationController.viewControllers[0];
-        origoViewController.membership = [_origo userMembership];
-        origoViewController.delegate = self;
-    } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView2]) {
-        UINavigationController *navigationController = segue.destinationViewController;
-        OOrigoViewController *origoViewController = navigationController.viewControllers[0];
-        origoViewController.origo = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
-        origoViewController.member = _member;
-        origoViewController.delegate = self;
+        [self prepareForModalSegue:segue data:[_emailField finalText] delegate:self];
+    } else if ([segue.identifier isEqualToString:kModalSegue1ToOrigoView]) {
+        [self prepareForModalSegue:segue data:[_origo userMembership] delegate:self];
+    } else if ([segue.identifier isEqualToString:kModalSegue2ToOrigoView]) {
+        [self prepareForModalSegue:segue data:[[[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence] addResident:_member] delegate:self];
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
-        OMemberListViewController *memberListViewController = segue.destinationViewController;
-        memberListViewController.origo = _origo;
-        memberListViewController.delegate = _delegate;
+        [self prepareForPushSegue:segue data:_origo];
+        [segue.destinationViewController setDelegate:self.delegate];
     }
 }
 
@@ -452,54 +425,42 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)setPrerequisites
+- (void)loadState
 {
-    if (_membership) {
-        _member = _membership.member;
-        _origo = _membership.origo;
-    }
-}
-
-
-- (void)setState
-{
-    self.state.targetIsMember = YES;
-    self.state.actionIsDisplay = self.state.actionIsActivate ? YES : ![OState s].actionIsInput;
+    _membership = self.data;
+    _member = _membership.member;
+    _origo = _membership.origo;
     
-    if (_member) {
-        [self.state setAspectForMember:_member];
-    }
+    self.state.targetIsMember = YES;
+    self.state.actionIsDisplay = YES;
+    [self.state setAspectForMember:_member];
 }
 
 
 - (void)loadData
 {
+    [self setData:_member forSectionWithKey:kMemberSection];
     
+    if (self.state.actionIsDisplay) {
+        NSMutableSet *residences = [[NSMutableSet alloc] init];
+        
+        for (OMemberResidency *residency in _member.residencies) {
+            [residences addObject:residency.residence];
+        }
+        
+        [self setData:residences forSectionWithKey:kAddressSection];
+    }
 }
 
 
 #pragma mark - UITableViewDataSource conformance
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return self.state.actionIsRegister ? 1 : 2;
-}
-
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return (section == kMemberSection) ? 1 : [_member.residencies count];
-}
-
-
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = 0.f;
+    CGFloat height = kDefaultTableViewCellHeight;
     
     if (indexPath.section == kMemberSection) {
-        height = _member ? [_member cellHeight] : [OMember defaultCellHeight];
-    } else if (indexPath.section == kAddressSection) {
-        height = kDefaultTableViewCellHeight;
+        height = [_member cellHeight];
     }
     
     return height;
@@ -511,12 +472,8 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     UITableViewCell *cell = nil;
     
     if (indexPath.section == kMemberSection) {
-        if (_member) {
-            _memberCell = [tableView cellForEntity:_member delegate:self];
-            _gender = _member.gender;
-        } else {
-            _memberCell = [tableView cellForEntityClass:OMember.class delegate:self];
-        }
+        _memberCell = [tableView cellForEntity:_member delegate:self];
+        _gender = _member.gender;
         
         _nameField = [_memberCell textFieldForKeyPath:kKeyPathName];
         _dateOfBirthField = [_memberCell textFieldForKeyPath:kKeyPathDateOfBirth];
@@ -526,9 +483,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         
         cell = _memberCell;
     } else if (indexPath.section == kAddressSection) {
-        OOrigo *residence = _sortedResidences[indexPath.row];
-        
-        cell = [tableView listCellForEntity:residence];
+        cell = [tableView listCellForEntity:[self entityForIndexPath:indexPath]];
     }
     
     return cell;
@@ -635,14 +590,14 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         case kGenderSheetTag:
             if (buttonIndex != kGenderSheetButtonCancel) {
                 _gender = (buttonIndex == kGenderSheetButtonFemale) ? kGenderFemale : kGenderMale;
-                [self registerMember];
+                [self updateMember];
             }
             
             break;
             
         case kExistingResidenceSheetTag:
             if (buttonIndex == kExistingResidenceButtonInviteToHousehold) {
-                [self registerMember];
+                [self registerCandidate];
             } else if (buttonIndex == kExistingResidenceButtonMergeHouseholds) {
                 // TODO
             }
@@ -688,7 +643,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
-    [self dismissViewControllerAnimated:YES completion:NULL];
+    [super dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:NO];
     
     if ([identitifier isEqualToString:kAuthViewControllerId]) {
         if ([_member.email isEqualToString:[_emailField finalText]]) {

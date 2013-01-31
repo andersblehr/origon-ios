@@ -15,6 +15,7 @@
 
 - (void)setBackground;
 - (void)addLogoBanner;
+- (void)addEmptyTableFooterViewWithText:(NSString *)text;
 - (UIActivityIndicatorView *)addActivityIndicator;
 
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;

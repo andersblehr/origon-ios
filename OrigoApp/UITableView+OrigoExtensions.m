@@ -74,6 +74,12 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
+- (void)addEmptyTableFooterViewWithText:(NSString *)text
+{
+    self.tableHeaderView = [self footerViewWithText:text];
+}
+
+
 - (UIActivityIndicatorView *)addActivityIndicator
 {
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, kKeyboardHeight);

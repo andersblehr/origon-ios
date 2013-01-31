@@ -47,6 +47,57 @@ static NSInteger const kUserRow = 0;
 
 @implementation OOrigoListViewController
 
+#pragma mark - Auxiliary methods
+
+- (NSString *)footerText
+{
+    NSString *footerText = nil;
+    
+    if ([self hasSectionWithKey:kOrigoSection]) {
+        footerText = [OStrings stringForKey:strFooterOrigoCreation];
+    } else {
+        footerText = [OStrings stringForKey:strFooterOrigoCreationFirst];
+    }
+    
+    if (self.state.aspectIsSelf && [self hasSectionWithKey:kWardSection]) {
+        NSString *yourChild = nil;
+        NSString *himOrHer = nil;
+        
+        BOOL allFemale = YES;
+        BOOL allMale = YES;
+        
+        if ([self numberOfRowsInSectionWithKey:kWardSection] == 1) {
+            yourChild = ((OMember *)[self entitiesInSectionWithKey:kWardSection][0]).givenName;
+        } else {
+            yourChild = [OStrings stringForKey:strTermYourChild];
+        }
+        
+        for (OMember *ward in [self entitiesInSectionWithKey:kWardSection]) {
+            allFemale = allFemale && [ward isFemale];
+            allMale = allMale && [ward isMale];
+        }
+        
+        if (allFemale) {
+            himOrHer = [OStrings stringForKey:strTermHer];
+        } else if (allMale) {
+            himOrHer = [OStrings stringForKey:strTermHim];
+        } else {
+            himOrHer = [OStrings stringForKey:strTermHimOrHer];
+        }
+        
+        NSString *wardsAddendum = [NSString stringWithFormat:[OStrings stringForKey:strFooterOrigoCreationWards], yourChild, himOrHer];
+        footerText = [NSString stringWithFormat:@"%@ %@", footerText, wardsAddendum];
+    } else if (self.state.aspectIsSelf) {
+        footerText = [footerText stringByAppendingString:@"."];
+    } else if (self.state.aspectIsWard) {
+        NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], _member.givenName];
+        footerText = [NSString stringWithFormat:@"%@ %@.", footerText, forWardName];
+    }
+    
+    return footerText;
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)addOrigo
@@ -108,6 +159,18 @@ static NSInteger const kUserRow = 0;
 }
 
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    if ([self shouldInitialise]) {
+        if (![self numberOfSectionsInTableView:self.tableView]) {
+            [self.tableView addEmptyTableFooterViewWithText:[self footerText]];
+        }
+    }
+}
+
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -129,49 +192,34 @@ static NSInteger const kUserRow = 0;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
-        OAuthViewController *authViewController = segue.destinationViewController;
-        authViewController.delegate = self;
+        [self prepareForModalSegue:segue data:nil delegate:self];
     } else if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        UINavigationController *navigationController = segue.destinationViewController;
-        OMemberViewController *memberViewController = navigationController.viewControllers[0];
-        memberViewController.membership = [[OMeta m].user.residencies anyObject]; // TODO: Fix!
-        memberViewController.delegate = self;
+        OMemberResidency *residency = [[OMeta m].user.residencies anyObject];
+        
+        if (!residency) {
+            OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
+            residency = [residence addResident:[OMeta m].user];
+            residency.isActive = @YES;
+            residency.isAdmin = @YES;
+        }
+        
+        [self prepareForModalSegue:segue data:residency delegate:self];
     } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
-        UINavigationController *navigationController = segue.destinationViewController;
-        OOrigoViewController *origoViewController = navigationController.viewControllers[0];
-        origoViewController.origo = [[OMeta m].context insertOrigoEntityOfType:_origoTypes[_indexOfSelectedOrigoType]];
-        origoViewController.member = _member;
-        origoViewController.delegate = self;
+        [self prepareForModalSegue:segue data:[[[OMeta m].context insertOrigoEntityOfType:_origoTypes[_indexOfSelectedOrigoType]] addMember:_member] delegate:self];
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberView]) {
-        OMemberViewController *memberViewController = segue.destinationViewController;
-        memberViewController.membership = [[OMeta m].user rootMembership];
-        memberViewController.entityObservingDelegate = _selectedCell;
+        [self prepareForPushSegue:segue data:[[OMeta m].user rootMembership] observer:_selectedCell];
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
-        OMemberListViewController *memberListViewController = segue.destinationViewController;
-        memberListViewController.origo = _selectedOrigo;
-        memberListViewController.entityObservingDelegate = _selectedCell;
+        [self prepareForPushSegue:segue data:_selectedOrigo observer:_selectedCell];
     }
 }
 
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (BOOL)shouldInitialise
+- (void)loadState
 {
-    return [[OMeta m] userIsAllSet];
-}
-
-
-- (void)setPrerequisites
-{
-    if (!_member || [_member isFault]) {
-        _member = [OMeta m].user;
-    }
-}
-
-
-- (void)setState
-{
+    _member = self.data ? self.data : [OMeta m].user;
+    
     self.state.actionIsList = YES;
     self.state.targetIsOrigo = YES;
     [self.state setAspectForMember:_member];
@@ -187,6 +235,12 @@ static NSInteger const kUserRow = 0;
         [self appendData:_member.residencies toSectionWithKey:kUserSection];
         [self setData:[_member wards] forSectionWithKey:kWardSection];
     }
+}
+
+
+- (BOOL)shouldInitialise
+{
+    return [[OMeta m] userIsAllSet];
 }
 
 
@@ -231,11 +285,9 @@ static NSInteger const kUserRow = 0;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = kMinimumPadding;
+    CGFloat height = kDefaultPadding;
     
-    if (section == [self sectionNumberForSectionKey:kUserSection]) {
-        height = kDefaultPadding;
-    } else if ([self hasSectionWithKey:section]) {
+    if (section != [self sectionNumberForSectionKey:kUserSection]) {
         height = [tableView standardHeaderHeight];
     }
     
@@ -274,50 +326,7 @@ static NSInteger const kUserRow = 0;
     UIView *footerView = nil;
     
     if ((section == [tableView numberOfSections] - 1) && [[OMeta m].user isTeenOrOlder]) {
-        NSString *footerText = nil;
-        
-        if ([self hasSectionWithKey:kOrigoSection]) {
-            footerText = [OStrings stringForKey:strFooterOrigoCreation];
-        } else {
-            footerText = [OStrings stringForKey:strFooterOrigoCreationFirst];
-        }
-        
-        if (self.state.aspectIsSelf && [self hasSectionWithKey:kWardSection]) {
-            NSString *yourChild = nil;
-            NSString *himOrHer = nil;
-            
-            BOOL allFemale = YES;
-            BOOL allMale = YES;
-            
-            if ([self numberOfRowsInSectionWithKey:kWardSection] == 1) {
-                yourChild = ((OMember *)[self entitiesInSectionWithKey:kWardSection][0]).givenName;
-            } else {
-                yourChild = [OStrings stringForKey:strTermYourChild];
-            }
-            
-            for (OMember *ward in [self entitiesInSectionWithKey:kWardSection]) {
-                allFemale = allFemale && [ward isFemale];
-                allMale = allMale && [ward isMale];
-            }
-            
-            if (allFemale) {
-                himOrHer = [OStrings stringForKey:strTermHer];
-            } else if (allMale) {
-                himOrHer = [OStrings stringForKey:strTermHim];
-            } else {
-                himOrHer = [OStrings stringForKey:strTermHimOrHer];
-            }
-            
-            NSString *wardsAddendum = [NSString stringWithFormat:[OStrings stringForKey:strFooterOrigoCreationWards], yourChild, himOrHer];
-            footerText = [NSString stringWithFormat:@"%@ %@", footerText, wardsAddendum];
-        } else if (self.state.aspectIsSelf) {
-            footerText = [footerText stringByAppendingString:@"."];
-        } else if (self.state.aspectIsWard) {
-            NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], _member.givenName];
-            footerText = [NSString stringWithFormat:@"%@ %@.", footerText, forWardName];
-        }
-        
-        footerView = [tableView footerViewWithText:footerText];
+        footerView = [tableView footerViewWithText:[self footerText]];
     }
     
     return footerView;
@@ -326,30 +335,31 @@ static NSInteger const kUserRow = 0;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    OMember *selectedMember = nil;
+    
     _selectedCell = (OTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
     _selectedOrigo = nil;
-    _selectedMember = nil;
     
     if (indexPath.section == [self sectionNumberForSectionKey:kUserSection]) {
         if (indexPath.row == kUserRow) {
-            _selectedMember = [OMeta m].user;
+            selectedMember = [OMeta m].user;
         } else {
             _selectedOrigo = ((OMembership *)[self entityForIndexPath:indexPath]).origo;
         }
     } else if (indexPath.section == [self sectionNumberForSectionKey:kWardSection]) {
-        _selectedMember = [self entityForIndexPath:indexPath];
+        selectedMember = [self entityForIndexPath:indexPath];
     } else if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
         _selectedOrigo = ((OMembership *)[self entityForIndexPath:indexPath]).origo;
     }
     
     if (_selectedOrigo) {
         [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
-    } else if (_selectedMember) {
-        if ([_selectedMember isUser]) {
+    } else if (selectedMember) {
+        if ([selectedMember isUser]) {
             [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];
         } else {
             OOrigoListViewController *wardOrigosViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId];
-            wardOrigosViewController.member = _selectedMember;
+            wardOrigosViewController.data = selectedMember;
             
             [self.navigationController pushViewController:wardOrigosViewController animated:YES];
         }
@@ -373,7 +383,7 @@ static NSInteger const kUserRow = 0;
 
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
-    [self dismissViewControllerAnimated:YES completion:NULL];
+    [super dismissModalViewControllerWithIdentitifier:identitifier];
     
     if ([identitifier isEqualToString:kAuthViewControllerId] ||
         [identitifier isEqualToString:kMemberViewControllerId] ||

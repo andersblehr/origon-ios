@@ -52,6 +52,14 @@
 
 #pragma mark - Adding members
 
+- (id)addNewMember
+{
+    OMember *member = [[OMeta m].context insertMemberEntityWithEmail:nil];
+    
+    return [self isResidence] ? [self addResident:member] : [self addMember:member];
+}
+
+
 - (id)addMember:(OMember *)member
 {
     OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self];

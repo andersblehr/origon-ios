@@ -10,17 +10,18 @@
 
 #import "OTableViewController.h"
 
-#import "OModalViewControllerDelegate.h"
-
 @protocol OEntityObservingDelegate;
 
 @class OTableViewCell, OTextField;
 @class OMember, OMembership, OOrigo;
 
-@interface OMemberViewController : OTableViewController<UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate, OModalViewControllerDelegate> {
+@interface OMemberViewController : OTableViewController<UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
-    OTableViewCell *_memberCell;
+    OMembership *_membership;
     OMember *_member;
+    OOrigo *_origo;
+    
+    OTableViewCell *_memberCell;
     OMember *_candidate;
     
     OTextField *_nameField;
@@ -35,14 +36,6 @@
     
     UIDatePicker *_dateOfBirthPicker;
     NSString *_gender;
-    
-    NSArray *_sortedResidences;
 }
-
-@property (strong, nonatomic) OMembership *membership;
-@property (strong, nonatomic) OOrigo *origo;
-
-@property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
-@property (weak, nonatomic) id<OModalViewControllerDelegate> delegate;
 
 @end

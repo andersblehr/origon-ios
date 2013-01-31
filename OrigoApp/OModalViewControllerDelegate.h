@@ -14,5 +14,6 @@
 
 @required
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier;
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier needsReloadData:(BOOL)needsReloadData;
 
 @end
