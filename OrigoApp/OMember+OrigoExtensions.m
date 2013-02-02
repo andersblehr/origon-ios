@@ -133,6 +133,24 @@
 
 #pragma mark - Origo memberships
 
+- (OMemberResidency *)initialResidency
+{
+    OMemberResidency *residency = [self.residencies anyObject];
+    
+    if (!residency) {
+        OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
+        residency = [residence addResident:self];
+        
+        if ([self isUser]) {
+            residency.isActive = @YES;
+            residency.isAdmin = @YES;
+        }
+    }
+    
+    return residency;
+}
+
+
 - (OMembership *)rootMembership
 {
     OMembership *rootMembership = nil;

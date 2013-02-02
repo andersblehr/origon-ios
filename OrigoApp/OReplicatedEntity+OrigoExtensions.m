@@ -228,7 +228,7 @@
 
 - (NSString *)listDetailsForState:(OState *)state
 {
-    return @"BROKEN: Plase override in subclass";
+    return nil;
 }
 
 

@@ -8,8 +8,6 @@
 
 #import "OMessageBoardViewController.h"
 
-#import "UITableView+OrigoExtensions.h"
-
 #import "OStrings.h"
 
 @implementation OMessageBoardViewController
@@ -29,8 +27,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    [self.tableView setBackground];
     
     self.title = [OStrings stringForKey:strTabBarTitleMessages];
 }

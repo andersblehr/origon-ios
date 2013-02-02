@@ -110,7 +110,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="idOrigoViewController" id="bxV-RT-yI4" customClass="OOrigoViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="LnJ-T1-eEC">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <connections>
@@ -370,11 +370,11 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="CWK-o1-hmk"/>
         <segue reference="Y6f-2P-abO"/>
-        <segue reference="Kbo-H7-0bI"/>
-        <segue reference="zDY-cv-tVk"/>
+        <segue reference="CWK-o1-hmk"/>
         <segue reference="99F-61-IG0"/>
+        <segue reference="AF0-ne-r5k"/>
+        <segue reference="Kbo-H7-0bI"/>
         <segue reference="whK-uw-InI"/>
     </inferredMetricsTieBreakers>
 </document>

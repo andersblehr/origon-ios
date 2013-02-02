@@ -60,8 +60,6 @@ static NSInteger const kMemberSection = 2;
 {
     [super viewDidLoad];
     
-    [self.tableView setBackground];
-    
     if ([_origo isResidence]) {
         if ([_origo userIsMember]) {
             self.title = _origo.name;
@@ -72,7 +70,7 @@ static NSInteger const kMemberSection = 2;
         self.title = [OStrings stringForKey:strViewTitleMembers];
     }
     
-    if ([_origo userIsAdmin]) {
+    if ([_origo userIsAdmin] || (![_origo hasAdmin] && [_origo userIsCreator])) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
         self.navigationItem.rightBarButtonItem.action = @selector(addMember);
         
@@ -106,11 +104,9 @@ static NSInteger const kMemberSection = 2;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        [self prepareForModalSegue:segue data:[_origo addNewMember] delegate:self];
-    } else if ([segue.identifier isEqualToString:kPushSegueToMemberView]) {
-        [self prepareForPushSegue:segue data:_selectedMembership observer:_selectedCell];
-    } else if ([segue.identifier isEqualToString:kPushSegueToOrigoView]) {
-        [self prepareForPushSegue:segue data:[_origo userMembership] observer:_selectedCell];
+        [self prepareForModalSegue:segue data:[_origo addNewMember]];
+    } else {
+        [self prepareForPushSegue:segue];
     }
 }
 
@@ -119,7 +115,8 @@ static NSInteger const kMemberSection = 2;
 
 - (void)loadState
 {
-    _origo = self.data;
+    _membership = self.data;
+    _origo = _membership.origo;
     
     self.state.actionIsList = YES;
     self.state.targetIsMember = YES;
@@ -140,7 +137,7 @@ static NSInteger const kMemberSection = 2;
         }
     }
     
-    [self setData:_origo forSectionWithKey:kOrigoSection];
+    [self setData:_membership forSectionWithKey:kOrigoSection];
     [self setData:contactMemberships forSectionWithKey:kContactSection];
     [self setData:regularMemberships forSectionWithKey:kMemberSection];
 }
@@ -166,15 +163,13 @@ static NSInteger const kMemberSection = 2;
 {
     OTableViewCell *cell = nil;
     
-    if (indexPath.section == kOrigoSection) {
-        _origoCell = [tableView cellForEntity:_origo];
-        _origoCell.entityObservingDelegate = self.observer;
+    if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
+        cell = [tableView cellForEntity:_origo];
+        cell.observer = self.observer;
         
         if ([_origo userIsAdmin]) {
-            _origoCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
-        
-        cell = _origoCell;
     } else {
         cell = [tableView listCellForEntity:[[self entityForIndexPath:indexPath] member]];
     }
@@ -264,13 +259,11 @@ static NSInteger const kMemberSection = 2;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    _selectedCell = (OTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
     
-    if (indexPath.section == kOrigoSection) {
+    if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
         [self performSegueWithIdentifier:kPushSegueToOrigoView sender:self];
     } else {
-        _selectedMembership = [self entityForIndexPath:indexPath];
-        
         [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];
     }
 }

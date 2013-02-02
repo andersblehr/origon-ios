@@ -8,8 +8,6 @@
 
 #import "OCalendarViewController.h"
 
-#import "UITableView+OrigoExtensions.h"
-
 #import "OStrings.h"
 
 
@@ -29,8 +27,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    [self.tableView setBackground];
     
     self.title = [OStrings stringForKey:strTabBarTitleCalendar];
 }

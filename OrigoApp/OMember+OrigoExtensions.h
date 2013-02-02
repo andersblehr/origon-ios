@@ -27,6 +27,7 @@
 - (NSSet *)housemates;
 - (NSSet *)wards;
 
+- (OMemberResidency *)initialResidency;
 - (OMembership *)rootMembership;
 - (NSSet *)origoMemberships;
 

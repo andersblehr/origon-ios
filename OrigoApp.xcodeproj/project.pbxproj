@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5C014A2415CA77320040A1D9 /* OAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C014A2315CA77310040A1D9 /* OAlert.m */; };
-		5C09D497169DABA0000C2229 /* OReplicatedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C09D496169DABA0000C2229 /* OReplicatedEntity.m */; };
 		5C09D49A169DAF84000C2229 /* OMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C09D499169DAF84000C2229 /* OMembership.m */; };
 		5C15BFB016350CB300BB5254 /* glyphicons_003_user.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFAE16350CB300BB5254 /* glyphicons_003_user.png */; };
 		5C15BFB116350CB300BB5254 /* glyphicons_003_user@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFAF16350CB300BB5254 /* glyphicons_003_user@2x.png */; };
@@ -45,6 +44,7 @@
 		5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C50581714CA1D05000D6587 /* QuartzCore.framework */; };
 		5C50581C14CAEC76000D6587 /* UIView+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C50581B14CAEC76000D6587 /* UIView+OrigoExtensions.m */; };
 		5C5ED5CE14F2E9FE006BBDFB /* OReplicatedEntity+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED5CD14F2E9FE006BBDFB /* OReplicatedEntity+OrigoExtensions.m */; };
+		5C6261AF16BA9E6B0026D148 /* OReplicatedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6261AE16BA9E6B0026D148 /* OReplicatedEntity.m */; };
 		5C629FEB14C61F98001DA01F /* 83-calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FE914C61F98001DA01F /* 83-calendar.png */; };
 		5C629FEC14C61F98001DA01F /* 83-calendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */; };
 		5C629FF014C62038001DA01F /* OMemberListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C629FEF14C62038001DA01F /* OMemberListViewController.m */; };
@@ -128,8 +128,6 @@
 /* Begin PBXFileReference section */
 		5C014A2215CA77310040A1D9 /* OAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAlert.h; sourceTree = "<group>"; };
 		5C014A2315CA77310040A1D9 /* OAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAlert.m; sourceTree = "<group>"; };
-		5C09D495169DABA0000C2229 /* OReplicatedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntity.h; sourceTree = "<group>"; };
-		5C09D496169DABA0000C2229 /* OReplicatedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntity.m; sourceTree = "<group>"; };
 		5C09D498169DAF84000C2229 /* OMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembership.h; sourceTree = "<group>"; };
 		5C09D499169DAF84000C2229 /* OMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMembership.m; sourceTree = "<group>"; };
 		5C15BFAE16350CB300BB5254 /* glyphicons_003_user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_003_user.png; sourceTree = "<group>"; };
@@ -184,6 +182,8 @@
 		5C50581B14CAEC76000D6587 /* UIView+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5C5ED5CC14F2E9FE006BBDFB /* OReplicatedEntity+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OReplicatedEntity+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5C5ED5CD14F2E9FE006BBDFB /* OReplicatedEntity+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OReplicatedEntity+OrigoExtensions.m"; sourceTree = "<group>"; };
+		5C6261AD16BA9E6B0026D148 /* OReplicatedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntity.h; sourceTree = "<group>"; };
+		5C6261AE16BA9E6B0026D148 /* OReplicatedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntity.m; sourceTree = "<group>"; };
 		5C629FE914C61F98001DA01F /* 83-calendar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar.png"; sourceTree = "<group>"; };
 		5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar@2x.png"; sourceTree = "<group>"; };
 		5C629FEE14C62038001DA01F /* OMemberListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMemberListViewController.h; sourceTree = "<group>"; };
@@ -403,8 +403,8 @@
 				5CAEE0BA163E513A00A9046B /* OMessageThread.m */,
 				5C78FABC165508AD009A4BCF /* OOrigo.h */,
 				5C78FABD165508AD009A4BCF /* OOrigo.m */,
-				5C09D495169DABA0000C2229 /* OReplicatedEntity.h */,
-				5C09D496169DABA0000C2229 /* OReplicatedEntity.m */,
+				5C6261AD16BA9E6B0026D148 /* OReplicatedEntity.h */,
+				5C6261AE16BA9E6B0026D148 /* OReplicatedEntity.m */,
 				5CAEE08C163E513300A9046B /* OReplicatedEntityRef.h */,
 				5CAEE08D163E513300A9046B /* OReplicatedEntityRef.m */,
 				5CAEE0C2163E513A00A9046B /* OScheduledAbsence.h */,
@@ -840,9 +840,9 @@
 				5C78FABE165508AE009A4BCF /* OOrigo.m in Sources */,
 				5CBDF78C1659175000D4681C /* OVisualConstraints.m in Sources */,
 				5CE9ED4A167A300600CA90F0 /* OMember.m in Sources */,
-				5C09D497169DABA0000C2229 /* OReplicatedEntity.m in Sources */,
 				5C09D49A169DAF84000C2229 /* OMembership.m in Sources */,
 				5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */,
+				5C6261AF16BA9E6B0026D148 /* OReplicatedEntity.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

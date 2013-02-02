@@ -16,5 +16,6 @@
 
 @optional
 - (BOOL)shouldInitialise;
+- (UIBarButtonItem *)cancelRegistrationButton;
 
 @end

@@ -38,46 +38,14 @@ static NSInteger const kOrigoSection = 0;
 
 @implementation OOrigoViewController
 
-#pragma mark - Auxiliary methods
-
-- (void)toggleEditMode
-{
-    static UIBarButtonItem *editButton = nil;
-    static UIBarButtonItem *backButton = nil;
-    
-    [_origoCell toggleEditMode];
-    
-    if (self.state.actionIsEdit) {
-        editButton = self.navigationItem.rightBarButtonItem;
-        backButton = self.navigationItem.leftBarButtonItem;
-        
-        if (!_cancelButton) {
-            _cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
-            _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
-            _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
-        }
-        
-        self.navigationItem.rightBarButtonItem = _nextButton;
-        self.navigationItem.leftBarButtonItem = _cancelButton;
-    } else if (self.state.actionIsDisplay) {
-        [self.view endEditing:YES];
-        
-        self.navigationItem.rightBarButtonItem = editButton;
-        self.navigationItem.leftBarButtonItem = backButton;
-    }
-    
-    OLogState;
-}
-
-
 #pragma mark - Selector implementations
 
-- (void)moveToNextInputField
-{
-    if (_currentField == _addressView) {
-        [_telephoneField becomeFirstResponder];
-    }
-}
+//- (void)moveToNextInputField
+//{
+//    if (_currentField == _addressView) {
+//        [_telephoneField becomeFirstResponder];
+//    }
+//}
 
 
 - (void)didCancelEditing
@@ -115,7 +83,7 @@ static NSInteger const kOrigoSection = 0;
         
         [[OMeta m].context replicateIfNeeded];
     } else {
-        [_origoCell shakeCellVibrateDevice:NO];
+        [self.entityCell shakeCellVibrateDevice:NO];
     }
 }
 
@@ -125,8 +93,6 @@ static NSInteger const kOrigoSection = 0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    [self.tableView setBackground];
     
     if (_origo) {
         self.title = [_origo isResidence] ? [OStrings stringForKey:strTermAddress] : _origo.name;
@@ -140,23 +106,6 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    if (self.state.actionIsRegister) {
-        _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
-        _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
-        
-        self.navigationItem.rightBarButtonItem = _nextButton;
-        
-        if (!([_origo isResidence] && self.state.aspectIsSelf)) {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
-        }
-    }
-}
-
-
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -164,7 +113,7 @@ static NSInteger const kOrigoSection = 0;
     if (self.state.actionIsInput) {
         [_addressView becomeFirstResponder];
     } else if ([_origo userIsAdmin]) {
-        _origoCell.editable = YES;
+        self.entityCell.editable = YES;
     }
     
     OLogState;
@@ -176,7 +125,8 @@ static NSInteger const kOrigoSection = 0;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToMemberListView]) {
-        [self prepareForModalSegue:segue data:_origo delegate:self.delegate];
+        [self prepareForModalSegue:segue data:_origo];
+        [segue.destinationViewController setDelegate:self.delegate];
     }
 }
 
@@ -209,6 +159,18 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
+- (UIBarButtonItem *)cancelRegistrationButton
+{
+    UIBarButtonItem *cancelButton = nil;
+    
+    if (!([_origo isResidence] && self.state.aspectIsSelf)) {
+        cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
+    }
+    
+    return cancelButton;
+}
+
+
 #pragma mark - UITableViewDataSource conformance
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -219,62 +181,12 @@ static NSInteger const kOrigoSection = 0;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    _origoCell = [tableView cellForEntity:_origo delegate:self];
+    self.entityCell = [tableView cellForEntity:_origo delegate:self];
     
-    _addressView = [_origoCell textFieldForKeyPath:kKeyPathAddress];
-    _telephoneField = [_origoCell textFieldForKeyPath:kKeyPathTelephone];
+    _addressView = [self.entityCell textFieldForKeyPath:kKeyPathAddress];
+    _telephoneField = [self.entityCell textFieldForKeyPath:kKeyPathTelephone];
     
-    return _origoCell;
-}
-
-
-#pragma mark - UITextFieldDelegate conformance
-
-- (void)textFieldDidBeginEditing:(OTextField *)textField
-{
-    if (self.state.actionIsDisplay) {
-        [self toggleEditMode];
-    }
-    
-    self.navigationItem.rightBarButtonItem = _doneButton;
-    
-    _currentField = textField;
-    
-    textField.hasEmphasis = YES;
-}
-
-
-- (void)textFieldDidEndEditing:(OTextField *)textField
-{
-    textField.hasEmphasis = NO;
-}
-
-
-#pragma mark - UITextViewDelegate conformance
-
-- (void)textViewDidBeginEditing:(OTextView *)textView
-{
-    if (self.state.actionIsDisplay) {
-        [self toggleEditMode];
-    }
-    
-    self.navigationItem.rightBarButtonItem = _nextButton;
-    
-    _currentField = textView;
-    
-    textView.hasEmphasis = YES;
-}
-
-
-- (void)textViewDidChange:(OTextView *)textView
-{
-    [_origoCell redrawIfNeeded];
-}
-
-
-- (void)textViewDidEndEditing:(OTextView *)textView
-{
-    textView.hasEmphasis = NO;
+    return self.entityCell;
 }
 
 @end
