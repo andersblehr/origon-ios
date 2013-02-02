@@ -33,6 +33,7 @@ extern CGFloat const kCellAnimationDuration;
     BOOL _selectable;
     
     NSMutableDictionary *_views;
+    NSMutableArray *_orderedTextFields;
     OVisualConstraints *_visualConstraints;
     
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
@@ -43,7 +44,7 @@ extern CGFloat const kCellAnimationDuration;
 @property (weak, nonatomic, readonly) OState *viewState;
 @property (nonatomic) BOOL editable;
 
-@property (weak, nonatomic) id<OEntityObservingDelegate> entityObservingDelegate;
+@property (weak, nonatomic) id<OEntityObservingDelegate> observer;
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 - (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
@@ -51,6 +52,7 @@ extern CGFloat const kCellAnimationDuration;
 
 - (id)labelForKeyPath:(NSString *)keyPath;
 - (id)textFieldForKeyPath:(NSString *)keyPath;
+- (id)nextInputFieldFromTextField:(id)textField;
 
 - (void)willAppearTrailing:(BOOL)trailing;
 - (void)toggleEditMode;

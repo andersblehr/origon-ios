@@ -8,14 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OEntityObservingDelegate.h"
 #import "OModalViewControllerDelegate.h"
 #import "OTableViewControllerDelegate.h"
 
-@class OState;
+@protocol OEntityObservingDelegate;
+
+@class OState, OTableViewCell;
 @class OReplicatedEntity;
 
-@interface OTableViewController : UITableViewController<OTableViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, OModalViewControllerDelegate> {
+@interface OTableViewController : UITableViewController<OTableViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
@@ -25,22 +26,30 @@
     NSMutableArray *_sectionKeys;
     NSMutableDictionary *_sectionData;
     NSMutableDictionary *_sectionCounts;
+    
     NSNumber *_lastSectionKey;
+    NSIndexPath *_selectedIndexPath;
+    UIView *_emphasisedField;
+    
+    UIBarButtonItem *_nextButton;
+    UIBarButtonItem *_doneButton;
+    UIBarButtonItem *_cancelButton;
 }
 
 @property (strong, nonatomic, readonly) OState *state;
+
+@property (nonatomic) BOOL shouldDemphasiseOnEndEdit;
 @property (nonatomic) BOOL modalImpliesRegistration;
 
 @property (strong, nonatomic) id data;
 @property (strong, nonatomic) id<OModalViewControllerDelegate> delegate;
-@property (strong, nonatomic) id<OEntityObservingDelegate>observer;
+@property (strong, nonatomic) id<OEntityObservingDelegate> observer;
+@property (strong, nonatomic) OTableViewCell *entityCell;
 
 @property (nonatomic, readonly) BOOL isPushed;
 @property (nonatomic, readonly) BOOL isPopped;
 @property (nonatomic, readonly) BOOL isModal;
 @property (nonatomic, readonly) BOOL wasHidden;
-
-- (void)reflectState;
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey;
@@ -51,8 +60,11 @@
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)sectionNumberForSectionKey:(NSInteger)sectionKey;
 
+- (void)prepareForPushSegue:(UIStoryboardSegue *)segue;
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data;
-- (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data observer:(id)observer;
-- (void)prepareForModalSegue:(UIStoryboardSegue *)segue data:(id)data delegate:(id)delegate;
+- (void)prepareForModalSegue:(UIStoryboardSegue *)segue data:(id)data;
+
+- (void)reflectState;
+- (void)toggleEditMode;
 
 @end

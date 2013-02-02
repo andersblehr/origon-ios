@@ -9,6 +9,7 @@
 #import "OMemberResidency+OrigoExtensions.h"
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
+#import "NSString+OrigoExtensions.h"
 
 #import "OMeta.h"
 
@@ -50,6 +51,13 @@
     isTransient = isTransient || [property isEqualToString:@"residence"];
     
     return isTransient;
+}
+
+#pragma mark - OReplicatedEntity+OrigoExtensions overrides
+
+- (NSString *)listNameForState:(OState *)state
+{
+    return [self.residence.address lines][0];
 }
 
 @end

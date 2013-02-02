@@ -17,7 +17,6 @@
 @private
     OMember *_member;
     
-    OTableViewCell *_selectedCell;
     OOrigo *_selectedOrigo;
     
     NSMutableArray *_origoTypes;

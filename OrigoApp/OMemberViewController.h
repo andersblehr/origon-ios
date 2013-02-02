@@ -15,24 +15,18 @@
 @class OTableViewCell, OTextField;
 @class OMember, OMembership, OOrigo;
 
-@interface OMemberViewController : OTableViewController<UITextFieldDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
+@interface OMemberViewController : OTableViewController<UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
     OMembership *_membership;
     OMember *_member;
     OOrigo *_origo;
     
-    OTableViewCell *_memberCell;
     OMember *_candidate;
     
     OTextField *_nameField;
     OTextField *_dateOfBirthField;
     OTextField *_mobilePhoneField;
     OTextField *_emailField;
-    
-    UIBarButtonItem *_cancelButton;
-    UIBarButtonItem *_nextButton;
-    UIBarButtonItem *_doneButton;
-    OTextField *_currentField;
     
     UIDatePicker *_dateOfBirthPicker;
     NSString *_gender;

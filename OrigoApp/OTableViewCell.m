@@ -69,7 +69,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Adding elements
 
-- (void)addTitleForKeyPath:(NSString *)keyPath hasPhoto:(BOOL)hasPhoto
+- (void)addTitleFieldForKeyPath:(NSString *)keyPath hasPhoto:(BOOL)hasPhoto
 {
     UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
     titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
@@ -137,6 +137,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     [self.contentView addSubview:textField];
     [_views setObject:textField forKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
+    [_orderedTextFields addObject:textField];
     
     if (constrained) {
         [_visualConstraints addUnlabeledConstraintsForKeyPath:keyPath];
@@ -161,6 +162,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     [self.contentView addSubview:textView];
     [_views setObject:textView forKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
+    [_orderedTextFields addObject:textView];
+    
     [_visualConstraints addLabeledTextFieldConstraintsForKeyPath:keyPath];
 }
 
@@ -176,7 +179,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self.editing = !_selectable;
     
     if (entityClass == OMember.class) {
-        [self addTitleForKeyPath:kKeyPathName hasPhoto:YES];
+        [self addTitleFieldForKeyPath:kKeyPathName hasPhoto:YES];
         [self addLabeledTextFieldForKeyPath:kKeyPathDateOfBirth];
         [self addLabeledTextFieldForKeyPath:kKeyPathMobilePhone];
         [self addLabeledTextFieldForKeyPath:kKeyPathEmail];
@@ -194,10 +197,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     
     if (self) {
-        _visualConstraints = [[OVisualConstraints alloc] initForTableViewCell:self];
-        _views = [[NSMutableDictionary alloc] init];
-        _inputDelegate = delegate;
-        
         self.backgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
         self.backgroundView.backgroundColor = [UIColor cellBackgroundColor];
         self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColor];
@@ -206,6 +205,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColor];
         self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
         self.textLabel.font = [UIFont titleFont];
+
+        if (![self isListCell]) {
+            _visualConstraints = [[OVisualConstraints alloc] initForTableViewCell:self];
+            _views = [[NSMutableDictionary alloc] init];
+            _orderedTextFields = [[NSMutableArray alloc] init];
+            _inputDelegate = delegate;
+        }
         
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
             [self addLabelForKeyPath:kKeyPathSignIn constrained:YES];
@@ -261,6 +267,29 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (id)textFieldForKeyPath:(NSString *)keyPath
 {
     return [_views objectForKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
+}
+
+
+- (id)nextInputFieldFromTextField:(id)textField
+{
+    UIView *inputField = nil;
+    
+    NSInteger numberOfTextFields = [_orderedTextFields count];
+    NSInteger indexOfTextField = [_orderedTextFields indexOfObject:textField];
+    
+    BOOL inputFieldIsEditable = NO;
+    
+    for (int i = indexOfTextField + 1; ((i < numberOfTextFields) && !inputFieldIsEditable); i++) {
+        inputField = _orderedTextFields[i];
+        
+        if ([inputField isKindOfClass:OTextField.class]) {
+            inputFieldIsEditable = ((OTextField *)inputField).enabled;
+        } else if ([inputField isKindOfClass:OTextView.class]) {
+            inputFieldIsEditable = ((OTextView *)inputField).editable;
+        }
+    }
+    
+    return inputFieldIsEditable ? inputField : nil;
 }
 
 
@@ -455,8 +484,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self redrawIfNeeded];
     }
     
-    if (_entityObservingDelegate) {
-        [_entityObservingDelegate reloadEntity];
+    if (_observer) {
+        [_observer reloadEntity];
     }
 }
 

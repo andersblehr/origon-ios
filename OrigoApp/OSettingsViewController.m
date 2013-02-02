@@ -44,8 +44,6 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
 {
     [super viewDidLoad];
 
-    [self.tableView setBackground];
-    
     self.title = [OStrings stringForKey:strTabBarTitleSettings];
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
 }
@@ -76,7 +74,8 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
     if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
         UINavigationController *origoNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
         
-        [self prepareForModalSegue:segue data:nil delegate:origoNavigationController.viewControllers[0]];
+        [self prepareForModalSegue:segue data:nil];
+        [segue.destinationViewController setDelegate:origoNavigationController.viewControllers[0]];
     }
 }
 

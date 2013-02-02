@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OTaskListViewController : UITableViewController
+#import "OTableViewController.h"
+
+@interface OTaskListViewController : OTableViewController
 
 @end

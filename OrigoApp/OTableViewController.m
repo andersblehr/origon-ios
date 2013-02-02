@@ -9,18 +9,35 @@
 #import "OTableViewController.h"
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
+#import "UIBarButtonItem+OrigoExtensions.h"
+#import "UITableView+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
+#import "OTextField.h"
+#import "OTextView.h"
 
 #import "OReplicatedEntity.h"
 
 
 @implementation OTableViewController
 
-#pragma mark - Initialisation & state handling
+#pragma mark - Selector implementations
+
+- (void)moveToNextInputField
+{
+    UIView *nextInputField = [_entityCell nextInputFieldFromTextField:_emphasisedField];
+    
+    if (nextInputField) {
+        [nextInputField becomeFirstResponder];
+    }
+}
+
+
+#pragma mark - Initialisation
 
 - (void)initialise
 {
@@ -40,18 +57,9 @@
                 _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
             }
             
+            _lastSectionKey = [_sectionKeys lastObject];
             _didInitialise = YES;
         }
-    }
-}
-
-
-- (void)reflectState
-{
-    if (!_didInitialise) {
-        [self initialise];
-    } else {
-        [[OState s] reflect:_state];
     }
 }
 
@@ -163,25 +171,78 @@
 }
 
 
+#pragma mark - Utility methods
+
+- (void)reflectState
+{
+    if (!_didInitialise) {
+        [self initialise];
+    } else {
+        [[OState s] reflect:_state];
+    }
+}
+
+
+- (void)toggleEditMode
+{
+    [_entityCell toggleEditMode];
+    
+    static UIBarButtonItem *rightButton = nil;
+    static UIBarButtonItem *leftButton = nil;
+    
+    if (self.state.actionIsEdit) {
+        rightButton = self.navigationItem.rightBarButtonItem;
+        leftButton = self.navigationItem.leftBarButtonItem;
+        
+        if (!_cancelButton) {
+            _cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
+            _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
+            _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
+        }
+        
+        self.navigationItem.leftBarButtonItem = _cancelButton;
+    } else if (self.state.actionIsDisplay) {
+        [self.view endEditing:YES];
+        
+        self.navigationItem.rightBarButtonItem = rightButton;
+        self.navigationItem.leftBarButtonItem = leftButton;
+    }
+    
+    OLogState;
+}
+
+
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
+    [self.tableView setBackground];
+    
     _sectionKeys = [[NSMutableArray alloc] init];
     _sectionData = [[NSMutableDictionary alloc] init];
     _sectionCounts = [[NSMutableDictionary alloc] init];
     
-    _state = [[OState alloc] init];
-    _modalImpliesRegistration = YES;
     _didJustLoad = YES;
+    _state = [[OState alloc] init];
+    _shouldDemphasiseOnEndEdit = YES;
+    _modalImpliesRegistration = ([NSStringFromClass(self.class) rangeOfString:@"List"].location == NSNotFound);
     
     if ([self.navigationController.viewControllers count] == 1) {
         _isModal = (self.presentingViewController != nil);
     }
     
     [self initialise];
+    
+    if (_state.actionIsRegister) {
+        _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
+        _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
+        
+        self.navigationItem.leftBarButtonItem = [self cancelRegistrationButton];
+        self.navigationItem.rightBarButtonItem = _nextButton;
+    }
 }
 
 
@@ -214,21 +275,21 @@
 
 #pragma mark - Segue handling
 
-- (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data
+- (void)prepareForPushSegue:(UIStoryboardSegue *)segue
 {
-    [self prepareForPushSegue:segue data:data observer:nil];
+    [self prepareForPushSegue:segue data:[self entityForIndexPath:_selectedIndexPath]];
 }
 
 
-- (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data observer:(id)observer
+- (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data
 {
     OTableViewController *destinationViewController = segue.destinationViewController;
     destinationViewController.data = data;
-    destinationViewController.observer = observer;
+    destinationViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:_selectedIndexPath];
 }
 
 
-- (void)prepareForModalSegue:(UIStoryboardSegue *)segue data:(id)data delegate:(id)delegate
+- (void)prepareForModalSegue:(UIStoryboardSegue *)segue data:(id)data
 {
     OTableViewController *destinationViewController = nil;
     
@@ -240,7 +301,7 @@
     }
     
     destinationViewController.data = data;
-    destinationViewController.delegate = delegate;
+    destinationViewController.delegate = self;
 }
 
 
@@ -264,27 +325,23 @@
 }
 
 
+- (UIBarButtonItem *)cancelRegistrationButton
+{
+    return nil;
+}
+
+
 #pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    if (!_lastSectionKey) {
-        _lastSectionKey = [_sectionKeys lastObject];
-    }
-    
     return [_sectionKeys count];
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger numberOfRows = 0;
-    
-    if ([_sectionKeys count]) {
-        numberOfRows = [self numberOfRowsInSectionWithKey:[_sectionKeys[section] integerValue]];
-    }
-    
-    return numberOfRows;
+    return [self numberOfRowsInSectionWithKey:[_sectionKeys[section] integerValue]];
 }
 
 
@@ -317,6 +374,12 @@
 }
 
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    _selectedIndexPath = indexPath;
+}
+
+
 #pragma mark - OModalViewControllerDelegate conformance
 
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
@@ -332,6 +395,80 @@
     [self dismissViewControllerAnimated:YES completion:^{
         _needsReloadData = NO;
     }];
+}
+
+
+#pragma mark - UITextFieldDelegate conformance
+
+- (void)textFieldDidBeginEditing:(OTextField *)textField
+{
+    if (self.state.actionIsDisplay) {
+        [self toggleEditMode];
+    }
+    
+    if ([_entityCell nextInputFieldFromTextField:textField]) {
+        self.navigationItem.rightBarButtonItem = _nextButton;
+    } else {
+        self.navigationItem.rightBarButtonItem = _doneButton;
+    }
+    
+    _emphasisedField = textField;
+    
+    textField.hasEmphasis = YES;
+}
+
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if ([_entityCell nextInputFieldFromTextField:textField]) {
+        [self moveToNextInputField];
+    } else {
+        [self performSelector:@selector(didFinishEditing)];
+    }
+    
+    return YES;
+}
+
+
+- (void)textFieldDidEndEditing:(OTextField *)textField
+{
+    if (_shouldDemphasiseOnEndEdit) {
+        textField.hasEmphasis = NO;
+    }
+}
+
+
+#pragma mark - UITextViewDelegate conformance
+
+- (void)textViewDidBeginEditing:(OTextView *)textView
+{
+    if (self.state.actionIsDisplay) {
+        [self toggleEditMode];
+    }
+    
+    if ([_entityCell nextInputFieldFromTextField:textView]) {
+        self.navigationItem.rightBarButtonItem = _nextButton;
+    } else {
+        self.navigationItem.rightBarButtonItem = _doneButton;
+    }
+    
+    _emphasisedField = textView;
+    
+    textView.hasEmphasis = YES;
+}
+
+
+- (void)textViewDidChange:(OTextView *)textView
+{
+    [self.entityCell redrawIfNeeded];
+}
+
+
+- (void)textViewDidEndEditing:(OTextView *)textView
+{
+    if (_shouldDemphasiseOnEndEdit) {
+        textView.hasEmphasis = NO;
+    }
 }
 
 @end

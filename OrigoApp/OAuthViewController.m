@@ -349,8 +349,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super viewDidLoad];
     
-    [self.tableView setBackground];
     [self.tableView addLogoBanner];
+
+    self.shouldDemphasiseOnEndEdit = NO;
     
     _activityIndicator = [self.tableView addActivityIndicator];
     _editingIsAllowed = YES;
@@ -395,7 +396,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        [self prepareForModalSegue:segue data:[[OMeta m].user.residencies anyObject] delegate:self];
+        [self prepareForModalSegue:segue data:[[OMeta m].user initialResidency]];
     }
 }
 

@@ -57,6 +57,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
     
     entity.entityId = entityId;
     entity.dateCreated = [NSDate date];
+    entity.createdBy = [OMeta m].userId;
     
     NSString *expires = [entity expiresInTimeframe];
     

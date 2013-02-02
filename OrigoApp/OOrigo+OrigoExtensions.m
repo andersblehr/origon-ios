@@ -116,19 +116,17 @@
 
 #pragma mark - Membership information
 
-- (OMembership *)userMembership
+- (BOOL)hasAdmin
 {
-    OMembership *userMembership = nil;
+    BOOL hasAdmin = NO;
     
     for (OMembership *membership in self.memberships) {
-        if (!userMembership) {
-            if ([membership.member.entityId isEqualToString:[OMeta m].user.entityId]) {
-                userMembership = membership;
-            }
+        if (!hasAdmin) {
+            hasAdmin = ([membership.isAdmin boolValue] && [membership.isActive boolValue]);
         }
     }
     
-    return userMembership;
+    return hasAdmin;
 }
 
 
@@ -144,6 +142,12 @@
 }
 
 
+- (BOOL)userIsCreator
+{
+    return ([self.createdBy isEqualToString:[OMeta m].userId]);
+}
+
+
 - (BOOL)hasMemberWithEmail:(NSString *)email
 {
     BOOL didFindMember = NO;
@@ -155,6 +159,22 @@
     }
     
     return didFindMember;
+}
+
+
+- (OMembership *)userMembership
+{
+    OMembership *userMembership = nil;
+    
+    for (OMembership *membership in self.memberships) {
+        if (!userMembership) {
+            if ([membership.member.entityId isEqualToString:[OMeta m].user.entityId]) {
+                userMembership = membership;
+            }
+        }
+    }
+    
+    return userMembership;
 }
 
 
@@ -200,13 +220,7 @@
 
 - (NSString *)listNameForState:(OState *)state
 {
-    NSString *listName = [self.address lines][0];
-    
-    if (state.targetIsOrigo) {
-        listName = self.name;
-    }
-    
-    return listName;
+    return self.name;
 }
 
 

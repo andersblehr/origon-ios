@@ -40,6 +40,7 @@ static NSString * const kModalSegueToAuthView = @"modalFromMemberToAuthView";
 static NSString * const kModalSegue1ToOrigoView = @"modal1FromMemberToOrigoView";
 static NSString * const kModalSegue2ToOrigoView = @"modal2FromMemberToOrigoView";
 static NSString * const kPushSegueToMemberListView = @"pushFromMemberToMemberListView";
+static NSString * const kPushSegueToOrigoView = @"pushFromMemberToOrigoView";
 
 static NSInteger const kMemberSection = 0;
 static NSInteger const kAddressSection = 1;
@@ -88,7 +89,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 _gender = _candidate.gender;
                 
                 if (_candidate.activeSince) {
-                    _memberCell.editing = NO;
+                    self.entityCell.editing = NO;
                 }
             }
         }
@@ -144,36 +145,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     BOOL membershipIsInactiveAndUserIsAdmin = ([_origo userIsAdmin] && ![_membership.isActive boolValue]);
     
     return (memberIsUserAndTeen || memberIsWardOfUser || membershipIsInactiveAndUserIsAdmin);
-}
-
-
-- (void)toggleEditMode
-{
-    static UIBarButtonItem *addButton = nil;
-    static UIBarButtonItem *backButton = nil;
-    
-    [_memberCell toggleEditMode];
-    
-    if (self.state.actionIsEdit) {
-        addButton = self.navigationItem.rightBarButtonItem;
-        backButton = self.navigationItem.leftBarButtonItem;
-        
-        if (!_cancelButton) {
-            _cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
-            _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
-            _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
-        }
-        
-        self.navigationItem.rightBarButtonItem = _nextButton;
-        self.navigationItem.leftBarButtonItem = _cancelButton;
-    } else if (self.state.actionIsDisplay) {
-        [self.view endEditing:YES];
-        
-        self.navigationItem.rightBarButtonItem = addButton;
-        self.navigationItem.leftBarButtonItem = backButton;
-    }
-    
-    OLogState;
 }
 
 
@@ -236,18 +207,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 
 #pragma mark - Selector implementations
-
-- (void)moveToNextInputField
-{
-    if (_currentField == _nameField) {
-        [_dateOfBirthField becomeFirstResponder];
-    } else if (_currentField == _dateOfBirthField) {
-        [_mobilePhoneField becomeFirstResponder];
-    } else if (_currentField == _mobilePhoneField) {
-        [_emailField becomeFirstResponder];
-    }
-}
-
 
 - (void)dateOfBirthDidChange
 {
@@ -316,7 +275,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             }
         }
     } else {
-        [_memberCell shakeCellVibrateDevice:NO];
+        [self.entityCell shakeCellVibrateDevice:NO];
     }
 }
 
@@ -330,7 +289,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)signOut
 {
     [[OMeta m] userDidSignOut];
-    _memberCell.entity = nil;
+    self.entityCell.entity = nil;
     
     [self.delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
 }
@@ -342,8 +301,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     [super viewDidLoad];
 
-    [self.tableView setBackground];
-    
     if (self.state.aspectIsSelf) {
         self.title = [OStrings stringForKey:strViewTitleAboutMe];
     } else if (_member) {
@@ -369,17 +326,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         } else if (!self.title) {
             self.title = [OStrings stringForKey:strViewTitleNewMember];
         }
-        
-        _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
-        _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
-        
-        self.navigationItem.rightBarButtonItem = _nextButton;
-        
-        if (self.state.aspectIsSelf) {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
-        } else {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
-        }
     }
 }
 
@@ -391,7 +337,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if (self.state.actionIsRegister) {
         [_nameField becomeFirstResponder];
     } else if ([self canEdit]) {
-        _memberCell.editable = YES;
+        self.entityCell.editable = YES;
     }
     
     OLogState;
@@ -403,13 +349,13 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
-        [self prepareForModalSegue:segue data:[_emailField finalText] delegate:self];
+        [self prepareForModalSegue:segue data:[_emailField finalText]];
     } else if ([segue.identifier isEqualToString:kModalSegue1ToOrigoView]) {
-        [self prepareForModalSegue:segue data:[_origo userMembership] delegate:self];
+        [self prepareForModalSegue:segue data:[_origo userMembership]];
     } else if ([segue.identifier isEqualToString:kModalSegue2ToOrigoView]) {
-        [self prepareForModalSegue:segue data:[[[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence] addResident:_member] delegate:self];
+        [self prepareForModalSegue:segue data:[[[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence] addResident:_member]];
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
-        [self prepareForPushSegue:segue data:_origo];
+        [self prepareForPushSegue:segue data:_membership];
         [segue.destinationViewController setDelegate:self.delegate];
     }
 }
@@ -442,14 +388,20 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     [self setData:_member forSectionWithKey:kMemberSection];
     
     if (self.state.actionIsDisplay) {
-        NSMutableSet *residences = [[NSMutableSet alloc] init];
-        
-        for (OMemberResidency *residency in _member.residencies) {
-            [residences addObject:residency.residence];
-        }
-        
-        [self setData:residences forSectionWithKey:kAddressSection];
+        [self setData:_member.residencies forSectionWithKey:kAddressSection];
     }
+}
+
+
+- (UIBarButtonItem *)cancelRegistrationButton
+{
+    UIBarButtonItem *cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
+    
+    if (self.state.aspectIsSelf) {
+        cancelButton = [UIBarButtonItem signOutButtonWithTarget:self];
+    }
+    
+    return cancelButton;
 }
 
 
@@ -472,16 +424,16 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     UITableViewCell *cell = nil;
     
     if (indexPath.section == kMemberSection) {
-        _memberCell = [tableView cellForEntity:_member delegate:self];
+        self.entityCell = [tableView cellForEntity:_member delegate:self];
+        
+        _nameField = [self.entityCell textFieldForKeyPath:kKeyPathName];
+        _dateOfBirthField = [self.entityCell textFieldForKeyPath:kKeyPathDateOfBirth];
+        _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
+        _mobilePhoneField = [self.entityCell textFieldForKeyPath:kKeyPathMobilePhone];
+        _emailField = [self.entityCell textFieldForKeyPath:kKeyPathEmail];
         _gender = _member.gender;
         
-        _nameField = [_memberCell textFieldForKeyPath:kKeyPathName];
-        _dateOfBirthField = [_memberCell textFieldForKeyPath:kKeyPathDateOfBirth];
-        _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
-        _mobilePhoneField = [_memberCell textFieldForKeyPath:kKeyPathMobilePhone];
-        _emailField = [_memberCell textFieldForKeyPath:kKeyPathEmail];
-        
-        cell = _memberCell;
+        cell = self.entityCell;
     } else if (indexPath.section == kAddressSection) {
         cell = [tableView listCellForEntity:[self entityForIndexPath:indexPath]];
     }
@@ -520,65 +472,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-#pragma mark - UITextFieldDelegate conformance
-
-- (void)textFieldDidBeginEditing:(OTextField *)textField
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.state.actionIsDisplay) {
-        [self toggleEditMode];
-    }
-    
-    if (textField == _emailField) {
-        self.navigationItem.rightBarButtonItem = _doneButton;
-    } else if (textField == _mobilePhoneField) {
-        if (self.state.actionIsRegister && self.state.aspectIsSelf) {
-            self.navigationItem.rightBarButtonItem = _doneButton;
-        } else {
-            self.navigationItem.rightBarButtonItem = _nextButton;
-        }
-    } else {
-        self.navigationItem.rightBarButtonItem = _nextButton;
-    }
-    
-    _currentField = textField;
-    
-    textField.hasEmphasis = YES;
-}
-
-
-- (void)textFieldDidEndEditing:(OTextField *)textField
-{
-    textField.hasEmphasis = NO;
-}
-
-
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
-{
-    BOOL shouldEndEditing = YES;
-    
-    if (textField == _emailField) {
-        shouldEndEditing = (![_emailField holdsValidEmail] || [self emailIsEligible]);
-    }
-    
-    return shouldEndEditing;
-}
-
-
-- (BOOL)textFieldShouldReturn:(OTextField *)textField
-{
-    BOOL shouldReturn = YES;
-    
-    if (textField == _nameField) {
-        [_dateOfBirthField becomeFirstResponder];
-    } else if (textField == _emailField) {
-        shouldReturn = [self textFieldShouldEndEditing:textField];
-        
-        if (shouldReturn) {
-            [self didFinishEditing];
-        }
-    }
-    
-    return shouldReturn;
+    [self performSegueWithIdentifier:kPushSegueToOrigoView sender:self];
 }
 
 

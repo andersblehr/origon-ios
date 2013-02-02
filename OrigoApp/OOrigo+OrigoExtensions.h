@@ -21,10 +21,12 @@
 - (BOOL)hasAddress;
 - (BOOL)hasTelephone;
 
-- (OMembership *)userMembership;
+- (BOOL)hasAdmin;
 - (BOOL)userIsMember;
 - (BOOL)userIsAdmin;
+- (BOOL)userIsCreator;
 - (BOOL)hasMemberWithEmail:(NSString *)email;
+- (OMembership *)userMembership;
 
 - (NSComparisonResult)compare:(OOrigo *)other;
 

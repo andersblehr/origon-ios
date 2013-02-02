@@ -15,20 +15,14 @@
 @class OMember, OMembership, OOrigo;
 @class OTableViewCell, OTextField, OTextView;
 
-@interface OOrigoViewController : OTableViewController<UITextViewDelegate> {
+@interface OOrigoViewController : OTableViewController {
 @private
     OMembership *_membership;
     OMember *_member;
     OOrigo *_origo;
     
-    OTableViewCell *_origoCell;
     OTextView *_addressView;
     OTextField *_telephoneField;
-    
-    UIBarButtonItem *_cancelButton;
-    UIBarButtonItem *_nextButton;
-    UIBarButtonItem *_doneButton;
-    UIView *_currentField;
 }
 
 @end

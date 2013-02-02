@@ -17,11 +17,8 @@
 
 @interface OMemberListViewController : OTableViewController<UITextViewDelegate> {
 @private
+    OMembership *_membership;
     OOrigo *_origo;
-    
-    OTableViewCell *_origoCell;
-    OTableViewCell *_selectedCell;
-    OMembership *_selectedMembership;
 }
 
 @end

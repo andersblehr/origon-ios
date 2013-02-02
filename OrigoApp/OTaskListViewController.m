@@ -8,8 +8,6 @@
 
 #import "OTaskListViewController.h"
 
-#import "UITableView+OrigoExtensions.h"
-
 #import "OStrings.h"
 
 @implementation OTaskListViewController
@@ -29,8 +27,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    [self.tableView setBackground];
     
     self.title = [OStrings stringForKey:strTabBarTitleTasks];
 }

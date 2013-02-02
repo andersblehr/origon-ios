@@ -141,8 +141,6 @@ static NSInteger const kUserRow = 0;
 {
     [super viewDidLoad];
     
-    [self.tableView setBackground];
-    
     self.title = @"Origo";
     
     if ([self shouldInitialise]) {
@@ -192,24 +190,13 @@ static NSInteger const kUserRow = 0;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
-        [self prepareForModalSegue:segue data:nil delegate:self];
+        [self prepareForModalSegue:segue data:nil];
     } else if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        OMemberResidency *residency = [[OMeta m].user.residencies anyObject];
-        
-        if (!residency) {
-            OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
-            residency = [residence addResident:[OMeta m].user];
-            residency.isActive = @YES;
-            residency.isAdmin = @YES;
-        }
-        
-        [self prepareForModalSegue:segue data:residency delegate:self];
+        [self prepareForModalSegue:segue data:[[OMeta m].user initialResidency]];
     } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
-        [self prepareForModalSegue:segue data:[[[OMeta m].context insertOrigoEntityOfType:_origoTypes[_indexOfSelectedOrigoType]] addMember:_member] delegate:self];
-    } else if ([segue.identifier isEqualToString:kPushSegueToMemberView]) {
-        [self prepareForPushSegue:segue data:[[OMeta m].user rootMembership] observer:_selectedCell];
-    } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
-        [self prepareForPushSegue:segue data:_selectedOrigo observer:_selectedCell];
+        [self prepareForModalSegue:segue data:[[[OMeta m].context insertOrigoEntityOfType:_origoTypes[_indexOfSelectedOrigoType]] addMember:_member]];
+    } else {
+        [self prepareForPushSegue:segue];
     }
 }
 
@@ -231,8 +218,8 @@ static NSInteger const kUserRow = 0;
     [self setData:[_member origoMemberships] forSectionWithKey:kOrigoSection];
     
     if ([_member isUser]) {
-        [self setData:_member forSectionWithKey:kUserSection];
-        [self appendData:_member.residencies toSectionWithKey:kUserSection];
+        [self setData:[_member rootMembership] forSectionWithKey:kUserSection];
+        [self appendData:[_member residencies] toSectionWithKey:kUserSection];
         [self setData:[_member wards] forSectionWithKey:kWardSection];
     }
 }
@@ -335,34 +322,15 @@ static NSInteger const kUserRow = 0;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    OMember *selectedMember = nil;
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
     
-    _selectedCell = (OTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
-    _selectedOrigo = nil;
-    
-    if (indexPath.section == [self sectionNumberForSectionKey:kUserSection]) {
-        if (indexPath.row == kUserRow) {
-            selectedMember = [OMeta m].user;
-        } else {
-            _selectedOrigo = ((OMembership *)[self entityForIndexPath:indexPath]).origo;
-        }
-    } else if (indexPath.section == [self sectionNumberForSectionKey:kWardSection]) {
-        selectedMember = [self entityForIndexPath:indexPath];
-    } else if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
-        _selectedOrigo = ((OMembership *)[self entityForIndexPath:indexPath]).origo;
-    }
-    
-    if (_selectedOrigo) {
+    if (indexPath.section != [self sectionNumberForSectionKey:kWardSection]) {
         [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
-    } else if (selectedMember) {
-        if ([selectedMember isUser]) {
-            [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];
-        } else {
-            OOrigoListViewController *wardOrigosViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId];
-            wardOrigosViewController.data = selectedMember;
-            
-            [self.navigationController pushViewController:wardOrigosViewController animated:YES];
-        }
+    } else {
+        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId];
+        origoListViewController.data = [self entityForIndexPath:indexPath];
+        
+        [self.navigationController pushViewController:origoListViewController animated:YES];
     }
 }
 
