@@ -20,16 +20,36 @@
 #import "OTextField.h"
 #import "OTextView.h"
 
-#import "OReplicatedEntity.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 
 @implementation OTableViewController
+
+#pragma mark - Auxiliary methods
+
+- (void)emphasiseInputField:(id)inputField
+{
+    if (self.state.actionIsDisplay) {
+        [self toggleEditMode];
+    }
+    
+    if ([_detailCell nextInputFieldFromTextField:inputField]) {
+        self.navigationItem.rightBarButtonItem = _nextButton;
+    } else {
+        self.navigationItem.rightBarButtonItem = _doneButton;
+    }
+    
+    _emphasisedField = inputField;
+    
+    [inputField setHasEmphasis:YES];
+}
+
 
 #pragma mark - Selector implementations
 
 - (void)moveToNextInputField
 {
-    UIView *nextInputField = [_entityCell nextInputFieldFromTextField:_emphasisedField];
+    UIView *nextInputField = [_detailCell nextInputFieldFromTextField:_emphasisedField];
     
     if (nextInputField) {
         [nextInputField becomeFirstResponder];
@@ -68,10 +88,22 @@
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
-    if ([data isKindOfClass:OReplicatedEntity.class]) {
-        _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
-    } else {
+    if ([data isKindOfClass:NSSet.class]) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
+    } else {
+        if (!data) {
+            data = [NSNull null];
+        }
+        
+        _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
+        
+        if (_entitySectionKey == NSNotFound) {
+            _entitySectionKey = sectionKey;
+            
+            if ([data isKindOfClass:OReplicatedEntity.class]) {
+                _entity = data;
+            }
+        }
     }
     
     if ([_sectionData[@(sectionKey)] count]) {
@@ -85,12 +117,15 @@
 
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey
 {
-    NSMutableArray *mergedData = _sectionData[@(sectionKey)];
+    if (sectionKey == _entitySectionKey) {
+        _entitySectionKey = NSNotFound;
+        _entity = nil;
+    }
     
-    if ([data isKindOfClass:OReplicatedEntity.class]) {
-        [mergedData addObject:data];
-    } else {
-        [mergedData addObjectsFromArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
+    if ([data isKindOfClass:NSSet.class]) {
+        [_sectionData[@(sectionKey)] addObjectsFromArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
+    } else if (data) {
+        [_sectionData[@(sectionKey)] addObject:data];
     }
 }
 
@@ -185,7 +220,7 @@
 
 - (void)toggleEditMode
 {
-    [_entityCell toggleEditMode];
+    [_detailCell toggleEditMode];
     
     static UIBarButtonItem *rightButton = nil;
     static UIBarButtonItem *leftButton = nil;
@@ -212,7 +247,6 @@
 }
 
 
-
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -221,18 +255,22 @@
 
     [self.tableView setBackground];
     
-    _sectionKeys = [[NSMutableArray alloc] init];
-    _sectionData = [[NSMutableDictionary alloc] init];
-    _sectionCounts = [[NSMutableDictionary alloc] init];
-    
-    _didJustLoad = YES;
+    NSString *viewControllerName = NSStringFromClass(self.class);
+    _entityClass = NSClassFromString([viewControllerName substringToIndex:[viewControllerName rangeOfString:@"ViewController"].location]);
+    _entitySectionKey = NSNotFound;
     _state = [[OState alloc] init];
+    
+    _canEdit = NO;
     _shouldDemphasiseOnEndEdit = YES;
     _modalImpliesRegistration = ([NSStringFromClass(self.class) rangeOfString:@"List"].location == NSNotFound);
     
-    if ([self.navigationController.viewControllers count] == 1) {
+    if (!self.navigationController || ([self.navigationController.viewControllers count] == 1)) {
         _isModal = (self.presentingViewController != nil);
     }
+    
+    _sectionKeys = [[NSMutableArray alloc] init];
+    _sectionData = [[NSMutableDictionary alloc] init];
+    _sectionCounts = [[NSMutableDictionary alloc] init];
     
     [self initialise];
     
@@ -243,6 +281,8 @@
         self.navigationItem.leftBarButtonItem = [self cancelRegistrationButton];
         self.navigationItem.rightBarButtonItem = _nextButton;
     }
+    
+    _didJustLoad = YES;
 }
 
 
@@ -261,6 +301,18 @@
     if (_isPopped || _needsReloadData) {
         [self loadData];
         [self reloadSectionsIfNeeded];
+    }
+}
+
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if (self.state.actionIsRegister) {
+        [[self.detailCell nextInputFieldFromTextField:nil] becomeFirstResponder];
+    } else if (self.detailCell) {
+        self.detailCell.editable = [self canEdit];
     }
 }
 
@@ -335,13 +387,51 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [_sectionKeys count];
+    return [OState s].actionIsSetup ? 0 : [_sectionKeys count];
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [self numberOfRowsInSectionWithKey:[_sectionKeys[section] integerValue]];
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGFloat height = kDefaultTableViewCellHeight;
+    
+    if (indexPath.section == [self sectionNumberForSectionKey:_entitySectionKey]) {
+        height = _entity ? [_entity cellHeight] : [_entityClass defaultCellHeight];
+    }
+    
+    return height;
+}
+
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    OTableViewCell *cell = nil;
+    
+    if (indexPath.section == [self sectionNumberForSectionKey:_entitySectionKey]) {
+        if (_entity) {
+            _detailCell = [tableView cellForEntity:_entity delegate:self];
+        } else {
+            _detailCell = [tableView cellForEntityClass:_entityClass delegate:self];
+        }
+        
+        if (self.state.actionIsList) {
+            _detailCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
+        
+        _detailCell.observer = self.observer;
+        
+        cell = _detailCell;
+    } else {
+        cell = [tableView listCellForEntity:[self entityForIndexPath:indexPath]];
+    }
+    
+    return cell;
 }
 
 
@@ -363,6 +453,30 @@
 
 
 #pragma mark - UITableViewDelegate conformance
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    CGFloat height = kDefaultPadding;
+    
+    if (section > 0) {
+        height = [tableView standardHeaderHeight];
+    }
+    
+    return height;
+}
+
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
+{
+    CGFloat height = kDefaultPadding;
+    
+    if (section == [tableView numberOfSections] - 1) {
+        height = [tableView standardFooterHeight];
+    }
+    
+    return height;
+}
+
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -402,25 +516,13 @@
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    if (self.state.actionIsDisplay) {
-        [self toggleEditMode];
-    }
-    
-    if ([_entityCell nextInputFieldFromTextField:textField]) {
-        self.navigationItem.rightBarButtonItem = _nextButton;
-    } else {
-        self.navigationItem.rightBarButtonItem = _doneButton;
-    }
-    
-    _emphasisedField = textField;
-    
-    textField.hasEmphasis = YES;
+    [self emphasiseInputField:textField];
 }
 
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if ([_entityCell nextInputFieldFromTextField:textField]) {
+    if ([_detailCell nextInputFieldFromTextField:textField]) {
         [self moveToNextInputField];
     } else {
         [self performSelector:@selector(didFinishEditing)];
@@ -442,25 +544,13 @@
 
 - (void)textViewDidBeginEditing:(OTextView *)textView
 {
-    if (self.state.actionIsDisplay) {
-        [self toggleEditMode];
-    }
-    
-    if ([_entityCell nextInputFieldFromTextField:textView]) {
-        self.navigationItem.rightBarButtonItem = _nextButton;
-    } else {
-        self.navigationItem.rightBarButtonItem = _doneButton;
-    }
-    
-    _emphasisedField = textView;
-    
-    textView.hasEmphasis = YES;
+    [self emphasiseInputField:textView];
 }
 
 
 - (void)textViewDidChange:(OTextView *)textView
 {
-    [self.entityCell redrawIfNeeded];
+    [self.detailCell redrawIfNeeded];
 }
 
 

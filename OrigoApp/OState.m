@@ -100,7 +100,7 @@ static OState *s = nil;
 
 - (void)setAspectForMember:(OMember *)member
 {
-    OStateAspect aspect = OStateAspectExternal;
+    OStateAspect aspect = [OState s].aspect;
     
     if (member) {
         if ([member isUser]) {
@@ -108,8 +108,6 @@ static OState *s = nil;
         } else if ([[[OMeta m].user wards] containsObject:member]) {
             aspect = OStateAspectWard;
         }
-    } else {
-        aspect = OStateAspectSelf;
     }
     
     [self setAspect:aspect activate:YES];
@@ -118,9 +116,9 @@ static OState *s = nil;
 
 - (void)setAspectForOrigo:(OOrigo *)origo
 {
-    if (!(self.actionIsRegister && self.aspectIsSelf)) {
-        OStateAspect aspect = OStateAspectNone;
-        
+    OStateAspect aspect = [OState s].aspect;
+    
+    if (origo) {
         if ([origo.type isEqualToString:kOrigoTypeResidence]) {
             aspect = OStateAspectResidence;
         } else if ([origo.type isEqualToString:kOrigoTypeOrganisation]) {
@@ -132,9 +130,9 @@ static OState *s = nil;
         } else if ([origo.type isEqualToString:kOrigoTypeSportsTeam]) {
             aspect = OStateAspectTeam;
         }
-        
-        [self setAspect:aspect activate:YES];
     }
+    
+    [self setAspect:aspect activate:YES];
 }
 
 

@@ -18,6 +18,9 @@
 
 @interface OTableViewController : UITableViewController<OTableViewControllerDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDelegate> {
 @private
+    Class _entityClass;
+    NSInteger _entitySectionKey;
+    
     BOOL _didJustLoad;
     BOOL _didInitialise;
     BOOL _isHidden;
@@ -37,14 +40,16 @@
 }
 
 @property (strong, nonatomic, readonly) OState *state;
+@property (strong, nonatomic, readonly) OReplicatedEntity *entity;
 
+@property (nonatomic) BOOL canEdit;
 @property (nonatomic) BOOL shouldDemphasiseOnEndEdit;
 @property (nonatomic) BOOL modalImpliesRegistration;
 
 @property (strong, nonatomic) id data;
 @property (strong, nonatomic) id<OModalViewControllerDelegate> delegate;
 @property (strong, nonatomic) id<OEntityObservingDelegate> observer;
-@property (strong, nonatomic) OTableViewCell *entityCell;
+@property (strong, nonatomic) OTableViewCell *detailCell;
 
 @property (nonatomic, readonly) BOOL isPushed;
 @property (nonatomic, readonly) BOOL isPopped;

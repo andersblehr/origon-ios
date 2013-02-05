@@ -153,15 +153,7 @@ static NSInteger const kUserRow = 0;
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
             self.navigationItem.rightBarButtonItem.action = @selector(addOrigo);
         }
-    }
-}
-
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    if ([self shouldInitialise]) {
+        
         if (![self numberOfSectionsInTableView:self.tableView]) {
             [self.tableView addEmptyTableFooterViewWithText:[self footerText]];
         }
@@ -192,9 +184,9 @@ static NSInteger const kUserRow = 0;
     if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
         [self prepareForModalSegue:segue data:nil];
     } else if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        [self prepareForModalSegue:segue data:[[OMeta m].user initialResidency]];
+        [self prepareForModalSegue:segue data:[_member initialResidency]];
     } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
-        [self prepareForModalSegue:segue data:[[[OMeta m].context insertOrigoEntityOfType:_origoTypes[_indexOfSelectedOrigoType]] addMember:_member]];
+        [self prepareForModalSegue:segue data:_member];
     } else {
         [self prepareForPushSegue:segue];
     }
@@ -231,68 +223,7 @@ static NSInteger const kUserRow = 0;
 }
 
 
-#pragma mark - UITableViewDataSource conformance
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return kDefaultTableViewCellHeight;
-}
-
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    OTableViewCell *cell = nil;
-    
-    OMembership *membership = nil;
-    OMember *member = nil;
-    
-    if (indexPath.section == [self sectionNumberForSectionKey:kUserSection]) {
-        if (indexPath.row == kUserRow) {
-            member = [OMeta m].user;
-        } else {
-            membership = [self entityForIndexPath:indexPath];
-        }
-    } else if (indexPath.section == [self sectionNumberForSectionKey:kWardSection]) {
-        member = [self entityForIndexPath:indexPath];
-    } else if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
-        membership = [self entityForIndexPath:indexPath];
-    }
-    
-    if (membership) {
-        cell = [tableView listCellForEntity:membership.origo];
-    } else if (member) {
-        cell = [tableView listCellForEntity:member];
-    }
-    
-    return cell;
-}
-
-
 #pragma mark - UITableViewDelegate conformance
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    CGFloat height = kDefaultPadding;
-    
-    if (section != [self sectionNumberForSectionKey:kUserSection]) {
-        height = [tableView standardHeaderHeight];
-    }
-    
-    return height;
-}
-
-
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-{
-    CGFloat height = kDefaultPadding;
-    
-    if (section == [tableView numberOfSections] - 1) {
-        height = [tableView standardFooterHeight];
-    }
-    
-    return height;
-}
-
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {

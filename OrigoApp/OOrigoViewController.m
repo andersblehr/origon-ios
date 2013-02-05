@@ -38,21 +38,9 @@ static NSInteger const kOrigoSection = 0;
 
 @implementation OOrigoViewController
 
-#pragma mark - Selector implementations
-
-//- (void)moveToNextInputField
-//{
-//    if (_currentField == _addressView) {
-//        [_telephoneField becomeFirstResponder];
-//    }
-//}
-
-
 - (void)didCancelEditing
 {
     if (self.state.actionIsRegister) {
-        [[OMeta m].context deleteEntity:_membership];
-        
         [self.delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId needsReloadData:NO];
     } else {
         _addressView.text = _origo.address;
@@ -70,10 +58,16 @@ static NSInteger const kOrigoSection = 0;
         _origo.telephone = [_telephoneField finalText];
         
         if (self.state.actionIsRegister) {
-            if ([_member isUser] && !_member.activeSince) {
+            if (_membership) {
                 _member.activeSince = [NSDate date];
                 [self.delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
             } else {
+                if ([_origo isResidence]) {
+                    _membership = [_origo addResident:_member];
+                } else {
+                    _membership = [_origo addMember:_member];
+                }
+                
                 [self performSegueWithIdentifier:kModalSegueToMemberListView sender:self];
             }
         } else if (self.state.actionIsEdit) {
@@ -83,7 +77,7 @@ static NSInteger const kOrigoSection = 0;
         
         [[OMeta m].context replicateIfNeeded];
     } else {
-        [self.entityCell shakeCellVibrateDevice:NO];
+        [self.detailCell shakeCellVibrateDevice:NO];
     }
 }
 
@@ -110,11 +104,8 @@ static NSInteger const kOrigoSection = 0;
 {
     [super viewDidAppear:animated];
     
-    if (self.state.actionIsInput) {
-        [_addressView becomeFirstResponder];
-    } else if ([_origo userIsAdmin]) {
-        self.entityCell.editable = YES;
-    }
+    _addressView = [self.detailCell textFieldForKeyPath:kKeyPathAddress];
+    _telephoneField = [self.detailCell textFieldForKeyPath:kKeyPathTelephone];
     
     OLogState;
 }
@@ -139,16 +130,26 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
+- (BOOL)canEdit
+{
+    return [_origo userIsAdmin];
+}
+
+
 #pragma mark - OTableViewControllerDelegate conformance
 
 - (void)loadState
 {
-    _membership = self.data;
-    _origo = _membership.origo;
-    _member = _membership.member;
+    if ([self.data isKindOfClass:OMembership.class]) {
+        _membership = self.data;
+        _origo = _membership.origo;
+        _member = _membership.member;
+    } else if ([self.data isKindOfClass:OMember.class]) {
+        _member = self.data;
+    }
     
     self.state.targetIsOrigo = YES;
-    self.state.actionIsDisplay = ![OState s].actionIsInput;
+    self.state.actionIsDisplay = YES;
     [self.state setAspectForOrigo:_origo];
 }
 
@@ -163,30 +164,11 @@ static NSInteger const kOrigoSection = 0;
 {
     UIBarButtonItem *cancelButton = nil;
     
-    if (!([_origo isResidence] && self.state.aspectIsSelf)) {
+    if (![_origo isResidence] || _member.activeSince) {
         cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
     }
     
     return cancelButton;
-}
-
-
-#pragma mark - UITableViewDataSource conformance
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [_origo cellHeight];
-}
-
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    self.entityCell = [tableView cellForEntity:_origo delegate:self];
-    
-    _addressView = [self.entityCell textFieldForKeyPath:kKeyPathAddress];
-    _telephoneField = [self.entityCell textFieldForKeyPath:kKeyPathTelephone];
-    
-    return self.entityCell;
 }
 
 @end

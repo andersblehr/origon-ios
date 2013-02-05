@@ -39,6 +39,48 @@
 }
 
 
+#pragma mark - OReplicatedEntity+OrigoExtensions overrides
+
+- (NSString *)listNameForState:(OState *)state
+{
+    NSString *listName = nil;
+    
+    if (state.actionIsList) {
+        listName = [self.member listNameForState:state];
+    } else if (state.actionIsDisplay && state.targetIsMember) {
+        listName = [self.origo listNameForState:state];
+    }
+    
+    return listName;
+}
+
+
+- (NSString *)listDetailsForState:(OState *)state
+{
+    NSString *listDetails = nil;
+    
+    if (state.actionIsList) {
+        listDetails = [self.member listDetailsForState:state];
+    }
+    
+    return listDetails;
+}
+
+
+- (UIImage *)listImageForState:(OState *)state
+{
+    UIImage *listImage = nil;
+    
+    if (state.actionIsList) {
+        listImage = [self.member listImageForState:state];
+    } else if (state.actionIsDisplay && state.targetIsMember) {
+        listImage = [self.origo listImageForState:state];
+    }
+    
+    return listImage;
+}
+
+
 #pragma mark - Comparison
 
 - (NSComparisonResult)compare:(OMembership *)other

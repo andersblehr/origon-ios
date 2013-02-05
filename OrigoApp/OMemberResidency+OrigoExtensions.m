@@ -12,6 +12,7 @@
 #import "NSString+OrigoExtensions.h"
 
 #import "OMeta.h"
+#import "OState.h"
 
 #import "OMember.h"
 #import "OOrigo.h"
@@ -53,11 +54,46 @@
     return isTransient;
 }
 
-#pragma mark - OReplicatedEntity+OrigoExtensions overrides
 
 - (NSString *)listNameForState:(OState *)state
 {
-    return [self.residence.address lines][0];
+    NSString *listName = nil;
+    
+    if (state.actionIsList && state.targetIsOrigo) {
+        listName = [self.origo listNameForState:state];
+    } else {
+        listName = [super listNameForState:state];
+    }
+    
+    return listName;
+}
+
+
+- (NSString *)listDetailsForState:(OState *)state
+{
+    NSString *listDetails = nil;
+    
+    if (state.actionIsList && state.targetIsOrigo) {
+        listDetails = [self.origo listDetailsForState:state];
+    } else {
+        listDetails = [super listDetailsForState:state];
+    }
+    
+    return listDetails;
+}
+
+
+- (UIImage *)listImageForState:(OState *)state
+{
+    UIImage *listImage = nil;
+    
+    if (state.actionIsList && state.targetIsOrigo) {
+        listImage = [self.origo listImageForState:state];
+    } else {
+        listImage = [super listImageForState:state];
+    }
+    
+    return listImage;
 }
 
 @end
