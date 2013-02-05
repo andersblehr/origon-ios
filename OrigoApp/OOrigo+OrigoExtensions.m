@@ -220,7 +220,15 @@
 
 - (NSString *)listNameForState:(OState *)state
 {
-    return self.name;
+    NSString *listName = nil;
+    
+    if (state.targetIsOrigo) {
+        listName = self.name;
+    } else if (state.targetIsMember) {
+        listName = [self.address lines][0];
+    }
+    
+    return listName;
 }
 
 
@@ -228,16 +236,14 @@
 {
     NSString *listDetails = nil;
     
-    if ([self hasTelephone]) {
-        listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedTelephone], self.telephone];
-    }
-    
     if (state.targetIsOrigo) {
         if ([self isResidence]) {
             listDetails = [self singleLineAddress];
         } else {
             listDetails = self.descriptionText;
         }
+    } else if ([self hasTelephone]) {
+        listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedTelephone], self.telephone];
     }
     
     return listDetails;

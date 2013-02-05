@@ -31,7 +31,7 @@ static CGFloat const kHeaderFontToHeightScaleFactor = 1.5f;
 
 static CGFloat const kFooterHeadRoom = 8.f;
 static CGFloat const kFooterShadowOffset = 2.f;
-static CGFloat const kFooterFontToHeightScaleFactor = 5.f;
+static CGFloat const kFooterFontToHeightScaleFactor = 4.f;
 
 static NSString * const kDarkLinenImageFile = @"dark_linen-640x960.png";
 static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";

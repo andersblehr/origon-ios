@@ -141,7 +141,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [_activityIndicator stopAnimating];
     }
     
-    _editingIsAllowed = !isPending;
+    self.canEdit = !isPending;
 }
 
 
@@ -150,7 +150,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _numberOfActivationAttempts++;
     
     if (_numberOfActivationAttempts < 3) {
-        [_authCell shakeCellVibrateDevice:YES];
+        [self.detailCell shakeCellVibrateDevice:YES];
         
         if (textField == _activationCodeField) {
             _activationCodeField.text = @"";
@@ -351,10 +351,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     [self.tableView addLogoBanner];
 
+    self.canEdit = YES;
     self.shouldDemphasiseOnEndEdit = NO;
     
     _activityIndicator = [self.tableView addActivityIndicator];
-    _editingIsAllowed = YES;
 }
 
 
@@ -435,19 +435,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
+- (void)loadData
+{
+    [self setData:self.data forSectionWithKey:kAuthSection];
+}
+
+
 #pragma mark - UITableViewDataSource conformance
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return [OState s].actionIsSetup ? 0 : 1;
-}
-
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return 1;
-}
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -458,18 +452,18 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.state.actionIsLogin) {
-        _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserSignIn delegate:self];
+        self.detailCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserSignIn delegate:self];
         
-        _emailField = [_authCell textFieldForKeyPath:kKeyPathAuthEmail];
-        _passwordField = [_authCell textFieldForKeyPath:kKeyPathPassword];
+        _emailField = [self.detailCell textFieldForKeyPath:kKeyPathAuthEmail];
+        _passwordField = [self.detailCell textFieldForKeyPath:kKeyPathPassword];
     } else {
-        _authCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserActivation delegate:self];
+        self.detailCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserActivation delegate:self];
         
-        _activationCodeField = [_authCell textFieldForKeyPath:kKeyPathActivationCode];
-        _repeatPasswordField = [_authCell textFieldForKeyPath:kKeyPathRepeatPassword];
+        _activationCodeField = [self.detailCell textFieldForKeyPath:kKeyPathActivationCode];
+        _repeatPasswordField = [self.detailCell textFieldForKeyPath:kKeyPathRepeatPassword];
     }
     
-    return _authCell;
+    return self.detailCell;
 }
 
 
@@ -511,7 +505,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    return _editingIsAllowed;
+    return self.canEdit;
 }
 
 
@@ -529,7 +523,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [self attemptUserLogin];
         } else {
             _passwordField.text = @"";
-            [_authCell shakeCellVibrateDevice:YES];
+            [self.detailCell shakeCellVibrateDevice:YES];
         }
     } else if (textField == _activationCodeField) {
         [_repeatPasswordField becomeFirstResponder];
@@ -546,7 +540,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             }
         } else {
             _repeatPasswordField.text = @"";
-            [_authCell shakeCellVibrateDevice:YES];
+            [self.detailCell shakeCellVibrateDevice:YES];
         }
     }
     
@@ -615,7 +609,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             }
         } else {
             if (response.statusCode == kHTTPStatusUnauthorized) {
-                [_authCell shakeCellVibrateDevice:YES];
+                [self.detailCell shakeCellVibrateDevice:YES];
                 [_passwordField becomeFirstResponder];
             } else {
                 [OAlert showAlertForHTTPStatus:response.statusCode];

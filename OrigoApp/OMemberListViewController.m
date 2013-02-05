@@ -104,7 +104,9 @@ static NSInteger const kMemberSection = 2;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        [self prepareForModalSegue:segue data:[_origo addNewMember]];
+        [self prepareForModalSegue:segue data:_origo];
+    } else if ([segue.identifier isEqualToString:kPushSegueToOrigoView]) {
+        [self prepareForPushSegue:segue data:_membership];
     } else {
         [self prepareForPushSegue:segue];
     }
@@ -137,7 +139,7 @@ static NSInteger const kMemberSection = 2;
         }
     }
     
-    [self setData:_membership forSectionWithKey:kOrigoSection];
+    [self setData:_origo forSectionWithKey:kOrigoSection];
     [self setData:contactMemberships forSectionWithKey:kContactSection];
     [self setData:regularMemberships forSectionWithKey:kMemberSection];
 }
@@ -159,25 +161,6 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    OTableViewCell *cell = nil;
-    
-    if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
-        cell = [tableView cellForEntity:_origo];
-        cell.observer = self.observer;
-        
-        if ([_origo userIsAdmin]) {
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        }
-    } else {
-        cell = [tableView listCellForEntity:[[self entityForIndexPath:indexPath] member]];
-    }
-    
-    return cell;
-}
-
-
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     BOOL canDeleteRow = NO;
@@ -192,36 +175,6 @@ static NSInteger const kMemberSection = 2;
 
 
 #pragma mark - UITableViewDelegate conformance
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    CGFloat height = kMinimumPadding;
-    
-    if (section == kOrigoSection) {
-        height = kDefaultPadding;
-    } else {
-        height = [tableView standardHeaderHeight];
-    }
-    
-    return height;
-}
-
-
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
-{
-    CGFloat height = kMinimumPadding;
-    
-    if (section == kOrigoSection) {
-        height = kDefaultPadding;
-    } else if (section == [self sectionNumberForSectionKey:kMemberSection]) {
-        if ([_origo userIsAdmin]) {
-            height = [tableView standardFooterHeight];
-        }
-    }
-    
-    return height;
-}
-
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {

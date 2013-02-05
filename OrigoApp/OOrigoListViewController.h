@@ -17,8 +17,6 @@
 @private
     OMember *_member;
     
-    OOrigo *_selectedOrigo;
-    
     NSMutableArray *_origoTypes;
     NSInteger _indexOfSelectedOrigoType;
 }

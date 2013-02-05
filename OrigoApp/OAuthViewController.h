@@ -16,20 +16,16 @@
 
 @interface OAuthViewController : OTableViewController<UITextFieldDelegate, UIAlertViewDelegate, OServerConnectionDelegate> {
 @private
-    OTableViewCell *_authCell;
-    
-    BOOL _editingIsAllowed;
     BOOL _userIsListed;
     
     OTextField *_emailField;
     OTextField *_passwordField;
     OTextField *_activationCodeField;
     OTextField *_repeatPasswordField;
+    UIActivityIndicatorView *_activityIndicator;
 
     NSDictionary *_authInfo;
     NSInteger _numberOfActivationAttempts;
-    
-    UIActivityIndicatorView *_activityIndicator;
 }
 
 @end

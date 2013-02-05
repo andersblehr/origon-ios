@@ -275,7 +275,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     UIView *inputField = nil;
     
     NSInteger numberOfTextFields = [_orderedTextFields count];
-    NSInteger indexOfTextField = [_orderedTextFields indexOfObject:textField];
+    NSInteger indexOfTextField = textField ? [_orderedTextFields indexOfObject:textField] : -1;
     
     BOOL inputFieldIsEditable = NO;
     
