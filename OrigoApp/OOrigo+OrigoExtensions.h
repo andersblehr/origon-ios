@@ -24,7 +24,6 @@
 - (BOOL)hasAdmin;
 - (BOOL)userIsMember;
 - (BOOL)userIsAdmin;
-- (BOOL)userIsCreator;
 - (BOOL)hasMemberWithEmail:(NSString *)email;
 - (OMembership *)userMembership;
 

@@ -86,7 +86,7 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
 {
     self.state.actionIsList = YES;
     self.state.targetIsSetting = YES;
-    self.state.aspectIsNone = YES;
+    self.state.aspectIsSelf = YES;
 }
 
 

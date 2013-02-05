@@ -21,6 +21,7 @@
 - (void)internaliseRelationships;
 - (void)makeGhost;
 
+- (BOOL)userIsCreator;
 - (BOOL)propertyIsTransient:(NSString *)property;
 - (BOOL)isReplicated;
 - (BOOL)isDirty;
@@ -35,8 +36,8 @@
 - (NSString *)listDetailsForState:(OState *)state;
 - (UIImage *)listImageForState:(OState *)state;
 
-- (NSString *)expiresInTimeframe;
-
 - (OReplicatedEntityRef *)entityRefForOrigo:(OOrigo *)origo;
+
+- (NSString *)expiresInTimeframe;
 
 @end

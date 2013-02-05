@@ -90,7 +90,7 @@
     if ([OState s].targetIsMember) {
         comparisonResult = [self.member.name localizedCaseInsensitiveCompare:other.member.name];
         
-        if ([OState s].aspectIsResidence) {
+        if ([self.origo isResidence]) {
             BOOL thisMemberIsMinor = [self.member isMinor];
             BOOL otherMemberIsMinor = [other.member isMinor];
             

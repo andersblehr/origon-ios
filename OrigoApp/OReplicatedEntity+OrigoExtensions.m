@@ -170,6 +170,14 @@
 }
 
 
+#pragma mark - Meta information
+
+- (BOOL)userIsCreator
+{
+    return ([self.createdBy isEqualToString:[OMeta m].userId]);
+}
+
+
 - (BOOL)propertyIsTransient:(NSString *)property
 {
     return [property isEqualToString:@"hashCode"];

@@ -142,12 +142,6 @@
 }
 
 
-- (BOOL)userIsCreator
-{
-    return ([self.createdBy isEqualToString:[OMeta m].userId]);
-}
-
-
 - (BOOL)hasMemberWithEmail:(NSString *)email
 {
     BOOL didFindMember = NO;

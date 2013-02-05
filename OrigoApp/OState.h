@@ -23,6 +23,11 @@ typedef NS_ENUM(NSInteger, OStateTarget) {
     OStateTargetNone,
     OStateTargetMember,
     OStateTargetOrigo,
+    OStateTargetResidence,
+    OStateTargetOrganisation,
+    OStateTargetClass,
+    OStateTargetPreschool,
+    OStateTargetTeam,
     OStateTargetEmail,
     OStateTargetSetting,
 };
@@ -31,12 +36,8 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
     OStateAspectNone,
     OStateAspectSelf,
     OStateAspectWard,
+    OStateAspectOrigo,
     OStateAspectExternal,
-    OStateAspectResidence,
-    OStateAspectOrganisation,
-    OStateAspectClass,
-    OStateAspectPreschool,
-    OStateAspectTeam,
 };
 
 @class OMember, OOrigo;
@@ -58,24 +59,24 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
 
 @property (nonatomic) BOOL targetIsMember;
 @property (nonatomic) BOOL targetIsOrigo;
+@property (nonatomic) BOOL targetIsResidence;
+@property (nonatomic) BOOL targetIsOrganisation;
+@property (nonatomic) BOOL targetIsClass;
+@property (nonatomic) BOOL targetIsPreschool;
+@property (nonatomic) BOOL targetIsTeam;
 @property (nonatomic) BOOL targetIsEmail;
 @property (nonatomic) BOOL targetIsSetting;
 
-@property (nonatomic) BOOL aspectIsNone;
 @property (nonatomic) BOOL aspectIsSelf;
 @property (nonatomic) BOOL aspectIsWard;
+@property (nonatomic) BOOL aspectIsOrigo;
 @property (nonatomic) BOOL aspectIsExternal;
-@property (nonatomic) BOOL aspectIsResidence;
-@property (nonatomic) BOOL aspectIsOrganisation;
-@property (nonatomic) BOOL aspectIsClass;
-@property (nonatomic) BOOL aspectIsPreschool;
-@property (nonatomic) BOOL aspectIsTeam;
 
 + (OState *)s;
 - (void)reflect:(OState *)state;
 
 - (void)setAspectForMember:(OMember *)member;
-- (void)setAspectForOrigo:(OOrigo *)origo;
+- (void)setTargetForOrigoType:(NSString *)origoType;
 
 - (void)toggleEdit;
 

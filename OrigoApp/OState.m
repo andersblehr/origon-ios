@@ -114,25 +114,25 @@ static OState *s = nil;
 }
 
 
-- (void)setAspectForOrigo:(OOrigo *)origo
+- (void)setTargetForOrigoType:(NSString *)origoType
 {
-    OStateAspect aspect = [OState s].aspect;
+    OStateTarget target = [OState s].target;
     
-    if (origo) {
-        if ([origo.type isEqualToString:kOrigoTypeResidence]) {
-            aspect = OStateAspectResidence;
-        } else if ([origo.type isEqualToString:kOrigoTypeOrganisation]) {
-            aspect = OStateAspectOrganisation;
-        } else if ([origo.type isEqualToString:kOrigoTypeSchoolClass]) {
-            aspect = OStateAspectClass;
-        } else if ([origo.type isEqualToString:kOrigoTypePreschoolClass]) {
-            aspect = OStateAspectPreschool;
-        } else if ([origo.type isEqualToString:kOrigoTypeSportsTeam]) {
-            aspect = OStateAspectTeam;
+    if (origoType) {
+        if ([origoType isEqualToString:kOrigoTypeResidence]) {
+            target = OStateTargetResidence;
+        } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
+            target = OStateTargetOrganisation;
+        } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
+            target = OStateTargetClass;
+        } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
+            target = OStateTargetPreschool;
+        } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
+            target = OStateTargetTeam;
         }
     }
     
-    [self setAspect:aspect activate:YES];
+    [self setTarget:target activate:YES];
 }
 
 
@@ -178,6 +178,16 @@ static OState *s = nil;
         targetAsString = @"MEMBER";
     } else if (self.targetIsOrigo) {
         targetAsString = @"ORIGO";
+    } else if (self.targetIsResidence) {
+        targetAsString = @"RESIDENCE";
+    } else if (self.targetIsOrganisation) {
+        targetAsString = @"ORGANISATION";
+    } else if (self.targetIsClass) {
+        targetAsString = @"CLASS";
+    } else if (self.targetIsPreschool) {
+        targetAsString = @"PRESCHOOL";
+    } else if (self.targetIsTeam) {
+        targetAsString = @"TEAM";
     } else if (self.targetIsEmail) {
         targetAsString = @"EMAIL";
     } else if (self.targetIsSetting) {
@@ -190,18 +200,10 @@ static OState *s = nil;
         aspectAsString = @"SELF";
     } else if (self.aspectIsWard) {
         aspectAsString = @"WARD";
+    } else if (self.aspectIsOrigo) {
+        aspectAsString = @"ORIGO";
     } else if (self.aspectIsExternal) {
         aspectAsString = @"EXTERNAL";
-    } else if (self.aspectIsResidence) {
-        aspectAsString = @"RESIDENCE";
-    } else if (self.aspectIsOrganisation) {
-        aspectAsString = @"ORGANISATION";
-    } else if (self.aspectIsClass) {
-        aspectAsString = @"CLASS";
-    } else if (self.aspectIsPreschool) {
-        aspectAsString = @"PRESCHOOL";
-    } else if (self.aspectIsTeam) {
-        aspectAsString = @"TEAM";
     } else {
         aspectAsString = @"NONE";
     }
@@ -335,6 +337,66 @@ static OState *s = nil;
 }
 
 
+- (void)setTargetIsResidence:(BOOL)targetIsResidence
+{
+    [self setTarget:OStateTargetResidence activate:targetIsResidence];
+}
+
+
+- (BOOL)targetIsResidence
+{
+    return (_target == OStateTargetResidence);
+}
+
+
+- (void)setTargetIsOrganisation:(BOOL)targetIsOrganisation
+{
+    [self setTarget:OStateTargetOrganisation activate:targetIsOrganisation];
+}
+
+
+- (BOOL)targetIsOrganisation
+{
+    return (_target == OStateTargetOrganisation);
+}
+
+
+- (void)setTargetIsClass:(BOOL)targetIsClass
+{
+    [self setTarget:OStateTargetClass activate:targetIsClass];
+}
+
+
+- (BOOL)targetIsClass
+{
+    return (_target == OStateTargetClass);
+}
+
+
+- (void)setTargetIsPreschool:(BOOL)targetIsPreschool
+{
+    [self setTarget:OStateTargetPreschool activate:targetIsPreschool];
+}
+
+
+- (BOOL)targetIsPreschool
+{
+    return (_target == OStateTargetPreschool);
+}
+
+
+- (void)setTargetIsTeam:(BOOL)targetIsTeam
+{
+    [self setTarget:OStateTargetTeam activate:targetIsTeam];
+}
+
+
+- (BOOL)targetIsTeam
+{
+    return (_target == OStateTargetTeam);
+}
+
+
 - (void)setTargetIsEmail:(BOOL)targetIsEmail
 {
     [self setTarget:OStateTargetEmail activate:targetIsEmail];
@@ -361,18 +423,6 @@ static OState *s = nil;
 
 #pragma mark - State aspect properties
 
-- (void)setAspectIsNone:(BOOL)aspectIsNone
-{
-    [self setAspect:_aspect activate:NO];
-}
-
-
-- (BOOL)aspectIsNone
-{
-    return (_aspect == OStateAspectNone);
-}
-
-
 - (void)setAspectIsSelf:(BOOL)aspectIsSelf
 {
     [self setAspect:OStateAspectSelf activate:aspectIsSelf];
@@ -397,6 +447,18 @@ static OState *s = nil;
 }
 
 
+- (void)setAspectIsOrigo:(BOOL)aspectIsOrigo
+{
+    [self setAspect:OStateAspectOrigo activate:aspectIsOrigo];
+}
+
+
+- (BOOL)aspectIsOrigo
+{
+    return (_aspect == OStateAspectOrigo);
+}
+
+
 - (void)setAspectIsExternal:(BOOL)aspectIsExternal
 {
     [self setAspect:OStateAspectExternal activate:aspectIsExternal];
@@ -406,66 +468,6 @@ static OState *s = nil;
 - (BOOL)aspectIsExternal
 {
     return (_aspect == OStateAspectExternal);
-}
-
-
-- (void)setAspectIsResidence:(BOOL)aspectIsResidence
-{
-    [self setAspect:OStateAspectResidence activate:aspectIsResidence];
-}
-
-
-- (BOOL)aspectIsResidence
-{
-    return (_aspect == OStateAspectResidence);
-}
-
-
-- (void)setAspectIsOrganisation:(BOOL)aspectIsOrganisation
-{
-    [self setAspect:OStateAspectOrganisation activate:aspectIsOrganisation];
-}
-
-
-- (BOOL)aspectIsOrganisation
-{
-    return (_aspect == OStateAspectOrganisation);
-}
-
-
-- (void)setAspectIsClass:(BOOL)aspectIsClass
-{
-    [self setAspect:OStateAspectClass activate:aspectIsClass];
-}
-
-
-- (BOOL)aspectIsClass
-{
-    return (_aspect == OStateAspectClass);
-}
-
-
-- (void)setAspectIsPreschool:(BOOL)aspectIsPreschool
-{
-    [self setAspect:OStateAspectPreschool activate:aspectIsPreschool];
-}
-
-
-- (BOOL)aspectIsPreschool
-{
-    return (_aspect == OStateAspectPreschool);
-}
-
-
-- (void)setAspectIsTeam:(BOOL)aspectIsTeam
-{
-    [self setAspect:OStateAspectTeam activate:aspectIsTeam];
-}
-
-
-- (BOOL)aspectIsTeam
-{
-    return (_aspect == OStateAspectTeam);
 }
 
 @end
