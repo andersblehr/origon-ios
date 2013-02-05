@@ -343,6 +343,12 @@
 
 - (void)prepareForModalSegue:(UIStoryboardSegue *)segue data:(id)data
 {
+    [self prepareForModalSegue:segue data:data meta:nil];
+}
+
+
+- (void)prepareForModalSegue:(UIStoryboardSegue *)segue data:(id)data meta:(id)meta
+{
     OTableViewController *destinationViewController = nil;
     
     if ([segue.destinationViewController isKindOfClass:OTableViewController.class]) {
@@ -353,7 +359,13 @@
     }
     
     destinationViewController.data = data;
-    destinationViewController.delegate = self;
+    
+    if ([meta isKindOfClass:OTableViewController.class]) {
+        destinationViewController.delegate = meta;
+    } else {
+        destinationViewController.meta = meta;
+        destinationViewController.delegate = self;
+    }
 }
 
 

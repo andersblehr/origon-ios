@@ -54,10 +54,16 @@ static NSInteger const kOrigoSection = 0;
 - (void)didFinishEditing
 {
     if ([[_addressView finalText] length] > 0) {
+        if (!_origo) {
+            _origo = [[OMeta m].context insertOrigoEntityOfType:self.meta];
+        }
+        
         _origo.address = [_addressView finalText];
         _origo.telephone = [_telephoneField finalText];
         
         if (self.state.actionIsRegister) {
+            [self.view endEditing:YES];
+            
             if (_membership) {
                 _member.activeSince = [NSDate date];
                 [self.delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
@@ -91,10 +97,10 @@ static NSInteger const kOrigoSection = 0;
     if (_origo) {
         self.title = [_origo isResidence] ? [OStrings stringForKey:strTermAddress] : _origo.name;
     } else {
-        if ([_origo.type isEqualToString:kOrigoTypeDefault]) {
+        if ([self.meta isEqualToString:kOrigoTypeDefault]) {
             self.title = [OStrings stringForKey:strViewTitleNewOrigo];
         } else {
-            self.title = [OStrings stringForKey:_origo.type];
+            self.title = [OStrings stringForKey:self.meta];
         }
     }
 }
@@ -116,8 +122,7 @@ static NSInteger const kOrigoSection = 0;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToMemberListView]) {
-        [self prepareForModalSegue:segue data:_origo];
-        [segue.destinationViewController setDelegate:self.delegate];
+        [self prepareForModalSegue:segue data:_membership meta:self.delegate];
     }
 }
 
@@ -148,9 +153,9 @@ static NSInteger const kOrigoSection = 0;
         _member = self.data;
     }
     
-    self.state.targetIsOrigo = YES;
     self.state.actionIsDisplay = YES;
-    [self.state setAspectForOrigo:_origo];
+    [self.state setTargetForOrigoType:(_origo ? _origo.type : self.meta)];
+    [self.state setAspectForMember:_member];
 }
 
 

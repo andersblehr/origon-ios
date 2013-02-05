@@ -122,7 +122,7 @@ static NSInteger const kMemberSection = 2;
     
     self.state.actionIsList = YES;
     self.state.targetIsMember = YES;
-    [self.state setAspectForOrigo:_origo];
+    self.state.aspectIsOrigo = YES;
 }
 
 

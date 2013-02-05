@@ -47,6 +47,7 @@
 @property (nonatomic) BOOL modalImpliesRegistration;
 
 @property (strong, nonatomic) id data;
+@property (strong, nonatomic) id meta;
 @property (strong, nonatomic) id<OModalViewControllerDelegate> delegate;
 @property (strong, nonatomic) id<OEntityObservingDelegate> observer;
 @property (strong, nonatomic) OTableViewCell *detailCell;
@@ -68,6 +69,7 @@
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue;
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data;
 - (void)prepareForModalSegue:(UIStoryboardSegue *)segue data:(id)data;
+- (void)prepareForModalSegue:(UIStoryboardSegue *)segue data:(id)data meta:(id)meta;
 
 - (void)reflectState;
 - (void)toggleEditMode;

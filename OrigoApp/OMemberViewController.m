@@ -345,7 +345,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     } else if ([segue.identifier isEqualToString:kModalSegue1ToOrigoView]) {
         [self prepareForModalSegue:segue data:_membership];
     } else if ([segue.identifier isEqualToString:kModalSegue2ToOrigoView]) {
-        [self prepareForModalSegue:segue data:_member];
+        [self prepareForModalSegue:segue data:_member meta:kOrigoTypeResidence];
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
         [self prepareForPushSegue:segue data:_membership];
         [segue.destinationViewController setDelegate:self.delegate];
