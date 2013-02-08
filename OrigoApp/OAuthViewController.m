@@ -255,10 +255,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [self registerNewDevice];
     }
     
-    if (deviceIsNew || [[OMeta m].context needsReplication]) {
-        [[OMeta m].context replicateIfNeeded];
-    }
-    
     [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
 }
 
@@ -317,8 +313,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     }
     
     [OMeta m].user.passwordHash = [_authInfo objectForKey:kKeyPathPasswordHash];
-    
-    [[OMeta m].context replicateIfNeeded];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathAuthInfo];
     
     if ([[OMeta m] userIsRegistered] && [[OMeta m].user isMinor]) {

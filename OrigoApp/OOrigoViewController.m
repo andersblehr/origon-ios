@@ -78,10 +78,7 @@ static NSInteger const kOrigoSection = 0;
             }
         } else if (self.state.actionIsEdit) {
             [self toggleEditMode];
-            [self.observer reloadEntity];
         }
-        
-        [[OMeta m].context replicateIfNeeded];
     } else {
         [self.detailCell shakeCellVibrateDevice:NO];
     }

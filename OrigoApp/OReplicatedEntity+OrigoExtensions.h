@@ -36,6 +36,7 @@
 - (NSString *)listDetailsForState:(OState *)state;
 - (UIImage *)listImageForState:(OState *)state;
 
+- (NSString *)entityRefIdForOrigo:(OOrigo *)origo;
 - (OReplicatedEntityRef *)entityRefForOrigo:(OOrigo *)origo;
 
 - (NSString *)expiresInTimeframe;

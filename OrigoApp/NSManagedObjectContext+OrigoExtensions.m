@@ -129,12 +129,22 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
     if (resultsArray == nil) {
         OLogError(@"Error fetching entity on device: %@", [error localizedDescription]);
     } else if ([resultsArray count] > 1) {
-        OLogBreakage(@"Found more than one entity with key/value [%@/%@].", keyPath, value);
+        OLogBreakage(@"Found more than one entity with '%@'='%@'.", keyPath, value);
     } else if ([resultsArray count] == 1) {
         entity = resultsArray[0];
     }
     
     return entity;
+}
+
+
+- (void)deleteEntityAsNeeded:(OReplicatedEntity *)entity isGhost:(BOOL)isGhost
+{
+    if (!isGhost && [entity isReplicated]) {
+        [entity makeGhost];
+    } else {
+        [self deleteObject:entity];
+    }
 }
 
 
@@ -147,47 +157,45 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
         
         [self deleteObject:[member entityRefForOrigo:origo]];
         
-        BOOL shouldDeleteMember = NO;
-        
-        if ([origo isResidence]) {
-            shouldDeleteMember = (([[member origoMemberships] count] == 0) && ![member isUser]);
-        } else {
-            shouldDeleteMember = (([[member origoMemberships] count] == 1) && ![[[OMeta m].user housemates] containsObject:member]);
-        }
-        
-        if (shouldDeleteMember) {
-            for (OMemberResidency *residency in member.residencies) {
-                if (residency.residence != origo) {
-                    [self deleteObject:[residency.residence entityRefForOrigo:origo]];
-                    [self deleteObject:[residency entityRefForOrigo:origo]];
-                    
-                    if ([residency.residence.residencies count] == 1) {
-                        [self deleteObject:residency.residence];
-                    }
-                    
-                    [self deleteObject:residency];
-                }
-            }
+        if ([OState s].targetIsOrigo) {
+            BOOL shouldDeleteMember = NO;
             
-            OMembership *rootMembership = [member rootMembership];
-            
-            if (rootMembership) {
-                [self deleteObject:rootMembership.origo];
-                [self deleteObject:rootMembership];
-            }
-            
-            if (!isGhost && [member isReplicated]) {
-                [member makeGhost];
+            if ([origo isResidence]) {
+                shouldDeleteMember = (([[member origoMemberships] count] == 0) && ([member.residencies count] == 1) && ![member isUser]);
             } else {
-                [self deleteObject:member];
+                shouldDeleteMember = (([[member origoMemberships] count] == 1) && ![[[OMeta m].user housemates] containsObject:member]);
+            }
+            
+            if (shouldDeleteMember) {
+                for (OMemberResidency *residency in member.residencies) {
+                    if (residency.residence != origo) {
+                        [self deleteObject:[residency.residence entityRefForOrigo:origo]];
+                        [self deleteObject:[residency entityRefForOrigo:origo]];
+                        
+                        if ([residency.residence.residencies count] == 1) {
+                            [self deleteObject:residency.residence];
+                        }
+                        
+                        [self deleteObject:residency];
+                    }
+                }
+                
+                OMembership *rootMembership = [member rootMembership];
+                
+                if (rootMembership) {
+                    [self deleteObject:rootMembership.origo];
+                    [self deleteObject:rootMembership];
+                }
+                
+                [self deleteEntityAsNeeded:member isGhost:isGhost];
+            }
+        } else if ([OState s].targetIsMember) {
+            if ([origo isResidence] && ([origo.residencies count] == 1)) {
+                [self deleteEntityAsNeeded:origo isGhost:isGhost];
             }
         }
         
-        if (!isGhost && [membership isReplicated]) {
-            [membership makeGhost];
-        } else {
-            [self deleteObject:membership];
-        }
+        [self deleteEntityAsNeeded:membership isGhost:isGhost];
     } else {
         [self deleteObject:entity];
     }
@@ -251,10 +259,14 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 
 - (id)insertEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo
 {
-    OReplicatedEntityRef *entityRef = [self insertEntityForClass:OReplicatedEntityRef.class inOrigo:origo entityId:[entity.entityId stringByAppendingString:origo.entityId separator:kSeparatorHash]];
+    OReplicatedEntityRef *entityRef = [entity entityRefForOrigo:origo];
     
-    entityRef.referencedEntityId = entity.entityId;
-    entityRef.referencedEntityOrigoId = entity.origoId;
+    if (!entityRef) {
+        entityRef = [self insertEntityForClass:OReplicatedEntityRef.class inOrigo:origo entityId:[entity entityRefIdForOrigo:origo]];
+        
+        entityRef.referencedEntityId = entity.entityId;
+        entityRef.referencedEntityOrigoId = entity.origoId;
+    }
     
     return entityRef;
 }

@@ -12,7 +12,6 @@
 
 @interface OOrigo (OrigoExtensions)
 
-- (id)addNewMember;
 - (id)addMember:(OMember *)member;
 - (id)addResident:(OMember *)resident;
 
@@ -22,11 +21,8 @@
 - (BOOL)hasTelephone;
 
 - (BOOL)hasAdmin;
-- (BOOL)userIsMember;
+- (BOOL)hasMember:(OMember *)member;
 - (BOOL)userIsAdmin;
-- (BOOL)hasMemberWithEmail:(NSString *)email;
-- (OMembership *)userMembership;
-
-- (NSComparisonResult)compare:(OOrigo *)other;
+- (BOOL)userIsMember;
 
 @end

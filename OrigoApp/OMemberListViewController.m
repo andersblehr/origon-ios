@@ -89,16 +89,6 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-	[super viewWillDisappear:animated];
-    
-    if (!self.presentedViewController) {
-        [[OMeta m].context replicateIfNeeded];
-    }
-}
-
-
 #pragma mark - Segue handling
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

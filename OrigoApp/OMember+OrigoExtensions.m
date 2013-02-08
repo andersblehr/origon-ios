@@ -103,7 +103,7 @@
     
     for (OMemberResidency *memberResidency in self.residencies) {
         for (OMemberResidency *householdResidency in memberResidency.residence.residencies) {
-            if (![householdResidency.isGhost boolValue]) {
+            if ((householdResidency.resident != self) && ![householdResidency.isGhost boolValue]) {
                 [housemates addObject:householdResidency.resident];
             }
         }
