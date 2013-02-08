@@ -40,7 +40,6 @@ static NSString * const kModalSegueToAuthView = @"modalFromMemberToAuthView";
 static NSString * const kModalSegue1ToOrigoView = @"modal1FromMemberToOrigoView";
 static NSString * const kModalSegue2ToOrigoView = @"modal2FromMemberToOrigoView";
 static NSString * const kPushSegueToMemberListView = @"pushFromMemberToMemberListView";
-static NSString * const kPushSegueToOrigoView = @"pushFromMemberToOrigoView";
 
 static NSInteger const kMemberSection = 0;
 static NSInteger const kAddressSection = 1;
@@ -72,7 +71,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         _candidate = [[OMeta m].context memberEntityWithEmail:email];
         
         if (_candidate) {
-            if ([_origo hasMemberWithEmail:email]) {
+            if ([_origo hasMember:_candidate]) {
                 _emailField.text = @"";
                 [_emailField becomeFirstResponder];
                 
@@ -140,11 +139,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             }
             
             [self.delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
-            [[OMeta m].context replicateIfNeeded];
         }
-    } else {
-        [[OMeta m].context replicateIfNeeded];
-        [self.observer reloadEntity];
     }
 }
 
@@ -271,6 +266,11 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             } else {
                 [self updateMember];
                 [self toggleEditMode];
+                
+                if ([[OMeta m].context needsReplication]) {
+                    [[OMeta m].context replicate];
+                    [self.observer reloadEntity];
+                }
             }
         }
     } else {
@@ -347,8 +347,12 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     } else if ([segue.identifier isEqualToString:kModalSegue2ToOrigoView]) {
         [self prepareForModalSegue:segue data:_member meta:kOrigoTypeResidence];
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
-        [self prepareForPushSegue:segue data:_membership];
-        [segue.destinationViewController setDelegate:self.delegate];
+        if (self.state.actionIsRegister) {
+            [self prepareForPushSegue:segue data:_membership];
+            [segue.destinationViewController setDelegate:self.delegate];
+        } else {
+            [self prepareForPushSegue:segue];
+        }
     }
 }
 
@@ -429,9 +433,11 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self performSegueWithIdentifier:kPushSegueToOrigoView sender:self];
+    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
+    
+    [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
 }
 
 
@@ -496,9 +502,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
-    [super dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:NO];
-    
     if ([identitifier isEqualToString:kAuthViewControllerId]) {
+        [super dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:NO];
+        
         if ([_member.email isEqualToString:[_emailField finalText]]) {
             [OMeta m].userEmail = _member.email;
             [self updateMember];
@@ -510,9 +516,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             [_emailField becomeFirstResponder];
         }
     } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
-        if (self.state.actionIsRegister) {
-            [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
-        }
+        [super dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:NO];
+        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
+    } else if ([identitifier isEqualToString:kMemberListViewControllerId]) {
+        [super dismissModalViewControllerWithIdentitifier:identitifier];
     }
 }
 

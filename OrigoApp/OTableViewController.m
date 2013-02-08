@@ -241,6 +241,11 @@
         
         self.navigationItem.rightBarButtonItem = rightButton;
         self.navigationItem.leftBarButtonItem = leftButton;
+        
+        if ([[OMeta m].context needsReplication]) {
+            [[OMeta m].context replicate];
+            [self.observer reloadEntity];
+        }
     }
     
     OLogState;
@@ -317,11 +322,15 @@
 }
 
 
-- (void)viewDidDisappear:(BOOL)animated
+- (void)viewWillDisappear:(BOOL)animated
 {
-    [super viewDidDisappear:animated];
+	[super viewWillDisappear:animated];
     
     _isHidden = (self.presentedViewController != nil);
+    
+    if (!_isHidden) {
+        [[OMeta m].context replicateIfNeeded];
+    }
 }
 
 

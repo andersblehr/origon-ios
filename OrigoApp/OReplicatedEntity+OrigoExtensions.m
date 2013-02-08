@@ -248,9 +248,15 @@
 
 #pragma mark - Entity linking & deletion
 
+- (NSString *)entityRefIdForOrigo:(OOrigo *)origo
+{
+    return [self.entityId stringByAppendingString:origo.entityId separator:kSeparatorHash];
+}
+
+
 - (OReplicatedEntityRef *)entityRefForOrigo:(OOrigo *)origo
 {
-    return [[OMeta m].context entityWithId:[self.entityId stringByAppendingString:origo.entityId separator:kSeparatorHash]];
+    return [[OMeta m].context entityWithId:[self entityRefIdForOrigo:origo]];
 }
 
 
