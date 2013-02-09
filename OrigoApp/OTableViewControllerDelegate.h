@@ -17,6 +17,8 @@
 @optional
 - (BOOL)shouldInitialise;
 - (UIBarButtonItem *)cancelRegistrationButton;
+- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @end

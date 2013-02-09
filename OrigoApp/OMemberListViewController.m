@@ -89,6 +89,14 @@ static NSInteger const kMemberSection = 2;
 }
 
 
+#pragma mark - Overrides
+
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return ((sectionKey == kMemberSection) && [_origo userIsAdmin]);
+}
+
+
 #pragma mark - Segue handling
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -135,6 +143,30 @@ static NSInteger const kMemberSection = 2;
 }
 
 
+- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
+{
+    NSString *text = nil;
+    
+    if (sectionKey == kContactSection) {
+        text = [OStrings stringForKey:strHeaderContacts];
+    } else if (sectionKey == kMemberSection) {
+        if ([_origo isResidence]) {
+            text = [OStrings stringForKey:strHeaderHouseholdMembers];
+        } else {
+            text = [OStrings stringForKey:strHeaderOrigoMembers];
+        }
+    }
+    
+    return text;
+}
+
+
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+{
+    return [OStrings stringForKey:strFooterHousehold];
+}
+
+
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
@@ -171,42 +203,6 @@ static NSInteger const kMemberSection = 2;
     }
     
     return canDeleteRow;
-}
-
-
-#pragma mark - UITableViewDelegate conformance
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *headerView = nil;
-    
-    if (section != kOrigoSection) {
-        if (section == [self sectionNumberForSectionKey:kContactSection]) {
-            headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderContacts]];
-        } else if (section == [self sectionNumberForSectionKey:kMemberSection]) {
-            if ([_origo isResidence]) {
-                headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderHouseholdMembers]];
-            } else {
-                headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderOrigoMembers]];
-            }
-        }
-    }
-    
-    return headerView;
-}
-
-
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    UIView *footerView = nil;
-    
-    if (section == [self sectionNumberForSectionKey:kMemberSection]) {
-        if ([_origo userIsAdmin]) {
-            footerView = [tableView footerViewWithText:[OStrings stringForKey:strFooterHousehold]];
-        }
-    }
-    
-    return footerView;
 }
 
 

@@ -152,6 +152,18 @@
 }
 
 
+- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
+{
+    return (sectionKey > 0);
+}
+
+
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return ([self sectionNumberForSectionKey:sectionKey] == [self.tableView numberOfSections] - 1);
+}
+
+
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey
 {
     return [_sectionCounts[@(sectionKey)] integerValue];
@@ -161,6 +173,12 @@
 - (NSInteger)sectionNumberForSectionKey:(NSInteger)sectionKey
 {
     return [_sectionKeys indexOfObject:@(sectionKey)];
+}
+
+
+- (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber
+{
+    return [_sectionKeys[sectionNumber] integerValue];
 }
 
 
@@ -410,6 +428,18 @@
 }
 
 
+- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
+{
+    return nil;
+}
+
+
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+{
+    return nil;
+}
+
+
 #pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -485,7 +515,7 @@
 {
     CGFloat height = kDefaultPadding;
     
-    if (section > 0) {
+    if ([self hasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView standardHeaderHeight];
     }
     
@@ -497,11 +527,37 @@
 {
     CGFloat height = kDefaultPadding;
     
-    if (section == [tableView numberOfSections] - 1) {
+    if ([self hasFooterForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView standardFooterHeight];
     }
     
     return height;
+}
+
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
+    UIView *view = nil;
+
+    if ([self hasHeaderForSectionWithKey:sectionKey]) {
+        view = [tableView headerViewWithText:[self textForHeaderInSectionWithKey:sectionKey]];
+    }
+    
+    return view;
+}
+
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
+    UIView *view = nil;
+    
+    if ([self hasFooterForSectionWithKey:sectionKey]) {
+        view = [tableView footerViewWithText:[self textForFooterInSectionWithKey:sectionKey]];
+    }
+    
+    return view;
 }
 
 

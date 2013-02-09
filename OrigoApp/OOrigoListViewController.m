@@ -177,6 +177,14 @@ static NSInteger const kUserRow = 0;
 }
 
 
+#pragma mark - Overrides
+
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return ([super hasFooterForSectionWithKey:sectionKey] && [[OMeta m].user isTeenOrOlder]);
+}
+
+
 #pragma mark - Segue handling
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -223,6 +231,26 @@ static NSInteger const kUserRow = 0;
 }
 
 
+- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
+{
+    NSString *text = nil;
+    
+    if (sectionKey == kWardSection) {
+        text = [OStrings stringForKey:strHeaderWardsOrigos];
+    } else if (sectionKey == kOrigoSection) {
+        text = [OStrings stringForKey:strHeaderMyOrigos];
+    }
+    
+    return text;
+}
+
+
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+{
+    return [self footerText];
+}
+
+
 - (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section != [self sectionNumberForSectionKey:kWardSection]) {
@@ -233,34 +261,6 @@ static NSInteger const kUserRow = 0;
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
     }
-}
-
-
-#pragma mark - UITableViewDelegate conformance
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *headerView = nil;
-    
-    if (section == [self sectionNumberForSectionKey:kWardSection]) {
-        headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderWardsOrigos]];
-    } else if (section == [self sectionNumberForSectionKey:kOrigoSection]) {
-        headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderMyOrigos]];
-    }
-    
-    return headerView;
-}
-
-
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    UIView *footerView = nil;
-    
-    if ((section == [tableView numberOfSections] - 1) && [[OMeta m].user isTeenOrOlder]) {
-        footerView = [tableView footerViewWithText:[self footerText]];
-    }
-    
-    return footerView;
 }
 
 
