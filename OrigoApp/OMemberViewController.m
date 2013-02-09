@@ -370,6 +370,18 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
+- (UIBarButtonItem *)cancelRegistrationButton
+{
+    UIBarButtonItem *cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
+    
+    if (self.state.aspectIsSelf) {
+        cancelButton = [UIBarButtonItem signOutButtonWithTarget:self];
+    }
+    
+    return cancelButton;
+}
+
+
 #pragma mark - OTableViewControllerDelegate conformance
 
 - (void)loadState
@@ -398,18 +410,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (UIBarButtonItem *)cancelRegistrationButton
-{
-    UIBarButtonItem *cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
-    
-    if (self.state.aspectIsSelf) {
-        cancelButton = [UIBarButtonItem signOutButtonWithTarget:self];
-    }
-    
-    return cancelButton;
-}
-
-
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
 {
     NSString *text = nil;
@@ -423,6 +423,12 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     return text;
+}
+
+
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+{
+    return nil;
 }
 
 
