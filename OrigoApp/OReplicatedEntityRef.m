@@ -2,8 +2,8 @@
 //  OReplicatedEntityRef.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 29.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 09.02.13.
+//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
 #import "OReplicatedEntityRef.h"
@@ -13,5 +13,6 @@
 
 @dynamic referencedEntityId;
 @dynamic referencedEntityOrigoId;
+@dynamic memberProxyId;
 
 @end

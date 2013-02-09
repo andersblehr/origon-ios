@@ -450,6 +450,8 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             if (buttonIndex != kGenderSheetButtonCancel) {
                 _gender = (buttonIndex == kGenderSheetButtonFemale) ? kGenderFemale : kGenderMale;
                 [self registerMember];
+            } else {
+                [self resumeFirstResponder];
             }
             
             break;
@@ -459,6 +461,8 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 [self registerMember];
             } else if (buttonIndex == kExistingResidenceButtonMergeHouseholds) {
                 // TODO
+            } else if (buttonIndex == kExistingResidenceButtonCancel) {
+                [self resumeFirstResponder];
             }
             
             break;

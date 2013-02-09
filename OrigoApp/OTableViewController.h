@@ -73,5 +73,6 @@
 
 - (void)reflectState;
 - (void)toggleEditMode;
+- (void)resumeFirstResponder;
 
 @end
