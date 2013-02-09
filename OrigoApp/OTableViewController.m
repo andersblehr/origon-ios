@@ -517,7 +517,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    _selectedIndexPath = indexPath;
+    if (((OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath]).selectable) {
+        _selectedIndexPath = indexPath;
+        
+        [self didSelectRowAtIndexPath:indexPath];
+    }
 }
 
 

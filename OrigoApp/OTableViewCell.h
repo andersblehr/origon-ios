@@ -30,8 +30,6 @@ extern CGFloat const kCellAnimationDuration;
 
 @interface OTableViewCell : UITableViewCell<OEntityObservingDelegate> {
 @private
-    BOOL _selectable;
-    
     NSMutableDictionary *_views;
     NSMutableArray *_orderedTextFields;
     OVisualConstraints *_visualConstraints;
@@ -42,6 +40,7 @@ extern CGFloat const kCellAnimationDuration;
 @property (strong, nonatomic) OReplicatedEntity *entity;
 @property (weak, nonatomic, readonly) Class entityClass;
 @property (weak, nonatomic, readonly) OState *viewState;
+@property (nonatomic, readonly) BOOL selectable;
 @property (nonatomic) BOOL editable;
 
 @property (weak, nonatomic) id<OEntityObservingDelegate> observer;

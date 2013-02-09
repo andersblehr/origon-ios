@@ -223,6 +223,19 @@ static NSInteger const kUserRow = 0;
 }
 
 
+- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section != [self sectionNumberForSectionKey:kWardSection]) {
+        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
+    } else {
+        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId];
+        origoListViewController.data = [self entityForIndexPath:indexPath];
+        
+        [self.navigationController pushViewController:origoListViewController animated:YES];
+    }
+}
+
+
 #pragma mark - UITableViewDelegate conformance
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -248,21 +261,6 @@ static NSInteger const kUserRow = 0;
     }
     
     return footerView;
-}
-
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
-    
-    if (indexPath.section != [self sectionNumberForSectionKey:kWardSection]) {
-        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
-    } else {
-        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId];
-        origoListViewController.data = [self entityForIndexPath:indexPath];
-        
-        [self.navigationController pushViewController:origoListViewController animated:YES];
-    }
 }
 
 
