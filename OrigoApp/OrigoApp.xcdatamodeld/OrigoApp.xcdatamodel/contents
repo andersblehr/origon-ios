@@ -175,6 +175,7 @@
         <attribute name="origoId" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="OReplicatedEntityRef" representedClassName="OReplicatedEntityRef" parentEntity="OReplicatedEntity" syncable="YES">
+        <attribute name="memberProxyId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="referencedEntityId" attributeType="String" syncable="YES"/>
         <attribute name="referencedEntityOrigoId" attributeType="String" syncable="YES"/>
         <userInfo>
@@ -254,7 +255,7 @@
         <element name="OMessageThread" positionX="0" positionY="0" width="128" height="90"/>
         <element name="OOrigo" positionX="0" positionY="0" width="128" height="285"/>
         <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="165"/>
-        <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
+        <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="90"/>
         <element name="OScheduledAbsence" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OScheduledBreak" positionX="0" positionY="0" width="128" height="90"/>
         <element name="OToDoAssignment" positionX="0" positionY="0" width="128" height="105"/>

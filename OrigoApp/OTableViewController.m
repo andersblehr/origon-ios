@@ -252,6 +252,12 @@
 }
 
 
+- (void)resumeFirstResponder
+{
+    [_emphasisedField becomeFirstResponder];
+}
+
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad

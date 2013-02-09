@@ -263,9 +263,14 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
     
     if (!entityRef) {
         entityRef = [self insertEntityForClass:OReplicatedEntityRef.class inOrigo:origo entityId:[entity entityRefIdForOrigo:origo]];
-        
         entityRef.referencedEntityId = entity.entityId;
         entityRef.referencedEntityOrigoId = entity.origoId;
+        
+        if ([entity isKindOfClass:OMember.class]) {
+            OMember *member = (OMember *)entity;
+            
+            entityRef.memberProxyId = member.email ? member.email : member.entityId;
+        }
     }
     
     return entityRef;
