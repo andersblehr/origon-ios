@@ -18,6 +18,7 @@ extern CGFloat const kTextInset;
     OTableViewCell *_containingCell;
     
     BOOL _isTitle;
+    BOOL _hasHadEmphasis;
 }
 
 @property (strong, nonatomic) NSString *keyPath;

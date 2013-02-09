@@ -221,8 +221,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
             [self addLabelForKeyPath:kKeyPathActivation constrained:YES];
             [self addTextFieldForKeyPath:kKeyPathActivationCode constrained:YES];
             [self addTextFieldForKeyPath:kKeyPathRepeatPassword constrained:YES];
-        } else {
-            _selectable = YES;
         }
         
         [self.contentView setNeedsUpdateConstraints];

@@ -70,6 +70,20 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
+- (void)synchroniseInputView
+{
+    if ([self.inputView isKindOfClass:UIDatePicker.class]) {
+        id value = [_containingCell.entity valueForKey:_keyPath];
+        
+        if (value) {
+            ((UIDatePicker *)self.inputView).date = value;
+        } else {
+            [(UIDatePicker *)self.inputView setToDefaultDate];
+        }
+    }
+}
+
+
 #pragma mark - Initialisation
 
 - (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate
@@ -168,6 +182,10 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidDate
 {
+    if (!_hasHadEmphasis) {
+        [self synchroniseInputView];
+    }
+    
     BOOL isValid = ([self.text length] > 0);
     
     if (!isValid) {
@@ -206,15 +224,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
             [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
         }
         
-        if ([self.inputView isKindOfClass:UIDatePicker.class]) {
-            id value = [_containingCell.entity valueForKey:_keyPath];
-            
-            if (value) {
-                ((UIDatePicker *)self.inputView).date = value;
-            } else {
-                [(UIDatePicker *)self.inputView setToDefaultDate];
-            }
-        }
+        [self synchroniseInputView];
+        
+        _hasHadEmphasis = YES;
     } else {
         self.text = [self finalText];
         self.backgroundColor = [UIColor clearColor];

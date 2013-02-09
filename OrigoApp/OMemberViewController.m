@@ -266,11 +266,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             } else {
                 [self updateMember];
                 [self toggleEditMode];
-                
-                if ([[OMeta m].context needsReplication]) {
-                    [[OMeta m].context replicate];
-                    [self.observer reloadEntity];
-                }
             }
         }
     } else {
@@ -415,6 +410,12 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
+- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
+}
+
+
 #pragma mark - UITableViewDelegate conformance
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -430,14 +431,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     return headerView;
-}
-
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
-    
-    [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
 }
 
 

@@ -135,6 +135,16 @@ static NSInteger const kMemberSection = 2;
 }
 
 
+- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
+        [self performSegueWithIdentifier:kPushSegueToOrigoView sender:self];
+    } else {
+        [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];
+    }
+}
+
+
 #pragma mark - UITableViewDataSource conformance
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -197,18 +207,6 @@ static NSInteger const kMemberSection = 2;
     }
     
     return footerView;
-}
-
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
-    
-    if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
-        [self performSegueWithIdentifier:kPushSegueToOrigoView sender:self];
-    } else {
-        [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];
-    }
 }
 
 

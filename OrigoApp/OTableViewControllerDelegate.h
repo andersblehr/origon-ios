@@ -17,5 +17,6 @@
 @optional
 - (BOOL)shouldInitialise;
 - (UIBarButtonItem *)cancelRegistrationButton;
+- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
