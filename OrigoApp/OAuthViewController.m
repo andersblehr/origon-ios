@@ -435,6 +435,24 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+{
+    NSString *text = nil;
+    
+    if (self.state.actionIsLogin) {
+        text = [OStrings stringForKey:strFooterSignInOrRegister];
+    } else if (self.state.actionIsActivate) {
+        if (self.state.targetIsMember) {
+            text = [OStrings stringForKey:strFooterActivate];
+        } else if (self.state.targetIsEmail) {
+            text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivateEmail], self.data];
+        }
+    }
+    
+    return text;
+}
+
+
 #pragma mark - UITableViewDataSource conformance
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -474,24 +492,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         _activationCodeField.hasEmphasis = YES;
         _repeatPasswordField.hasEmphasis = YES;
     }
-}
-
-
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
-{
-    NSString *footerText = nil;
-    
-    if (self.state.actionIsLogin) {
-        footerText = [OStrings stringForKey:strFooterSignInOrRegister];
-    } else if (self.state.actionIsActivate) {
-        if (self.state.targetIsMember) {
-            footerText = [OStrings stringForKey:strFooterActivate];
-        } else if (self.state.targetIsEmail) {
-            footerText = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivateEmail], self.data];
-        }
-    }
-    
-    return [tableView footerViewWithText:footerText];
 }
 
 

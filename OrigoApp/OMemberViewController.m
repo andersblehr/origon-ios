@@ -410,27 +410,25 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
 {
-    [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
-}
-
-
-#pragma mark - UITableViewDelegate conformance
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *headerView = nil;
+    NSString *text = nil;
     
-    if (section == kAddressSection) {
+    if (sectionKey == kAddressSection) {
         if ([_member.residencies count] == 1) {
-            headerView = [tableView headerViewWithText:[OStrings stringForKey:strTermAddress]];
+            text = [OStrings stringForKey:strTermAddress];
         } else {
-            headerView = [tableView headerViewWithText:[OStrings stringForKey:strHeaderAddresses]];
+            text = [OStrings stringForKey:strHeaderAddresses];
         }
     }
     
-    return headerView;
+    return text;
+}
+
+
+- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
 }
 
 
