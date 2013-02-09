@@ -179,6 +179,12 @@ static NSInteger const kUserRow = 0;
 
 #pragma mark - Overrides
 
+- (BOOL)shouldInitialise
+{
+    return [[OMeta m] userIsAllSet];
+}
+
+
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
     return ([super hasFooterForSectionWithKey:sectionKey] && [[OMeta m].user isTeenOrOlder]);
@@ -222,12 +228,6 @@ static NSInteger const kUserRow = 0;
         [self appendData:[_member residencies] toSectionWithKey:kUserSection];
         [self setData:[_member wards] forSectionWithKey:kWardSection];
     }
-}
-
-
-- (BOOL)shouldInitialise
-{
-    return [[OMeta m] userIsAllSet];
 }
 
 

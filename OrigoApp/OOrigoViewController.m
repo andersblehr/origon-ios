@@ -138,6 +138,18 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
+- (UIBarButtonItem *)cancelRegistrationButton
+{
+    UIBarButtonItem *cancelButton = nil;
+    
+    if (![_origo isResidence] || _member.activeSince) {
+        cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
+    }
+    
+    return cancelButton;
+}
+
+
 #pragma mark - OTableViewControllerDelegate conformance
 
 - (void)loadState
@@ -162,15 +174,9 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
-- (UIBarButtonItem *)cancelRegistrationButton
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    UIBarButtonItem *cancelButton = nil;
-    
-    if (![_origo isResidence] || _member.activeSince) {
-        cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
-    }
-    
-    return cancelButton;
+    return nil;
 }
 
 @end

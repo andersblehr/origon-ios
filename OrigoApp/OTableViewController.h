@@ -42,6 +42,7 @@
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic, readonly) OReplicatedEntity *entity;
 
+@property (nonatomic) BOOL shouldInitialise;
 @property (nonatomic) BOOL canEdit;
 @property (nonatomic) BOOL shouldDemphasiseOnEndEdit;
 @property (nonatomic) BOOL modalImpliesRegistration;

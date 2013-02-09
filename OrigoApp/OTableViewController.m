@@ -64,7 +64,7 @@
     if (![OStrings hasStrings]) {
         [OState s].actionIsSetup = YES;
     } else {
-        if ([self shouldInitialise]) {
+        if (self.shouldInitialise) {
             [self loadState];
             
             if (_isModal && self.modalImpliesRegistration) {
@@ -144,7 +144,7 @@
 }
 
 
-#pragma mark - Section handling
+#pragma mark - View layout
 
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey
 {
@@ -179,6 +179,12 @@
 - (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber
 {
     return [_sectionKeys[sectionNumber] integerValue];
+}
+
+
+- (UIBarButtonItem *)cancelRegistrationButton
+{
+    return [UIBarButtonItem cancelButtonWithTarget:self];
 }
 
 
@@ -289,6 +295,7 @@
     _entitySectionKey = NSNotFound;
     _state = [[OState alloc] init];
     
+    _shouldInitialise = YES;
     _canEdit = NO;
     _shouldDemphasiseOnEndEdit = YES;
     _modalImpliesRegistration = ([NSStringFromClass(self.class) rangeOfString:@"List"].location == NSNotFound);
@@ -413,30 +420,6 @@
 - (void)loadData
 {
     // Override in subclass
-}
-
-
-- (BOOL)shouldInitialise
-{
-    return YES;
-}
-
-
-- (UIBarButtonItem *)cancelRegistrationButton
-{
-    return nil;
-}
-
-
-- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
-{
-    return nil;
-}
-
-
-- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
-{
-    return nil;
 }
 
 
