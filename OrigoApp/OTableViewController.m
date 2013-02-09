@@ -136,11 +136,17 @@
 }
 
 
+- (id)entityAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
+{
+    return [self entitiesInSectionWithKey:sectionKey][row];
+}
+
+
 - (id)entityForIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [_sectionKeys[indexPath.section] integerValue];
     
-    return [self entitiesInSectionWithKey:sectionKey][indexPath.row];
+    return [self entityAtRow:indexPath.row inSectionWithKey:sectionKey];
 }
 
 
@@ -154,7 +160,7 @@
 
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
 {
-    return (sectionKey > 0);
+    return ([self sectionNumberForSectionKey:sectionKey] > 0);
 }
 
 
@@ -423,6 +429,24 @@
 }
 
 
+#pragma mark - OModalViewControllerDelegate conformance
+
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
+{
+    [self dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:YES];
+}
+
+
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier needsReloadData:(BOOL)needsReloadData
+{
+    _needsReloadData = needsReloadData;
+    
+    [self dismissViewControllerAnimated:YES completion:^{
+        _needsReloadData = NO;
+    }];
+}
+
+
 #pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -559,26 +583,8 @@
     if (((OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath]).selectable) {
         _selectedIndexPath = indexPath;
         
-        [self didSelectRowAtIndexPath:indexPath];
+        [self didSelectRow:indexPath.row inSectionWithKey:[self sectionKeyForSectionNumber:indexPath.section]];
     }
-}
-
-
-#pragma mark - OModalViewControllerDelegate conformance
-
-- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
-{
-    [self dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:YES];
-}
-
-
-- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier needsReloadData:(BOOL)needsReloadData
-{
-    _needsReloadData = needsReloadData;
-    
-    [self dismissViewControllerAnimated:YES completion:^{
-        _needsReloadData = NO;
-    }];
 }
 
 

@@ -17,6 +17,6 @@
 @optional
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
-- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
 
 @end

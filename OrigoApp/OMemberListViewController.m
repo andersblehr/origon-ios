@@ -167,9 +167,9 @@ static NSInteger const kMemberSection = 2;
 }
 
 
-- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
 {
-    if (indexPath.section == [self sectionNumberForSectionKey:kOrigoSection]) {
+    if (sectionKey == kOrigoSection) {
         [self performSegueWithIdentifier:kPushSegueToOrigoView sender:self];
     } else {
         [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];

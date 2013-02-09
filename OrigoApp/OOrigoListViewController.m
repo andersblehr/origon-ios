@@ -251,15 +251,15 @@ static NSInteger const kUserRow = 0;
 }
 
 
-- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
 {
-    if (indexPath.section != [self sectionNumberForSectionKey:kWardSection]) {
-        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
-    } else {
+    if (sectionKey == kWardSection) {
         OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId];
-        origoListViewController.data = [self entityForIndexPath:indexPath];
+        origoListViewController.data = [self entityAtRow:row inSectionWithKey:sectionKey];
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
+    } else {
+        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
     }
 }
 
