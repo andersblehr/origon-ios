@@ -61,15 +61,13 @@
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey;
 - (NSArray *)entitiesInSectionWithKey:(NSInteger)sectionKey;
+- (id)entityAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
 - (id)entityForIndexPath:(NSIndexPath *)indexPath;
 
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
-
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
-- (NSInteger)sectionNumberForSectionKey:(NSInteger)sectionKey;
-- (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber;
 
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue;
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data;

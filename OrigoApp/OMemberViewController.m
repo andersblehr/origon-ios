@@ -432,7 +432,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
 {
     [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
 }
