@@ -138,7 +138,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 _member.activeSince = [NSDate date];
             }
             
-            [self.delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
+            [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
         }
     }
 }
@@ -213,7 +213,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)didCancelEditing
 {
     if (self.state.actionIsRegister) {
-        [self.delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId needsReloadData:NO];
+        [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberViewControllerId needsReloadData:NO];
     } else if (self.state.actionIsEdit) {
         _dateOfBirthField.text = [_member.dateOfBirth localisedDateString];
         _mobilePhoneField.text = _member.mobilePhone;
@@ -285,7 +285,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     [[OMeta m] userDidSignOut];
     self.detailCell.entity = nil;
     
-    [self.delegate dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
+    [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
 }
 
 
@@ -344,7 +344,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
         if (self.state.actionIsRegister) {
             [self prepareForPushSegue:segue data:_membership];
-            [segue.destinationViewController setDelegate:self.delegate];
+            [segue.destinationViewController setDismisser:self.dismisser];
         } else {
             [self prepareForPushSegue:segue];
         }

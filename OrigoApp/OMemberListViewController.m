@@ -50,7 +50,7 @@ static NSInteger const kMemberSection = 2;
 
 - (void)didFinishEditing
 {
-    [self.delegate dismissModalViewControllerWithIdentitifier:kMemberListViewControllerId];
+    [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberListViewControllerId];
 }
 
 
@@ -74,7 +74,7 @@ static NSInteger const kMemberSection = 2;
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
         self.navigationItem.rightBarButtonItem.action = @selector(addMember);
         
-        if (self.delegate) {
+        if (self.dismisser) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         }
     }
@@ -86,14 +86,6 @@ static NSInteger const kMemberSection = 2;
     [super viewDidAppear:animated];
     
     OLogState;
-}
-
-
-#pragma mark - Overrides
-
-- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    return ((sectionKey == kMemberSection) && [_origo userIsAdmin]);
 }
 
 
@@ -143,6 +135,12 @@ static NSInteger const kMemberSection = 2;
 }
 
 
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return ((sectionKey == kMemberSection) && [_origo userIsAdmin]);
+}
+
+
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
 {
     NSString *text = nil;
@@ -178,20 +176,6 @@ static NSInteger const kMemberSection = 2;
 
 
 #pragma mark - UITableViewDataSource conformance
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    CGFloat height = 0.f;
-    
-    if (indexPath.section == kOrigoSection) {
-        height = [_origo cellHeight];
-    } else {
-        height = kDefaultTableViewCellHeight;
-    }
-    
-    return height;
-}
-
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {

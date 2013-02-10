@@ -185,12 +185,6 @@ static NSInteger const kUserRow = 0;
 }
 
 
-- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    return ([super hasFooterForSectionWithKey:sectionKey] && [[OMeta m].user isTeenOrOlder]);
-}
-
-
 #pragma mark - Segue handling
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -228,6 +222,12 @@ static NSInteger const kUserRow = 0;
         [self appendData:[_member residencies] toSectionWithKey:kUserSection];
         [self setData:[_member wards] forSectionWithKey:kWardSection];
     }
+}
+
+
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return ([super hasFooterForSectionWithKey:sectionKey] && [[OMeta m].user isTeenOrOlder]);
 }
 
 

@@ -15,6 +15,8 @@
 - (void)loadData;
 
 @optional
+- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
 - (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;

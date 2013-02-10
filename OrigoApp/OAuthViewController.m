@@ -167,7 +167,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
             [self toggleAuthState];
         } else if (self.state.targetIsEmail) {
-            [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+            [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
         }
     }
 }
@@ -255,7 +255,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [self registerNewDevice];
     }
     
-    [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+    [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
 }
 
 
@@ -316,7 +316,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathAuthInfo];
     
     if ([[OMeta m] userIsRegistered] && [[OMeta m].user isMinor]) {
-        [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+        [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
     } else {
         [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
     }
@@ -530,7 +530,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             if (self.state.targetIsMember) {
                 [self activateMembership];
             } else if (self.state.targetIsEmail) {
-                [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+                [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
             }
         } else {
             _repeatPasswordField.text = @"";
@@ -560,10 +560,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
 {
     if ([identitifier isEqualToString:kMemberListViewControllerId]) {
-        [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+        [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
     } else if ([identitifier isEqualToString:kMemberViewControllerId]) {
         if ([[OMeta m] userIsSignedIn]) {
-            [self.delegate dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+            [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
         } else {
             [self dismissViewControllerAnimated:YES completion:NULL];
             [self toggleAuthState];
@@ -581,7 +581,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         
         [OStrings.class didCompleteWithResponse:response data:data];
         [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:kKeyPathStringDate];
-        [(OTabBarController *)((UIViewController *)self.delegate).tabBarController setTabBarTitles];
+        [(OTabBarController *)((UIViewController *)self.dismisser).tabBarController setTabBarTitles];
         
         [self toggleAuthState];
     } else {
