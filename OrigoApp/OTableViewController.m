@@ -27,6 +27,18 @@
 
 #pragma mark - Auxiliary methods
 
+- (NSInteger)sectionNumberForSectionKey:(NSInteger)sectionKey
+{
+    return [_sectionKeys indexOfObject:@(sectionKey)];
+}
+
+
+- (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber
+{
+    return [_sectionKeys[sectionNumber] integerValue];
+}
+
+
 - (void)emphasiseInputField:(id)inputField
 {
     if (self.state.actionIsDisplay) {
@@ -65,13 +77,13 @@
         [OState s].actionIsSetup = YES;
     } else {
         if (self.shouldInitialise) {
-            [self loadState];
+            [_delegate loadState];
             
             if (_isModal && self.modalImpliesRegistration) {
                 _state.actionIsRegister = YES;
             }
             
-            [self loadData];
+            [_delegate loadData];
             
             for (NSNumber *sectionKey in [_sectionData allKeys]) {
                 _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
@@ -158,33 +170,9 @@
 }
 
 
-- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
-{
-    return ([self sectionNumberForSectionKey:sectionKey] > 0);
-}
-
-
-- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    return ([self sectionNumberForSectionKey:sectionKey] == [self.tableView numberOfSections] - 1);
-}
-
-
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey
 {
     return [_sectionCounts[@(sectionKey)] integerValue];
-}
-
-
-- (NSInteger)sectionNumberForSectionKey:(NSInteger)sectionKey
-{
-    return [_sectionKeys indexOfObject:@(sectionKey)];
-}
-
-
-- (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber
-{
-    return [_sectionKeys[sectionNumber] integerValue];
 }
 
 
@@ -300,6 +288,7 @@
     _entityClass = NSClassFromString([viewControllerName substringToIndex:[viewControllerName rangeOfString:@"ViewController"].location]);
     _entitySectionKey = NSNotFound;
     _state = [[OState alloc] init];
+    _delegate = self;
     
     _shouldInitialise = YES;
     _canEdit = NO;
@@ -341,7 +330,7 @@
     [self reflectState];
     
     if (_isPopped || _needsReloadData) {
-        [self loadData];
+        [_delegate loadData];
         [self reloadSectionsIfNeeded];
     }
 }
@@ -407,10 +396,10 @@
     destinationViewController.data = data;
     
     if ([meta isKindOfClass:OTableViewController.class]) {
-        destinationViewController.delegate = meta;
+        destinationViewController.dismisser = meta;
     } else {
         destinationViewController.meta = meta;
-        destinationViewController.delegate = self;
+        destinationViewController.dismisser = self;
     }
 }
 
@@ -426,6 +415,18 @@
 - (void)loadData
 {
     // Override in subclass
+}
+
+
+- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
+{
+    return ([self sectionNumberForSectionKey:sectionKey] > 0);
+}
+
+
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return ([self sectionNumberForSectionKey:sectionKey] == [self.tableView numberOfSections] - 1);
 }
 
 
@@ -522,7 +523,7 @@
 {
     CGFloat height = kDefaultPadding;
     
-    if ([self hasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
+    if ([_delegate hasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView standardHeaderHeight];
     }
     
@@ -534,7 +535,7 @@
 {
     CGFloat height = kDefaultPadding;
     
-    if ([self hasFooterForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
+    if ([_delegate hasFooterForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView standardFooterHeight];
     }
     
@@ -547,7 +548,7 @@
     NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     UIView *view = nil;
 
-    if ([self hasHeaderForSectionWithKey:sectionKey]) {
+    if ([_delegate hasHeaderForSectionWithKey:sectionKey]) {
         view = [tableView headerViewWithText:[self textForHeaderInSectionWithKey:sectionKey]];
     }
     
@@ -560,7 +561,7 @@
     NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     UIView *view = nil;
     
-    if ([self hasFooterForSectionWithKey:sectionKey]) {
+    if ([_delegate hasFooterForSectionWithKey:sectionKey]) {
         view = [tableView footerViewWithText:[self textForFooterInSectionWithKey:sectionKey]];
     }
     
@@ -580,10 +581,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (((OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath]).selectable) {
+    OTableViewCell *cell = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+    
+    if (cell.selectable) {
         _selectedIndexPath = indexPath;
         
-        [self didSelectRow:indexPath.row inSectionWithKey:[self sectionKeyForSectionNumber:indexPath.section]];
+        [_delegate didSelectRow:indexPath.row inSectionWithKey:[self sectionKeyForSectionNumber:indexPath.section]];
     }
 }
 

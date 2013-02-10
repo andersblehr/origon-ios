@@ -41,7 +41,7 @@ static NSInteger const kOrigoSection = 0;
 - (void)didCancelEditing
 {
     if (self.state.actionIsRegister) {
-        [self.delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId needsReloadData:NO];
+        [self.dismisser dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId needsReloadData:NO];
     } else {
         _addressView.text = _origo.address;
         _telephoneField.text = _origo.telephone;
@@ -66,7 +66,7 @@ static NSInteger const kOrigoSection = 0;
             
             if (_membership) {
                 _member.activeSince = [NSDate date];
-                [self.delegate dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
+                [self.dismisser dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
             } else {
                 if ([_origo isResidence]) {
                     _membership = [_origo addResident:_member];
@@ -119,7 +119,7 @@ static NSInteger const kOrigoSection = 0;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToMemberListView]) {
-        [self prepareForModalSegue:segue data:_membership meta:self.delegate];
+        [self prepareForModalSegue:segue data:_membership meta:self.dismisser];
     }
 }
 

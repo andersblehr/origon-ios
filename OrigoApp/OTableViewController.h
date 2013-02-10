@@ -37,10 +37,17 @@
     UIBarButtonItem *_nextButton;
     UIBarButtonItem *_doneButton;
     UIBarButtonItem *_cancelButton;
+    
+    id<OTableViewControllerDelegate> _delegate;
 }
 
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic, readonly) OReplicatedEntity *entity;
+
+@property (nonatomic, readonly) BOOL isPushed;
+@property (nonatomic, readonly) BOOL isPopped;
+@property (nonatomic, readonly) BOOL isModal;
+@property (nonatomic, readonly) BOOL wasHidden;
 
 @property (nonatomic) BOOL shouldInitialise;
 @property (nonatomic) BOOL canEdit;
@@ -49,14 +56,9 @@
 
 @property (strong, nonatomic) id data;
 @property (strong, nonatomic) id meta;
-@property (strong, nonatomic) id<OModalViewControllerDelegate> delegate;
+@property (strong, nonatomic) id<OModalViewControllerDelegate> dismisser;
 @property (strong, nonatomic) id<OEntityObservingDelegate> observer;
 @property (strong, nonatomic) OTableViewCell *detailCell;
-
-@property (nonatomic, readonly) BOOL isPushed;
-@property (nonatomic, readonly) BOOL isPopped;
-@property (nonatomic, readonly) BOOL isModal;
-@property (nonatomic, readonly) BOOL wasHidden;
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey;
