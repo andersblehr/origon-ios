@@ -27,6 +27,31 @@
 
 #pragma mark - Auxiliary methods
 
+- (void)initialise
+{
+    if (![OStrings hasStrings]) {
+        [OState s].actionIsSetup = YES;
+    } else {
+        if (self.shouldInitialise) {
+            [_delegate loadState];
+            
+            if (_isModal && self.modalImpliesRegistration) {
+                _state.actionIsRegister = YES;
+            }
+            
+            [_delegate loadData];
+            
+            for (NSNumber *sectionKey in [_sectionData allKeys]) {
+                _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
+            }
+            
+            _lastSectionKey = [_sectionKeys lastObject];
+            _didInitialise = YES;
+        }
+    }
+}
+
+
 - (NSInteger)sectionNumberForSectionKey:(NSInteger)sectionKey
 {
     return [_sectionKeys indexOfObject:@(sectionKey)];
@@ -69,34 +94,7 @@
 }
 
 
-#pragma mark - Initialisation
-
-- (void)initialise
-{
-    if (![OStrings hasStrings]) {
-        [OState s].actionIsSetup = YES;
-    } else {
-        if (self.shouldInitialise) {
-            [_delegate loadState];
-            
-            if (_isModal && self.modalImpliesRegistration) {
-                _state.actionIsRegister = YES;
-            }
-            
-            [_delegate loadData];
-            
-            for (NSNumber *sectionKey in [_sectionData allKeys]) {
-                _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
-            }
-            
-            _lastSectionKey = [_sectionKeys lastObject];
-            _didInitialise = YES;
-        }
-    }
-}
-
-
-#pragma mark - Section data management
+#pragma mark - Setting & accessing section data
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
@@ -343,7 +341,7 @@
     if (self.state.actionIsRegister) {
         [[self.detailCell nextInputFieldFromTextField:nil] becomeFirstResponder];
     } else if (self.detailCell) {
-        self.detailCell.editable = [self canEdit];
+        self.detailCell.editable = self.canEdit;
     }
 }
 
