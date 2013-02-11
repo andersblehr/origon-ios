@@ -177,7 +177,7 @@ static NSInteger const kUserRow = 0;
 }
 
 
-#pragma mark - Overrides
+#pragma mark - OTableViewController overrides
 
 - (BOOL)shouldInitialise
 {
@@ -185,7 +185,7 @@ static NSInteger const kUserRow = 0;
 }
 
 
-#pragma mark - Segue handling
+#pragma mark - UIViewController overrides
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {

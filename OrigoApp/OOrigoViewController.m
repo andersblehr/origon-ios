@@ -114,23 +114,7 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
-#pragma mark - Segue handling
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:kModalSegueToMemberListView]) {
-        [self prepareForModalSegue:segue data:_membership meta:self.dismisser];
-    }
-}
-
-
-#pragma mark - Overrides
-
-- (BOOL)hidesBottomBarWhenPushed
-{
-    return YES;
-}
-
+#pragma mark - OTableViewController overrides
 
 - (BOOL)canEdit
 {
@@ -147,6 +131,22 @@ static NSInteger const kOrigoSection = 0;
     }
     
     return cancelButton;
+}
+
+
+#pragma mark - UIViewController overrides
+
+- (BOOL)hidesBottomBarWhenPushed
+{
+    return YES;
+}
+
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:kModalSegueToMemberListView]) {
+        [self prepareForModalSegue:segue data:_membership meta:self.dismisser];
+    }
 }
 
 

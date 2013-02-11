@@ -385,21 +385,21 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - Segue handling
+#pragma mark - OTableViewController overrides
+
+- (BOOL)modalImpliesRegistration
+{
+    return NO;
+}
+
+
+#pragma mark - UIViewController overrides
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
         [self prepareForModalSegue:segue data:[[OMeta m].user initialResidency]];
     }
-}
-
-
-#pragma mark - Overrides
-
-- (BOOL)modalImpliesRegistration
-{
-    return NO;
 }
 
 

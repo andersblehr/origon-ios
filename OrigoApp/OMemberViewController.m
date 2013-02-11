@@ -274,7 +274,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)addAddress
+- (void)addResidence
 {
     [self performSegueWithIdentifier:kModalSegue2ToOrigoView sender:self];
 }
@@ -310,7 +310,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if (self.state.actionIsDisplay) {
         if ([self canEdit]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
-            self.navigationItem.rightBarButtonItem.action = @selector(addAddress);
+            self.navigationItem.rightBarButtonItem.action = @selector(addResidence);
         }
     }
 }
@@ -331,34 +331,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-#pragma mark - Segue handling
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
-        [self prepareForModalSegue:segue data:[_emailField finalText]];
-    } else if ([segue.identifier isEqualToString:kModalSegue1ToOrigoView]) {
-        [self prepareForModalSegue:segue data:_membership];
-    } else if ([segue.identifier isEqualToString:kModalSegue2ToOrigoView]) {
-        [self prepareForModalSegue:segue data:_member meta:kOrigoTypeResidence];
-    } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
-        if (self.state.actionIsRegister) {
-            [self prepareForPushSegue:segue data:_membership];
-            [segue.destinationViewController setDismisser:self.dismisser];
-        } else {
-            [self prepareForPushSegue:segue];
-        }
-    }
-}
-
-
-#pragma mark - Overrides
-
-- (BOOL)hidesBottomBarWhenPushed
-{
-    return YES;
-}
-
+#pragma mark - OTableViewController overrides
 
 - (BOOL)canEdit
 {
@@ -379,6 +352,33 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     return cancelButton;
+}
+
+
+#pragma mark - UIViewController overrides
+
+- (BOOL)hidesBottomBarWhenPushed
+{
+    return YES;
+}
+
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
+        [self prepareForModalSegue:segue data:[_emailField finalText]];
+    } else if ([segue.identifier isEqualToString:kModalSegue1ToOrigoView]) {
+        [self prepareForModalSegue:segue data:_membership];
+    } else if ([segue.identifier isEqualToString:kModalSegue2ToOrigoView]) {
+        [self prepareForModalSegue:segue data:_member meta:kOrigoTypeResidence];
+    } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
+        if (self.state.actionIsRegister) {
+            [self prepareForPushSegue:segue data:_membership];
+            [segue.destinationViewController setDismisser:self.dismisser];
+        } else {
+            [self prepareForPushSegue:segue];
+        }
+    }
 }
 
 
@@ -435,6 +435,32 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
 {
     [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
+}
+
+
+#pragma mark - OModalViewControllerDelegate conformance
+
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
+{
+    if ([identitifier isEqualToString:kAuthViewControllerId]) {
+        [super dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:NO];
+        
+        if ([_member.email isEqualToString:[_emailField finalText]]) {
+            [OMeta m].userEmail = _member.email;
+            [self updateMember];
+        } else {
+            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleEmailChangeFailed] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextEmailChangeFailed], [_emailField finalText]] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
+            [failedEmailChangeAlert show];
+            
+            [self toggleEditMode];
+            [_emailField becomeFirstResponder];
+        }
+    } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
+        [super dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:NO];
+        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
+    } else if ([identitifier isEqualToString:kMemberListViewControllerId]) {
+        [super dismissModalViewControllerWithIdentitifier:identitifier];
+    }
 }
 
 
@@ -495,32 +521,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             
         default:
             break;
-    }
-}
-
-
-#pragma mark - OModalViewControllerDelegate conformance
-
-- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
-{
-    if ([identitifier isEqualToString:kAuthViewControllerId]) {
-        [super dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:NO];
-        
-        if ([_member.email isEqualToString:[_emailField finalText]]) {
-            [OMeta m].userEmail = _member.email;
-            [self updateMember];
-        } else {
-            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleEmailChangeFailed] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextEmailChangeFailed], [_emailField finalText]] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
-            [failedEmailChangeAlert show];
-            
-            [self toggleEditMode];
-            [_emailField becomeFirstResponder];
-        }
-    } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
-        [super dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:NO];
-        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
-    } else if ([identitifier isEqualToString:kMemberListViewControllerId]) {
-        [super dismissModalViewControllerWithIdentitifier:identitifier];
     }
 }
 
