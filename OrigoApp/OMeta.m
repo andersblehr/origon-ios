@@ -49,6 +49,7 @@ NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
 NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
 NSString * const kIconFileInfant = @"76-baby_black.png";
 
+NSString * const kOrigoTypePrefix = @"origoType";
 NSString * const kOrigoTypeMemberRoot = @"origoTypeMemberRoot";
 NSString * const kOrigoTypeResidence = @"origoTypeResidence";
 NSString * const kOrigoTypeOrganisation = @"origoTypeOrganisation";

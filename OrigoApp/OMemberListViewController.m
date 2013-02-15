@@ -105,18 +105,16 @@ static NSInteger const kMemberSection = 2;
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)loadState
+- (void)digestInput
 {
     _membership = self.data;
     _origo = _membership.origo;
     
-    self.state.actionIsList = YES;
-    self.state.targetIsMember = YES;
-    self.state.aspectIsOrigo = YES;
+    self.aspectCarrier = _origo;
 }
 
 
-- (void)loadData
+- (void)populateDataSource
 {
     NSMutableSet *contactMemberships = [[NSMutableSet alloc] init];
     NSMutableSet *regularMemberships = [[NSMutableSet alloc] init];

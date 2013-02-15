@@ -96,6 +96,7 @@ extern NSString * const strPlaceholderName;
 extern NSString * const strPlaceholderEmail;
 extern NSString * const strPlaceholderDateOfBirth;
 extern NSString * const strPlaceholderMobilePhone;
+extern NSString * const strButtonNewAddress;
 extern NSString * const strButtonInviteToHousehold;
 extern NSString * const strButtonMergeHouseholds;
 extern NSString * const strAlertTitleMemberExists;

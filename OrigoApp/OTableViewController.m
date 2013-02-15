@@ -33,13 +33,21 @@
         [OState s].actionIsSetup = YES;
     } else {
         if (self.shouldInitialise) {
-            [_delegate loadState];
+            _state = [[OState alloc] initForViewController:self];
             
             if (_isModal && self.modalImpliesRegistration) {
                 _state.actionIsRegister = YES;
             }
             
-            [_delegate loadData];
+            [_delegate digestInput];
+            
+            if (_aspectCarrier) {
+                [_state setAspectForCarrier:_aspectCarrier];
+            }
+            
+            [[OState s] reflect:_state];
+            
+            [_delegate populateDataSource];
             
             for (NSNumber *sectionKey in [_sectionData allKeys]) {
                 _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
@@ -180,55 +188,13 @@
 }
 
 
-- (void)reloadSectionsIfNeeded
-{
-    NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
-    NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
-
-    for (NSNumber *sectionKey in [_sectionData allKeys]) {
-        NSInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
-        NSInteger oldSectionCount = [_sectionCounts[sectionKey] integerValue];
-        NSInteger newSectionCount = [_sectionData[sectionKey] count];
-        
-        if (oldSectionCount) {
-            if (newSectionCount && (newSectionCount != oldSectionCount)) {
-                [sectionsToReload addIndex:section];
-            } else if (!newSectionCount) {
-                [_sectionKeys removeObject:sectionKey];
-                [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
-            }
-        } else if (newSectionCount) {
-            [sectionsToInsert addIndex:section];
-        }
-        
-        _sectionCounts[sectionKey] = @(newSectionCount);
-    }
-
-    if (![_lastSectionKey isEqualToNumber:[_sectionKeys lastObject]]) {
-        if ([_sectionKeys containsObject:_lastSectionKey]) {
-            [sectionsToReload addIndex:[self sectionNumberForSectionKey:[_lastSectionKey integerValue]]];
-        }
-        
-        _lastSectionKey = [_sectionKeys lastObject];
-    }
-    
-    if ([sectionsToInsert count]) {
-        [self.tableView insertSections:sectionsToInsert withRowAnimation:UITableViewRowAnimationAutomatic];
-    }
-    
-    if ([sectionsToReload count]) {
-        [self.tableView reloadSections:sectionsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
-    }
-}
-
-
 #pragma mark - Utility methods
 
 - (void)reflectState
 {
     if (!_didInitialise) {
         [self initialise];
-    } else {
+    } else if (!_didJustLoad) {
         [[OState s] reflect:_state];
     }
 }
@@ -268,6 +234,50 @@
 }
 
 
+- (void)reloadSectionsIfNeeded
+{
+    [_delegate populateDataSource];
+    
+    NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
+    NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
+    
+    for (NSNumber *sectionKey in [_sectionData allKeys]) {
+        NSInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
+        NSInteger oldSectionCount = [_sectionCounts[sectionKey] integerValue];
+        NSInteger newSectionCount = [_sectionData[sectionKey] count];
+        
+        if (oldSectionCount) {
+            if (newSectionCount && (newSectionCount != oldSectionCount)) {
+                [sectionsToReload addIndex:section];
+            } else if (!newSectionCount) {
+                [_sectionKeys removeObject:sectionKey];
+                [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
+            }
+        } else if (newSectionCount) {
+            [sectionsToInsert addIndex:section];
+        }
+        
+        _sectionCounts[sectionKey] = @(newSectionCount);
+    }
+    
+    if (![_lastSectionKey isEqualToNumber:[_sectionKeys lastObject]]) {
+        if ([_sectionKeys containsObject:_lastSectionKey]) {
+            [sectionsToReload addIndex:[self sectionNumberForSectionKey:[_lastSectionKey integerValue]]];
+        }
+        
+        _lastSectionKey = [_sectionKeys lastObject];
+    }
+    
+    if ([sectionsToInsert count]) {
+        [self.tableView insertSections:sectionsToInsert withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+    
+    if ([sectionsToReload count]) {
+        [self.tableView reloadSections:sectionsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+}
+
+
 - (void)resumeFirstResponder
 {
     [_emphasisedField becomeFirstResponder];
@@ -285,7 +295,6 @@
     NSString *viewControllerName = NSStringFromClass(self.class);
     _entityClass = NSClassFromString([viewControllerName substringToIndex:[viewControllerName rangeOfString:@"ViewController"].location]);
     _entitySectionKey = NSNotFound;
-    _state = [[OState alloc] init];
     _delegate = self;
     
     _shouldInitialise = YES;
@@ -319,16 +328,15 @@
 {
     [super viewWillAppear:animated];
     
+    [self reflectState];
+    
     _wasHidden = _isHidden;
     _isHidden = NO;
     _isPushed = [self isMovingToParentViewController] || (_didJustLoad && !_isModal);
     _isPopped = (!_isPushed && !_isModal && !_wasHidden);
     _didJustLoad = NO;
     
-    [self reflectState];
-    
     if (_isPopped || _needsReloadData) {
-        [_delegate loadData];
         [self reloadSectionsIfNeeded];
     }
 }
@@ -404,13 +412,13 @@
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)loadState
+- (void)digestInput
 {
     // Override in subclass
 }
 
 
-- (void)loadData
+- (void)populateDataSource
 {
     // Override in subclass
 }

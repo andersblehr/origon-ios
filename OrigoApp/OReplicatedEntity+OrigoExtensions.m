@@ -210,24 +210,6 @@
 }
 
 
-- (NSString *)listName
-{
-    return [self listNameForState:[OState s]];
-}
-
-
-- (NSString *)listDetails
-{
-    return [self listDetailsForState:[OState s]];
-}
-
-
-- (UIImage *)listImage
-{
-    return [self listImageForState:[OState s]];
-}
-
-
 - (NSString *)listNameForState:(OState *)state
 {
     return @"BROKEN: Plase override in subclass";

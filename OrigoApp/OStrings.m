@@ -106,6 +106,7 @@ NSString * const strPlaceholderName                  = @"strPlaceholderName";
 NSString * const strPlaceholderEmail                 = @"strPlaceholderEmail";
 NSString * const strPlaceholderDateOfBirth           = @"strPlaceholderDateOfBirth";
 NSString * const strPlaceholderMobilePhone           = @"strPlaceholderMobilePhone";
+NSString * const strButtonNewAddress                 = @"strButtonNewAddress";
 NSString * const strButtonInviteToHousehold          = @"strButtonInviteToHousehold";
 NSString * const strButtonMergeHouseholds            = @"strButtonMergeHouseholds";
 NSString * const strAlertTitleMemberExists           = @"strAlertTitleMemberExists";

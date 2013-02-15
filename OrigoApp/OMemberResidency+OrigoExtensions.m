@@ -21,7 +21,6 @@
 
 @implementation OMemberResidency (OrigoExtensions)
 
-
 #pragma mark - OReplicateEntity (OReplicateEntityExtentions) overrides
 
 - (void)internaliseRelationships
@@ -59,7 +58,7 @@
 {
     NSString *listName = nil;
     
-    if (state.actionIsList && state.targetIsOrigo) {
+    if (state.viewIsOrigoList) {
         listName = [self.origo listNameForState:state];
     } else {
         listName = [super listNameForState:state];
@@ -73,7 +72,7 @@
 {
     NSString *listDetails = nil;
     
-    if (state.actionIsList && state.targetIsOrigo) {
+    if (state.viewIsOrigoList) {
         listDetails = [self.origo listDetailsForState:state];
     } else {
         listDetails = [super listDetailsForState:state];
@@ -87,7 +86,7 @@
 {
     UIImage *listImage = nil;
     
-    if (state.actionIsList && state.targetIsOrigo) {
+    if (state.viewIsOrigoList) {
         listImage = [self.origo listImageForState:state];
     } else {
         listImage = [super listImageForState:state];

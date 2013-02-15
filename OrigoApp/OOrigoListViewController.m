@@ -194,7 +194,7 @@ static NSInteger const kUserRow = 0;
     } else if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
         [self prepareForModalSegue:segue data:[_member initialResidency]];
     } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
-        [self prepareForModalSegue:segue data:_member];
+        [self prepareForModalSegue:segue data:_member meta:_selectedOrigoType];
     } else {
         [self prepareForPushSegue:segue];
     }
@@ -203,17 +203,15 @@ static NSInteger const kUserRow = 0;
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)loadState
+- (void)digestInput
 {
     _member = self.data ? self.data : [OMeta m].user;
     
-    self.state.actionIsList = YES;
-    self.state.targetIsOrigo = YES;
-    [self.state setAspectForMember:_member];
+    self.aspectCarrier = _member;
 }
 
 
-- (void)loadData
+- (void)populateDataSource
 {
     [self setData:[_member origoMemberships] forSectionWithKey:kOrigoSection];
     
@@ -222,6 +220,12 @@ static NSInteger const kUserRow = 0;
         [self appendData:[_member residencies] toSectionWithKey:kUserSection];
         [self setData:[_member wards] forSectionWithKey:kWardSection];
     }
+}
+
+
+- (id)aspectCarrier
+{
+    return _member;
 }
 
 
@@ -264,18 +268,6 @@ static NSInteger const kUserRow = 0;
 }
 
 
-#pragma mark - UIActionSheetDelegate conformance
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex != actionSheet.cancelButtonIndex) {
-        _indexOfSelectedOrigoType = buttonIndex;
-        
-        [self performSegueWithIdentifier:kModalSegueToOrigoView sender:self];
-    }
-}
-
-
 #pragma mark - OModalViewControllerDelegate conformance
 
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
@@ -290,6 +282,18 @@ static NSInteger const kUserRow = 0;
         }
     } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
         
+    }
+}
+
+
+#pragma mark - UIActionSheetDelegate conformance
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex != actionSheet.cancelButtonIndex) {
+        _selectedOrigoType = _origoTypes[buttonIndex];
+        
+        [self performSegueWithIdentifier:kModalSegueToOrigoView sender:self];
     }
 }
 

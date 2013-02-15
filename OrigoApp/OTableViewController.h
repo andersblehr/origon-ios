@@ -56,6 +56,7 @@
 
 @property (strong, nonatomic) id data;
 @property (strong, nonatomic) id meta;
+@property (strong, nonatomic) id aspectCarrier;
 @property (strong, nonatomic) id<OModalViewControllerDelegate> dismisser;
 @property (strong, nonatomic) id<OEntityObservingDelegate> observer;
 @property (strong, nonatomic) OTableViewCell *detailCell;
@@ -78,6 +79,7 @@
 
 - (void)reflectState;
 - (void)toggleEditMode;
+- (void)reloadSectionsIfNeeded;
 - (void)resumeFirstResponder;
 
 @end

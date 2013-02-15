@@ -12,6 +12,7 @@
 #import "OState.h"
 
 #import "OMember+OrigoExtensions.h"
+#import "OMemberResidency.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 
@@ -26,7 +27,7 @@
 }
 
 
-#pragma mark - OReplicateEntity (OReplicateEntityExtentions) overrides
+#pragma mark - OReplicatedEntity+OrigoExtensions overrides
 
 - (void)makeGhost
 {
@@ -39,15 +40,24 @@
 }
 
 
-#pragma mark - OReplicatedEntity+OrigoExtensions overrides
+- (void)internaliseRelationships
+{
+    [super internaliseRelationships];
+
+    if (self.associateMember) {
+        self.associateOrigo = self.origo;
+        self.origo = nil;
+    }
+}
+
 
 - (NSString *)listNameForState:(OState *)state
 {
     NSString *listName = nil;
     
-    if (state.actionIsList) {
+    if (state.viewIsMemberList || state.viewIsOrigoList) {
         listName = [self.member listNameForState:state];
-    } else if (state.actionIsDisplay && state.targetIsMember) {
+    } else if (state.viewIsMemberDetail) {
         listName = [self.origo listNameForState:state];
     }
     
@@ -59,7 +69,7 @@
 {
     NSString *listDetails = nil;
     
-    if (state.actionIsList) {
+    if (state.viewIsMemberList || state.viewIsOrigoList) {
         listDetails = [self.member listDetailsForState:state];
     }
     
@@ -71,9 +81,9 @@
 {
     UIImage *listImage = nil;
     
-    if (state.actionIsList) {
+    if (state.viewIsMemberList || state.viewIsOrigoList) {
         listImage = [self.member listImageForState:state];
-    } else if (state.actionIsDisplay && state.targetIsMember) {
+    } else if (state.viewIsMemberDetail) {
         listImage = [self.origo listImageForState:state];
     }
     
@@ -85,28 +95,15 @@
 
 - (NSComparisonResult)compare:(OMembership *)other
 {
-    NSComparisonResult comparisonResult = NSOrderedSame;
+    NSComparisonResult result = NSOrderedSame;
 
-    if ([OState s].targetIsMember) {
-        comparisonResult = [self.member.name localizedCaseInsensitiveCompare:other.member.name];
-        
-        if ([self.origo isResidence]) {
-            BOOL thisMemberIsMinor = [self.member isMinor];
-            BOOL otherMemberIsMinor = [other.member isMinor];
-            
-            if ([self.origo isResidence] && (thisMemberIsMinor != otherMemberIsMinor)) {
-                if (thisMemberIsMinor && !otherMemberIsMinor) {
-                    comparisonResult = NSOrderedDescending;
-                } else {
-                    comparisonResult = NSOrderedAscending;
-                }
-            }
-        }
-    } else if ([OState s].targetIsOrigo) {
-        comparisonResult = [self.origo.name localizedCaseInsensitiveCompare:other.origo.name];
+    if ([OState s].viewIsMemberList) {
+        result = [self.member compare:other.member];
+    } else if ([OState s].viewIsOrigoList || [OState s].viewIsMemberDetail) {
+        result = [self.origo compare:other.origo];
     }
 
-    return comparisonResult;
+    return result;
 }
 
 @end

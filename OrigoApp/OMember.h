@@ -2,8 +2,8 @@
 //  OMember.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 13.12.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 14.02.13.
+//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -32,6 +32,7 @@
 @property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @property (nonatomic, retain) NSSet *toDoAssignments;
+@property (nonatomic, retain) NSSet *associateMemberships;
 @end
 
 @interface OMember (CoreDataGeneratedAccessors)
@@ -80,5 +81,10 @@
 - (void)removeToDoAssignmentsObject:(OToDoAssignment *)value;
 - (void)addToDoAssignments:(NSSet *)values;
 - (void)removeToDoAssignments:(NSSet *)values;
+
+- (void)addAssociateMembershipsObject:(OMembership *)value;
+- (void)removeAssociateMembershipsObject:(OMembership *)value;
+- (void)addAssociateMemberships:(NSSet *)values;
+- (void)removeAssociateMemberships:(NSSet *)values;
 
 @end

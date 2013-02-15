@@ -48,12 +48,14 @@ static NSInteger const kGenderSheetTag = 0;
 static NSInteger const kGenderSheetButtonFemale = 0;
 static NSInteger const kGenderSheetButtonCancel = 2;
 
-static NSInteger const kExistingResidenceSheetTag = 1;
+static NSInteger const kAddressReuseSheetTag = 1;
+
+static NSInteger const kExistingResidenceSheetTag = 2;
 static NSInteger const kExistingResidenceButtonInviteToHousehold = 0;
 static NSInteger const kExistingResidenceButtonMergeHouseholds = 1;
 static NSInteger const kExistingResidenceButtonCancel = 2;
 
-static NSInteger const kEmailChangeAlertTag = 2;
+static NSInteger const kEmailChangeAlertTag = 3;
 static NSInteger const kEmailChangeButtonContinue = 1;
 
 
@@ -83,7 +85,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 emailIsEligible = NO;
             } else {
                 _mobilePhoneField.text = _candidate.mobilePhone;
-                [_dateOfBirthPicker setDate:_candidate.dateOfBirth animated:YES];
+                _dateOfBirthField.date = _candidate.dateOfBirth;
                 _dateOfBirthField.text = [_candidate.dateOfBirth localisedDateString];
                 _gender = _candidate.gender;
                 
@@ -123,7 +125,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)updateMember
 {
     _member.name = [_nameField finalText];
-    _member.dateOfBirth = _dateOfBirthPicker.date;
+    _member.dateOfBirth = [_dateOfBirthField date];
     _member.mobilePhone = [_mobilePhoneField finalText];
     _member.email = [_emailField finalText];
     
@@ -152,7 +154,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     NSString *femaleLabel = nil;
     NSString *maleLabel = nil;
     
-    if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
+    if ([_dateOfBirthField.date isBirthDateOfMinor]) {
         if (self.state.aspectIsSelf) {
             sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
         } else {
@@ -174,7 +176,27 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     
     UIActionSheet *genderSheet = [[UIActionSheet alloc] initWithTitle:sheetQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:femaleLabel, maleLabel, nil];
     genderSheet.tag = kGenderSheetTag;
+    
     [genderSheet showInView:self.view];
+}
+
+
+- (void)promptForAddressReuse:(NSSet *)housemateResidences
+{
+    _candidateResidences = [housemateResidences sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:kKeyPathAddress ascending:YES]]];
+    
+    UIActionSheet *residenceSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    
+    for (OOrigo *residence in _candidateResidences) {
+        [residenceSheet addButtonWithTitle:[residence.address lines][0]];
+    }
+    
+    [residenceSheet addButtonWithTitle:[OStrings stringForKey:strButtonNewAddress]];
+    [residenceSheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
+    residenceSheet.cancelButtonIndex = [housemateResidences count] + 1;
+    residenceSheet.tag = kAddressReuseSheetTag;
+    
+    [residenceSheet showInView:self.view];
 }
 
 
@@ -184,6 +206,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     
     UIActionSheet *existingResidenceSheet = [[UIActionSheet alloc] initWithTitle:sheetQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonInviteToHousehold], [OStrings stringForKey:strButtonMergeHouseholds], nil];
     existingResidenceSheet.tag = kExistingResidenceSheetTag;
+    
     [existingResidenceSheet showInView:self.view];
 }
 
@@ -192,6 +215,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     UIAlertView *emailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleUserEmailChange] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextUserEmailChange], _member.email, [_emailField finalText]] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
     emailChangeAlert.tag = kEmailChangeAlertTag;
+    
     [emailChangeAlert show];
 }
 
@@ -203,12 +227,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 
 #pragma mark - Selector implementations
-
-- (void)dateOfBirthDidChange
-{
-    _dateOfBirthField.text = [_dateOfBirthPicker.date localisedDateString];
-}
-
 
 - (void)didCancelEditing
 {
@@ -229,10 +247,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     BOOL inputIsValid = ([_nameField holdsValidName] && [_dateOfBirthField holdsValidDate]);
     
     if (inputIsValid) {
-        if (self.state.aspectIsSelf || ![_dateOfBirthPicker.date isBirthDateOfMinor]) {
+        if (self.state.aspectIsSelf || ![_dateOfBirthField.date isBirthDateOfMinor]) {
             inputIsValid = inputIsValid && [self emailIsEligible];
             inputIsValid = inputIsValid && [_mobilePhoneField holdsValidPhoneNumber];
-        } else if ([_dateOfBirthPicker.date isBirthDateOfMinor]) {
+        } else if ([_dateOfBirthField.date isBirthDateOfMinor]) {
             if ([[_emailField finalText] length] > 0) {
                 inputIsValid = inputIsValid && [_emailField holdsValidEmail];
             }
@@ -276,7 +294,13 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)addResidence
 {
-    [self performSegueWithIdentifier:kModalSegue2ToOrigoView sender:self];
+    NSSet *housemateResidences = [_member housemateResidences];
+    
+    if ([housemateResidences count] > 0) {
+        [self promptForAddressReuse:housemateResidences];
+    } else {
+        [self performSegueWithIdentifier:kModalSegue2ToOrigoView sender:self];
+    }
 }
 
 
@@ -322,7 +346,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     
     _nameField = [self.detailCell textFieldForKeyPath:kKeyPathName];
     _dateOfBirthField = [self.detailCell textFieldForKeyPath:kKeyPathDateOfBirth];
-    _dateOfBirthPicker = (UIDatePicker *)_dateOfBirthField.inputView;
     _mobilePhoneField = [self.detailCell textFieldForKeyPath:kKeyPathMobilePhone];
     _emailField = [self.detailCell textFieldForKeyPath:kKeyPathEmail];
     _gender = _member.gender;
@@ -384,7 +407,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)loadState
+- (void)digestInput
 {
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
@@ -394,13 +417,11 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         _origo = self.data;
     }
     
-    self.state.targetIsMember = YES;
-    self.state.actionIsDisplay = YES;
-    [self.state setAspectForMember:_member];
+    self.aspectCarrier = _member ? _member : _origo;
 }
 
 
-- (void)loadData
+- (void)populateDataSource
 {
     [self setData:_member forSectionWithKey:kMemberSection];
     
@@ -475,6 +496,16 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 [self registerMember];
             } else {
                 [self resumeFirstResponder];
+            }
+            
+            break;
+            
+        case kAddressReuseSheetTag:
+            if (buttonIndex == actionSheet.numberOfButtons - 2) {
+                [self performSegueWithIdentifier:kModalSegue2ToOrigoView sender:self];
+            } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
+                [_candidateResidences[buttonIndex] addResident:_member];
+                [self reloadSectionsIfNeeded];
             }
             
             break;

@@ -81,6 +81,7 @@
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="passwordHash" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
+        <relationship name="associateMemberships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OMembership" inverseName="associateMember" inverseEntity="OMembership" syncable="YES"/>
         <relationship name="contactForEvents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OEvent" inverseName="eventContacts" inverseEntity="OEvent" syncable="YES"/>
         <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ODevice" inverseName="member" inverseEntity="ODevice" syncable="YES"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ODocument" inverseName="author" inverseEntity="ODocument" syncable="YES"/>
@@ -110,8 +111,10 @@
         <attribute name="contactType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isActive" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isAdmin" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <relationship name="member" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="memberships" inverseEntity="OMember" syncable="YES"/>
-        <relationship name="origo" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OOrigo" inverseName="memberships" inverseEntity="OOrigo" syncable="YES"/>
+        <relationship name="associateMember" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="associateMemberships" inverseEntity="OMember" syncable="YES"/>
+        <relationship name="associateOrigo" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OOrigo" inverseName="associateMemberships" inverseEntity="OOrigo" syncable="YES"/>
+        <relationship name="member" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="memberships" inverseEntity="OMember" syncable="YES"/>
+        <relationship name="origo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OOrigo" inverseName="memberships" inverseEntity="OOrigo" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="no"/>
         </userInfo>
@@ -150,6 +153,7 @@
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="telephone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
+        <relationship name="associateMemberships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OMembership" inverseName="associateOrigo" inverseEntity="OMembership" syncable="YES"/>
         <relationship name="documentRepositories" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ODocumentRepository" inverseName="origo" inverseEntity="ODocumentRepository" syncable="YES"/>
         <relationship name="eventInvitations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OEventOrigoInvitation" inverseName="origo" inverseEntity="OEventOrigoInvitation" syncable="YES"/>
         <relationship name="hostingEvents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="OEvent" inverseName="hostingOrigos" inverseEntity="OEvent" syncable="YES"/>
@@ -175,7 +179,6 @@
         <attribute name="origoId" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="OReplicatedEntityRef" representedClassName="OReplicatedEntityRef" parentEntity="OReplicatedEntity" syncable="YES">
-        <attribute name="memberProxyId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="referencedEntityId" attributeType="String" syncable="YES"/>
         <attribute name="referencedEntityOrigoId" attributeType="String" syncable="YES"/>
         <userInfo>
@@ -247,15 +250,15 @@
         <element name="OEventInvitation" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OEventOrigoInvitation" positionX="0" positionY="0" width="128" height="90"/>
         <element name="OExternalDocument" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="OMember" positionX="0" positionY="0" width="128" height="315"/>
+        <element name="OMember" positionX="0" positionY="0" width="128" height="330"/>
         <element name="OMemberResidency" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="OMembership" positionX="0" positionY="0" width="128" height="135"/>
+        <element name="OMembership" positionX="0" positionY="0" width="128" height="165"/>
         <element name="OMessageBoard" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OMessageItem" positionX="0" positionY="0" width="128" height="120"/>
         <element name="OMessageThread" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OOrigo" positionX="0" positionY="0" width="128" height="285"/>
+        <element name="OOrigo" positionX="0" positionY="0" width="128" height="300"/>
         <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="165"/>
-        <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
         <element name="OScheduledAbsence" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OScheduledBreak" positionX="0" positionY="0" width="128" height="90"/>
         <element name="OToDoAssignment" positionX="0" positionY="0" width="128" height="105"/>

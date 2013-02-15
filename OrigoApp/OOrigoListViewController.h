@@ -18,7 +18,7 @@
     OMember *_member;
     
     NSMutableArray *_origoTypes;
-    NSInteger _indexOfSelectedOrigoType;
+    NSString *_selectedOrigoType;
 }
 
 @end

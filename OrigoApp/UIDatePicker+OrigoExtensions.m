@@ -35,8 +35,7 @@ static int const kMaximumRealisticAge = 100;
 {
     NSDate *now = [NSDate date];
     
-    if ([OState s].actionIsRegister &&
-        [OState s].targetIsMember && [OState s].aspectIsSelf) {
+    if ([OState s].viewIsMemberDetail && [OState s].actionIsRegister && [OState s].aspectIsSelf) {
         NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
         latestBirthDateOffset.year = -kMinimumRealisticAge;
         
