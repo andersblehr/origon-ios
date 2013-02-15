@@ -32,6 +32,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 @implementation OTextField
 
+@synthesize date = _date;
+
+
 #pragma mark - Auxiliary methods
 
 - (void)configureForKeyPath:(NSString *)keyPath
@@ -48,7 +51,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         self.autocapitalizationType = UITextAutocapitalizationTypeWords;
     } else if ([keyPath isEqualToString:kKeyPathDateOfBirth]) {
         UIDatePicker *datePicker = [OMeta m].sharedDatePicker;
-        [datePicker addTarget:self.delegate action:@selector(dateOfBirthDidChange) forControlEvents:UIControlEventValueChanged];
+        [datePicker addTarget:self action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
         
         self.inputView = datePicker;
     } else if ([keyPath isEqualToString:kKeyPathMobilePhone]) {
@@ -84,6 +87,17 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
+#pragma mark - Selector implementations
+
+- (void)didPickDate
+{
+    self.date = ((UIDatePicker *)self.inputView).date;
+    self.text = [_date localisedDateString];
+    
+    _didPickDate = YES;
+}
+
+
 #pragma mark - Initialisation
 
 - (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate
@@ -92,7 +106,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     
     if (self) {
         _containingCell = cell;
-        _isTitle = ([keyPath isEqualToString:kKeyPathName] && [OState s].targetIsMember);
+        _isTitle = ([keyPath isEqualToString:kKeyPathName] && [OState s].viewIsMemberDetail);
         
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -182,10 +196,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidDate
 {
-    if (!_hasHadEmphasis) {
-        [self synchroniseInputView];
-    }
-    
     BOOL isValid = ([self.text length] > 0);
     
     if (!isValid) {
@@ -196,7 +206,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-#pragma mark - Final text cleanup
+#pragma mark - Text clean-up
 
 - (NSString *)finalText
 {
@@ -212,6 +222,28 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Accessor overrides
 
+- (NSDate *)date
+{
+    if ([self.inputView isKindOfClass:UIDatePicker.class]) {
+        if (_didPickDate) {
+            _date = ((UIDatePicker *)self.inputView).date;
+        } else {
+            _date = [_containingCell.entity valueForKey:_keyPath];
+        }
+    }
+    
+    return _date;
+}
+
+
+- (void)setDate:(NSDate *)dateValue
+{
+    _date = dateValue;
+    
+    self.text = [dateValue localisedDateString];
+}
+
+
 - (void)setHasEmphasis:(BOOL)hasEmphasis
 {
     _hasEmphasis = hasEmphasis;
@@ -224,9 +256,15 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
             [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
         }
         
-        [self synchroniseInputView];
-        
-        _hasHadEmphasis = YES;
+        if ([self.inputView isKindOfClass:UIDatePicker.class] && !_didPickDate) {
+            id value = [_containingCell.entity valueForKey:_keyPath];
+            
+            if (value) {
+                ((UIDatePicker *)self.inputView).date = value;
+            } else {
+                [(UIDatePicker *)self.inputView setToDefaultDate];
+            }
+        }
     } else {
         self.text = [self finalText];
         self.backgroundColor = [UIColor clearColor];

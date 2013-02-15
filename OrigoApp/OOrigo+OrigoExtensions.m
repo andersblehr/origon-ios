@@ -21,57 +21,12 @@
 #import "OMember+OrigoExtensions.h"
 #import "OMemberResidency.h"
 #import "OMembership+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 
 @implementation OOrigo (OrigoExtensions)
 
 #pragma mark - Auxiliary methods
-
-- (OMembership *)membershipForMember:(OMember *)member
-{
-    OMembership *membershipForMember = nil;
-    
-    for (OMembership *membership in self.memberships) {
-        if (!membershipForMember) {
-            if ([membership.member.entityId isEqualToString:member.entityId]) {
-                membershipForMember = membership;
-            }
-        }
-    }
-    
-    return membershipForMember;
-}
-
-
-- (void)createLocalEntityRefsForMember:(OMember *)member
-{
-    [[OMeta m].context insertEntityRefForEntity:member inOrigo:self];
-    
-    for (OMemberResidency *residency in member.residencies) {
-        if (residency.residence != self) {
-            [[OMeta m].context insertEntityRefForEntity:residency inOrigo:self];
-            [[OMeta m].context insertEntityRefForEntity:residency.residence inOrigo:self];
-        }
-    }
-}
-
-
-- (void)createEntityRefsForMember:(OMember *)member
-{
-    [self createLocalEntityRefsForMember:member];
-    
-    if ([self isResidence]) {
-        for (OMember *housemate in [member housemates]) {
-            for (OMemberResidency *peerResidency in housemate.residencies) {
-                if ((peerResidency.residence != self) && (peerResidency.resident != member)) {
-                    [self createLocalEntityRefsForMember:peerResidency.resident];
-                    [peerResidency.residence createLocalEntityRefsForMember:member];
-                }
-            }
-        }
-    }
-}
-
 
 - (NSString *)singleLineAddress
 {
@@ -83,31 +38,105 @@
 }
 
 
-#pragma mark - Adding members
+- (OMembership *)membershipForMember:(OMember *)member
+{
+    OMembership *membershipForMember = nil;
+    
+    for (OMembership *membership in self.memberships) {
+        if (!membershipForMember && (membership.member == member)) {
+            membershipForMember = membership;
+        }
+    }
+    
+    if (!membershipForMember) {
+        for (OMembership *associateMembership in self.associateMemberships) {
+            if (!membershipForMember && (associateMembership.associateMember == member)) {
+                membershipForMember = associateMembership;
+            }
+        }
+    }
+    
+    return membershipForMember;
+}
 
-- (id)addMember:(OMember *)member
+
+- (void)createEntityRefsForMembership:(OMembership *)membership isAssociate:(BOOL)isAssociate
+{
+    OMember *member = isAssociate ? membership.associateMember : membership.member;
+    
+    [[OMeta m].context insertEntityRefForEntity:member inOrigo:self];
+    
+    for (OMemberResidency *residency in member.residencies) {
+        if (residency.residence != self) {
+            [[OMeta m].context insertEntityRefForEntity:residency inOrigo:self];
+            [[OMeta m].context insertEntityRefForEntity:residency.residence inOrigo:self];
+        }
+    }
+    
+    if ([self isResidence] && !isAssociate) {
+        for (OMemberResidency *residency in member.residencies) {
+            if (residency.residence != self) {
+                [[OMeta m].context insertEntityRefForEntity:membership inOrigo:residency.residence];
+                [[OMeta m].context insertEntityRefForEntity:membership.origo inOrigo:residency.residence];
+            }
+        }
+        
+        for (OMember *housemate in [member housemates]) {
+            for (OMemberResidency *peerResidency in housemate.residencies) {
+                if (peerResidency != membership) {
+                    if (![self hasAssociateMember:peerResidency.resident]) {
+                        [self addMember:peerResidency.resident isAssociate:YES];
+                    }
+                    
+                    if (![peerResidency.residence hasAssociateMember:member]) {
+                        [peerResidency.residence addMember:member isAssociate:YES];
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+- (id)addMember:(OMember *)member isAssociate:(BOOL)isAssociate
 {
     OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self];
-    membership.member = member;
-    membership.origo = self;
     
-    if (![self.type isEqualToString:kOrigoTypeMemberRoot]) {
-        [self createEntityRefsForMember:member];
+    if (isAssociate) {
+        membership.associateMember = member;
+        membership.associateOrigo = membership.origo;
+        membership.origo = nil;
+    } else {
+        membership.member = member;
+    }
+    
+    if (![self isMemberRoot]) {
+        [self createEntityRefsForMembership:membership isAssociate:isAssociate];
     }
     
     return membership;
 }
 
 
+#pragma mark - Adding members
+
+- (id)addMember:(OMember *)member
+{
+    return [self addMember:member isAssociate:NO];
+}
+
+
 - (id)addResident:(OMember *)resident
 {
-    OMemberResidency *residency = [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self];
-    residency.resident = resident;
-    residency.residence = self;
-    residency.member = resident;
-    residency.origo = self;
+    OMemberResidency *residency = [self isResidence] ? [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self] : nil;
     
-    [self createEntityRefsForMember:resident];
+    if (residency) {
+        residency.member = resident;
+        residency.resident = resident;
+        residency.residence = residency.origo;
+        
+        [self createEntityRefsForMembership:residency isAssociate:NO];
+    }
     
     return residency;
 }
@@ -146,9 +175,7 @@
     BOOL hasAdmin = NO;
     
     for (OMembership *membership in self.memberships) {
-        if (!hasAdmin) {
-            hasAdmin = ([membership.isAdmin boolValue] && [membership.isActive boolValue]);
-        }
+        hasAdmin = hasAdmin || [membership.isAdmin boolValue];
     }
     
     return hasAdmin;
@@ -156,6 +183,12 @@
 
 
 - (BOOL)hasMember:(OMember *)member
+{
+    return ([self membershipForMember:member].member != nil);
+}
+
+
+- (BOOL)hasAssociateMember:(OMember *)member
 {
     return ([self membershipForMember:member] != nil);
 }
@@ -173,7 +206,7 @@
 }
 
 
-#pragma mark - Table view cell height calculation
+#pragma mark - OReplicatedEntity+OrigoExtensions overrides
 
 + (CGFloat)defaultCellHeight
 {
@@ -211,15 +244,13 @@
 }
 
 
-#pragma mark - OReplicatedEntity+OrigoExtensions overrides
-
 - (NSString *)listNameForState:(OState *)state
 {
     NSString *listName = nil;
     
-    if (state.targetIsOrigo) {
+    if (state.viewIsOrigoList) {
         listName = self.name;
-    } else if (state.targetIsMember) {
+    } else if (state.viewIsMemberDetail) {
         listName = [self.address lines][0];
     }
     
@@ -231,7 +262,7 @@
 {
     NSString *listDetails = nil;
     
-    if (state.targetIsOrigo) {
+    if (state.viewIsOrigoList) {
         if ([self isResidence]) {
             listDetails = [self singleLineAddress];
         } else {
@@ -263,15 +294,15 @@
 
 - (NSComparisonResult)compare:(OOrigo *)other
 {
-    NSComparisonResult comparisonResult = NSOrderedSame;
+    NSComparisonResult result = NSOrderedSame;
     
-    if ([self.residencies count] > 0) {
-        comparisonResult = [self.address localizedCaseInsensitiveCompare:other.address];
+    if ([self isResidence]) {
+        result = [self.address localizedCaseInsensitiveCompare:other.address];
     } else {
-        comparisonResult = [self.name localizedCaseInsensitiveCompare:other.name];
+        result = [self.name localizedCaseInsensitiveCompare:other.name];
     }
     
-    return comparisonResult;
+    return result;
 }
 
 @end

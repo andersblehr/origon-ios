@@ -157,7 +157,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
         
         [self deleteObject:[member entityRefForOrigo:origo]];
         
-        if ([OState s].targetIsOrigo) {
+        if ([OState s].viewIsMemberList) {
             BOOL shouldDeleteMember = NO;
             
             if ([origo isResidence]) {
@@ -189,7 +189,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
                 
                 [self deleteEntityAsNeeded:member isGhost:isGhost];
             }
-        } else if ([OState s].targetIsMember) {
+        } else if ([OState s].viewIsMemberDetail) {
             if ([origo isResidence] && ([origo.residencies count] == 1)) {
                 [self deleteEntityAsNeeded:origo isGhost:isGhost];
             }
@@ -259,18 +259,16 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 
 - (id)insertEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo
 {
+    if (!entity) {
+        OLogDebug(@"Entity is nil!");
+    }
+    
     OReplicatedEntityRef *entityRef = [entity entityRefForOrigo:origo];
     
     if (!entityRef) {
         entityRef = [self insertEntityForClass:OReplicatedEntityRef.class inOrigo:origo entityId:[entity entityRefIdForOrigo:origo]];
         entityRef.referencedEntityId = entity.entityId;
         entityRef.referencedEntityOrigoId = entity.origoId;
-        
-        if ([entity isKindOfClass:OMember.class]) {
-            OMember *member = (OMember *)entity;
-            
-            entityRef.memberProxyId = member.email ? member.email : member.entityId;
-        }
     }
     
     return entityRef;

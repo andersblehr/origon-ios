@@ -313,7 +313,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)toggleEditMode
 {
-    [self.viewState toggleEdit];
+    [self.viewState toggleEditAction];
     
     self.editing = (self.viewState.actionIsEdit || _editable);
 }
@@ -398,9 +398,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if ([self isListCell]) {
         _selectable = YES;
         
-        self.textLabel.text = [_entity listName];
-        self.detailTextLabel.text = [_entity listDetails];
-        self.imageView.image = [_entity listImage];
+        self.textLabel.text = [_entity listNameForState:[OState s]];
+        self.detailTextLabel.text = [_entity listDetailsForState:[OState s]];
+        self.imageView.image = [_entity listImageForState:[OState s]];
         
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }

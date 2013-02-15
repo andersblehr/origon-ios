@@ -2,8 +2,8 @@
 //  OOrigo.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 15.11.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 14.02.13.
+//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -30,6 +30,7 @@
 @property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *subOrigos;
 @property (nonatomic, retain) OYearlySchedule *yearlySchedule;
+@property (nonatomic, retain) NSSet *associateMemberships;
 @end
 
 @interface OOrigo (CoreDataGeneratedAccessors)
@@ -73,5 +74,10 @@
 - (void)removeSubOrigosObject:(OOrigo *)value;
 - (void)addSubOrigos:(NSSet *)values;
 - (void)removeSubOrigos:(NSSet *)values;
+
+- (void)addAssociateMembershipsObject:(OMembership *)value;
+- (void)removeAssociateMembershipsObject:(OMembership *)value;
+- (void)addAssociateMemberships:(NSSet *)values;
+- (void)removeAssociateMemberships:(NSSet *)values;
 
 @end

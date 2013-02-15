@@ -9,11 +9,31 @@
 #import "OState.h"
 
 #import "OMeta.h"
+#import "OTableViewController.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OOrigo.h"
 
+#import "OAuthViewController.h"
+#import "OMemberListViewController.h"
+#import "OMemberViewController.h"
+#import "OOrigoListViewController.h"
+#import "OOrigoViewController.h"
+#import "OCalendarViewController.h"
+#import "OTaskListViewController.h"
+#import "OMessageBoardViewController.h"
+#import "OSettingsViewController.h"
+
 static OState *s = nil;
+
+
+@interface OState ()
+
+@property (nonatomic) OStateView view;
+@property (nonatomic) OStateAction action;
+@property (nonatomic) OStateAspect aspect;
+
+@end
 
 
 @implementation OState
@@ -24,18 +44,8 @@ static OState *s = nil;
 {
     _action = activate ? action : _action;
 
-    if (!(self == s)) {
+    if (self != s) {
         [[OState s] setAction:action activate:activate];
-    }
-}
-
-
-- (void)setTarget:(OStateTarget)target activate:(BOOL)activate
-{
-    _target = activate ? target : _target;
-    
-    if (!(self == s)) {
-        [[OState s] setTarget:target activate:activate];
     }
 }
 
@@ -44,9 +54,45 @@ static OState *s = nil;
 {
     _aspect = activate ? aspect : _aspect;
     
-    if (!(self == s)) {
+    if (self != s) {
         [[OState s] setAspect:aspect activate:activate];
     }
+}
+
+
+- (void)setAspectForMember:(OMember *)member
+{
+    OStateAspect aspect = OStateAspectDefault;
+    
+    if ([member isUser]) {
+        aspect = OStateAspectSelf;
+    } else if ([[[OMeta m].user wards] containsObject:member]) {
+        aspect = OStateAspectWard;
+    } else if ([[[OMeta m].user housemates] containsObject:member]) {
+        aspect = OStateAspectHousemate;
+    }
+    
+    [self setAspect:aspect activate:YES];
+}
+
+
+- (void)setAspectForOrigoType:(NSString *)origoType
+{
+    OStateAspect aspect = [OState s].aspect;
+    
+    if ([origoType isEqualToString:kOrigoTypeResidence]) {
+        aspect = OStateAspectResidence;
+    } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
+        aspect = OStateAspectOrganisation;
+    } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
+        aspect = OStateAspectSchoolClass;
+    } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
+        aspect = OStateAspectPreschool;
+    } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
+        aspect = OStateAspectTeam;
+    }
+    
+    [self setAspect:aspect activate:YES];
 }
 
 
@@ -55,23 +101,53 @@ static OState *s = nil;
 - (id)copyWithZone:(NSZone *)zone
 {
     OState *copy = [[OState alloc] init];
-    
+
+    copy.view = _view;
     copy.action = _action;
-    copy.target = _target;
     copy.aspect = _aspect;
     
     return copy;
 }
 
 
-- (id)init
+- (id)initForViewController:(OTableViewController *)viewController
 {
     self = [super init];
     
     if (self) {
-        _action = OStateActionNone;
-        _target = OStateTargetNone;
-        _aspect = OStateAspectNone;
+        if ([viewController isKindOfClass:OAuthViewController.class]) {
+            _view = OStateViewAuth;
+            _action = OStateActionLogin;
+        } else if ([viewController isKindOfClass:OOrigoListViewController.class]) {
+            _view = OStateViewOrigoList;
+            _action = OStateActionList;
+        } else if ([viewController isKindOfClass:OOrigoViewController.class]) {
+            _view = OStateViewOrigoDetail;
+            _action = OStateActionDisplay;
+        } else if ([viewController isKindOfClass:OMemberListViewController.class]) {
+            _view = OStateViewMemberList;
+            _action = OStateActionList;
+        } else if ([viewController isKindOfClass:OMemberViewController.class]) {
+            _view = OStateViewMemberDetail;
+            _action = OStateActionDisplay;
+        } else if ([viewController isKindOfClass:OCalendarViewController.class]) {
+            _view = OStateViewCalendar;
+            _action = OStateActionDisplay;
+        } else if ([viewController isKindOfClass:OTaskListViewController.class]) {
+            _view = OStateViewTaskList;
+            _action = OStateActionList;
+        } else if ([viewController isKindOfClass:OMessageBoardViewController.class]) {
+            _view = OStateViewMessageBoard;
+            _action = OStateActionDisplay;
+        } else if ([viewController isKindOfClass:OSettingsViewController.class]) {
+            _view = OStateViewSettings;
+            _action = OStateActionList;
+        } else {
+            _view = OStateViewDefault;
+            _action = OStateActionDefault;
+        }
+        
+        _aspect = OStateAspectDefault;
     }
     
     return self;
@@ -81,64 +157,38 @@ static OState *s = nil;
 + (OState *)s
 {
     if (!s) {
-        s = [[self alloc] init];
+        s = [[self alloc] initForViewController:nil];
     }
     
     return s;
 }
 
 
+#pragma mark - Utility methods
+
+- (void)setAspectForCarrier:(id)aspectCarrier
+{
+    if ([aspectCarrier isKindOfClass:OMember.class]) {
+        [self setAspectForMember:(OMember *)aspectCarrier];
+    } else if ([aspectCarrier isKindOfClass:OOrigo.class]) {
+        [self setAspectForOrigoType:((OOrigo *)aspectCarrier).type];
+    } else if ([aspectCarrier isKindOfClass:NSString.class]) {
+        if ([aspectCarrier hasPrefix:kOrigoTypePrefix]) {
+            [self setAspectForOrigoType:aspectCarrier];
+        }
+    }
+}
+
+
 - (void)reflect:(OState *)state
 {
+    _view = state.view;
     _action = state.action;
-    _target = state.target;
     _aspect = state.aspect;
 }
 
 
-#pragma mark - Entity to aspect mappings
-
-- (void)setAspectForMember:(OMember *)member
-{
-    OStateAspect aspect = [OState s].aspect;
-    
-    if (member) {
-        if ([member isUser]) {
-            aspect = OStateAspectSelf;
-        } else if ([[[OMeta m].user wards] containsObject:member]) {
-            aspect = OStateAspectWard;
-        }
-    }
-    
-    [self setAspect:aspect activate:YES];
-}
-
-
-- (void)setTargetForOrigoType:(NSString *)origoType
-{
-    OStateTarget target = [OState s].target;
-    
-    if (origoType) {
-        if ([origoType isEqualToString:kOrigoTypeResidence]) {
-            target = OStateTargetResidence;
-        } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
-            target = OStateTargetOrganisation;
-        } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
-            target = OStateTargetClass;
-        } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
-            target = OStateTargetPreschool;
-        } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
-            target = OStateTargetTeam;
-        }
-    }
-    
-    [self setTarget:target activate:YES];
-}
-
-
-#pragma mark - Toggle between edit & display action
-
-- (void)toggleEdit
+- (void)toggleEditAction
 {
     if (self.actionIsDisplay) {
         self.actionIsEdit = YES;
@@ -152,9 +202,29 @@ static OState *s = nil;
 
 - (NSString *)asString
 {
+    NSString *viewAsString = nil;
     NSString *actionAsString = nil;
-    NSString *targetAsString = nil;
     NSString *aspectAsString = nil;
+    
+    if (self.viewIsAuth) {
+        viewAsString = @"AUTH";
+    } else if (self.viewIsOrigoList) {
+        viewAsString = @"ORIGOS";
+    } else if (self.viewIsOrigoDetail) {
+        viewAsString = @"ORIGO";
+    } else if (self.viewIsMemberList) {
+        viewAsString = @"MEMBERS";
+    } else if (self.viewIsMemberDetail) {
+        viewAsString = @"MEMBER";
+    } else if (self.viewIsCalendar) {
+        viewAsString = @"CALENDAR";
+    } else if (self.viewIsTaskList) {
+        viewAsString = @"TASKS";
+    } else if (self.viewIsMessageBoard) {
+        viewAsString = @"BOARD";
+    } else if (self.viewIsSettings) {
+        viewAsString = @"SETTINGS";
+    }
     
     if (self.actionIsSetup) {
         actionAsString = @"SETUP";
@@ -171,44 +241,88 @@ static OState *s = nil;
     } else if (self.actionIsEdit) {
         actionAsString = @"EDIT";
     } else {
-        actionAsString = @"NONE";
+        actionAsString = @"DEFAULT";
     }
     
-    if (self.targetIsMember) {
-        targetAsString = @"MEMBER";
-    } else if (self.targetIsOrigo) {
-        targetAsString = @"ORIGO";
-    } else if (self.targetIsResidence) {
-        targetAsString = @"RESIDENCE";
-    } else if (self.targetIsOrganisation) {
-        targetAsString = @"ORGANISATION";
-    } else if (self.targetIsClass) {
-        targetAsString = @"CLASS";
-    } else if (self.targetIsPreschool) {
-        targetAsString = @"PRESCHOOL";
-    } else if (self.targetIsTeam) {
-        targetAsString = @"TEAM";
-    } else if (self.targetIsEmail) {
-        targetAsString = @"EMAIL";
-    } else if (self.targetIsSetting) {
-        targetAsString = @"SETTING";
-    } else {
-        targetAsString = @"NONE";
-    }
-    
-    if (self.aspectIsSelf) {
+    if (self.aspectIsEmail) {
+        aspectAsString = @"EMAIL";
+    } else if (self.aspectIsSelf) {
         aspectAsString = @"SELF";
     } else if (self.aspectIsWard) {
         aspectAsString = @"WARD";
-    } else if (self.aspectIsOrigo) {
-        aspectAsString = @"ORIGO";
-    } else if (self.aspectIsExternal) {
-        aspectAsString = @"EXTERNAL";
+    } else if (self.aspectIsHousemate) {
+        aspectAsString = @"HOUSEMATE";
+    } else if (self.aspectIsResidence) {
+        aspectAsString = @"RESIDENCE";
+    } else if (self.aspectIsOrganisation) {
+        aspectAsString = @"ORGANISATION";
+    } else if (self.aspectIsSchoolClass) {
+        aspectAsString = @"CLASS";
+    } else if (self.aspectIsPreschool) {
+        aspectAsString = @"PRESCHOOL";
+    } else if (self.aspectIsTeam) {
+        aspectAsString = @"TEAM";
     } else {
-        aspectAsString = @"NONE";
+        aspectAsString = @"DEFAULT";
     }
     
-    return [NSString stringWithFormat:@"[%@][%@][%@]", actionAsString, targetAsString, aspectAsString];
+    return [NSString stringWithFormat:@"[%@][%@][%@]", actionAsString, viewAsString, aspectAsString];
+}
+
+
+#pragma mark - State view properties
+
+- (BOOL)viewIsAuth
+{
+    return (_view == OStateViewAuth);
+}
+
+
+- (BOOL)viewIsOrigoList
+{
+    return (_view == OStateViewOrigoList);
+}
+
+
+- (BOOL)viewIsOrigoDetail
+{
+    return (_view == OStateViewOrigoDetail);
+}
+
+
+- (BOOL)viewIsMemberList
+{
+    return (_view == OStateViewMemberList);
+}
+
+
+- (BOOL)viewIsMemberDetail
+{
+    return (_view == OStateViewMemberDetail);
+}
+
+
+- (BOOL)viewIsCalendar
+{
+    return (_view == OStateViewCalendar);
+}
+
+
+- (BOOL)viewIsTaskList
+{
+    return (_view == OStateViewTaskList);
+}
+
+
+- (BOOL)viewIsMessageBoard
+{
+    return (_view == OStateViewMessageBoard);
+}
+
+
+- (BOOL)viewIsSettings
+{
+    return (_view == OStateViewSettings);
 }
 
 
@@ -311,116 +425,6 @@ static OState *s = nil;
 }
 
 
-#pragma mark - State target properties
-
-- (void)setTargetIsMember:(BOOL)targetIsMember
-{
-    [self setTarget:OStateTargetMember activate:targetIsMember];
-}
-
-
-- (BOOL)targetIsMember
-{
-    return (_target == OStateTargetMember);
-}
-
-
-- (void)setTargetIsOrigo:(BOOL)targetIsOrigo
-{
-    [self setTarget:OStateTargetOrigo activate:targetIsOrigo];
-}
-
-
-- (BOOL)targetIsOrigo
-{
-    return (_target == OStateTargetOrigo);
-}
-
-
-- (void)setTargetIsResidence:(BOOL)targetIsResidence
-{
-    [self setTarget:OStateTargetResidence activate:targetIsResidence];
-}
-
-
-- (BOOL)targetIsResidence
-{
-    return (_target == OStateTargetResidence);
-}
-
-
-- (void)setTargetIsOrganisation:(BOOL)targetIsOrganisation
-{
-    [self setTarget:OStateTargetOrganisation activate:targetIsOrganisation];
-}
-
-
-- (BOOL)targetIsOrganisation
-{
-    return (_target == OStateTargetOrganisation);
-}
-
-
-- (void)setTargetIsClass:(BOOL)targetIsClass
-{
-    [self setTarget:OStateTargetClass activate:targetIsClass];
-}
-
-
-- (BOOL)targetIsClass
-{
-    return (_target == OStateTargetClass);
-}
-
-
-- (void)setTargetIsPreschool:(BOOL)targetIsPreschool
-{
-    [self setTarget:OStateTargetPreschool activate:targetIsPreschool];
-}
-
-
-- (BOOL)targetIsPreschool
-{
-    return (_target == OStateTargetPreschool);
-}
-
-
-- (void)setTargetIsTeam:(BOOL)targetIsTeam
-{
-    [self setTarget:OStateTargetTeam activate:targetIsTeam];
-}
-
-
-- (BOOL)targetIsTeam
-{
-    return (_target == OStateTargetTeam);
-}
-
-
-- (void)setTargetIsEmail:(BOOL)targetIsEmail
-{
-    [self setTarget:OStateTargetEmail activate:targetIsEmail];
-}
-
-
-- (BOOL)targetIsEmail
-{
-    return (_target == OStateTargetEmail);
-}
-
-
-- (void)setTargetIsSetting:(BOOL)targetIsSetting
-{
-    [self setTarget:OStateTargetSetting activate:targetIsSetting];
-}
-
-
-- (BOOL)targetIsSetting
-{
-    return (_target == OStateTargetSetting);
-}
-
-
 #pragma mark - State aspect properties
 
 - (void)setAspectIsSelf:(BOOL)aspectIsSelf
@@ -447,27 +451,75 @@ static OState *s = nil;
 }
 
 
-- (void)setAspectIsOrigo:(BOOL)aspectIsOrigo
+- (void)setAspectIsHousemate:(BOOL)aspectIsHousemate
 {
-    [self setAspect:OStateAspectOrigo activate:aspectIsOrigo];
+    [self setAspect:OStateAspectHousemate activate:aspectIsHousemate];
 }
 
 
-- (BOOL)aspectIsOrigo
+- (BOOL)aspectIsHousemate
 {
-    return (_aspect == OStateAspectOrigo);
+    return (_aspect == OStateAspectHousemate);
 }
 
 
-- (void)setAspectIsExternal:(BOOL)aspectIsExternal
+- (void)setAspectIsResidence:(BOOL)aspectIsResidence
 {
-    [self setAspect:OStateAspectExternal activate:aspectIsExternal];
+    [self setAspect:OStateAspectResidence activate:aspectIsResidence];
 }
 
 
-- (BOOL)aspectIsExternal
+- (BOOL)aspectIsResidence
 {
-    return (_aspect == OStateAspectExternal);
+    return (_aspect == OStateAspectResidence);
+}
+
+
+- (void)setAspectIsOrganisation:(BOOL)aspectIsOrganisation
+{
+    [self setAspect:OStateAspectOrganisation activate:aspectIsOrganisation];
+}
+
+
+- (BOOL)aspectIsOrganisation
+{
+    return (_aspect == OStateAspectOrganisation);
+}
+
+
+- (void)setAspectIsSchoolClass:(BOOL)aspectIsSchoolClass
+{
+    [self setAspect:OStateAspectSchoolClass activate:aspectIsSchoolClass];
+}
+
+
+- (BOOL)aspectIsSchoolClass
+{
+    return (_aspect == OStateAspectSchoolClass);
+}
+
+
+- (void)setAspectIsPreschool:(BOOL)aspectIsPreschool
+{
+    [self setAspect:OStateAspectPreschool activate:aspectIsPreschool];
+}
+
+
+- (BOOL)aspectIsPreschool
+{
+    return (_aspect == OStateAspectPreschool);
+}
+
+
+- (void)setAspectIsTeam:(BOOL)aspectIsTeam
+{
+    [self setAspect:OStateAspectTeam activate:aspectIsTeam];
+}
+
+
+- (BOOL)aspectIsTeam
+{
+    return (_aspect == OStateAspectTeam);
 }
 
 @end

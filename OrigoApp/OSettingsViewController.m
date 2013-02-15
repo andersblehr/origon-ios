@@ -72,20 +72,17 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
-        UINavigationController *origoNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
+        UINavigationController *navigationController = self.tabBarController.viewControllers[kTabBarOrigo];
         
-        [self prepareForModalSegue:segue data:nil];
-        [segue.destinationViewController setDelegate:origoNavigationController.viewControllers[0]];
+        [self prepareForModalSegue:segue data:nil meta:navigationController.viewControllers[0]];
     }
 }
 
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)loadState
+- (void)digestInput
 {
-    self.state.actionIsList = YES;
-    self.state.targetIsSetting = YES;
     self.state.aspectIsSelf = YES;
 }
 

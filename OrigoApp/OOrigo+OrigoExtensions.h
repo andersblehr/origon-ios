@@ -22,7 +22,11 @@
 
 - (BOOL)hasAdmin;
 - (BOOL)hasMember:(OMember *)member;
+- (BOOL)hasAssociateMember:(OMember *)member;
+
 - (BOOL)userIsAdmin;
 - (BOOL)userIsMember;
+
+- (NSComparisonResult)compare:(OOrigo *)other;
 
 @end

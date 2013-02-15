@@ -2,7 +2,7 @@
 //  OMembership.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 09.01.13.
+//  Created by Anders Blehr on 14.02.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -20,5 +20,7 @@
 @property (nonatomic, retain) NSNumber * isAdmin;
 @property (nonatomic, retain) OMember *member;
 @property (nonatomic, retain) OOrigo *origo;
+@property (nonatomic, retain) OMember *associateMember;
+@property (nonatomic, retain) OOrigo *associateOrigo;
 
 @end

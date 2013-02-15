@@ -36,6 +36,7 @@ extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
 
+extern NSString * const kOrigoTypePrefix;
 extern NSString * const kOrigoTypeMemberRoot;
 extern NSString * const kOrigoTypeResidence;
 extern NSString * const kOrigoTypeOrganisation;

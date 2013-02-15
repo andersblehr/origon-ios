@@ -29,9 +29,6 @@
 + (CGFloat)defaultCellHeight;
 - (CGFloat)cellHeight;
 
-- (NSString *)listName;
-- (NSString *)listDetails;
-- (UIImage *)listImage;
 - (NSString *)listNameForState:(OState *)state;
 - (NSString *)listDetailsForState:(OState *)state;
 - (UIImage *)listImageForState:(OState *)state;

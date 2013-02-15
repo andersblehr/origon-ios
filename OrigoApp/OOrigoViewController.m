@@ -152,7 +152,7 @@ static NSInteger const kOrigoSection = 0;
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)loadState
+- (void)digestInput
 {
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
@@ -162,13 +162,11 @@ static NSInteger const kOrigoSection = 0;
         _member = self.data;
     }
     
-    self.state.actionIsDisplay = YES;
-    [self.state setTargetForOrigoType:(_origo ? _origo.type : self.meta)];
-    [self.state setAspectForMember:_member];
+    self.aspectCarrier = _origo ? _origo : self.meta;
 }
 
 
-- (void)loadData
+- (void)populateDataSource
 {
     [self setData:_origo forSectionWithKey:kOrigoSection];
 }

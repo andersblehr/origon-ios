@@ -2,8 +2,8 @@
 //  OMember.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 13.12.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 14.02.13.
+//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
 #import "OMember.h"
@@ -38,5 +38,6 @@
 @dynamic residencies;
 @dynamic scheduledAbsences;
 @dynamic toDoAssignments;
+@dynamic associateMemberships;
 
 @end

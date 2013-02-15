@@ -28,8 +28,8 @@
     OTextField *_mobilePhoneField;
     OTextField *_emailField;
     
-    UIDatePicker *_dateOfBirthPicker;
     NSString *_gender;
+    NSArray *_candidateResidences;
 }
 
 @end

@@ -8,8 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSInteger, OStateView) {
+    OStateViewDefault,
+    OStateViewAuth,
+    OStateViewOrigoList,
+    OStateViewOrigoDetail,
+    OStateViewMemberList,
+    OStateViewMemberDetail,
+    OStateViewCalendar,
+    OStateViewTaskList,
+    OStateViewMessageBoard,
+    OStateViewSettings,
+};
+
 typedef NS_ENUM(NSInteger, OStateAction) {
-    OStateActionNone,
+    OStateActionDefault,
     OStateActionSetup,
     OStateActionLogin,
     OStateActionActivate,
@@ -19,34 +32,33 @@ typedef NS_ENUM(NSInteger, OStateAction) {
     OStateActionEdit,
 };
 
-typedef NS_ENUM(NSInteger, OStateTarget) {
-    OStateTargetNone,
-    OStateTargetMember,
-    OStateTargetOrigo,
-    OStateTargetResidence,
-    OStateTargetOrganisation,
-    OStateTargetClass,
-    OStateTargetPreschool,
-    OStateTargetTeam,
-    OStateTargetEmail,
-    OStateTargetSetting,
-};
-
 typedef NS_ENUM(NSInteger, OStateAspect) {
-    OStateAspectNone,
+    OStateAspectDefault,
+    OStateAspectEmail,
     OStateAspectSelf,
     OStateAspectWard,
-    OStateAspectOrigo,
-    OStateAspectExternal,
+    OStateAspectHousemate,
+    OStateAspectResidence,
+    OStateAspectOrganisation,
+    OStateAspectSchoolClass,
+    OStateAspectPreschool,
+    OStateAspectTeam,
 };
 
+@class OTableViewController;
 @class OMember, OOrigo;
 
 @interface OState : NSObject
 
-@property (nonatomic) OStateAction action;
-@property (nonatomic) OStateTarget target;
-@property (nonatomic) OStateAspect aspect;
+@property (nonatomic, readonly) BOOL viewIsAuth;
+@property (nonatomic, readonly) BOOL viewIsOrigoList;
+@property (nonatomic, readonly) BOOL viewIsOrigoDetail;
+@property (nonatomic, readonly) BOOL viewIsMemberList;
+@property (nonatomic, readonly) BOOL viewIsMemberDetail;
+@property (nonatomic, readonly) BOOL viewIsCalendar;
+@property (nonatomic, readonly) BOOL viewIsTaskList;
+@property (nonatomic, readonly) BOOL viewIsMessageBoard;
+@property (nonatomic, readonly) BOOL viewIsSettings;
 
 @property (nonatomic) BOOL actionIsSetup;
 @property (nonatomic) BOOL actionIsLogin;
@@ -57,28 +69,23 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
 @property (nonatomic) BOOL actionIsEdit;
 @property (nonatomic, readonly) BOOL actionIsInput;
 
-@property (nonatomic) BOOL targetIsMember;
-@property (nonatomic) BOOL targetIsOrigo;
-@property (nonatomic) BOOL targetIsResidence;
-@property (nonatomic) BOOL targetIsOrganisation;
-@property (nonatomic) BOOL targetIsClass;
-@property (nonatomic) BOOL targetIsPreschool;
-@property (nonatomic) BOOL targetIsTeam;
-@property (nonatomic) BOOL targetIsEmail;
-@property (nonatomic) BOOL targetIsSetting;
-
+@property (nonatomic) BOOL aspectIsEmail;
 @property (nonatomic) BOOL aspectIsSelf;
 @property (nonatomic) BOOL aspectIsWard;
-@property (nonatomic) BOOL aspectIsOrigo;
-@property (nonatomic) BOOL aspectIsExternal;
+@property (nonatomic) BOOL aspectIsHousemate;
+@property (nonatomic) BOOL aspectIsResidence;
+@property (nonatomic) BOOL aspectIsOrganisation;
+@property (nonatomic) BOOL aspectIsSchoolClass;
+@property (nonatomic) BOOL aspectIsPreschool;
+@property (nonatomic) BOOL aspectIsTeam;
+
+- (id)initForViewController:(OTableViewController *)viewController;
 
 + (OState *)s;
+
+- (void)setAspectForCarrier:(id)aspectCarrier;
 - (void)reflect:(OState *)state;
-
-- (void)setAspectForMember:(OMember *)member;
-- (void)setTargetForOrigoType:(NSString *)origoType;
-
-- (void)toggleEdit;
+- (void)toggleEditAction;
 
 - (NSString *)asString;
 

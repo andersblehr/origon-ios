@@ -11,8 +11,8 @@
 @protocol OTableViewControllerDelegate <NSObject>
 
 @required
-- (void)loadState;
-- (void)loadData;
+- (void)digestInput;
+- (void)populateDataSource;
 
 @optional
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;

@@ -178,6 +178,27 @@
 }
 
 
+- (NSSet *)housemateResidences
+{
+    NSMutableSet *ownResidences = [[NSMutableSet alloc] init];
+    NSMutableSet *housemateResidences = [[NSMutableSet alloc] init];
+    
+    for (OMemberResidency *residency in self.residencies) {
+        [ownResidences addObject:residency.residence];
+    }
+    
+    for (OMember *housemate in [self housemates]) {
+        for (OMemberResidency *housemateResidency in housemate.residencies) {
+            if (![ownResidences containsObject:housemateResidency.residence]) {
+                [housemateResidences addObject:housemateResidency.residence];
+            }
+        }
+    }
+    
+    return housemateResidences;
+}
+
+
 - (BOOL)isMemberOfOrigoOfType:(NSString *)origoType
 {
     BOOL isMember = NO;
@@ -190,7 +211,7 @@
 }
 
 
-#pragma mark - Display cell height calculation
+#pragma mark - OReplicatedEntity+OrigoExtensions overrides
 
 + (CGFloat)defaultCellHeight
 {
@@ -226,19 +247,17 @@
 }
 
 
-#pragma mark - OReplicatedEntity+OrigoExtensions overrides
-
 - (NSString *)listNameForState:(OState *)state
 {
     NSString *listName = self.givenName;
     
-    if (state.targetIsMember) {
+    if (state.viewIsMemberList) {
         if ([self isMinor]) {
             listName = [listName stringByAppendingFormat:@" (%d)", [self.dateOfBirth yearsBeforeNow]];
         } else {
             listName = self.name;
         }
-    } else if (state.targetIsOrigo && [self isUser]) {
+    } else if (state.viewIsOrigoList && [self isUser]) {
         listName = [OStrings stringForKey:strTermMe];
     }
     
@@ -250,7 +269,7 @@
 {
     NSString *listDetails = nil;
     
-    if (state.targetIsMember) {
+    if (state.viewIsMemberList) {
         if (![self isMinor] || [[OMeta m].user hasWard:self]) {
             if ([self hasMobilePhone]) {
                 listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
@@ -258,7 +277,7 @@
                 listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.email];
             }
         }
-    } else if (state.targetIsOrigo && [self isUser]) {
+    } else if (state.viewIsOrigoList && [self isUser]) {
         listDetails = self.name;
     }
     
@@ -270,7 +289,7 @@
 {
     UIImage *listImage = nil;
     
-    if (state.targetIsMember || (state.targetIsOrigo && [self isUser])) {
+    if (state.viewIsMemberList || (state.viewIsOrigoList && [self isUser])) {
         if (self.photo) {
             // TODO: Embed photo
         } else {
@@ -292,7 +311,7 @@
                 }
             }
         }
-    } else if (state.targetIsOrigo) {
+    } else if (state.viewIsOrigoList) {
         listImage = [UIImage imageNamed:kIconFileOrigo];
     }
     
@@ -304,7 +323,22 @@
 
 - (NSComparisonResult)compare:(OMember *)other
 {
-    return [self.name localizedCaseInsensitiveCompare:other.name];
+    NSComparisonResult result = [self.name localizedCaseInsensitiveCompare:other.name];
+    
+    if ([OState s].viewIsMemberList && [OState s].aspectIsResidence) {
+        BOOL thisMemberIsMinor = [self isMinor];
+        BOOL otherMemberIsMinor = [other isMinor];
+        
+        if (thisMemberIsMinor != otherMemberIsMinor) {
+            if (thisMemberIsMinor && !otherMemberIsMinor) {
+                result = NSOrderedDescending;
+            } else {
+                result = NSOrderedAscending;
+            }
+        }
+    }
+    
+    return result;
 }
 
 @end

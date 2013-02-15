@@ -30,7 +30,9 @@
 - (OMemberResidency *)initialResidency;
 - (OMembership *)rootMembership;
 - (NSSet *)origoMemberships;
+- (NSSet *)housemateResidences;
 
 - (BOOL)isMemberOfOrigoOfType:(NSString *)origoType;
+- (NSComparisonResult)compare:(OMember *)other;
 
 @end
