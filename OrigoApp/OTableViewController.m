@@ -19,6 +19,7 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 #import "OTextView.h"
+#import "OTableViewCellLayout.h"
 
 #import "OReplicatedEntity+OrigoExtensions.h"
 
@@ -39,7 +40,7 @@
                 _state.actionIsRegister = YES;
             }
             
-            [_delegate digestInput];
+            [_delegate prepareState];
             
             if (_aspectCarrier) {
                 [_state setAspectForCarrier:_aspectCarrier];
@@ -120,6 +121,7 @@
             
             if ([data isKindOfClass:OReplicatedEntity.class]) {
                 _entity = data;
+                _entityClass = _entityClass ? _entityClass : _entity.class;
             }
         }
     }
@@ -297,8 +299,8 @@
     _entitySectionKey = NSNotFound;
     _delegate = self;
     
-    _shouldInitialise = YES;
     _canEdit = NO;
+    _shouldInitialise = YES;
     _shouldDemphasiseOnEndEdit = YES;
     _modalImpliesRegistration = ([NSStringFromClass(self.class) rangeOfString:@"List"].location == NSNotFound);
     
@@ -412,7 +414,7 @@
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)digestInput
+- (void)prepareState
 {
     // Override in subclass
 }
@@ -473,7 +475,7 @@
     CGFloat height = kDefaultTableViewCellHeight;
     
     if (indexPath.section == [self sectionNumberForSectionKey:_entitySectionKey]) {
-        height = _entity ? [_entity cellHeight] : [_entityClass defaultCellHeight];
+        height = [OTableViewCellLayout cell:_detailCell heightForEntityClass:_entityClass entity:_entity];
     }
     
     return height;
@@ -527,7 +529,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = kDefaultPadding;
+    CGFloat height = kDefaultCellPadding;
     
     if ([_delegate hasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView standardHeaderHeight];
@@ -539,7 +541,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    CGFloat height = kDefaultPadding;
+    CGFloat height = kDefaultCellPadding;
     
     if ([_delegate hasFooterForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView standardFooterHeight];

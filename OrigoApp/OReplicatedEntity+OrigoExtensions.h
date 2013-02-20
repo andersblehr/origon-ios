@@ -13,6 +13,7 @@
 
 @interface OReplicatedEntity (OrigoExtensions)
 
+- (BOOL)hasValueForKey:(NSString *)key;
 - (id)serialisableValueForKey:(NSString *)key;
 - (void)setDeserialisedValue:(id)value forKey:(NSString *)key;
 
@@ -21,13 +22,10 @@
 - (void)internaliseRelationships;
 - (void)makeGhost;
 
+- (BOOL)propertyForKeyIsTransient:(NSString *)key;
 - (BOOL)userIsCreator;
-- (BOOL)propertyIsTransient:(NSString *)property;
 - (BOOL)isReplicated;
 - (BOOL)isDirty;
-
-+ (CGFloat)defaultCellHeight;
-- (CGFloat)cellHeight;
 
 - (NSString *)listNameForState:(OState *)state;
 - (NSString *)listDetailsForState:(OState *)state;

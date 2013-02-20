@@ -23,6 +23,7 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 #import "OUUIDGenerator.h"
+#import "OTableViewCellLayout.h"
 
 #import "ODevice.h"
 #import "OMember+OrigoExtensions.h"
@@ -83,7 +84,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
         
         if (_authInfo) {
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathAuthInfo];
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultsKeyAuthInfo];
         }
     }
     
@@ -150,7 +151,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _numberOfActivationAttempts++;
     
     if (_numberOfActivationAttempts < 3) {
-        [self.detailCell shakeCellVibrateDevice:YES];
+        [self.detailCell shakeCellShouldVibrate:YES];
         
         if (textField == _activationCodeField) {
             _activationCodeField.text = @"";
@@ -186,7 +187,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (BOOL)activationIsValid
 {
-    NSString *activationCode = [[_authInfo objectForKey:kKeyPathActivationCode] lowercaseString];
+    NSString *activationCode = [[_authInfo objectForKey:kInputKeyActivationCode] lowercaseString];
     NSString *activationCodeAsEntered = [_activationCodeField.text lowercaseString];
     
     BOOL activationCodeIsValid = [activationCodeAsEntered isEqualToString:activationCode];
@@ -197,7 +198,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         NSString *passwordHash = nil;
         
         if (self.state.aspectIsSelf) {
-            passwordHash = [_authInfo objectForKey:kKeyPathPasswordHash];
+            passwordHash = [_authInfo objectForKey:kJSONKeyPasswordHash];
         } else if (self.state.aspectIsEmail) {
             passwordHash = [OMeta m].user.passwordHash;
         }
@@ -266,10 +267,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _authInfo = data;
     
     if (self.state.aspectIsSelf) {
-        _userIsListed = [[_authInfo objectForKey:kKeyPathIsListed] boolValue];
+        _userIsListed = [[_authInfo objectForKey:kJSONKeyIsListed] boolValue];
         
         NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:_authInfo];
-        [[NSUserDefaults standardUserDefaults] setObject:authInfoArchive forKey:kKeyPathAuthInfo];
+        [[NSUserDefaults standardUserDefaults] setObject:authInfoArchive forKey:kDefaultsKeyAuthInfo];
         
         [self toggleAuthState];
     }
@@ -312,8 +313,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         residenceMessageBoard.title = [OStrings stringForKey:strNameMyMessageBoard];
     }
     
-    [OMeta m].user.passwordHash = [_authInfo objectForKey:kKeyPathPasswordHash];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kKeyPathAuthInfo];
+    [OMeta m].user.passwordHash = [_authInfo objectForKey:kJSONKeyPasswordHash];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultsKeyAuthInfo];
     
     if ([[OMeta m] userIsRegistered] && [[OMeta m].user isMinor]) {
         [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
@@ -371,7 +372,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
     if (self.state.actionIsActivate) {
         if (self.state.aspectIsSelf) {
-            NSString *welcomeBackMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextWelcomeBack], [_authInfo objectForKey:kKeyPathEmail]];
+            NSString *welcomeBackMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextWelcomeBack], [_authInfo objectForKey:kPropertyKeyEmail]];
             
             UIAlertView *welcomeBackAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleWelcomeBack] message:welcomeBackMessage delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonStartOver] otherButtonTitles:[OStrings stringForKey:strButtonHaveCode], nil];
             welcomeBackAlert.tag = kAlertTagWelcomeBack;
@@ -405,17 +406,17 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)digestInput
+- (void)prepareState
 {
     if (self.data) {
         self.state.actionIsActivate = YES;
         self.state.aspectIsEmail = YES;
     } else {
-        NSData *authInfoArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathAuthInfo];
+        NSData *authInfoArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultsKeyAuthInfo];
         
         if (authInfoArchive) {
             _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
-            [OMeta m].userEmail = [_authInfo objectForKey:kKeyPathEmail];
+            [OMeta m].userEmail = [_authInfo objectForKey:kPropertyKeyEmail];
             
             self.state.actionIsActivate = YES;
         }
@@ -453,7 +454,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 3 * (kDefaultPadding + [UIFont detailFieldHeight]) + 1;
+    return 3 * (kDefaultCellPadding + [UIFont detailFieldHeight]) + 1;
 }
 
 
@@ -462,13 +463,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if (self.state.actionIsLogin) {
         self.detailCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserSignIn delegate:self];
         
-        _emailField = [self.detailCell textFieldForKeyPath:kKeyPathAuthEmail];
-        _passwordField = [self.detailCell textFieldForKeyPath:kKeyPathPassword];
+        _emailField = [self.detailCell textFieldForKey:kInputKeyAuthEmail];
+        _passwordField = [self.detailCell textFieldForKey:kInputKeyPassword];
     } else {
         self.detailCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserActivation delegate:self];
         
-        _activationCodeField = [self.detailCell textFieldForKeyPath:kKeyPathActivationCode];
-        _repeatPasswordField = [self.detailCell textFieldForKeyPath:kKeyPathRepeatPassword];
+        _activationCodeField = [self.detailCell textFieldForKey:kInputKeyActivationCode];
+        _repeatPasswordField = [self.detailCell textFieldForKey:kInputKeyRepeatPassword];
     }
     
     return self.detailCell;
@@ -513,7 +514,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [self attemptUserLogin];
         } else {
             _passwordField.text = @"";
-            [self.detailCell shakeCellVibrateDevice:YES];
+            [self.detailCell shakeCellShouldVibrate:YES];
         }
     } else if (textField == _activationCodeField) {
         [_repeatPasswordField becomeFirstResponder];
@@ -530,7 +531,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             }
         } else {
             _repeatPasswordField.text = @"";
-            [self.detailCell shakeCellVibrateDevice:YES];
+            [self.detailCell shakeCellShouldVibrate:YES];
         }
     }
     
@@ -576,7 +577,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [_activityIndicator stopAnimating];
         
         [OStrings.class didCompleteWithResponse:response data:data];
-        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:kKeyPathStringDate];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:kDefaultsKeyStringDate];
         [(OTabBarController *)((UIViewController *)self.dismisser).tabBarController setTabBarTitles];
         
         [self toggleAuthState];
@@ -599,7 +600,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             }
         } else {
             if (response.statusCode == kHTTPStatusUnauthorized) {
-                [self.detailCell shakeCellVibrateDevice:YES];
+                [self.detailCell shakeCellShouldVibrate:YES];
                 [_passwordField becomeFirstResponder];
             } else {
                 [OAlert showAlertForHTTPStatus:response.statusCode];

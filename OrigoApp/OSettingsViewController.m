@@ -81,7 +81,7 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)digestInput
+- (void)prepareState
 {
     self.state.aspectIsSelf = YES;
 }

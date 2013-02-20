@@ -11,5 +11,7 @@
 @interface OMembership (OrigoExtensions)
 
 - (BOOL)hasContactRole;
+- (BOOL)isAssociate;
+- (void)alignAssociation:(BOOL)isAssociate;
 
 @end

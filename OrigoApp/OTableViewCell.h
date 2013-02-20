@@ -16,23 +16,18 @@ extern NSString * const kReuseIdentifierDefault;
 extern NSString * const kReuseIdentifierUserSignIn;
 extern NSString * const kReuseIdentifierUserActivation;
 
-extern NSString * const kElementSuffixLabel;
-extern NSString * const kElementSuffixTextField;
-
-extern CGFloat const kDefaultTableViewCellHeight;
-extern CGFloat const kDefaultPadding;
-extern CGFloat const kMinimumPadding;
+extern NSString * const kViewKeySuffixLabel;
+extern NSString * const kViewKeySuffixTextField;
 
 extern CGFloat const kCellAnimationDuration;
 
-@class OState, OTextField, OTextView, OVisualConstraints;
+@class OState, OTextField, OTextView, OTableViewCellLayout;
 @class OReplicatedEntity;
 
 @interface OTableViewCell : UITableViewCell<OEntityObservingDelegate> {
 @private
+    OTableViewCellLayout *_layout;
     NSMutableDictionary *_views;
-    NSMutableArray *_orderedTextFields;
-    OVisualConstraints *_visualConstraints;
     
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
@@ -49,14 +44,15 @@ extern CGFloat const kCellAnimationDuration;
 - (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate;
 - (id)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 
-- (id)labelForKeyPath:(NSString *)keyPath;
-- (id)textFieldForKeyPath:(NSString *)keyPath;
+- (BOOL)isTitleKey:(NSString *)key;
+- (id)labelForKey:(NSString *)key;
+- (id)textFieldForKey:(NSString *)key;
 - (id)nextInputFieldFromTextField:(id)textField;
 
 - (void)willAppearTrailing:(BOOL)trailing;
 - (void)toggleEditMode;
 - (void)redrawIfNeeded;
 
-- (void)shakeCellVibrateDevice:(BOOL)shouldVibrate;
+- (void)shakeCellShouldVibrate:(BOOL)shouldVibrate;
 
 @end

@@ -37,37 +37,37 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Auxiliary methods
 
-- (void)configureForKeyPath:(NSString *)keyPath
+- (void)configureForKey:(NSString *)key
 {
-    _keyPath = keyPath;
+    _key = key;
     
-    if ([keyPath isEqualToString:kKeyPathAuthEmail]) {
+    if ([key isEqualToString:kInputKeyAuthEmail]) {
         self.keyboardType = UIKeyboardTypeEmailAddress;
-    } else if ([keyPath isEqualToString:kKeyPathPassword] || [keyPath isEqualToString:kKeyPathRepeatPassword]) {
+    } else if ([key isEqualToString:kInputKeyPassword] || [key isEqualToString:kInputKeyRepeatPassword]) {
         self.clearsOnBeginEditing = YES;
         self.returnKeyType = UIReturnKeyDone;
         self.secureTextEntry = YES;
-    } else if ([keyPath isEqualToString:kKeyPathName]) {
+    } else if ([key isEqualToString:kPropertyKeyName]) {
         self.autocapitalizationType = UITextAutocapitalizationTypeWords;
-    } else if ([keyPath isEqualToString:kKeyPathDateOfBirth]) {
+    } else if ([key isEqualToString:kPropertyKeyDateOfBirth]) {
         UIDatePicker *datePicker = [OMeta m].sharedDatePicker;
         [datePicker addTarget:self action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
         
         self.inputView = datePicker;
-    } else if ([keyPath isEqualToString:kKeyPathMobilePhone]) {
+    } else if ([key isEqualToString:kPropertyKeyMobilePhone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
         
         if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
             self.returnKeyType = UIReturnKeyDone;
         }
-    } else if ([keyPath isEqualToString:kKeyPathEmail]) {
+    } else if ([key isEqualToString:kPropertyKeyEmail]) {
         self.keyboardType = UIKeyboardTypeEmailAddress;
         self.returnKeyType = UIReturnKeyDone;
         
         if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
             self.enabled = NO;
         }
-    } else if ([keyPath isEqualToString:kKeyPathTelephone]) {
+    } else if ([key isEqualToString:kPropertyKeyTelephone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
     }
 }
@@ -76,7 +76,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 - (void)synchroniseInputView
 {
     if ([self.inputView isKindOfClass:UIDatePicker.class]) {
-        id value = [_containingCell.entity valueForKey:_keyPath];
+        id value = [_cell.entity valueForKey:_key];
         
         if (value) {
             ((UIDatePicker *)self.inputView).date = value;
@@ -100,13 +100,13 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Initialisation
 
-- (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate
+- (id)initForKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
     if (self) {
-        _containingCell = cell;
-        _isTitle = ([keyPath isEqualToString:kKeyPathName] && [OState s].viewIsMemberDetail);
+        _cell = cell;
+        _isTitle = [cell isTitleKey:key];
         
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -117,7 +117,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         self.font = _isTitle ? [UIFont titleFont] : [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
-        self.placeholder = [OStrings placeholderForKeyPath:keyPath];
+        self.placeholder = [OStrings placeholderForKey:key];
         self.returnKeyType = UIReturnKeyNext;
         self.textAlignment = NSTextAlignmentLeft;
         self.textColor = _isTitle ? [UIColor titleTextColor] : [UIColor detailTextColor];
@@ -125,7 +125,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
-        [self configureForKeyPath:keyPath];
+        [self configureForKey:key];
     }
     
     return self;
@@ -228,7 +228,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         if (_didPickDate) {
             _date = ((UIDatePicker *)self.inputView).date;
         } else {
-            _date = [_containingCell.entity valueForKey:_keyPath];
+            _date = [_cell.entity valueForKey:_key];
         }
     }
     
@@ -257,7 +257,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         }
         
         if ([self.inputView isKindOfClass:UIDatePicker.class] && !_didPickDate) {
-            id value = [_containingCell.entity valueForKey:_keyPath];
+            id value = [_cell.entity valueForKey:_key];
             
             if (value) {
                 ((UIDatePicker *)self.inputView).date = value;
@@ -276,7 +276,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     }
     
     [self hasDropShadow:_hasEmphasis];
-    [_containingCell redrawIfNeeded];
+    [_cell redrawIfNeeded];
 }
 
 
@@ -318,7 +318,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 {
     BOOL canPerformAction = [super canPerformAction:action withSender:sender];
     
-    if ([self.keyPath isEqualToString:kKeyPathDateOfBirth]) {
+    if ([self.key isEqualToString:kPropertyKeyDateOfBirth]) {
         canPerformAction = canPerformAction && (action != @selector(paste:));
     }
     

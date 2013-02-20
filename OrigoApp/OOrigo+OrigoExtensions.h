@@ -15,15 +15,12 @@
 - (id)addMember:(OMember *)member;
 - (id)addResident:(OMember *)resident;
 
-- (BOOL)isMemberRoot;
-- (BOOL)isResidence;
-- (BOOL)hasAddress;
-- (BOOL)hasTelephone;
-
+- (BOOL)isOfType:(NSString *)origoType;
 - (BOOL)hasAdmin;
 - (BOOL)hasMember:(OMember *)member;
 - (BOOL)hasAssociateMember:(OMember *)member;
 
+- (BOOL)userCanEdit;
 - (BOOL)userIsAdmin;
 - (BOOL)userIsMember;
 

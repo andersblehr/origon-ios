@@ -14,6 +14,7 @@
 
 #import "OStrings.h"
 #import "OTableViewCell.h"
+#import "OTableViewCellLayout.h"
 
 #import "OReplicatedEntity.h"
 
@@ -53,9 +54,9 @@ static NSString * const kLogoText = @"..origo..";
 
 - (void)addLogoBanner
 {
-    CGFloat cellWidth = self.bounds.size.width - 2 * kDefaultPadding;
-    CGRect containerViewFrame = CGRectMake(kDefaultPadding, 0.f, cellWidth, kLogoHeight);
-    CGRect logoFrame = CGRectMake(kDefaultPadding, kDefaultPadding, cellWidth, kLogoHeight - kDefaultPadding);
+    CGFloat cellWidth = self.bounds.size.width - 2 * kDefaultCellPadding;
+    CGRect containerViewFrame = CGRectMake(kDefaultCellPadding, 0.f, cellWidth, kLogoHeight);
+    CGRect logoFrame = CGRectMake(kDefaultCellPadding, kDefaultCellPadding, cellWidth, kLogoHeight - kDefaultCellPadding);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *logoLabel = [[UILabel alloc] initWithFrame:logoFrame];
@@ -179,9 +180,9 @@ static NSString * const kLogoText = @"..origo..";
 {
     self.sectionHeaderHeight = [self standardHeaderHeight];
     
-    CGFloat cellWidth = self.bounds.size.width - 2 * kDefaultPadding;
+    CGFloat cellWidth = self.bounds.size.width - 2 * kDefaultCellPadding;
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionHeaderHeight);
-    CGRect headerFrame = CGRectMake(kDefaultPadding, kHeaderHeadRoom, cellWidth, self.sectionHeaderHeight);
+    CGRect headerFrame = CGRectMake(kDefaultCellPadding, kHeaderHeadRoom, cellWidth, self.sectionHeaderHeight);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
@@ -205,10 +206,10 @@ static NSString * const kLogoText = @"..origo..";
     UIFont *footerFont = [UIFont footerFont];
     CGSize footerSize = [footerText sizeWithFont:footerFont constrainedToSize:CGSizeMake(kContentWidth, kFooterFontToHeightScaleFactor * footerFont.lineHeight) lineBreakMode:NSLineBreakByWordWrapping];
     
-    self.sectionFooterHeight = footerSize.height + kDefaultPadding;
+    self.sectionFooterHeight = footerSize.height + kDefaultCellPadding;
 
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionFooterHeight);
-    CGRect footerFrame = CGRectMake(kDefaultPadding * 2, kFooterHeadRoom, kContentWidth, self.sectionFooterHeight);
+    CGRect footerFrame = CGRectMake(kDefaultCellPadding * 2, kFooterHeadRoom, kContentWidth, self.sectionFooterHeight);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:footerFrame];

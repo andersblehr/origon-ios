@@ -42,17 +42,14 @@
 {
     OMembership *membershipForMember = nil;
     
-    for (OMembership *membership in self.memberships) {
-        if (!membershipForMember && (membership.member == member)) {
-            membershipForMember = membership;
-        }
-    }
+    NSMutableSet *allMemberships = [NSMutableSet setWithSet:self.memberships];
+    [allMemberships unionSet:self.associateMemberships];
     
-    if (!membershipForMember) {
-        for (OMembership *associateMembership in self.associateMemberships) {
-            if (!membershipForMember && (associateMembership.associateMember == member)) {
-                membershipForMember = associateMembership;
-            }
+    for (OMembership *membership in allMemberships) {
+        OMember *candidate = membership.member ? membership.member : membership.associateMember;
+        
+        if (!membershipForMember && (candidate == member)) {
+            membershipForMember = membership;
         }
     }
     
@@ -68,29 +65,25 @@
     
     for (OMemberResidency *residency in member.residencies) {
         if (residency.residence != self) {
+            OOrigo *residence = residency.residence;
+            
             [[OMeta m].context insertEntityRefForEntity:residency inOrigo:self];
-            [[OMeta m].context insertEntityRefForEntity:residency.residence inOrigo:self];
+            [[OMeta m].context insertEntityRefForEntity:residence inOrigo:self];
+            
+            if ([self isOfType:kOrigoTypeResidence] && !isAssociate) {
+                [[OMeta m].context insertEntityRefForEntity:membership inOrigo:residence];
+                [[OMeta m].context insertEntityRefForEntity:membership.origo inOrigo:residence];
+            }
         }
     }
     
-    if ([self isResidence] && !isAssociate) {
-        for (OMemberResidency *residency in member.residencies) {
-            if (residency.residence != self) {
-                [[OMeta m].context insertEntityRefForEntity:membership inOrigo:residency.residence];
-                [[OMeta m].context insertEntityRefForEntity:membership.origo inOrigo:residency.residence];
-            }
-        }
-        
+    if (!isAssociate) {
         for (OMember *housemate in [member housemates]) {
             for (OMemberResidency *peerResidency in housemate.residencies) {
-                if (peerResidency != membership) {
-                    if (![self hasAssociateMember:peerResidency.resident]) {
-                        [self addMember:peerResidency.resident isAssociate:YES];
-                    }
-                    
-                    if (![peerResidency.residence hasAssociateMember:member]) {
-                        [peerResidency.residence addMember:member isAssociate:YES];
-                    }
+                [self addMember:peerResidency.resident isAssociate:YES];
+                
+                if ([self isOfType:kOrigoTypeResidence]) {
+                    [peerResidency.residence addMember:member isAssociate:YES];
                 }
             }
         }
@@ -100,18 +93,24 @@
 
 - (id)addMember:(OMember *)member isAssociate:(BOOL)isAssociate
 {
-    OMembership *membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self];
-    
-    if (isAssociate) {
-        membership.associateMember = member;
-        membership.associateOrigo = membership.origo;
-        membership.origo = nil;
+    OMembership *membership = [self membershipForMember:member];
+
+    if (membership) {
+        [membership alignAssociation:isAssociate];
     } else {
-        membership.member = member;
-    }
-    
-    if (![self isMemberRoot]) {
-        [self createEntityRefsForMembership:membership isAssociate:isAssociate];
+        membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self];
+        
+        if (isAssociate) {
+            membership.associateMember = member;
+            membership.associateOrigo = membership.origo;
+            membership.origo = nil;
+        } else {
+            membership.member = member;
+        }
+        
+        if (![self isOfType:kOrigoTypeMemberRoot]) {
+            [self createEntityRefsForMembership:membership isAssociate:isAssociate];
+        }
     }
     
     return membership;
@@ -128,7 +127,7 @@
 
 - (id)addResident:(OMember *)resident
 {
-    OMemberResidency *residency = [self isResidence] ? [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self] : nil;
+    OMemberResidency *residency = [self isOfType:kOrigoTypeResidence] ? [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self] : nil;
     
     if (residency) {
         residency.member = resident;
@@ -144,31 +143,11 @@
 
 #pragma mark - Origo meta information
 
-- (BOOL)isMemberRoot
+- (BOOL)isOfType:(NSString *)origoType
 {
-    return [self.type isEqualToString:kOrigoTypeMemberRoot];
+    return [self.type isEqualToString:origoType];
 }
 
-
-- (BOOL)isResidence
-{
-    return [self.type isEqualToString:kOrigoTypeResidence];
-}
-
-
-- (BOOL)hasAddress
-{
-    return ([self.address length] > 0);
-}
-
-
-- (BOOL)hasTelephone
-{
-    return ([self.telephone length] > 0);
-}
-
-
-#pragma mark - Membership information
 
 - (BOOL)hasAdmin
 {
@@ -184,13 +163,23 @@
 
 - (BOOL)hasMember:(OMember *)member
 {
-    return ([self membershipForMember:member].member != nil);
+    OMembership *membership = [self membershipForMember:member];
+    
+    return ((membership != nil) && ![membership isAssociate]);
 }
 
 
 - (BOOL)hasAssociateMember:(OMember *)member
 {
-    return ([self membershipForMember:member] != nil);
+    OMembership *membership = [self membershipForMember:member];
+    
+    return ((membership != nil) && [membership isAssociate]);
+}
+
+
+- (BOOL)userCanEdit
+{
+    return ([self userIsAdmin] || (![self hasAdmin] && [self userIsCreator]));
 }
 
 
@@ -207,42 +196,6 @@
 
 
 #pragma mark - OReplicatedEntity+OrigoExtensions overrides
-
-+ (CGFloat)defaultCellHeight
-{
-    CGFloat height = 2 * kDefaultPadding;
-    
-    if ([OMeta m].participatingCell.entityClass == self) {
-        height += [[[OMeta m].participatingCell textFieldForKeyPath:kKeyPathAddress] height];
-    } else {
-        height += [OTextView heightWithText:[OStrings placeholderForKeyPath:kKeyPathAddress]];
-    }
-    
-    height += [UIFont detailFieldHeight];
-    
-    return height;
-}
-
-
-- (CGFloat)cellHeight
-{
-    CGFloat height = 2 * kDefaultPadding;
-    
-    if ([OMeta m].participatingCell.entity == self) {
-        height += [[[OMeta m].participatingCell textFieldForKeyPath:kKeyPathAddress] height];
-    } else if ([self.address length] > 0) {
-        height += [OTextView heightWithText:self.address];
-    } else {
-        height += [OTextView heightWithText:[OStrings placeholderForKeyPath:kKeyPathAddress]];
-    }
-    
-    if (([self.telephone length] > 0) || [OState s].actionIsInput) {
-        height += [UIFont detailFieldHeight];
-    }
-    
-    return height;
-}
-
 
 - (NSString *)listNameForState:(OState *)state
 {
@@ -263,12 +216,12 @@
     NSString *listDetails = nil;
     
     if (state.viewIsOrigoList) {
-        if ([self isResidence]) {
+        if ([self isOfType:kOrigoTypeResidence]) {
             listDetails = [self singleLineAddress];
         } else {
             listDetails = self.descriptionText;
         }
-    } else if ([self hasTelephone]) {
+    } else if ([self hasValueForKey:kPropertyKeyTelephone]) {
         listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedTelephone], self.telephone];
     }
     
@@ -280,7 +233,7 @@
 {
     UIImage *listImage = nil;
     
-    if ([self isResidence]) {
+    if ([self isOfType:kOrigoTypeResidence]) {
         listImage = [UIImage imageNamed:kIconFileHousehold];
     } else {
         // TODO: What icon to use for general origos?
@@ -296,7 +249,7 @@
 {
     NSComparisonResult result = NSOrderedSame;
     
-    if ([self isResidence]) {
+    if ([self isOfType:kOrigoTypeResidence]) {
         result = [self.address localizedCaseInsensitiveCompare:other.address];
     } else {
         result = [self.name localizedCaseInsensitiveCompare:other.name];

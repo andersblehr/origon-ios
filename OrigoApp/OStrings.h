@@ -45,7 +45,6 @@ extern NSString * const strAlertTitleWelcomeBack;
 extern NSString * const strAlertTextWelcomeBack;
 extern NSString * const strAlertTitleIncompleteRegistration;
 extern NSString * const strAlertTextIncompleteRegistration;
-extern NSString * const strSheetTitleEULA;
 
 // OOrigoListView strings
 extern NSString * const strTabBarTitleOrigo;
@@ -69,7 +68,12 @@ extern NSString * const strViewTitleHousehold;
 extern NSString * const strHeaderContacts;
 extern NSString * const strHeaderHouseholdMembers;
 extern NSString * const strHeaderOrigoMembers;
-extern NSString * const strFooterHousehold;
+extern NSString * const strFooterResidence;
+extern NSString * const strFooterSchoolClass;
+extern NSString * const strFooterPreschoolClass;
+extern NSString * const strFooterSportsTeam;
+extern NSString * const strFooterOtherOrigo;
+extern NSString * const strButtonNewHousemate;
 extern NSString * const strButtonDeleteMember;
 
 // OOrigoView strings
@@ -96,6 +100,7 @@ extern NSString * const strPlaceholderName;
 extern NSString * const strPlaceholderEmail;
 extern NSString * const strPlaceholderDateOfBirth;
 extern NSString * const strPlaceholderMobilePhone;
+extern NSString * const strFooterMember;
 extern NSString * const strButtonNewAddress;
 extern NSString * const strButtonInviteToHousehold;
 extern NSString * const strButtonMergeHouseholds;
@@ -147,7 +152,7 @@ extern NSString * const xstrContactRolesSportsTeam;
 + (void)conditionallyRefresh;
 
 + (NSString *)stringForKey:(NSString *)key;
-+ (NSString *)labelForKeyPath:(NSString *)keyPath;
-+ (NSString *)placeholderForKeyPath:(NSString *)keyPath;
++ (NSString *)labelForKey:(NSString *)key;
++ (NSString *)placeholderForKey:(NSString *)key;
 
 @end

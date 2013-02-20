@@ -19,18 +19,16 @@
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOfPreschoolAge;
 
-- (BOOL)hasMobilePhone;
 - (BOOL)hasAddress;
-- (BOOL)hasEmail;
 - (BOOL)hasWard:(OMember *)ward;
 
-- (NSSet *)housemates;
 - (NSSet *)wards;
+- (NSSet *)housemates;
+- (NSSet *)housemateResidences;
 
 - (OMemberResidency *)initialResidency;
 - (OMembership *)rootMembership;
 - (NSSet *)origoMemberships;
-- (NSSet *)housemateResidences;
 
 - (BOOL)isMemberOfOrigoOfType:(NSString *)origoType;
 - (NSComparisonResult)compare:(OMember *)other;

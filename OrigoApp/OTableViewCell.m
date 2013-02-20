@@ -22,7 +22,7 @@
 #import "OStrings.h"
 #import "OTextField.h"
 #import "OTextView.h"
-#import "OVisualConstraints.h"
+#import "OTableViewCellLayout.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"
@@ -34,18 +34,14 @@ NSString * const kReuseIdentifierDefault = @"idDefaultCell";
 NSString * const kReuseIdentifierUserSignIn = @"idUserSignInCell";
 NSString * const kReuseIdentifierUserActivation = @"idUserActivationCell";
 
-NSString * const kElementSuffixLabel = @"Label";
-NSString * const kElementSuffixTextField = @"Field";
-
-CGFloat const kDefaultTableViewCellHeight = 45.f;
-CGFloat const kDefaultPadding = 10.f;
-CGFloat const kMinimumPadding = 0.1f;
+NSString * const kViewKeySuffixLabel = @"Label";
+NSString * const kViewKeySuffixTextField = @"Field";
 
 CGFloat const kCellAnimationDuration = 0.3f;
 
-static NSString * const kKeyPathTitleBanner = @"titleBanner";
-static NSString * const kKeyPathPhotoFrame = @"photoFrame";
-static NSString * const kKeyPathPhotoPrompt = @"photoPrompt";
+static NSString * const kViewKeyTitleBanner = @"titleBanner";
+static NSString * const kViewKeyPhotoFrame = @"photoFrame";
+static NSString * const kViewKeyPhotoPrompt = @"photoPrompt";
 
 static CGFloat const kLabelDetailSpacing = 3.f;
 static CGFloat const kImplicitFramePadding = 2.f;
@@ -67,104 +63,98 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (BOOL)shouldComposeForReuseIdentifier:(NSString *)reuseIdentifier
+{
+    BOOL userIsSigningIn = [reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn];
+    BOOL userIsActivating = [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation];
+    
+    return (userIsSigningIn || userIsActivating);
+}
+
+
 #pragma mark - Adding elements
 
-- (void)addTitleFieldForKeyPath:(NSString *)keyPath hasPhoto:(BOOL)hasPhoto
+- (void)addTitleFieldIfApplicable
 {
-    UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
-    titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
-    [titleBannerView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    
-    [self.contentView addSubview:titleBannerView];
-    [_views setObject:titleBannerView forKey:kKeyPathTitleBanner];
-    [_visualConstraints addTitleConstraintsForKeyPath:keyPath];
-    
-    [self addTextFieldForKeyPath:keyPath constrained:NO];
-    
-    if (hasPhoto) {
-        _visualConstraints.titleBannerHasPhoto = YES;
+    if (_layout.titleKey) {
+        UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
+        titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
+        [titleBannerView setTranslatesAutoresizingMaskIntoConstraints:NO];
         
-        UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
-        NSData *photo = ((OMember *)_entity).photo;
+        [self.contentView addSubview:titleBannerView];
+        [_views setObject:titleBannerView forKey:kViewKeyTitleBanner];
         
-        if (photo) {
-            [imageButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
-        } else {
-            imageButton.backgroundColor = [UIColor whiteColor];
-            [imageButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [self addTextFieldForKey:_layout.titleKey];
+        
+        if (_layout.titleBannerHasPhoto) {
+            UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
+            NSData *photo = ((OMember *)_entity).photo;
             
-            UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
-            photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
-            photoPrompt.font = [UIFont labelFont];
-            photoPrompt.text = [OStrings stringForKey:strPlaceholderPhoto];
-            photoPrompt.textAlignment = NSTextAlignmentCenter;
-            photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
-            [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
+            if (photo) {
+                [imageButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
+            } else {
+                imageButton.backgroundColor = [UIColor whiteColor];
+                [imageButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+                
+                UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
+                photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
+                photoPrompt.font = [UIFont labelFont];
+                photoPrompt.text = [OStrings stringForKey:strPlaceholderPhoto];
+                photoPrompt.textAlignment = NSTextAlignmentCenter;
+                photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
+                [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
+                
+                [imageButton addSubview:photoPrompt];
+                [_views setObject:photoPrompt forKey:kViewKeyPhotoPrompt];
+            }
             
-            [imageButton addSubview:photoPrompt];
-            [_views setObject:photoPrompt forKey:kKeyPathPhotoPrompt];
+            [self.contentView addSubview:imageButton];
+            [_views setObject:imageButton forKey:kViewKeyPhotoFrame];
         }
-        
-        [self.contentView addSubview:imageButton];
-        [_views setObject:imageButton forKey:kKeyPathPhotoFrame];
     }
 }
 
 
-- (void)addLabelForKeyPath:(NSString *)keyPath constrained:(BOOL)constrained
+- (void)addLabelForKey:(NSString *)key centred:(BOOL)centred
 {
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
     label.backgroundColor = [UIColor clearColor];
     label.font = [UIFont labelFont];
     label.hidden = YES;
-    label.text = [OStrings labelForKeyPath:keyPath];
-    label.textAlignment = constrained ? NSTextAlignmentCenter : NSTextAlignmentRight;
+    label.text = [OStrings labelForKey:key];
+    label.textAlignment = centred ? NSTextAlignmentCenter : NSTextAlignmentRight;
     label.textColor = [UIColor labelTextColor];
     [label setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [self.contentView addSubview:label];
-    [_views setObject:label forKey:[keyPath stringByAppendingString:kElementSuffixLabel]];
-    
-    if (constrained) {
-        [_visualConstraints addUnlabeledConstraintsForKeyPath:keyPath];
-    }
+    [_views setObject:label forKey:[key stringByAppendingString:kViewKeySuffixLabel]];
 }
 
 
-- (void)addTextFieldForKeyPath:(NSString *)keyPath constrained:(BOOL)constrained
+- (void)addTextFieldForKey:(NSString *)key
 {
-    OTextField *textField = [[OTextField alloc] initForKeyPath:keyPath cell:self delegate:_inputDelegate];
+    OTextField *textField = [[OTextField alloc] initForKey:key cell:self delegate:_inputDelegate];
     
     [self.contentView addSubview:textField];
-    [_views setObject:textField forKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
-    [_orderedTextFields addObject:textField];
-    
-    if (constrained) {
-        [_visualConstraints addUnlabeledConstraintsForKeyPath:keyPath];
-    }
+    [_views setObject:textField forKey:[key stringByAppendingString:kViewKeySuffixTextField]];
 }
 
 
-- (void)addLabeledTextFieldForKeyPath:(NSString *)keyPath
+- (void)addLabeledTextFieldForKey:(NSString *)key
 {
-    [self addLabelForKeyPath:keyPath constrained:NO];
-    [self addTextFieldForKeyPath:keyPath constrained:NO];
-    
-    [_visualConstraints addLabeledTextFieldConstraintsForKeyPath:keyPath];
+    [self addLabelForKey:key centred:NO];
+    [self addTextFieldForKey:key];
 }
 
 
-- (void)addLabeledTextViewForKeyPath:(NSString *)keyPath
+- (void)addLabeledTextViewForKey:(NSString *)key
 {
-    [self addLabelForKeyPath:keyPath constrained:NO];
+    [self addLabelForKey:key centred:NO];
     
-    OTextView *textView = [[OTextView alloc] initForKeyPath:keyPath cell:self delegate:_inputDelegate];
+    OTextView *textView = [[OTextView alloc] initForKey:key cell:self delegate:_inputDelegate];
     
     [self.contentView addSubview:textView];
-    [_views setObject:textView forKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
-    [_orderedTextFields addObject:textView];
-    
-    [_visualConstraints addLabeledTextFieldConstraintsForKeyPath:keyPath];
+    [_views setObject:textView forKey:[key stringByAppendingString:kViewKeySuffixTextField]];
 }
 
 
@@ -172,20 +162,36 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
-    _entityClass = entityClass;
-    _selectable = self.viewState.actionIsList;
-    
     self.entity = entity;
     self.editing = !_selectable;
     
-    if (entityClass == OMember.class) {
-        [self addTitleFieldForKeyPath:kKeyPathName hasPhoto:YES];
-        [self addLabeledTextFieldForKeyPath:kKeyPathDateOfBirth];
-        [self addLabeledTextFieldForKeyPath:kKeyPathMobilePhone];
-        [self addLabeledTextFieldForKeyPath:kKeyPathEmail];
-    } else if (entityClass == OOrigo.class) {
-        [self addLabeledTextViewForKeyPath:kKeyPathAddress];
-        [self addLabeledTextFieldForKeyPath:kKeyPathTelephone];
+    _entityClass = entityClass;
+    
+    [_layout layOutForEntityClass:entityClass entity:entity];
+    
+    [self addTitleFieldIfApplicable];
+    
+    for (NSString *detailKey in _layout.detailKeys) {
+        if ([OTableViewCellLayout requiresTextViewForKey:detailKey]) {
+            [self addLabeledTextViewForKey:detailKey];
+        } else {
+            [self addLabeledTextFieldForKey:detailKey];
+        }
+    }
+}
+
+
+- (void)composeForReuseIdentifier:(NSString *)reuseIdentifier
+{
+    if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn] ||
+        [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
+        [_layout layOutForReuseIdentifier:reuseIdentifier];
+        
+        [self addLabelForKey:_layout.titleKey centred:YES];
+        
+        for (NSString *detailKey in _layout.detailKeys) {
+            [self addTextFieldForKey:detailKey];
+        }
     }
 }
 
@@ -207,20 +213,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.textLabel.font = [UIFont titleFont];
 
         if (![self isListCell]) {
-            _visualConstraints = [[OVisualConstraints alloc] initForTableViewCell:self];
+            _layout = [[OTableViewCellLayout alloc] initForCell:self];
             _views = [[NSMutableDictionary alloc] init];
-            _orderedTextFields = [[NSMutableArray alloc] init];
             _inputDelegate = delegate;
-        }
-        
-        if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
-            [self addLabelForKeyPath:kKeyPathSignIn constrained:YES];
-            [self addTextFieldForKeyPath:kKeyPathAuthEmail constrained:YES];
-            [self addTextFieldForKeyPath:kKeyPathPassword constrained:YES];
-        } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-            [self addLabelForKeyPath:kKeyPathActivation constrained:YES];
-            [self addTextFieldForKeyPath:kKeyPathActivationCode constrained:YES];
-            [self addTextFieldForKeyPath:kKeyPathRepeatPassword constrained:YES];
+            
+            if ([self shouldComposeForReuseIdentifier:reuseIdentifier]) {
+                [self composeForReuseIdentifier:reuseIdentifier];
+            }
         }
         
         [self.contentView setNeedsUpdateConstraints];
@@ -254,31 +253,38 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Text field & text view retrieval
+#pragma mark - Text field & text view access
 
-- (id)labelForKeyPath:(NSString *)keyPath
+- (BOOL)isTitleKey:(NSString *)key
 {
-    return [_views objectForKey:[keyPath stringByAppendingString:kElementSuffixLabel]];
+    return [key isEqualToString:_layout.titleKey];
 }
 
 
-- (id)textFieldForKeyPath:(NSString *)keyPath
+- (id)labelForKey:(NSString *)key
 {
-    return [_views objectForKey:[keyPath stringByAppendingString:kElementSuffixTextField]];
+    return [_views objectForKey:[key stringByAppendingString:kViewKeySuffixLabel]];
+}
+
+
+- (id)textFieldForKey:(NSString *)key
+{
+    return [_views objectForKey:[key stringByAppendingString:kViewKeySuffixTextField]];
 }
 
 
 - (id)nextInputFieldFromTextField:(id)textField
 {
+    NSArray *elementKeys = _layout.allKeys;
+    NSInteger indexOfTextField = textField ? [elementKeys indexOfObject:[textField key]] : -1;
+    NSString *inputFieldKey = nil;
     UIView *inputField = nil;
-    
-    NSInteger numberOfTextFields = [_orderedTextFields count];
-    NSInteger indexOfTextField = textField ? [_orderedTextFields indexOfObject:textField] : -1;
     
     BOOL inputFieldIsEditable = NO;
     
-    for (int i = indexOfTextField + 1; ((i < numberOfTextFields) && !inputFieldIsEditable); i++) {
-        inputField = _orderedTextFields[i];
+    for (int i = indexOfTextField + 1; ((i < [elementKeys count]) && !inputFieldIsEditable); i++) {
+        inputFieldKey = [elementKeys[i] stringByAppendingString:kViewKeySuffixTextField];
+        inputField = _views[inputFieldKey];
         
         if ([inputField isKindOfClass:OTextField.class]) {
             inputFieldIsEditable = ((OTextField *)inputField).enabled;
@@ -297,16 +303,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     if (trailing) {
         [self.backgroundView addDropShadowForTrailingTableViewCell];
-        
-        if (![self isListCell]) {
-            [OMeta m].participatingCell = self;
-        }
     } else {
         [self.backgroundView addDropShadowForInternalTableViewCell];
     }
     
-    if (_visualConstraints.titleBannerHasPhoto) {
-        [[_views objectForKey:kKeyPathPhotoFrame] addDropShadowForPhotoFrame];
+    if (_layout.titleBannerHasPhoto) {
+        [[_views objectForKey:kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
     }
 }
 
@@ -322,7 +324,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)redrawIfNeeded
 {
     if (_entity || _entityClass) {
-        CGFloat desiredHeight = _entity ? [_entity cellHeight] : [_entityClass defaultCellHeight];
+        CGFloat desiredHeight = [OTableViewCellLayout cell:self heightForEntityClass:_entityClass entity:_entity];
         
         if (abs(self.frame.size.height - (desiredHeight + kImplicitFramePadding)) > 0.5f) {
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
@@ -343,7 +345,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Cell effects
 
-- (void)shakeCellVibrateDevice:(BOOL)shouldVibrate
+- (void)shakeCellShouldVibrate:(BOOL)shouldVibrate
 {
     if (shouldVibrate) {
         AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
@@ -375,7 +377,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (![self isListCell]) {
         [self.contentView removeConstraints:[self.contentView constraints]];
         
-        NSDictionary *alignedConstraints = [_visualConstraints constraintsWithAlignmentOptions];
+        NSDictionary *alignedConstraints = [_layout constraintsWithAlignmentOptions];
         
         for (NSNumber *alignmentOptions in [alignedConstraints allKeys]) {
             NSUInteger options = [alignmentOptions integerValue];
@@ -403,6 +405,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.imageView.image = [_entity listImageForState:[OState s]];
         
         self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    } else {
+        _selectable = self.viewState.actionIsList;
     }
 }
 
@@ -470,13 +474,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.imageView.image = [_entity listImageForState:self.viewState];
     } else {
         if ([_entity isKindOfClass:OOrigo.class]) {
-            [[self textFieldForKeyPath:kKeyPathAddress] setText:((OOrigo *)_entity).address];
-            [[self textFieldForKeyPath:kKeyPathTelephone] setText:((OOrigo *)_entity).telephone];
+            [[self textFieldForKey:kPropertyKeyAddress] setText:((OOrigo *)_entity).address];
+            [[self textFieldForKey:kPropertyKeyTelephone] setText:((OOrigo *)_entity).telephone];
         } else if ([_entity isKindOfClass:OMember.class]) {
-            [[self textFieldForKeyPath:kKeyPathName] setText:((OMember *)_entity).name];
-            [[self textFieldForKeyPath:kKeyPathDateOfBirth] setText:[((OMember *)_entity).dateOfBirth localisedDateString]];
-            [[self textFieldForKeyPath:kKeyPathMobilePhone] setText:((OMember *)_entity).mobilePhone];
-            [[self textFieldForKeyPath:kKeyPathEmail] setText:((OMember *)_entity).email];
+            [[self textFieldForKey:kPropertyKeyName] setText:((OMember *)_entity).name];
+            [[self textFieldForKey:kPropertyKeyDateOfBirth] setText:[((OMember *)_entity).dateOfBirth localisedDateString]];
+            [[self textFieldForKey:kPropertyKeyMobilePhone] setText:((OMember *)_entity).mobilePhone];
+            [[self textFieldForKey:kPropertyKeyEmail] setText:((OMember *)_entity).email];
         }
         
         [self redrawIfNeeded];
