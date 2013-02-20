@@ -61,7 +61,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
                 lineCount = kTextViewMinimumEditLines;
             }
         }
-    } else if (([self.text length] > 0) && _containingCell.entity) {
+    } else if (([self.text length] > 0) && _cell.entity) {
         lineCount = [OTextView lineCountWithText:self.text];
     } else {
         lineCount = [OTextView lineCountWithText:self.placeholder];
@@ -84,12 +84,12 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 #pragma mark - Initialisation
 
-- (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate
+- (id)initForKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
     if (self) {
-        _containingCell = cell;
+        _cell = cell;
         
         _placeholderView = [[UITextView alloc] initWithFrame:CGRectZero];
         _placeholderView.backgroundColor = [UIColor clearColor];
@@ -107,7 +107,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         self.font = [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
-        self.placeholder = [OStrings placeholderForKeyPath:keyPath];
+        self.placeholder = [OStrings placeholderForKey:key];
         self.returnKeyType = UIReturnKeyDefault;
         self.scrollEnabled = NO;
         self.textAlignment = NSTextAlignmentLeft;
@@ -116,8 +116,8 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
+        _key = key;
         _hasEmphasis = NO;
-        _keyPath = keyPath;
         _lastKnownLineCount = [OTextView lineCountWithText:_placeholder];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:nil];
@@ -175,11 +175,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 - (void)setSelected:(BOOL)selected
 {
-    if (selected) {
-        self.textColor = [UIColor selectedDetailTextColor];
-    } else {
-        self.textColor = [UIColor detailTextColor];
-    }
+    self.textColor = selected ? [UIColor selectedDetailTextColor] : [UIColor detailTextColor];
 }
 
 
@@ -195,7 +191,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
     }
     
     [self hasDropShadow:_hasEmphasis];
-    [_containingCell redrawIfNeeded];
+    [_cell redrawIfNeeded];
 }
 
 

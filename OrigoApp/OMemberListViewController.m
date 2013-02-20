@@ -37,14 +37,51 @@ static NSInteger const kOrigoSection = 0;
 static NSInteger const kContactSection = 1;
 static NSInteger const kMemberSection = 2;
 
+static NSInteger const kHousemateSheetTag = 0;
+
 
 @implementation OMemberListViewController
+
+#pragma mark - Actions sheets
+
+- (void)promptForHousemate:(NSSet *)candidates
+{
+    _candidateHousemates = [candidates sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:kPropertyKeyName ascending:YES]]];
+    
+    UIActionSheet *housemateSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    
+    for (OMember *candidate in _candidateHousemates) {
+        [housemateSheet addButtonWithTitle:candidate.name];
+    }
+    
+    [housemateSheet addButtonWithTitle:[OStrings stringForKey:strButtonNewHousemate]];
+    [housemateSheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
+    housemateSheet.cancelButtonIndex = [candidates count] + 1;
+    housemateSheet.tag = kHousemateSheetTag;
+    
+    [housemateSheet showInView:self.view];
+}
+
 
 #pragma mark - Selector implementations
 
 - (void)addMember
 {
-    [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
+    NSMutableSet *candidates = [[NSMutableSet alloc] init];
+    
+    if ([_origo isOfType:kOrigoTypeResidence]) {
+        for (OMember *housemate in [_membership.member housemates]) {
+            if (![_origo hasMember:housemate]) {
+                [candidates addObject:housemate];
+            }
+        }
+    }
+    
+    if ([candidates count]) {
+        [self promptForHousemate:candidates];
+    } else {
+        [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
+    }
 }
 
 
@@ -60,7 +97,7 @@ static NSInteger const kMemberSection = 2;
 {
     [super viewDidLoad];
     
-    if ([_origo isResidence]) {
+    if ([_origo isOfType:kOrigoTypeResidence]) {
         if ([_origo userIsMember]) {
             self.title = _origo.name;
         } else {
@@ -70,7 +107,7 @@ static NSInteger const kMemberSection = 2;
         self.title = [OStrings stringForKey:strViewTitleMembers];
     }
     
-    if ([_origo userIsAdmin] || (![_origo hasAdmin] && [_origo userIsCreator])) {
+    if ([_origo userCanEdit]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
         self.navigationItem.rightBarButtonItem.action = @selector(addMember);
         
@@ -105,7 +142,7 @@ static NSInteger const kMemberSection = 2;
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)digestInput
+- (void)prepareState
 {
     _membership = self.data;
     _origo = _membership.origo;
@@ -135,7 +172,7 @@ static NSInteger const kMemberSection = 2;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return ((sectionKey == kMemberSection) && [_origo userIsAdmin]);
+    return ([super hasFooterForSectionWithKey:sectionKey] && [_origo userCanEdit]);
 }
 
 
@@ -146,7 +183,7 @@ static NSInteger const kMemberSection = 2;
     if (sectionKey == kContactSection) {
         text = [OStrings stringForKey:strHeaderContacts];
     } else if (sectionKey == kMemberSection) {
-        if ([_origo isResidence]) {
+        if ([_origo isOfType:kOrigoTypeResidence]) {
             text = [OStrings stringForKey:strHeaderHouseholdMembers];
         } else {
             text = [OStrings stringForKey:strHeaderOrigoMembers];
@@ -159,7 +196,21 @@ static NSInteger const kMemberSection = 2;
 
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    return [OStrings stringForKey:strFooterHousehold];
+    NSString *text = nil;
+    
+    if ([_origo isOfType:kOrigoTypeResidence]) {
+        text = [OStrings stringForKey:strFooterResidence];
+    } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
+        text = [OStrings stringForKey:strFooterSchoolClass];
+    } else if ([_origo isOfType:kOrigoTypePreschoolClass]) {
+        text = [OStrings stringForKey:strFooterPreschoolClass];
+    } else if ([_origo isOfType:kOrigoTypeSportsTeam]) {
+        text = [OStrings stringForKey:strFooterSportsTeam];
+    } else {
+        text = [OStrings stringForKey:strFooterOtherOrigo];
+    }
+    
+    return text;
 }
 
 
@@ -191,6 +242,27 @@ static NSInteger const kMemberSection = 2;
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return [OStrings stringForKey:strButtonDeleteMember];
+}
+
+
+#pragma mark - UIActionSheetDelegate conformance
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (actionSheet.tag) {
+        case kHousemateSheetTag:
+            if (buttonIndex == actionSheet.numberOfButtons - 2) {
+                [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
+            } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
+                [_origo addResident:_candidateHousemates[buttonIndex]];
+                [self reloadSectionsIfNeeded];
+            }
+            
+            break;
+            
+        default:
+            break;
+    }
 }
 
 @end

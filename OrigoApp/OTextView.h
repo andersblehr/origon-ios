@@ -14,20 +14,20 @@ extern NSInteger const kTextViewMaximumLines;
 
 @interface OTextView : UITextView<UITextViewDelegate> {
 @private
-    OTableViewCell *_containingCell;
+    OTableViewCell *_cell;
     UITextView *_placeholderView;
     
     NSString *_lastKnownText;
     NSInteger _lastKnownLineCount;
 }
 
-@property (strong, nonatomic) NSString *keyPath;
+@property (strong, nonatomic, readonly) NSString *key;
 @property (strong, nonatomic) NSString *placeholder;
 
 @property (nonatomic) BOOL selected;
 @property (nonatomic) BOOL hasEmphasis;
 
-- (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate;
+- (id)initForKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate;
 
 + (CGFloat)heightWithText:(NSString *)text;
 - (CGFloat)height;

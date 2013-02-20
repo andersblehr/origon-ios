@@ -48,7 +48,7 @@ static NSInteger const kGenderSheetTag = 0;
 static NSInteger const kGenderSheetButtonFemale = 0;
 static NSInteger const kGenderSheetButtonCancel = 2;
 
-static NSInteger const kAddressReuseSheetTag = 1;
+static NSInteger const kResidenceSheetTag = 1;
 
 static NSInteger const kExistingResidenceSheetTag = 2;
 static NSInteger const kExistingResidenceButtonInviteToHousehold = 0;
@@ -111,7 +111,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     if (!_membership) {
-        if ([_origo isResidence]) {
+        if ([_origo isOfType:kOrigoTypeResidence]) {
             _membership = [_origo addResident:_member];
         } else {
             _membership = [_origo addMember:_member];
@@ -133,10 +133,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         _member.givenName = [NSString givenNameFromFullName:_member.name];
         _member.gender = _gender;
         
-        if (self.state.aspectIsSelf && ![_origo hasAddress]) {
+        if (self.state.aspectIsSelf && ![_origo hasValueForKey:kPropertyKeyAddress]) {
             [self performSegueWithIdentifier:kModalSegue1ToOrigoView sender:self];
         } else {
-            if (self.state.aspectIsSelf && [_origo hasAddress]) {
+            if (self.state.aspectIsSelf && [_origo hasValueForKey:kPropertyKeyAddress]) {
                 _member.activeSince = [NSDate date];
             }
             
@@ -181,9 +181,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)promptForAddressReuse:(NSSet *)housemateResidences
+- (void)promptForResidence:(NSSet *)housemateResidences
 {
-    _candidateResidences = [housemateResidences sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:kKeyPathAddress ascending:YES]]];
+    _candidateResidences = [housemateResidences sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:kPropertyKeyAddress ascending:YES]]];
     
     UIActionSheet *residenceSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     
@@ -194,7 +194,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     [residenceSheet addButtonWithTitle:[OStrings stringForKey:strButtonNewAddress]];
     [residenceSheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
     residenceSheet.cancelButtonIndex = [housemateResidences count] + 1;
-    residenceSheet.tag = kAddressReuseSheetTag;
+    residenceSheet.tag = kResidenceSheetTag;
     
     [residenceSheet showInView:self.view];
 }
@@ -262,7 +262,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             [self.view endEditing:YES];
             
             if (_candidate) {
-                if ([_origo isResidence] && [_candidate.residencies count]) {
+                if ([_origo isOfType:kOrigoTypeResidence] && [_candidate.residencies count]) {
                     [self promptForExistingResidenceAction];
                 } else {
                     [self registerMember];
@@ -275,7 +275,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 }
             }
         } else if (self.state.actionIsEdit) {
-            if ([_member hasEmail] && ![[_emailField finalText] isEqualToString:_member.email]) {
+            if ([_member hasValueForKey:kPropertyKeyEmail] && ![[_emailField finalText] isEqualToString:_member.email]) {
                 if (self.state.aspectIsSelf) {
                     [self promptForUserEmailChangeConfirmation];
                 } else {
@@ -287,7 +287,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             }
         }
     } else {
-        [self.detailCell shakeCellVibrateDevice:NO];
+        [self.detailCell shakeCellShouldVibrate:NO];
     }
 }
 
@@ -297,7 +297,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     NSSet *housemateResidences = [_member housemateResidences];
     
     if ([housemateResidences count] > 0) {
-        [self promptForAddressReuse:housemateResidences];
+        [self promptForResidence:housemateResidences];
     } else {
         [self performSegueWithIdentifier:kModalSegue2ToOrigoView sender:self];
     }
@@ -324,7 +324,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     } else if (_member) {
         self.title = _member.givenName;
     } else if (self.state.actionIsRegister) {
-        if ([_origo isResidence]) {
+        if ([_origo isOfType:kOrigoTypeResidence]) {
             self.title = [OStrings stringForKey:strViewTitleNewHouseholdMember];
         } else {
             self.title = [OStrings stringForKey:strViewTitleNewMember];
@@ -344,10 +344,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     [super viewDidAppear:animated];
     
-    _nameField = [self.detailCell textFieldForKeyPath:kKeyPathName];
-    _dateOfBirthField = [self.detailCell textFieldForKeyPath:kKeyPathDateOfBirth];
-    _mobilePhoneField = [self.detailCell textFieldForKeyPath:kKeyPathMobilePhone];
-    _emailField = [self.detailCell textFieldForKeyPath:kKeyPathEmail];
+    _nameField = [self.detailCell textFieldForKey:kPropertyKeyName];
+    _dateOfBirthField = [self.detailCell textFieldForKey:kPropertyKeyDateOfBirth];
+    _mobilePhoneField = [self.detailCell textFieldForKey:kPropertyKeyMobilePhone];
+    _emailField = [self.detailCell textFieldForKey:kPropertyKeyEmail];
     _gender = _member.gender;
     
     OLogState;
@@ -407,7 +407,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)digestInput
+- (void)prepareState
 {
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
@@ -431,6 +431,12 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return ([super hasFooterForSectionWithKey:sectionKey] && [self canEdit]);
+}
+
+
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
 {
     NSString *text = nil;
@@ -449,7 +455,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    return nil;
+    return [OStrings stringForKey:strFooterMember];
 }
 
 
@@ -500,7 +506,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             
             break;
             
-        case kAddressReuseSheetTag:
+        case kResidenceSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
                 [self performSegueWithIdentifier:kModalSegue2ToOrigoView sender:self];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {

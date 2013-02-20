@@ -29,11 +29,11 @@
 {
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     
-    [dictionary setObject:self.entityId forKey:kKeyPathEntityId];
-    [dictionary setObject:self.entity.name forKey:kKeyPathEntityClass];
+    [dictionary setObject:self.entityId forKey:kPropertyKeyEntityId];
+    [dictionary setObject:self.entity.name forKey:kJSONKeyEntityClass];
     
-    if ([self isKindOfClass:OMember.class] && [self valueForKey:kKeyPathEmail]) {
-        [dictionary setObject:[self valueForKey:kKeyPathEmail] forKey:kKeyPathEmail];
+    if ([self isKindOfClass:OMember.class] && [self valueForKey:kPropertyKeyEmail]) {
+        [dictionary setObject:[self valueForKey:kPropertyKeyEmail] forKey:kPropertyKeyEmail];
     }
     
     return dictionary;
@@ -42,9 +42,25 @@
 
 #pragma mark - Key-value proxy methods
 
+- (BOOL)hasValueForKey:(NSString *)key
+{
+    id value = [self valueForKey:key];
+    
+    BOOL hasValue = NO;
+    
+    if (value && [value isKindOfClass:NSString.class]) {
+        hasValue = ([value length] > 0);
+    } else {
+        hasValue = (value != nil);
+    }
+    
+    return hasValue;
+}
+
+
 - (id)serialisableValueForKey:(NSString *)key
 {
-    id value = [super valueForKey:key];
+    id value = [self valueForKey:key];
     
     if (value && [value isKindOfClass:NSDate.class]) {
         value = [NSNumber numberWithLongLong:[value timeIntervalSince1970] * 1000];
@@ -75,10 +91,10 @@
     NSDictionary *attributes = [self.entity attributesByName];
     NSDictionary *relationships = [self.entity relationshipsByName];
     
-    [entityDictionary setObject:self.entity.name forKey:kKeyPathEntityClass];
+    [entityDictionary setObject:self.entity.name forKey:kJSONKeyEntityClass];
     
     for (NSString *attributeKey in [attributes allKeys]) {
-        if (![self propertyIsTransient:attributeKey]) {
+        if (![self propertyForKeyIsTransient:attributeKey]) {
             id attributeValue = [self serialisableValueForKey:attributeKey];
             
             if (attributeValue) {
@@ -90,7 +106,7 @@
     for (NSString *relationshipKey in [relationships allKeys]) {
         NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
         
-        if (!relationship.isToMany && ![self propertyIsTransient:relationshipKey]) {
+        if (!relationship.isToMany && ![self propertyForKeyIsTransient:relationshipKey]) {
             OReplicatedEntity *entity = [self valueForKey:relationshipKey];
             
             if (entity) {
@@ -114,7 +130,7 @@
     NSString *propertyString = @"";
     
     for (NSString *attributeKey in sortedAttributeKeys) {
-        if (![self propertyIsTransient:attributeKey]) {
+        if (![self propertyForKeyIsTransient:attributeKey]) {
             id value = [self valueForKey:attributeKey];
             
             if (value) {
@@ -127,7 +143,7 @@
     for (NSString *relationshipKey in sortedRelationshipKeys) {
         NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
         
-        if (!relationship.isToMany && ![self propertyIsTransient:relationshipKey]) {
+        if (!relationship.isToMany && ![self propertyForKeyIsTransient:relationshipKey]) {
             OReplicatedEntity *entity = [self valueForKey:relationshipKey];
             
             if (entity) {
@@ -149,7 +165,7 @@
     
     for (NSString *relationshipKey in [relationshipRefs allKeys]) {
         NSDictionary *relationshipRef = [relationshipRefs objectForKey:relationshipKey];
-        NSString *destinationId = [relationshipRef objectForKey:kKeyPathEntityId];
+        NSString *destinationId = [relationshipRef objectForKey:kPropertyKeyEntityId];
         
         OReplicatedEntity *entity = [[OMeta m] stagedEntityWithId:destinationId];
         
@@ -172,15 +188,15 @@
 
 #pragma mark - Meta information
 
-- (BOOL)userIsCreator
+- (BOOL)propertyForKeyIsTransient:(NSString *)key
 {
-    return ([self.createdBy isEqualToString:[OMeta m].userId]);
+    return [key isEqualToString:@"hashCode"];
 }
 
 
-- (BOOL)propertyIsTransient:(NSString *)property
+- (BOOL)userIsCreator
 {
-    return [property isEqualToString:@"hashCode"];
+    return ([self.createdBy isEqualToString:[OMeta m].userId]);
 }
 
 
@@ -197,18 +213,6 @@
 
 
 #pragma mark - Table view support
-
-+ (CGFloat)defaultCellHeight
-{
-    return kDefaultTableViewCellHeight;
-}
-
-
-- (CGFloat)cellHeight
-{
-    return kDefaultTableViewCellHeight;
-}
-
 
 - (NSString *)listNameForState:(OState *)state
 {

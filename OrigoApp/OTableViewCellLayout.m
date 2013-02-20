@@ -1,22 +1,30 @@
 //
-//  OVisualConstraints.m
+//  OTableViewCellLayout.m
 //  OrigoApp
 //
 //  Created by Anders Blehr on 18.11.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OVisualConstraints.h"
+#import "OTableViewCellLayout.h"
 
 #import "NSDate+OrigoExtensions.h"
 #import "UIFont+OrigoExtensions.h"
 
 #import "OLogging.h"
+#import "OMeta.h"
+#import "OStrings.h"
 #import "OTableViewCell.h"
 #import "OTextField.h"
 #import "OTextView.h"
 
+#import "OMember.h"
+#import "OOrigo.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
+
+CGFloat const kDefaultTableViewCellHeight = 45.f;
+CGFloat const kDefaultCellPadding = 10.f;
+CGFloat const kMinimumCellPadding = 0.1f;
 
 static NSString * const kVConstraintsInitial          = @"V:|-10-";
 static NSString * const kVConstraintsInitialWithTitle = @"V:|-44-";
@@ -41,22 +49,20 @@ static NSString * const kVConstraintsTextField        = @"[%@(%.f)]";
 static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%@]-6-[photoFrame]-10-|";
 static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%@]-6-|";
 
-static NSString * const kKeyPathPrefixDate = @"date";
 
-
-@implementation OVisualConstraints
+@implementation OTableViewCellLayout
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)elementsAreVisibleForKeyPath:(NSString *)keyPath
+- (BOOL)elementsAreVisibleForKey:(NSString *)key
 {
     BOOL elementsAreVisible = YES;
     
     if (_cell.entity) {
         NSArray *entityAttributeKeys = [[[_cell.entity entity] attributesByName] allKeys];
         
-        if ([entityAttributeKeys containsObject:keyPath]) {
-            id value = [_cell.entity valueForKey:keyPath];
+        if ([entityAttributeKeys containsObject:key]) {
+            id value = [_cell.entity valueForKey:key];
             
             if (value && [value isKindOfClass:NSString.class]) {
                 elementsAreVisible = ([value length] > 0);
@@ -72,12 +78,12 @@ static NSString * const kKeyPathPrefixDate = @"date";
 }
 
 
-- (void)configureElementsIfNeededForKeyPath:(NSString *)keyPath
+- (void)configureElementsIfNeededForKey:(NSString *)key
 {
-    id label = [_cell labelForKeyPath:keyPath];
-    id textField = [_cell textFieldForKeyPath:keyPath];
+    id label = [_cell labelForKey:key];
+    id textField = [_cell textFieldForKey:key];
     
-    if ([self elementsAreVisibleForKeyPath:keyPath]) {
+    if ([self elementsAreVisibleForKey:key]) {
         if (label && [label isHidden]) {
             [label setHidden:NO];
         }
@@ -85,7 +91,7 @@ static NSString * const kKeyPathPrefixDate = @"date";
         if (textField && [textField isHidden]) {
             [textField setHidden:NO];
             
-            id value = [_cell.entity valueForKey:keyPath];
+            id value = [_cell.entity valueForKey:key];
             
             if (value && (![[textField text] length])) {
                 if ([value isKindOfClass:NSString.class]) {
@@ -109,40 +115,93 @@ static NSString * const kKeyPathPrefixDate = @"date";
 }
 
 
-#pragma mark - Initialisation
+#pragma mark - Layout definitions
 
-- (id)initForTableViewCell:(OTableViewCell *)cell
++ (NSString *)titleKeyForReuseIdentifier:(NSString *)reuseIdentifier
 {
-    self = [super init];
+    NSString *titleKey = nil;
     
-    if (self) {
-        _cell = cell;
-        
-        _unlabeledElementKeyPaths = [[NSMutableArray alloc] init];
-        _labeledElementKeyPaths = [[NSMutableArray alloc] init];
+    if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
+        titleKey = kInputKeySignIn;
+    } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
+        titleKey = kInputKeyActivate;
     }
     
-    return self;
+    return titleKey;
+}
+
+
++ (NSArray *)detailKeysForReuseIdentifier:(NSString *)reuseIdentifier
+{
+    NSArray *detailKeys = nil;
+    
+    if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
+        detailKeys = @[kInputKeyAuthEmail, kInputKeyPassword];
+    } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
+        detailKeys = @[kInputKeyActivationCode, kInputKeyRepeatPassword];
+    }
+    
+    return detailKeys;
+}
+
+
++ (NSString *)titleKeyForEntityClass:(Class)entityClass
+{
+    return (entityClass == OMember.class) ? kPropertyKeyName : nil;
+}
+
+
++ (NSArray *)detailKeysForEntityClass:(Class)entityClass
+{
+    NSArray *detailKeys = nil;
+    
+    if (entityClass == OMember.class) {
+        detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
+    } else if (entityClass == OOrigo.class) {
+        detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
+    }
+    
+    return detailKeys;
 }
 
 
 #pragma mark - Adding constraints
 
-- (void)addTitleConstraintsForKeyPath:(NSString *)keyPath
+- (void)addTitleConstraintsForKey:(NSString *)key
 {
-    _titleKeyPath = keyPath;
+    _titleKey = key;
 }
 
 
-- (void)addLabeledTextFieldConstraintsForKeyPath:(NSString *)keyPath
+- (void)addLabeledTextFieldConstraintsForKey:(NSString *)key
 {
-    [_labeledElementKeyPaths addObject:keyPath];
+    [_labeledTextFieldKeys addObject:key];
 }
 
 
-- (void)addUnlabeledConstraintsForKeyPath:(NSString *)keyPath
+- (void)addCentredElementConstraintsForKey:(NSString *)key
 {
-    [_unlabeledElementKeyPaths addObject:keyPath];
+    [_centredElementKeys addObject:key];
+}
+
+
+- (void)addConstraintsCentred:(BOOL)centred
+{
+    if (_titleKey) {
+        if (centred) {
+            [self addCentredElementConstraintsForKey:_titleKey];
+        } else {
+            [self addTitleConstraintsForKey:_titleKey];
+        }
+    }
+    
+    for (NSString *detailKey in _detailKeys) {
+        if (centred) {
+            [self addCentredElementConstraintsForKey:detailKey];
+        } else {
+            [self addLabeledTextFieldConstraintsForKey:detailKey];
+        }
+    }
 }
 
 
@@ -152,10 +211,10 @@ static NSString * const kKeyPathPrefixDate = @"date";
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
-    if (_titleKeyPath) {
-        NSString *titleName = [_titleKeyPath stringByAppendingString:kElementSuffixTextField];
+    if (_titleKey) {
+        NSString *titleName = [_titleKey stringByAppendingString:kViewKeySuffixTextField];
         
-        [self configureElementsIfNeededForKeyPath:_titleKeyPath];
+        [self configureElementsIfNeededForKey:_titleKey];
         
         [constraints addObject:kVConstraintsTitleBanner];
         [constraints addObject:kHConstraintsTitleBanner];
@@ -176,17 +235,17 @@ static NSString * const kKeyPathPrefixDate = @"date";
 
 - (NSString *)labeledVerticalLabelConstraints
 {
-    NSString *constraints = _titleKeyPath ? kVConstraintsInitialWithTitle : kVConstraintsInitial;
+    NSString *constraints = _titleKey ? kVConstraintsInitialWithTitle : kVConstraintsInitial;
     
     BOOL isTopmostLabel = YES;
     id precedingTextField = nil;
     
-    for (NSString *keyPath in _labeledElementKeyPaths) {
-        [self configureElementsIfNeededForKeyPath:keyPath];
+    for (NSString *key in _labeledTextFieldKeys) {
+        [self configureElementsIfNeededForKey:key];
         
-        if ([self elementsAreVisibleForKeyPath:keyPath]) {
+        if ([self elementsAreVisibleForKey:key]) {
             NSString *constraint = nil;
-            NSString *labelName = [keyPath stringByAppendingString:kElementSuffixLabel];
+            NSString *labelName = [key stringByAppendingString:kViewKeySuffixLabel];
             
             if (isTopmostLabel) {
                 constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, labelName];
@@ -201,7 +260,7 @@ static NSString * const kKeyPathPrefixDate = @"date";
                 constraint = [NSString stringWithFormat:kVConstraintsLabel, padding, labelName];
             }
             
-            precedingTextField = [_cell textFieldForKeyPath:keyPath];
+            precedingTextField = [_cell textFieldForKey:key];
             constraints = [constraints stringByAppendingString:constraint];
         }
     }
@@ -214,18 +273,18 @@ static NSString * const kKeyPathPrefixDate = @"date";
 {
     NSString *constraints = kVConstraintsInitial;
     
-    if (_titleKeyPath) {
-        NSString *titleName = [_titleKeyPath stringByAppendingString:kElementSuffixTextField];
+    if (_titleKey) {
+        NSString *titleName = [_titleKey stringByAppendingString:kViewKeySuffixTextField];
         NSString *constraint = [NSString stringWithFormat:kVConstraintsTitle, titleName];
         
         constraints = [constraints stringByAppendingString:constraint];
     }
     
-    for (NSString *keyPath in _labeledElementKeyPaths) {
-        [self configureElementsIfNeededForKeyPath:keyPath];
+    for (NSString *key in _labeledTextFieldKeys) {
+        [self configureElementsIfNeededForKey:key];
         
-        if ([self elementsAreVisibleForKeyPath:keyPath]) {
-            id textField = [_cell textFieldForKeyPath:keyPath];
+        if ([self elementsAreVisibleForKey:key]) {
+            id textField = [_cell textFieldForKey:key];
             
             CGFloat textFieldHeight = [UIFont detailFieldHeight];
             
@@ -233,7 +292,7 @@ static NSString * const kKeyPathPrefixDate = @"date";
                 textFieldHeight = [(OTextView *)textField height];
             }
             
-            NSString *textFieldName = [keyPath stringByAppendingString:kElementSuffixTextField];
+            NSString *textFieldName = [key stringByAppendingString:kViewKeySuffixTextField];
             NSString *constraint = [NSString stringWithFormat:kVConstraintsTextField, textFieldName, textFieldHeight];
             
             constraints = [constraints stringByAppendingString:constraint];
@@ -250,12 +309,12 @@ static NSString * const kKeyPathPrefixDate = @"date";
     
     NSInteger rowNumber = 0;
     
-    for (NSString *keyPath in _labeledElementKeyPaths) {
-        [self configureElementsIfNeededForKeyPath:keyPath];
+    for (NSString *key in _labeledTextFieldKeys) {
+        [self configureElementsIfNeededForKey:key];
         
-        if ([self elementsAreVisibleForKeyPath:keyPath]) {
-            NSString *labelName = [keyPath stringByAppendingString:kElementSuffixLabel];
-            NSString *textFieldName = [keyPath stringByAppendingString:kElementSuffixTextField];
+        if ([self elementsAreVisibleForKey:key]) {
+            NSString *labelName = [key stringByAppendingString:kViewKeySuffixLabel];
+            NSString *textFieldName = [key stringByAppendingString:kViewKeySuffixTextField];
             NSString *constraint = nil;
             
             if (_titleBannerHasPhoto && (rowNumber++ < 2)) {
@@ -272,36 +331,36 @@ static NSString * const kKeyPathPrefixDate = @"date";
 }
 
 
-- (NSString *)unlabeledVerticalConstraints
+- (NSString *)centredVerticalConstraints
 {
     NSString *constraints = kVConstraintsInitial;
     
     BOOL isTopmostElement = YES;
     BOOL isBelowLabel = NO;
     
-    for (NSString *keyPath in _unlabeledElementKeyPaths) {
-        [self configureElementsIfNeededForKeyPath:keyPath];
+    for (NSString *key in _centredElementKeys) {
+        [self configureElementsIfNeededForKey:key];
         
-        if ([self elementsAreVisibleForKeyPath:keyPath]) {
+        if ([self elementsAreVisibleForKey:key]) {
             NSString *constraint = nil;
             NSString *elementName = nil;
             
-            if ([_cell labelForKeyPath:keyPath]) {
-                elementName = [keyPath stringByAppendingString:kElementSuffixLabel];
-            } else if ([_cell textFieldForKeyPath:keyPath]) {
-                elementName = [keyPath stringByAppendingString:kElementSuffixTextField];
+            if ([_cell labelForKey:key]) {
+                elementName = [key stringByAppendingString:kViewKeySuffixLabel];
+            } else if ([_cell textFieldForKey:key]) {
+                elementName = [key stringByAppendingString:kViewKeySuffixTextField];
             }
             
             if (isTopmostElement) {
                 constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, elementName];
                 isTopmostElement = NO;
             } else {
-                CGFloat spacing = isBelowLabel ? kDefaultPadding / 3 : 1.f;
+                CGFloat spacing = isBelowLabel ? kDefaultCellPadding / 3 : 1.f;
                 constraint = [NSString stringWithFormat:kVConstraintsElement, spacing, elementName];
             }
             
             constraints = [constraints stringByAppendingString:constraint];
-            isBelowLabel = [elementName hasSuffix:kElementSuffixLabel];
+            isBelowLabel = [elementName hasSuffix:kViewKeySuffixLabel];
         }
     }
     
@@ -309,21 +368,21 @@ static NSString * const kKeyPathPrefixDate = @"date";
 }
 
 
-- (NSArray *)unlabeledHorizontalConstraints
+- (NSArray *)centredHorizontalConstraints
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
-    for (NSString *keyPath in _unlabeledElementKeyPaths) {
-        [self configureElementsIfNeededForKeyPath:keyPath];
+    for (NSString *key in _centredElementKeys) {
+        [self configureElementsIfNeededForKey:key];
         
-        if ([self elementsAreVisibleForKeyPath:keyPath]) {
+        if ([self elementsAreVisibleForKey:key]) {
             NSString *constraint = nil;
             
-            if ([_cell labelForKeyPath:keyPath]) {
-                NSString *elementName = [keyPath stringByAppendingString:kElementSuffixLabel];
+            if ([_cell labelForKey:key]) {
+                NSString *elementName = [key stringByAppendingString:kViewKeySuffixLabel];
                 constraint = [NSString stringWithFormat:kHConstraintsLabel, elementName];
-            } else if ([_cell textFieldForKeyPath:keyPath]) {
-                NSString *elementName = [keyPath stringByAppendingString:kElementSuffixTextField];
+            } else if ([_cell textFieldForKey:key]) {
+                NSString *elementName = [key stringByAppendingString:kViewKeySuffixTextField];
                 constraint = [NSString stringWithFormat:kHConstraintsTextField, elementName];
             }
             
@@ -332,6 +391,82 @@ static NSString * const kKeyPathPrefixDate = @"date";
     }
     
     return constraints;
+}
+
+
+#pragma mark - Cell height computation
+
++ (CGFloat)cell:(OTableViewCell *)cell heightForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
+{
+    CGFloat height = 2 * kDefaultCellPadding;
+    
+    if ([self titleKeyForEntityClass:entityClass]) {
+        height += [UIFont titleFieldHeight] + kDefaultCellPadding;
+    }
+    
+    for (NSString *detailKey in [self detailKeysForEntityClass:entityClass]) {
+        if (!entity || [OState s].actionIsInput || [entity hasValueForKey:detailKey]) {
+            if ([self requiresTextViewForKey:detailKey]) {
+                if (cell) {
+                    height += [[cell textFieldForKey:detailKey] height];
+                } else if (entity && [entity hasValueForKey:detailKey]) {
+                    height += [OTextView heightWithText:[entity valueForKey:detailKey]];
+                } else {
+                    height += [OTextView heightWithText:[OStrings placeholderForKey:detailKey]];
+                }
+            } else {
+                height += [UIFont detailFieldHeight];
+            }
+        }
+    }
+    
+    return height;
+}
+
+
+#pragma mark - Detail field implementation info
+
++ (BOOL)requiresTextViewForKey:(NSString *)key
+{
+    return ([key isEqualToString:kPropertyKeyAddress]);
+}
+
+
+#pragma mark - Initialisation
+
+- (id)initForCell:(OTableViewCell *)cell
+{
+    self = [super init];
+    
+    if (self) {
+        _cell = cell;
+        
+        _centredElementKeys = [[NSMutableArray alloc] init];
+        _labeledTextFieldKeys = [[NSMutableArray alloc] init];
+    }
+    
+    return self;
+}
+
+
+- (void)layOutForReuseIdentifier:(NSString *)reuseIdentifier
+{
+    _titleKey = [OTableViewCellLayout titleKeyForReuseIdentifier:reuseIdentifier];
+    _detailKeys = [OTableViewCellLayout detailKeysForReuseIdentifier:reuseIdentifier];
+    
+    [self addConstraintsCentred:YES];
+}
+
+
+- (void)layOutForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
+{
+    _entity = entity;
+    
+    _titleKey = [OTableViewCellLayout titleKeyForEntityClass:entityClass];
+    _detailKeys = [OTableViewCellLayout detailKeysForEntityClass:entityClass];
+    _titleBannerHasPhoto = (entityClass == OMember.class) ? YES : NO;
+    
+    [self addConstraintsCentred:NO];
 }
 
 
@@ -344,7 +479,7 @@ static NSString * const kKeyPathPrefixDate = @"date";
     NSNumber *allTrailingOptions = [NSNumber numberWithInteger:NSLayoutFormatAlignAllTrailing];
     NSNumber *noAlignmentOptions = [NSNumber numberWithInteger:0];
     
-    if ([_labeledElementKeyPaths count]) {
+    if ([_labeledTextFieldKeys count]) {
         NSMutableArray *allTrailingConstraints = [[NSMutableArray alloc] init];
         [allTrailingConstraints addObject:[self labeledVerticalLabelConstraints]];
         
@@ -355,10 +490,10 @@ static NSString * const kKeyPathPrefixDate = @"date";
         
         [constraints setObject:allTrailingConstraints forKey:allTrailingOptions];
         [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
-    } else if ([_unlabeledElementKeyPaths count]) {
+    } else if ([_centredElementKeys count]) {
         NSMutableArray *nonAlignedConstraints = [[NSMutableArray alloc] init];
-        [nonAlignedConstraints addObject:[self unlabeledVerticalConstraints]];
-        [nonAlignedConstraints addObjectsFromArray:[self unlabeledHorizontalConstraints]];
+        [nonAlignedConstraints addObject:[self centredVerticalConstraints]];
+        [nonAlignedConstraints addObjectsFromArray:[self centredHorizontalConstraints]];
         
         [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
     }
@@ -373,6 +508,18 @@ static NSString * const kKeyPathPrefixDate = @"date";
 //    }
     
     return constraints;
+}
+
+
+#pragma mark - Accessor overrides
+
+- (NSArray *)allKeys
+{
+    NSMutableArray *allKeys = [[NSMutableArray alloc] initWithObjects:[self titleKey], nil];
+    
+    [allKeys addObjectsFromArray:[self detailKeys]];
+    
+    return allKeys;
 }
 
 @end

@@ -43,12 +43,12 @@
 }
 
 
-- (BOOL)propertyIsTransient:(NSString *)property
+- (BOOL)propertyForKeyIsTransient:(NSString *)key
 {
-    BOOL isTransient = [super propertyIsTransient:property];
+    BOOL isTransient = [super propertyForKeyIsTransient:key];
     
-    isTransient = isTransient || [property isEqualToString:@"resident"];
-    isTransient = isTransient || [property isEqualToString:@"residence"];
+    isTransient = isTransient || [key isEqualToString:@"resident"];
+    isTransient = isTransient || [key isEqualToString:@"residence"];
     
     return isTransient;
 }

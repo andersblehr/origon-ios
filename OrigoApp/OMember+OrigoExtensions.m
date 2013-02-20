@@ -23,6 +23,7 @@
 #import "OMemberResidency.h"
 #import "OMembership+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 
 @implementation OMember (OrigoExtensions)
@@ -55,7 +56,7 @@
 
 - (BOOL)isTeenOrOlder
 {
-    return ([self.dateOfBirth yearsBeforeNow] >= 13);
+    return ([self.dateOfBirth yearsBeforeNow] >= kTeenThreshold);
 }
 
 
@@ -65,27 +66,15 @@
 }
 
 
-- (BOOL)hasMobilePhone
-{
-    return ([self.mobilePhone length] > 0);
-}
-
-
 - (BOOL)hasAddress
 {
     BOOL hasAddress = NO;
     
     for (OMemberResidency *residency in self.residencies) {
-        hasAddress = hasAddress || [residency.residence hasAddress];
+        hasAddress = hasAddress || [residency.residence hasValueForKey:kPropertyKeyAddress];
     }
     
     return hasAddress;
-}
-
-
-- (BOOL)hasEmail
-{
-    return ([self.email length] > 0);
 }
 
 
@@ -96,22 +85,6 @@
 
 
 #pragma mark - Household information
-
-- (NSSet *)housemates
-{
-    NSMutableSet *housemates = [[NSMutableSet alloc] init];
-    
-    for (OMemberResidency *memberResidency in self.residencies) {
-        for (OMemberResidency *householdResidency in memberResidency.residence.residencies) {
-            if ((householdResidency.resident != self) && ![householdResidency.isGhost boolValue]) {
-                [housemates addObject:householdResidency.resident];
-            }
-        }
-    }
-    
-    return housemates;
-}
-
 
 - (NSSet *)wards
 {
@@ -128,6 +101,43 @@
     }
     
     return wards;
+}
+
+
+- (NSSet *)housemates
+{
+    NSMutableSet *housemates = [[NSMutableSet alloc] init];
+    
+    for (OMemberResidency *residency in self.residencies) {
+        for (OMemberResidency *peerResidency in residency.residence.residencies) {
+            if ((peerResidency.resident != self) && ![peerResidency.isGhost boolValue]) {
+                [housemates addObject:peerResidency.resident];
+            }
+        }
+    }
+    
+    return housemates;
+}
+
+
+- (NSSet *)housemateResidences
+{
+    NSMutableSet *ownResidences = [[NSMutableSet alloc] init];
+    NSMutableSet *housemateResidences = [[NSMutableSet alloc] init];
+    
+    for (OMemberResidency *residency in self.residencies) {
+        [ownResidences addObject:residency.residence];
+    }
+    
+    for (OMember *housemate in [self housemates]) {
+        for (OMemberResidency *housemateResidency in housemate.residencies) {
+            if (![ownResidences containsObject:housemateResidency.residence]) {
+                [housemateResidences addObject:housemateResidency.residence];
+            }
+        }
+    }
+    
+    return housemateResidences;
 }
 
 
@@ -169,7 +179,8 @@
     NSMutableSet *origoMemberships = [[NSMutableSet alloc] init];
     
     for (OMembership *membership in self.memberships) {
-        if (![membership.origo isMemberRoot] && ![membership.origo isResidence]) {
+        if (![membership.origo isOfType:kOrigoTypeMemberRoot] &&
+            ![membership.origo isOfType:kOrigoTypeResidence]) {
             [origoMemberships addObject:membership];
         }
     }
@@ -178,33 +189,12 @@
 }
 
 
-- (NSSet *)housemateResidences
-{
-    NSMutableSet *ownResidences = [[NSMutableSet alloc] init];
-    NSMutableSet *housemateResidences = [[NSMutableSet alloc] init];
-    
-    for (OMemberResidency *residency in self.residencies) {
-        [ownResidences addObject:residency.residence];
-    }
-    
-    for (OMember *housemate in [self housemates]) {
-        for (OMemberResidency *housemateResidency in housemate.residencies) {
-            if (![ownResidences containsObject:housemateResidency.residence]) {
-                [housemateResidences addObject:housemateResidency.residence];
-            }
-        }
-    }
-    
-    return housemateResidences;
-}
-
-
 - (BOOL)isMemberOfOrigoOfType:(NSString *)origoType
 {
     BOOL isMember = NO;
     
     for (OMembership *membership in self.memberships) {
-        isMember = isMember || [membership.origo.type isEqualToString:origoType];
+        isMember = isMember || [membership.origo isOfType:origoType];
     }
     
     return isMember;
@@ -212,40 +202,6 @@
 
 
 #pragma mark - OReplicatedEntity+OrigoExtensions overrides
-
-+ (CGFloat)defaultCellHeight
-{
-    CGFloat height = 3 * kDefaultPadding;
-    height += [UIFont titleFieldHeight];
-    height += 3 * [UIFont detailFieldHeight];
-    
-    return height;
-}
-
-
-- (CGFloat)cellHeight
-{
-    CGFloat height = 0.f;
-    
-    if ([OState s].actionIsInput) {
-        height = [OMember defaultCellHeight];
-    } else {
-        height = 3 * kDefaultPadding;
-        height += [UIFont titleFieldHeight];
-        height += [UIFont detailFieldHeight];
-        
-        if ([self.mobilePhone length] > 0) {
-            height += [UIFont detailFieldHeight];
-        }
-        
-        if ([self.email length] > 0) {
-            height += [UIFont detailFieldHeight];
-        }
-    }
-    
-    return height;
-}
-
 
 - (NSString *)listNameForState:(OState *)state
 {
@@ -271,9 +227,9 @@
     
     if (state.viewIsMemberList) {
         if (![self isMinor] || [[OMeta m].user hasWard:self]) {
-            if ([self hasMobilePhone]) {
+            if ([self hasValueForKey:kPropertyKeyMobilePhone]) {
                 listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
-            } else if ([self hasEmail]) {
+            } else if ([self hasValueForKey:kPropertyKeyEmail]) {
                 listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.email];
             }
         }

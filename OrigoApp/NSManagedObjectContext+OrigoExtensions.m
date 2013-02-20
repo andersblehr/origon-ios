@@ -37,7 +37,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
     origo.origoId = origoId;
     origo.type = type;
     
-    if ([origo.type isEqualToString:kOrigoTypeResidence]) {
+    if ([origo isOfType:kOrigoTypeResidence]) {
         origo.name = [OStrings stringForKey:strNameMyHousehold];
     }
     
@@ -71,14 +71,14 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 
 - (id)insertEntityFromDictionary:(NSDictionary *)entityDictionary
 {
-    NSString *entityId = [entityDictionary objectForKey:kKeyPathEntityId];
+    NSString *entityId = [entityDictionary objectForKey:kPropertyKeyEntityId];
     OReplicatedEntity *entity = [self entityWithId:entityId];
     
     if (!entity) {
-        NSString *entityClass = [entityDictionary objectForKey:kKeyPathEntityClass];
+        NSString *entityClass = [entityDictionary objectForKey:kJSONKeyEntityClass];
         
         entity = [self insertEntityForClass:NSClassFromString(entityClass) entityId:entityId];
-        entity.origoId = [entityDictionary objectForKey:kKeyPathOrigoId];
+        entity.origoId = [entityDictionary objectForKey:kPropertyKeyOrigoId];
     }
     
     NSDictionary *attributes = [entity.entity attributesByName];
@@ -117,10 +117,10 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 }
 
 
-- (id)entityOfClass:(Class)class withValue:(NSString *)value forKeyPath:(NSString *)keyPath
+- (id)entityOfClass:(Class)class withValue:(NSString *)value forKey:(NSString *)key
 {
     NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(class)];
-    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", keyPath, value]];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", key, value]];
     
     id entity = nil;
     NSError *error = nil;
@@ -129,7 +129,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
     if (resultsArray == nil) {
         OLogError(@"Error fetching entity on device: %@", [error localizedDescription]);
     } else if ([resultsArray count] > 1) {
-        OLogBreakage(@"Found more than one entity with '%@'='%@'.", keyPath, value);
+        OLogBreakage(@"Found more than one entity with '%@'='%@'.", key, value);
     } else if ([resultsArray count] == 1) {
         entity = resultsArray[0];
     }
@@ -150,7 +150,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 
 - (void)deleteEntity:(OReplicatedEntity *)entity isGhost:(BOOL)isGhost
 {
-    if ([entity isKindOfClass:OMembership.class]) {
+    if ([entity isKindOfClass:OMembership.class] && ![(OMembership *)entity isAssociate]) {
         OMembership *membership = (OMembership *)entity;
         OMember *member = membership.member;
         OOrigo *origo = membership.origo;
@@ -160,7 +160,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
         if ([OState s].viewIsMemberList) {
             BOOL shouldDeleteMember = NO;
             
-            if ([origo isResidence]) {
+            if ([origo isOfType:kOrigoTypeResidence]) {
                 shouldDeleteMember = (([[member origoMemberships] count] == 0) && ([member.residencies count] == 1) && ![member isUser]);
             } else {
                 shouldDeleteMember = (([[member origoMemberships] count] == 1) && ![[[OMeta m].user housemates] containsObject:member]);
@@ -190,7 +190,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
                 [self deleteEntityAsNeeded:member isGhost:isGhost];
             }
         } else if ([OState s].viewIsMemberDetail) {
-            if ([origo isResidence] && ([origo.residencies count] == 1)) {
+            if ([origo isOfType:kOrigoTypeResidence] && ([origo.residencies count] == 1)) {
                 [self deleteEntityAsNeeded:origo isGhost:isGhost];
             }
         }
@@ -249,8 +249,8 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
     
     entity.origoId = origo.entityId;
     
-    if ([[entity.entity relationshipsByName] objectForKey:kKeyPathOrigo]) {
-        [entity setValue:origo forKey:kKeyPathOrigo];
+    if ([[entity.entity relationshipsByName] objectForKey:kPropertyKeyOrigo]) {
+        [entity setValue:origo forKey:kPropertyKeyOrigo];
     }
     
     return entity;
@@ -259,10 +259,6 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 
 - (id)insertEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo
 {
-    if (!entity) {
-        OLogDebug(@"Entity is nil!");
-    }
-    
     OReplicatedEntityRef *entityRef = [entity entityRefForOrigo:origo];
     
     if (!entityRef) {
@@ -294,8 +290,8 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
     NSMutableSet *entities = [[NSMutableSet alloc] init];
     
     for (NSDictionary *replicaDictionary in replicaDictionaries) {
-        if ([[replicaDictionary objectForKey:kKeyPathIsGhost] boolValue]) {
-            NSString *ghostedEntityId = [replicaDictionary objectForKey:kKeyPathEntityId];
+        if ([[replicaDictionary objectForKey:kPropertyKeyIsGhost] boolValue]) {
+            NSString *ghostedEntityId = [replicaDictionary objectForKey:kPropertyKeyEntityId];
             OReplicatedEntity *ghostedEntity = [self entityWithId:ghostedEntityId];
 
             if (ghostedEntity) {
@@ -348,7 +344,7 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
     }
     
     NSData *dirtyEntityURIArchive = [NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs];
-    [[NSUserDefaults standardUserDefaults] setObject:dirtyEntityURIArchive forKey:kKeyPathDirtyEntities];
+    [[NSUserDefaults standardUserDefaults] setObject:dirtyEntityURIArchive forKey:kDefaultsKeyDirtyEntities];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
@@ -357,13 +353,13 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 
 - (id)entityWithId:(NSString *)entityId
 {
-    return [self entityOfClass:OReplicatedEntity.class withValue:entityId forKeyPath:kKeyPathEntityId];
+    return [self entityOfClass:OReplicatedEntity.class withValue:entityId forKey:kPropertyKeyEntityId];
 }
 
 
 - (id)memberEntityWithEmail:(NSString *)email
 {
-    return [self entityOfClass:OMember.class withValue:email forKeyPath:kKeyPathEmail];
+    return [self entityOfClass:OMember.class withValue:email forKey:kPropertyKeyEmail];
 }
 
 

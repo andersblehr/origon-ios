@@ -55,7 +55,6 @@ NSString * const strAlertTitleWelcomeBack            = @"strAlertTitleWelcomeBac
 NSString * const strAlertTextWelcomeBack             = @"strAlertTextWelcomeBack";
 NSString * const strAlertTitleIncompleteRegistration = @"strAlertTitleIncompleteRegistration";
 NSString * const strAlertTextIncompleteRegistration  = @"strAlertTextIncompleteRegistration";
-NSString * const strSheetTitleEULA                   = @"strSheetTitleEULA";
 
 // OOrigoListView strings
 NSString * const strTabBarTitleOrigo                 = @"strTabBarTitleOrigo";
@@ -79,7 +78,12 @@ NSString * const strViewTitleHousehold               = @"strViewTitleHousehold";
 NSString * const strHeaderContacts                   = @"strHeaderContacts";
 NSString * const strHeaderHouseholdMembers           = @"strHeaderHouseholdMembers";
 NSString * const strHeaderOrigoMembers               = @"strHeaderOrigoMembers";
-NSString * const strFooterHousehold                  = @"strFooterHousehold";
+NSString * const strFooterResidence                  = @"strFooterResidence";
+NSString * const strFooterSchoolClass                = @"strFooterSchoolClass";
+NSString * const strFooterPreschoolClass             = @"strFooterPreschoolClass";
+NSString * const strFooterSportsTeam                 = @"strFooterSportsTeam";
+NSString * const strFooterOtherOrigo                 = @"strFooterOtherOrigo";
+NSString * const strButtonNewHousemate               = @"strButtonNewHousemate";
 NSString * const strButtonDeleteMember               = @"strButtonDeleteMember";
 
 // OOrigoView strings
@@ -106,6 +110,7 @@ NSString * const strPlaceholderName                  = @"strPlaceholderName";
 NSString * const strPlaceholderEmail                 = @"strPlaceholderEmail";
 NSString * const strPlaceholderDateOfBirth           = @"strPlaceholderDateOfBirth";
 NSString * const strPlaceholderMobilePhone           = @"strPlaceholderMobilePhone";
+NSString * const strFooterMember                     = @"strFooterMember";
 NSString * const strButtonNewAddress                 = @"strButtonNewAddress";
 NSString * const strButtonInviteToHousehold          = @"strButtonInviteToHousehold";
 NSString * const strButtonMergeHouseholds            = @"strButtonMergeHouseholds";
@@ -170,9 +175,9 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 }
 
 
-+ (NSString *)stringKeyWithPrefix:(NSString *)prefix forKeyPath:(NSString *)keyPath
++ (NSString *)stringKeyWithPrefix:(NSString *)prefix forKey:(NSString *)key
 {
-    return [prefix stringByAppendingString:[[[keyPath substringWithRange:NSMakeRange(0, 1)] uppercaseString] stringByAppendingString:[keyPath substringFromIndex:1]]];
+    return [prefix stringByAppendingString:[[[key substringWithRange:NSMakeRange(0, 1)] uppercaseString] stringByAppendingString:[key substringFromIndex:1]]];
 }
 
 
@@ -198,7 +203,7 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 
 + (void)conditionallyRefresh
 {
-    NSDate *stringDate = [[NSUserDefaults standardUserDefaults] objectForKey:kKeyPathStringDate];
+    NSDate *stringDate = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultsKeyStringDate];
     
     if (stringDate && ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
         if ([self hasStrings] && [[OMeta m] internetConnectionIsAvailable]) {
@@ -228,15 +233,15 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 }
 
 
-+ (NSString *)labelForKeyPath:(NSString *)keyPath
++ (NSString *)labelForKey:(NSString *)key
 {
-    return [self stringForKey:[self stringKeyWithPrefix:kLabelKeyPrefix forKeyPath:keyPath]];
+    return [self stringForKey:[self stringKeyWithPrefix:kLabelKeyPrefix forKey:key]];
 }
 
 
-+ (NSString *)placeholderForKeyPath:(NSString *)keyPath
++ (NSString *)placeholderForKey:(NSString *)key
 {
-    return [self stringForKey:[self stringKeyWithPrefix:kPlaceholderKeyPrefix forKeyPath:keyPath]];
+    return [self stringForKey:[self stringKeyWithPrefix:kPlaceholderKeyPrefix forKey:key]];
 }
 
 

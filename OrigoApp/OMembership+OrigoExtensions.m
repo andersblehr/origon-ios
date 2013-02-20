@@ -27,6 +27,23 @@
 }
 
 
+- (BOOL)isAssociate
+{
+    return (self.associateMember != nil);
+}
+
+
+- (void)alignAssociation:(BOOL)isAssociate
+{
+    if (!isAssociate && [self isAssociate]) {
+        self.member = self.associateMember;
+        self.origo = self.associateOrigo;
+        self.associateMember = nil;
+        self.associateOrigo = nil;
+    }
+}
+
+
 #pragma mark - OReplicatedEntity+OrigoExtensions overrides
 
 - (void)makeGhost

@@ -15,10 +15,12 @@
 @class OTableViewCell;
 @class OMembership, OOrigo;
 
-@interface OMemberListViewController : OTableViewController<UITextViewDelegate> {
+@interface OMemberListViewController : OTableViewController<UIActionSheetDelegate> {
 @private
     OMembership *_membership;
     OOrigo *_origo;
+    
+    NSArray *_candidateHousemates;
 }
 
 @end

@@ -15,18 +15,18 @@ extern CGFloat const kTextInset;
 
 @interface OTextField : UITextField {
 @private
-    OTableViewCell *_containingCell;
+    OTableViewCell *_cell;
     
     BOOL _isTitle;
     BOOL _didPickDate;
 }
 
-@property (strong, nonatomic) NSString *keyPath;
+@property (strong, nonatomic, readonly) NSString *key;
 @property (strong, nonatomic) NSDate *date;
 
 @property (nonatomic) BOOL hasEmphasis;
 
-- (id)initForKeyPath:(NSString *)keyPath cell:(OTableViewCell *)cell delegate:(id)delegate;
+- (id)initForKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate;
 
 - (BOOL)holdsValidEmail;
 - (BOOL)holdsValidPassword;

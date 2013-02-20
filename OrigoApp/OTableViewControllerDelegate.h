@@ -11,7 +11,7 @@
 @protocol OTableViewControllerDelegate <NSObject>
 
 @required
-- (void)digestInput;
+- (void)prepareState;
 - (void)populateDataSource;
 
 @optional

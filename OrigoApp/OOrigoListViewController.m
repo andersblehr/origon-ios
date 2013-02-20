@@ -120,7 +120,7 @@ static NSInteger const kUserRow = 0;
     }
     
     [_origoTypes addObject:kOrigoTypeSportsTeam];
-    [_origoTypes addObject:kOrigoTypeDefault];
+    [_origoTypes addObject:kOrigoTypeOther];
     
     UIActionSheet *origoTypeSheet = [[UIActionSheet alloc] initWithTitle:sheetTitle delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     
@@ -203,7 +203,7 @@ static NSInteger const kUserRow = 0;
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)digestInput
+- (void)prepareState
 {
     _member = self.data ? self.data : [OMeta m].user;
     

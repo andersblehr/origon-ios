@@ -16,6 +16,7 @@ extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;
 
 extern NSUInteger const kCertainSchoolAge;
+extern NSUInteger const kTeenThreshold;
 extern NSUInteger const kAgeOfMajority;
 
 extern NSString * const kBundleId;
@@ -43,31 +44,33 @@ extern NSString * const kOrigoTypeOrganisation;
 extern NSString * const kOrigoTypeSchoolClass;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeSportsTeam;
-extern NSString * const kOrigoTypeDefault;
+extern NSString * const kOrigoTypeOther;
 
-extern NSString * const kKeyPathAuthInfo;
-extern NSString * const kKeyPathDirtyEntities;
-extern NSString * const kKeyPathEntityClass;
-extern NSString * const kKeyPathIsGhost;
-extern NSString * const kKeyPathEntityId;
-extern NSString * const kKeyPathOrigo;
-extern NSString * const kKeyPathOrigoId;
-extern NSString * const kKeyPathSignIn;
-extern NSString * const kKeyPathAuthEmail;
-extern NSString * const kKeyPathPassword;
-extern NSString * const kKeyPathActivation;
-extern NSString * const kKeyPathActivationCode;
-extern NSString * const kKeyPathRepeatPassword;
-extern NSString * const kKeyPathPasswordHash;
-extern NSString * const kKeyPathIsListed;
-extern NSString * const kKeyPathName;
-extern NSString * const kKeyPathMobilePhone;
-extern NSString * const kKeyPathEmail;
-extern NSString * const kKeyPathDateOfBirth;
-extern NSString * const kKeyPathAddress;
-extern NSString * const kKeyPathTelephone;
+extern NSString * const kInputKeyActivate;
+extern NSString * const kInputKeyActivationCode;
+extern NSString * const kInputKeyAuthEmail;
+extern NSString * const kInputKeyPassword;
+extern NSString * const kInputKeyRepeatPassword;
+extern NSString * const kInputKeySignIn;
 
-extern NSString * const kKeyPathStringDate;
+extern NSString * const kJSONKeyEntityClass;
+extern NSString * const kJSONKeyIsListed;
+extern NSString * const kJSONKeyPasswordHash;
+
+extern NSString * const kPropertyKeyAddress;
+extern NSString * const kPropertyKeyDateOfBirth;
+extern NSString * const kPropertyKeyEmail;
+extern NSString * const kPropertyKeyEntityId;
+extern NSString * const kPropertyKeyIsGhost;
+extern NSString * const kPropertyKeyMobilePhone;
+extern NSString * const kPropertyKeyName;
+extern NSString * const kPropertyKeyOrigo;
+extern NSString * const kPropertyKeyOrigoId;
+extern NSString * const kPropertyKeyTelephone;
+
+extern NSString * const kDefaultsKeyAuthInfo;
+extern NSString * const kDefaultsKeyDirtyEntities;
+extern NSString * const kDefaultsKeyStringDate;
 
 @class OTableViewCell;
 @class OMember, OReplicatedEntity;
@@ -101,8 +104,6 @@ extern NSString * const kKeyPathStringDate;
 @property (nonatomic, readonly) BOOL internetConnectionIsWWAN;
 
 @property (strong, nonatomic, readonly) UIDatePicker *sharedDatePicker;
-@property (weak, nonatomic) OTableViewCell *participatingCell;
-
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 
 + (OMeta *)m;

@@ -68,7 +68,7 @@ static NSInteger const kOrigoSection = 0;
                 _member.activeSince = [NSDate date];
                 [self.dismisser dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
             } else {
-                if ([_origo isResidence]) {
+                if ([_origo isOfType:kOrigoTypeResidence]) {
                     _membership = [_origo addResident:_member];
                 } else {
                     _membership = [_origo addMember:_member];
@@ -80,7 +80,7 @@ static NSInteger const kOrigoSection = 0;
             [self toggleEditMode];
         }
     } else {
-        [self.detailCell shakeCellVibrateDevice:NO];
+        [self.detailCell shakeCellShouldVibrate:NO];
     }
 }
 
@@ -92,9 +92,9 @@ static NSInteger const kOrigoSection = 0;
     [super viewDidLoad];
     
     if (_origo) {
-        self.title = [_origo isResidence] ? [OStrings stringForKey:strTermAddress] : _origo.name;
+        self.title = [_origo isOfType:kOrigoTypeResidence] ? [OStrings stringForKey:strTermAddress] : _origo.name;
     } else {
-        if ([self.meta isEqualToString:kOrigoTypeDefault]) {
+        if ([self.meta isEqualToString:kOrigoTypeOther]) {
             self.title = [OStrings stringForKey:strViewTitleNewOrigo];
         } else {
             self.title = [OStrings stringForKey:self.meta];
@@ -107,8 +107,8 @@ static NSInteger const kOrigoSection = 0;
 {
     [super viewDidAppear:animated];
     
-    _addressView = [self.detailCell textFieldForKeyPath:kKeyPathAddress];
-    _telephoneField = [self.detailCell textFieldForKeyPath:kKeyPathTelephone];
+    _addressView = [self.detailCell textFieldForKey:kPropertyKeyAddress];
+    _telephoneField = [self.detailCell textFieldForKey:kPropertyKeyTelephone];
     
     OLogState;
 }
@@ -126,7 +126,7 @@ static NSInteger const kOrigoSection = 0;
 {
     UIBarButtonItem *cancelButton = nil;
     
-    if (![_origo isResidence] || _member.activeSince) {
+    if (![_origo isOfType:kOrigoTypeResidence] || _member.activeSince) {
         cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
     }
     
@@ -152,7 +152,7 @@ static NSInteger const kOrigoSection = 0;
 
 #pragma mark - OTableViewControllerDelegate conformance
 
-- (void)digestInput
+- (void)prepareState
 {
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
