@@ -40,6 +40,32 @@
 }
 
 
+#pragma mark - Casting convenience methods
+
+- (OMember *)asMember
+{
+    return [self isMemberOfClass:OMember.class] ? (OMember *)self : nil;
+}
+
+
+- (OOrigo *)asOrigo
+{
+    return [self isMemberOfClass:OOrigo.class] ? (OOrigo *)self : nil;
+}
+
+
+- (OMembership *)asMembership
+{
+    return [self isKindOfClass:OMembership.class] ? (OMembership *)self : nil;
+}
+
+
+- (OMemberResidency *)asMemberResidency
+{
+    return [self isMemberOfClass:OMemberResidency.class] ? (OMemberResidency *)self : nil;
+}
+
+
 #pragma mark - Key-value proxy methods
 
 - (BOOL)hasValueForKey:(NSString *)key

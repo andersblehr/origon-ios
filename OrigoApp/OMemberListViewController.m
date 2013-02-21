@@ -228,7 +228,7 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath
 {
-    OMember *member = [[self entityForIndexPath:indexPath] member];
+    OMember *member = [[self entityForIndexPath:indexPath] asMembership].member;
     
     return [member isMinor] ? [member displayNameAndAge] : member.name;
 }
@@ -236,13 +236,13 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (NSString *)cellDetailTextForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[[self entityForIndexPath:indexPath] member] displayContactDetails];
+    return [[[self entityForIndexPath:indexPath] asMembership].member displayContactDetails];
 }
 
 
 - (UIImage *)cellImageForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[[self entityForIndexPath:indexPath] member] displayImage];
+    return [[[self entityForIndexPath:indexPath] asMembership].member displayImage];
 }
 
 

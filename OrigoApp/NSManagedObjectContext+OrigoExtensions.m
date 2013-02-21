@@ -150,8 +150,8 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
 
 - (void)deleteEntity:(OReplicatedEntity *)entity isGhost:(BOOL)isGhost
 {
-    if ([entity isKindOfClass:OMembership.class] && ![(OMembership *)entity isAssociate]) {
-        OMembership *membership = (OMembership *)entity;
+    if ([entity isKindOfClass:OMembership.class] && ![[entity asMembership] isAssociate]) {
+        OMembership *membership = [entity asMembership];
         OMember *member = membership.member;
         OOrigo *origo = membership.origo;
         
