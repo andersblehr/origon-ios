@@ -10,12 +10,14 @@
 
 #import "OTableViewController.h"
 
+#import "OTableViewListCellDelegate.h"
+
 @protocol OEntityObservingDelegate;
 
 @class OTableViewCell;
 @class OMembership, OOrigo;
 
-@interface OMemberListViewController : OTableViewController<UIActionSheetDelegate> {
+@interface OMemberListViewController : OTableViewController<UIActionSheetDelegate, OTableViewListCellDelegate> {
 @private
     OMembership *_membership;
     OOrigo *_origo;

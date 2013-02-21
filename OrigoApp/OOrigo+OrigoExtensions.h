@@ -14,6 +14,7 @@
 
 - (NSString *)displayAddress;
 - (NSString *)displayPhoneNumber;
+- (UIImage *)displayImage;
 
 - (id)addMember:(OMember *)member;
 - (id)addResident:(OMember *)resident;

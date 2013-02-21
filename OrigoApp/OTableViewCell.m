@@ -72,6 +72,20 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (void)populateListCell
+{
+    self.textLabel.text = [_informer listTextForIndexPath:_indexPath];
+    
+    if ([_informer respondsToSelector:@selector(listDetailsForIndexPath:)]) {
+        self.detailTextLabel.text = [_informer listDetailsForIndexPath:_indexPath];
+    }
+    
+    if ([_informer respondsToSelector:@selector(listImageForIndexPath:)]) {
+        self.imageView.image = [_informer listImageForIndexPath:_indexPath];
+    }
+}
+
+
 - (BOOL)shouldComposeForReuseIdentifier:(NSString *)reuseIdentifier
 {
     BOOL userIsSigningIn = [reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn];
@@ -195,145 +209,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - List cell display
-
-- (NSString *)listTextForEntity:(OReplicatedEntity *)entity
-{
-    OState *state = self.localState;
-    NSString *text = nil;
-    
-    if (state.viewIsOrigoList) {
-        
-    }
-    
-    if ([entity isKindOfClass:OMember.class]) {
-        OMember *member = (OMember *)entity;
-        
-        if (state.viewIsOrigoList) {
-            text = [member isUser] ? [OStrings stringForKey:strTermMe] : member.givenName;
-        } else if (state.viewIsMemberList) {
-            text = [member isMinor] ? [member displayNameAndAge] : member.name;
-        }
-    } else if ([entity isKindOfClass:OOrigo.class]) {
-        OOrigo *origo = (OOrigo *)entity;
-        
-        if (state.viewIsOrigoList) {
-            text = origo.name;
-        } else if (state.viewIsMemberDetail) {
-            text = [origo.address lines][0];
-        }
-    } else if ([entity isKindOfClass:OMembership.class]) {
-        OMembership *membership = (OMembership *)entity;
-        
-        if (state.viewIsOrigoList && [membership.origo isOfType:kOrigoTypeResidence]) {
-            text = [self listTextForEntity:membership.origo];
-        } else if (state.viewIsOrigoList || state.viewIsMemberList) {
-            text = [self listTextForEntity:membership.member];
-        } else if (state.viewIsMemberDetail) {
-            text = [self listTextForEntity:membership.origo];
-        }
-    }
-    
-    return text;
-}
-
-
-- (NSString *)listDetailsForEntity:(OReplicatedEntity *)entity
-{
-    OState *state = self.localState;
-    NSString *details = nil;
-    
-    if ([entity isKindOfClass:OMember.class]) {
-        OMember *member = (OMember *)entity;
-        
-        if (state.viewIsOrigoList && [member isUser]) {
-            details = member.name;
-        } else if (state.viewIsMemberList) {
-            details = [member displayContactDetails];
-        }
-    } else if ([entity isKindOfClass:OOrigo.class]) {
-        OOrigo *origo = (OOrigo *)entity;
-        
-        if (state.viewIsOrigoList) {
-            if ([origo isOfType:kOrigoTypeResidence]) {
-                details = [origo displayAddress];
-            } else {
-                details = origo.descriptionText;
-            }
-        } else {
-            details = [origo displayPhoneNumber];
-        }
-    } else if ([entity isKindOfClass:OMembership.class]) {
-        OMembership *membership = (OMembership *)entity;
-        
-        if (state.viewIsOrigoList && [membership.origo isOfType:kOrigoTypeResidence]) {
-            details = [self listDetailsForEntity:membership.origo];
-        } else if (state.viewIsOrigoList || state.viewIsMemberList) {
-            details = [self listDetailsForEntity:membership.member];
-        }
-    }
-    
-    return details;
-}
-
-
-- (UIImage *)listImageForEntity:(OReplicatedEntity *)entity
-{
-    OState *state = self.localState;
-    UIImage *image = nil;
-    
-    if ([entity isKindOfClass:OMember.class]) {
-        OMember *member = (OMember *)entity;
-        
-        if (state.viewIsMemberList || (state.viewIsOrigoList && [member isUser])) {
-            if (member.photo) {
-                // TODO: Embed photo
-            } else {
-                if ([member.dateOfBirth yearsBeforeNow] < kToddlerThreshold) {
-                    image = [UIImage imageNamed:kIconFileInfant];
-                } else {
-                    if ([member isMale]) {
-                        if ([member isMinor]) {
-                            image = [UIImage imageNamed:kIconFileBoy];
-                        } else {
-                            image = [UIImage imageNamed:kIconFileMan];
-                        }
-                    } else {
-                        if ([member isMinor]) {
-                            image = [UIImage imageNamed:kIconFileGirl];
-                        } else {
-                            image = [UIImage imageNamed:kIconFileWoman];
-                        }
-                    }
-                }
-            }
-        } else if (state.viewIsOrigoList) {
-            image = [UIImage imageNamed:kIconFileOrigo];
-        }
-    } else if ([entity isKindOfClass:OOrigo.class]) {
-        OOrigo *origo = (OOrigo *)entity;
-        
-        if ([origo isOfType:kOrigoTypeResidence]) {
-            image = [UIImage imageNamed:kIconFileHousehold];
-        } else {
-            // TODO: What icon to use for general origos?
-        }
-    } else if ([entity isKindOfClass:OMembership.class]) {
-        OMembership *membership = (OMembership *)entity;
-        
-        if (state.viewIsOrigoList && [membership.origo isOfType:kOrigoTypeResidence]) {
-            image = [self listImageForEntity:membership.origo];
-        } else if (state.viewIsOrigoList || state.viewIsMemberList) {
-            image = [self listImageForEntity:membership.member];
-        } else if (state.viewIsMemberDetail) {
-            image = [self listImageForEntity:membership.origo];
-        }
-    }
-    
-    return image;
-}
-
-
 #pragma mark - Initialisation
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
@@ -350,14 +225,22 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
         self.textLabel.font = [UIFont titleFont];
 
-        if (![self isListCell]) {
+        if ([self isListCell]) {
+            _informer = delegate;
+            _selectable = YES;
+        } else {
             _composer = [[OTableViewCellComposer alloc] initForCell:self];
             _views = [[NSMutableDictionary alloc] init];
             _inputDelegate = delegate;
+            _selectable = self.localState.actionIsList;
             
             if ([self shouldComposeForReuseIdentifier:reuseIdentifier]) {
                 [self composeForReuseIdentifier:reuseIdentifier];
             }
+        }
+        
+        if (_selectable) {
+            self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
         
         [self.contentView setNeedsUpdateConstraints];
@@ -568,20 +451,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Custom accessors
 
-- (void)setEntity:(OReplicatedEntity *)entity
+- (void)setIndexPath:(NSIndexPath *)indexPath
 {
-    _entity = entity;
-    
+    _indexPath = indexPath;
+
     if ([self isListCell]) {
-        _selectable = YES;
-        
-        self.textLabel.text = [self listTextForEntity:_entity];
-        self.detailTextLabel.text = [self listDetailsForEntity:_entity];
-        self.imageView.image = [self listImageForEntity:_entity];
-        
-        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    } else {
-        _selectable = self.localState.actionIsList;
+        [self populateListCell];
     }
 }
 
@@ -609,9 +484,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)reloadEntity
 {
     if ([self isListCell]) {
-        self.textLabel.text = [self listTextForEntity:_entity];
-        self.detailTextLabel.text = [self listDetailsForEntity:_entity];
-        self.imageView.image = [self listImageForEntity:_entity];
+        [self populateListCell];
     } else {
         for (NSString *detailKey in _composer.detailKeys) {
             id value = [_entity valueForKey:detailKey];

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "OEntityObservingDelegate.h"
+#import "OTableViewListCellDelegate.h"
 
 #import "OState.h"
 
@@ -26,19 +27,22 @@ extern CGFloat const kCellAnimationDuration;
 
 @interface OTableViewCell : UITableViewCell<OEntityObservingDelegate> {
 @private
+    Class _entityClass;
+    
     OTableViewCellComposer *_composer;
     NSMutableDictionary *_views;
     
+    id<OTableViewListCellDelegate> _informer;
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
-
-@property (nonatomic, readonly) BOOL selectable;
-@property (nonatomic) BOOL editable;
 
 @property (strong, nonatomic, readonly) OState *localState;
 @property (strong, nonatomic) NSIndexPath *indexPath;
 @property (strong, nonatomic) OReplicatedEntity *entity;
-@property (weak, nonatomic, readonly) Class entityClass;
+
+@property (nonatomic, readonly) BOOL selectable;
+@property (nonatomic) BOOL editable;
+
 @property (weak, nonatomic) id<OEntityObservingDelegate> observer;
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;

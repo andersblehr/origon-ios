@@ -41,8 +41,8 @@ static NSString * const kModalSegue1ToOrigoView = @"modal1FromMemberToOrigoView"
 static NSString * const kModalSegue2ToOrigoView = @"modal2FromMemberToOrigoView";
 static NSString * const kPushSegueToMemberListView = @"pushFromMemberToMemberListView";
 
-static NSInteger const kMemberSection = 0;
-static NSInteger const kAddressSection = 1;
+static NSInteger const kMemberSectionKey = 0;
+static NSInteger const kAddressSectionKey = 1;
 
 static NSInteger const kGenderSheetTag = 0;
 static NSInteger const kGenderSheetButtonFemale = 0;
@@ -307,7 +307,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)signOut
 {
     [[OMeta m] userDidSignOut];
-    self.detailCell.entity = nil;
+    //self.detailCell.entity = nil;
     
     [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
 }
@@ -423,10 +423,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)populateDataSource
 {
-    [self setData:_member forSectionWithKey:kMemberSection];
+    [self setData:_member forSectionWithKey:kMemberSectionKey];
     
     if (self.state.actionIsDisplay) {
-        [self setData:_member.residencies forSectionWithKey:kAddressSection];
+        [self setData:_member.residencies forSectionWithKey:kAddressSectionKey];
     }
 }
 
@@ -441,7 +441,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     NSString *text = nil;
     
-    if (sectionKey == kAddressSection) {
+    if (sectionKey == kAddressSectionKey) {
         if ([_member.residencies count] == 1) {
             text = [OStrings stringForKey:strTermAddress];
         } else {
@@ -462,6 +462,20 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
 {
     [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
+}
+
+
+#pragma mark - OTableViewListCellDelegate conformance
+
+- (NSString *)listTextForIndexPath:(NSIndexPath *)indexPath
+{
+    return [[[self entityForIndexPath:indexPath] origo].address lines][0];
+}
+
+
+- (UIImage *)listImageForIndexPath:(NSIndexPath *)indexPath
+{
+    return [UIImage imageNamed:kIconFileHousehold];
 }
 
 

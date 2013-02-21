@@ -14,6 +14,7 @@
 
 - (NSString *)displayNameAndAge;
 - (NSString *)displayContactDetails;
+- (UIImage *)displayImage;
 
 - (BOOL)isUser;
 - (BOOL)isFemale;

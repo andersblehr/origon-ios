@@ -107,7 +107,7 @@
 }
 
 
-#pragma mark - Displayable strings
+#pragma mark - Displayable strings & image
 
 - (NSString *)displayAddress
 {
@@ -128,6 +128,20 @@
     }
     
     return displayPhoneNumber;
+}
+
+
+- (UIImage *)displayImage
+{
+    UIImage *displayImage = nil;
+    
+    if ([self isOfType:kOrigoTypeResidence]) {
+        displayImage = [UIImage imageNamed:kIconFileHousehold];
+    } else {
+        // TODO: What icon to use for general origos?
+    }
+    
+    return displayImage;
 }
 
 

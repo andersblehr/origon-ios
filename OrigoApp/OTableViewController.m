@@ -67,12 +67,6 @@
 }
 
 
-- (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber
-{
-    return [_sectionKeys[sectionNumber] integerValue];
-}
-
-
 - (void)emphasiseInputField:(id)inputField
 {
     if (self.state.actionIsDisplay) {
@@ -181,6 +175,12 @@
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey
 {
     return [_sectionCounts[@(sectionKey)] integerValue];
+}
+
+
+- (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber
+{
+    return [_sectionKeys[sectionNumber] integerValue];
 }
 
 
@@ -495,16 +495,12 @@
             _detailCell = [tableView cellForEntityClass:_entityClass delegate:self];
         }
         
-        if (self.state.actionIsList) {
-            _detailCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        }
-        
         _detailCell.observer = self.observer;
         
         cell = _detailCell;
     } else {
-        //cell = [tableView listCellForIndexPath:indexPath];
-        cell = [tableView listCellForEntity:[self entityForIndexPath:indexPath]];
+        cell = [tableView listCellForIndexPath:indexPath informer:self];
+        //cell = [tableView listCellForEntity:[self entityForIndexPath:indexPath]];
     }
     
     return cell;
