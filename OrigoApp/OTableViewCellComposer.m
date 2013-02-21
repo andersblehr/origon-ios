@@ -13,6 +13,7 @@
 
 #import "OLogging.h"
 #import "OMeta.h"
+#import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
 #import "OTextField.h"
@@ -162,6 +163,12 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     }
     
     return detailKeys;
+}
+
+
++ (BOOL)titleBannerHasPhotoForEntityClass:(Class)entityClass
+{
+    return (entityClass == OMember.class) ? YES : NO;
 }
 
 
@@ -442,7 +449,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     
     _titleKey = [OTableViewCellComposer titleKeyForEntityClass:entityClass];
     _detailKeys = [OTableViewCellComposer detailKeysForEntityClass:entityClass];
-    _titleBannerHasPhoto = (entityClass == OMember.class) ? YES : NO;
+    _titleBannerHasPhoto = [OTableViewCellComposer titleBannerHasPhotoForEntityClass:entityClass];
     
     [self addConstraintsCentred:NO];
 }

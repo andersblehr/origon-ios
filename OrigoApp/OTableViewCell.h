@@ -11,8 +11,6 @@
 #import "OEntityObservingDelegate.h"
 #import "OTableViewListCellDelegate.h"
 
-#import "OState.h"
-
 extern NSString * const kReuseIdentifierDefault;
 extern NSString * const kReuseIdentifierUserSignIn;
 extern NSString * const kReuseIdentifierUserActivation;
@@ -32,7 +30,7 @@ extern CGFloat const kCellAnimationDuration;
     OTableViewCellComposer *_composer;
     NSMutableDictionary *_views;
     
-    id<OTableViewListCellDelegate> _informer;
+    id<OTableViewListCellDelegate> _listCellDelegate;
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
 

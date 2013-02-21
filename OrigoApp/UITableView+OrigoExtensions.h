@@ -19,10 +19,9 @@
 - (UIActivityIndicatorView *)addActivityIndicator;
 
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
-- (id)cellForEntity:(OReplicatedEntity *)entity;
 - (id)cellForEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 - (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate;
-- (id)listCellForIndexPath:(NSIndexPath *)indexPath informer:(id)informer;
+- (id)listCellForIndexPath:(NSIndexPath *)indexPath delegate:(id)delegate;
 
 - (CGFloat)standardHeaderHeight;
 - (CGFloat)standardFooterHeight;

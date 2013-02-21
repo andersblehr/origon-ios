@@ -112,12 +112,6 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (id)cellForEntity:(OReplicatedEntity *)entity
-{
-    return [self cellForEntity:entity delegate:nil];
-}
-
-
 - (id)cellForEntity:(OReplicatedEntity *)entity delegate:(id)delegate
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:entity.entityId];
@@ -142,12 +136,12 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (id)listCellForIndexPath:(NSIndexPath *)indexPath informer:(id)informer
+- (id)listCellForIndexPath:(NSIndexPath *)indexPath delegate:(id)delegate
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:kReuseIdentifierDefault];
     
     if (!cell) {
-        cell = [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:informer];
+        cell = [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:delegate];
     }
     
     cell.indexPath = indexPath;
