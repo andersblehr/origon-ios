@@ -270,64 +270,64 @@ static NSInteger const kUserRow = 0;
 
 #pragma mark - OTableViewListCellDelegate conformance
 
-- (NSString *)listTextForIndexPath:(NSIndexPath *)indexPath
+- (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *listText = nil;
+    NSString *cellText = nil;
     NSInteger sectionKey = [self sectionKeyForSectionNumber:indexPath.section];
     OReplicatedEntity *entity = [self entityForIndexPath:indexPath];
     
     if (sectionKey == kUserSectionKey) {
         if (indexPath.row == kUserRow) {
-            listText = [OStrings stringForKey:strTermMe];
+            cellText = [OStrings stringForKey:strTermMe];
         } else {
-            listText = ((OMemberResidency *)entity).residence.name;
+            cellText = ((OMemberResidency *)entity).residence.name;
         }
     } else if (sectionKey == kWardSectionKey) {
-        listText = ((OMember *)entity).givenName;
+        cellText = ((OMember *)entity).givenName;
     } else if (sectionKey == kOrigoSectionKey) {
-        listText = ((OMembership *)entity).origo.name;
+        cellText = ((OMembership *)entity).origo.name;
     }
     
-    return listText;
+    return cellText;
 }
 
 
-- (NSString *)listDetailsForIndexPath:(NSIndexPath *)indexPath
+- (NSString *)cellDetailTextForIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *listDetails = nil;
+    NSString *cellDetails = nil;
     OReplicatedEntity *entity = [self entityForIndexPath:indexPath];
     
     if ([self sectionKeyForSectionNumber:indexPath.section] == kUserSectionKey) {
         if (indexPath.row == kUserRow) {
-            listDetails = ((OMembership *)entity).member.name;
+            cellDetails = ((OMembership *)entity).member.name;
         } else {
-            listDetails = [((OMemberResidency *)entity).residence displayAddress];
+            cellDetails = [((OMemberResidency *)entity).residence displayAddress];
         }
     }
     
-    return listDetails;
+    return cellDetails;
 }
 
 
-- (UIImage *)listImageForIndexPath:(NSIndexPath *)indexPath
+- (UIImage *)cellImageForIndexPath:(NSIndexPath *)indexPath
 {
-    UIImage *listImage = nil;
+    UIImage *cellImage = nil;
     NSInteger sectionKey = [self sectionKeyForSectionNumber:indexPath.section];
     OReplicatedEntity *entity = [self entityForIndexPath:indexPath];
     
     if (sectionKey == kUserSectionKey) {
         if (indexPath.row == kUserRow) {
-            listImage = [((OMembership *)entity).member displayImage];
+            cellImage = [((OMembership *)entity).member displayImage];
         } else {
-            listImage = [((OMemberResidency *)entity).residence displayImage];
+            cellImage = [((OMemberResidency *)entity).residence displayImage];
         }
     } else if (sectionKey == kWardSectionKey) {
-        listImage = [UIImage imageNamed:kIconFileOrigo];
+        cellImage = [UIImage imageNamed:kIconFileOrigo];
     } else if (sectionKey == kOrigoSectionKey) {
-        listImage = [((OMembership *)entity).origo displayImage];
+        cellImage = [((OMembership *)entity).origo displayImage];
     }
     
-    return listImage;
+    return cellImage;
 }
 
 

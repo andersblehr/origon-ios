@@ -226,7 +226,7 @@ static NSInteger const kHousemateSheetTag = 0;
 
 #pragma mark - OTableViewListCellDelegate conformance
 
-- (NSString *)listTextForIndexPath:(NSIndexPath *)indexPath
+- (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath
 {
     OMember *member = [[self entityForIndexPath:indexPath] member];
     
@@ -234,13 +234,13 @@ static NSInteger const kHousemateSheetTag = 0;
 }
 
 
-- (NSString *)listDetailsForIndexPath:(NSIndexPath *)indexPath
+- (NSString *)cellDetailTextForIndexPath:(NSIndexPath *)indexPath
 {
     return [[[self entityForIndexPath:indexPath] member] displayContactDetails];
 }
 
 
-- (UIImage *)listImageForIndexPath:(NSIndexPath *)indexPath
+- (UIImage *)cellImageForIndexPath:(NSIndexPath *)indexPath
 {
     return [[[self entityForIndexPath:indexPath] member] displayImage];
 }

@@ -11,10 +11,10 @@
 @protocol OTableViewListCellDelegate <NSObject>
 
 @required
-- (NSString *)listTextForIndexPath:(NSIndexPath *)indexPath;
+- (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath;
 
 @optional
-- (NSString *)listDetailsForIndexPath:(NSIndexPath *)indexPath;
-- (UIImage *)listImageForIndexPath:(NSIndexPath *)indexPath;
+- (NSString *)cellDetailTextForIndexPath:(NSIndexPath *)indexPath;
+- (UIImage *)cellImageForIndexPath:(NSIndexPath *)indexPath;
 
 @end
