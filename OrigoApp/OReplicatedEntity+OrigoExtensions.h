@@ -9,9 +9,14 @@
 #import "OReplicatedEntity.h"
 
 @class OState;
-@class OOrigo, OReplicatedEntityRef;
+@class OMember, OMemberResidency, OMembership, OOrigo, OReplicatedEntityRef;
 
 @interface OReplicatedEntity (OrigoExtensions)
+
+- (OMember *)asMember;
+- (OOrigo *)asOrigo;
+- (OMembership *)asMembership;
+- (OMemberResidency *)asMemberResidency;
 
 - (BOOL)hasValueForKey:(NSString *)key;
 - (id)serialisableValueForKey:(NSString *)key;

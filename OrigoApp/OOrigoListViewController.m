@@ -26,6 +26,7 @@
 #import "OMemberResidency.h"
 #import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 #import "OAuthViewController.h"
 #import "OMemberListViewController.h"
@@ -280,12 +281,12 @@ static NSInteger const kUserRow = 0;
         if (indexPath.row == kUserRow) {
             cellText = [OStrings stringForKey:strTermMe];
         } else {
-            cellText = ((OMemberResidency *)entity).residence.name;
+            cellText = [entity asMemberResidency].residence.name;
         }
     } else if (sectionKey == kWardSectionKey) {
-        cellText = ((OMember *)entity).givenName;
+        cellText = [entity asMember].givenName;
     } else if (sectionKey == kOrigoSectionKey) {
-        cellText = ((OMembership *)entity).origo.name;
+        cellText = [entity asMembership].origo.name;
     }
     
     return cellText;
@@ -299,9 +300,9 @@ static NSInteger const kUserRow = 0;
     
     if ([self sectionKeyForSectionNumber:indexPath.section] == kUserSectionKey) {
         if (indexPath.row == kUserRow) {
-            cellDetails = ((OMembership *)entity).member.name;
+            cellDetails = [entity asMembership].member.name;
         } else {
-            cellDetails = [((OMemberResidency *)entity).residence displayAddress];
+            cellDetails = [[entity asMemberResidency].residence displayAddress];
         }
     }
     
@@ -317,14 +318,14 @@ static NSInteger const kUserRow = 0;
     
     if (sectionKey == kUserSectionKey) {
         if (indexPath.row == kUserRow) {
-            cellImage = [((OMembership *)entity).member displayImage];
+            cellImage = [[entity asMembership].member displayImage];
         } else {
-            cellImage = [((OMemberResidency *)entity).residence displayImage];
+            cellImage = [[entity asMemberResidency].residence displayImage];
         }
     } else if (sectionKey == kWardSectionKey) {
         cellImage = [UIImage imageNamed:kIconFileOrigo];
     } else if (sectionKey == kOrigoSectionKey) {
-        cellImage = [((OMembership *)entity).origo displayImage];
+        cellImage = [[entity asMembership].origo displayImage];
     }
     
     return cellImage;

@@ -111,7 +111,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         
         if (_composer.titleBannerHasPhoto) {
             UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
-            NSData *photo = ((OMember *)_entity).photo;
+            NSData *photo = [_entity asMember].photo;
             
             if (photo) {
                 [imageButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
