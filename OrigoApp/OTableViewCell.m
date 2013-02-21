@@ -74,14 +74,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)populateListCell
 {
-    self.textLabel.text = [_informer listTextForIndexPath:_indexPath];
+    self.textLabel.text = [_informer cellTextForIndexPath:_indexPath];
     
-    if ([_informer respondsToSelector:@selector(listDetailsForIndexPath:)]) {
-        self.detailTextLabel.text = [_informer listDetailsForIndexPath:_indexPath];
+    if ([_informer respondsToSelector:@selector(cellDetailTextForIndexPath:)]) {
+        self.detailTextLabel.text = [_informer cellDetailTextForIndexPath:_indexPath];
     }
     
-    if ([_informer respondsToSelector:@selector(listImageForIndexPath:)]) {
-        self.imageView.image = [_informer listImageForIndexPath:_indexPath];
+    if ([_informer respondsToSelector:@selector(cellImageForIndexPath:)]) {
+        self.imageView.image = [_informer cellImageForIndexPath:_indexPath];
     }
 }
 

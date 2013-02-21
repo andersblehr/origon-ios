@@ -467,13 +467,13 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - OTableViewListCellDelegate conformance
 
-- (NSString *)listTextForIndexPath:(NSIndexPath *)indexPath
+- (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath
 {
     return [[[self entityForIndexPath:indexPath] origo].address lines][0];
 }
 
 
-- (UIImage *)listImageForIndexPath:(NSIndexPath *)indexPath
+- (UIImage *)cellImageForIndexPath:(NSIndexPath *)indexPath
 {
     return [UIImage imageNamed:kIconFileHousehold];
 }
