@@ -33,7 +33,7 @@ static NSString * const kModalSegueToMemberView = @"modalFromMemberListToMemberV
 static NSString * const kPushSegueToMemberView = @"pushFromMemberListToMemberView";
 static NSString * const kPushSegueToOrigoView = @"pushFromMemberListToOrigoView";
 
-static NSInteger const kOrigoSection = 0;
+static NSInteger const kOrigoSectionKey = 0;
 static NSInteger const kContactSection = 1;
 static NSInteger const kMemberSection = 2;
 
@@ -164,7 +164,7 @@ static NSInteger const kHousemateSheetTag = 0;
         }
     }
     
-    [self setData:_origo forSectionWithKey:kOrigoSection];
+    [self setData:_origo forSectionWithKey:kOrigoSectionKey];
     [self setData:contactMemberships forSectionWithKey:kContactSection];
     [self setData:regularMemberships forSectionWithKey:kMemberSection];
 }
@@ -216,11 +216,33 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
 {
-    if (sectionKey == kOrigoSection) {
+    if (sectionKey == kOrigoSectionKey) {
         [self performSegueWithIdentifier:kPushSegueToOrigoView sender:self];
     } else {
         [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];
     }
+}
+
+
+#pragma mark - OTableViewListCellDelegate conformance
+
+- (NSString *)listTextForIndexPath:(NSIndexPath *)indexPath
+{
+    OMember *member = [[self entityForIndexPath:indexPath] member];
+    
+    return [member isMinor] ? [member displayNameAndAge] : member.name;
+}
+
+
+- (NSString *)listDetailsForIndexPath:(NSIndexPath *)indexPath
+{
+    return [[[self entityForIndexPath:indexPath] member] displayContactDetails];
+}
+
+
+- (UIImage *)listImageForIndexPath:(NSIndexPath *)indexPath
+{
+    return [[[self entityForIndexPath:indexPath] member] displayImage];
 }
 
 
@@ -230,7 +252,7 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     BOOL canDeleteRow = NO;
     
-    if (indexPath.section != kOrigoSection) {
+    if (indexPath.section != kOrigoSectionKey) {
         OMembership *membershipForRow = [self entityForIndexPath:indexPath];
         canDeleteRow = ([_origo userIsAdmin] && ![membershipForRow.member isUser]);
     }

@@ -10,10 +10,12 @@
 
 #import "OTableViewController.h"
 
+#import "OTableViewListCellDelegate.h"
+
 @class OTableViewCell;
 @class OMember, OOrigo;
 
-@interface OOrigoListViewController : OTableViewController<UIActionSheetDelegate> {
+@interface OOrigoListViewController : OTableViewController<UIActionSheetDelegate, OTableViewListCellDelegate> {
 @private
     OMember *_member;
     

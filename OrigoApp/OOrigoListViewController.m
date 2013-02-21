@@ -38,9 +38,9 @@ static NSString * const kModalSegueToOrigoView = @"modalFromOrigoListToOrigoView
 static NSString * const kPushSegueToMemberListView = @"pushFromOrigoListToMemberListView";
 static NSString * const kPushSegueToMemberView = @"pushFromOrigoListToMemberView";
 
-static NSInteger const kUserSection = 0;
-static NSInteger const kWardSection = 1;
-static NSInteger const kOrigoSection = 2;
+static NSInteger const kUserSectionKey = 0;
+static NSInteger const kWardSectionKey = 1;
+static NSInteger const kOrigoSectionKey = 2;
 
 static NSInteger const kUserRow = 0;
 
@@ -53,26 +53,26 @@ static NSInteger const kUserRow = 0;
 {
     NSString *footerText = nil;
     
-    if ([self hasSectionWithKey:kOrigoSection]) {
+    if ([self hasSectionWithKey:kOrigoSectionKey]) {
         footerText = [OStrings stringForKey:strFooterOrigoCreation];
     } else {
         footerText = [OStrings stringForKey:strFooterOrigoCreationFirst];
     }
     
-    if (self.state.aspectIsSelf && [self hasSectionWithKey:kWardSection]) {
+    if (self.state.aspectIsSelf && [self hasSectionWithKey:kWardSectionKey]) {
         NSString *yourChild = nil;
         NSString *himOrHer = nil;
         
         BOOL allFemale = YES;
         BOOL allMale = YES;
         
-        if ([self numberOfRowsInSectionWithKey:kWardSection] == 1) {
-            yourChild = ((OMember *)[self entitiesInSectionWithKey:kWardSection][0]).givenName;
+        if ([self numberOfRowsInSectionWithKey:kWardSectionKey] == 1) {
+            yourChild = ((OMember *)[self entitiesInSectionWithKey:kWardSectionKey][0]).givenName;
         } else {
             yourChild = [OStrings stringForKey:strTermYourChild];
         }
         
-        for (OMember *ward in [self entitiesInSectionWithKey:kWardSection]) {
+        for (OMember *ward in [self entitiesInSectionWithKey:kWardSectionKey]) {
             allFemale = allFemale && [ward isFemale];
             allMale = allMale && [ward isMale];
         }
@@ -213,12 +213,12 @@ static NSInteger const kUserRow = 0;
 
 - (void)populateDataSource
 {
-    [self setData:[_member origoMemberships] forSectionWithKey:kOrigoSection];
+    [self setData:[_member origoMemberships] forSectionWithKey:kOrigoSectionKey];
     
     if ([_member isUser]) {
-        [self setData:[_member rootMembership] forSectionWithKey:kUserSection];
-        [self appendData:[_member residencies] toSectionWithKey:kUserSection];
-        [self setData:[_member wards] forSectionWithKey:kWardSection];
+        [self setData:[_member rootMembership] forSectionWithKey:kUserSectionKey];
+        [self appendData:[_member residencies] toSectionWithKey:kUserSectionKey];
+        [self setData:[_member wards] forSectionWithKey:kWardSectionKey];
     }
 }
 
@@ -239,9 +239,9 @@ static NSInteger const kUserRow = 0;
 {
     NSString *text = nil;
     
-    if (sectionKey == kWardSection) {
+    if (sectionKey == kWardSectionKey) {
         text = [OStrings stringForKey:strHeaderWardsOrigos];
-    } else if (sectionKey == kOrigoSection) {
+    } else if (sectionKey == kOrigoSectionKey) {
         text = [OStrings stringForKey:strHeaderMyOrigos];
     }
     
@@ -257,7 +257,7 @@ static NSInteger const kUserRow = 0;
 
 - (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
 {
-    if (sectionKey == kWardSection) {
+    if (sectionKey == kWardSectionKey) {
         OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId];
         origoListViewController.data = [self entityAtRow:row inSectionWithKey:sectionKey];
         
@@ -265,6 +265,69 @@ static NSInteger const kUserRow = 0;
     } else {
         [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
     }
+}
+
+
+#pragma mark - OTableViewListCellDelegate conformance
+
+- (NSString *)listTextForIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *listText = nil;
+    NSInteger sectionKey = [self sectionKeyForSectionNumber:indexPath.section];
+    OReplicatedEntity *entity = [self entityForIndexPath:indexPath];
+    
+    if (sectionKey == kUserSectionKey) {
+        if (indexPath.row == kUserRow) {
+            listText = [OStrings stringForKey:strTermMe];
+        } else {
+            listText = ((OMemberResidency *)entity).residence.name;
+        }
+    } else if (sectionKey == kWardSectionKey) {
+        listText = ((OMember *)entity).givenName;
+    } else if (sectionKey == kOrigoSectionKey) {
+        listText = ((OMembership *)entity).origo.name;
+    }
+    
+    return listText;
+}
+
+
+- (NSString *)listDetailsForIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *listDetails = nil;
+    OReplicatedEntity *entity = [self entityForIndexPath:indexPath];
+    
+    if ([self sectionKeyForSectionNumber:indexPath.section] == kUserSectionKey) {
+        if (indexPath.row == kUserRow) {
+            listDetails = ((OMembership *)entity).member.name;
+        } else {
+            listDetails = [((OMemberResidency *)entity).residence displayAddress];
+        }
+    }
+    
+    return listDetails;
+}
+
+
+- (UIImage *)listImageForIndexPath:(NSIndexPath *)indexPath
+{
+    UIImage *listImage = nil;
+    NSInteger sectionKey = [self sectionKeyForSectionNumber:indexPath.section];
+    OReplicatedEntity *entity = [self entityForIndexPath:indexPath];
+    
+    if (sectionKey == kUserSectionKey) {
+        if (indexPath.row == kUserRow) {
+            listImage = [((OMembership *)entity).member displayImage];
+        } else {
+            listImage = [((OMemberResidency *)entity).residence displayImage];
+        }
+    } else if (sectionKey == kWardSectionKey) {
+        listImage = [UIImage imageNamed:kIconFileOrigo];
+    } else if (sectionKey == kOrigoSectionKey) {
+        listImage = [((OMembership *)entity).origo displayImage];
+    }
+    
+    return listImage;
 }
 
 

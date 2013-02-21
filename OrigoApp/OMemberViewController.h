@@ -10,12 +10,12 @@
 
 #import "OTableViewController.h"
 
-@protocol OEntityObservingDelegate;
+#import "OTableViewListCellDelegate.h"
 
 @class OTableViewCell, OTextField;
 @class OMember, OMembership, OOrigo;
 
-@interface OMemberViewController : OTableViewController<UIActionSheetDelegate, UIAlertViewDelegate> {
+@interface OMemberViewController : OTableViewController<UIActionSheetDelegate, UIAlertViewDelegate, OTableViewListCellDelegate> {
 @private
     OMembership *_membership;
     OMember *_member;

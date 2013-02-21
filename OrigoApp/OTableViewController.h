@@ -68,9 +68,9 @@
 - (id)entityForIndexPath:(NSIndexPath *)indexPath;
 
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
-- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;
-- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
+- (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber;
+- (UIBarButtonItem *)cancelRegistrationButton;
 
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue;
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data;

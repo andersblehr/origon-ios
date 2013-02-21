@@ -28,7 +28,7 @@
 
 @implementation OMember (OrigoExtensions)
 
-#pragma mark - Displayable strings
+#pragma mark - Displayable strings & image
 
 - (NSString *)displayNameAndAge
 {
@@ -47,6 +47,36 @@
     }
     
     return details;
+}
+
+
+- (UIImage *)displayImage
+{
+    UIImage *displayImage = nil;
+    
+    if (self.photo) {
+        // TODO: Embed photo
+    } else {
+        if ([self.dateOfBirth yearsBeforeNow] < kToddlerThreshold) {
+            displayImage = [UIImage imageNamed:kIconFileInfant];
+        } else {
+            if ([self isMale]) {
+                if ([self isMinor]) {
+                    displayImage = [UIImage imageNamed:kIconFileBoy];
+                } else {
+                    displayImage = [UIImage imageNamed:kIconFileMan];
+                }
+            } else {
+                if ([self isMinor]) {
+                    displayImage = [UIImage imageNamed:kIconFileGirl];
+                } else {
+                    displayImage = [UIImage imageNamed:kIconFileWoman];
+                }
+            }
+        }
+    }
+    
+    return displayImage;
 }
 
 

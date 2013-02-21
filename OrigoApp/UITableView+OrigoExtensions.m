@@ -142,29 +142,15 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (id)listCellForIndexPath:(NSIndexPath *)indexPath
+- (id)listCellForIndexPath:(NSIndexPath *)indexPath informer:(id)informer
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:kReuseIdentifierDefault];
     
     if (!cell) {
-        cell = [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:nil];
+        cell = [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:informer];
     }
     
     cell.indexPath = indexPath;
-    
-    return cell;
-}
-
-
-- (id)listCellForEntity:(OReplicatedEntity *)entity
-{
-    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:kReuseIdentifierDefault];
-    
-    if (!cell) {
-        cell = [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:nil];
-    }
-    
-    cell.entity = entity;
     
     return cell;
 }
