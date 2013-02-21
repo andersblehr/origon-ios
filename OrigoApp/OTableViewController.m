@@ -499,7 +499,7 @@
         
         cell = _detailCell;
     } else {
-        cell = [tableView listCellForIndexPath:indexPath informer:self];
+        cell = [tableView listCellForIndexPath:indexPath delegate:self];
         //cell = [tableView listCellForEntity:[self entityForIndexPath:indexPath]];
     }
     

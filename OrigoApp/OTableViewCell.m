@@ -66,6 +66,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Auxiliary methods
 
+- (BOOL)shouldComposeForReuseIdentifier:(NSString *)reuseIdentifier
+{
+    BOOL userIsSigningIn = [reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn];
+    BOOL userIsActivating = [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation];
+    
+    return (userIsSigningIn || userIsActivating);
+}
+
+
 - (BOOL)isListCell
 {
     return [self.reuseIdentifier isEqualToString:kReuseIdentifierDefault];
@@ -74,24 +83,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)populateListCell
 {
-    self.textLabel.text = [_informer cellTextForIndexPath:_indexPath];
+    self.textLabel.text = [_listCellDelegate cellTextForIndexPath:_indexPath];
     
-    if ([_informer respondsToSelector:@selector(cellDetailTextForIndexPath:)]) {
-        self.detailTextLabel.text = [_informer cellDetailTextForIndexPath:_indexPath];
+    if ([_listCellDelegate respondsToSelector:@selector(cellDetailTextForIndexPath:)]) {
+        self.detailTextLabel.text = [_listCellDelegate cellDetailTextForIndexPath:_indexPath];
     }
     
-    if ([_informer respondsToSelector:@selector(cellImageForIndexPath:)]) {
-        self.imageView.image = [_informer cellImageForIndexPath:_indexPath];
+    if ([_listCellDelegate respondsToSelector:@selector(cellImageForIndexPath:)]) {
+        self.imageView.image = [_listCellDelegate cellImageForIndexPath:_indexPath];
     }
-}
-
-
-- (BOOL)shouldComposeForReuseIdentifier:(NSString *)reuseIdentifier
-{
-    BOOL userIsSigningIn = [reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn];
-    BOOL userIsActivating = [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation];
-    
-    return (userIsSigningIn || userIsActivating);
 }
 
 
@@ -226,13 +226,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.textLabel.font = [UIFont titleFont];
 
         if ([self isListCell]) {
-            _informer = delegate;
+            _listCellDelegate = delegate;
             _selectable = YES;
         } else {
-            _composer = [[OTableViewCellComposer alloc] initForCell:self];
-            _views = [[NSMutableDictionary alloc] init];
             _inputDelegate = delegate;
             _selectable = self.localState.actionIsList;
+            _composer = [[OTableViewCellComposer alloc] initForCell:self];
+            _views = [[NSMutableDictionary alloc] init];
             
             if ([self shouldComposeForReuseIdentifier:reuseIdentifier]) {
                 [self composeForReuseIdentifier:reuseIdentifier];
