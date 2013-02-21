@@ -27,10 +27,6 @@
 - (BOOL)isReplicated;
 - (BOOL)isDirty;
 
-- (NSString *)listNameForState:(OState *)state;
-- (NSString *)listDetailsForState:(OState *)state;
-- (UIImage *)listImageForState:(OState *)state;
-
 - (NSString *)entityRefIdForOrigo:(OOrigo *)origo;
 - (OReplicatedEntityRef *)entityRefForOrigo:(OOrigo *)origo;
 

@@ -173,7 +173,7 @@ static OState *s = nil;
     } else if ([aspectCarrier isKindOfClass:OOrigo.class]) {
         [self setAspectForOrigoType:((OOrigo *)aspectCarrier).type];
     } else if ([aspectCarrier isKindOfClass:NSString.class]) {
-        if ([aspectCarrier hasPrefix:kOrigoTypePrefix]) {
+        if ([aspectCarrier hasPrefix:kPrefixOrigoType]) {
             [self setAspectForOrigoType:aspectCarrier];
         }
     }
@@ -188,7 +188,7 @@ static OState *s = nil;
 }
 
 
-- (void)toggleEditAction
+- (void)toggleEditState
 {
     if (self.actionIsDisplay) {
         self.actionIsEdit = YES;

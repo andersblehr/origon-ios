@@ -22,9 +22,11 @@
 #import "OStrings.h"
 #import "OTextField.h"
 #import "OTextView.h"
-#import "OTableViewCellLayout.h"
+#import "OTableViewCellComposer.h"
 
 #import "OMember+OrigoExtensions.h"
+#import "OMemberResidency.h"
+#import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 
@@ -53,6 +55,13 @@ static CGFloat const kShakeTranslationY = 0.f;
 static CGFloat const kShakeRepeatCount = 3.f;
 
 
+@interface OTableViewCell ()
+
+@property (strong, nonatomic) OState *localState;
+
+@end
+
+
 @implementation OTableViewCell
 
 #pragma mark - Auxiliary methods
@@ -74,9 +83,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Adding elements
 
-- (void)addTitleFieldIfApplicable
+- (void)addTitleFieldIfNeeded
 {
-    if (_layout.titleKey) {
+    if (_composer.titleKey) {
         UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
         titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
         [titleBannerView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -84,9 +93,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self.contentView addSubview:titleBannerView];
         [_views setObject:titleBannerView forKey:kViewKeyTitleBanner];
         
-        [self addTextFieldForKey:_layout.titleKey];
+        [self addTextFieldForKey:_composer.titleKey];
         
-        if (_layout.titleBannerHasPhoto) {
+        if (_composer.titleBannerHasPhoto) {
             UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
             NSData *photo = ((OMember *)_entity).photo;
             
@@ -140,17 +149,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)addLabeledTextFieldForKey:(NSString *)key
+- (void)addTextViewForKey:(NSString *)key
 {
-    [self addLabelForKey:key centred:NO];
-    [self addTextFieldForKey:key];
-}
-
-
-- (void)addLabeledTextViewForKey:(NSString *)key
-{
-    [self addLabelForKey:key centred:NO];
-    
     OTextView *textView = [[OTextView alloc] initForKey:key cell:self delegate:_inputDelegate];
     
     [self.contentView addSubview:textView];
@@ -160,39 +160,177 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Cell composition
 
+- (void)composeForReuseIdentifier:(NSString *)reuseIdentifier
+{
+    [_composer composeForReuseIdentifier:reuseIdentifier];
+    
+    [self addLabelForKey:_composer.titleKey centred:YES];
+    
+    for (NSString *detailKey in _composer.detailKeys) {
+        [self addTextFieldForKey:detailKey];
+    }
+}
+
+
 - (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
+    _entityClass = entityClass;
+    
     self.entity = entity;
     self.editing = !_selectable;
     
-    _entityClass = entityClass;
+    [_composer composeForEntityClass:entityClass entity:entity];
     
-    [_layout layOutForEntityClass:entityClass entity:entity];
+    [self addTitleFieldIfNeeded];
     
-    [self addTitleFieldIfApplicable];
-    
-    for (NSString *detailKey in _layout.detailKeys) {
-        if ([OTableViewCellLayout requiresTextViewForKey:detailKey]) {
-            [self addLabeledTextViewForKey:detailKey];
+    for (NSString *detailKey in _composer.detailKeys) {
+        [self addLabelForKey:detailKey centred:NO];
+        
+        if ([OTableViewCellComposer requiresTextViewForKey:detailKey]) {
+            [self addTextViewForKey:detailKey];
         } else {
-            [self addLabeledTextFieldForKey:detailKey];
+            [self addTextFieldForKey:detailKey];
         }
     }
 }
 
 
-- (void)composeForReuseIdentifier:(NSString *)reuseIdentifier
+#pragma mark - List cell display
+
+- (NSString *)listTextForEntity:(OReplicatedEntity *)entity
 {
-    if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn] ||
-        [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-        [_layout layOutForReuseIdentifier:reuseIdentifier];
+    OState *state = self.localState;
+    NSString *text = nil;
+    
+    if (state.viewIsOrigoList) {
         
-        [self addLabelForKey:_layout.titleKey centred:YES];
+    }
+    
+    if ([entity isKindOfClass:OMember.class]) {
+        OMember *member = (OMember *)entity;
         
-        for (NSString *detailKey in _layout.detailKeys) {
-            [self addTextFieldForKey:detailKey];
+        if (state.viewIsOrigoList) {
+            text = [member isUser] ? [OStrings stringForKey:strTermMe] : member.givenName;
+        } else if (state.viewIsMemberList) {
+            text = [member isMinor] ? [member displayNameAndAge] : member.name;
+        }
+    } else if ([entity isKindOfClass:OOrigo.class]) {
+        OOrigo *origo = (OOrigo *)entity;
+        
+        if (state.viewIsOrigoList) {
+            text = origo.name;
+        } else if (state.viewIsMemberDetail) {
+            text = [origo.address lines][0];
+        }
+    } else if ([entity isKindOfClass:OMembership.class]) {
+        OMembership *membership = (OMembership *)entity;
+        
+        if (state.viewIsOrigoList && [membership.origo isOfType:kOrigoTypeResidence]) {
+            text = [self listTextForEntity:membership.origo];
+        } else if (state.viewIsOrigoList || state.viewIsMemberList) {
+            text = [self listTextForEntity:membership.member];
+        } else if (state.viewIsMemberDetail) {
+            text = [self listTextForEntity:membership.origo];
         }
     }
+    
+    return text;
+}
+
+
+- (NSString *)listDetailsForEntity:(OReplicatedEntity *)entity
+{
+    OState *state = self.localState;
+    NSString *details = nil;
+    
+    if ([entity isKindOfClass:OMember.class]) {
+        OMember *member = (OMember *)entity;
+        
+        if (state.viewIsOrigoList && [member isUser]) {
+            details = member.name;
+        } else if (state.viewIsMemberList) {
+            details = [member displayContactDetails];
+        }
+    } else if ([entity isKindOfClass:OOrigo.class]) {
+        OOrigo *origo = (OOrigo *)entity;
+        
+        if (state.viewIsOrigoList) {
+            if ([origo isOfType:kOrigoTypeResidence]) {
+                details = [origo displayAddress];
+            } else {
+                details = origo.descriptionText;
+            }
+        } else {
+            details = [origo displayPhoneNumber];
+        }
+    } else if ([entity isKindOfClass:OMembership.class]) {
+        OMembership *membership = (OMembership *)entity;
+        
+        if (state.viewIsOrigoList && [membership.origo isOfType:kOrigoTypeResidence]) {
+            details = [self listDetailsForEntity:membership.origo];
+        } else if (state.viewIsOrigoList || state.viewIsMemberList) {
+            details = [self listDetailsForEntity:membership.member];
+        }
+    }
+    
+    return details;
+}
+
+
+- (UIImage *)listImageForEntity:(OReplicatedEntity *)entity
+{
+    OState *state = self.localState;
+    UIImage *image = nil;
+    
+    if ([entity isKindOfClass:OMember.class]) {
+        OMember *member = (OMember *)entity;
+        
+        if (state.viewIsMemberList || (state.viewIsOrigoList && [member isUser])) {
+            if (member.photo) {
+                // TODO: Embed photo
+            } else {
+                if ([member.dateOfBirth yearsBeforeNow] < kToddlerThreshold) {
+                    image = [UIImage imageNamed:kIconFileInfant];
+                } else {
+                    if ([member isMale]) {
+                        if ([member isMinor]) {
+                            image = [UIImage imageNamed:kIconFileBoy];
+                        } else {
+                            image = [UIImage imageNamed:kIconFileMan];
+                        }
+                    } else {
+                        if ([member isMinor]) {
+                            image = [UIImage imageNamed:kIconFileGirl];
+                        } else {
+                            image = [UIImage imageNamed:kIconFileWoman];
+                        }
+                    }
+                }
+            }
+        } else if (state.viewIsOrigoList) {
+            image = [UIImage imageNamed:kIconFileOrigo];
+        }
+    } else if ([entity isKindOfClass:OOrigo.class]) {
+        OOrigo *origo = (OOrigo *)entity;
+        
+        if ([origo isOfType:kOrigoTypeResidence]) {
+            image = [UIImage imageNamed:kIconFileHousehold];
+        } else {
+            // TODO: What icon to use for general origos?
+        }
+    } else if ([entity isKindOfClass:OMembership.class]) {
+        OMembership *membership = (OMembership *)entity;
+        
+        if (state.viewIsOrigoList && [membership.origo isOfType:kOrigoTypeResidence]) {
+            image = [self listImageForEntity:membership.origo];
+        } else if (state.viewIsOrigoList || state.viewIsMemberList) {
+            image = [self listImageForEntity:membership.member];
+        } else if (state.viewIsMemberDetail) {
+            image = [self listImageForEntity:membership.origo];
+        }
+    }
+    
+    return image;
 }
 
 
@@ -213,7 +351,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.textLabel.font = [UIFont titleFont];
 
         if (![self isListCell]) {
-            _layout = [[OTableViewCellLayout alloc] initForCell:self];
+            _composer = [[OTableViewCellComposer alloc] initForCell:self];
             _views = [[NSMutableDictionary alloc] init];
             _inputDelegate = delegate;
             
@@ -257,7 +395,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (BOOL)isTitleKey:(NSString *)key
 {
-    return [key isEqualToString:_layout.titleKey];
+    return [key isEqualToString:_composer.titleKey];
 }
 
 
@@ -275,7 +413,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (id)nextInputFieldFromTextField:(id)textField
 {
-    NSArray *elementKeys = _layout.allKeys;
+    NSArray *elementKeys = _composer.allKeys;
     NSInteger indexOfTextField = textField ? [elementKeys indexOfObject:[textField key]] : -1;
     NSString *inputFieldKey = nil;
     UIView *inputField = nil;
@@ -297,7 +435,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Adjust cell display
+#pragma mark - Cell display & effects
 
 - (void)willAppearTrailing:(BOOL)trailing
 {
@@ -307,7 +445,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self.backgroundView addDropShadowForInternalTableViewCell];
     }
     
-    if (_layout.titleBannerHasPhoto) {
+    if (_composer.titleBannerHasPhoto) {
         [[_views objectForKey:kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
     }
 }
@@ -315,16 +453,16 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)toggleEditMode
 {
-    [self.viewState toggleEditAction];
+    [self.localState toggleEditState];
     
-    self.editing = (self.viewState.actionIsEdit || _editable);
+    self.editing = (self.localState.actionIsEdit || _editable);
 }
 
 
 - (void)redrawIfNeeded
 {
     if (_entity || _entityClass) {
-        CGFloat desiredHeight = [OTableViewCellLayout cell:self heightForEntityClass:_entityClass entity:_entity];
+        CGFloat desiredHeight = [OTableViewCellComposer cell:self heightForEntityClass:_entityClass entity:_entity];
         
         if (abs(self.frame.size.height - (desiredHeight + kImplicitFramePadding)) > 0.5f) {
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
@@ -342,8 +480,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
 }
 
-
-#pragma mark - Cell effects
 
 - (void)shakeCellShouldVibrate:(BOOL)shouldVibrate
 {
@@ -368,7 +504,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Autolayout overrides
+#pragma mark - UIView overrides
 
 - (void)updateConstraints
 {
@@ -377,7 +513,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (![self isListCell]) {
         [self.contentView removeConstraints:[self.contentView constraints]];
         
-        NSDictionary *alignedConstraints = [_layout constraintsWithAlignmentOptions];
+        NSDictionary *alignedConstraints = [_composer constraintsWithAlignmentOptions];
         
         for (NSNumber *alignmentOptions in [alignedConstraints allKeys]) {
             NSUInteger options = [alignmentOptions integerValue];
@@ -391,46 +527,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Accessor overrides
-
-- (void)setEntity:(OReplicatedEntity *)entity
-{
-    _entity = entity;
-    
-    if ([self isListCell]) {
-        _selectable = YES;
-        
-        self.textLabel.text = [_entity listNameForState:[OState s]];
-        self.detailTextLabel.text = [_entity listDetailsForState:[OState s]];
-        self.imageView.image = [_entity listImageForState:[OState s]];
-        
-        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    } else {
-        _selectable = self.viewState.actionIsList;
-    }
-}
-
-
-- (OState *)viewState
-{
-    id tableViewDelegate = ((UITableView *)self.superview).delegate;
-    
-    return tableViewDelegate ? ((OTableViewController *)tableViewDelegate).state : [OState s];
-}
-
-
-- (void)setEditable:(BOOL)editable
-{
-    _editable = editable;
-    
-    self.editing = editable;
-}
-
+#pragma mark - UITableViewCell overrides
 
 - (void)setEditing:(BOOL)editing
 {
     [super setEditing:editing];
-
+    
     for (UIView *view in [_views allValues]) {
         if ([view isKindOfClass:OTextField.class]) {
             ((OTextField *)view).enabled = editing;
@@ -464,23 +566,63 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+#pragma mark - Custom accessors
+
+- (void)setEntity:(OReplicatedEntity *)entity
+{
+    _entity = entity;
+    
+    if ([self isListCell]) {
+        _selectable = YES;
+        
+        self.textLabel.text = [self listTextForEntity:_entity];
+        self.detailTextLabel.text = [self listDetailsForEntity:_entity];
+        self.imageView.image = [self listImageForEntity:_entity];
+        
+        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    } else {
+        _selectable = self.localState.actionIsList;
+    }
+}
+
+
+- (OState *)localState
+{
+    if (!_localState) {
+        _localState = ((OTableViewController *)((UITableView *)self.superview).delegate).state;
+    }
+    
+    return _localState ? _localState : [OState s];
+}
+
+
+- (void)setEditable:(BOOL)editable
+{
+    _editable = editable;
+    
+    self.editing = editable;
+}
+
+
 #pragma mark - OEntityObservingDelegate conformance
 
 - (void)reloadEntity
 {
     if ([self isListCell]) {
-        self.textLabel.text = [_entity listNameForState:self.viewState];
-        self.detailTextLabel.text = [_entity listDetailsForState:self.viewState];
-        self.imageView.image = [_entity listImageForState:self.viewState];
+        self.textLabel.text = [self listTextForEntity:_entity];
+        self.detailTextLabel.text = [self listDetailsForEntity:_entity];
+        self.imageView.image = [self listImageForEntity:_entity];
     } else {
-        if ([_entity isKindOfClass:OOrigo.class]) {
-            [[self textFieldForKey:kPropertyKeyAddress] setText:((OOrigo *)_entity).address];
-            [[self textFieldForKey:kPropertyKeyTelephone] setText:((OOrigo *)_entity).telephone];
-        } else if ([_entity isKindOfClass:OMember.class]) {
-            [[self textFieldForKey:kPropertyKeyName] setText:((OMember *)_entity).name];
-            [[self textFieldForKey:kPropertyKeyDateOfBirth] setText:[((OMember *)_entity).dateOfBirth localisedDateString]];
-            [[self textFieldForKey:kPropertyKeyMobilePhone] setText:((OMember *)_entity).mobilePhone];
-            [[self textFieldForKey:kPropertyKeyEmail] setText:((OMember *)_entity).email];
+        for (NSString *detailKey in _composer.detailKeys) {
+            id value = [_entity valueForKey:detailKey];
+            
+            if (value) {
+                if ([value isKindOfClass:NSString.class]) {
+                    [[self textFieldForKey:detailKey] setText:value];
+                } else if ([value isKindOfClass:NSDate.class]) {
+                    [[self textFieldForKey:detailKey] setDate:value];
+                }
+            }
         }
         
         [self redrawIfNeeded];

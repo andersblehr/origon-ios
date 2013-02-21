@@ -220,7 +220,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-#pragma mark - Accessor overrides
+#pragma mark - Custom accessors
 
 - (NSDate *)date
 {
@@ -280,6 +280,8 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
+#pragma mark - UIControl custom accessors
+
 - (void)setSelected:(BOOL)selected
 {
     [super setSelected:selected];
@@ -294,7 +296,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-#pragma mark - Overrides
+#pragma mark - UITextField overrides
 
 - (CGRect)editingRectForBounds:(CGRect)bounds
 {
@@ -314,24 +316,17 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
+#pragma mark - UIResponder overrides
+
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
     BOOL canPerformAction = [super canPerformAction:action withSender:sender];
     
-    if ([self.key isEqualToString:kPropertyKeyDateOfBirth]) {
+    if ([_key hasPrefix:kPrefixDateProperty]) {
         canPerformAction = canPerformAction && (action != @selector(paste:));
     }
     
     return canPerformAction;
-}
-
-
-- (CGSize)intrinsicContentSize
-{
-    CGFloat intrinsicContentWidth = [self.text sizeWithFont:self.font].width + 2 * kTextInset;
-    CGFloat intrinsicContentHeight = [self.font textFieldHeight];
-    
-    return CGSizeMake(intrinsicContentWidth, intrinsicContentHeight);
 }
 
 @end

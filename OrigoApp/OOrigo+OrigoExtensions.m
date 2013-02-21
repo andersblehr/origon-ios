@@ -28,16 +28,6 @@
 
 #pragma mark - Auxiliary methods
 
-- (NSString *)singleLineAddress
-{
-    NSMutableString *singleLineAddress = [NSMutableString stringWithString:self.address];
-    
-    [singleLineAddress replaceOccurrencesOfString:kSeparatorNewline withString:kSeparatorComma options:NSLiteralSearch range:NSMakeRange(0, [self.address length])];
-    
-    return singleLineAddress;
-}
-
-
 - (OMembership *)membershipForMember:(OMember *)member
 {
     OMembership *membershipForMember = nil;
@@ -117,6 +107,30 @@
 }
 
 
+#pragma mark - Displayable strings
+
+- (NSString *)displayAddress
+{
+    NSMutableString *displayAddress = [NSMutableString stringWithString:self.address];
+    
+    [displayAddress replaceOccurrencesOfString:kSeparatorNewline withString:kSeparatorComma options:NSLiteralSearch range:NSMakeRange(0, [self.address length])];
+    
+    return displayAddress;
+}
+
+
+- (NSString *)displayPhoneNumber
+{
+    NSString *displayPhoneNumber = nil;
+    
+    if ([self hasValueForKey:kPropertyKeyTelephone]) {
+        displayPhoneNumber = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedTelephone], self.telephone];
+    }
+    
+    return displayPhoneNumber;
+}
+
+
 #pragma mark - Adding members
 
 - (id)addMember:(OMember *)member
@@ -192,54 +206,6 @@
 - (BOOL)userIsMember
 {
     return [self hasMember:[OMeta m].user];
-}
-
-
-#pragma mark - OReplicatedEntity+OrigoExtensions overrides
-
-- (NSString *)listNameForState:(OState *)state
-{
-    NSString *listName = nil;
-    
-    if (state.viewIsOrigoList) {
-        listName = self.name;
-    } else if (state.viewIsMemberDetail) {
-        listName = [self.address lines][0];
-    }
-    
-    return listName;
-}
-
-
-- (NSString *)listDetailsForState:(OState *)state
-{
-    NSString *listDetails = nil;
-    
-    if (state.viewIsOrigoList) {
-        if ([self isOfType:kOrigoTypeResidence]) {
-            listDetails = [self singleLineAddress];
-        } else {
-            listDetails = self.descriptionText;
-        }
-    } else if ([self hasValueForKey:kPropertyKeyTelephone]) {
-        listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedTelephone], self.telephone];
-    }
-    
-    return listDetails;
-}
-
-
-- (UIImage *)listImageForState:(OState *)state
-{
-    UIImage *listImage = nil;
-    
-    if ([self isOfType:kOrigoTypeResidence]) {
-        listImage = [UIImage imageNamed:kIconFileHousehold];
-    } else {
-        // TODO: What icon to use for general origos?
-    }
-    
-    return listImage;
 }
 
 

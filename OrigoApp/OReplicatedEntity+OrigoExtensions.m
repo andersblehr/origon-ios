@@ -40,6 +40,9 @@
 }
 
 
+#pragma mark - 
+
+
 #pragma mark - Key-value proxy methods
 
 - (BOOL)hasValueForKey:(NSString *)key
@@ -209,26 +212,6 @@
 - (BOOL)isDirty
 {
     return ![self.hashCode isEqualToString:[self computeHashCode]];
-}
-
-
-#pragma mark - Table view support
-
-- (NSString *)listNameForState:(OState *)state
-{
-    return @"BROKEN: Plase override in subclass";
-}
-
-
-- (NSString *)listDetailsForState:(OState *)state
-{
-    return nil;
-}
-
-
-- (UIImage *)listImageForState:(OState *)state
-{
-    return nil;
 }
 
 

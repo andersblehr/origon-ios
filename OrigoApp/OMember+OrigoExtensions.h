@@ -12,6 +12,9 @@
 
 @interface OMember (OrigoExtensions)
 
+- (NSString *)displayNameAndAge;
+- (NSString *)displayContactDetails;
+
 - (BOOL)isUser;
 - (BOOL)isFemale;
 - (BOOL)isMale;
@@ -29,8 +32,8 @@
 - (OMemberResidency *)initialResidency;
 - (OMembership *)rootMembership;
 - (NSSet *)origoMemberships;
-
 - (BOOL)isMemberOfOrigoOfType:(NSString *)origoType;
+
 - (NSComparisonResult)compare:(OMember *)other;
 
 @end
