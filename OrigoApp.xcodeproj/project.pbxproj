@@ -104,7 +104,7 @@
 		5CBB63DC146080E000A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
 		5CBB63E4146080E000A9133A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5CBB63E2146080E000A9133A /* InfoPlist.strings */; };
 		5CBB63E7146080E000A9133A /* OrigoAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63E6146080E000A9133A /* OrigoAppTests.m */; };
-		5CBDF78C1659175000D4681C /* OTableViewCellLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBDF78B1659175000D4681C /* OTableViewCellLayout.m */; };
+		5CBDF78C1659175000D4681C /* OTableViewCellComposer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBDF78B1659175000D4681C /* OTableViewCellComposer.m */; };
 		5CBE919F159909E200516C54 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBE919E159909E200516C54 /* AudioToolbox.framework */; };
 		5CBE91A31599823000516C54 /* UIFont+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE91A21599823000516C54 /* UIFont+OrigoExtensions.m */; };
 		5CBE9C5314AB5160004FE2B7 /* NSString+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE9C5214AB515F004FE2B7 /* NSString+OrigoExtensions.m */; };
@@ -286,8 +286,8 @@
 		5CBB63E3146080E000A9133A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5CBB63E5146080E000A9133A /* OrigoAppTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OrigoAppTests.h; sourceTree = "<group>"; };
 		5CBB63E6146080E000A9133A /* OrigoAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OrigoAppTests.m; sourceTree = "<group>"; };
-		5CBDF78A1659175000D4681C /* OTableViewCellLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCellLayout.h; sourceTree = "<group>"; };
-		5CBDF78B1659175000D4681C /* OTableViewCellLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCellLayout.m; sourceTree = "<group>"; };
+		5CBDF78A1659175000D4681C /* OTableViewCellComposer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCellComposer.h; sourceTree = "<group>"; };
+		5CBDF78B1659175000D4681C /* OTableViewCellComposer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCellComposer.m; sourceTree = "<group>"; };
 		5CBE919E159909E200516C54 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5CBE91A11599823000516C54 /* UIFont+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5CBE91A21599823000516C54 /* UIFont+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+OrigoExtensions.m"; sourceTree = "<group>"; };
@@ -519,8 +519,8 @@
 				5CD3360D15C40A2F00ABBFE7 /* OState.m */,
 				5C23431014812A3000164478 /* OStrings.h */,
 				5C23431114812A3000164478 /* OStrings.m */,
-				5CBDF78A1659175000D4681C /* OTableViewCellLayout.h */,
-				5CBDF78B1659175000D4681C /* OTableViewCellLayout.m */,
+				5CBDF78A1659175000D4681C /* OTableViewCellComposer.h */,
+				5CBDF78B1659175000D4681C /* OTableViewCellComposer.m */,
 				5C3C665A14F56D6800514C57 /* OUUIDGenerator.h */,
 				5C3C665B14F56D6800514C57 /* OUUIDGenerator.m */,
 			);
@@ -836,7 +836,7 @@
 				5CAEE0D0163E513A00A9046B /* OMessageItem.m in Sources */,
 				5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OrigoExtensions.m in Sources */,
 				5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */,
-				5CBDF78C1659175000D4681C /* OTableViewCellLayout.m in Sources */,
+				5CBDF78C1659175000D4681C /* OTableViewCellComposer.m in Sources */,
 				5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */,
 				5C6261AF16BA9E6B0026D148 /* OReplicatedEntity.m in Sources */,
 				5C6C4B6B16CC027600C88E6C /* OReplicatedEntityRef.m in Sources */,

@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OTableViewCellLayout.h"
+#import "OTableViewCellComposer.h"
 
 #import "NSDate+OrigoExtensions.h"
 #import "UIFont+OrigoExtensions.h"
@@ -50,7 +50,7 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%
 static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%@]-6-|";
 
 
-@implementation OTableViewCellLayout
+@implementation OTableViewCellComposer
 
 #pragma mark - Auxiliary methods
 
@@ -70,7 +70,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
                 elementsAreVisible = NO;
             }
             
-            elementsAreVisible = elementsAreVisible || _cell.viewState.actionIsInput;
+            elementsAreVisible = elementsAreVisible || _cell.localState.actionIsInput;
         }
     }
     
@@ -167,39 +167,17 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 
 #pragma mark - Adding constraints
 
-- (void)addTitleConstraintsForKey:(NSString *)key
-{
-    _titleKey = key;
-}
-
-
-- (void)addLabeledTextFieldConstraintsForKey:(NSString *)key
-{
-    [_labeledTextFieldKeys addObject:key];
-}
-
-
-- (void)addCentredElementConstraintsForKey:(NSString *)key
-{
-    [_centredElementKeys addObject:key];
-}
-
-
 - (void)addConstraintsCentred:(BOOL)centred
 {
-    if (_titleKey) {
-        if (centred) {
-            [self addCentredElementConstraintsForKey:_titleKey];
-        } else {
-            [self addTitleConstraintsForKey:_titleKey];
-        }
+    if (_titleKey && centred) {
+        [_centredElementKeys addObject:_titleKey];
     }
     
     for (NSString *detailKey in _detailKeys) {
         if (centred) {
-            [self addCentredElementConstraintsForKey:detailKey];
+            [_centredElementKeys addObject:detailKey];
         } else {
-            [self addLabeledTextFieldConstraintsForKey:detailKey];
+            [_labeledTextFieldKeys addObject:detailKey];
         }
     }
 }
@@ -449,21 +427,21 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
-- (void)layOutForReuseIdentifier:(NSString *)reuseIdentifier
+- (void)composeForReuseIdentifier:(NSString *)reuseIdentifier
 {
-    _titleKey = [OTableViewCellLayout titleKeyForReuseIdentifier:reuseIdentifier];
-    _detailKeys = [OTableViewCellLayout detailKeysForReuseIdentifier:reuseIdentifier];
+    _titleKey = [OTableViewCellComposer titleKeyForReuseIdentifier:reuseIdentifier];
+    _detailKeys = [OTableViewCellComposer detailKeysForReuseIdentifier:reuseIdentifier];
     
     [self addConstraintsCentred:YES];
 }
 
 
-- (void)layOutForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
+- (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
     _entity = entity;
     
-    _titleKey = [OTableViewCellLayout titleKeyForEntityClass:entityClass];
-    _detailKeys = [OTableViewCellLayout detailKeysForEntityClass:entityClass];
+    _titleKey = [OTableViewCellComposer titleKeyForEntityClass:entityClass];
+    _detailKeys = [OTableViewCellComposer detailKeysForEntityClass:entityClass];
     _titleBannerHasPhoto = (entityClass == OMember.class) ? YES : NO;
     
     [self addConstraintsCentred:NO];
@@ -511,7 +489,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
-#pragma mark - Accessor overrides
+#pragma mark - Custom accessors
 
 - (NSArray *)allKeys
 {

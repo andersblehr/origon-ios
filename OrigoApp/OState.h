@@ -85,7 +85,7 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
 
 - (void)setAspectForCarrier:(id)aspectCarrier;
 - (void)reflect:(OState *)state;
-- (void)toggleEditAction;
+- (void)toggleEditState;
 
 - (NSString *)asString;
 

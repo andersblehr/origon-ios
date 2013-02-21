@@ -28,6 +28,28 @@
 
 @implementation OMember (OrigoExtensions)
 
+#pragma mark - Displayable strings
+
+- (NSString *)displayNameAndAge
+{
+    return [self.givenName stringByAppendingFormat:@" (%d)", [self.dateOfBirth yearsBeforeNow]];
+}
+
+
+- (NSString *)displayContactDetails
+{
+    NSString *details = nil;
+    
+    if ([self hasValueForKey:kPropertyKeyMobilePhone]) {
+        details = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
+    } else if ([self hasValueForKey:kPropertyKeyEmail]) {
+        details = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.email];
+    }
+    
+    return details;
+}
+
+
 #pragma mark - Meta information
 
 - (BOOL)isUser
@@ -198,80 +220,6 @@
     }
     
     return isMember;
-}
-
-
-#pragma mark - OReplicatedEntity+OrigoExtensions overrides
-
-- (NSString *)listNameForState:(OState *)state
-{
-    NSString *listName = self.givenName;
-    
-    if (state.viewIsMemberList) {
-        if ([self isMinor]) {
-            listName = [listName stringByAppendingFormat:@" (%d)", [self.dateOfBirth yearsBeforeNow]];
-        } else {
-            listName = self.name;
-        }
-    } else if (state.viewIsOrigoList && [self isUser]) {
-        listName = [OStrings stringForKey:strTermMe];
-    }
-    
-    return listName;
-}
-
-
-- (NSString *)listDetailsForState:(OState *)state
-{
-    NSString *listDetails = nil;
-    
-    if (state.viewIsMemberList) {
-        if (![self isMinor] || [[OMeta m].user hasWard:self]) {
-            if ([self hasValueForKey:kPropertyKeyMobilePhone]) {
-                listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
-            } else if ([self hasValueForKey:kPropertyKeyEmail]) {
-                listDetails = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.email];
-            }
-        }
-    } else if (state.viewIsOrigoList && [self isUser]) {
-        listDetails = self.name;
-    }
-    
-    return listDetails;
-}
-
-
-- (UIImage *)listImageForState:(OState *)state
-{
-    UIImage *listImage = nil;
-    
-    if (state.viewIsMemberList || (state.viewIsOrigoList && [self isUser])) {
-        if (self.photo) {
-            // TODO: Embed photo
-        } else {
-            if ([self.dateOfBirth yearsBeforeNow] < 2) {
-                listImage = [UIImage imageNamed:kIconFileInfant];
-            } else {
-                if ([self isMale]) {
-                    if ([self isMinor]) {
-                        listImage = [UIImage imageNamed:kIconFileBoy];
-                    } else {
-                        listImage = [UIImage imageNamed:kIconFileMan];
-                    }
-                } else {
-                    if ([self isMinor]) {
-                        listImage = [UIImage imageNamed:kIconFileGirl];
-                    } else {
-                        listImage = [UIImage imageNamed:kIconFileWoman];
-                    }
-                }
-            }
-        }
-    } else if (state.viewIsOrigoList) {
-        listImage = [UIImage imageNamed:kIconFileOrigo];
-    }
-    
-    return listImage;
 }
 
 

@@ -53,46 +53,4 @@
     return isTransient;
 }
 
-
-- (NSString *)listNameForState:(OState *)state
-{
-    NSString *listName = nil;
-    
-    if (state.viewIsOrigoList) {
-        listName = [self.origo listNameForState:state];
-    } else {
-        listName = [super listNameForState:state];
-    }
-    
-    return listName;
-}
-
-
-- (NSString *)listDetailsForState:(OState *)state
-{
-    NSString *listDetails = nil;
-    
-    if (state.viewIsOrigoList) {
-        listDetails = [self.origo listDetailsForState:state];
-    } else {
-        listDetails = [super listDetailsForState:state];
-    }
-    
-    return listDetails;
-}
-
-
-- (UIImage *)listImageForState:(OState *)state
-{
-    UIImage *listImage = nil;
-    
-    if (state.viewIsOrigoList) {
-        listImage = [self.origo listImageForState:state];
-    } else {
-        listImage = [super listImageForState:state];
-    }
-    
-    return listImage;
-}
-
 @end

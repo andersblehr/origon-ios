@@ -21,23 +21,24 @@ extern NSString * const kViewKeySuffixTextField;
 
 extern CGFloat const kCellAnimationDuration;
 
-@class OState, OTextField, OTextView, OTableViewCellLayout;
+@class OState, OTextField, OTextView, OTableViewCellComposer;
 @class OReplicatedEntity;
 
 @interface OTableViewCell : UITableViewCell<OEntityObservingDelegate> {
 @private
-    OTableViewCellLayout *_layout;
+    OTableViewCellComposer *_composer;
     NSMutableDictionary *_views;
     
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
 
-@property (strong, nonatomic) OReplicatedEntity *entity;
-@property (weak, nonatomic, readonly) Class entityClass;
-@property (weak, nonatomic, readonly) OState *viewState;
 @property (nonatomic, readonly) BOOL selectable;
 @property (nonatomic) BOOL editable;
 
+@property (strong, nonatomic, readonly) OState *localState;
+@property (strong, nonatomic) NSIndexPath *indexPath;
+@property (strong, nonatomic) OReplicatedEntity *entity;
+@property (weak, nonatomic, readonly) Class entityClass;
 @property (weak, nonatomic) id<OEntityObservingDelegate> observer;
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
@@ -52,7 +53,6 @@ extern CGFloat const kCellAnimationDuration;
 - (void)willAppearTrailing:(BOOL)trailing;
 - (void)toggleEditMode;
 - (void)redrawIfNeeded;
-
 - (void)shakeCellShouldVibrate:(BOOL)shouldVibrate;
 
 @end

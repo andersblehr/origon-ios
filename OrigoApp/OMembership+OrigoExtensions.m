@@ -68,46 +68,6 @@
 }
 
 
-- (NSString *)listNameForState:(OState *)state
-{
-    NSString *listName = nil;
-    
-    if (state.viewIsMemberList || state.viewIsOrigoList) {
-        listName = [self.member listNameForState:state];
-    } else if (state.viewIsMemberDetail) {
-        listName = [self.origo listNameForState:state];
-    }
-    
-    return listName;
-}
-
-
-- (NSString *)listDetailsForState:(OState *)state
-{
-    NSString *listDetails = nil;
-    
-    if (state.viewIsMemberList || state.viewIsOrigoList) {
-        listDetails = [self.member listDetailsForState:state];
-    }
-    
-    return listDetails;
-}
-
-
-- (UIImage *)listImageForState:(OState *)state
-{
-    UIImage *listImage = nil;
-    
-    if (state.viewIsMemberList || state.viewIsOrigoList) {
-        listImage = [self.member listImageForState:state];
-    } else if (state.viewIsMemberDetail) {
-        listImage = [self.origo listImageForState:state];
-    }
-    
-    return listImage;
-}
-
-
 #pragma mark - Comparison
 
 - (NSComparisonResult)compare:(OMembership *)other

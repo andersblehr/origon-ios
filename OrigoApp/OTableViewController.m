@@ -19,7 +19,7 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 #import "OTextView.h"
-#import "OTableViewCellLayout.h"
+#import "OTableViewCellComposer.h"
 
 #import "OReplicatedEntity+OrigoExtensions.h"
 
@@ -434,7 +434,9 @@
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return ([self sectionNumberForSectionKey:sectionKey] == [self.tableView numberOfSections] - 1);
+    NSInteger sectionNumber = [self sectionNumberForSectionKey:sectionKey];
+    
+    return ((sectionNumber == [self.tableView numberOfSections] - 1) && !_state.actionIsInput);
 }
 
 
@@ -475,7 +477,7 @@
     CGFloat height = kDefaultTableViewCellHeight;
     
     if (indexPath.section == [self sectionNumberForSectionKey:_entitySectionKey]) {
-        height = [OTableViewCellLayout cell:_detailCell heightForEntityClass:_entityClass entity:_entity];
+        height = [OTableViewCellComposer cell:_detailCell heightForEntityClass:_entityClass entity:_entity];
     }
     
     return height;
@@ -501,6 +503,7 @@
         
         cell = _detailCell;
     } else {
+        //cell = [tableView listCellForIndexPath:indexPath];
         cell = [tableView listCellForEntity:[self entityForIndexPath:indexPath]];
     }
     

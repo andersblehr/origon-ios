@@ -15,7 +15,7 @@ extern CGFloat const kMinimumCellPadding;
 @class OTableViewCell;
 @class OReplicatedEntity;
 
-@interface OTableViewCellLayout : NSObject {
+@interface OTableViewCellComposer : NSObject {
 @private
     OReplicatedEntity *_entity;
     OTableViewCell *_cell;
@@ -35,8 +35,8 @@ extern CGFloat const kMinimumCellPadding;
 + (BOOL)requiresTextViewForKey:(NSString *)key;
 
 - (id)initForCell:(OTableViewCell *)cell;
-- (void)layOutForReuseIdentifier:(NSString *)reuseIdentifier;
-- (void)layOutForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
+- (void)composeForReuseIdentifier:(NSString *)reuseIdentifier;
+- (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
 
 - (NSDictionary *)constraintsWithAlignmentOptions;
 

@@ -161,7 +161,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 }
 
 
-#pragma mark - Accessor overrides
+#pragma mark - Custom accessors
 
 - (void)setPlaceholder:(NSString *)placeholder
 {

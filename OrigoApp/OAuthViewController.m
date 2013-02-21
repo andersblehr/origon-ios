@@ -23,7 +23,7 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 #import "OUUIDGenerator.h"
-#import "OTableViewCellLayout.h"
+#import "OTableViewCellComposer.h"
 
 #import "ODevice.h"
 #import "OMember+OrigoExtensions.h"

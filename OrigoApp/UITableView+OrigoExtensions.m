@@ -14,7 +14,7 @@
 
 #import "OStrings.h"
 #import "OTableViewCell.h"
-#import "OTableViewCellLayout.h"
+#import "OTableViewCellComposer.h"
 
 #import "OReplicatedEntity.h"
 
@@ -142,9 +142,17 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (id)listCell
+- (id)listCellForIndexPath:(NSIndexPath *)indexPath
 {
-    return [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:nil];
+    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:kReuseIdentifierDefault];
+    
+    if (!cell) {
+        cell = [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:nil];
+    }
+    
+    cell.indexPath = indexPath;
+    
+    return cell;
 }
 
 
@@ -153,7 +161,7 @@ static NSString * const kLogoText = @"..origo..";
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:kReuseIdentifierDefault];
     
     if (!cell) {
-        cell = [self listCell];
+        cell = [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:nil];
     }
     
     cell.entity = entity;

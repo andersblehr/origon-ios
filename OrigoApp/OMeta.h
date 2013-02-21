@@ -15,6 +15,7 @@
 extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;
 
+extern NSUInteger const kToddlerThreshold;
 extern NSUInteger const kCertainSchoolAge;
 extern NSUInteger const kTeenThreshold;
 extern NSUInteger const kAgeOfMajority;
@@ -37,7 +38,9 @@ extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
 
-extern NSString * const kOrigoTypePrefix;
+extern NSString * const kPrefixDateProperty;
+extern NSString * const kPrefixOrigoType;
+
 extern NSString * const kOrigoTypeMemberRoot;
 extern NSString * const kOrigoTypeResidence;
 extern NSString * const kOrigoTypeOrganisation;

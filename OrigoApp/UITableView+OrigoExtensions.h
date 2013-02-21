@@ -22,7 +22,7 @@
 - (id)cellForEntity:(OReplicatedEntity *)entity;
 - (id)cellForEntity:(OReplicatedEntity *)entity delegate:(id)delegate;
 - (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate;
-- (id)listCell;
+- (id)listCellForIndexPath:(NSIndexPath *)indexPath;
 - (id)listCellForEntity:(OReplicatedEntity *)entity;
 
 - (CGFloat)standardHeaderHeight;

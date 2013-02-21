@@ -12,6 +12,9 @@
 
 @interface OOrigo (OrigoExtensions)
 
+- (NSString *)displayAddress;
+- (NSString *)displayPhoneNumber;
+
 - (id)addMember:(OMember *)member;
 - (id)addResident:(OMember *)resident;
 
