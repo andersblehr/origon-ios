@@ -16,6 +16,7 @@
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
+#import "OTableViewCellBlueprints.h"
 #import "OTextField.h"
 #import "OTextView.h"
 
@@ -116,62 +117,6 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
-#pragma mark - Layout definitions
-
-+ (NSString *)titleKeyForReuseIdentifier:(NSString *)reuseIdentifier
-{
-    NSString *titleKey = nil;
-    
-    if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
-        titleKey = kInputKeySignIn;
-    } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-        titleKey = kInputKeyActivate;
-    }
-    
-    return titleKey;
-}
-
-
-+ (NSArray *)detailKeysForReuseIdentifier:(NSString *)reuseIdentifier
-{
-    NSArray *detailKeys = nil;
-    
-    if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
-        detailKeys = @[kInputKeyAuthEmail, kInputKeyPassword];
-    } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-        detailKeys = @[kInputKeyActivationCode, kInputKeyRepeatPassword];
-    }
-    
-    return detailKeys;
-}
-
-
-+ (NSString *)titleKeyForEntityClass:(Class)entityClass
-{
-    return (entityClass == OMember.class) ? kPropertyKeyName : nil;
-}
-
-
-+ (NSArray *)detailKeysForEntityClass:(Class)entityClass
-{
-    NSArray *detailKeys = nil;
-    
-    if (entityClass == OMember.class) {
-        detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
-    } else if (entityClass == OOrigo.class) {
-        detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
-    }
-    
-    return detailKeys;
-}
-
-
-+ (BOOL)titleBannerHasPhotoForEntityClass:(Class)entityClass
-{
-    return (entityClass == OMember.class) ? YES : NO;
-}
-
-
 #pragma mark - Adding constraints
 
 - (void)addConstraintsCentred:(BOOL)centred
@@ -204,7 +149,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
         [constraints addObject:kVConstraintsTitleBanner];
         [constraints addObject:kHConstraintsTitleBanner];
         
-        if (_titleBannerHasPhoto) {
+        if (_titleHasPhoto) {
             [constraints addObject:[NSString stringWithFormat:kHConstraintsTitleWithPhoto, titleName]];
             [constraints addObject:kVConstraintsPhoto];
             [constraints addObject:kVConstraintsPhotoPrompt];
@@ -302,7 +247,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
             NSString *textFieldName = [key stringByAppendingString:kViewKeySuffixTextField];
             NSString *constraint = nil;
             
-            if (_titleBannerHasPhoto && (rowNumber++ < 2)) {
+            if (_titleHasPhoto && (rowNumber++ < 2)) {
                 constraint = [NSString stringWithFormat:kHConstraintsWithPhoto, labelName, textFieldName];
             } else {
                 constraint = [NSString stringWithFormat:kHConstraints, labelName, textFieldName];
@@ -385,13 +330,13 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     CGFloat height = 2 * kDefaultCellPadding;
     
-    if ([self titleKeyForEntityClass:entityClass]) {
+    if ([OTableViewCellBlueprints titleKeyForEntityClass:entityClass]) {
         height += [UIFont titleFieldHeight] + kDefaultCellPadding;
     }
     
-    for (NSString *detailKey in [self detailKeysForEntityClass:entityClass]) {
+    for (NSString *detailKey in [OTableViewCellBlueprints detailKeysForEntityClass:entityClass]) {
         if (!entity || [OState s].actionIsInput || [entity hasValueForKey:detailKey]) {
-            if ([self requiresTextViewForKey:detailKey]) {
+            if ([OTableViewCellBlueprints requiresTextViewForKey:detailKey]) {
                 if (cell) {
                     height += [[cell textFieldForKey:detailKey] height];
                 } else if (entity && [entity hasValueForKey:detailKey]) {
@@ -406,14 +351,6 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     }
     
     return height;
-}
-
-
-#pragma mark - Detail field implementation info
-
-+ (BOOL)requiresTextViewForKey:(NSString *)key
-{
-    return ([key isEqualToString:kPropertyKeyAddress]);
 }
 
 
@@ -436,8 +373,8 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 
 - (void)composeForReuseIdentifier:(NSString *)reuseIdentifier
 {
-    _titleKey = [OTableViewCellComposer titleKeyForReuseIdentifier:reuseIdentifier];
-    _detailKeys = [OTableViewCellComposer detailKeysForReuseIdentifier:reuseIdentifier];
+    _titleKey = [OTableViewCellBlueprints titleKeyForReuseIdentifier:reuseIdentifier];
+    _detailKeys = [OTableViewCellBlueprints detailKeysForReuseIdentifier:reuseIdentifier];
     
     [self addConstraintsCentred:YES];
 }
@@ -447,9 +384,9 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     _entity = entity;
     
-    _titleKey = [OTableViewCellComposer titleKeyForEntityClass:entityClass];
-    _detailKeys = [OTableViewCellComposer detailKeysForEntityClass:entityClass];
-    _titleBannerHasPhoto = [OTableViewCellComposer titleBannerHasPhotoForEntityClass:entityClass];
+    _titleKey = [OTableViewCellBlueprints titleKeyForEntityClass:entityClass];
+    _titleHasPhoto = [OTableViewCellBlueprints titleHasPhotoForEntityClass:entityClass];
+    _detailKeys = [OTableViewCellBlueprints detailKeysForEntityClass:entityClass];
     
     [self addConstraintsCentred:NO];
 }

@@ -22,6 +22,7 @@
 #import "OStrings.h"
 #import "OTextField.h"
 #import "OTextView.h"
+#import "OTableViewCellBlueprints.h"
 #import "OTableViewCellComposer.h"
 
 #import "OMember+OrigoExtensions.h"
@@ -109,7 +110,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         
         [self addTextFieldForKey:_composer.titleKey];
         
-        if (_composer.titleBannerHasPhoto) {
+        if (_composer.titleHasPhoto) {
             UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
             NSData *photo = [_entity asMember].photo;
             
@@ -200,7 +201,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     for (NSString *detailKey in _composer.detailKeys) {
         [self addLabelForKey:detailKey centred:NO];
         
-        if ([OTableViewCellComposer requiresTextViewForKey:detailKey]) {
+        if ([OTableViewCellBlueprints requiresTextViewForKey:detailKey]) {
             [self addTextViewForKey:detailKey];
         } else {
             [self addTextFieldForKey:detailKey];
@@ -328,7 +329,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self.backgroundView addDropShadowForInternalTableViewCell];
     }
     
-    if (_composer.titleBannerHasPhoto) {
+    if (_composer.titleHasPhoto) {
         [[_views objectForKey:kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
     }
 }

@@ -20,19 +20,16 @@ extern CGFloat const kMinimumCellPadding;
     OReplicatedEntity *_entity;
     OTableViewCell *_cell;
     
-    NSString *_titleKey;
-    NSMutableArray *_labeledTextFieldKeys;
     NSMutableArray *_centredElementKeys;
+    NSMutableArray *_labeledTextFieldKeys;
 }
 
 @property (strong, nonatomic, readonly) NSString *titleKey;
 @property (strong, nonatomic, readonly) NSArray *detailKeys;
-@property (strong, nonatomic, readonly) NSArray *allKeys;
-@property (nonatomic, readonly) BOOL titleBannerHasPhoto;
+@property (weak, nonatomic, readonly) NSArray *allKeys;
+@property (nonatomic, readonly) BOOL titleHasPhoto;
 
 + (CGFloat)cell:(OTableViewCell *)cell heightForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
-
-+ (BOOL)requiresTextViewForKey:(NSString *)key;
 
 - (id)initForCell:(OTableViewCell *)cell;
 - (void)composeForReuseIdentifier:(NSString *)reuseIdentifier;
