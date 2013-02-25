@@ -336,7 +336,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     
     for (NSString *detailKey in [OTableViewCellBlueprints detailKeysForEntityClass:entityClass]) {
         if (!entity || [OState s].actionIsInput || [entity hasValueForKey:detailKey]) {
-            if ([OTableViewCellBlueprints requiresTextViewForKey:detailKey]) {
+            if ([OTableViewCellBlueprints isKeyForMultiLineProperty:detailKey]) {
                 if (cell) {
                     height += [[cell textFieldForKey:detailKey] height];
                 } else if (entity && [entity hasValueForKey:detailKey]) {

@@ -16,6 +16,6 @@
 + (NSArray *)detailKeysForEntityClass:(Class)entityClass;
 
 + (BOOL)titleHasPhotoForEntityClass:(Class)entityClass;
-+ (BOOL)requiresTextViewForKey:(NSString *)key;
++ (BOOL)isKeyForMultiLineProperty:(NSString *)propertyKey;
 
 @end

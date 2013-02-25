@@ -36,7 +36,7 @@ NSString * const strTermAddress                      = @"strTermAddress";
 
 // OAuthView strings
 NSString * const strLabelSignIn                      = @"strLabelSignIn";
-NSString * const strLabelActivation                  = @"strLabelActivation";
+NSString * const strLabelActivate                    = @"strLabelActivate";
 NSString * const strFooterSignInOrRegister           = @"strFooterSignInOrRegister";
 NSString * const strFooterActivate                   = @"strFooterActivate";
 NSString * const strFooterActivateEmail              = @"strFooterActivateEmail";

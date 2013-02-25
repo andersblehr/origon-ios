@@ -26,7 +26,7 @@ extern NSString * const strTermAddress;
 
 // OAuthView strings
 extern NSString * const strLabelSignIn;
-extern NSString * const strLabelActivation;
+extern NSString * const strLabelActivate;
 extern NSString * const strFooterSignInOrRegister;
 extern NSString * const strFooterActivate;
 extern NSString * const strFooterActivateEmail;
