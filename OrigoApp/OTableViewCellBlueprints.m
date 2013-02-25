@@ -73,9 +73,9 @@
 }
 
 
-+ (BOOL)requiresTextViewForKey:(NSString *)key
++ (BOOL)isKeyForMultiLineProperty:(NSString *)propertyKey
 {
-    return ([key isEqualToString:kPropertyKeyAddress]);
+    return ([propertyKey isEqualToString:kPropertyKeyAddress]);
 }
 
 @end

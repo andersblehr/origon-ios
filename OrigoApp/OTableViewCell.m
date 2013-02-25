@@ -201,7 +201,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     for (NSString *detailKey in _composer.detailKeys) {
         [self addLabelForKey:detailKey centred:NO];
         
-        if ([OTableViewCellBlueprints requiresTextViewForKey:detailKey]) {
+        if ([OTableViewCellBlueprints isKeyForMultiLineProperty:detailKey]) {
             [self addTextViewForKey:detailKey];
         } else {
             [self addTextFieldForKey:detailKey];

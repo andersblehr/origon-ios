@@ -436,7 +436,7 @@
 {
     NSInteger sectionNumber = [self sectionNumberForSectionKey:sectionKey];
     
-    return ((sectionNumber == [self.tableView numberOfSections] - 1) && !_state.actionIsInput);
+    return ((sectionNumber == [self.tableView numberOfSections] - 1) && !_state.actionIsRegister);
 }
 
 
@@ -500,7 +500,6 @@
         cell = _detailCell;
     } else {
         cell = [tableView listCellForIndexPath:indexPath delegate:self];
-        //cell = [tableView listCellForEntity:[self entityForIndexPath:indexPath]];
     }
     
     return cell;
