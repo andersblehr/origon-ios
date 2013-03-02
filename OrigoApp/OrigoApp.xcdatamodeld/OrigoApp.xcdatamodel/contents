@@ -148,6 +148,7 @@
     </entity>
     <entity name="OOrigo" representedClassName="OOrigo" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="country" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="descriptionText" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
@@ -256,7 +257,7 @@
         <element name="OMessageBoard" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OMessageItem" positionX="0" positionY="0" width="128" height="120"/>
         <element name="OMessageThread" positionX="0" positionY="0" width="128" height="90"/>
-        <element name="OOrigo" positionX="0" positionY="0" width="128" height="300"/>
+        <element name="OOrigo" positionX="0" positionY="0" width="128" height="315"/>
         <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="165"/>
         <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
         <element name="OScheduledAbsence" positionX="0" positionY="0" width="128" height="105"/>

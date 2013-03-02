@@ -58,7 +58,7 @@ NSString * const kDateTimeFormatZulu = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
 
 - (BOOL)isBirthDateOfMinor
 {
-    return ([self yearsBeforeNow] < kAgeOfMajority);
+    return ([self yearsBeforeNow] < kAgeThresholdMajority);
 }
 
 @end

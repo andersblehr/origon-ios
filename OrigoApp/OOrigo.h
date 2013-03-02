@@ -2,7 +2,7 @@
 //  OOrigo.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 14.02.13.
+//  Created by Anders Blehr on 25.02.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -20,6 +20,8 @@
 @property (nonatomic, retain) NSData * photo;
 @property (nonatomic, retain) NSString * telephone;
 @property (nonatomic, retain) NSString * type;
+@property (nonatomic, retain) NSString * country;
+@property (nonatomic, retain) NSSet *associateMemberships;
 @property (nonatomic, retain) NSSet *documentRepositories;
 @property (nonatomic, retain) NSSet *eventInvitations;
 @property (nonatomic, retain) NSSet *hostingEvents;
@@ -30,10 +32,14 @@
 @property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *subOrigos;
 @property (nonatomic, retain) OYearlySchedule *yearlySchedule;
-@property (nonatomic, retain) NSSet *associateMemberships;
 @end
 
 @interface OOrigo (CoreDataGeneratedAccessors)
+
+- (void)addAssociateMembershipsObject:(OMembership *)value;
+- (void)removeAssociateMembershipsObject:(OMembership *)value;
+- (void)addAssociateMemberships:(NSSet *)values;
+- (void)removeAssociateMemberships:(NSSet *)values;
 
 - (void)addDocumentRepositoriesObject:(ODocumentRepository *)value;
 - (void)removeDocumentRepositoriesObject:(ODocumentRepository *)value;
@@ -74,10 +80,5 @@
 - (void)removeSubOrigosObject:(OOrigo *)value;
 - (void)addSubOrigos:(NSSet *)values;
 - (void)removeSubOrigos:(NSSet *)values;
-
-- (void)addAssociateMembershipsObject:(OMembership *)value;
-- (void)removeAssociateMembershipsObject:(OMembership *)value;
-- (void)addAssociateMemberships:(NSSet *)values;
-- (void)removeAssociateMemberships:(NSSet *)values;
 
 @end

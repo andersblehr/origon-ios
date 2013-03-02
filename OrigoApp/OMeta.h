@@ -10,21 +10,18 @@
 
 #import "Reachability.h"
 
-#import "OServerConnectionDelegate.h"
-
 extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;
 
-extern NSUInteger const kToddlerThreshold;
-extern NSUInteger const kCertainSchoolAge;
-extern NSUInteger const kTeenThreshold;
-extern NSUInteger const kAgeOfMajority;
+extern NSUInteger const kAgeThresholdToddler;
+extern NSUInteger const kAgeThresholdInSchool;
+extern NSUInteger const kAgeThresholdTeen;
+extern NSUInteger const kAgeThresholdMajority;
 
 extern NSString * const kBundleId;
 extern NSString * const kLanguageHungarian;
 
 extern NSString * const kAuthViewControllerId;
-extern NSString * const kTabBarControllerId;
 extern NSString * const kOrigoListViewControllerId;
 extern NSString * const kOrigoViewControllerId;
 extern NSString * const kMemberListViewControllerId;
@@ -61,6 +58,7 @@ extern NSString * const kJSONKeyIsListed;
 extern NSString * const kJSONKeyPasswordHash;
 
 extern NSString * const kPropertyKeyAddress;
+extern NSString * const kPropertyKeyCountry;
 extern NSString * const kPropertyKeyDateOfBirth;
 extern NSString * const kPropertyKeyEmail;
 extern NSString * const kPropertyKeyEntityId;
@@ -73,19 +71,16 @@ extern NSString * const kPropertyKeyTelephone;
 
 extern NSString * const kDefaultsKeyAuthInfo;
 extern NSString * const kDefaultsKeyDirtyEntities;
+extern NSString * const kDefaultsKeyRegistrationAborted;
 extern NSString * const kDefaultsKeyStringDate;
 
-@class OTableViewCell;
+@class OEntityReplicator, OTableViewCell;
 @class OMember, OReplicatedEntity;
 
-@interface OMeta : NSObject <OServerConnectionDelegate> {
+@interface OMeta : NSObject {
 @private
     Reachability *_internetReachability;
     NSDate *_authTokenExpiryDate;
-    
-    NSMutableSet *_dirtyEntities;
-    NSMutableDictionary *_stagedEntities;
-    NSMutableDictionary *_stagedRelationshipRefs;
 }
 
 @property (strong, nonatomic) NSString *userId;
@@ -106,8 +101,9 @@ extern NSString * const kDefaultsKeyStringDate;
 @property (nonatomic, readonly) BOOL internetConnectionIsWiFi;
 @property (nonatomic, readonly) BOOL internetConnectionIsWWAN;
 
-@property (strong, nonatomic, readonly) UIDatePicker *sharedDatePicker;
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
+@property (strong, nonatomic, readonly) OEntityReplicator *replicator;
+@property (strong, nonatomic, readonly) UIDatePicker *sharedDatePicker;
 
 + (OMeta *)m;
 
@@ -119,10 +115,9 @@ extern NSString * const kDefaultsKeyStringDate;
 - (BOOL)userIsSignedIn;
 - (BOOL)userIsRegistered;
 
-- (NSSet *)dirtyEntities;
-- (void)stageEntity:(OReplicatedEntity *)entity;
-- (void)stageRelationshipRefs:(NSDictionary *)relationshipRefs forEntity:(OReplicatedEntity *)entity;
-- (OReplicatedEntity *)stagedEntityWithId:(NSString *)entityId;
-- (NSDictionary *)stagedRelationshipRefsForEntity:(OReplicatedEntity *)entity;
+- (void)setGlobalDefault:(id)globalDefault forKey:(NSString *)key;
+- (void)setUserDefault:(id)userDefault forKey:(NSString *)key;
+- (id)globalDefaultForKey:(NSString *)key;
+- (id)userDefaultForKey:(NSString *)key;
 
 @end

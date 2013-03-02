@@ -1,5 +1,5 @@
 //
-//  OTableViewControllerDelegate.h
+//  OTableViewControllerInstance.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.01.13.
@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol OTableViewControllerDelegate <NSObject>
+@protocol OTableViewControllerInstance <NSObject>
 
 @required
-- (void)prepareState;
+- (void)initialise;
 - (void)populateDataSource;
 
 @optional

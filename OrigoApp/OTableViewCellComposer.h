@@ -12,7 +12,7 @@ extern CGFloat const kDefaultTableViewCellHeight;
 extern CGFloat const kDefaultCellPadding;
 extern CGFloat const kMinimumCellPadding;
 
-@class OTableViewCell;
+@class OTableViewCell, OTableViewCellBlueprint;
 @class OReplicatedEntity;
 
 @interface OTableViewCellComposer : NSObject {
@@ -24,10 +24,12 @@ extern CGFloat const kMinimumCellPadding;
     NSMutableArray *_labeledTextFieldKeys;
 }
 
-@property (strong, nonatomic, readonly) NSString *titleKey;
-@property (strong, nonatomic, readonly) NSArray *detailKeys;
-@property (weak, nonatomic, readonly) NSArray *allKeys;
-@property (nonatomic, readonly) BOOL titleHasPhoto;
+@property (strong, nonatomic, readonly) OTableViewCellBlueprint *blueprint;
+
+//@property (strong, nonatomic, readonly) NSString *titleKey;
+//@property (strong, nonatomic, readonly) NSArray *detailKeys;
+//@property (weak, nonatomic, readonly) NSArray *allKeys;
+//@property (nonatomic, readonly) BOOL titleHasPhoto;
 
 + (CGFloat)cell:(OTableViewCell *)cell heightForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
 

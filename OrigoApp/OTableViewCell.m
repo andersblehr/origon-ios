@@ -22,7 +22,7 @@
 #import "OStrings.h"
 #import "OTextField.h"
 #import "OTextView.h"
-#import "OTableViewCellBlueprints.h"
+#import "OTableViewCellBlueprint.h"
 #import "OTableViewCellComposer.h"
 
 #import "OMember+OrigoExtensions.h"
@@ -100,7 +100,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addTitleFieldIfNeeded
 {
-    if (_composer.titleKey) {
+    if (_composer.blueprint.titleKey) {
         UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
         titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
         [titleBannerView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -108,9 +108,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self.contentView addSubview:titleBannerView];
         [_views setObject:titleBannerView forKey:kViewKeyTitleBanner];
         
-        [self addTextFieldForKey:_composer.titleKey];
+        [self addTextFieldForKey:_composer.blueprint.titleKey];
         
-        if (_composer.titleHasPhoto) {
+        if (_composer.blueprint.hasPhoto) {
             UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
             NSData *photo = [_entity asMember].photo;
             
@@ -179,9 +179,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     [_composer composeForReuseIdentifier:reuseIdentifier];
     
-    [self addLabelForKey:_composer.titleKey centred:YES];
+    [self addLabelForKey:_composer.blueprint.titleKey centred:YES];
     
-    for (NSString *detailKey in _composer.detailKeys) {
+    for (NSString *detailKey in _composer.blueprint.detailKeys) {
         [self addTextFieldForKey:detailKey];
     }
 }
@@ -198,10 +198,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     [self addTitleFieldIfNeeded];
     
-    for (NSString *detailKey in _composer.detailKeys) {
+    for (NSString *detailKey in _composer.blueprint.detailKeys) {
         [self addLabelForKey:detailKey centred:NO];
         
-        if ([OTableViewCellBlueprints isKeyForMultiLineProperty:detailKey]) {
+        if ([_composer.blueprint keyRepresentsMultiLineProperty:detailKey]) {
             [self addTextViewForKey:detailKey];
         } else {
             [self addTextFieldForKey:detailKey];
@@ -279,7 +279,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (BOOL)isTitleKey:(NSString *)key
 {
-    return [key isEqualToString:_composer.titleKey];
+    return [key isEqualToString:_composer.blueprint.titleKey];
 }
 
 
@@ -297,7 +297,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (id)nextInputFieldFromTextField:(id)textField
 {
-    NSArray *elementKeys = _composer.allKeys;
+    NSArray *elementKeys = _composer.blueprint.allKeys;
     NSInteger indexOfTextField = textField ? [elementKeys indexOfObject:[textField key]] : -1;
     NSString *inputFieldKey = nil;
     UIView *inputField = nil;
@@ -329,7 +329,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self.backgroundView addDropShadowForInternalTableViewCell];
     }
     
-    if (_composer.titleHasPhoto) {
+    if (_composer.blueprint.hasPhoto) {
         [[_views objectForKey:kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
     }
 }
@@ -487,7 +487,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if ([self isListCell]) {
         [self populateListCell];
     } else {
-        for (NSString *detailKey in _composer.detailKeys) {
+        for (NSString *detailKey in _composer.blueprint.detailKeys) {
             id value = [_entity valueForKey:detailKey];
             
             if (value) {

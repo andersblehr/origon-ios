@@ -35,8 +35,6 @@
 #import "OMemberViewController.h"
 #import "OTabBarController.h"
 
-static NSString * const kModalSegueToMemberView = @"modalFromAuthToMemberView";
-
 static NSInteger const kAuthSection = 0;
 
 static NSInteger const kActivationCodeLength = 6;
@@ -71,10 +69,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)toggleAuthState
 {
-    if ([OState s].actionIsSetup) {
-        [self reflectState];
-        [self.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (self.state.actionIsLogin) {
+    if (self.state.actionIsLogin) {
         self.state.actionIsActivate = YES;
         
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationLeft];
@@ -84,7 +79,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
         
         if (_authInfo) {
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultsKeyAuthInfo];
+            [[OMeta m] setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
         }
     }
     
@@ -125,7 +120,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             _repeatPasswordField.text = @"";
         }
         
-        [_activityIndicator startAnimating];
+        [self.activityIndicator startAnimating];
     } else {
         if (self.state.actionIsLogin) {
             _emailField.text = email;
@@ -139,7 +134,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             _repeatPasswordField.placeholder = [OStrings stringForKey:strPlaceholderPassword];
         }
         
-        [_activityIndicator stopAnimating];
+        [self.activityIndicator stopAnimating];
     }
     
     self.canEdit = !isPending;
@@ -250,10 +245,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)completeLogin
 {
-    BOOL deviceIsNew = ([[OMeta m].context entityWithId:[OMeta m].deviceId] == nil);
-    
-    if (deviceIsNew) {
+    if (![[OMeta m].context entityWithId:[OMeta m].deviceId]) {
         [self registerNewDevice];
+    }
+    
+    if (![[OMeta m] userIsRegistered]) {
+        [[OMeta m] setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
     }
     
     [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
@@ -269,8 +266,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if (self.state.aspectIsSelf) {
         _userIsListed = [[_authInfo objectForKey:kJSONKeyIsListed] boolValue];
         
-        NSData *authInfoArchive = [NSKeyedArchiver archivedDataWithRootObject:_authInfo];
-        [[NSUserDefaults standardUserDefaults] setObject:authInfoArchive forKey:kDefaultsKeyAuthInfo];
+        [[OMeta m] setGlobalDefault:[NSKeyedArchiver archivedDataWithRootObject:_authInfo] forKey:kDefaultsKeyAuthInfo];
         
         [self toggleAuthState];
     }
@@ -314,13 +310,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     }
     
     [OMeta m].user.passwordHash = [_authInfo objectForKey:kJSONKeyPasswordHash];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultsKeyAuthInfo];
+    [[OMeta m] setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
     
-    if ([[OMeta m] userIsRegistered] && [[OMeta m].user isMinor]) {
-        [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
-    } else {
-        [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
-    }
+    [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
 }
 
 
@@ -348,19 +340,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
     self.canEdit = YES;
     self.shouldDemphasiseOnEndEdit = NO;
-    
-    _activityIndicator = [self.tableView addActivityIndicator];
-}
-
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-
-    if ([OState s].actionIsSetup) {
-        [_activityIndicator startAnimating];
-        [OStrings fetchStrings:self];
-    }
 }
 
 
@@ -394,25 +373,15 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - UIViewController overrides
+#pragma mark - OTableViewControllerInstance conformance
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        [self prepareForModalSegue:segue data:[[OMeta m].user initialResidency]];
-    }
-}
-
-
-#pragma mark - OTableViewControllerDelegate conformance
-
-- (void)prepareState
+- (void)initialise
 {
     if (self.data) {
         self.state.actionIsActivate = YES;
         self.state.aspectIsEmail = YES;
     } else {
-        NSData *authInfoArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultsKeyAuthInfo];
+        NSData *authInfoArchive = [[OMeta m] globalDefaultForKey:kDefaultsKeyAuthInfo];
         
         if (authInfoArchive) {
             _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
@@ -428,7 +397,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)populateDataSource
 {
-    [self setData:self.data forSectionWithKey:kAuthSection];
+    [self setData:kEmptyDetailCellPlaceholder forSectionWithKey:kAuthSection];
 }
 
 
@@ -440,7 +409,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         text = [OStrings stringForKey:strFooterSignInOrRegister];
     } else if (self.state.actionIsActivate) {
         if (self.state.aspectIsSelf) {
-            text = [OStrings stringForKey:strFooterActivate];
+            text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivate], [_emailField finalText]];
         } else if (self.state.aspectIsEmail) {
             text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivateEmail], self.data];
         }
@@ -552,69 +521,34 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - OModalViewControllerDelegate conformance
-
-- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
-{
-    if ([identitifier isEqualToString:kMemberListViewControllerId]) {
-        [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
-    } else if ([identitifier isEqualToString:kMemberViewControllerId]) {
-        if ([[OMeta m] userIsSignedIn]) {
-            [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
-        } else {
-            [self dismissViewControllerAnimated:YES completion:NULL];
-            [self toggleAuthState];
-        }
-    }
-}
-
-
 #pragma mark - OServerConnectionDelegate conformance
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    if ([OState s].actionIsSetup) {
-        [_activityIndicator stopAnimating];
-        
-        [OStrings.class didCompleteWithResponse:response data:data];
-        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:kDefaultsKeyStringDate];
-        [(OTabBarController *)((UIViewController *)self.dismisser).tabBarController setTabBarTitles];
-        
-        [self toggleAuthState];
-    } else {
-        [self indicatePendingServerSession:NO];
-        
-        if (response.statusCode < kHTTPStatusErrorRangeStart) {
-            if (response.statusCode == kHTTPStatusCreated) {
-                [self didReceiveActivationData:data];
-            } else {
-                if (![OMeta m].userId) {
-                    if (response.statusCode == kHTTPStatusOK) {
-                        [OMeta m].userId = [[response allHeaderFields] objectForKey:kHTTPHeaderLocation];
-                    } else {
-                        [OMeta m].userId = [OUUIDGenerator generateUUID];
-                    }
-                }
-                
-                [self userDidAuthenticateWithData:data];
-            }
-        } else {
-            if (response.statusCode == kHTTPStatusUnauthorized) {
-                [self.detailCell shakeCellShouldVibrate:YES];
-                [_passwordField becomeFirstResponder];
-            } else {
-                [OAlert showAlertForHTTPStatus:response.statusCode];
-            }
-        }
-    }
-}
-
-
-- (void)didFailWithError:(NSError *)error
-{
     [self indicatePendingServerSession:NO];
     
-    // TODO: Handle errors (-1001: Timeout, and others)
+    if (response.statusCode < kHTTPStatusErrorRangeStart) {
+        if (response.statusCode == kHTTPStatusCreated) {
+            [self didReceiveActivationData:data];
+        } else {
+            if (![OMeta m].userId) {
+                if (response.statusCode == kHTTPStatusOK) {
+                    [OMeta m].userId = [[response allHeaderFields] objectForKey:kHTTPHeaderLocation];
+                } else {
+                    [OMeta m].userId = [OUUIDGenerator generateUUID];
+                }
+            }
+            
+            [self userDidAuthenticateWithData:data];
+        }
+    } else {
+        if (response.statusCode == kHTTPStatusUnauthorized) {
+            [self.detailCell shakeCellShouldVibrate:YES];
+            [_passwordField becomeFirstResponder];
+        } else {
+            [OAlert showAlertForHTTPStatus:response.statusCode];
+        }
+    }
 }
 
 @end

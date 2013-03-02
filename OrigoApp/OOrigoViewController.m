@@ -31,8 +31,6 @@
 
 #import "OMemberListViewController.h"
 
-static NSString * const kModalSegueToMemberListView = @"modalFromOrigoToMemberListView";
-
 static NSInteger const kOrigoSection = 0;
 
 
@@ -62,26 +60,32 @@ static NSInteger const kOrigoSection = 0;
         _origo.telephone = [_telephoneField finalText];
         
         if (self.state.actionIsRegister) {
-            [self.view endEditing:YES];
-            
             if (_membership) {
                 _member.activeSince = [NSDate date];
-                [self.dismisser dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
             } else {
                 if ([_origo isOfType:kOrigoTypeResidence]) {
                     _membership = [_origo addResident:_member];
                 } else {
                     _membership = [_origo addMember:_member];
                 }
-                
-                [self performSegueWithIdentifier:kModalSegueToMemberListView sender:self];
             }
+            
+            [self.view endEditing:YES];
+            [self presentModalViewControllerWithIdentifier:kMemberListViewControllerId data:_membership dismisser:self.dismisser];
         } else if (self.state.actionIsEdit) {
             [self toggleEditMode];
         }
     } else {
         [self.detailCell shakeCellShouldVibrate:NO];
     }
+}
+
+
+- (void)signOut
+{
+    [[OMeta m] userDidSignOut];
+    
+    [self.dismisser dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
 }
 
 
@@ -122,15 +126,9 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
-- (UIBarButtonItem *)cancelRegistrationButton
+- (BOOL)cancelRegistrationImpliesSignOut
 {
-    UIBarButtonItem *cancelButton = nil;
-    
-    if (![_origo isOfType:kOrigoTypeResidence] || _member.activeSince) {
-        cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
-    }
-    
-    return cancelButton;
+    return ([_origo isOfType:kOrigoTypeResidence] && !_member.activeSince);
 }
 
 
@@ -142,17 +140,9 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:kModalSegueToMemberListView]) {
-        [self prepareForModalSegue:segue data:_membership meta:self.dismisser];
-    }
-}
+#pragma mark - OTableViewControllerInstance conformance
 
-
-#pragma mark - OTableViewControllerDelegate conformance
-
-- (void)prepareState
+- (void)initialise
 {
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
@@ -168,7 +158,9 @@ static NSInteger const kOrigoSection = 0;
 
 - (void)populateDataSource
 {
-    [self setData:_origo forSectionWithKey:kOrigoSection];
+    id origoDataSource = _origo ? _origo : kEmptyDetailCellPlaceholder;
+    
+    [self setData:origoDataSource forSectionWithKey:kOrigoSection];
 }
 
 

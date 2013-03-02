@@ -14,6 +14,7 @@
 
 #import "Reachability.h"
 
+#import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OServerConnection.h"
@@ -84,14 +85,14 @@ static void uncaughtExceptionHandler(NSException *exception)
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
     if (_persistentStoreCoordinator == nil) {
-        NSURL *applicationDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *storeURL = [applicationDocumentsDirectory URLByAppendingPathComponent: [NSString stringWithFormat:kPersistentStoreFormat, [OMeta m].userId]];
+        NSURL *documentDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+        NSURL *persistentStoreURL = [documentDirectory URLByAppendingPathComponent: [NSString stringWithFormat:kPersistentStoreFormat, [OMeta m].userId]];
         
         NSError *error = nil;
         _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
         
-        if(![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
-            OLogError(@"Error initiating Core Data: %@", [error localizedDescription]);
+        if(![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:persistentStoreURL options:nil error:&error]) {
+            OLogError(@"Error initialising Core Data: %@", [error localizedDescription]);
         }
     }
     
@@ -114,7 +115,7 @@ static void uncaughtExceptionHandler(NSException *exception)
     OLogDebug(@"System language is '%@'.", [[OMeta m] displayLanguage]);
 
     if ([OStrings hasStrings]) {
-        [OStrings conditionallyRefresh];
+        [OStrings refreshIfNeeded];
     }
     
     //NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
@@ -132,7 +133,13 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    [self.managedObjectContext saveReplicationState];
+    if ([[OMeta m] userIsSignedIn]) {
+        [[OMeta m].replicator saveUserReplicationState];
+        
+        if (![[OMeta m] userIsRegistered]) {
+            [[OMeta m] setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
+        }
+    }
 }
 
 
@@ -145,14 +152,16 @@ static void uncaughtExceptionHandler(NSException *exception)
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     if ([[OMeta m] userIsSignedIn]) {
-        [[OMeta m].context replicate];
+        [[OMeta m].replicator replicate];
     }
 }
 
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    [self.managedObjectContext saveReplicationState];
+    if ([[OMeta m] userIsSignedIn]) {
+        [[OMeta m].replicator saveUserReplicationState];
+    }
 }
 
 @end

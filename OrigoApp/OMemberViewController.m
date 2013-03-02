@@ -36,10 +36,7 @@
 #import "OOrigoViewController.h"
 #import "OTabBarController.h"
 
-static NSString * const kModalSegueToAuthView = @"modalFromMemberToAuthView";
-static NSString * const kModalSegue1ToOrigoView = @"modal1FromMemberToOrigoView";
-static NSString * const kModalSegue2ToOrigoView = @"modal2FromMemberToOrigoView";
-static NSString * const kPushSegueToMemberListView = @"pushFromMemberToMemberListView";
+static NSString * const kSegueToMemberListView = @"segueFromMemberToMemberListView";
 
 static NSInteger const kMemberSectionKey = 0;
 static NSInteger const kAddressSectionKey = 1;
@@ -134,9 +131,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         _member.gender = _gender;
         
         if (self.state.aspectIsSelf && ![_origo hasValueForKey:kPropertyKeyAddress]) {
-            [self performSegueWithIdentifier:kModalSegue1ToOrigoView sender:self];
+            [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_membership dismisser:self.dismisser];
         } else {
-            if (self.state.aspectIsSelf && [_origo hasValueForKey:kPropertyKeyAddress]) {
+            if (self.state.aspectIsSelf) {
                 _member.activeSince = [NSDate date];
             }
             
@@ -299,7 +296,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if ([housemateResidences count] > 0) {
         [self promptForResidence:housemateResidences];
     } else {
-        [self performSegueWithIdentifier:kModalSegue2ToOrigoView sender:self];
+        [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_member meta:kOrigoTypeResidence];
     }
 }
 
@@ -307,7 +304,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)signOut
 {
     [[OMeta m] userDidSignOut];
-    //self.detailCell.entity = nil;
     
     [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
 }
@@ -366,15 +362,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (UIBarButtonItem *)cancelRegistrationButton
+- (BOOL)cancelRegistrationImpliesSignOut
 {
-    UIBarButtonItem *cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
-    
-    if (self.state.aspectIsSelf) {
-        cancelButton = [UIBarButtonItem signOutButtonWithTarget:self];
-    }
-    
-    return cancelButton;
+    return self.state.aspectIsSelf;
 }
 
 
@@ -388,13 +378,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
-        [self prepareForModalSegue:segue data:[_emailField finalText]];
-    } else if ([segue.identifier isEqualToString:kModalSegue1ToOrigoView]) {
-        [self prepareForModalSegue:segue data:_membership];
-    } else if ([segue.identifier isEqualToString:kModalSegue2ToOrigoView]) {
-        [self prepareForModalSegue:segue data:_member meta:kOrigoTypeResidence];
-    } else if ([segue.identifier isEqualToString:kPushSegueToMemberListView]) {
+    if ([segue.identifier isEqualToString:kSegueToMemberListView]) {
         if (self.state.actionIsRegister) {
             [self prepareForPushSegue:segue data:_membership];
             [segue.destinationViewController setDismisser:self.dismisser];
@@ -405,9 +389,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-#pragma mark - OTableViewControllerDelegate conformance
+#pragma mark - OTableViewControllerInstance conformance
 
-- (void)prepareState
+- (void)initialise
 {
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
@@ -423,7 +407,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)populateDataSource
 {
-    [self setData:_member forSectionWithKey:kMemberSectionKey];
+    id memberDataSource = _member ? _member : kEmptyDetailCellPlaceholder;
+    
+    [self setData:memberDataSource forSectionWithKey:kMemberSectionKey];
     
     if (self.state.actionIsDisplay) {
         [self setData:_member.residencies forSectionWithKey:kAddressSectionKey];
@@ -461,7 +447,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
 {
-    [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
+    [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
 }
 
 
@@ -497,8 +483,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             [_emailField becomeFirstResponder];
         }
     } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
-        [super dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:NO];
-        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
+        [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
     } else if ([identitifier isEqualToString:kMemberListViewControllerId]) {
         [super dismissModalViewControllerWithIdentitifier:identitifier];
     }
@@ -522,7 +507,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             
         case kResidenceSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self performSegueWithIdentifier:kModalSegue2ToOrigoView sender:self];
+                [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_member meta:kOrigoTypeResidence];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_candidateResidences[buttonIndex] addResident:_member];
                 [self reloadSectionsIfNeeded];
@@ -541,14 +526,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             
             break;
             
-        case kEmailChangeAlertTag:
-            if (buttonIndex == kEmailChangeButtonContinue) {
-                [self toggleEditMode];
-                [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
-            }
-            
-            break;
-            
         default:
             break;
     }
@@ -563,7 +540,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         case kEmailChangeAlertTag:
             if (buttonIndex == kEmailChangeButtonContinue) {
                 [self toggleEditMode];
-                [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
+                [self presentModalViewControllerWithIdentifier:kAuthViewControllerId data:[_emailField finalText]];
             } else {
                 [_emailField becomeFirstResponder];
             }

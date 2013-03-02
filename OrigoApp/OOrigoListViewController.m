@@ -32,12 +32,9 @@
 #import "OMemberListViewController.h"
 #import "OMemberViewController.h"
 #import "OOrigoViewController.h"
+#import "OTabBarController.h"
 
-static NSString * const kModalSegueToAuthView = @"modalFromOrigoListToAuthView";
-static NSString * const kModalSegueToMemberView = @"modalFromOrigoListToMemberView";
-static NSString * const kModalSegueToOrigoView = @"modalFromOrigoListToOrigoView";
-static NSString * const kPushSegueToMemberListView = @"pushFromOrigoListToMemberListView";
-static NSString * const kPushSegueToMemberView = @"pushFromOrigoListToMemberView";
+static NSString * const kSegueToMemberListView = @"segueFromOrigoListToMemberListView";
 
 static NSInteger const kUserSectionKey = 0;
 static NSInteger const kWardSectionKey = 1;
@@ -144,12 +141,18 @@ static NSInteger const kUserRow = 0;
     
     self.title = @"Origo";
     
-    if ([self shouldInitialise]) {
-        if (![_member isUser]) {
-            self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
-            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
-        }
-        
+    if ([[OMeta m] userIsAllSet] && ![_member isUser]) {
+        self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
+    }
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    if ([[OMeta m] userIsAllSet]) {
         if ([[OMeta m].user isTeenOrOlder]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
             self.navigationItem.rightBarButtonItem.action = @selector(addOrigo);
@@ -167,22 +170,16 @@ static NSInteger const kUserRow = 0;
     [super viewDidAppear:animated];
     
     OLogState;
-    
-    if (![[OMeta m] userIsSignedIn]) {
-        [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
-    } else if (![[OMeta m] userIsRegistered]) {
-        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
+
+    if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
+        if ([[OMeta m] userDefaultForKey:kDefaultsKeyRegistrationAborted]) {
+            [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
+            
+            [[OMeta m] setUserDefault:nil forKey:kDefaultsKeyRegistrationAborted];
+        }
         
-        [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
+        [self presentModalViewControllerWithIdentifier:kMemberViewControllerId data:[[OMeta m].user initialResidency]];
     }
-}
-
-
-#pragma mark - OTableViewController overrides
-
-- (BOOL)shouldInitialise
-{
-    return [[OMeta m] userIsAllSet];
 }
 
 
@@ -190,21 +187,13 @@ static NSInteger const kUserRow = 0;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
-        [self prepareForModalSegue:segue data:nil];
-    } else if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        [self prepareForModalSegue:segue data:[_member initialResidency]];
-    } else if ([segue.identifier isEqualToString:kModalSegueToOrigoView]) {
-        [self prepareForModalSegue:segue data:_member meta:_selectedOrigoType];
-    } else {
-        [self prepareForPushSegue:segue];
-    }
+    [self prepareForPushSegue:segue];
 }
 
 
-#pragma mark - OTableViewControllerDelegate conformance
+#pragma mark - OTableViewControllerInstance conformance
 
-- (void)prepareState
+- (void)initialise
 {
     _member = self.data ? self.data : [OMeta m].user;
     
@@ -264,7 +253,7 @@ static NSInteger const kUserRow = 0;
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
     } else {
-        [self performSegueWithIdentifier:kPushSegueToMemberListView sender:self];
+        [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
     }
 }
 
@@ -344,8 +333,6 @@ static NSInteger const kUserRow = 0;
         if ([[OMeta m] userIsSignedIn]) {
             [self.tableView reloadData];
         }
-    } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
-        
     }
 }
 
@@ -357,7 +344,7 @@ static NSInteger const kUserRow = 0;
     if (buttonIndex != actionSheet.cancelButtonIndex) {
         _selectedOrigoType = _origoTypes[buttonIndex];
         
-        [self performSegueWithIdentifier:kModalSegueToOrigoView sender:self];
+        [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_member meta:_selectedOrigoType];
     }
 }
 

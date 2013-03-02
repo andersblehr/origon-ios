@@ -89,9 +89,11 @@ NSString * const strButtonDeleteMember               = @"strButtonDeleteMember";
 // OOrigoView strings
 NSString * const strViewTitleNewOrigo                = @"strViewTitleNewOrigo";
 NSString * const strLabelAddress                     = @"strLabelAddress";
+NSString * const strLabelCountry                     = @"strLabelCountry";
 NSString * const strLabelTelephone                   = @"strLabelTelephone";
 NSString * const strHeaderAddresses                  = @"strHeaderAddresses";
 NSString * const strPlaceholderAddress               = @"strPlaceholderAddress";
+NSString * const strPlaceholderCountry               = @"strPlaceholderCountry";
 NSString * const strPlaceholderTelephone             = @"strPlaceholderTelephone";
 
 // OMemberView strings
@@ -201,9 +203,9 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 }
 
 
-+ (void)conditionallyRefresh
++ (void)refreshIfNeeded
 {
-    NSDate *stringDate = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultsKeyStringDate];
+    NSDate *stringDate = [[OMeta m] userDefaultForKey:kDefaultsKeyStringDate];
     
     if (stringDate && ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
         if ([self hasStrings] && [[OMeta m] internetConnectionIsAvailable]) {

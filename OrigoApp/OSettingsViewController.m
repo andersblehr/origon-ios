@@ -20,8 +20,6 @@
 #import "OOrigoListViewController.h"
 #import "OTabBarController.h"
 
-static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
-
 
 @implementation OSettingsViewController
 
@@ -34,7 +32,7 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
     UINavigationController *origoTabNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
     [origoTabNavigationController setViewControllers:[NSArray arrayWithObject:[self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId]]];
     
-    [self performSegueWithIdentifier:kModalSegueToAuthView sender:self];
+    [self presentModalViewControllerWithIdentifier:kAuthViewControllerId data:nil dismisser:origoTabNavigationController.viewControllers[0]];
 }
 
 
@@ -67,21 +65,9 @@ static NSString * const kModalSegueToAuthView = @"modalFromSettingsToAuthView";
 }
 
 
-#pragma mark - Segue handling
+#pragma mark - OTableViewControllerInstance conformance
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:kModalSegueToAuthView]) {
-        UINavigationController *navigationController = self.tabBarController.viewControllers[kTabBarOrigo];
-        
-        [self prepareForModalSegue:segue data:nil meta:navigationController.viewControllers[0]];
-    }
-}
-
-
-#pragma mark - OTableViewControllerDelegate conformance
-
-- (void)prepareState
+- (void)initialise
 {
     self.state.aspectIsSelf = YES;
 }

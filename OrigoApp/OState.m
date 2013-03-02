@@ -9,6 +9,7 @@
 #import "OState.h"
 
 #import "OMeta.h"
+#import "OStrings.h"
 #import "OTableViewController.h"
 
 #import "OMember+OrigoExtensions.h"
@@ -147,6 +148,10 @@ static OState *s = nil;
             _action = OStateActionDefault;
         }
         
+        if (![OStrings hasStrings]) {
+            _action = OStateActionSetup;
+        }
+        
         _aspect = OStateAspectDefault;
     }
     
@@ -177,6 +182,8 @@ static OState *s = nil;
             [self setAspectForOrigoType:aspectCarrier];
         }
     }
+    
+    [[OState s] reflect:self];
 }
 
 
@@ -224,6 +231,8 @@ static OState *s = nil;
         viewAsString = @"BOARD";
     } else if (self.viewIsSettings) {
         viewAsString = @"SETTINGS";
+    } else {
+        viewAsString = @"DEFAULT";
     }
     
     if (self.actionIsSetup) {

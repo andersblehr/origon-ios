@@ -22,11 +22,6 @@
 - (void)save;
 - (void)saveServerReplicas:(NSArray *)replicaDictionaries;
 
-- (BOOL)needsReplication;
-- (void)replicateIfNeeded;
-- (void)replicate;
-- (void)saveReplicationState;
-
 - (id)entityWithId:(NSString *)entityId;
 - (id)memberEntityWithEmail:(NSString *)email;
 - (void)deleteEntity:(OReplicatedEntity *)entity;
