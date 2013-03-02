@@ -9,6 +9,7 @@
 #import "NSManagedObjectContext+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
 
+#import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OServerConnection.h"
@@ -107,10 +108,10 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
         }
     }
     
-    [[OMeta m] stageEntity:entity];
+    [[OMeta m].replicator stageEntity:entity];
     
     if ([relationshipRefs count] > 0) {
-        [[OMeta m] stageRelationshipRefs:relationshipRefs forEntity:entity];
+        [[OMeta m].replicator stageRelationshipRefs:relationshipRefs forEntity:entity];
     }
     
     return entity;
@@ -307,45 +308,6 @@ static NSString * const kRootOrigoIdFormat = @"~%@";
     }
     
     [self save];
-}
-
-
-#pragma mark - Server replication
-
-- (BOOL)needsReplication
-{
-    return ([[[OMeta m] dirtyEntities] count] > 0);
-}
-
-
-- (void)replicateIfNeeded
-{
-    if ([self needsReplication]) {
-        [self replicate];
-    }
-}
-
-
-- (void)replicate
-{
-    [[[OServerConnection alloc] init] replicate];
-}
-
-
-- (void)saveReplicationState
-{
-    NSSet *dirtyEntities = [[OMeta m] dirtyEntities];
-    NSMutableSet *dirtyEntityURIs = [[NSMutableSet alloc] init];
-    
-    [self save];
-    
-    for (OReplicatedEntity *dirtyEntity in dirtyEntities) {
-        [dirtyEntityURIs addObject:[[dirtyEntity objectID] URIRepresentation]];
-    }
-    
-    NSData *dirtyEntityURIArchive = [NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs];
-    [[NSUserDefaults standardUserDefaults] setObject:dirtyEntityURIArchive forKey:kDefaultsKeyDirtyEntities];
-    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 

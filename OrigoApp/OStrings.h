@@ -79,9 +79,11 @@ extern NSString * const strButtonDeleteMember;
 // OOrigoView strings
 extern NSString * const strViewTitleNewOrigo;
 extern NSString * const strLabelAddress;
+extern NSString * const strLabelCountry;
 extern NSString * const strLabelTelephone;
 extern NSString * const strHeaderAddresses;
 extern NSString * const strPlaceholderAddress;
+extern NSString * const strPlaceholderCountry;
 extern NSString * const strPlaceholderTelephone;
 
 // OMemberView strings
@@ -149,7 +151,7 @@ extern NSString * const xstrContactRolesSportsTeam;
 
 + (BOOL)hasStrings;
 + (void)fetchStrings:(id)delegate;
-+ (void)conditionallyRefresh;
++ (void)refreshIfNeeded;
 
 + (NSString *)stringForKey:(NSString *)key;
 + (NSString *)labelForKey:(NSString *)key;

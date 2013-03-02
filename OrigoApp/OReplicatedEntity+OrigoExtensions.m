@@ -12,6 +12,7 @@
 #import "NSManagedObjectContext+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
 
+#import "OEntityReplicator.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OTableViewCell.h"
@@ -187,13 +188,13 @@
 {
     self.hashCode = [self computeHashCode];
     
-    NSDictionary *relationshipRefs = [[OMeta m] stagedRelationshipRefsForEntity:self];
+    NSDictionary *relationshipRefs = [[OMeta m].replicator stagedRelationshipRefsForEntity:self];
     
     for (NSString *relationshipKey in [relationshipRefs allKeys]) {
         NSDictionary *relationshipRef = [relationshipRefs objectForKey:relationshipKey];
         NSString *destinationId = [relationshipRef objectForKey:kPropertyKeyEntityId];
         
-        OReplicatedEntity *entity = [[OMeta m] stagedEntityWithId:destinationId];
+        OReplicatedEntity *entity = [[OMeta m].replicator stagedEntityWithId:destinationId];
         
         if (!entity) {
             entity = [[OMeta m].context entityWithId:destinationId];

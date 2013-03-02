@@ -29,9 +29,8 @@
 #import "OMemberViewController.h"
 #import "OOrigoViewController.h"
 
-static NSString * const kModalSegueToMemberView = @"modalFromMemberListToMemberView";
-static NSString * const kPushSegueToMemberView = @"pushFromMemberListToMemberView";
-static NSString * const kPushSegueToOrigoView = @"pushFromMemberListToOrigoView";
+static NSString * const kSegueToMemberView = @"segueFromMemberListToMemberView";
+static NSString * const kSegueToOrigoView = @"segueFromMemberListToOrigoView";
 
 static NSInteger const kOrigoSectionKey = 0;
 static NSInteger const kContactSection = 1;
@@ -80,7 +79,7 @@ static NSInteger const kHousemateSheetTag = 0;
     if ([candidates count]) {
         [self promptForHousemate:candidates];
     } else {
-        [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
+        [self presentModalViewControllerWithIdentifier:kMemberViewControllerId data:_origo];
     }
 }
 
@@ -130,9 +129,7 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kModalSegueToMemberView]) {
-        [self prepareForModalSegue:segue data:_origo];
-    } else if ([segue.identifier isEqualToString:kPushSegueToOrigoView]) {
+    if ([segue.identifier isEqualToString:kSegueToOrigoView]) {
         [self prepareForPushSegue:segue data:_membership];
     } else {
         [self prepareForPushSegue:segue];
@@ -140,9 +137,9 @@ static NSInteger const kHousemateSheetTag = 0;
 }
 
 
-#pragma mark - OTableViewControllerDelegate conformance
+#pragma mark - OTableViewControllerInstance conformance
 
-- (void)prepareState
+- (void)initialise
 {
     _membership = self.data;
     _origo = _membership.origo;
@@ -217,9 +214,9 @@ static NSInteger const kHousemateSheetTag = 0;
 - (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
 {
     if (sectionKey == kOrigoSectionKey) {
-        [self performSegueWithIdentifier:kPushSegueToOrigoView sender:self];
+        [self performSegueWithIdentifier:kSegueToOrigoView sender:self];
     } else {
-        [self performSegueWithIdentifier:kPushSegueToMemberView sender:self];
+        [self performSegueWithIdentifier:kSegueToMemberView sender:self];
     }
 }
 
@@ -274,7 +271,7 @@ static NSInteger const kHousemateSheetTag = 0;
     switch (actionSheet.tag) {
         case kHousemateSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self performSegueWithIdentifier:kModalSegueToMemberView sender:self];
+                [self presentModalViewControllerWithIdentifier:kMemberViewControllerId data:_origo];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_origo addResident:_candidateHousemates[buttonIndex]];
                 [self reloadSectionsIfNeeded];

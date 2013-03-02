@@ -12,7 +12,7 @@
 
 #import "OTableViewListCellDelegate.h"
 
-@class OTableViewCell, OTextField;
+@class OTextField;
 @class OMember, OMembership, OOrigo;
 
 @interface OMemberViewController : OTableViewController<UIActionSheetDelegate, UIAlertViewDelegate, OTableViewListCellDelegate> {

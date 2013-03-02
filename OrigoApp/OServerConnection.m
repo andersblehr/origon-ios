@@ -16,6 +16,7 @@
 
 #import "OAlert.h"
 #import "OAppDelegate.h"
+#import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
@@ -256,22 +257,16 @@ static NSString * const kURLParameterVersion = @"version";
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     
-    NSSet *modifiedEntities = [OMeta m].dirtyEntities;
+    NSArray *entityDictionaries = [[OMeta m].replicator dirtyEntitiesAsDictionaries];
     
-    if (modifiedEntities.count > 0) {
+    if ([entityDictionaries count]) {
         _RESTRoute = kRESTRouteModelReplicate;
         
-        NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
-        
-        for (OReplicatedEntity *entity in modifiedEntities) {
-            [entityDictionaries addObject:[entity toDictionary]];
-        }
-        
-        [self performHTTPMethod:kHTTPMethodPOST entities:entityDictionaries delegate:[OMeta m]];
+        [self performHTTPMethod:kHTTPMethodPOST entities:entityDictionaries delegate:[OMeta m].replicator];
     } else {
         _RESTRoute = kRESTRouteModelFetch;
         
-        [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OMeta m]];
+        [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OMeta m].replicator];
     }
 }
 

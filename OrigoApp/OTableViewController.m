@@ -12,6 +12,7 @@
 #import "UIBarButtonItem+OrigoExtensions.h"
 #import "UITableView+OrigoExtensions.h"
 
+#import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
@@ -23,40 +24,41 @@
 
 #import "OReplicatedEntity+OrigoExtensions.h"
 
+#import "OTabBarController.h"
+
+NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
+
+
+@interface OTableViewController ()
+
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
+
+@end
+
 
 @implementation OTableViewController
 
 #pragma mark - Auxiliary methods
 
-- (void)initialise
+- (void)initialiseInstance
 {
-    if (![OStrings hasStrings]) {
-        [OState s].actionIsSetup = YES;
-    } else {
-        if (self.shouldInitialise) {
-            _state = [[OState alloc] initForViewController:self];
-            
-            if (_isModal && self.modalImpliesRegistration) {
-                _state.actionIsRegister = YES;
-            }
-            
-            [_delegate prepareState];
-            
-            if (_aspectCarrier) {
-                [_state setAspectForCarrier:_aspectCarrier];
-            }
-            
-            [[OState s] reflect:_state];
-            
-            [_delegate populateDataSource];
-            
-            for (NSNumber *sectionKey in [_sectionData allKeys]) {
-                _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
-            }
-            
-            _lastSectionKey = [_sectionKeys lastObject];
-            _didInitialise = YES;
+    if (([OStrings hasStrings] && [[OMeta m] userIsAllSet]) || _isModal) {
+        _state = [[OState alloc] initForViewController:self];
+        
+        if (_isModal && self.modalImpliesRegistration) {
+            _state.actionIsRegister = YES;
         }
+        
+        [_instance initialise];
+        [_state setAspectForCarrier:_aspectCarrier];
+        [_instance populateDataSource];
+        
+        for (NSNumber *sectionKey in [_sectionData allKeys]) {
+            _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
+        }
+        
+        _lastSectionKey = [_sectionKeys lastObject];
+        _didInitialise = YES;
     }
 }
 
@@ -103,11 +105,7 @@
 {
     if ([data isKindOfClass:NSSet.class]) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
-    } else {
-        if (!data) {
-            data = [NSNull null];
-        }
-        
+    } else if (data) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
         
         if (_entitySectionKey == NSNotFound) {
@@ -184,19 +182,15 @@
 }
 
 
-- (UIBarButtonItem *)cancelRegistrationButton
-{
-    return [UIBarButtonItem cancelButtonWithTarget:self];
-}
-
-
 #pragma mark - Utility methods
 
 - (void)reflectState
 {
-    if (!_didInitialise) {
-        [self initialise];
-    } else if (!_didJustLoad) {
+    if (!_didJustLoad) {
+        if (!_didInitialise) {
+            [self initialiseInstance];
+        }
+    
         [[OState s] reflect:_state];
     }
 }
@@ -226,8 +220,8 @@
         self.navigationItem.rightBarButtonItem = rightButton;
         self.navigationItem.leftBarButtonItem = leftButton;
         
-        if ([[OMeta m].context needsReplication]) {
-            [[OMeta m].context replicate];
+        if ([[OMeta m].replicator needsReplication]) {
+            [[OMeta m].replicator replicate];
             [self.observer reloadEntity];
         }
     }
@@ -238,7 +232,7 @@
 
 - (void)reloadSectionsIfNeeded
 {
-    [_delegate populateDataSource];
+    [_instance populateDataSource];
     
     NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
     NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
@@ -294,15 +288,17 @@
 
     [self.tableView setBackground];
     
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    
     NSString *viewControllerName = NSStringFromClass(self.class);
     _entityClass = NSClassFromString([viewControllerName substringToIndex:[viewControllerName rangeOfString:@"ViewController"].location]);
     _entitySectionKey = NSNotFound;
-    _delegate = self;
+    _instance = self;
     
     _canEdit = NO;
-    _shouldInitialise = YES;
     _shouldDemphasiseOnEndEdit = YES;
     _modalImpliesRegistration = ([NSStringFromClass(self.class) rangeOfString:@"List"].location == NSNotFound);
+    _cancelRegistrationImpliesSignOut = NO;
     
     if (!self.navigationController || ([self.navigationController.viewControllers count] == 1)) {
         _isModal = (self.presentingViewController != nil);
@@ -312,13 +308,18 @@
     _sectionData = [[NSMutableDictionary alloc] init];
     _sectionCounts = [[NSMutableDictionary alloc] init];
     
-    [self initialise];
+    [self initialiseInstance];
     
     if (_state.actionIsRegister) {
         _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
         _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
         
-        self.navigationItem.leftBarButtonItem = [self cancelRegistrationButton];
+        if (self.cancelRegistrationImpliesSignOut) {
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
+        } else {
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+        }
+        
         self.navigationItem.rightBarButtonItem = _nextButton;
     }
     
@@ -348,7 +349,12 @@
 {
     [super viewDidAppear:animated];
     
-    if (self.state.actionIsRegister) {
+    if (![OStrings hasStrings]) {
+        [self.activityIndicator startAnimating];
+        [OStrings fetchStrings:self];
+    } else if (![[OMeta m] userIsSignedIn]) {
+        [self presentModalViewControllerWithIdentifier:kAuthViewControllerId data:nil dismisser:self];
+    } else if (self.state.actionIsRegister) {
         [[self.detailCell nextInputFieldFromTextField:nil] becomeFirstResponder];
     } else if (self.detailCell) {
         self.detailCell.editable = self.canEdit;
@@ -362,8 +368,8 @@
     
     _isHidden = (self.presentedViewController != nil);
     
-    if (!_isHidden) {
-        [[OMeta m].context replicateIfNeeded];
+    if ([[OMeta m] userIsAllSet] && !_isHidden) {
+        [[OMeta m].replicator replicateIfNeeded];
     }
 }
 
@@ -384,37 +390,62 @@
 }
 
 
-- (void)prepareForModalSegue:(UIStoryboardSegue *)segue data:(id)data
+#pragma mark - Presenting modal view controllers
+
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data
 {
-    [self prepareForModalSegue:segue data:data meta:nil];
+    [self presentModalViewControllerWithIdentifier:identifier data:data meta:nil];
 }
 
 
-- (void)prepareForModalSegue:(UIStoryboardSegue *)segue data:(id)data meta:(id)meta
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta
 {
-    OTableViewController *destinationViewController = nil;
+    OTableViewController *viewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
     
-    if ([segue.destinationViewController isKindOfClass:OTableViewController.class]) {
-        destinationViewController = segue.destinationViewController;
-    } else {
-        UINavigationController *navigationController = segue.destinationViewController;
-        destinationViewController = navigationController.viewControllers[0];
-    }
-    
-    destinationViewController.data = data;
+    viewController.data = data;
     
     if ([meta isKindOfClass:OTableViewController.class]) {
-        destinationViewController.dismisser = meta;
+        viewController.dismisser = meta;
     } else {
-        destinationViewController.meta = meta;
-        destinationViewController.dismisser = self;
+        viewController.meta = meta;
+        viewController.dismisser = self;
     }
+    
+    UIViewController *destinationViewController = nil;
+    
+    if ([identifier isEqualToString:kAuthViewControllerId]) {
+        destinationViewController = viewController;
+        destinationViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    } else {
+        destinationViewController = [[UINavigationController alloc] initWithRootViewController:viewController];;
+        destinationViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    }
+    
+    [self.navigationController presentViewController:destinationViewController animated:YES completion:NULL];
 }
 
 
-#pragma mark - OTableViewControllerDelegate conformance
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser
+{
+    [self presentModalViewControllerWithIdentifier:identifier data:data meta:dismisser];
+}
 
-- (void)prepareState
+
+#pragma mark - Custom property accessors
+
+- (UIActivityIndicatorView *)activityIndicator
+{
+    if (!_activityIndicator) {
+        _activityIndicator = [self.tableView addActivityIndicator];
+    }
+    
+    return _activityIndicator;
+}
+
+
+#pragma mark - OTableViewControllerInstance conformance
+
+- (void)initialise
 {
     // Override in subclass
 }
@@ -440,29 +471,11 @@
 }
 
 
-#pragma mark - OModalViewControllerDelegate conformance
-
-- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
-{
-    [self dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:YES];
-}
-
-
-- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier needsReloadData:(BOOL)needsReloadData
-{
-    _needsReloadData = needsReloadData;
-    
-    [self dismissViewControllerAnimated:YES completion:^{
-        _needsReloadData = NO;
-    }];
-}
-
-
 #pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [OState s].actionIsSetup ? 0 : [_sectionKeys count];
+    return [_sectionKeys count];
 }
 
 
@@ -529,7 +542,7 @@
 {
     CGFloat height = kDefaultCellPadding;
     
-    if ([_delegate hasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
+    if ([_instance hasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView standardHeaderHeight];
     }
     
@@ -541,7 +554,7 @@
 {
     CGFloat height = kDefaultCellPadding;
     
-    if ([_delegate hasFooterForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
+    if ([_instance hasFooterForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView standardFooterHeight];
     }
     
@@ -554,7 +567,7 @@
     NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     UIView *view = nil;
 
-    if ([_delegate hasHeaderForSectionWithKey:sectionKey]) {
+    if ([_instance hasHeaderForSectionWithKey:sectionKey]) {
         view = [tableView headerViewWithText:[self textForHeaderInSectionWithKey:sectionKey]];
     }
     
@@ -567,7 +580,7 @@
     NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     UIView *view = nil;
     
-    if ([_delegate hasFooterForSectionWithKey:sectionKey]) {
+    if ([_instance hasFooterForSectionWithKey:sectionKey]) {
         view = [tableView footerViewWithText:[self textForFooterInSectionWithKey:sectionKey]];
     }
     
@@ -592,7 +605,7 @@
     if (cell.selectable) {
         _selectedIndexPath = indexPath;
         
-        [_delegate didSelectRow:indexPath.row inSectionWithKey:[self sectionKeyForSectionNumber:indexPath.section]];
+        [_instance didSelectRow:indexPath.row inSectionWithKey:[self sectionKeyForSectionNumber:indexPath.section]];
     }
 }
 
@@ -644,6 +657,48 @@
     if (_shouldDemphasiseOnEndEdit) {
         textView.hasEmphasis = NO;
     }
+}
+
+
+#pragma mark - OModalViewControllerDelegate conformance
+
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
+{
+    [self dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:YES];
+}
+
+
+- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier needsReloadData:(BOOL)needsReloadData
+{
+    _needsReloadData = [[OMeta m] userIsSignedIn] ? needsReloadData : NO;
+    
+    [self dismissViewControllerAnimated:YES completion:^{
+        _needsReloadData = NO;
+    }];
+}
+
+
+#pragma mark - OServerConnectionDelegate conformance
+
+- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
+{
+    if ([OState s].actionIsSetup) {
+        [self.activityIndicator stopAnimating];
+        
+        [OStrings.class didCompleteWithResponse:response data:data];
+        [[OMeta m] setUserDefault:[NSDate date] forKey:kDefaultsKeyStringDate];
+        [(OTabBarController *)self.tabBarController setTabBarTitles];
+        
+        [self presentModalViewControllerWithIdentifier:kAuthViewControllerId data:nil dismisser:self];
+    }
+}
+
+
+- (void)didFailWithError:(NSError *)error
+{
+    [self.activityIndicator stopAnimating];
+    
+    // TODO: Handle errors (-1001: Timeout, and others)
 }
 
 @end

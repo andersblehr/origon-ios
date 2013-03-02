@@ -13,6 +13,7 @@
 #import "UIDatePicker+OrigoExtensions.h"
 
 #import "OAppDelegate.h"
+#import "OEntityReplicator.h"
 #import "OState.h"
 #import "OLogging.h"
 #import "OServerConnection.h"
@@ -28,16 +29,15 @@
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
 
-NSUInteger const kToddlerThreshold = 2;
-NSUInteger const kCertainSchoolAge = 7;
-NSUInteger const kTeenThreshold = 13;
-NSUInteger const kAgeOfMajority = 18;
+NSUInteger const kAgeThresholdToddler = 2;
+NSUInteger const kAgeThresholdInSchool = 7;
+NSUInteger const kAgeThresholdTeen = 13;
+NSUInteger const kAgeThresholdMajority = 18;
 
 NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 NSString * const kLanguageHungarian = @"hu";
 
 NSString * const kAuthViewControllerId = @"idAuthViewController";
-NSString * const kTabBarControllerId = @"idTabBarController";
 NSString * const kOrigoListViewControllerId = @"idOrigoListViewController";
 NSString * const kOrigoViewControllerId = @"idOrigoViewController";
 NSString * const kMemberViewControllerId = @"idMemberViewController";
@@ -74,6 +74,7 @@ NSString * const kJSONKeyIsListed = @"isListed";
 NSString * const kJSONKeyPasswordHash = @"passwordHash";
 
 NSString * const kPropertyKeyAddress = @"address";
+NSString * const kPropertyKeyCountry = @"country";
 NSString * const kPropertyKeyDateOfBirth = @"dateOfBirth";
 NSString * const kPropertyKeyEmail = @"email";
 NSString * const kPropertyKeyEntityId = @"entityId";
@@ -86,13 +87,14 @@ NSString * const kPropertyKeyTelephone = @"telephone";
 
 NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
 NSString * const kDefaultsKeyDirtyEntities = @"origo.dirtyEntities";
+NSString * const kDefaultsKeyRegistrationAborted = @"origo.flag.registrationAborted";
 NSString * const kDefaultsKeyStringDate = @"origo.date.strings";
 
+static NSString * const kDefaultsKeyAuthExpiryDate = @"origo.date.authExpiry";
+static NSString * const kDefaultsKeyDeviceId = @"origo.id.device";
 static NSString * const kDefaultsKeyUserEmail = @"origo.user.email";
-static NSString * const kDefaultsKeyFormatAuthExpiryDate = @"origo.date.authExpiry.%@";
-static NSString * const kDefaultsKeyFormatDeviceId = @"origo.id.device.%@";
-static NSString * const kDefaultsKeyFormatLastReplicationDate = @"origo.date.lastReplication.%@";
-static NSString * const kDefaultsKeyFormatUserId = @"origo.id.user.%@";
+static NSString * const kDefaultsKeyLastReplicationDate = @"origo.date.lastReplication";
+static NSString * const kDefaultsKeyUserId = @"origo.id.user";
 
 static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
@@ -103,6 +105,7 @@ static OMeta *m = nil;
 @interface OMeta ()
 
 @property (strong, nonatomic) NSString *authToken;
+@property (strong, nonatomic) OEntityReplicator *replicator;
 
 @end
 
@@ -110,6 +113,14 @@ static OMeta *m = nil;
 @implementation OMeta
 
 #pragma mark - Auxiliary methods
+
+- (NSString *)qualifiedUserDefaultKeyForKey:(NSString *)key
+{
+    NSString *qualifier = [key isEqualToString:kDefaultsKeyUserId] ? _userEmail : _userId;
+    
+    return [NSString stringWithFormat:@"%@$%@", key, qualifier];
+}
+
 
 - (void)checkReachability:(Reachability *)reachability
 {
@@ -164,14 +175,14 @@ static OMeta *m = nil;
     self = [super init];
     
     if (self) {
-        _userEmail = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultsKeyUserEmail];
+        _userEmail = [self globalDefaultForKey:kDefaultsKeyUserEmail];
         _appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
         _displayLanguage = [NSLocale preferredLanguages][0];
         
         if (_userEmail) {
-            _userId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kDefaultsKeyFormatUserId, _userEmail]];
-            _deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kDefaultsKeyFormatDeviceId, _userId]];
-            _lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kDefaultsKeyFormatLastReplicationDate, _userId]];
+            _userId = [self userDefaultForKey:kDefaultsKeyUserId];
+            _deviceId = [self userDefaultForKey:kDefaultsKeyDeviceId];
+            _lastReplicationDate = [self userDefaultForKey:kDefaultsKeyLastReplicationDate];
         } else {
             _deviceId = [OUUIDGenerator generateUUID];
         }
@@ -190,10 +201,6 @@ static OMeta *m = nil;
         [_sharedDatePicker setEarliestValidBirthDate];
         [_sharedDatePicker setLatestValidBirthDate];
         [_sharedDatePicker setToDefaultDate];
-        
-        _dirtyEntities = [[NSMutableSet alloc] init];
-        _stagedEntities = [[NSMutableDictionary alloc] init];
-        _stagedRelationshipRefs = [[NSMutableDictionary alloc] init];
         
         [self checkReachability:[Reachability reachabilityForInternetConnection]];
         
@@ -220,23 +227,17 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - Connection status
-
-- (BOOL)internetConnectionIsAvailable
-{
-    return (_internetConnectionIsWiFi || _internetConnectionIsWWAN);
-}
-
-
 #pragma mark - User sign in & sign out
 
 - (void)userDidSignIn
 {
-    [[NSUserDefaults standardUserDefaults] setObject:_authTokenExpiryDate forKey:[NSString stringWithFormat:kDefaultsKeyFormatAuthExpiryDate, _userId]];
+    [self setUserDefault:_authTokenExpiryDate forKey:kDefaultsKeyAuthExpiryDate];
     
     _user = [self.context entityWithId:_userId];
     
-    if (!_user) {
+    if (_user) {
+        [self.replicator loadUserReplicationState];
+    } else {
         _user = [self.context insertMemberEntityWithEmail:_userEmail];
     }
 }
@@ -244,9 +245,10 @@ static OMeta *m = nil;
 
 - (void)userDidSignOut
 {
-    [self.context saveReplicationState];
+    [self.replicator saveUserReplicationState];
+    [self.replicator resetUserReplicationState];
     
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:kDefaultsKeyFormatAuthExpiryDate, _userId]];
+    [self setUserDefault:nil forKey:kDefaultsKeyAuthExpiryDate];
     
     _user = nil;
     _userId = nil;
@@ -267,7 +269,7 @@ static OMeta *m = nil;
 - (BOOL)userIsSignedIn
 {
     if (!_user) {
-        _authTokenExpiryDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kDefaultsKeyFormatAuthExpiryDate, _userId]];
+        _authTokenExpiryDate = [self userDefaultForKey:kDefaultsKeyAuthExpiryDate];
         
         if (_authTokenExpiryDate) {
             NSDate *now = [NSDate date];
@@ -289,81 +291,41 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - Replication housekeeping
+#pragma mark - User defaults convenience methods
 
-- (NSSet *)dirtyEntitiesFromEarlierSessions
+- (void)setGlobalDefault:(id)globalDefault forKey:(NSString *)key
 {
-    NSMutableSet *dirtyEntities = [[NSMutableSet alloc] init];
-    NSData *dirtyEntityURIArchive = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultsKeyDirtyEntities];
-    
-    if (dirtyEntityURIArchive) {
-        NSSet *dirtyEntityURIs = [NSKeyedUnarchiver unarchiveObjectWithData:dirtyEntityURIArchive];
-        
-        for (NSURL *dirtyEntityURI in dirtyEntityURIs) {
-            NSManagedObjectID *dirtyEntityID = [self.context.persistentStoreCoordinator managedObjectIDForURIRepresentation:dirtyEntityURI];
-            
-            [dirtyEntities addObject:[self.context objectWithID:dirtyEntityID]];
-        }
-        
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultsKeyDirtyEntities];
+    if (globalDefault) {
+        [[NSUserDefaults standardUserDefaults] setObject:globalDefault forKey:key];
+    } else {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
     }
-    
-    return dirtyEntities;
 }
 
 
-- (NSSet *)dirtyEntities
+- (void)setUserDefault:(id)userDefault forKey:(NSString *)key
 {
-    [_dirtyEntities unionSet:[self dirtyEntitiesFromEarlierSessions]];
-    [_dirtyEntities unionSet:[self.context insertedObjects]];
-    [_dirtyEntities unionSet:[self.context updatedObjects]];
-    
-    NSMutableSet *confirmedDirtyEntities = [[NSMutableSet alloc] init];
-    
-    for (OReplicatedEntity *entity in _dirtyEntities) {
-        if ([entity isDirty]) {
-            [confirmedDirtyEntities addObject:entity];
-        }
-    }
-    
-    _dirtyEntities = confirmedDirtyEntities;
-    
-    return _dirtyEntities;
+    [self setGlobalDefault:userDefault forKey:[self qualifiedUserDefaultKeyForKey:key]];
 }
 
 
-- (void)stageEntity:(OReplicatedEntity *)entity
+- (id)globalDefaultForKey:(NSString *)key
 {
-    if ([_stagedRelationshipRefs count] == 0) {
-        [_stagedEntities removeAllObjects];
-    }
-    
-    [_stagedEntities setObject:entity forKey:entity.entityId];
+    return [[NSUserDefaults standardUserDefaults] objectForKey:key];
 }
 
 
-- (void)stageRelationshipRefs:(NSDictionary *)relationshipRefs forEntity:(OReplicatedEntity *)entity
+- (id)userDefaultForKey:(NSString *)key
 {
-    if ([_stagedRelationshipRefs count] == 0) {
-        [_stagedEntities removeAllObjects];
-    }
-    
-    [_stagedRelationshipRefs setObject:relationshipRefs forKey:entity.entityId];
+    return [self globalDefaultForKey:[self qualifiedUserDefaultKeyForKey:key]];
 }
 
 
-- (OReplicatedEntity *)stagedEntityWithId:(NSString *)entityId
-{
-    return [_stagedEntities objectForKey:entityId];
-}
+#pragma mark - Connection status
 
-
-- (NSDictionary *)stagedRelationshipRefsForEntity:(OReplicatedEntity *)entity
+- (BOOL)internetConnectionIsAvailable
 {
-    NSDictionary *relationshipRefs = [_stagedRelationshipRefs objectForKey:entity.entityId];
-    [_stagedRelationshipRefs removeObjectForKey:entity.entityId];
-    
-    return relationshipRefs;
+    return (_internetConnectionIsWiFi || _internetConnectionIsWWAN);
 }
 
 
@@ -373,21 +335,21 @@ static OMeta *m = nil;
 {
     _userId = userId;
     
-    [[NSUserDefaults standardUserDefaults] setObject:_userId forKey:[NSString stringWithFormat:kDefaultsKeyFormatUserId, _userEmail]];
+    [self setUserDefault:_userId forKey:kDefaultsKeyUserId];
     
-    NSString *deviceId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kDefaultsKeyFormatDeviceId, _userId]];
-    NSString *lastReplicationDate = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kDefaultsKeyFormatLastReplicationDate, _userId]];
+    NSString *deviceId = [self userDefaultForKey:kDefaultsKeyDeviceId];
+    NSString *lastReplicationDate = [self userDefaultForKey:kDefaultsKeyLastReplicationDate];
     
     if (deviceId) {
         _deviceId = deviceId;
     } else if (_deviceId) {
-        [[NSUserDefaults standardUserDefaults] setObject:_deviceId forKey:[NSString stringWithFormat:kDefaultsKeyFormatDeviceId, _userId]];
+        [self setUserDefault:_deviceId forKey:kDefaultsKeyDeviceId];
     }
     
     if (lastReplicationDate) {
         _lastReplicationDate = lastReplicationDate;
     } else if (_lastReplicationDate) {
-        [[NSUserDefaults standardUserDefaults] setObject:_lastReplicationDate forKey:[NSString stringWithFormat:kDefaultsKeyFormatLastReplicationDate, _userId]];
+        [self setUserDefault:_lastReplicationDate forKey:kDefaultsKeyLastReplicationDate];
     }
 }
 
@@ -397,19 +359,19 @@ static OMeta *m = nil;
     _userEmail = userEmail;
     
     if (_userEmail) {
-        [[NSUserDefaults standardUserDefaults] setObject:_userEmail forKey:[NSString stringWithFormat:kDefaultsKeyUserEmail]];
-        
-        NSString *userId = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:kDefaultsKeyFormatUserId, _userEmail]];
+        [self setGlobalDefault:_userEmail forKey:kDefaultsKeyUserEmail];
+
+        NSString *userId = [self userDefaultForKey:kDefaultsKeyUserId];
         
         if (userId) {
             self.userId = userId;
         } else if (_userId) {
-            [[NSUserDefaults standardUserDefaults] setObject:_userId forKey:[NSString stringWithFormat:kDefaultsKeyFormatUserId, _userEmail]];
+            [self setUserDefault:_userId forKey:kDefaultsKeyUserId];
         } else if (!_deviceId) {
             _deviceId = [OUUIDGenerator generateUUID];
         }
     } else {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:kDefaultsKeyUserEmail];
+        [self setGlobalDefault:nil forKey:kDefaultsKeyUserEmail];
     }
 }
 
@@ -429,7 +391,7 @@ static OMeta *m = nil;
 {
     _lastReplicationDate = lastReplicationDate;
     
-    [[NSUserDefaults standardUserDefaults] setObject:_lastReplicationDate forKey:[NSString stringWithFormat:kDefaultsKeyFormatLastReplicationDate, _userId]];
+    [self setUserDefault:_lastReplicationDate forKey:kDefaultsKeyLastReplicationDate];
 }
 
 
@@ -439,38 +401,13 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - OServerConnectionDelegate conformance
-
-- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
+- (OEntityReplicator *)replicator
 {
-    if (data) {
-        [self.context saveServerReplicas:data];
+    if (!_replicator) {
+        _replicator = [[OEntityReplicator alloc] init];
     }
-
-    if ((response.statusCode == kHTTPStatusCreated) ||
-        (response.statusCode == kHTTPStatusMultiStatus)) {
-        OLogDebug(@"Entities successfully replicated to server.");
-        
-        NSDate *now = [NSDate date];
-        
-        for (OReplicatedEntity *entity in _dirtyEntities) {
-            if ([entity.isGhost boolValue]) {
-                [self.context deleteObject:entity];
-            } else {
-                entity.dateReplicated = now;
-                entity.hashCode = [entity computeHashCode];
-            }
-        }
-        
-        [self.context save];
-        [_dirtyEntities removeAllObjects];
-    }
-}
-
-
-- (void)didFailWithError:(NSError *)error
-{
-    OLogError(@"Error replicating with server.");
+    
+    return _replicator;
 }
 
 @end

@@ -14,7 +14,7 @@
 
 @class OTableViewCell, OTextField;
 
-@interface OAuthViewController : OTableViewController<UITextFieldDelegate, UIAlertViewDelegate, OServerConnectionDelegate> {
+@interface OAuthViewController : OTableViewController<UITextFieldDelegate, UIAlertViewDelegate> {
 @private
     BOOL _userIsListed;
     
@@ -22,7 +22,6 @@
     OTextField *_passwordField;
     OTextField *_activationCodeField;
     OTextField *_repeatPasswordField;
-    UIActivityIndicatorView *_activityIndicator;
 
     NSDictionary *_authInfo;
     NSInteger _numberOfActivationAttempts;

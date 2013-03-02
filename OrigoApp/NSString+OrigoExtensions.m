@@ -204,7 +204,7 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
     NSArray *names = [fullName componentsSeparatedByString:@" "];
     
     if ([[OMeta m].displayLanguage isEqualToString:kLanguageHungarian]) {
-        givenName = names[names.count - 1];
+        givenName = names[[names count] - 1];
     } else {
         givenName = names[0];
     }

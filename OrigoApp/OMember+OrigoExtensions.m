@@ -57,7 +57,7 @@
     if (self.photo) {
         // TODO: Embed photo
     } else {
-        if ([self.dateOfBirth yearsBeforeNow] < kToddlerThreshold) {
+        if ([self.dateOfBirth yearsBeforeNow] < kAgeThresholdToddler) {
             displayImage = [UIImage imageNamed:kIconFileInfant];
         } else {
             if ([self isMale]) {
@@ -108,13 +108,13 @@
 
 - (BOOL)isTeenOrOlder
 {
-    return ([self.dateOfBirth yearsBeforeNow] >= kTeenThreshold);
+    return ([self.dateOfBirth yearsBeforeNow] >= kAgeThresholdTeen);
 }
 
 
 - (BOOL)isOfPreschoolAge
 {
-    return ([self.dateOfBirth yearsBeforeNow] < kCertainSchoolAge);
+    return ([self.dateOfBirth yearsBeforeNow] < kAgeThresholdInSchool);
 }
 
 

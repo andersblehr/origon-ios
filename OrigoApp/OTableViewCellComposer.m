@@ -16,7 +16,7 @@
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
-#import "OTableViewCellBlueprints.h"
+#import "OTableViewCellBlueprint.h"
 #import "OTextField.h"
 #import "OTextView.h"
 
@@ -121,11 +121,11 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 
 - (void)addConstraintsCentred:(BOOL)centred
 {
-    if (_titleKey && centred) {
-        [_centredElementKeys addObject:_titleKey];
+    if (_blueprint.titleKey && centred) {
+        [_centredElementKeys addObject:_blueprint.titleKey];
     }
     
-    for (NSString *detailKey in _detailKeys) {
+    for (NSString *detailKey in _blueprint.detailKeys) {
         if (centred) {
             [_centredElementKeys addObject:detailKey];
         } else {
@@ -141,15 +141,15 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
-    if (_titleKey) {
-        NSString *titleName = [_titleKey stringByAppendingString:kViewKeySuffixTextField];
+    if (_blueprint.titleKey) {
+        NSString *titleName = [_blueprint.titleKey stringByAppendingString:kViewKeySuffixTextField];
         
-        [self configureElementsIfNeededForKey:_titleKey];
+        [self configureElementsIfNeededForKey:_blueprint.titleKey];
         
         [constraints addObject:kVConstraintsTitleBanner];
         [constraints addObject:kHConstraintsTitleBanner];
         
-        if (_titleHasPhoto) {
+        if (_blueprint.hasPhoto) {
             [constraints addObject:[NSString stringWithFormat:kHConstraintsTitleWithPhoto, titleName]];
             [constraints addObject:kVConstraintsPhoto];
             [constraints addObject:kVConstraintsPhotoPrompt];
@@ -165,7 +165,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 
 - (NSString *)labeledVerticalLabelConstraints
 {
-    NSString *constraints = _titleKey ? kVConstraintsInitialWithTitle : kVConstraintsInitial;
+    NSString *constraints = _blueprint.titleKey ? kVConstraintsInitialWithTitle : kVConstraintsInitial;
     
     BOOL isTopmostLabel = YES;
     id precedingTextField = nil;
@@ -203,8 +203,8 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     NSString *constraints = kVConstraintsInitial;
     
-    if (_titleKey) {
-        NSString *titleName = [_titleKey stringByAppendingString:kViewKeySuffixTextField];
+    if (_blueprint.titleKey) {
+        NSString *titleName = [_blueprint.titleKey stringByAppendingString:kViewKeySuffixTextField];
         NSString *constraint = [NSString stringWithFormat:kVConstraintsTitle, titleName];
         
         constraints = [constraints stringByAppendingString:constraint];
@@ -247,7 +247,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
             NSString *textFieldName = [key stringByAppendingString:kViewKeySuffixTextField];
             NSString *constraint = nil;
             
-            if (_titleHasPhoto && (rowNumber++ < 2)) {
+            if (_blueprint.hasPhoto && (rowNumber++ < 2)) {
                 constraint = [NSString stringWithFormat:kHConstraintsWithPhoto, labelName, textFieldName];
             } else {
                 constraint = [NSString stringWithFormat:kHConstraints, labelName, textFieldName];
@@ -330,13 +330,15 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     CGFloat height = 2 * kDefaultCellPadding;
     
-    if ([OTableViewCellBlueprints titleKeyForEntityClass:entityClass]) {
+    OTableViewCellBlueprint *blueprint = [[OTableViewCellBlueprint alloc] initForEntityClass:entityClass];
+    
+    if (blueprint.titleKey) {
         height += [UIFont titleFieldHeight] + kDefaultCellPadding;
     }
     
-    for (NSString *detailKey in [OTableViewCellBlueprints detailKeysForEntityClass:entityClass]) {
+    for (NSString *detailKey in blueprint.detailKeys) {
         if (!entity || [OState s].actionIsInput || [entity hasValueForKey:detailKey]) {
-            if ([OTableViewCellBlueprints isKeyForMultiLineProperty:detailKey]) {
+            if ([blueprint keyRepresentsMultiLineProperty:detailKey]) {
                 if (cell) {
                     height += [[cell textFieldForKey:detailKey] height];
                 } else if (entity && [entity hasValueForKey:detailKey]) {
@@ -373,8 +375,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 
 - (void)composeForReuseIdentifier:(NSString *)reuseIdentifier
 {
-    _titleKey = [OTableViewCellBlueprints titleKeyForReuseIdentifier:reuseIdentifier];
-    _detailKeys = [OTableViewCellBlueprints detailKeysForReuseIdentifier:reuseIdentifier];
+    _blueprint = [[OTableViewCellBlueprint alloc] initForReuseIdentifier:reuseIdentifier];
     
     [self addConstraintsCentred:YES];
 }
@@ -382,11 +383,8 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 
 - (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
+    _blueprint = [[OTableViewCellBlueprint alloc] initForEntityClass:entityClass];
     _entity = entity;
-    
-    _titleKey = [OTableViewCellBlueprints titleKeyForEntityClass:entityClass];
-    _titleHasPhoto = [OTableViewCellBlueprints titleHasPhotoForEntityClass:entityClass];
-    _detailKeys = [OTableViewCellBlueprints detailKeysForEntityClass:entityClass];
     
     [self addConstraintsCentred:NO];
 }
@@ -437,9 +435,8 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 
 - (NSArray *)allKeys
 {
-    NSMutableArray *allKeys = [[NSMutableArray alloc] initWithObjects:[self titleKey], nil];
-    
-    [allKeys addObjectsFromArray:[self detailKeys]];
+    NSMutableArray *allKeys = [[NSMutableArray alloc] initWithObjects:_blueprint.titleKey, nil];
+    [allKeys addObjectsFromArray:_blueprint.detailKeys];
     
     return allKeys;
 }
