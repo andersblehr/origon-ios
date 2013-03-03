@@ -10,21 +10,15 @@
 
 #import "NSDate+OrigoExtensions.h"
 #import "NSJSONSerialization+OrigoExtensions.h"
-#import "NSManagedObjectContext+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
 #import "NSURL+OrigoExtensions.h"
 
 #import "OAlert.h"
-#import "OAppDelegate.h"
 #import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
-#import "OUUIDGenerator.h"
-
-#import "OReplicatedEntity+OrigoExtensions.h"
-
 
 NSString * const kHTTPMethodGET = @"GET";
 NSString * const kHTTPMethodPOST = @"POST";

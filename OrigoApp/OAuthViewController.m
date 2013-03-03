@@ -10,7 +10,6 @@
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
-#import "UIBarButtonItem+OrigoExtensions.h"
 #import "UIFont+OrigoExtensions.h"
 #import "UITableView+OrigoExtensions.h"
 
@@ -23,17 +22,14 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 #import "OUUIDGenerator.h"
-#import "OTableViewCellComposer.h"
+#import "OTableViewCellBlueprint.h"
 
 #import "ODevice.h"
 #import "OMember+OrigoExtensions.h"
-#import "OMembership+OrigoExtensions.h"
+#import "OMembership.h"
 #import "OMemberResidency.h"
 #import "OMessageBoard.h"
 #import "OOrigo+OrigoExtensions.h"
-
-#import "OMemberViewController.h"
-#import "OTabBarController.h"
 
 static NSInteger const kAuthSection = 0;
 

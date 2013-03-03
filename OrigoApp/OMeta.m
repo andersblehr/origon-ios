@@ -14,17 +14,11 @@
 
 #import "OAppDelegate.h"
 #import "OEntityReplicator.h"
-#import "OState.h"
 #import "OLogging.h"
-#import "OServerConnection.h"
-#import "OStrings.h"
 #import "OUUIDGenerator.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
-
-#import "OOrigoListViewController.h"
-#import "OTabBarController.h"
 
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";

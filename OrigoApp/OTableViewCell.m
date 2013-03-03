@@ -10,25 +10,18 @@
 
 #import <AudioToolbox/AudioToolbox.h>
 
-#import "NSDate+OrigoExtensions.h"
-#import "NSManagedObjectContext+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
 #import "UIColor+OrigoExtensions.h"
 #import "UIFont+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 
-#import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OTextField.h"
 #import "OTextView.h"
 #import "OTableViewCellBlueprint.h"
-#import "OTableViewCellComposer.h"
+#import "OTableViewCellConstrainer.h"
 
-#import "OMember+OrigoExtensions.h"
-#import "OMemberResidency.h"
-#import "OMembership.h"
-#import "OOrigo+OrigoExtensions.h"
+#import "OMember.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 
 #import "OTableViewController.h"
@@ -67,15 +60,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)shouldComposeForReuseIdentifier:(NSString *)reuseIdentifier
-{
-    BOOL userIsSigningIn = [reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn];
-    BOOL userIsActivating = [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation];
-    
-    return (userIsSigningIn || userIsActivating);
-}
-
-
 - (BOOL)isListCell
 {
     return [self.reuseIdentifier isEqualToString:kReuseIdentifierDefault];
@@ -100,7 +84,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addTitleFieldIfNeeded
 {
-    if (_composer.blueprint.titleKey) {
+    if (_blueprint.titleKey) {
         UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
         titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
         [titleBannerView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -108,9 +92,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self.contentView addSubview:titleBannerView];
         [_views setObject:titleBannerView forKey:kViewKeyTitleBanner];
         
-        [self addTextFieldForKey:_composer.blueprint.titleKey];
+        [self addTextFieldForKey:_blueprint.titleKey];
         
-        if (_composer.blueprint.hasPhoto) {
+        if (_blueprint.hasPhoto) {
             UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
             NSData *photo = [_entity asMember].photo;
             
@@ -177,11 +161,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)composeForReuseIdentifier:(NSString *)reuseIdentifier
 {
-    [_composer composeForReuseIdentifier:reuseIdentifier];
+    [self addLabelForKey:_blueprint.titleKey centred:YES];
     
-    [self addLabelForKey:_composer.blueprint.titleKey centred:YES];
-    
-    for (NSString *detailKey in _composer.blueprint.detailKeys) {
+    for (NSString *detailKey in _blueprint.detailKeys) {
         [self addTextFieldForKey:detailKey];
     }
 }
@@ -194,14 +176,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self.entity = entity;
     self.editing = !_selectable;
     
-    [_composer composeForEntityClass:entityClass entity:entity];
-    
     [self addTitleFieldIfNeeded];
     
-    for (NSString *detailKey in _composer.blueprint.detailKeys) {
+    for (NSString *detailKey in _blueprint.detailKeys) {
         [self addLabelForKey:detailKey centred:NO];
         
-        if ([_composer.blueprint keyRepresentsMultiLineProperty:detailKey]) {
+        if ([_blueprint keyRepresentsMultiLineProperty:detailKey]) {
             [self addTextViewForKey:detailKey];
         } else {
             [self addTextFieldForKey:detailKey];
@@ -212,7 +192,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Initialisation
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
+- (id)initGenericsWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
     self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     
@@ -225,25 +205,34 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColor];
         self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
         self.textLabel.font = [UIFont titleFont];
-
+        
         if ([self isListCell]) {
             _listCellDelegate = delegate;
             _selectable = YES;
         } else {
             _inputDelegate = delegate;
             _selectable = self.localState.actionIsList;
-            _composer = [[OTableViewCellComposer alloc] initForCell:self];
             _views = [[NSMutableDictionary alloc] init];
-            
-            if ([self shouldComposeForReuseIdentifier:reuseIdentifier]) {
-                [self composeForReuseIdentifier:reuseIdentifier];
-            }
         }
         
         if (_selectable) {
             self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
+    }
+    
+    return self;
+}
+
+
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
+{
+    self = [self initGenericsWithReuseIdentifier:reuseIdentifier delegate:delegate];
+    
+    if (self && ![self isListCell]) {
+        _blueprint = [[OTableViewCellBlueprint alloc] initForReuseIdentifier:reuseIdentifier];
+        _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
         
+        [self composeForReuseIdentifier:reuseIdentifier];
         [self.contentView setNeedsUpdateConstraints];
     }
     
@@ -253,10 +242,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate
 {
-    self = [self initWithReuseIdentifier:NSStringFromClass(entityClass) delegate:delegate];
+    self = [self initGenericsWithReuseIdentifier:NSStringFromClass(entityClass) delegate:delegate];
     
     if (self) {
+        _blueprint = [[OTableViewCellBlueprint alloc] initForEntityClass:entityClass];
+        _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
+        
         [self composeForEntityClass:entityClass entity:nil];
+        [self.contentView setNeedsUpdateConstraints];
     }
     
     return self;
@@ -265,10 +258,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (id)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate
 {
-    self = [self initWithReuseIdentifier:entity.entityId delegate:delegate];
+    self = [self initGenericsWithReuseIdentifier:entity.entityId delegate:delegate];
     
     if (self) {
+        _blueprint = [[OTableViewCellBlueprint alloc] initForEntityClass:entity.class];
+        _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
+        
         [self composeForEntityClass:entity.class entity:entity];
+        [self.contentView setNeedsUpdateConstraints];
     }
     
     return self;
@@ -279,7 +276,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (BOOL)isTitleKey:(NSString *)key
 {
-    return [key isEqualToString:_composer.blueprint.titleKey];
+    return [key isEqualToString:_blueprint.titleKey];
 }
 
 
@@ -297,7 +294,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (id)nextInputFieldFromTextField:(id)textField
 {
-    NSArray *elementKeys = _composer.blueprint.allKeys;
+    NSArray *elementKeys = _blueprint.allKeys;
     NSInteger indexOfTextField = textField ? [elementKeys indexOfObject:[textField key]] : -1;
     NSString *inputFieldKey = nil;
     UIView *inputField = nil;
@@ -329,7 +326,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [self.backgroundView addDropShadowForInternalTableViewCell];
     }
     
-    if (_composer.blueprint.hasPhoto) {
+    if (_blueprint.hasPhoto) {
         [[_views objectForKey:kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
     }
 }
@@ -346,7 +343,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)redrawIfNeeded
 {
     if (_entity || _entityClass) {
-        CGFloat desiredHeight = [OTableViewCellComposer cell:self heightForEntityClass:_entityClass entity:_entity];
+        CGFloat desiredHeight = [OTableViewCellBlueprint cell:self heightForEntityClass:_entityClass entity:_entity];
         
         if (abs(self.frame.size.height - (desiredHeight + kImplicitFramePadding)) > 0.5f) {
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
@@ -397,7 +394,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (![self isListCell]) {
         [self.contentView removeConstraints:[self.contentView constraints]];
         
-        NSDictionary *alignedConstraints = [_composer constraintsWithAlignmentOptions];
+        NSDictionary *alignedConstraints = [_constrainer constraintsWithAlignmentOptions];
         
         for (NSNumber *alignmentOptions in [alignedConstraints allKeys]) {
             NSUInteger options = [alignmentOptions integerValue];
@@ -487,7 +484,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if ([self isListCell]) {
         [self populateListCell];
     } else {
-        for (NSString *detailKey in _composer.blueprint.detailKeys) {
+        for (NSString *detailKey in _blueprint.detailKeys) {
             id value = [_entity valueForKey:detailKey];
             
             if (value) {

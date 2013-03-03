@@ -8,8 +8,6 @@
 
 #import "UIView+OrigoExtensions.h"
 
-#import "UIColor+OrigoExtensions.h"
-
 #import "OTableViewCell.h"
 
 static CGFloat const kCellShadowRadius = 3.75f;

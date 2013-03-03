@@ -20,14 +20,15 @@ extern NSString * const kViewKeySuffixTextField;
 
 extern CGFloat const kCellAnimationDuration;
 
-@class OState, OTextField, OTextView, OTableViewCellComposer;
+@class OState, OTableViewCellBlueprint, OTableViewCellConstrainer;
 @class OReplicatedEntity;
 
 @interface OTableViewCell : UITableViewCell<OEntityObservingDelegate> {
 @private
     Class _entityClass;
     
-    OTableViewCellComposer *_composer;
+    OTableViewCellBlueprint *_blueprint;
+    OTableViewCellConstrainer *_constrainer;
     NSMutableDictionary *_views;
     
     id<OTableViewListCellDelegate> _listCellDelegate;

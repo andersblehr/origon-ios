@@ -12,29 +12,19 @@
 #import "NSManagedObjectContext+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
 #import "UIBarButtonItem+OrigoExtensions.h"
-#import "UITableView+OrigoExtensions.h"
-
-#import "OEntityObservingDelegate.h"
 
 #import "OAlert.h"
 #import "OLogging.h"
 #import "OMeta.h"
-#import "OServerConnection.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
 #import "OTextField.h"
 
 #import "OMember+OrigoExtensions.h"
-#import "OMemberResidency+OrigoExtensions.h"
-#import "OMembership+OrigoExtensions.h"
+#import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
-
-#import "OAuthViewController.h"
-#import "OMemberListViewController.h"
-#import "OOrigoViewController.h"
-#import "OTabBarController.h"
 
 static NSString * const kSegueToMemberListView = @"segueFromMemberToMemberListView";
 

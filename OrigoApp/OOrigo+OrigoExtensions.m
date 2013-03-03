@@ -10,13 +10,9 @@
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
-#import "UIFont+OrigoExtensions.h"
 
 #import "OMeta.h"
-#import "OState.h"
 #import "OStrings.h"
-#import "OTableViewCell.h"
-#import "OTextView.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OMemberResidency.h"

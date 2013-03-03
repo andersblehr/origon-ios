@@ -9,14 +9,12 @@
 #import "OStrings.h"
 
 #import "NSDate+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
 
 #import "OAlert.h"
 #import "OMeta.h"
 #import "OLogging.h"
 #import "OServerConnection.h"
 #import "OState.h"
-#import "OTableViewCell.h"
 
 // Cross-view strings
 NSString * const strNameMyHousehold                  = @"strNameMyHousehold";

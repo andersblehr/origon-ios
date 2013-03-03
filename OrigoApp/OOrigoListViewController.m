@@ -6,12 +6,8 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <QuartzCore/QuartzCore.h>
-
 #import "OOrigoListViewController.h"
 
-#import "NSManagedObjectContext+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
 #import "UIBarButtonItem+OrigoExtensions.h"
 #import "UITableView+OrigoExtensions.h"
 
@@ -20,19 +16,11 @@
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
-#import "OTableViewCell.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OMemberResidency.h"
-#import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
-
-#import "OAuthViewController.h"
-#import "OMemberListViewController.h"
-#import "OMemberViewController.h"
-#import "OOrigoViewController.h"
-#import "OTabBarController.h"
 
 static NSString * const kSegueToMemberListView = @"segueFromOrigoListToMemberListView";
 

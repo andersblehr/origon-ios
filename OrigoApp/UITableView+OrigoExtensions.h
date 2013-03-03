@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @class OReplicatedEntity;
-@class OTableViewCell;
 
 @interface UITableView (OrigoExtensions)
 

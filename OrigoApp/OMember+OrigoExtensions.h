@@ -8,8 +8,6 @@
 
 #import "OMember.h"
 
-@class OOrigo;
-
 @interface OMember (OrigoExtensions)
 
 - (NSString *)displayNameAndAge;

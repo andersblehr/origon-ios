@@ -13,7 +13,6 @@
 #import "UIFont+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 
-#import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"

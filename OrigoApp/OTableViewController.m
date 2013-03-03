@@ -20,9 +20,9 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 #import "OTextView.h"
-#import "OTableViewCellComposer.h"
+#import "OTableViewCellBlueprint.h"
 
-#import "OReplicatedEntity+OrigoExtensions.h"
+#import "OReplicatedEntity.h"
 
 #import "OTabBarController.h"
 
@@ -490,7 +490,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     CGFloat height = kDefaultTableViewCellHeight;
     
     if (indexPath.section == [self sectionNumberForSectionKey:_entitySectionKey]) {
-        height = [OTableViewCellComposer cell:_detailCell heightForEntityClass:_entityClass entity:_entity];
+        height = [OTableViewCellBlueprint cell:_detailCell heightForEntityClass:_entityClass entity:_entity];
     }
     
     return height;

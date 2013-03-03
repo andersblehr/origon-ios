@@ -1,32 +1,22 @@
 //
-//  OTableViewCellLayout.m
+//  OTableViewCellConstrainer.m
 //  OrigoApp
 //
 //  Created by Anders Blehr on 18.11.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OTableViewCellComposer.h"
+#import "OTableViewCellConstrainer.h"
 
 #import "NSDate+OrigoExtensions.h"
 #import "UIFont+OrigoExtensions.h"
 
-#import "OLogging.h"
-#import "OMeta.h"
 #import "OState.h"
-#import "OStrings.h"
 #import "OTableViewCell.h"
 #import "OTableViewCellBlueprint.h"
-#import "OTextField.h"
 #import "OTextView.h"
 
-#import "OMember.h"
-#import "OOrigo.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-
-CGFloat const kDefaultTableViewCellHeight = 45.f;
-CGFloat const kDefaultCellPadding = 10.f;
-CGFloat const kMinimumCellPadding = 0.1f;
+#import "OReplicatedEntity.h"
 
 static NSString * const kVConstraintsInitial          = @"V:|-10-";
 static NSString * const kVConstraintsInitialWithTitle = @"V:|-44-";
@@ -52,7 +42,7 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%
 static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%@]-6-|";
 
 
-@implementation OTableViewCellComposer
+@implementation OTableViewCellConstrainer
 
 #pragma mark - Auxiliary methods
 
@@ -117,24 +107,6 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
-#pragma mark - Adding constraints
-
-- (void)addConstraintsCentred:(BOOL)centred
-{
-    if (_blueprint.titleKey && centred) {
-        [_centredElementKeys addObject:_blueprint.titleKey];
-    }
-    
-    for (NSString *detailKey in _blueprint.detailKeys) {
-        if (centred) {
-            [_centredElementKeys addObject:detailKey];
-        } else {
-            [_labeledTextFieldKeys addObject:detailKey];
-        }
-    }
-}
-
-
 #pragma mark - Generating visual constraints strings
 
 - (NSArray *)titleConstraints
@@ -170,7 +142,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     BOOL isTopmostLabel = YES;
     id precedingTextField = nil;
     
-    for (NSString *key in _labeledTextFieldKeys) {
+    for (NSString *key in _blueprint.detailKeys) {
         [self configureElementsIfNeededForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {
@@ -210,7 +182,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
         constraints = [constraints stringByAppendingString:constraint];
     }
     
-    for (NSString *key in _labeledTextFieldKeys) {
+    for (NSString *key in _blueprint.detailKeys) {
         [self configureElementsIfNeededForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {
@@ -239,7 +211,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     
     NSInteger rowNumber = 0;
     
-    for (NSString *key in _labeledTextFieldKeys) {
+    for (NSString *key in _blueprint.detailKeys) {
         [self configureElementsIfNeededForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {
@@ -268,7 +240,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     BOOL isTopmostElement = YES;
     BOOL isBelowLabel = NO;
     
-    for (NSString *key in _centredElementKeys) {
+    for (NSString *key in _blueprint.allKeys) {
         [self configureElementsIfNeededForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {
@@ -302,7 +274,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
-    for (NSString *key in _centredElementKeys) {
+    for (NSString *key in _blueprint.allKeys) {
         [self configureElementsIfNeededForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {
@@ -324,69 +296,18 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
-#pragma mark - Cell height computation
-
-+ (CGFloat)cell:(OTableViewCell *)cell heightForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
-{
-    CGFloat height = 2 * kDefaultCellPadding;
-    
-    OTableViewCellBlueprint *blueprint = [[OTableViewCellBlueprint alloc] initForEntityClass:entityClass];
-    
-    if (blueprint.titleKey) {
-        height += [UIFont titleFieldHeight] + kDefaultCellPadding;
-    }
-    
-    for (NSString *detailKey in blueprint.detailKeys) {
-        if (!entity || [OState s].actionIsInput || [entity hasValueForKey:detailKey]) {
-            if ([blueprint keyRepresentsMultiLineProperty:detailKey]) {
-                if (cell) {
-                    height += [[cell textFieldForKey:detailKey] height];
-                } else if (entity && [entity hasValueForKey:detailKey]) {
-                    height += [OTextView heightWithText:[entity valueForKey:detailKey]];
-                } else {
-                    height += [OTextView heightWithText:[OStrings placeholderForKey:detailKey]];
-                }
-            } else {
-                height += [UIFont detailFieldHeight];
-            }
-        }
-    }
-    
-    return height;
-}
-
-
 #pragma mark - Initialisation
 
-- (id)initForCell:(OTableViewCell *)cell
+- (id)initWithBlueprint:(OTableViewCellBlueprint *)blueprint cell:(OTableViewCell *)cell
 {
     self = [super init];
     
     if (self) {
+        _blueprint = blueprint;
         _cell = cell;
-        
-        _centredElementKeys = [[NSMutableArray alloc] init];
-        _labeledTextFieldKeys = [[NSMutableArray alloc] init];
     }
     
     return self;
-}
-
-
-- (void)composeForReuseIdentifier:(NSString *)reuseIdentifier
-{
-    _blueprint = [[OTableViewCellBlueprint alloc] initForReuseIdentifier:reuseIdentifier];
-    
-    [self addConstraintsCentred:YES];
-}
-
-
-- (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
-{
-    _blueprint = [[OTableViewCellBlueprint alloc] initForEntityClass:entityClass];
-    _entity = entity;
-    
-    [self addConstraintsCentred:NO];
 }
 
 
@@ -396,49 +317,40 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     NSMutableDictionary *constraints = [[NSMutableDictionary alloc] init];
     
-    NSNumber *allTrailingOptions = [NSNumber numberWithInteger:NSLayoutFormatAlignAllTrailing];
-    NSNumber *noAlignmentOptions = [NSNumber numberWithInteger:0];
-    
-    if ([_labeledTextFieldKeys count]) {
-        NSMutableArray *allTrailingConstraints = [[NSMutableArray alloc] init];
-        [allTrailingConstraints addObject:[self labeledVerticalLabelConstraints]];
+    if (_blueprint) {
+        NSNumber *allTrailingOptions = [NSNumber numberWithInteger:NSLayoutFormatAlignAllTrailing];
+        NSNumber *noAlignmentOptions = [NSNumber numberWithInteger:0];
         
-        NSMutableArray *nonAlignedConstraints = [[NSMutableArray alloc] init];
-        [nonAlignedConstraints addObjectsFromArray:[self titleConstraints]];
-        [nonAlignedConstraints addObject:[self labeledVerticalTextFieldConstraints]];
-        [nonAlignedConstraints addObjectsFromArray:[self labeledHorizontalConstraints]];
+        if (_blueprint.hasLeadingLabels) {
+            NSMutableArray *allTrailingConstraints = [[NSMutableArray alloc] init];
+            [allTrailingConstraints addObject:[self labeledVerticalLabelConstraints]];
+            
+            NSMutableArray *nonAlignedConstraints = [[NSMutableArray alloc] init];
+            [nonAlignedConstraints addObjectsFromArray:[self titleConstraints]];
+            [nonAlignedConstraints addObject:[self labeledVerticalTextFieldConstraints]];
+            [nonAlignedConstraints addObjectsFromArray:[self labeledHorizontalConstraints]];
+            
+            [constraints setObject:allTrailingConstraints forKey:allTrailingOptions];
+            [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
+        } else {
+            NSMutableArray *nonAlignedConstraints = [[NSMutableArray alloc] init];
+            [nonAlignedConstraints addObject:[self centredVerticalConstraints]];
+            [nonAlignedConstraints addObjectsFromArray:[self centredHorizontalConstraints]];
+            
+            [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
+        }
         
-        [constraints setObject:allTrailingConstraints forKey:allTrailingOptions];
-        [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
-    } else if ([_centredElementKeys count]) {
-        NSMutableArray *nonAlignedConstraints = [[NSMutableArray alloc] init];
-        [nonAlignedConstraints addObject:[self centredVerticalConstraints]];
-        [nonAlignedConstraints addObjectsFromArray:[self centredHorizontalConstraints]];
-        
-        [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
+//        int i = 0;
+//        for (NSNumber *alignmentOptions in [constraints allKeys]) {
+//            NSArray *constraintsWithOptions = [constraints objectForKey:alignmentOptions];
+//            
+//            for (NSString *visualConstraints in constraintsWithOptions) {
+//                OLogDebug(@"\nVisual constraint (%d): %@", i++, visualConstraints);
+//            }
+//        }
     }
     
-//    int i = 0;
-//    for (NSNumber *alignmentOptions in [constraints allKeys]) {
-//        NSArray *constraintsWithOptions = [constraints objectForKey:alignmentOptions];
-//        
-//        for (NSString *visualConstraints in constraintsWithOptions) {
-//            OLogDebug(@"\nVisual constraint (%d): %@", i++, visualConstraints);
-//        }
-//    }
-    
     return constraints;
-}
-
-
-#pragma mark - Custom accessors
-
-- (NSArray *)allKeys
-{
-    NSMutableArray *allKeys = [[NSMutableArray alloc] initWithObjects:_blueprint.titleKey, nil];
-    [allKeys addObjectsFromArray:_blueprint.detailKeys];
-    
-    return allKeys;
 }
 
 @end

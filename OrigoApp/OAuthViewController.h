@@ -10,11 +10,9 @@
 
 #import "OTableViewController.h"
 
-#import "OServerConnectionDelegate.h"
+@class OTextField;
 
-@class OTableViewCell, OTextField;
-
-@interface OAuthViewController : OTableViewController<UITextFieldDelegate, UIAlertViewDelegate> {
+@interface OAuthViewController : OTableViewController<UIAlertViewDelegate> {
 @private
     BOOL _userIsListed;
     
