@@ -8,7 +8,6 @@
 
 #import "OReplicatedEntity.h"
 
-@class OState;
 @class OMember, OMemberResidency, OMembership, OOrigo, OReplicatedEntityRef;
 
 @interface OReplicatedEntity (OrigoExtensions)

@@ -14,8 +14,6 @@
 
 #import "OEntityReplicator.h"
 #import "OMeta.h"
-#import "OState.h"
-#import "OTableViewCell.h"
 
 #import "OMember.h"
 #import "OMemberResidency.h"

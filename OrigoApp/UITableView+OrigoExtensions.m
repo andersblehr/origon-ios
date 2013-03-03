@@ -12,9 +12,8 @@
 #import "UIFont+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 
-#import "OStrings.h"
 #import "OTableViewCell.h"
-#import "OTableViewCellComposer.h"
+#import "OTableViewCellBlueprint.h"
 
 #import "OReplicatedEntity.h"
 

@@ -8,14 +8,6 @@
 
 #import "OMemberResidency+OrigoExtensions.h"
 
-#import "NSManagedObjectContext+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
-
-#import "OMeta.h"
-#import "OState.h"
-
-#import "OMember.h"
-#import "OOrigo.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 
 

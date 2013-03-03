@@ -12,7 +12,6 @@
 #import "NSString+OrigoExtensions.h"
 
 #import "OMeta.h"
-#import "OState.h"
 
 NSString * const kOrigoSeasoning = @"socroilgao";
 

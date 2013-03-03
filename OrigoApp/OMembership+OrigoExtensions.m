@@ -8,11 +8,9 @@
 
 #import "OMembership+OrigoExtensions.h"
 
-#import "OMeta.h"
 #import "OState.h"
 
 #import "OMember+OrigoExtensions.h"
-#import "OMemberResidency.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 

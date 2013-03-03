@@ -9,15 +9,12 @@
 #import "OSettingsViewController.h"
 
 #import "UIBarButtonItem+OrigoExtensions.h"
-#import "UITableView+OrigoExtensions.h"
 
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
 
-#import "OAuthViewController.h"
-#import "OOrigoListViewController.h"
 #import "OTabBarController.h"
 
 

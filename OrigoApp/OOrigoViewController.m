@@ -9,12 +9,6 @@
 #import "OOrigoViewController.h"
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
-#import "UIBarButtonItem+OrigoExtensions.h"
-#import "UITableView+OrigoExtensions.h"
-
-#import "OEntityObservingDelegate.h"
-#import "OModalViewControllerDelegate.h"
 
 #import "OLogging.h"
 #import "OMeta.h"
@@ -24,12 +18,9 @@
 #import "OTextField.h"
 #import "OTextView.h"
 
-#import "OMember+OrigoExtensions.h"
+#import "OMember.h"
 #import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-
-#import "OMemberListViewController.h"
 
 static NSInteger const kOrigoSection = 0;
 

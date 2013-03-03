@@ -10,10 +10,8 @@
 
 #import "OTableViewController.h"
 
-@protocol OEntityObservingDelegate, OModalViewControllerDelegate;
-
+@class OTextField, OTextView;
 @class OMember, OMembership, OOrigo;
-@class OTableViewCell, OTextField, OTextView;
 
 @interface OOrigoViewController : OTableViewController {
 @private

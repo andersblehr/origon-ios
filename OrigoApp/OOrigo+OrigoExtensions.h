@@ -8,7 +8,7 @@
 
 #import "OOrigo.h"
 
-@class OMember, OMembership;
+@class OMember;
 
 @interface OOrigo (OrigoExtensions)
 

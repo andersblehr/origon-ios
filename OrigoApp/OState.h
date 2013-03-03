@@ -46,7 +46,6 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
 };
 
 @class OTableViewController;
-@class OMember, OOrigo;
 
 @interface OState : NSObject
 

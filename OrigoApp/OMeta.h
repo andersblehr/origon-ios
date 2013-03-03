@@ -74,7 +74,7 @@ extern NSString * const kDefaultsKeyDirtyEntities;
 extern NSString * const kDefaultsKeyRegistrationAborted;
 extern NSString * const kDefaultsKeyStringDate;
 
-@class OEntityReplicator, OTableViewCell;
+@class OEntityReplicator;
 @class OMember, OReplicatedEntity;
 
 @interface OMeta : NSObject {
