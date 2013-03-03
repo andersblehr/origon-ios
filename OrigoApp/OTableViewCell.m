@@ -191,27 +191,18 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Cell composition
 
-- (void)composeForReuseIdentifier:(NSString *)reuseIdentifier
+- (void)addCellElements
 {
-    [self addLabelForKey:_blueprint.titleKey centred:YES];
-    
-    for (NSString *detailKey in _blueprint.detailKeys) {
-        [self addTextFieldForKey:detailKey];
+    if (_blueprint.fieldsAreLabeled) {
+        [self addTitleFieldIfNeeded];
+    } else {
+        [self addLabelForKey:_blueprint.titleKey centred:YES];
     }
-}
-
-
-- (void)composeForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
-{
-    _entityClass = entityClass;
-    
-    self.entity = entity;
-    self.editing = !_selectable;
-    
-    [self addTitleFieldIfNeeded];
     
     for (NSString *detailKey in _blueprint.detailKeys) {
-        [self addLabelForKey:detailKey centred:NO];
+        if (_blueprint.fieldsAreLabeled) {
+            [self addLabelForKey:detailKey centred:NO];
+        }
         
         if ([_blueprint keyRepresentsMultiLineProperty:detailKey]) {
             [self addTextViewForKey:detailKey];
@@ -232,7 +223,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _blueprint = [[OTableViewCellBlueprint alloc] initForReuseIdentifier:reuseIdentifier];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
         
-        [self composeForReuseIdentifier:reuseIdentifier];
+        [self addCellElements];
         [self.contentView setNeedsUpdateConstraints];
     }
     
@@ -245,10 +236,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [self initCoreWithReuseIdentifier:NSStringFromClass(entityClass) delegate:delegate];
     
     if (self) {
+        self.entity = entity;
+        self.editing = !_selectable;
+        
+        _entityClass = entityClass;
         _blueprint = [[OTableViewCellBlueprint alloc] initForEntityClass:entityClass];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
         
-        [self composeForEntityClass:entityClass entity:entity];
+        [self addCellElements];
         [self.contentView setNeedsUpdateConstraints];
     }
     
