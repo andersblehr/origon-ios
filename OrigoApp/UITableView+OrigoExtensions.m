@@ -99,6 +99,20 @@ static NSString * const kLogoText = @"..origo..";
 
 #pragma mark - Cell instantiation
 
+- (id)listCellForIndexPath:(NSIndexPath *)indexPath delegate:(id)delegate
+{
+    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:kReuseIdentifierDefault];
+    
+    if (!cell) {
+        cell = [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:delegate];
+    }
+    
+    cell.indexPath = indexPath;
+    
+    return cell;
+}
+
+
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:reuseIdentifier];
@@ -111,39 +125,13 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (id)cellForEntity:(OReplicatedEntity *)entity delegate:(id)delegate
-{
-    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:entity.entityId];
-    
-    if (!cell) {
-        cell = [[OTableViewCell alloc] initWithEntity:entity delegate:delegate];
-    }
-    
-    return cell;
-}
-
-
-- (id)cellForEntityClass:(Class)entityClass delegate:(id)delegate
+- (id)cellForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity delegate:(id)delegate
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:NSStringFromClass(entityClass)];
     
     if (!cell) {
-        cell = [[OTableViewCell alloc] initWithEntityClass:entityClass delegate:delegate];
+        cell = [[OTableViewCell alloc] initWithEntityClass:entityClass entity:entity delegate:delegate];
     }
-    
-    return cell;
-}
-
-
-- (id)listCellForIndexPath:(NSIndexPath *)indexPath delegate:(id)delegate
-{
-    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:kReuseIdentifierDefault];
-    
-    if (!cell) {
-        cell = [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:delegate];
-    }
-    
-    cell.indexPath = indexPath;
     
     return cell;
 }

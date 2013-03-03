@@ -321,7 +321,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
         NSNumber *allTrailingOptions = [NSNumber numberWithInteger:NSLayoutFormatAlignAllTrailing];
         NSNumber *noAlignmentOptions = [NSNumber numberWithInteger:0];
         
-        if (_blueprint.hasLeadingLabels) {
+        if (_blueprint.fieldsAreLabeled) {
             NSMutableArray *allTrailingConstraints = [[NSMutableArray alloc] init];
             [allTrailingConstraints addObject:[self labeledVerticalLabelConstraints]];
             

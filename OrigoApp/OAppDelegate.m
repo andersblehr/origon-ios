@@ -16,7 +16,7 @@
 #import "OStrings.h"
 
 static NSString * const kTimeZoneNameUTC = @"UTC";
-static NSString * const kPersistentStoreFormat = @"OrigoApp^%@.sqlite";
+static NSString * const kPersistentStoreURLFormat = @"OrigoApp^%@.sqlite";
 
 
 @interface OAppDelegate ()
@@ -29,6 +29,8 @@ static NSString * const kPersistentStoreFormat = @"OrigoApp^%@.sqlite";
 
 
 @implementation OAppDelegate
+
+#pragma mark - Custom exception handler
 
 static void uncaughtExceptionHandler(NSException *exception)
 {
@@ -78,7 +80,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 {
     if (_persistentStoreCoordinator == nil) {
         NSURL *documentDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *persistentStoreURL = [documentDirectory URLByAppendingPathComponent: [NSString stringWithFormat:kPersistentStoreFormat, [OMeta m].userId]];
+        NSURL *persistentStoreURL = [documentDirectory URLByAppendingPathComponent: [NSString stringWithFormat:kPersistentStoreURLFormat, [OMeta m].userId]];
         
         NSError *error = nil;
         _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];

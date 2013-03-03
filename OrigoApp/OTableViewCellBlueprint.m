@@ -34,8 +34,8 @@ CGFloat const kMinimumCellPadding = 0.1f;
     self = [super init];
     
     if (self) {
+        _fieldsAreLabeled = NO;
         _hasPhoto = NO;
-        _hasLeadingLabels = NO;
         
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
             _titleKey = kInputKeySignIn;
@@ -55,7 +55,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
     self = [super init];
     
     if (self) {
-        _hasLeadingLabels = YES;
+        _fieldsAreLabeled = YES;
         
         if (entityClass == OMember.class) {
             _hasPhoto = YES;

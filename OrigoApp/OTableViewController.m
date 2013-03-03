@@ -502,12 +502,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     OTableViewCell *cell = nil;
     
     if (indexPath.section == [self sectionNumberForSectionKey:_entitySectionKey]) {
-        if (_entity) {
-            _detailCell = [tableView cellForEntity:_entity delegate:self];
-        } else {
-            _detailCell = [tableView cellForEntityClass:_entityClass delegate:self];
-        }
-        
+        _detailCell = [tableView cellForEntityClass:_entityClass entity:_entity delegate:self];
         _detailCell.observer = self.observer;
         
         cell = _detailCell;
