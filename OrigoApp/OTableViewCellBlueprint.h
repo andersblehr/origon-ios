@@ -17,7 +17,7 @@ extern CGFloat const kMinimumCellPadding;
 
 @interface OTableViewCellBlueprint : NSObject
 
-@property (nonatomic, readonly) BOOL hasLeadingLabels;
+@property (nonatomic, readonly) BOOL fieldsAreLabeled;
 @property (nonatomic, readonly) BOOL hasPhoto;
 
 @property (strong, nonatomic, readonly) NSString *titleKey;

@@ -80,6 +80,38 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (id)initCoreWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
+{
+    self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
+    
+    if (self) {
+        self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+        self.backgroundView.backgroundColor = [UIColor cellBackgroundColor];
+        self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColor];
+        self.detailTextLabel.font = [UIFont detailFont];
+        self.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+        self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColor];
+        self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
+        self.textLabel.font = [UIFont titleFont];
+        
+        if ([self isListCell]) {
+            _listCellDelegate = delegate;
+            _selectable = YES;
+        } else {
+            _inputDelegate = delegate;
+            _selectable = self.localState.actionIsList;
+            _views = [[NSMutableDictionary alloc] init];
+        }
+        
+        if (_selectable) {
+            self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
+    }
+    
+    return self;
+}
+
+
 #pragma mark - Adding elements
 
 - (void)addTitleFieldIfNeeded
@@ -192,41 +224,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Initialisation
 
-- (id)initGenericsWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
-{
-    self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
-    
-    if (self) {
-        self.backgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
-        self.backgroundView.backgroundColor = [UIColor cellBackgroundColor];
-        self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColor];
-        self.detailTextLabel.font = [UIFont detailFont];
-        self.selectedBackgroundView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
-        self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColor];
-        self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
-        self.textLabel.font = [UIFont titleFont];
-        
-        if ([self isListCell]) {
-            _listCellDelegate = delegate;
-            _selectable = YES;
-        } else {
-            _inputDelegate = delegate;
-            _selectable = self.localState.actionIsList;
-            _views = [[NSMutableDictionary alloc] init];
-        }
-        
-        if (_selectable) {
-            self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        }
-    }
-    
-    return self;
-}
-
-
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
-    self = [self initGenericsWithReuseIdentifier:reuseIdentifier delegate:delegate];
+    self = [self initCoreWithReuseIdentifier:reuseIdentifier delegate:delegate];
     
     if (self && ![self isListCell]) {
         _blueprint = [[OTableViewCellBlueprint alloc] initForReuseIdentifier:reuseIdentifier];
@@ -240,31 +240,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (id)initWithEntityClass:(Class)entityClass delegate:(id)delegate
+- (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity delegate:(id)delegate
 {
-    self = [self initGenericsWithReuseIdentifier:NSStringFromClass(entityClass) delegate:delegate];
+    self = [self initCoreWithReuseIdentifier:NSStringFromClass(entityClass) delegate:delegate];
     
     if (self) {
         _blueprint = [[OTableViewCellBlueprint alloc] initForEntityClass:entityClass];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
         
-        [self composeForEntityClass:entityClass entity:nil];
-        [self.contentView setNeedsUpdateConstraints];
-    }
-    
-    return self;
-}
-
-
-- (id)initWithEntity:(OReplicatedEntity *)entity delegate:(id)delegate
-{
-    self = [self initGenericsWithReuseIdentifier:entity.entityId delegate:delegate];
-    
-    if (self) {
-        _blueprint = [[OTableViewCellBlueprint alloc] initForEntityClass:entity.class];
-        _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
-        
-        [self composeForEntityClass:entity.class entity:entity];
+        [self composeForEntityClass:entityClass entity:entity];
         [self.contentView setNeedsUpdateConstraints];
     }
     
