@@ -204,7 +204,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 }
 
 
-#pragma mark - Overrides
+#pragma mark - UIView overrides
 
 - (void)drawRect:(CGRect)rect
 {

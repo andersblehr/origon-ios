@@ -13,7 +13,7 @@
 #import "OTableViewController.h"
 
 #import "OMember+OrigoExtensions.h"
-#import "OOrigo.h"
+#import "OOrigo+OrigoExtensions.h"
 
 #import "OAuthViewController.h"
 #import "OMemberListViewController.h"

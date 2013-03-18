@@ -8,6 +8,9 @@
 
 #import "OMember+OrigoExtensions.h"
 
+#import <CoreTelephony/CTCarrier.h>
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+
 #import "NSDate+OrigoExtensions.h"
 #import "NSManagedObjectContext+OrigoExtensions.h"
 
@@ -16,12 +19,36 @@
 #import "OStrings.h"
 
 #import "OMember.h"
-#import "OMemberResidency.h"
+#import "OMembership+OrigoExtensions.h"
+#import "OMessageBoard.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 
 
 @implementation OMember (OrigoExtensions)
+
+#pragma mark - Selector implementations
+
+- (NSComparisonResult)compare:(OMember *)other
+{
+    NSComparisonResult result = [self.name localizedCaseInsensitiveCompare:other.name];
+    
+    if ([OState s].viewIsMemberList && [OState s].aspectIsResidence) {
+        BOOL thisMemberIsMinor = [self isMinor];
+        BOOL otherMemberIsMinor = [other isMinor];
+        
+        if (thisMemberIsMinor != otherMemberIsMinor) {
+            if (thisMemberIsMinor && !otherMemberIsMinor) {
+                result = NSOrderedDescending;
+            } else {
+                result = NSOrderedAscending;
+            }
+        }
+    }
+    
+    return result;
+}
+
 
 #pragma mark - Displayable strings & image
 
@@ -75,6 +102,176 @@
 }
 
 
+#pragma mark - Origo memberships
+
+- (OMembership *)initialResidency
+{
+    OMembership *residency = [[self exposedResidencies] anyObject];
+    
+    if (!residency) {
+        OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
+        residency = [residence addResident:self];
+        
+        if ([self isUser]) {
+            residency.isActive = @YES;
+            residency.isAdmin = @YES;
+        }
+    }
+    
+    return residency;
+}
+
+
+- (OMembership *)rootMembership
+{
+    OMembership *rootMembership = nil;
+    
+    for (OMembership *membership in self.memberships) {
+        if (!rootMembership && [membership.origo isOfType:kOrigoTypeMemberRoot]) {
+            rootMembership = membership;
+        }
+    }
+    
+    return rootMembership;
+}
+
+
+- (NSSet *)exposedMemberships
+{
+    NSMutableSet *exposedMemberships = [[NSMutableSet alloc] init];
+    
+    for (OMembership *membership in self.memberships) {
+        if (![membership.origo isOfType:kOrigoTypeMemberRoot] && ![membership hasExpired]) {
+            [exposedMemberships addObject:membership];
+        }
+    }
+    
+    return exposedMemberships;
+}
+
+
+- (NSSet *)exposedResidencies
+{
+    NSMutableSet *exposedResidencies = [[NSMutableSet alloc] init];
+    
+    for (OMembership *residency in self.residencies) {
+        if (![residency hasExpired]) {
+            [exposedResidencies addObject:residency];
+        }
+    }
+    
+    return exposedResidencies;
+}
+
+
+- (NSSet *)exposedParticipancies
+{
+    NSMutableSet *exposedParticipations = [[NSMutableSet alloc] init];
+    
+    for (OMembership *membership in [self exposedMemberships]) {
+        if (![membership.origo isOfType:kOrigoTypeResidence]) {
+            [exposedParticipations addObject:membership];
+        }
+    }
+    
+    return exposedParticipations;
+}
+
+
+#pragma mark - Household information
+
+- (NSSet *)wards
+{
+    NSMutableSet *wards = [[NSMutableSet alloc] init];
+    
+    if (![self isMinor]) {
+        for (OMember *housemate in [self housemates]) {
+            if ([housemate isMinor]) {
+                [wards addObject:housemate];
+            }
+        }
+    }
+    
+    return wards;
+}
+
+
+- (NSSet *)housemates
+{
+    NSMutableSet *housemates = [[NSMutableSet alloc] init];
+    
+    for (OMembership *residency in [self exposedResidencies]) {
+        for (OMembership *peerResidency in [residency.residence exposedResidencies]) {
+            if ((peerResidency.resident != self) && ![peerResidency hasExpired]) {
+                [housemates addObject:peerResidency.resident];
+            }
+        }
+    }
+    
+    return housemates;
+}
+
+
+- (NSSet *)housemateResidences
+{
+    NSMutableSet *ownResidences = [[NSMutableSet alloc] init];
+    NSMutableSet *housemateResidences = [[NSMutableSet alloc] init];
+    
+    for (OMembership *residency in [self exposedResidencies]) {
+        [ownResidences addObject:residency.residence];
+    }
+    
+    for (OMember *housemate in [self housemates]) {
+        for (OMembership *housemateResidency in [housemate exposedResidencies]) {
+            if (![ownResidences containsObject:housemateResidency.residence]) {
+                [housemateResidences addObject:housemateResidency.residence];
+            }
+        }
+    }
+    
+    return housemateResidences;
+}
+
+
+#pragma mark - Managing member active state
+
+- (BOOL)isActive
+{
+    return (self.activeSince != nil);
+}
+
+
+- (void)makeActive
+{
+    CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
+    NSString *countryCode = [networkInfo subscriberCellularProvider].isoCountryCode;
+    
+    if (!countryCode) {
+        countryCode = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
+    }
+    
+    OMembership *rootMembership = [self rootMembership];
+    rootMembership.origo.countryCode = countryCode;
+    rootMembership.isActive = @YES;
+    rootMembership.isAdmin = @YES;
+    
+    for (OMembership *residency in [self exposedResidencies]) {
+        residency.isActive = @YES;
+        
+        if (![self isMinor] || [residency.createdBy isEqualToString:self.entityId]) {
+            residency.isAdmin = @YES;
+
+            if (![residency.residence.messageBoards count]) {
+                OMessageBoard *messageBoard = [[OMeta m].context insertEntityOfClass:OMessageBoard.class inOrigo:residency.residence];
+                messageBoard.title = [OStrings stringForKey:strDefaultMessageBoardName];
+            }
+        }
+    }
+    
+    self.activeSince = [NSDate date];
+}
+
+
 #pragma mark - Meta information
 
 - (BOOL)isUser
@@ -101,138 +298,15 @@
 }
 
 
-- (BOOL)isTeenOrOlder
-{
-    return ([self.dateOfBirth yearsBeforeNow] >= kAgeThresholdTeen);
-}
-
-
 - (BOOL)isOfPreschoolAge
 {
     return ([self.dateOfBirth yearsBeforeNow] < kAgeThresholdInSchool);
 }
 
 
-- (BOOL)hasAddress
+- (BOOL)isTeenOrOlder
 {
-    BOOL hasAddress = NO;
-    
-    for (OMemberResidency *residency in self.residencies) {
-        hasAddress = hasAddress || [residency.residence hasValueForKey:kPropertyKeyAddress];
-    }
-    
-    return hasAddress;
-}
-
-
-- (BOOL)hasWard:(OMember *)ward
-{
-    return [[self wards] containsObject:ward];
-}
-
-
-#pragma mark - Household information
-
-- (NSSet *)wards
-{
-    NSMutableSet *wards = [[NSMutableSet alloc] init];
-    
-    if (![self isMinor]) {
-        NSMutableSet *housemates = [NSSet setWithSet:[self housemates]];
-        
-        for (OMember *housemate in housemates) {
-            if ([housemate isMinor]) {
-                [wards addObject:housemate];
-            }
-        }
-    }
-    
-    return wards;
-}
-
-
-- (NSSet *)housemates
-{
-    NSMutableSet *housemates = [[NSMutableSet alloc] init];
-    
-    for (OMemberResidency *residency in self.residencies) {
-        for (OMemberResidency *peerResidency in residency.residence.residencies) {
-            if ((peerResidency.resident != self) && ![peerResidency.isGhost boolValue]) {
-                [housemates addObject:peerResidency.resident];
-            }
-        }
-    }
-    
-    return housemates;
-}
-
-
-- (NSSet *)housemateResidences
-{
-    NSMutableSet *ownResidences = [[NSMutableSet alloc] init];
-    NSMutableSet *housemateResidences = [[NSMutableSet alloc] init];
-    
-    for (OMemberResidency *residency in self.residencies) {
-        [ownResidences addObject:residency.residence];
-    }
-    
-    for (OMember *housemate in [self housemates]) {
-        for (OMemberResidency *housemateResidency in housemate.residencies) {
-            if (![ownResidences containsObject:housemateResidency.residence]) {
-                [housemateResidences addObject:housemateResidency.residence];
-            }
-        }
-    }
-    
-    return housemateResidences;
-}
-
-
-#pragma mark - Origo memberships
-
-- (OMemberResidency *)initialResidency
-{
-    OMemberResidency *residency = [self.residencies anyObject];
-    
-    if (!residency) {
-        OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
-        residency = [residence addResident:self];
-        
-        if ([self isUser]) {
-            residency.isActive = @YES;
-            residency.isAdmin = @YES;
-        }
-    }
-    
-    return residency;
-}
-
-
-- (OMembership *)rootMembership
-{
-    OMembership *rootMembership = nil;
-    OOrigo *memberRoot = [[OMeta m].context entityWithId:self.origoId];
-    
-    if (memberRoot) {
-        rootMembership = [memberRoot.memberships allObjects][0];
-    }
-    
-    return rootMembership;
-}
-
-
-- (NSSet *)origoMemberships
-{
-    NSMutableSet *origoMemberships = [[NSMutableSet alloc] init];
-    
-    for (OMembership *membership in self.memberships) {
-        if (![membership.origo isOfType:kOrigoTypeMemberRoot] &&
-            ![membership.origo isOfType:kOrigoTypeResidence]) {
-            [origoMemberships addObject:membership];
-        }
-    }
-    
-    return origoMemberships;
+    return ([self.dateOfBirth yearsBeforeNow] >= kAgeThresholdTeen);
 }
 
 
@@ -240,7 +314,7 @@
 {
     BOOL isMember = NO;
     
-    for (OMembership *membership in self.memberships) {
+    for (OMembership *membership in [self exposedMemberships]) {
         isMember = isMember || [membership.origo isOfType:origoType];
     }
     
@@ -248,26 +322,59 @@
 }
 
 
-#pragma mark - Comparison
-
-- (NSComparisonResult)compare:(OMember *)other
+- (BOOL)hasAddress
 {
-    NSComparisonResult result = [self.name localizedCaseInsensitiveCompare:other.name];
+    BOOL hasAddress = NO;
     
-    if ([OState s].viewIsMemberList && [OState s].aspectIsResidence) {
-        BOOL thisMemberIsMinor = [self isMinor];
-        BOOL otherMemberIsMinor = [other isMinor];
-        
-        if (thisMemberIsMinor != otherMemberIsMinor) {
-            if (thisMemberIsMinor && !otherMemberIsMinor) {
-                result = NSOrderedDescending;
-            } else {
-                result = NSOrderedAscending;
-            }
+    for (OMembership *residency in [self exposedResidencies]) {
+        hasAddress = hasAddress || [residency.residence hasValueForKey:kPropertyKeyAddress];
+    }
+    
+    return hasAddress;
+}
+
+
+- (BOOL)hasWard:(OMember *)candidate
+{
+    return [[self wards] containsObject:candidate];
+}
+
+
+- (BOOL)hasHousemate:(OMember *)candidate
+{
+    return [[self housemates] containsObject:candidate];
+}
+
+
+#pragma mark - Redundancy handling
+
+- (void)extricateIfRedundant
+{
+    BOOL isRedundant = ![self isUser];
+    
+    if (isRedundant) {
+        for (OMembership *membership in [[OMeta m].user exposedMemberships]) {
+            isRedundant = isRedundant && ![membership.origo indirectlyKnowsAboutMember:self];
         }
     }
     
-    return result;
+    if (isRedundant) {
+        for (OOrigo *residence in [self housemateResidences]) {
+            for (OMembership *residency in [residence exposedResidencies]) {
+                [[OMeta m].context deleteObject:residency];
+                [residency.resident extricateIfRedundant];
+                //[[OMeta m].context deleteObject:residency.resident];
+            }
+
+            if ([residence hasAssociateMember:[OMeta m].user]) {
+                [[residence membershipForMember:[OMeta m].user] expire];
+            }
+            
+            [[OMeta m].context deleteObject:residence];
+        }
+        
+        [[OMeta m].context deleteObject:self];
+    }
 }
 
 @end

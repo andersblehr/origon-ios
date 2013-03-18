@@ -48,14 +48,6 @@ NSString * const kIconFileInfant = @"76-baby_black.png";
 NSString * const kPrefixDateProperty = @"date";
 NSString * const kPrefixOrigoType = @"origoType";
 
-NSString * const kOrigoTypeMemberRoot = @"origoTypeMemberRoot";
-NSString * const kOrigoTypeResidence = @"origoTypeResidence";
-NSString * const kOrigoTypeOrganisation = @"origoTypeOrganisation";
-NSString * const kOrigoTypeSchoolClass = @"origoTypeSchoolClass";
-NSString * const kOrigoTypePreschoolClass = @"origoTypePreschoolClass";
-NSString * const kOrigoTypeSportsTeam = @"origoTypeSportsTeam";
-NSString * const kOrigoTypeOther = @"origoTypeDefault";
-
 NSString * const kInputKeyActivate = @"activate";
 NSString * const kInputKeyActivationCode = @"activationCode";
 NSString * const kInputKeyAuthEmail = @"authEmail";
@@ -72,12 +64,19 @@ NSString * const kPropertyKeyCountry = @"country";
 NSString * const kPropertyKeyDateOfBirth = @"dateOfBirth";
 NSString * const kPropertyKeyEmail = @"email";
 NSString * const kPropertyKeyEntityId = @"entityId";
-NSString * const kPropertyKeyIsGhost = @"isGhost";
+NSString * const kPropertyKeyHashCode = @"hashCode";
+NSString * const kPropertyKeyIsExpired = @"isExpired";
 NSString * const kPropertyKeyMobilePhone = @"mobilePhone";
 NSString * const kPropertyKeyName = @"name";
-NSString * const kPropertyKeyOrigo = @"origo";
 NSString * const kPropertyKeyOrigoId = @"origoId";
 NSString * const kPropertyKeyTelephone = @"telephone";
+
+NSString * const kRelationshipKeyAssociateMember = @"associateMember";
+NSString * const kRelationshipKeyAssociateOrigo = @"associateOrigo";
+NSString * const kRelationshipKeyMember = @"member";
+NSString * const kRelationshipKeyOrigo = @"origo";
+NSString * const kRelationshipKeyResidence = @"residence";
+NSString * const kRelationshipKeyResident = @"resident";
 
 NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
 NSString * const kDefaultsKeyDirtyEntities = @"origo.dirtyEntities";
@@ -97,6 +96,10 @@ static OMeta *m = nil;
 
 
 @interface OMeta ()
+
+@property (nonatomic) BOOL userIsAllSet;
+@property (nonatomic) BOOL userIsSignedIn;
+@property (nonatomic) BOOL userIsRegistered;
 
 @property (strong, nonatomic) NSString *authToken;
 @property (strong, nonatomic) OEntityReplicator *replicator;
@@ -227,12 +230,13 @@ static OMeta *m = nil;
 {
     [self setUserDefault:_authTokenExpiryDate forKey:kDefaultsKeyAuthExpiryDate];
     
-    _user = [self.context entityWithId:_userId];
+    _user = [self.context fetchEntityWithId:_userId];
     
     if (_user) {
         [self.replicator loadUserReplicationState];
     } else {
-        _user = [self.context insertMemberEntityWithEmail:_userEmail];
+        _user = [self.context insertMemberEntity];
+        _user.email = _userEmail;
     }
 }
 
@@ -251,37 +255,6 @@ static OMeta *m = nil;
     _lastReplicationDate = nil;
     
     [(OAppDelegate *)[UIApplication sharedApplication].delegate releasePersistentStore];
-}
-
-
-- (BOOL)userIsAllSet
-{
-    return ([self userIsSignedIn] && [self userIsRegistered]);
-}
-
-
-- (BOOL)userIsSignedIn
-{
-    if (!_user) {
-        _authTokenExpiryDate = [self userDefaultForKey:kDefaultsKeyAuthExpiryDate];
-        
-        if (_authTokenExpiryDate) {
-            NSDate *now = [NSDate date];
-            
-            if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
-                _authToken = [self generateAuthToken:_authTokenExpiryDate];
-                _user = [self.context entityWithId:_userId];
-            }
-        }
-    }
-    
-    return (_user != nil);
-}
-
-
-- (BOOL)userIsRegistered
-{
-    return ([_user hasValueForKey:kPropertyKeyMobilePhone] && [_user hasAddress]);
 }
 
 
@@ -323,7 +296,7 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - Accessors overrides
+#pragma mark - Custom accessors
 
 - (void)setUserId:(NSString *)userId
 {
@@ -367,6 +340,36 @@ static OMeta *m = nil;
     } else {
         [self setGlobalDefault:nil forKey:kDefaultsKeyUserEmail];
     }
+}
+
+- (BOOL)userIsAllSet
+{
+    return (self.userIsSignedIn && self.userIsRegistered);
+}
+
+
+- (BOOL)userIsSignedIn
+{
+    if (!_user) {
+        _authTokenExpiryDate = [self userDefaultForKey:kDefaultsKeyAuthExpiryDate];
+        
+        if (_authTokenExpiryDate) {
+            NSDate *now = [NSDate date];
+            
+            if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
+                _authToken = [self generateAuthToken:_authTokenExpiryDate];
+                _user = [self.context fetchEntityWithId:_userId];
+            }
+        }
+    }
+    
+    return (_user != nil);
+}
+
+
+- (BOOL)userIsRegistered
+{
+    return ([_user hasValueForKey:kPropertyKeyMobilePhone] && [_user hasAddress]);
 }
 
 

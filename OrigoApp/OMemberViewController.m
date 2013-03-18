@@ -57,7 +57,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if (emailIsEligible && self.state.actionIsRegister && !self.state.aspectIsSelf) {
         NSString *email = [_emailField finalText];
         
-        _candidate = [[OMeta m].context memberEntityWithEmail:email];
+        _candidate = [[OMeta m].context fetchMemberEntityWithEmail:email];
         
         if (_candidate) {
             if ([_origo hasMember:_candidate]) {
@@ -76,7 +76,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 _dateOfBirthField.text = [_candidate.dateOfBirth localisedDateString];
                 _gender = _candidate.gender;
                 
-                if (_candidate.activeSince) {
+                if ([_candidate isActive]) {
                     self.detailCell.editing = NO;
                 }
             }
@@ -93,7 +93,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if (_candidate) {
             _member = _candidate;
         } else {
-            _member = [[OMeta m].context insertMemberEntityWithEmail:[_emailField finalText]];
+            _member = [[OMeta m].context insertMemberEntity];
         }
     }
     
@@ -123,10 +123,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if (self.state.aspectIsSelf && ![_origo hasValueForKey:kPropertyKeyAddress]) {
             [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_membership dismisser:self.dismisser];
         } else {
-            if (self.state.aspectIsSelf) {
-                _member.activeSince = [NSDate date];
-            }
-            
             [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
         }
     }
@@ -335,8 +331,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     _mobilePhoneField = [self.detailCell textFieldForKey:kPropertyKeyMobilePhone];
     _emailField = [self.detailCell textFieldForKey:kPropertyKeyEmail];
     _gender = _member.gender;
-    
-    OLogState;
 }
 
 
@@ -344,11 +338,11 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (BOOL)canEdit
 {
-    BOOL memberIsUserAndTeen = ([_member isUser] && [_member isTeenOrOlder]);
-    BOOL memberIsWardOfUser = [[[OMeta m].user wards] containsObject:_member];
-    BOOL membershipIsInactiveAndUserIsAdmin = ([_origo userIsAdmin] && ![_membership.isActive boolValue]);
+    BOOL isUserAndTeenOrOlder = ([_member isUser] && [_member isTeenOrOlder]);
+    BOOL isWardOfUser = [[[OMeta m].user wards] containsObject:_member];
+    BOOL userIsAdminOrCreator = ([_origo userIsAdmin] || [_origo userIsCreator]);
     
-    return (memberIsUserAndTeen || memberIsWardOfUser || membershipIsInactiveAndUserIsAdmin);
+    return (isUserAndTeenOrOlder || isWardOfUser || (![_member isActive] && userIsAdminOrCreator));
 }
 
 
@@ -402,7 +396,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     [self setData:memberDataSource forSectionWithKey:kMemberSectionKey];
     
     if (self.state.actionIsDisplay) {
-        [self setData:_member.residencies forSectionWithKey:kAddressSectionKey];
+        [self setData:[_member exposedResidencies] forSectionWithKey:kAddressSectionKey];
     }
 }
 
@@ -418,7 +412,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     NSString *text = nil;
     
     if (sectionKey == kAddressSectionKey) {
-        if ([_member.residencies count] == 1) {
+        if ([[_member exposedResidencies] count] == 1) {
             text = [OStrings stringForKey:strTermAddress];
         } else {
             text = [OStrings stringForKey:strHeaderAddresses];

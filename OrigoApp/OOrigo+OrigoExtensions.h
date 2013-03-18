@@ -8,14 +8,29 @@
 
 #import "OOrigo.h"
 
-@class OMember;
+extern NSString * const kOrigoTypeMemberRoot;
+extern NSString * const kOrigoTypeResidence;
+extern NSString * const kOrigoTypeOrganisation;
+extern NSString * const kOrigoTypeSchoolClass;
+extern NSString * const kOrigoTypePreschoolClass;
+extern NSString * const kOrigoTypeSportsTeam;
+extern NSString * const kOrigoTypeOther;
+
+@class OMember, OMembership;
 
 @interface OOrigo (OrigoExtensions)
+
+- (NSComparisonResult)compare:(OOrigo *)other;
 
 - (NSString *)displayAddress;
 - (NSString *)displayPhoneNumber;
 - (UIImage *)displayImage;
 
+- (NSSet *)exposedMemberships;
+- (NSSet *)exposedResidencies;
+
+- (id)membershipForMember:(OMember *)member;
+- (id)addAssociateMember:(OMember *)member;
 - (id)addMember:(OMember *)member;
 - (id)addResident:(OMember *)resident;
 
@@ -23,11 +38,12 @@
 - (BOOL)hasAdmin;
 - (BOOL)hasMember:(OMember *)member;
 - (BOOL)hasAssociateMember:(OMember *)member;
+- (BOOL)indirectlyKnowsAboutMember:(OMember *)member;
 
 - (BOOL)userCanEdit;
 - (BOOL)userIsAdmin;
 - (BOOL)userIsMember;
 
-- (NSComparisonResult)compare:(OOrigo *)other;
+- (void)extricateIfRedundant;
 
 @end

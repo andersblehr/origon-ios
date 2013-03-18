@@ -24,8 +24,8 @@ static NSString * const kSegueToMemberView = @"segueFromMemberListToMemberView";
 static NSString * const kSegueToOrigoView = @"segueFromMemberListToOrigoView";
 
 static NSInteger const kOrigoSectionKey = 0;
-static NSInteger const kContactSection = 1;
-static NSInteger const kMemberSection = 2;
+static NSInteger const kContactSectionKey = 1;
+static NSInteger const kMemberSectionKey = 2;
 
 static NSInteger const kHousemateSheetTag = 0;
 
@@ -108,14 +108,6 @@ static NSInteger const kHousemateSheetTag = 0;
 }
 
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    OLogState;
-}
-
-
 #pragma mark - UIViewController overrides
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -153,8 +145,8 @@ static NSInteger const kHousemateSheetTag = 0;
     }
     
     [self setData:_origo forSectionWithKey:kOrigoSectionKey];
-    [self setData:contactMemberships forSectionWithKey:kContactSection];
-    [self setData:regularMemberships forSectionWithKey:kMemberSection];
+    [self setData:contactMemberships forSectionWithKey:kContactSectionKey];
+    [self setData:regularMemberships forSectionWithKey:kMemberSectionKey];
 }
 
 
@@ -168,9 +160,9 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     NSString *text = nil;
     
-    if (sectionKey == kContactSection) {
+    if (sectionKey == kContactSectionKey) {
         text = [OStrings stringForKey:strHeaderContacts];
-    } else if (sectionKey == kMemberSection) {
+    } else if (sectionKey == kMemberSectionKey) {
         if ([_origo isOfType:kOrigoTypeResidence]) {
             text = [OStrings stringForKey:strHeaderHouseholdMembers];
         } else {
@@ -206,7 +198,7 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     if (sectionKey == kOrigoSectionKey) {
         [self performSegueWithIdentifier:kSegueToOrigoView sender:self];
-    } else {
+    } else if ((sectionKey == kContactSectionKey) || (sectionKey == kMemberSectionKey)) {
         [self performSegueWithIdentifier:kSegueToMemberView sender:self];
     }
 }

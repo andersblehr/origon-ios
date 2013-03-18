@@ -15,25 +15,25 @@
 - (OMember *)asMember;
 - (OOrigo *)asOrigo;
 - (OMembership *)asMembership;
-- (OMemberResidency *)asMemberResidency;
 
 - (BOOL)hasValueForKey:(NSString *)key;
+- (id)mappedValueForKey:(NSString *)key;
 - (id)serialisableValueForKey:(NSString *)key;
 - (void)setDeserialisedValue:(id)value forKey:(NSString *)key;
 
 - (NSDictionary *)toDictionary;
 - (NSString *)computeHashCode;
 - (void)internaliseRelationships;
-- (void)makeGhost;
 
-- (BOOL)propertyForKeyIsTransient:(NSString *)key;
 - (BOOL)userIsCreator;
 - (BOOL)isReplicated;
 - (BOOL)isDirty;
+- (BOOL)isTransient;
+- (BOOL)isTransientProperty:(NSString *)key;
 
-- (NSString *)entityRefIdForOrigo:(OOrigo *)origo;
-- (OReplicatedEntityRef *)entityRefForOrigo:(OOrigo *)origo;
-
+- (BOOL)shouldReplicateOnExpiry;
+- (BOOL)hasExpired;
+- (void)expire;
 - (NSString *)expiresInTimeframe;
 
 @end

@@ -2,7 +2,7 @@
 //  OMembership.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 14.02.13.
+//  Created by Anders Blehr on 15.03.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "OReplicatedEntity.h"
 
-@class OMember, OOrigo;
+@class OMember, OOrigo, OResidencySchedule;
 
 @interface OMembership : OReplicatedEntity
 
@@ -18,9 +18,13 @@
 @property (nonatomic, retain) NSString * contactType;
 @property (nonatomic, retain) NSNumber * isActive;
 @property (nonatomic, retain) NSNumber * isAdmin;
-@property (nonatomic, retain) OMember *member;
-@property (nonatomic, retain) OOrigo *origo;
+@property (nonatomic, retain) NSString * type;
 @property (nonatomic, retain) OMember *associateMember;
 @property (nonatomic, retain) OOrigo *associateOrigo;
+@property (nonatomic, retain) OMember *member;
+@property (nonatomic, retain) OOrigo *origo;
+@property (nonatomic, retain) OMember *resident;
+@property (nonatomic, retain) OOrigo *residence;
+@property (nonatomic, retain) OResidencySchedule *residencySchedule;
 
 @end

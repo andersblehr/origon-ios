@@ -2,13 +2,14 @@
 //  OMembership.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 14.02.13.
+//  Created by Anders Blehr on 15.03.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
 #import "OMembership.h"
 #import "OMember.h"
 #import "OOrigo.h"
+#import "OResidencySchedule.h"
 
 
 @implementation OMembership
@@ -17,9 +18,13 @@
 @dynamic contactType;
 @dynamic isActive;
 @dynamic isAdmin;
-@dynamic member;
-@dynamic origo;
+@dynamic type;
 @dynamic associateMember;
 @dynamic associateOrigo;
+@dynamic member;
+@dynamic origo;
+@dynamic resident;
+@dynamic residence;
+@dynamic residencySchedule;
 
 @end

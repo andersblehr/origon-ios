@@ -44,19 +44,11 @@
 }
 
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    OLogState;
-}
-
-
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
     
-    if (![[OMeta m] userIsSignedIn]) {
+    if (![OMeta m].userIsSignedIn) {
         self.tabBarController.selectedIndex = kTabBarOrigo;
     }
 }

@@ -2,7 +2,7 @@
 //  OReplicatedEntity.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 31.01.13.
+//  Created by Anders Blehr on 13.03.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -11,13 +11,13 @@
 
 @implementation OReplicatedEntity
 
+@dynamic createdBy;
 @dynamic dateCreated;
 @dynamic dateExpires;
 @dynamic dateReplicated;
 @dynamic entityId;
 @dynamic hashCode;
-@dynamic isGhost;
+@dynamic isExpired;
 @dynamic origoId;
-@dynamic createdBy;
 
 @end

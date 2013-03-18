@@ -27,7 +27,6 @@
 - (void)loadUserReplicationState;
 - (void)resetUserReplicationState;
 
-- (NSArray *)dirtyEntitiesAsDictionaries;
 - (void)stageEntity:(OReplicatedEntity *)entity;
 - (void)stageRelationshipRefs:(NSDictionary *)relationshipRefs forEntity:(OReplicatedEntity *)entity;
 - (OReplicatedEntity *)stagedEntityWithId:(NSString *)entityId;

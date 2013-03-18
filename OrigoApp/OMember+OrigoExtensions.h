@@ -10,29 +10,37 @@
 
 @interface OMember (OrigoExtensions)
 
+- (NSComparisonResult)compare:(OMember *)other;
+
 - (NSString *)displayNameAndAge;
 - (NSString *)displayContactDetails;
 - (UIImage *)displayImage;
 
-- (BOOL)isUser;
-- (BOOL)isFemale;
-- (BOOL)isMale;
-- (BOOL)isMinor;
-- (BOOL)isTeenOrOlder;
-- (BOOL)isOfPreschoolAge;
-
-- (BOOL)hasAddress;
-- (BOOL)hasWard:(OMember *)ward;
+- (OMembership *)initialResidency;
+- (OMembership *)rootMembership;
+- (NSSet *)exposedMemberships;
+- (NSSet *)exposedResidencies;
+- (NSSet *)exposedParticipancies;
 
 - (NSSet *)wards;
 - (NSSet *)housemates;
 - (NSSet *)housemateResidences;
 
-- (OMemberResidency *)initialResidency;
-- (OMembership *)rootMembership;
-- (NSSet *)origoMemberships;
+- (BOOL)isActive;
+- (void)makeActive;
+
+- (BOOL)isUser;
+- (BOOL)isFemale;
+- (BOOL)isMale;
+- (BOOL)isMinor;
+- (BOOL)isOfPreschoolAge;
+- (BOOL)isTeenOrOlder;
 - (BOOL)isMemberOfOrigoOfType:(NSString *)origoType;
 
-- (NSComparisonResult)compare:(OMember *)other;
+- (BOOL)hasAddress;
+- (BOOL)hasWard:(OMember *)candidate;
+- (BOOL)hasHousemate:(OMember *)candidate;
+
+- (void)extricateIfRedundant;
 
 @end

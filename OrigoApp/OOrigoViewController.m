@@ -10,6 +10,7 @@
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
 
+#import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
@@ -18,7 +19,7 @@
 #import "OTextField.h"
 #import "OTextView.h"
 
-#import "OMember.h"
+#import "OMember+OrigoExtensions.h"
 #import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
 
@@ -51,9 +52,7 @@ static NSInteger const kOrigoSection = 0;
         _origo.telephone = [_telephoneField finalText];
         
         if (self.state.actionIsRegister) {
-            if (_membership) {
-                _member.activeSince = [NSDate date];
-            } else {
+            if (!_membership) {
                 if ([_origo isOfType:kOrigoTypeResidence]) {
                     _membership = [_origo addResident:_member];
                 } else {
@@ -63,6 +62,11 @@ static NSInteger const kOrigoSection = 0;
             
             [self.view endEditing:YES];
             [self presentModalViewControllerWithIdentifier:kMemberListViewControllerId data:_membership dismisser:self.dismisser];
+            
+            if ([_member isUser]) {
+                [[OMeta m].user makeActive];
+                [[OMeta m].replicator replicate];
+            }
         } else if (self.state.actionIsEdit) {
             [self toggleEditMode];
         }
@@ -104,8 +108,6 @@ static NSInteger const kOrigoSection = 0;
     
     _addressView = [self.detailCell textFieldForKey:kPropertyKeyAddress];
     _telephoneField = [self.detailCell textFieldForKey:kPropertyKeyTelephone];
-    
-    OLogState;
 }
 
 
