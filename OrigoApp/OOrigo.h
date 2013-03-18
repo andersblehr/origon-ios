@@ -2,7 +2,7 @@
 //  OOrigo.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 25.02.13.
+//  Created by Anders Blehr on 15.03.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -10,17 +10,17 @@
 #import <CoreData/CoreData.h>
 #import "OReplicatedEntity.h"
 
-@class ODocumentRepository, OEvent, OEventOrigoInvitation, OMemberResidency, OMembership, OMessageBoard, OOrigo, OToDoItem, OYearlySchedule;
+@class ODocumentRepository, OEvent, OEventOrigoInvitation, OMembership, OMessageBoard, OOrigo, OToDoItem, OYearlySchedule;
 
 @interface OOrigo : OReplicatedEntity
 
 @property (nonatomic, retain) NSString * address;
+@property (nonatomic, retain) NSString * countryCode;
 @property (nonatomic, retain) NSString * descriptionText;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSData * photo;
 @property (nonatomic, retain) NSString * telephone;
 @property (nonatomic, retain) NSString * type;
-@property (nonatomic, retain) NSString * country;
 @property (nonatomic, retain) NSSet *associateMemberships;
 @property (nonatomic, retain) NSSet *documentRepositories;
 @property (nonatomic, retain) NSSet *eventInvitations;
@@ -71,8 +71,8 @@
 - (void)addMessageBoards:(NSSet *)values;
 - (void)removeMessageBoards:(NSSet *)values;
 
-- (void)addResidenciesObject:(OMemberResidency *)value;
-- (void)removeResidenciesObject:(OMemberResidency *)value;
+- (void)addResidenciesObject:(OMembership *)value;
+- (void)removeResidenciesObject:(OMembership *)value;
 - (void)addResidencies:(NSSet *)values;
 - (void)removeResidencies:(NSSet *)values;
 

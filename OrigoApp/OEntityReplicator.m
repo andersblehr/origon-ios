@@ -14,7 +14,9 @@
 #import "OMeta.h"
 #import "OServerConnection.h"
 
+#import "OMember+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
+
 
 @implementation OEntityReplicator
 
@@ -39,6 +41,18 @@
 }
 
 
+- (NSArray *)dirtyEntitiesAsDictionaries
+{
+    NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
+    
+    for (OReplicatedEntity *entity in [self dirtyEntities]) {
+        [entityDictionaries addObject:[entity toDictionary]];
+    }
+    
+    return entityDictionaries;
+}
+
+
 #pragma mark - Initialisation
 
 - (id)init
@@ -50,7 +64,7 @@
         _stagedEntities = [[NSMutableDictionary alloc] init];
         _stagedRelationshipRefs = [[NSMutableDictionary alloc] init];
         
-        if ([[OMeta m] userIsSignedIn]) {
+        if ([OMeta m].userIsSignedIn) {
             [self loadUserReplicationState];
         }
     }
@@ -63,7 +77,7 @@
 
 - (BOOL)needsReplication
 {
-    return ([[self dirtyEntities] count] > 0);
+    return ([[OMeta m].user isActive] && ([[self dirtyEntities] count] > 0));
 }
 
 
@@ -77,9 +91,11 @@
 
 - (void)replicate
 {
-    [[[OServerConnection alloc] init] replicate];
+    [[[OServerConnection alloc] init] replicate:[self dirtyEntitiesAsDictionaries]];
 }
 
+
+#pragma mark - Maintaining user replication state
 
 - (void)saveUserReplicationState
 {
@@ -125,18 +141,6 @@
 
 
 #pragma mark - Replication staging
-
-- (NSArray *)dirtyEntitiesAsDictionaries
-{
-    NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
-    
-    for (OReplicatedEntity *entity in [self dirtyEntities]) {
-        [entityDictionaries addObject:[entity toDictionary]];
-    }
-    
-    return entityDictionaries;
-}
-
 
 - (void)stageEntity:(OReplicatedEntity *)entity
 {
@@ -188,7 +192,7 @@
         NSDate *now = [NSDate date];
         
         for (OReplicatedEntity *entity in _dirtyEntities) {
-            if ([entity.isGhost boolValue]) {
+            if ([entity isTransient]) {
                 [[OMeta m].context deleteObject:entity];
             } else {
                 entity.dateReplicated = now;

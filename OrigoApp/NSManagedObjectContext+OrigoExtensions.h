@@ -8,22 +8,21 @@
 
 #import <CoreData/CoreData.h>
 
-@class OMember, OOrigo, OReplicatedEntity;
+@class OMember, OMembership, OOrigo, OReplicatedEntity;
 
 @interface NSManagedObjectContext (OrigoExtensions)
 
-- (OOrigo *)insertOrigoEntityOfType:(NSString *)type;
-- (OMember *)insertMemberEntityWithEmail:(NSString *)email;
+- (id)insertMemberEntity;
+- (id)insertOrigoEntityOfType:(NSString *)origoType;
+- (id)insertMembershipEntityForMember:(OMember *)member inOrigo:(OOrigo *)origo;
+- (id)fetchMemberEntityWithEmail:(NSString *)email;
 
-- (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo;
-- (id)insertEntityForClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
-- (id)insertEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo;
+- (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo;
+- (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
+- (id)insertExpiryReferenceForMembership:(OMembership *)membership;
+- (id)fetchEntityWithId:(NSString *)entityId;
 
 - (void)save;
 - (void)saveServerReplicas:(NSArray *)replicaDictionaries;
-
-- (id)entityWithId:(NSString *)entityId;
-- (id)memberEntityWithEmail:(NSString *)email;
-- (void)deleteEntity:(OReplicatedEntity *)entity;
 
 @end

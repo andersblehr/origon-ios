@@ -15,16 +15,92 @@
 #import "OStrings.h"
 
 #import "OMember+OrigoExtensions.h"
-#import "OMemberResidency.h"
 #import "OMembership+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
+#import "OReplicatedEntityRef.h"
+
+NSString * const kOrigoTypeMemberRoot = @"origoTypeMemberRoot";
+NSString * const kOrigoTypeResidence = @"origoTypeResidence";
+NSString * const kOrigoTypeOrganisation = @"origoTypeOrganisation";
+NSString * const kOrigoTypeSchoolClass = @"origoTypeSchoolClass";
+NSString * const kOrigoTypePreschoolClass = @"origoTypePreschoolClass";
+NSString * const kOrigoTypeSportsTeam = @"origoTypeSportsTeam";
+NSString * const kOrigoTypeOther = @"origoTypeDefault";
 
 
 @implementation OOrigo (OrigoExtensions)
 
 #pragma mark - Auxiliary methods
 
-- (OMembership *)membershipForMember:(OMember *)member
+- (id)addMember:(OMember *)member isAssociate:(BOOL)isAssociate
+{
+    OMembership *membership = [self membershipForMember:member];
+
+    if (membership) {
+        if ([membership isAssociate] && !isAssociate) {
+            [membership makeStandard];
+        }
+    } else {
+        membership = [[OMeta m].context insertMembershipEntityForMember:member inOrigo:self];
+        
+        if (isAssociate) {
+            [membership makeAssociate];
+        }
+    }
+    
+    return membership;
+}
+
+
+#pragma mark - Selector implementations
+
+- (NSComparisonResult)compare:(OOrigo *)other
+{
+    NSComparisonResult result = NSOrderedSame;
+    
+    if ([self isOfType:kOrigoTypeResidence]) {
+        result = [self.address localizedCaseInsensitiveCompare:other.address];
+    } else {
+        result = [self.name localizedCaseInsensitiveCompare:other.name];
+    }
+    
+    return result;
+}
+
+
+#pragma mark - Accessing & adding memberships
+
+- (NSSet *)exposedMemberships
+{
+    NSMutableSet *exposedMemberships = [[NSMutableSet alloc] init];
+    
+    if (![self isOfType:kOrigoTypeMemberRoot]) {
+        for (OMembership *membership in self.memberships) {
+            if (![membership hasExpired]) {
+                [exposedMemberships addObject:membership];
+            }
+        }
+    }
+    
+    return exposedMemberships;
+}
+
+
+- (NSSet *)exposedResidencies
+{
+    NSMutableSet *exposedResidencies = [[NSMutableSet alloc] init];
+    
+    for (OMembership *membership in [self exposedMemberships]) {
+        if ([membership isResidency]) {
+            [exposedResidencies addObject:membership];
+        }
+    }
+    
+    return exposedResidencies;
+}
+
+
+- (id)membershipForMember:(OMember *)member
 {
     OMembership *membershipForMember = nil;
     
@@ -34,7 +110,7 @@
     for (OMembership *membership in allMemberships) {
         OMember *candidate = membership.member ? membership.member : membership.associateMember;
         
-        if (!membershipForMember && (candidate == member)) {
+        if (!membershipForMember && (candidate == member) && ![membership hasExpired]) {
             membershipForMember = membership;
         }
     }
@@ -43,63 +119,41 @@
 }
 
 
-- (void)createEntityRefsForMembership:(OMembership *)membership isAssociate:(BOOL)isAssociate
+- (id)addAssociateMember:(OMember *)member
 {
-    OMember *member = isAssociate ? membership.associateMember : membership.member;
-    
-    [[OMeta m].context insertEntityRefForEntity:member inOrigo:self];
-    
-    for (OMemberResidency *residency in member.residencies) {
-        if (residency.residence != self) {
-            OOrigo *residence = residency.residence;
-            
-            [[OMeta m].context insertEntityRefForEntity:residency inOrigo:self];
-            [[OMeta m].context insertEntityRefForEntity:residence inOrigo:self];
-            
-            if ([self isOfType:kOrigoTypeResidence] && !isAssociate) {
-                [[OMeta m].context insertEntityRefForEntity:membership inOrigo:residence];
-                [[OMeta m].context insertEntityRefForEntity:membership.origo inOrigo:residence];
-            }
-        }
-    }
-    
-    if (!isAssociate) {
-        for (OMember *housemate in [member housemates]) {
-            for (OMemberResidency *peerResidency in housemate.residencies) {
-                [self addMember:peerResidency.resident isAssociate:YES];
-                
-                if ([self isOfType:kOrigoTypeResidence]) {
-                    [peerResidency.residence addMember:member isAssociate:YES];
-                }
-            }
-        }
-    }
+    return [self addMember:member isAssociate:YES];
 }
 
 
-- (id)addMember:(OMember *)member isAssociate:(BOOL)isAssociate
+- (id)addMember:(OMember *)member
 {
-    OMembership *membership = [self membershipForMember:member];
-
-    if (membership) {
-        [membership alignAssociation:isAssociate];
+    id membership = nil;
+    
+    if ([self isOfType:kOrigoTypeResidence]) {
+        membership = [self addResident:member];
     } else {
-        membership = [[OMeta m].context insertEntityForClass:OMembership.class inOrigo:self];
-        
-        if (isAssociate) {
-            membership.associateMember = member;
-            membership.associateOrigo = membership.origo;
-            membership.origo = nil;
-        } else {
-            membership.member = member;
-        }
-        
-        if (![self isOfType:kOrigoTypeMemberRoot]) {
-            [self createEntityRefsForMembership:membership isAssociate:isAssociate];
-        }
+        membership = [self addMember:member isAssociate:NO];
     }
     
     return membership;
+}
+
+
+- (id)addResident:(OMember *)resident
+{
+    OMembership *residency = nil;
+    
+    if ([self isOfType:kOrigoTypeResidence]) {
+        residency = [self membershipForMember:resident];
+        
+        if (residency) {
+            [residency makeResidency];
+        } else {
+            residency = [[OMeta m].context insertMembershipEntityForMember:resident inOrigo:self];
+        }
+    }
+    
+    return residency;
 }
 
 
@@ -141,30 +195,6 @@
 }
 
 
-#pragma mark - Adding members
-
-- (id)addMember:(OMember *)member
-{
-    return [self addMember:member isAssociate:NO];
-}
-
-
-- (id)addResident:(OMember *)resident
-{
-    OMemberResidency *residency = [self isOfType:kOrigoTypeResidence] ? [[OMeta m].context insertEntityForClass:OMemberResidency.class inOrigo:self] : nil;
-    
-    if (residency) {
-        residency.member = resident;
-        residency.resident = resident;
-        residency.residence = residency.origo;
-        
-        [self createEntityRefsForMembership:residency isAssociate:NO];
-    }
-    
-    return residency;
-}
-
-
 #pragma mark - Origo meta information
 
 - (BOOL)isOfType:(NSString *)origoType
@@ -177,7 +207,7 @@
 {
     BOOL hasAdmin = NO;
     
-    for (OMembership *membership in self.memberships) {
+    for (OMembership *membership in [self exposedMemberships]) {
         hasAdmin = hasAdmin || [membership.isAdmin boolValue];
     }
     
@@ -201,6 +231,27 @@
 }
 
 
+- (BOOL)indirectlyKnowsAboutMember:(OMember *)member
+{
+    BOOL knowsAboutMember = NO;
+    OMembership *directMembership = [self membershipForMember:member];
+    
+    for (OMembership *membership in [self exposedMemberships]) {
+        if (membership != directMembership) {
+            for (OMembership *residency in [membership.member exposedResidencies]) {
+                if (residency.residence != self) {
+                    knowsAboutMember = knowsAboutMember || [residency.residence hasMember:member];
+                }
+            }
+        }
+    }
+    
+    return knowsAboutMember;
+}
+
+
+#pragma mark - User role information
+
 - (BOOL)userCanEdit
 {
     return ([self userIsAdmin] || (![self hasAdmin] && [self userIsCreator]));
@@ -209,7 +260,7 @@
 
 - (BOOL)userIsAdmin
 {
-    return [[self membershipForMember:[OMeta m].user].isAdmin boolValue];
+    return [[[self membershipForMember:[OMeta m].user] isAdmin] boolValue];
 }
 
 
@@ -219,19 +270,19 @@
 }
 
 
-#pragma mark - Comparison
+#pragma mark - Redundancy handling
 
-- (NSComparisonResult)compare:(OOrigo *)other
+- (void)extricateIfRedundant
 {
-    NSComparisonResult result = NSOrderedSame;
     
-    if ([self isOfType:kOrigoTypeResidence]) {
-        result = [self.address localizedCaseInsensitiveCompare:other.address];
-    } else {
-        result = [self.name localizedCaseInsensitiveCompare:other.name];
-    }
-    
-    return result;
+}
+
+
+#pragma mark - OReplicatedEntity (OrigoExtensions) overrides
+
+- (BOOL)isTransient
+{
+    return ([super isTransient] || ([self isOfType:kOrigoTypeMemberRoot] && (self != [[OMeta m].user rootMembership].origo)));
 }
 
 @end

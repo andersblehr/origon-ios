@@ -9,10 +9,6 @@
 #import <Foundation/Foundation.h>
 
 // Cross-view strings
-extern NSString * const strNameMyHousehold;
-extern NSString * const strNameOurHousehold;
-extern NSString * const strNameMyMessageBoard;
-extern NSString * const strNameOurMessageBoard;
 extern NSString * const strButtonOK;
 extern NSString * const strButtonEdit;
 extern NSString * const strButtonNext;
@@ -77,6 +73,7 @@ extern NSString * const strButtonNewHousemate;
 extern NSString * const strButtonDeleteMember;
 
 // OOrigoView strings
+extern NSString * const strDefaultResidenceName;
 extern NSString * const strViewTitleNewOrigo;
 extern NSString * const strLabelAddress;
 extern NSString * const strLabelCountry;
@@ -130,6 +127,7 @@ extern NSString * const strTabBarTitleTasks;
 
 // OMessageBoardView strings
 extern NSString * const strTabBarTitleMessages;
+extern NSString * const strDefaultMessageBoardName;
 
 // OSettingsView strings
 extern NSString * const strTabBarTitleSettings;

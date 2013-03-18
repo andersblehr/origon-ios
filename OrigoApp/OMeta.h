@@ -38,14 +38,6 @@ extern NSString * const kIconFileInfant;
 extern NSString * const kPrefixDateProperty;
 extern NSString * const kPrefixOrigoType;
 
-extern NSString * const kOrigoTypeMemberRoot;
-extern NSString * const kOrigoTypeResidence;
-extern NSString * const kOrigoTypeOrganisation;
-extern NSString * const kOrigoTypeSchoolClass;
-extern NSString * const kOrigoTypePreschoolClass;
-extern NSString * const kOrigoTypeSportsTeam;
-extern NSString * const kOrigoTypeOther;
-
 extern NSString * const kInputKeyActivate;
 extern NSString * const kInputKeyActivationCode;
 extern NSString * const kInputKeyAuthEmail;
@@ -62,12 +54,19 @@ extern NSString * const kPropertyKeyCountry;
 extern NSString * const kPropertyKeyDateOfBirth;
 extern NSString * const kPropertyKeyEmail;
 extern NSString * const kPropertyKeyEntityId;
-extern NSString * const kPropertyKeyIsGhost;
+extern NSString * const kPropertyKeyHashCode;
+extern NSString * const kPropertyKeyIsExpired;
 extern NSString * const kPropertyKeyMobilePhone;
 extern NSString * const kPropertyKeyName;
-extern NSString * const kPropertyKeyOrigo;
 extern NSString * const kPropertyKeyOrigoId;
 extern NSString * const kPropertyKeyTelephone;
+
+extern NSString * const kRelationshipKeyMember;
+extern NSString * const kRelationshipKeyOrigo;
+extern NSString * const kRelationshipKeyAssociateMember;
+extern NSString * const kRelationshipKeyAssociateOrigo;
+extern NSString * const kRelationshipKeyResidence;
+extern NSString * const kRelationshipKeyResident;
 
 extern NSString * const kDefaultsKeyAuthInfo;
 extern NSString * const kDefaultsKeyDirtyEntities;
@@ -86,6 +85,10 @@ extern NSString * const kDefaultsKeyStringDate;
 @property (strong, nonatomic) NSString *userId;
 @property (strong, nonatomic) NSString *userEmail;
 @property (strong, nonatomic, readonly) OMember *user;
+
+@property (nonatomic, readonly) BOOL userIsAllSet;
+@property (nonatomic, readonly) BOOL userIsSignedIn;
+@property (nonatomic, readonly) BOOL userIsRegistered;
 
 @property (strong, nonatomic, readonly) NSString *deviceId;
 @property (strong, nonatomic, readonly) NSString *authToken;
@@ -111,9 +114,6 @@ extern NSString * const kDefaultsKeyStringDate;
 
 - (void)userDidSignIn;
 - (void)userDidSignOut;
-- (BOOL)userIsAllSet;
-- (BOOL)userIsSignedIn;
-- (BOOL)userIsRegistered;
 
 - (void)setGlobalDefault:(id)globalDefault forKey:(NSString *)key;
 - (void)setUserDefault:(id)userDefault forKey:(NSString *)key;

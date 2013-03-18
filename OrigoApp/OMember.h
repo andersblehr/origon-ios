@@ -2,7 +2,7 @@
 //  OMember.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 14.02.13.
+//  Created by Anders Blehr on 15.03.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "OReplicatedEntity.h"
 
-@class ODevice, ODocument, OEvent, OEventInvitation, OMemberResidency, OMembership, OMessageItem, OScheduledAbsence, OToDoAssignment;
+@class ODevice, ODocument, OEvent, OEventInvitation, OMembership, OMessageItem, OScheduledAbsence, OToDoAssignment;
 
 @interface OMember : OReplicatedEntity
 
@@ -23,6 +23,7 @@
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * passwordHash;
 @property (nonatomic, retain) NSData * photo;
+@property (nonatomic, retain) NSSet *associateMemberships;
 @property (nonatomic, retain) NSSet *contactForEvents;
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;
@@ -32,10 +33,14 @@
 @property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @property (nonatomic, retain) NSSet *toDoAssignments;
-@property (nonatomic, retain) NSSet *associateMemberships;
 @end
 
 @interface OMember (CoreDataGeneratedAccessors)
+
+- (void)addAssociateMembershipsObject:(OMembership *)value;
+- (void)removeAssociateMembershipsObject:(OMembership *)value;
+- (void)addAssociateMemberships:(NSSet *)values;
+- (void)removeAssociateMemberships:(NSSet *)values;
 
 - (void)addContactForEventsObject:(OEvent *)value;
 - (void)removeContactForEventsObject:(OEvent *)value;
@@ -67,8 +72,8 @@
 - (void)addMessageItems:(NSSet *)values;
 - (void)removeMessageItems:(NSSet *)values;
 
-- (void)addResidenciesObject:(OMemberResidency *)value;
-- (void)removeResidenciesObject:(OMemberResidency *)value;
+- (void)addResidenciesObject:(OMembership *)value;
+- (void)removeResidenciesObject:(OMembership *)value;
 - (void)addResidencies:(NSSet *)values;
 - (void)removeResidencies:(NSSet *)values;
 
@@ -81,10 +86,5 @@
 - (void)removeToDoAssignmentsObject:(OToDoAssignment *)value;
 - (void)addToDoAssignments:(NSSet *)values;
 - (void)removeToDoAssignments:(NSSet *)values;
-
-- (void)addAssociateMembershipsObject:(OMembership *)value;
-- (void)removeAssociateMembershipsObject:(OMembership *)value;
-- (void)addAssociateMemberships:(NSSet *)values;
-- (void)removeAssociateMemberships:(NSSet *)values;
 
 @end

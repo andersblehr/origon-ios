@@ -21,7 +21,7 @@
     
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:delegate cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
     
-    if (tag != NSIntegerMax) {
+    if (tag != NSNotFound) {
         alert.tag = tag;
     }
     
@@ -39,11 +39,11 @@
 
 + (void)showAlertForError:(NSError *)error
 {
-    [self showAlertForError:error tagWith:NSIntegerMax delegate:nil];
+    [self showAlertForError:error tag:NSNotFound delegate:nil];
 }
 
 
-+ (void)showAlertForError:(NSError *)error tagWith:(int)tag delegate:(id)delegate
++ (void)showAlertForError:(NSError *)error tag:(int)tag delegate:(id)delegate
 {
     [self showAlertWithCode:[error code] message:[error localizedDescription] tag:tag delegate:delegate];
 }
@@ -51,11 +51,11 @@
 
 + (void)showAlertForHTTPStatus:(NSInteger)status
 {
-    [self showAlertForHTTPStatus:status tagWith:NSIntegerMax delegate:nil];
+    [self showAlertForHTTPStatus:status tag:NSNotFound delegate:nil];
 }
 
 
-+ (void)showAlertForHTTPStatus:(NSInteger)status tagWith:(int)tag delegate:(id)delegate
++ (void)showAlertForHTTPStatus:(NSInteger)status tag:(int)tag delegate:(id)delegate
 {
     [self showAlertWithCode:status message:[NSHTTPURLResponse localizedStringForStatusCode:status] tag:tag delegate:delegate];
 }

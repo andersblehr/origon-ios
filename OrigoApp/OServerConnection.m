@@ -216,7 +216,7 @@ static NSString * const kURLParameterVersion = @"version";
     _RESTHandler = kRESTHandlerStrings;
     _RESTRoute = [OMeta m].displayLanguage;
     
-    if ([[OMeta m] userIsSignedIn]) {
+    if ([OMeta m].userIsSignedIn) {
         [self setValue:[OMeta m].authToken forURLParameter:kURLParameterStringToken];
     } else {
         [self setValue:[self timestampToken] forURLParameter:kURLParameterStringToken];
@@ -244,14 +244,12 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-- (void)replicate
+- (void)replicate:(NSArray *)entityDictionaries
 {
     _RESTHandler = kRESTHandlerModel;
     
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
-    
-    NSArray *entityDictionaries = [[OMeta m].replicator dirtyEntitiesAsDictionaries];
     
     if ([entityDictionaries count]) {
         _RESTRoute = kRESTRouteModelReplicate;
@@ -304,7 +302,9 @@ static NSString * const kURLParameterVersion = @"version";
             [OMeta m].lastReplicationDate = replicationDate;
         }
     } else {
-        [OAlert showAlertForHTTPStatus:response.statusCode];
+        if (response.statusCode != kHTTPStatusUnauthorized) {
+            [OAlert showAlertForHTTPStatus:response.statusCode];
+        }
     }
     
     _HTTPResponse = response;

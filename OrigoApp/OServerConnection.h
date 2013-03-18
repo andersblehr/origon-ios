@@ -52,7 +52,7 @@ extern NSInteger const kHTTPStatusInternalServerError;
 
 - (void)fetchStrings:(id)delegate;
 - (void)authenticate:(id)delegate;
-- (void)replicate;
+- (void)replicate:(NSArray *)entityDictionaries;
 - (void)emailActivationCode:(id)delegate;
 
 @end

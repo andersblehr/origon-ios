@@ -22,7 +22,9 @@
 #import "OTextView.h"
 #import "OTableViewCellBlueprint.h"
 
-#import "OReplicatedEntity.h"
+#import "OMembership.h"
+#import "OOrigo+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 #import "OTabBarController.h"
 
@@ -42,7 +44,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
 - (void)initialiseInstance
 {
-    if (([OStrings hasStrings] && [[OMeta m] userIsAllSet]) || _isModal) {
+    if (([OStrings hasStrings] && [OMeta m].userIsAllSet) || _isModal) {
         _state = [[OState alloc] initForViewController:self];
         
         if (_isModal && self.modalImpliesRegistration) {
@@ -339,6 +341,10 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     _isPopped = (!_isPushed && !_isModal && !_wasHidden);
     _didJustLoad = NO;
     
+    if (![OStrings hasStrings]) {
+        [self.tabBarController.tabBar.items[kTabBarOrigo] setTitle:nil];
+    }
+    
     if (_isPopped || _needsReloadData) {
         [self reloadSectionsIfNeeded];
     }
@@ -352,13 +358,15 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     if (![OStrings hasStrings]) {
         [self.activityIndicator startAnimating];
         [OStrings fetchStrings:self];
-    } else if (![[OMeta m] userIsSignedIn]) {
+    } else if (![OMeta m].userIsSignedIn) {
         [self presentModalViewControllerWithIdentifier:kAuthViewControllerId data:nil dismisser:self];
     } else if (self.state.actionIsRegister) {
         [[self.detailCell nextInputFieldFromTextField:nil] becomeFirstResponder];
     } else if (self.detailCell) {
         self.detailCell.editable = self.canEdit;
     }
+    
+    OLogState;
 }
 
 
@@ -368,7 +376,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     
     _isHidden = (self.presentedViewController != nil);
     
-    if ([[OMeta m] userIsAllSet] && !_isHidden) {
+    if (!_isHidden) {
         [[OMeta m].replicator replicateIfNeeded];
     }
 }
@@ -514,18 +522,24 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 }
 
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return ([self.tableView cellForRowAtIndexPath:indexPath] != _detailCell);
+}
+
+
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         NSNumber *sectionKey = _sectionKeys[indexPath.section];
-        
         NSMutableArray *sectionData = _sectionData[sectionKey];
         OReplicatedEntity *entity = sectionData[indexPath.row];
         
-        [sectionData removeObjectAtIndex:indexPath.row];
         _sectionCounts[sectionKey] = @([_sectionCounts[sectionKey] integerValue] - 1);
-        [[OMeta m].context deleteEntity:entity];
+        [sectionData removeObjectAtIndex:indexPath.row];
+        [entity expire];
         
+        [[OMeta m].replicator replicateIfNeeded];
         [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
@@ -665,7 +679,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
 - (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier needsReloadData:(BOOL)needsReloadData
 {
-    _needsReloadData = [[OMeta m] userIsSignedIn] ? needsReloadData : NO;
+    _needsReloadData = [OMeta m].userIsSignedIn ? needsReloadData : NO;
     
     [self dismissViewControllerAnimated:YES completion:^{
         _needsReloadData = NO;

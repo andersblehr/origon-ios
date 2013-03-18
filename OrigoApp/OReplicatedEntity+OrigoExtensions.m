@@ -16,8 +16,9 @@
 #import "OMeta.h"
 
 #import "OMember.h"
-#import "OMemberResidency.h"
-#import "OOrigo.h"
+#import "OMembership.h"
+#import "OOrigo+OrigoExtensions.h"
+#import "OReplicatedEntityRef.h"
 
 
 @implementation OReplicatedEntity (OrigoExtensions)
@@ -55,13 +56,7 @@
 
 - (OMembership *)asMembership
 {
-    return [self isKindOfClass:OMembership.class] ? (OMembership *)self : nil;
-}
-
-
-- (OMemberResidency *)asMemberResidency
-{
-    return [self isMemberOfClass:OMemberResidency.class] ? (OMemberResidency *)self : nil;
+    return [self isMemberOfClass:OMembership.class] ? (OMembership *)self : nil;
 }
 
 
@@ -80,6 +75,12 @@
     }
     
     return hasValue;
+}
+
+
+- (id)mappedValueForKey:(NSString *)key
+{
+    return [self valueForKey:key];
 }
 
 
@@ -119,7 +120,7 @@
     [entityDictionary setObject:self.entity.name forKey:kJSONKeyEntityClass];
     
     for (NSString *attributeKey in [attributes allKeys]) {
-        if (![self propertyForKeyIsTransient:attributeKey]) {
+        if (![self isTransientProperty:attributeKey]) {
             id attributeValue = [self serialisableValueForKey:attributeKey];
             
             if (attributeValue) {
@@ -131,8 +132,8 @@
     for (NSString *relationshipKey in [relationships allKeys]) {
         NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
         
-        if (!relationship.isToMany && ![self propertyForKeyIsTransient:relationshipKey]) {
-            OReplicatedEntity *entity = [self valueForKey:relationshipKey];
+        if (!relationship.isToMany && ![self isTransientProperty:relationshipKey]) {
+            OReplicatedEntity *entity = [self mappedValueForKey:relationshipKey];
             
             if (entity) {
                 [entityDictionary setObject:[entity relationshipRef] forKey:relationshipKey];
@@ -155,7 +156,7 @@
     NSString *propertyString = @"";
     
     for (NSString *attributeKey in sortedAttributeKeys) {
-        if (![self propertyForKeyIsTransient:attributeKey]) {
+        if (![self isTransientProperty:attributeKey]) {
             id value = [self valueForKey:attributeKey];
             
             if (value) {
@@ -168,7 +169,7 @@
     for (NSString *relationshipKey in sortedRelationshipKeys) {
         NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
         
-        if (!relationship.isToMany && ![self propertyForKeyIsTransient:relationshipKey]) {
+        if (!relationship.isToMany && ![self isTransientProperty:relationshipKey]) {
             OReplicatedEntity *entity = [self valueForKey:relationshipKey];
             
             if (entity) {
@@ -195,7 +196,7 @@
         OReplicatedEntity *entity = [[OMeta m].replicator stagedEntityWithId:destinationId];
         
         if (!entity) {
-            entity = [[OMeta m].context entityWithId:destinationId];
+            entity = [[OMeta m].context fetchEntityWithId:destinationId];
         }
         
         if (entity) {
@@ -205,29 +206,11 @@
 }
 
 
-- (void)makeGhost
-{
-    self.isGhost = @YES;
-}
-
-
 #pragma mark - Meta information
-
-- (BOOL)propertyForKeyIsTransient:(NSString *)key
-{
-    return [key isEqualToString:@"hashCode"];
-}
-
 
 - (BOOL)userIsCreator
 {
     return ([self.createdBy isEqualToString:[OMeta m].userId]);
-}
-
-
-- (BOOL)isReplicated
-{
-    return (self.dateReplicated != nil);
 }
 
 
@@ -237,26 +220,51 @@
 }
 
 
-#pragma mark - Entity linking & deletion
-
-- (NSString *)entityRefIdForOrigo:(OOrigo *)origo
+- (BOOL)isReplicated
 {
-    return [self.entityId stringByAppendingString:origo.entityId separator:kSeparatorHash];
+    return (self.dateReplicated != nil);
 }
 
 
-- (OReplicatedEntityRef *)entityRefForOrigo:(OOrigo *)origo
+- (BOOL)isTransient
 {
-    return [[OMeta m].context entityWithId:[self entityRefIdForOrigo:origo]];
+    return ([self isKindOfClass:OReplicatedEntityRef.class] || [self hasExpired]);
 }
 
 
-#pragma mark - Miscellaneous
+- (BOOL)isTransientProperty:(NSString *)propertyKey
+{
+    return [propertyKey isEqualToString:kPropertyKeyHashCode];
+}
+
+
+#pragma mark - Entity expiration
+
+- (BOOL)shouldReplicateOnExpiry
+{
+    return (![self hasExpired] && [self isReplicated]);
+}
+
+
+- (BOOL)hasExpired
+{
+    return [self.isExpired boolValue] || self.isDeleted;
+}
+
+
+- (void)expire
+{
+    if ([self shouldReplicateOnExpiry]) {
+        self.isExpired = @YES;
+    } else {
+        [[OMeta m].context deleteObject:self];
+    }
+}
+
 
 - (NSString *)expiresInTimeframe
 {
-    NSEntityDescription *entity = self.entity;
-    NSString *expires = [entity.userInfo objectForKey:@"expires"];
+    NSString *expires = [self.entity.userInfo objectForKey:@"expires"];
     
     if (!expires) {
         // TODO: Keep track of and act on entity expiry dates

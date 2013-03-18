@@ -14,8 +14,6 @@
 
 @interface OAuthViewController : OTableViewController<UIAlertViewDelegate> {
 @private
-    BOOL _userIsListed;
-    
     OTextField *_emailField;
     OTextField *_passwordField;
     OTextField *_activationCodeField;

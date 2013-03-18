@@ -27,8 +27,6 @@
 #import "ODevice.h"
 #import "OMember+OrigoExtensions.h"
 #import "OMembership.h"
-#import "OMemberResidency.h"
-#import "OMessageBoard.h"
 #import "OOrigo+OrigoExtensions.h"
 
 static NSInteger const kAuthSection = 0;
@@ -155,8 +153,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         if (self.state.aspectIsSelf) {
             _numberOfActivationAttempts = 0;
             
-            [[[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] message:[OStrings stringForKey:strAlertTextActivationFailed] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil] show];
-
+            [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] message:[OStrings stringForKey:strAlertTextActivationFailed]];
             [self toggleAuthState];
         } else if (self.state.aspectIsEmail) {
             [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
@@ -167,7 +164,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)registerNewDevice
 {
-    ODevice *device = [[OMeta m].context insertEntityForClass:ODevice.class inOrigo:[[OMeta m].user rootMembership].origo entityId:[OMeta m].deviceId];
+    ODevice *device = [[OMeta m].context insertEntityOfClass:ODevice.class inOrigo:[[OMeta m].user rootMembership].origo entityId:[OMeta m].deviceId];
     device.type = [UIDevice currentDevice].model;
     device.displayName = [UIDevice currentDevice].name;
     device.member = [OMeta m].user;
@@ -241,11 +238,11 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)completeLogin
 {
-    if (![[OMeta m].context entityWithId:[OMeta m].deviceId]) {
+    if (![[OMeta m].context fetchEntityWithId:[OMeta m].deviceId]) {
         [self registerNewDevice];
     }
     
-    if (![[OMeta m] userIsRegistered]) {
+    if (![OMeta m].userIsRegistered) {
         [[OMeta m] setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
     }
     
@@ -260,8 +257,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _authInfo = data;
     
     if (self.state.aspectIsSelf) {
-        _userIsListed = [[_authInfo objectForKey:kJSONKeyIsListed] boolValue];
-        
         [[OMeta m] setGlobalDefault:[NSKeyedArchiver archivedDataWithRootObject:_authInfo] forKey:kDefaultsKeyAuthInfo];
         
         [self toggleAuthState];
@@ -281,33 +276,18 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)completeActivation
 {
-    [self registerNewDevice];
+    [OMeta m].user.passwordHash = [_authInfo objectForKey:kJSONKeyPasswordHash];
     
-    if (_userIsListed) {
-        OMembership *rootMembership = [[OMeta m].user rootMembership];
-        rootMembership.isActive = @YES;
-        rootMembership.isAdmin = @YES;
-        
-        for (OMemberResidency *residency in [OMeta m].user.residencies) {
-            residency.isActive = @YES;
-            
-            if (![[OMeta m].user isMinor]) {
-                residency.isAdmin = @YES;
-            }
-        }
+    if ([[_authInfo objectForKey:kJSONKeyIsListed] boolValue]) {
+        [[OMeta m].user makeActive];
     } else {
         OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
-        OMemberResidency *residency = [residence addResident:[OMeta m].user];
-        residency.isActive = @YES;
-        residency.isAdmin = @YES;
-        
-        OMessageBoard *residenceMessageBoard = [[OMeta m].context insertEntityForClass:OMessageBoard.class inOrigo:residence];
-        residenceMessageBoard.title = [OStrings stringForKey:strNameMyMessageBoard];
+        [residence addResident:[OMeta m].user];
     }
     
-    [OMeta m].user.passwordHash = [_authInfo objectForKey:kJSONKeyPasswordHash];
     [[OMeta m] setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
     
+    [self registerNewDevice];
     [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
 }
 
@@ -356,8 +336,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [self sendActivationCode];
         }
     }
-    
-    OLogState;
 }
 
 
@@ -541,8 +519,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         if (response.statusCode == kHTTPStatusUnauthorized) {
             [self.detailCell shakeCellShouldVibrate:YES];
             [_passwordField becomeFirstResponder];
-        } else {
-            [OAlert showAlertForHTTPStatus:response.statusCode];
         }
     }
 }

@@ -12,13 +12,14 @@
 #import "UITableView+OrigoExtensions.h"
 
 #import "OAlert.h"
+#import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
 
 #import "OMember+OrigoExtensions.h"
-#import "OMemberResidency.h"
+#import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 
@@ -129,7 +130,7 @@ static NSInteger const kUserRow = 0;
     
     self.title = @"Origo";
     
-    if ([[OMeta m] userIsAllSet] && ![_member isUser]) {
+    if ([OMeta m].userIsAllSet && ![_member isUser]) {
         self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
     }
@@ -140,7 +141,7 @@ static NSInteger const kUserRow = 0;
 {
     [super viewWillAppear:animated];
 
-    if ([[OMeta m] userIsAllSet]) {
+    if ([OMeta m].userIsAllSet) {
         if ([[OMeta m].user isTeenOrOlder]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
             self.navigationItem.rightBarButtonItem.action = @selector(addOrigo);
@@ -156,10 +157,8 @@ static NSInteger const kUserRow = 0;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
-    OLogState;
 
-    if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
+    if ([OMeta m].userIsSignedIn && ![OMeta m].userIsRegistered) {
         if ([[OMeta m] userDefaultForKey:kDefaultsKeyRegistrationAborted]) {
             [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
             
@@ -191,7 +190,7 @@ static NSInteger const kUserRow = 0;
 
 - (void)populateDataSource
 {
-    [self setData:[_member origoMemberships] forSectionWithKey:kOrigoSectionKey];
+    [self setData:[_member exposedParticipancies] forSectionWithKey:kOrigoSectionKey];
     
     if ([_member isUser]) {
         [self setData:[_member rootMembership] forSectionWithKey:kUserSectionKey];
@@ -258,7 +257,7 @@ static NSInteger const kUserRow = 0;
         if (indexPath.row == kUserRow) {
             cellText = [OStrings stringForKey:strTermMe];
         } else {
-            cellText = [entity asMemberResidency].residence.name;
+            cellText = [entity asMembership].residence.name;
         }
     } else if (sectionKey == kWardSectionKey) {
         cellText = [entity asMember].givenName;
@@ -279,7 +278,7 @@ static NSInteger const kUserRow = 0;
         if (indexPath.row == kUserRow) {
             cellDetails = [entity asMembership].member.name;
         } else {
-            cellDetails = [[entity asMemberResidency].residence displayAddress];
+            cellDetails = [[entity asMembership].residence displayAddress];
         }
     }
     
@@ -297,7 +296,7 @@ static NSInteger const kUserRow = 0;
         if (indexPath.row == kUserRow) {
             cellImage = [[entity asMembership].member displayImage];
         } else {
-            cellImage = [[entity asMemberResidency].residence displayImage];
+            cellImage = [[entity asMembership].residence displayImage];
         }
     } else if (sectionKey == kWardSectionKey) {
         cellImage = [UIImage imageNamed:kIconFileOrigo];
@@ -315,12 +314,8 @@ static NSInteger const kUserRow = 0;
 {
     [super dismissModalViewControllerWithIdentitifier:identitifier];
     
-    if ([identitifier isEqualToString:kAuthViewControllerId] ||
-        [identitifier isEqualToString:kMemberViewControllerId] ||
-        [identitifier isEqualToString:kMemberListViewControllerId]) {
-        if ([[OMeta m] userIsSignedIn]) {
-            [self.tableView reloadData];
-        }
+    if ([OMeta m].userIsSignedIn) {
+        [self.tableView reloadData];
     }
 }
 

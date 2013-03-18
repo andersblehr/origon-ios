@@ -316,6 +316,18 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
+#pragma mark - UIView overrides
+
+- (void)drawRect:(CGRect)rect
+{
+    [super drawRect:rect];
+    
+    if (_hasEmphasis) {
+        [self redrawDropShadow];
+    }
+}
+
+
 #pragma mark - UIResponder overrides
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender

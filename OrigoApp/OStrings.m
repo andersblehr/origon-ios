@@ -17,10 +17,6 @@
 #import "OState.h"
 
 // Cross-view strings
-NSString * const strNameMyHousehold                  = @"strNameMyHousehold";
-NSString * const strNameOurHousehold                 = @"strNameOurHousehold";
-NSString * const strNameMyMessageBoard               = @"strNameMyMessageBoard";
-NSString * const strNameOurMessageBoard              = @"strNameOurMessageBoard";
 NSString * const strButtonOK                         = @"strButtonOK";
 NSString * const strButtonEdit                       = @"strButtonEdit";
 NSString * const strButtonNext                       = @"strButtonNext";
@@ -85,6 +81,7 @@ NSString * const strButtonNewHousemate               = @"strButtonNewHousemate";
 NSString * const strButtonDeleteMember               = @"strButtonDeleteMember";
 
 // OOrigoView strings
+NSString * const strDefaultResidenceName             = @"strDefaultResidenceName";
 NSString * const strViewTitleNewOrigo                = @"strViewTitleNewOrigo";
 NSString * const strLabelAddress                     = @"strLabelAddress";
 NSString * const strLabelCountry                     = @"strLabelCountry";
@@ -138,6 +135,7 @@ NSString * const strTabBarTitleTasks                 = @"strTabBarTitleTasks";
 
 // OMessageBoardView strings
 NSString * const strTabBarTitleMessages              = @"strTabBarTitleMessages";
+NSString * const strDefaultMessageBoardName          = @"strDefaultMessageBoardName";
 
 // OSettingsView strings
 NSString * const strTabBarTitleSettings              = @"strTabBarTitleSettings";
@@ -256,12 +254,6 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
             OLogError(@"Error writing strings from server to plist '%@'.", [self fullPathToStringsPlist]);
         }
     }
-}
-
-
-+ (void)didFailWithError:(NSError *)error
-{
-    [OAlert showAlertForError:error];
 }
 
 @end

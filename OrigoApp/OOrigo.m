@@ -2,7 +2,7 @@
 //  OOrigo.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 25.02.13.
+//  Created by Anders Blehr on 15.03.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -10,7 +10,6 @@
 #import "ODocumentRepository.h"
 #import "OEvent.h"
 #import "OEventOrigoInvitation.h"
-#import "OMemberResidency.h"
 #import "OMembership.h"
 #import "OMessageBoard.h"
 #import "OOrigo.h"
@@ -21,12 +20,12 @@
 @implementation OOrigo
 
 @dynamic address;
+@dynamic countryCode;
 @dynamic descriptionText;
 @dynamic name;
 @dynamic photo;
 @dynamic telephone;
 @dynamic type;
-@dynamic country;
 @dynamic associateMemberships;
 @dynamic documentRepositories;
 @dynamic eventInvitations;
