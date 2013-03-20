@@ -18,9 +18,10 @@
 
 - (OMembership *)initialResidency;
 - (OMembership *)rootMembership;
-- (NSSet *)exposedMemberships;
-- (NSSet *)exposedResidencies;
-- (NSSet *)exposedParticipancies;
+- (NSSet *)allMemberships;
+- (NSSet *)fullMemberships;
+- (NSSet *)residencies;
+- (NSSet *)participancies;
 
 - (NSSet *)wards;
 - (NSSet *)housemates;
@@ -30,6 +31,7 @@
 - (void)makeActive;
 
 - (BOOL)isUser;
+- (BOOL)isKnownByUser;
 - (BOOL)isFemale;
 - (BOOL)isMale;
 - (BOOL)isMinor;
@@ -40,7 +42,5 @@
 - (BOOL)hasAddress;
 - (BOOL)hasWard:(OMember *)candidate;
 - (BOOL)hasHousemate:(OMember *)candidate;
-
-- (void)extricateIfRedundant;
 
 @end

@@ -2,7 +2,7 @@
 //  OMember.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 15.03.13.
+//  Created by Anders Blehr on 18.03.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -28,14 +28,12 @@
 @dynamic name;
 @dynamic passwordHash;
 @dynamic photo;
-@dynamic associateMemberships;
 @dynamic contactForEvents;
 @dynamic devices;
 @dynamic documents;
 @dynamic eventInvitations;
 @dynamic memberships;
 @dynamic messageItems;
-@dynamic residencies;
 @dynamic scheduledAbsences;
 @dynamic toDoAssignments;
 

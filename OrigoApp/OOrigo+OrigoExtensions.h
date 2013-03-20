@@ -26,8 +26,10 @@ extern NSString * const kOrigoTypeOther;
 - (NSString *)displayPhoneNumber;
 - (UIImage *)displayImage;
 
-- (NSSet *)exposedMemberships;
-- (NSSet *)exposedResidencies;
+- (NSSet *)allMemberships;
+- (NSSet *)fullMemberships;
+- (NSSet *)residencies;
+- (NSSet *)participancies;
 
 - (id)membershipForMember:(OMember *)member;
 - (id)addAssociateMember:(OMember *)member;
@@ -38,12 +40,11 @@ extern NSString * const kOrigoTypeOther;
 - (BOOL)hasAdmin;
 - (BOOL)hasMember:(OMember *)member;
 - (BOOL)hasAssociateMember:(OMember *)member;
+- (BOOL)knowsAboutMember:(OMember *)member;
 - (BOOL)indirectlyKnowsAboutMember:(OMember *)member;
 
 - (BOOL)userCanEdit;
 - (BOOL)userIsAdmin;
 - (BOOL)userIsMember;
-
-- (void)extricateIfRedundant;
 
 @end

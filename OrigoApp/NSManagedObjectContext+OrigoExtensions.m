@@ -92,32 +92,27 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (void)insertCrossReferencesForMembership:(OMembership *)membership
 {
-    OMember *member = [membership isAssociate] ? membership.associateMember : membership.member;
-    OOrigo *origo = [membership isAssociate] ? membership.associateOrigo : membership.origo;
+    [self insertEntityRefForEntity:membership.member inOrigo:membership.origo];
     
-    [self insertEntityRefForEntity:member inOrigo:origo];
-    
-    for (OMembership *residency in [member exposedResidencies]) {
-        if (residency.residence != origo) {
-            OOrigo *residence = residency.residence;
+    for (OMembership *residency in [membership.member residencies]) {
+        if (residency.origo != membership.origo) {
+            [self insertEntityRefForEntity:residency inOrigo:membership.origo];
+            [self insertEntityRefForEntity:residency.origo inOrigo:membership.origo];
             
-            [self insertEntityRefForEntity:residency inOrigo:origo];
-            [self insertEntityRefForEntity:residence inOrigo:origo];
-            
-            if ([origo isOfType:kOrigoTypeResidence] && ![membership isAssociate]) {
-                [self insertEntityRefForEntity:membership inOrigo:residence];
-                [self insertEntityRefForEntity:membership.origo inOrigo:residence];
+            if ([membership.origo isOfType:kOrigoTypeResidence] && ![membership isAssociate]) {
+                [self insertEntityRefForEntity:membership inOrigo:residency.origo];
+                [self insertEntityRefForEntity:membership.origo inOrigo:residency.origo];
             }
         }
     }
     
     if (![membership isAssociate]) {
-        for (OMember *housemate in [member housemates]) {
-            for (OMembership *peerResidency in [housemate exposedResidencies]) {
-                [origo addAssociateMember:peerResidency.resident];
+        for (OMember *housemate in [membership.member housemates]) {
+            for (OMembership *peerResidency in [housemate residencies]) {
+                [membership.origo addAssociateMember:peerResidency.member];
                 
-                if ([origo isOfType:kOrigoTypeResidence]) {
-                    [peerResidency.residence addAssociateMember:member];
+                if ([membership.origo isOfType:kOrigoTypeResidence]) {
+                    [peerResidency.origo addAssociateMember:membership.member];
                 }
             }
         }
@@ -230,7 +225,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 {
     OMembership *membership = [self insertEntityOfClass:OMembership.class inOrigo:origo];
     membership.member = member;
-    [membership alignWithOrigo];
+    [membership promoteToFull];
     
     if (![origo isOfType:kOrigoTypeMemberRoot]) {
         [self insertCrossReferencesForMembership:membership];
@@ -246,7 +241,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 }
 
 
-#pragma mark - Inserting & fetching entities
+#pragma mark - Inserting, fetching & deleting entities
 
 - (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo
 {
@@ -271,10 +266,9 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 - (id)insertExpiryReferenceForMembership:(OMembership *)membership
 {
     OReplicatedEntityRef *expiryRef = nil;
-    OMember *member = [membership isAssociate] ? membership.associateMember : membership.member;
     
-    if ([member isActive]) {
-        NSString *memberRootId = [self memberRootIdForMemberWithId:member.entityId];
+    if ([membership.member isActive]) {
+        NSString *memberRootId = [self memberRootIdForMemberWithId:membership.member.entityId];
         NSString *expiryRefId = [self entityRefIdForEntity:membership inOrigoWithId:memberRootId];
         
         expiryRef = [self insertEntityOfClass:OReplicatedEntityRef.class entityId:expiryRefId];
@@ -290,6 +284,28 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 - (id)fetchEntityWithId:(NSString *)entityId
 {
     return [self fetchEntityOfClass:OReplicatedEntity.class withValue:entityId forKey:kPropertyKeyEntityId];
+}
+
+
+- (void)deleteEntity:(OReplicatedEntity *)entity
+{
+    if (entity && !entity.isDeleted) {
+        if ([entity isKindOfClass:OMembership.class]) {
+            OMembership *membership = (OMembership *)entity;
+            
+            if (![membership.member isKnownByUser]) {
+                [self deleteEntity:membership.member];
+            }
+            
+            if ([membership.origo knowsAboutMember:[OMeta m].user]) {
+                [membership expire];
+            } else {
+                [self deleteEntity:membership.origo];
+            }
+        }
+        
+        [self deleteObject:entity];
+    }
 }
 
 
