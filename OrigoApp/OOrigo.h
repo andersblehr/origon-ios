@@ -2,7 +2,7 @@
 //  OOrigo.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 15.03.13.
+//  Created by Anders Blehr on 18.03.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -21,7 +21,6 @@
 @property (nonatomic, retain) NSData * photo;
 @property (nonatomic, retain) NSString * telephone;
 @property (nonatomic, retain) NSString * type;
-@property (nonatomic, retain) NSSet *associateMemberships;
 @property (nonatomic, retain) NSSet *documentRepositories;
 @property (nonatomic, retain) NSSet *eventInvitations;
 @property (nonatomic, retain) NSSet *hostingEvents;
@@ -29,17 +28,11 @@
 @property (nonatomic, retain) NSSet *memberToDoItems;
 @property (nonatomic, retain) NSSet *messageBoards;
 @property (nonatomic, retain) OOrigo *parentOrigo;
-@property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *subOrigos;
 @property (nonatomic, retain) OYearlySchedule *yearlySchedule;
 @end
 
 @interface OOrigo (CoreDataGeneratedAccessors)
-
-- (void)addAssociateMembershipsObject:(OMembership *)value;
-- (void)removeAssociateMembershipsObject:(OMembership *)value;
-- (void)addAssociateMemberships:(NSSet *)values;
-- (void)removeAssociateMemberships:(NSSet *)values;
 
 - (void)addDocumentRepositoriesObject:(ODocumentRepository *)value;
 - (void)removeDocumentRepositoriesObject:(ODocumentRepository *)value;
@@ -70,11 +63,6 @@
 - (void)removeMessageBoardsObject:(OMessageBoard *)value;
 - (void)addMessageBoards:(NSSet *)values;
 - (void)removeMessageBoards:(NSSet *)values;
-
-- (void)addResidenciesObject:(OMembership *)value;
-- (void)removeResidenciesObject:(OMembership *)value;
-- (void)addResidencies:(NSSet *)values;
-- (void)removeResidencies:(NSSet *)values;
 
 - (void)addSubOrigosObject:(OOrigo *)value;
 - (void)removeSubOrigosObject:(OOrigo *)value;

@@ -136,7 +136,7 @@ static NSInteger const kHousemateSheetTag = 0;
     NSMutableSet *contactMemberships = [[NSMutableSet alloc] init];
     NSMutableSet *regularMemberships = [[NSMutableSet alloc] init];
     
-    for (OMembership *membership in _origo.memberships) {
+    for (OMembership *membership in [_origo fullMemberships]) {
         if ([membership hasContactRole]) {
             [contactMemberships addObject:membership];
         } else {

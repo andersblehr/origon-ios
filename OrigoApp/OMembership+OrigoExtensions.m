@@ -17,10 +17,10 @@
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 
-NSString * const kMembershipTypeMemberRoot = @"~";
-NSString * const kMembershipTypeResidency = @"R";
-NSString * const kMembershipTypeStandard = @"S";
-NSString * const kMembershipTypeAssociate = @"A";
+static NSString * const kMembershipTypeMemberRoot = @"~";
+static NSString * const kMembershipTypeResidency = @"R";
+static NSString * const kMembershipTypeParticipancy = @"S";
+static NSString * const kMembershipTypeAssociate = @"A";
 
 
 @implementation OMembership (OrigoExtensions)
@@ -32,8 +32,8 @@ NSString * const kMembershipTypeAssociate = @"A";
     if ([self isAssociate]) {
         BOOL isRedundant = YES;
         
-        for (OMembership *membership in [self.associateOrigo exposedMemberships]) {
-            isRedundant = isRedundant && ![membership.member hasHousemate:self.associateMember];
+        for (OMembership *membership in [self.origo fullMemberships]) {
+            isRedundant = isRedundant && ![membership.member hasHousemate:self.member];
         }
         
         if (isRedundant) {
@@ -67,9 +67,9 @@ NSString * const kMembershipTypeAssociate = @"A";
 }
 
 
-- (BOOL)isStandard
+- (BOOL)isParticipancy
 {
-    return [self.type isEqualToString:kMembershipTypeStandard];
+    return [self.type isEqualToString:kMembershipTypeParticipancy];
 }
 
 
@@ -85,104 +85,28 @@ NSString * const kMembershipTypeAssociate = @"A";
 }
 
 
-#pragma mark - Converting between membership types
+#pragma mark - Promoting & demoting
 
-- (void)makeStandard
-{
-    if (![self isStandard]) {
-        if ([self isAssociate]) {
-            self.member = self.associateMember;
-            self.origo = self.associateOrigo;
-            self.associateMember = nil;
-            self.associateOrigo = nil;
-        }
-        
-        self.resident = nil;
-        self.residence = nil;
-        
-        self.type = kMembershipTypeStandard;
-    }
-}
-
-
-- (void)makeResidency
-{
-    if (![self isResidency]) {
-        [self makeStandard];
-        
-        self.resident = self.member;
-        self.residence = self.origo;
-        
-        self.type = kMembershipTypeResidency;
-    }
-}
-
-
-- (void)makeAssociate
-{
-    if (![self isAssociate]) {
-        self.associateMember = self.member;
-        self.associateOrigo = self.origo;
-        self.member = nil;
-        self.origo = nil;
-        self.resident = nil;
-        self.residence = nil;
-        
-        self.type = kMembershipTypeAssociate;
-    }
-}
-
-
-- (void)alignWithOrigo
+- (void)promoteToFull
 {
     if ([self.origo isOfType:kOrigoTypeMemberRoot]) {
         self.type = kMembershipTypeMemberRoot;
     } else if ([self.origo isOfType:kOrigoTypeResidence]) {
-        [self makeResidency];
+        self.type = kMembershipTypeResidency;
     } else {
-        [self makeStandard];
+        self.type = kMembershipTypeParticipancy;
     }
     
+}
+
+
+- (void)demoteToAssociate
+{
+    self.type = kMembershipTypeAssociate;
 }
 
 
 #pragma mark - OReplicatedEntity (OrigoExtensions) overrides
-
-- (id)mappedValueForKey:(NSString *)key
-{
-    id value = [self valueForKey:key];
-    
-    if ([self isAssociate]) {
-        if ([key isEqualToString:kRelationshipKeyMember]) {
-            value = [self valueForKey:kRelationshipKeyAssociateMember];
-        } else if ([key isEqualToString:kRelationshipKeyOrigo]) {
-            value = [self valueForKey:kRelationshipKeyAssociateOrigo];
-        } else if ([key isEqualToString:kRelationshipKeyAssociateMember]) {
-            value = nil;
-        } else if ([key isEqualToString:kRelationshipKeyAssociateOrigo]) {
-            value = nil;
-        }
-    }
-    
-    return value;
-}
-
-
-- (void)internaliseRelationships
-{
-    [super internaliseRelationships];
-
-    if ([self.type isEqualToString:kMembershipTypeResidency]) {
-        self.resident = self.member;
-        self.residence = self.origo;
-    } else if ([self.type isEqualToString:kMembershipTypeAssociate]) {
-        self.associateMember = self.member;
-        self.associateOrigo = self.origo;
-        self.member = nil;
-        self.origo = nil;
-    }
-}
-
 
 - (BOOL)isTransient
 {
@@ -190,24 +114,10 @@ NSString * const kMembershipTypeAssociate = @"A";
 }
 
 
-- (BOOL)isTransientProperty:(NSString *)propertyKey
-{
-    BOOL isTransient = [super isTransientProperty:propertyKey];
-    
-    isTransient = isTransient || [propertyKey isEqualToString:kRelationshipKeyResidence];
-    isTransient = isTransient || [propertyKey isEqualToString:kRelationshipKeyResident];
-    
-    return isTransient;
-}
-
-
 - (void)expire
 {
-    OMember *member = [self isAssociate] ? self.associateMember : self.member;
-    OOrigo *origo = [self isAssociate] ? self.associateOrigo : self.origo;
-    
-    if (![self isAssociate] && [origo indirectlyKnowsAboutMember:member]) {
-        [self makeAssociate];
+    if (![self isAssociate] && [self.origo indirectlyKnowsAboutMember:self.member]) {
+        [self demoteToAssociate];
     } else {
         if ([self shouldReplicateOnExpiry]) {
             self.contactRole = nil;
@@ -219,39 +129,40 @@ NSString * const kMembershipTypeAssociate = @"A";
         }
         
         [super expire];
+        
+        if (![self isAssociate]) {
+            for (OMember *housemate in [self.member housemates]) {
+                for (OMembership *peerResidency in [housemate residencies]) {
+                    [[self.origo membershipForMember:peerResidency.member] expireIfRedundant];
+                    
+                    if ([self.origo isOfType:kOrigoTypeResidence]) {
+                        [[peerResidency.origo membershipForMember:self.member] expireIfRedundant];
+                    }
+                }
+            }
+        }
 
-        if ([self isAssociate]) {
-            if ([member isUser]) {
-                for (OMembership *membership in [origo exposedMemberships]) {
-                    [[OMeta m].context deleteObject:membership];
-                    
-                    if (![[membership.member exposedMemberships] count]) {
-                        [[OMeta m].context deleteObject:membership.member];
-                    }
+        if ([self.member isUser]) {
+            for (OMembership *membership in [self.origo allMemberships]) {
+                if (![membership.member isKnownByUser]) {
+                    [[OMeta m].context deleteObject:membership.member];
                 }
                 
-                [[OMeta m].context deleteObject:origo];
-            } else {
-                for (OMembership *membership in [member exposedMemberships]) {
-                    [[OMeta m].context deleteObject:membership];
-                    
-                    if (![[membership.origo exposedMemberships] count]) {
-                        [[OMeta m].context deleteObject:membership.origo];
-                    }
-                }
-                
-                [member extricateIfRedundant];
+                [[OMeta m].context deleteObject:membership];
+                //[[OMeta m].context deleteEntity:membership];
             }
-        } else {
-            for (OMember *housemate in [member housemates]) {
-                for (OMembership *peerResidency in [housemate exposedResidencies]) {
-                    [[origo membershipForMember:peerResidency.resident] expireIfRedundant];
-                    
-                    if ([origo isOfType:kOrigoTypeResidence]) {
-                        [[peerResidency.residence membershipForMember:member] expireIfRedundant];
-                    }
-                }
+            
+            [[OMeta m].context deleteObject:self.origo];
+            //[[OMeta m].context deleteEntity:self.origo];
+        } else if (![self.member isKnownByUser]) {
+            for (OMembership *membership in [self.member allMemberships]) {
+                [[membership.origo membershipForMember:[OMeta m].user] expire];
+                [[OMeta m].context deleteObject:membership];
+                //[[OMeta m].context deleteEntity:membership];
             }
+            
+            [[OMeta m].context deleteObject:self.member];
+            //[[OMeta m].context deleteEntity:self.member];
         }
     }
 }

@@ -78,12 +78,6 @@
 }
 
 
-- (id)mappedValueForKey:(NSString *)key
-{
-    return [self valueForKey:key];
-}
-
-
 - (id)serialisableValueForKey:(NSString *)key
 {
     id value = [self valueForKey:key];
@@ -133,7 +127,7 @@
         NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
         
         if (!relationship.isToMany && ![self isTransientProperty:relationshipKey]) {
-            OReplicatedEntity *entity = [self mappedValueForKey:relationshipKey];
+            OReplicatedEntity *entity = [self valueForKey:relationshipKey];
             
             if (entity) {
                 [entityDictionary setObject:[entity relationshipRef] forKey:relationshipKey];
@@ -257,7 +251,7 @@
     if ([self shouldReplicateOnExpiry]) {
         self.isExpired = @YES;
     } else {
-        [[OMeta m].context deleteObject:self];
+        [[OMeta m].context deleteEntity:self];
     }
 }
 

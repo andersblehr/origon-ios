@@ -8,21 +8,14 @@
 
 #import "OMembership.h"
 
-extern NSString * const kMembershipTypeMemberRoot;
-extern NSString * const kMembershipTypeResidency;
-extern NSString * const kMembershipTypeStandard;
-extern NSString * const kMembershipTypeAssociate;
-
 @interface OMembership (OrigoExtensions)
 
 - (BOOL)hasContactRole;
-- (BOOL)isStandard;
+- (BOOL)isParticipancy;
 - (BOOL)isResidency;
 - (BOOL)isAssociate;
 
-- (void)makeStandard;
-- (void)makeResidency;
-- (void)makeAssociate;
-- (void)alignWithOrigo;
+- (void)promoteToFull;
+- (void)demoteToAssociate;
 
 @end

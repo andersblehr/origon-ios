@@ -38,13 +38,13 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 
     if (membership) {
         if ([membership isAssociate] && !isAssociate) {
-            [membership makeStandard];
+            [membership promoteToFull];
         }
     } else {
         membership = [[OMeta m].context insertMembershipEntityForMember:member inOrigo:self];
         
         if (isAssociate) {
-            [membership makeAssociate];
+            [membership demoteToAssociate];
         }
     }
     
@@ -70,33 +70,61 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 
 #pragma mark - Accessing & adding memberships
 
-- (NSSet *)exposedMemberships
+- (NSSet *)allMemberships
 {
-    NSMutableSet *exposedMemberships = [[NSMutableSet alloc] init];
+    NSMutableSet *memberships = [[NSMutableSet alloc] init];
     
     if (![self isOfType:kOrigoTypeMemberRoot]) {
         for (OMembership *membership in self.memberships) {
             if (![membership hasExpired]) {
-                [exposedMemberships addObject:membership];
+                [memberships addObject:membership];
             }
         }
     }
     
-    return exposedMemberships;
+    return memberships;
 }
 
 
-- (NSSet *)exposedResidencies
+- (NSSet *)fullMemberships
 {
-    NSMutableSet *exposedResidencies = [[NSMutableSet alloc] init];
+    NSMutableSet *fullMemberships = [[NSMutableSet alloc] init];
     
-    for (OMembership *membership in [self exposedMemberships]) {
-        if ([membership isResidency]) {
-            [exposedResidencies addObject:membership];
+    for (OMembership *membership in [self allMemberships]) {
+        if (![membership isAssociate]) {
+            [fullMemberships addObject:membership];
         }
     }
     
-    return exposedResidencies;
+    return fullMemberships;
+}
+
+
+- (NSSet *)residencies
+{
+    NSMutableSet *residencies = [[NSMutableSet alloc] init];
+    
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isResidency]) {
+            [residencies addObject:membership];
+        }
+    }
+    
+    return residencies;
+}
+
+
+- (NSSet *)participancies
+{
+    NSMutableSet *participancies = [[NSMutableSet alloc] init];
+    
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isParticipancy]) {
+            [participancies addObject:membership];
+        }
+    }
+    
+    return participancies;
 }
 
 
@@ -104,13 +132,8 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 {
     OMembership *membershipForMember = nil;
     
-    NSMutableSet *allMemberships = [NSMutableSet setWithSet:self.memberships];
-    [allMemberships unionSet:self.associateMemberships];
-    
-    for (OMembership *membership in allMemberships) {
-        OMember *candidate = membership.member ? membership.member : membership.associateMember;
-        
-        if (!membershipForMember && (candidate == member) && ![membership hasExpired]) {
+    for (OMembership *membership in [self allMemberships]) {
+        if (!membershipForMember && (membership.member == member)) {
             membershipForMember = membership;
         }
     }
@@ -147,7 +170,7 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
         residency = [self membershipForMember:resident];
         
         if (residency) {
-            [residency makeResidency];
+            [residency promoteToFull];
         } else {
             residency = [[OMeta m].context insertMembershipEntityForMember:resident inOrigo:self];
         }
@@ -207,7 +230,7 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 {
     BOOL hasAdmin = NO;
     
-    for (OMembership *membership in [self exposedMemberships]) {
+    for (OMembership *membership in [self allMemberships]) {
         hasAdmin = hasAdmin || [membership.isAdmin boolValue];
     }
     
@@ -231,16 +254,22 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 }
 
 
+- (BOOL)knowsAboutMember:(OMember *)member
+{
+    return ([self hasMember:member] || [self indirectlyKnowsAboutMember:member]);
+}
+
+
 - (BOOL)indirectlyKnowsAboutMember:(OMember *)member
 {
     BOOL knowsAboutMember = NO;
     OMembership *directMembership = [self membershipForMember:member];
     
-    for (OMembership *membership in [self exposedMemberships]) {
+    for (OMembership *membership in [self fullMemberships]) {
         if (membership != directMembership) {
-            for (OMembership *residency in [membership.member exposedResidencies]) {
-                if (residency.residence != self) {
-                    knowsAboutMember = knowsAboutMember || [residency.residence hasMember:member];
+            for (OMembership *residency in [membership.member residencies]) {
+                if (residency.origo != self) {
+                    knowsAboutMember = knowsAboutMember || [residency.origo hasMember:member];
                 }
             }
         }
@@ -267,14 +296,6 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 - (BOOL)userIsMember
 {
     return [self hasMember:[OMeta m].user];
-}
-
-
-#pragma mark - Redundancy handling
-
-- (void)extricateIfRedundant
-{
-    
 }
 
 

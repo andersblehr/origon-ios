@@ -71,12 +71,8 @@ NSString * const kPropertyKeyName = @"name";
 NSString * const kPropertyKeyOrigoId = @"origoId";
 NSString * const kPropertyKeyTelephone = @"telephone";
 
-NSString * const kRelationshipKeyAssociateMember = @"associateMember";
-NSString * const kRelationshipKeyAssociateOrigo = @"associateOrigo";
 NSString * const kRelationshipKeyMember = @"member";
 NSString * const kRelationshipKeyOrigo = @"origo";
-NSString * const kRelationshipKeyResidence = @"residence";
-NSString * const kRelationshipKeyResident = @"resident";
 
 NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
 NSString * const kDefaultsKeyDirtyEntities = @"origo.dirtyEntities";
@@ -96,6 +92,8 @@ static OMeta *m = nil;
 
 
 @interface OMeta ()
+
+@property (strong, nonatomic) OMember *user;
 
 @property (nonatomic) BOOL userIsAllSet;
 @property (nonatomic) BOOL userIsSignedIn;
@@ -150,6 +148,19 @@ static OMeta *m = nil;
     NSString *rawToken = [self.deviceId seasonWith:expiryDateAsString];
     
     return [rawToken hashUsingSHA1];
+}
+
+
+- (void)loadUser
+{
+    _user = [self.context fetchEntityWithId:_userId];
+    
+    if (_user) {
+        [self.replicator loadUserReplicationState];
+    } else {
+        _user = [self.context insertMemberEntity];
+        _user.email = _userEmail;
+    }
 }
 
 
@@ -229,15 +240,7 @@ static OMeta *m = nil;
 - (void)userDidSignIn
 {
     [self setUserDefault:_authTokenExpiryDate forKey:kDefaultsKeyAuthExpiryDate];
-    
-    _user = [self.context fetchEntityWithId:_userId];
-    
-    if (_user) {
-        [self.replicator loadUserReplicationState];
-    } else {
-        _user = [self.context insertMemberEntity];
-        _user.email = _userEmail;
-    }
+    [self loadUser];
 }
 
 
@@ -341,6 +344,17 @@ static OMeta *m = nil;
         [self setGlobalDefault:nil forKey:kDefaultsKeyUserEmail];
     }
 }
+
+
+- (OMember *)user
+{
+    if (!_user) {
+        [self loadUser];
+    }
+    
+    return _user;
+}
+
 
 - (BOOL)userIsAllSet
 {

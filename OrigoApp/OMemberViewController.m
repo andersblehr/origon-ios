@@ -396,7 +396,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     [self setData:memberDataSource forSectionWithKey:kMemberSectionKey];
     
     if (self.state.actionIsDisplay) {
-        [self setData:[_member exposedResidencies] forSectionWithKey:kAddressSectionKey];
+        [self setData:[_member residencies] forSectionWithKey:kAddressSectionKey];
     }
 }
 
@@ -412,7 +412,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     NSString *text = nil;
     
     if (sectionKey == kAddressSectionKey) {
-        if ([[_member exposedResidencies] count] == 1) {
+        if ([[_member residencies] count] == 1) {
             text = [OStrings stringForKey:strTermAddress];
         } else {
             text = [OStrings stringForKey:strHeaderAddresses];

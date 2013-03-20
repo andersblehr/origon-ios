@@ -190,7 +190,7 @@ static NSInteger const kUserRow = 0;
 
 - (void)populateDataSource
 {
-    [self setData:[_member exposedParticipancies] forSectionWithKey:kOrigoSectionKey];
+    [self setData:[_member participancies] forSectionWithKey:kOrigoSectionKey];
     
     if ([_member isUser]) {
         [self setData:[_member rootMembership] forSectionWithKey:kUserSectionKey];
@@ -257,7 +257,7 @@ static NSInteger const kUserRow = 0;
         if (indexPath.row == kUserRow) {
             cellText = [OStrings stringForKey:strTermMe];
         } else {
-            cellText = [entity asMembership].residence.name;
+            cellText = [entity asMembership].origo.name;
         }
     } else if (sectionKey == kWardSectionKey) {
         cellText = [entity asMember].givenName;
@@ -278,7 +278,7 @@ static NSInteger const kUserRow = 0;
         if (indexPath.row == kUserRow) {
             cellDetails = [entity asMembership].member.name;
         } else {
-            cellDetails = [[entity asMembership].residence displayAddress];
+            cellDetails = [[entity asMembership].origo displayAddress];
         }
     }
     
@@ -296,7 +296,7 @@ static NSInteger const kUserRow = 0;
         if (indexPath.row == kUserRow) {
             cellImage = [[entity asMembership].member displayImage];
         } else {
-            cellImage = [[entity asMembership].residence displayImage];
+            cellImage = [[entity asMembership].origo displayImage];
         }
     } else if (sectionKey == kWardSectionKey) {
         cellImage = [UIImage imageNamed:kIconFileOrigo];

@@ -21,6 +21,7 @@
 - (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
 - (id)insertExpiryReferenceForMembership:(OMembership *)membership;
 - (id)fetchEntityWithId:(NSString *)entityId;
+- (void)deleteEntity:(OReplicatedEntity *)entity;
 
 - (void)save;
 - (void)saveServerReplicas:(NSArray *)replicaDictionaries;

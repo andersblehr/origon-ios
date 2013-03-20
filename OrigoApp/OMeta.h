@@ -63,10 +63,6 @@ extern NSString * const kPropertyKeyTelephone;
 
 extern NSString * const kRelationshipKeyMember;
 extern NSString * const kRelationshipKeyOrigo;
-extern NSString * const kRelationshipKeyAssociateMember;
-extern NSString * const kRelationshipKeyAssociateOrigo;
-extern NSString * const kRelationshipKeyResidence;
-extern NSString * const kRelationshipKeyResident;
 
 extern NSString * const kDefaultsKeyAuthInfo;
 extern NSString * const kDefaultsKeyDirtyEntities;

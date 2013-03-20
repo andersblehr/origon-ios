@@ -2,7 +2,7 @@
 //  OMember.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 15.03.13.
+//  Created by Anders Blehr on 18.03.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -23,24 +23,17 @@
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * passwordHash;
 @property (nonatomic, retain) NSData * photo;
-@property (nonatomic, retain) NSSet *associateMemberships;
 @property (nonatomic, retain) NSSet *contactForEvents;
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;
 @property (nonatomic, retain) NSSet *eventInvitations;
 @property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) NSSet *messageItems;
-@property (nonatomic, retain) NSSet *residencies;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @property (nonatomic, retain) NSSet *toDoAssignments;
 @end
 
 @interface OMember (CoreDataGeneratedAccessors)
-
-- (void)addAssociateMembershipsObject:(OMembership *)value;
-- (void)removeAssociateMembershipsObject:(OMembership *)value;
-- (void)addAssociateMemberships:(NSSet *)values;
-- (void)removeAssociateMemberships:(NSSet *)values;
 
 - (void)addContactForEventsObject:(OEvent *)value;
 - (void)removeContactForEventsObject:(OEvent *)value;
@@ -71,11 +64,6 @@
 - (void)removeMessageItemsObject:(OMessageItem *)value;
 - (void)addMessageItems:(NSSet *)values;
 - (void)removeMessageItems:(NSSet *)values;
-
-- (void)addResidenciesObject:(OMembership *)value;
-- (void)removeResidenciesObject:(OMembership *)value;
-- (void)addResidencies:(NSSet *)values;
-- (void)removeResidencies:(NSSet *)values;
 
 - (void)addScheduledAbsencesObject:(OScheduledAbsence *)value;
 - (void)removeScheduledAbsencesObject:(OScheduledAbsence *)value;

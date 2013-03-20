@@ -106,7 +106,7 @@
 
 - (OMembership *)initialResidency
 {
-    OMembership *residency = [[self exposedResidencies] anyObject];
+    OMembership *residency = [[self residencies] anyObject];
     
     if (!residency) {
         OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
@@ -136,45 +136,59 @@
 }
 
 
-- (NSSet *)exposedMemberships
+- (NSSet *)allMemberships
 {
-    NSMutableSet *exposedMemberships = [[NSMutableSet alloc] init];
+    NSMutableSet *memberships = [[NSMutableSet alloc] init];
     
     for (OMembership *membership in self.memberships) {
         if (![membership.origo isOfType:kOrigoTypeMemberRoot] && ![membership hasExpired]) {
-            [exposedMemberships addObject:membership];
+            [memberships addObject:membership];
         }
     }
     
-    return exposedMemberships;
+    return memberships;
 }
 
 
-- (NSSet *)exposedResidencies
+- (NSSet *)fullMemberships
 {
-    NSMutableSet *exposedResidencies = [[NSMutableSet alloc] init];
+    NSMutableSet *fullMemberships = [[NSMutableSet alloc] init];
     
-    for (OMembership *residency in self.residencies) {
-        if (![residency hasExpired]) {
-            [exposedResidencies addObject:residency];
+    for (OMembership *membership in [self allMemberships]) {
+        if (![membership isAssociate]) {
+            [fullMemberships addObject:membership];
         }
     }
     
-    return exposedResidencies;
+    return fullMemberships;
 }
 
 
-- (NSSet *)exposedParticipancies
+- (NSSet *)residencies
 {
-    NSMutableSet *exposedParticipations = [[NSMutableSet alloc] init];
+    NSMutableSet *residencies = [[NSMutableSet alloc] init];
     
-    for (OMembership *membership in [self exposedMemberships]) {
-        if (![membership.origo isOfType:kOrigoTypeResidence]) {
-            [exposedParticipations addObject:membership];
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isResidency]) {
+            [residencies addObject:membership];
         }
     }
     
-    return exposedParticipations;
+    return residencies;
+}
+
+
+- (NSSet *)participancies
+{
+    NSMutableSet *participancies = [[NSMutableSet alloc] init];
+    
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isParticipancy]) {
+            [participancies addObject:membership];
+        }
+    }
+    
+    return participancies;
 }
 
 
@@ -200,10 +214,10 @@
 {
     NSMutableSet *housemates = [[NSMutableSet alloc] init];
     
-    for (OMembership *residency in [self exposedResidencies]) {
-        for (OMembership *peerResidency in [residency.residence exposedResidencies]) {
-            if ((peerResidency.resident != self) && ![peerResidency hasExpired]) {
-                [housemates addObject:peerResidency.resident];
+    for (OMembership *residency in [self residencies]) {
+        for (OMembership *peerResidency in [residency.origo residencies]) {
+            if ((peerResidency.member != self) && ![peerResidency hasExpired]) {
+                [housemates addObject:peerResidency.member];
             }
         }
     }
@@ -217,14 +231,14 @@
     NSMutableSet *ownResidences = [[NSMutableSet alloc] init];
     NSMutableSet *housemateResidences = [[NSMutableSet alloc] init];
     
-    for (OMembership *residency in [self exposedResidencies]) {
-        [ownResidences addObject:residency.residence];
+    for (OMembership *residency in [self residencies]) {
+        [ownResidences addObject:residency.origo];
     }
     
     for (OMember *housemate in [self housemates]) {
-        for (OMembership *housemateResidency in [housemate exposedResidencies]) {
-            if (![ownResidences containsObject:housemateResidency.residence]) {
-                [housemateResidences addObject:housemateResidency.residence];
+        for (OMembership *housemateResidency in [housemate residencies]) {
+            if (![ownResidences containsObject:housemateResidency.origo]) {
+                [housemateResidences addObject:housemateResidency.origo];
             }
         }
     }
@@ -255,14 +269,14 @@
     rootMembership.isActive = @YES;
     rootMembership.isAdmin = @YES;
     
-    for (OMembership *residency in [self exposedResidencies]) {
+    for (OMembership *residency in [self residencies]) {
         residency.isActive = @YES;
         
         if (![self isMinor] || [residency.createdBy isEqualToString:self.entityId]) {
             residency.isAdmin = @YES;
 
-            if (![residency.residence.messageBoards count]) {
-                OMessageBoard *messageBoard = [[OMeta m].context insertEntityOfClass:OMessageBoard.class inOrigo:residency.residence];
+            if (![residency.origo.messageBoards count]) {
+                OMessageBoard *messageBoard = [[OMeta m].context insertEntityOfClass:OMessageBoard.class inOrigo:residency.origo];
                 messageBoard.title = [OStrings stringForKey:strDefaultMessageBoardName];
             }
         }
@@ -277,6 +291,18 @@
 - (BOOL)isUser
 {
     return [self.email isEqualToString:[OMeta m].userEmail];
+}
+
+
+- (BOOL)isKnownByUser
+{
+    BOOL isKnownByUser = NO;
+    
+    for (OMembership *membership in [[OMeta m].user fullMemberships]) {
+        isKnownByUser = isKnownByUser || [membership.origo knowsAboutMember:self];
+    }
+    
+    return isKnownByUser;
 }
 
 
@@ -314,7 +340,7 @@
 {
     BOOL isMember = NO;
     
-    for (OMembership *membership in [self exposedMemberships]) {
+    for (OMembership *membership in [self allMemberships]) {
         isMember = isMember || [membership.origo isOfType:origoType];
     }
     
@@ -326,55 +352,23 @@
 {
     BOOL hasAddress = NO;
     
-    for (OMembership *residency in [self exposedResidencies]) {
-        hasAddress = hasAddress || [residency.residence hasValueForKey:kPropertyKeyAddress];
+    for (OMembership *residency in [self residencies]) {
+        hasAddress = hasAddress || [residency.origo hasValueForKey:kPropertyKeyAddress];
     }
     
     return hasAddress;
 }
 
 
-- (BOOL)hasWard:(OMember *)candidate
+- (BOOL)hasWard:(OMember *)member
 {
-    return [[self wards] containsObject:candidate];
+    return [[self wards] containsObject:member];
 }
 
 
-- (BOOL)hasHousemate:(OMember *)candidate
+- (BOOL)hasHousemate:(OMember *)member
 {
-    return [[self housemates] containsObject:candidate];
-}
-
-
-#pragma mark - Redundancy handling
-
-- (void)extricateIfRedundant
-{
-    BOOL isRedundant = ![self isUser];
-    
-    if (isRedundant) {
-        for (OMembership *membership in [[OMeta m].user exposedMemberships]) {
-            isRedundant = isRedundant && ![membership.origo indirectlyKnowsAboutMember:self];
-        }
-    }
-    
-    if (isRedundant) {
-        for (OOrigo *residence in [self housemateResidences]) {
-            for (OMembership *residency in [residence exposedResidencies]) {
-                [[OMeta m].context deleteObject:residency];
-                [residency.resident extricateIfRedundant];
-                //[[OMeta m].context deleteObject:residency.resident];
-            }
-
-            if ([residence hasAssociateMember:[OMeta m].user]) {
-                [[residence membershipForMember:[OMeta m].user] expire];
-            }
-            
-            [[OMeta m].context deleteObject:residence];
-        }
-        
-        [[OMeta m].context deleteObject:self];
-    }
+    return [[self housemates] containsObject:member];
 }
 
 @end

@@ -17,7 +17,6 @@
 - (OMembership *)asMembership;
 
 - (BOOL)hasValueForKey:(NSString *)key;
-- (id)mappedValueForKey:(NSString *)key;
 - (id)serialisableValueForKey:(NSString *)key;
 - (void)setDeserialisedValue:(id)value forKey:(NSString *)key;
 
