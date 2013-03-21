@@ -14,16 +14,23 @@
 
 - (id)insertMemberEntity;
 - (id)insertOrigoEntityOfType:(NSString *)origoType;
-- (id)insertMembershipEntityForMember:(OMember *)member inOrigo:(OOrigo *)origo;
-- (id)fetchMemberEntityWithEmail:(NSString *)email;
-
 - (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo;
 - (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
-- (id)insertExpiryReferenceForMembership:(OMembership *)membership;
+
+- (id)fetchMemberEntityWithEmail:(NSString *)email;
 - (id)fetchEntityWithId:(NSString *)entityId;
+
 - (void)deleteEntity:(OReplicatedEntity *)entity;
+- (void)deleteEntities;
+
+- (void)insertCrossReferencesForMembership:(OMembership *)membership;
+- (void)insertAdditionalCrossReferencesForFullMembership:(OMembership *)membership;
+- (void)expireCrossReferencesForMembership:(OMembership *)membership;
+- (void)expireAdditionalCrossReferencesForFullMembership:(OMembership *)membership;
 
 - (void)save;
 - (void)saveServerReplicas:(NSArray *)replicaDictionaries;
+
+- (NSSet *)dirtyEntitiesAwaitingReplication;
 
 @end

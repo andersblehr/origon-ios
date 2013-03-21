@@ -25,24 +25,6 @@ static NSString * const kMembershipTypeAssociate = @"A";
 
 @implementation OMembership (OrigoExtensions)
 
-#pragma mark - Auxiliary methods
-
-- (void)expireIfRedundant
-{
-    if ([self isAssociate]) {
-        BOOL isRedundant = YES;
-        
-        for (OMembership *membership in [self.origo fullMemberships]) {
-            isRedundant = isRedundant && ![membership.member hasHousemate:self.member];
-        }
-        
-        if (isRedundant) {
-            [self expire];
-        }
-    }
-}
-
-
 #pragma mark - Selector implementations
 
 - (NSComparisonResult)compare:(OMembership *)other
@@ -64,6 +46,12 @@ static NSString * const kMembershipTypeAssociate = @"A";
 - (BOOL)hasContactRole
 {
     return ([self.contactRole length] > 0);
+}
+
+
+- (BOOL)isFull
+{
+    return ([self isParticipancy] || [self isResidency]);
 }
 
 
@@ -89,20 +77,35 @@ static NSString * const kMembershipTypeAssociate = @"A";
 
 - (void)promoteToFull
 {
-    if ([self.origo isOfType:kOrigoTypeMemberRoot]) {
+    if ([self isAssociate]) {
+        [[OMeta m].context insertAdditionalCrossReferencesForFullMembership:self];
+        
+        [self alignWithOrigoIsAssociate:NO];
+    }
+}
+
+
+- (void)demoteToAssociate
+{
+    if ([self isFull]) {
+        [[OMeta m].context expireAdditionalCrossReferencesForFullMembership:self];
+        
+        [self alignWithOrigoIsAssociate:YES];
+    }
+}
+
+
+- (void)alignWithOrigoIsAssociate:(BOOL)isAssociate
+{
+    if (isAssociate) {
+        self.type = kMembershipTypeAssociate;
+    } else if ([self.origo isOfType:kOrigoTypeMemberRoot]) {
         self.type = kMembershipTypeMemberRoot;
     } else if ([self.origo isOfType:kOrigoTypeResidence]) {
         self.type = kMembershipTypeResidency;
     } else {
         self.type = kMembershipTypeParticipancy;
     }
-    
-}
-
-
-- (void)demoteToAssociate
-{
-    self.type = kMembershipTypeAssociate;
 }
 
 
@@ -120,49 +123,35 @@ static NSString * const kMembershipTypeAssociate = @"A";
         [self demoteToAssociate];
     } else {
         if ([self shouldReplicateOnExpiry]) {
+            [super expire];
+            
             self.contactRole = nil;
             self.contactType = nil;
             self.isActive = @NO;
             self.isAdmin = @NO;
             
-            [[OMeta m].context insertExpiryReferenceForMembership:self];
+            [[OMeta m].context expireCrossReferencesForMembership:self];
+        } else {
+            [super expire];
         }
         
-        [super expire];
-        
-        if (![self isAssociate]) {
-            for (OMember *housemate in [self.member housemates]) {
-                for (OMembership *peerResidency in [housemate residencies]) {
-                    [[self.origo membershipForMember:peerResidency.member] expireIfRedundant];
-                    
-                    if ([self.origo isOfType:kOrigoTypeResidence]) {
-                        [[peerResidency.origo membershipForMember:self.member] expireIfRedundant];
-                    }
-                }
-            }
-        }
-
         if ([self.member isUser]) {
             for (OMembership *membership in [self.origo allMemberships]) {
                 if (![membership.member isKnownByUser]) {
-                    [[OMeta m].context deleteObject:membership.member];
+                    [[OMeta m].context deleteEntity:membership.member];
                 }
                 
-                [[OMeta m].context deleteObject:membership];
-                //[[OMeta m].context deleteEntity:membership];
+                [[OMeta m].context deleteEntity:membership];
             }
             
-            [[OMeta m].context deleteObject:self.origo];
-            //[[OMeta m].context deleteEntity:self.origo];
+            [[OMeta m].context deleteEntity:self.origo];
         } else if (![self.member isKnownByUser]) {
             for (OMembership *membership in [self.member allMemberships]) {
                 [[membership.origo membershipForMember:[OMeta m].user] expire];
-                [[OMeta m].context deleteObject:membership];
-                //[[OMeta m].context deleteEntity:membership];
+                [[OMeta m].context deleteEntity:membership];
             }
             
-            [[OMeta m].context deleteObject:self.member];
-            //[[OMeta m].context deleteEntity:self.member];
+            [[OMeta m].context deleteEntity:self.member];
         }
     }
 }

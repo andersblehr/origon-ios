@@ -66,6 +66,7 @@ NSString * const kPropertyKeyEmail = @"email";
 NSString * const kPropertyKeyEntityId = @"entityId";
 NSString * const kPropertyKeyHashCode = @"hashCode";
 NSString * const kPropertyKeyIsExpired = @"isExpired";
+NSString * const kPropertyKeyIsAwaitingDeletion = @"isAwaitingDeletion";
 NSString * const kPropertyKeyMobilePhone = @"mobilePhone";
 NSString * const kPropertyKeyName = @"name";
 NSString * const kPropertyKeyOrigoId = @"origoId";

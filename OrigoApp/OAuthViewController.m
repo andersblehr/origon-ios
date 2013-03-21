@@ -282,7 +282,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [[OMeta m].user makeActive];
     } else {
         OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
-        [residence addResident:[OMeta m].user];
+        [residence addMember:[OMeta m].user];
     }
     
     [[OMeta m] setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];

@@ -210,7 +210,13 @@
 
 - (BOOL)isDirty
 {
-    return ![self.hashCode isEqualToString:[self computeHashCode]];
+    return ([self isBeingDeleted] || ![self.hashCode isEqualToString:[self computeHashCode]]);
+}
+
+
+- (BOOL)isBeingDeleted
+{
+    return [self.isAwaitingDeletion boolValue];
 }
 
 
@@ -228,7 +234,9 @@
 
 - (BOOL)isTransientProperty:(NSString *)propertyKey
 {
-    return [propertyKey isEqualToString:kPropertyKeyHashCode];
+    NSArray *transientPropertyKeys = @[kPropertyKeyHashCode, kPropertyKeyIsAwaitingDeletion];
+    
+    return [transientPropertyKeys containsObject:propertyKey];
 }
 
 
@@ -242,7 +250,7 @@
 
 - (BOOL)hasExpired
 {
-    return [self.isExpired boolValue] || self.isDeleted;
+    return [self.isExpired boolValue] || [self isBeingDeleted];
 }
 
 
