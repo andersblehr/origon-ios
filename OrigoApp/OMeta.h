@@ -55,6 +55,7 @@ extern NSString * const kPropertyKeyDateOfBirth;
 extern NSString * const kPropertyKeyEmail;
 extern NSString * const kPropertyKeyEntityId;
 extern NSString * const kPropertyKeyHashCode;
+extern NSString * const kPropertyKeyIsAwaitingDeletion;
 extern NSString * const kPropertyKeyIsExpired;
 extern NSString * const kPropertyKeyMobilePhone;
 extern NSString * const kPropertyKeyName;

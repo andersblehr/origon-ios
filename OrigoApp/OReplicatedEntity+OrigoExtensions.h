@@ -27,6 +27,7 @@
 - (BOOL)userIsCreator;
 - (BOOL)isReplicated;
 - (BOOL)isDirty;
+- (BOOL)isBeingDeleted;
 - (BOOL)isTransient;
 - (BOOL)isTransientProperty:(NSString *)key;
 

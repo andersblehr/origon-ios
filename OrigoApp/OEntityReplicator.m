@@ -24,18 +24,7 @@
 
 - (NSSet *)dirtyEntities
 {
-    [_dirtyEntities unionSet:[[OMeta m].context insertedObjects]];
-    [_dirtyEntities unionSet:[[OMeta m].context updatedObjects]];
-    
-    NSMutableSet *confirmedDirtyEntities = [[NSMutableSet alloc] init];
-    
-    for (OReplicatedEntity *entity in _dirtyEntities) {
-        if ([entity isDirty]) {
-            [confirmedDirtyEntities addObject:entity];
-        }
-    }
-    
-    _dirtyEntities = confirmedDirtyEntities;
+    [_dirtyEntities unionSet:[[OMeta m].context dirtyEntitiesAwaitingReplication]];
     
     return _dirtyEntities;
 }
@@ -175,6 +164,9 @@
     
     return relationshipRefs;
 }
+
+
+#pragma mark - Entity deletion
 
 
 #pragma mark - OServerConnectionDelegate conformance

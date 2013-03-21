@@ -31,10 +31,10 @@ extern NSString * const kOrigoTypeOther;
 - (NSSet *)residencies;
 - (NSSet *)participancies;
 
-- (id)membershipForMember:(OMember *)member;
-- (id)addAssociateMember:(OMember *)member;
 - (id)addMember:(OMember *)member;
-- (id)addResident:(OMember *)resident;
+- (id)addAssociateMember:(OMember *)member;
+- (id)membershipForMember:(OMember *)member;
+- (id)associateMembershipForMember:(OMember *)member;
 
 - (BOOL)isOfType:(NSString *)origoType;
 - (BOOL)hasAdmin;
@@ -42,6 +42,7 @@ extern NSString * const kOrigoTypeOther;
 - (BOOL)hasAssociateMember:(OMember *)member;
 - (BOOL)knowsAboutMember:(OMember *)member;
 - (BOOL)indirectlyKnowsAboutMember:(OMember *)member;
+- (BOOL)hasResidentsInCommonWithResidence:(OOrigo *)residence;
 
 - (BOOL)userCanEdit;
 - (BOOL)userIsAdmin;

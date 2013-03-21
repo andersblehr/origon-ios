@@ -53,11 +53,7 @@ static NSInteger const kOrigoSection = 0;
         
         if (self.state.actionIsRegister) {
             if (!_membership) {
-                if ([_origo isOfType:kOrigoTypeResidence]) {
-                    _membership = [_origo addResident:_member];
-                } else {
-                    _membership = [_origo addMember:_member];
-                }
+                _membership = [_origo addMember:_member];
             }
             
             [self.view endEditing:YES];

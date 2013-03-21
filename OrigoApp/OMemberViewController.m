@@ -98,11 +98,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     if (!_membership) {
-        if ([_origo isOfType:kOrigoTypeResidence]) {
-            _membership = [_origo addResident:_member];
-        } else {
-            _membership = [_origo addMember:_member];
-        }
+        _membership = [_origo addMember:_member];
     }
     
     [self updateMember];
@@ -493,7 +489,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
                 [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_member meta:kOrigoTypeResidence];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
-                [_candidateResidences[buttonIndex] addResident:_member];
+                [_candidateResidences[buttonIndex] addMember:_member];
                 [self reloadSectionsIfNeeded];
             }
             

@@ -256,7 +256,7 @@ static NSInteger const kHousemateSheetTag = 0;
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
                 [self presentModalViewControllerWithIdentifier:kMemberViewControllerId data:_origo];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
-                [_origo addResident:_candidateHousemates[buttonIndex]];
+                [_origo addMember:_candidateHousemates[buttonIndex]];
                 [self reloadSectionsIfNeeded];
             }
             

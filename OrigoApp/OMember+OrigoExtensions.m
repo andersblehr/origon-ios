@@ -110,7 +110,7 @@
     
     if (!residency) {
         OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
-        residency = [residence addResident:self];
+        residency = [residence addMember:self];
         
         if ([self isUser]) {
             residency.isActive = @YES;
@@ -155,7 +155,7 @@
     NSMutableSet *fullMemberships = [[NSMutableSet alloc] init];
     
     for (OMembership *membership in [self allMemberships]) {
-        if (![membership isAssociate]) {
+        if ([membership isFull]) {
             [fullMemberships addObject:membership];
         }
     }

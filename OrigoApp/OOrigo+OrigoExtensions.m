@@ -35,16 +35,19 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 - (id)addMember:(OMember *)member isAssociate:(BOOL)isAssociate
 {
     OMembership *membership = [self membershipForMember:member];
-
+    
     if (membership) {
         if ([membership isAssociate] && !isAssociate) {
             [membership promoteToFull];
         }
     } else {
-        membership = [[OMeta m].context insertMembershipEntityForMember:member inOrigo:self];
+        membership = [[OMeta m].context insertEntityOfClass:OMembership.class inOrigo:self];
+        membership.member = member;
         
-        if (isAssociate) {
-            [membership demoteToAssociate];
+        [membership alignWithOrigoIsAssociate:isAssociate];
+        
+        if (![self isOfType:kOrigoTypeMemberRoot]) {
+            [[OMeta m].context insertCrossReferencesForMembership:membership];
         }
     }
     
@@ -91,7 +94,7 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
     NSMutableSet *fullMemberships = [[NSMutableSet alloc] init];
     
     for (OMembership *membership in [self allMemberships]) {
-        if (![membership isAssociate]) {
+        if ([membership isFull]) {
             [fullMemberships addObject:membership];
         }
     }
@@ -128,6 +131,18 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 }
 
 
+- (id)addMember:(OMember *)member
+{
+    return [self addMember:member isAssociate:NO];
+}
+
+
+- (id)addAssociateMember:(OMember *)member
+{
+    return [self addMember:member isAssociate:YES];
+}
+
+
 - (id)membershipForMember:(OMember *)member
 {
     OMembership *membershipForMember = nil;
@@ -142,41 +157,11 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 }
 
 
-- (id)addAssociateMember:(OMember *)member
+- (id)associateMembershipForMember:(OMember *)member
 {
-    return [self addMember:member isAssociate:YES];
-}
-
-
-- (id)addMember:(OMember *)member
-{
-    id membership = nil;
+    OMembership *membership = [self membershipForMember:member];
     
-    if ([self isOfType:kOrigoTypeResidence]) {
-        membership = [self addResident:member];
-    } else {
-        membership = [self addMember:member isAssociate:NO];
-    }
-    
-    return membership;
-}
-
-
-- (id)addResident:(OMember *)resident
-{
-    OMembership *residency = nil;
-    
-    if ([self isOfType:kOrigoTypeResidence]) {
-        residency = [self membershipForMember:resident];
-        
-        if (residency) {
-            [residency promoteToFull];
-        } else {
-            residency = [[OMeta m].context insertMembershipEntityForMember:resident inOrigo:self];
-        }
-    }
-    
-    return residency;
+    return [membership isAssociate] ? membership : nil;
 }
 
 
@@ -242,7 +227,7 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 {
     OMembership *membership = [self membershipForMember:member];
     
-    return ((membership != nil) && ![membership isAssociate]);
+    return ((membership != nil) && [membership isFull]);
 }
 
 
@@ -276,6 +261,20 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
     }
     
     return knowsAboutMember;
+}
+
+
+- (BOOL)hasResidentsInCommonWithResidence:(OOrigo *)residence
+{
+    BOOL hasResidentsInCommon = NO;
+    
+    if ([self isOfType:kOrigoTypeResidence] && [residence isOfType:kOrigoTypeResidence]) {
+        for (OMembership *residency in [residence residencies]) {
+            hasResidentsInCommon = hasResidentsInCommon || [self hasMember:residency.member];
+        }
+    }
+    
+    return hasResidentsInCommon;
 }
 
 

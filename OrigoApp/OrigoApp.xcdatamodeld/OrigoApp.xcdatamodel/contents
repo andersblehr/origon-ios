@@ -161,6 +161,7 @@
         <attribute name="dateReplicated" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="entityId" attributeType="String" syncable="YES"/>
         <attribute name="hashCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isAwaitingDeletion" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isExpired" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="origoId" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
@@ -252,7 +253,7 @@
         <element name="OMessageItem" positionX="0" positionY="0" width="128" height="120"/>
         <element name="OMessageThread" positionX="0" positionY="0" width="128" height="90"/>
         <element name="OOrigo" positionX="0" positionY="0" width="128" height="285"/>
-        <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="165"/>
+        <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="180"/>
         <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
         <element name="OResidencySchedule" positionX="0" positionY="0" width="128" height="120"/>
         <element name="OScheduledAbsence" positionX="0" positionY="0" width="128" height="105"/>
