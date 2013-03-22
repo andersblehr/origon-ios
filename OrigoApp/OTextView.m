@@ -47,7 +47,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 {
     NSInteger lineCount = 0;
 
-    if (self.window && ([self.text length] > 0)) {
+    if (self.window && [self.text length]) {
         lineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
         
         if (_hasEmphasis) {
@@ -60,7 +60,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
                 lineCount = kTextViewMinimumEditLines;
             }
         }
-    } else if (([self.text length] > 0) && _cell.entity) {
+    } else if ([self.text length] && _cell.entity) {
         lineCount = [OTextView lineCountWithText:self.text];
     } else {
         lineCount = [OTextView lineCountWithText:self.placeholder];

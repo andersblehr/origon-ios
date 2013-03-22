@@ -148,7 +148,7 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
     OMembership *membershipForMember = nil;
     
     for (OMembership *membership in [self allMemberships]) {
-        if (!membershipForMember && (membership.member == member)) {
+        if (!membershipForMember && ![membership isBeingDeleted] && (membership.member == member)) {
             membershipForMember = membership;
         }
     }
@@ -254,7 +254,9 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
         if (membership != directMembership) {
             for (OMembership *residency in [membership.member residencies]) {
                 if (residency.origo != self) {
-                    knowsAboutMember = knowsAboutMember || [residency.origo hasMember:member];
+                    if (![membership isBeingDeleted] && ![residency isBeingDeleted]) {
+                        knowsAboutMember = knowsAboutMember || [residency.origo hasMember:member];
+                    }
                 }
             }
         }

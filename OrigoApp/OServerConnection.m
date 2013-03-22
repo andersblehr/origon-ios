@@ -327,7 +327,7 @@ static NSString * const kURLParameterVersion = @"version";
 
     id deserialisedData = nil;
     
-    if ([_responseData length] > 0) {
+    if ([_responseData length]) {
         deserialisedData = [NSJSONSerialization deserialise:_responseData];
     }
     
