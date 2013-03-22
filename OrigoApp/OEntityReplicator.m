@@ -20,28 +20,6 @@
 
 @implementation OEntityReplicator
 
-#pragma mark - Auxiliary methods
-
-- (NSSet *)dirtyEntities
-{
-    [_dirtyEntities unionSet:[[OMeta m].context dirtyEntitiesAwaitingReplication]];
-    
-    return _dirtyEntities;
-}
-
-
-- (NSArray *)dirtyEntitiesAsDictionaries
-{
-    NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
-    
-    for (OReplicatedEntity *entity in [self dirtyEntities]) {
-        [entityDictionaries addObject:[entity toDictionary]];
-    }
-    
-    return entityDictionaries;
-}
-
-
 #pragma mark - Initialisation
 
 - (id)init
@@ -66,7 +44,7 @@
 
 - (BOOL)needsReplication
 {
-    return ([[OMeta m].user isActive] && ([[self dirtyEntities] count] > 0));
+    return ([[OMeta m].user isActive] && [[[OMeta m].context entitiesAwaitingReplication] count]);
 }
 
 
@@ -80,7 +58,15 @@
 
 - (void)replicate
 {
-    [[[OServerConnection alloc] init] replicate:[self dirtyEntitiesAsDictionaries]];
+    [_dirtyEntities unionSet:[[OMeta m].context entitiesAwaitingReplication]];
+    
+    NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
+    
+    for (OReplicatedEntity *entity in _dirtyEntities) {
+        [entityDictionaries addObject:[entity toDictionary]];
+    }
+    
+    [[[OServerConnection alloc] init] replicate:entityDictionaries];
 }
 
 
@@ -88,16 +74,16 @@
 
 - (void)saveUserReplicationState
 {
-    [[OMeta m].context save];
-    
     NSMutableSet *dirtyEntityURIs = [[NSMutableSet alloc] init];
     
-    for (OReplicatedEntity *dirtyEntity in [self dirtyEntities]) {
+    for (OReplicatedEntity *dirtyEntity in [[OMeta m].context entitiesAwaitingReplication]) {
         [dirtyEntityURIs addObject:[[dirtyEntity objectID] URIRepresentation]];
     }
     
     [[OMeta m] setUserDefault:[NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs] forKey:kDefaultsKeyDirtyEntities];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    [[OMeta m].context save];
 }
 
 
@@ -166,9 +152,6 @@
 }
 
 
-#pragma mark - Entity deletion
-
-
 #pragma mark - OServerConnectionDelegate conformance
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
@@ -185,7 +168,7 @@
         
         for (OReplicatedEntity *entity in _dirtyEntities) {
             if ([entity isTransient]) {
-                [[OMeta m].context deleteObject:entity];
+                [[OMeta m].context deleteEntity:entity];
             } else {
                 entity.dateReplicated = now;
                 entity.hashCode = [entity computeHashCode];

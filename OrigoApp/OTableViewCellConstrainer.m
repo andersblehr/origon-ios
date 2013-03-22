@@ -85,7 +85,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
             
             id value = [_cell.entity valueForKey:key];
             
-            if (value && (![[textField text] length])) {
+            if (value && ![[textField text] length]) {
                 if ([value isKindOfClass:NSString.class]) {
                     [textField setText:value];
                 } else if ([value isKindOfClass:NSDate.class]) {

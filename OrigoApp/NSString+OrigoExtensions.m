@@ -142,7 +142,7 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
         
         if (!reconstructedString) {
             reconstructedString = workingCopy;
-        } else if ([workingCopy length] > 0) {
+        } else if ([workingCopy length]) {
             reconstructedString = [reconstructedString stringByAppendingString:workingCopy separator:kSeparatorNewline];
         }
     }
@@ -155,7 +155,7 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 {
     NSString *returnString = self;
     
-    if ([self length] > 0) {
+    if ([self length]) {
         returnString = [returnString stringByAppendingString:separator];
     }
     

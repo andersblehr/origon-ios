@@ -230,7 +230,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             inputIsValid = inputIsValid && [self emailIsEligible];
             inputIsValid = inputIsValid && [_mobilePhoneField holdsValidPhoneNumber];
         } else if ([_dateOfBirthField.date isBirthDateOfMinor]) {
-            if ([[_emailField finalText] length] > 0) {
+            if ([[_emailField finalText] length]) {
                 inputIsValid = inputIsValid && [_emailField holdsValidEmail];
             }
         }
@@ -275,7 +275,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     NSSet *housemateResidences = [_member housemateResidences];
     
-    if ([housemateResidences count] > 0) {
+    if ([housemateResidences count]) {
         [self promptForResidence:housemateResidences];
     } else {
         [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_member meta:kOrigoTypeResidence];

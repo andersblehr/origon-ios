@@ -250,7 +250,7 @@
 
 - (BOOL)hasExpired
 {
-    return [self.isExpired boolValue] || [self isBeingDeleted];
+    return [self.isExpired boolValue];
 }
 
 

@@ -178,7 +178,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     
     [[OMeta m].replicator stageEntity:entity];
     
-    if ([relationshipRefs count] > 0) {
+    if ([relationshipRefs count]) {
         [[OMeta m].replicator stageRelationshipRefs:relationshipRefs forEntity:entity];
     }
     
@@ -439,7 +439,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 #pragma mark - Entities to replicate
 
-- (NSSet *)dirtyEntitiesAwaitingReplication
+- (NSSet *)entitiesAwaitingReplication
 {
     NSMutableSet *entitiesAwaitingReplication = [[NSMutableSet alloc] init];
     

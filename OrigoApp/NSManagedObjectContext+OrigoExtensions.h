@@ -31,6 +31,6 @@
 - (void)save;
 - (void)saveServerReplicas:(NSArray *)replicaDictionaries;
 
-- (NSSet *)dirtyEntitiesAwaitingReplication;
+- (NSSet *)entitiesAwaitingReplication;
 
 @end

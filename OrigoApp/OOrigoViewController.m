@@ -43,7 +43,7 @@ static NSInteger const kOrigoSection = 0;
 
 - (void)didFinishEditing
 {
-    if ([[_addressView finalText] length] > 0) {
+    if ([[_addressView finalText] length]) {
         if (!_origo) {
             _origo = [[OMeta m].context insertOrigoEntityOfType:self.meta];
         }
