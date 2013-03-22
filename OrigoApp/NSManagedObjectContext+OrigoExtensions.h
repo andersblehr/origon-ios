@@ -21,7 +21,6 @@
 - (id)fetchEntityWithId:(NSString *)entityId;
 
 - (void)deleteEntity:(OReplicatedEntity *)entity;
-- (void)deleteEntities;
 
 - (void)insertCrossReferencesForMembership:(OMembership *)membership;
 - (void)insertAdditionalCrossReferencesForFullMembership:(OMembership *)membership;

@@ -279,16 +279,6 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 }
 
 
-- (void)deleteEntities
-{
-    for (OReplicatedEntity *entity in [self dirtyEntities]) {
-        if ([entity isBeingDeleted]) {
-            [self deleteObject:entity];
-        }
-    }
-}
-
-
 #pragma mark - Inserting & expiring entity cross references
 
 - (void)insertCrossReferencesForMembership:(OMembership *)membership
@@ -400,7 +390,11 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (void)save
 {
-    [self deleteEntities];
+    for (OReplicatedEntity *entity in [self dirtyEntities]) {
+        if ([entity isBeingDeleted]) {
+            [self deleteObject:entity];
+        }
+    }
     
     NSError *error;
     
