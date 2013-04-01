@@ -119,7 +119,7 @@ static NSString * const kMembershipTypeAssociate = @"A";
 
 - (void)expire
 {
-    if (![self isAssociate] && [self.origo indirectlyKnowsAboutMember:self.member]) {
+    if ([self isFull] && [self.origo indirectlyKnowsAboutMember:self.member]) {
         [self demoteToAssociate];
     } else {
         if ([self shouldReplicateOnExpiry]) {
