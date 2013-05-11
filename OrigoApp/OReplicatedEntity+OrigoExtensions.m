@@ -190,7 +190,7 @@
         OReplicatedEntity *entity = [[OMeta m].replicator stagedEntityWithId:destinationId];
         
         if (!entity) {
-            entity = [[OMeta m].context fetchEntityWithId:destinationId];
+            entity = [[OMeta m].context entityWithId:destinationId];
         }
         
         if (entity) {

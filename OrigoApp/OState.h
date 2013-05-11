@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "OTableViewController.h"
+
 typedef NS_ENUM(NSInteger, OStateView) {
     OStateViewDefault,
     OStateViewAuth,
@@ -40,14 +42,15 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
     OStateAspectHousemate,
     OStateAspectResidence,
     OStateAspectOrganisation,
+    OStateAspectAssociation,
     OStateAspectSchoolClass,
     OStateAspectPreschool,
     OStateAspectTeam,
 };
 
-@class OTableViewController;
-
 @interface OState : NSObject
+
+@property (weak, nonatomic, readonly) OTableViewController *activeViewController;
 
 @property (nonatomic, readonly) BOOL viewIsAuth;
 @property (nonatomic, readonly) BOOL viewIsOrigoList;
@@ -74,6 +77,7 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
 @property (nonatomic) BOOL aspectIsHousemate;
 @property (nonatomic) BOOL aspectIsResidence;
 @property (nonatomic) BOOL aspectIsOrganisation;
+@property (nonatomic) BOOL aspectIsAssociation;
 @property (nonatomic) BOOL aspectIsSchoolClass;
 @property (nonatomic) BOOL aspectIsPreschool;
 @property (nonatomic) BOOL aspectIsTeam;

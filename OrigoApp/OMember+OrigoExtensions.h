@@ -8,6 +8,8 @@
 
 #import "OMember.h"
 
+#import <CoreLocation/CoreLocation.h>
+
 @interface OMember (OrigoExtensions)
 
 - (NSComparisonResult)compare:(OMember *)other;
@@ -16,8 +18,8 @@
 - (NSString *)displayContactDetails;
 - (UIImage *)displayImage;
 
-- (OMembership *)initialResidency;
 - (OMembership *)rootMembership;
+- (OMembership *)initialResidency;
 - (NSSet *)allMemberships;
 - (NSSet *)fullMemberships;
 - (NSSet *)residencies;

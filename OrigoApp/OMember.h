@@ -2,7 +2,7 @@
 //  OMember.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 18.03.13.
+//  Created by Anders Blehr on 14.04.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "OReplicatedEntity.h"
 
-@class ODevice, ODocument, OEvent, OEventInvitation, OMembership, OMessageItem, OScheduledAbsence, OToDoAssignment;
+@class ODevice, ODocument, OEvent, OEventInvitation, OMembership, OMessageItem, OScheduledAbsence, OSettings, OToDoAssignment;
 
 @interface OMember : OReplicatedEntity
 
@@ -21,7 +21,6 @@
 @property (nonatomic, retain) NSString * givenName;
 @property (nonatomic, retain) NSString * mobilePhone;
 @property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSString * passwordHash;
 @property (nonatomic, retain) NSData * photo;
 @property (nonatomic, retain) NSSet *contactForEvents;
 @property (nonatomic, retain) NSSet *devices;
@@ -31,6 +30,7 @@
 @property (nonatomic, retain) NSSet *messageItems;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
 @property (nonatomic, retain) NSSet *toDoAssignments;
+@property (nonatomic, retain) OSettings *settings;
 @end
 
 @interface OMember (CoreDataGeneratedAccessors)

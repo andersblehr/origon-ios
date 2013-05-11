@@ -20,5 +20,6 @@
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
 - (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
+- (void)locatorDidLocate;
 
 @end

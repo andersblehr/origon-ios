@@ -133,6 +133,8 @@ static NSString * const kURLParameterVersion = @"version";
     if ([OMeta m].internetConnectionIsAvailable) {
         if (_requestIsValid) {
             [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+            
+            OLogDebug(@"Creating connection using URL: %@", _URLRequest.URL);
             NSURLConnection *URLConnection = [NSURLConnection connectionWithRequest:_URLRequest delegate:self];
             
             if (!URLConnection) {
@@ -244,6 +246,17 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
+- (void)sendEmailActivationCode:(id)delegate
+{
+    _RESTHandler = kRESTHandlerAuth;
+    _RESTRoute = kRESTRouteAuthEmailCode;
+    
+    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
+}
+
+
 - (void)replicate:(NSArray *)entityDictionaries
 {
     _RESTHandler = kRESTHandlerModel;
@@ -260,17 +273,6 @@ static NSString * const kURLParameterVersion = @"version";
         
         [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OMeta m].replicator];
     }
-}
-
-
-- (void)emailActivationCode:(id)delegate
-{
-    _RESTHandler = kRESTHandlerAuth;
-    _RESTRoute = kRESTRouteAuthEmailCode;
-    
-    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
 }
 
 

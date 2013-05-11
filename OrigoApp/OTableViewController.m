@@ -15,6 +15,7 @@
 #import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
+#import "OServerConnection.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
@@ -52,7 +53,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
         }
         
         [_instance initialise];
-        [_state setAspectForCarrier:_aspectCarrier];
+        [[OState s] reflect:_state];
         [_instance populateDataSource];
         
         for (NSNumber *sectionKey in [_sectionData allKeys]) {
@@ -357,7 +358,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     
     if (![OStrings hasStrings]) {
         [self.activityIndicator startAnimating];
-        [OStrings fetchStrings:self];
+        [[[OServerConnection alloc] init] fetchStrings:self];
     } else if (![OMeta m].userIsSignedIn) {
         [self presentModalViewControllerWithIdentifier:kAuthViewControllerId data:nil dismisser:self];
     } else if (self.state.actionIsRegister) {
@@ -448,6 +449,12 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     }
     
     return _activityIndicator;
+}
+
+
+- (void)setAspectCarrier:(id)aspectCarrier
+{
+    [_state setAspectForCarrier:aspectCarrier];
 }
 
 
@@ -695,7 +702,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
         [self.activityIndicator stopAnimating];
         
         [OStrings.class didCompleteWithResponse:response data:data];
-        [[OMeta m] setUserDefault:[NSDate date] forKey:kDefaultsKeyStringDate];
+        [[OMeta m] setGlobalDefault:[NSDate date] forKey:kDefaultsKeyStringDate];
         [(OTabBarController *)self.tabBarController setTabBarTitles];
         
         [self presentModalViewControllerWithIdentifier:kAuthViewControllerId data:nil dismisser:self];

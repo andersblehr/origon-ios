@@ -79,7 +79,6 @@
         <attribute name="givenName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="mobilePhone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
-        <attribute name="passwordHash" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
         <relationship name="contactForEvents" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OEvent" inverseName="eventContacts" inverseEntity="OEvent" syncable="YES"/>
         <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ODevice" inverseName="member" inverseEntity="ODevice" syncable="YES"/>
@@ -88,6 +87,7 @@
         <relationship name="memberships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OMembership" inverseName="member" inverseEntity="OMembership" syncable="YES"/>
         <relationship name="messageItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OMessageItem" inverseName="author" inverseEntity="OMessageItem" syncable="YES"/>
         <relationship name="scheduledAbsences" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="OScheduledAbsence" inverseName="person" inverseEntity="OScheduledAbsence" syncable="YES"/>
+        <relationship name="settings" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OSettings" inverseName="user" inverseEntity="OSettings" syncable="YES"/>
         <relationship name="toDoAssignments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OToDoAssignment" inverseName="assignee" inverseEntity="OToDoAssignment" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="no"/>
@@ -200,6 +200,13 @@
         </attribute>
         <relationship name="yearlySchedule" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OYearlySchedule" inverseName="scheduledBreaks" inverseEntity="OYearlySchedule" syncable="YES"/>
     </entity>
+    <entity name="OSettings" representedClassName="OSettings" parentEntity="OReplicatedEntity" syncable="YES">
+        <attribute name="countryCode" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="user" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="settings" inverseEntity="OMember" syncable="YES"/>
+        <userInfo>
+            <entry key="expires" value="no"/>
+        </userInfo>
+    </entity>
     <entity name="OToDoAssignment" representedClassName="OToDoAssignment" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="assigneeDidDecline" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isComplete" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -258,6 +265,7 @@
         <element name="OResidencySchedule" positionX="0" positionY="0" width="128" height="120"/>
         <element name="OScheduledAbsence" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OScheduledBreak" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="OSettings" positionX="160" positionY="192" width="128" height="75"/>
         <element name="OToDoAssignment" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OToDoItem" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OWeeklyScheduleItem" positionX="0" positionY="0" width="128" height="120"/>

@@ -16,6 +16,8 @@
 #import "OServerConnection.h"
 #import "OState.h"
 
+#import "OOrigo+OrigoExtensions.h"
+
 // Cross-view strings
 NSString * const strButtonOK                         = @"strButtonOK";
 NSString * const strButtonEdit                       = @"strButtonEdit";
@@ -27,6 +29,7 @@ NSString * const strButtonSignOut                    = @"strButtonSignOut";
 NSString * const strAlertTextNoInternet              = @"strAlertTextNoInternet";
 NSString * const strAlertTextServerError             = @"strAlertTextServerError";
 NSString * const strTermAddress                      = @"strTermAddress";
+NSString * const strTermCountry                      = @"strTermCountry";
 
 // OAuthView strings
 NSString * const strLabelSignIn                      = @"strLabelSignIn";
@@ -58,7 +61,13 @@ NSString * const strHeaderMyOrigos                   = @"strHeaderMyOrigos";
 NSString * const strFooterOrigoCreationFirst         = @"strFooterOrigoCreationFirst";
 NSString * const strFooterOrigoCreation              = @"strFooterOrigoCreation";
 NSString * const strFooterOrigoCreationWards         = @"strFooterOrigoCreationWards";
+NSString * const strButtonCountryOfLocation          = @"strButtonCountryOfLocation";
+NSString * const strButtonCountryOther               = @"strButtonCountryOther";
+NSString * const strAlertTitleOrigoCountry           = @"strAlertTitleOrigoCountry";
+NSString * const strAlertTextOrigoCountry            = @"strAlertTextOrigoCountry";
 NSString * const strSheetTitleOrigoType              = @"strSheetTitleOrigoType";
+NSString * const strSheetTitleOrigoCountryLocate     = @"strSheetTitleOrigoCountryLocate";
+NSString * const strSheetTitleOrigoCountryNoLocate   = @"strSheetTitleOrigoCountryNoLocate";
 NSString * const strTermMe                           = @"strTermMe";
 NSString * const strTermYourChild                    = @"strTermYourChild";
 NSString * const strTermHim                          = @"strTermHim";
@@ -84,11 +93,9 @@ NSString * const strButtonDeleteMember               = @"strButtonDeleteMember";
 NSString * const strDefaultResidenceName             = @"strDefaultResidenceName";
 NSString * const strViewTitleNewOrigo                = @"strViewTitleNewOrigo";
 NSString * const strLabelAddress                     = @"strLabelAddress";
-NSString * const strLabelCountry                     = @"strLabelCountry";
 NSString * const strLabelTelephone                   = @"strLabelTelephone";
 NSString * const strHeaderAddresses                  = @"strHeaderAddresses";
 NSString * const strPlaceholderAddress               = @"strPlaceholderAddress";
-NSString * const strPlaceholderCountry               = @"strPlaceholderCountry";
 NSString * const strPlaceholderTelephone             = @"strPlaceholderTelephone";
 
 // OMemberView strings
@@ -140,16 +147,26 @@ NSString * const strDefaultMessageBoardName          = @"strDefaultMessageBoardN
 // OSettingsView strings
 NSString * const strTabBarTitleSettings              = @"strTabBarTitleSettings";
 
-// Meta strings
-NSString * const origoTypeMemberRoot                 = @"origoTypeMemberRoot";
-NSString * const origoTypeResidence                  = @"origoTypeResidence";
-NSString * const origoTypeSchoolClass                = @"origoTypeSchoolClass";
-NSString * const origoTypePreschoolClass             = @"origoTypePreschoolClass";
-NSString * const origoTypeSportsTeam                 = @"origoTypeSportsTeam";
-NSString * const origoTypeDefault                    = @"origoTypeDefault";
+// Origo type strings
+NSString * const strOrigoTypeResidence               = @"strOrigoTypeResidence";
+NSString * const strOrigoTypeOrganisation            = @"strOrigoTypeOrganisation";
+NSString * const strOrigoTypeAssociation             = @"strOrigoTypeAssociation";
+NSString * const strOrigoTypeSchoolClass             = @"strOrigoTypeSchoolClass";
+NSString * const strOrigoTypePreschoolClass          = @"strOrigoTypePreschoolClass";
+NSString * const strOrigoTypeSportsTeam              = @"strOrigoTypeSportsTeam";
+NSString * const strOrigoTypeOther                   = @"strOrigoTypeOther";
+NSString * const strNewOrigoOfTypeResidence          = @"strNewOrigoOfTypeResidence";
+NSString * const strNewOrigoOfTypeOrganisation       = @"strNewOrigoOfTypeOrganisation";
+NSString * const strNewOrigoOfTypeAssociation        = @"strNewOrigoOfTypeAssociation";
+NSString * const strNewOrigoOfTypeSchoolClass        = @"strNewOrigoOfTypeSchoolClass";
+NSString * const strNewOrigoOfTypePreschoolClass     = @"strNewOrigoOfTypePreschoolClass";
+NSString * const strNewOrigoOfTypeSportsTeam         = @"strNewOrigoOfTypeSportsTeam";
+NSString * const strNewOrigoOfTypeOther              = @"strNewOrigoOfTypeOther";
 
+// Meta strings
 NSString * const xstrContactRolesSchoolClass         = @"xstrContactRolesSchoolClass";
 NSString * const xstrContactRolesPreschoolClass      = @"xstrContactRolesPreschoolClass";
+NSString * const xstrContactRolesAssociation         = @"xstrContactRolesAssociation";
 NSString * const xstrContactRolesSportsTeam          = @"xstrContactRolesSportsTeam";
 
 static NSInteger const kDaysBetweenStringFetches = 0; // TODO: Set to 14
@@ -191,19 +208,11 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 }
 
 
-+ (void)fetchStrings:(id)delegate
-{
-    if ([OState s].actionIsSetup) {
-        [[[OServerConnection alloc] init] fetchStrings:delegate];
-    }
-}
-
-
 + (void)refreshIfNeeded
 {
-    NSDate *stringDate = [[OMeta m] userDefaultForKey:kDefaultsKeyStringDate];
+    NSDate *stringDate = [[OMeta m] globalDefaultForKey:kDefaultsKeyStringDate];
     
-    if (stringDate && ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
+    if (!stringDate || ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
         if ([self hasStrings] && [[OMeta m] internetConnectionIsAvailable]) {
             [[[OServerConnection alloc] init] fetchStrings:self];
         }
@@ -212,6 +221,31 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 
 
 #pragma mark - String lookup
+
++ (NSString *)stringForOrigoType:(NSString *)origoType
+{
+    NSString *key = nil;
+    BOOL isRegistering3rdParty = ([OState s].actionIsRegister && [OMeta m].userIsRegistered);
+    
+    if ([origoType isEqualToString:kOrigoTypeResidence]) {
+        key = isRegistering3rdParty ? strNewOrigoOfTypeResidence : strOrigoTypeResidence;
+    } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
+        key = isRegistering3rdParty ? strNewOrigoOfTypeOrganisation : strOrigoTypeOrganisation;
+    } else if ([origoType isEqualToString:kOrigoTypeAssociation]) {
+        key = isRegistering3rdParty ? strNewOrigoOfTypeAssociation : strOrigoTypeAssociation;
+    } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
+        key = isRegistering3rdParty ? strNewOrigoOfTypeSchoolClass : strOrigoTypeSchoolClass;
+    } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
+        key = isRegistering3rdParty ? strNewOrigoOfTypePreschoolClass : strOrigoTypePreschoolClass;
+    } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
+        key = isRegistering3rdParty ? strNewOrigoOfTypeSportsTeam : strOrigoTypeSportsTeam;
+    } else {
+        key = isRegistering3rdParty ? strNewOrigoOfTypeOther : strOrigoTypeOther;
+    }
+    
+    return [self stringForKey:key];
+}
+
 
 + (NSString *)stringForKey:(NSString *)key
 {
@@ -254,6 +288,12 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
             OLogError(@"Error writing strings from server to plist '%@'.", [self fullPathToStringsPlist]);
         }
     }
+}
+
+
++ (void)didFailWithError:(NSError *)error
+{
+    [[OState s].activeViewController didFailWithError:error];
 }
 
 @end

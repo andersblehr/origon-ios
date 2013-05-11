@@ -19,6 +19,7 @@ extern NSString * const strButtonSignOut;
 extern NSString * const strAlertTextNoInternet;
 extern NSString * const strAlertTextServerError;
 extern NSString * const strTermAddress;
+extern NSString * const strTermCountry;
 
 // OAuthView strings
 extern NSString * const strLabelSignIn;
@@ -50,7 +51,13 @@ extern NSString * const strHeaderMyOrigos;
 extern NSString * const strFooterOrigoCreationFirst;
 extern NSString * const strFooterOrigoCreation;
 extern NSString * const strFooterOrigoCreationWards;
+extern NSString * const strButtonCountryOfLocation;
+extern NSString * const strButtonCountryOther;
+extern NSString * const strAlertTitleOrigoCountry;
+extern NSString * const strAlertTextOrigoCountry;
 extern NSString * const strSheetTitleOrigoType;
+extern NSString * const strSheetTitleOrigoCountryLocate;
+extern NSString * const strSheetTitleOrigoCountryNoLocate;
 extern NSString * const strTermMe;
 extern NSString * const strTermYourChild;
 extern NSString * const strTermHim;
@@ -76,11 +83,9 @@ extern NSString * const strButtonDeleteMember;
 extern NSString * const strDefaultResidenceName;
 extern NSString * const strViewTitleNewOrigo;
 extern NSString * const strLabelAddress;
-extern NSString * const strLabelCountry;
 extern NSString * const strLabelTelephone;
 extern NSString * const strHeaderAddresses;
 extern NSString * const strPlaceholderAddress;
-extern NSString * const strPlaceholderCountry;
 extern NSString * const strPlaceholderTelephone;
 
 // OMemberView strings
@@ -132,25 +137,35 @@ extern NSString * const strDefaultMessageBoardName;
 // OSettingsView strings
 extern NSString * const strTabBarTitleSettings;
 
-// Meta strings
-extern NSString * const origoTypeMemberRoot;
-extern NSString * const origoTypeResidence;
-extern NSString * const origoTypeSchoolClass;
-extern NSString * const origoTypePreschoolClass;
-extern NSString * const origoTypeSportsTeam;
-extern NSString * const origoTypeDefault;
+// Origo type strings
+extern NSString * const strOrigoTypeResidence;
+extern NSString * const strOrigoTypeOrganisation;
+extern NSString * const strOrigoTypeAssociation;
+extern NSString * const strOrigoTypeSchoolClass;
+extern NSString * const strOrigoTypePreschoolClass;
+extern NSString * const strOrigoTypeSportsTeam;
+extern NSString * const strOrigoTypeOther;
+extern NSString * const strNewOrigoOfTypeResidence;
+extern NSString * const strNewOrigoOfTypeOrganisation;
+extern NSString * const strNewOrigoOfTypeAssociation;
+extern NSString * const strNewOrigoOfTypeSchoolClass;
+extern NSString * const strNewOrigoOfTypePreschoolClass;
+extern NSString * const strNewOrigoOfTypeSportsTeam;
+extern NSString * const strNewOrigoOfTypeOther;
 
+// Meta strings
 extern NSString * const xstrContactRolesSchoolClass;
 extern NSString * const xstrContactRolesPreschoolClass;
+extern NSString * const xstrContactRolesAssociation;
 extern NSString * const xstrContactRolesSportsTeam;
 
 
 @interface OStrings : NSObject
 
 + (BOOL)hasStrings;
-+ (void)fetchStrings:(id)delegate;
 + (void)refreshIfNeeded;
 
++ (NSString *)stringForOrigoType:(NSString *)origoType;
 + (NSString *)stringForKey:(NSString *)key;
 + (NSString *)labelForKey:(NSString *)key;
 + (NSString *)placeholderForKey:(NSString *)key;

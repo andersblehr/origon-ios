@@ -136,9 +136,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidEmail
 {
-    NSString *email = [self.text removeSuperfluousWhitespace];
+    NSString *email = [self finalText];
     
-    BOOL isValid = [email isEmailAddress];
+    BOOL isValid = (email && [email isEmailAddress]);
     
     if (!isValid) {
         [self becomeFirstResponder];
@@ -150,9 +150,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidPassword
 {
-    NSString *password = [self.text removeSuperfluousWhitespace];
+    NSString *password = [self finalText];
     
-    BOOL isValid = ([password length] >= kMinimumPassordLength);
+    BOOL isValid = (password && ([password length] >= kMinimumPassordLength));
     
     if (!isValid) {
         [self becomeFirstResponder];
@@ -164,9 +164,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidName
 {
-    NSString *name = [self.text removeSuperfluousWhitespace];
+    NSString *name = [self finalText];
     
-    BOOL isValid = ([name length] > 0);
+    BOOL isValid = (name && ([name length] > 0));
     
     if (isValid) {
         isValid = isValid && ([name rangeOfString:kSeparatorSpace].location > 0);
@@ -182,9 +182,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidPhoneNumber
 {
-    NSString *mobileNumber = [self.text removeSuperfluousWhitespace];
+    NSString *mobileNumber = [self finalText];
     
-    BOOL isValid = ([mobileNumber length] >= kMinimumPhoneNumberLength);
+    BOOL isValid = (mobileNumber && ([mobileNumber length] >= kMinimumPhoneNumberLength));
     
     if (!isValid) {
         [self becomeFirstResponder];
@@ -210,13 +210,13 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (NSString *)finalText
 {
-    NSString *finalText = [self.text removeSuperfluousWhitespace];
+    self.text = [self.text removeSuperfluousWhitespace];
     
-    if ([finalText length] == 0) {
-        finalText = nil;
+    if ([self.text length] == 0) {
+        self.text = nil;
     }
     
-    return finalText;
+    return self.text;
 }
 
 
