@@ -11,6 +11,7 @@
 extern NSString * const kOrigoTypeMemberRoot;
 extern NSString * const kOrigoTypeResidence;
 extern NSString * const kOrigoTypeOrganisation;
+extern NSString * const kOrigoTypeAssociation;
 extern NSString * const kOrigoTypeSchoolClass;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeSportsTeam;
@@ -31,10 +32,10 @@ extern NSString * const kOrigoTypeOther;
 - (NSSet *)residencies;
 - (NSSet *)participancies;
 
-- (id)addMember:(OMember *)member;
-- (id)addAssociateMember:(OMember *)member;
-- (id)membershipForMember:(OMember *)member;
-- (id)associateMembershipForMember:(OMember *)member;
+- (OMembership *)addMember:(OMember *)member;
+- (OMembership *)addAssociateMember:(OMember *)member;
+- (OMembership *)membershipForMember:(OMember *)member;
+- (OMembership *)associateMembershipForMember:(OMember *)member;
 
 - (BOOL)isOfType:(NSString *)origoType;
 - (BOOL)hasAdmin;

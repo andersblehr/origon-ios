@@ -8,6 +8,7 @@
 
 #import "OAlert.h"
 
+#import "OState.h"
 #import "OStrings.h"
 
 
@@ -21,7 +22,7 @@
     
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:delegate cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
     
-    if (tag != NSNotFound) {
+    if (tag < NSIntegerMax) {
         alert.tag = tag;
     }
     
@@ -33,13 +34,26 @@
 
 + (void)showAlertWithTitle:(NSString *)title message:(NSString *)message
 {
-    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil] show];
+    [self showAlertWithTitle:title message:message tag:NSIntegerMax];
+}
+
+
++ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message tag:(NSInteger)tag
+{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
+    
+    if (tag < NSIntegerMax) {
+        alertView.delegate = [OState s].activeViewController;
+        alertView.tag = tag;
+    }
+    
+    [alertView show];
 }
 
 
 + (void)showAlertForError:(NSError *)error
 {
-    [self showAlertForError:error tag:NSNotFound delegate:nil];
+    [self showAlertForError:error tag:NSIntegerMax delegate:nil];
 }
 
 
@@ -51,7 +65,7 @@
 
 + (void)showAlertForHTTPStatus:(NSInteger)status
 {
-    [self showAlertForHTTPStatus:status tag:NSNotFound delegate:nil];
+    [self showAlertForHTTPStatus:status tag:NSIntegerMax delegate:nil];
 }
 
 

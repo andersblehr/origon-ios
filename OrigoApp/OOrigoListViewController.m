@@ -13,6 +13,7 @@
 
 #import "OAlert.h"
 #import "OEntityReplicator.h"
+#import "OLocator.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
@@ -22,8 +23,18 @@
 #import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
+#import "OSettings.h"
 
 static NSString * const kSegueToMemberListView = @"segueFromOrigoListToMemberListView";
+
+static NSInteger const kOrigoCountrySheetTag = 0;
+static NSInteger const kOrigoCountrySheetButtonCountryProvided = 0;
+static NSInteger const kOrigoCountrySheetButtonCountryOfLocation = 1;
+static NSInteger const kOrigoCountrySheetButtonCountryOther = 2;
+
+static NSInteger const kOrigoTypeSheetTag = 1;
+
+static NSInteger const kOrigoCountryAlertTag = 0;
 
 static NSInteger const kUserSectionKey = 0;
 static NSInteger const kWardSectionKey = 1;
@@ -85,12 +96,70 @@ static NSInteger const kUserRow = 0;
 }
 
 
+- (BOOL)needsOrigoCountryForSelectedOrigoType
+{
+    BOOL needsOrigoCountry = NO;
+    
+    if (![OMeta m].settings.countryCode) {
+        needsOrigoCountry =
+            ([_selectedOrigoType isEqualToString:kOrigoTypePreschoolClass] ||
+             [_selectedOrigoType isEqualToString:kOrigoTypeSchoolClass]);
+    }
+    
+    return needsOrigoCountry;
+}
+
+
+- (void)presentOrigoCountrySheet
+{
+    NSString *sheetTitleFormat = nil;
+    NSString *buttonTitleCountryOfLocation = nil;
+    
+    if ([[OMeta m].locator canUseLocationServices]) {
+        sheetTitleFormat = [OStrings stringForKey:strSheetTitleOrigoCountryLocate];
+        buttonTitleCountryOfLocation = [OStrings stringForKey:strButtonCountryOfLocation];
+    } else {
+        sheetTitleFormat = [OStrings stringForKey:strSheetTitleOrigoCountryNoLocate];
+    }
+    
+    UIActionSheet *origoCountrySheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:sheetTitleFormat, [OMeta m].locator.country] delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    
+    [origoCountrySheet addButtonWithTitle:[OMeta m].locator.country];
+    
+    if ([[OMeta m].locator canUseLocationServices]) {
+        [origoCountrySheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryOfLocation]];
+    }
+    
+    [origoCountrySheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryOther]];
+    [origoCountrySheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
+    origoCountrySheet.cancelButtonIndex = origoCountrySheet.numberOfButtons - 1;
+    origoCountrySheet.tag = kOrigoCountrySheetTag;
+    
+    [origoCountrySheet showInView:self.tabBarController.view];
+}
+
+
+- (void)displayOrigoCountryAlert
+{
+    [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
+
+    NSString *alertTitle = [NSString stringWithFormat:[OStrings stringForKey:strAlertTitleOrigoCountry], [OMeta m].locator.country];
+    NSString *alertText = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextOrigoCountry], [OMeta m].locator.country];
+    
+    [OAlert showAlertWithTitle:alertTitle message:alertText tag:kOrigoCountryAlertTag];
+}
+
+
+- (void)presentOrigoViewController
+{
+    [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_member meta:_selectedOrigoType];
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)addOrigo
 {
-    _origoTypes = [[NSMutableArray alloc] init];
-    
     NSString *sheetTitle = [OStrings stringForKey:strSheetTitleOrigoType];
     
     if (self.state.aspectIsSelf) {
@@ -98,25 +167,17 @@ static NSInteger const kUserRow = 0;
     } else if (self.state.aspectIsWard) {
         NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], _member.givenName];
         sheetTitle = [NSString stringWithFormat:@"%@ %@?", sheetTitle, forWardName];
-        
-        if ([_member isOfPreschoolAge] && ![_member isMemberOfOrigoOfType:kOrigoTypeSchoolClass]) {
-            [_origoTypes addObject:kOrigoTypePreschoolClass];
-        }
-        
-        [_origoTypes addObject:kOrigoTypeSchoolClass];
     }
-    
-    [_origoTypes addObject:kOrigoTypeSportsTeam];
-    [_origoTypes addObject:kOrigoTypeOther];
     
     UIActionSheet *origoTypeSheet = [[UIActionSheet alloc] initWithTitle:sheetTitle delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     
     for (NSString *origoType in _origoTypes) {
-        [origoTypeSheet addButtonWithTitle:[OStrings stringForKey:origoType]];
+        [origoTypeSheet addButtonWithTitle:[OStrings stringForOrigoType:origoType]];
     }
     
     [origoTypeSheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
     origoTypeSheet.cancelButtonIndex = [_origoTypes count];
+    origoTypeSheet.tag = kOrigoTypeSheetTag;
     
     [origoTypeSheet showInView:self.tabBarController.view];
 }
@@ -183,8 +244,23 @@ static NSInteger const kUserRow = 0;
 - (void)initialise
 {
     _member = self.data ? self.data : [OMeta m].user;
+    _origoTypes = [[NSMutableArray alloc] init];
     
     self.aspectCarrier = _member;
+    
+    if (self.state.aspectIsWard) {
+        if ([_member isOfPreschoolAge]) {
+            [_origoTypes addObject:kOrigoTypePreschoolClass];
+        }
+        
+        [_origoTypes addObject:kOrigoTypeSchoolClass];
+    } else {
+        [_origoTypes addObject:kOrigoTypeOrganisation];
+        [_origoTypes addObject:kOrigoTypeAssociation];
+    }
+    
+    [_origoTypes addObject:kOrigoTypeSportsTeam];
+    [_origoTypes addObject:kOrigoTypeOther];
 }
 
 
@@ -242,6 +318,12 @@ static NSInteger const kUserRow = 0;
     } else {
         [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
     }
+}
+
+
+- (void)locatorDidLocate
+{
+    [self displayOrigoCountryAlert];
 }
 
 
@@ -324,10 +406,50 @@ static NSInteger const kUserRow = 0;
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex != actionSheet.cancelButtonIndex) {
-        _selectedOrigoType = _origoTypes[buttonIndex];
-        
-        [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_member meta:_selectedOrigoType];
+    switch (actionSheet.tag) {
+        case kOrigoCountrySheetTag:
+            if (buttonIndex == kOrigoCountrySheetButtonCountryProvided) {
+                [self displayOrigoCountryAlert];
+            } else if (buttonIndex == kOrigoCountrySheetButtonCountryOfLocation) {
+                [[OMeta m].locator locate];
+            } else if (buttonIndex == kOrigoCountrySheetButtonCountryOther) {
+                // TODO: Modally open Settings pane for Origo country
+            }
+            
+            break;
+            
+        case kOrigoTypeSheetTag:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                _selectedOrigoType = _origoTypes[buttonIndex];
+                
+                if ([self needsOrigoCountryForSelectedOrigoType]) {
+                    [self presentOrigoCountrySheet];
+                } else {
+                    [self presentOrigoViewController];
+                }
+            }
+            
+            break;
+            
+        default:
+            break;
+    }
+    
+}
+
+
+#pragma mark - UIAlertViewDelegate conformance
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (alertView.tag) {
+        case kOrigoCountryAlertTag:
+            [self presentOrigoViewController];
+
+            break;
+            
+        default:
+            break;
     }
 }
 

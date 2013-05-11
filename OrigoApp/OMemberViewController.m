@@ -57,7 +57,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if (emailIsEligible && self.state.actionIsRegister && !self.state.aspectIsSelf) {
         NSString *email = [_emailField finalText];
         
-        _candidate = [[OMeta m].context fetchMemberEntityWithEmail:email];
+        _candidate = [[OMeta m].context memberEntityWithEmail:email];
         
         if (_candidate) {
             if ([_origo hasMember:_candidate]) {

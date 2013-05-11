@@ -12,13 +12,13 @@
 
 @interface NSManagedObjectContext (OrigoExtensions)
 
-- (id)insertMemberEntity;
-- (id)insertOrigoEntityOfType:(NSString *)origoType;
 - (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo;
-- (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
+- (id)insertOrigoEntityOfType:(NSString *)origoType;
+- (id)insertMemberEntity;
+- (id)insertDeviceEntity;
 
-- (id)fetchMemberEntityWithEmail:(NSString *)email;
-- (id)fetchEntityWithId:(NSString *)entityId;
+- (id)entityWithId:(NSString *)entityId;
+- (id)memberEntityWithEmail:(NSString *)email;
 
 - (void)deleteEntity:(OReplicatedEntity *)entity;
 

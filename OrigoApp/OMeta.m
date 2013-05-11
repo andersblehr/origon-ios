@@ -14,11 +14,14 @@
 
 #import "OAppDelegate.h"
 #import "OEntityReplicator.h"
+#import "OLocator.h"
 #import "OLogging.h"
+#import "OState.h"
 #import "OUUIDGenerator.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
+#import "OSettings.h"
 
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
@@ -75,9 +78,12 @@ NSString * const kPropertyKeyTelephone = @"telephone";
 NSString * const kRelationshipKeyMember = @"member";
 NSString * const kRelationshipKeyOrigo = @"origo";
 
+NSString * const kSettingsKeyCountry = @"origo.settings.country";
+
 NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
-NSString * const kDefaultsKeyDirtyEntities = @"origo.dirtyEntities";
-NSString * const kDefaultsKeyRegistrationAborted = @"origo.flag.registrationAborted";
+NSString * const kDefaultsKeyDirtyEntities = @"origo.state.dirtyEntities";
+NSString * const kDefaultsKeyPasswordHash = @"origo.auth.passwordHash";
+NSString * const kDefaultsKeyRegistrationAborted = @"origo.flags.registrationAborted";
 NSString * const kDefaultsKeyStringDate = @"origo.date.strings";
 
 static NSString * const kDefaultsKeyAuthExpiryDate = @"origo.date.authExpiry";
@@ -95,13 +101,14 @@ static OMeta *m = nil;
 @interface OMeta ()
 
 @property (strong, nonatomic) OMember *user;
+@property (strong, nonatomic) OEntityReplicator *replicator;
+@property (strong, nonatomic) OLocator *locator;
 
 @property (nonatomic) BOOL userIsAllSet;
 @property (nonatomic) BOOL userIsSignedIn;
 @property (nonatomic) BOOL userIsRegistered;
 
 @property (strong, nonatomic) NSString *authToken;
-@property (strong, nonatomic) OEntityReplicator *replicator;
 
 @end
 
@@ -154,7 +161,7 @@ static OMeta *m = nil;
 
 - (void)loadUser
 {
-    _user = [self.context fetchEntityWithId:_userId];
+    _user = [self.context entityWithId:_userId];
     
     if (_user) {
         [self.replicator loadUserReplicationState];
@@ -242,6 +249,10 @@ static OMeta *m = nil;
 {
     [self setUserDefault:_authTokenExpiryDate forKey:kDefaultsKeyAuthExpiryDate];
     [self loadUser];
+    
+    if (![self.context entityWithId:_deviceId]) {
+        [self.context insertDeviceEntity];
+    }
 }
 
 
@@ -252,8 +263,9 @@ static OMeta *m = nil;
     
     [self setUserDefault:nil forKey:kDefaultsKeyAuthExpiryDate];
     
-    _user = nil;
     _userId = nil;
+    _user = nil;
+    _locator = nil;
     _authToken = nil;
     _deviceId = nil;
     _lastReplicationDate = nil;
@@ -357,6 +369,32 @@ static OMeta *m = nil;
 }
 
 
+- (OEntityReplicator *)replicator
+{
+    if (!_replicator) {
+        _replicator = [[OEntityReplicator alloc] init];
+    }
+    
+    return _replicator;
+}
+
+
+- (OLocator *)locator
+{
+    if (!_locator) {
+        _locator = [[OLocator alloc] init];
+    }
+    
+    return _locator;
+}
+
+
+- (OSettings *)settings
+{
+    return self.user.settings;
+}
+
+
 - (BOOL)userIsAllSet
 {
     return (self.userIsSignedIn && self.userIsRegistered);
@@ -373,7 +411,7 @@ static OMeta *m = nil;
             
             if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
                 _authToken = [self generateAuthToken:_authTokenExpiryDate];
-                _user = [self.context fetchEntityWithId:_userId];
+                _user = [self.context entityWithId:_userId];
             }
         }
     }
@@ -410,16 +448,6 @@ static OMeta *m = nil;
 - (NSManagedObjectContext *)context
 {
     return ((OAppDelegate *)[UIApplication sharedApplication].delegate).managedObjectContext;
-}
-
-
-- (OEntityReplicator *)replicator
-{
-    if (!_replicator) {
-        _replicator = [[OEntityReplicator alloc] init];
-    }
-    
-    return _replicator;
 }
 
 @end

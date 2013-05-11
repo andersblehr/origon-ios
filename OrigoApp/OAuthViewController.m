@@ -24,7 +24,6 @@
 #import "OUUIDGenerator.h"
 #import "OTableViewCellBlueprint.h"
 
-#import "ODevice.h"
 #import "OMember+OrigoExtensions.h"
 #import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
@@ -135,6 +134,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
+#pragma mark - Input validation
+
 - (void)handleInvalidInputForField:(OTextField *)textField;
 {
     _numberOfActivationAttempts++;
@@ -162,17 +163,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (void)registerNewDevice
-{
-    ODevice *device = [[OMeta m].context insertEntityOfClass:ODevice.class inOrigo:[[OMeta m].user rootMembership].origo entityId:[OMeta m].deviceId];
-    device.type = [UIDevice currentDevice].model;
-    device.displayName = [UIDevice currentDevice].name;
-    device.member = [OMeta m].user;
-}
-
-
-#pragma mark - Input validation
-
 - (BOOL)activationIsValid
 {
     NSString *activationCode = [[_authInfo objectForKey:kInputKeyActivationCode] lowercaseString];
@@ -188,7 +178,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         if (self.state.aspectIsSelf) {
             passwordHash = [_authInfo objectForKey:kJSONKeyPasswordHash];
         } else if (self.state.aspectIsEmail) {
-            passwordHash = [OMeta m].user.passwordHash;
+            passwordHash = [[OMeta m] userDefaultForKey:kDefaultsKeyPasswordHash];
         }
         
         passwordIsValid = [passwordHashAsEntered isEqualToString:passwordHash];
@@ -206,9 +196,9 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-#pragma mark - User login
+#pragma mark - Initiating server requests
 
-- (void)attemptUserLogin
+- (void)initiateUserLogin
 {
     [OMeta m].userEmail = _emailField.text;
     
@@ -220,39 +210,31 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (void)userDidAuthenticateWithData:(NSArray *)data
+- (void)initiateUserActivation
 {
-    if (data) {
-        [[OMeta m].context saveServerReplicas:data];
-    }
+    OServerConnection *serverConnection = [[OServerConnection alloc] init];
+    [serverConnection setAuthHeaderForEmail:[OMeta m].userEmail password:_repeatPasswordField.text];
+    [serverConnection authenticate:self];
     
-    [[OMeta m] userDidSignIn];
-    
-    if (self.state.actionIsActivate) {
-        [self completeActivation];
-    } else if (self.state.actionIsLogin) {
-        [self completeLogin];
-    }
+    [self indicatePendingServerSession:YES];
 }
 
 
-- (void)completeLogin
+- (void)initiateEmailActivation
 {
-    if (![[OMeta m].context fetchEntityWithId:[OMeta m].deviceId]) {
-        [self registerNewDevice];
-    }
+    NSString *emailActivationCode = [[OUUIDGenerator generateUUID] substringToIndex:kActivationCodeLength];
     
-    if (![OMeta m].userIsRegistered) {
-        [[OMeta m] setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
-    }
+    OServerConnection *serverConnection = [[OServerConnection alloc] init];
+    [serverConnection setAuthHeaderForEmail:self.data password:emailActivationCode];
+    [serverConnection sendEmailActivationCode:self];
     
-    [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+    [self indicatePendingServerSession:YES];
 }
 
 
-#pragma mark - User sign-up & activation
+#pragma mark - Handling server responses
 
-- (void)didReceiveActivationData:(NSDictionary *)data
+- (void)userDidSignUpWithData:(NSDictionary *)data
 {
     _authInfo = data;
     
@@ -264,45 +246,32 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (void)activateMembership
+- (void)userDidAuthenticateWithData:(NSArray *)data
 {
-    OServerConnection *serverConnection = [[OServerConnection alloc] init];
-    [serverConnection setAuthHeaderForEmail:[OMeta m].userEmail password:_repeatPasswordField.text];
-    [serverConnection authenticate:self];
-    
-    [self indicatePendingServerSession:YES];
-}
-
-
-- (void)completeActivation
-{
-    [OMeta m].user.passwordHash = [_authInfo objectForKey:kJSONKeyPasswordHash];
-    
-    if ([[_authInfo objectForKey:kJSONKeyIsListed] boolValue]) {
-        [[OMeta m].user makeActive];
-    } else {
-        OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
-        [residence addMember:[OMeta m].user];
+    if (data) {
+        [[OMeta m].context saveServerReplicas:data];
     }
     
-    [[OMeta m] setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
+    [[OMeta m] userDidSignIn];
     
-    [self registerNewDevice];
+    if (self.state.actionIsLogin) {
+        if (![OMeta m].userIsRegistered) {
+            [[OMeta m] setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
+        }
+    } else if (self.state.actionIsActivate) {
+        [[OMeta m] setUserDefault:[_authInfo objectForKey:kJSONKeyPasswordHash] forKey:kDefaultsKeyPasswordHash];
+        
+        if ([[_authInfo objectForKey:kJSONKeyIsListed] boolValue]) {
+            [[OMeta m].user makeActive];
+        } else {
+            OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
+            [residence addMember:[OMeta m].user];
+        }
+        
+        [[OMeta m] setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
+    }
+    
     [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
-}
-
-
-#pragma mark - User email activation
-
-- (void)sendActivationCode
-{
-    NSString *activationCode = [[OUUIDGenerator generateUUID] substringToIndex:kActivationCodeLength];
-    
-    OServerConnection *serverConnection = [[OServerConnection alloc] init];
-    [serverConnection setAuthHeaderForEmail:self.data password:activationCode];
-    [serverConnection emailActivationCode:self];
-    
-    [self indicatePendingServerSession:YES];
 }
 
 
@@ -333,7 +302,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             welcomeBackAlert.tag = kAlertTagWelcomeBack;
             [welcomeBackAlert show];
         } else if (self.state.aspectIsEmail) {
-            [self sendActivationCode];
+            [self initiateEmailActivation];
         }
     }
 }
@@ -454,7 +423,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         
         if (shouldReturn) {
             [self.view endEditing:YES];
-            [self attemptUserLogin];
+            [self initiateUserLogin];
         } else {
             _passwordField.text = @"";
             [self.detailCell shakeCellShouldVibrate:YES];
@@ -468,7 +437,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [self.view endEditing:YES];
             
             if (self.state.aspectIsSelf) {
-                [self activateMembership];
+                [self initiateUserActivation];
             } else if (self.state.aspectIsEmail) {
                 [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
             }
@@ -503,7 +472,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     if (response.statusCode < kHTTPStatusErrorRangeStart) {
         if (response.statusCode == kHTTPStatusCreated) {
-            [self didReceiveActivationData:data];
+            [self userDidSignUpWithData:data];
         } else {
             if (![OMeta m].userId) {
                 if (response.statusCode == kHTTPStatusOK) {

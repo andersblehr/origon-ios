@@ -14,7 +14,7 @@
 
 @class OMember;
 
-@interface OOrigoListViewController : OTableViewController<OTableViewListCellDelegate, UIActionSheetDelegate> {
+@interface OOrigoListViewController : OTableViewController<OTableViewListCellDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
     OMember *_member;
     

@@ -19,20 +19,21 @@
 #import "OReplicatedEntity+OrigoExtensions.h"
 #import "OReplicatedEntityRef.h"
 
-NSString * const kOrigoTypeMemberRoot = @"origoTypeMemberRoot";
-NSString * const kOrigoTypeResidence = @"origoTypeResidence";
-NSString * const kOrigoTypeOrganisation = @"origoTypeOrganisation";
-NSString * const kOrigoTypeSchoolClass = @"origoTypeSchoolClass";
-NSString * const kOrigoTypePreschoolClass = @"origoTypePreschoolClass";
-NSString * const kOrigoTypeSportsTeam = @"origoTypeSportsTeam";
-NSString * const kOrigoTypeOther = @"origoTypeDefault";
+NSString * const kOrigoTypeMemberRoot = @"~";
+NSString * const kOrigoTypeResidence = @"R";
+NSString * const kOrigoTypeOrganisation = @"O";
+NSString * const kOrigoTypeAssociation = @"A";
+NSString * const kOrigoTypeSchoolClass = @"C";
+NSString * const kOrigoTypePreschoolClass = @"P";
+NSString * const kOrigoTypeSportsTeam = @"T";
+NSString * const kOrigoTypeOther = @"X";
 
 
 @implementation OOrigo (OrigoExtensions)
 
 #pragma mark - Auxiliary methods
 
-- (id)addMember:(OMember *)member isAssociate:(BOOL)isAssociate
+- (OMembership *)addMember:(OMember *)member isAssociate:(BOOL)isAssociate
 {
     OMembership *membership = [self membershipForMember:member];
     
@@ -131,19 +132,19 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 }
 
 
-- (id)addMember:(OMember *)member
+- (OMembership *)addMember:(OMember *)member
 {
     return [self addMember:member isAssociate:NO];
 }
 
 
-- (id)addAssociateMember:(OMember *)member
+- (OMembership *)addAssociateMember:(OMember *)member
 {
     return [self addMember:member isAssociate:YES];
 }
 
 
-- (id)membershipForMember:(OMember *)member
+- (OMembership *)membershipForMember:(OMember *)member
 {
     OMembership *membershipForMember = nil;
     
@@ -157,7 +158,7 @@ NSString * const kOrigoTypeOther = @"origoTypeDefault";
 }
 
 
-- (id)associateMembershipForMember:(OMember *)member
+- (OMembership *)associateMembershipForMember:(OMember *)member
 {
     OMembership *membership = [self membershipForMember:member];
     

@@ -87,13 +87,9 @@ static NSInteger const kOrigoSection = 0;
     [super viewDidLoad];
     
     if (_origo) {
-        self.title = [_origo isOfType:kOrigoTypeResidence] ? [OStrings stringForKey:strTermAddress] : _origo.name;
+        self.title = [_origo isOfType:kOrigoTypeResidence] ? [OStrings stringForOrigoType:kOrigoTypeResidence] : _origo.name;
     } else {
-        if ([self.meta isEqualToString:kOrigoTypeOther]) {
-            self.title = [OStrings stringForKey:strViewTitleNewOrigo];
-        } else {
-            self.title = [OStrings stringForKey:self.meta];
-        }
+        self.title = [OStrings stringForOrigoType:self.meta];
     }
 }
 

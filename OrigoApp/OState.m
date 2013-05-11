@@ -10,7 +10,6 @@
 
 #import "OMeta.h"
 #import "OStrings.h"
-#import "OTableViewController.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"
@@ -29,6 +28,8 @@ static OState *s = nil;
 
 
 @interface OState ()
+
+@property (weak, nonatomic) OTableViewController *activeViewController;
 
 @property (nonatomic) OStateView view;
 @property (nonatomic) OStateAction action;
@@ -85,6 +86,8 @@ static OState *s = nil;
         aspect = OStateAspectResidence;
     } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
         aspect = OStateAspectOrganisation;
+    } else if ([origoType isEqualToString:kOrigoTypeAssociation]) {
+        aspect = OStateAspectAssociation;
     } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
         aspect = OStateAspectSchoolClass;
     } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
@@ -99,23 +102,15 @@ static OState *s = nil;
 
 #pragma mark - Instantiation & initialisation
 
-- (id)copyWithZone:(NSZone *)zone
-{
-    OState *copy = [[OState alloc] init];
-
-    copy.view = _view;
-    copy.action = _action;
-    copy.aspect = _aspect;
-    
-    return copy;
-}
-
-
 - (id)initForViewController:(OTableViewController *)viewController
 {
     self = [super init];
     
     if (self) {
+        if (viewController) {
+            [OState s].activeViewController = viewController;
+        }
+        
         if ([viewController isKindOfClass:OAuthViewController.class]) {
             _view = OStateViewAuth;
             _action = OStateActionLogin;
@@ -183,7 +178,7 @@ static OState *s = nil;
         }
     }
     
-    [[OState s] reflect:self];
+    //[[OState s] reflect:self];
 }
 
 
@@ -265,6 +260,8 @@ static OState *s = nil;
         aspectAsString = @"RESIDENCE";
     } else if (self.aspectIsOrganisation) {
         aspectAsString = @"ORGANISATION";
+    } else if (self.aspectIsAssociation) {
+        aspectAsString = @"ASSOCIATION";
     } else if (self.aspectIsSchoolClass) {
         aspectAsString = @"CLASS";
     } else if (self.aspectIsPreschool) {
@@ -493,6 +490,18 @@ static OState *s = nil;
 - (BOOL)aspectIsOrganisation
 {
     return (_aspect == OStateAspectOrganisation);
+}
+
+
+- (void)setAspectIsAssociation:(BOOL)aspectIsAssociation
+{
+    [self setAspect:OStateAspectAssociation activate:aspectIsAssociation];
+}
+
+
+- (BOOL)aspectIsAssociation
+{
+    return (_aspect == OStateAspectAssociation);
 }
 
 

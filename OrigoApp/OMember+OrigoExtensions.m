@@ -14,6 +14,7 @@
 #import "NSDate+OrigoExtensions.h"
 #import "NSManagedObjectContext+OrigoExtensions.h"
 
+#import "OLocator.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
@@ -23,6 +24,10 @@
 #import "OMessageBoard.h"
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
+#import "OSettings.h"
+
+static NSInteger const kCountryOfResidenceAlertTag = 1;
+static NSInteger const kCountryOfResidenceButtonUseLocation = 1;
 
 
 @implementation OMember (OrigoExtensions)
@@ -104,6 +109,20 @@
 
 #pragma mark - Origo memberships
 
+- (OMembership *)rootMembership
+{
+    OMembership *rootMembership = nil;
+    
+    for (OMembership *membership in self.memberships) {
+        if (!rootMembership && [membership.origo isOfType:kOrigoTypeMemberRoot]) {
+            rootMembership = membership;
+        }
+    }
+    
+    return rootMembership;
+}
+
+
 - (OMembership *)initialResidency
 {
     OMembership *residency = [[self residencies] anyObject];
@@ -119,20 +138,6 @@
     }
     
     return residency;
-}
-
-
-- (OMembership *)rootMembership
-{
-    OMembership *rootMembership = nil;
-    
-    for (OMembership *membership in self.memberships) {
-        if (!rootMembership && [membership.origo isOfType:kOrigoTypeMemberRoot]) {
-            rootMembership = membership;
-        }
-    }
-    
-    return rootMembership;
 }
 
 
@@ -257,20 +262,18 @@
 
 - (void)makeActive
 {
-    CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
-    NSString *countryCode = [networkInfo subscriberCellularProvider].isoCountryCode;
-    
-    if (!countryCode) {
-        countryCode = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
-    }
-    
     OMembership *rootMembership = [self rootMembership];
-    rootMembership.origo.countryCode = countryCode;
     rootMembership.isActive = @YES;
     rootMembership.isAdmin = @YES;
     
+    self.settings = [[OMeta m].context insertEntityOfClass:OSettings.class inOrigo:rootMembership.origo];
+    
     for (OMembership *residency in [self residencies]) {
         residency.isActive = @YES;
+        
+        if (!residency.origo.countryCode) {
+            residency.origo.countryCode = [OMeta m].locator.countryCode;
+        }
         
         if (![self isMinor] || [residency.createdBy isEqualToString:self.entityId]) {
             residency.isAdmin = @YES;

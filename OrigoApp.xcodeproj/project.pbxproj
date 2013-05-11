@@ -27,13 +27,13 @@
 		5C15BFFE1638815300BB5254 /* 76-baby_black.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFFD1638815300BB5254 /* 76-baby_black.png */; };
 		5C198B7316D76344002D3976 /* OTableViewCellBlueprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C198B7216D76343002D3976 /* OTableViewCellBlueprint.m */; };
 		5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1A81BC1645CE22003DCCAF /* UIBarButtonItem+OrigoExtensions.m */; };
+		5C1D6CC3172043AC00479F7D /* OSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1D6CC2172043AC00479F7D /* OSettings.m */; };
+		5C1D6CC6172E62F500479F7D /* OLocator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1D6CC5172E62F500479F7D /* OLocator.m */; };
 		5C2262C415A0B47B00241C5F /* OOrigoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262C315A0B47B00241C5F /* OOrigoViewController.m */; };
 		5C23431214812A3100164478 /* OStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* OStrings.m */; };
 		5C26291E158F27860012A74A /* OAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* OAuthViewController.m */; };
 		5C2E11141469CDE5005BDE61 /* OServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* OServerConnection.m */; };
 		5C2E6B7E15A8501800638330 /* OMembership+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E6B7D15A8501800638330 /* OMembership+OrigoExtensions.m */; };
-		5C3317C916F7543E004F8921 /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3317C816F7543E004F8921 /* OOrigo.m */; };
-		5C3317CC16F7543F004F8921 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3317CB16F7543F004F8921 /* OMember.m */; };
 		5C3317CF16F7543F004F8921 /* OMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3317CE16F7543F004F8921 /* OMembership.m */; };
 		5C3374831563FBE200DEF67D /* OMember+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3374821563FBE200DEF67D /* OMember+OrigoExtensions.m */; };
 		5C369D9716FB58DA0053EB1F /* OReplicatedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C369D9616FB58DA0053EB1F /* OReplicatedEntity.m */; };
@@ -61,6 +61,7 @@
 		5C68F36F16E4C858005DDCF9 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C68F36E16E4C858005DDCF9 /* CoreTelephony.framework */; };
 		5C6C4B6B16CC027600C88E6C /* OReplicatedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6C4B6A16CC027600C88E6C /* OReplicatedEntityRef.m */; };
 		5C6E6C131589AC820002FF84 /* UITableView+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C121589AC820002FF84 /* UITableView+OrigoExtensions.m */; };
+		5C7013A3171EC9D0006E9F42 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C7013A2171EC9D0006E9F42 /* CoreLocation.framework */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C7379FD1593111B0065AB4F /* OTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7379FC1593111B0065AB4F /* OTextField.m */; };
 		5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78FAB91654E77E009A4BCF /* OTextView.m */; };
@@ -72,6 +73,8 @@
 		5C9B9096162E93BF004F530F /* 19-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9094162E93BF004F530F /* 19-gear.png */; };
 		5C9B9097162E93BF004F530F /* 19-gear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B9095162E93BF004F530F /* 19-gear@2x.png */; };
 		5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+OrigoExtensions.m */; };
+		5C9D94BB171A9CE500806F87 /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D94BA171A9CE400806F87 /* OOrigo.m */; };
+		5C9D94C4171AF45E00806F87 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D94C3171AF45E00806F87 /* OMember.m */; };
 		5CA10B8F16A40BB500031D81 /* glyphicons_309_comments.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA10B8D16A40BB500031D81 /* glyphicons_309_comments.png */; };
 		5CA10B9016A40BB500031D81 /* glyphicons_309_comments@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA10B8E16A40BB500031D81 /* glyphicons_309_comments@2x.png */; };
 		5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA10B9B16A7F49F00031D81 /* OTableViewController.m */; };
@@ -153,6 +156,10 @@
 		5C198B7216D76343002D3976 /* OTableViewCellBlueprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCellBlueprint.m; sourceTree = "<group>"; };
 		5C1A81BB1645CE22003DCCAF /* UIBarButtonItem+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5C1A81BC1645CE22003DCCAF /* UIBarButtonItem+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+OrigoExtensions.m"; sourceTree = "<group>"; };
+		5C1D6CC1172043AC00479F7D /* OSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettings.h; sourceTree = "<group>"; };
+		5C1D6CC2172043AC00479F7D /* OSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettings.m; sourceTree = "<group>"; };
+		5C1D6CC4172E62F500479F7D /* OLocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLocator.h; sourceTree = "<group>"; };
+		5C1D6CC5172E62F500479F7D /* OLocator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLocator.m; sourceTree = "<group>"; };
 		5C2262C215A0B47B00241C5F /* OOrigoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoViewController.h; sourceTree = "<group>"; };
 		5C2262C315A0B47B00241C5F /* OOrigoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoViewController.m; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* OStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OStrings.h; sourceTree = "<group>"; };
@@ -164,10 +171,6 @@
 		5C2E1133146ACFA9005BDE61 /* OServerConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OServerConnectionDelegate.h; sourceTree = "<group>"; };
 		5C2E6B7C15A8501800638330 /* OMembership+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OMembership+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5C2E6B7D15A8501800638330 /* OMembership+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OMembership+OrigoExtensions.m"; sourceTree = "<group>"; };
-		5C3317C716F7543E004F8921 /* OOrigo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigo.h; sourceTree = "<group>"; };
-		5C3317C816F7543E004F8921 /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
-		5C3317CA16F7543F004F8921 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
-		5C3317CB16F7543F004F8921 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
 		5C3317CD16F7543F004F8921 /* OMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembership.h; sourceTree = "<group>"; };
 		5C3317CE16F7543F004F8921 /* OMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMembership.m; sourceTree = "<group>"; };
 		5C3374811563FBE200DEF67D /* OMember+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OMember+OrigoExtensions.h"; sourceTree = "<group>"; };
@@ -212,6 +215,7 @@
 		5C6C4B6A16CC027600C88E6C /* OReplicatedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntityRef.m; sourceTree = "<group>"; };
 		5C6E6C111589AC820002FF84 /* UITableView+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5C6E6C121589AC820002FF84 /* UITableView+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+OrigoExtensions.m"; sourceTree = "<group>"; };
+		5C7013A2171EC9D0006E9F42 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5C7379FB1593111B0065AB4F /* OTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextField.h; sourceTree = "<group>"; };
 		5C7379FC1593111B0065AB4F /* OTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextField.m; sourceTree = "<group>"; };
@@ -230,6 +234,10 @@
 		5C9B9095162E93BF004F530F /* 19-gear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19-gear@2x.png"; sourceTree = "<group>"; };
 		5C9D3146151F1A0100DF6EB0 /* NSJSONSerialization+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSJSONSerialization+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+OrigoExtensions.m"; sourceTree = "<group>"; };
+		5C9D94B9171A9CE400806F87 /* OOrigo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigo.h; sourceTree = "<group>"; };
+		5C9D94BA171A9CE400806F87 /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
+		5C9D94C2171AF45E00806F87 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
+		5C9D94C3171AF45E00806F87 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
 		5CA10B8D16A40BB500031D81 /* glyphicons_309_comments.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_309_comments.png; sourceTree = "<group>"; };
 		5CA10B8E16A40BB500031D81 /* glyphicons_309_comments@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_309_comments@2x.png"; sourceTree = "<group>"; };
 		5CA10B9A16A7F49F00031D81 /* OTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewController.h; sourceTree = "<group>"; };
@@ -317,6 +325,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C7013A3171EC9D0006E9F42 /* CoreLocation.framework in Frameworks */,
 				5C68F36F16E4C858005DDCF9 /* CoreTelephony.framework in Frameworks */,
 				5CBE919F159909E200516C54 /* AudioToolbox.framework in Frameworks */,
 				5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */,
@@ -396,8 +405,8 @@
 				5CAEE0A5163E513700A9046B /* OEventOrigoInvitation.m */,
 				5CAEE09E163E513500A9046B /* OExternalDocument.h */,
 				5CAEE09F163E513500A9046B /* OExternalDocument.m */,
-				5C3317CA16F7543F004F8921 /* OMember.h */,
-				5C3317CB16F7543F004F8921 /* OMember.m */,
+				5C9D94C2171AF45E00806F87 /* OMember.h */,
+				5C9D94C3171AF45E00806F87 /* OMember.m */,
 				5C3317CD16F7543F004F8921 /* OMembership.h */,
 				5C3317CE16F7543F004F8921 /* OMembership.m */,
 				5CAEE092163E513400A9046B /* OMessageBoard.h */,
@@ -406,8 +415,8 @@
 				5CAEE0CF163E513A00A9046B /* OMessageItem.m */,
 				5CAEE0B9163E513900A9046B /* OMessageThread.h */,
 				5CAEE0BA163E513A00A9046B /* OMessageThread.m */,
-				5C3317C716F7543E004F8921 /* OOrigo.h */,
-				5C3317C816F7543E004F8921 /* OOrigo.m */,
+				5C9D94B9171A9CE400806F87 /* OOrigo.h */,
+				5C9D94BA171A9CE400806F87 /* OOrigo.m */,
 				5C369D9516FB58DA0053EB1F /* OReplicatedEntity.h */,
 				5C369D9616FB58DA0053EB1F /* OReplicatedEntity.m */,
 				5C6C4B6916CC027600C88E6C /* OReplicatedEntityRef.h */,
@@ -418,6 +427,8 @@
 				5CAEE0C3163E513A00A9046B /* OScheduledAbsence.m */,
 				5CAEE098163E513400A9046B /* OScheduledBreak.h */,
 				5CAEE099163E513400A9046B /* OScheduledBreak.m */,
+				5C1D6CC1172043AC00479F7D /* OSettings.h */,
+				5C1D6CC2172043AC00479F7D /* OSettings.m */,
 				5CAEE09B163E513500A9046B /* OToDoAssignment.h */,
 				5CAEE09C163E513500A9046B /* OToDoAssignment.m */,
 				5CAEE0CB163E513A00A9046B /* OToDoItem.h */,
@@ -518,6 +529,8 @@
 				5C014A2315CA77310040A1D9 /* OAlert.m */,
 				5C47154F16E2231C000D8A86 /* OEntityReplicator.h */,
 				5C47155016E2231C000D8A86 /* OEntityReplicator.m */,
+				5C1D6CC4172E62F500479F7D /* OLocator.h */,
+				5C1D6CC5172E62F500479F7D /* OLocator.m */,
 				5CCF09051466A0CB00D41AB0 /* OLogging.h */,
 				5C36BE88146E9DA100DD3CEA /* OMeta.h */,
 				5C36BE89146E9DA100DD3CEA /* OMeta.m */,
@@ -568,6 +581,7 @@
 		5CBB63B7146080DF00A9133A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5C7013A2171EC9D0006E9F42 /* CoreLocation.framework */,
 				5C68F36E16E4C858005DDCF9 /* CoreTelephony.framework */,
 				5CBE919E159909E200516C54 /* AudioToolbox.framework */,
 				5C50581714CA1D05000D6587 /* QuartzCore.framework */,
@@ -851,10 +865,12 @@
 				5C198B7316D76344002D3976 /* OTableViewCellBlueprint.m in Sources */,
 				5C47155116E2231C000D8A86 /* OEntityReplicator.m in Sources */,
 				5C7BC3DD16F358B7006AA52F /* OResidencySchedule.m in Sources */,
-				5C3317C916F7543E004F8921 /* OOrigo.m in Sources */,
-				5C3317CC16F7543F004F8921 /* OMember.m in Sources */,
 				5C3317CF16F7543F004F8921 /* OMembership.m in Sources */,
 				5C369D9716FB58DA0053EB1F /* OReplicatedEntity.m in Sources */,
+				5C9D94BB171A9CE500806F87 /* OOrigo.m in Sources */,
+				5C9D94C4171AF45E00806F87 /* OMember.m in Sources */,
+				5C1D6CC3172043AC00479F7D /* OSettings.m in Sources */,
+				5C1D6CC6172E62F500479F7D /* OLocator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -906,6 +922,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -923,6 +940,8 @@
 				GCC_WARN_UNUSED_FUNCTION = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -938,6 +957,7 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -949,6 +969,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -958,11 +980,15 @@
 		5CBB63EB146080E000A9133A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OrigoApp/OrigoApp-Prefix.pch";
 				INFOPLIST_FILE = "OrigoApp/OrigoApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = OrigoApp;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -970,11 +996,15 @@
 		5CBB63EC146080E000A9133A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OrigoApp/OrigoApp-Prefix.pch";
 				INFOPLIST_FILE = "OrigoApp/OrigoApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = OrigoApp;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

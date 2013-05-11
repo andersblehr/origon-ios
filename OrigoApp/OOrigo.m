@@ -2,7 +2,7 @@
 //  OOrigo.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 18.03.13.
+//  Created by Anders Blehr on 14.04.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -20,12 +20,12 @@
 @implementation OOrigo
 
 @dynamic address;
-@dynamic countryCode;
 @dynamic descriptionText;
 @dynamic name;
 @dynamic photo;
 @dynamic telephone;
 @dynamic type;
+@dynamic countryCode;
 @dynamic documentRepositories;
 @dynamic eventInvitations;
 @dynamic hostingEvents;

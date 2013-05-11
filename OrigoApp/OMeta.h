@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import <CoreLocation/CoreLocation.h>
+
 #import "Reachability.h"
 
 extern NSString * const kGenderFemale;
@@ -65,13 +67,16 @@ extern NSString * const kPropertyKeyTelephone;
 extern NSString * const kRelationshipKeyMember;
 extern NSString * const kRelationshipKeyOrigo;
 
+extern NSString * const kSettingsKeyCountry;
+
 extern NSString * const kDefaultsKeyAuthInfo;
 extern NSString * const kDefaultsKeyDirtyEntities;
+extern NSString * const kDefaultsKeyPasswordHash;
 extern NSString * const kDefaultsKeyRegistrationAborted;
 extern NSString * const kDefaultsKeyStringDate;
 
-@class OEntityReplicator;
-@class OMember, OReplicatedEntity;
+@class OEntityReplicator, OLocator;
+@class OMember, OReplicatedEntity, OSettings;
 
 @interface OMeta : NSObject {
 @private
@@ -82,6 +87,9 @@ extern NSString * const kDefaultsKeyStringDate;
 @property (strong, nonatomic) NSString *userId;
 @property (strong, nonatomic) NSString *userEmail;
 @property (strong, nonatomic, readonly) OMember *user;
+@property (strong, nonatomic, readonly) OEntityReplicator *replicator;
+@property (strong, nonatomic, readonly) OLocator *locator;
+@property (strong, nonatomic, readonly) OSettings *settings;
 
 @property (nonatomic, readonly) BOOL userIsAllSet;
 @property (nonatomic, readonly) BOOL userIsSignedIn;
@@ -102,7 +110,6 @@ extern NSString * const kDefaultsKeyStringDate;
 @property (nonatomic, readonly) BOOL internetConnectionIsWWAN;
 
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
-@property (strong, nonatomic, readonly) OEntityReplicator *replicator;
 @property (strong, nonatomic, readonly) UIDatePicker *sharedDatePicker;
 
 + (OMeta *)m;
