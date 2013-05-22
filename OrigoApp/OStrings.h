@@ -136,6 +136,7 @@ extern NSString * const strDefaultMessageBoardName;
 
 // OSettingsView strings
 extern NSString * const strTabBarTitleSettings;
+extern NSString * const strSettingTitleOrigoCountry;
 
 // Origo type strings
 extern NSString * const strOrigoTypeResidence;
@@ -165,9 +166,10 @@ extern NSString * const xstrContactRolesSportsTeam;
 + (BOOL)hasStrings;
 + (void)refreshIfNeeded;
 
-+ (NSString *)stringForOrigoType:(NSString *)origoType;
 + (NSString *)stringForKey:(NSString *)key;
++ (NSString *)stringForOrigoType:(NSString *)origoType;
 + (NSString *)labelForKey:(NSString *)key;
 + (NSString *)placeholderForKey:(NSString *)key;
++ (NSString *)settingTitleForKey:(NSString *)key;
 
 @end

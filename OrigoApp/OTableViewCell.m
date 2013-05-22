@@ -27,6 +27,7 @@
 #import "OTableViewController.h"
 
 NSString * const kReuseIdentifierDefault = @"idDefaultCell";
+NSString * const kReuseIdentifierSetting = @"idSettingCell";
 NSString * const kReuseIdentifierUserSignIn = @"idUserSignInCell";
 NSString * const kReuseIdentifierUserActivation = @"idUserActivationCell";
 
@@ -62,7 +63,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (BOOL)isListCell
 {
-    return [self.reuseIdentifier isEqualToString:kReuseIdentifierDefault];
+    BOOL isListCell = NO;
+    
+    isListCell = isListCell || [self.reuseIdentifier isEqualToString:kReuseIdentifierDefault];
+    isListCell = isListCell || [self.reuseIdentifier isEqualToString:kReuseIdentifierSetting];
+    
+    return isListCell;
 }
 
 
@@ -80,9 +86,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (id)initCoreWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
+- (id)initBasicsWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
-    self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
+    if ([reuseIdentifier isEqualToString:kReuseIdentifierSetting]) {
+        self = [super initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:reuseIdentifier];
+    } else {
+        self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
+    }
     
     if (self) {
         self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -217,7 +227,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
-    self = [self initCoreWithReuseIdentifier:reuseIdentifier delegate:delegate];
+    self = [self initBasicsWithReuseIdentifier:reuseIdentifier delegate:delegate];
     
     if (self && ![self isListCell]) {
         _blueprint = [[OTableViewCellBlueprint alloc] initForReuseIdentifier:reuseIdentifier];
@@ -233,7 +243,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity delegate:(id)delegate
 {
-    self = [self initCoreWithReuseIdentifier:NSStringFromClass(entityClass) delegate:delegate];
+    self = [self initBasicsWithReuseIdentifier:NSStringFromClass(entityClass) delegate:delegate];
     
     if (self) {
         self.entity = entity;
@@ -400,6 +410,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
             ((OTextView *)view).editable = editing;
             ((OTextView *)view).userInteractionEnabled = editing;
         }
+    }
+}
+
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
+    if (_selectable) {
+        [super setHighlighted:highlighted animated:animated];
     }
 }
 

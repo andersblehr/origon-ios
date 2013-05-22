@@ -12,7 +12,7 @@
 
 @implementation OSettings
 
-@dynamic countryCode;
+@dynamic origoCountryCode;
 @dynamic user;
 
 @end

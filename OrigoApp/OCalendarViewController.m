@@ -8,6 +8,7 @@
 
 #import "OCalendarViewController.h"
 
+#import "OMeta.h"
 #import "OStrings.h"
 
 
@@ -16,27 +17,11 @@
 
 #pragma mark - View lifecycle
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
-}
-
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     self.title = [OStrings stringForKey:strTabBarTitleCalendar];
-}
-
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 
@@ -49,6 +34,14 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+}
+
+
+#pragma mark - OTableViewControllerInstance conformance
+
+- (void)initialise
+{
+    _viewId = kCalendarView;
 }
 
 @end

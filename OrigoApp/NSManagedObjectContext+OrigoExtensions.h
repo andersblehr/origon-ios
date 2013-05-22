@@ -8,7 +8,7 @@
 
 #import <CoreData/CoreData.h>
 
-@class OMember, OMembership, OOrigo, OReplicatedEntity;
+@class OMembership, OOrigo, OReplicatedEntity;
 
 @interface NSManagedObjectContext (OrigoExtensions)
 

@@ -38,7 +38,7 @@ static NSInteger const kCountryOfResidenceButtonUseLocation = 1;
 {
     NSComparisonResult result = [self.name localizedCaseInsensitiveCompare:other.name];
     
-    if ([OState s].viewIsMemberList && [OState s].aspectIsResidence) {
+    if ([[OState s] viewIs:kMemberListView] && [OState s].aspectIsResidence) {
         BOOL thisMemberIsMinor = [self isMinor];
         BOOL otherMemberIsMinor = [other isMinor];
         

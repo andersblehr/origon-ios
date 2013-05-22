@@ -10,19 +10,6 @@
 
 #import "OTableViewController.h"
 
-typedef NS_ENUM(NSInteger, OStateView) {
-    OStateViewDefault,
-    OStateViewAuth,
-    OStateViewOrigoList,
-    OStateViewOrigoDetail,
-    OStateViewMemberList,
-    OStateViewMemberDetail,
-    OStateViewCalendar,
-    OStateViewTaskList,
-    OStateViewMessageBoard,
-    OStateViewSettings,
-};
-
 typedef NS_ENUM(NSInteger, OStateAction) {
     OStateActionDefault,
     OStateActionSetup,
@@ -52,16 +39,6 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
 
 @property (weak, nonatomic, readonly) OTableViewController *activeViewController;
 
-@property (nonatomic, readonly) BOOL viewIsAuth;
-@property (nonatomic, readonly) BOOL viewIsOrigoList;
-@property (nonatomic, readonly) BOOL viewIsOrigoDetail;
-@property (nonatomic, readonly) BOOL viewIsMemberList;
-@property (nonatomic, readonly) BOOL viewIsMemberDetail;
-@property (nonatomic, readonly) BOOL viewIsCalendar;
-@property (nonatomic, readonly) BOOL viewIsTaskList;
-@property (nonatomic, readonly) BOOL viewIsMessageBoard;
-@property (nonatomic, readonly) BOOL viewIsSettings;
-
 @property (nonatomic) BOOL actionIsSetup;
 @property (nonatomic) BOOL actionIsLogin;
 @property (nonatomic) BOOL actionIsActivate;
@@ -86,6 +63,7 @@ typedef NS_ENUM(NSInteger, OStateAspect) {
 
 + (OState *)s;
 
+- (BOOL)viewIs:(NSString *)viewId;
 - (void)setAspectForCarrier:(id)aspectCarrier;
 - (void)reflect:(OState *)state;
 - (void)toggleEditState;

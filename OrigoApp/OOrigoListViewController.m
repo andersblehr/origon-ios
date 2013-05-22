@@ -65,12 +65,12 @@ static NSInteger const kUserRow = 0;
         BOOL allMale = YES;
         
         if ([self numberOfRowsInSectionWithKey:kWardSectionKey] == 1) {
-            yourChild = ((OMember *)[self entitiesInSectionWithKey:kWardSectionKey][0]).givenName;
+            yourChild = ((OMember *)[self dataInSectionWithKey:kWardSectionKey][0]).givenName;
         } else {
             yourChild = [OStrings stringForKey:strTermYourChild];
         }
         
-        for (OMember *ward in [self entitiesInSectionWithKey:kWardSectionKey]) {
+        for (OMember *ward in [self dataInSectionWithKey:kWardSectionKey]) {
             allFemale = allFemale && [ward isFemale];
             allMale = allMale && [ward isMale];
         }
@@ -100,7 +100,7 @@ static NSInteger const kUserRow = 0;
 {
     BOOL needsOrigoCountry = NO;
     
-    if (![OMeta m].settings.countryCode) {
+    if (![OMeta m].settings.origoCountryCode) {
         needsOrigoCountry =
             ([_selectedOrigoType isEqualToString:kOrigoTypePreschoolClass] ||
              [_selectedOrigoType isEqualToString:kOrigoTypeSchoolClass]);
@@ -115,7 +115,7 @@ static NSInteger const kUserRow = 0;
     NSString *sheetTitleFormat = nil;
     NSString *buttonTitleCountryOfLocation = nil;
     
-    if ([[OMeta m].locator canUseLocationServices]) {
+    if ([[OMeta m].locator canLocate]) {
         sheetTitleFormat = [OStrings stringForKey:strSheetTitleOrigoCountryLocate];
         buttonTitleCountryOfLocation = [OStrings stringForKey:strButtonCountryOfLocation];
     } else {
@@ -126,7 +126,7 @@ static NSInteger const kUserRow = 0;
     
     [origoCountrySheet addButtonWithTitle:[OMeta m].locator.country];
     
-    if ([[OMeta m].locator canUseLocationServices]) {
+    if ([[OMeta m].locator canLocate]) {
         [origoCountrySheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryOfLocation]];
     }
     
@@ -141,18 +141,12 @@ static NSInteger const kUserRow = 0;
 
 - (void)displayOrigoCountryAlert
 {
-    [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
+    [OMeta m].settings.origoCountryCode = [OMeta m].locator.countryCode;
 
     NSString *alertTitle = [NSString stringWithFormat:[OStrings stringForKey:strAlertTitleOrigoCountry], [OMeta m].locator.country];
     NSString *alertText = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextOrigoCountry], [OMeta m].locator.country];
     
     [OAlert showAlertWithTitle:alertTitle message:alertText tag:kOrigoCountryAlertTag];
-}
-
-
-- (void)presentOrigoViewController
-{
-    [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_member meta:_selectedOrigoType];
 }
 
 
@@ -226,7 +220,7 @@ static NSInteger const kUserRow = 0;
             [[OMeta m] setUserDefault:nil forKey:kDefaultsKeyRegistrationAborted];
         }
         
-        [self presentModalViewControllerWithIdentifier:kMemberViewControllerId data:[[OMeta m].user initialResidency]];
+        [self presentModalViewWithIdentifier:kMemberView data:[[OMeta m].user initialResidency]];
     }
 }
 
@@ -243,6 +237,7 @@ static NSInteger const kUserRow = 0;
 
 - (void)initialise
 {
+    _viewId = kOrigoListView;
     _member = self.data ? self.data : [OMeta m].user;
     _origoTypes = [[NSMutableArray alloc] init];
     
@@ -311,8 +306,8 @@ static NSInteger const kUserRow = 0;
 - (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
 {
     if (sectionKey == kWardSectionKey) {
-        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListViewControllerId];
-        origoListViewController.data = [self entityAtRow:row inSectionWithKey:sectionKey];
+        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kOrigoListView];
+        origoListViewController.data = [self dataAtRow:row inSectionWithKey:sectionKey];
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
     } else {
@@ -321,9 +316,17 @@ static NSInteger const kUserRow = 0;
 }
 
 
+#pragma mark - OLocatorDelegate conformance
+
 - (void)locatorDidLocate
 {
     [self displayOrigoCountryAlert];
+}
+
+
+- (void)locatorCannotLocate
+{
+    [self presentOrigoCountrySheet];
 }
 
 
@@ -333,7 +336,7 @@ static NSInteger const kUserRow = 0;
 {
     NSString *cellText = nil;
     NSInteger sectionKey = [self sectionKeyForSectionNumber:indexPath.section];
-    OReplicatedEntity *entity = [self entityForIndexPath:indexPath];
+    OReplicatedEntity *entity = [self dataForIndexPath:indexPath];
     
     if (sectionKey == kUserSectionKey) {
         if (indexPath.row == kUserRow) {
@@ -354,7 +357,7 @@ static NSInteger const kUserRow = 0;
 - (NSString *)cellDetailTextForIndexPath:(NSIndexPath *)indexPath
 {
     NSString *cellDetails = nil;
-    OReplicatedEntity *entity = [self entityForIndexPath:indexPath];
+    OReplicatedEntity *entity = [self dataForIndexPath:indexPath];
     
     if ([self sectionKeyForSectionNumber:indexPath.section] == kUserSectionKey) {
         if (indexPath.row == kUserRow) {
@@ -372,7 +375,7 @@ static NSInteger const kUserRow = 0;
 {
     UIImage *cellImage = nil;
     NSInteger sectionKey = [self sectionKeyForSectionNumber:indexPath.section];
-    OReplicatedEntity *entity = [self entityForIndexPath:indexPath];
+    OReplicatedEntity *entity = [self dataForIndexPath:indexPath];
     
     if (sectionKey == kUserSectionKey) {
         if (indexPath.row == kUserRow) {
@@ -392,9 +395,9 @@ static NSInteger const kUserRow = 0;
 
 #pragma mark - OModalViewControllerDelegate conformance
 
-- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
+- (void)dismissModalViewWithIdentitifier:(NSString *)identitifier
 {
-    [super dismissModalViewControllerWithIdentitifier:identitifier];
+    [super dismissModalViewWithIdentitifier:identitifier];
     
     if ([OMeta m].userIsSignedIn) {
         [self.tableView reloadData];
@@ -425,7 +428,7 @@ static NSInteger const kUserRow = 0;
                 if ([self needsOrigoCountryForSelectedOrigoType]) {
                     [self presentOrigoCountrySheet];
                 } else {
-                    [self presentOrigoViewController];
+                    [self presentModalViewWithIdentifier:kOrigoView data:_member meta:_selectedOrigoType];
                 }
             }
             
@@ -444,7 +447,7 @@ static NSInteger const kUserRow = 0;
 {
     switch (alertView.tag) {
         case kOrigoCountryAlertTag:
-            [self presentOrigoViewController];
+            [self presentModalViewWithIdentifier:kOrigoView data:_member meta:_selectedOrigoType];
 
             break;
             

@@ -17,9 +17,10 @@
 - (void)addEmptyTableFooterViewWithText:(NSString *)text;
 - (UIActivityIndicatorView *)addActivityIndicator;
 
-- (id)listCellForIndexPath:(NSIndexPath *)indexPath delegate:(id)delegate;
 - (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 - (id)cellForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity delegate:(id)delegate;
+- (id)listCellForIndexPath:(NSIndexPath *)indexPath delegate:(id)delegate;
+- (id)settingCellForIndexPath:(NSIndexPath *)indexPath delegate:(id)delegate;
 
 - (CGFloat)standardHeaderHeight;
 - (CGFloat)standardFooterHeight;

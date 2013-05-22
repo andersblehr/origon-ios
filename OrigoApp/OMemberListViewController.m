@@ -70,14 +70,14 @@ static NSInteger const kHousemateSheetTag = 0;
     if ([candidates count]) {
         [self promptForHousemate:candidates];
     } else {
-        [self presentModalViewControllerWithIdentifier:kMemberViewControllerId data:_origo];
+        [self presentModalViewWithIdentifier:kMemberView data:_origo];
     }
 }
 
 
 - (void)didFinishEditing
 {
-    [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberListViewControllerId];
+    [self.dismisser dismissModalViewWithIdentitifier:kMemberListView];
 }
 
 
@@ -124,6 +124,7 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (void)initialise
 {
+    _viewId = kMemberListView;
     _membership = self.data;
     _origo = _membership.origo;
     
@@ -208,7 +209,7 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath
 {
-    OMember *member = [[self entityForIndexPath:indexPath] asMembership].member;
+    OMember *member = [[self dataForIndexPath:indexPath] asMembership].member;
     
     return [member isMinor] ? [member displayNameAndAge] : member.name;
 }
@@ -216,13 +217,13 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (NSString *)cellDetailTextForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[[self entityForIndexPath:indexPath] asMembership].member displayContactDetails];
+    return [[[self dataForIndexPath:indexPath] asMembership].member displayContactDetails];
 }
 
 
 - (UIImage *)cellImageForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[[self entityForIndexPath:indexPath] asMembership].member displayImage];
+    return [[[self dataForIndexPath:indexPath] asMembership].member displayImage];
 }
 
 
@@ -233,7 +234,7 @@ static NSInteger const kHousemateSheetTag = 0;
     BOOL canDeleteRow = NO;
     
     if (indexPath.section != kOrigoSectionKey) {
-        OMembership *membershipForRow = [self entityForIndexPath:indexPath];
+        OMembership *membershipForRow = [self dataForIndexPath:indexPath];
         canDeleteRow = ([_origo userIsAdmin] && ![membershipForRow.member isUser]);
     }
     
@@ -254,7 +255,7 @@ static NSInteger const kHousemateSheetTag = 0;
     switch (actionSheet.tag) {
         case kHousemateSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self presentModalViewControllerWithIdentifier:kMemberViewControllerId data:_origo];
+                [self presentModalViewWithIdentifier:kMemberView data:_origo];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_origo addMember:_candidateHousemates[buttonIndex]];
                 [self reloadSectionsIfNeeded];

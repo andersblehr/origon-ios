@@ -14,7 +14,7 @@
 
 @interface OSettings : OReplicatedEntity
 
-@property (nonatomic, retain) NSString * countryCode;
+@property (nonatomic, retain) NSString * origoCountryCode;
 @property (nonatomic, retain) OMember *user;
 
 @end

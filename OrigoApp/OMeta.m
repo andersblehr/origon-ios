@@ -23,6 +23,17 @@
 #import "OReplicatedEntity+OrigoExtensions.h"
 #import "OSettings.h"
 
+NSString * const kAuthView = @"AUTH";
+NSString * const kCalendarView = @"CALENDAR";
+NSString * const kMemberListView = @"MEMBERS";
+NSString * const kMemberView = @"MEMBER";
+NSString * const kMessageListView = @"MESSAGES";
+NSString * const kOrigoListView = @"ORIGOS";
+NSString * const kOrigoView = @"ORIGO";
+NSString * const kSettingListView = @"SETTINGS";
+NSString * const kSettingView = @"SETTING";
+NSString * const kTaskListView = @"TASKS";
+
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
 
@@ -33,12 +44,6 @@ NSUInteger const kAgeThresholdMajority = 18;
 
 NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 NSString * const kLanguageHungarian = @"hu";
-
-NSString * const kAuthViewControllerId = @"idAuthViewController";
-NSString * const kOrigoListViewControllerId = @"idOrigoListViewController";
-NSString * const kOrigoViewControllerId = @"idOrigoViewController";
-NSString * const kMemberViewControllerId = @"idMemberViewController";
-NSString * const kMemberListViewControllerId = @"idMemberListViewController";
 
 NSString * const kIconFileOrigo = @"10-arrows-in_black.png";
 NSString * const kIconFileHousehold = @"glyphicons_020_home.png";
@@ -77,8 +82,6 @@ NSString * const kPropertyKeyTelephone = @"telephone";
 
 NSString * const kRelationshipKeyMember = @"member";
 NSString * const kRelationshipKeyOrigo = @"origo";
-
-NSString * const kSettingsKeyCountry = @"origo.settings.country";
 
 NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
 NSString * const kDefaultsKeyDirtyEntities = @"origo.state.dirtyEntities";
