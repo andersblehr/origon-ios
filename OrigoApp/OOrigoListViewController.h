@@ -6,15 +6,14 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
 #import "OTableViewController.h"
 
+#import "OLocatorDelegate.h"
 #import "OTableViewListCellDelegate.h"
 
 @class OMember;
 
-@interface OOrigoListViewController : OTableViewController<OTableViewListCellDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
+@interface OOrigoListViewController : OTableViewController<OTableViewListCellDelegate, OLocatorDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
     OMember *_member;
     

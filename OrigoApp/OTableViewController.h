@@ -20,6 +20,9 @@ extern NSString * const kEmptyDetailCellPlaceholder;
 @class OReplicatedEntity;
 
 @interface OTableViewController : UITableViewController<OTableViewControllerInstance, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDelegate, OServerConnectionDelegate> {
+@protected
+    NSString *_viewId;
+
 @private
     Class _entityClass;
     NSInteger _entitySectionKey;
@@ -44,10 +47,12 @@ extern NSString * const kEmptyDetailCellPlaceholder;
     id<OTableViewControllerInstance> _instance;
 }
 
+@property (strong, nonatomic, readonly) NSString *viewId;
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic, readonly) OReplicatedEntity *entity;
 @property (strong, nonatomic, readonly) UIActivityIndicatorView *activityIndicator;
 
+@property (nonatomic, readonly) BOOL isListView;
 @property (nonatomic, readonly) BOOL isPushed;
 @property (nonatomic, readonly) BOOL isPopped;
 @property (nonatomic, readonly) BOOL isModal;
@@ -67,9 +72,9 @@ extern NSString * const kEmptyDetailCellPlaceholder;
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey;
-- (NSArray *)entitiesInSectionWithKey:(NSInteger)sectionKey;
-- (id)entityAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
-- (id)entityForIndexPath:(NSIndexPath *)indexPath;
+- (NSArray *)dataInSectionWithKey:(NSInteger)sectionKey;
+- (id)dataAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
+- (id)dataForIndexPath:(NSIndexPath *)indexPath;
 
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
@@ -78,9 +83,9 @@ extern NSString * const kEmptyDetailCellPlaceholder;
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue;
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data;
 
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data;
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta;
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser;
+- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data;
+- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta;
+- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser;
 
 - (void)reflectState;
 - (void)toggleEditMode;

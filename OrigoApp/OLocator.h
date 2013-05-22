@@ -10,16 +10,20 @@
 
 #import <CoreLocation/CoreLocation.h>
 
+@protocol OLocatorDelegate;
+
 @interface OLocator : NSObject<CLLocationManagerDelegate> {
 @private
     CLLocationManager *_locationManager;
     CLPlacemark *_placemark;
 }
 
-@property (strong, nonatomic, readonly) NSString *countryCode;
-@property (strong, nonatomic, readonly) NSString *country;
+@property (weak, nonatomic, readonly) NSString *countryCode;
+@property (weak, nonatomic, readonly) NSString *country;
 
-- (BOOL)canUseLocationServices;
+@property (weak, nonatomic) id<OLocatorDelegate> delegate;
+
+- (BOOL)canLocate;
 - (void)locate;
 
 @end

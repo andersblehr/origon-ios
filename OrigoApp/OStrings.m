@@ -146,6 +146,7 @@ NSString * const strDefaultMessageBoardName          = @"strDefaultMessageBoardN
 
 // OSettingsView strings
 NSString * const strTabBarTitleSettings              = @"strTabBarTitleSettings";
+NSString * const strSettingTitleOrigoCountry         = @"strSettingTitleOrigoCountry";
 
 // Origo type strings
 NSString * const strOrigoTypeResidence               = @"strOrigoTypeResidence";
@@ -175,6 +176,7 @@ static NSDictionary const *strings = nil;
 
 static NSString * const kLabelKeyPrefix = @"strLabel";
 static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
+static NSString * const kSettingTitleKeyPrefix = @"strSettingTitle";
 
 
 @implementation OStrings
@@ -222,6 +224,24 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 
 #pragma mark - String lookup
 
++ (NSString *)stringForKey:(NSString *)key
+{
+    NSString *string = @"";
+    
+    if ([self hasStrings]) {
+        string = [strings objectForKey:key];
+        
+        if (!string) {
+            OLogBreakage(@"No string with key '%@'.", key);
+        }
+    } else {
+        OLogBreakage(@"Failed to instantiate strings from plist.");
+    }
+    
+    return string;
+}
+
+
 + (NSString *)stringForOrigoType:(NSString *)origoType
 {
     NSString *key = nil;
@@ -247,24 +267,6 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 }
 
 
-+ (NSString *)stringForKey:(NSString *)key
-{
-    NSString *string = @"";
-    
-    if ([self hasStrings]) {
-        string = [strings objectForKey:key];
-        
-        if (!string) {
-            OLogBreakage(@"No string with key '%@'.", key);
-        }
-    } else {
-        OLogBreakage(@"Failed to instantiate strings from plist.");
-    }
-    
-    return string;
-}
-
-
 + (NSString *)labelForKey:(NSString *)key
 {
     return [self stringForKey:[self stringKeyWithPrefix:kLabelKeyPrefix forKey:key]];
@@ -274,6 +276,12 @@ static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 + (NSString *)placeholderForKey:(NSString *)key
 {
     return [self stringForKey:[self stringKeyWithPrefix:kPlaceholderKeyPrefix forKey:key]];
+}
+
+
++ (NSString *)settingTitleForKey:(NSString *)key
+{
+    return [self stringForKey:[self stringKeyWithPrefix:kSettingTitleKeyPrefix forKey:key]];
 }
 
 

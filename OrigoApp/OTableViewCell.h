@@ -12,6 +12,7 @@
 #import "OTableViewListCellDelegate.h"
 
 extern NSString * const kReuseIdentifierDefault;
+extern NSString * const kReuseIdentifierSetting;
 extern NSString * const kReuseIdentifierUserSignIn;
 extern NSString * const kReuseIdentifierUserActivation;
 

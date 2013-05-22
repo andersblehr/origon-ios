@@ -41,6 +41,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
 @implementation OTableViewController
 
+
 #pragma mark - Auxiliary methods
 
 - (void)initialiseInstance
@@ -106,7 +107,9 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
-    if ([data isKindOfClass:NSSet.class]) {
+    if ([data isKindOfClass:NSArray.class]) {
+        _sectionData[@(sectionKey)] = data;
+    } else if ([data isKindOfClass:NSSet.class]) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
     } else if (data) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
@@ -145,23 +148,23 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 }
 
 
-- (NSArray *)entitiesInSectionWithKey:(NSInteger)sectionKey
+- (NSArray *)dataInSectionWithKey:(NSInteger)sectionKey
 {
     return _sectionData[@(sectionKey)];
 }
 
 
-- (id)entityAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
+- (id)dataAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
 {
-    return [self entitiesInSectionWithKey:sectionKey][row];
+    return [self dataInSectionWithKey:sectionKey][row];
 }
 
 
-- (id)entityForIndexPath:(NSIndexPath *)indexPath
+- (id)dataForIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [_sectionKeys[indexPath.section] integerValue];
     
-    return [self entityAtRow:indexPath.row inSectionWithKey:sectionKey];
+    return [self dataAtRow:indexPath.row inSectionWithKey:sectionKey];
 }
 
 
@@ -298,9 +301,10 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     _entitySectionKey = NSNotFound;
     _instance = self;
     
+    _isListView = ([NSStringFromClass(self.class) rangeOfString:@"List"].location != NSNotFound);
     _canEdit = NO;
     _shouldDemphasiseOnEndEdit = YES;
-    _modalImpliesRegistration = ([NSStringFromClass(self.class) rangeOfString:@"List"].location == NSNotFound);
+    _modalImpliesRegistration = !_isListView;
     _cancelRegistrationImpliesSignOut = NO;
     
     if (!self.navigationController || ([self.navigationController.viewControllers count] == 1)) {
@@ -360,7 +364,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
         [self.activityIndicator startAnimating];
         [[[OServerConnection alloc] init] fetchStrings:self];
     } else if (![OMeta m].userIsSignedIn) {
-        [self presentModalViewControllerWithIdentifier:kAuthViewControllerId data:nil dismisser:self];
+        [self presentModalViewWithIdentifier:kAuthView data:nil dismisser:self];
     } else if (self.state.actionIsRegister) {
         [[self.detailCell nextInputFieldFromTextField:nil] becomeFirstResponder];
     } else if (self.detailCell) {
@@ -387,7 +391,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue
 {
-    [self prepareForPushSegue:segue data:[self entityForIndexPath:_selectedIndexPath]];
+    [self prepareForPushSegue:segue data:[self dataForIndexPath:_selectedIndexPath]];
 }
 
 
@@ -401,13 +405,13 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
 #pragma mark - Presenting modal view controllers
 
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data
+- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data
 {
-    [self presentModalViewControllerWithIdentifier:identifier data:data meta:nil];
+    [self presentModalViewWithIdentifier:identifier data:data meta:nil];
 }
 
 
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta
+- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta
 {
     OTableViewController *viewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
     
@@ -422,7 +426,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     
     UIViewController *destinationViewController = nil;
     
-    if ([identifier isEqualToString:kAuthViewControllerId]) {
+    if ([identifier isEqualToString:kAuthView]) {
         destinationViewController = viewController;
         destinationViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     } else {
@@ -434,9 +438,9 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 }
 
 
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser
+- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser
 {
-    [self presentModalViewControllerWithIdentifier:identifier data:data meta:dismisser];
+    [self presentModalViewWithIdentifier:identifier data:data meta:dismisser];
 }
 
 
@@ -678,13 +682,13 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
 #pragma mark - OModalViewControllerDelegate conformance
 
-- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
+- (void)dismissModalViewWithIdentitifier:(NSString *)identitifier
 {
-    [self dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:YES];
+    [self dismissModalViewWithIdentitifier:identitifier needsReloadData:YES];
 }
 
 
-- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier needsReloadData:(BOOL)needsReloadData
+- (void)dismissModalViewWithIdentitifier:(NSString *)identitifier needsReloadData:(BOOL)needsReloadData
 {
     _needsReloadData = [OMeta m].userIsSignedIn ? needsReloadData : NO;
     
@@ -705,7 +709,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
         [[OMeta m] setGlobalDefault:[NSDate date] forKey:kDefaultsKeyStringDate];
         [(OTabBarController *)self.tabBarController setTabBarTitles];
         
-        [self presentModalViewControllerWithIdentifier:kAuthViewControllerId data:nil dismisser:self];
+        [self presentModalViewWithIdentifier:kAuthView data:nil dismisser:self];
     }
 }
 

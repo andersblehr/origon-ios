@@ -12,6 +12,17 @@
 
 #import "Reachability.h"
 
+extern NSString * const kAuthView;
+extern NSString * const kCalendarView;
+extern NSString * const kMemberListView;
+extern NSString * const kMemberView;
+extern NSString * const kMessageListView;
+extern NSString * const kOrigoListView;
+extern NSString * const kOrigoView;
+extern NSString * const kSettingListView;
+extern NSString * const kSettingView;
+extern NSString * const kTaskListView;
+
 extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;
 
@@ -22,12 +33,6 @@ extern NSUInteger const kAgeThresholdMajority;
 
 extern NSString * const kBundleId;
 extern NSString * const kLanguageHungarian;
-
-extern NSString * const kAuthViewControllerId;
-extern NSString * const kOrigoListViewControllerId;
-extern NSString * const kOrigoViewControllerId;
-extern NSString * const kMemberListViewControllerId;
-extern NSString * const kMemberViewControllerId;
 
 extern NSString * const kIconFileOrigo;
 extern NSString * const kIconFileHousehold;
@@ -66,8 +71,6 @@ extern NSString * const kPropertyKeyTelephone;
 
 extern NSString * const kRelationshipKeyMember;
 extern NSString * const kRelationshipKeyOrigo;
-
-extern NSString * const kSettingsKeyCountry;
 
 extern NSString * const kDefaultsKeyAuthInfo;
 extern NSString * const kDefaultsKeyDirtyEntities;

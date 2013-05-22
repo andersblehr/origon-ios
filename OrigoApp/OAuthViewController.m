@@ -157,7 +157,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] message:[OStrings stringForKey:strAlertTextActivationFailed]];
             [self toggleAuthState];
         } else if (self.state.aspectIsEmail) {
-            [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+            [self.dismisser dismissModalViewWithIdentitifier:kAuthView];
         }
     }
 }
@@ -271,7 +271,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [[OMeta m] setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
     }
     
-    [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+    [self.dismisser dismissModalViewWithIdentitifier:kAuthView];
 }
 
 
@@ -320,6 +320,8 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)initialise
 {
+    _viewId = kAuthView;
+    
     if (self.data) {
         self.state.actionIsActivate = YES;
         self.state.aspectIsEmail = YES;
@@ -439,7 +441,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             if (self.state.aspectIsSelf) {
                 [self initiateUserActivation];
             } else if (self.state.aspectIsEmail) {
-                [self.dismisser dismissModalViewControllerWithIdentitifier:kAuthViewControllerId];
+                [self.dismisser dismissModalViewWithIdentitifier:kAuthView];
             }
         } else {
             _repeatPasswordField.text = @"";

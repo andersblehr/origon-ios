@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12C60" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="iqr-fd-qbX">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12D78" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="iqr-fd-qbX">
     <dependencies>
         <deployment defaultVersion="1552" identifier="iOS"/>
         <development version="4500" identifier="xcode"/>
@@ -9,7 +9,7 @@
         <!--Auth View Controller-->
         <scene sceneID="i2s-nI-C1j">
             <objects>
-                <tableViewController storyboardIdentifier="idAuthViewController" id="a73-0o-gAI" customClass="OAuthViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="AUTH" id="a73-0o-gAI" customClass="OAuthViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="IaI-4F-Chh">
                         <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -28,7 +28,7 @@
         <!--Task List View Controller - <strTasks>-->
         <scene sceneID="FtR-nb-C3g">
             <objects>
-                <viewController storyboardIdentifier="idTaskListViewController" id="h9q-RG-XjV" customClass="OTaskListViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TASKS" id="h9q-RG-XjV" customClass="OTaskListViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Oe6-hP-CNg">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -40,10 +40,10 @@
             </objects>
             <point key="canvasLocation" x="183" y="1301"/>
         </scene>
-        <!--Message Board View Controller - <strMessageBoard>-->
+        <!--Message List View Controller - <strMessageBoard>-->
         <scene sceneID="uXo-MS-8t7">
             <objects>
-                <viewController storyboardIdentifier="idMessageBoardViewController" id="Obd-WC-JAQ" customClass="OMessageBoardViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MESSAGES" id="Obd-WC-JAQ" customClass="OMessageListViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="IPB-4W-cqx">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -58,7 +58,7 @@
         <!--Member List View Controller - <strMemberList>-->
         <scene sceneID="5fB-zI-Tq9">
             <objects>
-                <viewController storyboardIdentifier="idMemberListViewController" id="O0V-Ey-WLK" customClass="OMemberListViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MEMBERS" id="O0V-Ey-WLK" customClass="OMemberListViewController" sceneMemberID="viewController">
                     <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lJb-0F-cm5">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -78,7 +78,7 @@
         <!--Member View Controller - <strMember>-->
         <scene sceneID="x7u-en-eVb">
             <objects>
-                <tableViewController storyboardIdentifier="idMemberViewController" id="T87-Bh-GzL" customClass="OMemberViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="MEMBER" id="T87-Bh-GzL" customClass="OMemberViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="209" sectionHeaderHeight="10" sectionFooterHeight="10" id="WsN-Uc-XTj">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -100,7 +100,7 @@
         <!--Origo View Controller - <strOrigo>-->
         <scene sceneID="WLp-CI-chb">
             <objects>
-                <tableViewController storyboardIdentifier="idOrigoViewController" id="bxV-RT-yI4" customClass="OOrigoViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="ORIGO" id="bxV-RT-yI4" customClass="OOrigoViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="LnJ-T1-eEC">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -119,7 +119,7 @@
         <!--Calendar View Controller - <strCalendar>-->
         <scene sceneID="FF8-Hh-UBk">
             <objects>
-                <viewController storyboardIdentifier="idCalendarViewController" id="EMg-2y-k0H" customClass="OCalendarViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CALENDAR" id="EMg-2y-k0H" customClass="OCalendarViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="a7X-Xm-nqx">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -134,7 +134,7 @@
         <!--Origo List View Controller - Origo-->
         <scene sceneID="SzQ-Uz-J3x">
             <objects>
-                <viewController storyboardIdentifier="idOrigoListViewController" id="9Fa-Np-JO6" customClass="OOrigoListViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ORIGOS" id="9Fa-Np-JO6" customClass="OOrigoListViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Nfe-mR-3nj">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -150,10 +150,10 @@
             </objects>
             <point key="canvasLocation" x="183" y="28"/>
         </scene>
-        <!--Settings View Controller - <strSettings>-->
+        <!--Setting List View Controller - <strSettingList>-->
         <scene sceneID="sOz-jV-QHA">
             <objects>
-                <tableViewController storyboardIdentifier="idSettingsViewController" id="Bf4-zU-a9P" customClass="OSettingsViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="SETTINGS" id="Bf4-zU-a9P" customClass="OSettingListViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="eLC-aL-8ZY">
                         <rect key="frame" x="0.0" y="64" width="320" height="367"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -163,11 +163,33 @@
                             <outlet property="delegate" destination="Bf4-zU-a9P" id="h0S-cp-pW5"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="&lt;strSettings>" id="pPk-Kr-fAc"/>
+                    <navigationItem key="navigationItem" title="&lt;strSettingList>" id="pPk-Kr-fAc"/>
+                    <connections>
+                        <segue destination="Lcb-OF-t33" kind="push" identifier="sequeFromSettingListToSettingView" id="Ik1-Va-tcX"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R31-Db-r3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="183" y="2539"/>
+        </scene>
+        <!--Setting View Controller - <strSetting>-->
+        <scene sceneID="J4F-Wc-d9B">
+            <objects>
+                <tableViewController storyboardIdentifier="SETTING" id="Lcb-OF-t33" customClass="OSettingViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="singleLineEtched" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="pjX-pJ-aBY">
+                        <rect key="frame" x="0.0" y="64" width="320" height="367"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <connections>
+                            <outlet property="dataSource" destination="Lcb-OF-t33" id="UM7-NS-NNt"/>
+                            <outlet property="delegate" destination="Lcb-OF-t33" id="4Lp-bR-Yo6"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="&lt;strSetting>" id="FVF-9e-saF"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hCo-uL-u2D" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="636" y="2542"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="uKK-ug-B0h">

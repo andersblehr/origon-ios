@@ -29,6 +29,7 @@
 		5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1A81BC1645CE22003DCCAF /* UIBarButtonItem+OrigoExtensions.m */; };
 		5C1D6CC3172043AC00479F7D /* OSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1D6CC2172043AC00479F7D /* OSettings.m */; };
 		5C1D6CC6172E62F500479F7D /* OLocator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1D6CC5172E62F500479F7D /* OLocator.m */; };
+		5C1D6CCA1743C80900479F7D /* OSettings+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1D6CC91743C80900479F7D /* OSettings+OrigoExtensions.m */; };
 		5C2262C415A0B47B00241C5F /* OOrigoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262C315A0B47B00241C5F /* OOrigoViewController.m */; };
 		5C23431214812A3100164478 /* OStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* OStrings.m */; };
 		5C26291E158F27860012A74A /* OAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* OAuthViewController.m */; };
@@ -56,7 +57,7 @@
 		5C629FF414C62133001DA01F /* 08-chat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FF214C62133001DA01F /* 08-chat@2x.png */; };
 		5C629FFB14C62481001DA01F /* 258-checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FF914C62481001DA01F /* 258-checkmark.png */; };
 		5C629FFC14C62481001DA01F /* 258-checkmark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FFA14C62481001DA01F /* 258-checkmark@2x.png */; };
-		5C629FFF14C624AD001DA01F /* OMessageBoardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C629FFE14C624AD001DA01F /* OMessageBoardViewController.m */; };
+		5C629FFF14C624AD001DA01F /* OMessageListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C629FFE14C624AD001DA01F /* OMessageListViewController.m */; };
 		5C62A00214C6252C001DA01F /* OTaskListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C62A00114C6252C001DA01F /* OTaskListViewController.m */; };
 		5C68F36F16E4C858005DDCF9 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C68F36E16E4C858005DDCF9 /* CoreTelephony.framework */; };
 		5C6C4B6B16CC027600C88E6C /* OReplicatedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6C4B6A16CC027600C88E6C /* OReplicatedEntityRef.m */; };
@@ -97,7 +98,7 @@
 		5CAEE0CA163E513A00A9046B /* ODocumentRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE0C9163E513A00A9046B /* ODocumentRepository.m */; };
 		5CAEE0CD163E513A00A9046B /* OToDoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE0CC163E513A00A9046B /* OToDoItem.m */; };
 		5CAEE0D0163E513A00A9046B /* OMessageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE0CF163E513A00A9046B /* OMessageItem.m */; };
-		5CB7E94015F38C1200FD53DF /* OSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E93F15F38C1200FD53DF /* OSettingsViewController.m */; };
+		5CB7E94015F38C1200FD53DF /* OSettingListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E93F15F38C1200FD53DF /* OSettingListViewController.m */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
 		5CBB63BD146080DF00A9133A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BC146080DF00A9133A /* CoreGraphics.framework */; };
@@ -113,6 +114,7 @@
 		5CBE919F159909E200516C54 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBE919E159909E200516C54 /* AudioToolbox.framework */; };
 		5CBE91A31599823000516C54 /* UIFont+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE91A21599823000516C54 /* UIFont+OrigoExtensions.m */; };
 		5CBE9C5314AB5160004FE2B7 /* NSString+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE9C5214AB515F004FE2B7 /* NSString+OrigoExtensions.m */; };
+		5CBFB738174B64D40021A8F6 /* OSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBFB737174B64D40021A8F6 /* OSettingViewController.m */; };
 		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
 		5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */; };
 		5CD3360E15C40A2F00ABBFE7 /* OState.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD3360D15C40A2F00ABBFE7 /* OState.m */; };
@@ -160,6 +162,9 @@
 		5C1D6CC2172043AC00479F7D /* OSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettings.m; sourceTree = "<group>"; };
 		5C1D6CC4172E62F500479F7D /* OLocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLocator.h; sourceTree = "<group>"; };
 		5C1D6CC5172E62F500479F7D /* OLocator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLocator.m; sourceTree = "<group>"; };
+		5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OLocatorDelegate.h; sourceTree = "<group>"; };
+		5C1D6CC81743C80900479F7D /* OSettings+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OSettings+OrigoExtensions.h"; sourceTree = "<group>"; };
+		5C1D6CC91743C80900479F7D /* OSettings+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OSettings+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5C2262C215A0B47B00241C5F /* OOrigoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoViewController.h; sourceTree = "<group>"; };
 		5C2262C315A0B47B00241C5F /* OOrigoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoViewController.m; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* OStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OStrings.h; sourceTree = "<group>"; };
@@ -206,8 +211,8 @@
 		5C629FF214C62133001DA01F /* 08-chat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "08-chat@2x.png"; sourceTree = "<group>"; };
 		5C629FF914C62481001DA01F /* 258-checkmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "258-checkmark.png"; sourceTree = "<group>"; };
 		5C629FFA14C62481001DA01F /* 258-checkmark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "258-checkmark@2x.png"; sourceTree = "<group>"; };
-		5C629FFD14C624AD001DA01F /* OMessageBoardViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMessageBoardViewController.h; sourceTree = "<group>"; };
-		5C629FFE14C624AD001DA01F /* OMessageBoardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMessageBoardViewController.m; sourceTree = "<group>"; };
+		5C629FFD14C624AD001DA01F /* OMessageListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMessageListViewController.h; sourceTree = "<group>"; };
+		5C629FFE14C624AD001DA01F /* OMessageListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMessageListViewController.m; sourceTree = "<group>"; };
 		5C62A00014C6252C001DA01F /* OTaskListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTaskListViewController.h; sourceTree = "<group>"; };
 		5C62A00114C6252C001DA01F /* OTaskListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTaskListViewController.m; sourceTree = "<group>"; };
 		5C68F36E16E4C858005DDCF9 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
@@ -281,8 +286,8 @@
 		5CAEE0CC163E513A00A9046B /* OToDoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OToDoItem.m; sourceTree = "<group>"; };
 		5CAEE0CE163E513A00A9046B /* OMessageItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMessageItem.h; sourceTree = "<group>"; };
 		5CAEE0CF163E513A00A9046B /* OMessageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMessageItem.m; sourceTree = "<group>"; };
-		5CB7E93E15F38C1200FD53DF /* OSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettingsViewController.h; sourceTree = "<group>"; };
-		5CB7E93F15F38C1200FD53DF /* OSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettingsViewController.m; sourceTree = "<group>"; };
+		5CB7E93E15F38C1200FD53DF /* OSettingListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettingListViewController.h; sourceTree = "<group>"; };
+		5CB7E93F15F38C1200FD53DF /* OSettingListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettingListViewController.m; sourceTree = "<group>"; };
 		5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OModalViewControllerDelegate.h; sourceTree = "<group>"; };
 		5CBB63B4146080DF00A9133A /* OrigoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OrigoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63B8146080DF00A9133A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -307,6 +312,8 @@
 		5CBE91A21599823000516C54 /* UIFont+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5CBE9C5114AB515F004FE2B7 /* NSString+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5CBE9C5214AB515F004FE2B7 /* NSString+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+OrigoExtensions.m"; sourceTree = "<group>"; };
+		5CBFB736174B64D40021A8F6 /* OSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettingViewController.h; sourceTree = "<group>"; };
+		5CBFB737174B64D40021A8F6 /* OSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettingViewController.m; sourceTree = "<group>"; };
 		5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5CCF08FC1465D5D800D41AB0 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		5CCF08FD1465D5D900D41AB0 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -481,6 +488,8 @@
 				5C83DF80153F59B800BB0B29 /* OOrigo+OrigoExtensions.m */,
 				5C5ED5CC14F2E9FE006BBDFB /* OReplicatedEntity+OrigoExtensions.h */,
 				5C5ED5CD14F2E9FE006BBDFB /* OReplicatedEntity+OrigoExtensions.m */,
+				5C1D6CC81743C80900479F7D /* OSettings+OrigoExtensions.h */,
+				5C1D6CC91743C80900479F7D /* OSettings+OrigoExtensions.m */,
 			);
 			name = "Model Categories";
 			sourceTree = "<group>";
@@ -489,6 +498,7 @@
 			isa = PBXGroup;
 			children = (
 				5C39EC1C166632570083DFEB /* OEntityObservingDelegate.h */,
+				5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */,
 				5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDelegate.h */,
 				5C2E1133146ACFA9005BDE61 /* OServerConnectionDelegate.h */,
 				5CA10B9E16A7F9FD00031D81 /* OTableViewControllerInstance.h */,
@@ -508,14 +518,16 @@
 				5C629FEF14C62038001DA01F /* OMemberListViewController.m */,
 				5C8B3AB415813DBB000B19FA /* OMemberViewController.h */,
 				5C8B3AB515813DBB000B19FA /* OMemberViewController.m */,
-				5C629FFD14C624AD001DA01F /* OMessageBoardViewController.h */,
-				5C629FFE14C624AD001DA01F /* OMessageBoardViewController.m */,
+				5C629FFD14C624AD001DA01F /* OMessageListViewController.h */,
+				5C629FFE14C624AD001DA01F /* OMessageListViewController.m */,
 				5C3D42801485678E009A68E0 /* OOrigoListViewController.h */,
 				5C3D42811485678F009A68E0 /* OOrigoListViewController.m */,
 				5C2262C215A0B47B00241C5F /* OOrigoViewController.h */,
 				5C2262C315A0B47B00241C5F /* OOrigoViewController.m */,
-				5CB7E93E15F38C1200FD53DF /* OSettingsViewController.h */,
-				5CB7E93F15F38C1200FD53DF /* OSettingsViewController.m */,
+				5CB7E93E15F38C1200FD53DF /* OSettingListViewController.h */,
+				5CB7E93F15F38C1200FD53DF /* OSettingListViewController.m */,
+				5CBFB736174B64D40021A8F6 /* OSettingViewController.h */,
+				5CBFB737174B64D40021A8F6 /* OSettingViewController.m */,
 				5C62A00014C6252C001DA01F /* OTaskListViewController.h */,
 				5C62A00114C6252C001DA01F /* OTaskListViewController.m */,
 			);
@@ -816,7 +828,7 @@
 				5C4F977B1496AF88006E244F /* NSURL+OrigoExtensions.m in Sources */,
 				5CBE9C5314AB5160004FE2B7 /* NSString+OrigoExtensions.m in Sources */,
 				5C629FF014C62038001DA01F /* OMemberListViewController.m in Sources */,
-				5C629FFF14C624AD001DA01F /* OMessageBoardViewController.m in Sources */,
+				5C629FFF14C624AD001DA01F /* OMessageListViewController.m in Sources */,
 				5C62A00214C6252C001DA01F /* OTaskListViewController.m in Sources */,
 				5C50581C14CAEC76000D6587 /* UIView+OrigoExtensions.m in Sources */,
 				5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+OrigoExtensions.m in Sources */,
@@ -838,7 +850,7 @@
 				5C2E6B7E15A8501800638330 /* OMembership+OrigoExtensions.m in Sources */,
 				5CD3360E15C40A2F00ABBFE7 /* OState.m in Sources */,
 				5C014A2415CA77320040A1D9 /* OAlert.m in Sources */,
-				5CB7E94015F38C1200FD53DF /* OSettingsViewController.m in Sources */,
+				5CB7E94015F38C1200FD53DF /* OSettingListViewController.m in Sources */,
 				5C15BFC916367BCA00BB5254 /* OTabBarController.m in Sources */,
 				5CAEE091163E513300A9046B /* ODocumentElement.m in Sources */,
 				5CAEE094163E513400A9046B /* OMessageBoard.m in Sources */,
@@ -871,6 +883,8 @@
 				5C9D94C4171AF45E00806F87 /* OMember.m in Sources */,
 				5C1D6CC3172043AC00479F7D /* OSettings.m in Sources */,
 				5C1D6CC6172E62F500479F7D /* OLocator.m in Sources */,
+				5C1D6CCA1743C80900479F7D /* OSettings+OrigoExtensions.m in Sources */,
+				5CBFB738174B64D40021A8F6 /* OSettingViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

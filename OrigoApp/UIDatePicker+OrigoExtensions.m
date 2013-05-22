@@ -10,10 +10,13 @@
 
 #import "NSDate+OrigoExtensions.h"
 
+#import "OMeta.h"
 #import "OState.h"
 
 static int const kMinimumRealisticAge = 6;
 static int const kMaximumRealisticAge = 100;
+
+static NSString * const kDefaultDate = @"1976-04-01T20:00:00Z";
 
 
 @implementation UIDatePicker (OrigoExtensions)
@@ -34,7 +37,7 @@ static int const kMaximumRealisticAge = 100;
 {
     NSDate *now = [NSDate date];
     
-    if ([OState s].viewIsMemberDetail && [OState s].actionIsRegister && [OState s].aspectIsSelf) {
+    if ([[OState s] viewIs:kMemberView] && [OState s].actionIsRegister && [OState s].aspectIsSelf) {
         NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
         latestBirthDateOffset.year = -kMinimumRealisticAge;
         
@@ -50,9 +53,8 @@ static int const kMaximumRealisticAge = 100;
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = kDateTimeFormatZulu;
-    NSDate *april1st1976 = [dateFormatter dateFromString:@"1976-04-01T20:00:00Z"];
     
-    [self setDate:april1st1976 animated:YES];
+    [self setDate:[dateFormatter dateFromString:kDefaultDate] animated:YES];
 }
 
 @end

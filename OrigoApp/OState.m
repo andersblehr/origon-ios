@@ -21,8 +21,8 @@
 #import "OOrigoViewController.h"
 #import "OCalendarViewController.h"
 #import "OTaskListViewController.h"
-#import "OMessageBoardViewController.h"
-#import "OSettingsViewController.h"
+#import "OMessageListViewController.h"
+#import "OSettingListViewController.h"
 
 static OState *s = nil;
 
@@ -31,7 +31,6 @@ static OState *s = nil;
 
 @property (weak, nonatomic) OTableViewController *activeViewController;
 
-@property (nonatomic) OStateView view;
 @property (nonatomic) OStateAction action;
 @property (nonatomic) OStateAspect aspect;
 
@@ -108,42 +107,18 @@ static OState *s = nil;
     
     if (self) {
         if (viewController) {
-            [OState s].activeViewController = viewController;
+            _activeViewController = viewController;
         }
         
-        if ([viewController isKindOfClass:OAuthViewController.class]) {
-            _view = OStateViewAuth;
-            _action = OStateActionLogin;
-        } else if ([viewController isKindOfClass:OOrigoListViewController.class]) {
-            _view = OStateViewOrigoList;
-            _action = OStateActionList;
-        } else if ([viewController isKindOfClass:OOrigoViewController.class]) {
-            _view = OStateViewOrigoDetail;
-            _action = OStateActionDisplay;
-        } else if ([viewController isKindOfClass:OMemberListViewController.class]) {
-            _view = OStateViewMemberList;
-            _action = OStateActionList;
-        } else if ([viewController isKindOfClass:OMemberViewController.class]) {
-            _view = OStateViewMemberDetail;
-            _action = OStateActionDisplay;
-        } else if ([viewController isKindOfClass:OCalendarViewController.class]) {
-            _view = OStateViewCalendar;
-            _action = OStateActionDisplay;
-        } else if ([viewController isKindOfClass:OTaskListViewController.class]) {
-            _view = OStateViewTaskList;
-            _action = OStateActionList;
-        } else if ([viewController isKindOfClass:OMessageBoardViewController.class]) {
-            _view = OStateViewMessageBoard;
-            _action = OStateActionDisplay;
-        } else if ([viewController isKindOfClass:OSettingsViewController.class]) {
-            _view = OStateViewSettings;
-            _action = OStateActionList;
+        if ([OStrings hasStrings]) {
+            if ([viewController isKindOfClass:OAuthViewController.class]) {
+                _action = OStateActionLogin;
+            } else if (viewController.isListView) {
+                _action = OStateActionList;
+            } else {
+                _action = OStateActionDisplay;
+            }
         } else {
-            _view = OStateViewDefault;
-            _action = OStateActionDefault;
-        }
-        
-        if (![OStrings hasStrings]) {
             _action = OStateActionSetup;
         }
         
@@ -166,6 +141,12 @@ static OState *s = nil;
 
 #pragma mark - Utility methods
 
+- (BOOL)viewIs:(NSString *)viewId
+{
+    return [_activeViewController.viewId isEqualToString:viewId];
+}
+
+
 - (void)setAspectForCarrier:(id)aspectCarrier
 {
     if ([aspectCarrier isKindOfClass:OMember.class]) {
@@ -177,14 +158,12 @@ static OState *s = nil;
             [self setAspectForOrigoType:aspectCarrier];
         }
     }
-    
-    //[[OState s] reflect:self];
 }
 
 
 - (void)reflect:(OState *)state
 {
-    _view = state.view;
+    _activeViewController = state.activeViewController;
     _action = state.action;
     _aspect = state.aspect;
 }
@@ -204,131 +183,52 @@ static OState *s = nil;
 
 - (NSString *)asString
 {
-    NSString *viewAsString = nil;
-    NSString *actionAsString = nil;
-    NSString *aspectAsString = nil;
-    
-    if (self.viewIsAuth) {
-        viewAsString = @"AUTH";
-    } else if (self.viewIsOrigoList) {
-        viewAsString = @"ORIGOS";
-    } else if (self.viewIsOrigoDetail) {
-        viewAsString = @"ORIGO";
-    } else if (self.viewIsMemberList) {
-        viewAsString = @"MEMBERS";
-    } else if (self.viewIsMemberDetail) {
-        viewAsString = @"MEMBER";
-    } else if (self.viewIsCalendar) {
-        viewAsString = @"CALENDAR";
-    } else if (self.viewIsTaskList) {
-        viewAsString = @"TASKS";
-    } else if (self.viewIsMessageBoard) {
-        viewAsString = @"BOARD";
-    } else if (self.viewIsSettings) {
-        viewAsString = @"SETTINGS";
-    } else {
-        viewAsString = @"DEFAULT";
-    }
+    NSString *action = nil;
+    NSString *aspect = nil;
     
     if (self.actionIsSetup) {
-        actionAsString = @"SETUP";
+        action = @"SETUP";
     } else if (self.actionIsLogin) {
-        actionAsString = @"LOGIN";
+        action = @"LOGIN";
     } else if (self.actionIsActivate) {
-        actionAsString = @"ACTIVATE";
+        action = @"ACTIVATE";
     } else if (self.actionIsRegister) {
-        actionAsString = @"REGISTER";
+        action = @"REGISTER";
     } else if (self.actionIsList) {
-        actionAsString = @"LIST";
+        action = @"LIST";
     } else if (self.actionIsDisplay) {
-        actionAsString = @"DISPLAY";
+        action = @"DISPLAY";
     } else if (self.actionIsEdit) {
-        actionAsString = @"EDIT";
+        action = @"EDIT";
     } else {
-        actionAsString = @"DEFAULT";
+        action = @"DEFAULT";
     }
     
     if (self.aspectIsEmail) {
-        aspectAsString = @"EMAIL";
+        aspect = @"EMAIL";
     } else if (self.aspectIsSelf) {
-        aspectAsString = @"SELF";
+        aspect = @"SELF";
     } else if (self.aspectIsWard) {
-        aspectAsString = @"WARD";
+        aspect = @"WARD";
     } else if (self.aspectIsHousemate) {
-        aspectAsString = @"HOUSEMATE";
+        aspect = @"HOUSEMATE";
     } else if (self.aspectIsResidence) {
-        aspectAsString = @"RESIDENCE";
+        aspect = @"RESIDENCE";
     } else if (self.aspectIsOrganisation) {
-        aspectAsString = @"ORGANISATION";
+        aspect = @"ORGANISATION";
     } else if (self.aspectIsAssociation) {
-        aspectAsString = @"ASSOCIATION";
+        aspect = @"ASSOCIATION";
     } else if (self.aspectIsSchoolClass) {
-        aspectAsString = @"CLASS";
+        aspect = @"CLASS";
     } else if (self.aspectIsPreschool) {
-        aspectAsString = @"PRESCHOOL";
+        aspect = @"PRESCHOOL";
     } else if (self.aspectIsTeam) {
-        aspectAsString = @"TEAM";
+        aspect = @"TEAM";
     } else {
-        aspectAsString = @"DEFAULT";
+        aspect = @"DEFAULT";
     }
     
-    return [NSString stringWithFormat:@"[%@][%@][%@]", actionAsString, viewAsString, aspectAsString];
-}
-
-
-#pragma mark - State view properties
-
-- (BOOL)viewIsAuth
-{
-    return (_view == OStateViewAuth);
-}
-
-
-- (BOOL)viewIsOrigoList
-{
-    return (_view == OStateViewOrigoList);
-}
-
-
-- (BOOL)viewIsOrigoDetail
-{
-    return (_view == OStateViewOrigoDetail);
-}
-
-
-- (BOOL)viewIsMemberList
-{
-    return (_view == OStateViewMemberList);
-}
-
-
-- (BOOL)viewIsMemberDetail
-{
-    return (_view == OStateViewMemberDetail);
-}
-
-
-- (BOOL)viewIsCalendar
-{
-    return (_view == OStateViewCalendar);
-}
-
-
-- (BOOL)viewIsTaskList
-{
-    return (_view == OStateViewTaskList);
-}
-
-
-- (BOOL)viewIsMessageBoard
-{
-    return (_view == OStateViewMessageBoard);
-}
-
-
-- (BOOL)viewIsSettings
-{
-    return (_view == OStateViewSettings);
+    return [NSString stringWithFormat:@"[%@][%@][%@]", action, _activeViewController.viewId, aspect];
 }
 
 

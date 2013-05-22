@@ -20,7 +20,7 @@
 #import "OMembership.h"
 #import "OOrigo.h"
 
-#import "OTableViewControllerInstance.h"
+#import "OLocatorDelegate.h"
 
 
 @implementation OLocator
@@ -31,9 +31,13 @@
 {
     self = [super init];
     
-    if (self && [self canUseLocationServices]) {
+    if (self && [self canLocate]) {
         _locationManager = [[CLLocationManager alloc] init];
         _locationManager.delegate = self;
+        
+        if ([[OState s].activeViewController conformsToProtocol:@protocol(OLocatorDelegate)]) {
+            _delegate = (id<OLocatorDelegate>)[OState s].activeViewController;
+        }
     }
     
     return self;
@@ -42,25 +46,23 @@
 
 #pragma mark - Updating location info
 
-- (BOOL)canUseLocationServices
+- (BOOL)canLocate
 {
-    BOOL canUseLocationServices = [CLLocationManager locationServicesEnabled];
+    BOOL canLocate = NO;
     
-    if (canUseLocationServices) {
+    if ([CLLocationManager locationServicesEnabled]) {
         CLAuthorizationStatus authorizationStatus = [CLLocationManager authorizationStatus];
         
-        canUseLocationServices =
-        ((authorizationStatus == kCLAuthorizationStatusNotDetermined) ||
-         (authorizationStatus == kCLAuthorizationStatusAuthorized));
+        canLocate = ((authorizationStatus == kCLAuthorizationStatusNotDetermined) || (authorizationStatus == kCLAuthorizationStatusAuthorized));
     }
     
-    return canUseLocationServices;
+    return canLocate;
 }
 
 
 - (void)locate
 {
-    if ([self canUseLocationServices]) {
+    if ([self canLocate]) {
         [_locationManager startUpdatingLocation];
     }
 }
@@ -70,7 +72,7 @@
 
 - (NSString *)countryCode
 {
-    NSString *countryCode = _placemark ? _placemark.ISOcountryCode : [OMeta m].settings.countryCode;
+    NSString *countryCode = _placemark ? _placemark.ISOcountryCode : [OMeta m].settings.origoCountryCode;
     
     if (!countryCode) {
         CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
@@ -100,10 +102,16 @@
     [[[CLGeocoder alloc] init] reverseGeocodeLocation:manager.location completionHandler:^(NSArray *placemarks, NSError *error) {
         _placemark = placemarks[0];
         
-        if ([[OState s].activeViewController respondsToSelector:@selector(locatorDidLocate)]) {
-            [[OState s].activeViewController locatorDidLocate];
-        }
+        [_delegate locatorDidLocate];
     }];
+}
+
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    if (status == kCLAuthorizationStatusDenied) {
+        [_delegate locatorCannotLocate];
+    }
 }
 
 @end

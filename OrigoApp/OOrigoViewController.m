@@ -31,7 +31,7 @@ static NSInteger const kOrigoSection = 0;
 - (void)didCancelEditing
 {
     if (self.state.actionIsRegister) {
-        [self.dismisser dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId needsReloadData:NO];
+        [self.dismisser dismissModalViewWithIdentitifier:kOrigoView needsReloadData:NO];
     } else {
         _addressView.text = _origo.address;
         _telephoneField.text = _origo.telephone;
@@ -57,7 +57,7 @@ static NSInteger const kOrigoSection = 0;
             }
             
             [self.view endEditing:YES];
-            [self presentModalViewControllerWithIdentifier:kMemberListViewControllerId data:_membership dismisser:self.dismisser];
+            [self presentModalViewWithIdentifier:kMemberListView data:_membership dismisser:self.dismisser];
             
             if ([_member isUser]) {
                 [[OMeta m].user makeActive];
@@ -76,7 +76,7 @@ static NSInteger const kOrigoSection = 0;
 {
     [[OMeta m] userDidSignOut];
     
-    [self.dismisser dismissModalViewControllerWithIdentitifier:kOrigoViewControllerId];
+    [self.dismisser dismissModalViewWithIdentitifier:kOrigoView];
 }
 
 
@@ -129,6 +129,8 @@ static NSInteger const kOrigoSection = 0;
 
 - (void)initialise
 {
+    _viewId = kOrigoView;
+    
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
         _origo = _membership.origo;

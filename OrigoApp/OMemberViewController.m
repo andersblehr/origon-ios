@@ -117,9 +117,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         _member.gender = _gender;
         
         if (self.state.aspectIsSelf && ![_origo hasValueForKey:kPropertyKeyAddress]) {
-            [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_membership dismisser:self.dismisser];
+            [self presentModalViewWithIdentifier:kOrigoView data:_membership dismisser:self.dismisser];
         } else {
-            [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
+            [self.dismisser dismissModalViewWithIdentitifier:kMemberView];
         }
     }
 }
@@ -210,7 +210,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)didCancelEditing
 {
     if (self.state.actionIsRegister) {
-        [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberViewControllerId needsReloadData:NO];
+        [self.dismisser dismissModalViewWithIdentitifier:kMemberView needsReloadData:NO];
     } else if (self.state.actionIsEdit) {
         _dateOfBirthField.text = [_member.dateOfBirth localisedDateString];
         _mobilePhoneField.text = _member.mobilePhone;
@@ -278,7 +278,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if ([housemateResidences count]) {
         [self promptForResidence:housemateResidences];
     } else {
-        [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_member meta:kOrigoTypeResidence];
+        [self presentModalViewWithIdentifier:kOrigoView data:_member meta:kOrigoTypeResidence];
     }
 }
 
@@ -287,7 +287,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     [[OMeta m] userDidSignOut];
     
-    [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
+    [self.dismisser dismissModalViewWithIdentitifier:kMemberView];
 }
 
 
@@ -373,6 +373,8 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)initialise
 {
+    _viewId = kMemberView;
+    
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
         _member = _membership.member;
@@ -435,7 +437,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[[self entityForIndexPath:indexPath] origo].address lines][0];
+    return [[[self dataForIndexPath:indexPath] origo].address lines][0];
 }
 
 
@@ -447,10 +449,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - OModalViewControllerDelegate conformance
 
-- (void)dismissModalViewControllerWithIdentitifier:(NSString *)identitifier
+- (void)dismissModalViewWithIdentitifier:(NSString *)identitifier
 {
-    if ([identitifier isEqualToString:kAuthViewControllerId]) {
-        [super dismissModalViewControllerWithIdentitifier:identitifier needsReloadData:NO];
+    if ([identitifier isEqualToString:kAuthView]) {
+        [super dismissModalViewWithIdentitifier:identitifier needsReloadData:NO];
         
         if ([_member.email isEqualToString:[_emailField finalText]]) {
             [OMeta m].userEmail = _member.email;
@@ -462,10 +464,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             [self toggleEditMode];
             [_emailField becomeFirstResponder];
         }
-    } else if ([identitifier isEqualToString:kOrigoViewControllerId]) {
-        [self.dismisser dismissModalViewControllerWithIdentitifier:kMemberViewControllerId];
-    } else if ([identitifier isEqualToString:kMemberListViewControllerId]) {
-        [super dismissModalViewControllerWithIdentitifier:identitifier];
+    } else if ([identitifier isEqualToString:kOrigoView]) {
+        [self.dismisser dismissModalViewWithIdentitifier:kMemberView];
+    } else if ([identitifier isEqualToString:kMemberListView]) {
+        [super dismissModalViewWithIdentitifier:identitifier];
     }
 }
 
@@ -487,7 +489,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             
         case kResidenceSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self presentModalViewControllerWithIdentifier:kOrigoViewControllerId data:_member meta:kOrigoTypeResidence];
+                [self presentModalViewWithIdentifier:kOrigoView data:_member meta:kOrigoTypeResidence];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_candidateResidences[buttonIndex] addMember:_member];
                 [self reloadSectionsIfNeeded];
@@ -520,7 +522,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         case kEmailChangeAlertTag:
             if (buttonIndex == kEmailChangeButtonContinue) {
                 [self toggleEditMode];
-                [self presentModalViewControllerWithIdentifier:kAuthViewControllerId data:[_emailField finalText]];
+                [self presentModalViewWithIdentifier:kAuthView data:[_emailField finalText]];
             } else {
                 [_emailField becomeFirstResponder];
             }

@@ -44,7 +44,14 @@
 
 - (BOOL)needsReplication
 {
-    return ([[OMeta m].user isActive] && [[[OMeta m].context entitiesAwaitingReplication] count]);
+    BOOL needsReplication = NO;
+    
+    if ([[OMeta m].user isActive]) {
+        needsReplication = [[[OMeta m].context entitiesAwaitingReplication] count];
+        needsReplication = needsReplication || [_dirtyEntities count];
+    }
+    
+    return needsReplication;
 }
 
 
