@@ -238,7 +238,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 {
     NSString *memberId = nil;
     
-    if ([OState s].aspectIsSelf) {
+    if ([[OState s] targetIs:kTargetUser]) {
         memberId = [OMeta m].userId;
     } else {
         memberId = [OUUIDGenerator generateUUID];
@@ -250,7 +250,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     OMember *member = [self insertEntityOfClass:OMember.class inOrigo:memberRoot entityId:memberId];
     [memberRoot addMember:member];
     
-    if ([OState s].aspectIsSelf) {
+    if ([[OState s] targetIs:kTargetUser]) {
         member.email = [OMeta m].userEmail;
     }
     

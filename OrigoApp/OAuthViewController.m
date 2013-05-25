@@ -42,7 +42,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)initialiseFields
 {
-    if (self.state.actionIsLogin) {
+    if ([self actionIs:kActionLogin]) {
         _passwordField.text = @"";
         
         if ([OMeta m].userEmail) {
@@ -51,7 +51,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         } else {
             [_emailField becomeFirstResponder];
         }
-    } else if (self.state.actionIsActivate) {
+    } else if ([self actionIs:kActionActivate]) {
         _activationCodeField.text = @"";
         _repeatPasswordField.text = @"";
         
@@ -62,12 +62,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)toggleAuthState
 {
-    if (self.state.actionIsLogin) {
-        self.state.actionIsActivate = YES;
+    if ([self actionIs:kActionLogin]) {
+        self.action = kActionActivate;
         
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationLeft];
-    } else if (self.state.actionIsActivate) {
-        self.state.actionIsLogin = YES;
+    } else if ([self actionIs:kActionActivate]) {
+        self.action = kActionLogin;
         
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
         
@@ -95,7 +95,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     static NSString *activationCode;
     
     if (isPending) {
-        if (self.state.actionIsLogin) {
+        if ([self actionIs:kActionLogin]) {
             email = _emailField.text;
             password = _passwordField.text;
             
@@ -103,7 +103,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             _emailField.text = @"";
             _passwordField.placeholder = [OStrings stringForKey:strPlaceholderPleaseWait];
             _passwordField.text = @"";
-        } else if (self.state.actionIsActivate) {
+        } else if ([self actionIs:kActionActivate]) {
             activationCode = _activationCodeField.text;
             password = _repeatPasswordField.text;
             
@@ -115,12 +115,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         
         [self.activityIndicator startAnimating];
     } else {
-        if (self.state.actionIsLogin) {
+        if ([self actionIs:kActionLogin]) {
             _emailField.text = email;
             _emailField.placeholder = [OStrings stringForKey:strPlaceholderAuthEmail];
             _passwordField.text = password;
             _passwordField.placeholder = [OStrings stringForKey:strPlaceholderPassword];
-        } else if (self.state.actionIsActivate) {
+        } else if ([self actionIs:kActionActivate]) {
             _activationCodeField.text = activationCode;
             _activationCodeField.placeholder = [OStrings stringForKey:strPlaceholderActivationCode];
             _repeatPasswordField.text = password;
@@ -151,13 +151,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         
         [textField becomeFirstResponder];
     } else {
-        if (self.state.aspectIsSelf) {
+        if ([self targetIs:kTargetUser]) {
             _numberOfActivationAttempts = 0;
             
             [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] message:[OStrings stringForKey:strAlertTextActivationFailed]];
             [self toggleAuthState];
-        } else if (self.state.aspectIsEmail) {
-            [self.dismisser dismissModalViewWithIdentitifier:kAuthView];
+        } else if ([self targetIs:kTargetEmail]) {
+            [self.dismisser dismissModalViewWithIdentitifier:kViewIdAuth];
         }
     }
 }
@@ -175,15 +175,15 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         NSString *passwordHashAsEntered = [self computePasswordHash:_repeatPasswordField.text];
         NSString *passwordHash = nil;
         
-        if (self.state.aspectIsSelf) {
+        if ([self targetIs:kTargetUser]) {
             passwordHash = [_authInfo objectForKey:kJSONKeyPasswordHash];
-        } else if (self.state.aspectIsEmail) {
+        } else if ([self targetIs:kTargetEmail]) {
             passwordHash = [[OMeta m] userDefaultForKey:kDefaultsKeyPasswordHash];
         }
         
         passwordIsValid = [passwordHashAsEntered isEqualToString:passwordHash];
         
-        if (passwordIsValid && self.state.aspectIsEmail) {
+        if (passwordIsValid && [self targetIs:kTargetEmail]) {
             [OMeta m].user.email = self.data;
         } else if (!passwordIsValid) {
             [self handleInvalidInputForField:_repeatPasswordField];
@@ -238,7 +238,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     _authInfo = data;
     
-    if (self.state.aspectIsSelf) {
+    if ([self targetIs:kTargetUser]) {
         [[OMeta m] setGlobalDefault:[NSKeyedArchiver archivedDataWithRootObject:_authInfo] forKey:kDefaultsKeyAuthInfo];
         
         [self toggleAuthState];
@@ -254,11 +254,11 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     [[OMeta m] userDidSignIn];
     
-    if (self.state.actionIsLogin) {
+    if ([self actionIs:kActionLogin]) {
         if (![OMeta m].userIsRegistered) {
             [[OMeta m] setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
         }
-    } else if (self.state.actionIsActivate) {
+    } else if ([self actionIs:kActionActivate]) {
         [[OMeta m] setUserDefault:[_authInfo objectForKey:kJSONKeyPasswordHash] forKey:kDefaultsKeyPasswordHash];
         
         if ([[_authInfo objectForKey:kJSONKeyIsListed] boolValue]) {
@@ -271,7 +271,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [[OMeta m] setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
     }
     
-    [self.dismisser dismissModalViewWithIdentitifier:kAuthView];
+    [self.dismisser dismissModalViewWithIdentitifier:kViewIdAuth];
 }
 
 
@@ -294,14 +294,14 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
     [self initialiseFields];
 
-    if (self.state.actionIsActivate) {
-        if (self.state.aspectIsSelf) {
+    if ([self actionIs:kActionActivate]) {
+        if ([self targetIs:kTargetUser]) {
             NSString *welcomeBackMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextWelcomeBack], [_authInfo objectForKey:kPropertyKeyEmail]];
             
             UIAlertView *welcomeBackAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleWelcomeBack] message:welcomeBackMessage delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonStartOver] otherButtonTitles:[OStrings stringForKey:strButtonHaveCode], nil];
             welcomeBackAlert.tag = kAlertTagWelcomeBack;
             [welcomeBackAlert show];
-        } else if (self.state.aspectIsEmail) {
+        } else if ([self targetIs:kTargetEmail]) {
             [self initiateEmailActivation];
         }
     }
@@ -320,22 +320,22 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)initialise
 {
-    _viewId = kAuthView;
-    
     if (self.data) {
-        self.state.actionIsActivate = YES;
-        self.state.aspectIsEmail = YES;
+        self.action = kActionActivate;
+        self.target = kTargetEmail;
     } else {
         NSData *authInfoArchive = [[OMeta m] globalDefaultForKey:kDefaultsKeyAuthInfo];
         
         if (authInfoArchive) {
             _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
             [OMeta m].userEmail = [_authInfo objectForKey:kPropertyKeyEmail];
-            
-            self.state.actionIsActivate = YES;
+
+            self.action = kActionActivate;
+        } else {
+            self.action = kActionLogin;
         }
         
-        self.state.aspectIsSelf = YES;
+        self.target = kTargetUser;
     }
 }
 
@@ -350,12 +350,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     NSString *text = nil;
     
-    if (self.state.actionIsLogin) {
+    if ([self actionIs:kActionLogin]) {
         text = [OStrings stringForKey:strFooterSignInOrRegister];
-    } else if (self.state.actionIsActivate) {
-        if (self.state.aspectIsSelf) {
+    } else if ([self actionIs:kActionActivate]) {
+        if ([self targetIs:kTargetUser]) {
             text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivate], [_emailField finalText]];
-        } else if (self.state.aspectIsEmail) {
+        } else if ([self targetIs:kTargetEmail]) {
             text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivateEmail], self.data];
         }
     }
@@ -374,7 +374,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.state.actionIsLogin) {
+    if ([self actionIs:kActionLogin]) {
         self.detailCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserSignIn delegate:self];
         
         _emailField = [self.detailCell textFieldForKey:kInputKeyAuthEmail];
@@ -396,10 +396,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     [super tableView:tableView willDisplayCell:cell forRowAtIndexPath:indexPath];
     
-    if (self.state.actionIsLogin) {
+    if ([self actionIs:kActionLogin]) {
         _emailField.hasEmphasis = YES;
         _passwordField.hasEmphasis = YES;
-    } else if (self.state.actionIsActivate) {
+    } else if ([self actionIs:kActionActivate]) {
         _activationCodeField.hasEmphasis = YES;
         _repeatPasswordField.hasEmphasis = YES;
     }
@@ -438,10 +438,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         if (shouldReturn) {
             [self.view endEditing:YES];
             
-            if (self.state.aspectIsSelf) {
+            if ([self targetIs:kTargetUser]) {
                 [self initiateUserActivation];
-            } else if (self.state.aspectIsEmail) {
-                [self.dismisser dismissModalViewWithIdentitifier:kAuthView];
+            } else if ([self targetIs:kTargetEmail]) {
+                [self.dismisser dismissModalViewWithIdentitifier:kViewIdAuth];
             }
         } else {
             _repeatPasswordField.text = @"";

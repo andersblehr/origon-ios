@@ -19,14 +19,14 @@
 #import "OReplicatedEntity+OrigoExtensions.h"
 #import "OReplicatedEntityRef.h"
 
-NSString * const kOrigoTypeMemberRoot = @"~";
-NSString * const kOrigoTypeResidence = @"R";
-NSString * const kOrigoTypeOrganisation = @"O";
-NSString * const kOrigoTypeAssociation = @"A";
-NSString * const kOrigoTypeSchoolClass = @"C";
-NSString * const kOrigoTypePreschoolClass = @"P";
-NSString * const kOrigoTypeSportsTeam = @"T";
-NSString * const kOrigoTypeOther = @"X";
+NSString * const kOrigoTypeMemberRoot = @"root";
+NSString * const kOrigoTypeResidence = @"residence";
+NSString * const kOrigoTypeOrganisation = @"organisation";
+NSString * const kOrigoTypeAssociation = @"association";
+NSString * const kOrigoTypeSchoolClass = @"school";
+NSString * const kOrigoTypePreschoolClass = @"preschool";
+NSString * const kOrigoTypeSportsTeam = @"team";
+NSString * const kOrigoTypeOther = @"other";
 
 
 @implementation OOrigo (OrigoExtensions)
@@ -302,6 +302,12 @@ NSString * const kOrigoTypeOther = @"X";
 
 
 #pragma mark - OReplicatedEntity (OrigoExtensions) overrides
+
+- (NSString *)asTarget
+{
+    return self.type;
+}
+
 
 - (BOOL)isTransient
 {

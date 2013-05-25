@@ -8,7 +8,7 @@
 
 #import "OTaskListViewController.h"
 
-#import "OMeta.h"
+#import "OState.h"
 #import "OStrings.h"
 
 @implementation OTaskListViewController
@@ -40,7 +40,7 @@
 
 - (void)initialise
 {
-    _viewId = kTaskListView;
+    // TODO
 }
 
 @end

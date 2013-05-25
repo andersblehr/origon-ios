@@ -43,7 +43,7 @@
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
     
     if (tag < NSIntegerMax) {
-        alertView.delegate = [OState s].activeViewController;
+        alertView.delegate = [OState s].viewController;
         alertView.tag = tag;
     }
     

@@ -109,7 +109,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             _selectable = YES;
         } else {
             _inputDelegate = delegate;
-            _selectable = self.localState.actionIsList;
+            _selectable = [self.localState actionIs:kActionList];
             _views = [[NSMutableDictionary alloc] init];
         }
         
@@ -325,7 +325,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     [self.localState toggleEditState];
     
-    self.editing = (self.localState.actionIsEdit || _editable);
+    self.editing = ([self.localState actionIs:kActionEdit] || _editable);
 }
 
 

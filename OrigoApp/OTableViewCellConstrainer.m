@@ -62,7 +62,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
                 elementsAreVisible = NO;
             }
             
-            elementsAreVisible = elementsAreVisible || _cell.localState.actionIsInput;
+            elementsAreVisible = elementsAreVisible || [_cell.localState actionIs:kActionInput];
         }
     }
     

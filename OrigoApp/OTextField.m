@@ -57,14 +57,14 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     } else if ([key isEqualToString:kPropertyKeyMobilePhone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
         
-        if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
+        if ([[OState s] actionIs:kActionRegister] && [[OState s] targetIs:kTargetUser]) {
             self.returnKeyType = UIReturnKeyDone;
         }
     } else if ([key isEqualToString:kPropertyKeyEmail]) {
         self.keyboardType = UIKeyboardTypeEmailAddress;
         self.returnKeyType = UIReturnKeyDone;
         
-        if ([OState s].actionIsRegister && [OState s].aspectIsSelf) {
+        if ([[OState s] actionIs:kActionRegister] && [[OState s] targetIs:kTargetUser]) {
             self.enabled = NO;
         }
     } else if ([key isEqualToString:kPropertyKeyTelephone]) {
@@ -113,7 +113,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         self.backgroundColor = [UIColor clearColor];
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         self.delegate = delegate;
-        self.enabled = [OState s].actionIsInput;
+        self.enabled = [[OState s] actionIs:kActionInput];
         self.font = _isTitle ? [UIFont titleFont] : [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
@@ -334,7 +334,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 {
     BOOL canPerformAction = [super canPerformAction:action withSender:sender];
     
-    if ([_key hasPrefix:kPrefixDateProperty]) {
+    if ([_key hasPrefix:kDatePropertyPrefix]) {
         canPerformAction = canPerformAction && (action != @selector(paste:));
     }
     

@@ -63,11 +63,11 @@ NSString * const strFooterOrigoCreation              = @"strFooterOrigoCreation"
 NSString * const strFooterOrigoCreationWards         = @"strFooterOrigoCreationWards";
 NSString * const strButtonCountryOfLocation          = @"strButtonCountryOfLocation";
 NSString * const strButtonCountryOther               = @"strButtonCountryOther";
-NSString * const strAlertTitleOrigoCountry           = @"strAlertTitleOrigoCountry";
-NSString * const strAlertTextOrigoCountry            = @"strAlertTextOrigoCountry";
+NSString * const strAlertTitleCountry                = @"strAlertTitleCountry";
+NSString * const strAlertTextCountry                 = @"strAlertTextCountry";
+NSString * const strSheetTitleCountryLocate          = @"strSheetTitleCountryLocate";
+NSString * const strSheetTitleCountryNoLocate        = @"strSheetTitleCountryNoLocate";
 NSString * const strSheetTitleOrigoType              = @"strSheetTitleOrigoType";
-NSString * const strSheetTitleOrigoCountryLocate     = @"strSheetTitleOrigoCountryLocate";
-NSString * const strSheetTitleOrigoCountryNoLocate   = @"strSheetTitleOrigoCountryNoLocate";
 NSString * const strTermMe                           = @"strTermMe";
 NSString * const strTermYourChild                    = @"strTermYourChild";
 NSString * const strTermHim                          = @"strTermHim";
@@ -137,16 +137,17 @@ NSString * const strTermMaleMinor                    = @"strTermMaleMinor";
 // OCalendarView strings
 NSString * const strTabBarTitleCalendar              = @"strTabBarTitleCalendar";
 
-// OTaskView strings
+// OTaskListView strings
 NSString * const strTabBarTitleTasks                 = @"strTabBarTitleTasks";
 
-// OMessageBoardView strings
+// OMessageListView strings
 NSString * const strTabBarTitleMessages              = @"strTabBarTitleMessages";
 NSString * const strDefaultMessageBoardName          = @"strDefaultMessageBoardName";
 
-// OSettingsView strings
+// OSettingListView strings
 NSString * const strTabBarTitleSettings              = @"strTabBarTitleSettings";
-NSString * const strSettingTitleOrigoCountry         = @"strSettingTitleOrigoCountry";
+NSString * const strSettingTitleCountry              = @"strSettingTitleCountry";
+NSString * const strSettingTextCountry               = @"strSettingTextCountry";
 
 // Origo type strings
 NSString * const strOrigoTypeResidence               = @"strOrigoTypeResidence";
@@ -177,6 +178,7 @@ static NSDictionary const *strings = nil;
 static NSString * const kLabelKeyPrefix = @"strLabel";
 static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
 static NSString * const kSettingTitleKeyPrefix = @"strSettingTitle";
+static NSString * const kSettingTextKeyPrefix = @"strSettingText";
 
 
 @implementation OStrings
@@ -245,22 +247,22 @@ static NSString * const kSettingTitleKeyPrefix = @"strSettingTitle";
 + (NSString *)stringForOrigoType:(NSString *)origoType
 {
     NSString *key = nil;
-    BOOL isRegistering3rdParty = ([OState s].actionIsRegister && [OMeta m].userIsRegistered);
+    BOOL is3rdParty = ([[OState s] actionIs:kActionRegister] && [OMeta m].userIsRegistered);
     
     if ([origoType isEqualToString:kOrigoTypeResidence]) {
-        key = isRegistering3rdParty ? strNewOrigoOfTypeResidence : strOrigoTypeResidence;
+        key = is3rdParty ? strNewOrigoOfTypeResidence : strOrigoTypeResidence;
     } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
-        key = isRegistering3rdParty ? strNewOrigoOfTypeOrganisation : strOrigoTypeOrganisation;
+        key = is3rdParty ? strNewOrigoOfTypeOrganisation : strOrigoTypeOrganisation;
     } else if ([origoType isEqualToString:kOrigoTypeAssociation]) {
-        key = isRegistering3rdParty ? strNewOrigoOfTypeAssociation : strOrigoTypeAssociation;
+        key = is3rdParty ? strNewOrigoOfTypeAssociation : strOrigoTypeAssociation;
     } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
-        key = isRegistering3rdParty ? strNewOrigoOfTypeSchoolClass : strOrigoTypeSchoolClass;
+        key = is3rdParty ? strNewOrigoOfTypeSchoolClass : strOrigoTypeSchoolClass;
     } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
-        key = isRegistering3rdParty ? strNewOrigoOfTypePreschoolClass : strOrigoTypePreschoolClass;
+        key = is3rdParty ? strNewOrigoOfTypePreschoolClass : strOrigoTypePreschoolClass;
     } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
-        key = isRegistering3rdParty ? strNewOrigoOfTypeSportsTeam : strOrigoTypeSportsTeam;
+        key = is3rdParty ? strNewOrigoOfTypeSportsTeam : strOrigoTypeSportsTeam;
     } else {
-        key = isRegistering3rdParty ? strNewOrigoOfTypeOther : strOrigoTypeOther;
+        key = is3rdParty ? strNewOrigoOfTypeOther : strOrigoTypeOther;
     }
     
     return [self stringForKey:key];
@@ -285,6 +287,12 @@ static NSString * const kSettingTitleKeyPrefix = @"strSettingTitle";
 }
 
 
++ (NSString *)settingTextForKey:(NSString *)key
+{
+    return [self stringForKey:[self stringKeyWithPrefix:kSettingTextKeyPrefix forKey:key]];
+}
+
+
 #pragma mark - OServerConnectionDelegate conformance
 
 + (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
@@ -301,7 +309,7 @@ static NSString * const kSettingTitleKeyPrefix = @"strSettingTitle";
 
 + (void)didFailWithError:(NSError *)error
 {
-    [[OState s].activeViewController didFailWithError:error];
+    [[OState s].viewController didFailWithError:error];
 }
 
 @end

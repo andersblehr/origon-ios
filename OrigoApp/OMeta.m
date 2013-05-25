@@ -23,17 +23,6 @@
 #import "OReplicatedEntity+OrigoExtensions.h"
 #import "OSettings.h"
 
-NSString * const kAuthView = @"AUTH";
-NSString * const kCalendarView = @"CALENDAR";
-NSString * const kMemberListView = @"MEMBERS";
-NSString * const kMemberView = @"MEMBER";
-NSString * const kMessageListView = @"MESSAGES";
-NSString * const kOrigoListView = @"ORIGOS";
-NSString * const kOrigoView = @"ORIGO";
-NSString * const kSettingListView = @"SETTINGS";
-NSString * const kSettingView = @"SETTING";
-NSString * const kTaskListView = @"TASKS";
-
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
 
@@ -53,8 +42,7 @@ NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
 NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
 NSString * const kIconFileInfant = @"76-baby_black.png";
 
-NSString * const kPrefixDateProperty = @"date";
-NSString * const kPrefixOrigoType = @"origoType";
+NSString * const kDatePropertyPrefix = @"date";
 
 NSString * const kInputKeyActivate = @"activate";
 NSString * const kInputKeyActivationCode = @"activationCode";
@@ -359,16 +347,6 @@ static OMeta *m = nil;
     } else {
         [self setGlobalDefault:nil forKey:kDefaultsKeyUserEmail];
     }
-}
-
-
-- (OMember *)user
-{
-    if (!_user) {
-        [self loadUser];
-    }
-    
-    return _user;
 }
 
 

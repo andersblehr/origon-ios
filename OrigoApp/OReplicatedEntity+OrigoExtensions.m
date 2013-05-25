@@ -60,6 +60,12 @@
 }
 
 
+- (NSString *)asTarget
+{
+    return @"OVERRIDE IN SUBCLASS!";
+}
+
+
 #pragma mark - Key-value proxy methods
 
 - (BOOL)hasValueForKey:(NSString *)key

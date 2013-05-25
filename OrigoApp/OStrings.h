@@ -53,11 +53,11 @@ extern NSString * const strFooterOrigoCreation;
 extern NSString * const strFooterOrigoCreationWards;
 extern NSString * const strButtonCountryOfLocation;
 extern NSString * const strButtonCountryOther;
-extern NSString * const strAlertTitleOrigoCountry;
-extern NSString * const strAlertTextOrigoCountry;
+extern NSString * const strAlertTitleCountry;
+extern NSString * const strAlertTextCountry;
+extern NSString * const strSheetTitleCountryLocate;
+extern NSString * const strSheetTitleCountryNoLocate;
 extern NSString * const strSheetTitleOrigoType;
-extern NSString * const strSheetTitleOrigoCountryLocate;
-extern NSString * const strSheetTitleOrigoCountryNoLocate;
 extern NSString * const strTermMe;
 extern NSString * const strTermYourChild;
 extern NSString * const strTermHim;
@@ -127,16 +127,17 @@ extern NSString * const strTermMaleMinor;
 // OCalendarView strings
 extern NSString * const strTabBarTitleCalendar;
 
-// OTaskView strings
+// OTaskListView strings
 extern NSString * const strTabBarTitleTasks;
 
-// OMessageBoardView strings
+// OMessageListView strings
 extern NSString * const strTabBarTitleMessages;
 extern NSString * const strDefaultMessageBoardName;
 
-// OSettingsView strings
+// OSettingListView strings
 extern NSString * const strTabBarTitleSettings;
-extern NSString * const strSettingTitleOrigoCountry;
+extern NSString * const strSettingTitleCountry;
+extern NSString * const strSettingTextCountry;
 
 // Origo type strings
 extern NSString * const strOrigoTypeResidence;
@@ -171,5 +172,6 @@ extern NSString * const xstrContactRolesSportsTeam;
 + (NSString *)labelForKey:(NSString *)key;
 + (NSString *)placeholderForKey:(NSString *)key;
 + (NSString *)settingTitleForKey:(NSString *)key;
++ (NSString *)settingTextForKey:(NSString *)key;
 
 @end

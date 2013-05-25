@@ -30,8 +30,8 @@ static NSInteger const kOrigoSection = 0;
 
 - (void)didCancelEditing
 {
-    if (self.state.actionIsRegister) {
-        [self.dismisser dismissModalViewWithIdentitifier:kOrigoView needsReloadData:NO];
+    if ([self actionIs:kActionRegister]) {
+        [self.dismisser dismissModalViewWithIdentitifier:kViewIdOrigo needsReloadData:NO];
     } else {
         _addressView.text = _origo.address;
         _telephoneField.text = _origo.telephone;
@@ -51,19 +51,19 @@ static NSInteger const kOrigoSection = 0;
         _origo.address = [_addressView finalText];
         _origo.telephone = [_telephoneField finalText];
         
-        if (self.state.actionIsRegister) {
+        if ([self actionIs:kActionRegister]) {
             if (!_membership) {
                 _membership = [_origo addMember:_member];
             }
             
             [self.view endEditing:YES];
-            [self presentModalViewWithIdentifier:kMemberListView data:_membership dismisser:self.dismisser];
+            [self presentModalViewWithIdentifier:kViewIdMemberList data:_membership dismisser:self.dismisser];
             
             if ([_member isUser]) {
                 [[OMeta m].user makeActive];
                 [[OMeta m].replicator replicate];
             }
-        } else if (self.state.actionIsEdit) {
+        } else if ([self actionIs:kActionEdit]) {
             [self toggleEditMode];
         }
     } else {
@@ -76,7 +76,7 @@ static NSInteger const kOrigoSection = 0;
 {
     [[OMeta m] userDidSignOut];
     
-    [self.dismisser dismissModalViewWithIdentitifier:kOrigoView];
+    [self.dismisser dismissModalViewWithIdentitifier:kViewIdOrigo];
 }
 
 
@@ -129,8 +129,6 @@ static NSInteger const kOrigoSection = 0;
 
 - (void)initialise
 {
-    _viewId = kOrigoView;
-    
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
         _origo = _membership.origo;
@@ -139,7 +137,7 @@ static NSInteger const kOrigoSection = 0;
         _member = self.data;
     }
     
-    self.aspectCarrier = _origo ? _origo : self.meta;
+    self.target = _origo ? _origo : self.meta;
 }
 
 

@@ -8,6 +8,9 @@
 
 #import "OTableViewController.h"
 
-@interface OSettingViewController : OTableViewController
+@interface OSettingViewController : OTableViewController {
+@private
+    NSString *_settingKey;
+}
 
 @end

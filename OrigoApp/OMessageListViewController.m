@@ -8,7 +8,7 @@
 
 #import "OMessageListViewController.h"
 
-#import "OMeta.h"
+#import "OState.h"
 #import "OStrings.h"
 
 @implementation OMessageListViewController
@@ -40,7 +40,7 @@
 
 - (void)initialise
 {
-    _viewId = kMessageListView;
+    // TODO
 }
 
 @end

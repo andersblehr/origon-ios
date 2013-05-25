@@ -10,63 +10,41 @@
 
 #import "OTableViewController.h"
 
-typedef NS_ENUM(NSInteger, OStateAction) {
-    OStateActionDefault,
-    OStateActionSetup,
-    OStateActionLogin,
-    OStateActionActivate,
-    OStateActionRegister,
-    OStateActionList,
-    OStateActionDisplay,
-    OStateActionEdit,
-};
+extern NSString * const kViewIdAuth;
+extern NSString * const kViewIdMemberList;
+extern NSString * const kViewIdMember;
+extern NSString * const kViewIdOrigoList;
+extern NSString * const kViewIdOrigo;
 
-typedef NS_ENUM(NSInteger, OStateAspect) {
-    OStateAspectDefault,
-    OStateAspectEmail,
-    OStateAspectSelf,
-    OStateAspectWard,
-    OStateAspectHousemate,
-    OStateAspectResidence,
-    OStateAspectOrganisation,
-    OStateAspectAssociation,
-    OStateAspectSchoolClass,
-    OStateAspectPreschool,
-    OStateAspectTeam,
-};
+extern NSString * const kActionSetup;
+extern NSString * const kActionLogin;
+extern NSString * const kActionActivate;
+extern NSString * const kActionRegister;
+extern NSString * const kActionList;
+extern NSString * const kActionDisplay;
+extern NSString * const kActionEdit;
+extern NSString * const kActionInput;
+
+extern NSString * const kTargetEmail;
+extern NSString * const kTargetUser;
+extern NSString * const kTargetWard;
+extern NSString * const kTargetHousemate;
+extern NSString * const kTarget3rdParty;
 
 @interface OState : NSObject
 
-@property (weak, nonatomic, readonly) OTableViewController *activeViewController;
-
-@property (nonatomic) BOOL actionIsSetup;
-@property (nonatomic) BOOL actionIsLogin;
-@property (nonatomic) BOOL actionIsActivate;
-@property (nonatomic) BOOL actionIsRegister;
-@property (nonatomic) BOOL actionIsList;
-@property (nonatomic) BOOL actionIsDisplay;
-@property (nonatomic) BOOL actionIsEdit;
-@property (nonatomic, readonly) BOOL actionIsInput;
-
-@property (nonatomic) BOOL aspectIsEmail;
-@property (nonatomic) BOOL aspectIsSelf;
-@property (nonatomic) BOOL aspectIsWard;
-@property (nonatomic) BOOL aspectIsHousemate;
-@property (nonatomic) BOOL aspectIsResidence;
-@property (nonatomic) BOOL aspectIsOrganisation;
-@property (nonatomic) BOOL aspectIsAssociation;
-@property (nonatomic) BOOL aspectIsSchoolClass;
-@property (nonatomic) BOOL aspectIsPreschool;
-@property (nonatomic) BOOL aspectIsTeam;
+@property (weak, nonatomic, readonly) OTableViewController *viewController;
 
 - (id)initForViewController:(OTableViewController *)viewController;
 
 + (OState *)s;
 
-- (BOOL)viewIs:(NSString *)viewId;
-- (void)setAspectForCarrier:(id)aspectCarrier;
 - (void)reflect:(OState *)state;
 - (void)toggleEditState;
+
+- (BOOL)viewIs:(NSString *)viewId;
+- (BOOL)actionIs:(NSString *)action;
+- (BOOL)targetIs:(NSString *)target;
 
 - (NSString *)asString;
 

@@ -20,18 +20,14 @@ extern NSString * const kEmptyDetailCellPlaceholder;
 @class OReplicatedEntity;
 
 @interface OTableViewController : UITableViewController<OTableViewControllerInstance, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDelegate, OServerConnectionDelegate> {
-@protected
-    NSString *_viewId;
-
 @private
-    Class _entityClass;
-    NSInteger _entitySectionKey;
-    
     BOOL _didJustLoad;
     BOOL _didInitialise;
     BOOL _isHidden;
     BOOL _needsReloadData;
     
+    Class _entityClass;
+    NSInteger _entitySectionKey;
     NSMutableArray *_sectionKeys;
     NSMutableDictionary *_sectionData;
     NSMutableDictionary *_sectionCounts;
@@ -48,11 +44,13 @@ extern NSString * const kEmptyDetailCellPlaceholder;
 }
 
 @property (strong, nonatomic, readonly) NSString *viewId;
+@property (strong, nonatomic) NSString *action;
+@property (strong, nonatomic) id target;
+
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic, readonly) OReplicatedEntity *entity;
 @property (strong, nonatomic, readonly) UIActivityIndicatorView *activityIndicator;
 
-@property (nonatomic, readonly) BOOL isListView;
 @property (nonatomic, readonly) BOOL isPushed;
 @property (nonatomic, readonly) BOOL isPopped;
 @property (nonatomic, readonly) BOOL isModal;
@@ -65,7 +63,6 @@ extern NSString * const kEmptyDetailCellPlaceholder;
 
 @property (strong, nonatomic) id data;
 @property (strong, nonatomic) id meta;
-@property (strong, nonatomic) id aspectCarrier;
 @property (strong, nonatomic) id<OModalViewControllerDelegate> dismisser;
 @property (strong, nonatomic) id<OEntityObservingDelegate> observer;
 @property (strong, nonatomic) OTableViewCell *detailCell;
@@ -86,6 +83,9 @@ extern NSString * const kEmptyDetailCellPlaceholder;
 - (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data;
 - (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta;
 - (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser;
+
+- (BOOL)actionIs:(NSString *)action;
+- (BOOL)targetIs:(NSString *)target;
 
 - (void)reflectState;
 - (void)toggleEditMode;

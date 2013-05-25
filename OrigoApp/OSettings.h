@@ -2,7 +2,7 @@
 //  OSettings.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 18.04.13.
+//  Created by Anders Blehr on 24.05.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -14,7 +14,7 @@
 
 @interface OSettings : OReplicatedEntity
 
-@property (nonatomic, retain) NSString * origoCountryCode;
+@property (nonatomic, retain) NSString * countryCode;
 @property (nonatomic, retain) OMember *user;
 
 @end

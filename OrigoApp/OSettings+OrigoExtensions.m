@@ -12,7 +12,7 @@
 #import "OMeta.h"
 #import "OStrings.h"
 
-NSString * const kSettingKeyOrigoCountry = @"origoCountry";
+NSString * const kSettingKeyCountry = @"country";
 
 static NSString * const kCodedSettingKeySuffix = @"Code";
 
@@ -23,7 +23,7 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
 
 - (BOOL)valueIsCodedForSettingKey:(NSString *)settingKey
 {
-    return [settingKey isEqualToString:kSettingKeyOrigoCountry];
+    return [settingKey isEqualToString:kSettingKeyCountry];
 }
 
 
@@ -33,7 +33,7 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
     NSString *codedValue = [self valueForKey:codedSettingKey];
     NSString *decodedValue = nil;
     
-    if ([settingKey isEqualToString:kSettingKeyOrigoCountry]) {
+    if ([settingKey isEqualToString:kSettingKeyCountry]) {
         decodedValue = [[NSLocale currentLocale] displayNameForKey:NSLocaleCountryCode value:codedValue];
     }
     
@@ -45,13 +45,7 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
 
 - (NSArray *)settingKeys
 {
-    return @[kSettingKeyOrigoCountry];
-}
-
-
-- (NSString *)titleForSettingKey:(NSString *)settingKey
-{
-    return [OStrings settingTitleForKey:settingKey];
+    return @[kSettingKeyCountry];
 }
 
 
