@@ -36,9 +36,9 @@ static NSInteger const kSettingsSectionKey = 0;
     [[OMeta m] userDidSignOut];
     
     UINavigationController *origoTabNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
-    [origoTabNavigationController setViewControllers:[NSArray arrayWithObject:[self.storyboard instantiateViewControllerWithIdentifier:kOrigoListView]]];
+    [origoTabNavigationController setViewControllers:[NSArray arrayWithObject:[self.storyboard instantiateViewControllerWithIdentifier:kViewIdOrigoList]]];
     
-    [self presentModalViewWithIdentifier:kAuthView data:nil dismisser:origoTabNavigationController.viewControllers[0]];
+    [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:origoTabNavigationController.viewControllers[0]];
 }
 
 
@@ -51,8 +51,8 @@ static NSInteger const kSettingsSectionKey = 0;
     self.title = [OStrings stringForKey:strTabBarTitleSettings];
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
     
-    if (![OMeta m].settings.origoCountryCode) {
-        [OMeta m].settings.origoCountryCode = [OMeta m].locator.countryCode;
+    if (![OMeta m].settings.countryCode) {
+        [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
     }
 }
 
@@ -81,9 +81,7 @@ static NSInteger const kSettingsSectionKey = 0;
 
 - (void)initialise
 {
-    _viewId = kSettingListView;
-    
-    self.state.aspectIsSelf = YES;
+    self.target = kTargetUser;
 }
 
 
@@ -109,7 +107,7 @@ static NSInteger const kSettingsSectionKey = 0;
 
 - (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[OMeta m].settings titleForSettingKey:[self dataForIndexPath:indexPath]];
+    return [OStrings settingTextForKey:[self dataForIndexPath:indexPath]];
 }
 
 

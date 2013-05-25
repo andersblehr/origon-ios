@@ -37,7 +37,7 @@ static NSString * const kDefaultDate = @"1976-04-01T20:00:00Z";
 {
     NSDate *now = [NSDate date];
     
-    if ([[OState s] viewIs:kMemberView] && [OState s].actionIsRegister && [OState s].aspectIsSelf) {
+    if ([[OState s] viewIs:kViewIdMember] && [[OState s] actionIs:kActionRegister] && [[OState s] targetIs:kTargetUser]) {
         NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
         latestBirthDateOffset.year = -kMinimumRealisticAge;
         

@@ -105,7 +105,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
     }
     
     for (NSString *detailKey in blueprint.detailKeys) {
-        if (!entity || [OState s].actionIsInput || [entity hasValueForKey:detailKey]) {
+        if (!entity || [[OState s] actionIs:kActionInput] || [entity hasValueForKey:detailKey]) {
             if ([blueprint keyRepresentsMultiLineProperty:detailKey]) {
                 if (cell) {
                     height += [[cell textFieldForKey:detailKey] height];

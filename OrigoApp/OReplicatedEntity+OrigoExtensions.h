@@ -15,6 +15,7 @@
 - (OMember *)asMember;
 - (OOrigo *)asOrigo;
 - (OMembership *)asMembership;
+- (NSString *)asTarget;
 
 - (BOOL)hasValueForKey:(NSString *)key;
 - (id)serialisableValueForKey:(NSString *)key;

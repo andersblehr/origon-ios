@@ -8,14 +8,16 @@
 
 #import "OSettingViewController.h"
 
-#import "OMeta.h"
+#import "OState.h"
+#import "OStrings.h"
 
 @implementation OSettingViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+	
+    self.title = [OStrings settingTitleForKey:_settingKey];
 }
 
 
@@ -23,7 +25,9 @@
 
 - (void)initialise
 {
-    _viewId = kSettingView;
+    _settingKey = self.data;
+    
+    self.target = _settingKey;
 }
 
 @end

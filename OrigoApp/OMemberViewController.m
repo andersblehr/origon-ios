@@ -54,7 +54,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     BOOL emailIsEligible = [_emailField holdsValidEmail];
     
-    if (emailIsEligible && self.state.actionIsRegister && !self.state.aspectIsSelf) {
+    if (emailIsEligible && [self actionIs:kActionRegister] && ![self targetIs:kTargetUser]) {
         NSString *email = [_emailField finalText];
         
         _candidate = [[OMeta m].context memberEntityWithEmail:email];
@@ -112,14 +112,14 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     _member.mobilePhone = [_mobilePhoneField finalText];
     _member.email = [_emailField finalText];
     
-    if (self.state.actionIsRegister) {
+    if ([self actionIs:kActionRegister]) {
         _member.givenName = [NSString givenNameFromFullName:_member.name];
         _member.gender = _gender;
         
-        if (self.state.aspectIsSelf && ![_origo hasValueForKey:kPropertyKeyAddress]) {
-            [self presentModalViewWithIdentifier:kOrigoView data:_membership dismisser:self.dismisser];
+        if ([self targetIs:kTargetUser] && ![_origo hasValueForKey:kPropertyKeyAddress]) {
+            [self presentModalViewWithIdentifier:kViewIdOrigo data:_membership dismisser:self.dismisser];
         } else {
-            [self.dismisser dismissModalViewWithIdentitifier:kMemberView];
+            [self.dismisser dismissModalViewWithIdentitifier:kViewIdMember];
         }
     }
 }
@@ -134,7 +134,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     NSString *maleLabel = nil;
     
     if ([_dateOfBirthField.date isBirthDateOfMinor]) {
-        if (self.state.aspectIsSelf) {
+        if ([self targetIs:kTargetUser]) {
             sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
         } else {
             sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [NSString givenNameFromFullName:[_nameField finalText]]];
@@ -143,7 +143,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         femaleLabel = [OStrings stringForKey:strTermFemaleMinor];
         maleLabel = [OStrings stringForKey:strTermMaleMinor];
     } else {
-        if (self.state.aspectIsSelf) {
+        if ([self targetIs:kTargetUser]) {
             sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
         } else {
             sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [NSString givenNameFromFullName:[_nameField finalText]]];
@@ -209,9 +209,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)didCancelEditing
 {
-    if (self.state.actionIsRegister) {
-        [self.dismisser dismissModalViewWithIdentitifier:kMemberView needsReloadData:NO];
-    } else if (self.state.actionIsEdit) {
+    if ([self actionIs:kActionRegister]) {
+        [self.dismisser dismissModalViewWithIdentitifier:kViewIdMember needsReloadData:NO];
+    } else if ([self actionIs:kActionEdit]) {
         _dateOfBirthField.text = [_member.dateOfBirth localisedDateString];
         _mobilePhoneField.text = _member.mobilePhone;
         _emailField.text = _member.email;
@@ -226,7 +226,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     BOOL inputIsValid = ([_nameField holdsValidName] && [_dateOfBirthField holdsValidDate]);
     
     if (inputIsValid) {
-        if (self.state.aspectIsSelf || ![_dateOfBirthField.date isBirthDateOfMinor]) {
+        if ([self targetIs:kTargetUser] || ![_dateOfBirthField.date isBirthDateOfMinor]) {
             inputIsValid = inputIsValid && [self emailIsEligible];
             inputIsValid = inputIsValid && [_mobilePhoneField holdsValidPhoneNumber];
         } else if ([_dateOfBirthField.date isBirthDateOfMinor]) {
@@ -237,7 +237,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     if (inputIsValid) {
-        if (self.state.actionIsRegister) {
+        if ([self actionIs:kActionRegister]) {
             [self.view endEditing:YES];
             
             if (_candidate) {
@@ -253,9 +253,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                     [self updateMember];
                 }
             }
-        } else if (self.state.actionIsEdit) {
+        } else if ([self actionIs:kActionEdit]) {
             if ([_member hasValueForKey:kPropertyKeyEmail] && ![[_emailField finalText] isEqualToString:_member.email]) {
-                if (self.state.aspectIsSelf) {
+                if ([self targetIs:kTargetUser]) {
                     [self promptForUserEmailChangeConfirmation];
                 } else {
                     [self promptForMemberEmailChangeConfirmation];
@@ -278,7 +278,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if ([housemateResidences count]) {
         [self promptForResidence:housemateResidences];
     } else {
-        [self presentModalViewWithIdentifier:kOrigoView data:_member meta:kOrigoTypeResidence];
+        [self presentModalViewWithIdentifier:kViewIdOrigo data:_member meta:kOrigoTypeResidence];
     }
 }
 
@@ -287,7 +287,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     [[OMeta m] userDidSignOut];
     
-    [self.dismisser dismissModalViewWithIdentitifier:kMemberView];
+    [self.dismisser dismissModalViewWithIdentitifier:kViewIdMember];
 }
 
 
@@ -297,11 +297,11 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     [super viewDidLoad];
 
-    if (self.state.aspectIsSelf) {
+    if ([self targetIs:kTargetUser]) {
         self.title = [OStrings stringForKey:strViewTitleAboutMe];
     } else if (_member) {
         self.title = _member.givenName;
-    } else if (self.state.actionIsRegister) {
+    } else if ([self actionIs:kActionRegister]) {
         if ([_origo isOfType:kOrigoTypeResidence]) {
             self.title = [OStrings stringForKey:strViewTitleNewHouseholdMember];
         } else {
@@ -309,7 +309,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         }
     }
     
-    if (self.state.actionIsDisplay) {
+    if ([self actionIs:kActionDisplay]) {
         if ([self canEdit]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
             self.navigationItem.rightBarButtonItem.action = @selector(addResidence);
@@ -344,7 +344,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (BOOL)cancelRegistrationImpliesSignOut
 {
-    return self.state.aspectIsSelf;
+    return [self targetIs:kTargetUser];
 }
 
 
@@ -359,7 +359,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kSegueToMemberListView]) {
-        if (self.state.actionIsRegister) {
+        if ([self actionIs:kActionRegister]) {
             [self prepareForPushSegue:segue data:_membership];
             [segue.destinationViewController setDismisser:self.dismisser];
         } else {
@@ -373,8 +373,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)initialise
 {
-    _viewId = kMemberView;
-    
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
         _member = _membership.member;
@@ -383,7 +381,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         _origo = self.data;
     }
     
-    self.aspectCarrier = _member ? _member : _origo;
+    self.target = _member ? _member : _origo;
 }
 
 
@@ -393,7 +391,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     
     [self setData:memberDataSource forSectionWithKey:kMemberSectionKey];
     
-    if (self.state.actionIsDisplay) {
+    if ([self actionIs:kActionDisplay]) {
         [self setData:[_member residencies] forSectionWithKey:kAddressSectionKey];
     }
 }
@@ -451,7 +449,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)dismissModalViewWithIdentitifier:(NSString *)identitifier
 {
-    if ([identitifier isEqualToString:kAuthView]) {
+    if ([identitifier isEqualToString:kViewIdAuth]) {
         [super dismissModalViewWithIdentitifier:identitifier needsReloadData:NO];
         
         if ([_member.email isEqualToString:[_emailField finalText]]) {
@@ -464,9 +462,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             [self toggleEditMode];
             [_emailField becomeFirstResponder];
         }
-    } else if ([identitifier isEqualToString:kOrigoView]) {
-        [self.dismisser dismissModalViewWithIdentitifier:kMemberView];
-    } else if ([identitifier isEqualToString:kMemberListView]) {
+    } else if ([identitifier isEqualToString:kViewIdOrigo]) {
+        [self.dismisser dismissModalViewWithIdentitifier:kViewIdMember];
+    } else if ([identitifier isEqualToString:kViewIdMemberList]) {
         [super dismissModalViewWithIdentitifier:identitifier];
     }
 }
@@ -489,7 +487,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             
         case kResidenceSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self presentModalViewWithIdentifier:kOrigoView data:_member meta:kOrigoTypeResidence];
+                [self presentModalViewWithIdentifier:kViewIdOrigo data:_member meta:kOrigoTypeResidence];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_candidateResidences[buttonIndex] addMember:_member];
                 [self reloadSectionsIfNeeded];
@@ -522,7 +520,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         case kEmailChangeAlertTag:
             if (buttonIndex == kEmailChangeButtonContinue) {
                 [self toggleEditMode];
-                [self presentModalViewWithIdentifier:kAuthView data:[_emailField finalText]];
+                [self presentModalViewWithIdentifier:kViewIdAuth data:[_emailField finalText]];
             } else {
                 [_emailField becomeFirstResponder];
             }

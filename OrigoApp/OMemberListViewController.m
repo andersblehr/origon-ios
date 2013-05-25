@@ -70,14 +70,14 @@ static NSInteger const kHousemateSheetTag = 0;
     if ([candidates count]) {
         [self promptForHousemate:candidates];
     } else {
-        [self presentModalViewWithIdentifier:kMemberView data:_origo];
+        [self presentModalViewWithIdentifier:kViewIdMember data:_origo];
     }
 }
 
 
 - (void)didFinishEditing
 {
-    [self.dismisser dismissModalViewWithIdentitifier:kMemberListView];
+    [self.dismisser dismissModalViewWithIdentitifier:kViewIdMemberList];
 }
 
 
@@ -124,11 +124,10 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (void)initialise
 {
-    _viewId = kMemberListView;
     _membership = self.data;
     _origo = _membership.origo;
     
-    self.aspectCarrier = _origo;
+    self.target = _origo;
 }
 
 
@@ -255,7 +254,7 @@ static NSInteger const kHousemateSheetTag = 0;
     switch (actionSheet.tag) {
         case kHousemateSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self presentModalViewWithIdentifier:kMemberView data:_origo];
+                [self presentModalViewWithIdentifier:kViewIdMember data:_origo];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_origo addMember:_candidateHousemates[buttonIndex]];
                 [self reloadSectionsIfNeeded];

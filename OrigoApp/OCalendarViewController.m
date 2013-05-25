@@ -8,7 +8,7 @@
 
 #import "OCalendarViewController.h"
 
-#import "OMeta.h"
+#import "OState.h"
 #import "OStrings.h"
 
 
@@ -41,7 +41,7 @@
 
 - (void)initialise
 {
-    _viewId = kCalendarView;
+    // TODO
 }
 
 @end

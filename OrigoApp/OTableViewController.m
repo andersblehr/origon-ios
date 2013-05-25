@@ -9,6 +9,7 @@
 #import "OTableViewController.h"
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
+#import "NSString+OrigoExtensions.h"
 #import "UIBarButtonItem+OrigoExtensions.h"
 #import "UITableView+OrigoExtensions.h"
 
@@ -31,6 +32,9 @@
 
 NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
+static NSString * const kListViewSuffix = @"ListViewController";
+static NSString * const kDetailViewSuffix = @"ViewController";
+
 
 @interface OTableViewController ()
 
@@ -41,28 +45,39 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
 @implementation OTableViewController
 
-
 #pragma mark - Auxiliary methods
+
+- (BOOL)isListView
+{
+    return ([NSStringFromClass(self.class) rangeOfString:kListViewSuffix].location != NSNotFound);
+}
+
 
 - (void)initialiseInstance
 {
-    if (([OStrings hasStrings] && [OMeta m].userIsAllSet) || _isModal) {
-        _state = [[OState alloc] initForViewController:self];
-        
-        if (_isModal && self.modalImpliesRegistration) {
-            _state.actionIsRegister = YES;
+    if ([OStrings hasStrings]) {
+        if ([OMeta m].userIsAllSet || _isModal) {
+            if (_isModal && self.modalImpliesRegistration) {
+                _action = kActionRegister;
+            } else if ([self isListView]) {
+                _action = kActionList;
+            } else {
+                _action = kActionDisplay;
+            }
+            
+            [_instance initialise];
+            [[OState s] reflect:_state];
+            [_instance populateDataSource];
+            
+            for (NSNumber *sectionKey in [_sectionData allKeys]) {
+                _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
+            }
+            
+            _lastSectionKey = [_sectionKeys lastObject];
+            _didInitialise = YES;
         }
-        
-        [_instance initialise];
-        [[OState s] reflect:_state];
-        [_instance populateDataSource];
-        
-        for (NSNumber *sectionKey in [_sectionData allKeys]) {
-            _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
-        }
-        
-        _lastSectionKey = [_sectionKeys lastObject];
-        _didInitialise = YES;
+    } else {
+        _action = kActionSetup;
     }
 }
 
@@ -75,7 +90,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
 - (void)emphasiseInputField:(id)inputField
 {
-    if (self.state.actionIsDisplay) {
+    if ([self actionIs:kActionDisplay]) {
         [self toggleEditMode];
     }
     
@@ -190,6 +205,18 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
 #pragma mark - Utility methods
 
+- (BOOL)actionIs:(NSString *)action
+{
+    return [_action isEqualToString:action];
+}
+
+
+- (BOOL)targetIs:(NSString *)target
+{
+    return [_target isEqualToString:target];
+}
+
+
 - (void)reflectState
 {
     if (!_didJustLoad) {
@@ -209,7 +236,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     static UIBarButtonItem *rightButton = nil;
     static UIBarButtonItem *leftButton = nil;
     
-    if (self.state.actionIsEdit) {
+    if ([self actionIs:kActionEdit]) {
         rightButton = self.navigationItem.rightBarButtonItem;
         leftButton = self.navigationItem.leftBarButtonItem;
         
@@ -220,7 +247,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
         }
         
         self.navigationItem.leftBarButtonItem = _cancelButton;
-    } else if (self.state.actionIsDisplay) {
+    } else if ([self actionIs:kActionDisplay]) {
         [self.view endEditing:YES];
         
         self.navigationItem.rightBarButtonItem = rightButton;
@@ -296,28 +323,37 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     
-    NSString *viewControllerName = NSStringFromClass(self.class);
-    _entityClass = NSClassFromString([viewControllerName substringToIndex:[viewControllerName rangeOfString:@"ViewController"].location]);
-    _entitySectionKey = NSNotFound;
-    _instance = self;
+    NSString *longName = NSStringFromClass(self.class);
+    NSString *shortName = [longName substringFromIndex:1];
+    NSString *viewSuffix = [self isListView] ? kListViewSuffix : kDetailViewSuffix;
+    _viewId = [[shortName substringToIndex:[shortName rangeOfString:viewSuffix].location] lowercaseString];
     
-    _isListView = ([NSStringFromClass(self.class) rangeOfString:@"List"].location != NSNotFound);
-    _canEdit = NO;
-    _shouldDemphasiseOnEndEdit = YES;
-    _modalImpliesRegistration = !_isListView;
-    _cancelRegistrationImpliesSignOut = NO;
+    if ([self isListView]) {
+        _modalImpliesRegistration = NO;
+        _viewId = [_viewId stringByAppendingString:@"s"];
+    } else {
+        _modalImpliesRegistration = YES;
+        _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kDetailViewSuffix].location]);
+    }
     
     if (!self.navigationController || ([self.navigationController.viewControllers count] == 1)) {
         _isModal = (self.presentingViewController != nil);
     }
     
+    _entitySectionKey = NSNotFound;
     _sectionKeys = [[NSMutableArray alloc] init];
     _sectionData = [[NSMutableDictionary alloc] init];
     _sectionCounts = [[NSMutableDictionary alloc] init];
+    _instance = self;
+    _state = [[OState alloc] initForViewController:self];
+    
+    _canEdit = NO;
+    _shouldDemphasiseOnEndEdit = YES;
+    _cancelRegistrationImpliesSignOut = NO;
     
     [self initialiseInstance];
     
-    if (_state.actionIsRegister) {
+    if ([self actionIs:kActionRegister]) {
         _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
         _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
         
@@ -364,8 +400,8 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
         [self.activityIndicator startAnimating];
         [[[OServerConnection alloc] init] fetchStrings:self];
     } else if (![OMeta m].userIsSignedIn) {
-        [self presentModalViewWithIdentifier:kAuthView data:nil dismisser:self];
-    } else if (self.state.actionIsRegister) {
+        [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:self];
+    } else if ([self actionIs:kActionRegister]) {
         [[self.detailCell nextInputFieldFromTextField:nil] becomeFirstResponder];
     } else if (self.detailCell) {
         self.detailCell.editable = self.canEdit;
@@ -426,11 +462,11 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
     
     UIViewController *destinationViewController = nil;
     
-    if ([identifier isEqualToString:kAuthView]) {
+    if ([identifier isEqualToString:kViewIdAuth]) {
         destinationViewController = viewController;
         destinationViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     } else {
-        destinationViewController = [[UINavigationController alloc] initWithRootViewController:viewController];;
+        destinationViewController = [[UINavigationController alloc] initWithRootViewController:viewController];
         destinationViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     }
     
@@ -456,9 +492,15 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 }
 
 
-- (void)setAspectCarrier:(id)aspectCarrier
+- (void)setTarget:(id)target
 {
-    [_state setAspectForCarrier:aspectCarrier];
+    //_target = target;
+    
+    if ([target isKindOfClass:OReplicatedEntity.class]) {
+        _target = [target asTarget];
+    } else if ([target isKindOfClass:NSString.class]) {
+        _target = [target isEmailAddress] ? kTargetEmail : target;
+    }
 }
 
 
@@ -486,7 +528,7 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 {
     NSInteger sectionNumber = [self sectionNumberForSectionKey:sectionKey];
     
-    return ((sectionNumber == [self.tableView numberOfSections] - 1) && !_state.actionIsRegister);
+    return ((sectionNumber == [self.tableView numberOfSections] - 1) && ![self actionIs:kActionRegister]);
 }
 
 
@@ -702,14 +744,14 @@ NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    if ([OState s].actionIsSetup) {
+    if ([self actionIs:kActionSetup]) {
         [self.activityIndicator stopAnimating];
         
         [OStrings.class didCompleteWithResponse:response data:data];
         [[OMeta m] setGlobalDefault:[NSDate date] forKey:kDefaultsKeyStringDate];
         [(OTabBarController *)self.tabBarController setTabBarTitles];
         
-        [self presentModalViewWithIdentifier:kAuthView data:nil dismisser:self];
+        [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:self];
     }
 }
 

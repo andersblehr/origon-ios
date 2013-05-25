@@ -102,7 +102,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         self.backgroundColor = [UIColor clearColor];
         self.contentInset = UIEdgeInsetsMake(-kTopInset, -kTextInset, 0.f, 0.f);
         self.delegate = delegate;
-        self.editable = [OState s].actionIsInput;
+        self.editable = [[OState s] actionIs:kActionInput];
         self.font = [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
@@ -110,7 +110,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
         self.returnKeyType = UIReturnKeyDefault;
         self.scrollEnabled = NO;
         self.textAlignment = NSTextAlignmentLeft;
-        self.userInteractionEnabled = [OState s].actionIsInput;
+        self.userInteractionEnabled = self.editable;
         
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];

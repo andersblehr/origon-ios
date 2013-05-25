@@ -8,14 +8,13 @@
 
 #import "OSettings.h"
 
-extern NSString * const kSettingKeyOrigoCountry;
+extern NSString * const kSettingKeyCountry;
 
 
 @interface OSettings (OrigoExtensions)
 
 - (NSArray *)settingKeys;
 
-- (NSString *)titleForSettingKey:(NSString *)settingKey;
 - (NSString *)valueForSettingKey:(NSString *)settingKey;
 
 @end

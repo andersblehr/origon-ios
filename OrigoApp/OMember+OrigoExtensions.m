@@ -38,7 +38,7 @@ static NSInteger const kCountryOfResidenceButtonUseLocation = 1;
 {
     NSComparisonResult result = [self.name localizedCaseInsensitiveCompare:other.name];
     
-    if ([[OState s] viewIs:kMemberListView] && [OState s].aspectIsResidence) {
+    if ([[OState s] viewIs:kViewIdMemberList] && [[OState s] targetIs:kOrigoTypeResidence]) {
         BOOL thisMemberIsMinor = [self isMinor];
         BOOL otherMemberIsMinor = [other isMinor];
         
@@ -372,6 +372,26 @@ static NSInteger const kCountryOfResidenceButtonUseLocation = 1;
 - (BOOL)hasHousemate:(OMember *)member
 {
     return [[self housemates] containsObject:member];
+}
+
+
+#pragma mark - OReplicatedEntity (OrigoExtensions) overrides
+
+- (NSString *)asTarget
+{
+    NSString *target = nil;
+    
+    if ([self isUser]) {
+        target = kTargetUser;
+    } else if ([[OMeta m].user hasWard:self]) {
+        target = kTargetWard;
+    } else if ([[OMeta m].user hasHousemate:self]) {
+        target = kTargetHousemate;
+    } else {
+        target = kTarget3rdParty;
+    }
+    
+    return target;
 }
 
 @end

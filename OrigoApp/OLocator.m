@@ -34,10 +34,6 @@
     if (self && [self canLocate]) {
         _locationManager = [[CLLocationManager alloc] init];
         _locationManager.delegate = self;
-        
-        if ([[OState s].activeViewController conformsToProtocol:@protocol(OLocatorDelegate)]) {
-            _delegate = (id<OLocatorDelegate>)[OState s].activeViewController;
-        }
     }
     
     return self;
@@ -63,6 +59,8 @@
 - (void)locate
 {
     if ([self canLocate]) {
+        _delegate = (id<OLocatorDelegate>)[OState s].viewController;
+        
         [_locationManager startUpdatingLocation];
     }
 }
@@ -72,7 +70,7 @@
 
 - (NSString *)countryCode
 {
-    NSString *countryCode = _placemark ? _placemark.ISOcountryCode : [OMeta m].settings.origoCountryCode;
+    NSString *countryCode = _placemark ? _placemark.ISOcountryCode : [OMeta m].settings.countryCode;
     
     if (!countryCode) {
         CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
