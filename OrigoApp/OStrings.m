@@ -149,6 +149,12 @@ NSString * const strTabBarTitleSettings              = @"strTabBarTitleSettings"
 NSString * const strSettingTitleCountry              = @"strSettingTitleCountry";
 NSString * const strSettingTextCountry               = @"strSettingTextCountry";
 
+// OSettingView strings
+NSString * const strLabelCountrySettings             = @"strLabelCountrySettings";
+NSString * const strLabelCountryLocation             = @"strLabelCountryLocation";
+NSString * const strFooterCountryInfoParenthesis     = @"strFooterCountryInfoParenthesis";
+NSString * const strFooterCountryInfoLocate          = @"strFooterCountryInfoLocate";
+
 // Origo type strings
 NSString * const strOrigoTypeResidence               = @"strOrigoTypeResidence";
 NSString * const strOrigoTypeOrganisation            = @"strOrigoTypeOrganisation";
@@ -166,19 +172,21 @@ NSString * const strNewOrigoOfTypeSportsTeam         = @"strNewOrigoOfTypeSports
 NSString * const strNewOrigoOfTypeOther              = @"strNewOrigoOfTypeOther";
 
 // Meta strings
-NSString * const xstrContactRolesSchoolClass         = @"xstrContactRolesSchoolClass";
-NSString * const xstrContactRolesPreschoolClass      = @"xstrContactRolesPreschoolClass";
-NSString * const xstrContactRolesAssociation         = @"xstrContactRolesAssociation";
-NSString * const xstrContactRolesSportsTeam          = @"xstrContactRolesSportsTeam";
+NSString * const metaSupportedCountryCodes           = @"metaSupportedCountryCodes";
+NSString * const metaContactRolesSchoolClass         = @"metaContactRolesSchoolClass";
+NSString * const metaContactRolesPreschoolClass      = @"metaContactRolesPreschoolClass";
+NSString * const metaContactRolesAssociation         = @"metaContactRolesAssociation";
+NSString * const metaContactRolesSportsTeam          = @"metaContactRolesSportsTeam";
 
-static NSInteger const kDaysBetweenStringFetches = 0; // TODO: Set to 14
-static NSString * const kStringsPlist = @"strings.plist";
 static NSDictionary const *strings = nil;
+static NSString * const kStringsPlist = @"strings.plist";
+static NSInteger const kDaysBetweenStringFetches = 0; // TODO: Set to 14
 
-static NSString * const kLabelKeyPrefix = @"strLabel";
-static NSString * const kPlaceholderKeyPrefix = @"strPlaceholder";
-static NSString * const kSettingTitleKeyPrefix = @"strSettingTitle";
-static NSString * const kSettingTextKeyPrefix = @"strSettingText";
+static NSString * const kKeyPrefixLabel = @"strLabel";
+static NSString * const kKeyPrefixPlaceholder = @"strPlaceholder";
+static NSString * const kKeyPrefixContactRole = @"strContactRole";
+static NSString * const kKeyPrefixSettingTitle = @"strSettingTitle";
+static NSString * const kKeyPrefixSettingText = @"strSettingText";
 
 
 @implementation OStrings
@@ -224,7 +232,7 @@ static NSString * const kSettingTextKeyPrefix = @"strSettingText";
 }
 
 
-#pragma mark - String lookup
+#pragma mark - Interface strings
 
 + (NSString *)stringForKey:(NSString *)key
 {
@@ -244,52 +252,60 @@ static NSString * const kSettingTextKeyPrefix = @"strSettingText";
 }
 
 
-+ (NSString *)stringForOrigoType:(NSString *)origoType
-{
-    NSString *key = nil;
-    BOOL is3rdParty = ([[OState s] actionIs:kActionRegister] && [OMeta m].userIsRegistered);
-    
-    if ([origoType isEqualToString:kOrigoTypeResidence]) {
-        key = is3rdParty ? strNewOrigoOfTypeResidence : strOrigoTypeResidence;
-    } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
-        key = is3rdParty ? strNewOrigoOfTypeOrganisation : strOrigoTypeOrganisation;
-    } else if ([origoType isEqualToString:kOrigoTypeAssociation]) {
-        key = is3rdParty ? strNewOrigoOfTypeAssociation : strOrigoTypeAssociation;
-    } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
-        key = is3rdParty ? strNewOrigoOfTypeSchoolClass : strOrigoTypeSchoolClass;
-    } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
-        key = is3rdParty ? strNewOrigoOfTypePreschoolClass : strOrigoTypePreschoolClass;
-    } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
-        key = is3rdParty ? strNewOrigoOfTypeSportsTeam : strOrigoTypeSportsTeam;
-    } else {
-        key = is3rdParty ? strNewOrigoOfTypeOther : strOrigoTypeOther;
-    }
-    
-    return [self stringForKey:key];
-}
-
-
 + (NSString *)labelForKey:(NSString *)key
 {
-    return [self stringForKey:[self stringKeyWithPrefix:kLabelKeyPrefix forKey:key]];
+    return [self stringForKey:[self stringKeyWithPrefix:kKeyPrefixLabel forKey:key]];
 }
 
 
 + (NSString *)placeholderForKey:(NSString *)key
 {
-    return [self stringForKey:[self stringKeyWithPrefix:kPlaceholderKeyPrefix forKey:key]];
+    return [self stringForKey:[self stringKeyWithPrefix:kKeyPrefixPlaceholder forKey:key]];
 }
 
 
-+ (NSString *)settingTitleForKey:(NSString *)key
+#pragma mark - Title & text strings
+
++ (NSString *)titleForOrigoType:(NSString *)origoType
 {
-    return [self stringForKey:[self stringKeyWithPrefix:kSettingTitleKeyPrefix forKey:key]];
+    NSString *stringKey = nil;
+    BOOL is3rdParty = ([[OState s] actionIs:kActionRegister] && [OMeta m].userIsRegistered);
+    
+    if ([origoType isEqualToString:kOrigoTypeResidence]) {
+        stringKey = is3rdParty ? strNewOrigoOfTypeResidence : strOrigoTypeResidence;
+    } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
+        stringKey = is3rdParty ? strNewOrigoOfTypeOrganisation : strOrigoTypeOrganisation;
+    } else if ([origoType isEqualToString:kOrigoTypeAssociation]) {
+        stringKey = is3rdParty ? strNewOrigoOfTypeAssociation : strOrigoTypeAssociation;
+    } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
+        stringKey = is3rdParty ? strNewOrigoOfTypeSchoolClass : strOrigoTypeSchoolClass;
+    } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
+        stringKey = is3rdParty ? strNewOrigoOfTypePreschoolClass : strOrigoTypePreschoolClass;
+    } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
+        stringKey = is3rdParty ? strNewOrigoOfTypeSportsTeam : strOrigoTypeSportsTeam;
+    } else {
+        stringKey = is3rdParty ? strNewOrigoOfTypeOther : strOrigoTypeOther;
+    }
+    
+    return [self stringForKey:stringKey];
 }
 
 
-+ (NSString *)settingTextForKey:(NSString *)key
++ (NSString *)titleForContactRole:(NSString *)contactRole
 {
-    return [self stringForKey:[self stringKeyWithPrefix:kSettingTextKeyPrefix forKey:key]];
+    return [self stringForKey:[self stringKeyWithPrefix:kKeyPrefixContactRole forKey:contactRole]];
+}
+
+
++ (NSString *)titleForSettingKey:(NSString *)settingKey
+{
+    return [self stringForKey:[self stringKeyWithPrefix:kKeyPrefixSettingTitle forKey:settingKey]];
+}
+
+
++ (NSString *)textForSettingKey:(NSString *)settingKey
+{
+    return [self stringForKey:[self stringKeyWithPrefix:kKeyPrefixSettingText forKey:settingKey]];
 }
 
 

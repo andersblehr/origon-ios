@@ -8,9 +8,21 @@
 
 #import "OTableViewController.h"
 
-@interface OSettingViewController : OTableViewController {
+#import "OLocatorDelegate.h"
+#import "OTableViewListCellDelegate.h"
+
+@class OTableViewCell;
+@class OSettings;
+
+@interface OSettingViewController : OTableViewController<OTableViewListCellDelegate, OLocatorDelegate> {
 @private
+    OSettings *_settings;
     NSString *_settingKey;
+    
+    OTableViewCell *_valueCell;
+    NSMutableArray *_valueList;
+    
+    BOOL _listContainsParenthesisedCountries;
 }
 
 @end

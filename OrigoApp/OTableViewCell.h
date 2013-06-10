@@ -11,8 +11,7 @@
 #import "OEntityObservingDelegate.h"
 #import "OTableViewListCellDelegate.h"
 
-extern NSString * const kReuseIdentifierDefault;
-extern NSString * const kReuseIdentifierSetting;
+extern NSString * const kReuseIdentifierList;
 extern NSString * const kReuseIdentifierUserSignIn;
 extern NSString * const kReuseIdentifierUserActivation;
 
@@ -31,22 +30,23 @@ extern CGFloat const kCellAnimationDuration;
     OTableViewCellBlueprint *_blueprint;
     OTableViewCellConstrainer *_constrainer;
     NSMutableDictionary *_views;
+    NSIndexPath *_indexPath;
     
     id<OTableViewListCellDelegate> _listCellDelegate;
     id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
 
 @property (strong, nonatomic, readonly) OState *localState;
-@property (strong, nonatomic) NSIndexPath *indexPath;
 @property (strong, nonatomic) OReplicatedEntity *entity;
 
 @property (nonatomic, readonly) BOOL selectable;
 @property (nonatomic) BOOL editable;
+@property (nonatomic) BOOL checked;
 
 @property (weak, nonatomic) id<OEntityObservingDelegate> observer;
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
-- (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity delegate:(id)delegate;
+- (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath;
 
 - (BOOL)isTitleKey:(NSString *)key;
 - (id)labelForKey:(NSString *)key;

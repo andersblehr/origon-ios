@@ -26,7 +26,7 @@ extern CGFloat const kTextInset;
 
 @property (nonatomic) BOOL hasEmphasis;
 
-- (id)initForKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate;
+- (id)initWithKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate;
 
 - (BOOL)holdsValidEmail;
 - (BOOL)holdsValidPassword;

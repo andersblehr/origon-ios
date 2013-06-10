@@ -8,7 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OAppDelegate : UIResponder <UIApplicationDelegate>
+@interface OAppDelegate : UIResponder <UIApplicationDelegate> {
+@private
+    BOOL _didEnterBackground;
+}
 
 @property (strong, nonatomic) UIWindow *window;
 

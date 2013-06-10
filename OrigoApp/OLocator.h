@@ -24,6 +24,9 @@
 @property (weak, nonatomic) id<OLocatorDelegate> delegate;
 
 - (BOOL)canLocate;
+- (BOOL)canLocateSilently;
+- (BOOL)didLocate;
+
 - (void)locate;
 
 @end

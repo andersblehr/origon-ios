@@ -342,7 +342,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)populateDataSource
 {
-    [self setData:kEmptyDetailCellPlaceholder forSectionWithKey:kAuthSection];
+    [self setData:kCustomCell forSectionWithKey:kAuthSection];
 }
 
 
@@ -375,12 +375,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([self actionIs:kActionLogin]) {
-        self.detailCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserSignIn delegate:self];
+        self.detailCell = [tableView cellForReuseIdentifier:kReuseIdentifierUserSignIn];
         
         _emailField = [self.detailCell textFieldForKey:kInputKeyAuthEmail];
         _passwordField = [self.detailCell textFieldForKey:kInputKeyPassword];
     } else {
-        self.detailCell = [tableView cellWithReuseIdentifier:kReuseIdentifierUserActivation delegate:self];
+        self.detailCell = [tableView cellForReuseIdentifier:kReuseIdentifierUserActivation];
         
         _activationCodeField = [self.detailCell textFieldForKey:kInputKeyActivationCode];
         _repeatPasswordField = [self.detailCell textFieldForKey:kInputKeyRepeatPassword];

@@ -24,7 +24,7 @@ static NSInteger const kTextViewMinimumEditLines = 2;
 static NSInteger const kTextViewMinimumLines = 1;
 
 static CGFloat const kTopInset = 5.f;
-static CGFloat const kDetailWidthGuesstimate = 210.f;
+static CGFloat const kDetailTextWidth = 210.f;
 
 
 @implementation OTextView
@@ -33,13 +33,12 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 + (NSInteger)lineCountWithText:(NSString *)text
 {
-    CGSize sizeGuesstimate = [text sizeWithFont:[UIFont detailFont] constrainedToSize:CGSizeMake(kDetailWidthGuesstimate, 1000.f)];
-    NSInteger lineCountGuesstimate = round(sizeGuesstimate.height / [UIFont detailLineHeight]);
+    NSInteger lineCount = [[UIFont detailFont] linecountWithText:text width:kDetailTextWidth];
     
-    lineCountGuesstimate = MAX(lineCountGuesstimate, kTextViewMinimumLines);
-    lineCountGuesstimate = MIN(lineCountGuesstimate, kTextViewMaximumLines);
+    lineCount = MAX(lineCount, kTextViewMinimumLines);
+    lineCount = MIN(lineCount, kTextViewMaximumLines);
     
-    return lineCountGuesstimate;
+    return lineCount;
 }
 
 
@@ -83,7 +82,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 #pragma mark - Initialisation
 
-- (id)initForKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate
+- (id)initWithKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
@@ -164,7 +163,7 @@ static CGFloat const kDetailWidthGuesstimate = 210.f;
 
 - (void)setPlaceholder:(NSString *)placeholder
 {
-    CGSize placeholderSize = CGSizeMake(kDetailWidthGuesstimate, [OTextView heightWithText:placeholder]);
+    CGSize placeholderSize = CGSizeMake(kDetailTextWidth, [OTextView heightWithText:placeholder]);
     
     _placeholderView.frame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height);
     _placeholderView.text = placeholder;

@@ -87,9 +87,9 @@ static NSInteger const kOrigoSection = 0;
     [super viewDidLoad];
     
     if (_origo) {
-        self.title = [_origo isOfType:kOrigoTypeResidence] ? [OStrings stringForOrigoType:kOrigoTypeResidence] : _origo.name;
+        self.title = [_origo isOfType:kOrigoTypeResidence] ? [OStrings titleForOrigoType:kOrigoTypeResidence] : _origo.name;
     } else {
-        self.title = [OStrings stringForOrigoType:self.meta];
+        self.title = [OStrings titleForOrigoType:self.meta];
     }
 }
 
@@ -143,15 +143,15 @@ static NSInteger const kOrigoSection = 0;
 
 - (void)populateDataSource
 {
-    id origoDataSource = _origo ? _origo : kEmptyDetailCellPlaceholder;
+    id origoDataSource = _origo ? _origo : kCustomCell;
     
     [self setData:origoDataSource forSectionWithKey:kOrigoSection];
 }
 
 
-- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return nil;
+    return NO;
 }
 
 @end

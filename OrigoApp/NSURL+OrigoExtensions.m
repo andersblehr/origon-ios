@@ -8,7 +8,10 @@
 
 #import "NSURL+OrigoExtensions.h"
 
+#import "NSString+OrigoExtensions.h"
+
 static NSString *kURLParameterFormat = @"%@%@=%@";
+
 
 @implementation NSURL (OrigoExtensions)
 
@@ -25,7 +28,7 @@ static NSString *kURLParameterFormat = @"%@%@=%@";
 - (NSURL *)URLByAppendingURLParameters:(NSDictionary *)URLParameters
 {
     NSMutableString *URLAsString = [[NSMutableString alloc] initWithString:[self absoluteString]];
-    NSString *separator = ([URLAsString rangeOfString:@"?"].location == NSNotFound) ? @"?" : @"&";
+    NSString *separator = [URLAsString containsString:@"?"] ? @"&" : @"?";
     
     if ([URLParameters count]) {
         for (NSString *key in [URLParameters allKeys]) {

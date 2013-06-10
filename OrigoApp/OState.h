@@ -10,11 +10,18 @@
 
 #import "OTableViewController.h"
 
+#import "OTableViewListCellDelegate.h"
+
 extern NSString * const kViewIdAuth;
-extern NSString * const kViewIdMemberList;
+extern NSString * const kViewIdCalendar;
 extern NSString * const kViewIdMember;
-extern NSString * const kViewIdOrigoList;
+extern NSString * const kViewIdMemberList;
+extern NSString * const kViewIdMessageList;
 extern NSString * const kViewIdOrigo;
+extern NSString * const kViewIdOrigoList;
+extern NSString * const kViewIdSetting;
+extern NSString * const kViewIdSettingList;
+extern NSString * const kViewIdTaskList;
 
 extern NSString * const kActionSetup;
 extern NSString * const kActionLogin;
@@ -34,8 +41,10 @@ extern NSString * const kTarget3rdParty;
 @interface OState : NSObject
 
 @property (weak, nonatomic, readonly) OTableViewController *viewController;
+@property (weak, nonatomic, readonly) id<OTableViewListCellDelegate> listCellDelegate;
+@property (weak, nonatomic, readonly) id<UITextFieldDelegate, UITextViewDelegate> inputDelegate;
 
-- (id)initForViewController:(OTableViewController *)viewController;
+- (id)initWithViewController:(OTableViewController *)viewController;
 
 + (OState *)s;
 

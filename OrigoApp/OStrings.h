@@ -139,6 +139,12 @@ extern NSString * const strTabBarTitleSettings;
 extern NSString * const strSettingTitleCountry;
 extern NSString * const strSettingTextCountry;
 
+// OSettingView strings
+extern NSString * const strLabelCountrySettings;
+extern NSString * const strLabelCountryLocation;
+extern NSString * const strFooterCountryInfoParenthesis;
+extern NSString * const strFooterCountryInfoLocate;
+
 // Origo type strings
 extern NSString * const strOrigoTypeResidence;
 extern NSString * const strOrigoTypeOrganisation;
@@ -156,10 +162,11 @@ extern NSString * const strNewOrigoOfTypeSportsTeam;
 extern NSString * const strNewOrigoOfTypeOther;
 
 // Meta strings
-extern NSString * const xstrContactRolesSchoolClass;
-extern NSString * const xstrContactRolesPreschoolClass;
-extern NSString * const xstrContactRolesAssociation;
-extern NSString * const xstrContactRolesSportsTeam;
+extern NSString * const metaSupportedCountryCodes;
+extern NSString * const metaContactRolesSchoolClass;
+extern NSString * const metaContactRolesPreschoolClass;
+extern NSString * const metaContactRolesAssociation;
+extern NSString * const metaContactRolesSportsTeam;
 
 
 @interface OStrings : NSObject
@@ -168,10 +175,12 @@ extern NSString * const xstrContactRolesSportsTeam;
 + (void)refreshIfNeeded;
 
 + (NSString *)stringForKey:(NSString *)key;
-+ (NSString *)stringForOrigoType:(NSString *)origoType;
 + (NSString *)labelForKey:(NSString *)key;
 + (NSString *)placeholderForKey:(NSString *)key;
-+ (NSString *)settingTitleForKey:(NSString *)key;
-+ (NSString *)settingTextForKey:(NSString *)key;
+
++ (NSString *)titleForOrigoType:(NSString *)origoType;
++ (NSString *)titleForContactRole:(NSString *)contactRole;
++ (NSString *)titleForSettingKey:(NSString *)settingKey;
++ (NSString *)textForSettingKey:(NSString *)settingKey;
 
 @end

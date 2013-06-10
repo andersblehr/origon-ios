@@ -81,6 +81,7 @@
 		5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA10B9B16A7F49F00031D81 /* OTableViewController.m */; };
 		5CA94D9B15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9A15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m */; };
 		5CA94D9F15836BD9008CD9EC /* NSDate+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9E15836BD9008CD9EC /* NSDate+OrigoExtensions.m */; };
+		5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAAD27E1751EBA7002AF8CF /* OUtil.m */; };
 		5CAEE091163E513300A9046B /* ODocumentElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE090163E513300A9046B /* ODocumentElement.m */; };
 		5CAEE094163E513400A9046B /* OMessageBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE093163E513400A9046B /* OMessageBoard.m */; };
 		5CAEE09A163E513400A9046B /* OScheduledBreak.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE099163E513400A9046B /* OScheduledBreak.m */; };
@@ -98,6 +99,8 @@
 		5CAEE0CA163E513A00A9046B /* ODocumentRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE0C9163E513A00A9046B /* ODocumentRepository.m */; };
 		5CAEE0CD163E513A00A9046B /* OToDoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE0CC163E513A00A9046B /* OToDoItem.m */; };
 		5CAEE0D0163E513A00A9046B /* OMessageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE0CF163E513A00A9046B /* OMessageItem.m */; };
+		5CB61171175F531B006BAE92 /* 193-location-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB6116F175F531B006BAE92 /* 193-location-arrow.png */; };
+		5CB61172175F531B006BAE92 /* 193-location-arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB61170175F531B006BAE92 /* 193-location-arrow@2x.png */; };
 		5CB7E94015F38C1200FD53DF /* OSettingListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E93F15F38C1200FD53DF /* OSettingListViewController.m */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
@@ -252,6 +255,8 @@
 		5CA94D9A15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDatePicker+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5CA94D9D15836BD9008CD9EC /* NSDate+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5CA94D9E15836BD9008CD9EC /* NSDate+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+OrigoExtensions.m"; sourceTree = "<group>"; };
+		5CAAD27D1751EBA7002AF8CF /* OUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUtil.h; sourceTree = "<group>"; };
+		5CAAD27E1751EBA7002AF8CF /* OUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUtil.m; sourceTree = "<group>"; };
 		5CAEE08F163E513300A9046B /* ODocumentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODocumentElement.h; sourceTree = "<group>"; };
 		5CAEE090163E513300A9046B /* ODocumentElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ODocumentElement.m; sourceTree = "<group>"; };
 		5CAEE092163E513400A9046B /* OMessageBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMessageBoard.h; sourceTree = "<group>"; };
@@ -286,6 +291,8 @@
 		5CAEE0CC163E513A00A9046B /* OToDoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OToDoItem.m; sourceTree = "<group>"; };
 		5CAEE0CE163E513A00A9046B /* OMessageItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMessageItem.h; sourceTree = "<group>"; };
 		5CAEE0CF163E513A00A9046B /* OMessageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMessageItem.m; sourceTree = "<group>"; };
+		5CB6116F175F531B006BAE92 /* 193-location-arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "193-location-arrow.png"; sourceTree = "<group>"; };
+		5CB61170175F531B006BAE92 /* 193-location-arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "193-location-arrow@2x.png"; sourceTree = "<group>"; };
 		5CB7E93E15F38C1200FD53DF /* OSettingListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettingListViewController.h; sourceTree = "<group>"; };
 		5CB7E93F15F38C1200FD53DF /* OSettingListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettingListViewController.m; sourceTree = "<group>"; };
 		5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OModalViewControllerDelegate.h; sourceTree = "<group>"; };
@@ -373,6 +380,8 @@
 				5C15BFF116385AB600BB5254 /* 76-baby_black@2x.png */,
 				5C629FE914C61F98001DA01F /* 83-calendar.png */,
 				5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */,
+				5CB6116F175F531B006BAE92 /* 193-location-arrow.png */,
+				5CB61170175F531B006BAE92 /* 193-location-arrow@2x.png */,
 				5C629FF914C62481001DA01F /* 258-checkmark.png */,
 				5C629FFA14C62481001DA01F /* 258-checkmark@2x.png */,
 				5C3A319514C61378001A783E /* dark_linen-640x960.png */,
@@ -556,6 +565,8 @@
 				5C198B7216D76343002D3976 /* OTableViewCellBlueprint.m */,
 				5CBDF78A1659175000D4681C /* OTableViewCellConstrainer.h */,
 				5CBDF78B1659175000D4681C /* OTableViewCellConstrainer.m */,
+				5CAAD27D1751EBA7002AF8CF /* OUtil.h */,
+				5CAAD27E1751EBA7002AF8CF /* OUtil.m */,
 				5C3C665A14F56D6800514C57 /* OUUIDGenerator.h */,
 				5C3C665B14F56D6800514C57 /* OUUIDGenerator.m */,
 			);
@@ -782,6 +793,8 @@
 				5C15BFFE1638815300BB5254 /* 76-baby_black.png in Resources */,
 				5CA10B8F16A40BB500031D81 /* glyphicons_309_comments.png in Resources */,
 				5CA10B9016A40BB500031D81 /* glyphicons_309_comments@2x.png in Resources */,
+				5CB61171175F531B006BAE92 /* 193-location-arrow.png in Resources */,
+				5CB61172175F531B006BAE92 /* 193-location-arrow@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -885,6 +898,7 @@
 				5C1D6CCA1743C80900479F7D /* OSettings+OrigoExtensions.m in Sources */,
 				5CBFB738174B64D40021A8F6 /* OSettingViewController.m in Sources */,
 				5C0AFA44174F7168007A29CD /* OSettings.m in Sources */,
+				5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

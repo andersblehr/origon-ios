@@ -20,6 +20,7 @@
 #import "OStrings.h"
 #import "OTableViewCell.h"
 #import "OTextField.h"
+#import "OUtil.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OMembership.h"
@@ -113,7 +114,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     _member.email = [_emailField finalText];
     
     if ([self actionIs:kActionRegister]) {
-        _member.givenName = [NSString givenNameFromFullName:_member.name];
+        _member.givenName = [OUtil givenNameFromFullName:_member.name];
         _member.gender = _gender;
         
         if ([self targetIs:kTargetUser] && ![_origo hasValueForKey:kPropertyKeyAddress]) {
@@ -137,7 +138,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if ([self targetIs:kTargetUser]) {
             sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
         } else {
-            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [NSString givenNameFromFullName:[_nameField finalText]]];
+            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [OUtil givenNameFromFullName:[_nameField finalText]]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemaleMinor];
@@ -146,7 +147,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if ([self targetIs:kTargetUser]) {
             sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
         } else {
-            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [NSString givenNameFromFullName:[_nameField finalText]]];
+            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [OUtil givenNameFromFullName:[_nameField finalText]]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemale];
@@ -387,7 +388,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)populateDataSource
 {
-    id memberDataSource = _member ? _member : kEmptyDetailCellPlaceholder;
+    id memberDataSource = _member ? _member : kCustomCell;
     
     [self setData:memberDataSource forSectionWithKey:kMemberSectionKey];
     
@@ -425,7 +426,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
+- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
 }
@@ -433,15 +434,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - OTableViewListCellDelegate conformance
 
-- (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath
+- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    return [[[self dataForIndexPath:indexPath] origo].address lines][0];
-}
-
-
-- (UIImage *)cellImageForIndexPath:(NSIndexPath *)indexPath
-{
-    return [UIImage imageNamed:kIconFileHousehold];
+    cell.textLabel.text = [[[self dataAtIndexPath:indexPath] origo].address lines][0];
+    cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
 }
 
 

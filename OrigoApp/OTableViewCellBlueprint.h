@@ -24,10 +24,10 @@ extern CGFloat const kMinimumCellPadding;
 @property (strong, nonatomic, readonly) NSArray *detailKeys;
 @property (weak, nonatomic, readonly) NSArray *allKeys;
 
-- (id)initForReuseIdentifier:(NSString *)reuseIdentifier;
-- (id)initForEntityClass:(Class)entityClass;
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
+- (id)initWithEntityClass:(Class)entityClass;
 
-- (BOOL)keyRepresentsMultiLineProperty:(NSString *)propertyKey;
+- (BOOL)keyRepresentsMultilineProperty:(NSString *)propertyKey;
 
 + (CGFloat)cell:(OTableViewCell *)cell heightForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
 

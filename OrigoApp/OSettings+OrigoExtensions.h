@@ -15,6 +15,8 @@ extern NSString * const kSettingKeyCountry;
 
 - (NSArray *)settingKeys;
 
-- (NSString *)valueForSettingKey:(NSString *)settingKey;
+- (void)setValue:(id)value forSettingKey:(NSString *)settingKey;
+- (id)valueForSettingKey:(NSString *)settingKey;
+- (id)displayValueForSettingKey:(NSString *)settingKey;
 
 @end

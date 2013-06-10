@@ -271,11 +271,7 @@ static NSInteger const kCountryOfResidenceButtonUseLocation = 1;
     for (OMembership *residency in [self residencies]) {
         residency.isActive = @YES;
         
-        if (!residency.origo.countryCode) {
-            residency.origo.countryCode = [OMeta m].locator.countryCode;
-        }
-        
-        if (![self isMinor] || [residency.createdBy isEqualToString:self.entityId]) {
+        if (![self isMinor] || [residency userIsCreator]) {
             residency.isAdmin = @YES;
 
             if (![residency.origo.messageBoards count]) {

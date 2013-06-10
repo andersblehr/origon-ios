@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "OTableViewCell.h"
+
 @protocol OTableViewControllerInstance <NSObject>
 
 @required
@@ -19,6 +21,8 @@
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
-- (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
+- (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)didResumeFromBackground;
 
 @end

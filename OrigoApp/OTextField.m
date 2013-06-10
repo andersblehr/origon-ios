@@ -19,6 +19,7 @@
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
+#import "OUtil.h"
 
 #import "OReplicatedEntity.h"
 
@@ -100,7 +101,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Initialisation
 
-- (id)initForKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate
+- (id)initWithKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
@@ -136,9 +137,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidEmail
 {
-    NSString *email = [self finalText];
-    
-    BOOL isValid = (email && [email isEmailAddress]);
+    BOOL isValid = [OUtil stringHoldsValidEmailAddress:[self finalText]];
     
     if (!isValid) {
         [self becomeFirstResponder];
@@ -164,13 +163,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (BOOL)holdsValidName
 {
-    NSString *name = [self finalText];
-    
-    BOOL isValid = (name && ([name length] > 0));
-    
-    if (isValid) {
-        isValid = isValid && ([name rangeOfString:kSeparatorSpace].location > 0);
-    }
+    BOOL isValid = [OUtil stringHoldsValidName:[self finalText]];
     
     if (!isValid) {
         [self becomeFirstResponder];

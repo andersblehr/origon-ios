@@ -29,19 +29,6 @@ static NSInteger const kSettingsSectionKey = 0;
 
 @implementation OSettingListViewController
 
-#pragma mark - Selector implementations
-
-- (void)signOut
-{
-    [[OMeta m] userDidSignOut];
-    
-    UINavigationController *origoTabNavigationController = self.tabBarController.viewControllers[kTabBarOrigo];
-    [origoTabNavigationController setViewControllers:[NSArray arrayWithObject:[self.storyboard instantiateViewControllerWithIdentifier:kViewIdOrigoList]]];
-    
-    [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:origoTabNavigationController.viewControllers[0]];
-}
-
-
 #pragma mark - View life cycle
 
 - (void)viewDidLoad
@@ -50,20 +37,6 @@ static NSInteger const kSettingsSectionKey = 0;
 
     self.title = [OStrings stringForKey:strTabBarTitleSettings];
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
-    
-    if (![OMeta m].settings.countryCode) {
-        [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
-    }
-}
-
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-    
-    if (![OMeta m].userIsSignedIn) {
-        self.tabBarController.selectedIndex = kTabBarOrigo;
-    }
 }
 
 
@@ -82,6 +55,10 @@ static NSInteger const kSettingsSectionKey = 0;
 - (void)initialise
 {
     self.target = kTargetUser;
+    
+    if (![OMeta m].settings.countryCode) {
+        [OMeta m].settings.countryCode = [OMeta m].inferredCountryCode;
+    }
 }
 
 
@@ -97,7 +74,7 @@ static NSInteger const kSettingsSectionKey = 0;
 }
 
 
-- (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
+- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     [self performSegueWithIdentifier:kSegueToSettingView sender:self];
 }
@@ -105,23 +82,16 @@ static NSInteger const kSettingsSectionKey = 0;
 
 #pragma mark - OTableViewListCellDelegate conformance
 
-- (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath
+- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    return [OStrings settingTextForKey:[self dataForIndexPath:indexPath]];
+    cell.textLabel.text = [OStrings textForSettingKey:[self dataAtIndexPath:indexPath]];
+    cell.detailTextLabel.text = [[OMeta m].settings displayValueForSettingKey:[self dataAtIndexPath:indexPath]];
 }
 
 
-- (NSString *)cellDetailTextForIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCellStyle)styleForIndexPath:(NSIndexPath *)indexPath
 {
-    return [[OMeta m].settings valueForSettingKey:[self dataForIndexPath:indexPath]];
-}
-
-
-#pragma mark - UITableViewDataSource conformance
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [tableView settingCellForIndexPath:indexPath delegate:self];
+    return UITableViewCellStyleValue1;
 }
 
 @end

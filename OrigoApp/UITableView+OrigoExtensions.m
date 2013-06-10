@@ -12,6 +12,7 @@
 #import "UIFont+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 
+#import "OState.h"
 #import "OTableViewCell.h"
 #import "OTableViewCellBlueprint.h"
 
@@ -31,7 +32,6 @@ static CGFloat const kHeaderFontToHeightScaleFactor = 1.5f;
 
 static CGFloat const kFooterHeadRoom = 8.f;
 static CGFloat const kFooterShadowOffset = 2.f;
-static CGFloat const kFooterFontToHeightScaleFactor = 4.f;
 
 static NSString * const kDarkLinenImageFile = @"dark_linen-640x960.png";
 static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
@@ -39,6 +39,20 @@ static NSString * const kLogoText = @"..origo..";
 
 
 @implementation UITableView (OrigoExtensions)
+
+#pragma mark - Auxiliary methods
+
+- (id)cellForReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
+{
+    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:reuseIdentifier];
+    
+    if (!cell) {
+        cell = [[OTableViewCell alloc] initWithReuseIdentifier:reuseIdentifier indexPath:indexPath];
+    }
+    
+    return cell;
+}
+
 
 #pragma mark - Appearance
 
@@ -99,45 +113,29 @@ static NSString * const kLogoText = @"..origo..";
 
 #pragma mark - Cell instantiation
 
-- (id)cellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
-{
-    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:reuseIdentifier];
-    
-    if (!cell) {
-        cell = [[OTableViewCell alloc] initWithReuseIdentifier:reuseIdentifier delegate:delegate];
-    }
-    
-    return cell;
-}
-
-
-- (id)cellForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity delegate:(id)delegate
+- (id)cellForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:NSStringFromClass(entityClass)];
     
     if (!cell) {
-        cell = [[OTableViewCell alloc] initWithEntityClass:entityClass entity:entity delegate:delegate];
+        cell = [[OTableViewCell alloc] initWithEntityClass:entityClass entity:entity];
     }
     
     return cell;
 }
 
 
-- (id)listCellForIndexPath:(NSIndexPath *)indexPath delegate:(id)delegate
+- (id)cellForReuseIdentifier:(NSString *)reuseIdentifier
 {
-    OTableViewCell *cell = [self cellWithReuseIdentifier:kReuseIdentifierDefault delegate:delegate];
-    cell.indexPath = indexPath;
-    
-    return cell;
+    return [self cellForReuseIdentifier:reuseIdentifier indexPath:nil];
 }
 
 
-- (id)settingCellForIndexPath:(NSIndexPath *)indexPath delegate:(id)delegate
+- (id)listCellForIndexPath:(NSIndexPath *)indexPath value:(id)value
 {
-    OTableViewCell *cell = [self cellWithReuseIdentifier:kReuseIdentifierSetting delegate:delegate];
-    cell.indexPath = indexPath;
+    NSString *reuseIdentifer = [NSString stringWithFormat:@"%@:%@", kReuseIdentifierList, value];
     
-    return cell;
+    return [self cellForReuseIdentifier:reuseIdentifer indexPath:indexPath];
 }
 
 
@@ -149,9 +147,11 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (CGFloat)standardFooterHeight
+- (CGFloat)heightForFooterWithText:(NSString *)text
 {
-    return kFooterFontToHeightScaleFactor * [UIFont footerFont].lineHeight;
+    UIFont *footerFont = [UIFont footerFont];
+    
+    return [footerFont linecountWithText:text width:kContentWidth] * footerFont.lineHeight;
 }
 
 
@@ -161,7 +161,7 @@ static NSString * const kLogoText = @"..origo..";
     
     CGFloat cellWidth = self.bounds.size.width - 2 * kDefaultCellPadding;
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionHeaderHeight);
-    CGRect headerFrame = CGRectMake(kDefaultCellPadding, kHeaderHeadRoom, cellWidth, self.sectionHeaderHeight);
+    CGRect headerFrame = CGRectMake(kDefaultCellPadding, kHeaderHeadRoom, cellWidth, self.sectionHeaderHeight + kHeaderHeadRoom);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
@@ -180,57 +180,28 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (UIView *)footerViewWithText:(NSString *)footerText
+- (UIView *)footerViewWithText:(NSString *)text
 {
-    UIFont *footerFont = [UIFont footerFont];
-    CGSize footerSize = [footerText sizeWithFont:footerFont constrainedToSize:CGSizeMake(kContentWidth, kFooterFontToHeightScaleFactor * footerFont.lineHeight) lineBreakMode:NSLineBreakByWordWrapping];
-    
-    self.sectionFooterHeight = footerSize.height + kDefaultCellPadding;
+    self.sectionFooterHeight = [self heightForFooterWithText:text] + kDefaultCellPadding;
 
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionFooterHeight);
-    CGRect footerFrame = CGRectMake(kDefaultCellPadding * 2, kFooterHeadRoom, kContentWidth, self.sectionFooterHeight);
+    CGRect footerFrame = CGRectMake(kDefaultCellPadding * 2, kFooterHeadRoom, kContentWidth, self.sectionFooterHeight + kFooterHeadRoom);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:footerFrame];
     
     footerLabel.backgroundColor = [UIColor clearColor];
-    footerLabel.font = footerFont;
+    footerLabel.font = [UIFont footerFont];
     footerLabel.numberOfLines = 0;
     footerLabel.shadowColor = [UIColor darkTextColor];
     footerLabel.shadowOffset = CGSizeMake(0.f, kFooterShadowOffset);
-    footerLabel.text = footerText;
+    footerLabel.text = text;
     footerLabel.textAlignment = NSTextAlignmentCenter;
     footerLabel.textColor = [UIColor footerTextColor];
     
     [containerView addSubview:footerLabel];
     
     return containerView;
-}
-
-
-#pragma mark - Cell insertion
-
-- (void)insertRow:(NSInteger)row inSection:(NSInteger)section sectionIsNew:(BOOL)sectionIsNew
-{
-    NSRange reloadRange = {section, 1};
-    
-    if (sectionIsNew) {
-        [self insertSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
-    }
-    
-    [self reloadSections:[NSIndexSet indexSetWithIndexesInRange:reloadRange] withRowAnimation:UITableViewRowAnimationAutomatic];
-}
-
-
-- (void)insertRowInNewSection:(NSInteger)section
-{
-    [self insertRow:0 inSection:section sectionIsNew:YES];
-}
-
-
-- (void)insertRow:(NSInteger)row inSection:(NSInteger)section;
-{
-    [self insertRow:row inSection:section sectionIsNew:NO];
 }
 
 @end

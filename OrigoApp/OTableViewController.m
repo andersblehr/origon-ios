@@ -23,6 +23,7 @@
 #import "OTextField.h"
 #import "OTextView.h"
 #import "OTableViewCellBlueprint.h"
+#import "OUtil.h"
 
 #import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
@@ -30,7 +31,7 @@
 
 #import "OTabBarController.h"
 
-NSString * const kEmptyDetailCellPlaceholder = @"<empty>";
+NSString * const kCustomCell = @"custom";
 
 static NSString * const kListViewSuffix = @"ListViewController";
 static NSString * const kDetailViewSuffix = @"ViewController";
@@ -49,7 +50,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (BOOL)isListView
 {
-    return ([NSStringFromClass(self.class) rangeOfString:kListViewSuffix].location != NSNotFound);
+    return [NSStringFromClass(self.class) containsString:kListViewSuffix];
 }
 
 
@@ -106,6 +107,35 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
+- (void)resetViewControllerAtTabIndex:(NSInteger)tabIndex reauthenticate:(BOOL)reauthenticate
+{
+    NSString *viewControllerId = nil;
+    
+    if (tabIndex == kTabIndexOrigo) {
+        viewControllerId = kViewIdOrigoList;
+    } else if (tabIndex == kTabIndexCalendar) {
+        viewControllerId = kViewIdCalendar;
+    } else if (tabIndex == kTabIndexTasks) {
+        viewControllerId = kViewIdTaskList;
+    } else if (tabIndex == kTabIndexMessages) {
+        viewControllerId = kViewIdMessageList;
+    } else if (tabIndex == kTabIndexSettings) {
+        viewControllerId = kViewIdSettingList;
+    }
+    
+    UINavigationController *navigationController = self.tabBarController.viewControllers[tabIndex];
+    [navigationController setViewControllers:[NSArray arrayWithObject:[self.storyboard instantiateViewControllerWithIdentifier:viewControllerId]]];
+    
+    if (reauthenticate) {
+        [[OMeta m] userDidSignOut];
+        
+        [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:navigationController.viewControllers[0]];
+        
+        _reauthenticationLandingTabIndex = tabIndex;
+    }
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)moveToNextInputField
@@ -118,12 +148,18 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
+- (void)signOut
+{
+    [self resetViewControllerAtTabIndex:kTabIndexOrigo reauthenticate:YES];
+}
+
+
 #pragma mark - Setting & accessing section data
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
     if ([data isKindOfClass:NSArray.class]) {
-        _sectionData[@(sectionKey)] = data;
+        _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:data];
     } else if ([data isKindOfClass:NSSet.class]) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
     } else if (data) {
@@ -155,7 +191,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
         _entity = nil;
     }
     
-    if ([data isKindOfClass:NSSet.class]) {
+    if ([_data isKindOfClass:NSArray.class] || [data isKindOfClass:NSSet.class]) {
         [_sectionData[@(sectionKey)] addObjectsFromArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
     } else if (data) {
         [_sectionData[@(sectionKey)] addObject:data];
@@ -175,11 +211,9 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
-- (id)dataForIndexPath:(NSIndexPath *)indexPath
+- (id)dataAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSInteger sectionKey = [_sectionKeys[indexPath.section] integerValue];
-    
-    return [self dataAtRow:indexPath.row inSectionWithKey:sectionKey];
+    return [self dataAtRow:indexPath.row inSectionWithKey:[self sectionKeyForIndexPath:indexPath]];
 }
 
 
@@ -203,7 +237,70 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
-#pragma mark - Utility methods
+- (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath
+{
+    return [self sectionKeyForSectionNumber:indexPath.section];
+}
+
+
+#pragma mark - Segue handling
+
+- (void)prepareForPushSegue:(UIStoryboardSegue *)segue
+{
+    [self prepareForPushSegue:segue data:[self dataAtIndexPath:_selectedIndexPath]];
+}
+
+
+- (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data
+{
+    OTableViewController *destinationViewController = segue.destinationViewController;
+    destinationViewController.data = data;
+    destinationViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:_selectedIndexPath];
+}
+
+
+#pragma mark - Presenting modal view controllers
+
+- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data
+{
+    [self presentModalViewWithIdentifier:identifier data:data meta:nil];
+}
+
+
+- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta
+{
+    OTableViewController *viewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
+    
+    viewController.data = data;
+    
+    if ([meta isKindOfClass:OTableViewController.class]) {
+        viewController.dismisser = meta;
+    } else {
+        viewController.meta = meta;
+        viewController.dismisser = self;
+    }
+    
+    UIViewController *destinationViewController = nil;
+    
+    if ([identifier isEqualToString:kViewIdAuth]) {
+        destinationViewController = viewController;
+        destinationViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    } else {
+        destinationViewController = [[UINavigationController alloc] initWithRootViewController:viewController];
+        destinationViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    }
+    
+    [self.navigationController presentViewController:destinationViewController animated:YES completion:NULL];
+}
+
+
+- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser
+{
+    [self presentModalViewWithIdentifier:identifier data:data meta:dismisser];
+}
+
+
+#pragma mark - State inspection
 
 - (BOOL)actionIs:(NSString *)action
 {
@@ -216,6 +313,8 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     return [_target isEqualToString:target];
 }
 
+
+#pragma mark - Utility methods
 
 - (void)reflectState
 {
@@ -307,6 +406,16 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
+- (void)reloadSectionWithKey:(NSInteger)sectionKey
+{
+    [_instance populateDataSource];
+    
+    _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
+    
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:[self sectionNumberForSectionKey:sectionKey]] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+
 - (void)resumeFirstResponder
 {
     [_emphasisedField becomeFirstResponder];
@@ -318,7 +427,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    
     [self.tableView setBackground];
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
@@ -344,9 +453,10 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     _sectionKeys = [[NSMutableArray alloc] init];
     _sectionData = [[NSMutableDictionary alloc] init];
     _sectionCounts = [[NSMutableDictionary alloc] init];
+    _reauthenticationLandingTabIndex = NSNotFound;
     _instance = self;
-    _state = [[OState alloc] initForViewController:self];
     
+    _state = [[OState alloc] initWithViewController:self];
     _canEdit = NO;
     _shouldDemphasiseOnEndEdit = YES;
     _cancelRegistrationImpliesSignOut = NO;
@@ -383,10 +493,10 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     _didJustLoad = NO;
     
     if (![OStrings hasStrings]) {
-        [self.tabBarController.tabBar.items[kTabBarOrigo] setTitle:nil];
+        [self.tabBarController.tabBar.items[kTabIndexOrigo] setTitle:nil];
     }
     
-    if (_isPopped || _needsReloadData) {
+    if (_isPopped || _needsReloadSections) {
         [self reloadSectionsIfNeeded];
     }
 }
@@ -423,60 +533,24 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
-#pragma mark - Segue handling
-
-- (void)prepareForPushSegue:(UIStoryboardSegue *)segue
+- (void)viewDidDisappear:(BOOL)animated
 {
-    [self prepareForPushSegue:segue data:[self dataForIndexPath:_selectedIndexPath]];
-}
-
-
-- (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data
-{
-    OTableViewController *destinationViewController = segue.destinationViewController;
-    destinationViewController.data = data;
-    destinationViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:_selectedIndexPath];
-}
-
-
-#pragma mark - Presenting modal view controllers
-
-- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data
-{
-    [self presentModalViewWithIdentifier:identifier data:data meta:nil];
-}
-
-
-- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta
-{
-    OTableViewController *viewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
+    [super viewDidDisappear:animated];
     
-    viewController.data = data;
-    
-    if ([meta isKindOfClass:OTableViewController.class]) {
-        viewController.dismisser = meta;
-    } else {
-        viewController.meta = meta;
-        viewController.dismisser = self;
+    if (_reauthenticationLandingTabIndex != NSNotFound) {
+        NSInteger leftmostTabIndex = kTabIndexOrigo;
+        NSInteger rightmostTabIndex = kTabIndexSettings;
+        
+        self.tabBarController.selectedIndex = _reauthenticationLandingTabIndex;
+        
+        for (NSInteger tabIndex = leftmostTabIndex; tabIndex <= rightmostTabIndex; tabIndex++) {
+            if (tabIndex != _reauthenticationLandingTabIndex) {
+                [self resetViewControllerAtTabIndex:tabIndex reauthenticate:NO];
+            }
+        }
+        
+        _reauthenticationLandingTabIndex = NSNotFound;
     }
-    
-    UIViewController *destinationViewController = nil;
-    
-    if ([identifier isEqualToString:kViewIdAuth]) {
-        destinationViewController = viewController;
-        destinationViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-    } else {
-        destinationViewController = [[UINavigationController alloc] initWithRootViewController:viewController];
-        destinationViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    }
-    
-    [self.navigationController presentViewController:destinationViewController animated:YES completion:NULL];
-}
-
-
-- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser
-{
-    [self presentModalViewWithIdentifier:identifier data:data meta:dismisser];
 }
 
 
@@ -499,7 +573,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     if ([target isKindOfClass:OReplicatedEntity.class]) {
         _target = [target asTarget];
     } else if ([target isKindOfClass:NSString.class]) {
-        _target = [target isEmailAddress] ? kTargetEmail : target;
+        _target = [OUtil stringHoldsValidEmailAddress:target] ? kTargetEmail : target;
     }
 }
 
@@ -563,12 +637,12 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     OTableViewCell *cell = nil;
     
     if (indexPath.section == [self sectionNumberForSectionKey:_entitySectionKey]) {
-        _detailCell = [tableView cellForEntityClass:_entityClass entity:_entity delegate:self];
+        _detailCell = [tableView cellForEntityClass:_entityClass entity:_entity];
         _detailCell.observer = self.observer;
         
         cell = _detailCell;
     } else {
-        cell = [tableView listCellForIndexPath:indexPath delegate:self];
+        cell = [tableView listCellForIndexPath:indexPath value:[self dataAtIndexPath:indexPath]];
     }
     
     return cell;
@@ -614,10 +688,11 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
+    NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     CGFloat height = kDefaultCellPadding;
     
-    if ([_instance hasFooterForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
-        height = [tableView standardFooterHeight];
+    if ([_instance hasFooterForSectionWithKey:sectionKey]) {
+        height = [tableView heightForFooterWithText:[_instance textForFooterInSectionWithKey:sectionKey]];
     }
     
     return height;
@@ -657,6 +732,10 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     } else {
         [cell willAppearTrailing:NO];
     }
+    
+    if ([_instance respondsToSelector:@selector(willDisplayCell:atIndexPath:)]) {
+        [_instance willDisplayCell:cell atIndexPath:indexPath];
+    }
 }
 
 
@@ -667,7 +746,9 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     if (cell.selectable) {
         _selectedIndexPath = indexPath;
         
-        [_instance didSelectRow:indexPath.row inSectionWithKey:[self sectionKeyForSectionNumber:indexPath.section]];
+        if ([_instance respondsToSelector:@selector(didSelectCell:atIndexPath:)]) {
+            [_instance didSelectCell:cell atIndexPath:indexPath];
+        }
     }
 }
 
@@ -732,10 +813,10 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)dismissModalViewWithIdentitifier:(NSString *)identitifier needsReloadData:(BOOL)needsReloadData
 {
-    _needsReloadData = [OMeta m].userIsSignedIn ? needsReloadData : NO;
+    _needsReloadSections = [OMeta m].userIsSignedIn ? needsReloadData : NO;
     
     [self dismissViewControllerAnimated:YES completion:^{
-        _needsReloadData = NO;
+        _needsReloadSections = NO;
     }];
 }
 

@@ -15,6 +15,7 @@
 
 NSString * const kOrigoSeasoning = @"socroilgao";
 
+NSString * const kListSeparator = @"|";
 NSString * const kSeparatorSpace = @" ";
 NSString * const kSeparatorNewline = @"\n";
 NSString * const kSeparatorComma = @", ";
@@ -163,6 +164,12 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
+- (BOOL)containsString:(NSString *)string
+{
+    return ([self rangeOfString:string].location != NSNotFound);
+}
+
+
 #pragma mark - Multi-line string details
 
 - (NSArray *)lines
@@ -174,41 +181,6 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 - (NSUInteger)lineCount
 {
     return [[self lines] count];
-}
-
-
-#pragma mark - Devining tring content
-
-- (BOOL)isEmailAddress
-{
-    NSUInteger atLocation = [self rangeOfString:@"@"].location;
-    NSUInteger dotLocation = [self rangeOfString:@"." options:NSBackwardsSearch].location;
-    NSUInteger spaceLocation = [self rangeOfString:@" "].location;
-    
-    BOOL isEmailAddress = (atLocation != NSNotFound);
-    
-    isEmailAddress = isEmailAddress && (dotLocation != NSNotFound);
-    isEmailAddress = isEmailAddress && (dotLocation > atLocation);
-    isEmailAddress = isEmailAddress && (spaceLocation == NSNotFound);
-    
-    return isEmailAddress;
-}
-
-
-#pragma mark - Given name from full name
-
-+ (NSString *)givenNameFromFullName:(NSString *)fullName
-{
-    NSString *givenName = nil;
-    NSArray *names = [fullName componentsSeparatedByString:@" "];
-    
-    if ([[OMeta m].displayLanguage isEqualToString:kLanguageHungarian]) {
-        givenName = names[[names count] - 1];
-    } else {
-        givenName = names[0];
-    }
-    
-    return givenName;
 }
 
 @end

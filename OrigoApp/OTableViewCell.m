@@ -26,10 +26,9 @@
 
 #import "OTableViewController.h"
 
-NSString * const kReuseIdentifierDefault = @"idDefaultCell";
-NSString * const kReuseIdentifierSetting = @"idSettingCell";
-NSString * const kReuseIdentifierUserSignIn = @"idUserSignInCell";
-NSString * const kReuseIdentifierUserActivation = @"idUserActivationCell";
+NSString * const kReuseIdentifierList = @"list";
+NSString * const kReuseIdentifierUserSignIn = @"signIn";
+NSString * const kReuseIdentifierUserActivation = @"activate";
 
 NSString * const kViewKeySuffixLabel = @"Label";
 NSString * const kViewKeySuffixTextField = @"Field";
@@ -63,36 +62,23 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (BOOL)isListCell
 {
-    BOOL isListCell = NO;
-    
-    isListCell = isListCell || [self.reuseIdentifier isEqualToString:kReuseIdentifierDefault];
-    isListCell = isListCell || [self.reuseIdentifier isEqualToString:kReuseIdentifierSetting];
-    
-    return isListCell;
+    return [self.reuseIdentifier hasPrefix:kReuseIdentifierList];
 }
 
 
-- (void)populateListCell
+- (id)initCommonsForReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
 {
-    self.textLabel.text = [_listCellDelegate cellTextForIndexPath:_indexPath];
+    UITableViewCellStyle style = UITableViewCellStyleSubtitle;
     
-    if ([_listCellDelegate respondsToSelector:@selector(cellDetailTextForIndexPath:)]) {
-        self.detailTextLabel.text = [_listCellDelegate cellDetailTextForIndexPath:_indexPath];
+    if ([reuseIdentifier hasPrefix:kReuseIdentifierList]) {
+        id<OTableViewListCellDelegate> listCellDelegate = self.localState.listCellDelegate;
+        
+        if ([listCellDelegate respondsToSelector:@selector(styleForIndexPath:)]) {
+            style = [listCellDelegate styleForIndexPath:_indexPath];
+        }
     }
     
-    if ([_listCellDelegate respondsToSelector:@selector(cellImageForIndexPath:)]) {
-        self.imageView.image = [_listCellDelegate cellImageForIndexPath:_indexPath];
-    }
-}
-
-
-- (id)initBasicsWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
-{
-    if ([reuseIdentifier isEqualToString:kReuseIdentifierSetting]) {
-        self = [super initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:reuseIdentifier];
-    } else {
-        self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
-    }
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     
     if (self) {
         self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -105,10 +91,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.textLabel.font = [UIFont titleFont];
         
         if ([self isListCell]) {
-            _listCellDelegate = delegate;
+            _listCellDelegate = self.localState.listCellDelegate;
             _selectable = YES;
+            _indexPath = indexPath;
+            
+            [_listCellDelegate populateListCell:self atIndexPath:_indexPath];
         } else {
-            _inputDelegate = delegate;
+            _inputDelegate = self.localState.inputDelegate;
             _selectable = [self.localState actionIs:kActionList];
             _views = [[NSMutableDictionary alloc] init];
         }
@@ -183,7 +172,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addTextFieldForKey:(NSString *)key
 {
-    OTextField *textField = [[OTextField alloc] initForKey:key cell:self delegate:_inputDelegate];
+    OTextField *textField = [[OTextField alloc] initWithKey:key cell:self delegate:_inputDelegate];
     
     [self.contentView addSubview:textField];
     [_views setObject:textField forKey:[key stringByAppendingString:kViewKeySuffixTextField]];
@@ -192,7 +181,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addTextViewForKey:(NSString *)key
 {
-    OTextView *textView = [[OTextView alloc] initForKey:key cell:self delegate:_inputDelegate];
+    OTextView *textView = [[OTextView alloc] initWithKey:key cell:self delegate:_inputDelegate];
     
     [self.contentView addSubview:textView];
     [_views setObject:textView forKey:[key stringByAppendingString:kViewKeySuffixTextField]];
@@ -214,7 +203,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             [self addLabelForKey:detailKey centred:NO];
         }
         
-        if ([_blueprint keyRepresentsMultiLineProperty:detailKey]) {
+        if ([_blueprint keyRepresentsMultilineProperty:detailKey]) {
             [self addTextViewForKey:detailKey];
         } else {
             [self addTextFieldForKey:detailKey];
@@ -225,12 +214,16 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Initialisation
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
+- (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
-    self = [self initBasicsWithReuseIdentifier:reuseIdentifier delegate:delegate];
+    self = [self initCommonsForReuseIdentifier:NSStringFromClass(entityClass) indexPath:nil];
     
-    if (self && ![self isListCell]) {
-        _blueprint = [[OTableViewCellBlueprint alloc] initForReuseIdentifier:reuseIdentifier];
+    if (self) {
+        self.entity = entity;
+        self.editing = !_selectable;
+        
+        _entityClass = entityClass;
+        _blueprint = [[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
         
         [self addCellElements];
@@ -241,16 +234,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity delegate:(id)delegate
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
 {
-    self = [self initBasicsWithReuseIdentifier:NSStringFromClass(entityClass) delegate:delegate];
+    self = [self initCommonsForReuseIdentifier:reuseIdentifier indexPath:indexPath];
     
-    if (self) {
-        self.entity = entity;
-        self.editing = !_selectable;
-        
-        _entityClass = entityClass;
-        _blueprint = [[OTableViewCellBlueprint alloc] initForEntityClass:entityClass];
+    if (self && ![self isListCell]) {
+        _blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
         
         [self addCellElements];
@@ -446,16 +435,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Custom accessors
 
-- (void)setIndexPath:(NSIndexPath *)indexPath
-{
-    _indexPath = indexPath;
-
-    if ([self isListCell]) {
-        [self populateListCell];
-    }
-}
-
-
 - (OState *)localState
 {
     if (!_localState) {
@@ -474,12 +453,22 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (void)setChecked:(BOOL)checked
+{
+    if (checked) {
+        self.accessoryType = UITableViewCellAccessoryCheckmark;
+    } else {
+        self.accessoryType = UITableViewCellAccessoryNone;
+    }
+}
+
+
 #pragma mark - OEntityObservingDelegate conformance
 
 - (void)reloadEntity
 {
     if ([self isListCell]) {
-        [self populateListCell];
+        [_listCellDelegate populateListCell:self atIndexPath:_indexPath];
     } else {
         for (NSString *detailKey in _blueprint.detailKeys) {
             id value = [_entity valueForKey:detailKey];
