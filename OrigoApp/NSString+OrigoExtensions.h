@@ -10,6 +10,7 @@
 
 extern NSString * const kOrigoSeasoning;
 
+extern NSString * const kListSeparator;
 extern NSString * const kSeparatorSpace;
 extern NSString * const kSeparatorNewline;
 extern NSString * const kSeparatorComma;
@@ -24,11 +25,9 @@ extern NSString * const kSeparatorHash;
 - (NSString *)removeSuperfluousWhitespace;
 - (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;
 
+- (BOOL)containsString:(NSString *)string;
+
 - (NSArray *)lines;
 - (NSUInteger)lineCount;
-
-- (BOOL)isEmailAddress;
-
-+ (NSString *)givenNameFromFullName:(NSString *)fullName;
 
 @end

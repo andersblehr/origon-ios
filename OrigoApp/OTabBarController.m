@@ -10,11 +10,11 @@
 
 #import "OStrings.h"
 
-NSInteger const kTabBarOrigo = 0;
-NSInteger const kTabBarCalendar = 1;
-NSInteger const kTabBarTasks = 2;
-NSInteger const kTabBarMessages = 3;
-NSInteger const kTabBarSettings = 4;
+NSInteger const kTabIndexOrigo = 0;
+NSInteger const kTabIndexCalendar = 1;
+NSInteger const kTabIndexTasks = 2;
+NSInteger const kTabIndexMessages = 3;
+NSInteger const kTabIndexSettings = 4;
 
 
 @implementation OTabBarController
@@ -23,11 +23,11 @@ NSInteger const kTabBarSettings = 4;
 
 - (void)setTabBarTitles
 {
-    [self.tabBar.items[kTabBarOrigo] setTitle:[OStrings stringForKey:strTabBarTitleOrigo]];
-    [self.tabBar.items[kTabBarCalendar] setTitle:[OStrings stringForKey:strTabBarTitleCalendar]];
-    [self.tabBar.items[kTabBarTasks] setTitle:[OStrings stringForKey:strTabBarTitleTasks]];
-    [self.tabBar.items[kTabBarMessages] setTitle:[OStrings stringForKey:strTabBarTitleMessages]];
-    [self.tabBar.items[kTabBarSettings] setTitle:[OStrings stringForKey:strTabBarTitleSettings]];
+    [self.tabBar.items[kTabIndexOrigo] setTitle:[OStrings stringForKey:strTabBarTitleOrigo]];
+    [self.tabBar.items[kTabIndexCalendar] setTitle:[OStrings stringForKey:strTabBarTitleCalendar]];
+    [self.tabBar.items[kTabIndexTasks] setTitle:[OStrings stringForKey:strTabBarTitleTasks]];
+    [self.tabBar.items[kTabIndexMessages] setTitle:[OStrings stringForKey:strTabBarTitleMessages]];
+    [self.tabBar.items[kTabIndexSettings] setTitle:[OStrings stringForKey:strTabBarTitleSettings]];
 }
 
 
@@ -41,7 +41,7 @@ NSInteger const kTabBarSettings = 4;
         [self setTabBarTitles];
     }
     
-    self.selectedIndex = kTabBarOrigo;
+    self.selectedIndex = kTabIndexOrigo;
 }
 
 

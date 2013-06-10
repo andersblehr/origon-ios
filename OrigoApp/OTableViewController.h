@@ -12,7 +12,7 @@
 #import "OServerConnectionDelegate.h"
 #import "OTableViewControllerInstance.h"
 
-extern NSString * const kEmptyDetailCellPlaceholder;
+extern NSString * const kCustomCell;
 
 @protocol OEntityObservingDelegate;
 
@@ -24,7 +24,7 @@ extern NSString * const kEmptyDetailCellPlaceholder;
     BOOL _didJustLoad;
     BOOL _didInitialise;
     BOOL _isHidden;
-    BOOL _needsReloadData;
+    BOOL _needsReloadSections;
     
     Class _entityClass;
     NSInteger _entitySectionKey;
@@ -34,6 +34,7 @@ extern NSString * const kEmptyDetailCellPlaceholder;
     
     NSNumber *_lastSectionKey;
     NSIndexPath *_selectedIndexPath;
+    NSInteger _reauthenticationLandingTabIndex;
     UIView *_emphasisedField;
     
     UIBarButtonItem *_nextButton;
@@ -63,19 +64,21 @@ extern NSString * const kEmptyDetailCellPlaceholder;
 
 @property (strong, nonatomic) id data;
 @property (strong, nonatomic) id meta;
-@property (strong, nonatomic) id<OModalViewControllerDelegate> dismisser;
-@property (strong, nonatomic) id<OEntityObservingDelegate> observer;
 @property (strong, nonatomic) OTableViewCell *detailCell;
+
+@property (weak, nonatomic) id<OModalViewControllerDelegate> dismisser;
+@property (weak, nonatomic) id<OEntityObservingDelegate> observer;
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey;
 - (NSArray *)dataInSectionWithKey:(NSInteger)sectionKey;
 - (id)dataAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
-- (id)dataForIndexPath:(NSIndexPath *)indexPath;
+- (id)dataAtIndexPath:(NSIndexPath *)indexPath;
 
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber;
+- (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath;
 
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue;
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data;
@@ -90,6 +93,7 @@ extern NSString * const kEmptyDetailCellPlaceholder;
 - (void)reflectState;
 - (void)toggleEditMode;
 - (void)reloadSectionsIfNeeded;
+- (void)reloadSectionWithKey:(NSInteger)sectionKey;
 - (void)resumeFirstResponder;
 
 @end

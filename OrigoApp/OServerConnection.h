@@ -47,9 +47,6 @@ extern NSInteger const kHTTPStatusInternalServerError;
 - (id)init;
 
 - (void)setAuthHeaderForEmail:(NSString *)email password:(NSString *)password;
-- (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field;
-- (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter;
-
 - (void)fetchStrings:(id)delegate;
 - (void)authenticate:(id)delegate;
 - (void)sendEmailActivationCode:(id)delegate;

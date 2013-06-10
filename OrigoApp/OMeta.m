@@ -8,6 +8,9 @@
 
 #import "OMeta.h"
 
+#import <CoreTelephony/CTCarrier.h>
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+
 #import "NSManagedObjectContext+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
 #import "UIDatePicker+OrigoExtensions.h"
@@ -17,11 +20,15 @@
 #import "OLocator.h"
 #import "OLogging.h"
 #import "OState.h"
+#import "OStrings.h"
+#import "OUtil.h"
 #import "OUUIDGenerator.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 #import "OSettings.h"
+
+NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
@@ -31,7 +38,6 @@ NSUInteger const kAgeThresholdInSchool = 7;
 NSUInteger const kAgeThresholdTeen = 13;
 NSUInteger const kAgeThresholdMajority = 18;
 
-NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 NSString * const kLanguageHungarian = @"hu";
 
 NSString * const kIconFileOrigo = @"10-arrows-in_black.png";
@@ -41,6 +47,7 @@ NSString * const kIconFileWoman = @"glyphicons_035_woman.png";
 NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
 NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
 NSString * const kIconFileInfant = @"76-baby_black.png";
+NSString * const kIconFileLocationArrow = @"193-location-arrow.png";
 
 NSString * const kDatePropertyPrefix = @"date";
 
@@ -194,14 +201,9 @@ static OMeta *m = nil;
             _deviceId = [OUUIDGenerator generateUUID];
         }
         
-        NSString *deviceModel = [UIDevice currentDevice].model;
-        _deviceIs_iPad = [deviceModel hasPrefix:@"iPad"];
-        _deviceIs_iPod = [deviceModel hasPrefix:@"iPod"];
-        _deviceIs_iPhone = [deviceModel hasPrefix:@"iPhone"];
-        _deviceIsSimulator = ([deviceModel rangeOfString:@"Simulator"].location != NSNotFound);
-        
         _internetConnectionIsWiFi = NO;
         _internetConnectionIsWWAN = NO;
+        _deviceIsSimulator = [[UIDevice currentDevice].model containsString:@"Simulator"];
         
         _sharedDatePicker = [[UIDatePicker alloc] init];
         _sharedDatePicker.datePickerMode = UIDatePickerModeDate;
@@ -212,7 +214,7 @@ static OMeta *m = nil;
         [self checkReachability:[Reachability reachabilityForInternetConnection]];
         
         if ([_internetReachability startNotifier]) {
-            OLogInfo(@"Reachability notifier is running.");
+            OLogDebug(@"Reachability notifier is running.");
         } else {
             OLogWarning(@"Could not start reachability notifier, checking internet connectivity only at startup.");
         }
@@ -295,14 +297,6 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - Connection status
-
-- (BOOL)internetConnectionIsAvailable
-{
-    return (_internetConnectionIsWiFi || _internetConnectionIsWWAN);
-}
-
-
 #pragma mark - Custom accessors
 
 - (void)setUserId:(NSString *)userId
@@ -325,6 +319,14 @@ static OMeta *m = nil;
     } else if (_lastReplicationDate) {
         [self setUserDefault:_lastReplicationDate forKey:kDefaultsKeyLastReplicationDate];
     }
+}
+
+
+- (void)setLastReplicationDate:(NSString *)lastReplicationDate
+{
+    _lastReplicationDate = lastReplicationDate;
+    
+    [self setUserDefault:_lastReplicationDate forKey:kDefaultsKeyLastReplicationDate];
 }
 
 
@@ -376,6 +378,30 @@ static OMeta *m = nil;
 }
 
 
+- (NSString *)authToken
+{
+    if (!_authToken) {
+        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeInterval30Days];
+        _authToken = [self generateAuthToken:_authTokenExpiryDate];
+    }
+    
+    return _authToken;
+}
+
+
+- (NSString *)inferredCountryCode
+{
+    CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
+    NSString *inferredCountryCode = [networkInfo subscriberCellularProvider].isoCountryCode;
+    
+    if (!inferredCountryCode) {
+        inferredCountryCode = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
+    }
+    
+    return inferredCountryCode;
+}
+
+
 - (BOOL)userIsAllSet
 {
     return (self.userIsSignedIn && self.userIsRegistered);
@@ -407,22 +433,35 @@ static OMeta *m = nil;
 }
 
 
-- (NSString *)authToken
+- (BOOL)internetConnectionIsAvailable
 {
-    if (!_authToken) {
-        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeInterval30Days];
-        _authToken = [self generateAuthToken:_authTokenExpiryDate];
-    }
-    
-    return _authToken;
+    return (_internetConnectionIsWiFi || _internetConnectionIsWWAN);
 }
 
 
-- (void)setLastReplicationDate:(NSString *)lastReplicationDate
+- (BOOL)shouldUseEasternNameOrder
 {
-    _lastReplicationDate = lastReplicationDate;
+    return [_displayLanguage isEqualToString:kLanguageHungarian];
+}
+
+
+- (NSArray *)supportedCountryCodes
+{
+    NSMutableDictionary *codesByCountry = [[NSMutableDictionary alloc] init];
+    NSArray *countryCodes = [[OStrings stringForKey:metaSupportedCountryCodes] componentsSeparatedByString:kListSeparator];
     
-    [self setUserDefault:_lastReplicationDate forKey:kDefaultsKeyLastReplicationDate];
+    for (NSString *countryCode in countryCodes) {
+        [codesByCountry setObject:countryCode forKey:[OUtil countryFromCountryCode:countryCode]];
+    }
+    
+    NSMutableArray *supportedCountryCodesSortedByCountry = [[NSMutableArray alloc] init];
+    NSArray *sortedCountries = [codesByCountry keysSortedByValueUsingSelector:@selector(localizedCompare:)];
+    
+    for (NSString *country in sortedCountries) {
+        [supportedCountryCodesSortedByCountry addObject:[codesByCountry objectForKey:country]];
+    }
+    
+    return supportedCountryCodesSortedByCountry;
 }
 
 

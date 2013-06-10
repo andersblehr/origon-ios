@@ -11,6 +11,7 @@
 #import "OLocator.h"
 #import "OMeta.h"
 #import "OStrings.h"
+#import "OUtil.h"
 
 NSString * const kSettingKeyCountry = @"country";
 
@@ -27,14 +28,32 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
 }
 
 
-- (NSString *)decodedValueForSettingKey:(NSString *)settingKey
+- (NSString *)normalisedKeyForSettingKey:(NSString *)settingKey
 {
-    NSString *codedSettingKey = [settingKey stringByAppendingString:kCodedSettingKeySuffix];
-    NSString *codedValue = [self valueForKey:codedSettingKey];
-    NSString *decodedValue = nil;
+    NSString *normalisedKey = nil;
+    
+    if ([self valueIsCodedForSettingKey:settingKey]) {
+        normalisedKey = [settingKey stringByAppendingString:kCodedSettingKeySuffix];
+    } else {
+        normalisedKey = settingKey;
+    }
+    
+    return normalisedKey;
+}
+
+
+- (id)decodeCodedValue:(NSString *)codedValue forSettingKey:(NSString *)settingKey
+{
+    id decodedValue = codedValue;
     
     if ([settingKey isEqualToString:kSettingKeyCountry]) {
-        decodedValue = [[NSLocale currentLocale] displayNameForKey:NSLocaleCountryCode value:codedValue];
+        NSString *country = [OUtil countryFromCountryCode:codedValue];
+        
+        if ([[OMeta m].supportedCountryCodes containsObject:codedValue]) {
+            decodedValue = country;
+        } else {
+            decodedValue = [NSString stringWithFormat:@"(%@)", country];
+        }
     }
     
     return decodedValue;
@@ -49,14 +68,24 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
 }
 
 
-- (NSString *)valueForSettingKey:(NSString *)settingKey
+- (void)setValue:(id)value forSettingKey:(NSString *)settingKey
 {
-    NSString *value = nil;
+    [self setValue:value forKey:[self normalisedKeyForSettingKey:settingKey]];
+}
+
+
+- (id)valueForSettingKey:(NSString *)settingKey
+{
+    return [self valueForKey:[self normalisedKeyForSettingKey:settingKey]];
+}
+
+
+- (id)displayValueForSettingKey:(NSString *)settingKey
+{
+    id value = [self valueForSettingKey:settingKey];
     
     if ([self valueIsCodedForSettingKey:settingKey]) {
-        value = [self decodedValueForSettingKey:settingKey];
-    } else {
-        value = [self valueForKey:settingKey];
+        value = [self decodeCodedValue:value forSettingKey:settingKey];
     }
     
     return value;

@@ -8,13 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+@class OTableViewCell;
+
 @protocol OTableViewListCellDelegate <NSObject>
 
 @required
-- (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath;
+- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 
 @optional
-- (NSString *)cellDetailTextForIndexPath:(NSIndexPath *)indexPath;
-- (UIImage *)cellImageForIndexPath:(NSIndexPath *)indexPath;
+- (UITableViewCellStyle)styleForIndexPath:(NSIndexPath *)indexPath;
 
 @end

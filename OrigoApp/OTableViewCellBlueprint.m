@@ -29,7 +29,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 #pragma mark - Initialisation
 
-- (id)initForReuseIdentifier:(NSString *)reuseIdentifier
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super init];
     
@@ -50,7 +50,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
 }
 
 
-- (id)initForEntityClass:(Class)entityClass
+- (id)initWithEntityClass:(Class)entityClass
 {
     self = [super init];
     
@@ -74,7 +74,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 #pragma mark - Layout information
 
-- (BOOL)keyRepresentsMultiLineProperty:(NSString *)propertyKey
+- (BOOL)keyRepresentsMultilineProperty:(NSString *)propertyKey
 {
     return ([propertyKey isEqualToString:kPropertyKeyAddress]);
 }
@@ -98,7 +98,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
 {
     CGFloat height = 2 * kDefaultCellPadding;
     
-    OTableViewCellBlueprint *blueprint = [[OTableViewCellBlueprint alloc] initForEntityClass:entityClass];
+    OTableViewCellBlueprint *blueprint = [[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass];
     
     if (blueprint.titleKey) {
         height += [UIFont titleFieldHeight] + kDefaultCellPadding;
@@ -106,7 +106,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
     
     for (NSString *detailKey in blueprint.detailKeys) {
         if (!entity || [[OState s] actionIs:kActionInput] || [entity hasValueForKey:detailKey]) {
-            if ([blueprint keyRepresentsMultiLineProperty:detailKey]) {
+            if ([blueprint keyRepresentsMultilineProperty:detailKey]) {
                 if (cell) {
                     height += [[cell textFieldForKey:detailKey] height];
                 } else if (entity && [entity hasValueForKey:detailKey]) {

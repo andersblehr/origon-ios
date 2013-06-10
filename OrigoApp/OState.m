@@ -26,13 +26,13 @@
 
 NSString * const kViewIdAuth = @"auth";
 NSString * const kViewIdCalendar = @"calendar";
-NSString * const kViewIdMemberList = @"members";
 NSString * const kViewIdMember = @"member";
+NSString * const kViewIdMemberList = @"members";
 NSString * const kViewIdMessageList = @"messages";
-NSString * const kViewIdOrigoList = @"origos";
 NSString * const kViewIdOrigo = @"origo";
-NSString * const kViewIdSettingList = @"settings";
+NSString * const kViewIdOrigoList = @"origos";
 NSString * const kViewIdSetting = @"setting";
+NSString * const kViewIdSettingList = @"settings";
 NSString * const kViewIdTaskList = @"tasks";
 
 NSString * const kActionSetup = @"setup";
@@ -57,7 +57,7 @@ static OState *s = nil;
 
 #pragma mark - Instantiation & initialisation
 
-- (id)initForViewController:(OTableViewController *)viewController
+- (id)initWithViewController:(OTableViewController *)viewController
 {
     self = [super init];
     
@@ -72,7 +72,7 @@ static OState *s = nil;
 + (OState *)s
 {
     if (!s) {
-        s = [[self alloc] initForViewController:nil];
+        s = [[self alloc] initWithViewController:nil];
     }
     
     return s;
@@ -141,6 +141,33 @@ static OState *s = nil;
     target = target ? target : @"DEFAULT";
     
     return [NSString stringWithFormat:@"[%@][%@][%@]", action, viewId, target];
+}
+
+
+#pragma mark - Custom property accessors
+
+- (id<OTableViewListCellDelegate>)listCellDelegate
+{
+    id listCellDelegate = nil;
+
+    if ([_viewController conformsToProtocol:@protocol(OTableViewListCellDelegate)]) {
+        listCellDelegate = (id<OTableViewListCellDelegate>)_viewController;
+    }
+    
+    return listCellDelegate;
+}
+
+
+- (id<UITextFieldDelegate, UITextViewDelegate>)inputDelegate
+{
+    id inputDelegate = nil;
+    
+    if ([_viewController conformsToProtocol:@protocol(UITextFieldDelegate)] ||
+        [_viewController conformsToProtocol:@protocol(UITextViewDelegate)]) {
+        inputDelegate = (id<UITextFieldDelegate, UITextViewDelegate>)_viewController;
+    }
+    
+    return inputDelegate;
 }
 
 @end

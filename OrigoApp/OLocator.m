@@ -8,13 +8,11 @@
 
 #import "OLocator.h"
 
-#import <CoreTelephony/CTCarrier.h>
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-
 #import "OMeta.h"
 #import "OSettings.h"
 #import "OState.h"
 #import "OStrings.h"
+#import "OUtil.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OMembership.h"
@@ -44,15 +42,31 @@
 
 - (BOOL)canLocate
 {
-    BOOL canLocate = NO;
+    BOOL canLocate = [self canLocateSilently];
     
-    if ([CLLocationManager locationServicesEnabled]) {
-        CLAuthorizationStatus authorizationStatus = [CLLocationManager authorizationStatus];
-        
-        canLocate = ((authorizationStatus == kCLAuthorizationStatusNotDetermined) || (authorizationStatus == kCLAuthorizationStatusAuthorized));
+    if (!canLocate && [CLLocationManager locationServicesEnabled]) {
+        canLocate = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined);
     }
     
     return canLocate;
+}
+
+
+- (BOOL)canLocateSilently
+{
+    BOOL canLocate = NO;
+    
+    if ([CLLocationManager locationServicesEnabled]) {
+        canLocate = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized);
+    }
+    
+    return canLocate;
+}
+
+
+- (BOOL)didLocate
+{
+    return (_placemark != nil);
 }
 
 
@@ -70,24 +84,13 @@
 
 - (NSString *)countryCode
 {
-    NSString *countryCode = _placemark ? _placemark.ISOcountryCode : [OMeta m].settings.countryCode;
-    
-    if (!countryCode) {
-        CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
-        countryCode = [networkInfo subscriberCellularProvider].isoCountryCode;
-        
-        if (!countryCode) {
-            countryCode = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
-        }
-    }
-    
-    return countryCode;
+    return _placemark ? _placemark.ISOcountryCode : nil;
 }
 
 
 - (NSString *)country
 {
-    return [[NSLocale currentLocale] displayNameForKey:NSLocaleCountryCode value:self.countryCode];
+    return self.countryCode ? [OUtil countryFromCountryCode:self.countryCode] : nil;
 }
 
 

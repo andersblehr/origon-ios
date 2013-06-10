@@ -166,7 +166,7 @@ static NSInteger const kUserRow = 0;
     UIActionSheet *origoTypeSheet = [[UIActionSheet alloc] initWithTitle:sheetTitle delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     
     for (NSString *origoType in _origoTypes) {
-        [origoTypeSheet addButtonWithTitle:[OStrings stringForOrigoType:origoType]];
+        [origoTypeSheet addButtonWithTitle:[OStrings titleForOrigoType:origoType]];
     }
     
     [origoTypeSheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
@@ -296,11 +296,11 @@ static NSInteger const kUserRow = 0;
 }
 
 
-- (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
+- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    if (sectionKey == kWardSectionKey) {
+    if ([self sectionKeyForIndexPath:indexPath] == kWardSectionKey) {
         OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kViewIdOrigoList];
-        origoListViewController.data = [self dataAtRow:row inSectionWithKey:sectionKey];
+        origoListViewController.data = [self dataAtIndexPath:indexPath];
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
     } else {
@@ -325,64 +325,29 @@ static NSInteger const kUserRow = 0;
 
 #pragma mark - OTableViewListCellDelegate conformance
 
-- (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath
+- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *cellText = nil;
-    NSInteger sectionKey = [self sectionKeyForSectionNumber:indexPath.section];
-    OReplicatedEntity *entity = [self dataForIndexPath:indexPath];
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    OReplicatedEntity *entity = [self dataAtIndexPath:indexPath];
+    OMembership *membership = [entity asMembership];
     
     if (sectionKey == kUserSectionKey) {
         if (indexPath.row == kUserRow) {
-            cellText = [OStrings stringForKey:strTermMe];
+            cell.textLabel.text = [OStrings stringForKey:strTermMe];
+            cell.detailTextLabel.text = membership.member.name;
+            cell.imageView.image = [membership.member displayImage];
         } else {
-            cellText = [entity asMembership].origo.name;
+            cell.textLabel.text = membership.origo.name;
+            cell.detailTextLabel.text = [membership.origo displayAddress];
+            cell.imageView.image = [membership.origo displayImage];
         }
     } else if (sectionKey == kWardSectionKey) {
-        cellText = [entity asMember].givenName;
+        cell.textLabel.text = [entity asMember].givenName;
+        cell.imageView.image = [UIImage imageNamed:kIconFileOrigo];
     } else if (sectionKey == kOrigoSectionKey) {
-        cellText = [entity asMembership].origo.name;
+        cell.textLabel.text = membership.origo.name;
+        cell.imageView.image = [membership.origo displayImage];
     }
-    
-    return cellText;
-}
-
-
-- (NSString *)cellDetailTextForIndexPath:(NSIndexPath *)indexPath
-{
-    NSString *cellDetails = nil;
-    OReplicatedEntity *entity = [self dataForIndexPath:indexPath];
-    
-    if ([self sectionKeyForSectionNumber:indexPath.section] == kUserSectionKey) {
-        if (indexPath.row == kUserRow) {
-            cellDetails = [entity asMembership].member.name;
-        } else {
-            cellDetails = [[entity asMembership].origo displayAddress];
-        }
-    }
-    
-    return cellDetails;
-}
-
-
-- (UIImage *)cellImageForIndexPath:(NSIndexPath *)indexPath
-{
-    UIImage *cellImage = nil;
-    NSInteger sectionKey = [self sectionKeyForSectionNumber:indexPath.section];
-    OReplicatedEntity *entity = [self dataForIndexPath:indexPath];
-    
-    if (sectionKey == kUserSectionKey) {
-        if (indexPath.row == kUserRow) {
-            cellImage = [[entity asMembership].member displayImage];
-        } else {
-            cellImage = [[entity asMembership].origo displayImage];
-        }
-    } else if (sectionKey == kWardSectionKey) {
-        cellImage = [UIImage imageNamed:kIconFileOrigo];
-    } else if (sectionKey == kOrigoSectionKey) {
-        cellImage = [[entity asMembership].origo displayImage];
-    }
-    
-    return cellImage;
 }
 
 

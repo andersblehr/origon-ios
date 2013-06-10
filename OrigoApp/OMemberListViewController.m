@@ -194,8 +194,10 @@ static NSInteger const kHousemateSheetTag = 0;
 }
 
 
-- (void)didSelectRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
+- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    
     if (sectionKey == kOrigoSectionKey) {
         [self performSegueWithIdentifier:kSegueToOrigoView sender:self];
     } else if ((sectionKey == kContactSectionKey) || (sectionKey == kMemberSectionKey)) {
@@ -206,23 +208,13 @@ static NSInteger const kHousemateSheetTag = 0;
 
 #pragma mark - OTableViewListCellDelegate conformance
 
-- (NSString *)cellTextForIndexPath:(NSIndexPath *)indexPath
+- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    OMember *member = [[self dataForIndexPath:indexPath] asMembership].member;
+    OMember *member = [[self dataAtIndexPath:indexPath] asMembership].member;
     
-    return [member isMinor] ? [member displayNameAndAge] : member.name;
-}
-
-
-- (NSString *)cellDetailTextForIndexPath:(NSIndexPath *)indexPath
-{
-    return [[[self dataForIndexPath:indexPath] asMembership].member displayContactDetails];
-}
-
-
-- (UIImage *)cellImageForIndexPath:(NSIndexPath *)indexPath
-{
-    return [[[self dataForIndexPath:indexPath] asMembership].member displayImage];
+    cell.textLabel.text = [member isMinor] ? [member displayNameAndAge] : member.name;
+    cell.detailTextLabel.text = [member displayContactDetails];
+    cell.imageView.image = [member displayImage];
 }
 
 
@@ -233,7 +225,7 @@ static NSInteger const kHousemateSheetTag = 0;
     BOOL canDeleteRow = NO;
     
     if (indexPath.section != kOrigoSectionKey) {
-        OMembership *membershipForRow = [self dataForIndexPath:indexPath];
+        OMembership *membershipForRow = [self dataAtIndexPath:indexPath];
         canDeleteRow = ([_origo userIsAdmin] && ![membershipForRow.member isUser]);
     }
     

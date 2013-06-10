@@ -12,6 +12,8 @@
 
 #import "Reachability.h"
 
+extern NSString * const kBundleId;
+
 extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;
 
@@ -20,7 +22,6 @@ extern NSUInteger const kAgeThresholdInSchool;
 extern NSUInteger const kAgeThresholdTeen;
 extern NSUInteger const kAgeThresholdMajority;
 
-extern NSString * const kBundleId;
 extern NSString * const kLanguageHungarian;
 
 extern NSString * const kIconFileOrigo;
@@ -30,6 +31,7 @@ extern NSString * const kIconFileWoman;
 extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
+extern NSString * const kIconFileLocationArrow;
 
 extern NSString * const kDatePropertyPrefix;
 
@@ -77,35 +79,32 @@ extern NSString * const kDefaultsKeyStringDate;
 
 @property (strong, nonatomic) NSString *userId;
 @property (strong, nonatomic) NSString *userEmail;
+@property (strong, nonatomic) NSString *lastReplicationDate;
+
 @property (strong, nonatomic, readonly) OMember *user;
 @property (strong, nonatomic, readonly) OEntityReplicator *replicator;
 @property (strong, nonatomic, readonly) OLocator *locator;
 @property (strong, nonatomic, readonly) OSettings *settings;
-
-@property (nonatomic, readonly) BOOL userIsAllSet;
-@property (nonatomic, readonly) BOOL userIsSignedIn;
-@property (nonatomic, readonly) BOOL userIsRegistered;
-
 @property (strong, nonatomic, readonly) NSString *deviceId;
 @property (strong, nonatomic, readonly) NSString *authToken;
 @property (strong, nonatomic, readonly) NSString *appVersion;
 @property (strong, nonatomic, readonly) NSString *displayLanguage;
-@property (strong, nonatomic) NSString *lastReplicationDate;
+@property (strong, nonatomic, readonly) NSString *inferredCountryCode;
 
-@property (nonatomic, readonly) BOOL deviceIs_iPad;
-@property (nonatomic, readonly) BOOL deviceIs_iPod;
-@property (nonatomic, readonly) BOOL deviceIs_iPhone;
-@property (nonatomic, readonly) BOOL deviceIsSimulator;
-
+@property (nonatomic, readonly) BOOL userIsAllSet;
+@property (nonatomic, readonly) BOOL userIsSignedIn;
+@property (nonatomic, readonly) BOOL userIsRegistered;
+@property (nonatomic, readonly) BOOL internetConnectionIsAvailable;
 @property (nonatomic, readonly) BOOL internetConnectionIsWiFi;
 @property (nonatomic, readonly) BOOL internetConnectionIsWWAN;
+@property (nonatomic, readonly) BOOL shouldUseEasternNameOrder;
+@property (nonatomic, readonly) BOOL deviceIsSimulator;
 
+@property (weak, nonatomic, readonly) NSArray *supportedCountryCodes;
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 @property (strong, nonatomic, readonly) UIDatePicker *sharedDatePicker;
 
 + (OMeta *)m;
-
-- (BOOL)internetConnectionIsAvailable;
 
 - (void)userDidSignIn;
 - (void)userDidSignOut;

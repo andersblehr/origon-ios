@@ -13,6 +13,7 @@
 #import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
+#import "OState.h"
 #import "OStrings.h"
 
 static NSString * const kTimeZoneNameUTC = @"UTC";
@@ -134,6 +135,8 @@ static void uncaughtExceptionHandler(NSException *exception)
             [[OMeta m] setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
         }
     }
+    
+    _didEnterBackground = YES;
 }
 
 
@@ -147,6 +150,14 @@ static void uncaughtExceptionHandler(NSException *exception)
 {
     if ([OMeta m].userIsSignedIn) {
         [[OMeta m].replicator replicate];
+    }
+    
+    if (_didEnterBackground) {
+        if ([[OState s].viewController respondsToSelector:@selector(didResumeFromBackground)]) {
+            [[OState s].viewController didResumeFromBackground];
+        }
+        
+        _didEnterBackground = NO;
     }
 }
 

@@ -8,6 +8,8 @@
 
 #import "OTableViewController.h"
 
-@interface OSettingListViewController : OTableViewController
+#import "OTableViewListCellDelegate.h"
+
+@interface OSettingListViewController : OTableViewController<OTableViewListCellDelegate>
 
 @end
