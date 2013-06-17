@@ -93,9 +93,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     [self.detailCell writeEntity];
     
     if ([self actionIs:kActionRegister]) {
-        _member.givenName = [OUtil givenNameFromFullName:_member.name];
-        _member.gender = _gender;
-        
         if ([self targetIs:kTargetUser] && ![_origo hasValueForKey:kPropertyKeyAddress]) {
             [self presentModalViewWithIdentifier:kViewIdOrigo data:_membership dismisser:self.dismisser];
         } else {
