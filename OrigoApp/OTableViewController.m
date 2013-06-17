@@ -136,6 +136,12 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 #pragma mark - Selector implementations
 
+- (void)moveToNextInputField
+{
+    [[_detailCell nextInputField] becomeFirstResponder];
+}
+
+
 - (void)didCancelEditing
 {
     if ([self actionIs:kActionRegister]) {
@@ -784,10 +790,8 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    id nextInputField = [_detailCell nextInputField];
-    
-    if (nextInputField) {
-        [nextInputField becomeFirstResponder];
+    if ([_detailCell nextInputField]) {
+        [self moveToNextInputField];
     } else {
         [self performSelector:@selector(didFinishEditing)];
     }
