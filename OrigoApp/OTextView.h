@@ -32,6 +32,10 @@ extern NSInteger const kTextViewMaximumLines;
 + (CGFloat)heightWithText:(NSString *)text;
 - (CGFloat)height;
 
-- (NSString *)finalText;
+- (BOOL)isDateField;
+- (BOOL)hasValue;
+- (BOOL)hasValidValueForKey:(NSString *)key;
+- (id)objectValue;
+- (NSString *)textValue;
 
 @end

@@ -22,7 +22,7 @@ extern NSString * const kSeparatorHash;
 - (NSString *)hashUsingSHA1;
 - (NSString *)seasonWith:(NSString *)string;
 
-- (NSString *)removeSuperfluousWhitespace;
+- (NSString *)removeRedundantWhitespace;
 - (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;
 
 - (BOOL)containsString:(NSString *)string;

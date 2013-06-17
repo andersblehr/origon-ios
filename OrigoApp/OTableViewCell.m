@@ -14,6 +14,7 @@
 #import "UIFont+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 
+#import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OTextField.h"
@@ -252,9 +253,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Text field & text view access
 
-- (BOOL)isTitleKey:(NSString *)key
+- (id)textFieldForKey:(NSString *)key
 {
-    return [key isEqualToString:_blueprint.titleKey];
+    return [_views objectForKey:[key stringByAppendingString:kViewKeySuffixTextField]];
 }
 
 
@@ -264,16 +265,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (id)textFieldForKey:(NSString *)key
-{
-    return [_views objectForKey:[key stringByAppendingString:kViewKeySuffixTextField]];
-}
-
-
-- (id)nextInputFieldFromTextField:(id)textField
+- (id)nextInputField
 {
     NSArray *elementKeys = _blueprint.allKeys;
-    NSInteger indexOfTextField = textField ? [elementKeys indexOfObject:[textField key]] : -1;
+    NSInteger indexOfTextField = _inputField ? [elementKeys indexOfObject:[_inputField key]] : -1;
     NSString *inputFieldKey = nil;
     UIView *inputField = nil;
     
@@ -291,6 +286,26 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
     
     return inputFieldIsEditable ? inputField : nil;
+}
+
+
+#pragma mark - Meta & validation
+
+- (BOOL)isTitleKey:(NSString *)key
+{
+    return [key isEqualToString:_blueprint.titleKey];
+}
+
+
+- (BOOL)hasValueForKey:(NSString *)key
+{
+    return [[self textFieldForKey:key] hasValue];
+}
+
+
+- (BOOL)hasValidValueForKey:(NSString *)key
+{
+    return [[self textFieldForKey:key] hasValidValueForKey:key];
 }
 
 
@@ -312,7 +327,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)toggleEditMode
 {
-    [self.localState toggleEditState];
+    if (_inputField) {
+        _inputField = nil;
+    }
     
     self.editing = ([self.localState actionIs:kActionEdit] || _editable);
 }
@@ -340,9 +357,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)shakeCellShouldVibrate:(BOOL)shouldVibrate
+- (void)shakeCellVibrate:(BOOL)vibrate
 {
-    if (shouldVibrate) {
+    if (vibrate) {
         AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
     }
     
@@ -360,6 +377,108 @@ static CGFloat const kShakeRepeatCount = 3.f;
             self.transform = CGAffineTransformIdentity;
         } completion:NULL];
     }];
+}
+
+
+#pragma mark - Writing input to entity
+
+- (void)readEntity
+{
+    if ([self isListCell]) {
+        [_listCellDelegate populateListCell:self atIndexPath:_indexPath];
+    } else {
+        for (NSString *propertyKey in _blueprint.allKeys) {
+            id value = [_entity valueForKey:propertyKey];
+            
+            if (value) {
+                if ([value isKindOfClass:NSString.class]) {
+                    [[self textFieldForKey:propertyKey] setText:value];
+                } else if ([value isKindOfClass:NSDate.class]) {
+                    [[self textFieldForKey:propertyKey] setDate:value];
+                }
+            }
+        }
+        
+        [self redrawIfNeeded];
+    }
+}
+
+
+- (void)writeEntity
+{
+    if (!_entity) {
+        _entity = [_inputDelegate targetEntity];
+    }
+    
+    for (NSString *propertyKey in _blueprint.allKeys) {
+        id textField = [self textFieldForKey:propertyKey];
+        
+        if ([textField hasValue]) {
+            if ([textField isDateField]) {
+                [_entity setValue:[textField date] forKey:propertyKey];
+            } else {
+                [_entity setValue:[textField textValue] forKey:propertyKey];
+            }
+        }
+    }
+    
+    if ([_inputDelegate respondsToSelector:@selector(additionalInputValues)]) {
+        NSDictionary *additionalValues = [_inputDelegate additionalInputValues];
+        
+        for (NSString *key in [additionalValues allKeys]) {
+            [_entity setValue:additionalValues[key] forKey:key];
+        }
+    }
+}
+
+
+#pragma mark - Custom accessors
+
+- (OState *)localState
+{
+    if (!_localState) {
+        _localState = ((OTableViewController *)((UITableView *)self.superview).delegate).state;
+    }
+    
+    return _localState ? _localState : [OState s];
+}
+
+
+- (void)setInputField:(id)inputField
+{
+    if (_inputField && [_inputField hasEmphasis]) {
+        BOOL shouldDeemphasise = YES;
+        
+        if ([_inputDelegate respondsToSelector:@selector(textFieldShouldDeemphasiseOnEndEdit)]) {
+            shouldDeemphasise = [_inputDelegate textFieldShouldDeemphasiseOnEndEdit];
+        }
+        
+        if (shouldDeemphasise) {
+            [_inputField setHasEmphasis:NO];
+        }
+    }
+
+    _inputField = inputField;
+    
+    [_inputField setHasEmphasis:YES];
+}
+
+
+- (void)setEditable:(BOOL)editable
+{
+    _editable = editable;
+    
+    self.editing = editable;
+}
+
+
+- (void)setChecked:(BOOL)checked
+{
+    if (checked) {
+        self.accessoryType = UITableViewCellAccessoryCheckmark;
+    } else {
+        self.accessoryType = UITableViewCellAccessoryNone;
+    }
 }
 
 
@@ -433,60 +552,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Custom accessors
-
-- (OState *)localState
-{
-    if (!_localState) {
-        _localState = ((OTableViewController *)((UITableView *)self.superview).delegate).state;
-    }
-    
-    return _localState ? _localState : [OState s];
-}
-
-
-- (void)setEditable:(BOOL)editable
-{
-    _editable = editable;
-    
-    self.editing = editable;
-}
-
-
-- (void)setChecked:(BOOL)checked
-{
-    if (checked) {
-        self.accessoryType = UITableViewCellAccessoryCheckmark;
-    } else {
-        self.accessoryType = UITableViewCellAccessoryNone;
-    }
-}
-
-
 #pragma mark - OEntityObservingDelegate conformance
 
-- (void)reloadEntity
+- (void)entityDidChange
 {
-    if ([self isListCell]) {
-        [_listCellDelegate populateListCell:self atIndexPath:_indexPath];
-    } else {
-        for (NSString *detailKey in _blueprint.detailKeys) {
-            id value = [_entity valueForKey:detailKey];
-            
-            if (value) {
-                if ([value isKindOfClass:NSString.class]) {
-                    [[self textFieldForKey:detailKey] setText:value];
-                } else if ([value isKindOfClass:NSDate.class]) {
-                    [[self textFieldForKey:detailKey] setDate:value];
-                }
-            }
-        }
-        
-        [self redrawIfNeeded];
-    }
+    [self readEntity];
     
     if (_observer) {
-        [_observer reloadEntity];
+        [_observer entityDidChange];
     }
 }
 

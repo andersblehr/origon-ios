@@ -20,7 +20,7 @@
 
 static NSInteger const kValueListSectionKey = 0;
 
-static NSString * const kCustomValue = @"unknown";
+static NSString * const kCustomValue = @"custom";
 
 
 @implementation OSettingViewController
@@ -38,7 +38,7 @@ static NSString * const kCustomValue = @"unknown";
 - (void)viewWillDisappear:(BOOL)animated
 {
     if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
-        [self.observer reloadEntity];
+        [self.observer entityDidChange];
     }
     
     [super viewWillDisappear:animated];
@@ -83,9 +83,9 @@ static NSString * const kCustomValue = @"unknown";
                 if (![_valueList containsObject:[OMeta m].locator.countryCode]) {
                     [_valueList addObject:[OMeta m].locator.countryCode];
                 }
-            } else if ([[OMeta m].locator canLocateSilently]) {
-                [[OMeta m].locator locate];
-            } else if (![_valueList containsObject:kCustomValue]) {
+            } else if ([[OMeta m].locator isAuthorised]) {
+                [[OMeta m].locator locateBlocking:NO];
+            } else {
                 [_valueList addObject:kCustomValue];
             }
         }
@@ -143,7 +143,7 @@ static NSString * const kCustomValue = @"unknown";
             if ([[OMeta m].locator didLocate]) {
                 [self locatorDidLocate];
             } else {
-                [[OMeta m].locator locate];
+                [[OMeta m].locator locateBlocking:NO];
             }
         }
     } else {
@@ -173,7 +173,7 @@ static NSString * const kCustomValue = @"unknown";
         NSString *country = [OUtil countryFromCountryCode:countryCode];
         
         if (country) {
-            if ([[OMeta m].supportedCountryCodes containsObject:countryCode]) {
+            if ([OUtil isSupportedCountryCode:countryCode]) {
                 cell.textLabel.text = country;
             } else {
                 _listContainsParenthesisedCountries = YES;

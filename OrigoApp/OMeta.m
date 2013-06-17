@@ -49,8 +49,6 @@ NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
 NSString * const kIconFileInfant = @"76-baby_black.png";
 NSString * const kIconFileLocationArrow = @"193-location-arrow.png";
 
-NSString * const kDatePropertyPrefix = @"date";
-
 NSString * const kInputKeyActivate = @"activate";
 NSString * const kInputKeyActivationCode = @"activationCode";
 NSString * const kInputKeyAuthEmail = @"authEmail";
@@ -65,8 +63,11 @@ NSString * const kJSONKeyPasswordHash = @"passwordHash";
 NSString * const kPropertyKeyAddress = @"address";
 NSString * const kPropertyKeyCountry = @"country";
 NSString * const kPropertyKeyDateOfBirth = @"dateOfBirth";
+NSString * const kPropertyKeyDescriptionText = @"descriptionText";
 NSString * const kPropertyKeyEmail = @"email";
 NSString * const kPropertyKeyEntityId = @"entityId";
+NSString * const kPropertyKeyGender = @"gender";
+NSString * const kPropertyKeyGivenName = @"givenName";
 NSString * const kPropertyKeyHashCode = @"hashCode";
 NSString * const kPropertyKeyIsExpired = @"isExpired";
 NSString * const kPropertyKeyIsAwaitingDeletion = @"isAwaitingDeletion";

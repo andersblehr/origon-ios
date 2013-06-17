@@ -8,17 +8,16 @@
 
 #import "OTableViewController.h"
 
+#import "OTableViewInputDelegate.h"
+
 @class OTextField, OTextView;
 @class OMember, OMembership, OOrigo;
 
-@interface OOrigoViewController : OTableViewController {
+@interface OOrigoViewController : OTableViewController<OTableViewInputDelegate> {
 @private
     OMembership *_membership;
     OMember *_member;
     OOrigo *_origo;
-    
-    OTextView *_addressView;
-    OTextField *_telephoneField;
 }
 
 @end

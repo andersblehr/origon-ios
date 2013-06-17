@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "OEntityObservingDelegate.h"
+#import "OTableViewInputDelegate.h"
 #import "OTableViewListCellDelegate.h"
 
 extern NSString * const kReuseIdentifierList;
@@ -33,11 +34,12 @@ extern CGFloat const kCellAnimationDuration;
     NSIndexPath *_indexPath;
     
     id<OTableViewListCellDelegate> _listCellDelegate;
-    id<UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
+    id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
 
 @property (strong, nonatomic, readonly) OState *localState;
 @property (strong, nonatomic) OReplicatedEntity *entity;
+@property (strong, nonatomic) id inputField;
 
 @property (nonatomic, readonly) BOOL selectable;
 @property (nonatomic) BOOL editable;
@@ -48,14 +50,20 @@ extern CGFloat const kCellAnimationDuration;
 - (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath;
 
-- (BOOL)isTitleKey:(NSString *)key;
-- (id)labelForKey:(NSString *)key;
 - (id)textFieldForKey:(NSString *)key;
-- (id)nextInputFieldFromTextField:(id)textField;
+- (id)labelForKey:(NSString *)key;
+- (id)nextInputField;
+
+- (BOOL)isTitleKey:(NSString *)key;
+- (BOOL)hasValueForKey:(NSString *)key;
+- (BOOL)hasValidValueForKey:(NSString *)key;
 
 - (void)willAppearTrailing:(BOOL)trailing;
 - (void)toggleEditMode;
 - (void)redrawIfNeeded;
-- (void)shakeCellShouldVibrate:(BOOL)shouldVibrate;
+- (void)shakeCellVibrate:(BOOL)vibrate;
+
+- (void)readEntity;
+- (void)writeEntity;
 
 @end

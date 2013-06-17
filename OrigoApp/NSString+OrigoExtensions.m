@@ -111,7 +111,7 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 
 #pragma mark - String operations
 
-- (NSString *)removeSuperfluousWhitespace
+- (NSString *)removeRedundantWhitespace
 {
     NSArray *whiteSpaceCharacters = @[@" ", @"\n"];
     NSArray *lines = [self lines];

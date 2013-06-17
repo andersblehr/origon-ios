@@ -21,8 +21,13 @@
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
+
 - (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+
+- (BOOL)inputIsValid;
+- (void)processInput;
+
 - (void)didResumeFromBackground;
 
 @end

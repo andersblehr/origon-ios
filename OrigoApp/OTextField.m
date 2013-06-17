@@ -33,8 +33,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 @implementation OTextField
 
-@synthesize date = _date;
-
 
 #pragma mark - Auxiliary methods
 
@@ -76,7 +74,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (void)synchroniseInputView
 {
-    if ([self.inputView isKindOfClass:UIDatePicker.class]) {
+    if ([self isDateField]) {
         id value = [_cell.entity valueForKey:_key];
         
         if (value) {
@@ -92,10 +90,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (void)didPickDate
 {
-    self.date = ((UIDatePicker *)self.inputView).date;
-    self.text = [_date localisedDateString];
-    
     _didPickDate = YES;
+    
+    self.text = [self.date localisedDateString];
 }
 
 
@@ -107,11 +104,12 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     
     if (self) {
         _cell = cell;
-        _isTitle = [cell isTitleKey:key];
+        _isTitle = [_cell isTitleKey:key];
         
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.backgroundColor = [UIColor clearColor];
+        self.contentMode = UIViewContentModeRedraw;
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         self.delegate = delegate;
         self.enabled = [[OState s] actionIs:kActionInput];
@@ -133,83 +131,61 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-#pragma mark - Input validation
+#pragma mark - Input access & validation
 
-- (BOOL)holdsValidEmail
+- (BOOL)isDateField
 {
-    BOOL isValid = [OUtil stringHoldsValidEmailAddress:[self finalText]];
-    
-    if (!isValid) {
-        [self becomeFirstResponder];
-    }
-    
-    return isValid;
+    return [self.inputView isKindOfClass:UIDatePicker.class];
 }
 
 
-- (BOOL)holdsValidPassword
+- (BOOL)hasValue
 {
-    NSString *password = [self finalText];
-    
-    BOOL isValid = (password && ([password length] >= kMinimumPassordLength));
-    
-    if (!isValid) {
-        [self becomeFirstResponder];
-    }
-    
-    return isValid;
+    return ([self objectValue] != nil);
 }
 
 
-- (BOOL)holdsValidName
+- (BOOL)hasValidValueForKey:(NSString *)key
 {
-    BOOL isValid = [OUtil stringHoldsValidName:[self finalText]];
+    BOOL displaysValidValue = NO;
     
-    if (!isValid) {
+    if ([key isEqualToString:kPropertyKeyEmail] || [key isEqualToString:kInputKeyAuthEmail]) {
+        displaysValidValue = [OUtil stringHoldsValidEmailAddress:[self textValue]];
+    } else if ([key isEqualToString:kInputKeyPassword]) {
+        displaysValidValue = ([[self textValue] length] >= kMinimumPassordLength);
+    } else if ([key isEqualToString:kPropertyKeyName]) {
+        displaysValidValue = [OUtil stringHoldsValidName:[self textValue]];
+    } else if ([key isEqualToString:kPropertyKeyMobilePhone]) {
+        displaysValidValue = ([[self textValue] length] >= kMinimumPhoneNumberLength);
+    } else if ([self isDateField]) {
+        displaysValidValue = ([self textValue] != nil);
+    }
+    
+    if (!displaysValidValue) {
         [self becomeFirstResponder];
     }
     
-    return isValid;
+    return displaysValidValue;
 }
 
 
-- (BOOL)holdsValidPhoneNumber
+- (id)objectValue
 {
-    NSString *mobileNumber = [self finalText];
-    
-    BOOL isValid = (mobileNumber && ([mobileNumber length] >= kMinimumPhoneNumberLength));
-    
-    if (!isValid) {
-        [self becomeFirstResponder];
-    }
-    
-    return isValid;
+    return [self isDateField] ? [self date] : [self textValue];
 }
 
 
-- (BOOL)holdsValidDate
+- (NSString *)textValue
 {
-    BOOL isValid = ([self.text length] > 0);
+    NSString *stringValue = [self.text removeRedundantWhitespace];
     
-    if (!isValid) {
-        [self becomeFirstResponder];
+    if ([stringValue length] == 0) {
+        stringValue = nil;
     }
     
-    return isValid;
-}
-
-
-#pragma mark - Text clean-up
-
-- (NSString *)finalText
-{
-    self.text = [self.text removeSuperfluousWhitespace];
+    self.text = stringValue;
     
-    if ([self.text length] == 0) {
-        self.text = nil;
-    }
-    
-    return self.text;
+    return stringValue;
 }
 
 
@@ -217,23 +193,25 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 - (NSDate *)date
 {
-    if ([self.inputView isKindOfClass:UIDatePicker.class]) {
+    NSDate *date = nil;
+    
+    if ([self isDateField]) {
         if (_didPickDate) {
-            _date = ((UIDatePicker *)self.inputView).date;
+            date = ((UIDatePicker *)self.inputView).date;
         } else {
-            _date = [_cell.entity valueForKey:_key];
+            date = [_cell.entity valueForKey:_key];
         }
     }
     
-    return _date;
+    return date;
 }
 
 
-- (void)setDate:(NSDate *)dateValue
+- (void)setDate:(NSDate *)date
 {
-    _date = dateValue;
+    ((UIDatePicker *)self.inputView).date = date;
     
-    self.text = [dateValue localisedDateString];
+    self.text = [date localisedDateString];
 }
 
 
@@ -249,7 +227,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
             [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
         }
         
-        if ([self.inputView isKindOfClass:UIDatePicker.class] && !_didPickDate) {
+        if ([self isDateField] && !_didPickDate) {
             id value = [_cell.entity valueForKey:_key];
             
             if (value) {
@@ -259,7 +237,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
             }
         }
     } else {
-        self.text = [self finalText];
+        self.text = [self textValue];
         self.backgroundColor = [UIColor clearColor];
         
         if (_isTitle) {
@@ -327,7 +305,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 {
     BOOL canPerformAction = [super canPerformAction:action withSender:sender];
     
-    if ([_key hasPrefix:kDatePropertyPrefix]) {
+    if ([self isDateField]) {
         canPerformAction = canPerformAction && (action != @selector(paste:));
     }
     

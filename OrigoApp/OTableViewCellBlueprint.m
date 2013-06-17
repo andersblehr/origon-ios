@@ -17,7 +17,7 @@
 #import "OTextView.h"
 
 #import "OMember.h"
-#import "OOrigo.h"
+#import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 
 CGFloat const kDefaultTableViewCellHeight = 45.f;
@@ -63,8 +63,14 @@ CGFloat const kMinimumCellPadding = 0.1f;
             _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
         } else if (entityClass == OOrigo.class) {
             _hasPhoto = NO;
-            _titleKey = nil;
-            _detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
+            
+            if ([[OState s] targetIs:kOrigoTypeResidence]) {
+                _titleKey = nil;
+                _detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
+            } else {
+                _titleKey = kPropertyKeyName;
+                _detailKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
+            }
         }
     }
     
@@ -76,7 +82,12 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 - (BOOL)keyRepresentsMultilineProperty:(NSString *)propertyKey
 {
-    return ([propertyKey isEqualToString:kPropertyKeyAddress]);
+    BOOL isMultiline = NO;
+    
+    isMultiline = isMultiline || [propertyKey isEqualToString:kPropertyKeyAddress];
+    isMultiline = isMultiline || [propertyKey isEqualToString:kPropertyKeyDescriptionText];
+    
+    return isMultiline;
 }
 
 

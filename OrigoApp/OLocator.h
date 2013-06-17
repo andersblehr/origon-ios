@@ -16,17 +16,21 @@
 @private
     CLLocationManager *_locationManager;
     CLPlacemark *_placemark;
+    UIAlertView *_blockingAlert;
+    
+    BOOL _blocking;
+    BOOL _awaitingAuthorisation;
+    BOOL _awaitingLocation;
+    
+    id<OLocatorDelegate> _delegate;
 }
 
 @property (weak, nonatomic, readonly) NSString *countryCode;
-@property (weak, nonatomic, readonly) NSString *country;
 
-@property (weak, nonatomic) id<OLocatorDelegate> delegate;
-
+- (BOOL)isAuthorised;
 - (BOOL)canLocate;
-- (BOOL)canLocateSilently;
 - (BOOL)didLocate;
 
-- (void)locate;
+- (void)locateBlocking:(BOOL)blocking;
 
 @end

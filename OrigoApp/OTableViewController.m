@@ -89,21 +89,19 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
-- (void)emphasiseInputField:(id)inputField
+- (void)inputFieldDidBeginEditing:(id)inputField
 {
     if ([self actionIs:kActionDisplay]) {
         [self toggleEditMode];
     }
+
+    _detailCell.inputField = inputField;
     
-    if ([_detailCell nextInputFieldFromTextField:inputField]) {
+    if ([_detailCell nextInputField]) {
         self.navigationItem.rightBarButtonItem = _nextButton;
     } else {
         self.navigationItem.rightBarButtonItem = _doneButton;
     }
-    
-    _emphasisedField = inputField;
-    
-    [inputField setHasEmphasis:YES];
 }
 
 
@@ -138,12 +136,31 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 #pragma mark - Selector implementations
 
-- (void)moveToNextInputField
+- (void)didCancelEditing
 {
-    UIView *nextInputField = [_detailCell nextInputFieldFromTextField:_emphasisedField];
-    
-    if (nextInputField) {
-        [nextInputField becomeFirstResponder];
+    if ([self actionIs:kActionRegister]) {
+        [_dismisser dismissModalViewControllerNeedsReloadData:NO];
+    } else if ([self actionIs:kActionEdit]) {
+        [_detailCell readEntity];
+        [self toggleEditMode];
+    }
+}
+
+
+- (void)didFinishEditing
+{
+    if ([self isListView]) {
+        [_dismisser dismissModalViewController];
+    } else {
+        if ([_instance inputIsValid]) {
+            if ([self actionIs:kActionRegister]) {
+                [self.view endEditing:YES];
+            }
+            
+            [_instance processInput];
+        } else {
+            [_detailCell shakeCellVibrate:NO];
+        }
     }
 }
 
@@ -330,6 +347,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)toggleEditMode
 {
+    [self.state toggleEditState];
     [_detailCell toggleEditMode];
     
     static UIBarButtonItem *rightButton = nil;
@@ -354,7 +372,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
         
         if ([[OMeta m].replicator needsReplication]) {
             [[OMeta m].replicator replicate];
-            [self.observer reloadEntity];
+            [self.observer entityDidChange];
         }
     }
     
@@ -418,7 +436,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)resumeFirstResponder
 {
-    [_emphasisedField becomeFirstResponder];
+    [_detailCell.inputField becomeFirstResponder];
 }
 
 
@@ -458,7 +476,6 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     
     _state = [[OState alloc] initWithViewController:self];
     _canEdit = NO;
-    _shouldDemphasiseOnEndEdit = YES;
     _cancelRegistrationImpliesSignOut = NO;
     
     [self initialiseInstance];
@@ -512,7 +529,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     } else if (![OMeta m].userIsSignedIn) {
         [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:self];
     } else if ([self actionIs:kActionRegister]) {
-        [[self.detailCell nextInputFieldFromTextField:nil] becomeFirstResponder];
+        [[self.detailCell nextInputField] becomeFirstResponder];
     } else if (self.detailCell) {
         self.detailCell.editable = self.canEdit;
     }
@@ -554,6 +571,12 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
+- (NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskPortrait;
+}
+
+
 #pragma mark - Custom property accessors
 
 - (UIActivityIndicatorView *)activityIndicator
@@ -568,8 +591,6 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)setTarget:(id)target
 {
-    //_target = target;
-    
     if ([target isKindOfClass:OReplicatedEntity.class]) {
         _target = [target asTarget];
     } else if ([target isKindOfClass:NSString.class]) {
@@ -757,14 +778,16 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    [self emphasiseInputField:textField];
+    [self inputFieldDidBeginEditing:textField];
 }
 
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    if ([_detailCell nextInputFieldFromTextField:textField]) {
-        [self moveToNextInputField];
+    id nextInputField = [_detailCell nextInputField];
+    
+    if (nextInputField) {
+        [nextInputField becomeFirstResponder];
     } else {
         [self performSelector:@selector(didFinishEditing)];
     }
@@ -773,19 +796,11 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
-- (void)textFieldDidEndEditing:(OTextField *)textField
-{
-    if (_shouldDemphasiseOnEndEdit) {
-        textField.hasEmphasis = NO;
-    }
-}
-
-
 #pragma mark - UITextViewDelegate conformance
 
 - (void)textViewDidBeginEditing:(OTextView *)textView
 {
-    [self emphasiseInputField:textView];
+    [self inputFieldDidBeginEditing:textView];
 }
 
 
@@ -795,23 +810,27 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
-- (void)textViewDidEndEditing:(OTextView *)textView
-{
-    if (_shouldDemphasiseOnEndEdit) {
-        textView.hasEmphasis = NO;
-    }
-}
-
-
 #pragma mark - OModalViewControllerDelegate conformance
 
-- (void)dismissModalViewWithIdentitifier:(NSString *)identitifier
+- (void)dismissModalViewController
 {
-    [self dismissModalViewWithIdentitifier:identitifier needsReloadData:YES];
+    [self dismissModalViewControllerWithIdentifier:_viewId];
 }
 
 
-- (void)dismissModalViewWithIdentitifier:(NSString *)identitifier needsReloadData:(BOOL)needsReloadData
+- (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier
+{
+    [self dismissModalViewControllerWithIdentifier:identifier needsReloadData:YES];
+}
+
+
+- (void)dismissModalViewControllerNeedsReloadData:(BOOL)needsReloadData
+{
+    [self dismissModalViewControllerWithIdentifier:_viewId needsReloadData:needsReloadData];
+}
+
+
+- (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier needsReloadData:(BOOL)needsReloadData
 {
     _needsReloadSections = [OMeta m].userIsSignedIn ? needsReloadData : NO;
     

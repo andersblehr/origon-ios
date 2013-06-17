@@ -8,12 +8,13 @@
 
 #import "OTableViewController.h"
 
+#import "OTableViewInputDelegate.h"
 #import "OTableViewListCellDelegate.h"
 
 @class OTextField;
 @class OMember, OMembership, OOrigo;
 
-@interface OMemberViewController : OTableViewController<UIActionSheetDelegate, UIAlertViewDelegate, OTableViewListCellDelegate> {
+@interface OMemberViewController : OTableViewController<OTableViewInputDelegate, OTableViewListCellDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
     OMembership *_membership;
     OMember *_member;

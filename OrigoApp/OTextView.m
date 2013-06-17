@@ -151,11 +151,49 @@ static CGFloat const kDetailTextWidth = 210.f;
 }
 
 
-#pragma mark - Final text cleanup
+#pragma mark - Input access & validation
 
-- (NSString *)finalText
+- (BOOL)isDateField
 {
-    return [self.text removeSuperfluousWhitespace];
+    return NO;
+}
+
+
+- (BOOL)hasValue
+{
+    return ([self textValue] != nil);
+}
+
+
+- (BOOL)hasValidValueForKey:(NSString *)key
+{
+    BOOL hasValidValue = ([self textValue] != nil);
+    
+    if (!hasValidValue) {
+        [self becomeFirstResponder];
+    }
+    
+    return hasValidValue;
+}
+
+
+- (id)objectValue
+{
+    return [self textValue];
+}
+
+
+- (NSString *)textValue
+{
+    NSString *finalText = [self.text removeRedundantWhitespace];
+    
+    if ([finalText length] == 0) {
+        finalText = nil;
+    }
+    
+    self.text = finalText;
+    
+    return finalText;
 }
 
 
@@ -184,7 +222,7 @@ static CGFloat const kDetailTextWidth = 210.f;
     if (_hasEmphasis) {
         self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
     } else {
-        self.text = [self finalText];
+        self.text = [self textValue];
         self.backgroundColor = [UIColor clearColor];
     }
     

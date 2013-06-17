@@ -42,7 +42,7 @@ extern NSString * const kTarget3rdParty;
 
 @property (weak, nonatomic, readonly) OTableViewController *viewController;
 @property (weak, nonatomic, readonly) id<OTableViewListCellDelegate> listCellDelegate;
-@property (weak, nonatomic, readonly) id<UITextFieldDelegate, UITextViewDelegate> inputDelegate;
+@property (weak, nonatomic, readonly) id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate> inputDelegate;
 
 - (id)initWithViewController:(OTableViewController *)viewController;
 

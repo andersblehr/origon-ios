@@ -11,6 +11,6 @@
 @protocol OEntityObservingDelegate <NSObject>
 
 @required
-- (void)reloadEntity;
+- (void)entityDidChange;
 
 @end

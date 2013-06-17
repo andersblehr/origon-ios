@@ -33,8 +33,6 @@ extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
 extern NSString * const kIconFileLocationArrow;
 
-extern NSString * const kDatePropertyPrefix;
-
 extern NSString * const kInputKeyActivate;
 extern NSString * const kInputKeyActivationCode;
 extern NSString * const kInputKeyAuthEmail;
@@ -49,8 +47,11 @@ extern NSString * const kJSONKeyPasswordHash;
 extern NSString * const kPropertyKeyAddress;
 extern NSString * const kPropertyKeyCountry;
 extern NSString * const kPropertyKeyDateOfBirth;
+extern NSString * const kPropertyKeyDescriptionText;
 extern NSString * const kPropertyKeyEmail;
 extern NSString * const kPropertyKeyEntityId;
+extern NSString * const kPropertyKeyGender;
+extern NSString * const kPropertyKeyGivenName;
 extern NSString * const kPropertyKeyHashCode;
 extern NSString * const kPropertyKeyIsAwaitingDeletion;
 extern NSString * const kPropertyKeyIsExpired;

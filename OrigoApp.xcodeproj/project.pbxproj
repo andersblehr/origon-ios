@@ -330,6 +330,7 @@
 		5CD3360D15C40A2F00ABBFE7 /* OState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OState.m; sourceTree = "<group>"; };
 		5CD5B29B14D56F7A002021FB /* NSManagedObjectContext+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+OrigoExtensions.m"; sourceTree = "<group>"; };
+		5CDE879C176F185E00272909 /* OTableViewInputDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTableViewInputDelegate.h; sourceTree = "<group>"; };
 		5CE987C214856426005A17C6 /* OCalendarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCalendarViewController.h; sourceTree = "<group>"; };
 		5CE987C314856426005A17C6 /* OCalendarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCalendarViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -511,6 +512,7 @@
 				5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDelegate.h */,
 				5C2E1133146ACFA9005BDE61 /* OServerConnectionDelegate.h */,
 				5CA10B9E16A7F9FD00031D81 /* OTableViewControllerInstance.h */,
+				5CDE879C176F185E00272909 /* OTableViewInputDelegate.h */,
 				5C198B7016D63944002D3976 /* OTableViewListCellDelegate.h */,
 			);
 			name = Protocols;

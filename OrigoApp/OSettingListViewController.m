@@ -84,8 +84,10 @@ static NSInteger const kSettingsSectionKey = 0;
 
 - (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    cell.textLabel.text = [OStrings textForSettingKey:[self dataAtIndexPath:indexPath]];
-    cell.detailTextLabel.text = [[OMeta m].settings displayValueForSettingKey:[self dataAtIndexPath:indexPath]];
+    NSString *settingKey = [self dataAtIndexPath:indexPath];
+    
+    cell.textLabel.text = [OStrings labelForSettingKey:settingKey];
+    cell.detailTextLabel.text = [[OMeta m].settings displayValueForSettingKey:settingKey];
 }
 
 

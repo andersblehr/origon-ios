@@ -23,6 +23,23 @@
 
 @implementation OLocator
 
+#pragma mark - Auxiliary methods
+
+- (void)showBlockingAlert
+{
+    _blockingAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTextLocating] message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:nil];
+    
+    [_blockingAlert show];
+    
+    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    activityIndicator.center = CGPointMake(_blockingAlert.bounds.size.width / 2.f, _blockingAlert.bounds.size.height - 50.f);
+    
+    [_blockingAlert addSubview:activityIndicator];
+    
+    [activityIndicator startAnimating];
+}
+
+
 #pragma mark - Initialisation
 
 - (id)init
@@ -38,26 +55,26 @@
 }
 
 
-#pragma mark - Updating location info
+#pragma mark - Location status
 
-- (BOOL)canLocate
+- (BOOL)isAuthorised
 {
-    BOOL canLocate = [self canLocateSilently];
+    BOOL canLocate = NO;
     
-    if (!canLocate && [CLLocationManager locationServicesEnabled]) {
-        canLocate = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined);
+    if ([CLLocationManager locationServicesEnabled]) {
+        canLocate = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized);
     }
     
     return canLocate;
 }
 
 
-- (BOOL)canLocateSilently
+- (BOOL)canLocate
 {
-    BOOL canLocate = NO;
+    BOOL canLocate = [self isAuthorised];
     
-    if ([CLLocationManager locationServicesEnabled]) {
-        canLocate = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized);
+    if (!canLocate && [CLLocationManager locationServicesEnabled]) {
+        canLocate = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined);
     }
     
     return canLocate;
@@ -70,9 +87,21 @@
 }
 
 
-- (void)locate
+#pragma mark - Locating
+
+- (void)locateBlocking:(BOOL)blocking
 {
     if ([self canLocate]) {
+        if ([self isAuthorised]) {
+            if (_blocking) {
+                [self showBlockingAlert];
+            }
+        } else {
+            _awaitingAuthorisation = YES;
+        }
+        
+        _blocking = blocking;
+        _awaitingLocation = YES;
         _delegate = (id<OLocatorDelegate>)[OState s].viewController;
         
         [_locationManager startUpdatingLocation];
@@ -88,30 +117,58 @@
 }
 
 
-- (NSString *)country
-{
-    return self.countryCode ? [OUtil countryFromCountryCode:self.countryCode] : nil;
-}
-
-
 #pragma mark - CLLocationManagerDelegate conformance
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     [manager stopUpdatingLocation];
     
-    [[[CLGeocoder alloc] init] reverseGeocodeLocation:manager.location completionHandler:^(NSArray *placemarks, NSError *error) {
-        _placemark = placemarks[0];
+    if (_awaitingLocation) {
+        if (_blocking) {
+            [_blockingAlert dismissWithClickedButtonIndex:0 animated:YES];
+        }
         
-        [_delegate locatorDidLocate];
-    }];
+        [[[CLGeocoder alloc] init] reverseGeocodeLocation:manager.location completionHandler:^(NSArray *placemarks, NSError *error) {
+            _placemark = placemarks[0];
+            
+            [_delegate locatorDidLocate];
+        }];
+        
+        _awaitingLocation = NO;
+    }
 }
 
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    if (status == kCLAuthorizationStatusDenied) {
-        [_delegate locatorCannotLocate];
+    if (_awaitingAuthorisation) {
+        if (status == kCLAuthorizationStatusAuthorized) {
+            if (_blocking) {
+                [self showBlockingAlert];
+            }
+        } else if (status == kCLAuthorizationStatusDenied) {
+            [_delegate locatorCannotLocate];
+            
+            _awaitingLocation = NO;
+        }
+        
+        _awaitingAuthorisation = NO;
+    }
+}
+
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+{
+    if (_awaitingLocation) {
+        if (_blocking) {
+            [_blockingAlert dismissWithClickedButtonIndex:0 animated:YES];
+        }
+        
+        if (error.code != kCLErrorLocationUnknown) {
+            [_delegate locatorCannotLocate];
+        }
+        
+        _awaitingLocation = NO;
     }
 }
 
