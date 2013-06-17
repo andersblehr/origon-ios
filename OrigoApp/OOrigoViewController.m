@@ -28,55 +28,13 @@ static NSInteger const kOrigoSection = 0;
 
 @implementation OOrigoViewController
 
-- (void)didCancelEditing
-{
-    if ([self actionIs:kActionRegister]) {
-        [self.dismisser dismissModalViewWithIdentitifier:kViewIdOrigo needsReloadData:NO];
-    } else {
-        _addressView.text = _origo.address;
-        _telephoneField.text = _origo.telephone;
-        
-        [self toggleEditMode];
-    }
-}
-
-
-- (void)didFinishEditing
-{
-    if ([[_addressView finalText] length]) {
-        if (!_origo) {
-            _origo = [[OMeta m].context insertOrigoEntityOfType:self.meta];
-        }
-        
-        _origo.address = [_addressView finalText];
-        _origo.telephone = [_telephoneField finalText];
-        
-        if ([self actionIs:kActionRegister]) {
-            if (!_membership) {
-                _membership = [_origo addMember:_member];
-            }
-            
-            [self.view endEditing:YES];
-            [self presentModalViewWithIdentifier:kViewIdMemberList data:_membership dismisser:self.dismisser];
-            
-            if ([_member isUser]) {
-                [[OMeta m].user makeActive];
-                [[OMeta m].replicator replicate];
-            }
-        } else if ([self actionIs:kActionEdit]) {
-            [self toggleEditMode];
-        }
-    } else {
-        [self.detailCell shakeCellShouldVibrate:NO];
-    }
-}
-
+#pragma mark - Selector implementations
 
 - (void)signOut
 {
     [[OMeta m] userDidSignOut];
     
-    [self.dismisser dismissModalViewWithIdentitifier:kViewIdOrigo];
+    [self.dismisser dismissModalViewController];
 }
 
 
@@ -91,15 +49,6 @@ static NSInteger const kOrigoSection = 0;
     } else {
         self.title = [OStrings titleForOrigoType:self.meta];
     }
-}
-
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    
-    _addressView = [self.detailCell textFieldForKey:kPropertyKeyAddress];
-    _telephoneField = [self.detailCell textFieldForKey:kPropertyKeyTelephone];
 }
 
 
@@ -152,6 +101,51 @@ static NSInteger const kOrigoSection = 0;
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
     return NO;
+}
+
+
+- (BOOL)inputIsValid
+{
+    BOOL isValid = NO;
+    
+    if ([self targetIs:kOrigoTypeResidence]) {
+        isValid = ([self.detailCell hasValidValueForKey:kPropertyKeyAddress]);
+    } else {
+        isValid = ([self.detailCell hasValidValueForKey:kPropertyKeyName]);
+    }
+    
+    return isValid;
+}
+
+
+- (void)processInput
+{
+    [self.detailCell writeEntity];
+    
+    if ([self actionIs:kActionRegister]) {
+        if (!_membership) {
+            _membership = [_origo addMember:_member];
+        }
+        
+        [self presentModalViewWithIdentifier:kViewIdMemberList data:_membership dismisser:self.dismisser];
+        
+        if ([_member isUser]) {
+            [[OMeta m].user makeActive];
+            [[OMeta m].replicator replicate];
+        }
+    } else if ([self actionIs:kActionEdit]) {
+        [self toggleEditMode];
+    }
+}
+
+
+#pragma mark - OTableViewInputDelegate conformance
+
+- (id)targetEntity
+{
+    _origo = [[OMeta m].context insertOrigoEntityOfType:self.target];
+    
+    return _origo;
 }
 
 @end

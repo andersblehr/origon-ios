@@ -19,6 +19,8 @@
     
     NSMutableArray *_origoTypes;
     NSString *_selectedOrigoType;
+    
+    BOOL _isObtainingCountryList;
 }
 
 @end

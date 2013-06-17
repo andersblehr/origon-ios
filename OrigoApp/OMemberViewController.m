@@ -53,10 +53,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (BOOL)emailIsEligible
 {
-    BOOL emailIsEligible = [_emailField holdsValidEmail];
+    BOOL emailIsEligible = [self.detailCell hasValidValueForKey:kPropertyKeyEmail];
     
     if (emailIsEligible && [self actionIs:kActionRegister] && ![self targetIs:kTargetUser]) {
-        NSString *email = [_emailField finalText];
+        NSString *email = [_emailField textValue];
         
         _candidate = [[OMeta m].context memberEntityWithEmail:email];
         
@@ -67,7 +67,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 
                 NSString *alertTitle = [OStrings stringForKey:strAlertTitleMemberExists];
                 NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, email, _origo.name];
-                [OAlert showAlertWithTitle:alertTitle message:alertMessage];
+                [OAlert showAlertWithTitle:alertTitle text:alertMessage];
                 
                 _candidate = nil;
                 emailIsEligible = NO;
@@ -88,30 +88,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)registerMember
+- (void)persistMember
 {
-    if (!_member) {
-        if (_candidate) {
-            _member = _candidate;
-        } else {
-            _member = [[OMeta m].context insertMemberEntity];
-        }
-    }
-    
-    if (!_membership) {
-        _membership = [_origo addMember:_member];
-    }
-    
-    [self updateMember];
-}
-
-
-- (void)updateMember
-{
-    _member.name = [_nameField finalText];
-    _member.dateOfBirth = [_dateOfBirthField date];
-    _member.mobilePhone = [_mobilePhoneField finalText];
-    _member.email = [_emailField finalText];
+    [self.detailCell writeEntity];
     
     if ([self actionIs:kActionRegister]) {
         _member.givenName = [OUtil givenNameFromFullName:_member.name];
@@ -120,13 +99,13 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if ([self targetIs:kTargetUser] && ![_origo hasValueForKey:kPropertyKeyAddress]) {
             [self presentModalViewWithIdentifier:kViewIdOrigo data:_membership dismisser:self.dismisser];
         } else {
-            [self.dismisser dismissModalViewWithIdentitifier:kViewIdMember];
+            [self.dismisser dismissModalViewController];
         }
     }
 }
 
 
-#pragma mark - Action sheets
+#pragma mark - Alerts & action sheets
 
 - (void)promptForGender
 {
@@ -138,7 +117,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if ([self targetIs:kTargetUser]) {
             sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
         } else {
-            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [OUtil givenNameFromFullName:[_nameField finalText]]];
+            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [OUtil givenNameFromFullName:[_nameField textValue]]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemaleMinor];
@@ -147,7 +126,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if ([self targetIs:kTargetUser]) {
             sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
         } else {
-            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [OUtil givenNameFromFullName:[_nameField finalText]]];
+            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [OUtil givenNameFromFullName:[_nameField textValue]]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemale];
@@ -193,7 +172,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)promptForUserEmailChangeConfirmation
 {
-    UIAlertView *emailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleUserEmailChange] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextUserEmailChange], _member.email, [_emailField finalText]] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
+    UIAlertView *emailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleUserEmailChange] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextUserEmailChange], _member.email, [_emailField textValue]] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
     emailChangeAlert.tag = kEmailChangeAlertTag;
     
     [emailChangeAlert show];
@@ -202,75 +181,11 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)promptForMemberEmailChangeConfirmation
 {
-    
+    // TODO
 }
 
 
 #pragma mark - Selector implementations
-
-- (void)didCancelEditing
-{
-    if ([self actionIs:kActionRegister]) {
-        [self.dismisser dismissModalViewWithIdentitifier:kViewIdMember needsReloadData:NO];
-    } else if ([self actionIs:kActionEdit]) {
-        _dateOfBirthField.text = [_member.dateOfBirth localisedDateString];
-        _mobilePhoneField.text = _member.mobilePhone;
-        _emailField.text = _member.email;
-        
-        [self toggleEditMode];
-    }
-}
-
-
-- (void)didFinishEditing
-{
-    BOOL inputIsValid = ([_nameField holdsValidName] && [_dateOfBirthField holdsValidDate]);
-    
-    if (inputIsValid) {
-        if ([self targetIs:kTargetUser] || ![_dateOfBirthField.date isBirthDateOfMinor]) {
-            inputIsValid = inputIsValid && [self emailIsEligible];
-            inputIsValid = inputIsValid && [_mobilePhoneField holdsValidPhoneNumber];
-        } else if ([_dateOfBirthField.date isBirthDateOfMinor]) {
-            if ([[_emailField finalText] length]) {
-                inputIsValid = inputIsValid && [_emailField holdsValidEmail];
-            }
-        }
-    }
-    
-    if (inputIsValid) {
-        if ([self actionIs:kActionRegister]) {
-            [self.view endEditing:YES];
-            
-            if (_candidate) {
-                if ([_origo isOfType:kOrigoTypeResidence] && [_candidate.residencies count]) {
-                    [self promptForExistingResidenceAction];
-                } else {
-                    [self registerMember];
-                }
-            } else {
-                if (!_gender) {
-                    [self promptForGender];
-                } else {
-                    [self updateMember];
-                }
-            }
-        } else if ([self actionIs:kActionEdit]) {
-            if ([_member hasValueForKey:kPropertyKeyEmail] && ![[_emailField finalText] isEqualToString:_member.email]) {
-                if ([self targetIs:kTargetUser]) {
-                    [self promptForUserEmailChangeConfirmation];
-                } else {
-                    [self promptForMemberEmailChangeConfirmation];
-                }
-            } else {
-                [self updateMember];
-                [self toggleEditMode];
-            }
-        }
-    } else {
-        [self.detailCell shakeCellShouldVibrate:NO];
-    }
-}
-
 
 - (void)addResidence
 {
@@ -288,7 +203,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     [[OMeta m] userDidSignOut];
     
-    [self.dismisser dismissModalViewWithIdentitifier:kViewIdMember];
+    [self.dismisser dismissModalViewController];
 }
 
 
@@ -432,6 +347,87 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
+- (BOOL)inputIsValid
+{
+    BOOL inputIsValid = YES;
+    
+    inputIsValid = inputIsValid && [self.detailCell hasValidValueForKey:kPropertyKeyName];
+    inputIsValid = inputIsValid && [self.detailCell hasValidValueForKey:kPropertyKeyDateOfBirth];
+    
+    if (inputIsValid) {
+        if ([self targetIs:kTargetUser] || ![_dateOfBirthField.date isBirthDateOfMinor]) {
+            inputIsValid = [self emailIsEligible] && [self.detailCell hasValidValueForKey:kPropertyKeyMobilePhone];
+        } else if ([_dateOfBirthField.date isBirthDateOfMinor]) {
+            if ([self.detailCell hasValueForKey:kPropertyKeyEmail]) {
+                inputIsValid = [self.detailCell hasValidValueForKey:kPropertyKeyEmail];
+            }
+        }
+    }
+    
+    return  inputIsValid;
+}
+
+
+- (void)processInput
+{
+    if ([self actionIs:kActionRegister]) {
+        if (_candidate) {
+            if ([_origo isOfType:kOrigoTypeResidence] && [_candidate.residencies count]) {
+                [self promptForExistingResidenceAction];
+            } else {
+                [self persistMember];
+            }
+        } else {
+            if (!_gender) {
+                [self promptForGender];
+            } else {
+                [self persistMember];
+            }
+        }
+    } else if ([self actionIs:kActionEdit]) {
+        if ([_member hasValueForKey:kPropertyKeyEmail] && ![[_emailField textValue] isEqualToString:_member.email]) {
+            if ([self targetIs:kTargetUser]) {
+                [self promptForUserEmailChangeConfirmation];
+            } else {
+                [self promptForMemberEmailChangeConfirmation];
+            }
+        } else {
+            [self persistMember];
+            [self toggleEditMode];
+        }
+    }
+}
+
+
+#pragma mark - OTableViewInputDelegate conformance
+
+- (id)targetEntity
+{
+    if (_candidate) {
+        _member = _candidate;
+    } else {
+        _member = [[OMeta m].context insertMemberEntity];
+    }
+    
+    if (!_membership) {
+        _membership = [_origo addMember:_member];
+    }
+    
+    return _member;
+}
+
+
+- (NSDictionary *)additionalInputValues
+{
+    NSMutableDictionary *additionalValues = [[NSMutableDictionary alloc] init];
+    
+    additionalValues[kPropertyKeyGender] = _gender;
+    additionalValues[kPropertyKeyGivenName] = [OUtil givenNameFromFullName:_member.name];
+    
+    return additionalValues;
+}
+
+
 #pragma mark - OTableViewListCellDelegate conformance
 
 - (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
@@ -443,25 +439,25 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - OModalViewControllerDelegate conformance
 
-- (void)dismissModalViewWithIdentitifier:(NSString *)identitifier
+- (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier
 {
-    if ([identitifier isEqualToString:kViewIdAuth]) {
-        [super dismissModalViewWithIdentitifier:identitifier needsReloadData:NO];
+    if ([identifier isEqualToString:kViewIdAuth]) {
+        [super dismissModalViewControllerWithIdentifier:identifier needsReloadData:NO];
         
-        if ([_member.email isEqualToString:[_emailField finalText]]) {
+        if ([_member.email isEqualToString:[_emailField textValue]]) {
             [OMeta m].userEmail = _member.email;
-            [self updateMember];
+            [self persistMember];
         } else {
-            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleEmailChangeFailed] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextEmailChangeFailed], [_emailField finalText]] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
+            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleEmailChangeFailed] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextEmailChangeFailed], [_emailField textValue]] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
             [failedEmailChangeAlert show];
             
             [self toggleEditMode];
             [_emailField becomeFirstResponder];
         }
-    } else if ([identitifier isEqualToString:kViewIdOrigo]) {
-        [self.dismisser dismissModalViewWithIdentitifier:kViewIdMember];
-    } else if ([identitifier isEqualToString:kViewIdMemberList]) {
-        [super dismissModalViewWithIdentitifier:identitifier];
+    } else if ([identifier isEqualToString:kViewIdOrigo]) {
+        [self.dismisser dismissModalViewController];
+    } else if ([identifier isEqualToString:kViewIdMemberList]) {
+        [super dismissModalViewControllerWithIdentifier:identifier];
     }
 }
 
@@ -474,7 +470,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         case kGenderSheetTag:
             if (buttonIndex != kGenderSheetButtonCancel) {
                 _gender = (buttonIndex == kGenderSheetButtonFemale) ? kGenderFemale : kGenderMale;
-                [self registerMember];
+                [self persistMember];
             } else {
                 [self resumeFirstResponder];
             }
@@ -493,7 +489,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             
         case kExistingResidenceSheetTag:
             if (buttonIndex == kExistingResidenceButtonInviteToHousehold) {
-                [self registerMember];
+                [self persistMember];
             } else if (buttonIndex == kExistingResidenceButtonMergeHouseholds) {
                 // TODO
             } else if (buttonIndex == kExistingResidenceButtonCancel) {
@@ -516,7 +512,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         case kEmailChangeAlertTag:
             if (buttonIndex == kEmailChangeButtonContinue) {
                 [self toggleEditMode];
-                [self presentModalViewWithIdentifier:kViewIdAuth data:[_emailField finalText]];
+                [self presentModalViewWithIdentifier:kViewIdAuth data:[_emailField textValue]];
             } else {
                 [_emailField becomeFirstResponder];
             }

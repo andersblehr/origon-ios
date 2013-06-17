@@ -28,12 +28,10 @@ extern CGFloat const kTextInset;
 
 - (id)initWithKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate;
 
-- (BOOL)holdsValidEmail;
-- (BOOL)holdsValidPassword;
-- (BOOL)holdsValidName;
-- (BOOL)holdsValidPhoneNumber;
-- (BOOL)holdsValidDate;
-
-- (NSString *)finalText;
+- (BOOL)isDateField;
+- (BOOL)hasValue;
+- (BOOL)hasValidValueForKey:(NSString *)key;
+- (id)objectValue;
+- (NSString *)textValue;
 
 @end

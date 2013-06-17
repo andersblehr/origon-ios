@@ -18,6 +18,7 @@
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
+#import "OUtil.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OMembership.h"
@@ -28,13 +29,12 @@
 static NSString * const kSegueToMemberListView = @"segueFromOrigoListToMemberListView";
 
 static NSInteger const kCountrySheetTag = 0;
-static NSInteger const kCountrySheetButtonCountryProvided = 0;
-static NSInteger const kCountrySheetButtonCountryOfLocation = 1;
-static NSInteger const kCountrySheetButtonCountryOther = 2;
+static NSInteger const kCountrySheetButtonCountryLocatedOrInferred = 0;
 
 static NSInteger const kOrigoTypeSheetTag = 1;
 
 static NSInteger const kCountryAlertTag = 0;
+static NSInteger const kCountryAlertButtonCancel = 0;
 
 static NSInteger const kUserSectionKey = 0;
 static NSInteger const kWardSectionKey = 1;
@@ -96,38 +96,24 @@ static NSInteger const kUserRow = 0;
 }
 
 
-- (BOOL)needsCountryForSelectedOrigoType
-{
-    BOOL needsCountry = NO;
-    
-    if (![OMeta m].settings.countryCode) {
-        needsCountry =
-            ([_selectedOrigoType isEqualToString:kOrigoTypePreschoolClass] ||
-             [_selectedOrigoType isEqualToString:kOrigoTypeSchoolClass]);
-    }
-    
-    return needsCountry;
-}
-
-
 - (void)presentCountrySheet
 {
-    NSString *sheetTitleFormat = nil;
-    NSString *buttonTitleCountryOfLocation = nil;
+    UIActionSheet *countrySheet = [[UIActionSheet alloc] initWithTitle:[OStrings stringForKey:strSheetTitleCountry] delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+
+    NSString *inferredCountry = [OUtil countryFromCountryCode:[OMeta m].inferredCountryCode];
+    NSString *locatedCountry = nil;
     
-    if ([[OMeta m].locator canLocate]) {
-        sheetTitleFormat = [OStrings stringForKey:strSheetTitleCountryLocate];
-        buttonTitleCountryOfLocation = [OStrings stringForKey:strButtonCountryOfLocation];
-    } else {
-        sheetTitleFormat = [OStrings stringForKey:strSheetTitleCountryNoLocate];
+    if ([[OMeta m].locator didLocate]) {
+        locatedCountry = [OUtil countryFromCountryCode:[OMeta m].locator.countryCode];
+        [countrySheet addButtonWithTitle:locatedCountry];
     }
     
-    UIActionSheet *countrySheet = [[UIActionSheet alloc] initWithTitle:[NSString stringWithFormat:sheetTitleFormat, [OMeta m].locator.country] delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    if (!locatedCountry || ![locatedCountry isEqualToString:inferredCountry]) {
+        [countrySheet addButtonWithTitle:inferredCountry];
+    }
     
-    [countrySheet addButtonWithTitle:[OMeta m].locator.country];
-    
-    if ([[OMeta m].locator canLocate]) {
-        [countrySheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryOfLocation]];
+    if (!locatedCountry && [[OMeta m].locator canLocate]) {
+        [countrySheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryLocate]];
     }
     
     [countrySheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryOther]];
@@ -141,12 +127,16 @@ static NSInteger const kUserRow = 0;
 
 - (void)displayCountryAlert
 {
-    [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
-
-    NSString *alertTitle = [NSString stringWithFormat:[OStrings stringForKey:strAlertTitleCountry], [OMeta m].locator.country];
-    NSString *alertText = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextCountry], [OMeta m].locator.country];
+    NSString *country = [OUtil countryFromCountryCode:[OMeta m].settings.countryCode];
+    NSString *alertFormat = nil;
     
-    [OAlert showAlertWithTitle:alertTitle message:alertText tag:kCountryAlertTag];
+    if ([OUtil isSupportedCountryCode:[OMeta m].settings.countryCode]) {
+        alertFormat = [OStrings stringForKey:strAlertTextCountrySupported];
+    } else {
+        alertFormat = [OStrings stringForKey:strAlertTextCountryUnsupported];
+    }
+    
+    [OAlert showAlertWithTitle:country text:[NSString stringWithFormat:alertFormat, country] tag:kCountryAlertTag];
 }
 
 
@@ -215,7 +205,7 @@ static NSInteger const kUserRow = 0;
 
     if ([OMeta m].userIsSignedIn && ![OMeta m].userIsRegistered) {
         if ([[OMeta m] userDefaultForKey:kDefaultsKeyRegistrationAborted]) {
-            [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] message:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
+            [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] text:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
             
             [[OMeta m] setUserDefault:nil forKey:kDefaultsKeyRegistrationAborted];
         }
@@ -313,7 +303,15 @@ static NSInteger const kUserRow = 0;
 
 - (void)locatorDidLocate
 {
-    [self displayCountryAlert];
+    if (_isObtainingCountryList) {
+        _isObtainingCountryList = NO;
+        
+        [self presentCountrySheet];
+    } else {
+        [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
+        
+        [self displayCountryAlert];
+    }
 }
 
 
@@ -353,9 +351,9 @@ static NSInteger const kUserRow = 0;
 
 #pragma mark - OModalViewControllerDelegate conformance
 
-- (void)dismissModalViewWithIdentitifier:(NSString *)identitifier
+- (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier
 {
-    [super dismissModalViewWithIdentitifier:identitifier];
+    [super dismissModalViewControllerWithIdentifier:identifier];
     
     if ([OMeta m].userIsSignedIn) {
         [self.tableView reloadData];
@@ -369,12 +367,30 @@ static NSInteger const kUserRow = 0;
 {
     switch (actionSheet.tag) {
         case kCountrySheetTag:
-            if (buttonIndex == kCountrySheetButtonCountryProvided) {
-                [self displayCountryAlert];
-            } else if (buttonIndex == kCountrySheetButtonCountryOfLocation) {
-                [[OMeta m].locator locate];
-            } else if (buttonIndex == kCountrySheetButtonCountryOther) {
-                // TODO: Modally open Settings pane for Origo country
+            if (buttonIndex < actionSheet.cancelButtonIndex - 1) {
+                if (buttonIndex == kCountrySheetButtonCountryLocatedOrInferred) {
+                    if ([[OMeta m].locator didLocate]) {
+                        [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
+                    } else {
+                        [OMeta m].settings.countryCode = [OMeta m].inferredCountryCode;
+                    }
+                } else {
+                    if ([[OMeta m].locator didLocate]) {
+                        [OMeta m].settings.countryCode = [OMeta m].inferredCountryCode;
+                    } else {
+                        [[OMeta m].locator locateBlocking:YES];
+                    }
+                }
+                
+                if ([OMeta m].settings.countryCode) {
+                    if ([OUtil isSupportedCountryCode:[OMeta m].settings.countryCode]) {
+                        [self presentModalViewWithIdentifier:kViewIdOrigo data:_member meta:_selectedOrigoType];
+                    } else {
+                        [self displayCountryAlert];
+                    }
+                }
+            } else if (buttonIndex == actionSheet.cancelButtonIndex - 1) {
+                [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleCountryOther] text:[OStrings stringForKey:strAlertTextCountryOther]];
             }
             
             break;
@@ -383,8 +399,14 @@ static NSInteger const kUserRow = 0;
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 _selectedOrigoType = _origoTypes[buttonIndex];
                 
-                if ([self needsCountryForSelectedOrigoType]) {
-                    [self presentCountrySheet];
+                if (![OMeta m].settings.countryCode) {
+                    if ([[OMeta m].locator isAuthorised] && ![[OMeta m].locator didLocate]) {
+                        _isObtainingCountryList = YES;
+                        
+                        [[OMeta m].locator locateBlocking:YES];
+                    } else {
+                        [self presentCountrySheet];
+                    }
                 } else {
                     [self presentModalViewWithIdentifier:kViewIdOrigo data:_member meta:_selectedOrigoType];
                 }
@@ -395,7 +417,6 @@ static NSInteger const kUserRow = 0;
         default:
             break;
     }
-    
 }
 
 

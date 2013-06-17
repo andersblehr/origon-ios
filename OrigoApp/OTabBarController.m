@@ -8,6 +8,7 @@
 
 #import "OTabBarController.h"
 
+#import "OState.h"
 #import "OStrings.h"
 
 NSInteger const kTabIndexOrigo = 0;
@@ -53,17 +54,7 @@ NSInteger const kTabIndexSettings = 4;
 
 - (NSUInteger)supportedInterfaceOrientations
 {
-    NSUInteger supportedOrientations = UIInterfaceOrientationMaskPortrait;
-    
-    if (self.selectedViewController) {
-        UIViewController *visibleViewController = ((UINavigationController *)self.selectedViewController).visibleViewController;
-        
-        if ([visibleViewController respondsToSelector:@selector(supportedInterfaceOrientations)]) {
-            supportedOrientations = [visibleViewController supportedInterfaceOrientations];
-        }
-    }
-    
-    return supportedOrientations;
+    return [[OState s].viewController supportedInterfaceOrientations];
 }
 
 @end

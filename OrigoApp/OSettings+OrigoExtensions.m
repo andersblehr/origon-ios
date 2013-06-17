@@ -49,7 +49,7 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
     if ([settingKey isEqualToString:kSettingKeyCountry]) {
         NSString *country = [OUtil countryFromCountryCode:codedValue];
         
-        if ([[OMeta m].supportedCountryCodes containsObject:codedValue]) {
+        if ([OUtil isSupportedCountryCode:codedValue]) {
             decodedValue = country;
         } else {
             decodedValue = [NSString stringWithFormat:@"(%@)", country];

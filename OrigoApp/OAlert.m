@@ -32,17 +32,17 @@
 
 #pragma mark - Alerting shorthands
 
-+ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message
++ (void)showAlertWithTitle:(NSString *)title text:(NSString *)text
 {
-    [self showAlertWithTitle:title message:message tag:NSIntegerMax];
+    [self showAlertWithTitle:title text:text tag:NSIntegerMax];
 }
 
 
-+ (void)showAlertWithTitle:(NSString *)title message:(NSString *)message tag:(NSInteger)tag
++ (void)showAlertWithTitle:(NSString *)title text:(NSString *)text tag:(NSInteger)tag
 {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:text delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
     
-    if (tag < NSIntegerMax) {
+    if (tag != NSIntegerMax) {
         alertView.delegate = [OState s].viewController;
         alertView.tag = tag;
     }

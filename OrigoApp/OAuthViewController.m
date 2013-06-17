@@ -141,7 +141,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     _numberOfActivationAttempts++;
     
     if (_numberOfActivationAttempts < 3) {
-        [self.detailCell shakeCellShouldVibrate:YES];
+        [self.detailCell shakeCellVibrate:YES];
         
         if (textField == _activationCodeField) {
             _activationCodeField.text = @"";
@@ -154,10 +154,10 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         if ([self targetIs:kTargetUser]) {
             _numberOfActivationAttempts = 0;
             
-            [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] message:[OStrings stringForKey:strAlertTextActivationFailed]];
+            [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] text:[OStrings stringForKey:strAlertTextActivationFailed]];
             [self toggleAuthState];
         } else if ([self targetIs:kTargetEmail]) {
-            [self.dismisser dismissModalViewWithIdentitifier:kViewIdAuth];
+            [self.dismisser dismissModalViewController];
         }
     }
 }
@@ -198,7 +198,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - Initiating server requests
 
-- (void)initiateUserLogin
+- (void)sendUserLoginRequest
 {
     [OMeta m].userEmail = _emailField.text;
     
@@ -210,7 +210,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (void)initiateUserActivation
+- (void)sendUserActivationRequest
 {
     OServerConnection *serverConnection = [[OServerConnection alloc] init];
     [serverConnection setAuthHeaderForEmail:[OMeta m].userEmail password:_repeatPasswordField.text];
@@ -220,7 +220,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (void)initiateEmailActivation
+- (void)sendEmailActivationRequest
 {
     NSString *emailActivationCode = [[OUUIDGenerator generateUUID] substringToIndex:kActivationCodeLength];
     
@@ -271,7 +271,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         [[OMeta m] setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
     }
     
-    [self.dismisser dismissModalViewWithIdentitifier:kViewIdAuth];
+    [self.dismisser dismissModalViewController];
 }
 
 
@@ -284,7 +284,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     [self.tableView addLogoBanner];
 
     self.canEdit = YES;
-    self.shouldDemphasiseOnEndEdit = NO;
 }
 
 
@@ -302,7 +301,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             welcomeBackAlert.tag = kAlertTagWelcomeBack;
             [welcomeBackAlert show];
         } else if ([self targetIs:kTargetEmail]) {
-            [self initiateEmailActivation];
+            [self sendEmailActivationRequest];
         }
     }
 }
@@ -354,13 +353,21 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         text = [OStrings stringForKey:strFooterSignInOrRegister];
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivate], [_emailField finalText]];
+            text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivate], [_emailField textValue]];
         } else if ([self targetIs:kTargetEmail]) {
             text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivateEmail], self.data];
         }
     }
     
     return text;
+}
+
+
+#pragma mark - OTableViewInputDelegate conformance
+
+- (BOOL)textFieldShouldDeemphasiseOnEndEdit
+{
+    return NO;
 }
 
 
@@ -421,14 +428,15 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     if (textField == _emailField) {
         [_passwordField becomeFirstResponder];
     } else if (textField == _passwordField) {
-        shouldReturn = [_emailField holdsValidEmail] && [_passwordField holdsValidPassword];
+        shouldReturn = shouldReturn && [self.detailCell hasValidValueForKey:kInputKeyAuthEmail];
+        shouldReturn = shouldReturn && [self.detailCell hasValidValueForKey:kInputKeyPassword];
         
         if (shouldReturn) {
             [self.view endEditing:YES];
-            [self initiateUserLogin];
+            [self sendUserLoginRequest];
         } else {
             _passwordField.text = @"";
-            [self.detailCell shakeCellShouldVibrate:YES];
+            [self.detailCell shakeCellVibrate:YES];
         }
     } else if (textField == _activationCodeField) {
         [_repeatPasswordField becomeFirstResponder];
@@ -439,13 +447,13 @@ static NSInteger const kAlertTagWelcomeBack = 0;
             [self.view endEditing:YES];
             
             if ([self targetIs:kTargetUser]) {
-                [self initiateUserActivation];
+                [self sendUserActivationRequest];
             } else if ([self targetIs:kTargetEmail]) {
-                [self.dismisser dismissModalViewWithIdentitifier:kViewIdAuth];
+                [self.dismisser dismissModalViewController];
             }
         } else {
             _repeatPasswordField.text = @"";
-            [self.detailCell shakeCellShouldVibrate:YES];
+            [self.detailCell shakeCellVibrate:YES];
         }
     }
     
@@ -488,7 +496,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         }
     } else {
         if (response.statusCode == kHTTPStatusUnauthorized) {
-            [self.detailCell shakeCellShouldVibrate:YES];
+            [self.detailCell shakeCellVibrate:YES];
             [_passwordField becomeFirstResponder];
         }
     }

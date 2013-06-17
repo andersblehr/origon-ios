@@ -28,6 +28,7 @@ NSString * const strButtonCancel                     = @"strButtonCancel";
 NSString * const strButtonSignOut                    = @"strButtonSignOut";
 NSString * const strAlertTextNoInternet              = @"strAlertTextNoInternet";
 NSString * const strAlertTextServerError             = @"strAlertTextServerError";
+NSString * const strAlertTextLocating                = @"strAlertTextLocating";
 NSString * const strTermAddress                      = @"strTermAddress";
 NSString * const strTermCountry                      = @"strTermCountry";
 
@@ -61,12 +62,13 @@ NSString * const strHeaderMyOrigos                   = @"strHeaderMyOrigos";
 NSString * const strFooterOrigoCreationFirst         = @"strFooterOrigoCreationFirst";
 NSString * const strFooterOrigoCreation              = @"strFooterOrigoCreation";
 NSString * const strFooterOrigoCreationWards         = @"strFooterOrigoCreationWards";
-NSString * const strButtonCountryOfLocation          = @"strButtonCountryOfLocation";
+NSString * const strButtonCountryLocate              = @"strButtonCountryLocate";
 NSString * const strButtonCountryOther               = @"strButtonCountryOther";
-NSString * const strAlertTitleCountry                = @"strAlertTitleCountry";
-NSString * const strAlertTextCountry                 = @"strAlertTextCountry";
-NSString * const strSheetTitleCountryLocate          = @"strSheetTitleCountryLocate";
-NSString * const strSheetTitleCountryNoLocate        = @"strSheetTitleCountryNoLocate";
+NSString * const strAlertTitleCountryOther           = @"strAlertTitleCountryOther";
+NSString * const strAlertTextCountryOther            = @"strAlertTextCountryOther";
+NSString * const strAlertTextCountrySupported        = @"strAlertTextCountrySupported";
+NSString * const strAlertTextCountryUnsupported      = @"strAlertTextCountryUnsupported";
+NSString * const strSheetTitleCountry                = @"strSheetTitleCountry";
 NSString * const strSheetTitleOrigoType              = @"strSheetTitleOrigoType";
 NSString * const strTermMe                           = @"strTermMe";
 NSString * const strTermYourChild                    = @"strTermYourChild";
@@ -93,9 +95,11 @@ NSString * const strButtonDeleteMember               = @"strButtonDeleteMember";
 NSString * const strDefaultResidenceName             = @"strDefaultResidenceName";
 NSString * const strViewTitleNewOrigo                = @"strViewTitleNewOrigo";
 NSString * const strLabelAddress                     = @"strLabelAddress";
+NSString * const strLabelDescriptionText             = @"strLabelDescriptionText";
 NSString * const strLabelTelephone                   = @"strLabelTelephone";
 NSString * const strHeaderAddresses                  = @"strHeaderAddresses";
 NSString * const strPlaceholderAddress               = @"strPlaceholderAddress";
+NSString * const strPlaceholderDescriptionText       = @"strPlaceholderDescriptionText";
 NSString * const strPlaceholderTelephone             = @"strPlaceholderTelephone";
 
 // OMemberView strings
@@ -303,7 +307,7 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 }
 
 
-+ (NSString *)textForSettingKey:(NSString *)settingKey
++ (NSString *)labelForSettingKey:(NSString *)settingKey
 {
     return [self stringForKey:[self stringKeyWithPrefix:kKeyPrefixSettingText forKey:settingKey]];
 }

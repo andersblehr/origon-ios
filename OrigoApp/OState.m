@@ -158,11 +158,12 @@ static OState *s = nil;
 }
 
 
-- (id<UITextFieldDelegate, UITextViewDelegate>)inputDelegate
+- (id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate>)inputDelegate
 {
     id inputDelegate = nil;
     
-    if ([_viewController conformsToProtocol:@protocol(UITextFieldDelegate)] ||
+    if ([_viewController conformsToProtocol:@protocol(OTableViewInputDelegate)] ||
+        [_viewController conformsToProtocol:@protocol(UITextFieldDelegate)] ||
         [_viewController conformsToProtocol:@protocol(UITextViewDelegate)]) {
         inputDelegate = (id<UITextFieldDelegate, UITextViewDelegate>)_viewController;
     }

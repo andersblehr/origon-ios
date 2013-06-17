@@ -47,6 +47,12 @@
 }
 
 
++ (BOOL)isSupportedCountryCode:(NSString *)countryCode
+{
+    return [[OMeta m].supportedCountryCodes containsObject:countryCode];
+}
+
+
 + (NSString *)countryFromCountryCode:(NSString *)countryCode
 {
     NSString *country = nil;

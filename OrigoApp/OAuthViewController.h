@@ -8,9 +8,11 @@
 
 #import "OTableViewController.h"
 
+#import "OTableViewInputDelegate.h"
+
 @class OTextField;
 
-@interface OAuthViewController : OTableViewController<UIAlertViewDelegate> {
+@interface OAuthViewController : OTableViewController<OTableViewInputDelegate, UIAlertViewDelegate> {
 @private
     OTextField *_emailField;
     OTextField *_passwordField;

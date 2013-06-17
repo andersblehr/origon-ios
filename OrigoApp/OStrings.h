@@ -18,6 +18,7 @@ extern NSString * const strButtonCancel;
 extern NSString * const strButtonSignOut;
 extern NSString * const strAlertTextNoInternet;
 extern NSString * const strAlertTextServerError;
+extern NSString * const strAlertTextLocating;
 extern NSString * const strTermAddress;
 extern NSString * const strTermCountry;
 
@@ -51,12 +52,13 @@ extern NSString * const strHeaderMyOrigos;
 extern NSString * const strFooterOrigoCreationFirst;
 extern NSString * const strFooterOrigoCreation;
 extern NSString * const strFooterOrigoCreationWards;
-extern NSString * const strButtonCountryOfLocation;
+extern NSString * const strButtonCountryLocate;
 extern NSString * const strButtonCountryOther;
-extern NSString * const strAlertTitleCountry;
-extern NSString * const strAlertTextCountry;
-extern NSString * const strSheetTitleCountryLocate;
-extern NSString * const strSheetTitleCountryNoLocate;
+extern NSString * const strAlertTitleCountryOther;
+extern NSString * const strAlertTextCountryOther;
+extern NSString * const strAlertTextCountrySupported;
+extern NSString * const strAlertTextCountryUnsupported;
+extern NSString * const strSheetTitleCountry;
 extern NSString * const strSheetTitleOrigoType;
 extern NSString * const strTermMe;
 extern NSString * const strTermYourChild;
@@ -83,9 +85,11 @@ extern NSString * const strButtonDeleteMember;
 extern NSString * const strDefaultResidenceName;
 extern NSString * const strViewTitleNewOrigo;
 extern NSString * const strLabelAddress;
+extern NSString * const strLabelDescriptionText;
 extern NSString * const strLabelTelephone;
 extern NSString * const strHeaderAddresses;
 extern NSString * const strPlaceholderAddress;
+extern NSString * const strPlaceholderDescriptionText;
 extern NSString * const strPlaceholderTelephone;
 
 // OMemberView strings
@@ -181,6 +185,6 @@ extern NSString * const metaContactRolesSportsTeam;
 + (NSString *)titleForOrigoType:(NSString *)origoType;
 + (NSString *)titleForContactRole:(NSString *)contactRole;
 + (NSString *)titleForSettingKey:(NSString *)settingKey;
-+ (NSString *)textForSettingKey:(NSString *)settingKey;
++ (NSString *)labelForSettingKey:(NSString *)settingKey;
 
 @end

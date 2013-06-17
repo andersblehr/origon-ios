@@ -35,7 +35,6 @@ extern NSString * const kCustomCell;
     NSNumber *_lastSectionKey;
     NSIndexPath *_selectedIndexPath;
     NSInteger _reauthenticationLandingTabIndex;
-    UIView *_emphasisedField;
     
     UIBarButtonItem *_nextButton;
     UIBarButtonItem *_doneButton;
@@ -58,7 +57,6 @@ extern NSString * const kCustomCell;
 @property (nonatomic, readonly) BOOL wasHidden;
 
 @property (nonatomic) BOOL canEdit;
-@property (nonatomic) BOOL shouldDemphasiseOnEndEdit;
 @property (nonatomic) BOOL modalImpliesRegistration;
 @property (nonatomic) BOOL cancelRegistrationImpliesSignOut;
 

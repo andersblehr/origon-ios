@@ -75,12 +75,6 @@ static NSInteger const kHousemateSheetTag = 0;
 }
 
 
-- (void)didFinishEditing
-{
-    [self.dismisser dismissModalViewWithIdentitifier:kViewIdMemberList];
-}
-
-
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
