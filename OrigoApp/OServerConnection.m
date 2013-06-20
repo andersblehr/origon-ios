@@ -234,7 +234,7 @@ static NSString * const kURLParameterVersion = @"version";
     
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     
-    if ([[OState s] actionIs:kActionLogin]) {
+    if ([[OState s] actionIs:kActionSignIn]) {
         _RESTRoute = kRESTRouteAuthLogin;
         
         [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];

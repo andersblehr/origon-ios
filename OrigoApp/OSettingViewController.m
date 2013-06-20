@@ -55,7 +55,7 @@ static NSString * const kCustomValue = @"custom";
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialise
+- (void)initialiseState
 {
     _settings = [OMeta m].settings;
     _settingKey = self.data;
@@ -64,7 +64,7 @@ static NSString * const kCustomValue = @"custom";
 }
 
 
-- (void)populateDataSource
+- (void)initialiseDataSource
 {
     if ([_settingKey isEqualToString:kSettingKeyCountry]) {
         _valueList = [NSMutableArray arrayWithArray:[OMeta m].supportedCountryCodes];

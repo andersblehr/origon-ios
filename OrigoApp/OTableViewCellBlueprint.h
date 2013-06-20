@@ -29,6 +29,7 @@ extern CGFloat const kMinimumCellPadding;
 
 - (BOOL)keyRepresentsMultilineProperty:(NSString *)propertyKey;
 
+//+ (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
 + (CGFloat)cell:(OTableViewCell *)cell heightForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
 
 @end

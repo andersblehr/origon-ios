@@ -32,8 +32,10 @@ static NSInteger const kAuthSection = 0;
 
 static NSInteger const kActivationCodeLength = 6;
 
-static NSInteger const kAlertButtonStartOver = 0;
 static NSInteger const kAlertTagWelcomeBack = 0;
+static NSInteger const kAlertTagActivationFailed = 1;
+
+static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 
 @implementation OAuthViewController
@@ -42,7 +44,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)initialiseFields
 {
-    if ([self actionIs:kActionLogin]) {
+    if ([self actionIs:kActionSignIn]) {
         _passwordField.text = @"";
         
         if ([OMeta m].userEmail) {
@@ -62,12 +64,12 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 - (void)toggleAuthState
 {
-    if ([self actionIs:kActionLogin]) {
+    if ([self actionIs:kActionSignIn]) {
         self.action = kActionActivate;
         
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationLeft];
     } else if ([self actionIs:kActionActivate]) {
-        self.action = kActionLogin;
+        self.action = kActionSignIn;
         
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
         
@@ -95,7 +97,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     static NSString *activationCode;
     
     if (isPending) {
-        if ([self actionIs:kActionLogin]) {
+        if ([self actionIs:kActionSignIn]) {
             email = _emailField.text;
             password = _passwordField.text;
             
@@ -115,7 +117,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
         
         [self.activityIndicator startAnimating];
     } else {
-        if ([self actionIs:kActionLogin]) {
+        if ([self actionIs:kActionSignIn]) {
             _emailField.text = email;
             _emailField.placeholder = [OStrings stringForKey:strPlaceholderAuthEmail];
             _passwordField.text = password;
@@ -135,66 +137,6 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 
 #pragma mark - Input validation
-
-- (void)handleInvalidInputForField:(OTextField *)textField;
-{
-    _numberOfActivationAttempts++;
-    
-    if (_numberOfActivationAttempts < 3) {
-        [self.detailCell shakeCellVibrate:YES];
-        
-        if (textField == _activationCodeField) {
-            _activationCodeField.text = @"";
-        }
-        
-        _passwordField.text = @"";
-        
-        [textField becomeFirstResponder];
-    } else {
-        if ([self targetIs:kTargetUser]) {
-            _numberOfActivationAttempts = 0;
-            
-            [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] text:[OStrings stringForKey:strAlertTextActivationFailed]];
-            [self toggleAuthState];
-        } else if ([self targetIs:kTargetEmail]) {
-            [self.dismisser dismissModalViewController];
-        }
-    }
-}
-
-
-- (BOOL)activationIsValid
-{
-    NSString *activationCode = [[_authInfo objectForKey:kInputKeyActivationCode] lowercaseString];
-    NSString *activationCodeAsEntered = [_activationCodeField.text lowercaseString];
-    
-    BOOL activationCodeIsValid = [activationCodeAsEntered isEqualToString:activationCode];
-    BOOL passwordIsValid = NO;
-    
-    if (activationCodeIsValid) {
-        NSString *passwordHashAsEntered = [self computePasswordHash:_repeatPasswordField.text];
-        NSString *passwordHash = nil;
-        
-        if ([self targetIs:kTargetUser]) {
-            passwordHash = [_authInfo objectForKey:kJSONKeyPasswordHash];
-        } else if ([self targetIs:kTargetEmail]) {
-            passwordHash = [[OMeta m] userDefaultForKey:kDefaultsKeyPasswordHash];
-        }
-        
-        passwordIsValid = [passwordHashAsEntered isEqualToString:passwordHash];
-        
-        if (passwordIsValid && [self targetIs:kTargetEmail]) {
-            [OMeta m].user.email = self.data;
-        } else if (!passwordIsValid) {
-            [self handleInvalidInputForField:_repeatPasswordField];
-        }
-    } else {
-        [self handleInvalidInputForField:_activationCodeField];
-    }
-    
-    return (activationCodeIsValid && passwordIsValid);
-}
-
 
 #pragma mark - Initiating server requests
 
@@ -254,7 +196,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
     
     [[OMeta m] userDidSignIn];
     
-    if ([self actionIs:kActionLogin]) {
+    if ([self actionIs:kActionSignIn]) {
         if (![OMeta m].userIsRegistered) {
             [[OMeta m] setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
         }
@@ -317,7 +259,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialise
+- (void)initialiseState
 {
     if (self.data) {
         self.action = kActionActivate;
@@ -331,7 +273,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 
             self.action = kActionActivate;
         } else {
-            self.action = kActionLogin;
+            self.action = kActionSignIn;
         }
         
         self.target = kTargetUser;
@@ -339,7 +281,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (void)populateDataSource
+- (void)initialiseDataSource
 {
     [self setData:kCustomCell forSectionWithKey:kAuthSection];
 }
@@ -349,7 +291,7 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 {
     NSString *text = nil;
     
-    if ([self actionIs:kActionLogin]) {
+    if ([self actionIs:kActionSignIn]) {
         text = [OStrings stringForKey:strFooterSignInOrRegister];
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
@@ -363,11 +305,113 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
+- (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *reuseIdentifier = nil;
+    
+    if ([self actionIs:kActionSignIn]) {
+        reuseIdentifier = kReuseIdentifierUserSignIn;
+    } else if ([self actionIs:kActionActivate]) {
+        reuseIdentifier = kReuseIdentifierUserActivation;
+    }
+    
+    return reuseIdentifier;
+}
+
+
+- (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    cell.shouldDeemphasiseOnEndEdit = NO;
+    
+    if ([self actionIs:kActionSignIn]) {
+        _emailField = [cell textFieldForKey:kInputKeyAuthEmail];
+        _passwordField = [cell textFieldForKey:kInputKeyPassword];
+    } else if ([self actionIs:kActionActivate]) {
+        _activationCodeField = [cell textFieldForKey:kInputKeyActivationCode];
+        _repeatPasswordField = [cell textFieldForKey:kInputKeyRepeatPassword];
+    }
+}
+
+
 #pragma mark - OTableViewInputDelegate conformance
 
-- (BOOL)textFieldShouldDeemphasiseOnEndEdit
+- (BOOL)inputIsValid
 {
-    return NO;
+    BOOL inputIsValid = NO;
+    
+    if ([self actionIs:kActionSignIn]) {
+        inputIsValid = [_emailField hasValidValue] && [_passwordField hasValidValue];
+    } else if ([self actionIs:kActionActivate]) {
+        inputIsValid = [_activationCodeField hasValidValue] && [_repeatPasswordField hasValidValue];
+    }
+    
+    return inputIsValid;
+}
+
+
+- (void)processInput
+{
+    if ([self actionIs:kActionSignIn]) {
+        [self sendUserLoginRequest];
+    } else if ([self actionIs:kActionActivate]) {
+        if ([self targetIs:kTargetUser]) {
+            [self sendUserActivationRequest];
+        } else if ([self targetIs:kTargetEmail]) {
+            [self.dismisser dismissModalViewController];
+        }
+    }
+}
+
+
+- (BOOL)willValidateInputForKey:(NSString *)key
+{
+    BOOL shouldValidate = NO;
+    
+    shouldValidate = shouldValidate || [key isEqualToString:kInputKeyActivationCode];
+    shouldValidate = shouldValidate || [key isEqualToString:kInputKeyRepeatPassword];
+    
+    return shouldValidate;
+}
+
+
+- (BOOL)inputValue:(id)inputValue isValidForKey:(NSString *)key
+{
+    BOOL valueIsValid = NO;
+    
+    if ([key isEqualToString:kInputKeyActivationCode]) {
+        NSString *activationCode = [_authInfo objectForKey:kInputKeyActivationCode];
+        NSString *activationCodeAsEntered = [inputValue lowercaseString];
+        
+        valueIsValid = [activationCodeAsEntered isEqualToString:activationCode];
+    } else if ([key isEqualToString:kInputKeyRepeatPassword]) {
+        NSString *passwordHashAsEntered = [self computePasswordHash:inputValue];
+        NSString *passwordHash = nil;
+        
+        if ([self targetIs:kTargetUser]) {
+            passwordHash = [_authInfo objectForKey:kJSONKeyPasswordHash];
+        } else if ([self targetIs:kTargetEmail]) {
+            passwordHash = [[OMeta m] userDefaultForKey:kDefaultsKeyPasswordHash];
+        }
+        
+        valueIsValid = [passwordHashAsEntered isEqualToString:passwordHash];
+    }
+    
+    if (!valueIsValid) {
+        _numberOfActivationAttempts++;
+        
+        if (_numberOfActivationAttempts == 3) {
+            if ([self targetIs:kTargetUser]) {
+                _numberOfActivationAttempts = 0;
+                
+                [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] text:[OStrings stringForKey:strAlertTextActivationFailed] tag:kAlertTagActivationFailed];
+                [self toggleAuthState];
+            } else if ([self targetIs:kTargetEmail]) {
+                [self.dismisser dismissModalViewController];
+            }
+        }
+    }
+    
+    return valueIsValid;
 }
 
 
@@ -379,97 +423,26 @@ static NSInteger const kAlertTagWelcomeBack = 0;
 }
 
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if ([self actionIs:kActionLogin]) {
-        self.detailCell = [tableView cellForReuseIdentifier:kReuseIdentifierUserSignIn];
-        
-        _emailField = [self.detailCell textFieldForKey:kInputKeyAuthEmail];
-        _passwordField = [self.detailCell textFieldForKey:kInputKeyPassword];
-    } else {
-        self.detailCell = [tableView cellForReuseIdentifier:kReuseIdentifierUserActivation];
-        
-        _activationCodeField = [self.detailCell textFieldForKey:kInputKeyActivationCode];
-        _repeatPasswordField = [self.detailCell textFieldForKey:kInputKeyRepeatPassword];
-    }
-    
-    return self.detailCell;
-}
-
-
-#pragma mark - UITableViewDelegate conformance
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [super tableView:tableView willDisplayCell:cell forRowAtIndexPath:indexPath];
-    
-    if ([self actionIs:kActionLogin]) {
-        _emailField.hasEmphasis = YES;
-        _passwordField.hasEmphasis = YES;
-    } else if ([self actionIs:kActionActivate]) {
-        _activationCodeField.hasEmphasis = YES;
-        _repeatPasswordField.hasEmphasis = YES;
-    }
-}
-
-
-#pragma mark - UITextFieldDelegate conformance
-
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
-{
-    return self.canEdit;
-}
-
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    BOOL shouldReturn = YES;
-    
-    if (textField == _emailField) {
-        [_passwordField becomeFirstResponder];
-    } else if (textField == _passwordField) {
-        shouldReturn = shouldReturn && [self.detailCell hasValidValueForKey:kInputKeyAuthEmail];
-        shouldReturn = shouldReturn && [self.detailCell hasValidValueForKey:kInputKeyPassword];
-        
-        if (shouldReturn) {
-            [self.view endEditing:YES];
-            [self sendUserLoginRequest];
-        } else {
-            _passwordField.text = @"";
-            [self.detailCell shakeCellVibrate:YES];
-        }
-    } else if (textField == _activationCodeField) {
-        [_repeatPasswordField becomeFirstResponder];
-    } else if (textField == _repeatPasswordField) {
-        shouldReturn = [self activationIsValid];
-        
-        if (shouldReturn) {
-            [self.view endEditing:YES];
-            
-            if ([self targetIs:kTargetUser]) {
-                [self sendUserActivationRequest];
-            } else if ([self targetIs:kTargetEmail]) {
-                [self.dismisser dismissModalViewController];
-            }
-        } else {
-            _repeatPasswordField.text = @"";
-            [self.detailCell shakeCellVibrate:YES];
-        }
-    }
-    
-    return shouldReturn;
-}
-
-
 #pragma mark - UIAlertViewDelegate implementation
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag == kAlertTagWelcomeBack) {
-        if (buttonIndex == kAlertButtonStartOver) {
-            [self toggleAuthState];
+    switch (alertView.tag) {
+        case kAlertTagWelcomeBack:
+            if (buttonIndex == kAlertButtonWelcomeBackStartOver) {
+                [self toggleAuthState];
+                [_passwordField becomeFirstResponder];
+            }
+            
+            break;
+            
+        case kAlertTagActivationFailed:
             [_passwordField becomeFirstResponder];
-        }
+            
+            break;
+            
+        default:
+            break;
     }
 }
 

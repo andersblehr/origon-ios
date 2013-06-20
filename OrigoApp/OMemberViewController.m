@@ -53,12 +53,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (BOOL)emailIsEligible
 {
-    BOOL emailIsEligible = [self.detailCell hasValidValueForKey:kPropertyKeyEmail];
+    BOOL emailIsEligible = [_emailField hasValidValue];
     
     if (emailIsEligible && [self actionIs:kActionRegister] && ![self targetIs:kTargetUser]) {
-        NSString *email = [_emailField textValue];
-        
-        _candidate = [[OMeta m].context memberEntityWithEmail:email];
+        _candidate = [[OMeta m].context memberEntityWithEmail:[_emailField textValue]];
         
         if (_candidate) {
             if ([_origo hasMember:_candidate]) {
@@ -66,7 +64,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 [_emailField becomeFirstResponder];
                 
                 NSString *alertTitle = [OStrings stringForKey:strAlertTitleMemberExists];
-                NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, email, _origo.name];
+                NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, [_emailField textValue], _origo.name];
                 [OAlert showAlertWithTitle:alertTitle text:alertMessage];
                 
                 _candidate = nil;
@@ -223,7 +221,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     if ([self actionIs:kActionDisplay]) {
-        if ([self canEdit]) {
+        if (self.canEdit) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
             self.navigationItem.rightBarButtonItem.action = @selector(addResidence);
         }
@@ -284,7 +282,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialise
+- (void)initialiseState
 {
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
@@ -298,9 +296,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)populateDataSource
+- (void)initialiseDataSource
 {
-    id memberDataSource = _member ? _member : kCustomCell;
+    id memberDataSource = _member ? _member : kEntityRegistrationCell;
     
     [self setData:memberDataSource forSectionWithKey:kMemberSectionKey];
     
@@ -312,7 +310,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return ([super hasFooterForSectionWithKey:sectionKey] && [self canEdit]);
+    return ([super hasFooterForSectionWithKey:sectionKey] && self.canEdit);
 }
 
 
@@ -348,15 +346,15 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     BOOL inputIsValid = YES;
     
-    inputIsValid = inputIsValid && [self.detailCell hasValidValueForKey:kPropertyKeyName];
-    inputIsValid = inputIsValid && [self.detailCell hasValidValueForKey:kPropertyKeyDateOfBirth];
+    inputIsValid = inputIsValid && [_nameField hasValidValue];
+    inputIsValid = inputIsValid && [_dateOfBirthField hasValidValue];
     
     if (inputIsValid) {
         if ([self targetIs:kTargetUser] || ![_dateOfBirthField.date isBirthDateOfMinor]) {
-            inputIsValid = [self emailIsEligible] && [self.detailCell hasValidValueForKey:kPropertyKeyMobilePhone];
+            inputIsValid = [self emailIsEligible] && [_mobilePhoneField hasValidValue];
         } else if ([_dateOfBirthField.date isBirthDateOfMinor]) {
-            if ([self.detailCell hasValueForKey:kPropertyKeyEmail]) {
-                inputIsValid = [self.detailCell hasValidValueForKey:kPropertyKeyEmail];
+            if ([_emailField hasValue]) {
+                inputIsValid = [_emailField hasValidValue];
             }
         }
     }

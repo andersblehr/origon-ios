@@ -23,7 +23,7 @@
 #import "OTextField.h"
 #import "OTextView.h"
 #import "OTableViewCellBlueprint.h"
-#import "OUtil.h"
+#import "OValidator.h"
 
 #import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
@@ -31,6 +31,7 @@
 
 #import "OTabBarController.h"
 
+NSString * const kEntityRegistrationCell = @"registration";
 NSString * const kCustomCell = @"custom";
 
 static NSString * const kListViewSuffix = @"ListViewController";
@@ -66,9 +67,9 @@ static NSString * const kDetailViewSuffix = @"ViewController";
                 _action = kActionDisplay;
             }
             
-            [_instance initialise];
+            [_instance initialiseState];
             [[OState s] reflect:_state];
-            [_instance populateDataSource];
+            [_instance initialiseDataSource];
             
             for (NSNumber *sectionKey in [_sectionData allKeys]) {
                 _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
@@ -101,6 +102,14 @@ static NSString * const kDetailViewSuffix = @"ViewController";
         self.navigationItem.rightBarButtonItem = _nextButton;
     } else {
         self.navigationItem.rightBarButtonItem = _doneButton;
+    }
+}
+
+
+- (void)inputFieldDidEndEditing:(id)inputField
+{
+    if (_detailCell.shouldDeemphasiseOnEndEdit) {
+        [inputField setHasEmphasis:NO];
     }
 }
 
@@ -158,15 +167,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     if ([self isListView]) {
         [_dismisser dismissModalViewController];
     } else {
-        if ([_instance inputIsValid]) {
-            if ([self actionIs:kActionRegister]) {
-                [self.view endEditing:YES];
-            }
-            
-            [_instance processInput];
-        } else {
-            [_detailCell shakeCellVibrate:NO];
-        }
+        [_detailCell processInput];
     }
 }
 
@@ -188,8 +189,8 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     } else if (data) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
         
-        if (_entitySectionKey == NSNotFound) {
-            _entitySectionKey = sectionKey;
+        if (_detailSectionKey == NSNotFound) {
+            _detailSectionKey = sectionKey;
             
             if ([data isKindOfClass:OReplicatedEntity.class]) {
                 _entity = data;
@@ -209,8 +210,8 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey
 {
-    if (sectionKey == _entitySectionKey) {
-        _entitySectionKey = NSNotFound;
+    if (sectionKey == _detailSectionKey) {
+        _detailSectionKey = NSNotFound;
         _entity = nil;
     }
     
@@ -388,7 +389,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)reloadSectionsIfNeeded
 {
-    [_instance populateDataSource];
+    [_instance initialiseDataSource];
     
     NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
     NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
@@ -432,7 +433,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)reloadSectionWithKey:(NSInteger)sectionKey
 {
-    [_instance populateDataSource];
+    [_instance initialiseDataSource];
     
     _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
     
@@ -473,7 +474,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
         _isModal = (self.presentingViewController != nil);
     }
     
-    _entitySectionKey = NSNotFound;
+    _detailSectionKey = NSNotFound;
     _sectionKeys = [[NSMutableArray alloc] init];
     _sectionData = [[NSMutableDictionary alloc] init];
     _sectionCounts = [[NSMutableDictionary alloc] init];
@@ -535,9 +536,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     } else if (![OMeta m].userIsSignedIn) {
         [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:self];
     } else if ([self actionIs:kActionRegister]) {
-        [[self.detailCell nextInputField] becomeFirstResponder];
-    } else if (self.detailCell) {
-        self.detailCell.editable = self.canEdit;
+        [[_detailCell nextInputField] becomeFirstResponder];
     }
     
     OLogState;
@@ -600,20 +599,20 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     if ([target isKindOfClass:OReplicatedEntity.class]) {
         _target = [target asTarget];
     } else if ([target isKindOfClass:NSString.class]) {
-        _target = [OUtil stringHoldsValidEmailAddress:target] ? kTargetEmail : target;
+        _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
     }
 }
 
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialise
+- (void)initialiseState
 {
     // Override in subclass
 }
 
 
-- (void)populateDataSource
+- (void)initialiseDataSource
 {
     // Override in subclass
 }
@@ -651,7 +650,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 {
     CGFloat height = kDefaultTableViewCellHeight;
     
-    if (indexPath.section == [self sectionNumberForSectionKey:_entitySectionKey]) {
+    if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
         height = [OTableViewCellBlueprint cell:_detailCell heightForEntityClass:_entityClass entity:_entity];
     }
     
@@ -663,11 +662,18 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 {
     OTableViewCell *cell = nil;
     
-    if (indexPath.section == [self sectionNumberForSectionKey:_entitySectionKey]) {
-        _detailCell = [tableView cellForEntityClass:_entityClass entity:_entity];
-        _detailCell.observer = self.observer;
+    if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
+        id cellData = [self dataAtIndexPath:indexPath];
         
-        cell = _detailCell;
+        if ([cellData isKindOfClass:NSString.class] && [cellData isEqualToString:kCustomCell]) {
+            cell = [tableView cellForReuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]];
+        } else {
+            cell = [tableView cellForEntityClass:_entityClass entity:_entity];
+            cell.observer = self.observer;
+        }
+        
+        _detailCell = cell;
+        _detailCell.editable = self.canEdit;
     } else {
         cell = [tableView listCellForIndexPath:indexPath value:[self dataAtIndexPath:indexPath]];
     }
@@ -754,14 +760,14 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if ([_instance respondsToSelector:@selector(willDisplayCell:atIndexPath:)]) {
+        [_instance willDisplayCell:cell atIndexPath:indexPath];
+    }
+    
     if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1) {
         [cell willAppearTrailing:YES];
     } else {
         [cell willAppearTrailing:NO];
-    }
-    
-    if ([_instance respondsToSelector:@selector(willDisplayCell:atIndexPath:)]) {
-        [_instance willDisplayCell:cell atIndexPath:indexPath];
     }
 }
 
@@ -788,7 +794,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
+- (BOOL)textFieldShouldReturn:(OTextField *)textField
 {
     if ([_detailCell nextInputField]) {
         [self moveToNextInputField];
@@ -797,6 +803,12 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     }
     
     return YES;
+}
+
+
+- (void)textFieldDidEndEditing:(OTextField *)textField
+{
+    [self inputFieldDidEndEditing:textField];
 }
 
 
@@ -810,7 +822,13 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)textViewDidChange:(OTextView *)textView
 {
-    [self.detailCell redrawIfNeeded];
+    [_detailCell redrawIfNeeded];
+}
+
+
+- (void)textViewDidEndEditing:(OTextView *)textView
+{
+    [self inputFieldDidEndEditing:textView];
 }
 
 

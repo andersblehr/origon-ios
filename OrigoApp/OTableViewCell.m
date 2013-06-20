@@ -100,6 +100,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         } else {
             _inputDelegate = self.localState.inputDelegate;
             _selectable = [self.localState actionIs:kActionList];
+            _shouldDeemphasiseOnEndEdit = YES;
             _views = [[NSMutableDictionary alloc] init];
         }
         
@@ -305,7 +306,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (BOOL)hasValidValueForKey:(NSString *)key
 {
-    return [[self textFieldForKey:key] hasValidValueForKey:key];
+    return [[self textFieldForKey:key] hasValidValue];
 }
 
 
@@ -313,14 +314,20 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)willAppearTrailing:(BOOL)trailing
 {
-    if (trailing) {
-        [self.backgroundView addDropShadowForTrailingTableViewCell];
-    } else {
-        [self.backgroundView addDropShadowForInternalTableViewCell];
-    }
+    [self.backgroundView addDropShadowForTableViewCellTrailing:trailing];
     
     if (_blueprint.hasPhoto) {
         [[_views objectForKey:kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
+    }
+    
+    if (_editable && !_shouldDeemphasiseOnEndEdit) {
+        for (NSString *key in [_views allKeys]) {
+            id view = _views[key];
+            
+            if ([view isKindOfClass:OTextField.class] || [view isKindOfClass:OTextView.class]) {
+                [view setHasEmphasis:YES];
+            }
+        }
     }
 }
 
@@ -377,6 +384,20 @@ static CGFloat const kShakeRepeatCount = 3.f;
             self.transform = CGAffineTransformIdentity;
         } completion:NULL];
     }];
+}
+
+
+- (void)processInput
+{
+    if ([_inputDelegate inputIsValid]) {
+        if (![[OState s] actionIs:kActionEdit]) {
+            [[OState s].viewController.view endEditing:YES];
+        }
+        
+        [_inputDelegate processInput];
+    } else {
+        [self shakeCellVibrate:NO];
+    }
 }
 
 
@@ -446,21 +467,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setInputField:(id)inputField
 {
-    if (_inputField && [_inputField hasEmphasis]) {
-        BOOL shouldDeemphasise = YES;
-        
-        if ([_inputDelegate respondsToSelector:@selector(textFieldShouldDeemphasiseOnEndEdit)]) {
-            shouldDeemphasise = [_inputDelegate textFieldShouldDeemphasiseOnEndEdit];
-        }
-        
-        if (shouldDeemphasise) {
-            [_inputField setHasEmphasis:NO];
-        }
+    if (_inputField && [_inputField hasEmphasis] && _shouldDeemphasiseOnEndEdit) {
+        [_inputField setHasEmphasis:NO];
     }
 
     _inputField = inputField;
     
-    [_inputField setHasEmphasis:YES];
+    if (_inputField && ![_inputField hasEmphasis]) {
+        [_inputField setHasEmphasis:YES];
+    }
 }
 
 

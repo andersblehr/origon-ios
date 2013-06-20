@@ -73,17 +73,11 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 
 #pragma mark - Shadows
 
-- (void)addDropShadowForInternalTableViewCell
+- (void)addDropShadowForTableViewCellTrailing:(BOOL)trailing
 {
-    CGRect nonOverlappingShadowRect = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height - 2.75f * kCellShadowRadius);
+    CGRect shadowRect = trailing ? self.bounds : CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height - 2.75f * kCellShadowRadius);
     
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:nonOverlappingShadowRect] colour:[UIColor blackColor] radius:kCellShadowRadius offset:kCellShadowOffset];
-}
-
-
-- (void)addDropShadowForTrailingTableViewCell
-{
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor blackColor] radius:kCellShadowRadius offset:kCellShadowOffset];
+    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:shadowRect] colour:[UIColor blackColor] radius:kCellShadowRadius offset:kCellShadowOffset];
 }
 
 
@@ -93,13 +87,13 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 }
 
 
-- (void)hasDropShadow:(BOOL)hasDropShadow
+- (void)toggleDropShadow:(BOOL)isVisible
 {
-    if (hasDropShadow) {
+    if (isVisible) {
         if ([self isKindOfClass:UITextField.class] || [self isKindOfClass:UITextView.class]) {
             [self addDropShadowForTextField];
         } else {
-            [self addDropShadowForTrailingTableViewCell];
+            [self addDropShadowForTableViewCellTrailing:YES];
         }
     } else {
         [self removeDropShadow];

@@ -11,41 +11,10 @@
 #import "NSString+OrigoExtensions.h"
 
 #import "OMeta.h"
+#import "OValidator.h"
 
 
 @implementation OUtil
-
-+ (BOOL)stringHoldsValidName:(NSString *)string
-{
-    BOOL holdsValidName = NO;
-    
-    if (string) {
-        holdsValidName = ([string length] > 0);
-        holdsValidName = holdsValidName && ([string rangeOfString:kSeparatorSpace].location > 0);
-    }
-    
-    return holdsValidName;
-}
-
-
-+ (BOOL)stringHoldsValidEmailAddress:(NSString *)string
-{
-    BOOL holdsValidEmailAddress = NO;
-    
-    if (string) {
-        NSUInteger atLocation = [string rangeOfString:@"@"].location;
-        NSUInteger dotLocation = [string rangeOfString:@"." options:NSBackwardsSearch].location;
-        NSUInteger spaceLocation = [string rangeOfString:@" "].location;
-        
-        holdsValidEmailAddress = (atLocation != NSNotFound);
-        holdsValidEmailAddress = holdsValidEmailAddress && (dotLocation != NSNotFound);
-        holdsValidEmailAddress = holdsValidEmailAddress && (dotLocation > atLocation);
-        holdsValidEmailAddress = holdsValidEmailAddress && (spaceLocation == NSNotFound);
-    }
-    
-    return holdsValidEmailAddress;
-}
-
 
 + (BOOL)isSupportedCountryCode:(NSString *)countryCode
 {
@@ -69,7 +38,7 @@
 {
     NSString *givenName = nil;
     
-    if ([self stringHoldsValidName:fullName]) {
+    if ([OValidator valueIsName:fullName]) {
         NSArray *names = [fullName componentsSeparatedByString:kSeparatorSpace];
         
         if ([OMeta m].shouldUseEasternNameOrder) {

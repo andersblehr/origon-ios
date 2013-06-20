@@ -116,7 +116,7 @@ static NSInteger const kHousemateSheetTag = 0;
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialise
+- (void)initialiseState
 {
     _membership = self.data;
     _origo = _membership.origo;
@@ -125,7 +125,7 @@ static NSInteger const kHousemateSheetTag = 0;
 }
 
 
-- (void)populateDataSource
+- (void)initialiseDataSource
 {
     NSMutableSet *contactMemberships = [[NSMutableSet alloc] init];
     NSMutableSet *regularMemberships = [[NSMutableSet alloc] init];

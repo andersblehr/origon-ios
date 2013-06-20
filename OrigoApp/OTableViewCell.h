@@ -44,6 +44,7 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic, readonly) BOOL selectable;
 @property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL checked;
+@property (nonatomic) BOOL shouldDeemphasiseOnEndEdit;
 
 @property (weak, nonatomic) id<OEntityObservingDelegate> observer;
 
@@ -62,6 +63,7 @@ extern CGFloat const kCellAnimationDuration;
 - (void)toggleEditMode;
 - (void)redrawIfNeeded;
 - (void)shakeCellVibrate:(BOOL)vibrate;
+- (void)processInput;
 
 - (void)readEntity;
 - (void)writeEntity;

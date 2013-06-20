@@ -165,9 +165,9 @@ static CGFloat const kDetailTextWidth = 210.f;
 }
 
 
-- (BOOL)hasValidValueForKey:(NSString *)key
+- (BOOL)hasValidValue
 {
-    BOOL hasValidValue = ([self textValue] != nil);
+    BOOL hasValidValue = [self hasValue];
     
     if (!hasValidValue) {
         [self becomeFirstResponder];
@@ -226,7 +226,7 @@ static CGFloat const kDetailTextWidth = 210.f;
         self.backgroundColor = [UIColor clearColor];
     }
     
-    [self hasDropShadow:_hasEmphasis];
+    [self toggleDropShadow:_hasEmphasis];
     [_cell redrawIfNeeded];
 }
 
