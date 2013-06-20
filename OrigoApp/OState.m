@@ -36,7 +36,7 @@ NSString * const kViewIdSettingList = @"settings";
 NSString * const kViewIdTaskList = @"tasks";
 
 NSString * const kActionSetup = @"setup";
-NSString * const kActionLogin = @"login";
+NSString * const kActionSignIn = @"signin";
 NSString * const kActionActivate = @"activate";
 NSString * const kActionRegister = @"register";
 NSString * const kActionList = @"list";
@@ -110,7 +110,7 @@ static OState *s = nil;
     BOOL actionIsCurrent = NO;
     
     if ([action isEqualToString:kActionInput]) {
-        actionIsCurrent = actionIsCurrent || [self.viewController actionIs:kActionLogin];
+        actionIsCurrent = actionIsCurrent || [self.viewController actionIs:kActionSignIn];
         actionIsCurrent = actionIsCurrent || [self.viewController actionIs:kActionActivate];
         actionIsCurrent = actionIsCurrent || [self.viewController actionIs:kActionRegister];
         actionIsCurrent = actionIsCurrent || [self.viewController actionIs:kActionEdit];

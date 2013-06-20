@@ -10,8 +10,6 @@
 
 @interface OUtil : NSObject
 
-+ (BOOL)stringHoldsValidName:(NSString *)string;
-+ (BOOL)stringHoldsValidEmailAddress:(NSString *)string;
 + (BOOL)isSupportedCountryCode:(NSString *)countryCode;
 
 + (NSString *)countryFromCountryCode:(NSString *)countryCode;

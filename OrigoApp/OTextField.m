@@ -19,7 +19,7 @@
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
-#import "OUtil.h"
+#import "OValidator.h"
 
 #import "OReplicatedEntity.h"
 
@@ -27,14 +27,21 @@ CGFloat const kTextInset = 4.f;
 
 static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor";
 
-static NSInteger const kMinimumPassordLength = 6;
-static NSInteger const kMinimumPhoneNumberLength = 5;
-
 
 @implementation OTextField
 
-
 #pragma mark - Auxiliary methods
+
+- (BOOL)isPasswordField
+{
+    BOOL isPasswordField = NO;
+    
+    isPasswordField = isPasswordField || [_key isEqualToString:kInputKeyPassword];
+    isPasswordField = isPasswordField || [_key isEqualToString:kInputKeyRepeatPassword];
+    
+    return isPasswordField;
+}
+
 
 - (void)configureForKey:(NSString *)key
 {
@@ -42,7 +49,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     
     if ([key isEqualToString:kInputKeyAuthEmail]) {
         self.keyboardType = UIKeyboardTypeEmailAddress;
-    } else if ([key isEqualToString:kInputKeyPassword] || [key isEqualToString:kInputKeyRepeatPassword]) {
+    } else if ([self isPasswordField]) {
         self.clearsOnBeginEditing = YES;
         self.returnKeyType = UIReturnKeyDone;
         self.secureTextEntry = YES;
@@ -105,6 +112,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     if (self) {
         _cell = cell;
         _isTitle = [_cell isTitleKey:key];
+        _inputDelegate = delegate;
         
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -145,27 +153,30 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-- (BOOL)hasValidValueForKey:(NSString *)key
+- (BOOL)hasValidValue
 {
-    BOOL displaysValidValue = NO;
+    BOOL hasValidValue = NO;
+    BOOL delegateWillValidate = NO;
     
-    if ([key isEqualToString:kPropertyKeyEmail] || [key isEqualToString:kInputKeyAuthEmail]) {
-        displaysValidValue = [OUtil stringHoldsValidEmailAddress:[self textValue]];
-    } else if ([key isEqualToString:kInputKeyPassword]) {
-        displaysValidValue = ([[self textValue] length] >= kMinimumPassordLength);
-    } else if ([key isEqualToString:kPropertyKeyName]) {
-        displaysValidValue = [OUtil stringHoldsValidName:[self textValue]];
-    } else if ([key isEqualToString:kPropertyKeyMobilePhone]) {
-        displaysValidValue = ([[self textValue] length] >= kMinimumPhoneNumberLength);
-    } else if ([self isDateField]) {
-        displaysValidValue = ([self textValue] != nil);
+    if ([_inputDelegate respondsToSelector:@selector(willValidateInputForKey:)]) {
+        delegateWillValidate = [_inputDelegate willValidateInputForKey:_key];
     }
     
-    if (!displaysValidValue) {
+    if (delegateWillValidate) {
+        hasValidValue = [_inputDelegate inputValue:[self objectValue] isValidForKey:_key];
+    } else {
+        hasValidValue = [OValidator value:[self objectValue] isValidForKey:_key];
+    }
+    
+    if (!hasValidValue) {
+        if ([self isPasswordField]) {
+            self.text = @"";
+        }
+        
         [self becomeFirstResponder];
     }
     
-    return displaysValidValue;
+    return hasValidValue;
 }
 
 
@@ -198,7 +209,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     if ([self isDateField]) {
         if (_didPickDate) {
             date = ((UIDatePicker *)self.inputView).date;
-        } else {
+        } else if (_cell.entity) {
             date = [_cell.entity valueForKey:_key];
         }
     }
@@ -246,7 +257,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         }
     }
     
-    [self hasDropShadow:_hasEmphasis];
+    [self toggleDropShadow:_hasEmphasis];
     [_cell redrawIfNeeded];
 }
 

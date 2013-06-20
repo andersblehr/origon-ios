@@ -10,9 +10,14 @@
 
 @protocol OTableViewInputDelegate <NSObject>
 
+@required
+- (BOOL)inputIsValid;
+- (void)processInput;
+
 @optional
-- (id)targetEntity;
-- (BOOL)textFieldShouldDeemphasiseOnEndEdit;
+- (BOOL)willValidateInputForKey:(NSString *)key;
+- (BOOL)inputValue:(id)inputValue isValidForKey:(NSString *)key;
 - (NSDictionary *)additionalInputValues;
+- (id)targetEntity;
 
 @end

@@ -13,8 +13,8 @@
 @protocol OTableViewControllerInstance <NSObject>
 
 @required
-- (void)initialise;
-- (void)populateDataSource;
+- (void)initialiseState;
+- (void)initialiseDataSource;
 
 @optional
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;
@@ -22,11 +22,9 @@
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
 
+- (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath;
 - (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
-
-- (BOOL)inputIsValid;
-- (void)processInput;
 
 - (void)didResumeFromBackground;
 

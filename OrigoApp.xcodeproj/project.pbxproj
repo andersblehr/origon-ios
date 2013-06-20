@@ -118,6 +118,7 @@
 		5CBE91A31599823000516C54 /* UIFont+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE91A21599823000516C54 /* UIFont+OrigoExtensions.m */; };
 		5CBE9C5314AB5160004FE2B7 /* NSString+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE9C5214AB515F004FE2B7 /* NSString+OrigoExtensions.m */; };
 		5CBFB738174B64D40021A8F6 /* OSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBFB737174B64D40021A8F6 /* OSettingViewController.m */; };
+		5CC40C9B1772DC5E00DD850E /* OValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC40C9A1772DC5E00DD850E /* OValidator.m */; };
 		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
 		5CCF09041465D91B00D41AB0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CCF09031465D91B00D41AB0 /* SystemConfiguration.framework */; };
 		5CD3360E15C40A2F00ABBFE7 /* OState.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD3360D15C40A2F00ABBFE7 /* OState.m */; };
@@ -321,6 +322,8 @@
 		5CBE9C5214AB515F004FE2B7 /* NSString+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5CBFB736174B64D40021A8F6 /* OSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettingViewController.h; sourceTree = "<group>"; };
 		5CBFB737174B64D40021A8F6 /* OSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettingViewController.m; sourceTree = "<group>"; };
+		5CC40C991772DC5E00DD850E /* OValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OValidator.h; sourceTree = "<group>"; };
+		5CC40C9A1772DC5E00DD850E /* OValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OValidator.m; sourceTree = "<group>"; };
 		5CCF08BD1463F12A00D41AB0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		5CCF08FC1465D5D800D41AB0 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		5CCF08FD1465D5D900D41AB0 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -571,6 +574,8 @@
 				5CAAD27E1751EBA7002AF8CF /* OUtil.m */,
 				5C3C665A14F56D6800514C57 /* OUUIDGenerator.h */,
 				5C3C665B14F56D6800514C57 /* OUUIDGenerator.m */,
+				5CC40C991772DC5E00DD850E /* OValidator.h */,
+				5CC40C9A1772DC5E00DD850E /* OValidator.m */,
 			);
 			name = "Auxiliary Classes";
 			sourceTree = "<group>";
@@ -901,6 +906,7 @@
 				5CBFB738174B64D40021A8F6 /* OSettingViewController.m in Sources */,
 				5C0AFA44174F7168007A29CD /* OSettings.m in Sources */,
 				5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */,
+				5CC40C9B1772DC5E00DD850E /* OValidator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

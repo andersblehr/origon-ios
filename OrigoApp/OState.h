@@ -24,7 +24,7 @@ extern NSString * const kViewIdSettingList;
 extern NSString * const kViewIdTaskList;
 
 extern NSString * const kActionSetup;
-extern NSString * const kActionLogin;
+extern NSString * const kActionSignIn;
 extern NSString * const kActionActivate;
 extern NSString * const kActionRegister;
 extern NSString * const kActionList;

@@ -6,19 +6,20 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 
 extern CGFloat const kTextInset;
 
 @class OTableViewCell;
+@protocol OTableViewInputDelegate;
 
 @interface OTextField : UITextField {
 @private
-    OTableViewCell *_cell;
-    
     BOOL _isTitle;
     BOOL _didPickDate;
+    
+    OTableViewCell *_cell;
+    id<OTableViewInputDelegate> _inputDelegate;
 }
 
 @property (strong, nonatomic, readonly) NSString *key;
@@ -30,7 +31,8 @@ extern CGFloat const kTextInset;
 
 - (BOOL)isDateField;
 - (BOOL)hasValue;
-- (BOOL)hasValidValueForKey:(NSString *)key;
+- (BOOL)hasValidValue;
+
 - (id)objectValue;
 - (NSString *)textValue;
 

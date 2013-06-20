@@ -56,7 +56,7 @@ static NSInteger const kOrigoSection = 0;
 
 - (BOOL)canEdit
 {
-    return [_origo userIsAdmin];
+    return [self actionIs:kActionRegister] || [_origo userIsAdmin];
 }
 
 
@@ -76,7 +76,7 @@ static NSInteger const kOrigoSection = 0;
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialise
+- (void)initialiseState
 {
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
@@ -90,9 +90,9 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
-- (void)populateDataSource
+- (void)initialiseDataSource
 {
-    id origoDataSource = _origo ? _origo : kCustomCell;
+    id origoDataSource = _origo ? _origo : kEntityRegistrationCell;
     
     [self setData:origoDataSource forSectionWithKey:kOrigoSection];
 }
@@ -109,9 +109,9 @@ static NSInteger const kOrigoSection = 0;
     BOOL isValid = NO;
     
     if ([self targetIs:kOrigoTypeResidence]) {
-        isValid = ([self.detailCell hasValidValueForKey:kPropertyKeyAddress]);
+        isValid = [self.detailCell hasValidValueForKey:kPropertyKeyAddress];
     } else {
-        isValid = ([self.detailCell hasValidValueForKey:kPropertyKeyName]);
+        isValid = [self.detailCell hasValidValueForKey:kPropertyKeyName];
     }
     
     return isValid;

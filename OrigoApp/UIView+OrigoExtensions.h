@@ -13,11 +13,10 @@
 
 - (void)addGradientLayer;
 
-- (void)addDropShadowForInternalTableViewCell;
-- (void)addDropShadowForTrailingTableViewCell;
+- (void)addDropShadowForTableViewCellTrailing:(BOOL)trailing;
 - (void)addDropShadowForPhotoFrame;
 
-- (void)hasDropShadow:(BOOL)hasDropShadow;
+- (void)toggleDropShadow:(BOOL)isVisible;
 - (void)redrawDropShadow;
 
 @end

@@ -39,7 +39,7 @@
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialise
+- (void)initialiseState
 {
     // TODO
 }

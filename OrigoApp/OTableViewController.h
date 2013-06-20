@@ -12,6 +12,7 @@
 #import "OServerConnectionDelegate.h"
 #import "OTableViewControllerInstance.h"
 
+extern NSString * const kEntityRegistrationCell;
 extern NSString * const kCustomCell;
 
 @protocol OEntityObservingDelegate;
@@ -27,7 +28,7 @@ extern NSString * const kCustomCell;
     BOOL _needsReloadSections;
     
     Class _entityClass;
-    NSInteger _entitySectionKey;
+    NSInteger _detailSectionKey;
     NSMutableArray *_sectionKeys;
     NSMutableDictionary *_sectionData;
     NSMutableDictionary *_sectionCounts;

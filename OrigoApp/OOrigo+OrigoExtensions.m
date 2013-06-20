@@ -45,6 +45,10 @@ NSString * const kOrigoTypeOther = @"other";
         membership = [[OMeta m].context insertEntityOfClass:OMembership.class inOrigo:self];
         membership.member = member;
         
+        if ([member isUser]) {
+            membership.isAdmin = @YES;
+        }
+        
         [membership alignWithOrigoIsAssociate:isAssociate];
         
         if (![self isOfType:kOrigoTypeMemberRoot]) {

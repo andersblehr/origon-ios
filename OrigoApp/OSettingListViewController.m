@@ -52,7 +52,7 @@ static NSInteger const kSettingsSectionKey = 0;
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialise
+- (void)initialiseState
 {
     self.target = kTargetUser;
     
@@ -62,7 +62,7 @@ static NSInteger const kSettingsSectionKey = 0;
 }
 
 
-- (void)populateDataSource
+- (void)initialiseDataSource
 {
     [self setData:[[OMeta m].settings settingKeys] forSectionWithKey:kSettingsSectionKey];
 }

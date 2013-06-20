@@ -34,7 +34,7 @@ extern NSInteger const kTextViewMaximumLines;
 
 - (BOOL)isDateField;
 - (BOOL)hasValue;
-- (BOOL)hasValidValueForKey:(NSString *)key;
+- (BOOL)hasValidValue;
 - (id)objectValue;
 - (NSString *)textValue;
 
