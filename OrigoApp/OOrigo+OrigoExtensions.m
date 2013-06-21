@@ -201,7 +201,7 @@ NSString * const kOrigoTypeOther = @"other";
     if ([self isOfType:kOrigoTypeResidence]) {
         displayImage = [UIImage imageNamed:kIconFileHousehold];
     } else {
-        // TODO: What icon to use for general origos?
+        displayImage = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?
     }
     
     return displayImage;

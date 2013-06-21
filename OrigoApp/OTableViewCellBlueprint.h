@@ -17,6 +17,7 @@ extern CGFloat const kMinimumCellPadding;
 
 @interface OTableViewCellBlueprint : NSObject
 
+@property (nonatomic, readonly) BOOL fieldsShouldDeemphasiseOnEndEdit;
 @property (nonatomic, readonly) BOOL fieldsAreLabeled;
 @property (nonatomic, readonly) BOOL hasPhoto;
 

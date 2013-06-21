@@ -100,7 +100,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
         } else {
             _inputDelegate = self.localState.inputDelegate;
             _selectable = [self.localState actionIs:kActionList];
-            _shouldDeemphasiseOnEndEdit = YES;
             _views = [[NSMutableDictionary alloc] init];
         }
         
@@ -320,7 +319,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [[_views objectForKey:kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
     }
     
-    if (_editable && !_shouldDeemphasiseOnEndEdit) {
+    if (_editable && !_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
         for (NSString *key in [_views allKeys]) {
             id view = _views[key];
             
@@ -334,10 +333,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)toggleEditMode
 {
-    if (_inputField) {
-        _inputField = nil;
-    }
-    
     self.editing = ([self.localState actionIs:kActionEdit] || _editable);
 }
 
@@ -467,7 +462,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setInputField:(id)inputField
 {
-    if (_inputField && [_inputField hasEmphasis] && _shouldDeemphasiseOnEndEdit) {
+    if (_inputField && [_inputField hasEmphasis] && _blueprint.fieldsShouldDeemphasiseOnEndEdit) {
         [_inputField setHasEmphasis:NO];
     }
 
@@ -520,7 +515,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - UITableViewCell overrides
+#pragma mark - UITableViewCell custom accessors
 
 - (void)setEditing:(BOOL)editing
 {

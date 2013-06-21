@@ -249,7 +249,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-#pragma mark - OTableViewController overrides
+#pragma mark - OTableViewController custom accessors
 
 - (BOOL)modalImpliesRegistration
 {
@@ -321,8 +321,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    cell.shouldDeemphasiseOnEndEdit = NO;
-    
     if ([self actionIs:kActionSignIn]) {
         _emailField = [cell textFieldForKey:kInputKeyAuthEmail];
         _passwordField = [cell textFieldForKey:kInputKeyPassword];

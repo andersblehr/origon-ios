@@ -81,7 +81,7 @@ static OState *s = nil;
 
 #pragma mark - Utility methods
 
-- (void)reflect:(OState *)state
+- (void)reflectState:(OState *)state
 {
     _viewController = state.viewController;
 }

@@ -241,7 +241,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-#pragma mark - OTableViewController overrides
+#pragma mark - OTableViewController custom accessors
 
 - (BOOL)canEdit
 {
@@ -259,13 +259,15 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-#pragma mark - UIViewController overrides
+#pragma mark - UIViewController custom accessors
 
 - (BOOL)hidesBottomBarWhenPushed
 {
     return YES;
 }
 
+
+#pragma mark - UIViewController overrides
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -342,6 +344,8 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
+#pragma mark - OTableViewInputDelegate conformance
+
 - (BOOL)inputIsValid
 {
     BOOL inputIsValid = YES;
@@ -393,8 +397,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
 }
 
-
-#pragma mark - OTableViewInputDelegate conformance
 
 - (id)targetEntity
 {

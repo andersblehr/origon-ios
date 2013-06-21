@@ -151,7 +151,7 @@ static CGFloat const kDetailTextWidth = 210.f;
 }
 
 
-#pragma mark - Input access & validation
+#pragma mark - Data access & validation
 
 - (BOOL)isDateField
 {
@@ -185,15 +185,15 @@ static CGFloat const kDetailTextWidth = 210.f;
 
 - (NSString *)textValue
 {
-    NSString *finalText = [self.text removeRedundantWhitespace];
+    NSString *textValue = [self.text removeRedundantWhitespace];
     
-    if ([finalText length] == 0) {
-        finalText = nil;
+    if ([textValue length] == 0) {
+        textValue = nil;
     }
     
-    self.text = finalText;
+    self.text = textValue;
     
-    return finalText;
+    return textValue;
 }
 
 
