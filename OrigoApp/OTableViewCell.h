@@ -44,7 +44,6 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic, readonly) BOOL selectable;
 @property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL checked;
-@property (nonatomic) BOOL shouldDeemphasiseOnEndEdit;
 
 @property (weak, nonatomic) id<OEntityObservingDelegate> observer;
 

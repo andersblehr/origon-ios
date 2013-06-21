@@ -34,6 +34,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
     self = [super init];
     
     if (self) {
+        _fieldsShouldDeemphasiseOnEndEdit = NO;
         _fieldsAreLabeled = NO;
         _hasPhoto = NO;
         
@@ -55,6 +56,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
     self = [super init];
     
     if (self) {
+        _fieldsShouldDeemphasiseOnEndEdit = YES;
         _fieldsAreLabeled = YES;
         
         if (entityClass == OMember.class) {

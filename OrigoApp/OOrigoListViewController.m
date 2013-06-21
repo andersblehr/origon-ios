@@ -26,6 +26,7 @@
 #import "OReplicatedEntity+OrigoExtensions.h"
 #import "OSettings.h"
 
+static NSString * const kSegueToMemberView = @"segueFromOrigoListToMemberView";
 static NSString * const kSegueToMemberListView = @"segueFromOrigoListToMemberListView";
 
 static NSInteger const kCountrySheetTag = 0;
@@ -39,6 +40,8 @@ static NSInteger const kCountryAlertButtonCancel = 0;
 static NSInteger const kUserSectionKey = 0;
 static NSInteger const kWardSectionKey = 1;
 static NSInteger const kOrigoSectionKey = 2;
+
+static NSInteger const kUserRow = 0;
 
 
 @implementation OOrigoListViewController
@@ -251,7 +254,8 @@ static NSInteger const kOrigoSectionKey = 2;
     [self setData:[_member participancies] forSectionWithKey:kOrigoSectionKey];
     
     if ([_member isUser]) {
-        [self setData:[_member residencies] forSectionWithKey:kUserSectionKey];
+        [self setData:[_member rootMembership] forSectionWithKey:kUserSectionKey];
+        [self appendData:[_member residencies] toSectionWithKey:kUserSectionKey];
         [self setData:[_member wards] forSectionWithKey:kWardSectionKey];
     }
 }
@@ -291,7 +295,11 @@ static NSInteger const kOrigoSectionKey = 2;
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
     } else {
-        [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
+        if (indexPath.row == kUserRow) {
+            [self performSegueWithIdentifier:kSegueToMemberView sender:self];
+        } else {
+            [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
+        }
     }
 }
 
@@ -327,12 +335,18 @@ static NSInteger const kOrigoSectionKey = 2;
     OMembership *membership = [entity asMembership];
     
     if (sectionKey == kUserSectionKey) {
-        cell.textLabel.text = membership.origo.name;
-        cell.detailTextLabel.text = [membership.origo displayAddress];
-        cell.imageView.image = [membership.origo displayImage];
+        if (indexPath.row == kUserRow) {
+            cell.textLabel.text = [OStrings stringForKey:strTermMe];
+            cell.detailTextLabel.text = membership.member.name;
+            cell.imageView.image = [membership.member displayImage];
+        } else {
+            cell.textLabel.text = membership.origo.name;
+            cell.detailTextLabel.text = [membership.origo displayAddress];
+            cell.imageView.image = [membership.origo displayImage];
+        }
     } else if (sectionKey == kWardSectionKey) {
         cell.textLabel.text = [entity asMember].givenName;
-        cell.imageView.image = [UIImage imageNamed:kIconFileOrigo];
+        cell.imageView.image = [[entity asMember] displayImage]; //[UIImage imageNamed:kIconFileOrigo];
     } else if (sectionKey == kOrigoSectionKey) {
         cell.textLabel.text = membership.origo.name;
         cell.imageView.image = [membership.origo displayImage];

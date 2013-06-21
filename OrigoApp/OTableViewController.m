@@ -68,7 +68,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
             }
             
             [_instance initialiseState];
-            [[OState s] reflect:_state];
+            [[OState s] reflectState:_state];
             [_instance initialiseDataSource];
             
             for (NSNumber *sectionKey in [_sectionData allKeys]) {
@@ -102,14 +102,6 @@ static NSString * const kDetailViewSuffix = @"ViewController";
         self.navigationItem.rightBarButtonItem = _nextButton;
     } else {
         self.navigationItem.rightBarButtonItem = _doneButton;
-    }
-}
-
-
-- (void)inputFieldDidEndEditing:(id)inputField
-{
-    if (_detailCell.shouldDeemphasiseOnEndEdit) {
-        [inputField setHasEmphasis:NO];
     }
 }
 
@@ -347,7 +339,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
             [self initialiseInstance];
         }
     
-        [[OState s] reflect:_state];
+        [[OState s] reflectState:_state];
     }
 }
 
@@ -808,7 +800,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)textFieldDidEndEditing:(OTextField *)textField
 {
-    [self inputFieldDidEndEditing:textField];
+    _detailCell.inputField = nil;
 }
 
 
@@ -828,7 +820,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)textViewDidEndEditing:(OTextView *)textView
 {
-    [self inputFieldDidEndEditing:textView];
+    _detailCell.inputField = nil;
 }
 
 

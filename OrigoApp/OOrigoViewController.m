@@ -52,7 +52,7 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
-#pragma mark - OTableViewController overrides
+#pragma mark - OTableViewController custom accesors
 
 - (BOOL)canEdit
 {
@@ -66,7 +66,7 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
-#pragma mark - UIViewController overrides
+#pragma mark - UIViewController custom accessors
 
 - (BOOL)hidesBottomBarWhenPushed
 {
@@ -104,6 +104,8 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
+#pragma mark - OTableViewInputDelegate conformance
+
 - (BOOL)inputIsValid
 {
     BOOL isValid = NO;
@@ -138,8 +140,6 @@ static NSInteger const kOrigoSection = 0;
     }
 }
 
-
-#pragma mark - OTableViewInputDelegate conformance
 
 - (id)targetEntity
 {

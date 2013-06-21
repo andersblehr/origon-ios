@@ -16,6 +16,8 @@ extern CGFloat const kTextInset;
 @interface OTextField : UITextField {
 @private
     BOOL _isTitle;
+    BOOL _hasEmphasis;
+    BOOL _deemphasisesOnEndEdit;
     BOOL _didPickDate;
     
     OTableViewCell *_cell;

@@ -48,7 +48,7 @@ extern NSString * const kTarget3rdParty;
 
 + (OState *)s;
 
-- (void)reflect:(OState *)state;
+- (void)reflectState:(OState *)state;
 - (void)toggleEditState;
 
 - (BOOL)viewIs:(NSString *)viewId;

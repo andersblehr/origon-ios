@@ -45,7 +45,7 @@ static NSString * const kCustomValue = @"custom";
 }
 
 
-#pragma mark - UIViewController overrides
+#pragma mark - UIViewController custom accessors
 
 - (BOOL)hidesBottomBarWhenPushed
 {

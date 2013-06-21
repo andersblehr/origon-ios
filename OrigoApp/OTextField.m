@@ -79,20 +79,6 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 }
 
 
-- (void)synchroniseInputView
-{
-    if ([self isDateField]) {
-        id value = [_cell.entity valueForKey:_key];
-        
-        if (value) {
-            ((UIDatePicker *)self.inputView).date = value;
-        } else {
-            [(UIDatePicker *)self.inputView setToDefaultDate];
-        }
-    }
-}
-
-
 #pragma mark - Selector implementations
 
 - (void)didPickDate
@@ -139,7 +125,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 }
 
 
-#pragma mark - Input access & validation
+#pragma mark - Data access & validation
 
 - (BOOL)isDateField
 {
@@ -239,10 +225,8 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         }
         
         if ([self isDateField] && !_didPickDate) {
-            id value = [_cell.entity valueForKey:_key];
-            
-            if (value) {
-                ((UIDatePicker *)self.inputView).date = value;
+            if (self.date) {
+                ((UIDatePicker *)self.inputView).date = self.date;
             } else {
                 [(UIDatePicker *)self.inputView setToDefaultDate];
             }
