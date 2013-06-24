@@ -29,7 +29,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 #pragma mark - Auxiliary methods
 
-+ (CGFloat)heightForCell:(OTableViewCell *)cell withBlueprint:(OTableViewCellBlueprint *)blueprint entity:(OReplicatedEntity *)entity
++ (CGFloat)heightWithBlueprint:(OTableViewCellBlueprint *)blueprint entity:(OReplicatedEntity *)entity cell:(OTableViewCell *)cell
 {
     CGFloat height = 2 * kDefaultCellPadding;
     
@@ -134,19 +134,19 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 + (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier
 {
-    return [self heightForCell:nil withBlueprint:[[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier] entity:nil];
+    return [self heightWithBlueprint:[[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier] entity:nil cell:nil];
 }
 
 
 + (CGFloat)heightForCellWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
-    return [self heightForCell:nil withBlueprint:[[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass] entity:entity];
+    return [self heightWithBlueprint:[[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass] entity:entity cell:nil];
 }
 
 
 - (CGFloat)heightForCell:(OTableViewCell *)cell
 {
-    return [self.class heightForCell:cell withBlueprint:cell.blueprint entity:cell.entity];
+    return [self.class heightWithBlueprint:cell.blueprint entity:cell.entity cell:cell];
 }
 
 
