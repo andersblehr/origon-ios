@@ -10,6 +10,7 @@
 
 #import <CoreData/CoreData.h>
 
+#import "ODefaults.h"
 #import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
@@ -128,11 +129,11 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    if ([OMeta m].userIsSignedIn) {
+    if ([[OMeta m] userIsSignedIn]) {
         [[OMeta m].replicator saveUserReplicationState];
         
-        if (![OMeta m].userIsRegistered) {
-            [[OMeta m] setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
+        if (![[OMeta m] userIsRegistered]) {
+            [ODefaults setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
         }
     }
     
@@ -148,7 +149,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    if ([OMeta m].userIsSignedIn) {
+    if ([[OMeta m] userIsSignedIn]) {
         [[OMeta m].replicator replicate];
     }
     
@@ -164,7 +165,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    if ([OMeta m].userIsSignedIn) {
+    if ([[OMeta m] userIsSignedIn]) {
         [[OMeta m].replicator saveUserReplicationState];
     }
 }

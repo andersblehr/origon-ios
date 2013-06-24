@@ -12,6 +12,7 @@
 #import "UITableView+OrigoExtensions.h"
 
 #import "OAlert.h"
+#import "ODefaults.h"
 #import "OEntityReplicator.h"
 #import "OLocator.h"
 #import "OLogging.h"
@@ -38,8 +39,8 @@ static NSInteger const kCountryAlertTag = 0;
 static NSInteger const kCountryAlertButtonCancel = 0;
 
 static NSInteger const kUserSectionKey = 0;
-static NSInteger const kWardSectionKey = 1;
-static NSInteger const kOrigoSectionKey = 2;
+static NSInteger const kOrigoSectionKey = 1;
+static NSInteger const kWardSectionKey = 2;
 
 static NSInteger const kUserRow = 0;
 
@@ -101,7 +102,7 @@ static NSInteger const kUserRow = 0;
 {
     UIActionSheet *countrySheet = [[UIActionSheet alloc] initWithTitle:[OStrings stringForKey:strSheetTitleCountry] delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
 
-    NSString *inferredCountry = [OUtil countryFromCountryCode:[OMeta m].inferredCountryCode];
+    NSString *inferredCountry = [OUtil countryFromCountryCode:[[OMeta m] inferredCountryCode]];
     NSString *locatedCountry = nil;
     
     if ([[OMeta m].locator didLocate]) {
@@ -176,7 +177,7 @@ static NSInteger const kUserRow = 0;
     
     self.title = @"Origo";
     
-    if ([OMeta m].userIsAllSet && ![_member isUser]) {
+    if ([[OMeta m] userIsAllSet] && ![_member isUser]) {
         self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
     }
@@ -187,7 +188,7 @@ static NSInteger const kUserRow = 0;
 {
     [super viewWillAppear:animated];
 
-    if ([OMeta m].userIsAllSet) {
+    if ([[OMeta m] userIsAllSet]) {
         if ([[OMeta m].user isTeenOrOlder]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
             self.navigationItem.rightBarButtonItem.action = @selector(addOrigo);
@@ -204,11 +205,11 @@ static NSInteger const kUserRow = 0;
 {
     [super viewDidAppear:animated];
 
-    if ([OMeta m].userIsSignedIn && ![OMeta m].userIsRegistered) {
-        if ([[OMeta m] userDefaultForKey:kDefaultsKeyRegistrationAborted]) {
+    if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
+        if ([ODefaults userDefaultForKey:kDefaultsKeyRegistrationAborted]) {
             [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] text:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
             
-            [[OMeta m] setUserDefault:nil forKey:kDefaultsKeyRegistrationAborted];
+            [ODefaults setUserDefault:nil forKey:kDefaultsKeyRegistrationAborted];
         }
         
         [self presentModalViewWithIdentifier:kViewIdMember data:[[OMeta m].user initialResidency]];
@@ -289,17 +290,21 @@ static NSInteger const kUserRow = 0;
 
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self sectionKeyForIndexPath:indexPath] == kWardSectionKey) {
-        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kViewIdOrigoList];
-        origoListViewController.data = [self dataAtIndexPath:indexPath];
-        
-        [self.navigationController pushViewController:origoListViewController animated:YES];
-    } else {
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    
+    if (sectionKey == kUserSectionKey) {
         if (indexPath.row == kUserRow) {
             [self performSegueWithIdentifier:kSegueToMemberView sender:self];
         } else {
             [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
         }
+    } else if (sectionKey == kOrigoSectionKey) {
+        [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
+    } else if (sectionKey == kWardSectionKey) {
+        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kViewIdOrigoList];
+        origoListViewController.data = [self dataAtIndexPath:indexPath];
+        
+        [self.navigationController pushViewController:origoListViewController animated:YES];
     }
 }
 
@@ -360,7 +365,7 @@ static NSInteger const kUserRow = 0;
 {
     [super dismissModalViewControllerWithIdentifier:identifier];
     
-    if ([OMeta m].userIsSignedIn) {
+    if ([[OMeta m] userIsSignedIn]) {
         [self.tableView reloadData];
     }
 }
@@ -377,11 +382,11 @@ static NSInteger const kUserRow = 0;
                     if ([[OMeta m].locator didLocate]) {
                         [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
                     } else {
-                        [OMeta m].settings.countryCode = [OMeta m].inferredCountryCode;
+                        [OMeta m].settings.countryCode = [[OMeta m] inferredCountryCode];
                     }
                 } else {
                     if ([[OMeta m].locator didLocate]) {
-                        [OMeta m].settings.countryCode = [OMeta m].inferredCountryCode;
+                        [OMeta m].settings.countryCode = [[OMeta m] inferredCountryCode];
                     } else {
                         [[OMeta m].locator locateBlocking:YES];
                     }

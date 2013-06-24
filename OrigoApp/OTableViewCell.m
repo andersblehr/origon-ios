@@ -114,43 +114,41 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Adding elements
 
-- (void)addTitleFieldIfNeeded
+- (void)addTitleField
 {
-    if (_blueprint.titleKey) {
-        UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
-        titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
-        [titleBannerView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
+    titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
+    [titleBannerView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+    [self.contentView addSubview:titleBannerView];
+    [_views setObject:titleBannerView forKey:kViewKeyTitleBanner];
+    
+    [self addTextFieldForKey:_blueprint.titleKey];
+    
+    if (_blueprint.hasPhoto) {
+        UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        NSData *photo = [_entity asMember].photo;
         
-        [self.contentView addSubview:titleBannerView];
-        [_views setObject:titleBannerView forKey:kViewKeyTitleBanner];
-        
-        [self addTextFieldForKey:_blueprint.titleKey];
-        
-        if (_blueprint.hasPhoto) {
-            UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
-            NSData *photo = [_entity asMember].photo;
+        if (photo) {
+            [imageButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
+        } else {
+            imageButton.backgroundColor = [UIColor whiteColor];
+            [imageButton setTranslatesAutoresizingMaskIntoConstraints:NO];
             
-            if (photo) {
-                [imageButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
-            } else {
-                imageButton.backgroundColor = [UIColor whiteColor];
-                [imageButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-                
-                UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
-                photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
-                photoPrompt.font = [UIFont labelFont];
-                photoPrompt.text = [OStrings stringForKey:strPlaceholderPhoto];
-                photoPrompt.textAlignment = NSTextAlignmentCenter;
-                photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
-                [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
-                
-                [imageButton addSubview:photoPrompt];
-                [_views setObject:photoPrompt forKey:kViewKeyPhotoPrompt];
-            }
+            UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
+            photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
+            photoPrompt.font = [UIFont labelFont];
+            photoPrompt.text = [OStrings stringForKey:strPlaceholderPhoto];
+            photoPrompt.textAlignment = NSTextAlignmentCenter;
+            photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
+            [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
             
-            [self.contentView addSubview:imageButton];
-            [_views setObject:imageButton forKey:kViewKeyPhotoFrame];
+            [imageButton addSubview:photoPrompt];
+            [_views setObject:photoPrompt forKey:kViewKeyPhotoPrompt];
         }
+        
+        [self.contentView addSubview:imageButton];
+        [_views setObject:imageButton forKey:kViewKeyPhotoFrame];
     }
 }
 
@@ -193,10 +191,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addCellElements
 {
-    if (_blueprint.fieldsAreLabeled) {
-        [self addTitleFieldIfNeeded];
-    } else {
-        [self addLabelForKey:_blueprint.titleKey centred:YES];
+    if (_blueprint.titleKey) {
+        if (_blueprint.fieldsAreLabeled) {
+            [self addTitleField];
+        } else {
+            [self addLabelForKey:_blueprint.titleKey centred:YES];
+        }
     }
     
     for (NSString *detailKey in _blueprint.detailKeys) {
@@ -204,7 +204,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             [self addLabelForKey:detailKey centred:NO];
         }
         
-        if ([_blueprint keyRepresentsMultilineProperty:detailKey]) {
+        if ([_blueprint keyRepresentsTextViewProperty:detailKey]) {
             [self addTextViewForKey:detailKey];
         } else {
             [self addTextFieldForKey:detailKey];
@@ -333,14 +333,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)toggleEditMode
 {
-    self.editing = ([self.localState actionIs:kActionEdit] || _editable);
+    self.editing = [self.localState actionIs:kActionEdit] || _editable;
 }
 
 
 - (void)redrawIfNeeded
 {
     if (_entity || _entityClass) {
-        CGFloat desiredHeight = [OTableViewCellBlueprint cell:self heightForEntityClass:_entityClass entity:_entity];
+        CGFloat desiredHeight = [_blueprint heightForCell:self];
         
         if (abs(self.frame.size.height - (desiredHeight + kImplicitFramePadding)) > 0.5f) {
             [UIView animateWithDuration:kCellAnimationDuration animations:^{

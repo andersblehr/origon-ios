@@ -67,15 +67,15 @@ static NSString * const kCustomValue = @"custom";
 - (void)initialiseDataSource
 {
     if ([_settingKey isEqualToString:kSettingKeyCountry]) {
-        _valueList = [NSMutableArray arrayWithArray:[OMeta m].supportedCountryCodes];
+        _valueList = [NSMutableArray arrayWithArray:[[OMeta m] supportedCountryCodes]];
         _listContainsParenthesisedCountries = NO;
         
         if (![_valueList containsObject:[_settings valueForSettingKey:_settingKey]]) {
             [_valueList addObject:[_settings valueForSettingKey:_settingKey]];
         }
         
-        if (![_valueList containsObject:[OMeta m].inferredCountryCode]) {
-            [_valueList addObject:[OMeta m].inferredCountryCode];
+        if (![_valueList containsObject:[[OMeta m] inferredCountryCode]]) {
+            [_valueList addObject:[[OMeta m] inferredCountryCode]];
         }
         
         if ([[OMeta m].locator canLocate]) {
@@ -185,7 +185,7 @@ static NSString * const kCustomValue = @"custom";
                     if ([[OMeta m].locator canLocate]) {
                         cell.detailTextLabel.text = [OStrings stringForKey:strLabelCountryLocation];
                     }
-                } else if ([countryCode isEqualToString:[OMeta m].inferredCountryCode]) {
+                } else if ([countryCode isEqualToString:[[OMeta m] inferredCountryCode]]) {
                     cell.detailTextLabel.text = [OStrings stringForKey:strLabelCountrySettings];
                 }
             }

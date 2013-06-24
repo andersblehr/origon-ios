@@ -79,7 +79,6 @@
 		5CA10B8F16A40BB500031D81 /* glyphicons_309_comments.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA10B8D16A40BB500031D81 /* glyphicons_309_comments.png */; };
 		5CA10B9016A40BB500031D81 /* glyphicons_309_comments@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA10B8E16A40BB500031D81 /* glyphicons_309_comments@2x.png */; };
 		5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA10B9B16A7F49F00031D81 /* OTableViewController.m */; };
-		5CA94D9B15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9A15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m */; };
 		5CA94D9F15836BD9008CD9EC /* NSDate+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9E15836BD9008CD9EC /* NSDate+OrigoExtensions.m */; };
 		5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAAD27E1751EBA7002AF8CF /* OUtil.m */; };
 		5CAEE091163E513300A9046B /* ODocumentElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE090163E513300A9046B /* ODocumentElement.m */; };
@@ -124,6 +123,7 @@
 		5CD3360E15C40A2F00ABBFE7 /* OState.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD3360D15C40A2F00ABBFE7 /* OState.m */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+OrigoExtensions.m */; };
 		5CE987C414856426005A17C6 /* OCalendarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CE987C314856426005A17C6 /* OCalendarViewController.m */; };
+		5CF3DE291775AD820068B2E7 /* ODefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF3DE281775AD810068B2E7 /* ODefaults.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -252,8 +252,6 @@
 		5CA10B9A16A7F49F00031D81 /* OTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewController.h; sourceTree = "<group>"; };
 		5CA10B9B16A7F49F00031D81 /* OTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewController.m; sourceTree = "<group>"; };
 		5CA10B9E16A7F9FD00031D81 /* OTableViewControllerInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTableViewControllerInstance.h; sourceTree = "<group>"; };
-		5CA94D9915834A9E008CD9EC /* UIDatePicker+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDatePicker+OrigoExtensions.h"; sourceTree = "<group>"; };
-		5CA94D9A15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDatePicker+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5CA94D9D15836BD9008CD9EC /* NSDate+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5CA94D9E15836BD9008CD9EC /* NSDate+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5CAAD27D1751EBA7002AF8CF /* OUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUtil.h; sourceTree = "<group>"; };
@@ -336,6 +334,8 @@
 		5CDE879C176F185E00272909 /* OTableViewInputDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTableViewInputDelegate.h; sourceTree = "<group>"; };
 		5CE987C214856426005A17C6 /* OCalendarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCalendarViewController.h; sourceTree = "<group>"; };
 		5CE987C314856426005A17C6 /* OCalendarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCalendarViewController.m; sourceTree = "<group>"; };
+		5CF3DE271775AD810068B2E7 /* ODefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODefaults.h; sourceTree = "<group>"; };
+		5CF3DE281775AD810068B2E7 /* ODefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ODefaults.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -478,8 +478,6 @@
 				5C1A81BC1645CE22003DCCAF /* UIBarButtonItem+OrigoExtensions.m */,
 				5C4955F4157D469000F2A885 /* UIColor+OrigoExtensions.h */,
 				5C4955F5157D469000F2A885 /* UIColor+OrigoExtensions.m */,
-				5CA94D9915834A9E008CD9EC /* UIDatePicker+OrigoExtensions.h */,
-				5CA94D9A15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m */,
 				5CBE91A11599823000516C54 /* UIFont+OrigoExtensions.h */,
 				5CBE91A21599823000516C54 /* UIFont+OrigoExtensions.m */,
 				5C6E6C111589AC820002FF84 /* UITableView+OrigoExtensions.h */,
@@ -553,6 +551,8 @@
 			children = (
 				5C014A2215CA77310040A1D9 /* OAlert.h */,
 				5C014A2315CA77310040A1D9 /* OAlert.m */,
+				5CF3DE271775AD810068B2E7 /* ODefaults.h */,
+				5CF3DE281775AD810068B2E7 /* ODefaults.m */,
 				5C47154F16E2231C000D8A86 /* OEntityReplicator.h */,
 				5C47155016E2231C000D8A86 /* OEntityReplicator.m */,
 				5C1D6CC4172E62F500479F7D /* OLocator.h */,
@@ -860,7 +860,6 @@
 				5C4955F6157D469000F2A885 /* UIColor+OrigoExtensions.m in Sources */,
 				5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */,
 				5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */,
-				5CA94D9B15834A9E008CD9EC /* UIDatePicker+OrigoExtensions.m in Sources */,
 				5CA94D9F15836BD9008CD9EC /* NSDate+OrigoExtensions.m in Sources */,
 				5C6E6C131589AC820002FF84 /* UITableView+OrigoExtensions.m in Sources */,
 				5C26291E158F27860012A74A /* OAuthViewController.m in Sources */,
@@ -907,6 +906,7 @@
 				5C0AFA44174F7168007A29CD /* OSettings.m in Sources */,
 				5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */,
 				5CC40C9B1772DC5E00DD850E /* OValidator.m in Sources */,
+				5CF3DE291775AD820068B2E7 /* ODefaults.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

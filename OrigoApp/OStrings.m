@@ -11,6 +11,7 @@
 #import "NSDate+OrigoExtensions.h"
 
 #import "OAlert.h"
+#import "ODefaults.h"
 #import "OMeta.h"
 #import "OLogging.h"
 #import "OServerConnection.h"
@@ -226,7 +227,7 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 
 + (void)refreshIfNeeded
 {
-    NSDate *stringDate = [[OMeta m] globalDefaultForKey:kDefaultsKeyStringDate];
+    NSDate *stringDate = [ODefaults globalDefaultForKey:kDefaultsKeyStringDate];
     
     if (!stringDate || ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
         if ([self hasStrings] && [[OMeta m] internetConnectionIsAvailable]) {
@@ -273,7 +274,7 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 + (NSString *)titleForOrigoType:(NSString *)origoType
 {
     NSString *stringKey = nil;
-    BOOL is3rdParty = ([[OState s] actionIs:kActionRegister] && [OMeta m].userIsRegistered);
+    BOOL is3rdParty = [[OState s] actionIs:kActionRegister] && [[OMeta m] userIsRegistered];
     
     if ([origoType isEqualToString:kOrigoTypeResidence]) {
         stringKey = is3rdParty ? strNewOrigoOfTypeResidence : strOrigoTypeResidence;

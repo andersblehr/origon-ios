@@ -10,6 +10,7 @@
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
 
+#import "ODefaults.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OServerConnection.h"
@@ -31,7 +32,7 @@
         _stagedEntities = [[NSMutableDictionary alloc] init];
         _stagedRelationshipRefs = [[NSMutableDictionary alloc] init];
         
-        if ([OMeta m].userIsSignedIn) {
+        if ([[OMeta m] userIsSignedIn]) {
             [self loadUserReplicationState];
         }
     }
@@ -87,7 +88,7 @@
         [dirtyEntityURIs addObject:[[dirtyEntity objectID] URIRepresentation]];
     }
     
-    [[OMeta m] setUserDefault:[NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs] forKey:kDefaultsKeyDirtyEntities];
+    [ODefaults setUserDefault:[NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs] forKey:kDefaultsKeyDirtyEntities];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     [[OMeta m].context save];
@@ -98,7 +99,7 @@
 {
     [self resetUserReplicationState];
     
-    NSData *dirtyEntityURIArchive = [[OMeta m] userDefaultForKey:kDefaultsKeyDirtyEntities];
+    NSData *dirtyEntityURIArchive = [ODefaults userDefaultForKey:kDefaultsKeyDirtyEntities];
     
     if (dirtyEntityURIArchive) {
         NSSet *dirtyEntityURIs = [NSKeyedUnarchiver unarchiveObjectWithData:dirtyEntityURIArchive];
@@ -109,7 +110,7 @@
             [_dirtyEntities addObject:[[OMeta m].context objectWithID:dirtyEntityID]];
         }
         
-        [[OMeta m] setUserDefault:nil forKey:kDefaultsKeyDirtyEntities];
+        [ODefaults setUserDefault:nil forKey:kDefaultsKeyDirtyEntities];
     }
 }
 

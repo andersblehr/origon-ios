@@ -27,6 +27,40 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 @implementation OTableViewCellBlueprint
 
+#pragma mark - Auxiliary methods
+
++ (CGFloat)heightForCell:(OTableViewCell *)cell withBlueprint:(OTableViewCellBlueprint *)blueprint entity:(OReplicatedEntity *)entity
+{
+    CGFloat height = 2 * kDefaultCellPadding;
+    
+    if (blueprint.titleKey) {
+        if (blueprint.fieldsAreLabeled) {
+            height += [UIFont titleFieldHeight] + kDefaultCellPadding;
+        } else {
+            height += [UIFont detailFieldHeight] + kDefaultCellPadding;
+        }
+    }
+    
+    for (NSString *detailKey in blueprint.detailKeys) {
+        if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:detailKey]) {
+            if ([blueprint keyRepresentsTextViewProperty:detailKey]) {
+                if (cell) {
+                    height += [[cell textFieldForKey:detailKey] height];
+                } else if (entity && [entity hasValueForKey:detailKey]) {
+                    height += [OTextView heightWithText:[entity valueForKey:detailKey]];
+                } else {
+                    height += [OTextView heightWithText:[OStrings placeholderForKey:detailKey]];
+                }
+            } else {
+                height += [UIFont detailFieldHeight];
+            }
+        }
+    }
+    
+    return height;
+}
+
+
 #pragma mark - Initialisation
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
@@ -66,30 +100,21 @@ CGFloat const kMinimumCellPadding = 0.1f;
         } else if (entityClass == OOrigo.class) {
             _hasPhoto = NO;
             
-            if ([[OState s] targetIs:kOrigoTypeResidence]) {
+            if ([[OState s] actionIs:kActionList]) {
                 _titleKey = nil;
-                _detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
             } else {
                 _titleKey = kPropertyKeyName;
+            }
+            
+            if ([[OState s] targetIs:kOrigoTypeResidence]) {
+                _detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
+            } else {
                 _detailKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
             }
         }
     }
     
     return self;
-}
-
-
-#pragma mark - Layout information
-
-- (BOOL)keyRepresentsMultilineProperty:(NSString *)propertyKey
-{
-    BOOL isMultiline = NO;
-    
-    isMultiline = isMultiline || [propertyKey isEqualToString:kPropertyKeyAddress];
-    isMultiline = isMultiline || [propertyKey isEqualToString:kPropertyKeyDescriptionText];
-    
-    return isMultiline;
 }
 
 
@@ -107,33 +132,34 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 #pragma mark - Cell height computation
 
-+ (CGFloat)cell:(OTableViewCell *)cell heightForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
++ (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier
 {
-    CGFloat height = 2 * kDefaultCellPadding;
+    return [self heightForCell:nil withBlueprint:[[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier] entity:nil];
+}
+
+
++ (CGFloat)heightForCellWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
+{
+    return [self heightForCell:nil withBlueprint:[[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass] entity:entity];
+}
+
+
+- (CGFloat)heightForCell:(OTableViewCell *)cell
+{
+    return [self.class heightForCell:cell withBlueprint:cell.blueprint entity:cell.entity];
+}
+
+
+#pragma mark - Text field type information
+
+- (BOOL)keyRepresentsTextViewProperty:(NSString *)propertyKey
+{
+    BOOL isMultiline = NO;
     
-    OTableViewCellBlueprint *blueprint = [[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass];
+    isMultiline = isMultiline || [propertyKey isEqualToString:kPropertyKeyAddress];
+    isMultiline = isMultiline || [propertyKey isEqualToString:kPropertyKeyDescriptionText];
     
-    if (blueprint.titleKey) {
-        height += [UIFont titleFieldHeight] + kDefaultCellPadding;
-    }
-    
-    for (NSString *detailKey in blueprint.detailKeys) {
-        if (!entity || [[OState s] actionIs:kActionInput] || [entity hasValueForKey:detailKey]) {
-            if ([blueprint keyRepresentsMultilineProperty:detailKey]) {
-                if (cell) {
-                    height += [[cell textFieldForKey:detailKey] height];
-                } else if (entity && [entity hasValueForKey:detailKey]) {
-                    height += [OTextView heightWithText:[entity valueForKey:detailKey]];
-                } else {
-                    height += [OTextView heightWithText:[OStrings placeholderForKey:detailKey]];
-                }
-            } else {
-                height += [UIFont detailFieldHeight];
-            }
-        }
-    }
-    
-    return height;
+    return isMultiline;
 }
 
 @end

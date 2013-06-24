@@ -94,7 +94,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if ([self targetIs:kTargetUser] && ![_origo hasValueForKey:kPropertyKeyAddress]) {
             [self presentModalViewWithIdentifier:kViewIdOrigo data:_membership dismisser:self.dismisser];
         } else {
-            [self.dismisser dismissModalViewController];
+            [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
         }
     }
 }
@@ -198,7 +198,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     [[OMeta m] userDidSignOut];
     
-    [self.dismisser dismissModalViewController];
+    [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
 }
 
 
@@ -245,9 +245,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (BOOL)canEdit
 {
-    BOOL isUserAndTeenOrOlder = ([_member isUser] && [_member isTeenOrOlder]);
+    BOOL isUserAndTeenOrOlder = [_member isUser] && [_member isTeenOrOlder];
     BOOL isWardOfUser = [[[OMeta m].user wards] containsObject:_member];
-    BOOL userIsAdminOrCreator = ([_origo userIsAdmin] || [_origo userIsCreator]);
+    BOOL userIsAdminOrCreator = [_origo userIsAdmin] || [_origo userIsCreator];
     
     return (isUserAndTeenOrOlder || isWardOfUser || (![_member isActive] && userIsAdminOrCreator));
 }
@@ -414,6 +414,18 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
+- (BOOL)shouldEnableInputFieldWithKey:(NSString *)key
+{
+    BOOL shouldEnable = YES;
+    
+    if ([key isEqualToString:kPropertyKeyEmail]) {
+        shouldEnable = ![[OState s] actionIs:kActionRegister] || ![[OState s] targetIs:kTargetUser];
+    }
+    
+    return shouldEnable;
+}
+
+
 - (NSDictionary *)additionalInputValues
 {
     NSMutableDictionary *additionalValues = [[NSMutableDictionary alloc] init];
@@ -452,7 +464,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             [_emailField becomeFirstResponder];
         }
     } else if ([identifier isEqualToString:kViewIdOrigo]) {
-        [self.dismisser dismissModalViewController];
+        [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
     } else if ([identifier isEqualToString:kViewIdMemberList]) {
         [super dismissModalViewControllerWithIdentifier:identifier];
     }

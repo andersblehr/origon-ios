@@ -130,11 +130,6 @@ static NSInteger const kCountryOfResidenceButtonUseLocation = 1;
     if (!residency) {
         OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
         residency = [residence addMember:self];
-        
-        if ([self isUser]) {
-            residency.isActive = @YES;
-            residency.isAdmin = @YES;
-        }
     }
     
     return residency;

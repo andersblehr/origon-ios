@@ -22,6 +22,7 @@
 #import "OMember+OrigoExtensions.h"
 #import "OMembership.h"
 #import "OOrigo+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 static NSInteger const kOrigoSection = 0;
 
@@ -34,7 +35,7 @@ static NSInteger const kOrigoSection = 0;
 {
     [[OMeta m] userDidSignOut];
     
-    [self.dismisser dismissModalViewController];
+    [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
 }
 
 
@@ -56,7 +57,7 @@ static NSInteger const kOrigoSection = 0;
 
 - (BOOL)canEdit
 {
-    return [self actionIs:kActionRegister] || [_origo userIsAdmin];
+    return [self actionIs:kActionRegister] || [_origo userIsAdmin] || (![_origo hasAdmin] && [_origo userIsCreator]);
 }
 
 
