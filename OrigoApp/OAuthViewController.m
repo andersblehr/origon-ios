@@ -14,6 +14,7 @@
 #import "UITableView+OrigoExtensions.h"
 
 #import "OAlert.h"
+#import "ODefaults.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OServerConnection.h"
@@ -74,7 +75,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
         
         if (_authInfo) {
-            [[OMeta m] setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
+            [ODefaults setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
         }
     }
     
@@ -181,7 +182,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     _authInfo = data;
     
     if ([self targetIs:kTargetUser]) {
-        [[OMeta m] setGlobalDefault:[NSKeyedArchiver archivedDataWithRootObject:_authInfo] forKey:kDefaultsKeyAuthInfo];
+        [ODefaults setGlobalDefault:[NSKeyedArchiver archivedDataWithRootObject:_authInfo] forKey:kDefaultsKeyAuthInfo];
         
         [self toggleAuthState];
     }
@@ -197,11 +198,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     [[OMeta m] userDidSignIn];
     
     if ([self actionIs:kActionSignIn]) {
-        if (![OMeta m].userIsRegistered) {
-            [[OMeta m] setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
+        if (![[OMeta m] userIsRegistered]) {
+            [ODefaults setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
         }
     } else if ([self actionIs:kActionActivate]) {
-        [[OMeta m] setUserDefault:[_authInfo objectForKey:kJSONKeyPasswordHash] forKey:kDefaultsKeyPasswordHash];
+        [ODefaults setUserDefault:[_authInfo objectForKey:kJSONKeyPasswordHash] forKey:kDefaultsKeyPasswordHash];
         
         if ([[_authInfo objectForKey:kJSONKeyIsListed] boolValue]) {
             [[OMeta m].user makeActive];
@@ -210,10 +211,10 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             [residence addMember:[OMeta m].user];
         }
         
-        [[OMeta m] setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
+        [ODefaults setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
     }
     
-    [self.dismisser dismissModalViewController];
+    [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
 }
 
 
@@ -265,7 +266,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         self.action = kActionActivate;
         self.target = kTargetEmail;
     } else {
-        NSData *authInfoArchive = [[OMeta m] globalDefaultForKey:kDefaultsKeyAuthInfo];
+        NSData *authInfoArchive = [ODefaults globalDefaultForKey:kDefaultsKeyAuthInfo];
         
         if (authInfoArchive) {
             _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
@@ -355,7 +356,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         if ([self targetIs:kTargetUser]) {
             [self sendUserActivationRequest];
         } else if ([self targetIs:kTargetEmail]) {
-            [self.dismisser dismissModalViewController];
+            [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
         }
     }
 }
@@ -388,7 +389,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         if ([self targetIs:kTargetUser]) {
             passwordHash = [_authInfo objectForKey:kJSONKeyPasswordHash];
         } else if ([self targetIs:kTargetEmail]) {
-            passwordHash = [[OMeta m] userDefaultForKey:kDefaultsKeyPasswordHash];
+            passwordHash = [ODefaults userDefaultForKey:kDefaultsKeyPasswordHash];
         }
         
         valueIsValid = [passwordHashAsEntered isEqualToString:passwordHash];
@@ -404,20 +405,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
                 [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] text:[OStrings stringForKey:strAlertTextActivationFailed] tag:kAlertTagActivationFailed];
                 [self toggleAuthState];
             } else if ([self targetIs:kTargetEmail]) {
-                [self.dismisser dismissModalViewController];
+                [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
             }
         }
     }
     
     return valueIsValid;
-}
-
-
-#pragma mark - UITableViewDataSource conformance
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return 3 * (kDefaultCellPadding + [UIFont detailFieldHeight]) + 1;
 }
 
 

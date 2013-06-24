@@ -15,4 +15,8 @@
 + (NSString *)countryFromCountryCode:(NSString *)countryCode;
 + (NSString *)givenNameFromFullName:(NSString *)fullName;
 
++ (NSDate *)defaultDatePickerDate;
++ (NSDate *)earliestValidBirthDate;
++ (NSDate *)latestValidBirthDate;
+
 @end

@@ -57,7 +57,7 @@ static NSInteger const kSettingsSectionKey = 0;
     self.target = kTargetUser;
     
     if (![OMeta m].settings.countryCode) {
-        [OMeta m].settings.countryCode = [OMeta m].inferredCountryCode;
+        [OMeta m].settings.countryCode = [[OMeta m] inferredCountryCode];
     }
 }
 

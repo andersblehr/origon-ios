@@ -13,6 +13,7 @@
 #import "UIBarButtonItem+OrigoExtensions.h"
 #import "UITableView+OrigoExtensions.h"
 
+#import "ODefaults.h"
 #import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
@@ -58,7 +59,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 - (void)initialiseInstance
 {
     if ([OStrings hasStrings]) {
-        if ([OMeta m].userIsAllSet || _isModal) {
+        if ([[OMeta m] userIsAllSet] || _isModal) {
             if (_isModal && self.modalImpliesRegistration) {
                 _action = kActionRegister;
             } else if ([self isListView]) {
@@ -146,7 +147,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 - (void)didCancelEditing
 {
     if ([self actionIs:kActionRegister]) {
-        [_dismisser dismissModalViewControllerNeedsReloadData:NO];
+        [_dismisser dismissModalViewControllerWithIdentifier:_viewId needsReloadData:NO];
     } else if ([self actionIs:kActionEdit]) {
         [_detailCell readEntity];
         [self toggleEditMode];
@@ -157,7 +158,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 - (void)didFinishEditing
 {
     if ([self isListView]) {
-        [_dismisser dismissModalViewController];
+        [_dismisser dismissModalViewControllerWithIdentifier:_viewId];
     } else {
         [_detailCell processInput];
     }
@@ -505,7 +506,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     _wasHidden = _isHidden;
     _isHidden = NO;
     _isPushed = [self isMovingToParentViewController] || (_didJustLoad && !_isModal);
-    _isPopped = (!_isPushed && !_isModal && !_wasHidden);
+    _isPopped = !_isPushed && !_isModal && !_wasHidden;
     _didJustLoad = NO;
     
     if (![OStrings hasStrings]) {
@@ -525,10 +526,10 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     if (![OStrings hasStrings]) {
         [self.activityIndicator startAnimating];
         [[[OServerConnection alloc] init] fetchStrings:self];
-    } else if (![OMeta m].userIsSignedIn) {
-        [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:self];
     } else if ([self actionIs:kActionRegister]) {
         [[_detailCell nextInputField] becomeFirstResponder];
+    } else if (![_viewId isEqualToString:kViewIdAuth] && ![[OMeta m] userIsSignedIn]) {
+        [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:self];
     }
     
     OLogState;
@@ -643,7 +644,13 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     CGFloat height = kDefaultTableViewCellHeight;
     
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
-        height = [OTableViewCellBlueprint cell:_detailCell heightForEntityClass:_entityClass entity:_entity];
+        if (_detailCell) {
+            height = [_detailCell.blueprint heightForCell:_detailCell];
+        } else if (_entityClass || _entity) {
+            height = [OTableViewCellBlueprint heightForCellWithEntityClass:_entityClass entity:_entity];
+        } else if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
+            height = [OTableViewCellBlueprint heightForCellWithReuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]];
+        }
     }
     
     return height;
@@ -826,27 +833,15 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 #pragma mark - OModalViewControllerDelegate conformance
 
-- (void)dismissModalViewController
-{
-    [self dismissModalViewControllerWithIdentifier:_viewId];
-}
-
-
 - (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier
 {
     [self dismissModalViewControllerWithIdentifier:identifier needsReloadData:YES];
 }
 
 
-- (void)dismissModalViewControllerNeedsReloadData:(BOOL)needsReloadData
-{
-    [self dismissModalViewControllerWithIdentifier:_viewId needsReloadData:needsReloadData];
-}
-
-
 - (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier needsReloadData:(BOOL)needsReloadData
 {
-    _needsReloadSections = [OMeta m].userIsSignedIn ? needsReloadData : NO;
+    _needsReloadSections = [[OMeta m] userIsSignedIn] ? needsReloadData : NO;
     
     [self dismissViewControllerAnimated:YES completion:^{
         _needsReloadSections = NO;
@@ -862,7 +857,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
         [self.activityIndicator stopAnimating];
         
         [OStrings.class didCompleteWithResponse:response data:data];
-        [[OMeta m] setGlobalDefault:[NSDate date] forKey:kDefaultsKeyStringDate];
+        [ODefaults setGlobalDefault:[NSDate date] forKey:kDefaultsKeyStringDate];
         [(OTabBarController *)self.tabBarController setTabBarTitles];
         
         [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:self];

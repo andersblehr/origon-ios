@@ -19,7 +19,7 @@
 
 static NSString * const kMembershipTypeMemberRoot = @"~";
 static NSString * const kMembershipTypeResidency = @"R";
-static NSString * const kMembershipTypeParticipancy = @"S";
+static NSString * const kMembershipTypeParticipancy = @"P";
 static NSString * const kMembershipTypeAssociate = @"A";
 
 

@@ -81,15 +81,7 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     [super viewDidLoad];
     
-    if ([_origo isOfType:kOrigoTypeResidence]) {
-        if ([_origo userIsMember]) {
-            self.title = _origo.name;
-        } else {
-            self.title = [OStrings stringForKey:strViewTitleHousehold];
-        }
-    } else {
-        self.title = [OStrings stringForKey:strViewTitleMembers];
-    }
+    self.title = _origo.name;
     
     if ([_origo userCanEdit]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
@@ -220,7 +212,7 @@ static NSInteger const kHousemateSheetTag = 0;
     
     if (indexPath.section != kOrigoSectionKey) {
         OMembership *membershipForRow = [self dataAtIndexPath:indexPath];
-        canDeleteRow = ([_origo userIsAdmin] && ![membershipForRow.member isUser]);
+        canDeleteRow = [_origo userIsAdmin] && ![membershipForRow.member isUser];
     }
     
     return canDeleteRow;

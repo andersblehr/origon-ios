@@ -96,7 +96,7 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (NSString *)origoServerURL
 {
-    NSString *origoServer = [OMeta m].deviceIsSimulator ? kOrigoDevServer : kOrigoProdServer;
+    NSString *origoServer = [[OMeta m] deviceIsSimulator] ? kOrigoDevServer : kOrigoProdServer;
     NSMutableString *protocol = [NSMutableString stringWithString:kHTTPProtocol];
     
     if ([origoServer isEqualToString:kGAEServer] && [_RESTHandler isEqualToString:kRESTHandlerAuth]) {
@@ -130,7 +130,7 @@ static NSString * const kURLParameterVersion = @"version";
         [_delegate willSendRequest:_URLRequest];
     }
     
-    if ([OMeta m].internetConnectionIsAvailable) {
+    if ([[OMeta m] internetConnectionIsAvailable]) {
         if (_requestIsValid) {
             [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
             
@@ -218,7 +218,7 @@ static NSString * const kURLParameterVersion = @"version";
     _RESTHandler = kRESTHandlerStrings;
     _RESTRoute = [OMeta m].displayLanguage;
     
-    if ([OMeta m].userIsSignedIn) {
+    if ([[OMeta m] userIsSignedIn]) {
         [self setValue:[OMeta m].authToken forURLParameter:kURLParameterStringToken];
     } else {
         [self setValue:[self timestampToken] forURLParameter:kURLParameterStringToken];

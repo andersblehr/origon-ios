@@ -11,9 +11,7 @@
 @protocol OModalViewControllerDelegate <NSObject>
 
 @required
-- (void)dismissModalViewController;
 - (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier;
-- (void)dismissModalViewControllerNeedsReloadData:(BOOL)needsReloadData;
 - (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier needsReloadData:(BOOL)needsReloadData;
 
 @end

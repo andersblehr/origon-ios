@@ -11,7 +11,6 @@
 #import "NSDate+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
 #import "UIColor+OrigoExtensions.h"
-#import "UIDatePicker+OrigoExtensions.h"
 #import "UIFont+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 
@@ -19,6 +18,7 @@
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
+#import "OUtil.h"
 #import "OValidator.h"
 
 #import "OReplicatedEntity.h"
@@ -43,37 +43,29 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 }
 
 
-- (void)configureForKey:(NSString *)key
+- (void)configure
 {
-    _key = key;
-    
-    if ([key isEqualToString:kInputKeyAuthEmail]) {
+    if ([_key isEqualToString:kInputKeyAuthEmail]) {
         self.keyboardType = UIKeyboardTypeEmailAddress;
     } else if ([self isPasswordField]) {
         self.clearsOnBeginEditing = YES;
         self.returnKeyType = UIReturnKeyDone;
         self.secureTextEntry = YES;
-    } else if ([key isEqualToString:kPropertyKeyName]) {
+    } else if ([_key isEqualToString:kPropertyKeyName]) {
         self.autocapitalizationType = UITextAutocapitalizationTypeWords;
-    } else if ([key isEqualToString:kPropertyKeyDateOfBirth]) {
+    } else if ([_key isEqualToString:kPropertyKeyDateOfBirth]) {
         UIDatePicker *datePicker = [OMeta m].sharedDatePicker;
+        datePicker.minimumDate = [OUtil earliestValidBirthDate];
+        datePicker.maximumDate = [OUtil latestValidBirthDate];
         [datePicker addTarget:self action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
         
         self.inputView = datePicker;
-    } else if ([key isEqualToString:kPropertyKeyMobilePhone]) {
+    } else if ([_key isEqualToString:kPropertyKeyMobilePhone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
-        
-        if ([[OState s] actionIs:kActionRegister] && [[OState s] targetIs:kTargetUser]) {
-            self.returnKeyType = UIReturnKeyDone;
-        }
-    } else if ([key isEqualToString:kPropertyKeyEmail]) {
+    } else if ([_key isEqualToString:kPropertyKeyEmail]) {
         self.keyboardType = UIKeyboardTypeEmailAddress;
         self.returnKeyType = UIReturnKeyDone;
-        
-        if ([[OState s] actionIs:kActionRegister] && [[OState s] targetIs:kTargetUser]) {
-            self.enabled = NO;
-        }
-    } else if ([key isEqualToString:kPropertyKeyTelephone]) {
+    } else if ([_key isEqualToString:kPropertyKeyTelephone]) {
         self.keyboardType = UIKeyboardTypeNumberPad;
     }
 }
@@ -96,6 +88,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     self = [super initWithFrame:CGRectZero];
     
     if (self) {
+        _key = key;
         _cell = cell;
         _isTitle = [_cell isTitleKey:key];
         _inputDelegate = delegate;
@@ -118,7 +111,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
-        [self configureForKey:key];
+        [self configure];
     }
     
     return self;
@@ -225,11 +218,9 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         }
         
         if ([self isDateField] && !_didPickDate) {
-            if (self.date) {
-                ((UIDatePicker *)self.inputView).date = self.date;
-            } else {
-                [(UIDatePicker *)self.inputView setToDefaultDate];
-            }
+            NSDate *datePickerDate = self.date ? self.date : [OUtil defaultDatePickerDate];
+            
+            [(UIDatePicker *)self.inputView setDate:datePickerDate animated:YES];
         }
     } else {
         self.text = [self textValue];
@@ -247,6 +238,20 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 
 #pragma mark - UIControl custom accessors
+
+- (void)setEnabled:(BOOL)enabled
+{
+    BOOL shouldEnable = enabled;
+    
+    if (shouldEnable) {
+        if ([_inputDelegate respondsToSelector:@selector(shouldEnableInputFieldWithKey:)]) {
+            shouldEnable = [_inputDelegate shouldEnableInputFieldWithKey:_key];
+        }
+    }
+    
+    [super setEnabled:shouldEnable];
+}
+
 
 - (void)setSelected:(BOOL)selected
 {

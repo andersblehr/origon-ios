@@ -90,18 +90,10 @@ extern NSString * const kDefaultsKeyStringDate;
 @property (strong, nonatomic, readonly) NSString *authToken;
 @property (strong, nonatomic, readonly) NSString *appVersion;
 @property (strong, nonatomic, readonly) NSString *displayLanguage;
-@property (strong, nonatomic, readonly) NSString *inferredCountryCode;
 
-@property (nonatomic, readonly) BOOL userIsAllSet;
-@property (nonatomic, readonly) BOOL userIsSignedIn;
-@property (nonatomic, readonly) BOOL userIsRegistered;
-@property (nonatomic, readonly) BOOL internetConnectionIsAvailable;
 @property (nonatomic, readonly) BOOL internetConnectionIsWiFi;
 @property (nonatomic, readonly) BOOL internetConnectionIsWWAN;
-@property (nonatomic, readonly) BOOL shouldUseEasternNameOrder;
-@property (nonatomic, readonly) BOOL deviceIsSimulator;
 
-@property (weak, nonatomic, readonly) NSArray *supportedCountryCodes;
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 @property (strong, nonatomic, readonly) UIDatePicker *sharedDatePicker;
 
@@ -110,9 +102,15 @@ extern NSString * const kDefaultsKeyStringDate;
 - (void)userDidSignIn;
 - (void)userDidSignOut;
 
-- (void)setGlobalDefault:(id)globalDefault forKey:(NSString *)key;
-- (void)setUserDefault:(id)userDefault forKey:(NSString *)key;
-- (id)globalDefaultForKey:(NSString *)key;
-- (id)userDefaultForKey:(NSString *)key;
+- (BOOL)userIsSignedIn;
+- (BOOL)userIsRegistered;
+- (BOOL)userIsAllSet;
+
+- (BOOL)internetConnectionIsAvailable;
+- (BOOL)shouldUseEasternNameOrder;
+- (BOOL)deviceIsSimulator;
+
+- (NSArray *)supportedCountryCodes;
+- (NSString *)inferredCountryCode;
 
 @end

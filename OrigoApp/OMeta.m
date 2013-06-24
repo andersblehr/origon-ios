@@ -13,9 +13,9 @@
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
-#import "UIDatePicker+OrigoExtensions.h"
 
 #import "OAppDelegate.h"
+#import "ODefaults.h"
 #import "OEntityReplicator.h"
 #import "OLocator.h"
 #import "OLogging.h"
@@ -85,12 +85,6 @@ NSString * const kDefaultsKeyPasswordHash = @"origo.auth.passwordHash";
 NSString * const kDefaultsKeyRegistrationAborted = @"origo.flags.registrationAborted";
 NSString * const kDefaultsKeyStringDate = @"origo.date.strings";
 
-static NSString * const kDefaultsKeyAuthExpiryDate = @"origo.date.authExpiry";
-static NSString * const kDefaultsKeyDeviceId = @"origo.id.device";
-static NSString * const kDefaultsKeyUserEmail = @"origo.user.email";
-static NSString * const kDefaultsKeyLastReplicationDate = @"origo.date.lastReplication";
-static NSString * const kDefaultsKeyUserId = @"origo.id.user";
-
 static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
 
@@ -102,11 +96,6 @@ static OMeta *m = nil;
 @property (strong, nonatomic) OMember *user;
 @property (strong, nonatomic) OEntityReplicator *replicator;
 @property (strong, nonatomic) OLocator *locator;
-
-@property (nonatomic) BOOL userIsAllSet;
-@property (nonatomic) BOOL userIsSignedIn;
-@property (nonatomic) BOOL userIsRegistered;
-
 @property (strong, nonatomic) NSString *authToken;
 
 @end
@@ -115,14 +104,6 @@ static OMeta *m = nil;
 @implementation OMeta
 
 #pragma mark - Auxiliary methods
-
-- (NSString *)qualifiedUserDefaultKeyForKey:(NSString *)key
-{
-    NSString *qualifier = [key isEqualToString:kDefaultsKeyUserId] ? _userEmail : _userId;
-    
-    return [NSString stringWithFormat:@"%@$%@", key, qualifier];
-}
-
 
 - (void)checkReachability:(Reachability *)reachability
 {
@@ -190,27 +171,24 @@ static OMeta *m = nil;
     self = [super init];
     
     if (self) {
-        _userEmail = [self globalDefaultForKey:kDefaultsKeyUserEmail];
+        _userEmail = [ODefaults globalDefaultForKey:kDefaultsKeyUserEmail];
         _appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
         _displayLanguage = [NSLocale preferredLanguages][0];
         
         if (_userEmail) {
-            _userId = [self userDefaultForKey:kDefaultsKeyUserId];
-            _deviceId = [self userDefaultForKey:kDefaultsKeyDeviceId];
-            _lastReplicationDate = [self userDefaultForKey:kDefaultsKeyLastReplicationDate];
+            _userId = [ODefaults userDefaultForKey:kDefaultsKeyUserId];
+            _deviceId = [ODefaults userDefaultForKey:kDefaultsKeyDeviceId];
+            _lastReplicationDate = [ODefaults userDefaultForKey:kDefaultsKeyLastReplicationDate];
         } else {
             _deviceId = [OUUIDGenerator generateUUID];
         }
         
         _internetConnectionIsWiFi = NO;
         _internetConnectionIsWWAN = NO;
-        _deviceIsSimulator = [[UIDevice currentDevice].model containsString:@"Simulator"];
         
         _sharedDatePicker = [[UIDatePicker alloc] init];
         _sharedDatePicker.datePickerMode = UIDatePickerModeDate;
-        [_sharedDatePicker setEarliestValidBirthDate];
-        [_sharedDatePicker setLatestValidBirthDate];
-        [_sharedDatePicker setToDefaultDate];
+        _sharedDatePicker.date = [OUtil defaultDatePickerDate];
         
         [self checkReachability:[Reachability reachabilityForInternetConnection]];
         
@@ -237,11 +215,12 @@ static OMeta *m = nil;
 }
 
 
-#pragma mark - User sign in & sign out
+#pragma mark - User sign in & registration status
 
 - (void)userDidSignIn
 {
-    [self setUserDefault:_authTokenExpiryDate forKey:kDefaultsKeyAuthExpiryDate];
+    [ODefaults setUserDefault:_authTokenExpiryDate forKey:kDefaultsKeyAuthExpiryDate];
+    
     [self loadUser];
     
     if (![self.context entityWithId:_deviceId]) {
@@ -255,46 +234,101 @@ static OMeta *m = nil;
     [self.replicator saveUserReplicationState];
     [self.replicator resetUserReplicationState];
     
-    [self setUserDefault:nil forKey:kDefaultsKeyAuthExpiryDate];
+    [ODefaults setUserDefault:nil forKey:kDefaultsKeyAuthExpiryDate];
+    [ODefaults resetUser];
     
-    _userId = nil;
     _user = nil;
+    _userId = nil;
     _locator = nil;
-    _authToken = nil;
     _deviceId = nil;
+    _authToken = nil;
     _lastReplicationDate = nil;
     
     [(OAppDelegate *)[UIApplication sharedApplication].delegate releasePersistentStore];
 }
 
 
-#pragma mark - User defaults convenience methods
-
-- (void)setGlobalDefault:(id)globalDefault forKey:(NSString *)key
+- (BOOL)userIsAllSet
 {
-    if (globalDefault) {
-        [[NSUserDefaults standardUserDefaults] setObject:globalDefault forKey:key];
-    } else {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
+    return ([self userIsSignedIn] && [self userIsRegistered]);
+}
+
+
+- (BOOL)userIsSignedIn
+{
+    if (!_authTokenExpiryDate) {
+        _authTokenExpiryDate = [ODefaults userDefaultForKey:kDefaultsKeyAuthExpiryDate];
+        
+        if (_authTokenExpiryDate) {
+            NSDate *now = [NSDate date];
+            
+            if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
+                _authToken = [self generateAuthToken:_authTokenExpiryDate];
+                _user = [self.context entityWithId:_userId];
+            }
+        }
     }
+    
+    return (_user != nil);
 }
 
 
-- (void)setUserDefault:(id)userDefault forKey:(NSString *)key
+- (BOOL)userIsRegistered
 {
-    [self setGlobalDefault:userDefault forKey:[self qualifiedUserDefaultKeyForKey:key]];
+    return ([_user hasValueForKey:kPropertyKeyMobilePhone] && [_user hasAddress]);
 }
 
 
-- (id)globalDefaultForKey:(NSString *)key
+#pragma mark - Convenience methods
+
+- (BOOL)internetConnectionIsAvailable
 {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    return (_internetConnectionIsWiFi || _internetConnectionIsWWAN);
 }
 
 
-- (id)userDefaultForKey:(NSString *)key
+- (BOOL)shouldUseEasternNameOrder
 {
-    return [self globalDefaultForKey:[self qualifiedUserDefaultKeyForKey:key]];
+    return [_displayLanguage isEqualToString:kLanguageHungarian];
+}
+
+
+- (BOOL)deviceIsSimulator
+{
+    return [[UIDevice currentDevice].model containsString:@"Simulator"];
+}
+
+
+- (NSArray *)supportedCountryCodes
+{
+    NSMutableDictionary *codesByCountry = [[NSMutableDictionary alloc] init];
+    NSArray *countryCodes = [[OStrings stringForKey:metaSupportedCountryCodes] componentsSeparatedByString:kListSeparator];
+    
+    for (NSString *countryCode in countryCodes) {
+        [codesByCountry setObject:countryCode forKey:[OUtil countryFromCountryCode:countryCode]];
+    }
+    
+    NSMutableArray *supportedCountryCodesSortedByCountry = [[NSMutableArray alloc] init];
+    NSArray *sortedCountries = [codesByCountry keysSortedByValueUsingSelector:@selector(localizedCompare:)];
+    
+    for (NSString *country in sortedCountries) {
+        [supportedCountryCodesSortedByCountry addObject:[codesByCountry objectForKey:country]];
+    }
+    
+    return supportedCountryCodesSortedByCountry;
+}
+
+
+- (NSString *)inferredCountryCode
+{
+    CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
+    NSString *inferredCountryCode = [networkInfo subscriberCellularProvider].isoCountryCode;
+    
+    if (!inferredCountryCode) {
+        inferredCountryCode = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
+    }
+    
+    return inferredCountryCode;
 }
 
 
@@ -304,21 +338,21 @@ static OMeta *m = nil;
 {
     _userId = userId;
     
-    [self setUserDefault:_userId forKey:kDefaultsKeyUserId];
+    [ODefaults setUserDefault:_userId forKey:kDefaultsKeyUserId];
     
-    NSString *deviceId = [self userDefaultForKey:kDefaultsKeyDeviceId];
-    NSString *lastReplicationDate = [self userDefaultForKey:kDefaultsKeyLastReplicationDate];
+    NSString *deviceId = [ODefaults userDefaultForKey:kDefaultsKeyDeviceId];
+    NSString *lastReplicationDate = [ODefaults userDefaultForKey:kDefaultsKeyLastReplicationDate];
     
     if (deviceId) {
         _deviceId = deviceId;
     } else if (_deviceId) {
-        [self setUserDefault:_deviceId forKey:kDefaultsKeyDeviceId];
+        [ODefaults setUserDefault:_deviceId forKey:kDefaultsKeyDeviceId];
     }
     
     if (lastReplicationDate) {
         _lastReplicationDate = lastReplicationDate;
     } else if (_lastReplicationDate) {
-        [self setUserDefault:_lastReplicationDate forKey:kDefaultsKeyLastReplicationDate];
+        [ODefaults setUserDefault:_lastReplicationDate forKey:kDefaultsKeyLastReplicationDate];
     }
 }
 
@@ -327,7 +361,7 @@ static OMeta *m = nil;
 {
     _lastReplicationDate = lastReplicationDate;
     
-    [self setUserDefault:_lastReplicationDate forKey:kDefaultsKeyLastReplicationDate];
+    [ODefaults setUserDefault:_lastReplicationDate forKey:kDefaultsKeyLastReplicationDate];
 }
 
 
@@ -336,19 +370,21 @@ static OMeta *m = nil;
     _userEmail = userEmail;
     
     if (_userEmail) {
-        [self setGlobalDefault:_userEmail forKey:kDefaultsKeyUserEmail];
+        [ODefaults setGlobalDefault:_userEmail forKey:kDefaultsKeyUserEmail];
 
-        NSString *userId = [self userDefaultForKey:kDefaultsKeyUserId];
+        NSString *userId = [ODefaults userDefaultForKey:kDefaultsKeyUserId];
         
         if (userId) {
             self.userId = userId;
         } else if (_userId) {
-            [self setUserDefault:_userId forKey:kDefaultsKeyUserId];
-        } else if (!_deviceId) {
+            [ODefaults setUserDefault:_userId forKey:kDefaultsKeyUserId];
+        }
+        
+        if (!_deviceId) {
             _deviceId = [OUUIDGenerator generateUUID];
         }
     } else {
-        [self setGlobalDefault:nil forKey:kDefaultsKeyUserEmail];
+        [ODefaults setGlobalDefault:nil forKey:kDefaultsKeyUserEmail];
     }
 }
 
@@ -387,82 +423,6 @@ static OMeta *m = nil;
     }
     
     return _authToken;
-}
-
-
-- (NSString *)inferredCountryCode
-{
-    CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
-    NSString *inferredCountryCode = [networkInfo subscriberCellularProvider].isoCountryCode;
-    
-    if (!inferredCountryCode) {
-        inferredCountryCode = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
-    }
-    
-    return inferredCountryCode;
-}
-
-
-- (BOOL)userIsAllSet
-{
-    return (self.userIsSignedIn && self.userIsRegistered);
-}
-
-
-- (BOOL)userIsSignedIn
-{
-    if (!_user) {
-        _authTokenExpiryDate = [self userDefaultForKey:kDefaultsKeyAuthExpiryDate];
-        
-        if (_authTokenExpiryDate) {
-            NSDate *now = [NSDate date];
-            
-            if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
-                _authToken = [self generateAuthToken:_authTokenExpiryDate];
-                _user = [self.context entityWithId:_userId];
-            }
-        }
-    }
-    
-    return (_user != nil);
-}
-
-
-- (BOOL)userIsRegistered
-{
-    return ([_user hasValueForKey:kPropertyKeyMobilePhone] && [_user hasAddress]);
-}
-
-
-- (BOOL)internetConnectionIsAvailable
-{
-    return (_internetConnectionIsWiFi || _internetConnectionIsWWAN);
-}
-
-
-- (BOOL)shouldUseEasternNameOrder
-{
-    return [_displayLanguage isEqualToString:kLanguageHungarian];
-}
-
-
-- (NSArray *)supportedCountryCodes
-{
-    NSMutableDictionary *codesByCountry = [[NSMutableDictionary alloc] init];
-    NSArray *countryCodes = [[OStrings stringForKey:metaSupportedCountryCodes] componentsSeparatedByString:kListSeparator];
-    
-    for (NSString *countryCode in countryCodes) {
-        [codesByCountry setObject:countryCode forKey:[OUtil countryFromCountryCode:countryCode]];
-    }
-    
-    NSMutableArray *supportedCountryCodesSortedByCountry = [[NSMutableArray alloc] init];
-    NSArray *sortedCountries = [codesByCountry keysSortedByValueUsingSelector:@selector(localizedCompare:)];
-    
-    for (NSString *country in sortedCountries) {
-        [supportedCountryCodesSortedByCountry addObject:[codesByCountry objectForKey:country]];
-    }
-    
-    return supportedCountryCodesSortedByCountry;
 }
 
 

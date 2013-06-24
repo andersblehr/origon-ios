@@ -16,6 +16,7 @@
 
 @optional
 - (id)targetEntity;
+- (BOOL)shouldEnableInputFieldWithKey:(NSString *)key;
 - (BOOL)willValidateInputForKey:(NSString *)key;
 - (BOOL)inputValue:(id)inputValue isValidForKey:(NSString *)key;
 - (NSDictionary *)additionalInputValues;

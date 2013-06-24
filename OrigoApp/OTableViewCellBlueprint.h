@@ -17,9 +17,9 @@ extern CGFloat const kMinimumCellPadding;
 
 @interface OTableViewCellBlueprint : NSObject
 
-@property (nonatomic, readonly) BOOL fieldsShouldDeemphasiseOnEndEdit;
-@property (nonatomic, readonly) BOOL fieldsAreLabeled;
 @property (nonatomic, readonly) BOOL hasPhoto;
+@property (nonatomic, readonly) BOOL fieldsAreLabeled;
+@property (nonatomic, readonly) BOOL fieldsShouldDeemphasiseOnEndEdit;
 
 @property (strong, nonatomic, readonly) NSString *titleKey;
 @property (strong, nonatomic, readonly) NSArray *detailKeys;
@@ -28,9 +28,10 @@ extern CGFloat const kMinimumCellPadding;
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (id)initWithEntityClass:(Class)entityClass;
 
-- (BOOL)keyRepresentsMultilineProperty:(NSString *)propertyKey;
++ (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier;
++ (CGFloat)heightForCellWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
+- (CGFloat)heightForCell:(OTableViewCell *)cell;
 
-//+ (CGFloat)heightForReuseIdentifier:(NSString *)reuseIdentifier;
-+ (CGFloat)cell:(OTableViewCell *)cell heightForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
+- (BOOL)keyRepresentsTextViewProperty:(NSString *)propertyKey;
 
 @end
