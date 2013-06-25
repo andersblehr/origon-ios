@@ -10,9 +10,9 @@
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
 
-#import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
+#import "OReplicator.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"

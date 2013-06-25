@@ -16,9 +16,9 @@
 
 #import "OAppDelegate.h"
 #import "ODefaults.h"
-#import "OEntityReplicator.h"
 #import "OLocator.h"
 #import "OLogging.h"
+#import "OReplicator.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OUtil.h"
@@ -94,7 +94,7 @@ static OMeta *m = nil;
 @interface OMeta ()
 
 @property (strong, nonatomic) OMember *user;
-@property (strong, nonatomic) OEntityReplicator *replicator;
+@property (strong, nonatomic) OReplicator *replicator;
 @property (strong, nonatomic) OLocator *locator;
 @property (strong, nonatomic) NSString *authToken;
 
@@ -389,10 +389,10 @@ static OMeta *m = nil;
 }
 
 
-- (OEntityReplicator *)replicator
+- (OReplicator *)replicator
 {
     if (!_replicator) {
-        _replicator = [[OEntityReplicator alloc] init];
+        _replicator = [[OReplicator alloc] init];
     }
     
     return _replicator;

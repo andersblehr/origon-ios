@@ -25,15 +25,22 @@ static NSInteger const kTextViewMinimumLines = 1;
 
 static CGFloat const kTopInset = 5.f;
 static CGFloat const kDetailTextWidth = 210.f;
+static CGFloat const kAccessoryViewWidth = 30.f;
 
 
 @implementation OTextView
 
 #pragma mark - Auxiliary methods
 
-+ (NSInteger)lineCountWithText:(NSString *)text
++ (NSInteger)lineCountWithText:(NSString *)text state:(OState *)state
 {
-    NSInteger lineCount = [[UIFont detailFont] linecountWithText:text width:kDetailTextWidth];
+    NSInteger detailTextWidth = kDetailTextWidth;
+    
+    if ([state actionIs:kActionList]) {
+        detailTextWidth -= kAccessoryViewWidth;
+    }
+    
+    NSInteger lineCount = [[UIFont detailFont] linecountWithText:text textWidth:detailTextWidth];
     
     lineCount = MAX(lineCount, kTextViewMinimumLines);
     lineCount = MIN(lineCount, kTextViewMaximumLines);
@@ -46,23 +53,25 @@ static CGFloat const kDetailTextWidth = 210.f;
 {
     NSInteger lineCount = 0;
 
-    if (self.window && [self.text length]) {
-        lineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
-        
-        if (_hasEmphasis) {
-            if ((lineCount > 1) && (lineCount < kTextViewMaximumLines)) {
-                lineCount++;
-            } else if (lineCount > kTextViewMaximumLines) {
-                lineCount = kTextViewMaximumLines;
-                [super setText:_lastKnownText];
-            } else if (lineCount < kTextViewMinimumEditLines) {
-                lineCount = kTextViewMinimumEditLines;
+    if ([self.text length]) {
+        if (self.window) {
+            lineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
+            
+            if (_hasEmphasis) {
+                if ((lineCount > 1) && (lineCount < kTextViewMaximumLines)) {
+                    lineCount++;
+                } else if (lineCount > kTextViewMaximumLines) {
+                    lineCount = kTextViewMaximumLines;
+                    [super setText:_lastKnownText];
+                } else if (lineCount < kTextViewMinimumEditLines) {
+                    lineCount = kTextViewMinimumEditLines;
+                }
             }
+        } else {
+            lineCount = [OTextView lineCountWithText:self.text state:_cell.localState];
         }
-    } else if ([self.text length] && _cell.entity) {
-        lineCount = [OTextView lineCountWithText:self.text];
     } else {
-        lineCount = [OTextView lineCountWithText:self.placeholder];
+        lineCount = [OTextView lineCountWithText:self.placeholder state:_cell.localState];
     }
     
     _lastKnownLineCount = lineCount;
@@ -87,8 +96,6 @@ static CGFloat const kDetailTextWidth = 210.f;
     self = [super initWithFrame:CGRectZero];
     
     if (self) {
-        _cell = cell;
-        
         _placeholderView = [[UITextView alloc] initWithFrame:CGRectZero];
         _placeholderView.backgroundColor = [UIColor clearColor];
         _placeholderView.delegate = self;
@@ -115,8 +122,9 @@ static CGFloat const kDetailTextWidth = 210.f;
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
         _key = key;
+        _cell = cell;
         _hasEmphasis = NO;
-        _lastKnownLineCount = [OTextView lineCountWithText:_placeholder];
+        _lastKnownLineCount = [OTextView lineCountWithText:_placeholder state:[OState s]];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:nil];
     }
@@ -129,7 +137,7 @@ static CGFloat const kDetailTextWidth = 210.f;
 
 + (CGFloat)heightWithText:(NSString *)text
 {
-    NSInteger lineCount = [self lineCountWithText:text];
+    NSInteger lineCount = [self lineCountWithText:text state:[OState s]];
     NSInteger padding = 4.f / lineCount;
     
     return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight] + padding;

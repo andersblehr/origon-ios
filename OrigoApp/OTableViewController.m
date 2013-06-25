@@ -13,17 +13,17 @@
 #import "UIBarButtonItem+OrigoExtensions.h"
 #import "UITableView+OrigoExtensions.h"
 
+#import "OConnection.h"
 #import "ODefaults.h"
-#import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
-#import "OServerConnection.h"
+#import "OReplicator.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
+#import "OTableViewCellBlueprint.h"
 #import "OTextField.h"
 #import "OTextView.h"
-#import "OTableViewCellBlueprint.h"
 #import "OValidator.h"
 
 #import "OMembership.h"
@@ -525,7 +525,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     
     if (![OStrings hasStrings]) {
         [self.activityIndicator startAnimating];
-        [[[OServerConnection alloc] init] fetchStrings:self];
+        [[[OConnection alloc] init] fetchStrings:self];
     } else if ([self actionIs:kActionRegister]) {
         [[_detailCell nextInputField] becomeFirstResponder];
     } else if (![_viewId isEqualToString:kViewIdAuth] && ![[OMeta m] userIsSignedIn]) {

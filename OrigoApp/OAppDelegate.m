@@ -11,9 +11,9 @@
 #import <CoreData/CoreData.h>
 
 #import "ODefaults.h"
-#import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
+#import "OReplicator.h"
 #import "OState.h"
 #import "OStrings.h"
 

@@ -1,12 +1,12 @@
 //
-//  OServerConnection.m
+//  OConnection.m
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OServerConnection.h"
+#import "OConnection.h"
 
 #import "NSDate+OrigoExtensions.h"
 #import "NSJSONSerialization+OrigoExtensions.h"
@@ -14,9 +14,9 @@
 #import "NSURL+OrigoExtensions.h"
 
 #import "OAlert.h"
-#import "OEntityReplicator.h"
 #import "OLogging.h"
 #import "OMeta.h"
+#import "OReplicator.h"
 #import "OState.h"
 #import "OStrings.h"
 
@@ -77,7 +77,7 @@ static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
 
 
-@implementation OServerConnection
+@implementation OConnection
 
 #pragma mark - Auxiliary methods
 

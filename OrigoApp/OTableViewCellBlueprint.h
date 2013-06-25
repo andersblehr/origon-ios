@@ -15,7 +15,10 @@ extern CGFloat const kMinimumCellPadding;
 @class OTableViewCell;
 @class OReplicatedEntity;
 
-@interface OTableViewCellBlueprint : NSObject
+@interface OTableViewCellBlueprint : NSObject {
+@private
+    NSArray *_textViewKeys;
+}
 
 @property (nonatomic, readonly) BOOL hasPhoto;
 @property (nonatomic, readonly) BOOL fieldsAreLabeled;
@@ -23,15 +26,15 @@ extern CGFloat const kMinimumCellPadding;
 
 @property (strong, nonatomic, readonly) NSString *titleKey;
 @property (strong, nonatomic, readonly) NSArray *detailKeys;
-@property (weak, nonatomic, readonly) NSArray *allKeys;
+@property (strong, nonatomic, readonly) NSArray *keys;
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (id)initWithEntityClass:(Class)entityClass;
 
+- (Class)textFieldClassForKey:(NSString *)key;
+
+- (CGFloat)heightForCell:(OTableViewCell *)cell;
 + (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier;
 + (CGFloat)heightForCellWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
-- (CGFloat)heightForCell:(OTableViewCell *)cell;
-
-- (BOOL)keyRepresentsTextViewProperty:(NSString *)propertyKey;
 
 @end
