@@ -1,25 +1,25 @@
 //
-//  OEntityReplicator.m
+//  OReplicator.m
 //  OrigoApp
 //
 //  Created by Anders Blehr on 02.03.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
-#import "OEntityReplicator.h"
+#import "OReplicator.h"
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
 
+#import "OConnection.h"
 #import "ODefaults.h"
 #import "OLogging.h"
 #import "OMeta.h"
-#import "OServerConnection.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 
 
-@implementation OEntityReplicator
+@implementation OReplicator
 
 #pragma mark - Initialisation
 
@@ -74,7 +74,7 @@
         [entityDictionaries addObject:[entity toDictionary]];
     }
     
-    [[[OServerConnection alloc] init] replicate:entityDictionaries];
+    [[[OConnection alloc] init] replicate:entityDictionaries];
 }
 
 

@@ -69,7 +69,7 @@ extern NSString * const kDefaultsKeyPasswordHash;
 extern NSString * const kDefaultsKeyRegistrationAborted;
 extern NSString * const kDefaultsKeyStringDate;
 
-@class OEntityReplicator, OLocator;
+@class OReplicator, OLocator;
 @class OMember, OReplicatedEntity, OSettings;
 
 @interface OMeta : NSObject {
@@ -83,7 +83,7 @@ extern NSString * const kDefaultsKeyStringDate;
 @property (strong, nonatomic) NSString *lastReplicationDate;
 
 @property (strong, nonatomic, readonly) OMember *user;
-@property (strong, nonatomic, readonly) OEntityReplicator *replicator;
+@property (strong, nonatomic, readonly) OReplicator *replicator;
 @property (strong, nonatomic, readonly) OLocator *locator;
 @property (strong, nonatomic, readonly) OSettings *settings;
 @property (strong, nonatomic, readonly) NSString *deviceId;

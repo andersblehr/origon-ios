@@ -21,6 +21,6 @@
 + (CGFloat)detailLineHeight;
 
 - (CGFloat)textFieldHeight;
-- (NSInteger)linecountWithText:(NSString *)text width:(CGFloat)width;
+- (NSInteger)linecountWithText:(NSString *)text textWidth:(CGFloat)textWidth;
 
 @end

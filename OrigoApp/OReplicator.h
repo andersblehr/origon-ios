@@ -1,5 +1,5 @@
 //
-//  OEntityReplicator.h
+//  OReplicator.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 02.03.13.
@@ -8,11 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-#import "OServerConnectionDelegate.h"
+#import "OConnectionDelegate.h"
 
 @class OReplicatedEntity;
 
-@interface OEntityReplicator : NSObject <OServerConnectionDelegate> {
+@interface OReplicator : NSObject <OConnectionDelegate> {
 @private
     NSMutableSet *_dirtyEntities;
     NSMutableDictionary *_stagedEntities;

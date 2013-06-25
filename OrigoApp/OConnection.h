@@ -1,5 +1,5 @@
 //
-//  OServerConnection.h
+//  OConnection.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "OServerConnectionDelegate.h"
+#import "OConnectionDelegate.h"
 
 extern NSString * const kHTTPMethodGET;
 extern NSString * const kHTTPMethodPOST;
@@ -29,9 +29,9 @@ extern NSInteger const kHTTPStatusForbidden;
 extern NSInteger const kHTTPStatusNotFound;
 extern NSInteger const kHTTPStatusInternalServerError;
 
-@interface OServerConnection : NSObject {
+@interface OConnection : NSObject {
 @private
-    id<OServerConnectionDelegate> _delegate;
+    id<OConnectionDelegate> _delegate;
     
     NSString *_RESTHandler;
     NSString *_RESTRoute;

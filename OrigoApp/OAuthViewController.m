@@ -14,16 +14,16 @@
 #import "UITableView+OrigoExtensions.h"
 
 #import "OAlert.h"
+#import "OConnection.h"
 #import "ODefaults.h"
 #import "OLogging.h"
 #import "OMeta.h"
-#import "OServerConnection.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
+#import "OTableViewCellBlueprint.h"
 #import "OTextField.h"
 #import "OUUIDGenerator.h"
-#import "OTableViewCellBlueprint.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OMembership.h"
@@ -145,7 +145,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 {
     [OMeta m].userEmail = _emailField.text;
     
-    OServerConnection *serverConnection = [[OServerConnection alloc] init];
+    OConnection *serverConnection = [[OConnection alloc] init];
     [serverConnection setAuthHeaderForEmail:_emailField.text password:_passwordField.text];
     [serverConnection authenticate:self];
     
@@ -155,7 +155,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)sendUserActivationRequest
 {
-    OServerConnection *serverConnection = [[OServerConnection alloc] init];
+    OConnection *serverConnection = [[OConnection alloc] init];
     [serverConnection setAuthHeaderForEmail:[OMeta m].userEmail password:_repeatPasswordField.text];
     [serverConnection authenticate:self];
     
@@ -167,7 +167,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 {
     NSString *emailActivationCode = [[OUUIDGenerator generateUUID] substringToIndex:kActivationCodeLength];
     
-    OServerConnection *serverConnection = [[OServerConnection alloc] init];
+    OConnection *serverConnection = [[OConnection alloc] init];
     [serverConnection setAuthHeaderForEmail:self.data password:emailActivationCode];
     [serverConnection sendEmailActivationCode:self];
     

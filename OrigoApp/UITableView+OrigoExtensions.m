@@ -151,7 +151,7 @@ static NSString * const kLogoText = @"..origo..";
 {
     UIFont *footerFont = [UIFont footerFont];
     
-    return [footerFont linecountWithText:text width:kContentWidth] * footerFont.lineHeight;
+    return [footerFont linecountWithText:text textWidth:kContentWidth] * footerFont.lineHeight;
 }
 
 

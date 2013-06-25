@@ -12,8 +12,8 @@
 #import "NSManagedObjectContext+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
 
-#import "OEntityReplicator.h"
 #import "OMeta.h"
+#import "OReplicator.h"
 
 #import "OMember.h"
 #import "OMembership.h"

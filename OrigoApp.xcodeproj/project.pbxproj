@@ -33,7 +33,7 @@
 		5C2262C415A0B47B00241C5F /* OOrigoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262C315A0B47B00241C5F /* OOrigoViewController.m */; };
 		5C23431214812A3100164478 /* OStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* OStrings.m */; };
 		5C26291E158F27860012A74A /* OAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* OAuthViewController.m */; };
-		5C2E11141469CDE5005BDE61 /* OServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* OServerConnection.m */; };
+		5C2E11141469CDE5005BDE61 /* OConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* OConnection.m */; };
 		5C2E6B7E15A8501800638330 /* OMembership+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E6B7D15A8501800638330 /* OMembership+OrigoExtensions.m */; };
 		5C3317CF16F7543F004F8921 /* OMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3317CE16F7543F004F8921 /* OMembership.m */; };
 		5C3374831563FBE200DEF67D /* OMember+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3374821563FBE200DEF67D /* OMember+OrigoExtensions.m */; };
@@ -44,7 +44,7 @@
 		5C3A319614C61378001A783E /* dark_linen-640x960.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3A319514C61378001A783E /* dark_linen-640x960.png */; };
 		5C3C665C14F56D6800514C57 /* OUUIDGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C665B14F56D6800514C57 /* OUUIDGenerator.m */; };
 		5C3D42821485678F009A68E0 /* OOrigoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D42811485678F009A68E0 /* OOrigoListViewController.m */; };
-		5C47155116E2231C000D8A86 /* OEntityReplicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C47155016E2231C000D8A86 /* OEntityReplicator.m */; };
+		5C47155116E2231C000D8A86 /* OReplicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C47155016E2231C000D8A86 /* OReplicator.m */; };
 		5C4955F6157D469000F2A885 /* UIColor+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4955F5157D469000F2A885 /* UIColor+OrigoExtensions.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+OrigoExtensions.m */; };
 		5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C50581714CA1D05000D6587 /* QuartzCore.framework */; };
@@ -175,9 +175,9 @@
 		5C23431114812A3000164478 /* OStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OStrings.m; sourceTree = "<group>"; };
 		5C26291C158F27860012A74A /* OAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthViewController.h; sourceTree = "<group>"; };
 		5C26291D158F27860012A74A /* OAuthViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAuthViewController.m; sourceTree = "<group>"; };
-		5C2E11121469CDE5005BDE61 /* OServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OServerConnection.h; sourceTree = "<group>"; };
-		5C2E11131469CDE5005BDE61 /* OServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OServerConnection.m; sourceTree = "<group>"; };
-		5C2E1133146ACFA9005BDE61 /* OServerConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OServerConnectionDelegate.h; sourceTree = "<group>"; };
+		5C2E11121469CDE5005BDE61 /* OConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OConnection.h; sourceTree = "<group>"; };
+		5C2E11131469CDE5005BDE61 /* OConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OConnection.m; sourceTree = "<group>"; };
+		5C2E1133146ACFA9005BDE61 /* OConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OConnectionDelegate.h; sourceTree = "<group>"; };
 		5C2E6B7C15A8501800638330 /* OMembership+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OMembership+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5C2E6B7D15A8501800638330 /* OMembership+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OMembership+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5C3317CD16F7543F004F8921 /* OMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembership.h; sourceTree = "<group>"; };
@@ -196,8 +196,8 @@
 		5C3C665B14F56D6800514C57 /* OUUIDGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUUIDGenerator.m; sourceTree = "<group>"; };
 		5C3D42801485678E009A68E0 /* OOrigoListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoListViewController.h; sourceTree = "<group>"; };
 		5C3D42811485678F009A68E0 /* OOrigoListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoListViewController.m; sourceTree = "<group>"; };
-		5C47154F16E2231C000D8A86 /* OEntityReplicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEntityReplicator.h; sourceTree = "<group>"; };
-		5C47155016E2231C000D8A86 /* OEntityReplicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEntityReplicator.m; sourceTree = "<group>"; };
+		5C47154F16E2231C000D8A86 /* OReplicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicator.h; sourceTree = "<group>"; };
+		5C47155016E2231C000D8A86 /* OReplicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicator.m; sourceTree = "<group>"; };
 		5C4955F4157D469000F2A885 /* UIColor+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5C4955F5157D469000F2A885 /* UIColor+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5C4F97791496AF88006E244F /* NSURL+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+OrigoExtensions.h"; sourceTree = "<group>"; };
@@ -488,6 +488,17 @@
 			name = "Cocoa Categories";
 			sourceTree = "<group>";
 		};
+		5C50F2581779A6AD00B961BC /* Cell Layout */ = {
+			isa = PBXGroup;
+			children = (
+				5C198B7116D76343002D3976 /* OTableViewCellBlueprint.h */,
+				5C198B7216D76343002D3976 /* OTableViewCellBlueprint.m */,
+				5CBDF78A1659175000D4681C /* OTableViewCellConstrainer.h */,
+				5CBDF78B1659175000D4681C /* OTableViewCellConstrainer.m */,
+			);
+			name = "Cell Layout";
+			sourceTree = "<group>";
+		};
 		5C5ED5CB14F2E95B006BBDFB /* Model Categories */ = {
 			isa = PBXGroup;
 			children = (
@@ -508,10 +519,10 @@
 		5CB49DCD14881E98006EA2F8 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				5C2E1133146ACFA9005BDE61 /* OConnectionDelegate.h */,
 				5C39EC1C166632570083DFEB /* OEntityObservingDelegate.h */,
 				5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */,
 				5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDelegate.h */,
-				5C2E1133146ACFA9005BDE61 /* OServerConnectionDelegate.h */,
 				5CA10B9E16A7F9FD00031D81 /* OTableViewControllerInstance.h */,
 				5CDE879C176F185E00272909 /* OTableViewInputDelegate.h */,
 				5C198B7016D63944002D3976 /* OTableViewListCellDelegate.h */,
@@ -551,25 +562,21 @@
 			children = (
 				5C014A2215CA77310040A1D9 /* OAlert.h */,
 				5C014A2315CA77310040A1D9 /* OAlert.m */,
+				5C2E11121469CDE5005BDE61 /* OConnection.h */,
+				5C2E11131469CDE5005BDE61 /* OConnection.m */,
 				5CF3DE271775AD810068B2E7 /* ODefaults.h */,
 				5CF3DE281775AD810068B2E7 /* ODefaults.m */,
-				5C47154F16E2231C000D8A86 /* OEntityReplicator.h */,
-				5C47155016E2231C000D8A86 /* OEntityReplicator.m */,
 				5C1D6CC4172E62F500479F7D /* OLocator.h */,
 				5C1D6CC5172E62F500479F7D /* OLocator.m */,
 				5CCF09051466A0CB00D41AB0 /* OLogging.h */,
 				5C36BE88146E9DA100DD3CEA /* OMeta.h */,
 				5C36BE89146E9DA100DD3CEA /* OMeta.m */,
-				5C2E11121469CDE5005BDE61 /* OServerConnection.h */,
-				5C2E11131469CDE5005BDE61 /* OServerConnection.m */,
+				5C47154F16E2231C000D8A86 /* OReplicator.h */,
+				5C47155016E2231C000D8A86 /* OReplicator.m */,
 				5CD3360C15C40A2F00ABBFE7 /* OState.h */,
 				5CD3360D15C40A2F00ABBFE7 /* OState.m */,
 				5C23431014812A3000164478 /* OStrings.h */,
 				5C23431114812A3000164478 /* OStrings.m */,
-				5C198B7116D76343002D3976 /* OTableViewCellBlueprint.h */,
-				5C198B7216D76343002D3976 /* OTableViewCellBlueprint.m */,
-				5CBDF78A1659175000D4681C /* OTableViewCellConstrainer.h */,
-				5CBDF78B1659175000D4681C /* OTableViewCellConstrainer.m */,
 				5CAAD27D1751EBA7002AF8CF /* OUtil.h */,
 				5CAAD27E1751EBA7002AF8CF /* OUtil.m */,
 				5C3C665A14F56D6800514C57 /* OUUIDGenerator.h */,
@@ -633,6 +640,7 @@
 				5CBB63C7146080DF00A9133A /* OAppDelegate.h */,
 				5CBB63C8146080DF00A9133A /* OAppDelegate.m */,
 				5CB49DD014881F36006EA2F8 /* Auxiliary Classes */,
+				5C50F2581779A6AD00B961BC /* Cell Layout */,
 				5C4F9766149529BF006E244F /* Cocoa Categories */,
 				5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */,
 				5C36BEA51471A05700DD3CEA /* Model */,
@@ -839,7 +847,7 @@
 				5CBB63C5146080DF00A9133A /* main.m in Sources */,
 				5CBB63C9146080DF00A9133A /* OAppDelegate.m in Sources */,
 				5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */,
-				5C2E11141469CDE5005BDE61 /* OServerConnection.m in Sources */,
+				5C2E11141469CDE5005BDE61 /* OConnection.m in Sources */,
 				5C36BE8A146E9DA100DD3CEA /* OMeta.m in Sources */,
 				5C36BE9C1470507700DD3CEA /* OrigoApp.xcdatamodeld in Sources */,
 				5C23431214812A3100164478 /* OStrings.m in Sources */,
@@ -894,7 +902,7 @@
 				5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */,
 				5C6C4B6B16CC027600C88E6C /* OReplicatedEntityRef.m in Sources */,
 				5C198B7316D76344002D3976 /* OTableViewCellBlueprint.m in Sources */,
-				5C47155116E2231C000D8A86 /* OEntityReplicator.m in Sources */,
+				5C47155116E2231C000D8A86 /* OReplicator.m in Sources */,
 				5C7BC3DD16F358B7006AA52F /* OResidencySchedule.m in Sources */,
 				5C3317CF16F7543F004F8921 /* OMembership.m in Sources */,
 				5C369D9716FB58DA0053EB1F /* OReplicatedEntity.m in Sources */,

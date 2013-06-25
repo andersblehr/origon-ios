@@ -14,6 +14,7 @@
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
+#import "OTextField.h"
 #import "OTextView.h"
 
 #import "OMember.h"
@@ -43,7 +44,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
     
     for (NSString *detailKey in blueprint.detailKeys) {
         if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:detailKey]) {
-            if ([blueprint keyRepresentsTextViewProperty:detailKey]) {
+            if ([blueprint textFieldClassForKey:detailKey] == OTextView.class) {
                 if (cell) {
                     height += [[cell textFieldForKey:detailKey] height];
                 } else if (entity && [entity hasValueForKey:detailKey]) {
@@ -58,6 +59,18 @@ CGFloat const kMinimumCellPadding = 0.1f;
     }
     
     return height;
+}
+
+
+- (void)consolidateKeys
+{
+    if (_titleKey) {
+        _keys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
+    } else {
+        _keys = _detailKeys;
+    }
+    
+    _textViewKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
 }
 
 
@@ -79,6 +92,8 @@ CGFloat const kMinimumCellPadding = 0.1f;
             _titleKey = kInputKeyActivate;
             _detailKeys = @[kInputKeyActivationCode, kInputKeyRepeatPassword];
         }
+        
+        [self consolidateKeys];
     }
     
     return self;
@@ -112,25 +127,29 @@ CGFloat const kMinimumCellPadding = 0.1f;
                 _detailKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
             }
         }
+        
+        [self consolidateKeys];
     }
     
     return self;
 }
 
 
-#pragma mark - Custom accessors
+#pragma mark - Implementation meta information
 
-- (NSArray *)allKeys
+- (Class)textFieldClassForKey:(NSString *)key
 {
-    NSMutableArray *allKeys = [[NSMutableArray alloc] initWithObjects:[self titleKey], nil];
-    
-    [allKeys addObjectsFromArray:[self detailKeys]];
-    
-    return allKeys;
+    return [_textViewKeys containsObject:key] ? OTextView.class : OTextField.class;
 }
 
 
 #pragma mark - Cell height computation
+
+- (CGFloat)heightForCell:(OTableViewCell *)cell
+{
+    return [self.class heightWithBlueprint:cell.blueprint entity:cell.entity cell:cell];
+}
+
 
 + (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -141,25 +160,6 @@ CGFloat const kMinimumCellPadding = 0.1f;
 + (CGFloat)heightForCellWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
     return [self heightWithBlueprint:[[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass] entity:entity cell:nil];
-}
-
-
-- (CGFloat)heightForCell:(OTableViewCell *)cell
-{
-    return [self.class heightWithBlueprint:cell.blueprint entity:cell.entity cell:cell];
-}
-
-
-#pragma mark - Text field type information
-
-- (BOOL)keyRepresentsTextViewProperty:(NSString *)propertyKey
-{
-    BOOL isMultiline = NO;
-    
-    isMultiline = isMultiline || [propertyKey isEqualToString:kPropertyKeyAddress];
-    isMultiline = isMultiline || [propertyKey isEqualToString:kPropertyKeyDescriptionText];
-    
-    return isMultiline;
 }
 
 @end

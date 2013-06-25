@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "OConnectionDelegate.h"
 #import "OModalViewControllerDelegate.h"
-#import "OServerConnectionDelegate.h"
 #import "OTableViewControllerInstance.h"
 
 extern NSString * const kEntityRegistrationCell;
@@ -20,7 +20,7 @@ extern NSString * const kCustomCell;
 @class OState, OTableViewCell;
 @class OReplicatedEntity;
 
-@interface OTableViewController : UITableViewController<OTableViewControllerInstance, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDelegate, OServerConnectionDelegate> {
+@interface OTableViewController : UITableViewController<OTableViewControllerInstance, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDelegate, OConnectionDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;

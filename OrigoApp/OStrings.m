@@ -11,10 +11,10 @@
 #import "NSDate+OrigoExtensions.h"
 
 #import "OAlert.h"
+#import "OConnection.h"
 #import "ODefaults.h"
 #import "OMeta.h"
 #import "OLogging.h"
-#import "OServerConnection.h"
 #import "OState.h"
 
 #import "OOrigo+OrigoExtensions.h"
@@ -231,7 +231,7 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
     
     if (!stringDate || ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
         if ([self hasStrings] && [[OMeta m] internetConnectionIsAvailable]) {
-            [[[OServerConnection alloc] init] fetchStrings:self];
+            [[[OConnection alloc] init] fetchStrings:self];
         }
     }
 }

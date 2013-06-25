@@ -1,5 +1,5 @@
 //
-//  OServerConnectionDelegate.h
+//  OConnectionDelegate.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol OServerConnectionDelegate <NSObject>
+@protocol OConnectionDelegate <NSObject>
 
 @required
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data;

@@ -17,10 +17,10 @@
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
-#import "OTextField.h"
-#import "OTextView.h"
 #import "OTableViewCellBlueprint.h"
 #import "OTableViewCellConstrainer.h"
+#import "OTextField.h"
+#import "OTextView.h"
 
 #import "OMember.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
@@ -171,19 +171,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addTextFieldForKey:(NSString *)key
 {
-    OTextField *textField = [[OTextField alloc] initWithKey:key cell:self delegate:_inputDelegate];
+    Class textFieldClass = [_blueprint textFieldClassForKey:key];
+    id textField = [[textFieldClass alloc] initWithKey:key cell:self delegate:_inputDelegate];
     
     [self.contentView addSubview:textField];
     [_views setObject:textField forKey:[key stringByAppendingString:kViewKeySuffixTextField]];
-}
-
-
-- (void)addTextViewForKey:(NSString *)key
-{
-    OTextView *textView = [[OTextView alloc] initWithKey:key cell:self delegate:_inputDelegate];
-    
-    [self.contentView addSubview:textView];
-    [_views setObject:textView forKey:[key stringByAppendingString:kViewKeySuffixTextField]];
 }
 
 
@@ -204,11 +196,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             [self addLabelForKey:detailKey centred:NO];
         }
         
-        if ([_blueprint keyRepresentsTextViewProperty:detailKey]) {
-            [self addTextViewForKey:detailKey];
-        } else {
-            [self addTextFieldForKey:detailKey];
-        }
+        [self addTextFieldForKey:detailKey];
     }
 }
 
@@ -267,15 +255,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (id)nextInputField
 {
-    NSArray *elementKeys = _blueprint.allKeys;
-    NSInteger indexOfTextField = _inputField ? [elementKeys indexOfObject:[_inputField key]] : -1;
+    NSArray *keys = _blueprint.keys;
+    NSInteger indexOfTextField = _inputField ? [keys indexOfObject:[_inputField key]] : -1;
     NSString *inputFieldKey = nil;
     UIView *inputField = nil;
     
     BOOL inputFieldIsEditable = NO;
     
-    for (int i = indexOfTextField + 1; ((i < [elementKeys count]) && !inputFieldIsEditable); i++) {
-        inputFieldKey = [elementKeys[i] stringByAppendingString:kViewKeySuffixTextField];
+    for (int i = indexOfTextField + 1; ((i < [keys count]) && !inputFieldIsEditable); i++) {
+        inputFieldKey = [keys[i] stringByAppendingString:kViewKeySuffixTextField];
         inputField = _views[inputFieldKey];
         
         if ([inputField isKindOfClass:OTextField.class]) {
@@ -403,7 +391,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if ([self isListCell]) {
         [_listCellDelegate populateListCell:self atIndexPath:_indexPath];
     } else {
-        for (NSString *propertyKey in _blueprint.allKeys) {
+        for (NSString *propertyKey in _blueprint.keys) {
             id value = [_entity valueForKey:propertyKey];
             
             if (value) {
@@ -426,7 +414,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _entity = [_inputDelegate targetEntity];
     }
     
-    for (NSString *propertyKey in _blueprint.allKeys) {
+    for (NSString *propertyKey in _blueprint.keys) {
         id textField = [self textFieldForKey:propertyKey];
         
         if ([textField hasValue]) {
@@ -567,6 +555,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)entityDidChange
 {
     [self readEntity];
+    [self redrawIfNeeded];
     
     if (_observer) {
         [_observer entityDidChange];
