@@ -8,6 +8,7 @@
 
 #import "OOrigoListViewController.h"
 
+#import "NSString+OrigoExtensions.h"
 #import "UIBarButtonItem+OrigoExtensions.h"
 #import "UITableView+OrigoExtensions.h"
 
@@ -212,7 +213,7 @@ static NSInteger const kUserRow = 0;
             [ODefaults setUserDefault:nil forKey:kDefaultsKeyRegistrationAborted];
         }
         
-        [self presentModalViewWithIdentifier:kViewIdMember data:[[OMeta m].user initialResidency]];
+        [self presentModalViewControllerWithIdentifier:kViewControllerMember data:[[OMeta m].user initialResidency]];
     }
 }
 
@@ -301,7 +302,7 @@ static NSInteger const kUserRow = 0;
     } else if (sectionKey == kOrigoSectionKey) {
         [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
     } else if (sectionKey == kWardSectionKey) {
-        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kViewIdOrigoList];
+        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kViewControllerOrigoList];
         origoListViewController.data = [self dataAtIndexPath:indexPath];
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
@@ -337,24 +338,29 @@ static NSInteger const kUserRow = 0;
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     OReplicatedEntity *entity = [self dataAtIndexPath:indexPath];
-    OMembership *membership = [entity asMembership];
     
-    if (sectionKey == kUserSectionKey) {
-        if (indexPath.row == kUserRow) {
-            cell.textLabel.text = [OStrings stringForKey:strTermMe];
-            cell.detailTextLabel.text = membership.member.name;
-            cell.imageView.image = [membership.member displayImage];
-        } else {
+    if ((sectionKey == kUserSectionKey) || (sectionKey == kOrigoSectionKey)) {
+        OMembership *membership = [entity asMembership];
+        
+        if (sectionKey == kUserSectionKey) {
+            if (indexPath.row == kUserRow) {
+                cell.textLabel.text = [OStrings stringForKey:strTermMe];
+                cell.detailTextLabel.text = membership.member.name;
+                cell.imageView.image = [membership.member listCellImage];
+            } else {
+                cell.textLabel.text = membership.origo.name;
+                cell.detailTextLabel.text = [membership.origo.address stringByReplacingSeparator:kSeparatorNewline withSeparator:kSeparatorComma];
+                cell.imageView.image = [membership.origo listCellImage];
+            }
+        } else if (sectionKey == kOrigoSectionKey) {
             cell.textLabel.text = membership.origo.name;
-            cell.detailTextLabel.text = [membership.origo displayAddress];
-            cell.imageView.image = [membership.origo displayImage];
+            cell.imageView.image = [membership.origo listCellImage];
         }
     } else if (sectionKey == kWardSectionKey) {
-        cell.textLabel.text = [entity asMember].givenName;
-        cell.imageView.image = [[entity asMember] displayImage]; //[UIImage imageNamed:kIconFileOrigo];
-    } else if (sectionKey == kOrigoSectionKey) {
-        cell.textLabel.text = membership.origo.name;
-        cell.imageView.image = [membership.origo displayImage];
+        OMember *ward = [entity asMember];
+        
+        cell.textLabel.text = ward.givenName;
+        cell.imageView.image = [ward listCellImage];
     }
 }
 
@@ -394,7 +400,7 @@ static NSInteger const kUserRow = 0;
                 
                 if ([OMeta m].settings.countryCode) {
                     if ([OUtil isSupportedCountryCode:[OMeta m].settings.countryCode]) {
-                        [self presentModalViewWithIdentifier:kViewIdOrigo data:_member meta:_selectedOrigoType];
+                        [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_member meta:_selectedOrigoType];
                     } else {
                         [self displayCountryAlert];
                     }
@@ -418,7 +424,7 @@ static NSInteger const kUserRow = 0;
                         [self presentCountrySheet];
                     }
                 } else {
-                    [self presentModalViewWithIdentifier:kViewIdOrigo data:_member meta:_selectedOrigoType];
+                    [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_member meta:_selectedOrigoType];
                 }
             }
             
@@ -436,7 +442,7 @@ static NSInteger const kUserRow = 0;
 {
     switch (alertView.tag) {
         case kCountryAlertTag:
-            [self presentModalViewWithIdentifier:kViewIdOrigo data:_member meta:_selectedOrigoType];
+            [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_member meta:_selectedOrigoType];
 
             break;
             

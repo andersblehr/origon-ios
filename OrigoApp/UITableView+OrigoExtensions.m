@@ -133,7 +133,7 @@ static NSString * const kLogoText = @"..origo..";
 
 - (id)listCellForIndexPath:(NSIndexPath *)indexPath value:(id)value
 {
-    NSString *reuseIdentifer = [NSString stringWithFormat:@"%@:%@", kReuseIdentifierList, value];
+    NSString *reuseIdentifer = [NSString stringWithFormat:@"%@:%@", idCellReuseList, value];
     
     return [self cellForReuseIdentifier:reuseIdentifer indexPath:indexPath];
 }

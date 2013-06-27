@@ -35,7 +35,7 @@ static NSInteger const kOrigoSection = 0;
 {
     [[OMeta m] userDidSignOut];
     
-    [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
+    [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
 }
 
 
@@ -61,12 +61,6 @@ static NSInteger const kOrigoSection = 0;
 }
 
 
-- (BOOL)cancelRegistrationImpliesSignOut
-{
-    return ([_origo isOfType:kOrigoTypeResidence] && !_member.activeSince);
-}
-
-
 #pragma mark - UIViewController custom accessors
 
 - (BOOL)hidesBottomBarWhenPushed
@@ -88,6 +82,7 @@ static NSInteger const kOrigoSection = 0;
     }
     
     self.target = _origo ? _origo : self.meta;
+    self.cancelRegistrationImpliesSignOut = [_origo isOfType:kOrigoTypeResidence] && !_member.activeSince;
 }
 
 
@@ -130,7 +125,7 @@ static NSInteger const kOrigoSection = 0;
             _membership = [_origo addMember:_member];
         }
         
-        [self presentModalViewWithIdentifier:kViewIdMemberList data:_membership dismisser:self.dismisser];
+        [self presentModalViewControllerWithIdentifier:kViewControllerMemberList data:_membership dismisser:self.dismisser];
         
         if ([_member isUser]) {
             [[OMeta m].user makeActive];

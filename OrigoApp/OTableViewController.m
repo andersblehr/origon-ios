@@ -35,8 +35,8 @@
 NSString * const kEntityRegistrationCell = @"registration";
 NSString * const kCustomCell = @"custom";
 
-static NSString * const kListViewSuffix = @"ListViewController";
-static NSString * const kDetailViewSuffix = @"ViewController";
+static NSString * const kControllerSuffixList = @"ListViewController";
+static NSString * const kControllerSuffix = @"ViewController";
 
 
 @interface OTableViewController ()
@@ -50,9 +50,9 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)isListView
+- (BOOL)isListController
 {
-    return [NSStringFromClass(self.class) containsString:kListViewSuffix];
+    return [NSStringFromClass(self.class) containsString:kControllerSuffixList];
 }
 
 
@@ -62,7 +62,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
         if ([[OMeta m] userIsAllSet] || _isModal) {
             if (_isModal && self.modalImpliesRegistration) {
                 _action = kActionRegister;
-            } else if ([self isListView]) {
+            } else if ([self isListController]) {
                 _action = kActionList;
             } else {
                 _action = kActionDisplay;
@@ -112,15 +112,15 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     NSString *viewControllerId = nil;
     
     if (tabIndex == kTabIndexOrigo) {
-        viewControllerId = kViewIdOrigoList;
+        viewControllerId = kViewControllerOrigoList;
     } else if (tabIndex == kTabIndexCalendar) {
-        viewControllerId = kViewIdCalendar;
+        viewControllerId = kViewControllerCalendar;
     } else if (tabIndex == kTabIndexTasks) {
-        viewControllerId = kViewIdTaskList;
+        viewControllerId = kViewControllerTaskList;
     } else if (tabIndex == kTabIndexMessages) {
-        viewControllerId = kViewIdMessageList;
+        viewControllerId = kViewControllerMessageList;
     } else if (tabIndex == kTabIndexSettings) {
-        viewControllerId = kViewIdSettingList;
+        viewControllerId = kViewControllerSettingList;
     }
     
     UINavigationController *navigationController = self.tabBarController.viewControllers[tabIndex];
@@ -129,7 +129,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     if (reauthenticate) {
         [[OMeta m] userDidSignOut];
         
-        [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:navigationController.viewControllers[0]];
+        [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil dismisser:navigationController.viewControllers[0]];
         
         _reauthenticationLandingTabIndex = tabIndex;
     }
@@ -147,7 +147,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 - (void)didCancelEditing
 {
     if ([self actionIs:kActionRegister]) {
-        [_dismisser dismissModalViewControllerWithIdentifier:_viewId needsReloadData:NO];
+        [_dismisser dismissModalViewControllerWithIdentifier:_viewControllerId needsReloadData:NO];
     } else if ([self actionIs:kActionEdit]) {
         [_detailCell readEntity];
         [self toggleEditMode];
@@ -157,8 +157,8 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 - (void)didFinishEditing
 {
-    if ([self isListView]) {
-        [_dismisser dismissModalViewControllerWithIdentifier:_viewId];
+    if ([self isListController]) {
+        [_dismisser dismissModalViewControllerWithIdentifier:_viewControllerId];
     } else {
         [_detailCell processInput];
     }
@@ -278,13 +278,13 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 
 #pragma mark - Presenting modal view controllers
 
-- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data
 {
-    [self presentModalViewWithIdentifier:identifier data:data meta:nil];
+    [self presentModalViewControllerWithIdentifier:identifier data:data meta:nil];
 }
 
 
-- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta
 {
     OTableViewController *viewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
     
@@ -299,7 +299,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     
     UIViewController *destinationViewController = nil;
     
-    if ([identifier isEqualToString:kViewIdAuth]) {
+    if ([identifier isEqualToString:kViewControllerAuth]) {
         destinationViewController = viewController;
         destinationViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     } else {
@@ -311,9 +311,9 @@ static NSString * const kDetailViewSuffix = @"ViewController";
 }
 
 
-- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser
 {
-    [self presentModalViewWithIdentifier:identifier data:data meta:dismisser];
+    [self presentModalViewControllerWithIdentifier:identifier data:data meta:dismisser];
 }
 
 
@@ -452,15 +452,15 @@ static NSString * const kDetailViewSuffix = @"ViewController";
     
     NSString *longName = NSStringFromClass(self.class);
     NSString *shortName = [longName substringFromIndex:1];
-    NSString *viewSuffix = [self isListView] ? kListViewSuffix : kDetailViewSuffix;
-    _viewId = [[shortName substringToIndex:[shortName rangeOfString:viewSuffix].location] lowercaseString];
+    NSString *controllerSuffix = [self isListController] ? kControllerSuffixList : kControllerSuffix;
+    _viewControllerId = [[shortName substringToIndex:[shortName rangeOfString:controllerSuffix].location] lowercaseString];
     
-    if ([self isListView]) {
+    if ([self isListController]) {
         _modalImpliesRegistration = NO;
-        _viewId = [_viewId stringByAppendingString:@"s"];
+        _viewControllerId = [_viewControllerId stringByAppendingString:@"s"];
     } else {
         _modalImpliesRegistration = YES;
-        _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kDetailViewSuffix].location]);
+        _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kControllerSuffix].location]);
     }
     
     if (!self.navigationController || ([self.navigationController.viewControllers count] == 1)) {
@@ -528,8 +528,8 @@ static NSString * const kDetailViewSuffix = @"ViewController";
         [[[OConnection alloc] init] fetchStrings:self];
     } else if ([self actionIs:kActionRegister]) {
         [[_detailCell nextInputField] becomeFirstResponder];
-    } else if (![_viewId isEqualToString:kViewIdAuth] && ![[OMeta m] userIsSignedIn]) {
-        [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:self];
+    } else if (![_viewControllerId isEqualToString:kViewControllerAuth] && ![[OMeta m] userIsSignedIn]) {
+        [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil dismisser:self];
     }
     
     OLogState;
@@ -860,7 +860,7 @@ static NSString * const kDetailViewSuffix = @"ViewController";
         [ODefaults setGlobalDefault:[NSDate date] forKey:kDefaultsKeyStringDate];
         [(OTabBarController *)self.tabBarController setTabBarTitles];
         
-        [self presentModalViewWithIdentifier:kViewIdAuth data:nil dismisser:self];
+        [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil dismisser:self];
     }
 }
 

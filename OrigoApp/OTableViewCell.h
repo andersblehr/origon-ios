@@ -12,9 +12,9 @@
 #import "OTableViewInputDelegate.h"
 #import "OTableViewListCellDelegate.h"
 
-extern NSString * const kReuseIdentifierList;
-extern NSString * const kReuseIdentifierUserSignIn;
-extern NSString * const kReuseIdentifierUserActivation;
+extern NSString * const idCellReuseList;
+extern NSString * const idCellReuseUserSignIn;
+extern NSString * const idCellReuseUserActivation;
 
 extern NSString * const kViewKeySuffixLabel;
 extern NSString * const kViewKeySuffixTextField;

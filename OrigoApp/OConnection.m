@@ -39,11 +39,8 @@ NSInteger const kHTTPStatusForbidden = 403;
 NSInteger const kHTTPStatusNotFound = 404;
 NSInteger const kHTTPStatusInternalServerError = 500;
 
-static NSString * const kGAEServer = @"origoapp.appspot.com";
-//static NSString * const kOrigoDevServer = @"localhost:8888";
 static NSString * const kOrigoDevServer = @"enceladus.local:8888";
 static NSString * const kOrigoProdServer = @"origoapp.appspot.com";
-//static NSString * const kOrigoProdServer = @"enceladus.local:8888";
 
 static NSString * const kHTTPProtocol = @"http";
 static NSString * const kHTTPProtocolSuffixSSL = @"s";
@@ -99,7 +96,7 @@ static NSString * const kURLParameterVersion = @"version";
     NSString *origoServer = [[OMeta m] deviceIsSimulator] ? kOrigoDevServer : kOrigoProdServer;
     NSMutableString *protocol = [NSMutableString stringWithString:kHTTPProtocol];
     
-    if ([origoServer isEqualToString:kGAEServer] && [_RESTHandler isEqualToString:kRESTHandlerAuth]) {
+    if ([_RESTHandler isEqualToString:kRESTHandlerAuth] && ![[OMeta m] deviceIsSimulator]) {
         [protocol appendString:kHTTPProtocolSuffixSSL];
     }
     
