@@ -44,7 +44,7 @@ extern NSString * const kCustomCell;
     id<OTableViewControllerInstance> _instance;
 }
 
-@property (strong, nonatomic, readonly) NSString *viewId;
+@property (strong, nonatomic, readonly) NSString *viewControllerId;
 @property (strong, nonatomic) NSString *action;
 @property (strong, nonatomic) id target;
 
@@ -82,9 +82,9 @@ extern NSString * const kCustomCell;
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue;
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data;
 
-- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data;
-- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta;
-- (void)presentModalViewWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser;
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data;
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta;
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser;
 
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;

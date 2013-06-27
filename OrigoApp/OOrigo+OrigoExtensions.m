@@ -9,9 +9,10 @@
 #import "OOrigo+OrigoExtensions.h"
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
+//#import "NSString+OrigoExtensions.h"
 
 #import "OMeta.h"
+#import "OState.h"
 #import "OStrings.h"
 
 #import "OMember+OrigoExtensions.h"
@@ -171,44 +172,6 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
-#pragma mark - Displayable strings & image
-
-- (NSString *)displayAddress
-{
-    NSMutableString *displayAddress = [NSMutableString stringWithString:self.address];
-    
-    [displayAddress replaceOccurrencesOfString:kSeparatorNewline withString:kSeparatorComma options:NSLiteralSearch range:NSMakeRange(0, [self.address length])];
-    
-    return displayAddress;
-}
-
-
-- (NSString *)displayPhoneNumber
-{
-    NSString *displayPhoneNumber = nil;
-    
-    if ([self hasValueForKey:kPropertyKeyTelephone]) {
-        displayPhoneNumber = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedTelephone], self.telephone];
-    }
-    
-    return displayPhoneNumber;
-}
-
-
-- (UIImage *)displayImage
-{
-    UIImage *displayImage = nil;
-    
-    if ([self isOfType:kOrigoTypeResidence]) {
-        displayImage = [UIImage imageNamed:kIconFileHousehold];
-    } else {
-        displayImage = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?
-    }
-    
-    return displayImage;
-}
-
-
 #pragma mark - Origo meta information
 
 - (BOOL)isOfType:(NSString *)origoType
@@ -242,6 +205,12 @@ NSString * const kOrigoTypeOther = @"other";
     OMembership *membership = [self membershipForMember:member];
     
     return ((membership != nil) && [membership isAssociate]);
+}
+
+
+- (BOOL)memberIsContact:(OMember *)member
+{
+    return [[self membershipForMember:member] hasContactRole];
 }
 
 
@@ -306,11 +275,33 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
+#pragma mark - Display image
+
+- (UIImage *)listCellImage
+{
+    UIImage *displayImage = nil;
+    
+    if ([self isOfType:kOrigoTypeResidence]) {
+        displayImage = [UIImage imageNamed:kIconFileHousehold];
+    } else {
+        displayImage = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?
+    }
+    
+    return displayImage;
+}
+
+
 #pragma mark - OReplicatedEntity (OrigoExtensions) overrides
 
 - (NSString *)asTarget
 {
-    return self.type;
+    NSString *target = self.type;
+    
+    if ([self.type isEqualToString:kOrigoTypeResidence] && [self userIsMember]) {
+        target = kTargetHousehold;
+    }
+    
+    return target;
 }
 
 

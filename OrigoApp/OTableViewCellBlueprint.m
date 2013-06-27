@@ -85,10 +85,10 @@ CGFloat const kMinimumCellPadding = 0.1f;
         _fieldsAreLabeled = NO;
         _hasPhoto = NO;
         
-        if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
+        if ([reuseIdentifier isEqualToString:idCellReuseUserSignIn]) {
             _titleKey = kInputKeySignIn;
             _detailKeys = @[kInputKeyAuthEmail, kInputKeyPassword];
-        } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
+        } else if ([reuseIdentifier isEqualToString:idCellReuseUserActivation]) {
             _titleKey = kInputKeyActivate;
             _detailKeys = @[kInputKeyActivationCode, kInputKeyRepeatPassword];
         }
@@ -111,7 +111,12 @@ CGFloat const kMinimumCellPadding = 0.1f;
         if (entityClass == OMember.class) {
             _hasPhoto = YES;
             _titleKey = kPropertyKeyName;
-            _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
+            
+            if ([[OState s] targetIs:kTargetHousehold]) {
+                _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
+            } else {
+                _detailKeys = @[kPropertyKeyMobilePhone, kPropertyKeyEmail];
+            }
         } else if (entityClass == OOrigo.class) {
             _hasPhoto = NO;
             

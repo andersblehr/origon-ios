@@ -23,10 +23,6 @@ extern NSString * const kOrigoTypeOther;
 
 - (NSComparisonResult)compare:(OOrigo *)other;
 
-- (NSString *)displayAddress;
-- (NSString *)displayPhoneNumber;
-- (UIImage *)displayImage;
-
 - (NSSet *)allMemberships;
 - (NSSet *)fullMemberships;
 - (NSSet *)residencies;
@@ -41,6 +37,7 @@ extern NSString * const kOrigoTypeOther;
 - (BOOL)hasAdmin;
 - (BOOL)hasMember:(OMember *)member;
 - (BOOL)hasAssociateMember:(OMember *)member;
+- (BOOL)memberIsContact:(OMember *)member;
 - (BOOL)knowsAboutMember:(OMember *)member;
 - (BOOL)indirectlyKnowsAboutMember:(OMember *)member;
 - (BOOL)hasResidentsInCommonWithResidence:(OOrigo *)residence;
@@ -48,5 +45,7 @@ extern NSString * const kOrigoTypeOther;
 - (BOOL)userCanEdit;
 - (BOOL)userIsAdmin;
 - (BOOL)userIsMember;
+
+- (UIImage *)listCellImage;
 
 @end

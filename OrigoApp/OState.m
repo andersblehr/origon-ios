@@ -24,16 +24,16 @@
 #import "OMessageListViewController.h"
 #import "OSettingListViewController.h"
 
-NSString * const kViewIdAuth = @"auth";
-NSString * const kViewIdCalendar = @"calendar";
-NSString * const kViewIdMember = @"member";
-NSString * const kViewIdMemberList = @"members";
-NSString * const kViewIdMessageList = @"messages";
-NSString * const kViewIdOrigo = @"origo";
-NSString * const kViewIdOrigoList = @"origos";
-NSString * const kViewIdSetting = @"setting";
-NSString * const kViewIdSettingList = @"settings";
-NSString * const kViewIdTaskList = @"tasks";
+NSString * const kViewControllerAuth = @"auth";
+NSString * const kViewControllerCalendar = @"calendar";
+NSString * const kViewControllerMember = @"member";
+NSString * const kViewControllerMemberList = @"members";
+NSString * const kViewControllerMessageList = @"messages";
+NSString * const kViewControllerOrigo = @"origo";
+NSString * const kViewControllerOrigoList = @"origos";
+NSString * const kViewControllerSetting = @"setting";
+NSString * const kViewControllerSettingList = @"settings";
+NSString * const kViewControllerTaskList = @"tasks";
 
 NSString * const kActionSetup = @"setup";
 NSString * const kActionSignIn = @"signin";
@@ -47,8 +47,8 @@ NSString * const kActionInput = @"input";
 NSString * const kTargetEmail = @"email";
 NSString * const kTargetUser = @"user";
 NSString * const kTargetWard = @"ward";
-NSString * const kTargetHousemate = @"housemate";
-NSString * const kTarget3rdParty = @"3rdParty";
+NSString * const kTargetHousehold = @"household";
+NSString * const kTargetExternal = @"external";
 
 static OState *s = nil;
 
@@ -99,9 +99,9 @@ static OState *s = nil;
 
 #pragma mark - State inspection
 
-- (BOOL)viewIs:(NSString *)viewId
+- (BOOL)viewControllerIs:(NSString *)viewControllerId
 {
-    return [_viewController.viewId isEqualToString:viewId];
+    return [_viewController.viewControllerId isEqualToString:viewControllerId];
 }
 
 
@@ -110,10 +110,10 @@ static OState *s = nil;
     BOOL actionIsCurrent = NO;
     
     if ([action isEqualToString:kActionInput]) {
-        actionIsCurrent = actionIsCurrent || [self.viewController actionIs:kActionSignIn];
-        actionIsCurrent = actionIsCurrent || [self.viewController actionIs:kActionActivate];
-        actionIsCurrent = actionIsCurrent || [self.viewController actionIs:kActionRegister];
-        actionIsCurrent = actionIsCurrent || [self.viewController actionIs:kActionEdit];
+        actionIsCurrent = actionIsCurrent || [_viewController actionIs:kActionSignIn];
+        actionIsCurrent = actionIsCurrent || [_viewController actionIs:kActionActivate];
+        actionIsCurrent = actionIsCurrent || [_viewController actionIs:kActionRegister];
+        actionIsCurrent = actionIsCurrent || [_viewController actionIs:kActionEdit];
     } else {
         actionIsCurrent = [_viewController actionIs:action];
     }
@@ -124,7 +124,17 @@ static OState *s = nil;
 
 - (BOOL)targetIs:(NSString *)target
 {
-    return [_viewController targetIs:target];
+    BOOL targetIsCurrent = NO;
+    
+    if ([target isEqualToString:kTargetHousehold]) {
+        targetIsCurrent = targetIsCurrent || [_viewController targetIs:kTargetUser];
+        targetIsCurrent = targetIsCurrent || [_viewController targetIs:kTargetWard];
+        targetIsCurrent = targetIsCurrent || [_viewController targetIs:kTargetHousehold];
+    } else {
+        targetIsCurrent = [_viewController targetIs:target];
+    }
+    
+    return targetIsCurrent;
 }
 
 
@@ -132,15 +142,15 @@ static OState *s = nil;
 
 - (NSString *)asString
 {
-    NSString *viewId = [_viewController.viewId uppercaseString];
+    NSString *viewController = [_viewController.viewControllerId uppercaseString];
     NSString *action = [_viewController.action uppercaseString];
     NSString *target = [_viewController.target uppercaseString];
     
-    viewId = viewId ? viewId : @"DEFAULT";
+    viewController = viewController ? viewController : @"DEFAULT";
     action = action ? action : @"DEFAULT";
     target = target ? target : @"DEFAULT";
     
-    return [NSString stringWithFormat:@"[%@][%@][%@]", action, viewId, target];
+    return [NSString stringWithFormat:@"[%@][%@][%@]", action, viewController, target];
 }
 
 

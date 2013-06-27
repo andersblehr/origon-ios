@@ -214,7 +214,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [ODefaults setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
     }
     
-    [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
+    [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
 }
 
 
@@ -311,9 +311,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     NSString *reuseIdentifier = nil;
     
     if ([self actionIs:kActionSignIn]) {
-        reuseIdentifier = kReuseIdentifierUserSignIn;
+        reuseIdentifier = idCellReuseUserSignIn;
     } else if ([self actionIs:kActionActivate]) {
-        reuseIdentifier = kReuseIdentifierUserActivation;
+        reuseIdentifier = idCellReuseUserActivation;
     }
     
     return reuseIdentifier;
@@ -356,7 +356,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         if ([self targetIs:kTargetUser]) {
             [self sendUserActivationRequest];
         } else if ([self targetIs:kTargetEmail]) {
-            [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
+            [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
         }
     }
 }
@@ -405,7 +405,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
                 [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] text:[OStrings stringForKey:strAlertTextActivationFailed] tag:kAlertTagActivationFailed];
                 [self toggleAuthState];
             } else if ([self targetIs:kTargetEmail]) {
-                [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
+                [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
             }
         }
     }
@@ -416,7 +416,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 #pragma mark - UIAlertViewDelegate implementation
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
         case kAlertTagWelcomeBack:

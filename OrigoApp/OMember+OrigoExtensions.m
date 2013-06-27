@@ -26,9 +26,6 @@
 #import "OReplicatedEntity+OrigoExtensions.h"
 #import "OSettings.h"
 
-static NSInteger const kCountryOfResidenceAlertTag = 1;
-static NSInteger const kCountryOfResidenceButtonUseLocation = 1;
-
 
 @implementation OMember (OrigoExtensions)
 
@@ -38,7 +35,7 @@ static NSInteger const kCountryOfResidenceButtonUseLocation = 1;
 {
     NSComparisonResult result = [self.name localizedCaseInsensitiveCompare:other.name];
     
-    if ([[OState s] viewIs:kViewIdMemberList] && [[OState s] targetIs:kOrigoTypeResidence]) {
+    if ([[OState s] viewControllerIs:kViewControllerMemberList] && [[OState s] targetIs:kOrigoTypeResidence]) {
         BOOL thisMemberIsMinor = [self isMinor];
         BOOL otherMemberIsMinor = [other isMinor];
         
@@ -52,58 +49,6 @@ static NSInteger const kCountryOfResidenceButtonUseLocation = 1;
     }
     
     return result;
-}
-
-
-#pragma mark - Displayable strings & image
-
-- (NSString *)displayNameAndAge
-{
-    return [self.givenName stringByAppendingFormat:@" (%d)", [self.dateOfBirth yearsBeforeNow]];
-}
-
-
-- (NSString *)displayContactDetails
-{
-    NSString *details = nil;
-    
-    if ([self hasValueForKey:kPropertyKeyMobilePhone]) {
-        details = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
-    } else if ([self hasValueForKey:kPropertyKeyEmail]) {
-        details = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], self.email];
-    }
-    
-    return details;
-}
-
-
-- (UIImage *)displayImage
-{
-    UIImage *displayImage = nil;
-    
-    if (self.photo) {
-        // TODO: Embed photo
-    } else {
-        if ([self.dateOfBirth yearsBeforeNow] < kAgeThresholdToddler) {
-            displayImage = [UIImage imageNamed:kIconFileInfant];
-        } else {
-            if ([self isMale]) {
-                if ([self isMinor]) {
-                    displayImage = [UIImage imageNamed:kIconFileBoy];
-                } else {
-                    displayImage = [UIImage imageNamed:kIconFileMan];
-                }
-            } else {
-                if ([self isMinor]) {
-                    displayImage = [UIImage imageNamed:kIconFileGirl];
-                } else {
-                    displayImage = [UIImage imageNamed:kIconFileWoman];
-                }
-            }
-        }
-    }
-    
-    return displayImage;
 }
 
 
@@ -366,6 +311,30 @@ static NSInteger const kCountryOfResidenceButtonUseLocation = 1;
 }
 
 
+#pragma mark - Display image
+
+- (UIImage *)listCellImage
+{
+    UIImage *image = nil;
+    
+    if (self.photo) {
+        image = [UIImage imageWithData:self.photo];
+    } else {
+        if (self.dateOfBirth) {
+            if ([self isMinor]) {
+                image = [UIImage imageNamed:[self isMale] ? kIconFileBoy : kIconFileGirl];
+            } else {
+                image = [UIImage imageNamed:[self isMale] ? kIconFileMan : kIconFileWoman];
+            }
+        } else {
+            image = [UIImage imageNamed:[self isMale] ? kIconFileBoy : kIconFileGirl];
+        }
+    }
+    
+    return image;
+}
+
+
 #pragma mark - OReplicatedEntity (OrigoExtensions) overrides
 
 - (NSString *)asTarget
@@ -377,9 +346,9 @@ static NSInteger const kCountryOfResidenceButtonUseLocation = 1;
     } else if ([[OMeta m].user hasWard:self]) {
         target = kTargetWard;
     } else if ([[OMeta m].user hasHousemate:self]) {
-        target = kTargetHousemate;
+        target = kTargetHousehold;
     } else {
-        target = kTarget3rdParty;
+        target = kTargetExternal;
     }
     
     return target;

@@ -92,9 +92,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     
     if ([self actionIs:kActionRegister]) {
         if ([self targetIs:kTargetUser] && ![_origo hasValueForKey:kPropertyKeyAddress]) {
-            [self presentModalViewWithIdentifier:kViewIdOrigo data:_membership dismisser:self.dismisser];
+            [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_membership dismisser:self.dismisser];
         } else {
-            [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
+            [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
         }
     }
 }
@@ -189,7 +189,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if ([housemateResidences count]) {
         [self promptForResidence:housemateResidences];
     } else {
-        [self presentModalViewWithIdentifier:kViewIdOrigo data:_member meta:kOrigoTypeResidence];
+        [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_member meta:kOrigoTypeResidence];
     }
 }
 
@@ -198,7 +198,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     [[OMeta m] userDidSignOut];
     
-    [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
+    [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
 }
 
 
@@ -253,12 +253,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (BOOL)cancelRegistrationImpliesSignOut
-{
-    return [self targetIs:kTargetUser];
-}
-
-
 #pragma mark - UIViewController custom accessors
 
 - (BOOL)hidesBottomBarWhenPushed
@@ -295,6 +289,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     self.target = _member ? _member : _origo;
+    self.cancelRegistrationImpliesSignOut = [self targetIs:kTargetUser];
 }
 
 
@@ -348,18 +343,24 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (BOOL)inputIsValid
 {
-    BOOL inputIsValid = YES;
+    BOOL memberIsMinor = [_dateOfBirthField.date isBirthDateOfMinor];
     
-    inputIsValid = inputIsValid && [_nameField hasValidValue];
-    inputIsValid = inputIsValid && [_dateOfBirthField hasValidValue];
+    memberIsMinor = memberIsMinor || [[OState s] targetIs:kOrigoTypePreschoolClass];
+    memberIsMinor = memberIsMinor || [[OState s] targetIs:kOrigoTypeSchoolClass];
+    
+    BOOL inputIsValid = [_nameField hasValidValue];
+    
+    if ([self targetIs:kTargetHousehold]) {
+        inputIsValid = inputIsValid && [_dateOfBirthField hasValidValue];
+    }
     
     if (inputIsValid) {
-        if ([self targetIs:kTargetUser] || ![_dateOfBirthField.date isBirthDateOfMinor]) {
-            inputIsValid = [self emailIsEligible] && [_mobilePhoneField hasValidValue];
-        } else if ([_dateOfBirthField.date isBirthDateOfMinor]) {
-            if ([_emailField hasValue]) {
-                inputIsValid = [_emailField hasValidValue];
-            }
+        if ([self targetIs:kTargetUser] || !memberIsMinor || [_emailField hasValue]) {
+            inputIsValid = inputIsValid && [self emailIsEligible];
+        }
+        
+        if ([self targetIs:kTargetUser] || [self targetIs:kTargetHousehold]) {
+            inputIsValid = inputIsValid && [_mobilePhoneField hasValidValue];
         }
     }
     
@@ -450,7 +451,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier
 {
-    if ([identifier isEqualToString:kViewIdAuth]) {
+    if ([identifier isEqualToString:kViewControllerAuth]) {
         [super dismissModalViewControllerWithIdentifier:identifier needsReloadData:NO];
         
         if ([_member.email isEqualToString:[_emailField textValue]]) {
@@ -463,9 +464,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             [self toggleEditMode];
             [_emailField becomeFirstResponder];
         }
-    } else if ([identifier isEqualToString:kViewIdOrigo]) {
-        [self.dismisser dismissModalViewControllerWithIdentifier:self.viewId];
-    } else if ([identifier isEqualToString:kViewIdMemberList]) {
+    } else if ([identifier isEqualToString:kViewControllerOrigo]) {
+        [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
+    } else if ([identifier isEqualToString:kViewControllerMemberList]) {
         [super dismissModalViewControllerWithIdentifier:identifier];
     }
 }
@@ -488,7 +489,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             
         case kResidenceSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self presentModalViewWithIdentifier:kViewIdOrigo data:_member meta:kOrigoTypeResidence];
+                [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_member meta:kOrigoTypeResidence];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_candidateResidences[buttonIndex] addMember:_member];
                 [self reloadSectionsIfNeeded];
@@ -515,13 +516,13 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - UIAlertViewDelegate conformance
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
         case kEmailChangeAlertTag:
             if (buttonIndex == kEmailChangeButtonContinue) {
                 [self toggleEditMode];
-                [self presentModalViewWithIdentifier:kViewIdAuth data:[_emailField textValue]];
+                [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:[_emailField textValue]];
             } else {
                 [_emailField becomeFirstResponder];
             }

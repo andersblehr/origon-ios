@@ -31,9 +31,9 @@ static NSString * const kMembershipTypeAssociate = @"A";
 {
     NSComparisonResult result = NSOrderedSame;
     
-    if ([[OState s] viewIs:kViewIdMemberList]) {
+    if ([[OState s] viewControllerIs:kViewControllerMemberList]) {
         result = [self.member compare:other.member];
-    } else if ([[OState s] viewIs:kViewIdOrigoList] || [[OState s] viewIs:kViewIdMember]) {
+    } else if ([[OState s] viewControllerIs:kViewControllerOrigoList] || [[OState s] viewControllerIs:kViewControllerMember]) {
         result = [self.origo compare:other.origo];
     }
     

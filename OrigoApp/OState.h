@@ -12,16 +12,16 @@
 
 #import "OTableViewListCellDelegate.h"
 
-extern NSString * const kViewIdAuth;
-extern NSString * const kViewIdCalendar;
-extern NSString * const kViewIdMember;
-extern NSString * const kViewIdMemberList;
-extern NSString * const kViewIdMessageList;
-extern NSString * const kViewIdOrigo;
-extern NSString * const kViewIdOrigoList;
-extern NSString * const kViewIdSetting;
-extern NSString * const kViewIdSettingList;
-extern NSString * const kViewIdTaskList;
+extern NSString * const kViewControllerAuth;
+extern NSString * const kViewControllerCalendar;
+extern NSString * const kViewControllerMember;
+extern NSString * const kViewControllerMemberList;
+extern NSString * const kViewControllerMessageList;
+extern NSString * const kViewControllerOrigo;
+extern NSString * const kViewControllerOrigoList;
+extern NSString * const kViewControllerSetting;
+extern NSString * const kViewControllerSettingList;
+extern NSString * const kViewControllerTaskList;
 
 extern NSString * const kActionSetup;
 extern NSString * const kActionSignIn;
@@ -35,12 +35,15 @@ extern NSString * const kActionInput;
 extern NSString * const kTargetEmail;
 extern NSString * const kTargetUser;
 extern NSString * const kTargetWard;
-extern NSString * const kTargetHousemate;
-extern NSString * const kTarget3rdParty;
+extern NSString * const kTargetHousehold;
+extern NSString * const kTargetExternal;
 
 @interface OState : NSObject
 
 @property (weak, nonatomic, readonly) OTableViewController *viewController;
+@property (strong, nonatomic) NSString *action;
+@property (strong, nonatomic) NSString *target;
+
 @property (weak, nonatomic, readonly) id<OTableViewListCellDelegate> listCellDelegate;
 @property (weak, nonatomic, readonly) id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate> inputDelegate;
 
@@ -51,7 +54,7 @@ extern NSString * const kTarget3rdParty;
 - (void)reflectState:(OState *)state;
 - (void)toggleEditState;
 
-- (BOOL)viewIs:(NSString *)viewId;
+- (BOOL)viewControllerIs:(NSString *)viewControllerId;
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
 

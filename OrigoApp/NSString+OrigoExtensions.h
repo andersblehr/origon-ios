@@ -24,6 +24,7 @@ extern NSString * const kSeparatorHash;
 
 - (NSString *)removeRedundantWhitespace;
 - (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;
+- (NSString *)stringByReplacingSeparator:(NSString *)oldSeparator withSeparator:(NSString *)newSeparator;
 
 - (BOOL)containsString:(NSString *)string;
 

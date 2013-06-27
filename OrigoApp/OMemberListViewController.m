@@ -10,6 +10,8 @@
 
 #import "UIBarButtonItem+OrigoExtensions.h"
 
+#import "NSDate+OrigoExtensions.h"
+
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
@@ -31,6 +33,69 @@ static NSInteger const kHousemateSheetTag = 0;
 
 
 @implementation OMemberListViewController
+
+#pragma mark - Auxiliary methods
+
+- (BOOL)targetIsMinors
+{
+    BOOL targetIsMinors = NO;
+    
+    targetIsMinors = targetIsMinors || [self targetIs:kOrigoTypePreschoolClass];
+    targetIsMinors = targetIsMinors || [self targetIs:kOrigoTypeSchoolClass];
+    
+    return targetIsMinors;
+}
+
+
+- (NSString *)listCellTextForMember:(OMember *)member
+{
+    NSString *text = nil;
+    
+    if ([member isMinor]) {
+        text = [member.givenName stringByAppendingFormat:@" (%d)", [member.dateOfBirth yearsBeforeNow]];
+    } else {
+        text = member.name;
+    }
+    
+    return text;
+}
+
+
+- (NSString *)listCellDetailTextForMember:(OMember *)member
+{
+    NSString *detailText = nil;
+    
+    if ([member hasValueForKey:kPropertyKeyMobilePhone]) {
+        detailText = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], member.mobilePhone];
+    } else if ([member hasValueForKey:kPropertyKeyEmail]) {
+        detailText = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], member.email];
+    }
+    
+    return detailText;
+}
+
+
+- (UIImage *)listCellImageForMember:(OMember *)member
+{
+    UIImage *image = nil;
+    
+    if (member.photo || member.dateOfBirth) {
+        image = [member listCellImage];
+    } else {
+        if ([self targetIsMinors]) {
+            if ([_origo memberIsContact:member]) {
+                image = [UIImage imageNamed:[member isMale] ? kIconFileMan : kIconFileWoman];
+            } else {
+                image = [UIImage imageNamed:[member isMale] ? kIconFileBoy : kIconFileGirl];
+            }
+        } else {
+            image = [UIImage imageNamed:[member isMale] ? kIconFileMan : kIconFileWoman];
+        }
+    }
+    
+    return image;
+}
+
 
 #pragma mark - Actions sheets
 
@@ -70,7 +135,7 @@ static NSInteger const kHousemateSheetTag = 0;
     if ([candidates count]) {
         [self promptForHousemate:candidates];
     } else {
-        [self presentModalViewWithIdentifier:kViewIdMember data:_origo];
+        [self presentModalViewControllerWithIdentifier:kViewControllerMember data:_origo];
     }
 }
 
@@ -198,9 +263,9 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     OMember *member = [[self dataAtIndexPath:indexPath] asMembership].member;
     
-    cell.textLabel.text = [member isMinor] ? [member displayNameAndAge] : member.name;
-    cell.detailTextLabel.text = [member displayContactDetails];
-    cell.imageView.image = [member displayImage];
+    cell.textLabel.text = [self listCellTextForMember:member];
+    cell.detailTextLabel.text = [self listCellDetailTextForMember:member];
+    cell.imageView.image = [self listCellImageForMember:member];
 }
 
 
@@ -232,7 +297,7 @@ static NSInteger const kHousemateSheetTag = 0;
     switch (actionSheet.tag) {
         case kHousemateSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self presentModalViewWithIdentifier:kViewIdMember data:_origo];
+                [self presentModalViewControllerWithIdentifier:kViewControllerMember data:_origo];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_origo addMember:_candidateHousemates[buttonIndex]];
                 [self reloadSectionsIfNeeded];

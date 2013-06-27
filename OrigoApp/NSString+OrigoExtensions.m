@@ -154,13 +154,23 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 
 - (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator
 {
-    NSString *returnString = self;
+    NSString *reworkedString = self;
     
     if ([self length]) {
-        returnString = [returnString stringByAppendingString:separator];
+        reworkedString = [reworkedString stringByAppendingString:separator];
     }
     
-    return [returnString stringByAppendingString:string];
+    return [reworkedString stringByAppendingString:string];
+}
+
+
+- (NSString *)stringByReplacingSeparator:(NSString *)oldSeparator withSeparator:(NSString *)newSeparator
+{
+    NSMutableString *reworkedString = [NSMutableString stringWithString:self];
+    
+    [reworkedString replaceOccurrencesOfString:oldSeparator withString:newSeparator options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    
+    return reworkedString;
 }
 
 

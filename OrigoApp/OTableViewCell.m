@@ -27,9 +27,9 @@
 
 #import "OTableViewController.h"
 
-NSString * const kReuseIdentifierList = @"list";
-NSString * const kReuseIdentifierUserSignIn = @"signIn";
-NSString * const kReuseIdentifierUserActivation = @"activate";
+NSString * const idCellReuseList = @"list";
+NSString * const idCellReuseUserSignIn = @"signIn";
+NSString * const idCellReuseUserActivation = @"activate";
 
 NSString * const kViewKeySuffixLabel = @"Label";
 NSString * const kViewKeySuffixTextField = @"Field";
@@ -63,7 +63,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (BOOL)isListCell
 {
-    return [self.reuseIdentifier hasPrefix:kReuseIdentifierList];
+    return [self.reuseIdentifier hasPrefix:idCellReuseList];
 }
 
 
@@ -71,7 +71,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     UITableViewCellStyle style = UITableViewCellStyleSubtitle;
     
-    if ([reuseIdentifier hasPrefix:kReuseIdentifierList]) {
+    if ([reuseIdentifier hasPrefix:idCellReuseList]) {
         id<OTableViewListCellDelegate> listCellDelegate = self.localState.listCellDelegate;
         
         if ([listCellDelegate respondsToSelector:@selector(styleForIndexPath:)]) {

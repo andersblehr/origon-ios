@@ -14,10 +14,6 @@
 
 - (NSComparisonResult)compare:(OMember *)other;
 
-- (NSString *)displayNameAndAge;
-- (NSString *)displayContactDetails;
-- (UIImage *)displayImage;
-
 - (OMembership *)rootMembership;
 - (OMembership *)initialResidency;
 - (NSSet *)allMemberships;
@@ -44,5 +40,7 @@
 - (BOOL)hasAddress;
 - (BOOL)hasWard:(OMember *)candidate;
 - (BOOL)hasHousemate:(OMember *)candidate;
+
+- (UIImage *)listCellImage;
 
 @end
