@@ -14,6 +14,7 @@
 #import "NSURL+OrigoExtensions.h"
 
 #import "OAlert.h"
+#import "OCrypto.h"
 #import "OLogging.h"
 #import "OMeta.h"
 #import "OReplicator.h"
@@ -61,7 +62,7 @@ static NSString * const kRESTHandlerStrings = @"strings";
 static NSString * const kRESTHandlerAuth = @"auth";
 static NSString * const kRESTHandlerModel = @"model";
 
-static NSString * const kRESTRouteAuthLogin = @"login";
+static NSString * const kRESTRouteAuthSignIn = @"sign-in";
 static NSString * const kRESTRouteAuthActivate = @"activate";
 static NSString * const kRESTRouteAuthEmailCode = @"emailcode";
 static NSString * const kRESTRouteModelReplicate = @"replicate";
@@ -78,19 +79,6 @@ static NSString * const kURLParameterVersion = @"version";
 
 #pragma mark - Auxiliary methods
 
-- (NSString *)timestampToken
-{
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:kDateTimeFormatZulu];
-    
-    NSString *timestamp = [dateFormatter stringFromDate:[NSDate date]];
-    NSString *saltedAndHashedTimestamp = [[timestamp seasonWith:kOrigoSeasoning] hashUsingSHA1];
-    NSString *base64EncodedTimestamp = [timestamp base64EncodedString];
-    
-    return [base64EncodedTimestamp stringByAppendingString:saltedAndHashedTimestamp];
-}
-
-
 - (NSString *)origoServerURL
 {
     NSString *origoServer = [[OMeta m] deviceIsSimulator] ? kOrigoDevServer : kOrigoProdServer;
@@ -106,28 +94,28 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (void)performHTTPMethod:(NSString *)HTTPMethod entities:(NSArray *)entities delegate:(id)delegate
 {
-    _delegate = delegate;
-    
-    [self setValue:[OMeta m].deviceId forURLParameter:kURLParameterDeviceId];
-    [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
-    [self setValue:[OMeta m].appVersion forURLParameter:kURLParameterVersion];
-    
-    _URLRequest.HTTPMethod = HTTPMethod;
-    _URLRequest.URL = [[[[NSURL URLWithString:[self origoServerURL]] URLByAppendingPathComponent:_RESTHandler] URLByAppendingPathComponent:_RESTRoute] URLByAppendingURLParameters:_URLParameters];
-    
-    [self setValue:kMediaTypeJSONUTF8 forHTTPHeaderField:kHTTPHeaderContentType];
-    [self setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
-    [self setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
-    
-    if (entities) {
-        _URLRequest.HTTPBody = [NSJSONSerialization serialise:entities];
-    }
-        
-    if ([_delegate respondsToSelector:@selector(willSendRequest:)]) {
-        [_delegate willSendRequest:_URLRequest];
-    }
-    
     if ([[OMeta m] internetConnectionIsAvailable]) {
+        _delegate = delegate;
+        
+        [self setValue:[OMeta m].deviceId forURLParameter:kURLParameterDeviceId];
+        [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
+        [self setValue:[OMeta m].appVersion forURLParameter:kURLParameterVersion];
+        
+        _URLRequest.HTTPMethod = HTTPMethod;
+        _URLRequest.URL = [[[[NSURL URLWithString:[self origoServerURL]] URLByAppendingPathComponent:_RESTHandler] URLByAppendingPathComponent:_RESTRoute] URLByAppendingURLParameters:_URLParameters];
+        
+        [self setValue:kMediaTypeJSONUTF8 forHTTPHeaderField:kHTTPHeaderContentType];
+        [self setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
+        [self setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
+        
+        if (entities) {
+            _URLRequest.HTTPBody = [NSJSONSerialization serialise:entities];
+        }
+        
+        if ([_delegate respondsToSelector:@selector(willSendRequest:)]) {
+            [_delegate willSendRequest:_URLRequest];
+        }
+    
         if (_requestIsValid) {
             [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
             
@@ -147,32 +135,7 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-#pragma mark - Initialisation
-
-- (id)init
-{
-    self = [super init];
-    
-    if (self) {
-        _URLRequest = [[NSMutableURLRequest alloc] init];
-        _URLParameters = [[NSMutableDictionary alloc] init];
-        _responseData = [[NSMutableData alloc] init];
-        
-        _requestIsValid = YES;
-    }
-    
-    return self;
-}
-
-
 #pragma mark - HTTP headers & URL parameters
-
-- (void)setAuthHeaderForEmail:(NSString *)email password:(NSString *)password
-{
-    NSString *authString = [NSString stringWithFormat:@"%@:%@", email, password];
-    [self setValue:[NSString stringWithFormat:@"Basic %@", [authString base64EncodedString]] forHTTPHeaderField:kHTTPHeaderAuthorization];
-}
-
 
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field
 {
@@ -200,11 +163,29 @@ static NSString * const kURLParameterVersion = @"version";
 - (void)setValue:(NSString *)value forURLParameter:(NSString *)parameter required:(BOOL)required
 {
     if (value) {
-        [_URLParameters setObject:value forKey:parameter];
+        _URLParameters[parameter] = value;
     } else if (required) {
         _requestIsValid = NO;
         OLogBreakage(@"Missing value for required URL parameter '%@'.", parameter);
     }
+}
+
+
+#pragma mark - Initialisation
+
+- (id)init
+{
+    self = [super init];
+    
+    if (self) {
+        _URLRequest = [[NSMutableURLRequest alloc] init];
+        _URLParameters = [[NSMutableDictionary alloc] init];
+        _responseData = [[NSMutableData alloc] init];
+        
+        _requestIsValid = YES;
+    }
+    
+    return self;
 }
 
 
@@ -218,53 +199,55 @@ static NSString * const kURLParameterVersion = @"version";
     if ([[OMeta m] userIsSignedIn]) {
         [self setValue:[OMeta m].authToken forURLParameter:kURLParameterStringToken];
     } else {
-        [self setValue:[self timestampToken] forURLParameter:kURLParameterStringToken];
+        [self setValue:[OCrypto timestampToken] forURLParameter:kURLParameterStringToken];
     }
     
     [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
 }
 
 
-- (void)authenticate:(id)delegate
+- (void)authenticateWithEmail:(NSString *)email password:(NSString *)password
 {
     _RESTHandler = kRESTHandlerAuth;
     
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    [self setValue:[OCrypto basicAuthHeaderWithUserId:email password:password] forHTTPHeaderField:kHTTPHeaderAuthorization];
     
     if ([[OState s] actionIs:kActionSignIn]) {
-        _RESTRoute = kRESTRouteAuthLogin;
+        _RESTRoute = kRESTRouteAuthSignIn;
         
         [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
     } else if ([[OState s] actionIs:kActionActivate]) {
         _RESTRoute = kRESTRouteAuthActivate;
     }
     
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OState s].viewController];
 }
 
 
-- (void)sendEmailActivationCode:(id)delegate
+- (void)sendActivationCode:(NSString *)activationCode toEmailAddress:(NSString *)emailAddress
 {
     _RESTHandler = kRESTHandlerAuth;
     _RESTRoute = kRESTRouteAuthEmailCode;
     
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    [self setValue:[OCrypto basicAuthHeaderWithUserId:emailAddress password:activationCode] forHTTPHeaderField:kHTTPHeaderAuthorization];
     
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OState s].viewController];
 }
 
 
-- (void)replicate:(NSArray *)entityDictionaries
+- (void)replicateEntities:(NSArray *)entities
 {
     _RESTHandler = kRESTHandlerModel;
     
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     
-    if ([entityDictionaries count]) {
+    if ([entities count]) {
         _RESTRoute = kRESTRouteModelReplicate;
         
-        [self performHTTPMethod:kHTTPMethodPOST entities:entityDictionaries delegate:[OMeta m].replicator];
+        [self performHTTPMethod:kHTTPMethodPOST entities:entities delegate:[OMeta m].replicator];
     } else {
         _RESTRoute = kRESTRouteModelFetch;
         
@@ -273,19 +256,7 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-#pragma mark - NSURLConnectionDelegate conformance
-
-- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-	OLogDebug(@"Received authentication challenge: %@", challenge);
-}
-
-
-- (void)connection:(NSURLConnection *)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-{
-	OLogDebug(@"Connection cancelled authentication challenge: %@", challenge);
-}
-
+#pragma mark - NSURLConnectionDataDelegate conformance
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response
 {
@@ -294,8 +265,7 @@ static NSString * const kURLParameterVersion = @"version";
     [_responseData setLength:0];
     
     if (response.statusCode < kHTTPStatusErrorRangeStart) {
-        NSDictionary *responseHeaders = [response allHeaderFields];
-        NSString *replicationDate = [responseHeaders objectForKey:kHTTPHeaderLastModified];
+        NSString *replicationDate = [response allHeaderFields][kHTTPHeaderLastModified];
         
         if (replicationDate) {
             [OMeta m].lastReplicationDate = replicationDate;
@@ -318,6 +288,14 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
+- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse;
+{
+	OLogVerbose(@"Will cache response: %@", cachedResponse);
+    
+	return cachedResponse;
+}
+
+
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
     OLogDebug(@"Server request completed. HTTP status code: %d", _HTTPResponse.statusCode);
@@ -334,6 +312,20 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
+#pragma mark - NSURLConnectionDelegate conformance
+
+- (void)connection:(NSURLConnection *)connection willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+	OLogVerbose(@"Requesting default handling for authentication challenge: %@", challenge);
+    
+    if ([challenge.sender respondsToSelector:@selector(performDefaultHandlingForAuthenticationChallenge:)]) {
+        [challenge.sender performDefaultHandlingForAuthenticationChallenge:challenge];
+    } else {
+        [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
+    }
+}
+
+
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
 	OLogError(@"Connection failed with error: %@ (%d)", error.localizedDescription, error.code);
@@ -342,13 +334,6 @@ static NSString * const kURLParameterVersion = @"version";
     
     [OAlert showAlertForError:error];
     [_delegate didFailWithError:error];
-}
-
-
-- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse;
-{
-	OLogVerbose(@"Will cache response: %@", cachedResponse);
-	return cachedResponse;
 }
 
 @end

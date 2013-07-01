@@ -74,7 +74,7 @@
         [entityDictionaries addObject:[entity toDictionary]];
     }
     
-    [[[OConnection alloc] init] replicate:entityDictionaries];
+    [[[OConnection alloc] init] replicateEntities:entityDictionaries];
 }
 
 
@@ -89,7 +89,6 @@
     }
     
     [ODefaults setUserDefault:[NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs] forKey:kDefaultsKeyDirtyEntities];
-    [[NSUserDefaults standardUserDefaults] synchronize];
     
     [[OMeta m].context save];
 }
@@ -131,7 +130,7 @@
         [_stagedEntities removeAllObjects];
     }
     
-    [_stagedEntities setObject:entity forKey:entity.entityId];
+    _stagedEntities[entity.entityId] = entity;
 }
 
 
@@ -141,26 +140,26 @@
         [_stagedEntities removeAllObjects];
     }
     
-    [_stagedRelationshipRefs setObject:relationshipRefs forKey:entity.entityId];
+    _stagedRelationshipRefs[entity.entityId] = relationshipRefs;
 }
 
 
 - (OReplicatedEntity *)stagedEntityWithId:(NSString *)entityId
 {
-    return [_stagedEntities objectForKey:entityId];
+    return _stagedEntities[entityId];
 }
 
 
 - (NSDictionary *)stagedRelationshipRefsForEntity:(OReplicatedEntity *)entity
 {
-    NSDictionary *relationshipRefs = [_stagedRelationshipRefs objectForKey:entity.entityId];
+    NSDictionary *relationshipRefs = _stagedRelationshipRefs[entity.entityId];
     [_stagedRelationshipRefs removeObjectForKey:entity.entityId];
     
     return relationshipRefs;
 }
 
 
-#pragma mark - OServerConnectionDelegate conformance
+#pragma mark - OConnectionDelegate conformance
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {

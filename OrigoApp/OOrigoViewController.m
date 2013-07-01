@@ -24,7 +24,7 @@
 #import "OOrigo+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 
-static NSInteger const kOrigoSection = 0;
+static NSInteger const kSectionKeyOrigo = 0;
 
 
 @implementation OOrigoViewController
@@ -81,7 +81,7 @@ static NSInteger const kOrigoSection = 0;
         _member = self.data;
     }
     
-    self.target = _origo ? _origo : self.meta;
+    self.state.target = _origo ? _origo : self.meta;
     self.cancelRegistrationImpliesSignOut = [_origo isOfType:kOrigoTypeResidence] && !_member.activeSince;
 }
 
@@ -90,7 +90,7 @@ static NSInteger const kOrigoSection = 0;
 {
     id origoDataSource = _origo ? _origo : kEntityRegistrationCell;
     
-    [self setData:origoDataSource forSectionWithKey:kOrigoSection];
+    [self setData:origoDataSource forSectionWithKey:kSectionKeyOrigo];
 }
 
 
@@ -139,7 +139,7 @@ static NSInteger const kOrigoSection = 0;
 
 - (id)targetEntity
 {
-    _origo = [[OMeta m].context insertOrigoEntityOfType:self.target];
+    _origo = [[OMeta m].context insertOrigoEntityOfType:self.meta];
     
     return _origo;
 }

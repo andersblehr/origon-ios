@@ -17,10 +17,11 @@ extern CGFloat const kTextInset;
 @private
     BOOL _isTitle;
     BOOL _hasEmphasis;
-    BOOL _deemphasisesOnEndEdit;
     BOOL _didPickDate;
     
     OTableViewCell *_cell;
+    NSString *_cachedText;
+
     id<OTableViewInputDelegate> _inputDelegate;
 }
 
@@ -37,5 +38,7 @@ extern CGFloat const kTextInset;
 
 - (id)objectValue;
 - (NSString *)textValue;
+
+- (void)indicatePendingEvent:(BOOL)isPending;
 
 @end

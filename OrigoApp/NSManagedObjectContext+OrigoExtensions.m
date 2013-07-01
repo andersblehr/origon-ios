@@ -15,7 +15,7 @@
 #import "OReplicator.h"
 #import "OState.h"
 #import "OStrings.h"
-#import "OUUIDGenerator.h"
+#import "OCrypto.h"
 
 #import "ODevice.h"
 #import "OMember+OrigoExtensions.h"
@@ -67,7 +67,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     
     entity.origoId = origo.entityId;
     
-    if ([[entity.entity relationshipsByName] objectForKey:kRelationshipKeyOrigo]) {
+    if ([entity.entity relationshipsByName][kRelationshipKeyOrigo]) {
         [entity setValue:origo forKey:kRelationshipKeyOrigo];
     }
     
@@ -155,21 +155,21 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (id)mergeEntityFromDictionary:(NSDictionary *)entityDictionary
 {
-    NSString *entityId = [entityDictionary objectForKey:kPropertyKeyEntityId];
+    NSString *entityId = entityDictionary[kPropertyKeyEntityId];
     OReplicatedEntity *entity = [self entityWithId:entityId];
     
     if (!entity) {
-        NSString *entityClass = [entityDictionary objectForKey:kJSONKeyEntityClass];
+        NSString *entityClass = entityDictionary[kJSONKeyEntityClass];
         
         entity = [self insertEntityOfClass:NSClassFromString(entityClass) entityId:entityId];
-        entity.origoId = [entityDictionary objectForKey:kPropertyKeyOrigoId];
+        entity.origoId = entityDictionary[kPropertyKeyOrigoId];
     }
     
     NSDictionary *attributes = [entity.entity attributesByName];
     NSDictionary *relationships = [entity.entity relationshipsByName];
     
     for (NSString *attributeKey in [attributes allKeys]) {
-        id attributeValue = [entityDictionary objectForKey:attributeKey];
+        id attributeValue = entityDictionary[attributeKey];
         
         if (attributeValue) {
             [entity setDeserialisedValue:attributeValue forKey:attributeKey];
@@ -179,14 +179,14 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     NSMutableDictionary *relationshipRefs = [[NSMutableDictionary alloc] init];
     
     for (NSString *relationshipKey in [relationships allKeys]) {
-        NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
+        NSRelationshipDescription *relationship = relationships[relationshipKey];
         
         if (!relationship.isToMany) {
             NSString *relationshipRefName = [NSString stringWithFormat:@"%@Ref", relationshipKey];
-            NSDictionary *relationshipRef = [entityDictionary objectForKey:relationshipRefName];
+            NSDictionary *relationshipRef = entityDictionary[relationshipRefName];
             
             if (relationshipRef) {
-                [relationshipRefs setObject:relationshipRef forKey:relationshipKey];
+                relationshipRefs[relationshipKey] = relationshipRef;
             }
         }
     }
@@ -224,13 +224,13 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo
 {
-    return [self insertEntityOfClass:class inOrigo:origo entityId:[OUUIDGenerator generateUUID]];
+    return [self insertEntityOfClass:class inOrigo:origo entityId:[OCrypto generateUUID]];
 }
 
 
 - (id)insertOrigoEntityOfType:(NSString *)origoType
 {
-    return [self insertOrigoEntityOfType:origoType origoId:[OUUIDGenerator generateUUID]];
+    return [self insertOrigoEntityOfType:origoType origoId:[OCrypto generateUUID]];
 }
 
 
@@ -241,7 +241,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     if ([[OState s] targetIs:kTargetUser]) {
         memberId = [OMeta m].userId;
     } else {
-        memberId = [OUUIDGenerator generateUUID];
+        memberId = [OCrypto generateUUID];
     }
     
     NSString *memberRootId = [self memberRootIdForMemberWithId:memberId];
@@ -423,8 +423,8 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     NSMutableSet *entities = [[NSMutableSet alloc] init];
     
     for (NSDictionary *replicaDictionary in replicaDictionaries) {
-        BOOL hasExpired = [[replicaDictionary objectForKey:kPropertyKeyIsExpired] boolValue];
-        NSString *entityId = [replicaDictionary objectForKey:kPropertyKeyEntityId];
+        BOOL hasExpired = [replicaDictionary[kPropertyKeyIsExpired] boolValue];
+        NSString *entityId = replicaDictionary[kPropertyKeyEntityId];
         
         if (!hasExpired || [self entityWithId:entityId]) {
             [entities addObject:[self mergeEntityFromDictionary:replicaDictionary]];

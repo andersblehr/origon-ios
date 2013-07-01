@@ -18,7 +18,7 @@
 
 #import "OSettings+OrigoExtensions.h"
 
-static NSInteger const kValueListSectionKey = 0;
+static NSInteger const kSectionKeyValues = 0;
 
 static NSString * const kCustomValue = @"custom";
 
@@ -60,37 +60,32 @@ static NSString * const kCustomValue = @"custom";
     _settings = [OMeta m].settings;
     _settingKey = self.data;
     
-    self.target = _settingKey;
+    self.state.target = _settingKey;
 }
 
 
 - (void)initialiseDataSource
 {
     if ([_settingKey isEqualToString:kSettingKeyCountry]) {
-        _valueList = [NSMutableArray arrayWithArray:[[OMeta m] supportedCountryCodes]];
-        _listContainsParenthesisedCountries = NO;
+        NSString *currentCountryCode = [_settings valueForSettingKey:_settingKey];
+        NSString *inferredCountryCode = [[OMeta m] inferredCountryCode];
+        NSString *localCountryCode = [OMeta m].locator.countryCode;
         
-        if (![_valueList containsObject:[_settings valueForSettingKey:_settingKey]]) {
-            [_valueList addObject:[_settings valueForSettingKey:_settingKey]];
-        }
+        [self setData:[[OMeta m] supportedCountryCodes] forSectionWithKey:kSectionKeyValues];
+        [self appendData:currentCountryCode toSectionWithKey:kSectionKeyValues];
+        [self appendData:inferredCountryCode toSectionWithKey:kSectionKeyValues];
         
-        if (![_valueList containsObject:[[OMeta m] inferredCountryCode]]) {
-            [_valueList addObject:[[OMeta m] inferredCountryCode]];
-        }
-        
-        if ([[OMeta m].locator canLocate]) {
-            if ([[OMeta m].locator didLocate]) {
-                if (![_valueList containsObject:[OMeta m].locator.countryCode]) {
-                    [_valueList addObject:[OMeta m].locator.countryCode];
-                }
-            } else if ([[OMeta m].locator isAuthorised]) {
+        if (localCountryCode) {
+            [self appendData:localCountryCode toSectionWithKey:kSectionKeyValues];
+        } else if ([[OMeta m].locator canLocate]) {
+            if ([[OMeta m].locator isAuthorised]) {
                 [[OMeta m].locator locateBlocking:NO];
             } else {
-                [_valueList addObject:kCustomValue];
+                [self appendData:kCustomValue toSectionWithKey:kSectionKeyValues];
             }
         }
         
-        [self setData:_valueList forSectionWithKey:kValueListSectionKey];
+        _listContainsParenthesisedCountries = NO;
     }
 }
 
@@ -160,17 +155,38 @@ static NSString * const kCustomValue = @"custom";
 
 - (void)didResumeFromBackground
 {
-    [self reloadSectionWithKey:kValueListSectionKey];
+    [self reloadSectionWithKey:kSectionKeyValues];
 }
 
 
-#pragma mark - OTableViewListCellDelegate conformance
+#pragma mark - OTableViewListDelegate conformance
+
+- (BOOL)willCompareObjectsInSectionWithKey:(NSInteger)sectionKey
+{
+    return (_settingKey == kSettingKeyCountry) ? YES : NO;
+}
+
+
+- (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2
+{
+    NSComparisonResult result = NSOrderedSame;
+    
+    if (_settingKey == kSettingKeyCountry) {
+        NSString *country1 = [OUtil localisedCountryNameFromCountryCode:object1];
+        NSString *country2 = [OUtil localisedCountryNameFromCountryCode:object2];
+        
+        result = [country1 localizedCaseInsensitiveCompare:country2];
+    }
+    
+    return result;
+}
+
 
 - (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     if ([_settingKey isEqualToString:kSettingKeyCountry]) {
         NSString *countryCode = [self dataAtIndexPath:indexPath];
-        NSString *country = [OUtil countryFromCountryCode:countryCode];
+        NSString *country = [OUtil localisedCountryNameFromCountryCode:countryCode];
         
         if (country) {
             if ([OUtil isSupportedCountryCode:countryCode]) {
@@ -209,14 +225,17 @@ static NSString * const kCustomValue = @"custom";
 - (void)locatorDidLocate
 {
     if ([_settingKey isEqualToString:kSettingKeyCountry]) {
-        if ([_valueList containsObject:kCustomValue]) {
-            [self reloadSectionWithKey:kValueListSectionKey];
+        if ([[self dataInSectionWithKey:kSectionKeyValues] containsObject:kCustomValue]) {
+            [self reloadSectionWithKey:kSectionKeyValues];
         } else {
-            BOOL countryIsUnknown = ![_valueList containsObject:[OMeta m].locator.countryCode];
-            BOOL countryIsChecked = [[OMeta m].locator.countryCode isEqualToString:[_settings valueForSettingKey:_settingKey]];
+            NSString *localCountryCode = [OMeta m].locator.countryCode;
+            NSString *currentCountryCode = [_settings valueForSettingKey:_settingKey];
             
-            if (countryIsUnknown || countryIsChecked) {
-                [self reloadSectionWithKey:kValueListSectionKey];
+            BOOL countryIsChecked = [localCountryCode isEqualToString:currentCountryCode];
+            BOOL countryIsUnknown = ![[self dataInSectionWithKey:kSectionKeyValues] containsObject:localCountryCode];
+            
+            if (countryIsChecked || countryIsUnknown) {
+                [self reloadSectionWithKey:kSectionKeyValues];
             }
         }
     }
@@ -225,7 +244,7 @@ static NSString * const kCustomValue = @"custom";
 
 - (void)locatorCannotLocate
 {
-    [self reloadSectionWithKey:kValueListSectionKey];
+    [self reloadSectionWithKey:kSectionKeyValues];
 }
 
 @end

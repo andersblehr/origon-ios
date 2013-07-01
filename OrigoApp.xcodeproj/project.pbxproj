@@ -42,7 +42,7 @@
 		5C36BE9914704E6800DD3CEA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C36BE9814704E6800DD3CEA /* CoreData.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		5C36BE9C1470507700DD3CEA /* OrigoApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE9A1470507700DD3CEA /* OrigoApp.xcdatamodeld */; };
 		5C3A319614C61378001A783E /* dark_linen-640x960.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3A319514C61378001A783E /* dark_linen-640x960.png */; };
-		5C3C665C14F56D6800514C57 /* OUUIDGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C665B14F56D6800514C57 /* OUUIDGenerator.m */; };
+		5C3C665C14F56D6800514C57 /* OCrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C665B14F56D6800514C57 /* OCrypto.m */; };
 		5C3D42821485678F009A68E0 /* OOrigoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D42811485678F009A68E0 /* OOrigoListViewController.m */; };
 		5C47155116E2231C000D8A86 /* OReplicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C47155016E2231C000D8A86 /* OReplicator.m */; };
 		5C4955F6157D469000F2A885 /* UIColor+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4955F5157D469000F2A885 /* UIColor+OrigoExtensions.m */; };
@@ -159,7 +159,7 @@
 		5C15BFF716386C6000BB5254 /* glyphicons_004_girl-as_boy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy.png"; sourceTree = "<group>"; };
 		5C15BFF816386C6000BB5254 /* glyphicons_004_girl-as_boy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy@2x.png"; sourceTree = "<group>"; };
 		5C15BFFD1638815300BB5254 /* 76-baby_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "76-baby_black.png"; sourceTree = "<group>"; };
-		5C198B7016D63944002D3976 /* OTableViewListCellDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTableViewListCellDelegate.h; sourceTree = "<group>"; };
+		5C198B7016D63944002D3976 /* OTableViewListDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTableViewListDelegate.h; sourceTree = "<group>"; };
 		5C198B7116D76343002D3976 /* OTableViewCellBlueprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCellBlueprint.h; sourceTree = "<group>"; };
 		5C198B7216D76343002D3976 /* OTableViewCellBlueprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCellBlueprint.m; sourceTree = "<group>"; };
 		5C1A81BB1645CE22003DCCAF /* UIBarButtonItem+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+OrigoExtensions.h"; sourceTree = "<group>"; };
@@ -190,10 +190,10 @@
 		5C36BE89146E9DA100DD3CEA /* OMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMeta.m; sourceTree = "<group>"; };
 		5C36BE9814704E6800DD3CEA /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		5C36BE9B1470507700DD3CEA /* OrigoApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OrigoApp.xcdatamodel; sourceTree = "<group>"; };
-		5C39EC1C166632570083DFEB /* OEntityObservingDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OEntityObservingDelegate.h; sourceTree = "<group>"; };
+		5C39EC1C166632570083DFEB /* OEntityObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OEntityObserver.h; sourceTree = "<group>"; };
 		5C3A319514C61378001A783E /* dark_linen-640x960.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark_linen-640x960.png"; sourceTree = "<group>"; };
-		5C3C665A14F56D6800514C57 /* OUUIDGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUUIDGenerator.h; sourceTree = "<group>"; };
-		5C3C665B14F56D6800514C57 /* OUUIDGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUUIDGenerator.m; sourceTree = "<group>"; };
+		5C3C665A14F56D6800514C57 /* OCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCrypto.h; sourceTree = "<group>"; };
+		5C3C665B14F56D6800514C57 /* OCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCrypto.m; sourceTree = "<group>"; };
 		5C3D42801485678E009A68E0 /* OOrigoListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoListViewController.h; sourceTree = "<group>"; };
 		5C3D42811485678F009A68E0 /* OOrigoListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoListViewController.m; sourceTree = "<group>"; };
 		5C47154F16E2231C000D8A86 /* OReplicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicator.h; sourceTree = "<group>"; };
@@ -520,12 +520,12 @@
 			isa = PBXGroup;
 			children = (
 				5C2E1133146ACFA9005BDE61 /* OConnectionDelegate.h */,
-				5C39EC1C166632570083DFEB /* OEntityObservingDelegate.h */,
+				5C39EC1C166632570083DFEB /* OEntityObserver.h */,
 				5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */,
 				5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDelegate.h */,
 				5CA10B9E16A7F9FD00031D81 /* OTableViewControllerInstance.h */,
 				5CDE879C176F185E00272909 /* OTableViewInputDelegate.h */,
-				5C198B7016D63944002D3976 /* OTableViewListCellDelegate.h */,
+				5C198B7016D63944002D3976 /* OTableViewListDelegate.h */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -564,6 +564,8 @@
 				5C014A2315CA77310040A1D9 /* OAlert.m */,
 				5C2E11121469CDE5005BDE61 /* OConnection.h */,
 				5C2E11131469CDE5005BDE61 /* OConnection.m */,
+				5C3C665A14F56D6800514C57 /* OCrypto.h */,
+				5C3C665B14F56D6800514C57 /* OCrypto.m */,
 				5CF3DE271775AD810068B2E7 /* ODefaults.h */,
 				5CF3DE281775AD810068B2E7 /* ODefaults.m */,
 				5C1D6CC4172E62F500479F7D /* OLocator.h */,
@@ -579,8 +581,6 @@
 				5C23431114812A3000164478 /* OStrings.m */,
 				5CAAD27D1751EBA7002AF8CF /* OUtil.h */,
 				5CAAD27E1751EBA7002AF8CF /* OUtil.m */,
-				5C3C665A14F56D6800514C57 /* OUUIDGenerator.h */,
-				5C3C665B14F56D6800514C57 /* OUUIDGenerator.m */,
 				5CC40C991772DC5E00DD850E /* OValidator.h */,
 				5CC40C9A1772DC5E00DD850E /* OValidator.m */,
 			);
@@ -861,7 +861,7 @@
 				5C50581C14CAEC76000D6587 /* UIView+OrigoExtensions.m in Sources */,
 				5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+OrigoExtensions.m in Sources */,
 				5C5ED5CE14F2E9FE006BBDFB /* OReplicatedEntity+OrigoExtensions.m in Sources */,
-				5C3C665C14F56D6800514C57 /* OUUIDGenerator.m in Sources */,
+				5C3C665C14F56D6800514C57 /* OCrypto.m in Sources */,
 				5C9D3148151F1A0100DF6EB0 /* NSJSONSerialization+OrigoExtensions.m in Sources */,
 				5C83DF81153F59B800BB0B29 /* OOrigo+OrigoExtensions.m in Sources */,
 				5C3374831563FBE200DEF67D /* OMember+OrigoExtensions.m in Sources */,

@@ -133,7 +133,7 @@ static NSString * const kLogoText = @"..origo..";
 
 - (id)listCellForIndexPath:(NSIndexPath *)indexPath value:(id)value
 {
-    NSString *reuseIdentifer = [NSString stringWithFormat:@"%@:%@", idCellReuseList, value];
+    NSString *reuseIdentifer = [NSString stringWithFormat:@"%@:%@", kReuseIdentifierList, value];
     
     return [self cellForReuseIdentifier:reuseIdentifer indexPath:indexPath];
 }
@@ -151,7 +151,7 @@ static NSString * const kLogoText = @"..origo..";
 {
     UIFont *footerFont = [UIFont footerFont];
     
-    return [footerFont linecountWithText:text textWidth:kContentWidth] * footerFont.lineHeight;
+    return [footerFont lineCountWithText:text textWidth:kContentWidth] * footerFont.lineHeight;
 }
 
 

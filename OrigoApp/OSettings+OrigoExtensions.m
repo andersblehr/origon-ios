@@ -47,7 +47,7 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
     id decodedValue = codedValue;
     
     if ([settingKey isEqualToString:kSettingKeyCountry]) {
-        NSString *country = [OUtil countryFromCountryCode:codedValue];
+        NSString *country = [OUtil localisedCountryNameFromCountryCode:codedValue];
         
         if ([OUtil isSupportedCountryCode:codedValue]) {
             decodedValue = country;

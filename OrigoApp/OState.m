@@ -10,9 +10,11 @@
 
 #import "OMeta.h"
 #import "OStrings.h"
+#import "OValidator.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoExtensions.h"
 
 #import "OAuthViewController.h"
 #import "OMemberListViewController.h"
@@ -36,7 +38,7 @@ NSString * const kViewControllerSettingList = @"settings";
 NSString * const kViewControllerTaskList = @"tasks";
 
 NSString * const kActionSetup = @"setup";
-NSString * const kActionSignIn = @"signin";
+NSString * const kActionSignIn = @"sign-in";
 NSString * const kActionActivate = @"activate";
 NSString * const kActionRegister = @"register";
 NSString * const kActionList = @"list";
@@ -79,20 +81,30 @@ static OState *s = nil;
 }
 
 
-#pragma mark - Utility methods
+#pragma mark - State reflection
 
 - (void)reflectState:(OState *)state
 {
-    _viewController = state.viewController;
+    if (state != self) {
+        _viewController = state.viewController;
+        _action = state.action;
+        _target = state.target;
+    }
 }
 
 
-- (void)toggleEditState
+- (void)toggleAction:(NSArray *)alternatingActions
 {
-    if ([_viewController actionIs:kActionDisplay]) {
-        _viewController.action = kActionEdit;
-    } else if ([_viewController actionIs:kActionEdit]) {
-        _viewController.action = kActionDisplay;
+    if ([alternatingActions count] == 2) {
+        if ([_action isEqualToString:alternatingActions[0]]) {
+            _action = alternatingActions[1];
+        } else if ([_action isEqualToString:alternatingActions[1]]) {
+            _action = alternatingActions[0];
+        }
+        
+        if (self != [OState s]) {
+            [[OState s] reflectState:self];
+        }
     }
 }
 
@@ -107,34 +119,37 @@ static OState *s = nil;
 
 - (BOOL)actionIs:(NSString *)action
 {
-    BOOL actionIsCurrent = NO;
+    BOOL isCurrent = NO;
     
     if ([action isEqualToString:kActionInput]) {
-        actionIsCurrent = actionIsCurrent || [_viewController actionIs:kActionSignIn];
-        actionIsCurrent = actionIsCurrent || [_viewController actionIs:kActionActivate];
-        actionIsCurrent = actionIsCurrent || [_viewController actionIs:kActionRegister];
-        actionIsCurrent = actionIsCurrent || [_viewController actionIs:kActionEdit];
+        isCurrent = isCurrent || [_action isEqualToString:kActionSignIn];
+        isCurrent = isCurrent || [_action isEqualToString:kActionActivate];
+        isCurrent = isCurrent || [_action isEqualToString:kActionRegister];
+        isCurrent = isCurrent || [_action isEqualToString:kActionEdit];
     } else {
-        actionIsCurrent = [_viewController actionIs:action];
+        isCurrent = [_action isEqualToString:action];
     }
     
-    return actionIsCurrent;
+    return isCurrent;
 }
 
 
 - (BOOL)targetIs:(NSString *)target
 {
-    BOOL targetIsCurrent = NO;
+    BOOL isCurrent = NO;
     
     if ([target isEqualToString:kTargetHousehold]) {
-        targetIsCurrent = targetIsCurrent || [_viewController targetIs:kTargetUser];
-        targetIsCurrent = targetIsCurrent || [_viewController targetIs:kTargetWard];
-        targetIsCurrent = targetIsCurrent || [_viewController targetIs:kTargetHousehold];
+        isCurrent = isCurrent || [_target isEqualToString:kTargetHousehold];
+        isCurrent = isCurrent || [_target isEqualToString:kTargetUser];
+        isCurrent = isCurrent || [_target isEqualToString:kTargetWard];
+    } else if ([target isEqualToString:kOrigoTypeResidence]) {
+        isCurrent = isCurrent || [_target isEqualToString:kOrigoTypeResidence];
+        isCurrent = isCurrent || [_target isEqualToString:kTargetHousehold];
     } else {
-        targetIsCurrent = [_viewController targetIs:target];
+        isCurrent = [_target isEqualToString:target];
     }
     
-    return targetIsCurrent;
+    return isCurrent;
 }
 
 
@@ -143,8 +158,8 @@ static OState *s = nil;
 - (NSString *)asString
 {
     NSString *viewController = [_viewController.viewControllerId uppercaseString];
-    NSString *action = [_viewController.action uppercaseString];
-    NSString *target = [_viewController.target uppercaseString];
+    NSString *action = [_action uppercaseString];
+    NSString *target = [_target uppercaseString];
     
     viewController = viewController ? viewController : @"DEFAULT";
     action = action ? action : @"DEFAULT";
@@ -156,15 +171,25 @@ static OState *s = nil;
 
 #pragma mark - Custom property accessors
 
-- (id<OTableViewListCellDelegate>)listCellDelegate
+- (void)setTarget:(id)target
 {
-    id listCellDelegate = nil;
+    if ([target isKindOfClass:OReplicatedEntity.class]) {
+        _target = [target asTarget];
+    } else if ([target isKindOfClass:NSString.class]) {
+        _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
+    }
+}
 
-    if ([_viewController conformsToProtocol:@protocol(OTableViewListCellDelegate)]) {
-        listCellDelegate = (id<OTableViewListCellDelegate>)_viewController;
+
+- (id<OTableViewListDelegate>)listDelegate
+{
+    id listDelegate = nil;
+
+    if ([_viewController conformsToProtocol:@protocol(OTableViewListDelegate)]) {
+        listDelegate = (id<OTableViewListDelegate>)_viewController;
     }
     
-    return listCellDelegate;
+    return listDelegate;
 }
 
 

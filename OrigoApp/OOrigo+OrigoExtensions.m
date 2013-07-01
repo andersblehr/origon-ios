@@ -62,22 +62,6 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
-#pragma mark - Selector implementations
-
-- (NSComparisonResult)compare:(OOrigo *)other
-{
-    NSComparisonResult result = NSOrderedSame;
-    
-    if ([self isOfType:kOrigoTypeResidence]) {
-        result = [self.address localizedCaseInsensitiveCompare:other.address];
-    } else {
-        result = [self.name localizedCaseInsensitiveCompare:other.name];
-    }
-    
-    return result;
-}
-
-
 #pragma mark - Accessing & adding memberships
 
 - (NSSet *)allMemberships
@@ -279,15 +263,15 @@ NSString * const kOrigoTypeOther = @"other";
 
 - (UIImage *)listCellImage
 {
-    UIImage *displayImage = nil;
+    UIImage *image = nil;
     
     if ([self isOfType:kOrigoTypeResidence]) {
-        displayImage = [UIImage imageNamed:kIconFileHousehold];
+        image = [UIImage imageNamed:kIconFileHousehold];
     } else {
-        displayImage = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?
+        image = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?
     }
     
-    return displayImage;
+    return image;
 }
 
 

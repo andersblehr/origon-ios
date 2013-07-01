@@ -32,7 +32,7 @@ static NSString *kURLParameterFormat = @"%@%@=%@";
     
     if ([URLParameters count]) {
         for (NSString *key in [URLParameters allKeys]) {
-            NSString *URLEscapedValue = [NSURL URLEscapeString:[URLParameters objectForKey:key]];
+            NSString *URLEscapedValue = [NSURL URLEscapeString:URLParameters[key]];
             [URLAsString appendFormat:kURLParameterFormat, separator, key, URLEscapedValue];
             
             separator = @"&";

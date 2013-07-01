@@ -8,13 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-#import "OEntityObservingDelegate.h"
+#import "OEntityObserver.h"
 #import "OTableViewInputDelegate.h"
-#import "OTableViewListCellDelegate.h"
+#import "OTableViewListDelegate.h"
 
-extern NSString * const idCellReuseList;
-extern NSString * const idCellReuseUserSignIn;
-extern NSString * const idCellReuseUserActivation;
+extern NSString * const kReuseIdentifierList;
+extern NSString * const kReuseIdentifierUserSignIn;
+extern NSString * const kReuseIdentifierUserActivation;
 
 extern NSString * const kViewKeySuffixLabel;
 extern NSString * const kViewKeySuffixTextField;
@@ -24,20 +24,19 @@ extern CGFloat const kCellAnimationDuration;
 @class OState, OTableViewCellBlueprint, OTableViewCellConstrainer;
 @class OReplicatedEntity;
 
-@interface OTableViewCell : UITableViewCell<OEntityObservingDelegate> {
+@interface OTableViewCell : UITableViewCell<OEntityObserver> {
 @private
-    Class _entityClass;
-    
     OTableViewCellConstrainer *_constrainer;
     NSMutableDictionary *_views;
     NSIndexPath *_indexPath;
+    Class _entityClass;
     
-    id<OTableViewListCellDelegate> _listCellDelegate;
+    id<OTableViewListDelegate> _listDelegate;
     id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
 }
 
 @property (strong, nonatomic, readonly) OTableViewCellBlueprint *blueprint;
-@property (strong, nonatomic, readonly) OState *localState;
+@property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic) OReplicatedEntity *entity;
 @property (strong, nonatomic) id inputField;
 
@@ -45,7 +44,7 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL checked;
 
-@property (weak, nonatomic) id<OEntityObservingDelegate> observer;
+@property (weak, nonatomic) id<OEntityObserver> observer;
 
 - (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath;

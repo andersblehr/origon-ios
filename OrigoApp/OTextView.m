@@ -40,7 +40,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         detailTextWidth -= kAccessoryViewWidth;
     }
     
-    NSInteger lineCount = [[UIFont detailFont] linecountWithText:text textWidth:detailTextWidth];
+    NSInteger lineCount = [[UIFont detailFont] lineCountWithText:text textWidth:detailTextWidth];
     
     lineCount = MAX(lineCount, kTextViewMinimumLines);
     lineCount = MIN(lineCount, kTextViewMaximumLines);
@@ -68,10 +68,10 @@ static CGFloat const kAccessoryViewWidth = 30.f;
                 }
             }
         } else {
-            lineCount = [OTextView lineCountWithText:self.text state:_cell.localState];
+            lineCount = [OTextView lineCountWithText:self.text state:_cell.state];
         }
     } else {
-        lineCount = [OTextView lineCountWithText:self.placeholder state:_cell.localState];
+        lineCount = [OTextView lineCountWithText:self.placeholder state:_cell.state];
     }
     
     _lastKnownLineCount = lineCount;

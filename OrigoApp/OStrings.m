@@ -198,7 +198,7 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 
 #pragma mark - Auxiliary methods
 
-+ (NSString *)fullPathToStringsPlist
++ (NSString *)pathToStringsFile
 {
     NSString *cachesDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
     NSString *relativePath = [kBundleId stringByAppendingPathComponent:kStringsPlist];
@@ -218,7 +218,7 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 + (BOOL)hasStrings
 {
     if (!strings) {
-        strings = [NSDictionary dictionaryWithContentsOfFile:[self fullPathToStringsPlist]];
+        strings = [NSDictionary dictionaryWithContentsOfFile:[self pathToStringsFile]];
     }
     
     return (strings != nil);
@@ -227,10 +227,10 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 
 + (void)refreshIfNeeded
 {
-    NSDate *stringDate = [ODefaults globalDefaultForKey:kDefaultsKeyStringDate];
-    
-    if (!stringDate || ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
-        if ([self hasStrings] && [[OMeta m] internetConnectionIsAvailable]) {
+    if ([[OMeta m] userIsSignedIn] && [[OMeta m] internetConnectionIsAvailable]) {
+        NSDate *stringDate = [ODefaults globalDefaultForKey:kDefaultsKeyStringDate];
+        
+        if (stringDate && ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
             [[[OConnection alloc] init] fetchStrings:self];
         }
     }
@@ -244,13 +244,13 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
     NSString *string = @"";
     
     if ([self hasStrings]) {
-        string = [strings objectForKey:key];
+        string = strings[key];
         
         if (!string) {
             OLogBreakage(@"No string with key '%@'.", key);
         }
     } else {
-        OLogBreakage(@"Failed to instantiate strings from plist.");
+        OLogError(@"Failed to read strings from file.");
     }
     
     return string;
@@ -314,16 +314,21 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 }
 
 
-#pragma mark - OServerConnectionDelegate conformance
+#pragma mark - OConnectionDelegate conformance
 
 + (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
     if (response.statusCode == kHTTPStatusOK) {
         strings = data;
         
-        if (![strings writeToFile:[self fullPathToStringsPlist] atomically:YES]) {
-            OLogError(@"Error writing strings from server to plist '%@'.", [self fullPathToStringsPlist]);
+        if ([strings writeToFile:[self pathToStringsFile] atomically:YES]) {
+            [ODefaults setGlobalDefault:[NSDate date] forKey:kDefaultsKeyStringDate];
+            OLogDebug(@"Wrote latest strings to file.");
+        } else {
+            OLogError(@"Error writing latest strings to file.");
         }
+    } else {
+        OLogError(@"Error retrieving latest strings from server.");
     }
 }
 

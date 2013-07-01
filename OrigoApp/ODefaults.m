@@ -24,25 +24,30 @@ static NSString *userId = nil;
 
 #pragma mark - Auxiliary methods
 
-+ (NSString *)userQualifiedKeyForKey:(NSString *)key
++ (NSString *)userKeyForKey:(NSString *)key
 {
-    NSString *qualifier = nil;
+    NSString *userKey = nil;
+    NSString *userQualifier = nil;
 
     if ([key isEqualToString:kDefaultsKeyUserId]) {
         if (!userEmail) {
             userEmail = [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultsKeyUserEmail];
         }
         
-        qualifier = userEmail;
+        userQualifier = userEmail;
     } else {
         if (!userId) {
             userId = [self userDefaultForKey:kDefaultsKeyUserId];
         }
         
-        qualifier = userId;
+        userQualifier = userId;
     }
     
-    return [NSString stringWithFormat:@"%@$%@", key, qualifier];
+    if (userQualifier) {
+        userKey = [NSString stringWithFormat:@"%@$%@", key, userQualifier];
+    }
+    
+    return userKey;
 }
 
 
@@ -60,7 +65,11 @@ static NSString *userId = nil;
 
 + (void)setUserDefault:(id)userDefault forKey:(NSString *)key
 {
-    [self setGlobalDefault:userDefault forKey:[self userQualifiedKeyForKey:key]];
+    NSString *userKey = [self userKeyForKey:key];
+    
+    if (userKey) {
+        [self setGlobalDefault:userDefault forKey:userKey];
+    }
 }
 
 
@@ -72,7 +81,9 @@ static NSString *userId = nil;
 
 + (id)userDefaultForKey:(NSString *)key
 {
-    return [self globalDefaultForKey:[self userQualifiedKeyForKey:key]];
+    NSString *userKey = [self userKeyForKey:key];
+    
+    return userKey ? [self globalDefaultForKey:userKey] : nil;
 }
 
 

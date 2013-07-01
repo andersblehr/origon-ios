@@ -11,18 +11,19 @@
 #import <CoreTelephony/CTCarrier.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 
+#import "NSDate+OrigoExtensions.h"
 #import "NSManagedObjectContext+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
 
 #import "OAppDelegate.h"
+#import "OCrypto.h"
 #import "ODefaults.h"
 #import "OLocator.h"
 #import "OLogging.h"
 #import "OReplicator.h"
 #import "OState.h"
 #import "OStrings.h"
-#import "OUtil.h"
-#import "OUUIDGenerator.h"
+#import "OCrypto.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
@@ -56,6 +57,9 @@ NSString * const kInputKeyPassword = @"password";
 NSString * const kInputKeyRepeatPassword = @"repeatPassword";
 NSString * const kInputKeySignIn = @"signIn";
 
+NSString * const kJSONKeyActivationCode = @"activationCode";
+NSString * const kJSONKeyDeviceId = @"deviceId";
+NSString * const kJSONKeyEmail = @"email";
 NSString * const kJSONKeyEntityClass = @"entityClass";
 NSString * const kJSONKeyIsListed = @"isListed";
 NSString * const kJSONKeyPasswordHash = @"passwordHash";
@@ -93,10 +97,11 @@ static OMeta *m = nil;
 
 @interface OMeta ()
 
+@property (strong, nonatomic) NSString *authToken;
+
 @property (strong, nonatomic) OMember *user;
 @property (strong, nonatomic) OReplicator *replicator;
 @property (strong, nonatomic) OLocator *locator;
-@property (strong, nonatomic) NSString *authToken;
 
 @end
 
@@ -113,11 +118,11 @@ static OMeta *m = nil;
     _internetConnectionIsWWAN = (internetStatus == ReachableViaWWAN);
     
     if (_internetConnectionIsWiFi) {
-        OLogInfo(@"Connected to the internet via Wi-Fi.");
+        OLogDebug(@"Connected to the internet via Wi-Fi.");
     } else if (_internetConnectionIsWWAN) {
-        OLogInfo(@"Connected to the internet via mobile web (WWAN).");
+        OLogDebug(@"Connected to the internet via mobile web (WWAN).");
     } else {
-        OLogInfo(@"Not connected to the internet.");
+        OLogDebug(@"Not connected to the internet.");
     }
     
     _internetReachability = reachability;
@@ -127,15 +132,6 @@ static OMeta *m = nil;
 - (void)reachabilityDidChange:(NSNotification *)notification
 {
     [self checkReachability:(Reachability *)[notification object]];
-}
-
-
-- (NSString *)generateAuthToken:(NSDate *)expiryDate
-{
-    NSString *expiryDateAsString = expiryDate.description;
-    NSString *rawToken = [self.deviceId seasonWith:expiryDateAsString];
-    
-    return [rawToken hashUsingSHA1];
 }
 
 
@@ -171,16 +167,13 @@ static OMeta *m = nil;
     self = [super init];
     
     if (self) {
-        _userEmail = [ODefaults globalDefaultForKey:kDefaultsKeyUserEmail];
-        _appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:(id)kCFBundleVersionKey];
+        _appVersion = [[NSBundle mainBundle] infoDictionary][(id)kCFBundleVersionKey];
         _displayLanguage = [NSLocale preferredLanguages][0];
         
-        if (_userEmail) {
-            _userId = [ODefaults userDefaultForKey:kDefaultsKeyUserId];
-            _deviceId = [ODefaults userDefaultForKey:kDefaultsKeyDeviceId];
-            _lastReplicationDate = [ODefaults userDefaultForKey:kDefaultsKeyLastReplicationDate];
-        } else {
-            _deviceId = [OUUIDGenerator generateUUID];
+        NSString *userEmail = [ODefaults globalDefaultForKey:kDefaultsKeyUserEmail];
+        
+        if (userEmail) {
+            self.userEmail = userEmail;
         }
         
         _internetConnectionIsWiFi = NO;
@@ -188,7 +181,7 @@ static OMeta *m = nil;
         
         _sharedDatePicker = [[UIDatePicker alloc] init];
         _sharedDatePicker.datePickerMode = UIDatePickerModeDate;
-        _sharedDatePicker.date = [OUtil defaultDatePickerDate];
+        _sharedDatePicker.date = [NSDate defaultDate];
         
         [self checkReachability:[Reachability reachabilityForInternetConnection]];
         
@@ -250,7 +243,7 @@ static OMeta *m = nil;
 
 - (BOOL)userIsAllSet
 {
-    return ([self userIsSignedIn] && [self userIsRegistered]);
+    return [self userIsSignedIn] && [self userIsRegistered];
 }
 
 
@@ -263,7 +256,7 @@ static OMeta *m = nil;
             NSDate *now = [NSDate date];
             
             if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
-                _authToken = [self generateAuthToken:_authTokenExpiryDate];
+                _authToken = [OCrypto authTokenWithExpiryDate:_authTokenExpiryDate];
                 _user = [self.context entityWithId:_userId];
             }
         }
@@ -301,21 +294,7 @@ static OMeta *m = nil;
 
 - (NSArray *)supportedCountryCodes
 {
-    NSMutableDictionary *codesByCountry = [[NSMutableDictionary alloc] init];
-    NSArray *countryCodes = [[OStrings stringForKey:metaSupportedCountryCodes] componentsSeparatedByString:kListSeparator];
-    
-    for (NSString *countryCode in countryCodes) {
-        [codesByCountry setObject:countryCode forKey:[OUtil countryFromCountryCode:countryCode]];
-    }
-    
-    NSMutableArray *supportedCountryCodesSortedByCountry = [[NSMutableArray alloc] init];
-    NSArray *sortedCountries = [codesByCountry keysSortedByValueUsingSelector:@selector(localizedCompare:)];
-    
-    for (NSString *country in sortedCountries) {
-        [supportedCountryCodesSortedByCountry addObject:[codesByCountry objectForKey:country]];
-    }
-    
-    return supportedCountryCodesSortedByCountry;
+    return [[OStrings stringForKey:metaSupportedCountryCodes] componentsSeparatedByString:kListSeparator];
 }
 
 
@@ -337,7 +316,6 @@ static OMeta *m = nil;
 - (void)setUserId:(NSString *)userId
 {
     _userId = userId;
-    
     [ODefaults setUserDefault:_userId forKey:kDefaultsKeyUserId];
     
     NSString *deviceId = [ODefaults userDefaultForKey:kDefaultsKeyDeviceId];
@@ -357,6 +335,28 @@ static OMeta *m = nil;
 }
 
 
+- (void)setUserEmail:(NSString *)userEmail
+{
+    if ([[OState s] actionIs:kActionActivate] && [[OState s] targetIs:kTargetEmail]) {
+        [OMeta m].user.email = userEmail;
+        
+        [ODefaults setUserDefault:nil forKey:kDefaultsKeyUserId];
+        [ODefaults resetUser];
+    }
+    
+    _userEmail = userEmail;
+    [ODefaults setGlobalDefault:_userEmail forKey:kDefaultsKeyUserEmail];
+    
+    NSString *userId = [ODefaults userDefaultForKey:kDefaultsKeyUserId];
+    
+    if (userId) {
+        self.userId = userId;
+    } else if (_userId) {
+        [ODefaults setUserDefault:_userId forKey:kDefaultsKeyUserId];
+    }
+}
+
+
 - (void)setLastReplicationDate:(NSString *)lastReplicationDate
 {
     _lastReplicationDate = lastReplicationDate;
@@ -365,27 +365,30 @@ static OMeta *m = nil;
 }
 
 
-- (void)setUserEmail:(NSString *)userEmail
+- (NSString *)deviceId
 {
-    _userEmail = userEmail;
-    
-    if (_userEmail) {
-        [ODefaults setGlobalDefault:_userEmail forKey:kDefaultsKeyUserEmail];
-
-        NSString *userId = [ODefaults userDefaultForKey:kDefaultsKeyUserId];
-        
-        if (userId) {
-            self.userId = userId;
-        } else if (_userId) {
-            [ODefaults setUserDefault:_userId forKey:kDefaultsKeyUserId];
-        }
-        
-        if (!_deviceId) {
-            _deviceId = [OUUIDGenerator generateUUID];
-        }
-    } else {
-        [ODefaults setGlobalDefault:nil forKey:kDefaultsKeyUserEmail];
+    if (!_deviceId) {
+        _deviceId = [OCrypto generateUUID];
     }
+    
+    return _deviceId;
+}
+
+
+- (NSString *)authToken
+{
+    if (!_authToken) {
+        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeInterval30Days];
+        _authToken = [OCrypto authTokenWithExpiryDate:_authTokenExpiryDate];
+    }
+    
+    return _authToken;
+}
+
+
+- (OSettings *)settings
+{
+    return self.user.settings;
 }
 
 
@@ -406,23 +409,6 @@ static OMeta *m = nil;
     }
     
     return _locator;
-}
-
-
-- (OSettings *)settings
-{
-    return self.user.settings;
-}
-
-
-- (NSString *)authToken
-{
-    if (!_authToken) {
-        _authTokenExpiryDate = [NSDate dateWithTimeIntervalSinceNow:kTimeInterval30Days];
-        _authToken = [self generateAuthToken:_authTokenExpiryDate];
-    }
-    
-    return _authToken;
 }
 
 

@@ -9,18 +9,16 @@
 #import "OTableViewController.h"
 
 #import "OLocatorDelegate.h"
-#import "OTableViewListCellDelegate.h"
+#import "OTableViewListDelegate.h"
 
 @class OMember;
 
-@interface OOrigoListViewController : OTableViewController<OTableViewListCellDelegate, OLocatorDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
+@interface OOrigoListViewController : OTableViewController<OTableViewListDelegate, OLocatorDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
     OMember *_member;
     
     NSMutableArray *_origoTypes;
     NSString *_selectedOrigoType;
-    
-    BOOL _isObtainingCountryList;
 }
 
 @end

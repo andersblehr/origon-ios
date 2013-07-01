@@ -12,6 +12,7 @@ extern NSString * const kDateTimeFormatZulu;
 
 @interface NSDate (OrigoExtensions)
 
++ (NSDate *)defaultDate;
 + (NSDate *)dateWithDeserialisedDate:(NSNumber *)deserialisedDate;
 
 - (NSString *)localisedDateString;

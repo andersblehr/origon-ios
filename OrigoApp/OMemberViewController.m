@@ -21,6 +21,7 @@
 #import "OTableViewCell.h"
 #import "OTextField.h"
 #import "OUtil.h"
+#import "OValidator.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OMembership.h"
@@ -29,8 +30,8 @@
 
 static NSString * const kSegueToMemberListView = @"segueFromMemberToMemberListView";
 
-static NSInteger const kMemberSectionKey = 0;
-static NSInteger const kAddressSectionKey = 1;
+static NSInteger const kSectionKeyMember = 0;
+static NSInteger const kSectionKeyAddresses = 1;
 
 static NSInteger const kGenderSheetTag = 0;
 static NSInteger const kGenderSheetButtonFemale = 0;
@@ -72,7 +73,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             } else {
                 _mobilePhoneField.text = _candidate.mobilePhone;
                 _dateOfBirthField.date = _candidate.dateOfBirth;
-                _dateOfBirthField.text = [_candidate.dateOfBirth localisedDateString];
                 _gender = _candidate.gender;
                 
                 if ([_candidate isActive]) {
@@ -83,6 +83,24 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     return emailIsEligible;
+}
+
+
+- (NSString *)givenNameFromFullName:(NSString *)fullName
+{
+    NSString *givenName = nil;
+    
+    if ([OValidator valueIsName:fullName]) {
+        NSArray *names = [fullName componentsSeparatedByString:kSeparatorSpace];
+        
+        if ([[OMeta m] shouldUseEasternNameOrder]) {
+            givenName = names[1];
+        } else {
+            givenName = names[0];
+        }
+    }
+    
+    return givenName;
 }
 
 
@@ -112,7 +130,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if ([self targetIs:kTargetUser]) {
             sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
         } else {
-            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [OUtil givenNameFromFullName:[_nameField textValue]]];
+            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [self givenNameFromFullName:[_nameField textValue]]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemaleMinor];
@@ -121,7 +139,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if ([self targetIs:kTargetUser]) {
             sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
         } else {
-            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [OUtil givenNameFromFullName:[_nameField textValue]]];
+            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [self givenNameFromFullName:[_nameField textValue]]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemale];
@@ -288,7 +306,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         _origo = self.data;
     }
     
-    self.target = _member ? _member : _origo;
+    self.state.target = _member ? _member : _origo;
     self.cancelRegistrationImpliesSignOut = [self targetIs:kTargetUser];
 }
 
@@ -297,10 +315,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     id memberDataSource = _member ? _member : kEntityRegistrationCell;
     
-    [self setData:memberDataSource forSectionWithKey:kMemberSectionKey];
+    [self setData:memberDataSource forSectionWithKey:kSectionKeyMember];
     
     if ([self actionIs:kActionDisplay]) {
-        [self setData:[_member residencies] forSectionWithKey:kAddressSectionKey];
+        [self setData:[_member residencies] forSectionWithKey:kSectionKeyAddresses];
     }
 }
 
@@ -315,7 +333,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     NSString *text = nil;
     
-    if (sectionKey == kAddressSectionKey) {
+    if (sectionKey == kSectionKeyAddresses) {
         if ([[_member residencies] count] == 1) {
             text = [OStrings stringForKey:strTermAddress];
         } else {
@@ -339,14 +357,29 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
+#pragma mark - OTableViewListDelegate conformance
+
+- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
+{
+    return [OUtil sortKeyWithPropertyKey:kPropertyKeyAddress relationshipKey:kRelationshipKeyOrigo];
+}
+
+
+- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    cell.textLabel.text = [[[self dataAtIndexPath:indexPath] origo].address lines][0];
+    cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
+}
+
+
 #pragma mark - OTableViewInputDelegate conformance
 
 - (BOOL)inputIsValid
 {
     BOOL memberIsMinor = [_dateOfBirthField.date isBirthDateOfMinor];
     
-    memberIsMinor = memberIsMinor || [[OState s] targetIs:kOrigoTypePreschoolClass];
-    memberIsMinor = memberIsMinor || [[OState s] targetIs:kOrigoTypeSchoolClass];
+    memberIsMinor = memberIsMinor || [self targetIs:kOrigoTypePreschoolClass];
+    memberIsMinor = memberIsMinor || [self targetIs:kOrigoTypeSchoolClass];
     
     BOOL inputIsValid = [_nameField hasValidValue];
     
@@ -355,11 +388,11 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     if (inputIsValid) {
-        if ([self targetIs:kTargetUser] || !memberIsMinor || [_emailField hasValue]) {
+        if ([self targetIs:kTargetUser] || [_emailField hasValue] || !memberIsMinor) {
             inputIsValid = inputIsValid && [self emailIsEligible];
         }
         
-        if ([self targetIs:kTargetUser] || [self targetIs:kTargetHousehold]) {
+        if ([self targetIs:kTargetUser] || ([self targetIs:kTargetHousehold] && !memberIsMinor)) {
             inputIsValid = inputIsValid && [_mobilePhoneField hasValidValue];
         }
     }
@@ -420,7 +453,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     BOOL shouldEnable = YES;
     
     if ([key isEqualToString:kPropertyKeyEmail]) {
-        shouldEnable = ![[OState s] actionIs:kActionRegister] || ![[OState s] targetIs:kTargetUser];
+        shouldEnable = ![self actionIs:kActionRegister] || ![self targetIs:kTargetUser];
     }
     
     return shouldEnable;
@@ -432,18 +465,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     NSMutableDictionary *additionalValues = [[NSMutableDictionary alloc] init];
     
     additionalValues[kPropertyKeyGender] = _gender;
-    additionalValues[kPropertyKeyGivenName] = [OUtil givenNameFromFullName:_member.name];
+    additionalValues[kPropertyKeyGivenName] = [self givenNameFromFullName:_member.name];
     
     return additionalValues;
-}
-
-
-#pragma mark - OTableViewListCellDelegate conformance
-
-- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    cell.textLabel.text = [[[self dataAtIndexPath:indexPath] origo].address lines][0];
-    cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
 }
 
 
@@ -455,7 +479,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         [super dismissModalViewControllerWithIdentifier:identifier needsReloadData:NO];
         
         if ([_member.email isEqualToString:[_emailField textValue]]) {
-            [OMeta m].userEmail = _member.email;
             [self persistMember];
         } else {
             UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleEmailChangeFailed] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextEmailChangeFailed], [_emailField textValue]] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
@@ -516,7 +539,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - UIAlertViewDelegate conformance
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
         case kEmailChangeAlertTag:
