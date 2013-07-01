@@ -10,7 +10,7 @@
 
 #import "OTableViewController.h"
 
-#import "OTableViewListCellDelegate.h"
+#import "OTableViewListDelegate.h"
 
 extern NSString * const kViewControllerAuth;
 extern NSString * const kViewControllerCalendar;
@@ -42,9 +42,9 @@ extern NSString * const kTargetExternal;
 
 @property (weak, nonatomic, readonly) OTableViewController *viewController;
 @property (strong, nonatomic) NSString *action;
-@property (strong, nonatomic) NSString *target;
+@property (strong, nonatomic) id target;
 
-@property (weak, nonatomic, readonly) id<OTableViewListCellDelegate> listCellDelegate;
+@property (weak, nonatomic, readonly) id<OTableViewListDelegate> listDelegate;
 @property (weak, nonatomic, readonly) id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate> inputDelegate;
 
 - (id)initWithViewController:(OTableViewController *)viewController;
@@ -52,7 +52,7 @@ extern NSString * const kTargetExternal;
 + (OState *)s;
 
 - (void)reflectState:(OState *)state;
-- (void)toggleEditState;
+- (void)toggleAction:(NSArray *)alternatingActions;
 
 - (BOOL)viewControllerIs:(NSString *)viewControllerId;
 - (BOOL)actionIs:(NSString *)action;

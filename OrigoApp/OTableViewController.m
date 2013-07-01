@@ -35,8 +35,8 @@
 NSString * const kEntityRegistrationCell = @"registration";
 NSString * const kCustomCell = @"custom";
 
-static NSString * const kControllerSuffixList = @"ListViewController";
-static NSString * const kControllerSuffix = @"ViewController";
+static NSString * const kViewControllerSuffix = @"ViewController";
+static NSString * const kViewControllerSuffixList = @"ListViewController";
 
 
 @interface OTableViewController ()
@@ -48,11 +48,19 @@ static NSString * const kControllerSuffix = @"ViewController";
 
 @implementation OTableViewController
 
+#pragma mark - Comparison delegation
+
+static NSInteger compareObjects(id object1, id object2, void *context)
+{
+    return [(__bridge id)context compareObject:object1 toObject:object2];
+}
+
+
 #pragma mark - Auxiliary methods
 
-- (BOOL)isListController
+- (BOOL)isListViewController
 {
-    return [NSStringFromClass(self.class) containsString:kControllerSuffixList];
+    return [NSStringFromClass(self.class) hasSuffix:kViewControllerSuffixList];
 }
 
 
@@ -61,11 +69,11 @@ static NSString * const kControllerSuffix = @"ViewController";
     if ([OStrings hasStrings]) {
         if ([[OMeta m] userIsAllSet] || _isModal) {
             if (_isModal && self.modalImpliesRegistration) {
-                _action = kActionRegister;
-            } else if ([self isListController]) {
-                _action = kActionList;
+                _state.action = kActionRegister;
+            } else if ([self isListViewController]) {
+                _state.action = kActionList;
             } else {
-                _action = kActionDisplay;
+                _state.action = kActionDisplay;
             }
             
             [_instance initialiseState];
@@ -80,8 +88,37 @@ static NSString * const kControllerSuffix = @"ViewController";
             _didInitialise = YES;
         }
     } else {
-        _action = kActionSetup;
+        _state.action = kActionSetup;
     }
+}
+
+
+- (NSArray *)sortedArrayWithData:(id)data forSectionWithKey:(NSInteger)sectionKey
+{
+    NSArray *unsortedArray = [data allObjects];
+    NSArray *sortedArray = nil;
+    
+    if ([_instance conformsToProtocol:@protocol(OTableViewListDelegate)]) {
+        id listDelegate = (id<OTableViewListDelegate>)_instance;
+        
+        BOOL listDelegateWillCompare = NO;
+        
+        if ([listDelegate respondsToSelector:@selector(willCompareObjectsInSectionWithKey:)]) {
+            listDelegateWillCompare = [listDelegate willCompareObjectsInSectionWithKey:sectionKey];
+        }
+        
+        if (listDelegateWillCompare) {
+            sortedArray = [unsortedArray sortedArrayUsingFunction:compareObjects context:(__bridge void *)self];
+        } else if ([listDelegate respondsToSelector:@selector(sortKeyForSectionWithKey:)]) {
+            NSString *sortKey = [listDelegate sortKeyForSectionWithKey:sectionKey];
+            
+            if (sortKey) {
+                sortedArray = [unsortedArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:sortKey ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]]];
+            }
+        }
+    }
+    
+    return sortedArray ? sortedArray : unsortedArray;
 }
 
 
@@ -93,7 +130,7 @@ static NSString * const kControllerSuffix = @"ViewController";
 
 - (void)inputFieldDidBeginEditing:(id)inputField
 {
-    if ([self actionIs:kActionDisplay]) {
+    if ([_state actionIs:kActionDisplay]) {
         [self toggleEditMode];
     }
 
@@ -146,9 +183,9 @@ static NSString * const kControllerSuffix = @"ViewController";
 
 - (void)didCancelEditing
 {
-    if ([self actionIs:kActionRegister]) {
+    if ([_state actionIs:kActionRegister]) {
         [_dismisser dismissModalViewControllerWithIdentifier:_viewControllerId needsReloadData:NO];
-    } else if ([self actionIs:kActionEdit]) {
+    } else if ([_state actionIs:kActionEdit]) {
         [_detailCell readEntity];
         [self toggleEditMode];
     }
@@ -157,7 +194,7 @@ static NSString * const kControllerSuffix = @"ViewController";
 
 - (void)didFinishEditing
 {
-    if ([self isListController]) {
+    if ([self isListViewController]) {
         [_dismisser dismissModalViewControllerWithIdentifier:_viewControllerId];
     } else {
         [_detailCell processInput];
@@ -171,14 +208,28 @@ static NSString * const kControllerSuffix = @"ViewController";
 }
 
 
-#pragma mark - Setting & accessing section data
+#pragma mark - State introspection
+
+- (BOOL)actionIs:(NSString *)action
+{
+    return [_state actionIs:action];
+}
+
+
+- (BOOL)targetIs:(NSString *)target
+{
+    return [_state targetIs:target];
+}
+
+
+#pragma mark - Setting section data
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
     if ([data isKindOfClass:NSArray.class]) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:data];
     } else if ([data isKindOfClass:NSSet.class]) {
-        _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
+        _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:[self sortedArrayWithData:data forSectionWithKey:sectionKey]];
     } else if (data) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
         
@@ -209,16 +260,18 @@ static NSString * const kControllerSuffix = @"ViewController";
     }
     
     if ([_data isKindOfClass:NSArray.class] || [data isKindOfClass:NSSet.class]) {
-        [_sectionData[@(sectionKey)] addObjectsFromArray:[[data allObjects] sortedArrayUsingSelector:@selector(compare:)]];
-    } else if (data) {
+        [_sectionData[@(sectionKey)] addObjectsFromArray:[self sortedArrayWithData:data forSectionWithKey:sectionKey]];
+    } else if (data && ![_sectionData[@(sectionKey)] containsObject:data]) {
         [_sectionData[@(sectionKey)] addObject:data];
     }
 }
 
 
-- (NSArray *)dataInSectionWithKey:(NSInteger)sectionKey
+#pragma mark - Accessing section data
+
+- (id)dataAtIndexPath:(NSIndexPath *)indexPath
 {
-    return _sectionData[@(sectionKey)];
+    return [self dataAtRow:indexPath.row inSectionWithKey:[self sectionKeyForIndexPath:indexPath]];
 }
 
 
@@ -228,9 +281,9 @@ static NSString * const kControllerSuffix = @"ViewController";
 }
 
 
-- (id)dataAtIndexPath:(NSIndexPath *)indexPath
+- (NSArray *)dataInSectionWithKey:(NSInteger)sectionKey
 {
-    return [self dataAtRow:indexPath.row inSectionWithKey:[self sectionKeyForIndexPath:indexPath]];
+    return _sectionData[@(sectionKey)];
 }
 
 
@@ -317,20 +370,6 @@ static NSString * const kControllerSuffix = @"ViewController";
 }
 
 
-#pragma mark - State inspection
-
-- (BOOL)actionIs:(NSString *)action
-{
-    return [_action isEqualToString:action];
-}
-
-
-- (BOOL)targetIs:(NSString *)target
-{
-    return [_target isEqualToString:target];
-}
-
-
 #pragma mark - Utility methods
 
 - (void)reflectState
@@ -347,7 +386,6 @@ static NSString * const kControllerSuffix = @"ViewController";
 
 - (void)toggleEditMode
 {
-    [self.state toggleEditState];
     [_detailCell toggleEditMode];
     
     static UIBarButtonItem *rightButton = nil;
@@ -452,15 +490,15 @@ static NSString * const kControllerSuffix = @"ViewController";
     
     NSString *longName = NSStringFromClass(self.class);
     NSString *shortName = [longName substringFromIndex:1];
-    NSString *controllerSuffix = [self isListController] ? kControllerSuffixList : kControllerSuffix;
+    NSString *controllerSuffix = [self isListViewController] ? kViewControllerSuffixList : kViewControllerSuffix;
     _viewControllerId = [[shortName substringToIndex:[shortName rangeOfString:controllerSuffix].location] lowercaseString];
     
-    if ([self isListController]) {
+    if ([self isListViewController]) {
         _modalImpliesRegistration = NO;
         _viewControllerId = [_viewControllerId stringByAppendingString:@"s"];
     } else {
         _modalImpliesRegistration = YES;
-        _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kControllerSuffix].location]);
+        _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kViewControllerSuffix].location]);
     }
     
     if (!self.navigationController || ([self.navigationController.viewControllers count] == 1)) {
@@ -480,7 +518,7 @@ static NSString * const kControllerSuffix = @"ViewController";
     
     [self initialiseInstance];
     
-    if ([self actionIs:kActionRegister]) {
+    if ([_state actionIs:kActionRegister]) {
         _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
         _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
         
@@ -526,7 +564,7 @@ static NSString * const kControllerSuffix = @"ViewController";
     if (![OStrings hasStrings]) {
         [self.activityIndicator startAnimating];
         [[[OConnection alloc] init] fetchStrings:self];
-    } else if ([self actionIs:kActionRegister]) {
+    } else if ([_state actionIs:kActionRegister]) {
         [[_detailCell nextInputField] becomeFirstResponder];
     } else if (![_viewControllerId isEqualToString:kViewControllerAuth] && ![[OMeta m] userIsSignedIn]) {
         [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil dismisser:self];
@@ -587,16 +625,6 @@ static NSString * const kControllerSuffix = @"ViewController";
 }
 
 
-- (void)setTarget:(id)target
-{
-    if ([target isKindOfClass:OReplicatedEntity.class]) {
-        _target = [target asTarget];
-    } else if ([target isKindOfClass:NSString.class]) {
-        _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
-    }
-}
-
-
 #pragma mark - OTableViewControllerInstance conformance
 
 - (void)initialiseState
@@ -621,7 +649,7 @@ static NSString * const kControllerSuffix = @"ViewController";
 {
     NSInteger sectionNumber = [self sectionNumberForSectionKey:sectionKey];
     
-    return ((sectionNumber == [self.tableView numberOfSections] - 1) && ![self actionIs:kActionRegister]);
+    return ((sectionNumber == [self.tableView numberOfSections] - 1) && ![_state actionIs:kActionRegister]);
 }
 
 
@@ -849,17 +877,15 @@ static NSString * const kControllerSuffix = @"ViewController";
 }
 
 
-#pragma mark - OServerConnectionDelegate conformance
+#pragma mark - OConnectionDelegate conformance
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    if ([self actionIs:kActionSetup]) {
+    if ([_state actionIs:kActionSetup]) {
         [self.activityIndicator stopAnimating];
-        
         [OStrings.class didCompleteWithResponse:response data:data];
-        [ODefaults setGlobalDefault:[NSDate date] forKey:kDefaultsKeyStringDate];
-        [(OTabBarController *)self.tabBarController setTabBarTitles];
         
+        [(OTabBarController *)self.tabBarController setTabBarTitles];
         [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil dismisser:self];
     }
 }

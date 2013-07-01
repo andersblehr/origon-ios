@@ -12,8 +12,6 @@
 
 @interface OMember (OrigoExtensions)
 
-- (NSComparisonResult)compare:(OMember *)other;
-
 - (OMembership *)rootMembership;
 - (OMembership *)initialResidency;
 - (NSSet *)allMemberships;

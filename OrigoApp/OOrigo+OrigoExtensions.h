@@ -21,8 +21,6 @@ extern NSString * const kOrigoTypeOther;
 
 @interface OOrigo (OrigoExtensions)
 
-- (NSComparisonResult)compare:(OOrigo *)other;
-
 - (NSSet *)allMemberships;
 - (NSSet *)fullMemberships;
 - (NSSet *)residencies;

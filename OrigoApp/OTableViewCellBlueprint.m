@@ -85,10 +85,10 @@ CGFloat const kMinimumCellPadding = 0.1f;
         _fieldsAreLabeled = NO;
         _hasPhoto = NO;
         
-        if ([reuseIdentifier isEqualToString:idCellReuseUserSignIn]) {
+        if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
             _titleKey = kInputKeySignIn;
             _detailKeys = @[kInputKeyAuthEmail, kInputKeyPassword];
-        } else if ([reuseIdentifier isEqualToString:idCellReuseUserActivation]) {
+        } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
             _titleKey = kInputKeyActivate;
             _detailKeys = @[kInputKeyActivationCode, kInputKeyRepeatPassword];
         }

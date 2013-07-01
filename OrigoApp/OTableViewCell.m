@@ -27,9 +27,9 @@
 
 #import "OTableViewController.h"
 
-NSString * const idCellReuseList = @"list";
-NSString * const idCellReuseUserSignIn = @"signIn";
-NSString * const idCellReuseUserActivation = @"activate";
+NSString * const kReuseIdentifierList = @"list";
+NSString * const kReuseIdentifierUserSignIn = @"signIn";
+NSString * const kReuseIdentifierUserActivation = @"activate";
 
 NSString * const kViewKeySuffixLabel = @"Label";
 NSString * const kViewKeySuffixTextField = @"Field";
@@ -52,7 +52,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 @interface OTableViewCell ()
 
-@property (strong, nonatomic) OState *localState;
+@property (strong, nonatomic) OState *state;
 
 @end
 
@@ -63,7 +63,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (BOOL)isListCell
 {
-    return [self.reuseIdentifier hasPrefix:idCellReuseList];
+    return [self.reuseIdentifier hasPrefix:kReuseIdentifierList];
 }
 
 
@@ -71,11 +71,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     UITableViewCellStyle style = UITableViewCellStyleSubtitle;
     
-    if ([reuseIdentifier hasPrefix:idCellReuseList]) {
-        id<OTableViewListCellDelegate> listCellDelegate = self.localState.listCellDelegate;
+    if ([reuseIdentifier hasPrefix:kReuseIdentifierList]) {
+        id listDelegate = (id<OTableViewListDelegate>)[OState s].viewController;
         
-        if ([listCellDelegate respondsToSelector:@selector(styleForIndexPath:)]) {
-            style = [listCellDelegate styleForIndexPath:_indexPath];
+        if ([listDelegate respondsToSelector:@selector(styleForIndexPath:)]) {
+            style = [listDelegate styleForIndexPath:indexPath];
         }
     }
     
@@ -91,16 +91,18 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
         self.textLabel.font = [UIFont titleFont];
         
+        _state = [OState s].viewController.state;
+        
         if ([self isListCell]) {
-            _listCellDelegate = self.localState.listCellDelegate;
-            _selectable = YES;
             _indexPath = indexPath;
+            _selectable = YES;
+            _listDelegate = (id<OTableViewListDelegate>)_state.viewController;
             
-            [_listCellDelegate populateListCell:self atIndexPath:_indexPath];
+            [_listDelegate populateListCell:self atIndexPath:_indexPath];
         } else {
-            _inputDelegate = self.localState.inputDelegate;
-            _selectable = [self.localState actionIs:kActionList];
             _views = [[NSMutableDictionary alloc] init];
+            _selectable = [_state actionIs:kActionList];
+            _inputDelegate = (id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate>)_state.viewController;
         }
         
         if (_selectable) {
@@ -243,13 +245,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (id)textFieldForKey:(NSString *)key
 {
-    return [_views objectForKey:[key stringByAppendingString:kViewKeySuffixTextField]];
+    return _views[[key stringByAppendingString:kViewKeySuffixTextField]];
 }
 
 
 - (id)labelForKey:(NSString *)key
 {
-    return [_views objectForKey:[key stringByAppendingString:kViewKeySuffixLabel]];
+    return _views[[key stringByAppendingString:kViewKeySuffixLabel]];
 }
 
 
@@ -304,7 +306,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [self.backgroundView addDropShadowForTableViewCellTrailing:trailing];
     
     if (_blueprint.hasPhoto) {
-        [[_views objectForKey:kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
+        [_views[kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
     }
     
     if (_editable && !_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
@@ -321,7 +323,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)toggleEditMode
 {
-    self.editing = [self.localState actionIs:kActionEdit] || _editable;
+    [_state toggleAction:@[kActionDisplay, kActionEdit]];
+    
+    self.editing = [_state actionIs:kActionEdit] || _editable;
 }
 
 
@@ -373,8 +377,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)processInput
 {
     if ([_inputDelegate inputIsValid]) {
-        if (![[OState s] actionIs:kActionEdit]) {
-            [[OState s].viewController.view endEditing:YES];
+        if (![_state actionIs:kActionEdit]) {
+            [_state.viewController.view endEditing:YES];
         }
         
         [_inputDelegate processInput];
@@ -384,12 +388,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Writing input to entity
+#pragma mark - Synchronising cell content with entity
 
 - (void)readEntity
 {
     if ([self isListCell]) {
-        [_listCellDelegate populateListCell:self atIndexPath:_indexPath];
+        [_listDelegate populateListCell:self atIndexPath:_indexPath];
     } else {
         for (NSString *propertyKey in _blueprint.keys) {
             id value = [_entity valueForKey:propertyKey];
@@ -438,16 +442,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Custom accessors
 
-- (OState *)localState
-{
-    if (!_localState) {
-        _localState = ((OTableViewController *)((UITableView *)self.superview).delegate).state;
-    }
-    
-    return _localState ? _localState : [OState s];
-}
-
-
 - (void)setInputField:(id)inputField
 {
     if (_inputField && [_inputField hasEmphasis] && _blueprint.fieldsShouldDeemphasiseOnEndEdit) {
@@ -493,7 +487,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         
         for (NSNumber *alignmentOptions in [alignedConstraints allKeys]) {
             NSUInteger options = [alignmentOptions integerValue];
-            NSArray *constraintsWithOptions = [alignedConstraints objectForKey:alignmentOptions];
+            NSArray *constraintsWithOptions = alignedConstraints[alignmentOptions];
             
             for (NSString *visualConstraints in constraintsWithOptions) {
                 [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:options metrics:nil views:_views]];

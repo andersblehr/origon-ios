@@ -15,7 +15,7 @@
 extern NSString * const kEntityRegistrationCell;
 extern NSString * const kCustomCell;
 
-@protocol OEntityObservingDelegate;
+@protocol OEntityObserver;
 
 @class OState, OTableViewCell;
 @class OReplicatedEntity;
@@ -45,9 +45,6 @@ extern NSString * const kCustomCell;
 }
 
 @property (strong, nonatomic, readonly) NSString *viewControllerId;
-@property (strong, nonatomic) NSString *action;
-@property (strong, nonatomic) id target;
-
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic, readonly) OReplicatedEntity *entity;
 @property (strong, nonatomic, readonly) UIActivityIndicatorView *activityIndicator;
@@ -66,13 +63,17 @@ extern NSString * const kCustomCell;
 @property (strong, nonatomic) OTableViewCell *detailCell;
 
 @property (weak, nonatomic) id<OModalViewControllerDelegate> dismisser;
-@property (weak, nonatomic) id<OEntityObservingDelegate> observer;
+@property (weak, nonatomic) id<OEntityObserver> observer;
+
+- (BOOL)actionIs:(NSString *)action;
+- (BOOL)targetIs:(NSString *)target;
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey;
-- (NSArray *)dataInSectionWithKey:(NSInteger)sectionKey;
-- (id)dataAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
+
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath;
+- (id)dataAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
+- (NSArray *)dataInSectionWithKey:(NSInteger)sectionKey;
 
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
@@ -85,9 +86,6 @@ extern NSString * const kCustomCell;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser;
-
-- (BOOL)actionIs:(NSString *)action;
-- (BOOL)targetIs:(NSString *)target;
 
 - (void)reflectState;
 - (void)toggleEditMode;

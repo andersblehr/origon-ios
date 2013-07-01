@@ -11,12 +11,8 @@
 @interface OUtil : NSObject
 
 + (BOOL)isSupportedCountryCode:(NSString *)countryCode;
++ (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode;
 
-+ (NSString *)countryFromCountryCode:(NSString *)countryCode;
-+ (NSString *)givenNameFromFullName:(NSString *)fullName;
-
-+ (NSDate *)defaultDatePickerDate;
-+ (NSDate *)earliestValidBirthDate;
-+ (NSDate *)latestValidBirthDate;
++ (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;
 
 @end

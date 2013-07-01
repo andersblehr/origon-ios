@@ -39,9 +39,9 @@ static NSInteger const kOrigoTypeSheetTag = 1;
 static NSInteger const kCountryAlertTag = 0;
 static NSInteger const kCountryAlertButtonCancel = 0;
 
-static NSInteger const kUserSectionKey = 0;
-static NSInteger const kOrigoSectionKey = 1;
-static NSInteger const kWardSectionKey = 2;
+static NSInteger const kSectionKeyUser = 0;
+static NSInteger const kSectionKeyOrigos = 1;
+static NSInteger const kSectionKeyWards = 2;
 
 static NSInteger const kUserRow = 0;
 
@@ -54,26 +54,26 @@ static NSInteger const kUserRow = 0;
 {
     NSString *footerText = nil;
     
-    if ([self hasSectionWithKey:kOrigoSectionKey]) {
+    if ([self hasSectionWithKey:kSectionKeyOrigos]) {
         footerText = [OStrings stringForKey:strFooterOrigoCreation];
     } else {
         footerText = [OStrings stringForKey:strFooterOrigoCreationFirst];
     }
     
-    if ([self targetIs:kTargetUser] && [self hasSectionWithKey:kWardSectionKey]) {
+    if ([self targetIs:kTargetUser] && [self hasSectionWithKey:kSectionKeyWards]) {
         NSString *yourChild = nil;
         NSString *himOrHer = nil;
         
         BOOL allFemale = YES;
         BOOL allMale = YES;
         
-        if ([self numberOfRowsInSectionWithKey:kWardSectionKey] == 1) {
-            yourChild = ((OMember *)[self dataInSectionWithKey:kWardSectionKey][0]).givenName;
+        if ([self numberOfRowsInSectionWithKey:kSectionKeyWards] == 1) {
+            yourChild = ((OMember *)[self dataInSectionWithKey:kSectionKeyWards][0]).givenName;
         } else {
             yourChild = [OStrings stringForKey:strTermYourChild];
         }
         
-        for (OMember *ward in [self dataInSectionWithKey:kWardSectionKey]) {
+        for (OMember *ward in [self dataInSectionWithKey:kSectionKeyWards]) {
             allFemale = allFemale && [ward isFemale];
             allMale = allMale && [ward isMale];
         }
@@ -103,11 +103,11 @@ static NSInteger const kUserRow = 0;
 {
     UIActionSheet *countrySheet = [[UIActionSheet alloc] initWithTitle:[OStrings stringForKey:strSheetTitleCountry] delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
 
-    NSString *inferredCountry = [OUtil countryFromCountryCode:[[OMeta m] inferredCountryCode]];
+    NSString *inferredCountry = [OUtil localisedCountryNameFromCountryCode:[[OMeta m] inferredCountryCode]];
     NSString *locatedCountry = nil;
     
     if ([[OMeta m].locator didLocate]) {
-        locatedCountry = [OUtil countryFromCountryCode:[OMeta m].locator.countryCode];
+        locatedCountry = [OUtil localisedCountryNameFromCountryCode:[OMeta m].locator.countryCode];
         [countrySheet addButtonWithTitle:locatedCountry];
     }
     
@@ -130,7 +130,7 @@ static NSInteger const kUserRow = 0;
 
 - (void)displayCountryAlert
 {
-    NSString *country = [OUtil countryFromCountryCode:[OMeta m].settings.countryCode];
+    NSString *country = [OUtil localisedCountryNameFromCountryCode:[OMeta m].settings.countryCode];
     NSString *alertFormat = nil;
     
     if ([OUtil isSupportedCountryCode:[OMeta m].settings.countryCode]) {
@@ -233,7 +233,7 @@ static NSInteger const kUserRow = 0;
     _member = self.data ? self.data : [OMeta m].user;
     _origoTypes = [[NSMutableArray alloc] init];
     
-    self.target = _member;
+    self.state.target = _member;
     
     if ([self targetIs:kTargetWard]) {
         if ([_member isOfPreschoolAge]) {
@@ -253,12 +253,12 @@ static NSInteger const kUserRow = 0;
 
 - (void)initialiseDataSource
 {
-    [self setData:[_member participancies] forSectionWithKey:kOrigoSectionKey];
+    [self setData:[_member participancies] forSectionWithKey:kSectionKeyOrigos];
     
     if ([_member isUser]) {
-        [self setData:[_member rootMembership] forSectionWithKey:kUserSectionKey];
-        [self appendData:[_member residencies] toSectionWithKey:kUserSectionKey];
-        [self setData:[_member wards] forSectionWithKey:kWardSectionKey];
+        [self setData:[_member rootMembership] forSectionWithKey:kSectionKeyUser];
+        [self appendData:[_member residencies] toSectionWithKey:kSectionKeyUser];
+        [self setData:[_member wards] forSectionWithKey:kSectionKeyWards];
     }
 }
 
@@ -273,9 +273,9 @@ static NSInteger const kUserRow = 0;
 {
     NSString *text = nil;
     
-    if (sectionKey == kWardSectionKey) {
+    if (sectionKey == kSectionKeyWards) {
         text = [OStrings stringForKey:strHeaderWardsOrigos];
-    } else if (sectionKey == kOrigoSectionKey) {
+    } else if (sectionKey == kSectionKeyOrigos) {
         text = [OStrings stringForKey:strHeaderMyOrigos];
     }
     
@@ -293,15 +293,15 @@ static NSInteger const kUserRow = 0;
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if (sectionKey == kUserSectionKey) {
+    if (sectionKey == kSectionKeyUser) {
         if (indexPath.row == kUserRow) {
             [self performSegueWithIdentifier:kSegueToMemberView sender:self];
         } else {
             [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
         }
-    } else if (sectionKey == kOrigoSectionKey) {
+    } else if (sectionKey == kSectionKeyOrigos) {
         [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
-    } else if (sectionKey == kWardSectionKey) {
+    } else if (sectionKey == kSectionKeyWards) {
         OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kViewControllerOrigoList];
         origoListViewController.data = [self dataAtIndexPath:indexPath];
         
@@ -310,13 +310,52 @@ static NSInteger const kUserRow = 0;
 }
 
 
+#pragma mark - OTableViewListDelegate conformance
+
+- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
+{
+    NSString *relationshipKey = (sectionKey == kSectionKeyWards) ? nil : kRelationshipKeyOrigo;
+    
+    return [OUtil sortKeyWithPropertyKey:kPropertyKeyName relationshipKey:relationshipKey];
+}
+
+
+- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    OReplicatedEntity *entity = [self dataAtIndexPath:indexPath];
+    
+    if ((sectionKey == kSectionKeyUser) || (sectionKey == kSectionKeyOrigos)) {
+        OMembership *membership = [entity asMembership];
+        
+        if (sectionKey == kSectionKeyUser) {
+            if (indexPath.row == kUserRow) {
+                cell.textLabel.text = [OStrings stringForKey:strTermMe];
+                cell.detailTextLabel.text = membership.member.name;
+                cell.imageView.image = [membership.member listCellImage];
+            } else {
+                cell.textLabel.text = membership.origo.name;
+                cell.detailTextLabel.text = [membership.origo.address stringByReplacingSeparator:kSeparatorNewline withSeparator:kSeparatorComma];
+                cell.imageView.image = [membership.origo listCellImage];
+            }
+        } else if (sectionKey == kSectionKeyOrigos) {
+            cell.textLabel.text = membership.origo.name;
+            cell.imageView.image = [membership.origo listCellImage];
+        }
+    } else if (sectionKey == kSectionKeyWards) {
+        OMember *ward = [entity asMember];
+        
+        cell.textLabel.text = ward.givenName;
+        cell.imageView.image = [ward listCellImage];
+    }
+}
+
+
 #pragma mark - OLocatorDelegate conformance
 
 - (void)locatorDidLocate
 {
-    if (_isObtainingCountryList) {
-        _isObtainingCountryList = NO;
-        
+    if ([OMeta m].locator.blocking) {
         [self presentCountrySheet];
     } else {
         [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
@@ -329,39 +368,6 @@ static NSInteger const kUserRow = 0;
 - (void)locatorCannotLocate
 {
     [self presentCountrySheet];
-}
-
-
-#pragma mark - OTableViewListCellDelegate conformance
-
-- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
-    OReplicatedEntity *entity = [self dataAtIndexPath:indexPath];
-    
-    if ((sectionKey == kUserSectionKey) || (sectionKey == kOrigoSectionKey)) {
-        OMembership *membership = [entity asMembership];
-        
-        if (sectionKey == kUserSectionKey) {
-            if (indexPath.row == kUserRow) {
-                cell.textLabel.text = [OStrings stringForKey:strTermMe];
-                cell.detailTextLabel.text = membership.member.name;
-                cell.imageView.image = [membership.member listCellImage];
-            } else {
-                cell.textLabel.text = membership.origo.name;
-                cell.detailTextLabel.text = [membership.origo.address stringByReplacingSeparator:kSeparatorNewline withSeparator:kSeparatorComma];
-                cell.imageView.image = [membership.origo listCellImage];
-            }
-        } else if (sectionKey == kOrigoSectionKey) {
-            cell.textLabel.text = membership.origo.name;
-            cell.imageView.image = [membership.origo listCellImage];
-        }
-    } else if (sectionKey == kWardSectionKey) {
-        OMember *ward = [entity asMember];
-        
-        cell.textLabel.text = ward.givenName;
-        cell.imageView.image = [ward listCellImage];
-    }
 }
 
 
@@ -417,8 +423,6 @@ static NSInteger const kUserRow = 0;
                 
                 if (![OMeta m].settings.countryCode) {
                     if ([[OMeta m].locator isAuthorised] && ![[OMeta m].locator didLocate]) {
-                        _isObtainingCountryList = YES;
-                        
                         [[OMeta m].locator locateBlocking:YES];
                     } else {
                         [self presentCountrySheet];
@@ -438,7 +442,7 @@ static NSInteger const kUserRow = 0;
 
 #pragma mark - UIAlertViewDelegate conformance
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
         case kCountryAlertTag:

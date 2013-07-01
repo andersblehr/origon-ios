@@ -9,12 +9,12 @@
 #import "OTableViewController.h"
 
 #import "OTableViewInputDelegate.h"
-#import "OTableViewListCellDelegate.h"
+#import "OTableViewListDelegate.h"
 
 @class OTextField;
 @class OMember, OMembership, OOrigo;
 
-@interface OMemberViewController : OTableViewController<OTableViewInputDelegate, OTableViewListCellDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
+@interface OMemberViewController : OTableViewController<OTableViewListDelegate, OTableViewInputDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
     OMembership *_membership;
     OMember *_member;

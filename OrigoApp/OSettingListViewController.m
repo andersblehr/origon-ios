@@ -24,7 +24,7 @@
 
 static NSString * const kSegueToSettingView = @"sequeFromSettingListToSettingView";
 
-static NSInteger const kSettingsSectionKey = 0;
+static NSInteger const kSectionKeySettings = 0;
 
 
 @implementation OSettingListViewController
@@ -54,7 +54,7 @@ static NSInteger const kSettingsSectionKey = 0;
 
 - (void)initialiseState
 {
-    self.target = kTargetUser;
+    self.state.target = kTargetUser;
     
     if (![OMeta m].settings.countryCode) {
         [OMeta m].settings.countryCode = [[OMeta m] inferredCountryCode];
@@ -64,7 +64,7 @@ static NSInteger const kSettingsSectionKey = 0;
 
 - (void)initialiseDataSource
 {
-    [self setData:[[OMeta m].settings settingKeys] forSectionWithKey:kSettingsSectionKey];
+    [self setData:[[OMeta m].settings settingKeys] forSectionWithKey:kSectionKeySettings];
 }
 
 
@@ -80,7 +80,7 @@ static NSInteger const kSettingsSectionKey = 0;
 }
 
 
-#pragma mark - OTableViewListCellDelegate conformance
+#pragma mark - OTableViewListDelegate conformance
 
 - (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {

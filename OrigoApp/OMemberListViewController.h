@@ -8,11 +8,11 @@
 
 #import "OTableViewController.h"
 
-#import "OTableViewListCellDelegate.h"
+#import "OTableViewListDelegate.h"
 
 @class OMembership, OOrigo;
 
-@interface OMemberListViewController : OTableViewController<OTableViewListCellDelegate, UIActionSheetDelegate> {
+@interface OMemberListViewController : OTableViewController<OTableViewListDelegate, UIActionSheetDelegate> {
 @private
     OMembership *_membership;
     OOrigo *_origo;

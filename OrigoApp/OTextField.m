@@ -25,6 +25,9 @@
 
 CGFloat const kTextInset = 4.f;
 
+static NSInteger const kMinimumRealisticAge = 6;
+static NSInteger const kMaximumRealisticAge = 100;
+
 static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor";
 
 
@@ -43,6 +46,35 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 }
 
 
+- (NSDate *)earliestValidBirthDate
+{
+    NSDateComponents *earliestBirthDateOffset = [[NSDateComponents alloc] init];
+    earliestBirthDateOffset.year = -kMaximumRealisticAge;
+    
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDate *now = [NSDate date];
+    
+    return [calendar dateByAddingComponents:earliestBirthDateOffset toDate:now options:kNilOptions];
+}
+
+
+- (NSDate *)latestValidBirthDate
+{
+    NSDate *now = [NSDate date];
+    NSDate *latestValidBirthDate = now;
+    
+    if ([[OState s] actionIs:kActionRegister] && [[OState s] targetIs:kTargetUser]) {
+        NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
+        latestBirthDateOffset.year = -kMinimumRealisticAge;
+        
+        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        latestValidBirthDate = [calendar dateByAddingComponents:latestBirthDateOffset toDate:now options:kNilOptions];
+    }
+    
+    return latestValidBirthDate;
+}
+
+
 - (void)configure
 {
     if ([_key isEqualToString:kInputKeyAuthEmail]) {
@@ -55,8 +87,8 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         self.autocapitalizationType = UITextAutocapitalizationTypeWords;
     } else if ([_key isEqualToString:kPropertyKeyDateOfBirth]) {
         UIDatePicker *datePicker = [OMeta m].sharedDatePicker;
-        datePicker.minimumDate = [OUtil earliestValidBirthDate];
-        datePicker.maximumDate = [OUtil latestValidBirthDate];
+        datePicker.minimumDate = [self earliestValidBirthDate];
+        datePicker.maximumDate = [self latestValidBirthDate];
         [datePicker addTarget:self action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
         
         self.inputView = datePicker;
@@ -147,7 +179,11 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         hasValidValue = [OValidator value:[self objectValue] isValidForKey:_key];
     }
     
-    if (!hasValidValue) {
+    if (hasValidValue) {
+        if (![self isDateField]) {
+            self.text = [self textValue];
+        }
+    } else {
         if ([self isPasswordField]) {
             self.text = @"";
         }
@@ -167,15 +203,36 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 - (NSString *)textValue
 {
-    NSString *stringValue = [self.text removeRedundantWhitespace];
+    NSString *textValue = self.text;
     
-    if ([stringValue length] == 0) {
-        stringValue = nil;
+    if (![self isPasswordField]) {
+        textValue = [textValue removeRedundantWhitespace];
     }
     
-    self.text = stringValue;
+    if ([textValue length] == 0) {
+        textValue = nil;
+    }
     
-    return stringValue;
+    self.text = textValue;
+    
+    return textValue;
+}
+
+
+#pragma mark - Block or unblock for pending event
+
+- (void)indicatePendingEvent:(BOOL)isPending
+{
+    if (isPending) {
+        _cachedText = self.text ? self.text : @"";
+        self.text = @"";
+        self.placeholder = [OStrings stringForKey:strPlaceholderPleaseWait];
+    } else if (_cachedText) {
+        self.text = _cachedText;
+        self.placeholder = [OStrings placeholderForKey:_key];
+    }
+
+    self.enabled = !isPending;
 }
 
 
@@ -218,7 +275,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         }
         
         if ([self isDateField] && !_didPickDate) {
-            NSDate *datePickerDate = self.date ? self.date : [OUtil defaultDatePickerDate];
+            NSDate *datePickerDate = self.date ? self.date : [NSDate defaultDate];
             
             [(UIDatePicker *)self.inputView setDate:datePickerDate animated:YES];
         }

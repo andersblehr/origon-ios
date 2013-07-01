@@ -16,6 +16,7 @@
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
+#import "OUtil.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OMembership+OrigoExtensions.h"
@@ -25,9 +26,9 @@
 static NSString * const kSegueToMemberView = @"segueFromMemberListToMemberView";
 static NSString * const kSegueToOrigoView = @"segueFromMemberListToOrigoView";
 
-static NSInteger const kOrigoSectionKey = 0;
-static NSInteger const kContactSectionKey = 1;
-static NSInteger const kMemberSectionKey = 2;
+static NSInteger const kSectionKeyOrigo = 0;
+static NSInteger const kSectionKeyContacts = 1;
+static NSInteger const kSectionKeyMembers = 2;
 
 static NSInteger const kHousemateSheetTag = 0;
 
@@ -178,7 +179,7 @@ static NSInteger const kHousemateSheetTag = 0;
     _membership = self.data;
     _origo = _membership.origo;
     
-    self.target = _origo;
+    self.state.target = _origo;
 }
 
 
@@ -195,9 +196,9 @@ static NSInteger const kHousemateSheetTag = 0;
         }
     }
     
-    [self setData:_origo forSectionWithKey:kOrigoSectionKey];
-    [self setData:contactMemberships forSectionWithKey:kContactSectionKey];
-    [self setData:regularMemberships forSectionWithKey:kMemberSectionKey];
+    [self setData:_origo forSectionWithKey:kSectionKeyOrigo];
+    [self setData:contactMemberships forSectionWithKey:kSectionKeyContacts];
+    [self setData:regularMemberships forSectionWithKey:kSectionKeyMembers];
 }
 
 
@@ -211,9 +212,9 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     NSString *text = nil;
     
-    if (sectionKey == kContactSectionKey) {
+    if (sectionKey == kSectionKeyContacts) {
         text = [OStrings stringForKey:strHeaderContacts];
-    } else if (sectionKey == kMemberSectionKey) {
+    } else if (sectionKey == kSectionKeyMembers) {
         if ([_origo isOfType:kOrigoTypeResidence]) {
             text = [OStrings stringForKey:strHeaderHouseholdMembers];
         } else {
@@ -249,15 +250,51 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if (sectionKey == kOrigoSectionKey) {
+    if (sectionKey == kSectionKeyOrigo) {
         [self performSegueWithIdentifier:kSegueToOrigoView sender:self];
-    } else if ((sectionKey == kContactSectionKey) || (sectionKey == kMemberSectionKey)) {
+    } else if ((sectionKey == kSectionKeyContacts) || (sectionKey == kSectionKeyMembers)) {
         [self performSegueWithIdentifier:kSegueToMemberView sender:self];
     }
 }
 
 
-#pragma mark - OTableViewListCellDelegate conformance
+#pragma mark - OTableViewListDelegate conformance
+
+- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
+{
+    return [OUtil sortKeyWithPropertyKey:kPropertyKeyName relationshipKey:kRelationshipKeyMember];
+}
+
+
+- (BOOL)willCompareObjectsInSectionWithKey:(NSInteger)sectionKey
+{
+    return [self targetIs:kOrigoTypeResidence] && (sectionKey == kSectionKeyMembers);
+}
+
+
+- (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2
+{
+    NSComparisonResult result = NSOrderedSame;
+    
+    OMember *member1 = [object1 asMembership].member;
+    OMember *member2 = [object2 asMembership].member;
+    
+    BOOL member1IsMinor = [member1 isMinor];
+    BOOL member2IsMinor = [member2 isMinor];
+    
+    if (member1IsMinor != member2IsMinor) {
+        if (member1IsMinor && !member2IsMinor) {
+            result = NSOrderedDescending;
+        } else {
+            result = NSOrderedAscending;
+        }
+    } else {
+        result = [member1.name localizedCaseInsensitiveCompare:member2.name];
+    }
+    
+    return result;
+}
+
 
 - (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
@@ -275,7 +312,7 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     BOOL canDeleteRow = NO;
     
-    if (indexPath.section != kOrigoSectionKey) {
+    if (indexPath.section != kSectionKeyOrigo) {
         OMembership *membershipForRow = [self dataAtIndexPath:indexPath];
         canDeleteRow = [_origo userIsAdmin] && ![membershipForRow.member isUser];
     }

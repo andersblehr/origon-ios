@@ -12,16 +12,11 @@
 #import "NSString+OrigoExtensions.h"
 
 #import "OMeta.h"
-#import "OState.h"
-#import "OValidator.h"
-
-static NSString * const kDefaultDate = @"1976-04-01T20:00:00Z";
-
-static NSInteger const kMinimumRealisticAge = 6;
-static NSInteger const kMaximumRealisticAge = 100;
 
 
 @implementation OUtil
+
+#pragma mark - Convenience methods
 
 + (BOOL)isSupportedCountryCode:(NSString *)countryCode
 {
@@ -29,7 +24,7 @@ static NSInteger const kMaximumRealisticAge = 100;
 }
 
 
-+ (NSString *)countryFromCountryCode:(NSString *)countryCode
++ (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode
 {
     NSString *country = nil;
     
@@ -41,59 +36,17 @@ static NSInteger const kMaximumRealisticAge = 100;
 }
 
 
-+ (NSString *)givenNameFromFullName:(NSString *)fullName
++ (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey
 {
-    NSString *givenName = nil;
+    NSString *sortKey = nil;
     
-    if ([OValidator valueIsName:fullName]) {
-        NSArray *names = [fullName componentsSeparatedByString:kSeparatorSpace];
-        
-        if ([[OMeta m] shouldUseEasternNameOrder]) {
-            givenName = names[1];
-        } else {
-            givenName = names[0];
-        }
+    if (relationshipKey) {
+        sortKey = [NSString stringWithFormat:@"%@.%@", relationshipKey, propertyKey];
+    } else {
+        sortKey = propertyKey;
     }
     
-    return givenName;
-}
-
-
-+ (NSDate *)defaultDatePickerDate
-{
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = kDateTimeFormatZulu;
-    
-    return [dateFormatter dateFromString:kDefaultDate];
-}
-
-
-+ (NSDate *)earliestValidBirthDate
-{
-    NSDateComponents *earliestBirthDateOffset = [[NSDateComponents alloc] init];
-    earliestBirthDateOffset.year = -kMaximumRealisticAge;
-    
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDate *now = [NSDate date];
-    
-    return [calendar dateByAddingComponents:earliestBirthDateOffset toDate:now options:kNilOptions];
-}
-
-
-+ (NSDate *)latestValidBirthDate
-{
-    NSDate *now = [NSDate date];
-    NSDate *latestValidBirthDate = now;
-    
-    if ([[OState s] actionIs:kActionRegister] && [[OState s] targetIs:kTargetUser]) {
-        NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
-        latestBirthDateOffset.year = -kMinimumRealisticAge;
-        
-        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-        latestValidBirthDate = [calendar dateByAddingComponents:latestBirthDateOffset toDate:now options:kNilOptions];
-    }
-    
-    return latestValidBirthDate;
+    return sortKey;
 }
 
 @end

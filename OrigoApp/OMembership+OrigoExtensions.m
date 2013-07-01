@@ -25,22 +25,6 @@ static NSString * const kMembershipTypeAssociate = @"A";
 
 @implementation OMembership (OrigoExtensions)
 
-#pragma mark - Selector implementations
-
-- (NSComparisonResult)compare:(OMembership *)other
-{
-    NSComparisonResult result = NSOrderedSame;
-    
-    if ([[OState s] viewControllerIs:kViewControllerMemberList]) {
-        result = [self.member compare:other.member];
-    } else if ([[OState s] viewControllerIs:kViewControllerOrigoList] || [[OState s] viewControllerIs:kViewControllerMember]) {
-        result = [self.origo compare:other.origo];
-    }
-    
-    return result;
-}
-
-
 #pragma mark - Meta information
 
 - (BOOL)hasContactRole

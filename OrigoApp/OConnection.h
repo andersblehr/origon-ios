@@ -29,9 +29,9 @@ extern NSInteger const kHTTPStatusForbidden;
 extern NSInteger const kHTTPStatusNotFound;
 extern NSInteger const kHTTPStatusInternalServerError;
 
-@interface OConnection : NSObject {
+@interface OConnection : NSObject<NSURLConnectionDataDelegate, NSURLConnectionDelegate> {
 @private
-    id<OConnectionDelegate> _delegate;
+    BOOL _requestIsValid;
     
     NSString *_RESTHandler;
     NSString *_RESTRoute;
@@ -41,15 +41,14 @@ extern NSInteger const kHTTPStatusInternalServerError;
     NSHTTPURLResponse *_HTTPResponse;
 	NSMutableData *_responseData;
     
-    BOOL _requestIsValid;
+    id<OConnectionDelegate> _delegate;
 }
 
 - (id)init;
 
-- (void)setAuthHeaderForEmail:(NSString *)email password:(NSString *)password;
 - (void)fetchStrings:(id)delegate;
-- (void)authenticate:(id)delegate;
-- (void)sendEmailActivationCode:(id)delegate;
-- (void)replicate:(NSArray *)entityDictionaries;
+- (void)authenticateWithEmail:(NSString *)email password:(NSString *)password;
+- (void)sendActivationCode:(NSString *)activationCode toEmailAddress:(NSString *)emailAddress;
+- (void)replicateEntities:(NSArray *)entities;
 
 @end

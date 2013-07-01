@@ -21,7 +21,6 @@
     OTextField *_repeatPasswordField;
 
     NSDictionary *_authInfo;
-    NSInteger _numberOfActivationAttempts;
 }
 
 @end

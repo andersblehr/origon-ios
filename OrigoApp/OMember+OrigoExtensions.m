@@ -29,29 +29,6 @@
 
 @implementation OMember (OrigoExtensions)
 
-#pragma mark - Selector implementations
-
-- (NSComparisonResult)compare:(OMember *)other
-{
-    NSComparisonResult result = [self.name localizedCaseInsensitiveCompare:other.name];
-    
-    if ([[OState s] viewControllerIs:kViewControllerMemberList] && [[OState s] targetIs:kOrigoTypeResidence]) {
-        BOOL thisMemberIsMinor = [self isMinor];
-        BOOL otherMemberIsMinor = [other isMinor];
-        
-        if (thisMemberIsMinor != otherMemberIsMinor) {
-            if (thisMemberIsMinor && !otherMemberIsMinor) {
-                result = NSOrderedDescending;
-            } else {
-                result = NSOrderedAscending;
-            }
-        }
-    }
-    
-    return result;
-}
-
-
 #pragma mark - Origo memberships
 
 - (OMembership *)rootMembership

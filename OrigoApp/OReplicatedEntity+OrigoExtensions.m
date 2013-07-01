@@ -12,6 +12,7 @@
 #import "NSManagedObjectContext+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
 
+#import "OCrypto.h"
 #import "OMeta.h"
 #import "OReplicator.h"
 
@@ -27,16 +28,16 @@
 
 - (NSDictionary *)relationshipRef
 {
-    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *relationshipRef = [[NSMutableDictionary alloc] init];
     
-    [dictionary setObject:self.entityId forKey:kPropertyKeyEntityId];
-    [dictionary setObject:self.entity.name forKey:kJSONKeyEntityClass];
+    relationshipRef[kPropertyKeyEntityId] = self.entityId;
+    relationshipRef[kJSONKeyEntityClass] = self.entity.name;
     
     if ([self isKindOfClass:OMember.class] && [self valueForKey:kPropertyKeyEmail]) {
-        [dictionary setObject:[self valueForKey:kPropertyKeyEmail] forKey:kPropertyKeyEmail];
+        relationshipRef[kPropertyKeyEmail] = [self valueForKey:kPropertyKeyEmail];
     }
     
-    return dictionary;
+    return relationshipRef;
 }
 
 
@@ -98,7 +99,7 @@
 
 - (void)setDeserialisedValue:(id)value forKey:(NSString *)key
 {
-    NSAttributeDescription *attribute = [[self.entity attributesByName] objectForKey:key];
+    NSAttributeDescription *attribute = [self.entity attributesByName][key];
     
     if (attribute.attributeType == NSDateAttributeType) {
         value = [NSDate dateWithDeserialisedDate:value];
@@ -117,26 +118,26 @@
     NSDictionary *attributes = [self.entity attributesByName];
     NSDictionary *relationships = [self.entity relationshipsByName];
     
-    [entityDictionary setObject:self.entity.name forKey:kJSONKeyEntityClass];
+    entityDictionary[kJSONKeyEntityClass] = self.entity.name;
     
     for (NSString *attributeKey in [attributes allKeys]) {
         if (![self isTransientProperty:attributeKey]) {
             id attributeValue = [self serialisableValueForKey:attributeKey];
             
             if (attributeValue) {
-                [entityDictionary setObject:attributeValue forKey:attributeKey];
+                entityDictionary[attributeKey] = attributeValue;
             }
         }
     }
     
     for (NSString *relationshipKey in [relationships allKeys]) {
-        NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
+        NSRelationshipDescription *relationship = relationships[relationshipKey];
         
         if (!relationship.isToMany && ![self isTransientProperty:relationshipKey]) {
             OReplicatedEntity *entity = [self valueForKey:relationshipKey];
             
             if (entity) {
-                [entityDictionary setObject:[entity relationshipRef] forKey:relationshipKey];
+                entityDictionary[relationshipKey] = [entity relationshipRef];
             }
         }
     }
@@ -167,7 +168,7 @@
     }
     
     for (NSString *relationshipKey in sortedRelationshipKeys) {
-        NSRelationshipDescription *relationship = [relationships objectForKey:relationshipKey];
+        NSRelationshipDescription *relationship = relationships[relationshipKey];
         
         if (!relationship.isToMany && ![self isTransientProperty:relationshipKey]) {
             OReplicatedEntity *entity = [self valueForKey:relationshipKey];
@@ -179,7 +180,7 @@
         }
     }
     
-    return [propertyString hashUsingSHA1];
+    return [OCrypto SHA1HashForString:propertyString];
 }
 
 
@@ -190,8 +191,8 @@
     NSDictionary *relationshipRefs = [[OMeta m].replicator stagedRelationshipRefsForEntity:self];
     
     for (NSString *relationshipKey in [relationshipRefs allKeys]) {
-        NSDictionary *relationshipRef = [relationshipRefs objectForKey:relationshipKey];
-        NSString *destinationId = [relationshipRef objectForKey:kPropertyKeyEntityId];
+        NSDictionary *relationshipRef = relationshipRefs[relationshipKey];
+        NSString *destinationId = relationshipRef[kPropertyKeyEntityId];
         
         OReplicatedEntity *entity = [[OMeta m].replicator stagedEntityWithId:destinationId];
         
@@ -272,7 +273,7 @@
 
 - (NSString *)expiresInTimeframe
 {
-    NSString *expires = [self.entity.userInfo objectForKey:@"expires"];
+    NSString *expires = self.entity.userInfo[@"expires"];
     
     if (!expires) {
         // TODO: Keep track of and act on entity expiry dates

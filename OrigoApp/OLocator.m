@@ -27,16 +27,9 @@
 
 - (void)showBlockingAlert
 {
-    _blockingAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTextLocating] message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:nil];
+    _blockingAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTextLocating] message:nil delegate:self cancelButtonTitle:nil otherButtonTitles:nil];
     
     [_blockingAlert show];
-    
-    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    activityIndicator.center = CGPointMake(_blockingAlert.bounds.size.width / 2.f, _blockingAlert.bounds.size.height - 50.f);
-    
-    [_blockingAlert addSubview:activityIndicator];
-    
-    [activityIndicator startAnimating];
 }
 
 
@@ -134,6 +127,7 @@
             [_delegate locatorDidLocate];
         }];
         
+        _blocking = NO;
         _awaitingLocation = NO;
     }
 }
@@ -170,6 +164,19 @@
         
         _awaitingLocation = NO;
     }
+}
+
+
+#pragma mark - UIAlertViewDelegate conformance
+
+- (void)willPresentAlertView:(UIAlertView *)alertView
+{
+    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    activityIndicator.center = CGPointMake(_blockingAlert.bounds.size.width / 2.f, _blockingAlert.bounds.size.height - 50.f);
+    
+    [_blockingAlert addSubview:activityIndicator];
+    
+    [activityIndicator startAnimating];
 }
 
 @end

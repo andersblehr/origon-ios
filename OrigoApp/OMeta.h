@@ -40,6 +40,9 @@ extern NSString * const kInputKeyPassword;
 extern NSString * const kInputKeyRepeatPassword;
 extern NSString * const kInputKeySignIn;
 
+extern NSString * const kJSONKeyActivationCode;
+extern NSString * const kJSONKeyDeviceId;
+extern NSString * const kJSONKeyEmail;
 extern NSString * const kJSONKeyEntityClass;
 extern NSString * const kJSONKeyIsListed;
 extern NSString * const kJSONKeyPasswordHash;
@@ -75,27 +78,29 @@ extern NSString * const kDefaultsKeyStringDate;
 @interface OMeta : NSObject {
 @private
     Reachability *_internetReachability;
+    
     NSDate *_authTokenExpiryDate;
 }
-
-@property (strong, nonatomic) NSString *userId;
-@property (strong, nonatomic) NSString *userEmail;
-@property (strong, nonatomic) NSString *lastReplicationDate;
-
-@property (strong, nonatomic, readonly) OMember *user;
-@property (strong, nonatomic, readonly) OReplicator *replicator;
-@property (strong, nonatomic, readonly) OLocator *locator;
-@property (strong, nonatomic, readonly) OSettings *settings;
-@property (strong, nonatomic, readonly) NSString *deviceId;
-@property (strong, nonatomic, readonly) NSString *authToken;
-@property (strong, nonatomic, readonly) NSString *appVersion;
-@property (strong, nonatomic, readonly) NSString *displayLanguage;
 
 @property (nonatomic, readonly) BOOL internetConnectionIsWiFi;
 @property (nonatomic, readonly) BOOL internetConnectionIsWWAN;
 
-@property (weak, nonatomic, readonly) NSManagedObjectContext *context;
+@property (strong, nonatomic) NSString *userId;
+@property (strong, nonatomic) NSString *userEmail;
+@property (strong, nonatomic) NSString *deviceId;
+@property (strong, nonatomic) NSString *lastReplicationDate;
+
+@property (strong, nonatomic, readonly) NSString *authToken;
+@property (strong, nonatomic, readonly) NSString *appVersion;
+@property (strong, nonatomic, readonly) NSString *displayLanguage;
+
+@property (strong, nonatomic, readonly) OMember *user;
+@property (strong, nonatomic, readonly) OSettings *settings;
+@property (strong, nonatomic, readonly) OReplicator *replicator;
+@property (strong, nonatomic, readonly) OLocator *locator;
+
 @property (strong, nonatomic, readonly) UIDatePicker *sharedDatePicker;
+@property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 
 + (OMeta *)m;
 

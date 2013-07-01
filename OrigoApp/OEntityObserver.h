@@ -1,5 +1,5 @@
 //
-//  OEntityObservingDelegate.h
+//  OEntityObserver.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 28.11.12.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol OEntityObservingDelegate <NSObject>
+@protocol OEntityObserver <NSObject>
 
 @required
 - (void)entityDidChange;

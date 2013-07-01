@@ -41,6 +41,22 @@ static void uncaughtExceptionHandler(NSException *exception)
 }
 
 
+#pragma mark - Auxiliary methods
+
+- (void)saveApplicationState
+{
+    if ([[OMeta m] userIsSignedIn]) {
+        [[OMeta m].replicator saveUserReplicationState];
+        
+        if (![[OMeta m] userIsRegistered]) {
+            [ODefaults setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
+        }
+    }
+    
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
 #pragma mark - Persistent store release
 
 - (void)releasePersistentStore
@@ -51,7 +67,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 }
 
 
-#pragma mark - Core Data properties
+#pragma mark - Core Data property accessors
 
 - (NSManagedObjectModel *)managedObjectModel
 {
@@ -107,7 +123,6 @@ static void uncaughtExceptionHandler(NSException *exception)
     
     OLogDebug(@"Device is %@.", [UIDevice currentDevice].model);
     OLogDebug(@"iOS version is %@.", [UIDevice currentDevice].systemVersion);
-    OLogDebug(@"Device name is %@.", [UIDevice currentDevice].name);
     OLogDebug(@"System language is '%@'.", [[OMeta m] displayLanguage]);
 
     if ([OStrings hasStrings]) {
@@ -129,13 +144,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    if ([[OMeta m] userIsSignedIn]) {
-        [[OMeta m].replicator saveUserReplicationState];
-        
-        if (![[OMeta m] userIsRegistered]) {
-            [ODefaults setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
-        }
-    }
+    [self saveApplicationState];
     
     _didEnterBackground = YES;
 }
@@ -149,24 +158,24 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    if ([[OMeta m] userIsSignedIn]) {
-        [[OMeta m].replicator replicate];
-    }
-    
     if (_didEnterBackground) {
         if ([[OState s].viewController respondsToSelector:@selector(didResumeFromBackground)]) {
             [[OState s].viewController didResumeFromBackground];
         }
         
         _didEnterBackground = NO;
+    } else {
+        if ([[OMeta m] userIsSignedIn]) {
+            [[OMeta m].replicator replicate];
+        }
     }
 }
 
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    if ([[OMeta m] userIsSignedIn]) {
-        [[OMeta m].replicator saveUserReplicationState];
+    if (!_didEnterBackground) {
+        [self saveApplicationState];
     }
 }
 

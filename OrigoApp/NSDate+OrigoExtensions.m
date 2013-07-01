@@ -12,6 +12,8 @@
 
 NSString * const kDateTimeFormatZulu = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
 
+static NSString * const kDefaultDate = @"1976-04-01T20:00:00Z";
+
 
 @implementation NSDate (OrigoExtensions)
 
@@ -23,6 +25,17 @@ NSString * const kDateTimeFormatZulu = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     
     return [calendar components:NSYearCalendarUnit fromDate:self toDate:now options:kNilOptions];
+}
+
+
+#pragma mark - Default date
+
++ (NSDate *)defaultDate
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = kDateTimeFormatZulu;
+    
+    return [dateFormatter dateFromString:kDefaultDate];
 }
 
 

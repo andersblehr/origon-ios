@@ -62,7 +62,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
                 elementsAreVisible = NO;
             }
             
-            elementsAreVisible = elementsAreVisible || [_cell.localState actionIs:kActionInput];
+            elementsAreVisible = elementsAreVisible || [_cell.state actionIs:kActionInput];
         }
     }
     
@@ -330,14 +330,14 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
             [nonAlignedConstraints addObject:[self labeledVerticalTextFieldConstraints]];
             [nonAlignedConstraints addObjectsFromArray:[self labeledHorizontalConstraints]];
             
-            [constraints setObject:allTrailingConstraints forKey:allTrailingOptions];
-            [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
+            constraints[allTrailingOptions] = allTrailingConstraints;
+            constraints[noAlignmentOptions] = nonAlignedConstraints;
         } else {
             NSMutableArray *nonAlignedConstraints = [[NSMutableArray alloc] init];
             [nonAlignedConstraints addObject:[self centredVerticalConstraints]];
             [nonAlignedConstraints addObjectsFromArray:[self centredHorizontalConstraints]];
             
-            [constraints setObject:nonAlignedConstraints forKey:noAlignmentOptions];
+            constraints[noAlignmentOptions] = nonAlignedConstraints;
         }
         
 //        int i = 0;
