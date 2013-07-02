@@ -257,7 +257,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (id)nextInputField
 {
-    NSArray *keys = _blueprint.keys;
+    NSArray *keys = _blueprint.allTextFieldKeys;
     NSInteger indexOfTextField = _inputField ? [keys indexOfObject:[_inputField key]] : -1;
     NSString *inputFieldKey = nil;
     UIView *inputField = nil;
@@ -395,7 +395,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if ([self isListCell]) {
         [_listDelegate populateListCell:self atIndexPath:_indexPath];
     } else {
-        for (NSString *propertyKey in _blueprint.keys) {
+        for (NSString *propertyKey in _blueprint.allTextFieldKeys) {
             id value = [_entity valueForKey:propertyKey];
             
             if (value) {
@@ -418,24 +418,20 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _entity = [_inputDelegate targetEntity];
     }
     
-    for (NSString *propertyKey in _blueprint.keys) {
-        id textField = [self textFieldForKey:propertyKey];
+    for (NSString *key in _blueprint.allTextFieldKeys) {
+        id textField = [self textFieldForKey:key];
         
         if ([textField hasValue]) {
             if ([textField isDateField]) {
-                [_entity setValue:[textField date] forKey:propertyKey];
+                [_entity setValue:[textField date] forKey:key];
             } else {
-                [_entity setValue:[textField textValue] forKey:propertyKey];
+                [_entity setValue:[textField textValue] forKey:key];
             }
         }
     }
     
-    if ([_inputDelegate respondsToSelector:@selector(additionalInputValues)]) {
-        NSDictionary *additionalValues = [_inputDelegate additionalInputValues];
-        
-        for (NSString *key in [additionalValues allKeys]) {
-            [_entity setValue:additionalValues[key] forKey:key];
-        }
+    for (NSString *key in _blueprint.indirectKeys) {
+        [_entity setValue:[_inputDelegate inputValueForIndirectKey:key] forKey:key];
     }
 }
 

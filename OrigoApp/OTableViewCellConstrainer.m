@@ -240,7 +240,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     BOOL isTopmostElement = YES;
     BOOL isBelowLabel = NO;
     
-    for (NSString *key in _blueprint.keys) {
+    for (NSString *key in _blueprint.allTextFieldKeys) {
         [self configureElementsIfNeededForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {
@@ -274,7 +274,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 {
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
-    for (NSString *key in _blueprint.keys) {
+    for (NSString *key in _blueprint.allTextFieldKeys) {
         [self configureElementsIfNeededForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {

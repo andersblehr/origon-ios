@@ -31,8 +31,6 @@
 
 static NSInteger const kSectionKeyAuth = 0;
 
-static NSInteger const kActivationCodeLength = 6;
-
 static NSInteger const kAlertTagWelcomeBack = 0;
 static NSInteger const kAlertTagActivationFailed = 1;
 
@@ -113,33 +111,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-#pragma mark - Initiating server requests
-
-- (void)sendUserSignInRequest
-{
-    [OMeta m].userEmail = [_emailField textValue];
-    
-    OConnection *connection = [[OConnection alloc] init];
-    [connection authenticateWithEmail:[OMeta m].userEmail password:_passwordField.text];
-}
-
-
-- (void)sendUserActivationRequest
-{
-    OConnection *connection = [[OConnection alloc] init];
-    [connection authenticateWithEmail:[OMeta m].userEmail password:_repeatPasswordField.text];
-}
-
-
-- (void)sendEmailActivationRequest
-{
-    NSString *activationCode = [[OCrypto generateUUID] substringToIndex:kActivationCodeLength];
-    
-    OConnection *connection = [[OConnection alloc] init];
-    [connection sendActivationCode:activationCode toEmailAddress:self.data];
-}
-
-
 #pragma mark - Handling server responses
 
 - (void)userDidSignUpWithData:(NSDictionary *)data
@@ -209,7 +180,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             welcomeBackAlert.tag = kAlertTagWelcomeBack;
             [welcomeBackAlert show];
         } else if ([self targetIs:kTargetEmail]) {
-            [self sendEmailActivationRequest];
+            [OConnection sendActivationCodeToEmail:self.data];
         }
     }
 }
@@ -255,7 +226,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         text = [OStrings stringForKey:strFooterSignInOrRegister];
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivate], [_emailField textValue]];
+            text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivateUser], _emailField.text];
         } else if ([self targetIs:kTargetEmail]) {
             text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivateEmail], self.data];
         }
@@ -310,10 +281,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)processInput
 {
     if ([self actionIs:kActionSignIn]) {
-        [self sendUserSignInRequest];
+        [OMeta m].userEmail = _emailField.text;
+        [OConnection signInWithEmail:[OMeta m].userEmail password:_passwordField.text];
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            [self sendUserActivationRequest];
+            [OConnection activateWithEmail:[OMeta m].userEmail password:_repeatPasswordField.text];
         } else if ([self targetIs:kTargetEmail]) {
             [OMeta m].userEmail = self.data;
             [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
@@ -324,12 +296,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (BOOL)willValidateInputForKey:(NSString *)key
 {
-    BOOL willValidate = NO;
-    
-    willValidate = willValidate || [key isEqualToString:kInputKeyActivationCode];
-    willValidate = willValidate || [key isEqualToString:kInputKeyRepeatPassword];
-    
-    return willValidate;
+    return [@[kInputKeyActivationCode, kInputKeyRepeatPassword] containsObject:key];
 }
 
 

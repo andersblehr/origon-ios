@@ -68,13 +68,13 @@
 {
     [_dirtyEntities unionSet:[[OMeta m].context entitiesAwaitingReplication]];
     
-    NSMutableArray *entityDictionaries = [[NSMutableArray alloc] init];
+    NSMutableArray *entities = [[NSMutableArray alloc] init];
     
     for (OReplicatedEntity *entity in _dirtyEntities) {
-        [entityDictionaries addObject:[entity toDictionary]];
+        [entities addObject:[entity toDictionary]];
     }
     
-    [[[OConnection alloc] init] replicateEntities:entityDictionaries];
+    [OConnection replicateEntities:entities];
 }
 
 

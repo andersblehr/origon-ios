@@ -26,7 +26,8 @@ extern CGFloat const kMinimumCellPadding;
 
 @property (strong, nonatomic, readonly) NSString *titleKey;
 @property (strong, nonatomic, readonly) NSArray *detailKeys;
-@property (strong, nonatomic, readonly) NSArray *keys;
+@property (strong, nonatomic, readonly) NSArray *indirectKeys;
+@property (strong, nonatomic, readonly) NSArray *allTextFieldKeys;
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 - (id)initWithEntityClass:(Class)entityClass;

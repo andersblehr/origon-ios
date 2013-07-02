@@ -77,7 +77,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             }
             
             [_instance initialiseState];
-            [[OState s] reflectState:_state];
             [_instance initialiseDataSource];
             
             for (NSNumber *sectionKey in [_sectionData allKeys]) {
@@ -90,6 +89,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     } else {
         _state.action = kActionSetup;
     }
+    
+    [[OState s] reflectState:_state];
 }
 
 
@@ -372,18 +373,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Utility methods
 
-- (void)reflectState
-{
-    if (!_didJustLoad) {
-        if (!_didInitialise) {
-            [self initialiseInstance];
-        }
-    
-        [[OState s] reflectState:_state];
-    }
-}
-
-
 - (void)toggleEditMode
 {
     [_detailCell toggleEditMode];
@@ -539,7 +528,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [super viewWillAppear:animated];
     
-    [self reflectState];
+    if (!_didJustLoad) {
+        if (!_didInitialise) {
+            [self initialiseInstance];
+        }
+        
+        [[OState s] reflectState:_state];
+    }
     
     _wasHidden = _isHidden;
     _isHidden = NO;
@@ -561,9 +556,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [super viewDidAppear:animated];
     
-    if (![OStrings hasStrings]) {
+    if ([_state actionIs:kActionSetup]) {
         [self.activityIndicator startAnimating];
-        [[[OConnection alloc] init] fetchStrings:self];
+        [OConnection fetchStrings];
     } else if ([_state actionIs:kActionRegister]) {
         [[_detailCell nextInputField] becomeFirstResponder];
     } else if (![_viewControllerId isEqualToString:kViewControllerAuth] && ![[OMeta m] userIsSignedIn]) {

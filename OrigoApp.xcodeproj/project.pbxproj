@@ -405,7 +405,7 @@
 			name = Media;
 			sourceTree = "<group>";
 		};
-		5C36BEA51471A05700DD3CEA /* Model */ = {
+		5C36BEA51471A05700DD3CEA /* Data Model */ = {
 			isa = PBXGroup;
 			children = (
 				5C36BE9A1470507700DD3CEA /* OrigoApp.xcdatamodeld */,
@@ -458,7 +458,7 @@
 				5CAEE0AD163E513900A9046B /* OYearlySchedule.h */,
 				5CAEE0AE163E513900A9046B /* OYearlySchedule.m */,
 			);
-			name = Model;
+			name = "Data Model";
 			sourceTree = "<group>";
 		};
 		5C4F9766149529BF006E244F /* Cocoa Categories */ = {
@@ -499,7 +499,7 @@
 			name = "Cell Layout";
 			sourceTree = "<group>";
 		};
-		5C5ED5CB14F2E95B006BBDFB /* Model Categories */ = {
+		5C5ED5CB14F2E95B006BBDFB /* Data Model Categories */ = {
 			isa = PBXGroup;
 			children = (
 				5C3374811563FBE200DEF67D /* OMember+OrigoExtensions.h */,
@@ -513,7 +513,7 @@
 				5C1D6CC81743C80900479F7D /* OSettings+OrigoExtensions.h */,
 				5C1D6CC91743C80900479F7D /* OSettings+OrigoExtensions.m */,
 			);
-			name = "Model Categories";
+			name = "Data Model Categories";
 			sourceTree = "<group>";
 		};
 		5CB49DCD14881E98006EA2F8 /* Protocols */ = {
@@ -643,8 +643,8 @@
 				5C50F2581779A6AD00B961BC /* Cell Layout */,
 				5C4F9766149529BF006E244F /* Cocoa Categories */,
 				5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */,
-				5C36BEA51471A05700DD3CEA /* Model */,
-				5C5ED5CB14F2E95B006BBDFB /* Model Categories */,
+				5C36BEA51471A05700DD3CEA /* Data Model */,
+				5C5ED5CB14F2E95B006BBDFB /* Data Model Categories */,
 				5CB49DCD14881E98006EA2F8 /* Protocols */,
 				5CB49DCE14881EC6006EA2F8 /* View Controllers */,
 				5CB49DD114882012006EA2F8 /* Third Party */,

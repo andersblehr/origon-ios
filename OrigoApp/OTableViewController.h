@@ -87,7 +87,6 @@ extern NSString * const kCustomCell;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser;
 
-- (void)reflectState;
 - (void)toggleEditMode;
 - (void)reloadSectionsIfNeeded;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;

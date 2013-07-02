@@ -14,9 +14,12 @@
 
 #import "NSDate+OrigoExtensions.h"
 
-static NSString * const kOrigoSeasoning = @"socroilgao";
+static NSString * const kDefaultSeasoning = @"socroilgao";
 
-static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+static NSString * const kCredentialsFormat = @"%@:%@";
+static NSString * const kBasicAuthFormat = @"Basic %@";
+
+static NSInteger const kActivationCodeLength = 6;
 
 
 @implementation OCrypto
@@ -53,11 +56,11 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 
 + (NSString *)seasonAndHashString:(NSString *)string
 {
-    return [self SHA1HashForString:[self string:string seasonedWith:kOrigoSeasoning]];
+    return [self SHA1HashForString:[self string:string seasonedWith:kDefaultSeasoning]];
 }
 
 
-#pragma mark - Token and password processing
+#pragma mark - Tokens & authentication
 
 + (NSString *)timestampToken
 {
@@ -79,61 +82,70 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
-+ (NSString *)basicAuthHeaderWithUserId:(NSString *)userId password:(NSString *)password
-{
-    NSString *credentials = [NSString stringWithFormat:@"%@:%@", userId, password];
-    
-    return [NSString stringWithFormat:@"Basic %@", [self base64EncodeString:credentials]];
-}
-
-
 + (NSString *)passwordHashWithPassword:(NSString *)password
 {
     return [self seasonAndHashString:password];
 }
 
 
-#pragma mark - Crypto methods
++ (NSString *)basicAuthHeaderWithUserId:(NSString *)userId password:(NSString *)password
+{
+    NSString *credentials = [NSString stringWithFormat:kCredentialsFormat, userId, password];
+    
+    return [NSString stringWithFormat:kBasicAuthFormat, [self base64EncodeString:credentials]];
+}
 
-//  This method from public domain. Credits: http://www.cocoadev.com/index.pl?BaseSixtyFour
+
+#pragma mark - Encoding & hashing
+
 + (NSString *)base64EncodeString:(NSString *)string;
 {
+    static const char table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    
+    NSString *encodedString = nil;
 	NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
     
-    if ([data length] == 0)
-		return @"";
+    if ([data length]) {
+        char *characters = malloc((([data length] + 2) / 3) * 4);
+
+        NSUInteger length = 0;
+        NSUInteger i = 0;
+        
+        while (i < [string length]) {
+            char buffer[3] = {0,0,0};
+            short bufferLength = 0;
+            
+            while ((bufferLength < 3) && (i < [data length])) {
+                buffer[bufferLength++] = ((char *)[data bytes])[i++];
+            }
+            
+            characters[length++] = table[(buffer[0] & 0xFC) >> 2];
+            characters[length++] = table[((buffer[0] & 0x03) << 4) | ((buffer[1] & 0xF0) >> 4)];
+            
+            if (bufferLength > 1) {
+                characters[length++] = table[((buffer[1] & 0x0F) << 2) | ((buffer[2] & 0xC0) >> 6)];
+            } else {
+                characters[length++] = '=';
+            }
+            
+            if (bufferLength > 2) {
+                characters[length++] = table[buffer[2] & 0x3F];
+            } else {
+                characters[length++] = '=';
+            }
+        }
+        
+        encodedString = [[NSString alloc] initWithBytesNoCopy:characters length:length encoding:NSASCIIStringEncoding freeWhenDone:YES];
+    }
     
-    char *characters = malloc((([data length] + 2) / 3) * 4);
-	if (characters == NULL)
-		return nil;
-	NSUInteger length = 0;
-	
-	NSUInteger i = 0;
-	while (i < [string length])
-	{
-		char buffer[3] = {0,0,0};
-		short bufferLength = 0;
-		while (bufferLength < 3 && i < [data length])
-			buffer[bufferLength++] = ((char *)[data bytes])[i++];
-		
-		characters[length++] = base64EncodingTable[(buffer[0] & 0xFC) >> 2];
-		characters[length++] = base64EncodingTable[((buffer[0] & 0x03) << 4) | ((buffer[1] & 0xF0) >> 4)];
-		if (bufferLength > 1)
-			characters[length++] = base64EncodingTable[((buffer[1] & 0x0F) << 2) | ((buffer[2] & 0xC0) >> 6)];
-		else characters[length++] = '=';
-		if (bufferLength > 2)
-			characters[length++] = base64EncodingTable[buffer[2] & 0x3F];
-		else characters[length++] = '=';
-	}
-	
-	return [[NSString alloc] initWithBytesNoCopy:characters length:length encoding:NSASCIIStringEncoding freeWhenDone:YES];
+    return encodedString;
 }
 
 
 + (NSString *)SHA1HashForString:(NSString *)string;
 {
-    const char *charString = [string cStringUsingEncoding:NSUTF8StringEncoding];
-    NSData *data = [NSData dataWithBytes:charString length:[string length]];
+    const char *CString = [string cStringUsingEncoding:NSUTF8StringEncoding];
+    NSData *data = [NSData dataWithBytes:CString length:[string length]];
     
     uint8_t SHA1Digest[CC_SHA1_DIGEST_LENGTH];
     CC_SHA1(data.bytes, [data length], SHA1Digest);
@@ -148,6 +160,8 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
 }
 
 
+#pragma mark - Generating UUIDs & activation codes
+
 + (NSString *)generateUUID
 {
     CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
@@ -159,6 +173,12 @@ static const char base64EncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk
     CFRelease(UUIDAsCFStringRef);
     
     return UUID;
+}
+
+
++ (NSString *)generateActivationCode
+{
+    return [[self generateUUID] substringToIndex:kActivationCodeLength];
 }
 
 @end
