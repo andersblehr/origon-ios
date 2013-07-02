@@ -33,8 +33,8 @@ extern NSInteger const kHTTPStatusInternalServerError;
 @private
     BOOL _requestIsValid;
     
-    NSString *_RESTHandler;
-    NSString *_RESTRoute;
+    NSString *_root;
+    NSString *_path;
     
     NSMutableURLRequest *_URLRequest;
     NSMutableDictionary *_URLParameters;
@@ -44,11 +44,11 @@ extern NSInteger const kHTTPStatusInternalServerError;
     id<OConnectionDelegate> _delegate;
 }
 
-- (id)init;
++ (void)signInWithEmail:(NSString *)email password:(NSString *)password;
++ (void)activateWithEmail:(NSString *)email password:(NSString *)password;
++ (void)sendActivationCodeToEmail:(NSString *)email;
 
-- (void)fetchStrings:(id)delegate;
-- (void)authenticateWithEmail:(NSString *)email password:(NSString *)password;
-- (void)sendActivationCode:(NSString *)activationCode toEmailAddress:(NSString *)emailAddress;
-- (void)replicateEntities:(NSArray *)entities;
++ (void)fetchStrings;
++ (void)replicateEntities:(NSArray *)entities;
 
 @end

@@ -65,7 +65,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 [_emailField becomeFirstResponder];
                 
                 NSString *alertTitle = [OStrings stringForKey:strAlertTitleMemberExists];
-                NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, [_emailField textValue], _origo.name];
+                NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, _emailField.text, _origo.name];
                 [OAlert showAlertWithTitle:alertTitle text:alertMessage];
                 
                 _candidate = nil;
@@ -130,7 +130,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if ([self targetIs:kTargetUser]) {
             sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
         } else {
-            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [self givenNameFromFullName:[_nameField textValue]]];
+            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [self givenNameFromFullName:_nameField.text]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemaleMinor];
@@ -139,7 +139,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         if ([self targetIs:kTargetUser]) {
             sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
         } else {
-            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [self givenNameFromFullName:[_nameField textValue]]];
+            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [self givenNameFromFullName:_nameField.text]];
         }
         
         femaleLabel = [OStrings stringForKey:strTermFemale];
@@ -185,7 +185,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)promptForUserEmailChangeConfirmation
 {
-    UIAlertView *emailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleUserEmailChange] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextUserEmailChange], _member.email, [_emailField textValue]] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
+    UIAlertView *emailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleUserEmailChange] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextUserEmailChange], _member.email, _emailField.text] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
     emailChangeAlert.tag = kEmailChangeAlertTag;
     
     [emailChangeAlert show];
@@ -418,7 +418,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             }
         }
     } else if ([self actionIs:kActionEdit]) {
-        if ([_member hasValueForKey:kPropertyKeyEmail] && ![[_emailField textValue] isEqualToString:_member.email]) {
+        if ([_member hasValueForKey:kPropertyKeyEmail] && ![_emailField.text isEqualToString:_member.email]) {
             if ([self targetIs:kTargetUser]) {
                 [self promptForUserEmailChangeConfirmation];
             } else {
@@ -448,6 +448,20 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
+- (id)inputValueForIndirectKey:(NSString *)key
+{
+    id inputValue = nil;
+    
+    if ([key isEqualToString:kPropertyKeyGender]) {
+        inputValue = _gender;
+    } else if ([key isEqualToString:kPropertyKeyGivenName]) {
+        inputValue = [self givenNameFromFullName:_member.name];
+    }
+    
+    return inputValue;
+}
+
+
 - (BOOL)shouldEnableInputFieldWithKey:(NSString *)key
 {
     BOOL shouldEnable = YES;
@@ -460,17 +474,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (NSDictionary *)additionalInputValues
-{
-    NSMutableDictionary *additionalValues = [[NSMutableDictionary alloc] init];
-    
-    additionalValues[kPropertyKeyGender] = _gender;
-    additionalValues[kPropertyKeyGivenName] = [self givenNameFromFullName:_member.name];
-    
-    return additionalValues;
-}
-
-
 #pragma mark - OModalViewControllerDelegate conformance
 
 - (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier
@@ -478,10 +481,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if ([identifier isEqualToString:kViewControllerAuth]) {
         [super dismissModalViewControllerWithIdentifier:identifier needsReloadData:NO];
         
-        if ([_member.email isEqualToString:[_emailField textValue]]) {
+        if ([_member.email isEqualToString:_emailField.text]) {
             [self persistMember];
         } else {
-            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleEmailChangeFailed] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextEmailChangeFailed], [_emailField textValue]] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
+            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleEmailChangeFailed] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextEmailChangeFailed], _emailField.text] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
             [failedEmailChangeAlert show];
             
             [self toggleEditMode];
@@ -545,7 +548,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         case kEmailChangeAlertTag:
             if (buttonIndex == kEmailChangeButtonContinue) {
                 [self toggleEditMode];
-                [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:[_emailField textValue]];
+                [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:_emailField.text];
             } else {
                 [_emailField becomeFirstResponder];
             }

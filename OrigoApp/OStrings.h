@@ -26,7 +26,7 @@ extern NSString * const strTermCountry;
 extern NSString * const strLabelSignIn;
 extern NSString * const strLabelActivate;
 extern NSString * const strFooterSignInOrRegister;
-extern NSString * const strFooterActivate;
+extern NSString * const strFooterActivateUser;
 extern NSString * const strFooterActivateEmail;
 extern NSString * const strPlaceholderAuthEmail;
 extern NSString * const strPlaceholderPassword;

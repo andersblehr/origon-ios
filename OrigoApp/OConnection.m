@@ -58,17 +58,16 @@ static NSString * const kCharsetUTF8 = @"utf-8";
 static NSString * const kMediaTypeJSONUTF8 = @"application/json;charset=utf-8";
 static NSString * const kMediaTypeJSON = @"application/json";
 
-static NSString * const kRESTHandlerStrings = @"strings";
-static NSString * const kRESTHandlerAuth = @"auth";
-static NSString * const kRESTHandlerModel = @"model";
+static NSString * const kRootStrings = @"strings";
+static NSString * const kRootAuth = @"auth";
+static NSString * const kRootModel = @"model";
 
-static NSString * const kRESTRouteAuthSignIn = @"sign-in";
-static NSString * const kRESTRouteAuthActivate = @"activate";
-static NSString * const kRESTRouteAuthEmailCode = @"emailcode";
-static NSString * const kRESTRouteModelReplicate = @"replicate";
-static NSString * const kRESTRouteModelFetch = @"fetch";
+static NSString * const kPathSignIn = @"sign-in";
+static NSString * const kPathActivate = @"activate";
+static NSString * const kPathSendCode = @"sendcode";
+static NSString * const kPathReplicate = @"replicate";
+static NSString * const kPathFetch = @"fetch";
 
-static NSString * const kURLParameterStringToken = @"token";
 static NSString * const kURLParameterAuthToken = @"token";
 static NSString * const kURLParameterDeviceId = @"duid";
 static NSString * const kURLParameterDevice = @"device";
@@ -79,12 +78,12 @@ static NSString * const kURLParameterVersion = @"version";
 
 #pragma mark - Auxiliary methods
 
-- (NSString *)origoServerURL
+- (NSString *)serverURL
 {
     NSString *origoServer = [[OMeta m] deviceIsSimulator] ? kOrigoDevServer : kOrigoProdServer;
     NSMutableString *protocol = [NSMutableString stringWithString:kHTTPProtocol];
     
-    if ([_RESTHandler isEqualToString:kRESTHandlerAuth] && ![[OMeta m] deviceIsSimulator]) {
+    if ([_root isEqualToString:kRootAuth] && ![[OMeta m] deviceIsSimulator]) {
         [protocol appendString:kHTTPProtocolSuffixSSL];
     }
     
@@ -102,13 +101,13 @@ static NSString * const kURLParameterVersion = @"version";
         [self setValue:[OMeta m].appVersion forURLParameter:kURLParameterVersion];
         
         _URLRequest.HTTPMethod = HTTPMethod;
-        _URLRequest.URL = [[[[NSURL URLWithString:[self origoServerURL]] URLByAppendingPathComponent:_RESTHandler] URLByAppendingPathComponent:_RESTRoute] URLByAppendingURLParameters:_URLParameters];
+        _URLRequest.URL = [[[[NSURL URLWithString:[self serverURL]] URLByAppendingPathComponent:_root] URLByAppendingPathComponent:_path] URLByAppendingURLParameters:_URLParameters];
         
         [self setValue:kMediaTypeJSONUTF8 forHTTPHeaderField:kHTTPHeaderContentType];
         [self setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
         [self setValue:kCharsetUTF8 forHTTPHeaderField:kHTTPHeaderAcceptCharset];
         
-        if (entities) {
+        if (entities && [entities count]) {
             _URLRequest.HTTPBody = [NSJSONSerialization serialise:entities];
         }
         
@@ -132,6 +131,22 @@ static NSString * const kURLParameterVersion = @"version";
     } else {
         [self connection:nil didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:[OStrings stringForKey:strAlertTextNoInternet] forKey:NSLocalizedDescriptionKey]]];
     }
+}
+
+
+- (void)authenticateWithPath:(NSString *)path email:(NSString *)email password:(NSString *)password
+{
+    _root = kRootAuth;
+    _path = path;
+    
+    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    [self setValue:[OCrypto basicAuthHeaderWithUserId:email password:password] forHTTPHeaderField:kHTTPHeaderAuthorization];
+    
+    if ([_path isEqualToString:kPathSignIn]) {
+        [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
+    }
+    
+    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OState s].viewController];
 }
 
 
@@ -189,70 +204,71 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-#pragma mark - Server requests
-
-- (void)fetchStrings:(id)delegate
+- (id)initWithRoot:(NSString *)root path:(NSString *)path
 {
-    _RESTHandler = kRESTHandlerStrings;
-    _RESTRoute = [OMeta m].displayLanguage;
+    self = [self init];
     
-    if ([[OMeta m] userIsSignedIn]) {
-        [self setValue:[OMeta m].authToken forURLParameter:kURLParameterStringToken];
+    if (self) {
+        _root = root;
+        _path = path;
+    }
+    
+    return self;
+}
+
+
+#pragma mark - Authentication
+
++ (void)signInWithEmail:(NSString *)email password:(NSString *)password
+{
+    [[[OConnection alloc] init] authenticateWithPath:kPathSignIn email:email password:password];
+}
+
+
++ (void)activateWithEmail:(NSString *)email password:(NSString *)password
+{
+    [[[OConnection alloc] init] authenticateWithPath:kPathActivate email:email password:password];
+}
+
+
++ (void)sendActivationCodeToEmail:(NSString *)email
+{
+    [[[OConnection alloc] init] authenticateWithPath:kPathSendCode email:email password:[OCrypto generateActivationCode]];
+}
+
+
+#pragma mark - UI strings
+
++ (void)fetchStrings
+{
+    id delegate = nil;
+    
+    OConnection *connection = [[OConnection alloc] initWithRoot:kRootStrings path:[OMeta m].displayLanguage];
+    
+    if ([OStrings hasStrings]) {
+        [connection setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+        delegate = OStrings.class;
     } else {
-        [self setValue:[OCrypto timestampToken] forURLParameter:kURLParameterStringToken];
+        [connection setValue:[OCrypto timestampToken] forURLParameter:kURLParameterAuthToken];
+        delegate = [OState s].viewController;
     }
     
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
+    [connection performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
 }
 
 
-- (void)authenticateWithEmail:(NSString *)email password:(NSString *)password
+#pragma mark - Entity replication
+
++ (void)replicateEntities:(NSArray *)entities
 {
-    _RESTHandler = kRESTHandlerAuth;
+    NSString *path = [entities count] ? kPathReplicate : kPathFetch;
+    NSString *HTTPMethod = [entities count] ? kHTTPMethodPOST : kHTTPMethodGET;
     
-    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    [self setValue:[OCrypto basicAuthHeaderWithUserId:email password:password] forHTTPHeaderField:kHTTPHeaderAuthorization];
+    OConnection *connection = [[OConnection alloc] initWithRoot:kRootModel path:path];
+    [connection setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    [connection setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     
-    if ([[OState s] actionIs:kActionSignIn]) {
-        _RESTRoute = kRESTRouteAuthSignIn;
-        
-        [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
-    } else if ([[OState s] actionIs:kActionActivate]) {
-        _RESTRoute = kRESTRouteAuthActivate;
-    }
-    
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OState s].viewController];
-}
-
-
-- (void)sendActivationCode:(NSString *)activationCode toEmailAddress:(NSString *)emailAddress
-{
-    _RESTHandler = kRESTHandlerAuth;
-    _RESTRoute = kRESTRouteAuthEmailCode;
-    
-    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    [self setValue:[OCrypto basicAuthHeaderWithUserId:emailAddress password:activationCode] forHTTPHeaderField:kHTTPHeaderAuthorization];
-    
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OState s].viewController];
-}
-
-
-- (void)replicateEntities:(NSArray *)entities
-{
-    _RESTHandler = kRESTHandlerModel;
-    
-    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
-    
-    if ([entities count]) {
-        _RESTRoute = kRESTRouteModelReplicate;
-        
-        [self performHTTPMethod:kHTTPMethodPOST entities:entities delegate:[OMeta m].replicator];
-    } else {
-        _RESTRoute = kRESTRouteModelFetch;
-        
-        [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OMeta m].replicator];
-    }
+    [connection performHTTPMethod:HTTPMethod entities:entities delegate:[OMeta m].replicator];
 }
 
 

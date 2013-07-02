@@ -65,9 +65,9 @@ CGFloat const kMinimumCellPadding = 0.1f;
 - (void)consolidateKeys
 {
     if (_titleKey) {
-        _keys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
+        _allTextFieldKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
     } else {
-        _keys = _detailKeys;
+        _allTextFieldKeys = _detailKeys;
     }
     
     _textViewKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
@@ -117,6 +117,8 @@ CGFloat const kMinimumCellPadding = 0.1f;
             } else {
                 _detailKeys = @[kPropertyKeyMobilePhone, kPropertyKeyEmail];
             }
+            
+            _indirectKeys = @[kPropertyKeyGender, kPropertyKeyGivenName];
         } else if (entityClass == OOrigo.class) {
             _hasPhoto = NO;
             

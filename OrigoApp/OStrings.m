@@ -37,7 +37,7 @@ NSString * const strTermCountry                      = @"strTermCountry";
 NSString * const strLabelSignIn                      = @"strLabelSignIn";
 NSString * const strLabelActivate                    = @"strLabelActivate";
 NSString * const strFooterSignInOrRegister           = @"strFooterSignInOrRegister";
-NSString * const strFooterActivate                   = @"strFooterActivate";
+NSString * const strFooterActivateUser               = @"strFooterActivateUser";
 NSString * const strFooterActivateEmail              = @"strFooterActivateEmail";
 NSString * const strPlaceholderAuthEmail             = @"strPlaceholderAuthEmail";
 NSString * const strPlaceholderPassword              = @"strPlaceholderPassword";
@@ -231,7 +231,7 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
         NSDate *stringDate = [ODefaults globalDefaultForKey:kDefaultsKeyStringDate];
         
         if (stringDate && ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
-            [[[OConnection alloc] init] fetchStrings:self];
+            [OConnection fetchStrings];
         }
     }
 }
