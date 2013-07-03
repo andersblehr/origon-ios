@@ -8,6 +8,7 @@
 
 #import "OTaskListViewController.h"
 
+#import "OLogging.h"
 #import "OState.h"
 #import "OStrings.h"
 
@@ -30,15 +31,15 @@
 }
 
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
-
-
 #pragma mark - OTableViewControllerInstance conformance
 
 - (void)initialiseState
+{
+    // TODO
+}
+
+
+- (void)initialiseDataSource
 {
     // TODO
 }

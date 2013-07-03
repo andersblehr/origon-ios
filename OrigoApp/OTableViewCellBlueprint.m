@@ -8,8 +8,10 @@
 
 #import "OTableViewCellBlueprint.h"
 
+#import "NSDate+OrigoExtensions.h"
 #import "UIFont+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
@@ -44,7 +46,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
     
     for (NSString *detailKey in blueprint.detailKeys) {
         if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:detailKey]) {
-            if ([blueprint textFieldClassForKey:detailKey] == OTextView.class) {
+            if ([[self textViewKeys] containsObject:detailKey]) {
                 if (cell) {
                     height += [[cell textFieldForKey:detailKey] height];
                 } else if (entity && [entity hasValueForKey:detailKey]) {
@@ -62,15 +64,27 @@ CGFloat const kMinimumCellPadding = 0.1f;
 }
 
 
-- (void)consolidateKeys
++ (NSArray *)textViewKeys
+{
+    return @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
+}
+
+
+- (void)finaliseKeys
 {
     if (_titleKey) {
         _allTextFieldKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
     } else {
         _allTextFieldKeys = _detailKeys;
     }
+
+    _nameKeys = @[kPropertyKeyName];
+    _dateKeys = @[kPropertyKeyDateOfBirth];
+    _numberKeys = @[kPropertyKeyMobilePhone, kPropertyKeyTelephone];
+    _emailKeys = @[kInputKeyAuthEmail, kPropertyKeyEmail];
+    _passwordKeys = @[kInputKeyPassword, kInputKeyRepeatPassword];
     
-    _textViewKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
+    _textViewKeys = [self.class textViewKeys];
 }
 
 
@@ -93,7 +107,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
             _detailKeys = @[kInputKeyActivationCode, kInputKeyRepeatPassword];
         }
         
-        [self consolidateKeys];
+        [self finaliseKeys];
     }
     
     return self;
@@ -135,28 +149,28 @@ CGFloat const kMinimumCellPadding = 0.1f;
             }
         }
         
-        [self consolidateKeys];
+        [self finaliseKeys];
     }
     
     return self;
 }
 
 
-#pragma mark - Implementation meta information
+#pragma mark - Factory methods
 
-- (Class)textFieldClassForKey:(NSString *)key
++ (OTableViewCellBlueprint *)blueprintWithReuseIdentifier:(NSString *)reuseIdentifier
 {
-    return [_textViewKeys containsObject:key] ? OTextView.class : OTextField.class;
+    return [[self alloc] initWithReuseIdentifier:reuseIdentifier];
+}
+
+
++ (OTableViewCellBlueprint *)blueprintWithEntityClass:(Class)entityClass
+{
+    return [[self alloc] initWithEntityClass:entityClass];
 }
 
 
 #pragma mark - Cell height computation
-
-- (CGFloat)heightForCell:(OTableViewCell *)cell
-{
-    return [self.class heightWithBlueprint:cell.blueprint entity:cell.entity cell:cell];
-}
-
 
 + (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -167,6 +181,52 @@ CGFloat const kMinimumCellPadding = 0.1f;
 + (CGFloat)heightForCellWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
 {
     return [self heightWithBlueprint:[[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass] entity:entity cell:nil];
+}
+
+
+- (CGFloat)heightForCell:(OTableViewCell *)cell
+{
+    return [self.class heightWithBlueprint:cell.blueprint entity:cell.entity cell:cell];
+}
+
+
+#pragma mark - Text field instantiation
+
+- (id)textFieldWithKey:(NSString *)key delegate:(id)delegate
+{
+    Class textFieldClass = [_textViewKeys containsObject:key] ? OTextView.class : OTextField.class;
+    id textField = [[textFieldClass alloc] initWithKey:key delegate:delegate];
+    
+    if ([key isEqualToString:_titleKey]) {
+        [textField setIsTitle:YES];
+    }
+    
+    if ([_dateKeys containsObject:key]) {
+        UIDatePicker *datePicker = [OMeta m].sharedDatePicker;
+        [datePicker addTarget:textField action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
+        
+        [textField setInputView:datePicker];
+        
+        if ([key isEqualToString:kPropertyKeyDateOfBirth]) {
+            datePicker.minimumDate = [NSDate earliestValidBirthDate];
+            datePicker.maximumDate = [NSDate latestValidBirthDate];
+        }
+    } else if ([_numberKeys containsObject:key]) {
+        [textField setKeyboardType:UIKeyboardTypeNumberPad];
+    } else if ([_emailKeys containsObject:key]) {
+        [textField setKeyboardType:UIKeyboardTypeEmailAddress];
+    } else {
+        [textField setKeyboardType:UIKeyboardTypeDefault];
+        
+        if ([_nameKeys containsObject:key]) {
+            [textField setAutocapitalizationType:UITextAutocapitalizationTypeWords];
+        } else if ([_passwordKeys containsObject:key]) {
+            [textField setSecureTextEntry:YES];
+            [textField setClearsOnBeginEditing:YES];
+        }
+    }
+    
+    return textField;
 }
 
 @end

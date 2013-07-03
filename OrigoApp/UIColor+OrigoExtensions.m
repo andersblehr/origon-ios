@@ -8,6 +8,8 @@
 
 #import "UIColor+OrigoExtensions.h"
 
+#import "OLogging.h"
+
 
 @implementation UIColor (OrigoExtensions)
 

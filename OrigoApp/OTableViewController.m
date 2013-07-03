@@ -141,6 +141,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         self.navigationItem.rightBarButtonItem = _nextButton;
     } else {
         self.navigationItem.rightBarButtonItem = _doneButton;
+        
+        if ([inputField isKindOfClass:OTextField.class]) {
+            [inputField setReturnKeyType:UIReturnKeyDone];
+        }
     }
 }
 
@@ -824,7 +828,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [self performSelector:@selector(didFinishEditing)];
     }
     
-    return YES;
+    return NO;
 }
 
 

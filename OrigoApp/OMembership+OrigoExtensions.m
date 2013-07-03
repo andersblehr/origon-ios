@@ -10,8 +10,8 @@
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
-#import "OState.h"
 
 #import "OMember+OrigoExtensions.h"
 #import "OOrigo+OrigoExtensions.h"

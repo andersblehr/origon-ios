@@ -12,11 +12,17 @@ extern CGFloat const kDefaultTableViewCellHeight;
 extern CGFloat const kDefaultCellPadding;
 extern CGFloat const kMinimumCellPadding;
 
-@class OTableViewCell;
+@class OTableViewCell, OTextField;
 @class OReplicatedEntity;
 
 @interface OTableViewCellBlueprint : NSObject {
 @private
+    NSArray *_nameKeys;
+    NSArray *_dateKeys;
+    NSArray *_numberKeys;
+    NSArray *_emailKeys;
+    NSArray *_passwordKeys;
+    
     NSArray *_textViewKeys;
 }
 
@@ -29,13 +35,13 @@ extern CGFloat const kMinimumCellPadding;
 @property (strong, nonatomic, readonly) NSArray *indirectKeys;
 @property (strong, nonatomic, readonly) NSArray *allTextFieldKeys;
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
-- (id)initWithEntityClass:(Class)entityClass;
++ (OTableViewCellBlueprint *)blueprintWithReuseIdentifier:(NSString *)reuseIdentifier;
++ (OTableViewCellBlueprint *)blueprintWithEntityClass:(Class)entityClass;
 
-- (Class)textFieldClassForKey:(NSString *)key;
-
-- (CGFloat)heightForCell:(OTableViewCell *)cell;
 + (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier;
 + (CGFloat)heightForCellWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
+- (CGFloat)heightForCell:(OTableViewCell *)cell;
+
+- (id)textFieldWithKey:(NSString *)key delegate:(id)delegate;
 
 @end

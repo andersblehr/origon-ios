@@ -10,9 +10,10 @@
 
 #import <CommonCrypto/CommonDigest.h>
 
-#import "OMeta.h"
-
 #import "NSDate+OrigoExtensions.h"
+
+#import "OLogging.h"
+#import "OMeta.h"
 
 static NSString * const kDefaultSeasoning = @"socroilgao";
 
@@ -28,8 +29,8 @@ static NSInteger const kActivationCodeLength = 6;
 
 + (NSString *)string:(NSString *)string seasonedWith:(NSString *)seasoning;
 {
-    NSString *selfHash = [self SHA1HashForString:string];
-    NSString *seasoningHash = [self SHA1HashForString:seasoning];
+    NSString *selfHash = [self computeSHA1HashForString:string];
+    NSString *seasoningHash = [self computeSHA1HashForString:seasoning];
     
     const char *selfCString = [selfHash cStringUsingEncoding:NSUTF8StringEncoding];
     const char *seasoningCString = [seasoningHash cStringUsingEncoding:NSUTF8StringEncoding];
@@ -56,7 +57,7 @@ static NSInteger const kActivationCodeLength = 6;
 
 + (NSString *)seasonAndHashString:(NSString *)string
 {
-    return [self SHA1HashForString:[self string:string seasonedWith:kDefaultSeasoning]];
+    return [self computeSHA1HashForString:[self string:string seasonedWith:kDefaultSeasoning]];
 }
 
 
@@ -78,7 +79,7 @@ static NSInteger const kActivationCodeLength = 6;
 {
     NSString *rawToken = [self string:[OMeta m].deviceId seasonedWith:expiryDate.description];
     
-    return [self SHA1HashForString:rawToken];
+    return [self computeSHA1HashForString:rawToken];
 }
 
 
@@ -142,7 +143,7 @@ static NSInteger const kActivationCodeLength = 6;
 }
 
 
-+ (NSString *)SHA1HashForString:(NSString *)string;
++ (NSString *)computeSHA1HashForString:(NSString *)string;
 {
     const char *CString = [string cStringUsingEncoding:NSUTF8StringEncoding];
     NSData *data = [NSData dataWithBytes:CString length:[string length]];

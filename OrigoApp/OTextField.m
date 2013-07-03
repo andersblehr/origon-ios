@@ -14,6 +14,7 @@
 #import "UIFont+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
@@ -25,89 +26,18 @@
 
 CGFloat const kTextInset = 4.f;
 
-static NSInteger const kMinimumRealisticAge = 6;
-static NSInteger const kMaximumRealisticAge = 100;
-
 static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor";
 
 
 @implementation OTextField
 
-#pragma mark - Auxiliary methods
-
-- (BOOL)isPasswordField
-{
-    BOOL isPasswordField = NO;
-    
-    isPasswordField = isPasswordField || [_key isEqualToString:kInputKeyPassword];
-    isPasswordField = isPasswordField || [_key isEqualToString:kInputKeyRepeatPassword];
-    
-    return isPasswordField;
-}
-
-
-- (NSDate *)earliestValidBirthDate
-{
-    NSDateComponents *earliestBirthDateOffset = [[NSDateComponents alloc] init];
-    earliestBirthDateOffset.year = -kMaximumRealisticAge;
-    
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDate *now = [NSDate date];
-    
-    return [calendar dateByAddingComponents:earliestBirthDateOffset toDate:now options:kNilOptions];
-}
-
-
-- (NSDate *)latestValidBirthDate
-{
-    NSDate *now = [NSDate date];
-    NSDate *latestValidBirthDate = now;
-    
-    if ([[OState s] actionIs:kActionRegister] && [[OState s] targetIs:kTargetUser]) {
-        NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
-        latestBirthDateOffset.year = -kMinimumRealisticAge;
-        
-        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-        latestValidBirthDate = [calendar dateByAddingComponents:latestBirthDateOffset toDate:now options:kNilOptions];
-    }
-    
-    return latestValidBirthDate;
-}
-
-
-- (void)configure
-{
-    if ([_key isEqualToString:kInputKeyAuthEmail]) {
-        self.keyboardType = UIKeyboardTypeEmailAddress;
-    } else if ([self isPasswordField]) {
-        self.clearsOnBeginEditing = YES;
-        self.returnKeyType = UIReturnKeyDone;
-        self.secureTextEntry = YES;
-    } else if ([_key isEqualToString:kPropertyKeyName]) {
-        self.autocapitalizationType = UITextAutocapitalizationTypeWords;
-    } else if ([_key isEqualToString:kPropertyKeyDateOfBirth]) {
-        UIDatePicker *datePicker = [OMeta m].sharedDatePicker;
-        datePicker.minimumDate = [self earliestValidBirthDate];
-        datePicker.maximumDate = [self latestValidBirthDate];
-        [datePicker addTarget:self action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
-        
-        self.inputView = datePicker;
-    } else if ([_key isEqualToString:kPropertyKeyMobilePhone]) {
-        self.keyboardType = UIKeyboardTypeNumberPad;
-    } else if ([_key isEqualToString:kPropertyKeyEmail]) {
-        self.keyboardType = UIKeyboardTypeEmailAddress;
-        self.returnKeyType = UIReturnKeyDone;
-    } else if ([_key isEqualToString:kPropertyKeyTelephone]) {
-        self.keyboardType = UIKeyboardTypeNumberPad;
-    }
-}
-
-
 #pragma mark - Selector implementations
 
 - (void)didPickDate
 {
-    _didPickDate = YES;
+    if (!_didPickDate) {
+        _didPickDate = YES;
+    }
     
     self.text = [self.date localisedDateString];
 }
@@ -115,14 +45,12 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 #pragma mark - Initialisation
 
-- (id)initWithKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate
+- (id)initWithKey:(NSString *)key delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
     if (self) {
         _key = key;
-        _cell = cell;
-        _isTitle = [_cell isTitleKey:key];
         _inputDelegate = delegate;
         
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -142,8 +70,6 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
-        
-        [self configure];
     }
     
     return self;
@@ -180,11 +106,9 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     }
     
     if (hasValidValue) {
-        if (![self isDateField]) {
-            self.text = [self textValue];
-        }
+        self.text = [self textValue];
     } else {
-        if ([self isPasswordField]) {
+        if (self.secureTextEntry) {
             self.text = @"";
         }
         
@@ -203,17 +127,25 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 - (NSString *)textValue
 {
-    NSString *textValue = self.text;
+    NSString *textValue = nil;
     
-    if (![self isPasswordField]) {
-        textValue = [textValue removeRedundantWhitespace];
+    if (self.text && [self.text length]) {
+        if ([self isDateField]) {
+            textValue = [self.date localisedDateString];
+        } else {
+            textValue = self.text;
+            
+            if (!self.secureTextEntry) {
+                textValue = [textValue removeRedundantWhitespace];
+            }
+            
+            if ([textValue length] == 0) {
+                textValue = nil;
+            }
+            
+            self.text = textValue;
+        }
     }
-    
-    if ([textValue length] == 0) {
-        textValue = nil;
-    }
-    
-    self.text = textValue;
     
     return textValue;
 }
@@ -225,6 +157,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 {
     if (isPending) {
         _cachedText = self.text ? self.text : @"";
+        
         self.text = @"";
         self.placeholder = [OStrings stringForKey:strPlaceholderPleaseWait];
     } else if (_cachedText) {
@@ -240,17 +173,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 - (NSDate *)date
 {
-    NSDate *date = nil;
-    
-    if ([self isDateField]) {
-        if (_didPickDate) {
-            date = ((UIDatePicker *)self.inputView).date;
-        } else if (_cell.entity) {
-            date = [_cell.entity valueForKey:_key];
-        }
-    }
-    
-    return date;
+    return [self isDateField] ? ((UIDatePicker *)self.inputView).date : nil;
 }
 
 
@@ -259,6 +182,15 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     ((UIDatePicker *)self.inputView).date = date;
     
     self.text = [date localisedDateString];
+}
+
+
+- (void)setIsTitle:(BOOL)isTitle
+{
+    _isTitle = isTitle;
+    
+    self.font = [UIFont titleFont];
+    self.textColor = [UIColor titleTextColor];
 }
 
 
@@ -273,12 +205,6 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
             self.textColor = [UIColor editableTitleTextColor];
             [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
         }
-        
-        if ([self isDateField] && !_didPickDate) {
-            NSDate *datePickerDate = self.date ? self.date : [NSDate defaultDate];
-            
-            [(UIDatePicker *)self.inputView setDate:datePickerDate animated:YES];
-        }
     } else {
         self.text = [self textValue];
         self.backgroundColor = [UIColor clearColor];
@@ -290,7 +216,6 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     }
     
     [self toggleDropShadow:_hasEmphasis];
-    [_cell redrawIfNeeded];
 }
 
 

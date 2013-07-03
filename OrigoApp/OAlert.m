@@ -8,6 +8,7 @@
 
 #import "OAlert.h"
 
+#import "OLogging.h"
 #import "OState.h"
 #import "OStrings.h"
 

@@ -8,6 +8,7 @@
 
 #import "UIBarButtonItem+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OStrings.h"
 
 

@@ -8,6 +8,7 @@
 
 #import "ODefaults.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
 
 NSString * const kDefaultsKeyAuthExpiryDate = @"origo.date.authExpiry";

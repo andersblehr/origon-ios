@@ -10,6 +10,7 @@
 
 #import "NSString+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
 
 static NSInteger const kMinimumPassordLength = 6;

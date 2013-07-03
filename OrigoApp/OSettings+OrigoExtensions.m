@@ -8,9 +8,7 @@
 
 #import "OSettings+OrigoExtensions.h"
 
-#import "OLocator.h"
-#import "OMeta.h"
-#import "OStrings.h"
+#import "OLogging.h"
 #import "OUtil.h"
 
 NSString * const kSettingKeyCountry = @"country";
