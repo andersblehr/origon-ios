@@ -11,6 +11,7 @@
 #import "NSDate+OrigoExtensions.h"
 #import "UIFont+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OState.h"
 #import "OTableViewCell.h"
 #import "OTableViewCellBlueprint.h"
@@ -83,14 +84,18 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
         if (textField && [textField isHidden]) {
             [textField setHidden:NO];
             
-            id value = [_cell.entity valueForKey:key];
-            
-            if (value && ![[textField text] length]) {
-                if ([value isKindOfClass:NSString.class]) {
-                    [textField setText:value];
-                } else if ([value isKindOfClass:NSDate.class]) {
-                    [textField setText:[value localisedDateString]];
+            if (_cell.entity) {
+                id value = [_cell.entity valueForKey:key];
+                
+                if (value && ![textField textValue]) {
+                    if ([value isKindOfClass:NSDate.class]) {
+                        [textField setDate:value];
+                    } else {
+                        [textField setText:value];
+                    }
                 }
+            } else {
+                //[textField setText:@" "];
             }
         }
     } else {

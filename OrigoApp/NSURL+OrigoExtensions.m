@@ -10,6 +10,8 @@
 
 #import "NSString+OrigoExtensions.h"
 
+#import "OLogging.h"
+
 static NSString *kURLParameterFormat = @"%@%@=%@";
 
 

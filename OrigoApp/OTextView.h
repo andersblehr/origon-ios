@@ -10,11 +10,11 @@
 
 extern NSInteger const kTextViewMaximumLines;
 
-@class OTableViewCell;
+@class OTableViewCell, OState;
 
 @interface OTextView : UITextView<UITextViewDelegate> {
 @private
-    OTableViewCell *_cell;
+    OState *_state;
     UITextView *_placeholderView;
     
     NSString *_lastKnownText;
@@ -27,7 +27,7 @@ extern NSInteger const kTextViewMaximumLines;
 @property (nonatomic) BOOL selected;
 @property (nonatomic) BOOL hasEmphasis;
 
-- (id)initWithKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate;
+- (id)initWithKey:(NSString *)key delegate:(id)delegate;
 
 + (CGFloat)heightWithText:(NSString *)text;
 - (CGFloat)height;
@@ -35,6 +35,7 @@ extern NSInteger const kTextViewMaximumLines;
 - (BOOL)isDateField;
 - (BOOL)hasValue;
 - (BOOL)hasValidValue;
+
 - (id)objectValue;
 - (NSString *)textValue;
 

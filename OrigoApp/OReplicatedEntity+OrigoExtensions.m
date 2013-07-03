@@ -13,6 +13,7 @@
 #import "NSString+OrigoExtensions.h"
 
 #import "OCrypto.h"
+#import "OLogging.h"
 #import "OMeta.h"
 #import "OReplicator.h"
 
@@ -180,7 +181,7 @@
         }
     }
     
-    return [OCrypto SHA1HashForString:propertyString];
+    return [OCrypto computeSHA1HashForString:propertyString];
 }
 
 

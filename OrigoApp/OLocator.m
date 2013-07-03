@@ -8,6 +8,7 @@
 
 #import "OLocator.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
 #import "OSettings.h"
 #import "OState.h"

@@ -8,11 +8,16 @@
 
 #import "NSDate+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
+#import "OState.h"
 
 NSString * const kDateTimeFormatZulu = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
 
 static NSString * const kDefaultDate = @"1976-04-01T20:00:00Z";
+
+static NSInteger const kMinimumRealisticAge = 6;
+static NSInteger const kMaximumRealisticAge = 100;
 
 
 @implementation NSDate (OrigoExtensions)
@@ -28,7 +33,7 @@ static NSString * const kDefaultDate = @"1976-04-01T20:00:00Z";
 }
 
 
-#pragma mark - Default date
+#pragma mark - Specific dates
 
 + (NSDate *)defaultDate
 {
@@ -36,6 +41,35 @@ static NSString * const kDefaultDate = @"1976-04-01T20:00:00Z";
     dateFormatter.dateFormat = kDateTimeFormatZulu;
     
     return [dateFormatter dateFromString:kDefaultDate];
+}
+
+
++ (NSDate *)earliestValidBirthDate
+{
+    NSDateComponents *earliestBirthDateOffset = [[NSDateComponents alloc] init];
+    earliestBirthDateOffset.year = -kMaximumRealisticAge;
+    
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDate *now = [NSDate date];
+    
+    return [calendar dateByAddingComponents:earliestBirthDateOffset toDate:now options:kNilOptions];
+}
+
+
++ (NSDate *)latestValidBirthDate
+{
+    NSDate *now = [NSDate date];
+    NSDate *latestValidBirthDate = now;
+    
+    if ([[OState s] actionIs:kActionRegister] && [[OState s] targetIs:kTargetUser]) {
+        NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
+        latestBirthDateOffset.year = -kMinimumRealisticAge;
+        
+        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        latestValidBirthDate = [calendar dateByAddingComponents:latestBirthDateOffset toDate:now options:kNilOptions];
+    }
+    
+    return latestValidBirthDate;
 }
 
 

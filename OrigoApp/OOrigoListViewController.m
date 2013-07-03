@@ -335,7 +335,7 @@ static NSInteger const kUserRow = 0;
                 cell.imageView.image = [membership.member listCellImage];
             } else {
                 cell.textLabel.text = membership.origo.name;
-                cell.detailTextLabel.text = [membership.origo.address stringByReplacingSeparator:kSeparatorNewline withSeparator:kSeparatorComma];
+                cell.detailTextLabel.text = [membership.origo.address stringByReplacingSubstring:kSeparatorNewline withString:kSeparatorComma];
                 cell.imageView.image = [membership.origo listCellImage];
             }
         } else if (sectionKey == kSectionKeyOrigos) {

@@ -13,6 +13,7 @@
 #import "UIFont+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OTableViewCell.h"
@@ -31,6 +32,14 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 @implementation OTextView
 
 #pragma mark - Auxiliary methods
+
++ (CGFloat)heightWithLineCount:(NSInteger)lineCount
+{
+    NSInteger padding = kTopInset / lineCount;
+    
+    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight] + padding;
+}
+
 
 + (NSInteger)lineCountWithText:(NSString *)text state:(OState *)state
 {
@@ -68,10 +77,10 @@ static CGFloat const kAccessoryViewWidth = 30.f;
                 }
             }
         } else {
-            lineCount = [OTextView lineCountWithText:self.text state:_cell.state];
+            lineCount = [self.class lineCountWithText:self.text state:_state];
         }
     } else {
-        lineCount = [OTextView lineCountWithText:self.placeholder state:_cell.state];
+        lineCount = [self.class lineCountWithText:self.placeholder state:_state];
     }
     
     _lastKnownLineCount = lineCount;
@@ -91,7 +100,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 #pragma mark - Initialisation
 
-- (id)initWithKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate
+- (id)initWithKey:(NSString *)key delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
@@ -122,9 +131,9 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
         _key = key;
-        _cell = cell;
         _hasEmphasis = NO;
-        _lastKnownLineCount = [OTextView lineCountWithText:_placeholder state:[OState s]];
+        _state = [OState s].viewController.state;
+        _lastKnownLineCount = [self.class lineCountWithText:_placeholder state:_state];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:nil];
     }
@@ -137,17 +146,13 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 + (CGFloat)heightWithText:(NSString *)text
 {
-    NSInteger lineCount = [self lineCountWithText:text state:[OState s]];
-    NSInteger padding = 4.f / lineCount;
-    
-    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight] + padding;
+    return [self heightWithLineCount:[self lineCountWithText:text state:[OState s]]];
 }
 
 
 - (CGFloat)height
 {
     NSInteger lineCount = [self lineCount];
-    NSInteger padding = 4.f / lineCount;
     
     if (_hasEmphasis) {
         lineCount = MAX(kTextViewMinimumEditLines, lineCount);
@@ -155,7 +160,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         lineCount = MAX(kTextViewMinimumLines, lineCount);
     }
     
-    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight] + padding;
+    return [self.class heightWithLineCount:lineCount];
 }
 
 
@@ -209,7 +214,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 - (void)setPlaceholder:(NSString *)placeholder
 {
-    CGSize placeholderSize = CGSizeMake(kDetailTextWidth, [OTextView heightWithText:placeholder]);
+    CGSize placeholderSize = CGSizeMake(kDetailTextWidth, [self.class heightWithText:placeholder]);
     
     _placeholderView.frame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height);
     _placeholderView.text = placeholder;
@@ -235,7 +240,6 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     }
     
     [self toggleDropShadow:_hasEmphasis];
-    [_cell redrawIfNeeded];
 }
 
 

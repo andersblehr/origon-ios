@@ -11,6 +11,7 @@
 #import "UIBarButtonItem+OrigoExtensions.h"
 
 #import "OLocator.h"
+#import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"

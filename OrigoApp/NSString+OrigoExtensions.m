@@ -9,6 +9,8 @@
 
 #import "NSString+OrigoExtensions.h"
 
+#import "OLogging.h"
+
 NSString * const kListSeparator = @"|";
 NSString * const kSeparatorSpace = @" ";
 NSString * const kSeparatorNewline = @"\n";
@@ -42,42 +44,32 @@ NSString * const kSeparatorHash = @"#";
 
 - (NSString *)removeRedundantWhitespace
 {
-    NSArray *whiteSpaceCharacters = @[@" ", @"\n"];
-    NSArray *lines = [self lines];
-    NSString *reconstructedString = nil;
+    NSString *doubleSpace = [kSeparatorSpace stringByAppendingString:kSeparatorSpace];
+    NSString *doubleNewline = [kSeparatorNewline stringByAppendingString:kSeparatorNewline];
+    NSString *spaceNewline = [kSeparatorSpace stringByAppendingString:kSeparatorNewline];
+    NSString *newlineSpace = [kSeparatorNewline stringByAppendingString:kSeparatorSpace];
     
-    for (NSString *line in lines) {
-        NSString *workingCopy = [NSString stringWithString:line];
-        NSString *workingCopyBeforePass = nil;
+    NSString *copy = [NSString stringWithString:self];
+    NSString *copyBeforePass = nil;
+    
+    while (![copy isEqualToString:copyBeforePass]) {
+        copyBeforePass = copy;
         
-        while (![workingCopy isEqualToString:workingCopyBeforePass]) {
-            workingCopyBeforePass = workingCopy;
-            
-            for (NSString *space in whiteSpaceCharacters) {
-                NSUInteger spaceLocation = [workingCopy rangeOfString:space].location;
-                
-                while (spaceLocation == 0) {
-                    workingCopy = [workingCopy substringFromIndex:1];
-                    spaceLocation = [workingCopy rangeOfString:space].location;
-                }
-                
-                spaceLocation = [workingCopy rangeOfString:space options:NSBackwardsSearch].location;
-                
-                while (spaceLocation == [workingCopy length] - 1) {
-                    workingCopy = [workingCopy substringToIndex:spaceLocation];
-                    spaceLocation = [workingCopy rangeOfString:space options:NSBackwardsSearch].location;
-                }
-            }
+        copy = [copy stringByReplacingSubstring:doubleSpace withString:kSeparatorSpace];
+        copy = [copy stringByReplacingSubstring:doubleNewline withString:kSeparatorNewline];
+        copy = [copy stringByReplacingSubstring:spaceNewline withString:kSeparatorNewline];
+        copy = [copy stringByReplacingSubstring:newlineSpace withString:kSeparatorNewline];
+        
+        if ([copy hasPrefix:kSeparatorSpace] || [copy hasPrefix:kSeparatorNewline]) {
+            copy = [copy substringFromIndex:1];
         }
         
-        if (!reconstructedString) {
-            reconstructedString = workingCopy;
-        } else if ([workingCopy length]) {
-            reconstructedString = [reconstructedString stringByAppendingString:workingCopy separator:kSeparatorNewline];
+        if ([copy hasSuffix:kSeparatorSpace] || [copy hasSuffix:kSeparatorNewline]) {
+            copy = [copy substringToIndex:[copy length] - 1];
         }
     }
     
-    return reconstructedString;
+    return copy;
 }
 
 
@@ -93,11 +85,11 @@ NSString * const kSeparatorHash = @"#";
 }
 
 
-- (NSString *)stringByReplacingSeparator:(NSString *)oldSeparator withSeparator:(NSString *)newSeparator
+- (NSString *)stringByReplacingSubstring:(NSString *)substring withString:(NSString *)string
 {
     NSMutableString *reworkedString = [NSMutableString stringWithString:self];
     
-    [reworkedString replaceOccurrencesOfString:oldSeparator withString:newSeparator options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    [reworkedString replaceOccurrencesOfString:substring withString:string options:NSLiteralSearch range:NSMakeRange(0, [self length])];
     
     return reworkedString;
 }

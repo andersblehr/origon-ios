@@ -11,6 +11,7 @@
 #import "NSDate+OrigoExtensions.h"
 #import "NSString+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
 
 

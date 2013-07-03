@@ -23,6 +23,6 @@ extern NSString * const kSeparatorHash;
 
 - (NSString *)removeRedundantWhitespace;
 - (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;
-- (NSString *)stringByReplacingSeparator:(NSString *)oldSeparator withSeparator:(NSString *)newSeparator;
+- (NSString *)stringByReplacingSubstring:(NSString *)substring withString:(NSString *)string;
 
 @end

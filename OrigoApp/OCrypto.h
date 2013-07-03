@@ -16,7 +16,7 @@
 + (NSString *)basicAuthHeaderWithUserId:(NSString *)userId password:(NSString *)password;
 
 + (NSString *)base64EncodeString:(NSString *)string;
-+ (NSString *)SHA1HashForString:(NSString *)string;
++ (NSString *)computeSHA1HashForString:(NSString *)string;
 
 + (NSString *)generateUUID;
 + (NSString *)generateActivationCode;

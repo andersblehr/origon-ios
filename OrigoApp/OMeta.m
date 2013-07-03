@@ -338,7 +338,7 @@ static OMeta *m = nil;
 - (void)setUserEmail:(NSString *)userEmail
 {
     if ([[OState s] actionIs:kActionActivate] && [[OState s] targetIs:kTargetEmail]) {
-        [OMeta m].user.email = userEmail;
+        _user.email = userEmail;
         
         [ODefaults setUserDefault:nil forKey:kDefaultsKeyUserId];
         [ODefaults resetUser];

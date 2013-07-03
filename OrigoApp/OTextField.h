@@ -19,7 +19,6 @@ extern CGFloat const kTextInset;
     BOOL _hasEmphasis;
     BOOL _didPickDate;
     
-    OTableViewCell *_cell;
     NSString *_cachedText;
 
     id<OTableViewInputDelegate> _inputDelegate;
@@ -28,9 +27,10 @@ extern CGFloat const kTextInset;
 @property (strong, nonatomic, readonly) NSString *key;
 @property (strong, nonatomic) NSDate *date;
 
+@property (nonatomic) BOOL isTitle;
 @property (nonatomic) BOOL hasEmphasis;
 
-- (id)initWithKey:(NSString *)key cell:(OTableViewCell *)cell delegate:(id)delegate;
+- (id)initWithKey:(NSString *)key delegate:(id)delegate;
 
 - (BOOL)isDateField;
 - (BOOL)hasValue;

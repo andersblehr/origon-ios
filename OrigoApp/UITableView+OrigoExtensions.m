@@ -12,6 +12,7 @@
 #import "UIFont+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OState.h"
 #import "OTableViewCell.h"
 #import "OTableViewCellBlueprint.h"

@@ -8,6 +8,7 @@
 
 #import "OState.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
 #import "OStrings.h"
 #import "OValidator.h"
@@ -102,8 +103,8 @@ static OState *s = nil;
             _action = alternatingActions[0];
         }
         
-        if (self != [OState s]) {
-            [[OState s] reflectState:self];
+        if (self != [self.class s]) {
+            [[self.class s] reflectState:self];
         }
     }
 }

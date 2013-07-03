@@ -14,6 +14,7 @@
 #import "UIFont+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 
+#import "OLogging.h"
 #import "OMeta.h"
 #import "OState.h"
 #import "OStrings.h"
@@ -173,8 +174,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addTextFieldForKey:(NSString *)key
 {
-    Class textFieldClass = [_blueprint textFieldClassForKey:key];
-    id textField = [[textFieldClass alloc] initWithKey:key cell:self delegate:_inputDelegate];
+    id textField = [_blueprint textFieldWithKey:key delegate:_inputDelegate];
     
     [self.contentView addSubview:textField];
     [_views setObject:textField forKey:[key stringByAppendingString:kViewKeySuffixTextField]];
@@ -214,7 +214,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.editing = !_selectable;
         
         _entityClass = entityClass;
-        _blueprint = [[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass];
+        _blueprint = [OTableViewCellBlueprint blueprintWithEntityClass:entityClass];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
         
         [self addCellElements];
@@ -230,7 +230,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [self initCommonsForReuseIdentifier:reuseIdentifier indexPath:indexPath];
     
     if (self && ![self isListCell]) {
-        _blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
+        _blueprint = [OTableViewCellBlueprint blueprintWithReuseIdentifier:reuseIdentifier];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
         
         [self addCellElements];
@@ -395,15 +395,18 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if ([self isListCell]) {
         [_listDelegate populateListCell:self atIndexPath:_indexPath];
     } else {
-        for (NSString *propertyKey in _blueprint.allTextFieldKeys) {
-            id value = [_entity valueForKey:propertyKey];
+        for (NSString *key in _blueprint.allTextFieldKeys) {
+            id textField = [self textFieldForKey:key];
+            id value = [_entity valueForKey:key];
             
             if (value) {
                 if ([value isKindOfClass:NSString.class]) {
-                    [[self textFieldForKey:propertyKey] setText:value];
+                    [textField setText:value];
                 } else if ([value isKindOfClass:NSDate.class]) {
-                    [[self textFieldForKey:propertyKey] setDate:value];
+                    [textField setDate:value];
                 }
+            } else {
+                [textField setText:@""];
             }
         }
         
@@ -449,6 +452,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (_inputField && ![_inputField hasEmphasis]) {
         [_inputField setHasEmphasis:YES];
     }
+    
+    [self redrawIfNeeded];
 }
 
 
