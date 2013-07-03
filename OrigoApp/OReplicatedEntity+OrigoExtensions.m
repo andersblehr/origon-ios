@@ -42,6 +42,14 @@
 }
 
 
+- (BOOL)isTransientProperty:(NSString *)propertyKey
+{
+    NSArray *transientPropertyKeys = @[kPropertyKeyHashCode, kPropertyKeyIsAwaitingDeletion];
+    
+    return [transientPropertyKeys containsObject:propertyKey];
+}
+
+
 #pragma mark - Casting convenience methods
 
 - (OMember *)asMember
@@ -216,15 +224,15 @@
 }
 
 
-- (BOOL)isDirty
+- (BOOL)isTransient
 {
-    return ([self isBeingDeleted] || ![self.hashCode isEqualToString:[self computeHashCode]]);
+    return ([self isKindOfClass:OReplicatedEntityRef.class] || [self hasExpired]);
 }
 
 
-- (BOOL)isBeingDeleted
+- (BOOL)isDirty
 {
-    return [self.isAwaitingDeletion boolValue];
+    return ([self isBeingDeleted] || ![self.hashCode isEqualToString:[self computeHashCode]]);
 }
 
 
@@ -234,17 +242,9 @@
 }
 
 
-- (BOOL)isTransient
+- (BOOL)isBeingDeleted
 {
-    return ([self isKindOfClass:OReplicatedEntityRef.class] || [self hasExpired]);
-}
-
-
-- (BOOL)isTransientProperty:(NSString *)propertyKey
-{
-    NSArray *transientPropertyKeys = @[kPropertyKeyHashCode, kPropertyKeyIsAwaitingDeletion];
-    
-    return [transientPropertyKeys containsObject:propertyKey];
+    return [self.isAwaitingDeletion boolValue];
 }
 
 

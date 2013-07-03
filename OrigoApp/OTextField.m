@@ -169,6 +169,23 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 }
 
 
+#pragma mark - Workaround for unwanted animation
+
+- (void)suppressUnwantedAutolayoutAnimation:(BOOL)suppress
+{
+    // Setting empty text field to temporary value on creation and resetting before
+    // cell display, to avoid autolayout causing newly entered text to disappear and
+    // fly back in on end edit when next input field is an OTextView instance that
+    // resizes on begin edit.
+    
+    if (suppress) {
+        self.text = kSeparatorSpace;
+    } else if ([self.text isEqualToString:kSeparatorSpace]) {
+        self.text = @"";
+    }
+}
+
+
 #pragma mark - Custom accessors
 
 - (NSDate *)date

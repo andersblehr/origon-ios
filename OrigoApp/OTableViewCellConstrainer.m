@@ -15,6 +15,7 @@
 #import "OState.h"
 #import "OTableViewCell.h"
 #import "OTableViewCellBlueprint.h"
+#import "OTextField.h"
 #import "OTextView.h"
 
 #import "OReplicatedEntity.h"
@@ -71,7 +72,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
 }
 
 
-- (void)configureElementsIfNeededForKey:(NSString *)key
+- (void)configureElementsForKey:(NSString *)key
 {
     id label = [_cell labelForKey:key];
     id textField = [_cell textFieldForKey:key];
@@ -84,18 +85,16 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
         if (textField && [textField isHidden]) {
             [textField setHidden:NO];
             
-            if (_cell.entity) {
-                id value = [_cell.entity valueForKey:key];
-                
-                if (value && ![textField textValue]) {
-                    if ([value isKindOfClass:NSDate.class]) {
-                        [textField setDate:value];
-                    } else {
-                        [textField setText:value];
-                    }
+            id value = [_cell.entity valueForKey:key];
+            
+            if (value && ![textField textValue]) {
+                if ([value isKindOfClass:NSDate.class]) {
+                    [textField setDate:value];
+                } else {
+                    [textField setText:value];
                 }
-            } else {
-                //[textField setText:@" "];
+            } else if ([textField isKindOfClass:OTextField.class]) {
+                [textField suppressUnwantedAutolayoutAnimation:YES]; // Hack!
             }
         }
     } else {
@@ -121,7 +120,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     if (_blueprint.titleKey) {
         NSString *titleName = [_blueprint.titleKey stringByAppendingString:kViewKeySuffixTextField];
         
-        [self configureElementsIfNeededForKey:_blueprint.titleKey];
+        [self configureElementsForKey:_blueprint.titleKey];
         
         [constraints addObject:kVConstraintsTitleBanner];
         [constraints addObject:kHConstraintsTitleBanner];
@@ -148,7 +147,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     id precedingTextField = nil;
     
     for (NSString *key in _blueprint.detailKeys) {
-        [self configureElementsIfNeededForKey:key];
+        [self configureElementsForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {
             NSString *constraint = nil;
@@ -188,7 +187,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     }
     
     for (NSString *key in _blueprint.detailKeys) {
-        [self configureElementsIfNeededForKey:key];
+        [self configureElementsForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {
             id textField = [_cell textFieldForKey:key];
@@ -217,7 +216,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     NSInteger rowNumber = 0;
     
     for (NSString *key in _blueprint.detailKeys) {
-        [self configureElementsIfNeededForKey:key];
+        [self configureElementsForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {
             NSString *labelName = [key stringByAppendingString:kViewKeySuffixLabel];
@@ -246,7 +245,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     BOOL isBelowLabel = NO;
     
     for (NSString *key in _blueprint.allTextFieldKeys) {
-        [self configureElementsIfNeededForKey:key];
+        [self configureElementsForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {
             NSString *constraint = nil;
@@ -280,7 +279,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
     
     for (NSString *key in _blueprint.allTextFieldKeys) {
-        [self configureElementsIfNeededForKey:key];
+        [self configureElementsForKey:key];
         
         if ([self elementsAreVisibleForKey:key]) {
             NSString *constraint = nil;

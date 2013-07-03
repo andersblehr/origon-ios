@@ -309,12 +309,16 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [_views[kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
     }
     
-    if (_editable && !_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
-        for (NSString *key in [_views allKeys]) {
-            id view = _views[key];
+    if (_editable) {
+        for (NSString *key in [_blueprint allTextFieldKeys]) {
+            id textField = [self textFieldForKey:key];
             
-            if ([view isKindOfClass:OTextField.class] || [view isKindOfClass:OTextView.class]) {
-                [view setHasEmphasis:YES];
+            if (!_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
+                [textField setHasEmphasis:YES];
+            }
+            
+            if ([textField isKindOfClass:OTextField.class]) {
+                [textField suppressUnwantedAutolayoutAnimation:NO]; // Hack!
             }
         }
     }

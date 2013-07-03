@@ -40,5 +40,6 @@ extern CGFloat const kTextInset;
 - (NSString *)textValue;
 
 - (void)indicatePendingEvent:(BOOL)isPending;
+- (void)suppressUnwantedAutolayoutAnimation:(BOOL)suppress;
 
 @end

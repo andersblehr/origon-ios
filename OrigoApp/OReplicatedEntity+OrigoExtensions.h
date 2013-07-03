@@ -26,11 +26,10 @@
 - (void)internaliseRelationships;
 
 - (BOOL)userIsCreator;
-- (BOOL)isReplicated;
-- (BOOL)isDirty;
-- (BOOL)isBeingDeleted;
 - (BOOL)isTransient;
-- (BOOL)isTransientProperty:(NSString *)key;
+- (BOOL)isDirty;
+- (BOOL)isReplicated;
+- (BOOL)isBeingDeleted;
 
 - (BOOL)shouldReplicateOnExpiry;
 - (BOOL)hasExpired;
