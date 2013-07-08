@@ -8,10 +8,6 @@
 
 #import "OTabBarController.h"
 
-#import "OLogging.h"
-#import "OState.h"
-#import "OStrings.h"
-
 NSInteger const kTabIndexOrigo = 0;
 NSInteger const kTabIndexCalendar = 1;
 NSInteger const kTabIndexTasks = 2;

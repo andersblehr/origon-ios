@@ -6,9 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-#import "OConnectionDelegate.h"
+#import "OrigoApp.h"
 
 extern NSString * const kHTTPMethodGET;
 extern NSString * const kHTTPMethodPOST;

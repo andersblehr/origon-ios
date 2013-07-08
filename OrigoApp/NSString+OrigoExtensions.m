@@ -3,18 +3,16 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved. Except:
-//   - (NSString *)base64Encoded
+//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
 #import "NSString+OrigoExtensions.h"
-
-#import "OLogging.h"
 
 NSString * const kListSeparator = @"|";
 NSString * const kSeparatorSpace = @" ";
 NSString * const kSeparatorNewline = @"\n";
 NSString * const kSeparatorComma = @", ";
+NSString * const kSeparatorAmpersand = @" & ";
 NSString * const kSeparatorHash = @"#";
 
 

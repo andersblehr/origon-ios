@@ -2,18 +2,15 @@
 //  OTableViewCellBlueprint.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 22.02.13.
-//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 17.10.12.
+//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "OrigoApp.h"
 
 extern CGFloat const kDefaultTableViewCellHeight;
 extern CGFloat const kDefaultCellPadding;
 extern CGFloat const kMinimumCellPadding;
-
-@class OTableViewCell, OTextField;
-@class OReplicatedEntity;
 
 @interface OTableViewCellBlueprint : NSObject {
 @private

@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
+#import "OrigoApp.h"
+
 #import "OOrigo.h"
 
 extern NSString * const kOrigoTypeMemberRoot;
@@ -16,8 +18,6 @@ extern NSString * const kOrigoTypeSchoolClass;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeSportsTeam;
 extern NSString * const kOrigoTypeOther;
-
-@class OMember, OMembership;
 
 @interface OOrigo (OrigoExtensions)
 
@@ -31,6 +31,10 @@ extern NSString * const kOrigoTypeOther;
 - (OMembership *)membershipForMember:(OMember *)member;
 - (OMembership *)associateMembershipForMember:(OMember *)member;
 
+- (BOOL)userCanEdit;
+- (BOOL)userIsAdmin;
+- (BOOL)userIsMember;
+
 - (BOOL)isOfType:(NSString *)origoType;
 - (BOOL)hasAdmin;
 - (BOOL)hasMember:(OMember *)member;
@@ -40,9 +44,9 @@ extern NSString * const kOrigoTypeOther;
 - (BOOL)indirectlyKnowsAboutMember:(OMember *)member;
 - (BOOL)hasResidentsInCommonWithResidence:(OOrigo *)residence;
 
-- (BOOL)userCanEdit;
-- (BOOL)userIsAdmin;
-- (BOOL)userIsMember;
+- (NSString *)shortAddress;
+- (NSString *)singleLineAddress;
+- (NSString *)residenceDescription;
 
 - (UIImage *)listCellImage;
 

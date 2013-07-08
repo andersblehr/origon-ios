@@ -6,11 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OTableViewController.h"
-
-#import "OTableViewListDelegate.h"
-
-@class OMembership, OOrigo;
+#import "OrigoApp.h"
 
 @interface OMemberListViewController : OTableViewController<OTableViewListDelegate, UIActionSheetDelegate> {
 @private

@@ -8,26 +8,6 @@
 
 #import "OTableViewCell.h"
 
-#import <AudioToolbox/AudioToolbox.h>
-
-#import "UIColor+OrigoExtensions.h"
-#import "UIFont+OrigoExtensions.h"
-#import "UIView+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OTableViewCellBlueprint.h"
-#import "OTableViewCellConstrainer.h"
-#import "OTextField.h"
-#import "OTextView.h"
-
-#import "OMember.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-
-#import "OTableViewController.h"
-
 NSString * const kReuseIdentifierList = @"list";
 NSString * const kReuseIdentifierUserSignIn = @"signIn";
 NSString * const kReuseIdentifierUserActivation = @"activate";
@@ -243,39 +223,48 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Text field & text view access
 
-- (id)textFieldForKey:(NSString *)key
-{
-    return _views[[key stringByAppendingString:kViewKeySuffixTextField]];
-}
-
-
 - (id)labelForKey:(NSString *)key
 {
     return _views[[key stringByAppendingString:kViewKeySuffixLabel]];
 }
 
 
-- (id)nextInputField
+- (id)textFieldForKey:(NSString *)key
 {
-    NSArray *keys = _blueprint.allTextFieldKeys;
-    NSInteger indexOfTextField = _inputField ? [keys indexOfObject:[_inputField key]] : -1;
-    NSString *inputFieldKey = nil;
-    UIView *inputField = nil;
+    return _views[[key stringByAppendingString:kViewKeySuffixTextField]];
+}
+
+
+- (id)firstInputField
+{
+    id inputField = nil;
     
-    BOOL inputFieldIsEditable = NO;
-    
-    for (int i = indexOfTextField + 1; ((i < [keys count]) && !inputFieldIsEditable); i++) {
-        inputFieldKey = [keys[i] stringByAppendingString:kViewKeySuffixTextField];
-        inputField = _views[inputFieldKey];
-        
-        if ([inputField isKindOfClass:OTextField.class]) {
-            inputFieldIsEditable = ((OTextField *)inputField).enabled;
-        } else if ([inputField isKindOfClass:OTextView.class]) {
-            inputFieldIsEditable = ((OTextView *)inputField).editable;
+    for (NSString *key in _blueprint.allTextFieldKeys) {
+        if (!inputField && ![self hasValueForKey:key]) {
+            inputField = [self textFieldForKey:key];
         }
     }
     
-    return inputFieldIsEditable ? inputField : nil;
+    return inputField ? inputField : [self nextInputField];
+}
+
+
+- (id)nextInputField
+{
+    id inputField = nil;
+    BOOL ignoreField = (_inputField != nil);
+    
+    for (NSString *key in _blueprint.allTextFieldKeys) {
+        if (ignoreField) {
+            ignoreField = ![key isEqualToString:[_inputField key]];
+        } else {
+            if (!inputField && [[self textFieldForKey:key] editable]) {
+                inputField = [self textFieldForKey:key];
+            }
+        }
+    }
+    
+    return inputField;
 }
 
 
@@ -310,7 +299,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
     
     if (_editable) {
-        for (NSString *key in [_blueprint allTextFieldKeys]) {
+        for (NSString *key in _blueprint.allTextFieldKeys) {
             id textField = [self textFieldForKey:key];
             
             if (!_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
@@ -318,7 +307,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             }
             
             if ([textField isKindOfClass:OTextField.class]) {
-                [textField suppressUnwantedAutolayoutAnimation:NO]; // Hack!
+                [textField raiseGuardAgainstUnwantedAutolayoutAnimation:NO]; // Hack!
             }
         }
     }
@@ -508,13 +497,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     [super setEditing:editing];
     
-    for (UIView *view in [_views allValues]) {
-        if ([view isKindOfClass:OTextField.class]) {
-            ((OTextField *)view).enabled = editing;
-        } else if ([view isKindOfClass:OTextView.class]) {
-            ((OTextView *)view).editable = editing;
-            ((OTextView *)view).userInteractionEnabled = editing;
-        }
+    for (NSString *key in _blueprint.allTextFieldKeys) {
+        [[self textFieldForKey:key] setEditable:editing];
     }
 }
 
@@ -532,17 +516,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (_selectable) {
         [super setSelected:selected animated:animated];
         
-        for (UIView *view in [_views allValues]) {
-            if ([view isKindOfClass:UILabel.class]) {
+        for (id view in [_views allValues]) {
+            if ([view isKindOfClass:OTextField.class] || [view isKindOfClass:OTextView.class]) {
+                [view setSelected:selected];
+            } else if ([view isKindOfClass:UILabel.class]) {
                 if (selected) {
                     ((UILabel *)view).textColor = [UIColor selectedLabelTextColor];
                 } else {
                     ((UILabel *)view).textColor = [UIColor labelTextColor];
                 }
-            } else if ([view isKindOfClass:OTextField.class]) {
-                ((OTextField *)view).selected = selected;
-            } else if ([view isKindOfClass:OTextView.class]) {
-                ((OTextView *)view).selected = selected;
             }
         }
     }

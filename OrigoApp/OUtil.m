@@ -2,17 +2,11 @@
 //  OUtil.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 26.05.13.
-//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 17.10.12.
+//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
 #import "OUtil.h"
-
-#import "NSDate+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
 
 
 @implementation OUtil
@@ -34,6 +28,24 @@
     }
     
     return country;
+}
+
+
++ (NSString *)givenNameFromFullName:(NSString *)fullName
+{
+    NSString *givenName = nil;
+    
+    if ([OValidator valueIsName:fullName]) {
+        NSArray *names = [fullName componentsSeparatedByString:kSeparatorSpace];
+        
+        if ([[OMeta m] shouldUseEasternNameOrder]) {
+            givenName = names[1];
+        } else {
+            givenName = names[0];
+        }
+    }
+    
+    return givenName;
 }
 
 

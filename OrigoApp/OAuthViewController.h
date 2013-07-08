@@ -6,12 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OTableViewController.h"
-
-#import "OConnectionDelegate.h"
-#import "OTableViewInputDelegate.h"
-
-@class OTextField;
+#import "OrigoApp.h"
 
 @interface OAuthViewController : OTableViewController<OTableViewInputDelegate, UIAlertViewDelegate, OConnectionDelegate> {
 @private
@@ -22,5 +17,8 @@
 
     NSDictionary *_authInfo;
 }
+
+@property (nonatomic, readonly) BOOL userIsListed;
+@property (nonatomic, readonly) BOOL registrationIsIncomplete;
 
 @end

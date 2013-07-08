@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OTableViewController.h"
+#import "OrigoApp.h"
 
 @interface OMessageListViewController : OTableViewController
 

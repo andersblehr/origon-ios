@@ -8,24 +8,6 @@
 
 #import "OMember+OrigoExtensions.h"
 
-#import <CoreTelephony/CTCarrier.h>
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-
-#import "NSDate+OrigoExtensions.h"
-#import "NSManagedObjectContext+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OState.h"
-#import "OStrings.h"
-
-#import "OMember.h"
-#import "OMembership+OrigoExtensions.h"
-#import "OMessageBoard.h"
-#import "OOrigo+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-#import "OSettings.h"
-
 
 @implementation OMember (OrigoExtensions)
 
@@ -210,6 +192,34 @@
 }
 
 
+- (BOOL)isManagedByUser
+{
+    BOOL isRepresentedByUser = NO;
+    
+    if (![self isActive] || [self isMinor]) {
+        isRepresentedByUser = [[[OMeta m].user housemates] containsObject:self];
+        
+        if (!isRepresentedByUser) {
+            BOOL canBeRepresentedByUser = YES;
+            
+            for (OMembership *residency in [self residencies]) {
+                canBeRepresentedByUser = canBeRepresentedByUser && ![residency.origo hasAdmin];
+            }
+            
+            if (canBeRepresentedByUser) {
+                isRepresentedByUser = [self userIsCreator];
+                
+                for (OMembership *participancy in [self participancies]) {
+                    isRepresentedByUser = isRepresentedByUser || [participancy.origo userIsAdmin];
+                }
+            }
+        }
+    }
+    
+    return [self isUser] || isRepresentedByUser;
+}
+
+
 - (BOOL)isKnownByUser
 {
     BOOL isKnownByUser = NO;
@@ -219,12 +229,6 @@
     }
     
     return isKnownByUser;
-}
-
-
-- (BOOL)isFemale
-{
-    return [self.gender isEqualToString:kGenderFemale];
 }
 
 
@@ -264,30 +268,6 @@
 }
 
 
-- (BOOL)hasAddress
-{
-    BOOL hasAddress = NO;
-    
-    for (OMembership *residency in [self residencies]) {
-        hasAddress = hasAddress || [residency.origo hasValueForKey:kPropertyKeyAddress];
-    }
-    
-    return hasAddress;
-}
-
-
-- (BOOL)hasWard:(OMember *)member
-{
-    return [[self wards] containsObject:member];
-}
-
-
-- (BOOL)hasHousemate:(OMember *)member
-{
-    return [[self housemates] containsObject:member];
-}
-
-
 #pragma mark - Display image
 
 - (UIImage *)listCellImage
@@ -320,9 +300,9 @@
     
     if ([self isUser]) {
         target = kTargetUser;
-    } else if ([[OMeta m].user hasWard:self]) {
+    } else if ([[[OMeta m].user wards] containsObject:self]) {
         target = kTargetWard;
-    } else if ([[OMeta m].user hasHousemate:self]) {
+    } else if ([[[OMeta m].user housemates] containsObject:self]) {
         target = kTargetHousehold;
     } else {
         target = kTargetExternal;

@@ -2,7 +2,7 @@
 //  OMember.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 14.04.13.
+//  Created by Anders Blehr on 05.07.13.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
@@ -22,6 +22,7 @@
 @property (nonatomic, retain) NSString * mobilePhone;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSData * photo;
+@property (nonatomic, retain) NSString * passwordHash;
 @property (nonatomic, retain) NSSet *contactForEvents;
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;
@@ -29,8 +30,8 @@
 @property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) NSSet *messageItems;
 @property (nonatomic, retain) NSSet *scheduledAbsences;
-@property (nonatomic, retain) NSSet *toDoAssignments;
 @property (nonatomic, retain) OSettings *settings;
+@property (nonatomic, retain) NSSet *toDoAssignments;
 @end
 
 @interface OMember (CoreDataGeneratedAccessors)

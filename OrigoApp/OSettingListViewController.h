@@ -6,9 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OTableViewController.h"
-
-#import "OTableViewListDelegate.h"
+#import "OrigoApp.h"
 
 @interface OSettingListViewController : OTableViewController<OTableViewListDelegate>
 

@@ -8,22 +8,6 @@
 
 #import "OOrigoViewController.h"
 
-#import "NSManagedObjectContext+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OReplicator.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OTableViewCell.h"
-#import "OTextField.h"
-#import "OTextView.h"
-
-#import "OMember+OrigoExtensions.h"
-#import "OMembership.h"
-#import "OOrigo+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-
 static NSInteger const kSectionKeyOrigo = 0;
 
 
@@ -35,7 +19,7 @@ static NSInteger const kSectionKeyOrigo = 0;
 {
     [[OMeta m] userDidSignOut];
     
-    [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
+    [self.dismisser dismissModalViewController:self reload:YES];
 }
 
 
@@ -46,7 +30,11 @@ static NSInteger const kSectionKeyOrigo = 0;
     [super viewDidLoad];
     
     if (_origo) {
-        self.title = [_origo isOfType:kOrigoTypeResidence] ? [OStrings titleForOrigoType:kOrigoTypeResidence] : _origo.name;
+        if ([_origo isOfType:kOrigoTypeResidence]) {
+            self.title = [OStrings titleForOrigoType:_origo.type];
+        } else {
+            self.title = _origo.name;
+        }
     } else {
         self.title = [OStrings titleForOrigoType:self.meta];
     }
@@ -96,7 +84,13 @@ static NSInteger const kSectionKeyOrigo = 0;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return NO;
+    return self.canEdit;
+}
+
+
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+{
+    return [OStrings stringForKey:strFooterTapToEdit];
 }
 
 
@@ -125,12 +119,7 @@ static NSInteger const kSectionKeyOrigo = 0;
             _membership = [_origo addMember:_member];
         }
         
-        [self presentModalViewControllerWithIdentifier:kViewControllerMemberList data:_membership dismisser:self.dismisser];
-        
-        if ([_member isUser]) {
-            [[OMeta m].user makeActive];
-            [[OMeta m].replicator replicate];
-        }
+        [self presentModalViewControllerWithIdentifier:kViewControllerMemberList data:_membership];
     } else if ([self actionIs:kActionEdit]) {
         [self toggleEditMode];
     }
@@ -142,6 +131,14 @@ static NSInteger const kSectionKeyOrigo = 0;
     _origo = [[OMeta m].context insertOrigoEntityOfType:self.meta];
     
     return _origo;
+}
+
+
+#pragma mark - OModalViewControllerDismisser conformance
+
+- (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController
+{
+    return [viewController.identifier isEqualToString:kViewControllerMemberList];
 }
 
 @end

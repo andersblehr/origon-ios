@@ -8,22 +8,6 @@
 
 #import "NSManagedObjectContext+OrigoExtensions.h"
 
-#import "NSString+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OReplicator.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OCrypto.h"
-
-#import "ODevice.h"
-#import "OMember+OrigoExtensions.h"
-#import "OMembership+OrigoExtensions.h"
-#import "OOrigo+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-#import "OReplicatedEntityRef.h"
-
 static NSString * const kMemberRootIdFormat = @"~%@";
 
 

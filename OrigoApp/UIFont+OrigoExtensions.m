@@ -8,8 +8,6 @@
 
 #import "UIFont+OrigoExtensions.h"
 
-#import "OLogging.h"
-
 static CGFloat const kTitleFontSize = 16.f;
 static CGFloat const kLabelFontSize = 12.f;
 static CGFloat const kDetailFontSize = 14.f;

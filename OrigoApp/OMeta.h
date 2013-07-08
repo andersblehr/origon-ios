@@ -6,11 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-#import <CoreLocation/CoreLocation.h>
-
-#import "Reachability.h"
+#import "OrigoApp.h"
 
 extern NSString * const kBundleId;
 
@@ -61,6 +57,7 @@ extern NSString * const kPropertyKeyIsExpired;
 extern NSString * const kPropertyKeyMobilePhone;
 extern NSString * const kPropertyKeyName;
 extern NSString * const kPropertyKeyOrigoId;
+extern NSString * const kPropertyKeyPasswordHash;
 extern NSString * const kPropertyKeyTelephone;
 
 extern NSString * const kRelationshipKeyMember;
@@ -68,12 +65,9 @@ extern NSString * const kRelationshipKeyOrigo;
 
 extern NSString * const kDefaultsKeyAuthInfo;
 extern NSString * const kDefaultsKeyDirtyEntities;
-extern NSString * const kDefaultsKeyPasswordHash;
-extern NSString * const kDefaultsKeyRegistrationAborted;
 extern NSString * const kDefaultsKeyStringDate;
 
-@class OReplicator, OLocator;
-@class OMember, OReplicatedEntity, OSettings;
+//@class OReplicator, OLocator;
 
 @interface OMeta : NSObject {
 @private

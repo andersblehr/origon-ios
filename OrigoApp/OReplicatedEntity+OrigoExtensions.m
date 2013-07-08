@@ -8,20 +8,6 @@
 
 #import "OReplicatedEntity+OrigoExtensions.h"
 
-#import "NSDate+OrigoExtensions.h"
-#import "NSManagedObjectContext+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
-
-#import "OCrypto.h"
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OReplicator.h"
-
-#import "OMember.h"
-#import "OMembership.h"
-#import "OOrigo+OrigoExtensions.h"
-#import "OReplicatedEntityRef.h"
-
 
 @implementation OReplicatedEntity (OrigoExtensions)
 
@@ -44,7 +30,7 @@
 
 - (BOOL)isTransientProperty:(NSString *)propertyKey
 {
-    NSArray *transientPropertyKeys = @[kPropertyKeyHashCode, kPropertyKeyIsAwaitingDeletion];
+    NSArray *transientPropertyKeys = @[kPropertyKeyPasswordHash, kPropertyKeyHashCode, kPropertyKeyIsAwaitingDeletion];
     
     return [transientPropertyKeys containsObject:propertyKey];
 }

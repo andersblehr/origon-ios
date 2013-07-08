@@ -6,8 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <QuartzCore/QuartzCore.h>
-#import <UIKit/UIKit.h>
+#import "OrigoApp.h"
 
 @interface UIView (OrigoExtensions)
 

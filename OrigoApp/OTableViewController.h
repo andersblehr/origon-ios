@@ -6,26 +6,17 @@
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
-#import "OConnectionDelegate.h"
-#import "OModalViewControllerDelegate.h"
-#import "OTableViewControllerInstance.h"
+#import "OrigoApp.h"
 
 extern NSString * const kEntityRegistrationCell;
 extern NSString * const kCustomCell;
 
-@protocol OEntityObserver;
-
-@class OState, OTableViewCell;
-@class OReplicatedEntity;
-
-@interface OTableViewController : UITableViewController<OTableViewControllerInstance, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDelegate, OConnectionDelegate> {
+@interface OTableViewController : UITableViewController<OTableViewControllerInstance, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDismisser, OConnectionDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
     BOOL _isHidden;
-    BOOL _needsReloadSections;
+    BOOL _shouldReloadOnModalDismissal;
     
     Class _entityClass;
     NSInteger _detailSectionKey;
@@ -44,7 +35,7 @@ extern NSString * const kCustomCell;
     id<OTableViewControllerInstance> _instance;
 }
 
-@property (strong, nonatomic, readonly) NSString *viewControllerId;
+@property (strong, nonatomic, readonly) NSString *identifier;
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic, readonly) OReplicatedEntity *entity;
 @property (strong, nonatomic, readonly) UIActivityIndicatorView *activityIndicator;
@@ -55,6 +46,7 @@ extern NSString * const kCustomCell;
 @property (nonatomic, readonly) BOOL wasHidden;
 
 @property (nonatomic) BOOL canEdit;
+@property (nonatomic) BOOL hasToolbar;
 @property (nonatomic) BOOL modalImpliesRegistration;
 @property (nonatomic) BOOL cancelRegistrationImpliesSignOut;
 
@@ -62,7 +54,7 @@ extern NSString * const kCustomCell;
 @property (strong, nonatomic) id meta;
 @property (strong, nonatomic) OTableViewCell *detailCell;
 
-@property (weak, nonatomic) id<OModalViewControllerDelegate> dismisser;
+@property (weak, nonatomic) id<OModalViewControllerDismisser> dismisser;
 @property (weak, nonatomic) id<OEntityObserver> observer;
 
 - (BOOL)actionIs:(NSString *)action;
@@ -85,10 +77,10 @@ extern NSString * const kCustomCell;
 
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta;
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser;
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier dismisser:(id)dismisser;
 
 - (void)toggleEditMode;
-- (void)reloadSectionsIfNeeded;
+- (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
 - (void)resumeFirstResponder;
 

@@ -8,20 +8,6 @@
 
 #import "OSettingListViewController.h"
 
-#import "UIBarButtonItem+OrigoExtensions.h"
-#import "UITableView+OrigoExtensions.h"
-
-#import "OLocator.h"
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OTableViewCell.h"
-
-#import "OSettings+OrigoExtensions.h"
-
-#import "OTabBarController.h"
-
 static NSString * const kSegueToSettingView = @"sequeFromSettingListToSettingView";
 
 static NSInteger const kSectionKeySettings = 0;

@@ -47,10 +47,6 @@ static void uncaughtExceptionHandler(NSException *exception)
 {
     if ([[OMeta m] userIsSignedIn]) {
         [[OMeta m].replicator saveUserReplicationState];
-        
-        if (![[OMeta m] userIsRegistered]) {
-            [ODefaults setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
-        }
     }
     
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -165,7 +161,7 @@ static void uncaughtExceptionHandler(NSException *exception)
         
         _didEnterBackground = NO;
     } else {
-        if ([[OMeta m] userIsSignedIn]) {
+        if ([[OMeta m] userIsAllSet]) {
             [[OMeta m].replicator replicate];
         }
     }

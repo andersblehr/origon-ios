@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "OrigoApp.h"
 
 @interface UIColor (OrigoExtensions)
 

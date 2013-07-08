@@ -6,13 +6,7 @@
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
-#import "OTableViewController.h"
-
-#import "OLocatorDelegate.h"
-#import "OTableViewListDelegate.h"
-
-@class OTableViewCell;
-@class OSettings;
+#import "OrigoApp.h"
 
 @interface OSettingViewController : OTableViewController<OTableViewListDelegate, OLocatorDelegate> {
 @private

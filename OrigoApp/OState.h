@@ -6,11 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-#import "OTableViewController.h"
-
-#import "OTableViewListDelegate.h"
+#import "OrigoApp.h"
 
 extern NSString * const kViewControllerAuth;
 extern NSString * const kViewControllerCalendar;
@@ -23,7 +19,7 @@ extern NSString * const kViewControllerSetting;
 extern NSString * const kViewControllerSettingList;
 extern NSString * const kViewControllerTaskList;
 
-extern NSString * const kActionSetup;
+extern NSString * const kActionLoad;
 extern NSString * const kActionSignIn;
 extern NSString * const kActionActivate;
 extern NSString * const kActionRegister;
@@ -32,6 +28,7 @@ extern NSString * const kActionDisplay;
 extern NSString * const kActionEdit;
 extern NSString * const kActionInput;
 
+extern NSString * const kTargetStrings;
 extern NSString * const kTargetEmail;
 extern NSString * const kTargetUser;
 extern NSString * const kTargetWard;

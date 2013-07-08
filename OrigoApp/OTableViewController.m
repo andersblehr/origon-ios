@@ -8,30 +8,6 @@
 
 #import "OTableViewController.h"
 
-#import "NSManagedObjectContext+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
-#import "UIBarButtonItem+OrigoExtensions.h"
-#import "UITableView+OrigoExtensions.h"
-
-#import "OConnection.h"
-#import "ODefaults.h"
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OReplicator.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OTableViewCell.h"
-#import "OTableViewCellBlueprint.h"
-#import "OTextField.h"
-#import "OTextView.h"
-#import "OValidator.h"
-
-#import "OMembership.h"
-#import "OOrigo+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-
-#import "OTabBarController.h"
-
 NSString * const kEntityRegistrationCell = @"registration";
 NSString * const kCustomCell = @"custom";
 
@@ -85,12 +61,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             
             _lastSectionKey = [_sectionKeys lastObject];
             _didInitialise = YES;
+        } else {
+            _state.action = kActionLoad;
+            _state.target = kTargetUser;
         }
     } else {
-        _state.action = kActionSetup;
+        _state.action = kActionLoad;
+        _state.target = kTargetStrings;
     }
-    
-    [[OState s] reflectState:_state];
 }
 
 
@@ -131,7 +109,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)inputFieldDidBeginEditing:(id)inputField
 {
-    if ([_state actionIs:kActionDisplay]) {
+    if ([self actionIs:kActionDisplay]) {
         [self toggleEditMode];
     }
 
@@ -171,7 +149,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (reauthenticate) {
         [[OMeta m] userDidSignOut];
         
-        [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil dismisser:navigationController.viewControllers[0]];
+        [self presentModalViewControllerWithIdentifier:kViewControllerAuth dismisser:navigationController.viewControllers[0]];
         
         _reauthenticationLandingTabIndex = tabIndex;
     }
@@ -188,9 +166,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)didCancelEditing
 {
-    if ([_state actionIs:kActionRegister]) {
-        [_dismisser dismissModalViewControllerWithIdentifier:_viewControllerId needsReloadData:NO];
-    } else if ([_state actionIs:kActionEdit]) {
+    if ([self actionIs:kActionRegister]) {
+        [_dismisser dismissModalViewController:self reload:NO];
+    } else if ([self actionIs:kActionEdit]) {
         [_detailCell readEntity];
         [self toggleEditMode];
     }
@@ -200,7 +178,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)didFinishEditing
 {
     if ([self isListViewController]) {
-        [_dismisser dismissModalViewControllerWithIdentifier:_viewControllerId];
+        [_dismisser dismissModalViewController:self reload:YES];
     } else {
         [_detailCell processInput];
     }
@@ -369,9 +347,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data dismisser:(id)dismisser
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier dismisser:(id)dismisser
 {
-    [self presentModalViewControllerWithIdentifier:identifier data:data meta:dismisser];
+    [self presentModalViewControllerWithIdentifier:identifier data:nil meta:dismisser];
 }
 
 
@@ -411,7 +389,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)reloadSectionsIfNeeded
+- (void)reloadSections
 {
     [_instance initialiseDataSource];
     
@@ -480,15 +458,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [self.tableView setBackground];
     
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.toolbar.barStyle = UIBarStyleBlack;
     
     NSString *longName = NSStringFromClass(self.class);
     NSString *shortName = [longName substringFromIndex:1];
     NSString *controllerSuffix = [self isListViewController] ? kViewControllerSuffixList : kViewControllerSuffix;
-    _viewControllerId = [[shortName substringToIndex:[shortName rangeOfString:controllerSuffix].location] lowercaseString];
+    _identifier = [[shortName substringToIndex:[shortName rangeOfString:controllerSuffix].location] lowercaseString];
     
     if ([self isListViewController]) {
         _modalImpliesRegistration = NO;
-        _viewControllerId = [_viewControllerId stringByAppendingString:@"s"];
+        _identifier = [_identifier stringByAppendingString:@"s"];
     } else {
         _modalImpliesRegistration = YES;
         _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kViewControllerSuffix].location]);
@@ -511,7 +490,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     [self initialiseInstance];
     
-    if ([_state actionIs:kActionRegister]) {
+    if ([self actionIs:kActionRegister]) {
         _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
         _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
         
@@ -550,8 +529,22 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [self.tabBarController.tabBar.items[kTabIndexOrigo] setTitle:nil];
     }
     
-    if (_isPopped || _needsReloadSections) {
-        [self reloadSectionsIfNeeded];
+    if (_hasToolbar) {
+        [self.navigationController setToolbarHidden:NO animated:YES];
+        
+        UIBarButtonItem *space = [UIBarButtonItem flexibleSpace];
+        UIBarButtonItem *callButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"75-phone.png"] landscapeImagePhone:[UIImage imageNamed:@"75-phone.png"] style:UIBarButtonItemStylePlain target:self action:@selector(signOut)];
+        UIBarButtonItem *textButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:nil];
+        //UIBarButtonItem *textButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_139_phone.png"] landscapeImagePhone:[UIImage imageNamed:@"glyphicons_139_phone.png"] style:UIBarButtonItemStylePlain target:self action:@selector(signOut)];
+        UIBarButtonItem *emailButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"18-envelope.png"] landscapeImagePhone:[UIImage imageNamed:@"18-envelope.png"] style:UIBarButtonItemStylePlain target:self action:@selector(signOut)];
+        
+        [self setToolbarItems:@[space, callButton, space, textButton, space, emailButton, space]];
+    } else  {
+        [self.navigationController setToolbarHidden:YES animated:YES];
+    }
+    
+    if (_isPopped || _shouldReloadOnModalDismissal) {
+        [self reloadSections];
     }
 }
 
@@ -560,13 +553,17 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [super viewDidAppear:animated];
     
-    if ([_state actionIs:kActionSetup]) {
-        [self.activityIndicator startAnimating];
-        [OConnection fetchStrings];
-    } else if ([_state actionIs:kActionRegister]) {
-        [[_detailCell nextInputField] becomeFirstResponder];
-    } else if (![_viewControllerId isEqualToString:kViewControllerAuth] && ![[OMeta m] userIsSignedIn]) {
-        [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil dismisser:self];
+    if ([[OMeta m] userIsSignedIn]) {
+        if ([self actionIs:kActionRegister]) {
+            [[_detailCell firstInputField] becomeFirstResponder];
+        }
+    } else {
+        if ([self actionIs:kActionLoad] && [self targetIs:kTargetStrings]) {
+            [self.activityIndicator startAnimating];
+            [OConnection fetchStrings];
+        } else if (![_identifier isEqualToString:kViewControllerAuth]) {
+            [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil];
+        }
     }
     
     OLogState;
@@ -579,9 +576,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     _isHidden = (self.presentedViewController != nil);
     
-    if (!_isHidden) {
-        [[OMeta m].replicator replicateIfNeeded];
+    if (![[OMeta m].user isActive] && [[OMeta m] userIsAllSet]) {
+        [[OMeta m].user makeActive];
     }
+    
+    [[OMeta m].replicator replicateIfNeeded];
 }
 
 
@@ -648,7 +647,37 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     NSInteger sectionNumber = [self sectionNumberForSectionKey:sectionKey];
     
-    return ((sectionNumber == [self.tableView numberOfSections] - 1) && ![_state actionIs:kActionRegister]);
+    return ((sectionNumber == [self.tableView numberOfSections] - 1) && ![self actionIs:kActionRegister]);
+}
+
+
+#pragma mark - OModalViewControllerDismisser conformance
+
+- (void)dismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload
+{
+    BOOL shouldRelayDismissal = NO;
+    
+    if ([self respondsToSelector:@selector(shouldRelayDismissalOfModalViewController:)]) {
+        shouldRelayDismissal = [self shouldRelayDismissalOfModalViewController:viewController];
+    }
+    
+    if (shouldRelayDismissal) {
+        [self.dismisser dismissModalViewController:viewController reload:reload];
+    } else {
+        if ([self respondsToSelector:@selector(willDismissModalViewController:)]) {
+            [self willDismissModalViewController:viewController];
+        }
+        
+        _shouldReloadOnModalDismissal = [[OMeta m] userIsSignedIn] ? reload : NO;
+        
+        [self dismissViewControllerAnimated:YES completion:^{
+            _shouldReloadOnModalDismissal = NO;
+        }];
+        
+        if ([self respondsToSelector:@selector(didDismissModalViewController:)]) {
+            [self didDismissModalViewController:viewController];
+        }
+    }
 }
 
 
@@ -710,7 +739,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return ([self.tableView cellForRowAtIndexPath:indexPath] != _detailCell);
+    BOOL canDeleteRow = NO;
+    
+    if ([self.tableView cellForRowAtIndexPath:indexPath] != _detailCell) {
+        if ([_instance respondsToSelector:@selector(canDeleteRowAtIndexPath:)]) {
+            canDeleteRow = [_instance canDeleteRowAtIndexPath:indexPath];
+        }
+    }
+    
+    return canDeleteRow;
 }
 
 
@@ -858,34 +895,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - OModalViewControllerDelegate conformance
-
-- (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier
-{
-    [self dismissModalViewControllerWithIdentifier:identifier needsReloadData:YES];
-}
-
-
-- (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier needsReloadData:(BOOL)needsReloadData
-{
-    _needsReloadSections = [[OMeta m] userIsSignedIn] ? needsReloadData : NO;
-    
-    [self dismissViewControllerAnimated:YES completion:^{
-        _needsReloadSections = NO;
-    }];
-}
-
-
 #pragma mark - OConnectionDelegate conformance
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    if ([_state actionIs:kActionSetup]) {
+    if ([self actionIs:kActionLoad]) {
         [self.activityIndicator stopAnimating];
         [OStrings.class didCompleteWithResponse:response data:data];
         
         [(OTabBarController *)self.tabBarController setTabBarTitles];
-        [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil dismisser:self];
+        [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil];
     }
 }
 

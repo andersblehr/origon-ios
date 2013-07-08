@@ -8,13 +8,6 @@
 
 #import "OCrypto.h"
 
-#import <CommonCrypto/CommonDigest.h>
-
-#import "NSDate+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
-
 static NSString * const kDefaultSeasoning = @"socroilgao";
 
 static NSString * const kCredentialsFormat = @"%@:%@";

@@ -2,15 +2,11 @@
 //  OLocator.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 29.04.13.
-//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 17.10.12.
+//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-#import <CoreLocation/CoreLocation.h>
-
-@protocol OLocatorDelegate;
+#import "OrigoApp.h"
 
 @interface OLocator : NSObject<CLLocationManagerDelegate, UIAlertViewDelegate> {
 @private

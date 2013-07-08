@@ -8,10 +8,6 @@
 
 #import "OCalendarViewController.h"
 
-#import "OLogging.h"
-#import "OState.h"
-#import "OStrings.h"
-
 
 @implementation OCalendarViewController
 
