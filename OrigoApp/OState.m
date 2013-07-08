@@ -8,25 +8,6 @@
 
 #import "OState.h"
 
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OStrings.h"
-#import "OValidator.h"
-
-#import "OMember+OrigoExtensions.h"
-#import "OOrigo+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-
-#import "OAuthViewController.h"
-#import "OMemberListViewController.h"
-#import "OMemberViewController.h"
-#import "OOrigoListViewController.h"
-#import "OOrigoViewController.h"
-#import "OCalendarViewController.h"
-#import "OTaskListViewController.h"
-#import "OMessageListViewController.h"
-#import "OSettingListViewController.h"
-
 NSString * const kViewControllerAuth = @"auth";
 NSString * const kViewControllerCalendar = @"calendar";
 NSString * const kViewControllerMember = @"member";
@@ -38,7 +19,7 @@ NSString * const kViewControllerSetting = @"setting";
 NSString * const kViewControllerSettingList = @"settings";
 NSString * const kViewControllerTaskList = @"tasks";
 
-NSString * const kActionSetup = @"setup";
+NSString * const kActionLoad = @"load";
 NSString * const kActionSignIn = @"sign-in";
 NSString * const kActionActivate = @"activate";
 NSString * const kActionRegister = @"register";
@@ -47,6 +28,7 @@ NSString * const kActionDisplay = @"display";
 NSString * const kActionEdit = @"edit";
 NSString * const kActionInput = @"input";
 
+NSString * const kTargetStrings = @"strings";
 NSString * const kTargetEmail = @"email";
 NSString * const kTargetUser = @"user";
 NSString * const kTargetWard = @"ward";
@@ -75,14 +57,14 @@ static OState *s = nil;
 + (OState *)s
 {
     if (!s) {
-        s = [[self alloc] initWithViewController:nil];
+        s = [[OState alloc] initWithViewController:nil];
     }
     
     return s;
 }
 
 
-#pragma mark - State reflection
+#pragma mark - State reflection & toggling
 
 - (void)reflectState:(OState *)state
 {
@@ -98,13 +80,9 @@ static OState *s = nil;
 {
     if ([alternatingActions count] == 2) {
         if ([_action isEqualToString:alternatingActions[0]]) {
-            _action = alternatingActions[1];
+            self.action = alternatingActions[1];
         } else if ([_action isEqualToString:alternatingActions[1]]) {
-            _action = alternatingActions[0];
-        }
-        
-        if (self != [self.class s]) {
-            [[self.class s] reflectState:self];
+            self.action = alternatingActions[0];
         }
     }
 }
@@ -112,9 +90,9 @@ static OState *s = nil;
 
 #pragma mark - State inspection
 
-- (BOOL)viewControllerIs:(NSString *)viewControllerId
+- (BOOL)viewControllerIs:(NSString *)viewControllerIdentifier
 {
-    return [_viewController.viewControllerId isEqualToString:viewControllerId];
+    return [_viewController.identifier isEqualToString:viewControllerIdentifier];
 }
 
 
@@ -158,7 +136,7 @@ static OState *s = nil;
 
 - (NSString *)asString
 {
-    NSString *viewController = [_viewController.viewControllerId uppercaseString];
+    NSString *viewController = [_viewController.identifier uppercaseString];
     NSString *action = [_action uppercaseString];
     NSString *target = [_target uppercaseString];
     
@@ -172,6 +150,14 @@ static OState *s = nil;
 
 #pragma mark - Custom property accessors
 
+- (void)setAction:(NSString *)action
+{
+    _action = action;
+    
+    [[OState s] reflectState:self];
+}
+
+
 - (void)setTarget:(id)target
 {
     if ([target isKindOfClass:OReplicatedEntity.class]) {
@@ -179,6 +165,8 @@ static OState *s = nil;
     } else if ([target isKindOfClass:NSString.class]) {
         _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
     }
+    
+    [[OState s] reflectState:self];
 }
 
 

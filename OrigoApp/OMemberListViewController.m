@@ -8,21 +8,6 @@
 
 #import "OMemberListViewController.h"
 
-#import "UIBarButtonItem+OrigoExtensions.h"
-
-#import "NSDate+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OUtil.h"
-
-#import "OMember+OrigoExtensions.h"
-#import "OMembership+OrigoExtensions.h"
-#import "OOrigo+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-
 static NSString * const kSegueToMemberView = @"segueFromMemberListToMemberView";
 static NSString * const kSegueToOrigoView = @"segueFromMemberListToOrigoView";
 
@@ -147,13 +132,17 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     [super viewDidLoad];
     
-    self.title = _origo.name;
+    if ([self targetIs:kOrigoTypeResidence] && ![self targetIs:kTargetHousehold]) {
+        self.title = [_origo residenceDescription];
+    } else {
+        self.title = _origo.name;
+    }
     
     if ([_origo userCanEdit]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
         self.navigationItem.rightBarButtonItem.action = @selector(addMember);
         
-        if (self.dismisser) {
+        if (self.isModal) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         }
     }
@@ -258,6 +247,19 @@ static NSInteger const kHousemateSheetTag = 0;
 }
 
 
+- (BOOL)canDeleteRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL canDeleteRow = NO;
+    
+    if (indexPath.section != kSectionKeyOrigo) {
+        OMembership *membershipForRow = [self dataAtIndexPath:indexPath];
+        canDeleteRow = [_origo userIsAdmin] && ![membershipForRow.member isUser];
+    }
+    
+    return canDeleteRow;
+}
+
+
 #pragma mark - OTableViewListDelegate conformance
 
 - (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
@@ -308,19 +310,6 @@ static NSInteger const kHousemateSheetTag = 0;
 
 #pragma mark - UITableViewDataSource conformance
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    BOOL canDeleteRow = NO;
-    
-    if (indexPath.section != kSectionKeyOrigo) {
-        OMembership *membershipForRow = [self dataAtIndexPath:indexPath];
-        canDeleteRow = [_origo userIsAdmin] && ![membershipForRow.member isUser];
-    }
-    
-    return canDeleteRow;
-}
-
-
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return [OStrings stringForKey:strButtonDeleteMember];
@@ -337,7 +326,7 @@ static NSInteger const kHousemateSheetTag = 0;
                 [self presentModalViewControllerWithIdentifier:kViewControllerMember data:_origo];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_origo addMember:_candidateHousemates[buttonIndex]];
-                [self reloadSectionsIfNeeded];
+                [self reloadSections];
             }
             
             break;

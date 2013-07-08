@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "OrigoApp.h"
 
 @protocol OTableViewInputDelegate <NSObject>
 

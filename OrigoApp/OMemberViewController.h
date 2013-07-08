@@ -6,13 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OTableViewController.h"
-
-#import "OTableViewInputDelegate.h"
-#import "OTableViewListDelegate.h"
-
-@class OTextField;
-@class OMember, OMembership, OOrigo;
+#import "OrigoApp.h"
 
 @interface OMemberViewController : OTableViewController<OTableViewListDelegate, OTableViewInputDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private

@@ -6,9 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <CoreData/CoreData.h>
-
-@class OMembership, OOrigo, OReplicatedEntity;
+#import "OrigoApp.h"
 
 @interface NSManagedObjectContext (OrigoExtensions)
 

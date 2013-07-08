@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OMember.h"
+#import "OrigoApp.h"
 
-#import <CoreLocation/CoreLocation.h>
+#import "OMember.h"
 
 @interface OMember (OrigoExtensions)
 
@@ -27,17 +27,13 @@
 - (void)makeActive;
 
 - (BOOL)isUser;
+- (BOOL)isManagedByUser;
 - (BOOL)isKnownByUser;
-- (BOOL)isFemale;
 - (BOOL)isMale;
 - (BOOL)isMinor;
 - (BOOL)isOfPreschoolAge;
 - (BOOL)isTeenOrOlder;
 - (BOOL)isMemberOfOrigoOfType:(NSString *)origoType;
-
-- (BOOL)hasAddress;
-- (BOOL)hasWard:(OMember *)candidate;
-- (BOOL)hasHousemate:(OMember *)candidate;
 
 - (UIImage *)listCellImage;
 

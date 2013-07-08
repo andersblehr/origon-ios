@@ -8,25 +8,7 @@
 
 #import "OOrigoListViewController.h"
 
-#import "NSString+OrigoExtensions.h"
-#import "UIBarButtonItem+OrigoExtensions.h"
-#import "UITableView+OrigoExtensions.h"
-
-#import "OAlert.h"
-#import "ODefaults.h"
-#import "OLocator.h"
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OReplicator.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OUtil.h"
-
-#import "OMember+OrigoExtensions.h"
-#import "OMembership.h"
-#import "OOrigo+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-#import "OSettings.h"
+#import "OAuthViewController.h"
 
 static NSString * const kSegueToMemberView = @"segueFromOrigoListToMemberView";
 static NSString * const kSegueToMemberListView = @"segueFromOrigoListToMemberListView";
@@ -64,8 +46,8 @@ static NSInteger const kUserRow = 0;
         NSString *yourChild = nil;
         NSString *himOrHer = nil;
         
-        BOOL allFemale = YES;
         BOOL allMale = YES;
+        BOOL allFemale = YES;
         
         if ([self numberOfRowsInSectionWithKey:kSectionKeyWards] == 1) {
             yourChild = ((OMember *)[self dataInSectionWithKey:kSectionKeyWards][0]).givenName;
@@ -74,14 +56,14 @@ static NSInteger const kUserRow = 0;
         }
         
         for (OMember *ward in [self dataInSectionWithKey:kSectionKeyWards]) {
-            allFemale = allFemale && [ward isFemale];
             allMale = allMale && [ward isMale];
+            allFemale = allFemale && ![ward isMale];
         }
         
-        if (allFemale) {
-            himOrHer = [OStrings stringForKey:strTermHer];
-        } else if (allMale) {
+        if (allMale) {
             himOrHer = [OStrings stringForKey:strTermHim];
+        } else if (allFemale) {
+            himOrHer = [OStrings stringForKey:strTermHer];
         } else {
             himOrHer = [OStrings stringForKey:strTermHimOrHer];
         }
@@ -96,6 +78,17 @@ static NSInteger const kUserRow = 0;
     }
     
     return footerText;
+}
+
+
+- (void)displayListedUserRegistrationAlert
+{
+    OMember *creator = [[OMeta m].context entityWithId:[OMeta m].user.createdBy];
+    
+    NSString *strPronoun = [creator isMale] ? strTermHe : strTermShe;
+    NSString *alertText = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextListedUserRegistration], creator.givenName, [OStrings stringForKey:strPronoun]];
+    
+    [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleListedUserRegistration] text:alertText];
 }
 
 
@@ -207,10 +200,10 @@ static NSInteger const kUserRow = 0;
     [super viewDidAppear:animated];
 
     if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
-        if ([ODefaults userDefaultForKey:kDefaultsKeyRegistrationAborted]) {
+        if (_userIsListed) {
+            [self displayListedUserRegistrationAlert];
+        } else if (_registrationIsIncomplete) {
             [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] text:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
-            
-            [ODefaults setUserDefault:nil forKey:kDefaultsKeyRegistrationAborted];
         }
         
         [self presentModalViewControllerWithIdentifier:kViewControllerMember data:[[OMeta m].user initialResidency]];
@@ -335,7 +328,7 @@ static NSInteger const kUserRow = 0;
                 cell.imageView.image = [membership.member listCellImage];
             } else {
                 cell.textLabel.text = membership.origo.name;
-                cell.detailTextLabel.text = [membership.origo.address stringByReplacingSubstring:kSeparatorNewline withString:kSeparatorComma];
+                cell.detailTextLabel.text = [membership.origo singleLineAddress];
                 cell.imageView.image = [membership.origo listCellImage];
             }
         } else if (sectionKey == kSectionKeyOrigos) {
@@ -347,6 +340,21 @@ static NSInteger const kUserRow = 0;
         
         cell.textLabel.text = ward.givenName;
         cell.imageView.image = [ward listCellImage];
+    }
+}
+
+
+#pragma mark - OModalViewControllerDismisser conformance
+
+- (void)didDismissModalViewController:(OTableViewController *)viewController
+{
+    if ([viewController.identifier isEqualToString:kViewControllerAuth]) {
+        _userIsListed = ((OAuthViewController *)viewController).userIsListed;
+        _registrationIsIncomplete = ((OAuthViewController *)viewController).registrationIsIncomplete;
+    }
+    
+    if ([[OMeta m] userIsSignedIn]) {
+        [self.tableView reloadData];
     }
 }
 
@@ -368,18 +376,6 @@ static NSInteger const kUserRow = 0;
 - (void)locatorCannotLocate
 {
     [self presentCountrySheet];
-}
-
-
-#pragma mark - OModalViewControllerDelegate conformance
-
-- (void)dismissModalViewControllerWithIdentifier:(NSString *)identifier
-{
-    [super dismissModalViewControllerWithIdentifier:identifier];
-    
-    if ([[OMeta m] userIsSignedIn]) {
-        [self.tableView reloadData];
-    }
 }
 
 

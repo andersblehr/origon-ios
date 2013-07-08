@@ -8,23 +8,12 @@
 
 #import "OTextView.h"
 
-#import "NSString+OrigoExtensions.h"
-#import "UIColor+OrigoExtensions.h"
-#import "UIFont+OrigoExtensions.h"
-#import "UIView+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OTableViewCell.h"
-#import "OTextField.h"
-
 NSInteger const kTextViewMaximumLines = 5;
 
 static NSInteger const kTextViewMinimumEditLines = 2;
 static NSInteger const kTextViewMinimumLines = 1;
 
-static CGFloat const kTopInset = 5.f;
+static CGFloat const kTopInset = 6.f;
 static CGFloat const kDetailTextWidth = 210.f;
 static CGFloat const kAccessoryViewWidth = 30.f;
 
@@ -35,9 +24,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 + (CGFloat)heightWithLineCount:(NSInteger)lineCount
 {
-    NSInteger padding = kTopInset / lineCount;
-    
-    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight] + padding;
+    return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight];
 }
 
 
@@ -77,10 +64,10 @@ static CGFloat const kAccessoryViewWidth = 30.f;
                 }
             }
         } else {
-            lineCount = [self.class lineCountWithText:self.text state:_state];
+            lineCount = [OTextView lineCountWithText:self.text state:_state];
         }
     } else {
-        lineCount = [self.class lineCountWithText:self.placeholder state:_state];
+        lineCount = [OTextView lineCountWithText:self.placeholder state:_state];
     }
     
     _lastKnownLineCount = lineCount;
@@ -133,7 +120,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         _key = key;
         _hasEmphasis = NO;
         _state = [OState s].viewController.state;
-        _lastKnownLineCount = [self.class lineCountWithText:_placeholder state:_state];
+        _lastKnownLineCount = [OTextView lineCountWithText:_placeholder state:_state];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:nil];
     }
@@ -160,7 +147,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         lineCount = MAX(kTextViewMinimumLines, lineCount);
     }
     
-    return [self.class heightWithLineCount:lineCount];
+    return [OTextView heightWithLineCount:lineCount];
 }
 
 
@@ -214,7 +201,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 - (void)setPlaceholder:(NSString *)placeholder
 {
-    CGSize placeholderSize = CGSizeMake(kDetailTextWidth, [self.class heightWithText:placeholder]);
+    CGSize placeholderSize = CGSizeMake(kDetailTextWidth, [OTextView heightWithText:placeholder]);
     
     _placeholderView.frame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height);
     _placeholderView.text = placeholder;
@@ -250,6 +237,22 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     
     _lastKnownText = text;
     _lastKnownLineCount = [self lineCount];
+}
+
+
+#pragma mark - UITextView custom accessors
+
+- (BOOL)editable
+{
+    return self.isEditable;
+}
+
+
+- (void)setEditable:(BOOL)editable
+{
+    [super setEditable:editable];
+    
+    self.userInteractionEnabled = editable;
 }
 
 

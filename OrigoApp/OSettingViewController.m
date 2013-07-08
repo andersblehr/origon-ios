@@ -8,17 +8,6 @@
 
 #import "OSettingViewController.h"
 
-#import "UIBarButtonItem+OrigoExtensions.h"
-
-#import "OLocator.h"
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OUtil.h"
-
-#import "OSettings+OrigoExtensions.h"
-
 static NSInteger const kSectionKeyValues = 0;
 
 static NSString * const kCustomValue = @"custom";

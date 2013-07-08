@@ -8,18 +8,8 @@
 
 #import "OStrings.h"
 
-#import "NSDate+OrigoExtensions.h"
-
-#import "OAlert.h"
-#import "OConnection.h"
-#import "ODefaults.h"
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OState.h"
-
-#import "OOrigo+OrigoExtensions.h"
-
 // Cross-view strings
+NSString * const strFooterTapToEdit                  = @"strFooterTapToEdit";
 NSString * const strButtonOK                         = @"strButtonOK";
 NSString * const strButtonEdit                       = @"strButtonEdit";
 NSString * const strButtonNext                       = @"strButtonNext";
@@ -46,14 +36,10 @@ NSString * const strPlaceholderRepeatPassword        = @"strPlaceholderRepeatPas
 NSString * const strPlaceholderPleaseWait            = @"strPlaceholderPleaseWait";
 NSString * const strButtonHaveCode                   = @"strButtonHaveCode";
 NSString * const strButtonStartOver                  = @"strButtonStartOver";
-NSString * const strButtonAccept                     = @"strButtonAccept";
-NSString * const strButtonDecline                    = @"strButtonDecline";
 NSString * const strAlertTitleActivationFailed       = @"strAlertTitleActivationFailed";
 NSString * const strAlertTextActivationFailed        = @"strAlertTextActivationFailed";
 NSString * const strAlertTitleWelcomeBack            = @"strAlertTitleWelcomeBack";
 NSString * const strAlertTextWelcomeBack             = @"strAlertTextWelcomeBack";
-NSString * const strAlertTitleIncompleteRegistration = @"strAlertTitleIncompleteRegistration";
-NSString * const strAlertTextIncompleteRegistration  = @"strAlertTextIncompleteRegistration";
 
 // OOrigoListView strings
 NSString * const strTabBarTitleOrigo                 = @"strTabBarTitleOrigo";
@@ -65,6 +51,10 @@ NSString * const strFooterOrigoCreation              = @"strFooterOrigoCreation"
 NSString * const strFooterOrigoCreationWards         = @"strFooterOrigoCreationWards";
 NSString * const strButtonCountryLocate              = @"strButtonCountryLocate";
 NSString * const strButtonCountryOther               = @"strButtonCountryOther";
+NSString * const strAlertTitleListedUserRegistration = @"strAlertTitleListedUserRegistration";
+NSString * const strAlertTextListedUserRegistration  = @"strAlertTextListedUserRegistration";
+NSString * const strAlertTitleIncompleteRegistration = @"strAlertTitleIncompleteRegistration";
+NSString * const strAlertTextIncompleteRegistration  = @"strAlertTextIncompleteRegistration";
 NSString * const strAlertTitleCountryOther           = @"strAlertTitleCountryOther";
 NSString * const strAlertTextCountryOther            = @"strAlertTextCountryOther";
 NSString * const strAlertTextCountrySupported        = @"strAlertTextCountrySupported";
@@ -73,14 +63,16 @@ NSString * const strSheetTitleCountry                = @"strSheetTitleCountry";
 NSString * const strSheetTitleOrigoType              = @"strSheetTitleOrigoType";
 NSString * const strTermMe                           = @"strTermMe";
 NSString * const strTermYourChild                    = @"strTermYourChild";
+NSString * const strTermHe                           = @"strTermHe";
 NSString * const strTermHim                          = @"strTermHim";
+NSString * const strTermShe                          = @"strTermShe";
 NSString * const strTermHer                          = @"strTermHer";
 NSString * const strTermHimOrHer                     = @"strTermHimOrHer";
 NSString * const strTermForName                      = @"strTermForName";
 
 // OMemberListView strings
 NSString * const strViewTitleMembers                 = @"strViewTitleMembers";
-NSString * const strViewTitleHousehold               = @"strViewTitleHousehold";
+NSString * const strViewTitleResidence               = @"strViewTitleResidence";
 NSString * const strHeaderContacts                   = @"strHeaderContacts";
 NSString * const strHeaderHouseholdMembers           = @"strHeaderHouseholdMembers";
 NSString * const strHeaderOrigoMembers               = @"strHeaderOrigoMembers";
@@ -119,7 +111,7 @@ NSString * const strPlaceholderName                  = @"strPlaceholderName";
 NSString * const strPlaceholderEmail                 = @"strPlaceholderEmail";
 NSString * const strPlaceholderDateOfBirth           = @"strPlaceholderDateOfBirth";
 NSString * const strPlaceholderMobilePhone           = @"strPlaceholderMobilePhone";
-NSString * const strFooterMember                     = @"strFooterMember";
+NSString * const strFooterTapToAddAddress            = @"strFooterTapToAddAddress";
 NSString * const strButtonNewAddress                 = @"strButtonNewAddress";
 NSString * const strButtonInviteToHousehold          = @"strButtonInviteToHousehold";
 NSString * const strButtonMergeHouseholds            = @"strButtonMergeHouseholds";

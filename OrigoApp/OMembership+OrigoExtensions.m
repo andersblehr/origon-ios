@@ -8,15 +8,6 @@
 
 #import "OMembership+OrigoExtensions.h"
 
-#import "NSManagedObjectContext+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
-
-#import "OMember+OrigoExtensions.h"
-#import "OOrigo+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-
 static NSString * const kMembershipTypeMemberRoot = @"~";
 static NSString * const kMembershipTypeResidency = @"R";
 static NSString * const kMembershipTypeParticipancy = @"P";

@@ -6,12 +6,9 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "OrigoApp.h"
 
 extern CGFloat const kTextInset;
-
-@class OTableViewCell;
-@protocol OTableViewInputDelegate;
 
 @interface OTextField : UITextField {
 @private
@@ -28,6 +25,7 @@ extern CGFloat const kTextInset;
 @property (strong, nonatomic) NSDate *date;
 
 @property (nonatomic) BOOL isTitle;
+@property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL hasEmphasis;
 
 - (id)initWithKey:(NSString *)key delegate:(id)delegate;
@@ -40,6 +38,6 @@ extern CGFloat const kTextInset;
 - (NSString *)textValue;
 
 - (void)indicatePendingEvent:(BOOL)isPending;
-- (void)suppressUnwantedAutolayoutAnimation:(BOOL)suppress;
+- (void)raiseGuardAgainstUnwantedAutolayoutAnimation:(BOOL)raiseGuard; // Hack!
 
 @end

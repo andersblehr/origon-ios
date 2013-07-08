@@ -8,19 +8,6 @@
 
 #import "OConnection.h"
 
-#import "NSDate+OrigoExtensions.h"
-#import "NSJSONSerialization+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
-#import "NSURL+OrigoExtensions.h"
-
-#import "OAlert.h"
-#import "OCrypto.h"
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OReplicator.h"
-#import "OState.h"
-#import "OStrings.h"
-
 NSString * const kHTTPMethodGET = @"GET";
 NSString * const kHTTPMethodPOST = @"POST";
 NSString * const kHTTPMethodDELETE = @"DELETE";

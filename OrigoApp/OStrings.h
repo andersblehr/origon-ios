@@ -6,9 +6,10 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "OrigoApp.h"
 
 // Cross-view strings
+extern NSString * const strFooterTapToEdit;
 extern NSString * const strButtonOK;
 extern NSString * const strButtonEdit;
 extern NSString * const strButtonNext;
@@ -35,14 +36,10 @@ extern NSString * const strPlaceholderRepeatPassword;
 extern NSString * const strPlaceholderPleaseWait;
 extern NSString * const strButtonHaveCode;
 extern NSString * const strButtonStartOver;
-extern NSString * const strButtonAccept;
-extern NSString * const strButtonDecline;
 extern NSString * const strAlertTitleActivationFailed;
 extern NSString * const strAlertTextActivationFailed;
 extern NSString * const strAlertTitleWelcomeBack;
 extern NSString * const strAlertTextWelcomeBack;
-extern NSString * const strAlertTitleIncompleteRegistration;
-extern NSString * const strAlertTextIncompleteRegistration;
 
 // OOrigoListView strings
 extern NSString * const strTabBarTitleOrigo;
@@ -54,6 +51,10 @@ extern NSString * const strFooterOrigoCreation;
 extern NSString * const strFooterOrigoCreationWards;
 extern NSString * const strButtonCountryLocate;
 extern NSString * const strButtonCountryOther;
+extern NSString * const strAlertTitleListedUserRegistration;
+extern NSString * const strAlertTextListedUserRegistration;
+extern NSString * const strAlertTitleIncompleteRegistration;
+extern NSString * const strAlertTextIncompleteRegistration;
 extern NSString * const strAlertTitleCountryOther;
 extern NSString * const strAlertTextCountryOther;
 extern NSString * const strAlertTextCountrySupported;
@@ -62,14 +63,16 @@ extern NSString * const strSheetTitleCountry;
 extern NSString * const strSheetTitleOrigoType;
 extern NSString * const strTermMe;
 extern NSString * const strTermYourChild;
+extern NSString * const strTermHe;
 extern NSString * const strTermHim;
+extern NSString * const strTermShe;
 extern NSString * const strTermHer;
 extern NSString * const strTermHimOrHer;
 extern NSString * const strTermForName;
 
 // OMemberListView strings
 extern NSString * const strViewTitleMembers;
-extern NSString * const strViewTitleHousehold;
+extern NSString * const strViewTitleResidence;
 extern NSString * const strHeaderContacts;
 extern NSString * const strHeaderHouseholdMembers;
 extern NSString * const strHeaderOrigoMembers;
@@ -108,7 +111,7 @@ extern NSString * const strPlaceholderName;
 extern NSString * const strPlaceholderEmail;
 extern NSString * const strPlaceholderDateOfBirth;
 extern NSString * const strPlaceholderMobilePhone;
-extern NSString * const strFooterMember;
+extern NSString * const strFooterTapToAddAddress;
 extern NSString * const strButtonNewAddress;
 extern NSString * const strButtonInviteToHousehold;
 extern NSString * const strButtonMergeHouseholds;

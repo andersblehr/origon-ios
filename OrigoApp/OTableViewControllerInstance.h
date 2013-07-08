@@ -6,9 +6,7 @@
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-#import "OTableViewCell.h"
+#import "OrigoApp.h"
 
 @protocol OTableViewControllerInstance <NSObject>
 
@@ -25,6 +23,7 @@
 - (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath;
 - (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (BOOL)canDeleteRowAtIndexPath:(NSIndexPath *)indexPath;
 
 - (void)didResumeFromBackground;
 

@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OReplicatedEntity.h"
+#import "OrigoApp.h"
 
-@class OMember, OMemberResidency, OMembership, OOrigo, OReplicatedEntityRef;
+#import "OReplicatedEntity.h"
 
 @interface OReplicatedEntity (OrigoExtensions)
 

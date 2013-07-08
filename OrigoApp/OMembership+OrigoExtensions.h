@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
+#import "OrigoApp.h"
+
 #import "OMembership.h"
 
 @interface OMembership (OrigoExtensions)

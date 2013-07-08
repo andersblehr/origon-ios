@@ -2,16 +2,11 @@
 //  OValidator.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 20.06.13.
-//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 17.10.12.
+//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
 #import "OValidator.h"
-
-#import "NSString+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
 
 static NSInteger const kMinimumPassordLength = 6;
 static NSInteger const kMinimumPhoneNumberLength = 5;

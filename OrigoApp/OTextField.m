@@ -8,22 +8,6 @@
 
 #import "OTextField.h"
 
-#import "NSDate+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
-#import "UIColor+OrigoExtensions.h"
-#import "UIFont+OrigoExtensions.h"
-#import "UIView+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OTableViewCell.h"
-#import "OUtil.h"
-#import "OValidator.h"
-
-#import "OReplicatedEntity.h"
-
 CGFloat const kTextInset = 4.f;
 
 static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor";
@@ -86,7 +70,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 - (BOOL)hasValue
 {
-    return ([self objectValue] != nil);
+    return ([self textValue] != nil);
 }
 
 
@@ -130,21 +114,17 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     NSString *textValue = nil;
     
     if (self.text && [self.text length]) {
-        if ([self isDateField]) {
-            textValue = [self.date localisedDateString];
-        } else {
-            textValue = self.text;
-            
-            if (!self.secureTextEntry) {
-                textValue = [textValue removeRedundantWhitespace];
-            }
-            
-            if ([textValue length] == 0) {
-                textValue = nil;
-            }
-            
-            self.text = textValue;
+        textValue = self.text;
+        
+        if (!self.secureTextEntry) {
+            textValue = [textValue removeRedundantWhitespace];
         }
+        
+        if ([textValue length] == 0) {
+            textValue = nil;
+        }
+        
+        self.text = textValue;
     }
     
     return textValue;
@@ -169,19 +149,21 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 }
 
 
-#pragma mark - Workaround for unwanted animation
+#pragma mark - Workaround (hack) to avoid unwanted animation
 
-- (void)suppressUnwantedAutolayoutAnimation:(BOOL)suppress
+- (void)raiseGuardAgainstUnwantedAutolayoutAnimation:(BOOL)raiseGuard
 {
     // Setting empty text field to temporary value on creation and resetting before
     // cell display, to avoid autolayout causing newly entered text to disappear and
-    // fly back in on end edit when next input field is an OTextView instance that
-    // resizes on begin edit.
+    // fly back in on end edit when next input field is an OTextView that resizes on
+    // begin edit.
     
-    if (suppress) {
-        self.text = kSeparatorSpace;
-    } else if ([self.text isEqualToString:kSeparatorSpace]) {
-        self.text = @"";
+    if ([[OState s] actionIs:kActionRegister]) {
+        if (raiseGuard && ![self hasValue]) {
+            self.text = kSeparatorSpace;
+        } else if (!raiseGuard && [self.text isEqualToString:kSeparatorSpace]) {
+            self.text = @"";
+        }
     }
 }
 
@@ -208,6 +190,18 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     
     self.font = [UIFont titleFont];
     self.textColor = [UIColor titleTextColor];
+}
+
+
+- (BOOL)editable
+{
+    return self.enabled;
+}
+
+
+- (void)setEditable:(BOOL)editable
+{
+    self.enabled = editable;
 }
 
 

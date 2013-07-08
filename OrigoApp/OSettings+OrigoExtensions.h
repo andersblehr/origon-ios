@@ -2,14 +2,15 @@
 //  OSettings+OrigoExtensions.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 15.05.13.
+//  Created by Anders Blehr on 17.10.12.
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
+
+#import "OrigoApp.h"
 
 #import "OSettings.h"
 
 extern NSString * const kSettingKeyCountry;
-
 
 @interface OSettings (OrigoExtensions)
 

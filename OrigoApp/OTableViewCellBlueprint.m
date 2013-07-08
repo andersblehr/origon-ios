@@ -2,26 +2,11 @@
 //  OTableViewCellBlueprint.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 22.02.13.
-//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 17.10.12.
+//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
 #import "OTableViewCellBlueprint.h"
-
-#import "NSDate+OrigoExtensions.h"
-#import "UIFont+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OTableViewCell.h"
-#import "OTextField.h"
-#import "OTextView.h"
-
-#import "OMember.h"
-#import "OOrigo+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
 
 CGFloat const kDefaultTableViewCellHeight = 45.f;
 CGFloat const kDefaultCellPadding = 10.f;
@@ -84,7 +69,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
     _emailKeys = @[kInputKeyAuthEmail, kPropertyKeyEmail];
     _passwordKeys = @[kInputKeyPassword, kInputKeyRepeatPassword];
     
-    _textViewKeys = [self.class textViewKeys];
+    _textViewKeys = [OTableViewCellBlueprint textViewKeys];
 }
 
 
@@ -136,10 +121,10 @@ CGFloat const kMinimumCellPadding = 0.1f;
         } else if (entityClass == OOrigo.class) {
             _hasPhoto = NO;
             
-            if ([[OState s] actionIs:kActionList]) {
-                _titleKey = nil;
-            } else {
+            if ([[OState s] targetIs:kTargetHousehold] && ![[OState s] actionIs:kActionList]) {
                 _titleKey = kPropertyKeyName;
+            } else {
+                _titleKey = nil;
             }
             
             if ([[OState s] targetIs:kOrigoTypeResidence]) {
@@ -160,13 +145,13 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 + (OTableViewCellBlueprint *)blueprintWithReuseIdentifier:(NSString *)reuseIdentifier
 {
-    return [[self alloc] initWithReuseIdentifier:reuseIdentifier];
+    return [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
 }
 
 
 + (OTableViewCellBlueprint *)blueprintWithEntityClass:(Class)entityClass
 {
-    return [[self alloc] initWithEntityClass:entityClass];
+    return [[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass];
 }
 
 
@@ -186,7 +171,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 - (CGFloat)heightForCell:(OTableViewCell *)cell
 {
-    return [self.class heightWithBlueprint:cell.blueprint entity:cell.entity cell:cell];
+    return [OTableViewCellBlueprint heightWithBlueprint:cell.blueprint entity:cell.entity cell:cell];
 }
 
 

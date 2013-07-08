@@ -2,23 +2,11 @@
 //  OTableViewCellConstrainer.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 18.11.12.
+//  Created by Anders Blehr on 17.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
 #import "OTableViewCellConstrainer.h"
-
-#import "NSDate+OrigoExtensions.h"
-#import "UIFont+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OState.h"
-#import "OTableViewCell.h"
-#import "OTableViewCellBlueprint.h"
-#import "OTextField.h"
-#import "OTextView.h"
-
-#import "OReplicatedEntity.h"
 
 static NSString * const kVConstraintsInitial          = @"V:|-10-";
 static NSString * const kVConstraintsInitialWithTitle = @"V:|-44-";
@@ -93,8 +81,10 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
                 } else {
                     [textField setText:value];
                 }
-            } else if ([textField isKindOfClass:OTextField.class]) {
-                [textField suppressUnwantedAutolayoutAnimation:YES]; // Hack!
+            }
+            
+            if ([textField isKindOfClass:OTextField.class]) {
+                [textField raiseGuardAgainstUnwantedAutolayoutAnimation:YES]; // Hack!
             }
         }
     } else {

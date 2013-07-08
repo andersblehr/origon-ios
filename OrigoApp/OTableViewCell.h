@@ -6,11 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
-#import "OEntityObserver.h"
-#import "OTableViewInputDelegate.h"
-#import "OTableViewListDelegate.h"
+#import "OrigoApp.h"
 
 extern NSString * const kReuseIdentifierList;
 extern NSString * const kReuseIdentifierUserSignIn;
@@ -20,9 +16,6 @@ extern NSString * const kViewKeySuffixLabel;
 extern NSString * const kViewKeySuffixTextField;
 
 extern CGFloat const kCellAnimationDuration;
-
-@class OState, OTableViewCellBlueprint, OTableViewCellConstrainer;
-@class OReplicatedEntity;
 
 @interface OTableViewCell : UITableViewCell<OEntityObserver> {
 @private
@@ -49,8 +42,9 @@ extern CGFloat const kCellAnimationDuration;
 - (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath;
 
-- (id)textFieldForKey:(NSString *)key;
 - (id)labelForKey:(NSString *)key;
+- (id)textFieldForKey:(NSString *)key;
+- (id)firstInputField;
 - (id)nextInputField;
 
 - (BOOL)isTitleKey:(NSString *)key;

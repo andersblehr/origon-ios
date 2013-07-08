@@ -8,27 +8,6 @@
 
 #import "OMeta.h"
 
-#import <CoreTelephony/CTCarrier.h>
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-
-#import "NSDate+OrigoExtensions.h"
-#import "NSManagedObjectContext+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
-
-#import "OAppDelegate.h"
-#import "OCrypto.h"
-#import "ODefaults.h"
-#import "OLocator.h"
-#import "OLogging.h"
-#import "OReplicator.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OCrypto.h"
-
-#import "OMember+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-#import "OSettings.h"
-
 NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 
 NSString * const kGenderFemale = @"F";
@@ -78,6 +57,7 @@ NSString * const kPropertyKeyIsAwaitingDeletion = @"isAwaitingDeletion";
 NSString * const kPropertyKeyMobilePhone = @"mobilePhone";
 NSString * const kPropertyKeyName = @"name";
 NSString * const kPropertyKeyOrigoId = @"origoId";
+NSString * const kPropertyKeyPasswordHash = @"passwordHash";
 NSString * const kPropertyKeyTelephone = @"telephone";
 
 NSString * const kRelationshipKeyMember = @"member";
@@ -85,8 +65,6 @@ NSString * const kRelationshipKeyOrigo = @"origo";
 
 NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
 NSString * const kDefaultsKeyDirtyEntities = @"origo.state.dirtyEntities";
-NSString * const kDefaultsKeyPasswordHash = @"origo.auth.passwordHash";
-NSString * const kDefaultsKeyRegistrationAborted = @"origo.flags.registrationAborted";
 NSString * const kDefaultsKeyStringDate = @"origo.date.strings";
 
 static NSTimeInterval const kTimeInterval30Days = 2592000;
@@ -102,6 +80,8 @@ static OMeta *m = nil;
 @property (strong, nonatomic) OMember *user;
 @property (strong, nonatomic) OReplicator *replicator;
 @property (strong, nonatomic) OLocator *locator;
+
+@property (strong, nonatomic) UIDatePicker *sharedDatePicker;
 
 @end
 
@@ -181,7 +161,6 @@ static OMeta *m = nil;
         
         _sharedDatePicker = [[UIDatePicker alloc] init];
         _sharedDatePicker.datePickerMode = UIDatePickerModeDate;
-        _sharedDatePicker.date = [NSDate defaultDate];
         
         [self checkReachability:[Reachability reachabilityForInternetConnection]];
         
@@ -268,7 +247,15 @@ static OMeta *m = nil;
 
 - (BOOL)userIsRegistered
 {
-    return ([_user hasValueForKey:kPropertyKeyMobilePhone] && [_user hasAddress]);
+    BOOL userHasDateOfBirth = [_user hasValueForKey:kPropertyKeyDateOfBirth];
+    BOOL userHasMobilePhone = [_user hasValueForKey:kPropertyKeyMobilePhone];
+    BOOL userHasAddress = NO;
+    
+    for (OMembership *residency in [_user residencies]) {
+        userHasAddress = userHasAddress || [residency.origo hasValueForKey:kPropertyKeyAddress];
+    }
+    
+    return userHasDateOfBirth && userHasMobilePhone && userHasAddress;
 }
 
 
@@ -409,6 +396,14 @@ static OMeta *m = nil;
     }
     
     return _locator;
+}
+
+
+- (UIDatePicker *)sharedDatePicker
+{
+    _sharedDatePicker.date = [NSDate defaultDate];
+    
+    return _sharedDatePicker;
 }
 
 

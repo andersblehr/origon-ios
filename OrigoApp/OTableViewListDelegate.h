@@ -6,9 +6,7 @@
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-@class OTableViewCell;
+#import "OrigoApp.h"
 
 @protocol OTableViewListDelegate <NSObject>
 

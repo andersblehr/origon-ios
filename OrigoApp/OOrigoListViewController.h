@@ -6,16 +6,14 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OTableViewController.h"
-
-#import "OLocatorDelegate.h"
-#import "OTableViewListDelegate.h"
-
-@class OMember;
+#import "OrigoApp.h"
 
 @interface OOrigoListViewController : OTableViewController<OTableViewListDelegate, OLocatorDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
     OMember *_member;
+    
+    BOOL _userIsListed;
+    BOOL _registrationIsIncomplete;
     
     NSMutableArray *_origoTypes;
     NSString *_selectedOrigoType;

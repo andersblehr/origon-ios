@@ -6,9 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
-@class OReplicatedEntity;
+#import "OrigoApp.h"
 
 @interface UITableView (OrigoExtensions)
 

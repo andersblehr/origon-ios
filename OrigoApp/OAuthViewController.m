@@ -8,27 +8,6 @@
 
 #import "OAuthViewController.h"
 
-#import "NSManagedObjectContext+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
-#import "UIFont+OrigoExtensions.h"
-#import "UITableView+OrigoExtensions.h"
-
-#import "OAlert.h"
-#import "OConnection.h"
-#import "ODefaults.h"
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OState.h"
-#import "OStrings.h"
-#import "OTableViewCell.h"
-#import "OTableViewCellBlueprint.h"
-#import "OTextField.h"
-#import "OCrypto.h"
-
-#import "OMember+OrigoExtensions.h"
-#import "OMembership.h"
-#import "OOrigo+OrigoExtensions.h"
-
 static NSInteger const kSectionKeyAuth = 0;
 
 static NSInteger const kAlertTagWelcomeBack = 0;
@@ -105,7 +84,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         if ([self targetIs:kTargetUser]) {
             [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] text:[OStrings stringForKey:strAlertTextActivationFailed] tag:kAlertTagActivationFailed];
         } else if ([self targetIs:kTargetEmail]) {
-            [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
+            [self.dismisser dismissModalViewController:self reload:YES];
         }
     }
 }
@@ -134,15 +113,15 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     [[OMeta m] userDidSignIn];
     
     if ([self actionIs:kActionSignIn]) {
-        if (![[OMeta m] userIsRegistered]) {
-            [ODefaults setUserDefault:@YES forKey:kDefaultsKeyRegistrationAborted];
-        }
-    } else if ([self actionIs:kActionActivate]) {
-        [ODefaults setUserDefault:_authInfo[kJSONKeyPasswordHash] forKey:kDefaultsKeyPasswordHash];
+        [OMeta m].user.passwordHash = [OCrypto passwordHashWithPassword:_passwordField.text];
         
-        if ([_authInfo[kJSONKeyIsListed] boolValue]) {
-            [[OMeta m].user makeActive];
-        } else {
+        _registrationIsIncomplete = ![[OMeta m] userIsRegistered];
+    } else if ([self actionIs:kActionActivate]) {
+        [OMeta m].user.passwordHash = _authInfo[kJSONKeyPasswordHash];
+        
+        _userIsListed = [_authInfo[kJSONKeyIsListed] boolValue];
+        
+        if (!_userIsListed) {
             OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
             [residence addMember:[OMeta m].user];
         }
@@ -150,7 +129,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [ODefaults setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
     }
     
-    [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
+    [self.dismisser dismissModalViewController:self reload:YES];
 }
 
 
@@ -288,7 +267,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             [OConnection activateWithEmail:[OMeta m].userEmail password:_repeatPasswordField.text];
         } else if ([self targetIs:kTargetEmail]) {
             [OMeta m].userEmail = self.data;
-            [self.dismisser dismissModalViewControllerWithIdentifier:self.viewControllerId];
+            
+            [self.dismisser dismissModalViewController:self reload:NO];
         }
     }
 }
@@ -316,7 +296,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         if ([self targetIs:kTargetUser]) {
             passwordHash = _authInfo[kJSONKeyPasswordHash];
         } else if ([self targetIs:kTargetEmail]) {
-            passwordHash = [ODefaults userDefaultForKey:kDefaultsKeyPasswordHash];
+            passwordHash = [OMeta m].user.passwordHash;
         }
         
         valueIsValid = [passwordHashAsEntered isEqualToString:passwordHash];

@@ -2,14 +2,11 @@
 //  ODefaults.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 22.06.13.
-//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 17.10.12.
+//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
 #import "ODefaults.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
 
 NSString * const kDefaultsKeyAuthExpiryDate = @"origo.date.authExpiry";
 NSString * const kDefaultsKeyDeviceId = @"origo.id.device";

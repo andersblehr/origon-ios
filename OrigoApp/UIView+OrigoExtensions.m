@@ -8,9 +8,6 @@
 
 #import "UIView+OrigoExtensions.h"
 
-#import "OLogging.h"
-#import "OTableViewCell.h"
-
 static CGFloat const kCellShadowRadius = 3.75f;
 static CGFloat const kCellShadowOffset = 5.f;
 static CGFloat const kFieldShadowRadius = 3.f;

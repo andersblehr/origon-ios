@@ -8,17 +8,6 @@
 
 #import "OOrigo+OrigoExtensions.h"
 
-#import "NSManagedObjectContext+OrigoExtensions.h"
-
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OState.h"
-
-#import "OMember+OrigoExtensions.h"
-#import "OMembership+OrigoExtensions.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
-#import "OReplicatedEntityRef.h"
-
 NSString * const kOrigoTypeMemberRoot = @"root";
 NSString * const kOrigoTypeResidence = @"residence";
 NSString * const kOrigoTypeOrganisation = @"organisation";
@@ -155,6 +144,26 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
+#pragma mark - User role information
+
+- (BOOL)userCanEdit
+{
+    return ([self userIsAdmin] || (![self hasAdmin] && [self userIsCreator]));
+}
+
+
+- (BOOL)userIsAdmin
+{
+    return [[[self membershipForMember:[OMeta m].user] isAdmin] boolValue];
+}
+
+
+- (BOOL)userIsMember
+{
+    return [self hasMember:[OMeta m].user];
+}
+
+
 #pragma mark - Origo meta information
 
 - (BOOL)isOfType:(NSString *)origoType
@@ -238,23 +247,50 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
-#pragma mark - User role information
+#pragma mark - Descriptive strings
 
-- (BOOL)userCanEdit
+- (NSString *)shortAddress
 {
-    return ([self userIsAdmin] || (![self hasAdmin] && [self userIsCreator]));
+    return [self.address length] ? [self.address lines][0] : nil;
 }
 
 
-- (BOOL)userIsAdmin
+- (NSString *)singleLineAddress
 {
-    return [[[self membershipForMember:[OMeta m].user] isAdmin] boolValue];
+    return [self.address stringByReplacingSubstring:kSeparatorNewline withString:kSeparatorComma];
 }
 
 
-- (BOOL)userIsMember
+- (NSString *)residenceDescription
 {
-    return [self hasMember:[OMeta m].user];
+    NSString *title = nil;
+    
+    if ([self isOfType:kOrigoTypeResidence]) {
+        NSString *names = nil;
+        NSMutableArray *unsortedNames = [[NSMutableArray alloc] init];
+        
+        for (OMembership *residency in [self residencies]) {
+            if (![residency.member isMinor]) {
+                [unsortedNames addObject:residency.member.givenName];
+            }
+        }
+        
+        NSArray *sortedNames = [unsortedNames sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+        
+        for (NSString *name in sortedNames) {
+            if (!names) {
+                names = name;
+            } else if ([sortedNames lastObject] == name) {
+                names = [names stringByAppendingString:name separator:kSeparatorAmpersand];
+            } else {
+                names = [names stringByAppendingString:name separator:kSeparatorComma];
+            }
+        }
+        
+        title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleResidence], names];
+    }
+    
+    return title;
 }
 
 
