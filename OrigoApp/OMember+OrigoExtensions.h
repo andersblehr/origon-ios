@@ -31,9 +31,14 @@
 - (BOOL)isKnownByUser;
 - (BOOL)isMale;
 - (BOOL)isMinor;
-- (BOOL)isOfPreschoolAge;
 - (BOOL)isTeenOrOlder;
+- (BOOL)isOlderThan:(NSInteger)age;
 - (BOOL)isMemberOfOrigoOfType:(NSString *)origoType;
+- (BOOL)hasParentOfGender:(NSString *)gender;
+
+- (NSString *)givenName;
+- (NSArray *)pronoun;
+- (NSString *)appellation;
 
 - (UIImage *)listCellImage;
 

@@ -19,10 +19,6 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 - (void)didPickDate
 {
-    if (!_didPickDate) {
-        _didPickDate = YES;
-    }
-    
     self.text = [self.date localisedDateString];
 }
 

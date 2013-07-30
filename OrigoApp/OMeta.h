@@ -13,10 +13,11 @@ extern NSString * const kBundleId;
 extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;
 
-extern NSUInteger const kAgeThresholdToddler;
-extern NSUInteger const kAgeThresholdInSchool;
-extern NSUInteger const kAgeThresholdTeen;
-extern NSUInteger const kAgeThresholdMajority;
+extern NSInteger const kAgeThresholdToddler;
+extern NSInteger const kAgeThresholdInSchool;
+extern NSInteger const kAgeThresholdTeen;
+extern NSInteger const kAgeOfConsent;
+extern NSInteger const kAgeOfMajority;
 
 extern NSString * const kLanguageHungarian;
 
@@ -49,12 +50,13 @@ extern NSString * const kPropertyKeyDateOfBirth;
 extern NSString * const kPropertyKeyDescriptionText;
 extern NSString * const kPropertyKeyEmail;
 extern NSString * const kPropertyKeyEntityId;
+extern NSString * const kPropertyKeyFatherId;
 extern NSString * const kPropertyKeyGender;
-extern NSString * const kPropertyKeyGivenName;
 extern NSString * const kPropertyKeyHashCode;
 extern NSString * const kPropertyKeyIsAwaitingDeletion;
 extern NSString * const kPropertyKeyIsExpired;
 extern NSString * const kPropertyKeyMobilePhone;
+extern NSString * const kPropertyKeyMotherId;
 extern NSString * const kPropertyKeyName;
 extern NSString * const kPropertyKeyOrigoId;
 extern NSString * const kPropertyKeyPasswordHash;
@@ -66,8 +68,6 @@ extern NSString * const kRelationshipKeyOrigo;
 extern NSString * const kDefaultsKeyAuthInfo;
 extern NSString * const kDefaultsKeyDirtyEntities;
 extern NSString * const kDefaultsKeyStringDate;
-
-//@class OReplicator, OLocator;
 
 @interface OMeta : NSObject {
 @private

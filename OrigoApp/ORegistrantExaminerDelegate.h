@@ -1,5 +1,5 @@
 //
-//  OEntityObserver.h
+//  ORegistreeExaminerDelegate.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
@@ -8,9 +8,10 @@
 
 #import "OrigoApp.h"
 
-@protocol OEntityObserver <NSObject>
+@protocol ORegistrantExaminerDelegate <NSObject>
 
 @required
-- (void)entityDidChange;
+- (void)examinerDidFinishExamination;
+- (void)examinerDidCancelExamination;
 
 @end

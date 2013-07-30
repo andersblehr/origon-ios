@@ -8,7 +8,7 @@
 
 #import "OrigoApp.h"
 
-@interface OMemberViewController : OTableViewController<OTableViewListDelegate, OTableViewInputDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
+@interface OMemberViewController : OTableViewController<OTableViewListDelegate, OTableViewInputDelegate, ORegistrantExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
     OMembership *_membership;
     OMember *_member;
@@ -21,7 +21,7 @@
     OTextField *_mobilePhoneField;
     OTextField *_emailField;
     
-    NSString *_gender;
+    ORegistrantExaminer *_examiner;
     NSArray *_candidateResidences;
 }
 

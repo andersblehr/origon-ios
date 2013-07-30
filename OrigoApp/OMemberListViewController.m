@@ -38,7 +38,7 @@ static NSInteger const kHousemateSheetTag = 0;
     NSString *text = nil;
     
     if ([member isMinor]) {
-        text = [member.givenName stringByAppendingFormat:@" (%d)", [member.dateOfBirth yearsBeforeNow]];
+        text = [[member givenName] stringByAppendingFormat:@" (%d)", [member.dateOfBirth yearsBeforeNow]];
     } else {
         text = member.name;
     }
@@ -133,7 +133,7 @@ static NSInteger const kHousemateSheetTag = 0;
     [super viewDidLoad];
     
     if ([self targetIs:kOrigoTypeResidence] && ![self targetIs:kTargetHousehold]) {
-        self.title = [_origo residenceDescription];
+        self.title = [_origo shortAddress];
     } else {
         self.title = _origo.name;
     }

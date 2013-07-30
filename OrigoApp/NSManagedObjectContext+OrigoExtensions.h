@@ -12,7 +12,7 @@
 
 - (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo;
 - (id)insertOrigoEntityOfType:(NSString *)origoType;
-- (id)insertMemberEntity;
+- (id)insertMemberEntityWithId:(NSString *)memberId;
 - (id)insertDeviceEntity;
 
 - (id)entityWithId:(NSString *)entityId;

@@ -146,12 +146,12 @@
     NSDictionary *attributes = [self.entity attributesByName];
     NSDictionary *relationships = [self.entity relationshipsByName];
     
-    NSArray *sortedAttributeKeys = [[attributes allKeys] sortedArrayUsingSelector:@selector(compare:)];
-    NSArray *sortedRelationshipKeys = [[relationships allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *attributeKeys = [[attributes allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *relationshipKeys = [[relationships allKeys] sortedArrayUsingSelector:@selector(compare:)];
     
     NSString *propertyString = @"";
     
-    for (NSString *attributeKey in sortedAttributeKeys) {
+    for (NSString *attributeKey in attributeKeys) {
         if (![self isTransientProperty:attributeKey]) {
             id value = [self valueForKey:attributeKey];
             
@@ -162,7 +162,7 @@
         }
     }
     
-    for (NSString *relationshipKey in sortedRelationshipKeys) {
+    for (NSString *relationshipKey in relationshipKeys) {
         NSRelationshipDescription *relationship = relationships[relationshipKey];
         
         if (!relationship.isToMany && ![self isTransientProperty:relationshipKey]) {

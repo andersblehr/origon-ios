@@ -12,7 +12,10 @@
 
 + (BOOL)isSupportedCountryCode:(NSString *)countryCode;
 + (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode;
+
 + (NSString *)givenNameFromFullName:(NSString *)fullName;
++ (NSString *)collectiveAppellationForMemberList:(NSArray *)members;
++ (NSString *)argumentWithABFormat:(NSString *)formatKey A:(NSString *)A B:(NSString *)B;
 
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;
 

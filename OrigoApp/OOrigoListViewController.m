@@ -49,21 +49,21 @@ static NSInteger const kUserRow = 0;
         BOOL allMale = YES;
         BOOL allFemale = YES;
         
-        if ([self numberOfRowsInSectionWithKey:kSectionKeyWards] == 1) {
-            yourChild = ((OMember *)[self dataInSectionWithKey:kSectionKeyWards][0]).givenName;
+        if ([[_member wards] count] == 1) {
+            yourChild = [[self dataInSectionWithKey:kSectionKeyWards][0] givenName];
         } else {
             yourChild = [OStrings stringForKey:strTermYourChild];
         }
         
-        for (OMember *ward in [self dataInSectionWithKey:kSectionKeyWards]) {
+        for (OMember *ward in [_member wards]) {
             allMale = allMale && [ward isMale];
             allFemale = allFemale && ![ward isMale];
         }
         
         if (allMale) {
-            himOrHer = [OStrings stringForKey:strTermHim];
+            himOrHer = [OLanguage pronouns][he][accusative];
         } else if (allFemale) {
-            himOrHer = [OStrings stringForKey:strTermHer];
+            himOrHer = [OLanguage pronouns][she][accusative];
         } else {
             himOrHer = [OStrings stringForKey:strTermHimOrHer];
         }
@@ -73,7 +73,7 @@ static NSInteger const kUserRow = 0;
     } else if ([self targetIs:kTargetUser]) {
         footerText = [footerText stringByAppendingString:@"."];
     } else if ([self targetIs:kTargetWard]) {
-        NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], _member.givenName];
+        NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], [_member givenName]];
         footerText = [NSString stringWithFormat:@"%@ %@.", footerText, forWardName];
     }
     
@@ -85,8 +85,7 @@ static NSInteger const kUserRow = 0;
 {
     OMember *creator = [[OMeta m].context entityWithId:[OMeta m].user.createdBy];
     
-    NSString *strPronoun = [creator isMale] ? strTermHe : strTermShe;
-    NSString *alertText = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextListedUserRegistration], creator.givenName, [OStrings stringForKey:strPronoun]];
+    NSString *alertText = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextListedUserRegistration], [creator givenName], [creator pronoun][nominative]];
     
     [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleListedUserRegistration] text:alertText];
 }
@@ -145,7 +144,7 @@ static NSInteger const kUserRow = 0;
     if ([self targetIs:kTargetUser]) {
         sheetTitle = [sheetTitle stringByAppendingString:@"?"];
     } else if ([self targetIs:kTargetWard]) {
-        NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], _member.givenName];
+        NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], [_member givenName]];
         sheetTitle = [NSString stringWithFormat:@"%@ %@?", sheetTitle, forWardName];
     }
     
@@ -171,9 +170,11 @@ static NSInteger const kUserRow = 0;
     
     self.title = @"Origo";
     
+    _registrationIsIncomplete = [[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered];
+    
     if ([[OMeta m] userIsAllSet] && ![_member isUser]) {
-        self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], _member.givenName];
-        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_member.givenName];
+        self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], [_member givenName]];
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_member givenName]];
     }
 }
 
@@ -229,7 +230,7 @@ static NSInteger const kUserRow = 0;
     self.state.target = _member;
     
     if ([self targetIs:kTargetWard]) {
-        if ([_member isOfPreschoolAge]) {
+        if ([_member isOlderThan:kAgeThresholdInSchool]) {
             [_origoTypes addObject:kOrigoTypePreschoolClass];
         }
         
@@ -323,7 +324,7 @@ static NSInteger const kUserRow = 0;
         
         if (sectionKey == kSectionKeyUser) {
             if (indexPath.row == kUserRow) {
-                cell.textLabel.text = [OStrings stringForKey:strTermMe];
+                cell.textLabel.text = [[OLanguage pronouns][I][disjunctive] capitalizedString];
                 cell.detailTextLabel.text = membership.member.name;
                 cell.imageView.image = [membership.member listCellImage];
             } else {
@@ -338,7 +339,7 @@ static NSInteger const kUserRow = 0;
     } else if (sectionKey == kSectionKeyWards) {
         OMember *ward = [entity asMember];
         
-        cell.textLabel.text = ward.givenName;
+        cell.textLabel.text = [ward givenName];
         cell.imageView.image = [ward listCellImage];
     }
 }

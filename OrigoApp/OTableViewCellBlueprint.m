@@ -117,7 +117,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
                 _detailKeys = @[kPropertyKeyMobilePhone, kPropertyKeyEmail];
             }
             
-            _indirectKeys = @[kPropertyKeyGender, kPropertyKeyGivenName];
+            _indirectKeys = @[kPropertyKeyGender, kPropertyKeyFatherId, kPropertyKeyMotherId];
         } else if (entityClass == OOrigo.class) {
             _hasPhoto = NO;
             

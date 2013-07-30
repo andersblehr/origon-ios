@@ -8,7 +8,7 @@
 
 #import "OStrings.h"
 
-// Cross-view strings
+// Cross-view terms & strings
 NSString * const strFooterTapToEdit                  = @"strFooterTapToEdit";
 NSString * const strButtonOK                         = @"strButtonOK";
 NSString * const strButtonEdit                       = @"strButtonEdit";
@@ -20,8 +20,15 @@ NSString * const strButtonSignOut                    = @"strButtonSignOut";
 NSString * const strAlertTextNoInternet              = @"strAlertTextNoInternet";
 NSString * const strAlertTextServerError             = @"strAlertTextServerError";
 NSString * const strAlertTextLocating                = @"strAlertTextLocating";
-NSString * const strTermAddress                      = @"strTermAddress";
-NSString * const strTermCountry                      = @"strTermCountry";
+NSString * const strArgumentFormatAorB               = @"strArgumentFormatAorB";
+NSString * const strArgumentFormatAofB               = @"strArgumentFormatAofB";
+NSString * const strTermYes                          = @"strTermYes";
+NSString * const strTermNo                           = @"strTermNo";
+NSString * const strTermMan                          = @"strTermMan";
+NSString * const strTermBoy                          = @"strTermBoy";
+NSString * const strTermWoman                        = @"strTermWoman";
+NSString * const strTermGirl                         = @"strTermGirl";
+NSString * const strSeparatorAnd                     = @"strSeparatorAnd";
 
 // OAuthView strings
 NSString * const strLabelSignIn                      = @"strLabelSignIn";
@@ -61,12 +68,7 @@ NSString * const strAlertTextCountrySupported        = @"strAlertTextCountrySupp
 NSString * const strAlertTextCountryUnsupported      = @"strAlertTextCountryUnsupported";
 NSString * const strSheetTitleCountry                = @"strSheetTitleCountry";
 NSString * const strSheetTitleOrigoType              = @"strSheetTitleOrigoType";
-NSString * const strTermMe                           = @"strTermMe";
 NSString * const strTermYourChild                    = @"strTermYourChild";
-NSString * const strTermHe                           = @"strTermHe";
-NSString * const strTermHim                          = @"strTermHim";
-NSString * const strTermShe                          = @"strTermShe";
-NSString * const strTermHer                          = @"strTermHer";
 NSString * const strTermHimOrHer                     = @"strTermHimOrHer";
 NSString * const strTermForName                      = @"strTermForName";
 
@@ -90,7 +92,6 @@ NSString * const strViewTitleNewOrigo                = @"strViewTitleNewOrigo";
 NSString * const strLabelAddress                     = @"strLabelAddress";
 NSString * const strLabelDescriptionText             = @"strLabelDescriptionText";
 NSString * const strLabelTelephone                   = @"strLabelTelephone";
-NSString * const strHeaderAddresses                  = @"strHeaderAddresses";
 NSString * const strPlaceholderAddress               = @"strPlaceholderAddress";
 NSString * const strPlaceholderDescriptionText       = @"strPlaceholderDescriptionText";
 NSString * const strPlaceholderTelephone             = @"strPlaceholderTelephone";
@@ -111,7 +112,10 @@ NSString * const strPlaceholderName                  = @"strPlaceholderName";
 NSString * const strPlaceholderEmail                 = @"strPlaceholderEmail";
 NSString * const strPlaceholderDateOfBirth           = @"strPlaceholderDateOfBirth";
 NSString * const strPlaceholderMobilePhone           = @"strPlaceholderMobilePhone";
+NSString * const strHeaderAddress                    = @"strHeaderAddress";
+NSString * const strHeaderAddresses                  = @"strHeaderAddresses";
 NSString * const strFooterTapToAddAddress            = @"strFooterTapToAddAddress";
+NSString * const strButtonParentToSome               = @"strButtonParentToSome";
 NSString * const strButtonNewAddress                 = @"strButtonNewAddress";
 NSString * const strButtonInviteToHousehold          = @"strButtonInviteToHousehold";
 NSString * const strButtonMergeHouseholds            = @"strButtonMergeHouseholds";
@@ -121,15 +125,18 @@ NSString * const strAlertTitleUserEmailChange        = @"strAlertTitleUserEmailC
 NSString * const strAlertTextUserEmailChange         = @"strAlertTextUserEmailChange";
 NSString * const strAlertTitleEmailChangeFailed      = @"strAlertTitleFailedEmailChange";
 NSString * const strAlertTextEmailChangeFailed       = @"strAlertTextFailedEmailChange";
-NSString * const strSheetTitleGenderSelf             = @"strSheetTitleGenderSelf";
-NSString * const strSheetTitleGenderSelfMinor        = @"strSheetTitleGenderSelfMinor";
-NSString * const strSheetTitleGenderMember           = @"strSheetTitleGenderMember";
-NSString * const strSheetTitleGenderMinor            = @"strSheetTitleGenderMinor";
+NSString * const strSheetTitleGender                 = @"strSheetTitleGender";
+NSString * const strSheetTitleParenthood             = @"strSheetTitleParenthood";
 NSString * const strSheetTitleExistingResidence      = @"strSheetTitleExistingResidence";
-NSString * const strTermFemale                       = @"strTermFemale";
-NSString * const strTermFemaleMinor                  = @"strTermFemaleMinor";
-NSString * const strTermMale                         = @"strTermMale";
-NSString * const strTermMaleMinor                    = @"strTermMaleMinor";
+NSString * const strTermTheParents                   = @"strTermTheParents";
+NSString * const strTermTheFather                    = @"strTermTheFather";
+NSString * const strTermTheMother                    = @"strTermTheMother";
+NSString * const strTermYourFather                   = @"strTermYourFather";
+NSString * const strTermYourMother                   = @"strTermYourMother";
+NSString * const strTermHisFather                    = @"strTermHisFather";
+NSString * const strTermHerFather                    = @"strTermHerFather";
+NSString * const strTermHisMother                    = @"strTermHisMother";
+NSString * const strTermHerMother                    = @"strTermHerMother";
 
 // OCalendarView strings
 NSString * const strTabBarTitleCalendar              = @"strTabBarTitleCalendar";
@@ -199,12 +206,6 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 }
 
 
-+ (NSString *)stringKeyWithPrefix:(NSString *)prefix forKey:(NSString *)key
-{
-    return [prefix stringByAppendingString:[[[key substringWithRange:NSMakeRange(0, 1)] uppercaseString] stringByAppendingString:[key substringFromIndex:1]]];
-}
-
-
 #pragma mark - String fetching & refresh
 
 + (BOOL)hasStrings
@@ -251,13 +252,13 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 
 + (NSString *)labelForKey:(NSString *)key
 {
-    return [self stringForKey:[self stringKeyWithPrefix:kKeyPrefixLabel forKey:key]];
+    return [self stringForKey:[kKeyPrefixLabel stringByAppendingCapitalisedString:key]];
 }
 
 
 + (NSString *)placeholderForKey:(NSString *)key
 {
-    return [self stringForKey:[self stringKeyWithPrefix:kKeyPrefixPlaceholder forKey:key]];
+    return [self stringForKey:[kKeyPrefixPlaceholder stringByAppendingCapitalisedString:key]];
 }
 
 
@@ -290,19 +291,19 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 
 + (NSString *)titleForContactRole:(NSString *)contactRole
 {
-    return [self stringForKey:[self stringKeyWithPrefix:kKeyPrefixContactRole forKey:contactRole]];
+    return [self stringForKey:[kKeyPrefixContactRole stringByAppendingCapitalisedString:contactRole]];
 }
 
 
 + (NSString *)titleForSettingKey:(NSString *)settingKey
 {
-    return [self stringForKey:[self stringKeyWithPrefix:kKeyPrefixSettingTitle forKey:settingKey]];
+    return [self stringForKey:[kKeyPrefixSettingTitle stringByAppendingCapitalisedString:settingKey]];
 }
 
 
 + (NSString *)labelForSettingKey:(NSString *)settingKey
 {
-    return [self stringForKey:[self stringKeyWithPrefix:kKeyPrefixSettingText forKey:settingKey]];
+    return [self stringForKey:[kKeyPrefixSettingText stringByAppendingCapitalisedString:settingKey]];
 }
 
 
