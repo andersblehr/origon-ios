@@ -46,7 +46,6 @@ extern NSString * const kOrigoTypeOther;
 
 - (NSString *)shortAddress;
 - (NSString *)singleLineAddress;
-- (NSString *)residenceDescription;
 
 - (UIImage *)listCellImage;
 

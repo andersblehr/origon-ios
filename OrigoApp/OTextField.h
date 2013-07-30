@@ -14,7 +14,6 @@ extern CGFloat const kTextInset;
 @private
     BOOL _isTitle;
     BOOL _hasEmphasis;
-    BOOL _didPickDate;
     
     NSString *_cachedText;
 

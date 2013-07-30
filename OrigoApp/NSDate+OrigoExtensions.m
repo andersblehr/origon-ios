@@ -12,20 +12,19 @@ NSString * const kDateTimeFormatZulu = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
 
 static NSString * const kDefaultDate = @"1976-04-01T20:00:00Z";
 
-static NSInteger const kMinimumRealisticAge = 6;
-static NSInteger const kMaximumRealisticAge = 100;
+static NSInteger const kMinimumRealisticUserAge = 6;
+static NSInteger const kMaximumRealisticUserAge = 100;
 
 
 @implementation NSDate (OrigoExtensions)
 
 #pragma mark - Auxiliary methods
 
-- (NSDateComponents *)dateComponentsBeforeNow
+- (NSDateComponents *)dateComponentsBeforeDate:(NSDate *)date;
 {
-    NSDate *now = [NSDate date];
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     
-    return [calendar components:NSYearCalendarUnit fromDate:self toDate:now options:kNilOptions];
+    return [calendar components:NSYearCalendarUnit fromDate:self toDate:date options:kNilOptions];
 }
 
 
@@ -43,7 +42,7 @@ static NSInteger const kMaximumRealisticAge = 100;
 + (NSDate *)earliestValidBirthDate
 {
     NSDateComponents *earliestBirthDateOffset = [[NSDateComponents alloc] init];
-    earliestBirthDateOffset.year = -kMaximumRealisticAge;
+    earliestBirthDateOffset.year = -kMaximumRealisticUserAge;
     
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDate *now = [NSDate date];
@@ -59,7 +58,7 @@ static NSInteger const kMaximumRealisticAge = 100;
     
     if ([[OState s] actionIs:kActionRegister] && [[OState s] targetIs:kTargetUser]) {
         NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
-        latestBirthDateOffset.year = -kMinimumRealisticAge;
+        latestBirthDateOffset.year = -kMinimumRealisticUserAge;
         
         NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
         latestValidBirthDate = [calendar dateByAddingComponents:latestBirthDateOffset toDate:now options:kNilOptions];
@@ -89,19 +88,25 @@ static NSInteger const kMaximumRealisticAge = 100;
 
 - (NSInteger)daysBeforeNow
 {
-    return [self dateComponentsBeforeNow].day;
+    return [self dateComponentsBeforeDate:[NSDate date]].day;
 }
 
 
 - (NSInteger)yearsBeforeNow
 {
-    return [self dateComponentsBeforeNow].year;
+    return [self yearsBeforeDate:[NSDate date]];
+}
+
+
+- (NSInteger)yearsBeforeDate:(NSDate *)date
+{
+    return [self dateComponentsBeforeDate:date].year;
 }
 
 
 - (BOOL)isBirthDateOfMinor
 {
-    return ([self yearsBeforeNow] < kAgeThresholdMajority);
+    return ([self yearsBeforeNow] < kAgeOfMajority);
 }
 
 @end

@@ -71,6 +71,16 @@ NSString * const kSeparatorHash = @"#";
 }
 
 
+- (NSString *)stringByReplacingSubstring:(NSString *)substring withString:(NSString *)string
+{
+    NSMutableString *reworkedString = [NSMutableString stringWithString:self];
+    
+    [reworkedString replaceOccurrencesOfString:substring withString:string options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    
+    return reworkedString;
+}
+
+
 - (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator
 {
     NSString *reworkedString = self;
@@ -83,13 +93,15 @@ NSString * const kSeparatorHash = @"#";
 }
 
 
-- (NSString *)stringByReplacingSubstring:(NSString *)substring withString:(NSString *)string
+- (NSString *)stringByAppendingCapitalisedString:(NSString *)string
 {
-    NSMutableString *reworkedString = [NSMutableString stringWithString:self];
-    
-    [reworkedString replaceOccurrencesOfString:substring withString:string options:NSLiteralSearch range:NSMakeRange(0, [self length])];
-    
-    return reworkedString;
+    return [self stringByAppendingString:[string stringByCapitalisingFirstLetter]];
+}
+
+
+- (NSString *)stringByCapitalisingFirstLetter
+{
+    return [[[self substringWithRange:NSMakeRange(0, 1)] uppercaseString] stringByAppendingString:[self substringFromIndex:1]];
 }
 
 @end

@@ -440,6 +440,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [_inputField setHasEmphasis:NO];
     }
 
+    _lastInputField = _inputField;
     _inputField = inputField;
     
     if (_inputField && ![_inputField hasEmphasis]) {

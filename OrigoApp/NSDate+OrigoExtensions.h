@@ -21,6 +21,8 @@ extern NSString * const kDateTimeFormatZulu;
 
 - (NSInteger)daysBeforeNow;
 - (NSInteger)yearsBeforeNow;
+- (NSInteger)yearsBeforeDate:(NSDate *)date;
+
 - (BOOL)isBirthDateOfMinor;
 
 @end

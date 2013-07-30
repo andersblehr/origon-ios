@@ -31,6 +31,7 @@ extern CGFloat const kCellAnimationDuration;
 @property (strong, nonatomic, readonly) OTableViewCellBlueprint *blueprint;
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic) OReplicatedEntity *entity;
+@property (strong, nonatomic) id lastInputField;
 @property (strong, nonatomic) id inputField;
 
 @property (nonatomic, readonly) BOOL selectable;

@@ -53,7 +53,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             } else {
                 _mobilePhoneField.text = _candidate.mobilePhone;
                 _dateOfBirthField.date = _candidate.dateOfBirth;
-                _gender = _candidate.gender;
                 
                 if ([_candidate isActive]) {
                     self.detailCell.editing = NO;
@@ -82,39 +81,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - Alerts & action sheets
 
-- (void)promptForGender
-{
-    NSString *sheetQuestion = nil;
-    NSString *femaleLabel = nil;
-    NSString *maleLabel = nil;
-    
-    if ([_dateOfBirthField.date isBirthDateOfMinor]) {
-        if ([self targetIs:kTargetUser]) {
-            sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelfMinor];
-        } else {
-            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMinor], [OUtil givenNameFromFullName:_nameField.text]];
-        }
-        
-        femaleLabel = [OStrings stringForKey:strTermFemaleMinor];
-        maleLabel = [OStrings stringForKey:strTermMaleMinor];
-    } else {
-        if ([self targetIs:kTargetUser]) {
-            sheetQuestion = [OStrings stringForKey:strSheetTitleGenderSelf];
-        } else {
-            sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleGenderMember], [OUtil givenNameFromFullName:_nameField.text]];
-        }
-        
-        femaleLabel = [OStrings stringForKey:strTermFemale];
-        maleLabel = [OStrings stringForKey:strTermMale];
-    }
-    
-    UIActionSheet *genderSheet = [[UIActionSheet alloc] initWithTitle:sheetQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:femaleLabel, maleLabel, nil];
-    genderSheet.tag = kGenderSheetTag;
-    
-    [genderSheet showInView:self.view];
-}
-
-
 - (void)promptForResidence:(NSSet *)housemateResidences
 {
     _candidateResidences = [housemateResidences sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:kPropertyKeyAddress ascending:YES]]];
@@ -136,7 +102,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)promptForExistingResidenceAction
 {
-    NSString *sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleExistingResidence], _candidate.name, _candidate.givenName];
+    NSString *sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleExistingResidence], _candidate.name, [_candidate givenName]];
     
     UIActionSheet *existingResidenceSheet = [[UIActionSheet alloc] initWithTitle:sheetQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonInviteToHousehold], [OStrings stringForKey:strButtonMergeHouseholds], nil];
     existingResidenceSheet.tag = kExistingResidenceSheetTag;
@@ -191,7 +157,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if ([self targetIs:kTargetUser]) {
         self.title = [OStrings stringForKey:strViewTitleAboutMe];
     } else if (_member) {
-        self.title = _member.givenName;
+        self.title = [_member givenName];
     } else if ([self actionIs:kActionRegister]) {
         if ([_origo isOfType:kOrigoTypeResidence]) {
             self.title = [OStrings stringForKey:strViewTitleNewHouseholdMember];
@@ -217,7 +183,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     _dateOfBirthField = [self.detailCell textFieldForKey:kPropertyKeyDateOfBirth];
     _mobilePhoneField = [self.detailCell textFieldForKey:kPropertyKeyMobilePhone];
     _emailField = [self.detailCell textFieldForKey:kPropertyKeyEmail];
-    _gender = _member.gender;
 }
 
 
@@ -268,6 +233,8 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     
     self.hasToolbar = ![self targetIs:kTargetHousehold];
     self.cancelRegistrationImpliesSignOut = [self targetIs:kTargetUser];
+    
+    _examiner = [[ORegistrantExaminer alloc] initWithResidence:_origo];
 }
 
 
@@ -295,7 +262,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     
     if (sectionKey == kSectionKeyAddresses) {
         if ([[_member residencies] count] == 1) {
-            text = [OStrings stringForKey:strTermAddress];
+            text = [OStrings stringForKey:strHeaderAddress];
         } else {
             text = [OStrings stringForKey:strHeaderAddresses];
         }
@@ -331,14 +298,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     
     cell.textLabel.text = [residence shortAddress];
     cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
-    
-    if ([_member isMinor] && ([[_member residencies] count] > 1)) {
-        if ([residence userIsMember]) {
-            cell.detailTextLabel.text = residence.name;
-        } else {
-            cell.detailTextLabel.text = [residence residenceDescription];
-        }
-    }
 }
 
 
@@ -381,10 +340,10 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 [self persistMember];
             }
         } else {
-            [self promptForGender];
+            [_examiner examineRegistrantWithName:_nameField.text dateOfBirth:_dateOfBirthField.date];
         }
     } else if ([self actionIs:kActionEdit]) {
-        if ([_member hasValueForKey:kPropertyKeyEmail] && ![_emailField.text isEqualToString:_member.email]) {
+        if ([_member.email length] && ![_emailField.text isEqualToString:_member.email]) {
             if ([self targetIs:kTargetUser]) {
                 [self promptForUserEmailChangeConfirmation];
             } else {
@@ -403,7 +362,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if (_candidate) {
         _member = _candidate;
     } else {
-        _member = [[OMeta m].context insertMemberEntity];
+        _member = [[OMeta m].context insertMemberEntityWithId:_examiner.registrantId];
     }
     
     if (!_membership) {
@@ -419,9 +378,11 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     id inputValue = nil;
     
     if ([key isEqualToString:kPropertyKeyGender]) {
-        inputValue = _gender;
-    } else if ([key isEqualToString:kPropertyKeyGivenName]) {
-        inputValue = [OUtil givenNameFromFullName:_member.name];
+        inputValue = _examiner.gender;
+    } else if ([key isEqualToString:kPropertyKeyFatherId]) {
+        inputValue = _examiner.fatherId;
+    } else if ([key isEqualToString:kPropertyKeyMotherId]) {
+        inputValue = _examiner.motherId;
     }
     
     return inputValue;
@@ -437,6 +398,20 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     return shouldEnable;
+}
+
+
+#pragma mark - OHouseholdExaminerDelegate conformance
+
+- (void)examinerDidFinishExamination
+{
+    [self persistMember];
+}
+
+
+- (void)examinerDidCancelExamination
+{
+    [self resumeFirstResponder];
 }
 
 
@@ -478,16 +453,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (actionSheet.tag) {
-        case kGenderSheetTag:
-            if (buttonIndex != kGenderSheetButtonCancel) {
-                _gender = (buttonIndex == kGenderSheetButtonFemale) ? kGenderFemale : kGenderMale;
-                [self persistMember];
-            } else {
-                [self resumeFirstResponder];
-            }
-            
-            break;
-            
         case kResidenceSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
                 [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_member meta:kOrigoTypeResidence];

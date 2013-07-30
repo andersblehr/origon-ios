@@ -75,9 +75,10 @@
         <attribute name="activeSince" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="dateOfBirth" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fatherId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="givenName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="mobilePhone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="motherId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="passwordHash" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>

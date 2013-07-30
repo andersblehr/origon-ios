@@ -218,16 +218,8 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 }
 
 
-- (id)insertMemberEntity
+- (id)insertMemberEntityWithId:(NSString *)memberId
 {
-    NSString *memberId = nil;
-    
-    if ([[OState s] targetIs:kTargetUser]) {
-        memberId = [OMeta m].userId;
-    } else {
-        memberId = [OCrypto generateUUID];
-    }
-    
     NSString *memberRootId = [self memberRootIdForMemberWithId:memberId];
     
     OOrigo *memberRoot = [self insertOrigoEntityOfType:kOrigoTypeMemberRoot origoId:memberRootId];

@@ -23,7 +23,9 @@ extern NSString * const kSeparatorHash;
 - (NSArray *)lines;
 
 - (NSString *)removeRedundantWhitespace;
-- (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;
 - (NSString *)stringByReplacingSubstring:(NSString *)substring withString:(NSString *)string;
+- (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;
+- (NSString *)stringByAppendingCapitalisedString:(NSString *)string;
+- (NSString *)stringByCapitalisingFirstLetter;
 
 @end

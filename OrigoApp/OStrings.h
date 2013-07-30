@@ -8,7 +8,7 @@
 
 #import "OrigoApp.h"
 
-// Cross-view strings
+// Cross-view terms & strings
 extern NSString * const strFooterTapToEdit;
 extern NSString * const strButtonOK;
 extern NSString * const strButtonEdit;
@@ -20,8 +20,15 @@ extern NSString * const strButtonSignOut;
 extern NSString * const strAlertTextNoInternet;
 extern NSString * const strAlertTextServerError;
 extern NSString * const strAlertTextLocating;
-extern NSString * const strTermAddress;
-extern NSString * const strTermCountry;
+extern NSString * const strArgumentFormatAorB;
+extern NSString * const strArgumentFormatAofB;
+extern NSString * const strTermYes;
+extern NSString * const strTermNo;
+extern NSString * const strTermMan;
+extern NSString * const strTermBoy;
+extern NSString * const strTermWoman;
+extern NSString * const strTermGirl;
+extern NSString * const strSeparatorAnd;
 
 // OAuthView strings
 extern NSString * const strLabelSignIn;
@@ -61,12 +68,7 @@ extern NSString * const strAlertTextCountrySupported;
 extern NSString * const strAlertTextCountryUnsupported;
 extern NSString * const strSheetTitleCountry;
 extern NSString * const strSheetTitleOrigoType;
-extern NSString * const strTermMe;
 extern NSString * const strTermYourChild;
-extern NSString * const strTermHe;
-extern NSString * const strTermHim;
-extern NSString * const strTermShe;
-extern NSString * const strTermHer;
 extern NSString * const strTermHimOrHer;
 extern NSString * const strTermForName;
 
@@ -90,7 +92,6 @@ extern NSString * const strViewTitleNewOrigo;
 extern NSString * const strLabelAddress;
 extern NSString * const strLabelDescriptionText;
 extern NSString * const strLabelTelephone;
-extern NSString * const strHeaderAddresses;
 extern NSString * const strPlaceholderAddress;
 extern NSString * const strPlaceholderDescriptionText;
 extern NSString * const strPlaceholderTelephone;
@@ -112,6 +113,9 @@ extern NSString * const strPlaceholderEmail;
 extern NSString * const strPlaceholderDateOfBirth;
 extern NSString * const strPlaceholderMobilePhone;
 extern NSString * const strFooterTapToAddAddress;
+extern NSString * const strHeaderAddress;
+extern NSString * const strHeaderAddresses;
+extern NSString * const strButtonParentToSome;
 extern NSString * const strButtonNewAddress;
 extern NSString * const strButtonInviteToHousehold;
 extern NSString * const strButtonMergeHouseholds;
@@ -121,15 +125,18 @@ extern NSString * const strAlertTitleUserEmailChange;
 extern NSString * const strAlertTextUserEmailChange;
 extern NSString * const strAlertTitleEmailChangeFailed;
 extern NSString * const strAlertTextEmailChangeFailed;
-extern NSString * const strSheetTitleGenderSelf;
-extern NSString * const strSheetTitleGenderSelfMinor;
-extern NSString * const strSheetTitleGenderMember;
-extern NSString * const strSheetTitleGenderMinor;
+extern NSString * const strSheetTitleGender;
+extern NSString * const strSheetTitleParenthood;
 extern NSString * const strSheetTitleExistingResidence;
-extern NSString * const strTermFemale;
-extern NSString * const strTermFemaleMinor;
-extern NSString * const strTermMale;
-extern NSString * const strTermMaleMinor;
+extern NSString * const strTermTheParents;
+extern NSString * const strTermTheFather;
+extern NSString * const strTermTheMother;
+extern NSString * const strTermYourFather;
+extern NSString * const strTermYourMother;
+extern NSString * const strTermHisFather;
+extern NSString * const strTermHerFather;
+extern NSString * const strTermHisMother;
+extern NSString * const strTermHerMother;
 
 // OCalendarView strings
 extern NSString * const strTabBarTitleCalendar;
@@ -174,7 +181,6 @@ extern NSString * const metaContactRolesSchoolClass;
 extern NSString * const metaContactRolesPreschoolClass;
 extern NSString * const metaContactRolesAssociation;
 extern NSString * const metaContactRolesSportsTeam;
-
 
 @interface OStrings : NSObject
 

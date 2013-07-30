@@ -44,10 +44,11 @@
 		5C3A319614C61378001A783E /* dark_linen-640x960.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C3A319514C61378001A783E /* dark_linen-640x960.png */; };
 		5C3C665C14F56D6800514C57 /* OCrypto.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3C665B14F56D6800514C57 /* OCrypto.m */; };
 		5C3D42821485678F009A68E0 /* OOrigoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3D42811485678F009A68E0 /* OOrigoListViewController.m */; };
-		5C3F9998178AC15F00E31A44 /* OMemberExaminer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3F9997178AC15F00E31A44 /* OMemberExaminer.m */; };
+		5C3F9998178AC15F00E31A44 /* ORegistrantExaminer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3F9997178AC15F00E31A44 /* ORegistrantExaminer.m */; };
 		5C47155116E2231C000D8A86 /* OReplicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C47155016E2231C000D8A86 /* OReplicator.m */; };
 		5C4955F6157D469000F2A885 /* UIColor+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4955F5157D469000F2A885 /* UIColor+OrigoExtensions.m */; };
-		5C4E0F0A1786D9C000C835D2 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4E0F091786D9C000C835D2 /* OMember.m */; };
+		5C49FD3E178D7BF8009AD20B /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C49FD3D178D7BF8009AD20B /* OMember.m */; };
+		5C49FD41178DB96E009AD20B /* OLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C49FD40178DB96E009AD20B /* OLanguage.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+OrigoExtensions.m */; };
 		5C50581814CA1D05000D6587 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C50581714CA1D05000D6587 /* QuartzCore.framework */; };
 		5C50581C14CAEC76000D6587 /* UIView+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C50581B14CAEC76000D6587 /* UIView+OrigoExtensions.m */; };
@@ -199,16 +200,18 @@
 		5C3C665B14F56D6800514C57 /* OCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCrypto.m; sourceTree = "<group>"; };
 		5C3D42801485678E009A68E0 /* OOrigoListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoListViewController.h; sourceTree = "<group>"; };
 		5C3D42811485678F009A68E0 /* OOrigoListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoListViewController.m; sourceTree = "<group>"; };
-		5C3F9996178AC15F00E31A44 /* OMemberExaminer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMemberExaminer.h; sourceTree = "<group>"; };
-		5C3F9997178AC15F00E31A44 /* OMemberExaminer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMemberExaminer.m; sourceTree = "<group>"; };
-		5C3F9999178AC91100E31A44 /* OMemberExaminerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OMemberExaminerDelegate.h; sourceTree = "<group>"; };
+		5C3F9996178AC15F00E31A44 /* ORegistrantExaminer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORegistrantExaminer.h; sourceTree = "<group>"; };
+		5C3F9997178AC15F00E31A44 /* ORegistrantExaminer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORegistrantExaminer.m; sourceTree = "<group>"; };
+		5C3F9999178AC91100E31A44 /* ORegistrantExaminerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORegistrantExaminerDelegate.h; sourceTree = "<group>"; };
 		5C3F999A178AD58600E31A44 /* OrigoApp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OrigoApp.h; sourceTree = "<group>"; };
 		5C47154F16E2231C000D8A86 /* OReplicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicator.h; sourceTree = "<group>"; };
 		5C47155016E2231C000D8A86 /* OReplicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicator.m; sourceTree = "<group>"; };
 		5C4955F4157D469000F2A885 /* UIColor+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5C4955F5157D469000F2A885 /* UIColor+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+OrigoExtensions.m"; sourceTree = "<group>"; };
-		5C4E0F081786D9C000C835D2 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
-		5C4E0F091786D9C000C835D2 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
+		5C49FD3C178D7BF8009AD20B /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
+		5C49FD3D178D7BF8009AD20B /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
+		5C49FD3F178DB96E009AD20B /* OLanguage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLanguage.h; sourceTree = "<group>"; };
+		5C49FD40178DB96E009AD20B /* OLanguage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLanguage.m; sourceTree = "<group>"; };
 		5C4F97791496AF88006E244F /* NSURL+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5C4F977A1496AF88006E244F /* NSURL+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5C50581714CA1D05000D6587 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -438,8 +441,8 @@
 				5CAEE0A5163E513700A9046B /* OEventOrigoInvitation.m */,
 				5CAEE09E163E513500A9046B /* OExternalDocument.h */,
 				5CAEE09F163E513500A9046B /* OExternalDocument.m */,
-				5C4E0F081786D9C000C835D2 /* OMember.h */,
-				5C4E0F091786D9C000C835D2 /* OMember.m */,
+				5C49FD3C178D7BF8009AD20B /* OMember.h */,
+				5C49FD3D178D7BF8009AD20B /* OMember.m */,
 				5C3317CD16F7543F004F8921 /* OMembership.h */,
 				5C3317CE16F7543F004F8921 /* OMembership.m */,
 				5CAEE092163E513400A9046B /* OMessageBoard.h */,
@@ -533,8 +536,8 @@
 				5C2E1133146ACFA9005BDE61 /* OConnectionDelegate.h */,
 				5C39EC1C166632570083DFEB /* OEntityObserver.h */,
 				5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */,
-				5C3F9999178AC91100E31A44 /* OMemberExaminerDelegate.h */,
 				5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDismisser.h */,
+				5C3F9999178AC91100E31A44 /* ORegistrantExaminerDelegate.h */,
 				5CA10B9E16A7F9FD00031D81 /* OTableViewControllerInstance.h */,
 				5CDE879C176F185E00272909 /* OTableViewInputDelegate.h */,
 				5C198B7016D63944002D3976 /* OTableViewListDelegate.h */,
@@ -580,13 +583,15 @@
 				5C3C665B14F56D6800514C57 /* OCrypto.m */,
 				5CF3DE271775AD810068B2E7 /* ODefaults.h */,
 				5CF3DE281775AD810068B2E7 /* ODefaults.m */,
+				5C49FD3F178DB96E009AD20B /* OLanguage.h */,
+				5C49FD40178DB96E009AD20B /* OLanguage.m */,
 				5C1D6CC4172E62F500479F7D /* OLocator.h */,
 				5C1D6CC5172E62F500479F7D /* OLocator.m */,
 				5CCF09051466A0CB00D41AB0 /* OLogging.h */,
-				5C3F9996178AC15F00E31A44 /* OMemberExaminer.h */,
-				5C3F9997178AC15F00E31A44 /* OMemberExaminer.m */,
 				5C36BE88146E9DA100DD3CEA /* OMeta.h */,
 				5C36BE89146E9DA100DD3CEA /* OMeta.m */,
+				5C3F9996178AC15F00E31A44 /* ORegistrantExaminer.h */,
+				5C3F9997178AC15F00E31A44 /* ORegistrantExaminer.m */,
 				5C47154F16E2231C000D8A86 /* OReplicator.h */,
 				5C47155016E2231C000D8A86 /* OReplicator.m */,
 				5CD3360C15C40A2F00ABBFE7 /* OState.h */,
@@ -931,8 +936,9 @@
 				5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */,
 				5CC40C9B1772DC5E00DD850E /* OValidator.m in Sources */,
 				5CF3DE291775AD820068B2E7 /* ODefaults.m in Sources */,
-				5C4E0F0A1786D9C000C835D2 /* OMember.m in Sources */,
-				5C3F9998178AC15F00E31A44 /* OMemberExaminer.m in Sources */,
+				5C3F9998178AC15F00E31A44 /* ORegistrantExaminer.m in Sources */,
+				5C49FD3E178D7BF8009AD20B /* OMember.m in Sources */,
+				5C49FD41178DB96E009AD20B /* OLanguage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

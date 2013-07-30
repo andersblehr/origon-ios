@@ -2,8 +2,8 @@
 //  OTableViewController.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 17.01.13.
-//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 17.10.12.
+//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
 #import "OTableViewController.h"
@@ -445,7 +445,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)resumeFirstResponder
 {
-    [_detailCell.inputField becomeFirstResponder];
+    [_detailCell.lastInputField becomeFirstResponder];
 }
 
 

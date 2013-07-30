@@ -244,15 +244,15 @@
 }
 
 
-- (BOOL)isOfPreschoolAge
+- (BOOL)isTeenOrOlder
 {
-    return ([self.dateOfBirth yearsBeforeNow] < kAgeThresholdInSchool);
+    return [self isOlderThan:kAgeThresholdTeen];
 }
 
 
-- (BOOL)isTeenOrOlder
+- (BOOL)isOlderThan:(NSInteger)age
 {
-    return ([self.dateOfBirth yearsBeforeNow] >= kAgeThresholdTeen);
+    return ([self.dateOfBirth yearsBeforeNow] >= age);
 }
 
 
@@ -265,6 +265,40 @@
     }
     
     return isMember;
+}
+
+
+- (BOOL)hasParentOfGender:(NSString *)gender
+{
+    return [gender isEqualToString:kGenderMale] ? (self.fatherId != nil) : (self.motherId != nil);
+}
+
+
+#pragma mark - Convenience methods
+
+- (NSString *)givenName
+{
+    return [OUtil givenNameFromFullName:self.name];
+}
+
+
+- (NSArray *)pronoun
+{
+    NSArray *pronoun = nil;
+    
+    if ([self isUser]) {
+        pronoun = [OLanguage pronouns][I];
+    } else {
+        pronoun = [self isMale] ? [OLanguage pronouns][he] : [OLanguage pronouns][she];
+    }
+    
+    return pronoun;
+}
+
+
+- (NSString *)appellation
+{
+    return [self isUser] ? [OLanguage pronouns][you][nominative] : [self givenName];
 }
 
 

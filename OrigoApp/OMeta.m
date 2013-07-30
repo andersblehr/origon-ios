@@ -13,10 +13,11 @@ NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
 
-NSUInteger const kAgeThresholdToddler = 2;
-NSUInteger const kAgeThresholdInSchool = 7;
-NSUInteger const kAgeThresholdTeen = 13;
-NSUInteger const kAgeThresholdMajority = 18;
+NSInteger const kAgeThresholdToddler = 1;
+NSInteger const kAgeThresholdInSchool = 6;
+NSInteger const kAgeThresholdTeen = 13;
+NSInteger const kAgeOfConsent = 16;
+NSInteger const kAgeOfMajority = 18;
 
 NSString * const kLanguageHungarian = @"hu";
 
@@ -49,12 +50,13 @@ NSString * const kPropertyKeyDateOfBirth = @"dateOfBirth";
 NSString * const kPropertyKeyDescriptionText = @"descriptionText";
 NSString * const kPropertyKeyEmail = @"email";
 NSString * const kPropertyKeyEntityId = @"entityId";
+NSString * const kPropertyKeyFatherId = @"fatherId";
 NSString * const kPropertyKeyGender = @"gender";
-NSString * const kPropertyKeyGivenName = @"givenName";
 NSString * const kPropertyKeyHashCode = @"hashCode";
 NSString * const kPropertyKeyIsExpired = @"isExpired";
 NSString * const kPropertyKeyIsAwaitingDeletion = @"isAwaitingDeletion";
 NSString * const kPropertyKeyMobilePhone = @"mobilePhone";
+NSString * const kPropertyKeyMotherId = @"motherId";
 NSString * const kPropertyKeyName = @"name";
 NSString * const kPropertyKeyOrigoId = @"origoId";
 NSString * const kPropertyKeyPasswordHash = @"passwordHash";
@@ -122,7 +124,7 @@ static OMeta *m = nil;
     if (_user) {
         [self.replicator loadUserReplicationState];
     } else {
-        _user = [self.context insertMemberEntity];
+        _user = [self.context insertMemberEntityWithId:_userId];
         _user.email = _userEmail;
     }
 }

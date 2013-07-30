@@ -261,39 +261,6 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
-- (NSString *)residenceDescription
-{
-    NSString *title = nil;
-    
-    if ([self isOfType:kOrigoTypeResidence]) {
-        NSString *names = nil;
-        NSMutableArray *unsortedNames = [[NSMutableArray alloc] init];
-        
-        for (OMembership *residency in [self residencies]) {
-            if (![residency.member isMinor]) {
-                [unsortedNames addObject:residency.member.givenName];
-            }
-        }
-        
-        NSArray *sortedNames = [unsortedNames sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-        
-        for (NSString *name in sortedNames) {
-            if (!names) {
-                names = name;
-            } else if ([sortedNames lastObject] == name) {
-                names = [names stringByAppendingString:name separator:kSeparatorAmpersand];
-            } else {
-                names = [names stringByAppendingString:name separator:kSeparatorComma];
-            }
-        }
-        
-        title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleResidence], names];
-    }
-    
-    return title;
-}
-
-
 #pragma mark - Display image
 
 - (UIImage *)listCellImage
