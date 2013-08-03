@@ -150,7 +150,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
                 CGFloat padding = 0.f;
                 
                 if (precedingTextField && [precedingTextField isKindOfClass:OTextView.class]) {
-                    padding = [(OTextView *)precedingTextField height] - [UIFont detailFieldHeight];
+                    padding = [precedingTextField height] - [UIFont detailFieldHeight];
                 }
                 
                 constraint = [NSString stringWithFormat:kVConstraintsLabel, padding, labelName];
@@ -185,7 +185,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
             CGFloat textFieldHeight = [UIFont detailFieldHeight];
             
             if ([textField isKindOfClass:OTextView.class]) {
-                textFieldHeight = [(OTextView *)textField height];
+                textFieldHeight = [textField height];
             }
             
             NSString *textFieldName = [key stringByAppendingString:kViewKeySuffixTextField];

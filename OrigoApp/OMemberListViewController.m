@@ -33,6 +33,12 @@ static NSInteger const kHousemateSheetTag = 0;
 }
 
 
+- (BOOL)newHousemateIsGuardian
+{
+    return ![_origo userIsMember] && [_membership.member isWardOfUser];
+}
+
+
 - (NSString *)listCellTextForMember:(OMember *)member
 {
     NSString *text = nil;
@@ -85,22 +91,27 @@ static NSInteger const kHousemateSheetTag = 0;
 
 #pragma mark - Actions sheets
 
-- (void)promptForHousemate:(NSSet *)candidates
+- (void)presentHousemateCandidatesSheet:(NSSet *)candidates
 {
-    _candidateHousemates = [candidates sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:kPropertyKeyName ascending:YES]]];
+    _housemateCandidates = [candidates sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:kPropertyKeyName ascending:YES]]];
     
-    UIActionSheet *housemateSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     
-    for (OMember *candidate in _candidateHousemates) {
-        [housemateSheet addButtonWithTitle:candidate.name];
+    for (OMember *candidate in _housemateCandidates) {
+        [sheet addButtonWithTitle:candidate.name];
     }
     
-    [housemateSheet addButtonWithTitle:[OStrings stringForKey:strButtonNewHousemate]];
-    [housemateSheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
-    housemateSheet.cancelButtonIndex = [candidates count] + 1;
-    housemateSheet.tag = kHousemateSheetTag;
+    if ([self newHousemateIsGuardian]) {
+        [sheet addButtonWithTitle:[OStrings stringForKey:strButtonOtherGuardian]];
+    } else {
+        [sheet addButtonWithTitle:[OStrings stringForKey:strButtonNewHousemate]];
+    }
     
-    [housemateSheet showInView:self.view];
+    [sheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
+    sheet.cancelButtonIndex = [candidates count] + 1;
+    sheet.tag = kHousemateSheetTag;
+    
+    [sheet showInView:self.view];
 }
 
 
@@ -119,9 +130,9 @@ static NSInteger const kHousemateSheetTag = 0;
     }
     
     if ([candidates count]) {
-        [self promptForHousemate:candidates];
+        [self presentHousemateCandidatesSheet:candidates];
     } else {
-        [self presentModalViewControllerWithIdentifier:kViewControllerMember data:_origo];
+        [self presentModalViewControllerWithIdentifier:kVCIdentifierMember data:_origo];
     }
 }
 
@@ -322,10 +333,14 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     switch (actionSheet.tag) {
         case kHousemateSheetTag:
-            if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self presentModalViewControllerWithIdentifier:kViewControllerMember data:_origo];
-            } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
-                [_origo addMember:_candidateHousemates[buttonIndex]];
+            if (buttonIndex == actionSheet.cancelButtonIndex - 1) {
+                if ([self newHousemateIsGuardian]) {
+                    [self presentModalViewControllerWithIdentifier:kVCIdentifierMember data:_origo meta:kMemberTypeGuardian];
+                } else {
+                    [self presentModalViewControllerWithIdentifier:kVCIdentifierMember data:_origo];
+                }
+            } else if (buttonIndex < actionSheet.cancelButtonIndex - 1) {
+                [_origo addMember:_housemateCandidates[buttonIndex]];
                 [self reloadSections];
             }
             

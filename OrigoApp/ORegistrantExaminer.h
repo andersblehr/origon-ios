@@ -11,9 +11,9 @@
 @interface ORegistrantExaminer : NSObject<UIActionSheetDelegate> {
 @private
     OOrigo *_residence;
+    OMember *_currentCandidate;
     
-    BOOL _lookingForParents;
-    BOOL _didPerformInitialExamination;
+    BOOL _isMinor;
     
     NSString *_givenName;
     NSDate *_dateOfBirth;
@@ -32,6 +32,9 @@
 
 - (id)initWithResidence:(OOrigo *)residence;
 
+- (void)examineRegistrant:(OMember *)registrant;
 - (void)examineRegistrantWithName:(NSString *)name dateOfBirth:(NSDate *)dateOfBirth;
+- (void)examineRegistrantWithName:(NSString *)name isGuardian:(BOOL)isGuardian;
+- (void)examineRegistrantWithName:(NSString *)name isMinor:(BOOL)isMinor;
 
 @end

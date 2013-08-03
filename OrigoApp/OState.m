@@ -8,16 +8,16 @@
 
 #import "OState.h"
 
-NSString * const kViewControllerAuth = @"auth";
-NSString * const kViewControllerCalendar = @"calendar";
-NSString * const kViewControllerMember = @"member";
-NSString * const kViewControllerMemberList = @"members";
-NSString * const kViewControllerMessageList = @"messages";
-NSString * const kViewControllerOrigo = @"origo";
-NSString * const kViewControllerOrigoList = @"origos";
-NSString * const kViewControllerSetting = @"setting";
-NSString * const kViewControllerSettingList = @"settings";
-NSString * const kViewControllerTaskList = @"tasks";
+NSString * const kVCIdentifierAuth = @"auth";
+NSString * const kVCIdentifierCalendar = @"calendar";
+NSString * const kVCIdentifierMember = @"member";
+NSString * const kVCIdentifierMemberList = @"members";
+NSString * const kVCIdentifierMessageList = @"messages";
+NSString * const kVCIdentifierOrigo = @"origo";
+NSString * const kVCIdentifierOrigoList = @"origos";
+NSString * const kVCIdentifierSetting = @"setting";
+NSString * const kVCIdentifierSettingList = @"settings";
+NSString * const kVCIdentifierTaskList = @"tasks";
 
 NSString * const kActionLoad = @"load";
 NSString * const kActionSignIn = @"sign-in";
@@ -89,12 +89,6 @@ static OState *s = nil;
 
 
 #pragma mark - State inspection
-
-- (BOOL)viewControllerIs:(NSString *)viewControllerIdentifier
-{
-    return [_viewController.identifier isEqualToString:viewControllerIdentifier];
-}
-
 
 - (BOOL)actionIs:(NSString *)action
 {

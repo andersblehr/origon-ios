@@ -125,8 +125,8 @@ static void uncaughtExceptionHandler(NSException *exception)
         [OStrings refreshIfNeeded];
     }
     
-    //NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-    //[[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+    NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
     
     return YES;
 }

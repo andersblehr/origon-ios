@@ -119,7 +119,7 @@ static NSInteger const kSectionKeyOrigo = 0;
             _membership = [_origo addMember:_member];
         }
         
-        [self presentModalViewControllerWithIdentifier:kViewControllerMemberList data:_membership];
+        [self presentModalViewControllerWithIdentifier:kVCIdentifierMemberList data:_membership];
     } else if ([self actionIs:kActionEdit]) {
         [self toggleEditMode];
     }
@@ -138,7 +138,7 @@ static NSInteger const kSectionKeyOrigo = 0;
 
 - (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController
 {
-    return [viewController.identifier isEqualToString:kViewControllerMemberList];
+    return [viewController.identifier isEqualToString:kVCIdentifierMemberList];
 }
 
 @end

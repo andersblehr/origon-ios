@@ -18,7 +18,4 @@
     NSDictionary *_authInfo;
 }
 
-@property (nonatomic, readonly) BOOL userIsListed;
-@property (nonatomic, readonly) BOOL registrationIsIncomplete;
-
 @end

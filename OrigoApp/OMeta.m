@@ -41,7 +41,6 @@ NSString * const kJSONKeyActivationCode = @"activationCode";
 NSString * const kJSONKeyDeviceId = @"deviceId";
 NSString * const kJSONKeyEmail = @"email";
 NSString * const kJSONKeyEntityClass = @"entityClass";
-NSString * const kJSONKeyIsListed = @"isListed";
 NSString * const kJSONKeyPasswordHash = @"passwordHash";
 
 NSString * const kPropertyKeyAddress = @"address";
@@ -130,6 +129,24 @@ static OMeta *m = nil;
 }
 
 
+- (void)reset
+{
+    [ODefaults resetUser];
+    
+    _user = nil;
+    _userId = nil;
+    _locator = nil;
+    _deviceId = nil;
+    _authToken = nil;
+    _authTokenExpiryDate = nil;
+    _lastReplicationDate = nil;
+    _userDidJustSignUp = NO;
+    _isSignedIn = @NO;
+    
+    [(OAppDelegate *)[UIApplication sharedApplication].delegate releasePersistentStore];
+}
+
+
 #pragma mark - Singleton instantiation & initialisation
 
 + (id)allocWithZone:(NSZone *)zone
@@ -152,10 +169,8 @@ static OMeta *m = nil;
         _appVersion = [[NSBundle mainBundle] infoDictionary][(id)kCFBundleVersionKey];
         _displayLanguage = [NSLocale preferredLanguages][0];
         
-        NSString *userEmail = [ODefaults globalDefaultForKey:kDefaultsKeyUserEmail];
-        
-        if (userEmail) {
-            self.userEmail = userEmail;
+        if ([ODefaults globalDefaultForKey:kDefaultsKeyUserEmail]) {
+            self.userEmail = [ODefaults globalDefaultForKey:kDefaultsKeyUserEmail];
         }
         
         _internetConnectionIsWiFi = NO;
@@ -191,6 +206,12 @@ static OMeta *m = nil;
 
 #pragma mark - User sign in & registration status
 
+- (void)userDidSignUp
+{
+    _userDidJustSignUp = YES;
+}
+
+
 - (void)userDidSignIn
 {
     [ODefaults setUserDefault:_authTokenExpiryDate forKey:kDefaultsKeyAuthExpiryDate];
@@ -200,6 +221,8 @@ static OMeta *m = nil;
     if (![self.context entityWithId:_deviceId]) {
         [self.context insertDeviceEntity];
     }
+    
+    _isSignedIn = @YES;
 }
 
 
@@ -209,16 +232,8 @@ static OMeta *m = nil;
     [self.replicator resetUserReplicationState];
     
     [ODefaults setUserDefault:nil forKey:kDefaultsKeyAuthExpiryDate];
-    [ODefaults resetUser];
-    
-    _user = nil;
-    _userId = nil;
-    _locator = nil;
-    _deviceId = nil;
-    _authToken = nil;
-    _lastReplicationDate = nil;
-    
-    [(OAppDelegate *)[UIApplication sharedApplication].delegate releasePersistentStore];
+
+    [self reset];
 }
 
 
@@ -230,20 +245,28 @@ static OMeta *m = nil;
 
 - (BOOL)userIsSignedIn
 {
-    if (!_authTokenExpiryDate) {
-        _authTokenExpiryDate = [ODefaults userDefaultForKey:kDefaultsKeyAuthExpiryDate];
-        
-        if (_authTokenExpiryDate) {
-            NSDate *now = [NSDate date];
+    if (!_isSignedIn) {
+        if (!_authTokenExpiryDate) {
+            _authTokenExpiryDate = [ODefaults userDefaultForKey:kDefaultsKeyAuthExpiryDate];
             
-            if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
-                _authToken = [OCrypto authTokenWithExpiryDate:_authTokenExpiryDate];
-                _user = [self.context entityWithId:_userId];
+            if (_authTokenExpiryDate) {
+                NSDate *now = [NSDate date];
+                
+                if ([now compare:_authTokenExpiryDate] == NSOrderedAscending) {
+                    _authToken = [OCrypto authTokenWithExpiryDate:_authTokenExpiryDate];
+                    _user = [self.context entityWithId:_userId];
+                }
             }
+        }
+
+        if (_user) {
+            _isSignedIn = @YES;
+        } else {
+            [self reset];
         }
     }
     
-    return (_user != nil);
+    return [_isSignedIn boolValue];
 }
 
 

@@ -8,7 +8,8 @@
 
 #import "OTextField.h"
 
-CGFloat const kTextInset = 4.f;
+CGFloat const kTextInsetX = 4.0f;
+CGFloat const kTextInsetY = 1.4f;
 
 static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor";
 
@@ -37,7 +38,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.backgroundColor = [UIColor clearColor];
         self.contentMode = UIViewContentModeRedraw;
-        self.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+        self.contentVerticalAlignment = UIControlContentVerticalAlignmentTop;
         self.delegate = delegate;
         self.enabled = [[OState s] actionIs:kActionInput];
         self.font = _isTitle ? [UIFont titleFont] : [UIFont detailFont];
@@ -272,7 +273,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
-    return CGRectInset([super textRectForBounds:bounds], kTextInset, 0.f);
+    return CGRectInset([super textRectForBounds:bounds], kTextInsetX, kTextInsetY);
 }
 
 

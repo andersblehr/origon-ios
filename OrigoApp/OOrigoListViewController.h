@@ -12,9 +12,6 @@
 @private
     OMember *_member;
     
-    BOOL _userIsListed;
-    BOOL _registrationIsIncomplete;
-    
     NSMutableArray *_origoTypes;
     NSString *_selectedOrigoType;
 }
