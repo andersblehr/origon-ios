@@ -8,7 +8,8 @@
 
 #import "OrigoApp.h"
 
-extern CGFloat const kTextInset;
+extern CGFloat const kTextInsetX;
+extern CGFloat const kTextInsetY;
 
 @interface OTextField : UITextField {
 @private

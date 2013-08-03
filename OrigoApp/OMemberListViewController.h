@@ -13,7 +13,7 @@
     OMembership *_membership;
     OOrigo *_origo;
     
-    NSArray *_candidateHousemates;
+    NSArray *_housemateCandidates;
 }
 
 @end

@@ -10,6 +10,8 @@
 
 #import "OMember.h"
 
+extern NSString * const kMemberTypeGuardian;
+
 @interface OMember (OrigoExtensions)
 
 - (OMembership *)rootMembership;
@@ -27,6 +29,7 @@
 - (void)makeActive;
 
 - (BOOL)isUser;
+- (BOOL)isWardOfUser;
 - (BOOL)isManagedByUser;
 - (BOOL)isKnownByUser;
 - (BOOL)isMale;
@@ -34,7 +37,7 @@
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOlderThan:(NSInteger)age;
 - (BOOL)isMemberOfOrigoOfType:(NSString *)origoType;
-- (BOOL)hasParentOfGender:(NSString *)gender;
+- (BOOL)hasParentWithGender:(NSString *)gender;
 
 - (NSString *)givenName;
 - (NSArray *)pronoun;

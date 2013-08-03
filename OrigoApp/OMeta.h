@@ -41,7 +41,6 @@ extern NSString * const kJSONKeyActivationCode;
 extern NSString * const kJSONKeyDeviceId;
 extern NSString * const kJSONKeyEmail;
 extern NSString * const kJSONKeyEntityClass;
-extern NSString * const kJSONKeyIsListed;
 extern NSString * const kJSONKeyPasswordHash;
 
 extern NSString * const kPropertyKeyAddress;
@@ -73,11 +72,13 @@ extern NSString * const kDefaultsKeyStringDate;
 @private
     Reachability *_internetReachability;
     
+    NSNumber *_isSignedIn;
     NSDate *_authTokenExpiryDate;
 }
 
 @property (nonatomic, readonly) BOOL internetConnectionIsWiFi;
 @property (nonatomic, readonly) BOOL internetConnectionIsWWAN;
+@property (nonatomic, readonly) BOOL userDidJustSignUp;
 
 @property (strong, nonatomic) NSString *userId;
 @property (strong, nonatomic) NSString *userEmail;
@@ -98,6 +99,7 @@ extern NSString * const kDefaultsKeyStringDate;
 
 + (OMeta *)m;
 
+- (void)userDidSignUp;
 - (void)userDidSignIn;
 - (void)userDidSignOut;
 

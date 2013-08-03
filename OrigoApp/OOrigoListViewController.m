@@ -8,8 +8,6 @@
 
 #import "OOrigoListViewController.h"
 
-#import "OAuthViewController.h"
-
 static NSString * const kSegueToMemberView = @"segueFromOrigoListToMemberView";
 static NSString * const kSegueToMemberListView = @"segueFromOrigoListToMemberListView";
 
@@ -69,7 +67,7 @@ static NSInteger const kUserRow = 0;
         }
         
         NSString *wardsAddendum = [NSString stringWithFormat:[OStrings stringForKey:strFooterOrigoCreationWards], yourChild, himOrHer];
-        footerText = [NSString stringWithFormat:@"%@ %@", footerText, wardsAddendum];
+        footerText = [NSString stringWithFormat:@"%@ %@.", footerText, wardsAddendum];
     } else if ([self targetIs:kTargetUser]) {
         footerText = [footerText stringByAppendingString:@"."];
     } else if ([self targetIs:kTargetWard]) {
@@ -81,46 +79,38 @@ static NSInteger const kUserRow = 0;
 }
 
 
-- (void)displayListedUserRegistrationAlert
-{
-    OMember *creator = [[OMeta m].context entityWithId:[OMeta m].user.createdBy];
-    
-    NSString *alertText = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextListedUserRegistration], [creator givenName], [creator pronoun][nominative]];
-    
-    [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleListedUserRegistration] text:alertText];
-}
-
+#pragma mark - Action sheets & alerts
 
 - (void)presentCountrySheet
 {
-    UIActionSheet *countrySheet = [[UIActionSheet alloc] initWithTitle:[OStrings stringForKey:strSheetTitleCountry] delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:[OStrings stringForKey:strSheetTitleCountry] delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
 
     NSString *inferredCountry = [OUtil localisedCountryNameFromCountryCode:[[OMeta m] inferredCountryCode]];
     NSString *locatedCountry = nil;
     
     if ([[OMeta m].locator didLocate]) {
         locatedCountry = [OUtil localisedCountryNameFromCountryCode:[OMeta m].locator.countryCode];
-        [countrySheet addButtonWithTitle:locatedCountry];
+        [sheet addButtonWithTitle:locatedCountry];
     }
     
     if (!locatedCountry || ![locatedCountry isEqualToString:inferredCountry]) {
-        [countrySheet addButtonWithTitle:inferredCountry];
+        [sheet addButtonWithTitle:inferredCountry];
     }
     
     if (!locatedCountry && [[OMeta m].locator canLocate]) {
-        [countrySheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryLocate]];
+        [sheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryLocate]];
     }
     
-    [countrySheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryOther]];
-    [countrySheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
-    countrySheet.cancelButtonIndex = countrySheet.numberOfButtons - 1;
-    countrySheet.tag = kCountrySheetTag;
+    [sheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryOther]];
+    [sheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
+    sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
+    sheet.tag = kCountrySheetTag;
     
-    [countrySheet showInView:self.tabBarController.view];
+    [sheet showInView:self.tabBarController.view];
 }
 
 
-- (void)displayCountryAlert
+- (void)presentCountryAlert
 {
     NSString *country = [OUtil localisedCountryNameFromCountryCode:[OMeta m].settings.countryCode];
     NSString *alertFormat = nil;
@@ -135,30 +125,40 @@ static NSInteger const kUserRow = 0;
 }
 
 
+- (void)presentListedUserAlert
+{
+    OMember *creator = [[OMeta m].context entityWithId:[OMeta m].user.createdBy];
+    
+    NSString *alertText = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextListedUserRegistration], [creator givenName], [creator pronoun][nominative]];
+    
+    [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleListedUserRegistration] text:alertText];
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)addOrigo
 {
-    NSString *sheetTitle = [OStrings stringForKey:strSheetTitleOrigoType];
+    NSString *question = [OStrings stringForKey:strSheetTitleOrigoType];
     
     if ([self targetIs:kTargetUser]) {
-        sheetTitle = [sheetTitle stringByAppendingString:@"?"];
+        question = [question stringByAppendingString:@"?"];
     } else if ([self targetIs:kTargetWard]) {
         NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], [_member givenName]];
-        sheetTitle = [NSString stringWithFormat:@"%@ %@?", sheetTitle, forWardName];
+        question = [NSString stringWithFormat:@"%@ %@?", question, forWardName];
     }
     
-    UIActionSheet *origoTypeSheet = [[UIActionSheet alloc] initWithTitle:sheetTitle delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     
     for (NSString *origoType in _origoTypes) {
-        [origoTypeSheet addButtonWithTitle:[OStrings titleForOrigoType:origoType]];
+        [sheet addButtonWithTitle:[OStrings titleForOrigoType:origoType]];
     }
     
-    [origoTypeSheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
-    origoTypeSheet.cancelButtonIndex = [_origoTypes count];
-    origoTypeSheet.tag = kOrigoTypeSheetTag;
+    [sheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
+    sheet.cancelButtonIndex = [_origoTypes count];
+    sheet.tag = kOrigoTypeSheetTag;
     
-    [origoTypeSheet showInView:self.tabBarController.view];
+    [sheet showInView:self.tabBarController.view];
 }
 
 
@@ -169,8 +169,6 @@ static NSInteger const kUserRow = 0;
     [super viewDidLoad];
     
     self.title = @"Origo";
-    
-    _registrationIsIncomplete = [[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered];
     
     if ([[OMeta m] userIsAllSet] && ![_member isUser]) {
         self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], [_member givenName]];
@@ -200,14 +198,14 @@ static NSInteger const kUserRow = 0;
 {
     [super viewDidAppear:animated];
 
-    if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
-        if (_userIsListed) {
-            [self displayListedUserRegistrationAlert];
-        } else if (_registrationIsIncomplete) {
+    if ([OMeta m].user && [[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
+        if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].user.entityId]) {
+            [self presentListedUserAlert];
+        } else if (![OMeta m].userDidJustSignUp) {
             [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] text:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
         }
         
-        [self presentModalViewControllerWithIdentifier:kViewControllerMember data:[[OMeta m].user initialResidency]];
+        [self presentModalViewControllerWithIdentifier:kVCIdentifierMember data:[[OMeta m].user initialResidency]];
     }
 }
 
@@ -296,7 +294,7 @@ static NSInteger const kUserRow = 0;
     } else if (sectionKey == kSectionKeyOrigos) {
         [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
     } else if (sectionKey == kSectionKeyWards) {
-        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kViewControllerOrigoList];
+        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kVCIdentifierOrigoList];
         origoListViewController.data = [self dataAtIndexPath:indexPath];
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
@@ -349,11 +347,6 @@ static NSInteger const kUserRow = 0;
 
 - (void)didDismissModalViewController:(OTableViewController *)viewController
 {
-    if ([viewController.identifier isEqualToString:kViewControllerAuth]) {
-        _userIsListed = ((OAuthViewController *)viewController).userIsListed;
-        _registrationIsIncomplete = ((OAuthViewController *)viewController).registrationIsIncomplete;
-    }
-    
     if ([[OMeta m] userIsSignedIn]) {
         [self.tableView reloadData];
     }
@@ -369,7 +362,7 @@ static NSInteger const kUserRow = 0;
     } else {
         [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
         
-        [self displayCountryAlert];
+        [self presentCountryAlert];
     }
 }
 
@@ -403,9 +396,9 @@ static NSInteger const kUserRow = 0;
                 
                 if ([OMeta m].settings.countryCode) {
                     if ([OUtil isSupportedCountryCode:[OMeta m].settings.countryCode]) {
-                        [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_member meta:_selectedOrigoType];
+                        [self presentModalViewControllerWithIdentifier:kVCIdentifierOrigo data:_member meta:_selectedOrigoType];
                     } else {
-                        [self displayCountryAlert];
+                        [self presentCountryAlert];
                     }
                 }
             } else if (buttonIndex == actionSheet.cancelButtonIndex - 1) {
@@ -425,7 +418,7 @@ static NSInteger const kUserRow = 0;
                         [self presentCountrySheet];
                     }
                 } else {
-                    [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_member meta:_selectedOrigoType];
+                    [self presentModalViewControllerWithIdentifier:kVCIdentifierOrigo data:_member meta:_selectedOrigoType];
                 }
             }
             
@@ -443,7 +436,7 @@ static NSInteger const kUserRow = 0;
 {
     switch (alertView.tag) {
         case kCountryAlertTag:
-            [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_member meta:_selectedOrigoType];
+            [self presentModalViewControllerWithIdentifier:kVCIdentifierOrigo data:_member meta:_selectedOrigoType];
 
             break;
             

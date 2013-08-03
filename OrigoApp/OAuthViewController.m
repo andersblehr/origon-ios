@@ -114,14 +114,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     
     if ([self actionIs:kActionSignIn]) {
         [OMeta m].user.passwordHash = [OCrypto passwordHashWithPassword:_passwordField.text];
-        
-        _registrationIsIncomplete = ![[OMeta m] userIsRegistered];
     } else if ([self actionIs:kActionActivate]) {
+        [[OMeta m] userDidSignUp];
         [OMeta m].user.passwordHash = _authInfo[kJSONKeyPasswordHash];
         
-        _userIsListed = [_authInfo[kJSONKeyIsListed] boolValue];
-        
-        if (!_userIsListed) {
+        if (![[[OMeta m].user residencies] count]) {
             OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
             [residence addMember:[OMeta m].user];
         }

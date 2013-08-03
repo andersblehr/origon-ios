@@ -76,12 +76,6 @@
 }
 
 
-+ (NSString *)argumentWithABFormat:(NSString *)formatKey A:(NSString *)A B:(NSString *)B
-{
-    return [NSString stringWithFormat:[OStrings stringForKey:formatKey], A, B];
-}
-
-
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey
 {
     NSString *sortKey = nil;

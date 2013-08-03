@@ -129,27 +129,27 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)resetViewControllerAtTabIndex:(NSInteger)tabIndex reauthenticate:(BOOL)reauthenticate
 {
-    NSString *viewControllerId = nil;
+    NSString *viewControllerIdentifier = nil;
     
     if (tabIndex == kTabIndexOrigo) {
-        viewControllerId = kViewControllerOrigoList;
+        viewControllerIdentifier = kVCIdentifierOrigoList;
     } else if (tabIndex == kTabIndexCalendar) {
-        viewControllerId = kViewControllerCalendar;
+        viewControllerIdentifier = kVCIdentifierCalendar;
     } else if (tabIndex == kTabIndexTasks) {
-        viewControllerId = kViewControllerTaskList;
+        viewControllerIdentifier = kVCIdentifierTaskList;
     } else if (tabIndex == kTabIndexMessages) {
-        viewControllerId = kViewControllerMessageList;
+        viewControllerIdentifier = kVCIdentifierMessageList;
     } else if (tabIndex == kTabIndexSettings) {
-        viewControllerId = kViewControllerSettingList;
+        viewControllerIdentifier = kVCIdentifierSettingList;
     }
     
     UINavigationController *navigationController = self.tabBarController.viewControllers[tabIndex];
-    [navigationController setViewControllers:[NSArray arrayWithObject:[self.storyboard instantiateViewControllerWithIdentifier:viewControllerId]]];
+    [navigationController setViewControllers:[NSArray arrayWithObject:[self.storyboard instantiateViewControllerWithIdentifier:viewControllerIdentifier]]];
     
     if (reauthenticate) {
         [[OMeta m] userDidSignOut];
         
-        [self presentModalViewControllerWithIdentifier:kViewControllerAuth dismisser:navigationController.viewControllers[0]];
+        [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth dismisser:navigationController.viewControllers[0]];
         
         _reauthenticationLandingTabIndex = tabIndex;
     }
@@ -335,7 +335,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     UIViewController *destinationViewController = nil;
     
-    if ([identifier isEqualToString:kViewControllerAuth]) {
+    if ([identifier isEqualToString:kVCIdentifierAuth]) {
         destinationViewController = viewController;
         destinationViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     } else {
@@ -535,7 +535,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         UIBarButtonItem *space = [UIBarButtonItem flexibleSpace];
         UIBarButtonItem *callButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"75-phone.png"] landscapeImagePhone:[UIImage imageNamed:@"75-phone.png"] style:UIBarButtonItemStylePlain target:self action:@selector(signOut)];
         UIBarButtonItem *textButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:nil];
-        //UIBarButtonItem *textButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"glyphicons_139_phone.png"] landscapeImagePhone:[UIImage imageNamed:@"glyphicons_139_phone.png"] style:UIBarButtonItemStylePlain target:self action:@selector(signOut)];
         UIBarButtonItem *emailButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"18-envelope.png"] landscapeImagePhone:[UIImage imageNamed:@"18-envelope.png"] style:UIBarButtonItemStylePlain target:self action:@selector(signOut)];
         
         [self setToolbarItems:@[space, callButton, space, textButton, space, emailButton, space]];
@@ -561,8 +560,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if ([self actionIs:kActionLoad] && [self targetIs:kTargetStrings]) {
             [self.activityIndicator startAnimating];
             [OConnection fetchStrings];
-        } else if (![_identifier isEqualToString:kViewControllerAuth]) {
-            [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil];
+        } else if (![_identifier isEqualToString:kVCIdentifierAuth]) {
+            [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth data:nil];
         }
     }
     
@@ -904,7 +903,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [OStrings.class didCompleteWithResponse:response data:data];
         
         [(OTabBarController *)self.tabBarController setTabBarTitles];
-        [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:nil];
+        [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth data:nil];
     }
 }
 

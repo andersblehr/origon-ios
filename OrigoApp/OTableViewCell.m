@@ -21,7 +21,6 @@ static NSString * const kViewKeyTitleBanner = @"titleBanner";
 static NSString * const kViewKeyPhotoFrame = @"photoFrame";
 static NSString * const kViewKeyPhotoPrompt = @"photoPrompt";
 
-static CGFloat const kLabelDetailSpacing = 3.f;
 static CGFloat const kImplicitFramePadding = 2.f;
 
 static CGFloat const kShakeDuration = 0.05f;

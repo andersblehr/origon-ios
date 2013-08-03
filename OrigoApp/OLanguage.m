@@ -13,37 +13,47 @@ NSInteger const accusative = 1;
 NSInteger const dative = 2;
 NSInteger const disjunctive = 3;
 
-NSInteger const singular1 = 1;
-NSInteger const singular2 = 2;
-NSInteger const singular3 = 3;
-NSInteger const plural1 = 4;
-NSInteger const plural2 = 5;
-NSInteger const plural3 = 6;
+NSInteger const definite = 0;
+NSInteger const possessive2 = 1;
+NSInteger const possessive3 = 2;
+
+NSInteger const singular1 = 0;
+NSInteger const singular2 = 1;
+NSInteger const singular3 = 2;
+NSInteger const plural1 = 3;
+NSInteger const plural2 = 4;
+NSInteger const plural3 = 5;
+
+NSString * const be  = @"verbBe";
+
+NSString * const father = @"nounFather";
+NSString * const mother = @"nounMother";
+NSString * const parents = @"nounParents";
 
 NSString * const I   = @"pronounI";
 NSString * const you = @"pronounYou";
 NSString * const he  = @"pronounHe";
 NSString * const she = @"pronounShe";
 
-NSString * const be  = @"verbBe";
-
-static NSString * const kPartOfSpeechPronouns = @"pronoun";
 static NSString * const kPartOfSpeechVerbs = @"verb";
+static NSString * const kPartOfSpeechNouns = @"noun";
+static NSString * const kPartOfSpeechPronouns = @"pronoun";
 
 static NSString * const strQuestionTemplate = @"strQuestionTemplate";
-static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
 
 static NSString * const kSubjectPlaceholder = @"{subject}";
 static NSString * const kVerbPlaceholder = @"{verb}";
 static NSString * const kArgumentPlaceholder = @"{argument}";
+static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
 
 static OLanguage *language = nil;
 
 
 @interface OLanguage ()
 
-@property (strong, nonatomic) NSDictionary *pronouns;
 @property (strong, nonatomic) NSDictionary *verbs;
+@property (strong, nonatomic) NSDictionary *nouns;
+@property (strong, nonatomic) NSDictionary *pronouns;
 
 @end
 
@@ -131,8 +141,9 @@ static OLanguage *language = nil;
     self = [super init];
     
     if (self) {
-        _pronouns = [self loadPartOfSpeech:kPartOfSpeechPronouns];
         _verbs = [self loadPartOfSpeech:kPartOfSpeechVerbs];
+        _nouns = [self loadPartOfSpeech:kPartOfSpeechNouns];
+        _pronouns = [self loadPartOfSpeech:kPartOfSpeechPronouns];
     }
     
     return self;
@@ -151,15 +162,21 @@ static OLanguage *language = nil;
 
 #pragma mark - Parts of speech dictionaries
 
-+ (NSDictionary *)pronouns
-{
-    return [OLanguage language].pronouns;
-}
-
-
 + (NSDictionary *)verbs
 {
     return [OLanguage language].verbs;
+}
+
+
++ (NSDictionary *)nouns
+{
+    return [OLanguage language].nouns;
+}
+
+
++ (NSDictionary *)pronouns
+{
+    return [OLanguage language].pronouns;
 }
 
 
@@ -174,9 +191,24 @@ static OLanguage *language = nil;
 }
 
 
-+ (NSString *)possessiveClauseWithPossessor:(id)possessor possessee:(NSString *)possessee
++ (NSString *)possessiveClauseWithPossessor:(id)possessor noun:(NSString *)nounKey
 {
+    NSString *possessiveClause = nil;
+    NSArray *noun = [OLanguage nouns][nounKey];
     
+    if ([possessor isKindOfClass:NSString.class]) {
+        possessiveClause = [NSString stringWithFormat:noun[possessive3], possessor];
+    } else if ([possessor isKindOfClass:OMember.class]) {
+        if ([possessor isUser]) {
+            possessiveClause = noun[possessive2];
+        } else {
+            possessiveClause = [NSString stringWithFormat:noun[possessive3], [possessor givenName]];
+        }
+    } else if ([possessor isKindOfClass:NSArray.class]) {
+        possessiveClause = [NSString stringWithFormat:noun[possessive3], [OUtil collectiveAppellationForMemberList:possessor]];
+    }
+    
+    return possessiveClause;
 }
 
 

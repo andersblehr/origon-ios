@@ -8,8 +8,18 @@
 
 #import "OMember+OrigoExtensions.h"
 
+NSString * const kMemberTypeGuardian = @"guardian";
+
 
 @implementation OMember (OrigoExtensions)
+
+#pragma mark - Selector implementations
+
+- (NSComparisonResult)appellationCompare:(OMember *)other
+{
+    return [[self appellation] localizedCompare:[other appellation]];
+}
+
 
 #pragma mark - Origo memberships
 
@@ -192,6 +202,12 @@
 }
 
 
+- (BOOL)isWardOfUser
+{
+    return [[[OMeta m].user wards] containsObject:self];
+}
+
+
 - (BOOL)isManagedByUser
 {
     BOOL isRepresentedByUser = NO;
@@ -268,7 +284,7 @@
 }
 
 
-- (BOOL)hasParentOfGender:(NSString *)gender
+- (BOOL)hasParentWithGender:(NSString *)gender
 {
     return [gender isEqualToString:kGenderMale] ? (self.fatherId != nil) : (self.motherId != nil);
 }

@@ -71,7 +71,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     
     if ([self actionIs:kActionRegister]) {
         if ([self targetIs:kTargetUser] && ![_origo hasValueForKey:kPropertyKeyAddress]) {
-            [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_membership];
+            [self presentModalViewControllerWithIdentifier:kVCIdentifierOrigo data:_membership];
         } else {
             [self.dismisser dismissModalViewController:self reload:YES];
         }
@@ -79,48 +79,48 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-#pragma mark - Alerts & action sheets
+#pragma mark - Action sheets & alerts
 
-- (void)promptForResidence:(NSSet *)housemateResidences
+- (void)presentCandidateResidencesSheet:(NSSet *)residences
 {
-    _candidateResidences = [housemateResidences sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:kPropertyKeyAddress ascending:YES]]];
+    _candidateResidences = [residences sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:kPropertyKeyAddress ascending:YES]]];
     
-    UIActionSheet *residenceSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     
     for (OOrigo *residence in _candidateResidences) {
-        [residenceSheet addButtonWithTitle:[residence shortAddress]];
+        [sheet addButtonWithTitle:[residence shortAddress]];
     }
     
-    [residenceSheet addButtonWithTitle:[OStrings stringForKey:strButtonNewAddress]];
-    [residenceSheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
-    residenceSheet.cancelButtonIndex = [housemateResidences count] + 1;
-    residenceSheet.tag = kResidenceSheetTag;
+    [sheet addButtonWithTitle:[OStrings stringForKey:strButtonNewAddress]];
+    [sheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
+    sheet.cancelButtonIndex = [residences count] + 1;
+    sheet.tag = kResidenceSheetTag;
     
-    [residenceSheet showInView:self.view];
+    [sheet showInView:self.view];
 }
 
 
-- (void)promptForExistingResidenceAction
+- (void)presentExistingResidenceActionSheet
 {
-    NSString *sheetQuestion = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleExistingResidence], _candidate.name, [_candidate givenName]];
+    NSString *question = [NSString stringWithFormat:[OStrings stringForKey:strSheetTitleExistingResidence], _candidate.name, [_candidate givenName]];
     
-    UIActionSheet *existingResidenceSheet = [[UIActionSheet alloc] initWithTitle:sheetQuestion delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonInviteToHousehold], [OStrings stringForKey:strButtonMergeHouseholds], nil];
-    existingResidenceSheet.tag = kExistingResidenceSheetTag;
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonInviteToHousehold], [OStrings stringForKey:strButtonMergeHouseholds], nil];
+    sheet.tag = kExistingResidenceSheetTag;
     
-    [existingResidenceSheet showInView:self.view];
+    [sheet showInView:self.view];
 }
 
 
-- (void)promptForUserEmailChangeConfirmation
+- (void)presentUserEmailChangeAlert
 {
-    UIAlertView *emailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleUserEmailChange] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextUserEmailChange], _member.email, _emailField.text] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
-    emailChangeAlert.tag = kEmailChangeAlertTag;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleUserEmailChange] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextUserEmailChange], _member.email, _emailField.text] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
+    alert.tag = kEmailChangeAlertTag;
     
-    [emailChangeAlert show];
+    [alert show];
 }
 
 
-- (void)promptForMemberEmailChangeConfirmation
+- (void)presentMemberEmailChangeAlert
 {
     // TODO
 }
@@ -133,9 +133,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     NSSet *housemateResidences = [_member housemateResidences];
     
     if ([housemateResidences count]) {
-        [self promptForResidence:housemateResidences];
+        [self presentCandidateResidencesSheet:housemateResidences];
     } else {
-        [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_member meta:kOrigoTypeResidence];
+        [self presentModalViewControllerWithIdentifier:kVCIdentifierOrigo data:_member meta:kOrigoTypeResidence];
     }
 }
 
@@ -335,19 +335,25 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if ([self actionIs:kActionRegister]) {
         if (_candidate) {
             if ([_origo isOfType:kOrigoTypeResidence] && [_candidate.residencies count]) {
-                [self promptForExistingResidenceAction];
+                [self presentExistingResidenceActionSheet];
             } else {
                 [self persistMember];
             }
         } else {
-            [_examiner examineRegistrantWithName:_nameField.text dateOfBirth:_dateOfBirthField.date];
+            if (_member) {
+                [_examiner examineRegistrant:_member];
+            } else if ([self.meta isEqualToString:kMemberTypeGuardian]) {
+                [_examiner examineRegistrantWithName:_nameField.text isGuardian:YES];
+            } else {
+                [_examiner examineRegistrantWithName:_nameField.text dateOfBirth:_dateOfBirthField.date];
+            }
         }
     } else if ([self actionIs:kActionEdit]) {
         if ([_member.email length] && ![_emailField.text isEqualToString:_member.email]) {
             if ([self targetIs:kTargetUser]) {
-                [self promptForUserEmailChangeConfirmation];
+                [self presentUserEmailChangeAlert];
             } else {
-                [self promptForMemberEmailChangeConfirmation];
+                [self presentMemberEmailChangeAlert];
             }
         } else {
             [self persistMember];
@@ -424,8 +430,8 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if ([self actionIs:kActionRegister]) {
         NSString *identifier = viewController.identifier;
         
-        shouldRelay = shouldRelay || [identifier isEqual:kViewControllerOrigo];
-        shouldRelay = shouldRelay || [identifier isEqual:kViewControllerMemberList];
+        shouldRelay = shouldRelay || [identifier isEqual:kVCIdentifierOrigo];
+        shouldRelay = shouldRelay || [identifier isEqual:kVCIdentifierMemberList];
     }
     
     return shouldRelay;
@@ -434,7 +440,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)willDismissModalViewController:(OTableViewController *)viewController
 {
-    if ([viewController.identifier isEqualToString:kViewControllerAuth]) {
+    if ([viewController.identifier isEqualToString:kVCIdentifierAuth]) {
         if ([_member.email isEqualToString:_emailField.text]) {
             [self persistMember];
         } else {
@@ -455,7 +461,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     switch (actionSheet.tag) {
         case kResidenceSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self presentModalViewControllerWithIdentifier:kViewControllerOrigo data:_member meta:kOrigoTypeResidence];
+                [self presentModalViewControllerWithIdentifier:kVCIdentifierOrigo data:_member meta:kOrigoTypeResidence];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_candidateResidences[buttonIndex] addMember:_member];
                 [self reloadSections];
@@ -488,7 +494,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         case kEmailChangeAlertTag:
             if (buttonIndex == kEmailChangeButtonContinue) {
                 [self toggleEditMode];
-                [self presentModalViewControllerWithIdentifier:kViewControllerAuth data:_emailField.text];
+                [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth data:_emailField.text];
             } else {
                 [_emailField becomeFirstResponder];
             }
