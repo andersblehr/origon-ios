@@ -30,10 +30,6 @@ NSInteger const kHTTPStatusInternalServerError = 500;
 static NSString * const kOrigoDevServer = @"enceladus.local:8888";
 static NSString * const kOrigoProdServer = @"origoapp.appspot.com";
 
-static NSString * const kHTTPProtocol = @"http";
-static NSString * const kHTTPProtocolSuffixSSL = @"s";
-static NSString * const kHTTPURLFormat = @"%@://%@";
-
 static NSString * const kHTTPHeaderAccept = @"Accept";
 static NSString * const kHTTPHeaderAcceptCharset = @"Accept-Charset";
 static NSString * const kHTTPHeaderAuthorization = @"Authorization";
@@ -68,13 +64,15 @@ static NSString * const kURLParameterVersion = @"version";
 - (NSString *)serverURL
 {
     NSString *origoServer = [[OMeta m] deviceIsSimulator] ? kOrigoDevServer : kOrigoProdServer;
-    NSMutableString *protocol = [NSMutableString stringWithString:kHTTPProtocol];
+    NSString *protocol = nil;
     
     if ([_root isEqualToString:kRootAuth] && ![[OMeta m] deviceIsSimulator]) {
-        [protocol appendString:kHTTPProtocolSuffixSSL];
+        protocol = kProtocolHTTPS;
+    } else {
+        protocol = kProtocolHTTP;
     }
     
-    return [NSString stringWithFormat:kHTTPURLFormat, protocol, origoServer];
+    return [protocol stringByAppendingString:origoServer];
 }
 
 

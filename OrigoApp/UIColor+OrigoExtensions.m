@@ -133,15 +133,15 @@
 
 #pragma mark - Placeholder colours
 
-+ (UIColor *)defaultPlaceholderColor
++ (UIColor *)titlePlaceholderColor
 {
-    return [self lightGrayColor];
+    return [self lightTextColor];
 }
 
 
-+ (UIColor *)lightPlaceholderColor
++ (UIColor *)detailPlaceholderColor
 {
-    return [self lightTextColor];
+    return [self lightGrayColor];
 }
 
 @end

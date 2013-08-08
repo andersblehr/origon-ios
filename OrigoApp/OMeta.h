@@ -8,18 +8,19 @@
 
 #import "OrigoApp.h"
 
-extern NSString * const kBundleId;
-
-extern NSString * const kGenderFemale;
-extern NSString * const kGenderMale;
-
 extern NSInteger const kAgeThresholdToddler;
 extern NSInteger const kAgeThresholdInSchool;
 extern NSInteger const kAgeThresholdTeen;
 extern NSInteger const kAgeOfConsent;
 extern NSInteger const kAgeOfMajority;
 
+extern NSString * const kBundleId;
+
 extern NSString * const kLanguageHungarian;
+
+extern NSString * const kProtocolHTTP;
+extern NSString * const kProtocolHTTPS;
+extern NSString * const kProtocolTel;
 
 extern NSString * const kIconFileOrigo;
 extern NSString * const kIconFileHousehold;
@@ -29,6 +30,13 @@ extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
 extern NSString * const kIconFileLocationArrow;
+
+extern NSString * const kIconFilePlacePhoneCall;
+extern NSString * const kIconFileSendText;
+extern NSString * const kIconFileSendEmail;
+
+extern NSString * const kGenderFemale;
+extern NSString * const kGenderMale;
 
 extern NSString * const kInputKeyActivate;
 extern NSString * const kInputKeyActivationCode;
@@ -92,6 +100,7 @@ extern NSString * const kDefaultsKeyStringDate;
 @property (strong, nonatomic, readonly) OMember *user;
 @property (strong, nonatomic, readonly) OSettings *settings;
 @property (strong, nonatomic, readonly) OReplicator *replicator;
+@property (strong, nonatomic, readonly) OSwitchboard *switchboard;
 @property (strong, nonatomic, readonly) OLocator *locator;
 
 @property (strong, nonatomic, readonly) UIDatePicker *sharedDatePicker;

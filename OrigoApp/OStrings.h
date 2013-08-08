@@ -10,6 +10,7 @@
 
 // Cross-view terms & strings
 extern NSString * const strFooterTapToEdit;
+extern NSString * const strFooterOrigoSignature;
 extern NSString * const strButtonOK;
 extern NSString * const strButtonEdit;
 extern NSString * const strButtonNext;
@@ -17,6 +18,7 @@ extern NSString * const strButtonDone;
 extern NSString * const strButtonContinue;
 extern NSString * const strButtonCancel;
 extern NSString * const strButtonSignOut;
+extern NSString * const strButtonAllContacts;
 extern NSString * const strAlertTextNoInternet;
 extern NSString * const strAlertTextServerError;
 extern NSString * const strAlertTextLocating;
@@ -49,12 +51,12 @@ extern NSString * const strAlertTextWelcomeBack;
 
 // OOrigoListView strings
 extern NSString * const strTabBarTitleOrigo;
-extern NSString * const strViewTitleWardOrigoList;
 extern NSString * const strHeaderWardsOrigos;
 extern NSString * const strHeaderMyOrigos;
 extern NSString * const strFooterOrigoCreationFirst;
 extern NSString * const strFooterOrigoCreation;
 extern NSString * const strFooterOrigoCreationWards;
+extern NSString * const strButtonSettings;
 extern NSString * const strButtonCountryLocate;
 extern NSString * const strButtonCountryOther;
 extern NSString * const strAlertTitleListedUserRegistration;
@@ -103,20 +105,17 @@ extern NSString * const strViewTitleNewHouseholdMember;
 extern NSString * const strLabelEmail;
 extern NSString * const strLabelMobilePhone;
 extern NSString * const strLabelDateOfBirth;
-extern NSString * const strLabelAbbreviatedEmail;
 extern NSString * const strLabelAbbreviatedMobilePhone;
-extern NSString * const strLabelAbbreviatedDateOfBirth;
-extern NSString * const strLabelAbbreviatedTelephone;
 extern NSString * const strPlaceholderPhoto;
 extern NSString * const strPlaceholderName;
 extern NSString * const strPlaceholderEmail;
 extern NSString * const strPlaceholderDateOfBirth;
 extern NSString * const strPlaceholderMobilePhone;
 extern NSString * const strFooterTapToAddAddress;
-extern NSString * const strHeaderAddress;
-extern NSString * const strHeaderAddresses;
 extern NSString * const strButtonParentToSome;
 extern NSString * const strButtonNewAddress;
+extern NSString * const strButtonChangePassword;
+extern NSString * const strButtonEditGender;
 extern NSString * const strButtonInviteToHousehold;
 extern NSString * const strButtonMergeHouseholds;
 extern NSString * const strAlertTitleMemberExists;
@@ -125,8 +124,9 @@ extern NSString * const strAlertTitleUserEmailChange;
 extern NSString * const strAlertTextUserEmailChange;
 extern NSString * const strAlertTitleEmailChangeFailed;
 extern NSString * const strAlertTextEmailChangeFailed;
-extern NSString * const strSheetTitleGender;
-extern NSString * const strSheetTitleParenthood;
+extern NSString * const strSheetTitleEmailRecipient;
+extern NSString * const strSheetTitleTextRecipient;
+extern NSString * const strSheetTitlePhoneCallRecipient;
 extern NSString * const strSheetTitleExistingResidence;
 extern NSString * const strQuestionArgumentGender;
 extern NSString * const strQuestionArgumentGenderMinor;
@@ -153,7 +153,8 @@ extern NSString * const strSettingTextCountry;
 // OSettingView strings
 extern NSString * const strLabelCountrySettings;
 extern NSString * const strLabelCountryLocation;
-extern NSString * const strFooterCountryInfoParenthesis;
+extern NSString * const strFooterCountryInfo;
+extern NSString * const strFooterCountryInfoNote;
 extern NSString * const strFooterCountryInfoLocate;
 
 // Origo type strings

@@ -386,6 +386,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     if ([self isListCell]) {
         [_listDelegate populateListCell:self atIndexPath:_indexPath];
+        [_state.viewController.dirtySections addObject:@(_indexPath.section)];
     } else {
         for (NSString *key in _blueprint.allTextFieldKeys) {
             id textField = [self textFieldForKey:key];
@@ -416,12 +417,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
     for (NSString *key in _blueprint.allTextFieldKeys) {
         id textField = [self textFieldForKey:key];
         
-        if ([textField hasValue]) {
-            if ([textField isDateField]) {
-                [_entity setValue:[textField date] forKey:key];
-            } else {
-                [_entity setValue:[textField textValue] forKey:key];
-            }
+        if ([textField isDateField]) {
+            [_entity setValue:[textField date] forKey:key];
+        } else {
+            [_entity setValue:[textField textValue] forKey:key];
         }
     }
     

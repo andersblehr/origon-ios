@@ -16,7 +16,7 @@
 @optional
 - (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey;
 - (BOOL)willCompareObjectsInSectionWithKey:(NSInteger)sectionKey;
-- (NSComparisonResult)compareObject:(id)entity1 toObject:(id)entity2;
+- (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2;
 
 - (UITableViewCellStyle)styleForIndexPath:(NSIndexPath *)indexPath;
 

@@ -26,7 +26,6 @@ extern NSString * const kCustomCell;
     
     NSNumber *_lastSectionKey;
     NSIndexPath *_selectedIndexPath;
-    NSInteger _reauthenticationLandingTabIndex;
     
     UIBarButtonItem *_nextButton;
     UIBarButtonItem *_doneButton;
@@ -38,7 +37,9 @@ extern NSString * const kCustomCell;
 @property (strong, nonatomic, readonly) NSString *identifier;
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic, readonly) OReplicatedEntity *entity;
+@property (strong, nonatomic, readonly) NSMutableSet *dirtySections;
 @property (strong, nonatomic, readonly) UIActivityIndicatorView *activityIndicator;
+@property (strong, nonatomic, readonly) UIView *actionSheetView;
 
 @property (nonatomic, readonly) BOOL isPushed;
 @property (nonatomic, readonly) BOOL isPopped;
@@ -46,7 +47,6 @@ extern NSString * const kCustomCell;
 @property (nonatomic, readonly) BOOL wasHidden;
 
 @property (nonatomic) BOOL canEdit;
-@property (nonatomic) BOOL hasToolbar;
 @property (nonatomic) BOOL modalImpliesRegistration;
 @property (nonatomic) BOOL cancelRegistrationImpliesSignOut;
 

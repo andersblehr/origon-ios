@@ -16,12 +16,13 @@
 #import <CoreTelephony/CTCarrier.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <Foundation/Foundation.h>
+#import <MessageUI/MessageUI.h>
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIKit.h>
 
 #import "Reachability.h"
 
-@class ORegistrantExaminer, OLocator, OReplicator, OState, OTabBarController, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
+@class OLocator, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTabBarController, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
 @class ODevice, OMember, OMembership, OMessageBoard, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
 
 #import "OConnectionDelegate.h"
@@ -65,6 +66,7 @@
 #import "OReplicator.h"
 #import "OState.h"
 #import "OStrings.h"
+#import "OSwitchboard.h"
 #import "OTabBarController.h"
 #import "OTableViewCell.h"
 #import "OTableViewCellBlueprint.h"

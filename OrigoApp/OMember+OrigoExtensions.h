@@ -21,7 +21,10 @@ extern NSString * const kMemberTypeGuardian;
 - (NSSet *)residencies;
 - (NSSet *)participancies;
 
+- (OMember *)partner;
 - (NSSet *)wards;
+- (NSSet *)parents;
+- (NSSet *)guardians;
 - (NSSet *)housemates;
 - (NSSet *)housemateResidences;
 
@@ -30,6 +33,7 @@ extern NSString * const kMemberTypeGuardian;
 
 - (BOOL)isUser;
 - (BOOL)isWardOfUser;
+- (BOOL)isHousemateOfUser;
 - (BOOL)isManagedByUser;
 - (BOOL)isKnownByUser;
 - (BOOL)isMale;
@@ -37,12 +41,18 @@ extern NSString * const kMemberTypeGuardian;
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOlderThan:(NSInteger)age;
 - (BOOL)isMemberOfOrigoOfType:(NSString *)origoType;
+- (BOOL)hasParent:(OMember *)member;
 - (BOOL)hasParentWithGender:(NSString *)gender;
+- (BOOL)guardiansAreParents;
+
+- (NSArray *)pronoun;
+- (NSArray *)parentNoun;
 
 - (NSString *)givenName;
-- (NSArray *)pronoun;
+- (NSString *)nameWithParentTitle;
 - (NSString *)appellation;
-
-- (UIImage *)listCellImage;
+- (NSString *)labeledMobilePhone;
+- (NSString *)shortAddress;
+- (UIImage *)smallImage;
 
 @end

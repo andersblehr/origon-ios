@@ -59,9 +59,9 @@ static NSInteger const kUserRow = 0;
         }
         
         if (allMale) {
-            himOrHer = [OLanguage pronouns][he][accusative];
+            himOrHer = [OLanguage pronouns][_he_][accusative];
         } else if (allFemale) {
-            himOrHer = [OLanguage pronouns][she][accusative];
+            himOrHer = [OLanguage pronouns][_she_][accusative];
         } else {
             himOrHer = [OStrings stringForKey:strTermHimOrHer];
         }
@@ -106,7 +106,7 @@ static NSInteger const kUserRow = 0;
     sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
     sheet.tag = kCountrySheetTag;
     
-    [sheet showInView:self.tabBarController.view];
+    [sheet showInView:self.actionSheetView];
 }
 
 
@@ -137,7 +137,13 @@ static NSInteger const kUserRow = 0;
 
 #pragma mark - Selector implementations
 
-- (void)addOrigo
+- (void)openSettings
+{
+    [self presentModalViewControllerWithIdentifier:kVCIdentifierSettingList data:nil];
+}
+
+
+- (void)performAddAction
 {
     NSString *question = [OStrings stringForKey:strSheetTitleOrigoType];
     
@@ -158,7 +164,7 @@ static NSInteger const kUserRow = 0;
     sheet.cancelButtonIndex = [_origoTypes count];
     sheet.tag = kOrigoTypeSheetTag;
     
-    [sheet showInView:self.tabBarController.view];
+    [sheet showInView:self.actionSheetView];
 }
 
 
@@ -171,7 +177,7 @@ static NSInteger const kUserRow = 0;
     self.title = @"Origo";
     
     if ([[OMeta m] userIsAllSet] && ![_member isUser]) {
-        self.navigationItem.title = [NSString stringWithFormat:[OStrings stringForKey:strViewTitleWardOrigoList], [_member givenName]];
+        self.navigationItem.title = [self.title stringByAppendingString:[_member givenName] separator:kSeparatorInterpunct];
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_member givenName]];
     }
 }
@@ -182,9 +188,12 @@ static NSInteger const kUserRow = 0;
     [super viewWillAppear:animated];
 
     if ([[OMeta m] userIsAllSet]) {
+        if ([_member isUser]) {
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
+        }
+        
         if ([[OMeta m].user isTeenOrOlder]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
-            self.navigationItem.rightBarButtonItem.action = @selector(addOrigo);
         }
         
         if (![self numberOfSectionsInTableView:self.tableView]) {
@@ -198,7 +207,7 @@ static NSInteger const kUserRow = 0;
 {
     [super viewDidAppear:animated];
 
-    if ([OMeta m].user && [[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
+    if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
         if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].user.entityId]) {
             [self presentListedUserAlert];
         } else if (![OMeta m].userDidJustSignUp) {
@@ -228,7 +237,7 @@ static NSInteger const kUserRow = 0;
     self.state.target = _member;
     
     if ([self targetIs:kTargetWard]) {
-        if ([_member isOlderThan:kAgeThresholdInSchool]) {
+        if (![_member isOlderThan:kAgeThresholdInSchool]) {
             [_origoTypes addObject:kOrigoTypePreschoolClass];
         }
         
@@ -322,9 +331,9 @@ static NSInteger const kUserRow = 0;
         
         if (sectionKey == kSectionKeyUser) {
             if (indexPath.row == kUserRow) {
-                cell.textLabel.text = [[OLanguage pronouns][I][disjunctive] capitalizedString];
+                cell.textLabel.text = [[OLanguage pronouns][_I_][disjunctive] capitalizedString];
                 cell.detailTextLabel.text = membership.member.name;
-                cell.imageView.image = [membership.member listCellImage];
+                cell.imageView.image = [membership.member smallImage];
             } else {
                 cell.textLabel.text = membership.origo.name;
                 cell.detailTextLabel.text = [membership.origo singleLineAddress];
@@ -338,7 +347,7 @@ static NSInteger const kUserRow = 0;
         OMember *ward = [entity asMember];
         
         cell.textLabel.text = [ward givenName];
-        cell.imageView.image = [ward listCellImage];
+        cell.imageView.image = [ward smallImage];
     }
 }
 

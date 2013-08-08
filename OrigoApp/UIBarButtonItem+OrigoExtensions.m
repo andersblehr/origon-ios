@@ -11,25 +11,17 @@
 
 @implementation UIBarButtonItem (OrigoExtensions)
 
-#pragma mark - Toolbar flexible space
+#pragma mark - Bar button shorthands
 
-+ (UIBarButtonItem *)flexibleSpace
++ (UIBarButtonItem *)settingsButtonWithTarget:(id)target
 {
-    static UIBarButtonItem *flexibleSpace = nil;
-    
-    if (!flexibleSpace) {
-        flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-    }
-    
-    return flexibleSpace;
+    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"14-gear.png"] style:UIBarButtonItemStylePlain target:target action:@selector(openSettings)];
 }
 
 
-#pragma mark - Convenience methods
-
 + (UIBarButtonItem *)addButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:nil];
+    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:@selector(performAddAction)];
 }
 
 
@@ -59,13 +51,31 @@
 
 + (UIBarButtonItem *)actionButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:target action:nil];
+    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:target action:@selector(performAction)];
 }
 
 
-+ (UIBarButtonItem *)chatButtonWithTarget:(id)target
++ (UIBarButtonItem *)sendEmailButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"08-chat.png"] landscapeImagePhone:[UIImage imageNamed:@"08-chat.png"] style:UIBarButtonItemStylePlain target:target action:@selector(signOut)];
+    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSendEmail] style:UIBarButtonItemStylePlain target:target action:@selector(processEmailRequest)];
+}
+
+
++ (UIBarButtonItem *)sendTextButtonWithTarget:(id)target
+{
+    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSendText] style:UIBarButtonItemStylePlain target:target action:@selector(processTextRequest)];
+}
+
+
++ (UIBarButtonItem *)phoneCallButtonWithTarget:(id)target
+{
+    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFilePlacePhoneCall] style:UIBarButtonItemStylePlain target:target action:@selector(processPhoneCallRequest)];
+}
+
+
++ (UIBarButtonItem *)flexibleSpace
+{
+    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 }
 
 

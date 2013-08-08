@@ -12,7 +12,6 @@ extern NSInteger const kTabIndexOrigo;
 extern NSInteger const kTabIndexCalendar;
 extern NSInteger const kTabIndexTasks;
 extern NSInteger const kTabIndexMessages;
-extern NSInteger const kTabIndexSettings;
 
 @interface OTabBarController : UITabBarController
 

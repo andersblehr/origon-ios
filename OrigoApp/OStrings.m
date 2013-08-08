@@ -10,6 +10,7 @@
 
 // Cross-view terms & strings
 NSString * const strFooterTapToEdit                  = @"strFooterTapToEdit";
+NSString * const strFooterOrigoSignature             = @"strFooterOrigoSignature";
 NSString * const strButtonOK                         = @"strButtonOK";
 NSString * const strButtonEdit                       = @"strButtonEdit";
 NSString * const strButtonNext                       = @"strButtonNext";
@@ -17,6 +18,7 @@ NSString * const strButtonDone                       = @"strButtonDone";
 NSString * const strButtonContinue                   = @"strButtonContinue";
 NSString * const strButtonCancel                     = @"strButtonCancel";
 NSString * const strButtonSignOut                    = @"strButtonSignOut";
+NSString * const strButtonAllContacts                = @"strButtonAllContacts";
 NSString * const strAlertTextNoInternet              = @"strAlertTextNoInternet";
 NSString * const strAlertTextServerError             = @"strAlertTextServerError";
 NSString * const strAlertTextLocating                = @"strAlertTextLocating";
@@ -49,12 +51,12 @@ NSString * const strAlertTextWelcomeBack             = @"strAlertTextWelcomeBack
 
 // OOrigoListView strings
 NSString * const strTabBarTitleOrigo                 = @"strTabBarTitleOrigo";
-NSString * const strViewTitleWardOrigoList           = @"strViewTitleWardOrigoList";
 NSString * const strHeaderWardsOrigos                = @"strHeaderWardsOrigos";
 NSString * const strHeaderMyOrigos                   = @"strHeaderMyOrigos";
 NSString * const strFooterOrigoCreationFirst         = @"strFooterOrigoCreationFirst";
 NSString * const strFooterOrigoCreation              = @"strFooterOrigoCreation";
 NSString * const strFooterOrigoCreationWards         = @"strFooterOrigoCreationWards";
+NSString * const strButtonSettings                   = @"strButtonSettings";
 NSString * const strButtonCountryLocate              = @"strButtonCountryLocate";
 NSString * const strButtonCountryOther               = @"strButtonCountryOther";
 NSString * const strAlertTitleListedUserRegistration = @"strAlertTitleListedUserRegistration";
@@ -103,20 +105,17 @@ NSString * const strViewTitleNewHouseholdMember      = @"strViewTitleNewHousehol
 NSString * const strLabelEmail                       = @"strLabelEmail";
 NSString * const strLabelMobilePhone                 = @"strLabelMobilePhone";
 NSString * const strLabelDateOfBirth                 = @"strLabelDateOfBirth";
-NSString * const strLabelAbbreviatedEmail            = @"strLabelAbbreviatedEmail";
 NSString * const strLabelAbbreviatedMobilePhone      = @"strLabelAbbreviatedMobilePhone";
-NSString * const strLabelAbbreviatedDateOfBirth      = @"strLabelAbbreviatedDateOfBirth";
-NSString * const strLabelAbbreviatedTelephone        = @"strLabelAbbreviatedTelephone";
 NSString * const strPlaceholderPhoto                 = @"strPlaceholderPhoto";
 NSString * const strPlaceholderName                  = @"strPlaceholderName";
 NSString * const strPlaceholderEmail                 = @"strPlaceholderEmail";
 NSString * const strPlaceholderDateOfBirth           = @"strPlaceholderDateOfBirth";
 NSString * const strPlaceholderMobilePhone           = @"strPlaceholderMobilePhone";
-NSString * const strHeaderAddress                    = @"strHeaderAddress";
-NSString * const strHeaderAddresses                  = @"strHeaderAddresses";
 NSString * const strFooterTapToAddAddress            = @"strFooterTapToAddAddress";
 NSString * const strButtonParentToSome               = @"strButtonParentToSome";
 NSString * const strButtonNewAddress                 = @"strButtonNewAddress";
+NSString * const strButtonChangePassword             = @"strButtonChangePassword";
+NSString * const strButtonEditGender                 = @"strButtonEditGender";
 NSString * const strButtonInviteToHousehold          = @"strButtonInviteToHousehold";
 NSString * const strButtonMergeHouseholds            = @"strButtonMergeHouseholds";
 NSString * const strAlertTitleMemberExists           = @"strAlertTitleMemberExists";
@@ -125,8 +124,9 @@ NSString * const strAlertTitleUserEmailChange        = @"strAlertTitleUserEmailC
 NSString * const strAlertTextUserEmailChange         = @"strAlertTextUserEmailChange";
 NSString * const strAlertTitleEmailChangeFailed      = @"strAlertTitleFailedEmailChange";
 NSString * const strAlertTextEmailChangeFailed       = @"strAlertTextFailedEmailChange";
-NSString * const strSheetTitleGender                 = @"strSheetTitleGender";
-NSString * const strSheetTitleParenthood             = @"strSheetTitleParenthood";
+NSString * const strSheetTitleEmailRecipient         = @"strSheetTitleEmailRecipient";
+NSString * const strSheetTitleTextRecipient          = @"strSheetTitleTextRecipient";
+NSString * const strSheetTitlePhoneCallRecipient     = @"strSheetTitlePhoneCallRecipient";
 NSString * const strSheetTitleExistingResidence      = @"strSheetTitleExistingResidence";
 NSString * const strQuestionArgumentGender           = @"strQuestionArgumentGender";
 NSString * const strQuestionArgumentGenderMinor      = @"strQuestionArgumentGenderMinor";
@@ -153,7 +153,8 @@ NSString * const strSettingTextCountry               = @"strSettingTextCountry";
 // OSettingView strings
 NSString * const strLabelCountrySettings             = @"strLabelCountrySettings";
 NSString * const strLabelCountryLocation             = @"strLabelCountryLocation";
-NSString * const strFooterCountryInfoParenthesis     = @"strFooterCountryInfoParenthesis";
+NSString * const strFooterCountryInfo                = @"strFooterCountryInfo";
+NSString * const strFooterCountryInfoNote            = @"strFooterCountryInfoNote";
 NSString * const strFooterCountryInfoLocate          = @"strFooterCountryInfoLocate";
 
 // Origo type strings
@@ -220,7 +221,7 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
     if ([[OMeta m] userIsSignedIn] && [[OMeta m] internetConnectionIsAvailable]) {
         NSDate *stringDate = [ODefaults globalDefaultForKey:kDefaultsKeyStringDate];
         
-        if (stringDate && ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
+        if (!stringDate || ([stringDate daysBeforeNow] >= kDaysBetweenStringFetches)) {
             [OConnection fetchStrings];
         }
     }
@@ -261,25 +262,25 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 
 #pragma mark - Title & text strings
 
-+ (NSString *)titleForOrigoType:(NSString *)origoType
++ (NSString *)titleForOrigoType:(NSString *)type
 {
     NSString *stringKey = nil;
-    BOOL is3rdParty = [[OState s] actionIs:kActionRegister] && [[OMeta m] userIsRegistered];
+    BOOL isNewOrigo = [[OState s] actionIs:kActionRegister] && [[OMeta m] userIsRegistered];
     
-    if ([origoType isEqualToString:kOrigoTypeResidence]) {
-        stringKey = is3rdParty ? strNewOrigoOfTypeResidence : strOrigoTypeResidence;
-    } else if ([origoType isEqualToString:kOrigoTypeOrganisation]) {
-        stringKey = is3rdParty ? strNewOrigoOfTypeOrganisation : strOrigoTypeOrganisation;
-    } else if ([origoType isEqualToString:kOrigoTypeAssociation]) {
-        stringKey = is3rdParty ? strNewOrigoOfTypeAssociation : strOrigoTypeAssociation;
-    } else if ([origoType isEqualToString:kOrigoTypeSchoolClass]) {
-        stringKey = is3rdParty ? strNewOrigoOfTypeSchoolClass : strOrigoTypeSchoolClass;
-    } else if ([origoType isEqualToString:kOrigoTypePreschoolClass]) {
-        stringKey = is3rdParty ? strNewOrigoOfTypePreschoolClass : strOrigoTypePreschoolClass;
-    } else if ([origoType isEqualToString:kOrigoTypeSportsTeam]) {
-        stringKey = is3rdParty ? strNewOrigoOfTypeSportsTeam : strOrigoTypeSportsTeam;
+    if ([type isEqualToString:kOrigoTypeResidence] || [type isEqualToString:kTargetHousehold]) {
+        stringKey = isNewOrigo ? strNewOrigoOfTypeResidence : strOrigoTypeResidence;
+    } else if ([type isEqualToString:kOrigoTypeOrganisation]) {
+        stringKey = isNewOrigo ? strNewOrigoOfTypeOrganisation : strOrigoTypeOrganisation;
+    } else if ([type isEqualToString:kOrigoTypeAssociation]) {
+        stringKey = isNewOrigo ? strNewOrigoOfTypeAssociation : strOrigoTypeAssociation;
+    } else if ([type isEqualToString:kOrigoTypeSchoolClass]) {
+        stringKey = isNewOrigo ? strNewOrigoOfTypeSchoolClass : strOrigoTypeSchoolClass;
+    } else if ([type isEqualToString:kOrigoTypePreschoolClass]) {
+        stringKey = isNewOrigo ? strNewOrigoOfTypePreschoolClass : strOrigoTypePreschoolClass;
+    } else if ([type isEqualToString:kOrigoTypeSportsTeam]) {
+        stringKey = isNewOrigo ? strNewOrigoOfTypeSportsTeam : strOrigoTypeSportsTeam;
     } else {
-        stringKey = is3rdParty ? strNewOrigoOfTypeOther : strOrigoTypeOther;
+        stringKey = isNewOrigo ? strNewOrigoOfTypeOther : strOrigoTypeOther;
     }
     
     return [self stringForKey:stringKey];

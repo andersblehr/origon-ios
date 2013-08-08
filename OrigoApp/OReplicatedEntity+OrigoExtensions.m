@@ -96,7 +96,7 @@
 {
     NSAttributeDescription *attribute = [self.entity attributesByName][key];
     
-    if (attribute.attributeType == NSDateAttributeType) {
+    if (value && (attribute.attributeType == NSDateAttributeType)) {
         value = [NSDate dateWithDeserialisedDate:value];
     }
     

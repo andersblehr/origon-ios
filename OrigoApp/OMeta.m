@@ -8,18 +8,19 @@
 
 #import "OMeta.h"
 
-NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
-
-NSString * const kGenderFemale = @"F";
-NSString * const kGenderMale = @"M";
-
 NSInteger const kAgeThresholdToddler = 1;
 NSInteger const kAgeThresholdInSchool = 6;
 NSInteger const kAgeThresholdTeen = 13;
 NSInteger const kAgeOfConsent = 16;
 NSInteger const kAgeOfMajority = 18;
 
+NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
+
 NSString * const kLanguageHungarian = @"hu";
+
+NSString * const kProtocolHTTP = @"http://";
+NSString * const kProtocolHTTPS = @"https://";
+NSString * const kProtocolTel = @"tel://";
 
 NSString * const kIconFileOrigo = @"10-arrows-in_black.png";
 NSString * const kIconFileHousehold = @"glyphicons_020_home.png";
@@ -29,6 +30,13 @@ NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
 NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
 NSString * const kIconFileInfant = @"76-baby_black.png";
 NSString * const kIconFileLocationArrow = @"193-location-arrow.png";
+
+NSString * const kIconFilePlacePhoneCall = @"75-phone.png";
+NSString * const kIconFileSendText = @"glyphicons_245_chat.png";
+NSString * const kIconFileSendEmail = @"18-envelope.png";
+
+NSString * const kGenderFemale = @"F";
+NSString * const kGenderMale = @"M";
 
 NSString * const kInputKeyActivate = @"activate";
 NSString * const kInputKeyActivationCode = @"activationCode";
@@ -80,6 +88,7 @@ static OMeta *m = nil;
 
 @property (strong, nonatomic) OMember *user;
 @property (strong, nonatomic) OReplicator *replicator;
+@property (strong, nonatomic) OSwitchboard *switchboard;
 @property (strong, nonatomic) OLocator *locator;
 
 @property (strong, nonatomic) UIDatePicker *sharedDatePicker;
@@ -232,7 +241,7 @@ static OMeta *m = nil;
     [self.replicator resetUserReplicationState];
     
     [ODefaults setUserDefault:nil forKey:kDefaultsKeyAuthExpiryDate];
-
+    
     [self reset];
 }
 
@@ -304,6 +313,8 @@ static OMeta *m = nil;
 }
 
 
+#pragma mark - Country information
+
 - (NSArray *)supportedCountryCodes
 {
     return [[OStrings stringForKey:metaSupportedCountryCodes] componentsSeparatedByString:kListSeparator];
@@ -312,14 +323,13 @@ static OMeta *m = nil;
 
 - (NSString *)inferredCountryCode
 {
-    CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
-    NSString *inferredCountryCode = [networkInfo subscriberCellularProvider].isoCountryCode;
+    NSString *inferredCountryCode = self.switchboard.carrier.isoCountryCode;
     
     if (!inferredCountryCode) {
         inferredCountryCode = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
     }
     
-    return inferredCountryCode;
+    return [inferredCountryCode lowercaseString];
 }
 
 
@@ -411,6 +421,16 @@ static OMeta *m = nil;
     }
     
     return _replicator;
+}
+
+
+- (OSwitchboard *)switchboard
+{
+    if (!_switchboard) {
+        _switchboard = [[OSwitchboard alloc] init];
+    }
+    
+    return _switchboard;
 }
 
 

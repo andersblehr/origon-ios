@@ -63,7 +63,7 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
     CAGradientLayer *gradientLayer = [CAGradientLayer layer];
     
     gradientLayer.frame = self.bounds;
-    gradientLayer.colors = [NSArray arrayWithObjects:(id)[[UIColor blackColor] colorWithAlphaComponent:0.1f].CGColor, (id)[UIColor clearColor].CGColor, nil];
+    gradientLayer.colors = @[(id)[[UIColor blackColor] colorWithAlphaComponent:0.1f].CGColor, (id)[UIColor clearColor].CGColor];
     
     [self.layer addSublayer:gradientLayer];
 }

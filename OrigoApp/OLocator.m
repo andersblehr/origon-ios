@@ -94,7 +94,7 @@
 
 - (NSString *)countryCode
 {
-    return _placemark ? _placemark.ISOcountryCode : nil;
+    return _placemark ? [_placemark.ISOcountryCode lowercaseString] : nil;
 }
 
 

@@ -14,6 +14,9 @@ NSString * const kCustomCell = @"custom";
 static NSString * const kViewControllerSuffix = @"ViewController";
 static NSString * const kViewControllerSuffixList = @"ListViewController";
 
+static UIViewController * _reauthenticationDismisser;
+static BOOL _needsResetViewControllers;
+
 
 @interface OTableViewController ()
 
@@ -92,7 +95,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             NSString *sortKey = [listDelegate sortKeyForSectionWithKey:sectionKey];
             
             if (sortKey) {
-                sortedArray = [unsortedArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:sortKey ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]]];
+                sortedArray = [unsortedArray sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:sortKey ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]]];
             }
         }
     }
@@ -127,31 +130,29 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)resetViewControllerAtTabIndex:(NSInteger)tabIndex reauthenticate:(BOOL)reauthenticate
+- (void)resetViewControllerWithIdentifier:(NSString *)identifier
 {
-    NSString *viewControllerIdentifier = nil;
+    UIViewController *viewController = nil;
+    NSInteger tabIndex = kTabIndexOrigo;
     
-    if (tabIndex == kTabIndexOrigo) {
-        viewControllerIdentifier = kVCIdentifierOrigoList;
-    } else if (tabIndex == kTabIndexCalendar) {
-        viewControllerIdentifier = kVCIdentifierCalendar;
-    } else if (tabIndex == kTabIndexTasks) {
-        viewControllerIdentifier = kVCIdentifierTaskList;
-    } else if (tabIndex == kTabIndexMessages) {
-        viewControllerIdentifier = kVCIdentifierMessageList;
-    } else if (tabIndex == kTabIndexSettings) {
-        viewControllerIdentifier = kVCIdentifierSettingList;
+    if ([identifier isEqualToString:kVCIdentifierCalendar]) {
+        tabIndex = kTabIndexCalendar;
+    } else if ([identifier isEqualToString:kVCIdentifierTaskList]) {
+        tabIndex = kTabIndexTasks;
+    } else if ([identifier isEqualToString:kVCIdentifierMessageList]) {
+        tabIndex = kTabIndexMessages;
     }
     
     UINavigationController *navigationController = self.tabBarController.viewControllers[tabIndex];
-    [navigationController setViewControllers:[NSArray arrayWithObject:[self.storyboard instantiateViewControllerWithIdentifier:viewControllerIdentifier]]];
     
-    if (reauthenticate) {
-        [[OMeta m] userDidSignOut];
-        
-        [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth dismisser:navigationController.viewControllers[0]];
-        
-        _reauthenticationLandingTabIndex = tabIndex;
+    if (navigationController) {
+        if (tabIndex == kTabIndexOrigo) {
+            viewController = _reauthenticationDismisser;
+        } else {
+            viewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
+        }
+    
+        [navigationController setViewControllers:@[viewController]];
     }
 }
 
@@ -182,12 +183,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     } else {
         [_detailCell processInput];
     }
-}
-
-
-- (void)signOut
-{
-    [self resetViewControllerAtTabIndex:kTabIndexOrigo reauthenticate:YES];
 }
 
 
@@ -398,21 +393,21 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     for (NSNumber *sectionKey in [_sectionData allKeys]) {
         NSInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
-        NSInteger oldSectionCount = [_sectionCounts[sectionKey] integerValue];
-        NSInteger newSectionCount = [_sectionData[sectionKey] count];
+        NSInteger oldCount = [_sectionCounts[sectionKey] integerValue];
+        NSInteger newCount = [_sectionData[sectionKey] count];
         
-        if (oldSectionCount) {
-            if (newSectionCount && (newSectionCount != oldSectionCount)) {
+        if (oldCount) {
+            if ((newCount && (newCount != oldCount)) || [_dirtySections containsObject:@(section)]) {
                 [sectionsToReload addIndex:section];
-            } else if (!newSectionCount) {
+            } else if (!newCount) {
                 [_sectionKeys removeObject:sectionKey];
                 [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
             }
-        } else if (newSectionCount) {
+        } else if (newCount) {
             [sectionsToInsert addIndex:section];
         }
         
-        _sectionCounts[sectionKey] = @(newSectionCount);
+        _sectionCounts[sectionKey] = @(newCount);
     }
     
     if (![_lastSectionKey isEqualToNumber:[_sectionKeys lastObject]]) {
@@ -481,7 +476,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _sectionKeys = [[NSMutableArray alloc] init];
     _sectionData = [[NSMutableDictionary alloc] init];
     _sectionCounts = [[NSMutableDictionary alloc] init];
-    _reauthenticationLandingTabIndex = NSNotFound;
+    _dirtySections = [[NSMutableSet alloc] init];
     _instance = self;
     
     _state = [[OState alloc] initWithViewController:self];
@@ -529,21 +524,24 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [self.tabBarController.tabBar.items[kTabIndexOrigo] setTitle:nil];
     }
     
-    if (_hasToolbar) {
-        [self.navigationController setToolbarHidden:NO animated:YES];
+    if (![self actionIs:kActionRegister]) {
+        NSArray *toolbarButtons = nil;
         
-        UIBarButtonItem *space = [UIBarButtonItem flexibleSpace];
-        UIBarButtonItem *callButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"75-phone.png"] landscapeImagePhone:[UIImage imageNamed:@"75-phone.png"] style:UIBarButtonItemStylePlain target:self action:@selector(signOut)];
-        UIBarButtonItem *textButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:nil];
-        UIBarButtonItem *emailButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"18-envelope.png"] landscapeImagePhone:[UIImage imageNamed:@"18-envelope.png"] style:UIBarButtonItemStylePlain target:self action:@selector(signOut)];
+        if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
+            toolbarButtons = [_instance toolbarButtons];
+        }
         
-        [self setToolbarItems:@[space, callButton, space, textButton, space, emailButton, space]];
-    } else  {
-        [self.navigationController setToolbarHidden:YES animated:YES];
+        if (toolbarButtons) {
+            [self setToolbarItems:toolbarButtons];
+            [self.navigationController setToolbarHidden:NO animated:YES];
+        } else  {
+            [self.navigationController setToolbarHidden:YES animated:YES];
+        }
     }
     
     if (_isPopped || _shouldReloadOnModalDismissal) {
         [self reloadSections];
+        [_dirtySections removeAllObjects];
     }
 }
 
@@ -561,7 +559,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self.activityIndicator startAnimating];
             [OConnection fetchStrings];
         } else if (![_identifier isEqualToString:kVCIdentifierAuth]) {
-            [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth data:nil];
+            [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth dismisser:_reauthenticationDismisser];
         }
     }
     
@@ -580,6 +578,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     [[OMeta m].replicator replicateIfNeeded];
+    [[OMeta m].sharedDatePicker removeTarget:nil action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
 }
 
 
@@ -587,19 +586,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [super viewDidDisappear:animated];
     
-    if (_reauthenticationLandingTabIndex != NSNotFound) {
-        NSInteger leftmostTabIndex = kTabIndexOrigo;
-        NSInteger rightmostTabIndex = kTabIndexSettings;
+    if (_needsResetViewControllers && !_isModal) {
+        [self resetViewControllerWithIdentifier:kVCIdentifierOrigoList];
+        [self resetViewControllerWithIdentifier:kVCIdentifierCalendar];
+        [self resetViewControllerWithIdentifier:kVCIdentifierTaskList];
+        [self resetViewControllerWithIdentifier:kVCIdentifierMessageList];
         
-        self.tabBarController.selectedIndex = _reauthenticationLandingTabIndex;
+        self.tabBarController.selectedIndex = kTabIndexOrigo;
         
-        for (NSInteger tabIndex = leftmostTabIndex; tabIndex <= rightmostTabIndex; tabIndex++) {
-            if (tabIndex != _reauthenticationLandingTabIndex) {
-                [self resetViewControllerAtTabIndex:tabIndex reauthenticate:NO];
-            }
-        }
-        
-        _reauthenticationLandingTabIndex = NSNotFound;
+        _needsResetViewControllers = NO;
     }
 }
 
@@ -619,6 +614,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     return _activityIndicator;
+}
+
+
+- (UIView *)actionSheetView
+{
+    return _isModal ? self.view : self.tabBarController.view;
 }
 
 
@@ -680,6 +681,19 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+- (void)dismissModalViewController:(OTableViewController *)viewController signOut:(BOOL)signOut
+{
+    if (signOut) {
+        [[OMeta m] userDidSignOut];
+        
+        _needsResetViewControllers = YES;
+        _reauthenticationDismisser = [[OState s].viewController.storyboard instantiateViewControllerWithIdentifier:kVCIdentifierOrigoList];
+    }
+    
+    [self dismissModalViewController:viewController reload:NO];
+}
+
+
 #pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -727,7 +741,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         _detailCell = cell;
-        _detailCell.editable = self.canEdit;
+        _detailCell.editable = [self actionIs:kActionRegister] || self.canEdit;
     } else {
         cell = [tableView listCellForIndexPath:indexPath value:[self dataAtIndexPath:indexPath]];
     }
