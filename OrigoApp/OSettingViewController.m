@@ -88,19 +88,24 @@ static NSString * const kCustomValue = @"custom";
 
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    NSString *text = nil;
+    NSMutableString *text = nil;
     
     if ([_settingKey isEqualToString:kSettingKeyCountry]) {
+        NSMutableArray *supportedCountries = [[NSMutableArray alloc] init];
+        
+        for (NSString *countryCode in [[OMeta m] supportedCountryCodes]) {
+            [supportedCountries addObject:[OUtil localisedCountryNameFromCountryCode:countryCode]];
+        }
+        
+        text = [NSMutableString stringWithFormat:[OStrings stringForKey:strFooterCountryInfo], [OLanguage plainLanguageListOfItems:supportedCountries]];
+        
         if (_listContainsParenthesisedCountries) {
-            text = [OStrings stringForKey:strFooterCountryInfoParenthesis];
+            [text appendString:kSeparatorSpace];
+            [text appendString:[OStrings stringForKey:strFooterCountryInfoNote]];
         }
         
         if (![[OMeta m].locator canLocate]) {
-            if (text) {
-                text = [text stringByAppendingFormat:@"\n\n%@", [OStrings stringForKey:strFooterCountryInfoLocate]];
-            } else {
-                text = [OStrings stringForKey:strFooterCountryInfoLocate];
-            }
+            [text appendFormat:@"\n\n%@", [OStrings stringForKey:strFooterCountryInfoLocate]];
         }
     }
     

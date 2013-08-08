@@ -12,7 +12,6 @@ NSInteger const kTabIndexOrigo = 0;
 NSInteger const kTabIndexCalendar = 1;
 NSInteger const kTabIndexTasks = 2;
 NSInteger const kTabIndexMessages = 3;
-NSInteger const kTabIndexSettings = 4;
 
 
 @implementation OTabBarController
@@ -25,7 +24,6 @@ NSInteger const kTabIndexSettings = 4;
     [self.tabBar.items[kTabIndexCalendar] setTitle:[OStrings stringForKey:strTabBarTitleCalendar]];
     [self.tabBar.items[kTabIndexTasks] setTitle:[OStrings stringForKey:strTabBarTitleTasks]];
     [self.tabBar.items[kTabIndexMessages] setTitle:[OStrings stringForKey:strTabBarTitleMessages]];
-    [self.tabBar.items[kTabIndexSettings] setTitle:[OStrings stringForKey:strTabBarTitleSettings]];
 }
 
 

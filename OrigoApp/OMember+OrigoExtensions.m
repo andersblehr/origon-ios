@@ -10,6 +10,8 @@
 
 NSString * const kMemberTypeGuardian = @"guardian";
 
+static NSString * const kLabeledPropertyFormat  = @"(%@) %@";
+
 
 @implementation OMember (OrigoExtensions)
 
@@ -17,7 +19,17 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (NSComparisonResult)appellationCompare:(OMember *)other
 {
-    return [[self appellation] localizedCompare:[other appellation]];
+    NSComparisonResult result = NSOrderedSame;
+    
+    if ([[self appellation] isEqualToString:[OLanguage pronouns][_you_][nominative]]) {
+        result = NSOrderedAscending;
+    } else if ([[other appellation] isEqualToString:[OLanguage pronouns][_you_][nominative]]) {
+        result = NSOrderedDescending;
+    } else {
+        result = [[self appellation] localizedCompare:[other appellation]];
+    }
+    
+    return result;
 }
 
 
@@ -108,6 +120,29 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 #pragma mark - Household information
 
+- (OMember *)partner
+{
+    OMember *partner = nil;
+    
+    if (![self isMinor]) {
+        NSInteger numberOfAdults = 1;
+        
+        for (OMember *housemate in [self housemates]) {
+            if (![housemate isMinor] && ![housemate hasParent:self]) {
+                partner = housemate;
+                numberOfAdults++;
+            }
+        }
+        
+        if (numberOfAdults > 2) {
+            partner = nil;
+        }
+    }
+    
+    return partner;
+}
+
+
 - (NSSet *)wards
 {
     NSMutableSet *wards = [[NSMutableSet alloc] init];
@@ -121,6 +156,36 @@ NSString * const kMemberTypeGuardian = @"guardian";
     }
     
     return wards;
+}
+
+
+- (NSSet *)parents
+{
+    NSMutableSet *parents = [[NSMutableSet alloc] init];
+    
+    for (OMember *guardian in [self guardians]) {
+        if ([self hasParent:guardian]) {
+            [parents addObject:guardian];
+        }
+    }
+    
+    return parents;
+}
+
+
+- (NSSet *)guardians
+{
+    NSMutableSet *guardians = [[NSMutableSet alloc] init];
+    
+    if ([self isMinor]) {
+        for (OMember *housemate in [self housemates]) {
+            if (![housemate isMinor]) {
+                [guardians addObject:housemate];
+            }
+        }
+    }
+    
+    return guardians;
 }
 
 
@@ -208,12 +273,18 @@ NSString * const kMemberTypeGuardian = @"guardian";
 }
 
 
+- (BOOL)isHousemateOfUser
+{
+    return [[[OMeta m].user housemates] containsObject:self];
+}
+
+
 - (BOOL)isManagedByUser
 {
     BOOL isRepresentedByUser = NO;
     
     if (![self isActive] || [self isMinor]) {
-        isRepresentedByUser = [[[OMeta m].user housemates] containsObject:self];
+        isRepresentedByUser = [self isHousemateOfUser];
         
         if (!isRepresentedByUser) {
             BOOL canBeRepresentedByUser = YES;
@@ -284,13 +355,56 @@ NSString * const kMemberTypeGuardian = @"guardian";
 }
 
 
+- (BOOL)hasParent:(OMember *)member
+{
+    return [self.fatherId isEqualToString:member.entityId] || [self.motherId isEqualToString:member.entityId];
+}
+
+
 - (BOOL)hasParentWithGender:(NSString *)gender
 {
     return [gender isEqualToString:kGenderMale] ? (self.fatherId != nil) : (self.motherId != nil);
 }
 
 
-#pragma mark - Convenience methods
+- (BOOL)guardiansAreParents
+{
+    NSSet *guardians = [self guardians];
+    BOOL guardiansAreParents = ([guardians count] > 0);
+    
+    if (guardiansAreParents) {
+        for (OMember *guardian in guardians) {
+            guardiansAreParents = guardiansAreParents && [self hasParent:guardian];
+        }
+    }
+    
+    return guardiansAreParents;
+}
+
+
+#pragma mark - Language hooks
+
+- (NSArray *)pronoun
+{
+    NSArray *pronoun = nil;
+    
+    if ([self isUser]) {
+        pronoun = [OLanguage pronouns][_I_];
+    } else {
+        pronoun = [self isMale] ? [OLanguage pronouns][_he_] : [OLanguage pronouns][_she_];
+    }
+    
+    return pronoun;
+}
+
+
+- (NSArray *)parentNoun
+{
+    return [self isMale] ? [OLanguage nouns][_father_] : [OLanguage nouns][_mother_];
+}
+
+
+#pragma mark - Data formatting shorthands
 
 - (NSString *)givenName
 {
@@ -298,29 +412,31 @@ NSString * const kMemberTypeGuardian = @"guardian";
 }
 
 
-- (NSArray *)pronoun
+- (NSString *)nameWithParentTitle
 {
-    NSArray *pronoun = nil;
-    
-    if ([self isUser]) {
-        pronoun = [OLanguage pronouns][I];
-    } else {
-        pronoun = [self isMale] ? [OLanguage pronouns][he] : [OLanguage pronouns][she];
-    }
-    
-    return pronoun;
+    return [NSString stringWithFormat:@"%@ (%@)", self.name, [self parentNoun][singularIndefinite]];
 }
 
 
 - (NSString *)appellation
 {
-    return [self isUser] ? [OLanguage pronouns][you][nominative] : [self givenName];
+    return [self isUser] ? [OLanguage pronouns][_you_][nominative] : [self givenName];
 }
 
 
-#pragma mark - Display image
+- (NSString *)labeledMobilePhone
+{
+    return [NSString stringWithFormat:kLabeledPropertyFormat, [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
+}
 
-- (UIImage *)listCellImage
+
+- (NSString *)shortAddress
+{
+    return [[[[self residencies] anyObject] origo] shortAddress];
+}
+
+
+- (UIImage *)smallImage
 {
     UIImage *image = nil;
     
@@ -334,7 +450,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
                 image = [UIImage imageNamed:[self isMale] ? kIconFileMan : kIconFileWoman];
             }
         } else {
-            image = [UIImage imageNamed:[self isMale] ? kIconFileBoy : kIconFileGirl];
+            image = [UIImage imageNamed:[self isMale] ? kIconFileMan : kIconFileWoman];
         }
     }
     

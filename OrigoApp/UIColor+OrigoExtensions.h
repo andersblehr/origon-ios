@@ -26,7 +26,7 @@
 + (UIColor *)headerTextColor;
 + (UIColor *)footerTextColor;
 
-+ (UIColor *)defaultPlaceholderColor;
-+ (UIColor *)lightPlaceholderColor;
++ (UIColor *)titlePlaceholderColor;
++ (UIColor *)detailPlaceholderColor;
 
 @end

@@ -43,8 +43,12 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     NSString *text = nil;
     
-    if ([member isMinor]) {
-        text = [[member givenName] stringByAppendingFormat:@" (%d)", [member.dateOfBirth yearsBeforeNow]];
+    if ([member isMinor] && [self targetIs:kOrigoTypeResidence]) {
+        text = [member givenName];
+        
+        if ([member hasValueForKey:kPropertyKeyDateOfBirth]) {
+            text = [text stringByAppendingFormat:@" (%d)", [member.dateOfBirth yearsBeforeNow]];
+        }
     } else {
         text = member.name;
     }
@@ -58,9 +62,7 @@ static NSInteger const kHousemateSheetTag = 0;
     NSString *detailText = nil;
     
     if ([member hasValueForKey:kPropertyKeyMobilePhone]) {
-        detailText = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedMobilePhone], member.mobilePhone];
-    } else if ([member hasValueForKey:kPropertyKeyEmail]) {
-        detailText = [NSString stringWithFormat:@"(%@) %@", [OStrings stringForKey:strLabelAbbreviatedEmail], member.email];
+        detailText = [member labeledMobilePhone];
     }
     
     return detailText;
@@ -72,7 +74,7 @@ static NSInteger const kHousemateSheetTag = 0;
     UIImage *image = nil;
     
     if (member.photo || member.dateOfBirth) {
-        image = [member listCellImage];
+        image = [member smallImage];
     } else {
         if ([self targetIsMinors]) {
             if ([_origo memberIsContact:member]) {
@@ -93,7 +95,7 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (void)presentHousemateCandidatesSheet:(NSSet *)candidates
 {
-    _housemateCandidates = [candidates sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:kPropertyKeyName ascending:YES]]];
+    _housemateCandidates = [candidates sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:kPropertyKeyName ascending:YES]]];
     
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     
@@ -111,13 +113,19 @@ static NSInteger const kHousemateSheetTag = 0;
     sheet.cancelButtonIndex = [candidates count] + 1;
     sheet.tag = kHousemateSheetTag;
     
-    [sheet showInView:self.view];
+    [sheet showInView:self.actionSheetView];
 }
 
 
 #pragma mark - Selector implementations
 
-- (void)addMember
+- (void)performAction
+{
+    
+}
+
+
+- (void)performAddAction
 {
     NSMutableSet *candidates = [[NSMutableSet alloc] init];
     
@@ -148,15 +156,22 @@ static NSInteger const kHousemateSheetTag = 0;
     } else {
         self.title = _origo.name;
     }
+
+    NSMutableArray *rightBarButtonItems = [[NSMutableArray alloc] init];
+    
+    if (![self targetIs:kOrigoTypeResidence]) {
+        [rightBarButtonItems addObject:[UIBarButtonItem actionButtonWithTarget:self]];
+    }
     
     if ([_origo userCanEdit]) {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
-        self.navigationItem.rightBarButtonItem.action = @selector(addMember);
+        [rightBarButtonItems addObject:[UIBarButtonItem addButtonWithTarget:self]];
         
         if (self.isModal) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         }
     }
+    
+    self.navigationItem.rightBarButtonItems = rightBarButtonItems;
 }
 
 

@@ -41,13 +41,13 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         self.contentVerticalAlignment = UIControlContentVerticalAlignmentTop;
         self.delegate = delegate;
         self.enabled = [[OState s] actionIs:kActionInput];
-        self.font = _isTitle ? [UIFont titleFont] : [UIFont detailFont];
+        self.font = [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
         self.placeholder = [OStrings placeholderForKey:key];
         self.returnKeyType = UIReturnKeyNext;
         self.textAlignment = NSTextAlignmentLeft;
-        self.textColor = _isTitle ? [UIColor titleTextColor] : [UIColor detailTextColor];
+        self.textColor = [UIColor detailTextColor];
         
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
@@ -185,8 +185,14 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 {
     _isTitle = isTitle;
     
-    self.font = [UIFont titleFont];
-    self.textColor = [UIColor titleTextColor];
+    self.font = _isTitle ? [UIFont titleFont] : [UIFont detailFont];
+    self.textColor = _isTitle ? [UIColor titleTextColor] : [UIColor detailTextColor];
+    
+    if (_isTitle) {
+        [self setValue:[UIColor titlePlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
+    } else {
+        [self setValue:[UIColor detailPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
+    }
 }
 
 
@@ -211,7 +217,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         
         if (_isTitle) {
             self.textColor = [UIColor editableTitleTextColor];
-            [self setValue:[UIColor defaultPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
+            [self setValue:[UIColor detailPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
         }
     } else {
         self.text = [self textValue];
@@ -219,7 +225,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         
         if (_isTitle) {
             self.textColor = [UIColor titleTextColor];
-            [self setValue:[UIColor lightPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
+            [self setValue:[UIColor titlePlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
         }
     }
     

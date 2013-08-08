@@ -70,7 +70,7 @@ static NSInteger const kOffspringCandidateButtonYes = 0;
 
 - (NSString *)parentNounForGender:(NSString *)gender
 {
-    return [gender isEqualToString:kGenderMale] ? father : mother;
+    return [gender isEqualToString:kGenderMale] ? _father_ : _mother_;
 }
 
 
@@ -94,16 +94,16 @@ static NSInteger const kOffspringCandidateButtonYes = 0;
 {
     id subject = [[OState s] targetIs:kTargetUser] ? [OMeta m].user : _givenName;
     
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:[OLanguage questionWithSubject:subject verb:be argument:[OStrings stringForKey:_isMinor ? strQuestionArgumentGenderMinor : strQuestionArgumentGender]] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:_isMinor ? strTermGirl : strTermWoman], [OStrings stringForKey:_isMinor ? strTermBoy : strTermMan], nil];
+    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:[OLanguage questionWithSubject:subject verb:_be_ argument:[OStrings stringForKey:_isMinor ? strQuestionArgumentGenderMinor : strQuestionArgumentGender]] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:_isMinor ? strTermGirl : strTermWoman], [OStrings stringForKey:_isMinor ? strTermBoy : strTermMan], nil];
     sheet.tag = kGenderSheetTag;
     
-    [sheet showInView:[OState s].viewController.view];
+    [sheet showInView:[OState s].viewController.actionSheetView];
 }
 
 
 - (void)presentBothParentCandidatesSheet
 {
-    NSString *question = [OLanguage questionWithSubject:_candidates verb:be argument:[OLanguage possessiveClauseWithPossessor:_givenName noun:parents]];
+    NSString *question = [OLanguage questionWithSubject:_candidates verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_givenName noun:_parent_]];
     
     NSString *buttonCandidate0 = [OLanguage predicateClauseWithSubject:_candidates[0] predicate:[self candidate:_candidates[0] parentLabelWithOffspringGender:_gender]];
     NSString *buttonCandidate1 = [OLanguage predicateClauseWithSubject:_candidates[1] predicate:[self candidate:_candidates[1] parentLabelWithOffspringGender:_gender]];
@@ -111,14 +111,14 @@ static NSInteger const kOffspringCandidateButtonYes = 0;
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strTermYes], buttonCandidate0, buttonCandidate1, [OStrings stringForKey:strTermNo], nil];
     sheet.tag = kBothParentCandidatesSheetTag;
     
-    [sheet showInView:[OState s].viewController.view];
+    [sheet showInView:[OState s].viewController.actionSheetView];
 }
 
 
 - (void)presentAllOffspringCandidatesSheet
 {
     NSString *noun = [self parentNounForGender:_gender];
-    NSString *question = [OLanguage questionWithSubject:_givenName verb:be argument:[OLanguage possessiveClauseWithPossessor:_candidates noun:noun]];
+    NSString *question = [OLanguage questionWithSubject:_givenName verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_candidates noun:noun]];
     
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     [sheet addButtonWithTitle:[OStrings stringForKey:strTermYes]];
@@ -135,29 +135,29 @@ static NSInteger const kOffspringCandidateButtonYes = 0;
     sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
     sheet.tag = kAllOffspringCandidatesSheetTag;
     
-    [sheet showInView:[OState s].viewController.view];
+    [sheet showInView:[OState s].viewController.actionSheetView];
 }
 
 
 - (void)presentCandidateSheetForParentCandidate:(OMember *)candidate
 {
-    NSString *question = [OLanguage questionWithSubject:candidate verb:be argument:[OLanguage possessiveClauseWithPossessor:_givenName noun:[self parentNounForGender:candidate.gender]]];
+    NSString *question = [OLanguage questionWithSubject:candidate verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_givenName noun:[self parentNounForGender:candidate.gender]]];
     
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strTermYes], [OStrings stringForKey:strTermNo], nil];
     sheet.tag = kParentCandidateSheetTag;
     
-    [sheet showInView:[OState s].viewController.view];
+    [sheet showInView:[OState s].viewController.actionSheetView];
 }
 
 
 - (void)presentCandidateSheetForOffspringCandidate:(OMember *)candidate
 {
-    NSString *question = [OLanguage questionWithSubject:_givenName verb:be argument:[OLanguage possessiveClauseWithPossessor:candidate noun:[self parentNounForGender:_gender]]];
+    NSString *question = [OLanguage questionWithSubject:_givenName verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:candidate noun:[self parentNounForGender:_gender]]];
     
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strTermYes], [OStrings stringForKey:strTermNo], nil];
     sheet.tag = kOffspringCandidateSheetTag;
     
-    [sheet showInView:[OState s].viewController.view];
+    [sheet showInView:[OState s].viewController.actionSheetView];
 }
 
 

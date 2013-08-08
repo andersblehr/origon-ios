@@ -15,6 +15,20 @@ static NSInteger const kSectionKeySettings = 0;
 
 @implementation OSettingListViewController
 
+#pragma mark - Selection implementations
+
+- (void)signOut
+{
+    [self.dismisser dismissModalViewController:self signOut:YES];
+}
+
+
+- (void)didFinishEditing
+{
+    [self.dismisser dismissModalViewController:self reload:NO];
+}
+
+
 #pragma mark - View life cycle
 
 - (void)viewDidLoad
@@ -22,7 +36,8 @@ static NSInteger const kSectionKeySettings = 0;
     [super viewDidLoad];
 
     self.title = [OStrings stringForKey:strTabBarTitleSettings];
-    self.navigationItem.rightBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
 }
 
 

@@ -12,6 +12,7 @@
 
 @required
 - (void)dismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload;
+- (void)dismissModalViewController:(OTableViewController *)viewController signOut:(BOOL)signOut;
 
 @optional
 - (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController;

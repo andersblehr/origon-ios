@@ -19,6 +19,7 @@
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
+- (NSArray *)toolbarButtons;
 
 - (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath;
 - (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;

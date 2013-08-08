@@ -9,11 +9,12 @@
 #import "NSString+OrigoExtensions.h"
 
 NSString * const kListSeparator = @"|";
-NSString * const kSeparatorSpace = @" ";
-NSString * const kSeparatorNewline = @"\n";
-NSString * const kSeparatorComma = @", ";
 NSString * const kSeparatorAmpersand = @" & ";
+NSString * const kSeparatorComma = @", ";
 NSString * const kSeparatorHash = @"#";
+NSString * const kSeparatorInterpunct = @" • ";
+NSString * const kSeparatorNewline = @"\n";
+NSString * const kSeparatorSpace = @" ";
 
 
 @implementation NSString (OrigoExtensions)

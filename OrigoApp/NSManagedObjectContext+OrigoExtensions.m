@@ -64,7 +64,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     OOrigo *origo = [self insertEntityOfClass:OOrigo.class entityId:origoId];
     
     origo.origoId = origoId;
-    origo.type = origoType;
+    origo.type = [origoType isEqualToString:kTargetHousehold] ? kOrigoTypeResidence : origoType;
     
     if ([origo isOfType:kOrigoTypeResidence]) {
         origo.name = [OStrings stringForKey:strDefaultResidenceName];
@@ -153,11 +153,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     NSDictionary *relationships = [entity.entity relationshipsByName];
     
     for (NSString *attributeKey in [attributes allKeys]) {
-        id attributeValue = entityDictionary[attributeKey];
-        
-        if (attributeValue) {
-            [entity setDeserialisedValue:attributeValue forKey:attributeKey];
-        }
+        [entity setDeserialisedValue:entityDictionary[attributeKey] forKey:attributeKey];
     }
     
     NSMutableDictionary *relationshipRefs = [[NSMutableDictionary alloc] init];

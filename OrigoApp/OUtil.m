@@ -49,33 +49,6 @@
 }
 
 
-+ (NSString *)collectiveAppellationForMemberList:(NSArray *)members
-{
-    NSMutableString *collectiveAppellation = nil;
-    NSMutableArray *unsortedAppellations = [[NSMutableArray alloc] init];
-    
-    for (OMember *member in members) {
-        [unsortedAppellations addObject:[member appellation]];
-    }
-    
-    NSArray *sortedAppellations = [unsortedAppellations sortedArrayUsingSelector:@selector(localizedCompare:)];
-    
-    for (NSString *appellation in sortedAppellations) {
-        if (!collectiveAppellation) {
-            collectiveAppellation = [NSMutableString stringWithString:appellation];
-        } else if ([sortedAppellations lastObject] == appellation) {
-            [collectiveAppellation appendString:[OStrings stringForKey:strSeparatorAnd]];
-            [collectiveAppellation appendString:appellation];
-        } else {
-            [collectiveAppellation appendString:kSeparatorComma];
-            [collectiveAppellation appendString:appellation];
-        }
-    }
-    
-    return collectiveAppellation;
-}
-
-
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey
 {
     NSString *sortKey = nil;

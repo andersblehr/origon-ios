@@ -17,9 +17,7 @@ static NSInteger const kSectionKeyOrigo = 0;
 
 - (void)signOut
 {
-    [[OMeta m] userDidSignOut];
-    
-    [self.dismisser dismissModalViewController:self reload:YES];
+    [self.dismisser dismissModalViewController:self signOut:YES];
 }
 
 
@@ -45,7 +43,7 @@ static NSInteger const kSectionKeyOrigo = 0;
 
 - (BOOL)canEdit
 {
-    return [self actionIs:kActionRegister] || [_origo userIsAdmin] || (![_origo hasAdmin] && [_origo userIsCreator]);
+    return [_origo userIsAdmin] || (![_origo hasAdmin] && [_origo userIsCreator]);
 }
 
 
@@ -70,7 +68,7 @@ static NSInteger const kSectionKeyOrigo = 0;
     }
     
     self.state.target = _origo ? _origo : self.meta;
-    self.cancelRegistrationImpliesSignOut = [_origo isOfType:kOrigoTypeResidence] && !_member.activeSince;
+    self.cancelRegistrationImpliesSignOut = ![_member isActive];
 }
 
 

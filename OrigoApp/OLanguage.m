@@ -13,9 +13,12 @@ NSInteger const accusative = 1;
 NSInteger const dative = 2;
 NSInteger const disjunctive = 3;
 
-NSInteger const definite = 0;
-NSInteger const possessive2 = 1;
-NSInteger const possessive3 = 2;
+NSInteger const singularIndefinite = 0;
+NSInteger const singularDefinite = 1;
+NSInteger const pluralIndefinite = 2;
+NSInteger const pluralDefinite = 3;
+NSInteger const possessive2 = 4;
+NSInteger const possessive3 = 5;
 
 NSInteger const singular1 = 0;
 NSInteger const singular2 = 1;
@@ -24,16 +27,18 @@ NSInteger const plural1 = 3;
 NSInteger const plural2 = 4;
 NSInteger const plural3 = 5;
 
-NSString * const be  = @"verbBe";
+NSString * const _be_  = @"verbBe";
 
-NSString * const father = @"nounFather";
-NSString * const mother = @"nounMother";
-NSString * const parents = @"nounParents";
+NSString * const _father_ = @"nounFather";
+NSString * const _mother_ = @"nounMother";
+NSString * const _parent_ = @"nounParent";
+NSString * const _contact_ = @"nounContact";
+NSString * const _address_ = @"nounAddress";
 
-NSString * const I   = @"pronounI";
-NSString * const you = @"pronounYou";
-NSString * const he  = @"pronounHe";
-NSString * const she = @"pronounShe";
+NSString * const _I_   = @"pronounI";
+NSString * const _you_ = @"pronounYou";
+NSString * const _he_  = @"pronounHe";
+NSString * const _she_ = @"pronounShe";
 
 static NSString * const kPartOfSpeechVerbs = @"verb";
 static NSString * const kPartOfSpeechNouns = @"noun";
@@ -86,15 +91,15 @@ static OLanguage *language = nil;
     } else if ([subject isKindOfClass:OMember.class]) {
         if ([subject isUser]) {
             if (isQuestion) {
-                subjectString = [OLanguage pronouns][you][nominative];
+                subjectString = [OLanguage pronouns][_you_][nominative];
             } else {
-                subjectString = [OLanguage pronouns][I][nominative];
+                subjectString = [OLanguage pronouns][_I_][nominative];
             }
         } else {
             subjectString = [subject givenName];
         }
     } else if ([subject isKindOfClass:NSArray.class]) {
-        subjectString = [OUtil collectiveAppellationForMemberList:subject];
+        subjectString = [OLanguage plainLanguageListOfItems:subject];
     }
     
     return subjectString;
@@ -185,7 +190,7 @@ static OLanguage *language = nil;
 + (NSString *)predicateClauseWithSubject:(id)subject predicate:(NSString *)predicate
 {
     NSString *subjectString = [self subjectStringWithSubject:subject isQuestion:NO];
-    NSString *verbString = [self verbStringWithVerb:be subject:subject isQuestion:NO];
+    NSString *verbString = [self verbStringWithVerb:_be_ subject:subject isQuestion:NO];
     
     return [[NSString stringWithFormat:kPredicateClauseFormat, subjectString, verbString, predicate] stringByCapitalisingFirstLetter];
 }
@@ -205,7 +210,7 @@ static OLanguage *language = nil;
             possessiveClause = [NSString stringWithFormat:noun[possessive3], [possessor givenName]];
         }
     } else if ([possessor isKindOfClass:NSArray.class]) {
-        possessiveClause = [NSString stringWithFormat:noun[possessive3], [OUtil collectiveAppellationForMemberList:possessor]];
+        possessiveClause = [NSString stringWithFormat:noun[possessive3], [OLanguage plainLanguageListOfItems:possessor]];
     }
     
     return possessiveClause;
@@ -223,6 +228,38 @@ static OLanguage *language = nil;
     question = [question stringByReplacingSubstring:kArgumentPlaceholder withString:argument];
     
     return [question stringByCapitalisingFirstLetter];
+}
+
+
++ (NSString *)plainLanguageListOfItems:(NSArray *)items
+{
+    NSMutableArray *stringItems = nil;
+    
+    if ([items[0] isKindOfClass:NSString.class]) {
+        stringItems = [NSArray arrayWithArray:items];
+    } else if ([items[0] isKindOfClass:OMember.class]) {
+        stringItems = [[NSMutableArray alloc] init];
+        
+        for (OMember *member in items) {
+            [stringItems addObject:[member appellation]];
+        }
+    }
+
+    NSMutableString *plainLanguageListing = nil;
+    
+    for (NSString *stringItem in stringItems) {
+        if (!plainLanguageListing) {
+            plainLanguageListing = [NSMutableString stringWithString:stringItem];
+        } else if ([stringItems lastObject] == stringItem) {
+            [plainLanguageListing appendString:[OStrings stringForKey:strSeparatorAnd]];
+            [plainLanguageListing appendString:stringItem];
+        } else {
+            [plainLanguageListing appendString:kSeparatorComma];
+            [plainLanguageListing appendString:stringItem];
+        }
+    }
+    
+    return plainLanguageListing;
 }
 
 @end

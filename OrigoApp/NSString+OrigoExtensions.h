@@ -9,11 +9,12 @@
 #import "OrigoApp.h"
 
 extern NSString * const kListSeparator;
-extern NSString * const kSeparatorSpace;
-extern NSString * const kSeparatorNewline;
-extern NSString * const kSeparatorComma;
 extern NSString * const kSeparatorAmpersand;
+extern NSString * const kSeparatorComma;
 extern NSString * const kSeparatorHash;
+extern NSString * const kSeparatorInterpunct;
+extern NSString * const kSeparatorNewline;
+extern NSString * const kSeparatorSpace;
 
 @interface NSString (OrigoExtensions)
 
