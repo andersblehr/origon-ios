@@ -15,16 +15,26 @@ static NSString * const kDefaultDate = @"1976-04-01T20:00:00Z";
 static NSInteger const kMinimumRealisticUserAge = 6;
 static NSInteger const kMaximumRealisticUserAge = 100;
 
+static NSCalendar *_calendar = nil;
+
 
 @implementation NSDate (OrigoExtensions)
 
 #pragma mark - Auxiliary methods
 
++ (NSCalendar *)calendar
+{
+    if (!_calendar) {
+        _calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    }
+    
+    return _calendar;
+}
+
+
 - (NSDateComponents *)dateComponentsBeforeDate:(NSDate *)date;
 {
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    
-    return [calendar components:NSYearCalendarUnit fromDate:self toDate:date options:kNilOptions];
+    return [[NSDate calendar] components:NSYearCalendarUnit fromDate:self toDate:date options:kNilOptions];
 }
 
 
@@ -44,10 +54,9 @@ static NSInteger const kMaximumRealisticUserAge = 100;
     NSDateComponents *earliestBirthDateOffset = [[NSDateComponents alloc] init];
     earliestBirthDateOffset.year = -kMaximumRealisticUserAge;
     
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDate *now = [NSDate date];
     
-    return [calendar dateByAddingComponents:earliestBirthDateOffset toDate:now options:kNilOptions];
+    return [[NSDate calendar] dateByAddingComponents:earliestBirthDateOffset toDate:now options:kNilOptions];
 }
 
 
@@ -56,12 +65,11 @@ static NSInteger const kMaximumRealisticUserAge = 100;
     NSDate *now = [NSDate date];
     NSDate *latestValidBirthDate = now;
     
-    if ([[OState s] actionIs:kActionRegister] && [[OState s] targetIs:kTargetUser]) {
+    if ([[OState s] targetIs:kTargetUser]) {
         NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
         latestBirthDateOffset.year = -kMinimumRealisticUserAge;
         
-        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-        latestValidBirthDate = [calendar dateByAddingComponents:latestBirthDateOffset toDate:now options:kNilOptions];
+        latestValidBirthDate = [[NSDate calendar] dateByAddingComponents:latestBirthDateOffset toDate:now options:kNilOptions];
     }
     
     return latestValidBirthDate;

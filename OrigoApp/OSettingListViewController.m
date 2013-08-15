@@ -17,12 +17,6 @@ static NSInteger const kSectionKeySettings = 0;
 
 #pragma mark - Selection implementations
 
-- (void)signOut
-{
-    [self.dismisser dismissModalViewController:self signOut:YES];
-}
-
-
 - (void)didFinishEditing
 {
     [self.dismisser dismissModalViewController:self reload:NO];

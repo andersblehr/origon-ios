@@ -153,12 +153,6 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 #pragma mark - Data access & validation
 
-- (BOOL)isDateField
-{
-    return NO;
-}
-
-
 - (BOOL)hasValue
 {
     return ([self textValue] != nil);
@@ -206,6 +200,12 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     _placeholderView.frame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height);
     _placeholderView.text = placeholder;
     _placeholder = placeholder;
+}
+
+
+- (BOOL)isDateField
+{
+    return NO;
 }
 
 

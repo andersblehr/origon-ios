@@ -110,6 +110,22 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
+- (NSSet *)elders
+{
+    NSMutableSet *elders = [[NSMutableSet alloc] init];
+    
+    if ([self isOfType:kOrigoTypeResidence]) {
+        for (OMembership *residency in [self residencies]) {
+            if (![residency.member isMinor]) {
+                [elders addObject:residency.member];
+            }
+        }
+    }
+    
+    return elders;
+}
+
+
 - (OMembership *)addMember:(OMember *)member
 {
     return [self addMember:member isAssociate:NO];

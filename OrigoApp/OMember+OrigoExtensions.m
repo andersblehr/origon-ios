@@ -321,7 +321,7 @@ static NSString * const kLabeledPropertyFormat  = @"(%@) %@";
 
 - (BOOL)isMale
 {
-    return [self.gender isEqualToString:kGenderMale];
+    return [self.gender hasPrefix:kGenderMale];
 }
 
 
@@ -363,7 +363,7 @@ static NSString * const kLabeledPropertyFormat  = @"(%@) %@";
 
 - (BOOL)hasParentWithGender:(NSString *)gender
 {
-    return [gender isEqualToString:kGenderMale] ? (self.fatherId != nil) : (self.motherId != nil);
+    return [gender hasPrefix:kGenderMale] ? (self.fatherId != nil) : (self.motherId != nil);
 }
 
 

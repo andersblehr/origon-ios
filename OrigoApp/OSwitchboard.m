@@ -87,28 +87,48 @@ static NSInteger const kServiceRequestPhoneCall = 2;
         [self addRecipientCandidates:@[_member] skipIfContainsUser:YES];
 
         if ([_member isMinor]) {
-            NSMutableArray *parents = [[NSMutableArray alloc] init];
-            
-            for (OMember *parent in [_member parents]) {
-                [parents insertObject:parent atIndex:[parent isUser] ? [parents count] : 0];
-            }
-            
-            if ([parents count] == 2) {
-                [self addRecipientCandidates:parents skipIfContainsUser:YES];
-            }
-            
-            for (OMember *parent in parents) {
-                [self addRecipientCandidates:@[parent] skipIfContainsUser:YES];
-            }
-            
-            for (OMember *parent in parents) {
-                if ([parent partner]) {
-                    [self addRecipientCandidates:@[parent, [parent partner]] skipIfContainsUser:NO];
+            if ([[_member parents] count]) {
+                NSMutableArray *parents = [[NSMutableArray alloc] init];
+                
+                for (OMember *parent in [_member parents]) {
+                    [parents insertObject:parent atIndex:[parent isUser] ? [parents count] : 0];
+                }
+                
+                if ([parents count] == 2) {
+                    [self addRecipientCandidates:parents skipIfContainsUser:YES];
+                }
+                
+                for (OMember *parent in parents) {
+                    [self addRecipientCandidates:@[parent] skipIfContainsUser:YES];
+                }
+                
+                for (OMember *parent in parents) {
+                    OMember *partner = [parent partner];
+                    
+                    if (partner) {
+                        [self addRecipientCandidates:@[parent, partner] skipIfContainsUser:NO];
+                    }
+                }
+            } else {
+                for (OMembership *residency in [_member residencies]) {
+                    NSSet *elders = [residency.origo elders];
+                    
+                    [self addRecipientCandidates:elders skipIfContainsUser:YES];
+                    
+                    for (OMember *elder in elders) {
+                        [self addRecipientCandidates:@[elder] skipIfContainsUser:YES];
+                    }
                 }
             }
             
             if ([[_member guardians] count] > 2) {
                 [self addRecipientCandidates:[_member guardians] skipIfContainsUser:NO];
+            }
+        }
+        
+        for (OMembership *residency in [_member residencies]) {
+            if ([residency.origo hasValueForKey:kPropertyKeyTelephone]) {
+                [_callRecipientCandidates addObject:@[residency.origo]];
             }
         }
     }
@@ -143,12 +163,16 @@ static NSInteger const kServiceRequestPhoneCall = 2;
     
     for (NSArray *recipients in _recipientCandidates) {
         if ([recipients count] == 1) {
-            if ([_member isWardOfUser]) {
-                [recipientSheet addButtonWithTitle:[recipients[0] givenName]];
-            } else if ([_member hasParent:recipients[0]]) {
-                [recipientSheet addButtonWithTitle:[recipients[0] nameWithParentTitle]];
-            } else {
-                [recipientSheet addButtonWithTitle:[recipients[0] name]];
+            if ([recipients[0] isKindOfClass:OMember.class]) {
+                if ([_member isWardOfUser]) {
+                    [recipientSheet addButtonWithTitle:[recipients[0] givenName]];
+                } else if ([_member hasParent:recipients[0]]) {
+                    [recipientSheet addButtonWithTitle:[recipients[0] nameWithParentTitle]];
+                } else {
+                    [recipientSheet addButtonWithTitle:[recipients[0] name]];
+                }
+            } else if ([recipients[0] isKindOfClass:OOrigo.class]) {
+                [recipientSheet addButtonWithTitle:[recipients[0] shortAddress]];
             }
         } else if ([recipients count] == 2) {
             if ([_member hasParent:recipients[0]] && [_member hasParent:recipients[1]]) {
@@ -208,7 +232,6 @@ static NSInteger const kServiceRequestPhoneCall = 2;
     }
     
     MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
-    mailComposer.navigationBar.barStyle = UIBarStyleBlack;
     mailComposer.mailComposeDelegate = self;
     [mailComposer setToRecipients:recipientEmailAddresses];
     [mailComposer setMessageBody:[OStrings stringForKey:strFooterOrigoSignature] isHTML:NO];
@@ -219,24 +242,31 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 
 - (void)sendTextToRecipients:(NSArray *)recipients
 {
-    NSMutableArray *recipientNumbers = [[NSMutableArray alloc] init];
+    NSMutableArray *recipientMobileNumbers = [[NSMutableArray alloc] init];
     
     for (OMember *recipient in recipients) {
-        [recipientNumbers addObject:recipient.mobilePhone];
+        [recipientMobileNumbers addObject:recipient.mobilePhone];
     }
     
     MFMessageComposeViewController *messageComposer = [[MFMessageComposeViewController alloc] init];
-    messageComposer.navigationBar.barStyle = UIBarStyleBlack;
     messageComposer.messageComposeDelegate = self;
-    messageComposer.recipients = recipientNumbers;
+    messageComposer.recipients = recipientMobileNumbers;
     
     [[OState s].viewController presentViewController:messageComposer animated:YES completion:NULL];
 }
 
 
-- (void)placePhoneCallToRecipient:(OMember *)recipient
+- (void)placePhoneCallToRecipient:(id)recipient
 {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[kProtocolTel stringByAppendingString:recipient.mobilePhone]]];
+    NSString *phoneNumber = nil;
+    
+    if ([recipient isKindOfClass:OMember.class]) {
+        phoneNumber = [recipient mobilePhone];
+    } else if ([recipient isKindOfClass:OOrigo.class]) {
+        phoneNumber = [recipient telephone];
+    }
+    
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[kProtocolTel stringByAppendingString:phoneNumber]]];
 }
 
 
@@ -266,23 +296,22 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 }
 
 
-#pragma mark - Obtaining toolbar items
+#pragma mark - Applicable toolbar items
 
 - (NSArray *)toolbarButtonsWithEntity:(id)entity
 {
+    UIBarButtonItem *flexibleSpace = [UIBarButtonItem flexibleSpace];
     NSMutableArray *toolbarButtons = [[NSMutableArray alloc] init];
     
     [self assembleRecipientCandidatesWithEntity:entity];
 
     if ([_emailRecipientCandidates count] || [_callRecipientCandidates count]) {
-        UIBarButtonItem *space = [UIBarButtonItem flexibleSpace];
+        [toolbarButtons addObject:flexibleSpace];
         
-        [toolbarButtons addObject:space];
-
         if ([_callRecipientCandidates count]) {
             if ([MFMessageComposeViewController canSendText]) {
                 [toolbarButtons addObject:[UIBarButtonItem sendTextButtonWithTarget:self]];
-                [toolbarButtons addObject:space];
+                [toolbarButtons addObject:flexibleSpace];
             }
             
             if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:kProtocolTel]]) {
@@ -290,14 +319,14 @@ static NSInteger const kServiceRequestPhoneCall = 2;
                 
                 if ([mobileNetworkCode length] && ![mobileNetworkCode isEqualToString:@"65535"]) {
                     [toolbarButtons addObject:[UIBarButtonItem phoneCallButtonWithTarget:self]];
-                    [toolbarButtons addObject:space];
+                    [toolbarButtons addObject:flexibleSpace];
                 }
             }
         }
         
         if ([_emailRecipientCandidates count] && [MFMailComposeViewController canSendMail]) {
             [toolbarButtons addObject:[UIBarButtonItem sendEmailButtonWithTarget:self]];
-            [toolbarButtons addObject:space];
+            [toolbarButtons addObject:flexibleSpace];
         }
     }
     

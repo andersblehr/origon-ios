@@ -119,13 +119,13 @@ static NSInteger const kHousemateSheetTag = 0;
 
 #pragma mark - Selector implementations
 
-- (void)performAction
+- (void)presentActionSheet
 {
     
 }
 
 
-- (void)performAddAction
+- (void)addItem
 {
     NSMutableSet *candidates = [[NSMutableSet alloc] init];
     

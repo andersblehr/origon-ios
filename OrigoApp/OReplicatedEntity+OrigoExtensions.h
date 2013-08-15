@@ -34,6 +34,7 @@
 - (BOOL)shouldReplicateOnExpiry;
 - (BOOL)hasExpired;
 - (void)expire;
+- (void)unexpire;
 - (NSString *)expiresInTimeframe;
 
 @end

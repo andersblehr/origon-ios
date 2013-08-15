@@ -12,6 +12,8 @@
 
 @interface OReplicator : NSObject <OConnectionDelegate> {
 @private
+    BOOL _isReplicating;
+    
     NSMutableSet *_dirtyEntities;
     NSMutableDictionary *_stagedEntities;
     NSMutableDictionary *_stagedRelationshipRefs;

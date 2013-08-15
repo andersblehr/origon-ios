@@ -183,20 +183,12 @@ CGFloat const kMinimumCellPadding = 0.1f;
     id textField = [[textFieldClass alloc] initWithKey:key delegate:delegate];
     
     if ([key isEqualToString:_titleKey]) {
-        [textField setIsTitle:YES];
+        [textField setIsTitleField:YES];
+    } else if ([_dateKeys containsObject:key]) {
+        [textField setIsDateField:YES];
     }
     
-    if ([_dateKeys containsObject:key]) {
-        UIDatePicker *datePicker = [OMeta m].sharedDatePicker;
-        [datePicker addTarget:textField action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
-        
-        [textField setInputView:datePicker];
-        
-        if ([key isEqualToString:kPropertyKeyDateOfBirth]) {
-            datePicker.minimumDate = [NSDate earliestValidBirthDate];
-            datePicker.maximumDate = [NSDate latestValidBirthDate];
-        }
-    } else if ([_numberKeys containsObject:key]) {
+    if ([_numberKeys containsObject:key]) {
         [textField setKeyboardType:UIKeyboardTypeNumberPad];
     } else if ([_emailKeys containsObject:key]) {
         [textField setKeyboardType:UIKeyboardTypeEmailAddress];

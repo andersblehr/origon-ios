@@ -37,7 +37,7 @@
 {
     BOOL needsReplication = NO;
     
-    if ([[OMeta m].user isActive]) {
+    if (!_isReplicating && [[OMeta m].user isActive]) {
         needsReplication = [[[OMeta m].context entitiesAwaitingReplication] count];
         needsReplication = needsReplication || [_dirtyEntities count];
     }
@@ -56,6 +56,8 @@
 
 - (void)replicate
 {
+    _isReplicating = YES;
+    
     [_dirtyEntities unionSet:[[OMeta m].context entitiesAwaitingReplication]];
     
     NSMutableArray *entities = [[NSMutableArray alloc] init];
@@ -153,12 +155,13 @@
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
+    NSInteger HTTPStatus = response.statusCode;
+    
     if (data) {
         [[OMeta m].context saveServerReplicas:data];
     }
     
-    if ((response.statusCode == kHTTPStatusCreated) ||
-        (response.statusCode == kHTTPStatusMultiStatus)) {
+    if ((HTTPStatus == kHTTPStatusCreated) || (HTTPStatus == kHTTPStatusMultiStatus)) {
         OLogDebug(@"Entities successfully replicated to server.");
         
         NSDate *now = [NSDate date];
@@ -175,13 +178,19 @@
         [[OMeta m].context save];
         
         [self resetUserReplicationState];
+    } else if (HTTPStatus == kHTTPStatusUnauthorized) {
+        [[OState s].viewController signOut];
     }
+    
+    _isReplicating = NO;
 }
 
 
 - (void)didFailWithError:(NSError *)error
 {
     OLogError(@"Error replicating with server.");
+    
+    _isReplicating = NO;
 }
 
 @end

@@ -13,14 +13,6 @@ static NSInteger const kSectionKeyOrigo = 0;
 
 @implementation OOrigoViewController
 
-#pragma mark - Selector implementations
-
-- (void)signOut
-{
-    [self.dismisser dismissModalViewController:self signOut:YES];
-}
-
-
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -68,7 +60,6 @@ static NSInteger const kSectionKeyOrigo = 0;
     }
     
     self.state.target = _origo ? _origo : self.meta;
-    self.cancelRegistrationImpliesSignOut = ![_member isActive];
 }
 
 
@@ -82,7 +73,7 @@ static NSInteger const kSectionKeyOrigo = 0;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return self.canEdit;
+    return self.canEdit && ![self actionIs:kActionRegister];
 }
 
 

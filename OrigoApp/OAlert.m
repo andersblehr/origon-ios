@@ -13,7 +13,7 @@
 
 #pragma mark - Auxiliary methods
 
-+ (void)showAlertWithCode:(int)code message:(NSString *)message tag:(int)tag delegate:(id)delegate
++ (void)showAlertWithCode:(NSInteger)code message:(NSString *)message tag:(NSInteger)tag delegate:(id)delegate
 {
     NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextServerError], code, message];
     
@@ -54,7 +54,7 @@
 }
 
 
-+ (void)showAlertForError:(NSError *)error tag:(int)tag delegate:(id)delegate
++ (void)showAlertForError:(NSError *)error tag:(NSInteger)tag delegate:(id)delegate
 {
     [self showAlertWithCode:[error code] message:[error localizedDescription] tag:tag delegate:delegate];
 }
@@ -66,7 +66,7 @@
 }
 
 
-+ (void)showAlertForHTTPStatus:(NSInteger)status tag:(int)tag delegate:(id)delegate
++ (void)showAlertForHTTPStatus:(NSInteger)status tag:(NSInteger)tag delegate:(id)delegate
 {
     [self showAlertWithCode:status message:[NSHTTPURLResponse localizedStringForStatusCode:status] tag:tag delegate:delegate];
 }

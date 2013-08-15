@@ -19,9 +19,9 @@
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
+- (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath;
 - (NSArray *)toolbarButtons;
 
-- (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath;
 - (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (BOOL)canDeleteRowAtIndexPath:(NSIndexPath *)indexPath;

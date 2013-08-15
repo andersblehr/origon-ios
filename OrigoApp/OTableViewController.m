@@ -14,6 +14,8 @@ NSString * const kCustomCell = @"custom";
 static NSString * const kViewControllerSuffix = @"ViewController";
 static NSString * const kViewControllerSuffixList = @"ListViewController";
 
+static NSInteger const kToolbarHeight = 44.f;
+
 static UIViewController * _reauthenticationDismisser;
 static BOOL _needsResetViewControllers;
 
@@ -444,6 +446,21 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+- (void)signOut
+{
+    [[OMeta m] userDidSignOut];
+    
+    _needsResetViewControllers = YES;
+    _reauthenticationDismisser = [[OState s].viewController.storyboard instantiateViewControllerWithIdentifier:kVCIdentifierOrigoList];
+    
+    if (_isModal) {
+        [self.dismisser dismissModalViewController:self reload:NO];
+    } else {
+        [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth dismisser:_reauthenticationDismisser];
+    }
+}
+
+
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -481,7 +498,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     _state = [[OState alloc] initWithViewController:self];
     _canEdit = NO;
-    _cancelRegistrationImpliesSignOut = NO;
     
     [self initialiseInstance];
     
@@ -489,7 +505,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
         _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
         
-        if (self.cancelRegistrationImpliesSignOut) {
+        if (![[OMeta m].user isActive]) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
         } else {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
@@ -504,8 +520,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
-    
     if (!_didJustLoad) {
         if (!_didInitialise) {
             [self initialiseInstance];
@@ -513,6 +527,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         [[OState s] reflectState:_state];
     }
+    
+    [super viewWillAppear:animated];
     
     _wasHidden = _isHidden;
     _isHidden = NO;
@@ -524,16 +540,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [self.tabBarController.tabBar.items[kTabIndexOrigo] setTitle:nil];
     }
     
-    if (![self actionIs:kActionRegister]) {
-        NSArray *toolbarButtons = nil;
-        
+    if (self.tabBarController) {
         if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
-            toolbarButtons = [_instance toolbarButtons];
+            self.toolbarItems = [_instance toolbarButtons];
         }
         
-        if (toolbarButtons) {
-            [self setToolbarItems:toolbarButtons];
+        if (self.toolbarItems) {
             [self.navigationController setToolbarHidden:NO animated:YES];
+            self.tableView.contentInset = UIEdgeInsetsMake(0, 0, kToolbarHeight, 0);
         } else  {
             [self.navigationController setToolbarHidden:YES animated:YES];
         }
@@ -550,7 +564,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [super viewDidAppear:animated];
     
+    OLogState;
+    
     if ([[OMeta m] userIsSignedIn]) {
+        if (_detailCell.editable) {
+            [_detailCell prepareForInput];
+        }
+        
         if ([self actionIs:kActionRegister]) {
             [[_detailCell firstInputField] becomeFirstResponder];
         }
@@ -562,8 +582,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth dismisser:_reauthenticationDismisser];
         }
     }
-    
-    OLogState;
 }
 
 
@@ -572,13 +590,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 	[super viewWillDisappear:animated];
     
     _isHidden = (self.presentedViewController != nil);
-    
+
     if (![[OMeta m].user isActive] && [[OMeta m] userIsAllSet]) {
         [[OMeta m].user makeActive];
     }
     
     [[OMeta m].replicator replicateIfNeeded];
-    [[OMeta m].sharedDatePicker removeTarget:nil action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
 }
 
 
@@ -619,7 +636,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (UIView *)actionSheetView
 {
-    return _isModal ? self.view : self.tabBarController.view;
+    return self.tabBarController ? self.tabBarController.view : self.view;
 }
 
 
@@ -678,19 +695,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self didDismissModalViewController:viewController];
         }
     }
-}
-
-
-- (void)dismissModalViewController:(OTableViewController *)viewController signOut:(BOOL)signOut
-{
-    if (signOut) {
-        [[OMeta m] userDidSignOut];
-        
-        _needsResetViewControllers = YES;
-        _reauthenticationDismisser = [[OState s].viewController.storyboard instantiateViewControllerWithIdentifier:kVCIdentifierOrigoList];
-    }
-    
-    [self dismissModalViewController:viewController reload:NO];
 }
 
 

@@ -56,6 +56,8 @@ extern CGFloat const kCellAnimationDuration;
 - (void)toggleEditMode;
 - (void)redrawIfNeeded;
 - (void)shakeCellVibrate:(BOOL)vibrate;
+
+- (void)prepareForInput;
 - (void)processInput;
 
 - (void)readEntity;

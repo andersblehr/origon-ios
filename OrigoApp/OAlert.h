@@ -13,8 +13,8 @@
 + (void)showAlertWithTitle:(NSString *)title text:(NSString *)text;
 + (void)showAlertWithTitle:(NSString *)title text:(NSString *)text tag:(NSInteger)tag;
 + (void)showAlertForError:(NSError *)error;
-+ (void)showAlertForError:(NSError *)error tag:(int)tag delegate:(id)delegate;
++ (void)showAlertForError:(NSError *)error tag:(NSInteger)tag delegate:(id)delegate;
 + (void)showAlertForHTTPStatus:(NSInteger)status;
-+ (void)showAlertForHTTPStatus:(NSInteger)status tag:(int)tag delegate:(id)delegate;
++ (void)showAlertForHTTPStatus:(NSInteger)status tag:(NSInteger)tag delegate:(id)delegate;
 
 @end

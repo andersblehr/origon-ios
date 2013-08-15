@@ -287,26 +287,28 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Cell display & effects
+#pragma mark - Cell display
 
 - (void)willAppearTrailing:(BOOL)trailing
 {
     [self.backgroundView addDropShadowForTableViewCellTrailing:trailing];
     
-    if (_blueprint.hasPhoto) {
-        [_views[kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
-    }
-    
-    if (_editable) {
-        for (NSString *key in _blueprint.allTextFieldKeys) {
-            id textField = [self textFieldForKey:key];
-            
-            if (!_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
-                [textField setHasEmphasis:YES];
-            }
-            
-            if ([textField isKindOfClass:OTextField.class]) {
-                [textField raiseGuardAgainstUnwantedAutolayoutAnimation:NO]; // Hack!
+    if (![self isListCell]) {
+        if (_blueprint.hasPhoto) {
+            [_views[kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
+        }
+        
+        if (_editable) {
+            for (NSString *key in _blueprint.allTextFieldKeys) {
+                id textField = [self textFieldForKey:key];
+                
+                if (!_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
+                    [textField setHasEmphasis:YES];
+                }
+                
+                if ([textField isKindOfClass:OTextField.class]) {
+                    [textField raiseGuardAgainstUnwantedAutolayoutAnimation:NO]; // Hack!
+                }
             }
         }
     }
@@ -363,6 +365,20 @@ static CGFloat const kShakeRepeatCount = 3.f;
             self.transform = CGAffineTransformIdentity;
         } completion:NULL];
     }];
+}
+
+
+#pragma mark - Handling input
+
+- (void)prepareForInput
+{
+    for (NSString *key in _blueprint.allTextFieldKeys) {
+        id textField = [self textFieldForKey:key];
+        
+        if ([textField isDateField]) {
+            [textField prepareForInput];
+        }
+    }
 }
 
 
@@ -434,7 +450,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setInputField:(id)inputField
 {
-    if (_inputField && [_inputField hasEmphasis] && _blueprint.fieldsShouldDeemphasiseOnEndEdit) {
+    if ([_inputField hasEmphasis] && _blueprint.fieldsShouldDeemphasiseOnEndEdit) {
         [_inputField setHasEmphasis:NO];
     }
 

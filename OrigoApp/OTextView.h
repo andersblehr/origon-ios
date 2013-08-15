@@ -22,6 +22,7 @@ extern NSInteger const kTextViewMaximumLines;
 @property (strong, nonatomic, readonly) NSString *key;
 @property (strong, nonatomic) NSString *placeholder;
 
+@property (nonatomic) BOOL isDateField;
 @property (nonatomic) BOOL selected;
 @property (nonatomic) BOOL hasEmphasis;
 
@@ -30,7 +31,6 @@ extern NSInteger const kTextViewMaximumLines;
 + (CGFloat)heightWithText:(NSString *)text;
 - (CGFloat)height;
 
-- (BOOL)isDateField;
 - (BOOL)hasValue;
 - (BOOL)hasValidValue;
 

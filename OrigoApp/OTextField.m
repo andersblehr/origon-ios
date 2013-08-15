@@ -11,6 +11,9 @@
 CGFloat const kTextInsetX = 4.0f;
 CGFloat const kTextInsetY = 1.4f;
 
+static NSString * const kDatePrefix = @"date";
+static NSString * const KDateSuffix = @"Date";
+
 static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor";
 
 
@@ -20,7 +23,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 - (void)didPickDate
 {
-    self.text = [self.date localisedDateString];
+    self.date = ((UIDatePicker *)self.inputView).date;
 }
 
 
@@ -59,12 +62,6 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 #pragma mark - Data access & validation
 
-- (BOOL)isDateField
-{
-    return [self.inputView isKindOfClass:UIDatePicker.class];
-}
-
-
 - (BOOL)hasValue
 {
     return ([self textValue] != nil);
@@ -102,7 +99,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 - (id)objectValue
 {
-    return [self isDateField] ? [self date] : [self textValue];
+    return _isDateField ? [self date] : [self textValue];
 }
 
 
@@ -128,7 +125,26 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 }
 
 
-#pragma mark - Block or unblock for pending event
+#pragma mark - Input readiness & blocking
+
+- (void)prepareForInput
+{
+    if (_isDateField && ![self.inputView isKindOfClass:UIDatePicker.class]) {
+        UIDatePicker *datePicker = [[UIDatePicker alloc] init];
+        datePicker.datePickerMode = UIDatePickerModeDate;
+        [datePicker addTarget:self action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
+        
+        if ([_key isEqualToString:kPropertyKeyDateOfBirth]) {
+            datePicker.minimumDate = [NSDate earliestValidBirthDate];
+            datePicker.maximumDate = [NSDate latestValidBirthDate];
+        }
+        
+        datePicker.date = _date ? _date : [NSDate defaultDate];
+        
+        self.inputView = datePicker;
+    }
+}
+
 
 - (void)indicatePendingEvent:(BOOL)isPending
 {
@@ -167,28 +183,26 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 #pragma mark - Custom accessors
 
-- (NSDate *)date
-{
-    return [self isDateField] ? ((UIDatePicker *)self.inputView).date : nil;
-}
-
-
 - (void)setDate:(NSDate *)date
 {
-    ((UIDatePicker *)self.inputView).date = date;
+    _date = date;
     
-    self.text = [date localisedDateString];
+    self.text = [_date localisedDateString];
+    
+    if ([self.inputView isKindOfClass:UIDatePicker.class]) {
+        ((UIDatePicker *)self.inputView).date = _date;
+    }
 }
 
 
-- (void)setIsTitle:(BOOL)isTitle
+- (void)setIsTitleField:(BOOL)isTitleField
 {
-    _isTitle = isTitle;
+    _isTitleField = isTitleField;
     
-    self.font = _isTitle ? [UIFont titleFont] : [UIFont detailFont];
-    self.textColor = _isTitle ? [UIColor titleTextColor] : [UIColor detailTextColor];
+    self.font = _isTitleField ? [UIFont titleFont] : [UIFont detailFont];
+    self.textColor = _isTitleField ? [UIColor titleTextColor] : [UIColor detailTextColor];
     
-    if (_isTitle) {
+    if (_isTitleField) {
         [self setValue:[UIColor titlePlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
     } else {
         [self setValue:[UIColor detailPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
@@ -215,7 +229,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     if (_hasEmphasis) {
         self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
         
-        if (_isTitle) {
+        if (_isTitleField) {
             self.textColor = [UIColor editableTitleTextColor];
             [self setValue:[UIColor detailPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
         }
@@ -223,7 +237,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         self.text = [self textValue];
         self.backgroundColor = [UIColor clearColor];
         
-        if (_isTitle) {
+        if (_isTitleField) {
             self.textColor = [UIColor titleTextColor];
             [self setValue:[UIColor titlePlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
         }
@@ -253,7 +267,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 {
     [super setSelected:selected];
     
-    if (!_isTitle) {
+    if (!_isTitleField) {
         if (selected) {
             self.textColor = [UIColor selectedDetailTextColor];
         } else {

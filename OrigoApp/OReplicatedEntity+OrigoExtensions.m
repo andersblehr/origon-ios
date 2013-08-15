@@ -238,7 +238,7 @@
 
 - (BOOL)shouldReplicateOnExpiry
 {
-    return (![self hasExpired] && [self isReplicated]);
+    return ![self hasExpired] && [self isReplicated];
 }
 
 
@@ -255,6 +255,12 @@
     } else {
         [[OMeta m].context deleteEntity:self];
     }
+}
+
+
+- (void)unexpire
+{
+    self.isExpired = @NO;
 }
 
 
