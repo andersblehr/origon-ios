@@ -18,7 +18,8 @@ static NSInteger const kGenderSheetTag = 0;
 static NSInteger const kGenderSheetButtonFemale = 0;
 static NSInteger const kGenderSheetButtonCancel = 2;
 
-static NSInteger const kUserActionSheetTag = 1;
+static NSInteger const kActionSheetTag = 1;
+static NSInteger const kActionSheetButtonAddAddress = 0;
 
 static NSInteger const kResidenceSheetTag = 2;
 
@@ -139,7 +140,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - Selector implementations
 
-- (void)performAddAction
+- (void)addAddress
 {
     NSSet *housemateResidences = [_member housemateResidences];
     
@@ -151,18 +152,24 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (void)signOut
+- (void)presentActionSheet
 {
-    [self.dismisser dismissModalViewController:self signOut:YES];
-}
-
-
-- (void)performAction
-{
-    UIActionSheet *userActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strButtonChangePassword], [OStrings stringForKey:strButtonEditGender], nil];
-    userActionSheet.tag = kUserActionSheetTag;
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     
-    [userActionSheet showInView:self.actionSheetView];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddAddress]];
+    
+    if ([_member isUser]) {
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonChangePassword]];
+    } else if ([_member isWardOfUser]) {
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEditRelations]];
+    }
+
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonCorrectGender]];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
+    actionSheet.cancelButtonIndex = actionSheet.numberOfButtons - 1;
+    actionSheet.tag = kActionSheetTag;
+    
+    [actionSheet showInView:self.actionSheetView];
 }
 
 
@@ -186,7 +193,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     
     if ([self actionIs:kActionDisplay]) {
         if (self.canEdit) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
         }
     }
 }
@@ -249,7 +256,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     self.state.target = _member ? _member : _origo;
-    self.cancelRegistrationImpliesSignOut = [self targetIs:kTargetUser];
 }
 
 
@@ -309,23 +315,15 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (NSArray *)toolbarButtons
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    NSArray *toolbarButtons = nil;
-    
-    if ([_member isUser]) {
-        toolbarButtons = @[[UIBarButtonItem actionButtonWithTarget:self]];
-    } else {
-        toolbarButtons = [[OMeta m].switchboard toolbarButtonsWithEntity:_member];
-    }
-    
-    return toolbarButtons;
+    return [OStrings stringForKey:strFooterTapToEdit];
 }
 
 
-- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+- (NSArray *)toolbarButtons
 {
-    return [[OStrings stringForKey:strFooterTapToEdit] stringByAppendingString:[OStrings stringForKey:strFooterTapToAddAddress] separator:kSeparatorNewline];
+    return [_member isUser] ? nil : [[OMeta m].switchboard toolbarButtonsWithEntity:_member];
 }
 
 
@@ -526,7 +524,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-#pragma mark - OHouseholdExaminerDelegate conformance
+#pragma mark - ORegistrantExaminerDelegate conformance
 
 - (void)examinerDidFinishExamination
 {
@@ -578,6 +576,13 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (actionSheet.tag) {
+        case kActionSheetTag:
+            if (buttonIndex == kActionSheetButtonAddAddress) {
+                [self addAddress];
+            }
+            
+            break;
+            
         case kResidenceSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
                 [self presentNewResidenceViewController];

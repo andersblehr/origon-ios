@@ -48,7 +48,6 @@ extern NSString * const kCustomCell;
 
 @property (nonatomic) BOOL canEdit;
 @property (nonatomic) BOOL modalImpliesRegistration;
-@property (nonatomic) BOOL cancelRegistrationImpliesSignOut;
 
 @property (strong, nonatomic) id data;
 @property (strong, nonatomic) id meta;
@@ -83,5 +82,6 @@ extern NSString * const kCustomCell;
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
 - (void)resumeFirstResponder;
+- (void)signOut;
 
 @end

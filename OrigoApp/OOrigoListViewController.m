@@ -143,7 +143,7 @@ static NSInteger const kUserRow = 0;
 }
 
 
-- (void)performAddAction
+- (void)addItem
 {
     NSString *question = [OStrings stringForKey:strSheetTitleOrigoType];
     

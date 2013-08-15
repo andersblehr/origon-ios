@@ -35,8 +35,10 @@ extern NSString * const kIconFilePlacePhoneCall;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;
 
-extern NSString * const kGenderFemale;
 extern NSString * const kGenderMale;
+extern NSString * const kGenderMaleConfirmed;
+extern NSString * const kGenderFemale;
+extern NSString * const kGenderFemaleConfirmed;
 
 extern NSString * const kInputKeyActivate;
 extern NSString * const kInputKeyActivationCode;
@@ -103,7 +105,6 @@ extern NSString * const kDefaultsKeyStringDate;
 @property (strong, nonatomic, readonly) OSwitchboard *switchboard;
 @property (strong, nonatomic, readonly) OLocator *locator;
 
-@property (strong, nonatomic, readonly) UIDatePicker *sharedDatePicker;
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 
 + (OMeta *)m;

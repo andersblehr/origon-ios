@@ -104,6 +104,7 @@
 		5CAEE0D0163E513A00A9046B /* OMessageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAEE0CF163E513A00A9046B /* OMessageItem.m */; };
 		5CB61171175F531B006BAE92 /* 193-location-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB6116F175F531B006BAE92 /* 193-location-arrow.png */; };
 		5CB61172175F531B006BAE92 /* 193-location-arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB61170175F531B006BAE92 /* 193-location-arrow@2x.png */; };
+		5CB74EF117BB60BF003FAC28 /* ODevice+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB74EF017BB60BF003FAC28 /* ODevice+OrigoExtensions.m */; };
 		5CB7E94015F38C1200FD53DF /* OSettingListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E93F15F38C1200FD53DF /* OSettingListViewController.m */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
@@ -310,6 +311,8 @@
 		5CAEE0CF163E513A00A9046B /* OMessageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMessageItem.m; sourceTree = "<group>"; };
 		5CB6116F175F531B006BAE92 /* 193-location-arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "193-location-arrow.png"; sourceTree = "<group>"; };
 		5CB61170175F531B006BAE92 /* 193-location-arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "193-location-arrow@2x.png"; sourceTree = "<group>"; };
+		5CB74EEF17BB60BF003FAC28 /* ODevice+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ODevice+OrigoExtensions.h"; sourceTree = "<group>"; };
+		5CB74EF017BB60BF003FAC28 /* ODevice+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ODevice+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5CB7E93E15F38C1200FD53DF /* OSettingListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettingListViewController.h; sourceTree = "<group>"; };
 		5CB7E93F15F38C1200FD53DF /* OSettingListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettingListViewController.m; sourceTree = "<group>"; };
 		5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDismisser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OModalViewControllerDismisser.h; sourceTree = "<group>"; };
@@ -534,6 +537,8 @@
 		5C5ED5CB14F2E95B006BBDFB /* Model Categories */ = {
 			isa = PBXGroup;
 			children = (
+				5CB74EEF17BB60BF003FAC28 /* ODevice+OrigoExtensions.h */,
+				5CB74EF017BB60BF003FAC28 /* ODevice+OrigoExtensions.m */,
 				5C3374811563FBE200DEF67D /* OMember+OrigoExtensions.h */,
 				5C3374821563FBE200DEF67D /* OMember+OrigoExtensions.m */,
 				5C2E6B7C15A8501800638330 /* OMembership+OrigoExtensions.h */,
@@ -965,6 +970,7 @@
 				5C49FD3E178D7BF8009AD20B /* OMember.m in Sources */,
 				5C49FD41178DB96E009AD20B /* OLanguage.m in Sources */,
 				5CF17E5917AF84B600985255 /* OSwitchboard.m in Sources */,
+				5CB74EF117BB60BF003FAC28 /* ODevice+OrigoExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

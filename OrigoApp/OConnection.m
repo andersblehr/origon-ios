@@ -17,13 +17,10 @@ NSInteger const kHTTPStatusOK = 200;
 NSInteger const kHTTPStatusCreated = 201;
 NSInteger const kHTTPStatusNoContent = 204;
 NSInteger const kHTTPStatusMultiStatus = 207;
-NSInteger const kHTTPStatusFound = 302;
 NSInteger const kHTTPStatusNotModified = 304;
 
 NSInteger const kHTTPStatusErrorRangeStart = 400;
-NSInteger const kHTTPStatusBadRequest = 400;
 NSInteger const kHTTPStatusUnauthorized = 401;
-NSInteger const kHTTPStatusForbidden = 403;
 NSInteger const kHTTPStatusNotFound = 404;
 NSInteger const kHTTPStatusInternalServerError = 500;
 
@@ -271,10 +268,8 @@ static NSString * const kURLParameterVersion = @"version";
         if (replicationDate) {
             [OMeta m].lastReplicationDate = replicationDate;
         }
-    } else {
-        if (response.statusCode != kHTTPStatusUnauthorized) {
-            [OAlert showAlertForHTTPStatus:response.statusCode];
-        }
+    } else if (response.statusCode != kHTTPStatusUnauthorized) {
+        [OAlert showAlertForHTTPStatus:response.statusCode];
     }
     
     _HTTPResponse = response;

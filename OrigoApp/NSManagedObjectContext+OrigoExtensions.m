@@ -412,6 +412,10 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     }
     
     [self save];
+    
+    if (![OMeta m].deviceId) {
+        [[OState s].viewController signOut];
+    }
 }
 
 

@@ -17,13 +17,10 @@ extern NSInteger const kHTTPStatusOK;
 extern NSInteger const kHTTPStatusCreated;
 extern NSInteger const kHTTPStatusNoContent;
 extern NSInteger const kHTTPStatusMultiStatus;
-extern NSInteger const kHTTPStatusFound;
 extern NSInteger const kHTTPStatusNotModified;
 
 extern NSInteger const kHTTPStatusErrorRangeStart;
-extern NSInteger const kHTTPStatusBadRequest;
 extern NSInteger const kHTTPStatusUnauthorized;
-extern NSInteger const kHTTPStatusForbidden;
 extern NSInteger const kHTTPStatusNotFound;
 extern NSInteger const kHTTPStatusInternalServerError;
 

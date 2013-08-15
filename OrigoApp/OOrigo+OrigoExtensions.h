@@ -25,6 +25,7 @@ extern NSString * const kOrigoTypeOther;
 - (NSSet *)fullMemberships;
 - (NSSet *)residencies;
 - (NSSet *)participancies;
+- (NSSet *)elders;
 
 - (OMembership *)addMember:(OMember *)member;
 - (OMembership *)addAssociateMember:(OMember *)member;

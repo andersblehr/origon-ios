@@ -264,7 +264,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             [OConnection activateWithEmail:[OMeta m].userEmail password:_repeatPasswordField.text];
         } else if ([self targetIs:kTargetEmail]) {
             [OMeta m].userEmail = self.data;
-            
             [self.dismisser dismissModalViewController:self reload:NO];
         }
     }
@@ -358,11 +357,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             
             [self userDidAuthenticateWithData:data];
         }
-    } else {
-        if (response.statusCode == kHTTPStatusUnauthorized) {
-            [self.detailCell shakeCellVibrate:YES];
-            [_passwordField becomeFirstResponder];
-        }
+    } else if (response.statusCode == kHTTPStatusUnauthorized) {
+        [self.detailCell shakeCellVibrate:YES];
+        [_passwordField becomeFirstResponder];
     }
 }
 
@@ -370,6 +367,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)didFailWithError:(NSError *)error
 {
     [self indicatePendingRequest:NO];
+    
+    // TODO: Subsequent auth attempts seem to fail.
 }
 
 @end

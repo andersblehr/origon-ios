@@ -21,7 +21,7 @@
 
 + (UIBarButtonItem *)addButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:@selector(performAddAction)];
+    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:@selector(addItem)];
 }
 
 
@@ -51,7 +51,7 @@
 
 + (UIBarButtonItem *)actionButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:target action:@selector(performAction)];
+    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:target action:@selector(presentActionSheet)];
 }
 
 

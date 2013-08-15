@@ -35,8 +35,10 @@ NSString * const kIconFilePlacePhoneCall = @"75-phone.png";
 NSString * const kIconFileSendText = @"glyphicons_245_chat.png";
 NSString * const kIconFileSendEmail = @"18-envelope.png";
 
-NSString * const kGenderFemale = @"F";
 NSString * const kGenderMale = @"M";
+NSString * const kGenderMaleConfirmed = @"M!";
+NSString * const kGenderFemale = @"F";
+NSString * const kGenderFemaleConfirmed = @"F!";
 
 NSString * const kInputKeyActivate = @"activate";
 NSString * const kInputKeyActivationCode = @"activationCode";
@@ -90,8 +92,6 @@ static OMeta *m = nil;
 @property (strong, nonatomic) OReplicator *replicator;
 @property (strong, nonatomic) OSwitchboard *switchboard;
 @property (strong, nonatomic) OLocator *locator;
-
-@property (strong, nonatomic) UIDatePicker *sharedDatePicker;
 
 @end
 
@@ -185,9 +185,6 @@ static OMeta *m = nil;
         _internetConnectionIsWiFi = NO;
         _internetConnectionIsWWAN = NO;
         
-        _sharedDatePicker = [[UIDatePicker alloc] init];
-        _sharedDatePicker.datePickerMode = UIDatePickerModeDate;
-        
         [self checkReachability:[Reachability reachabilityForInternetConnection]];
         
         if ([_internetReachability startNotifier]) {
@@ -227,8 +224,12 @@ static OMeta *m = nil;
     
     [self loadUser];
     
-    if (![self.context entityWithId:_deviceId]) {
+    ODevice *device = [self.context entityWithId:_deviceId];
+    
+    if (!device) {
         [self.context insertDeviceEntity];
+    } else if ([device hasExpired]) {
+        [device unexpire];
     }
     
     _isSignedIn = @YES;
@@ -441,14 +442,6 @@ static OMeta *m = nil;
     }
     
     return _locator;
-}
-
-
-- (UIDatePicker *)sharedDatePicker
-{
-    _sharedDatePicker.date = [NSDate defaultDate];
-    
-    return _sharedDatePicker;
 }
 
 
