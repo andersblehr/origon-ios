@@ -17,44 +17,6 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 #pragma mark - Auxiliary methods
 
-+ (CGFloat)heightWithBlueprint:(OTableViewCellBlueprint *)blueprint entity:(OReplicatedEntity *)entity cell:(OTableViewCell *)cell
-{
-    CGFloat height = 2 * kDefaultCellPadding;
-    
-    if (blueprint.titleKey) {
-        if (blueprint.fieldsAreLabeled) {
-            height += [UIFont titleFieldHeight] + kDefaultCellPadding;
-        } else {
-            height += [UIFont detailFieldHeight] + kDefaultCellPadding;
-        }
-    }
-    
-    for (NSString *detailKey in blueprint.detailKeys) {
-        if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:detailKey]) {
-            if ([[self textViewKeys] containsObject:detailKey]) {
-                if (cell) {
-                    height += [[cell textFieldForKey:detailKey] height];
-                } else if (entity && [entity hasValueForKey:detailKey]) {
-                    height += [OTextView heightWithText:[entity valueForKey:detailKey]];
-                } else {
-                    height += [OTextView heightWithText:[OStrings placeholderForKey:detailKey]];
-                }
-            } else {
-                height += [UIFont detailFieldHeight];
-            }
-        }
-    }
-    
-    return height;
-}
-
-
-+ (NSArray *)textViewKeys
-{
-    return @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
-}
-
-
 - (void)finaliseKeys
 {
     if (_titleKey) {
@@ -68,8 +30,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
     _numberKeys = @[kPropertyKeyMobilePhone, kPropertyKeyTelephone];
     _emailKeys = @[kInputKeyAuthEmail, kPropertyKeyEmail];
     _passwordKeys = @[kInputKeyPassword, kInputKeyRepeatPassword];
-    
-    _textViewKeys = [OTableViewCellBlueprint textViewKeys];
+    _textViewKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
 }
 
 
@@ -104,6 +65,8 @@ CGFloat const kMinimumCellPadding = 0.1f;
     self = [super init];
     
     if (self) {
+        OState *state = [OState s];
+        
         _fieldsShouldDeemphasiseOnEndEdit = YES;
         _fieldsAreLabeled = YES;
         
@@ -111,26 +74,28 @@ CGFloat const kMinimumCellPadding = 0.1f;
             _hasPhoto = YES;
             _titleKey = kPropertyKeyName;
             
-            if ([[OState s] targetIs:kTargetHousehold]) {
+            if ([state targetIs:kTargetHousehold]) {
                 _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
             } else {
                 _detailKeys = @[kPropertyKeyMobilePhone, kPropertyKeyEmail];
             }
             
-            _indirectKeys = @[kPropertyKeyGender, kPropertyKeyFatherId, kPropertyKeyMotherId];
+            _indirectKeys = @[kPropertyKeyGender, kPropertyKeyIsJuvenile, kPropertyKeyFatherId, kPropertyKeyMotherId];
         } else if (entityClass == OOrigo.class) {
             _hasPhoto = NO;
             
-            if ([[OState s] targetIs:kTargetHousehold] && ![[OState s] actionIs:kActionList]) {
-                _titleKey = kPropertyKeyName;
-            } else {
+            if ([state actionIs:kActionList]) {
                 _titleKey = nil;
+            } else if (![state targetIs:kOrigoTypeResidence] || [state targetIs:kTargetHousehold]) {
+                _titleKey = kPropertyKeyName;
             }
             
-            if ([[OState s] targetIs:kOrigoTypeResidence]) {
+            if ([state targetIs:kOrigoTypeResidence]) {
                 _detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
+            } else if ([state targetIs:kOrigoTypeOrganisation]) {
+                _detailKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress, kPropertyKeyTelephone];
             } else {
-                _detailKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
+                _detailKeys = @[kPropertyKeyDescriptionText];
             }
         }
         
@@ -141,46 +106,17 @@ CGFloat const kMinimumCellPadding = 0.1f;
 }
 
 
-#pragma mark - Factory methods
-
-+ (OTableViewCellBlueprint *)blueprintWithReuseIdentifier:(NSString *)reuseIdentifier
-{
-    return [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
-}
-
-
-+ (OTableViewCellBlueprint *)blueprintWithEntityClass:(Class)entityClass
-{
-    return [[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass];
-}
-
-
-#pragma mark - Cell height computation
-
-+ (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier
-{
-    return [self heightWithBlueprint:[[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier] entity:nil cell:nil];
-}
-
-
-+ (CGFloat)heightForCellWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
-{
-    return [self heightWithBlueprint:[[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass] entity:entity cell:nil];
-}
-
-
-- (CGFloat)heightForCell:(OTableViewCell *)cell
-{
-    return [OTableViewCellBlueprint heightWithBlueprint:cell.blueprint entity:cell.entity cell:cell];
-}
-
-
 #pragma mark - Text field instantiation
 
 - (id)textFieldWithKey:(NSString *)key delegate:(id)delegate
 {
-    Class textFieldClass = [_textViewKeys containsObject:key] ? OTextView.class : OTextField.class;
-    id textField = [[textFieldClass alloc] initWithKey:key delegate:delegate];
+    id textField = nil;
+    
+    if ([_textViewKeys containsObject:key]) {
+        textField = [[OTextView alloc] initWithKey:key blueprint:self delegate:delegate];
+    } else {
+        textField = [[OTextField alloc] initWithKey:key delegate:delegate];
+    }
     
     if ([key isEqualToString:_titleKey]) {
         [textField setIsTitleField:YES];
@@ -204,6 +140,40 @@ CGFloat const kMinimumCellPadding = 0.1f;
     }
     
     return textField;
+}
+
+
+#pragma mark - Cell height computation
+
+- (CGFloat)cellHeightWithEntity:(OReplicatedEntity *)entity cell:(OTableViewCell *)cell
+{
+    CGFloat height = 2 * kDefaultCellPadding;
+    
+    if (_titleKey) {
+        if (_fieldsAreLabeled) {
+            height += [UIFont titleFieldHeight] + kDefaultCellPadding;
+        } else {
+            height += [UIFont detailFieldHeight] + kDefaultCellPadding;
+        }
+    }
+    
+    for (NSString *key in _detailKeys) {
+        if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:key]) {
+            if ([_textViewKeys containsObject:key]) {
+                if (cell) {
+                    height += [[cell textFieldForKey:key] height];
+                } else if ([entity hasValueForKey:key]) {
+                    height += [OTextView heightWithText:[entity valueForKey:key] blueprint:self];
+                } else {
+                    height += [OTextView heightWithText:[OStrings placeholderForKey:key] blueprint:self];
+                }
+            } else {
+                height += [UIFont detailFieldHeight];
+            }
+        }
+    }
+    
+    return height;
 }
 
 @end

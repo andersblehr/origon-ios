@@ -9,7 +9,8 @@
 #import "OTableViewController.h"
 
 NSString * const kEntityRegistrationCell = @"registration";
-NSString * const kCustomCell = @"custom";
+NSString * const kCustomCell = @"customCell";
+NSString * const kCustomValue = @"customValue";
 
 static NSString * const kViewControllerSuffix = @"ViewController";
 static NSString * const kViewControllerSuffixList = @"ListViewController";
@@ -137,11 +138,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     UIViewController *viewController = nil;
     NSInteger tabIndex = kTabIndexOrigo;
     
-    if ([identifier isEqualToString:kVCIdentifierCalendar]) {
+    if ([identifier isEqualToString:kIdentifierCalendar]) {
         tabIndex = kTabIndexCalendar;
-    } else if ([identifier isEqualToString:kVCIdentifierTaskList]) {
+    } else if ([identifier isEqualToString:kIdentifierTaskList]) {
         tabIndex = kTabIndexTasks;
-    } else if ([identifier isEqualToString:kVCIdentifierMessageList]) {
+    } else if ([identifier isEqualToString:kIdentifierMessageList]) {
         tabIndex = kTabIndexMessages;
     }
     
@@ -213,7 +214,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     } else if (data) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
         
-        if (_detailSectionKey == NSNotFound) {
+        if (sectionKey == 0) {
             _detailSectionKey = sectionKey;
             
             if ([data isKindOfClass:OReplicatedEntity.class]) {
@@ -332,7 +333,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     UIViewController *destinationViewController = nil;
     
-    if ([identifier isEqualToString:kVCIdentifierAuth]) {
+    if ([identifier isEqualToString:kIdentifierAuth]) {
         destinationViewController = viewController;
         destinationViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     } else {
@@ -451,12 +452,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [[OMeta m] userDidSignOut];
     
     _needsResetViewControllers = YES;
-    _reauthenticationDismisser = [[OState s].viewController.storyboard instantiateViewControllerWithIdentifier:kVCIdentifierOrigoList];
+    _reauthenticationDismisser = [[OState s].viewController.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
     
     if (_isModal) {
         [self.dismisser dismissModalViewController:self reload:NO];
     } else {
-        [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth dismisser:_reauthenticationDismisser];
+        [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reauthenticationDismisser];
     }
 }
 
@@ -536,21 +537,17 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _isPopped = !_isPushed && !_isModal && !_wasHidden;
     _didJustLoad = NO;
     
-    if (![OStrings hasStrings]) {
-        [self.tabBarController.tabBar.items[kTabIndexOrigo] setTitle:nil];
-    }
-    
-    if (self.tabBarController) {
-        if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
+    if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
+        if (self.tabBarController && (!self.toolbarItems || _wasHidden)) {
             self.toolbarItems = [_instance toolbarButtons];
         }
-        
-        if (self.toolbarItems) {
-            [self.navigationController setToolbarHidden:NO animated:YES];
-            self.tableView.contentInset = UIEdgeInsetsMake(0, 0, kToolbarHeight, 0);
-        } else  {
-            [self.navigationController setToolbarHidden:YES animated:YES];
-        }
+    }
+    
+    if (self.toolbarItems) {
+        [self.navigationController setToolbarHidden:NO animated:YES];
+        self.tableView.contentInset = UIEdgeInsetsMake(0, 0, kToolbarHeight, 0);
+    } else  {
+        [self.navigationController setToolbarHidden:YES animated:YES];
     }
     
     if (_isPopped || _shouldReloadOnModalDismissal) {
@@ -569,17 +566,17 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if ([[OMeta m] userIsSignedIn]) {
         if (_detailCell.editable) {
             [_detailCell prepareForInput];
-        }
-        
-        if ([self actionIs:kActionRegister]) {
-            [[_detailCell firstInputField] becomeFirstResponder];
+            
+            if ([self actionIs:kActionRegister]) {
+                [[_detailCell firstInputField] becomeFirstResponder];
+            }
         }
     } else {
         if ([self actionIs:kActionLoad] && [self targetIs:kTargetStrings]) {
             [self.activityIndicator startAnimating];
             [OConnection fetchStrings];
-        } else if (![_identifier isEqualToString:kVCIdentifierAuth]) {
-            [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth dismisser:_reauthenticationDismisser];
+        } else if (![_identifier isEqualToString:kIdentifierAuth]) {
+            [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reauthenticationDismisser];
         }
     }
 }
@@ -604,10 +601,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [super viewDidDisappear:animated];
     
     if (_needsResetViewControllers && !_isModal) {
-        [self resetViewControllerWithIdentifier:kVCIdentifierOrigoList];
-        [self resetViewControllerWithIdentifier:kVCIdentifierCalendar];
-        [self resetViewControllerWithIdentifier:kVCIdentifierTaskList];
-        [self resetViewControllerWithIdentifier:kVCIdentifierMessageList];
+        [self resetViewControllerWithIdentifier:kIdentifierOrigoList];
+        [self resetViewControllerWithIdentifier:kIdentifierCalendar];
+        [self resetViewControllerWithIdentifier:kIdentifierTaskList];
+        [self resetViewControllerWithIdentifier:kIdentifierMessageList];
         
         self.tabBarController.selectedIndex = kTabIndexOrigo;
         
@@ -718,11 +715,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
         if (_detailCell) {
-            height = [_detailCell.blueprint heightForCell:_detailCell];
-        } else if (_entityClass || _entity) {
-            height = [OTableViewCellBlueprint heightForCellWithEntityClass:_entityClass entity:_entity];
+            height = [_detailCell.blueprint cellHeightWithEntity:_entity cell:_detailCell];
+        } else if (_entityClass) {
+            height = [[[OTableViewCellBlueprint alloc] initWithEntityClass:_entityClass] cellHeightWithEntity:_entity cell:nil];
         } else if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
-            height = [OTableViewCellBlueprint heightForCellWithReuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]];
+            height = [[[OTableViewCellBlueprint alloc] initWithReuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]] cellHeightWithEntity:nil cell:nil];
         }
     }
     
@@ -747,7 +744,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _detailCell = cell;
         _detailCell.editable = [self actionIs:kActionRegister] || self.canEdit;
     } else {
-        cell = [tableView listCellForIndexPath:indexPath value:[self dataAtIndexPath:indexPath]];
+        cell = [tableView listCellForIndexPath:indexPath data:[self dataAtIndexPath:indexPath]];
     }
     
     return cell;
@@ -921,7 +918,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [OStrings.class didCompleteWithResponse:response data:data];
         
         [(OTabBarController *)self.tabBarController setTabBarTitles];
-        [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth data:nil];
+        [self presentModalViewControllerWithIdentifier:kIdentifierAuth data:nil];
     }
 }
 

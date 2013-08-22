@@ -18,6 +18,7 @@ extern NSString * const kSeparatorSpace;
 
 @interface NSString (OrigoExtensions)
 
+- (BOOL)hasValue;
 - (BOOL)containsString:(NSString *)string;
 
 - (NSUInteger)lineCount;

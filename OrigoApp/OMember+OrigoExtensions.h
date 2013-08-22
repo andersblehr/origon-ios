@@ -8,8 +8,6 @@
 
 #import "OrigoApp.h"
 
-#import "OMember.h"
-
 extern NSString * const kMemberTypeGuardian;
 
 @interface OMember (OrigoExtensions)
@@ -51,8 +49,8 @@ extern NSString * const kMemberTypeGuardian;
 - (NSString *)givenName;
 - (NSString *)nameWithParentTitle;
 - (NSString *)appellation;
-- (NSString *)labeledMobilePhone;
 - (NSString *)shortAddress;
+- (NSString *)shortDetails;
 - (UIImage *)smallImage;
 
 @end

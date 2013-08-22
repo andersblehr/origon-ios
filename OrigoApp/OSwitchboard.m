@@ -22,9 +22,9 @@ static NSInteger const kServiceRequestPhoneCall = 2;
     BOOL canHandleServiceRequest = NO;
     
     if (serviceRequest == kServiceRequestEmail) {
-        canHandleServiceRequest = [candidate hasValueForKey:kPropertyKeyEmail];
+        canHandleServiceRequest = [candidate.email hasValue];
     } else {
-        canHandleServiceRequest = [candidate hasValueForKey:kPropertyKeyMobilePhone];
+        canHandleServiceRequest = [candidate.mobilePhone hasValue];
     }
     
     return canHandleServiceRequest;
@@ -127,7 +127,7 @@ static NSInteger const kServiceRequestPhoneCall = 2;
         }
         
         for (OMembership *residency in [_member residencies]) {
-            if ([residency.origo hasValueForKey:kPropertyKeyTelephone]) {
+            if ([residency.origo.telephone hasValue]) {
                 [_callRecipientCandidates addObject:@[residency.origo]];
             }
         }
@@ -317,7 +317,7 @@ static NSInteger const kServiceRequestPhoneCall = 2;
             if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:kProtocolTel]]) {
                 NSString *mobileNetworkCode = _carrier.mobileNetworkCode;
                 
-                if ([mobileNetworkCode length] && ![mobileNetworkCode isEqualToString:@"65535"]) {
+                if ([mobileNetworkCode hasValue] && ![mobileNetworkCode isEqualToString:@"65535"]) {
                     [toolbarButtons addObject:[UIBarButtonItem phoneCallButtonWithTarget:self]];
                     [toolbarButtons addObject:flexibleSpace];
                 }

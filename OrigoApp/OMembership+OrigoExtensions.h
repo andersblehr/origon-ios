@@ -8,8 +8,6 @@
 
 #import "OrigoApp.h"
 
-#import "OMembership.h"
-
 @interface OMembership (OrigoExtensions)
 
 - (BOOL)hasContactRole;

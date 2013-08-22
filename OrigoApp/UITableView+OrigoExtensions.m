@@ -8,8 +8,9 @@
 
 #import "UITableView+OrigoExtensions.h"
 
+CGFloat const kContentWidth = 280.f;
+
 static CGFloat const kScreenWidth = 320.f;
-static CGFloat const kContentWidth = 280.f;
 static CGFloat const kKeyboardHeight = 216.f;
 
 static CGFloat const kLogoHeight = 55.f;
@@ -36,7 +37,10 @@ static NSString * const kLogoText = @"..origo..";
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:reuseIdentifier];
     
-    if (!cell) {
+    if (cell) {
+        cell.indexPath = indexPath;
+        [cell readEntity];
+    } else {
         cell = [[OTableViewCell alloc] initWithReuseIdentifier:reuseIdentifier indexPath:indexPath];
     }
     
@@ -78,12 +82,6 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (void)addEmptyTableFooterViewWithText:(NSString *)text
-{
-    self.tableHeaderView = [self footerViewWithText:text];
-}
-
-
 - (UIActivityIndicatorView *)addActivityIndicator
 {
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, kKeyboardHeight);
@@ -121,9 +119,9 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (id)listCellForIndexPath:(NSIndexPath *)indexPath value:(id)value
+- (id)listCellForIndexPath:(NSIndexPath *)indexPath data:(id)data
 {
-    NSString *reuseIdentifer = [NSString stringWithFormat:@"%@:%@", kReuseIdentifierList, value];
+    NSString *reuseIdentifer = [NSString stringWithFormat:@"%@:%@", kReuseIdentifierList, data];
     
     return [self cellForReuseIdentifier:reuseIdentifer indexPath:indexPath];
 }

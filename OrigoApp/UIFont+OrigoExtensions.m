@@ -81,7 +81,7 @@ static CGFloat const kFieldHeightScaleFactor = 1.22f;
 
 - (NSInteger)lineCountWithText:(NSString *)text textWidth:(CGFloat)textWidth
 {
-    CGSize textSize = [text sizeWithFont:self constrainedToSize:CGSizeMake(textWidth, 1000.f)];
+    CGSize textSize = [text sizeWithFont:self constrainedToSize:CGSizeMake(textWidth, FLT_MAX)];
     
     return round(textSize.height / (self.lineHeight + 1.f));
 }

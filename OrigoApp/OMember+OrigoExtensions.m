@@ -10,8 +10,6 @@
 
 NSString * const kMemberTypeGuardian = @"guardian";
 
-static NSString * const kLabeledPropertyFormat  = @"(%@) %@";
-
 
 @implementation OMember (OrigoExtensions)
 
@@ -327,7 +325,7 @@ static NSString * const kLabeledPropertyFormat  = @"(%@) %@";
 
 - (BOOL)isMinor
 {
-    return [self.dateOfBirth isBirthDateOfMinor];
+    return self.dateOfBirth ? [self.dateOfBirth isBirthDateOfMinor] : [self.isJuvenile boolValue];
 }
 
 
@@ -424,15 +422,29 @@ static NSString * const kLabeledPropertyFormat  = @"(%@) %@";
 }
 
 
-- (NSString *)labeledMobilePhone
-{
-    return [NSString stringWithFormat:kLabeledPropertyFormat, [OStrings stringForKey:strLabelAbbreviatedMobilePhone], self.mobilePhone];
-}
-
+#pragma mark - Display data
 
 - (NSString *)shortAddress
 {
     return [[[[self residencies] anyObject] origo] shortAddress];
+}
+
+
+- (NSString *)shortDetails
+{
+    NSString *details = [self.mobilePhone hasValue] ? self.mobilePhone : self.email;
+    
+    if ([self isMinor]) {
+        NSString *age = [NSString stringWithFormat:[OStrings stringForKey:strFormatAge], [self.dateOfBirth yearsBeforeNow]];
+        
+        if (details) {
+            details = [age stringByAppendingString:details separator:kSeparatorComma];
+        } else {
+            details = age;
+        }
+    }
+    
+    return details;
 }
 
 

@@ -35,12 +35,18 @@
 #import "OTableViewListDelegate.h"
 
 #import "ODevice.h"
+#import "ODevice+OrigoExtensions.h"
+#import "OMember.h"
 #import "OMember+OrigoExtensions.h"
+#import "OMembership.h"
 #import "OMembership+OrigoExtensions.h"
 #import "OMessageBoard.h"
+#import "OOrigo.h"
 #import "OOrigo+OrigoExtensions.h"
+#import "OReplicatedEntity.h"
 #import "OReplicatedEntity+OrigoExtensions.h"
 #import "OReplicatedEntityRef.h"
+#import "OSettings.h"
 #import "OSettings+OrigoExtensions.h"
 
 #import "NSDate+OrigoExtensions.h"

@@ -8,16 +8,16 @@
 
 #import "OState.h"
 
-NSString * const kVCIdentifierAuth = @"auth";
-NSString * const kVCIdentifierCalendar = @"calendar";
-NSString * const kVCIdentifierMember = @"member";
-NSString * const kVCIdentifierMemberList = @"members";
-NSString * const kVCIdentifierMessageList = @"messages";
-NSString * const kVCIdentifierOrigo = @"origo";
-NSString * const kVCIdentifierOrigoList = @"origos";
-NSString * const kVCIdentifierSetting = @"setting";
-NSString * const kVCIdentifierSettingList = @"settings";
-NSString * const kVCIdentifierTaskList = @"tasks";
+NSString * const kIdentifierAuth = @"auth";
+NSString * const kIdentifierCalendar = @"calendar";
+NSString * const kIdentifierMember = @"member";
+NSString * const kIdentifierMemberList = @"members";
+NSString * const kIdentifierMessageList = @"messages";
+NSString * const kIdentifierOrigo = @"origo";
+NSString * const kIdentifierOrigoList = @"origos";
+NSString * const kIdentifierSetting = @"setting";
+NSString * const kIdentifierSettingList = @"settings";
+NSString * const kIdentifierTaskList = @"tasks";
 
 NSString * const kActionLoad = @"load";
 NSString * const kActionSignIn = @"sign-in";
@@ -92,37 +92,43 @@ static OState *s = nil;
 
 - (BOOL)actionIs:(NSString *)action
 {
-    BOOL isCurrent = NO;
+    BOOL actionIsCurrent = NO;
     
     if ([action isEqualToString:kActionInput]) {
-        isCurrent = isCurrent || [_action isEqualToString:kActionSignIn];
-        isCurrent = isCurrent || [_action isEqualToString:kActionActivate];
-        isCurrent = isCurrent || [_action isEqualToString:kActionRegister];
-        isCurrent = isCurrent || [_action isEqualToString:kActionEdit];
+        actionIsCurrent = actionIsCurrent || [_action isEqualToString:kActionSignIn];
+        actionIsCurrent = actionIsCurrent || [_action isEqualToString:kActionActivate];
+        actionIsCurrent = actionIsCurrent || [_action isEqualToString:kActionRegister];
+        actionIsCurrent = actionIsCurrent || [_action isEqualToString:kActionEdit];
     } else {
-        isCurrent = [_action isEqualToString:action];
+        actionIsCurrent = [_action isEqualToString:action];
     }
     
-    return isCurrent;
+    return actionIsCurrent;
 }
 
 
 - (BOOL)targetIs:(NSString *)target
 {
-    BOOL isCurrent = NO;
+    BOOL targetIsCurrent = NO;
     
     if ([target isEqualToString:kTargetHousehold]) {
-        isCurrent = isCurrent || [_target isEqualToString:kTargetHousehold];
-        isCurrent = isCurrent || [_target isEqualToString:kTargetUser];
-        isCurrent = isCurrent || [_target isEqualToString:kTargetWard];
+        targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetHousehold];
+        targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetUser];
+        targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetWard];
     } else if ([target isEqualToString:kOrigoTypeResidence]) {
-        isCurrent = isCurrent || [_target isEqualToString:kOrigoTypeResidence];
-        isCurrent = isCurrent || [_target isEqualToString:kTargetHousehold];
+        targetIsCurrent = targetIsCurrent || [_target isEqualToString:kOrigoTypeResidence];
+        targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetHousehold];
     } else {
-        isCurrent = [_target isEqualToString:target];
+        targetIsCurrent = [_target isEqualToString:target];
     }
     
-    return isCurrent;
+    return targetIsCurrent;
+}
+
+
+- (BOOL)isCurrent
+{
+    return (self.viewController == [OState s].viewController);
 }
 
 

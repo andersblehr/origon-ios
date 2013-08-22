@@ -14,7 +14,7 @@ static NSInteger const kTextViewMinimumEditLines = 2;
 static NSInteger const kTextViewMinimumLines = 1;
 
 static CGFloat const kTopInset = 6.f;
-static CGFloat const kDetailTextWidth = 210.f;
+static CGFloat const kDefaultTextWidth = 210.f;
 static CGFloat const kAccessoryViewWidth = 30.f;
 
 
@@ -22,21 +22,33 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 #pragma mark - Auxiliary methods
 
++ (CGFloat)textWidthWithBlueprint:(OTableViewCellBlueprint *)blueprint
+{
+    CGFloat labelWidth = 0.f;
+    
+    for (NSString *key in blueprint.detailKeys) {
+        CGSize labelSize = [[OStrings labelForKey:key] sizeWithFont:[UIFont labelFont] constrainedToSize:CGSizeMake(FLT_MAX, FLT_MAX)];
+        
+        labelWidth = MAX(labelWidth, labelSize.width);
+    }
+    
+    return kContentWidth - 2 * kTextInsetX - labelWidth;
+}
+
+
 + (CGFloat)heightWithLineCount:(NSInteger)lineCount
 {
     return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight];
 }
 
 
-+ (NSInteger)lineCountWithText:(NSString *)text state:(OState *)state
++ (NSInteger)lineCountWithText:(NSString *)text textWidth:(CGFloat)textWidth state:(OState *)state
 {
-    NSInteger detailTextWidth = kDetailTextWidth;
-    
-    if ([state actionIs:kActionList]) {
-        detailTextWidth -= kAccessoryViewWidth;
+    if ([state actionIs:kActionList] || (!state && [[OState s] actionIs:kActionList])) {
+        textWidth -= kAccessoryViewWidth;
     }
     
-    NSInteger lineCount = [[UIFont detailFont] lineCountWithText:text textWidth:detailTextWidth];
+    NSInteger lineCount = [[UIFont detailFont] lineCountWithText:text textWidth:textWidth];
     
     lineCount = MAX(lineCount, kTextViewMinimumLines);
     lineCount = MIN(lineCount, kTextViewMaximumLines);
@@ -49,7 +61,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 {
     NSInteger lineCount = 0;
 
-    if ([self.text length]) {
+    if ([self.text hasValue]) {
         if (self.window) {
             lineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
             
@@ -64,10 +76,10 @@ static CGFloat const kAccessoryViewWidth = 30.f;
                 }
             }
         } else {
-            lineCount = [OTextView lineCountWithText:self.text state:_state];
+            lineCount = [OTextView lineCountWithText:self.text textWidth:_textWidth state:_state];
         }
     } else {
-        lineCount = [OTextView lineCountWithText:self.placeholder state:_state];
+        lineCount = [OTextView lineCountWithText:self.placeholder textWidth:_textWidth state:_state];
     }
     
     _lastKnownLineCount = lineCount;
@@ -81,24 +93,17 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 - (void)textDidChange
 {
-    _placeholderView.hidden = ([self.text length] > 0);
+    _placeholderView.hidden = [self.text hasValue];
 }
 
 
 #pragma mark - Initialisation
 
-- (id)initWithKey:(NSString *)key delegate:(id)delegate
+- (id)initWithKey:(NSString *)key blueprint:(OTableViewCellBlueprint *)blueprint delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
     if (self) {
-        _placeholderView = [[UITextView alloc] initWithFrame:CGRectZero];
-        _placeholderView.backgroundColor = [UIColor clearColor];
-        _placeholderView.delegate = self;
-        _placeholderView.font = [UIFont detailFont];
-        _placeholderView.textColor = [UIColor lightGrayColor];
-        [self addSubview:_placeholderView];
-        
         self.autocapitalizationType = UITextAutocapitalizationTypeSentences;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.backgroundColor = [UIColor clearColor];
@@ -108,19 +113,30 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         self.font = [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
-        self.placeholder = [OStrings placeholderForKey:key];
         self.returnKeyType = UIReturnKeyDefault;
         self.scrollEnabled = NO;
         self.textAlignment = NSTextAlignmentLeft;
         self.userInteractionEnabled = self.editable;
-        
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
         _key = key;
-        _hasEmphasis = NO;
+        _blueprint = blueprint;
         _state = [OState s].viewController.state;
-        _lastKnownLineCount = [OTextView lineCountWithText:_placeholder state:_state];
+        _textWidth = [OTextView textWidthWithBlueprint:_blueprint];
+        _hasEmphasis = NO;
+        
+        if (self.editable) {
+            _placeholderView = [[UITextView alloc] initWithFrame:CGRectZero];
+            _placeholderView.backgroundColor = [UIColor clearColor];
+            _placeholderView.delegate = self;
+            _placeholderView.font = [UIFont detailFont];
+            _placeholderView.textColor = [UIColor lightGrayColor];
+            [self addSubview:_placeholderView];
+            
+            self.placeholder = [OStrings placeholderForKey:_key];
+            _lastKnownLineCount = [OTextView lineCountWithText:_placeholder textWidth:_textWidth state:_state];
+        }
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:nil];
     }
@@ -131,9 +147,12 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 #pragma mark - Hooks for sizing & resizing
 
-+ (CGFloat)heightWithText:(NSString *)text
++ (CGFloat)heightWithText:(NSString *)text blueprint:(OTableViewCellBlueprint *)blueprint
 {
-    return [self heightWithLineCount:[self lineCountWithText:text state:[OState s]]];
+    CGFloat textWidth = [OTextView textWidthWithBlueprint:blueprint];
+    NSInteger lineCount = [OTextView lineCountWithText:text textWidth:textWidth state:nil];
+    
+    return [OTextView heightWithLineCount:lineCount];
 }
 
 
@@ -155,7 +174,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 - (BOOL)hasValue
 {
-    return ([self textValue] != nil);
+    return ([[self textValue] hasValue]);
 }
 
 
@@ -181,7 +200,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 {
     NSString *textValue = [self.text removeRedundantWhitespace];
     
-    if ([textValue length] == 0) {
+    if (![textValue hasValue]) {
         textValue = nil;
     }
     
@@ -195,9 +214,9 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 - (void)setPlaceholder:(NSString *)placeholder
 {
-    CGSize placeholderSize = CGSizeMake(kDetailTextWidth, [OTextView heightWithText:placeholder]);
+    CGSize placeholderSize = CGSizeMake(_textWidth, [OTextView heightWithText:placeholder blueprint:_blueprint]);
     
-    _placeholderView.frame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height);
+    _placeholderView.frame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height + 5.f);
     _placeholderView.text = placeholder;
     _placeholder = placeholder;
 }

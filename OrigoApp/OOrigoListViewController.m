@@ -19,7 +19,7 @@ static NSInteger const kOrigoTypeSheetTag = 1;
 static NSInteger const kCountryAlertTag = 0;
 static NSInteger const kCountryAlertButtonCancel = 0;
 
-static NSInteger const kSectionKeyUser = 0;
+static NSInteger const kSectionKeyMember = 0;
 static NSInteger const kSectionKeyOrigos = 1;
 static NSInteger const kSectionKeyWards = 2;
 
@@ -139,7 +139,7 @@ static NSInteger const kUserRow = 0;
 
 - (void)openSettings
 {
-    [self presentModalViewControllerWithIdentifier:kVCIdentifierSettingList data:nil];
+    [self presentModalViewControllerWithIdentifier:kIdentifierSettingList data:nil];
 }
 
 
@@ -157,7 +157,7 @@ static NSInteger const kUserRow = 0;
     UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
     
     for (NSString *origoType in _origoTypes) {
-        [sheet addButtonWithTitle:[OStrings titleForOrigoType:origoType]];
+        [sheet addButtonWithTitle:[OStrings labelForOrigoType:origoType labelType:kOrigoLabelTypeOrigo]];
     }
     
     [sheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
@@ -174,12 +174,7 @@ static NSInteger const kUserRow = 0;
 {
     [super viewDidLoad];
     
-    self.title = @"Origo";
-    
-    if ([[OMeta m] userIsAllSet] && ![_member isUser]) {
-        self.navigationItem.title = [self.title stringByAppendingString:[_member givenName] separator:kSeparatorInterpunct];
-        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_member givenName]];
-    }
+    self.title = [_member isWardOfUser] ? _member.givenName : @"Origo";
 }
 
 
@@ -187,18 +182,12 @@ static NSInteger const kUserRow = 0;
 {
     [super viewWillAppear:animated];
 
-    if ([[OMeta m] userIsAllSet]) {
-        if ([_member isUser]) {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
-        }
-        
-        if ([[OMeta m].user isTeenOrOlder]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
-        }
-        
-        if (![self numberOfSectionsInTableView:self.tableView]) {
-            [self.tableView addEmptyTableFooterViewWithText:[self footerText]];
-        }
+    if ([_member isUser]) {
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
+    }
+    
+    if ([[OMeta m].user isTeenOrOlder]) {
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
     }
 }
 
@@ -214,7 +203,7 @@ static NSInteger const kUserRow = 0;
             [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] text:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
         }
         
-        [self presentModalViewControllerWithIdentifier:kVCIdentifierMember data:[[OMeta m].user initialResidency]];
+        [self presentModalViewControllerWithIdentifier:kIdentifierMember data:[[OMeta m].user initialResidency]];
     }
 }
 
@@ -236,30 +225,34 @@ static NSInteger const kUserRow = 0;
     
     self.state.target = _member;
     
-    if ([self targetIs:kTargetWard]) {
+    if ([self targetIs:kTargetUser]) {
+        [_origoTypes addObject:kOrigoTypeFriends];
+        [_origoTypes addObject:kOrigoTypeOrganisation];
+        [_origoTypes addObject:kOrigoTypeTeam];
+    } else {
         if (![_member isOlderThan:kAgeThresholdInSchool]) {
             [_origoTypes addObject:kOrigoTypePreschoolClass];
         }
         
         [_origoTypes addObject:kOrigoTypeSchoolClass];
-    } else {
-        [_origoTypes addObject:kOrigoTypeOrganisation];
-        [_origoTypes addObject:kOrigoTypeAssociation];
+        [_origoTypes addObject:kOrigoTypePlaymates];
+        [_origoTypes addObject:kOrigoTypeMinorTeam];
     }
     
-    [_origoTypes addObject:kOrigoTypeSportsTeam];
     [_origoTypes addObject:kOrigoTypeOther];
 }
 
 
 - (void)initialiseDataSource
 {
-    [self setData:[_member participancies] forSectionWithKey:kSectionKeyOrigos];
-    
-    if ([_member isUser]) {
-        [self setData:[_member rootMembership] forSectionWithKey:kSectionKeyUser];
-        [self appendData:[_member residencies] toSectionWithKey:kSectionKeyUser];
-        [self setData:[_member wards] forSectionWithKey:kSectionKeyWards];
+    if (_member) {
+        [self setData:@[_member] forSectionWithKey:kSectionKeyMember];
+        [self setData:[_member participancies] forSectionWithKey:kSectionKeyOrigos];
+        
+        if ([_member isUser]) {
+            [self appendData:[_member residencies] toSectionWithKey:kSectionKeyMember];
+            [self setData:[_member wards] forSectionWithKey:kSectionKeyWards];
+        }
     }
 }
 
@@ -277,7 +270,7 @@ static NSInteger const kUserRow = 0;
     if (sectionKey == kSectionKeyWards) {
         text = [OStrings stringForKey:strHeaderWardsOrigos];
     } else if (sectionKey == kSectionKeyOrigos) {
-        text = [OStrings stringForKey:strHeaderMyOrigos];
+        text = [[OLanguage possessiveClauseWithPossessor:_member noun:_origo_] stringByCapitalisingFirstLetter];
     }
     
     return text;
@@ -294,7 +287,7 @@ static NSInteger const kUserRow = 0;
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if (sectionKey == kSectionKeyUser) {
+    if (sectionKey == kSectionKeyMember) {
         if (indexPath.row == kUserRow) {
             [self performSegueWithIdentifier:kSegueToMemberView sender:self];
         } else {
@@ -303,7 +296,7 @@ static NSInteger const kUserRow = 0;
     } else if (sectionKey == kSectionKeyOrigos) {
         [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
     } else if (sectionKey == kSectionKeyWards) {
-        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kVCIdentifierOrigoList];
+        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
         origoListViewController.data = [self dataAtIndexPath:indexPath];
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
@@ -326,22 +319,32 @@ static NSInteger const kUserRow = 0;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     OReplicatedEntity *entity = [self dataAtIndexPath:indexPath];
     
-    if ((sectionKey == kSectionKeyUser) || (sectionKey == kSectionKeyOrigos)) {
+    if (sectionKey == kSectionKeyMember) {
+        if ([entity isKindOfClass:OMember.class]) {
+            OMember *member = [entity asMember];
+            
+            if ([member isUser]) {
+                cell.textLabel.text = [[OLanguage pronouns][_I_][disjunctive] capitalizedString];
+                cell.detailTextLabel.text = member.name;
+            } else {
+                cell.textLabel.text = member.name;
+                cell.detailTextLabel.text = [member shortDetails];
+            }
+            
+            cell.imageView.image = [member smallImage];
+        } else {
+            OMembership *membership = [entity asMembership];
+            
+            cell.textLabel.text = membership.origo.name;
+            cell.detailTextLabel.text = [membership.origo singleLineAddress];
+            cell.imageView.image = [membership.origo smallImage];
+        }
+    } else if (sectionKey == kSectionKeyOrigos) {
         OMembership *membership = [entity asMembership];
         
-        if (sectionKey == kSectionKeyUser) {
-            if (indexPath.row == kUserRow) {
-                cell.textLabel.text = [[OLanguage pronouns][_I_][disjunctive] capitalizedString];
-                cell.detailTextLabel.text = membership.member.name;
-                cell.imageView.image = [membership.member smallImage];
-            } else {
-                cell.textLabel.text = membership.origo.name;
-                cell.detailTextLabel.text = [membership.origo singleLineAddress];
-                cell.imageView.image = [membership.origo listCellImage];
-            }
-        } else if (sectionKey == kSectionKeyOrigos) {
+        if (sectionKey == kSectionKeyOrigos) {
             cell.textLabel.text = membership.origo.name;
-            cell.imageView.image = [membership.origo listCellImage];
+            cell.imageView.image = [membership.origo smallImage];
         }
     } else if (sectionKey == kSectionKeyWards) {
         OMember *ward = [entity asMember];
@@ -405,7 +408,7 @@ static NSInteger const kUserRow = 0;
                 
                 if ([OMeta m].settings.countryCode) {
                     if ([OUtil isSupportedCountryCode:[OMeta m].settings.countryCode]) {
-                        [self presentModalViewControllerWithIdentifier:kVCIdentifierOrigo data:_member meta:_selectedOrigoType];
+                        [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:_selectedOrigoType];
                     } else {
                         [self presentCountryAlert];
                     }
@@ -427,7 +430,7 @@ static NSInteger const kUserRow = 0;
                         [self presentCountrySheet];
                     }
                 } else {
-                    [self presentModalViewControllerWithIdentifier:kVCIdentifierOrigo data:_member meta:_selectedOrigoType];
+                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:_selectedOrigoType];
                 }
             }
             
@@ -445,7 +448,7 @@ static NSInteger const kUserRow = 0;
 {
     switch (alertView.tag) {
         case kCountryAlertTag:
-            [self presentModalViewControllerWithIdentifier:kVCIdentifierOrigo data:_member meta:_selectedOrigoType];
+            [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:_selectedOrigoType];
 
             break;
             

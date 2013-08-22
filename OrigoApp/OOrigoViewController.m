@@ -21,12 +21,12 @@ static NSInteger const kSectionKeyOrigo = 0;
     
     if (_origo) {
         if ([_origo isOfType:kOrigoTypeResidence]) {
-            self.title = [OStrings titleForOrigoType:_origo.type];
+            self.title = [OStrings labelForOrigoType:_origo.type labelType:kOrigoLabelTypeOrigo];
         } else {
             self.title = _origo.name;
         }
     } else {
-        self.title = [OStrings titleForOrigoType:self.meta];
+        self.title = [OStrings labelForOrigoType:self.meta labelType:kOrigoLabelTypeOrigoNew];
     }
 }
 
@@ -108,7 +108,7 @@ static NSInteger const kSectionKeyOrigo = 0;
             _membership = [_origo addMember:_member];
         }
         
-        [self presentModalViewControllerWithIdentifier:kVCIdentifierMemberList data:_membership];
+        [self presentModalViewControllerWithIdentifier:kIdentifierMemberList data:_membership];
     } else if ([self actionIs:kActionEdit]) {
         [self toggleEditMode];
     }
@@ -127,7 +127,7 @@ static NSInteger const kSectionKeyOrigo = 0;
 
 - (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController
 {
-    return [viewController.identifier isEqualToString:kVCIdentifierMemberList];
+    return [viewController.identifier isEqualToString:kIdentifierMemberList];
 }
 
 @end

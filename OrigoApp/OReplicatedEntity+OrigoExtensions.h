@@ -8,8 +8,6 @@
 
 #import "OrigoApp.h"
 
-#import "OReplicatedEntity.h"
-
 @interface OReplicatedEntity (OrigoExtensions)
 
 - (OMember *)asMember;

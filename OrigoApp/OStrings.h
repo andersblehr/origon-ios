@@ -21,13 +21,13 @@ extern NSString * const strButtonSignOut;
 extern NSString * const strAlertTextNoInternet;
 extern NSString * const strAlertTextServerError;
 extern NSString * const strAlertTextLocating;
-extern NSString * const strArgumentFormatAofB;
 extern NSString * const strTermYes;
 extern NSString * const strTermNo;
 extern NSString * const strTermMan;
 extern NSString * const strTermBoy;
 extern NSString * const strTermWoman;
 extern NSString * const strTermGirl;
+extern NSString * const strFormatAge;
 extern NSString * const strSeparatorAnd;
 
 // OAuthView strings
@@ -72,11 +72,6 @@ extern NSString * const strTermHimOrHer;
 extern NSString * const strTermForName;
 
 // OMemberListView strings
-extern NSString * const strViewTitleMembers;
-extern NSString * const strViewTitleResidence;
-extern NSString * const strHeaderContacts;
-extern NSString * const strHeaderHouseholdMembers;
-extern NSString * const strHeaderOrigoMembers;
 extern NSString * const strFooterResidence;
 extern NSString * const strFooterSchoolClass;
 extern NSString * const strFooterPreschoolClass;
@@ -98,17 +93,14 @@ extern NSString * const strPlaceholderTelephone;
 
 // OMemberView strings
 extern NSString * const strViewTitleAboutMe;
-extern NSString * const strViewTitleNewMember;
-extern NSString * const strViewTitleNewHouseholdMember;
-extern NSString * const strLabelEmail;
-extern NSString * const strLabelMobilePhone;
 extern NSString * const strLabelDateOfBirth;
-extern NSString * const strLabelAbbreviatedMobilePhone;
-extern NSString * const strPlaceholderPhoto;
+extern NSString * const strLabelMobilePhone;
+extern NSString * const strLabelEmail;
 extern NSString * const strPlaceholderName;
-extern NSString * const strPlaceholderEmail;
+extern NSString * const strPlaceholderPhoto;
 extern NSString * const strPlaceholderDateOfBirth;
 extern NSString * const strPlaceholderMobilePhone;
+extern NSString * const strPlaceholderEmail;
 extern NSString * const strButtonParentToSome;
 extern NSString * const strButtonAddAddress;
 extern NSString * const strButtonChangePassword;
@@ -158,20 +150,10 @@ extern NSString * const strFooterCountryInfoNote;
 extern NSString * const strFooterCountryInfoLocate;
 
 // Origo type strings
-extern NSString * const strOrigoTypeResidence;
-extern NSString * const strOrigoTypeOrganisation;
-extern NSString * const strOrigoTypeAssociation;
-extern NSString * const strOrigoTypeSchoolClass;
-extern NSString * const strOrigoTypePreschoolClass;
-extern NSString * const strOrigoTypeSportsTeam;
-extern NSString * const strOrigoTypeOther;
-extern NSString * const strNewOrigoOfTypeResidence;
-extern NSString * const strNewOrigoOfTypeOrganisation;
-extern NSString * const strNewOrigoOfTypeAssociation;
-extern NSString * const strNewOrigoOfTypeSchoolClass;
-extern NSString * const strNewOrigoOfTypePreschoolClass;
-extern NSString * const strNewOrigoOfTypeSportsTeam;
-extern NSString * const strNewOrigoOfTypeOther;
+extern NSString * const kOrigoLabelTypeOrigo;
+extern NSString * const kOrigoLabelTypeOrigoNew;
+extern NSString * const kOrigoLabelTypeMemberList;
+extern NSString * const kOrigoLabelTypeMemberNew;
 
 // Meta strings
 extern NSString * const metaSupportedCountryCodes;
@@ -189,7 +171,7 @@ extern NSString * const metaContactRolesSportsTeam;
 + (NSString *)labelForKey:(NSString *)key;
 + (NSString *)placeholderForKey:(NSString *)key;
 
-+ (NSString *)titleForOrigoType:(NSString *)origoType;
++ (NSString *)labelForOrigoType:(NSString *)origoType labelType:(NSString *)labelType;
 + (NSString *)titleForContactRole:(NSString *)contactRole;
 + (NSString *)titleForSettingKey:(NSString *)settingKey;
 + (NSString *)labelForSettingKey:(NSString *)settingKey;

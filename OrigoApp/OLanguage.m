@@ -29,6 +29,7 @@ NSInteger const plural3 = 5;
 
 NSString * const _be_  = @"verbBe";
 
+NSString * const _origo_ = @"nounOrigo";
 NSString * const _father_ = @"nounFather";
 NSString * const _mother_ = @"nounMother";
 NSString * const _parent_ = @"nounParent";

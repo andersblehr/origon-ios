@@ -8,13 +8,15 @@
 
 #import "OOrigo+OrigoExtensions.h"
 
-NSString * const kOrigoTypeMemberRoot = @"root";
+NSString * const kOrigoTypeMemberRoot = @"~";
 NSString * const kOrigoTypeResidence = @"residence";
+NSString * const kOrigoTypeFriends = @"friends";
+NSString * const kOrigoTypeTeam = @"team";
 NSString * const kOrigoTypeOrganisation = @"organisation";
-NSString * const kOrigoTypeAssociation = @"association";
-NSString * const kOrigoTypeSchoolClass = @"school";
-NSString * const kOrigoTypePreschoolClass = @"preschool";
-NSString * const kOrigoTypeSportsTeam = @"team";
+NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
+NSString * const kOrigoTypeSchoolClass = @"schoolClass";
+NSString * const kOrigoTypePlaymates = @"playmates";
+NSString * const kOrigoTypeMinorTeam = @"minorTeam";
 NSString * const kOrigoTypeOther = @"other";
 
 
@@ -188,6 +190,19 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
+- (BOOL)isJuvenile
+{
+    BOOL isJuvenile = NO;
+    
+    isJuvenile = isJuvenile || [self isOfType:kOrigoTypePreschoolClass];
+    isJuvenile = isJuvenile || [self isOfType:kOrigoTypeSchoolClass];
+    isJuvenile = isJuvenile || [self isOfType:kOrigoTypePlaymates];
+    isJuvenile = isJuvenile || [self isOfType:kOrigoTypeMinorTeam];
+    
+    return isJuvenile;
+}
+
+
 - (BOOL)hasAdmin
 {
     BOOL hasAdmin = NO;
@@ -263,13 +278,7 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
-#pragma mark - Descriptive strings
-
-- (NSString *)shortAddress
-{
-    return [self.address length] ? [self.address lines][0] : nil;
-}
-
+#pragma mark - Display data
 
 - (NSString *)singleLineAddress
 {
@@ -277,9 +286,13 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
-#pragma mark - Display image
+- (NSString *)shortAddress
+{
+    return [self.address hasValue] ? [self.address lines][0] : nil;
+}
 
-- (UIImage *)listCellImage
+
+- (UIImage *)smallImage
 {
     UIImage *image = nil;
     

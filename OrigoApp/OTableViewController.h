@@ -10,6 +10,7 @@
 
 extern NSString * const kEntityRegistrationCell;
 extern NSString * const kCustomCell;
+extern NSString * const kCustomValue;
 
 @interface OTableViewController : UITableViewController<OTableViewControllerInstance, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDismisser, OConnectionDelegate> {
 @private
