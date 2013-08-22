@@ -193,7 +193,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         self.editing = !_selectable;
         
         _entityClass = entityClass;
-        _blueprint = [OTableViewCellBlueprint blueprintWithEntityClass:entityClass];
+        _blueprint = [[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
         
         [self addCellElements];
@@ -209,7 +209,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [self initCommonsForReuseIdentifier:reuseIdentifier indexPath:indexPath];
     
     if (self && ![self isListCell]) {
-        _blueprint = [OTableViewCellBlueprint blueprintWithReuseIdentifier:reuseIdentifier];
+        _blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
         
         [self addCellElements];
@@ -326,7 +326,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)redrawIfNeeded
 {
     if (_entity || _entityClass) {
-        CGFloat desiredHeight = [_blueprint heightForCell:self];
+        CGFloat desiredHeight = [_blueprint cellHeightWithEntity:_entity cell:self];
         
         if (abs(self.frame.size.height - (desiredHeight + kImplicitFramePadding)) > 0.5f) {
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
@@ -401,8 +401,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)readEntity
 {
     if ([self isListCell]) {
-        [_listDelegate populateListCell:self atIndexPath:_indexPath];
-        [_state.viewController.dirtySections addObject:@(_indexPath.section)];
+        if ([_state isCurrent]) {
+            [_listDelegate populateListCell:self atIndexPath:_indexPath];
+        } else {
+            [_state.viewController.dirtySections addObject:@(_indexPath.section)];
+        }
     } else {
         for (NSString *key in _blueprint.allTextFieldKeys) {
             id textField = [self textFieldForKey:key];

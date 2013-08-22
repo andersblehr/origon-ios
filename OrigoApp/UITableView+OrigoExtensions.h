@@ -8,16 +8,17 @@
 
 #import "OrigoApp.h"
 
+extern CGFloat const kContentWidth;
+
 @interface UITableView (OrigoExtensions)
 
 - (void)setBackground;
 - (void)addLogoBanner;
-- (void)addEmptyTableFooterViewWithText:(NSString *)text;
 - (UIActivityIndicatorView *)addActivityIndicator;
 
 - (id)cellForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
 - (id)cellForReuseIdentifier:(NSString *)reuseIdentifier;
-- (id)listCellForIndexPath:(NSIndexPath *)indexPath value:(id)value;
+- (id)listCellForIndexPath:(NSIndexPath *)indexPath data:(id)data;
 
 - (CGFloat)standardHeaderHeight;
 - (CGFloat)heightForFooterWithText:(NSString *)text;

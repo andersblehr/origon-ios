@@ -59,8 +59,8 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 {
     BOOL valueIsName = NO;
     
-    if (value && [value isKindOfClass:NSString.class]) {
-        valueIsName = ([value length] > 0);
+    if ([value isKindOfClass:NSString.class]) {
+        valueIsName = [value hasValue];
         valueIsName = valueIsName && ([value rangeOfString:kSeparatorSpace].location > 0);
     }
     

@@ -10,8 +10,6 @@
 
 static NSInteger const kSectionKeyValues = 0;
 
-static NSString * const kCustomValue = @"custom";
-
 
 @implementation OSettingViewController
 

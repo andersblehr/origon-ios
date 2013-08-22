@@ -19,7 +19,6 @@ extern CGFloat const kMinimumCellPadding;
     NSArray *_numberKeys;
     NSArray *_emailKeys;
     NSArray *_passwordKeys;
-    
     NSArray *_textViewKeys;
 }
 
@@ -32,13 +31,10 @@ extern CGFloat const kMinimumCellPadding;
 @property (strong, nonatomic, readonly) NSArray *indirectKeys;
 @property (strong, nonatomic, readonly) NSArray *allTextFieldKeys;
 
-+ (OTableViewCellBlueprint *)blueprintWithReuseIdentifier:(NSString *)reuseIdentifier;
-+ (OTableViewCellBlueprint *)blueprintWithEntityClass:(Class)entityClass;
-
-+ (CGFloat)heightForCellWithReuseIdentifier:(NSString *)reuseIdentifier;
-+ (CGFloat)heightForCellWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
-- (CGFloat)heightForCell:(OTableViewCell *)cell;
+- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
+- (id)initWithEntityClass:(Class)entityClass;
 
 - (id)textFieldWithKey:(NSString *)key delegate:(id)delegate;
+- (CGFloat)cellHeightWithEntity:(OReplicatedEntity *)entity cell:(OTableViewCell *)cell;
 
 @end

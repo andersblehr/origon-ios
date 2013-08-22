@@ -20,13 +20,13 @@ static NSString * const kMembershipTypeAssociate = @"A";
 
 - (BOOL)hasContactRole
 {
-    return ([self.contactRole length] > 0);
+    return [self.contactRole hasValue];
 }
 
 
 - (BOOL)isFull
 {
-    return ([self isParticipancy] || [self isResidency]);
+    return [self isParticipancy] || [self isResidency];
 }
 
 

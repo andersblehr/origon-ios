@@ -107,14 +107,14 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 {
     NSString *textValue = nil;
     
-    if (self.text && [self.text length]) {
+    if ([self.text hasValue]) {
         textValue = self.text;
         
         if (!self.secureTextEntry) {
             textValue = [textValue removeRedundantWhitespace];
         }
         
-        if ([textValue length] == 0) {
+        if (![textValue hasValue]) {
             textValue = nil;
         }
         

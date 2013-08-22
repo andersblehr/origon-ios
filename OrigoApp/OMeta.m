@@ -62,8 +62,9 @@ NSString * const kPropertyKeyEntityId = @"entityId";
 NSString * const kPropertyKeyFatherId = @"fatherId";
 NSString * const kPropertyKeyGender = @"gender";
 NSString * const kPropertyKeyHashCode = @"hashCode";
-NSString * const kPropertyKeyIsExpired = @"isExpired";
 NSString * const kPropertyKeyIsAwaitingDeletion = @"isAwaitingDeletion";
+NSString * const kPropertyKeyIsExpired = @"isExpired";
+NSString * const kPropertyKeyIsJuvenile = @"isJuvenile";
 NSString * const kPropertyKeyMobilePhone = @"mobilePhone";
 NSString * const kPropertyKeyMotherId = @"motherId";
 NSString * const kPropertyKeyName = @"name";
@@ -282,15 +283,13 @@ static OMeta *m = nil;
 
 - (BOOL)userIsRegistered
 {
-    BOOL userHasDateOfBirth = [_user hasValueForKey:kPropertyKeyDateOfBirth];
-    BOOL userHasMobilePhone = [_user hasValueForKey:kPropertyKeyMobilePhone];
     BOOL userHasAddress = NO;
     
     for (OMembership *residency in [_user residencies]) {
-        userHasAddress = userHasAddress || [residency.origo hasValueForKey:kPropertyKeyAddress];
+        userHasAddress = userHasAddress || [residency.origo.address hasValue];
     }
     
-    return userHasDateOfBirth && userHasMobilePhone && userHasAddress;
+    return _user.dateOfBirth && [_user.mobilePhone hasValue] && userHasAddress;
 }
 
 

@@ -13,8 +13,10 @@ extern NSInteger const kTextViewMaximumLines;
 @interface OTextView : UITextView<UITextViewDelegate> {
 @private
     OState *_state;
-    UITextView *_placeholderView;
+    OTableViewCellBlueprint *_blueprint;
+    CGFloat _textWidth;
     
+    UITextView *_placeholderView;
     NSString *_lastKnownText;
     NSInteger _lastKnownLineCount;
 }
@@ -26,9 +28,9 @@ extern NSInteger const kTextViewMaximumLines;
 @property (nonatomic) BOOL selected;
 @property (nonatomic) BOOL hasEmphasis;
 
-- (id)initWithKey:(NSString *)key delegate:(id)delegate;
+- (id)initWithKey:(NSString *)key blueprint:(OTableViewCellBlueprint *)blueprint delegate:(id)delegate;
 
-+ (CGFloat)heightWithText:(NSString *)text;
++ (CGFloat)heightWithText:(NSString *)text blueprint:(OTableViewCellBlueprint *)blueprint;
 - (CGFloat)height;
 
 - (BOOL)hasValue;

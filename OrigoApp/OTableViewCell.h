@@ -21,7 +21,6 @@ extern CGFloat const kCellAnimationDuration;
 @private
     OTableViewCellConstrainer *_constrainer;
     NSMutableDictionary *_views;
-    NSIndexPath *_indexPath;
     Class _entityClass;
     
     id<OTableViewListDelegate> _listDelegate;
@@ -31,6 +30,7 @@ extern CGFloat const kCellAnimationDuration;
 @property (strong, nonatomic, readonly) OTableViewCellBlueprint *blueprint;
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic) OReplicatedEntity *entity;
+@property (strong, nonatomic) NSIndexPath *indexPath;
 @property (strong, nonatomic) id lastInputField;
 @property (strong, nonatomic) id inputField;
 

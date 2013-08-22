@@ -21,6 +21,12 @@ NSString * const kSeparatorSpace = @" ";
 
 #pragma mark - Convenience methods
 
+- (BOOL)hasValue
+{
+    return ([self length] > 0);
+}
+
+
 - (BOOL)containsString:(NSString *)string
 {
     return ([self rangeOfString:string].location != NSNotFound);
@@ -86,7 +92,7 @@ NSString * const kSeparatorSpace = @" ";
 {
     NSString *reworkedString = self;
     
-    if ([self length]) {
+    if ([self hasValue]) {
         reworkedString = [reworkedString stringByAppendingString:separator];
     }
     

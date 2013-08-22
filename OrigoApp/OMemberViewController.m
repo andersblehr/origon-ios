@@ -74,10 +74,14 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     [self.detailCell writeEntity];
     
     if ([self actionIs:kActionRegister]) {
-        if ([self targetIs:kTargetUser] && ![_origo hasValueForKey:kPropertyKeyAddress]) {
-            [self presentModalViewControllerWithIdentifier:kVCIdentifierOrigo data:_membership];
-        } else {
-            [self.dismisser dismissModalViewController:self reload:YES];
+        if ([self targetIs:kTargetUser]) {
+            if (![_origo.address hasValue]) {
+                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_membership];
+            } else {
+                [self.dismisser dismissModalViewController:self reload:YES];
+            }
+        } else /* if (![self targetIs:kTargetHousehold]) */ {
+            [self.dismisser dismissModalViewController:self reload:YES]; // Temporary workaround
         }
     }
 }
@@ -87,7 +91,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 {
     NSString *meta = [_member isUser] ? kTargetHousehold : kOrigoTypeResidence;
     
-    [self presentModalViewControllerWithIdentifier:kVCIdentifierOrigo data:_member meta:meta];
+    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:meta];
 }
 
 
@@ -184,11 +188,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     } else if (_member) {
         self.title = [_member isHousemateOfUser] ? [_member givenName] : _member.name;
     } else if ([self actionIs:kActionRegister]) {
-        if ([_origo isOfType:kOrigoTypeResidence]) {
-            self.title = [OStrings stringForKey:strViewTitleNewHouseholdMember];
-        } else {
-            self.title = [OStrings stringForKey:strViewTitleNewMember];
-        }
+        self.title = [OStrings labelForOrigoType:_origo.type labelType:kOrigoLabelTypeMemberNew];
     }
     
     if ([self actionIs:kActionDisplay]) {
@@ -330,7 +330,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyGuardian) {
-        OMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kVCIdentifierMember];
+        OMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierMember];
         memberViewController.data = [self dataAtIndexPath:indexPath];
         memberViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
         
@@ -393,6 +393,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         OMember *guardian = [self dataAtIndexPath:indexPath];
         
         cell.textLabel.text = guardian.name;
+        cell.imageView.image = [guardian smallImage];
         
         if ([_member guardiansAreParents]) {
             if ([[_member residencies] count] > 1) {
@@ -407,13 +408,15 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 cell.detailTextLabel.text = [guardian shortAddress];
             }
         }
-
-        cell.imageView.image = [guardian smallImage];
     } else if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddress) {
         OOrigo *residence = [[self dataAtIndexPath:indexPath] origo];
         
         cell.textLabel.text = [residence shortAddress];
         cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
+        
+        if ([residence.telephone hasValue]) {
+            cell.detailTextLabel.text = residence.telephone;
+        }
     }
 }
 
@@ -468,7 +471,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             }
         }
     } else if ([self actionIs:kActionEdit]) {
-        if ([_member.email length] && ![_emailField.text isEqualToString:_member.email]) {
+        if ([_member.email hasValue] && ![_emailField.text isEqualToString:_member.email]) {
             if ([self targetIs:kTargetUser]) {
                 [self presentUserEmailChangeAlert];
             } else {
@@ -501,11 +504,15 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (id)inputValueForIndirectKey:(NSString *)key
 {
     id inputValue = nil;
-    
-    if (_examiner) {
-        inputValue = [_examiner valueForKey:key];
+
+    if ([key isEqualToString:kPropertyKeyIsJuvenile]) {
+        inputValue = _member.dateOfBirth ? nil : @([_origo isJuvenile]);
     } else {
-        inputValue = [_member valueForKey:key];
+        if (_examiner) {
+            inputValue = [_examiner valueForKey:key];
+        } else {
+            inputValue = [_member valueForKey:key];
+        }
     }
     
     return inputValue;
@@ -547,8 +554,8 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     if ([self actionIs:kActionRegister]) {
         NSString *identifier = viewController.identifier;
         
-        shouldRelay = shouldRelay || [identifier isEqual:kVCIdentifierOrigo];
-        shouldRelay = shouldRelay || [identifier isEqual:kVCIdentifierMemberList];
+        shouldRelay = shouldRelay || [identifier isEqual:kIdentifierOrigo];
+        shouldRelay = shouldRelay || [identifier isEqual:kIdentifierMemberList];
     }
     
     return shouldRelay;
@@ -557,7 +564,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 - (void)willDismissModalViewController:(OTableViewController *)viewController
 {
-    if ([viewController.identifier isEqualToString:kVCIdentifierAuth]) {
+    if ([viewController.identifier isEqualToString:kIdentifierAuth]) {
         if ([_member.email isEqualToString:_emailField.text]) {
             [self persistMember];
         } else {
@@ -618,7 +625,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         case kEmailChangeAlertTag:
             if (buttonIndex == kEmailChangeButtonContinue) {
                 [self toggleEditMode];
-                [self presentModalViewControllerWithIdentifier:kVCIdentifierAuth data:_emailField.text];
+                [self presentModalViewControllerWithIdentifier:kIdentifierAuth data:_emailField.text];
             } else {
                 [_emailField becomeFirstResponder];
             }

@@ -22,72 +22,9 @@ static NSInteger const kHousemateSheetTag = 0;
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)targetIsMinors
-{
-    BOOL targetIsMinors = NO;
-    
-    targetIsMinors = targetIsMinors || [self targetIs:kOrigoTypePreschoolClass];
-    targetIsMinors = targetIsMinors || [self targetIs:kOrigoTypeSchoolClass];
-    
-    return targetIsMinors;
-}
-
-
 - (BOOL)newHousemateIsGuardian
 {
     return ![_origo userIsMember] && [_membership.member isWardOfUser];
-}
-
-
-- (NSString *)listCellTextForMember:(OMember *)member
-{
-    NSString *text = nil;
-    
-    if ([member isMinor] && [self targetIs:kOrigoTypeResidence]) {
-        text = [member givenName];
-        
-        if ([member hasValueForKey:kPropertyKeyDateOfBirth]) {
-            text = [text stringByAppendingFormat:@" (%d)", [member.dateOfBirth yearsBeforeNow]];
-        }
-    } else {
-        text = member.name;
-    }
-    
-    return text;
-}
-
-
-- (NSString *)listCellDetailTextForMember:(OMember *)member
-{
-    NSString *detailText = nil;
-    
-    if ([member hasValueForKey:kPropertyKeyMobilePhone]) {
-        detailText = [member labeledMobilePhone];
-    }
-    
-    return detailText;
-}
-
-
-- (UIImage *)listCellImageForMember:(OMember *)member
-{
-    UIImage *image = nil;
-    
-    if (member.photo || member.dateOfBirth) {
-        image = [member smallImage];
-    } else {
-        if ([self targetIsMinors]) {
-            if ([_origo memberIsContact:member]) {
-                image = [UIImage imageNamed:[member isMale] ? kIconFileMan : kIconFileWoman];
-            } else {
-                image = [UIImage imageNamed:[member isMale] ? kIconFileBoy : kIconFileGirl];
-            }
-        } else {
-            image = [UIImage imageNamed:[member isMale] ? kIconFileMan : kIconFileWoman];
-        }
-    }
-    
-    return image;
 }
 
 
@@ -119,28 +56,22 @@ static NSInteger const kHousemateSheetTag = 0;
 
 #pragma mark - Selector implementations
 
-- (void)presentActionSheet
-{
-    
-}
-
-
 - (void)addItem
 {
-    NSMutableSet *candidates = [[NSMutableSet alloc] init];
+    NSMutableSet *housemateCandidates = [[NSMutableSet alloc] init];
     
     if ([_origo isOfType:kOrigoTypeResidence]) {
         for (OMember *housemate in [_membership.member housemates]) {
             if (![_origo hasMember:housemate]) {
-                [candidates addObject:housemate];
+                [housemateCandidates addObject:housemate];
             }
         }
     }
     
-    if ([candidates count]) {
-        [self presentHousemateCandidatesSheet:candidates];
+    if ([housemateCandidates count]) {
+        [self presentHousemateCandidatesSheet:housemateCandidates];
     } else {
-        [self presentModalViewControllerWithIdentifier:kVCIdentifierMember data:_origo];
+        [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo];
     }
 }
 
@@ -151,27 +82,25 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     [super viewDidLoad];
     
-    if ([self targetIs:kOrigoTypeResidence] && ![self targetIs:kTargetHousehold]) {
-        self.title = [_origo shortAddress];
-    } else {
-        self.title = _origo.name;
-    }
-
-    NSMutableArray *rightBarButtonItems = [[NSMutableArray alloc] init];
-    
-    if (![self targetIs:kOrigoTypeResidence]) {
-        [rightBarButtonItems addObject:[UIBarButtonItem actionButtonWithTarget:self]];
-    }
-    
     if ([_origo userCanEdit]) {
-        [rightBarButtonItems addObject:[UIBarButtonItem addButtonWithTarget:self]];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
         
         if (self.isModal) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         }
     }
+}
+
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     
-    self.navigationItem.rightBarButtonItems = rightBarButtonItems;
+    if ([self targetIs:kOrigoTypeResidence] && ![self targetIs:kTargetHousehold]) {
+        self.title = [_origo shortAddress];
+    } else {
+        self.title = _origo.name;
+    }
 }
 
 
@@ -228,13 +157,9 @@ static NSInteger const kHousemateSheetTag = 0;
     NSString *text = nil;
     
     if (sectionKey == kSectionKeyContacts) {
-        text = [OStrings stringForKey:strHeaderContacts];
+        text = [[OLanguage nouns][_contact_][pluralIndefinite] capitalizedString];
     } else if (sectionKey == kSectionKeyMembers) {
-        if ([_origo isOfType:kOrigoTypeResidence]) {
-            text = [OStrings stringForKey:strHeaderHouseholdMembers];
-        } else {
-            text = [OStrings stringForKey:strHeaderOrigoMembers];
-        }
+        text = [OStrings labelForOrigoType:_origo.type labelType:kOrigoLabelTypeMemberList];
     }
     
     return text;
@@ -251,7 +176,7 @@ static NSInteger const kHousemateSheetTag = 0;
         text = [OStrings stringForKey:strFooterSchoolClass];
     } else if ([_origo isOfType:kOrigoTypePreschoolClass]) {
         text = [OStrings stringForKey:strFooterPreschoolClass];
-    } else if ([_origo isOfType:kOrigoTypeSportsTeam]) {
+    } else if ([_origo isOfType:kOrigoTypeTeam]) {
         text = [OStrings stringForKey:strFooterSportsTeam];
     } else {
         text = [OStrings stringForKey:strFooterOtherOrigo];
@@ -328,9 +253,9 @@ static NSInteger const kHousemateSheetTag = 0;
 {
     OMember *member = [[self dataAtIndexPath:indexPath] asMembership].member;
     
-    cell.textLabel.text = [self listCellTextForMember:member];
-    cell.detailTextLabel.text = [self listCellDetailTextForMember:member];
-    cell.imageView.image = [self listCellImageForMember:member];
+    cell.textLabel.text = member.name;
+    cell.detailTextLabel.text = [member shortDetails];
+    cell.imageView.image = [member smallImage];
 }
 
 
@@ -350,9 +275,9 @@ static NSInteger const kHousemateSheetTag = 0;
         case kHousemateSheetTag:
             if (buttonIndex == actionSheet.cancelButtonIndex - 1) {
                 if ([self newHousemateIsGuardian]) {
-                    [self presentModalViewControllerWithIdentifier:kVCIdentifierMember data:_origo meta:kMemberTypeGuardian];
+                    [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kMemberTypeGuardian];
                 } else {
-                    [self presentModalViewControllerWithIdentifier:kVCIdentifierMember data:_origo];
+                    [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo];
                 }
             } else if (buttonIndex < actionSheet.cancelButtonIndex - 1) {
                 [_origo addMember:_housemateCandidates[buttonIndex]];

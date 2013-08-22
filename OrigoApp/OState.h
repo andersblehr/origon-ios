@@ -8,16 +8,16 @@
 
 #import "OrigoApp.h"
 
-extern NSString * const kVCIdentifierAuth;
-extern NSString * const kVCIdentifierCalendar;
-extern NSString * const kVCIdentifierMember;
-extern NSString * const kVCIdentifierMemberList;
-extern NSString * const kVCIdentifierMessageList;
-extern NSString * const kVCIdentifierOrigo;
-extern NSString * const kVCIdentifierOrigoList;
-extern NSString * const kVCIdentifierSetting;
-extern NSString * const kVCIdentifierSettingList;
-extern NSString * const kVCIdentifierTaskList;
+extern NSString * const kIdentifierAuth;
+extern NSString * const kIdentifierCalendar;
+extern NSString * const kIdentifierMember;
+extern NSString * const kIdentifierMemberList;
+extern NSString * const kIdentifierMessageList;
+extern NSString * const kIdentifierOrigo;
+extern NSString * const kIdentifierOrigoList;
+extern NSString * const kIdentifierSetting;
+extern NSString * const kIdentifierSettingList;
+extern NSString * const kIdentifierTaskList;
 
 extern NSString * const kActionLoad;
 extern NSString * const kActionSignIn;
@@ -53,6 +53,7 @@ extern NSString * const kTargetExternal;
 
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
+- (BOOL)isCurrent;
 
 - (NSString *)asString;
 

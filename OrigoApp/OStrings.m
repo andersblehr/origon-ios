@@ -21,13 +21,13 @@ NSString * const strButtonSignOut                    = @"strButtonSignOut";
 NSString * const strAlertTextNoInternet              = @"strAlertTextNoInternet";
 NSString * const strAlertTextServerError             = @"strAlertTextServerError";
 NSString * const strAlertTextLocating                = @"strAlertTextLocating";
-NSString * const strArgumentFormatAofB               = @"strArgumentFormatAofB";
 NSString * const strTermYes                          = @"strTermYes";
 NSString * const strTermNo                           = @"strTermNo";
 NSString * const strTermMan                          = @"strTermMan";
 NSString * const strTermBoy                          = @"strTermBoy";
 NSString * const strTermWoman                        = @"strTermWoman";
 NSString * const strTermGirl                         = @"strTermGirl";
+NSString * const strFormatAge                        = @"strFormatAge";
 NSString * const strSeparatorAnd                     = @"strSeparatorAnd";
 
 // OAuthView strings
@@ -72,11 +72,6 @@ NSString * const strTermHimOrHer                     = @"strTermHimOrHer";
 NSString * const strTermForName                      = @"strTermForName";
 
 // OMemberListView strings
-NSString * const strViewTitleMembers                 = @"strViewTitleMembers";
-NSString * const strViewTitleResidence               = @"strViewTitleResidence";
-NSString * const strHeaderContacts                   = @"strHeaderContacts";
-NSString * const strHeaderHouseholdMembers           = @"strHeaderHouseholdMembers";
-NSString * const strHeaderOrigoMembers               = @"strHeaderOrigoMembers";
 NSString * const strFooterResidence                  = @"strFooterResidence";
 NSString * const strFooterSchoolClass                = @"strFooterSchoolClass";
 NSString * const strFooterPreschoolClass             = @"strFooterPreschoolClass";
@@ -98,17 +93,14 @@ NSString * const strPlaceholderTelephone             = @"strPlaceholderTelephone
 
 // OMemberView strings
 NSString * const strViewTitleAboutMe                 = @"strViewTitleAboutMe";
-NSString * const strViewTitleNewMember               = @"strViewTitleNewMember";
-NSString * const strViewTitleNewHouseholdMember      = @"strViewTitleNewHouseholdMember";
-NSString * const strLabelEmail                       = @"strLabelEmail";
-NSString * const strLabelMobilePhone                 = @"strLabelMobilePhone";
 NSString * const strLabelDateOfBirth                 = @"strLabelDateOfBirth";
-NSString * const strLabelAbbreviatedMobilePhone      = @"strLabelAbbreviatedMobilePhone";
+NSString * const strLabelMobilePhone                 = @"strLabelMobilePhone";
+NSString * const strLabelEmail                       = @"strLabelEmail";
 NSString * const strPlaceholderPhoto                 = @"strPlaceholderPhoto";
 NSString * const strPlaceholderName                  = @"strPlaceholderName";
-NSString * const strPlaceholderEmail                 = @"strPlaceholderEmail";
 NSString * const strPlaceholderDateOfBirth           = @"strPlaceholderDateOfBirth";
 NSString * const strPlaceholderMobilePhone           = @"strPlaceholderMobilePhone";
+NSString * const strPlaceholderEmail                 = @"strPlaceholderEmail";
 NSString * const strButtonParentToSome               = @"strButtonParentToSome";
 NSString * const strButtonAddAddress                 = @"strButtonAddAddress";
 NSString * const strButtonChangePassword             = @"strButtonChangePassword";
@@ -158,20 +150,10 @@ NSString * const strFooterCountryInfoNote            = @"strFooterCountryInfoNot
 NSString * const strFooterCountryInfoLocate          = @"strFooterCountryInfoLocate";
 
 // Origo type strings
-NSString * const strOrigoTypeResidence               = @"strOrigoTypeResidence";
-NSString * const strOrigoTypeOrganisation            = @"strOrigoTypeOrganisation";
-NSString * const strOrigoTypeAssociation             = @"strOrigoTypeAssociation";
-NSString * const strOrigoTypeSchoolClass             = @"strOrigoTypeSchoolClass";
-NSString * const strOrigoTypePreschoolClass          = @"strOrigoTypePreschoolClass";
-NSString * const strOrigoTypeSportsTeam              = @"strOrigoTypeSportsTeam";
-NSString * const strOrigoTypeOther                   = @"strOrigoTypeOther";
-NSString * const strNewOrigoOfTypeResidence          = @"strNewOrigoOfTypeResidence";
-NSString * const strNewOrigoOfTypeOrganisation       = @"strNewOrigoOfTypeOrganisation";
-NSString * const strNewOrigoOfTypeAssociation        = @"strNewOrigoOfTypeAssociation";
-NSString * const strNewOrigoOfTypeSchoolClass        = @"strNewOrigoOfTypeSchoolClass";
-NSString * const strNewOrigoOfTypePreschoolClass     = @"strNewOrigoOfTypePreschoolClass";
-NSString * const strNewOrigoOfTypeSportsTeam         = @"strNewOrigoOfTypeSportsTeam";
-NSString * const strNewOrigoOfTypeOther              = @"strNewOrigoOfTypeOther";
+NSString * const kOrigoLabelTypeOrigo                = @"strOrigoLabel";
+NSString * const kOrigoLabelTypeOrigoNew             = @"strNewOrigoLabel";
+NSString * const kOrigoLabelTypeMemberList           = @"strMemberListLabel";
+NSString * const kOrigoLabelTypeMemberNew            = @"strNewMemberLabel";
 
 // Meta strings
 NSString * const metaSupportedCountryCodes           = @"metaSupportedCountryCodes";
@@ -262,28 +244,9 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 
 #pragma mark - Title & text strings
 
-+ (NSString *)titleForOrigoType:(NSString *)type
++ (NSString *)labelForOrigoType:(NSString *)origoType labelType:(NSString *)labelType
 {
-    NSString *stringKey = nil;
-    BOOL isNewOrigo = [[OState s] actionIs:kActionRegister] && [[OMeta m] userIsRegistered];
-    
-    if ([type isEqualToString:kOrigoTypeResidence] || [type isEqualToString:kTargetHousehold]) {
-        stringKey = isNewOrigo ? strNewOrigoOfTypeResidence : strOrigoTypeResidence;
-    } else if ([type isEqualToString:kOrigoTypeOrganisation]) {
-        stringKey = isNewOrigo ? strNewOrigoOfTypeOrganisation : strOrigoTypeOrganisation;
-    } else if ([type isEqualToString:kOrigoTypeAssociation]) {
-        stringKey = isNewOrigo ? strNewOrigoOfTypeAssociation : strOrigoTypeAssociation;
-    } else if ([type isEqualToString:kOrigoTypeSchoolClass]) {
-        stringKey = isNewOrigo ? strNewOrigoOfTypeSchoolClass : strOrigoTypeSchoolClass;
-    } else if ([type isEqualToString:kOrigoTypePreschoolClass]) {
-        stringKey = isNewOrigo ? strNewOrigoOfTypePreschoolClass : strOrigoTypePreschoolClass;
-    } else if ([type isEqualToString:kOrigoTypeSportsTeam]) {
-        stringKey = isNewOrigo ? strNewOrigoOfTypeSportsTeam : strOrigoTypeSportsTeam;
-    } else {
-        stringKey = isNewOrigo ? strNewOrigoOfTypeOther : strOrigoTypeOther;
-    }
-    
-    return [self stringForKey:stringKey];
+    return [OStrings stringForKey:[labelType stringByAppendingString:[origoType stringByCapitalisingFirstLetter]]];
 }
 
 

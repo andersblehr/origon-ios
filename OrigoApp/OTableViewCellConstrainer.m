@@ -47,7 +47,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
             id value = [_cell.entity valueForKey:key];
             
             if (value && [value isKindOfClass:NSString.class]) {
-                elementsAreVisible = ([value length] > 0);
+                elementsAreVisible = [value hasValue];
             } else if (!value) {
                 elementsAreVisible = NO;
             }

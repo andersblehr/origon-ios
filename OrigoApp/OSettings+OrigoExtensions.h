@@ -8,8 +8,6 @@
 
 #import "OrigoApp.h"
 
-#import "OSettings.h"
-
 extern NSString * const kSettingKeyCountry;
 
 @interface OSettings (OrigoExtensions)

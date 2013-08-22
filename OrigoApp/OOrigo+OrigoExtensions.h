@@ -8,15 +8,15 @@
 
 #import "OrigoApp.h"
 
-#import "OOrigo.h"
-
 extern NSString * const kOrigoTypeMemberRoot;
 extern NSString * const kOrigoTypeResidence;
+extern NSString * const kOrigoTypeFriends;
+extern NSString * const kOrigoTypeTeam;
 extern NSString * const kOrigoTypeOrganisation;
-extern NSString * const kOrigoTypeAssociation;
-extern NSString * const kOrigoTypeSchoolClass;
 extern NSString * const kOrigoTypePreschoolClass;
-extern NSString * const kOrigoTypeSportsTeam;
+extern NSString * const kOrigoTypeSchoolClass;
+extern NSString * const kOrigoTypePlaymates;
+extern NSString * const kOrigoTypeMinorTeam;
 extern NSString * const kOrigoTypeOther;
 
 @interface OOrigo (OrigoExtensions)
@@ -37,6 +37,7 @@ extern NSString * const kOrigoTypeOther;
 - (BOOL)userIsMember;
 
 - (BOOL)isOfType:(NSString *)origoType;
+- (BOOL)isJuvenile;
 - (BOOL)hasAdmin;
 - (BOOL)hasMember:(OMember *)member;
 - (BOOL)hasAssociateMember:(OMember *)member;
@@ -45,9 +46,8 @@ extern NSString * const kOrigoTypeOther;
 - (BOOL)indirectlyKnowsAboutMember:(OMember *)member;
 - (BOOL)hasResidentsInCommonWithResidence:(OOrigo *)residence;
 
-- (NSString *)shortAddress;
 - (NSString *)singleLineAddress;
-
-- (UIImage *)listCellImage;
+- (NSString *)shortAddress;
+- (UIImage *)smallImage;
 
 @end

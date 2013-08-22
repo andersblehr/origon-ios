@@ -77,6 +77,7 @@
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="fatherId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isJuvenile" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="mobilePhone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="motherId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
@@ -256,7 +257,7 @@
         <element name="OEventInvitation" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OEventOrigoInvitation" positionX="0" positionY="0" width="128" height="90"/>
         <element name="OExternalDocument" positionX="0" positionY="0" width="128" height="75"/>
-        <element name="OMember" positionX="0" positionY="0" width="128" height="330"/>
+        <element name="OMember" positionX="0" positionY="0" width="128" height="345"/>
         <element name="OMembership" positionX="0" positionY="0" width="128" height="165"/>
         <element name="OMessageBoard" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OMessageItem" positionX="0" positionY="0" width="128" height="120"/>
