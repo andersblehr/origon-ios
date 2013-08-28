@@ -11,7 +11,7 @@
 @interface UIBarButtonItem (OrigoExtensions)
 
 + (UIBarButtonItem *)settingsButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)addButtonWithTarget:(id)target;
++ (UIBarButtonItem *)plusButtonWithTarget:(id)target;
 + (UIBarButtonItem *)nextButtonWithTarget:(id)target;
 + (UIBarButtonItem *)cancelButtonWithTarget:(id)target;
 + (UIBarButtonItem *)doneButtonWithTarget:(id)target;

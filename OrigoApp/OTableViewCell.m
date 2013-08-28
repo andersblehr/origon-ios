@@ -307,7 +307,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 }
                 
                 if ([textField isKindOfClass:OTextField.class]) {
-                    [textField raiseGuardAgainstUnwantedAutolayoutAnimation:NO]; // Hack!
+                    [textField raiseGuardAgainstUnwantedAutolayoutAnimation:NO]; // Lower guard
                 }
             }
         }

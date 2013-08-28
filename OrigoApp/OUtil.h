@@ -10,7 +10,9 @@
 
 @interface OUtil : NSObject
 
++ (BOOL)origoTypeIsJuvenile:(NSString *)origoType;
 + (BOOL)isSupportedCountryCode:(NSString *)countryCode;
+
 + (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode;
 + (NSString *)givenNameFromFullName:(NSString *)fullName;
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;

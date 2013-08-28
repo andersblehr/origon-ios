@@ -13,6 +13,19 @@
 
 #pragma mark - Convenience methods
 
++ (BOOL)origoTypeIsJuvenile:(NSString *)origoType
+{
+    BOOL isJuvenile = NO;
+    
+    isJuvenile = isJuvenile || [origoType isEqualToString:kOrigoTypePreschoolClass];
+    isJuvenile = isJuvenile || [origoType isEqualToString:kOrigoTypeSchoolClass];
+    isJuvenile = isJuvenile || [origoType isEqualToString:kOrigoTypePlaymates];
+    isJuvenile = isJuvenile || [origoType isEqualToString:kOrigoTypeMinorTeam];
+    
+    return isJuvenile;
+}
+
+
 + (BOOL)isSupportedCountryCode:(NSString *)countryCode
 {
     return [[[OMeta m] supportedCountryCodes] containsObject:countryCode];

@@ -192,14 +192,7 @@ NSString * const kOrigoTypeOther = @"other";
 
 - (BOOL)isJuvenile
 {
-    BOOL isJuvenile = NO;
-    
-    isJuvenile = isJuvenile || [self isOfType:kOrigoTypePreschoolClass];
-    isJuvenile = isJuvenile || [self isOfType:kOrigoTypeSchoolClass];
-    isJuvenile = isJuvenile || [self isOfType:kOrigoTypePlaymates];
-    isJuvenile = isJuvenile || [self isOfType:kOrigoTypeMinorTeam];
-    
-    return isJuvenile;
+    return [OUtil origoTypeIsJuvenile:self.type];
 }
 
 

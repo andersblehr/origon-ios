@@ -33,6 +33,7 @@ extern NSString * const kTargetEmail;
 extern NSString * const kTargetUser;
 extern NSString * const kTargetWard;
 extern NSString * const kTargetHousehold;
+extern NSString * const kTargetJuvenile;
 extern NSString * const kTargetExternal;
 
 @interface OState : NSObject

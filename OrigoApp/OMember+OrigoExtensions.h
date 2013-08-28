@@ -10,6 +10,8 @@
 
 extern NSString * const kMemberTypeGuardian;
 
+extern NSString * const kInferredPropertyKeyAge;
+
 @interface OMember (OrigoExtensions)
 
 - (OMembership *)rootMembership;
@@ -46,6 +48,7 @@ extern NSString * const kMemberTypeGuardian;
 - (NSArray *)pronoun;
 - (NSArray *)parentNoun;
 
+- (NSString *)age;
 - (NSString *)givenName;
 - (NSString *)nameWithParentTitle;
 - (NSString *)appellation;

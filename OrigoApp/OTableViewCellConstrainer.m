@@ -84,7 +84,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
             }
             
             if ([textField isKindOfClass:OTextField.class]) {
-                [textField raiseGuardAgainstUnwantedAutolayoutAnimation:YES]; // Hack!
+                [textField raiseGuardAgainstUnwantedAutolayoutAnimation:YES]; // Raise guard
             }
         }
     } else {

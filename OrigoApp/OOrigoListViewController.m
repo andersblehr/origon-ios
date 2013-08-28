@@ -187,7 +187,7 @@ static NSInteger const kUserRow = 0;
     }
     
     if ([[OMeta m].user isTeenOrOlder]) {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
     }
 }
 

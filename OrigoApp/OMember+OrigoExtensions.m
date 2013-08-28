@@ -10,6 +10,8 @@
 
 NSString * const kMemberTypeGuardian = @"guardian";
 
+NSString * const kInferredPropertyKeyAge = @"age";
+
 
 @implementation OMember (OrigoExtensions)
 
@@ -404,6 +406,12 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 #pragma mark - Data formatting shorthands
 
+- (NSString *)age
+{
+    return [NSString stringWithFormat:[OStrings stringForKey:strFormatAge], [self.dateOfBirth yearsBeforeNow]];
+}
+
+
 - (NSString *)givenName
 {
     return [OUtil givenNameFromFullName:self.name];
@@ -435,12 +443,10 @@ NSString * const kMemberTypeGuardian = @"guardian";
     NSString *details = [self.mobilePhone hasValue] ? self.mobilePhone : self.email;
     
     if ([self isMinor]) {
-        NSString *age = [NSString stringWithFormat:[OStrings stringForKey:strFormatAge], [self.dateOfBirth yearsBeforeNow]];
-        
         if (details) {
-            details = [age stringByAppendingString:details separator:kSeparatorComma];
+            details = [[self age] stringByAppendingString:details separator:kSeparatorComma];
         } else {
-            details = age;
+            details = [self age];
         }
     }
     
@@ -487,6 +493,18 @@ NSString * const kMemberTypeGuardian = @"guardian";
     }
     
     return target;
+}
+
+
+- (id)valueForInferredPropertyKey:(NSString *)key
+{
+    id value = nil;
+    
+    if ([key isEqualToString:kInferredPropertyKeyAge] && self.dateOfBirth) {
+        value = [self age];
+    }
+    
+    return value;
 }
 
 @end

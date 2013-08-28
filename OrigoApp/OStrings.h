@@ -159,7 +159,7 @@ extern NSString * const kOrigoLabelTypeMemberNew;
 extern NSString * const metaSupportedCountryCodes;
 extern NSString * const metaContactRolesSchoolClass;
 extern NSString * const metaContactRolesPreschoolClass;
-extern NSString * const metaContactRolesAssociation;
+extern NSString * const metaContactRolesOrganisation;
 extern NSString * const metaContactRolesSportsTeam;
 
 @interface OStrings : NSObject
