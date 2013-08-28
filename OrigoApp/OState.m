@@ -33,6 +33,7 @@ NSString * const kTargetEmail = @"email";
 NSString * const kTargetUser = @"user";
 NSString * const kTargetWard = @"ward";
 NSString * const kTargetHousehold = @"household";
+NSString * const kTargetJuvenile = @"juvenile";
 NSString * const kTargetExternal = @"external";
 
 static OState *s = nil;
@@ -115,6 +116,8 @@ static OState *s = nil;
         targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetHousehold];
         targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetUser];
         targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetWard];
+    } else if ([target isEqualToString:kTargetJuvenile]) {
+        targetIsCurrent = [OUtil origoTypeIsJuvenile:_target];
     } else if ([target isEqualToString:kOrigoTypeResidence]) {
         targetIsCurrent = targetIsCurrent || [_target isEqualToString:kOrigoTypeResidence];
         targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetHousehold];

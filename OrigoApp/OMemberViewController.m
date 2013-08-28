@@ -81,7 +81,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 [self.dismisser dismissModalViewController:self reload:YES];
             }
         } else /* if (![self targetIs:kTargetHousehold]) */ {
-            [self.dismisser dismissModalViewController:self reload:YES]; // Temporary workaround
+            [self.dismisser dismissModalViewController:self reload:YES]; // Work in progress
         }
     }
 }

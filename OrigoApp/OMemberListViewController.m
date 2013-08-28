@@ -83,7 +83,7 @@ static NSInteger const kHousemateSheetTag = 0;
     [super viewDidLoad];
     
     if ([_origo userCanEdit]) {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem addButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
         
         if (self.isModal) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];

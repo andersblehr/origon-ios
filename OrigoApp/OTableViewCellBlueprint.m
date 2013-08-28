@@ -76,6 +76,8 @@ CGFloat const kMinimumCellPadding = 0.1f;
             
             if ([state targetIs:kTargetHousehold]) {
                 _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
+            } else if ([state targetIs:kTargetJuvenile] && ![state actionIs:kActionInput]) {
+                _detailKeys = @[kInferredPropertyKeyAge, kPropertyKeyMobilePhone, kPropertyKeyEmail];
             } else {
                 _detailKeys = @[kPropertyKeyMobilePhone, kPropertyKeyEmail];
             }

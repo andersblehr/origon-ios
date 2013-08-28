@@ -28,6 +28,12 @@
 }
 
 
+- (BOOL)isInferredPropertyKey:(NSString *)propertyKey
+{
+    return [propertyKey isEqualToString:kInferredPropertyKeyAge];
+}
+
+
 - (BOOL)isTransientProperty:(NSString *)propertyKey
 {
     NSArray *transientPropertyKeys = @[kPropertyKeyPasswordHash, kPropertyKeyHashCode, kPropertyKeyIsAwaitingDeletion];
@@ -77,6 +83,12 @@
     }
     
     return hasValue;
+}
+
+
+- (id)valueForInferredPropertyKey:(NSString *)key
+{
+    return @"OVERRIDE IN SUBCLASS!";
 }
 
 
@@ -273,6 +285,22 @@
     }
     
     return expires;
+}
+
+
+#pragma mark - NSManagedObject overrides
+
+- (id)valueForKey:(NSString *)key
+{
+    id value = nil;
+    
+    if ([self isInferredPropertyKey:key]) {
+        value = [self valueForInferredPropertyKey:key];
+    } else {
+        value = [super valueForKey:key];
+    }
+    
+    return value;
 }
 
 @end

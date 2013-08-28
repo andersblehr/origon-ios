@@ -159,7 +159,7 @@ NSString * const kOrigoLabelTypeMemberNew            = @"strNewMemberLabel";
 NSString * const metaSupportedCountryCodes           = @"metaSupportedCountryCodes";
 NSString * const metaContactRolesSchoolClass         = @"metaContactRolesSchoolClass";
 NSString * const metaContactRolesPreschoolClass      = @"metaContactRolesPreschoolClass";
-NSString * const metaContactRolesAssociation         = @"metaContactRolesAssociation";
+NSString * const metaContactRolesOrganisation         = @"metaContactRolesAssociation";
 NSString * const metaContactRolesSportsTeam          = @"metaContactRolesSportsTeam";
 
 static NSDictionary const *strings = nil;
@@ -168,6 +168,7 @@ static NSInteger const kDaysBetweenStringFetches = 0; // TODO: Set to 14
 
 static NSString * const kKeyPrefixLabel = @"strLabel";
 static NSString * const kKeyPrefixPlaceholder = @"strPlaceholder";
+static NSString * const kKeyPrefixFooter = @"strFooter";
 static NSString * const kKeyPrefixContactRole = @"strContactRole";
 static NSString * const kKeyPrefixSettingTitle = @"strSettingTitle";
 static NSString * const kKeyPrefixSettingText = @"strSettingText";
