@@ -10,8 +10,16 @@
 
 @interface OValidator : NSObject
 
-+ (BOOL)value:(id)value isValidForKey:(NSString *)key;
++ (NSArray *)nameKeys;
++ (NSArray *)dateKeys;
++ (NSArray *)phoneKeys;
++ (NSArray *)emailKeys;
++ (NSArray *)passwordKeys;
++ (NSArray *)inferredKeys;
 
++ (NSString *)propertyKeyForKey:(NSString *)key;
+
++ (BOOL)value:(id)value isValidForKey:(NSString *)key;
 + (BOOL)valueIsEmailAddress:(id)value;
 + (BOOL)valueIsName:(id)value;
 

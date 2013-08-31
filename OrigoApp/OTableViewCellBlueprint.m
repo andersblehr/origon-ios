@@ -17,20 +17,9 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 #pragma mark - Auxiliary methods
 
-- (void)finaliseKeys
+- (NSArray *)textViewKeys
 {
-    if (_titleKey) {
-        _allTextFieldKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
-    } else {
-        _allTextFieldKeys = _detailKeys;
-    }
-
-    _nameKeys = @[kPropertyKeyName];
-    _dateKeys = @[kPropertyKeyDateOfBirth];
-    _numberKeys = @[kPropertyKeyMobilePhone, kPropertyKeyTelephone];
-    _emailKeys = @[kInputKeyAuthEmail, kPropertyKeyEmail];
-    _passwordKeys = @[kInputKeyPassword, kInputKeyRepeatPassword];
-    _textViewKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
+    return @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
 }
 
 
@@ -46,14 +35,12 @@ CGFloat const kMinimumCellPadding = 0.1f;
         _hasPhoto = NO;
         
         if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
-            _titleKey = kInputKeySignIn;
-            _detailKeys = @[kInputKeyAuthEmail, kInputKeyPassword];
+            _titleKey = kInterfaceKeySignIn;
+            _detailKeys = @[kInterfaceKeyAuthEmail, kInterfaceKeyPassword];
         } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-            _titleKey = kInputKeyActivate;
-            _detailKeys = @[kInputKeyActivationCode, kInputKeyRepeatPassword];
+            _titleKey = kInterfaceKeyActivate;
+            _detailKeys = @[kInterfaceKeyActivationCode, kInterfaceKeyRepeatPassword];
         }
-        
-        [self finaliseKeys];
     }
     
     return self;
@@ -76,8 +63,8 @@ CGFloat const kMinimumCellPadding = 0.1f;
             
             if ([state targetIs:kTargetHousehold]) {
                 _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
-            } else if ([state targetIs:kTargetJuvenile] && ![state actionIs:kActionInput]) {
-                _detailKeys = @[kInferredPropertyKeyAge, kPropertyKeyMobilePhone, kPropertyKeyEmail];
+            } else if ([state targetIs:kTargetJuvenile] && ![state targetIs:kTargetHousehold]) {
+                _detailKeys = @[kInterfaceKeyAge, kPropertyKeyMobilePhone, kPropertyKeyEmail];
             } else {
                 _detailKeys = @[kPropertyKeyMobilePhone, kPropertyKeyEmail];
             }
@@ -95,13 +82,11 @@ CGFloat const kMinimumCellPadding = 0.1f;
             if ([state targetIs:kOrigoTypeResidence]) {
                 _detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
             } else if ([state targetIs:kOrigoTypeOrganisation]) {
-                _detailKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress, kPropertyKeyTelephone];
+                _detailKeys = @[kInterfaceKeyPurpose, kPropertyKeyAddress, kPropertyKeyTelephone];
             } else {
                 _detailKeys = @[kPropertyKeyDescriptionText];
             }
         }
-        
-        [self finaliseKeys];
     }
     
     return self;
@@ -114,7 +99,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
 {
     id textField = nil;
     
-    if ([_textViewKeys containsObject:key]) {
+    if ([[self textViewKeys] containsObject:[OValidator propertyKeyForKey:key]]) {
         textField = [[OTextView alloc] initWithKey:key blueprint:self delegate:delegate];
     } else {
         textField = [[OTextField alloc] initWithKey:key delegate:delegate];
@@ -122,20 +107,20 @@ CGFloat const kMinimumCellPadding = 0.1f;
     
     if ([key isEqualToString:_titleKey]) {
         [textField setIsTitleField:YES];
-    } else if ([_dateKeys containsObject:key]) {
+    } else if ([[OValidator dateKeys] containsObject:key]) {
         [textField setIsDateField:YES];
     }
     
-    if ([_numberKeys containsObject:key]) {
+    if ([[OValidator phoneKeys] containsObject:key]) {
         [textField setKeyboardType:UIKeyboardTypeNumberPad];
-    } else if ([_emailKeys containsObject:key]) {
+    } else if ([[OValidator emailKeys] containsObject:key]) {
         [textField setKeyboardType:UIKeyboardTypeEmailAddress];
     } else {
         [textField setKeyboardType:UIKeyboardTypeDefault];
         
-        if ([_nameKeys containsObject:key]) {
+        if ([[OValidator nameKeys] containsObject:key]) {
             [textField setAutocapitalizationType:UITextAutocapitalizationTypeWords];
-        } else if ([_passwordKeys containsObject:key]) {
+        } else if ([[OValidator passwordKeys] containsObject:key]) {
             [textField setSecureTextEntry:YES];
             [textField setClearsOnBeginEditing:YES];
         }
@@ -161,7 +146,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
     
     for (NSString *key in _detailKeys) {
         if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:key]) {
-            if ([_textViewKeys containsObject:key]) {
+            if ([[self textViewKeys] containsObject:[OValidator propertyKeyForKey:key]]) {
                 if (cell) {
                     height += [[cell textFieldForKey:key] height];
                 } else if ([entity hasValueForKey:key]) {
@@ -176,6 +161,22 @@ CGFloat const kMinimumCellPadding = 0.1f;
     }
     
     return height;
+}
+
+
+#pragma mark - Custom accessors
+
+- (NSArray *)allTextFieldKeys
+{
+    if (!_allTextFieldKeys) {
+        if (_titleKey) {
+            _allTextFieldKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
+        } else {
+            _allTextFieldKeys = _detailKeys;
+        }
+    }
+    
+    return _allTextFieldKeys;
 }
 
 @end

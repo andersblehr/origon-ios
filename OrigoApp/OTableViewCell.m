@@ -30,13 +30,6 @@ static CGFloat const kShakeTranslationY = 0.f;
 static CGFloat const kShakeRepeatCount = 3.f;
 
 
-@interface OTableViewCell ()
-
-@property (strong, nonatomic) OState *state;
-
-@end
-
-
 @implementation OTableViewCell
 
 #pragma mark - Auxiliary methods

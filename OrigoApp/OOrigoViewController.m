@@ -71,18 +71,6 @@ static NSInteger const kSectionKeyOrigo = 0;
 }
 
 
-- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    return self.canEdit && ![self actionIs:kActionRegister];
-}
-
-
-- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
-{
-    return [OStrings stringForKey:strFooterTapToEdit];
-}
-
-
 #pragma mark - OTableViewInputDelegate conformance
 
 - (BOOL)inputIsValid

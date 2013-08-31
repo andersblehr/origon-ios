@@ -85,6 +85,7 @@ NSString * const strButtonDeleteMember               = @"strButtonDeleteMember";
 NSString * const strDefaultResidenceName             = @"strDefaultResidenceName";
 NSString * const strViewTitleNewOrigo                = @"strViewTitleNewOrigo";
 NSString * const strLabelAddress                     = @"strLabelAddress";
+NSString * const strLabelPurpose                     = @"strLabelPurpose";
 NSString * const strLabelDescriptionText             = @"strLabelDescriptionText";
 NSString * const strLabelTelephone                   = @"strLabelTelephone";
 NSString * const strPlaceholderAddress               = @"strPlaceholderAddress";
@@ -211,7 +212,7 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 }
 
 
-#pragma mark - Interface strings
+#pragma mark - Display strings
 
 + (NSString *)stringForKey:(NSString *)key
 {
@@ -243,11 +244,15 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 }
 
 
-#pragma mark - Title & text strings
-
 + (NSString *)labelForOrigoType:(NSString *)origoType labelType:(NSString *)labelType
 {
-    return [OStrings stringForKey:[labelType stringByAppendingString:[origoType stringByCapitalisingFirstLetter]]];
+    return [OStrings stringForKey:[labelType stringByAppendingCapitalisedString:origoType]];
+}
+
+
++ (NSString *)footerForOrigoType:(NSString *)origoType
+{
+    return [OStrings stringForKey:[kKeyPrefixFooter stringByAppendingCapitalisedString:origoType]];
 }
 
 

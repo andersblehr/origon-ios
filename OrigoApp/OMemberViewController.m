@@ -275,12 +275,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
-- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    return ([super hasFooterForSectionWithKey:sectionKey] && self.canEdit);
-}
-
-
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
 {
     NSString *text = nil;
@@ -312,12 +306,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     return [text capitalizedString];
-}
-
-
-- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
-{
-    return [OStrings stringForKey:strFooterTapToEdit];
 }
 
 

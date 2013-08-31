@@ -148,7 +148,7 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return ([super hasFooterForSectionWithKey:sectionKey] && [_origo userCanEdit]);
+    return [self isLastSectionKey:sectionKey] && [_origo userCanEdit];
 }
 
 
@@ -168,21 +168,7 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    NSString *text = nil;
-    
-    if ([_origo isOfType:kOrigoTypeResidence]) {
-        text = [OStrings stringForKey:strFooterResidence];
-    } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
-        text = [OStrings stringForKey:strFooterSchoolClass];
-    } else if ([_origo isOfType:kOrigoTypePreschoolClass]) {
-        text = [OStrings stringForKey:strFooterPreschoolClass];
-    } else if ([_origo isOfType:kOrigoTypeTeam]) {
-        text = [OStrings stringForKey:strFooterSportsTeam];
-    } else {
-        text = [OStrings stringForKey:strFooterOtherOrigo];
-    }
-    
-    return text;
+    return [OStrings footerForOrigoType:_origo.type];
 }
 
 

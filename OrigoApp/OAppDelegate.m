@@ -21,15 +21,6 @@ static NSString * const kTimeZoneNameUTC = @"UTC";
 static NSString * const kPersistentStoreURLFormat = @"OrigoApp^%@.sqlite";
 
 
-@interface OAppDelegate ()
-
-@property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
-@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-@property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-
-@end
-
-
 @implementation OAppDelegate
 
 #pragma mark - Custom exception handler

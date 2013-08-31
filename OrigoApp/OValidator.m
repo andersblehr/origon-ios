@@ -8,27 +8,112 @@
 
 #import "OValidator.h"
 
+static NSArray *_nameKeys = nil;
+static NSArray *_dateKeys = nil;
+static NSArray *_phoneKeys = nil;
+static NSArray *_emailKeys = nil;
+static NSArray *_passwordKeys = nil;
+static NSArray *_inferredKeys = nil;
+
+static NSDictionary *_keyMappings = nil;
+
 static NSInteger const kMinimumPassordLength = 6;
 static NSInteger const kMinimumPhoneNumberLength = 5;
 
 
 @implementation OValidator
 
+#pragma mark - Key categorisation
+
++ (NSArray *)nameKeys
+{
+    if (!_nameKeys) {
+        _nameKeys = @[kPropertyKeyName];
+    }
+
+    return _nameKeys;
+}
+
+
++ (NSArray *)dateKeys
+{
+    if (!_dateKeys) {
+        _dateKeys = @[kPropertyKeyDateOfBirth];
+    }
+    
+    return _dateKeys;
+}
+
+
++ (NSArray *)phoneKeys
+{
+    if (!_phoneKeys) {
+        _phoneKeys = @[kPropertyKeyMobilePhone, kPropertyKeyTelephone];
+    }
+    
+    return _phoneKeys;
+}
+
+
++ (NSArray *)emailKeys
+{
+    if (!_emailKeys) {
+        _emailKeys = @[kInterfaceKeyAuthEmail, kPropertyKeyEmail];
+    }
+    
+    return _emailKeys;
+}
+
+
++ (NSArray *)passwordKeys
+{
+    if (!_passwordKeys) {
+        _passwordKeys = @[kInterfaceKeyPassword, kInterfaceKeyRepeatPassword];
+    }
+    
+    return _passwordKeys;
+}
+
+
++ (NSArray *)inferredKeys
+{
+    if (!_inferredKeys) {
+        _inferredKeys = @[kInterfaceKeyAge];
+    }
+    
+    return _inferredKeys;
+}
+
+
+#pragma mark - Key mapping
+
++ (NSString *)propertyKeyForKey:(NSString *)key
+{
+    if (!_keyMappings) {
+        _keyMappings = @{kInterfaceKeyPurpose : kPropertyKeyDescriptionText};
+    }
+    
+    return [[_keyMappings allKeys] containsObject:key] ? _keyMappings[key] : key;
+}
+
+
+#pragma mark - Validation
+
 + (BOOL)value:(id)value isValidForKey:(NSString *)key
 {
     BOOL valueIsValid = NO;
     
     if (value) {
-        if ([key isEqualToString:kPropertyKeyEmail] || [key isEqualToString:kInputKeyAuthEmail]) {
-            valueIsValid = [self valueIsEmailAddress:value];
-        } else if ([key isEqualToString:kInputKeyPassword]) {
-            valueIsValid = ([value length] >= kMinimumPassordLength);
-        } else if ([key isEqualToString:kPropertyKeyName]) {
+        if ([[OValidator nameKeys] containsObject:key]) {
             valueIsValid = [self valueIsName:value];
-        } else if ([key isEqualToString:kPropertyKeyMobilePhone]) {
-            valueIsValid = ([value length] >= kMinimumPhoneNumberLength);
-        } else if ([value isKindOfClass:NSDate.class]) {
+        } else if ([[OValidator dateKeys] containsObject:key]) {
             valueIsValid = YES;
+        } else if ([[OValidator phoneKeys] containsObject:key]) {
+            valueIsValid = ([value length] >= kMinimumPhoneNumberLength);
+        } else if ([[OValidator emailKeys] containsObject:key]) {
+            valueIsValid = [self valueIsEmailAddress:value];
+        } else if ([[OValidator passwordKeys] containsObject:key]) {
+            valueIsValid = ([value length] >= kMinimumPassordLength);
         }
     }
     

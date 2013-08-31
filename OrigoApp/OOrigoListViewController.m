@@ -259,7 +259,7 @@ static NSInteger const kUserRow = 0;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return ([super hasFooterForSectionWithKey:sectionKey] && [[OMeta m].user isTeenOrOlder]);
+    return ([self isLastSectionKey:sectionKey] && [[OMeta m].user isTeenOrOlder]);
 }
 
 

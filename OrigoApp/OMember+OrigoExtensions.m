@@ -10,8 +10,6 @@
 
 NSString * const kMemberTypeGuardian = @"guardian";
 
-NSString * const kInferredPropertyKeyAge = @"age";
-
 
 @implementation OMember (OrigoExtensions)
 
@@ -496,11 +494,11 @@ NSString * const kInferredPropertyKeyAge = @"age";
 }
 
 
-- (id)valueForInferredPropertyKey:(NSString *)key
+- (id)valueForInferredKey:(NSString *)key
 {
     id value = nil;
     
-    if ([key isEqualToString:kInferredPropertyKeyAge] && self.dateOfBirth) {
+    if ([key isEqualToString:kInterfaceKeyAge] && self.dateOfBirth) {
         value = [self age];
     }
     

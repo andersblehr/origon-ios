@@ -15,7 +15,7 @@
 
 + (UIBarButtonItem *)settingsButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"14-gear.png"] style:UIBarButtonItemStylePlain target:target action:@selector(openSettings)];
+    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSettings] style:UIBarButtonItemStylePlain target:target action:@selector(openSettings)];
 }
 
 

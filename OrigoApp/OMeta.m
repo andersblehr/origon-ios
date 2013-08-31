@@ -30,7 +30,7 @@ NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
 NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
 NSString * const kIconFileInfant = @"76-baby_black.png";
 NSString * const kIconFileLocationArrow = @"193-location-arrow.png";
-
+NSString * const kIconFileSettings = @"14-gear.png";
 NSString * const kIconFilePlacePhoneCall = @"75-phone.png";
 NSString * const kIconFileSendText = @"glyphicons_245_chat.png";
 NSString * const kIconFileSendEmail = @"18-envelope.png";
@@ -40,12 +40,14 @@ NSString * const kGenderMaleConfirmed = @"M!";
 NSString * const kGenderFemale = @"F";
 NSString * const kGenderFemaleConfirmed = @"F!";
 
-NSString * const kInputKeyActivate = @"activate";
-NSString * const kInputKeyActivationCode = @"activationCode";
-NSString * const kInputKeyAuthEmail = @"authEmail";
-NSString * const kInputKeyPassword = @"password";
-NSString * const kInputKeyRepeatPassword = @"repeatPassword";
-NSString * const kInputKeySignIn = @"signIn";
+NSString * const kInterfaceKeyActivate = @"activate";
+NSString * const kInterfaceKeyActivationCode = @"activationCode";
+NSString * const kInterfaceKeyAge = @"age";
+NSString * const kInterfaceKeyAuthEmail = @"authEmail";
+NSString * const kInterfaceKeyPassword = @"password";
+NSString * const kInterfaceKeyPurpose = @"purpose";
+NSString * const kInterfaceKeyRepeatPassword = @"repeatPassword";
+NSString * const kInterfaceKeySignIn = @"signIn";
 
 NSString * const kJSONKeyActivationCode = @"activationCode";
 NSString * const kJSONKeyDeviceId = @"deviceId";
@@ -82,19 +84,7 @@ NSString * const kDefaultsKeyStringDate = @"origo.date.strings";
 static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
 
-static OMeta *m = nil;
-
-
-@interface OMeta ()
-
-@property (strong, nonatomic) NSString *authToken;
-
-@property (strong, nonatomic) OMember *user;
-@property (strong, nonatomic) OReplicator *replicator;
-@property (strong, nonatomic) OSwitchboard *switchboard;
-@property (strong, nonatomic) OLocator *locator;
-
-@end
+static OMeta *_m = nil;
 
 
 @implementation OMeta
@@ -203,11 +193,11 @@ static OMeta *m = nil;
 
 + (OMeta *)m
 {
-    if (!m) {
-        m = [[super allocWithZone:nil] init];
+    if (!_m) {
+        _m = [[super allocWithZone:nil] init];
     }
     
-    return m;
+    return _m;
 }
 
 

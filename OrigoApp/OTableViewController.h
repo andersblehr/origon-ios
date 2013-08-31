@@ -27,6 +27,7 @@ extern NSString * const kCustomValue;
     
     NSNumber *_lastSectionKey;
     NSIndexPath *_selectedIndexPath;
+    UIActivityIndicatorView *_activityIndicator;
     
     UIBarButtonItem *_nextButton;
     UIBarButtonItem *_doneButton;
@@ -67,6 +68,7 @@ extern NSString * const kCustomValue;
 - (id)dataAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
 - (NSArray *)dataInSectionWithKey:(NSInteger)sectionKey;
 
+- (BOOL)isLastSectionKey:(NSInteger)sectionKey;
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber;

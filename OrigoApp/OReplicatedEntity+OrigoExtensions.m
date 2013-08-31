@@ -28,12 +28,6 @@
 }
 
 
-- (BOOL)isInferredPropertyKey:(NSString *)propertyKey
-{
-    return [propertyKey isEqualToString:kInferredPropertyKeyAge];
-}
-
-
 - (BOOL)isTransientProperty:(NSString *)propertyKey
 {
     NSArray *transientPropertyKeys = @[kPropertyKeyPasswordHash, kPropertyKeyHashCode, kPropertyKeyIsAwaitingDeletion];
@@ -64,7 +58,7 @@
 
 - (NSString *)asTarget
 {
-    return @"OVERRIDE IN SUBCLASS!";
+    return @"OVERRIDE IN SUBCLASS CATEGORY!";
 }
 
 
@@ -76,7 +70,7 @@
     
     BOOL hasValue = NO;
     
-    if (value && [value isKindOfClass:NSString.class]) {
+    if ([value isKindOfClass:NSString.class]) {
         hasValue = ([value length] > 0);
     } else {
         hasValue = (value != nil);
@@ -86,9 +80,9 @@
 }
 
 
-- (id)valueForInferredPropertyKey:(NSString *)key
+- (id)valueForInferredKey:(NSString *)key
 {
-    return @"OVERRIDE IN SUBCLASS!";
+    return @"OVERRIDE IN SUBCLASS CATEGORY!";
 }
 
 
@@ -278,7 +272,7 @@
 
 - (NSString *)expiresInTimeframe
 {
-    NSString *expires = self.entity.userInfo[@"expires"];
+    NSString *expires = [self.entity userInfo][@"expires"];
     
     if (!expires) {
         // TODO: Keep track of and act on entity expiry dates
@@ -290,15 +284,22 @@
 
 #pragma mark - NSManagedObject overrides
 
+- (void)setValue:(id)value forKey:(NSString *)key
+{
+    [super setValue:value forKey:[OValidator propertyKeyForKey:key]];
+}
+
+
 - (id)valueForKey:(NSString *)key
 {
     id value = nil;
     
-    if ([self isInferredPropertyKey:key]) {
-        value = [self valueForInferredPropertyKey:key];
+    if ([[OValidator inferredKeys] containsObject:key]) {
+        value = [self valueForInferredKey:key];
     } else {
-        value = [super valueForKey:key];
+        value = [super valueForKey:[OValidator propertyKeyForKey:key]];
     }
+
     
     return value;
 }

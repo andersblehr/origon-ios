@@ -14,12 +14,7 @@ extern CGFloat const kMinimumCellPadding;
 
 @interface OTableViewCellBlueprint : NSObject {
 @private
-    NSArray *_nameKeys;
-    NSArray *_dateKeys;
-    NSArray *_numberKeys;
-    NSArray *_emailKeys;
-    NSArray *_passwordKeys;
-    NSArray *_textViewKeys;
+    NSArray *_allTextFieldKeys;
 }
 
 @property (nonatomic, readonly) BOOL hasPhoto;

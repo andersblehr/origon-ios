@@ -12,20 +12,13 @@ NSString * const kEntityRegistrationCell = @"registration";
 NSString * const kCustomCell = @"customCell";
 NSString * const kCustomValue = @"customValue";
 
-static NSString * const kViewControllerSuffix = @"ViewController";
+static NSString * const kViewControllerSuffixDefault = @"ViewController";
 static NSString * const kViewControllerSuffixList = @"ListViewController";
 
 static NSInteger const kToolbarHeight = 44.f;
 
 static UIViewController * _reauthenticationDismisser;
 static BOOL _needsResetViewControllers;
-
-
-@interface OTableViewController ()
-
-@property (strong, nonatomic) UIActivityIndicatorView *activityIndicator;
-
-@end
 
 
 @implementation OTableViewController
@@ -270,6 +263,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - View layout
 
+- (BOOL)isLastSectionKey:(NSInteger)sectionKey
+{
+    return ([self sectionNumberForSectionKey:sectionKey] == [self.tableView numberOfSections] - 1);
+}
+
+
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey
 {
     return [_sectionKeys containsObject:@(sectionKey)];
@@ -475,15 +474,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     NSString *longName = NSStringFromClass(self.class);
     NSString *shortName = [longName substringFromIndex:1];
-    NSString *controllerSuffix = [self isListViewController] ? kViewControllerSuffixList : kViewControllerSuffix;
-    _identifier = [[shortName substringToIndex:[shortName rangeOfString:controllerSuffix].location] lowercaseString];
+    NSString *viewControllerSuffix = [self isListViewController] ? kViewControllerSuffixList : kViewControllerSuffixDefault;
+    _identifier = [[shortName substringToIndex:[shortName rangeOfString:viewControllerSuffix].location] lowercaseString];
     
     if ([self isListViewController]) {
         _modalImpliesRegistration = NO;
         _identifier = [_identifier stringByAppendingString:@"s"];
     } else {
         _modalImpliesRegistration = YES;
-        _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kViewControllerSuffix].location]);
+        _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kViewControllerSuffixDefault].location]);
     }
     
     if (!self.navigationController || ([self.navigationController.viewControllers count] == 1)) {
@@ -659,9 +658,19 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    NSInteger sectionNumber = [self sectionNumberForSectionKey:sectionKey];
+    return (sectionKey == _detailSectionKey) && ![self actionIs:kActionRegister] && self.canEdit;
+}
+
+
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+{
+    NSString *text = nil;
     
-    return ((sectionNumber == [self.tableView numberOfSections] - 1) && ![self actionIs:kActionRegister]);
+    if ((sectionKey == _detailSectionKey) && ![self actionIs:kActionRegister] && self.canEdit) {
+        text = [OStrings stringForKey:strFooterTapToEdit];
+    }
+    
+    return text;
 }
 
 

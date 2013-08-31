@@ -85,6 +85,7 @@ extern NSString * const strButtonDeleteMember;
 extern NSString * const strDefaultResidenceName;
 extern NSString * const strViewTitleNewOrigo;
 extern NSString * const strLabelAddress;
+extern NSString * const strLabelPurpose;
 extern NSString * const strLabelDescriptionText;
 extern NSString * const strLabelTelephone;
 extern NSString * const strPlaceholderAddress;
@@ -172,6 +173,7 @@ extern NSString * const metaContactRolesSportsTeam;
 + (NSString *)placeholderForKey:(NSString *)key;
 
 + (NSString *)labelForOrigoType:(NSString *)origoType labelType:(NSString *)labelType;
++ (NSString *)footerForOrigoType:(NSString *)origoType;
 + (NSString *)titleForContactRole:(NSString *)contactRole;
 + (NSString *)titleForSettingKey:(NSString *)settingKey;
 + (NSString *)labelForSettingKey:(NSString *)settingKey;
