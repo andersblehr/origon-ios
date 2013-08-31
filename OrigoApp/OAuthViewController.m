@@ -229,11 +229,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     if ([self actionIs:kActionSignIn]) {
-        _emailField = [cell textFieldForKey:kInputKeyAuthEmail];
-        _passwordField = [cell textFieldForKey:kInputKeyPassword];
+        _emailField = [cell textFieldForKey:kInterfaceKeyAuthEmail];
+        _passwordField = [cell textFieldForKey:kInterfaceKeyPassword];
     } else if ([self actionIs:kActionActivate]) {
-        _activationCodeField = [cell textFieldForKey:kInputKeyActivationCode];
-        _repeatPasswordField = [cell textFieldForKey:kInputKeyRepeatPassword];
+        _activationCodeField = [cell textFieldForKey:kInterfaceKeyActivationCode];
+        _repeatPasswordField = [cell textFieldForKey:kInterfaceKeyRepeatPassword];
     }
 }
 
@@ -272,7 +272,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (BOOL)willValidateInputForKey:(NSString *)key
 {
-    return [@[kInputKeyActivationCode, kInputKeyRepeatPassword] containsObject:key];
+    return [@[kInterfaceKeyActivationCode, kInterfaceKeyRepeatPassword] containsObject:key];
 }
 
 
@@ -280,12 +280,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 {
     BOOL valueIsValid = NO;
     
-    if ([key isEqualToString:kInputKeyActivationCode]) {
+    if ([key isEqualToString:kInterfaceKeyActivationCode]) {
         NSString *activationCode = _authInfo[kJSONKeyActivationCode];
         NSString *activationCodeAsEntered = [inputValue lowercaseString];
         
         valueIsValid = [activationCodeAsEntered isEqualToString:activationCode];
-    } else if ([key isEqualToString:kInputKeyRepeatPassword]) {
+    } else if ([key isEqualToString:kInterfaceKeyRepeatPassword]) {
         NSString *passwordHashAsEntered = [OCrypto passwordHashWithPassword:inputValue];
         NSString *passwordHash = nil;
         

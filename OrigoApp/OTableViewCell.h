@@ -19,6 +19,7 @@ extern CGFloat const kCellAnimationDuration;
 
 @interface OTableViewCell : UITableViewCell<OEntityObserver> {
 @private
+    OState *_state;
     OTableViewCellConstrainer *_constrainer;
     NSMutableDictionary *_views;
     Class _entityClass;

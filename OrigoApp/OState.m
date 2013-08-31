@@ -36,7 +36,7 @@ NSString * const kTargetHousehold = @"household";
 NSString * const kTargetJuvenile = @"juvenile";
 NSString * const kTargetExternal = @"external";
 
-static OState *s = nil;
+static OState *_s = nil;
 
 
 @implementation OState
@@ -57,11 +57,11 @@ static OState *s = nil;
 
 + (OState *)s
 {
-    if (!s) {
-        s = [[OState alloc] initWithViewController:nil];
+    if (!_s) {
+        _s = [[OState alloc] initWithViewController:nil];
     }
     
-    return s;
+    return _s;
 }
 
 

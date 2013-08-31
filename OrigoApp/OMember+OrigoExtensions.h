@@ -10,8 +10,6 @@
 
 extern NSString * const kMemberTypeGuardian;
 
-extern NSString * const kInferredPropertyKeyAge;
-
 @interface OMember (OrigoExtensions)
 
 - (OMembership *)rootMembership;

@@ -30,7 +30,7 @@ extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
 extern NSString * const kIconFileLocationArrow;
-
+extern NSString * const kIconFileSettings;
 extern NSString * const kIconFilePlacePhoneCall;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;
@@ -40,12 +40,14 @@ extern NSString * const kGenderMaleConfirmed;
 extern NSString * const kGenderFemale;
 extern NSString * const kGenderFemaleConfirmed;
 
-extern NSString * const kInputKeyActivate;
-extern NSString * const kInputKeyActivationCode;
-extern NSString * const kInputKeyAuthEmail;
-extern NSString * const kInputKeyPassword;
-extern NSString * const kInputKeyRepeatPassword;
-extern NSString * const kInputKeySignIn;
+extern NSString * const kInterfaceKeyActivate;
+extern NSString * const kInterfaceKeyActivationCode;
+extern NSString * const kInterfaceKeyAge;
+extern NSString * const kInterfaceKeyAuthEmail;
+extern NSString * const kInterfaceKeyPassword;
+extern NSString * const kInterfaceKeyPurpose;
+extern NSString * const kInterfaceKeyRepeatPassword;
+extern NSString * const kInterfaceKeySignIn;
 
 extern NSString * const kJSONKeyActivationCode;
 extern NSString * const kJSONKeyDeviceId;
@@ -83,7 +85,13 @@ extern NSString * const kDefaultsKeyStringDate;
 @private
     Reachability *_internetReachability;
     
+    OMember *_user;
+    OReplicator *_replicator;
+    OSwitchboard *_switchboard;
+    OLocator *_locator;
+    
     NSNumber *_isSignedIn;
+    NSString *_authToken;
     NSDate *_authTokenExpiryDate;
 }
 

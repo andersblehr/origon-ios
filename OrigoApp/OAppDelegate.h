@@ -10,6 +10,10 @@
 
 @interface OAppDelegate : UIResponder <UIApplicationDelegate> {
 @private
+    NSManagedObjectModel *_managedObjectModel;
+    NSManagedObjectContext *_managedObjectContext;
+    NSPersistentStoreCoordinator *_persistentStoreCoordinator;
+    
     BOOL _didEnterBackground;
 }
 

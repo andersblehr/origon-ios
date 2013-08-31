@@ -16,7 +16,7 @@
 - (NSString *)asTarget;
 
 - (BOOL)hasValueForKey:(NSString *)key;
-- (id)valueForInferredPropertyKey:(NSString *)key;
+- (id)valueForInferredKey:(NSString *)key;
 - (id)serialisableValueForKey:(NSString *)key;
 - (void)setDeserialisedValue:(id)value forKey:(NSString *)key;
 
