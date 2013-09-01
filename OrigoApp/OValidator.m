@@ -90,7 +90,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 + (NSString *)propertyKeyForKey:(NSString *)key
 {
     if (!_keyMappings) {
-        _keyMappings = @{kInterfaceKeyPurpose : kPropertyKeyDescriptionText};
+        _keyMappings = @{
+            kInterfaceKeyPurpose : kPropertyKeyDescriptionText
+        };
     }
     
     return [[_keyMappings allKeys] containsObject:key] ? _keyMappings[key] : key;

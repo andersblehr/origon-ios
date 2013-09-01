@@ -15,19 +15,23 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 @implementation OTableViewCellBlueprint
 
-#pragma mark - Auxiliary methods
+#pragma mark - Initialisation
 
-- (NSArray *)textViewKeys
+- (id)init
 {
-    return @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
+    self = [super init];
+    
+    if (self) {
+        _textViewKeys = @[kPropertyKeyAddress, kPropertyKeyDescriptionText];
+    }
+    
+    return self;
 }
 
 
-#pragma mark - Initialisation
-
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
 {
-    self = [super init];
+    self = [self init];
     
     if (self) {
         _fieldsShouldDeemphasiseOnEndEdit = NO;
@@ -49,7 +53,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
 
 - (id)initWithEntityClass:(Class)entityClass
 {
-    self = [super init];
+    self = [self init];
     
     if (self) {
         OState *state = [OState s];
@@ -99,7 +103,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
 {
     id textField = nil;
     
-    if ([[self textViewKeys] containsObject:[OValidator propertyKeyForKey:key]]) {
+    if ([_textViewKeys containsObject:[OValidator propertyKeyForKey:key]]) {
         textField = [[OTextView alloc] initWithKey:key blueprint:self delegate:delegate];
     } else {
         textField = [[OTextField alloc] initWithKey:key delegate:delegate];
@@ -146,7 +150,7 @@ CGFloat const kMinimumCellPadding = 0.1f;
     
     for (NSString *key in _detailKeys) {
         if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:key]) {
-            if ([[self textViewKeys] containsObject:[OValidator propertyKeyForKey:key]]) {
+            if ([_textViewKeys containsObject:[OValidator propertyKeyForKey:key]]) {
                 if (cell) {
                     height += [[cell textFieldForKey:key] height];
                 } else if ([entity hasValueForKey:key]) {
