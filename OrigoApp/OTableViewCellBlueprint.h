@@ -14,6 +14,7 @@ extern CGFloat const kMinimumCellPadding;
 
 @interface OTableViewCellBlueprint : NSObject {
 @private
+    NSArray *_textViewKeys;
     NSArray *_allTextFieldKeys;
 }
 
