@@ -245,7 +245,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         self.backgroundColor = [UIColor clearColor];
     }
     
-    [self toggleDropShadow:_hasEmphasis];
+    [self setDropShadowForTextFieldVisible:_hasEmphasis];
 }
 
 
@@ -282,7 +282,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     [super drawRect:rect];
     
     if (_hasEmphasis) {
-        [self redrawDropShadow];
+        [self redrawDropShadowForTextField];
     }
 }
 

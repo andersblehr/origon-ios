@@ -284,7 +284,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)willAppearTrailing:(BOOL)trailing
 {
-    [self.backgroundView addDropShadowForTableViewCellTrailing:trailing];
+    _trailing = trailing;
+    
+    [self.backgroundView addDropShadowForTableViewCellTrailing:_trailing];
     
     if (![self isListCell]) {
         if (_blueprint.hasPhoto) {
@@ -331,10 +333,16 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 
                 [self setNeedsUpdateConstraints];
                 [self layoutIfNeeded];
-                [self.backgroundView redrawDropShadow];
+                [self.backgroundView redrawDropShadowForTextField];
             }];
         }
     }
+}
+
+
+- (void)redrawDropShadow
+{
+    [self.backgroundView addDropShadowForTableViewCellTrailing:_trailing];
 }
 
 

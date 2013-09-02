@@ -243,7 +243,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         }
     }
     
-    [self toggleDropShadow:_hasEmphasis];
+    [self setDropShadowForTextFieldVisible:_hasEmphasis];
 }
 
 
@@ -304,7 +304,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     [super drawRect:rect];
     
     if (_hasEmphasis) {
-        [self redrawDropShadow];
+        [self redrawDropShadowForTextField];
     }
 }
 

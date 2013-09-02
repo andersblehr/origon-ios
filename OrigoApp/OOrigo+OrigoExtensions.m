@@ -10,6 +10,7 @@
 
 NSString * const kOrigoTypeMemberRoot = @"~";
 NSString * const kOrigoTypeResidence = @"residence";
+NSString * const kOrigoTypeContactList = @"contactList";
 NSString * const kOrigoTypeFriends = @"friends";
 NSString * const kOrigoTypeTeam = @"team";
 NSString * const kOrigoTypeOrganisation = @"organisation";

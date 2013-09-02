@@ -15,7 +15,7 @@
 - (void)addDropShadowForTableViewCellTrailing:(BOOL)trailing;
 - (void)addDropShadowForPhotoFrame;
 
-- (void)toggleDropShadow:(BOOL)isVisible;
-- (void)redrawDropShadow;
+- (void)setDropShadowForTextFieldVisible:(BOOL)visible;
+- (void)redrawDropShadowForTextField;
 
 @end
