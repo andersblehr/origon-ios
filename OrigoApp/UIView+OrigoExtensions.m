@@ -85,21 +85,17 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 }
 
 
-- (void)toggleDropShadow:(BOOL)isVisible
+- (void)setDropShadowForTextFieldVisible:(BOOL)visible
 {
-    if (isVisible) {
-        if ([self isKindOfClass:UITextField.class] || [self isKindOfClass:UITextView.class]) {
-            [self addDropShadowForTextField];
-        } else {
-            [self addDropShadowForTableViewCellTrailing:YES];
-        }
+    if (visible) {
+        [self addDropShadowForTextField];
     } else {
         [self removeDropShadow];
     }
 }
 
 
-- (void)redrawDropShadow
+- (void)redrawDropShadowForTextField
 {
     CGPathRef redrawnShadowPath;
     

@@ -10,6 +10,7 @@
 
 extern NSString * const kOrigoTypeMemberRoot;
 extern NSString * const kOrigoTypeResidence;
+extern NSString * const kOrigoTypeContactList;
 extern NSString * const kOrigoTypeFriends;
 extern NSString * const kOrigoTypeTeam;
 extern NSString * const kOrigoTypeOrganisation;

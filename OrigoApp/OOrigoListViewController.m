@@ -229,6 +229,7 @@ static NSInteger const kUserRow = 0;
         [_origoTypes addObject:kOrigoTypeFriends];
         [_origoTypes addObject:kOrigoTypeOrganisation];
         [_origoTypes addObject:kOrigoTypeTeam];
+        [_origoTypes addObject:kOrigoTypeContactList];
     } else {
         if (![_member isOlderThan:kAgeThresholdInSchool]) {
             [_origoTypes addObject:kOrigoTypePreschoolClass];

@@ -22,7 +22,7 @@
 
 #import "Reachability.h"
 
-@class OLocator, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTabBarController, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
+@class OAlert, OConnection, OCrypto, ODefaults, OLanguage, OLocator, ONavigationController, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
 @class ODevice, OMember, OMembership, OMessageBoard, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
 
 #import "OConnectionDelegate.h"
@@ -67,13 +67,13 @@
 #import "OLanguage.h"
 #import "OLocator.h"
 #import "OLogging.h"
+#import "ONavigationController.h"
 #import "ORegistrantExaminer.h"
 #import "OMeta.h"
 #import "OReplicator.h"
 #import "OState.h"
 #import "OStrings.h"
 #import "OSwitchboard.h"
-#import "OTabBarController.h"
 #import "OTableViewCell.h"
 #import "OTableViewCellBlueprint.h"
 #import "OTableViewCellConstrainer.h"

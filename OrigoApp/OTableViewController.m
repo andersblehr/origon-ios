@@ -17,8 +17,8 @@ static NSString * const kViewControllerSuffixList = @"ListViewController";
 
 static NSInteger const kToolbarHeight = 44.f;
 
-static UIViewController * _reauthenticationDismisser;
-static BOOL _needsResetViewControllers;
+static BOOL _needsReinstantiateRootViewController;
+static UIViewController * _reinstantiatedRootViewController;
 
 
 @implementation OTableViewController
@@ -122,33 +122,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if ([inputField isKindOfClass:OTextField.class]) {
             [inputField setReturnKeyType:UIReturnKeyDone];
         }
-    }
-}
-
-
-- (void)resetViewControllerWithIdentifier:(NSString *)identifier
-{
-    UIViewController *viewController = nil;
-    NSInteger tabIndex = kTabIndexOrigo;
-    
-    if ([identifier isEqualToString:kIdentifierCalendar]) {
-        tabIndex = kTabIndexCalendar;
-    } else if ([identifier isEqualToString:kIdentifierTaskList]) {
-        tabIndex = kTabIndexTasks;
-    } else if ([identifier isEqualToString:kIdentifierMessageList]) {
-        tabIndex = kTabIndexMessages;
-    }
-    
-    UINavigationController *navigationController = self.tabBarController.viewControllers[tabIndex];
-    
-    if (navigationController) {
-        if (tabIndex == kTabIndexOrigo) {
-            viewController = _reauthenticationDismisser;
-        } else {
-            viewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
-        }
-    
-        [navigationController setViewControllers:@[viewController]];
     }
 }
 
@@ -450,13 +423,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [[OMeta m] userDidSignOut];
     
-    _needsResetViewControllers = YES;
-    _reauthenticationDismisser = [[OState s].viewController.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
+    _needsReinstantiateRootViewController = YES;
+    _reinstantiatedRootViewController = [[OState s].viewController.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
     
     if (_isModal) {
         [self.dismisser dismissModalViewController:self reload:NO];
     } else {
-        [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reauthenticationDismisser];
+        [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reinstantiatedRootViewController];
     }
 }
 
@@ -537,7 +510,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _didJustLoad = NO;
     
     if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
-        if (self.tabBarController && (!self.toolbarItems || _wasHidden)) {
+        if (!self.presentingViewController && (!self.toolbarItems || _wasHidden)) {
             self.toolbarItems = [_instance toolbarButtons];
         }
     }
@@ -563,7 +536,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     OLogState;
     
     if ([[OMeta m] userIsSignedIn]) {
-        if (_detailCell.editable) {
+        if (_detailCell && _detailCell.editable) {
             [_detailCell prepareForInput];
             
             if ([self actionIs:kActionRegister]) {
@@ -575,7 +548,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self.activityIndicator startAnimating];
             [OConnection fetchStrings];
         } else if (![_identifier isEqualToString:kIdentifierAuth]) {
-            [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reauthenticationDismisser];
+            [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reinstantiatedRootViewController];
         }
     }
 }
@@ -599,15 +572,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [super viewDidDisappear:animated];
     
-    if (_needsResetViewControllers && !_isModal) {
-        [self resetViewControllerWithIdentifier:kIdentifierOrigoList];
-        [self resetViewControllerWithIdentifier:kIdentifierCalendar];
-        [self resetViewControllerWithIdentifier:kIdentifierTaskList];
-        [self resetViewControllerWithIdentifier:kIdentifierMessageList];
+    if (_needsReinstantiateRootViewController && !_isModal) {
+        [self.navigationController setViewControllers:@[_reinstantiatedRootViewController]];
         
-        self.tabBarController.selectedIndex = kTabIndexOrigo;
-        
-        _needsResetViewControllers = NO;
+        _needsReinstantiateRootViewController = NO;
     }
 }
 
@@ -615,6 +583,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (NSUInteger)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskPortrait;
+}
+
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    for (OTableViewCell *cell in [self.tableView visibleCells]) {
+        [cell redrawDropShadow];
+    }
 }
 
 
@@ -632,7 +608,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (UIView *)actionSheetView
 {
-    return self.tabBarController ? self.tabBarController.view : self.view;
+    return self.navigationController ? self.navigationController.view : self.view;
 }
 
 
@@ -926,7 +902,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [self.activityIndicator stopAnimating];
         [OStrings.class didCompleteWithResponse:response data:data];
         
-        [(OTabBarController *)self.tabBarController setTabBarTitles];
         [self presentModalViewControllerWithIdentifier:kIdentifierAuth data:nil];
     }
 }

@@ -23,6 +23,7 @@ extern CGFloat const kCellAnimationDuration;
     OTableViewCellConstrainer *_constrainer;
     NSMutableDictionary *_views;
     Class _entityClass;
+    BOOL _trailing;
     
     id<OTableViewListDelegate> _listDelegate;
     id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
@@ -56,6 +57,7 @@ extern CGFloat const kCellAnimationDuration;
 - (void)willAppearTrailing:(BOOL)trailing;
 - (void)toggleEditMode;
 - (void)redrawIfNeeded;
+- (void)redrawDropShadow;
 - (void)shakeCellVibrate:(BOOL)vibrate;
 
 - (void)prepareForInput;

@@ -19,7 +19,6 @@
 		5C15BFBA16350FEE00BB5254 /* glyphicons_004_girl@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFB816350FEE00BB5254 /* glyphicons_004_girl@2x.png */; };
 		5C15BFC51635181C00BB5254 /* 10-arrows-in.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFC31635181C00BB5254 /* 10-arrows-in.png */; };
 		5C15BFC61635181C00BB5254 /* 10-arrows-in@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFC41635181C00BB5254 /* 10-arrows-in@2x.png */; };
-		5C15BFC916367BCA00BB5254 /* OTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C15BFC816367BC900BB5254 /* OTabBarController.m */; };
 		5C15BFDF163805AE00BB5254 /* 10-arrows-in_black.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFDD163805AD00BB5254 /* 10-arrows-in_black.png */; };
 		5C15BFE0163805AE00BB5254 /* 10-arrows-in_black@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFDE163805AE00BB5254 /* 10-arrows-in_black@2x.png */; };
 		5C15BFF216385AB700BB5254 /* 76-baby_black@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFF116385AB600BB5254 /* 76-baby_black@2x.png */; };
@@ -67,6 +66,7 @@
 		5C629FFC14C62481001DA01F /* 258-checkmark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FFA14C62481001DA01F /* 258-checkmark@2x.png */; };
 		5C629FFF14C624AD001DA01F /* OMessageListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C629FFE14C624AD001DA01F /* OMessageListViewController.m */; };
 		5C62A00214C6252C001DA01F /* OTaskListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C62A00114C6252C001DA01F /* OTaskListViewController.m */; };
+		5C64105917D499450005B192 /* ONavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C64105817D499450005B192 /* ONavigationController.m */; };
 		5C68F36F16E4C858005DDCF9 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C68F36E16E4C858005DDCF9 /* CoreTelephony.framework */; };
 		5C6C4B6B16CC027600C88E6C /* OReplicatedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6C4B6A16CC027600C88E6C /* OReplicatedEntityRef.m */; };
 		5C6E6C131589AC820002FF84 /* UITableView+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C121589AC820002FF84 /* UITableView+OrigoExtensions.m */; };
@@ -162,8 +162,6 @@
 		5C15BFB816350FEE00BB5254 /* glyphicons_004_girl@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl@2x.png"; sourceTree = "<group>"; };
 		5C15BFC31635181C00BB5254 /* 10-arrows-in.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "10-arrows-in.png"; sourceTree = "<group>"; };
 		5C15BFC41635181C00BB5254 /* 10-arrows-in@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "10-arrows-in@2x.png"; sourceTree = "<group>"; };
-		5C15BFC716367BC900BB5254 /* OTabBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTabBarController.h; sourceTree = "<group>"; };
-		5C15BFC816367BC900BB5254 /* OTabBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTabBarController.m; sourceTree = "<group>"; };
 		5C15BFDD163805AD00BB5254 /* 10-arrows-in_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "10-arrows-in_black.png"; sourceTree = "<group>"; };
 		5C15BFDE163805AE00BB5254 /* 10-arrows-in_black@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "10-arrows-in_black@2x.png"; sourceTree = "<group>"; };
 		5C15BFF116385AB600BB5254 /* 76-baby_black@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "76-baby_black@2x.png"; sourceTree = "<group>"; };
@@ -242,6 +240,8 @@
 		5C629FFE14C624AD001DA01F /* OMessageListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMessageListViewController.m; sourceTree = "<group>"; };
 		5C62A00014C6252C001DA01F /* OTaskListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTaskListViewController.h; sourceTree = "<group>"; };
 		5C62A00114C6252C001DA01F /* OTaskListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTaskListViewController.m; sourceTree = "<group>"; };
+		5C64105717D499450005B192 /* ONavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ONavigationController.h; sourceTree = "<group>"; };
+		5C64105817D499450005B192 /* ONavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ONavigationController.m; sourceTree = "<group>"; };
 		5C68F36E16E4C858005DDCF9 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		5C6C4B6916CC027600C88E6C /* OReplicatedEntityRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntityRef.h; sourceTree = "<group>"; };
 		5C6C4B6A16CC027600C88E6C /* OReplicatedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntityRef.m; sourceTree = "<group>"; };
@@ -733,8 +733,8 @@
 		5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */ = {
 			isa = PBXGroup;
 			children = (
-				5C15BFC716367BC900BB5254 /* OTabBarController.h */,
-				5C15BFC816367BC900BB5254 /* OTabBarController.m */,
+				5C64105717D499450005B192 /* ONavigationController.h */,
+				5C64105817D499450005B192 /* ONavigationController.m */,
 				5C8B3AB81582493C000B19FA /* OTableViewCell.h */,
 				5C8B3AB91582493C000B19FA /* OTableViewCell.m */,
 				5CA10B9A16A7F49F00031D81 /* OTableViewController.h */,
@@ -930,7 +930,6 @@
 				5CD3360E15C40A2F00ABBFE7 /* OState.m in Sources */,
 				5C014A2415CA77320040A1D9 /* OAlert.m in Sources */,
 				5CB7E94015F38C1200FD53DF /* OSettingListViewController.m in Sources */,
-				5C15BFC916367BCA00BB5254 /* OTabBarController.m in Sources */,
 				5CAEE091163E513300A9046B /* ODocumentElement.m in Sources */,
 				5CAEE094163E513400A9046B /* OMessageBoard.m in Sources */,
 				5CAEE09A163E513400A9046B /* OScheduledBreak.m in Sources */,
@@ -971,6 +970,7 @@
 				5CB74EF117BB60BF003FAC28 /* ODevice+OrigoExtensions.m in Sources */,
 				5C84D27417C34F7B00A746B7 /* OMember.m in Sources */,
 				5CE6044217C4033800911CC1 /* OOrigo.m in Sources */,
+				5C64105917D499450005B192 /* ONavigationController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
