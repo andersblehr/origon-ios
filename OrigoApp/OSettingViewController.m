@@ -33,14 +33,6 @@ static NSInteger const kSectionKeyValues = 0;
 }
 
 
-#pragma mark - UIViewController custom accessors
-
-- (BOOL)hidesBottomBarWhenPushed
-{
-    return YES;
-}
-
-
 #pragma mark - OTableViewControllerInstance conformance
 
 - (void)initialiseState
@@ -156,7 +148,7 @@ static NSInteger const kSectionKeyValues = 0;
 
 - (BOOL)willCompareObjectsInSectionWithKey:(NSInteger)sectionKey
 {
-    return (_settingKey == kSettingKeyCountry) ? YES : NO;
+    return (_settingKey == kSettingKeyCountry);
 }
 
 

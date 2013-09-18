@@ -58,9 +58,11 @@ static NSInteger const kHousemateSheetTag = 0;
 
 - (void)addItem
 {
-    NSMutableSet *housemateCandidates = [[NSMutableSet alloc] init];
+    NSMutableSet *housemateCandidates = nil;
     
     if ([_origo isOfType:kOrigoTypeResidence]) {
+        housemateCandidates = [[NSMutableSet alloc] init];
+        
         for (OMember *housemate in [_membership.member housemates]) {
             if (![_origo hasMember:housemate]) {
                 [housemateCandidates addObject:housemate];
@@ -68,7 +70,7 @@ static NSInteger const kHousemateSheetTag = 0;
         }
     }
     
-    if ([housemateCandidates count]) {
+    if ([_origo isOfType:kOrigoTypeResidence] && [housemateCandidates count]) {
         [self presentHousemateCandidatesSheet:housemateCandidates];
     } else {
         [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo];
@@ -88,18 +90,6 @@ static NSInteger const kHousemateSheetTag = 0;
         if (self.isModal) {
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         }
-    }
-}
-
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    if ([self targetIs:kOrigoTypeResidence] && ![self targetIs:kTargetHousehold]) {
-        self.title = [_origo shortAddress];
-    } else {
-        self.title = _origo.name;
     }
 }
 
@@ -124,6 +114,12 @@ static NSInteger const kHousemateSheetTag = 0;
     _origo = _membership.origo;
     
     self.state.target = _origo;
+    
+    if ([self targetIs:kOrigoTypeResidence] && ![self targetIs:kTargetHousehold]) {
+        self.title = [_origo shortAddress];
+    } else {
+        self.title = _origo.name;
+    }
 }
 
 

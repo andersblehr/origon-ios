@@ -36,6 +36,12 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - Auxiliary methods
 
+- (BOOL)isRegisteringJuvenileOrigoGuardian
+{
+    return [self actionIs:kActionRegister] && [_origo isJuvenile] && [self.meta isEqualToString:kMemberTypeGuardian];
+}
+
+
 - (BOOL)emailIsEligible
 {
     BOOL emailIsEligible = [_emailField hasValidValue];
@@ -84,14 +90,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             [self.dismisser dismissModalViewController:self reload:YES]; // Work in progress
         }
     }
-}
-
-
-- (void)presentNewResidenceViewController
-{
-    NSString *meta = [_member isUser] ? kTargetHousehold : kOrigoTypeResidence;
-    
-    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:meta];
 }
 
 
@@ -144,18 +142,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - Selector implementations
 
-- (void)addAddress
-{
-    NSSet *housemateResidences = [_member housemateResidences];
-    
-    if ([housemateResidences count]) {
-        [self presentCandidateResidencesSheet:housemateResidences];
-    } else {
-        [self presentNewResidenceViewController];
-    }
-}
-
-
 - (void)presentActionSheet
 {
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
@@ -179,34 +165,20 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-
-    if ([self targetIs:kTargetUser]) {
-        self.title = [OStrings stringForKey:strViewTitleAboutMe];
-    } else if (_member) {
-        self.title = [_member isHousemateOfUser] ? [_member givenName] : _member.name;
-    } else if ([self actionIs:kActionRegister]) {
-        self.title = [OStrings labelForOrigoType:_origo.type labelType:kOrigoLabelTypeMemberNew];
-    }
-    
-    if ([self actionIs:kActionDisplay]) {
-        if (self.canEdit) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
-        }
-    }
-}
-
-
 - (void)viewDidAppear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
-    
     _nameField = [self.detailCell textFieldForKey:kPropertyKeyName];
     _dateOfBirthField = [self.detailCell textFieldForKey:kPropertyKeyDateOfBirth];
     _mobilePhoneField = [self.detailCell textFieldForKey:kPropertyKeyMobilePhone];
     _emailField = [self.detailCell textFieldForKey:kPropertyKeyEmail];
+    
+    if ([self actionIs:kActionRegister] && [_origo isJuvenile]) {
+        if (!self.wasHidden && ![self.meta isEqualToString:kMemberTypeGuardian]) {
+            [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kMemberTypeGuardian];
+        }
+    }
+    
+    [super viewDidAppear:animated];
 }
 
 
@@ -215,14 +187,6 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 - (BOOL)canEdit
 {
     return [_member isManagedByUser];
-}
-
-
-#pragma mark - UIViewController custom accessors
-
-- (BOOL)hidesBottomBarWhenPushed
-{
-    return YES;
 }
 
 
@@ -255,7 +219,23 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         _origo = self.data;
     }
     
-    self.state.target = _member ? _member : _origo;
+    self.state.target = _member ? _member : (self.meta ? self.meta : _origo);
+    
+    if ([self targetIs:kTargetUser]) {
+        self.title = [OStrings stringForKey:strViewTitleAboutMe];
+    } else if (_member) {
+        self.title = [_member isHousemateOfUser] ? [_member givenName] : _member.name;
+    } else if ([self isRegisteringJuvenileOrigoGuardian]) {
+        self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
+    } else if ([self actionIs:kActionRegister]) {
+        self.title = [OStrings labelForOrigoType:_origo.type labelType:kOrigoLabelTypeMemberNew];
+    }
+    
+    if ([self actionIs:kActionDisplay]) {
+        if (self.canEdit) {
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
+        }
+    }
 }
 
 
@@ -272,6 +252,12 @@ static NSInteger const kEmailChangeButtonContinue = 1;
         
         [self setData:[_member residencies] forSectionWithKey:kSectionKeyAddress];
     }
+}
+
+
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return [self actionIs:kActionRegister] && ![self targetIs:kTargetUser];
 }
 
 
@@ -306,6 +292,18 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     }
     
     return [text capitalizedString];
+}
+
+
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+{
+    NSString *text = [OStrings stringForKey:strFooterOrigoInviteAlert];
+    
+    if ([self isRegisteringJuvenileOrigoGuardian]) {
+        text = [NSString stringWithFormat:@"%@\n\n%@", [OStrings stringForKey:strFooterJuvenileOrigoGuardian], text];
+    }
+    
+    return text;
 }
 
 
@@ -540,10 +538,9 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     BOOL shouldRelay = NO;
     
     if ([self actionIs:kActionRegister]) {
-        NSString *identifier = viewController.identifier;
-        
-        shouldRelay = shouldRelay || [identifier isEqual:kIdentifierOrigo];
-        shouldRelay = shouldRelay || [identifier isEqual:kIdentifierMemberList];
+        shouldRelay = shouldRelay || [viewController.identifier isEqual:kIdentifierMember];
+        shouldRelay = shouldRelay || [viewController.identifier isEqual:kIdentifierMemberList];
+        shouldRelay = shouldRelay || [viewController.identifier isEqual:kIdentifierOrigo];
     }
     
     return shouldRelay;
@@ -573,14 +570,20 @@ static NSInteger const kEmailChangeButtonContinue = 1;
     switch (actionSheet.tag) {
         case kActionSheetTag:
             if (buttonIndex == kActionSheetButtonAddAddress) {
-                [self addAddress];
+                NSSet *housemateResidences = [_member housemateResidences];
+                
+                if ([housemateResidences count]) {
+                    [self presentCandidateResidencesSheet:housemateResidences];
+                } else {
+                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:kOrigoTypeResidence];
+                }
             }
             
             break;
             
         case kResidenceSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self presentNewResidenceViewController];
+                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:kOrigoTypeResidence];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_candidateResidences[buttonIndex] addMember:_member];
                 [self reloadSections];

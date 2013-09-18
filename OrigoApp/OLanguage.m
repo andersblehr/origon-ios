@@ -33,6 +33,7 @@ NSString * const _origo_ = @"nounOrigo";
 NSString * const _father_ = @"nounFather";
 NSString * const _mother_ = @"nounMother";
 NSString * const _parent_ = @"nounParent";
+NSString * const _guardian_ = @"nounGuardian";
 NSString * const _contact_ = @"nounContact";
 NSString * const _address_ = @"nounAddress";
 

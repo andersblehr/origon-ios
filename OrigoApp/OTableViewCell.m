@@ -102,13 +102,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     if (_blueprint.hasPhoto) {
         UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        [imageButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+        
         NSData *photo = [_entity asMember].photo;
         
         if (photo) {
             [imageButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
         } else {
             imageButton.backgroundColor = [UIColor whiteColor];
-            [imageButton setTranslatesAutoresizingMaskIntoConstraints:NO];
             
             UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
             photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];

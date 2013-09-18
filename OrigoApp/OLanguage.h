@@ -33,6 +33,7 @@ extern NSString * const _origo_;
 extern NSString * const _father_;
 extern NSString * const _mother_;
 extern NSString * const _parent_;
+extern NSString * const _guardian_;
 extern NSString * const _contact_;
 extern NSString * const _address_;
 

@@ -8,6 +8,8 @@
 
 #import "OTableViewCellConstrainer.h"
 
+static NSString * const kSpaceConstraintBelowTitle    = @"-10-";
+
 static NSString * const kVConstraintsInitial          = @"V:|-10-";
 static NSString * const kVConstraintsInitialWithTitle = @"V:|-44-";
 
@@ -18,7 +20,7 @@ static NSString * const kHConstraintsTextField        = @"H:|-55-[%@]-55-|";
 
 static NSString * const kVConstraintsTitleBanner      = @"V:|-(-1)-[titleBanner(39)]";
 static NSString * const kHConstraintsTitleBanner      = @"H:|-(-1)-[titleBanner]-(-1)-|";
-static NSString * const kVConstraintsTitle            = @"[%@(24)]-10-";
+static NSString * const kVConstraintsTitle            = @"[%@(24)]";
 static NSString * const kHConstraintsTitle            = @"H:|-6-[%@]-6-|";
 static NSString * const kHConstraintsTitleWithPhoto   = @"H:|-6-[%@]-6-[photoFrame(55)]-10-|";
 static NSString * const kVConstraintsPhoto            = @"V:|-10-[photoFrame(55)]";
@@ -28,8 +30,8 @@ static NSString * const kHConstraintsPhotoPrompt      = @"H:|-3-[photoPrompt]-3-
 static NSString * const kVConstraintsLabel            = @"-%.f-[%@(22)]";
 static NSString * const kVConstraintsTextField        = @"[%@(%.f)]";
 
-static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%@]-6-[photoFrame]-10-|";
 static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%@]-6-|";
+static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%@]-6-[photoFrame]-10-|";
 
 
 @implementation OTableViewCellConstrainer
@@ -135,7 +137,7 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
     
     BOOL isTopmostLabel = YES;
     id precedingTextField = nil;
-    
+
     for (NSString *key in _blueprint.detailKeys) {
         [self configureElementsForKey:key];
         
@@ -176,22 +178,28 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
         constraints = [constraints stringByAppendingString:constraint];
     }
     
-    for (NSString *key in _blueprint.detailKeys) {
-        [self configureElementsForKey:key];
+    if ([_blueprint.detailKeys count]) {
+        if (_blueprint.titleKey) {
+            constraints = [constraints stringByAppendingString:kSpaceConstraintBelowTitle];
+        }
         
-        if ([self elementsAreVisibleForKey:key]) {
-            id textField = [_cell textFieldForKey:key];
+        for (NSString *key in _blueprint.detailKeys) {
+            [self configureElementsForKey:key];
             
-            CGFloat textFieldHeight = [UIFont detailFieldHeight];
-            
-            if ([textField isKindOfClass:OTextView.class]) {
-                textFieldHeight = [textField height];
+            if ([self elementsAreVisibleForKey:key]) {
+                id textField = [_cell textFieldForKey:key];
+                
+                CGFloat textFieldHeight = [UIFont detailFieldHeight];
+                
+                if ([textField isKindOfClass:OTextView.class]) {
+                    textFieldHeight = [textField height];
+                }
+                
+                NSString *textFieldName = [key stringByAppendingString:kViewKeySuffixTextField];
+                NSString *constraint = [NSString stringWithFormat:kVConstraintsTextField, textFieldName, textFieldHeight];
+                
+                constraints = [constraints stringByAppendingString:constraint];
             }
-            
-            NSString *textFieldName = [key stringByAppendingString:kViewKeySuffixTextField];
-            NSString *constraint = [NSString stringWithFormat:kVConstraintsTextField, textFieldName, textFieldHeight];
-            
-            constraints = [constraints stringByAppendingString:constraint];
         }
     }
     
@@ -316,15 +324,18 @@ static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%
         NSNumber *noAlignmentOptions = [NSNumber numberWithInteger:0];
         
         if (_blueprint.fieldsAreLabeled) {
-            NSMutableArray *allTrailingConstraints = [[NSMutableArray alloc] init];
-            [allTrailingConstraints addObject:[self labeledVerticalLabelConstraints]];
+            if (_blueprint.detailKeys) {
+                NSMutableArray *allTrailingConstraints = [[NSMutableArray alloc] init];
+                [allTrailingConstraints addObject:[self labeledVerticalLabelConstraints]];
+                
+                constraints[allTrailingOptions] = allTrailingConstraints;
+            }
             
             NSMutableArray *nonAlignedConstraints = [[NSMutableArray alloc] init];
             [nonAlignedConstraints addObjectsFromArray:[self titleConstraints]];
             [nonAlignedConstraints addObject:[self labeledVerticalTextFieldConstraints]];
             [nonAlignedConstraints addObjectsFromArray:[self labeledHorizontalConstraints]];
             
-            constraints[allTrailingOptions] = allTrailingConstraints;
             constraints[noAlignmentOptions] = nonAlignedConstraints;
         } else {
             NSMutableArray *nonAlignedConstraints = [[NSMutableArray alloc] init];

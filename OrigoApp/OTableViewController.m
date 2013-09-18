@@ -111,7 +111,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if ([self actionIs:kActionDisplay]) {
         [self toggleEditMode];
     }
-
+    
     _detailCell.inputField = inputField;
     
     if ([_detailCell nextInputField]) {
@@ -123,6 +123,52 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [inputField setReturnKeyType:UIReturnKeyDone];
         }
     }
+}
+
+
+#pragma mark - Header & footer handling & delegation
+
+- (BOOL)instanceHasHeaderForSectionWithKey:(NSInteger)sectionKey
+{
+    BOOL hasHeader = ([self sectionNumberForSectionKey:sectionKey] > 0);
+    
+    if (!hasHeader && [_instance respondsToSelector:@selector(hasHeaderForSectionWithKey:)]) {
+        hasHeader = [_instance hasHeaderForSectionWithKey:sectionKey];
+    }
+    
+    return hasHeader;
+}
+
+
+- (BOOL)instanceHasDefaultFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return (sectionKey == _detailSectionKey) && ![self actionIs:kActionRegister] && self.canEdit;
+}
+
+
+- (BOOL)instanceHasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    BOOL hasFooter = [self instanceHasDefaultFooterForSectionWithKey:sectionKey];
+    
+    if (!hasFooter && [_instance respondsToSelector:@selector(hasFooterForSectionWithKey:)]) {
+        hasFooter = [_instance hasFooterForSectionWithKey:sectionKey];
+    }
+    
+    return hasFooter;
+}
+
+
+- (NSString *)footerTextForSectionWithKey:(NSInteger)sectionKey
+{
+    NSString *footerText = nil;
+    
+    if ([self instanceHasDefaultFooterForSectionWithKey:sectionKey]) {
+        footerText = [OStrings stringForKey:strFooterTapToEdit];
+    } else if ([_instance respondsToSelector:@selector(textForFooterInSectionWithKey:)]) {
+        footerText = [_instance textForFooterInSectionWithKey:sectionKey];
+    }
+    
+    return footerText;
 }
 
 
@@ -536,7 +582,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     OLogState;
     
     if ([[OMeta m] userIsSignedIn]) {
-        if (_detailCell && _detailCell.editable) {
+        if (_detailCell && _detailCell.editable && !_isHidden) {
             [_detailCell prepareForInput];
             
             if ([self actionIs:kActionRegister]) {
@@ -623,30 +669,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)initialiseDataSource
 {
     // Override in subclass
-}
-
-
-- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
-{
-    return ([self sectionNumberForSectionKey:sectionKey] > 0);
-}
-
-
-- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    return (sectionKey == _detailSectionKey) && ![self actionIs:kActionRegister] && self.canEdit;
-}
-
-
-- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
-{
-    NSString *text = nil;
-    
-    if ((sectionKey == _detailSectionKey) && ![self actionIs:kActionRegister] && self.canEdit) {
-        text = [OStrings stringForKey:strFooterTapToEdit];
-    }
-    
-    return text;
 }
 
 
@@ -773,7 +795,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     CGFloat height = kDefaultCellPadding;
     
-    if ([_instance hasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
+    if ([self instanceHasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView standardHeaderHeight];
     }
     
@@ -786,8 +808,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     CGFloat height = kDefaultCellPadding;
     
-    if ([_instance hasFooterForSectionWithKey:sectionKey]) {
-        height = [tableView heightForFooterWithText:[_instance textForFooterInSectionWithKey:sectionKey]];
+    if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
+        height = [tableView heightForFooterWithText:[self footerTextForSectionWithKey:sectionKey]];
     }
     
     return height;
@@ -799,7 +821,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     UIView *view = nil;
 
-    if ([_instance hasHeaderForSectionWithKey:sectionKey]) {
+    if ([self instanceHasHeaderForSectionWithKey:sectionKey]) {
         view = [tableView headerViewWithText:[self textForHeaderInSectionWithKey:sectionKey]];
     }
     
@@ -812,8 +834,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     UIView *view = nil;
     
-    if ([_instance hasFooterForSectionWithKey:sectionKey]) {
-        view = [tableView footerViewWithText:[self textForFooterInSectionWithKey:sectionKey]];
+    if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
+        view = [tableView footerViewWithText:[self footerTextForSectionWithKey:sectionKey]];
     }
     
     return view;

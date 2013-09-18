@@ -22,12 +22,6 @@
 }
 
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-}
-
-
 #pragma mark - OTableViewControllerInstance conformance
 
 - (void)initialiseState

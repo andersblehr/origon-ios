@@ -102,6 +102,8 @@ extern NSString * const strPlaceholderPhoto;
 extern NSString * const strPlaceholderDateOfBirth;
 extern NSString * const strPlaceholderMobilePhone;
 extern NSString * const strPlaceholderEmail;
+extern NSString * const strFooterOrigoInviteAlert;
+extern NSString * const strFooterJuvenileOrigoGuardian;
 extern NSString * const strButtonParentToSome;
 extern NSString * const strButtonAddAddress;
 extern NSString * const strButtonChangePassword;
