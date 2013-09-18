@@ -12,6 +12,8 @@ CGFloat const kDefaultTableViewCellHeight = 45.f;
 CGFloat const kDefaultCellPadding = 10.f;
 CGFloat const kMinimumCellPadding = 0.1f;
 
+static CGFloat const kPaddedPhotoFrameHeight = 75.f;
+
 
 @implementation OTableViewCellBlueprint
 
@@ -67,8 +69,12 @@ CGFloat const kMinimumCellPadding = 0.1f;
             
             if ([state targetIs:kTargetHousehold]) {
                 _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
-            } else if ([state targetIs:kTargetJuvenile] && ![state actionIs:kActionInput]) {
-                _detailKeys = @[kInterfaceKeyAge, kPropertyKeyMobilePhone, kPropertyKeyEmail];
+            } else if ([state targetIs:kTargetJuvenile]) {
+                if ([state actionIs:kActionInput]) {
+                    _detailKeys = nil;
+                } else {
+                    _detailKeys = @[kInterfaceKeyAge, kPropertyKeyMobilePhone, kPropertyKeyEmail];
+                }
             } else {
                 _detailKeys = @[kPropertyKeyMobilePhone, kPropertyKeyEmail];
             }
@@ -148,20 +154,24 @@ CGFloat const kMinimumCellPadding = 0.1f;
         }
     }
     
-    for (NSString *key in _detailKeys) {
-        if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:key]) {
-            if ([_textViewKeys containsObject:[OValidator propertyKeyForKey:key]]) {
-                if (cell) {
-                    height += [[cell textFieldForKey:key] height];
-                } else if ([entity hasValueForKey:key]) {
-                    height += [OTextView heightWithText:[entity valueForKey:key] blueprint:self];
+    if ([_detailKeys count]) {
+        for (NSString *key in _detailKeys) {
+            if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:key]) {
+                if ([_textViewKeys containsObject:[OValidator propertyKeyForKey:key]]) {
+                    if (cell) {
+                        height += [[cell textFieldForKey:key] height];
+                    } else if ([entity hasValueForKey:key]) {
+                        height += [OTextView heightWithText:[entity valueForKey:key] blueprint:self];
+                    } else {
+                        height += [OTextView heightWithText:[OStrings placeholderForKey:key] blueprint:self];
+                    }
                 } else {
-                    height += [OTextView heightWithText:[OStrings placeholderForKey:key] blueprint:self];
+                    height += [UIFont detailFieldHeight];
                 }
-            } else {
-                height += [UIFont detailFieldHeight];
             }
         }
+    } else if (_hasPhoto) {
+        height = kPaddedPhotoFrameHeight;
     }
     
     return height;

@@ -8,7 +8,7 @@
 
 #import "OrigoApp.h"
 
-@interface OMemberViewController : OTableViewController<OTableViewListDelegate, OTableViewInputDelegate, ORegistrantExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
+@interface OMemberViewController : OTableViewController<OTableViewListDelegate, OTableViewInputDelegate, ORegistrantExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, OConnectionDelegate> {
 @private
     OMembership *_membership;
     OMember *_member;

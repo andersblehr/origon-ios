@@ -178,20 +178,6 @@ static NSInteger const kUserRow = 0;
 }
 
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-
-    if ([_member isUser]) {
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
-    }
-    
-    if ([[OMeta m].user isTeenOrOlder]) {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
-    }
-}
-
-
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -225,22 +211,29 @@ static NSInteger const kUserRow = 0;
     
     self.state.target = _member;
     
-    if ([self targetIs:kTargetUser]) {
-        [_origoTypes addObject:kOrigoTypeFriends];
-        [_origoTypes addObject:kOrigoTypeOrganisation];
-        [_origoTypes addObject:kOrigoTypeTeam];
-        [_origoTypes addObject:kOrigoTypeContactList];
-    } else {
-        if (![_member isOlderThan:kAgeThresholdInSchool]) {
-            [_origoTypes addObject:kOrigoTypePreschoolClass];
-        }
-        
-        [_origoTypes addObject:kOrigoTypeSchoolClass];
-        [_origoTypes addObject:kOrigoTypePlaymates];
-        [_origoTypes addObject:kOrigoTypeMinorTeam];
+    if ([_member isUser]) {
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
     }
     
-    [_origoTypes addObject:kOrigoTypeOther];
+    if ([[OMeta m].user isTeenOrOlder]) {
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+        
+        if ([self targetIs:kTargetUser]) {
+            [_origoTypes addObject:kOrigoTypeFriends];
+            [_origoTypes addObject:kOrigoTypeOrganisation];
+            [_origoTypes addObject:kOrigoTypeTeam];
+            [_origoTypes addObject:kOrigoTypeOther];
+            [_origoTypes addObject:kOrigoTypeContactList];
+        } else {
+            if (![_member isOlderThan:kAgeThresholdInSchool]) {
+                [_origoTypes addObject:kOrigoTypePreschoolClass];
+            }
+            
+            [_origoTypes addObject:kOrigoTypeSchoolClass];
+            [_origoTypes addObject:kOrigoTypePlaymates];
+            [_origoTypes addObject:kOrigoTypeMinorTeam];
+        }
+    }
 }
 
 
