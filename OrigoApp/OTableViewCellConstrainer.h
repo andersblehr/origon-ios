@@ -12,6 +12,8 @@
 @private
     OTableViewCellBlueprint *_blueprint;
     OTableViewCell *_cell;
+    
+    CGFloat _labelWidth;
 }
 
 - (id)initWithBlueprint:(OTableViewCellBlueprint *)blueprint cell:(OTableViewCell *)cell;

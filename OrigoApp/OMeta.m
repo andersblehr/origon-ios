@@ -84,6 +84,7 @@ NSString * const kDefaultsKeyStringDate = @"origo.date.strings";
 static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
 
+static CGFloat _systemVersion = 0.f;
 static OMeta *_m = nil;
 
 
@@ -166,6 +167,7 @@ static OMeta *_m = nil;
     self = [super init];
     
     if (self) {
+        _systemVersion = [[UIDevice currentDevice].systemVersion floatValue];
         _appVersion = [[NSBundle mainBundle] infoDictionary][(id)kCFBundleVersionKey];
         _displayLanguage = [NSLocale preferredLanguages][0];
         
@@ -297,9 +299,19 @@ static OMeta *_m = nil;
 }
 
 
-- (BOOL)deviceIsSimulator
++ (BOOL)deviceIsSimulator
 {
     return [[UIDevice currentDevice].model containsString:@"Simulator"];
+}
+
+
++ (BOOL)systemIs_iOS6x
+{
+    if (!_systemVersion) {
+        _systemVersion = [[UIDevice currentDevice].systemVersion floatValue];
+    }
+    
+    return (_systemVersion < 7.f);
 }
 
 

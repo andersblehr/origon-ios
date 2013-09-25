@@ -10,6 +10,8 @@
 
 @interface UIColor (OrigoExtensions)
 
++ (UIColor *)windowTintColor;
+
 + (UIColor *)cellBackgroundColor;
 + (UIColor *)selectedCellBackgroundColor;
 + (UIColor *)titleBackgroundColor;

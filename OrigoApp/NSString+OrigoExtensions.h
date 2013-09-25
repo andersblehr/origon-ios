@@ -21,7 +21,9 @@ extern NSString * const kSeparatorSpace;
 - (BOOL)hasValue;
 - (BOOL)containsString:(NSString *)string;
 
-- (NSUInteger)lineCount;
+- (CGSize)sizeWithFont:(UIFont *)font maxWidth:(CGFloat)maxWidth;
+- (NSInteger)lineCountWithFont:(UIFont *)font maxWidth:(CGFloat)maxWidth;
+- (NSInteger)lineCount;
 - (NSArray *)lines;
 
 - (NSString *)removeRedundantWhitespace;

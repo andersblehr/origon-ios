@@ -104,9 +104,13 @@ static void uncaughtExceptionHandler(NSException *exception)
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
-    
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:kTimeZoneNameUTC]];
+    
+    if ([OMeta systemIs_iOS6x]) {
+        [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
+    } else {
+        _window.tintColor = [UIColor windowTintColor];
+    }
     
     OLogDebug(@"Device is %@.", [UIDevice currentDevice].model);
     OLogDebug(@"iOS version is %@.", [UIDevice currentDevice].systemVersion);

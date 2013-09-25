@@ -14,6 +14,7 @@ extern NSInteger const kTextViewMaximumLines;
 @private
     OState *_state;
     OTableViewCellBlueprint *_blueprint;
+    CGFloat _labelWidth;
     CGFloat _textWidth;
     
     UITextView *_placeholderView;
@@ -30,6 +31,7 @@ extern NSInteger const kTextViewMaximumLines;
 
 - (id)initWithKey:(NSString *)key blueprint:(OTableViewCellBlueprint *)blueprint delegate:(id)delegate;
 
++ (CGFloat)labelWidthWithBlueprint:(OTableViewCellBlueprint *)blueprint;
 + (CGFloat)heightWithText:(NSString *)text blueprint:(OTableViewCellBlueprint *)blueprint;
 - (CGFloat)height;
 

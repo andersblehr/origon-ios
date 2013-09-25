@@ -13,8 +13,8 @@ static NSString * const kSpaceConstraintBelowTitle    = @"-10-";
 static NSString * const kVConstraintsInitial          = @"V:|-10-";
 static NSString * const kVConstraintsInitialWithTitle = @"V:|-44-";
 
-static NSString * const kVConstraintsElementTopmost   = @"[%@(22)]";
-static NSString * const kVConstraintsElement          = @"-%.f-[%@(22)]";
+static NSString * const kVConstraintsElementTopmost   = @"[%@(%.f)]";
+static NSString * const kVConstraintsElement          = @"-%.f-[%@(%.f)]";
 static NSString * const kHConstraintsLabel            = @"H:|-25-[%@]-25-|";
 static NSString * const kHConstraintsTextField        = @"H:|-55-[%@]-55-|";
 
@@ -27,11 +27,11 @@ static NSString * const kVConstraintsPhoto            = @"V:|-10-[photoFrame(55)
 static NSString * const kVConstraintsPhotoPrompt      = @"V:|-3-[photoPrompt]-3-|";
 static NSString * const kHConstraintsPhotoPrompt      = @"H:|-3-[photoPrompt]-3-|";
 
-static NSString * const kVConstraintsLabel            = @"-%.f-[%@(22)]";
+static NSString * const kVConstraintsLabel            = @"-%.f-[%@(%.f)]";
 static NSString * const kVConstraintsTextField        = @"[%@(%.f)]";
 
-static NSString * const kHConstraints                 = @"H:|-10-[%@(>=55)]-3-[%@]-6-|";
-static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%@]-6-[photoFrame]-10-|";
+static NSString * const kHConstraints                 = @"H:|-10-[%@(%.f)]-3-[%@]-6-|";
+static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@]-6-[photoFrame]-10-|";
 
 
 @implementation OTableViewCellConstrainer
@@ -85,8 +85,8 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%
                 }
             }
             
-            if ([textField isKindOfClass:OTextField.class]) {
-                [textField raiseGuardAgainstUnwantedAutolayoutAnimation:YES]; // Raise guard
+            if ([OMeta systemIs_iOS6x] && [textField isKindOfClass:OTextField.class]) {
+                [textField raiseGuardAgainstUnwantedAutolayoutAnimation:YES]; // Bug workaround
             }
         }
     } else {
@@ -146,8 +146,8 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%
             NSString *labelName = [key stringByAppendingString:kViewKeySuffixLabel];
             
             if (isTopmostLabel) {
-                constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, labelName];
                 isTopmostLabel = NO;
+                constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, labelName, [UIFont detailFieldHeight]];
             } else {
                 CGFloat padding = 0.f;
                 
@@ -155,7 +155,7 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%
                     padding = [precedingTextField height] - [UIFont detailFieldHeight];
                 }
                 
-                constraint = [NSString stringWithFormat:kVConstraintsLabel, padding, labelName];
+                constraint = [NSString stringWithFormat:kVConstraintsLabel, padding, labelName, [UIFont detailFieldHeight]];
             }
             
             precedingTextField = [_cell textFieldForKey:key];
@@ -222,9 +222,9 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%
             NSString *constraint = nil;
             
             if (_blueprint.hasPhoto && (rowNumber++ < 2)) {
-                constraint = [NSString stringWithFormat:kHConstraintsWithPhoto, labelName, textFieldName];
+                constraint = [NSString stringWithFormat:kHConstraintsWithPhoto, labelName, _labelWidth, textFieldName];
             } else {
-                constraint = [NSString stringWithFormat:kHConstraints, labelName, textFieldName];
+                constraint = [NSString stringWithFormat:kHConstraints, labelName, _labelWidth, textFieldName];
             }
             
             [constraints addObject:constraint];
@@ -256,11 +256,11 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%
             }
             
             if (isTopmostElement) {
-                constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, elementName];
                 isTopmostElement = NO;
+                constraint = [NSString stringWithFormat:kVConstraintsElementTopmost, elementName, [UIFont detailFieldHeight]];
             } else {
                 CGFloat spacing = isBelowLabel ? kDefaultCellPadding / 3 : 1.f;
-                constraint = [NSString stringWithFormat:kVConstraintsElement, spacing, elementName];
+                constraint = [NSString stringWithFormat:kVConstraintsElement, spacing, elementName, [UIFont detailFieldHeight]];
             }
             
             constraints = [constraints stringByAppendingString:constraint];
@@ -307,6 +307,8 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(>=55)]-3-[%
     if (self) {
         _blueprint = blueprint;
         _cell = cell;
+        
+        _labelWidth = [OTextView labelWidthWithBlueprint:_blueprint];
     }
     
     return self;

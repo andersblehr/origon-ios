@@ -33,15 +33,32 @@ NSString * const kSeparatorSpace = @" ";
 }
 
 
-- (NSArray *)lines
+- (CGSize)sizeWithFont:(UIFont *)font maxWidth:(CGFloat)maxWidth
 {
-    return [self componentsSeparatedByString:kSeparatorNewline];
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:self attributes:@{NSFontAttributeName:font}];
+    CGRect boundingRect = [attributedText boundingRectWithSize:CGSizeMake(maxWidth, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+    
+    return CGSizeMake(ceil(boundingRect.size.width), ceil(boundingRect.size.height));
 }
 
 
-- (NSUInteger)lineCount
+- (NSInteger)lineCountWithFont:(UIFont *)font maxWidth:(CGFloat)maxWidth
+{
+    CGSize textSize = [self sizeWithFont:font maxWidth:maxWidth];
+    
+    return round(textSize.height / (font.lineHeight + 1.f));
+}
+
+
+- (NSInteger)lineCount
 {
     return [[self lines] count];
+}
+
+
+- (NSArray *)lines
+{
+    return [self componentsSeparatedByString:kSeparatorNewline];
 }
 
 

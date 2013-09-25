@@ -21,7 +21,7 @@ static NSString * const kViewKeyTitleBanner = @"titleBanner";
 static NSString * const kViewKeyPhotoFrame = @"photoFrame";
 static NSString * const kViewKeyPhotoPrompt = @"photoPrompt";
 
-static CGFloat const kImplicitFramePadding = 2.f;
+static CGFloat const kImplicitFramePadding_iOS6x = 2.f;
 
 static CGFloat const kShakeDuration = 0.05f;
 static CGFloat const kShakeDelay = 0.f;
@@ -55,22 +55,16 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     
     if (self) {
-        self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-        self.backgroundView.backgroundColor = [UIColor cellBackgroundColor];
-        self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColor];
-        self.detailTextLabel.font = [UIFont detailFont];
-        self.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-        self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColor];
-        self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
-        self.textLabel.font = [UIFont titleFont];
-        
         _state = [OState s].viewController.state;
         
         if ([self isListCell]) {
+            self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColor];
+            self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
+            
             _indexPath = indexPath;
             _selectable = YES;
             _listDelegate = (id<OTableViewListDelegate>)_state.viewController;
-            
+
             [_listDelegate populateListCell:self atIndexPath:_indexPath];
         } else {
             _views = [[NSMutableDictionary alloc] init];
@@ -80,6 +74,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
         
         if (_selectable) {
             self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
+        
+        if ([OMeta systemIs_iOS6x]) {
+            self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+            self.backgroundView.backgroundColor = [UIColor cellBackgroundColor];
+            self.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+            self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColor];
         }
     }
     
@@ -287,7 +288,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     _trailing = trailing;
     
-    [self.backgroundView addDropShadowForTableViewCellTrailing:_trailing];
+    if ([OMeta systemIs_iOS6x]) {
+        [self.backgroundView addDropShadowForTableViewCellTrailing:_trailing];
+    }
     
     if (![self isListCell]) {
         if (_blueprint.hasPhoto) {
@@ -302,8 +305,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
                     [textField setHasEmphasis:YES];
                 }
                 
-                if ([textField isKindOfClass:OTextField.class]) {
-                    [textField raiseGuardAgainstUnwantedAutolayoutAnimation:NO]; // Lower guard
+                if ([OMeta systemIs_iOS6x] && [textField isKindOfClass:OTextField.class]) {
+                    [textField raiseGuardAgainstUnwantedAutolayoutAnimation:NO]; // Bug workaround
                 }
             }
         }
@@ -322,19 +325,25 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)redrawIfNeeded
 {
     if (_entity || _entityClass) {
+        CGFloat implicitFramePadding = [OMeta systemIs_iOS6x] ? kImplicitFramePadding_iOS6x : 0.f;
         CGFloat desiredHeight = [_blueprint cellHeightWithEntity:_entity cell:self];
         
-        if (abs(self.frame.size.height - (desiredHeight + kImplicitFramePadding)) > 0.5f) {
+        if (abs(self.frame.size.height - (desiredHeight + implicitFramePadding)) > 0.5f) {
+            [self setNeedsUpdateConstraints];
+            
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
-                [(UITableView *)self.superview beginUpdates];
-                CGRect frame = self.frame;
-                frame.size.height = desiredHeight + kImplicitFramePadding;
-                self.frame = frame;
-                [(UITableView *)self.superview endUpdates];
-                
-                [self setNeedsUpdateConstraints];
                 [self layoutIfNeeded];
-                [self.backgroundView redrawDropShadowForTextField];
+                
+                [_state.viewController.tableView beginUpdates];
+                [_state.viewController.tableView endUpdates];
+                
+                CGRect frame = self.frame;
+                frame.size.height = desiredHeight + implicitFramePadding;
+                self.frame = frame;
+                
+                if ([OMeta systemIs_iOS6x]) {
+                    [self.backgroundView redrawDropShadowForTextField];
+                }
             }];
         }
     }
@@ -517,8 +526,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     [super setEditing:editing];
     
-    for (NSString *key in _blueprint.allTextFieldKeys) {
-        [[self textFieldForKey:key] setEditable:editing];
+    if (![self isListCell]) {
+        for (NSString *key in _blueprint.allTextFieldKeys) {
+            [[self textFieldForKey:key] setEditable:editing];
+        }
     }
 }
 
@@ -539,7 +550,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         for (id view in [_views allValues]) {
             if ([view isKindOfClass:OTextField.class] || [view isKindOfClass:OTextView.class]) {
                 [view setSelected:selected];
-            } else if ([view isKindOfClass:UILabel.class]) {
+            } else if ([OMeta systemIs_iOS6x] && [view isKindOfClass:UILabel.class]) {
                 if (selected) {
                     ((UILabel *)view).textColor = [UIColor selectedLabelTextColor];
                 } else {

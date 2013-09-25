@@ -300,7 +300,6 @@
         value = [super valueForKey:[OValidator propertyKeyForKey:key]];
     }
 
-    
     return value;
 }
 

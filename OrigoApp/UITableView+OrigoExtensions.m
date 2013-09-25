@@ -17,7 +17,7 @@ static CGFloat const kLogoHeight = 55.f;
 static CGFloat const kLogoFontSize = 30.f;
 static CGFloat const kLogoShadowOffset = 7.f;
 
-static CGFloat const kHeaderFontToHeightScaleFactor = 1.5f;
+static CGFloat const kLineToHeaderHeightFactor = 1.5f;
 static CGFloat const kHeaderShadowOffset = 3.f;
 static CGFloat const kFooterShadowOffset = 2.f;
 static CGFloat const kFooterHeadRoom = 6.f;
@@ -68,11 +68,16 @@ static NSString * const kLogoText = @"..origo..";
     
     logoLabel.backgroundColor = [UIColor clearColor];
     logoLabel.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
-    logoLabel.shadowColor = [UIColor darkTextColor];
-    logoLabel.shadowOffset = CGSizeMake(0.f, kLogoShadowOffset);
     logoLabel.text = kLogoText;
     logoLabel.textAlignment = NSTextAlignmentCenter;
-    logoLabel.textColor = [UIColor headerTextColor];
+    
+    if ([OMeta systemIs_iOS6x]) {
+        logoLabel.shadowColor = [UIColor darkTextColor];
+        logoLabel.shadowOffset = CGSizeMake(0.f, kLogoShadowOffset);
+        logoLabel.textColor = [UIColor headerTextColor];
+    } else {
+        logoLabel.textColor = [UIColor windowTintColor];
+    }
     
     [containerView addSubview:logoLabel];
     
@@ -129,14 +134,14 @@ static NSString * const kLogoText = @"..origo..";
 
 - (CGFloat)standardHeaderHeight
 {
-    return kHeaderFontToHeightScaleFactor * [UIFont headerFont].lineHeight;
+    return kLineToHeaderHeightFactor * [UIFont headerFont].lineHeight;
 }
 
 
 - (CGFloat)heightForFooterWithText:(NSString *)text
 {
     UIFont *footerFont = [UIFont footerFont];
-    CGFloat textHeight = [footerFont lineCountWithText:text textWidth:kContentWidth] * footerFont.lineHeight;
+    CGFloat textHeight = [text lineCountWithFont:footerFont maxWidth:kContentWidth] * footerFont.lineHeight;
     
     return textHeight + 2.f * kDefaultCellPadding;
 }
@@ -155,11 +160,14 @@ static NSString * const kLogoText = @"..origo..";
     
     headerLabel.backgroundColor = [UIColor clearColor];
     headerLabel.font = [UIFont headerFont];
-    headerLabel.shadowColor = [UIColor darkTextColor];
-    headerLabel.shadowOffset = CGSizeMake(0.f, kHeaderShadowOffset);
     headerLabel.text = text;
     headerLabel.textAlignment = NSTextAlignmentLeft;
     headerLabel.textColor = [UIColor headerTextColor];
+
+    if ([OMeta systemIs_iOS6x]) {
+        headerLabel.shadowColor = [UIColor darkTextColor];
+        headerLabel.shadowOffset = CGSizeMake(0.f, kHeaderShadowOffset);
+    }
     
     [containerView addSubview:headerLabel];
     
@@ -180,11 +188,14 @@ static NSString * const kLogoText = @"..origo..";
     footerLabel.backgroundColor = [UIColor clearColor];
     footerLabel.font = [UIFont footerFont];
     footerLabel.numberOfLines = 0;
-    footerLabel.shadowColor = [UIColor darkTextColor];
-    footerLabel.shadowOffset = CGSizeMake(0.f, kFooterShadowOffset);
     footerLabel.text = text;
     footerLabel.textAlignment = NSTextAlignmentCenter;
     footerLabel.textColor = [UIColor footerTextColor];
+
+    if ([OMeta systemIs_iOS6x]) {
+        footerLabel.shadowColor = [UIColor darkTextColor];
+        footerLabel.shadowOffset = CGSizeMake(0.f, kFooterShadowOffset);
+    }
     
     [containerView addSubview:footerLabel];
     
