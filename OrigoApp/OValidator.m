@@ -128,9 +128,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     BOOL valueIsEmailAddress = NO;
     
     if (value && [value isKindOfClass:NSString.class]) {
-        NSUInteger atLocation = [value rangeOfString:@"@"].location;
-        NSUInteger dotLocation = [value rangeOfString:@"." options:NSBackwardsSearch].location;
-        NSUInteger spaceLocation = [value rangeOfString:@" "].location;
+        NSInteger atLocation = [value rangeOfString:@"@"].location;
+        NSInteger dotLocation = [value rangeOfString:@"." options:NSBackwardsSearch].location;
+        NSInteger spaceLocation = [value rangeOfString:@" "].location;
         
         valueIsEmailAddress = (atLocation != NSNotFound);
         valueIsEmailAddress = valueIsEmailAddress && (dotLocation != NSNotFound);

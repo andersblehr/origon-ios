@@ -14,7 +14,6 @@ static NSInteger const kTextViewMinimumEditLines = 2;
 static NSInteger const kTextViewMinimumLines = 1;
 
 static CGFloat const kTopInset = 6.f;
-static CGFloat const kDefaultTextWidth = 210.f;
 static CGFloat const kAccessoryViewWidth = 30.f;
 
 
@@ -24,15 +23,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 + (CGFloat)textWidthWithBlueprint:(OTableViewCellBlueprint *)blueprint
 {
-    CGFloat labelWidth = 0.f;
-    
-    for (NSString *key in blueprint.detailKeys) {
-        CGSize labelSize = [[OStrings labelForKey:key] sizeWithFont:[UIFont labelFont] constrainedToSize:CGSizeMake(FLT_MAX, FLT_MAX)];
-        
-        labelWidth = MAX(labelWidth, labelSize.width);
-    }
-    
-    return kContentWidth - 2 * kTextInsetX - labelWidth;
+    return kContentWidth - 2 * kTextInsetX - [OTextView labelWidthWithBlueprint:blueprint];
 }
 
 
@@ -42,13 +33,13 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 }
 
 
-+ (NSInteger)lineCountWithText:(NSString *)text textWidth:(CGFloat)textWidth state:(OState *)state
++ (NSInteger)lineCountWithText:(NSString *)text maxWidth:(CGFloat)maxWidth state:(OState *)state
 {
     if ([state actionIs:kActionList] || (!state && [[OState s] actionIs:kActionList])) {
-        textWidth -= kAccessoryViewWidth;
+        maxWidth -= kAccessoryViewWidth;
     }
     
-    NSInteger lineCount = [[UIFont detailFont] lineCountWithText:text textWidth:textWidth];
+    NSInteger lineCount = [text lineCountWithFont:[UIFont detailFont] maxWidth:maxWidth];
     
     lineCount = MAX(lineCount, kTextViewMinimumLines);
     lineCount = MIN(lineCount, kTextViewMaximumLines);
@@ -63,7 +54,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
     if ([self.text hasValue]) {
         if (self.window) {
-            lineCount = (NSInteger)(self.contentSize.height / [UIFont detailLineHeight]);
+            lineCount = [self.text lineCountWithFont:self.font maxWidth:_textWidth];
             
             if (_hasEmphasis) {
                 if ((lineCount > 1) && (lineCount < kTextViewMaximumLines)) {
@@ -76,10 +67,10 @@ static CGFloat const kAccessoryViewWidth = 30.f;
                 }
             }
         } else {
-            lineCount = [OTextView lineCountWithText:self.text textWidth:_textWidth state:_state];
+            lineCount = [OTextView lineCountWithText:self.text maxWidth:_textWidth state:_state];
         }
     } else {
-        lineCount = [OTextView lineCountWithText:self.placeholder textWidth:_textWidth state:_state];
+        lineCount = [OTextView lineCountWithText:self.placeholder maxWidth:_textWidth state:_state];
     }
     
     _lastKnownLineCount = lineCount;
@@ -107,35 +98,30 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         self.autocapitalizationType = UITextAutocapitalizationTypeSentences;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.backgroundColor = [UIColor clearColor];
-        self.contentInset = UIEdgeInsetsMake(-kTopInset, -kTextInsetX, 0.f, 0.f);
+        self.contentMode = UIViewContentModeRedraw;
         self.delegate = delegate;
-        self.editable = [[OState s] actionIs:kActionInput];
         self.font = [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
         self.returnKeyType = UIReturnKeyDefault;
         self.scrollEnabled = NO;
         self.textAlignment = NSTextAlignmentLeft;
-        self.userInteractionEnabled = self.editable;
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
         _key = key;
         _blueprint = blueprint;
         _state = [OState s].viewController.state;
+        _labelWidth = [OTextView labelWidthWithBlueprint:_blueprint];
         _textWidth = [OTextView textWidthWithBlueprint:_blueprint];
         _hasEmphasis = NO;
         
-        if (self.editable) {
-            _placeholderView = [[UITextView alloc] initWithFrame:CGRectZero];
-            _placeholderView.backgroundColor = [UIColor clearColor];
-            _placeholderView.delegate = self;
-            _placeholderView.font = [UIFont detailFont];
-            _placeholderView.textColor = [UIColor lightGrayColor];
-            [self addSubview:_placeholderView];
-            
-            self.placeholder = [OStrings placeholderForKey:_key];
-            _lastKnownLineCount = [OTextView lineCountWithText:_placeholder textWidth:_textWidth state:_state];
+        if ([OMeta systemIs_iOS6x]) {
+            self.contentInset = UIEdgeInsetsMake(-kTopInset, -kTextInsetX, 0.f, 0.f);
+        } else {
+            self.textContainerInset = UIEdgeInsetsMake(3.5f, -1.f, 0.f, 0.f);
+            self.layer.borderColor = [[UIColor clearColor] CGColor];
+            self.layer.borderWidth = kTextFieldBorderWidth;
         }
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:nil];
@@ -147,10 +133,24 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 #pragma mark - Hooks for sizing & resizing
 
++ (CGFloat)labelWidthWithBlueprint:(OTableViewCellBlueprint *)blueprint
+{
+    CGFloat labelWidth = 0.f;
+    
+    for (NSString *key in blueprint.detailKeys) {
+        CGSize labelSize = [[OStrings labelForKey:key] sizeWithFont:[UIFont labelFont] maxWidth:CGFLOAT_MAX];
+        
+        labelWidth = MAX(labelWidth, labelSize.width);
+    }
+    
+    return labelWidth + 1.f;
+}
+
+
 + (CGFloat)heightWithText:(NSString *)text blueprint:(OTableViewCellBlueprint *)blueprint
 {
     CGFloat textWidth = [OTextView textWidthWithBlueprint:blueprint];
-    NSInteger lineCount = [OTextView lineCountWithText:text textWidth:textWidth state:nil];
+    NSInteger lineCount = [OTextView lineCountWithText:text maxWidth:textWidth state:nil];
     
     return [OTextView heightWithLineCount:lineCount];
 }
@@ -219,6 +219,10 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     _placeholderView.frame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height + 5.f);
     _placeholderView.text = placeholder;
     _placeholder = placeholder;
+
+    if (![OMeta systemIs_iOS6x]) {
+        _placeholderView.textContainerInset = UIEdgeInsetsMake(3.5f, -1.f, 0.f, 0.f);
+    }
 }
 
 
@@ -230,7 +234,9 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 - (void)setSelected:(BOOL)selected
 {
-    self.textColor = selected ? [UIColor selectedDetailTextColor] : [UIColor detailTextColor];
+    if ([OMeta systemIs_iOS6x]) {
+        self.textColor = selected ? [UIColor selectedDetailTextColor] : [UIColor detailTextColor];
+    }
 }
 
 
@@ -239,13 +245,22 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     _hasEmphasis = hasEmphasis;
     
     if (_hasEmphasis) {
-        self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
+        if ([OMeta systemIs_iOS6x]) {
+            self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
+            [self setDropShadowForTextFieldVisible:YES];
+        } else {
+            self.layer.borderColor = [[UIColor windowTintColor] CGColor];
+        }
     } else {
         self.text = [self textValue];
-        self.backgroundColor = [UIColor clearColor];
+        
+        if ([OMeta systemIs_iOS6x]) {
+            self.backgroundColor = [UIColor clearColor];
+            [self setDropShadowForTextFieldVisible:NO];
+        } else {
+            self.layer.borderColor = [[UIColor clearColor] CGColor];
+        }
     }
-    
-    [self setDropShadowForTextFieldVisible:_hasEmphasis];
 }
 
 
@@ -272,6 +287,18 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     [super setEditable:editable];
     
     self.userInteractionEnabled = editable;
+    
+    if (editable && _key && !_placeholderView) {
+        _placeholderView = [[UITextView alloc] initWithFrame:CGRectZero];
+        _placeholderView.backgroundColor = [UIColor clearColor];
+        _placeholderView.delegate = self;
+        _placeholderView.font = [UIFont detailFont];
+        _placeholderView.textColor = [UIColor lightGrayColor];
+        [self addSubview:_placeholderView];
+        
+        self.placeholder = [OStrings placeholderForKey:_key];
+        _lastKnownLineCount = [OTextView lineCountWithText:_placeholder maxWidth:_textWidth state:_state];
+    }
 }
 
 
@@ -281,7 +308,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 {
     [super drawRect:rect];
     
-    if (_hasEmphasis) {
+    if ([OMeta systemIs_iOS6x] && _hasEmphasis) {
         [self redrawDropShadowForTextField];
     }
 }

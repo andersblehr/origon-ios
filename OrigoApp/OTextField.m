@@ -8,11 +8,9 @@
 
 #import "OTextField.h"
 
-CGFloat const kTextInsetX = 4.0f;
+CGFloat const kTextFieldBorderWidth = 0.5f;
+CGFloat const kTextInsetX = 4.f;
 CGFloat const kTextInsetY = 1.4f;
-
-static NSString * const kDatePrefix = @"date";
-static NSString * const KDateSuffix = @"Date";
 
 static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor";
 
@@ -34,23 +32,25 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     self = [super initWithFrame:CGRectZero];
     
     if (self) {
-        _key = key;
-        _inputDelegate = delegate;
-        
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.backgroundColor = [UIColor clearColor];
         self.contentMode = UIViewContentModeRedraw;
-        self.contentVerticalAlignment = UIControlContentVerticalAlignmentTop;
         self.delegate = delegate;
-        self.enabled = [[OState s] actionIs:kActionInput];
         self.font = [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
         self.placeholder = [OStrings placeholderForKey:key];
         self.returnKeyType = UIReturnKeyNext;
         self.textAlignment = NSTextAlignmentLeft;
-        self.textColor = [UIColor detailTextColor];
+        
+        _key = key;
+        _inputDelegate = delegate;
+        
+        if (![OMeta systemIs_iOS6x]) {
+            self.layer.borderWidth = 0.5f;
+            self.layer.borderColor = [[UIColor clearColor] CGColor];
+        }
         
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
@@ -229,6 +229,12 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     if (_hasEmphasis) {
         self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
         
+        if ([OMeta systemIs_iOS6x]) {
+            [self setDropShadowForTextFieldVisible:YES];
+        } else {
+            self.layer.borderColor = [[UIColor windowTintColor] CGColor];
+        }
+        
         if (_isTitleField) {
             self.textColor = [UIColor editableTitleTextColor];
             [self setValue:[UIColor detailPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
@@ -237,13 +243,17 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         self.text = [self textValue];
         self.backgroundColor = [UIColor clearColor];
         
+        if ([OMeta systemIs_iOS6x]) {
+            [self setDropShadowForTextFieldVisible:NO];
+        } else {
+            self.layer.borderColor = [[UIColor clearColor] CGColor];
+        }
+        
         if (_isTitleField) {
             self.textColor = [UIColor titleTextColor];
             [self setValue:[UIColor titlePlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
         }
     }
-    
-    [self setDropShadowForTextFieldVisible:_hasEmphasis];
 }
 
 
@@ -267,7 +277,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 {
     [super setSelected:selected];
     
-    if (!_isTitleField) {
+    if ([OMeta systemIs_iOS6x] && !_isTitleField) {
         if (selected) {
             self.textColor = [UIColor selectedDetailTextColor];
         } else {
@@ -303,7 +313,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 {
     [super drawRect:rect];
     
-    if (_hasEmphasis) {
+    if ([OMeta systemIs_iOS6x] && _hasEmphasis) {
         [self redrawDropShadowForTextField];
     }
 }

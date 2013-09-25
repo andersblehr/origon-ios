@@ -102,8 +102,8 @@ static NSInteger const kActivationCodeLength = 6;
     if ([data length]) {
         char *characters = malloc((([data length] + 2) / 3) * 4);
 
-        NSUInteger length = 0;
-        NSUInteger i = 0;
+        NSInteger length = 0;
+        NSInteger i = 0;
         
         while (i < [string length]) {
             char buffer[3] = {0,0,0};

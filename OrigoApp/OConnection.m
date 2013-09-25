@@ -60,10 +60,10 @@ static NSString * const kURLParameterVersion = @"version";
 
 - (NSString *)serverURL
 {
-    NSString *origoServer = [[OMeta m] deviceIsSimulator] ? kOrigoDevServer : kOrigoProdServer;
+    NSString *origoServer = [OMeta deviceIsSimulator] ? kOrigoDevServer : kOrigoProdServer;
     NSString *protocol = nil;
     
-    if ([_root isEqualToString:kRootAuth] && ![[OMeta m] deviceIsSimulator]) {
+    if ([_root isEqualToString:kRootAuth] && ![OMeta deviceIsSimulator]) {
         protocol = kProtocolHTTPS;
     } else {
         protocol = kProtocolHTTP;

@@ -238,7 +238,7 @@ static OLanguage *language = nil;
     NSMutableArray *stringItems = nil;
     
     if ([items[0] isKindOfClass:NSString.class]) {
-        stringItems = [NSArray arrayWithArray:items];
+        stringItems = [NSMutableArray arrayWithArray:items];
     } else if ([items[0] isKindOfClass:OMember.class]) {
         stringItems = [[NSMutableArray alloc] init];
         

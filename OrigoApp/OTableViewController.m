@@ -15,7 +15,9 @@ NSString * const kCustomValue = @"customValue";
 static NSString * const kViewControllerSuffixDefault = @"ViewController";
 static NSString * const kViewControllerSuffixList = @"ListViewController";
 
-static NSInteger const kToolbarHeight = 44.f;
+static CGFloat const kDefaultCellSpacing_iOS6x = 10.f;
+static CGFloat const kDefaultCellSpacing = 28.f;
+static CGFloat const kToolbarHeight = 44.f;
 
 static BOOL _needsReinstantiateRootViewController;
 static UIViewController * _reinstantiatedRootViewController;
@@ -177,6 +179,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)moveToNextInputField
 {
     [[_detailCell nextInputField] becomeFirstResponder];
+}
+
+
+- (void)didImplicitlyCancelEditing
+{
+    if ([self actionIs:kActionEdit]) {
+        [self didCancelEditing];
+    }
 }
 
 
@@ -486,10 +496,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [super viewDidLoad];
     
-    [self.tableView setBackground];
-    
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.toolbar.barStyle = UIBarStyleBlack;
+    if ([OMeta systemIs_iOS6x]) {
+        [self.tableView setBackground];
+        
+        self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+        self.navigationController.toolbar.barStyle = UIBarStyleBlack;
+    }
     
     NSString *longName = NSStringFromClass(self.class);
     NSString *shortName = [longName substringFromIndex:1];
@@ -513,9 +525,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _sectionData = [[NSMutableDictionary alloc] init];
     _sectionCounts = [[NSMutableDictionary alloc] init];
     _dirtySections = [[NSMutableSet alloc] init];
-    _instance = self;
-    
     _state = [[OState alloc] initWithViewController:self];
+    _instance = self;
     _canEdit = NO;
     
     [self initialiseInstance];
@@ -532,6 +543,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         self.navigationItem.rightBarButtonItem = _nextButton;
     }
+    
+    UITapGestureRecognizer *tapGestureRecogniser = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didImplicitlyCancelEditing)];
+    tapGestureRecogniser.cancelsTouchesInView = NO;
+    
+    [self.tableView addGestureRecognizer:tapGestureRecogniser];
     
     _didJustLoad = YES;
 }
@@ -563,7 +579,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if (self.toolbarItems) {
         [self.navigationController setToolbarHidden:NO animated:YES];
-        self.tableView.contentInset = UIEdgeInsetsMake(0, 0, kToolbarHeight, 0);
+        
+        if ([OMeta systemIs_iOS6x]) {
+            self.tableView.contentInset = UIEdgeInsetsMake(0, 0, kToolbarHeight, 0);
+        }
     } else  {
         [self.navigationController setToolbarHidden:YES animated:YES];
     }
@@ -634,8 +653,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    for (OTableViewCell *cell in [self.tableView visibleCells]) {
-        [cell redrawDropShadow];
+    if ([OMeta systemIs_iOS6x]) {
+        for (OTableViewCell *cell in [self.tableView visibleCells]) {
+            [cell redrawDropShadow];
+        }
     }
 }
 
@@ -793,7 +814,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = kDefaultCellPadding;
+    CGFloat height = [OMeta systemIs_iOS6x] ? kDefaultCellSpacing_iOS6x : kDefaultCellSpacing;
     
     if ([self instanceHasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView standardHeaderHeight];
@@ -874,6 +895,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
+    OLogDebug(@"Begin editing in text field. (Text: '%@')", textField.text);
+    
     [self inputFieldDidBeginEditing:textField];
 }
 
@@ -892,6 +915,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)textFieldDidEndEditing:(OTextField *)textField
 {
+    OLogDebug(@"End editing in text field. (Text: '%@')", textField.text);
+    
     _detailCell.inputField = nil;
 }
 
@@ -900,18 +925,24 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)textViewDidBeginEditing:(OTextView *)textView
 {
+    OLogDebug(@"Begin editing in text view. (Text: '%@')", textView.text);
+    
     [self inputFieldDidBeginEditing:textView];
 }
 
 
 - (void)textViewDidChange:(OTextView *)textView
 {
+    OLogDebug(@"Text did change in text view. (Text: '%@')", textView.text);
+    
     [_detailCell redrawIfNeeded];
 }
 
 
 - (void)textViewDidEndEditing:(OTextView *)textView
 {
+    OLogDebug(@"End editing in text view. (Text: '%@')", textView.text);
+    
     _detailCell.inputField = nil;
 }
 

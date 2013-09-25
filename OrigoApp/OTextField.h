@@ -8,6 +8,7 @@
 
 #import "OrigoApp.h"
 
+extern CGFloat const kTextFieldBorderWidth;
 extern CGFloat const kTextInsetX;
 extern CGFloat const kTextInsetY;
 

@@ -128,7 +128,8 @@ extern NSString * const kDefaultsKeyStringDate;
 
 - (BOOL)internetConnectionIsAvailable;
 - (BOOL)shouldUseEasternNameOrder;
-- (BOOL)deviceIsSimulator;
++ (BOOL)deviceIsSimulator;
++ (BOOL)systemIs_iOS6x;
 
 - (NSArray *)supportedCountryCodes;
 - (NSString *)inferredCountryCode;

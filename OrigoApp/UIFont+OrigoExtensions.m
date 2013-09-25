@@ -8,13 +8,17 @@
 
 #import "UIFont+OrigoExtensions.h"
 
-static CGFloat const kTitleFontSize = 16.f;
-static CGFloat const kLabelFontSize = 12.f;
+static CGFloat const kTitleFontSize_iOS6x = 16.f;
+static CGFloat const kTitleFontSize = 17.f;
+static CGFloat const kLabelFontSize_iOS6x = 12.f;
+static CGFloat const kLabelFontSize = 14.f;
 static CGFloat const kDetailFontSize = 14.f;
-static CGFloat const kHeaderFontSize = 17.f;
+static CGFloat const kHeaderFontSize_iOS6x = 17.f;
+static CGFloat const kHeaderFontSize = 15.f;
 static CGFloat const kFooterFontSize = 13.f;
 
-static CGFloat const kFieldHeightScaleFactor = 1.22f;
+static CGFloat const kLineToFieldHeightFactor_iOS6x = 1.22f;
+static CGFloat const kLineToFieldHeightFactor = 1.34f;
 
 
 @implementation UIFont (OrigoExtensions)
@@ -23,13 +27,29 @@ static CGFloat const kFieldHeightScaleFactor = 1.22f;
 
 + (UIFont *)titleFont
 {
-    return [self boldSystemFontOfSize:kTitleFontSize];
+    UIFont *titleFont = nil;
+    
+    if ([OMeta systemIs_iOS6x]) {
+        titleFont = [self boldSystemFontOfSize:kTitleFontSize_iOS6x];
+    } else {
+        titleFont = [self systemFontOfSize:kTitleFontSize];
+    }
+    
+    return titleFont;
 }
 
 
 + (UIFont *)labelFont
 {
-    return [self boldSystemFontOfSize:kLabelFontSize];
+    UIFont *labelFont = nil;
+    
+    if ([OMeta systemIs_iOS6x]) {
+        labelFont = [self boldSystemFontOfSize:kLabelFontSize_iOS6x];
+    } else {
+        labelFont = [self systemFontOfSize:kLabelFontSize];
+    }
+    
+    return labelFont;
 }
 
 
@@ -41,7 +61,15 @@ static CGFloat const kFieldHeightScaleFactor = 1.22f;
 
 + (UIFont *)headerFont
 {
-    return [self boldSystemFontOfSize:kHeaderFontSize];
+    UIFont *headerFont = nil;
+    
+    if ([OMeta systemIs_iOS6x]) {
+        headerFont = [self boldSystemFontOfSize:kHeaderFontSize_iOS6x];
+    } else {
+        headerFont = [self systemFontOfSize:kHeaderFontSize];
+    }
+    
+    return headerFont;
 }
 
 
@@ -75,15 +103,9 @@ static CGFloat const kFieldHeightScaleFactor = 1.22f;
 
 - (CGFloat)textFieldHeight
 {
-    return kFieldHeightScaleFactor * self.lineHeight;
-}
-
-
-- (NSInteger)lineCountWithText:(NSString *)text textWidth:(CGFloat)textWidth
-{
-    CGSize textSize = [text sizeWithFont:self constrainedToSize:CGSizeMake(textWidth, FLT_MAX)];
+    CGFloat lineToFieldHeightFactor = [OMeta systemIs_iOS6x] ? kLineToFieldHeightFactor_iOS6x : kLineToFieldHeightFactor;
     
-    return round(textSize.height / (self.lineHeight + 1.f));
+    return lineToFieldHeightFactor * self.lineHeight;
 }
 
 @end
