@@ -29,7 +29,7 @@ static NSInteger const kSectionKeySettings = 0;
 {
     [super viewDidLoad];
 
-    self.title = [OStrings stringForKey:strTabBarTitleSettings];
+    self.title = [OStrings stringForKey:strViewTitleSettings];
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
 }

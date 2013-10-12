@@ -49,7 +49,7 @@ NSString * const strAlertTitleWelcomeBack            = @"strAlertTitleWelcomeBac
 NSString * const strAlertTextWelcomeBack             = @"strAlertTextWelcomeBack";
 
 // OOrigoListView strings
-NSString * const strTabBarTitleOrigo                 = @"strTabBarTitleOrigo";
+NSString * const strViewTitleOrigo                   = @"strViewTitleOrigo";
 NSString * const strHeaderWardsOrigos                = @"strHeaderWardsOrigos";
 NSString * const strHeaderMyOrigos                   = @"strHeaderMyOrigos";
 NSString * const strFooterOrigoCreationFirst         = @"strFooterOrigoCreationFirst";
@@ -131,17 +131,17 @@ NSString * const strTermHisMother                    = @"strTermHisMother";
 NSString * const strTermHerMother                    = @"strTermHerMother";
 
 // OCalendarView strings
-NSString * const strTabBarTitleCalendar              = @"strTabBarTitleCalendar";
+NSString * const strViewTitleCalendar                = @"strViewTitleCalendar";
 
 // OTaskListView strings
-NSString * const strTabBarTitleTasks                 = @"strTabBarTitleTasks";
+NSString * const strViewTitleTasks                   = @"strViewTitleTasks";
 
 // OMessageListView strings
-NSString * const strTabBarTitleMessages              = @"strTabBarTitleMessages";
+NSString * const strViewTitleMessages                = @"strViewTitleMessages";
 NSString * const strDefaultMessageBoardName          = @"strDefaultMessageBoardName";
 
 // OSettingListView strings
-NSString * const strTabBarTitleSettings              = @"strTabBarTitleSettings";
+NSString * const strViewTitleSettings                = @"strViewTitleSettings";
 NSString * const strSettingTitleCountry              = @"strSettingTitleCountry";
 NSString * const strSettingTextCountry               = @"strSettingTextCountry";
 

@@ -10,11 +10,12 @@
 
 @interface UIFont (OrigoExtensions)
 
-+ (UIFont *)titleFont;
-+ (UIFont *)labelFont;
-+ (UIFont *)detailFont;
 + (UIFont *)headerFont;
 + (UIFont *)footerFont;
++ (UIFont *)titleFont;
++ (UIFont *)detailFont;
++ (UIFont *)listTextFont;
++ (UIFont *)listDetailFont;
 
 + (CGFloat)titleFieldHeight;
 + (CGFloat)detailFieldHeight;

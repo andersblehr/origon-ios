@@ -49,7 +49,7 @@ extern NSString * const strAlertTitleWelcomeBack;
 extern NSString * const strAlertTextWelcomeBack;
 
 // OOrigoListView strings
-extern NSString * const strTabBarTitleOrigo;
+extern NSString * const strViewTitleOrigo;
 extern NSString * const strHeaderWardsOrigos;
 extern NSString * const strHeaderMyOrigos;
 extern NSString * const strFooterOrigoCreationFirst;
@@ -131,17 +131,17 @@ extern NSString * const strTermHisMother;
 extern NSString * const strTermHerMother;
 
 // OCalendarView strings
-extern NSString * const strTabBarTitleCalendar;
+extern NSString * const strViewTitleCalendar;
 
 // OTaskListView strings
-extern NSString * const strTabBarTitleTasks;
+extern NSString * const strViewTitleTasks;
 
 // OMessageListView strings
-extern NSString * const strTabBarTitleMessages;
+extern NSString * const strViewTitleMessages;
 extern NSString * const strDefaultMessageBoardName;
 
 // OSettingListView strings
-extern NSString * const strTabBarTitleSettings;
+extern NSString * const strViewTitleSettings;
 extern NSString * const strSettingTitleCountry;
 extern NSString * const strSettingTextCountry;
 

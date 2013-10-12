@@ -13,7 +13,11 @@ NSInteger const kTextViewMaximumLines = 5;
 static NSInteger const kTextViewMinimumEditLines = 2;
 static NSInteger const kTextViewMinimumLines = 1;
 
-static CGFloat const kTopInset = 6.f;
+static CGFloat const kContentInsetX = 4.f;
+static CGFloat const kContentInsetY = 6.f;
+static CGFloat const kTextInsetX = 1.f;
+static CGFloat const kTextInsetY = 3.5f;
+
 static CGFloat const kAccessoryViewWidth = 30.f;
 
 
@@ -23,7 +27,9 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 + (CGFloat)textWidthWithBlueprint:(OTableViewCellBlueprint *)blueprint
 {
-    return kContentWidth - 2 * kTextInsetX - [OTextView labelWidthWithBlueprint:blueprint];
+    CGFloat textInsetX = [OMeta systemIs_iOS6x] ? kContentInsetX : kTextInsetX;
+    
+    return kContentWidth - 2 * textInsetX - [OTextView labelWidthWithBlueprint:blueprint];
 }
 
 
@@ -106,22 +112,22 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         self.returnKeyType = UIReturnKeyDefault;
         self.scrollEnabled = NO;
         self.textAlignment = NSTextAlignmentLeft;
+        self.layer.borderColor = [[UIColor clearColor] CGColor];
+        self.layer.borderWidth = [OMeta screenIsRetina] ? kBorderWidth : kBorderWidthNonRetina;
+        
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
         _key = key;
         _blueprint = blueprint;
         _state = [OState s].viewController.state;
-        _labelWidth = [OTextView labelWidthWithBlueprint:_blueprint];
         _textWidth = [OTextView textWidthWithBlueprint:_blueprint];
         _hasEmphasis = NO;
         
         if ([OMeta systemIs_iOS6x]) {
-            self.contentInset = UIEdgeInsetsMake(-kTopInset, -kTextInsetX, 0.f, 0.f);
+            self.contentInset = UIEdgeInsetsMake(-kContentInsetY, -kContentInsetX, 0.f, 0.f);
         } else {
-            self.textContainerInset = UIEdgeInsetsMake(3.5f, -1.f, 0.f, 0.f);
-            self.layer.borderColor = [[UIColor clearColor] CGColor];
-            self.layer.borderWidth = kTextFieldBorderWidth;
+            self.textContainerInset = UIEdgeInsetsMake(kTextInsetY, -kTextInsetX, 0.f, 0.f);
         }
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:nil];
@@ -138,7 +144,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     CGFloat labelWidth = 0.f;
     
     for (NSString *key in blueprint.detailKeys) {
-        CGSize labelSize = [[OStrings labelForKey:key] sizeWithFont:[UIFont labelFont] maxWidth:CGFLOAT_MAX];
+        CGSize labelSize = [[OStrings labelForKey:key] sizeWithFont:[UIFont detailFont] maxWidth:CGFLOAT_MAX];
         
         labelWidth = MAX(labelWidth, labelSize.width);
     }
@@ -232,34 +238,16 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 }
 
 
-- (void)setSelected:(BOOL)selected
-{
-    if ([OMeta systemIs_iOS6x]) {
-        self.textColor = selected ? [UIColor selectedDetailTextColor] : [UIColor detailTextColor];
-    }
-}
-
-
 - (void)setHasEmphasis:(BOOL)hasEmphasis
 {
     _hasEmphasis = hasEmphasis;
     
     if (_hasEmphasis) {
-        if ([OMeta systemIs_iOS6x]) {
-            self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-            [self setDropShadowForTextFieldVisible:YES];
-        } else {
-            self.layer.borderColor = [[UIColor windowTintColor] CGColor];
-        }
+        self.layer.borderColor = [[UIColor windowTintColor] CGColor];
     } else {
         self.text = [self textValue];
         
-        if ([OMeta systemIs_iOS6x]) {
-            self.backgroundColor = [UIColor clearColor];
-            [self setDropShadowForTextFieldVisible:NO];
-        } else {
-            self.layer.borderColor = [[UIColor clearColor] CGColor];
-        }
+        self.layer.borderColor = [[UIColor clearColor] CGColor];
     }
 }
 
@@ -293,7 +281,8 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         _placeholderView.backgroundColor = [UIColor clearColor];
         _placeholderView.delegate = self;
         _placeholderView.font = [UIFont detailFont];
-        _placeholderView.textColor = [UIColor lightGrayColor];
+        _placeholderView.textColor = [UIColor defaultPlaceholderColor];
+        
         [self addSubview:_placeholderView];
         
         self.placeholder = [OStrings placeholderForKey:_key];
@@ -309,7 +298,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     [super drawRect:rect];
     
     if ([OMeta systemIs_iOS6x] && _hasEmphasis) {
-        [self redrawDropShadowForTextField];
+        [self redrawDropShadow];
     }
 }
 

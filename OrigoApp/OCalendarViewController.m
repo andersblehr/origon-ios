@@ -18,7 +18,7 @@
 {
     [super viewDidLoad];
     
-    self.title = [OStrings stringForKey:strTabBarTitleCalendar];
+    self.title = [OStrings stringForKey:strViewTitleCalendar];
 }
 
 

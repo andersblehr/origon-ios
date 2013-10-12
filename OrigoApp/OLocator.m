@@ -15,6 +15,7 @@
 
 - (void)showBlockingAlert
 {
+    _blocking = YES;
     _blockingAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTextLocating] message:nil delegate:self cancelButtonTitle:nil otherButtonTitles:nil];
     
     [_blockingAlert show];
@@ -74,14 +75,13 @@
 {
     if ([self canLocate]) {
         if ([self isAuthorised]) {
-            if (_blocking) {
+            if (blocking) {
                 [self showBlockingAlert];
             }
         } else {
             _awaitingAuthorisation = YES;
         }
         
-        _blocking = blocking;
         _awaitingLocation = YES;
         _delegate = (id<OLocatorDelegate>)[OState s].viewController;
         
@@ -146,11 +146,11 @@
             [_blockingAlert dismissWithClickedButtonIndex:0 animated:YES];
         }
         
-        if (error.code != kCLErrorLocationUnknown) {
+        if ((error.code != kCLErrorLocationUnknown) || [OMeta deviceIsSimulator]) {
             [_delegate locatorCannotLocate];
+            
+            _awaitingLocation = NO;
         }
-        
-        _awaitingLocation = NO;
     }
 }
 

@@ -15,7 +15,7 @@
 
 + (UIBarButtonItem *)settingsButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSettings] style:UIBarButtonItemStylePlain target:target action:@selector(openSettings)];
+    return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strViewTitleSettings] style:UIBarButtonItemStylePlain target:target action:@selector(openSettings)];
 }
 
 
@@ -57,19 +57,25 @@
 
 + (UIBarButtonItem *)sendEmailButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSendEmail] style:UIBarButtonItemStylePlain target:target action:@selector(processEmailRequest)];
+    NSString *iconFile = [OMeta systemIs_iOS6x] ? kIconFileSendEmail_iOS6x : kIconFileSendEmail;
+    
+    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:iconFile] style:UIBarButtonItemStylePlain target:target action:@selector(processEmailRequest)];
 }
 
 
 + (UIBarButtonItem *)sendTextButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSendText] style:UIBarButtonItemStylePlain target:target action:@selector(processTextRequest)];
+    NSString *iconFile = [OMeta systemIs_iOS6x] ? kIconFileSendText_iOS6x : kIconFileSendText;
+    
+    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:iconFile] style:UIBarButtonItemStylePlain target:target action:@selector(processTextRequest)];
 }
 
 
 + (UIBarButtonItem *)phoneCallButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFilePlacePhoneCall] style:UIBarButtonItemStylePlain target:target action:@selector(processPhoneCallRequest)];
+    NSString *iconFile = [OMeta systemIs_iOS6x] ? kIconFilePlacePhoneCall_iOS6x : kIconFilePlacePhoneCall;
+    
+    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:iconFile] style:UIBarButtonItemStylePlain target:target action:@selector(processPhoneCallRequest)];
 }
 
 

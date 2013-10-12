@@ -8,11 +8,12 @@
 
 #import "OTextField.h"
 
-CGFloat const kTextFieldBorderWidth = 0.5f;
-CGFloat const kTextInsetX = 4.f;
-CGFloat const kTextInsetY = 1.4f;
+CGFloat const kBorderWidthNonRetina = 1.f;
+CGFloat const kBorderWidth = 0.5f;
 
-static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor";
+static CGFloat const kTextInsetX = 4.f;
+static CGFloat const kTextInsetY_iOS6x = 1.2f;
+static CGFloat const kTextInsetY = 2.5f;
 
 
 @implementation OTextField
@@ -43,14 +44,11 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
         self.placeholder = [OStrings placeholderForKey:key];
         self.returnKeyType = UIReturnKeyNext;
         self.textAlignment = NSTextAlignmentLeft;
+        self.layer.borderWidth = [OMeta screenIsRetina] ? kBorderWidth : kBorderWidthNonRetina;
+        self.layer.borderColor = [[UIColor clearColor] CGColor];
         
         _key = key;
         _inputDelegate = delegate;
-        
-        if (![OMeta systemIs_iOS6x]) {
-            self.layer.borderWidth = 0.5f;
-            self.layer.borderColor = [[UIColor clearColor] CGColor];
-        }
         
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
@@ -200,12 +198,14 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     _isTitleField = isTitleField;
     
     self.font = _isTitleField ? [UIFont titleFont] : [UIFont detailFont];
-    self.textColor = _isTitleField ? [UIColor titleTextColor] : [UIColor detailTextColor];
+    self.textColor = _isTitleField ? [UIColor titleTextColor] : [UIColor defaultTextColor];
     
     if (_isTitleField) {
-        [self setValue:[UIColor titlePlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
-    } else {
-        [self setValue:[UIColor detailPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
+        if (![OMeta systemIs_iOS6x]) {
+            self.tintColor = [UIColor titlePlaceholderColor];
+        }
+        
+        self.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.placeholder attributes:@{NSForegroundColorAttributeName:[UIColor titlePlaceholderColor]}];
     }
 }
 
@@ -227,32 +227,14 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     _hasEmphasis = hasEmphasis;
     
     if (_hasEmphasis) {
-        self.backgroundColor = [UIColor editableTextFieldBackgroundColor];
-        
-        if ([OMeta systemIs_iOS6x]) {
-            [self setDropShadowForTextFieldVisible:YES];
+        if (_isTitleField) {
+            self.layer.borderColor = [[UIColor titleTextColor] CGColor];
         } else {
             self.layer.borderColor = [[UIColor windowTintColor] CGColor];
         }
-        
-        if (_isTitleField) {
-            self.textColor = [UIColor editableTitleTextColor];
-            [self setValue:[UIColor detailPlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
-        }
     } else {
         self.text = [self textValue];
-        self.backgroundColor = [UIColor clearColor];
-        
-        if ([OMeta systemIs_iOS6x]) {
-            [self setDropShadowForTextFieldVisible:NO];
-        } else {
-            self.layer.borderColor = [[UIColor clearColor] CGColor];
-        }
-        
-        if (_isTitleField) {
-            self.textColor = [UIColor titleTextColor];
-            [self setValue:[UIColor titlePlaceholderColor] forKeyPath:kKeyPathPlaceholderColor];
-        }
+        self.layer.borderColor = [[UIColor clearColor] CGColor];
     }
 }
 
@@ -273,20 +255,6 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 }
 
 
-- (void)setSelected:(BOOL)selected
-{
-    [super setSelected:selected];
-    
-    if ([OMeta systemIs_iOS6x] && !_isTitleField) {
-        if (selected) {
-            self.textColor = [UIColor selectedDetailTextColor];
-        } else {
-            self.textColor = [UIColor detailTextColor];
-        }
-    }
-}
-
-
 #pragma mark - UITextField overrides
 
 - (CGRect)editingRectForBounds:(CGRect)bounds
@@ -303,7 +271,9 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
 
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
-    return CGRectInset([super textRectForBounds:bounds], kTextInsetX, kTextInsetY);
+    CGFloat textInsetY = [OMeta systemIs_iOS6x] ? kTextInsetY_iOS6x : kTextInsetY;
+    
+    return CGRectInset([super textRectForBounds:bounds], kTextInsetX, textInsetY);
 }
 
 
@@ -314,7 +284,7 @@ static NSString * const kKeyPathPlaceholderColor = @"_placeholderLabel.textColor
     [super drawRect:rect];
     
     if ([OMeta systemIs_iOS6x] && _hasEmphasis) {
-        [self redrawDropShadowForTextField];
+        [self redrawDropShadow];
     }
 }
 

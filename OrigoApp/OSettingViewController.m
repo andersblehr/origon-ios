@@ -76,6 +76,12 @@ static NSInteger const kSectionKeyValues = 0;
 }
 
 
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return [_settingKey isEqualToString:kSettingKeyCountry];
+}
+
+
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
     NSMutableString *text = nil;
@@ -90,8 +96,9 @@ static NSInteger const kSectionKeyValues = 0;
         text = [NSMutableString stringWithFormat:[OStrings stringForKey:strFooterCountryInfo], [OLanguage plainLanguageListOfItems:supportedCountries]];
         
         if (_listContainsParenthesisedCountries) {
-            [text appendString:kSeparatorSpace];
             [text appendString:[OStrings stringForKey:strFooterCountryInfoNote]];
+        } else {
+            [text appendString:@"."];
         }
         
         if (![[OMeta m].locator canLocate]) {
