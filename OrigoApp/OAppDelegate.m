@@ -107,7 +107,7 @@ static void uncaughtExceptionHandler(NSException *exception)
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:kTimeZoneNameUTC]];
     
     if ([OMeta systemIs_iOS6x]) {
-        [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleBlackOpaque;
+        [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     } else {
         _window.tintColor = [UIColor windowTintColor];
     }

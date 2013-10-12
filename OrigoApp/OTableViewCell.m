@@ -58,8 +58,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _state = [OState s].viewController.state;
         
         if ([self isListCell]) {
-            self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColor];
             self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
+            self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColor];
+            
+            if (style == UITableViewCellStyleSubtitle) {
+                self.textLabel.font = [UIFont listTextFont];
+                self.textLabel.textColor = [UIColor defaultTextColor];
+                self.detailTextLabel.font = [UIFont listDetailFont];
+                self.detailTextLabel.textColor = [UIColor defaultTextColor];
+            }
             
             _indexPath = indexPath;
             _selectable = YES;
@@ -114,7 +121,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             
             UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
             photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
-            photoPrompt.font = [UIFont labelFont];
+            photoPrompt.font = [UIFont detailFont];
             photoPrompt.text = [OStrings stringForKey:strPlaceholderPhoto];
             photoPrompt.textAlignment = NSTextAlignmentCenter;
             photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
@@ -134,7 +141,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
     label.backgroundColor = [UIColor clearColor];
-    label.font = [UIFont labelFont];
+    label.font = [UIFont detailFont];
     label.hidden = YES;
     label.text = [OStrings labelForKey:key];
     label.textAlignment = centred ? NSTextAlignmentCenter : NSTextAlignmentRight;
@@ -284,12 +291,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Cell display
 
-- (void)willAppearTrailing:(BOOL)trailing
+- (void)willAppear
 {
-    _trailing = trailing;
-    
     if ([OMeta systemIs_iOS6x]) {
-        [self.backgroundView addDropShadowForTableViewCellTrailing:_trailing];
+        [self.backgroundView addDropShadowForTableViewCell];
     }
     
     if (![self isListCell]) {
@@ -342,7 +347,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 self.frame = frame;
                 
                 if ([OMeta systemIs_iOS6x]) {
-                    [self.backgroundView redrawDropShadowForTextField];
+                    [self.backgroundView redrawDropShadow];
                 }
             }];
         }
@@ -352,7 +357,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)redrawDropShadow
 {
-    [self.backgroundView addDropShadowForTableViewCellTrailing:_trailing];
+    [self.backgroundView addDropShadowForTableViewCell];
 }
 
 
@@ -520,6 +525,17 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (void)setFrame:(CGRect)frame
+{
+    if ([OMeta systemIs_iOS6x]) {
+        frame.origin.x = -kDefaultCellPadding;
+        frame.size.width = kScreenWidth + 2.f * kDefaultCellPadding;
+    }
+    
+    [super setFrame:frame];
+}
+
+
 #pragma mark - UITableViewCell custom accessors
 
 - (void)setEditing:(BOOL)editing
@@ -546,18 +562,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     if (_selectable) {
         [super setSelected:selected animated:animated];
-        
-        for (id view in [_views allValues]) {
-            if ([view isKindOfClass:OTextField.class] || [view isKindOfClass:OTextView.class]) {
-                [view setSelected:selected];
-            } else if ([OMeta systemIs_iOS6x] && [view isKindOfClass:UILabel.class]) {
-                if (selected) {
-                    ((UILabel *)view).textColor = [UIColor selectedLabelTextColor];
-                } else {
-                    ((UILabel *)view).textColor = [UIColor labelTextColor];
-                }
-            }
-        }
     }
 }
 

@@ -308,7 +308,9 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
         _blueprint = blueprint;
         _cell = cell;
         
-        _labelWidth = [OTextView labelWidthWithBlueprint:_blueprint];
+        if (_blueprint.fieldsAreLabeled) {
+            _labelWidth = [OTextView labelWidthWithBlueprint:_blueprint];
+        }
     }
     
     return self;

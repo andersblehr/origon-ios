@@ -30,10 +30,12 @@ extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
 extern NSString * const kIconFileLocationArrow;
-extern NSString * const kIconFileSettings;
 extern NSString * const kIconFilePlacePhoneCall;
+extern NSString * const kIconFilePlacePhoneCall_iOS6x;
 extern NSString * const kIconFileSendText;
+extern NSString * const kIconFileSendText_iOS6x;
 extern NSString * const kIconFileSendEmail;
+extern NSString * const kIconFileSendEmail_iOS6x;
 
 extern NSString * const kGenderMale;
 extern NSString * const kGenderMaleConfirmed;
@@ -130,6 +132,7 @@ extern NSString * const kDefaultsKeyStringDate;
 - (BOOL)shouldUseEasternNameOrder;
 + (BOOL)deviceIsSimulator;
 + (BOOL)systemIs_iOS6x;
++ (BOOL)screenIsRetina;
 
 - (NSArray *)supportedCountryCodes;
 - (NSString *)inferredCountryCode;

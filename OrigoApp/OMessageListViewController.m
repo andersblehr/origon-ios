@@ -17,7 +17,7 @@
 {
     [super viewDidLoad];
     
-    self.title = [OStrings stringForKey:strTabBarTitleMessages];
+    self.title = [OStrings stringForKey:strViewTitleMessages];
 }
 
 

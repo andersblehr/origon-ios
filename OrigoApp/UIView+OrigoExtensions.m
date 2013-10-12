@@ -8,8 +8,8 @@
 
 #import "UIView+OrigoExtensions.h"
 
-static CGFloat const kCellShadowRadius = 3.75f;
-static CGFloat const kCellShadowOffset = 5.f;
+static CGFloat const kCellShadowRadius = 1.f;
+static CGFloat const kCellShadowOffset = 0.f;
 static CGFloat const kFieldShadowRadius = 3.f;
 static CGFloat const kFieldShadowOffset = 3.f;
 static CGFloat const kFieldShadowHeightShrinkage = 1.f;
@@ -44,38 +44,11 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 }
 
 
-- (void)addDropShadowForTextField
-{
-    [self addShadowWithPath:[self shadowPathForTextField] colour:[UIColor darkGrayColor] radius:kFieldShadowRadius offset:kFieldShadowOffset];
-}
-
-
-- (void)removeDropShadow
-{
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor clearColor] radius:0.f offset:0.f];
-}
-
-
-#pragma mark - Gradient layer
-
-- (void)addGradientLayer
-{
-    CAGradientLayer *gradientLayer = [CAGradientLayer layer];
-    
-    gradientLayer.frame = self.bounds;
-    gradientLayer.colors = @[(id)[[UIColor blackColor] colorWithAlphaComponent:0.1f].CGColor, (id)[UIColor clearColor].CGColor];
-    
-    [self.layer addSublayer:gradientLayer];
-}
-
-
 #pragma mark - Shadows
 
-- (void)addDropShadowForTableViewCellTrailing:(BOOL)trailing
+- (void)addDropShadowForTableViewCell
 {
-    CGRect shadowRect = trailing ? self.bounds : CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height - 2.75f * kCellShadowRadius);
-    
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:shadowRect] colour:[UIColor blackColor] radius:kCellShadowRadius offset:kCellShadowOffset];
+    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor tableViewSeparatorColor] radius:kCellShadowRadius offset:kCellShadowOffset];
 }
 
 
@@ -85,17 +58,7 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 }
 
 
-- (void)setDropShadowForTextFieldVisible:(BOOL)visible
-{
-    if (visible) {
-        [self addDropShadowForTextField];
-    } else {
-        [self removeDropShadow];
-    }
-}
-
-
-- (void)redrawDropShadowForTextField
+- (void)redrawDropShadow
 {
     CGPathRef redrawnShadowPath;
     

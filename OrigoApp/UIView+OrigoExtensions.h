@@ -10,12 +10,9 @@
 
 @interface UIView (OrigoExtensions)
 
-- (void)addGradientLayer;
-
-- (void)addDropShadowForTableViewCellTrailing:(BOOL)trailing;
+- (void)addDropShadowForTableViewCell;
 - (void)addDropShadowForPhotoFrame;
 
-- (void)setDropShadowForTextFieldVisible:(BOOL)visible;
-- (void)redrawDropShadowForTextField;
+- (void)redrawDropShadow;
 
 @end

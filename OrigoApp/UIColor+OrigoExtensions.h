@@ -10,25 +10,24 @@
 
 @interface UIColor (OrigoExtensions)
 
++ (UIColor *)barTintColor;
 + (UIColor *)windowTintColor;
++ (UIColor *)tableViewBackgroundColor;
++ (UIColor *)tableViewSeparatorColor;
 
 + (UIColor *)cellBackgroundColor;
 + (UIColor *)selectedCellBackgroundColor;
 + (UIColor *)titleBackgroundColor;
-+ (UIColor *)editableTextFieldBackgroundColor;
 + (UIColor *)imagePlaceholderBackgroundColor;
 
-+ (UIColor *)titleTextColor;
-+ (UIColor *)editableTitleTextColor;
-+ (UIColor *)labelTextColor;
-+ (UIColor *)selectedLabelTextColor;
-+ (UIColor *)detailTextColor;
-+ (UIColor *)selectedDetailTextColor;
-+ (UIColor *)imagePlaceholderTextColor;
++ (UIColor *)defaultTextColor;
 + (UIColor *)headerTextColor;
 + (UIColor *)footerTextColor;
++ (UIColor *)titleTextColor;
++ (UIColor *)labelTextColor;
++ (UIColor *)imagePlaceholderTextColor;
 
++ (UIColor *)defaultPlaceholderColor;
 + (UIColor *)titlePlaceholderColor;
-+ (UIColor *)detailPlaceholderColor;
 
 @end

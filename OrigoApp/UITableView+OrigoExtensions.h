@@ -8,11 +8,11 @@
 
 #import "OrigoApp.h"
 
+extern CGFloat const kScreenWidth;
 extern CGFloat const kContentWidth;
 
 @interface UITableView (OrigoExtensions)
 
-- (void)setBackground;
 - (void)addLogoBanner;
 - (UIActivityIndicatorView *)addActivityIndicator;
 

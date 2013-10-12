@@ -17,7 +17,7 @@
 {
     [super viewDidLoad];
     
-    self.title = [OStrings stringForKey:strTabBarTitleTasks];
+    self.title = [OStrings stringForKey:strViewTitleTasks];
 }
 
 

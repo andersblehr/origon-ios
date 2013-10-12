@@ -15,9 +15,8 @@ NSString * const kCustomValue = @"customValue";
 static NSString * const kViewControllerSuffixDefault = @"ViewController";
 static NSString * const kViewControllerSuffixList = @"ListViewController";
 
-static CGFloat const kDefaultCellSpacing_iOS6x = 10.f;
-static CGFloat const kDefaultCellSpacing = 28.f;
-static CGFloat const kToolbarHeight = 44.f;
+static CGFloat const kEmptyFooterHeight = 14.f;
+static CGFloat const kSectionSpacing = 28.f;
 
 static BOOL _needsReinstantiateRootViewController;
 static UIViewController * _reinstantiatedRootViewController;
@@ -142,17 +141,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (BOOL)instanceHasDefaultFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    return (sectionKey == _detailSectionKey) && ![self actionIs:kActionRegister] && self.canEdit;
-}
-
-
 - (BOOL)instanceHasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    BOOL hasFooter = [self instanceHasDefaultFooterForSectionWithKey:sectionKey];
+    BOOL hasFooter = NO;
     
-    if (!hasFooter && [_instance respondsToSelector:@selector(hasFooterForSectionWithKey:)]) {
+    if ([_instance respondsToSelector:@selector(hasFooterForSectionWithKey:)]) {
         hasFooter = [_instance hasFooterForSectionWithKey:sectionKey];
     }
     
@@ -164,9 +157,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     NSString *footerText = nil;
     
-    if ([self instanceHasDefaultFooterForSectionWithKey:sectionKey]) {
-        footerText = [OStrings stringForKey:strFooterTapToEdit];
-    } else if ([_instance respondsToSelector:@selector(textForFooterInSectionWithKey:)]) {
+    if ([_instance respondsToSelector:@selector(textForFooterInSectionWithKey:)]) {
         footerText = [_instance textForFooterInSectionWithKey:sectionKey];
     }
     
@@ -363,11 +354,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if ([identifier isEqualToString:kIdentifierAuth]) {
         destinationViewController = viewController;
-        destinationViewController.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     } else {
         destinationViewController = [[UINavigationController alloc] initWithRootViewController:viewController];
-        destinationViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     }
+    
+    destinationViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     
     [self.navigationController presentViewController:destinationViewController animated:YES completion:NULL];
 }
@@ -497,10 +488,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [super viewDidLoad];
     
     if ([OMeta systemIs_iOS6x]) {
-        [self.tableView setBackground];
+        self.tableView.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+        self.tableView.backgroundColor = [UIColor tableViewBackgroundColor];
         
-        self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+        self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
+        self.navigationController.navigationBar.tintColor = [UIColor barTintColor];
         self.navigationController.toolbar.barStyle = UIBarStyleBlack;
+        self.navigationController.toolbar.tintColor = [UIColor barTintColor];
+        self.navigationController.toolbar.translucent = YES;
     }
     
     NSString *longName = NSStringFromClass(self.class);
@@ -568,24 +563,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _wasHidden = _isHidden;
     _isHidden = NO;
     _isPushed = [self isMovingToParentViewController] || (_didJustLoad && !_isModal);
-    _isPopped = !_isPushed && !_isModal && !_wasHidden;
+    _isPopped = !_isPushed && !_wasHidden && (!_isModal || !_didJustLoad);
     _didJustLoad = NO;
     
-    if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
-        if (!self.presentingViewController && (!self.toolbarItems || _wasHidden)) {
+    if (!self.presentingViewController && (!self.toolbarItems || _isPopped || _wasHidden)) {
+        if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
             self.toolbarItems = [_instance toolbarButtons];
         }
     }
     
-    if (self.toolbarItems) {
-        [self.navigationController setToolbarHidden:NO animated:YES];
-        
-        if ([OMeta systemIs_iOS6x]) {
-            self.tableView.contentInset = UIEdgeInsetsMake(0, 0, kToolbarHeight, 0);
-        }
-    } else  {
-        [self.navigationController setToolbarHidden:YES animated:YES];
-    }
+    [self.navigationController setToolbarHidden:(!self.toolbarItems) animated:YES];
     
     if (_isPopped || _shouldReloadOnModalDismissal) {
         [self reloadSections];
@@ -814,7 +801,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = [OMeta systemIs_iOS6x] ? kDefaultCellSpacing_iOS6x : kDefaultCellSpacing;
+    CGFloat height = kSectionSpacing;
     
     if ([self instanceHasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView standardHeaderHeight];
@@ -826,8 +813,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
+    CGFloat height = kEmptyFooterHeight;
     NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
-    CGFloat height = kDefaultCellPadding;
     
     if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
         height = [tableView heightForFooterWithText:[self footerTextForSectionWithKey:sectionKey]];
@@ -839,8 +826,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     UIView *view = nil;
+    NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
 
     if ([self instanceHasHeaderForSectionWithKey:sectionKey]) {
         view = [tableView headerViewWithText:[self textForHeaderInSectionWithKey:sectionKey]];
@@ -852,8 +839,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     UIView *view = nil;
+    NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     
     if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
         view = [tableView footerViewWithText:[self footerTextForSectionWithKey:sectionKey]];
@@ -869,11 +856,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [_instance willDisplayCell:cell atIndexPath:indexPath];
     }
     
-    if (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1) {
-        [cell willAppearTrailing:YES];
-    } else {
-        [cell willAppearTrailing:NO];
-    }
+    [cell willAppear];
 }
 
 
@@ -895,8 +878,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    OLogDebug(@"Begin editing in text field. (Text: '%@')", textField.text);
-    
     [self inputFieldDidBeginEditing:textField];
 }
 
@@ -915,8 +896,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)textFieldDidEndEditing:(OTextField *)textField
 {
-    OLogDebug(@"End editing in text field. (Text: '%@')", textField.text);
-    
     _detailCell.inputField = nil;
 }
 
@@ -925,24 +904,18 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)textViewDidBeginEditing:(OTextView *)textView
 {
-    OLogDebug(@"Begin editing in text view. (Text: '%@')", textView.text);
-    
     [self inputFieldDidBeginEditing:textView];
 }
 
 
 - (void)textViewDidChange:(OTextView *)textView
 {
-    OLogDebug(@"Text did change in text view. (Text: '%@')", textView.text);
-    
     [_detailCell redrawIfNeeded];
 }
 
 
 - (void)textViewDidEndEditing:(OTextView *)textView
 {
-    OLogDebug(@"End editing in text view. (Text: '%@')", textView.text);
-    
     _detailCell.inputField = nil;
 }
 

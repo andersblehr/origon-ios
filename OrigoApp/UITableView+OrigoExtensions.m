@@ -8,21 +8,17 @@
 
 #import "UITableView+OrigoExtensions.h"
 
-CGFloat const kContentWidth = 280.f;
+CGFloat const kScreenWidth = 320.f;
+CGFloat const kContentWidth = 300.f;
 
-static CGFloat const kScreenWidth = 320.f;
 static CGFloat const kKeyboardHeight = 216.f;
 
 static CGFloat const kLogoHeight = 55.f;
 static CGFloat const kLogoFontSize = 30.f;
-static CGFloat const kLogoShadowOffset = 7.f;
 
 static CGFloat const kLineToHeaderHeightFactor = 1.5f;
-static CGFloat const kHeaderShadowOffset = 3.f;
-static CGFloat const kFooterShadowOffset = 2.f;
 static CGFloat const kFooterHeadRoom = 6.f;
 
-static NSString * const kDarkLinenImageFile = @"dark_linen-640x960.png";
 static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
 static NSString * const kLogoText = @"..origo..";
 
@@ -48,15 +44,6 @@ static NSString * const kLogoText = @"..origo..";
 
 #pragma mark - Appearance
 
-- (void)setBackground
-{
-    self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:kDarkLinenImageFile]];
-    
-    [self.backgroundView addGradientLayer];
-}
-
-
 - (void)addLogoBanner
 {
     CGFloat cellWidth = self.bounds.size.width - 2 * kDefaultCellPadding;
@@ -70,14 +57,7 @@ static NSString * const kLogoText = @"..origo..";
     logoLabel.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
     logoLabel.text = kLogoText;
     logoLabel.textAlignment = NSTextAlignmentCenter;
-    
-    if ([OMeta systemIs_iOS6x]) {
-        logoLabel.shadowColor = [UIColor darkTextColor];
-        logoLabel.shadowOffset = CGSizeMake(0.f, kLogoShadowOffset);
-        logoLabel.textColor = [UIColor headerTextColor];
-    } else {
-        logoLabel.textColor = [UIColor windowTintColor];
-    }
+    logoLabel.textColor = [UIColor windowTintColor];
     
     [containerView addSubview:logoLabel];
     
@@ -90,7 +70,7 @@ static NSString * const kLogoText = @"..origo..";
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, kKeyboardHeight);
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     
-    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     activityIndicatorView.center = containerView.center;
     activityIndicatorView.hidesWhenStopped = YES;
     
@@ -151,7 +131,7 @@ static NSString * const kLogoText = @"..origo..";
 {
     self.sectionHeaderHeight = [self standardHeaderHeight];
     
-    CGFloat cellWidth = self.bounds.size.width - 2 * kDefaultCellPadding;
+    CGFloat cellWidth = self.bounds.size.width - 2.f * kDefaultCellPadding;
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionHeaderHeight);
     CGRect headerFrame = CGRectMake(kDefaultCellPadding, 0.f, cellWidth, self.sectionHeaderHeight);
     
@@ -164,11 +144,6 @@ static NSString * const kLogoText = @"..origo..";
     headerLabel.textAlignment = NSTextAlignmentLeft;
     headerLabel.textColor = [UIColor headerTextColor];
 
-    if ([OMeta systemIs_iOS6x]) {
-        headerLabel.shadowColor = [UIColor darkTextColor];
-        headerLabel.shadowOffset = CGSizeMake(0.f, kHeaderShadowOffset);
-    }
-    
     [containerView addSubview:headerLabel];
     
     return containerView;
@@ -180,7 +155,7 @@ static NSString * const kLogoText = @"..origo..";
     self.sectionFooterHeight = [self heightForFooterWithText:text];
 
     CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionFooterHeight);
-    CGRect footerFrame = CGRectMake(2.f * kDefaultCellPadding, 0.f, kContentWidth, self.sectionFooterHeight + kFooterHeadRoom);
+    CGRect footerFrame = CGRectMake(kDefaultCellPadding, 0.f, kContentWidth, self.sectionFooterHeight + kFooterHeadRoom);
     
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:footerFrame];
@@ -192,11 +167,6 @@ static NSString * const kLogoText = @"..origo..";
     footerLabel.textAlignment = NSTextAlignmentCenter;
     footerLabel.textColor = [UIColor footerTextColor];
 
-    if ([OMeta systemIs_iOS6x]) {
-        footerLabel.shadowColor = [UIColor darkTextColor];
-        footerLabel.shadowOffset = CGSizeMake(0.f, kFooterShadowOffset);
-    }
-    
     [containerView addSubview:footerLabel];
     
     return containerView;
