@@ -248,6 +248,10 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 
 + (NSString *)labelForOrigoType:(NSString *)origoType labelType:(NSString *)labelType
 {
+    if ([origoType isEqualToString:kTargetHousehold]) {
+        origoType = kOrigoTypeResidence;
+    }
+    
     return [OStrings stringForKey:[labelType stringByAppendingCapitalisedString:origoType]];
 }
 
