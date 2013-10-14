@@ -11,7 +11,6 @@
 NSInteger const nominative = 0;
 NSInteger const accusative = 1;
 NSInteger const dative = 2;
-NSInteger const disjunctive = 3;
 
 NSInteger const singularIndefinite = 0;
 NSInteger const singularDefinite = 1;

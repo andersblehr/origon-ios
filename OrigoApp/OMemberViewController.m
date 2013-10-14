@@ -93,6 +93,14 @@ static NSInteger const kEmailChangeButtonContinue = 1;
 }
 
 
+- (void)presentResidenceRegistrationViewController
+{
+    NSString *meta = [_member isUser] ? kTargetHousehold : kOrigoTypeResidence;
+    
+    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:meta];
+}
+
+
 #pragma mark - Action sheets & alerts
 
 - (void)presentCandidateResidencesSheet:(NSSet *)residences
@@ -575,7 +583,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
                 if ([housemateResidences count]) {
                     [self presentCandidateResidencesSheet:housemateResidences];
                 } else {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:kOrigoTypeResidence];
+                    [self presentResidenceRegistrationViewController];
                 }
             }
             
@@ -583,7 +591,7 @@ static NSInteger const kEmailChangeButtonContinue = 1;
             
         case kResidenceSheetTag:
             if (buttonIndex == actionSheet.numberOfButtons - 2) {
-                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:kOrigoTypeResidence];
+                [self presentResidenceRegistrationViewController];
             } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
                 [_candidateResidences[buttonIndex] addMember:_member];
                 [self reloadSections];

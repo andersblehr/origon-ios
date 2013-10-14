@@ -19,11 +19,9 @@ static NSInteger const kOrigoTypeSheetTag = 1;
 static NSInteger const kCountryAlertTag = 0;
 static NSInteger const kCountryAlertButtonCancel = 0;
 
-static NSInteger const kSectionKeyMember = 0;
+static NSInteger const kSectionKeyHouseholds = 0;
 static NSInteger const kSectionKeyOrigos = 1;
 static NSInteger const kSectionKeyWards = 2;
-
-static NSInteger const kUserRow = 0;
 
 
 @implementation OOrigoListViewController
@@ -240,11 +238,10 @@ static NSInteger const kUserRow = 0;
 - (void)initialiseDataSource
 {
     if (_member) {
-        [self setData:@[_member] forSectionWithKey:kSectionKeyMember];
         [self setData:[_member participancies] forSectionWithKey:kSectionKeyOrigos];
         
         if ([_member isUser]) {
-            [self appendData:[_member residencies] toSectionWithKey:kSectionKeyMember];
+            [self setData:[_member residencies] forSectionWithKey:kSectionKeyHouseholds];
             [self setData:[_member wards] forSectionWithKey:kSectionKeyWards];
         }
     }
@@ -281,19 +278,13 @@ static NSInteger const kUserRow = 0;
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if (sectionKey == kSectionKeyMember) {
-        if (indexPath.row == kUserRow) {
-            [self performSegueWithIdentifier:kSegueToMemberView sender:self];
-        } else {
-            [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
-        }
-    } else if (sectionKey == kSectionKeyOrigos) {
-        [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
-    } else if (sectionKey == kSectionKeyWards) {
+    if (sectionKey == kSectionKeyWards) {
         OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
         origoListViewController.data = [self dataAtIndexPath:indexPath];
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
+    } else {
+        [self performSegueWithIdentifier:kSegueToMemberListView sender:self];
     }
 }
 
@@ -313,38 +304,20 @@ static NSInteger const kUserRow = 0;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     OReplicatedEntity *entity = [self dataAtIndexPath:indexPath];
     
-    if (sectionKey == kSectionKeyMember) {
-        if ([entity isKindOfClass:OMember.class]) {
-            OMember *member = [entity asMember];
-            
-            if ([member isUser]) {
-                cell.textLabel.text = [[OLanguage pronouns][_I_][disjunctive] capitalizedString];
-                cell.detailTextLabel.text = member.name;
-            } else {
-                cell.textLabel.text = member.name;
-                cell.detailTextLabel.text = [member shortDetails];
-            }
-            
-            cell.imageView.image = [member smallImage];
-        } else {
-            OMembership *membership = [entity asMembership];
-            
-            cell.textLabel.text = membership.origo.name;
-            cell.detailTextLabel.text = [membership.origo singleLineAddress];
-            cell.imageView.image = [membership.origo smallImage];
-        }
-    } else if (sectionKey == kSectionKeyOrigos) {
-        OMembership *membership = [entity asMembership];
-        
-        if (sectionKey == kSectionKeyOrigos) {
-            cell.textLabel.text = membership.origo.name;
-            cell.imageView.image = [membership.origo smallImage];
-        }
-    } else if (sectionKey == kSectionKeyWards) {
+    if (sectionKey == kSectionKeyWards) {
         OMember *ward = [entity asMember];
         
         cell.textLabel.text = [ward givenName];
         cell.imageView.image = [ward smallImage];
+    } else {
+        OMembership *membership = [entity asMembership];
+        
+        cell.textLabel.text = membership.origo.name;
+        cell.imageView.image = [membership.origo smallImage];
+        
+        if (sectionKey == kSectionKeyHouseholds) {
+            cell.detailTextLabel.text = [membership.origo singleLineAddress];
+        }
     }
 }
 

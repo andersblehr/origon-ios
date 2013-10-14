@@ -12,8 +12,7 @@ CGFloat const kBorderWidthNonRetina = 1.f;
 CGFloat const kBorderWidth = 0.5f;
 
 static CGFloat const kTextInsetX = 4.f;
-static CGFloat const kTextInsetY_iOS6x = 1.2f;
-static CGFloat const kTextInsetY = 2.5f;
+static CGFloat const kTextInsetY = 1.2f;
 
 
 @implementation OTextField
@@ -271,9 +270,7 @@ static CGFloat const kTextInsetY = 2.5f;
 
 - (CGRect)textRectForBounds:(CGRect)bounds
 {
-    CGFloat textInsetY = [OMeta systemIs_iOS6x] ? kTextInsetY_iOS6x : kTextInsetY;
-    
-    return CGRectInset([super textRectForBounds:bounds], kTextInsetX, textInsetY);
+    return CGRectInset([super textRectForBounds:bounds], kTextInsetX, kTextInsetY);
 }
 
 
