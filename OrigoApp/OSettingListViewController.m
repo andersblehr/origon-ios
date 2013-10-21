@@ -57,7 +57,7 @@ static NSInteger const kSectionKeySettings = 0;
 }
 
 
-- (void)initialiseDataSource
+- (void)initialiseData
 {
     [self setData:[[OMeta m].settings settingKeys] forSectionWithKey:kSectionKeySettings];
 }

@@ -44,7 +44,7 @@ static NSInteger const kSectionKeyValues = 0;
 }
 
 
-- (void)initialiseDataSource
+- (void)initialiseData
 {
     if ([_settingKey isEqualToString:kSettingKeyCountry]) {
         NSString *currentCountryCode = [_settings valueForSettingKey:_settingKey];

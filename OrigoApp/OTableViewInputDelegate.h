@@ -15,7 +15,7 @@
 - (void)processInput;
 
 @optional
-- (id)targetEntity;
+- (id)inputEntity;
 - (id)inputValueForIndirectKey:(NSString *)key;
 - (BOOL)shouldEnableInputFieldWithKey:(NSString *)key;
 - (BOOL)willValidateInputForKey:(NSString *)key;

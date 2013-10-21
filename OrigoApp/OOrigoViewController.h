@@ -8,11 +8,14 @@
 
 #import "OrigoApp.h"
 
-@interface OOrigoViewController : OTableViewController<OTableViewInputDelegate> {
+@interface OOrigoViewController : OTableViewController<OTableViewInputDelegate, OTableViewListDelegate, UIActionSheetDelegate> {
 @private
     OMembership *_membership;
     OMember *_member;
     OOrigo *_origo;
+    
+    NSString *_origoType;
+    NSArray *_housemateCandidates;
 }
 
 @end

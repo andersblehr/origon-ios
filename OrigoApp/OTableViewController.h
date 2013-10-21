@@ -49,7 +49,6 @@ extern NSString * const kCustomValue;
 @property (nonatomic, readonly) BOOL wasHidden;
 
 @property (nonatomic) BOOL canEdit;
-@property (nonatomic) BOOL modalImpliesRegistration;
 
 @property (strong, nonatomic) id data;
 @property (strong, nonatomic) id meta;
@@ -58,6 +57,7 @@ extern NSString * const kCustomValue;
 @property (weak, nonatomic) id<OModalViewControllerDismisser> dismisser;
 @property (weak, nonatomic) id<OEntityObserver> observer;
 
+- (BOOL)aspectIsHousehold;
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
 

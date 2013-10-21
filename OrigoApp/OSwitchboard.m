@@ -149,46 +149,43 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 
 - (void)presentRecipientCandidateSheet
 {
-    NSString *question = nil;
+    NSString *prompt = nil;
     
     if (_serviceRequest == kServiceRequestEmail) {
-        question = [OStrings stringForKey:strSheetTitleEmailRecipient];
+        prompt = [OStrings stringForKey:strSheetTitleEmailRecipient];
     } else if (_serviceRequest == kServiceRequestText) {
-        question = [OStrings stringForKey:strSheetTitleTextRecipient];
+        prompt = [OStrings stringForKey:strSheetTitleTextRecipient];
     } else if (_serviceRequest == kServiceRequestPhoneCall) {
-        question = [OStrings stringForKey:strSheetTitlePhoneCallRecipient];
+        prompt = [OStrings stringForKey:strSheetTitlePhoneCallRecipient];
     }
     
-    UIActionSheet *recipientSheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:0];
     
     for (NSArray *recipients in _recipientCandidates) {
         if ([recipients count] == 1) {
             if ([recipients[0] isKindOfClass:OMember.class]) {
                 if ([_member isWardOfUser]) {
-                    [recipientSheet addButtonWithTitle:[recipients[0] givenName]];
+                    [actionSheet addButtonWithTitle:[recipients[0] givenName]];
                 } else if ([_member hasParent:recipients[0]]) {
-                    [recipientSheet addButtonWithTitle:[recipients[0] nameWithParentTitle]];
+                    [actionSheet addButtonWithTitle:[recipients[0] nameWithParentTitle]];
                 } else {
-                    [recipientSheet addButtonWithTitle:[recipients[0] name]];
+                    [actionSheet addButtonWithTitle:[recipients[0] name]];
                 }
             } else if ([recipients[0] isKindOfClass:OOrigo.class]) {
-                [recipientSheet addButtonWithTitle:[recipients[0] shortAddress]];
+                [actionSheet addButtonWithTitle:[recipients[0] shortAddress]];
             }
         } else if ([recipients count] == 2) {
             if ([_member hasParent:recipients[0]] && [_member hasParent:recipients[1]]) {
-                [recipientSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_member noun:_parent_] stringByCapitalisingFirstLetter]];
+                [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_member noun:_parent_] stringByCapitalisingFirstLetter]];
             } else {
-                [recipientSheet addButtonWithTitle:[OLanguage plainLanguageListOfItems:recipients]];
+                [actionSheet addButtonWithTitle:[OLanguage plainLanguageListOfItems:recipients]];
             }
         } else if ([recipients count] > 2) {
-            [recipientSheet addButtonWithTitle:[OStrings stringForKey:strButtonAllContacts]];
+            [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAllContacts]];
         }
     }
     
-    [recipientSheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
-    recipientSheet.cancelButtonIndex = recipientSheet.numberOfButtons - 1;
-    
-    [recipientSheet showInView:[OState s].viewController.actionSheetView];
+    [actionSheet show];
 }
 
 
@@ -336,7 +333,7 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 
 #pragma mark - UIActionSheetDelegate conformance
 
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+- (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex != actionSheet.cancelButtonIndex) {
         [self performServiceRequestWithRecipients:_recipientCandidates[buttonIndex]];

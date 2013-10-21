@@ -106,6 +106,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         self.backgroundColor = [UIColor clearColor];
         self.contentMode = UIViewContentModeRedraw;
         self.delegate = delegate;
+        self.editable = NO;
         self.font = [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
@@ -122,6 +123,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         _blueprint = blueprint;
         _state = [OState s].viewController.state;
         _textWidth = [OTextView textWidthWithBlueprint:_blueprint];
+        _placeholder = [OStrings placeholderForKey:_key];
         _hasEmphasis = NO;
         
         if ([OMeta systemIs_iOS6x]) {
@@ -218,20 +220,6 @@ static CGFloat const kAccessoryViewWidth = 30.f;
 
 #pragma mark - Custom accessors
 
-- (void)setPlaceholder:(NSString *)placeholder
-{
-    CGSize placeholderSize = CGSizeMake(_textWidth, [OTextView heightWithText:placeholder blueprint:_blueprint]);
-    
-    _placeholderView.frame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height + 5.f);
-    _placeholderView.text = placeholder;
-    _placeholder = placeholder;
-
-    if (![OMeta systemIs_iOS6x]) {
-        _placeholderView.textContainerInset = UIEdgeInsetsMake(3.5f, -1.f, 0.f, 0.f);
-    }
-}
-
-
 - (BOOL)isDateField
 {
     return NO;
@@ -276,16 +264,24 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     
     self.userInteractionEnabled = editable;
     
-    if (editable && _key && !_placeholderView) {
-        _placeholderView = [[UITextView alloc] initWithFrame:CGRectZero];
+    if (editable && _placeholder && !_placeholderView) {
+        CGSize placeholderSize = CGSizeMake(_textWidth, [OTextView heightWithText:_placeholder blueprint:_blueprint]);
+        CGRect placeholderFrame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height);
+        
+        _placeholderView = [[UITextView alloc] initWithFrame:placeholderFrame];
         _placeholderView.backgroundColor = [UIColor clearColor];
         _placeholderView.delegate = self;
         _placeholderView.font = [UIFont detailFont];
+        _placeholderView.text = _placeholder;
         _placeholderView.textColor = [UIColor defaultPlaceholderColor];
+        _placeholderView.hidden = [self hasText];
+        
+        if (![OMeta systemIs_iOS6x]) {
+            _placeholderView.textContainerInset = UIEdgeInsetsMake(kTextInsetY, -kTextInsetX, 0.f, 0.f);
+        }
         
         [self addSubview:_placeholderView];
         
-        self.placeholder = [OStrings placeholderForKey:_key];
         _lastKnownLineCount = [OTextView lineCountWithText:_placeholder maxWidth:_textWidth state:_state];
     }
 }

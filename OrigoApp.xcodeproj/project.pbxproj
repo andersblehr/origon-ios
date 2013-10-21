@@ -29,7 +29,6 @@
 		5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1A81BC1645CE22003DCCAF /* UIBarButtonItem+OrigoExtensions.m */; };
 		5C1D6CC6172E62F500479F7D /* OLocator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1D6CC5172E62F500479F7D /* OLocator.m */; };
 		5C1D6CCA1743C80900479F7D /* OSettings+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1D6CC91743C80900479F7D /* OSettings+OrigoExtensions.m */; };
-		5C2262C415A0B47B00241C5F /* OOrigoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2262C315A0B47B00241C5F /* OOrigoViewController.m */; };
 		5C23431214812A3100164478 /* OStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C23431114812A3000164478 /* OStrings.m */; };
 		5C26291E158F27860012A74A /* OAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* OAuthViewController.m */; };
 		5C2E11141469CDE5005BDE61 /* OConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* OConnection.m */; };
@@ -52,7 +51,7 @@
 		5C5ED5CE14F2E9FE006BBDFB /* OReplicatedEntity+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED5CD14F2E9FE006BBDFB /* OReplicatedEntity+OrigoExtensions.m */; };
 		5C629FEB14C61F98001DA01F /* 83-calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FE914C61F98001DA01F /* 83-calendar.png */; };
 		5C629FEC14C61F98001DA01F /* 83-calendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */; };
-		5C629FF014C62038001DA01F /* OMemberListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C629FEF14C62038001DA01F /* OMemberListViewController.m */; };
+		5C629FF014C62038001DA01F /* OOrigoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C629FEF14C62038001DA01F /* OOrigoViewController.m */; };
 		5C629FF314C62133001DA01F /* 08-chat.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FF114C62133001DA01F /* 08-chat.png */; };
 		5C629FF414C62133001DA01F /* 08-chat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FF214C62133001DA01F /* 08-chat@2x.png */; };
 		5C629FFB14C62481001DA01F /* 258-checkmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FF914C62481001DA01F /* 258-checkmark.png */; };
@@ -66,6 +65,7 @@
 		5C7013A3171EC9D0006E9F42 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C7013A2171EC9D0006E9F42 /* CoreLocation.framework */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C7379FD1593111B0065AB4F /* OTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7379FC1593111B0065AB4F /* OTextField.m */; };
+		5C78695018116AD400020E08 /* OActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78694F18116AD400020E08 /* OActionSheet.m */; };
 		5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78FAB91654E77E009A4BCF /* OTextView.m */; };
 		5C7BC3DD16F358B7006AA52F /* OResidencySchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7BC3DC16F358B7006AA52F /* OResidencySchedule.m */; };
 		5C83DF81153F59B800BB0B29 /* OOrigo+OrigoExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF80153F59B800BB0B29 /* OOrigo+OrigoExtensions.m */; };
@@ -181,8 +181,6 @@
 		5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OLocatorDelegate.h; sourceTree = "<group>"; };
 		5C1D6CC81743C80900479F7D /* OSettings+OrigoExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OSettings+OrigoExtensions.h"; sourceTree = "<group>"; };
 		5C1D6CC91743C80900479F7D /* OSettings+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OSettings+OrigoExtensions.m"; sourceTree = "<group>"; };
-		5C2262C215A0B47B00241C5F /* OOrigoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoViewController.h; sourceTree = "<group>"; };
-		5C2262C315A0B47B00241C5F /* OOrigoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoViewController.m; sourceTree = "<group>"; };
 		5C23431014812A3000164478 /* OStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OStrings.h; sourceTree = "<group>"; };
 		5C23431114812A3000164478 /* OStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OStrings.m; sourceTree = "<group>"; };
 		5C26291C158F27860012A74A /* OAuthViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthViewController.h; sourceTree = "<group>"; };
@@ -226,8 +224,8 @@
 		5C5ED5CD14F2E9FE006BBDFB /* OReplicatedEntity+OrigoExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OReplicatedEntity+OrigoExtensions.m"; sourceTree = "<group>"; };
 		5C629FE914C61F98001DA01F /* 83-calendar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar.png"; sourceTree = "<group>"; };
 		5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar@2x.png"; sourceTree = "<group>"; };
-		5C629FEE14C62038001DA01F /* OMemberListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMemberListViewController.h; sourceTree = "<group>"; };
-		5C629FEF14C62038001DA01F /* OMemberListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMemberListViewController.m; sourceTree = "<group>"; };
+		5C629FEE14C62038001DA01F /* OOrigoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoViewController.h; sourceTree = "<group>"; };
+		5C629FEF14C62038001DA01F /* OOrigoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoViewController.m; sourceTree = "<group>"; };
 		5C629FF114C62133001DA01F /* 08-chat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "08-chat.png"; sourceTree = "<group>"; };
 		5C629FF214C62133001DA01F /* 08-chat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "08-chat@2x.png"; sourceTree = "<group>"; };
 		5C629FF914C62481001DA01F /* 258-checkmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "258-checkmark.png"; sourceTree = "<group>"; };
@@ -247,6 +245,8 @@
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5C7379FB1593111B0065AB4F /* OTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextField.h; sourceTree = "<group>"; };
 		5C7379FC1593111B0065AB4F /* OTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextField.m; sourceTree = "<group>"; };
+		5C78694E18116AD400020E08 /* OActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OActionSheet.h; sourceTree = "<group>"; };
+		5C78694F18116AD400020E08 /* OActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OActionSheet.m; sourceTree = "<group>"; };
 		5C78FAB81654E77E009A4BCF /* OTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextView.h; sourceTree = "<group>"; };
 		5C78FAB91654E77E009A4BCF /* OTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextView.m; sourceTree = "<group>"; };
 		5C7BC3DB16F358B7006AA52F /* OResidencySchedule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OResidencySchedule.h; sourceTree = "<group>"; };
@@ -584,16 +584,14 @@
 				5C26291D158F27860012A74A /* OAuthViewController.m */,
 				5CE987C214856426005A17C6 /* OCalendarViewController.h */,
 				5CE987C314856426005A17C6 /* OCalendarViewController.m */,
-				5C629FEE14C62038001DA01F /* OMemberListViewController.h */,
-				5C629FEF14C62038001DA01F /* OMemberListViewController.m */,
 				5C8B3AB415813DBB000B19FA /* OMemberViewController.h */,
 				5C8B3AB515813DBB000B19FA /* OMemberViewController.m */,
 				5C629FFD14C624AD001DA01F /* OMessageListViewController.h */,
 				5C629FFE14C624AD001DA01F /* OMessageListViewController.m */,
+				5C629FEE14C62038001DA01F /* OOrigoViewController.h */,
+				5C629FEF14C62038001DA01F /* OOrigoViewController.m */,
 				5C3D42801485678E009A68E0 /* OOrigoListViewController.h */,
 				5C3D42811485678F009A68E0 /* OOrigoListViewController.m */,
-				5C2262C215A0B47B00241C5F /* OOrigoViewController.h */,
-				5C2262C315A0B47B00241C5F /* OOrigoViewController.m */,
 				5CB7E93E15F38C1200FD53DF /* OSettingListViewController.h */,
 				5CB7E93F15F38C1200FD53DF /* OSettingListViewController.m */,
 				5CBFB736174B64D40021A8F6 /* OSettingViewController.h */,
@@ -742,6 +740,8 @@
 		5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */ = {
 			isa = PBXGroup;
 			children = (
+				5C78694E18116AD400020E08 /* OActionSheet.h */,
+				5C78694F18116AD400020E08 /* OActionSheet.m */,
 				5C64105717D499450005B192 /* ONavigationController.h */,
 				5C64105817D499450005B192 /* ONavigationController.m */,
 				5C8B3AB81582493C000B19FA /* OTableViewCell.h */,
@@ -919,7 +919,7 @@
 				5C3D42821485678F009A68E0 /* OOrigoListViewController.m in Sources */,
 				5C4F977B1496AF88006E244F /* NSURL+OrigoExtensions.m in Sources */,
 				5CBE9C5314AB5160004FE2B7 /* NSString+OrigoExtensions.m in Sources */,
-				5C629FF014C62038001DA01F /* OMemberListViewController.m in Sources */,
+				5C629FF014C62038001DA01F /* OOrigoViewController.m in Sources */,
 				5C629FFF14C624AD001DA01F /* OMessageListViewController.m in Sources */,
 				5C62A00214C6252C001DA01F /* OTaskListViewController.m in Sources */,
 				5C50581C14CAEC76000D6587 /* UIView+OrigoExtensions.m in Sources */,
@@ -937,7 +937,6 @@
 				5C26291E158F27860012A74A /* OAuthViewController.m in Sources */,
 				5C7379FD1593111B0065AB4F /* OTextField.m in Sources */,
 				5CBE91A31599823000516C54 /* UIFont+OrigoExtensions.m in Sources */,
-				5C2262C415A0B47B00241C5F /* OOrigoViewController.m in Sources */,
 				5C2E6B7E15A8501800638330 /* OMembership+OrigoExtensions.m in Sources */,
 				5CD3360E15C40A2F00ABBFE7 /* OState.m in Sources */,
 				5C014A2415CA77320040A1D9 /* OAlert.m in Sources */,
@@ -981,6 +980,7 @@
 				5CF17E5917AF84B600985255 /* OSwitchboard.m in Sources */,
 				5CB74EF117BB60BF003FAC28 /* ODevice+OrigoExtensions.m in Sources */,
 				5C84D27417C34F7B00A746B7 /* OMember.m in Sources */,
+				5C78695018116AD400020E08 /* OActionSheet.m in Sources */,
 				5CE6044217C4033800911CC1 /* OOrigo.m in Sources */,
 				5C64105917D499450005B192 /* ONavigationController.m in Sources */,
 			);

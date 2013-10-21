@@ -71,19 +71,8 @@ extern NSString * const strTermYourChild;
 extern NSString * const strTermHimOrHer;
 extern NSString * const strTermForName;
 
-// OMemberListView strings
-extern NSString * const strFooterResidence;
-extern NSString * const strFooterSchoolClass;
-extern NSString * const strFooterPreschoolClass;
-extern NSString * const strFooterSportsTeam;
-extern NSString * const strFooterOtherOrigo;
-extern NSString * const strButtonNewHousemate;
-extern NSString * const strButtonOtherGuardian;
-extern NSString * const strButtonDeleteMember;
-
 // OOrigoView strings
 extern NSString * const strDefaultResidenceName;
-extern NSString * const strViewTitleNewOrigo;
 extern NSString * const strLabelAddress;
 extern NSString * const strLabelPurpose;
 extern NSString * const strLabelDescriptionText;
@@ -91,6 +80,11 @@ extern NSString * const strLabelTelephone;
 extern NSString * const strPlaceholderAddress;
 extern NSString * const strPlaceholderDescriptionText;
 extern NSString * const strPlaceholderTelephone;
+extern NSString * const strButtonAbout;
+extern NSString * const strButtonShowInMap;
+extern NSString * const strButtonNewHousemate;
+extern NSString * const strButtonOtherGuardian;
+extern NSString * const strButtonDeleteMember;
 
 // OMemberView strings
 extern NSString * const strViewTitleAboutMe;
@@ -142,8 +136,6 @@ extern NSString * const strDefaultMessageBoardName;
 
 // OSettingListView strings
 extern NSString * const strViewTitleSettings;
-extern NSString * const strSettingTitleCountry;
-extern NSString * const strSettingTextCountry;
 
 // OSettingView strings
 extern NSString * const strLabelCountrySettings;
@@ -176,6 +168,8 @@ extern NSString * const metaContactRolesSportsTeam;
 
 + (NSString *)labelForOrigoType:(NSString *)origoType labelType:(NSString *)labelType;
 + (NSString *)footerForOrigoType:(NSString *)origoType;
++ (NSString *)addMemberButtonTitleForOrigoType:(NSString *)origoType;
++ (NSString *)addContactButtonTitleForOrigoType:(NSString *)origoType;
 + (NSString *)titleForContactRole:(NSString *)contactRole;
 + (NSString *)titleForSettingKey:(NSString *)settingKey;
 + (NSString *)labelForSettingKey:(NSString *)settingKey;

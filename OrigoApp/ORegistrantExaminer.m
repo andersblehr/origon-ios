@@ -13,22 +13,16 @@ static NSInteger const kParentCandidateStatusMother = 0x01;
 static NSInteger const kParentCandidateStatusFather = 0x02;
 static NSInteger const kParentCandidateStatusBoth = 0x03;
 
-static NSInteger const kGenderSheetTag = 0;
-static NSInteger const kGenderSheetButtonFemale = 0;
+static NSInteger const kActionSheetTagGender = 0;
+static NSInteger const kButtonTagFemale = 0;
 
-static NSInteger const kBothParentCandidatesSheetTag = 1;
-static NSInteger const kBothParentCandidatesButtonYes = 0;
-static NSInteger const kBothParentCandidatesButtonNo = 3;
+static NSInteger const kActionSheetTagBothParents = 1;
+static NSInteger const kActionSheetTagParent = 2;
+static NSInteger const kActionSheetTagAllOffspring = 3;
+static NSInteger const kActionSheetTagOffspring = 4;
 
-static NSInteger const kAllOffspringCandidatesSheetTag = 2;
-static NSInteger const kAllOffspringCandidatesButtonYes = 0;
-static NSInteger const kAllOffspringCandidatesButtonSome = 1;
-
-static NSInteger const kParentCandidateSheetTag = 3;
-static NSInteger const kParentCandidateButtonYes = 0;
-
-static NSInteger const kOffspringCandidateSheetTag = 4;
-static NSInteger const kOffspringCandidateButtonYes = 0;
+static NSInteger const kButtonTagYes = 0;
+static NSInteger const kButtonTagNo = 3;
 
 
 @implementation ORegistrantExaminer
@@ -93,71 +87,72 @@ static NSInteger const kOffspringCandidateButtonYes = 0;
 - (void)presentGenderSheet
 {
     id subject = [[OState s] targetIs:kTargetUser] ? [OMeta m].user : _givenName;
+    NSString *prompt = [OLanguage questionWithSubject:subject verb:_be_ argument:[OStrings stringForKey:_isMinor ? strQuestionArgumentGenderMinor : strQuestionArgumentGender]];
     
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:[OLanguage questionWithSubject:subject verb:_be_ argument:[OStrings stringForKey:_isMinor ? strQuestionArgumentGenderMinor : strQuestionArgumentGender]] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:_isMinor ? strTermGirl : strTermWoman], [OStrings stringForKey:_isMinor ? strTermBoy : strTermMan], nil];
-    sheet.tag = kGenderSheetTag;
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagGender];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:_isMinor ? strTermGirl : strTermWoman] tag:kButtonTagFemale];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:_isMinor ? strTermBoy : strTermMan]];
     
-    [sheet showInView:[OState s].viewController.actionSheetView];
+    [actionSheet show];
 }
 
 
 - (void)presentBothParentCandidatesSheet
 {
-    NSString *question = [OLanguage questionWithSubject:_candidates verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_givenName noun:_parent_]];
+    NSString *prompt = [OLanguage questionWithSubject:_candidates verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_givenName noun:_parent_]];
     
-    NSString *buttonCandidate0 = [OLanguage predicateClauseWithSubject:_candidates[0] predicate:[self candidate:_candidates[0] parentLabelWithOffspringGender:_gender]];
-    NSString *buttonCandidate1 = [OLanguage predicateClauseWithSubject:_candidates[1] predicate:[self candidate:_candidates[1] parentLabelWithOffspringGender:_gender]];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagBothParents];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strTermYes] tag:kButtonTagYes];
+    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[0] predicate:[self candidate:_candidates[0] parentLabelWithOffspringGender:_gender]]];
+    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[1] predicate:[self candidate:_candidates[1] parentLabelWithOffspringGender:_gender]]];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strTermNo] tag:kButtonTagNo];
     
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strTermYes], buttonCandidate0, buttonCandidate1, [OStrings stringForKey:strTermNo], nil];
-    sheet.tag = kBothParentCandidatesSheetTag;
-    
-    [sheet showInView:[OState s].viewController.actionSheetView];
+    [actionSheet show];
 }
 
 
 - (void)presentAllOffspringCandidatesSheet
 {
-    NSString *noun = [self parentNounForGender:_gender];
-    NSString *question = [OLanguage questionWithSubject:_givenName verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_candidates noun:noun]];
+    NSString *parentNoun = [self parentNounForGender:_gender];
+    NSString *prompt = [OLanguage questionWithSubject:_givenName verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_candidates noun:parentNoun]];
     
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-    [sheet addButtonWithTitle:[OStrings stringForKey:strTermYes]];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAllOffspring];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strTermYes] tag:kButtonTagYes];
     
     if ([_candidates count] == 2) {
-        [sheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[0] noun:noun]stringByCapitalisingFirstLetter]];
-        [sheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[1] noun:noun] stringByCapitalisingFirstLetter]];
-    } else if ([_candidates count] > 2) {
-        [sheet addButtonWithTitle:[OStrings stringForKey:strButtonParentToSome]];
+        [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[0] noun:parentNoun] stringByCapitalisingFirstLetter]];
+        [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[1] noun:parentNoun] stringByCapitalisingFirstLetter]];
+    } else {
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonParentToSome]];
     }
     
-    [sheet addButtonWithTitle:[OStrings stringForKey:strTermNo]];
-    [sheet addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
-    sheet.cancelButtonIndex = sheet.numberOfButtons - 1;
-    sheet.tag = kAllOffspringCandidatesSheetTag;
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strTermNo] tag:kButtonTagNo];
     
-    [sheet showInView:[OState s].viewController.actionSheetView];
+    [actionSheet show];
 }
 
 
 - (void)presentCandidateSheetForParentCandidate:(OMember *)candidate
 {
-    NSString *question = [OLanguage questionWithSubject:candidate verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_givenName noun:[self parentNounForGender:candidate.gender]]];
+    NSString *prompt = [OLanguage questionWithSubject:candidate verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_givenName noun:[self parentNounForGender:candidate.gender]]];
     
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strTermYes], [OStrings stringForKey:strTermNo], nil];
-    sheet.tag = kParentCandidateSheetTag;
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagParent];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strTermYes] tag:kButtonTagYes];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strTermNo] tag:kButtonTagNo];
     
-    [sheet showInView:[OState s].viewController.actionSheetView];
+    [actionSheet show];
 }
 
 
 - (void)presentCandidateSheetForOffspringCandidate:(OMember *)candidate
 {
-    NSString *question = [OLanguage questionWithSubject:_givenName verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:candidate noun:[self parentNounForGender:_gender]]];
+    NSString *prompt = [OLanguage questionWithSubject:_givenName verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:candidate noun:[self parentNounForGender:_gender]]];
     
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:question delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] destructiveButtonTitle:nil otherButtonTitles:[OStrings stringForKey:strTermYes], [OStrings stringForKey:strTermNo], nil];
-    sheet.tag = kOffspringCandidateSheetTag;
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagOffspring];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strTermYes] tag:kButtonTagYes];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strTermNo] tag:kButtonTagNo];
     
-    [sheet showInView:[OState s].viewController.actionSheetView];
+    [actionSheet show];
 }
 
 
@@ -305,12 +300,14 @@ static NSInteger const kOffspringCandidateButtonYes = 0;
 
 #pragma mark - UIActionSheetDelegate conformance
 
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+- (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex != actionSheet.cancelButtonIndex) {
+    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+    
+    if (buttonIndex < actionSheet.cancelButtonIndex) {
         switch (actionSheet.tag) {
-            case kGenderSheetTag:
-                _gender = (buttonIndex == kGenderSheetButtonFemale) ? kGenderFemale : kGenderMale;
+            case kActionSheetTagGender:
+                _gender = (buttonTag == kButtonTagFemale) ? kGenderFemale : kGenderMale;
                 
                 if (_dateOfBirth) {
                     [self assembleCandidates];
@@ -318,35 +315,30 @@ static NSInteger const kOffspringCandidateButtonYes = 0;
                 
                 break;
                 
-            case kBothParentCandidatesSheetTag:
+            case kActionSheetTagBothParents:
                 [_examinedCandidates addObjectsFromArray:_candidates];
                 
-                if (buttonIndex == kBothParentCandidatesButtonYes) {
+                if (buttonTag == kButtonTagYes) {
                     _fatherId = [[_candidates[0] isMale] ? _candidates[0] : _candidates[1] entityId];
                     _motherId = [[_candidates[0] isMale] ? _candidates[1] : _candidates[0] entityId];
-                } else if (buttonIndex < kBothParentCandidatesButtonNo) {
-                    if ([_candidates[buttonIndex - 1] isMale]) {
-                        _fatherId = [_candidates[buttonIndex - 1] entityId];
+                } else if (buttonTag != kButtonTagNo) {
+                    if ([_candidates[buttonTag - 1] isMale]) {
+                        _fatherId = [_candidates[buttonTag - 1] entityId];
                     } else {
-                        _motherId = [_candidates[buttonIndex - 1] entityId];
+                        _motherId = [_candidates[buttonTag - 1] entityId];
                     }
                 }
                 
                 break;
                 
-            case kAllOffspringCandidatesSheetTag:
-                if (buttonIndex == kAllOffspringCandidatesButtonYes) {
+            case kActionSheetTagAllOffspring:
+                if (buttonTag == kButtonTagYes) {
                     [_examinedCandidates addObjectsFromArray:_candidates];
                     [_registrantOffspring addObjectsFromArray:_candidates];
-                } else if (buttonIndex < actionSheet.numberOfButtons - 2) {
+                } else if (buttonTag != kButtonTagNo) {
                     if ([_candidates count] == 2) {
                         [_examinedCandidates addObjectsFromArray:_candidates];
-                        
-                        if (buttonIndex == kAllOffspringCandidatesButtonSome) {
-                            [_registrantOffspring addObject:_candidates[0]];
-                        } else {
-                            [_registrantOffspring addObject:_candidates[1]];
-                        }
+                        [_registrantOffspring addObject:_candidates[buttonTag - 1]];
                     }
                 } else {
                     [_examinedCandidates addObjectsFromArray:_candidates];
@@ -354,8 +346,8 @@ static NSInteger const kOffspringCandidateButtonYes = 0;
                 
                 break;
                 
-            case kParentCandidateSheetTag:
-                if (buttonIndex == kParentCandidateButtonYes) {
+            case kActionSheetTagParent:
+                if (buttonTag == kButtonTagYes) {
                     _fatherId = [_currentCandidate isMale] ? _currentCandidate.entityId : nil;
                     _motherId = [_currentCandidate isMale] ? nil : _currentCandidate.entityId;
                     
@@ -370,8 +362,8 @@ static NSInteger const kOffspringCandidateButtonYes = 0;
                 
                 break;
                 
-            case kOffspringCandidateSheetTag:
-                if (buttonIndex == kOffspringCandidateButtonYes) {
+            case kActionSheetTagOffspring:
+                if (buttonTag == kButtonTagYes) {
                     [_registrantOffspring addObject:_currentCandidate];
                 }
                 

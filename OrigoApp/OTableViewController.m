@@ -44,7 +44,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     if ([OStrings hasStrings]) {
         if ([[OMeta m] userIsAllSet] || _isModal) {
-            if (_isModal && self.modalImpliesRegistration) {
+            if (_isModal && ![self isListViewController]) {
                 _state.action = kActionRegister;
             } else if ([self isListViewController]) {
                 _state.action = kActionList;
@@ -53,7 +53,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             }
             
             [_instance initialiseState];
-            [_instance initialiseDataSource];
+            [_instance initialiseData];
             
             for (NSNumber *sectionKey in [_sectionData allKeys]) {
                 _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
@@ -133,7 +133,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     BOOL hasHeader = ([self sectionNumberForSectionKey:sectionKey] > 0);
     
-    if (!hasHeader && [_instance respondsToSelector:@selector(hasHeaderForSectionWithKey:)]) {
+    if ([_instance respondsToSelector:@selector(hasHeaderForSectionWithKey:)]) {
         hasHeader = [_instance hasHeaderForSectionWithKey:sectionKey];
     }
     
@@ -194,7 +194,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)didFinishEditing
 {
-    if ([self isListViewController]) {
+    if ([self actionIs:kActionDisplay]) {
         [_dismisser dismissModalViewController:self reload:YES];
     } else {
         [_detailCell processInput];
@@ -203,6 +203,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 
 #pragma mark - State introspection
+
+- (BOOL)aspectIsHousehold
+{
+    return [_state aspectIsHousehold];
+}
+
 
 - (BOOL)actionIs:(NSString *)action
 {
@@ -390,6 +396,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         self.navigationItem.leftBarButtonItem = _cancelButton;
+        
+        [[self.detailCell nextInputField] becomeFirstResponder];
     } else if ([self actionIs:kActionDisplay]) {
         [self.view endEditing:YES];
         
@@ -408,7 +416,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)reloadSections
 {
-    [_instance initialiseDataSource];
+    [_instance initialiseData];
     
     NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
     NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
@@ -452,7 +460,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)reloadSectionWithKey:(NSInteger)sectionKey
 {
-    [_instance initialiseDataSource];
+    [_instance initialiseData];
     
     _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
     
@@ -504,10 +512,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _identifier = [[shortName substringToIndex:[shortName rangeOfString:viewControllerSuffix].location] lowercaseString];
     
     if ([self isListViewController]) {
-        _modalImpliesRegistration = NO;
         _identifier = [_identifier stringByAppendingString:@"s"];
     } else {
-        _modalImpliesRegistration = YES;
         _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kViewControllerSuffixDefault].location]);
     }
     
@@ -538,11 +544,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         self.navigationItem.rightBarButtonItem = _nextButton;
     }
-    
-    UITapGestureRecognizer *tapGestureRecogniser = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didImplicitlyCancelEditing)];
-    tapGestureRecogniser.cancelsTouchesInView = NO;
-    
-    [self.tableView addGestureRecognizer:tapGestureRecogniser];
     
     _didJustLoad = YES;
 }
@@ -592,7 +593,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [_detailCell prepareForInput];
             
             if ([self actionIs:kActionRegister]) {
-                [[_detailCell firstInputField] becomeFirstResponder];
+                [[_detailCell firstEmptyInputField] becomeFirstResponder];
             }
         }
     } else {
@@ -674,7 +675,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)initialiseDataSource
+- (void)initialiseData
 {
     // Override in subclass
 }
@@ -686,8 +687,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     BOOL shouldRelayDismissal = NO;
     
-    if ([self respondsToSelector:@selector(shouldRelayDismissalOfModalViewController:)]) {
-        shouldRelayDismissal = [self shouldRelayDismissalOfModalViewController:viewController];
+    if (_isModal) {
+        if ([self respondsToSelector:@selector(shouldRelayDismissalOfModalViewController:)]) {
+            shouldRelayDismissal = [self shouldRelayDismissalOfModalViewController:viewController];
+        }
     }
     
     if (shouldRelayDismissal) {
@@ -726,7 +729,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    CGFloat height = kDefaultTableViewCellHeight;
+    CGFloat height = kDefaultCellHeight;
     
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
         if (_detailCell) {
@@ -747,9 +750,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     OTableViewCell *cell = nil;
     
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
-        id cellData = [self dataAtIndexPath:indexPath];
+        id data = [self dataAtIndexPath:indexPath];
         
-        if ([cellData isKindOfClass:NSString.class] && [cellData isEqualToString:kCustomCell]) {
+        if ([data isKindOfClass:NSString.class] && [data isEqualToString:kCustomCell]) {
             cell = [tableView cellForReuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]];
         } else {
             cell = [tableView cellForEntityClass:_entityClass entity:_entity];
@@ -865,10 +868,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     OTableViewCell *cell = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     
     if (cell.selectable) {
-        _selectedIndexPath = indexPath;
-        
-        if ([_instance respondsToSelector:@selector(didSelectCell:atIndexPath:)]) {
-            [_instance didSelectCell:cell atIndexPath:indexPath];
+        if ([self actionIs:kActionInput]) {
+            cell.selected = NO;
+        } else {
+            _selectedIndexPath = indexPath;
+            
+            if ([_instance respondsToSelector:@selector(didSelectCell:atIndexPath:)]) {
+                [_instance didSelectCell:cell atIndexPath:indexPath];
+            }
         }
     }
 }

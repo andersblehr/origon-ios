@@ -273,7 +273,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (BOOL)isHousemateOfUser
 {
-    return [[[OMeta m].user housemates] containsObject:self];
+    return [self isUser] || [[[OMeta m].user housemates] containsObject:self];
 }
 
 
@@ -482,10 +482,10 @@ NSString * const kMemberTypeGuardian = @"guardian";
     
     if ([self isUser]) {
         target = kTargetUser;
-    } else if ([[[OMeta m].user wards] containsObject:self]) {
+    } else if ([self isWardOfUser]) {
         target = kTargetWard;
-    } else if ([[[OMeta m].user housemates] containsObject:self]) {
-        target = kTargetHousehold;
+    } else if ([self isHousemateOfUser]) {
+        target = kTargetHousemate;
     } else {
         target = kTargetExternal;
     }
