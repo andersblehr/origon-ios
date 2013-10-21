@@ -71,19 +71,8 @@ NSString * const strTermYourChild                    = @"strTermYourChild";
 NSString * const strTermHimOrHer                     = @"strTermHimOrHer";
 NSString * const strTermForName                      = @"strTermForName";
 
-// OMemberListView strings
-NSString * const strFooterResidence                  = @"strFooterResidence";
-NSString * const strFooterSchoolClass                = @"strFooterSchoolClass";
-NSString * const strFooterPreschoolClass             = @"strFooterPreschoolClass";
-NSString * const strFooterSportsTeam                 = @"strFooterSportsTeam";
-NSString * const strFooterOtherOrigo                 = @"strFooterOtherOrigo";
-NSString * const strButtonNewHousemate               = @"strButtonNewHousemate";
-NSString * const strButtonOtherGuardian              = @"strButtonOtherGuardian";
-NSString * const strButtonDeleteMember               = @"strButtonDeleteMember";
-
 // OOrigoView strings
 NSString * const strDefaultResidenceName             = @"strDefaultResidenceName";
-NSString * const strViewTitleNewOrigo                = @"strViewTitleNewOrigo";
 NSString * const strLabelAddress                     = @"strLabelAddress";
 NSString * const strLabelPurpose                     = @"strLabelPurpose";
 NSString * const strLabelDescriptionText             = @"strLabelDescriptionText";
@@ -91,6 +80,11 @@ NSString * const strLabelTelephone                   = @"strLabelTelephone";
 NSString * const strPlaceholderAddress               = @"strPlaceholderAddress";
 NSString * const strPlaceholderDescriptionText       = @"strPlaceholderDescriptionText";
 NSString * const strPlaceholderTelephone             = @"strPlaceholderTelephone";
+NSString * const strButtonAbout                      = @"strButtonAbout";
+NSString * const strButtonShowInMap                  = @"strButtonShowInMap";
+NSString * const strButtonNewHousemate               = @"strButtonNewHousemate";
+NSString * const strButtonOtherGuardian              = @"strButtonOtherGuardian";
+NSString * const strButtonDeleteMember               = @"strButtonDeleteMember";
 
 // OMemberView strings
 NSString * const strViewTitleAboutMe                 = @"strViewTitleAboutMe";
@@ -142,8 +136,6 @@ NSString * const strDefaultMessageBoardName          = @"strDefaultMessageBoardN
 
 // OSettingListView strings
 NSString * const strViewTitleSettings                = @"strViewTitleSettings";
-NSString * const strSettingTitleCountry              = @"strSettingTitleCountry";
-NSString * const strSettingTextCountry               = @"strSettingTextCountry";
 
 // OSettingView strings
 NSString * const strLabelCountrySettings             = @"strLabelCountrySettings";
@@ -172,6 +164,8 @@ static NSInteger const kDaysBetweenStringFetches = 0; // TODO: Set to 14
 static NSString * const kKeyPrefixLabel = @"strLabel";
 static NSString * const kKeyPrefixPlaceholder = @"strPlaceholder";
 static NSString * const kKeyPrefixFooter = @"strFooter";
+static NSString * const kKeyPrefixAddMemberButton = @"strButtonAddMember";
+static NSString * const kKeyPrefixAddContactButton = @"strButtonAddContact";
 static NSString * const kKeyPrefixContactRole = @"strContactRole";
 static NSString * const kKeyPrefixSettingTitle = @"strSettingTitle";
 static NSString * const kKeyPrefixSettingText = @"strSettingText";
@@ -248,10 +242,6 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 
 + (NSString *)labelForOrigoType:(NSString *)origoType labelType:(NSString *)labelType
 {
-    if ([origoType isEqualToString:kTargetHousehold]) {
-        origoType = kOrigoTypeResidence;
-    }
-    
     return [OStrings stringForKey:[labelType stringByAppendingCapitalisedString:origoType]];
 }
 
@@ -259,6 +249,18 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 + (NSString *)footerForOrigoType:(NSString *)origoType
 {
     return [OStrings stringForKey:[kKeyPrefixFooter stringByAppendingCapitalisedString:origoType]];
+}
+
+
++ (NSString *)addMemberButtonTitleForOrigoType:(NSString *)origoType
+{
+    return [OStrings stringForKey:[kKeyPrefixAddMemberButton stringByAppendingCapitalisedString:origoType]];
+}
+
+
++ (NSString *)addContactButtonTitleForOrigoType:(NSString *)origoType
+{
+    return [OStrings stringForKey:[kKeyPrefixAddContactButton stringByAppendingCapitalisedString:origoType]];
 }
 
 

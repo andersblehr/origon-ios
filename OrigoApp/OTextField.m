@@ -37,6 +37,7 @@ static CGFloat const kTextInsetY = 1.2f;
         self.backgroundColor = [UIColor clearColor];
         self.contentMode = UIViewContentModeRedraw;
         self.delegate = delegate;
+        self.enabled = NO;
         self.font = [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;

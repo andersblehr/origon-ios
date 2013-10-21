@@ -12,7 +12,7 @@
 
 @required
 - (void)initialiseState;
-- (void)initialiseDataSource;
+- (void)initialiseData;
 
 @optional
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;

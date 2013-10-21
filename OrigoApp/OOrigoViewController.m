@@ -8,25 +8,89 @@
 
 #import "OOrigoViewController.h"
 
+static NSString * const kSegueToMemberView = @"segueFromOrigoToMemberView";
+
 static NSInteger const kSectionKeyOrigo = 0;
+static NSInteger const kSectionKeyContacts = 1;
+static NSInteger const kSectionKeyMembers = 2;
+
+static NSInteger const kActionSheetTagActionSheet = 0;
+static NSInteger const kButtonTagAddMember = 0;
+static NSInteger const kButtonTagAddContact = 1;
+static NSInteger const kButtonTagEdit = 2;
+static NSInteger const kButtonTagAbout = 3;
+static NSInteger const kButtonTagShowInMap = 4;
+
+static NSInteger const kActionSheetTagHousemate = 1;
+static NSInteger const kButtonTagHousemate = 100;
+static NSInteger const kButtonTagGuardian = 101;
 
 
 @implementation OOrigoViewController
 
-#pragma mark - View lifecycle
+#pragma mark - Actions sheets
 
-- (void)viewDidLoad
+- (void)presentHousemateCandidatesSheet:(NSSet *)candidates
 {
-    [super viewDidLoad];
+    _housemateCandidates = [candidates sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:kPropertyKeyName ascending:YES]]];
     
-    if (_origo) {
-        if ([_origo isOfType:kOrigoTypeResidence]) {
-            self.title = [OStrings labelForOrigoType:_origo.type labelType:kOrigoLabelTypeOrigo];
-        } else {
-            self.title = _origo.name;
-        }
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagHousemate];
+    
+    for (OMember *candidate in _housemateCandidates) {
+        [actionSheet addButtonWithTitle:candidate.name];
+    }
+    
+    if (![_origo userIsMember] && [_membership.member isWardOfUser]) {
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonOtherGuardian] tag:kButtonTagGuardian];
     } else {
-        self.title = [OStrings labelForOrigoType:self.meta labelType:kOrigoLabelTypeOrigoNew];
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonNewHousemate] tag:kButtonTagHousemate];
+    }
+    
+    [actionSheet show];
+}
+
+
+#pragma mark - Selector implementations
+
+- (void)presentActionSheet
+{
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
+    
+    [actionSheet addButtonWithTitle:[OStrings addMemberButtonTitleForOrigoType:_origoType] tag:kButtonTagAddMember];
+    
+    if ([_origo isJuvenile]) {
+        [actionSheet addButtonWithTitle:[OStrings addContactButtonTitleForOrigoType:_origoType] tag:kButtonTagAddContact];
+    }
+    
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
+    [actionSheet addButtonWithTitle:[NSString stringWithFormat:[OStrings stringForKey:strButtonAbout], _origo.name] tag:kButtonTagAbout];
+    
+    if ([_origo.address hasValue]) {
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonShowInMap] tag:kButtonTagShowInMap];
+    }
+    
+    [actionSheet show];
+}
+
+
+- (void)addItem
+{
+    NSMutableSet *housemateCandidates = nil;
+    
+    if ([_origo isOfType:kOrigoTypeResidence]) {
+        housemateCandidates = [[NSMutableSet alloc] init];
+        
+        for (OMember *housemate in [_membership.member housemates]) {
+            if (![_origo hasMember:housemate]) {
+                [housemateCandidates addObject:housemate];
+            }
+        }
+    }
+    
+    if ([_origo isOfType:kOrigoTypeResidence] && [housemateCandidates count]) {
+        [self presentHousemateCandidatesSheet:housemateCandidates];
+    } else {
+        [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo];
     }
 }
 
@@ -35,7 +99,17 @@ static NSInteger const kSectionKeyOrigo = 0;
 
 - (BOOL)canEdit
 {
-    return [_origo userIsAdmin] || (![_origo hasAdmin] && [_origo userIsCreator]);
+    return [_origo userCanEdit];
+}
+
+
+#pragma mark - UIViewController overrides
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:kSegueToMemberView]) {
+        [self prepareForPushSegue:segue];
+    }
 }
 
 
@@ -45,21 +119,111 @@ static NSInteger const kSectionKeyOrigo = 0;
 {
     if ([self.data isKindOfClass:OMembership.class]) {
         _membership = self.data;
-        _origo = _membership.origo;
         _member = _membership.member;
+        _origo = _membership.origo;
+        _origoType = _origo.type;
+        
+        if ([_origo isOfType:kOrigoTypeResidence]) {
+            self.title = [OStrings labelForOrigoType:_origoType labelType:kOrigoLabelTypeOrigo];
+        } else {
+            self.title = _origo.name;
+        }
+        
+        if ([self canEdit] && ![self actionIs:kActionRegister]) {
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
+        }
+
+        [self.state setTarget:_origo];
     } else if ([self.data isKindOfClass:OMember.class]) {
         _member = self.data;
+        _origoType = self.meta;
+        
+        self.title = [OStrings labelForOrigoType:_origoType labelType:kOrigoLabelTypeOrigoNew];
+        
+        [self.state setTarget:_origoType aspectCarrier:_member];
     }
-    
-    self.state.target = _origo ? _origo : self.meta;
 }
 
 
-- (void)initialiseDataSource
+- (void)initialiseData
 {
-    id origoDataSource = _origo ? _origo : kEntityRegistrationCell;
+    if ([self actionIs:kActionRegister]) {
+        [self setData:_origo ? _origo : kEntityRegistrationCell forSectionWithKey:kSectionKeyOrigo];
+        [self setData:@[_member] forSectionWithKey:kSectionKeyMembers];
+    } else {
+        NSMutableSet *contactMemberships = [[NSMutableSet alloc] init];
+        NSMutableSet *regularMemberships = [[NSMutableSet alloc] init];
+        
+        for (OMembership *membership in [_origo fullMemberships]) {
+            if ([membership hasContactRole]) {
+                [contactMemberships addObject:membership];
+            } else {
+                [regularMemberships addObject:membership];
+            }
+        }
+        
+        [self setData:_origo forSectionWithKey:kSectionKeyOrigo];
+        [self setData:contactMemberships forSectionWithKey:kSectionKeyContacts];
+        [self setData:regularMemberships forSectionWithKey:kSectionKeyMembers];
+    }
+}
+
+
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    BOOL hasFooter = NO;
     
-    [self setData:origoDataSource forSectionWithKey:kSectionKeyOrigo];
+    if (self.isModal && ![self actionIs:kActionRegister]) {
+        hasFooter = [self isLastSectionKey:sectionKey] && [_origo userCanEdit];
+    }
+    
+    return hasFooter;
+}
+
+
+- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
+{
+    NSString *text = nil;
+    
+    if (sectionKey == kSectionKeyContacts) {
+        text = [[OLanguage nouns][_contact_][pluralIndefinite] capitalizedString];
+    } else if (sectionKey == kSectionKeyMembers) {
+        text = [OStrings labelForOrigoType:_origoType labelType:kOrigoLabelTypeMemberList];
+    }
+    
+    return text;
+}
+
+
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+{
+    return [OStrings footerForOrigoType:_origoType];
+}
+
+
+- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    
+    if ((sectionKey == kSectionKeyContacts) || (sectionKey == kSectionKeyMembers)) {
+        [self performSegueWithIdentifier:kSegueToMemberView sender:self];
+    }
+}
+
+
+- (BOOL)canDeleteRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL canDeleteRow = NO;
+    
+    if (indexPath.section != kSectionKeyOrigo) {
+        OMembership *membershipForRow = [self dataAtIndexPath:indexPath];
+        
+        if ([membershipForRow isKindOfClass:OMembership.class]) {
+            canDeleteRow = [_origo userIsAdmin] && ![membershipForRow.member isUser];
+        }
+    }
+    
+    return canDeleteRow;
 }
 
 
@@ -88,14 +252,21 @@ static NSInteger const kSectionKeyOrigo = 0;
             _membership = [_origo addMember:_member];
         }
         
-        [self presentModalViewControllerWithIdentifier:kIdentifierMemberList data:_membership];
+        [self toggleEditMode];
+        [self.detailCell readEntity];
+        [self reloadSectionWithKey:kSectionKeyMembers];
+        
+        [[OMeta m].replicator replicate];
+        
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
     } else if ([self actionIs:kActionEdit]) {
         [self toggleEditMode];
     }
 }
 
 
-- (id)targetEntity
+- (id)inputEntity
 {
     _origo = [[OMeta m].context insertOrigoEntityOfType:self.meta];
     
@@ -103,11 +274,115 @@ static NSInteger const kSectionKeyOrigo = 0;
 }
 
 
-#pragma mark - OModalViewControllerDismisser conformance
+#pragma mark - OTableViewListDelegate conformance
 
-- (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController
+- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
 {
-    return [viewController.identifier isEqualToString:kIdentifierMemberList];
+    return [OUtil sortKeyWithPropertyKey:kPropertyKeyName relationshipKey:kRelationshipKeyMember];
+}
+
+
+- (BOOL)willCompareObjectsInSectionWithKey:(NSInteger)sectionKey
+{
+    return [self targetIs:kOrigoTypeResidence] && (sectionKey == kSectionKeyMembers);
+}
+
+
+- (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2
+{
+    NSComparisonResult result = NSOrderedSame;
+    
+    OMember *member1 = [object1 asMembership].member;
+    OMember *member2 = [object2 asMembership].member;
+    
+    BOOL member1IsMinor = [member1 isMinor];
+    BOOL member2IsMinor = [member2 isMinor];
+    
+    if (member1IsMinor != member2IsMinor) {
+        if (member1IsMinor && !member2IsMinor) {
+            result = NSOrderedDescending;
+        } else {
+            result = NSOrderedAscending;
+        }
+    } else {
+        result = [member1.name localizedCaseInsensitiveCompare:member2.name];
+    }
+    
+    return result;
+}
+
+
+- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    OMember *member = nil;
+    
+    if ([self actionIs:kActionRegister]) {
+        member = [self dataAtIndexPath:indexPath];
+    } else {
+        member = [[self dataAtIndexPath:indexPath] asMembership].member;
+    }
+    
+    cell.textLabel.text = member.name;
+    cell.detailTextLabel.text = [member shortDetails];
+    cell.imageView.image = [member smallImage];
+}
+
+
+#pragma mark - UITableViewDataSource conformance
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [OStrings stringForKey:strButtonDeleteMember];
+}
+
+
+#pragma mark - UIActionSheetDelegate conformance
+
+- (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (actionSheet.tag) {
+        case kActionSheetTagActionSheet:
+            if ([actionSheet tagForButtonIndex:buttonIndex] == kButtonTagEdit) {
+                [self toggleEditMode];
+            }
+            
+            break;
+            
+        default:
+            break;
+    }
+}
+
+
+- (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+    
+    switch (actionSheet.tag) {
+        case kActionSheetTagActionSheet:
+            if (buttonIndex < actionSheet.cancelButtonIndex) {
+                if (buttonTag == kButtonTagAddMember) {
+                    [self addItem];
+                }
+            }
+            
+            break;
+            
+        case kActionSheetTagHousemate:
+            if (buttonTag == kButtonTagHousemate) {
+                [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo];
+            } else if (buttonTag == kButtonTagGuardian) {
+                [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kMemberTypeGuardian];
+            } else if (buttonIndex < actionSheet.cancelButtonIndex) {
+                [_origo addMember:_housemateCandidates[buttonIndex]];
+                [self reloadSections];
+            }
+            
+            break;
+            
+        default:
+            break;
+    }
 }
 
 @end

@@ -188,7 +188,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-- (void)initialiseDataSource
+- (void)initialiseData
 {
     [self setData:kCustomCell forSectionWithKey:kSectionKeyAuth];
 }

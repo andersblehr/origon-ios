@@ -62,9 +62,8 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 - (id)insertOrigoEntityOfType:(NSString *)origoType origoId:(NSString *)origoId
 {
     OOrigo *origo = [self insertEntityOfClass:OOrigo.class entityId:origoId];
-    
     origo.origoId = origoId;
-    origo.type = [origoType isEqualToString:kTargetHousehold] ? kOrigoTypeResidence : origoType;
+    origo.type = origoType;
     
     if ([origo isOfType:kOrigoTypeResidence]) {
         origo.name = [OStrings stringForKey:strDefaultResidenceName];

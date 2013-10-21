@@ -46,17 +46,15 @@ extern CGFloat const kCellAnimationDuration;
 
 - (id)labelForKey:(NSString *)key;
 - (id)textFieldForKey:(NSString *)key;
-- (id)firstInputField;
+- (id)firstEmptyInputField;
 - (id)nextInputField;
 
-- (BOOL)isTitleKey:(NSString *)key;
 - (BOOL)hasValueForKey:(NSString *)key;
 - (BOOL)hasValidValueForKey:(NSString *)key;
 
 - (void)willAppear;
 - (void)toggleEditMode;
 - (void)redrawIfNeeded;
-- (void)redrawDropShadow;
 - (void)shakeCellVibrate:(BOOL)vibrate;
 
 - (void)prepareForInput;

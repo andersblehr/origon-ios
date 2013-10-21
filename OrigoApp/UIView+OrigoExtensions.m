@@ -46,7 +46,7 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 
 #pragma mark - Shadows
 
-- (void)addDropShadowForTableViewCell
+- (void)addSeparatorsForTableViewCell
 {
     [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor tableViewSeparatorColor] radius:kCellShadowRadius offset:kCellShadowOffset];
 }
@@ -54,7 +54,7 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 
 - (void)addDropShadowForPhotoFrame
 {
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor darkGrayColor] radius:kImageShadowRadius offset:kImageShadowOffset];
+    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:CGRectMake(0.f, 0.f, kPhotoFrameWidth, kPhotoFrameWidth)] colour:[UIColor darkGrayColor] radius:kImageShadowRadius offset:kImageShadowOffset];
 }
 
 

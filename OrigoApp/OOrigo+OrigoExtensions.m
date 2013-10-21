@@ -304,13 +304,7 @@ NSString * const kOrigoTypeOther = @"other";
 
 - (NSString *)asTarget
 {
-    NSString *target = self.type;
-    
-    if ([self.type isEqualToString:kOrigoTypeResidence] && [self userIsMember]) {
-        target = kTargetHousehold;
-    }
-    
-    return target;
+    return self.type;
 }
 
 

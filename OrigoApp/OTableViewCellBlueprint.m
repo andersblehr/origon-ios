@@ -8,9 +8,10 @@
 
 #import "OTableViewCellBlueprint.h"
 
-CGFloat const kDefaultTableViewCellHeight = 45.f;
+CGFloat const kDefaultCellHeight = 45.f;
 CGFloat const kDefaultCellPadding = 10.f;
 CGFloat const kMinimumCellPadding = 0.1f;
+CGFloat const kPhotoFrameWidth = 55.f;
 
 static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
@@ -67,7 +68,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             _hasPhoto = YES;
             _titleKey = kPropertyKeyName;
             
-            if ([state targetIs:kTargetHousehold]) {
+            if ([state aspectIsHousehold]) {
                 _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
             } else if ([state targetIs:kTargetJuvenile]) {
                 if ([state actionIs:kActionInput]) {
@@ -83,9 +84,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
         } else if (entityClass == OOrigo.class) {
             _hasPhoto = NO;
             
-            if ([state actionIs:kActionList]) {
-                _titleKey = nil;
-            } else if (![state targetIs:kOrigoTypeResidence] || [state targetIs:kTargetHousehold]) {
+            if (![state targetIs:kOrigoTypeResidence] || [state aspectIsHousehold]) {
                 _titleKey = kPropertyKeyName;
             }
             

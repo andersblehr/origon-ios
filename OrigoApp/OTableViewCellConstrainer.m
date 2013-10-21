@@ -15,15 +15,15 @@ static NSString * const kVConstraintsInitialWithTitle = @"V:|-44-";
 
 static NSString * const kVConstraintsElementTopmost   = @"[%@(%.f)]";
 static NSString * const kVConstraintsElement          = @"-%.f-[%@(%.f)]";
-static NSString * const kHConstraintsLabel            = @"H:|-25-[%@]-25-|";
-static NSString * const kHConstraintsTextField        = @"H:|-55-[%@]-55-|";
+static NSString * const kHConstraintsCentredLabel     = @"H:|-25-[%@]-25-|";
+static NSString * const kHConstraintsCentredTextField = @"H:|-55-[%@]-55-|";
 
 static NSString * const kVConstraintsTitleBanner      = @"V:|-(-1)-[titleBanner(39)]";
 static NSString * const kHConstraintsTitleBanner      = @"H:|-(-1)-[titleBanner]-(-1)-|";
 static NSString * const kVConstraintsTitle            = @"[%@(24)]";
 static NSString * const kHConstraintsTitle            = @"H:|-6-[%@]-6-|";
-static NSString * const kHConstraintsTitleWithPhoto   = @"H:|-6-[%@]-6-[photoFrame(55)]-10-|";
-static NSString * const kVConstraintsPhoto            = @"V:|-10-[photoFrame(55)]";
+static NSString * const kHConstraintsTitleWithPhoto   = @"H:|-6-[%@]-6-[photoFrame(%.f)]-10-|";
+static NSString * const kVConstraintsPhoto            = @"V:|-10-[photoFrame(%.f)]";
 static NSString * const kVConstraintsPhotoPrompt      = @"V:|-3-[photoPrompt]-3-|";
 static NSString * const kHConstraintsPhotoPrompt      = @"H:|-3-[photoPrompt]-3-|";
 
@@ -118,8 +118,8 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
         [constraints addObject:kHConstraintsTitleBanner];
         
         if (_blueprint.hasPhoto) {
-            [constraints addObject:[NSString stringWithFormat:kHConstraintsTitleWithPhoto, titleName]];
-            [constraints addObject:kVConstraintsPhoto];
+            [constraints addObject:[NSString stringWithFormat:kHConstraintsTitleWithPhoto, titleName, kPhotoFrameWidth]];
+            [constraints addObject:[NSString stringWithFormat:kVConstraintsPhoto, kPhotoFrameWidth]];
             [constraints addObject:kVConstraintsPhotoPrompt];
             [constraints addObject:kHConstraintsPhotoPrompt];
         } else {
@@ -284,10 +284,10 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
             
             if ([_cell labelForKey:key]) {
                 NSString *elementName = [key stringByAppendingString:kViewKeySuffixLabel];
-                constraint = [NSString stringWithFormat:kHConstraintsLabel, elementName];
+                constraint = [NSString stringWithFormat:kHConstraintsCentredLabel, elementName];
             } else if ([_cell textFieldForKey:key]) {
                 NSString *elementName = [key stringByAppendingString:kViewKeySuffixTextField];
-                constraint = [NSString stringWithFormat:kHConstraintsTextField, elementName];
+                constraint = [NSString stringWithFormat:kHConstraintsCentredTextField, elementName];
             }
             
             [constraints addObject:constraint];

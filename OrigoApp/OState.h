@@ -11,8 +11,8 @@
 extern NSString * const kIdentifierAuth;
 extern NSString * const kIdentifierCalendar;
 extern NSString * const kIdentifierMember;
-extern NSString * const kIdentifierMemberList;
 extern NSString * const kIdentifierMessageList;
+extern NSString * const kIdentifierOldOrigo;
 extern NSString * const kIdentifierOrigo;
 extern NSString * const kIdentifierOrigoList;
 extern NSString * const kIdentifierSetting;
@@ -32,11 +32,14 @@ extern NSString * const kTargetStrings;
 extern NSString * const kTargetEmail;
 extern NSString * const kTargetUser;
 extern NSString * const kTargetWard;
-extern NSString * const kTargetHousehold;
+extern NSString * const kTargetHousemate;
 extern NSString * const kTargetJuvenile;
 extern NSString * const kTargetExternal;
 
-@interface OState : NSObject
+@interface OState : NSObject {
+@private
+    NSString *_aspect;
+}
 
 @property (weak, nonatomic, readonly) OTableViewController *viewController;
 @property (strong, nonatomic) NSString *action;
@@ -49,9 +52,11 @@ extern NSString * const kTargetExternal;
 
 + (OState *)s;
 
+- (void)setTarget:(NSString *)target aspectCarrier:(id)aspectCarrier;
 - (void)reflectState:(OState *)state;
 - (void)toggleAction:(NSArray *)alternatingActions;
 
+- (BOOL)aspectIsHousehold;
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
 - (BOOL)isCurrent;

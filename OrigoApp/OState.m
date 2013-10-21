@@ -11,8 +11,8 @@
 NSString * const kIdentifierAuth = @"auth";
 NSString * const kIdentifierCalendar = @"calendar";
 NSString * const kIdentifierMember = @"member";
-NSString * const kIdentifierMemberList = @"members";
 NSString * const kIdentifierMessageList = @"messages";
+NSString * const kIdentifierOldOrigo = @"old";
 NSString * const kIdentifierOrigo = @"origo";
 NSString * const kIdentifierOrigoList = @"origos";
 NSString * const kIdentifierSetting = @"setting";
@@ -32,14 +32,37 @@ NSString * const kTargetStrings = @"strings";
 NSString * const kTargetEmail = @"email";
 NSString * const kTargetUser = @"user";
 NSString * const kTargetWard = @"ward";
-NSString * const kTargetHousehold = @"household";
+NSString * const kTargetHousemate = @"housemate";
 NSString * const kTargetJuvenile = @"juvenile";
 NSString * const kTargetExternal = @"external";
+
+static NSString * const kAspectHousehold = @"h";
+static NSString * const kAspectDefault = @"d";
 
 static OState *_s = nil;
 
 
 @implementation OState
+
+#pragma mark - Auxiliary methods
+
+- (void)setAspectForEntity:(id)entity
+{
+    if ([entity isKindOfClass:OMember.class]) {
+        if ([entity isUser] || [entity isHousemateOfUser]) {
+            _aspect = kAspectHousehold;
+        } else {
+            _aspect = kAspectDefault;
+        }
+    } else if ([entity isKindOfClass:OOrigo.class]) {
+        if ([entity isOfType:kOrigoTypeResidence] && [entity userIsMember]) {
+            _aspect = kAspectHousehold;
+        } else {
+            _aspect = kAspectDefault;
+        }
+    }
+}
+
 
 #pragma mark - Instantiation & initialisation
 
@@ -49,6 +72,12 @@ static OState *_s = nil;
     
     if (self && viewController) {
         _viewController = viewController;
+        
+        if ([OState s] && [[OState s] aspectIsHousehold]) {
+            _aspect = kAspectHousehold;
+        } else {
+            _aspect = kAspectDefault;
+        }
     }
     
     return self;
@@ -65,12 +94,25 @@ static OState *_s = nil;
 }
 
 
-#pragma mark - State reflection & toggling
+#pragma mark - State handling
+
+- (void)setTarget:(NSString *)target aspectCarrier:(id)aspectCarrier
+{
+    if ([aspectCarrier isKindOfClass:OMember.class]) {
+        if (![target isEqualToString:kOrigoTypeResidence] || ![aspectCarrier isUser]) {
+            _aspect = kAspectDefault;
+        }
+        
+        [self setTarget:target];
+    }
+}
+
 
 - (void)reflectState:(OState *)state
 {
     if (state != self) {
         _viewController = state.viewController;
+        _aspect = [state aspectIsHousehold] ? kAspectHousehold : kAspectDefault;
         _action = state.action;
         _target = state.target;
     }
@@ -91,6 +133,12 @@ static OState *_s = nil;
 
 #pragma mark - State inspection
 
+- (BOOL)aspectIsHousehold
+{
+    return [_aspect isEqualToString:kAspectHousehold];
+}
+
+
 - (BOOL)actionIs:(NSString *)action
 {
     BOOL actionIsCurrent = NO;
@@ -110,22 +158,15 @@ static OState *_s = nil;
 
 - (BOOL)targetIs:(NSString *)target
 {
-    BOOL targetIsCurrent = NO;
+    BOOL targetIsIndicated = NO;
     
-    if ([target isEqualToString:kTargetHousehold]) {
-        targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetHousehold];
-        targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetUser];
-        targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetWard];
-    } else if ([target isEqualToString:kTargetJuvenile]) {
-        targetIsCurrent = [OUtil origoTypeIsJuvenile:_target];
-    } else if ([target isEqualToString:kOrigoTypeResidence]) {
-        targetIsCurrent = targetIsCurrent || [_target isEqualToString:kOrigoTypeResidence];
-        targetIsCurrent = targetIsCurrent || [_target isEqualToString:kTargetHousehold];
+    if ([target isEqualToString:kTargetJuvenile]) {
+        targetIsIndicated = [OUtil origoTypeIsJuvenile:_target];
     } else {
-        targetIsCurrent = [_target isEqualToString:target];
+        targetIsIndicated = [_target isEqualToString:target];
     }
     
-    return targetIsCurrent;
+    return targetIsIndicated;
 }
 
 
@@ -140,6 +181,7 @@ static OState *_s = nil;
 - (NSString *)asString
 {
     NSString *viewController = [_viewController.identifier uppercaseString];
+    NSString *aspect = [_aspect uppercaseString];
     NSString *action = [_action uppercaseString];
     NSString *target = [_target uppercaseString];
     
@@ -147,7 +189,7 @@ static OState *_s = nil;
     action = action ? action : @"DEFAULT";
     target = target ? target : @"DEFAULT";
     
-    return [NSString stringWithFormat:@"[%@][%@][%@]", action, viewController, target];
+    return [NSString stringWithFormat:@"{%@}[%@][%@][%@]", aspect, action, viewController, target];
 }
 
 
@@ -164,38 +206,14 @@ static OState *_s = nil;
 - (void)setTarget:(id)target
 {
     if ([target isKindOfClass:OReplicatedEntity.class]) {
+        [self setAspectForEntity:target];
+        
         _target = [target asTarget];
     } else if ([target isKindOfClass:NSString.class]) {
         _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
     }
     
     [[OState s] reflectState:self];
-}
-
-
-- (id<OTableViewListDelegate>)listDelegate
-{
-    id listDelegate = nil;
-
-    if ([_viewController conformsToProtocol:@protocol(OTableViewListDelegate)]) {
-        listDelegate = (id<OTableViewListDelegate>)_viewController;
-    }
-    
-    return listDelegate;
-}
-
-
-- (id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate>)inputDelegate
-{
-    id inputDelegate = nil;
-    
-    if ([_viewController conformsToProtocol:@protocol(OTableViewInputDelegate)] ||
-        [_viewController conformsToProtocol:@protocol(UITextFieldDelegate)] ||
-        [_viewController conformsToProtocol:@protocol(UITextViewDelegate)]) {
-        inputDelegate = (id<UITextFieldDelegate, UITextViewDelegate>)_viewController;
-    }
-    
-    return inputDelegate;
 }
 
 @end

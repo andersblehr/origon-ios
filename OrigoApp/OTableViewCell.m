@@ -191,9 +191,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [self initCommonsForReuseIdentifier:NSStringFromClass(entityClass) indexPath:nil];
     
     if (self) {
-        self.entity = entity;
-        self.editing = !_selectable;
-        
+        _entity = entity;
         _entityClass = entityClass;
         _blueprint = [[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
@@ -236,7 +234,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (id)firstInputField
+- (id)firstEmptyInputField
 {
     id inputField = nil;
     
@@ -271,12 +269,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Meta & validation
 
-- (BOOL)isTitleKey:(NSString *)key
-{
-    return [key isEqualToString:_blueprint.titleKey];
-}
-
-
 - (BOOL)hasValueForKey:(NSString *)key
 {
     return [[self textFieldForKey:key] hasValue];
@@ -294,7 +286,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)willAppear
 {
     if ([OMeta systemIs_iOS6x]) {
-        [self.backgroundView addDropShadowForTableViewCell];
+        [self.backgroundView addSeparatorsForTableViewCell];
     }
     
     if (![self isListCell]) {
@@ -315,15 +307,21 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 }
             }
         }
+        
+        self.editing = [_state actionIs:kActionInput];
     }
 }
 
 
 - (void)toggleEditMode
 {
-    [_state toggleAction:@[kActionDisplay, kActionEdit]];
+    if ([_state actionIs:kActionRegister]) {
+        [_state toggleAction:@[kActionDisplay, kActionRegister]];
+    } else {
+        [_state toggleAction:@[kActionDisplay, kActionEdit]];
+    }
     
-    self.editing = [_state actionIs:kActionEdit] || _editable;
+    self.editing = [_state actionIs:kActionEdit];
 }
 
 
@@ -352,12 +350,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
             }];
         }
     }
-}
-
-
-- (void)redrawDropShadow
-{
-    [self.backgroundView addDropShadowForTableViewCell];
 }
 
 
@@ -446,7 +438,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)writeEntity
 {
     if (!_entity) {
-        _entity = [_inputDelegate targetEntity];
+        _entity = [_inputDelegate inputEntity];
     }
     
     for (NSString *key in _blueprint.allTextFieldKeys) {
@@ -481,14 +473,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
     
     [self redrawIfNeeded];
-}
-
-
-- (void)setEditable:(BOOL)editable
-{
-    _editable = editable;
-    
-    self.editing = editable;
 }
 
 
