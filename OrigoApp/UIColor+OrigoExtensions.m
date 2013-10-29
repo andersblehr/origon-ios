@@ -15,187 +15,176 @@
 
 + (UIColor *)manateeColor // Grey
 {
-    return [self colorWithRed:142/255.f green:142/255.f blue:147/255.f alpha:1.f];
+    return [UIColor colorWithRed:142/255.f green:142/255.f blue:147/255.f alpha:1.f];
 }
 
 
 + (UIColor *)radicalRedColor
 {
-    return [self colorWithRed:255/255.f green:45/255.f blue:85/255.f alpha:1.f];
+    return [UIColor colorWithRed:255/255.f green:45/255.f blue:85/255.f alpha:1.f];
 }
 
 
 + (UIColor *)redOrangeColor
 {
-    return [self colorWithRed:255/255.f green:59/255.f blue:48/255.f alpha:1.f];
+    return [UIColor colorWithRed:255/255.f green:59/255.f blue:48/255.f alpha:1.f];
 }
 
 
 + (UIColor *)pizazzColor // Orange
 {
-    return [self colorWithRed:255/255.f green:149/255.f blue:0/255.f alpha:1.f];
+    return [UIColor colorWithRed:255/255.f green:149/255.f blue:0/255.f alpha:1.f];
 }
 
 
 + (UIColor *)supernovaColor // Yellow
 {
-    return [self colorWithRed:255/255.f green:204/255.f blue:0/255.f alpha:1.f];
+    return [UIColor colorWithRed:255/255.f green:204/255.f blue:0/255.f alpha:1.f];
 }
 
 
 + (UIColor *)emeraldColor // Green
 {
-    return [self colorWithRed:76/255.f green:217/255.f blue:100/255.f alpha:1.f];
+    return [UIColor colorWithRed:76/255.f green:217/255.f blue:100/255.f alpha:1.f];
 }
 
 
 + (UIColor *)malibuColor // Bright blue
 {
-    return [self colorWithRed:90/255.f green:200/255.f blue:250/255.f alpha:1.f];
+    return [UIColor colorWithRed:90/255.f green:200/255.f blue:250/255.f alpha:1.f];
 }
 
 
 + (UIColor *)curiousBlueColor // Soft blue
 {
-    return [self colorWithRed:52/255.f green:170/255.f blue:220/255.f alpha:1.f];
+    return [UIColor colorWithRed:52/255.f green:170/255.f blue:220/255.f alpha:1.f];
 }
 
 
 + (UIColor *)azureRadianceColor // Standard UI blue
 {
-    return [self colorWithRed:0/255.f green:122/255.f blue:255/255.f alpha:1.f];
+    return [UIColor colorWithRed:0/255.f green:122/255.f blue:255/255.f alpha:1.f];
 }
 
 
 + (UIColor *)indigoColor
 {
-    return [self colorWithRed:88/255.f green:86/255.f blue:214/255.f alpha:1.f];
-}
-
-
-#pragma mark - Other iOS 7 RGB shorthands
-
-+ (UIColor *)athensGrayColor // Default table view background colour
-{
-    return [self colorWithRed:239/255.f green:239/255.f blue:244/255.f alpha:1.f];
-}
-
-
-+ (UIColor *)frenchGrayColor // Default table view separator colour
-{
-    return [self colorWithRed:200/255.f green:199/255.f blue:204/255.f alpha:1.f];
-}
-
-
-+ (UIColor *)blackRussianColor
-{
-    return [self colorWithRed:0/255.f green:0/255.f blue:25/255.f alpha:0.22f];
+    return [UIColor colorWithRed:88/255.f green:86/255.f blue:214/255.f alpha:1.f];
 }
 
 
 #pragma mark - iOS 7 default colours
 
-+ (UIColor *)windowTintColor
+
++ (UIColor *)navigationBarShadowColour
 {
-    return [self pizazzColor];
+    return [UIColor colorWithRed:245/255.f green:245/255.f blue:246/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)tableViewBackgroundColor
++ (UIColor *)tableViewBackgroundColour
 {
-    return [self athensGrayColor];
+    return [UIColor colorWithRed:239/255.f green:239/255.f blue:244/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)tableViewSeparatorColor
++ (UIColor *)tableViewSeparatorColour
 {
-    return [self frenchGrayColor];
+    return [UIColor colorWithRed:200/255.f green:199/255.f blue:204/255.f alpha:1.f];
 }
 
 
-#pragma mark - iOS 6 navigation & toobar colour
-
-+ (UIColor *)barTintColor
++ (UIColor *)cellBackgroundColour
 {
-    return [self manateeColor];
+    return [UIColor whiteColor];
 }
 
 
-#pragma mark - Background colours
-
-+ (UIColor *)cellBackgroundColor
++ (UIColor *)selectedCellBackgroundColour
 {
-    return [self whiteColor];
+    return [UIColor tableViewSeparatorColour];
 }
 
 
-+ (UIColor *)selectedCellBackgroundColor
++ (UIColor *)placeholderColour
 {
-    return [self tableViewSeparatorColor];
+    return [UIColor colorWithRed:0/255.f green:0/255.f blue:25/255.f alpha:0.22f];
 }
 
 
-+ (UIColor *)titleBackgroundColor
+#pragma mark - Interface colours
+
++ (UIColor *)windowTintColour
 {
-    return [self windowTintColor];
+    return [UIColor pizazzColor];
 }
 
 
-+ (UIColor *)imagePlaceholderBackgroundColor
++ (UIColor *)titleBackgroundColour
 {
-    return [self tableViewBackgroundColor];
+    return [UIColor windowTintColour];
+}
+
+
++ (UIColor *)titlePlaceholderColour
+{
+    return [UIColor colorWithWhite:1.f alpha:0.6f];
+}
+
+
++ (UIColor *)imagePlaceholderBackgroundColour
+{
+    return [UIColor tableViewBackgroundColour];
+}
+
+
++ (UIColor *)iOS6BarButtonItemColour
+{
+    return [UIColor colorWithRed:255/255.f green:192/255.f blue:104/255.f alpha:1.f];
+}
+
+
++ (UIColor *)iOS6ToolbarColour
+{
+    return [UIColor colorWithRed:255/255.f green:199/255.f blue:121/255.f alpha:1.f];
 }
 
 
 #pragma mark - Text colours
 
-+ (UIColor *)defaultTextColor
++ (UIColor *)textColour
 {
-    return [self blackColor];
+    return [UIColor blackColor];
 }
 
 
-+ (UIColor *)headerTextColor
++ (UIColor *)headerTextColour
 {
-    return [self darkGrayColor];
+    return [UIColor darkGrayColor];
 }
 
 
-+ (UIColor *)footerTextColor
++ (UIColor *)footerTextColour
 {
-    return [self darkGrayColor];
+    return [UIColor darkGrayColor];
 }
 
 
-+ (UIColor *)titleTextColor
++ (UIColor *)titleTextColour
 {
-    return [self whiteColor];
+    return [UIColor whiteColor];
 }
 
 
-+ (UIColor *)labelTextColor
++ (UIColor *)labelTextColour
 {
-    return [self windowTintColor];
+    return [UIColor windowTintColour];
 }
 
 
-+ (UIColor *)imagePlaceholderTextColor
++ (UIColor *)imagePlaceholderTextColour
 {
-    return [self whiteColor];
-}
-
-
-#pragma mark - Placeholder colours
-
-+ (UIColor *)defaultPlaceholderColor
-{
-    return [OMeta systemIs_iOS6x] ? [self lightGrayColor] : [self blackRussianColor];
-}
-
-
-+ (UIColor *)titlePlaceholderColor
-{
-    return [self colorWithWhite:1.f alpha:0.6f];
+    return [UIColor whiteColor];
 }
 
 @end

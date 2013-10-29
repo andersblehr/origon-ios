@@ -61,13 +61,9 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (id)insertOrigoEntityOfType:(NSString *)origoType origoId:(NSString *)origoId
 {
-    OOrigo *origo = [self insertEntityOfClass:OOrigo.class entityId:origoId];
+    OOrigo *origo = [self insertEntityOfClass:[OOrigo class] entityId:origoId];
     origo.origoId = origoId;
     origo.type = origoType;
-    
-    if ([origo isOfType:kOrigoTypeResidence]) {
-        origo.name = [OStrings stringForKey:strDefaultResidenceName];
-    }
     
     return origo;
 }
@@ -79,7 +75,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     OReplicatedEntityRef *entityRef = [self entityWithId:entityRefId];
     
     if (!entityRef) {
-        entityRef = [self insertEntityOfClass:OReplicatedEntityRef.class inOrigo:origo entityId:entityRefId];
+        entityRef = [self insertEntityOfClass:[OReplicatedEntityRef class] inOrigo:origo entityId:entityRefId];
         entityRef.referencedEntityId = entity.entityId;
         entityRef.referencedEntityOrigoId = entity.origoId;
     }
@@ -105,7 +101,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
         NSString *memberRootId = [self memberRootIdForMemberWithId:membership.member.entityId];
         NSString *expiryRefId = [self entityRefIdForEntity:membership inOrigoWithId:memberRootId];
         
-        expiryRef = [self insertEntityOfClass:OReplicatedEntityRef.class entityId:expiryRefId];
+        expiryRef = [self insertEntityOfClass:[OReplicatedEntityRef class] entityId:expiryRefId];
         expiryRef.referencedEntityId = membership.entityId;
         expiryRef.referencedEntityOrigoId = membership.origoId;
         expiryRef.origoId = memberRootId;
@@ -155,7 +151,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
         [entity setDeserialisedValue:entityDictionary[attributeKey] forKey:attributeKey];
     }
     
-    NSMutableDictionary *relationshipRefs = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *relationshipRefs = [NSMutableDictionary dictionary];
     
     for (NSString *relationshipKey in [relationships allKeys]) {
         NSRelationshipDescription *relationship = relationships[relationshipKey];
@@ -182,12 +178,12 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (NSSet *)dirtyEntities
 {
-    NSMutableSet *unsavedEntities = [[NSMutableSet alloc] init];
+    NSMutableSet *unsavedEntities = [NSMutableSet set];
     
     [unsavedEntities unionSet:[self insertedObjects]];
     [unsavedEntities unionSet:[self updatedObjects]];
     
-    NSMutableSet *dirtyEntities = [[NSMutableSet alloc] init];
+    NSMutableSet *dirtyEntities = [NSMutableSet set];
     
     for (OReplicatedEntity *entity in unsavedEntities) {
         if ([entity isDirty]) {
@@ -218,7 +214,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     NSString *memberRootId = [self memberRootIdForMemberWithId:memberId];
     
     OOrigo *memberRoot = [self insertOrigoEntityOfType:kOrigoTypeMemberRoot origoId:memberRootId];
-    OMember *member = [self insertEntityOfClass:OMember.class inOrigo:memberRoot entityId:memberId];
+    OMember *member = [self insertEntityOfClass:[OMember class] inOrigo:memberRoot entityId:memberId];
     [memberRoot addMember:member];
     
     if ([[OState s] targetIs:kTargetUser]) {
@@ -231,7 +227,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (id)insertDeviceEntity
 {
-    ODevice *device = [self insertEntityOfClass:ODevice.class inOrigo:[[OMeta m].user rootMembership].origo entityId:[OMeta m].deviceId];
+    ODevice *device = [self insertEntityOfClass:[ODevice class] inOrigo:[[OMeta m].user rootMembership].origo entityId:[OMeta m].deviceId];
     device.type = [UIDevice currentDevice].model;
     device.displayName = [UIDevice currentDevice].name;
     device.member = [OMeta m].user;
@@ -244,13 +240,13 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (id)entityWithId:(NSString *)entityId
 {
-    return [self entityOfClass:OReplicatedEntity.class withValue:entityId forKey:kPropertyKeyEntityId];
+    return [self entityOfClass:[OReplicatedEntity class] withValue:entityId forKey:kPropertyKeyEntityId];
 }
 
 
 - (id)memberEntityWithEmail:(NSString *)email
 {
-    return [self entityOfClass:OMember.class withValue:email forKey:kPropertyKeyEmail];
+    return [self entityOfClass:[OMember class] withValue:email forKey:kPropertyKeyEmail];
 }
 
 
@@ -347,7 +343,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
         }
     }
     
-    NSMutableSet *peerResidencies = [[NSMutableSet alloc] init];
+    NSMutableSet *peerResidencies = [NSMutableSet set];
     
     for (OMember *housemate in [member housemates]) {
         for (OMembership *peerResidency in [housemate residencies]) {
@@ -391,7 +387,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (void)saveServerReplicas:(NSArray *)replicaDictionaries
 {
-    NSMutableSet *entities = [[NSMutableSet alloc] init];
+    NSMutableSet *entities = [NSMutableSet set];
     
     for (NSDictionary *replicaDictionary in replicaDictionaries) {
         BOOL hasExpired = [replicaDictionary[kPropertyKeyIsExpired] boolValue];
@@ -422,7 +418,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (NSSet *)entitiesAwaitingReplication
 {
-    NSMutableSet *entitiesAwaitingReplication = [[NSMutableSet alloc] init];
+    NSMutableSet *entitiesAwaitingReplication = [NSMutableSet set];
     
     for (OReplicatedEntity *entity in [self dirtyEntities]) {
         if (![entity isBeingDeleted]) {

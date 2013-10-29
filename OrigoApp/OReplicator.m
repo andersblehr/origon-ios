@@ -18,9 +18,9 @@
     self = [super init];
     
     if (self) {
-        _dirtyEntities = [[NSMutableSet alloc] init];
-        _stagedEntities = [[NSMutableDictionary alloc] init];
-        _stagedRelationshipRefs = [[NSMutableDictionary alloc] init];
+        _dirtyEntities = [NSMutableSet set];
+        _stagedEntities = [NSMutableDictionary dictionary];
+        _stagedRelationshipRefs = [NSMutableDictionary dictionary];
         
         if ([[OMeta m] userIsSignedIn]) {
             [self loadUserReplicationState];
@@ -60,7 +60,7 @@
     
     [_dirtyEntities unionSet:[[OMeta m].context entitiesAwaitingReplication]];
     
-    NSMutableArray *entities = [[NSMutableArray alloc] init];
+    NSMutableArray *entities = [NSMutableArray array];
     
     for (OReplicatedEntity *entity in _dirtyEntities) {
         [entities addObject:[entity toDictionary]];
@@ -74,7 +74,7 @@
 
 - (void)saveUserReplicationState
 {
-    NSMutableSet *dirtyEntityURIs = [[NSMutableSet alloc] init];
+    NSMutableSet *dirtyEntityURIs = [NSMutableSet set];
     
     for (OReplicatedEntity *dirtyEntity in [[OMeta m].context entitiesAwaitingReplication]) {
         [dirtyEntityURIs addObject:[[dirtyEntity objectID] URIRepresentation]];

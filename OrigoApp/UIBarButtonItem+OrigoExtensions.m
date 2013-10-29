@@ -15,13 +15,35 @@
 
 + (UIBarButtonItem *)settingsButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strViewTitleSettings] style:UIBarButtonItemStylePlain target:target action:@selector(openSettings)];
+    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSettings] style:UIBarButtonItemStylePlain target:target action:@selector(openSettings)];
 }
 
 
 + (UIBarButtonItem *)plusButtonWithTarget:(id)target
 {
-    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:@selector(addItem)];
+    UIBarButtonItem *button = nil;
+    
+    if ([OMeta systemIs_iOS6x]) {
+        button = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFilePlus] style:UIBarButtonItemStylePlain target:target action:@selector(addItem)];
+    } else {
+        button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:@selector(addItem)];
+    }
+    
+    return button;
+}
+
+
++ (UIBarButtonItem *)actionButtonWithTarget:(id)target
+{
+    UIBarButtonItem *button = nil;
+    
+    if ([OMeta systemIs_iOS6x]) {
+        button = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileAction] style:UIBarButtonItemStylePlain target:target action:@selector(presentActionSheet)];
+    } else {
+        button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:target action:@selector(presentActionSheet)];
+    }
+    
+    return button;
 }
 
 
@@ -46,12 +68,6 @@
 + (UIBarButtonItem *)signOutButtonWithTarget:(id)target
 {
     return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonSignOut] style:UIBarButtonItemStylePlain target:target action:@selector(signOut)];
-}
-
-
-+ (UIBarButtonItem *)actionButtonWithTarget:(id)target
-{
-    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:target action:@selector(presentActionSheet)];
 }
 
 

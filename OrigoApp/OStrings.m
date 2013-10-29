@@ -8,6 +8,21 @@
 
 #import "OStrings.h"
 
+// String key prefixes
+NSString * const kKeyPrefixDefault                   = @"strDefault";
+NSString * const kKeyPrefixLabel                     = @"strLabel";
+NSString * const kKeyPrefixPlaceholder               = @"strPlaceholder";
+NSString * const kKeyPrefixFooter                    = @"strFooter";
+NSString * const kKeyPrefixAddMemberButton           = @"strButtonAddMember";
+NSString * const kKeyPrefixAddContactButton          = @"strButtonAddContact";
+NSString * const kKeyPrefixContactRole               = @"strContactRole";
+NSString * const kKeyPrefixSettingTitle              = @"strSettingTitle";
+NSString * const kKeyPrefixSettingLabel              = @"strSettingLabel";
+NSString * const kKeyPrefixOrigoTitle                = @"strOrigoTitle";
+NSString * const kKeyPrefixNewOrigoTitle             = @"strNewOrigoTitle";
+NSString * const kKeyPrefixMemberListTitle           = @"strMemberListTitle";
+NSString * const kKeyPrefixNewMemberTitle            = @"strNewMemberTitle";
+
 // Cross-view terms & strings
 NSString * const strFooterTapToEdit                  = @"strFooterTapToEdit";
 NSString * const strFooterOrigoSignature             = @"strFooterOrigoSignature";
@@ -55,7 +70,6 @@ NSString * const strHeaderMyOrigos                   = @"strHeaderMyOrigos";
 NSString * const strFooterOrigoCreationFirst         = @"strFooterOrigoCreationFirst";
 NSString * const strFooterOrigoCreation              = @"strFooterOrigoCreation";
 NSString * const strFooterOrigoCreationWards         = @"strFooterOrigoCreationWards";
-NSString * const strButtonCountryLocate              = @"strButtonCountryLocate";
 NSString * const strButtonCountryOther               = @"strButtonCountryOther";
 NSString * const strAlertTitleListedUserRegistration = @"strAlertTitleListedUserRegistration";
 NSString * const strAlertTextListedUserRegistration  = @"strAlertTextListedUserRegistration";
@@ -72,7 +86,6 @@ NSString * const strTermHimOrHer                     = @"strTermHimOrHer";
 NSString * const strTermForName                      = @"strTermForName";
 
 // OOrigoView strings
-NSString * const strDefaultResidenceName             = @"strDefaultResidenceName";
 NSString * const strLabelAddress                     = @"strLabelAddress";
 NSString * const strLabelPurpose                     = @"strLabelPurpose";
 NSString * const strLabelDescriptionText             = @"strLabelDescriptionText";
@@ -139,36 +152,22 @@ NSString * const strViewTitleSettings                = @"strViewTitleSettings";
 
 // OSettingView strings
 NSString * const strLabelCountrySettings             = @"strLabelCountrySettings";
-NSString * const strLabelCountryLocation             = @"strLabelCountryLocation";
+NSString * const strLabelCountryLocate               = @"strLabelCountryLocate";
 NSString * const strFooterCountryInfo                = @"strFooterCountryInfo";
 NSString * const strFooterCountryInfoNote            = @"strFooterCountryInfoNote";
 NSString * const strFooterCountryInfoLocate          = @"strFooterCountryInfoLocate";
 
-// Origo type strings
-NSString * const kOrigoLabelTypeOrigo                = @"strOrigoLabel";
-NSString * const kOrigoLabelTypeOrigoNew             = @"strNewOrigoLabel";
-NSString * const kOrigoLabelTypeMemberList           = @"strMemberListLabel";
-NSString * const kOrigoLabelTypeMemberNew            = @"strNewMemberLabel";
-
 // Meta strings
-NSString * const metaSupportedCountryCodes           = @"metaSupportedCountryCodes";
+NSString * const metaSupportedLanguages              = @"metaSupportedLanguages";
 NSString * const metaContactRolesSchoolClass         = @"metaContactRolesSchoolClass";
 NSString * const metaContactRolesPreschoolClass      = @"metaContactRolesPreschoolClass";
-NSString * const metaContactRolesOrganisation         = @"metaContactRolesAssociation";
+NSString * const metaContactRolesOrganisation        = @"metaContactRolesAssociation";
 NSString * const metaContactRolesSportsTeam          = @"metaContactRolesSportsTeam";
 
-static NSDictionary const *strings = nil;
 static NSString * const kStringsPlist = @"strings.plist";
 static NSInteger const kDaysBetweenStringFetches = 0; // TODO: Set to 14
 
-static NSString * const kKeyPrefixLabel = @"strLabel";
-static NSString * const kKeyPrefixPlaceholder = @"strPlaceholder";
-static NSString * const kKeyPrefixFooter = @"strFooter";
-static NSString * const kKeyPrefixAddMemberButton = @"strButtonAddMember";
-static NSString * const kKeyPrefixAddContactButton = @"strButtonAddContact";
-static NSString * const kKeyPrefixContactRole = @"strContactRole";
-static NSString * const kKeyPrefixSettingTitle = @"strSettingTitle";
-static NSString * const kKeyPrefixSettingText = @"strSettingText";
+static NSDictionary const *_strings = nil;
 
 
 @implementation OStrings
@@ -178,7 +177,7 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 + (NSString *)pathToStringsFile
 {
     NSString *cachesDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
-    NSString *relativePath = [kBundleId stringByAppendingPathComponent:kStringsPlist];
+    NSString *relativePath = [[[NSBundle mainBundle] bundleIdentifier] stringByAppendingPathComponent:kStringsPlist];
     
     return [cachesDirectory stringByAppendingPathComponent:relativePath];
 }
@@ -188,11 +187,26 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 
 + (BOOL)hasStrings
 {
-    if (!strings) {
-        strings = [NSDictionary dictionaryWithContentsOfFile:[self pathToStringsFile]];
+    if (!_strings) {
+        NSString *persistedLanguage = [ODefaults globalDefaultForKey:kDefaultsKeyStringLanguage];
+        
+        BOOL canLoadStrings = [persistedLanguage isEqualToString:[OMeta m].language];
+        
+        if (!canLoadStrings) {
+            NSArray *supportedLanguages = [OMeta supportedLanguages];
+            
+            BOOL persistedIsSupported = [supportedLanguages containsObject:persistedLanguage];
+            BOOL currentIsSupported = [supportedLanguages containsObject:[OMeta m].language];
+            
+            canLoadStrings = !persistedIsSupported && !currentIsSupported;
+        }
+        
+        if (canLoadStrings) {
+            _strings = [NSDictionary dictionaryWithContentsOfFile:[self pathToStringsFile]];
+        }
     }
     
-    return (strings != nil);
+    return (_strings != nil);
 }
 
 
@@ -215,7 +229,7 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
     NSString *string = @"";
     
     if ([self hasStrings]) {
-        string = strings[key];
+        string = _strings[key];
         
         if (!string) {
             OLogBreakage(@"No string with key '%@'.", key);
@@ -228,57 +242,9 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 }
 
 
-+ (NSString *)labelForKey:(NSString *)key
++ (NSString *)stringForKey:(NSString *)key withKeyPrefix:(NSString *)prefix
 {
-    return [self stringForKey:[kKeyPrefixLabel stringByAppendingCapitalisedString:key]];
-}
-
-
-+ (NSString *)placeholderForKey:(NSString *)key
-{
-    return [self stringForKey:[kKeyPrefixPlaceholder stringByAppendingCapitalisedString:key]];
-}
-
-
-+ (NSString *)labelForOrigoType:(NSString *)origoType labelType:(NSString *)labelType
-{
-    return [OStrings stringForKey:[labelType stringByAppendingCapitalisedString:origoType]];
-}
-
-
-+ (NSString *)footerForOrigoType:(NSString *)origoType
-{
-    return [OStrings stringForKey:[kKeyPrefixFooter stringByAppendingCapitalisedString:origoType]];
-}
-
-
-+ (NSString *)addMemberButtonTitleForOrigoType:(NSString *)origoType
-{
-    return [OStrings stringForKey:[kKeyPrefixAddMemberButton stringByAppendingCapitalisedString:origoType]];
-}
-
-
-+ (NSString *)addContactButtonTitleForOrigoType:(NSString *)origoType
-{
-    return [OStrings stringForKey:[kKeyPrefixAddContactButton stringByAppendingCapitalisedString:origoType]];
-}
-
-
-+ (NSString *)titleForContactRole:(NSString *)contactRole
-{
-    return [self stringForKey:[kKeyPrefixContactRole stringByAppendingCapitalisedString:contactRole]];
-}
-
-
-+ (NSString *)titleForSettingKey:(NSString *)settingKey
-{
-    return [self stringForKey:[kKeyPrefixSettingTitle stringByAppendingCapitalisedString:settingKey]];
-}
-
-
-+ (NSString *)labelForSettingKey:(NSString *)settingKey
-{
-    return [self stringForKey:[kKeyPrefixSettingText stringByAppendingCapitalisedString:settingKey]];
+    return [OStrings stringForKey:[prefix stringByAppendingCapitalisedString:key]];
 }
 
 
@@ -287,11 +253,13 @@ static NSString * const kKeyPrefixSettingText = @"strSettingText";
 + (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
     if (response.statusCode == kHTTPStatusOK) {
-        strings = data;
+        _strings = data;
         
-        if ([strings writeToFile:[self pathToStringsFile] atomically:YES]) {
+        if ([_strings writeToFile:[self pathToStringsFile] atomically:YES]) {
             [ODefaults setGlobalDefault:[NSDate date] forKey:kDefaultsKeyStringDate];
-            OLogDebug(@"Wrote latest strings to file.");
+            [ODefaults setGlobalDefault:[OMeta m].language forKey:kDefaultsKeyStringLanguage];
+            
+            OLogDebug(@"Wrote latest strings to file (language: %@).", [OMeta m].language);
         } else {
             OLogError(@"Error writing latest strings to file.");
         }

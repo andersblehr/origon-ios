@@ -10,24 +10,25 @@
 
 @interface UIColor (OrigoExtensions)
 
-+ (UIColor *)barTintColor;
-+ (UIColor *)windowTintColor;
-+ (UIColor *)tableViewBackgroundColor;
-+ (UIColor *)tableViewSeparatorColor;
++ (UIColor *)navigationBarShadowColour;
++ (UIColor *)tableViewBackgroundColour;
++ (UIColor *)tableViewSeparatorColour;
++ (UIColor *)cellBackgroundColour;
++ (UIColor *)selectedCellBackgroundColour;
++ (UIColor *)placeholderColour;
 
-+ (UIColor *)cellBackgroundColor;
-+ (UIColor *)selectedCellBackgroundColor;
-+ (UIColor *)titleBackgroundColor;
-+ (UIColor *)imagePlaceholderBackgroundColor;
++ (UIColor *)windowTintColour;
++ (UIColor *)titleBackgroundColour;
++ (UIColor *)titlePlaceholderColour;
++ (UIColor *)imagePlaceholderBackgroundColour;
++ (UIColor *)iOS6BarButtonItemColour;
++ (UIColor *)iOS6ToolbarColour;
 
-+ (UIColor *)defaultTextColor;
-+ (UIColor *)headerTextColor;
-+ (UIColor *)footerTextColor;
-+ (UIColor *)titleTextColor;
-+ (UIColor *)labelTextColor;
-+ (UIColor *)imagePlaceholderTextColor;
-
-+ (UIColor *)defaultPlaceholderColor;
-+ (UIColor *)titlePlaceholderColor;
++ (UIColor *)textColour;
++ (UIColor *)headerTextColour;
++ (UIColor *)footerTextColour;
++ (UIColor *)titleTextColour;
++ (UIColor *)labelTextColour;
++ (UIColor *)imagePlaceholderTextColour;
 
 @end

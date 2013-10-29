@@ -123,7 +123,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         _blueprint = blueprint;
         _state = [OState s].viewController.state;
         _textWidth = [OTextView textWidthWithBlueprint:_blueprint];
-        _placeholder = [OStrings placeholderForKey:_key];
+        _placeholder = [OStrings stringForKey:_key withKeyPrefix:kKeyPrefixPlaceholder];
         _hasEmphasis = NO;
         
         if ([OMeta systemIs_iOS6x]) {
@@ -146,7 +146,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     CGFloat labelWidth = 0.f;
     
     for (NSString *key in blueprint.detailKeys) {
-        CGSize labelSize = [[OStrings labelForKey:key] sizeWithFont:[UIFont detailFont] maxWidth:CGFLOAT_MAX];
+        CGSize labelSize = [[OStrings stringForKey:key withKeyPrefix:kKeyPrefixLabel] sizeWithFont:[UIFont detailFont] maxWidth:CGFLOAT_MAX];
         
         labelWidth = MAX(labelWidth, labelSize.width);
     }
@@ -231,7 +231,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
     _hasEmphasis = hasEmphasis;
     
     if (_hasEmphasis) {
-        self.layer.borderColor = [[UIColor windowTintColor] CGColor];
+        self.layer.borderColor = [[UIColor windowTintColour] CGColor];
     } else {
         self.text = [self textValue];
         
@@ -273,7 +273,7 @@ static CGFloat const kAccessoryViewWidth = 30.f;
         _placeholderView.delegate = self;
         _placeholderView.font = [UIFont detailFont];
         _placeholderView.text = _placeholder;
-        _placeholderView.textColor = [UIColor defaultPlaceholderColor];
+        _placeholderView.textColor = [UIColor placeholderColour];
         _placeholderView.hidden = [self hasText];
         
         if (![OMeta systemIs_iOS6x]) {

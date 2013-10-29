@@ -19,7 +19,7 @@
     if (self) {
         self.tag = tag;
         
-        _buttonTags = [[NSMutableArray alloc] init];
+        _buttonTags = [NSMutableArray array];
     }
     
     return self;

@@ -37,7 +37,7 @@ static NSInteger const kButtonTagNo = 3;
 
 - (void)assembleCandidates
 {
-    NSMutableArray *candidates = [[NSMutableArray alloc] init];
+    NSMutableArray *candidates = [NSMutableArray array];
     
     for (OMembership *residency in [_residence residencies]) {
         if (_isMinor) {
@@ -287,8 +287,8 @@ static NSInteger const kButtonTagNo = 3;
     _givenName = [OUtil givenNameFromFullName:name];
     _parentCandidateStatus = kParentCandidateStatusUndetermined;
     _candidates = nil;
-    _examinedCandidates = [[NSMutableSet alloc] init];
-    _registrantOffspring = [[NSMutableArray alloc] init];
+    _examinedCandidates = [NSMutableSet set];
+    _registrantOffspring = [NSMutableArray array];
     _registrantId = [[OState s] targetIs:kTargetUser] ? [OMeta m].userId : [OCrypto generateUUID];
     _gender = nil;
     _motherId = nil;
@@ -302,9 +302,9 @@ static NSInteger const kButtonTagNo = 3;
 
 - (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-    
     if (buttonIndex < actionSheet.cancelButtonIndex) {
+        NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+        
         switch (actionSheet.tag) {
             case kActionSheetTagGender:
                 _gender = (buttonTag == kButtonTagFemale) ? kGenderFemale : kGenderMale;

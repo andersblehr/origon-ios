@@ -14,10 +14,6 @@ NSInteger const kAgeThresholdTeen = 13;
 NSInteger const kAgeOfConsent = 16;
 NSInteger const kAgeOfMajority = 18;
 
-NSString * const kBundleId = @"com.origoapp.ios.OrigoApp";
-
-NSString * const kLanguageHungarian = @"hu";
-
 NSString * const kProtocolHTTP = @"http://";
 NSString * const kProtocolHTTPS = @"https://";
 NSString * const kProtocolTel = @"tel://";
@@ -29,18 +25,30 @@ NSString * const kIconFileWoman = @"glyphicons_035_woman.png";
 NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
 NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
 NSString * const kIconFileInfant = @"76-baby_black.png";
-NSString * const kIconFileLocationArrow = @"193-location-arrow.png";
+NSString * const kIconFileSettings = @"14-gear.png";
+NSString * const kIconFilePlus = @"05-plus.png";
+NSString * const kIconFileAction = @"212-action2_centred.png";
 NSString * const kIconFilePlacePhoneCall = @"735-phone.png";
 NSString * const kIconFilePlacePhoneCall_iOS6x = @"735-phone-selected.png";
 NSString * const kIconFileSendText = @"734-chat.png";
 NSString * const kIconFileSendText_iOS6x = @"734-chat-selected.png";
 NSString * const kIconFileSendEmail = @"730-envelope.png";
 NSString * const kIconFileSendEmail_iOS6x = @"730-envelope-selected.png";
+NSString * const kIconFileLocationArrow = @"193-location-arrow.png";
 
 NSString * const kGenderMale = @"M";
-NSString * const kGenderMaleConfirmed = @"M!";
 NSString * const kGenderFemale = @"F";
-NSString * const kGenderFemaleConfirmed = @"F!";
+
+NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
+NSString * const kDefaultsKeyDirtyEntities = @"origo.state.dirtyEntities";
+NSString * const kDefaultsKeyStringDate = @"origo.strings.date";
+NSString * const kDefaultsKeyStringLanguage = @"origo.strings.language";
+
+NSString * const kJSONKeyActivationCode = @"activationCode";
+NSString * const kJSONKeyDeviceId = @"deviceId";
+NSString * const kJSONKeyEmail = @"email";
+NSString * const kJSONKeyEntityClass = @"entityClass";
+NSString * const kJSONKeyPasswordHash = @"passwordHash";
 
 NSString * const kInterfaceKeyActivate = @"activate";
 NSString * const kInterfaceKeyActivationCode = @"activationCode";
@@ -48,14 +56,9 @@ NSString * const kInterfaceKeyAge = @"age";
 NSString * const kInterfaceKeyAuthEmail = @"authEmail";
 NSString * const kInterfaceKeyPassword = @"password";
 NSString * const kInterfaceKeyPurpose = @"purpose";
+NSString * const kInterfaceKeyResidenceName = @"residenceName";
 NSString * const kInterfaceKeyRepeatPassword = @"repeatPassword";
 NSString * const kInterfaceKeySignIn = @"signIn";
-
-NSString * const kJSONKeyActivationCode = @"activationCode";
-NSString * const kJSONKeyDeviceId = @"deviceId";
-NSString * const kJSONKeyEmail = @"email";
-NSString * const kJSONKeyEntityClass = @"entityClass";
-NSString * const kJSONKeyPasswordHash = @"passwordHash";
 
 NSString * const kPropertyKeyAddress = @"address";
 NSString * const kPropertyKeyCountry = @"country";
@@ -79,15 +82,15 @@ NSString * const kPropertyKeyTelephone = @"telephone";
 NSString * const kRelationshipKeyMember = @"member";
 NSString * const kRelationshipKeyOrigo = @"origo";
 
-NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
-NSString * const kDefaultsKeyDirtyEntities = @"origo.state.dirtyEntities";
-NSString * const kDefaultsKeyStringDate = @"origo.date.strings";
+static NSString * const kLanguageHungarian = @"hu";
+static NSString * const kCountryCodeNorway = @"no";
 
 static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
 
 static CGFloat _systemVersion = 0.f;
 static CGFloat _screenScale = 0.f;
+
 static OMeta *_m = nil;
 
 
@@ -171,8 +174,9 @@ static OMeta *_m = nil;
     
     if (self) {
         _systemVersion = [[UIDevice currentDevice].systemVersion floatValue];
+        _appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
         _appVersion = [[NSBundle mainBundle] infoDictionary][(id)kCFBundleVersionKey];
-        _displayLanguage = [NSLocale preferredLanguages][0];
+        _language = [NSLocale preferredLanguages][0];
         
         if ([ODefaults globalDefaultForKey:kDefaultsKeyUserEmail]) {
             self.userEmail = [ODefaults globalDefaultForKey:kDefaultsKeyUserEmail];
@@ -298,7 +302,7 @@ static OMeta *_m = nil;
 
 - (BOOL)shouldUseEasternNameOrder
 {
-    return [_displayLanguage isEqualToString:kLanguageHungarian];
+    return [_language isEqualToString:kLanguageHungarian];
 }
 
 
@@ -330,9 +334,15 @@ static OMeta *_m = nil;
 
 #pragma mark - Country information
 
-- (NSArray *)supportedCountryCodes
++ (NSArray *)supportedLanguages
 {
-    return [[OStrings stringForKey:metaSupportedCountryCodes] componentsSeparatedByString:kListSeparator];
+    return [[OStrings stringForKey:metaSupportedLanguages] componentsSeparatedByString:kListSeparator];
+}
+
+
++ (NSArray *)supportedCountryCodes
+{
+    return @[kCountryCodeNorway];
 }
 
 

@@ -14,6 +14,7 @@ static NSArray *_phoneKeys = nil;
 static NSArray *_emailKeys = nil;
 static NSArray *_passwordKeys = nil;
 static NSArray *_inferredKeys = nil;
+static NSArray *_keysWithDefaultValues = nil;
 
 static NSDictionary *_keyMappings = nil;
 
@@ -87,15 +88,40 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Key mapping
 
-+ (NSString *)propertyKeyForKey:(NSString *)key
++ (NSDictionary *)keyMappings
 {
     if (!_keyMappings) {
         _keyMappings = @{
+            kInterfaceKeyResidenceName : kPropertyKeyName,
             kInterfaceKeyPurpose : kPropertyKeyDescriptionText
         };
     }
     
-    return [[_keyMappings allKeys] containsObject:key] ? _keyMappings[key] : key;
+    return _keyMappings;
+}
+
+
++ (NSString *)propertyKeyForKey:(NSString *)key
+{
+    return [[[OValidator keyMappings] allKeys] containsObject:key] ? _keyMappings[key] : key;
+}
+
+
+#pragma mark - Default value for given key
+
++ (NSString *)defaultValueForKey:(NSString *)key
+{
+    if (!_keysWithDefaultValues) {
+        _keysWithDefaultValues = @[kInterfaceKeyResidenceName];
+    }
+    
+    id defaultValue = nil;
+    
+    if ([_keysWithDefaultValues containsObject:key]) {
+        defaultValue = [OStrings stringForKey:key withKeyPrefix:kKeyPrefixDefault];
+    }
+    
+    return defaultValue;
 }
 
 
@@ -127,7 +153,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 {
     BOOL valueIsEmailAddress = NO;
     
-    if (value && [value isKindOfClass:NSString.class]) {
+    if (value && [value isKindOfClass:[NSString class]]) {
         NSInteger atLocation = [value rangeOfString:@"@"].location;
         NSInteger dotLocation = [value rangeOfString:@"." options:NSBackwardsSearch].location;
         NSInteger spaceLocation = [value rangeOfString:@" "].location;
@@ -146,7 +172,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 {
     BOOL valueIsName = NO;
     
-    if ([value isKindOfClass:NSString.class]) {
+    if ([value isKindOfClass:[NSString class]]) {
         valueIsName = [value hasValue];
         valueIsName = valueIsName && ([value rangeOfString:kSeparatorSpace].location > 0);
     }

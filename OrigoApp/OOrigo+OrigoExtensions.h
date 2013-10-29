@@ -47,6 +47,7 @@ extern NSString * const kOrigoTypeOther;
 - (BOOL)indirectlyKnowsAboutMember:(OMember *)member;
 - (BOOL)hasResidentsInCommonWithResidence:(OOrigo *)residence;
 
+- (NSString *)displayName;
 - (NSString *)singleLineAddress;
 - (NSString *)shortAddress;
 - (UIImage *)smallImage;

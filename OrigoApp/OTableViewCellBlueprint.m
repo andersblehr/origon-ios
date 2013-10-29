@@ -64,7 +64,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
         _fieldsShouldDeemphasiseOnEndEdit = YES;
         _fieldsAreLabeled = YES;
         
-        if (entityClass == OMember.class) {
+        if (entityClass == [OMember class]) {
             _hasPhoto = YES;
             _titleKey = kPropertyKeyName;
             
@@ -81,10 +81,12 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             }
             
             _indirectKeys = @[kPropertyKeyGender, kPropertyKeyIsJuvenile, kPropertyKeyFatherId, kPropertyKeyMotherId];
-        } else if (entityClass == OOrigo.class) {
+        } else if (entityClass == [OOrigo class]) {
             _hasPhoto = NO;
             
-            if (![state targetIs:kOrigoTypeResidence] || [state aspectIsHousehold]) {
+            if ([state aspectIsHousehold]) {
+                _titleKey = kInterfaceKeyResidenceName;
+            } else if (![state targetIs:kOrigoTypeResidence]) {
                 _titleKey = kPropertyKeyName;
             }
             
@@ -162,7 +164,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
                     } else if ([entity hasValueForKey:key]) {
                         height += [OTextView heightWithText:[entity valueForKey:key] blueprint:self];
                     } else {
-                        height += [OTextView heightWithText:[OStrings placeholderForKey:key] blueprint:self];
+                        height += [OTextView heightWithText:[OStrings stringForKey:key withKeyPrefix:kKeyPrefixPlaceholder] blueprint:self];
                     }
                 } else {
                     height += [UIFont detailFieldHeight];

@@ -57,6 +57,7 @@
 #import "UIBarButtonItem+OrigoExtensions.h"
 #import "UIColor+OrigoExtensions.h"
 #import "UIFont+OrigoExtensions.h"
+#import "UINavigationItem+OrigoExtensions.h"
 #import "UITableView+OrigoExtensions.h"
 #import "UIView+OrigoExtensions.h"
 

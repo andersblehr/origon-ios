@@ -34,7 +34,7 @@ NSString * const kOrigoTypeOther = @"other";
             [membership promoteToFull];
         }
     } else {
-        membership = [[OMeta m].context insertEntityOfClass:OMembership.class inOrigo:self];
+        membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self];
         membership.member = member;
         
         [membership alignWithOrigoIsAssociate:isAssociate];
@@ -57,7 +57,7 @@ NSString * const kOrigoTypeOther = @"other";
 
 - (NSSet *)allMemberships
 {
-    NSMutableSet *memberships = [[NSMutableSet alloc] init];
+    NSMutableSet *memberships = [NSMutableSet set];
     
     if (![self isOfType:kOrigoTypeMemberRoot]) {
         for (OMembership *membership in self.memberships) {
@@ -73,7 +73,7 @@ NSString * const kOrigoTypeOther = @"other";
 
 - (NSSet *)fullMemberships
 {
-    NSMutableSet *fullMemberships = [[NSMutableSet alloc] init];
+    NSMutableSet *fullMemberships = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
         if ([membership isFull]) {
@@ -87,7 +87,7 @@ NSString * const kOrigoTypeOther = @"other";
 
 - (NSSet *)residencies
 {
-    NSMutableSet *residencies = [[NSMutableSet alloc] init];
+    NSMutableSet *residencies = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
         if ([membership isResidency]) {
@@ -101,7 +101,7 @@ NSString * const kOrigoTypeOther = @"other";
 
 - (NSSet *)participancies
 {
-    NSMutableSet *participancies = [[NSMutableSet alloc] init];
+    NSMutableSet *participancies = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
         if ([membership isParticipancy]) {
@@ -115,7 +115,7 @@ NSString * const kOrigoTypeOther = @"other";
 
 - (NSSet *)elders
 {
-    NSMutableSet *elders = [[NSMutableSet alloc] init];
+    NSMutableSet *elders = [NSMutableSet set];
     
     if ([self isOfType:kOrigoTypeResidence]) {
         for (OMembership *residency in [self residencies]) {
@@ -273,6 +273,18 @@ NSString * const kOrigoTypeOther = @"other";
 
 
 #pragma mark - Display data
+
+- (NSString *)displayName
+{
+    NSString *name = self.name;
+    
+    if (!name && [self isOfType:kOrigoTypeResidence]) {
+        name = [OValidator defaultValueForKey:kInterfaceKeyResidenceName];
+    }
+    
+    return name;
+}
+
 
 - (NSString *)singleLineAddress
 {

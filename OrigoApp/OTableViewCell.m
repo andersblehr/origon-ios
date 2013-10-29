@@ -58,14 +58,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _state = [OState s].viewController.state;
         
         if ([self isListCell]) {
-            self.textLabel.backgroundColor = [UIColor cellBackgroundColor];
-            self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColor];
+            self.textLabel.backgroundColor = [UIColor cellBackgroundColour];
+            self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColour];
             
             if (style == UITableViewCellStyleSubtitle) {
                 self.textLabel.font = [UIFont listTextFont];
-                self.textLabel.textColor = [UIColor defaultTextColor];
+                self.textLabel.textColor = [UIColor textColour];
                 self.detailTextLabel.font = [UIFont listDetailFont];
-                self.detailTextLabel.textColor = [UIColor defaultTextColor];
+                self.detailTextLabel.textColor = [UIColor textColour];
             }
             
             _indexPath = indexPath;
@@ -74,7 +74,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
             [_listDelegate populateListCell:self atIndexPath:_indexPath];
         } else {
-            _views = [[NSMutableDictionary alloc] init];
+            _views = [NSMutableDictionary dictionary];
             _selectable = [_state actionIs:kActionList];
             _inputDelegate = (id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate>)_state.viewController;
         }
@@ -85,9 +85,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
         
         if ([OMeta systemIs_iOS6x]) {
             self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-            self.backgroundView.backgroundColor = [UIColor cellBackgroundColor];
+            self.backgroundView.backgroundColor = [UIColor cellBackgroundColour];
             self.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-            self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColor];
+            self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColour];
         }
     }
     
@@ -100,7 +100,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)addTitleField
 {
     UIView *titleBannerView = [[UIView alloc] initWithFrame:CGRectZero];
-    titleBannerView.backgroundColor = [UIColor titleBackgroundColor];
+    titleBannerView.backgroundColor = [UIColor titleBackgroundColour];
     [titleBannerView setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [self.contentView addSubview:titleBannerView];
@@ -120,11 +120,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
             imageButton.backgroundColor = [UIColor whiteColor];
             
             UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
-            photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColor];
+            photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColour];
             photoPrompt.font = [UIFont detailFont];
             photoPrompt.text = [OStrings stringForKey:strPlaceholderPhoto];
             photoPrompt.textAlignment = NSTextAlignmentCenter;
-            photoPrompt.textColor = [UIColor imagePlaceholderTextColor];
+            photoPrompt.textColor = [UIColor imagePlaceholderTextColour];
             [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
             
             [imageButton addSubview:photoPrompt];
@@ -143,9 +143,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
     label.backgroundColor = [UIColor clearColor];
     label.font = [UIFont detailFont];
     label.hidden = YES;
-    label.text = [OStrings labelForKey:key];
+    label.text = [OStrings stringForKey:key withKeyPrefix:kKeyPrefixLabel];
     label.textAlignment = centred ? NSTextAlignmentCenter : NSTextAlignmentRight;
-    label.textColor = [UIColor labelTextColor];
+    label.textColor = [UIColor labelTextColour];
     [label setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [self.contentView addSubview:label];
@@ -194,7 +194,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _entity = entity;
         _entityClass = entityClass;
         _blueprint = [[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass];
-        _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
+        _constrainer = [[OTableViewCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
         
         [self addCellElements];
         [self.contentView setNeedsUpdateConstraints];
@@ -210,7 +210,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     if (self && ![self isListCell]) {
         _blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
-        _constrainer = [[OTableViewCellConstrainer alloc] initWithBlueprint:_blueprint cell:self];
+        _constrainer = [[OTableViewCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
         
         [self addCellElements];
         [self.contentView setNeedsUpdateConstraints];
@@ -302,8 +302,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
                     [textField setHasEmphasis:YES];
                 }
                 
-                if ([OMeta systemIs_iOS6x] && [textField isKindOfClass:OTextField.class]) {
-                    [textField raiseGuardAgainstUnwantedAutolayoutAnimation:NO]; // Bug workaround
+                if ([textField isKindOfClass:[OTextField class]]) {
+                    [textField raiseGuardAgainstUnwantedAutolayoutAnimation:YES]; // Bug workaround
                 }
             }
         }
@@ -420,9 +420,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
             id value = [_entity valueForKey:key];
             
             if (value) {
-                if ([value isKindOfClass:NSString.class]) {
+                if ([value isKindOfClass:[NSString class]]) {
                     [textField setText:value];
-                } else if ([value isKindOfClass:NSDate.class]) {
+                } else if ([value isKindOfClass:[NSDate class]]) {
                     [textField setDate:value];
                 }
             } else {
@@ -447,12 +447,37 @@ static CGFloat const kShakeRepeatCount = 3.f;
         if ([textField isDateField]) {
             [_entity setValue:[textField date] forKey:key];
         } else {
-            [_entity setValue:[textField textValue] forKey:key];
+            NSString *textValue = [textField textValue];
+            
+            if ([[OState s] actionIs:kActionRegister]) {
+                if ([textValue isEqualToString:[OValidator defaultValueForKey:key]]) {
+                    textValue = nil;
+                }
+            }
+            
+            [_entity setValue:textValue forKey:key];
         }
     }
     
     for (NSString *key in _blueprint.indirectKeys) {
         [_entity setValue:[_inputDelegate inputValueForIndirectKey:key] forKey:key];
+    }
+}
+
+
+- (void)writeEntityDefaults
+{
+    for (NSString *key in _blueprint.allTextFieldKeys) {
+        id textField = [self textFieldForKey:key];
+        
+        if (![textField isDateField]) {
+            NSString *entityValue = [_entity rawValueForKey:key];
+            NSString *textValue = [textField textValue];
+            
+            if (!entityValue && [textValue isEqualToString:[OValidator defaultValueForKey:key]]) {
+                [_entity setValue:textValue forKey:key];
+            }
+        }
     }
 }
 

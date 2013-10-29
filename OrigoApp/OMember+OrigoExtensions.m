@@ -62,7 +62,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (NSSet *)allMemberships
 {
-    NSMutableSet *memberships = [[NSMutableSet alloc] init];
+    NSMutableSet *memberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
         if (![membership.origo isOfType:kOrigoTypeMemberRoot] && ![membership hasExpired]) {
@@ -76,7 +76,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (NSSet *)fullMemberships
 {
-    NSMutableSet *fullMemberships = [[NSMutableSet alloc] init];
+    NSMutableSet *fullMemberships = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
         if ([membership isFull]) {
@@ -90,7 +90,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (NSSet *)residencies
 {
-    NSMutableSet *residencies = [[NSMutableSet alloc] init];
+    NSMutableSet *residencies = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
         if ([membership isResidency]) {
@@ -104,7 +104,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (NSSet *)participancies
 {
-    NSMutableSet *participancies = [[NSMutableSet alloc] init];
+    NSMutableSet *participancies = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
         if ([membership isParticipancy]) {
@@ -143,7 +143,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (NSSet *)wards
 {
-    NSMutableSet *wards = [[NSMutableSet alloc] init];
+    NSMutableSet *wards = [NSMutableSet set];
     
     if (![self isMinor]) {
         for (OMember *housemate in [self housemates]) {
@@ -159,7 +159,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (NSSet *)parents
 {
-    NSMutableSet *parents = [[NSMutableSet alloc] init];
+    NSMutableSet *parents = [NSMutableSet set];
     
     for (OMember *guardian in [self guardians]) {
         if ([self hasParent:guardian]) {
@@ -173,7 +173,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (NSSet *)guardians
 {
-    NSMutableSet *guardians = [[NSMutableSet alloc] init];
+    NSMutableSet *guardians = [NSMutableSet set];
     
     if ([self isMinor]) {
         for (OMember *housemate in [self housemates]) {
@@ -189,7 +189,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (NSSet *)housemates
 {
-    NSMutableSet *housemates = [[NSMutableSet alloc] init];
+    NSMutableSet *housemates = [NSMutableSet set];
     
     for (OMembership *residency in [self residencies]) {
         for (OMembership *peerResidency in [residency.origo residencies]) {
@@ -205,8 +205,8 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (NSSet *)housemateResidences
 {
-    NSMutableSet *ownResidences = [[NSMutableSet alloc] init];
-    NSMutableSet *housemateResidences = [[NSMutableSet alloc] init];
+    NSMutableSet *ownResidences = [NSMutableSet set];
+    NSMutableSet *housemateResidences = [NSMutableSet set];
     
     for (OMembership *residency in [self residencies]) {
         [ownResidences addObject:residency.origo];
@@ -238,7 +238,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
     rootMembership.isActive = @YES;
     rootMembership.isAdmin = @YES;
     
-    self.settings = [[OMeta m].context insertEntityOfClass:OSettings.class inOrigo:rootMembership.origo];
+    self.settings = [[OMeta m].context insertEntityOfClass:[OSettings class] inOrigo:rootMembership.origo];
     
     for (OMembership *residency in [self residencies]) {
         residency.isActive = @YES;
@@ -247,7 +247,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
             residency.isAdmin = @YES;
 
             if (![residency.origo.messageBoards count]) {
-                OMessageBoard *messageBoard = [[OMeta m].context insertEntityOfClass:OMessageBoard.class inOrigo:residency.origo];
+                OMessageBoard *messageBoard = [[OMeta m].context insertEntityOfClass:[OMessageBoard class] inOrigo:residency.origo];
                 messageBoard.title = [OStrings stringForKey:strDefaultMessageBoardName];
             }
         }

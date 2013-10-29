@@ -70,7 +70,7 @@ static OLanguage *language = nil;
 
 - (NSDictionary *)loadPartOfSpeech:(NSString *)partOfSpeech
 {
-    NSMutableDictionary *formsDictionary = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *formsDictionary = [NSMutableDictionary dictionary];
     NSString *words = [OStrings stringForKey:[partOfSpeech stringByAppendingString:@"s"]];
     
     for (NSString *word in [words componentsSeparatedByString:kListSeparator]) {
@@ -87,9 +87,9 @@ static OLanguage *language = nil;
 {
     NSString *subjectString = nil;
     
-    if ([subject isKindOfClass:NSString.class]) {
+    if ([subject isKindOfClass:[NSString class]]) {
         subjectString = subject;
-    } else if ([subject isKindOfClass:OMember.class]) {
+    } else if ([subject isKindOfClass:[OMember class]]) {
         if ([subject isUser]) {
             if (isQuestion) {
                 subjectString = [OLanguage pronouns][_you_][nominative];
@@ -99,7 +99,7 @@ static OLanguage *language = nil;
         } else {
             subjectString = [subject givenName];
         }
-    } else if ([subject isKindOfClass:NSArray.class]) {
+    } else if ([subject isKindOfClass:[NSArray class]]) {
         subjectString = [OLanguage plainLanguageListOfItems:subject];
     }
     
@@ -112,15 +112,15 @@ static OLanguage *language = nil;
     NSArray *verb = [OLanguage verbs][verbKey];
     NSString *verbString = nil;
     
-    if ([subject isKindOfClass:NSString.class]) {
+    if ([subject isKindOfClass:[NSString class]]) {
         verbString = verb[singular3];
-    } else if ([subject isKindOfClass:OMember.class]) {
+    } else if ([subject isKindOfClass:[OMember class]]) {
         if ([subject isUser]) {
             verbString = isQuestion ? verb[singular2] : verb[singular1];
         } else {
             verbString = verb[singular3];
         }
-    } else if ([subject isKindOfClass:NSArray.class]) {
+    } else if ([subject isKindOfClass:[NSArray class]]) {
         verbString = [subject containsObject:[OMeta m].user] ? verb[plural2] : verb[plural3];
     }
     
@@ -202,15 +202,15 @@ static OLanguage *language = nil;
     NSString *possessiveClause = nil;
     NSArray *noun = [OLanguage nouns][nounKey];
     
-    if ([possessor isKindOfClass:NSString.class]) {
+    if ([possessor isKindOfClass:[NSString class]]) {
         possessiveClause = [NSString stringWithFormat:noun[possessive3], possessor];
-    } else if ([possessor isKindOfClass:OMember.class]) {
+    } else if ([possessor isKindOfClass:[OMember class]]) {
         if ([possessor isUser]) {
             possessiveClause = noun[possessive2];
         } else {
             possessiveClause = [NSString stringWithFormat:noun[possessive3], [possessor givenName]];
         }
-    } else if ([possessor isKindOfClass:NSArray.class]) {
+    } else if ([possessor isKindOfClass:[NSArray class]]) {
         possessiveClause = [NSString stringWithFormat:noun[possessive3], [OLanguage plainLanguageListOfItems:possessor]];
     }
     
@@ -236,10 +236,10 @@ static OLanguage *language = nil;
 {
     NSMutableArray *stringItems = nil;
     
-    if ([items[0] isKindOfClass:NSString.class]) {
+    if ([items[0] isKindOfClass:[NSString class]]) {
         stringItems = [NSMutableArray arrayWithArray:items];
-    } else if ([items[0] isKindOfClass:OMember.class]) {
-        stringItems = [[NSMutableArray alloc] init];
+    } else if ([items[0] isKindOfClass:[OMember class]]) {
+        stringItems = [NSMutableArray array];
         
         for (OMember *member in items) {
             [stringItems addObject:[member appellation]];

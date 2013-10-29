@@ -55,7 +55,7 @@ static NSInteger const kButtonTagContinue = 1;
                 [_emailField becomeFirstResponder];
                 
                 NSString *alertTitle = [OStrings stringForKey:strAlertTitleMemberExists];
-                NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, _emailField.text, _origo.name];
+                NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, _emailField.text, [_origo displayName]];
                 [OAlert showAlertWithTitle:alertTitle text:alertMessage];
                 
                 _candidate = nil;
@@ -147,13 +147,13 @@ static NSInteger const kButtonTagContinue = 1;
         [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonChangePassword] tag:kButtonTagChangePassword];
     }
     
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddAddress] tag:kButtonTagAddAddress];
     [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
     
     if ([_member isWardOfUser]) {
         [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEditRelations] tag:kButtonTagEditRelations];
     }
-
+    
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddAddress] tag:kButtonTagAddAddress];
     [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonCorrectGender] tag:kButtonTagCorrectGender];
     
     [actionSheet show];
@@ -206,13 +206,13 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)initialiseState
 {
-    if ([self.data isKindOfClass:OMember.class]) {
+    if ([self.data isKindOfClass:[OMember class]]) {
         _member = self.data;
-    } else if ([self.data isKindOfClass:OMembership.class]) {
+    } else if ([self.data isKindOfClass:[OMembership class]]) {
         _membership = self.data;
         _member = _membership.member;
         _origo = _membership.origo;
-    } else if ([self.data isKindOfClass:OOrigo.class]) {
+    } else if ([self.data isKindOfClass:[OOrigo class]]) {
         _origo = self.data;
     }
     
@@ -225,7 +225,7 @@ static NSInteger const kButtonTagContinue = 1;
     } else if ([self isRegisteringJuvenileOrigoGuardian]) {
         self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
     } else if ([self actionIs:kActionRegister]) {
-        self.title = [OStrings labelForOrigoType:_origo.type labelType:kOrigoLabelTypeMemberNew];
+        self.title = [OStrings stringForKey:_origo.type withKeyPrefix:kKeyPrefixNewMemberTitle];
     }
     
     if ([self actionIs:kActionDisplay]) {
@@ -254,7 +254,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return [self actionIs:kActionRegister] && ![self targetIs:kTargetUser];
+    return [self actionIs:kActionRegister] && ![self targetIs:kTargetUser] && ![_origo isJuvenile];
 }
 
 
@@ -377,21 +377,15 @@ static NSInteger const kButtonTagContinue = 1;
         
         cell.textLabel.text = guardian.name;
         cell.imageView.image = [guardian smallImage];
-        
-        if ([_member guardiansAreParents]) {
-            if ([[_member residencies] count] == 1) {
-                cell.detailTextLabel.text = [guardian shortDetails];
-            } else {
-                cell.detailTextLabel.text = [guardian shortAddress];
-            }
+
+        if ([[_member residencies] count] == 1) {
+            cell.detailTextLabel.text = [guardian shortDetails];
         } else {
-            if ([_member hasParent:guardian] && ([[_member residencies] count] > 1)) {
-                cell.detailTextLabel.text = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:[guardian shortAddress] separator: kSeparatorComma];
-            } else if ([_member hasParent:guardian]) {
-                cell.detailTextLabel.text = [[guardian parentNoun][singularIndefinite] capitalizedString];
-            } else if ([[_member residencies] count] > 1) {
-                cell.detailTextLabel.text = [guardian shortAddress];
-            }
+            cell.detailTextLabel.text = [guardian shortAddress];
+        }
+        
+        if ([_member hasParent:guardian]) {
+            cell.detailTextLabel.text = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:cell.detailTextLabel.text separator:kSeparatorComma];
         }
     } else if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddress) {
         OOrigo *residence = [[self dataAtIndexPath:indexPath] origo];

@@ -22,7 +22,7 @@ extern CGFloat const kContentWidth;
 
 - (CGFloat)standardHeaderHeight;
 - (CGFloat)heightForFooterWithText:(NSString *)text;
-- (UIView *)headerViewWithText:(NSString *)title;
+- (UIView *)headerViewWithText:(NSString *)text;
 - (UIView *)footerViewWithText:(NSString *)text;
 
 @end

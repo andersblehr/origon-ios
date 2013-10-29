@@ -8,6 +8,21 @@
 
 #import "OrigoApp.h"
 
+// String key prefixes
+extern NSString * const kKeyPrefixDefault;
+extern NSString * const kKeyPrefixLabel;
+extern NSString * const kKeyPrefixPlaceholder;
+extern NSString * const kKeyPrefixFooter;
+extern NSString * const kKeyPrefixAddMemberButton;
+extern NSString * const kKeyPrefixAddContactButton;
+extern NSString * const kKeyPrefixContactRole;
+extern NSString * const kKeyPrefixSettingTitle;
+extern NSString * const kKeyPrefixSettingLabel;
+extern NSString * const kKeyPrefixOrigoTitle;
+extern NSString * const kKeyPrefixNewOrigoTitle;
+extern NSString * const kKeyPrefixMemberListTitle;
+extern NSString * const kKeyPrefixNewMemberTitle;
+
 // Cross-view terms & strings
 extern NSString * const strFooterTapToEdit;
 extern NSString * const strFooterOrigoSignature;
@@ -55,7 +70,6 @@ extern NSString * const strHeaderMyOrigos;
 extern NSString * const strFooterOrigoCreationFirst;
 extern NSString * const strFooterOrigoCreation;
 extern NSString * const strFooterOrigoCreationWards;
-extern NSString * const strButtonCountryLocate;
 extern NSString * const strButtonCountryOther;
 extern NSString * const strAlertTitleListedUserRegistration;
 extern NSString * const strAlertTextListedUserRegistration;
@@ -72,7 +86,6 @@ extern NSString * const strTermHimOrHer;
 extern NSString * const strTermForName;
 
 // OOrigoView strings
-extern NSString * const strDefaultResidenceName;
 extern NSString * const strLabelAddress;
 extern NSString * const strLabelPurpose;
 extern NSString * const strLabelDescriptionText;
@@ -139,19 +152,13 @@ extern NSString * const strViewTitleSettings;
 
 // OSettingView strings
 extern NSString * const strLabelCountrySettings;
-extern NSString * const strLabelCountryLocation;
+extern NSString * const strLabelCountryLocate;
 extern NSString * const strFooterCountryInfo;
 extern NSString * const strFooterCountryInfoNote;
 extern NSString * const strFooterCountryInfoLocate;
 
-// Origo type strings
-extern NSString * const kOrigoLabelTypeOrigo;
-extern NSString * const kOrigoLabelTypeOrigoNew;
-extern NSString * const kOrigoLabelTypeMemberList;
-extern NSString * const kOrigoLabelTypeMemberNew;
-
 // Meta strings
-extern NSString * const metaSupportedCountryCodes;
+extern NSString * const metaSupportedLanguages;
 extern NSString * const metaContactRolesSchoolClass;
 extern NSString * const metaContactRolesPreschoolClass;
 extern NSString * const metaContactRolesOrganisation;
@@ -163,15 +170,6 @@ extern NSString * const metaContactRolesSportsTeam;
 + (void)refreshIfNeeded;
 
 + (NSString *)stringForKey:(NSString *)key;
-+ (NSString *)labelForKey:(NSString *)key;
-+ (NSString *)placeholderForKey:(NSString *)key;
-
-+ (NSString *)labelForOrigoType:(NSString *)origoType labelType:(NSString *)labelType;
-+ (NSString *)footerForOrigoType:(NSString *)origoType;
-+ (NSString *)addMemberButtonTitleForOrigoType:(NSString *)origoType;
-+ (NSString *)addContactButtonTitleForOrigoType:(NSString *)origoType;
-+ (NSString *)titleForContactRole:(NSString *)contactRole;
-+ (NSString *)titleForSettingKey:(NSString *)settingKey;
-+ (NSString *)labelForSettingKey:(NSString *)settingKey;
++ (NSString *)stringForKey:(NSString *)key withKeyPrefix:(NSString *)prefix;
 
 @end

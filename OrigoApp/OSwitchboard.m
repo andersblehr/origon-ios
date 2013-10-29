@@ -33,8 +33,8 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 
 - (void)addRecipientCandidates:(id)candidates skipIfContainsUser:(BOOL)skipIfContainsUser
 {
-    NSMutableArray *emailRecipients = [[NSMutableArray alloc] init];
-    NSMutableArray *phoneRecipients = [[NSMutableArray alloc] init];
+    NSMutableArray *emailRecipients = [NSMutableArray array];
+    NSMutableArray *phoneRecipients = [NSMutableArray array];
     
     for (OMember *candidate in candidates) {
         if (![candidate isUser]) {
@@ -75,20 +75,20 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 
 - (void)assembleRecipientCandidatesWithEntity:(id)entity
 {
-    _emailRecipientCandidates = [[NSMutableArray alloc] init];
-    _textRecipientCandidates = [[NSMutableArray alloc] init];
-    _callRecipientCandidates = [[NSMutableArray alloc] init];
+    _emailRecipientCandidates = [NSMutableArray array];
+    _textRecipientCandidates = [NSMutableArray array];
+    _callRecipientCandidates = [NSMutableArray array];
     
-    if ([entity isKindOfClass:OOrigo.class]) {
+    if ([entity isKindOfClass:[OOrigo class]]) {
         [self addRecipientCandidates:[entity fullMemberships] skipIfContainsUser:NO];
-    } else if ([entity isKindOfClass:OMember.class]) {
+    } else if ([entity isKindOfClass:[OMember class]]) {
         _member = entity;
         
         [self addRecipientCandidates:@[_member] skipIfContainsUser:YES];
 
         if ([_member isMinor]) {
             if ([[_member parents] count]) {
-                NSMutableArray *parents = [[NSMutableArray alloc] init];
+                NSMutableArray *parents = [NSMutableArray array];
                 
                 for (OMember *parent in [_member parents]) {
                     [parents insertObject:parent atIndex:[parent isUser] ? [parents count] : 0];
@@ -163,7 +163,7 @@ static NSInteger const kServiceRequestPhoneCall = 2;
     
     for (NSArray *recipients in _recipientCandidates) {
         if ([recipients count] == 1) {
-            if ([recipients[0] isKindOfClass:OMember.class]) {
+            if ([recipients[0] isKindOfClass:[OMember class]]) {
                 if ([_member isWardOfUser]) {
                     [actionSheet addButtonWithTitle:[recipients[0] givenName]];
                 } else if ([_member hasParent:recipients[0]]) {
@@ -171,7 +171,7 @@ static NSInteger const kServiceRequestPhoneCall = 2;
                 } else {
                     [actionSheet addButtonWithTitle:[recipients[0] name]];
                 }
-            } else if ([recipients[0] isKindOfClass:OOrigo.class]) {
+            } else if ([recipients[0] isKindOfClass:[OOrigo class]]) {
                 [actionSheet addButtonWithTitle:[recipients[0] shortAddress]];
             }
         } else if ([recipients count] == 2) {
@@ -222,7 +222,7 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 
 - (void)sendEmailToRecipients:(NSArray *)recipients
 {
-    NSMutableArray *recipientEmailAddresses = [[NSMutableArray alloc] init];
+    NSMutableArray *recipientEmailAddresses = [NSMutableArray array];
     
     for (OMember *recipient in recipients) {
         [recipientEmailAddresses addObject:recipient.email];
@@ -239,7 +239,7 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 
 - (void)sendTextToRecipients:(NSArray *)recipients
 {
-    NSMutableArray *recipientMobileNumbers = [[NSMutableArray alloc] init];
+    NSMutableArray *recipientMobileNumbers = [NSMutableArray array];
     
     for (OMember *recipient in recipients) {
         [recipientMobileNumbers addObject:recipient.mobilePhone];
@@ -257,9 +257,9 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 {
     NSString *phoneNumber = nil;
     
-    if ([recipient isKindOfClass:OMember.class]) {
+    if ([recipient isKindOfClass:[OMember class]]) {
         phoneNumber = [recipient mobilePhone];
-    } else if ([recipient isKindOfClass:OOrigo.class]) {
+    } else if ([recipient isKindOfClass:[OOrigo class]]) {
         phoneNumber = [recipient telephone];
     }
     
@@ -298,7 +298,7 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 - (NSArray *)toolbarButtonsWithEntity:(id)entity
 {
     UIBarButtonItem *flexibleSpace = [UIBarButtonItem flexibleSpace];
-    NSMutableArray *toolbarButtons = [[NSMutableArray alloc] init];
+    NSMutableArray *toolbarButtons = [NSMutableArray array];
     
     [self assembleRecipientCandidatesWithEntity:entity];
 
