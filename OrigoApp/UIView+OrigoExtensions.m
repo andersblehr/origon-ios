@@ -48,7 +48,7 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 
 - (void)addSeparatorsForTableViewCell
 {
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor tableViewSeparatorColor] radius:kCellShadowRadius offset:kCellShadowOffset];
+    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor tableViewSeparatorColour] radius:kCellShadowRadius offset:kCellShadowOffset];
 }
 
 

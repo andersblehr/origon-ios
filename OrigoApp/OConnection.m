@@ -176,8 +176,8 @@ static NSString * const kURLParameterVersion = @"version";
     
     if (self) {
         _URLRequest = [[NSMutableURLRequest alloc] init];
-        _URLParameters = [[NSMutableDictionary alloc] init];
-        _responseData = [[NSMutableData alloc] init];
+        _URLParameters = [NSMutableDictionary dictionary];
+        _responseData = [NSMutableData data];
         
         _requestIsValid = YES;
     }
@@ -225,11 +225,11 @@ static NSString * const kURLParameterVersion = @"version";
 {
     id delegate = nil;
     
-    OConnection *connection = [[OConnection alloc] initWithRoot:kRootStrings path:[OMeta m].displayLanguage];
+    OConnection *connection = [[OConnection alloc] initWithRoot:kRootStrings path:[OMeta m].language];
     
     if ([OStrings hasStrings]) {
         [connection setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
-        delegate = OStrings.class;
+        delegate = [OStrings class];
     } else {
         [connection setValue:[OCrypto timestampToken] forURLParameter:kURLParameterAuthToken];
         delegate = [OState s].viewController;

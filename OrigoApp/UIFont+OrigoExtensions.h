@@ -10,6 +10,8 @@
 
 @interface UIFont (OrigoExtensions)
 
++ (UIFont *)navigationBarTitleFont;
++ (UIFont *)navigationBarSubtitleFont;
 + (UIFont *)headerFont;
 + (UIFont *)footerFont;
 + (UIFont *)titleFont;

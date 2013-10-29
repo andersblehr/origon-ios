@@ -44,6 +44,20 @@ static void uncaughtExceptionHandler(NSException *exception)
 }
 
 
+- (void)setUpAppearances
+{
+    if ([OMeta systemIs_iOS6x]) {
+        [[UINavigationBar appearance] setTintColor:[UIColor navigationBarShadowColour]];
+        [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeFont: [UIFont navigationBarTitleFont], UITextAttributeTextColor: [UIColor blackColor], UITextAttributeTextShadowColor: [UIColor clearColor]}];
+        
+        [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTintColor:[UIColor iOS6BarButtonItemColour]];
+        [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTitleTextAttributes:@{UITextAttributeTextShadowColor: [UIColor clearColor]} forState:UIControlStateNormal];
+        
+        [[UIToolbar appearance] setTintColor:[UIColor iOS6ToolbarColour]];
+    }
+}
+
+
 #pragma mark - Persistent store release
 
 - (void)releasePersistentStore
@@ -103,18 +117,20 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    OLogDebug(@"Application did finish launching");
+    
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:kTimeZoneNameUTC]];
     
     if ([OMeta systemIs_iOS6x]) {
-        [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+        [self setUpAppearances];
     } else {
-        _window.tintColor = [UIColor windowTintColor];
+        _window.tintColor = [UIColor windowTintColour];
     }
     
     OLogDebug(@"Device is %@.", [UIDevice currentDevice].model);
     OLogDebug(@"iOS version is %@.", [UIDevice currentDevice].systemVersion);
-    OLogDebug(@"System language is '%@'.", [[OMeta m] displayLanguage]);
+    OLogDebug(@"System language is '%@'.", [[OMeta m] language]);
 
     if ([OStrings hasStrings]) {
         [OStrings refreshIfNeeded];
@@ -135,6 +151,8 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
+    OLogDebug(@"Application did enter background");
+    
     [self saveApplicationState];
     
     _didEnterBackground = YES;
@@ -149,6 +167,8 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    OLogDebug(@"Application did become active");
+    
     if (_didEnterBackground) {
         if ([[OState s].viewController respondsToSelector:@selector(didResumeFromBackground)]) {
             [[OState s].viewController didResumeFromBackground];
@@ -165,6 +185,8 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+    OLogDebug(@"Application will terminate");
+    
     if (!_didEnterBackground) {
         [self saveApplicationState];
     }

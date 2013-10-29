@@ -18,8 +18,8 @@ static NSInteger const kSectionKeyValues = 0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	
-    self.title = [OStrings titleForSettingKey:_settingKey];
+
+	self.title = [OStrings stringForKey:_settingKey withKeyPrefix:kKeyPrefixSettingTitle];
 }
 
 
@@ -51,7 +51,7 @@ static NSInteger const kSectionKeyValues = 0;
         NSString *inferredCountryCode = [[OMeta m] inferredCountryCode];
         NSString *localCountryCode = [OMeta m].locator.countryCode;
         
-        [self setData:[[OMeta m] supportedCountryCodes] forSectionWithKey:kSectionKeyValues];
+        [self setData:[OMeta supportedCountryCodes] forSectionWithKey:kSectionKeyValues];
         [self appendData:currentCountryCode toSectionWithKey:kSectionKeyValues];
         [self appendData:inferredCountryCode toSectionWithKey:kSectionKeyValues];
         
@@ -87,9 +87,9 @@ static NSInteger const kSectionKeyValues = 0;
     NSMutableString *text = nil;
     
     if ([_settingKey isEqualToString:kSettingKeyCountry]) {
-        NSMutableArray *supportedCountries = [[NSMutableArray alloc] init];
+        NSMutableArray *supportedCountries = [NSMutableArray array];
         
-        for (NSString *countryCode in [[OMeta m] supportedCountryCodes]) {
+        for (NSString *countryCode in [OMeta supportedCountryCodes]) {
             [supportedCountries addObject:[OUtil localisedCountryNameFromCountryCode:countryCode]];
         }
         
@@ -191,14 +191,14 @@ static NSInteger const kSectionKeyValues = 0;
                 
                 if ([countryCode isEqualToString:[OMeta m].locator.countryCode]) {
                     if ([[OMeta m].locator canLocate]) {
-                        cell.detailTextLabel.text = [OStrings stringForKey:strLabelCountryLocation];
+                        cell.detailTextLabel.text = [OStrings stringForKey:strLabelCountryLocate];
                     }
                 } else if ([countryCode isEqualToString:[[OMeta m] inferredCountryCode]]) {
                     cell.detailTextLabel.text = [OStrings stringForKey:strLabelCountrySettings];
                 }
             }
         } else {
-            cell.detailTextLabel.text = [OStrings stringForKey:strLabelCountryLocation];
+            cell.detailTextLabel.text = [OStrings stringForKey:strLabelCountryLocate];
             cell.imageView.image = [UIImage imageNamed:kIconFileLocationArrow];
         }
         

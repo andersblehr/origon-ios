@@ -48,13 +48,13 @@ static OState *_s = nil;
 
 - (void)setAspectForEntity:(id)entity
 {
-    if ([entity isKindOfClass:OMember.class]) {
+    if ([entity isKindOfClass:[OMember class]]) {
         if ([entity isUser] || [entity isHousemateOfUser]) {
             _aspect = kAspectHousehold;
         } else {
             _aspect = kAspectDefault;
         }
-    } else if ([entity isKindOfClass:OOrigo.class]) {
+    } else if ([entity isKindOfClass:[OOrigo class]]) {
         if ([entity isOfType:kOrigoTypeResidence] && [entity userIsMember]) {
             _aspect = kAspectHousehold;
         } else {
@@ -98,7 +98,7 @@ static OState *_s = nil;
 
 - (void)setTarget:(NSString *)target aspectCarrier:(id)aspectCarrier
 {
-    if ([aspectCarrier isKindOfClass:OMember.class]) {
+    if ([aspectCarrier isKindOfClass:[OMember class]]) {
         if (![target isEqualToString:kOrigoTypeResidence] || ![aspectCarrier isUser]) {
             _aspect = kAspectDefault;
         }
@@ -205,11 +205,11 @@ static OState *_s = nil;
 
 - (void)setTarget:(id)target
 {
-    if ([target isKindOfClass:OReplicatedEntity.class]) {
+    if ([target isKindOfClass:[OReplicatedEntity class]]) {
         [self setAspectForEntity:target];
         
         _target = [target asTarget];
-    } else if ([target isKindOfClass:NSString.class]) {
+    } else if ([target isKindOfClass:[NSString class]]) {
         _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
     }
     

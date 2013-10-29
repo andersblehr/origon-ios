@@ -81,7 +81,7 @@ static NSInteger const kSectionKeySettings = 0;
 {
     NSString *settingKey = [self dataAtIndexPath:indexPath];
     
-    cell.textLabel.text = [OStrings labelForSettingKey:settingKey];
+    cell.textLabel.text = [OStrings stringForKey:settingKey withKeyPrefix:kKeyPrefixSettingLabel];
     cell.detailTextLabel.text = [[OMeta m].settings displayValueForSettingKey:settingKey];
 }
 

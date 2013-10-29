@@ -62,5 +62,6 @@ extern CGFloat const kCellAnimationDuration;
 
 - (void)readEntity;
 - (void)writeEntity;
+- (void)writeEntityDefaults;
 
 @end

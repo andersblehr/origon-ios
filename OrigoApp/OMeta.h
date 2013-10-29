@@ -14,10 +14,6 @@ extern NSInteger const kAgeThresholdTeen;
 extern NSInteger const kAgeOfConsent;
 extern NSInteger const kAgeOfMajority;
 
-extern NSString * const kBundleId;
-
-extern NSString * const kLanguageHungarian;
-
 extern NSString * const kProtocolHTTP;
 extern NSString * const kProtocolHTTPS;
 extern NSString * const kProtocolTel;
@@ -29,18 +25,30 @@ extern NSString * const kIconFileWoman;
 extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
-extern NSString * const kIconFileLocationArrow;
+extern NSString * const kIconFileSettings;
+extern NSString * const kIconFilePlus;
+extern NSString * const kIconFileAction;
 extern NSString * const kIconFilePlacePhoneCall;
 extern NSString * const kIconFilePlacePhoneCall_iOS6x;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendText_iOS6x;
 extern NSString * const kIconFileSendEmail;
 extern NSString * const kIconFileSendEmail_iOS6x;
+extern NSString * const kIconFileLocationArrow;
 
 extern NSString * const kGenderMale;
-extern NSString * const kGenderMaleConfirmed;
 extern NSString * const kGenderFemale;
-extern NSString * const kGenderFemaleConfirmed;
+
+extern NSString * const kDefaultsKeyAuthInfo;
+extern NSString * const kDefaultsKeyDirtyEntities;
+extern NSString * const kDefaultsKeyStringDate;
+extern NSString * const kDefaultsKeyStringLanguage;
+
+extern NSString * const kJSONKeyActivationCode;
+extern NSString * const kJSONKeyDeviceId;
+extern NSString * const kJSONKeyEmail;
+extern NSString * const kJSONKeyEntityClass;
+extern NSString * const kJSONKeyPasswordHash;
 
 extern NSString * const kInterfaceKeyActivate;
 extern NSString * const kInterfaceKeyActivationCode;
@@ -49,13 +57,8 @@ extern NSString * const kInterfaceKeyAuthEmail;
 extern NSString * const kInterfaceKeyPassword;
 extern NSString * const kInterfaceKeyPurpose;
 extern NSString * const kInterfaceKeyRepeatPassword;
+extern NSString * const kInterfaceKeyResidenceName;
 extern NSString * const kInterfaceKeySignIn;
-
-extern NSString * const kJSONKeyActivationCode;
-extern NSString * const kJSONKeyDeviceId;
-extern NSString * const kJSONKeyEmail;
-extern NSString * const kJSONKeyEntityClass;
-extern NSString * const kJSONKeyPasswordHash;
 
 extern NSString * const kPropertyKeyAddress;
 extern NSString * const kPropertyKeyCountry;
@@ -78,10 +81,6 @@ extern NSString * const kPropertyKeyTelephone;
 
 extern NSString * const kRelationshipKeyMember;
 extern NSString * const kRelationshipKeyOrigo;
-
-extern NSString * const kDefaultsKeyAuthInfo;
-extern NSString * const kDefaultsKeyDirtyEntities;
-extern NSString * const kDefaultsKeyStringDate;
 
 @interface OMeta : NSObject {
 @private
@@ -106,9 +105,10 @@ extern NSString * const kDefaultsKeyStringDate;
 @property (strong, nonatomic) NSString *deviceId;
 @property (strong, nonatomic) NSString *lastReplicationDate;
 
-@property (strong, nonatomic, readonly) NSString *authToken;
+@property (strong, nonatomic, readonly) NSString *appName;
 @property (strong, nonatomic, readonly) NSString *appVersion;
-@property (strong, nonatomic, readonly) NSString *displayLanguage;
+@property (strong, nonatomic, readonly) NSString *authToken;
+@property (strong, nonatomic, readonly) NSString *language;
 
 @property (strong, nonatomic, readonly) OMember *user;
 @property (strong, nonatomic, readonly) OSettings *settings;
@@ -134,7 +134,8 @@ extern NSString * const kDefaultsKeyStringDate;
 + (BOOL)systemIs_iOS6x;
 + (BOOL)screenIsRetina;
 
-- (NSArray *)supportedCountryCodes;
++ (NSArray *)supportedLanguages;
++ (NSArray *)supportedCountryCodes;
 - (NSString *)inferredCountryCode;
 
 @end

@@ -36,7 +36,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (BOOL)isListViewController
 {
-    return [NSStringFromClass(self.class) hasSuffix:kViewControllerSuffixList];
+    return [NSStringFromClass([self class]) hasSuffix:kViewControllerSuffixList];
 }
 
 
@@ -120,7 +120,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     } else {
         self.navigationItem.rightBarButtonItem = _doneButton;
         
-        if ([inputField isKindOfClass:OTextField.class]) {
+        if ([inputField isKindOfClass:[OTextField class]]) {
             [inputField setReturnKeyType:UIReturnKeyDone];
         }
     }
@@ -186,6 +186,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if ([self actionIs:kActionRegister]) {
         [_dismisser dismissModalViewController:self reload:NO];
     } else if ([self actionIs:kActionEdit]) {
+        [_detailCell writeEntityDefaults];
         [_detailCell readEntity];
         [self toggleEditMode];
     }
@@ -226,9 +227,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
-    if ([data isKindOfClass:NSArray.class]) {
+    if ([data isKindOfClass:[NSArray class]]) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:data];
-    } else if ([data isKindOfClass:NSSet.class]) {
+    } else if ([data isKindOfClass:[NSSet class]]) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:[self sortedArrayWithData:data forSectionWithKey:sectionKey]];
     } else if (data) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
@@ -236,9 +237,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if (sectionKey == 0) {
             _detailSectionKey = sectionKey;
             
-            if ([data isKindOfClass:OReplicatedEntity.class]) {
+            if ([data isKindOfClass:[OReplicatedEntity class]]) {
                 _entity = data;
-                _entityClass = _entityClass ? _entityClass : _entity.class;
+                _entityClass = _entityClass ? _entityClass : [_entity class];
             }
         }
     }
@@ -259,7 +260,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _entity = nil;
     }
     
-    if ([_data isKindOfClass:NSArray.class] || [data isKindOfClass:NSSet.class]) {
+    if ([_data isKindOfClass:[NSArray class]] || [data isKindOfClass:[NSSet class]]) {
         [_sectionData[@(sectionKey)] addObjectsFromArray:[self sortedArrayWithData:data forSectionWithKey:sectionKey]];
     } else if (data && ![_sectionData[@(sectionKey)] containsObject:data]) {
         [_sectionData[@(sectionKey)] addObject:data];
@@ -349,7 +350,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     viewController.data = data;
     
-    if ([meta isKindOfClass:OTableViewController.class]) {
+    if ([meta isKindOfClass:[OTableViewController class]]) {
         viewController.dismisser = meta;
     } else {
         viewController.meta = meta;
@@ -497,16 +498,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if ([OMeta systemIs_iOS6x]) {
         self.tableView.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-        self.tableView.backgroundColor = [UIColor tableViewBackgroundColor];
-        
-        self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
-        self.navigationController.navigationBar.tintColor = [UIColor barTintColor];
-        self.navigationController.toolbar.barStyle = UIBarStyleBlack;
-        self.navigationController.toolbar.tintColor = [UIColor barTintColor];
-        self.navigationController.toolbar.translucent = YES;
+        self.tableView.backgroundColor = [UIColor tableViewBackgroundColour];
     }
     
-    NSString *longName = NSStringFromClass(self.class);
+    NSString *longName = NSStringFromClass([self class]);
     NSString *shortName = [longName substringFromIndex:1];
     NSString *viewControllerSuffix = [self isListViewController] ? kViewControllerSuffixList : kViewControllerSuffixDefault;
     _identifier = [[shortName substringToIndex:[shortName rangeOfString:viewControllerSuffix].location] lowercaseString];
@@ -522,10 +517,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     _detailSectionKey = NSNotFound;
-    _sectionKeys = [[NSMutableArray alloc] init];
-    _sectionData = [[NSMutableDictionary alloc] init];
-    _sectionCounts = [[NSMutableDictionary alloc] init];
-    _dirtySections = [[NSMutableSet alloc] init];
+    _sectionKeys = [NSMutableArray array];
+    _sectionData = [NSMutableDictionary dictionary];
+    _sectionCounts = [NSMutableDictionary dictionary];
+    _dirtySections = [NSMutableSet set];
     _state = [[OState alloc] initWithViewController:self];
     _instance = self;
     _canEdit = NO;
@@ -588,18 +583,18 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     OLogState;
     
-    if ([[OMeta m] userIsSignedIn]) {
-        if (_detailCell && _detailCell.editable && !_isHidden) {
-            [_detailCell prepareForInput];
-            
-            if ([self actionIs:kActionRegister]) {
-                [[_detailCell firstEmptyInputField] becomeFirstResponder];
-            }
-        }
+    if ([self actionIs:kActionLoad] && [self targetIs:kTargetStrings]) {
+        [self.activityIndicator startAnimating];
+        [OConnection fetchStrings];
     } else {
-        if ([self actionIs:kActionLoad] && [self targetIs:kTargetStrings]) {
-            [self.activityIndicator startAnimating];
-            [OConnection fetchStrings];
+        if ([[OMeta m] userIsSignedIn]) {
+            if (_detailCell && _detailCell.editable && !_isHidden) {
+                [_detailCell prepareForInput];
+                
+                if ([self actionIs:kActionRegister]) {
+                    [[_detailCell firstEmptyInputField] becomeFirstResponder];
+                }
+            }
         } else if (![_identifier isEqualToString:kIdentifierAuth]) {
             [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reinstantiatedRootViewController];
         }
@@ -752,7 +747,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
         id data = [self dataAtIndexPath:indexPath];
         
-        if ([data isKindOfClass:NSString.class] && [data isEqualToString:kCustomCell]) {
+        if ([data isKindOfClass:[NSString class]] && [data isEqualToString:kCustomCell]) {
             cell = [tableView cellForReuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]];
         } else {
             cell = [tableView cellForEntityClass:_entityClass entity:_entity];
@@ -931,11 +926,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
+    [self.activityIndicator stopAnimating];
+    
     if ([self actionIs:kActionLoad]) {
-        [self.activityIndicator stopAnimating];
-        [OStrings.class didCompleteWithResponse:response data:data];
+        [[OStrings class] didCompleteWithResponse:response data:data];
         
-        [self presentModalViewControllerWithIdentifier:kIdentifierAuth data:nil];
+        if ([[OMeta m] userIsSignedIn]) {
+            [self viewWillAppear:NO];
+        } else {
+            [self presentModalViewControllerWithIdentifier:kIdentifierAuth data:nil];
+        }
     }
 }
 

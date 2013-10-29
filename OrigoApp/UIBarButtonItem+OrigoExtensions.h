@@ -12,11 +12,11 @@
 
 + (UIBarButtonItem *)settingsButtonWithTarget:(id)target;
 + (UIBarButtonItem *)plusButtonWithTarget:(id)target;
++ (UIBarButtonItem *)actionButtonWithTarget:(id)target;
 + (UIBarButtonItem *)nextButtonWithTarget:(id)target;
 + (UIBarButtonItem *)cancelButtonWithTarget:(id)target;
 + (UIBarButtonItem *)doneButtonWithTarget:(id)target;
 + (UIBarButtonItem *)signOutButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)actionButtonWithTarget:(id)target;
 + (UIBarButtonItem *)phoneCallButtonWithTarget:(id)target;
 + (UIBarButtonItem *)sendTextButtonWithTarget:(id)target;
 + (UIBarButtonItem *)sendEmailButtonWithTarget:(id)target;

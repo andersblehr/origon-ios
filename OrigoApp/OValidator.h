@@ -17,7 +17,9 @@
 + (NSArray *)passwordKeys;
 + (NSArray *)inferredKeys;
 
++ (NSDictionary *)keyMappings;
 + (NSString *)propertyKeyForKey:(NSString *)key;
++ (NSString *)defaultValueForKey:(NSString *)key;
 
 + (BOOL)value:(id)value isValidForKey:(NSString *)key;
 + (BOOL)valueIsEmailAddress:(id)value;

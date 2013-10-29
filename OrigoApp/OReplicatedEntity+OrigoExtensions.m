@@ -15,12 +15,12 @@
 
 - (NSDictionary *)relationshipRef
 {
-    NSMutableDictionary *relationshipRef = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *relationshipRef = [NSMutableDictionary dictionary];
     
     relationshipRef[kPropertyKeyEntityId] = self.entityId;
     relationshipRef[kJSONKeyEntityClass] = self.entity.name;
     
-    if ([self isKindOfClass:OMember.class] && [self valueForKey:kPropertyKeyEmail]) {
+    if ([self isKindOfClass:[OMember class]] && [self valueForKey:kPropertyKeyEmail]) {
         relationshipRef[kPropertyKeyEmail] = [self valueForKey:kPropertyKeyEmail];
     }
     
@@ -40,19 +40,19 @@
 
 - (OMember *)asMember
 {
-    return [self isMemberOfClass:OMember.class] ? (OMember *)self : nil;
+    return [self isMemberOfClass:[OMember class]] ? (OMember *)self : nil;
 }
 
 
 - (OOrigo *)asOrigo
 {
-    return [self isMemberOfClass:OOrigo.class] ? (OOrigo *)self : nil;
+    return [self isMemberOfClass:[OOrigo class]] ? (OOrigo *)self : nil;
 }
 
 
 - (OMembership *)asMembership
 {
-    return [self isMemberOfClass:OMembership.class] ? (OMembership *)self : nil;
+    return [self isMemberOfClass:[OMembership class]] ? (OMembership *)self : nil;
 }
 
 
@@ -70,13 +70,19 @@
     
     BOOL hasValue = NO;
     
-    if ([value isKindOfClass:NSString.class]) {
+    if ([value isKindOfClass:[NSString class]]) {
         hasValue = ([value length] > 0);
     } else {
         hasValue = (value != nil);
     }
     
     return hasValue;
+}
+
+
+- (id)rawValueForKey:(NSString *)key
+{
+    return [super valueForKey:[OValidator propertyKeyForKey:key]];
 }
 
 
@@ -90,7 +96,7 @@
 {
     id value = [self valueForKey:key];
     
-    if (value && [value isKindOfClass:NSDate.class]) {
+    if (value && [value isKindOfClass:[NSDate class]]) {
         value = [NSNumber numberWithLongLong:[value timeIntervalSince1970] * 1000];
     }
     
@@ -114,7 +120,7 @@
 
 - (NSDictionary *)toDictionary
 {
-    NSMutableDictionary *entityDictionary = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *entityDictionary = [NSMutableDictionary dictionary];
     
     NSDictionary *attributes = [self.entity attributesByName];
     NSDictionary *relationships = [self.entity relationshipsByName];
@@ -218,7 +224,7 @@
 
 - (BOOL)isTransient
 {
-    return ([self isKindOfClass:OReplicatedEntityRef.class] || [self hasExpired]);
+    return ([self isKindOfClass:[OReplicatedEntityRef class]] || [self hasExpired]);
 }
 
 
@@ -298,6 +304,10 @@
         value = [self valueForInferredKey:key];
     } else {
         value = [super valueForKey:[OValidator propertyKeyForKey:key]];
+    }
+    
+    if (!value) {
+        value = [OValidator defaultValueForKey:key];
     }
 
     return value;

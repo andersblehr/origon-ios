@@ -12,6 +12,7 @@
 @private
     OMember *_member;
     
+    NSMutableArray *_countryCodes;
     NSMutableArray *_origoTypes;
     NSString *_selectedOrigoType;
 }

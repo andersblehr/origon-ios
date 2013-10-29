@@ -28,7 +28,7 @@
 
 + (BOOL)isSupportedCountryCode:(NSString *)countryCode
 {
-    return [[[OMeta m] supportedCountryCodes] containsObject:countryCode];
+    return [[OMeta supportedCountryCodes] containsObject:countryCode];
 }
 
 

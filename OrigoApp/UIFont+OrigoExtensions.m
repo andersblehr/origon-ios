@@ -8,8 +8,11 @@
 
 #import "UIFont+OrigoExtensions.h"
 
-static NSString * const kiOS7SystemFontName = @"Helvetica Neue";
+static NSString * const kiOS7SystemFontName = @"HelveticaNeue";
+static NSString * const kiOS7BoldSystemFontName = @"HelveticaNeue-Bold";
 
+static CGFloat const kNavigationBarTitleFontSize = 18.f;
+static CGFloat const kNavigationBarSubtitleFontSize = 11.f;
 static CGFloat const kHeaderFontSize = 15.f;
 static CGFloat const kFooterFontSize = 13.f;
 static CGFloat const kTitleFontSize = 17.f;
@@ -31,41 +34,59 @@ static CGFloat const kLineToFieldHeightFactor = 1.34f;
 }
 
 
++ (UIFont *)iOS7BoldSystemFontOfSize:(CGFloat)size
+{
+    return [UIFont fontWithName:kiOS7BoldSystemFontName size:size];
+}
+
+
 #pragma mark - Font shorthands
+
++ (UIFont *)navigationBarTitleFont
+{
+    return [UIFont iOS7BoldSystemFontOfSize:kNavigationBarTitleFontSize];
+}
+
+
++ (UIFont *)navigationBarSubtitleFont
+{
+    return [UIFont iOS7SystemFontOfSize:kNavigationBarSubtitleFontSize];
+}
+
 
 + (UIFont *)headerFont
 {
-    return [self iOS7SystemFontOfSize:kHeaderFontSize];
+    return [UIFont iOS7SystemFontOfSize:kHeaderFontSize];
 }
 
 
 + (UIFont *)footerFont
 {
-    return [self iOS7SystemFontOfSize:kFooterFontSize];
+    return [UIFont iOS7SystemFontOfSize:kFooterFontSize];
 }
 
 
 + (UIFont *)titleFont
 {
-    return [self iOS7SystemFontOfSize:kTitleFontSize];
+    return [UIFont iOS7SystemFontOfSize:kTitleFontSize];
 }
 
 
 + (UIFont *)detailFont
 {
-    return [self iOS7SystemFontOfSize:kDetailFontSize];
+    return [UIFont iOS7SystemFontOfSize:kDetailFontSize];
 }
 
 
 + (UIFont *)listTextFont
 {
-    return [self iOS7SystemFontOfSize:kListTextFontSize];
+    return [UIFont iOS7SystemFontOfSize:kListTextFontSize];
 }
 
 
 + (UIFont *)listDetailFont
 {
-    return [self iOS7SystemFontOfSize:kListDetailFontSize];
+    return [UIFont iOS7SystemFontOfSize:kListDetailFontSize];
 }
 
 
@@ -73,19 +94,19 @@ static CGFloat const kLineToFieldHeightFactor = 1.34f;
 
 + (CGFloat)titleFieldHeight
 {
-    return [[self titleFont] textFieldHeight];
+    return [[UIFont titleFont] textFieldHeight];
 }
 
 
 + (CGFloat)detailFieldHeight
 {
-    return [[self detailFont] textFieldHeight];
+    return [[UIFont detailFont] textFieldHeight];
 }
 
 
 + (CGFloat)detailLineHeight
 {
-    return [self detailFont].lineHeight + 1.f;
+    return [UIFont detailFont].lineHeight + 1.f;
 }
 
 

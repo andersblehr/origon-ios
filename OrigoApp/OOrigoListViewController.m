@@ -12,10 +12,8 @@ static NSString * const kSegueToOrigoView = @"segueFromOrigoListToOrigoView";
 static NSString * const kSegueToMemberView = @"segueFromOrigoListToMemberView";
 
 static NSInteger const kActionSheetTagCountry = 0;
-static NSInteger const kButtonTagLocated = 0;
-static NSInteger const kButtonTagInferred = 1;
-static NSInteger const kButtonTagLocate = 2;
-static NSInteger const kButtonTagOther = 3;
+static NSInteger const kButtonTagLocate = 100;
+static NSInteger const kButtonTagOther = 101;
 
 static NSInteger const kActionSheetTagOrigoType = 1;
 
@@ -83,22 +81,30 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)presentCountrySheet
 {
-    NSString *inferredCountry = [OUtil localisedCountryNameFromCountryCode:[[OMeta m] inferredCountryCode]];
-    NSString *locatedCountry = nil;
+    _countryCodes = [NSMutableArray arrayWithArray:[OMeta supportedCountryCodes]];
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[OStrings stringForKey:strSheetTitleCountry] delegate:self tag:kActionSheetTagCountry];
 
-    if ([[OMeta m].locator didLocate]) {
-        locatedCountry = [OUtil localisedCountryNameFromCountryCode:[OMeta m].locator.countryCode];
-        [actionSheet addButtonWithTitle:locatedCountry tag:kButtonTagLocated];
+    for (NSString *countryCode in _countryCodes) {
+        [actionSheet addButtonWithTitle:[OUtil localisedCountryNameFromCountryCode:countryCode]];
     }
     
-    if (!locatedCountry || ![locatedCountry isEqualToString:inferredCountry]) {
-        [actionSheet addButtonWithTitle:inferredCountry tag:kButtonTagInferred];
+    NSString *locatedCountryCode = [OMeta m].locator.countryCode;
+    
+    if (locatedCountryCode && ![_countryCodes containsObject:locatedCountryCode]) {
+        [_countryCodes addObject:locatedCountryCode];
+        [actionSheet addButtonWithTitle:[OUtil localisedCountryNameFromCountryCode:locatedCountryCode]];
     }
     
-    if (!locatedCountry && [[OMeta m].locator canLocate]) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryLocate] tag:kButtonTagLocate];
+    NSString *inferredCountryCode = [[OMeta m] inferredCountryCode];
+    
+    if (![_countryCodes containsObject:inferredCountryCode]) {
+        [_countryCodes addObject:inferredCountryCode];
+        [actionSheet addButtonWithTitle:[OUtil localisedCountryNameFromCountryCode:inferredCountryCode]];
+    }
+    
+    if (![[OMeta m].locator didLocate] && [[OMeta m].locator canLocate]) {
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strLabelCountryLocate] tag:kButtonTagLocate];
     }
     
     [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryOther] tag:kButtonTagOther];
@@ -154,7 +160,7 @@ static NSInteger const kSectionKeyWards = 2;
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagOrigoType];
     
     for (NSString *origoType in _origoTypes) {
-        [actionSheet addButtonWithTitle:[OStrings labelForOrigoType:origoType labelType:kOrigoLabelTypeOrigo]];
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:origoType withKeyPrefix:kKeyPrefixOrigoTitle]];
     }
     
     [actionSheet show];
@@ -162,14 +168,6 @@ static NSInteger const kSectionKeyWards = 2;
 
 
 #pragma mark - View lifecycle
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    self.title = [_member isWardOfUser] ? _member.givenName : @"Origo";
-}
-
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -200,12 +198,15 @@ static NSInteger const kSectionKeyWards = 2;
 - (void)initialiseState
 {
     _member = self.data ? self.data : [OMeta m].user;
-    _origoTypes = [[NSMutableArray alloc] init];
+    _origoTypes = [NSMutableArray array];
     
     self.state.target = _member;
     
     if ([_member isUser]) {
+        [self.navigationItem setTitle:[OMeta m].appName withSubtitle:[OMeta m].user.name];
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
+    } else {
+        self.title = [_member givenName];
     }
     
     if ([[OMeta m].user isTeenOrOlder]) {
@@ -317,7 +318,7 @@ static NSInteger const kSectionKeyWards = 2;
     } else {
         OMembership *membership = [entity asMembership];
         
-        cell.textLabel.text = membership.origo.name;
+        cell.textLabel.text = [membership.origo displayName];
         cell.imageView.image = [membership.origo smallImage];
         
         if (sectionKey == kSectionKeyMember) {
@@ -361,32 +362,30 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-    
-    switch (actionSheet.tag) {
-        case kActionSheetTagCountry:
-            if (buttonTag == kButtonTagLocated) {
-                [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
-            } else if (buttonTag == kButtonTagInferred) {
-                [OMeta m].settings.countryCode = [[OMeta m] inferredCountryCode];
-            } else if (buttonTag == kButtonTagLocate) {
-                [[OMeta m].locator locateBlocking:YES];
-            } else if (buttonTag == kButtonTagOther) {
-                [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleCountryOther] text:[OStrings stringForKey:strAlertTextCountryOther]];
-            }
-            
-            if ([OMeta m].settings.countryCode) {
-                if ([OUtil isSupportedCountryCode:[OMeta m].settings.countryCode]) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:_selectedOrigoType];
-                } else {
-                    [self presentCountryAlert];
+    if (buttonIndex < actionSheet.cancelButtonIndex) {
+        NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+        
+        switch (actionSheet.tag) {
+            case kActionSheetTagCountry:
+                if (buttonTag < kButtonTagLocate) {
+                    [OMeta m].settings.countryCode = _countryCodes[buttonTag];
+                } else if (buttonTag == kButtonTagLocate) {
+                    [[OMeta m].locator locateBlocking:YES];
+                } else if (buttonTag == kButtonTagOther) {
+                    [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleCountryOther] text:[OStrings stringForKey:strAlertTextCountryOther]];
                 }
-            }
-            
-            break;
-            
-        case kActionSheetTagOrigoType:
-            if (buttonIndex < actionSheet.cancelButtonIndex) {
+                
+                if ([OMeta m].settings.countryCode) {
+                    if ([OUtil isSupportedCountryCode:[OMeta m].settings.countryCode]) {
+                        [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:_selectedOrigoType];
+                    } else {
+                        [self presentCountryAlert];
+                    }
+                }
+                
+                break;
+                
+            case kActionSheetTagOrigoType:
                 _selectedOrigoType = _origoTypes[buttonIndex];
                 
                 if (![OMeta m].settings.countryCode) {
@@ -398,12 +397,12 @@ static NSInteger const kSectionKeyWards = 2;
                 } else {
                     [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:_selectedOrigoType];
                 }
-            }
-            
-            break;
-            
-        default:
-            break;
+                
+                break;
+                
+            default:
+                break;
+        }
     }
 }
 

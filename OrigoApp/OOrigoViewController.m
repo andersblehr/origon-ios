@@ -56,14 +56,14 @@ static NSInteger const kButtonTagGuardian = 101;
 {
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
     
-    [actionSheet addButtonWithTitle:[OStrings addMemberButtonTitleForOrigoType:_origoType] tag:kButtonTagAddMember];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
     
     if ([_origo isJuvenile]) {
-        [actionSheet addButtonWithTitle:[OStrings addContactButtonTitleForOrigoType:_origoType] tag:kButtonTagAddContact];
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddContactButton] tag:kButtonTagAddContact];
     }
     
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
-    [actionSheet addButtonWithTitle:[NSString stringWithFormat:[OStrings stringForKey:strButtonAbout], _origo.name] tag:kButtonTagAbout];
+    [actionSheet addButtonWithTitle:[NSString stringWithFormat:[OStrings stringForKey:strButtonAbout], [_origo displayName]] tag:kButtonTagAbout];
     
     if ([_origo.address hasValue]) {
         [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonShowInMap] tag:kButtonTagShowInMap];
@@ -78,7 +78,7 @@ static NSInteger const kButtonTagGuardian = 101;
     NSMutableSet *housemateCandidates = nil;
     
     if ([_origo isOfType:kOrigoTypeResidence]) {
-        housemateCandidates = [[NSMutableSet alloc] init];
+        housemateCandidates = [NSMutableSet set];
         
         for (OMember *housemate in [_membership.member housemates]) {
             if (![_origo hasMember:housemate]) {
@@ -117,16 +117,16 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)initialiseState
 {
-    if ([self.data isKindOfClass:OMembership.class]) {
+    if ([self.data isKindOfClass:[OMembership class]]) {
         _membership = self.data;
         _member = _membership.member;
         _origo = _membership.origo;
         _origoType = _origo.type;
         
         if ([_origo isOfType:kOrigoTypeResidence]) {
-            self.title = [OStrings labelForOrigoType:_origoType labelType:kOrigoLabelTypeOrigo];
+            self.title = [OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixOrigoTitle];
         } else {
-            self.title = _origo.name;
+            self.title = [_origo displayName];
         }
         
         if ([self canEdit] && ![self actionIs:kActionRegister]) {
@@ -134,11 +134,11 @@ static NSInteger const kButtonTagGuardian = 101;
         }
 
         [self.state setTarget:_origo];
-    } else if ([self.data isKindOfClass:OMember.class]) {
+    } else if ([self.data isKindOfClass:[OMember class]]) {
         _member = self.data;
         _origoType = self.meta;
         
-        self.title = [OStrings labelForOrigoType:_origoType labelType:kOrigoLabelTypeOrigoNew];
+        self.title = [OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixNewOrigoTitle];
         
         [self.state setTarget:_origoType aspectCarrier:_member];
     }
@@ -151,8 +151,8 @@ static NSInteger const kButtonTagGuardian = 101;
         [self setData:_origo ? _origo : kEntityRegistrationCell forSectionWithKey:kSectionKeyOrigo];
         [self setData:@[_member] forSectionWithKey:kSectionKeyMembers];
     } else {
-        NSMutableSet *contactMemberships = [[NSMutableSet alloc] init];
-        NSMutableSet *regularMemberships = [[NSMutableSet alloc] init];
+        NSMutableSet *contactMemberships = [NSMutableSet set];
+        NSMutableSet *regularMemberships = [NSMutableSet set];
         
         for (OMembership *membership in [_origo fullMemberships]) {
             if ([membership hasContactRole]) {
@@ -188,7 +188,7 @@ static NSInteger const kButtonTagGuardian = 101;
     if (sectionKey == kSectionKeyContacts) {
         text = [[OLanguage nouns][_contact_][pluralIndefinite] capitalizedString];
     } else if (sectionKey == kSectionKeyMembers) {
-        text = [OStrings labelForOrigoType:_origoType labelType:kOrigoLabelTypeMemberList];
+        text = [OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixMemberListTitle];
     }
     
     return text;
@@ -197,7 +197,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    return [OStrings footerForOrigoType:_origoType];
+    return [OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixFooter];
 }
 
 
@@ -218,7 +218,7 @@ static NSInteger const kButtonTagGuardian = 101;
     if (indexPath.section != kSectionKeyOrigo) {
         OMembership *membershipForRow = [self dataAtIndexPath:indexPath];
         
-        if ([membershipForRow isKindOfClass:OMembership.class]) {
+        if ([membershipForRow isKindOfClass:[OMembership class]]) {
             canDeleteRow = [_origo userIsAdmin] && ![membershipForRow.member isUser];
         }
     }

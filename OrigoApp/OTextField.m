@@ -41,7 +41,7 @@ static CGFloat const kTextInsetY = 1.2f;
         self.font = [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
-        self.placeholder = [OStrings placeholderForKey:key];
+        self.placeholder = [OStrings stringForKey:key withKeyPrefix:kKeyPrefixPlaceholder];
         self.returnKeyType = UIReturnKeyNext;
         self.textAlignment = NSTextAlignmentLeft;
         self.layer.borderWidth = [OMeta screenIsRetina] ? kBorderWidth : kBorderWidthNonRetina;
@@ -106,11 +106,7 @@ static CGFloat const kTextInsetY = 1.2f;
     NSString *textValue = nil;
     
     if ([self.text hasValue]) {
-        textValue = self.text;
-        
-        if (!self.secureTextEntry) {
-            textValue = [textValue removeRedundantWhitespace];
-        }
+        textValue = self.secureTextEntry ? self.text : [self.text removeRedundantWhitespace];
         
         if (![textValue hasValue]) {
             textValue = nil;
@@ -127,7 +123,7 @@ static CGFloat const kTextInsetY = 1.2f;
 
 - (void)prepareForInput
 {
-    if (_isDateField && ![self.inputView isKindOfClass:UIDatePicker.class]) {
+    if (_isDateField && ![self.inputView isKindOfClass:[UIDatePicker class]]) {
         UIDatePicker *datePicker = [[UIDatePicker alloc] init];
         datePicker.datePickerMode = UIDatePickerModeDate;
         [datePicker addTarget:self action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
@@ -151,9 +147,9 @@ static CGFloat const kTextInsetY = 1.2f;
         
         self.text = @"";
         self.placeholder = [OStrings stringForKey:strPlaceholderPleaseWait];
-    } else if (_cachedText) {
-        self.text = _cachedText;
-        self.placeholder = [OStrings placeholderForKey:_key];
+    } else {
+        self.text = _cachedText ? _cachedText : self.text;
+        self.placeholder = [OStrings stringForKey:_key withKeyPrefix:kKeyPrefixPlaceholder];
     }
 
     self.enabled = !isPending;
@@ -168,6 +164,8 @@ static CGFloat const kTextInsetY = 1.2f;
     // cell display, to avoid autolayout causing newly entered text to disappear and
     // fly back in on end edit when next input field is an OTextView that resizes on
     // begin edit.
+    
+    raiseGuard = [OMeta systemIs_iOS6x] ? !raiseGuard : raiseGuard;
     
     if ([[OState s] actionIs:kActionRegister]) {
         if (raiseGuard && ![self hasValue]) {
@@ -187,7 +185,7 @@ static CGFloat const kTextInsetY = 1.2f;
     
     self.text = [_date localisedDateString];
     
-    if ([self.inputView isKindOfClass:UIDatePicker.class]) {
+    if ([self.inputView isKindOfClass:[UIDatePicker class]]) {
         ((UIDatePicker *)self.inputView).date = _date;
     }
 }
@@ -198,14 +196,14 @@ static CGFloat const kTextInsetY = 1.2f;
     _isTitleField = isTitleField;
     
     self.font = _isTitleField ? [UIFont titleFont] : [UIFont detailFont];
-    self.textColor = _isTitleField ? [UIColor titleTextColor] : [UIColor defaultTextColor];
+    self.textColor = _isTitleField ? [UIColor titleTextColour] : [UIColor textColour];
     
     if (_isTitleField) {
         if (![OMeta systemIs_iOS6x]) {
-            self.tintColor = [UIColor titlePlaceholderColor];
+            self.tintColor = [UIColor titlePlaceholderColour];
         }
         
-        self.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.placeholder attributes:@{NSForegroundColorAttributeName:[UIColor titlePlaceholderColor]}];
+        self.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.placeholder attributes:@{NSForegroundColorAttributeName:[UIColor titlePlaceholderColour]}];
     }
 }
 
@@ -228,9 +226,9 @@ static CGFloat const kTextInsetY = 1.2f;
     
     if (_hasEmphasis) {
         if (_isTitleField) {
-            self.layer.borderColor = [[UIColor titleTextColor] CGColor];
+            self.layer.borderColor = [[UIColor titleTextColour] CGColor];
         } else {
-            self.layer.borderColor = [[UIColor windowTintColor] CGColor];
+            self.layer.borderColor = [[UIColor windowTintColour] CGColor];
         }
     } else {
         self.text = [self textValue];
