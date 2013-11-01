@@ -86,7 +86,7 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
             }
             
             if ([textField isKindOfClass:[OTextField class]]) {
-                [textField raiseGuardAgainstUnwantedAutolayoutAnimation:NO]; // Bug workaround
+                [textField raiseGuardAgainstUnwantedAutolayoutAnimation:YES]; // Bug workaround
             }
         }
     } else {
@@ -262,7 +262,7 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
         
         if ([self elementsAreVisibleForKey:key]) {
             if (!constraints) {
-                constraints = kVConstraintsInitial;
+                constraints = [kVConstraintsInitial stringByAppendingString:kDelimitingSpace];
             }
             
             NSString *constraint = nil;

@@ -165,8 +165,6 @@ static CGFloat const kTextInsetY = 1.2f;
     // fly back in on end edit when next input field is an OTextView that resizes on
     // begin edit.
     
-    raiseGuard = [OMeta systemIs_iOS6x] ? !raiseGuard : raiseGuard;
-    
     if ([[OState s] actionIs:kActionRegister]) {
         if (raiseGuard && ![self hasValue]) {
             self.text = kSeparatorSpace;

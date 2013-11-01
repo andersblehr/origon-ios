@@ -51,6 +51,5 @@ extern NSString * const _she_;
 + (NSString *)predicateClauseWithSubject:(id)subject predicate:(NSString *)predicate;
 + (NSString *)possessiveClauseWithPossessor:(id)possessor noun:(NSString *)nounKey;
 + (NSString *)questionWithSubject:(id)subject verb:(NSString *)verb argument:(NSString *)argument;
-+ (NSString *)plainLanguageListOfItems:(NSArray *)items;
 
 @end

@@ -116,6 +116,18 @@ NSString * const kMemberTypeGuardian = @"guardian";
 }
 
 
+- (NSArray *)sortedOrigos
+{
+    NSMutableArray *origos = [NSMutableArray array];
+    
+    for (OMembership *participancy in [self participancies]) {
+        [origos addObject:participancy.origo];
+    }
+    
+    return [origos sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
 #pragma mark - Household information
 
 - (OMember *)partner

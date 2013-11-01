@@ -11,6 +11,20 @@
 
 @implementation UIBarButtonItem (OrigoExtensions)
 
+#pragma mark - Auxiliary methods
+
++ (UIBarButtonItem *)barButtonWithIcon:(NSString *)iconFile target:(id)target action:(SEL)action
+{
+    UIImage *image = [UIImage imageNamed:iconFile];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.bounds = CGRectMake(0.f, 0.f, image.size.width, image.size.height);
+    [button setImage:image forState:UIControlStateNormal];
+    [button addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
+    
+    return [[UIBarButtonItem alloc] initWithCustomView:button];
+}
+
+
 #pragma mark - Bar button shorthands
 
 + (UIBarButtonItem *)settingsButtonWithTarget:(id)target
@@ -73,25 +87,46 @@
 
 + (UIBarButtonItem *)sendEmailButtonWithTarget:(id)target
 {
-    NSString *iconFile = [OMeta systemIs_iOS6x] ? kIconFileSendEmail_iOS6x : kIconFileSendEmail;
+    UIBarButtonItem *barButtonItem = nil;
+    SEL action = @selector(processEmailRequest);
     
-    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:iconFile] style:UIBarButtonItemStylePlain target:target action:@selector(processEmailRequest)];
+    if ([OMeta systemIs_iOS6x]) {
+        barButtonItem = [UIBarButtonItem barButtonWithIcon:kIconFileSendEmail_iOS6x target:target action:action];
+    } else {
+        barButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSendEmail] style:UIBarButtonItemStylePlain target:target action:action];
+    }
+    
+    return barButtonItem;
 }
 
 
 + (UIBarButtonItem *)sendTextButtonWithTarget:(id)target
 {
-    NSString *iconFile = [OMeta systemIs_iOS6x] ? kIconFileSendText_iOS6x : kIconFileSendText;
+    UIBarButtonItem *barButtonItem = nil;
+    SEL action = @selector(processTextRequest);
     
-    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:iconFile] style:UIBarButtonItemStylePlain target:target action:@selector(processTextRequest)];
+    if ([OMeta systemIs_iOS6x]) {
+        barButtonItem = [UIBarButtonItem barButtonWithIcon:kIconFileSendText_iOS6x target:target action:action];
+    } else {
+        barButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSendText] style:UIBarButtonItemStylePlain target:target action:action];
+    }
+    
+    return barButtonItem;
 }
 
 
 + (UIBarButtonItem *)phoneCallButtonWithTarget:(id)target
 {
-    NSString *iconFile = [OMeta systemIs_iOS6x] ? kIconFilePlacePhoneCall_iOS6x : kIconFilePlacePhoneCall;
+    UIBarButtonItem *barButtonItem = nil;
+    SEL action = @selector(processPhoneCallRequest);
     
-    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:iconFile] style:UIBarButtonItemStylePlain target:target action:@selector(processPhoneCallRequest)];
+    if ([OMeta systemIs_iOS6x]) {
+        barButtonItem = [UIBarButtonItem barButtonWithIcon:kIconFilePlacePhoneCall_iOS6x target:target action:action];
+    } else {
+        barButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFilePlacePhoneCall] style:UIBarButtonItemStylePlain target:target action:action];
+    }
+    
+    return barButtonItem;
 }
 
 

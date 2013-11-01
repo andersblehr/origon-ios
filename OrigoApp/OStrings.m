@@ -81,6 +81,7 @@ NSString * const strAlertTextCountrySupported        = @"strAlertTextCountrySupp
 NSString * const strAlertTextCountryUnsupported      = @"strAlertTextCountryUnsupported";
 NSString * const strSheetTitleCountry                = @"strSheetTitleCountry";
 NSString * const strSheetTitleOrigoType              = @"strSheetTitleOrigoType";
+NSString * const strTextNoOrigos                     = @"strTextNoOrigos";
 NSString * const strTermYourChild                    = @"strTermYourChild";
 NSString * const strTermHimOrHer                     = @"strTermHimOrHer";
 NSString * const strTermForName                      = @"strTermForName";
@@ -93,6 +94,7 @@ NSString * const strLabelTelephone                   = @"strLabelTelephone";
 NSString * const strPlaceholderAddress               = @"strPlaceholderAddress";
 NSString * const strPlaceholderDescriptionText       = @"strPlaceholderDescriptionText";
 NSString * const strPlaceholderTelephone             = @"strPlaceholderTelephone";
+NSString * const strButtonAddParentContact           = @"strButtonAddParentContact";
 NSString * const strButtonAbout                      = @"strButtonAbout";
 NSString * const strButtonShowInMap                  = @"strButtonShowInMap";
 NSString * const strButtonNewHousemate               = @"strButtonNewHousemate";
@@ -190,19 +192,21 @@ static NSDictionary const *_strings = nil;
     if (!_strings) {
         NSString *persistedLanguage = [ODefaults globalDefaultForKey:kDefaultsKeyStringLanguage];
         
-        BOOL canLoadStrings = [persistedLanguage isEqualToString:[OMeta m].language];
-        
-        if (!canLoadStrings) {
-            NSArray *supportedLanguages = [OMeta supportedLanguages];
+        if (persistedLanguage) {
+            BOOL canLoadStrings = [persistedLanguage isEqualToString:[OMeta m].language];
             
-            BOOL persistedIsSupported = [supportedLanguages containsObject:persistedLanguage];
-            BOOL currentIsSupported = [supportedLanguages containsObject:[OMeta m].language];
+            if (!canLoadStrings) {
+                NSArray *supportedLanguages = [OMeta supportedLanguages];
+                
+                BOOL persistedIsSupported = [supportedLanguages containsObject:persistedLanguage];
+                BOOL currentIsSupported = [supportedLanguages containsObject:[OMeta m].language];
+                
+                canLoadStrings = !persistedIsSupported && !currentIsSupported;
+            }
             
-            canLoadStrings = !persistedIsSupported && !currentIsSupported;
-        }
-        
-        if (canLoadStrings) {
-            _strings = [NSDictionary dictionaryWithContentsOfFile:[self pathToStringsFile]];
+            if (canLoadStrings) {
+                _strings = [NSDictionary dictionaryWithContentsOfFile:[self pathToStringsFile]];
+            }
         }
     }
     

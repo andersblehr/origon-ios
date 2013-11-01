@@ -32,6 +32,44 @@
 }
 
 
++ (NSString *)commaSeparatedListOfItems:(NSArray *)items conjoinLastItem:(BOOL)conjoinLastItem
+{
+    NSMutableArray *stringItems = nil;
+    
+    if ([items[0] isKindOfClass:[NSString class]]) {
+        stringItems = [NSMutableArray arrayWithArray:items];
+    } else {
+        stringItems = [NSMutableArray array];
+        
+        if ([items[0] isKindOfClass:[OMember class]]) {
+            for (OMember *member in items) {
+                [stringItems addObject:[member appellation]];
+            }
+        } else if ([items[0] isKindOfClass:[OOrigo class]]) {
+            for (OOrigo *origo in items) {
+                [stringItems addObject:[origo displayName]];
+            }
+        }
+    }
+    
+    NSMutableString *plainLanguageListing = nil;
+    
+    for (NSString *stringItem in stringItems) {
+        if (!plainLanguageListing) {
+            plainLanguageListing = [NSMutableString stringWithString:stringItem];
+        } else if (conjoinLastItem && [stringItems lastObject] == stringItem) {
+            [plainLanguageListing appendString:[OStrings stringForKey:strSeparatorAnd]];
+            [plainLanguageListing appendString:stringItem];
+        } else {
+            [plainLanguageListing appendString:kSeparatorComma];
+            [plainLanguageListing appendString:stringItem];
+        }
+    }
+    
+    return plainLanguageListing;
+}
+
+
 + (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode
 {
     NSString *country = nil;

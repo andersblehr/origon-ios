@@ -18,6 +18,7 @@ extern NSString * const kMemberTypeGuardian;
 - (NSSet *)fullMemberships;
 - (NSSet *)residencies;
 - (NSSet *)participancies;
+- (NSArray *)sortedOrigos;
 
 - (OMember *)partner;
 - (NSSet *)wards;

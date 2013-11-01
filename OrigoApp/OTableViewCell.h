@@ -35,7 +35,6 @@ extern CGFloat const kCellAnimationDuration;
 @property (strong, nonatomic) id lastInputField;
 @property (strong, nonatomic) id inputField;
 
-@property (nonatomic, readonly) BOOL selectable;
 @property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL checked;
 
@@ -49,10 +48,11 @@ extern CGFloat const kCellAnimationDuration;
 - (id)firstEmptyInputField;
 - (id)nextInputField;
 
+- (BOOL)isListCell;
 - (BOOL)hasValueForKey:(NSString *)key;
 - (BOOL)hasValidValueForKey:(NSString *)key;
 
-- (void)willAppear;
+- (void)didLayoutSubviews;
 - (void)toggleEditMode;
 - (void)redrawIfNeeded;
 - (void)shakeCellVibrate:(BOOL)vibrate;

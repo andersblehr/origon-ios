@@ -145,6 +145,18 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 }
 
 
+- (BOOL)deviceCanPlacePhoneCall
+{
+    BOOL canPlacePhoneCall = NO;
+    
+    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:kProtocolTel]]) {
+        canPlacePhoneCall = [_carrier.mobileNetworkCode hasValue];
+    }
+    
+    return canPlacePhoneCall;
+}
+
+
 #pragma mark - Action sheets
 
 - (void)presentRecipientCandidateSheet
@@ -178,7 +190,7 @@ static NSInteger const kServiceRequestPhoneCall = 2;
             if ([_member hasParent:recipients[0]] && [_member hasParent:recipients[1]]) {
                 [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_member noun:_parent_] stringByCapitalisingFirstLetter]];
             } else {
-                [actionSheet addButtonWithTitle:[OLanguage plainLanguageListOfItems:recipients]];
+                [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:recipients conjoinLastItem:YES]];
             }
         } else if ([recipients count] > 2) {
             [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAllContacts]];
@@ -306,18 +318,14 @@ static NSInteger const kServiceRequestPhoneCall = 2;
         [toolbarButtons addObject:flexibleSpace];
         
         if ([_callRecipientCandidates count]) {
-            if ([MFMessageComposeViewController canSendText]) {
+            if ([MFMessageComposeViewController canSendText] || [OMeta deviceIsSimulator]) {
                 [toolbarButtons addObject:[UIBarButtonItem sendTextButtonWithTarget:self]];
                 [toolbarButtons addObject:flexibleSpace];
             }
             
-            if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:kProtocolTel]]) {
-                NSString *mobileNetworkCode = _carrier.mobileNetworkCode;
-                
-                if ([mobileNetworkCode hasValue] && ![mobileNetworkCode isEqualToString:@"65535"]) {
-                    [toolbarButtons addObject:[UIBarButtonItem phoneCallButtonWithTarget:self]];
-                    [toolbarButtons addObject:flexibleSpace];
-                }
+            if ([self deviceCanPlacePhoneCall] || [OMeta deviceIsSimulator]) {
+                [toolbarButtons addObject:[UIBarButtonItem phoneCallButtonWithTarget:self]];
+                [toolbarButtons addObject:flexibleSpace];
             }
         }
         

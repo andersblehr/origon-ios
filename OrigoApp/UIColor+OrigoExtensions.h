@@ -10,7 +10,7 @@
 
 @interface UIColor (OrigoExtensions)
 
-+ (UIColor *)navigationBarShadowColour;
++ (UIColor *)toolbarShadowColour;
 + (UIColor *)tableViewBackgroundColour;
 + (UIColor *)tableViewSeparatorColour;
 + (UIColor *)cellBackgroundColour;
@@ -22,7 +22,6 @@
 + (UIColor *)titlePlaceholderColour;
 + (UIColor *)imagePlaceholderBackgroundColour;
 + (UIColor *)iOS6BarButtonItemColour;
-+ (UIColor *)iOS6ToolbarColour;
 
 + (UIColor *)textColour;
 + (UIColor *)headerTextColour;

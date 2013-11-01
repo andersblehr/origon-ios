@@ -12,7 +12,6 @@ extern NSInteger const kTextViewMaximumLines;
 
 @interface OTextView : UITextView<UITextViewDelegate> {
 @private
-    OState *_state;
     OTableViewCellBlueprint *_blueprint;
     CGFloat _textWidth;
     

@@ -53,6 +53,14 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
+#pragma mark - Selector implementations
+
+- (NSComparisonResult)compare:(OOrigo *)other
+{
+    return [[self displayName] localizedCaseInsensitiveCompare:[other displayName]];
+}
+
+
 #pragma mark - Accessing & adding memberships
 
 - (NSSet *)allMemberships
