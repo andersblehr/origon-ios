@@ -315,6 +315,14 @@ static NSInteger const kSectionKeyWards = 2;
         
         cell.textLabel.text = [ward givenName];
         cell.imageView.image = [ward smallImage];
+        
+        NSArray *sortedOrigos = [ward sortedOrigos];
+        
+        if ([sortedOrigos count]) {
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:sortedOrigos conjoinLastItem:NO];
+        } else {
+            cell.detailTextLabel.text = [OStrings stringForKey:strTextNoOrigos];
+        }
     } else {
         OMembership *membership = [entity asMembership];
         
@@ -323,6 +331,8 @@ static NSInteger const kSectionKeyWards = 2;
         
         if (sectionKey == kSectionKeyMember) {
             cell.detailTextLabel.text = [membership.origo singleLineAddress];
+        } else {
+            cell.detailTextLabel.text = [OStrings stringForKey:membership.origo.type withKeyPrefix:kKeyPrefixOrigoTitle];
         }
     }
 }

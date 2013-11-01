@@ -54,9 +54,7 @@ static NSInteger const kButtonTagContinue = 1;
                 _emailField.text = @"";
                 [_emailField becomeFirstResponder];
                 
-                NSString *alertTitle = [OStrings stringForKey:strAlertTitleMemberExists];
-                NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, _emailField.text, [_origo displayName]];
-                [OAlert showAlertWithTitle:alertTitle text:alertMessage];
+                [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleMemberExists] text:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, _emailField.text, [_origo displayName]]];
                 
                 _candidate = nil;
                 emailIsEligible = NO;
@@ -64,7 +62,7 @@ static NSInteger const kButtonTagContinue = 1;
                 _mobilePhoneField.text = _candidate.mobilePhone;
                 _dateOfBirthField.date = _candidate.dateOfBirth;
                 
-                if ([_candidate isActive]) {
+                if (![_candidate isManagedByUser]) {
                     self.detailCell.editing = NO;
                 }
             }
@@ -254,7 +252,12 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return [self actionIs:kActionRegister] && ![self targetIs:kTargetUser] && ![_origo isJuvenile];
+    BOOL hasFooter = [self actionIs:kActionRegister];
+    
+    hasFooter = hasFooter && ![self targetIs:kTargetUser];
+    hasFooter = hasFooter && (![_origo isJuvenile] || [self isRegisteringJuvenileOrigoGuardian]);
+    
+    return hasFooter;
 }
 
 
@@ -528,7 +531,12 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController
 {
-    return [viewController.identifier isEqual:kIdentifierOrigo];
+    BOOL shouldRelay = NO;
+    
+    shouldRelay = shouldRelay || [viewController.identifier isEqual:kIdentifierMember];
+    shouldRelay = shouldRelay || [viewController.identifier isEqual:kIdentifierOrigo];
+    
+    return shouldRelay;
 }
 
 

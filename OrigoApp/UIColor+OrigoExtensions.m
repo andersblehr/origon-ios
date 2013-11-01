@@ -76,7 +76,7 @@
 #pragma mark - iOS 7 default colours
 
 
-+ (UIColor *)navigationBarShadowColour
++ (UIColor *)toolbarShadowColour
 {
     return [UIColor colorWithRed:245/255.f green:245/255.f blue:246/255.f alpha:1.f];
 }
@@ -108,7 +108,7 @@
 
 + (UIColor *)placeholderColour
 {
-    return [UIColor colorWithRed:0/255.f green:0/255.f blue:25/255.f alpha:0.22f];
+    return [OMeta systemIs_iOS6x] ? [UIColor lightGrayColor] : [UIColor colorWithRed:0/255.f green:0/255.f blue:25/255.f alpha:0.22f];
 }
 
 
@@ -141,12 +141,6 @@
 + (UIColor *)iOS6BarButtonItemColour
 {
     return [UIColor colorWithRed:255/255.f green:192/255.f blue:104/255.f alpha:1.f];
-}
-
-
-+ (UIColor *)iOS6ToolbarColour
-{
-    return [UIColor colorWithRed:255/255.f green:199/255.f blue:121/255.f alpha:1.f];
 }
 
 

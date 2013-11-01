@@ -47,13 +47,13 @@ static void uncaughtExceptionHandler(NSException *exception)
 - (void)setUpAppearances
 {
     if ([OMeta systemIs_iOS6x]) {
-        [[UINavigationBar appearance] setTintColor:[UIColor navigationBarShadowColour]];
+        [[UINavigationBar appearance] setTintColor:[UIColor toolbarShadowColour]];
         [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeFont: [UIFont navigationBarTitleFont], UITextAttributeTextColor: [UIColor blackColor], UITextAttributeTextShadowColor: [UIColor clearColor]}];
         
         [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTintColor:[UIColor iOS6BarButtonItemColour]];
         [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTitleTextAttributes:@{UITextAttributeTextShadowColor: [UIColor clearColor]} forState:UIControlStateNormal];
         
-        [[UIToolbar appearance] setTintColor:[UIColor iOS6ToolbarColour]];
+        [[UIToolbar appearance] setTintColor:[UIColor toolbarShadowColour]];
     }
 }
 

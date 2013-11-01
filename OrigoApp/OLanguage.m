@@ -100,7 +100,7 @@ static OLanguage *language = nil;
             subjectString = [subject givenName];
         }
     } else if ([subject isKindOfClass:[NSArray class]]) {
-        subjectString = [OLanguage plainLanguageListOfItems:subject];
+        subjectString = [OUtil commaSeparatedListOfItems:subject conjoinLastItem:YES];
     }
     
     return subjectString;
@@ -211,7 +211,7 @@ static OLanguage *language = nil;
             possessiveClause = [NSString stringWithFormat:noun[possessive3], [possessor givenName]];
         }
     } else if ([possessor isKindOfClass:[NSArray class]]) {
-        possessiveClause = [NSString stringWithFormat:noun[possessive3], [OLanguage plainLanguageListOfItems:possessor]];
+        possessiveClause = [NSString stringWithFormat:noun[possessive3], [OUtil commaSeparatedListOfItems:possessor conjoinLastItem:YES]];
     }
     
     return possessiveClause;
@@ -229,38 +229,6 @@ static OLanguage *language = nil;
     question = [question stringByReplacingSubstring:kArgumentPlaceholder withString:argument];
     
     return [question stringByCapitalisingFirstLetter];
-}
-
-
-+ (NSString *)plainLanguageListOfItems:(NSArray *)items
-{
-    NSMutableArray *stringItems = nil;
-    
-    if ([items[0] isKindOfClass:[NSString class]]) {
-        stringItems = [NSMutableArray arrayWithArray:items];
-    } else if ([items[0] isKindOfClass:[OMember class]]) {
-        stringItems = [NSMutableArray array];
-        
-        for (OMember *member in items) {
-            [stringItems addObject:[member appellation]];
-        }
-    }
-
-    NSMutableString *plainLanguageListing = nil;
-    
-    for (NSString *stringItem in stringItems) {
-        if (!plainLanguageListing) {
-            plainLanguageListing = [NSMutableString stringWithString:stringItem];
-        } else if ([stringItems lastObject] == stringItem) {
-            [plainLanguageListing appendString:[OStrings stringForKey:strSeparatorAnd]];
-            [plainLanguageListing appendString:stringItem];
-        } else {
-            [plainLanguageListing appendString:kSeparatorComma];
-            [plainLanguageListing appendString:stringItem];
-        }
-    }
-    
-    return plainLanguageListing;
 }
 
 @end

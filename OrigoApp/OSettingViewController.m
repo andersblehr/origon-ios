@@ -93,7 +93,7 @@ static NSInteger const kSectionKeyValues = 0;
             [supportedCountries addObject:[OUtil localisedCountryNameFromCountryCode:countryCode]];
         }
         
-        text = [NSMutableString stringWithFormat:[OStrings stringForKey:strFooterCountryInfo], [OLanguage plainLanguageListOfItems:supportedCountries]];
+        text = [NSMutableString stringWithFormat:[OStrings stringForKey:strFooterCountryInfo], [OUtil commaSeparatedListOfItems:supportedCountries conjoinLastItem:YES]];
         
         if (_listContainsParenthesisedCountries) {
             [text appendString:[OStrings stringForKey:strFooterCountryInfoNote]];

@@ -34,12 +34,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)isListCell
-{
-    return [self.reuseIdentifier hasPrefix:kReuseIdentifierList];
-}
-
-
 - (id)initCommonsForReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
 {
     UITableViewCellStyle style = UITableViewCellStyleSubtitle;
@@ -58,29 +52,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _state = [OState s].viewController.state;
         
         if ([self isListCell]) {
-            self.textLabel.backgroundColor = [UIColor cellBackgroundColour];
-            self.detailTextLabel.backgroundColor = [UIColor cellBackgroundColour];
-            
-            if (style == UITableViewCellStyleSubtitle) {
-                self.textLabel.font = [UIFont listTextFont];
-                self.textLabel.textColor = [UIColor textColour];
-                self.detailTextLabel.font = [UIFont listDetailFont];
-                self.detailTextLabel.textColor = [UIColor textColour];
-            }
+            self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
             _indexPath = indexPath;
-            _selectable = YES;
             _listDelegate = (id<OTableViewListDelegate>)_state.viewController;
 
             [_listDelegate populateListCell:self atIndexPath:_indexPath];
         } else {
             _views = [NSMutableDictionary dictionary];
-            _selectable = [_state actionIs:kActionList];
             _inputDelegate = (id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate>)_state.viewController;
-        }
-        
-        if (_selectable) {
-            self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
         
         if ([OMeta systemIs_iOS6x]) {
@@ -88,6 +68,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
             self.backgroundView.backgroundColor = [UIColor cellBackgroundColour];
             self.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
             self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColour];
+            self.textLabel.backgroundColor = [UIColor clearColor];
+            self.detailTextLabel.backgroundColor = [UIColor clearColor];
+            
+            if (style == UITableViewCellStyleSubtitle) {
+                self.textLabel.font = [UIFont listTextFont];
+                self.textLabel.textColor = [UIColor textColour];
+                self.detailTextLabel.font = [UIFont listDetailFont];
+                self.detailTextLabel.textColor = [UIColor textColour];
+            }
         }
     }
     
@@ -269,6 +258,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Meta & validation
 
+- (BOOL)isListCell
+{
+    return [self.reuseIdentifier hasPrefix:kReuseIdentifierList];
+}
+
+
 - (BOOL)hasValueForKey:(NSString *)key
 {
     return [[self textFieldForKey:key] hasValue];
@@ -283,12 +278,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Cell display
 
-- (void)willAppear
+- (void)didLayoutSubviews
 {
-    if ([OMeta systemIs_iOS6x]) {
-        [self.backgroundView addSeparatorsForTableViewCell];
-    }
-    
     if (![self isListCell]) {
         if (_blueprint.hasPhoto) {
             [_views[kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
@@ -303,7 +294,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 }
                 
                 if ([textField isKindOfClass:[OTextField class]]) {
-                    [textField raiseGuardAgainstUnwantedAutolayoutAnimation:YES]; // Bug workaround
+                    [textField raiseGuardAgainstUnwantedAutolayoutAnimation:NO]; // Bug workaround
                 }
             }
         }
@@ -561,7 +552,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
-    if (_selectable) {
+    if ([self isListCell]) {
         [super setHighlighted:highlighted animated:animated];
     }
 }
@@ -569,7 +560,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    if (_selectable) {
+    if ([self isListCell]) {
         [super setSelected:selected animated:animated];
     }
 }

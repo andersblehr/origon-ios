@@ -9,9 +9,9 @@
 #import "UIFont+OrigoExtensions.h"
 
 static NSString * const kiOS7SystemFontName = @"HelveticaNeue";
-static NSString * const kiOS7BoldSystemFontName = @"HelveticaNeue-Bold";
+static NSString * const kiOS7MediumSystemFontName = @"HelveticaNeue-Medium";
 
-static CGFloat const kNavigationBarTitleFontSize = 18.f;
+static CGFloat const kNavigationBarTitleFontSize = 17.f;
 static CGFloat const kNavigationBarSubtitleFontSize = 11.f;
 static CGFloat const kHeaderFontSize = 15.f;
 static CGFloat const kFooterFontSize = 13.f;
@@ -34,9 +34,9 @@ static CGFloat const kLineToFieldHeightFactor = 1.34f;
 }
 
 
-+ (UIFont *)iOS7BoldSystemFontOfSize:(CGFloat)size
++ (UIFont *)iOS7MediumSystemFontOfSize:(CGFloat)size
 {
-    return [UIFont fontWithName:kiOS7BoldSystemFontName size:size];
+    return [UIFont fontWithName:kiOS7MediumSystemFontName size:size];
 }
 
 
@@ -44,7 +44,7 @@ static CGFloat const kLineToFieldHeightFactor = 1.34f;
 
 + (UIFont *)navigationBarTitleFont
 {
-    return [UIFont iOS7BoldSystemFontOfSize:kNavigationBarTitleFontSize];
+    return [UIFont iOS7MediumSystemFontOfSize:kNavigationBarTitleFontSize];
 }
 
 

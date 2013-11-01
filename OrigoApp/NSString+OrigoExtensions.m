@@ -12,7 +12,6 @@ NSString * const kListSeparator = @"|";
 NSString * const kSeparatorAmpersand = @" & ";
 NSString * const kSeparatorComma = @", ";
 NSString * const kSeparatorHash = @"#";
-NSString * const kSeparatorInterpunct = @" • ";
 NSString * const kSeparatorNewline = @"\n";
 NSString * const kSeparatorSpace = @" ";
 
@@ -44,9 +43,7 @@ NSString * const kSeparatorSpace = @" ";
 
 - (NSInteger)lineCountWithFont:(UIFont *)font maxWidth:(CGFloat)maxWidth
 {
-    CGSize textSize = [self sizeWithFont:font maxWidth:maxWidth];
-    
-    return round(textSize.height / (font.lineHeight + 1.f));
+    return round([self sizeWithFont:font maxWidth:maxWidth].height / font.lineHeight);
 }
 
 

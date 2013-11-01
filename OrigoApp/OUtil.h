@@ -13,6 +13,7 @@
 + (BOOL)origoTypeIsJuvenile:(NSString *)origoType;
 + (BOOL)isSupportedCountryCode:(NSString *)countryCode;
 
++ (NSString *)commaSeparatedListOfItems:(NSArray *)items conjoinLastItem:(BOOL)conjoinLastItem;
 + (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode;
 + (NSString *)givenNameFromFullName:(NSString *)fullName;
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;

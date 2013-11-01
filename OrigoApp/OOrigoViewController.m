@@ -15,11 +15,12 @@ static NSInteger const kSectionKeyContacts = 1;
 static NSInteger const kSectionKeyMembers = 2;
 
 static NSInteger const kActionSheetTagActionSheet = 0;
-static NSInteger const kButtonTagAddMember = 0;
-static NSInteger const kButtonTagAddContact = 1;
-static NSInteger const kButtonTagEdit = 2;
-static NSInteger const kButtonTagAbout = 3;
+static NSInteger const kButtonTagEdit = 0;
+static NSInteger const kButtonTagAddMember = 1;
+static NSInteger const kButtonTagAddContact = 2;
+static NSInteger const kButtonTagAddParentContact = 3;
 static NSInteger const kButtonTagShowInMap = 4;
+static NSInteger const kButtonTagAbout = 5;
 
 static NSInteger const kActionSheetTagHousemate = 1;
 static NSInteger const kButtonTagHousemate = 100;
@@ -27,6 +28,30 @@ static NSInteger const kButtonTagGuardian = 101;
 
 
 @implementation OOrigoViewController
+
+#pragma mark - Auxiliary methods
+
+- (void)addMember
+{
+    NSMutableSet *housemateCandidates = nil;
+    
+    if ([_origo isOfType:kOrigoTypeResidence]) {
+        housemateCandidates = [NSMutableSet set];
+        
+        for (OMember *housemate in [_membership.member housemates]) {
+            if (![_origo hasMember:housemate]) {
+                [housemateCandidates addObject:housemate];
+            }
+        }
+    }
+    
+    if (housemateCandidates && [housemateCandidates count]) {
+        [self presentHousemateCandidatesSheet:housemateCandidates];
+    } else {
+        [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo];
+    }
+}
+
 
 #pragma mark - Actions sheets
 
@@ -59,15 +84,16 @@ static NSInteger const kButtonTagGuardian = 101;
     [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
     [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
     
-    if ([_origo isJuvenile]) {
+    if ([_origo isJuvenile] && ![_origo isOfType:kOrigoTypePlaymates]) {
         [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddContactButton] tag:kButtonTagAddContact];
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddParentContact] tag:kButtonTagAddParentContact];
     }
-    
-    [actionSheet addButtonWithTitle:[NSString stringWithFormat:[OStrings stringForKey:strButtonAbout], [_origo displayName]] tag:kButtonTagAbout];
     
     if ([_origo.address hasValue]) {
         [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonShowInMap] tag:kButtonTagShowInMap];
     }
+    
+    [actionSheet addButtonWithTitle:[NSString stringWithFormat:[OStrings stringForKey:strButtonAbout], [_origo displayName]] tag:kButtonTagAbout];
     
     [actionSheet show];
 }
@@ -75,22 +101,15 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)addItem
 {
-    NSMutableSet *housemateCandidates = nil;
-    
-    if ([_origo isOfType:kOrigoTypeResidence]) {
-        housemateCandidates = [NSMutableSet set];
+    if (![_origo isOfType:kOrigoTypeResidence] && ![_origo isOfType:kOrigoTypePlaymates]) {
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
         
-        for (OMember *housemate in [_membership.member housemates]) {
-            if (![_origo hasMember:housemate]) {
-                [housemateCandidates addObject:housemate];
-            }
-        }
-    }
-    
-    if ([_origo isOfType:kOrigoTypeResidence] && [housemateCandidates count]) {
-        [self presentHousemateCandidatesSheet:housemateCandidates];
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddContactButton] tag:kButtonTagAddContact];
+        
+        [actionSheet show];
     } else {
-        [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo];
+        [self addMember];
     }
 }
 
@@ -362,7 +381,7 @@ static NSInteger const kButtonTagGuardian = 101;
         case kActionSheetTagActionSheet:
             if (buttonIndex < actionSheet.cancelButtonIndex) {
                 if (buttonTag == kButtonTagAddMember) {
-                    [self addItem];
+                    [self addMember];
                 }
             }
             

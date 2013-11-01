@@ -29,11 +29,11 @@ NSString * const kIconFileSettings = @"14-gear.png";
 NSString * const kIconFilePlus = @"05-plus.png";
 NSString * const kIconFileAction = @"212-action2_centred.png";
 NSString * const kIconFilePlacePhoneCall = @"735-phone.png";
-NSString * const kIconFilePlacePhoneCall_iOS6x = @"735-phone-selected.png";
+NSString * const kIconFilePlacePhoneCall_iOS6x = @"735-phone_pizazz.png";
 NSString * const kIconFileSendText = @"734-chat.png";
-NSString * const kIconFileSendText_iOS6x = @"734-chat-selected.png";
+NSString * const kIconFileSendText_iOS6x = @"734-chat_pizazz.png";
 NSString * const kIconFileSendEmail = @"730-envelope.png";
-NSString * const kIconFileSendEmail_iOS6x = @"730-envelope-selected.png";
+NSString * const kIconFileSendEmail_iOS6x = @"730-envelope_pizazz.png";
 NSString * const kIconFileLocationArrow = @"193-location-arrow.png";
 
 NSString * const kGenderMale = @"M";

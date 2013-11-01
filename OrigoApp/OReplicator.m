@@ -80,9 +80,11 @@
         [dirtyEntityURIs addObject:[[dirtyEntity objectID] URIRepresentation]];
     }
     
-    [ODefaults setUserDefault:[NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs] forKey:kDefaultsKeyDirtyEntities];
-    
-    [[OMeta m].context save];
+    if ([dirtyEntityURIs count]) {
+        [ODefaults setUserDefault:[NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs] forKey:kDefaultsKeyDirtyEntities];
+        
+        [[OMeta m].context save];
+    }
 }
 
 

@@ -11,6 +11,7 @@
 static NSString * const kSegueToSettingView = @"sequeFromSettingListToSettingView";
 
 static NSInteger const kSectionKeySettings = 0;
+static NSInteger const kSectionKeySignOut = 1;
 
 
 @implementation OSettingListViewController
@@ -30,7 +31,6 @@ static NSInteger const kSectionKeySettings = 0;
     [super viewDidLoad];
 
     self.title = [OStrings stringForKey:strViewTitleSettings];
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
 }
 
@@ -60,6 +60,13 @@ static NSInteger const kSectionKeySettings = 0;
 - (void)initialiseData
 {
     [self setData:[[OMeta m].settings settingKeys] forSectionWithKey:kSectionKeySettings];
+    [self setData:@[kCustomValue] forSectionWithKey:kSectionKeySignOut];
+}
+
+
+- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
+{
+    return NO;
 }
 
 
@@ -71,7 +78,13 @@ static NSInteger const kSectionKeySettings = 0;
 
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    [self performSegueWithIdentifier:kSegueToSettingView sender:self];
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    
+    if (sectionKey == kSectionKeySettings) {
+        [self performSegueWithIdentifier:kSegueToSettingView sender:self];
+    } else if (sectionKey == kSectionKeySignOut) {
+        [self signOut];
+    }
 }
 
 
@@ -79,10 +92,18 @@ static NSInteger const kSectionKeySettings = 0;
 
 - (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *settingKey = [self dataAtIndexPath:indexPath];
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    cell.textLabel.text = [OStrings stringForKey:settingKey withKeyPrefix:kKeyPrefixSettingLabel];
-    cell.detailTextLabel.text = [[OMeta m].settings displayValueForSettingKey:settingKey];
+    if (sectionKey == kSectionKeySettings) {
+        NSString *key = [self dataAtIndexPath:indexPath];
+        
+        cell.textLabel.text = [OStrings stringForKey:key withKeyPrefix:kKeyPrefixSettingLabel];
+        cell.detailTextLabel.text = [[OMeta m].settings displayValueForSettingKey:key];
+    } else if (sectionKey == kSectionKeySignOut) {
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.textLabel.textColor = [UIColor redColor];
+        cell.textLabel.text = [[OStrings stringForKey:strButtonSignOut] stringByAppendingString:[OMeta m].user.name separator:kSeparatorSpace];
+    }
 }
 
 

@@ -504,6 +504,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     NSString *longName = NSStringFromClass([self class]);
     NSString *shortName = [longName substringFromIndex:1];
     NSString *viewControllerSuffix = [self isListViewController] ? kViewControllerSuffixList : kViewControllerSuffixDefault;
+    
     _identifier = [[shortName substringToIndex:[shortName rangeOfString:viewControllerSuffix].location] lowercaseString];
     
     if ([self isListViewController]) {
@@ -573,6 +574,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (_isPopped || _shouldReloadOnModalDismissal) {
         [self reloadSections];
         [_dirtySections removeAllObjects];
+    }
+}
+
+
+- (void)viewDidLayoutSubviews
+{
+    if (_detailCell) {
+        [_detailCell didLayoutSubviews];
     }
 }
 
@@ -854,7 +863,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [_instance willDisplayCell:cell atIndexPath:indexPath];
     }
     
-    [cell willAppear];
+    if ([OMeta systemIs_iOS6x]) {
+        [cell.backgroundView addSeparatorsForTableViewCell];
+    }
 }
 
 
@@ -862,7 +873,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     OTableViewCell *cell = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     
-    if (cell.selectable) {
+    if ([cell isListCell]) {
         if ([self actionIs:kActionInput]) {
             cell.selected = NO;
         } else {

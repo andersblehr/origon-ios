@@ -13,7 +13,7 @@ CGFloat const kContentWidth = 300.f;
 
 static CGFloat const kKeyboardHeight = 216.f;
 
-static CGFloat const kLogoHeight = 55.f;
+static CGFloat const kLogoHeight = 110.f;
 static CGFloat const kLogoFontSize = 30.f;
 
 static CGFloat const kLineToHeaderHeightFactor = 1.5f;
@@ -46,11 +46,11 @@ static NSString * const kLogoText = @"..origo..";
 
 - (void)addLogoBanner
 {
-    CGFloat cellWidth = self.bounds.size.width - 2 * kDefaultCellPadding;
-    CGRect containerViewFrame = CGRectMake(kDefaultCellPadding, 0.f, cellWidth, kLogoHeight);
-    CGRect logoFrame = CGRectMake(kDefaultCellPadding, kDefaultCellPadding, cellWidth, kLogoHeight - kDefaultCellPadding);
-    
+    CGFloat cellWidth = self.bounds.size.width;
+    CGRect containerViewFrame = CGRectMake(0.f, 0.f, cellWidth, kLogoHeight);
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
+
+    CGRect logoFrame = CGRectMake(0.f, 0.f, cellWidth, kLogoHeight);
     UILabel *logoLabel = [[UILabel alloc] initWithFrame:logoFrame];
     
     logoLabel.backgroundColor = [UIColor clearColor];
@@ -67,16 +67,19 @@ static NSString * const kLogoText = @"..origo..";
 
 - (UIActivityIndicatorView *)addActivityIndicator
 {
-    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, kKeyboardHeight);
+    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth / 2, kKeyboardHeight / 2);
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
+    containerView.backgroundColor = [UIColor redColor];
     
-    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     activityIndicatorView.center = containerView.center;
+    activityIndicatorView.color = [UIColor lightGrayColor];
     activityIndicatorView.hidesWhenStopped = YES;
     
     [containerView addSubview:activityIndicatorView];
+    [self addSubview:containerView];
     
-    self.tableFooterView = containerView;
+    //self.tableFooterView = containerView;
     
     return activityIndicatorView;
 }
@@ -104,7 +107,7 @@ static NSString * const kLogoText = @"..origo..";
 
 - (id)listCellForIndexPath:(NSIndexPath *)indexPath data:(id)data
 {
-    NSString *reuseIdentifer = [NSString stringWithFormat:@"%@:%@", kReuseIdentifierList, data];
+    NSString *reuseIdentifer = [kReuseIdentifierList stringByAppendingFormat:@":%@", data];
     
     return [self cellForReuseIdentifier:reuseIdentifer indexPath:indexPath];
 }
