@@ -140,22 +140,6 @@ static CGFloat const kTextInsetY = 1.2f;
 }
 
 
-- (void)indicatePendingEvent:(BOOL)isPending
-{
-    if (isPending) {
-        _cachedText = self.text ? self.text : @"";
-        
-        self.text = @"";
-        self.placeholder = [OStrings stringForKey:strPlaceholderPleaseWait];
-    } else {
-        self.text = _cachedText ? _cachedText : self.text;
-        self.placeholder = [OStrings stringForKey:_key withKeyPrefix:kKeyPrefixPlaceholder];
-    }
-
-    self.enabled = !isPending;
-}
-
-
 #pragma mark - Workaround (hack) to avoid unwanted animation
 
 - (void)raiseGuardAgainstUnwantedAutolayoutAnimation:(BOOL)raiseGuard
@@ -271,19 +255,13 @@ static CGFloat const kTextInsetY = 1.2f;
 }
 
 
-#pragma mark - UIView overrides
+#pragma mark - UIResponder overrides
 
-- (void)drawRect:(CGRect)rect
+- (BOOL)canBecomeFirstResponder
 {
-    [super drawRect:rect];
-    
-    if ([OMeta systemIs_iOS6x] && _hasEmphasis) {
-        [self redrawDropShadow];
-    }
+    return YES;
 }
 
-
-#pragma mark - UIResponder overrides
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {

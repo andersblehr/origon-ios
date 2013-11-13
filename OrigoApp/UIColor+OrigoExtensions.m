@@ -106,9 +106,9 @@
 }
 
 
-+ (UIColor *)placeholderColour
++ (UIColor *)alertViewBackgroundColour
 {
-    return [OMeta systemIs_iOS6x] ? [UIColor lightGrayColor] : [UIColor colorWithRed:0/255.f green:0/255.f blue:25/255.f alpha:0.22f];
+    return [UIColor colorWithRed:226.f/255 green:226.f/255 blue:226.f/255 alpha:1.f];
 }
 
 
@@ -149,6 +149,12 @@
 + (UIColor *)textColour
 {
     return [UIColor blackColor];
+}
+
+
++ (UIColor *)placeholderTextColour
+{
+    return [OMeta systemIs_iOS6x] ? [UIColor lightGrayColor] : [UIColor colorWithRed:0/255.f green:0/255.f blue:25/255.f alpha:0.22f];
 }
 
 

@@ -19,9 +19,10 @@ static CGFloat const kTitleFontSize = 17.f;
 static CGFloat const kDetailFontSize = 14.f;
 static CGFloat const kListTextFontSize = 18.f;
 static CGFloat const kListDetailFontSize = 12.f;
+static CGFloat const kAlternateListFontSize = 17.f;
 
-static CGFloat const kLineToFieldHeightFactor_iOS6x = 1.22f;
 static CGFloat const kLineToFieldHeightFactor = 1.34f;
+static CGFloat const kLineToFieldHeightFactor_iOS6x = 1.22f;
 
 
 @implementation UIFont (OrigoExtensions)
@@ -87,6 +88,12 @@ static CGFloat const kLineToFieldHeightFactor = 1.34f;
 + (UIFont *)listDetailFont
 {
     return [UIFont iOS7SystemFontOfSize:kListDetailFontSize];
+}
+
+
++ (UIFont *)alternateListFont
+{
+    return [UIFont iOS7SystemFontOfSize:kAlternateListFontSize];
 }
 
 

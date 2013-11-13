@@ -8,152 +8,39 @@
 
 #import "OSwitchboard.h"
 
-static NSInteger const kServiceRequestEmail = 0;
-static NSInteger const kServiceRequestText = 1;
-static NSInteger const kServiceRequestPhoneCall = 2;
+static NSInteger const kServiceTypeText = 0;
+static NSInteger const kServiceTypeCall = 1;
+static NSInteger const kServiceTypeEmail = 2;
+
+static NSInteger const kRecipientTagOrigo = 0;
+static NSInteger const kRecipientTagMember = 1;
+static NSInteger const kRecipientTagContact = 2;
+static NSInteger const kRecipientTagParent = 3;
+static NSInteger const kRecipientTagParents = 4;
+static NSInteger const kRecipientTagGuardians = 5;
+static NSInteger const kRecipientTagAllMembers = 6;
+static NSInteger const kRecipientTagAllContacts = 7;
+static NSInteger const kRecipientTagAllGuardians = 8;
 
 
 @implementation OSwitchboard
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)candidate:(OMember *)candidate canHandleServiceRequest:(NSInteger)serviceRequest
+- (void)reset
 {
-    BOOL canHandleServiceRequest = NO;
+    _origo = nil;
+    _member = nil;
     
-    if (serviceRequest == kServiceRequestEmail) {
-        canHandleServiceRequest = [candidate.email hasValue];
-    } else {
-        canHandleServiceRequest = [candidate.mobilePhone hasValue];
-    }
+    _recipientCandidatesByServiceType = [NSMutableArray array];
+    _recipientCandidatesByServiceType[kServiceTypeText] = [NSMutableArray array];
+    _recipientCandidatesByServiceType[kServiceTypeCall] = [NSMutableArray array];
+    _recipientCandidatesByServiceType[kServiceTypeEmail] = [NSMutableArray array];
     
-    return canHandleServiceRequest;
-}
-
-
-- (void)addRecipientCandidates:(id)candidates skipIfContainsUser:(BOOL)skipIfContainsUser
-{
-    NSMutableArray *emailRecipients = [NSMutableArray array];
-    NSMutableArray *phoneRecipients = [NSMutableArray array];
-    
-    for (OMember *candidate in candidates) {
-        if (![candidate isUser]) {
-            if ([self candidate:candidate canHandleServiceRequest:kServiceRequestEmail]) {
-                [emailRecipients addObject:candidate];
-            }
-            
-            if ([self candidate:candidate canHandleServiceRequest:kServiceRequestPhoneCall]) {
-                [phoneRecipients addObject:candidate];
-            }
-        } else if (skipIfContainsUser) {
-            [emailRecipients removeAllObjects];
-            [phoneRecipients removeAllObjects];
-            
-            break;
-        }
-    }
-    
-    if ([emailRecipients count]) {
-        [_emailRecipientCandidates addObject:emailRecipients];
-    }
-    
-    if ([phoneRecipients count]) {
-        [_textRecipientCandidates addObject:phoneRecipients];
-        
-        if ([phoneRecipients count] == 1) {
-            [_callRecipientCandidates addObject:phoneRecipients];
-        } else if ([phoneRecipients count] == 2) {
-            if (![_member hasParent:phoneRecipients[0]]) {
-                [_callRecipientCandidates addObject:@[phoneRecipients[0]]];
-            } else if (![_member hasParent:phoneRecipients[1]]) {
-                [_callRecipientCandidates addObject:@[phoneRecipients[1]]];
-            }
-        }
-    }
-}
-
-
-- (void)assembleRecipientCandidatesWithEntity:(id)entity
-{
-    _emailRecipientCandidates = [NSMutableArray array];
-    _textRecipientCandidates = [NSMutableArray array];
-    _callRecipientCandidates = [NSMutableArray array];
-    
-    if ([entity isKindOfClass:[OOrigo class]]) {
-        [self addRecipientCandidates:[entity fullMemberships] skipIfContainsUser:NO];
-    } else if ([entity isKindOfClass:[OMember class]]) {
-        _member = entity;
-        
-        [self addRecipientCandidates:@[_member] skipIfContainsUser:YES];
-
-        if ([_member isMinor]) {
-            if ([[_member parents] count]) {
-                NSMutableArray *parents = [NSMutableArray array];
-                
-                for (OMember *parent in [_member parents]) {
-                    [parents insertObject:parent atIndex:[parent isUser] ? [parents count] : 0];
-                }
-                
-                if ([parents count] == 2) {
-                    [self addRecipientCandidates:parents skipIfContainsUser:YES];
-                }
-                
-                for (OMember *parent in parents) {
-                    [self addRecipientCandidates:@[parent] skipIfContainsUser:YES];
-                }
-                
-                for (OMember *parent in parents) {
-                    OMember *partner = [parent partner];
-                    
-                    if (partner) {
-                        [self addRecipientCandidates:@[parent, partner] skipIfContainsUser:NO];
-                    }
-                }
-            } else {
-                for (OMembership *residency in [_member residencies]) {
-                    NSSet *elders = [residency.origo elders];
-                    
-                    [self addRecipientCandidates:elders skipIfContainsUser:YES];
-                    
-                    for (OMember *elder in elders) {
-                        [self addRecipientCandidates:@[elder] skipIfContainsUser:YES];
-                    }
-                }
-            }
-            
-            if ([[_member guardians] count] > 2) {
-                [self addRecipientCandidates:[_member guardians] skipIfContainsUser:NO];
-            }
-        }
-        
-        for (OMembership *residency in [_member residencies]) {
-            if ([residency.origo.telephone hasValue]) {
-                [_callRecipientCandidates addObject:@[residency.origo]];
-            }
-        }
-    }
-}
-
-
-- (void)processServiceRequest
-{
-    if ([_recipientCandidates count] == 1) {
-        [self performServiceRequestWithRecipients:_recipientCandidates[0]];
-    } else {
-        [self presentRecipientCandidateSheet];
-    }
-}
-
-
-- (BOOL)deviceCanPlacePhoneCall
-{
-    BOOL canPlacePhoneCall = NO;
-    
-    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:kProtocolTel]]) {
-        canPlacePhoneCall = [_carrier.mobileNetworkCode hasValue];
-    }
-    
-    return canPlacePhoneCall;
+    _recipientTagsByServiceType = [NSMutableArray array];
+    _recipientTagsByServiceType[kServiceTypeText] = [NSMutableArray array];
+    _recipientTagsByServiceType[kServiceTypeCall] = [NSMutableArray array];
+    _recipientTagsByServiceType[kServiceTypeEmail] = [NSMutableArray array];
 }
 
 
@@ -161,40 +48,54 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 
 - (void)presentRecipientCandidateSheet
 {
+    NSArray *recipientTags = _recipientTagsByServiceType[_requestType];
     NSString *prompt = nil;
+    NSInteger candidateCount = 0;
     
-    if (_serviceRequest == kServiceRequestEmail) {
-        prompt = [OStrings stringForKey:strSheetTitleEmailRecipient];
-    } else if (_serviceRequest == kServiceRequestText) {
-        prompt = [OStrings stringForKey:strSheetTitleTextRecipient];
-    } else if (_serviceRequest == kServiceRequestPhoneCall) {
-        prompt = [OStrings stringForKey:strSheetTitlePhoneCallRecipient];
+    if (_requestType == kServiceTypeText) {
+        prompt = [OStrings stringForKey:strSheetPromptTextRecipient];
+    } else if (_requestType == kServiceTypeCall) {
+        prompt = [OStrings stringForKey:strSheetPromptCallRecipient];
+    } else if (_requestType == kServiceTypeEmail) {
+        prompt = [OStrings stringForKey:strSheetPromptEmailRecipient];
     }
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:0];
     
     for (NSArray *recipients in _recipientCandidates) {
-        if ([recipients count] == 1) {
-            if ([recipients[0] isKindOfClass:[OMember class]]) {
-                if ([_member isWardOfUser]) {
-                    [actionSheet addButtonWithTitle:[recipients[0] givenName]];
-                } else if ([_member hasParent:recipients[0]]) {
-                    [actionSheet addButtonWithTitle:[recipients[0] nameWithParentTitle]];
-                } else {
-                    [actionSheet addButtonWithTitle:[recipients[0] name]];
-                }
-            } else if ([recipients[0] isKindOfClass:[OOrigo class]]) {
-                [actionSheet addButtonWithTitle:[recipients[0] shortAddress]];
-            }
-        } else if ([recipients count] == 2) {
-            if ([_member hasParent:recipients[0]] && [_member hasParent:recipients[1]]) {
-                [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_member noun:_parent_] stringByCapitalisingFirstLetter]];
+        NSInteger recipientTag = [recipientTags[candidateCount] integerValue];
+        
+        if (recipientTag == kRecipientTagOrigo) {
+            OOrigo *origo = recipients[0];
+            
+            if ([origo.address hasValue]) {
+                [actionSheet addButtonWithTitle:[origo shortAddress]];
             } else {
-                [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:recipients conjoinLastItem:YES]];
+                [actionSheet addButtonWithTitle:[origo displayName]];
             }
-        } else if ([recipients count] > 2) {
+        } else if (recipientTag == kRecipientTagMember) {
+            [actionSheet addButtonWithTitle:[recipients[0] givenName]];
+        } else if (recipientTag == kRecipientTagContact) {
+            [actionSheet addButtonWithTitle:[recipients[0] givenNameWithContactRoleForOrigo:_origo]];
+        } else if (recipientTag == kRecipientTagParent) {
+            if ([[OState s] aspectIsHousehold]) {
+                [actionSheet addButtonWithTitle:[recipients[0] givenName]];
+            } else {
+                [actionSheet addButtonWithTitle:[recipients[0] givenNameWithParentTitle]];
+            }
+        } else if (recipientTag == kRecipientTagParents) {
+            [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_member noun:_parent_] stringByCapitalisingFirstLetter]];
+        } else if (recipientTag == kRecipientTagGuardians) {
+            [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:recipients conjoinLastItem:YES]];
+        } else if (recipientTag == kRecipientTagAllMembers) {
+            [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAllMembers]];
+        } else if (recipientTag == kRecipientTagAllContacts) {
             [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAllContacts]];
+        } else if (recipientTag == kRecipientTagAllGuardians) {
+            [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAllGuardians]];
         }
+        
+        candidateCount++;
     }
     
     [actionSheet show];
@@ -203,30 +104,249 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 
 #pragma mark - Selector implementations
 
-- (void)processEmailRequest
-{
-    _serviceRequest = kServiceRequestEmail;
-    _recipientCandidates = _emailRecipientCandidates;
-    
-    [self processServiceRequest];
-}
-
-
 - (void)processTextRequest
 {
-    _serviceRequest = kServiceRequestText;
-    _recipientCandidates = _textRecipientCandidates;
+    _requestType = kServiceTypeText;
+    _recipientCandidates = _recipientCandidatesByServiceType[kServiceTypeText];
     
     [self processServiceRequest];
 }
 
 
-- (void)processPhoneCallRequest
+- (void)processCallRequest
 {
-    _serviceRequest = kServiceRequestPhoneCall;
-    _recipientCandidates = _callRecipientCandidates;
+    _requestType = kServiceTypeCall;
+    _recipientCandidates = _recipientCandidatesByServiceType[kServiceTypeCall];
     
     [self processServiceRequest];
+}
+
+
+- (void)processEmailRequest
+{
+    _requestType = kServiceTypeEmail;
+    _recipientCandidates = _recipientCandidatesByServiceType[kServiceTypeEmail];
+    
+    [self processServiceRequest];
+}
+
+
+#pragma mark - Assembling recipient candidates
+
+- (void)addRecipients:(NSArray *)recipients forServiceType:(NSInteger)serviceType tag:(NSInteger)tag
+{
+    NSMutableArray *recipientCandidates = _recipientCandidatesByServiceType[serviceType];
+    
+    BOOL isListed = NO;
+    
+    if ([recipients count] == 1) {
+        for (NSArray *recipientList in recipientCandidates) {
+            if (!isListed && [recipientList containsObject:recipients[0]]) {
+                isListed = ([recipientList count] == 1);
+            }
+        }
+    }
+    
+    if (!isListed) {
+        [_recipientTagsByServiceType[serviceType] addObject:@(tag)];
+        [recipientCandidates addObject:recipients];
+    }
+}
+
+
+- (void)addRecipientCandidates:(id)candidates skipUser:(BOOL)skipUser tag:(NSInteger)tag
+{
+    NSMutableArray *emailRecipients = [NSMutableArray array];
+    NSMutableArray *phoneRecipients = [NSMutableArray array];
+    
+    if (tag == kRecipientTagOrigo) {
+        if ([[candidates[0] telephone] hasValue]) {
+            [phoneRecipients addObject:candidates[0]];
+        }
+    } else {
+        if (![candidates containsObject:[OMeta m].user] || !skipUser) {
+            for (OMember *candidate in candidates) {
+                if (![candidate isUser]) {
+                    if ([candidate.email hasValue]) {
+                        [emailRecipients addObject:candidate];
+                    }
+                    
+                    if ([candidate.mobilePhone hasValue]) {
+                        [phoneRecipients addObject:candidate];
+                    }
+                }
+            }
+        }
+    }
+    
+    if ([emailRecipients count]) {
+        [self addRecipients:emailRecipients forServiceType:kServiceTypeEmail tag:tag];
+    }
+    
+    if ([phoneRecipients count]) {
+        if (tag != kRecipientTagOrigo) {
+            [self addRecipients:phoneRecipients forServiceType:kServiceTypeText tag:tag];
+        }
+        
+        if ([phoneRecipients count] == 1) {
+            [self addRecipients:phoneRecipients forServiceType:kServiceTypeCall tag:tag];
+        } else if (_member && ([phoneRecipients count] == 2)) {
+            if ([_member hasParent:phoneRecipients[0]]) {
+                [self addRecipients:@[phoneRecipients[1]] forServiceType:kServiceTypeCall tag:tag];
+            } else if ([_member hasParent:phoneRecipients[1]]) {
+                [self addRecipients:@[phoneRecipients[0]] forServiceType:kServiceTypeCall tag:tag];
+            }
+        }
+    }
+}
+
+
+- (void)assembleOrigoRecipientCandidates
+{
+    if ([_origo.telephone hasValue]) {
+        [self addRecipientCandidates:@[_origo] skipUser:NO tag:kRecipientTagOrigo];
+    }
+    
+    if ([_origo isJuvenile]) {
+        [self addRecipientCandidates:[_origo guardians] skipUser:NO tag:kRecipientTagAllGuardians];
+        
+        if ([_origo userIsContact]) {
+            [self addRecipientCandidates:[_origo members] skipUser:NO tag:kRecipientTagAllMembers];
+        }
+        
+        if ([_origo hasContacts]) {
+            [self addRecipientCandidates:[_origo contacts] skipUser:NO tag:kRecipientTagAllContacts];
+        }
+    }
+    
+    if ([_origo isOfType:kOrigoTypeResidence]) {
+        for (OMember *member in [_origo members]) {
+            [self addRecipientCandidates:@[member] skipUser:YES tag:kRecipientTagMember];
+        }
+    } else if ([_origo hasContacts]) {
+        for (OMember *contact in [_origo contacts]) {
+            [self addRecipientCandidates:@[contact] skipUser:YES tag:kRecipientTagContact];
+        }
+    }
+    
+    if (![_origo isJuvenile]) {
+        [self addRecipientCandidates:[_origo members] skipUser:NO tag:kRecipientTagAllMembers];
+    }
+}
+
+
+- (void)assembleMemberRecipientCandidates
+{
+    [self addRecipientCandidates:@[_member] skipUser:YES tag:kRecipientTagMember];
+    
+    if ([_member isMinor]) {
+        if ([[_member parents] count]) {
+            NSMutableArray *parents = [NSMutableArray array];
+            
+            for (OMember *parent in [_member parents]) {
+                [parents insertObject:parent atIndex:[parent isUser] ? [parents count] : 0];
+            }
+            
+            if ([parents count] == 2) {
+                [self addRecipientCandidates:parents skipUser:YES tag:kRecipientTagParents];
+            }
+            
+            for (OMember *parent in parents) {
+                [self addRecipientCandidates:@[parent] skipUser:YES tag:kRecipientTagParent];
+            }
+            
+            for (OMember *parent in parents) {
+                OMember *partner = [parent partner];
+                
+                if (partner) {
+                    [self addRecipientCandidates:@[parent, partner] skipUser:NO tag:kRecipientTagGuardians];
+                }
+            }
+        } else {
+            for (OMembership *residency in [_member residencies]) {
+                NSSet *elders = [residency.origo elders];
+                
+                [self addRecipientCandidates:elders skipUser:YES tag:kRecipientTagGuardians];
+                
+                for (OMember *elder in elders) {
+                    [self addRecipientCandidates:@[elder] skipUser:YES tag:kRecipientTagMember];
+                }
+            }
+        }
+        
+        if ([[_member guardians] count] > 2) {
+            [self addRecipientCandidates:[_member guardians] skipUser:NO tag:kRecipientTagAllGuardians];
+        }
+    }
+    
+    for (OMembership *residency in [_member residencies]) {
+        if ([residency.origo.telephone hasValue]) {
+            [self addRecipientCandidates:@[residency.origo] skipUser:NO tag:kRecipientTagOrigo];
+        }
+    }
+}
+
+
+#pragma mark - Configuring buttons
+
+- (BOOL)hasTextButton
+{
+    BOOL hasTextRecipients = [_recipientCandidatesByServiceType[kServiceTypeText] count];
+    BOOL canSendText = [MFMessageComposeViewController canSendText];
+    
+    return hasTextRecipients && (canSendText || [OMeta deviceIsSimulator]);
+}
+
+
+- (BOOL)hasCallButton
+{
+    BOOL hasCallRecipients = [_recipientCandidatesByServiceType[kServiceTypeCall] count];
+    BOOL canPlacePhoneCall = NO;
+    
+    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:kProtocolTel]]) {
+        canPlacePhoneCall = [_carrier.mobileNetworkCode hasValue];
+    }
+    
+    return hasCallRecipients && (canPlacePhoneCall || [OMeta deviceIsSimulator]);
+}
+
+
+- (BOOL)hasEmailButton
+{
+    BOOL hasEmailRecipients = [_recipientCandidatesByServiceType[kServiceTypeEmail] count];
+    
+    return hasEmailRecipients && [MFMailComposeViewController canSendMail];
+}
+
+
+- (NSArray *)toolbarButtons
+{
+    BOOL hasTextButton = [self hasTextButton];
+    BOOL hasCallButton = [self hasCallButton];
+    BOOL hasEmailButton = [self hasEmailButton];
+    
+    NSMutableArray *toolbarButtons = [NSMutableArray array];
+    
+    if (hasTextButton || hasCallButton || hasEmailButton) {
+        [toolbarButtons addObject:[UIBarButtonItem flexibleSpace]];
+        
+        if (hasTextButton) {
+            [toolbarButtons addObject:[UIBarButtonItem sendTextButtonWithTarget:self]];
+            [toolbarButtons addObject:[UIBarButtonItem flexibleSpace]];
+        }
+        
+        if (hasCallButton) {
+            [toolbarButtons addObject:[UIBarButtonItem phoneCallButtonWithTarget:self]];
+            [toolbarButtons addObject:[UIBarButtonItem flexibleSpace]];
+        }
+        
+        if (hasEmailButton) {
+            [toolbarButtons addObject:[UIBarButtonItem sendEmailButtonWithTarget:self]];
+            [toolbarButtons addObject:[UIBarButtonItem flexibleSpace]];
+        }
+    }
+    
+    return [toolbarButtons count] ? toolbarButtons : nil;
 }
 
 
@@ -281,12 +401,22 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 
 - (void)performServiceRequestWithRecipients:(NSArray *)recipients
 {
-    if (_serviceRequest == kServiceRequestEmail) {
+    if (_requestType == kServiceTypeEmail) {
         [self sendEmailToRecipients:recipients];
-    } else if (_serviceRequest == kServiceRequestText) {
+    } else if (_requestType == kServiceTypeText) {
         [self sendTextToRecipients:recipients];
-    } else if (_serviceRequest == kServiceRequestPhoneCall) {
+    } else if (_requestType == kServiceTypeCall) {
         [self placePhoneCallToRecipient:recipients[0]];
+    }
+}
+
+
+- (void)processServiceRequest
+{
+    if (_member && [_recipientCandidates count] == 1) {
+        [self performServiceRequestWithRecipients:_recipientCandidates[0]];
+    } else {
+        [self presentRecipientCandidateSheet];
     }
 }
 
@@ -307,35 +437,27 @@ static NSInteger const kServiceRequestPhoneCall = 2;
 
 #pragma mark - Applicable toolbar items
 
-- (NSArray *)toolbarButtonsWithEntity:(id)entity
+- (NSArray *)toolbarButtonsForOrigo:(OOrigo *)origo
 {
-    UIBarButtonItem *flexibleSpace = [UIBarButtonItem flexibleSpace];
-    NSMutableArray *toolbarButtons = [NSMutableArray array];
+    [self reset];
     
-    [self assembleRecipientCandidatesWithEntity:entity];
+    _origo = origo;
+    
+    [self assembleOrigoRecipientCandidates];
+    
+    return [self toolbarButtons];
+}
 
-    if ([_emailRecipientCandidates count] || [_callRecipientCandidates count]) {
-        [toolbarButtons addObject:flexibleSpace];
-        
-        if ([_callRecipientCandidates count]) {
-            if ([MFMessageComposeViewController canSendText] || [OMeta deviceIsSimulator]) {
-                [toolbarButtons addObject:[UIBarButtonItem sendTextButtonWithTarget:self]];
-                [toolbarButtons addObject:flexibleSpace];
-            }
-            
-            if ([self deviceCanPlacePhoneCall] || [OMeta deviceIsSimulator]) {
-                [toolbarButtons addObject:[UIBarButtonItem phoneCallButtonWithTarget:self]];
-                [toolbarButtons addObject:flexibleSpace];
-            }
-        }
-        
-        if ([_emailRecipientCandidates count] && [MFMailComposeViewController canSendMail]) {
-            [toolbarButtons addObject:[UIBarButtonItem sendEmailButtonWithTarget:self]];
-            [toolbarButtons addObject:flexibleSpace];
-        }
-    }
+
+- (NSArray *)toolbarButtonsForMember:(OMember *)member
+{
+    [self reset];
     
-    return [toolbarButtons count] ? toolbarButtons : nil;
+    _member = member;
+    
+    [self assembleMemberRecipientCandidates];
+    
+    return [self toolbarButtons];
 }
 
 

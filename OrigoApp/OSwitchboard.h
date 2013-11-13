@@ -10,17 +10,18 @@
 
 @interface OSwitchboard : NSObject<UIActionSheetDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate> {
 @private
-    NSInteger _serviceRequest;
+    OOrigo *_origo;
     OMember *_member;
+    NSInteger _requestType;
     
-    NSMutableArray *_emailRecipientCandidates;
-    NSMutableArray *_textRecipientCandidates;
-    NSMutableArray *_callRecipientCandidates;
+    NSMutableArray *_recipientTagsByServiceType;
+    NSMutableArray *_recipientCandidatesByServiceType;
     NSArray *_recipientCandidates;
 }
 
 @property (strong, nonatomic, readonly) CTCarrier *carrier;
 
-- (NSArray *)toolbarButtonsWithEntity:(id)entity;
+- (NSArray *)toolbarButtonsForOrigo:(OOrigo *)origo;
+- (NSArray *)toolbarButtonsForMember:(OMember *)member;
 
 @end

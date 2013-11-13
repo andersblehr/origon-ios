@@ -8,7 +8,7 @@
 
 #import "OTableViewController.h"
 
-NSString * const kEntityRegistrationCell = @"registration";
+NSString * const kRegistrationCell = @"registration";
 NSString * const kCustomCell = @"customCell";
 NSString * const kCustomValue = @"customValue";
 
@@ -400,8 +400,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         [[self.detailCell nextInputField] becomeFirstResponder];
     } else if ([self actionIs:kActionDisplay]) {
-        [self.view endEditing:YES];
-        
         self.navigationItem.rightBarButtonItem = rightButton;
         self.navigationItem.leftBarButtonItem = leftButton;
         
@@ -482,11 +480,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _needsReinstantiateRootViewController = YES;
     _reinstantiatedRootViewController = [[OState s].viewController.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
     
-    if (_isModal) {
-        [self.dismisser dismissModalViewController:self reload:NO];
-    } else {
-        [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reinstantiatedRootViewController];
-    }
+    [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reinstantiatedRootViewController];
 }
 
 
@@ -563,7 +557,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _isPopped = !_isPushed && !_wasHidden && (!_isModal || !_didJustLoad);
     _didJustLoad = NO;
     
-    if (!self.presentingViewController && (!self.toolbarItems || _isPopped || _wasHidden)) {
+    if (!_isModal && (!self.toolbarItems || _isPopped || _wasHidden)) {
         if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
             self.toolbarItems = [_instance toolbarButtons];
         }
@@ -629,7 +623,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [super viewDidDisappear:animated];
     
-    if (_needsReinstantiateRootViewController && !_isModal) {
+    if (_needsReinstantiateRootViewController) {
         [self.navigationController setViewControllers:@[_reinstantiatedRootViewController]];
         
         _needsReinstantiateRootViewController = NO;
@@ -647,7 +641,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     if ([OMeta systemIs_iOS6x]) {
         for (OTableViewCell *cell in [self.tableView visibleCells]) {
-            [cell redrawDropShadow];
+            [cell redrawSeparatorsForTableViewCell];
         }
     }
 }
@@ -655,10 +649,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Custom property accessors
 
-- (UIActivityIndicatorView *)activityIndicator
+- (OActivityIndicator *)activityIndicator
 {
     if (!_activityIndicator) {
-        _activityIndicator = [self.tableView addActivityIndicator];
+        _activityIndicator = [[OActivityIndicator alloc] init];
     }
     
     return _activityIndicator;

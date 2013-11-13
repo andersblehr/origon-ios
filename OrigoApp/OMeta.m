@@ -158,7 +158,7 @@ static OMeta *_m = nil;
 
 + (id)allocWithZone:(NSZone *)zone
 {
-    return [self m];
+    return [OMeta m];
 }
 
 

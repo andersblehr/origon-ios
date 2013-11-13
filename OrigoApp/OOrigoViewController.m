@@ -84,9 +84,12 @@ static NSInteger const kButtonTagGuardian = 101;
     [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
     [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
     
-    if ([_origo isJuvenile] && ![_origo isOfType:kOrigoTypePlaymates]) {
+    if ([_origo isOrganised]) {
         [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddContactButton] tag:kButtonTagAddContact];
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddParentContact] tag:kButtonTagAddParentContact];
+        
+        if ([_origo isJuvenile]) {
+            [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddParentContact] tag:kButtonTagAddParentContact];
+        }
     }
     
     if ([_origo.address hasValue]) {
@@ -101,7 +104,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)addItem
 {
-    if (![_origo isOfType:kOrigoTypeResidence] && ![_origo isOfType:kOrigoTypePlaymates]) {
+    if ([_origo isOrganised]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
         
         [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
@@ -167,23 +170,17 @@ static NSInteger const kButtonTagGuardian = 101;
 - (void)initialiseData
 {
     if ([self actionIs:kActionRegister]) {
-        [self setData:_origo ? _origo : kEntityRegistrationCell forSectionWithKey:kSectionKeyOrigo];
+        [self setData:_origo ? _origo : kRegistrationCell forSectionWithKey:kSectionKeyOrigo];
         [self setData:@[_member] forSectionWithKey:kSectionKeyMembers];
     } else {
-        NSMutableSet *contactMemberships = [NSMutableSet set];
-        NSMutableSet *regularMemberships = [NSMutableSet set];
-        
-        for (OMembership *membership in [_origo fullMemberships]) {
-            if ([membership hasContactRole]) {
-                [contactMemberships addObject:membership];
-            } else {
-                [regularMemberships addObject:membership];
-            }
-        }
-        
         [self setData:_origo forSectionWithKey:kSectionKeyOrigo];
-        [self setData:contactMemberships forSectionWithKey:kSectionKeyContacts];
-        [self setData:regularMemberships forSectionWithKey:kSectionKeyMembers];
+        
+        if ([_origo isJuvenile]) {
+            [self setData:[_origo contactMemberships] forSectionWithKey:kSectionKeyContacts];
+            [self setData:[_origo regularMemberships] forSectionWithKey:kSectionKeyMembers];
+        } else {
+            [self setData:[_origo fullMemberships] forSectionWithKey:kSectionKeyMembers];
+        }
     }
 }
 
@@ -211,6 +208,12 @@ static NSInteger const kButtonTagGuardian = 101;
     }
     
     return text;
+}
+
+
+- (NSArray *)toolbarButtons
+{
+    return [[OMeta m].switchboard toolbarButtonsForOrigo:_origo];
 }
 
 

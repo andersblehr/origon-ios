@@ -18,6 +18,7 @@
 + (UIFont *)detailFont;
 + (UIFont *)listTextFont;
 + (UIFont *)listDetailFont;
++ (UIFont *)alternateListFont;
 
 + (CGFloat)titleFieldHeight;
 + (CGFloat)detailFieldHeight;

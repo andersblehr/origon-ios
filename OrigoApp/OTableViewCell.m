@@ -51,6 +51,26 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (self) {
         _state = [OState s].viewController.state;
         
+        if ([OMeta systemIs_iOS6x]) {
+            self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+            self.backgroundView.backgroundColor = [UIColor cellBackgroundColour];
+            self.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+            self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColour];
+            self.textLabel.backgroundColor = [UIColor clearColor];
+            self.textLabel.textColor = [UIColor textColour];
+            self.detailTextLabel.backgroundColor = [UIColor clearColor];
+            
+            if (style == UITableViewCellStyleSubtitle) {
+                self.textLabel.font = [UIFont listTextFont];
+                self.detailTextLabel.font = [UIFont listDetailFont];
+                self.detailTextLabel.textColor = [UIColor textColour];
+            } else if (style == UITableViewCellStyleValue1) {
+                self.textLabel.font = [UIFont alternateListFont];
+                self.detailTextLabel.font = [UIFont alternateListFont];
+                self.detailTextLabel.textColor = [UIColor lightGrayColor];
+            }
+        }
+        
         if ([self isListCell]) {
             self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
@@ -61,22 +81,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
         } else {
             _views = [NSMutableDictionary dictionary];
             _inputDelegate = (id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate>)_state.viewController;
-        }
-        
-        if ([OMeta systemIs_iOS6x]) {
-            self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-            self.backgroundView.backgroundColor = [UIColor cellBackgroundColour];
-            self.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-            self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColour];
-            self.textLabel.backgroundColor = [UIColor clearColor];
-            self.detailTextLabel.backgroundColor = [UIColor clearColor];
-            
-            if (style == UITableViewCellStyleSubtitle) {
-                self.textLabel.font = [UIFont listTextFont];
-                self.textLabel.textColor = [UIColor textColour];
-                self.detailTextLabel.font = [UIFont listDetailFont];
-                self.detailTextLabel.textColor = [UIColor textColour];
-            }
         }
     }
     
@@ -336,7 +340,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 self.frame = frame;
                 
                 if ([OMeta systemIs_iOS6x]) {
-                    [self.backgroundView redrawDropShadow];
+                    [self.backgroundView redrawSeparatorsForTableViewCell];
                 }
             }];
         }
@@ -385,7 +389,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     if ([_inputDelegate inputIsValid]) {
         if (![_state actionIs:kActionEdit]) {
-            [_state.viewController.view endEditing:YES];
+            [self endEditing:YES];
         }
         
         [_inputDelegate processInput];

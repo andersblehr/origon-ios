@@ -15,7 +15,7 @@
 + (UIColor *)tableViewSeparatorColour;
 + (UIColor *)cellBackgroundColour;
 + (UIColor *)selectedCellBackgroundColour;
-+ (UIColor *)placeholderColour;
++ (UIColor *)alertViewBackgroundColour;
 
 + (UIColor *)windowTintColour;
 + (UIColor *)titleBackgroundColour;
@@ -24,6 +24,7 @@
 + (UIColor *)iOS6BarButtonItemColour;
 
 + (UIColor *)textColour;
++ (UIColor *)placeholderTextColour;
 + (UIColor *)headerTextColour;
 + (UIColor *)footerTextColour;
 + (UIColor *)titleTextColour;

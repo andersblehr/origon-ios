@@ -230,7 +230,7 @@
 
 - (BOOL)isDirty
 {
-    return ([self isBeingDeleted] || ![self.hashCode isEqualToString:[self computeHashCode]]);
+    return ![self.hashCode isEqualToString:[self computeHashCode]];
 }
 
 

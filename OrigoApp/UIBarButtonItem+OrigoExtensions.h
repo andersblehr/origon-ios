@@ -17,8 +17,8 @@
 + (UIBarButtonItem *)cancelButtonWithTarget:(id)target;
 + (UIBarButtonItem *)doneButtonWithTarget:(id)target;
 + (UIBarButtonItem *)signOutButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)phoneCallButtonWithTarget:(id)target;
 + (UIBarButtonItem *)sendTextButtonWithTarget:(id)target;
++ (UIBarButtonItem *)phoneCallButtonWithTarget:(id)target;
 + (UIBarButtonItem *)sendEmailButtonWithTarget:(id)target;
 + (UIBarButtonItem *)flexibleSpace;
 

@@ -11,8 +11,8 @@
 @interface UIView (OrigoExtensions)
 
 - (void)addSeparatorsForTableViewCell;
-- (void)addDropShadowForPhotoFrame;
+- (void)redrawSeparatorsForTableViewCell;
 
-- (void)redrawDropShadow;
+- (void)addDropShadowForPhotoFrame;
 
 @end

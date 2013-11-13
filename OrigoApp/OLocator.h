@@ -12,7 +12,7 @@
 @private
     CLLocationManager *_locationManager;
     CLPlacemark *_placemark;
-    UIAlertView *_blockingAlert;
+    OActivityIndicator *_activityIndicator;
     
     BOOL _awaitingAuthorisation;
     BOOL _awaitingLocation;

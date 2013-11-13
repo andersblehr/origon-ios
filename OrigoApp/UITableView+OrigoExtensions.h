@@ -14,7 +14,6 @@ extern CGFloat const kContentWidth;
 @interface UITableView (OrigoExtensions)
 
 - (void)addLogoBanner;
-- (UIActivityIndicatorView *)addActivityIndicator;
 
 - (id)cellForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
 - (id)cellForReuseIdentifier:(NSString *)reuseIdentifier;

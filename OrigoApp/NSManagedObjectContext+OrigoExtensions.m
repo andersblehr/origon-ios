@@ -176,22 +176,22 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 }
 
 
-- (NSSet *)dirtyEntities
+- (NSSet *)pendingEntities
 {
     NSMutableSet *unsavedEntities = [NSMutableSet set];
     
     [unsavedEntities unionSet:[self insertedObjects]];
     [unsavedEntities unionSet:[self updatedObjects]];
     
-    NSMutableSet *dirtyEntities = [NSMutableSet set];
+    NSMutableSet *pendingEntities = [NSMutableSet set];
     
     for (OReplicatedEntity *entity in unsavedEntities) {
-        if ([entity isDirty]) {
-            [dirtyEntities addObject:entity];
+        if ([entity isDirty] || [entity isBeingDeleted]) {
+            [pendingEntities addObject:entity];
         }
     }
     
-    return dirtyEntities;
+    return pendingEntities;
 }
 
 
@@ -369,7 +369,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (void)save
 {
-    for (OReplicatedEntity *entity in [self dirtyEntities]) {
+    for (OReplicatedEntity *entity in [self pendingEntities]) {
         if ([entity isBeingDeleted]) {
             [self deleteObject:entity];
         }
@@ -416,17 +416,17 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 #pragma mark - Entities to replicate
 
-- (NSSet *)entitiesAwaitingReplication
+- (NSSet *)dirtyEntities
 {
-    NSMutableSet *entitiesAwaitingReplication = [NSMutableSet set];
+    NSMutableSet *dirtyEntities = [NSMutableSet set];
     
-    for (OReplicatedEntity *entity in [self dirtyEntities]) {
+    for (OReplicatedEntity *entity in [self pendingEntities]) {
         if (![entity isBeingDeleted]) {
-            [entitiesAwaitingReplication addObject:entity];
+            [dirtyEntities addObject:entity];
         }
     }
     
-    return entitiesAwaitingReplication;
+    return dirtyEntities;
 }
 
 @end
