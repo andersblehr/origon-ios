@@ -10,6 +10,8 @@
 
 static NSInteger const kSectionKeyAuth = 0;
 
+static NSInteger const kMaxActivationAttempts = 3;
+
 static NSInteger const kAlertTagWelcomeBack = 0;
 static NSInteger const kAlertTagActivationFailed = 1;
 
@@ -40,18 +42,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-- (void)indicatePendingRequest:(BOOL)isPending
-{
-    if ([self actionIs:kActionSignIn]) {
-        [_emailField indicatePendingEvent:isPending];
-        [_passwordField indicatePendingEvent:isPending];
-    } else if ([self actionIs:kActionActivate]) {
-        [_activationCodeField indicatePendingEvent:isPending];
-        [_repeatPasswordField indicatePendingEvent:isPending];
-    }
-}
-
-
 - (void)toggleAuthState
 {
     [self.state toggleAction:@[kActionSignIn, kActionActivate]];
@@ -78,7 +68,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     
     numberOfFailedAttempts++;
     
-    if (numberOfFailedAttempts == 3) {
+    if (numberOfFailedAttempts == kMaxActivationAttempts) {
         numberOfFailedAttempts = 0;
         
         if ([self targetIs:kTargetUser]) {
@@ -334,14 +324,14 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)willSendRequest:(NSURLRequest *)request
 {
     if (![self actionIs:kActionActivate] || ![self targetIs:kTargetEmail]) {
-        [self indicatePendingRequest:YES];
+        [self.activityIndicator startAnimating];
     }
 }
 
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    [self indicatePendingRequest:NO];
+    [self.activityIndicator stopAnimating];
     
     if (response.statusCode < kHTTPStatusErrorRangeStart) {
         if (response.statusCode == kHTTPStatusCreated) {
@@ -366,7 +356,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)didFailWithError:(NSError *)error
 {
-    [self indicatePendingRequest:NO];
+    [self.activityIndicator stopAnimating];
     
     // TODO: Subsequent auth attempts seem to fail.
 }

@@ -64,6 +64,7 @@
 		5C7013A3171EC9D0006E9F42 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C7013A2171EC9D0006E9F42 /* CoreLocation.framework */; };
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C7379FD1593111B0065AB4F /* OTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7379FC1593111B0065AB4F /* OTextField.m */; };
+		5C752CB21827E29D004CEACD /* OActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C752CB11827E29D004CEACD /* OActivityIndicator.m */; };
 		5C78695018116AD400020E08 /* OActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78694F18116AD400020E08 /* OActionSheet.m */; };
 		5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78FAB91654E77E009A4BCF /* OTextView.m */; };
 		5C7BC3DD16F358B7006AA52F /* OResidencySchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7BC3DC16F358B7006AA52F /* OResidencySchedule.m */; };
@@ -252,6 +253,8 @@
 		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5C7379FB1593111B0065AB4F /* OTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextField.h; sourceTree = "<group>"; };
 		5C7379FC1593111B0065AB4F /* OTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextField.m; sourceTree = "<group>"; };
+		5C752CB01827E29D004CEACD /* OActivityIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OActivityIndicator.h; sourceTree = "<group>"; };
+		5C752CB11827E29D004CEACD /* OActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OActivityIndicator.m; sourceTree = "<group>"; };
 		5C78694E18116AD400020E08 /* OActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OActionSheet.h; sourceTree = "<group>"; };
 		5C78694F18116AD400020E08 /* OActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OActionSheet.m; sourceTree = "<group>"; };
 		5C78FAB81654E77E009A4BCF /* OTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextView.h; sourceTree = "<group>"; };
@@ -628,6 +631,8 @@
 		5CB49DD014881F36006EA2F8 /* Auxiliary Classes */ = {
 			isa = PBXGroup;
 			children = (
+				5C752CB01827E29D004CEACD /* OActivityIndicator.h */,
+				5C752CB11827E29D004CEACD /* OActivityIndicator.m */,
 				5C014A2215CA77310040A1D9 /* OAlert.h */,
 				5C014A2315CA77310040A1D9 /* OAlert.m */,
 				5C2E11121469CDE5005BDE61 /* OConnection.h */,
@@ -965,6 +970,7 @@
 				5C3374831563FBE200DEF67D /* OMember+OrigoExtensions.m in Sources */,
 				5C4955F6157D469000F2A885 /* UIColor+OrigoExtensions.m in Sources */,
 				5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */,
+				5C752CB21827E29D004CEACD /* OActivityIndicator.m in Sources */,
 				5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */,
 				5CA94D9F15836BD9008CD9EC /* NSDate+OrigoExtensions.m in Sources */,
 				5C6E6C131589AC820002FF84 /* UITableView+OrigoExtensions.m in Sources */,

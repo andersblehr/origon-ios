@@ -270,7 +270,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
         _placeholderView.delegate = self;
         _placeholderView.font = [UIFont detailFont];
         _placeholderView.text = _placeholder;
-        _placeholderView.textColor = [UIColor placeholderColour];
+        _placeholderView.textColor = [UIColor placeholderTextColour];
         _placeholderView.hidden = [self hasText];
         
         if (![OMeta systemIs_iOS6x]) {
@@ -284,15 +284,11 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 }
 
 
-#pragma mark - UIView overrides
+#pragma mark - UIResponder overrides
 
-- (void)drawRect:(CGRect)rect
+- (BOOL)canBecomeFirstResponder
 {
-    [super drawRect:rect];
-    
-    if ([OMeta systemIs_iOS6x] && _hasEmphasis) {
-        [self redrawDropShadow];
-    }
+    return YES;
 }
 
 

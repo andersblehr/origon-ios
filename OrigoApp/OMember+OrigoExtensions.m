@@ -10,6 +10,8 @@
 
 NSString * const kMemberTypeGuardian = @"guardian";
 
+NSString * const kAnnotatedNameFormat = @"%@ (%@)";
+
 
 @implementation OMember (OrigoExtensions)
 
@@ -273,7 +275,7 @@ NSString * const kMemberTypeGuardian = @"guardian";
 
 - (BOOL)isUser
 {
-    return [self.email isEqualToString:[OMeta m].userEmail];
+    return (self == [OMeta m].user);
 }
 
 
@@ -353,18 +355,6 @@ NSString * const kMemberTypeGuardian = @"guardian";
 }
 
 
-- (BOOL)isMemberOfOrigoOfType:(NSString *)origoType
-{
-    BOOL isMember = NO;
-    
-    for (OMembership *membership in [self allMemberships]) {
-        isMember = isMember || [membership.origo isOfType:origoType];
-    }
-    
-    return isMember;
-}
-
-
 - (BOOL)hasParent:(OMember *)member
 {
     return [self.fatherId isEqualToString:member.entityId] || [self.motherId isEqualToString:member.entityId];
@@ -422,21 +412,27 @@ NSString * const kMemberTypeGuardian = @"guardian";
 }
 
 
+- (NSString *)appellation
+{
+    return [self isUser] ? [OLanguage pronouns][_you_][nominative] : [self givenName];
+}
+
+
 - (NSString *)givenName
 {
     return [OUtil givenNameFromFullName:self.name];
 }
 
 
-- (NSString *)nameWithParentTitle
+- (NSString *)givenNameWithParentTitle
 {
-    return [NSString stringWithFormat:@"%@ (%@)", self.name, [self parentNoun][singularIndefinite]];
+    return [NSString stringWithFormat:kAnnotatedNameFormat, [self givenName], [self parentNoun][singularIndefinite]];
 }
 
 
-- (NSString *)appellation
+- (NSString *)givenNameWithContactRoleForOrigo:(OOrigo *)origo
 {
-    return [self isUser] ? [OLanguage pronouns][_you_][nominative] : [self givenName];
+    return [NSString stringWithFormat:kAnnotatedNameFormat, [self givenName], [origo membershipForMember:self].contactRole];
 }
 
 

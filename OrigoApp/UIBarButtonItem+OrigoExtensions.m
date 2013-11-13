@@ -8,6 +8,8 @@
 
 #import "UIBarButtonItem+OrigoExtensions.h"
 
+static UIBarButtonItem *_flexibleSpace = nil;
+
 
 @implementation UIBarButtonItem (OrigoExtensions)
 
@@ -85,21 +87,6 @@
 }
 
 
-+ (UIBarButtonItem *)sendEmailButtonWithTarget:(id)target
-{
-    UIBarButtonItem *barButtonItem = nil;
-    SEL action = @selector(processEmailRequest);
-    
-    if ([OMeta systemIs_iOS6x]) {
-        barButtonItem = [UIBarButtonItem barButtonWithIcon:kIconFileSendEmail_iOS6x target:target action:action];
-    } else {
-        barButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSendEmail] style:UIBarButtonItemStylePlain target:target action:action];
-    }
-    
-    return barButtonItem;
-}
-
-
 + (UIBarButtonItem *)sendTextButtonWithTarget:(id)target
 {
     UIBarButtonItem *barButtonItem = nil;
@@ -118,7 +105,7 @@
 + (UIBarButtonItem *)phoneCallButtonWithTarget:(id)target
 {
     UIBarButtonItem *barButtonItem = nil;
-    SEL action = @selector(processPhoneCallRequest);
+    SEL action = @selector(processCallRequest);
     
     if ([OMeta systemIs_iOS6x]) {
         barButtonItem = [UIBarButtonItem barButtonWithIcon:kIconFilePlacePhoneCall_iOS6x target:target action:action];
@@ -130,9 +117,28 @@
 }
 
 
++ (UIBarButtonItem *)sendEmailButtonWithTarget:(id)target
+{
+    UIBarButtonItem *barButtonItem = nil;
+    SEL action = @selector(processEmailRequest);
+    
+    if ([OMeta systemIs_iOS6x]) {
+        barButtonItem = [UIBarButtonItem barButtonWithIcon:kIconFileSendEmail_iOS6x target:target action:action];
+    } else {
+        barButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSendEmail] style:UIBarButtonItemStylePlain target:target action:action];
+    }
+    
+    return barButtonItem;
+}
+
+
 + (UIBarButtonItem *)flexibleSpace
 {
-    return [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    if (!_flexibleSpace) {
+        _flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    }
+    
+    return _flexibleSpace;
 }
 
 

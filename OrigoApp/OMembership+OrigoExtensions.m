@@ -18,12 +18,6 @@ static NSString * const kMembershipTypeAssociate = @"A";
 
 #pragma mark - Meta information
 
-- (BOOL)hasContactRole
-{
-    return [self.contactRole hasValue];
-}
-
-
 - (BOOL)isFull
 {
     return [self isParticipancy] || [self isResidency];
@@ -45,6 +39,12 @@ static NSString * const kMembershipTypeAssociate = @"A";
 - (BOOL)isAssociate
 {
     return [self.type isEqualToString:kMembershipTypeAssociate];
+}
+
+
+- (BOOL)hasContactRole
+{
+    return [self.contactRole hasValue];
 }
 
 

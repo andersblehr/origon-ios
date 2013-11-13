@@ -8,7 +8,7 @@
 
 #import "OrigoApp.h"
 
-extern NSString * const kEntityRegistrationCell;
+extern NSString * const kRegistrationCell;
 extern NSString * const kCustomCell;
 extern NSString * const kCustomValue;
 
@@ -27,7 +27,7 @@ extern NSString * const kCustomValue;
     
     NSNumber *_lastSectionKey;
     NSIndexPath *_selectedIndexPath;
-    UIActivityIndicatorView *_activityIndicator;
+    OActivityIndicator *_activityIndicator;
     
     UIBarButtonItem *_nextButton;
     UIBarButtonItem *_doneButton;
@@ -39,8 +39,8 @@ extern NSString * const kCustomValue;
 @property (strong, nonatomic, readonly) NSString *identifier;
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic, readonly) OReplicatedEntity *entity;
+@property (strong, nonatomic, readonly) OActivityIndicator *activityIndicator;
 @property (strong, nonatomic, readonly) NSMutableSet *dirtySections;
-@property (strong, nonatomic, readonly) UIActivityIndicatorView *activityIndicator;
 @property (strong, nonatomic, readonly) UIView *actionSheetView;
 
 @property (nonatomic, readonly) BOOL isPushed;

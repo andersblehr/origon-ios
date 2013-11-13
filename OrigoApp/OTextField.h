@@ -14,7 +14,6 @@ extern CGFloat const kBorderWidthNonRetina;
 @interface OTextField : UITextField {
 @private
     NSDate *_date;
-    NSString *_cachedText;
 
     id<OTableViewInputDelegate> _inputDelegate;
 }
@@ -36,7 +35,6 @@ extern CGFloat const kBorderWidthNonRetina;
 - (NSString *)textValue;
 
 - (void)prepareForInput;
-- (void)indicatePendingEvent:(BOOL)isPending;
 - (void)raiseGuardAgainstUnwantedAutolayoutAnimation:(BOOL)raiseGuard; // Hack!
 
 @end

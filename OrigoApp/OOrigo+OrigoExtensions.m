@@ -10,15 +10,14 @@
 
 NSString * const kOrigoTypeMemberRoot = @"~";
 NSString * const kOrigoTypeResidence = @"residence";
-NSString * const kOrigoTypeContactList = @"contactList";
 NSString * const kOrigoTypeFriends = @"friends";
 NSString * const kOrigoTypeTeam = @"team";
 NSString * const kOrigoTypeOrganisation = @"organisation";
+NSString * const kOrigoTypeOther = @"other";
 NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
 NSString * const kOrigoTypeSchoolClass = @"schoolClass";
 NSString * const kOrigoTypePlaymates = @"playmates";
 NSString * const kOrigoTypeMinorTeam = @"minorTeam";
-NSString * const kOrigoTypeOther = @"other";
 
 
 @implementation OOrigo (OrigoExtensions)
@@ -93,6 +92,34 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
+- (NSSet *)regularMemberships
+{
+    NSMutableSet *regularMemberships = [NSMutableSet set];
+    
+    for (OMembership *membership in [self fullMemberships]) {
+        if (![membership hasContactRole]) {
+            [regularMemberships addObject:membership];
+        }
+    }
+    
+    return regularMemberships;
+}
+
+
+- (NSSet *)contactMemberships
+{
+    NSMutableSet *contactMemberships = [NSMutableSet set];
+    
+    for (OMembership *membership in [self fullMemberships]) {
+        if ([membership hasContactRole]) {
+            [contactMemberships addObject:membership];
+        }
+    }
+    
+    return contactMemberships;
+}
+
+
 - (NSSet *)residencies
 {
     NSMutableSet *residencies = [NSMutableSet set];
@@ -121,6 +148,44 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
+- (NSSet *)contacts
+{
+    NSMutableSet *contacts = [NSMutableSet set];
+    
+    for (OMembership *membership in [self contactMemberships]) {
+        [contacts addObject:membership.member];
+    }
+    
+    return contacts;
+}
+
+
+- (NSSet *)members
+{
+    NSMutableSet *members = [NSMutableSet set];
+    
+    for (OMembership *membership in [self fullMemberships]) {
+        [members addObject:membership.member];
+    }
+    
+    return members;
+}
+
+
+- (NSSet *)guardians
+{
+    NSMutableSet *guardians = [NSMutableSet set];
+    
+    if ([self isJuvenile]) {
+        for (OMembership *membership in [self regularMemberships]) {
+            [guardians unionSet:[membership.member guardians]];
+        }
+    }
+    
+    return guardians;
+}
+
+
 - (NSSet *)elders
 {
     NSMutableSet *elders = [NSMutableSet set];
@@ -136,6 +201,8 @@ NSString * const kOrigoTypeOther = @"other";
     return elders;
 }
 
+
+#pragma mark - Membership creation & access
 
 - (OMembership *)addMember:(OMember *)member
 {
@@ -191,11 +258,29 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
+- (BOOL)userIsContact
+{
+    return [self hasContact:[OMeta m].user];
+}
+
+
 #pragma mark - Origo meta information
 
 - (BOOL)isOfType:(NSString *)origoType
 {
     return [self.type isEqualToString:origoType];
+}
+
+
+- (BOOL)isOrganised
+{
+    BOOL isOrganised = YES;
+    
+    isOrganised = isOrganised && ![self isOfType:kOrigoTypeResidence];
+    isOrganised = isOrganised && ![self isOfType:kOrigoTypeFriends];
+    isOrganised = isOrganised && ![self isOfType:kOrigoTypePlaymates];
+    
+    return isOrganised;
 }
 
 
@@ -217,6 +302,12 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
+- (BOOL)hasContacts
+{
+    return ([[self contacts] count] > 0);
+}
+
+
 - (BOOL)hasMember:(OMember *)member
 {
     OMembership *membership = [self membershipForMember:member];
@@ -225,17 +316,17 @@ NSString * const kOrigoTypeOther = @"other";
 }
 
 
-- (BOOL)hasAssociateMember:(OMember *)member
+- (BOOL)hasContact:(OMember *)contact
 {
-    OMembership *membership = [self membershipForMember:member];
-    
-    return ((membership != nil) && [membership isAssociate]);
+    return [[self membershipForMember:contact] hasContactRole];
 }
 
 
-- (BOOL)memberIsContact:(OMember *)member
+- (BOOL)hasAssociateMember:(OMember *)associateMember
 {
-    return [[self membershipForMember:member] hasContactRole];
+    OMembership *membership = [self membershipForMember:associateMember];
+    
+    return ((membership != nil) && [membership isAssociate]);
 }
 
 

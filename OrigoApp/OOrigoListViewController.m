@@ -83,7 +83,7 @@ static NSInteger const kSectionKeyWards = 2;
 {
     _countryCodes = [NSMutableArray arrayWithArray:[OMeta supportedCountryCodes]];
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[OStrings stringForKey:strSheetTitleCountry] delegate:self tag:kActionSheetTagCountry];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[OStrings stringForKey:strSheetPromptCountry] delegate:self tag:kActionSheetTagCountry];
 
     for (NSString *countryCode in _countryCodes) {
         [actionSheet addButtonWithTitle:[OUtil localisedCountryNameFromCountryCode:countryCode]];
@@ -148,7 +148,7 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)addItem
 {
-    NSString *prompt = [OStrings stringForKey:strSheetTitleOrigoType];
+    NSString *prompt = [OStrings stringForKey:strSheetPromptOrigoType];
     
     if ([self targetIs:kTargetUser]) {
         prompt = [prompt stringByAppendingString:@"?"];
@@ -214,10 +214,9 @@ static NSInteger const kSectionKeyWards = 2;
         
         if ([self targetIs:kTargetUser]) {
             [_origoTypes addObject:kOrigoTypeFriends];
-            [_origoTypes addObject:kOrigoTypeOrganisation];
             [_origoTypes addObject:kOrigoTypeTeam];
+            [_origoTypes addObject:kOrigoTypeOrganisation];
             [_origoTypes addObject:kOrigoTypeOther];
-            [_origoTypes addObject:kOrigoTypeContactList];
         } else {
             if (![_member isOlderThan:kAgeThresholdInSchool]) {
                 [_origoTypes addObject:kOrigoTypePreschoolClass];

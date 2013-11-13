@@ -11,17 +11,6 @@
 
 @implementation OLocator
 
-#pragma mark - Auxiliary methods
-
-- (void)showBlockingAlert
-{
-    _blocking = YES;
-    _blockingAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTextLocating] message:nil delegate:self cancelButtonTitle:nil otherButtonTitles:nil];
-    
-    [_blockingAlert show];
-}
-
-
 #pragma mark - Initialisation
 
 - (id)init
@@ -31,6 +20,7 @@
     if (self && [self canLocate]) {
         _locationManager = [[CLLocationManager alloc] init];
         _locationManager.delegate = self;
+        _activityIndicator = [OState s].viewController.activityIndicator;
     }
     
     return self;
@@ -74,9 +64,11 @@
 - (void)locateBlocking:(BOOL)blocking
 {
     if ([self canLocate]) {
+        _blocking = blocking;
+        
         if ([self isAuthorised]) {
-            if (blocking) {
-                [self showBlockingAlert];
+            if (_blocking) {
+                [_activityIndicator startAnimating];
             }
         } else {
             _awaitingAuthorisation = YES;
@@ -106,7 +98,7 @@
     
     if (_awaitingLocation) {
         if (_blocking) {
-            [_blockingAlert dismissWithClickedButtonIndex:0 animated:YES];
+            [_activityIndicator stopAnimating];
         }
         
         [[[CLGeocoder alloc] init] reverseGeocodeLocation:manager.location completionHandler:^(NSArray *placemarks, NSError *error) {
@@ -126,7 +118,7 @@
     if (_awaitingAuthorisation) {
         if (status == kCLAuthorizationStatusAuthorized) {
             if (_blocking) {
-                [self showBlockingAlert];
+                [_activityIndicator startAnimating];
             }
         } else if (status == kCLAuthorizationStatusDenied) {
             [_delegate locatorCannotLocate];
@@ -142,29 +134,17 @@
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
     if (_awaitingLocation) {
-        if (_blocking) {
-            [_blockingAlert dismissWithClickedButtonIndex:0 animated:YES];
-        }
-        
         if ((error.code != kCLErrorLocationUnknown) || [OMeta deviceIsSimulator]) {
+            if (_blocking) {
+                [_activityIndicator stopAnimating];
+            }
+            
             [_delegate locatorCannotLocate];
             
+            _blocking = NO;
             _awaitingLocation = NO;
         }
     }
-}
-
-
-#pragma mark - UIAlertViewDelegate conformance
-
-- (void)willPresentAlertView:(UIAlertView *)alertView
-{
-    UIActivityIndicatorView *activityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    activityIndicator.center = CGPointMake(_blockingAlert.bounds.size.width / 2.f, _blockingAlert.bounds.size.height - 50.f);
-    
-    [_blockingAlert addSubview:activityIndicator];
-    
-    [activityIndicator startAnimating];
 }
 
 @end

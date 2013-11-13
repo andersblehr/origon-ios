@@ -38,8 +38,7 @@
     BOOL needsReplication = NO;
     
     if (!_isReplicating && [[OMeta m].user isActive]) {
-        needsReplication = [[[OMeta m].context entitiesAwaitingReplication] count];
-        needsReplication = needsReplication || [_dirtyEntities count];
+        needsReplication = [_dirtyEntities count] || [[[OMeta m].context dirtyEntities] count];
     }
     
     return needsReplication;
@@ -58,7 +57,7 @@
 {
     _isReplicating = YES;
     
-    [_dirtyEntities unionSet:[[OMeta m].context entitiesAwaitingReplication]];
+    [_dirtyEntities unionSet:[[OMeta m].context dirtyEntities]];
     
     NSMutableArray *entities = [NSMutableArray array];
     
@@ -74,16 +73,18 @@
 
 - (void)saveUserReplicationState
 {
-    NSMutableSet *dirtyEntityURIs = [NSMutableSet set];
+    NSSet *dirtyEntities = [[OMeta m].context dirtyEntities];
     
-    for (OReplicatedEntity *dirtyEntity in [[OMeta m].context entitiesAwaitingReplication]) {
-        [dirtyEntityURIs addObject:[[dirtyEntity objectID] URIRepresentation]];
-    }
-    
-    if ([dirtyEntityURIs count]) {
-        [ODefaults setUserDefault:[NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs] forKey:kDefaultsKeyDirtyEntities];
-        
+    if ([dirtyEntities count]) {
         [[OMeta m].context save];
+        
+        NSMutableSet *dirtyEntityURIs = [NSMutableSet set];
+        
+        for (OReplicatedEntity *dirtyEntity in dirtyEntities) {
+            [dirtyEntityURIs addObject:[[dirtyEntity objectID] URIRepresentation]];
+        }
+        
+        [ODefaults setUserDefault:[NSKeyedArchiver archivedDataWithRootObject:dirtyEntityURIs] forKey:kDefaultsKeyDirtyEntities];
     }
 }
 

@@ -10,9 +10,6 @@
 
 static CGFloat const kCellShadowRadius = 1.f;
 static CGFloat const kCellShadowOffset = 0.f;
-static CGFloat const kFieldShadowRadius = 3.f;
-static CGFloat const kFieldShadowOffset = 3.f;
-static CGFloat const kFieldShadowHeightShrinkage = 1.f;
 static CGFloat const kImageShadowRadius = 1.f;
 static CGFloat const kImageShadowOffset = 1.5f;
 
@@ -22,15 +19,6 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 @implementation UIView (OrigoExtensions)
 
 #pragma mark - Auxiliary methods
-
-- (UIBezierPath *)shadowPathForTextField
-{
-    CGFloat fieldShadowOriginY = self.bounds.origin.y + kFieldShadowOffset;
-    CGFloat fieldShadowHeight = self.bounds.size.height - kFieldShadowHeightShrinkage;
-    
-    return [UIBezierPath bezierPathWithRect:CGRectMake(self.bounds.origin.x, fieldShadowOriginY, self.bounds.size.width, fieldShadowHeight)];
-}
-
 
 - (void)addShadowWithPath:(UIBezierPath *)path colour:(UIColor *)colour radius:(CGFloat)radius offset:(CGFloat)offset
 {
@@ -44,7 +32,7 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 }
 
 
-#pragma mark - Shadows
+#pragma mark - Shadow effects
 
 - (void)addSeparatorsForTableViewCell
 {
@@ -52,21 +40,9 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 }
 
 
-- (void)addDropShadowForPhotoFrame
+- (void)redrawSeparatorsForTableViewCell
 {
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:CGRectMake(0.f, 0.f, kPhotoFrameWidth, kPhotoFrameWidth)] colour:[UIColor darkGrayColor] radius:kImageShadowRadius offset:kImageShadowOffset];
-}
-
-
-- (void)redrawDropShadow
-{
-    CGPathRef redrawnShadowPath;
-    
-    if ([self isKindOfClass:UITextField.class] || [self isKindOfClass:UITextView.class]) {
-        redrawnShadowPath = [self shadowPathForTextField].CGPath;
-    } else {
-        redrawnShadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
-    }
+    CGPathRef redrawnShadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
     
     CABasicAnimation *redrawAnimation = [CABasicAnimation animationWithKeyPath:kKeyPathShadowPath];
     redrawAnimation.duration = kCellAnimationDuration;
@@ -76,6 +52,12 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
     
     [self.layer addAnimation:redrawAnimation forKey:nil];
     self.layer.shadowPath = redrawnShadowPath;
+}
+
+
+- (void)addDropShadowForPhotoFrame
+{
+    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:CGRectMake(0.f, 0.f, kPhotoFrameWidth, kPhotoFrameWidth)] colour:[UIColor darkGrayColor] radius:kImageShadowRadius offset:kImageShadowOffset];
 }
 
 @end

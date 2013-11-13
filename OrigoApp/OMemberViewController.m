@@ -85,7 +85,7 @@ static NSInteger const kButtonTagContinue = 1;
                 [self.dismisser dismissModalViewController:self reload:YES];
             }
         } else /* if (![self targetIs:kTargetHousehold]) */ {
-            [self.dismisser dismissModalViewController:self reload:YES]; // Work in progress
+            [self.dismisser dismissModalViewController:self reload:YES]; // TODO: Work in progress
         }
     }
 }
@@ -111,7 +111,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)presentExistingResidenceActionSheet
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:[OStrings stringForKey:strSheetTitleExistingResidence], _candidate.name, [_candidate givenName]] delegate:self tag:kActionSheetTagExistingResidence];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:[OStrings stringForKey:strSheetPromptExistingResidence], _candidate.name, [_candidate givenName]] delegate:self tag:kActionSheetTagExistingResidence];
     
     [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonInviteToHousehold] tag:kButtonTagInviteToHousehold];
     [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonMergeHouseholds] tag:kButtonTagMergeHouseholds];
@@ -236,7 +236,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)initialiseData
 {
-    id memberDataSource = _member ? _member : kEntityRegistrationCell;
+    id memberDataSource = _member ? _member : kRegistrationCell;
     
     [self setData:memberDataSource forSectionWithKey:kSectionKeyMember];
     
@@ -309,7 +309,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (NSArray *)toolbarButtons
 {
-    return [_member isUser] ? nil : [[OMeta m].switchboard toolbarButtonsWithEntity:_member];
+    return [_member isUser] ? nil : [[OMeta m].switchboard toolbarButtonsForMember:_member];
 }
 
 
@@ -387,7 +387,7 @@ static NSInteger const kButtonTagContinue = 1;
             cell.detailTextLabel.text = [guardian shortAddress];
         }
         
-        if ([_member hasParent:guardian]) {
+        if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
             cell.detailTextLabel.text = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:cell.detailTextLabel.text separator:kSeparatorComma];
         }
     } else if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddress) {

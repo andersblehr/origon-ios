@@ -10,12 +10,11 @@
 
 @interface OMembership (OrigoExtensions)
 
-- (BOOL)hasContactRole;
-
 - (BOOL)isFull;
 - (BOOL)isParticipancy;
 - (BOOL)isResidency;
 - (BOOL)isAssociate;
+- (BOOL)hasContactRole;
 
 - (void)promoteToFull;
 - (void)demoteToAssociate;

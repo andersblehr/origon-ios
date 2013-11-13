@@ -11,8 +11,6 @@
 CGFloat const kScreenWidth = 320.f;
 CGFloat const kContentWidth = 300.f;
 
-static CGFloat const kKeyboardHeight = 216.f;
-
 static CGFloat const kLogoHeight = 110.f;
 static CGFloat const kLogoFontSize = 30.f;
 
@@ -65,26 +63,6 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (UIActivityIndicatorView *)addActivityIndicator
-{
-    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth / 2, kKeyboardHeight / 2);
-    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
-    containerView.backgroundColor = [UIColor redColor];
-    
-    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    activityIndicatorView.center = containerView.center;
-    activityIndicatorView.color = [UIColor lightGrayColor];
-    activityIndicatorView.hidesWhenStopped = YES;
-    
-    [containerView addSubview:activityIndicatorView];
-    [self addSubview:containerView];
-    
-    //self.tableFooterView = containerView;
-    
-    return activityIndicatorView;
-}
-
-
 #pragma mark - Cell instantiation
 
 - (id)cellForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
@@ -126,7 +104,7 @@ static NSString * const kLogoText = @"..origo..";
     UIFont *footerFont = [UIFont footerFont];
     CGFloat textHeight = [text lineCountWithFont:footerFont maxWidth:kContentWidth] * footerFont.lineHeight;
     
-    return textHeight + 2.f * kDefaultCellPadding;
+    return textHeight + 2 * kDefaultCellPadding;
 }
 
 
