@@ -8,14 +8,12 @@
 
 #import "OrigoApp.h"
 
-@interface OSettingViewController : OTableViewController<OTableViewListDelegate, OLocatorDelegate> {
+@interface OSettingViewController : OTableViewController<OTableViewListDelegate> {
 @private
     OSettings *_settings;
     NSString *_settingKey;
     
     OTableViewCell *_valueCell;
-    
-    BOOL _listContainsParenthesisedCountries;
 }
 
 @end

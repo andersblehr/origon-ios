@@ -9,6 +9,8 @@
 #ifndef OrigoApp_OrigoApp_h
 #define OrigoApp_OrigoApp_h
 
+#import <AddressBook/AddressBook.h>
+#import <AddressBookUI/AddressBookUI.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <CommonCrypto/CommonDigest.h>
 #import <CoreData/CoreData.h>
@@ -22,11 +24,12 @@
 
 #import "Reachability.h"
 
-@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLanguage, OLocator, ONavigationController, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
+@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
 @class ODevice, OMember, OMembership, OMessageBoard, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
 
 #import "OConnectionDelegate.h"
 #import "OEntityObserver.h"
+#import "OInputField.h"
 #import "OLocatorDelegate.h"
 #import "ORegistrantExaminerDelegate.h"
 #import "OModalViewControllerDismisser.h"
@@ -35,31 +38,32 @@
 #import "OTableViewListDelegate.h"
 
 #import "ODevice.h"
-#import "ODevice+OrigoExtensions.h"
+#import "ODevice+OrigoAdditions.h"
 #import "OMember.h"
-#import "OMember+OrigoExtensions.h"
+#import "OMember+OrigoAdditions.h"
 #import "OMembership.h"
-#import "OMembership+OrigoExtensions.h"
+#import "OMembership+OrigoAdditions.h"
 #import "OMessageBoard.h"
 #import "OOrigo.h"
-#import "OOrigo+OrigoExtensions.h"
+#import "OOrigo+OrigoAdditions.h"
 #import "OReplicatedEntity.h"
-#import "OReplicatedEntity+OrigoExtensions.h"
+#import "OReplicatedEntity+OrigoAdditions.h"
 #import "OReplicatedEntityRef.h"
 #import "OSettings.h"
-#import "OSettings+OrigoExtensions.h"
+#import "OSettings+OrigoAdditions.h"
 
-#import "NSDate+OrigoExtensions.h"
-#import "NSJSONSerialization+OrigoExtensions.h"
-#import "NSManagedObjectContext+OrigoExtensions.h"
-#import "NSString+OrigoExtensions.h"
-#import "NSURL+OrigoExtensions.h"
-#import "UIBarButtonItem+OrigoExtensions.h"
-#import "UIColor+OrigoExtensions.h"
-#import "UIFont+OrigoExtensions.h"
-#import "UINavigationItem+OrigoExtensions.h"
-#import "UITableView+OrigoExtensions.h"
-#import "UIView+OrigoExtensions.h"
+#import "NSDate+OrigoAdditions.h"
+#import "NSJSONSerialization+OrigoAdditions.h"
+#import "NSLocale+OrigoAdditions.h"
+#import "NSManagedObjectContext+OrigoAdditions.h"
+#import "NSString+OrigoAdditions.h"
+#import "NSURL+OrigoAdditions.h"
+#import "UIBarButtonItem+OrigoAdditions.h"
+#import "UIColor+OrigoAdditions.h"
+#import "UIFont+OrigoAdditions.h"
+#import "UINavigationItem+OrigoAdditions.h"
+#import "UITableView+OrigoAdditions.h"
+#import "UIView+OrigoAdditions.h"
 
 #import "OActionSheet.h"
 #import "OActivityIndicator.h"
@@ -71,6 +75,7 @@
 #import "OLocator.h"
 #import "OLogging.h"
 #import "ONavigationController.h"
+#import "OPhoneNumberFormatter.h"
 #import "ORegistrantExaminer.h"
 #import "OMeta.h"
 #import "OReplicator.h"

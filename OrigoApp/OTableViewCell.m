@@ -227,20 +227,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (id)firstEmptyInputField
-{
-    id inputField = nil;
-    
-    for (NSString *key in _blueprint.allTextFieldKeys) {
-        if (!inputField && ![self hasValueForKey:key]) {
-            inputField = [self textFieldForKey:key];
-        }
-    }
-    
-    return inputField ? inputField : [self nextInputField];
-}
-
-
 - (id)nextInputField
 {
     id inputField = nil;
@@ -257,6 +243,22 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
     
     return inputField;
+}
+
+
+- (id)nextInvalidInputField
+{
+    id invalidInputField = nil;
+    
+    for (NSString *key in _blueprint.allTextFieldKeys) {
+        id textField = [self textFieldForKey:key];
+        
+        if (!invalidInputField && ![textField hasValidValue]) {
+            invalidInputField = textField;
+        }
+    }
+    
+    return invalidInputField;
 }
 
 
@@ -277,6 +279,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (BOOL)hasValidValueForKey:(NSString *)key
 {
     return [[self textFieldForKey:key] hasValidValue];
+}
+
+
+- (BOOL)hasInvalidInputField
+{
+    return ([self nextInvalidInputField] != nil);
 }
 
 
@@ -421,7 +429,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
                     [textField setDate:value];
                 }
             } else {
-                [textField setText:@""];
+                [textField setText:[NSString string]];
             }
         }
         

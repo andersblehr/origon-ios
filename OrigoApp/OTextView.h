@@ -10,7 +10,7 @@
 
 extern NSInteger const kTextViewMaximumLines;
 
-@interface OTextView : UITextView<UITextViewDelegate> {
+@interface OTextView : UITextView<OInputField, UITextViewDelegate> {
 @private
     OTableViewCellBlueprint *_blueprint;
     CGFloat _textWidth;
@@ -23,7 +23,6 @@ extern NSInteger const kTextViewMaximumLines;
 @property (strong, nonatomic, readonly) NSString *key;
 @property (strong, nonatomic) NSString *placeholder;
 
-@property (nonatomic) BOOL isDateField;
 @property (nonatomic) BOOL selected;
 @property (nonatomic) BOOL hasEmphasis;
 
@@ -32,11 +31,5 @@ extern NSInteger const kTextViewMaximumLines;
 + (CGFloat)labelWidthWithBlueprint:(OTableViewCellBlueprint *)blueprint;
 + (CGFloat)heightWithText:(NSString *)text blueprint:(OTableViewCellBlueprint *)blueprint;
 - (CGFloat)height;
-
-- (BOOL)hasValue;
-- (BOOL)hasValidValue;
-
-- (id)objectValue;
-- (NSString *)textValue;
 
 @end

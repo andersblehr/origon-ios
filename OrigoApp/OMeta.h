@@ -28,6 +28,7 @@ extern NSString * const kIconFileInfant;
 extern NSString * const kIconFileSettings;
 extern NSString * const kIconFilePlus;
 extern NSString * const kIconFileAction;
+extern NSString * const kIconFileLookup;
 extern NSString * const kIconFilePlacePhoneCall;
 extern NSString * const kIconFilePlacePhoneCall_iOS6x;
 extern NSString * const kIconFileSendText;
@@ -87,9 +88,10 @@ extern NSString * const kRelationshipKeyOrigo;
     Reachability *_internetReachability;
     
     OMember *_user;
+    OLocator *_locator;
     OReplicator *_replicator;
     OSwitchboard *_switchboard;
-    OLocator *_locator;
+    OPhoneNumberFormatter *_phoneNumberFormatter;
     
     NSNumber *_isSignedIn;
     NSString *_authToken;
@@ -111,10 +113,11 @@ extern NSString * const kRelationshipKeyOrigo;
 @property (strong, nonatomic, readonly) NSString *language;
 
 @property (strong, nonatomic, readonly) OMember *user;
+@property (strong, nonatomic, readonly) OLocator *locator;
 @property (strong, nonatomic, readonly) OSettings *settings;
 @property (strong, nonatomic, readonly) OReplicator *replicator;
 @property (strong, nonatomic, readonly) OSwitchboard *switchboard;
-@property (strong, nonatomic, readonly) OLocator *locator;
+@property (strong, nonatomic, readonly) OPhoneNumberFormatter *phoneNumberFormatter;
 
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 
@@ -135,7 +138,5 @@ extern NSString * const kRelationshipKeyOrigo;
 + (BOOL)screenIsRetina;
 
 + (NSArray *)supportedLanguages;
-+ (NSArray *)supportedCountryCodes;
-- (NSString *)inferredCountryCode;
 
 @end

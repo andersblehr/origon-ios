@@ -88,7 +88,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         } else if (recipientTag == kRecipientTagGuardians) {
             [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:recipients conjoinLastItem:YES]];
         } else if (recipientTag == kRecipientTagAllMembers) {
-            [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAllMembers]];
+            [actionSheet addButtonWithTitle:[OStrings stringForKey:_origo.type withKeyPrefix:kKeyPrefixAllMembersTitle]];
         } else if (recipientTag == kRecipientTagAllContacts) {
             [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAllContacts]];
         } else if (recipientTag == kRecipientTagAllGuardians) {

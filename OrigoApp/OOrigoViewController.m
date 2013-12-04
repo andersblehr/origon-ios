@@ -145,7 +145,9 @@ static NSInteger const kButtonTagGuardian = 101;
         _origo = _membership.origo;
         _origoType = _origo.type;
         
-        if ([_origo isOfType:kOrigoTypeResidence]) {
+        [self.state setTarget:_origo];
+        
+        if ([_origo isOfType:kOrigoTypeResidence] && ![[OState s] aspectIsHousehold]) {
             self.title = [OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixOrigoTitle];
         } else {
             self.title = [_origo displayName];
@@ -154,8 +156,6 @@ static NSInteger const kButtonTagGuardian = 101;
         if ([self canEdit] && ![self actionIs:kActionRegister]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
         }
-
-        [self.state setTarget:_origo];
     } else if ([self.data isKindOfClass:[OMember class]]) {
         _member = self.data;
         _origoType = self.meta;

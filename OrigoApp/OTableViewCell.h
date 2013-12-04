@@ -45,12 +45,13 @@ extern CGFloat const kCellAnimationDuration;
 
 - (id)labelForKey:(NSString *)key;
 - (id)textFieldForKey:(NSString *)key;
-- (id)firstEmptyInputField;
 - (id)nextInputField;
+- (id)nextInvalidInputField;
 
 - (BOOL)isListCell;
 - (BOOL)hasValueForKey:(NSString *)key;
 - (BOOL)hasValidValueForKey:(NSString *)key;
+- (BOOL)hasInvalidInputField;
 
 - (void)didLayoutSubviews;
 - (void)toggleEditMode;

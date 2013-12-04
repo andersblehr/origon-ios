@@ -12,8 +12,8 @@
 
 + (NSArray *)nameKeys;
 + (NSArray *)dateKeys;
-+ (NSArray *)phoneKeys;
 + (NSArray *)emailKeys;
++ (NSArray *)phoneNumberKeys;
 + (NSArray *)passwordKeys;
 + (NSArray *)inferredKeys;
 

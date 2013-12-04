@@ -25,6 +25,41 @@ static CGFloat const kTextInsetY = 1.2f;
 }
 
 
+- (void)phoneNumberDidChange
+{
+    NSString *oldFormat = self.text;
+    NSString *newFormat = [[OMeta m].phoneNumberFormatter formatPhoneNumber:oldFormat];
+    
+    UITextRange *range = [self selectedTextRange];
+    NSInteger offset = [self offsetFromPosition:self.endOfDocument toPosition:range.end];
+    NSInteger endPosition = [oldFormat length] - 1;
+    NSInteger tailingDigits = 0;
+    
+    for (int i = 0; i > offset; i--) {
+        if ([kCharacters0_9 containsCharacter:[oldFormat characterAtIndex:endPosition + i]]) {
+            tailingDigits++;
+        }
+    }
+    
+    endPosition = [newFormat length] - 1;
+    
+    for (int i = 0; tailingDigits > 0; i--) {
+        if ([kCharacters0_9 containsCharacter:[newFormat characterAtIndex:endPosition + i]]) {
+            tailingDigits--;
+            
+            if (!tailingDigits) {
+                offset = i - 1;
+            }
+        }
+    }
+    
+    super.text = newFormat;
+    
+    UITextPosition *newPosition = [self positionFromPosition:self.endOfDocument offset:offset];
+    self.selectedTextRange = [self textRangeFromPosition:newPosition toPosition:newPosition];
+}
+
+
 #pragma mark - Initialisation
 
 - (id)initWithKey:(NSString *)key delegate:(id)delegate
@@ -47,75 +82,18 @@ static CGFloat const kTextInsetY = 1.2f;
         self.layer.borderWidth = [OMeta screenIsRetina] ? kBorderWidth : kBorderWidthNonRetina;
         self.layer.borderColor = [[UIColor clearColor] CGColor];
         
+        [self setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
+        
         _key = key;
         _inputDelegate = delegate;
         
-        [self setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
+        if ([[OValidator phoneNumberKeys] containsObject:_key]) {
+            [self addTarget:self action:@selector(phoneNumberDidChange) forControlEvents:UIControlEventEditingChanged];
+        }
     }
     
     return self;
-}
-
-
-#pragma mark - Data access & validation
-
-- (BOOL)hasValue
-{
-    return ([self textValue] != nil);
-}
-
-
-- (BOOL)hasValidValue
-{
-    BOOL hasValidValue = NO;
-    BOOL delegateWillValidate = NO;
-    
-    if ([_inputDelegate respondsToSelector:@selector(willValidateInputForKey:)]) {
-        delegateWillValidate = [_inputDelegate willValidateInputForKey:_key];
-    }
-    
-    if (delegateWillValidate) {
-        hasValidValue = [_inputDelegate inputValue:[self objectValue] isValidForKey:_key];
-    } else {
-        hasValidValue = [OValidator value:[self objectValue] isValidForKey:_key];
-    }
-    
-    if (hasValidValue) {
-        self.text = [self textValue];
-    } else {
-        if (self.secureTextEntry) {
-            self.text = @"";
-        }
-        
-        [self becomeFirstResponder];
-    }
-    
-    return hasValidValue;
-}
-
-
-- (id)objectValue
-{
-    return _isDateField ? [self date] : [self textValue];
-}
-
-
-- (NSString *)textValue
-{
-    NSString *textValue = nil;
-    
-    if ([self.text hasValue]) {
-        textValue = self.secureTextEntry ? self.text : [self.text removeRedundantWhitespace];
-        
-        if (![textValue hasValue]) {
-            textValue = nil;
-        }
-        
-        self.text = textValue;
-    }
-    
-    return textValue;
 }
 
 
@@ -123,7 +101,7 @@ static CGFloat const kTextInsetY = 1.2f;
 
 - (void)prepareForInput
 {
-    if (_isDateField && ![self.inputView isKindOfClass:[UIDatePicker class]]) {
+    if ([self isDateField] && ![self.inputView isKindOfClass:[UIDatePicker class]]) {
         UIDatePicker *datePicker = [[UIDatePicker alloc] init];
         datePicker.datePickerMode = UIDatePickerModeDate;
         [datePicker addTarget:self action:@selector(didPickDate) forControlEvents:UIControlEventValueChanged];
@@ -151,9 +129,9 @@ static CGFloat const kTextInsetY = 1.2f;
     
     if ([[OState s] actionIs:kActionRegister]) {
         if (raiseGuard && ![self hasValue]) {
-            self.text = kSeparatorSpace;
+            super.text = kSeparatorSpace;
         } else if (!raiseGuard && [self.text isEqualToString:kSeparatorSpace]) {
-            self.text = @"";
+            super.text = @"";
         }
     }
 }
@@ -161,15 +139,51 @@ static CGFloat const kTextInsetY = 1.2f;
 
 #pragma mark - Custom accessors
 
+- (void)setMultiValue:(NSArray *)multiValue
+{
+    if ([multiValue count] > 1) {
+        _multiValue = multiValue;
+        
+        super.text = nil;
+    } else if ([multiValue count] == 1) {
+        id value = multiValue[0];
+        
+        if ([value isKindOfClass:[NSString class]]) {
+            self.text = value;
+        } else if ([value isKindOfClass:[NSDate class]]) {
+            self.date = value;
+        }
+    }
+}
+
+
 - (void)setDate:(NSDate *)date
 {
     _date = date;
     
-    self.text = [_date localisedDateString];
+    self.text = [_date asString];
     
     if ([self.inputView isKindOfClass:[UIDatePicker class]]) {
         ((UIDatePicker *)self.inputView).date = _date;
     }
+}
+
+
+- (void)setValue:(id)value
+{
+    _value = value;
+    
+    if ([self isDateField]) {
+        _displayValue = [_value asString];
+        
+        if ([self.inputView isKindOfClass:[UIDatePicker class]]) {
+            ((UIDatePicker *)self.inputView).date = _value;
+        }
+    } else if ([[OValidator phoneNumberKeys] containsObject:_key]) {
+        _displayValue = [[OMeta m].phoneNumberFormatter canonicalisePhoneNumber:_value];
+    }
+    
+    self.text = _displayValue ? _displayValue : _value;
 }
 
 
@@ -213,7 +227,7 @@ static CGFloat const kTextInsetY = 1.2f;
             self.layer.borderColor = [[UIColor windowTintColour] CGColor];
         }
     } else {
-        self.text = [self textValue];
+        super.text = [self textValue];
         self.layer.borderColor = [[UIColor clearColor] CGColor];
     }
 }
@@ -236,6 +250,20 @@ static CGFloat const kTextInsetY = 1.2f;
 
 
 #pragma mark - UITextField overrides
+
+- (void)setText:(NSString *)text
+{
+    if (_multiValue) {
+        _multiValue = nil;
+    }
+    
+    if ([[OValidator phoneNumberKeys] containsObject:_key]) {
+        text = [[OMeta m].phoneNumberFormatter canonicalisePhoneNumber:text];
+    }
+    
+    super.text = text;
+}
+
 
 - (CGRect)editingRectForBounds:(CGRect)bounds
 {
@@ -272,6 +300,76 @@ static CGFloat const kTextInsetY = 1.2f;
     }
     
     return canPerformAction;
+}
+
+
+#pragma mark - OInputField conformance
+
+- (BOOL)isDateField
+{
+    return [[OValidator dateKeys] containsObject:_key];
+}
+
+
+- (BOOL)hasValue
+{
+    return ([self textValue] != nil);
+}
+
+
+- (BOOL)hasValidValue
+{
+    BOOL hasValidValue = NO;
+    
+    if (!_multiValue) {
+        BOOL delegateWillValidate = NO;
+        
+        if ([_inputDelegate respondsToSelector:@selector(willValidateInputForKey:)]) {
+            delegateWillValidate = [_inputDelegate willValidateInputForKey:_key];
+        }
+        
+        if (delegateWillValidate) {
+            hasValidValue = [_inputDelegate inputValue:[self objectValue] isValidForKey:_key];
+        } else {
+            hasValidValue = [OValidator value:[self objectValue] isValidForKey:_key];
+        }
+    }
+    
+    if (hasValidValue) {
+        super.text = [self textValue];
+    } else {
+        if (self.secureTextEntry) {
+            super.text = @"";
+        }
+        
+        [self becomeFirstResponder];
+    }
+    
+    return hasValidValue;
+}
+
+
+- (id)objectValue
+{
+    return [self isDateField] ? [self date] : [self textValue];
+}
+
+
+- (NSString *)textValue
+{
+    NSString *textValue = nil;
+    
+    if ([self.text hasValue]) {
+        textValue = self.secureTextEntry ? self.text : [self.text removeRedundantWhitespace];
+        
+        if (![textValue hasValue]) {
+            textValue = nil;
+        }
+        
+        super.text = textValue;
+    }
+    
+    return textValue;
 }
 
 @end

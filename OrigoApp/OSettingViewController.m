@@ -46,27 +46,7 @@ static NSInteger const kSectionKeyValues = 0;
 
 - (void)initialiseData
 {
-    if ([_settingKey isEqualToString:kSettingKeyCountry]) {
-        NSString *currentCountryCode = [_settings valueForSettingKey:_settingKey];
-        NSString *inferredCountryCode = [[OMeta m] inferredCountryCode];
-        NSString *localCountryCode = [OMeta m].locator.countryCode;
-        
-        [self setData:[OMeta supportedCountryCodes] forSectionWithKey:kSectionKeyValues];
-        [self appendData:currentCountryCode toSectionWithKey:kSectionKeyValues];
-        [self appendData:inferredCountryCode toSectionWithKey:kSectionKeyValues];
-        
-        if (localCountryCode) {
-            [self appendData:localCountryCode toSectionWithKey:kSectionKeyValues];
-        } else if ([[OMeta m].locator canLocate]) {
-            if ([[OMeta m].locator isAuthorised]) {
-                [[OMeta m].locator locateBlocking:NO];
-            } else {
-                [self appendData:kCustomValue toSectionWithKey:kSectionKeyValues];
-            }
-        }
-        
-        _listContainsParenthesisedCountries = NO;
-    }
+    // TODO
 }
 
 
@@ -78,35 +58,7 @@ static NSInteger const kSectionKeyValues = 0;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return [_settingKey isEqualToString:kSettingKeyCountry];
-}
-
-
-- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
-{
-    NSMutableString *text = nil;
-    
-    if ([_settingKey isEqualToString:kSettingKeyCountry]) {
-        NSMutableArray *supportedCountries = [NSMutableArray array];
-        
-        for (NSString *countryCode in [OMeta supportedCountryCodes]) {
-            [supportedCountries addObject:[OUtil localisedCountryNameFromCountryCode:countryCode]];
-        }
-        
-        text = [NSMutableString stringWithFormat:[OStrings stringForKey:strFooterCountryInfo], [OUtil commaSeparatedListOfItems:supportedCountries conjoinLastItem:YES]];
-        
-        if (_listContainsParenthesisedCountries) {
-            [text appendString:[OStrings stringForKey:strFooterCountryInfoNote]];
-        } else {
-            [text appendString:@"."];
-        }
-        
-        if (![[OMeta m].locator canLocate]) {
-            [text appendFormat:@"\n\n%@", [OStrings stringForKey:strFooterCountryInfoLocate]];
-        }
-    }
-    
-    return text;
+    return NO;
 }
 
 
@@ -126,13 +78,7 @@ static NSInteger const kSectionKeyValues = 0;
     [cell setSelected:NO animated:YES];
     
     if ([[self dataAtIndexPath:indexPath] isEqualToString:kCustomValue]) {
-        if ([_settingKey isEqualToString:kSettingKeyCountry]) {
-            if ([[OMeta m].locator didLocate]) {
-                [self locatorDidLocate];
-            } else {
-                [[OMeta m].locator locateBlocking:NO];
-            }
-        }
+        // TODO
     } else {
         _valueCell.checked = NO;
         _valueCell = cell;
@@ -153,90 +99,15 @@ static NSInteger const kSectionKeyValues = 0;
 
 #pragma mark - OTableViewListDelegate conformance
 
-- (BOOL)willCompareObjectsInSectionWithKey:(NSInteger)sectionKey
-{
-    return (_settingKey == kSettingKeyCountry);
-}
-
-
-- (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2
-{
-    NSComparisonResult result = NSOrderedSame;
-    
-    if (_settingKey == kSettingKeyCountry) {
-        NSString *country1 = [OUtil localisedCountryNameFromCountryCode:object1];
-        NSString *country2 = [OUtil localisedCountryNameFromCountryCode:object2];
-        
-        result = [country1 localizedCaseInsensitiveCompare:country2];
-    }
-    
-    return result;
-}
-
-
 - (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    if ([_settingKey isEqualToString:kSettingKeyCountry]) {
-        NSString *countryCode = [self dataAtIndexPath:indexPath];
-        NSString *country = [OUtil localisedCountryNameFromCountryCode:countryCode];
-        
-        if (country) {
-            if ([OUtil isSupportedCountryCode:countryCode]) {
-                cell.textLabel.text = country;
-            } else {
-                _listContainsParenthesisedCountries = YES;
-                
-                cell.textLabel.text = [NSString stringWithFormat:@"(%@)", country];
-                cell.textLabel.textColor = [UIColor darkGrayColor];
-                
-                if ([countryCode isEqualToString:[OMeta m].locator.countryCode]) {
-                    if ([[OMeta m].locator canLocate]) {
-                        cell.detailTextLabel.text = [OStrings stringForKey:strLabelCountryLocate];
-                    }
-                } else if ([countryCode isEqualToString:[[OMeta m] inferredCountryCode]]) {
-                    cell.detailTextLabel.text = [OStrings stringForKey:strLabelCountrySettings];
-                }
-            }
-        } else {
-            cell.detailTextLabel.text = [OStrings stringForKey:strLabelCountryLocate];
-            cell.imageView.image = [UIImage imageNamed:kIconFileLocationArrow];
-        }
-        
-    }
+    // TODO
 }
 
 
 - (UITableViewCellStyle)styleForIndexPath:(NSIndexPath *)indexPath
 {
     return UITableViewCellStyleValue1;
-}
-
-
-#pragma mark - OLocatorDelegate conformance
-
-- (void)locatorDidLocate
-{
-    if ([_settingKey isEqualToString:kSettingKeyCountry]) {
-        if ([[self dataInSectionWithKey:kSectionKeyValues] containsObject:kCustomValue]) {
-            [self reloadSectionWithKey:kSectionKeyValues];
-        } else {
-            NSString *localCountryCode = [OMeta m].locator.countryCode;
-            NSString *currentCountryCode = [_settings valueForSettingKey:_settingKey];
-            
-            BOOL countryIsChecked = [localCountryCode isEqualToString:currentCountryCode];
-            BOOL countryIsUnknown = ![[self dataInSectionWithKey:kSectionKeyValues] containsObject:localCountryCode];
-            
-            if (countryIsChecked || countryIsUnknown) {
-                [self reloadSectionWithKey:kSectionKeyValues];
-            }
-        }
-    }
-}
-
-
-- (void)locatorCannotLocate
-{
-    [self reloadSectionWithKey:kSectionKeyValues];
 }
 
 @end

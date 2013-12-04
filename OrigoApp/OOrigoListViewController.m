@@ -11,13 +11,7 @@
 static NSString * const kSegueToOrigoView = @"segueFromOrigoListToOrigoView";
 static NSString * const kSegueToMemberView = @"segueFromOrigoListToMemberView";
 
-static NSInteger const kActionSheetTagCountry = 0;
-static NSInteger const kButtonTagLocate = 100;
-static NSInteger const kButtonTagOther = 101;
-
 static NSInteger const kActionSheetTagOrigoType = 1;
-
-static NSInteger const kAlertTagCountry = 0;
 
 static NSInteger const kSectionKeyMember = 0;
 static NSInteger const kSectionKeyOrigos = 1;
@@ -78,55 +72,6 @@ static NSInteger const kSectionKeyWards = 2;
 
 
 #pragma mark - Action sheets & alerts
-
-- (void)presentCountrySheet
-{
-    _countryCodes = [NSMutableArray arrayWithArray:[OMeta supportedCountryCodes]];
-    
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[OStrings stringForKey:strSheetPromptCountry] delegate:self tag:kActionSheetTagCountry];
-
-    for (NSString *countryCode in _countryCodes) {
-        [actionSheet addButtonWithTitle:[OUtil localisedCountryNameFromCountryCode:countryCode]];
-    }
-    
-    NSString *locatedCountryCode = [OMeta m].locator.countryCode;
-    
-    if (locatedCountryCode && ![_countryCodes containsObject:locatedCountryCode]) {
-        [_countryCodes addObject:locatedCountryCode];
-        [actionSheet addButtonWithTitle:[OUtil localisedCountryNameFromCountryCode:locatedCountryCode]];
-    }
-    
-    NSString *inferredCountryCode = [[OMeta m] inferredCountryCode];
-    
-    if (![_countryCodes containsObject:inferredCountryCode]) {
-        [_countryCodes addObject:inferredCountryCode];
-        [actionSheet addButtonWithTitle:[OUtil localisedCountryNameFromCountryCode:inferredCountryCode]];
-    }
-    
-    if (![[OMeta m].locator didLocate] && [[OMeta m].locator canLocate]) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strLabelCountryLocate] tag:kButtonTagLocate];
-    }
-    
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonCountryOther] tag:kButtonTagOther];
-    
-    [actionSheet show];
-}
-
-
-- (void)presentCountryAlert
-{
-    NSString *country = [OUtil localisedCountryNameFromCountryCode:[OMeta m].settings.countryCode];
-    NSString *alertFormat = nil;
-    
-    if ([OUtil isSupportedCountryCode:[OMeta m].settings.countryCode]) {
-        alertFormat = [OStrings stringForKey:strAlertTextCountrySupported];
-    } else {
-        alertFormat = [OStrings stringForKey:strAlertTextCountryUnsupported];
-    }
-    
-    [OAlert showAlertWithTitle:country text:[NSString stringWithFormat:alertFormat, country] tag:kAlertTagCountry];
-}
-
 
 - (void)presentListedUserAlert
 {
@@ -347,87 +292,20 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-#pragma mark - OLocatorDelegate conformance
-
-- (void)locatorDidLocate
-{
-    if ([OMeta m].locator.blocking) {
-        [self presentCountrySheet];
-    } else {
-        [OMeta m].settings.countryCode = [OMeta m].locator.countryCode;
-        
-        [self presentCountryAlert];
-    }
-}
-
-
-- (void)locatorCannotLocate
-{
-    [self presentCountrySheet];
-}
-
-
 #pragma mark - UIActionSheetDelegate conformance
 
 - (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex < actionSheet.cancelButtonIndex) {
-        NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
-        
         switch (actionSheet.tag) {
-            case kActionSheetTagCountry:
-                if (buttonTag < kButtonTagLocate) {
-                    [OMeta m].settings.countryCode = _countryCodes[buttonTag];
-                } else if (buttonTag == kButtonTagLocate) {
-                    [[OMeta m].locator locateBlocking:YES];
-                } else if (buttonTag == kButtonTagOther) {
-                    [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleCountryOther] text:[OStrings stringForKey:strAlertTextCountryOther]];
-                }
-                
-                if ([OMeta m].settings.countryCode) {
-                    if ([OUtil isSupportedCountryCode:[OMeta m].settings.countryCode]) {
-                        [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:_selectedOrigoType];
-                    } else {
-                        [self presentCountryAlert];
-                    }
-                }
-                
-                break;
-                
             case kActionSheetTagOrigoType:
-                _selectedOrigoType = _origoTypes[buttonIndex];
-                
-                if (![OMeta m].settings.countryCode) {
-                    if ([[OMeta m].locator isAuthorised] && ![[OMeta m].locator didLocate]) {
-                        [[OMeta m].locator locateBlocking:YES];
-                    } else {
-                        [self presentCountrySheet];
-                    }
-                } else {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:_selectedOrigoType];
-                }
+                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:_origoTypes[buttonIndex]];
                 
                 break;
                 
             default:
                 break;
         }
-    }
-}
-
-
-#pragma mark - UIAlertViewDelegate conformance
-
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (alertView.tag) {
-        case kAlertTagCountry:
-            [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:_selectedOrigoType];
-
-            break;
-            
-        default:
-            break;
     }
 }
 
