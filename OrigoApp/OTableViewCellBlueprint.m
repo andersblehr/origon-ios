@@ -118,12 +118,10 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
     
     if ([key isEqualToString:_titleKey]) {
         [textField setIsTitleField:YES];
-    } else if ([[OValidator dateKeys] containsObject:key]) {
-        [textField setIsDateField:YES];
     }
     
-    if ([[OValidator phoneKeys] containsObject:key]) {
-        [textField setKeyboardType:UIKeyboardTypeNumberPad];
+    if ([[OValidator phoneNumberKeys] containsObject:key]) {
+        [textField setKeyboardType:UIKeyboardTypeNumbersAndPunctuation];
     } else if ([[OValidator emailKeys] containsObject:key]) {
         [textField setKeyboardType:UIKeyboardTypeEmailAddress];
     } else {

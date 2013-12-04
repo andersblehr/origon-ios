@@ -28,6 +28,7 @@ NSString * const kIconFileInfant = @"76-baby_black.png";
 NSString * const kIconFileSettings = @"14-gear.png";
 NSString * const kIconFilePlus = @"05-plus.png";
 NSString * const kIconFileAction = @"212-action2_centred.png";
+NSString * const kIconFileLookup = @"01-magnify.png";
 NSString * const kIconFilePlacePhoneCall = @"735-phone.png";
 NSString * const kIconFilePlacePhoneCall_iOS6x = @"735-phone_pizazz.png";
 NSString * const kIconFileSendText = @"734-chat.png";
@@ -83,7 +84,6 @@ NSString * const kRelationshipKeyMember = @"member";
 NSString * const kRelationshipKeyOrigo = @"origo";
 
 static NSString * const kLanguageHungarian = @"hu";
-static NSString * const kCountryCodeNorway = @"no";
 
 static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
@@ -332,29 +332,11 @@ static OMeta *_m = nil;
 }
 
 
-#pragma mark - Country information
+#pragma mark - Meta information
 
 + (NSArray *)supportedLanguages
 {
-    return [[OStrings stringForKey:metaSupportedLanguages] componentsSeparatedByString:kListSeparator];
-}
-
-
-+ (NSArray *)supportedCountryCodes
-{
-    return @[kCountryCodeNorway];
-}
-
-
-- (NSString *)inferredCountryCode
-{
-    NSString *inferredCountryCode = self.switchboard.carrier.isoCountryCode;
-    
-    if (!inferredCountryCode) {
-        inferredCountryCode = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
-    }
-    
-    return [inferredCountryCode lowercaseString];
+    return [[OStrings stringForKey:metaSupportedLanguages] componentsSeparatedByString:kSeparatorList];
 }
 
 
@@ -433,6 +415,16 @@ static OMeta *_m = nil;
 }
 
 
+- (OLocator *)locator
+{
+    if (!_locator) {
+        _locator = [[OLocator alloc] init];
+    }
+    
+    return _locator;
+}
+
+
 - (OSettings *)settings
 {
     return self.user.settings;
@@ -459,13 +451,13 @@ static OMeta *_m = nil;
 }
 
 
-- (OLocator *)locator
+- (OPhoneNumberFormatter *)phoneNumberFormatter
 {
-    if (!_locator) {
-        _locator = [[OLocator alloc] init];
+    if (!_phoneNumberFormatter) {
+        _phoneNumberFormatter = [[OPhoneNumberFormatter alloc] init];
     }
     
-    return _locator;
+    return _phoneNumberFormatter;
 }
 
 

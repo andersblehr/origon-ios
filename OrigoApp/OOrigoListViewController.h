@@ -8,13 +8,11 @@
 
 #import "OrigoApp.h"
 
-@interface OOrigoListViewController : OTableViewController<OTableViewListDelegate, OLocatorDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
+@interface OOrigoListViewController : OTableViewController<OTableViewListDelegate, UIActionSheetDelegate> {
 @private
     OMember *_member;
     
-    NSMutableArray *_countryCodes;
     NSMutableArray *_origoTypes;
-    NSString *_selectedOrigoType;
 }
 
 @end

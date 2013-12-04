@@ -8,21 +8,21 @@
 
 #import "OrigoApp.h"
 
-@interface OMemberViewController : OTableViewController<OTableViewListDelegate, OTableViewInputDelegate, ORegistrantExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, OConnectionDelegate> {
+@interface OMemberViewController : OTableViewController<OTableViewListDelegate, OTableViewInputDelegate, ORegistrantExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate, OConnectionDelegate> {
 @private
     OMembership *_membership;
     OMember *_member;
     OOrigo *_origo;
-    
-    OMember *_candidate;
     
     OTextField *_nameField;
     OTextField *_dateOfBirthField;
     OTextField *_mobilePhoneField;
     OTextField *_emailField;
     
-    ORegistrantExaminer *_examiner;
+    OMember *_candidate;
     NSArray *_candidateResidences;
+    
+    ORegistrantExaminer *_examiner;
 }
 
 @end

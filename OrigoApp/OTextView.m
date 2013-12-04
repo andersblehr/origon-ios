@@ -174,53 +174,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 }
 
 
-#pragma mark - Data access & validation
-
-- (BOOL)hasValue
-{
-    return ([[self textValue] hasValue]);
-}
-
-
-- (BOOL)hasValidValue
-{
-    BOOL hasValidValue = [self hasValue];
-    
-    if (!hasValidValue) {
-        [self becomeFirstResponder];
-    }
-    
-    return hasValidValue;
-}
-
-
-- (id)objectValue
-{
-    return [self textValue];
-}
-
-
-- (NSString *)textValue
-{
-    NSString *textValue = [self.text removeRedundantWhitespace];
-    
-    if (![textValue hasValue]) {
-        textValue = nil;
-    }
-    
-    self.text = textValue;
-    
-    return textValue;
-}
-
-
 #pragma mark - Custom accessors
-
-- (BOOL)isDateField
-{
-    return NO;
-}
-
 
 - (void)setHasEmphasis:(BOOL)hasEmphasis
 {
@@ -236,6 +190,8 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 }
 
 
+#pragma mark - UITextView custom accessors
+
 - (void)setText:(NSString *)text
 {
     [super setText:text];
@@ -245,8 +201,6 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
     _lastKnownLineCount = [self lineCount];
 }
 
-
-#pragma mark - UITextView custom accessors
 
 - (BOOL)editable
 {
@@ -289,6 +243,52 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 - (BOOL)canBecomeFirstResponder
 {
     return YES;
+}
+
+
+#pragma mark - OInputField conformance
+
+- (BOOL)isDateField
+{
+    return NO;
+}
+
+
+- (BOOL)hasValue
+{
+    return ([[self textValue] hasValue]);
+}
+
+
+- (BOOL)hasValidValue
+{
+    BOOL hasValidValue = [self hasValue];
+    
+    if (!hasValidValue) {
+        [self becomeFirstResponder];
+    }
+    
+    return hasValidValue;
+}
+
+
+- (id)objectValue
+{
+    return [self textValue];
+}
+
+
+- (NSString *)textValue
+{
+    NSString *textValue = [self.text removeRedundantWhitespace];
+    
+    if (![textValue hasValue]) {
+        textValue = nil;
+    }
+    
+    self.text = textValue;
+    
+    return textValue;
 }
 
 

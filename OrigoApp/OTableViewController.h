@@ -81,6 +81,7 @@ extern NSString * const kCustomValue;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier dismisser:(id)dismisser;
 
+- (void)endEditing;
 - (void)toggleEditMode;
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;

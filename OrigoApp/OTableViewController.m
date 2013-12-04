@@ -117,6 +117,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if ([_detailCell nextInputField]) {
         self.navigationItem.rightBarButtonItem = _nextButton;
+        
+        if ([inputField isKindOfClass:[OTextField class]]) {
+            [inputField setReturnKeyType:UIReturnKeyNext];
+        }
     } else {
         self.navigationItem.rightBarButtonItem = _doneButton;
         
@@ -379,6 +383,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Utility methods
 
+- (void)endEditing
+{
+    if ([self actionIs:kActionRegister]) {
+        [self.view endEditing:YES];
+        self.navigationItem.rightBarButtonItem = _doneButton;
+    }
+}
+
+
 - (void)toggleEditMode
 {
     [_detailCell toggleEditMode];
@@ -532,7 +545,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
         }
         
-        self.navigationItem.rightBarButtonItem = _nextButton;
+        [self.navigationItem appendRightBarButtonItem:_nextButton];
     }
     
     _didJustLoad = YES;
@@ -595,7 +608,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 [_detailCell prepareForInput];
                 
                 if ([self actionIs:kActionRegister]) {
-                    [[_detailCell firstEmptyInputField] becomeFirstResponder];
+                    if ([_detailCell hasInvalidInputField]) {
+                        [[_detailCell nextInvalidInputField] becomeFirstResponder];
+                    } else {
+                        [[_detailCell nextInputField] becomeFirstResponder];
+                    }
                 }
             }
         } else if (![_identifier isEqualToString:kIdentifierAuth]) {

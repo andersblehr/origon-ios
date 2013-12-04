@@ -11,30 +11,27 @@
 extern CGFloat const kBorderWidth;
 extern CGFloat const kBorderWidthNonRetina;
 
-@interface OTextField : UITextField {
+@interface OTextField : UITextField<OInputField> {
 @private
     NSDate *_date;
+    id _value;
+    id _displayValue;
 
     id<OTableViewInputDelegate> _inputDelegate;
 }
 
 @property (strong, nonatomic, readonly) NSString *key;
+@property (strong, nonatomic) NSArray *multiValue;
 @property (strong, nonatomic) NSDate *date;
+@property (strong, nonatomic) id value;
 
 @property (nonatomic) BOOL isTitleField;
-@property (nonatomic) BOOL isDateField;
 @property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL hasEmphasis;
 
 - (id)initWithKey:(NSString *)key delegate:(id)delegate;
 
-- (BOOL)hasValue;
-- (BOOL)hasValidValue;
-
-- (id)objectValue;
-- (NSString *)textValue;
-
 - (void)prepareForInput;
-- (void)raiseGuardAgainstUnwantedAutolayoutAnimation:(BOOL)raiseGuard; // Hack!
+- (void)raiseGuardAgainstUnwantedAutolayoutAnimation:(BOOL)raiseGuard; // Bug workaround
 
 @end

@@ -73,10 +73,10 @@ static OLanguage *language = nil;
     NSMutableDictionary *formsDictionary = [NSMutableDictionary dictionary];
     NSString *words = [OStrings stringForKey:[partOfSpeech stringByAppendingString:@"s"]];
     
-    for (NSString *word in [words componentsSeparatedByString:kListSeparator]) {
+    for (NSString *word in [words componentsSeparatedByString:kSeparatorList]) {
         NSString *wordKey = [partOfSpeech stringByAppendingCapitalisedString:word];
         
-        formsDictionary[wordKey] = [[OStrings stringForKey:wordKey] componentsSeparatedByString:kListSeparator];
+        formsDictionary[wordKey] = [[OStrings stringForKey:wordKey] componentsSeparatedByString:kSeparatorList];
     }
     
     return formsDictionary;

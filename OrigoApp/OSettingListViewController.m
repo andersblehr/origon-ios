@@ -50,10 +50,6 @@ static NSInteger const kSectionKeySignOut = 1;
 - (void)initialiseState
 {
     self.state.target = kTargetUser;
-    
-    if (![OMeta m].settings.countryCode) {
-        [OMeta m].settings.countryCode = [[OMeta m] inferredCountryCode];
-    }
 }
 
 

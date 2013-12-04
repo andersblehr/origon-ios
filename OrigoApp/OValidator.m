@@ -10,8 +10,8 @@
 
 static NSArray *_nameKeys = nil;
 static NSArray *_dateKeys = nil;
-static NSArray *_phoneKeys = nil;
 static NSArray *_emailKeys = nil;
+static NSArray *_phoneNumberKeys = nil;
 static NSArray *_passwordKeys = nil;
 static NSArray *_inferredKeys = nil;
 static NSArray *_keysWithDefaultValues = nil;
@@ -29,7 +29,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 + (NSArray *)nameKeys
 {
     if (!_nameKeys) {
-        _nameKeys = @[kPropertyKeyName];
+        _nameKeys = @[kPropertyKeyName, kInterfaceKeyResidenceName];
     }
 
     return _nameKeys;
@@ -46,16 +46,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-+ (NSArray *)phoneKeys
-{
-    if (!_phoneKeys) {
-        _phoneKeys = @[kPropertyKeyMobilePhone, kPropertyKeyTelephone];
-    }
-    
-    return _phoneKeys;
-}
-
-
 + (NSArray *)emailKeys
 {
     if (!_emailKeys) {
@@ -63,6 +53,16 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     }
     
     return _emailKeys;
+}
+
+
++ (NSArray *)phoneNumberKeys
+{
+    if (!_phoneNumberKeys) {
+        _phoneNumberKeys = @[kPropertyKeyMobilePhone, kPropertyKeyTelephone];
+    }
+    
+    return _phoneNumberKeys;
 }
 
 
@@ -132,15 +132,17 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     BOOL valueIsValid = NO;
     
     if (value) {
-        if ([[OValidator nameKeys] containsObject:key]) {
+        NSString *propertyKey = [OValidator propertyKeyForKey:key];
+        
+        if ([[OValidator nameKeys] containsObject:propertyKey]) {
             valueIsValid = [self valueIsName:value];
-        } else if ([[OValidator dateKeys] containsObject:key]) {
+        } else if ([[OValidator dateKeys] containsObject:propertyKey]) {
             valueIsValid = YES;
-        } else if ([[OValidator phoneKeys] containsObject:key]) {
+        } else if ([[OValidator phoneNumberKeys] containsObject:propertyKey]) {
             valueIsValid = ([value length] >= kMinimumPhoneNumberLength);
-        } else if ([[OValidator emailKeys] containsObject:key]) {
+        } else if ([[OValidator emailKeys] containsObject:propertyKey]) {
             valueIsValid = [self valueIsEmailAddress:value];
-        } else if ([[OValidator passwordKeys] containsObject:key]) {
+        } else if ([[OValidator passwordKeys] containsObject:propertyKey]) {
             valueIsValid = ([value length] >= kMinimumPassordLength);
         }
     }
@@ -174,7 +176,10 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     
     if ([value isKindOfClass:[NSString class]]) {
         valueIsName = [value hasValue];
-        valueIsName = valueIsName && ([value rangeOfString:kSeparatorSpace].location > 0);
+        
+        if ([[OState s].viewController.identifier isEqualToString:kIdentifierMember]) {
+            valueIsName = valueIsName && ([value rangeOfString:kSeparatorSpace].location > 0);
+        }
     }
     
     return valueIsName;

@@ -26,59 +26,47 @@
 }
 
 
-+ (BOOL)isSupportedCountryCode:(NSString *)countryCode
-{
-    return [[OMeta supportedCountryCodes] containsObject:countryCode];
-}
-
-
 + (NSString *)commaSeparatedListOfItems:(NSArray *)items conjoinLastItem:(BOOL)conjoinLastItem
 {
-    NSMutableArray *stringItems = nil;
+    NSMutableString *commaSeparatedList = nil;
     
-    if ([items[0] isKindOfClass:[NSString class]]) {
-        stringItems = [NSMutableArray arrayWithArray:items];
-    } else {
-        stringItems = [NSMutableArray array];
+    if ([items count]) {
+        NSMutableArray *stringItems = nil;
         
-        if ([items[0] isKindOfClass:[OMember class]]) {
-            for (OMember *member in items) {
-                [stringItems addObject:[member appellation]];
-            }
-        } else if ([items[0] isKindOfClass:[OOrigo class]]) {
-            for (OOrigo *origo in items) {
-                [stringItems addObject:[origo displayName]];
-            }
-        }
-    }
-    
-    NSMutableString *plainLanguageListing = nil;
-    
-    for (NSString *stringItem in stringItems) {
-        if (!plainLanguageListing) {
-            plainLanguageListing = [NSMutableString stringWithString:stringItem];
-        } else if (conjoinLastItem && [stringItems lastObject] == stringItem) {
-            [plainLanguageListing appendString:[OStrings stringForKey:strSeparatorAnd]];
-            [plainLanguageListing appendString:stringItem];
+        if ([items[0] isKindOfClass:[NSString class]]) {
+            stringItems = [NSMutableArray arrayWithArray:items];
         } else {
-            [plainLanguageListing appendString:kSeparatorComma];
-            [plainLanguageListing appendString:stringItem];
+            stringItems = [NSMutableArray array];
+            
+            if ([items[0] isKindOfClass:[NSDate class]]) {
+                for (NSDate *date in items) {
+                    [stringItems addObject:[date asString]];
+                }
+            } else if ([items[0] isKindOfClass:[OMember class]]) {
+                for (OMember *member in items) {
+                    [stringItems addObject:[member appellation]];
+                }
+            } else if ([items[0] isKindOfClass:[OOrigo class]]) {
+                for (OOrigo *origo in items) {
+                    [stringItems addObject:[origo displayName]];
+                }
+            }
+        }
+        
+        for (NSString *stringItem in stringItems) {
+            if (!commaSeparatedList) {
+                commaSeparatedList = [NSMutableString stringWithString:stringItem];
+            } else if (conjoinLastItem && [stringItems lastObject] == stringItem) {
+                [commaSeparatedList appendString:[OStrings stringForKey:strSeparatorAnd]];
+                [commaSeparatedList appendString:stringItem];
+            } else {
+                [commaSeparatedList appendString:kSeparatorComma];
+                [commaSeparatedList appendString:stringItem];
+            }
         }
     }
     
-    return plainLanguageListing;
-}
-
-
-+ (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode
-{
-    NSString *country = nil;
-    
-    if (countryCode) {
-        country = [[NSLocale currentLocale] displayNameForKey:NSLocaleCountryCode value:countryCode];
-    }
-    
-    return country;
+    return commaSeparatedList;
 }
 
 

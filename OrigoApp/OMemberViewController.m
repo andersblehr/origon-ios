@@ -24,7 +24,14 @@ static NSInteger const kButtonTagCorrectGender = 4;
 static NSInteger const kActionSheetTagResidence = 1;
 static NSInteger const kButtonTagNewAddress = 100;
 
-static NSInteger const kActionSheetTagExistingResidence = 2;
+static NSInteger const kActionSheetTagLookupType = 2;
+static NSInteger const kButtonTagLookUpContact = 0;
+static NSInteger const kButtonTagLookUpMember = 1;
+
+static NSInteger const kActionSheetTagMultiValue = 3;
+static NSInteger const kButtonTagDifferentValue = 10;
+
+static NSInteger const kActionSheetTagExistingResidence = 4;
 static NSInteger const kButtonTagInviteToHousehold = 0;
 static NSInteger const kButtonTagMergeHouseholds = 1;
 
@@ -42,6 +49,116 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
+- (void)lookUpContact
+{
+    ABPeoplePickerNavigationController *peoplePicker = [[ABPeoplePickerNavigationController alloc] init];
+    peoplePicker.peoplePickerDelegate = self;
+    
+    [self presentViewController:peoplePicker animated:YES completion:NULL];
+}
+
+
+- (void)setNameFieldFromPersonRecord:(ABRecordRef)personRecord
+{
+    NSString *firstName = (__bridge_transfer NSString *)ABRecordCopyValue(personRecord, kABPersonFirstNameProperty);
+    NSString *middleName = (__bridge_transfer NSString *)ABRecordCopyValue(personRecord, kABPersonMiddleNameProperty);
+    NSString *lastName = (__bridge_transfer NSString *)ABRecordCopyValue(personRecord, kABPersonLastNameProperty);
+    
+    NSString *fullName = [OMeta m].shouldUseEasternNameOrder ? lastName : firstName;
+    
+    if (fullName) {
+        NSString *nextName = [OMeta m].shouldUseEasternNameOrder ? firstName : middleName;
+        
+        if (nextName) {
+            fullName = [fullName stringByAppendingString:nextName separator:kSeparatorSpace];
+        }
+        
+        nextName = [OMeta m].shouldUseEasternNameOrder ? middleName : lastName;
+        
+        if (nextName) {
+            fullName = [fullName stringByAppendingString:nextName separator:kSeparatorSpace];
+        }
+    }
+    
+    _nameField.text = fullName;
+}
+
+
+- (void)setMobilePhoneFieldFromPersonRecord:(ABRecordRef)personRecord
+{
+    NSMutableArray *mobilePhoneNumbers = [NSMutableArray array];
+    ABMultiValueRef phoneMultiValues = ABRecordCopyValue(personRecord, kABPersonPhoneProperty);
+    NSString *label = nil;
+    
+    for (CFIndex i = 0; i < ABMultiValueGetCount(phoneMultiValues); i++) {
+        label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(phoneMultiValues, i);
+        
+        BOOL isMobilePhone = [label isEqualToString:(NSString *)kABPersonPhoneMobileLabel];
+        BOOL is_iPhone = [label isEqualToString:(NSString *)kABPersonPhoneIPhoneLabel];
+        
+        if (isMobilePhone || is_iPhone) {
+            [mobilePhoneNumbers addObject:(__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(phoneMultiValues, i)];
+        }
+    }
+    
+    if ([mobilePhoneNumbers count]) {
+        _mobilePhoneField.multiValue = mobilePhoneNumbers;
+    } else {
+        _mobilePhoneField.text = nil;
+    }
+    
+    CFRelease(phoneMultiValues);
+}
+
+
+- (void)setEmailFieldFromPersonRecord:(ABRecordRef)personRecord
+{
+    NSMutableArray *emailAddresses = [NSMutableArray array];
+    ABMultiValueRef emailMultiValues = ABRecordCopyValue(personRecord, kABPersonEmailProperty);
+    
+    for (CFIndex i = 0; i < ABMultiValueGetCount(emailMultiValues); i++) {
+        NSString *emailAddress = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(emailMultiValues, i);
+        
+        if ([OValidator valueIsEmailAddress:emailAddress]) {
+            [emailAddresses addObject:emailAddress];
+        }
+    }
+    
+    if ([emailAddresses count]) {
+        _emailField.multiValue = emailAddresses;
+    } else {
+        _emailField.text = nil;
+    }
+    
+    CFRelease(emailMultiValues);
+}
+
+
+- (BOOL)candidateIsValid
+{
+    BOOL candidateIsValid = YES;
+    
+    if ([_origo hasMember:_candidate]) {
+        _emailField.text = @"";
+        [_emailField becomeFirstResponder];
+        
+        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleMemberExists] text:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, _emailField.text, [_origo displayName]]];
+        
+        _candidate = nil;
+        candidateIsValid = NO;
+    } else {
+        _mobilePhoneField.text = _candidate.mobilePhone;
+        _dateOfBirthField.date = _candidate.dateOfBirth;
+        
+        if (![_candidate isManagedByUser]) {
+            self.detailCell.editing = NO;
+        }
+    }
+    
+    return candidateIsValid;
+}
+
+
 - (BOOL)emailIsEligible
 {
     BOOL emailIsEligible = [_emailField hasValidValue];
@@ -50,22 +167,7 @@ static NSInteger const kButtonTagContinue = 1;
         _candidate = [[OMeta m].context memberEntityWithEmail:[_emailField textValue]];
         
         if (_candidate) {
-            if ([_origo hasMember:_candidate]) {
-                _emailField.text = @"";
-                [_emailField becomeFirstResponder];
-                
-                [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleMemberExists] text:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, _emailField.text, [_origo displayName]]];
-                
-                _candidate = nil;
-                emailIsEligible = NO;
-            } else {
-                _mobilePhoneField.text = _candidate.mobilePhone;
-                _dateOfBirthField.date = _candidate.dateOfBirth;
-                
-                if (![_candidate isManagedByUser]) {
-                    self.detailCell.editing = NO;
-                }
-            }
+            emailIsEligible = [self candidateIsValid];
         }
     }
     
@@ -104,6 +206,33 @@ static NSInteger const kButtonTagContinue = 1;
     }
     
     [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonNewAddress] tag:kButtonTagNewAddress];
+    
+    [actionSheet show];
+}
+
+
+- (void)presentActionSheetForMultiValueField:(OTextField *)multiValueField;
+{
+    NSString *promptFormat = nil;
+    NSString *differentValueButtonTitle = nil;
+    
+    if (multiValueField == _mobilePhoneField) {
+        promptFormat = [OStrings stringForKey:strSheetPromptMultiValuePhone];
+        differentValueButtonTitle = [OStrings stringForKey:strButtonDifferentNumber];
+    } else if (multiValueField == _emailField) {
+        promptFormat = [OStrings stringForKey:strSheetPromptMultiValueEmail];
+        differentValueButtonTitle = [OStrings stringForKey:strButtonDifferentEmail];
+    }
+    
+    [multiValueField becomeFirstResponder];
+    
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:promptFormat, [_nameField textValue]] delegate:self tag:kActionSheetTagMultiValue];
+    
+    for (int i = 0; i < [multiValueField.multiValue count]; i++) {
+        [actionSheet addButtonWithTitle:multiValueField.multiValue[i]];
+    }
+    
+    [actionSheet addButtonWithTitle:differentValueButtonTitle tag:kButtonTagDifferentValue];
     
     [actionSheet show];
 }
@@ -155,6 +284,23 @@ static NSInteger const kButtonTagContinue = 1;
     [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonCorrectGender] tag:kButtonTagCorrectGender];
     
     [actionSheet show];
+}
+
+
+- (void)performLookup
+{
+    [self.view endEditing:YES];
+    
+    if ([[[OMeta m].user fullMemberships] count] > 1) {
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagLookupType];
+        
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonLookUpInContacts]];
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonLookUpInOrigo]];
+        
+        [actionSheet show];
+    } else {
+        [self lookUpContact];
+    }
 }
 
 
@@ -230,6 +376,8 @@ static NSInteger const kButtonTagContinue = 1;
         if (self.canEdit) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
         }
+    } else if ([self actionIs:kActionRegister] && ![self targetIs:kTargetUser]) {
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButtonWithTarget:self];
     }
 }
 
@@ -375,7 +523,9 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyGuardian) {
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    
+    if (sectionKey == kSectionKeyGuardian) {
         OMember *guardian = [self dataAtIndexPath:indexPath];
         
         cell.textLabel.text = guardian.name;
@@ -390,7 +540,7 @@ static NSInteger const kButtonTagContinue = 1;
         if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
             cell.detailTextLabel.text = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:cell.detailTextLabel.text separator:kSeparatorComma];
         }
-    } else if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddress) {
+    } else if (sectionKey == kSectionKeyAddress) {
         OOrigo *residence = [[self dataAtIndexPath:indexPath] origo];
         
         cell.textLabel.text = [residence shortAddress];
@@ -560,10 +710,27 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
+    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+    
     switch (actionSheet.tag) {
         case kActionSheetTagActionSheet:
-            if ([actionSheet tagForButtonIndex:buttonIndex] == kButtonTagEdit) {
+            if (buttonTag == kButtonTagEdit) {
                 [self toggleEditMode];
+            }
+            
+            break;
+            
+        case kActionSheetTagMultiValue:
+            if (buttonIndex == actionSheet.cancelButtonIndex) {
+                [self performSelectorOnMainThread:@selector(didCancelEditing) withObject:nil waitUntilDone:NO];
+            } else {
+                OTextField *multiValueField = _mobilePhoneField.multiValue ? _mobilePhoneField : _emailField;
+                
+                if (buttonTag != kButtonTagDifferentValue) {
+                    multiValueField.text = multiValueField.multiValue[buttonIndex];
+                } else {
+                    multiValueField.text = nil;
+                }
             }
             
             break;
@@ -598,6 +765,34 @@ static NSInteger const kButtonTagContinue = 1;
             } else if (buttonIndex < actionSheet.cancelButtonIndex) {
                 [_candidateResidences[buttonIndex] addMember:_member];
                 [self reloadSections];
+            }
+            
+            break;
+            
+        case kActionSheetTagLookupType:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                if (buttonTag == kButtonTagLookUpContact) {
+                    [self lookUpContact];
+                } else if (buttonTag == kButtonTagLookUpMember) {
+                    // TODO
+                }
+            } else {
+                [self resumeFirstResponder];
+            }
+            
+            break;
+            
+        case kActionSheetTagMultiValue:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                if (_emailField.multiValue) {
+                    [self presentActionSheetForMultiValueField:_emailField];
+                } else {
+                    if ([self.detailCell hasInvalidInputField]) {
+                        [[self.detailCell nextInvalidInputField] becomeFirstResponder];
+                    } else {
+                        [self endEditing];
+                    }
+                }
             }
             
             break;
@@ -639,6 +834,40 @@ static NSInteger const kButtonTagContinue = 1;
         default:
             break;
     }
+}
+
+
+#pragma mark - ABPeoplePickerNavigationControllerDelegate conformance
+
+- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person
+{
+    [self setNameFieldFromPersonRecord:person];
+    [self setMobilePhoneFieldFromPersonRecord:person];
+    [self setEmailFieldFromPersonRecord:person];
+    
+    [self dismissViewControllerAnimated:YES completion:^{
+        if (_mobilePhoneField.multiValue) {
+            [self presentActionSheetForMultiValueField:_mobilePhoneField];
+        } else if (_emailField.multiValue) {
+            [self presentActionSheetForMultiValueField:_emailField];
+        } else {
+            [self endEditing];
+        }
+    }];
+    
+    return NO;
+}
+
+
+- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
+{
+    return NO;
+}
+
+
+- (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker
+{
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 @end

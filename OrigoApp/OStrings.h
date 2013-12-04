@@ -22,6 +22,7 @@ extern NSString * const kKeyPrefixOrigoTitle;
 extern NSString * const kKeyPrefixNewOrigoTitle;
 extern NSString * const kKeyPrefixMemberListTitle;
 extern NSString * const kKeyPrefixNewMemberTitle;
+extern NSString * const kKeyPrefixAllMembersTitle;
 
 // Cross-view terms & strings
 extern NSString * const strFooterTapToEdit;
@@ -69,16 +70,10 @@ extern NSString * const strHeaderMyOrigos;
 extern NSString * const strFooterOrigoCreationFirst;
 extern NSString * const strFooterOrigoCreation;
 extern NSString * const strFooterOrigoCreationWards;
-extern NSString * const strButtonCountryOther;
 extern NSString * const strAlertTitleListedUserRegistration;
 extern NSString * const strAlertTextListedUserRegistration;
 extern NSString * const strAlertTitleIncompleteRegistration;
 extern NSString * const strAlertTextIncompleteRegistration;
-extern NSString * const strAlertTitleCountryOther;
-extern NSString * const strAlertTextCountryOther;
-extern NSString * const strAlertTextCountrySupported;
-extern NSString * const strAlertTextCountryUnsupported;
-extern NSString * const strSheetPromptCountry;
 extern NSString * const strSheetPromptOrigoType;
 extern NSString * const strTextNoOrigos;
 extern NSString * const strTermYourChild;
@@ -118,9 +113,12 @@ extern NSString * const strButtonChangePassword;
 extern NSString * const strButtonEditRelations;
 extern NSString * const strButtonCorrectGender;
 extern NSString * const strButtonNewAddress;
-extern NSString * const strButtonAllMembers;
 extern NSString * const strButtonAllContacts;
 extern NSString * const strButtonAllGuardians;
+extern NSString * const strButtonLookUpInContacts;
+extern NSString * const strButtonLookUpInOrigo;
+extern NSString * const strButtonDifferentNumber;
+extern NSString * const strButtonDifferentEmail;
 extern NSString * const strButtonInviteToHousehold;
 extern NSString * const strButtonMergeHouseholds;
 extern NSString * const strAlertTitleMemberExists;
@@ -132,6 +130,8 @@ extern NSString * const strAlertTextEmailChangeFailed;
 extern NSString * const strSheetPromptEmailRecipient;
 extern NSString * const strSheetPromptTextRecipient;
 extern NSString * const strSheetPromptCallRecipient;
+extern NSString * const strSheetPromptMultiValuePhone;
+extern NSString * const strSheetPromptMultiValueEmail;
 extern NSString * const strSheetPromptExistingResidence;
 extern NSString * const strQuestionArgumentGender;
 extern NSString * const strQuestionArgumentGenderMinor;
@@ -154,14 +154,14 @@ extern NSString * const strDefaultMessageBoardName;
 extern NSString * const strViewTitleSettings;
 
 // OSettingView strings
-extern NSString * const strLabelCountrySettings;
-extern NSString * const strLabelCountryLocate;
-extern NSString * const strFooterCountryInfo;
-extern NSString * const strFooterCountryInfoNote;
-extern NSString * const strFooterCountryInfoLocate;
+// ...
 
 // Meta strings
 extern NSString * const metaSupportedLanguages;
+extern NSString * const metaMultiLingualCountryCodes;
+extern NSString * const metaCountryCodesByCountryCallingCode;
+extern NSString * const metaInternationalTemplate;
+extern NSString * const metaPhoneNumberTemplatesByRegion;
 extern NSString * const metaContactRolesSchoolClass;
 extern NSString * const metaContactRolesPreschoolClass;
 extern NSString * const metaContactRolesOrganisation;
