@@ -13,7 +13,7 @@ NSString * const kReuseIdentifierUserSignIn = @"signIn";
 NSString * const kReuseIdentifierUserActivation = @"activate";
 
 NSString * const kViewKeySuffixLabel = @"Label";
-NSString * const kViewKeySuffixTextField = @"Field";
+NSString * const kViewKeySuffixInputField = @"Field";
 
 CGFloat const kCellAnimationDuration = 0.3f;
 
@@ -80,7 +80,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             [_listDelegate populateListCell:self atIndexPath:_indexPath];
         } else {
             _views = [NSMutableDictionary dictionary];
-            _inputDelegate = (id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate>)_state.viewController;
+            _inputDelegate = (id<OTableViewInputDelegate>)_state.viewController;
         }
     }
     
@@ -99,7 +99,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [self.contentView addSubview:titleBannerView];
     [_views setObject:titleBannerView forKey:kViewKeyTitleBanner];
     
-    [self addTextFieldForKey:_blueprint.titleKey];
+    [self addInputFieldForKey:_blueprint.titleKey];
     
     if (_blueprint.hasPhoto) {
         UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
@@ -132,26 +132,19 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addLabelForKey:(NSString *)key centred:(BOOL)centred
 {
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
-    label.backgroundColor = [UIColor clearColor];
-    label.font = [UIFont detailFont];
-    label.hidden = YES;
-    label.text = [OStrings stringForKey:key withKeyPrefix:kKeyPrefixLabel];
-    label.textAlignment = centred ? NSTextAlignmentCenter : NSTextAlignmentRight;
-    label.textColor = [UIColor labelTextColour];
-    [label setTranslatesAutoresizingMaskIntoConstraints:NO];
+    OLabel *label = [[OLabel alloc] initWithKey:key centred:centred];
     
     [self.contentView addSubview:label];
     [_views setObject:label forKey:[key stringByAppendingString:kViewKeySuffixLabel]];
 }
 
 
-- (void)addTextFieldForKey:(NSString *)key
+- (void)addInputFieldForKey:(NSString *)key
 {
-    id textField = [_blueprint textFieldWithKey:key delegate:_inputDelegate];
+    OInputField *inputField = [_blueprint inputFieldWithKey:key delegate:_inputDelegate];
     
-    [self.contentView addSubview:textField];
-    [_views setObject:textField forKey:[key stringByAppendingString:kViewKeySuffixTextField]];
+    [self.contentView addSubview:inputField];
+    [_views setObject:inputField forKey:[key stringByAppendingString:kViewKeySuffixInputField]];
 }
 
 
@@ -172,7 +165,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             [self addLabelForKey:detailKey centred:NO];
         }
         
-        [self addTextFieldForKey:detailKey];
+        [self addInputFieldForKey:detailKey];
     }
 }
 
@@ -186,7 +179,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (self) {
         _entity = entity;
         _entityClass = entityClass;
-        _blueprint = [[OTableViewCellBlueprint alloc] initWithEntityClass:entityClass];
+        _blueprint = [[OTableViewCellBlueprint alloc] initWithState:_state];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
         
         [self addCellElements];
@@ -213,31 +206,31 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Text field & text view access
+#pragma mark - Label & input view access
 
-- (id)labelForKey:(NSString *)key
+- (OLabel *)labelForKey:(NSString *)key
 {
     return _views[[key stringByAppendingString:kViewKeySuffixLabel]];
 }
 
 
-- (id)textFieldForKey:(NSString *)key
+- (OInputField *)inputFieldForKey:(NSString *)key
 {
-    return _views[[key stringByAppendingString:kViewKeySuffixTextField]];
+    return _views[[key stringByAppendingString:kViewKeySuffixInputField]];
 }
 
 
-- (id)nextInputField
+- (OInputField *)nextInputField
 {
-    id inputField = nil;
+    OInputField *inputField = nil;
     BOOL ignoreField = (_inputField != nil);
     
-    for (NSString *key in _blueprint.allTextFieldKeys) {
+    for (NSString *key in _blueprint.inputFieldKeys) {
         if (ignoreField) {
-            ignoreField = ![key isEqualToString:[_inputField key]];
+            ignoreField = ![key isEqualToString:_inputField.key];
         } else {
-            if (!inputField && [[self textFieldForKey:key] editable]) {
-                inputField = [self textFieldForKey:key];
+            if (!inputField && [self inputFieldForKey:key].editable) {
+                inputField = [self inputFieldForKey:key];
             }
         }
     }
@@ -246,15 +239,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (id)nextInvalidInputField
+- (OInputField *)nextInvalidInputField
 {
-    id invalidInputField = nil;
+    OInputField *invalidInputField = nil;
     
-    for (NSString *key in _blueprint.allTextFieldKeys) {
-        id textField = [self textFieldForKey:key];
+    for (NSString *key in _blueprint.inputFieldKeys) {
+        OInputField *inputField = [self inputFieldForKey:key];
         
-        if (!invalidInputField && ![textField hasValidValue]) {
-            invalidInputField = textField;
+        if (!invalidInputField && ![inputField hasValidValue]) {
+            invalidInputField = inputField;
         }
     }
     
@@ -272,13 +265,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (BOOL)hasValueForKey:(NSString *)key
 {
-    return [[self textFieldForKey:key] hasValue];
+    return ([self inputFieldForKey:key].value != nil);
 }
 
 
 - (BOOL)hasValidValueForKey:(NSString *)key
 {
-    return [[self textFieldForKey:key] hasValidValue];
+    return [[self inputFieldForKey:key] hasValidValue];
 }
 
 
@@ -298,15 +291,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
         
         if (_editable) {
-            for (NSString *key in _blueprint.allTextFieldKeys) {
-                id textField = [self textFieldForKey:key];
+            for (NSString *key in _blueprint.inputFieldKeys) {
+                OInputField *inputField = [self inputFieldForKey:key];
                 
                 if (!_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
-                    [textField setHasEmphasis:YES];
+                    inputField.hasEmphasis = YES;
                 }
                 
-                if ([textField isKindOfClass:[OTextField class]]) {
-                    [textField raiseGuardAgainstUnwantedAutolayoutAnimation:NO]; // Bug workaround
+                if (!inputField.supportsMultiLineText) {
+                    [inputField protectAgainstUnwantedAutolayoutAnimation:NO]; // Bug workaround
                 }
             }
         }
@@ -379,15 +372,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Handling input
+#pragma mark - Input handling
 
 - (void)prepareForInput
 {
-    for (NSString *key in _blueprint.allTextFieldKeys) {
-        id textField = [self textFieldForKey:key];
+    for (NSString *key in _blueprint.inputFieldKeys) {
+        OInputField *inputField = [self inputFieldForKey:key];
         
-        if ([textField isDateField]) {
-            [textField prepareForInput];
+        if ([inputField respondsToSelector:@selector(prepareForInput)]) {
+            [inputField prepareForInput];
         }
     }
 }
@@ -407,7 +400,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Synchronising cell content with entity
+#pragma mark - Content synchronising
 
 - (void)readEntity
 {
@@ -418,19 +411,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
             [_state.viewController.dirtySections addObject:@(_indexPath.section)];
         }
     } else {
-        for (NSString *key in _blueprint.allTextFieldKeys) {
-            id textField = [self textFieldForKey:key];
-            id value = [_entity valueForKey:key];
-            
-            if (value) {
-                if ([value isKindOfClass:[NSString class]]) {
-                    [textField setText:value];
-                } else if ([value isKindOfClass:[NSDate class]]) {
-                    [textField setDate:value];
-                }
-            } else {
-                [textField setText:[NSString string]];
-            }
+        for (NSString *key in _blueprint.inputFieldKeys) {
+            [self inputFieldForKey:key].value = [_entity valueForKey:key];
         }
         
         [self redrawIfNeeded];
@@ -444,22 +426,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _entity = [_inputDelegate inputEntity];
     }
     
-    for (NSString *key in _blueprint.allTextFieldKeys) {
-        id textField = [self textFieldForKey:key];
-        
-        if ([textField isDateField]) {
-            [_entity setValue:[textField date] forKey:key];
-        } else {
-            NSString *textValue = [textField textValue];
-            
-            if ([[OState s] actionIs:kActionRegister]) {
-                if ([textValue isEqualToString:[OValidator defaultValueForKey:key]]) {
-                    textValue = nil;
-                }
-            }
-            
-            [_entity setValue:textValue forKey:key];
-        }
+    for (NSString *key in _blueprint.inputFieldKeys) {
+        [_entity setValue:[self inputFieldForKey:key].value forKey:key];
     }
     
     for (NSString *key in _blueprint.indirectKeys) {
@@ -468,36 +436,19 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)writeEntityDefaults
-{
-    for (NSString *key in _blueprint.allTextFieldKeys) {
-        id textField = [self textFieldForKey:key];
-        
-        if (![textField isDateField]) {
-            NSString *entityValue = [_entity rawValueForKey:key];
-            NSString *textValue = [textField textValue];
-            
-            if (!entityValue && [textValue isEqualToString:[OValidator defaultValueForKey:key]]) {
-                [_entity setValue:textValue forKey:key];
-            }
-        }
-    }
-}
-
-
 #pragma mark - Custom accessors
 
 - (void)setInputField:(id)inputField
 {
-    if ([_inputField hasEmphasis] && _blueprint.fieldsShouldDeemphasiseOnEndEdit) {
-        [_inputField setHasEmphasis:NO];
+    if (_inputField.hasEmphasis && _blueprint.fieldsShouldDeemphasiseOnEndEdit) {
+        _inputField.hasEmphasis = NO;
     }
 
     _lastInputField = _inputField;
     _inputField = inputField;
     
-    if (_inputField && ![_inputField hasEmphasis]) {
-        [_inputField setHasEmphasis:YES];
+    if (_inputField && !_inputField.hasEmphasis) {
+        _inputField.hasEmphasis = YES;
     }
     
     [self redrawIfNeeded];
@@ -555,8 +506,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [super setEditing:editing];
     
     if (![self isListCell]) {
-        for (NSString *key in _blueprint.allTextFieldKeys) {
-            [[self textFieldForKey:key] setEditable:editing];
+        for (NSString *key in _blueprint.inputFieldKeys) {
+            [self inputFieldForKey:key].editable = editing;
+            
+            if ([OValidator isAlternatingLabelKey:key]) {
+                [self labelForKey:key].useAlternateText = editing;
+            }
         }
     }
 }

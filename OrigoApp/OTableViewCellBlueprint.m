@@ -18,14 +18,68 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 @implementation OTableViewCellBlueprint
 
+#pragma mark - Auxiliary methods
+
+- (NSArray *)displayableDetailKeys
+{
+    if (_displayableDetailKeys && ![_state.action isEqualToString:_stateAction]) {
+        _displayableDetailKeys = nil;
+        _stateAction = _state.action;
+    }
+    
+    if (!_displayableDetailKeys) {
+        _displayableDetailKeys = [NSMutableArray arrayWithArray:_detailKeys];
+        
+        if ([_state.viewController.identifier isEqualToString:kIdentifierMember]) {
+            if ([_state targetIs:kTargetJuvenile]) {
+                if ([_state actionIs:kActionInput] && ![_state aspectIsHousehold]) {
+                    _displayableDetailKeys = nil;
+                }
+            } else if (![_state aspectIsHousehold] || ![_state actionIs:kActionInput]) {
+                [_displayableDetailKeys removeObject:kPropertyKeyDateOfBirth];
+            }
+        }
+    }
+    
+    return _displayableDetailKeys;
+}
+
+
 #pragma mark - Initialisation
 
-- (id)init
+- (id)initWithState:(OState *)state
 {
     self = [super init];
     
     if (self) {
-        _textViewKeys = @[kPropertyKeyAddress, kPropertyKeyDescriptionText];
+        _state = state;
+        _stateAction = _state.action;
+        _fieldsShouldDeemphasiseOnEndEdit = YES;
+        _fieldsAreLabeled = YES;
+        
+        if ([_state.viewController.identifier isEqualToString:kIdentifierMember]) {
+            _hasPhoto = YES;
+            _titleKey = kPropertyKeyName;
+            _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
+            _indirectKeys = @[kPropertyKeyGender, kPropertyKeyIsJuvenile, kPropertyKeyFatherId, kPropertyKeyMotherId];
+        } else if ([_state.viewController.identifier isEqualToString:kIdentifierOrigo]) {
+            _textViewKeys = @[kPropertyKeyAddress, kPropertyKeyDescriptionText];
+            _hasPhoto = NO;
+            
+            if ([_state aspectIsHousehold]) {
+                _titleKey = kInterfaceKeyResidenceName;
+            } else if (![_state targetIs:kOrigoTypeResidence]) {
+                _titleKey = kPropertyKeyName;
+            }
+            
+            if ([_state targetIs:kOrigoTypeResidence]) {
+                _detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
+            } else if ([_state targetIs:kOrigoTypeOrganisation]) {
+                _detailKeys = @[kInterfaceKeyPurpose, kPropertyKeyAddress, kPropertyKeyTelephone];
+            } else {
+                _detailKeys = @[kPropertyKeyDescriptionText];
+            }
+        }
     }
     
     return self;
@@ -34,7 +88,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
 {
-    self = [self init];
+    self = [super init];
     
     if (self) {
         _fieldsShouldDeemphasiseOnEndEdit = NO;
@@ -54,88 +108,44 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 }
 
 
-- (id)initWithEntityClass:(Class)entityClass
+#pragma mark - Detail key filtering
+
+- (BOOL)elementsAreDisplayableForKey:(NSString *)key
 {
-    self = [self init];
-    
-    if (self) {
-        OState *state = [OState s];
-        
-        _fieldsShouldDeemphasiseOnEndEdit = YES;
-        _fieldsAreLabeled = YES;
-        
-        if (entityClass == [OMember class]) {
-            _hasPhoto = YES;
-            _titleKey = kPropertyKeyName;
-            
-            if ([state aspectIsHousehold]) {
-                _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
-            } else if ([state targetIs:kTargetJuvenile]) {
-                if ([state actionIs:kActionInput]) {
-                    _detailKeys = nil;
-                } else {
-                    _detailKeys = @[kInterfaceKeyAge, kPropertyKeyMobilePhone, kPropertyKeyEmail];
-                }
-            } else {
-                _detailKeys = @[kPropertyKeyMobilePhone, kPropertyKeyEmail];
-            }
-            
-            _indirectKeys = @[kPropertyKeyGender, kPropertyKeyIsJuvenile, kPropertyKeyFatherId, kPropertyKeyMotherId];
-        } else if (entityClass == [OOrigo class]) {
-            _hasPhoto = NO;
-            
-            if ([state aspectIsHousehold]) {
-                _titleKey = kInterfaceKeyResidenceName;
-            } else if (![state targetIs:kOrigoTypeResidence]) {
-                _titleKey = kPropertyKeyName;
-            }
-            
-            if ([state targetIs:kOrigoTypeResidence]) {
-                _detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
-            } else if ([state targetIs:kOrigoTypeOrganisation]) {
-                _detailKeys = @[kInterfaceKeyPurpose, kPropertyKeyAddress, kPropertyKeyTelephone];
-            } else {
-                _detailKeys = @[kPropertyKeyDescriptionText];
-            }
-        }
-    }
-    
-    return self;
+    return [key isEqualToString:_titleKey] || [[self displayableDetailKeys] containsObject:key];
 }
 
 
 #pragma mark - Text field instantiation
 
-- (id)textFieldWithKey:(NSString *)key delegate:(id)delegate
+- (OInputField *)inputFieldWithKey:(NSString *)key delegate:(id)delegate
 {
-    id textField = nil;
+    OInputField *inputField = nil;
     
     if ([_textViewKeys containsObject:[OValidator propertyKeyForKey:key]]) {
-        textField = [[OTextView alloc] initWithKey:key blueprint:self delegate:delegate];
+        inputField = [[OTextView alloc] initWithKey:key blueprint:self delegate:delegate];
     } else {
-        textField = [[OTextField alloc] initWithKey:key delegate:delegate];
+        inputField = [[OTextField alloc] initWithKey:key delegate:delegate];
     }
     
-    if ([key isEqualToString:_titleKey]) {
-        [textField setIsTitleField:YES];
-    }
+    inputField.isTitleField = [key isEqualToString:_titleKey];
     
-    if ([[OValidator phoneNumberKeys] containsObject:key]) {
-        [textField setKeyboardType:UIKeyboardTypeNumbersAndPunctuation];
-    } else if ([[OValidator emailKeys] containsObject:key]) {
-        [textField setKeyboardType:UIKeyboardTypeEmailAddress];
+    if ([OValidator isPhoneNumberKey:key]) {
+        inputField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+    } else if ([OValidator isEmailKey:key]) {
+        inputField.keyboardType = UIKeyboardTypeEmailAddress;
     } else {
-        [textField setKeyboardType:UIKeyboardTypeDefault];
+        inputField.keyboardType = UIKeyboardTypeDefault;
         
-        if ([[OValidator nameKeys] containsObject:key]) {
-            [textField setAutocapitalizationType:UITextAutocapitalizationTypeWords];
-        } else if ([[OValidator passwordKeys] containsObject:key]) {
-            [textField setSecureTextEntry:YES];
-            [textField setClearsOnBeginEditing:YES];
+        if ([OValidator isNameKey:key]) {
+            inputField.autocapitalizationType = UITextAutocapitalizationTypeWords;
+        } else if ([OValidator isPasswordKey:key]) {
+            inputField.secureTextEntry = YES;
+            ((OTextField *)inputField).clearsOnBeginEditing = YES;
         }
     }
     
-    return textField;
+    return inputField;
 }
 
 
@@ -153,12 +163,12 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
         }
     }
     
-    if ([_detailKeys count]) {
-        for (NSString *key in _detailKeys) {
+    if ([[self displayableDetailKeys] count]) {
+        for (NSString *key in [self displayableDetailKeys]) {
             if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:key]) {
                 if ([_textViewKeys containsObject:[OValidator propertyKeyForKey:key]]) {
                     if (cell) {
-                        height += [[cell textFieldForKey:key] height];
+                        height += [[cell inputFieldForKey:key] height];
                     } else if ([entity hasValueForKey:key]) {
                         height += [OTextView heightWithText:[entity valueForKey:key] blueprint:self];
                     } else {
@@ -179,17 +189,17 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 #pragma mark - Custom accessors
 
-- (NSArray *)allTextFieldKeys
+- (NSArray *)inputFieldKeys
 {
-    if (!_allTextFieldKeys) {
+    if (!_inputFieldKeys) {
         if (_titleKey) {
-            _allTextFieldKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
+            _inputFieldKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
         } else {
-            _allTextFieldKeys = _detailKeys;
+            _inputFieldKeys = _detailKeys;
         }
     }
     
-    return _allTextFieldKeys;
+    return _inputFieldKeys;
 }
 
 @end

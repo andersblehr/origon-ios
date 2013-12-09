@@ -24,6 +24,6 @@
 + (CGFloat)detailFieldHeight;
 + (CGFloat)detailLineHeight;
 
-- (CGFloat)textFieldHeight;
+- (CGFloat)inputFieldHeight;
 
 @end

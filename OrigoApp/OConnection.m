@@ -24,7 +24,8 @@ NSInteger const kHTTPStatusUnauthorized = 401;
 NSInteger const kHTTPStatusNotFound = 404;
 NSInteger const kHTTPStatusInternalServerError = 500;
 
-static NSString * const kOrigoDevServer = @"enceladus.local:8888";
+static NSString * const kOrigoDevServer = @"localhost:8888";
+//static NSString * const kOrigoDevServer = @"enceladus.local:8888";
 static NSString * const kOrigoProdServer = @"origoapp.appspot.com";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";

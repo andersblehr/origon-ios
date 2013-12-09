@@ -141,32 +141,33 @@ static OState *_s = nil;
 
 - (BOOL)actionIs:(NSString *)action
 {
-    BOOL actionIsCurrent = NO;
+    BOOL actionMatches = NO;
     
     if ([action isEqualToString:kActionInput]) {
-        actionIsCurrent = actionIsCurrent || [_action isEqualToString:kActionSignIn];
-        actionIsCurrent = actionIsCurrent || [_action isEqualToString:kActionActivate];
-        actionIsCurrent = actionIsCurrent || [_action isEqualToString:kActionRegister];
-        actionIsCurrent = actionIsCurrent || [_action isEqualToString:kActionEdit];
+        actionMatches = actionMatches || [_action isEqualToString:kActionSignIn];
+        actionMatches = actionMatches || [_action isEqualToString:kActionActivate];
+        actionMatches = actionMatches || [_action isEqualToString:kActionRegister];
+        actionMatches = actionMatches || [_action isEqualToString:kActionEdit];
     } else {
-        actionIsCurrent = [_action isEqualToString:action];
+        actionMatches = [_action isEqualToString:action];
     }
     
-    return actionIsCurrent;
+    return actionMatches;
 }
 
 
 - (BOOL)targetIs:(NSString *)target
 {
-    BOOL targetIsIndicated = NO;
+    BOOL targetMatches = NO;
     
     if ([target isEqualToString:kTargetJuvenile]) {
-        targetIsIndicated = [OUtil origoTypeIsJuvenile:_target];
+        targetMatches = targetMatches || [_target isEqualToString:kTargetWard];
+        targetMatches = targetMatches || [OUtil origoTypeIsJuvenile:_target];
     } else {
-        targetIsIndicated = [_target isEqualToString:target];
+        targetMatches = [_target isEqualToString:target];
     }
     
-    return targetIsIndicated;
+    return targetMatches;
 }
 
 

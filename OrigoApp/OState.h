@@ -45,9 +45,6 @@ extern NSString * const kTargetExternal;
 @property (strong, nonatomic) NSString *action;
 @property (strong, nonatomic) id target;
 
-@property (weak, nonatomic, readonly) id<OTableViewListDelegate> listDelegate;
-@property (weak, nonatomic, readonly) id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate> inputDelegate;
-
 - (id)initWithViewController:(OTableViewController *)viewController;
 
 + (OState *)s;

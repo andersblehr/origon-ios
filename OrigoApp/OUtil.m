@@ -40,7 +40,7 @@
             
             if ([items[0] isKindOfClass:[NSDate class]]) {
                 for (NSDate *date in items) {
-                    [stringItems addObject:[date asString]];
+                    [stringItems addObject:[date localisedDateString]];
                 }
             } else if ([items[0] isKindOfClass:[OMember class]]) {
                 for (OMember *member in items) {

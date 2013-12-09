@@ -8,96 +8,86 @@
 
 #import "OTableViewCellConstrainer.h"
 
-static NSString * const kDelimitingSpace              = @"-10-";
+static NSString * const kDelimitingSpace               = @"-10-";
 
-static NSString * const kVConstraintsInitial          = @"V:|";
-static NSString * const kVConstraintsInitialWithTitle = @"V:|-44-";
+static NSString * const kVConstraintsInitial           = @"V:|";
+static NSString * const kVConstraintsInitialWithTitle  = @"V:|-44-";
 
-static NSString * const kVConstraintsElementTopmost   = @"[%@(%.f)]";
-static NSString * const kVConstraintsElement          = @"-%.f-[%@(%.f)]";
-static NSString * const kHConstraintsCentredLabel     = @"H:|-25-[%@]-25-|";
-static NSString * const kHConstraintsCentredTextField = @"H:|-55-[%@]-55-|";
+static NSString * const kVConstraintsElementTopmost    = @"[%@(%.f)]";
+static NSString * const kVConstraintsElement           = @"-%.f-[%@(%.f)]";
+static NSString * const kHConstraintsCentredLabel      = @"H:|-25-[%@]-25-|";
+static NSString * const kHConstraintsCentredInputField = @"H:|-55-[%@]-55-|";
 
-static NSString * const kVConstraintsTitleBanner      = @"V:|-(-1)-[titleBanner(39)]";
-static NSString * const kHConstraintsTitleBanner      = @"H:|-(-1)-[titleBanner]-(-1)-|";
-static NSString * const kVConstraintsTitle            = @"[%@(24)]";
-static NSString * const kHConstraintsTitle            = @"H:|-6-[%@]-6-|";
-static NSString * const kHConstraintsTitleWithPhoto   = @"H:|-6-[%@]-6-[photoFrame(%.f)]-10-|";
-static NSString * const kVConstraintsPhoto            = @"V:|-10-[photoFrame(%.f)]";
-static NSString * const kVConstraintsPhotoPrompt      = @"V:|-3-[photoPrompt]-3-|";
-static NSString * const kHConstraintsPhotoPrompt      = @"H:|-3-[photoPrompt]-3-|";
+static NSString * const kVConstraintsTitleBanner       = @"V:|-(-1)-[titleBanner(39)]";
+static NSString * const kHConstraintsTitleBanner       = @"H:|-(-1)-[titleBanner]-(-1)-|";
+static NSString * const kVConstraintsTitle             = @"[%@(24)]";
+static NSString * const kHConstraintsTitle             = @"H:|-6-[%@]-6-|";
+static NSString * const kHConstraintsTitleWithPhoto    = @"H:|-6-[%@]-6-[photoFrame(%.f)]-10-|";
+static NSString * const kVConstraintsPhoto             = @"V:|-10-[photoFrame(%.f)]";
+static NSString * const kVConstraintsPhotoPrompt       = @"V:|-3-[photoPrompt]-3-|";
+static NSString * const kHConstraintsPhotoPrompt       = @"H:|-3-[photoPrompt]-3-|";
 
-static NSString * const kVConstraintsLabel            = @"-%.f-[%@(%.f)]";
-static NSString * const kVConstraintsTextField        = @"[%@(%.f)]";
+static NSString * const kVConstraintsLabel             = @"-%.f-[%@(%.f)]";
+static NSString * const kVConstraintsInputField        = @"[%@(%.f)]";
 
-static NSString * const kHConstraints                 = @"H:|-10-[%@(%.f)]-3-[%@]-6-|";
-static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@]-6-[photoFrame]-10-|";
+static NSString * const kHConstraints                  = @"H:|-10-[%@(%.f)]-3-[%@]-6-|";
+static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%@]-6-[photoFrame]-10-|";
 
 
 @implementation OTableViewCellConstrainer
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)elementsAreVisibleForKey:(NSString *)key
+- (BOOL)shouldDisplayElementsForKey:(NSString *)key
 {
-    BOOL elementsAreVisible = YES;
+    BOOL shouldDisplayElements = [_blueprint elementsAreDisplayableForKey:key];
     
-    if (_cell.entity) {
-        NSArray *entityAttributeKeys = [[[_cell.entity entity] attributesByName] allKeys];
+    if (shouldDisplayElements && _cell.entity) {
+        id value = [_cell.entity valueForKey:key];
         
-        if ([entityAttributeKeys containsObject:key]) {
-            id value = [_cell.entity valueForKey:key];
-            
-            if (value && [value isKindOfClass:[NSString class]]) {
-                elementsAreVisible = [value hasValue];
-            } else if (!value) {
-                elementsAreVisible = NO;
-            }
-            
-            elementsAreVisible = elementsAreVisible || [_cell.state actionIs:kActionInput];
+        if (value && [value isKindOfClass:[NSString class]]) {
+            shouldDisplayElements = [value hasValue];
+        } else if (!value) {
+            shouldDisplayElements = NO;
         }
+        
+        shouldDisplayElements = shouldDisplayElements || [_cell.state actionIs:kActionInput];
     }
     
-    return elementsAreVisible;
+    return shouldDisplayElements;
 }
 
 
 - (void)configureElementsForKey:(NSString *)key
 {
-    id label = [_cell labelForKey:key];
-    id textField = [_cell textFieldForKey:key];
+    OLabel *label = [_cell labelForKey:key];
+    OInputField *inputField = [_cell inputFieldForKey:key];
     
-    if ([self elementsAreVisibleForKey:key]) {
-        if (label && [label isHidden]) {
-            [label setHidden:NO];
+    if (!inputField.value) {
+        inputField.value = [_cell.entity valueForKey:key];
+    }
+    
+    if ([self shouldDisplayElementsForKey:key]) {
+        if (label && label.isHidden) {
+            label.hidden = NO;
         }
         
-        if (textField && [textField isHidden]) {
-            [textField setHidden:NO];
+        if (inputField && inputField.isHidden) {
+            inputField.hidden = NO;
             
-            id value = [_cell.entity valueForKey:key];
-            
-            if (value && ![textField textValue]) {
-                if ([value isKindOfClass:[NSDate class]]) {
-                    [textField setDate:value];
-                } else {
-                    [textField setText:value];
-                }
-            }
-            
-            if ([textField isKindOfClass:[OTextField class]]) {
-                [textField raiseGuardAgainstUnwantedAutolayoutAnimation:YES]; // Bug workaround
+            if (!inputField.supportsMultiLineText) {
+                [inputField protectAgainstUnwantedAutolayoutAnimation:YES]; // Bug workaround
             }
         }
     } else {
-        if (label && ![label isHidden]) {
-            [label setHidden:YES];
-            [label setFrame:CGRectZero];
+        if (label && !label.isHidden) {
+            label.hidden = YES;
+            label.frame = CGRectZero;
         }
         
-        if (textField && ![textField isHidden]) {
-            [textField setHidden:YES];
-            [textField setFrame:CGRectZero];
+        if (inputField && ![inputField isHidden]) {
+            inputField.hidden = YES;
+            inputField.frame = CGRectZero;
         }
     }
 }
@@ -110,7 +100,7 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
     NSMutableArray *constraints = [NSMutableArray array];
     
     if (_blueprint.titleKey) {
-        NSString *titleName = [_blueprint.titleKey stringByAppendingString:kViewKeySuffixTextField];
+        NSString *titleName = [_blueprint.titleKey stringByAppendingString:kViewKeySuffixInputField];
         
         [self configureElementsForKey:_blueprint.titleKey];
         
@@ -136,12 +126,12 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
     NSString *constraints = nil;
     
     BOOL isTopmostLabel = YES;
-    id precedingTextField = nil;
+    OInputField *precedingInputField = nil;
 
     for (NSString *key in _blueprint.detailKeys) {
         [self configureElementsForKey:key];
         
-        if ([self elementsAreVisibleForKey:key]) {
+        if ([self shouldDisplayElementsForKey:key]) {
             if (!constraints) {
                 if (_blueprint.titleKey) {
                     constraints = kVConstraintsInitialWithTitle;
@@ -159,14 +149,14 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
             } else {
                 CGFloat padding = 0.f;
                 
-                if (precedingTextField && [precedingTextField isKindOfClass:[OTextView class]]) {
-                    padding = [precedingTextField height] - [UIFont detailFieldHeight];
+                if (precedingInputField.supportsMultiLineText) {
+                    padding = [precedingInputField height] - [UIFont detailFieldHeight];
                 }
                 
                 constraint = [NSString stringWithFormat:kVConstraintsLabel, padding, labelName, [UIFont detailFieldHeight]];
             }
             
-            precedingTextField = [_cell textFieldForKey:key];
+            precedingInputField = [_cell inputFieldForKey:key];
             constraints = [constraints stringByAppendingString:constraint];
         }
     }
@@ -175,12 +165,12 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
 }
 
 
-- (NSArray *)labeledVerticalTextFieldConstraints
+- (NSArray *)labeledVerticalInputFieldConstraints
 {
     NSString *constraints = nil;
     
     if (_blueprint.titleKey) {
-        NSString *titleName = [_blueprint.titleKey stringByAppendingString:kViewKeySuffixTextField];
+        NSString *titleName = [_blueprint.titleKey stringByAppendingString:kViewKeySuffixInputField];
         NSString *constraint = [NSString stringWithFormat:kVConstraintsTitle, titleName];
         
         constraints = [kVConstraintsInitial stringByAppendingString:kDelimitingSpace];
@@ -193,25 +183,19 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
         for (NSString *key in _blueprint.detailKeys) {
             [self configureElementsForKey:key];
             
-            if ([self elementsAreVisibleForKey:key]) {
+            if ([self shouldDisplayElementsForKey:key]) {
                 if (constraints && !didInsertDelimiter) {
                     constraints = [constraints stringByAppendingString:kDelimitingSpace];
-                    
                     didInsertDelimiter = YES;
                 } else if (!constraints) {
                     constraints = [kVConstraintsInitial stringByAppendingString:kDelimitingSpace];
                 }
                 
-                id textField = [_cell textFieldForKey:key];
+                OInputField *inputField = [_cell inputFieldForKey:key];
+                CGFloat inputFieldHeight = inputField.supportsMultiLineText ? [inputField height] : [UIFont detailFieldHeight];
                 
-                CGFloat textFieldHeight = [UIFont detailFieldHeight];
-                
-                if ([textField isKindOfClass:[OTextView class]]) {
-                    textFieldHeight = [textField height];
-                }
-                
-                NSString *textFieldName = [key stringByAppendingString:kViewKeySuffixTextField];
-                NSString *constraint = [NSString stringWithFormat:kVConstraintsTextField, textFieldName, textFieldHeight];
+                NSString *inputFieldName = [key stringByAppendingString:kViewKeySuffixInputField];
+                NSString *constraint = [NSString stringWithFormat:kVConstraintsInputField, inputFieldName, inputFieldHeight];
                 
                 constraints = [constraints stringByAppendingString:constraint];
             }
@@ -231,15 +215,15 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
     for (NSString *key in _blueprint.detailKeys) {
         [self configureElementsForKey:key];
         
-        if ([self elementsAreVisibleForKey:key]) {
+        if ([self shouldDisplayElementsForKey:key]) {
             NSString *labelName = [key stringByAppendingString:kViewKeySuffixLabel];
-            NSString *textFieldName = [key stringByAppendingString:kViewKeySuffixTextField];
+            NSString *inputFieldName = [key stringByAppendingString:kViewKeySuffixInputField];
             NSString *constraint = nil;
             
             if (_blueprint.hasPhoto && (rowNumber++ < 2)) {
-                constraint = [NSString stringWithFormat:kHConstraintsWithPhoto, labelName, _labelWidth, textFieldName];
+                constraint = [NSString stringWithFormat:kHConstraintsWithPhoto, labelName, _labelWidth, inputFieldName];
             } else {
-                constraint = [NSString stringWithFormat:kHConstraints, labelName, _labelWidth, textFieldName];
+                constraint = [NSString stringWithFormat:kHConstraints, labelName, _labelWidth, inputFieldName];
             }
             
             [constraints addObject:constraint];
@@ -257,10 +241,10 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
     BOOL isTopmostElement = YES;
     BOOL isBelowLabel = NO;
     
-    for (NSString *key in _blueprint.allTextFieldKeys) {
+    for (NSString *key in _blueprint.inputFieldKeys) {
         [self configureElementsForKey:key];
         
-        if ([self elementsAreVisibleForKey:key]) {
+        if ([self shouldDisplayElementsForKey:key]) {
             if (!constraints) {
                 constraints = [kVConstraintsInitial stringByAppendingString:kDelimitingSpace];
             }
@@ -270,8 +254,8 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
             
             if ([_cell labelForKey:key]) {
                 elementName = [key stringByAppendingString:kViewKeySuffixLabel];
-            } else if ([_cell textFieldForKey:key]) {
-                elementName = [key stringByAppendingString:kViewKeySuffixTextField];
+            } else if ([_cell inputFieldForKey:key]) {
+                elementName = [key stringByAppendingString:kViewKeySuffixInputField];
             }
             
             if (isTopmostElement) {
@@ -295,18 +279,18 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
 {
     NSMutableArray *constraints = [NSMutableArray array];
     
-    for (NSString *key in _blueprint.allTextFieldKeys) {
+    for (NSString *key in _blueprint.inputFieldKeys) {
         [self configureElementsForKey:key];
         
-        if ([self elementsAreVisibleForKey:key]) {
+        if ([self shouldDisplayElementsForKey:key]) {
             NSString *constraint = nil;
             
             if ([_cell labelForKey:key]) {
                 NSString *elementName = [key stringByAppendingString:kViewKeySuffixLabel];
                 constraint = [NSString stringWithFormat:kHConstraintsCentredLabel, elementName];
             } else {
-                NSString *elementName = [key stringByAppendingString:kViewKeySuffixTextField];
-                constraint = [NSString stringWithFormat:kHConstraintsCentredTextField, elementName];
+                NSString *elementName = [key stringByAppendingString:kViewKeySuffixInputField];
+                constraint = [NSString stringWithFormat:kHConstraintsCentredInputField, elementName];
             }
             
             [constraints addObject:constraint];
@@ -328,7 +312,7 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
         _blueprint = blueprint;
         
         if (_blueprint.fieldsAreLabeled) {
-            _labelWidth = [OTextView labelWidthWithBlueprint:_blueprint];
+            _labelWidth = [OLabel widthWithBlueprint:_blueprint];
         }
     }
     
@@ -352,7 +336,7 @@ static NSString * const kHConstraintsWithPhoto        = @"H:|-10-[%@(%.f)]-3-[%@
             
             NSMutableArray *nonAlignedConstraints = [NSMutableArray array];
             [nonAlignedConstraints addObjectsFromArray:[self titleConstraints]];
-            [nonAlignedConstraints addObjectsFromArray:[self labeledVerticalTextFieldConstraints]];
+            [nonAlignedConstraints addObjectsFromArray:[self labeledVerticalInputFieldConstraints]];
             [nonAlignedConstraints addObjectsFromArray:[self labeledHorizontalConstraints]];
             
             constraints[allTrailingOption] = allTrailingConstraints;

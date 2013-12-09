@@ -14,10 +14,10 @@
     OMember *_member;
     OOrigo *_origo;
     
-    OTextField *_nameField;
-    OTextField *_dateOfBirthField;
-    OTextField *_mobilePhoneField;
-    OTextField *_emailField;
+    OInputField *_nameField;
+    OInputField *_dateOfBirthField;
+    OInputField *_mobilePhoneField;
+    OInputField *_emailField;
     
     OMember *_candidate;
     NSArray *_candidateResidences;

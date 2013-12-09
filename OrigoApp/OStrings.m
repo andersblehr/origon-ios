@@ -11,6 +11,7 @@
 // String key prefixes
 NSString * const kKeyPrefixDefault                    = @"strDefault";
 NSString * const kKeyPrefixLabel                      = @"strLabel";
+NSString * const kKeyPrefixAlternateLabel             = @"strAlternateLabel";
 NSString * const kKeyPrefixPlaceholder                = @"strPlaceholder";
 NSString * const kKeyPrefixFooter                     = @"strFooter";
 NSString * const kKeyPrefixAddMemberButton            = @"strButtonAddMember";
@@ -231,7 +232,7 @@ static NSDictionary const *_strings = nil;
 
 + (NSString *)stringForKey:(NSString *)key
 {
-    NSString *string = @"";
+    NSString *string = [NSString string];
     
     if ([self hasStrings]) {
         string = _strings[key];

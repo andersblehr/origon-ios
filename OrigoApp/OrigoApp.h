@@ -24,18 +24,20 @@
 
 #import "Reachability.h"
 
-@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
+@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
 @class ODevice, OMember, OMembership, OMessageBoard, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
 
 #import "OConnectionDelegate.h"
 #import "OEntityObserver.h"
-#import "OInputField.h"
 #import "OLocatorDelegate.h"
 #import "ORegistrantExaminerDelegate.h"
 #import "OModalViewControllerDismisser.h"
 #import "OTableViewControllerInstance.h"
 #import "OTableViewInputDelegate.h"
 #import "OTableViewListDelegate.h"
+#import "OTextInput.h"
+
+typedef UIView<OTextInput> OInputField;
 
 #import "ODevice.h"
 #import "ODevice+OrigoAdditions.h"
@@ -71,6 +73,7 @@
 #import "OConnection.h"
 #import "OCrypto.h"
 #import "ODefaults.h"
+#import "OLabel.h"
 #import "OLanguage.h"
 #import "OLocator.h"
 #import "OLogging.h"

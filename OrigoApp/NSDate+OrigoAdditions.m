@@ -86,9 +86,15 @@ static NSCalendar *_calendar = nil;
 
 #pragma mark - Localised date formatting
 
-- (NSString *)asString
+- (NSString *)localisedDateString
 {
     return [NSDateFormatter localizedStringFromDate:self dateStyle:NSDateFormatterLongStyle timeStyle:NSDateFormatterNoStyle];
+}
+
+
+- (NSString *)localisedAgeString
+{
+    return [NSString stringWithFormat:[OStrings stringForKey:strFormatAge], [self yearsBeforeNow]];
 }
 
 

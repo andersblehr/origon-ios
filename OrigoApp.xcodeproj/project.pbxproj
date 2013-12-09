@@ -64,6 +64,7 @@
 		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C7379FD1593111B0065AB4F /* OTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7379FC1593111B0065AB4F /* OTextField.m */; };
 		5C752CB21827E29D004CEACD /* OActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C752CB11827E29D004CEACD /* OActivityIndicator.m */; };
+		5C77067618549A2E0088C78D /* OLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C77067518549A2E0088C78D /* OLabel.m */; };
 		5C78695018116AD400020E08 /* OActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78694F18116AD400020E08 /* OActionSheet.m */; };
 		5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78FAB91654E77E009A4BCF /* OTextView.m */; };
 		5C7BC3DD16F358B7006AA52F /* OResidencySchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7BC3DC16F358B7006AA52F /* OResidencySchedule.m */; };
@@ -259,6 +260,8 @@
 		5C7379FC1593111B0065AB4F /* OTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextField.m; sourceTree = "<group>"; };
 		5C752CB01827E29D004CEACD /* OActivityIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OActivityIndicator.h; sourceTree = "<group>"; };
 		5C752CB11827E29D004CEACD /* OActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OActivityIndicator.m; sourceTree = "<group>"; };
+		5C77067418549A2E0088C78D /* OLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLabel.h; sourceTree = "<group>"; };
+		5C77067518549A2E0088C78D /* OLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLabel.m; sourceTree = "<group>"; };
 		5C78694E18116AD400020E08 /* OActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OActionSheet.h; sourceTree = "<group>"; };
 		5C78694F18116AD400020E08 /* OActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OActionSheet.m; sourceTree = "<group>"; };
 		5C78FAB81654E77E009A4BCF /* OTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextView.h; sourceTree = "<group>"; };
@@ -396,7 +399,7 @@
 		5CFD8E66183503D200DC3945 /* 01-magnify@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "01-magnify@2x.png"; sourceTree = "<group>"; };
 		5CFD8E6918350CC700DC3945 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		5CFD8E6A18350CC700DC3945 /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
-		5CFD8E6D183CCEAF00DC3945 /* OInputField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OInputField.h; sourceTree = "<group>"; };
+		5CFD8E6D183CCEAF00DC3945 /* OTextInput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTextInput.h; sourceTree = "<group>"; };
 		5CFD8E6E183CE27200DC3945 /* OPhoneNumberFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OPhoneNumberFormatter.h; sourceTree = "<group>"; };
 		5CFD8E6F183CE27200DC3945 /* OPhoneNumberFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OPhoneNumberFormatter.m; sourceTree = "<group>"; };
 		5CFD8E71183E03A900DC3945 /* OSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettings.h; sourceTree = "<group>"; };
@@ -614,13 +617,13 @@
 			children = (
 				5C2E1133146ACFA9005BDE61 /* OConnectionDelegate.h */,
 				5C39EC1C166632570083DFEB /* OEntityObserver.h */,
-				5CFD8E6D183CCEAF00DC3945 /* OInputField.h */,
 				5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */,
 				5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDismisser.h */,
 				5C3F9999178AC91100E31A44 /* ORegistrantExaminerDelegate.h */,
 				5CA10B9E16A7F9FD00031D81 /* OTableViewControllerInstance.h */,
 				5CDE879C176F185E00272909 /* OTableViewInputDelegate.h */,
 				5C198B7016D63944002D3976 /* OTableViewListDelegate.h */,
+				5CFD8E6D183CCEAF00DC3945 /* OTextInput.h */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -796,6 +799,8 @@
 			children = (
 				5C78694E18116AD400020E08 /* OActionSheet.h */,
 				5C78694F18116AD400020E08 /* OActionSheet.m */,
+				5C77067418549A2E0088C78D /* OLabel.h */,
+				5C77067518549A2E0088C78D /* OLabel.m */,
 				5C64105717D499450005B192 /* ONavigationController.h */,
 				5C64105817D499450005B192 /* ONavigationController.m */,
 				5C8B3AB81582493C000B19FA /* OTableViewCell.h */,
@@ -1041,6 +1046,7 @@
 				5C369D9716FB58DA0053EB1F /* OReplicatedEntity.m in Sources */,
 				5C1D6CC6172E62F500479F7D /* OLocator.m in Sources */,
 				5C1D6CCA1743C80900479F7D /* OSettings+OrigoAdditions.m in Sources */,
+				5C77067618549A2E0088C78D /* OLabel.m in Sources */,
 				5CBFB738174B64D40021A8F6 /* OSettingViewController.m in Sources */,
 				5C8526B4183E290B0078A914 /* OOrigo.m in Sources */,
 				5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */,

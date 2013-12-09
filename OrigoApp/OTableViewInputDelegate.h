@@ -8,7 +8,7 @@
 
 #import "OrigoApp.h"
 
-@protocol OTableViewInputDelegate <NSObject>
+@protocol OTableViewInputDelegate <UITextFieldDelegate, UITextViewDelegate>
 
 @required
 - (BOOL)inputIsValid;
@@ -17,7 +17,7 @@
 @optional
 - (id)inputEntity;
 - (id)inputValueForIndirectKey:(NSString *)key;
-- (BOOL)shouldEnableInputFieldWithKey:(NSString *)key;
+- (BOOL)shouldEditInputFieldWithKey:(NSString *)key;
 - (BOOL)willValidateInputForKey:(NSString *)key;
 - (BOOL)inputValue:(id)inputValue isValidForKey:(NSString *)key;
 
