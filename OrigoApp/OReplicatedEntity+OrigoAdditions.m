@@ -66,12 +66,12 @@
 
 - (BOOL)hasValueForKey:(NSString *)key
 {
-    id value = [self valueForKey:key];
-    
     BOOL hasValue = NO;
     
+    id value = [self valueForKey:key];
+    
     if ([value isKindOfClass:[NSString class]]) {
-        hasValue = ([value length] > 0);
+        hasValue = ([value hasValue]);
     } else {
         hasValue = (value != nil);
     }
@@ -83,12 +83,6 @@
 - (id)rawValueForKey:(NSString *)key
 {
     return [super valueForKey:[OValidator propertyKeyForKey:key]];
-}
-
-
-- (id)valueForInferredKey:(NSString *)key
-{
-    return @"OVERRIDE IN SUBCLASS CATEGORY!";
 }
 
 
@@ -161,7 +155,7 @@
     NSArray *attributeKeys = [[attributes allKeys] sortedArrayUsingSelector:@selector(compare:)];
     NSArray *relationshipKeys = [[relationships allKeys] sortedArrayUsingSelector:@selector(compare:)];
     
-    NSString *propertyString = @"";
+    NSString *propertyString = [NSString string];
     
     for (NSString *attributeKey in attributeKeys) {
         if (![self isTransientProperty:attributeKey]) {
@@ -298,19 +292,7 @@
 
 - (id)valueForKey:(NSString *)key
 {
-    id value = nil;
-    
-    if ([[OValidator inferredKeys] containsObject:key]) {
-        value = [self valueForInferredKey:key];
-    } else {
-        value = [super valueForKey:[OValidator propertyKeyForKey:key]];
-    }
-    
-    if (!value) {
-        value = [OValidator defaultValueForKey:key];
-    }
-
-    return value;
+    return [super valueForKey:[OValidator propertyKeyForKey:key]];
 }
 
 @end

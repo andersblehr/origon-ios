@@ -13,7 +13,7 @@ extern NSString * const kReuseIdentifierUserSignIn;
 extern NSString * const kReuseIdentifierUserActivation;
 
 extern NSString * const kViewKeySuffixLabel;
-extern NSString * const kViewKeySuffixTextField;
+extern NSString * const kViewKeySuffixInputField;
 
 extern CGFloat const kCellAnimationDuration;
 
@@ -25,15 +25,15 @@ extern CGFloat const kCellAnimationDuration;
     Class _entityClass;
     
     id<OTableViewListDelegate> _listDelegate;
-    id<OTableViewInputDelegate, UITextFieldDelegate, UITextViewDelegate> _inputDelegate;
+    id<OTableViewInputDelegate> _inputDelegate;
 }
 
 @property (strong, nonatomic, readonly) OTableViewCellBlueprint *blueprint;
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic) OReplicatedEntity *entity;
+@property (strong, nonatomic) OInputField *lastInputField;
+@property (strong, nonatomic) OInputField *inputField;
 @property (strong, nonatomic) NSIndexPath *indexPath;
-@property (strong, nonatomic) id lastInputField;
-@property (strong, nonatomic) id inputField;
 
 @property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL checked;
@@ -43,10 +43,10 @@ extern CGFloat const kCellAnimationDuration;
 - (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath;
 
-- (id)labelForKey:(NSString *)key;
-- (id)textFieldForKey:(NSString *)key;
-- (id)nextInputField;
-- (id)nextInvalidInputField;
+- (OLabel *)labelForKey:(NSString *)key;
+- (OInputField *)inputFieldForKey:(NSString *)key;
+- (OInputField *)nextInputField;
+- (OInputField *)nextInvalidInputField;
 
 - (BOOL)isListCell;
 - (BOOL)hasValueForKey:(NSString *)key;
@@ -63,6 +63,5 @@ extern CGFloat const kCellAnimationDuration;
 
 - (void)readEntity;
 - (void)writeEntity;
-- (void)writeEntityDefaults;
 
 @end

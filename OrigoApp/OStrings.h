@@ -11,6 +11,7 @@
 // String key prefixes
 extern NSString * const kKeyPrefixDefault;
 extern NSString * const kKeyPrefixLabel;
+extern NSString * const kKeyPrefixAlternateLabel;
 extern NSString * const kKeyPrefixPlaceholder;
 extern NSString * const kKeyPrefixFooter;
 extern NSString * const kKeyPrefixAddMemberButton;

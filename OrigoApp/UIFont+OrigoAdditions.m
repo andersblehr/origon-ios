@@ -101,13 +101,13 @@ static CGFloat const kLineToFieldHeightFactor_iOS6x = 1.22f;
 
 + (CGFloat)titleFieldHeight
 {
-    return [[UIFont titleFont] textFieldHeight];
+    return [[UIFont titleFont] inputFieldHeight];
 }
 
 
 + (CGFloat)detailFieldHeight
 {
-    return [[UIFont detailFont] textFieldHeight];
+    return [[UIFont detailFont] inputFieldHeight];
 }
 
 
@@ -119,7 +119,7 @@ static CGFloat const kLineToFieldHeightFactor_iOS6x = 1.22f;
 
 #pragma mark - Text field height
 
-- (CGFloat)textFieldHeight
+- (CGFloat)inputFieldHeight
 {
     CGFloat lineToFieldHeightFactor = [OMeta systemIs_iOS6x] ? kLineToFieldHeightFactor_iOS6x : kLineToFieldHeightFactor;
     

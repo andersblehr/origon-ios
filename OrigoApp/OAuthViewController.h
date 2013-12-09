@@ -10,10 +10,10 @@
 
 @interface OAuthViewController : OTableViewController<OTableViewInputDelegate, UIAlertViewDelegate, OConnectionDelegate> {
 @private
-    OTextField *_emailField;
-    OTextField *_passwordField;
-    OTextField *_activationCodeField;
-    OTextField *_repeatPasswordField;
+    OInputField *_emailField;
+    OInputField *_passwordField;
+    OInputField *_activationCodeField;
+    OInputField *_repeatPasswordField;
 
     NSDictionary *_authInfo;
 }

@@ -8,13 +8,54 @@
 
 #import "OValidator.h"
 
+NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
+NSString * const kDefaultsKeyDirtyEntities = @"origo.state.dirtyEntities";
+NSString * const kDefaultsKeyStringDate = @"origo.strings.date";
+NSString * const kDefaultsKeyStringLanguage = @"origo.strings.language";
+
+NSString * const kJSONKeyActivationCode = @"activationCode";
+NSString * const kJSONKeyDeviceId = @"deviceId";
+NSString * const kJSONKeyEmail = @"email";
+NSString * const kJSONKeyEntityClass = @"entityClass";
+NSString * const kJSONKeyPasswordHash = @"passwordHash";
+
+NSString * const kInterfaceKeyActivate = @"activate";
+NSString * const kInterfaceKeyActivationCode = @"activationCode";
+NSString * const kInterfaceKeyAuthEmail = @"authEmail";
+NSString * const kInterfaceKeyPassword = @"password";
+NSString * const kInterfaceKeyPurpose = @"purpose";
+NSString * const kInterfaceKeyResidenceName = @"residenceName";
+NSString * const kInterfaceKeyRepeatPassword = @"repeatPassword";
+NSString * const kInterfaceKeySignIn = @"signIn";
+
+NSString * const kPropertyKeyAddress = @"address";
+NSString * const kPropertyKeyCountry = @"country";
+NSString * const kPropertyKeyDateOfBirth = @"dateOfBirth";
+NSString * const kPropertyKeyDescriptionText = @"descriptionText";
+NSString * const kPropertyKeyEmail = @"email";
+NSString * const kPropertyKeyEntityId = @"entityId";
+NSString * const kPropertyKeyFatherId = @"fatherId";
+NSString * const kPropertyKeyGender = @"gender";
+NSString * const kPropertyKeyHashCode = @"hashCode";
+NSString * const kPropertyKeyIsAwaitingDeletion = @"isAwaitingDeletion";
+NSString * const kPropertyKeyIsExpired = @"isExpired";
+NSString * const kPropertyKeyIsJuvenile = @"isJuvenile";
+NSString * const kPropertyKeyMobilePhone = @"mobilePhone";
+NSString * const kPropertyKeyMotherId = @"motherId";
+NSString * const kPropertyKeyName = @"name";
+NSString * const kPropertyKeyOrigoId = @"origoId";
+NSString * const kPropertyKeyPasswordHash = @"passwordHash";
+NSString * const kPropertyKeyTelephone = @"telephone";
+
+NSString * const kRelationshipKeyMember = @"member";
+NSString * const kRelationshipKeyOrigo = @"origo";
+
 static NSArray *_nameKeys = nil;
 static NSArray *_dateKeys = nil;
 static NSArray *_emailKeys = nil;
 static NSArray *_phoneNumberKeys = nil;
 static NSArray *_passwordKeys = nil;
-static NSArray *_inferredKeys = nil;
-static NSArray *_keysWithDefaultValues = nil;
+static NSArray *_defaultableKeys = nil;
 
 static NSDictionary *_keyMappings = nil;
 
@@ -26,63 +67,81 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 #pragma mark - Key categorisation
 
-+ (NSArray *)nameKeys
++ (BOOL)isNameKey:(NSString *)key
 {
     if (!_nameKeys) {
         _nameKeys = @[kPropertyKeyName, kInterfaceKeyResidenceName];
     }
-
-    return _nameKeys;
+    
+    return [_nameKeys containsObject:key];
 }
 
 
-+ (NSArray *)dateKeys
++ (BOOL)isAgeKey:(NSString *)key
+{
+    return [key isEqualToString:kPropertyKeyDateOfBirth];
+}
+
+
++ (BOOL)isDateKey:(NSString *)key
 {
     if (!_dateKeys) {
-        _dateKeys = @[kPropertyKeyDateOfBirth];
+        _dateKeys = [NSArray array];
     }
     
-    return _dateKeys;
+    return [self isAgeKey:key] || [_dateKeys containsObject:key];
 }
 
 
-+ (NSArray *)emailKeys
++ (BOOL)isEmailKey:(NSString *)key
 {
     if (!_emailKeys) {
         _emailKeys = @[kInterfaceKeyAuthEmail, kPropertyKeyEmail];
     }
     
-    return _emailKeys;
+    return [_emailKeys containsObject:key];
 }
 
 
-+ (NSArray *)phoneNumberKeys
++ (BOOL)isPhoneNumberKey:(NSString *)key
 {
     if (!_phoneNumberKeys) {
         _phoneNumberKeys = @[kPropertyKeyMobilePhone, kPropertyKeyTelephone];
     }
     
-    return _phoneNumberKeys;
+    return [_phoneNumberKeys containsObject:key];
 }
 
 
-+ (NSArray *)passwordKeys
++ (BOOL)isPasswordKey:(NSString *)key
 {
     if (!_passwordKeys) {
         _passwordKeys = @[kInterfaceKeyPassword, kInterfaceKeyRepeatPassword];
     }
     
-    return _passwordKeys;
+    return [_passwordKeys containsObject:key];
 }
 
 
-+ (NSArray *)inferredKeys
++ (BOOL)isDefaultableKey:(NSString *)key
 {
-    if (!_inferredKeys) {
-        _inferredKeys = @[kInterfaceKeyAge];
+    if (!_defaultableKeys) {
+        _defaultableKeys = @[kInterfaceKeyResidenceName];
     }
     
-    return _inferredKeys;
+    return [_defaultableKeys containsObject:key];
+}
+
+
++ (BOOL)isAlternatingLabelKey:(NSString *)key
+{
+    return [self isAgeKey:key];
+}
+
+
++ (BOOL)isAlternatingInputFieldKey:(NSString *)key
+{
+    return [self isAlternatingLabelKey:key] || [self isPhoneNumberKey:key];
 }
 
 
@@ -111,13 +170,9 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 + (NSString *)defaultValueForKey:(NSString *)key
 {
-    if (!_keysWithDefaultValues) {
-        _keysWithDefaultValues = @[kInterfaceKeyResidenceName];
-    }
-    
     id defaultValue = nil;
     
-    if ([_keysWithDefaultValues containsObject:key]) {
+    if ([self isDefaultableKey:key]) {
         defaultValue = [OStrings stringForKey:key withKeyPrefix:kKeyPrefixDefault];
     }
     
@@ -134,17 +189,19 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     if (value) {
         NSString *propertyKey = [OValidator propertyKeyForKey:key];
         
-        if ([[OValidator nameKeys] containsObject:propertyKey]) {
+        if ([self isNameKey:propertyKey]) {
             valueIsValid = [self valueIsName:value];
-        } else if ([[OValidator dateKeys] containsObject:propertyKey]) {
+        } else if ([self isDateKey:propertyKey]) {
             valueIsValid = YES;
-        } else if ([[OValidator phoneNumberKeys] containsObject:propertyKey]) {
+        } else if ([self isPhoneNumberKey:propertyKey]) {
             valueIsValid = ([value length] >= kMinimumPhoneNumberLength);
-        } else if ([[OValidator emailKeys] containsObject:propertyKey]) {
+        } else if ([self isEmailKey:propertyKey]) {
             valueIsValid = [self valueIsEmailAddress:value];
-        } else if ([[OValidator passwordKeys] containsObject:propertyKey]) {
+        } else if ([self isPasswordKey:propertyKey]) {
             valueIsValid = ([value length] >= kMinimumPassordLength);
         }
+    } else {
+        valueIsValid = [self isDefaultableKey:key];
     }
     
     return valueIsValid;

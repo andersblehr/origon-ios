@@ -41,7 +41,7 @@ static CGFloat const kTitleHeight = 24.f;
     subtitleLabel.adjustsFontSizeToFitWidth = YES;
     
     CGRect titleViewFrame = CGRectMake(0.f, 0.f, titleViewWidth, kNavigationBarHeight);
-    UIView* titleView = [[UILabel alloc] initWithFrame:titleViewFrame];
+    UIView* titleView = [[UIView alloc] initWithFrame:titleViewFrame];
     titleView.backgroundColor = [UIColor clearColor];
     [titleView addSubview:titleLabel];
     [titleView addSubview:subtitleLabel];

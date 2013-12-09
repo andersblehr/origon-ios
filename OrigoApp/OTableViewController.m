@@ -107,7 +107,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)inputFieldDidBeginEditing:(id)inputField
+- (void)inputFieldDidBeginEditing:(OInputField *)inputField
 {
     if ([self actionIs:kActionDisplay]) {
         [self toggleEditMode];
@@ -118,14 +118,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if ([_detailCell nextInputField]) {
         self.navigationItem.rightBarButtonItem = _nextButton;
         
-        if ([inputField isKindOfClass:[OTextField class]]) {
-            [inputField setReturnKeyType:UIReturnKeyNext];
+        if (!inputField.supportsMultiLineText) {
+            inputField.returnKeyType = UIReturnKeyNext;
         }
     } else {
         self.navigationItem.rightBarButtonItem = _doneButton;
         
-        if ([inputField isKindOfClass:[OTextField class]]) {
-            [inputField setReturnKeyType:UIReturnKeyDone];
+        if (!inputField.supportsMultiLineText) {
+            inputField.returnKeyType = UIReturnKeyDone;
         }
     }
 }
@@ -190,8 +190,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if ([self actionIs:kActionRegister]) {
         [_dismisser dismissModalViewController:self reload:NO];
     } else if ([self actionIs:kActionEdit]) {
-        [_detailCell writeEntityDefaults];
-        [_detailCell readEntity];
         [self toggleEditMode];
     }
 }
@@ -750,7 +748,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if (_detailCell) {
             height = [_detailCell.blueprint cellHeightWithEntity:_entity cell:_detailCell];
         } else if (_entityClass) {
-            height = [[[OTableViewCellBlueprint alloc] initWithEntityClass:_entityClass] cellHeightWithEntity:_entity cell:nil];
+            height = [[[OTableViewCellBlueprint alloc] initWithState:_state] cellHeightWithEntity:_entity cell:nil];
         } else if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
             height = [[[OTableViewCellBlueprint alloc] initWithReuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]] cellHeightWithEntity:nil cell:nil];
         }

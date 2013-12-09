@@ -25,13 +25,19 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 @implementation OTextView
 
+@synthesize key = _key;
+@synthesize hasEmphasis = _hasEmphasis;
+@synthesize isTitleField = _isTitleField;
+@synthesize supportsMultiLineText = _supportsMultiLineText;
+
+
 #pragma mark - Auxiliary methods
 
 + (CGFloat)textWidthWithBlueprint:(OTableViewCellBlueprint *)blueprint
 {
     CGFloat widthAdjustment = [OMeta systemIs_iOS6x] ? kWidthAdjustment_iOS6x : kWidthAdjustment;
     
-    return kContentWidth - [OTextView labelWidthWithBlueprint:blueprint] + widthAdjustment;
+    return kContentWidth - [OLabel widthWithBlueprint:blueprint] + widthAdjustment;
 }
 
 
@@ -74,13 +80,23 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
             lineCount = [OTextView lineCountWithText:self.text maxWidth:_textWidth];
         }
     } else {
-        lineCount = [OTextView lineCountWithText:self.placeholder maxWidth:_textWidth];
+        lineCount = [OTextView lineCountWithText:_placeholder maxWidth:_textWidth];
     }
     
     _lastKnownLineCount = lineCount;
     _lastKnownText = self.text;
     
     return lineCount;
+}
+
+
+- (NSString *)prepareText
+{
+    if ([self.text hasValue]) {
+        self.text = [self.text removeRedundantWhitespace];
+    }
+    
+    return [self.text hasValue] ? self.text : nil;
 }
 
 
@@ -121,7 +137,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
         _blueprint = blueprint;
         _textWidth = [OTextView textWidthWithBlueprint:_blueprint];
         _placeholder = [OStrings stringForKey:_key withKeyPrefix:kKeyPrefixPlaceholder];
-        _hasEmphasis = NO;
+        _supportsMultiLineText = YES;
         
         if ([OMeta systemIs_iOS6x]) {
             self.contentInset = UIEdgeInsetsMake(kContentInsetTop, kContentInsetLeft, 0.f, 0.f);
@@ -136,21 +152,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 }
 
 
-#pragma mark - Hooks for sizing & resizing
-
-+ (CGFloat)labelWidthWithBlueprint:(OTableViewCellBlueprint *)blueprint
-{
-    CGFloat labelWidth = 0.f;
-    
-    for (NSString *key in blueprint.detailKeys) {
-        CGSize labelSize = [[OStrings stringForKey:key withKeyPrefix:kKeyPrefixLabel] sizeWithFont:[UIFont detailFont] maxWidth:CGFLOAT_MAX];
-        
-        labelWidth = MAX(labelWidth, labelSize.width);
-    }
-    
-    return labelWidth + 1.f;
-}
-
+#pragma mark - Height computation
 
 + (CGFloat)heightWithText:(NSString *)text blueprint:(OTableViewCellBlueprint *)blueprint
 {
@@ -160,51 +162,33 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 }
 
 
-- (CGFloat)height
+#pragma mark - UIResponder overrides
+
+- (BOOL)canBecomeFirstResponder
 {
-    NSInteger lineCount = [self lineCount];
-    
-    if (_hasEmphasis) {
-        lineCount = MAX(kTextViewMinimumEditLines, lineCount);
-    } else {
-        lineCount = MAX(kTextViewMinimumLines, lineCount);
-    }
-    
-    return [OTextView heightWithLineCount:lineCount];
+    return YES;
 }
 
 
-#pragma mark - Custom accessors
+#pragma mark - OTextInput conformance: Accessors
 
-- (void)setHasEmphasis:(BOOL)hasEmphasis
+- (void)setValue:(id)value
 {
-    _hasEmphasis = hasEmphasis;
+    self.text = value;
     
-    if (_hasEmphasis) {
-        self.layer.borderColor = [[UIColor windowTintColour] CGColor];
-    } else {
-        self.text = [self textValue];
-        
-        self.layer.borderColor = [[UIColor clearColor] CGColor];
-    }
-}
-
-
-#pragma mark - UITextView custom accessors
-
-- (void)setText:(NSString *)text
-{
-    [super setText:text];
+    [self prepareText];
     [self textDidChange];
     
-    _lastKnownText = text;
+    _lastKnownText = self.text;
     _lastKnownLineCount = [self lineCount];
 }
 
 
-- (BOOL)editable
+- (id)value
 {
-    return self.isEditable;
+    NSString *value = [self prepareText];
+    
+    return value;
 }
 
 
@@ -238,31 +222,31 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 }
 
 
-#pragma mark - UIResponder overrides
-
-- (BOOL)canBecomeFirstResponder
+- (BOOL)editable
 {
-    return YES;
+    return self.isEditable;
 }
 
 
-#pragma mark - OInputField conformance
-
-- (BOOL)isDateField
+- (void)setHasEmphasis:(BOOL)hasEmphasis
 {
-    return NO;
+    _hasEmphasis = hasEmphasis;
+    
+    if (_hasEmphasis) {
+        self.layer.borderColor = [[UIColor windowTintColour] CGColor];
+    } else {
+        [self prepareText];
+        
+        self.layer.borderColor = [[UIColor clearColor] CGColor];
+    }
 }
 
 
-- (BOOL)hasValue
-{
-    return ([[self textValue] hasValue]);
-}
-
+#pragma mark - OTextInput conformance: Methods
 
 - (BOOL)hasValidValue
 {
-    BOOL hasValidValue = [self hasValue];
+    BOOL hasValidValue = [self.text hasValue];
     
     if (!hasValidValue) {
         [self becomeFirstResponder];
@@ -272,23 +256,23 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 }
 
 
-- (id)objectValue
+- (BOOL)hasMultiValue
 {
-    return [self textValue];
+    return NO;
 }
 
 
-- (NSString *)textValue
+- (CGFloat)height
 {
-    NSString *textValue = [self.text removeRedundantWhitespace];
+    NSInteger lineCount = [self lineCount];
     
-    if (![textValue hasValue]) {
-        textValue = nil;
+    if (_hasEmphasis) {
+        lineCount = MAX(kTextViewMinimumEditLines, lineCount);
+    } else {
+        lineCount = MAX(kTextViewMinimumLines, lineCount);
     }
     
-    self.text = textValue;
-    
-    return textValue;
+    return [OTextView heightWithLineCount:lineCount];
 }
 
 

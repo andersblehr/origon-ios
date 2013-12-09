@@ -408,7 +408,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (NSString *)age
 {
-    return [NSString stringWithFormat:[OStrings stringForKey:strFormatAge], [self.dateOfBirth yearsBeforeNow]];
+    return [self.dateOfBirth localisedAgeString];
 }
 
 
@@ -446,7 +446,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (NSString *)shortDetails
 {
-    NSString *details = [self.mobilePhone hasValue] ? self.mobilePhone : self.email;
+    NSString *details = [self.mobilePhone hasValue] ? [[OMeta m].phoneNumberFormatter canonicalisePhoneNumber:self.mobilePhone] : self.email;
     
     if ([self isMinor]) {
         if (details) {
@@ -494,23 +494,13 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         target = kTargetWard;
     } else if ([self isHousemateOfUser]) {
         target = kTargetHousemate;
+    } else if ([self isMinor]) {
+        target = kTargetJuvenile;
     } else {
         target = kTargetExternal;
     }
     
     return target;
-}
-
-
-- (id)valueForInferredKey:(NSString *)key
-{
-    id value = nil;
-    
-    if ([key isEqualToString:kInterfaceKeyAge] && self.dateOfBirth) {
-        value = [self age];
-    }
-    
-    return value;
 }
 
 @end

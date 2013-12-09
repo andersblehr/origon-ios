@@ -271,7 +271,7 @@ NSString * const kCharacters0_9 = @"0123456789";
             if ([token isEqualToString:character] && ![kWildcardTokens containsString:token]) {
                 matchedCharacters = character;
             } else if ([token isEqualToString:kTokenCanonical]) {
-                _canonicalOffset = [_formattedPhoneNumber length] + 1;
+                _canonicalOffset = [_formattedPhoneNumber length];
                 matchedCharacters = [self matchCharacter:character];
             } else if ([kWildcardTokens containsString:token]) {
                 if ([kWhitespaceCharacters containsString:character]) {
