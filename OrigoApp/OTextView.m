@@ -90,7 +90,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 }
 
 
-- (NSString *)prepareText
+- (NSString *)peelText
 {
     if ([self.text hasValue]) {
         self.text = [self.text removeRedundantWhitespace];
@@ -176,7 +176,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 {
     self.text = value;
     
-    [self prepareText];
+    [self peelText];
     [self textDidChange];
     
     _lastKnownText = self.text;
@@ -186,7 +186,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 - (id)value
 {
-    NSString *value = [self prepareText];
+    NSString *value = [self peelText];
     
     return value;
 }
@@ -235,7 +235,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
     if (_hasEmphasis) {
         self.layer.borderColor = [[UIColor windowTintColour] CGColor];
     } else {
-        [self prepareText];
+        [self peelText];
         
         self.layer.borderColor = [[UIColor clearColor] CGColor];
     }

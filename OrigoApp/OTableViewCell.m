@@ -225,7 +225,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     OInputField *inputField = nil;
     BOOL ignoreField = (_inputField != nil);
     
-    for (NSString *key in _blueprint.inputFieldKeys) {
+    for (NSString *key in _blueprint.displayableInputFieldKeys) {
         if (ignoreField) {
             ignoreField = ![key isEqualToString:_inputField.key];
         } else {
@@ -243,7 +243,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     OInputField *invalidInputField = nil;
     
-    for (NSString *key in _blueprint.inputFieldKeys) {
+    for (NSString *key in _blueprint.displayableInputFieldKeys) {
         OInputField *inputField = [self inputFieldForKey:key];
         
         if (!invalidInputField && ![inputField hasValidValue]) {
@@ -291,7 +291,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
         
         if (_editable) {
-            for (NSString *key in _blueprint.inputFieldKeys) {
+            for (NSString *key in _blueprint.displayableInputFieldKeys) {
                 OInputField *inputField = [self inputFieldForKey:key];
                 
                 if (!_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
@@ -376,7 +376,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)prepareForInput
 {
-    for (NSString *key in _blueprint.inputFieldKeys) {
+    for (NSString *key in _blueprint.allInputFieldKeys) {
         OInputField *inputField = [self inputFieldForKey:key];
         
         if ([inputField respondsToSelector:@selector(prepareForInput)]) {
@@ -411,7 +411,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             [_state.viewController.dirtySections addObject:@(_indexPath.section)];
         }
     } else {
-        for (NSString *key in _blueprint.inputFieldKeys) {
+        for (NSString *key in _blueprint.allInputFieldKeys) {
             [self inputFieldForKey:key].value = [_entity valueForKey:key];
         }
         
@@ -426,7 +426,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _entity = [_inputDelegate inputEntity];
     }
     
-    for (NSString *key in _blueprint.inputFieldKeys) {
+    for (NSString *key in _blueprint.allInputFieldKeys) {
         [_entity setValue:[self inputFieldForKey:key].value forKey:key];
     }
     
@@ -506,7 +506,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [super setEditing:editing];
     
     if (![self isListCell]) {
-        for (NSString *key in _blueprint.inputFieldKeys) {
+        for (NSString *key in _blueprint.allInputFieldKeys) {
             [self inputFieldForKey:key].editable = editing;
             
             if ([OValidator isAlternatingLabelKey:key]) {

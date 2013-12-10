@@ -20,9 +20,9 @@ extern CGFloat const kPhotoFrameWidth;
     
     NSArray *_textViewKeys;
     NSArray *_detailKeys;
-    NSArray *_inputFieldKeys;
+    NSArray *_allInputFieldKeys;
     
-    NSMutableArray *_displayableDetailKeys;
+    NSMutableArray *_displayableInputFieldKeys;
 }
 
 @property (nonatomic, readonly) BOOL hasPhoto;
@@ -31,7 +31,8 @@ extern CGFloat const kPhotoFrameWidth;
 
 @property (strong, nonatomic, readonly) NSString *titleKey;
 @property (strong, nonatomic, readonly) NSArray *detailKeys;
-@property (strong, nonatomic, readonly) NSArray *inputFieldKeys;
+@property (strong, nonatomic, readonly) NSArray *displayableInputFieldKeys;
+@property (strong, nonatomic, readonly) NSArray *allInputFieldKeys;
 @property (strong, nonatomic, readonly) NSArray *indirectKeys;
 
 - (id)initWithState:(OState *)state;
@@ -39,6 +40,5 @@ extern CGFloat const kPhotoFrameWidth;
 
 - (OInputField *)inputFieldWithKey:(NSString *)key delegate:(id)delegate;
 - (CGFloat)cellHeightWithEntity:(OReplicatedEntity *)entity cell:(OTableViewCell *)cell;
-- (BOOL)elementsAreDisplayableForKey:(NSString *)key;
 
 @end
