@@ -18,33 +18,6 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 @implementation OTableViewCellBlueprint
 
-#pragma mark - Auxiliary methods
-
-- (NSArray *)displayableDetailKeys
-{
-    if (_displayableDetailKeys && ![_state.action isEqualToString:_stateAction]) {
-        _displayableDetailKeys = nil;
-        _stateAction = _state.action;
-    }
-    
-    if (!_displayableDetailKeys) {
-        _displayableDetailKeys = [NSMutableArray arrayWithArray:_detailKeys];
-        
-        if ([_state.viewController.identifier isEqualToString:kIdentifierMember]) {
-            if ([_state targetIs:kTargetJuvenile]) {
-                if ([_state actionIs:kActionInput] && ![_state aspectIsHousehold]) {
-                    _displayableDetailKeys = nil;
-                }
-            } else if (![_state aspectIsHousehold] || ![_state actionIs:kActionInput]) {
-                [_displayableDetailKeys removeObject:kPropertyKeyDateOfBirth];
-            }
-        }
-    }
-    
-    return _displayableDetailKeys;
-}
-
-
 #pragma mark - Initialisation
 
 - (id)initWithState:(OState *)state
@@ -108,14 +81,6 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 }
 
 
-#pragma mark - Detail key filtering
-
-- (BOOL)elementsAreDisplayableForKey:(NSString *)key
-{
-    return [key isEqualToString:_titleKey] || [[self displayableDetailKeys] containsObject:key];
-}
-
-
 #pragma mark - Text field instantiation
 
 - (OInputField *)inputFieldWithKey:(NSString *)key delegate:(id)delegate
@@ -155,32 +120,30 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 {
     CGFloat height = 2 * kDefaultCellPadding;
     
-    if (_titleKey) {
-        if (_fieldsAreLabeled) {
-            height += [UIFont titleFieldHeight] + kDefaultCellPadding;
-        } else {
-            height += [UIFont detailFieldHeight] + kDefaultCellPadding;
+    for (NSString *key in self.displayableInputFieldKeys) {
+        if ([key isEqualToString:_titleKey]) {
+            if (_fieldsAreLabeled) {
+                height += [UIFont titleFieldHeight] + kDefaultCellPadding;
+            } else {
+                height += [UIFont detailFieldHeight] + kDefaultCellPadding;
+            }
+        } else if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:key]) {
+            if ([_textViewKeys containsObject:[OValidator propertyKeyForKey:key]]) {
+                if (cell) {
+                    height += [[cell inputFieldForKey:key] height];
+                } else if ([entity hasValueForKey:key]) {
+                    height += [OTextView heightWithText:[entity valueForKey:key] blueprint:self];
+                } else {
+                    height += [OTextView heightWithText:[OStrings stringForKey:key withKeyPrefix:kKeyPrefixPlaceholder] blueprint:self];
+                }
+            } else {
+                height += [UIFont detailFieldHeight];
+            }
         }
     }
     
-    if ([[self displayableDetailKeys] count]) {
-        for (NSString *key in [self displayableDetailKeys]) {
-            if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:key]) {
-                if ([_textViewKeys containsObject:[OValidator propertyKeyForKey:key]]) {
-                    if (cell) {
-                        height += [[cell inputFieldForKey:key] height];
-                    } else if ([entity hasValueForKey:key]) {
-                        height += [OTextView heightWithText:[entity valueForKey:key] blueprint:self];
-                    } else {
-                        height += [OTextView heightWithText:[OStrings stringForKey:key withKeyPrefix:kKeyPrefixPlaceholder] blueprint:self];
-                    }
-                } else {
-                    height += [UIFont detailFieldHeight];
-                }
-            }
-        }
-    } else if (_hasPhoto) {
-        height = kPaddedPhotoFrameHeight;
+    if (_hasPhoto) {
+        height = MAX(height, kPaddedPhotoFrameHeight);
     }
     
     return height;
@@ -189,17 +152,42 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 #pragma mark - Custom accessors
 
-- (NSArray *)inputFieldKeys
+- (NSArray *)displayableInputFieldKeys
 {
-    if (!_inputFieldKeys) {
-        if (_titleKey) {
-            _inputFieldKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
-        } else {
-            _inputFieldKeys = _detailKeys;
+    if (_displayableInputFieldKeys && ![_state.action isEqualToString:_stateAction]) {
+        _displayableInputFieldKeys = nil;
+        _stateAction = _state.action;
+    }
+    
+    if (!_displayableInputFieldKeys) {
+        _displayableInputFieldKeys = [NSMutableArray arrayWithArray:self.allInputFieldKeys];
+        
+        if ([_state.viewController.identifier isEqualToString:kIdentifierMember]) {
+            if ([_state targetIs:kTargetJuvenile]) {
+                if ([_state actionIs:kActionInput] && ![_state aspectIsHousehold]) {
+                    _displayableInputFieldKeys = nil;
+                }
+            } else if (![_state aspectIsHousehold] || ![_state actionIs:kActionInput]) {
+                [_displayableInputFieldKeys removeObject:kPropertyKeyDateOfBirth];
+            }
         }
     }
     
-    return _inputFieldKeys;
+    return _displayableInputFieldKeys;
+}
+
+
+- (NSArray *)allInputFieldKeys
+{
+    if (!_allInputFieldKeys) {
+        if (_titleKey) {
+            _allInputFieldKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
+        } else {
+            _allInputFieldKeys = _detailKeys;
+        }
+    }
+    
+    return _allInputFieldKeys;
 }
 
 @end
