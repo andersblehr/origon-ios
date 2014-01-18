@@ -15,15 +15,16 @@ NSString * const kIdentifierMessageList = @"messages";
 NSString * const kIdentifierOldOrigo = @"old";
 NSString * const kIdentifierOrigo = @"origo";
 NSString * const kIdentifierOrigoList = @"origos";
-NSString * const kIdentifierSetting = @"setting";
-NSString * const kIdentifierSettingList = @"settings";
 NSString * const kIdentifierTaskList = @"tasks";
+NSString * const kIdentifierValueList = @"values";
+NSString * const kIdentifierValuePicker = @"value";
 
 NSString * const kActionLoad = @"load";
 NSString * const kActionSignIn = @"sign-in";
 NSString * const kActionActivate = @"activate";
 NSString * const kActionRegister = @"register";
 NSString * const kActionList = @"list";
+NSString * const kActionPick = @"pick";
 NSString * const kActionDisplay = @"display";
 NSString * const kActionEdit = @"edit";
 NSString * const kActionInput = @"input";
@@ -34,7 +35,12 @@ NSString * const kTargetUser = @"user";
 NSString * const kTargetWard = @"ward";
 NSString * const kTargetHousemate = @"housemate";
 NSString * const kTargetJuvenile = @"juvenile";
-NSString * const kTargetExternal = @"external";
+NSString * const kTargetMember = @"member";
+NSString * const kTargetMembers = @"members";
+NSString * const kTargetGuardian = @"guardian";
+NSString * const kTargetContact = @"contact";
+NSString * const kTargetRelation = @"relation";
+NSString * const kTargetSetting = @"setting";
 
 static NSString * const kAspectHousehold = @"h";
 static NSString * const kAspectDefault = @"d";
@@ -49,7 +55,8 @@ static OState *_s = nil;
 - (void)setAspectForEntity:(id)entity
 {
     if ([entity isKindOfClass:[OMember class]]) {
-        if ([entity isUser] || [entity isHousemateOfUser]) {
+        if ([entity isHousemateOfUser]) {
+            _pivotMember = entity;
             _aspect = kAspectHousehold;
         } else {
             _aspect = kAspectDefault;
@@ -73,10 +80,9 @@ static OState *_s = nil;
     if (self && viewController) {
         _viewController = viewController;
         
-        if ([OState s] && [[OState s] aspectIsHousehold]) {
-            _aspect = kAspectHousehold;
-        } else {
-            _aspect = kAspectDefault;
+        if ([OState s]) {
+            _pivotMember = [OState s].pivotMember;
+            _aspect = [[OState s] aspectIsHousehold] ? kAspectHousehold : kAspectDefault;
         }
     }
     
@@ -102,9 +108,9 @@ static OState *_s = nil;
         if (![target isEqualToString:kOrigoTypeResidence] || ![aspectCarrier isUser]) {
             _aspect = kAspectDefault;
         }
-        
-        [self setTarget:target];
     }
+    
+    self.target = target;
 }
 
 
@@ -112,6 +118,7 @@ static OState *_s = nil;
 {
     if (state != self) {
         _viewController = state.viewController;
+        _pivotMember = state.pivotMember;
         _aspect = [state aspectIsHousehold] ? kAspectHousehold : kAspectDefault;
         _action = state.action;
         _target = state.target;
@@ -182,7 +189,6 @@ static OState *_s = nil;
 - (NSString *)asString
 {
     NSString *viewController = [_viewController.identifier uppercaseString];
-    NSString *aspect = [_aspect uppercaseString];
     NSString *action = [_action uppercaseString];
     NSString *target = [_target uppercaseString];
     
@@ -190,7 +196,7 @@ static OState *_s = nil;
     action = action ? action : @"DEFAULT";
     target = target ? target : @"DEFAULT";
     
-    return [NSString stringWithFormat:@"{%@}[%@][%@][%@]", aspect, action, viewController, target];
+    return [NSString stringWithFormat:@"[%@][%@][%@]", action, viewController, target];
 }
 
 

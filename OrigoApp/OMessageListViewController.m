@@ -8,8 +8,8 @@
 
 #import "OMessageListViewController.h"
 
-@implementation OMessageListViewController
 
+@implementation OMessageListViewController
 
 #pragma mark - View lifecycle
 

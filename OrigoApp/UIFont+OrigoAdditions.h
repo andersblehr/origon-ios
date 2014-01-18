@@ -12,13 +12,14 @@
 
 + (UIFont *)navigationBarTitleFont;
 + (UIFont *)navigationBarSubtitleFont;
++ (UIFont *)plainHeaderFont;
 + (UIFont *)headerFont;
 + (UIFont *)footerFont;
 + (UIFont *)titleFont;
 + (UIFont *)detailFont;
 + (UIFont *)listTextFont;
-+ (UIFont *)listDetailFont;
-+ (UIFont *)alternateListFont;
++ (UIFont *)listDetailTextFont;
++ (UIFont *)alternateListTextFont;
 
 + (CGFloat)titleFieldHeight;
 + (CGFloat)detailFieldHeight;

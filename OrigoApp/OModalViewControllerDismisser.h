@@ -13,9 +13,4 @@
 @required
 - (void)dismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload;
 
-@optional
-- (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController;
-- (void)willDismissModalViewController:(OTableViewController *)viewController;
-- (void)didDismissModalViewController:(OTableViewController *)viewController;
-
 @end

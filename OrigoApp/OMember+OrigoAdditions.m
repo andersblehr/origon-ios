@@ -8,14 +8,18 @@
 
 #import "OMember+OrigoAdditions.h"
 
-NSString * const kMemberTypeGuardian = @"guardian";
-
 NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 
 @implementation OMember (OrigoAdditions)
 
 #pragma mark - Selector implementations
+
+- (NSComparisonResult)compare:(OMember *)other
+{
+    return [self.name localizedCaseInsensitiveCompare:other.name];
+}
+
 
 - (NSComparisonResult)appellationCompare:(OMember *)other
 {
@@ -185,6 +189,24 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
+- (NSSet *)siblings
+{
+    NSMutableSet *siblings = [NSMutableSet set];
+    
+    if ([self isMinor]) {
+        for (OMember *guardian in [self guardians]) {
+            for (OMember *sibling in [guardian wards]) {
+                if (sibling != self) {
+                    [siblings addObject:sibling];
+                }
+            }
+        }
+    }
+    
+    return siblings;
+}
+
+
 - (NSSet *)guardians
 {
     NSMutableSet *guardians = [NSMutableSet set];
@@ -198,6 +220,70 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     }
     
     return guardians;
+}
+
+
+- (NSSet *)peers
+{
+    NSMutableSet *peers = [NSMutableSet set];
+    
+    for (OMembership *membership in [self fullMemberships]) {
+        for (OMembership *peerMembership in [membership.origo fullMemberships]) {
+            if ([peerMembership.member isMinor] == [self isMinor]) {
+                [peers addObject:peerMembership.member];
+            }
+        }
+    }
+    
+    if ([self isMinor]) {
+        for (OMember *sibling in [self siblings]) {
+            for (OMembership *siblingMembership in [sibling fullMemberships]) {
+                for (OMembership *peerMembership in [siblingMembership.origo fullMemberships]) {
+                    if ([peerMembership.member isMinor]) {
+                        [peers addObject:peerMembership.member];
+                    }
+                }
+            }
+        }
+    } else {
+        for (OMember *ward in [self wards]) {
+            for (OMembership *wardMembership in [ward fullMemberships]) {
+                for (OMembership *peerMembership in [wardMembership.origo fullMemberships]) {
+                    if ([peerMembership.member isMinor]) {
+                        [peers unionSet:[peerMembership.member guardians]];
+                    } else {
+                        [peers addObject:peerMembership.member];
+                    }
+                }
+            }
+        }
+    }
+    
+    return peers;
+}
+
+
+- (NSSet *)wardPeers
+{
+    NSMutableSet *wardPeers = [NSMutableSet set];
+    
+    for (OMember *ward in [self wards]) {
+        [wardPeers unionSet:[ward peers]];
+    }
+    
+    return wardPeers;
+}
+
+
+- (NSSet *)guardianPeers
+{
+    NSMutableSet *guardianPeers = [NSMutableSet set];
+    
+    for (OMember *guardian in [self guardians]) {
+        [guardianPeers unionSet:[guardian peers]];
+    }
+    
+    return guardianPeers;
 }
 
 
@@ -497,7 +583,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     } else if ([self isMinor]) {
         target = kTargetJuvenile;
     } else {
-        target = kTargetExternal;
+        target = kTargetMember;
     }
     
     return target;

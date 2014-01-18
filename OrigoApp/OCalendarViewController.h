@@ -8,6 +8,6 @@
 
 #import "OrigoApp.h"
 
-@interface OCalendarViewController : OTableViewController
+@interface OCalendarViewController : OTableViewController<OTableViewControllerInstance>
 
 @end

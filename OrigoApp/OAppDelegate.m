@@ -53,6 +53,10 @@ static void uncaughtExceptionHandler(NSException *exception)
         [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTintColor:[UIColor iOS6BarButtonItemColour]];
         [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTitleTextAttributes:@{UITextAttributeTextShadowColor: [UIColor clearColor]} forState:UIControlStateNormal];
         
+        [[UISegmentedControl appearanceWhenContainedIn:[UINavigationBar class], nil] setSegmentedControlStyle:UISegmentedControlStyleBar];
+        [[UISegmentedControl appearanceWhenContainedIn:[UINavigationBar class], nil] setTintColor:[UIColor whiteColor]];
+        [[UISegmentedControl appearanceWhenContainedIn:[UINavigationBar class], nil] setTitleTextAttributes:@{UITextAttributeTextColor:[UIColor iOS6BarButtonItemColour], UITextAttributeTextShadowColor: [UIColor clearColor]} forState:UIControlStateNormal];
+        
         [[UIToolbar appearance] setTintColor:[UIColor toolbarShadowColour]];
     }
 }

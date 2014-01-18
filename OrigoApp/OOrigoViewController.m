@@ -16,11 +16,12 @@ static NSInteger const kSectionKeyMembers = 2;
 
 static NSInteger const kActionSheetTagActionSheet = 0;
 static NSInteger const kButtonTagEdit = 0;
-static NSInteger const kButtonTagAddMember = 1;
-static NSInteger const kButtonTagAddContact = 2;
-static NSInteger const kButtonTagAddParentContact = 3;
-static NSInteger const kButtonTagShowInMap = 4;
-static NSInteger const kButtonTagAbout = 5;
+static NSInteger const kButtonTagEditRoles = 1;
+static NSInteger const kButtonTagAddMember = 2;
+static NSInteger const kButtonTagAddFromOrigo = 3;
+static NSInteger const kButtonTagAddContact = 4;
+static NSInteger const kButtonTagShowInMap = 5;
+static NSInteger const kButtonTagAbout = 6;
 
 static NSInteger const kActionSheetTagHousemate = 1;
 static NSInteger const kButtonTagHousemate = 100;
@@ -82,14 +83,16 @@ static NSInteger const kButtonTagGuardian = 101;
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
     
     [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
     
     if ([_origo isOrganised]) {
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEditRoles] tag:kButtonTagEditRoles];
+    }
+    
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddFromOrigo] tag:kButtonTagAddFromOrigo];
+    
+    if ([_origo isOrganised] && [_origo isJuvenile]) {
         [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddContactButton] tag:kButtonTagAddContact];
-        
-        if ([_origo isJuvenile]) {
-            [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddParentContact] tag:kButtonTagAddParentContact];
-        }
     }
     
     if ([_origo.address hasValue]) {
@@ -104,11 +107,15 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)addItem
 {
-    if ([_origo isOrganised]) {
+    if (![_origo isOfType:kOrigoTypeResidence]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
         
         [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddContactButton] tag:kButtonTagAddContact];
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddFromOrigo] tag:kButtonTagAddFromOrigo];
+        
+        if ([_origo isOrganised] && [_origo isJuvenile]) {
+            [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddContactButton] tag:kButtonTagAddContact];
+        }
         
         [actionSheet show];
     } else {
@@ -145,7 +152,7 @@ static NSInteger const kButtonTagGuardian = 101;
         _origo = _membership.origo;
         _origoType = _origo.type;
         
-        [self.state setTarget:_origo];
+        self.state.target = _origo;
         
         if ([_origo isOfType:kOrigoTypeResidence] && ![[OState s] aspectIsHousehold]) {
             self.title = [OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixOrigoTitle];
@@ -154,7 +161,7 @@ static NSInteger const kButtonTagGuardian = 101;
         }
         
         if ([self canEdit] && ![self actionIs:kActionRegister]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButton];
         }
     } else if ([self.data isKindOfClass:[OMember class]]) {
         _member = self.data;
@@ -185,6 +192,12 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
+- (NSArray *)toolbarButtons
+{
+    return [[OMeta m].switchboard toolbarButtonsForOrigo:_origo];
+}
+
+
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
     BOOL hasFooter = NO;
@@ -208,12 +221,6 @@ static NSInteger const kButtonTagGuardian = 101;
     }
     
     return text;
-}
-
-
-- (NSArray *)toolbarButtons
-{
-    return [[OMeta m].switchboard toolbarButtonsForOrigo:_origo];
 }
 
 
@@ -249,6 +256,20 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
+- (void)didDismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload
+{
+    if (reload) {
+        if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
+            for (OMember *member in viewController.returnData) {
+                [_origo addMember:member];
+            }
+            
+            [self reloadSections];
+        }
+    }
+}
+
+
 #pragma mark - OTableViewInputDelegate conformance
 
 - (BOOL)inputIsValid
@@ -280,8 +301,8 @@ static NSInteger const kButtonTagGuardian = 101;
         
         [[OMeta m].replicator replicate];
         
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButton];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButton];
     } else if ([self actionIs:kActionEdit]) {
         [self toggleEditMode];
     }
@@ -385,6 +406,10 @@ static NSInteger const kButtonTagGuardian = 101;
             if (buttonIndex < actionSheet.cancelButtonIndex) {
                 if (buttonTag == kButtonTagAddMember) {
                     [self addMember];
+                } else if (buttonTag == kButtonTagAddFromOrigo) {
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker data:_origo meta:kTargetMembers];
+                } else if (buttonTag == kButtonTagAddContact) {
+                    [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kTargetContact];
                 }
             }
             
@@ -394,7 +419,7 @@ static NSInteger const kButtonTagGuardian = 101;
             if (buttonTag == kButtonTagHousemate) {
                 [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo];
             } else if (buttonTag == kButtonTagGuardian) {
-                [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kMemberTypeGuardian];
+                [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kTargetGuardian];
             } else if (buttonIndex < actionSheet.cancelButtonIndex) {
                 [_origo addMember:_housemateCandidates[buttonIndex]];
                 [self reloadSections];

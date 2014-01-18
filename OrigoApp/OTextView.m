@@ -166,7 +166,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 - (BOOL)canBecomeFirstResponder
 {
-    return YES;
+    return self.editable;
 }
 
 

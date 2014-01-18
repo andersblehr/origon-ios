@@ -16,6 +16,7 @@ extern NSString * const kSeparatorSpace;
 
 extern NSString * const kSeparatorList;
 extern NSString * const kSeparatorMapping;
+extern NSString * const kSeparatorSegments;
 extern NSString * const kSeparatorAlternates;
 
 @interface NSString (OrigoAdditions)

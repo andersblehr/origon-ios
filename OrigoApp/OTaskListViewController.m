@@ -8,8 +8,8 @@
 
 #import "OTaskListViewController.h"
 
-@implementation OTaskListViewController
 
+@implementation OTaskListViewController
 
 #pragma mark - View lifecycle
 

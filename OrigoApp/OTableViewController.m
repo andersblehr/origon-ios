@@ -9,14 +9,16 @@
 #import "OTableViewController.h"
 
 NSString * const kRegistrationCell = @"registration";
-NSString * const kCustomCell = @"customCell";
-NSString * const kCustomValue = @"customValue";
+NSString * const kCustomData = @"customData";
 
 static NSString * const kViewControllerSuffixDefault = @"ViewController";
 static NSString * const kViewControllerSuffixList = @"ListViewController";
+static NSString * const kViewControllerSuffixPicker = @"PickerViewController";
 
 static CGFloat const kEmptyFooterHeight = 14.f;
 static CGFloat const kSectionSpacing = 28.f;
+
+static NSInteger const kMinimumSectionIndexTitles = 13;
 
 static BOOL _needsReinstantiateRootViewController;
 static UIViewController * _reinstantiatedRootViewController;
@@ -34,9 +36,21 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Auxiliary methods
 
+- (BOOL)isEntityViewController
+{
+    return ![self isListViewController] && ![self isPickerViewController];
+}
+
+
 - (BOOL)isListViewController
 {
     return [NSStringFromClass([self class]) hasSuffix:kViewControllerSuffixList];
+}
+
+
+- (BOOL)isPickerViewController
+{
+    return [NSStringFromClass([self class]) hasSuffix:kViewControllerSuffixPicker];
 }
 
 
@@ -44,12 +58,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     if ([OStrings hasStrings]) {
         if ([[OMeta m] userIsAllSet] || _isModal) {
-            if (_isModal && ![self isListViewController]) {
-                _state.action = kActionRegister;
+            if ([self isEntityViewController]) {
+                _state.action = _isModal ? kActionRegister : kActionDisplay;
             } else if ([self isListViewController]) {
                 _state.action = kActionList;
-            } else {
-                _state.action = kActionDisplay;
+            } else if ([self isPickerViewController]) {
+                _state.action = kActionPick;
             }
             
             [_instance initialiseState];
@@ -141,7 +155,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         hasHeader = [_instance hasHeaderForSectionWithKey:sectionKey];
     }
     
-    return hasHeader;
+    return hasHeader || _usesSectionIndexTitles;
 }
 
 
@@ -187,7 +201,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)didCancelEditing
 {
-    if ([self actionIs:kActionRegister]) {
+    if (self.isModal) {
         [_dismisser dismissModalViewController:self reload:NO];
     } else if ([self actionIs:kActionEdit]) {
         [self toggleEditMode];
@@ -197,10 +211,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)didFinishEditing
 {
-    if ([self actionIs:kActionDisplay]) {
-        [_dismisser dismissModalViewController:self reload:YES];
-    } else {
+    if ([self actionIs:kActionInput]) {
         [_detailCell processInput];
+    } else {
+        [_dismisser dismissModalViewController:self reload:YES];
     }
 }
 
@@ -227,12 +241,67 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Setting section data
 
+- (void)setData:(NSArray *)data sectionIndexLabelKey:(NSString *)sectionIndexLabelKey
+{
+    static NSInteger sectionKey;
+    static NSString *labelKey = nil;
+    
+    if (sectionIndexLabelKey) {
+        sectionKey = 0;
+        
+        [_sectionIndexTitles removeAllObjects];
+        [_dirtySections addObjectsFromArray:_sectionKeys];
+        
+        if (_usesPlainTableViewStyle && ([data count] > kMinimumSectionIndexTitles)) {
+            _usesSectionIndexTitles = YES;
+            labelKey = sectionIndexLabelKey;
+            
+            [self setData:data sectionIndexLabelKey:nil];
+        } else {
+            [self setData:data forSectionWithKey:sectionKey];
+        }
+    } else if (labelKey) {
+        if ([data count]) {
+            NSString *sectionLabelSample = [data[0] valueForKey:labelKey];
+            NSString *sectionInitial = [sectionLabelSample substringWithRange:NSMakeRange(0, 1)];
+            
+            [_sectionIndexTitles addObject:[sectionInitial uppercaseString]];
+            
+            NSMutableArray *sectionData = [NSMutableArray array];
+            NSArray *remainingData = nil;
+            
+            for (int i = 0; (i < [data count]) && !remainingData; i++) {
+                NSString *label = [data[i] valueForKey:labelKey];
+                
+                if ([[label lowercaseString] hasPrefix:[sectionInitial lowercaseString]]) {
+                    [sectionData addObject:data[i]];
+                } else {
+                    remainingData = [data subarrayWithRange:NSMakeRange(i, [data count] - i)];
+                }
+            }
+            
+            [self setData:sectionData forSectionWithKey:sectionKey++];
+            [self setData:remainingData sectionIndexLabelKey:nil];
+        } else if ([_sectionKeys count] > sectionKey) {
+            NSRange redundantSections = NSMakeRange(sectionKey, [_sectionKeys count] - sectionKey);
+            NSArray *redundantSectionKeys = [_sectionKeys subarrayWithRange:redundantSections];
+            
+            [_sectionKeys removeObjectsInRange:redundantSections];
+            [_sectionData removeObjectsForKeys:redundantSectionKeys];
+            [_sectionCounts removeObjectsForKeys:redundantSectionKeys];
+            
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:redundantSections] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+    }
+}
+
+
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
     if ([data isKindOfClass:[NSArray class]]) {
-        _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:data];
+        _sectionData[@(sectionKey)] = [data mutableCopy];
     } else if ([data isKindOfClass:[NSSet class]]) {
-        _sectionData[@(sectionKey)] = [NSMutableArray arrayWithArray:[self sortedArrayWithData:data forSectionWithKey:sectionKey]];
+        _sectionData[@(sectionKey)] = [[self sortedArrayWithData:data forSectionWithKey:sectionKey] mutableCopy];
     } else if (data) {
         _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
         
@@ -385,6 +454,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     if ([self actionIs:kActionRegister]) {
         [self.view endEditing:YES];
+        
+        self.detailCell.editable = NO;
         self.navigationItem.rightBarButtonItem = _doneButton;
     }
 }
@@ -402,9 +473,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         leftButton = self.navigationItem.leftBarButtonItem;
         
         if (!_cancelButton) {
-            _cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
-            _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
-            _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
+            _cancelButton = [UIBarButtonItem cancelButton];
+            _nextButton = [UIBarButtonItem nextButton];
+            _doneButton = [UIBarButtonItem doneButton];
         }
         
         self.navigationItem.leftBarButtonItem = _cancelButton;
@@ -465,6 +536,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if ([sectionsToReload count]) {
         [self.tableView reloadSections:sectionsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
     }
+    
+    [_dirtySections removeAllObjects];
 }
 
 
@@ -506,15 +579,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         self.tableView.backgroundColor = [UIColor tableViewBackgroundColour];
     }
     
-    NSString *longName = NSStringFromClass([self class]);
-    NSString *shortName = [longName substringFromIndex:1];
-    NSString *viewControllerSuffix = [self isListViewController] ? kViewControllerSuffixList : kViewControllerSuffixDefault;
-    
-    _identifier = [[shortName substringToIndex:[shortName rangeOfString:viewControllerSuffix].location] lowercaseString];
-    
-    if ([self isListViewController]) {
-        _identifier = [_identifier stringByAppendingString:@"s"];
-    } else {
+    if ([self isEntityViewController]) {
+        NSString *longName = NSStringFromClass([self class]);
+        
         _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kViewControllerSuffixDefault].location]);
     }
     
@@ -522,25 +589,32 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _isModal = (self.presentingViewController != nil);
     }
     
-    _detailSectionKey = NSNotFound;
+    _identifier = self.restorationIdentifier;
     _sectionKeys = [NSMutableArray array];
     _sectionData = [NSMutableDictionary dictionary];
     _sectionCounts = [NSMutableDictionary dictionary];
+    _sectionIndexTitles = [NSMutableArray array];
     _dirtySections = [NSMutableSet set];
+    _detailSectionKey = NSNotFound;
     _state = [[OState alloc] initWithViewController:self];
-    _instance = self;
+    _instance = (id<OTableViewControllerInstance>)self;
     _canEdit = NO;
     
     [self initialiseInstance];
     
+    if (_usesPlainTableViewStyle) {
+        self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    }
+    
     if ([self actionIs:kActionRegister]) {
-        _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
-        _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
+        _nextButton = [UIBarButtonItem nextButton];
+        _doneButton = [UIBarButtonItem doneButton];
         
         if (![[OMeta m].user isActive]) {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:self];
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButton];
         } else {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
         }
         
         [self.navigationItem appendRightBarButtonItem:_nextButton];
@@ -578,7 +652,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if (_isPopped || _shouldReloadOnModalDismissal) {
         [self reloadSections];
-        [_dirtySections removeAllObjects];
     }
 }
 
@@ -606,9 +679,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 [_detailCell prepareForInput];
                 
                 if ([self actionIs:kActionRegister]) {
-                    if ([_detailCell hasInvalidInputField]) {
-                        [[_detailCell nextInvalidInputField] becomeFirstResponder];
-                    } else {
+                    if (![_detailCell hasInvalidInputField] && !_wasHidden) {
                         [[_detailCell nextInputField] becomeFirstResponder];
                     }
                 }
@@ -662,7 +733,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Custom property accessors
+#pragma mark - Custom accessors
 
 - (OActivityIndicator *)activityIndicator
 {
@@ -680,17 +751,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - OTableViewControllerInstance conformance
-
-- (void)initialiseState
+- (void)setUsesSectionIndexTitles:(BOOL)usesSectionIndexTitles
 {
-    // Override in subclass
-}
-
-
-- (void)initialiseData
-{
-    // Override in subclass
+    _usesSectionIndexTitles = usesSectionIndexTitles;
+    
+    if (_usesSectionIndexTitles) {
+        _usesPlainTableViewStyle = YES;
+    }
 }
 
 
@@ -701,16 +768,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     BOOL shouldRelayDismissal = NO;
     
     if (_isModal) {
-        if ([self respondsToSelector:@selector(shouldRelayDismissalOfModalViewController:)]) {
-            shouldRelayDismissal = [self shouldRelayDismissalOfModalViewController:viewController];
+        if ([_instance respondsToSelector:@selector(shouldRelayDismissalOfModalViewController:)]) {
+            shouldRelayDismissal = [_instance shouldRelayDismissalOfModalViewController:viewController];
         }
     }
     
     if (shouldRelayDismissal) {
         [self.dismisser dismissModalViewController:viewController reload:reload];
     } else {
-        if ([self respondsToSelector:@selector(willDismissModalViewController:)]) {
-            [self willDismissModalViewController:viewController];
+        if ([_instance respondsToSelector:@selector(willDismissModalViewController:)]) {
+            [_instance willDismissModalViewController:viewController];
         }
         
         _shouldReloadOnModalDismissal = [[OMeta m] userIsSignedIn] ? reload : NO;
@@ -719,8 +786,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             _shouldReloadOnModalDismissal = NO;
         }];
         
-        if ([self respondsToSelector:@selector(didDismissModalViewController:)]) {
-            [self didDismissModalViewController:viewController];
+        if ([_instance respondsToSelector:@selector(didDismissModalViewController:reload:)]) {
+            [_instance didDismissModalViewController:viewController reload:reload];
         }
     }
 }
@@ -763,17 +830,20 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     OTableViewCell *cell = nil;
     
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
-        id data = [self dataAtIndexPath:indexPath];
+        NSString *customReuseIdentifier = nil;
         
-        if ([data isKindOfClass:[NSString class]] && [data isEqualToString:kCustomCell]) {
-            cell = [tableView cellForReuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]];
+        if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
+            customReuseIdentifier = [_instance reuseIdentifierForIndexPath:indexPath];
+        }
+        
+        if (customReuseIdentifier) {
+            cell = [tableView cellForReuseIdentifier:customReuseIdentifier];
         } else {
             cell = [tableView cellForEntityClass:_entityClass entity:_entity];
             cell.observer = self.observer;
         }
         
         _detailCell = cell;
-        _detailCell.editable = [self actionIs:kActionRegister] || self.canEdit;
     } else {
         cell = [tableView listCellForIndexPath:indexPath data:[self dataAtIndexPath:indexPath]];
     }
@@ -813,14 +883,26 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    return _sectionIndexTitles;
+}
+
+
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
+{
+    return index;
+}
+
+
 #pragma mark - UITableViewDelegate conformance
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = kSectionSpacing;
+    CGFloat height = _usesPlainTableViewStyle ? 0.f : kSectionSpacing;
     
     if ([self instanceHasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
-        height = [tableView standardHeaderHeight];
+        height = [tableView headerHeight];
     }
     
     return height;
@@ -829,11 +911,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    CGFloat height = kEmptyFooterHeight;
+    CGFloat height = _usesPlainTableViewStyle ? 0.f : kEmptyFooterHeight;
     NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     
     if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
-        height = [tableView heightForFooterWithText:[self footerTextForSectionWithKey:sectionKey]];
+        height = [tableView footerHeightWithText:[self footerTextForSectionWithKey:sectionKey]];
     }
     
     return height;
@@ -845,8 +927,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     UIView *view = nil;
     NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
 
-    if ([self instanceHasHeaderForSectionWithKey:sectionKey]) {
-        view = [tableView headerViewWithText:[self textForHeaderInSectionWithKey:sectionKey]];
+    if (_usesSectionIndexTitles) {
+        view = [tableView headerViewWithText:_sectionIndexTitles[section]];
+    } else if ([self instanceHasHeaderForSectionWithKey:sectionKey]) {
+        view = [tableView headerViewWithText:[_instance textForHeaderInSectionWithKey:sectionKey]];
     }
     
     return view;
@@ -872,7 +956,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [_instance willDisplayCell:cell atIndexPath:indexPath];
     }
     
-    if ([OMeta systemIs_iOS6x]) {
+    if ([OMeta systemIs_iOS6x] && !_usesPlainTableViewStyle) {
         [cell.backgroundView addSeparatorsForTableViewCell];
     }
 }

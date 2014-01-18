@@ -25,7 +25,7 @@ NSString * const kKeyPrefixMemberListTitle            = @"strMemberListTitle";
 NSString * const kKeyPrefixNewMemberTitle             = @"strNewMemberTitle";
 NSString * const kKeyPrefixAllMembersTitle            = @"strAllMembersTitle";
 
-// Cross-view terms & strings
+// Cross-view strings
 NSString * const strFooterTapToEdit                   = @"strFooterTapToEdit";
 NSString * const strFooterOrigoSignature              = @"strFooterOrigoSignature";
 NSString * const strButtonOK                          = @"strButtonOK";
@@ -47,7 +47,7 @@ NSString * const strTermGirl                          = @"strTermGirl";
 NSString * const strFormatAge                         = @"strFormatAge";
 NSString * const strSeparatorAnd                      = @"strSeparatorAnd";
 
-// OAuthView strings
+// OAuthViewController strings
 NSString * const strLabelSignIn                       = @"strLabelSignIn";
 NSString * const strLabelActivate                     = @"strLabelActivate";
 NSString * const strFooterSignInOrRegister            = @"strFooterSignInOrRegister";
@@ -64,7 +64,7 @@ NSString * const strAlertTextActivationFailed         = @"strAlertTextActivation
 NSString * const strAlertTitleWelcomeBack             = @"strAlertTitleWelcomeBack";
 NSString * const strAlertTextWelcomeBack              = @"strAlertTextWelcomeBack";
 
-// OOrigoListView strings
+// OOrigoListViewController strings
 NSString * const strViewTitleOrigo                    = @"strViewTitleOrigo";
 NSString * const strHeaderWardsOrigos                 = @"strHeaderWardsOrigos";
 NSString * const strHeaderMyOrigos                    = @"strHeaderMyOrigos";
@@ -81,7 +81,7 @@ NSString * const strTermYourChild                     = @"strTermYourChild";
 NSString * const strTermHimOrHer                      = @"strTermHimOrHer";
 NSString * const strTermForName                       = @"strTermForName";
 
-// OOrigoView strings
+// OOrigoViewController strings
 NSString * const strLabelAddress                      = @"strLabelAddress";
 NSString * const strLabelPurpose                      = @"strLabelPurpose";
 NSString * const strLabelDescriptionText              = @"strLabelDescriptionText";
@@ -89,14 +89,15 @@ NSString * const strLabelTelephone                    = @"strLabelTelephone";
 NSString * const strPlaceholderAddress                = @"strPlaceholderAddress";
 NSString * const strPlaceholderDescriptionText        = @"strPlaceholderDescriptionText";
 NSString * const strPlaceholderTelephone              = @"strPlaceholderTelephone";
-NSString * const strButtonAddParentContact            = @"strButtonAddParentContact";
-NSString * const strButtonAbout                       = @"strButtonAbout";
+NSString * const strButtonEditRoles                   = @"strButtonEditRoles";
+NSString * const strButtonAddFromOrigo                = @"strButtonAddFromOrigo";
 NSString * const strButtonShowInMap                   = @"strButtonShowInMap";
+NSString * const strButtonAbout                       = @"strButtonAbout";
 NSString * const strButtonNewHousemate                = @"strButtonNewHousemate";
 NSString * const strButtonOtherGuardian               = @"strButtonOtherGuardian";
 NSString * const strButtonDeleteMember                = @"strButtonDeleteMember";
 
-// OMemberView strings
+// OMemberViewController strings
 NSString * const strViewTitleAboutMe                  = @"strViewTitleAboutMe";
 NSString * const strLabelDateOfBirth                  = @"strLabelDateOfBirth";
 NSString * const strLabelMobilePhone                  = @"strLabelMobilePhone";
@@ -116,8 +117,8 @@ NSString * const strButtonCorrectGender               = @"strButtonCorrectGender
 NSString * const strButtonNewAddress                  = @"strButtonNewAddress";
 NSString * const strButtonAllContacts                 = @"strButtonAllContacts";
 NSString * const strButtonAllGuardians                = @"strButtonAllGuardians";
-NSString * const strButtonLookUpInContacts            = @"strButtonLookUpInContacts";
-NSString * const strButtonLookUpInOrigo               = @"strButtonLookUpInOrigo";
+NSString * const strButtonRetrieveFromContacts        = @"strButtonRetrieveFromContacts";
+NSString * const strButtonRetrieveFromOrigo           = @"strButtonRetrieveFromOrigo";
 NSString * const strButtonDifferentNumber             = @"strButtonDifferentNumber";
 NSString * const strButtonDifferentEmail              = @"strButtonDifferentEmail";
 NSString * const strButtonInviteToHousehold           = @"strButtonInviteToHousehold";
@@ -141,21 +142,21 @@ NSString * const strTermHerFather                     = @"strTermHerFather";
 NSString * const strTermHisMother                     = @"strTermHisMother";
 NSString * const strTermHerMother                     = @"strTermHerMother";
 
-// OCalendarView strings
+// OCalendarViewController strings
 NSString * const strViewTitleCalendar                 = @"strViewTitleCalendar";
 
-// OTaskListView strings
+// OTaskListViewController strings
 NSString * const strViewTitleTasks                    = @"strViewTitleTasks";
 
-// OMessageListView strings
+// OMessageListViewController strings
 NSString * const strViewTitleMessages                 = @"strViewTitleMessages";
 NSString * const strDefaultMessageBoardName           = @"strDefaultMessageBoardName";
 
-// OSettingListView strings
+// OValueListViewController strings
 NSString * const strViewTitleSettings                 = @"strViewTitleSettings";
 
-// OSettingView strings
-// ...
+// OValuePickerViewController strings
+NSString * const strSegmentedTitleAdultsMinors        = @"strSegmentedTitleAdultsMinors";
 
 // Meta strings
 NSString * const metaSupportedLanguages               = @"metaSupportedLanguages";

@@ -1,5 +1,5 @@
 //
-//  OSettingViewController.h
+//  OValuePickerViewController.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
@@ -8,12 +8,12 @@
 
 #import "OrigoApp.h"
 
-@interface OSettingViewController : OTableViewController<OTableViewListDelegate> {
+@interface OValuePickerViewController : OTableViewController<OTableViewControllerInstance, OTableViewListDelegate> {
 @private
+    UISegmentedControl *_segmentedTitle;
+    
     OSettings *_settings;
     NSString *_settingKey;
-    
-    OTableViewCell *_valueCell;
 }
 
 @end

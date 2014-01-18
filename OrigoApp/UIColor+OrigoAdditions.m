@@ -78,7 +78,7 @@
 
 + (UIColor *)toolbarShadowColour
 {
-    return [UIColor colorWithRed:245/255.f green:245/255.f blue:246/255.f alpha:1.f];
+    return [UIColor colorWithRed:248/255.f green:248/255.f blue:248/255.f alpha:1.f];
 }
 
 

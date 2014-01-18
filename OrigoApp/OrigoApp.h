@@ -37,6 +37,7 @@
 #import "OTableViewListDelegate.h"
 #import "OTextInput.h"
 
+typedef OTableViewController<OTableViewControllerInstance> OTableViewControllerInstance;
 typedef UIView<OTextInput> OInputField;
 
 #import "ODevice.h"

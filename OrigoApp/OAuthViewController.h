@@ -8,7 +8,7 @@
 
 #import "OrigoApp.h"
 
-@interface OAuthViewController : OTableViewController<OTableViewInputDelegate, UIAlertViewDelegate, OConnectionDelegate> {
+@interface OAuthViewController : OTableViewController<OTableViewControllerInstance, OTableViewInputDelegate, UIAlertViewDelegate, OConnectionDelegate> {
 @private
     OInputField *_emailField;
     OInputField *_passwordField;

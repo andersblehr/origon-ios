@@ -15,15 +15,16 @@ extern NSString * const kIdentifierMessageList;
 extern NSString * const kIdentifierOldOrigo;
 extern NSString * const kIdentifierOrigo;
 extern NSString * const kIdentifierOrigoList;
-extern NSString * const kIdentifierSetting;
-extern NSString * const kIdentifierSettingList;
 extern NSString * const kIdentifierTaskList;
+extern NSString * const kIdentifierValueList;
+extern NSString * const kIdentifierValuePicker;
 
 extern NSString * const kActionLoad;
 extern NSString * const kActionSignIn;
 extern NSString * const kActionActivate;
 extern NSString * const kActionRegister;
 extern NSString * const kActionList;
+extern NSString * const kActionPick;
 extern NSString * const kActionDisplay;
 extern NSString * const kActionEdit;
 extern NSString * const kActionInput;
@@ -34,7 +35,12 @@ extern NSString * const kTargetUser;
 extern NSString * const kTargetWard;
 extern NSString * const kTargetHousemate;
 extern NSString * const kTargetJuvenile;
-extern NSString * const kTargetExternal;
+extern NSString * const kTargetMember;
+extern NSString * const kTargetMembers;
+extern NSString * const kTargetGuardian;
+extern NSString * const kTargetContact;
+extern NSString * const kTargetRelation;
+extern NSString * const kTargetSetting;
 
 @interface OState : NSObject {
 @private
@@ -42,6 +48,7 @@ extern NSString * const kTargetExternal;
 }
 
 @property (weak, nonatomic, readonly) OTableViewController *viewController;
+@property (weak, nonatomic, readonly) OMember *pivotMember;
 @property (strong, nonatomic) NSString *action;
 @property (strong, nonatomic) id target;
 

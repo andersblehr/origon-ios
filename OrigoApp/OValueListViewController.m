@@ -1,20 +1,20 @@
 //
-//  OSettingListViewController.m
+//  OValueListViewController.m
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OSettingListViewController.h"
+#import "OValueListViewController.h"
 
-static NSString * const kSegueToSettingView = @"sequeFromSettingListToSettingView";
+static NSString * const kSegueToValuePickerView = @"sequeFromValueListToValuePickerView";
 
-static NSInteger const kSectionKeySettings = 0;
+static NSInteger const kSectionKeyValues = 0;
 static NSInteger const kSectionKeySignOut = 1;
 
 
-@implementation OSettingListViewController
+@implementation OValueListViewController
 
 #pragma mark - Selection implementations
 
@@ -31,7 +31,7 @@ static NSInteger const kSectionKeySignOut = 1;
     [super viewDidLoad];
 
     self.title = [OStrings stringForKey:strViewTitleSettings];
-    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButton];
 }
 
 
@@ -39,7 +39,7 @@ static NSInteger const kSectionKeySignOut = 1;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if ([segue.identifier isEqualToString:kSegueToSettingView]) {
+    if ([segue.identifier isEqualToString:kSegueToValuePickerView]) {
         [self prepareForPushSegue:segue];
     }
 }
@@ -55,8 +55,8 @@ static NSInteger const kSectionKeySignOut = 1;
 
 - (void)initialiseData
 {
-    [self setData:[[OMeta m].settings settingKeys] forSectionWithKey:kSectionKeySettings];
-    [self setData:@[kCustomValue] forSectionWithKey:kSectionKeySignOut];
+    [self setData:[[OMeta m].settings settingKeys] forSectionWithKey:kSectionKeyValues];
+    [self setData:@[kCustomData] forSectionWithKey:kSectionKeySignOut];
 }
 
 
@@ -76,8 +76,8 @@ static NSInteger const kSectionKeySignOut = 1;
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if (sectionKey == kSectionKeySettings) {
-        [self performSegueWithIdentifier:kSegueToSettingView sender:self];
+    if (sectionKey == kSectionKeyValues) {
+        [self performSegueWithIdentifier:kSegueToValuePickerView sender:self];
     } else if (sectionKey == kSectionKeySignOut) {
         [self signOut];
     }
@@ -90,7 +90,7 @@ static NSInteger const kSectionKeySignOut = 1;
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if (sectionKey == kSectionKeySettings) {
+    if (sectionKey == kSectionKeyValues) {
         NSString *key = [self dataAtIndexPath:indexPath];
         
         cell.textLabel.text = [OStrings stringForKey:key withKeyPrefix:kKeyPrefixSettingLabel];

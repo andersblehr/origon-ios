@@ -180,7 +180,21 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)initialiseData
 {
-    [self setData:kCustomCell forSectionWithKey:kSectionKeyAuth];
+    [self setData:kCustomData forSectionWithKey:kSectionKeyAuth];
+}
+
+
+- (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *reuseIdentifier = nil;
+    
+    if ([self actionIs:kActionSignIn]) {
+        reuseIdentifier = kReuseIdentifierUserSignIn;
+    } else if ([self actionIs:kActionActivate]) {
+        reuseIdentifier = kReuseIdentifierUserActivation;
+    }
+    
+    return reuseIdentifier;
 }
 
 
@@ -199,20 +213,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     }
     
     return text;
-}
-
-
-- (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath
-{
-    NSString *reuseIdentifier = nil;
-    
-    if ([self actionIs:kActionSignIn]) {
-        reuseIdentifier = kReuseIdentifierUserSignIn;
-    } else if ([self actionIs:kActionActivate]) {
-        reuseIdentifier = kReuseIdentifierUserActivation;
-    }
-    
-    return reuseIdentifier;
 }
 
 
