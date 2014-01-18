@@ -160,7 +160,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
     }
     
     if (!_displayableInputFieldKeys) {
-        _displayableInputFieldKeys = [NSMutableArray arrayWithArray:self.allInputFieldKeys];
+        _displayableInputFieldKeys = [self.allInputFieldKeys mutableCopy];
         
         if ([_state.viewController.identifier isEqualToString:kIdentifierMember]) {
             if ([_state targetIs:kTargetJuvenile]) {

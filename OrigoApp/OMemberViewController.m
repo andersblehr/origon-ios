@@ -45,7 +45,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)isRegisteringJuvenileOrigoGuardian
 {
-    return [self actionIs:kActionRegister] && [_origo isJuvenile] && [self.meta isEqualToString:kMemberTypeGuardian];
+    return [self actionIs:kActionRegister] && [_origo isJuvenile] && [self.meta isEqualToString:kTargetGuardian];
 }
 
 
@@ -139,12 +139,10 @@ static NSInteger const kButtonTagContinue = 1;
         _candidate = nil;
         candidateIsValid = NO;
     } else {
-        _mobilePhoneField.value = _candidate.mobilePhone;
+        _nameField.value = _candidate.name;
         _dateOfBirthField.value = _candidate.dateOfBirth;
-        
-        if (![_candidate isManagedByUser]) {
-            self.detailCell.editing = NO;
-        }
+        _mobilePhoneField.value = _candidate.mobilePhone;
+        _emailField.value = _candidate.email;
     }
     
     return candidateIsValid;
@@ -286,8 +284,8 @@ static NSInteger const kButtonTagContinue = 1;
     if ([[[OMeta m].user fullMemberships] count] > 1) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagLookupType];
         
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonLookUpInContacts]];
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonLookUpInOrigo]];
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonRetrieveFromContacts]];
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonRetrieveFromOrigo]];
         
         [actionSheet show];
     } else {
@@ -306,8 +304,8 @@ static NSInteger const kButtonTagContinue = 1;
     _emailField = [self.detailCell inputFieldForKey:kPropertyKeyEmail];
     
     if ([self actionIs:kActionRegister] && [_origo isJuvenile]) {
-        if (!self.wasHidden && ![self.meta isEqualToString:kMemberTypeGuardian]) {
-            [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kMemberTypeGuardian];
+        if (!self.wasHidden && ![self.meta isEqualToString:kTargetGuardian]) {
+            [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kTargetGuardian];
         }
     }
     
@@ -366,10 +364,10 @@ static NSInteger const kButtonTagContinue = 1;
     
     if ([self actionIs:kActionDisplay]) {
         if (self.canEdit) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButton];
         }
     } else if ([self actionIs:kActionRegister] && ![self targetIs:kTargetUser]) {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButton];
     }
 }
 
@@ -387,6 +385,12 @@ static NSInteger const kButtonTagContinue = 1;
         
         [self setData:[_member residencies] forSectionWithKey:kSectionKeyAddress];
     }
+}
+
+
+- (NSArray *)toolbarButtons
+{
+    return [_member isUser] ? nil : [[OMeta m].switchboard toolbarButtonsForMember:_member];
 }
 
 
@@ -414,13 +418,13 @@ static NSInteger const kButtonTagContinue = 1;
             if ([_member hasParent:guardian]) {
                 text = [guardian parentNoun][singularIndefinite];
             } else {
-                text = [OLanguage nouns][_contact_][singularIndefinite];
+                text = [OLanguage nouns][_guardian_][singularIndefinite];
             }
         } else {
             if ([_member guardiansAreParents]) {
                 text = [OLanguage nouns][_parent_][pluralIndefinite];
             } else {
-                text = [OLanguage nouns][_contact_][pluralIndefinite];
+                text = [OLanguage nouns][_guardian_][pluralIndefinite];
             }
         }
     } else if (sectionKey == kSectionKeyAddress) {
@@ -447,12 +451,6 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (NSArray *)toolbarButtons
-{
-    return [_member isUser] ? nil : [[OMeta m].switchboard toolbarButtonsForMember:_member];
-}
-
-
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyGuardian) {
@@ -463,6 +461,46 @@ static NSInteger const kButtonTagContinue = 1;
         [self.navigationController pushViewController:memberViewController animated:YES];
     } else if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddress) {
         [self performSegueWithIdentifier:kSegueToOrigoView sender:self];
+    }
+}
+
+
+- (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController
+{
+    BOOL shouldRelay = NO;
+    
+    shouldRelay = shouldRelay || [viewController.identifier isEqual:kIdentifierMember];
+    shouldRelay = shouldRelay || [viewController.identifier isEqual:kIdentifierOrigo];
+    
+    return shouldRelay;
+}
+
+
+- (void)willDismissModalViewController:(OTableViewController *)viewController
+{
+    if ([viewController.identifier isEqualToString:kIdentifierAuth]) {
+        if ([_member.email isEqualToString:_emailField.value]) {
+            [self persistMember];
+        } else {
+            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleEmailChangeFailed] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextEmailChangeFailed], _emailField.value] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
+            [failedEmailChangeAlert show];
+            
+            [self toggleEditMode];
+            [_emailField becomeFirstResponder];
+        }
+    }
+}
+
+
+- (void)didDismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload
+{
+    if (reload) {
+        if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
+            _candidate = viewController.returnData;
+            
+            [self candidateIsValid];
+            [self endEditing];
+        }
     }
 }
 
@@ -588,7 +626,7 @@ static NSInteger const kButtonTagContinue = 1;
             
             if (_member) {
                 [_examiner examineRegistrant:_member];
-            } else if ([self.meta isEqualToString:kMemberTypeGuardian]) {
+            } else if ([self.meta isEqualToString:kTargetGuardian]) {
                 [_examiner examineRegistrantWithName:_nameField.value isGuardian:YES];
             } else {
                 [_examiner examineRegistrantWithName:_nameField.value dateOfBirth:_dateOfBirthField.value];
@@ -669,35 +707,6 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-#pragma mark - OModalViewControllerDismisser conformance
-
-- (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController
-{
-    BOOL shouldRelay = NO;
-    
-    shouldRelay = shouldRelay || [viewController.identifier isEqual:kIdentifierMember];
-    shouldRelay = shouldRelay || [viewController.identifier isEqual:kIdentifierOrigo];
-    
-    return shouldRelay;
-}
-
-
-- (void)willDismissModalViewController:(OTableViewController *)viewController
-{
-    if ([viewController.identifier isEqualToString:kIdentifierAuth]) {
-        if ([_member.email isEqualToString:_emailField.value]) {
-            [self persistMember];
-        } else {
-            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleEmailChangeFailed] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextEmailChangeFailed], _emailField.value] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
-            [failedEmailChangeAlert show];
-            
-            [self toggleEditMode];
-            [_emailField becomeFirstResponder];
-        }
-    }
-}
-
-
 #pragma mark - UIActionSheetDelegate conformance
 
 - (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -766,7 +775,7 @@ static NSInteger const kButtonTagContinue = 1;
                 if (buttonTag == kButtonTagLookUpContact) {
                     [self lookUpContact];
                 } else if (buttonTag == kButtonTagLookUpMember) {
-                    // TODO
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker data:_origo meta:kTargetMember];
                 }
             } else {
                 [self resumeFirstResponder];
@@ -833,6 +842,8 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person
 {
+    self.detailCell.editable = YES;
+    
     [self setNameFieldFromPersonRecord:person];
     [self setMobilePhoneFieldFromPersonRecord:person];
     [self setEmailFieldFromPersonRecord:person];
@@ -842,7 +853,7 @@ static NSInteger const kButtonTagContinue = 1;
             [self presentActionSheetForMultiValueField:_mobilePhoneField];
         } else if ([_emailField hasMultiValue]) {
             [self presentActionSheetForMultiValueField:_emailField];
-        } else {
+        } else if (![self.detailCell hasInvalidInputField]) {
             [self endEditing];
         }
     }];

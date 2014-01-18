@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="a3K-AG-mMk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="a3K-AG-mMk">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <scenes>
         <!--Auth View Controller-->
         <scene sceneID="i2s-nI-C1j">
             <objects>
-                <tableViewController storyboardIdentifier="auth" id="a73-0o-gAI" customClass="OAuthViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="auth" useStoryboardIdentifierAsRestorationIdentifier="YES" id="a73-0o-gAI" customClass="OAuthViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="IaI-4F-Chh">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -27,7 +27,7 @@
         <!--Task List View Controller - <strTasks>-->
         <scene sceneID="FtR-nb-C3g">
             <objects>
-                <viewController storyboardIdentifier="tasks" id="h9q-RG-XjV" customClass="OTaskListViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="tasks" useStoryboardIdentifierAsRestorationIdentifier="YES" id="h9q-RG-XjV" customClass="OTaskListViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Oe6-hP-CNg">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -42,7 +42,7 @@
         <!--Message List View Controller - <strMessageBoard>-->
         <scene sceneID="uXo-MS-8t7">
             <objects>
-                <viewController storyboardIdentifier="messages" id="Obd-WC-JAQ" customClass="OMessageListViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="messages" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Obd-WC-JAQ" customClass="OMessageListViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="IPB-4W-cqx">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -57,7 +57,7 @@
         <!--Origo View Controller-->
         <scene sceneID="5fB-zI-Tq9">
             <objects>
-                <viewController storyboardIdentifier="origo" id="O0V-Ey-WLK" customClass="OOrigoViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="origo" useStoryboardIdentifierAsRestorationIdentifier="YES" id="O0V-Ey-WLK" customClass="OOrigoViewController" sceneMemberID="viewController">
                     <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="lJb-0F-cm5">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -76,7 +76,7 @@
         <!--Member View Controller-->
         <scene sceneID="x7u-en-eVb">
             <objects>
-                <tableViewController storyboardIdentifier="member" id="T87-Bh-GzL" customClass="OMemberViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="member" useStoryboardIdentifierAsRestorationIdentifier="YES" id="T87-Bh-GzL" customClass="OMemberViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="209" sectionHeaderHeight="10" sectionFooterHeight="10" id="WsN-Uc-XTj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -98,7 +98,7 @@
         <!--Calendar View Controller - <strCalendar>-->
         <scene sceneID="FF8-Hh-UBk">
             <objects>
-                <viewController storyboardIdentifier="calendar" id="EMg-2y-k0H" customClass="OCalendarViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="calendar" useStoryboardIdentifierAsRestorationIdentifier="YES" id="EMg-2y-k0H" customClass="OCalendarViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="a7X-Xm-nqx">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -113,7 +113,7 @@
         <!--Origo List View Controller - Origo-->
         <scene sceneID="SzQ-Uz-J3x">
             <objects>
-                <viewController storyboardIdentifier="origos" id="9Fa-Np-JO6" customClass="OOrigoListViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="origos" useStoryboardIdentifierAsRestorationIdentifier="YES" id="9Fa-Np-JO6" customClass="OOrigoListViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Nfe-mR-3nj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -130,10 +130,10 @@
             </objects>
             <point key="canvasLocation" x="183" y="28"/>
         </scene>
-        <!--Setting List View Controller - <strSettingList>-->
+        <!--Value List View Controller - <strSettingList>-->
         <scene sceneID="sOz-jV-QHA">
             <objects>
-                <tableViewController storyboardIdentifier="settings" id="Bf4-zU-a9P" customClass="OSettingListViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="values" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Bf4-zU-a9P" customClass="OValueListViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="eLC-aL-8ZY">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -145,17 +145,17 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="&lt;strSettingList>" id="pPk-Kr-fAc"/>
                     <connections>
-                        <segue destination="Lcb-OF-t33" kind="push" identifier="sequeFromSettingListToSettingView" id="Ik1-Va-tcX"/>
+                        <segue destination="Lcb-OF-t33" kind="push" identifier="sequeFromValueListToValuePickerView" id="Ik1-Va-tcX"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R31-Db-r3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="183" y="-1274"/>
         </scene>
-        <!--Setting View Controller - <strSetting>-->
+        <!--Value Picker View Controller - <strSetting>-->
         <scene sceneID="J4F-Wc-d9B">
             <objects>
-                <tableViewController storyboardIdentifier="setting" id="Lcb-OF-t33" customClass="OSettingViewController" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="value" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Lcb-OF-t33" customClass="OValuePickerViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="pjX-pJ-aBY">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -169,7 +169,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hCo-uL-u2D" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="636" y="-1271"/>
+            <point key="canvasLocation" x="642" y="-1274"/>
         </scene>
         <!--Navigation Controller - Origo-->
         <scene sceneID="0Xf-MH-Xiq">
@@ -198,7 +198,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="gEQ-1g-oCH"/>
         <segue reference="pI9-dP-sfi"/>
+        <segue reference="99F-61-IG0"/>
     </inferredMetricsTieBreakers>
 </document>

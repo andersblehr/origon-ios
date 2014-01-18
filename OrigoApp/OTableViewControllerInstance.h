@@ -15,16 +15,21 @@
 - (void)initialiseData;
 
 @optional
+- (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath;
+- (NSArray *)toolbarButtons;
+
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
-- (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath;
-- (NSArray *)toolbarButtons;
 
 - (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (BOOL)canDeleteRowAtIndexPath:(NSIndexPath *)indexPath;
+
+- (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController;
+- (void)willDismissModalViewController:(OTableViewController *)viewController;
+- (void)didDismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload;
 
 - (void)didResumeFromBackground;
 

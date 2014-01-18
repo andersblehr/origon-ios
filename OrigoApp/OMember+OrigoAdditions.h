@@ -8,8 +8,6 @@
 
 #import "OrigoApp.h"
 
-extern NSString * const kMemberTypeGuardian;
-
 @interface OMember (OrigoAdditions)
 
 - (OMembership *)rootMembership;
@@ -23,7 +21,11 @@ extern NSString * const kMemberTypeGuardian;
 - (OMember *)partner;
 - (NSSet *)wards;
 - (NSSet *)parents;
+- (NSSet *)siblings;
 - (NSSet *)guardians;
+- (NSSet *)peers;
+- (NSSet *)wardPeers;
+- (NSSet *)guardianPeers;
 - (NSSet *)housemates;
 - (NSSet *)housemateResidences;
 

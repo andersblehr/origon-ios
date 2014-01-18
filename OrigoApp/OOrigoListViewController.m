@@ -87,7 +87,7 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)openSettings
 {
-    [self presentModalViewControllerWithIdentifier:kIdentifierSettingList data:nil];
+    [self presentModalViewControllerWithIdentifier:kIdentifierValueList data:nil];
 }
 
 
@@ -149,13 +149,13 @@ static NSInteger const kSectionKeyWards = 2;
     
     if ([_member isUser]) {
         [self.navigationItem setTitle:[OMeta m].appName withSubtitle:[OMeta m].user.name];
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButton];
     } else {
         self.title = [_member givenName];
     }
     
     if ([[OMeta m].user isTeenOrOlder]) {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButton];
         
         if ([self targetIs:kTargetUser]) {
             [_origoTypes addObject:kOrigoTypeFriends];
@@ -233,6 +233,14 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
+- (void)didDismissModalViewController:(OTableViewController *)viewController
+{
+    if ([[OMeta m] userIsSignedIn]) {
+        [self.tableView reloadData];
+    }
+}
+
+
 #pragma mark - OTableViewListDelegate conformance
 
 - (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
@@ -278,16 +286,6 @@ static NSInteger const kSectionKeyWards = 2;
         } else {
             cell.detailTextLabel.text = [OStrings stringForKey:membership.origo.type withKeyPrefix:kKeyPrefixOrigoTitle];
         }
-    }
-}
-
-
-#pragma mark - OModalViewControllerDismisser conformance
-
-- (void)didDismissModalViewController:(OTableViewController *)viewController
-{
-    if ([[OMeta m] userIsSignedIn]) {
-        [self.tableView reloadData];
     }
 }
 

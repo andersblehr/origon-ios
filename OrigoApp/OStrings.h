@@ -25,7 +25,7 @@ extern NSString * const kKeyPrefixMemberListTitle;
 extern NSString * const kKeyPrefixNewMemberTitle;
 extern NSString * const kKeyPrefixAllMembersTitle;
 
-// Cross-view terms & strings
+// Cross-view strings
 extern NSString * const strFooterTapToEdit;
 extern NSString * const strFooterOrigoSignature;
 extern NSString * const strButtonOK;
@@ -47,7 +47,7 @@ extern NSString * const strTermGirl;
 extern NSString * const strFormatAge;
 extern NSString * const strSeparatorAnd;
 
-// OAuthView strings
+// OAuthViewController strings
 extern NSString * const strLabelSignIn;
 extern NSString * const strLabelActivate;
 extern NSString * const strFooterSignInOrRegister;
@@ -64,7 +64,7 @@ extern NSString * const strAlertTextActivationFailed;
 extern NSString * const strAlertTitleWelcomeBack;
 extern NSString * const strAlertTextWelcomeBack;
 
-// OOrigoListView strings
+// OOrigoListViewController strings
 extern NSString * const strViewTitleOrigo;
 extern NSString * const strHeaderWardsOrigos;
 extern NSString * const strHeaderMyOrigos;
@@ -81,7 +81,7 @@ extern NSString * const strTermYourChild;
 extern NSString * const strTermHimOrHer;
 extern NSString * const strTermForName;
 
-// OOrigoView strings
+// OOrigoViewController strings
 extern NSString * const strLabelAddress;
 extern NSString * const strLabelPurpose;
 extern NSString * const strLabelDescriptionText;
@@ -89,14 +89,15 @@ extern NSString * const strLabelTelephone;
 extern NSString * const strPlaceholderAddress;
 extern NSString * const strPlaceholderDescriptionText;
 extern NSString * const strPlaceholderTelephone;
-extern NSString * const strButtonAddParentContact;
-extern NSString * const strButtonAbout;
+extern NSString * const strButtonEditRoles;
+extern NSString * const strButtonAddFromOrigo;
 extern NSString * const strButtonShowInMap;
+extern NSString * const strButtonAbout;
 extern NSString * const strButtonNewHousemate;
 extern NSString * const strButtonOtherGuardian;
 extern NSString * const strButtonDeleteMember;
 
-// OMemberView strings
+// OMemberViewController strings
 extern NSString * const strViewTitleAboutMe;
 extern NSString * const strLabelDateOfBirth;
 extern NSString * const strLabelMobilePhone;
@@ -116,8 +117,8 @@ extern NSString * const strButtonCorrectGender;
 extern NSString * const strButtonNewAddress;
 extern NSString * const strButtonAllContacts;
 extern NSString * const strButtonAllGuardians;
-extern NSString * const strButtonLookUpInContacts;
-extern NSString * const strButtonLookUpInOrigo;
+extern NSString * const strButtonRetrieveFromContacts;
+extern NSString * const strButtonRetrieveFromOrigo;
 extern NSString * const strButtonDifferentNumber;
 extern NSString * const strButtonDifferentEmail;
 extern NSString * const strButtonInviteToHousehold;
@@ -141,21 +142,21 @@ extern NSString * const strTermHerFather;
 extern NSString * const strTermHisMother;
 extern NSString * const strTermHerMother;
 
-// OCalendarView strings
+// OCalendarViewController strings
 extern NSString * const strViewTitleCalendar;
 
-// OTaskListView strings
+// OTaskListViewController strings
 extern NSString * const strViewTitleTasks;
 
-// OMessageListView strings
+// OMessageListViewController strings
 extern NSString * const strViewTitleMessages;
 extern NSString * const strDefaultMessageBoardName;
 
-// OSettingListView strings
+// OValueListViewController strings
 extern NSString * const strViewTitleSettings;
 
-// OSettingView strings
-// ...
+// OValuePickerViewController strings
+extern NSString * const strSegmentedTitleAdultsMinors;
 
 // Meta strings
 extern NSString * const metaSupportedLanguages;

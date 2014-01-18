@@ -9,10 +9,9 @@
 #import "OrigoApp.h"
 
 extern NSString * const kRegistrationCell;
-extern NSString * const kCustomCell;
-extern NSString * const kCustomValue;
+extern NSString * const kCustomData;
 
-@interface OTableViewController : UITableViewController<OTableViewControllerInstance, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDismisser, OConnectionDelegate> {
+@interface OTableViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDismisser, OConnectionDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
@@ -24,6 +23,7 @@ extern NSString * const kCustomValue;
     NSMutableArray *_sectionKeys;
     NSMutableDictionary *_sectionData;
     NSMutableDictionary *_sectionCounts;
+    NSMutableArray *_sectionIndexTitles;
     
     NSNumber *_lastSectionKey;
     NSIndexPath *_selectedIndexPath;
@@ -48,10 +48,13 @@ extern NSString * const kCustomValue;
 @property (nonatomic, readonly) BOOL isModal;
 @property (nonatomic, readonly) BOOL wasHidden;
 
+@property (nonatomic) BOOL usesPlainTableViewStyle;
+@property (nonatomic) BOOL usesSectionIndexTitles;
 @property (nonatomic) BOOL canEdit;
 
-@property (strong, nonatomic) id data;
 @property (strong, nonatomic) id meta;
+@property (strong, nonatomic) id data;
+@property (strong, nonatomic) id returnData;
 @property (strong, nonatomic) OTableViewCell *detailCell;
 
 @property (weak, nonatomic) id<OModalViewControllerDismisser> dismisser;
@@ -61,6 +64,7 @@ extern NSString * const kCustomValue;
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
 
+- (void)setData:(NSArray *)data sectionIndexLabelKey:(NSString *)sectionIndexLabelKey;
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey;
 

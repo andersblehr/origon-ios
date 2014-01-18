@@ -8,6 +8,6 @@
 
 #import "OrigoApp.h"
 
-@interface OMessageListViewController : OTableViewController
+@interface OMessageListViewController : OTableViewController<OTableViewControllerInstance>
 
 @end

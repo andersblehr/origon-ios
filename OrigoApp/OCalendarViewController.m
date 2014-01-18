@@ -11,7 +11,6 @@
 
 @implementation OCalendarViewController
 
-
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad

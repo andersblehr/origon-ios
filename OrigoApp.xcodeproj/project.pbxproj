@@ -104,7 +104,7 @@
 		5CB61171175F531B006BAE92 /* 193-location-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB6116F175F531B006BAE92 /* 193-location-arrow.png */; };
 		5CB61172175F531B006BAE92 /* 193-location-arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB61170175F531B006BAE92 /* 193-location-arrow@2x.png */; };
 		5CB74EF117BB60BF003FAC28 /* ODevice+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB74EF017BB60BF003FAC28 /* ODevice+OrigoAdditions.m */; };
-		5CB7E94015F38C1200FD53DF /* OSettingListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E93F15F38C1200FD53DF /* OSettingListViewController.m */; };
+		5CB7E94015F38C1200FD53DF /* OValueListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E93F15F38C1200FD53DF /* OValueListViewController.m */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
 		5CBB63BD146080DF00A9133A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BC146080DF00A9133A /* CoreGraphics.framework */; };
@@ -120,7 +120,7 @@
 		5CBE919F159909E200516C54 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBE919E159909E200516C54 /* AudioToolbox.framework */; };
 		5CBE91A31599823000516C54 /* UIFont+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE91A21599823000516C54 /* UIFont+OrigoAdditions.m */; };
 		5CBE9C5314AB5160004FE2B7 /* NSString+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE9C5214AB515F004FE2B7 /* NSString+OrigoAdditions.m */; };
-		5CBFB738174B64D40021A8F6 /* OSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBFB737174B64D40021A8F6 /* OSettingViewController.m */; };
+		5CBFB738174B64D40021A8F6 /* OValuePickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBFB737174B64D40021A8F6 /* OValuePickerViewController.m */; };
 		5CC40C9B1772DC5E00DD850E /* OValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC40C9A1772DC5E00DD850E /* OValidator.m */; };
 		5CCC3570181EF1EA0079DB55 /* 14-gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CCC356E181EF1EA0079DB55 /* 14-gear.png */; };
 		5CCC3571181EF1EA0079DB55 /* 14-gear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CCC356F181EF1EA0079DB55 /* 14-gear@2x.png */; };
@@ -332,8 +332,8 @@
 		5CB61170175F531B006BAE92 /* 193-location-arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "193-location-arrow@2x.png"; sourceTree = "<group>"; };
 		5CB74EEF17BB60BF003FAC28 /* ODevice+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ODevice+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5CB74EF017BB60BF003FAC28 /* ODevice+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ODevice+OrigoAdditions.m"; sourceTree = "<group>"; };
-		5CB7E93E15F38C1200FD53DF /* OSettingListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettingListViewController.h; sourceTree = "<group>"; };
-		5CB7E93F15F38C1200FD53DF /* OSettingListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettingListViewController.m; sourceTree = "<group>"; };
+		5CB7E93E15F38C1200FD53DF /* OValueListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OValueListViewController.h; sourceTree = "<group>"; };
+		5CB7E93F15F38C1200FD53DF /* OValueListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OValueListViewController.m; sourceTree = "<group>"; };
 		5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDismisser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OModalViewControllerDismisser.h; sourceTree = "<group>"; };
 		5CBB63B4146080DF00A9133A /* OrigoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OrigoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63B8146080DF00A9133A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -358,8 +358,8 @@
 		5CBE91A21599823000516C54 /* UIFont+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CBE9C5114AB515F004FE2B7 /* NSString+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5CBE9C5214AB515F004FE2B7 /* NSString+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+OrigoAdditions.m"; sourceTree = "<group>"; };
-		5CBFB736174B64D40021A8F6 /* OSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettingViewController.h; sourceTree = "<group>"; };
-		5CBFB737174B64D40021A8F6 /* OSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettingViewController.m; sourceTree = "<group>"; };
+		5CBFB736174B64D40021A8F6 /* OValuePickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OValuePickerViewController.h; sourceTree = "<group>"; };
+		5CBFB737174B64D40021A8F6 /* OValuePickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OValuePickerViewController.m; sourceTree = "<group>"; };
 		5CC40C991772DC5E00DD850E /* OValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OValidator.h; sourceTree = "<group>"; };
 		5CC40C9A1772DC5E00DD850E /* OValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OValidator.m; sourceTree = "<group>"; };
 		5CCC356E181EF1EA0079DB55 /* 14-gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "14-gear.png"; sourceTree = "<group>"; };
@@ -643,12 +643,12 @@
 				5C3D42811485678F009A68E0 /* OOrigoListViewController.m */,
 				5C629FEE14C62038001DA01F /* OOrigoViewController.h */,
 				5C629FEF14C62038001DA01F /* OOrigoViewController.m */,
-				5CB7E93E15F38C1200FD53DF /* OSettingListViewController.h */,
-				5CB7E93F15F38C1200FD53DF /* OSettingListViewController.m */,
-				5CBFB736174B64D40021A8F6 /* OSettingViewController.h */,
-				5CBFB737174B64D40021A8F6 /* OSettingViewController.m */,
 				5C62A00014C6252C001DA01F /* OTaskListViewController.h */,
 				5C62A00114C6252C001DA01F /* OTaskListViewController.m */,
+				5CB7E93E15F38C1200FD53DF /* OValueListViewController.h */,
+				5CB7E93F15F38C1200FD53DF /* OValueListViewController.m */,
+				5CBFB736174B64D40021A8F6 /* OValuePickerViewController.h */,
+				5CBFB737174B64D40021A8F6 /* OValuePickerViewController.m */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -1014,7 +1014,7 @@
 				5C2E6B7E15A8501800638330 /* OMembership+OrigoAdditions.m in Sources */,
 				5CD3360E15C40A2F00ABBFE7 /* OState.m in Sources */,
 				5C014A2415CA77320040A1D9 /* OAlert.m in Sources */,
-				5CB7E94015F38C1200FD53DF /* OSettingListViewController.m in Sources */,
+				5CB7E94015F38C1200FD53DF /* OValueListViewController.m in Sources */,
 				5CAEE091163E513300A9046B /* ODocumentElement.m in Sources */,
 				5CAEE094163E513400A9046B /* OMessageBoard.m in Sources */,
 				5CAEE09A163E513400A9046B /* OScheduledBreak.m in Sources */,
@@ -1047,7 +1047,7 @@
 				5C1D6CC6172E62F500479F7D /* OLocator.m in Sources */,
 				5C1D6CCA1743C80900479F7D /* OSettings+OrigoAdditions.m in Sources */,
 				5C77067618549A2E0088C78D /* OLabel.m in Sources */,
-				5CBFB738174B64D40021A8F6 /* OSettingViewController.m in Sources */,
+				5CBFB738174B64D40021A8F6 /* OValuePickerViewController.m in Sources */,
 				5C8526B4183E290B0078A914 /* OOrigo.m in Sources */,
 				5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */,
 				5CC40C9B1772DC5E00DD850E /* OValidator.m in Sources */,

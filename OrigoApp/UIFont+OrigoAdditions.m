@@ -55,6 +55,12 @@ static CGFloat const kLineToFieldHeightFactor_iOS6x = 1.22f;
 }
 
 
++ (UIFont *)plainHeaderFont
+{
+    return [self listTextFont];
+}
+
+
 + (UIFont *)headerFont
 {
     return [UIFont iOS7SystemFontOfSize:kHeaderFontSize];
@@ -85,13 +91,13 @@ static CGFloat const kLineToFieldHeightFactor_iOS6x = 1.22f;
 }
 
 
-+ (UIFont *)listDetailFont
++ (UIFont *)listDetailTextFont
 {
     return [UIFont iOS7SystemFontOfSize:kListDetailFontSize];
 }
 
 
-+ (UIFont *)alternateListFont
++ (UIFont *)alternateListTextFont
 {
     return [UIFont iOS7SystemFontOfSize:kAlternateListFontSize];
 }

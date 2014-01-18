@@ -342,12 +342,10 @@ NSString * const kOrigoTypeMinorTeam = @"minorTeam";
     OMembership *directMembership = [self membershipForMember:member];
     
     for (OMembership *membership in [self fullMemberships]) {
-        if (membership != directMembership) {
+        if ((membership != directMembership) && ![membership isBeingDeleted]) {
             for (OMembership *residency in [membership.member residencies]) {
-                if (residency.origo != self) {
-                    if (![membership isBeingDeleted] && ![residency isBeingDeleted]) {
-                        knowsAboutMember = knowsAboutMember || [residency.origo hasMember:member];
-                    }
+                if ((residency.origo != self) && ![residency isBeingDeleted]) {
+                    knowsAboutMember = knowsAboutMember || [residency.origo hasMember:member];
                 }
             }
         }

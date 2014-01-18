@@ -1,5 +1,5 @@
 //
-//  OSettingListViewController.h
+//  OValueListViewController.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
@@ -8,6 +8,6 @@
 
 #import "OrigoApp.h"
 
-@interface OSettingListViewController : OTableViewController<OTableViewListDelegate>
+@interface OValueListViewController : OTableViewController<OTableViewControllerInstance, OTableViewListDelegate>
 
 @end

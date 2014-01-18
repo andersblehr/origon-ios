@@ -10,17 +10,17 @@
 
 @interface UIBarButtonItem (OrigoAdditions)
 
-+ (UIBarButtonItem *)settingsButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)plusButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)actionButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)lookupButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)nextButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)cancelButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)doneButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)signOutButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)sendTextButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)phoneCallButtonWithTarget:(id)target;
-+ (UIBarButtonItem *)sendEmailButtonWithTarget:(id)target;
++ (UIBarButtonItem *)settingsButton;
++ (UIBarButtonItem *)plusButton;
++ (UIBarButtonItem *)actionButton;
++ (UIBarButtonItem *)lookupButton;
++ (UIBarButtonItem *)nextButton;
++ (UIBarButtonItem *)cancelButton;
++ (UIBarButtonItem *)doneButton;
++ (UIBarButtonItem *)signOutButton;
++ (UIBarButtonItem *)sendTextButton;
++ (UIBarButtonItem *)phoneCallButton;
++ (UIBarButtonItem *)sendEmailButton;
 + (UIBarButtonItem *)flexibleSpace;
 
 @end

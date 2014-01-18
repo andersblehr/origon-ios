@@ -50,9 +50,21 @@ static CGFloat const kTitleHeight = 24.f;
 }
 
 
+- (UISegmentedControl *)addSegmentedTitle:(NSString *)segmentedTitle
+{
+    NSArray *titleSegments = [segmentedTitle componentsSeparatedByString:kSeparatorSegments];
+    UISegmentedControl *titleControl = [[UISegmentedControl alloc] initWithItems:titleSegments];
+    [titleControl addTarget:[OState s].viewController action:@selector(didSelectTitleSegment) forControlEvents:UIControlEventValueChanged];
+    
+    self.titleView = titleControl;
+    
+    return titleControl;
+}
+
+
 - (void)appendRightBarButtonItem:(UIBarButtonItem *)barButtonItem
 {
-    NSMutableArray *rightBarButtonItems = [NSMutableArray arrayWithArray:self.rightBarButtonItems];
+    NSMutableArray *rightBarButtonItems = [self.rightBarButtonItems mutableCopy];
     
     if ([rightBarButtonItems count] == 1) {
         [rightBarButtonItems insertObject:barButtonItem atIndex:0];

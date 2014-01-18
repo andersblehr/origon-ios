@@ -16,6 +16,7 @@ NSString * const kSeparatorSpace = @" ";
 
 NSString * const kSeparatorList = @";";
 NSString * const kSeparatorMapping = @":";
+NSString * const kSeparatorSegments = @"|";
 NSString * const kSeparatorAlternates = @"|";
 
 

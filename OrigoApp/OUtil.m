@@ -34,7 +34,7 @@
         NSMutableArray *stringItems = nil;
         
         if ([items[0] isKindOfClass:[NSString class]]) {
-            stringItems = [NSMutableArray arrayWithArray:items];
+            stringItems = [items mutableCopy];
         } else {
             stringItems = [NSMutableArray array];
             

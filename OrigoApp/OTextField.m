@@ -180,7 +180,7 @@ static CGFloat const kTextInsetY = 1.2f;
 
 - (BOOL)canBecomeFirstResponder
 {
-    return YES;
+    return self.editable;
 }
 
 

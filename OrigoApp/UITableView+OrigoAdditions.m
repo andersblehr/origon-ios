@@ -91,15 +91,23 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-#pragma mark - Header & footer convenience methods
+#pragma mark - Height computation
 
-- (CGFloat)standardHeaderHeight
+- (CGFloat)headerHeight
 {
-    return kLineToHeaderHeightFactor * [UIFont headerFont].lineHeight;
+    CGFloat headerHeight = 0.f;
+    
+    if (self.style == UITableViewStylePlain) {
+        headerHeight = [UIFont plainHeaderFont].lineHeight;
+    } else {
+        headerHeight = kLineToHeaderHeightFactor * [UIFont headerFont].lineHeight;
+    }
+    
+    return headerHeight;
 }
 
 
-- (CGFloat)heightForFooterWithText:(NSString *)text
+- (CGFloat)footerHeightWithText:(NSString *)text
 {
     UIFont *footerFont = [UIFont footerFont];
     CGFloat textHeight = [text lineCountWithFont:footerFont maxWidth:kContentWidth] * footerFont.lineHeight;
@@ -108,23 +116,33 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
+#pragma mark - Header & footer views
+
 - (UIView *)headerViewWithText:(NSString *)text
 {
-    self.sectionHeaderHeight = [self standardHeaderHeight];
+    self.sectionHeaderHeight = [self headerHeight];
     
-    CGFloat cellWidth = self.bounds.size.width - 2 * kDefaultCellPadding;
-    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionHeaderHeight);
-    CGRect headerFrame = CGRectMake(kDefaultCellPadding, 0.f, cellWidth, self.sectionHeaderHeight);
+    CGFloat headerWidth = self.bounds.size.width - 2 * kDefaultCellPadding;
+    CGRect containerFrame = CGRectMake(0.f, 0.f, self.bounds.size.width, self.sectionHeaderHeight);
+    CGRect headerFrame = CGRectMake(kDefaultCellPadding, 0.f, headerWidth, self.sectionHeaderHeight);
     
-    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
+    UIView *containerView = [[UIView alloc] initWithFrame:containerFrame];
     UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
-    
-    headerLabel.backgroundColor = [UIColor clearColor];
-    headerLabel.font = [UIFont headerFont];
+
+    if (self.style == UITableViewStylePlain) {
+        containerView.backgroundColor = [UIColor toolbarShadowColour];
+        headerLabel.backgroundColor = [UIColor clearColor];
+        headerLabel.font = [UIFont listTextFont];
+        headerLabel.textColor = [UIColor textColour];
+    } else {
+        headerLabel.backgroundColor = [UIColor clearColor];
+        headerLabel.font = [UIFont headerFont];
+        headerLabel.textColor = [UIColor headerTextColour];
+    }
+
     headerLabel.text = text;
     headerLabel.textAlignment = NSTextAlignmentLeft;
-    headerLabel.textColor = [UIColor headerTextColour];
-
+    
     [containerView addSubview:headerLabel];
     
     return containerView;
@@ -133,12 +151,12 @@ static NSString * const kLogoText = @"..origo..";
 
 - (UIView *)footerViewWithText:(NSString *)text
 {
-    self.sectionFooterHeight = [self heightForFooterWithText:text];
+    self.sectionFooterHeight = [self footerHeightWithText:text];
 
-    CGRect containerViewFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionFooterHeight);
+    CGRect containerFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionFooterHeight);
     CGRect footerFrame = CGRectMake(kDefaultCellPadding, 0.f, kContentWidth, self.sectionFooterHeight + kFooterHeadRoom);
     
-    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
+    UIView *containerView = [[UIView alloc] initWithFrame:containerFrame];
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:footerFrame];
     
     footerLabel.backgroundColor = [UIColor clearColor];

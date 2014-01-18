@@ -19,8 +19,9 @@ extern CGFloat const kContentWidth;
 - (id)cellForReuseIdentifier:(NSString *)reuseIdentifier;
 - (id)listCellForIndexPath:(NSIndexPath *)indexPath data:(id)data;
 
-- (CGFloat)standardHeaderHeight;
-- (CGFloat)heightForFooterWithText:(NSString *)text;
+- (CGFloat)headerHeight;
+- (CGFloat)footerHeightWithText:(NSString *)text;
+
 - (UIView *)headerViewWithText:(NSString *)text;
 - (UIView *)footerViewWithText:(NSString *)text;
 

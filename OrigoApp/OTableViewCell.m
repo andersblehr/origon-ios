@@ -62,11 +62,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
             
             if (style == UITableViewCellStyleSubtitle) {
                 self.textLabel.font = [UIFont listTextFont];
-                self.detailTextLabel.font = [UIFont listDetailFont];
+                self.detailTextLabel.font = [UIFont listDetailTextFont];
                 self.detailTextLabel.textColor = [UIColor textColour];
             } else if (style == UITableViewCellStyleValue1) {
-                self.textLabel.font = [UIFont alternateListFont];
-                self.detailTextLabel.font = [UIFont alternateListFont];
+                self.textLabel.font = [UIFont alternateListTextFont];
+                self.detailTextLabel.font = [UIFont alternateListTextFont];
                 self.detailTextLabel.textColor = [UIColor lightGrayColor];
             }
         }
@@ -167,6 +167,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
         
         [self addInputFieldForKey:detailKey];
     }
+    
+    self.editable = [_state actionIs:kActionInput];
 }
 
 
@@ -303,8 +305,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 }
             }
         }
-        
-        self.editing = [_state actionIs:kActionInput];
     }
 }
 
@@ -317,7 +317,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         [_state toggleAction:@[kActionDisplay, kActionEdit]];
     }
     
-    self.editing = [_state actionIs:kActionEdit];
+    self.editable = [_state actionIs:kActionEdit];
 }
 
 
@@ -457,7 +457,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setChecked:(BOOL)checked
 {
-    if (checked) {
+    _checked = checked;
+    
+    if (_checked) {
         self.accessoryType = UITableViewCellAccessoryCheckmark;
     } else {
         self.accessoryType = UITableViewCellAccessoryNone;
@@ -490,7 +492,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setFrame:(CGRect)frame
 {
-    if ([OMeta systemIs_iOS6x]) {
+    if ([OMeta systemIs_iOS6x] && !_state.viewController.usesPlainTableViewStyle) {
         frame.origin.x = -kDefaultCellPadding;
         frame.size.width = kScreenWidth + 2.f * kDefaultCellPadding;
     }
@@ -499,23 +501,27 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - UITableViewCell custom accessors
+#pragma mark - Custom accessors
 
-- (void)setEditing:(BOOL)editing
+- (void)setEditable:(BOOL)editable
 {
-    [super setEditing:editing];
+    _editable = editable;
+    
+    self.editing = editable;
     
     if (![self isListCell]) {
         for (NSString *key in _blueprint.allInputFieldKeys) {
-            [self inputFieldForKey:key].editable = editing;
+            [self inputFieldForKey:key].editable = editable;
             
             if ([OValidator isAlternatingLabelKey:key]) {
-                [self labelForKey:key].useAlternateText = editing;
+                [self labelForKey:key].useAlternateText = editable;
             }
         }
     }
 }
 
+
+#pragma mark - UITableViewCell custom accessors
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
