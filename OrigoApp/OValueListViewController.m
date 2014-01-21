@@ -16,25 +16,6 @@ static NSInteger const kSectionKeySignOut = 1;
 
 @implementation OValueListViewController
 
-#pragma mark - Selection implementations
-
-- (void)didFinishEditing
-{
-    [self.dismisser dismissModalViewController:self reload:NO];
-}
-
-
-#pragma mark - View life cycle
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-
-    self.title = [OStrings stringForKey:strViewTitleSettings];
-    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButton];
-}
-
-
 #pragma mark - UIViewController overrides
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -49,6 +30,9 @@ static NSInteger const kSectionKeySignOut = 1;
 
 - (void)initialiseState
 {
+    self.title = [OStrings stringForKey:strViewTitleSettings];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
+    
     self.state.target = kTargetUser;
 }
 

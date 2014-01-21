@@ -202,6 +202,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)didCancelEditing
 {
     if (self.isModal) {
+        _returnData = nil;
+        
         [_dismisser dismissModalViewController:self reload:NO];
     } else if ([self actionIs:kActionEdit]) {
         [self toggleEditMode];
@@ -452,9 +454,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)endEditing
 {
+    [self.view endEditing:YES];
+    
     if ([self actionIs:kActionRegister]) {
-        [self.view endEditing:YES];
-        
         self.detailCell.editable = NO;
         self.navigationItem.rightBarButtonItem = _doneButton;
     }
@@ -508,7 +510,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         NSInteger newCount = [_sectionData[sectionKey] count];
         
         if (oldCount) {
-            if ((newCount && (newCount != oldCount)) || [_dirtySections containsObject:@(section)]) {
+            if (newCount && ((newCount != oldCount) || [_dirtySections containsObject:@(section)])) {
                 [sectionsToReload addIndex:section];
             } else if (!newCount) {
                 [_sectionKeys removeObject:sectionKey];
@@ -521,7 +523,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _sectionCounts[sectionKey] = @(newCount);
     }
     
-    if (![_lastSectionKey isEqualToNumber:[_sectionKeys lastObject]]) {
+    if ([_sectionKeys count] && ![_lastSectionKey isEqualToNumber:[_sectionKeys lastObject]]) {
         if ([_sectionKeys containsObject:_lastSectionKey]) {
             [sectionsToReload addIndex:[self sectionNumberForSectionKey:[_lastSectionKey integerValue]]];
         }
@@ -562,7 +564,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [[OMeta m] userDidSignOut];
     
     _needsReinstantiateRootViewController = YES;
-    _reinstantiatedRootViewController = [[OState s].viewController.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
+    _reinstantiatedRootViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
     
     [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reinstantiatedRootViewController];
 }
@@ -786,8 +788,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             _shouldReloadOnModalDismissal = NO;
         }];
         
-        if ([_instance respondsToSelector:@selector(didDismissModalViewController:reload:)]) {
-            [_instance didDismissModalViewController:viewController reload:reload];
+        if ([_instance respondsToSelector:@selector(didDismissModalViewController:)]) {
+            [_instance didDismissModalViewController:viewController];
         }
     }
 }

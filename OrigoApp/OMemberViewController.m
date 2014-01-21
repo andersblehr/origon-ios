@@ -31,10 +31,6 @@ static NSInteger const kButtonTagLookUpMember = 1;
 static NSInteger const kActionSheetTagMultiValue = 3;
 static NSInteger const kButtonTagDifferentValue = 10;
 
-static NSInteger const kActionSheetTagExistingResidence = 4;
-static NSInteger const kButtonTagInviteToHousehold = 0;
-static NSInteger const kButtonTagMergeHouseholds = 1;
-
 static NSInteger const kAlertTagEmailChange = 0;
 static NSInteger const kButtonTagContinue = 1;
 
@@ -43,9 +39,9 @@ static NSInteger const kButtonTagContinue = 1;
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)isRegisteringJuvenileOrigoGuardian
+- (BOOL)isRegisteringJuvenileElder
 {
-    return [self actionIs:kActionRegister] && [_origo isJuvenile] && [self.meta isEqualToString:kTargetGuardian];
+    return [self actionIs:kActionRegister] && self.meta;
 }
 
 
@@ -228,17 +224,6 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)presentExistingResidenceActionSheet
-{
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:[OStrings stringForKey:strSheetPromptExistingResidence], _candidate.name, [_candidate givenName]] delegate:self tag:kActionSheetTagExistingResidence];
-    
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonInviteToHousehold] tag:kButtonTagInviteToHousehold];
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonMergeHouseholds] tag:kButtonTagMergeHouseholds];
-    
-    [actionSheet show];
-}
-
-
 - (void)presentUserEmailChangeAlert
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleUserEmailChange] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextUserEmailChange], _member.email, _emailField.value] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
@@ -281,7 +266,7 @@ static NSInteger const kButtonTagContinue = 1;
 {
     [self.view endEditing:YES];
     
-    if ([[[OMeta m].user fullMemberships] count] > 1) {
+    if ([[[OState s].pivotMember fullMemberships] count] > 1) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagLookupType];
         
         [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonRetrieveFromContacts]];
@@ -303,10 +288,8 @@ static NSInteger const kButtonTagContinue = 1;
     _mobilePhoneField = [self.detailCell inputFieldForKey:kPropertyKeyMobilePhone];
     _emailField = [self.detailCell inputFieldForKey:kPropertyKeyEmail];
     
-    if ([self actionIs:kActionRegister] && [_origo isJuvenile]) {
-        if (!self.wasHidden && ![self.meta isEqualToString:kTargetGuardian]) {
-            [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kTargetGuardian];
-        }
+    if ([self actionIs:kActionRegister] && [_origo isJuvenile] && !self.meta && !self.wasHidden) {
+        [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kTargetGuardian];
     }
     
     [super viewDidAppear:animated];
@@ -354,11 +337,15 @@ static NSInteger const kButtonTagContinue = 1;
     
     if ([self targetIs:kTargetUser]) {
         self.title = [OStrings stringForKey:strViewTitleAboutMe];
+    } else if ([self targetIs:kTargetGuardian]) {
+        self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
+    } else if ([self targetIs:kTargetContact]) {
+        self.title = [OStrings stringForKey:_origo.type withKeyPrefix:kKeyPrefixContactTitle];
+    } else if ([self targetIs:kTargetParentContact]) {
+        self.title = [OStrings stringForKey:strTermParentContact];
     } else if (_member) {
         self.title = [_member isHousemateOfUser] ? [_member givenName] : _member.name;
-    } else if ([self isRegisteringJuvenileOrigoGuardian]) {
-        self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
-    } else if ([self actionIs:kActionRegister]) {
+    } else {
         self.title = [OStrings stringForKey:_origo.type withKeyPrefix:kKeyPrefixNewMemberTitle];
     }
     
@@ -399,7 +386,7 @@ static NSInteger const kButtonTagContinue = 1;
     BOOL hasFooter = [self actionIs:kActionRegister];
     
     hasFooter = hasFooter && ![self targetIs:kTargetUser];
-    hasFooter = hasFooter && (![_origo isJuvenile] || [self isRegisteringJuvenileOrigoGuardian]);
+    hasFooter = hasFooter && (![_origo isJuvenile] || [self isRegisteringJuvenileElder]);
     
     return hasFooter;
 }
@@ -443,7 +430,7 @@ static NSInteger const kButtonTagContinue = 1;
 {
     NSString *text = [OStrings stringForKey:strFooterOrigoInviteAlert];
     
-    if ([self isRegisteringJuvenileOrigoGuardian]) {
+    if ([self targetIs:kTargetGuardian]) {
         text = [NSString stringWithFormat:@"%@\n\n%@", [OStrings stringForKey:strFooterJuvenileOrigoGuardian], text];
     }
     
@@ -467,12 +454,15 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController
 {
-    BOOL shouldRelay = NO;
+    BOOL shouldRelayDismissal = [viewController.identifier isEqualToString:kIdentifierOrigo];
     
-    shouldRelay = shouldRelay || [viewController.identifier isEqual:kIdentifierMember];
-    shouldRelay = shouldRelay || [viewController.identifier isEqual:kIdentifierOrigo];
+    if (!shouldRelayDismissal) {
+        if ([viewController.identifier isEqualToString:kIdentifierMember]) {
+            shouldRelayDismissal = !viewController.returnData;
+        }
+    }
     
-    return shouldRelay;
+    return shouldRelayDismissal;
 }
 
 
@@ -492,14 +482,18 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)didDismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload
+- (void)didDismissModalViewController:(OTableViewController *)viewController
 {
-    if (reload) {
-        if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
+    if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
+        if (viewController.returnData) {
             _candidate = viewController.returnData;
             
             [self candidateIsValid];
             [self endEditing];
+        }
+    } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
+        if (viewController.returnData) {
+            
         }
     }
 }
@@ -616,21 +610,19 @@ static NSInteger const kButtonTagContinue = 1;
 {
     if ([self actionIs:kActionRegister]) {
         if (_candidate) {
-            if ([_origo isOfType:kOrigoTypeResidence] && [_candidate.residencies count]) {
-                [self presentExistingResidenceActionSheet];
-            } else {
-                [self persistMember];
-            }
-        } else {
+            [self persistMember];
+        } else if ([_origo isOfType:kOrigoTypeResidence]) {
             _examiner = [[ORegistrantExaminer alloc] initWithResidence:_origo];
             
             if (_member) {
                 [_examiner examineRegistrant:_member];
-            } else if ([self.meta isEqualToString:kTargetGuardian]) {
+            } else if ([self targetIs:kTargetGuardian]) {
                 [_examiner examineRegistrantWithName:_nameField.value isGuardian:YES];
             } else {
                 [_examiner examineRegistrantWithName:_nameField.value dateOfBirth:_dateOfBirthField.value];
             }
+        } else {
+            // TODO
         }
     } else if ([self actionIs:kActionEdit]) {
         if ([_member.email hasValue] && ![_emailField.value isEqualToString:_member.email]) {
@@ -775,7 +767,7 @@ static NSInteger const kButtonTagContinue = 1;
                 if (buttonTag == kButtonTagLookUpContact) {
                     [self lookUpContact];
                 } else if (buttonTag == kButtonTagLookUpMember) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker data:_origo meta:kTargetMember];
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker data:_origo meta:self.meta ? self.meta : kTargetMember];
                 }
             } else {
                 [self resumeFirstResponder];
@@ -794,19 +786,6 @@ static NSInteger const kButtonTagContinue = 1;
                         [self endEditing];
                     }
                 }
-            }
-            
-            break;
-            
-        case kActionSheetTagExistingResidence:
-            if (buttonIndex < actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagInviteToHousehold) {
-                    [self persistMember];
-                } else if (buttonTag == kButtonTagMergeHouseholds) {
-                    // TODO
-                }
-            } else {
-                [self resumeFirstResponder];
             }
             
             break;

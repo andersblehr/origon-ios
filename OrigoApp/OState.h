@@ -39,6 +39,7 @@ extern NSString * const kTargetMember;
 extern NSString * const kTargetMembers;
 extern NSString * const kTargetGuardian;
 extern NSString * const kTargetContact;
+extern NSString * const kTargetParentContact;
 extern NSString * const kTargetRelation;
 extern NSString * const kTargetSetting;
 

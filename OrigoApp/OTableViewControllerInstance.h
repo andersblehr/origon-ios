@@ -29,7 +29,7 @@
 
 - (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController;
 - (void)willDismissModalViewController:(OTableViewController *)viewController;
-- (void)didDismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload;
+- (void)didDismissModalViewController:(OTableViewController *)viewController;
 
 - (void)didResumeFromBackground;
 

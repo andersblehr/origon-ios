@@ -148,6 +148,7 @@ static NSInteger const kSectionKeyWards = 2;
     self.state.target = _member;
     
     if ([_member isUser]) {
+        self.title = [OMeta m].appName;
         [self.navigationItem setTitle:[OMeta m].appName withSubtitle:[OMeta m].user.name];
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButton];
     } else {

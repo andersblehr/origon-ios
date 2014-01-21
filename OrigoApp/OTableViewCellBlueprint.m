@@ -165,7 +165,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
         if ([_state.viewController.identifier isEqualToString:kIdentifierMember]) {
             if ([_state targetIs:kTargetJuvenile]) {
                 if ([_state actionIs:kActionInput] && ![_state aspectIsHousehold]) {
-                    _displayableInputFieldKeys = nil;
+                    _displayableInputFieldKeys = [@[kPropertyKeyName] mutableCopy];
                 }
             } else if (![_state aspectIsHousehold] || ![_state actionIs:kActionInput]) {
                 [_displayableInputFieldKeys removeObject:kPropertyKeyDateOfBirth];

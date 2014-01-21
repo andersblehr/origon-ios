@@ -284,6 +284,12 @@ NSString * const kOrigoTypeMinorTeam = @"minorTeam";
 }
 
 
+- (BOOL)isCrossGenerational
+{
+    return [self isOfType:kOrigoTypeResidence];
+}
+
+
 - (BOOL)isJuvenile
 {
     return [OUtil origoTypeIsJuvenile:self.type];

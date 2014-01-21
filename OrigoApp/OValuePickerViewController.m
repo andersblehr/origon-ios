@@ -18,14 +18,24 @@ static NSInteger const kSegmentedTitleIndexMinors = 1;
 
 #pragma mark - Auxiliary methods
 
+- (BOOL)targetIsJuvenileElder
+{
+    BOOL targetIsJuvenileElder = NO;
+    
+    targetIsJuvenileElder = targetIsJuvenileElder || [self targetIs:kTargetGuardian];
+    targetIsJuvenileElder = targetIsJuvenileElder || [self targetIs:kTargetContact];
+    targetIsJuvenileElder = targetIsJuvenileElder || [self targetIs:kTargetParentContact];
+    
+    return targetIsJuvenileElder;
+}
+
+
 - (BOOL)targetIsMemberVariant
 {
-    BOOL targetIsMemberVariant = NO;
+    BOOL targetIsMemberVariant = [self targetIsJuvenileElder];
     
     targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetMember];
     targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetMembers];
-    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetContact];
-    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetGuardian];
     
     return targetIsMemberVariant;
 }
@@ -41,14 +51,17 @@ static NSInteger const kSegmentedTitleIndexMinors = 1;
 {
     NSMutableSet *peers = nil;
     
-    if ([[OState s].pivotMember isMinor] == _segmentedTitle.selectedSegmentIndex) {
-        peers = [[[OState s].pivotMember peers] mutableCopy];
-    } else if ([[OState s].pivotMember isMinor]) {
-        peers = [[[OState s].pivotMember guardianPeers] mutableCopy];
+    if (_segmentedTitle) {
+        if ([[OState s].pivotMember isMinor] == _segmentedTitle.selectedSegmentIndex) {
+            peers = [[[OState s].pivotMember peers] mutableCopy];
+        } else {
+            peers = [[[OState s].pivotMember crossGenerationalPeers] mutableCopy];
+        }
+    } else if ([self targetIsJuvenileElder]) {
+        peers = [[[OState s].pivotMember crossGenerationalPeers] mutableCopy];
     } else {
-        peers = [[[OState s].pivotMember wardPeers] mutableCopy];
+        peers = [[[OState s].pivotMember peers] mutableCopy];
     }
-
     
     for (OMembership *membership in [self.data fullMemberships]) {
         [peers removeObject:membership.member];
@@ -82,15 +95,17 @@ static NSInteger const kSegmentedTitleIndexMinors = 1;
 
 - (void)initialiseState
 {
-    self.state.target = self.meta;
+    self.state.target = self.meta ? self.meta : self.data;
 
     if ([self targetIsMemberVariant]) {
-        _segmentedTitle = [self.navigationItem addSegmentedTitle:[OStrings stringForKey:strSegmentedTitleAdultsMinors]];
-        
-        if ([[OState s].pivotMember isMinor]) {
-            _segmentedTitle.selectedSegmentIndex = kSegmentedTitleIndexMinors;
-        } else {
-            _segmentedTitle.selectedSegmentIndex = kSegmentedTitleIndexAdults;
+        if ([self.data isCrossGenerational]) {
+            _segmentedTitle = [self.navigationItem addSegmentedTitle:[OStrings stringForKey:strSegmentedTitleAdultsMinors]];
+            
+            if ([[OState s].pivotMember isMinor]) {
+                _segmentedTitle.selectedSegmentIndex = kSegmentedTitleIndexMinors;
+            } else {
+                _segmentedTitle.selectedSegmentIndex = kSegmentedTitleIndexAdults;
+            }
         }
         
         self.usesPlainTableViewStyle = YES;
