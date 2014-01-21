@@ -263,27 +263,15 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (NSSet *)wardPeers
+- (NSSet *)crossGenerationalPeers
 {
-    NSMutableSet *wardPeers = [NSMutableSet set];
+    NSMutableSet *crossGenerationalPeers = [NSMutableSet set];
     
-    for (OMember *ward in [self wards]) {
-        [wardPeers unionSet:[ward peers]];
+    for (OMember *crossGenerationalHousemate in [self isMinor] ? [self guardians] : [self wards]) {
+        [crossGenerationalPeers unionSet:[crossGenerationalHousemate peers]];
     }
     
-    return wardPeers;
-}
-
-
-- (NSSet *)guardianPeers
-{
-    NSMutableSet *guardianPeers = [NSMutableSet set];
-    
-    for (OMember *guardian in [self guardians]) {
-        [guardianPeers unionSet:[guardian peers]];
-    }
-    
-    return guardianPeers;
+    return crossGenerationalPeers;
 }
 
 

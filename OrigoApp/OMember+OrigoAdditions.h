@@ -24,8 +24,7 @@
 - (NSSet *)siblings;
 - (NSSet *)guardians;
 - (NSSet *)peers;
-- (NSSet *)wardPeers;
-- (NSSet *)guardianPeers;
+- (NSSet *)crossGenerationalPeers;
 - (NSSet *)housemates;
 - (NSSet *)housemateResidences;
 

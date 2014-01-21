@@ -20,8 +20,9 @@ static NSInteger const kButtonTagEditRoles = 1;
 static NSInteger const kButtonTagAddMember = 2;
 static NSInteger const kButtonTagAddFromOrigo = 3;
 static NSInteger const kButtonTagAddContact = 4;
-static NSInteger const kButtonTagShowInMap = 5;
-static NSInteger const kButtonTagAbout = 6;
+static NSInteger const kButtonTagAddParentContact = 5;
+static NSInteger const kButtonTagShowInMap = 6;
+static NSInteger const kButtonTagAbout = 7;
 
 static NSInteger const kActionSheetTagHousemate = 1;
 static NSInteger const kButtonTagHousemate = 100;
@@ -31,6 +32,21 @@ static NSInteger const kButtonTagGuardian = 101;
 @implementation OOrigoViewController
 
 #pragma mark - Auxiliary methods
+
+- (void)addNewMemberButtonsToActionSheet:(OActionSheet *)actionSheet
+{
+    [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
+    
+    if ([[[OState s].pivotMember fullMemberships] count] > 1) {
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddFromOrigo] tag:kButtonTagAddFromOrigo];
+    }
+    
+    if ([_origo isOrganised] && [_origo isJuvenile]) {
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddContactButton] tag:kButtonTagAddContact];
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddParentContact] tag:kButtonTagAddParentContact];
+    }
+}
+
 
 - (void)addMember
 {
@@ -84,16 +100,11 @@ static NSInteger const kButtonTagGuardian = 101;
     
     [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
     
-    if ([_origo isOrganised]) {
+    if ([_origo isOrganised] && [_origo hasContacts]) {
         [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEditRoles] tag:kButtonTagEditRoles];
     }
     
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddFromOrigo] tag:kButtonTagAddFromOrigo];
-    
-    if ([_origo isOrganised] && [_origo isJuvenile]) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddContactButton] tag:kButtonTagAddContact];
-    }
+    [self addNewMemberButtonsToActionSheet:actionSheet];
     
     if ([_origo.address hasValue]) {
         [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonShowInMap] tag:kButtonTagShowInMap];
@@ -110,12 +121,7 @@ static NSInteger const kButtonTagGuardian = 101;
     if (![_origo isOfType:kOrigoTypeResidence]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
         
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddFromOrigo] tag:kButtonTagAddFromOrigo];
-        
-        if ([_origo isOrganised] && [_origo isJuvenile]) {
-            [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddContactButton] tag:kButtonTagAddContact];
-        }
+        [self addNewMemberButtonsToActionSheet:actionSheet];
         
         [actionSheet show];
     } else {
@@ -256,10 +262,10 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
-- (void)didDismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload
+- (void)didDismissModalViewController:(OTableViewController *)viewController
 {
-    if (reload) {
-        if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
+    if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
+        if (viewController.returnData) {
             for (OMember *member in viewController.returnData) {
                 [_origo addMember:member];
             }
@@ -410,6 +416,8 @@ static NSInteger const kButtonTagGuardian = 101;
                     [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker data:_origo meta:kTargetMembers];
                 } else if (buttonTag == kButtonTagAddContact) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kTargetContact];
+                } else if (buttonTag == kButtonTagAddParentContact) {
+                    [self presentModalViewControllerWithIdentifier:kIdentifierMember data:_origo meta:kTargetParentContact];
                 }
             }
             

@@ -13,20 +13,20 @@ extern NSString * const kKeyPrefixDefault;
 extern NSString * const kKeyPrefixLabel;
 extern NSString * const kKeyPrefixAlternateLabel;
 extern NSString * const kKeyPrefixPlaceholder;
+extern NSString * const kKeyPrefixOrigoTitle;
+extern NSString * const kKeyPrefixNewOrigoTitle;
 extern NSString * const kKeyPrefixFooter;
 extern NSString * const kKeyPrefixAddMemberButton;
 extern NSString * const kKeyPrefixAddContactButton;
-extern NSString * const kKeyPrefixContactRole;
-extern NSString * const kKeyPrefixSettingTitle;
-extern NSString * const kKeyPrefixSettingLabel;
-extern NSString * const kKeyPrefixOrigoTitle;
-extern NSString * const kKeyPrefixNewOrigoTitle;
+extern NSString * const kKeyPrefixContactTitle;
 extern NSString * const kKeyPrefixMemberListTitle;
 extern NSString * const kKeyPrefixNewMemberTitle;
 extern NSString * const kKeyPrefixAllMembersTitle;
+extern NSString * const kKeyPrefixContactRole;
+extern NSString * const kKeyPrefixSettingTitle;
+extern NSString * const kKeyPrefixSettingLabel;
 
 // Cross-view strings
-extern NSString * const strFooterTapToEdit;
 extern NSString * const strFooterOrigoSignature;
 extern NSString * const strButtonOK;
 extern NSString * const strButtonEdit;
@@ -44,6 +44,8 @@ extern NSString * const strTermMan;
 extern NSString * const strTermBoy;
 extern NSString * const strTermWoman;
 extern NSString * const strTermGirl;
+extern NSString * const strTermParentContact;
+
 extern NSString * const strFormatAge;
 extern NSString * const strSeparatorAnd;
 
@@ -91,6 +93,7 @@ extern NSString * const strPlaceholderDescriptionText;
 extern NSString * const strPlaceholderTelephone;
 extern NSString * const strButtonEditRoles;
 extern NSString * const strButtonAddFromOrigo;
+extern NSString * const strButtonAddParentContact;
 extern NSString * const strButtonShowInMap;
 extern NSString * const strButtonAbout;
 extern NSString * const strButtonNewHousemate;

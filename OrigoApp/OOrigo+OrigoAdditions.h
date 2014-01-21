@@ -44,6 +44,7 @@ extern NSString * const kOrigoTypeMinorTeam;
 
 - (BOOL)isOfType:(NSString *)origoType;
 - (BOOL)isOrganised;
+- (BOOL)isCrossGenerational;
 - (BOOL)isJuvenile;
 - (BOOL)hasAdmin;
 - (BOOL)hasContacts;
