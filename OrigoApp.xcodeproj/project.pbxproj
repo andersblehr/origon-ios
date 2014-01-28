@@ -69,10 +69,10 @@
 		5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78FAB91654E77E009A4BCF /* OTextView.m */; };
 		5C7BC3DD16F358B7006AA52F /* OResidencySchedule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7BC3DC16F358B7006AA52F /* OResidencySchedule.m */; };
 		5C83DF81153F59B800BB0B29 /* OOrigo+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF80153F59B800BB0B29 /* OOrigo+OrigoAdditions.m */; };
-		5C84D27417C34F7B00A746B7 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C84D27317C34F7B00A746B7 /* OMember.m */; };
-		5C8526B4183E290B0078A914 /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8526B3183E290B0078A914 /* OOrigo.m */; };
 		5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* OMemberViewController.m */; };
 		5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB91582493C000B19FA /* OTableViewCell.m */; };
+		5C8E2EC41891406800BF7BC0 /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8E2EC31891406800BF7BC0 /* OOrigo.m */; };
+		5C8E2EC71891412000BF7BC0 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8E2EC61891412000BF7BC0 /* OMember.m */; };
 		5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C93DC741628100C009A66C4 /* Default-568h@2x.png */; };
 		5C98903617F6B8AD00D957F9 /* 730-envelope.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903417F6B8AD00D957F9 /* 730-envelope.png */; };
 		5C98903717F6B8AD00D957F9 /* 730-envelope@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903517F6B8AD00D957F9 /* 730-envelope@2x.png */; };
@@ -270,14 +270,14 @@
 		5C7BC3DC16F358B7006AA52F /* OResidencySchedule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OResidencySchedule.m; sourceTree = "<group>"; };
 		5C83DF7F153F59B800BB0B29 /* OOrigo+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OOrigo+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5C83DF80153F59B800BB0B29 /* OOrigo+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OOrigo+OrigoAdditions.m"; sourceTree = "<group>"; };
-		5C84D27217C34F7B00A746B7 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
-		5C84D27317C34F7B00A746B7 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
-		5C8526B2183E290B0078A914 /* OOrigo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigo.h; sourceTree = "<group>"; };
-		5C8526B3183E290B0078A914 /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
 		5C8B3AB415813DBB000B19FA /* OMemberViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMemberViewController.h; sourceTree = "<group>"; };
 		5C8B3AB515813DBB000B19FA /* OMemberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMemberViewController.m; sourceTree = "<group>"; };
 		5C8B3AB81582493C000B19FA /* OTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCell.h; sourceTree = "<group>"; };
 		5C8B3AB91582493C000B19FA /* OTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCell.m; sourceTree = "<group>"; };
+		5C8E2EC21891406800BF7BC0 /* OOrigo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigo.h; sourceTree = "<group>"; };
+		5C8E2EC31891406800BF7BC0 /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
+		5C8E2EC51891412000BF7BC0 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
+		5C8E2EC61891412000BF7BC0 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
 		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		5C98903417F6B8AD00D957F9 /* 730-envelope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "730-envelope.png"; sourceTree = "<group>"; };
 		5C98903517F6B8AD00D957F9 /* 730-envelope@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "730-envelope@2x.png"; sourceTree = "<group>"; };
@@ -515,8 +515,8 @@
 				5CAEE0A5163E513700A9046B /* OEventOrigoInvitation.m */,
 				5CAEE09E163E513500A9046B /* OExternalDocument.h */,
 				5CAEE09F163E513500A9046B /* OExternalDocument.m */,
-				5C84D27217C34F7B00A746B7 /* OMember.h */,
-				5C84D27317C34F7B00A746B7 /* OMember.m */,
+				5C8E2EC51891412000BF7BC0 /* OMember.h */,
+				5C8E2EC61891412000BF7BC0 /* OMember.m */,
 				5C3317CD16F7543F004F8921 /* OMembership.h */,
 				5C3317CE16F7543F004F8921 /* OMembership.m */,
 				5CAEE092163E513400A9046B /* OMessageBoard.h */,
@@ -525,8 +525,8 @@
 				5CAEE0CF163E513A00A9046B /* OMessageItem.m */,
 				5CAEE0B9163E513900A9046B /* OMessageThread.h */,
 				5CAEE0BA163E513A00A9046B /* OMessageThread.m */,
-				5C8526B2183E290B0078A914 /* OOrigo.h */,
-				5C8526B3183E290B0078A914 /* OOrigo.m */,
+				5C8E2EC21891406800BF7BC0 /* OOrigo.h */,
+				5C8E2EC31891406800BF7BC0 /* OOrigo.m */,
 				5C369D9516FB58DA0053EB1F /* OReplicatedEntity.h */,
 				5C369D9616FB58DA0053EB1F /* OReplicatedEntity.m */,
 				5C6C4B6916CC027600C88E6C /* OReplicatedEntityRef.h */,
@@ -982,6 +982,7 @@
 			files = (
 				5CBB63C5146080DF00A9133A /* main.m in Sources */,
 				5CBB63C9146080DF00A9133A /* OAppDelegate.m in Sources */,
+				5C8E2EC41891406800BF7BC0 /* OOrigo.m in Sources */,
 				5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */,
 				5C2E11141469CDE5005BDE61 /* OConnection.m in Sources */,
 				5C36BE8A146E9DA100DD3CEA /* OMeta.m in Sources */,
@@ -1006,6 +1007,7 @@
 				5C752CB21827E29D004CEACD /* OActivityIndicator.m in Sources */,
 				5CFD8E73183E03A900DC3945 /* OSettings.m in Sources */,
 				5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */,
+				5C8E2EC71891412000BF7BC0 /* OMember.m in Sources */,
 				5CA94D9F15836BD9008CD9EC /* NSDate+OrigoAdditions.m in Sources */,
 				5C6E6C131589AC820002FF84 /* UITableView+OrigoAdditions.m in Sources */,
 				5C26291E158F27860012A74A /* OAuthViewController.m in Sources */,
@@ -1048,7 +1050,6 @@
 				5C1D6CCA1743C80900479F7D /* OSettings+OrigoAdditions.m in Sources */,
 				5C77067618549A2E0088C78D /* OLabel.m in Sources */,
 				5CBFB738174B64D40021A8F6 /* OValuePickerViewController.m in Sources */,
-				5C8526B4183E290B0078A914 /* OOrigo.m in Sources */,
 				5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */,
 				5CC40C9B1772DC5E00DD850E /* OValidator.m in Sources */,
 				5CF3DE291775AD820068B2E7 /* ODefaults.m in Sources */,
@@ -1057,7 +1058,6 @@
 				5CF17E5917AF84B600985255 /* OSwitchboard.m in Sources */,
 				5CB74EF117BB60BF003FAC28 /* ODevice+OrigoAdditions.m in Sources */,
 				5CFD8E70183CE27200DC3945 /* OPhoneNumberFormatter.m in Sources */,
-				5C84D27417C34F7B00A746B7 /* OMember.m in Sources */,
 				5C78695018116AD400020E08 /* OActionSheet.m in Sources */,
 				5C64105917D499450005B192 /* ONavigationController.m in Sources */,
 			);

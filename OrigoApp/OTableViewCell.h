@@ -22,7 +22,7 @@ extern CGFloat const kCellAnimationDuration;
     OState *_state;
     OTableViewCellConstrainer *_constrainer;
     NSMutableDictionary *_views;
-    Class _entityClass;
+    OInputField *_lastInputField;
     
     id<OTableViewListDelegate> _listDelegate;
     id<OTableViewInputDelegate> _inputDelegate;
@@ -31,7 +31,6 @@ extern CGFloat const kCellAnimationDuration;
 @property (strong, nonatomic, readonly) OTableViewCellBlueprint *blueprint;
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic) OReplicatedEntity *entity;
-@property (strong, nonatomic) OInputField *lastInputField;
 @property (strong, nonatomic) OInputField *inputField;
 @property (strong, nonatomic) NSIndexPath *indexPath;
 
@@ -55,7 +54,9 @@ extern CGFloat const kCellAnimationDuration;
 
 - (void)didLayoutSubviews;
 - (void)toggleEditMode;
+- (void)clearInputFields;
 - (void)redrawIfNeeded;
+- (void)resumeFirstResponder;
 - (void)shakeCellVibrate:(BOOL)vibrate;
 
 - (void)prepareForInput;

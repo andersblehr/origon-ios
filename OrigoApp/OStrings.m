@@ -37,7 +37,6 @@ NSString * const strButtonCancel                      = @"strButtonCancel";
 NSString * const strButtonSignOut                     = @"strButtonSignOut";
 NSString * const strAlertTextNoInternet               = @"strAlertTextNoInternet";
 NSString * const strAlertTextServerError              = @"strAlertTextServerError";
-NSString * const strAlertTextLocating                 = @"strAlertTextLocating";
 NSString * const strTermYes                           = @"strTermYes";
 NSString * const strTermNo                            = @"strTermNo";
 NSString * const strTermMan                           = @"strTermMan";

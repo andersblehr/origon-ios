@@ -18,22 +18,11 @@ static NSInteger const kSegmentedTitleIndexMinors = 1;
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)targetIsJuvenileElder
-{
-    BOOL targetIsJuvenileElder = NO;
-    
-    targetIsJuvenileElder = targetIsJuvenileElder || [self targetIs:kTargetGuardian];
-    targetIsJuvenileElder = targetIsJuvenileElder || [self targetIs:kTargetContact];
-    targetIsJuvenileElder = targetIsJuvenileElder || [self targetIs:kTargetParentContact];
-    
-    return targetIsJuvenileElder;
-}
-
-
 - (BOOL)targetIsMemberVariant
 {
-    BOOL targetIsMemberVariant = [self targetIsJuvenileElder];
+    BOOL targetIsMemberVariant = NO;
     
+    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetElder];
     targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetMember];
     targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetMembers];
     
@@ -52,12 +41,12 @@ static NSInteger const kSegmentedTitleIndexMinors = 1;
     NSMutableSet *peers = nil;
     
     if (_segmentedTitle) {
-        if ([[OState s].pivotMember isMinor] == _segmentedTitle.selectedSegmentIndex) {
+        if ([[OState s].pivotMember isJuvenile] == _segmentedTitle.selectedSegmentIndex) {
             peers = [[[OState s].pivotMember peers] mutableCopy];
         } else {
             peers = [[[OState s].pivotMember crossGenerationalPeers] mutableCopy];
         }
-    } else if ([self targetIsJuvenileElder]) {
+    } else if ([self targetIs:kTargetElder]) {
         peers = [[[OState s].pivotMember crossGenerationalPeers] mutableCopy];
     } else {
         peers = [[[OState s].pivotMember peers] mutableCopy];
@@ -79,18 +68,6 @@ static NSInteger const kSegmentedTitleIndexMinors = 1;
 }
 
 
-#pragma mark - View lifecycle
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
-        [self.observer entityDidChange];
-    }
-    
-    [super viewWillDisappear:animated];
-}
-
-
 #pragma mark - OTableViewControllerInstance conformance
 
 - (void)initialiseState
@@ -101,7 +78,7 @@ static NSInteger const kSegmentedTitleIndexMinors = 1;
         if ([self.data isCrossGenerational]) {
             _segmentedTitle = [self.navigationItem addSegmentedTitle:[OStrings stringForKey:strSegmentedTitleAdultsMinors]];
             
-            if ([[OState s].pivotMember isMinor]) {
+            if ([[OState s].pivotMember isJuvenile]) {
                 _segmentedTitle.selectedSegmentIndex = kSegmentedTitleIndexMinors;
             } else {
                 _segmentedTitle.selectedSegmentIndex = kSegmentedTitleIndexAdults;

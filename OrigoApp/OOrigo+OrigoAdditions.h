@@ -16,8 +16,6 @@ extern NSString * const kOrigoTypeOrganisation;
 extern NSString * const kOrigoTypeOther;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeSchoolClass;
-extern NSString * const kOrigoTypePlaymates;
-extern NSString * const kOrigoTypeMinorTeam;
 
 @interface OOrigo (OrigoAdditions)
 

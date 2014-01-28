@@ -35,6 +35,7 @@ extern NSString * const kTargetUser;
 extern NSString * const kTargetWard;
 extern NSString * const kTargetHousemate;
 extern NSString * const kTargetJuvenile;
+extern NSString * const kTargetElder;
 extern NSString * const kTargetMember;
 extern NSString * const kTargetMembers;
 extern NSString * const kTargetGuardian;

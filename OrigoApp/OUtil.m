@@ -13,19 +13,6 @@
 
 #pragma mark - Convenience methods
 
-+ (BOOL)origoTypeIsJuvenile:(NSString *)origoType
-{
-    BOOL isJuvenile = NO;
-    
-    isJuvenile = isJuvenile || [origoType isEqualToString:kOrigoTypePreschoolClass];
-    isJuvenile = isJuvenile || [origoType isEqualToString:kOrigoTypeSchoolClass];
-    isJuvenile = isJuvenile || [origoType isEqualToString:kOrigoTypePlaymates];
-    isJuvenile = isJuvenile || [origoType isEqualToString:kOrigoTypeMinorTeam];
-    
-    return isJuvenile;
-}
-
-
 + (NSString *)commaSeparatedListOfItems:(NSArray *)items conjoinLastItem:(BOOL)conjoinLastItem
 {
     NSMutableString *commaSeparatedList = nil;
@@ -56,11 +43,13 @@
         for (NSString *stringItem in stringItems) {
             if (!commaSeparatedList) {
                 commaSeparatedList = [NSMutableString stringWithString:stringItem];
-            } else if (conjoinLastItem && [stringItems lastObject] == stringItem) {
-                [commaSeparatedList appendString:[OStrings stringForKey:strSeparatorAnd]];
-                [commaSeparatedList appendString:stringItem];
             } else {
-                [commaSeparatedList appendString:kSeparatorComma];
+                if (conjoinLastItem && (stringItem == [stringItems lastObject])) {
+                    [commaSeparatedList appendString:[OStrings stringForKey:strSeparatorAnd]];
+                } else {
+                    [commaSeparatedList appendString:kSeparatorComma];
+                }
+                
                 [commaSeparatedList appendString:stringItem];
             }
         }

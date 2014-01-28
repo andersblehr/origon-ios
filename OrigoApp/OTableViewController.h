@@ -89,7 +89,6 @@ extern NSString * const kCustomData;
 - (void)toggleEditMode;
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
-- (void)resumeFirstResponder;
 - (void)signOut;
 
 @end

@@ -180,7 +180,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     if (self) {
         _entity = entity;
-        _entityClass = entityClass;
         _blueprint = [[OTableViewCellBlueprint alloc] initWithState:_state];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
         
@@ -321,17 +320,33 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (void)clearInputFields
+{
+    if (![self isListCell] && _editable) {
+        for (NSString *key in _blueprint.displayableInputFieldKeys) {
+            [self inputFieldForKey:key].value = nil;
+        }
+    }
+}
+
+
 - (void)redrawIfNeeded
 {
-    if (_entity || _entityClass) {
+    if (![self isListCell]) {
         CGFloat implicitFramePadding = [OMeta systemIs_iOS6x] ? kImplicitFramePadding_iOS6x : 0.f;
         CGFloat desiredHeight = [_blueprint cellHeightWithEntity:_entity cell:self];
         
         if (abs(self.frame.size.height - (desiredHeight + implicitFramePadding)) > 0.5f) {
             [self setNeedsUpdateConstraints];
             
-            [UIView animateWithDuration:kCellAnimationDuration animations:^{
+            if (![OMeta systemIs_iOS6x]) {
                 [self layoutIfNeeded];
+            }
+            
+            [UIView animateWithDuration:kCellAnimationDuration animations:^{
+                if ([OMeta systemIs_iOS6x]) {
+                    [self layoutIfNeeded];
+                }
                 
                 [_state.viewController.tableView beginUpdates];
                 [_state.viewController.tableView endUpdates];
@@ -346,6 +361,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
             }];
         }
     }
+}
+
+
+- (void)resumeFirstResponder
+{
+    [_lastInputField becomeFirstResponder];
 }
 
 
@@ -539,15 +560,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - OEntityObservingDelegate conformance
+#pragma mark - OEntityObserver conformance
 
-- (void)entityDidChange
+- (void)observeEntity
 {
     [self readEntity];
     [self redrawIfNeeded];
     
     if (_observer) {
-        [_observer entityDidChange];
+        [_observer observeEntity];
     }
 }
 

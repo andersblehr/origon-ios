@@ -188,7 +188,7 @@ static NSInteger const kButtonTagGuardian = 101;
     } else {
         [self setData:_origo forSectionWithKey:kSectionKeyOrigo];
         
-        if ([_origo isJuvenile]) {
+        if ([_member isJuvenile]) {
             [self setData:[_origo contactMemberships] forSectionWithKey:kSectionKeyContacts];
             [self setData:[_origo regularMemberships] forSectionWithKey:kSectionKeyMembers];
         } else {
@@ -270,6 +270,7 @@ static NSInteger const kButtonTagGuardian = 101;
                 [_origo addMember:member];
             }
             
+            [[OMeta m].replicator replicate];
             [self reloadSections];
         }
     }
@@ -344,8 +345,8 @@ static NSInteger const kButtonTagGuardian = 101;
     OMember *member1 = [object1 asMembership].member;
     OMember *member2 = [object2 asMembership].member;
     
-    BOOL member1IsMinor = [member1 isMinor];
-    BOOL member2IsMinor = [member2 isMinor];
+    BOOL member1IsMinor = [member1 isJuvenile];
+    BOOL member2IsMinor = [member2 isJuvenile];
     
     if (member1IsMinor != member2IsMinor) {
         if (member1IsMinor && !member2IsMinor) {

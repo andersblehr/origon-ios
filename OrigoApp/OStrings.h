@@ -37,7 +37,6 @@ extern NSString * const strButtonCancel;
 extern NSString * const strButtonSignOut;
 extern NSString * const strAlertTextNoInternet;
 extern NSString * const strAlertTextServerError;
-extern NSString * const strAlertTextLocating;
 extern NSString * const strTermYes;
 extern NSString * const strTermNo;
 extern NSString * const strTermMan;
