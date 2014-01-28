@@ -11,6 +11,6 @@
 @protocol OEntityObserver <NSObject>
 
 @required
-- (void)entityDidChange;
+- (void)observeEntity;
 
 @end

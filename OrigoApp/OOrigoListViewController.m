@@ -158,19 +158,20 @@ static NSInteger const kSectionKeyWards = 2;
     if ([[OMeta m].user isTeenOrOlder]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButton];
         
-        if ([self targetIs:kTargetUser]) {
-            [_origoTypes addObject:kOrigoTypeFriends];
-            [_origoTypes addObject:kOrigoTypeTeam];
-            [_origoTypes addObject:kOrigoTypeOrganisation];
-            [_origoTypes addObject:kOrigoTypeOther];
-        } else {
+        if ([[OState s].pivotMember isJuvenile]) {
             if (![_member isOlderThan:kAgeThresholdInSchool]) {
                 [_origoTypes addObject:kOrigoTypePreschoolClass];
             }
             
             [_origoTypes addObject:kOrigoTypeSchoolClass];
-            [_origoTypes addObject:kOrigoTypePlaymates];
-            [_origoTypes addObject:kOrigoTypeMinorTeam];
+        }
+        
+        [_origoTypes addObject:kOrigoTypeFriends];
+        [_origoTypes addObject:kOrigoTypeTeam];
+        
+        if (![[OState s].pivotMember isJuvenile]) {
+            [_origoTypes addObject:kOrigoTypeOrganisation];
+            [_origoTypes addObject:kOrigoTypeOther];
         }
     }
 }
@@ -226,6 +227,7 @@ static NSInteger const kSectionKeyWards = 2;
     } else if (sectionKey == kSectionKeyWards) {
         OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
         origoListViewController.data = [self dataAtIndexPath:indexPath];
+        origoListViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
     } else {

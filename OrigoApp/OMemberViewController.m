@@ -41,7 +41,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)isRegisteringJuvenileElder
 {
-    return [self actionIs:kActionRegister] && self.meta;
+    return [self actionIs:kActionRegister] && [self targetIs:kTargetElder];
 }
 
 
@@ -366,7 +366,7 @@ static NSInteger const kButtonTagContinue = 1;
     [self setData:memberDataSource forSectionWithKey:kSectionKeyMember];
     
     if ([self actionIs:kActionDisplay]) {
-        if ([_member isMinor]) {
+        if ([_member isJuvenile]) {
             [self setData:[_member guardians] forSectionWithKey:kSectionKeyGuardian];
         }
         
@@ -430,7 +430,7 @@ static NSInteger const kButtonTagContinue = 1;
 {
     NSString *text = [OStrings stringForKey:strFooterOrigoInviteAlert];
     
-    if ([self targetIs:kTargetGuardian]) {
+    if ([_origo isJuvenile] && [self targetIs:kTargetGuardian]) {
         text = [NSString stringWithFormat:@"%@\n\n%@", [OStrings stringForKey:strFooterJuvenileOrigoGuardian], text];
     }
     
@@ -659,7 +659,7 @@ static NSInteger const kButtonTagContinue = 1;
 {
     id inputValue = nil;
 
-    if ([key isEqualToString:kPropertyKeyIsJuvenile]) {
+    if ([key isEqualToString:kPropertyKeyIsMinor]) {
         inputValue = _member.dateOfBirth ? nil : @([_origo isJuvenile]);
     } else {
         if (_examiner) {
@@ -695,7 +695,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)examinerDidCancelExamination
 {
-    [self resumeFirstResponder];
+    [self.detailCell resumeFirstResponder];
 }
 
 
@@ -764,13 +764,15 @@ static NSInteger const kButtonTagContinue = 1;
             
         case kActionSheetTagLookupType:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
+                [self.detailCell clearInputFields];
+                
                 if (buttonTag == kButtonTagLookUpContact) {
                     [self lookUpContact];
                 } else if (buttonTag == kButtonTagLookUpMember) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker data:_origo meta:self.meta ? self.meta : kTargetMember];
                 }
             } else {
-                [self resumeFirstResponder];
+                [self.detailCell resumeFirstResponder];
             }
             
             break;

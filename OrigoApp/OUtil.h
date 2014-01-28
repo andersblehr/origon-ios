@@ -10,8 +10,6 @@
 
 @interface OUtil : NSObject
 
-+ (BOOL)origoTypeIsJuvenile:(NSString *)origoType;
-
 + (NSString *)commaSeparatedListOfItems:(NSArray *)items conjoinLastItem:(BOOL)conjoinLastItem;
 + (NSString *)givenNameFromFullName:(NSString *)fullName;
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;

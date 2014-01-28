@@ -37,7 +37,7 @@
 - (BOOL)isManagedByUser;
 - (BOOL)isKnownByUser;
 - (BOOL)isMale;
-- (BOOL)isMinor;
+- (BOOL)isJuvenile;
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOlderThan:(NSInteger)age;
 - (BOOL)hasParent:(OMember *)member;

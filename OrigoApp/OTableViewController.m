@@ -489,7 +489,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         if ([[OMeta m].replicator needsReplication]) {
             [[OMeta m].replicator replicate];
-            [self.observer entityDidChange];
+            [self.observer observeEntity];
         }
     }
     
@@ -550,12 +550,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
     
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:[self sectionNumberForSectionKey:sectionKey]] withRowAnimation:UITableViewRowAnimationAutomatic];
-}
-
-
-- (void)resumeFirstResponder
-{
-    [_detailCell.lastInputField becomeFirstResponder];
 }
 
 
@@ -695,6 +689,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+    if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
+        [self.observer observeEntity];
+    }
+    
 	[super viewWillDisappear:animated];
     
     _isHidden = (self.presentedViewController != nil);

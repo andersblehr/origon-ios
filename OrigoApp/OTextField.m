@@ -209,7 +209,11 @@ static CGFloat const kTextInsetY = 1.2f;
             ((UIDatePicker *)self.inputView).date = _value;
         }
         
-        [self presentValue];
+        if (_value || [OValidator isDefaultableKey:_key]) {
+            [self presentValue];
+        } else {
+            self.text = nil;
+        }
     } else if ([_value count] == 1) {
         self.value = _value[0];
     }
@@ -232,7 +236,7 @@ static CGFloat const kTextInsetY = 1.2f;
     
     self.enabled = editable;
     
-    if ([OValidator isAlternatingInputFieldKey:_key] && ![self hasMultiValue]) {
+    if (_value && [OValidator isAlternatingInputFieldKey:_key] && ![self hasMultiValue]) {
         [self presentValue];
     }
 }
@@ -343,9 +347,9 @@ static CGFloat const kTextInsetY = 1.2f;
     // Setting empty text field to temporary value on creation and resetting before
     // cell display, to avoid autolayout causing newly entered text to disappear and
     // fly back in on end edit when next input field is an OTextView that resizes on
-    // begin edit.
+    // begin edit in iOS 6.x.
     
-    if ([[OState s] actionIs:kActionRegister]) {
+    if ([OMeta systemIs_iOS6x] && [[OState s] actionIs:kActionRegister]) {
         if (shouldProtect && !self.text) {
             self.text = kSeparatorSpace;
         } else if (!shouldProtect && [self.text isEqualToString:kSeparatorSpace]) {

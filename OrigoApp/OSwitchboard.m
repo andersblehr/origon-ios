@@ -239,7 +239,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 {
     [self addRecipientCandidates:@[_member] skipUser:YES tag:kRecipientTagMember];
     
-    if ([_member isMinor]) {
+    if ([_member isJuvenile]) {
         if ([[_member parents] count]) {
             NSMutableArray *parents = [NSMutableArray array];
             

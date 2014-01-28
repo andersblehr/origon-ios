@@ -16,8 +16,6 @@ NSString * const kOrigoTypeOrganisation = @"organisation";
 NSString * const kOrigoTypeOther = @"other";
 NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
 NSString * const kOrigoTypeSchoolClass = @"schoolClass";
-NSString * const kOrigoTypePlaymates = @"playmates";
-NSString * const kOrigoTypeMinorTeam = @"minorTeam";
 
 
 @implementation OOrigo (OrigoAdditions)
@@ -192,7 +190,7 @@ NSString * const kOrigoTypeMinorTeam = @"minorTeam";
     
     if ([self isOfType:kOrigoTypeResidence]) {
         for (OMembership *residency in [self residencies]) {
-            if (![residency.member isMinor]) {
+            if (![residency.member isJuvenile]) {
                 [elders addObject:residency.member];
             }
         }
@@ -274,13 +272,7 @@ NSString * const kOrigoTypeMinorTeam = @"minorTeam";
 
 - (BOOL)isOrganised
 {
-    BOOL isOrganised = YES;
-    
-    isOrganised = isOrganised && ![self isOfType:kOrigoTypeResidence];
-    isOrganised = isOrganised && ![self isOfType:kOrigoTypeFriends];
-    isOrganised = isOrganised && ![self isOfType:kOrigoTypePlaymates];
-    
-    return isOrganised;
+    return ![self isOfType:kOrigoTypeResidence] && ![self isOfType:kOrigoTypeFriends];
 }
 
 
@@ -292,7 +284,7 @@ NSString * const kOrigoTypeMinorTeam = @"minorTeam";
 
 - (BOOL)isJuvenile
 {
-    return [OUtil origoTypeIsJuvenile:self.type];
+    return [self.isForMinors boolValue];
 }
 
 

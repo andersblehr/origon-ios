@@ -39,7 +39,7 @@ extern NSString * const kPropertyKeyGender;
 extern NSString * const kPropertyKeyHashCode;
 extern NSString * const kPropertyKeyIsAwaitingDeletion;
 extern NSString * const kPropertyKeyIsExpired;
-extern NSString * const kPropertyKeyIsJuvenile;
+extern NSString * const kPropertyKeyIsMinor;
 extern NSString * const kPropertyKeyMobilePhone;
 extern NSString * const kPropertyKeyMotherId;
 extern NSString * const kPropertyKeyName;

@@ -140,11 +140,11 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     OMember *partner = nil;
     
-    if (![self isMinor]) {
+    if (![self isJuvenile]) {
         NSInteger numberOfAdults = 1;
         
         for (OMember *housemate in [self housemates]) {
-            if (![housemate isMinor] && ![housemate hasParent:self]) {
+            if (![housemate isJuvenile] && ![housemate hasParent:self]) {
                 partner = housemate;
                 numberOfAdults++;
             }
@@ -163,9 +163,9 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     NSMutableSet *wards = [NSMutableSet set];
     
-    if (![self isMinor]) {
+    if (![self isJuvenile]) {
         for (OMember *housemate in [self housemates]) {
-            if ([housemate isMinor]) {
+            if ([housemate isJuvenile]) {
                 [wards addObject:housemate];
             }
         }
@@ -193,7 +193,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     NSMutableSet *siblings = [NSMutableSet set];
     
-    if ([self isMinor]) {
+    if ([self isJuvenile]) {
         for (OMember *guardian in [self guardians]) {
             for (OMember *sibling in [guardian wards]) {
                 if (sibling != self) {
@@ -211,9 +211,9 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     NSMutableSet *guardians = [NSMutableSet set];
     
-    if ([self isMinor]) {
+    if ([self isJuvenile]) {
         for (OMember *housemate in [self housemates]) {
-            if (![housemate isMinor]) {
+            if (![housemate isJuvenile]) {
                 [guardians addObject:housemate];
             }
         }
@@ -229,17 +229,17 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     
     for (OMembership *membership in [self fullMemberships]) {
         for (OMembership *peerMembership in [membership.origo fullMemberships]) {
-            if ([peerMembership.member isMinor] == [self isMinor]) {
+            if ([peerMembership.member isJuvenile] == [self isJuvenile]) {
                 [peers addObject:peerMembership.member];
             }
         }
     }
     
-    if ([self isMinor]) {
+    if ([self isJuvenile]) {
         for (OMember *sibling in [self siblings]) {
             for (OMembership *siblingMembership in [sibling fullMemberships]) {
                 for (OMembership *peerMembership in [siblingMembership.origo fullMemberships]) {
-                    if ([peerMembership.member isMinor]) {
+                    if ([peerMembership.member isJuvenile]) {
                         [peers addObject:peerMembership.member];
                     }
                 }
@@ -249,7 +249,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         for (OMember *ward in [self wards]) {
             for (OMembership *wardMembership in [ward fullMemberships]) {
                 for (OMembership *peerMembership in [wardMembership.origo fullMemberships]) {
-                    if ([peerMembership.member isMinor]) {
+                    if ([peerMembership.member isJuvenile]) {
                         [peers unionSet:[peerMembership.member guardians]];
                     } else {
                         [peers addObject:peerMembership.member];
@@ -267,8 +267,8 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     NSMutableSet *crossGenerationalPeers = [NSMutableSet set];
     
-    for (OMember *crossGenerationalHousemate in [self isMinor] ? [self guardians] : [self wards]) {
-        [crossGenerationalPeers unionSet:[crossGenerationalHousemate peers]];
+    for (OMember *housemate in [self isJuvenile] ? [self guardians] : [self wards]) {
+        [crossGenerationalPeers unionSet:[housemate peers]];
     }
     
     return crossGenerationalPeers;
@@ -331,7 +331,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     for (OMembership *residency in [self residencies]) {
         residency.isActive = @YES;
         
-        if (![self isMinor] || [residency userIsCreator]) {
+        if (![self isJuvenile] || [residency userIsCreator]) {
             residency.isAdmin = @YES;
 
             if (![residency.origo.messageBoards count]) {
@@ -369,7 +369,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     BOOL isRepresentedByUser = NO;
     
-    if (![self isActive] || [self isMinor]) {
+    if (![self isActive] || [self isJuvenile]) {
         isRepresentedByUser = [self isHousemateOfUser];
         
         if (!isRepresentedByUser) {
@@ -411,9 +411,9 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (BOOL)isMinor
+- (BOOL)isJuvenile
 {
-    return self.dateOfBirth ? [self.dateOfBirth isBirthDateOfMinor] : [self.isJuvenile boolValue];
+    return self.dateOfBirth ? [self.dateOfBirth isBirthDateOfMinor] : [self.isMinor boolValue];
 }
 
 
@@ -522,7 +522,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     NSString *details = [self.mobilePhone hasValue] ? [[OMeta m].phoneNumberFormatter canonicalisePhoneNumber:self.mobilePhone] : self.email;
     
-    if ([self isMinor]) {
+    if ([self isJuvenile]) {
         if (details) {
             details = [[self age] stringByAppendingString:details separator:kSeparatorComma];
         } else {
@@ -542,7 +542,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         image = [UIImage imageWithData:self.photo];
     } else {
         if (self.dateOfBirth) {
-            if ([self isMinor]) {
+            if ([self isJuvenile]) {
                 image = [UIImage imageNamed:[self isMale] ? kIconFileBoy : kIconFileGirl];
             } else {
                 image = [UIImage imageNamed:[self isMale] ? kIconFileMan : kIconFileWoman];
@@ -568,7 +568,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         target = kTargetWard;
     } else if ([self isHousemateOfUser]) {
         target = kTargetHousemate;
-    } else if ([self isMinor]) {
+    } else if ([self isJuvenile]) {
         target = kTargetJuvenile;
     } else {
         target = kTargetMember;

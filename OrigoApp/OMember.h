@@ -2,8 +2,8 @@
 //  OMember.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 20.08.13.
-//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 23.01.14.
+//  Copyright (c) 2014 Rhelba Creations. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -19,12 +19,12 @@
 @property (nonatomic, retain) NSString * email;
 @property (nonatomic, retain) NSString * fatherId;
 @property (nonatomic, retain) NSString * gender;
+@property (nonatomic, retain) NSNumber * isMinor;
 @property (nonatomic, retain) NSString * mobilePhone;
 @property (nonatomic, retain) NSString * motherId;
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSString * passwordHash;
 @property (nonatomic, retain) NSData * photo;
-@property (nonatomic, retain) NSNumber * isJuvenile;
 @property (nonatomic, retain) NSSet *contactForEvents;
 @property (nonatomic, retain) NSSet *devices;
 @property (nonatomic, retain) NSSet *documents;

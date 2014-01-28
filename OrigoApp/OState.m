@@ -35,6 +35,7 @@ NSString * const kTargetUser = @"user";
 NSString * const kTargetWard = @"ward";
 NSString * const kTargetHousemate = @"housemate";
 NSString * const kTargetJuvenile = @"juvenile";
+NSString * const kTargetElder = @"elder";
 NSString * const kTargetMember = @"member";
 NSString * const kTargetMembers = @"members";
 NSString * const kTargetGuardian = @"guardian";
@@ -149,33 +150,36 @@ static OState *_s = nil;
 
 - (BOOL)actionIs:(NSString *)action
 {
-    BOOL actionMatches = NO;
+    BOOL actionsDidMatch = [_action isEqualToString:action];
     
-    if ([action isEqualToString:kActionInput]) {
-        actionMatches = actionMatches || [_action isEqualToString:kActionSignIn];
-        actionMatches = actionMatches || [_action isEqualToString:kActionActivate];
-        actionMatches = actionMatches || [_action isEqualToString:kActionRegister];
-        actionMatches = actionMatches || [_action isEqualToString:kActionEdit];
-    } else {
-        actionMatches = [_action isEqualToString:action];
+    if (!actionsDidMatch) {
+        if ([action isEqualToString:kActionInput]) {
+            actionsDidMatch = actionsDidMatch || [_action isEqualToString:kActionSignIn];
+            actionsDidMatch = actionsDidMatch || [_action isEqualToString:kActionActivate];
+            actionsDidMatch = actionsDidMatch || [_action isEqualToString:kActionRegister];
+            actionsDidMatch = actionsDidMatch || [_action isEqualToString:kActionEdit];
+        }
     }
     
-    return actionMatches;
+    return actionsDidMatch;
 }
 
 
 - (BOOL)targetIs:(NSString *)target
 {
-    BOOL targetMatches = NO;
+    BOOL targetsDidMatch = [_target isEqualToString:target];
     
-    if ([target isEqualToString:kTargetJuvenile]) {
-        targetMatches = targetMatches || [_target isEqualToString:kTargetWard];
-        targetMatches = targetMatches || [OUtil origoTypeIsJuvenile:_target];
-    } else {
-        targetMatches = [_target isEqualToString:target];
+    if (!targetsDidMatch) {
+        if ([target isEqualToString:kTargetJuvenile]) {
+            targetsDidMatch = targetsDidMatch || [_target isEqualToString:kTargetWard];
+        } else if ([target isEqualToString:kTargetElder]) {
+            targetsDidMatch = targetsDidMatch || [_target isEqualToString:kTargetGuardian];
+            targetsDidMatch = targetsDidMatch || [_target isEqualToString:kTargetContact];
+            targetsDidMatch = targetsDidMatch || [_target isEqualToString:kTargetParentContact];
+        }
     }
     
-    return targetMatches;
+    return targetsDidMatch;
 }
 
 

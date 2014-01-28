@@ -49,7 +49,7 @@ static NSInteger const kButtonTagNo = 3;
             if ([candidates count] > 2) {
                 _parentCandidateStatus = kParentCandidateStatusUndetermined;
             }
-        } else if ([residency.member isMinor] && ![residency.member hasParentWithGender:_gender]) {
+        } else if ([residency.member isJuvenile] && ![residency.member hasParentWithGender:_gender]) {
             if ([_dateOfBirth yearsBeforeDate:residency.member.dateOfBirth] >= kAgeOfConsent) {
                 [candidates addObject:residency.member];
             }
@@ -213,7 +213,7 @@ static NSInteger const kButtonTagNo = 3;
             [self presentNextCandidateSheet];
         }
     } else {
-        if ([[OMeta m].user isMinor]) {
+        if ([[OMeta m].user isJuvenile]) {
             [self presentNextCandidateSheet];
         } else {
             [self presentAllOffspringCandidatesSheet];
