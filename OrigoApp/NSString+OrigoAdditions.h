@@ -36,4 +36,6 @@ extern NSString * const kSeparatorAlternates;
 - (NSString *)stringByAppendingCapitalisedString:(NSString *)string;
 - (NSString *)stringByCapitalisingFirstLetter;
 
+- (NSInteger)levenshteinDistanceToString:(NSString *)string;
+
 @end

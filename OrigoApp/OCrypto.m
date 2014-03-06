@@ -158,15 +158,7 @@ static NSInteger const kActivationCodeLength = 6;
 
 + (NSString *)generateUUID
 {
-    CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
-    CFStringRef UUIDAsCFStringRef = CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
-    
-    NSString *UUID = [[NSString stringWithString:(__bridge NSString *)UUIDAsCFStringRef] lowercaseString];
-    
-    CFRelease(UUIDRef);
-    CFRelease(UUIDAsCFStringRef);
-    
-    return UUID;
+    return [[[NSUUID UUID] UUIDString] lowercaseString];
 }
 
 

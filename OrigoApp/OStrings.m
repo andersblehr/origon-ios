@@ -124,8 +124,10 @@ NSString * const strButtonDifferentNumber             = @"strButtonDifferentNumb
 NSString * const strButtonDifferentEmail              = @"strButtonDifferentEmail";
 NSString * const strButtonInviteToHousehold           = @"strButtonInviteToHousehold";
 NSString * const strButtonMergeHouseholds             = @"strButtonMergeHouseholds";
-NSString * const strAlertTitleMemberExists            = @"strAlertTitleMemberExists";
-NSString * const strAlertTextMemberExists             = @"strAlertTextMemberExists";
+NSString * const strAlertTitleDataConflict            = @"strAlertTitleDataConflict";
+NSString * const strAlertTextDataConflict             = @"strAlertTextDataConflict";
+NSString * const strAlertTitleMembershipExists        = @"strAlertTitleMembershipExists";
+NSString * const strAlertTextMembershipExists         = @"strAlertTextMembershipExists";
 NSString * const strAlertTitleUserEmailChange         = @"strAlertTitleUserEmailChange";
 NSString * const strAlertTextUserEmailChange          = @"strAlertTextUserEmailChange";
 NSString * const strAlertTitleEmailChangeFailed       = @"strAlertTitleFailedEmailChange";
@@ -151,7 +153,6 @@ NSString * const strViewTitleTasks                    = @"strViewTitleTasks";
 
 // OMessageListViewController strings
 NSString * const strViewTitleMessages                 = @"strViewTitleMessages";
-NSString * const strDefaultMessageBoardName           = @"strDefaultMessageBoardName";
 
 // OValueListViewController strings
 NSString * const strViewTitleSettings                 = @"strViewTitleSettings";

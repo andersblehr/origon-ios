@@ -45,5 +45,6 @@ extern NSInteger const kHTTPStatusInternalServerError;
 
 + (void)fetchStrings;
 + (void)replicateEntities:(NSArray *)entities;
++ (void)lookupMemberWithIdentifier:(NSString *)identifier;
 
 @end

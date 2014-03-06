@@ -264,15 +264,18 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)didDismissModalViewController:(OTableViewController *)viewController
 {
-    if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
-        if (viewController.returnData) {
+    if (viewController.returnData) {
+        if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
             for (OMember *member in viewController.returnData) {
                 [_origo addMember:member];
             }
             
             [[OMeta m].replicator replicate];
-            [self reloadSections];
+        } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
+            // TODO:
         }
+        
+        [self reloadSections];
     }
 }
 

@@ -238,14 +238,33 @@ static NSInteger const kButtonTagNo = 3;
 }
 
 
+- (void)examineRegistrantWithName:(NSString *)name isMinor:(BOOL)isMinor
+{
+    _isMinor = isMinor;
+    _givenName = [OUtil givenNameFromFullName:name];
+    _parentCandidateStatus = kParentCandidateStatusUndetermined;
+    _candidates = nil;
+    _examinedCandidates = [NSMutableSet set];
+    _registrantOffspring = [NSMutableArray array];
+    _registrantId = [[OState s] targetIs:kTargetUser] ? [OMeta m].userId : [OCrypto generateUUID];
+    _motherId = nil;
+    _fatherId = nil;
+    
+    [self performExamination];
+}
+
+
 #pragma mark - Initialisation
 
-- (id)initWithResidence:(OOrigo *)residence
+- (id)initWithOrigo:(OOrigo *)origo
 {
     self = [super init];
     
     if (self) {
-        _residence = residence;
+        if ([origo isOfType:kOrigoTypeResidence]) {
+            _residence = origo;
+        }
+        
         _delegate = (id<ORegistrantExaminerDelegate>)[OState s].viewController;
     }
     
@@ -259,7 +278,21 @@ static NSInteger const kButtonTagNo = 3;
 {
     _gender = registrant.gender;
     
-    [self examineRegistrantWithName:registrant.name dateOfBirth:registrant.dateOfBirth];
+    [self examineRegistrantWithName:registrant.name isMinor:[registrant.dateOfBirth isBirthDateOfMinor]];
+}
+
+
+- (void)examineRegistrantWithName:(NSString *)name
+{
+    [self examineRegistrantWithName:name isMinor:NO];
+}
+
+
+- (void)examineRegistrantWithName:(NSString *)name gender:(NSString *)gender
+{
+    _gender = gender;
+
+    [self examineRegistrantWithName:name isMinor:NO];
 }
 
 
@@ -268,33 +301,6 @@ static NSInteger const kButtonTagNo = 3;
     _dateOfBirth = dateOfBirth;
     
     [self examineRegistrantWithName:name isMinor:[dateOfBirth isBirthDateOfMinor]];
-}
-
-
-- (void)examineRegistrantWithName:(NSString *)name isGuardian:(BOOL)isGuardian
-{
-    if (isGuardian) {
-        _dateOfBirth = [NSDate defaultDate];
-    }
-    
-    [self examineRegistrantWithName:name isMinor:NO];
-}
-
-
-- (void)examineRegistrantWithName:(NSString *)name isMinor:(BOOL)isMinor
-{
-    _isMinor = isMinor;
-    _givenName = [OUtil givenNameFromFullName:name];
-    _parentCandidateStatus = kParentCandidateStatusUndetermined;
-    _candidates = nil;
-    _examinedCandidates = [NSMutableSet set];
-    _registrantOffspring = [NSMutableArray array];
-    _registrantId = [[OState s] targetIs:kTargetUser] ? [OMeta m].userId : [OCrypto generateUUID];
-    _gender = nil;
-    _motherId = nil;
-    _fatherId = nil;
-    
-    [self performExamination];
 }
 
 
@@ -309,7 +315,7 @@ static NSInteger const kButtonTagNo = 3;
             case kActionSheetTagGender:
                 _gender = (buttonTag == kButtonTagFemale) ? kGenderFemale : kGenderMale;
                 
-                if (_dateOfBirth) {
+                if (_residence && (_dateOfBirth || [[OState s] targetIs:kTargetGuardian])) {
                     [self assembleCandidates];
                 }
                 

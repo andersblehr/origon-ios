@@ -448,7 +448,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
     
     for (NSString *key in _blueprint.allInputFieldKeys) {
-        [_entity setValue:[self inputFieldForKey:key].value forKey:key];
+        OInputField *inputField = [self inputFieldForKey:key];
+        
+        if (!inputField.isHidden) {
+            [_entity setValue:inputField.value forKey:key];
+        }
     }
     
     for (NSString *key in _blueprint.indirectKeys) {

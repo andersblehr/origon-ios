@@ -43,9 +43,9 @@ extern NSString * const kCustomData;
 @property (strong, nonatomic, readonly) NSMutableSet *dirtySections;
 @property (strong, nonatomic, readonly) UIView *actionSheetView;
 
+@property (nonatomic, readonly) BOOL isModal;
 @property (nonatomic, readonly) BOOL isPushed;
 @property (nonatomic, readonly) BOOL isPopped;
-@property (nonatomic, readonly) BOOL isModal;
 @property (nonatomic, readonly) BOOL wasHidden;
 
 @property (nonatomic) BOOL usesPlainTableViewStyle;

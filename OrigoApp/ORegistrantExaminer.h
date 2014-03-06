@@ -30,11 +30,11 @@
 @property (strong, nonatomic, readonly) NSString *motherId;
 @property (strong, nonatomic, readonly) NSString *fatherId;
 
-- (id)initWithResidence:(OOrigo *)residence;
+- (id)initWithOrigo:(OOrigo *)origo;
 
 - (void)examineRegistrant:(OMember *)registrant;
+- (void)examineRegistrantWithName:(NSString *)name;
+- (void)examineRegistrantWithName:(NSString *)name gender:(NSString *)gender;
 - (void)examineRegistrantWithName:(NSString *)name dateOfBirth:(NSDate *)dateOfBirth;
-- (void)examineRegistrantWithName:(NSString *)name isGuardian:(BOOL)isGuardian;
-- (void)examineRegistrantWithName:(NSString *)name isMinor:(BOOL)isMinor;
 
 @end

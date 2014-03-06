@@ -330,15 +330,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     
     for (OMembership *residency in [self residencies]) {
         residency.isActive = @YES;
-        
-        if (![self isJuvenile] || [residency userIsCreator]) {
-            residency.isAdmin = @YES;
-
-            if (![residency.origo.messageBoards count]) {
-                OMessageBoard *messageBoard = [[OMeta m].context insertEntityOfClass:[OMessageBoard class] inOrigo:residency.origo];
-                messageBoard.title = [OStrings stringForKey:strDefaultMessageBoardName];
-            }
-        }
+        residency.isAdmin = @(![self isJuvenile] || [residency userIsCreator]);
     }
     
     self.activeSince = [NSDate date];

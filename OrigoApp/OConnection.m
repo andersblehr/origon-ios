@@ -48,11 +48,13 @@ static NSString * const kPathActivate = @"activate";
 static NSString * const kPathSendCode = @"sendcode";
 static NSString * const kPathReplicate = @"replicate";
 static NSString * const kPathFetch = @"fetch";
+static NSString * const kPathLookup = @"lookup";
 
 static NSString * const kURLParameterAuthToken = @"token";
 static NSString * const kURLParameterDeviceId = @"duid";
 static NSString * const kURLParameterDevice = @"device";
 static NSString * const kURLParameterVersion = @"version";
+static NSString * const kURLParameterIdentifier = @"id";
 
 
 @implementation OConnection
@@ -74,7 +76,7 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-- (void)performHTTPMethod:(NSString *)HTTPMethod entities:(NSArray *)entities delegate:(id)delegate
+- (void)performHTTPMethod:(NSString *)HTTPMethod entities:(NSArray *)entities delegate:(id<OConnectionDelegate>)delegate
 {
     if ([[OMeta m] internetConnectionIsAvailable]) {
         _delegate = delegate;
@@ -220,7 +222,7 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
-#pragma mark - UI strings
+#pragma mark - Fetching UI strings
 
 + (void)fetchStrings
 {
@@ -255,6 +257,18 @@ static NSString * const kURLParameterVersion = @"version";
 }
 
 
+#pragma mark - Member lookup
+
++ (void)lookupMemberWithIdentifier:(NSString *)identifier
+{
+    OConnection *connection = [[OConnection alloc] initWithRoot:kRootModel path:kPathLookup];
+    [connection setValue:identifier forURLParameter:kURLParameterIdentifier];
+    [connection setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    
+    [connection performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OState s].viewController];
+}
+
+
 #pragma mark - NSURLConnectionDataDelegate conformance
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response
@@ -269,8 +283,8 @@ static NSString * const kURLParameterVersion = @"version";
         if (replicationDate) {
             [OMeta m].lastReplicationDate = replicationDate;
         }
-    } else if (response.statusCode != kHTTPStatusUnauthorized) {
-        [OAlert showAlertForHTTPStatus:response.statusCode];
+    } else if (response.statusCode != kHTTPStatusNotFound) {
+        OLogError(@"Server error: %@", [NSHTTPURLResponse localizedStringForStatusCode:response.statusCode]);
     }
     
     _HTTPResponse = response;

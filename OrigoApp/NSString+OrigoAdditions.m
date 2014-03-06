@@ -137,4 +137,40 @@ NSString * const kSeparatorAlternates = @"|";
     return [[[self substringWithRange:NSMakeRange(0, 1)] uppercaseString] stringByAppendingString:[self substringFromIndex:1]];
 }
 
+
+#pragma mark - Edit distance to other string
+
+- (NSInteger)levenshteinDistanceToString:(NSString *)string
+{
+    // Borrowed from Rosetta Code: http://rosettacode.org/wiki/Levenshtein_distance#Objective-C
+    
+    NSInteger sl = [self length];
+    NSInteger tl = [string length];
+    NSInteger *d = calloc(sizeof(*d), (sl+1) * (tl+1));
+    
+#define d(i, j) d[((j) * sl) + (i)]
+    for (NSInteger i = 0; i <= sl; i++) {
+        d(i, 0) = i;
+    }
+    for (NSInteger j = 0; j <= tl; j++) {
+        d(0, j) = j;
+    }
+    for (NSInteger j = 1; j <= tl; j++) {
+        for (NSInteger i = 1; i <= sl; i++) {
+            if ([self characterAtIndex:i-1] == [string characterAtIndex:j-1]) {
+                d(i, j) = d(i-1, j-1);
+            } else {
+                d(i, j) = MIN(d(i-1, j), MIN(d(i, j-1), d(i-1, j-1))) + 1;
+            }
+        }
+    }
+    
+    NSInteger r = d(sl, tl);
+#undef d
+    
+    free(d);
+    
+    return r;
+}
+
 @end

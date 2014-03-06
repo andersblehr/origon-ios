@@ -16,7 +16,7 @@
 - (id)insertDeviceEntity;
 
 - (id)entityWithId:(NSString *)entityId;
-- (id)memberEntityWithEmail:(NSString *)email;
+- (id)entityOfClass:(Class)class withValue:(NSString *)value forKey:(NSString *)key;
 
 - (void)deleteEntity:(OReplicatedEntity *)entity;
 
