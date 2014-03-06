@@ -60,6 +60,8 @@ static CGFloat const kFadeAnimationDuration = 0.2f;
             self.userInteractionEnabled = YES;
         }];
     }
+    
+    _isAnimating = YES;
 }
 
 
@@ -72,6 +74,8 @@ static CGFloat const kFadeAnimationDuration = 0.2f;
             self.userInteractionEnabled = NO;
         }];
     }
+    
+    _isAnimating = NO;
 }
 
 @end

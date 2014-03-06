@@ -14,4 +14,6 @@
 + (NSString *)givenNameFromFullName:(NSString *)fullName;
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;
 
++ (BOOL)name:(NSString *)name matchesName:(NSString *)otherName;
+
 @end

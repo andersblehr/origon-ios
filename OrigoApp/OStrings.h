@@ -125,8 +125,10 @@ extern NSString * const strButtonDifferentNumber;
 extern NSString * const strButtonDifferentEmail;
 extern NSString * const strButtonInviteToHousehold;
 extern NSString * const strButtonMergeHouseholds;
-extern NSString * const strAlertTitleMemberExists;
-extern NSString * const strAlertTextMemberExists;
+extern NSString * const strAlertTitleDataConflict;
+extern NSString * const strAlertTextDataConflict;
+extern NSString * const strAlertTitleMembershipExists;
+extern NSString * const strAlertTextMembershipExists;
 extern NSString * const strAlertTitleUserEmailChange;
 extern NSString * const strAlertTextUserEmailChange;
 extern NSString * const strAlertTitleEmailChangeFailed;
@@ -152,7 +154,6 @@ extern NSString * const strViewTitleTasks;
 
 // OMessageListViewController strings
 extern NSString * const strViewTitleMessages;
-extern NSString * const strDefaultMessageBoardName;
 
 // OValueListViewController strings
 extern NSString * const strViewTitleSettings;

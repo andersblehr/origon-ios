@@ -117,27 +117,6 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 }
 
 
-- (id)entityOfClass:(Class)class withValue:(NSString *)value forKey:(NSString *)key
-{
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(class)];
-    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", key, value]];
-    
-    id entity = nil;
-    NSError *error = nil;
-    NSArray *resultsArray = [self executeFetchRequest:request error:&error];
-    
-    if (resultsArray == nil) {
-        OLogError(@"Error fetching entity on device: %@", [error localizedDescription]);
-    } else if ([resultsArray count] > 1) {
-        OLogBreakage(@"Found more than one entity with '%@'='%@'.", key, value);
-    } else if ([resultsArray count] == 1) {
-        entity = resultsArray[0];
-    }
-    
-    return entity;
-}
-
-
 - (id)mergeEntityFromDictionary:(NSDictionary *)entityDictionary
 {
     NSString *entityId = entityDictionary[kPropertyKeyEntityId];
@@ -250,9 +229,24 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 }
 
 
-- (id)memberEntityWithEmail:(NSString *)email
+- (id)entityOfClass:(Class)class withValue:(NSString *)value forKey:(NSString *)key
 {
-    return [self entityOfClass:[OMember class] withValue:email forKey:kPropertyKeyEmail];
+    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass(class)];
+    [request setPredicate:[NSPredicate predicateWithFormat:@"%K = %@", key, value]];
+    
+    id entity = nil;
+    NSError *error = nil;
+    NSArray *resultsArray = [self executeFetchRequest:request error:&error];
+    
+    if (resultsArray == nil) {
+        OLogError(@"Error fetching entity on device: %@", [error localizedDescription]);
+    } else if ([resultsArray count] > 1) {
+        OLogBreakage(@"Found more than one entity with '%@'='%@'.", key, value);
+    } else if ([resultsArray count] == 1) {
+        entity = resultsArray[0];
+    }
+    
+    return entity;
 }
 
 

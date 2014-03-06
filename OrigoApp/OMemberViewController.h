@@ -20,6 +20,7 @@
     OInputField *_emailField;
     
     OMember *_candidate;
+    NSDictionary *_candidateDictionary;
     NSArray *_candidateResidences;
     
     ORegistrantExaminer *_examiner;

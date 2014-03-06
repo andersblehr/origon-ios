@@ -228,6 +228,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
+- (BOOL)serverRequestsAreSynchronous
+{
+    return ![self actionIs:kActionActivate] || ![self targetIs:kTargetEmail];
+}
+
+
 #pragma mark - OTableViewInputDelegate conformance
 
 - (BOOL)inputIsValid
@@ -321,17 +327,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 #pragma mark - OconnectionDelegate conformance
 
-- (void)willSendRequest:(NSURLRequest *)request
-{
-    if (![self actionIs:kActionActivate] || ![self targetIs:kTargetEmail]) {
-        [self.activityIndicator startAnimating];
-    }
-}
-
-
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    [self.activityIndicator stopAnimating];
+    [super didCompleteWithResponse:response data:data];
     
     if (response.statusCode < kHTTPStatusErrorRangeStart) {
         if (response.statusCode == kHTTPStatusCreated) {
@@ -351,14 +349,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [self.detailCell shakeCellVibrate:YES];
         [_passwordField becomeFirstResponder];
     }
-}
-
-
-- (void)didFailWithError:(NSError *)error
-{
-    [self.activityIndicator stopAnimating];
-    
-    // TODO: Subsequent auth attempts seem to fail.
 }
 
 @end

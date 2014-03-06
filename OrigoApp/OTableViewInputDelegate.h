@@ -17,7 +17,7 @@
 @optional
 - (id)inputEntity;
 - (id)inputValueForIndirectKey:(NSString *)key;
-- (BOOL)shouldEditInputFieldWithKey:(NSString *)key;
+- (BOOL)canEditInputFieldWithKey:(NSString *)key;
 - (BOOL)willValidateInputForKey:(NSString *)key;
 - (BOOL)inputValue:(id)inputValue isValidForKey:(NSString *)key;
 

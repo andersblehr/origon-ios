@@ -122,6 +122,7 @@ static NSString * const kMembershipTypeAssociate = @"A";
             [[OMeta m].context deleteEntity:self.origo];
         } else if (![self.member isKnownByUser]) {
             for (OMembership *membership in [self.member allMemberships]) {
+                [[OMeta m].context deleteEntity:membership.origo];
                 [[OMeta m].context deleteEntity:membership];
             }
             

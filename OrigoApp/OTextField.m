@@ -229,8 +229,8 @@ static CGFloat const kTextInsetY = 1.2f;
 - (void)setEditable:(BOOL)editable
 {
     if (editable) {
-        if ([_inputDelegate respondsToSelector:@selector(shouldEditInputFieldWithKey:)]) {
-            editable = [_inputDelegate shouldEditInputFieldWithKey:_key];
+        if ([_inputDelegate respondsToSelector:@selector(canEditInputFieldWithKey:)]) {
+            editable = [_inputDelegate canEditInputFieldWithKey:_key];
         }
     }
     

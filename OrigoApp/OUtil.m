@@ -8,6 +8,8 @@
 
 #import "OUtil.h"
 
+static CGFloat kMatchingEditDistancePercentage = 0.4f;
+
 
 @implementation OUtil
 
@@ -88,6 +90,52 @@
     }
     
     return sortKey;
+}
+
+
+#pragma mark - Fuzzy matching
+
++ (BOOL)name:(NSString *)fullName matchesName:(NSString *)otherFullName
+{
+    fullName = [[fullName removeRedundantWhitespace] lowercaseString];
+    otherFullName = [[otherFullName removeRedundantWhitespace] lowercaseString];
+    
+    NSArray *names = [fullName componentsSeparatedByString:kSeparatorSpace];
+    NSArray *otherNames = [otherFullName componentsSeparatedByString:kSeparatorSpace];
+    
+    if ([names count] > [otherNames count]) {
+        NSArray *temp = names;
+        
+        names = otherNames;
+        otherNames = temp;
+    }
+
+    NSMutableArray *matchableOtherNames = [otherNames mutableCopy];
+    BOOL namesMatch = YES;
+    
+    for (NSString *name in names) {
+        if (namesMatch) {
+            NSInteger shortestEditDistance = NSIntegerMax;
+            NSString *matchedOtherName = nil;
+            
+            for (NSString *otherName in matchableOtherNames) {
+                NSInteger editDistance = [name levenshteinDistanceToString:otherName];
+                
+                if (editDistance < shortestEditDistance) {
+                    shortestEditDistance = editDistance;
+                    matchedOtherName = otherName;
+                }
+            }
+            
+            namesMatch = ((CGFloat)shortestEditDistance / (CGFloat)[name length] <= kMatchingEditDistancePercentage);
+            
+            if (namesMatch) {
+                [matchableOtherNames removeObject:matchedOtherName];
+            }
+        }
+    }
+    
+    return namesMatch;
 }
 
 @end

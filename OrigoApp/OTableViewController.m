@@ -421,6 +421,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     OTableViewController *viewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
     
+    viewController->_isModal = YES;
     viewController.data = data;
     
     if ([meta isKindOfClass:[OTableViewController class]]) {
@@ -579,10 +580,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         NSString *longName = NSStringFromClass([self class]);
         
         _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kViewControllerSuffixDefault].location]);
-    }
-    
-    if (!self.navigationController || ([self.navigationController.viewControllers count] == 1)) {
-        _isModal = (self.presentingViewController != nil);
     }
     
     _identifier = self.restorationIdentifier;
@@ -1028,11 +1025,27 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - OConnectionDelegate conformance
 
+- (void)willSendRequest:(NSURLRequest *)request
+{
+    BOOL requestIsSynchronous = NO;
+    
+    if ([_instance respondsToSelector:@selector(serverRequestsAreSynchronous)]) {
+        requestIsSynchronous = [_instance serverRequestsAreSynchronous];
+    }
+    
+    if (requestIsSynchronous) {
+        [self.activityIndicator startAnimating];
+    }
+}
+
+
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    [self.activityIndicator stopAnimating];
+    if (self.activityIndicator.isAnimating) {
+        [self.activityIndicator stopAnimating];
+    }
     
-    if ([self actionIs:kActionLoad]) {
+    if ([self actionIs:kActionLoad] && [self targetIs:kTargetStrings]) {
         [[OStrings class] didCompleteWithResponse:response data:data];
         
         if ([[OMeta m] userIsSignedIn]) {
@@ -1046,7 +1059,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)didFailWithError:(NSError *)error
 {
-    [self.activityIndicator stopAnimating];
+    if (self.activityIndicator.isAnimating) {
+        [self.activityIndicator stopAnimating];
+    }
     
     // TODO: Handle errors (-1001: Timeout, and others)
 }

@@ -122,42 +122,119 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (BOOL)candidateIsValid
+- (BOOL)candidateIsEligible
 {
-    BOOL candidateIsValid = YES;
+    BOOL candidateIsEligible = YES;
     
     if ([_origo hasMember:_candidate]) {
-        _emailField.value = [NSString string];
-        [_emailField becomeFirstResponder];
+        OInputField *identifierField = _emailField.value ? _emailField : _mobilePhoneField;
         
-        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleMemberExists] text:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextMemberExists], _candidate.name, _emailField.value, [_origo displayName]]];
+        identifierField.value = [NSString string];
+        [identifierField becomeFirstResponder];
+        
+        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleMembershipExists] text:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextMembershipExists], _candidate.name, [_origo displayName]]];
         
         _candidate = nil;
-        candidateIsValid = NO;
+        candidateIsEligible = NO;
     } else {
         _nameField.value = _candidate.name;
-        _dateOfBirthField.value = _candidate.dateOfBirth;
         _mobilePhoneField.value = _candidate.mobilePhone;
         _emailField.value = _candidate.email;
     }
     
-    return candidateIsValid;
+    return candidateIsEligible;
 }
 
 
-- (BOOL)emailIsEligible
+- (BOOL)valueIsEligableForInputField:(OInputField *)inputField
 {
-    BOOL emailIsEligible = [_emailField hasValidValue];
+    BOOL valueIsEligible = [inputField hasValidValue];
     
-    if (emailIsEligible && [self actionIs:kActionRegister] && ![self targetIs:kTargetUser]) {
-        _candidate = [[OMeta m].context memberEntityWithEmail:_emailField.value];
+    if (valueIsEligible && [self actionIs:kActionRegister] && ![self targetIs:kTargetUser]) {
+        _candidate = [[OMeta m].context entityOfClass:[OMember class] withValue:inputField.value forKey:inputField.key];
         
         if (_candidate) {
-            emailIsEligible = [self candidateIsValid];
+            valueIsEligible = [self candidateIsEligible];
         }
     }
     
-    return emailIsEligible;
+    return valueIsEligible;
+}
+
+
+- (OMember *)lookupMemberOnDevice
+{
+    OMember *member = nil;
+
+    if (_emailField.value || _mobilePhoneField.value) {
+        if (_emailField.value) {
+            member = [[OMeta m].context entityOfClass:[OMember class] withValue:_emailField.value forKey:kPropertyKeyEmail];
+        }
+        
+        if (!member && _mobilePhoneField.value) {
+            member = [[OMeta m].context entityOfClass:[OMember class] withValue:_mobilePhoneField.value forKey:kPropertyKeyMobilePhone];
+            
+            if (member && member.email) {
+                member = nil;
+            }
+        }
+        
+        if (member) {
+            [self populateWithName:member.name mobilePhone:member.mobilePhone email:member.email];
+        }
+    }
+
+    return member;
+}
+
+
+- (BOOL)inputMatchesCandicateWithDictionary:(NSDictionary *)dictionary
+{
+    BOOL inputMatches = [OUtil name:_nameField.value matchesName:dictionary[kPropertyKeyName]];
+    
+    if (inputMatches && !_dateOfBirthField.isHidden) {
+        inputMatches = [_dateOfBirthField.value isEqual:[NSDate dateWithDeserialisedDate:dictionary[kPropertyKeyDateOfBirth]]];
+    }
+    
+    if (inputMatches && _mobilePhoneField.value) {
+        inputMatches = [[[OMeta m].phoneNumberFormatter canonicalisePhoneNumber:_mobilePhoneField.value] isEqualToString:[[OMeta m].phoneNumberFormatter canonicalisePhoneNumber:dictionary[kPropertyKeyMobilePhone]]];
+    }
+    
+    if (inputMatches && _emailField.value) {
+        inputMatches = [_emailField.value isEqualToString:dictionary[kPropertyKeyEmail]];
+    }
+    
+    return inputMatches;
+}
+
+
+- (void)populateWithName:(NSString *)name mobilePhone:(NSString *)mobilePhone email:(NSString *)email
+{
+    _nameField.value = name;
+    
+    if (mobilePhone) {
+        _mobilePhoneField.value = mobilePhone;
+    }
+    
+    if (email && !_emailField.value) {
+        _emailField.value = email;
+    }
+}
+
+
+- (void)examineMember
+{
+    _examiner = [[ORegistrantExaminer alloc] initWithOrigo:_origo];
+    
+    if (_candidate) {
+        [_examiner examineRegistrant:_candidate];
+    } else if (_candidateDictionary) {
+        [_examiner examineRegistrantWithName:_candidateDictionary[kPropertyKeyName] gender:_candidateDictionary[kPropertyKeyGender]];
+    } else if ([_dateOfBirthField isHidden]) {
+        [_examiner examineRegistrantWithName:_nameField.value];
+    } else {
+        [_examiner examineRegistrantWithName:_nameField.value dateOfBirth:_dateOfBirthField.value];
+    }
 }
 
 
@@ -484,18 +561,23 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)didDismissModalViewController:(OTableViewController *)viewController
 {
-    if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
-        if (viewController.returnData) {
+    if (viewController.returnData) {
+        if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
             _candidate = viewController.returnData;
             
-            [self candidateIsValid];
-            [self endEditing];
-        }
-    } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-        if (viewController.returnData) {
-            
+            if ([self candidateIsEligible] && _dateOfBirthField.isHidden) {
+                [self endEditing];
+            }
+        } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
+            // TODO
         }
     }
+}
+
+
+- (BOOL)serverRequestsAreSynchronous
+{
+    return YES;
 }
 
 
@@ -581,28 +663,45 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)inputIsValid
 {
-    BOOL memberIsMinor = [_dateOfBirthField.value isBirthDateOfMinor];
-    
-    memberIsMinor = memberIsMinor || [self targetIs:kOrigoTypePreschoolClass];
-    memberIsMinor = memberIsMinor || [self targetIs:kOrigoTypeSchoolClass];
-    
-    BOOL inputIsValid = [_nameField hasValidValue];
-    
-    if ([self aspectIsHousehold]) {
-        inputIsValid = inputIsValid && [_dateOfBirthField hasValidValue];
+    if (!_candidate && ![self targetIs:kTargetUser]) {
+        _candidate = [self lookupMemberOnDevice];
     }
     
-    if (inputIsValid) {
-        if ([self targetIs:kTargetUser] || _emailField.value || !memberIsMinor) {
-            inputIsValid = inputIsValid && [self emailIsEligible];
-        }
+    BOOL isValid = [_nameField hasValidValue];
+    
+    if (isValid && [self aspectIsHousehold]) {
+        isValid = [_dateOfBirthField hasValidValue];
         
-        if ([self targetIs:kTargetUser] || ([self aspectIsHousehold] && !memberIsMinor)) {
-            inputIsValid = inputIsValid && [_mobilePhoneField hasValidValue];
+        if (_candidate) {
+            isValid = [_dateOfBirthField.value isEqual:_candidate.dateOfBirth];
+            
+            if (!isValid) {
+                [_dateOfBirthField becomeFirstResponder];
+            }
         }
     }
     
-    return  inputIsValid;
+    if (isValid && _mobilePhoneField.value) {
+        if (_emailField.value) {
+            isValid = [_mobilePhoneField hasValidValue];
+        } else {
+            isValid = [self valueIsEligableForInputField:_mobilePhoneField];
+        }
+    }
+    
+    if (isValid && _emailField.value) {
+        isValid = [self valueIsEligableForInputField:_emailField];
+    }
+    
+    if (isValid && ([self targetIs:kTargetUser] || ![_dateOfBirthField.value isBirthDateOfMinor])) {
+        if ([self aspectIsHousehold]) {
+            isValid = [_mobilePhoneField hasValidValue] && [_emailField hasValidValue];
+        } else {
+            isValid = _emailField.value || [_mobilePhoneField hasValidValue];
+        }
+    }
+    
+    return isValid;
 }
 
 
@@ -610,19 +709,17 @@ static NSInteger const kButtonTagContinue = 1;
 {
     if ([self actionIs:kActionRegister]) {
         if (_candidate) {
-            [self persistMember];
-        } else if ([_origo isOfType:kOrigoTypeResidence]) {
-            _examiner = [[ORegistrantExaminer alloc] initWithResidence:_origo];
-            
-            if (_member) {
-                [_examiner examineRegistrant:_member];
-            } else if ([self targetIs:kTargetGuardian]) {
-                [_examiner examineRegistrantWithName:_nameField.value isGuardian:YES];
+            if ([_origo isOfType:kOrigoTypeResidence]) {
+                [self examineMember];
             } else {
-                [_examiner examineRegistrantWithName:_nameField.value dateOfBirth:_dateOfBirthField.value];
+                [self persistMember];
             }
         } else {
-            // TODO
+            if (![self targetIs:kTargetUser] && (_emailField.value || _mobilePhoneField.value)) {
+                [OConnection lookupMemberWithIdentifier:_emailField.value ? _emailField.value : _mobilePhoneField.value];
+            } else {
+                [self examineMember];
+            }
         }
     } else if ([self actionIs:kActionEdit]) {
         if ([_member.email hasValue] && ![_emailField.value isEqualToString:_member.email]) {
@@ -673,15 +770,15 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (BOOL)shouldEditInputFieldWithKey:(NSString *)key
+- (BOOL)canEditInputFieldWithKey:(NSString *)key
 {
-    BOOL shouldEnable = YES;
+    BOOL canEdit = YES;
     
     if ([key isEqualToString:kPropertyKeyEmail]) {
-        shouldEnable = ![self actionIs:kActionRegister] || ![self targetIs:kTargetUser];
+        canEdit = ![self actionIs:kActionRegister] || ![self targetIs:kTargetUser];
     }
     
-    return shouldEnable;
+    return canEdit;
 }
 
 
@@ -689,6 +786,11 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)examinerDidFinishExamination
 {
+    if (self.returnData) {
+        [[OMeta m].context saveServerReplicas:self.returnData];
+        _candidate = [[OMeta m].context entityWithId:_candidateDictionary[kPropertyKeyEntityId]];
+    }
+    
     [self persistMember];
 }
 
@@ -852,6 +954,43 @@ static NSInteger const kButtonTagContinue = 1;
 - (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
+}
+
+
+#pragma mark - OConnectionDelegate conformance
+
+- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
+{
+    [super didCompleteWithResponse:response data:data];
+    
+    if (response.statusCode == kHTTPStatusOK) {
+        NSString *identifier = _emailField.value ? _emailField.value : _mobilePhoneField.value;
+        NSString *identifierKey = _emailField.value ? kPropertyKeyEmail : kPropertyKeyMobilePhone;
+        NSString *memberClassName = NSStringFromClass([OMember class]);
+        
+        for (NSDictionary *entityDictionary in data) {
+            if ([entityDictionary[kJSONKeyEntityClass] isEqualToString:memberClassName]) {
+                if ([entityDictionary[identifierKey] isEqualToString:identifier]) {
+                    if ([self inputMatchesCandicateWithDictionary:entityDictionary]) {
+                        self.returnData = data;
+                        _candidateDictionary = entityDictionary;
+                        
+                        [self populateWithName:_candidateDictionary[kPropertyKeyName] mobilePhone:_candidateDictionary[kPropertyKeyMobilePhone] email:_candidateDictionary[kPropertyKeyEmail]];
+                        
+                        [self examineMember];
+                    } else {
+                        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleDataConflict] text:[OStrings stringForKey:strAlertTextDataConflict]];
+                        
+                        [self.detailCell resumeFirstResponder];
+                    }
+                    
+                    break;
+                }
+            }
+        }
+    } else {
+        [self examineMember];
+    }
 }
 
 @end

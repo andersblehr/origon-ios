@@ -31,6 +31,7 @@
 - (void)willDismissModalViewController:(OTableViewController *)viewController;
 - (void)didDismissModalViewController:(OTableViewController *)viewController;
 
+- (BOOL)serverRequestsAreSynchronous;
 - (void)didResumeFromBackground;
 
 @end
