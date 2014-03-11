@@ -198,19 +198,20 @@ static NSDictionary const *_strings = nil;
         NSString *persistedLanguage = [ODefaults globalDefaultForKey:kDefaultsKeyStringLanguage];
         
         if (persistedLanguage) {
-            BOOL canLoadStrings = [persistedLanguage isEqualToString:[OMeta m].language];
+            BOOL canUseStrings = [persistedLanguage isEqualToString:[OMeta m].language];
             
-            if (!canLoadStrings) {
+            if (!canUseStrings) {
+                _strings = [NSDictionary dictionaryWithContentsOfFile:[self pathToStringsFile]];
                 NSArray *supportedLanguages = [OMeta supportedLanguages];
                 
                 BOOL persistedIsSupported = [supportedLanguages containsObject:persistedLanguage];
                 BOOL currentIsSupported = [supportedLanguages containsObject:[OMeta m].language];
                 
-                canLoadStrings = !persistedIsSupported && !currentIsSupported;
+                canUseStrings = !persistedIsSupported && !currentIsSupported;
             }
             
-            if (canLoadStrings) {
-                _strings = [NSDictionary dictionaryWithContentsOfFile:[self pathToStringsFile]];
+            if (!canUseStrings) {
+                _strings = nil;
             }
         }
     }

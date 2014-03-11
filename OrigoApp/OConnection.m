@@ -309,7 +309,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
-    OLogDebug(@"Server request completed. HTTP status code: %d", _HTTPResponse.statusCode);
+    OLogDebug(@"Server request completed. HTTP status code: %ld", _HTTPResponse.statusCode);
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 
@@ -339,7 +339,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-	OLogError(@"Connection failed with error: %@ (%d)", error.localizedDescription, error.code);
+	OLogError(@"Connection failed with error: %@ (%ld)", error.localizedDescription, (long)error.code);
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     

@@ -131,7 +131,7 @@ NSString * const kCharacters0_9 = @"0123456789";
 {
     NSMutableArray *levelFormats = [NSMutableArray array];
     
-    for (int level = _optionalNestingLevel; level < [formats count]; level++) {
+    for (NSInteger level = _optionalNestingLevel; level < [formats count]; level++) {
         NSMutableArray *nestedFormats = formats[level];
         
         for (int groupLevel = 0; groupLevel < _groupNestingLevel; groupLevel++) {

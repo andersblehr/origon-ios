@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
-@interface OrigoAppTests : SenTestCase
+@interface OrigoAppTests : XCTestCase
 
 @end

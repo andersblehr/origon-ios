@@ -8,7 +8,17 @@
 
 #import "OrigoApp.h"
 
+extern NSString *kMembershipStatusInvited;
+extern NSString *kMembershipStatusWaiting;
+extern NSString *kMembershipStatusActive;
+extern NSString *kMembershipStatusRejected;
+extern NSString *kMembershipStatusExpired;
+
 @interface OMembership (OrigoAdditions)
+
+- (BOOL)isInvited;
+- (BOOL)isActive;
+- (BOOL)isRejected;
 
 - (BOOL)isFull;
 - (BOOL)isParticipancy;

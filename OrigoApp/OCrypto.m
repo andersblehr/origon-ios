@@ -142,7 +142,7 @@ static NSInteger const kActivationCodeLength = 6;
     NSData *data = [NSData dataWithBytes:CString length:[string length]];
     
     uint8_t SHA1Digest[CC_SHA1_DIGEST_LENGTH];
-    CC_SHA1(data.bytes, [data length], SHA1Digest);
+    CC_SHA1(data.bytes, (CC_LONG)[data length], SHA1Digest);
     
     NSMutableString *hash = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
     
