@@ -32,7 +32,6 @@
 		5C26291E158F27860012A74A /* OAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C26291D158F27860012A74A /* OAuthViewController.m */; };
 		5C2E11141469CDE5005BDE61 /* OConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E11131469CDE5005BDE61 /* OConnection.m */; };
 		5C2E6B7E15A8501800638330 /* OMembership+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C2E6B7D15A8501800638330 /* OMembership+OrigoAdditions.m */; };
-		5C3317CF16F7543F004F8921 /* OMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3317CE16F7543F004F8921 /* OMembership.m */; };
 		5C3374831563FBE200DEF67D /* OMember+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C3374821563FBE200DEF67D /* OMember+OrigoAdditions.m */; };
 		5C369D9716FB58DA0053EB1F /* OReplicatedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C369D9616FB58DA0053EB1F /* OReplicatedEntity.m */; };
 		5C36BE8A146E9DA100DD3CEA /* OMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C36BE89146E9DA100DD3CEA /* OMeta.m */; };
@@ -46,6 +45,7 @@
 		5C49FD41178DB96E009AD20B /* OLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C49FD40178DB96E009AD20B /* OLanguage.m */; };
 		5C4F977B1496AF88006E244F /* NSURL+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F977A1496AF88006E244F /* NSURL+OrigoAdditions.m */; };
 		5C50581C14CAEC76000D6587 /* UIView+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C50581B14CAEC76000D6587 /* UIView+OrigoAdditions.m */; };
+		5C58AA8718CE028500778B9F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5C58AA8518CE028500778B9F /* Localizable.strings */; };
 		5C5ED5CE14F2E9FE006BBDFB /* OReplicatedEntity+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C5ED5CD14F2E9FE006BBDFB /* OReplicatedEntity+OrigoAdditions.m */; };
 		5C629FEB14C61F98001DA01F /* 83-calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FE914C61F98001DA01F /* 83-calendar.png */; };
 		5C629FEC14C61F98001DA01F /* 83-calendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C629FEA14C61F98001DA01F /* 83-calendar@2x.png */; };
@@ -61,7 +61,6 @@
 		5C6C4B6B16CC027600C88E6C /* OReplicatedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6C4B6A16CC027600C88E6C /* OReplicatedEntityRef.m */; };
 		5C6E6C131589AC820002FF84 /* UITableView+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C121589AC820002FF84 /* UITableView+OrigoAdditions.m */; };
 		5C7013A3171EC9D0006E9F42 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C7013A2171EC9D0006E9F42 /* CoreLocation.framework */; };
-		5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */; };
 		5C7379FD1593111B0065AB4F /* OTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7379FC1593111B0065AB4F /* OTextField.m */; };
 		5C752CB21827E29D004CEACD /* OActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C752CB11827E29D004CEACD /* OActivityIndicator.m */; };
 		5C77067618549A2E0088C78D /* OLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C77067518549A2E0088C78D /* OLabel.m */; };
@@ -73,6 +72,7 @@
 		5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB91582493C000B19FA /* OTableViewCell.m */; };
 		5C8E2EC41891406800BF7BC0 /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8E2EC31891406800BF7BC0 /* OOrigo.m */; };
 		5C8E2EC71891412000BF7BC0 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8E2EC61891412000BF7BC0 /* OMember.m */; };
+		5C8EBC4B18CF29DE008F8EF8 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C8EBC4D18CF29DE008F8EF8 /* MainStoryboard_iPhone.storyboard */; };
 		5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C93DC741628100C009A66C4 /* Default-568h@2x.png */; };
 		5C98903617F6B8AD00D957F9 /* 730-envelope.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903417F6B8AD00D957F9 /* 730-envelope.png */; };
 		5C98903717F6B8AD00D957F9 /* 730-envelope@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903517F6B8AD00D957F9 /* 730-envelope@2x.png */; };
@@ -105,16 +105,14 @@
 		5CB61172175F531B006BAE92 /* 193-location-arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB61170175F531B006BAE92 /* 193-location-arrow@2x.png */; };
 		5CB74EF117BB60BF003FAC28 /* ODevice+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB74EF017BB60BF003FAC28 /* ODevice+OrigoAdditions.m */; };
 		5CB7E94015F38C1200FD53DF /* OValueListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E93F15F38C1200FD53DF /* OValueListViewController.m */; };
+		5CBB358518C8B13800644163 /* OMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB358418C8B13800644163 /* OMembership.m */; };
 		5CBB63B9146080DF00A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63BB146080DF00A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
 		5CBB63BD146080DF00A9133A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BC146080DF00A9133A /* CoreGraphics.framework */; };
-		5CBB63C3146080DF00A9133A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5CBB63C1146080DF00A9133A /* InfoPlist.strings */; };
 		5CBB63C5146080DF00A9133A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C4146080DF00A9133A /* main.m */; };
 		5CBB63C9146080DF00A9133A /* OAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C8146080DF00A9133A /* OAppDelegate.m */; };
-		5CBB63DA146080E000A9133A /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63D9146080E000A9133A /* SenTestingKit.framework */; };
 		5CBB63DB146080E000A9133A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63B8146080DF00A9133A /* UIKit.framework */; };
 		5CBB63DC146080E000A9133A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBB63BA146080DF00A9133A /* Foundation.framework */; };
-		5CBB63E4146080E000A9133A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5CBB63E2146080E000A9133A /* InfoPlist.strings */; };
 		5CBB63E7146080E000A9133A /* OrigoAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63E6146080E000A9133A /* OrigoAppTests.m */; };
 		5CBDF78C1659175000D4681C /* OTableViewCellConstrainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBDF78B1659175000D4681C /* OTableViewCellConstrainer.m */; };
 		5CBE919F159909E200516C54 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CBE919E159909E200516C54 /* AudioToolbox.framework */; };
@@ -203,8 +201,6 @@
 		5C2E1133146ACFA9005BDE61 /* OConnectionDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OConnectionDelegate.h; sourceTree = "<group>"; };
 		5C2E6B7C15A8501800638330 /* OMembership+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OMembership+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5C2E6B7D15A8501800638330 /* OMembership+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OMembership+OrigoAdditions.m"; sourceTree = "<group>"; };
-		5C3317CD16F7543F004F8921 /* OMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembership.h; sourceTree = "<group>"; };
-		5C3317CE16F7543F004F8921 /* OMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMembership.m; sourceTree = "<group>"; };
 		5C3374811563FBE200DEF67D /* OMember+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OMember+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5C3374821563FBE200DEF67D /* OMember+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OMember+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5C369D9516FB58DA0053EB1F /* OReplicatedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntity.h; sourceTree = "<group>"; };
@@ -233,6 +229,8 @@
 		5C50581714CA1D05000D6587 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		5C50581A14CAEC76000D6587 /* UIView+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5C50581B14CAEC76000D6587 /* UIView+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+OrigoAdditions.m"; sourceTree = "<group>"; };
+		5C58AA8618CE028500778B9F /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = OrigoApp/Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5C58AA8818CE029000778B9F /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = OrigoApp/nb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5C5ED5CC14F2E9FE006BBDFB /* OReplicatedEntity+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OReplicatedEntity+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5C5ED5CD14F2E9FE006BBDFB /* OReplicatedEntity+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OReplicatedEntity+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5C629FE914C61F98001DA01F /* 83-calendar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "83-calendar.png"; sourceTree = "<group>"; };
@@ -255,7 +253,6 @@
 		5C6E6C111589AC820002FF84 /* UITableView+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableView+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5C6E6C121589AC820002FF84 /* UITableView+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableView+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5C7013A2171EC9D0006E9F42 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5C7379FB1593111B0065AB4F /* OTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextField.h; sourceTree = "<group>"; };
 		5C7379FC1593111B0065AB4F /* OTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextField.m; sourceTree = "<group>"; };
 		5C752CB01827E29D004CEACD /* OActivityIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OActivityIndicator.h; sourceTree = "<group>"; };
@@ -278,6 +275,7 @@
 		5C8E2EC31891406800BF7BC0 /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
 		5C8E2EC51891412000BF7BC0 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
 		5C8E2EC61891412000BF7BC0 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
+		5C8EBC4C18CF29DE008F8EF8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		5C98903417F6B8AD00D957F9 /* 730-envelope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "730-envelope.png"; sourceTree = "<group>"; };
 		5C98903517F6B8AD00D957F9 /* 730-envelope@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "730-envelope@2x.png"; sourceTree = "<group>"; };
@@ -335,20 +333,19 @@
 		5CB7E93E15F38C1200FD53DF /* OValueListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OValueListViewController.h; sourceTree = "<group>"; };
 		5CB7E93F15F38C1200FD53DF /* OValueListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OValueListViewController.m; sourceTree = "<group>"; };
 		5CB9FF5A15A1ED1B0035B896 /* OModalViewControllerDismisser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OModalViewControllerDismisser.h; sourceTree = "<group>"; };
+		5CBB358318C8B13800644163 /* OMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembership.h; sourceTree = "<group>"; };
+		5CBB358418C8B13800644163 /* OMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMembership.m; sourceTree = "<group>"; };
 		5CBB63B4146080DF00A9133A /* OrigoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OrigoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63B8146080DF00A9133A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		5CBB63BA146080DF00A9133A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5CBB63BC146080DF00A9133A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5CBB63C0146080DF00A9133A /* OrigoApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OrigoApp-Info.plist"; sourceTree = "<group>"; };
-		5CBB63C2146080DF00A9133A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		5CBB63C4146080DF00A9133A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5CBB63C4146080DF00A9133A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5CBB63C6146080DF00A9133A /* OrigoApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OrigoApp-Prefix.pch"; sourceTree = "<group>"; };
 		5CBB63C7146080DF00A9133A /* OAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OAppDelegate.h; sourceTree = "<group>"; };
 		5CBB63C8146080DF00A9133A /* OAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OAppDelegate.m; sourceTree = "<group>"; };
-		5CBB63D8146080E000A9133A /* OrigoAppTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OrigoAppTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5CBB63D9146080E000A9133A /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		5CBB63D8146080E000A9133A /* OrigoAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OrigoAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CBB63E1146080E000A9133A /* OrigoAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OrigoAppTests-Info.plist"; sourceTree = "<group>"; };
-		5CBB63E3146080E000A9133A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5CBB63E5146080E000A9133A /* OrigoAppTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OrigoAppTests.h; sourceTree = "<group>"; };
 		5CBB63E6146080E000A9133A /* OrigoAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OrigoAppTests.m; sourceTree = "<group>"; };
 		5CBDF78A1659175000D4681C /* OTableViewCellConstrainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCellConstrainer.h; sourceTree = "<group>"; };
@@ -432,7 +429,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5CBB63DA146080E000A9133A /* SenTestingKit.framework in Frameworks */,
 				5CBB63DB146080E000A9133A /* UIKit.framework in Frameworks */,
 				5CBB63DC146080E000A9133A /* Foundation.framework in Frameworks */,
 			);
@@ -517,8 +513,8 @@
 				5CAEE09F163E513500A9046B /* OExternalDocument.m */,
 				5C8E2EC51891412000BF7BC0 /* OMember.h */,
 				5C8E2EC61891412000BF7BC0 /* OMember.m */,
-				5C3317CD16F7543F004F8921 /* OMembership.h */,
-				5C3317CE16F7543F004F8921 /* OMembership.m */,
+				5CBB358318C8B13800644163 /* OMembership.h */,
+				5CBB358418C8B13800644163 /* OMembership.m */,
 				5CAEE092163E513400A9046B /* OMessageBoard.h */,
 				5CAEE093163E513400A9046B /* OMessageBoard.m */,
 				5CAEE0CE163E513A00A9046B /* OMessageItem.h */,
@@ -716,7 +712,7 @@
 			isa = PBXGroup;
 			children = (
 				5CBB63B4146080DF00A9133A /* OrigoApp.app */,
-				5CBB63D8146080E000A9133A /* OrigoAppTests.octest */,
+				5CBB63D8146080E000A9133A /* OrigoAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -737,7 +733,6 @@
 				5CBB63BC146080DF00A9133A /* CoreGraphics.framework */,
 				5CBB63BA146080DF00A9133A /* Foundation.framework */,
 				5CBB63B8146080DF00A9133A /* UIKit.framework */,
-				5CBB63D9146080E000A9133A /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -745,7 +740,7 @@
 		5CBB63BE146080DF00A9133A /* OrigoApp */ = {
 			isa = PBXGroup;
 			children = (
-				5C71DE0514829E02001D90C6 /* MainStoryboard_iPhone.storyboard */,
+				5C8EBC4D18CF29DE008F8EF8 /* MainStoryboard_iPhone.storyboard */,
 				5CBB63C7146080DF00A9133A /* OAppDelegate.h */,
 				5CBB63C8146080DF00A9133A /* OAppDelegate.m */,
 				5CB49DD014881F36006EA2F8 /* Auxiliary Classes */,
@@ -769,7 +764,7 @@
 				5C3F999A178AD58600E31A44 /* OrigoApp.h */,
 				5CBB63C6146080DF00A9133A /* OrigoApp-Prefix.pch */,
 				5CBB63C0146080DF00A9133A /* OrigoApp-Info.plist */,
-				5CBB63C1146080DF00A9133A /* InfoPlist.strings */,
+				5C58AA8518CE028500778B9F /* Localizable.strings */,
 				5C276E7A1475B9A800A6C500 /* Media */,
 			);
 			name = "Supporting Files";
@@ -789,7 +784,6 @@
 			isa = PBXGroup;
 			children = (
 				5CBB63E1146080E000A9133A /* OrigoAppTests-Info.plist */,
-				5CBB63E2146080E000A9133A /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -851,8 +845,8 @@
 			);
 			name = OrigoAppTests;
 			productName = OrigoAppTests;
-			productReference = 5CBB63D8146080E000A9133A /* OrigoAppTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = 5CBB63D8146080E000A9133A /* OrigoAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -860,6 +854,7 @@
 		5CBB63AB146080DD00A9133A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastTestingUpgradeCheck = 0510;
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "Rhelba Creations";
 				TargetAttributes = {
@@ -880,6 +875,7 @@
 				es,
 				sv,
 				da,
+				Base,
 			);
 			mainGroup = 5CBB63A9146080DD00A9133A;
 			productRefGroup = 5CBB63B5146080DF00A9133A /* Products */;
@@ -898,8 +894,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5C98903617F6B8AD00D957F9 /* 730-envelope.png in Resources */,
-				5CBB63C3146080DF00A9133A /* InfoPlist.strings in Resources */,
-				5C71DE0414829E02001D90C6 /* MainStoryboard_iPhone.storyboard in Resources */,
 				5C629FEB14C61F98001DA01F /* 83-calendar.png in Resources */,
 				5C629FEC14C61F98001DA01F /* 83-calendar@2x.png in Resources */,
 				5C629FF314C62133001DA01F /* 08-chat.png in Resources */,
@@ -909,6 +903,7 @@
 				5CCC35B01821BB3B0079DB55 /* 734-chat_pizazz@2x.png in Resources */,
 				5C629FFC14C62481001DA01F /* 258-checkmark@2x.png in Resources */,
 				5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */,
+				5C58AA8718CE028500778B9F /* Localizable.strings in Resources */,
 				5C15BFB016350CB300BB5254 /* glyphicons_003_user.png in Resources */,
 				5C15BFB116350CB300BB5254 /* glyphicons_003_user@2x.png in Resources */,
 				5C15BFB516350CCE00BB5254 /* glyphicons_035_woman.png in Resources */,
@@ -929,6 +924,7 @@
 				5C15BFF516385D4800BB5254 /* glyphicons_020_home.png in Resources */,
 				5C15BFF616385D4800BB5254 /* glyphicons_020_home@2x.png in Resources */,
 				5CCC3570181EF1EA0079DB55 /* 14-gear.png in Resources */,
+				5C8EBC4B18CF29DE008F8EF8 /* MainStoryboard_iPhone.storyboard in Resources */,
 				5C15BFF916386C6100BB5254 /* glyphicons_004_girl-as_boy.png in Resources */,
 				5C15BFFA16386C6100BB5254 /* glyphicons_004_girl-as_boy@2x.png in Resources */,
 				5C98903717F6B8AD00D957F9 /* 730-envelope@2x.png in Resources */,
@@ -953,7 +949,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5CBB63E4146080E000A9133A /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1031,6 +1026,7 @@
 				5CAEE0BB163E513A00A9046B /* OMessageThread.m in Sources */,
 				5CAEE0BE163E513A00A9046B /* ODocument.m in Sources */,
 				5CAEE0C4163E513A00A9046B /* OScheduledAbsence.m in Sources */,
+				5CBB358518C8B13800644163 /* OMembership.m in Sources */,
 				5CAEE0C7163E513A00A9046B /* ODevice.m in Sources */,
 				5CAEE0CA163E513A00A9046B /* ODocumentRepository.m in Sources */,
 				5CAEE0CD163E513A00A9046B /* OToDoItem.m in Sources */,
@@ -1044,7 +1040,6 @@
 				5C198B7316D76344002D3976 /* OTableViewCellBlueprint.m in Sources */,
 				5C47155116E2231C000D8A86 /* OReplicator.m in Sources */,
 				5C7BC3DD16F358B7006AA52F /* OResidencySchedule.m in Sources */,
-				5C3317CF16F7543F004F8921 /* OMembership.m in Sources */,
 				5C369D9716FB58DA0053EB1F /* OReplicatedEntity.m in Sources */,
 				5C1D6CC6172E62F500479F7D /* OLocator.m in Sources */,
 				5C1D6CCA1743C80900479F7D /* OSettings+OrigoAdditions.m in Sources */,
@@ -1082,20 +1077,22 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		5CBB63C1146080DF00A9133A /* InfoPlist.strings */ = {
+		5C58AA8518CE028500778B9F /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				5CBB63C2146080DF00A9133A /* en */,
+				5C58AA8618CE028500778B9F /* Base */,
+				5C58AA8818CE029000778B9F /* nb */,
 			);
-			name = InfoPlist.strings;
+			name = Localizable.strings;
+			path = ..;
 			sourceTree = "<group>";
 		};
-		5CBB63E2146080E000A9133A /* InfoPlist.strings */ = {
+		5C8EBC4D18CF29DE008F8EF8 /* MainStoryboard_iPhone.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				5CBB63E3146080E000A9133A /* en */,
+				5C8EBC4C18CF29DE008F8EF8 /* Base */,
 			);
-			name = InfoPlist.strings;
+			name = MainStoryboard_iPhone.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1217,14 +1214,13 @@
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/OrigoApp.app/OrigoApp";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OrigoApp/OrigoApp-Prefix.pch";
 				INFOPLIST_FILE = "OrigoAppTests/OrigoAppTests-Info.plist";
 				PRODUCT_NAME = OrigoAppTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -1234,14 +1230,13 @@
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/OrigoApp.app/OrigoApp";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OrigoApp/OrigoApp-Prefix.pch";
 				INFOPLIST_FILE = "OrigoAppTests/OrigoAppTests-Info.plist";
 				PRODUCT_NAME = OrigoAppTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};

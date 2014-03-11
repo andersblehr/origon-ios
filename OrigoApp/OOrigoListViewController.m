@@ -287,7 +287,12 @@ static NSInteger const kSectionKeyWards = 2;
         if (sectionKey == kSectionKeyMember) {
             cell.detailTextLabel.text = [membership.origo singleLineAddress];
         } else {
-            cell.detailTextLabel.text = [OStrings stringForKey:membership.origo.type withKeyPrefix:kKeyPrefixOrigoTitle];
+            if ([membership isInvited]) {
+                cell.detailTextLabel.text = NSLocalizedString(@"textNewListing", nil);
+                cell.detailTextLabel.textColor = [UIColor redOrangeColour];
+            } else {
+                cell.detailTextLabel.text = [OStrings stringForKey:membership.origo.type withKeyPrefix:kKeyPrefixOrigoTitle];
+            }
         }
     }
 }

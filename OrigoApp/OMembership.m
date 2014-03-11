@@ -2,8 +2,8 @@
 //  OMembership.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 18.03.13.
-//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 06.03.14.
+//  Copyright (c) 2014 Rhelba Creations. All rights reserved.
 //
 
 #import "OMembership.h"
@@ -16,9 +16,9 @@
 
 @dynamic contactRole;
 @dynamic contactType;
-@dynamic isActive;
 @dynamic isAdmin;
 @dynamic type;
+@dynamic status;
 @dynamic member;
 @dynamic origo;
 @dynamic residencySchedule;

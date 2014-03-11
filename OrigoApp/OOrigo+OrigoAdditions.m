@@ -36,11 +36,6 @@ NSString * const kOrigoTypeSchoolClass = @"schoolClass";
         
         [membership alignWithOrigoIsAssociate:isAssociate];
         
-        if ([member isUser] && ![membership isAssociate]) {
-            membership.isActive = @YES;
-            membership.isAdmin = @YES;
-        }
-        
         if (![self isOfType:kOrigoTypeMemberRoot]) {
             [[OMeta m].context insertCrossReferencesForMembership:membership];
         }

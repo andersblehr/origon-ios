@@ -44,7 +44,6 @@ extern NSString * const strTermBoy;
 extern NSString * const strTermWoman;
 extern NSString * const strTermGirl;
 extern NSString * const strTermParentContact;
-
 extern NSString * const strFormatAge;
 extern NSString * const strSeparatorAnd;
 

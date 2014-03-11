@@ -8,6 +8,12 @@
 
 #import "OMembership+OrigoAdditions.h"
 
+NSString *kMembershipStatusInvited = @"I";
+NSString *kMembershipStatusWaiting = @"W";
+NSString *kMembershipStatusActive = @"A";
+NSString *kMembershipStatusRejected = @"R";
+NSString *kMembershipStatusExpired = @"-";
+
 static NSString * const kMembershipTypeMemberRoot = @"~";
 static NSString * const kMembershipTypeResidency = @"R";
 static NSString * const kMembershipTypeParticipancy = @"P";
@@ -15,6 +21,26 @@ static NSString * const kMembershipTypeAssociate = @"A";
 
 
 @implementation OMembership (OrigoAdditions)
+
+#pragma mark - Status information
+
+- (BOOL)isInvited
+{
+    return [self.status isEqualToString:kMembershipStatusInvited];
+}
+
+
+- (BOOL)isActive
+{
+    return [self.status isEqualToString:kMembershipStatusActive];
+}
+
+
+- (BOOL)isRejected
+{
+    return [self.status isEqualToString:kMembershipStatusRejected];
+}
+
 
 #pragma mark - Meta information
 
@@ -74,12 +100,22 @@ static NSString * const kMembershipTypeAssociate = @"A";
 {
     if (isAssociate) {
         self.type = kMembershipTypeAssociate;
-    } else if ([self.origo isOfType:kOrigoTypeMemberRoot]) {
-        self.type = kMembershipTypeMemberRoot;
-    } else if ([self.origo isOfType:kOrigoTypeResidence]) {
-        self.type = kMembershipTypeResidency;
+        self.status = nil;
     } else {
-        self.type = kMembershipTypeParticipancy;
+        if ([self.origo isOfType:kOrigoTypeMemberRoot]) {
+            self.type = kMembershipTypeMemberRoot;
+        } else if ([self.origo isOfType:kOrigoTypeResidence]) {
+            self.type = kMembershipTypeResidency;
+        } else {
+            self.type = kMembershipTypeParticipancy;
+        }
+        
+        if ([self.member isUser]) {
+            self.status = kMembershipStatusActive;
+            self.isAdmin = @YES;
+        } else {
+            self.status = kMembershipStatusInvited;
+        }
     }
 }
 
@@ -102,7 +138,8 @@ static NSString * const kMembershipTypeAssociate = @"A";
             
             self.contactRole = nil;
             self.contactType = nil;
-            self.isActive = @NO;
+            //self.isActive = @NO;
+            self.status = kMembershipStatusExpired;
             self.isAdmin = @NO;
             
             [[OMeta m].context expireCrossReferencesForMembership:self];

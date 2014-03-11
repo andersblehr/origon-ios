@@ -98,14 +98,16 @@ static NSInteger const kButtonTagGuardian = 101;
 {
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
     
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
-    
-    if ([_origo isOrganised] && [_origo hasContacts]) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEditRoles] tag:kButtonTagEditRoles];
+    if ([self canEdit]) {
+        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
+        
+        if ([_origo isOrganised] && [_origo hasContacts]) {
+            [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEditRoles] tag:kButtonTagEditRoles];
+        }
+        
+        [self addNewMemberButtonsToActionSheet:actionSheet];
     }
-    
-    [self addNewMemberButtonsToActionSheet:actionSheet];
-    
+        
     if ([_origo.address hasValue]) {
         [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonShowInMap] tag:kButtonTagShowInMap];
     }
@@ -166,7 +168,7 @@ static NSInteger const kButtonTagGuardian = 101;
             self.title = [_origo displayName];
         }
         
-        if ([self canEdit] && ![self actionIs:kActionRegister]) {
+        if (![self actionIs:kActionRegister]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButton];
         }
     } else if ([self.data isKindOfClass:[OMember class]]) {

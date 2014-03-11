@@ -8,8 +8,6 @@
 
 #import "OValuePickerViewController.h"
 
-static NSInteger const kSectionKeyValues = 0;
-
 static NSInteger const kSegmentedTitleIndexAdults = 0;
 static NSInteger const kSegmentedTitleIndexMinors = 1;
 

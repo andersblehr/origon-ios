@@ -323,13 +323,13 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 - (void)makeActive
 {
     OMembership *rootMembership = [self rootMembership];
-    rootMembership.isActive = @YES;
+    rootMembership.status = kMembershipStatusActive;
     rootMembership.isAdmin = @YES;
     
     self.settings = [[OMeta m].context insertEntityOfClass:[OSettings class] inOrigo:rootMembership.origo];
     
     for (OMembership *residency in [self residencies]) {
-        residency.isActive = @YES;
+        residency.status = kMembershipStatusActive;
         residency.isAdmin = @(![self isJuvenile] || [residency userIsCreator]);
     }
     
@@ -341,7 +341,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (BOOL)isUser
 {
-    return (self == [OMeta m].user);
+    return ((self == [OMeta m].user) || [[OState s] targetIs:kTargetUser]);
 }
 
 

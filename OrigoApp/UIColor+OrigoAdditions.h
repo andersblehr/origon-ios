@@ -10,6 +10,17 @@
 
 @interface UIColor (OrigoAdditions)
 
++ (UIColor *)manateeColour;
++ (UIColor *)radicalRedColour;
++ (UIColor *)redOrangeColour;
++ (UIColor *)pizazzColour;
++ (UIColor *)supernovaColour;
++ (UIColor *)emeraldColour;
++ (UIColor *)malibuColour;
++ (UIColor *)curiousBlueColour;
++ (UIColor *)azureRadianceColour;
++ (UIColor *)indigoColour;
+
 + (UIColor *)toolbarShadowColour;
 + (UIColor *)tableViewBackgroundColour;
 + (UIColor *)tableViewSeparatorColour;
