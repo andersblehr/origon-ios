@@ -8,40 +8,7 @@
 
 #import "OMeta.h"
 
-NSInteger const kAgeThresholdToddler = 1;
-NSInteger const kAgeThresholdInSchool = 6;
-NSInteger const kAgeThresholdTeen = 13;
-NSInteger const kAgeOfConsent = 16;
-NSInteger const kAgeOfMajority = 18;
-
-NSString * const kProtocolHTTP = @"http://";
-NSString * const kProtocolHTTPS = @"https://";
-NSString * const kProtocolTel = @"tel://";
-
-NSString * const kIconFileOrigo = @"10-arrows-in_black.png";
-NSString * const kIconFileHousehold = @"glyphicons_020_home.png";
-NSString * const kIconFileMan = @"glyphicons_003_user.png";
-NSString * const kIconFileWoman = @"glyphicons_035_woman.png";
-NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
-NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
-NSString * const kIconFileInfant = @"76-baby_black.png";
-NSString * const kIconFileSettings = @"14-gear.png";
-NSString * const kIconFilePlus = @"05-plus.png";
-NSString * const kIconFileAction = @"212-action2_centred.png";
-NSString * const kIconFileLookup = @"01-magnify.png";
-NSString * const kIconFilePlacePhoneCall = @"735-phone.png";
-NSString * const kIconFilePlacePhoneCall_iOS6x = @"735-phone_pizazz.png";
-NSString * const kIconFileSendText = @"734-chat.png";
-NSString * const kIconFileSendText_iOS6x = @"734-chat_pizazz.png";
-NSString * const kIconFileSendEmail = @"730-envelope.png";
-NSString * const kIconFileSendEmail_iOS6x = @"730-envelope_pizazz.png";
-NSString * const kIconFileLocationArrow = @"193-location-arrow.png";
-
-NSString * const kGenderMale = @"M";
-NSString * const kGenderFemale = @"F";
-
-static NSString * const kLanguageHungarian = @"hu";
-
+static NSString * const kLocalisedProject = @"lproj";
 static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
 
@@ -259,7 +226,7 @@ static OMeta *_m = nil;
 
 - (BOOL)shouldUseEasternNameOrder
 {
-    return [_language isEqualToString:kLanguageHungarian];
+    return [_language isEqualToString:kLanguageCodeHungarian];
 }
 
 
@@ -291,9 +258,21 @@ static OMeta *_m = nil;
 
 #pragma mark - Meta information
 
-+ (NSArray *)supportedLanguages
+- (NSBundle *)localisedStringsBundle
 {
-    return [[OStrings stringForKey:metaSupportedLanguages] componentsSeparatedByString:kSeparatorList];
+    if (!_localisedStringsBundle) {
+        _localisedStringsBundle = [NSBundle mainBundle];
+        
+        if (![_localisedStringsBundle pathForResource:[OMeta m].language ofType:kLocalisedProject]) {
+            NSString *testString = [_localisedStringsBundle localizedStringForKey:@"String test" value:@"" table:nil];
+            
+            if ([testString isEqualToString:@"String test"] || [OMeta m].settings.useEnglish) {
+                _localisedStringsBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:kLanguageCodeEnglish ofType:kLocalisedProject]];
+            }
+        }
+    }
+    
+    return _localisedStringsBundle;
 }
 
 

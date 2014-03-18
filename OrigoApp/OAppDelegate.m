@@ -8,15 +8,6 @@
 
 #import "OAppDelegate.h"
 
-#import <CoreData/CoreData.h>
-
-#import "ODefaults.h"
-#import "OLogging.h"
-#import "OMeta.h"
-#import "OReplicator.h"
-#import "OState.h"
-#import "OStrings.h"
-
 static NSString * const kTimeZoneNameUTC = @"UTC";
 static NSString * const kPersistentStoreURLFormat = @"OrigoApp^%@.sqlite";
 
@@ -136,10 +127,6 @@ static void uncaughtExceptionHandler(NSException *exception)
     OLogDebug(@"iOS version is %@.", [UIDevice currentDevice].systemVersion);
     OLogDebug(@"System language is '%@'.", [[OMeta m] language]);
 
-    if ([OStrings hasStrings]) {
-        [OStrings refreshIfNeeded];
-    }
-    
     //NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
     //[[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
     

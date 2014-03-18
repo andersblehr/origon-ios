@@ -6,9 +6,10 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
+#import <Foundation/Foundation.h>
 
-extern NSString * const kSeparatorAmpersand;
+extern NSString * const kCharacters0_9;
+
 extern NSString * const kSeparatorComma;
 extern NSString * const kSeparatorHash;
 extern NSString * const kSeparatorNewline;

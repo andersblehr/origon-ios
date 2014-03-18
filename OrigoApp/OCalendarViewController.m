@@ -17,7 +17,7 @@
 {
     [super viewDidLoad];
     
-    self.title = [OStrings stringForKey:strViewTitleCalendar];
+    self.title = NSLocalizedString(@"Calendar", @"");
 }
 
 

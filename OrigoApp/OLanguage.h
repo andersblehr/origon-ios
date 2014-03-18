@@ -6,26 +6,31 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
+#import <Foundation/Foundation.h>
 
-extern NSInteger const nominative;
-extern NSInteger const accusative;
-extern NSInteger const dative;
-extern NSInteger const disjunctive;
+typedef NS_ENUM(NSInteger, OCase) {
+    nominative,
+    accusative,
+    dative,
+};
 
-extern NSInteger const singularIndefinite;
-extern NSInteger const singularDefinite;
-extern NSInteger const pluralIndefinite;
-extern NSInteger const pluralDefinite;
-extern NSInteger const possessive2;
-extern NSInteger const possessive3;
+typedef NS_ENUM(NSInteger, ONounForm) {
+    singularIndefinite,
+    singularDefinite,
+    pluralIndefinite,
+    pluralDefinite,
+    possessive2,
+    possessive3,
+};
 
-extern NSInteger const singular1;
-extern NSInteger const singular2;
-extern NSInteger const singular3;
-extern NSInteger const plural1;
-extern NSInteger const plural2;
-extern NSInteger const plural3;
+typedef NS_ENUM(NSInteger, OPersonNumber) {
+    singular1,
+    singular2,
+    singular3,
+    plural1,
+    plural2,
+    plural3,
+};
 
 extern NSString * const _be_;
 

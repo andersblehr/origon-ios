@@ -72,7 +72,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         numberOfFailedAttempts = 0;
         
         if ([self targetIs:kTargetUser]) {
-            [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleActivationFailed] text:[OStrings stringForKey:strAlertTextActivationFailed] tag:kAlertTagActivationFailed];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Activation failed", @"") text:NSLocalizedString(@"It looks like you may have lost the activation code ...", @"") tag:kAlertTagActivationFailed];
         } else if ([self targetIs:kTargetEmail]) {
             [self.dismisser dismissModalViewController:self reload:YES];
         }
@@ -140,9 +140,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
     if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            NSString *welcomeBackMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextWelcomeBack], _authInfo[kPropertyKeyEmail]];
-            
-            UIAlertView *welcomeBackAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleWelcomeBack] message:welcomeBackMessage delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonStartOver] otherButtonTitles:[OStrings stringForKey:strButtonHaveCode], nil];
+            UIAlertView *welcomeBackAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Welcome back!", @"") message:[NSString stringWithFormat:NSLocalizedString(@"If you have handy the activation code sent to %@ ...", @""), _authInfo[kPropertyKeyEmail]] delegate:self cancelButtonTitle:NSLocalizedString(@"Start over", @"") otherButtonTitles:NSLocalizedString(@"Have code", @""), nil];
             welcomeBackAlert.tag = kAlertTagWelcomeBack;
             [welcomeBackAlert show];
         } else if ([self targetIs:kTargetEmail]) {
@@ -198,17 +196,23 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return YES;
+}
+
+
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
     NSString *text = nil;
     
     if ([self actionIs:kActionSignIn]) {
-        text = [OStrings stringForKey:strFooterSignInOrRegister];
+        text = NSLocalizedString(@"New users will receive an email with an activation code that must be entered in the next step.", @"");
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivateUser], _emailField.value];
+            text = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@ ...", @""), _emailField.value];
         } else if ([self targetIs:kTargetEmail]) {
-            text = [NSString stringWithFormat:[OStrings stringForKey:strFooterActivateEmail], self.data];
+            text = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@.", @""), self.data];
         }
     }
     

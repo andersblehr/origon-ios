@@ -27,9 +27,9 @@ static NSInteger const kSectionKeyWards = 2;
     NSString *footerText = nil;
     
     if ([self hasSectionWithKey:kSectionKeyOrigos]) {
-        footerText = [OStrings stringForKey:strFooterOrigoCreation];
+        footerText = NSLocalizedString(@"Tap [+] to create a new origo", @"");
     } else {
-        footerText = [OStrings stringForKey:strFooterOrigoCreationFirst];
+        footerText = NSLocalizedString(@"Tap [+] to create an origo", @"");
     }
     
     if ([self targetIs:kTargetUser] && [self hasSectionWithKey:kSectionKeyWards]) {
@@ -42,7 +42,7 @@ static NSInteger const kSectionKeyWards = 2;
         if ([[_member wards] count] == 1) {
             yourChild = [[self dataInSectionWithKey:kSectionKeyWards][0] givenName];
         } else {
-            yourChild = [OStrings stringForKey:strTermYourChild];
+            yourChild = NSLocalizedString(@"your child", @"");
         }
         
         for (OMember *ward in [_member wards]) {
@@ -55,19 +55,15 @@ static NSInteger const kSectionKeyWards = 2;
         } else if (allFemale) {
             himOrHer = [OLanguage pronouns][_she_][accusative];
         } else {
-            himOrHer = [OStrings stringForKey:strTermHimOrHer];
+            himOrHer = NSLocalizedString(@"him or her", @"");
         }
         
-        NSString *wardsAddendum = [NSString stringWithFormat:[OStrings stringForKey:strFooterOrigoCreationWards], yourChild, himOrHer];
-        footerText = [NSString stringWithFormat:@"%@ %@.", footerText, wardsAddendum];
-    } else if ([self targetIs:kTargetUser]) {
-        footerText = [footerText stringByAppendingString:@"."];
+        footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"... for yourself. Select %@ to create an origo for %@", @""), yourChild, himOrHer] separator:kSeparatorSpace];
     } else if ([self targetIs:kTargetWard]) {
-        NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], [_member givenName]];
-        footerText = [NSString stringWithFormat:@"%@ %@.", footerText, forWardName];
+        footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"for %@", @""), [_member givenName]] separator:kSeparatorSpace];
     }
     
-    return footerText;
+    return [footerText stringByAppendingString:@"."];
 }
 
 
@@ -77,9 +73,7 @@ static NSInteger const kSectionKeyWards = 2;
 {
     OMember *creator = [[OMeta m].context entityWithId:[OMeta m].user.createdBy];
     
-    NSString *alertText = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextListedUserRegistration], [creator givenName], [creator pronoun][nominative]];
-    
-    [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleListedUserRegistration] text:alertText];
+    [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origo", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Please verify your details and provide the information that %@ was not authorised to enter when %@ invited you.", @""), [creator givenName], [creator pronoun][nominative]]];
 }
 
 
@@ -93,19 +87,16 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)addItem
 {
-    NSString *prompt = [OStrings stringForKey:strSheetPromptOrigoType];
+    NSString *prompt = NSLocalizedString(@"What sort of origo du you want to create", @"");
     
-    if ([self targetIs:kTargetUser]) {
-        prompt = [prompt stringByAppendingString:@"?"];
-    } else if ([self targetIs:kTargetWard]) {
-        NSString *forWardName = [NSString stringWithFormat:[OStrings stringForKey:strTermForName], [_member givenName]];
-        prompt = [NSString stringWithFormat:@"%@ %@?", prompt, forWardName];
+    if ([self targetIs:kTargetWard]) {
+        prompt = [prompt stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"for %@", @""), [_member givenName]] separator:kSeparatorSpace];
     }
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagOrigoType];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[prompt stringByAppendingString:@"?"] delegate:self tag:kActionSheetTagOrigoType];
     
     for (NSString *origoType in _origoTypes) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:origoType withKeyPrefix:kKeyPrefixOrigoTitle]];
+        [actionSheet addButtonWithTitle:NSLocalizedString(origoType, kKeyPrefixOrigoTitle)];
     }
     
     [actionSheet show];
@@ -122,7 +113,7 @@ static NSInteger const kSectionKeyWards = 2;
         if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].user.entityId]) {
             [self presentListedUserAlert];
         } else if (![OMeta m].userDidJustSignUp) {
-            [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleIncompleteRegistration] text:[OStrings stringForKey:strAlertTextIncompleteRegistration]];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Incomplete registration", @"") text:NSLocalizedString(@"You must complete your registration before you can start using Origo.", @"")];
         }
         
         [self presentModalViewControllerWithIdentifier:kIdentifierMember data:[[OMeta m].user initialResidency]];
@@ -203,9 +194,9 @@ static NSInteger const kSectionKeyWards = 2;
     NSString *text = nil;
     
     if (sectionKey == kSectionKeyWards) {
-        text = [OStrings stringForKey:strHeaderWardsOrigos];
+        text = NSLocalizedString(@"The kids' origos", @"");
     } else if (sectionKey == kSectionKeyOrigos) {
-        text = [[OLanguage possessiveClauseWithPossessor:_member noun:_origo_] stringByCapitalisingFirstLetter];
+        text = NSLocalizedString(@"My origos", @"");
     }
     
     return text;
@@ -276,7 +267,7 @@ static NSInteger const kSectionKeyWards = 2;
         if ([sortedOrigos count]) {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:sortedOrigos conjoinLastItem:NO];
         } else {
-            cell.detailTextLabel.text = [OStrings stringForKey:strTextNoOrigos];
+            cell.detailTextLabel.text = NSLocalizedString(@"(No origos)", @"");
         }
     } else {
         OMembership *membership = [entity asMembership];
@@ -288,10 +279,10 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.text = [membership.origo singleLineAddress];
         } else {
             if ([membership isInvited]) {
-                cell.detailTextLabel.text = NSLocalizedString(@"textNewListing", nil);
+                cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
                 cell.detailTextLabel.textColor = [UIColor redOrangeColour];
             } else {
-                cell.detailTextLabel.text = [OStrings stringForKey:membership.origo.type withKeyPrefix:kKeyPrefixOrigoTitle];
+                cell.detailTextLabel.text = NSLocalizedString(membership.origo.type, kKeyPrefixOrigoTitle);
             }
         }
     }

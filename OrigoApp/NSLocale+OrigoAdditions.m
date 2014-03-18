@@ -8,20 +8,15 @@
 
 #import "NSLocale+OrigoAdditions.h"
 
-static NSArray *_multiLingualCountryCodes = nil;
-
 
 @implementation NSLocale (OrigoAdditions)
 
 + (NSString *)regionIdentifier
 {
-    if (!_multiLingualCountryCodes) {
-        _multiLingualCountryCodes = [[OStrings stringForKey:metaMultiLingualCountryCodes] componentsSeparatedByString:kSeparatorList];
-    }
-    
+    NSArray *multiLingualCountryCodes = @[@"CA"];
     NSString *regionIdentifier = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
     
-    if ([_multiLingualCountryCodes containsObject:regionIdentifier]) {
+    if ([multiLingualCountryCodes containsObject:regionIdentifier]) {
         regionIdentifier = [[NSLocale currentLocale] objectForKey:NSLocaleIdentifier];
     }
     

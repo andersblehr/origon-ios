@@ -15,9 +15,9 @@
 
 + (void)showAlertWithCode:(NSInteger)code message:(NSString *)message tag:(NSInteger)tag delegate:(id)delegate
 {
-    NSString *alertMessage = [NSString stringWithFormat:[OStrings stringForKey:strAlertTextServerError], code, message];
+    NSString *alertMessage = [NSString stringWithFormat:NSLocalizedString(@"An error has occurred. Please try again later. [%d: \"%@\"]", @""), code, message];
     
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:delegate cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:alertMessage delegate:delegate cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
     
     if (tag < NSIntegerMax) {
         alert.tag = tag;
@@ -37,7 +37,7 @@
 
 + (void)showAlertWithTitle:(NSString *)title text:(NSString *)text tag:(NSInteger)tag
 {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:text delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:text delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
     
     if (tag != NSIntegerMax) {
         alertView.delegate = [OState s].viewController;

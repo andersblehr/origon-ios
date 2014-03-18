@@ -44,7 +44,7 @@
 
 - (void)show
 {
-    [self addButtonWithTitle:[OStrings stringForKey:strButtonCancel]];
+    [self addButtonWithTitle:NSLocalizedString(@"Cancel", @"")];
     self.cancelButtonIndex = self.numberOfButtons - 1;
     
     [self showInView:[OState s].viewController.actionSheetView];

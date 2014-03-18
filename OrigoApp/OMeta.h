@@ -6,43 +6,11 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
-
-extern NSInteger const kAgeThresholdToddler;
-extern NSInteger const kAgeThresholdInSchool;
-extern NSInteger const kAgeThresholdTeen;
-extern NSInteger const kAgeOfConsent;
-extern NSInteger const kAgeOfMajority;
-
-extern NSString * const kProtocolHTTP;
-extern NSString * const kProtocolHTTPS;
-extern NSString * const kProtocolTel;
-
-extern NSString * const kIconFileOrigo;
-extern NSString * const kIconFileHousehold;
-extern NSString * const kIconFileMan;
-extern NSString * const kIconFileWoman;
-extern NSString * const kIconFileBoy;
-extern NSString * const kIconFileGirl;
-extern NSString * const kIconFileInfant;
-extern NSString * const kIconFileSettings;
-extern NSString * const kIconFilePlus;
-extern NSString * const kIconFileAction;
-extern NSString * const kIconFileLookup;
-extern NSString * const kIconFilePlacePhoneCall;
-extern NSString * const kIconFilePlacePhoneCall_iOS6x;
-extern NSString * const kIconFileSendText;
-extern NSString * const kIconFileSendText_iOS6x;
-extern NSString * const kIconFileSendEmail;
-extern NSString * const kIconFileSendEmail_iOS6x;
-extern NSString * const kIconFileLocationArrow;
-
-extern NSString * const kGenderMale;
-extern NSString * const kGenderFemale;
+#import <Foundation/Foundation.h>
 
 @interface OMeta : NSObject {
 @private
-    Reachability *_internetReachability;
+    NSBundle *_localisedStringsBundle;
     
     OMember *_user;
     OLocator *_locator;
@@ -53,6 +21,8 @@ extern NSString * const kGenderFemale;
     NSNumber *_isSignedIn;
     NSString *_authToken;
     NSDate *_authTokenExpiryDate;
+    
+    Reachability *_internetReachability;
 }
 
 @property (nonatomic, readonly) BOOL internetConnectionIsWiFi;
@@ -68,6 +38,7 @@ extern NSString * const kGenderFemale;
 @property (strong, nonatomic, readonly) NSString *appVersion;
 @property (strong, nonatomic, readonly) NSString *authToken;
 @property (strong, nonatomic, readonly) NSString *language;
+@property (strong, nonatomic, readonly) NSBundle *localisedStringsBundle;
 
 @property (strong, nonatomic, readonly) OMember *user;
 @property (strong, nonatomic, readonly) OLocator *locator;
@@ -94,6 +65,6 @@ extern NSString * const kGenderFemale;
 + (BOOL)systemIs_iOS6x;
 + (BOOL)screenIsRetina;
 
-+ (NSArray *)supportedLanguages;
+- (NSBundle *)localisedStringsBundle;
 
 @end

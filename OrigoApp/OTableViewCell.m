@@ -9,8 +9,6 @@
 #import "OTableViewCell.h"
 
 NSString * const kReuseIdentifierList = @"list";
-NSString * const kReuseIdentifierUserSignIn = @"signIn";
-NSString * const kReuseIdentifierUserActivation = @"activate";
 
 NSString * const kViewKeySuffixLabel = @"Label";
 NSString * const kViewKeySuffixInputField = @"Field";
@@ -115,7 +113,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
             photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColour];
             photoPrompt.font = [UIFont detailFont];
-            photoPrompt.text = [OStrings stringForKey:strPlaceholderPhoto];
+            photoPrompt.text = NSLocalizedString(kPropertyKeyPhoto, kKeyPrefixPlaceholder);
             photoPrompt.textAlignment = NSTextAlignmentCenter;
             photoPrompt.textColor = [UIColor imagePlaceholderTextColour];
             [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];

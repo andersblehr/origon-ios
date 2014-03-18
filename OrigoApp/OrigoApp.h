@@ -9,6 +9,10 @@
 #ifndef OrigoApp_OrigoApp_h
 #define OrigoApp_OrigoApp_h
 
+#undef NSLocalizedString
+#define NSLocalizedString(key, prefix) \
+        [[OMeta m].localisedStringsBundle localizedStringForKey:([prefix length] ? [prefix stringByAppendingString:key separator:@" "] : key) value:@"" table:nil]
+
 #import <AddressBook/AddressBook.h>
 #import <AddressBookUI/AddressBookUI.h>
 #import <AudioToolbox/AudioToolbox.h>
@@ -25,7 +29,7 @@
 #import "Reachability.h"
 
 @class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
-@class ODevice, OMember, OMembership, OMessageBoard, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
+@class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
 
 #import "OConnectionDelegate.h"
 #import "OEntityObserver.h"
@@ -83,7 +87,7 @@ typedef UIView<OTextInput> OInputField;
 #import "OMeta.h"
 #import "OReplicator.h"
 #import "OState.h"
-#import "OStrings.h"
+#import "OConstants.h"
 #import "OSwitchboard.h"
 #import "OTableViewCell.h"
 #import "OTableViewCellBlueprint.h"

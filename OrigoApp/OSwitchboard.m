@@ -8,6 +8,8 @@
 
 #import "OSwitchboard.h"
 
+static NSString * const kProtocolTel = @"tel://";
+
 static NSInteger const kServiceTypeText = 0;
 static NSInteger const kServiceTypeCall = 1;
 static NSInteger const kServiceTypeEmail = 2;
@@ -53,11 +55,11 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     NSInteger candidateCount = 0;
     
     if (_requestType == kServiceTypeText) {
-        prompt = [OStrings stringForKey:strSheetPromptTextRecipient];
+        prompt = NSLocalizedString(@"Who do you want to text?", @"");
     } else if (_requestType == kServiceTypeCall) {
-        prompt = [OStrings stringForKey:strSheetPromptCallRecipient];
+        prompt = NSLocalizedString(@"Who do you want to call?", @"");
     } else if (_requestType == kServiceTypeEmail) {
-        prompt = [OStrings stringForKey:strSheetPromptEmailRecipient];
+        prompt = NSLocalizedString(@"Who do you want to email?", @"");
     }
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:0];
@@ -88,11 +90,11 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         } else if (recipientTag == kRecipientTagGuardians) {
             [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:recipients conjoinLastItem:YES]];
         } else if (recipientTag == kRecipientTagAllMembers) {
-            [actionSheet addButtonWithTitle:[OStrings stringForKey:_origo.type withKeyPrefix:kKeyPrefixAllMembersTitle]];
+            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kKeyPrefixAllMembersTitle)];
         } else if (recipientTag == kRecipientTagAllContacts) {
-            [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAllContacts]];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"All contacts", @"")];
         } else if (recipientTag == kRecipientTagAllGuardians) {
-            [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAllGuardians]];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"All guardians", @"")];
         }
         
         candidateCount++;
@@ -189,7 +191,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         }
         
         if ([phoneRecipients count] == 1) {
-            [self addRecipients:phoneRecipients forServiceType:kServiceTypeCall tag:tag];
+            [self addRecipients:phoneRecipients forServiceType:kServiceTypeCall tag:kRecipientTagMember];
         } else if (_member && ([phoneRecipients count] == 2)) {
             if ([_member hasParent:phoneRecipients[0]]) {
                 [self addRecipients:@[phoneRecipients[1]] forServiceType:kServiceTypeCall tag:tag];
@@ -363,7 +365,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     MFMailComposeViewController *mailComposer = [[MFMailComposeViewController alloc] init];
     mailComposer.mailComposeDelegate = self;
     [mailComposer setToRecipients:recipientEmailAddresses];
-    [mailComposer setMessageBody:[OStrings stringForKey:strFooterOrigoSignature] isHTML:NO];
+    [mailComposer setMessageBody:NSLocalizedString(@"Sent from Origo - http://origoapp.com", @"") isHTML:NO];
 
     [[OState s].viewController presentViewController:mailComposer animated:YES completion:NULL];
 }

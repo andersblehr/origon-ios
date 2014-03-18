@@ -8,45 +8,26 @@
 
 #import "OLanguage.h"
 
-NSInteger const nominative = 0;
-NSInteger const accusative = 1;
-NSInteger const dative = 2;
+NSString * const _be_  = @"wordBe";
 
-NSInteger const singularIndefinite = 0;
-NSInteger const singularDefinite = 1;
-NSInteger const pluralIndefinite = 2;
-NSInteger const pluralDefinite = 3;
-NSInteger const possessive2 = 4;
-NSInteger const possessive3 = 5;
+NSString * const _origo_ = @"wordOrigo";
+NSString * const _father_ = @"wordFather";
+NSString * const _mother_ = @"wordMother";
+NSString * const _parent_ = @"wordParent";
+NSString * const _guardian_ = @"wordGuardian";
+NSString * const _contact_ = @"wordContact";
+NSString * const _address_ = @"wordAddress";
 
-NSInteger const singular1 = 0;
-NSInteger const singular2 = 1;
-NSInteger const singular3 = 2;
-NSInteger const plural1 = 3;
-NSInteger const plural2 = 4;
-NSInteger const plural3 = 5;
+NSString * const _I_   = @"wordI";
+NSString * const _you_ = @"wordYou";
+NSString * const _he_  = @"wordHe";
+NSString * const _she_ = @"wordShe";
 
-NSString * const _be_  = @"verbBe";
+static NSString * const kPartOfSpeechVerbs = @"be";
+static NSString * const kPartOfSpeechNouns = @"origo;father;mother;parent;guardian;contact;address";
+static NSString * const kPartOfSpeechPronouns = @"I;you;he;she";
 
-NSString * const _origo_ = @"nounOrigo";
-NSString * const _father_ = @"nounFather";
-NSString * const _mother_ = @"nounMother";
-NSString * const _parent_ = @"nounParent";
-NSString * const _guardian_ = @"nounGuardian";
-NSString * const _contact_ = @"nounContact";
-NSString * const _address_ = @"nounAddress";
-
-NSString * const _I_   = @"pronounI";
-NSString * const _you_ = @"pronounYou";
-NSString * const _he_  = @"pronounHe";
-NSString * const _she_ = @"pronounShe";
-
-static NSString * const kPartOfSpeechVerbs = @"verb";
-static NSString * const kPartOfSpeechNouns = @"noun";
-static NSString * const kPartOfSpeechPronouns = @"pronoun";
-
-static NSString * const strQuestionTemplate = @"strQuestionTemplate";
-
+static NSString * const kWordPrefix = @"word";
 static NSString * const kSubjectPlaceholder = @"{subject}";
 static NSString * const kVerbPlaceholder = @"{verb}";
 static NSString * const kArgumentPlaceholder = @"{argument}";
@@ -71,12 +52,11 @@ static OLanguage *language = nil;
 - (NSDictionary *)loadPartOfSpeech:(NSString *)partOfSpeech
 {
     NSMutableDictionary *formsDictionary = [NSMutableDictionary dictionary];
-    NSString *words = [OStrings stringForKey:[partOfSpeech stringByAppendingString:@"s"]];
     
-    for (NSString *word in [words componentsSeparatedByString:kSeparatorList]) {
-        NSString *wordKey = [partOfSpeech stringByAppendingCapitalisedString:word];
+    for (NSString *word in [partOfSpeech componentsSeparatedByString:kSeparatorList]) {
+        NSString *wordKey = [kWordPrefix stringByAppendingCapitalisedString:word];
         
-        formsDictionary[wordKey] = [[OStrings stringForKey:wordKey] componentsSeparatedByString:kSeparatorList];
+        formsDictionary[wordKey] = [NSLocalizedString(wordKey, @"") componentsSeparatedByString:kSeparatorList];
     }
     
     return formsDictionary;
@@ -223,7 +203,7 @@ static OLanguage *language = nil;
     NSString *subjectString = [self subjectStringWithSubject:subject isQuestion:YES];
     NSString *verbString = [self verbStringWithVerb:verb subject:subject isQuestion:YES];
     
-    NSString *question = [OStrings stringForKey:strQuestionTemplate];
+    NSString *question = NSLocalizedString(@"questionTemplate", @"");
     question = [question stringByReplacingSubstring:kSubjectPlaceholder withString:subjectString];
     question = [question stringByReplacingSubstring:kVerbPlaceholder withString:verbString];
     question = [question stringByReplacingSubstring:kArgumentPlaceholder withString:argument];

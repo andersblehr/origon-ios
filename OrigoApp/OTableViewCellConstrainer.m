@@ -18,8 +18,9 @@ static NSString * const kVConstraintsElement           = @"-%.f-[%@(%.f)]";
 static NSString * const kHConstraintsCentredLabel      = @"H:|-25-[%@]-25-|";
 static NSString * const kHConstraintsCentredInputField = @"H:|-55-[%@]-55-|";
 
-static NSString * const kVConstraintsTitleBanner       = @"V:|-(-1)-[titleBanner(39)]";
-static NSString * const kHConstraintsTitleBanner       = @"H:|-(-1)-[titleBanner]-(-1)-|";
+static NSString * const kVConstraintsTitleBanner_iOS6x = @"V:|-(-1)-[titleBanner(39)]";
+static NSString * const kVConstraintsTitleBanner       = @"V:|-(0)-[titleBanner(39)]";
+static NSString * const kHConstraintsTitleBanner       = @"H:|-(0)-[titleBanner]-(0)-|";
 static NSString * const kVConstraintsTitle             = @"[%@(24)]";
 static NSString * const kHConstraintsTitle             = @"H:|-6-[%@]-6-|";
 static NSString * const kHConstraintsTitleWithPhoto    = @"H:|-6-[%@]-6-[photoFrame(%.f)]-10-|";
@@ -104,8 +105,8 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
         
         [self configureElementsForKey:_blueprint.titleKey];
         
-        [constraints addObject:kVConstraintsTitleBanner];
         [constraints addObject:kHConstraintsTitleBanner];
+        [constraints addObject:[OMeta systemIs_iOS6x] ? kVConstraintsTitleBanner_iOS6x : kVConstraintsTitleBanner];
         
         if (_blueprint.hasPhoto) {
             [constraints addObject:[NSString stringWithFormat:kHConstraintsTitleWithPhoto, titleName, kPhotoFrameWidth]];

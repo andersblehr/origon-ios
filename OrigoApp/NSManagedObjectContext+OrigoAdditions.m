@@ -65,8 +65,8 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     origo.origoId = origoId;
     origo.type = origoType;
     
-    if ([[OState s].pivotMember isJuvenile]) {
-        if (![origo isOfType:kOrigoTypeMemberRoot] && ![origo isOfType:kOrigoTypeResidence]) {
+    if (![origo isOfType:kOrigoTypeMemberRoot] && ![origo isOfType:kOrigoTypeResidence]) {
+        if ([[OState s].pivotMember isJuvenile]) {
             origo.isForMinors = @YES;
         }
     }

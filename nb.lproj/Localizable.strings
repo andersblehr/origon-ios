@@ -1,0 +1,377 @@
+/* 
+  Localizable.strings
+  OrigoApp
+
+  Created by Anders Blehr on 10.03.14.
+  Copyright (c) 2014 Rhelba Creations. All rights reserved.
+*/
+
+
+/***
+ * Property derived strings
+ ***/
+
+// Labels
+"[label] signIn" = "Logg på eller registrer deg";
+"[label] activate" = "Oppgi aktiveringskode";
+"[label] address" = "Adresse";
+"[label] purpose" = "Formål";
+"[label] descriptionText" = "Beskrivelse";
+"[label] telephone" = "Telefon";
+"[label] dateOfBirth" = "Alder";
+"[label] mobilePhone" = "Mobil";
+"[label] email"  = "Epost";
+
+// Alternate labels
+"[alternate label] dateOfBirth" = "Født";
+
+// Placeholders
+"[placeholder] authEmail" = "Epostadressen din";
+"[placeholder] password" = "Passordet ditt";
+"[placeholder] activationCode" = "Aktiveringskode fra epost";
+"[placeholder] repeatPassword" = "Gjenta passordet ditt";
+"[placeholder] residenceName" = "Kallenavn for denne adressen";
+"[placeholder] address" = "Gateadresse\nPostnummer og -sted";
+"[placeholder] purpose" = "Formålet med dette origoet";
+"[placeholder] descriptionText" = "En valgfri beskrivelse";
+"[placeholder] telephone" = "Telefonnummer";
+"[placeholder] name" = "Navn";
+"[placeholder] photo" = "Bilde";
+"[placeholder] dateOfBirth" = "Fødselsdato";
+"[placeholder] mobilePhone" = "Mobilnummer";
+"[placeholder] email" = "En gyldig epostadresse";
+
+// Defaults
+"[default] residenceName" = "Min husstand";
+
+
+/***
+ * Origo type derived strings
+ ***/
+
+// Origo titles
+"[title] residence" = "Husstand";
+"[title] friends" = "Vennegruppe";
+"[title] team" = "Lag, idrettsgruppe";
+"[title] organisation" = "Organisasjon, forening";
+"[title] preschoolClass" = "Barnehageavdeling";
+"[title] schoolClass" = "Skoleklasse";
+"[title] other" = "Annet formål";
+
+// Registration titles
+"[registration title] residence" = "Ny adresse";
+"[registration title] friends" = "Ny vennegruppe";
+"[registration title] team" = "Ny idrettsgruppe";
+"[registration title] organisation" = "Ny organisasjon";
+"[registration title] preschoolClass" = "Ny barnehageavdeling";
+"[registration title] schoolClass" = "Ny skoleklasse";
+"[registration title] other" = "Nytt origo";
+
+// Registration footers
+"[registration footer] residence" = "Trykk [+] for å legge til medlemmer i husstanden.";
+"[registration footer] friends" = "Trykk [+] for å legge til venner.";
+"[registration footer] team" = "Trykk [+] for å legge til deltakere.";
+"[registration footer] organisation" = "Trykk [+] for å legge til medlemmer.";
+"[registration footer] preschoolClass" = "Trykk [+] for å legge til barn i avdelingen.";
+"[registration footer] schoolClass" = "Trykk [+] for å legge til elever i klassen.";
+"[registration footer] other" = "Trykk [+] for å legge til medlemmer.";
+
+// Member registration button titles
+"[add member] residence" = "Legg til medlem";
+"[add member] friends"= "Legg til venn/venninne";
+"[add member] team" = "Legg til deltaker";
+"[add member] organisation" = "Legg til medlem";
+"[add member] preschoolClass" = "Legg til barn";
+"[add member] schoolClass" = "Legg til elev";
+"[add member] other" = "Legg til medlem";
+
+// Contact registration button titles
+"[add contact] preschoolClass" = "Legg til lærer/assistent";
+"[add contact] schoolClass" = "Legg til lærer";
+"[add contact] team" = "Legg til trener";
+
+// Origo contact titles
+"[contact title] preschoolClass" = "Lærer/assistent";
+"[contact title] schoolClass" = "Lærer";
+"[contact title] team" = "Trener";
+
+// Origo member list titles
+"[member list] residence" = "I husstanden";
+"[member list] friends" = "I gruppa";
+"[member list] team" = "Deltakere";
+"[member list] organisation" = "Medlemmer";
+"[member list] preschoolClass" = "I avdelingen";
+"[member list] schoolClass" = "I klassen";
+"[member list] other" = "Medlemmer";
+
+// Origo member registration titles
+"[member registration] residence" = "I husstanden";
+"[member registration] friends" = "I gruppa";
+"[member registration] team" = "Ny deltaker";
+"[member registration] organisation" = "Nytt medlem";
+"[member registration] preschoolClass" = "I avdelingen";
+"[member registration] schoolClass" = "I klassen";
+"[member registration] other" = "Nytt medlem";
+
+// Origo collective titles
+"[all members] residence" = "Alle i husstanden";
+"[all members] friends" = "Alle i gruppa";
+"[all members] team" = "Alle deltakere";
+"[all members] organisation" = "Alle medlemmer";
+"[all members] schoolClass" = "Alle i klassen";
+"[all members] other" = "Alle medlemmer";
+
+
+/***
+ * Contact roles
+ ***/
+
+// Preschool class roles
+"preschoolClass headTeacher" = "Avdelingsleder";
+"preschoolClass teacher" = "Førskolelærer";
+"preschoolClass assistantTeacher" = "Assistent";
+
+// School class roles
+"schoolClass teacher" = "Kontaktlærer";
+"schoolClass topicTeacher" = "Faglærer";
+"schoolClass specialEducationTeacher" = "Spesiallærer";
+"schoolClass assistantTeacher" = "Assistentlærer";
+"schoolClass headTeacher" = "Rektor";
+
+// Organisation roles
+"organisation chair" = "Formann/-kvinne";
+"organisation deputyChair" = "Varamann/-kvinne";
+"organisation treasurer" = "Kasserer";
+
+// Team roles
+"team coach" = "Trener";
+"team assistantCoach" = "Assistenttrener";
+
+
+/***
+ * Language strings
+ ***/
+
+// Templates
+"questionTemplate" = "{verb} {subject} {argument}?";
+
+// Verbs
+"wordBe" = "er;er;er;er;er;er";
+
+// Nouns
+"wordOrigo" = "-;-;-;-;mine origo;%@ sine origo";
+"wordFather" = "far;faren;-;-;faren din;faren til %@";
+"wordMother" = "mor;moren;-;-;moren din;moren til %@";
+"wordParent" = "-;-;foreldre;foreldrene;foreldrene dine;foreldrene til %@";
+"wordGuardian" = "foresatt;-;foresatte;-;-;-";
+"wordContact" = "kontaktperson;-;kontaktpersoner;-;-;-";
+"wordAddress" = "adresse;-;adresser;-;-;-";
+
+// Pronouns
+"wordI" = "jeg;meg;meg";
+"wordYou" = "du;deg;deg";
+"wordHe" = "han;ham;ham";
+"wordShe" = "hun;henne;henne";
+
+
+/***
+ * Cross-view strings
+ ***/
+
+// Email signature
+"Sent from Origo - http://origoapp.com" = "\n\nSendt fra Origo - http://origoapp.com";
+
+// Buttons
+"OK" = "OK";
+"Edit" = "Rediger";
+"Next" = "Neste";
+"Done" = "Ferdig";
+"Continue" = "Fortsett";
+"Cancel" = "Avbryt";
+"Log out" = "Logg ut";
+
+// Alerts
+"No internet connection." = "Ingen internettforbindelse.";
+"An error has occurred. Please try again later. [%d: \"%@\"]" = "Det har oppstått en feil, vennligst prøv igjen senere. [%d: \"%@\"]";
+
+// Generic terms
+"Yes" = "Ja";
+"No" = "Nei";
+"Man" = "Mann";
+"Boy" = "Gutt";
+"Woman" = "Kvinne";
+"Girl" = "Jente";
+"Parent contact" = "Foreldrekontakt";
+
+// Formats
+"%d years" = "%d år";
+
+// Separators
+" and " = " og ";
+
+
+/***
+ * OAuthViewController strings
+ ***/
+
+// Footers
+"New users will receive an email with an activation code that must be entered in the next step." = "Nye brukere vil motta en epost med en aktiveringskode som må oppgis i neste steg.";
+"The activation code has been sent to %@ ..." = "Aktiveringskoden er sendt til %@. Du kan oppgi den senere om du ikke har tilgang til eposten din her og nå.";
+"The activation code has been sent to %@." = "Aktiveringskoden er sendt til %@.";
+
+// Buttons
+"Have code" = "Har kode";
+"Start over" = "Gå tilbake";
+
+// Alerts
+"Activation failed" = "Aktivering mislyktes";
+"It looks like you may have lost the activation code ..." = "Det ser ut til at du enten har mistet aktiveringskoden som vi sendte deg på epost, eller at du har glemt passordet ditt. La oss starte på nytt.";
+"Welcome back!" = "Velkommen tilbake!";
+"If you have handy the activation code sent to %@ ..." = "Om du har aktiveringskoden som ble sendt til %@, så kan du aktivere medlemskapet ditt nå. Om ikke, kan du gå tilbake og starte på nytt.";
+
+/***
+ * OOrigoListViewController strings
+ ***/
+
+// Headers
+"My origos" = "Mine origo";
+"The kids' origos" = "Barnas origo";
+
+// Footers
+"Tap [+] to create an origo" = "Trykk [+] for å opprette et origo";
+"Tap [+] to create a new origo" = "Trykk [+] for å opprette et nytt origo";
+"... for yourself. Select %@ to create an origo for %@" = "for deg selv, eller velg %@ for å opprette et origo for %@";
+
+// Alerts
+"Welcome to Origo" = "Velkommen til Origo";
+"Please verify your details and provide the information that %@ was not authorised to enter when %@ invited you." = "Kontroller at opplysningene dine er riktige, samt legg inn opplysninger som %@ ikke hadde adgang til å oppgi da %@ inviterte deg.";
+"Incomplete registration" = "Ufullstendig registrering";
+"You must complete your registration before you can start using Origo." = "Du må fullføre registreringen før du kan begynne å bruke Origo.";
+
+// Prompts
+"What sort of origo du you want to create" = "Hva slags origo ønsker du å opprette";
+
+// Info
+"New listing" = "Ny oppføring";
+"(No origos)" = "(Ingen origo)";
+
+// Terms
+"your child" = "et av barna";
+"him or her" = "ham eller henne";
+"for %@" = "for %@";
+
+
+/***
+ * OOrigoViewController strings
+ ***/
+
+// Buttons
+"Edit roles" = "Rediger roller";
+"Add from other origos" = "Legg til fra andre origo";
+"Add parent contact" = "Legg til foreldrekontakt";
+"Show in map" = "Vis på kart";
+"About %@" = "Om %@";
+"New housemate" = "Ny bofelle";
+"Other guardian" = "Annen foresatt";
+"Remove" = "Meld ut";
+
+
+/***
+ * OMemberViewController strings
+ ***/
+
+// View title
+"About me" = "Om meg";
+
+// Footers
+"A notification will be sent to the email address you provide." = "Et varsel vil bli sendt til epost-adressen du oppgir.";
+"Before you can register a minor, you must register his or her parents/guardians." = "Før du kan registrere en mindreårig, må du registrere hans eller hennes foresatte.";
+
+// Buttons
+"To some of them" = "Til noen av dem";
+"Add an address" = "Legg til en adresse";
+"Change password" = "Endre passord";
+"Edit relations" = "Rediger relasjoner";
+"Correct gender" = "Korriger kjønn";
+"New address" = "Ny adresse";
+"All guardians" = "Alle foresatte";
+"All contacts" = "Alle kontaktpersoner";
+"Retrieve from Contacts"   = "Hent fra Kontakter";
+"Retrieve from Origo" = "Hent fra annet origo";
+"A different number" = "Et annet nummer";
+"A different address" = "En annen adresse";
+
+// Alerts
+"Incorrect details" = "Uriktige opplysninger";
+"The details you have provided do not match our records ..." = "Opplysningene du har oppgitt, stemmer ikke med dem som er lagret hos oss. Du kan ikke legge til denne personen om du har uriktige opplysninger.";
+"Already member" = "Allerede medlem";
+"%@ is already a member of %@." = "%@ er allerede medlem i %@.";
+"New email address" = "Ny epost-adresse";
+"You are about to change your email address from %@ to %@ ..." = "Du er i ferd med å endre epost-adressen din fra %@ til %@. Du må ha tilgang til den nye adressen for å aktivere endringen. Ønsker du å fortsette?";
+"Activation failed" = "Aktivering mislyktes";
+"The email address %@ could not be activated ..." = "Aktivering av epost-adressen %@ mislyktes. Prøv igjen, eller trykk Avbryt for avbryte endringen.";
+
+// Prompts
+"Who do you want to email?" = "Hvem vil du sende epost til?";
+"Who do you want to text?" = "Hvem vil du sende tekstmelding til?";
+"Who do you want to call?" = "Hvem vil du ringe?";
+"strSheetPromptExistingResidence" = "%@ er allerede medlem av en husstand. Vil du invitere %@ til også å bli med i din husstand, eller ønsker du å slå husstandene deres sammen til én?";
+"%@ is registered with more than one mobile phone number. Which number do you want to provide?" = "%@ er registrert med mer enn ett mobilnummer. Hvilket nummer vil du oppgi?";
+"%@ is registered with more than one email address. Which address do you want to provide?" = "%@ er registrert med mer enn én epostadresse. Hvilken adresse vil du oppgi?";
+
+// Question arguments
+"a woman or a man" = "kvinne eller mann";
+"a girl or a boy" = "jente eller gutt";
+
+// Terms
+"his father" = "faren hans";
+"her father" = "faren hennes";
+"his mother" = "moren hans";
+"her mother" = "moren hennes";
+
+
+/***
+ * OCalendarViewController strings
+ ***/
+
+// View title
+"Calendar" = "Kalender";
+
+
+/***
+ * OTaskListViewController strings
+ ***/
+
+// View title
+"Tasks" = "Oppgaver";
+
+
+/***
+ * OMessageListViewController strings
+ ***/
+
+// View title
+"Messages" = "Meldinger";
+
+
+/***
+ * OValueListViewController strings
+ ***/
+
+// View title
+"Settings" = "Innstillinger";
+
+
+/***
+ * OValuePickerViewController strings
+ ***/
+
+// View title
+"Adults|Minors" = "Voksne|Barn";
+
+
+/***
+ * Self test strings
+ ***/
+
+"String test" = "Dette er en streng på norsk";
