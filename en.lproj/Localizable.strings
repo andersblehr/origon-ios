@@ -332,30 +332,6 @@
 
 
 /***
- * OCalendarViewController strings
- ***/
-
-// View title
-"Calendar" = "Calendar";
-
-
-/***
- * OTaskListViewController strings
- ***/
-
-// View title
-"Tasks" = "Tasks";
-
-
-/***
- * OMessageListViewController strings
- ***/
-
-// View title
-"Messages" = "Messages";
-
-
-/***
  * OValueListViewController strings
  ***/
 

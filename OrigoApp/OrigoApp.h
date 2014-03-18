@@ -49,7 +49,6 @@ typedef UIView<OTextInput> OInputField;
 #import "OMember+OrigoAdditions.h"
 #import "OMembership.h"
 #import "OMembership+OrigoAdditions.h"
-#import "OMessageBoard.h"
 #import "OOrigo.h"
 #import "OOrigo+OrigoAdditions.h"
 #import "OReplicatedEntity.h"

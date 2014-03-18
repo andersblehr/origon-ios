@@ -2,8 +2,8 @@
 //  OReplicatedEntity.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 21.03.13.
-//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 18.03.14.
+//  Copyright (c) 2014 Rhelba Source. All rights reserved.
 //
 
 #import "OReplicatedEntity.h"
@@ -17,8 +17,8 @@
 @dynamic dateReplicated;
 @dynamic entityId;
 @dynamic hashCode;
-@dynamic isExpired;
 @dynamic isAwaitingDeletion;
+@dynamic isExpired;
 @dynamic origoId;
 
 @end
