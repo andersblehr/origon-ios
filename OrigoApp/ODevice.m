@@ -2,8 +2,8 @@
 //  ODevice.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 29.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 18.03.14.
+//  Copyright (c) 2014 Rhelba Source. All rights reserved.
 //
 
 #import "ODevice.h"
