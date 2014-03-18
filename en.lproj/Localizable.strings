@@ -1,0 +1,378 @@
+/* 
+  Localizable.strings
+  OrigoApp
+
+  Created by Anders Blehr on 10.03.14.
+  Copyright (c) 2014 Rhelba Creations. All rights reserved.
+*/
+
+
+/***
+ * Property derived strings
+ ***/
+
+// Labels
+"[label] signIn" = "Sign in or sign up";
+"[label] activate" = "Enter activation code";
+"[label] address" = "Address";
+"[label] purpose" = "Purpose";
+"[label] descriptionText" = "Description";
+"[label] telephone" = "Telephone";
+"[label] dateOfBirth" = "Age";
+"[label] mobilePhone" = "Mobile";
+"[label] email" = "Email";
+
+// Alternate labels
+"[alternate label] dateOfBirth" = "Born";
+
+// Placeholders
+"[placeholder] authEmail" = "Your email address";
+"[placeholder] password" = "Your password";
+"[placeholder] activationCode" = "Activation code from email";
+"[placeholder] repeatPassword" = "Repeat your password";
+"[placeholder] residenceName" = "Nickname for this address";
+"[placeholder] address" = "Street address\nPostal code and city/town";
+"[placeholder] purpose" = "The purpose of this origo";
+"[placeholder] descriptionText" = "An optional description";
+"[placeholder] telephone" = "Telephone number";
+"[placeholder] name"  = "Name";
+"[placeholder] photo" = "Photo";
+"[placeholder] dateOfBirth" = "Date of birth";
+"[placeholder] mobilePhone" = "Mobile phone number";
+"[placeholder] email" = "A valid email address";
+
+// Defaults
+"[default] residenceName" = "My place";
+
+
+/***
+ * Origo type derived strings
+ ***/
+
+// Origo titles
+"[title] residence" = "Household";
+"[title] friends" = "Party of friends";
+"[title] team" = "Team/sports group";
+"[title] organisation" = "Organisation";
+"[title] preschoolClass" = "Preschool class";
+"[title] schoolClass" = "School class";
+"[title] other" = "General purpose";
+
+// Registration titles
+"[registration title] residence" = "New address";
+"[registration title] friends" = "New party of friends";
+"[registration title] team" = "New sports group";
+"[registration title] organisation" = "New organisation";
+"[registration title] preschoolClass" = "New preschool class";
+"[registration title] schoolClass" = "New school class";
+"[registration title] other" = "New origo";
+
+// Registration footers
+"[registration footer] residence" = "Tap [+] to add members to the household.";
+"[registration footer] friends" = "Tap [+] to add friends.";
+"[registration footer] team" = "Tap [+] to add players.";
+"[registration footer] organisation" = "Tap [+] to add members.";
+"[registration footer] preschoolClass" = "Tap [+] to add pupils to the class.";
+"[registration footer] schoolClass" = "Tap [+] to add pupils to the class.";
+"[registration footer] other" = "Tap [+] to add members.";
+
+// Member registration button titles
+"[add member] residence" = "Add household member";
+"[add member] friends" = "Add friend";
+"[add member] team" = "Add player";
+"[add member] organisation" = "Add member";
+"[add member] preschoolClass" = "Add child";
+"[add member] schoolClass" = "Add pupil";
+"[add member] other" = "Add member";
+
+// Contact registration button titles
+"[add contact] preschoolClass" = "Add teacher";
+"[add contact] schoolClass" = "Add teacher";
+"[add contact] team" = "Add coach";
+
+// Contact titles
+"[contact title] preschoolClass" = "Teacher";
+"[contact title] schoolClass" = "Teacher";
+"[contact title] team" = "Coach";
+
+// Origo member list titles
+"[member list] residence" = "In the household";
+"[member list] friends" = "In the party";
+"[member list] team" = "Participants";
+"[member list] organisation" = "Members";
+"[member list] preschoolClass" = "In the class";
+"[member list] schoolClass" = "In the class";
+"[member list] other" = "Members";
+
+// Origo member registration titles
+"[member registration] residence" = "In the household";
+"[member registration] friends" = "In the party";
+"[member registration] team" = "New participant";
+"[member registration] organisation" = "New member";
+"[member registration] preschoolClass" = "New classmate";
+"[member registration] schoolClass" = "New classmate";
+"[member registration] other" = "New member";
+
+// Origo collective titles
+"[all members] residence" = "The whole household";
+"[all members] friends" = "The whole group";
+"[all members] team" = "The whole group";
+"[all members] organisation" = "All members";
+"[all members] schoolClass" = "The whole class";
+"[all members] other" = "All members";
+
+
+/***
+ * Contact roles
+ ***/
+
+// Preschool class roles
+"preschoolClass headTeacher" = "Head teacher";
+"preschoolClass teacher" = "Teacher";
+"preschoolClass assistantTeacher" = "Assistant teacher";
+
+// School class roles
+"schoolClass teacher" = "Teacher";
+"schoolClass topicTeacher" = "Topic teacher";
+"schoolClass specialEducationTeacher" = "Special education teacher";
+"schoolClass assistantTeacher" = "Assistant teacher";
+"schoolClass headTeacher" = "Head teacher";
+
+// Organisation roles
+"organisation chair" = "Chair";
+"organisation deputyChair" = "Deputy chair";
+"organisation treasurer" = "Treasurer";
+
+// Team roles
+"team coach" = "Coach";
+"team assistantCoach" = "Assistant coach";
+
+
+/***
+ * Language strings
+ ***/
+
+// Templates
+"questionTemplate" = "{verb} {subject} {argument}?";
+
+// Verbs
+"wordBe" = "am;are;is;are;are;are";
+
+// Nouns
+"wordOrigo" = "-;-;-;-;my origos;%@'s origos";
+"wordFather" = "father;the father;-;-;your father;%@'s father";
+"wordMother" = "mother;the mother;-;-;your mother;%@'s mother";
+"wordParent" = "-;-;parents;the parents;your parents;%@'s parents";
+"wordGuardian" = "guardian;-;guardians;-;-;-";
+"wordContact" = "contact;-;contacts;-;-;-";
+"wordAddress" = "address;-;addresses;-;-;-";
+
+// Pronouns
+"wordI" = "I;me;me";
+"wordYou" = "you;you;you";
+"wordHe" = "he;him;him";
+"wordShe" = "she;her;her";
+
+
+/***
+ * Cross-view strings
+ ***/
+
+// Email signature
+"Sent from Origo - http://origoapp.com" = "\n\nSent from Origo - http://origoapp.com";
+
+// Buttons
+"OK" = "OK";
+"Edit" = "Edit";
+"Next" = "Next";
+"Done" = "Done";
+"Continue" = "Continue";
+"Cancel" = "Cancel";
+"Log out" = "Log out";
+
+// Alerts
+"No internet connection." = "No internet connection.";
+"An error has occurred. Please try again later. [%d: \"%@\"]" = "An error has occurred. Please try again later. [%d: \"%@\"]";
+
+// Generic terms
+"Yes" = "Yes";
+"No" = "No";
+"Man" = "Man";
+"Boy" = "Boy";
+"Woman" = "Woman";
+"Girl" = "Girl";
+"Parent contact" = "Parent contact";
+
+// Formats
+"%d years" = "%d years";
+
+// Separators
+" and " = " and ";
+
+
+/***
+ * OAuthViewController strings
+ ***/
+
+// Footers
+"New users will receive an email with an activation code that must be entered in the next step." = "New users will receive an email with an activation code that must be entered in the next step.";
+"The activation code has been sent to %@ ..." = "The activation code has been sent to %@. You can enter it later if you don't have access to your email at this time.";
+"The activation code has been sent to %@." = "The activation code has been sent to %@.";
+
+// Buttons
+"Have code" = "Have code";
+"Start over" = "Start over";
+
+// Alerts
+"Activation failed" = "Activation failed";
+"It looks like you may have lost the activation code ..." = "It looks like you may have lost the activation code that we emailed to you, or forgotten your password. Let's start over.";
+"Welcome back!" = "Welcome back!";
+"If you have handy the activation code sent to %@ ..." = "If you have handy the activation code sent to %@, you can now activate your membership. If not, you may go back and start over.";
+
+
+/***
+ * OOrigoListViewController strings
+ ***/
+
+// Headers
+"My origos" = "My origos";
+"The kids' origos" = "The kids' origos";
+
+// Footers
+"Tap [+] to create an origo" = "Tap [+] to create an origo";
+"Tap [+] to create a new origo" = "Tap [+] to create a new origo";
+"... for yourself. Select %@ to create an origo for %@" = "for yourself. Select %@ to create an origo for %@";
+
+// Alerts
+"Welcome to Origo" = "Welcome to Origo";
+"Please verify your details and provide the information that %@ was not authorised to enter when %@ invited you." = "Please verify your details and provide the information that %@ was not authorised to enter when %@ invited you.";
+"Incomplete registration" = "Incomplete registration";
+"You must complete your registration before you can start using Origo." = "You must complete your registration before you can start using Origo.";
+
+// Prompts
+"What sort of origo du you want to create" = "What sort of origo du you want to create";
+
+// Info
+"New listing" = "New listing";
+"(No origos)" = "(No origos)";
+
+// Terms
+"your child" = "your child";
+"him or her" = "him or her";
+"for %@" = "for %@";
+
+
+/***
+ * OOrigoViewController strings
+ ***/
+
+// Buttons
+"Edit roles" = "Edit roles";
+"Add from other origos" = "Add from other origos";
+"Add parent contact" = "Add parent contact";
+"Show in map" = "Show in map";
+"About %@" = "About %@";
+"New housemate" = "New housemate";
+"Other guardian" = "Other guardian";
+"Remove" = "Remove";
+
+
+/***
+ * OMemberViewController strings
+ ***/
+
+// View title
+"About me" = "About me";
+
+// Footers
+"A notification will be sent to the email address you provide." = "A notification will be sent to the email address you provide.";
+"Before you can register a minor, you must register his or her parents/guardians." = "Before you can register a minor, you must register his or her parents/guardians.";
+
+// Buttons
+"To some of them" = "To some of them";
+"Add an address" = "Add an address";
+"Change password" = "Change password";
+"Edit relations" = "Edit relations";
+"Correct gender" = "Correct gender";
+"New address" = "New address";
+"All contacts" = "All contacts";
+"All guardians" = "All guardians";
+"Retrieve from Contacts"   = "Retrieve from Contacts";
+"Retrieve from Origo" = "Retrieve from other origo";
+"A different number" = "A different number";
+"A different address" = "A different address";
+
+// Alerts
+"Incorrect details" = "Incorrect details";
+"The details you have provided do not match our records ..." = "The details you have provided do not match our records. You cannot add this person if you do not have the correct information.";
+"Already member" = "Already member";
+"%@ is already a member of %@." = "%@ is already a member of %@.";
+"New email address" = "New email address";
+"You are about to change your email address from %@ to %@ ..." = "You are about to change your email address from %@ to %@. You need access to the new address to activate this change. Do you want to continue?";
+"Activation failed" = "Activation failed";
+"The email address %@ could not be activated ..." = "The email address %@ could not be activated. Please try again, or tap Cancel to cancel the change.";
+
+// Prompts
+"Who do you want to email?" = "Who do you want to email?";
+"Who do you want to text?" = "Who do you want to text?";
+"Who do you want to call?" = "Who do you want to call?";
+"strSheetPromptExistingResidence" = "%@ is already member of a household. Would you like to invite %@ to join your household as well, or do you want to merge your households into one?";
+"%@ is registered with more than one mobile phone number. Which number do you want to provide?" = "%@ is registered with more than one mobile phone number. Which number do you want to provide?";
+"%@ is registered with more than one email address. Which address do you want to provide?" = "%@ is registered with more than one email address. Which address do you want to provide?";
+
+// Question arguments
+"a woman or a man" = "a woman or a man";
+"a girl or a boy" = "a girl or a boy";
+
+// Terms
+"his father" = "his father";
+"her father" = "her father";
+"his mother" = "his mother";
+"her mother" = "her mother";
+
+
+/***
+ * OCalendarViewController strings
+ ***/
+
+// View title
+"Calendar" = "Calendar";
+
+
+/***
+ * OTaskListViewController strings
+ ***/
+
+// View title
+"Tasks" = "Tasks";
+
+
+/***
+ * OMessageListViewController strings
+ ***/
+
+// View title
+"Messages" = "Messages";
+
+
+/***
+ * OValueListViewController strings
+ ***/
+
+// View title
+"Settings" = "Settings";
+
+
+/***
+ * OValuePickerViewController strings
+ ***/
+
+// View title
+"Adults|Minors" = "Adults|Minors";
+
+
+/***
+ * Self test strings
+ ***/
+
+"String test" = "This is a string in English";

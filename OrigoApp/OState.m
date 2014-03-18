@@ -8,17 +8,6 @@
 
 #import "OState.h"
 
-NSString * const kIdentifierAuth = @"auth";
-NSString * const kIdentifierCalendar = @"calendar";
-NSString * const kIdentifierMember = @"member";
-NSString * const kIdentifierMessageList = @"messages";
-NSString * const kIdentifierOldOrigo = @"old";
-NSString * const kIdentifierOrigo = @"origo";
-NSString * const kIdentifierOrigoList = @"origos";
-NSString * const kIdentifierTaskList = @"tasks";
-NSString * const kIdentifierValueList = @"values";
-NSString * const kIdentifierValuePicker = @"value";
-
 NSString * const kActionLoad = @"load";
 NSString * const kActionSignIn = @"sign-in";
 NSString * const kActionActivate = @"activate";
@@ -29,7 +18,6 @@ NSString * const kActionDisplay = @"display";
 NSString * const kActionEdit = @"edit";
 NSString * const kActionInput = @"input";
 
-NSString * const kTargetStrings = @"strings";
 NSString * const kTargetEmail = @"email";
 NSString * const kTargetUser = @"user";
 NSString * const kTargetWard = @"ward";

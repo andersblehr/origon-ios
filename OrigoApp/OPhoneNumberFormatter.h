@@ -6,9 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
-
-extern NSString * const kCharacters0_9;
+#import <Foundation/Foundation.h>
 
 @interface OPhoneNumberFormatter : NSObject {
 @private

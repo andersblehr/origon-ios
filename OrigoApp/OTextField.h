@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
+#import <UIKit/UIKit.h>
 
 extern CGFloat const kBorderWidth;
 extern CGFloat const kBorderWidthNonRetina;

@@ -132,7 +132,7 @@ static NSInteger const kButtonTagContinue = 1;
         identifierField.value = [NSString string];
         [identifierField becomeFirstResponder];
         
-        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleMembershipExists] text:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextMembershipExists], _candidate.name, [_origo displayName]]];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Already member", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ is already a member of %@.", @""), _candidate.name, [_origo displayName]]];
         
         _candidate = nil;
         candidateIsEligible = NO;
@@ -268,7 +268,7 @@ static NSInteger const kButtonTagContinue = 1;
         [actionSheet addButtonWithTitle:[residence shortAddress]];
     }
     
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonNewAddress] tag:kButtonTagNewAddress];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"New address", @"") tag:kButtonTagNewAddress];
     
     [actionSheet show];
 }
@@ -280,11 +280,11 @@ static NSInteger const kButtonTagContinue = 1;
     NSString *differentValueButtonTitle = nil;
     
     if (multiValueField == _mobilePhoneField) {
-        promptFormat = [OStrings stringForKey:strSheetPromptMultiValuePhone];
-        differentValueButtonTitle = [OStrings stringForKey:strButtonDifferentNumber];
+        promptFormat = NSLocalizedString(@"%@ is registered with more than one mobile phone number. Which number do you want to provide?", @"");
+        differentValueButtonTitle = NSLocalizedString(@"A different number", @"");
     } else if (multiValueField == _emailField) {
-        promptFormat = [OStrings stringForKey:strSheetPromptMultiValueEmail];
-        differentValueButtonTitle = [OStrings stringForKey:strButtonDifferentEmail];
+        promptFormat = NSLocalizedString(@"%@ is registered with more than one email address. Which address do you want to provide?", @"");
+        differentValueButtonTitle = NSLocalizedString(@"A different address", @"");
     }
     
     [multiValueField becomeFirstResponder];
@@ -303,7 +303,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)presentUserEmailChangeAlert
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleUserEmailChange] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextUserEmailChange], _member.email, _emailField.value] delegate:self cancelButtonTitle:[OStrings stringForKey:strButtonCancel] otherButtonTitles:[OStrings stringForKey:strButtonContinue], nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"New email address", @"") message:[NSString stringWithFormat:NSLocalizedString(@"You are about to change your email address from %@ to %@ ...", @""), _member.email, _emailField.value] delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"Continue", @""), nil];
     alert.tag = kAlertTagEmailChange;
     
     [alert show];
@@ -323,17 +323,17 @@ static NSInteger const kButtonTagContinue = 1;
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
     
     if ([_member isUser]) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonChangePassword] tag:kButtonTagChangePassword];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Change password", @"") tag:kButtonTagChangePassword];
     }
     
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
     
     if ([_member isWardOfUser]) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEditRelations] tag:kButtonTagEditRelations];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit relations", @"") tag:kButtonTagEditRelations];
     }
     
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddAddress] tag:kButtonTagAddAddress];
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonCorrectGender] tag:kButtonTagCorrectGender];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Add an address", @"") tag:kButtonTagAddAddress];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Correct gender", @"") tag:kButtonTagCorrectGender];
     
     [actionSheet show];
 }
@@ -343,11 +343,11 @@ static NSInteger const kButtonTagContinue = 1;
 {
     [self.view endEditing:YES];
     
-    if ([[[OState s].pivotMember fullMemberships] count] > 1) {
+    if ([[OState s].pivotMember hasPeersNotInOrigo:_origo]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagLookupType];
         
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonRetrieveFromContacts]];
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonRetrieveFromOrigo]];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"")];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Origo", @"")];
         
         [actionSheet show];
     } else {
@@ -413,17 +413,17 @@ static NSInteger const kButtonTagContinue = 1;
     self.state.target = _member ? _member : (self.meta ? self.meta : _origo);
     
     if ([self targetIs:kTargetUser]) {
-        self.title = [OStrings stringForKey:strViewTitleAboutMe];
+        self.title = NSLocalizedString(@"About me", @"");
     } else if ([self targetIs:kTargetGuardian]) {
         self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
     } else if ([self targetIs:kTargetContact]) {
-        self.title = [OStrings stringForKey:_origo.type withKeyPrefix:kKeyPrefixContactTitle];
+        self.title = NSLocalizedString(_origo.type, kKeyPrefixContactTitle);
     } else if ([self targetIs:kTargetParentContact]) {
-        self.title = [OStrings stringForKey:strTermParentContact];
+        self.title = NSLocalizedString(@"Parent contact", @"");
     } else if (_member) {
         self.title = [_member isHousemateOfUser] ? [_member givenName] : _member.name;
     } else {
-        self.title = [OStrings stringForKey:_origo.type withKeyPrefix:kKeyPrefixNewMemberTitle];
+        self.title = NSLocalizedString(_origo.type, kKeyPrefixNewMemberTitle);
     }
     
     if ([self actionIs:kActionDisplay]) {
@@ -505,10 +505,10 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    NSString *text = [OStrings stringForKey:strFooterOrigoInviteAlert];
+    NSString *text = NSLocalizedString(@"A notification will be sent to the email address you provide.", @"");
     
     if ([_origo isJuvenile] && [self targetIs:kTargetGuardian]) {
-        text = [NSString stringWithFormat:@"%@\n\n%@", [OStrings stringForKey:strFooterJuvenileOrigoGuardian], text];
+        text = [NSString stringWithFormat:@"%@\n\n%@", NSLocalizedString(@"Before you can register a minor, you must register his or her parents/guardians.", @""), text];
     }
     
     return text;
@@ -549,7 +549,7 @@ static NSInteger const kButtonTagContinue = 1;
         if ([_member.email isEqualToString:_emailField.value]) {
             [self persistMember];
         } else {
-            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:[OStrings stringForKey:strAlertTitleEmailChangeFailed] message:[NSString stringWithFormat:[OStrings stringForKey:strAlertTextEmailChangeFailed], _emailField.value] delegate:nil cancelButtonTitle:[OStrings stringForKey:strButtonOK] otherButtonTitles:nil];
+            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Activation failed", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ could not be activated ...", @""), _emailField.value] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
             [failedEmailChangeAlert show];
             
             [self toggleEditMode];
@@ -979,7 +979,7 @@ static NSInteger const kButtonTagContinue = 1;
                         
                         [self examineMember];
                     } else {
-                        [OAlert showAlertWithTitle:[OStrings stringForKey:strAlertTitleDataConflict] text:[OStrings stringForKey:strAlertTextDataConflict]];
+                        [OAlert showAlertWithTitle:NSLocalizedString(@"Incorrect details", @"") text:NSLocalizedString(@"The details you have provided do not match our records ...", @"")];
                         
                         [self.detailCell resumeFirstResponder];
                     }

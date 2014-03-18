@@ -6,23 +6,19 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
-
-extern NSString * const kHTTPMethodGET;
-extern NSString * const kHTTPMethodPOST;
-extern NSString * const kHTTPMethodDELETE;
-extern NSString * const kHTTPHeaderLocation;
+#import <Foundation/Foundation.h>
 
 extern NSInteger const kHTTPStatusOK;
 extern NSInteger const kHTTPStatusCreated;
 extern NSInteger const kHTTPStatusNoContent;
 extern NSInteger const kHTTPStatusMultiStatus;
 extern NSInteger const kHTTPStatusNotModified;
-
 extern NSInteger const kHTTPStatusErrorRangeStart;
 extern NSInteger const kHTTPStatusUnauthorized;
 extern NSInteger const kHTTPStatusNotFound;
 extern NSInteger const kHTTPStatusInternalServerError;
+
+extern NSString * const kHTTPHeaderLocation;
 
 @interface OConnection : NSObject<NSURLConnectionDataDelegate, NSURLConnectionDelegate> {
 @private
@@ -43,7 +39,6 @@ extern NSInteger const kHTTPStatusInternalServerError;
 + (void)activateWithEmail:(NSString *)email password:(NSString *)password;
 + (void)sendActivationCodeToEmail:(NSString *)email;
 
-+ (void)fetchStrings;
 + (void)replicateEntities:(NSArray *)entities;
 + (void)lookupMemberWithIdentifier:(NSString *)identifier;
 

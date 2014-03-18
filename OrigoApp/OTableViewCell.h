@@ -6,11 +6,9 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
+#import <UIKit/UIKit.h>
 
 extern NSString * const kReuseIdentifierList;
-extern NSString * const kReuseIdentifierUserSignIn;
-extern NSString * const kReuseIdentifierUserActivation;
 
 extern NSString * const kViewKeySuffixLabel;
 extern NSString * const kViewKeySuffixInputField;

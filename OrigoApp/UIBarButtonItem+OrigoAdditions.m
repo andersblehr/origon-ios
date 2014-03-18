@@ -79,25 +79,25 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (UIBarButtonItem *)nextButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonNext] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(moveToNextInputField)];
+    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Next", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(moveToNextInputField)];
 }
 
 
 + (UIBarButtonItem *)cancelButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonCancel] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didCancelEditing)];
+    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didCancelEditing)];
 }
 
 
 + (UIBarButtonItem *)doneButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonDone] style:UIBarButtonItemStyleDone target:[OState s].viewController action:@selector(didFinishEditing)];
+    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"") style:UIBarButtonItemStyleDone target:[OState s].viewController action:@selector(didFinishEditing)];
 }
 
 
 + (UIBarButtonItem *)signOutButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:[OStrings stringForKey:strButtonSignOut] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(signOut)];
+    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Log out", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(signOut)];
 }
 
 

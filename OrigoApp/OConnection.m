@@ -8,21 +8,25 @@
 
 #import "OConnection.h"
 
-NSString * const kHTTPMethodGET = @"GET";
-NSString * const kHTTPMethodPOST = @"POST";
-NSString * const kHTTPMethodDELETE = @"DELETE";
-NSString * const kHTTPHeaderLocation = @"Location";
 
 NSInteger const kHTTPStatusOK = 200;
 NSInteger const kHTTPStatusCreated = 201;
 NSInteger const kHTTPStatusNoContent = 204;
 NSInteger const kHTTPStatusMultiStatus = 207;
 NSInteger const kHTTPStatusNotModified = 304;
-
 NSInteger const kHTTPStatusErrorRangeStart = 400;
 NSInteger const kHTTPStatusUnauthorized = 401;
 NSInteger const kHTTPStatusNotFound = 404;
 NSInteger const kHTTPStatusInternalServerError = 500;
+
+NSString * const kHTTPHeaderLocation = @"Location";
+
+static NSString * const kHTTPMethodGET = @"GET";
+static NSString * const kHTTPMethodPOST = @"POST";
+static NSString * const kHTTPMethodDELETE = @"DELETE";
+
+static NSString * const kProtocolHTTP = @"http://";
+static NSString * const kProtocolHTTPS = @"https://";
 
 static NSString * const kOrigoDevServer = @"localhost:8888";
 //static NSString * const kOrigoDevServer = @"enceladus.local:8888";
@@ -39,7 +43,6 @@ static NSString * const kCharsetUTF8 = @"utf-8";
 static NSString * const kMediaTypeJSONUTF8 = @"application/json;charset=utf-8";
 static NSString * const kMediaTypeJSON = @"application/json";
 
-static NSString * const kRootStrings = @"strings";
 static NSString * const kRootAuth = @"auth";
 static NSString * const kRootModel = @"model";
 
@@ -114,7 +117,7 @@ static NSString * const kURLParameterIdentifier = @"id";
             OLogBreakage(@"Missing headers and/or parameters in request, aborting.");
         }
     } else {
-        [self connection:nil didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:[OStrings stringForKey:strAlertTextNoInternet] forKey:NSLocalizedDescriptionKey]]];
+        [self connection:nil didFailWithError:[NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorNotConnectedToInternet userInfo:[NSDictionary dictionaryWithObject:NSLocalizedString(@"No internet connection.", @"") forKey:NSLocalizedDescriptionKey]]];
     }
 }
 
@@ -222,26 +225,6 @@ static NSString * const kURLParameterIdentifier = @"id";
 }
 
 
-#pragma mark - Fetching UI strings
-
-+ (void)fetchStrings
-{
-    id delegate = nil;
-    
-    OConnection *connection = [[OConnection alloc] initWithRoot:kRootStrings path:[OMeta m].language];
-    
-    if ([OStrings hasStrings]) {
-        [connection setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
-        delegate = [OStrings class];
-    } else {
-        [connection setValue:[OCrypto timestampToken] forURLParameter:kURLParameterAuthToken];
-        delegate = [OState s].viewController;
-    }
-    
-    [connection performHTTPMethod:kHTTPMethodGET entities:nil delegate:delegate];
-}
-
-
 #pragma mark - Entity replication
 
 + (void)replicateEntities:(NSArray *)entities
@@ -309,7 +292,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
-    OLogDebug(@"Server request completed. HTTP status code: %ld", _HTTPResponse.statusCode);
+    OLogDebug(@"Server request completed. HTTP status code: %ld", (long)_HTTPResponse.statusCode);
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 

@@ -30,7 +30,7 @@ static NSInteger const kSectionKeySignOut = 1;
 
 - (void)initialiseState
 {
-    self.title = [OStrings stringForKey:strViewTitleSettings];
+    self.title = NSLocalizedString(@"Settings", @"");
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
     
     self.state.target = kTargetUser;
@@ -77,12 +77,12 @@ static NSInteger const kSectionKeySignOut = 1;
     if (sectionKey == kSectionKeyValues) {
         NSString *key = [self dataAtIndexPath:indexPath];
         
-        cell.textLabel.text = [OStrings stringForKey:key withKeyPrefix:kKeyPrefixSettingLabel];
+        cell.textLabel.text = NSLocalizedString(key, kKeyPrefixSettingLabel);
         cell.detailTextLabel.text = [[OMeta m].settings displayValueForSettingKey:key];
     } else if (sectionKey == kSectionKeySignOut) {
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.textLabel.textColor = [UIColor redColor];
-        cell.textLabel.text = [[OStrings stringForKey:strButtonSignOut] stringByAppendingString:[OMeta m].user.name separator:kSeparatorSpace];
+        cell.textLabel.text = [NSLocalizedString(@"Log out", @"") stringByAppendingString:[OMeta m].user.name separator:kSeparatorSpace];
     }
 }
 

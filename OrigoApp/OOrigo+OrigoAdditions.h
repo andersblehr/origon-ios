@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
+#import <Foundation/Foundation.h>
 
 extern NSString * const kOrigoTypeMemberRoot;
 extern NSString * const kOrigoTypeResidence;
@@ -16,6 +16,17 @@ extern NSString * const kOrigoTypeOrganisation;
 extern NSString * const kOrigoTypeOther;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeSchoolClass;
+
+extern NSString * const kContactRoleTeacher;
+extern NSString * const kContactRoleTopicTeacher;
+extern NSString * const kContactRoleSpecialEducationTeacher;
+extern NSString * const kContactRoleAssistantTeacher;
+extern NSString * const kContactRoleHeadTeacher;
+extern NSString * const kContactRoleChair;
+extern NSString * const kContactRoleDeputyChair;
+extern NSString * const kContactRoleTreasurer;
+extern NSString * const kContactRoleCoach;
+extern NSString * const kContactRoleAssistantCoach;
 
 @interface OOrigo (OrigoAdditions)
 

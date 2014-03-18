@@ -134,7 +134,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
                 } else if ([entity hasValueForKey:key]) {
                     height += [OTextView heightWithText:[entity valueForKey:key] blueprint:self];
                 } else {
-                    height += [OTextView heightWithText:[OStrings stringForKey:key withKeyPrefix:kKeyPrefixPlaceholder] blueprint:self];
+                    height += [OTextView heightWithText:NSLocalizedString(key, kKeyPrefixPlaceholder) blueprint:self];
                 }
             } else {
                 height += [UIFont detailFieldHeight];

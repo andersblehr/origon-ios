@@ -17,6 +17,17 @@ NSString * const kOrigoTypeOther = @"other";
 NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
 NSString * const kOrigoTypeSchoolClass = @"schoolClass";
 
+NSString * const kContactRoleTeacher = @"teacher";
+NSString * const kContactRoleTopicTeacher = @"topicTeacher";
+NSString * const kContactRoleSpecialEducationTeacher = @"specialEducationTeacher";
+NSString * const kContactRoleAssistantTeacher = @"assistantTeacher";
+NSString * const kContactRoleHeadTeacher = @"headTeacher";
+NSString * const kContactRoleChair = @"chair";
+NSString * const kContactRoleDeputyChair = @"deputyChair";
+NSString * const kContactRoleTreasurer = @"treasurer";
+NSString * const kContactRoleCoach = @"coach";
+NSString * const kContactRoleAssistantCoach = @"assistantCoach";
+
 
 @implementation OOrigo (OrigoAdditions)
 

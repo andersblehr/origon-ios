@@ -13,7 +13,6 @@ CGFloat const kContentWidth = 300.f;
 
 static CGFloat const kLogoHeight = 110.f;
 static CGFloat const kLogoFontSize = 30.f;
-
 static CGFloat const kLineToHeaderHeightFactor = 1.5f;
 static CGFloat const kFooterHeadRoom = 6.f;
 

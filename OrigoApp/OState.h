@@ -6,18 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
-
-extern NSString * const kIdentifierAuth;
-extern NSString * const kIdentifierCalendar;
-extern NSString * const kIdentifierMember;
-extern NSString * const kIdentifierMessageList;
-extern NSString * const kIdentifierOldOrigo;
-extern NSString * const kIdentifierOrigo;
-extern NSString * const kIdentifierOrigoList;
-extern NSString * const kIdentifierTaskList;
-extern NSString * const kIdentifierValueList;
-extern NSString * const kIdentifierValuePicker;
+#import <Foundation/Foundation.h>
 
 extern NSString * const kActionLoad;
 extern NSString * const kActionSignIn;
@@ -29,7 +18,6 @@ extern NSString * const kActionDisplay;
 extern NSString * const kActionEdit;
 extern NSString * const kActionInput;
 
-extern NSString * const kTargetStrings;
 extern NSString * const kTargetEmail;
 extern NSString * const kTargetUser;
 extern NSString * const kTargetWard;

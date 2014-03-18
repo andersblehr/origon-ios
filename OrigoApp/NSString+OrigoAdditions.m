@@ -8,7 +8,8 @@
 
 #import "NSString+OrigoAdditions.h"
 
-NSString * const kSeparatorAmpersand = @" & ";
+NSString * const kCharacters0_9 = @"0123456789";
+
 NSString * const kSeparatorComma = @", ";
 NSString * const kSeparatorHash = @"#";
 NSString * const kSeparatorNewline = @"\n";

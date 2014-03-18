@@ -35,15 +35,15 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)addNewMemberButtonsToActionSheet:(OActionSheet *)actionSheet
 {
-    [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddMemberButton] tag:kButtonTagAddMember];
+    [actionSheet addButtonWithTitle:NSLocalizedString(_origoType, kKeyPrefixAddMemberButton) tag:kButtonTagAddMember];
     
-    if ([[[OState s].pivotMember fullMemberships] count] > 1) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddFromOrigo] tag:kButtonTagAddFromOrigo];
+    if ([[OState s].pivotMember hasPeersNotInOrigo:_origo]) {
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other origos", @"") tag:kButtonTagAddFromOrigo];
     }
     
     if ([_origo isOrganised] && [_origo isJuvenile]) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixAddContactButton] tag:kButtonTagAddContact];
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonAddParentContact] tag:kButtonTagAddParentContact];
+        [actionSheet addButtonWithTitle:NSLocalizedString(_origoType, kKeyPrefixAddContactButton) tag:kButtonTagAddContact];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Add parent contact", @"") tag:kButtonTagAddParentContact];
     }
 }
 
@@ -83,9 +83,9 @@ static NSInteger const kButtonTagGuardian = 101;
     }
     
     if (![_origo userIsMember] && [_membership.member isWardOfUser]) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonOtherGuardian] tag:kButtonTagGuardian];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Other guardian", @"") tag:kButtonTagGuardian];
     } else {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonNewHousemate] tag:kButtonTagHousemate];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"New housemate", @"") tag:kButtonTagHousemate];
     }
     
     [actionSheet show];
@@ -99,20 +99,20 @@ static NSInteger const kButtonTagGuardian = 101;
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
     
     if ([self canEdit]) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEdit] tag:kButtonTagEdit];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
         
         if ([_origo isOrganised] && [_origo hasContacts]) {
-            [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonEditRoles] tag:kButtonTagEditRoles];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit roles", @"") tag:kButtonTagEditRoles];
         }
         
         [self addNewMemberButtonsToActionSheet:actionSheet];
     }
         
     if ([_origo.address hasValue]) {
-        [actionSheet addButtonWithTitle:[OStrings stringForKey:strButtonShowInMap] tag:kButtonTagShowInMap];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Show in map", @"") tag:kButtonTagShowInMap];
     }
     
-    [actionSheet addButtonWithTitle:[NSString stringWithFormat:[OStrings stringForKey:strButtonAbout], [_origo displayName]] tag:kButtonTagAbout];
+    [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"About %@", @""), [_origo displayName]] tag:kButtonTagAbout];
     
     [actionSheet show];
 }
@@ -163,7 +163,7 @@ static NSInteger const kButtonTagGuardian = 101;
         self.state.target = _origo;
         
         if ([_origo isOfType:kOrigoTypeResidence] && ![[OState s] aspectIsHousehold]) {
-            self.title = [OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixOrigoTitle];
+            self.title = NSLocalizedString(_origoType, kKeyPrefixOrigoTitle);
         } else {
             self.title = [_origo displayName];
         }
@@ -175,7 +175,7 @@ static NSInteger const kButtonTagGuardian = 101;
         _member = self.data;
         _origoType = self.meta;
         
-        self.title = [OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixNewOrigoTitle];
+        self.title = NSLocalizedString(_origoType, kKeyPrefixNewOrigoTitle);
         
         [self.state setTarget:_origoType aspectCarrier:_member];
     }
@@ -225,7 +225,7 @@ static NSInteger const kButtonTagGuardian = 101;
     if (sectionKey == kSectionKeyContacts) {
         text = [[OLanguage nouns][_contact_][pluralIndefinite] capitalizedString];
     } else if (sectionKey == kSectionKeyMembers) {
-        text = [OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixMemberListTitle];
+        text = NSLocalizedString(_origoType, kKeyPrefixMemberListTitle);
     }
     
     return text;
@@ -234,7 +234,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    return [OStrings stringForKey:_origoType withKeyPrefix:kKeyPrefixFooter];
+    return NSLocalizedString(_origoType, kKeyPrefixFooter);
 }
 
 
@@ -387,7 +387,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [OStrings stringForKey:strButtonDeleteMember];
+    return NSLocalizedString(@"Remove", @"");
 }
 
 

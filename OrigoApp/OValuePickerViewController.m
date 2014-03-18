@@ -74,7 +74,7 @@ static NSInteger const kSegmentedTitleIndexMinors = 1;
 
     if ([self targetIsMemberVariant]) {
         if ([self.data isCrossGenerational]) {
-            _segmentedTitle = [self.navigationItem addSegmentedTitle:[OStrings stringForKey:strSegmentedTitleAdultsMinors]];
+            _segmentedTitle = [self.navigationItem addSegmentedTitle:NSLocalizedString(@"Adults|Minors", @"")];
             
             if ([[OState s].pivotMember isJuvenile]) {
                 _segmentedTitle.selectedSegmentIndex = kSegmentedTitleIndexMinors;
@@ -91,7 +91,7 @@ static NSInteger const kSegmentedTitleIndexMinors = 1;
             self.navigationItem.rightBarButtonItem.enabled = NO;
         }
     } else {
-        self.title = [OStrings stringForKey:_settingKey withKeyPrefix:kKeyPrefixSettingTitle];
+        self.title = NSLocalizedString(_settingKey, kKeyPrefixSettingTitle);
         
         _settings = [OMeta m].settings;
         _settingKey = self.state.target;

@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
+#import <UIKit/UIKit.h>
 
 @interface ONavigationController : UINavigationController
 

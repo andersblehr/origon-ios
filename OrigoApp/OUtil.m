@@ -47,7 +47,7 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
                 commaSeparatedList = [NSMutableString stringWithString:stringItem];
             } else {
                 if (conjoinLastItem && (stringItem == [stringItems lastObject])) {
-                    [commaSeparatedList appendString:[OStrings stringForKey:strSeparatorAnd]];
+                    [commaSeparatedList appendString:NSLocalizedString(@" and ", @"")];
                 } else {
                     [commaSeparatedList appendString:kSeparatorComma];
                 }

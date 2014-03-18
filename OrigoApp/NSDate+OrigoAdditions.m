@@ -94,7 +94,7 @@ static NSCalendar *_calendar = nil;
 
 - (NSString *)localisedAgeString
 {
-    return [NSString stringWithFormat:[OStrings stringForKey:strFormatAge], [self yearsBeforeNow]];
+    return [NSString stringWithFormat:NSLocalizedString(@"%d years", @""), [self yearsBeforeNow]];
 }
 
 

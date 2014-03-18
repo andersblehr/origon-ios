@@ -8,10 +8,9 @@
 
 #import "OTextView.h"
 
-NSInteger const kTextViewMaximumLines = 5;
-
-static NSInteger const kTextViewMinimumEditLines = 2;
+static NSInteger const kTextViewMaximumLines = 5;
 static NSInteger const kTextViewMinimumLines = 1;
+static NSInteger const kTextViewMinimumEditLines = 2;
 
 static CGFloat const kContentInsetTop = -6.f;
 static CGFloat const kContentInsetLeft = -4.f;
@@ -136,7 +135,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
         _key = key;
         _blueprint = blueprint;
         _textWidth = [OTextView textWidthWithBlueprint:_blueprint];
-        _placeholder = [OStrings stringForKey:_key withKeyPrefix:kKeyPrefixPlaceholder];
+        _placeholder = NSLocalizedString(_key, kKeyPrefixPlaceholder);
         _supportsMultiLineText = YES;
         
         if ([OMeta systemIs_iOS6x]) {

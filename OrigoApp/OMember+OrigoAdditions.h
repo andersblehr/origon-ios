@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
+#import <Foundation/Foundation.h>
 
 @interface OMember (OrigoAdditions)
 
@@ -40,6 +40,7 @@
 - (BOOL)isJuvenile;
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOlderThan:(NSInteger)age;
+- (BOOL)hasPeersNotInOrigo:(OOrigo *)origo;
 - (BOOL)hasParent:(OMember *)member;
 - (BOOL)hasParentWithGender:(NSString *)gender;
 - (BOOL)guardiansAreParents;

@@ -341,7 +341,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (BOOL)isUser
 {
-    return ((self == [OMeta m].user) || [[OState s] targetIs:kTargetUser]);
+    return (self == [OMeta m].user || [self.email isEqualToString:[OMeta m].userEmail]);
 }
 
 
@@ -418,6 +418,18 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 - (BOOL)isOlderThan:(NSInteger)age
 {
     return ([self.dateOfBirth yearsBeforeNow] >= age);
+}
+
+
+- (BOOL)hasPeersNotInOrigo:(OOrigo *)origo
+{
+    NSMutableSet *peers = [[self peers] mutableCopy];
+    
+    for (OMembership *membership in [origo fullMemberships]) {
+        [peers removeObject:membership.member];
+    }
+    
+    return ([peers count] > 0);
 }
 
 

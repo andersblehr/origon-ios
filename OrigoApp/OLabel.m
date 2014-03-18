@@ -14,7 +14,7 @@
 
 + (CGFloat)widthWithKey:(NSString *)key keyPrefix:(NSString *)keyPrefix
 {
-    return [[OStrings stringForKey:key withKeyPrefix:keyPrefix] sizeWithFont:[UIFont detailFont] maxWidth:CGFLOAT_MAX].width;
+    return [NSLocalizedString(key, keyPrefix) sizeWithFont:[UIFont detailFont] maxWidth:CGFLOAT_MAX].width;
 }
 
 
@@ -46,7 +46,7 @@
         self.backgroundColor = [UIColor clearColor];
         self.font = [UIFont detailFont];
         self.hidden = YES;
-        self.text = [OStrings stringForKey:key withKeyPrefix:kKeyPrefixLabel];
+        self.text = NSLocalizedString(key, kKeyPrefixLabel);
         self.textAlignment = centred ? NSTextAlignmentCenter : NSTextAlignmentRight;
         self.textColor = [UIColor labelTextColour];
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -67,9 +67,9 @@
     
     if ([OValidator isAlternatingLabelKey:_key]) {
         if (_useAlternateText) {
-            self.text = [OStrings stringForKey:_key withKeyPrefix:kKeyPrefixAlternateLabel];
+            self.text = NSLocalizedString(_key, kKeyPrefixAlternateLabel);
         } else {
-            self.text = [OStrings stringForKey:_key withKeyPrefix:kKeyPrefixLabel];
+            self.text = NSLocalizedString(_key, kKeyPrefixLabel);
         }
     }
 }

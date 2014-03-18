@@ -56,32 +56,27 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)initialiseInstance
 {
-    if ([OStrings hasStrings]) {
-        if ([[OMeta m] userIsAllSet] || _isModal) {
-            if ([self isEntityViewController]) {
-                _state.action = _isModal ? kActionRegister : kActionDisplay;
-            } else if ([self isListViewController]) {
-                _state.action = kActionList;
-            } else if ([self isPickerViewController]) {
-                _state.action = kActionPick;
-            }
-            
-            [_instance initialiseState];
-            [_instance initialiseData];
-            
-            for (NSNumber *sectionKey in [_sectionData allKeys]) {
-                _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
-            }
-            
-            _lastSectionKey = [_sectionKeys lastObject];
-            _didInitialise = YES;
-        } else {
-            _state.action = kActionLoad;
-            _state.target = kTargetUser;
+    if ([[OMeta m] userIsAllSet] || _isModal) {
+        if ([self isEntityViewController]) {
+            _state.action = _isModal ? kActionRegister : kActionDisplay;
+        } else if ([self isListViewController]) {
+            _state.action = kActionList;
+        } else if ([self isPickerViewController]) {
+            _state.action = kActionPick;
         }
+        
+        [_instance initialiseState];
+        [_instance initialiseData];
+        
+        for (NSNumber *sectionKey in [_sectionData allKeys]) {
+            _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
+        }
+        
+        _lastSectionKey = [_sectionKeys lastObject];
+        _didInitialise = YES;
     } else {
         _state.action = kActionLoad;
-        _state.target = kTargetStrings;
+        _state.target = kTargetUser;
     }
 }
 
@@ -191,14 +186,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)didImplicitlyCancelEditing
-{
-    if ([self actionIs:kActionEdit]) {
-        [self didCancelEditing];
-    }
-}
-
-
 - (void)didCancelEditing
 {
     if (self.isModal) {
@@ -206,6 +193,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         [_dismisser dismissModalViewController:self reload:NO];
     } else if ([self actionIs:kActionEdit]) {
+        [_detailCell readEntity];
         [self toggleEditMode];
     }
 }
@@ -663,23 +651,18 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     OLogState;
     
-    if ([self actionIs:kActionLoad] && [self targetIs:kTargetStrings]) {
-        [self.activityIndicator startAnimating];
-        [OConnection fetchStrings];
-    } else {
-        if ([[OMeta m] userIsSignedIn]) {
-            if (_detailCell && _detailCell.editable && !_isHidden) {
-                [_detailCell prepareForInput];
-                
-                if ([self actionIs:kActionRegister]) {
-                    if (![_detailCell hasInvalidInputField] && !_wasHidden) {
-                        [[_detailCell nextInputField] becomeFirstResponder];
-                    }
+    if ([[OMeta m] userIsSignedIn]) {
+        if (_detailCell && _detailCell.editable && !_isHidden) {
+            [_detailCell prepareForInput];
+            
+            if ([self actionIs:kActionRegister]) {
+                if (![_detailCell hasInvalidInputField] && !_wasHidden) {
+                    [[_detailCell nextInputField] becomeFirstResponder];
                 }
             }
-        } else if (![_identifier isEqualToString:kIdentifierAuth]) {
-            [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reinstantiatedRootViewController];
         }
+    } else if (![_identifier isEqualToString:kIdentifierAuth]) {
+        [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reinstantiatedRootViewController];
     }
 }
 
@@ -1043,16 +1026,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     if (self.activityIndicator.isAnimating) {
         [self.activityIndicator stopAnimating];
-    }
-    
-    if ([self actionIs:kActionLoad] && [self targetIs:kTargetStrings]) {
-        [[OStrings class] didCompleteWithResponse:response data:data];
-        
-        if ([[OMeta m] userIsSignedIn]) {
-            [self viewWillAppear:NO];
-        } else {
-            [self presentModalViewControllerWithIdentifier:kIdentifierAuth data:nil];
-        }
     }
 }
 

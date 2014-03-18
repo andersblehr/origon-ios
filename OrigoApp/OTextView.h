@@ -6,9 +6,7 @@
 //  Copyright (c) 2012 Rhelba Creations. All rights reserved.
 //
 
-#import "OrigoApp.h"
-
-extern NSInteger const kTextViewMaximumLines;
+#import <UIKit/UIKit.h>
 
 @interface OTextView : UITextView<OTextInput, UITextViewDelegate> {
 @private

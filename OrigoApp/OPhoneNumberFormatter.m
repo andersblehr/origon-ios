@@ -8,6 +8,16 @@
 
 #import "OPhoneNumberFormatter.h"
 
+static NSString * const kCountryCodesByCountryCallingCode = @"1:US;33:FR;45:DK;46:SE;47:NO";
+static NSString * const kInternationalTemplate = @"+{1|20|21#|22#|23#|24#|25#|26#|27|29#|30|31|32|33|34|35#|36|37#|8#|39|40|41|42#|43|44|45|46|47|48|49|50#|51|52|53|54|55|56|57|58|59#|60|61|62|63|64|65|66|67#|68#|69#|7|80#|81|82|84|85#|86|878|88#|90|91|92|93|94|95|96#|97#|98|99#} #@";
+static NSString * const kPhoneNumberTemplatesByRegion =
+@"US|AS|AI|AG|BS|BB|BM|VG|KY|DM|DO|GD|GU|JM|MS|MP|PR|KN|LC|VC|SX|TT|TC|VI:[[[+]1 ]^(N##) ]^N##-####;" \
+    "en_CA:[[[+]1-]^N##-]^N##-####;" \
+    "fr_CA:[[[+]1 ]^N## ]^N##-####;" \
+    "FR:{+33 |^0}# ## ## ## ##;" \
+    "DK:[+45 ]^N# ## ## ##;" \
+    "NO:[+47 ]^{{4|8|9}## ## ###|N# ## ## ##}";
+
 static NSString * const kTemplateGeneric = @"^[0]#* #@";
 static NSString * const kFormatTokens = @"^*@+0123456789#N-()/ ";
 static NSString * const kWildcardTokens = @"*@";
@@ -33,7 +43,6 @@ static NSMutableDictionary *_countryCodesByCountryCallingCode = nil;
 static NSMutableDictionary *_templatesByRegionIdentifier = nil;
 static NSMutableDictionary *_formattersByCountryCode = nil;
 
-NSString * const kCharacters0_9 = @"0123456789";
 
 
 @implementation OPhoneNumberFormatter
@@ -44,7 +53,7 @@ NSString * const kCharacters0_9 = @"0123456789";
 {
     _countryCodesByCountryCallingCode = [NSMutableDictionary dictionary];
     
-    NSArray *mappings = [[OStrings stringForKey:metaCountryCodesByCountryCallingCode] componentsSeparatedByString:kSeparatorList];
+    NSArray *mappings = [kCountryCodesByCountryCallingCode componentsSeparatedByString:kSeparatorList];
     
     for (NSString *mapping in mappings) {
         NSArray *keyAndValue = [mapping componentsSeparatedByString:kSeparatorMapping];
@@ -58,7 +67,7 @@ NSString * const kCharacters0_9 = @"0123456789";
 {
     _templatesByRegionIdentifier = [NSMutableDictionary dictionary];
     
-    NSArray *mappings = [[OStrings stringForKey:metaPhoneNumberTemplatesByRegion] componentsSeparatedByString:kSeparatorList];
+    NSArray *mappings = [kPhoneNumberTemplatesByRegion componentsSeparatedByString:kSeparatorList];
     
     for (NSString *mapping in mappings) {
         NSArray *keysAndValue = [mapping componentsSeparatedByString:kSeparatorMapping];
@@ -367,7 +376,7 @@ NSString * const kCharacters0_9 = @"0123456789";
     if (self) {
         if (!_formattersByCountryCode) {
             _formattersByCountryCode = [NSMutableDictionary dictionary];
-            _internationalFormats = [self formatsFromTemplate:[OStrings stringForKey:metaInternationalTemplate]];
+            _internationalFormats = [self formatsFromTemplate:kInternationalTemplate];
             
             [self loadCountryCallingCodeToCountryCodeMappings];
             [self loadRegionToTemplateMappings];

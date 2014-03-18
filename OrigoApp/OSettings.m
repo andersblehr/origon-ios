@@ -2,8 +2,8 @@
 //  OSettings.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 21.11.13.
-//  Copyright (c) 2013 Rhelba Creations. All rights reserved.
+//  Created by Anders Blehr on 14.03.14.
+//  Copyright (c) 2014 Rhelba Source. All rights reserved.
 //
 
 #import "OSettings.h"
@@ -12,6 +12,7 @@
 
 @implementation OSettings
 
+@dynamic useEnglish;
 @dynamic user;
 
 @end

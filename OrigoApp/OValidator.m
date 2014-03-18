@@ -8,48 +8,6 @@
 
 #import "OValidator.h"
 
-NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
-NSString * const kDefaultsKeyDirtyEntities = @"origo.state.dirtyEntities";
-NSString * const kDefaultsKeyStringDate = @"origo.strings.date";
-NSString * const kDefaultsKeyStringLanguage = @"origo.strings.language";
-
-NSString * const kJSONKeyActivationCode = @"activationCode";
-NSString * const kJSONKeyDeviceId = @"deviceId";
-NSString * const kJSONKeyEmail = @"email";
-NSString * const kJSONKeyEntityClass = @"entityClass";
-NSString * const kJSONKeyPasswordHash = @"passwordHash";
-
-NSString * const kInterfaceKeyActivate = @"activate";
-NSString * const kInterfaceKeyActivationCode = @"activationCode";
-NSString * const kInterfaceKeyAuthEmail = @"authEmail";
-NSString * const kInterfaceKeyPassword = @"password";
-NSString * const kInterfaceKeyPurpose = @"purpose";
-NSString * const kInterfaceKeyResidenceName = @"residenceName";
-NSString * const kInterfaceKeyRepeatPassword = @"repeatPassword";
-NSString * const kInterfaceKeySignIn = @"signIn";
-
-NSString * const kPropertyKeyAddress = @"address";
-NSString * const kPropertyKeyCountry = @"country";
-NSString * const kPropertyKeyDateOfBirth = @"dateOfBirth";
-NSString * const kPropertyKeyDescriptionText = @"descriptionText";
-NSString * const kPropertyKeyEmail = @"email";
-NSString * const kPropertyKeyEntityId = @"entityId";
-NSString * const kPropertyKeyFatherId = @"fatherId";
-NSString * const kPropertyKeyGender = @"gender";
-NSString * const kPropertyKeyHashCode = @"hashCode";
-NSString * const kPropertyKeyIsAwaitingDeletion = @"isAwaitingDeletion";
-NSString * const kPropertyKeyIsExpired = @"isExpired";
-NSString * const kPropertyKeyIsMinor = @"isMinor";
-NSString * const kPropertyKeyMobilePhone = @"mobilePhone";
-NSString * const kPropertyKeyMotherId = @"motherId";
-NSString * const kPropertyKeyName = @"name";
-NSString * const kPropertyKeyOrigoId = @"origoId";
-NSString * const kPropertyKeyPasswordHash = @"passwordHash";
-NSString * const kPropertyKeyTelephone = @"telephone";
-
-NSString * const kRelationshipKeyMember = @"member";
-NSString * const kRelationshipKeyOrigo = @"origo";
-
 static NSArray *_nameKeys = nil;
 static NSArray *_dateKeys = nil;
 static NSArray *_emailKeys = nil;
@@ -173,7 +131,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     id defaultValue = nil;
     
     if ([self isDefaultableKey:key]) {
-        defaultValue = [OStrings stringForKey:key withKeyPrefix:kKeyPrefixDefault];
+        defaultValue = NSLocalizedString(key, kKeyPrefixDefault);
     }
     
     return defaultValue;
