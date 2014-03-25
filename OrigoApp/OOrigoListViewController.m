@@ -116,7 +116,7 @@ static NSInteger const kSectionKeyWards = 2;
             [OAlert showAlertWithTitle:NSLocalizedString(@"Incomplete registration", @"") text:NSLocalizedString(@"You must complete your registration before you can start using Origo.", @"")];
         }
         
-        [self presentModalViewControllerWithIdentifier:kIdentifierMember data:[[OMeta m].user initialResidency]];
+        [self presentModalViewControllerWithIdentifier:kIdentifierMember data:[[OMeta m].user ensureResidency]];
     }
 }
 

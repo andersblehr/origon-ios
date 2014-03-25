@@ -61,6 +61,12 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
 }
 
 
++ (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode
+{
+    return [[NSLocale currentLocale] displayNameForKey:NSLocaleCountryCode value:countryCode];
+}
+
+
 + (NSString *)givenNameFromFullName:(NSString *)fullName
 {
     NSString *givenName = nil;

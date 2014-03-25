@@ -53,7 +53,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (OMembership *)initialResidency
+- (OMembership *)ensureResidency
 {
     OMembership *residency = [[self residencies] anyObject];
     

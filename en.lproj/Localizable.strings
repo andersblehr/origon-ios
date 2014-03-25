@@ -86,6 +86,7 @@
 "[add member] other" = "Add member";
 
 // Contact registration button titles
+"[add contact] organisation" = "Add role";
 "[add contact] preschoolClass" = "Add teacher";
 "[add contact] schoolClass" = "Add teacher";
 "[add contact] team" = "Add coach";
@@ -188,6 +189,7 @@
 "Done" = "Done";
 "Continue" = "Continue";
 "Cancel" = "Cancel";
+"Skip" = "Skip";
 "Log out" = "Log out";
 
 // Alerts
@@ -301,6 +303,8 @@
 "Retrieve from Origo" = "Retrieve from other origo";
 "A different number" = "A different number";
 "A different address" = "A different address";
+"None of them" = "None of them";
+
 
 // Alerts
 "Incorrect details" = "Incorrect details";
@@ -316,9 +320,10 @@
 "Who do you want to email?" = "Who do you want to email?";
 "Who do you want to text?" = "Who do you want to text?";
 "Who do you want to call?" = "Who do you want to call?";
-"strSheetPromptExistingResidence" = "%@ is already member of a household. Would you like to invite %@ to join your household as well, or do you want to merge your households into one?";
 "%@ is registered with more than one mobile phone number. Which number do you want to provide?" = "%@ is registered with more than one mobile phone number. Which number do you want to provide?";
 "%@ is registered with more than one email address. Which address do you want to provide?" = "%@ is registered with more than one email address. Which address do you want to provide?";
+"%@ is registered with more than one home address. Which address do you want to provide?" = "%@ is registered with more than one home address. Which address do you want to provide?";
+"%@ is registered with more than one home phone number. Which number do you want to provide?" = "%@ is registered with more than one home phone number. Which number do you want to provide?";
 
 // Question arguments
 "a woman or a man" = "a woman or a man";

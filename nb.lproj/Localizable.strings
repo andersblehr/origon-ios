@@ -86,6 +86,7 @@
 "[add member] other" = "Legg til medlem";
 
 // Contact registration button titles
+"[add contact] organisation" = "Legg til rolle";
 "[add contact] preschoolClass" = "Legg til lærer/assistent";
 "[add contact] schoolClass" = "Legg til lærer";
 "[add contact] team" = "Legg til trener";
@@ -187,6 +188,7 @@
 "Next" = "Neste";
 "Done" = "Ferdig";
 "Continue" = "Fortsett";
+"Skip" = "Hopp over";
 "Cancel" = "Avbryt";
 "Log out" = "Logg ut";
 
@@ -300,6 +302,7 @@
 "Retrieve from Origo" = "Hent fra annet origo";
 "A different number" = "Et annet nummer";
 "A different address" = "En annen adresse";
+"None of them" = "Ingen av dem";
 
 // Alerts
 "Incorrect details" = "Uriktige opplysninger";
@@ -315,9 +318,10 @@
 "Who do you want to email?" = "Hvem vil du sende epost til?";
 "Who do you want to text?" = "Hvem vil du sende tekstmelding til?";
 "Who do you want to call?" = "Hvem vil du ringe?";
-"strSheetPromptExistingResidence" = "%@ er allerede medlem av en husstand. Vil du invitere %@ til også å bli med i din husstand, eller ønsker du å slå husstandene deres sammen til én?";
 "%@ is registered with more than one mobile phone number. Which number do you want to provide?" = "%@ er registrert med mer enn ett mobilnummer. Hvilket nummer vil du oppgi?";
 "%@ is registered with more than one email address. Which address do you want to provide?" = "%@ er registrert med mer enn én epostadresse. Hvilken adresse vil du oppgi?";
+"%@ is registered with more than one home address. Which address do you want to provide?" = "%@ er registrert med mer enn én hjemmeadresse. Hvilken addresse vil du oppgi?";
+"%@ is registered with more than one home phone number. Which number do you want to provide?" = "%@ er registrert med mer en ett hjemmetelefonnummer. Hvilket nummer vil du oppgi?";
 
 // Question arguments
 "a woman or a man" = "kvinne eller mann";

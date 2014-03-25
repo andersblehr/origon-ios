@@ -11,7 +11,7 @@
 @interface OMember (OrigoAdditions)
 
 - (OMembership *)rootMembership;
-- (OMembership *)initialResidency;
+- (OMembership *)ensureResidency;
 - (NSSet *)allMemberships;
 - (NSSet *)fullMemberships;
 - (NSSet *)residencies;

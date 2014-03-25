@@ -11,10 +11,16 @@
 
 @implementation NSLocale (OrigoAdditions)
 
++ (NSString *)countryCode
+{
+    return [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
+}
+
+
 + (NSString *)regionIdentifier
 {
     NSArray *multiLingualCountryCodes = @[@"CA"];
-    NSString *regionIdentifier = [[NSLocale currentLocale] objectForKey:NSLocaleCountryCode];
+    NSString *regionIdentifier = [NSLocale countryCode];
     
     if ([multiLingualCountryCodes containsObject:regionIdentifier]) {
         regionIdentifier = [[NSLocale currentLocale] objectForKey:NSLocaleIdentifier];

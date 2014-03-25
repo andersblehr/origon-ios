@@ -11,6 +11,7 @@
 @interface OUtil : NSObject
 
 + (NSString *)commaSeparatedListOfItems:(NSArray *)items conjoinLastItem:(BOOL)conjoinLastItem;
++ (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode;
 + (NSString *)givenNameFromFullName:(NSString *)fullName;
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;
 

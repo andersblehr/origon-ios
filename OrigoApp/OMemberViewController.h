@@ -21,6 +21,8 @@
     
     OMember *_candidate;
     NSDictionary *_candidateDictionary;
+    NSMutableArray *_candidateAddresses;
+    NSMutableArray *_candidateHomeNumbers;
     NSArray *_candidateResidences;
     
     ORegistrantExaminer *_examiner;

@@ -41,6 +41,7 @@
     </entity>
     <entity name="OOrigo" representedClassName="OOrigo" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="countryCode" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="descriptionText" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="isForMinors" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
@@ -83,7 +84,7 @@
         <element name="ODevice" positionX="0" positionY="0" width="128" height="90"/>
         <element name="OMember" positionX="0" positionY="0" width="128" height="253"/>
         <element name="OMembership" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="OOrigo" positionX="0" positionY="0" width="128" height="195"/>
+        <element name="OOrigo" positionX="0" positionY="0" width="128" height="210"/>
         <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="180"/>
         <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
         <element name="OSettings" positionX="0" positionY="0" width="128" height="75"/>

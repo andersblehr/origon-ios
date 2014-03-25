@@ -28,7 +28,7 @@
 
 #import "Reachability.h"
 
-@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
+@class OActionSheet, OActivityIndicator, OAddressFacade, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
 @class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
 
 #import "OConnectionDelegate.h"
@@ -72,6 +72,7 @@ typedef UIView<OTextInput> OInputField;
 
 #import "OActionSheet.h"
 #import "OActivityIndicator.h"
+#import "OAddressFacade.h"
 #import "OAlert.h"
 #import "OConnection.h"
 #import "OCrypto.h"

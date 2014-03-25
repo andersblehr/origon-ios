@@ -41,9 +41,12 @@ static NSInteger const kButtonTagGuardian = 101;
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other origos", @"") tag:kButtonTagAddFromOrigo];
     }
     
-    if ([_origo isOrganised] && [_origo isJuvenile]) {
+    if ([_origo isOrganised]) {
         [actionSheet addButtonWithTitle:NSLocalizedString(_origoType, kKeyPrefixAddContactButton) tag:kButtonTagAddContact];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Add parent contact", @"") tag:kButtonTagAddParentContact];
+        
+        if ([_origo isJuvenile]) {
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add parent contact", @"") tag:kButtonTagAddParentContact];
+        }
     }
 }
 
@@ -185,6 +188,8 @@ static NSInteger const kButtonTagGuardian = 101;
 - (void)initialiseData
 {
     if ([self actionIs:kActionRegister]) {
+        self.cancelImpliesSkip = (_origo && ![self aspectIsHousehold]);
+        
         [self setData:_origo ? _origo : kRegistrationCell forSectionWithKey:kSectionKeyOrigo];
         [self setData:@[_member] forSectionWithKey:kSectionKeyMembers];
     } else {

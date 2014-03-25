@@ -27,6 +27,12 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
++ (UIBarButtonItem *)cancelButtonWithTitle:(NSString *)title
+{
+    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didCancelEditing)];
+}
+
+
 #pragma mark - Bar button shorthands
 
 + (UIBarButtonItem *)settingsButton
@@ -85,7 +91,13 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (UIBarButtonItem *)cancelButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didCancelEditing)];
+    return [UIBarButtonItem cancelButtonWithTitle:NSLocalizedString(@"Cancel", @"")];
+}
+
+
++ (UIBarButtonItem *)skipButton
+{
+    return [UIBarButtonItem cancelButtonWithTitle:NSLocalizedString(@"Skip", @"")];
 }
 
 
