@@ -24,7 +24,10 @@ extern NSString * const kCustomData;
     NSMutableDictionary *_sectionData;
     NSMutableDictionary *_sectionCounts;
     NSMutableArray *_sectionIndexTitles;
-    
+
+    NSMutableDictionary *_sectionHeaderLabels;
+    NSMutableDictionary *_sectionFooterLabels;
+
     NSNumber *_lastSectionKey;
     NSIndexPath *_selectedIndexPath;
     OActivityIndicator *_activityIndicator;
@@ -50,12 +53,14 @@ extern NSString * const kCustomData;
 
 @property (nonatomic) BOOL usesPlainTableViewStyle;
 @property (nonatomic) BOOL usesSectionIndexTitles;
+@property (nonatomic) BOOL cancelImpliesSkip;
 @property (nonatomic) BOOL canEdit;
 
 @property (strong, nonatomic) id meta;
 @property (strong, nonatomic) id data;
 @property (strong, nonatomic) id returnData;
 @property (strong, nonatomic) OTableViewCell *detailCell;
+@property (strong, nonatomic) OInputField *nextInputField;
 
 @property (weak, nonatomic) id<OModalViewControllerDismisser> dismisser;
 @property (weak, nonatomic) id<OEntityObserver> observer;
@@ -78,6 +83,9 @@ extern NSString * const kCustomData;
 - (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber;
 - (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath;
 
+- (void)setHeaderText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey;
+- (void)setFooterText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey;
+
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue;
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data;
 
@@ -85,8 +93,11 @@ extern NSString * const kCustomData;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier dismisser:(id)dismisser;
 
-- (void)endEditing;
 - (void)toggleEditMode;
+- (void)didCancelEditing;
+- (void)didFinishEditing;
+- (void)endEditing;
+
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
 - (void)signOut;

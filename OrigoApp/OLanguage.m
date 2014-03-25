@@ -27,10 +27,11 @@ static NSString * const kPartOfSpeechVerbs = @"be";
 static NSString * const kPartOfSpeechNouns = @"origo;father;mother;parent;guardian;contact;address";
 static NSString * const kPartOfSpeechPronouns = @"I;you;he;she";
 
+static NSString * const kPlaceholderSubject = @"{subject}";
+static NSString * const kPlaceholderVerb = @"{verb}";
+static NSString * const kPlaceholderArgument = @"{argument}";
+
 static NSString * const kWordPrefix = @"word";
-static NSString * const kSubjectPlaceholder = @"{subject}";
-static NSString * const kVerbPlaceholder = @"{verb}";
-static NSString * const kArgumentPlaceholder = @"{argument}";
 static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
 
 static OLanguage *language = nil;
@@ -204,9 +205,9 @@ static OLanguage *language = nil;
     NSString *verbString = [self verbStringWithVerb:verb subject:subject isQuestion:YES];
     
     NSString *question = NSLocalizedString(@"questionTemplate", @"");
-    question = [question stringByReplacingSubstring:kSubjectPlaceholder withString:subjectString];
-    question = [question stringByReplacingSubstring:kVerbPlaceholder withString:verbString];
-    question = [question stringByReplacingSubstring:kArgumentPlaceholder withString:argument];
+    question = [question stringByReplacingSubstring:kPlaceholderSubject withString:subjectString];
+    question = [question stringByReplacingSubstring:kPlaceholderVerb withString:verbString];
+    question = [question stringByReplacingSubstring:kPlaceholderArgument withString:argument];
     
     return [question stringByCapitalisingFirstLetter];
 }

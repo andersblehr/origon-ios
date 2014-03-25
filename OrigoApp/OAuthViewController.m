@@ -105,13 +105,10 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     if ([self actionIs:kActionSignIn]) {
         [OMeta m].user.passwordHash = [OCrypto passwordHashWithPassword:_passwordField.value];
     } else if ([self actionIs:kActionActivate]) {
-        [[OMeta m] userDidSignUp];
         [OMeta m].user.passwordHash = _authInfo[kJSONKeyPasswordHash];
         
-        if (![[[OMeta m].user residencies] count]) {
-            OOrigo *residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
-            [residence addMember:[OMeta m].user];
-        }
+        [[OMeta m] userDidSignUp];
+        [[OMeta m].user ensureResidency];
         
         [ODefaults setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
     }
@@ -264,7 +261,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             [OConnection activateWithEmail:[OMeta m].userEmail password:_repeatPasswordField.value];
         } else if ([self targetIs:kTargetEmail]) {
             [OMeta m].userEmail = self.data;
-            [self.dismisser dismissModalViewController:self reload:NO];
+            [self.dismisser dismissModalViewController:self reload:YES];
         }
     }
 }
@@ -278,13 +275,13 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (BOOL)inputValue:(id)inputValue isValidForKey:(NSString *)key
 {
-    BOOL valueIsValid = NO;
+    BOOL isValid = NO;
     
     if ([key isEqualToString:kInterfaceKeyActivationCode]) {
         NSString *activationCode = _authInfo[kJSONKeyActivationCode];
         NSString *activationCodeAsEntered = [inputValue lowercaseString];
         
-        valueIsValid = [activationCodeAsEntered isEqualToString:activationCode];
+        isValid = [activationCodeAsEntered isEqualToString:activationCode];
     } else if ([key isEqualToString:kInterfaceKeyRepeatPassword]) {
         NSString *passwordHashAsEntered = [OCrypto passwordHashWithPassword:inputValue];
         NSString *passwordHash = nil;
@@ -295,14 +292,14 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             passwordHash = [OMeta m].user.passwordHash;
         }
         
-        valueIsValid = [passwordHashAsEntered isEqualToString:passwordHash];
+        isValid = [passwordHashAsEntered isEqualToString:passwordHash];
     }
     
-    if (!valueIsValid) {
+    if (!isValid) {
         [self handleFailedActivationAttempt];
     }
     
-    return valueIsValid;
+    return isValid;
 }
 
 

@@ -186,29 +186,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)didCancelEditing
-{
-    if (self.isModal) {
-        _returnData = nil;
-        
-        [_dismisser dismissModalViewController:self reload:NO];
-    } else if ([self actionIs:kActionEdit]) {
-        [_detailCell readEntity];
-        [self toggleEditMode];
-    }
-}
-
-
-- (void)didFinishEditing
-{
-    if ([self actionIs:kActionInput]) {
-        [_detailCell processInput];
-    } else {
-        [_dismisser dismissModalViewController:self reload:YES];
-    }
-}
-
-
 #pragma mark - State introspection
 
 - (BOOL)aspectIsHousehold
@@ -381,6 +358,24 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+#pragma mark - Modifying header & footer text
+
+- (void)setHeaderText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey
+{
+    if ([self instanceHasHeaderForSectionWithKey:sectionKey]) {
+        [_sectionHeaderLabels[@(sectionKey)] setText:text];
+    }
+}
+
+
+- (void)setFooterText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey
+{
+    if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
+        [_sectionFooterLabels[@(sectionKey)] setText:text];
+    }
+}
+
+
 #pragma mark - Segue handling
 
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue
@@ -439,18 +434,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Utility methods
-
-- (void)endEditing
-{
-    [self.view endEditing:YES];
-    
-    if ([self actionIs:kActionRegister]) {
-        self.detailCell.editable = NO;
-        self.navigationItem.rightBarButtonItem = _doneButton;
-    }
-}
-
+#pragma mark - Edit mode transitions
 
 - (void)toggleEditMode
 {
@@ -471,7 +455,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         self.navigationItem.leftBarButtonItem = _cancelButton;
         
-        [[self.detailCell nextInputField] becomeFirstResponder];
+        if (_nextInputField) {
+            [_nextInputField becomeFirstResponder];
+            _nextInputField = nil;
+        } else {
+            [[_detailCell nextInputField] becomeFirstResponder];
+        }
     } else if ([self actionIs:kActionDisplay]) {
         self.navigationItem.rightBarButtonItem = rightButton;
         self.navigationItem.leftBarButtonItem = leftButton;
@@ -485,6 +474,41 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     OLogState;
 }
 
+
+- (void)didCancelEditing
+{
+    if (self.isModal) {
+        _returnData = nil;
+        [_dismisser dismissModalViewController:self reload:NO];
+    } else if ([self actionIs:kActionEdit]) {
+        [_detailCell readEntity];
+        [self toggleEditMode];
+    }
+}
+
+
+- (void)didFinishEditing
+{
+    if ([self actionIs:kActionInput]) {
+        [_detailCell processInput];
+    } else {
+        [_dismisser dismissModalViewController:self reload:YES];
+    }
+}
+
+
+- (void)endEditing
+{
+    [self.view endEditing:YES];
+    
+    if ([self actionIs:kActionRegister]) {
+        self.detailCell.editable = NO;
+        self.navigationItem.rightBarButtonItem = _doneButton;
+    }
+}
+
+
+#pragma mark - Utility methods
 
 - (void)reloadSections
 {
@@ -536,9 +560,19 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [_instance initialiseData];
     
+    BOOL sectionExists = ([_sectionCounts[@(sectionKey)] integerValue] > 0);
+    
     _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
     
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:[self sectionNumberForSectionKey:sectionKey]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    BOOL sectionIsEmpty = (![_sectionCounts[@(sectionKey)] integerValue]);
+    
+    if (sectionExists && !sectionIsEmpty) {
+        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:[self sectionNumberForSectionKey:sectionKey]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } else if (!sectionExists && !sectionIsEmpty) {
+        [self.tableView insertSections:[NSIndexSet indexSetWithIndex:[self sectionNumberForSectionKey:sectionKey]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    } else if (sectionExists && sectionIsEmpty) {
+        [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:[self sectionNumberForSectionKey:sectionKey]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
 }
 
 
@@ -574,6 +608,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _sectionKeys = [NSMutableArray array];
     _sectionData = [NSMutableDictionary dictionary];
     _sectionCounts = [NSMutableDictionary dictionary];
+    _sectionHeaderLabels = [NSMutableDictionary dictionary];
+    _sectionFooterLabels = [NSMutableDictionary dictionary];
     _sectionIndexTitles = [NSMutableArray array];
     _dirtySections = [NSMutableSet set];
     _detailSectionKey = NSNotFound;
@@ -592,10 +628,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _nextButton = [UIBarButtonItem nextButton];
         _doneButton = [UIBarButtonItem doneButton];
         
-        if (![[OMeta m].user isActive]) {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButton];
+        if ([[OMeta m].user isActive]) {
+            if (_cancelImpliesSkip) {
+                self.navigationItem.leftBarButtonItem = [UIBarButtonItem skipButton];
+            } else {
+                self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
+            }
         } else {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButton];
         }
         
         [self.navigationItem appendRightBarButtonItem:_nextButton];
@@ -754,7 +794,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     if (shouldRelayDismissal) {
-        [self.dismisser dismissModalViewController:viewController reload:reload];
+        if (!reload && viewController.cancelImpliesSkip) {
+            [self.dismisser dismissModalViewController:viewController reload:YES];
+        } else {
+            [self.dismisser dismissModalViewController:viewController reload:reload];
+        }
     } else {
         if ([_instance respondsToSelector:@selector(willDismissModalViewController:)]) {
             [_instance willDismissModalViewController:viewController];
@@ -913,6 +957,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         view = [tableView headerViewWithText:[_instance textForHeaderInSectionWithKey:sectionKey]];
     }
     
+    if (view) {
+        [_sectionHeaderLabels setObject:view.subviews[0] forKey:@(sectionKey)];
+    }
+    
     return view;
 }
 
@@ -924,6 +972,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
         view = [tableView footerViewWithText:[self footerTextForSectionWithKey:sectionKey]];
+    }
+    
+    if (view) {
+        [_sectionFooterLabels setObject:view.subviews[0] forKey:@(sectionKey)];
     }
     
     return view;

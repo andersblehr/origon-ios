@@ -16,6 +16,7 @@
 + (UIBarButtonItem *)lookupButton;
 + (UIBarButtonItem *)nextButton;
 + (UIBarButtonItem *)cancelButton;
++ (UIBarButtonItem *)skipButton;
 + (UIBarButtonItem *)doneButton;
 + (UIBarButtonItem *)signOutButton;
 + (UIBarButtonItem *)sendTextButton;

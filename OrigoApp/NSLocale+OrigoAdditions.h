@@ -10,6 +10,7 @@
 
 @interface NSLocale (OrigoAdditions)
 
++ (NSString *)countryCode;
 + (NSString *)regionIdentifier;
 
 @end

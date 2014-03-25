@@ -109,7 +109,9 @@ NSString * const kSeparatorAlternates = @"|";
 {
     NSMutableString *reworkedString = [NSMutableString stringWithString:self];
     
-    [reworkedString replaceOccurrencesOfString:substring withString:string options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    if (substring && string) {
+        [reworkedString replaceOccurrencesOfString:substring withString:string options:NSLiteralSearch range:NSMakeRange(0, [self length])];
+    }
     
     return reworkedString;
 }
