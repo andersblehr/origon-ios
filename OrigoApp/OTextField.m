@@ -30,7 +30,7 @@ static CGFloat const kTextInsetY = 1.2f;
 {
     if (_value && [_value isKindOfClass:[NSString class]]) {
         if ([OValidator isPhoneNumberKey:_key]) {
-            _value = [[OMeta m].phoneNumberFormatter formatPhoneNumber:_value];
+            _value = [OPhoneNumberFormatter formatPhoneNumber:_value canonicalise:NO];
         } else if (![OValidator isPasswordKey:_key]) {
             _value = [_value removeRedundantWhitespace];
         }
@@ -51,7 +51,7 @@ static CGFloat const kTextInsetY = 1.2f;
             if (self.editable) {
                 self.text = _value;
             } else {
-                self.text = [[OMeta m].phoneNumberFormatter canonicalisePhoneNumber:_value];
+                self.text = [OPhoneNumberFormatter formatPhoneNumber:_value canonicalise:YES];
             }
         } else if ([OValidator isAgeKey:_key]) {
             if (self.editable) {
@@ -70,7 +70,7 @@ static CGFloat const kTextInsetY = 1.2f;
 
 - (void)phoneNumberDidChange
 {
-    _value = [[OMeta m].phoneNumberFormatter formatPhoneNumber:self.text];
+    _value = [OPhoneNumberFormatter formatPhoneNumber:self.text canonicalise:NO];
     
     UITextRange *range = [self selectedTextRange];
     NSInteger offset = [self offsetFromPosition:self.endOfDocument toPosition:range.end];

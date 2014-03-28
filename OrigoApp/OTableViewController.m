@@ -180,6 +180,28 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Selector implementations
 
+- (void)didCancelEditing
+{
+    if (self.isModal) {
+        _returnData = nil;
+        [_dismisser dismissModalViewController:self reload:NO];
+    } else if ([self actionIs:kActionEdit]) {
+        [_detailCell readEntity];
+        [self toggleEditMode];
+    }
+}
+
+
+- (void)didFinishEditing
+{
+    if ([self actionIs:kActionInput]) {
+        [_detailCell processInput];
+    } else {
+        [_dismisser dismissModalViewController:self reload:YES];
+    }
+}
+
+
 - (void)moveToNextInputField
 {
     [[_detailCell nextInputField] becomeFirstResponder];
@@ -206,7 +228,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Setting section data
+#pragma mark - Handling section data
 
 - (void)setData:(NSArray *)data sectionIndexLabelKey:(NSString *)sectionIndexLabelKey
 {
@@ -306,8 +328,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Accessing section data
-
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath
 {
     return [self dataAtRow:indexPath.row inSectionWithKey:[self sectionKeyForIndexPath:indexPath]];
@@ -362,17 +382,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)setHeaderText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey
 {
-    if ([self instanceHasHeaderForSectionWithKey:sectionKey]) {
-        [_sectionHeaderLabels[@(sectionKey)] setText:text];
-    }
+    [_sectionHeaderLabels[@(sectionKey)] setText:text];
 }
 
 
 - (void)setFooterText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey
 {
-    if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
-        [_sectionFooterLabels[@(sectionKey)] setText:text];
-    }
+    [_sectionFooterLabels[@(sectionKey)] setText:text];
 }
 
 
@@ -475,28 +491,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)didCancelEditing
-{
-    if (self.isModal) {
-        _returnData = nil;
-        [_dismisser dismissModalViewController:self reload:NO];
-    } else if ([self actionIs:kActionEdit]) {
-        [_detailCell readEntity];
-        [self toggleEditMode];
-    }
-}
-
-
-- (void)didFinishEditing
-{
-    if ([self actionIs:kActionInput]) {
-        [_detailCell processInput];
-    } else {
-        [_dismisser dismissModalViewController:self reload:YES];
-    }
-}
-
-
 - (void)endEditing
 {
     [self.view endEditing:YES];
@@ -561,17 +555,21 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [_instance initialiseData];
     
     BOOL sectionExists = ([_sectionCounts[@(sectionKey)] integerValue] > 0);
+    BOOL sectionIsEmpty = (![_sectionData[@(sectionKey)] count]);
     
-    _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
-    
-    BOOL sectionIsEmpty = (![_sectionCounts[@(sectionKey)] integerValue]);
-    
-    if (sectionExists && !sectionIsEmpty) {
-        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:[self sectionNumberForSectionKey:sectionKey]] withRowAnimation:UITableViewRowAnimationAutomatic];
-    } else if (!sectionExists && !sectionIsEmpty) {
-        [self.tableView insertSections:[NSIndexSet indexSetWithIndex:[self sectionNumberForSectionKey:sectionKey]] withRowAnimation:UITableViewRowAnimationAutomatic];
-    } else if (sectionExists && sectionIsEmpty) {
-        [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:[self sectionNumberForSectionKey:sectionKey]] withRowAnimation:UITableViewRowAnimationAutomatic];
+    if (sectionExists || !sectionIsEmpty) {
+        _sectionCounts[@(sectionKey)] = @([_sectionData[@(sectionKey)] count]);
+        
+        NSInteger sectionNumber = [self sectionNumberForSectionKey:sectionKey];
+        
+        if (sectionExists && !sectionIsEmpty) {
+            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:sectionNumber] withRowAnimation:UITableViewRowAnimationAutomatic];
+        } else if (!sectionExists && !sectionIsEmpty) {
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:sectionNumber] withRowAnimation:UITableViewRowAnimationAutomatic];
+        } else if (sectionExists && sectionIsEmpty) {
+            [_sectionKeys removeObject:@(sectionKey)];
+            [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionNumber] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
     }
 }
 

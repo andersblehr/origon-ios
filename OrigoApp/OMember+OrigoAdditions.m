@@ -524,7 +524,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (NSString *)shortDetails
 {
-    NSString *details = [self.mobilePhone hasValue] ? [[OMeta m].phoneNumberFormatter canonicalisePhoneNumber:self.mobilePhone] : self.email;
+    NSString *details = [self.mobilePhone hasValue] ? [OPhoneNumberFormatter formatPhoneNumber:self.mobilePhone canonicalise:YES] : self.email;
     
     if ([self isJuvenile]) {
         if (details) {
