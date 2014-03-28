@@ -297,9 +297,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if (sectionKey == 0) {
             _detailSectionKey = sectionKey;
             
-            if ([data isKindOfClass:[OReplicatedEntity class]]) {
+            if ([data isKindOfClass:_entityClass]) {
                 _entity = data;
-                _entityClass = _entityClass ? _entityClass : [_entity class];
             }
         }
     }
@@ -597,9 +596,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     if ([self isEntityViewController]) {
-        NSString *longName = NSStringFromClass([self class]);
+        NSString *viewControllerName = NSStringFromClass([self class]);
         
-        _entityClass = NSClassFromString([longName substringToIndex:[longName rangeOfString:kViewControllerSuffixDefault].location]);
+        _entityClass = NSClassFromString([viewControllerName substringToIndex:[viewControllerName rangeOfString:kViewControllerSuffixDefault].location]);
     }
     
     _identifier = self.restorationIdentifier;
@@ -836,7 +835,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
         if (_detailCell) {
             height = [_detailCell.blueprint cellHeightWithEntity:_entity cell:_detailCell];
-        } else if (_entityClass) {
+        } else if (_entity) {
             height = [[[OTableViewCellBlueprint alloc] initWithState:_state] cellHeightWithEntity:_entity cell:nil];
         } else if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
             height = [[[OTableViewCellBlueprint alloc] initWithReuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]] cellHeightWithEntity:nil cell:nil];
