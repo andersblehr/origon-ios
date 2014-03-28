@@ -8,13 +8,14 @@
 
 #import "OPhoneNumberFormatter.h"
 
-static NSString * const kCountryCodesByCountryCallingCode = @"1:US;33:FR;45:DK;46:SE;47:NO";
+static NSString * const kRegionIdentifiersByCountryCallingCode = @"1:US|en_CA|fr_CA|AS|AI|AG|BS|BB|BM|VG|KY|DM|DO|GD|GU|JM|MS|MP|PR|KN|LC|VC|SX|TT|TC|VI;33:FR;34:ES;45:DK;46:SE;47:NO";
 static NSString * const kInternationalTemplate = @"+{1|20|21#|22#|23#|24#|25#|26#|27|29#|30|31|32|33|34|35#|36|37#|8#|39|40|41|42#|43|44|45|46|47|48|49|50#|51|52|53|54|55|56|57|58|59#|60|61|62|63|64|65|66|67#|68#|69#|7|80#|81|82|84|85#|86|878|88#|90|91|92|93|94|95|96#|97#|98|99#} #@";
-static NSString * const kPhoneNumberTemplatesByRegion =
+static NSString * const kTemplatesByRegionCode =
 @"US|AS|AI|AG|BS|BB|BM|VG|KY|DM|DO|GD|GU|JM|MS|MP|PR|KN|LC|VC|SX|TT|TC|VI:[[[+]1 ]^(N##) ]^N##-####;" \
     "en_CA:[[[+]1-]^N##-]^N##-####;" \
     "fr_CA:[[[+]1 ]^N## ]^N##-####;" \
     "FR:{+33 |^0}# ## ## ## ##;" \
+    "ES:[+34 ]^{6|7|8|9}## ### ###;" \
     "DK:[+45 ]^N# ## ## ##;" \
     "NO:[+47 ]^{{4|8|9}## ## ###|N# ## ## ##}";
 
@@ -39,9 +40,9 @@ static NSString * const kTokenWildcardTolerant = @"@";
 
 static NSArray *_internationalFormats;
 static NSArray *_supportedRegionIdentifiers = nil;
-static NSMutableDictionary *_countryCodesByCountryCallingCode = nil;
+static NSMutableDictionary *_regionIdentifiersByCountryCallingCode = nil;
 static NSMutableDictionary *_templatesByRegionIdentifier = nil;
-static NSMutableDictionary *_formattersByCountryCode = nil;
+static NSMutableDictionary *_formattersByRegionIdentifier = nil;
 
 
 
@@ -49,16 +50,16 @@ static NSMutableDictionary *_formattersByCountryCode = nil;
 
 #pragma mark - Auxiliary methods
 
-- (void)loadCountryCallingCodeToCountryCodeMappings
+- (void)loadCountryCallingCodeToRegionIdentifierMappings
 {
-    _countryCodesByCountryCallingCode = [NSMutableDictionary dictionary];
+    _regionIdentifiersByCountryCallingCode = [NSMutableDictionary dictionary];
     
-    NSArray *mappings = [kCountryCodesByCountryCallingCode componentsSeparatedByString:kSeparatorList];
+    NSArray *mappings = [kRegionIdentifiersByCountryCallingCode componentsSeparatedByString:kSeparatorList];
     
     for (NSString *mapping in mappings) {
-        NSArray *keyAndValue = [mapping componentsSeparatedByString:kSeparatorMapping];
+        NSArray *keyAndValues = [mapping componentsSeparatedByString:kSeparatorMapping];
         
-        _countryCodesByCountryCallingCode[keyAndValue[0]] = keyAndValue[1];
+        _regionIdentifiersByCountryCallingCode[keyAndValues[0]] = [keyAndValues[1] componentsSeparatedByString:kSeparatorAlternates];
     }
 }
 
@@ -67,7 +68,7 @@ static NSMutableDictionary *_formattersByCountryCode = nil;
 {
     _templatesByRegionIdentifier = [NSMutableDictionary dictionary];
     
-    NSArray *mappings = [kPhoneNumberTemplatesByRegion componentsSeparatedByString:kSeparatorList];
+    NSArray *mappings = [kTemplatesByRegionCode componentsSeparatedByString:kSeparatorList];
     
     for (NSString *mapping in mappings) {
         NSArray *keysAndValue = [mapping componentsSeparatedByString:kSeparatorMapping];
@@ -79,32 +80,6 @@ static NSMutableDictionary *_formattersByCountryCode = nil;
     }
     
     _supportedRegionIdentifiers = [_templatesByRegionIdentifier allKeys];
-}
-
-
-- (NSString *)countryCodeFromPhoneNumber:(NSString *)phoneNumber
-{
-    NSString *countryCallingCode = nil;
-    
-    for (int i = 1; !countryCallingCode && (i < [phoneNumber length]); i++) {
-        if ([kWhitespaceCharacters containsCharacter:[phoneNumber characterAtIndex:i]]) {
-            countryCallingCode = [phoneNumber substringWithRange:NSMakeRange(1, i - 1)];
-        }
-    }
-    
-    return countryCallingCode ? _countryCodesByCountryCallingCode[countryCallingCode] : nil;
-}
-
-
-- (OPhoneNumberFormatter *)formatterForCountryCode:(NSString *)countryCode
-{
-    if (![[_formattersByCountryCode allKeys] containsObject:countryCode]) {
-        _formattersByCountryCode[countryCode] = [[OPhoneNumberFormatter alloc] initWithRegionIdentifier:countryCode];
-    }
-    
-    OPhoneNumberFormatter *formatter = _formattersByCountryCode[countryCode];
-    
-    return (formatter != self) ? formatter : nil;
 }
 
 
@@ -237,7 +212,7 @@ static NSMutableDictionary *_formattersByCountryCode = nil;
 }
 
 
-#pragma mark - Matching phone numbers
+#pragma mark - Parsing and matching
 
 - (NSString *)flattenPhoneNumber:(NSString *)phoneNumber
 {
@@ -321,16 +296,14 @@ static NSMutableDictionary *_formattersByCountryCode = nil;
 }
 
 
-- (BOOL)matchPhoneNumber:(NSString *)phoneNumber toFormat:(NSString *)format
+- (NSString *)matchPhoneNumber:(NSString *)phoneNumber toFormat:(NSString *)format
 {
     _format = format;
     _tokenOffset = 0;
     _canonicalOffset = 0;
     _formattedPhoneNumber = [NSString string];
     
-    int i = 0;
-    
-    for (; _formattedPhoneNumber && (i < [phoneNumber length]); i++) {
+    for (int i = 0; _formattedPhoneNumber && (i < [phoneNumber length]); i++) {
         NSString *character = [phoneNumber substringWithRange:NSMakeRange(i, 1)];
         NSString *segment = [self matchCharacter:character];
         
@@ -341,29 +314,19 @@ static NSMutableDictionary *_formattersByCountryCode = nil;
         }
     }
     
-    return (_formattedPhoneNumber != nil);
+    return _formattedPhoneNumber;
 }
 
 
-- (void)matchInternationalPhoneNumber:(NSString *)phoneNumber
+- (NSString *)formatPhoneNumber:(NSString *)phoneNumber
 {
-    if (([phoneNumber length] > 1)) {
-        BOOL isInternationalPhoneNumber = NO;
-        
-        for (NSString *format in _internationalFormats) {
-            if (!isInternationalPhoneNumber) {
-                isInternationalPhoneNumber = [self matchPhoneNumber:phoneNumber toFormat:format];
-            }
-        }
-        
-        if (isInternationalPhoneNumber) {
-            NSString *countryCode = [self countryCodeFromPhoneNumber:_formattedPhoneNumber];
-            
-            if (countryCode && [_supportedRegionIdentifiers containsObject:countryCode]) {
-                _formattedPhoneNumber = [[self formatterForCountryCode:countryCode] formatPhoneNumber:phoneNumber];
-            }
-        }
+    NSString *formattedNumber = nil;
+    
+    for (int i = 0; !formattedNumber && (i < [_formats count]); i++) {
+        formattedNumber = [self matchPhoneNumber:phoneNumber toFormat:_formats[i]];
     }
+    
+    return formattedNumber ? formattedNumber : [self flattenPhoneNumber:phoneNumber];
 }
 
 
@@ -374,11 +337,11 @@ static NSMutableDictionary *_formattersByCountryCode = nil;
     self = [super init];
     
     if (self) {
-        if (!_formattersByCountryCode) {
-            _formattersByCountryCode = [NSMutableDictionary dictionary];
+        if (!_formattersByRegionIdentifier) {
+            _formattersByRegionIdentifier = [NSMutableDictionary dictionary];
             _internationalFormats = [self formatsFromTemplate:kInternationalTemplate];
             
-            [self loadCountryCallingCodeToCountryCodeMappings];
+            [self loadCountryCallingCodeToRegionIdentifierMappings];
             [self loadRegionToTemplateMappings];
         }
         
@@ -387,45 +350,70 @@ static NSMutableDictionary *_formattersByCountryCode = nil;
         } else {
             _formats = [self formatsFromTemplates:kTemplateGeneric];
         }
+        
+        _formattersByRegionIdentifier[regionIdentifier] = self;
     }
     
     return self;
 }
 
 
-- (id)init
-{
-    return [self initWithRegionIdentifier:[NSLocale regionIdentifier]];
-}
-
-
 #pragma mark - Format or canonicalise phone number
 
-- (NSString *)formatPhoneNumber:(NSString *)phoneNumber
++ (NSString *)formatPhoneNumber:(NSString *)phoneNumber canonicalise:(BOOL)canonicalise
 {
-    BOOL matchesFormat = NO;
+    OPhoneNumberFormatter *formatter = nil;
+    NSString *regionIdentifier = [NSLocale regionIdentifier];
     
-    for (int i = 0; !matchesFormat && (i < [_formats count]); i++) {
-        matchesFormat = [self matchPhoneNumber:phoneNumber toFormat:_formats[i]];
+    if (_formattersByRegionIdentifier) {
+        formatter = _formattersByRegionIdentifier[regionIdentifier];
+    } else {
+        formatter = [[OPhoneNumberFormatter alloc] initWithRegionIdentifier:regionIdentifier];
     }
     
-    if (!matchesFormat && [phoneNumber hasPrefix:kTokenPlus]) {
-        [self matchInternationalPhoneNumber:phoneNumber];
+    if ([phoneNumber hasPrefix:kTokenPlus] && ([phoneNumber length] > 1)) {
+        NSString *prefixedNumber = nil;
+        
+        for (NSString *format in _internationalFormats) {
+            if (!prefixedNumber) {
+                prefixedNumber = [formatter matchPhoneNumber:phoneNumber toFormat:format];
+            }
+        }
+        
+        if (prefixedNumber) {
+            NSString *countryCallingCode = nil;
+            
+            for (int i = 1; !countryCallingCode && (i < [prefixedNumber length]); i++) {
+                if ([kWhitespaceCharacters containsCharacter:[prefixedNumber characterAtIndex:i]]) {
+                    countryCallingCode = [prefixedNumber substringWithRange:NSMakeRange(1, i - 1)];
+                }
+            }
+            
+            if (countryCallingCode) {
+                NSArray *eligibleRegionIdentifiers = _regionIdentifiersByCountryCallingCode[countryCallingCode];
+                
+                if (![eligibleRegionIdentifiers containsObject:regionIdentifier]) {
+                    regionIdentifier = eligibleRegionIdentifiers[0];
+                }
+                
+                if ([_supportedRegionIdentifiers containsObject:regionIdentifier]) {
+                    formatter = _formattersByRegionIdentifier[regionIdentifier];
+                    
+                    if (!formatter) {
+                        formatter = [[OPhoneNumberFormatter alloc] initWithRegionIdentifier:regionIdentifier];
+                    }
+                }
+            }
+        }
     }
     
-    if (!_formattedPhoneNumber) {
-        _formattedPhoneNumber = [self flattenPhoneNumber:phoneNumber];
+    NSString *formattedNumber = [formatter formatPhoneNumber:phoneNumber];
+    
+    if (canonicalise && [regionIdentifier isEqualToString:[NSLocale regionIdentifier]]) {
+        formattedNumber = [formattedNumber substringFromIndex:formatter->_canonicalOffset];
     }
     
-    return _formattedPhoneNumber;
-}
-
-
-- (NSString *)canonicalisePhoneNumber:(NSString *)phoneNumber
-{
-    [self formatPhoneNumber:phoneNumber];
-    
-    return [_formattedPhoneNumber substringFromIndex:_canonicalOffset];
+    return formattedNumber;
 }
 
 @end

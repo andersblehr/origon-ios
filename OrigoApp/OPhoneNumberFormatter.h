@@ -20,7 +20,6 @@
     NSString *_formattedPhoneNumber;
 }
 
-- (NSString *)formatPhoneNumber:(NSString *)phoneNumber;
-- (NSString *)canonicalisePhoneNumber:(NSString *)phoneNumber;
++ (NSString *)formatPhoneNumber:(NSString *)phoneNumber canonicalise:(BOOL)canonicalise;
 
 @end

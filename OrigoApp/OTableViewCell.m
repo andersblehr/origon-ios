@@ -103,7 +103,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
         [imageButton setTranslatesAutoresizingMaskIntoConstraints:NO];
         
-        NSData *photo = [_entity asMember].photo;
+        NSData *photo = [_entity valueForKey:kPropertyKeyPhoto];
         
         if (photo) {
             [imageButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
