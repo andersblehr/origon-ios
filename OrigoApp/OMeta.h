@@ -45,7 +45,6 @@
 @property (strong, nonatomic, readonly) OSettings *settings;
 @property (strong, nonatomic, readonly) OReplicator *replicator;
 @property (strong, nonatomic, readonly) OSwitchboard *switchboard;
-@property (strong, nonatomic, readonly) OPhoneNumberFormatter *phoneNumberFormatter;
 
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 

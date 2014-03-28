@@ -387,16 +387,6 @@ static OMeta *_m = nil;
 }
 
 
-- (OPhoneNumberFormatter *)phoneNumberFormatter
-{
-    if (!_phoneNumberFormatter) {
-        _phoneNumberFormatter = [[OPhoneNumberFormatter alloc] init];
-    }
-    
-    return _phoneNumberFormatter;
-}
-
-
 - (NSManagedObjectContext *)context
 {
     return ((OAppDelegate *)[UIApplication sharedApplication].delegate).managedObjectContext;

@@ -62,7 +62,9 @@
 		5C77067618549A2E0088C78D /* OLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C77067518549A2E0088C78D /* OLabel.m */; };
 		5C78695018116AD400020E08 /* OActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78694F18116AD400020E08 /* OActionSheet.m */; };
 		5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78FAB91654E77E009A4BCF /* OTextView.m */; };
-		5C7C4DD218E57E1F00903989 /* OEntityFacade.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C4DD118E57E1F00903989 /* OEntityFacade.m */; };
+		5C7C4DD218E57E1F00903989 /* OEntityProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C4DD118E57E1F00903989 /* OEntityProxy.m */; };
+		5C7C4DD518E58E6000903989 /* OMemberProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C4DD418E58E6000903989 /* OMemberProxy.m */; };
+		5C7C4DD818E5934800903989 /* OOrigoProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C4DD718E5934800903989 /* OOrigoProxy.m */; };
 		5C7EDE3418DB2450003AFFAF /* OAddressFacade.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7EDE3318DB2450003AFFAF /* OAddressFacade.m */; };
 		5C83DF81153F59B800BB0B29 /* OOrigo+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF80153F59B800BB0B29 /* OOrigo+OrigoAdditions.m */; };
 		5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* OMemberViewController.m */; };
@@ -236,8 +238,12 @@
 		5C78694F18116AD400020E08 /* OActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OActionSheet.m; sourceTree = "<group>"; };
 		5C78FAB81654E77E009A4BCF /* OTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTextView.h; sourceTree = "<group>"; };
 		5C78FAB91654E77E009A4BCF /* OTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextView.m; sourceTree = "<group>"; };
-		5C7C4DD018E57E1F00903989 /* OEntityFacade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEntityFacade.h; sourceTree = "<group>"; };
-		5C7C4DD118E57E1F00903989 /* OEntityFacade.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEntityFacade.m; sourceTree = "<group>"; };
+		5C7C4DD018E57E1F00903989 /* OEntityProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEntityProxy.h; sourceTree = "<group>"; };
+		5C7C4DD118E57E1F00903989 /* OEntityProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEntityProxy.m; sourceTree = "<group>"; };
+		5C7C4DD318E58E6000903989 /* OMemberProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMemberProxy.h; sourceTree = "<group>"; };
+		5C7C4DD418E58E6000903989 /* OMemberProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMemberProxy.m; sourceTree = "<group>"; };
+		5C7C4DD618E5934800903989 /* OOrigoProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoProxy.h; sourceTree = "<group>"; };
+		5C7C4DD718E5934800903989 /* OOrigoProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigoProxy.m; sourceTree = "<group>"; };
 		5C7EDE3218DB2450003AFFAF /* OAddressFacade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAddressFacade.h; sourceTree = "<group>"; };
 		5C7EDE3318DB2450003AFFAF /* OAddressFacade.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAddressFacade.m; sourceTree = "<group>"; };
 		5C83DF7F153F59B800BB0B29 /* OOrigo+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OOrigo+OrigoAdditions.h"; sourceTree = "<group>"; };
@@ -520,13 +526,17 @@
 			name = "Model Categories";
 			sourceTree = "<group>";
 		};
-		5C7C4DCF18E57DDF00903989 /* Model Façades */ = {
+		5C7C4DCF18E57DDF00903989 /* Model Proxies */ = {
 			isa = PBXGroup;
 			children = (
-				5C7C4DD018E57E1F00903989 /* OEntityFacade.h */,
-				5C7C4DD118E57E1F00903989 /* OEntityFacade.m */,
+				5C7C4DD018E57E1F00903989 /* OEntityProxy.h */,
+				5C7C4DD118E57E1F00903989 /* OEntityProxy.m */,
+				5C7C4DD318E58E6000903989 /* OMemberProxy.h */,
+				5C7C4DD418E58E6000903989 /* OMemberProxy.m */,
+				5C7C4DD618E5934800903989 /* OOrigoProxy.h */,
+				5C7C4DD718E5934800903989 /* OOrigoProxy.m */,
 			);
-			name = "Model Façades";
+			name = "Model Proxies";
 			sourceTree = "<group>";
 		};
 		5CB49DCD14881E98006EA2F8 /* Protocols */ = {
@@ -666,7 +676,7 @@
 				5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */,
 				5C36BEA51471A05700DD3CEA /* Model */,
 				5C5ED5CB14F2E95B006BBDFB /* Model Categories */,
-				5C7C4DCF18E57DDF00903989 /* Model Façades */,
+				5C7C4DCF18E57DDF00903989 /* Model Proxies */,
 				5CB49DCD14881E98006EA2F8 /* Protocols */,
 				5CB49DCE14881EC6006EA2F8 /* View Controllers */,
 				5CB49DD114882012006EA2F8 /* Third Party */,
@@ -894,6 +904,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CBB63C5146080DF00A9133A /* main.m in Sources */,
+				5C7C4DD518E58E6000903989 /* OMemberProxy.m in Sources */,
 				5CBB63C9146080DF00A9133A /* OAppDelegate.m in Sources */,
 				5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */,
 				5C2E11141469CDE5005BDE61 /* OConnection.m in Sources */,
@@ -936,8 +947,9 @@
 				5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */,
 				5CBDF78C1659175000D4681C /* OTableViewCellConstrainer.m in Sources */,
 				5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */,
+				5C7C4DD818E5934800903989 /* OOrigoProxy.m in Sources */,
 				5C198B7316D76344002D3976 /* OTableViewCellBlueprint.m in Sources */,
-				5C7C4DD218E57E1F00903989 /* OEntityFacade.m in Sources */,
+				5C7C4DD218E57E1F00903989 /* OEntityProxy.m in Sources */,
 				5C47155116E2231C000D8A86 /* OReplicator.m in Sources */,
 				5C1D6CC6172E62F500479F7D /* OLocator.m in Sources */,
 				5CC1947818DB7335007FDB52 /* OOrigo.m in Sources */,
