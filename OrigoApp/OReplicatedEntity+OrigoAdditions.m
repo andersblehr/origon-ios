@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OReplicatedEntity+OrigoAdditions.h"
@@ -36,29 +36,11 @@
 }
 
 
-#pragma mark - Casting convenience methods
-
-- (OMember *)asMember
-{
-    return [self isMemberOfClass:[OMember class]] ? (OMember *)self : nil;
-}
-
-
-- (OOrigo *)asOrigo
-{
-    return [self isMemberOfClass:[OOrigo class]] ? (OOrigo *)self : nil;
-}
-
-
-- (OMembership *)asMembership
-{
-    return [self isMemberOfClass:[OMembership class]] ? (OMembership *)self : nil;
-}
-
+#pragma mark - State string representation
 
 - (NSString *)asTarget
 {
-    return @"OVERRIDE IN SUBCLASS CATEGORY!";
+    return @"OVERRIDE IN SUBCLASS";
 }
 
 
@@ -240,7 +222,7 @@
 }
 
 
-#pragma mark - Entity expiration
+#pragma mark - Expiration handling
 
 - (BOOL)shouldReplicateOnExpiry
 {
@@ -279,6 +261,32 @@
     }
     
     return expires;
+}
+
+
+#pragma mark - OEntityProxy informal protocol conformance
+
+- (Class)entityClass
+{
+    return [self class];
+}
+
+
+- (OEntityProxy *)proxy
+{
+    return [[OEntityProxy alloc] initWithEntity:self];
+}
+
+
+- (id<OEntityFacade>)facade
+{
+    return (id<OEntityFacade>)self;
+}
+
+
+- (BOOL)isInstantiated
+{
+    return YES;
 }
 
 

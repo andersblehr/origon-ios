@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OTableViewCell.h"
@@ -172,9 +172,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Initialisation
 
-- (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
+- (id)initWithEntity:(id)entity
 {
-    self = [self initCommonsForReuseIdentifier:NSStringFromClass(entityClass) indexPath:nil];
+    self = [self initCommonsForReuseIdentifier:NSStringFromClass([entity entityClass]) indexPath:nil];
     
     if (self) {
         _entity = entity;
@@ -194,7 +194,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     self = [self initCommonsForReuseIdentifier:reuseIdentifier indexPath:indexPath];
     
     if (self && ![self isListCell]) {
-        _blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
+        _blueprint = [[OTableViewCellBlueprint alloc] initWithState:_state reuseIdentifier:reuseIdentifier];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
         
         [self addCellElements];
@@ -424,11 +424,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)readEntity
 {
     if ([self isListCell]) {
-        if ([_state isCurrent]) {
-            [_listDelegate populateListCell:self atIndexPath:_indexPath];
-        } else {
-            [_state.viewController.dirtySections addObject:@(_indexPath.section)];
-        }
+        [_listDelegate populateListCell:self atIndexPath:_indexPath];
     } else {
         for (NSString *key in _blueprint.allInputFieldKeys) {
             [self inputFieldForKey:key].value = [_entity valueForKey:key];
@@ -441,8 +437,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)writeEntity
 {
-    if (!_entity) {
-        _entity = [_inputDelegate inputEntity];
+    if (![_entity isInstantiated] && [_entity canBeInstantiated]) {
+        [_entity instantiateWithEntity:[_inputDelegate inputEntity]];
     }
     
     for (NSString *key in _blueprint.allInputFieldKeys) {
@@ -461,7 +457,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Custom accessors
 
-- (void)setInputField:(id)inputField
+- (void)setInputField:(OInputField *)inputField
 {
     if (_inputField.hasEmphasis && _blueprint.fieldsShouldDeemphasiseOnEndEdit) {
         _inputField.hasEmphasis = NO;
@@ -475,6 +471,22 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
     
     [self redrawIfNeeded];
+}
+
+
+- (void)setEditable:(BOOL)editable
+{
+    _editable = editable;
+    
+    if (![self isListCell]) {
+        for (NSString *key in _blueprint.allInputFieldKeys) {
+            [self inputFieldForKey:key].editable = editable;
+            
+            if ([OValidator isAlternatingLabelKey:key]) {
+                [self labelForKey:key].useAlternateText = editable;
+            }
+        }
+    }
 }
 
 
@@ -521,26 +533,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
     
     [super setFrame:frame];
-}
-
-
-#pragma mark - Custom accessors
-
-- (void)setEditable:(BOOL)editable
-{
-    _editable = editable;
-    
-    self.editing = editable;
-    
-    if (![self isListCell]) {
-        for (NSString *key in _blueprint.allInputFieldKeys) {
-            [self inputFieldForKey:key].editable = editable;
-            
-            if ([OValidator isAlternatingLabelKey:key]) {
-                [self labelForKey:key].useAlternateText = editable;
-            }
-        }
-    }
 }
 
 

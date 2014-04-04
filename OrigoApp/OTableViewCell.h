@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -28,16 +28,17 @@ extern CGFloat const kCellAnimationDuration;
 
 @property (strong, nonatomic, readonly) OTableViewCellBlueprint *blueprint;
 @property (strong, nonatomic, readonly) OState *state;
-@property (strong, nonatomic) OReplicatedEntity *entity;
+@property (strong, nonatomic, readonly) id entity;
 @property (strong, nonatomic) OInputField *inputField;
 @property (strong, nonatomic) NSIndexPath *indexPath;
 
 @property (nonatomic) BOOL editable;
+@property (nonatomic) BOOL selectable;
 @property (nonatomic) BOOL checked;
 
 @property (weak, nonatomic) id<OEntityObserver> observer;
 
-- (id)initWithEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
+- (id)initWithEntity:(id)entity;
 - (id)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath;
 
 - (OLabel *)labelForKey:(NSString *)key;

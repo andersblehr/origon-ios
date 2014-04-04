@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OTableViewCellBlueprint.h"
@@ -59,21 +59,26 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 }
 
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier
+- (id)initWithState:(OState *)state reuseIdentifier:(NSString *)reuseIdentifier
 {
-    self = [super init];
+    self = [self initWithState:state];
     
     if (self) {
-        _fieldsShouldDeemphasiseOnEndEdit = NO;
-        _fieldsAreLabeled = NO;
-        _hasPhoto = NO;
+        BOOL isSigningIn = [reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn];
+        BOOL isActivating = [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation];
         
-        if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
-            _titleKey = kInterfaceKeySignIn;
-            _detailKeys = @[kInterfaceKeyAuthEmail, kInterfaceKeyPassword];
-        } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-            _titleKey = kInterfaceKeyActivate;
-            _detailKeys = @[kInterfaceKeyActivationCode, kInterfaceKeyRepeatPassword];
+        if (isSigningIn || isActivating) {
+            _fieldsShouldDeemphasiseOnEndEdit = NO;
+            _fieldsAreLabeled = NO;
+            _hasPhoto = NO;
+        
+            if (isSigningIn) {
+                _titleKey = kInterfaceKeySignIn;
+                _detailKeys = @[kInterfaceKeyAuthEmail, kInterfaceKeyPassword];
+            } else if (isActivating) {
+                _titleKey = kInterfaceKeyActivate;
+                _detailKeys = @[kInterfaceKeyActivationCode, kInterfaceKeyRepeatPassword];
+            }
         }
     }
     
@@ -116,7 +121,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 #pragma mark - Cell height computation
 
-- (CGFloat)cellHeightWithEntity:(OReplicatedEntity *)entity cell:(OTableViewCell *)cell
+- (CGFloat)cellHeightWithEntity:(id)entity cell:(OTableViewCell *)cell
 {
     CGFloat height = 2 * kDefaultCellPadding;
     
@@ -127,7 +132,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             } else {
                 height += [UIFont detailFieldHeight] + kDefaultCellPadding;
             }
-        } else if ([[OState s] actionIs:kActionInput] || [entity hasValueForKey:key]) {
+        } else if ([_state actionIs:kActionInput] || [entity hasValueForKey:key]) {
             if ([_textViewKeys containsObject:[OValidator propertyKeyForKey:key]]) {
                 if (cell) {
                     height += [[cell inputFieldForKey:key] height];

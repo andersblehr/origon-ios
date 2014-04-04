@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -35,6 +35,8 @@
 + (UIColor *)iOS6BarButtonItemColour;
 
 + (UIColor *)textColour;
++ (UIColor *)lightTextColour;
++ (UIColor *)notificationTextColour;
 + (UIColor *)placeholderTextColour;
 + (UIColor *)headerTextColour;
 + (UIColor *)footerTextColour;

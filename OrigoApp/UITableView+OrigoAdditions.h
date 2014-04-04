@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -15,7 +15,7 @@ extern CGFloat const kContentWidth;
 
 - (void)addLogoBanner;
 
-- (id)cellForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity;
+- (id)cellForEntity:(id)entity;
 - (id)cellForReuseIdentifier:(NSString *)reuseIdentifier;
 - (id)listCellForIndexPath:(NSIndexPath *)indexPath data:(id)data;
 

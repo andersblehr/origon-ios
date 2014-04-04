@@ -3,12 +3,11 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
-extern NSString * const kRegistrationCell;
 extern NSString * const kCustomData;
 
 @interface OTableViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDismisser, OConnectionDelegate> {
@@ -18,12 +17,13 @@ extern NSString * const kCustomData;
     BOOL _isHidden;
     BOOL _shouldReloadOnModalDismissal;
     
-    Class _entityClass;
+    Class _implicitEntityClass;
     NSInteger _detailSectionKey;
     NSMutableArray *_sectionKeys;
     NSMutableDictionary *_sectionData;
     NSMutableDictionary *_sectionCounts;
     NSMutableArray *_sectionIndexTitles;
+    NSMutableSet *_dirtySections;
 
     NSMutableDictionary *_sectionHeaderLabels;
     NSMutableDictionary *_sectionFooterLabels;
@@ -37,14 +37,13 @@ extern NSString * const kCustomData;
     UIBarButtonItem *_cancelButton;
     
     id<OTableViewControllerInstance> _instance;
+    id _target;
 }
 
 @property (strong, nonatomic, readonly) NSString *identifier;
 @property (strong, nonatomic, readonly) OState *state;
-@property (strong, nonatomic, readonly) OReplicatedEntity *entity;
+@property (strong, nonatomic, readonly) OEntityProxy *entityProxy;
 @property (strong, nonatomic, readonly) OActivityIndicator *activityIndicator;
-@property (strong, nonatomic, readonly) NSMutableSet *dirtySections;
-@property (strong, nonatomic, readonly) UIView *actionSheetView;
 
 @property (nonatomic, readonly) BOOL isModal;
 @property (nonatomic, readonly) BOOL isPushed;
@@ -56,8 +55,8 @@ extern NSString * const kCustomData;
 @property (nonatomic) BOOL cancelImpliesSkip;
 @property (nonatomic) BOOL canEdit;
 
+@property (strong, nonatomic) id target;
 @property (strong, nonatomic) id meta;
-@property (strong, nonatomic) id data;
 @property (strong, nonatomic) id returnData;
 @property (strong, nonatomic) OTableViewCell *detailCell;
 @property (strong, nonatomic) OInputField *nextInputField;
@@ -69,9 +68,10 @@ extern NSString * const kCustomData;
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
 
-- (void)setData:(NSArray *)data sectionIndexLabelKey:(NSString *)sectionIndexLabelKey;
+- (void)setDataForDetailSection;
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey;
+- (void)setData:(NSArray *)data sectionIndexLabelKey:(NSString *)sectionIndexLabelKey;
 
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath;
 - (id)dataAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
@@ -79,7 +79,6 @@ extern NSString * const kCustomData;
 
 - (BOOL)isLastSectionKey:(NSInteger)sectionKey;
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
-- (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber;
 - (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath;
 
@@ -87,11 +86,11 @@ extern NSString * const kCustomData;
 - (void)setFooterText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey;
 
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue;
-- (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data;
+- (void)prepareForPushSegue:(UIStoryboardSegue *)segue target:(id)target;
 
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data;
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta;
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier dismisser:(id)dismisser;
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target dismisser:(id)dismisser;
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target meta:(id)meta;
 
 - (void)toggleEditMode;
 - (void)didCancelEditing;
@@ -100,6 +99,7 @@ extern NSString * const kCustomData;
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
+
 - (void)signOut;
 
 @end

@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "NSManagedObjectContext+OrigoAdditions.h"
@@ -212,7 +212,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 - (id)insertDeviceEntity
 {
-    ODevice *device = [self insertEntityOfClass:[ODevice class] inOrigo:[[OMeta m].user rootMembership].origo entityId:[OMeta m].deviceId];
+    ODevice *device = [self insertEntityOfClass:[ODevice class] inOrigo:[[OMeta m].user rootOrigo] entityId:[OMeta m].deviceId];
     device.type = [UIDevice currentDevice].model;
     device.displayName = [UIDevice currentDevice].name;
     device.member = [OMeta m].user;

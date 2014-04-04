@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "ORegistrantExaminer.h"
@@ -39,19 +39,19 @@ static NSInteger const kButtonTagNo = 3;
 {
     NSMutableArray *candidates = [NSMutableArray array];
     
-    for (OMembership *residency in [_residence residencies]) {
+    for (OMember *resident in [_residence residents]) {
         if (_isMinor) {
-            if ([residency.member.dateOfBirth yearsBeforeDate:_dateOfBirth] >= kAgeOfConsent) {
-                [candidates addObject:residency.member];
-                _parentCandidateStatus ^= [self parentCandidateStatusForMember:residency.member];
+            if ([resident.dateOfBirth yearsBeforeDate:_dateOfBirth] >= kAgeOfConsent) {
+                [candidates addObject:resident];
+                _parentCandidateStatus ^= [self parentCandidateStatusForMember:resident];
             }
             
             if ([candidates count] > 2) {
                 _parentCandidateStatus = kParentCandidateStatusUndetermined;
             }
-        } else if ([residency.member isJuvenile] && ![residency.member hasParentWithGender:_gender]) {
-            if ([_dateOfBirth yearsBeforeDate:residency.member.dateOfBirth] >= kAgeOfConsent) {
-                [candidates addObject:residency.member];
+        } else if ([resident isJuvenile] && ![resident hasParentWithGender:_gender]) {
+            if ([_dateOfBirth yearsBeforeDate:resident.dateOfBirth] >= kAgeOfConsent) {
+                [candidates addObject:resident];
             }
         }
     }

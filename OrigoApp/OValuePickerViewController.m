@@ -3,13 +3,10 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OValuePickerViewController.h"
-
-static NSInteger const kSegmentedTitleIndexAdults = 0;
-static NSInteger const kSegmentedTitleIndexMinors = 1;
 
 
 @implementation OValuePickerViewController
@@ -36,33 +33,15 @@ static NSInteger const kSegmentedTitleIndexMinors = 1;
 
 - (NSArray *)sortedPeers
 {
-    NSMutableSet *peers = nil;
+    NSSet *peers = nil;
     
-    if (_segmentedTitle) {
-        if ([[OState s].pivotMember isJuvenile] == _segmentedTitle.selectedSegmentIndex) {
-            peers = [[[OState s].pivotMember peers] mutableCopy];
-        } else {
-            peers = [[[OState s].pivotMember crossGenerationalPeers] mutableCopy];
-        }
-    } else if ([self targetIs:kTargetElder]) {
-        peers = [[[OState s].pivotMember crossGenerationalPeers] mutableCopy];
+    if ([self targetIs:kTargetElder]) {
+        peers = [[OMeta m].user peersNotInOrigo:self.meta];
     } else {
-        peers = [[[OState s].pivotMember peers] mutableCopy];
-    }
-    
-    for (OMembership *membership in [self.data fullMemberships]) {
-        [peers removeObject:membership.member];
+        peers = [[OState s].pivotMember peersNotInOrigo:self.meta];
     }
     
     return [[peers allObjects] sortedArrayUsingSelector:@selector(compare:)];
-}
-
-
-#pragma mark - Selector implementations
-
-- (void)didSelectTitleSegment
-{
-    [self reloadSections];
 }
 
 
@@ -70,19 +49,7 @@ static NSInteger const kSegmentedTitleIndexMinors = 1;
 
 - (void)initialiseState
 {
-    self.state.target = self.meta ? self.meta : self.data;
-
     if ([self targetIsMemberVariant]) {
-        if ([self.data isCrossGenerational]) {
-            _segmentedTitle = [self.navigationItem addSegmentedTitle:NSLocalizedString(@"Adults|Minors", @"")];
-            
-            if ([[OState s].pivotMember isJuvenile]) {
-                _segmentedTitle.selectedSegmentIndex = kSegmentedTitleIndexMinors;
-            } else {
-                _segmentedTitle.selectedSegmentIndex = kSegmentedTitleIndexAdults;
-            }
-        }
-        
         self.usesPlainTableViewStyle = YES;
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
         

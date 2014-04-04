@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -36,9 +36,9 @@ extern CGFloat const kPhotoFrameWidth;
 @property (strong, nonatomic, readonly) NSArray *indirectKeys;
 
 - (id)initWithState:(OState *)state;
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
+- (id)initWithState:(OState *)state reuseIdentifier:(NSString *)reuseIdentifier;
 
 - (OInputField *)inputFieldWithKey:(NSString *)key delegate:(id)delegate;
-- (CGFloat)cellHeightWithEntity:(OReplicatedEntity *)entity cell:(OTableViewCell *)cell;
+- (CGFloat)cellHeightWithEntity:(id)entity cell:(OTableViewCell *)cell;
 
 @end

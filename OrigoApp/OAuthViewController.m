@@ -3,12 +3,10 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OAuthViewController.h"
-
-static NSInteger const kSectionKeyAuth = 0;
 
 static NSInteger const kMaxActivationAttempts = 3;
 
@@ -108,7 +106,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [OMeta m].user.passwordHash = _authInfo[kJSONKeyPasswordHash];
         
         [[OMeta m] userDidSignUp];
-        [[OMeta m].user ensureResidency];
+        [[OMeta m].user residence];
         
         [ODefaults setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
     }
@@ -141,7 +139,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             welcomeBackAlert.tag = kAlertTagWelcomeBack;
             [welcomeBackAlert show];
         } else if ([self targetIs:kTargetEmail]) {
-            [OConnection sendActivationCodeToEmail:self.data];
+            [OConnection sendActivationCodeToEmail:self.target];
         }
     }
 }
@@ -151,9 +149,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)initialiseState
 {
-    if (self.data) {
-        self.state.action = kActionActivate;
+    if ([OValidator valueIsEmailAddress:self.target]) {
         self.state.target = kTargetEmail;
+        self.state.action = kActionActivate;
     } else {
         NSData *authInfoArchive = [ODefaults globalDefaultForKey:kDefaultsKeyAuthInfo];
         
@@ -167,15 +165,13 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         } else {
             self.state.action = kActionSignIn;
         }
-        
-        self.state.target = kTargetUser;
     }
 }
 
 
 - (void)initialiseData
 {
-    [self setData:kCustomData forSectionWithKey:kSectionKeyAuth];
+    [self setDataForDetailSection];
 }
 
 
@@ -204,12 +200,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     NSString *text = nil;
     
     if ([self actionIs:kActionSignIn]) {
-        text = NSLocalizedString(@"New users will receive an email with an activation code that must be entered in the next step.", @"");
+        text = NSLocalizedString(@"New users will receive an email with an activation code.", @"");
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
             text = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@ ...", @""), _emailField.value];
         } else if ([self targetIs:kTargetEmail]) {
-            text = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@.", @""), self.data];
+            text = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@.", @""), self.target];
         }
     }
     
@@ -260,7 +256,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         if ([self targetIs:kTargetUser]) {
             [OConnection activateWithEmail:[OMeta m].userEmail password:_repeatPasswordField.value];
         } else if ([self targetIs:kTargetEmail]) {
-            [OMeta m].userEmail = self.data;
+            [OMeta m].userEmail = self.target;
             [self.dismisser dismissModalViewController:self reload:YES];
         }
     }

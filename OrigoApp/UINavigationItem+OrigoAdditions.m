@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "UINavigationItem+OrigoAdditions.h"
@@ -68,8 +68,8 @@ static CGFloat const kTitleHeight = 24.f;
     
     if ([rightBarButtonItems count] == 1) {
         [rightBarButtonItems insertObject:barButtonItem atIndex:0];
-    } else if ([rightBarButtonItems count] == 0) {
-        rightBarButtonItems[0] = barButtonItem;
+    } else {
+        rightBarButtonItems = [NSMutableArray arrayWithObject:barButtonItem];
     }
     
     [self setRightBarButtonItems:rightBarButtonItems animated:YES];

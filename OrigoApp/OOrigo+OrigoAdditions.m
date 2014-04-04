@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OOrigo+OrigoAdditions.h"
@@ -64,7 +64,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 }
 
 
-#pragma mark - Accessing & adding memberships
+#pragma mark - Memberships
 
 - (NSSet *)allMemberships
 {
@@ -82,85 +82,19 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 }
 
 
-- (NSSet *)fullMemberships
+#pragma mark - Member filtering
+
+- (NSSet *)residents
 {
-    NSMutableSet *fullMemberships = [NSMutableSet set];
-    
-    for (OMembership *membership in [self allMemberships]) {
-        if ([membership isFull]) {
-            [fullMemberships addObject:membership];
-        }
-    }
-    
-    return fullMemberships;
-}
-
-
-- (NSSet *)regularMemberships
-{
-    NSMutableSet *regularMemberships = [NSMutableSet set];
-    
-    for (OMembership *membership in [self fullMemberships]) {
-        if (![membership hasContactRole]) {
-            [regularMemberships addObject:membership];
-        }
-    }
-    
-    return regularMemberships;
-}
-
-
-- (NSSet *)contactMemberships
-{
-    NSMutableSet *contactMemberships = [NSMutableSet set];
-    
-    for (OMembership *membership in [self fullMemberships]) {
-        if ([membership hasContactRole]) {
-            [contactMemberships addObject:membership];
-        }
-    }
-    
-    return contactMemberships;
-}
-
-
-- (NSSet *)residencies
-{
-    NSMutableSet *residencies = [NSMutableSet set];
+    NSMutableSet *residents = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
         if ([membership isResidency]) {
-            [residencies addObject:membership];
+            [residents addObject:membership.member];
         }
     }
     
-    return residencies;
-}
-
-
-- (NSSet *)participancies
-{
-    NSMutableSet *participancies = [NSMutableSet set];
-    
-    for (OMembership *membership in [self allMemberships]) {
-        if ([membership isParticipancy]) {
-            [participancies addObject:membership];
-        }
-    }
-    
-    return participancies;
-}
-
-
-- (NSSet *)contacts
-{
-    NSMutableSet *contacts = [NSMutableSet set];
-    
-    for (OMembership *membership in [self contactMemberships]) {
-        [contacts addObject:membership.member];
-    }
-    
-    return contacts;
+    return residents;
 }
 
 
@@ -168,11 +102,36 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     NSMutableSet *members = [NSMutableSet set];
     
-    for (OMembership *membership in [self fullMemberships]) {
-        [members addObject:membership.member];
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isFull]) {
+            [members addObject:membership.member];
+        }
     }
     
     return members;
+}
+
+
+- (NSSet *)contacts
+{
+    NSMutableSet *contacts = [NSMutableSet set];
+    
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isFull] && [membership hasContactRole]) {
+            [contacts addObject:membership.member];
+        }
+    }
+    
+    return contacts;
+}
+
+
+- (NSSet *)regulars
+{
+    NSMutableSet *regulars = [[self members] mutableCopy];
+    [regulars minusSet:[self contacts]];
+    
+    return regulars;
 }
 
 
@@ -181,8 +140,8 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     NSMutableSet *guardians = [NSMutableSet set];
     
     if ([self isJuvenile]) {
-        for (OMembership *membership in [self regularMemberships]) {
-            [guardians unionSet:[membership.member guardians]];
+        for (OMember *member in [self regulars]) {
+            [guardians unionSet:[member guardians]];
         }
     }
     
@@ -195,9 +154,9 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     NSMutableSet *elders = [NSMutableSet set];
     
     if ([self isOfType:kOrigoTypeResidence]) {
-        for (OMembership *residency in [self residencies]) {
-            if (![residency.member isJuvenile]) {
-                [elders addObject:residency.member];
+        for (OMember *resident in [self residents]) {
+            if (![resident isJuvenile]) {
+                [elders addObject:resident];
             }
         }
     }
@@ -282,12 +241,6 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 }
 
 
-- (BOOL)isCrossGenerational
-{
-    return [self isOfType:kOrigoTypeResidence];
-}
-
-
 - (BOOL)isJuvenile
 {
     return [self.isForMinors boolValue];
@@ -345,11 +298,13 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     BOOL knowsAboutMember = NO;
     OMembership *directMembership = [self membershipForMember:member];
     
-    for (OMembership *membership in [self fullMemberships]) {
-        if ((membership != directMembership) && ![membership isBeingDeleted]) {
-            for (OMembership *residency in [membership.member residencies]) {
-                if ((residency.origo != self) && ![residency isBeingDeleted]) {
-                    knowsAboutMember = knowsAboutMember || [residency.origo hasMember:member];
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isFull]) {
+            if ((membership != directMembership) && ![membership isBeingDeleted]) {
+                for (OMembership *residency in [membership.member residencies]) {
+                    if ((residency.origo != self) && ![residency isBeingDeleted]) {
+                        knowsAboutMember = knowsAboutMember || [residency.origo hasMember:member];
+                    }
                 }
             }
         }
@@ -364,8 +319,8 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     BOOL hasResidentsInCommon = NO;
     
     if ([self isOfType:kOrigoTypeResidence] && [residence isOfType:kOrigoTypeResidence]) {
-        for (OMembership *residency in [residence residencies]) {
-            hasResidentsInCommon = hasResidentsInCommon || [self hasMember:residency.member];
+        for (OMember *resident in [residence residents]) {
+            hasResidentsInCommon = hasResidentsInCommon || [self hasMember:resident];
         }
     }
     
@@ -423,7 +378,13 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 - (BOOL)isTransient
 {
-    return ([super isTransient] || ([self isOfType:kOrigoTypeMemberRoot] && (self != [[OMeta m].user rootMembership].origo)));
+    BOOL isTransient = [super isTransient];
+    
+    if (!isTransient) {
+        isTransient = ([self isOfType:kOrigoTypeMemberRoot] && (self != [[OMeta m].user rootOrigo]));
+    }
+    
+    return isTransient;
 }
 
 @end

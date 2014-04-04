@@ -3,20 +3,20 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
 @interface OMember (OrigoAdditions)
 
-- (OMembership *)rootMembership;
-- (OMembership *)ensureResidency;
 - (NSSet *)allMemberships;
-- (NSSet *)fullMemberships;
 - (NSSet *)residencies;
-- (NSSet *)participancies;
-- (NSArray *)sortedOrigos;
+
+- (OOrigo *)rootOrigo;
+- (OOrigo *)residence;
+- (NSArray *)residences;
+- (NSArray *)origos;
 
 - (OMember *)partner;
 - (NSSet *)wards;
@@ -24,8 +24,9 @@
 - (NSSet *)siblings;
 - (NSSet *)guardians;
 - (NSSet *)peers;
-- (NSSet *)crossGenerationalPeers;
+- (NSSet *)peersNotInOrigo:(OOrigo *)origo;
 - (NSSet *)housemates;
+- (NSSet *)housematesNotInResidence:(OOrigo *)residence;
 - (NSSet *)housemateResidences;
 
 - (BOOL)isActive;
@@ -40,7 +41,6 @@
 - (BOOL)isJuvenile;
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOlderThan:(NSInteger)age;
-- (BOOL)hasPeersNotInOrigo:(OOrigo *)origo;
 - (BOOL)hasParent:(OMember *)member;
 - (BOOL)hasParentWithGender:(NSString *)gender;
 - (BOOL)guardiansAreParents;

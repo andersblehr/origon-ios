@@ -3,7 +3,7 @@
   OrigoApp
 
   Created by Anders Blehr on 10.03.14.
-  Copyright (c) 2014 Rhelba Creations. All rights reserved.
+  Copyright (c) 2014 Rhelba Source. All rights reserved.
 */
 
 
@@ -217,7 +217,7 @@
  ***/
 
 // Footers
-"New users will receive an email with an activation code that must be entered in the next step." = "Nye brukere vil motta en epost med en aktiveringskode som må oppgis i neste steg.";
+"New users will receive an email with an activation code." = "Nye brukere vil motta en epost med en aktiveringskode.";
 "The activation code has been sent to %@ ..." = "Aktiveringskoden er sendt til %@. Du kan oppgi den senere om du ikke har tilgang til eposten din her og nå.";
 "The activation code has been sent to %@." = "Aktiveringskoden er sendt til %@.";
 

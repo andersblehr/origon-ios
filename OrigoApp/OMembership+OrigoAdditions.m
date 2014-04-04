@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OMembership+OrigoAdditions.h"
@@ -101,6 +101,9 @@ static NSString * const kMembershipTypeAssociate = @"A";
     if (isAssociate) {
         self.type = kMembershipTypeAssociate;
         self.status = nil;
+        self.contactRole = nil;
+        self.contactType = nil;
+        self.isAdmin = @NO;
     } else {
         if ([self.origo isOfType:kOrigoTypeMemberRoot]) {
             self.type = kMembershipTypeMemberRoot;
@@ -136,10 +139,9 @@ static NSString * const kMembershipTypeAssociate = @"A";
         if ([self shouldReplicateOnExpiry]) {
             [super expire];
             
+            self.status = kMembershipStatusExpired;
             self.contactRole = nil;
             self.contactType = nil;
-            //self.isActive = @NO;
-            self.status = kMembershipStatusExpired;
             self.isAdmin = @NO;
             
             [[OMeta m].context expireCrossReferencesForMembership:self];

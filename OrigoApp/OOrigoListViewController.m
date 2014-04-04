@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OOrigoListViewController.h"
@@ -81,7 +81,7 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)openSettings
 {
-    [self presentModalViewControllerWithIdentifier:kIdentifierValueList data:nil];
+    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetSettings];
 }
 
 
@@ -116,7 +116,7 @@ static NSInteger const kSectionKeyWards = 2;
             [OAlert showAlertWithTitle:NSLocalizedString(@"Incomplete registration", @"") text:NSLocalizedString(@"You must complete your registration before you can start using Origo.", @"")];
         }
         
-        [self presentModalViewControllerWithIdentifier:kIdentifierMember data:[[OMeta m].user ensureResidency]];
+        [self presentModalViewControllerWithIdentifier:kIdentifierMember target:[OMeta m].user];
     }
 }
 
@@ -133,10 +133,8 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)initialiseState
 {
-    _member = self.data ? self.data : [OMeta m].user;
+    _member = [self.entityProxy facade];
     _origoTypes = [NSMutableArray array];
-    
-    self.state.target = _member;
     
     if ([_member isUser]) {
         self.title = [OMeta m].appName;
@@ -171,15 +169,21 @@ static NSInteger const kSectionKeyWards = 2;
 - (void)initialiseData
 {
     if (_member) {
-        [self setData:[_member participancies] forSectionWithKey:kSectionKeyOrigos];
+        [self setData:[_member origos] forSectionWithKey:kSectionKeyOrigos];
         
         if ([_member isUser]) {
-            [self setData:[_member residencies] forSectionWithKey:kSectionKeyMember];
+            [self setData:[_member residences] forSectionWithKey:kSectionKeyMember];
             [self setData:[_member wards] forSectionWithKey:kSectionKeyWards];
         } else {
             [self setData:@[_member] forSectionWithKey:kSectionKeyMember];
         }
     }
+}
+
+
+- (id)defaultTarget
+{
+    return [[OMeta m] userIsSignedIn] ? [OMeta m].user : nil;
 }
 
 
@@ -196,7 +200,7 @@ static NSInteger const kSectionKeyWards = 2;
     if (sectionKey == kSectionKeyWards) {
         text = NSLocalizedString(@"The kids' origos", @"");
     } else if (sectionKey == kSectionKeyOrigos) {
-        text = NSLocalizedString(@"My origos", @"");
+        text = [[OLanguage possessiveClauseWithPossessor:_member noun:_origo_] stringByCapitalisingFirstLetter];
     }
     
     return text;
@@ -217,7 +221,7 @@ static NSInteger const kSectionKeyWards = 2;
         [self performSegueWithIdentifier:kSegueToMemberView sender:self];
     } else if (sectionKey == kSectionKeyWards) {
         OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
-        origoListViewController.data = [self dataAtIndexPath:indexPath];
+        origoListViewController.target = [self dataAtIndexPath:indexPath];
         origoListViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
         
         [self.navigationController pushViewController:origoListViewController animated:YES];
@@ -230,7 +234,7 @@ static NSInteger const kSectionKeyWards = 2;
 - (void)didDismissModalViewController:(OTableViewController *)viewController
 {
     if ([[OMeta m] userIsSignedIn]) {
-        [self.tableView reloadData];
+        [self reloadSections];
     }
 }
 
@@ -248,42 +252,49 @@ static NSInteger const kSectionKeyWards = 2;
 - (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
-    OReplicatedEntity *entity = [self dataAtIndexPath:indexPath];
+    id entity = [self dataAtIndexPath:indexPath];
     
-    if ((sectionKey == kSectionKeyMember) && ![_member isUser]) {
-        OMember *member = [entity asMember];
-
-        cell.textLabel.text = member.name;
-        cell.detailTextLabel.text = [member shortDetails];
-        cell.imageView.image = [member smallImage];
+    if (sectionKey == kSectionKeyMember) {
+        if ([_member isUser]) {
+            OOrigo *residence = entity;
+            
+            cell.textLabel.text = [residence displayName];
+            cell.detailTextLabel.text = [residence singleLineAddress];
+            cell.imageView.image = [residence smallImage];
+        } else {
+            OMember *member = entity;
+            
+            cell.textLabel.text = member.name;
+            cell.detailTextLabel.text = [member shortDetails];
+            cell.imageView.image = [member smallImage];
+        }
     } else if (sectionKey == kSectionKeyWards) {
-        OMember *ward = [entity asMember];
+        OMember *ward = entity;
         
         cell.textLabel.text = [ward givenName];
         cell.imageView.image = [ward smallImage];
         
-        NSArray *sortedOrigos = [ward sortedOrigos];
+        NSArray *origos = [ward origos];
         
-        if ([sortedOrigos count]) {
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:sortedOrigos conjoinLastItem:NO];
+        if ([origos count]) {
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:origos conjoinLastItem:NO];
+            cell.detailTextLabel.textColor = [UIColor textColour];
         } else {
             cell.detailTextLabel.text = NSLocalizedString(@"(No origos)", @"");
+            cell.detailTextLabel.textColor = [UIColor lightTextColor];
         }
-    } else {
-        OMembership *membership = [entity asMembership];
+    } else if (sectionKey == kSectionKeyOrigos) {
+        OOrigo *origo = entity;
+
+        cell.textLabel.text = [origo displayName];
+        cell.imageView.image = [origo smallImage];
         
-        cell.textLabel.text = [membership.origo displayName];
-        cell.imageView.image = [membership.origo smallImage];
-        
-        if (sectionKey == kSectionKeyMember) {
-            cell.detailTextLabel.text = [membership.origo singleLineAddress];
+        if ([[origo membershipForMember:[OMeta m].user] isInvited]) {
+            cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
+            cell.detailTextLabel.textColor = [UIColor notificationTextColour];
         } else {
-            if ([membership isInvited]) {
-                cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
-                cell.detailTextLabel.textColor = [UIColor redOrangeColour];
-            } else {
-                cell.detailTextLabel.text = NSLocalizedString(membership.origo.type, kKeyPrefixOrigoTitle);
-            }
+            cell.detailTextLabel.text = NSLocalizedString(origo.type, kKeyPrefixOrigoTitle);
+            cell.detailTextLabel.textColor = [UIColor textColour];
         }
     }
 }
@@ -296,7 +307,7 @@ static NSInteger const kSectionKeyWards = 2;
     if (buttonIndex < actionSheet.cancelButtonIndex) {
         switch (actionSheet.tag) {
             case kActionSheetTagOrigoType:
-                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo data:_member meta:_origoTypes[buttonIndex]];
+                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:_origoTypes[buttonIndex]];
                 
                 break;
                 

@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -31,6 +31,7 @@ extern NSString * const kTargetContact;
 extern NSString * const kTargetParentContact;
 extern NSString * const kTargetRelation;
 extern NSString * const kTargetSetting;
+extern NSString * const kTargetSettings;
 
 @interface OState : NSObject {
 @private
@@ -46,7 +47,6 @@ extern NSString * const kTargetSetting;
 
 + (OState *)s;
 
-- (void)setTarget:(NSString *)target aspectCarrier:(id)aspectCarrier;
 - (void)reflectState:(OState *)state;
 - (void)toggleAction:(NSArray *)alternatingActions;
 

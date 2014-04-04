@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "UITableView+OrigoAdditions.h"
@@ -64,12 +64,12 @@ static NSString * const kLogoText = @"..origo..";
 
 #pragma mark - Cell instantiation
 
-- (id)cellForEntityClass:(Class)entityClass entity:(OReplicatedEntity *)entity
+- (id)cellForEntity:(id)entity
 {
-    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:NSStringFromClass(entityClass)];
+    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:NSStringFromClass([entity entityClass])];
     
     if (!cell) {
-        cell = [[OTableViewCell alloc] initWithEntityClass:entityClass entity:entity];
+        cell = [[OTableViewCell alloc] initWithEntity:entity];
     }
     
     return cell;

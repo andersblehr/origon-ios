@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OCrypto.h"
@@ -33,7 +33,7 @@ static NSInteger const kActivationCodeLength = 6;
     char seasonedBytes[hashLength + 1];
     seasonedBytes[hashLength] = (char)0;
     
-    for (int i = 0; i < hashLength; i++) {
+    for (NSInteger i = 0; i < hashLength; i++) {
         char char1 = selfCString[i];
         char char2 = seasoningCString[hashLength - (i + 1)];
         
@@ -146,7 +146,7 @@ static NSInteger const kActivationCodeLength = 6;
     
     NSMutableString *hash = [NSMutableString stringWithCapacity:CC_SHA1_DIGEST_LENGTH * 2];
     
-    for (int i = 0; i < CC_SHA1_DIGEST_LENGTH; i++) {
+    for (NSInteger i = 0; i < CC_SHA1_DIGEST_LENGTH; i++) {
         [hash appendFormat:@"%02x", SHA1Digest[i]];
     }
     
