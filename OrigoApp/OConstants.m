@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OConstants.h"
@@ -51,7 +51,7 @@ NSString * const kInterfaceKeySignIn = @"signIn";
 
 // Entity property keys
 NSString * const kPropertyKeyAddress = @"address";
-NSString * const kPropertyKeyCountry = @"country";
+NSString * const kPropertyKeyCountryCode = @"countryCode";
 NSString * const kPropertyKeyDateOfBirth = @"dateOfBirth";
 NSString * const kPropertyKeyDescriptionText = @"descriptionText";
 NSString * const kPropertyKeyEmail = @"email";

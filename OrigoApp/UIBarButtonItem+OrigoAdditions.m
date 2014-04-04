@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "UIBarButtonItem+OrigoAdditions.h"
@@ -33,7 +33,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-#pragma mark - Bar button shorthands
+#pragma mark - Navigation bar buttons
 
 + (UIBarButtonItem *)settingsButton
 {
@@ -89,6 +89,12 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
++ (UIBarButtonItem *)editButton
+{
+    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Edit", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didBeginEditing)];
+}
+
+
 + (UIBarButtonItem *)cancelButton
 {
     return [UIBarButtonItem cancelButtonWithTitle:NSLocalizedString(@"Cancel", @"")];
@@ -112,6 +118,8 @@ static UIBarButtonItem *_flexibleSpace = nil;
     return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Log out", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(signOut)];
 }
 
+
+#pragma mark - Toolbar buttons
 
 + (UIBarButtonItem *)sendTextButton
 {
@@ -157,6 +165,8 @@ static UIBarButtonItem *_flexibleSpace = nil;
     return barButtonItem;
 }
 
+
+#pragma mark - Generic flexible space
 
 + (UIBarButtonItem *)flexibleSpace
 {

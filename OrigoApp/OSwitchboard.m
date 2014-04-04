@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OSwitchboard.h"
@@ -265,8 +265,8 @@ static NSInteger const kRecipientTagAllGuardians = 8;
                 }
             }
         } else {
-            for (OMembership *residency in [_member residencies]) {
-                NSSet *elders = [residency.origo elders];
+            for (OOrigo *residence in [_member residences]) {
+                NSSet *elders = [residence elders];
                 
                 [self addRecipientCandidates:elders skipUser:YES tag:kRecipientTagGuardians];
                 
@@ -281,9 +281,9 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         }
     }
     
-    for (OMembership *residency in [_member residencies]) {
-        if ([residency.origo.telephone hasValue]) {
-            [self addRecipientCandidates:@[residency.origo] skipUser:NO tag:kRecipientTagOrigo];
+    for (OOrigo *residence in [_member residences]) {
+        if ([residence.telephone hasValue]) {
+            [self addRecipientCandidates:@[residence] skipUser:NO tag:kRecipientTagOrigo];
         }
     }
 }

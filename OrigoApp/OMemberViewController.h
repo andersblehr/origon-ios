@@ -3,16 +3,16 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
 @interface OMemberViewController : OTableViewController<OTableViewControllerInstance, OTableViewListDelegate, OTableViewInputDelegate, ORegistrantExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate, OConnectionDelegate> {
 @private
+    id _member;
+    id _origo;
     OMembership *_membership;
-    OMember *_member;
-    OOrigo *_origo;
     
     OInputField *_nameField;
     OInputField *_dateOfBirthField;

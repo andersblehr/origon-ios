@@ -3,13 +3,14 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "NSString+OrigoAdditions.h"
 
 NSString * const kCharacters0_9 = @"0123456789";
 
+NSString * const kSeparatorColon = @":";
 NSString * const kSeparatorComma = @", ";
 NSString * const kSeparatorHash = @"#";
 NSString * const kSeparatorNewline = @"\n";
@@ -138,6 +139,12 @@ NSString * const kSeparatorAlternates = @"|";
 - (NSString *)stringByCapitalisingFirstLetter
 {
     return [[[self substringWithRange:NSMakeRange(0, 1)] uppercaseString] stringByAppendingString:[self substringFromIndex:1]];
+}
+
+
+- (NSString *)stringByLowercasingFirstLetter
+{
+    return [[[self substringWithRange:NSMakeRange(0, 1)] lowercaseString] stringByAppendingString:[self substringFromIndex:1]];
 }
 
 

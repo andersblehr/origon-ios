@@ -3,12 +3,11 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OTableViewController.h"
 
-NSString * const kRegistrationCell = @"registration";
 NSString * const kCustomData = @"customData";
 
 static NSString * const kViewControllerSuffixDefault = @"ViewController";
@@ -18,6 +17,7 @@ static NSString * const kViewControllerSuffixPicker = @"PickerViewController";
 static CGFloat const kEmptyFooterHeight = 14.f;
 static CGFloat const kSectionSpacing = 28.f;
 
+static NSInteger const kDetailSectionKey = 0;
 static NSInteger const kMinimumSectionIndexTitles = 13;
 
 static BOOL _needsReinstantiateRootViewController;
@@ -38,7 +38,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (BOOL)isEntityViewController
 {
-    return ![self isListViewController] && ![self isPickerViewController];
+    if (!_implicitEntityClass) {
+        if (![self isListViewController] && ![self isPickerViewController]) {
+            NSString *viewControllerName = NSStringFromClass([self class]);
+            _implicitEntityClass = NSClassFromString([viewControllerName substringToIndex:[viewControllerName rangeOfString:kViewControllerSuffixDefault].location]);
+        }
+    }
+    
+    return (_implicitEntityClass != NULL);
 }
 
 
@@ -180,6 +187,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Selector implementations
 
+- (void)didBeginEditing
+{
+    [self toggleEditMode];
+}
+
+
 - (void)didCancelEditing
 {
     if (self.isModal) {
@@ -228,7 +241,61 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Handling section data
+#pragma mark - Setting section data
+
+- (void)setDataForDetailSection
+{
+    [self setData:self.target forSectionWithKey:kDetailSectionKey];
+}
+
+
+- (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
+{
+    if ([data isKindOfClass:[NSArray class]]) {
+        _sectionData[@(sectionKey)] = [data mutableCopy];
+    } else if ([data isKindOfClass:[NSSet class]]) {
+        _sectionData[@(sectionKey)] = [[self sortedArrayWithData:data forSectionWithKey:sectionKey] mutableCopy];
+    } else if (data) {
+        if (sectionKey == kDetailSectionKey) {
+            _detailSectionKey = sectionKey;
+            
+            if (data != _target) {
+                self.target = data;
+            }
+            
+            if (_entityProxy) {
+                _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:_entityProxy];
+            } else {
+                _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
+            }
+        } else {
+            _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
+        }
+    }
+    
+    if ([_sectionData[@(sectionKey)] count]) {
+        if (![_sectionKeys containsObject:@(sectionKey)]) {
+            [_sectionKeys addObject:@(sectionKey)];
+            [_sectionKeys sortUsingSelector:@selector(compare:)];
+        }
+    }
+}
+
+
+- (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey
+{
+    if (sectionKey == _detailSectionKey) {
+        _detailSectionKey = NSNotFound;
+        _entityProxy = nil;
+    }
+    
+    if ([data isKindOfClass:[NSArray class]] || [data isKindOfClass:[NSSet class]]) {
+        [_sectionData[@(sectionKey)] addObjectsFromArray:[self sortedArrayWithData:data forSectionWithKey:sectionKey]];
+    } else if (data && ![_sectionData[@(sectionKey)] containsObject:data]) {
+        [_sectionData[@(sectionKey)] addObject:data];
+    }
+}
+
 
 - (void)setData:(NSArray *)data sectionIndexLabelKey:(NSString *)sectionIndexLabelKey
 {
@@ -259,7 +326,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             NSMutableArray *sectionData = [NSMutableArray array];
             NSArray *remainingData = nil;
             
-            for (int i = 0; (i < [data count]) && !remainingData; i++) {
+            for (NSInteger i = 0; (i < [data count]) && !remainingData; i++) {
                 NSString *label = [data[i] valueForKey:labelKey];
                 
                 if ([[label lowercaseString] hasPrefix:[sectionInitial lowercaseString]]) {
@@ -285,47 +352,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
-{
-    if ([data isKindOfClass:[NSArray class]]) {
-        _sectionData[@(sectionKey)] = [data mutableCopy];
-    } else if ([data isKindOfClass:[NSSet class]]) {
-        _sectionData[@(sectionKey)] = [[self sortedArrayWithData:data forSectionWithKey:sectionKey] mutableCopy];
-    } else if (data) {
-        _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
-        
-        if (sectionKey == 0) {
-            _detailSectionKey = sectionKey;
-            
-            if ([data isKindOfClass:_entityClass]) {
-                _entity = data;
-            }
-        }
-    }
-    
-    if ([_sectionData[@(sectionKey)] count]) {
-        if (![_sectionKeys containsObject:@(sectionKey)]) {
-            [_sectionKeys addObject:@(sectionKey)];
-            [_sectionKeys sortUsingSelector:@selector(compare:)];
-        }
-    }
-}
-
-
-- (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey
-{
-    if (sectionKey == _detailSectionKey) {
-        _detailSectionKey = NSNotFound;
-        _entity = nil;
-    }
-    
-    if ([_data isKindOfClass:[NSArray class]] || [data isKindOfClass:[NSSet class]]) {
-        [_sectionData[@(sectionKey)] addObjectsFromArray:[self sortedArrayWithData:data forSectionWithKey:sectionKey]];
-    } else if (data && ![_sectionData[@(sectionKey)] containsObject:data]) {
-        [_sectionData[@(sectionKey)] addObject:data];
-    }
-}
-
+#pragma mark - Accessing section data
 
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -359,12 +386,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey
-{
-    return [_sectionCounts[@(sectionKey)] integerValue];
-}
-
-
 - (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber
 {
     return [_sectionKeys[sectionNumber] integerValue];
@@ -395,32 +416,46 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue
 {
-    [self prepareForPushSegue:segue data:[self dataAtIndexPath:_selectedIndexPath]];
+    [self prepareForPushSegue:segue target:[self dataAtIndexPath:_selectedIndexPath]];
 }
 
 
-- (void)prepareForPushSegue:(UIStoryboardSegue *)segue data:(id)data
+- (void)prepareForPushSegue:(UIStoryboardSegue *)segue target:(id)target
 {
     OTableViewController *destinationViewController = segue.destinationViewController;
-    destinationViewController.data = data;
+    destinationViewController.target = target;
     destinationViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:_selectedIndexPath];
+    
+    if (destinationViewController.entityProxy && _entityProxy) {
+        destinationViewController.entityProxy.parent = _entityProxy;
+    }
 }
 
 
 #pragma mark - Presenting modal view controllers
 
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target
 {
-    [self presentModalViewControllerWithIdentifier:identifier data:data meta:nil];
+    [self presentModalViewControllerWithIdentifier:identifier target:target meta:nil];
 }
 
 
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier data:(id)data meta:(id)meta
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target dismisser:(id)dismisser
+{
+    [self presentModalViewControllerWithIdentifier:identifier target:target meta:dismisser];
+}
+
+
+- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target meta:(id)meta
 {
     OTableViewController *viewController = [self.storyboard instantiateViewControllerWithIdentifier:identifier];
     
     viewController->_isModal = YES;
-    viewController.data = data;
+    viewController.target = target;
+    
+    if (viewController.entityProxy && _entityProxy) {
+        viewController.entityProxy.parent = _entityProxy;
+    }
     
     if ([meta isKindOfClass:[OTableViewController class]]) {
         viewController.dismisser = meta;
@@ -440,12 +475,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     destinationViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     
     [self.navigationController presentViewController:destinationViewController animated:YES completion:NULL];
-}
-
-
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier dismisser:(id)dismisser
-{
-    [self presentModalViewControllerWithIdentifier:identifier data:nil meta:dismisser];
 }
 
 
@@ -580,7 +609,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _needsReinstantiateRootViewController = YES;
     _reinstantiatedRootViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
     
-    [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reinstantiatedRootViewController];
+    [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetUser dismisser:_reinstantiatedRootViewController];
 }
 
 
@@ -595,12 +624,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         self.tableView.backgroundColor = [UIColor tableViewBackgroundColour];
     }
     
-    if ([self isEntityViewController]) {
-        NSString *viewControllerName = NSStringFromClass([self class]);
-        
-        _entityClass = NSClassFromString([viewControllerName substringToIndex:[viewControllerName rangeOfString:kViewControllerSuffixDefault].location]);
-    }
-    
     _identifier = self.restorationIdentifier;
     _sectionKeys = [NSMutableArray array];
     _sectionData = [NSMutableDictionary dictionary];
@@ -610,8 +633,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _sectionIndexTitles = [NSMutableArray array];
     _dirtySections = [NSMutableSet set];
     _detailSectionKey = NSNotFound;
-    _state = [[OState alloc] initWithViewController:self];
     _instance = (id<OTableViewControllerInstance>)self;
+    _state = [[OState alloc] initWithViewController:self];
     _canEdit = NO;
     
     [self initialiseInstance];
@@ -625,14 +648,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _nextButton = [UIBarButtonItem nextButton];
         _doneButton = [UIBarButtonItem doneButton];
         
-        if ([[OMeta m].user isActive]) {
-            if (_cancelImpliesSkip) {
-                self.navigationItem.leftBarButtonItem = [UIBarButtonItem skipButton];
+        if (_isModal) {
+            if ([[OMeta m].user isActive]) {
+                if (_cancelImpliesSkip) {
+                    self.navigationItem.leftBarButtonItem = [UIBarButtonItem skipButton];
+                } else {
+                    self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
+                }
             } else {
-                self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
+                self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButton];
             }
-        } else {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButton];
         }
         
         [self.navigationItem appendRightBarButtonItem:_nextButton];
@@ -645,7 +670,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)viewWillAppear:(BOOL)animated
 {
     if (!_didJustLoad) {
-        if (!_didInitialise) {
+        if (!_didInitialise && self.target) {
             [self initialiseInstance];
         }
         
@@ -668,7 +693,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     [self.navigationController setToolbarHidden:(!self.toolbarItems) animated:YES];
     
-    if (_isPopped || _shouldReloadOnModalDismissal) {
+    if (![self actionIs:kActionInput] && (_isPopped || _shouldReloadOnModalDismissal)) {
         [self reloadSections];
     }
 }
@@ -689,7 +714,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     OLogState;
     
     if ([[OMeta m] userIsSignedIn]) {
-        if (_detailCell && _detailCell.editable && !_isHidden) {
+        if (_detailCell && _detailCell.editable && !_isPopped && !_isHidden) {
             [_detailCell prepareForInput];
             
             if ([self actionIs:kActionRegister]) {
@@ -699,7 +724,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             }
         }
     } else if (![_identifier isEqualToString:kIdentifierAuth]) {
-        [self presentModalViewControllerWithIdentifier:kIdentifierAuth dismisser:_reinstantiatedRootViewController];
+        [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetUser];
     }
 }
 
@@ -728,7 +753,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if (_needsReinstantiateRootViewController) {
         [self.navigationController setViewControllers:@[_reinstantiatedRootViewController]];
-        
         _needsReinstantiateRootViewController = NO;
     }
 }
@@ -762,12 +786,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (UIView *)actionSheetView
-{
-    return self.navigationController ? self.navigationController.view : self.view;
-}
-
-
 - (void)setUsesSectionIndexTitles:(BOOL)usesSectionIndexTitles
 {
     _usesSectionIndexTitles = usesSectionIndexTitles;
@@ -775,6 +793,44 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (_usesSectionIndexTitles) {
         _usesPlainTableViewStyle = YES;
     }
+}
+
+
+- (void)setTarget:(id)target
+{
+    _target = target;
+    
+    if (_state) {
+        _state.target = target;
+    }
+    
+    OEntityProxy *proxyParent = _entityProxy ? _entityProxy.parent : nil;
+    
+    if ([target isKindOfClass:[OReplicatedEntity class]]) {
+        _entityProxy = [target proxy];
+    } else if ([target isKindOfClass:[OEntityProxy class]]) {
+        _entityProxy = target;
+    } else if ([self isEntityViewController]) {
+        _entityProxy = [[OEntityProxy alloc] initWithEntityClass:_implicitEntityClass type:target];
+    }
+    
+    if (_entityProxy) {
+        _target = _entityProxy;
+        
+        if (proxyParent) {
+            _entityProxy.parent = proxyParent;
+        }
+    }
+}
+
+
+- (id)target
+{
+    if (!_target && [_instance respondsToSelector:@selector(defaultTarget)]) {
+        self.target = [_instance defaultTarget];
+    }
+    
+    return _target;
 }
 
 
@@ -824,7 +880,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self numberOfRowsInSectionWithKey:[_sectionKeys[section] integerValue]];
+    return [_sectionCounts[@([_sectionKeys[section] integerValue])] integerValue];
 }
 
 
@@ -834,11 +890,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
         if (_detailCell) {
-            height = [_detailCell.blueprint cellHeightWithEntity:_entity cell:_detailCell];
-        } else if (_entity) {
-            height = [[[OTableViewCellBlueprint alloc] initWithState:_state] cellHeightWithEntity:_entity cell:nil];
+            height = [_detailCell.blueprint cellHeightWithEntity:_entityProxy cell:_detailCell];
+        } else if (_entityProxy) {
+            height = [[[OTableViewCellBlueprint alloc] initWithState:_state] cellHeightWithEntity:_entityProxy cell:nil];
         } else if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
-            height = [[[OTableViewCellBlueprint alloc] initWithReuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]] cellHeightWithEntity:nil cell:nil];
+            height = [[[OTableViewCellBlueprint alloc] initWithState:_state reuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]] cellHeightWithEntity:nil cell:nil];
         }
     }
     
@@ -860,7 +916,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if (customReuseIdentifier) {
             cell = [tableView cellForReuseIdentifier:customReuseIdentifier];
         } else {
-            cell = [tableView cellForEntityClass:_entityClass entity:_entity];
+            cell = [tableView cellForEntity:_entityProxy];
             cell.observer = self.observer;
         }
         

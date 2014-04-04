@@ -2,7 +2,6 @@
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5063" systemVersion="13C64" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="ODevice" representedClassName="ODevice" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="displayName" attributeType="String" syncable="YES"/>
-        <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="member" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="devices" inverseEntity="OMember" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="no"/>
@@ -32,7 +31,6 @@
         <attribute name="contactType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isAdmin" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="member" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="memberships" inverseEntity="OMember" syncable="YES"/>
         <relationship name="origo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OOrigo" inverseName="memberships" inverseEntity="OOrigo" syncable="YES"/>
         <userInfo>
@@ -47,7 +45,6 @@
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES" syncable="YES"/>
         <attribute name="photo" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="telephone" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="memberships" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="OMembership" inverseName="origo" inverseEntity="OMembership" syncable="YES"/>
         <relationship name="parentOrigo" optional="YES" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="OOrigo" inverseName="subOrigos" inverseEntity="OOrigo" syncable="YES"/>
         <relationship name="subOrigos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="OOrigo" inverseName="parentOrigo" inverseEntity="OOrigo" syncable="YES"/>
@@ -65,6 +62,7 @@
         <attribute name="isAwaitingDeletion" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="isExpired" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="origoId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="OReplicatedEntityRef" representedClassName="OReplicatedEntityRef" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="referencedEntityId" attributeType="String" syncable="YES"/>
@@ -81,11 +79,11 @@
         </userInfo>
     </entity>
     <elements>
-        <element name="ODevice" positionX="0" positionY="0" width="128" height="90"/>
+        <element name="ODevice" positionX="0" positionY="0" width="128" height="73"/>
         <element name="OMember" positionX="0" positionY="0" width="128" height="253"/>
-        <element name="OMembership" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="OOrigo" positionX="0" positionY="0" width="128" height="210"/>
-        <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="180"/>
+        <element name="OMembership" positionX="0" positionY="0" width="128" height="133"/>
+        <element name="OOrigo" positionX="0" positionY="0" width="128" height="193"/>
+        <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="193"/>
         <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="75"/>
         <element name="OSettings" positionX="0" positionY="0" width="128" height="75"/>
     </elements>

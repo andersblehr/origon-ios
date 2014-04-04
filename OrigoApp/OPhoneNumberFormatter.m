@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OPhoneNumberFormatter.h"
@@ -118,7 +118,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
     for (NSInteger level = _optionalNestingLevel; level < [formats count]; level++) {
         NSMutableArray *nestedFormats = formats[level];
         
-        for (int groupLevel = 0; groupLevel < _groupNestingLevel; groupLevel++) {
+        for (NSInteger groupLevel = 0; groupLevel < _groupNestingLevel; groupLevel++) {
             nestedFormats = [nestedFormats lastObject];
             
             if ((groupLevel == _groupNestingLevel - 1) && includedLeaves) {
@@ -156,7 +156,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
     
     NSMutableArray *formats = [NSMutableArray arrayWithObject:[NSMutableArray arrayWithObject:[NSMutableString string]]];
     
-    for (int i = 0; i < [template length]; i++) {
+    for (NSInteger i = 0; i < [template length]; i++) {
         NSString *token = [template substringWithRange:NSMakeRange(i, 1)];
         
         if ([kFormatTokens containsString:token]) {
@@ -218,7 +218,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
 {
     NSMutableString *digits = [NSMutableString string];
     
-    for (int i = 0; i < [phoneNumber length]; i++) {
+    for (NSInteger i = 0; i < [phoneNumber length]; i++) {
         NSString *character = [phoneNumber substringWithRange:NSMakeRange(i, 1)];
         
         if ([kCharacters0_9 containsString:character] || [character isEqualToString:kTokenPlus]) {
@@ -303,7 +303,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
     _canonicalOffset = 0;
     _formattedPhoneNumber = [NSString string];
     
-    for (int i = 0; _formattedPhoneNumber && (i < [phoneNumber length]); i++) {
+    for (NSInteger i = 0; _formattedPhoneNumber && (i < [phoneNumber length]); i++) {
         NSString *character = [phoneNumber substringWithRange:NSMakeRange(i, 1)];
         NSString *segment = [self matchCharacter:character];
         
@@ -322,7 +322,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
 {
     NSString *formattedNumber = nil;
     
-    for (int i = 0; !formattedNumber && (i < [_formats count]); i++) {
+    for (NSInteger i = 0; !formattedNumber && (i < [_formats count]); i++) {
         formattedNumber = [self matchPhoneNumber:phoneNumber toFormat:_formats[i]];
     }
     
@@ -383,7 +383,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         if (prefixedNumber) {
             NSString *countryCallingCode = nil;
             
-            for (int i = 1; !countryCallingCode && (i < [prefixedNumber length]); i++) {
+            for (NSInteger i = 1; !countryCallingCode && (i < [prefixedNumber length]); i++) {
                 if ([kWhitespaceCharacters containsCharacter:[prefixedNumber characterAtIndex:i]]) {
                     countryCallingCode = [prefixedNumber substringWithRange:NSMakeRange(1, i - 1)];
                 }

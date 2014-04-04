@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #ifndef OrigoApp_OrigoApp_h
@@ -28,8 +28,9 @@
 
 #import "Reachability.h"
 
-@class OActionSheet, OActivityIndicator, OAddressFacade, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
+@class OEntityProxy, OOrigoProxy;
 @class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
+@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
 
 #import "OConnectionDelegate.h"
 #import "OEntityObserver.h"
@@ -41,7 +42,9 @@
 #import "OTableViewListDelegate.h"
 #import "OTextInput.h"
 
-typedef UIView<OTextInput> OInputField;
+#import "OEntityFacade.h"
+#import "OEntityProxy.h"
+#import "OOrigoProxy.h"
 
 #import "ODevice.h"
 #import "ODevice+OrigoAdditions.h"
@@ -56,6 +59,8 @@ typedef UIView<OTextInput> OInputField;
 #import "OReplicatedEntityRef.h"
 #import "OSettings.h"
 #import "OSettings+OrigoAdditions.h"
+
+typedef UIView<OTextInput> OInputField;
 
 #import "NSDate+OrigoAdditions.h"
 #import "NSJSONSerialization+OrigoAdditions.h"
@@ -72,7 +77,6 @@ typedef UIView<OTextInput> OInputField;
 
 #import "OActionSheet.h"
 #import "OActivityIndicator.h"
-#import "OAddressFacade.h"
 #import "OAlert.h"
 #import "OConnection.h"
 #import "OCrypto.h"

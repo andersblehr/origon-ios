@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -31,13 +31,11 @@ extern NSString * const kContactRoleAssistantCoach;
 @interface OOrigo (OrigoAdditions)
 
 - (NSSet *)allMemberships;
-- (NSSet *)fullMemberships;
-- (NSSet *)regularMemberships;
-- (NSSet *)contactMemberships;
-- (NSSet *)residencies;
-- (NSSet *)participancies;
+
+- (NSSet *)residents;
 - (NSSet *)members;
 - (NSSet *)contacts;
+- (NSSet *)regulars;
 - (NSSet *)guardians;
 - (NSSet *)elders;
 
@@ -53,7 +51,6 @@ extern NSString * const kContactRoleAssistantCoach;
 
 - (BOOL)isOfType:(NSString *)origoType;
 - (BOOL)isOrganised;
-- (BOOL)isCrossGenerational;
 - (BOOL)isJuvenile;
 - (BOOL)hasAdmin;
 - (BOOL)hasContacts;

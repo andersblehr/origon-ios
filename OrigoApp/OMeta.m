@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OMeta.h"
@@ -15,7 +15,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 static CGFloat _systemVersion = 0.f;
 static CGFloat _screenScale = 0.f;
 
-static OMeta *_m = nil;
+static OMeta *_meta = nil;
 
 
 @implementation OMeta
@@ -126,11 +126,11 @@ static OMeta *_m = nil;
 
 + (OMeta *)m
 {
-    if (!_m) {
-        _m = [[super allocWithZone:nil] init];
+    if (!_meta) {
+        _meta = [[super allocWithZone:nil] init];
     }
     
-    return _m;
+    return _meta;
 }
 
 
@@ -208,8 +208,8 @@ static OMeta *_m = nil;
 {
     BOOL userHasAddress = NO;
     
-    for (OMembership *residency in [_user residencies]) {
-        userHasAddress = userHasAddress || [residency.origo.address hasValue];
+    for (OOrigo *residence in [_user residences]) {
+        userHasAddress = userHasAddress || [residence.address hasValue];
     }
     
     return _user.dateOfBirth && [_user.mobilePhone hasValue] && userHasAddress;
@@ -263,10 +263,10 @@ static OMeta *_m = nil;
     if (!_localisedStringsBundle) {
         _localisedStringsBundle = [NSBundle mainBundle];
         
-        if (![_localisedStringsBundle pathForResource:[OMeta m].language ofType:kLocalisedProject]) {
+        if (![_localisedStringsBundle pathForResource:_meta.language ofType:kLocalisedProject]) {
             NSString *testString = [_localisedStringsBundle localizedStringForKey:@"String test" value:@"" table:nil];
             
-            if ([testString isEqualToString:@"String test"] || [OMeta m].settings.useEnglish) {
+            if ([testString isEqualToString:@"String test"] || _meta.settings.useEnglish) {
                 _localisedStringsBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:kLanguageCodeEnglish ofType:kLocalisedProject]];
             }
         }

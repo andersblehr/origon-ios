@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OState.h"
@@ -31,30 +31,35 @@ NSString * const kTargetContact = @"contact";
 NSString * const kTargetParentContact = @"parentContact";
 NSString * const kTargetRelation = @"relation";
 NSString * const kTargetSetting = @"setting";
+NSString * const kTargetSettings = @"settings";
 
 static NSString * const kAspectHousehold = @"h";
 static NSString * const kAspectDefault = @"d";
 
-static OState *_s = nil;
+static OState *_activeState = nil;
 
 
 @implementation OState
 
 #pragma mark - Auxiliary methods
 
-- (void)setAspectForEntity:(id)entity
+- (void)setAspectForTarget:(id)target
 {
-    if ([entity isKindOfClass:[OMember class]]) {
-        if ([entity isHousemateOfUser]) {
-            _pivotMember = entity;
+    if ([target isKindOfClass:[OMember class]]) {
+        if ([target isHousemateOfUser]) {
+            _pivotMember = target;
             _aspect = kAspectHousehold;
         } else {
             _aspect = kAspectDefault;
         }
-    } else if ([entity isKindOfClass:[OOrigo class]]) {
-        if ([entity isOfType:kOrigoTypeResidence] && [entity userIsMember]) {
+    } else if ([target isKindOfClass:[OOrigo class]]) {
+        if ([target isOfType:kOrigoTypeResidence] && [target userIsMember]) {
             _aspect = kAspectHousehold;
         } else {
+            _aspect = kAspectDefault;
+        }
+    } else if ([target isKindOfClass:[NSString class]]) {
+        if (![target isEqualToString:kOrigoTypeResidence] && ![target isEqualToString:kTargetMember]) {
             _aspect = kAspectDefault;
         }
     }
@@ -70,10 +75,12 @@ static OState *_s = nil;
     if (self && viewController) {
         _viewController = viewController;
         
-        if ([OState s]) {
-            _pivotMember = [OState s].pivotMember;
-            _aspect = [[OState s] aspectIsHousehold] ? kAspectHousehold : kAspectDefault;
+        if (_activeState) {
+            _aspect = _activeState->_aspect;
+            _pivotMember = _activeState.pivotMember;
         }
+        
+        self.target = viewController.target;
     }
     
     return self;
@@ -82,34 +89,22 @@ static OState *_s = nil;
 
 + (OState *)s
 {
-    if (!_s) {
-        _s = [[OState alloc] initWithViewController:nil];
+    if (!_activeState) {
+        _activeState = [[OState alloc] initWithViewController:nil];
     }
     
-    return _s;
+    return _activeState;
 }
 
 
 #pragma mark - State handling
-
-- (void)setTarget:(NSString *)target aspectCarrier:(id)aspectCarrier
-{
-    if ([aspectCarrier isKindOfClass:[OMember class]]) {
-        if (![target isEqualToString:kOrigoTypeResidence] || ![aspectCarrier isUser]) {
-            _aspect = kAspectDefault;
-        }
-    }
-    
-    self.target = target;
-}
-
 
 - (void)reflectState:(OState *)state
 {
     if (state != self) {
         _viewController = state.viewController;
         _pivotMember = state.pivotMember;
-        _aspect = [state aspectIsHousehold] ? kAspectHousehold : kAspectDefault;
+        _aspect = state->_aspect;
         _action = state.action;
         _target = state.target;
     }
@@ -173,7 +168,7 @@ static OState *_s = nil;
 
 - (BOOL)isCurrent
 {
-    return (self.viewController == [OState s].viewController);
+    return (self.viewController == _activeState.viewController);
 }
 
 
@@ -193,27 +188,35 @@ static OState *_s = nil;
 }
 
 
-#pragma mark - Custom property accessors
+#pragma mark - Custom accessors
 
 - (void)setAction:(NSString *)action
 {
     _action = action;
     
-    [[OState s] reflectState:self];
+    [_activeState reflectState:self];
 }
 
 
 - (void)setTarget:(id)target
 {
+    if ([target isKindOfClass:[OEntityProxy class]]) {
+        if ([target isInstantiated]) {
+            target = [target proxy].entity;
+        } else {
+            target = [target facade].type;
+        }
+    }
+    
+    [self setAspectForTarget:target];
+    
     if ([target isKindOfClass:[OReplicatedEntity class]]) {
-        [self setAspectForEntity:target];
-        
         _target = [target asTarget];
     } else if ([target isKindOfClass:[NSString class]]) {
         _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
     }
     
-    [[OState s] reflectState:self];
+    [_activeState reflectState:self];
 }
 
 @end

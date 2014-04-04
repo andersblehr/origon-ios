@@ -2,7 +2,7 @@
 //  OReplicatedEntity.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 18.03.14.
+//  Created by Anders Blehr on 29.03.14.
 //  Copyright (c) 2014 Rhelba Source. All rights reserved.
 //
 
@@ -21,5 +21,6 @@
 @property (nonatomic, retain) NSNumber * isAwaitingDeletion;
 @property (nonatomic, retain) NSNumber * isExpired;
 @property (nonatomic, retain) NSString * origoId;
+@property (nonatomic, retain) NSString * type;
 
 @end

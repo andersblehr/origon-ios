@@ -3,7 +3,7 @@
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Creations. All rights reserved.
+//  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
 #import "OTextField.h"
@@ -77,7 +77,7 @@ static CGFloat const kTextInsetY = 1.2f;
     NSInteger endPosition = [self.text length] - 1;
     NSInteger tailingDigits = 0;
     
-    for (int i = 0; i > offset; i--) {
+    for (NSInteger i = 0; i > offset; i--) {
         if ([kCharacters0_9 containsCharacter:[self.text characterAtIndex:endPosition + i]]) {
             tailingDigits++;
         }
@@ -85,7 +85,7 @@ static CGFloat const kTextInsetY = 1.2f;
     
     endPosition = [_value length] - 1;
     
-    for (int i = 0; tailingDigits > 0; i--) {
+    for (NSInteger i = 0; tailingDigits > 0; i--) {
         if ([kCharacters0_9 containsCharacter:[_value characterAtIndex:endPosition + i]]) {
             tailingDigits--;
             
