@@ -281,7 +281,7 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.textColor = [UIColor textColour];
         } else {
             cell.detailTextLabel.text = NSLocalizedString(@"(No origos)", @"");
-            cell.detailTextLabel.textColor = [UIColor lightTextColor];
+            cell.detailTextLabel.textColor = [UIColor dimmedTextColour];
         }
     } else if (sectionKey == kSectionKeyOrigos) {
         OOrigo *origo = entity;

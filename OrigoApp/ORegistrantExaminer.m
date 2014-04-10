@@ -50,7 +50,13 @@ static NSInteger const kButtonTagNo = 3;
                 _parentCandidateStatus = kParentCandidateStatusUndetermined;
             }
         } else if ([resident isJuvenile] && ![resident hasParentWithGender:_gender]) {
-            if ([_dateOfBirth yearsBeforeDate:resident.dateOfBirth] >= kAgeOfConsent) {
+            BOOL isParentCandidate = YES;
+            
+            if (_dateOfBirth && resident.dateOfBirth) {
+                isParentCandidate = ([_dateOfBirth yearsBeforeDate:resident.dateOfBirth] >= kAgeOfConsent);
+            }
+            
+            if (isParentCandidate) {
                 [candidates addObject:resident];
             }
         }

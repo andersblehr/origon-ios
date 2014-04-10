@@ -152,7 +152,7 @@
 }
 
 
-+ (instancetype)lightTextColour
++ (instancetype)dimmedTextColour
 {
     return [self lightGrayColor];
 }
