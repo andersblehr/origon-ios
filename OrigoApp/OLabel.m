@@ -38,7 +38,7 @@
 
 #pragma mark - Initialisation
 
-- (id)initWithKey:(NSString *)key centred:(BOOL)centred
+- (instancetype)initWithKey:(NSString *)key centred:(BOOL)centred
 {
     self = [super initWithFrame:CGRectZero];
     

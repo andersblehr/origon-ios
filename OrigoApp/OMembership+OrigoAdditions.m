@@ -105,7 +105,7 @@ static NSString * const kMembershipTypeAssociate = @"A";
         self.contactType = nil;
         self.isAdmin = @NO;
     } else {
-        if ([self.origo isOfType:kOrigoTypeMemberRoot]) {
+        if ([self.origo isOfType:kOrigoTypeRoot]) {
             self.type = kMembershipTypeMemberRoot;
         } else if ([self.origo isOfType:kOrigoTypeResidence]) {
             self.type = kMembershipTypeResidency;

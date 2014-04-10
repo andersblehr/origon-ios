@@ -13,7 +13,7 @@
     NSMutableArray *_buttonTags;
 }
 
-- (id)initWithPrompt:(NSString *)prompt delegate:(id<UIActionSheetDelegate>)delegate tag:(NSInteger)tag;
+- (instancetype)initWithPrompt:(NSString *)prompt delegate:(id<UIActionSheetDelegate>)delegate tag:(NSInteger)tag;
 
 - (NSInteger)addButtonWithTitle:(NSString *)title tag:(NSInteger)tag;
 - (NSInteger)tagForButtonIndex:(NSInteger)buttonIndex;

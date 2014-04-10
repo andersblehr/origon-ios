@@ -10,6 +10,7 @@
 
 @interface OUtil : NSObject
 
++ (NSString *)rootIdFromMemberId:(NSString *)memberId;
 + (NSString *)commaSeparatedListOfItems:(NSArray *)items conjoinLastItem:(BOOL)conjoinLastItem;
 + (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode;
 + (NSString *)givenNameFromFullName:(NSString *)fullName;

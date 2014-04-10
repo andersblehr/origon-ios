@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString * const kOrigoTypeMemberRoot;
+extern NSString * const kOrigoTypeRoot;
 extern NSString * const kOrigoTypeResidence;
 extern NSString * const kOrigoTypeFriends;
 extern NSString * const kOrigoTypeTeam;
@@ -30,8 +30,9 @@ extern NSString * const kContactRoleAssistantCoach;
 
 @interface OOrigo (OrigoAdditions)
 
-- (NSSet *)allMemberships;
++ (instancetype)origoWithId:(NSString *)entityId type:(NSString *)type;
 
+- (NSSet *)allMemberships;
 - (NSSet *)residents;
 - (NSSet *)members;
 - (NSSet *)contacts;

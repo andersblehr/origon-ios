@@ -13,7 +13,7 @@
 
 #pragma mark - Initialisation
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     

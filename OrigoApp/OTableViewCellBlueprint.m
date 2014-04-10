@@ -20,7 +20,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 #pragma mark - Initialisation
 
-- (id)initWithState:(OState *)state
+- (instancetype)initWithState:(OState *)state
 {
     self = [super init];
     
@@ -59,7 +59,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 }
 
 
-- (id)initWithState:(OState *)state reuseIdentifier:(NSString *)reuseIdentifier
+- (instancetype)initWithState:(OState *)state reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [self initWithState:state];
     

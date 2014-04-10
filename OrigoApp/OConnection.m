@@ -176,7 +176,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 #pragma mark - Initialisation
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     
@@ -192,7 +192,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 }
 
 
-- (id)initWithRoot:(NSString *)root path:(NSString *)path
+- (instancetype)initWithRoot:(NSString *)root path:(NSString *)path
 {
     self = [self init];
     
@@ -209,19 +209,19 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 + (void)signInWithEmail:(NSString *)email password:(NSString *)password
 {
-    [[[OConnection alloc] init] authenticateWithPath:kPathSignIn email:email password:password];
+    [[[self alloc] init] authenticateWithPath:kPathSignIn email:email password:password];
 }
 
 
 + (void)activateWithEmail:(NSString *)email password:(NSString *)password
 {
-    [[[OConnection alloc] init] authenticateWithPath:kPathActivate email:email password:password];
+    [[[self alloc] init] authenticateWithPath:kPathActivate email:email password:password];
 }
 
 
 + (void)sendActivationCodeToEmail:(NSString *)email
 {
-    [[[OConnection alloc] init] authenticateWithPath:kPathSendCode email:email password:[OCrypto generateActivationCode]];
+    [[[self alloc] init] authenticateWithPath:kPathSendCode email:email password:[OCrypto generateActivationCode]];
 }
 
 
@@ -232,7 +232,7 @@ static NSString * const kURLParameterIdentifier = @"id";
     NSString *path = [entities count] ? kPathReplicate : kPathFetch;
     NSString *HTTPMethod = [entities count] ? kHTTPMethodPOST : kHTTPMethodGET;
     
-    OConnection *connection = [[OConnection alloc] initWithRoot:kRootModel path:path];
+    OConnection *connection = [[self alloc] initWithRoot:kRootModel path:path];
     [connection setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [connection setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     
@@ -244,7 +244,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 + (void)lookupMemberWithIdentifier:(NSString *)identifier
 {
-    OConnection *connection = [[OConnection alloc] initWithRoot:kRootModel path:kPathLookup];
+    OConnection *connection = [[self alloc] initWithRoot:kRootModel path:kPathLookup];
     [connection setValue:identifier forURLParameter:kURLParameterIdentifier];
     [connection setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     

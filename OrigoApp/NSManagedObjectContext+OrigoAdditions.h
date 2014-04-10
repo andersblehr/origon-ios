@@ -10,10 +10,9 @@
 
 @interface NSManagedObjectContext (OrigoAdditions)
 
+- (id)insertEntityOfClass:(Class)class entityId:(NSString *)entityId;
+- (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId;
 - (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo;
-- (id)insertOrigoEntityOfType:(NSString *)origoType;
-- (id)insertMemberEntityWithId:(NSString *)memberId;
-- (id)insertDeviceEntity;
 
 - (id)entityWithId:(NSString *)entityId;
 - (id)entityOfClass:(Class)class withValue:(NSString *)value forKey:(NSString *)key;
@@ -21,8 +20,8 @@
 - (void)deleteEntity:(OReplicatedEntity *)entity;
 
 - (void)insertCrossReferencesForMembership:(OMembership *)membership;
-- (void)insertAdditionalCrossReferencesForFullMembership:(OMembership *)membership;
 - (void)expireCrossReferencesForMembership:(OMembership *)membership;
+- (void)insertAdditionalCrossReferencesForFullMembership:(OMembership *)membership;
 - (void)expireAdditionalCrossReferencesForFullMembership:(OMembership *)membership;
 
 - (void)save;

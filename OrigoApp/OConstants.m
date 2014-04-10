@@ -69,6 +69,7 @@ NSString * const kPropertyKeyOrigoId = @"origoId";
 NSString * const kPropertyKeyPasswordHash = @"passwordHash";
 NSString * const kPropertyKeyPhoto = @"photo";
 NSString * const kPropertyKeyTelephone = @"telephone";
+NSString * const kPropertyKeyType = @"type";
 
 // Entity relationship keys
 NSString * const kRelationshipKeyMember = @"member";

@@ -10,38 +10,38 @@
 
 @interface UIColor (OrigoAdditions)
 
-+ (UIColor *)manateeColour;
-+ (UIColor *)radicalRedColour;
-+ (UIColor *)redOrangeColour;
-+ (UIColor *)pizazzColour;
-+ (UIColor *)supernovaColour;
-+ (UIColor *)emeraldColour;
-+ (UIColor *)malibuColour;
-+ (UIColor *)curiousBlueColour;
-+ (UIColor *)azureRadianceColour;
-+ (UIColor *)indigoColour;
++ (instancetype)manateeColour;
++ (instancetype)radicalRedColour;
++ (instancetype)redOrangeColour;
++ (instancetype)pizazzColour;
++ (instancetype)supernovaColour;
++ (instancetype)emeraldColour;
++ (instancetype)malibuColour;
++ (instancetype)curiousBlueColour;
++ (instancetype)azureRadianceColour;
++ (instancetype)indigoColour;
 
-+ (UIColor *)toolbarShadowColour;
-+ (UIColor *)tableViewBackgroundColour;
-+ (UIColor *)tableViewSeparatorColour;
-+ (UIColor *)cellBackgroundColour;
-+ (UIColor *)selectedCellBackgroundColour;
-+ (UIColor *)alertViewBackgroundColour;
++ (instancetype)toolbarShadowColour;
++ (instancetype)tableViewBackgroundColour;
++ (instancetype)tableViewSeparatorColour;
++ (instancetype)cellBackgroundColour;
++ (instancetype)selectedCellBackgroundColour;
++ (instancetype)alertViewBackgroundColour;
 
-+ (UIColor *)windowTintColour;
-+ (UIColor *)titleBackgroundColour;
-+ (UIColor *)titlePlaceholderColour;
-+ (UIColor *)imagePlaceholderBackgroundColour;
-+ (UIColor *)iOS6BarButtonItemColour;
++ (instancetype)windowTintColour;
++ (instancetype)titleBackgroundColour;
++ (instancetype)titlePlaceholderColour;
++ (instancetype)imagePlaceholderBackgroundColour;
++ (instancetype)iOS6BarButtonItemColour;
 
-+ (UIColor *)textColour;
-+ (UIColor *)lightTextColour;
-+ (UIColor *)notificationTextColour;
-+ (UIColor *)placeholderTextColour;
-+ (UIColor *)headerTextColour;
-+ (UIColor *)footerTextColour;
-+ (UIColor *)titleTextColour;
-+ (UIColor *)labelTextColour;
-+ (UIColor *)imagePlaceholderTextColour;
++ (instancetype)textColour;
++ (instancetype)lightTextColour;
++ (instancetype)notificationTextColour;
++ (instancetype)placeholderTextColour;
++ (instancetype)headerTextColour;
++ (instancetype)footerTextColour;
++ (instancetype)titleTextColour;
++ (instancetype)labelTextColour;
++ (instancetype)imagePlaceholderTextColour;
 
 @end

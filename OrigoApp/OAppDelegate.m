@@ -123,9 +123,10 @@ static void uncaughtExceptionHandler(NSException *exception)
         _window.tintColor = [UIColor windowTintColour];
     }
     
-    OLogDebug(@"Device is %@.", [UIDevice currentDevice].model);
-    OLogDebug(@"iOS version is %@.", [UIDevice currentDevice].systemVersion);
-    OLogDebug(@"System language is '%@'.", [[OMeta m] language]);
+    OLogDebug(@"Device ID: %@", [OMeta m].deviceId);
+    OLogDebug(@"Device model: %@.", [UIDevice currentDevice].model);
+    OLogDebug(@"iOS version: %@.", [UIDevice currentDevice].systemVersion);
+    OLogDebug(@"System language: %@", [OMeta m].language);
 
     //NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
     //[[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];

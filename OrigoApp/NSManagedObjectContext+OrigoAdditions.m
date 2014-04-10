@@ -8,70 +8,14 @@
 
 #import "NSManagedObjectContext+OrigoAdditions.h"
 
-static NSString * const kMemberRootIdFormat = @"~%@";
-
 
 @implementation NSManagedObjectContext (OrigoAdditions)
 
-#pragma mark - Auxiliary methods
-
-- (NSString *)memberRootIdForMemberWithId:(NSString *)memberId
-{
-    return [NSString stringWithFormat:kMemberRootIdFormat, memberId];
-}
-
+#pragma mark - Entity cross-reference handling
 
 - (NSString *)entityRefIdForEntity:(OReplicatedEntity *)entity inOrigoWithId:(NSString *)origoId
 {
     return [entity.entityId stringByAppendingString:origoId separator:kSeparatorHash];
-}
-
-
-- (id)insertEntityOfClass:(Class)class entityId:(NSString *)entityId
-{
-    OReplicatedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
-    
-    entity.entityId = entityId;
-    entity.dateCreated = [NSDate date];
-    entity.createdBy = [OMeta m].userId;
-    
-    NSString *expires = [entity expiresInTimeframe];
-    
-    if (expires) {
-        // TODO: Process expiry instructions
-    }
-    
-    return entity;
-}
-
-
-- (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId
-{
-    OReplicatedEntity *entity = [self insertEntityOfClass:class entityId:entityId];
-    
-    entity.origoId = origo.entityId;
-    
-    if ([entity.entity relationshipsByName][kRelationshipKeyOrigo]) {
-        [entity setValue:origo forKey:kRelationshipKeyOrigo];
-    }
-    
-    return entity;
-}
-
-
-- (id)insertOrigoEntityOfType:(NSString *)origoType origoId:(NSString *)origoId
-{
-    OOrigo *origo = [self insertEntityOfClass:[OOrigo class] entityId:origoId];
-    origo.origoId = origoId;
-    origo.type = origoType;
-    
-    if (![origo isOfType:kOrigoTypeMemberRoot] && ![origo isOfType:kOrigoTypeResidence]) {
-        if ([[OState s].pivotMember isJuvenile]) {
-            origo.isForMinors = @YES;
-        }
-    }
-    
-    return origo;
 }
 
 
@@ -104,18 +48,20 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     OReplicatedEntityRef *expiryRef = nil;
     
     if ([membership.member isActive]) {
-        NSString *memberRootId = [self memberRootIdForMemberWithId:membership.member.entityId];
-        NSString *expiryRefId = [self entityRefIdForEntity:membership inOrigoWithId:memberRootId];
+        NSString *rootId = [OUtil rootIdFromMemberId:membership.member.entityId];
+        NSString *expiryRefId = [self entityRefIdForEntity:membership inOrigoWithId:rootId];
         
         expiryRef = [self insertEntityOfClass:[OReplicatedEntityRef class] entityId:expiryRefId];
         expiryRef.referencedEntityId = membership.entityId;
         expiryRef.referencedEntityOrigoId = membership.origoId;
-        expiryRef.origoId = memberRootId;
+        expiryRef.origoId = rootId;
     }
     
     return expiryRef;
 }
 
+
+#pragma mark - Merge/insert entity data from dictionary
 
 - (id)mergeEntityFromDictionary:(NSDictionary *)entityDictionary
 {
@@ -161,6 +107,8 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 }
 
 
+#pragma mark - Preparing for entity replication
+
 - (NSSet *)pendingEntities
 {
     NSMutableSet *unsavedEntities = [NSMutableSet set];
@@ -182,42 +130,44 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 
 #pragma mark - Inserting entities
 
+- (id)insertEntityOfClass:(Class)class entityId:(NSString *)entityId
+{
+    OReplicatedEntity *entity = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(class) inManagedObjectContext:self];
+    
+    entity.entityId = entityId;
+    entity.dateCreated = [NSDate date];
+    entity.createdBy = [OMeta m].userId;
+
+    if (class == [OOrigo class]) {
+        entity.origoId = entityId;
+    }
+    
+    NSString *expires = [entity expiresInTimeframe];
+    
+    if (expires) {
+        // TODO: Process expiry instructions
+    }
+    
+    return entity;
+}
+
+
+- (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo entityId:(NSString *)entityId
+{
+    OReplicatedEntity *entity = [self insertEntityOfClass:class entityId:entityId];
+    entity.origoId = origo.entityId;
+    
+    if ([entity.entity relationshipsByName][kRelationshipKeyOrigo]) {
+        [entity setValue:origo forKey:kRelationshipKeyOrigo];
+    }
+    
+    return entity;
+}
+
+
 - (id)insertEntityOfClass:(Class)class inOrigo:(OOrigo *)origo
 {
     return [self insertEntityOfClass:class inOrigo:origo entityId:[OCrypto generateUUID]];
-}
-
-
-- (id)insertOrigoEntityOfType:(NSString *)origoType
-{
-    return [self insertOrigoEntityOfType:origoType origoId:[OCrypto generateUUID]];
-}
-
-
-- (id)insertMemberEntityWithId:(NSString *)memberId
-{
-    NSString *memberRootId = [self memberRootIdForMemberWithId:memberId];
-    
-    OOrigo *memberRoot = [self insertOrigoEntityOfType:kOrigoTypeMemberRoot origoId:memberRootId];
-    OMember *member = [self insertEntityOfClass:[OMember class] inOrigo:memberRoot entityId:memberId];
-    [memberRoot addMember:member];
-    
-    if ([[OState s] targetIs:kTargetUser]) {
-        member.email = [OMeta m].userEmail;
-    }
-    
-    return member;
-}
-
-
-- (id)insertDeviceEntity
-{
-    ODevice *device = [self insertEntityOfClass:[ODevice class] inOrigo:[[OMeta m].user rootOrigo] entityId:[OMeta m].deviceId];
-    device.type = [UIDevice currentDevice].model;
-    device.displayName = [UIDevice currentDevice].name;
-    device.member = [OMeta m].user;
-    
-    return device;
 }
 
 
@@ -250,7 +200,7 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 }
 
 
-#pragma mark - Entity deletion
+#pragma mark - Deleting entities
 
 - (void)deleteEntity:(OReplicatedEntity *)entity
 {
@@ -280,30 +230,6 @@ static NSString * const kMemberRootIdFormat = @"~%@";
 }
 
 
-- (void)insertAdditionalCrossReferencesForFullMembership:(OMembership *)membership
-{
-    OMember *member = membership.member;
-    OOrigo *origo = membership.origo;
-    
-    for (OMembership *residency in [member residencies]) {
-        if ((residency != membership) && [origo isOfType:kOrigoTypeResidence]) {
-            [self createEntityRefForEntity:membership inOrigo:residency.origo];
-            [self createEntityRefForEntity:origo inOrigo:residency.origo];
-        }
-    }
-    
-    for (OMember *housemate in [member housemates]) {
-        for (OMembership *peerResidency in [housemate residencies]) {
-            [origo addAssociateMember:peerResidency.member];
-            
-            if ([origo isOfType:kOrigoTypeResidence]) {
-                [peerResidency.origo addAssociateMember:member];
-            }
-        }
-    }
-}
-
-
 - (void)expireCrossReferencesForMembership:(OMembership *)membership
 {
     OMember *member = membership.member;
@@ -324,6 +250,30 @@ static NSString * const kMemberRootIdFormat = @"~%@";
     
     if ([membership isFull]) {
         [self expireAdditionalCrossReferencesForFullMembership:membership];
+    }
+}
+
+
+- (void)insertAdditionalCrossReferencesForFullMembership:(OMembership *)membership
+{
+    OMember *member = membership.member;
+    OOrigo *origo = membership.origo;
+    
+    for (OMembership *residency in [member residencies]) {
+        if ((residency != membership) && [origo isOfType:kOrigoTypeResidence]) {
+            [self createEntityRefForEntity:membership inOrigo:residency.origo];
+            [self createEntityRefForEntity:origo inOrigo:residency.origo];
+        }
+    }
+    
+    for (OMember *housemate in [member housemates]) {
+        for (OMembership *peerResidency in [housemate residencies]) {
+            [origo addAssociateMember:peerResidency.member];
+            
+            if ([origo isOfType:kOrigoTypeResidence]) {
+                [peerResidency.origo addAssociateMember:member];
+            }
+        }
     }
 }
 

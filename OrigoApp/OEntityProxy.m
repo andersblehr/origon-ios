@@ -8,38 +8,66 @@
 
 #import "OEntityProxy.h"
 
-static NSString * const kPrefixSetter = @"set";
+static NSString * const kAccessorPrefixSetter = @"set";
+static NSString * const kClassSuffixProxy = @"Proxy";
 
 
 @implementation OEntityProxy
 
 #pragma mark - Initialisation
 
-- (id)initWithEntity:(OReplicatedEntity *)entity
+- (instancetype)initWithEntity:(OReplicatedEntity *)entity
 {
-    self = [self initWithEntityClass:[entity class] type:entity.type];
+    NSString *type = nil;
+    
+    if ([[[entity class] propertyKeys] containsObject:kPropertyKeyType]) {
+        type = [entity valueForKey:kPropertyKeyType];
+    }
+    
+    self = [self initWithEntityClass:[entity class] type:type];
     
     if (self) {
-        _entity = entity;
+        _instance = entity;
     }
     
     return self;
 }
 
 
-- (id)initWithEntityClass:(Class)entityClass type:(NSString *)type
+- (instancetype)initWithEntityClass:(Class)entityClass type:(NSString *)type
 {
     self = [super init];
     
     if (self) {
-        _entityClass = entityClass;
-        _type = type;
+        _propertyKeys = [entityClass propertyKeys];
+        
+        if (![_propertyKeys containsObject:kPropertyKeyType]) {
+            _propertyKeys = [_propertyKeys arrayByAddingObject:kPropertyKeyType];
+        }
         
         _valuesByKey = [NSMutableDictionary dictionary];
-        _attributeNames = [[[NSEntityDescription entityForName:NSStringFromClass(_entityClass) inManagedObjectContext:[OMeta m].context] attributesByName] allKeys];
+        _entityClass = entityClass;
+        
+        if (type) {
+            [self setValue:type forKey:kPropertyKeyType];
+        }
     }
     
     return self;
+}
+
+
+#pragma mark - Factory methods
+
++ (instancetype)proxyForEntity:(OReplicatedEntity *)entity
+{
+    return [[self alloc] initWithEntity:entity];
+}
+
+
++ (instancetype)proxyForEntityOfClass:(Class)entityClass type:(NSString *)type
+{
+    return [[self alloc] initWithEntityClass:entityClass type:type];
 }
 
 
@@ -59,7 +87,7 @@ static NSString * const kPrefixSetter = @"set";
 
 - (id<OEntityFacade>)facade
 {
-    return _entity ? (id<OEntityFacade>)_entity : (id<OEntityFacade>)self;
+    return _instance ? (id<OEntityFacade>)_instance : (id<OEntityFacade>)self;
 }
 
 
@@ -69,7 +97,7 @@ static NSString * const kPrefixSetter = @"set";
     
     if (_parent) {
         if (_parent.entityClass == parentClass) {
-            parent = _parent.entity ? _parent.entity : _parent;
+            parent = _parent.instance ? _parent.instance : _parent;
         } else {
             parent = [_parent parentWithClass:parentClass];
         }
@@ -81,7 +109,7 @@ static NSString * const kPrefixSetter = @"set";
 
 - (BOOL)isInstantiated
 {
-    return (_entity != nil);
+    return (_instance != nil);
 }
 
 
@@ -93,17 +121,17 @@ static NSString * const kPrefixSetter = @"set";
 
 - (BOOL)hasValueForKey:(NSString *)key
 {
-    return _entity ? [_entity hasValueForKey:key] : [[_valuesByKey allKeys] containsObject:key];
+    return _instance ? [_instance hasValueForKey:key] : [[_valuesByKey allKeys] containsObject:key];
 }
 
 
-#pragma mark - Entity instantiation
+#pragma mark - Custom accessors
 
-- (void)instantiateWithEntity:(OReplicatedEntity *)entity
+- (void)setInstance:(id)instance
 {
-    if ([entity class] == _entityClass) {
-        _entity = entity;
-    }
+    _instance = ([instance class] == _entityClass) ? instance : nil;
+    
+    [_valuesByKey removeAllObjects];
 }
 
 
@@ -111,8 +139,8 @@ static NSString * const kPrefixSetter = @"set";
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {
-    if (_entity) {
-        [_entity setValue:value forKey:key];
+    if (_instance) {
+        [_instance setValue:value forKey:key];
     } else {
         _valuesByKey[key] = value;
     }
@@ -121,7 +149,7 @@ static NSString * const kPrefixSetter = @"set";
 
 - (id)valueForKey:(NSString *)key
 {
-    return _entity ? [_entity valueForKey:key] : _valuesByKey[key];
+    return _instance ? [_instance valueForKey:key] : _valuesByKey[key];
 }
 
 
@@ -137,7 +165,7 @@ static NSString * const kPrefixSetter = @"set";
 
 - (id)forwardingTargetForSelector:(SEL)selector
 {
-    return (_entity && [_entity respondsToSelector:selector]) ? _entity : nil;
+    return (_instance && [_instance respondsToSelector:selector]) ? _instance : nil;
 }
 
 
@@ -149,16 +177,16 @@ static NSString * const kPrefixSetter = @"set";
         _forwardSelector = @selector(forwardingFallbackForUninstantiatedEntities);
     } else {
         NSString *selectorName = NSStringFromSelector(selector);
-        NSString *attributeName = [selectorName componentsSeparatedByString:kSeparatorColon][0];
+        NSString *propertyKey = [selectorName componentsSeparatedByString:kSeparatorColon][0];
         
-        BOOL isSetter = [attributeName hasPrefix:kPrefixSetter];
+        BOOL isSetter = [propertyKey hasPrefix:kAccessorPrefixSetter];
         
         if (isSetter) {
-            attributeName = [[attributeName substringFromIndex:3] stringByLowercasingFirstLetter];
+            propertyKey = [[propertyKey substringFromIndex:3] stringByLowercasingFirstLetter];
         }
         
-        if ([_attributeNames containsObject:attributeName]) {
-            _forwardSelectorArgument = attributeName;
+        if ([_propertyKeys containsObject:propertyKey]) {
+            _forwardSelectorArgument = propertyKey;
             
             if (isSetter) {
                 _forwardSelector = @selector(setValue:forKey:);

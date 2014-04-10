@@ -10,8 +10,7 @@
 
 @interface OOrigoProxy : OEntityProxy
 
-//@property (strong, nonatomic) NSString *telephone;
-
-- (id)initWithAddressBookDictionary:(CFDictionaryRef)dictionary;
++ (instancetype)proxyWithType:(NSString *)type;
++ (instancetype)proxyFromAddressBookEntry:(CFDictionaryRef)entry;
 
 @end

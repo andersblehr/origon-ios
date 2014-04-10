@@ -42,7 +42,6 @@
 
 @property (strong, nonatomic, readonly) OMember *user;
 @property (strong, nonatomic, readonly) OLocator *locator;
-@property (strong, nonatomic, readonly) OSettings *settings;
 @property (strong, nonatomic, readonly) OReplicator *replicator;
 @property (strong, nonatomic, readonly) OSwitchboard *switchboard;
 
@@ -59,7 +58,7 @@
 - (BOOL)userIsAllSet;
 
 - (BOOL)internetConnectionIsAvailable;
-- (BOOL)shouldUseEasternNameOrder;
++ (BOOL)usingEasternNameOrder;
 + (BOOL)deviceIsSimulator;
 + (BOOL)systemIs_iOS6x;
 + (BOOL)screenIsRetina;

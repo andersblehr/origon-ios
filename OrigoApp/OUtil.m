@@ -8,12 +8,20 @@
 
 #import "OUtil.h"
 
+static NSString * const kRootIdFormat = @"~%@";
+
 static CGFloat kMatchingEditDistancePercentage = 0.4f;
 
 
 @implementation OUtil
 
 #pragma mark - Convenience methods
+
++ (NSString *)rootIdFromMemberId:(NSString *)memberId
+{
+    return [NSString stringWithFormat:kRootIdFormat, memberId];
+}
+
 
 + (NSString *)commaSeparatedListOfItems:(NSArray *)items conjoinLastItem:(BOOL)conjoinLastItem
 {
@@ -74,7 +82,7 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
     if ([OValidator valueIsName:fullName]) {
         NSArray *names = [fullName componentsSeparatedByString:kSeparatorSpace];
         
-        if ([[OMeta m] shouldUseEasternNameOrder]) {
+        if ([OMeta usingEasternNameOrder]) {
             givenName = names[1];
         } else {
             givenName = names[0];

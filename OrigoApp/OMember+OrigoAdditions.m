@@ -37,6 +37,23 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
+#pragma mark - Instantiation
+
++ (instancetype)memberWithId:(NSString *)entityId
+{
+    OOrigo *root = [OOrigo origoWithId:[OUtil rootIdFromMemberId:entityId] type:kOrigoTypeRoot];
+    OMember *instance = [[OMeta m].context insertEntityOfClass:self inOrigo:root entityId:entityId];
+    
+    [root addMember:instance];
+    
+    if ([[OState s] targetIs:kTargetUser]) {
+        instance.email = [OMeta m].userEmail;
+    }
+    
+    return instance;
+}
+
+
 #pragma mark - Memberships
 
 - (NSSet *)allMemberships
@@ -44,7 +61,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     NSMutableSet *memberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
-        if (![membership.origo isOfType:kOrigoTypeMemberRoot] && ![membership hasExpired]) {
+        if (![membership.origo isOfType:kOrigoTypeRoot] && ![membership hasExpired]) {
             [memberships addObject:membership];
         }
     }
@@ -69,17 +86,17 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 #pragma mark - Linked origos
 
-- (OOrigo *)rootOrigo
+- (OOrigo *)root
 {
-    OOrigo *rootOrigo = nil;
+    OOrigo *root = nil;
     
     for (OMembership *membership in self.memberships) {
-        if (!rootOrigo && [membership.type isEqualToString:kOrigoTypeMemberRoot]) {
-            rootOrigo = membership.origo;
+        if (!root && [membership.type isEqualToString:kOrigoTypeRoot]) {
+            root = membership.origo;
         }
     }
     
-    return rootOrigo;
+    return root;
 }
 
 
@@ -88,7 +105,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     OOrigo *residence = [[NSSet setWithArray:[self residences]] anyObject];
     
     if (!residence) {
-        residence = [[OMeta m].context insertOrigoEntityOfType:kOrigoTypeResidence];
+        residence = [OOrigo origoWithId:[OCrypto generateUUID] type:kOrigoTypeResidence];
         [residence addMember:self];
     }
     
@@ -318,18 +335,16 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (void)makeActive
 {
-    OOrigo *rootOrigo = [self rootOrigo];
-    OMembership *rootMembership = [rootOrigo membershipForMember:self];
+    OMembership *rootMembership = [[self root] membershipForMember:self];
     rootMembership.status = kMembershipStatusActive;
     rootMembership.isAdmin = @YES;
-    
-    self.settings = [[OMeta m].context insertEntityOfClass:[OSettings class] inOrigo:rootOrigo];
     
     for (OMembership *residency in [self residencies]) {
         residency.status = kMembershipStatusActive;
         residency.isAdmin = @(![self isJuvenile] || [residency userIsCreator]);
     }
     
+    self.settings = [OSettings settings];
     self.activeSince = [NSDate date];
 }
 
@@ -415,6 +430,18 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 - (BOOL)isOlderThan:(NSInteger)age
 {
     return ([self.dateOfBirth yearsBeforeNow] >= age);
+}
+
+
+- (BOOL)hasAddress
+{
+    BOOL hasAddress = NO;
+    
+    for (OOrigo *residence in [self residences]) {
+        hasAddress = hasAddress || [residence.address hasValue];
+    }
+    
+    return hasAddress;
 }
 
 
@@ -546,6 +573,12 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
+
+- (id)relationshipToEntity:(id)other
+{
+    return [other isKindOfClass:[OOrigo class]] ? [other membershipForMember:self] : nil;
+}
+
 
 - (NSString *)asTarget
 {

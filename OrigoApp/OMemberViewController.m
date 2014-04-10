@@ -14,22 +14,23 @@ static NSInteger const kSectionKeyMember = 0;
 static NSInteger const kSectionKeyGuardian = 1;
 static NSInteger const kSectionKeyAddress = 2;
 
-static NSInteger const kActionSheetTagActionSheet = 0;
-static NSInteger const kButtonTagAddAddress = 0;
-static NSInteger const kButtonTagChangePassword = 1;
-static NSInteger const kButtonTagEdit = 2;
-static NSInteger const kButtonTagEditRelations = 3;
-static NSInteger const kButtonTagCorrectGender = 4;
+static NSInteger const kActionSheetTagAction = 0;
+static NSInteger const kButtonTagActionAddAddress = 0;
+static NSInteger const kButtonTagActionChangePassword = 1;
+static NSInteger const kButtonTagActionEdit = 2;
+static NSInteger const kButtonTagActionEditRelations = 3;
+static NSInteger const kButtonTagActionCorrectGender = 4;
 
 static NSInteger const kActionSheetTagResidence = 1;
-static NSInteger const kButtonTagNewAddress = 10;
+static NSInteger const kButtonTagResidenceNewAddress = 10;
 
-static NSInteger const kActionSheetTagPickSource = 2;
-static NSInteger const kButtonTagPickFromAddressBook = 0;
-static NSInteger const kButtonTagPickFromOrigo = 1;
+static NSInteger const kActionSheetTagSource = 2;
+static NSInteger const kButtonTagSourceAddressBook = 0;
+static NSInteger const kButtonTagSourceOrigo = 1;
 
-static NSInteger const kActionSheetTagMultiValue = 3;
-static NSInteger const kButtonTagNoValue = 10;
+static NSInteger const kActionSheetTagAddressBookEntry = 3;
+static NSInteger const kButtonTagAddressBookEntryAllValues = 10;
+static NSInteger const kButtonTagAddressBookEntryNoValue = 11;
 
 static NSInteger const kAlertTagEmailChange = 0;
 static NSInteger const kButtonTagContinue = 1;
@@ -39,18 +40,12 @@ static NSInteger const kButtonTagContinue = 1;
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)isRegisteringJuvenileElder
-{
-    return [self actionIs:kActionRegister] && [self targetIs:kTargetElder];
-}
-
-
 - (void)resetInputState
 {
     [self.detailCell clearInputFields];
     
     if ([self hasSectionWithKey:kSectionKeyAddress]) {
-        [_candidateAddresses removeAllObjects];
+        _candidateResidences = [NSArray array];
         
         [self reloadSectionWithKey:kSectionKeyAddress];
         [self setFooterText:[self textForFooterInSectionWithKey:kSectionKeyMember] forSectionWithKey:kSectionKeyMember];
@@ -58,104 +53,13 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)pickFromAddressBook
+- (BOOL)isRegisteringJuvenileElder
 {
-    ABPeoplePickerNavigationController *peoplePicker = [[ABPeoplePickerNavigationController alloc] init];
-    peoplePicker.peoplePickerDelegate = self;
-    
-    [self presentViewController:peoplePicker animated:YES completion:NULL];
+    return [self actionIs:kActionRegister] && [self targetIs:kTargetElder];
 }
 
 
-- (void)setNameFromAddressBookPerson:(ABRecordRef)person
-{
-    NSString *firstName = (__bridge_transfer NSString *)ABRecordCopyValue(person, kABPersonFirstNameProperty);
-    NSString *middleName = (__bridge_transfer NSString *)ABRecordCopyValue(person, kABPersonMiddleNameProperty);
-    NSString *lastName = (__bridge_transfer NSString *)ABRecordCopyValue(person, kABPersonLastNameProperty);
-    
-    NSString *fullName = [OMeta m].shouldUseEasternNameOrder ? lastName : firstName;
-    
-    if (fullName) {
-        NSString *nextName = [OMeta m].shouldUseEasternNameOrder ? firstName : middleName;
-        
-        if (nextName) {
-            fullName = [fullName stringByAppendingString:nextName separator:kSeparatorSpace];
-        }
-        
-        nextName = [OMeta m].shouldUseEasternNameOrder ? middleName : lastName;
-        
-        if (nextName) {
-            fullName = [fullName stringByAppendingString:nextName separator:kSeparatorSpace];
-        }
-    }
-    
-    _nameField.value = fullName;
-}
-
-
-- (void)setPhoneNumbersFromAddressBookPerson:(ABRecordRef)person
-{
-    NSMutableArray *mobilePhoneNumbers = [NSMutableArray array];
-    ABMultiValueRef multiValues = ABRecordCopyValue(person, kABPersonPhoneProperty);
-    
-    for (CFIndex i = 0; i < ABMultiValueGetCount(multiValues); i++) {
-        NSString *label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(multiValues, i);
-        
-        BOOL isMobilePhone = [label isEqualToString:(NSString *)kABPersonPhoneMobileLabel];
-        BOOL is_iPhone = [label isEqualToString:(NSString *)kABPersonPhoneIPhoneLabel];
-        BOOL isHomePhone = [label isEqualToString:(NSString *)kABHomeLabel];
-        
-        if (isMobilePhone || is_iPhone || isHomePhone) {
-            NSString *phoneNumber = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(multiValues, i);
-            
-            if (isMobilePhone || is_iPhone) {
-                [mobilePhoneNumbers addObject:phoneNumber];
-            } else {
-                [_candidateHomeNumbers addObject:phoneNumber];
-            }
-        }
-    }
-    
-    _mobilePhoneField.value = [mobilePhoneNumbers count] ? mobilePhoneNumbers : nil;
-    
-    CFRelease(multiValues);
-}
-
-
-- (void)setEmailFromAddressBookPerson:(ABRecordRef)person
-{
-    NSMutableArray *emailAddresses = [NSMutableArray array];
-    ABMultiValueRef emailMultiValues = ABRecordCopyValue(person, kABPersonEmailProperty);
-    
-    for (CFIndex i = 0; i < ABMultiValueGetCount(emailMultiValues); i++) {
-        NSString *emailAddress = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(emailMultiValues, i);
-        
-        if ([OValidator valueIsEmailAddress:emailAddress]) {
-            [emailAddresses addObject:emailAddress];
-        }
-    }
-    
-    _emailField.value = [emailAddresses count] ? emailAddresses : nil;
-    
-    CFRelease(emailMultiValues);
-}
-
-
-- (void)setAddressesFromAddressBookPerson:(ABRecordRef)person
-{
-    ABMultiValueRef multiValues = ABRecordCopyValue(person, kABPersonAddressProperty);
-    
-    for (CFIndex i = 0; i < ABMultiValueGetCount(multiValues); i++) {
-        NSString *label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(multiValues, i);
-        
-        if ([label isEqualToString:(NSString *)kABHomeLabel]) {
-            [_candidateAddresses addObject:[[OOrigoProxy alloc] initWithAddressBookDictionary:ABMultiValueCopyValueAtIndex(multiValues, i)]];
-        }
-    }
-    
-    CFRelease(multiValues);
-}
-
+#pragma mark - Input validation
 
 - (BOOL)candidateIsEligible
 {
@@ -197,33 +101,7 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (OMember *)lookupMemberOnDevice
-{
-    OMember *member = nil;
-
-    if (_emailField.value || _mobilePhoneField.value) {
-        if (_emailField.value) {
-            member = [[OMeta m].context entityOfClass:[OMember class] withValue:_emailField.value forKey:kPropertyKeyEmail];
-        }
-        
-        if (!member && _mobilePhoneField.value) {
-            member = [[OMeta m].context entityOfClass:[OMember class] withValue:_mobilePhoneField.value forKey:kPropertyKeyMobilePhone];
-            
-            if (member && member.email) {
-                member = nil;
-            }
-        }
-        
-        if (member) {
-            [self populateWithName:member.name mobilePhone:member.mobilePhone email:member.email];
-        }
-    }
-
-    return member;
-}
-
-
-- (BOOL)inputMatchesCandicateWithDictionary:(NSDictionary *)dictionary
+- (BOOL)inputMatchesCandidateWithDictionary:(NSDictionary *)dictionary
 {
     BOOL inputMatches = [OUtil name:_nameField.value matchesName:dictionary[kPropertyKeyName]];
     
@@ -243,7 +121,35 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)populateWithName:(NSString *)name mobilePhone:(NSString *)mobilePhone email:(NSString *)email
+#pragma mark - Candidate lookup & presentation
+
+- (OMember *)lookupCandidateOnDevice
+{
+    OMember *candidate = nil;
+    
+    if (_emailField.value || _mobilePhoneField.value) {
+        if (_emailField.value) {
+            candidate = [[OMeta m].context entityOfClass:[OMember class] withValue:_emailField.value forKey:kPropertyKeyEmail];
+        }
+        
+        if (!candidate && _mobilePhoneField.value) {
+            candidate = [[OMeta m].context entityOfClass:[OMember class] withValue:_mobilePhoneField.value forKey:kPropertyKeyMobilePhone];
+            
+            if (candidate && candidate.email) {
+                candidate = nil;
+            }
+        }
+        
+        if (candidate) {
+            [self presentCandidateWithName:candidate.name mobilePhone:candidate.mobilePhone email:candidate.email];
+        }
+    }
+    
+    return candidate;
+}
+
+
+- (void)presentCandidateWithName:(NSString *)name mobilePhone:(NSString *)mobilePhone email:(NSString *)email
 {
     _nameField.value = name;
     
@@ -256,6 +162,8 @@ static NSInteger const kButtonTagContinue = 1;
     }
 }
 
+
+#pragma mark - Examine and persist new member
 
 - (void)examineMember
 {
@@ -301,7 +209,7 @@ static NSInteger const kButtonTagContinue = 1;
         [actionSheet addButtonWithTitle:[residence shortAddress]];
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"New address", @"") tag:kButtonTagNewAddress];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"New address", @"") tag:kButtonTagResidenceNewAddress];
     
     [actionSheet show];
 }
@@ -312,20 +220,20 @@ static NSInteger const kButtonTagContinue = 1;
     NSString *promptFormat = nil;
     
     if (multiValueField == _mobilePhoneField) {
-        promptFormat = NSLocalizedString(@"%@ is registered with more than one mobile phone number. Which number do you want to provide?", @"");
+        promptFormat = NSLocalizedString(@"%@ has more than one mobile phone number. Which number do you want to provide?", @"");
     } else if (multiValueField == _emailField) {
-        promptFormat = NSLocalizedString(@"%@ is registered with more than one email address. Which address do you want to provide?", @"");
+        promptFormat = NSLocalizedString(@"%@ has more than one email address. Which address do you want to provide?", @"");
     }
     
     [multiValueField becomeFirstResponder];
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:promptFormat, [OUtil givenNameFromFullName:_nameField.value]] delegate:self tag:kActionSheetTagMultiValue];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:promptFormat, [OUtil givenNameFromFullName:_nameField.value]] delegate:self tag:kActionSheetTagAddressBookEntry];
     
     for (NSInteger i = 0; i < [multiValueField.value count]; i++) {
         [actionSheet addButtonWithTitle:multiValueField.value[i]];
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"None of them", @"") tag:kButtonTagNoValue];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"None of them", @"") tag:kButtonTagAddressBookEntryNoValue];
     
     [actionSheet show];
 }
@@ -333,27 +241,87 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)presentActionSheetForMultipleAddresses
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"%@ is registered with more than one home address. Which address do you want to provide?", @""), [OUtil givenNameFromFullName:_nameField.value]] delegate:self tag:kActionSheetTagMultiValue];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"%@ has more than one home address. Which address do you want to provide?", @""), [OUtil givenNameFromFullName:_nameField.value]] delegate:self tag:kActionSheetTagAddressBookEntry];
     
     for (NSInteger i = 0; i < [_candidateAddresses count]; i++) {
         [actionSheet addButtonWithTitle:[_candidateAddresses[i] shortAddress]];
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"None of them", @"") tag:kButtonTagNoValue];
+    NSString *allTitle = nil;
+    NSString *noneTitle = nil;
+    
+    if ([_candidateAddresses count] == 2) {
+        allTitle = NSLocalizedString(@"Both", @"");
+        noneTitle = NSLocalizedString(@"Neither", @"");
+    } else {
+        allTitle = NSLocalizedString(@"All of them", @"");
+        noneTitle = NSLocalizedString(@"None of them", @"");
+    }
+    
+    [actionSheet addButtonWithTitle:allTitle tag:kButtonTagAddressBookEntryAllValues];
+    [actionSheet addButtonWithTitle:noneTitle tag:kButtonTagAddressBookEntryNoValue];
     
     [actionSheet show];
 }
 
 
-- (void)presentActionSheetForMultipleHomePhoneNumbers
+- (void)presentActionSheetForMappingHomeNumbers
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"%@ is registered with more than one home phone number. Which number do you want to provide?", @""), [OUtil givenNameFromFullName:_nameField.value], [_candidateAddresses[0] shortAddress]] delegate:self tag:kActionSheetTagMultiValue];
-    
-    for (NSInteger i = 0; i < [_candidateHomeNumbers count]; i++) {
-        [actionSheet addButtonWithTitle:_candidateHomeNumbers[i]];
+    static NSInteger originalHomeNumberCount = 0;
+
+    if (!originalHomeNumberCount) {
+        originalHomeNumberCount = [_candidateHomeNumbers count];
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"None of them", @"") tag:kButtonTagNoValue];
+    NSString *givenName = [OUtil givenNameFromFullName:_nameField.value];
+    NSString *prompt = nil;
+    
+    if ([_candidateResidences count] == 1) {
+        _homeNumberMappings = _candidateHomeNumbers;
+        
+        if ([_candidateResidences[0] hasAddress]) {
+            prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ has more than one home phone number. Which number is valid for %@?", @""), givenName, [_candidateResidences[0] shortAddress]];
+        } else {
+            prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ has more than one home phone number. Which number do you want to provide?", @""), givenName];
+        }
+    } else {
+        _homeNumberMappings = [NSMutableArray array];
+        
+        for (id residence in _candidateResidences) {
+            if (![residence facade].telephone) {
+                [_homeNumberMappings addObject:residence];
+            }
+        }
+        
+        if (originalHomeNumberCount == 1) {
+            prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ has only one home phone number, %@. Which address has this number?", @""), givenName, _candidateHomeNumbers[0]];
+        } else if ([_candidateHomeNumbers count] == originalHomeNumberCount) {
+            prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ has more than one home phone number. Which address has the number %@?", @""), givenName, _candidateHomeNumbers[0]];
+        } else {
+            if (([_candidateHomeNumbers count] == 1) && ([_homeNumberMappings count] == 1)) {
+                prompt = [NSString stringWithFormat:NSLocalizedString(@"Does %@ have home phone number %@?", @""), [_homeNumberMappings[0] shortAddress], _candidateHomeNumbers[0]];
+            } else {
+                prompt = [NSString stringWithFormat:NSLocalizedString(@"Which address has home phone number %@?", @""), _candidateHomeNumbers[0]];
+            }
+        }
+    }
+    
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAddressBookEntry];
+    
+    if (([_candidateHomeNumbers count] == 1) && ([_homeNumberMappings count] == 1)) {
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"")];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"") tag:kButtonTagAddressBookEntryNoValue];
+    } else {
+        for (NSInteger i = 0; i < [_homeNumberMappings count]; i++) {
+            if ([_homeNumberMappings[0] isKindOfClass:[NSString class]]) {
+                [actionSheet addButtonWithTitle:_homeNumberMappings[i]];
+            } else {
+                [actionSheet addButtonWithTitle:[_homeNumberMappings[i] shortAddress]];
+            }
+        }
+        
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"None of them", @"") tag:kButtonTagAddressBookEntryNoValue];
+    }
     
     [actionSheet show];
 }
@@ -374,42 +342,38 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-#pragma mark - Adress book data handling
+#pragma mark - Adress book entry processing
 
-- (BOOL)hasAddressBookMultiValues
+- (BOOL)addressBookEntryNeedsProcessing
 {
-    BOOL hasMultiValues = NO;
+    BOOL needsProcessing = NO;
     
-    hasMultiValues = hasMultiValues || [_mobilePhoneField hasMultiValue];
-    hasMultiValues = hasMultiValues || [_emailField hasMultiValue];
-    hasMultiValues = hasMultiValues || ([_candidateAddresses count] > 1);
-    hasMultiValues = hasMultiValues || ([_candidateHomeNumbers count] > 1);
+    needsProcessing = needsProcessing || [_mobilePhoneField hasMultiValue];
+    needsProcessing = needsProcessing || [_emailField hasMultiValue];
+    needsProcessing = needsProcessing || [_candidateAddresses count];
+    needsProcessing = needsProcessing || [_candidateHomeNumbers count];
     
-    return hasMultiValues;
+    return needsProcessing;
 }
 
 
-- (void)processAddressBookMultiValues
+- (void)processAddressBookEntry
 {
     if ([_mobilePhoneField hasMultiValue]) {
         [self presentActionSheetForMultiValueField:_mobilePhoneField];
     } else if ([_emailField hasMultiValue]) {
         [self presentActionSheetForMultiValueField:_emailField];
-    } else if ([_candidateAddresses count] > 1) {
+    } else if ([_candidateAddresses count]) {
         [self presentActionSheetForMultipleAddresses];
-    } else if ([_candidateHomeNumbers count] > 1) {
-        [self presentActionSheetForMultipleHomePhoneNumbers];
+    } else if ([_candidateHomeNumbers count]) {
+        [self presentActionSheetForMappingHomeNumbers];
     }
 }
 
 
-- (void)presentAddressBookValues
+- (void)presentAddressBookEntry
 {
-    for (NSInteger i = 0; i < [_candidateAddresses count]; i++) {
-        [_candidateAddresses[i] facade].telephone = _candidateHomeNumbers[i];
-    }
-    
-    if ([_candidateAddresses count]) {
+    if ([_candidateResidences count]) {
         [self reloadSectionWithKey:kSectionKeyAddress];
         [self setFooterText:[self textForFooterInSectionWithKey:kSectionKeyMember] forSectionWithKey:kSectionKeyMember];
     }
@@ -422,24 +386,141 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
+#pragma mark - Retrieving address book entry
+
+- (void)pickFromAddressBook
+{
+    ABPeoplePickerNavigationController *peoplePicker = [[ABPeoplePickerNavigationController alloc] init];
+    peoplePicker.peoplePickerDelegate = self;
+    
+    [self presentViewController:peoplePicker animated:YES completion:NULL];
+}
+
+
+- (void)setNameFromAddressBookEntry:(ABRecordRef)entry
+{
+    NSString *firstName = (__bridge_transfer NSString *)ABRecordCopyValue(entry, kABPersonFirstNameProperty);
+    NSString *middleName = (__bridge_transfer NSString *)ABRecordCopyValue(entry, kABPersonMiddleNameProperty);
+    NSString *lastName = (__bridge_transfer NSString *)ABRecordCopyValue(entry, kABPersonLastNameProperty);
+    
+    NSString *fullName = [OMeta usingEasternNameOrder] ? lastName : firstName;
+    
+    if (fullName) {
+        NSString *nextName = [OMeta usingEasternNameOrder] ? firstName : middleName;
+        
+        if (nextName) {
+            fullName = [fullName stringByAppendingString:nextName separator:kSeparatorSpace];
+        }
+        
+        nextName = [OMeta usingEasternNameOrder] ? middleName : lastName;
+        
+        if (nextName) {
+            fullName = [fullName stringByAppendingString:nextName separator:kSeparatorSpace];
+        }
+    }
+    
+    _nameField.value = fullName;
+}
+
+
+- (void)setAddressesFromAddressBookEntry:(ABRecordRef)entry
+{
+    ABMultiValueRef multiValues = ABRecordCopyValue(entry, kABPersonAddressProperty);
+    
+    for (CFIndex i = 0; i < ABMultiValueGetCount(multiValues); i++) {
+        NSString *label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(multiValues, i);
+        
+        if ([label isEqualToString:(NSString *)kABHomeLabel]) {
+            [_candidateAddresses addObject:[OOrigoProxy proxyFromAddressBookEntry:ABMultiValueCopyValueAtIndex(multiValues, i)]];
+        }
+    }
+    
+    CFRelease(multiValues);
+    
+    if ([_candidateAddresses count] == 1) {
+        _candidateResidences = @[_candidateAddresses[0]];
+        [_candidateAddresses removeAllObjects];
+    }
+}
+
+
+- (void)setPhoneNumbersFromAddressBookEntry:(ABRecordRef)entry
+{
+    NSMutableArray *mobilePhoneNumbers = [NSMutableArray array];
+    ABMultiValueRef multiValues = ABRecordCopyValue(entry, kABPersonPhoneProperty);
+    
+    for (CFIndex i = 0; i < ABMultiValueGetCount(multiValues); i++) {
+        NSString *label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(multiValues, i);
+        
+        BOOL isMobilePhone = [label isEqualToString:(NSString *)kABPersonPhoneMobileLabel];
+        BOOL is_iPhone = [label isEqualToString:(NSString *)kABPersonPhoneIPhoneLabel];
+        BOOL isHomePhone = [label isEqualToString:(NSString *)kABHomeLabel];
+        
+        if (isMobilePhone || is_iPhone || isHomePhone) {
+            NSString *phoneNumber = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(multiValues, i);
+            
+            if (isMobilePhone || is_iPhone) {
+                [mobilePhoneNumbers addObject:phoneNumber];
+            } else {
+                [_candidateHomeNumbers addObject:phoneNumber];
+            }
+        }
+    }
+    
+    CFRelease(multiValues);
+    
+    if (![_candidateAddresses count] && ![_candidateResidences count]) {
+        if ([_candidateHomeNumbers count] == 1) {
+            _candidateResidences = @[[OOrigoProxy proxyWithType:kOrigoTypeResidence]];
+        }
+    }
+    
+    if ([_candidateHomeNumbers count] == [_candidateResidences count]) {
+        [_candidateResidences[0] facade].telephone = _candidateHomeNumbers[0];
+        [_candidateHomeNumbers removeAllObjects];
+    }
+    
+    _mobilePhoneField.value = [mobilePhoneNumbers count] ? mobilePhoneNumbers : nil;
+}
+
+
+- (void)setEmailFromAddressBookEntry:(ABRecordRef)entry
+{
+    NSMutableArray *emailAddresses = [NSMutableArray array];
+    ABMultiValueRef multiValues = ABRecordCopyValue(entry, kABPersonEmailProperty);
+    
+    for (CFIndex i = 0; i < ABMultiValueGetCount(multiValues); i++) {
+        NSString *emailAddress = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(multiValues, i);
+        
+        if ([OValidator valueIsEmailAddress:emailAddress]) {
+            [emailAddresses addObject:emailAddress];
+        }
+    }
+    
+    CFRelease(multiValues);
+    
+    _emailField.value = [emailAddresses count] ? emailAddresses : nil;
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)presentActionSheet
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAction];
     
     if ([_member isUser]) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Change password", @"") tag:kButtonTagChangePassword];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Change password", @"") tag:kButtonTagActionChangePassword];
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagActionEdit];
     
     if ([_member isWardOfUser]) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit relations", @"") tag:kButtonTagEditRelations];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit relations", @"") tag:kButtonTagActionEditRelations];
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Add an address", @"") tag:kButtonTagAddAddress];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Correct gender", @"") tag:kButtonTagCorrectGender];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Add an address", @"") tag:kButtonTagActionAddAddress];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Correct gender", @"") tag:kButtonTagActionCorrectGender];
     
     [actionSheet show];
 }
@@ -450,7 +531,7 @@ static NSInteger const kButtonTagContinue = 1;
     [self.view endEditing:YES];
     
     if ([[[OState s].pivotMember peersNotInOrigo:_origo] count] > 0) {
-        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagPickSource];
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
         
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"")];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Origo", @"")];
@@ -467,13 +548,17 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    _nameField = [self.detailCell inputFieldForKey:kPropertyKeyName];
-    _dateOfBirthField = [self.detailCell inputFieldForKey:kPropertyKeyDateOfBirth];
-    _mobilePhoneField = [self.detailCell inputFieldForKey:kPropertyKeyMobilePhone];
-    _emailField = [self.detailCell inputFieldForKey:kPropertyKeyEmail];
+    if (!_nameField) {
+        _nameField = [self.detailCell inputFieldForKey:kPropertyKeyName];
+        _dateOfBirthField = [self.detailCell inputFieldForKey:kPropertyKeyDateOfBirth];
+        _mobilePhoneField = [self.detailCell inputFieldForKey:kPropertyKeyMobilePhone];
+        _emailField = [self.detailCell inputFieldForKey:kPropertyKeyEmail];
+    }
     
-    if ([self actionIs:kActionRegister] && [_origo isJuvenile] && ![self targetIs:kTargetGuardian]) {
-        [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
+    if ([self actionIs:kActionRegister]) {
+        if ([_origo isJuvenile] && ![self targetIs:kTargetGuardian]) {
+            [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
+        }
     }
     
     [super viewDidAppear:animated];
@@ -493,18 +578,14 @@ static NSInteger const kButtonTagContinue = 1;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if ([segue.identifier isEqualToString:kSegueToOrigoView]) {
-        if ([self actionIs:kActionRegister]) {
-            [self prepareForPushSegue:segue target:_candidateAddresses[0]];
-        } else {
-            [self prepareForPushSegue:segue];
-        }
+        [self prepareForPushSegue:segue];
     }
 }
 
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialiseState
+- (void)loadState
 {
     _member = [self.entityProxy facade];
     _origo = [[self.entityProxy parentWithClass:[OOrigo class]] facade];
@@ -537,7 +618,7 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)initialiseData
+- (void)loadData
 {
     [self setDataForDetailSection];
     
@@ -547,8 +628,8 @@ static NSInteger const kButtonTagContinue = 1;
         }
         
         [self setData:[_member residences] forSectionWithKey:kSectionKeyAddress];
-    } else if (_candidateAddresses) {
-        [self setData:_candidateAddresses forSectionWithKey:kSectionKeyAddress];
+    } else if (_candidateResidences) {
+        [self setData:_candidateResidences forSectionWithKey:kSectionKeyAddress];
     }
 }
 
@@ -599,9 +680,9 @@ static NSInteger const kButtonTagContinue = 1;
             }
         }
     } else if (sectionKey == kSectionKeyAddress) {
-        if (([[_member residences] count] == 1) || _candidateAddresses) {
+        if (([[_member residences] count] == 1) || ([_candidateResidences count] == 1)) {
             text = [OLanguage nouns][_address_][singularIndefinite];
-        } else if ([[_member residences] count] > 1) {
+        } else if (([[_member residences] count] > 1) || ([_candidateResidences count] > 1)) {
             text = [OLanguage nouns][_address_][pluralIndefinite];
         }
     }
@@ -640,14 +721,26 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
+- (BOOL)canDeleteRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL canDelete = NO;
+    
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddress) {
+        canDelete = ([self tableView:self.tableView numberOfRowsInSection:indexPath.section] > 1);
+    }
+    
+    return canDelete;
+}
+
+
 - (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController
 {
-    BOOL shouldRelayDismissal = [viewController.identifier isEqualToString:kIdentifierOrigo];
+    BOOL shouldRelayDismissal = NO;
     
-    if (!shouldRelayDismissal) {
-        if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-            shouldRelayDismissal = !viewController.returnData;
-        }
+    if ([viewController.identifier isEqualToString:kIdentifierMember]) {
+        shouldRelayDismissal = !viewController.returnData;
+    } else if ([viewController.identifier isEqualToString:kIdentifierOrigo]) {
+        shouldRelayDismissal = YES;
     }
     
     return shouldRelayDismissal;
@@ -738,15 +831,15 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if (sectionKey == kSectionKeyGuardian) {
         OMember *guardian = [self dataAtIndexPath:indexPath];
         
-        cell.textLabel.text = guardian.name;
         cell.imageView.image = [guardian smallImage];
+        cell.textLabel.text = guardian.name;
 
         if ([[_member residences] count] == 1) {
             cell.detailTextLabel.text = [guardian shortDetails];
@@ -758,20 +851,12 @@ static NSInteger const kButtonTagContinue = 1;
             cell.detailTextLabel.text = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:cell.detailTextLabel.text separator:kSeparatorComma];
         }
     } else if (sectionKey == kSectionKeyAddress) {
-        NSString *homeNumber = nil;
+        id residence = [self dataAtIndexPath:indexPath];
         
-        if ([self actionIs:kActionDisplay]) {
-            OOrigo *residence = [self dataAtIndexPath:indexPath];
-            
-            cell.textLabel.text = [residence shortAddress];
-            homeNumber = [residence.telephone hasValue] ? residence.telephone : nil;
-        } else if ([self actionIs:kActionRegister] && [_candidateAddresses count]) {
-            cell.textLabel.text = [_candidateAddresses[0] shortAddress];
-            homeNumber = [_candidateAddresses[0] facade].telephone;
-        }
-        
+        cell.selectable = YES;
         cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
-        cell.detailTextLabel.text = [OPhoneNumberFormatter formatPhoneNumber:homeNumber canonicalise:YES];
+        cell.textLabel.text = [residence shortAddress];
+        cell.detailTextLabel.text = [OPhoneNumberFormatter formatPhoneNumber:[residence facade].telephone canonicalise:YES];
     }
 }
 
@@ -781,7 +866,7 @@ static NSInteger const kButtonTagContinue = 1;
 - (BOOL)inputIsValid
 {
     if (!_candidate && ![self targetIs:kTargetUser]) {
-        _candidate = [self lookupMemberOnDevice];
+        _candidate = [self lookupCandidateOnDevice];
     }
     
     BOOL isValid = [_nameField hasValidValue];
@@ -860,7 +945,11 @@ static NSInteger const kButtonTagContinue = 1;
     if (_candidate) {
         _member = _candidate;
     } else {
-        _member = [[OMeta m].context insertMemberEntityWithId:_examiner.registrantId];
+        _member = [OMember memberWithId:_examiner.registrantId];
+    }
+    
+    for (id residence in _candidateResidences) {
+        [[OOrigo instanceFromProxy:residence] addMember:_member];
     }
     
     if (!_membership) {
@@ -927,43 +1016,55 @@ static NSInteger const kButtonTagContinue = 1;
     NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
     
     switch (actionSheet.tag) {
-        case kActionSheetTagActionSheet:
-            if (buttonTag == kButtonTagEdit) {
+        case kActionSheetTagAction:
+            if (buttonTag == kButtonTagActionEdit) {
                 [self toggleEditMode];
             }
             
             break;
             
-        case kActionSheetTagMultiValue:
+        case kActionSheetTagAddressBookEntry:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 if ([_mobilePhoneField hasMultiValue]) {
-                    if (buttonTag != kButtonTagNoValue) {
+                    if (buttonTag != kButtonTagAddressBookEntryNoValue) {
                         _mobilePhoneField.value = _mobilePhoneField.value[buttonIndex];
                     } else {
                         _mobilePhoneField.value = nil;
                     }
                 } else if ([_emailField hasMultiValue]) {
-                    if (buttonTag != kButtonTagNoValue) {
+                    if (buttonTag != kButtonTagAddressBookEntryNoValue) {
                         _emailField.value = _emailField.value[buttonIndex];
                     } else {
                         _emailField.value = nil;
                     }
-                } else if ([_candidateAddresses count] > 1) {
-                    if (buttonTag != kButtonTagNoValue) {
-                        [_candidateAddresses setArray:@[_candidateAddresses[buttonIndex]]];
-                    } else {
-                        [_candidateAddresses removeAllObjects];
+                } else if ([_candidateAddresses count]) {
+                    if (buttonTag == kButtonTagAddressBookEntryAllValues) {
+                        _candidateResidences = [NSArray arrayWithArray:_candidateAddresses];
+                    } else if (buttonTag != kButtonTagAddressBookEntryNoValue) {
+                        _candidateResidences = @[_candidateAddresses[buttonIndex]];
                     }
-                } else if ([_candidateHomeNumbers count] > 1) {
-                    if (buttonTag != kButtonTagNoValue) {
-                        [_candidateHomeNumbers setArray:@[_candidateHomeNumbers[buttonIndex]]];
-                    } else {
+                    
+                    [_candidateAddresses removeAllObjects];
+                } else if ([_candidateHomeNumbers count]) {
+                    if ([_homeNumberMappings[0] isKindOfClass:[NSString class]]) {
+                        if (buttonTag != kButtonTagAddressBookEntryNoValue) {
+                            NSString *selectedNumber = _homeNumberMappings[buttonIndex];
+                            [_candidateResidences[0] facade].telephone = selectedNumber;
+                        }
+                        
                         [_candidateHomeNumbers removeAllObjects];
+                    } else {
+                        if (buttonTag != kButtonTagAddressBookEntryNoValue) {
+                            id selectedAddress = _homeNumberMappings[buttonIndex];
+                            [selectedAddress facade].telephone = _candidateHomeNumbers[0];
+                        }
+                        
+                        [_candidateHomeNumbers removeObjectAtIndex:0];
                     }
                 }
                 
-                if (![self hasAddressBookMultiValues]) {
-                    [self presentAddressBookValues];
+                if (![self addressBookEntryNeedsProcessing]) {
+                    [self presentAddressBookEntry];
                 }
             }
             
@@ -980,8 +1081,8 @@ static NSInteger const kButtonTagContinue = 1;
     NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
     
     switch (actionSheet.tag) {
-        case kActionSheetTagActionSheet:
-            if (buttonTag == kButtonTagAddAddress) {
+        case kActionSheetTagAction:
+            if (buttonTag == kButtonTagActionAddAddress) {
                 NSSet *housemateResidences = [_member housemateResidences];
                 
                 if ([housemateResidences count]) {
@@ -994,7 +1095,7 @@ static NSInteger const kButtonTagContinue = 1;
             break;
             
         case kActionSheetTagResidence:
-            if (buttonTag == kButtonTagNewAddress) {
+            if (buttonTag == kButtonTagResidenceNewAddress) {
                 [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:kOrigoTypeResidence];
             } else if (buttonIndex < actionSheet.cancelButtonIndex) {
                 [_candidateResidences[buttonIndex] addMember:_member];
@@ -1003,13 +1104,13 @@ static NSInteger const kButtonTagContinue = 1;
             
             break;
             
-        case kActionSheetTagPickSource:
+        case kActionSheetTagSource:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 [self resetInputState];
                 
-                if (buttonTag == kButtonTagPickFromAddressBook) {
+                if (buttonTag == kButtonTagSourceAddressBook) {
                     [self pickFromAddressBook];
-                } else if (buttonTag == kButtonTagPickFromOrigo) {
+                } else if (buttonTag == kButtonTagSourceOrigo) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMember meta:_origo];
                 }
             } else {
@@ -1018,10 +1119,10 @@ static NSInteger const kButtonTagContinue = 1;
             
             break;
             
-        case kActionSheetTagMultiValue:
+        case kActionSheetTagAddressBookEntry:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if ([self hasAddressBookMultiValues]) {
-                    [self processAddressBookMultiValues];
+                if ([self addressBookEntryNeedsProcessing]) {
+                    [self processAddressBookEntry];
                 }
             }
             
@@ -1061,17 +1162,17 @@ static NSInteger const kButtonTagContinue = 1;
     _candidateAddresses = [NSMutableArray array];
     _candidateHomeNumbers = [NSMutableArray array];
     
-    [self setNameFromAddressBookPerson:person];
-    [self setPhoneNumbersFromAddressBookPerson:person];
-    [self setEmailFromAddressBookPerson:person];
-    [self setAddressesFromAddressBookPerson:person];
+    [self setNameFromAddressBookEntry:person];
+    [self setAddressesFromAddressBookEntry:person];
+    [self setPhoneNumbersFromAddressBookEntry:person];
+    [self setEmailFromAddressBookEntry:person];
 
-    if ([self hasAddressBookMultiValues]) {
+    if ([self addressBookEntryNeedsProcessing]) {
         [self dismissViewControllerAnimated:YES completion:^{
-            [self processAddressBookMultiValues];
+            [self processAddressBookEntry];
         }];
     } else {
-        [self presentAddressBookValues];
+        [self presentAddressBookEntry];
         [self dismissViewControllerAnimated:YES completion:NULL];
     }
     
@@ -1105,11 +1206,11 @@ static NSInteger const kButtonTagContinue = 1;
         for (NSDictionary *entityDictionary in data) {
             if ([entityDictionary[kJSONKeyEntityClass] isEqualToString:memberClassName]) {
                 if ([entityDictionary[identifierKey] isEqualToString:identifier]) {
-                    if ([self inputMatchesCandicateWithDictionary:entityDictionary]) {
+                    if ([self inputMatchesCandidateWithDictionary:entityDictionary]) {
                         self.returnData = data;
                         _candidateDictionary = entityDictionary;
                         
-                        [self populateWithName:_candidateDictionary[kPropertyKeyName] mobilePhone:_candidateDictionary[kPropertyKeyMobilePhone] email:_candidateDictionary[kPropertyKeyEmail]];
+                        [self presentCandidateWithName:_candidateDictionary[kPropertyKeyName] mobilePhone:_candidateDictionary[kPropertyKeyMobilePhone] email:_candidateDictionary[kPropertyKeyEmail]];
                         
                         [self examineMember];
                     } else {

@@ -15,8 +15,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 static CGFloat _systemVersion = 0.f;
 static CGFloat _screenScale = 0.f;
 
-static OMeta *_meta = nil;
-
 
 @implementation OMeta
 
@@ -54,7 +52,7 @@ static OMeta *_meta = nil;
     if (_user) {
         [self.replicator loadUserReplicationState];
     } else {
-        _user = [self.context insertMemberEntityWithId:_userId];
+        _user = [OMember memberWithId:_userId];
         _user.email = _userEmail;
     }
 }
@@ -82,7 +80,7 @@ static OMeta *_meta = nil;
 
 + (id)allocWithZone:(NSZone *)zone
 {
-    return [OMeta m];
+    return [self m];
 }
 
 
@@ -92,7 +90,7 @@ static OMeta *_meta = nil;
 }
 
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     
@@ -126,11 +124,14 @@ static OMeta *_meta = nil;
 
 + (OMeta *)m
 {
-    if (!_meta) {
-        _meta = [[super allocWithZone:nil] init];
-    }
+    static OMeta *meta = nil;
+    static dispatch_once_t onceToken;
     
-    return _meta;
+    dispatch_once(&onceToken, ^{
+        meta = [[super allocWithZone:nil] init];
+    });
+    
+    return meta;
 }
 
 
@@ -148,11 +149,9 @@ static OMeta *_meta = nil;
     
     [self loadUser];
     
-    ODevice *device = [self.context entityWithId:_deviceId];
+    ODevice *device = [ODevice device];
     
-    if (!device) {
-        [self.context insertDeviceEntity];
-    } else if ([device hasExpired]) {
+    if ([device hasExpired]) {
         [device unexpire];
     }
     
@@ -224,9 +223,9 @@ static OMeta *_meta = nil;
 }
 
 
-- (BOOL)shouldUseEasternNameOrder
++ (BOOL)usingEasternNameOrder
 {
-    return [_language isEqualToString:kLanguageCodeHungarian];
+    return [[self m].language isEqualToString:kLanguageCodeHungarian];
 }
 
 
@@ -256,17 +255,17 @@ static OMeta *_meta = nil;
 }
 
 
-#pragma mark - Meta information
+#pragma mark - Localisation support
 
 - (NSBundle *)localisedStringsBundle
 {
     if (!_localisedStringsBundle) {
         _localisedStringsBundle = [NSBundle mainBundle];
         
-        if (![_localisedStringsBundle pathForResource:_meta.language ofType:kLocalisedProject]) {
+        if (![_localisedStringsBundle pathForResource:[[self class] m].language ofType:kLocalisedProject]) {
             NSString *testString = [_localisedStringsBundle localizedStringForKey:@"String test" value:@"" table:nil];
             
-            if ([testString isEqualToString:@"String test"] || _meta.settings.useEnglish) {
+            if ([testString isEqualToString:@"String test"] || [OSettings settings].useEnglish) {
                 _localisedStringsBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:kLanguageCodeEnglish ofType:kLocalisedProject]];
             }
         }
@@ -358,12 +357,6 @@ static OMeta *_meta = nil;
     }
     
     return _locator;
-}
-
-
-- (OSettings *)settings
-{
-    return self.user.settings;
 }
 
 

@@ -43,7 +43,7 @@ extern NSString * const kTargetSettings;
 @property (strong, nonatomic) NSString *action;
 @property (strong, nonatomic) id target;
 
-- (id)initWithViewController:(OTableViewController *)viewController;
+- (instancetype)initWithViewController:(OTableViewController *)viewController;
 
 + (OState *)s;
 

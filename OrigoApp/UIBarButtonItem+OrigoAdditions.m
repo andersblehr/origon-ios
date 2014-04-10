@@ -15,7 +15,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 #pragma mark - Auxiliary methods
 
-+ (UIBarButtonItem *)barButtonWithIcon:(NSString *)iconFile action:(SEL)action
++ (instancetype)barButtonWithIcon:(NSString *)iconFile action:(SEL)action
 {
     UIImage *image = [UIImage imageNamed:iconFile];
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -23,143 +23,143 @@ static UIBarButtonItem *_flexibleSpace = nil;
     [button setImage:image forState:UIControlStateNormal];
     [button addTarget:[OMeta m].switchboard action:action forControlEvents:UIControlEventTouchUpInside];
     
-    return [[UIBarButtonItem alloc] initWithCustomView:button];
+    return [[self alloc] initWithCustomView:button];
 }
 
 
-+ (UIBarButtonItem *)cancelButtonWithTitle:(NSString *)title
++ (instancetype)cancelButtonWithTitle:(NSString *)title
 {
-    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didCancelEditing)];
+    return [[self alloc] initWithTitle:NSLocalizedString(@"Cancel", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didCancelEditing)];
 }
 
 
 #pragma mark - Navigation bar buttons
 
-+ (UIBarButtonItem *)settingsButton
++ (instancetype)settingsButton
 {
-    return [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSettings] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(openSettings)];
+    return [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSettings] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(openSettings)];
 }
 
 
-+ (UIBarButtonItem *)plusButton
++ (instancetype)plusButton
 {
     UIBarButtonItem *button = nil;
     
     if ([OMeta systemIs_iOS6x]) {
-        button = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFilePlus] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(addItem)];
+        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFilePlus] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(addItem)];
     } else {
-        button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:[OState s].viewController action:@selector(addItem)];
+        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:[OState s].viewController action:@selector(addItem)];
     }
     
     return button;
 }
 
 
-+ (UIBarButtonItem *)actionButton
++ (instancetype)actionButton
 {
     UIBarButtonItem *button = nil;
     
     if ([OMeta systemIs_iOS6x]) {
-        button = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileAction] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(presentActionSheet)];
+        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileAction] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(presentActionSheet)];
     } else {
-        button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:[OState s].viewController action:@selector(presentActionSheet)];
+        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:[OState s].viewController action:@selector(presentActionSheet)];
     }
     
     return button;
 }
 
 
-+ (UIBarButtonItem *)lookupButton
++ (instancetype)lookupButton
 {
     UIBarButtonItem *button = nil;
     
     if ([OMeta systemIs_iOS6x]) {
-        button = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileLookup] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(performLookup)];
+        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileLookup] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(performLookup)];
     } else {
-        button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:[OState s].viewController action:@selector(performLookup)];
+        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:[OState s].viewController action:@selector(performLookup)];
     }
     
     return button;
 }
 
 
-+ (UIBarButtonItem *)nextButton
++ (instancetype)nextButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Next", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(moveToNextInputField)];
+    return [[self alloc] initWithTitle:NSLocalizedString(@"Next", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(moveToNextInputField)];
 }
 
 
-+ (UIBarButtonItem *)editButton
++ (instancetype)editButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Edit", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didBeginEditing)];
+    return [[self alloc] initWithTitle:NSLocalizedString(@"Edit", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didBeginEditing)];
 }
 
 
-+ (UIBarButtonItem *)cancelButton
++ (instancetype)cancelButton
 {
-    return [UIBarButtonItem cancelButtonWithTitle:NSLocalizedString(@"Cancel", @"")];
+    return [self cancelButtonWithTitle:NSLocalizedString(@"Cancel", @"")];
 }
 
 
-+ (UIBarButtonItem *)skipButton
++ (instancetype)skipButton
 {
-    return [UIBarButtonItem cancelButtonWithTitle:NSLocalizedString(@"Skip", @"")];
+    return [self cancelButtonWithTitle:NSLocalizedString(@"Skip", @"")];
 }
 
 
-+ (UIBarButtonItem *)doneButton
++ (instancetype)doneButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"") style:UIBarButtonItemStyleDone target:[OState s].viewController action:@selector(didFinishEditing)];
+    return [[self alloc] initWithTitle:NSLocalizedString(@"Done", @"") style:UIBarButtonItemStyleDone target:[OState s].viewController action:@selector(didFinishEditing)];
 }
 
 
-+ (UIBarButtonItem *)signOutButton
++ (instancetype)signOutButton
 {
-    return [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Log out", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(signOut)];
+    return [[self alloc] initWithTitle:NSLocalizedString(@"Log out", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(signOut)];
 }
 
 
 #pragma mark - Toolbar buttons
 
-+ (UIBarButtonItem *)sendTextButton
++ (instancetype)sendTextButton
 {
     UIBarButtonItem *barButtonItem = nil;
     SEL action = @selector(processTextRequest);
     
     if ([OMeta systemIs_iOS6x]) {
-        barButtonItem = [UIBarButtonItem barButtonWithIcon:kIconFileSendText_iOS6x action:action];
+        barButtonItem = [self barButtonWithIcon:kIconFileSendText_iOS6x action:action];
     } else {
-        barButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSendText] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
+        barButtonItem = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSendText] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
     }
     
     return barButtonItem;
 }
 
 
-+ (UIBarButtonItem *)phoneCallButton
++ (instancetype)phoneCallButton
 {
     UIBarButtonItem *barButtonItem = nil;
     SEL action = @selector(processCallRequest);
     
     if ([OMeta systemIs_iOS6x]) {
-        barButtonItem = [UIBarButtonItem barButtonWithIcon:kIconFilePlacePhoneCall_iOS6x action:action];
+        barButtonItem = [self barButtonWithIcon:kIconFilePlacePhoneCall_iOS6x action:action];
     } else {
-        barButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFilePlacePhoneCall] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
+        barButtonItem = [[self alloc] initWithImage:[UIImage imageNamed:kIconFilePlacePhoneCall] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
     }
     
     return barButtonItem;
 }
 
 
-+ (UIBarButtonItem *)sendEmailButton
++ (instancetype)sendEmailButton
 {
     UIBarButtonItem *barButtonItem = nil;
     SEL action = @selector(processEmailRequest);
     
     if ([OMeta systemIs_iOS6x]) {
-        barButtonItem = [UIBarButtonItem barButtonWithIcon:kIconFileSendEmail_iOS6x action:action];
+        barButtonItem = [self barButtonWithIcon:kIconFileSendEmail_iOS6x action:action];
     } else {
-        barButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:kIconFileSendEmail] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
+        barButtonItem = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSendEmail] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
     }
     
     return barButtonItem;
@@ -168,10 +168,10 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 #pragma mark - Generic flexible space
 
-+ (UIBarButtonItem *)flexibleSpace
++ (instancetype)flexibleSpace
 {
     if (!_flexibleSpace) {
-        _flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+        _flexibleSpace = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     }
     
     return _flexibleSpace;

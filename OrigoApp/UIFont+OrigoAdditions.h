@@ -10,16 +10,16 @@
 
 @interface UIFont (OrigoAdditions)
 
-+ (UIFont *)navigationBarTitleFont;
-+ (UIFont *)navigationBarSubtitleFont;
-+ (UIFont *)plainHeaderFont;
-+ (UIFont *)headerFont;
-+ (UIFont *)footerFont;
-+ (UIFont *)titleFont;
-+ (UIFont *)detailFont;
-+ (UIFont *)listTextFont;
-+ (UIFont *)listDetailTextFont;
-+ (UIFont *)alternateListTextFont;
++ (instancetype)navigationBarTitleFont;
++ (instancetype)navigationBarSubtitleFont;
++ (instancetype)plainHeaderFont;
++ (instancetype)headerFont;
++ (instancetype)footerFont;
++ (instancetype)titleFont;
++ (instancetype)detailFont;
++ (instancetype)listTextFont;
++ (instancetype)listDetailTextFont;
++ (instancetype)alternateListTextFont;
 
 + (CGFloat)titleFieldHeight;
 + (CGFloat)detailFieldHeight;

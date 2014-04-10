@@ -23,6 +23,7 @@
     NSDictionary *_candidateDictionary;
     NSMutableArray *_candidateAddresses;
     NSMutableArray *_candidateHomeNumbers;
+    NSMutableArray *_homeNumberMappings;
     NSArray *_candidateResidences;
     
     ORegistrantExaminer *_examiner;
