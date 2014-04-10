@@ -35,7 +35,7 @@
 + (instancetype)iOS6BarButtonItemColour;
 
 + (instancetype)textColour;
-+ (instancetype)lightTextColour;
++ (instancetype)dimmedTextColour;
 + (instancetype)notificationTextColour;
 + (instancetype)placeholderTextColour;
 + (instancetype)headerTextColour;
