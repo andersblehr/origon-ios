@@ -29,77 +29,77 @@ static CGFloat const kLineToFieldHeightFactor_iOS6x = 1.22f;
 
 #pragma mark - Auxiliary methods
 
-+ (UIFont *)iOS7SystemFontOfSize:(CGFloat)size
++ (instancetype)iOS7SystemFontOfSize:(CGFloat)size
 {
-    return [UIFont fontWithName:kiOS7SystemFontName size:size];
+    return [self fontWithName:kiOS7SystemFontName size:size];
 }
 
 
-+ (UIFont *)iOS7MediumSystemFontOfSize:(CGFloat)size
++ (instancetype)iOS7MediumSystemFontOfSize:(CGFloat)size
 {
-    return [UIFont fontWithName:kiOS7MediumSystemFontName size:size];
+    return [self fontWithName:kiOS7MediumSystemFontName size:size];
 }
 
 
 #pragma mark - Font shorthands
 
-+ (UIFont *)navigationBarTitleFont
++ (instancetype)navigationBarTitleFont
 {
-    return [UIFont iOS7MediumSystemFontOfSize:kNavigationBarTitleFontSize];
+    return [self iOS7MediumSystemFontOfSize:kNavigationBarTitleFontSize];
 }
 
 
-+ (UIFont *)navigationBarSubtitleFont
++ (instancetype)navigationBarSubtitleFont
 {
-    return [UIFont iOS7SystemFontOfSize:kNavigationBarSubtitleFontSize];
+    return [self iOS7SystemFontOfSize:kNavigationBarSubtitleFontSize];
 }
 
 
-+ (UIFont *)plainHeaderFont
++ (instancetype)plainHeaderFont
 {
     return [self listTextFont];
 }
 
 
-+ (UIFont *)headerFont
++ (instancetype)headerFont
 {
-    return [UIFont iOS7SystemFontOfSize:kHeaderFontSize];
+    return [self iOS7SystemFontOfSize:kHeaderFontSize];
 }
 
 
-+ (UIFont *)footerFont
++ (instancetype)footerFont
 {
-    return [UIFont iOS7SystemFontOfSize:kFooterFontSize];
+    return [self iOS7SystemFontOfSize:kFooterFontSize];
 }
 
 
-+ (UIFont *)titleFont
++ (instancetype)titleFont
 {
-    return [UIFont iOS7SystemFontOfSize:kTitleFontSize];
+    return [self iOS7SystemFontOfSize:kTitleFontSize];
 }
 
 
-+ (UIFont *)detailFont
++ (instancetype)detailFont
 {
-    return [UIFont iOS7SystemFontOfSize:kDetailFontSize];
+    return [self iOS7SystemFontOfSize:kDetailFontSize];
 }
 
 
-+ (UIFont *)listTextFont
++ (instancetype)listTextFont
 {
-    return [UIFont iOS7SystemFontOfSize:kListTextFontSize];
+    return [self iOS7SystemFontOfSize:kListTextFontSize];
 }
 
 
-+ (UIFont *)listDetailTextFont
++ (instancetype)listDetailTextFont
 {
-    return [UIFont iOS7SystemFontOfSize:kListDetailFontSize];
+    return [self iOS7SystemFontOfSize:kListDetailFontSize];
 }
 
 
-+ (UIFont *)alternateListTextFont
++ (instancetype)alternateListTextFont
 {
-    return [UIFont iOS7SystemFontOfSize:kAlternateListFontSize];
+    return [self iOS7SystemFontOfSize:kAlternateListFontSize];
 }
 
 
@@ -107,19 +107,19 @@ static CGFloat const kLineToFieldHeightFactor_iOS6x = 1.22f;
 
 + (CGFloat)titleFieldHeight
 {
-    return [[UIFont titleFont] inputFieldHeight];
+    return [[self titleFont] inputFieldHeight];
 }
 
 
 + (CGFloat)detailFieldHeight
 {
-    return [[UIFont detailFont] inputFieldHeight];
+    return [[self detailFont] inputFieldHeight];
 }
 
 
 + (CGFloat)detailLineHeight
 {
-    return [UIFont detailFont].lineHeight + 1.f;
+    return [[self detailFont] lineHeight] + 1.f;
 }
 
 

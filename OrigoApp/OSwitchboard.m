@@ -191,7 +191,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         }
         
         if ([phoneRecipients count] == 1) {
-            [self addRecipients:phoneRecipients forServiceType:kServiceTypeCall tag:kRecipientTagMember];
+            [self addRecipients:phoneRecipients forServiceType:kServiceTypeCall tag:tag];
         } else if (_member && ([phoneRecipients count] == 2)) {
             if ([_member hasParent:phoneRecipients[0]]) {
                 [self addRecipients:@[phoneRecipients[1]] forServiceType:kServiceTypeCall tag:tag];
@@ -425,7 +425,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 
 #pragma mark - Initialisation
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     

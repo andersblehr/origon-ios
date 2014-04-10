@@ -2,7 +2,7 @@
 //  OOrigo.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 29.03.14.
+//  Created by Anders Blehr on 09.04.14.
 //  Copyright (c) 2014 Rhelba Source. All rights reserved.
 //
 
@@ -21,6 +21,7 @@
 @property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSData * photo;
 @property (nonatomic, retain) NSString * telephone;
+@property (nonatomic, retain) NSString * type;
 @property (nonatomic, retain) NSSet *memberships;
 @property (nonatomic, retain) OOrigo *parentOrigo;
 @property (nonatomic, retain) NSSet *subOrigos;

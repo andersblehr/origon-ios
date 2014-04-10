@@ -17,6 +17,6 @@
 
 + (CGFloat)widthWithBlueprint:(OTableViewCellBlueprint *)blueprint;
 
-- (id)initWithKey:(NSString *)key centred:(BOOL)centred;
+- (instancetype)initWithKey:(NSString *)key centred:(BOOL)centred;
 
 @end

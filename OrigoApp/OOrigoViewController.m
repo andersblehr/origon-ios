@@ -149,21 +149,24 @@ static NSInteger const kButtonTagGuardian = 101;
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialiseState
+- (void)loadState
 {
     _origo = [self.entityProxy facade];
     _member = [[self.entityProxy parentWithClass:[OMember class]] facade];
     
     if ([self actionIs:kActionRegister]) {
-        if (self.isModal) {
+        if ([_origo isOfType:kOrigoTypeResidence] && ![_member hasAddress]) {
+            self.title = NSLocalizedString(kOrigoTypeResidence, kKeyPrefixOrigoTitle);
+        } else {
             self.title = NSLocalizedString([_origo facade].type, kKeyPrefixNewOrigoTitle);
-            self.cancelImpliesSkip = ([_origo isInstantiated] && ![self aspectIsHousehold]);
         }
+        
+        self.cancelImpliesSkip = ([_origo isInstantiated] && ![self aspectIsHousehold]);
     } else {
         _membership = [_origo membershipForMember:_member];
         
         if ([_origo isOfType:kOrigoTypeResidence] && ![[OState s] aspectIsHousehold]) {
-            self.title = NSLocalizedString([_origo facade].type, kKeyPrefixOrigoTitle);
+            self.title = NSLocalizedString(kOrigoTypeResidence, kKeyPrefixOrigoTitle);
         } else {
             self.title = [_origo displayName];
         }
@@ -179,7 +182,7 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
-- (void)initialiseData
+- (void)loadData
 {
     [self setDataForDetailSection];
     
@@ -305,6 +308,10 @@ static NSInteger const kButtonTagGuardian = 101;
             _membership = [_origo addMember:_member];
         }
         
+        if ([_member isUser] && ![_member isActive]) {
+            [_member makeActive];
+        }
+        
         [self toggleEditMode];
         [self.detailCell readEntity];
         [self reloadSectionWithKey:kSectionKeyMembers];
@@ -319,7 +326,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (id)inputEntity
 {
-    _origo = [[OMeta m].context insertOrigoEntityOfType:[_origo facade].type];
+    _origo = [OOrigo instanceFromProxy:_origo];
     
     return _origo;
 }
@@ -363,7 +370,7 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
-- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     OMember *member = [self dataAtIndexPath:indexPath];
     

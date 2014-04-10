@@ -10,10 +10,12 @@
 
 @interface OMember (OrigoAdditions)
 
++ (instancetype)memberWithId:(NSString *)entityId;
+
 - (NSSet *)allMemberships;
 - (NSSet *)residencies;
 
-- (OOrigo *)rootOrigo;
+- (OOrigo *)root;
 - (OOrigo *)residence;
 - (NSArray *)residences;
 - (NSArray *)origos;
@@ -41,6 +43,7 @@
 - (BOOL)isJuvenile;
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOlderThan:(NSInteger)age;
+- (BOOL)hasAddress;
 - (BOOL)hasParent:(OMember *)member;
 - (BOOL)hasParentWithGender:(NSString *)gender;
 - (BOOL)guardiansAreParents;

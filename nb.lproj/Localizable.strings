@@ -50,7 +50,7 @@
  ***/
 
 // Origo titles
-"[title] residence" = "Husstand";
+"[title] residence" = "Adresse";
 "[title] friends" = "Vennegruppe";
 "[title] team" = "Lag, idrettsgruppe";
 "[title] organisation" = "Organisasjon, forening";
@@ -218,7 +218,7 @@
 
 // Footers
 "New users will receive an email with an activation code." = "Nye brukere vil motta en epost med en aktiveringskode.";
-"The activation code has been sent to %@ ..." = "Aktiveringskoden er sendt til %@. Du kan oppgi den senere om du ikke har tilgang til eposten din her og nå.";
+"The activation code has been sent to %@ ..." = "Aktiveringskoden er sendt til %@. Du kan oppgi koden senere om du ikke har tilgang til eposten din her og nå.";
 "The activation code has been sent to %@." = "Aktiveringskoden er sendt til %@.";
 
 // Buttons
@@ -302,7 +302,10 @@
 "Retrieve from Origo" = "Hent fra annet origo";
 "A different number" = "Et annet nummer";
 "A different address" = "En annen adresse";
+"Neither" = "Ingen av dem";
 "None of them" = "Ingen av dem";
+"Both" = "Begge";
+"All of them" = "Alle";
 
 // Alerts
 "Incorrect details" = "Uriktige opplysninger";
@@ -318,10 +321,15 @@
 "Who do you want to email?" = "Hvem vil du sende epost til?";
 "Who do you want to text?" = "Hvem vil du sende tekstmelding til?";
 "Who do you want to call?" = "Hvem vil du ringe?";
-"%@ is registered with more than one mobile phone number. Which number do you want to provide?" = "%@ er registrert med mer enn ett mobilnummer. Hvilket nummer vil du oppgi?";
-"%@ is registered with more than one email address. Which address do you want to provide?" = "%@ er registrert med mer enn én epostadresse. Hvilken adresse vil du oppgi?";
-"%@ is registered with more than one home address. Which address do you want to provide?" = "%@ er registrert med mer enn én hjemmeadresse. Hvilken addresse vil du oppgi?";
-"%@ is registered with more than one home phone number. Which number do you want to provide?" = "%@ er registrert med mer en ett hjemmetelefonnummer. Hvilket nummer vil du oppgi?";
+"%@ has more than one mobile phone number. Which number do you want to provide?" = "%@ har flere mobilnummer. Hvilket nummer vil du oppgi?";
+"%@ has more than one email address. Which address do you want to provide?" = "%@ har flere epostadresser. Hvilken adresse vil du oppgi?";
+"%@ has more than one home address. Which address do you want to provide?" = "%@ har flere hjemmeadresser. Hvilken adresse vil du oppgi?";
+"%@ has more than one home phone number. Which number is valid for %@?" = "%@ har flere hjemmetelefonnummer. Hvilket nummer gjelder for %@?";
+"%@ has more than one home phone number. Which number do you want to provide?" = "%@ har flere hjemmetelefonnummer. Hvilket nummer vil du oppgi?";
+"%@ has only one home phone number, %@. Which address has this number?" = "%@ har bare ett hjemmetelefonnummer, %@. Hvilken adresse har dette nummeret?";
+"%@ has more than one home phone number. Which address has the number %@?" = "%@ har flere hjemmetelefonnummer. Hvilken adresse har nummeret %@?";
+"Which address has home phone number %@?" = "Hvilken adresse har hjemmetelefonnummeret %@?";
+"Does %@ have home phone number %@?" = "Har %@ hjemmetelefonnummeret %@?";
 
 // Question arguments
 "a woman or a man" = "kvinne eller mann";

@@ -16,7 +16,7 @@
     CGFloat _labelWidth;
 }
 
-- (id)initWithCell:(OTableViewCell *)cell blueprint:(OTableViewCellBlueprint *)blueprint;
+- (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OTableViewCellBlueprint *)blueprint;
 
 - (NSDictionary *)constraintsWithAlignmentOptions;
 

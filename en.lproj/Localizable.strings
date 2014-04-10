@@ -50,7 +50,7 @@
  ***/
 
 // Origo titles
-"[title] residence" = "Household";
+"[title] residence" = "Address";
 "[title] friends" = "Party of friends";
 "[title] team" = "Team/sports group";
 "[title] organisation" = "Organisation";
@@ -218,7 +218,7 @@
 
 // Footers
 "New users will receive an email with an activation code." = "New users will receive an email with an activation code.";
-"The activation code has been sent to %@ ..." = "The activation code has been sent to %@. You can enter it later if you don't have access to your email at this time.";
+"The activation code has been sent to %@ ..." = "The activation code has been sent to %@. You can enter the code later if you don't have access to your email at this time.";
 "The activation code has been sent to %@." = "The activation code has been sent to %@.";
 
 // Buttons
@@ -303,7 +303,10 @@
 "Retrieve from Origo" = "Retrieve from other origo";
 "A different number" = "A different number";
 "A different address" = "A different address";
+"Neither" = "Neither";
 "None of them" = "None of them";
+"Both" = "Both";
+"All of them" = "All of them";
 
 
 // Alerts
@@ -320,10 +323,15 @@
 "Who do you want to email?" = "Who do you want to email?";
 "Who do you want to text?" = "Who do you want to text?";
 "Who do you want to call?" = "Who do you want to call?";
-"%@ is registered with more than one mobile phone number. Which number do you want to provide?" = "%@ is registered with more than one mobile phone number. Which number do you want to provide?";
-"%@ is registered with more than one email address. Which address do you want to provide?" = "%@ is registered with more than one email address. Which address do you want to provide?";
-"%@ is registered with more than one home address. Which address do you want to provide?" = "%@ is registered with more than one home address. Which address do you want to provide?";
-"%@ is registered with more than one home phone number. Which number do you want to provide?" = "%@ is registered with more than one home phone number. Which number do you want to provide?";
+"%@ has more than one mobile phone number. Which number do you want to provide?" = "%@ has more than one mobile phone number. Which number do you want to provide?";
+"%@ has more than one email address. Which address do you want to provide?" = "%@ has more than one email address. Which address do you want to provide?";
+"%@ has more than one home address. Which address do you want to provide?" = "%@ has more than one home address. Which address do you want to provide?";
+"%@ has more than one home phone number. Which number is valid for %@?" = "%@ has more than one home phone number. Which number is valid for %@?";
+"%@ has more than one home phone number. Which number do you want to provide?" = "%@ has more than one home phone number. Which number do you want to provide?";
+"%@ has only one home phone number, %@. Which address has this number?" = "%@ has only one home phone number, %@. Which address has this number?";
+"%@ has more than one home phone number. Which address has the number %@?" = "%@ has more than one home phone number. Which address has the number %@?";
+"Which address has home phone number %@?" = "Which address has home phone number %@?";
+"Does %@ have home phone number %@?" = "Does %@ have home phone number %@?";
 
 // Question arguments
 "a woman or a man" = "a woman or a man";

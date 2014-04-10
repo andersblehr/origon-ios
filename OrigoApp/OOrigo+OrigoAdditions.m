@@ -8,7 +8,7 @@
 
 #import "OOrigo+OrigoAdditions.h"
 
-NSString * const kOrigoTypeMemberRoot = @"~";
+NSString * const kOrigoTypeRoot = @"~";
 NSString * const kOrigoTypeResidence = @"residence";
 NSString * const kOrigoTypeFriends = @"friends";
 NSString * const kOrigoTypeTeam = @"team";
@@ -47,7 +47,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
         
         [membership alignWithOrigoIsAssociate:isAssociate];
         
-        if (![self isOfType:kOrigoTypeMemberRoot]) {
+        if (![self isOfType:kOrigoTypeRoot]) {
             [[OMeta m].context insertCrossReferencesForMembership:membership];
         }
     }
@@ -60,7 +60,28 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 - (NSComparisonResult)compare:(OOrigo *)other
 {
-    return [[self displayName] localizedCaseInsensitiveCompare:[other displayName]];
+    NSString *value = [self isOfType:kOrigoTypeResidence] ? self.address : self.name;
+    NSString *comparisonValue = [other isOfType:kOrigoTypeResidence] ? other.address : other.name;
+    
+    return [value localizedCaseInsensitiveCompare:comparisonValue];
+}
+
+
+#pragma mark - Instantiation
+
++ (instancetype)origoWithId:(NSString *)entityId type:(NSString *)type
+{
+    OOrigo *instance = [[OMeta m].context insertEntityOfClass:[self class] entityId:entityId];
+    instance.origoId = entityId;
+    instance.type = type;
+    
+    if (![instance isOfType:kOrigoTypeRoot] && ![instance isOfType:kOrigoTypeResidence]) {
+        if ([[OState s].pivotMember isJuvenile]) {
+            instance.isForMinors = @YES;
+        }
+    }
+    
+    return instance;
 }
 
 
@@ -70,7 +91,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     NSMutableSet *memberships = [NSMutableSet set];
     
-    if (![self isOfType:kOrigoTypeMemberRoot]) {
+    if (![self isOfType:kOrigoTypeRoot]) {
         for (OMembership *membership in self.memberships) {
             if (![membership hasExpired]) {
                 [memberships addObject:membership];
@@ -183,7 +204,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     OMembership *membershipForMember = nil;
     
-    for (OMembership *membership in [self allMemberships]) {
+    for (OMembership *membership in self.memberships) {
         if (!membershipForMember && ![membership isBeingDeleted] && (membership.member == member)) {
             membershipForMember = membership;
         }
@@ -370,9 +391,9 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
 
-- (NSString *)asTarget
+- (id)relationshipToEntity:(id)other
 {
-    return self.type;
+    return [other isKindOfClass:[OMember class]] ? [self membershipForMember:other] : nil;
 }
 
 
@@ -381,10 +402,16 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     BOOL isTransient = [super isTransient];
     
     if (!isTransient) {
-        isTransient = ([self isOfType:kOrigoTypeMemberRoot] && (self != [[OMeta m].user rootOrigo]));
+        isTransient = ([self isOfType:kOrigoTypeRoot] && (self != [[OMeta m].user root]));
     }
     
     return isTransient;
+}
+
+
+- (NSString *)asTarget
+{
+    return self.type;
 }
 
 @end

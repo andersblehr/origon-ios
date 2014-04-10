@@ -36,11 +36,23 @@
 }
 
 
-#pragma mark - State string representation
+#pragma mark - Instantiation
 
-- (NSString *)asTarget
++ (instancetype)instanceFromProxy:(OEntityProxy *)proxy
 {
-    return @"OVERRIDE IN SUBCLASS";
+    id instance = [[OMeta m].context insertEntityOfClass:proxy.entityClass entityId:[OCrypto generateUUID]];
+    
+    for (NSString *key in [self propertyKeys]) {
+        id value = [proxy valueForKey:key];
+        
+        if (value) {
+            [instance setValue:value forKey:key];
+        }
+    }
+    
+    proxy.instance = instance;
+    
+    return instance;
 }
 
 
@@ -190,6 +202,12 @@
 }
 
 
+- (id)relationshipToEntity:(id)other
+{
+    return nil; // Override in subclass
+}
+
+
 #pragma mark - Meta information
 
 - (BOOL)userIsCreator
@@ -264,6 +282,20 @@
 }
 
 
+#pragma mark - Introspection
+
++ (NSArray *)propertyKeys
+{
+    return [[[NSEntityDescription entityForName:NSStringFromClass(self) inManagedObjectContext:[OMeta m].context] attributesByName] allKeys];
+}
+
+
+- (NSString *)asTarget
+{
+    return @"OVERRIDE IN SUBCLASS";
+}
+
+
 #pragma mark - OEntityProxy informal protocol conformance
 
 - (Class)entityClass
@@ -274,7 +306,7 @@
 
 - (OEntityProxy *)proxy
 {
-    return [[OEntityProxy alloc] initWithEntity:self];
+    return [OEntityProxy proxyForEntity:self];
 }
 
 

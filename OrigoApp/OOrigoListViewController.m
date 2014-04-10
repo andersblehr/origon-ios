@@ -131,7 +131,7 @@ static NSInteger const kSectionKeyWards = 2;
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialiseState
+- (void)loadState
 {
     _member = [self.entityProxy facade];
     _origoTypes = [NSMutableArray array];
@@ -166,7 +166,7 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-- (void)initialiseData
+- (void)loadData
 {
     if (_member) {
         [self setData:[_member origos] forSectionWithKey:kSectionKeyOrigos];
@@ -249,7 +249,7 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     id entity = [self dataAtIndexPath:indexPath];

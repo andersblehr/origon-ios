@@ -257,7 +257,7 @@ static NSInteger const kButtonTagNo = 3;
 
 #pragma mark - Initialisation
 
-- (id)initWithOrigo:(OOrigo *)origo
+- (instancetype)initWithOrigo:(OOrigo *)origo
 {
     self = [super init];
     

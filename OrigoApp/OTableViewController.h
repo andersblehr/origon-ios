@@ -10,7 +10,7 @@
 
 extern NSString * const kCustomData;
 
-@interface OTableViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OModalViewControllerDismisser, OConnectionDelegate> {
+@interface OTableViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OConnectionDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
@@ -61,7 +61,7 @@ extern NSString * const kCustomData;
 @property (strong, nonatomic) OTableViewCell *detailCell;
 @property (strong, nonatomic) OInputField *nextInputField;
 
-@property (weak, nonatomic) id<OModalViewControllerDismisser> dismisser;
+@property (weak, nonatomic) OTableViewController *dismisser;
 @property (weak, nonatomic) id<OEntityObserver> observer;
 
 - (BOOL)aspectIsHousehold;
@@ -89,8 +89,8 @@ extern NSString * const kCustomData;
 - (void)prepareForPushSegue:(UIStoryboardSegue *)segue target:(id)target;
 
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target dismisser:(id)dismisser;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target meta:(id)meta;
+- (void)dismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload;
 
 - (void)toggleEditMode;
 - (void)didCancelEditing;

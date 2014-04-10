@@ -16,6 +16,6 @@ extern CGFloat const kBorderWidthNonRetina;
     id<OTableViewInputDelegate> _inputDelegate;
 }
 
-- (id)initWithKey:(NSString *)key delegate:(id)delegate;
+- (instancetype)initWithKey:(NSString *)key delegate:(id)delegate;
 
 @end

@@ -34,8 +34,6 @@ static NSString * const kPlaceholderArgument = @"{argument}";
 static NSString * const kWordPrefix = @"word";
 static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
 
-static OLanguage *language = nil;
-
 
 @interface OLanguage ()
 
@@ -73,9 +71,9 @@ static OLanguage *language = nil;
     } else if ([subject isKindOfClass:[OMember class]]) {
         if ([subject isUser]) {
             if (isQuestion) {
-                subjectString = [OLanguage pronouns][_you_][nominative];
+                subjectString = [self pronouns][_you_][nominative];
             } else {
-                subjectString = [OLanguage pronouns][_I_][nominative];
+                subjectString = [self pronouns][_I_][nominative];
             }
         } else {
             subjectString = [subject givenName];
@@ -90,7 +88,7 @@ static OLanguage *language = nil;
 
 + (NSString *)verbStringWithVerb:(NSString *)verbKey subject:(id)subject isQuestion:(BOOL)isQuestion
 {
-    NSArray *verb = [OLanguage verbs][verbKey];
+    NSArray *verb = [self verbs][verbKey];
     NSString *verbString = nil;
     
     if ([subject isKindOfClass:[NSString class]]) {
@@ -113,7 +111,7 @@ static OLanguage *language = nil;
 
 + (id)allocWithZone:(NSZone *)zone
 {
-    return [OLanguage language];
+    return [self language];
 }
 
 
@@ -123,7 +121,7 @@ static OLanguage *language = nil;
 }
 
 
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     
@@ -137,11 +135,14 @@ static OLanguage *language = nil;
 }
 
 
-+ (OLanguage *)language
++ (instancetype)language
 {
-    if (!language) {
+    static OLanguage *language = nil;
+    static dispatch_once_t onceToken;
+    
+    dispatch_once(&onceToken, ^{
         language = [[super allocWithZone:nil] init];
-    }
+    });
     
     return language;
 }
@@ -151,19 +152,19 @@ static OLanguage *language = nil;
 
 + (NSDictionary *)verbs
 {
-    return [OLanguage language].verbs;
+    return [[self language] verbs];
 }
 
 
 + (NSDictionary *)nouns
 {
-    return [OLanguage language].nouns;
+    return [[self language] nouns];
 }
 
 
 + (NSDictionary *)pronouns
 {
-    return [OLanguage language].pronouns;
+    return [[self language] pronouns];
 }
 
 
@@ -181,7 +182,7 @@ static OLanguage *language = nil;
 + (NSString *)possessiveClauseWithPossessor:(id)possessor noun:(NSString *)nounKey
 {
     NSString *possessiveClause = nil;
-    NSArray *noun = [OLanguage nouns][nounKey];
+    NSArray *noun = [self nouns][nounKey];
     
     if ([possessor isKindOfClass:[NSString class]]) {
         possessiveClause = [NSString stringWithFormat:noun[possessive3], possessor];

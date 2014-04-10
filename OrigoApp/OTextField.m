@@ -122,7 +122,7 @@ static CGFloat const kTextInsetY = 1.2f;
 
 #pragma mark - Initialisation
 
-- (id)initWithKey:(NSString *)key delegate:(id)delegate
+- (instancetype)initWithKey:(NSString *)key delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     

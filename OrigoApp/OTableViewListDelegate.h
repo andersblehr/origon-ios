@@ -11,7 +11,7 @@
 @protocol OTableViewListDelegate <NSObject>
 
 @required
-- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 
 @optional
 - (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey;

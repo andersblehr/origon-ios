@@ -120,7 +120,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 
 + (NSString *)propertyKeyForKey:(NSString *)key
 {
-    return [[[OValidator keyMappings] allKeys] containsObject:key] ? _keyMappings[key] : key;
+    return [[[self keyMappings] allKeys] containsObject:key] ? _keyMappings[key] : key;
 }
 
 
@@ -145,7 +145,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
     BOOL valueIsValid = NO;
     
     if (value) {
-        NSString *propertyKey = [OValidator propertyKeyForKey:key];
+        NSString *propertyKey = [self propertyKeyForKey:key];
         
         if ([self isNameKey:propertyKey]) {
             valueIsValid = [self valueIsName:value];

@@ -41,6 +41,25 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
 }
 
 
+#pragma mark - Instance access
+
++ (instancetype)settings
+{
+    OSettings *settings = nil;
+    
+    if ([OMeta m].user) {
+        settings = [OMeta m].user.settings;
+    
+        if (!settings) {
+            settings = [[OMeta m].context insertEntityOfClass:self inOrigo:[[OMeta m].user root]];
+            [OMeta m].user.settings = settings;
+        }
+    }
+    
+    return settings;
+}
+
+
 #pragma mark - Convenience methods
 
 - (NSArray *)settingKeys

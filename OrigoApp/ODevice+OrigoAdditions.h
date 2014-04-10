@@ -10,4 +10,6 @@
 
 @interface ODevice (OrigoAdditions)
 
++ (instancetype)device;
+
 @end

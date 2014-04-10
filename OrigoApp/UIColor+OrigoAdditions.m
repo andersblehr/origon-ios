@@ -13,190 +13,198 @@
 
 #pragma mark - Core iOS 7 palette RGB shorthands
 
-+ (UIColor *)manateeColour // Grey
++ (instancetype)manateeColour // Grey
 {
-    return [UIColor colorWithRed:142/255.f green:142/255.f blue:147/255.f alpha:1.f];
+    return [self colorWithRed:142/255.f green:142/255.f blue:147/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)radicalRedColour
++ (instancetype)radicalRedColour
 {
-    return [UIColor colorWithRed:255/255.f green:45/255.f blue:85/255.f alpha:1.f];
+    return [self colorWithRed:255/255.f green:45/255.f blue:85/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)redOrangeColour
++ (instancetype)redOrangeColour
 {
-    return [UIColor colorWithRed:255/255.f green:59/255.f blue:48/255.f alpha:1.f];
+    return [self colorWithRed:255/255.f green:59/255.f blue:48/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)pizazzColour // Orange
++ (instancetype)pizazzColour // Orange
 {
-    return [UIColor colorWithRed:255/255.f green:149/255.f blue:0/255.f alpha:1.f];
+    return [self colorWithRed:255/255.f green:149/255.f blue:0/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)supernovaColour // Yellow
++ (instancetype)supernovaColour // Yellow
 {
-    return [UIColor colorWithRed:255/255.f green:204/255.f blue:0/255.f alpha:1.f];
+    return [self colorWithRed:255/255.f green:204/255.f blue:0/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)emeraldColour // Green
++ (instancetype)emeraldColour // Green
 {
-    return [UIColor colorWithRed:76/255.f green:217/255.f blue:100/255.f alpha:1.f];
+    return [self colorWithRed:76/255.f green:217/255.f blue:100/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)malibuColour // Bright blue
++ (instancetype)malibuColour // Bright blue
 {
-    return [UIColor colorWithRed:90/255.f green:200/255.f blue:250/255.f alpha:1.f];
+    return [self colorWithRed:90/255.f green:200/255.f blue:250/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)curiousBlueColour // Soft blue
++ (instancetype)curiousBlueColour // Soft blue
 {
-    return [UIColor colorWithRed:52/255.f green:170/255.f blue:220/255.f alpha:1.f];
+    return [self colorWithRed:52/255.f green:170/255.f blue:220/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)azureRadianceColour // Standard UI blue
++ (instancetype)azureRadianceColour // Standard UI blue
 {
-    return [UIColor colorWithRed:0/255.f green:122/255.f blue:255/255.f alpha:1.f];
+    return [self colorWithRed:0/255.f green:122/255.f blue:255/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)indigoColour
++ (instancetype)indigoColour
 {
-    return [UIColor colorWithRed:88/255.f green:86/255.f blue:214/255.f alpha:1.f];
+    return [self colorWithRed:88/255.f green:86/255.f blue:214/255.f alpha:1.f];
 }
 
 
 #pragma mark - iOS 7 default colours
 
 
-+ (UIColor *)toolbarShadowColour
++ (instancetype)toolbarShadowColour
 {
-    return [UIColor colorWithRed:248/255.f green:248/255.f blue:248/255.f alpha:1.f];
+    return [self colorWithRed:248/255.f green:248/255.f blue:248/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)tableViewBackgroundColour
++ (instancetype)tableViewBackgroundColour
 {
-    return [UIColor colorWithRed:239/255.f green:239/255.f blue:244/255.f alpha:1.f];
+    return [self colorWithRed:239/255.f green:239/255.f blue:244/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)tableViewSeparatorColour
++ (instancetype)tableViewSeparatorColour
 {
-    return [UIColor colorWithRed:200/255.f green:199/255.f blue:204/255.f alpha:1.f];
+    return [self colorWithRed:200/255.f green:199/255.f blue:204/255.f alpha:1.f];
 }
 
 
-+ (UIColor *)cellBackgroundColour
++ (instancetype)cellBackgroundColour
 {
-    return [UIColor whiteColor];
+    return [self whiteColor];
 }
 
 
-+ (UIColor *)selectedCellBackgroundColour
++ (instancetype)selectedCellBackgroundColour
 {
-    return [UIColor tableViewSeparatorColour];
+    return [self tableViewSeparatorColour];
 }
 
 
-+ (UIColor *)alertViewBackgroundColour
++ (instancetype)alertViewBackgroundColour
 {
-    return [UIColor colorWithRed:226.f/255 green:226.f/255 blue:226.f/255 alpha:1.f];
+    return [self colorWithRed:226.f/255 green:226.f/255 blue:226.f/255 alpha:1.f];
 }
 
 
 #pragma mark - Interface colours
 
-+ (UIColor *)windowTintColour
++ (instancetype)windowTintColour
 {
-    return [UIColor pizazzColour];
+    return [self pizazzColour];
 }
 
 
-+ (UIColor *)titleBackgroundColour
++ (instancetype)titleBackgroundColour
 {
-    return [UIColor windowTintColour];
+    return [self windowTintColour];
 }
 
 
-+ (UIColor *)titlePlaceholderColour
++ (instancetype)titlePlaceholderColour
 {
-    return [UIColor colorWithWhite:1.f alpha:0.6f];
+    return [self colorWithWhite:1.f alpha:0.6f];
 }
 
 
-+ (UIColor *)imagePlaceholderBackgroundColour
++ (instancetype)imagePlaceholderBackgroundColour
 {
-    return [UIColor tableViewBackgroundColour];
+    return [self tableViewBackgroundColour];
 }
 
 
-+ (UIColor *)iOS6BarButtonItemColour
++ (instancetype)iOS6BarButtonItemColour
 {
-    return [UIColor colorWithRed:255/255.f green:192/255.f blue:104/255.f alpha:1.f];
+    return [self colorWithRed:255/255.f green:192/255.f blue:104/255.f alpha:1.f];
 }
 
 
 #pragma mark - Text colours
 
-+ (UIColor *)textColour
++ (instancetype)textColour
 {
-    return [UIColor blackColor];
+    return [self blackColor];
 }
 
 
-+ (UIColor *)lightTextColour
++ (instancetype)lightTextColour
 {
-    return [UIColor lightGrayColor];
+    return [self lightGrayColor];
 }
 
 
-+ (UIColor *)notificationTextColour
++ (instancetype)notificationTextColour
 {
-    return [UIColor redOrangeColour];
+    return [self redOrangeColour];
 }
 
 
-+ (UIColor *)placeholderTextColour
++ (instancetype)placeholderTextColour
 {
-    return [OMeta systemIs_iOS6x] ? [UIColor lightGrayColor] : [UIColor colorWithRed:0/255.f green:0/255.f blue:25/255.f alpha:0.22f];
+    UIColor *placeholderTextColor = nil;
+    
+    if ([OMeta systemIs_iOS6x]) {
+        placeholderTextColor = [self lightGrayColor];
+    } else {
+        placeholderTextColor = [self colorWithRed:0/255.f green:0/255.f blue:25/255.f alpha:0.22f];
+    }
+    
+    return placeholderTextColor;
 }
 
 
-+ (UIColor *)headerTextColour
++ (instancetype)headerTextColour
 {
-    return [UIColor darkGrayColor];
+    return [self darkGrayColor];
 }
 
 
-+ (UIColor *)footerTextColour
++ (instancetype)footerTextColour
 {
-    return [UIColor darkGrayColor];
+    return [self darkGrayColor];
 }
 
 
-+ (UIColor *)titleTextColour
++ (instancetype)titleTextColour
 {
-    return [UIColor whiteColor];
+    return [self whiteColor];
 }
 
 
-+ (UIColor *)labelTextColour
++ (instancetype)labelTextColour
 {
-    return [UIColor windowTintColour];
+    return [self windowTintColour];
 }
 
 
-+ (UIColor *)imagePlaceholderTextColour
++ (instancetype)imagePlaceholderTextColour
 {
-    return [UIColor whiteColor];
+    return [self whiteColor];
 }
 
 @end

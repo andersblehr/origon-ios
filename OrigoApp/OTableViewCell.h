@@ -38,8 +38,8 @@ extern CGFloat const kCellAnimationDuration;
 
 @property (weak, nonatomic) id<OEntityObserver> observer;
 
-- (id)initWithEntity:(id)entity;
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath;
+- (instancetype)initWithEntity:(id)entity;
+- (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath;
 
 - (OLabel *)labelForKey:(NSString *)key;
 - (OInputField *)inputFieldForKey:(NSString *)key;

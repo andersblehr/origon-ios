@@ -10,7 +10,7 @@
 
 @interface OReplicatedEntity (OrigoAdditions)
 
-- (NSString *)asTarget;
++ (instancetype)instanceFromProxy:(OEntityProxy *)proxy;
 
 - (BOOL)hasValueForKey:(NSString *)key;
 - (id)rawValueForKey:(NSString *)key;
@@ -20,6 +20,7 @@
 - (NSDictionary *)toDictionary;
 - (NSString *)computeHashCode;
 - (void)internaliseRelationships;
+- (id)relationshipToEntity:(id)other;
 
 - (BOOL)userIsCreator;
 - (BOOL)isTransient;
@@ -32,5 +33,8 @@
 - (void)expire;
 - (void)unexpire;
 - (NSString *)expiresInTimeframe;
+
++ (NSArray *)propertyKeys;
+- (NSString *)asTarget;
 
 @end

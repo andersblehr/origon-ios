@@ -72,8 +72,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             _state.action = kActionPick;
         }
         
-        [_instance initialiseState];
-        [_instance initialiseData];
+        [_instance loadState];
+        [_instance loadData];
         
         for (NSNumber *sectionKey in [_sectionData allKeys]) {
             _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
@@ -432,17 +432,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Presenting modal view controllers
+#pragma mark - Modal view controller handling
 
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target
 {
     [self presentModalViewControllerWithIdentifier:identifier target:target meta:nil];
-}
-
-
-- (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target dismisser:(id)dismisser
-{
-    [self presentModalViewControllerWithIdentifier:identifier target:target meta:dismisser];
 }
 
 
@@ -475,6 +469,40 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     destinationViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     
     [self.navigationController presentViewController:destinationViewController animated:YES completion:NULL];
+}
+
+
+- (void)dismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload
+{
+    BOOL shouldRelayDismissal = NO;
+    
+    if (_isModal) {
+        if ([_instance respondsToSelector:@selector(shouldRelayDismissalOfModalViewController:)]) {
+            shouldRelayDismissal = [_instance shouldRelayDismissalOfModalViewController:viewController];
+        }
+    }
+    
+    if (shouldRelayDismissal) {
+        if (!reload && viewController.cancelImpliesSkip) {
+            [_dismisser dismissModalViewController:viewController reload:YES];
+        } else {
+            [_dismisser dismissModalViewController:viewController reload:reload];
+        }
+    } else {
+        if ([_instance respondsToSelector:@selector(willDismissModalViewController:)]) {
+            [_instance willDismissModalViewController:viewController];
+        }
+        
+        _shouldReloadOnModalDismissal = [[OMeta m] userIsSignedIn] ? reload : NO;
+        
+        [self dismissViewControllerAnimated:YES completion:^{
+            _shouldReloadOnModalDismissal = NO;
+        }];
+        
+        if ([_instance respondsToSelector:@selector(didDismissModalViewController:)]) {
+            [_instance didDismissModalViewController:viewController];
+        }
+    }
 }
 
 
@@ -534,7 +562,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)reloadSections
 {
-    [_instance initialiseData];
+    [_instance loadData];
     
     NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
     NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
@@ -580,7 +608,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)reloadSectionWithKey:(NSInteger)sectionKey
 {
-    [_instance initialiseData];
+    [_instance loadData];
     
     BOOL sectionExists = ([_sectionCounts[@(sectionKey)] integerValue] > 0);
     BOOL sectionIsEmpty = (![_sectionData[@(sectionKey)] count]);
@@ -609,7 +637,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _needsReinstantiateRootViewController = YES;
     _reinstantiatedRootViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
     
-    [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetUser dismisser:_reinstantiatedRootViewController];
+    [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetUser meta:_reinstantiatedRootViewController];
 }
 
 
@@ -738,10 +766,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 	[super viewWillDisappear:animated];
     
     _isHidden = (self.presentedViewController != nil);
-
-    if (![[OMeta m].user isActive] && [[OMeta m] userIsAllSet]) {
-        [[OMeta m].user makeActive];
-    }
     
     [[OMeta m].replicator replicateIfNeeded];
 }
@@ -811,7 +835,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     } else if ([target isKindOfClass:[OEntityProxy class]]) {
         _entityProxy = target;
     } else if ([self isEntityViewController]) {
-        _entityProxy = [[OEntityProxy alloc] initWithEntityClass:_implicitEntityClass type:target];
+        _entityProxy = [OEntityProxy proxyForEntityOfClass:_implicitEntityClass type:target];
     }
     
     if (_entityProxy) {
@@ -831,42 +855,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     return _target;
-}
-
-
-#pragma mark - OModalViewControllerDismisser conformance
-
-- (void)dismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload
-{
-    BOOL shouldRelayDismissal = NO;
-    
-    if (_isModal) {
-        if ([_instance respondsToSelector:@selector(shouldRelayDismissalOfModalViewController:)]) {
-            shouldRelayDismissal = [_instance shouldRelayDismissalOfModalViewController:viewController];
-        }
-    }
-    
-    if (shouldRelayDismissal) {
-        if (!reload && viewController.cancelImpliesSkip) {
-            [self.dismisser dismissModalViewController:viewController reload:YES];
-        } else {
-            [self.dismisser dismissModalViewController:viewController reload:reload];
-        }
-    } else {
-        if ([_instance respondsToSelector:@selector(willDismissModalViewController:)]) {
-            [_instance willDismissModalViewController:viewController];
-        }
-        
-        _shouldReloadOnModalDismissal = [[OMeta m] userIsSignedIn] ? reload : NO;
-        
-        [self dismissViewControllerAnimated:YES completion:^{
-            _shouldReloadOnModalDismissal = NO;
-        }];
-        
-        if ([_instance respondsToSelector:@selector(didDismissModalViewController:)]) {
-            [_instance didDismissModalViewController:viewController];
-        }
-    }
 }
 
 
@@ -948,13 +936,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         NSNumber *sectionKey = _sectionKeys[indexPath.section];
         NSMutableArray *sectionData = _sectionData[sectionKey];
-        OReplicatedEntity *entity = sectionData[indexPath.row];
+        id entity = sectionData[indexPath.row];
         
         _sectionCounts[sectionKey] = @([_sectionCounts[sectionKey] integerValue] - 1);
         [sectionData removeObjectAtIndex:indexPath.row];
-        [entity expire];
         
-        [[OMeta m].replicator replicateIfNeeded];
+        if ([_entityProxy isInstantiated] && [entity isInstantiated]) {
+            [[_entityProxy.instance relationshipToEntity:entity] expire];
+            [[OMeta m].replicator replicateIfNeeded];
+        }
+        
         [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
@@ -1051,15 +1042,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     OTableViewCell *cell = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     
-    if ([cell isListCell]) {
-        if ([self actionIs:kActionInput]) {
-            cell.selected = NO;
-        } else {
-            _selectedIndexPath = indexPath;
-            
-            if ([_instance respondsToSelector:@selector(didSelectCell:atIndexPath:)]) {
-                [_instance didSelectCell:cell atIndexPath:indexPath];
-            }
+    if (cell.selectable) {
+        _selectedIndexPath = indexPath;
+        
+        if ([_instance respondsToSelector:@selector(didSelectCell:atIndexPath:)]) {
+            [_instance didSelectCell:cell atIndexPath:indexPath];
         }
     }
 }

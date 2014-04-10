@@ -11,8 +11,8 @@
 @protocol OTableViewControllerInstance <NSObject>
 
 @required
-- (void)initialiseState;
-- (void)initialiseData;
+- (void)loadState;
+- (void)loadData;
 
 @optional
 - (id)defaultTarget;

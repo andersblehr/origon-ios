@@ -21,9 +21,9 @@ static CGFloat const kFadeAnimationDuration = 0.2f;
 
 @implementation OActivityIndicator
 
-#pragma mark - Singleton instantiation & initialisation
+#pragma mark - Initialisation
 
-- (id)init
+- (instancetype)init
 {
     self = [super initWithFrame:[OState s].viewController.view.window.frame];
     
@@ -50,6 +50,8 @@ static CGFloat const kFadeAnimationDuration = 0.2f;
     return self;
 }
 
+
+#pragma mark - Starting & stopping animation
 
 - (void)startAnimating
 {

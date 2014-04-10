@@ -35,8 +35,8 @@ extern CGFloat const kPhotoFrameWidth;
 @property (strong, nonatomic, readonly) NSArray *allInputFieldKeys;
 @property (strong, nonatomic, readonly) NSArray *indirectKeys;
 
-- (id)initWithState:(OState *)state;
-- (id)initWithState:(OState *)state reuseIdentifier:(NSString *)reuseIdentifier;
+- (instancetype)initWithState:(OState *)state;
+- (instancetype)initWithState:(OState *)state reuseIdentifier:(NSString *)reuseIdentifier;
 
 - (OInputField *)inputFieldWithKey:(NSString *)key delegate:(id)delegate;
 - (CGFloat)cellHeightWithEntity:(id)entity cell:(OTableViewCell *)cell;

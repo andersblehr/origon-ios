@@ -34,13 +34,13 @@ static NSCalendar *_calendar = nil;
 
 - (NSDateComponents *)dateComponentsBeforeDate:(NSDate *)date;
 {
-    return [[NSDate calendar] components:NSYearCalendarUnit fromDate:self toDate:date options:kNilOptions];
+    return [[[self class] calendar] components:NSYearCalendarUnit fromDate:self toDate:date options:kNilOptions];
 }
 
 
 #pragma mark - Specific dates
 
-+ (NSDate *)defaultDate
++ (instancetype)defaultDate
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = kDateTimeFormatZulu;
@@ -49,27 +49,27 @@ static NSCalendar *_calendar = nil;
 }
 
 
-+ (NSDate *)earliestValidBirthDate
++ (instancetype)earliestValidBirthDate
 {
     NSDateComponents *earliestBirthDateOffset = [[NSDateComponents alloc] init];
     earliestBirthDateOffset.year = -kMaximumRealisticUserAge;
     
-    NSDate *now = [NSDate date];
+    NSDate *now = [self date];
     
-    return [[NSDate calendar] dateByAddingComponents:earliestBirthDateOffset toDate:now options:kNilOptions];
+    return [[self calendar] dateByAddingComponents:earliestBirthDateOffset toDate:now options:kNilOptions];
 }
 
 
 + (NSDate *)latestValidBirthDate
 {
-    NSDate *now = [NSDate date];
+    NSDate *now = [self date];
     NSDate *latestValidBirthDate = now;
     
     if ([[OState s] targetIs:kTargetUser]) {
         NSDateComponents *latestBirthDateOffset = [[NSDateComponents alloc] init];
         latestBirthDateOffset.year = -kMinimumRealisticUserAge;
         
-        latestValidBirthDate = [[NSDate calendar] dateByAddingComponents:latestBirthDateOffset toDate:now options:kNilOptions];
+        latestValidBirthDate = [[self calendar] dateByAddingComponents:latestBirthDateOffset toDate:now options:kNilOptions];
     }
     
     return latestValidBirthDate;
@@ -80,7 +80,7 @@ static NSCalendar *_calendar = nil;
 
 + (NSDate *)dateWithDeserialisedDate:(NSNumber *)deserialisedDate
 {
-    return [NSDate dateWithTimeIntervalSince1970:[deserialisedDate doubleValue] / 1000];
+    return [self dateWithTimeIntervalSince1970:[deserialisedDate doubleValue] / 1000];
 }
 
 
@@ -102,13 +102,13 @@ static NSCalendar *_calendar = nil;
 
 - (NSInteger)daysBeforeNow
 {
-    return [self dateComponentsBeforeDate:[NSDate date]].day;
+    return [self dateComponentsBeforeDate:[[self class] date]].day;
 }
 
 
 - (NSInteger)yearsBeforeNow
 {
-    return [self yearsBeforeDate:[NSDate date]];
+    return [self yearsBeforeDate:[[self class] date]];
 }
 
 

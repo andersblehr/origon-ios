@@ -332,7 +332,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
 
 #pragma mark - Initialisation
 
-- (id)initWithRegionIdentifier:(NSString *)regionIdentifier
+- (instancetype)initWithRegionIdentifier:(NSString *)regionIdentifier
 {
     self = [super init];
     
@@ -368,7 +368,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
     if (_formattersByRegionIdentifier) {
         formatter = _formattersByRegionIdentifier[regionIdentifier];
     } else {
-        formatter = [[OPhoneNumberFormatter alloc] initWithRegionIdentifier:regionIdentifier];
+        formatter = [[self alloc] initWithRegionIdentifier:regionIdentifier];
     }
     
     if ([phoneNumber hasPrefix:kTokenPlus] && ([phoneNumber length] > 1)) {
@@ -400,7 +400,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
                     formatter = _formattersByRegionIdentifier[regionIdentifier];
                     
                     if (!formatter) {
-                        formatter = [[OPhoneNumberFormatter alloc] initWithRegionIdentifier:regionIdentifier];
+                        formatter = [[self alloc] initWithRegionIdentifier:regionIdentifier];
                     }
                 }
             }

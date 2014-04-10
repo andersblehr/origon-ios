@@ -36,8 +36,6 @@ NSString * const kTargetSettings = @"settings";
 static NSString * const kAspectHousehold = @"h";
 static NSString * const kAspectDefault = @"d";
 
-static OState *_activeState = nil;
-
 
 @implementation OState
 
@@ -68,16 +66,16 @@ static OState *_activeState = nil;
 
 #pragma mark - Instantiation & initialisation
 
-- (id)initWithViewController:(OTableViewController *)viewController
+- (instancetype)initWithViewController:(OTableViewController *)viewController
 {
     self = [super init];
     
     if (self && viewController) {
         _viewController = viewController;
         
-        if (_activeState) {
-            _aspect = _activeState->_aspect;
-            _pivotMember = _activeState.pivotMember;
+        if ([[self class] s]) {
+            _aspect = [[self class] s]->_aspect;
+            _pivotMember = [[self class] s].pivotMember;
         }
         
         self.target = viewController.target;
@@ -89,11 +87,14 @@ static OState *_activeState = nil;
 
 + (OState *)s
 {
-    if (!_activeState) {
-        _activeState = [[OState alloc] initWithViewController:nil];
-    }
+    static OState *activeState = nil;
+    static dispatch_once_t onceToken;
     
-    return _activeState;
+    dispatch_once(&onceToken, ^{
+        activeState = [[self allocWithZone:nil] initWithViewController:nil];
+    });
+    
+    return activeState;
 }
 
 
@@ -168,7 +169,7 @@ static OState *_activeState = nil;
 
 - (BOOL)isCurrent
 {
-    return (self.viewController == _activeState.viewController);
+    return (self.viewController == [[self class] s].viewController);
 }
 
 
@@ -194,7 +195,7 @@ static OState *_activeState = nil;
 {
     _action = action;
     
-    [_activeState reflectState:self];
+    [[[self class] s] reflectState:self];
 }
 
 
@@ -202,7 +203,7 @@ static OState *_activeState = nil;
 {
     if ([target isKindOfClass:[OEntityProxy class]]) {
         if ([target isInstantiated]) {
-            target = [target proxy].entity;
+            target = [target proxy].instance;
         } else {
             target = [target facade].type;
         }
@@ -215,8 +216,8 @@ static OState *_activeState = nil;
     } else if ([target isKindOfClass:[NSString class]]) {
         _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
     }
-    
-    [_activeState reflectState:self];
+
+    [[[self class] s] reflectState:self];
 }
 
 @end

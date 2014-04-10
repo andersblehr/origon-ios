@@ -10,6 +10,8 @@
 
 @interface OSettings (OrigoAdditions)
 
++ (instancetype)settings;
+
 - (NSArray *)settingKeys;
 
 - (void)setValue:(id)value forSettingKey:(NSString *)settingKey;

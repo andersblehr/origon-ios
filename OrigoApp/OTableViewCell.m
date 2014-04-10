@@ -30,14 +30,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 @implementation OTableViewCell
 
-#pragma mark - Auxiliary methods
+#pragma mark - Common initialisations
 
-- (id)initCommonsForReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
+- (instancetype)initCommonsForReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
 {
+    id listDelegate = (id<OTableViewListDelegate>)[OState s].viewController;
     UITableViewCellStyle style = UITableViewCellStyleSubtitle;
     
     if ([reuseIdentifier hasPrefix:kReuseIdentifierList]) {
-        id listDelegate = (id<OTableViewListDelegate>)[OState s].viewController;
         
         if ([listDelegate respondsToSelector:@selector(styleForIndexPath:)]) {
             style = [listDelegate styleForIndexPath:indexPath];
@@ -70,12 +70,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
         
         if ([self isListCell]) {
-            self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            
             _indexPath = indexPath;
-            _listDelegate = (id<OTableViewListDelegate>)_state.viewController;
+            _listDelegate = listDelegate;
+            
+            self.selectable = ![_state actionIs:kActionInput];
 
-            [_listDelegate populateListCell:self atIndexPath:_indexPath];
+            [_listDelegate loadListCell:self atIndexPath:_indexPath];
         } else {
             _views = [NSMutableDictionary dictionary];
             _inputDelegate = (id<OTableViewInputDelegate>)_state.viewController;
@@ -172,7 +172,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Initialisation
 
-- (id)initWithEntity:(id)entity
+- (instancetype)initWithEntity:(id)entity
 {
     self = [self initCommonsForReuseIdentifier:NSStringFromClass([entity entityClass]) indexPath:nil];
     
@@ -189,7 +189,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
+- (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
 {
     self = [self initCommonsForReuseIdentifier:reuseIdentifier indexPath:indexPath];
     
@@ -424,7 +424,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)readEntity
 {
     if ([self isListCell]) {
-        [_listDelegate populateListCell:self atIndexPath:_indexPath];
+        [_listDelegate loadListCell:self atIndexPath:_indexPath];
     } else {
         for (NSString *key in _blueprint.allInputFieldKeys) {
             [self inputFieldForKey:key].value = [_entity valueForKey:key];
@@ -438,7 +438,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)writeEntity
 {
     if (![_entity isInstantiated] && [_entity canBeInstantiated]) {
-        [_entity instantiateWithEntity:[_inputDelegate inputEntity]];
+        [_entity setInstance:[_inputDelegate inputEntity]];
     }
     
     for (NSString *key in _blueprint.allInputFieldKeys) {
@@ -471,6 +471,18 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
     
     [self redrawIfNeeded];
+}
+
+
+- (void)setSelectable:(BOOL)selectable
+{
+    _selectable = selectable;
+
+    if (_selectable) {
+        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    } else {
+        self.accessoryType = UITableViewCellAccessoryNone;
+    }
 }
 
 
@@ -540,7 +552,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
 {
-    if ([self isListCell]) {
+    if (_selectable) {
         [super setHighlighted:highlighted animated:animated];
     }
 }
@@ -548,7 +560,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    if ([self isListCell]) {
+    if (_selectable) {
         [super setSelected:selected animated:animated];
     }
 }

@@ -76,10 +76,10 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
                 }
             }
         } else {
-            lineCount = [OTextView lineCountWithText:self.text maxWidth:_textWidth];
+            lineCount = [[self class] lineCountWithText:self.text maxWidth:_textWidth];
         }
     } else {
-        lineCount = [OTextView lineCountWithText:_placeholder maxWidth:_textWidth];
+        lineCount = [[self class] lineCountWithText:_placeholder maxWidth:_textWidth];
     }
     
     _lastKnownLineCount = lineCount;
@@ -109,7 +109,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 #pragma mark - Initialisation
 
-- (id)initWithKey:(NSString *)key blueprint:(OTableViewCellBlueprint *)blueprint delegate:(id)delegate
+- (instancetype)initWithKey:(NSString *)key blueprint:(OTableViewCellBlueprint *)blueprint delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
@@ -134,7 +134,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
         
         _key = key;
         _blueprint = blueprint;
-        _textWidth = [OTextView textWidthWithBlueprint:_blueprint];
+        _textWidth = [[self class] textWidthWithBlueprint:_blueprint];
         _placeholder = NSLocalizedString(_key, kKeyPrefixPlaceholder);
         _supportsMultiLineText = YES;
         
@@ -155,9 +155,9 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 + (CGFloat)heightWithText:(NSString *)text blueprint:(OTableViewCellBlueprint *)blueprint
 {
-    NSInteger lineCount = [OTextView lineCountWithText:text maxWidth:[OTextView textWidthWithBlueprint:blueprint]];
+    NSInteger lineCount = [self lineCountWithText:text maxWidth:[self textWidthWithBlueprint:blueprint]];
     
-    return [OTextView heightWithLineCount:lineCount];
+    return [self heightWithLineCount:lineCount];
 }
 
 
@@ -199,7 +199,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
     
     if (editable && _placeholder && !_placeholderView) {
         CGFloat frameAdjustment = [OMeta systemIs_iOS6x] ? kHeigthAdjustment_iOS6x : 0.f;
-        CGSize placeholderSize = CGSizeMake(_textWidth, [OTextView heightWithText:_placeholder blueprint:_blueprint]);
+        CGSize placeholderSize = CGSizeMake(_textWidth, [[self class] heightWithText:_placeholder blueprint:_blueprint]);
         CGRect placeholderFrame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height + frameAdjustment);
         
         _placeholderView = [[UITextView alloc] initWithFrame:placeholderFrame];
@@ -216,7 +216,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
         
         [self addSubview:_placeholderView];
         
-        _lastKnownLineCount = [OTextView lineCountWithText:_placeholder maxWidth:_textWidth];
+        _lastKnownLineCount = [[self class] lineCountWithText:_placeholder maxWidth:_textWidth];
     }
 }
 
@@ -271,7 +271,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
         lineCount = MAX(kTextViewMinimumLines, lineCount);
     }
     
-    return [OTextView heightWithLineCount:lineCount];
+    return [[self class] heightWithLineCount:lineCount];
 }
 
 

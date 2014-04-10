@@ -147,7 +147,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialiseState
+- (void)loadState
 {
     if ([OValidator valueIsEmailAddress:self.target]) {
         self.state.target = kTargetEmail;
@@ -169,7 +169,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-- (void)initialiseData
+- (void)loadData
 {
     [self setDataForDetailSection];
 }

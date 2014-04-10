@@ -47,7 +47,7 @@
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialiseState
+- (void)loadState
 {
     if ([self targetIsMemberVariant]) {
         self.usesPlainTableViewStyle = YES;
@@ -60,13 +60,13 @@
     } else {
         self.title = NSLocalizedString(_settingKey, kKeyPrefixSettingTitle);
         
-        _settings = [OMeta m].settings;
+        _settings = [OSettings settings];
         _settingKey = self.state.target;
     }
 }
 
 
-- (void)initialiseData
+- (void)loadData
 {
     if ([self targetIsMemberVariant]) {
         [self setData:[self sortedPeers] sectionIndexLabelKey:kPropertyKeyName];
@@ -130,7 +130,7 @@
 
 #pragma mark - OTableViewListDelegate conformance
 
-- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     if ([self targetIsMemberVariant]) {
         OMember *peer = [self dataAtIndexPath:indexPath];

@@ -69,6 +69,7 @@ extern NSString * const kPropertyKeyOrigoId;
 extern NSString * const kPropertyKeyPasswordHash;
 extern NSString * const kPropertyKeyPhoto;
 extern NSString * const kPropertyKeyTelephone;
+extern NSString * const kPropertyKeyType;
 
 // Entity relationship keys
 extern NSString * const kRelationshipKeyMember;

@@ -11,19 +11,18 @@
 @interface OEntityProxy : NSObject {
 @private
     Class _entityClass;
+    NSArray *_propertyKeys;
     NSMutableDictionary *_valuesByKey;
-    NSArray *_attributeNames;
     
     SEL _forwardSelector;
     id _forwardSelectorArgument;
 }
 
-@property (strong, nonatomic, readonly) id entity;
-@property (strong, nonatomic, readonly) NSString *type;
+@property (strong, nonatomic) OReplicatedEntity *instance;
 @property (strong, nonatomic) OEntityProxy *parent;
 
-- (id)initWithEntity:(OReplicatedEntity *)entity;
-- (id)initWithEntityClass:(Class)entityClass type:(NSString *)type;
++ (instancetype)proxyForEntity:(OReplicatedEntity *)entity;
++ (instancetype)proxyForEntityOfClass:(Class)entityClass type:(NSString *)type;
 
 - (Class)entityClass;
 - (OEntityProxy *)proxy;
@@ -33,7 +32,5 @@
 - (BOOL)isInstantiated;
 - (BOOL)canBeInstantiated;
 - (BOOL)hasValueForKey:(NSString *)key;
-
-- (void)instantiateWithEntity:(OReplicatedEntity *)entity;
 
 @end

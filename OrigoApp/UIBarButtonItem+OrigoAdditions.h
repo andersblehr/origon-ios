@@ -10,21 +10,21 @@
 
 @interface UIBarButtonItem (OrigoAdditions)
 
-+ (UIBarButtonItem *)settingsButton;
-+ (UIBarButtonItem *)plusButton;
-+ (UIBarButtonItem *)actionButton;
-+ (UIBarButtonItem *)lookupButton;
-+ (UIBarButtonItem *)nextButton;
-+ (UIBarButtonItem *)editButton;
-+ (UIBarButtonItem *)cancelButton;
-+ (UIBarButtonItem *)skipButton;
-+ (UIBarButtonItem *)doneButton;
-+ (UIBarButtonItem *)signOutButton;
++ (instancetype)settingsButton;
++ (instancetype)plusButton;
++ (instancetype)actionButton;
++ (instancetype)lookupButton;
++ (instancetype)nextButton;
++ (instancetype)editButton;
++ (instancetype)cancelButton;
++ (instancetype)skipButton;
++ (instancetype)doneButton;
++ (instancetype)signOutButton;
 
-+ (UIBarButtonItem *)sendTextButton;
-+ (UIBarButtonItem *)phoneCallButton;
-+ (UIBarButtonItem *)sendEmailButton;
++ (instancetype)sendTextButton;
++ (instancetype)phoneCallButton;
++ (instancetype)sendEmailButton;
 
-+ (UIBarButtonItem *)flexibleSpace;
++ (instancetype)flexibleSpace;
 
 @end

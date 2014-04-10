@@ -304,7 +304,7 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
 
 #pragma mark - Initialisation
 
-- (id)initWithCell:(OTableViewCell *)cell blueprint:(OTableViewCellBlueprint *)blueprint;
+- (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OTableViewCellBlueprint *)blueprint;
 {
     self = [super init];
     

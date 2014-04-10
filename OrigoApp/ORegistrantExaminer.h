@@ -30,7 +30,7 @@
 @property (strong, nonatomic, readonly) NSString *motherId;
 @property (strong, nonatomic, readonly) NSString *fatherId;
 
-- (id)initWithOrigo:(OOrigo *)origo;
+- (instancetype)initWithOrigo:(OOrigo *)origo;
 
 - (void)examineRegistrant:(OMember *)registrant;
 - (void)examineRegistrantWithName:(NSString *)name;

@@ -24,10 +24,10 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 #pragma mark - Auxiliary methods
 
-- (void)formatAddressFromAddressBookDictionary:(CFDictionaryRef)dictionary
+- (void)formatAddressFromAddressBookEntry:(CFDictionaryRef)entry
 {
     NSString *address = kDefaultAddressTemplate;
-    NSString *countryCode = [(NSString *)CFDictionaryGetValue(dictionary, kABPersonAddressCountryCodeKey) uppercaseString];
+    NSString *countryCode = [(NSString *)CFDictionaryGetValue(entry, kABPersonAddressCountryCodeKey) uppercaseString];
     
     if (!countryCode) {
         countryCode = [NSLocale countryCode];
@@ -46,45 +46,57 @@ static NSString * const kAddressTemplatesByCountryCode =
         }
     }
     
-    address = [address stringByReplacingSubstring:kPlaceholderStreet withString:(NSString *)CFDictionaryGetValue(dictionary, kABPersonAddressStreetKey)];
-    address = [address stringByReplacingSubstring:kPlaceholderCity withString:(NSString *)CFDictionaryGetValue(dictionary, kABPersonAddressCityKey)];
-    address = [address stringByReplacingSubstring:kPlaceholderState withString:(NSString *)CFDictionaryGetValue(dictionary, kABPersonAddressStateKey)];
-    address = [address stringByReplacingSubstring:kPlaceholderZip withString:(NSString *)CFDictionaryGetValue(dictionary, kABPersonAddressZIPKey)];
+    address = [address stringByReplacingSubstring:kPlaceholderStreet withString:(NSString *)CFDictionaryGetValue(entry, kABPersonAddressStreetKey)];
+    address = [address stringByReplacingSubstring:kPlaceholderCity withString:(NSString *)CFDictionaryGetValue(entry, kABPersonAddressCityKey)];
+    address = [address stringByReplacingSubstring:kPlaceholderState withString:(NSString *)CFDictionaryGetValue(entry, kABPersonAddressStateKey)];
+    address = [address stringByReplacingSubstring:kPlaceholderZip withString:(NSString *)CFDictionaryGetValue(entry, kABPersonAddressZIPKey)];
     
-    [self setValue:address forKey:kPropertyKeyAddress];
-    [self setValue:countryCode forKey:kPropertyKeyCountryCode];
+    [self facade].address = address;
+    [self facade].countryCode = countryCode;
 }
 
 
 #pragma mark - Initialisation
 
-- (id)initWithAddressBookDictionary:(CFDictionaryRef)dictionary
+- (instancetype)initWithAddressBookEntry:(CFDictionaryRef)entry
 {
-    self = [super initWithEntityClass:[OOrigo class] type:kOrigoTypeResidence];
+    self = [[self class] proxyForEntityOfClass:[OOrigo class] type:kOrigoTypeResidence];
     
     if (self) {
-        [self formatAddressFromAddressBookDictionary:dictionary];
+        [self formatAddressFromAddressBookEntry:entry];
     }
     
     return self;
 }
 
 
-#pragma mark - Custom accessors
+#pragma mark - Factory methods
 
-//- (void)setTelephone:(NSString *)telephone
-//{
-//    [self setValue:telephone forKey:kPropertyKeyTelephone];
-//}
-//
-//
-//- (NSString *)telephone
-//{
-//    return [self valueForKey:kPropertyKeyTelephone];
-//}
++ (instancetype)proxyWithType:(NSString *)type
+{
+    return [self proxyForEntityOfClass:self type:type];
+}
+
+
++ (instancetype)proxyFromAddressBookEntry:(CFDictionaryRef)entry
+{
+    return [[self alloc] initWithAddressBookEntry:entry];
+}
 
 
 #pragma mark - Informal OOrigo protocol conformance
+
+- (BOOL)isOfType:(NSString *)type
+{
+    return [[self valueForKey:kPropertyKeyType] isEqualToString:type];
+}
+
+
+- (BOOL)hasAddress
+{
+    return ([self valueForKey:kPropertyKeyAddress] != nil);
+}
+
 
 - (NSString *)shortAddress
 {

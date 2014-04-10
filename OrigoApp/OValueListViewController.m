@@ -28,7 +28,7 @@ static NSInteger const kSectionKeySignOut = 1;
 
 #pragma mark - OTableViewControllerInstance conformance
 
-- (void)initialiseState
+- (void)loadState
 {
     self.title = NSLocalizedString(@"Settings", @"");
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
@@ -37,9 +37,9 @@ static NSInteger const kSectionKeySignOut = 1;
 }
 
 
-- (void)initialiseData
+- (void)loadData
 {
-    [self setData:[[OMeta m].settings settingKeys] forSectionWithKey:kSectionKeyValues];
+    [self setData:[[OSettings settings] settingKeys] forSectionWithKey:kSectionKeyValues];
     [self setData:@[kCustomData] forSectionWithKey:kSectionKeySignOut];
 }
 
@@ -70,7 +70,7 @@ static NSInteger const kSectionKeySignOut = 1;
 
 #pragma mark - OTableViewListDelegate conformance
 
-- (void)populateListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
@@ -78,7 +78,7 @@ static NSInteger const kSectionKeySignOut = 1;
         NSString *key = [self dataAtIndexPath:indexPath];
         
         cell.textLabel.text = NSLocalizedString(key, kKeyPrefixSettingLabel);
-        cell.detailTextLabel.text = [[OMeta m].settings displayValueForSettingKey:key];
+        cell.detailTextLabel.text = [[OSettings settings] displayValueForSettingKey:key];
     } else if (sectionKey == kSectionKeySignOut) {
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.textLabel.textColor = [UIColor redColor];

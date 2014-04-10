@@ -36,7 +36,6 @@
 #import "OEntityObserver.h"
 #import "OLocatorDelegate.h"
 #import "ORegistrantExaminerDelegate.h"
-#import "OModalViewControllerDismisser.h"
 #import "OTableViewControllerInstance.h"
 #import "OTableViewInputDelegate.h"
 #import "OTableViewListDelegate.h"
