@@ -129,8 +129,8 @@ static NSInteger const kButtonTagNo = 3;
     if ([_candidates count] == 2) {
         [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[0] noun:parentNoun] stringByCapitalisingFirstLetter]];
         [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_candidates[1] noun:parentNoun] stringByCapitalisingFirstLetter]];
-    } else {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"To some of them", @"")];
+    } else if ([_candidates count] > 2) {
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"To some of them", @"")]; // TODO
     }
     
     [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"") tag:kButtonTagNo];

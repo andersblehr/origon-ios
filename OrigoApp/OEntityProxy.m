@@ -67,7 +67,7 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 + (instancetype)proxyForEntityOfClass:(Class)entityClass type:(NSString *)type
 {
-    return [[self alloc] initWithEntityClass:entityClass type:type];
+    return [[[entityClass proxyClass] alloc] initWithEntityClass:entityClass type:type];
 }
 
 
@@ -107,6 +107,14 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
+- (BOOL)hasValueForKey:(NSString *)key
+{
+    return _instance ? [_instance hasValueForKey:key] : [[_valuesByKey allKeys] containsObject:key];
+}
+
+
+#pragma mark - Entity instance handling
+
 - (BOOL)isInstantiated
 {
     return (_instance != nil);
@@ -119,9 +127,35 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
-- (BOOL)hasValueForKey:(NSString *)key
+- (id)instantiate
 {
-    return _instance ? [_instance hasValueForKey:key] : [[_valuesByKey allKeys] containsObject:key];
+    NSString *entityId = nil;
+    
+    if ([self hasValueForKey:kPropertyKeyEntityId]) {
+        entityId = [self valueForKey:kPropertyKeyEntityId];
+    } else {
+        entityId = [OCrypto generateUUID];
+    }
+    
+    return [self instantiateWithId:entityId];
+}
+
+
+- (id)instantiateWithId:(NSString *)entityId
+{
+    _instance = [_entityClass instanceWithId:entityId];
+    
+    for (NSString *key in [_entityClass propertyKeys]) {
+        if (![key isEqualToString:kPropertyKeyEntityId]) {
+            id value = _valuesByKey[key];
+            
+            if (value) {
+                [_instance setValue:value forKey:key];
+            }
+        }
+    }
+    
+    return _instance;
 }
 
 

@@ -38,6 +38,7 @@ extern NSString * const kTargetSettings;
     NSString *_aspect;
 }
 
+@property (strong, nonatomic, readonly) NSString *identifier;
 @property (weak, nonatomic, readonly) OTableViewController *viewController;
 @property (weak, nonatomic, readonly) OMember *pivotMember;
 @property (strong, nonatomic) NSString *action;
@@ -54,7 +55,9 @@ extern NSString * const kTargetSettings;
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
 - (BOOL)isCurrent;
+- (BOOL)isValidDestinationState:(NSString *)stateIdentifier;
 
 - (NSString *)asString;
++ (NSString *)stateIdentifierForViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
 
 @end

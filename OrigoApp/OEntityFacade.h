@@ -13,19 +13,20 @@
 @required
 
 // Shared properties
+@property (strong, nonatomic, readonly) NSString *entityId;
 @property (strong, nonatomic, readonly) NSString *type;
-@property (strong, nonatomic) NSString * name;
+@property (strong, nonatomic) NSString *name;
 
 // OOrigo unique properties
-@property (strong, nonatomic) NSString * descriptionText;
-@property (strong, nonatomic) NSString * address;
-@property (strong, nonatomic) NSString * telephone;
-@property (strong, nonatomic) NSString * countryCode;
+@property (strong, nonatomic) NSString *descriptionText;
+@property (strong, nonatomic) NSString *address;
+@property (strong, nonatomic) NSString *telephone;
+@property (strong, nonatomic) NSString *countryCode;
 
 // OMember unique properties
 @property (strong, nonatomic) NSDate *dateOfBirth;
-@property (strong, nonatomic) NSString * mobilePhone;
-@property (strong, nonatomic) NSString * email;
-@property (strong, nonatomic) NSString * gender;
+@property (strong, nonatomic) NSString *mobilePhone;
+@property (strong, nonatomic) NSString *email;
+@property (strong, nonatomic) NSString *gender;
 
 @end

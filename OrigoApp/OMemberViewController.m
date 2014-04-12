@@ -8,8 +8,6 @@
 
 #import "OMemberViewController.h"
 
-static NSString * const kSegueToOrigoView = @"segueFromMemberToOrigoView";
-
 static NSInteger const kSectionKeyMember = 0;
 static NSInteger const kSectionKeyGuardian = 1;
 static NSInteger const kSectionKeyAddress = 2;
@@ -469,15 +467,17 @@ static NSInteger const kButtonTagContinue = 1;
     
     CFRelease(multiValues);
     
-    if (![_candidateAddresses count] && ![_candidateResidences count]) {
-        if ([_candidateHomeNumbers count] == 1) {
-            _candidateResidences = @[[OOrigoProxy proxyWithType:kOrigoTypeResidence]];
+    if ([_candidateHomeNumbers count]) {
+        if (![_candidateAddresses count] && ![_candidateResidences count]) {
+            if ([_candidateHomeNumbers count] == 1) {
+                _candidateResidences = @[[OOrigoProxy proxyWithType:kOrigoTypeResidence]];
+            }
         }
-    }
-    
-    if ([_candidateHomeNumbers count] == [_candidateResidences count]) {
-        [_candidateResidences[0] facade].telephone = _candidateHomeNumbers[0];
-        [_candidateHomeNumbers removeAllObjects];
+        
+        if ([_candidateHomeNumbers count] == [_candidateResidences count]) {
+            [_candidateResidences[0] facade].telephone = _candidateHomeNumbers[0];
+            [_candidateHomeNumbers removeAllObjects];
+        }
     }
     
     _mobilePhoneField.value = [mobilePhoneNumbers count] ? mobilePhoneNumbers : nil;
@@ -573,16 +573,6 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-#pragma mark - UIViewController overrides
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:kSegueToOrigoView]) {
-        [self prepareForPushSegue:segue];
-    }
-}
-
-
 #pragma mark - OTableViewControllerInstance conformance
 
 - (void)loadState
@@ -604,6 +594,7 @@ static NSInteger const kButtonTagContinue = 1;
         self.title = NSLocalizedString(@"Parent contact", @"");
     } else if ([_member isInstantiated]) {
         self.title = [_member isHousemateOfUser] ? [_member givenName] : [_member facade].name;
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem buttonWithTitle:[_member givenName]];
     } else {
         self.title = NSLocalizedString([_origo facade].type, kKeyPrefixNewMemberTitle);
     }
@@ -704,20 +695,6 @@ static NSInteger const kButtonTagContinue = 1;
     }
     
     return text;
-}
-
-
-- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyGuardian) {
-        OMemberViewController *memberViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierMember];
-        memberViewController.target = [self dataAtIndexPath:indexPath];
-        memberViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-        
-        [self.navigationController pushViewController:memberViewController animated:YES];
-    } else if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddress) {
-        [self performSegueWithIdentifier:kSegueToOrigoView sender:self];
-    }
 }
 
 
@@ -850,13 +827,16 @@ static NSInteger const kButtonTagContinue = 1;
         if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
             cell.detailTextLabel.text = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:cell.detailTextLabel.text separator:kSeparatorComma];
         }
+        
+        [cell setDestinationViewControllerIdentifier:kIdentifierMember segueDuringInput:NO];
     } else if (sectionKey == kSectionKeyAddress) {
         id residence = [self dataAtIndexPath:indexPath];
         
-        cell.selectable = YES;
         cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
         cell.textLabel.text = [residence shortAddress];
         cell.detailTextLabel.text = [OPhoneNumberFormatter formatPhoneNumber:[residence facade].telephone canonicalise:YES];
+        
+        [cell setDestinationViewControllerIdentifier:kIdentifierOrigo segueDuringInput:YES];
     }
 }
 
@@ -945,11 +925,11 @@ static NSInteger const kButtonTagContinue = 1;
     if (_candidate) {
         _member = _candidate;
     } else {
-        _member = [OMember memberWithId:_examiner.registrantId];
+        _member = [_member instantiateWithId:_examiner.registrantId];
     }
     
     for (id residence in _candidateResidences) {
-        [[OOrigo instanceFromProxy:residence] addMember:_member];
+        [[residence instantiate] addMember:_member];
     }
     
     if (!_membership) {

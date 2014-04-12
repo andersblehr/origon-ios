@@ -69,17 +69,19 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 #pragma mark - Instantiation
 
-+ (instancetype)origoWithId:(NSString *)entityId type:(NSString *)type
++ (instancetype)instanceWithId:(NSString *)entityId
 {
-    OOrigo *instance = [[OMeta m].context insertEntityOfClass:[self class] entityId:entityId];
+    OOrigo *instance = [super instanceWithId:entityId];
     instance.origoId = entityId;
-    instance.type = type;
     
-    if (![instance isOfType:kOrigoTypeRoot] && ![instance isOfType:kOrigoTypeResidence]) {
-        if ([[OState s].pivotMember isJuvenile]) {
-            instance.isForMinors = @YES;
-        }
-    }
+    return instance;
+}
+
+
++ (instancetype)instanceWithId:(NSString *)entityId type:(NSString *)type
+{
+    OOrigo *instance = [self instanceWithId:entityId];
+    instance.type = type;
     
     return instance;
 }
@@ -190,7 +192,15 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 - (OMembership *)addMember:(OMember *)member
 {
-    return [self addMember:member isAssociate:NO];
+    BOOL isFirstMember = ![self.memberships count];
+    
+    OMembership *membership = [self addMember:member isAssociate:NO];
+    
+    if (isFirstMember && ![self isOfType:kOrigoTypeResidence] && [member isJuvenile]) {
+        self.isForMinors = @YES;
+    }
+    
+    return membership;
 }
 
 
@@ -265,6 +275,12 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 - (BOOL)isJuvenile
 {
     return [self.isForMinors boolValue];
+}
+
+
+- (BOOL)hasAddress
+{
+    return [self.address hasValue];
 }
 
 
@@ -406,6 +422,12 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     }
     
     return isTransient;
+}
+
+
++ (Class)proxyClass
+{
+    return [OOrigoProxy class];
 }
 
 

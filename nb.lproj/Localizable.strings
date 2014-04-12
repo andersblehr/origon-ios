@@ -77,7 +77,7 @@
 "[registration footer] other" = "Trykk [+] for å legge til medlemmer.";
 
 // Member registration button titles
-"[add member] residence" = "Legg til medlem";
+"[add member] residence" = "Legg til bofelle";
 "[add member] friends"= "Legg til venn/venninne";
 "[add member] team" = "Legg til deltaker";
 "[add member] organisation" = "Legg til medlem";
@@ -273,6 +273,7 @@
 "Add parent contact" = "Legg til foreldrekontakt";
 "Show in map" = "Vis på kart";
 "About %@" = "Om %@";
+"About this household" = "Om husstanden";
 "New housemate" = "Ny bofelle";
 "Other guardian" = "Annen foresatt";
 "Remove" = "Meld ut";

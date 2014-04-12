@@ -29,11 +29,14 @@ extern CGFloat const kCellAnimationDuration;
 @property (strong, nonatomic, readonly) OTableViewCellBlueprint *blueprint;
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic, readonly) id entity;
+@property (strong, nonatomic, readonly) NSString *destinationViewControllerIdentifier;
+
 @property (strong, nonatomic) OInputField *inputField;
 @property (strong, nonatomic) NSIndexPath *indexPath;
 
+@property (nonatomic, readonly) BOOL selectable;
+@property (nonatomic, readonly) BOOL segueDuringInput;
 @property (nonatomic) BOOL editable;
-@property (nonatomic) BOOL selectable;
 @property (nonatomic) BOOL checked;
 
 @property (weak, nonatomic) id<OEntityObserver> observer;
@@ -57,11 +60,13 @@ extern CGFloat const kCellAnimationDuration;
 - (void)redrawIfNeeded;
 - (void)resumeFirstResponder;
 - (void)shakeCellVibrate:(BOOL)vibrate;
+- (void)setDestinationViewControllerIdentifier:(NSString *)identifier segueDuringInput:(BOOL)segueDuringInput;
 
 - (void)prepareForInput;
 - (void)processInput;
 
 - (void)readEntity;
 - (void)writeEntity;
+- (void)writeEntityDefaults;
 
 @end

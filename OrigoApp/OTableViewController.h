@@ -14,6 +14,7 @@ extern NSString * const kCustomData;
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
+    BOOL _didResurface;
     BOOL _isHidden;
     BOOL _shouldReloadOnModalDismissal;
     
@@ -47,7 +48,6 @@ extern NSString * const kCustomData;
 
 @property (nonatomic, readonly) BOOL isModal;
 @property (nonatomic, readonly) BOOL isPushed;
-@property (nonatomic, readonly) BOOL isPopped;
 @property (nonatomic, readonly) BOOL wasHidden;
 
 @property (nonatomic) BOOL usesPlainTableViewStyle;
@@ -84,9 +84,6 @@ extern NSString * const kCustomData;
 
 - (void)setHeaderText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey;
 - (void)setFooterText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey;
-
-- (void)prepareForPushSegue:(UIStoryboardSegue *)segue;
-- (void)prepareForPushSegue:(UIStoryboardSegue *)segue target:(id)target;
 
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target meta:(id)meta;

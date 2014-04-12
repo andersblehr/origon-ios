@@ -10,10 +10,9 @@
 
 @interface OReplicatedEntity (OrigoAdditions)
 
-+ (instancetype)instanceFromProxy:(OEntityProxy *)proxy;
++ (instancetype)instanceWithId:(NSString *)entityId;
 
 - (BOOL)hasValueForKey:(NSString *)key;
-- (id)rawValueForKey:(NSString *)key;
 - (id)serialisableValueForKey:(NSString *)key;
 - (void)setDeserialisedValue:(id)value forKey:(NSString *)key;
 
@@ -34,6 +33,7 @@
 - (void)unexpire;
 - (NSString *)expiresInTimeframe;
 
++ (Class)proxyClass;
 + (NSArray *)propertyKeys;
 - (NSString *)asTarget;
 

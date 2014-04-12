@@ -147,6 +147,17 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+- (void)preparePushDestinationViewController:(OTableViewController *)destinationViewController
+{
+    destinationViewController.target = [self dataAtIndexPath:_selectedIndexPath];
+    destinationViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:_selectedIndexPath];
+    
+    if (destinationViewController.entityProxy && _entityProxy) {
+        destinationViewController.entityProxy.parent = _entityProxy;
+    }
+}
+
+
 #pragma mark - Header & footer handling & delegation
 
 - (BOOL)instanceHasHeaderForSectionWithKey:(NSInteger)sectionKey
@@ -195,10 +206,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)didCancelEditing
 {
-    if (self.isModal) {
+    if ([self actionIs:kActionRegister]) {
         _returnData = nil;
         [_dismisser dismissModalViewController:self reload:NO];
     } else if ([self actionIs:kActionEdit]) {
+        [_detailCell writeEntityDefaults];
         [_detailCell readEntity];
         [self toggleEditMode];
     }
@@ -409,26 +421,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)setFooterText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey
 {
     [_sectionFooterLabels[@(sectionKey)] setText:text];
-}
-
-
-#pragma mark - Segue handling
-
-- (void)prepareForPushSegue:(UIStoryboardSegue *)segue
-{
-    [self prepareForPushSegue:segue target:[self dataAtIndexPath:_selectedIndexPath]];
-}
-
-
-- (void)prepareForPushSegue:(UIStoryboardSegue *)segue target:(id)target
-{
-    OTableViewController *destinationViewController = segue.destinationViewController;
-    destinationViewController.target = target;
-    destinationViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:_selectedIndexPath];
-    
-    if (destinationViewController.entityProxy && _entityProxy) {
-        destinationViewController.entityProxy.parent = _entityProxy;
-    }
 }
 
 
@@ -710,10 +702,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _wasHidden = _isHidden;
     _isHidden = NO;
     _isPushed = [self isMovingToParentViewController] || (_didJustLoad && !_isModal);
-    _isPopped = !_isPushed && !_wasHidden && (!_isModal || !_didJustLoad);
+    _didResurface = !_isPushed && !_wasHidden && (!_isModal || !_didJustLoad);
     _didJustLoad = NO;
     
-    if (!_isModal && (!self.toolbarItems || _isPopped || _wasHidden)) {
+    if (!_isModal && (!self.toolbarItems || _didResurface || _wasHidden)) {
         if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
             self.toolbarItems = [_instance toolbarButtons];
         }
@@ -721,7 +713,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     [self.navigationController setToolbarHidden:(!self.toolbarItems) animated:YES];
     
-    if (![self actionIs:kActionInput] && (_isPopped || _shouldReloadOnModalDismissal)) {
+    if (![self actionIs:kActionInput] && (_didResurface || _shouldReloadOnModalDismissal)) {
         [self reloadSections];
     }
 }
@@ -742,7 +734,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     OLogState;
     
     if ([[OMeta m] userIsSignedIn]) {
-        if (_detailCell && _detailCell.editable && !_isPopped && !_isHidden) {
+        if (_detailCell && _detailCell.editable && !_didResurface && !_isHidden) {
             [_detailCell prepareForInput];
             
             if ([self actionIs:kActionRegister]) {
@@ -835,7 +827,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     } else if ([target isKindOfClass:[OEntityProxy class]]) {
         _entityProxy = target;
     } else if ([self isEntityViewController]) {
-        _entityProxy = [OEntityProxy proxyForEntityOfClass:_implicitEntityClass type:target];
+        _entityProxy = [[_implicitEntityClass proxyClass] proxyForEntityOfClass:_implicitEntityClass type:target];
     }
     
     if (_entityProxy) {
@@ -855,6 +847,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     return _target;
+}
+
+
+#pragma mark - UIViewController overrides
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    [self preparePushDestinationViewController:segue.destinationViewController];
 }
 
 
@@ -1042,7 +1042,22 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     OTableViewCell *cell = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     
-    if (cell.selectable) {
+    if (cell.destinationViewControllerIdentifier) {
+        if (![self actionIs:kActionInput] || cell.segueDuringInput) {
+            _selectedIndexPath = indexPath;
+            
+            if (![_identifier isEqualToString:cell.destinationViewControllerIdentifier]) {
+                [self performSegueWithIdentifier:[_identifier stringByAppendingString:cell.destinationViewControllerIdentifier separator:kSeparatorColon] sender:self];
+            } else {
+                OTableViewController *destinationViewController = [self.storyboard instantiateViewControllerWithIdentifier:cell.destinationViewControllerIdentifier];
+                
+                [self preparePushDestinationViewController:destinationViewController];
+                [self.navigationController pushViewController:destinationViewController animated:YES];
+            }
+        } else {
+            cell.selected = NO;
+        }
+    } else if (cell.selectable) {
         _selectedIndexPath = indexPath;
         
         if ([_instance respondsToSelector:@selector(didSelectCell:atIndexPath:)]) {

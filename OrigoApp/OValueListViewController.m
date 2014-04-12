@@ -16,16 +16,6 @@ static NSInteger const kSectionKeySignOut = 1;
 
 @implementation OValueListViewController
 
-#pragma mark - UIViewController overrides
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:kSegueToValuePickerView]) {
-        [self prepareForPushSegue:segue];
-    }
-}
-
-
 #pragma mark - OTableViewControllerInstance conformance
 
 - (void)loadState

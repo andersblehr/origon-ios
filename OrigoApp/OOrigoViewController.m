@@ -8,8 +8,6 @@
 
 #import "OOrigoViewController.h"
 
-static NSString * const kSegueToMemberView = @"segueFromOrigoToMemberView";
-
 static NSInteger const kSectionKeyOrigo = 0;
 static NSInteger const kSectionKeyContacts = 1;
 static NSInteger const kSectionKeyMembers = 2;
@@ -62,7 +60,9 @@ static NSInteger const kButtonTagGuardian = 101;
     if (housemateCandidates && [housemateCandidates count]) {
         [self presentHousemateCandidatesSheet:housemateCandidates];
     } else {
-        [self presentModalViewControllerWithIdentifier:kIdentifierMember target:[_origo facade].type];
+        id target = [_origo isJuvenile] ? kTargetJuvenile : [_origo facade].type;
+        
+        [self presentModalViewControllerWithIdentifier:kIdentifierMember target:target];
     }
 }
 
@@ -109,7 +109,17 @@ static NSInteger const kButtonTagGuardian = 101;
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Show in map", @"") tag:kButtonTagShowInMap];
     }
     
-    [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"About %@", @""), [_origo displayName]] tag:kButtonTagAbout];
+    NSString *origoDisplayName = nil;
+    
+    if (![_origo isOfType:kOrigoTypeResidence] || [self aspectIsHousehold]) {
+        origoDisplayName = [_origo displayName];
+    } else if ([_origo hasAddress]) {
+        origoDisplayName = [_origo shortAddress];
+    } else {
+        origoDisplayName = NSLocalizedString(@"About this household", @"");
+    }
+    
+    [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"About %@", @""), origoDisplayName] tag:kButtonTagAbout];
     
     [actionSheet show];
 }
@@ -134,16 +144,6 @@ static NSInteger const kButtonTagGuardian = 101;
 - (BOOL)canEdit
 {
     return [_origo userCanEdit];
-}
-
-
-#pragma mark - UIViewController overrides
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:kSegueToMemberView]) {
-        [self prepareForPushSegue:segue];
-    }
 }
 
 
@@ -239,16 +239,6 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
-- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
-    
-    if ((sectionKey == kSectionKeyContacts) || (sectionKey == kSectionKeyMembers)) {
-        [self performSegueWithIdentifier:kSegueToMemberView sender:self];
-    }
-}
-
-
 - (BOOL)canDeleteRowAtIndexPath:(NSIndexPath *)indexPath
 {
     BOOL canDeleteRow = NO;
@@ -326,7 +316,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (id)inputEntity
 {
-    _origo = [OOrigo instanceFromProxy:_origo];
+    _origo = [_origo instantiate];
     
     return _origo;
 }
@@ -377,6 +367,8 @@ static NSInteger const kButtonTagGuardian = 101;
     cell.textLabel.text = member.name;
     cell.detailTextLabel.text = [member shortDetails];
     cell.imageView.image = [member smallImage];
+    
+    [cell setDestinationViewControllerIdentifier:kIdentifierMember segueDuringInput:NO];
 }
 
 

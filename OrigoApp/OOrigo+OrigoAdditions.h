@@ -30,7 +30,7 @@ extern NSString * const kContactRoleAssistantCoach;
 
 @interface OOrigo (OrigoAdditions)
 
-+ (instancetype)origoWithId:(NSString *)entityId type:(NSString *)type;
++ (instancetype)instanceWithId:(NSString *)entityId type:(NSString *)type;
 
 - (NSSet *)allMemberships;
 - (NSSet *)residents;
@@ -53,6 +53,7 @@ extern NSString * const kContactRoleAssistantCoach;
 - (BOOL)isOfType:(NSString *)origoType;
 - (BOOL)isOrganised;
 - (BOOL)isJuvenile;
+- (BOOL)hasAddress;
 - (BOOL)hasAdmin;
 - (BOOL)hasContacts;
 - (BOOL)hasMember:(OMember *)member;

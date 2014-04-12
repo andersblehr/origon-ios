@@ -43,6 +43,7 @@
 
 #import "OEntityFacade.h"
 #import "OEntityProxy.h"
+#import "OMemberProxy.h"
 #import "OOrigoProxy.h"
 
 #import "ODevice.h"

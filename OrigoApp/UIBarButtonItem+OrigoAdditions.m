@@ -166,7 +166,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-#pragma mark - Generic flexible space
+#pragma mark - Other buttons
 
 + (instancetype)flexibleSpace
 {
@@ -175,6 +175,12 @@ static UIBarButtonItem *_flexibleSpace = nil;
     }
     
     return _flexibleSpace;
+}
+
+
++ (instancetype)buttonWithTitle:(NSString *)title
+{
+    return [[self alloc] initWithTitle:title style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 
 @end
