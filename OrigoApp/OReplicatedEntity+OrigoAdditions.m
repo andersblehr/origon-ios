@@ -38,21 +38,9 @@
 
 #pragma mark - Instantiation
 
-+ (instancetype)instanceFromProxy:(OEntityProxy *)proxy
++ (instancetype)instanceWithId:(NSString *)entityId;
 {
-    id instance = [[OMeta m].context insertEntityOfClass:proxy.entityClass entityId:[OCrypto generateUUID]];
-    
-    for (NSString *key in [self propertyKeys]) {
-        id value = [proxy valueForKey:key];
-        
-        if (value) {
-            [instance setValue:value forKey:key];
-        }
-    }
-    
-    proxy.instance = instance;
-    
-    return instance;
+    return [[OMeta m].context insertEntityOfClass:self entityId:entityId];
 }
 
 
@@ -71,12 +59,6 @@
     }
     
     return hasValue;
-}
-
-
-- (id)rawValueForKey:(NSString *)key
-{
-    return [super valueForKey:[OValidator propertyKeyForKey:key]];
 }
 
 
@@ -283,6 +265,12 @@
 
 
 #pragma mark - Introspection
+
++ (Class)proxyClass
+{
+    return [OEntityProxy class];
+}
+
 
 + (NSArray *)propertyKeys
 {

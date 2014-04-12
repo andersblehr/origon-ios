@@ -39,7 +39,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             _textViewKeys = @[kPropertyKeyAddress, kPropertyKeyDescriptionText];
             _hasPhoto = NO;
             
-            if ([_state aspectIsHousehold]) {
+            if ([_state aspectIsHousehold] && [_state.pivotMember isUser]) {
                 _titleKey = kInterfaceKeyResidenceName;
             } else if (![_state targetIs:kOrigoTypeResidence]) {
                 _titleKey = kPropertyKeyName;
@@ -168,12 +168,13 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
         _displayableInputFieldKeys = [self.allInputFieldKeys mutableCopy];
         
         if ([_state.viewController.identifier isEqualToString:kIdentifierMember]) {
-            if ([[OState s].pivotMember isJuvenile] && ![_state targetIs:kTargetElder]) {
-                if ([_state actionIs:kActionInput] && ![_state aspectIsHousehold]) {
-                    _displayableInputFieldKeys = [@[kPropertyKeyName] mutableCopy];
-                }
-            } else if (![_state aspectIsHousehold] || ![_state actionIs:kActionInput]) {
+            if (![_state aspectIsHousehold]) {
                 [_displayableInputFieldKeys removeObject:kPropertyKeyDateOfBirth];
+                
+                if ([_state targetIs:kTargetJuvenile] && [_state actionIs:kActionInput]) {
+                    [_displayableInputFieldKeys removeObject:kPropertyKeyMobilePhone];
+                    [_displayableInputFieldKeys removeObject:kPropertyKeyEmail];
+                }
             }
         }
     }

@@ -78,7 +78,9 @@ static NSString * const kAspectDefault = @"d";
             _pivotMember = [[self class] s].pivotMember;
         }
         
-        self.target = viewController.target;
+        if (viewController.target) {
+            self.target = viewController.target;
+        }
     }
     
     return self;
@@ -103,6 +105,7 @@ static NSString * const kAspectDefault = @"d";
 - (void)reflectState:(OState *)state
 {
     if (state != self) {
+        _identifier = state->_identifier;
         _viewController = state.viewController;
         _pivotMember = state.pivotMember;
         _aspect = state->_aspect;
@@ -134,36 +137,36 @@ static NSString * const kAspectDefault = @"d";
 
 - (BOOL)actionIs:(NSString *)action
 {
-    BOOL actionsDidMatch = [_action isEqualToString:action];
+    BOOL isMatch = [_action isEqualToString:action];
     
-    if (!actionsDidMatch) {
+    if (!isMatch) {
         if ([action isEqualToString:kActionInput]) {
-            actionsDidMatch = actionsDidMatch || [_action isEqualToString:kActionSignIn];
-            actionsDidMatch = actionsDidMatch || [_action isEqualToString:kActionActivate];
-            actionsDidMatch = actionsDidMatch || [_action isEqualToString:kActionRegister];
-            actionsDidMatch = actionsDidMatch || [_action isEqualToString:kActionEdit];
+            isMatch = isMatch || [_action isEqualToString:kActionSignIn];
+            isMatch = isMatch || [_action isEqualToString:kActionActivate];
+            isMatch = isMatch || [_action isEqualToString:kActionRegister];
+            isMatch = isMatch || [_action isEqualToString:kActionEdit];
         }
     }
     
-    return actionsDidMatch;
+    return isMatch;
 }
 
 
 - (BOOL)targetIs:(NSString *)target
 {
-    BOOL targetsDidMatch = [_target isEqualToString:target];
+    BOOL isMatch = [_target isEqualToString:target];
     
-    if (!targetsDidMatch) {
+    if (!isMatch) {
         if ([target isEqualToString:kTargetJuvenile]) {
-            targetsDidMatch = targetsDidMatch || [_target isEqualToString:kTargetWard];
+            isMatch = isMatch || [_target isEqualToString:kTargetWard];
         } else if ([target isEqualToString:kTargetElder]) {
-            targetsDidMatch = targetsDidMatch || [_target isEqualToString:kTargetGuardian];
-            targetsDidMatch = targetsDidMatch || [_target isEqualToString:kTargetContact];
-            targetsDidMatch = targetsDidMatch || [_target isEqualToString:kTargetParentContact];
+            isMatch = isMatch || [_target isEqualToString:kTargetGuardian];
+            isMatch = isMatch || [_target isEqualToString:kTargetContact];
+            isMatch = isMatch || [_target isEqualToString:kTargetParentContact];
         }
     }
     
-    return targetsDidMatch;
+    return isMatch;
 }
 
 
@@ -173,19 +176,52 @@ static NSString * const kAspectDefault = @"d";
 }
 
 
+- (BOOL)isValidDestinationState:(NSString *)stateIdentifier
+{
+    BOOL isValid = YES;
+    UINavigationController *navigationController = _viewController.navigationController;
+    
+    if (navigationController) {
+        for (OTableViewController *viewController in navigationController.viewControllers) {
+            isValid = isValid && ![viewController.state.identifier isEqualToString:stateIdentifier];
+        }
+    }
+    
+    return isValid;
+}
+
+
 #pragma mark - String representation
 
 - (NSString *)asString
 {
-    NSString *viewController = [_viewController.identifier uppercaseString];
+    NSString *viewControllerIdentifier = [_viewController.identifier uppercaseString];
     NSString *action = [_action uppercaseString];
     NSString *target = [_target uppercaseString];
     
-    viewController = viewController ? viewController : @"DEFAULT";
+    viewControllerIdentifier = viewControllerIdentifier ? viewControllerIdentifier : @"DEFAULT";
     action = action ? action : @"DEFAULT";
     target = target ? target : @"DEFAULT";
     
-    return [NSString stringWithFormat:@"[%@][%@][%@]", action, viewController, target];
+    return [NSString stringWithFormat:@"[%@][%@][%@]", action, viewControllerIdentifier, target];
+}
+
+
+#pragma mark - State identifier generation
+
++ (NSString *)stateIdentifierForViewControllerWithIdentifier:(NSString *)identifier target:(id)target
+{
+    NSString *instanceQualifier = nil;
+    
+    if ([target isKindOfClass:[NSString class]]) {
+        instanceQualifier = target;
+    } else if ([target isInstantiated]) {
+        instanceQualifier = [target facade].entityId;
+    } else {
+        instanceQualifier = [target facade].type;
+    }
+    
+    return [identifier stringByAppendingString:instanceQualifier separator:kSeparatorColon];
 }
 
 
@@ -216,6 +252,8 @@ static NSString * const kAspectDefault = @"d";
     } else if ([target isKindOfClass:[NSString class]]) {
         _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
     }
+    
+    _identifier = [[self class] stateIdentifierForViewControllerWithIdentifier:_viewController.identifier target:target];
 
     [[[self class] s] reflectState:self];
 }

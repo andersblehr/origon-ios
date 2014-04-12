@@ -74,7 +74,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 + (instancetype)proxyWithType:(NSString *)type
 {
-    return [self proxyForEntityOfClass:self type:type];
+    return [self proxyForEntityOfClass:[OOrigo class] type:type];
 }
 
 

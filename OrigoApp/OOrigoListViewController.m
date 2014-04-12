@@ -8,9 +8,6 @@
 
 #import "OOrigoListViewController.h"
 
-static NSString * const kSegueToOrigoView = @"segueFromOrigoListToOrigoView";
-static NSString * const kSegueToMemberView = @"segueFromOrigoListToMemberView";
-
 static NSInteger const kActionSheetTagOrigoType = 1;
 
 static NSInteger const kSectionKeyMember = 0;
@@ -121,14 +118,6 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-#pragma mark - UIViewController overrides
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    [self prepareForPushSegue:segue];
-}
-
-
 #pragma mark - OTableViewControllerInstance conformance
 
 - (void)loadState
@@ -169,7 +158,7 @@ static NSInteger const kSectionKeyWards = 2;
 - (void)loadData
 {
     if (_member) {
-        [self setData:[_member origos] forSectionWithKey:kSectionKeyOrigos];
+        [self setData:[_member origosIncludeResidences:NO] forSectionWithKey:kSectionKeyOrigos];
         
         if ([_member isUser]) {
             [self setData:[_member residences] forSectionWithKey:kSectionKeyMember];
@@ -213,24 +202,6 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
-    
-    if ((sectionKey == kSectionKeyMember) && ![_member isUser]) {
-        [self performSegueWithIdentifier:kSegueToMemberView sender:self];
-    } else if (sectionKey == kSectionKeyWards) {
-        OOrigoListViewController *origoListViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
-        origoListViewController.target = [self dataAtIndexPath:indexPath];
-        origoListViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-        
-        [self.navigationController pushViewController:origoListViewController animated:YES];
-    } else {
-        [self performSegueWithIdentifier:kSegueToOrigoView sender:self];
-    }
-}
-
-
 - (void)didDismissModalViewController:(OTableViewController *)viewController
 {
     if ([[OMeta m] userIsSignedIn]) {
@@ -261,12 +232,16 @@ static NSInteger const kSectionKeyWards = 2;
             cell.textLabel.text = [residence displayName];
             cell.detailTextLabel.text = [residence singleLineAddress];
             cell.imageView.image = [residence smallImage];
+            
+            [cell setDestinationViewControllerIdentifier:kIdentifierOrigo segueDuringInput:NO];
         } else {
             OMember *member = entity;
             
             cell.textLabel.text = member.name;
             cell.detailTextLabel.text = [member shortDetails];
             cell.imageView.image = [member smallImage];
+            
+            [cell setDestinationViewControllerIdentifier:kIdentifierMember segueDuringInput:NO];
         }
     } else if (sectionKey == kSectionKeyWards) {
         OMember *ward = entity;
@@ -274,7 +249,7 @@ static NSInteger const kSectionKeyWards = 2;
         cell.textLabel.text = [ward givenName];
         cell.imageView.image = [ward smallImage];
         
-        NSArray *origos = [ward origos];
+        NSArray *origos = [ward origosIncludeResidences:NO];
         
         if ([origos count]) {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:origos conjoinLastItem:NO];
@@ -283,6 +258,8 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.text = NSLocalizedString(@"(No origos)", @"");
             cell.detailTextLabel.textColor = [UIColor dimmedTextColour];
         }
+        
+        [cell setDestinationViewControllerIdentifier:kIdentifierOrigoList segueDuringInput:NO];
     } else if (sectionKey == kSectionKeyOrigos) {
         OOrigo *origo = entity;
 
@@ -296,6 +273,8 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.text = NSLocalizedString(origo.type, kKeyPrefixOrigoTitle);
             cell.detailTextLabel.textColor = [UIColor textColour];
         }
+        
+        [cell setDestinationViewControllerIdentifier:kIdentifierOrigo segueDuringInput:NO];
     }
 }
 

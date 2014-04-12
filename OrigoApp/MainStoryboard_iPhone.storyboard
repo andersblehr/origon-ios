@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="a3K-AG-mMk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="a3K-AG-mMk">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -66,7 +66,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="PZV-fj-ium"/>
                     <connections>
-                        <segue destination="T87-Bh-GzL" kind="push" identifier="segueFromOrigoToMemberView" id="pI9-dP-sfi"/>
+                        <segue destination="T87-Bh-GzL" kind="push" identifier="origo:member" id="pI9-dP-sfi"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W7Y-2S-hfd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -88,7 +88,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="uRg-zS-kRb"/>
                     <connections>
-                        <segue destination="O0V-Ey-WLK" kind="push" identifier="segueFromMemberToOrigoView" id="99F-61-IG0"/>
+                        <segue destination="O0V-Ey-WLK" kind="push" identifier="member:origo" id="99F-61-IG0"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Br5-90-R22" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -122,8 +122,8 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="2TD-LP-teE"/>
                     <connections>
-                        <segue destination="O0V-Ey-WLK" kind="push" identifier="segueFromOrigoListToOrigoView" id="gEQ-1g-oCH"/>
-                        <segue destination="T87-Bh-GzL" kind="push" identifier="segueFromOrigoListToMemberView" id="GXo-RZ-eB4"/>
+                        <segue destination="O0V-Ey-WLK" kind="push" identifier="origos:origo" id="gEQ-1g-oCH"/>
+                        <segue destination="T87-Bh-GzL" kind="push" identifier="origos:member" id="GXo-RZ-eB4"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nIi-HS-de2" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -198,7 +198,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="pI9-dP-sfi"/>
         <segue reference="99F-61-IG0"/>
+        <segue reference="GXo-RZ-eB4"/>
     </inferredMetricsTieBreakers>
 </document>

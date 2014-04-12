@@ -37,23 +37,6 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-#pragma mark - Instantiation
-
-+ (instancetype)memberWithId:(NSString *)entityId
-{
-    OOrigo *root = [OOrigo origoWithId:[OUtil rootIdFromMemberId:entityId] type:kOrigoTypeRoot];
-    OMember *instance = [[OMeta m].context insertEntityOfClass:self inOrigo:root entityId:entityId];
-    
-    [root addMember:instance];
-    
-    if ([[OState s] targetIs:kTargetUser]) {
-        instance.email = [OMeta m].userEmail;
-    }
-    
-    return instance;
-}
-
-
 #pragma mark - Memberships
 
 - (NSSet *)allMemberships
@@ -105,7 +88,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     OOrigo *residence = [[NSSet setWithArray:[self residences]] anyObject];
     
     if (!residence) {
-        residence = [OOrigo origoWithId:[OCrypto generateUUID] type:kOrigoTypeResidence];
+        residence = [OOrigo instanceWithId:[OCrypto generateUUID] type:kOrigoTypeResidence];
         [residence addMember:self];
     }
     
@@ -125,12 +108,12 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (NSArray *)origos
+- (NSArray *)origosIncludeResidences:(BOOL)includeResidences
 {
     NSMutableArray *origos = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isParticipancy]) {
+        if ([membership isParticipancy] || (includeResidences && [membership isResidency])) {
             [origos addObject:membership.origo];
         }
     }
@@ -232,7 +215,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     NSMutableSet *peers = [NSMutableSet set];
     
-    for (OOrigo *origo in [self origos]) {
+    for (OOrigo *origo in [self origosIncludeResidences:YES]) {
         for (OMember *peer in [origo members]) {
             if ([peer isJuvenile] == [self isJuvenile]) {
                 [peers addObject:peer];
@@ -242,7 +225,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     
     if ([self isJuvenile]) {
         for (OMember *sibling in [self siblings]) {
-            for (OOrigo *origo in [sibling origos]) {
+            for (OOrigo *origo in [sibling origosIncludeResidences:YES]) {
                 for (OMember *peer in [origo members]) {
                     if ([peer isJuvenile]) {
                         [peers addObject:peer];
@@ -252,7 +235,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         }
     } else {
         for (OMember *ward in [self wards]) {
-            for (OOrigo *origo in [ward origos]) {
+            for (OOrigo *origo in [ward origosIncludeResidences:YES]) {
                 for (OMember *peer in [origo members]) {
                     if ([peer isJuvenile]) {
                         [peers unionSet:[peer guardians]];
@@ -386,7 +369,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
             if (canBeRepresentedByUser) {
                 isRepresentedByUser = [self userIsCreator];
                 
-                for (OOrigo *origo in [self origos]) {
+                for (OOrigo *origo in [self origosIncludeResidences:NO]) {
                     isRepresentedByUser = isRepresentedByUser || [origo userIsAdmin];
                 }
             }
@@ -401,7 +384,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     BOOL isKnownByUser = NO;
     
-    for (OOrigo *origo in [[OMeta m].user origos]) {
+    for (OOrigo *origo in [[OMeta m].user origosIncludeResidences:YES]) {
         isKnownByUser = isKnownByUser || [origo knowsAboutMember:self];
     }
     
@@ -574,9 +557,26 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
 
++ (instancetype)instanceWithId:(NSString *)entityId
+{
+    OOrigo *root = [OOrigo instanceWithId:[OUtil rootIdFromMemberId:entityId] type:kOrigoTypeRoot];
+    OMember *instance = [[OMeta m].context insertEntityOfClass:self inOrigo:root entityId:entityId];
+    
+    [root addMember:instance];
+    
+    return instance;
+}
+
+
 - (id)relationshipToEntity:(id)other
 {
     return [other isKindOfClass:[OOrigo class]] ? [other membershipForMember:self] : nil;
+}
+
+
++ (Class)proxyClass
+{
+    return [OMemberProxy class];
 }
 
 

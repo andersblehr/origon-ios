@@ -52,7 +52,7 @@ static CGFloat _screenScale = 0.f;
     if (_user) {
         [self.replicator loadUserReplicationState];
     } else {
-        _user = [OMember memberWithId:_userId];
+        _user = [OMember instanceWithId:_userId];
         _user.email = _userEmail;
     }
 }

@@ -26,5 +26,6 @@
 + (instancetype)sendEmailButton;
 
 + (instancetype)flexibleSpace;
++ (instancetype)buttonWithTitle:(NSString *)title;
 
 @end

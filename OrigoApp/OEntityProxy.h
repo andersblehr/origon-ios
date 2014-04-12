@@ -28,9 +28,11 @@
 - (OEntityProxy *)proxy;
 - (id<OEntityFacade>)facade;
 - (id)parentWithClass:(Class)parentClass;
+- (BOOL)hasValueForKey:(NSString *)key;
 
 - (BOOL)isInstantiated;
 - (BOOL)canBeInstantiated;
-- (BOOL)hasValueForKey:(NSString *)key;
+- (id)instantiate;
+- (id)instantiateWithId:(NSString *)entityId;
 
 @end

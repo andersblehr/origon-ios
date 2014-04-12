@@ -10,15 +10,13 @@
 
 @interface OMember (OrigoAdditions)
 
-+ (instancetype)memberWithId:(NSString *)entityId;
-
 - (NSSet *)allMemberships;
 - (NSSet *)residencies;
 
 - (OOrigo *)root;
 - (OOrigo *)residence;
 - (NSArray *)residences;
-- (NSArray *)origos;
+- (NSArray *)origosIncludeResidences:(BOOL)includeResidences;
 
 - (OMember *)partner;
 - (NSSet *)wards;

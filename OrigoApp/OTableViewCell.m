@@ -72,8 +72,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         if ([self isListCell]) {
             _indexPath = indexPath;
             _listDelegate = listDelegate;
-            
-            self.selectable = ![_state actionIs:kActionInput];
+            _selectable = ![_state actionIs:kActionInput];
 
             [_listDelegate loadListCell:self atIndexPath:_indexPath];
         } else {
@@ -280,7 +279,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Cell display
+#pragma mark - Cell behaviour
 
 - (void)didLayoutSubviews
 {
@@ -391,6 +390,32 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (void)setDestinationViewControllerIdentifier:(NSString *)identifier segueDuringInput:(BOOL)segueDuringInput
+{
+    if (!_destinationViewControllerIdentifier) {
+        BOOL destinationIsEligible = ![_state actionIs:kActionInput] || segueDuringInput;
+        
+        if (destinationIsEligible) {
+            NSString *stateIdentifier = [OState stateIdentifierForViewControllerWithIdentifier:identifier target:[_state.viewController dataAtIndexPath:_indexPath]];
+            
+            destinationIsEligible = [_state isValidDestinationState:stateIdentifier];
+        }
+        
+        if (destinationIsEligible) {
+            _selectable = YES;
+            _segueDuringInput = segueDuringInput;
+            _destinationViewControllerIdentifier = identifier;
+            
+            self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        } else {
+            _selectable = NO;
+            
+            self.accessoryType = UITableViewCellAccessoryNone;
+        }
+    }
+}
+
+
 #pragma mark - Input handling
 
 - (void)prepareForInput
@@ -455,6 +480,20 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (void)writeEntityDefaults
+{
+    for (NSString *key in _blueprint.displayableInputFieldKeys) {
+        if (![_entity valueForKey:key] && [OValidator isDefaultableKey:key]) {
+            OInputField *inputField = [self inputFieldForKey:key];
+            
+            if ([inputField.text isEqual:[OValidator defaultValueForKey:key]]) {
+                [_entity setValue:inputField.text forKey:key];
+            }
+        }
+    }
+}
+
+
 #pragma mark - Custom accessors
 
 - (void)setInputField:(OInputField *)inputField
@@ -471,18 +510,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
     
     [self redrawIfNeeded];
-}
-
-
-- (void)setSelectable:(BOOL)selectable
-{
-    _selectable = selectable;
-
-    if (_selectable) {
-        self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    } else {
-        self.accessoryType = UITableViewCellAccessoryNone;
-    }
 }
 
 

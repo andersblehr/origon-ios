@@ -11,8 +11,9 @@
 @protocol OTextInput <UITextInput>
 
 @required
-@property (strong, nonatomic, readonly) NSString *key;
 @property (strong, nonatomic) id value;
+@property (strong, nonatomic, readonly) NSString *text;
+@property (strong, nonatomic, readonly) NSString *key;
 
 @property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL hasEmphasis;
