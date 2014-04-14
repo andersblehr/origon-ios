@@ -205,13 +205,7 @@ static CGFloat _screenScale = 0.f;
 
 - (BOOL)userIsRegistered
 {
-    BOOL userHasAddress = NO;
-    
-    for (OOrigo *residence in [_user residences]) {
-        userHasAddress = userHasAddress || [residence.address hasValue];
-    }
-    
-    return _user.dateOfBirth && [_user.mobilePhone hasValue] && userHasAddress;
+    return _user.dateOfBirth && [_user.mobilePhone hasValue] && [_user hasAddress];
 }
 
 

@@ -13,7 +13,7 @@
     OOrigo *_residence;
     OMember *_currentCandidate;
     
-    BOOL _isMinor;
+    BOOL _isJuvenile;
     
     NSString *_givenName;
     NSDate *_dateOfBirth;
@@ -30,7 +30,7 @@
 @property (strong, nonatomic, readonly) NSString *motherId;
 @property (strong, nonatomic, readonly) NSString *fatherId;
 
-- (instancetype)initWithOrigo:(OOrigo *)origo;
+- (instancetype)initWithResidence:(OOrigo *)origo delegate:(id)delegate;
 
 - (void)examineRegistrant:(OMember *)registrant;
 - (void)examineRegistrantWithName:(NSString *)name;

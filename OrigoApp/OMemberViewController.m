@@ -165,7 +165,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)examineMember
 {
-    _examiner = [[ORegistrantExaminer alloc] initWithOrigo:_origo];
+    _examiner = [[ORegistrantExaminer alloc] initWithResidence:_origo delegate:self];
     
     if (_candidate) {
         [_examiner examineRegistrant:_candidate];
@@ -186,7 +186,11 @@ static NSInteger const kButtonTagContinue = 1;
     if ([self actionIs:kActionRegister]) {
         OOrigo *residence = [_member residence];
         
-        if ([residence.address hasValue]) {
+        if ([residence hasAddress]) {
+            if ([_member isUser] && ![_member isActive]) {
+                [_member makeActive];
+            }
+            
             [self.dismisser dismissModalViewController:self reload:YES];
         } else {
             [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:residence];

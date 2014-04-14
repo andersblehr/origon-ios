@@ -40,7 +40,7 @@ static NSInteger const kButtonTagNo = 3;
     NSMutableArray *candidates = [NSMutableArray array];
     
     for (OMember *resident in [_residence residents]) {
-        if (_isMinor) {
+        if (_isJuvenile) {
             if ([resident.dateOfBirth yearsBeforeDate:_dateOfBirth] >= kAgeOfConsent) {
                 [candidates addObject:resident];
                 _parentCandidateStatus ^= [self parentCandidateStatusForMember:resident];
@@ -94,11 +94,11 @@ static NSInteger const kButtonTagNo = 3;
 {
     id subject = [[OState s] targetIs:kTargetUser] ? [OMeta m].user : _givenName;
     
-    NSString *prompt = [OLanguage questionWithSubject:subject verb:_be_ argument:_isMinor ? NSLocalizedString(@"a girl or a boy", @"") : NSLocalizedString(@"a woman or a man", @"")];
+    NSString *prompt = [OLanguage questionWithSubject:subject verb:_be_ argument:_isJuvenile ? NSLocalizedString(@"a girl or a boy", @"") : NSLocalizedString(@"a woman or a man", @"")];
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagGender];
-    [actionSheet addButtonWithTitle:_isMinor ? NSLocalizedString(@"Girl", @"") : NSLocalizedString(@"Woman", @"") tag:kButtonTagFemale];
-    [actionSheet addButtonWithTitle:_isMinor ? NSLocalizedString(@"Boy", @"") : NSLocalizedString(@"Man", @"")];
+    [actionSheet addButtonWithTitle:_isJuvenile ? NSLocalizedString(@"Girl", @"") : NSLocalizedString(@"Woman", @"") tag:kButtonTagFemale];
+    [actionSheet addButtonWithTitle:_isJuvenile ? NSLocalizedString(@"Boy", @"") : NSLocalizedString(@"Man", @"")];
     
     [actionSheet show];
 }
@@ -200,7 +200,7 @@ static NSInteger const kButtonTagNo = 3;
     _currentCandidate = [self nextCandidate];
     
     if (_currentCandidate) {
-        if (_isMinor) {
+        if (_isJuvenile) {
             [self presentCandidateSheetForParentCandidate:_currentCandidate];
         } else {
             [self presentCandidateSheetForOffspringCandidate:_currentCandidate];
@@ -213,7 +213,7 @@ static NSInteger const kButtonTagNo = 3;
 
 - (void)performInitialExamination
 {
-    if (_isMinor) {
+    if (_isJuvenile) {
         if (_parentCandidateStatus == kParentCandidateStatusBoth) {
             [self presentBothParentCandidatesSheet];
         } else {
@@ -245,9 +245,9 @@ static NSInteger const kButtonTagNo = 3;
 }
 
 
-- (void)examineRegistrantWithName:(NSString *)name isMinor:(BOOL)isMinor
+- (void)examineRegistrantWithName:(NSString *)name isJuvenile:(BOOL)isJuvenile
 {
-    _isMinor = isMinor;
+    _isJuvenile = isJuvenile;
     _givenName = [OUtil givenNameFromFullName:name];
     _parentCandidateStatus = kParentCandidateStatusUndetermined;
     _candidates = nil;
@@ -257,22 +257,23 @@ static NSInteger const kButtonTagNo = 3;
     _motherId = nil;
     _fatherId = nil;
     
+    if (_residence && (_dateOfBirth || [[OState s] targetIs:kTargetGuardian])) {
+        [self assembleCandidates];
+    }
+    
     [self performExamination];
 }
 
 
 #pragma mark - Initialisation
 
-- (instancetype)initWithOrigo:(OOrigo *)origo
+- (instancetype)initWithResidence:(OOrigo *)residence delegate:(id)delegate
 {
     self = [super init];
     
     if (self) {
-        if ([origo isOfType:kOrigoTypeResidence]) {
-            _residence = origo;
-        }
-        
-        _delegate = (id<ORegistrantExaminerDelegate>)[OState s].viewController;
+        _residence = residence;
+        _delegate = delegate;
     }
     
     return self;
@@ -285,13 +286,13 @@ static NSInteger const kButtonTagNo = 3;
 {
     _gender = registrant.gender;
     
-    [self examineRegistrantWithName:registrant.name isMinor:[registrant.dateOfBirth isBirthDateOfMinor]];
+    [self examineRegistrantWithName:registrant.name isJuvenile:[registrant isJuvenile]];
 }
 
 
 - (void)examineRegistrantWithName:(NSString *)name
 {
-    [self examineRegistrantWithName:name isMinor:NO];
+    [self examineRegistrantWithName:name isJuvenile:NO];
 }
 
 
@@ -299,7 +300,7 @@ static NSInteger const kButtonTagNo = 3;
 {
     _gender = gender;
 
-    [self examineRegistrantWithName:name isMinor:NO];
+    [self examineRegistrantWithName:name isJuvenile:NO];
 }
 
 
@@ -307,7 +308,7 @@ static NSInteger const kButtonTagNo = 3;
 {
     _dateOfBirth = dateOfBirth;
     
-    [self examineRegistrantWithName:name isMinor:[dateOfBirth isBirthDateOfMinor]];
+    [self examineRegistrantWithName:name isJuvenile:[dateOfBirth isBirthDateOfMinor]];
 }
 
 
@@ -321,10 +322,6 @@ static NSInteger const kButtonTagNo = 3;
         switch (actionSheet.tag) {
             case kActionSheetTagGender:
                 _gender = (buttonTag == kButtonTagFemale) ? kGenderFemale : kGenderMale;
-                
-                if (_residence && (_dateOfBirth || [[OState s] targetIs:kTargetGuardian])) {
-                    [self assembleCandidates];
-                }
                 
                 break;
                 
