@@ -64,16 +64,6 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-#pragma mark - Action sheets & alerts
-
-- (void)presentListedUserAlert
-{
-    OMember *creator = [[OMeta m].context entityWithId:[OMeta m].user.createdBy];
-    
-    [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origo", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Please verify your details and provide the information that %@ was not authorised to enter when %@ invited you.", @""), [creator givenName], [creator pronoun][nominative]]];
-}
-
-
 #pragma mark - Selector implementations
 
 - (void)openSettings
@@ -108,7 +98,9 @@ static NSInteger const kSectionKeyWards = 2;
 
     if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
         if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].user.entityId]) {
-            [self presentListedUserAlert];
+            OMember *creator = [[OMeta m].context entityWithId:[OMeta m].user.createdBy];
+            
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origo", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Please verify your details and provide the information that %@ was not authorised to enter when %@ invited you.", @""), [creator givenName], [creator pronoun][nominative]]];
         } else if (![OMeta m].userDidJustSignUp) {
             [OAlert showAlertWithTitle:NSLocalizedString(@"Incomplete registration", @"") text:NSLocalizedString(@"You must complete your registration before you can start using Origo.", @"")];
         }

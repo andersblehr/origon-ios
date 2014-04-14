@@ -71,6 +71,18 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
++ (instancetype)proxyForEntityWithJSONDictionary:(NSDictionary *)dictionary
+{
+    id proxy = [self proxyForEntityOfClass:NSClassFromString(dictionary[kJSONKeyEntityClass]) type:dictionary[kPropertyKeyType]];
+    
+    for (NSString *key in [dictionary allKeys]) {
+        [proxy setValue:dictionary[key] forKeyPath:key];
+    }
+    
+    return proxy;
+}
+
+
 #pragma mark - Introspection
 
 - (Class)entityClass
@@ -175,7 +187,7 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 {
     if (_instance) {
         [_instance setValue:value forKey:key];
-    } else {
+    } else if ([_propertyKeys containsObject:key]) {
         _valuesByKey[key] = value;
     }
 }

@@ -70,7 +70,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         if (recipientTag == kRecipientTagOrigo) {
             OOrigo *origo = recipients[0];
             
-            if ([origo.address hasValue]) {
+            if ([origo hasAddress]) {
                 [actionSheet addButtonWithTitle:[origo shortAddress]];
             } else {
                 [actionSheet addButtonWithTitle:[origo displayName]];

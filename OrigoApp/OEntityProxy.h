@@ -23,6 +23,7 @@
 
 + (instancetype)proxyForEntity:(OReplicatedEntity *)entity;
 + (instancetype)proxyForEntityOfClass:(Class)entityClass type:(NSString *)type;
++ (instancetype)proxyForEntityWithJSONDictionary:(NSDictionary *)dictionary;
 
 - (Class)entityClass;
 - (OEntityProxy *)proxy;

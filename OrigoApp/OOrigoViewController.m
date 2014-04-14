@@ -105,7 +105,7 @@ static NSInteger const kButtonTagGuardian = 101;
         [self addNewMemberButtonsToActionSheet:actionSheet];
     }
         
-    if ([[_origo facade].address hasValue]) {
+    if ([_origo hasAddress]) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Show in map", @"") tag:kButtonTagShowInMap];
     }
     

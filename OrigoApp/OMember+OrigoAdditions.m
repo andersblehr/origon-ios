@@ -421,7 +421,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     BOOL hasAddress = NO;
     
     for (OOrigo *residence in [self residences]) {
-        hasAddress = hasAddress || [residence.address hasValue];
+        hasAddress = hasAddress || [residence hasAddress];
     }
     
     return hasAddress;

@@ -387,7 +387,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 - (NSString *)shortAddress
 {
-    return [self.address hasValue] ? [self.address lines][0] : nil;
+    return [self hasAddress] ? [self.address lines][0] : nil;
 }
 
 
