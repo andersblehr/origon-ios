@@ -23,4 +23,32 @@
     return proxy;
 }
 
+
+#pragma mark - Informal OMember protocol conformance
+
+- (BOOL)isJuvenile
+{
+    BOOL isJuvenile = NO;
+    
+    if (self.instance) {
+        isJuvenile = [self.instance isJuvenile];
+    } else {
+        NSDate *dateOfBirth = [self valueForKey:kPropertyKeyDateOfBirth];
+        
+        if (dateOfBirth) {
+            isJuvenile = [dateOfBirth isBirthDateOfMinor];
+        } else {
+            isJuvenile = [[self valueForKey:kPropertyKeyIsMinor] boolValue];
+        }
+    }
+    
+    return isJuvenile;
+}
+
+
+- (NSString *)givenName
+{
+    return [OUtil givenNameFromFullName:[self valueForKey:kPropertyKeyName]];
+}
+
 @end

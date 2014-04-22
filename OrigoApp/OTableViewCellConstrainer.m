@@ -48,7 +48,7 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
         
         if (value && [value isKindOfClass:[NSString class]]) {
             shouldDisplayElements = [value hasValue];
-        } else if (!value && ![OValidator isDefaultableKey:key]) {
+        } else if (!value) {
             shouldDisplayElements = NO;
         }
         

@@ -29,13 +29,13 @@ extern CGFloat const kCellAnimationDuration;
 @property (strong, nonatomic, readonly) OTableViewCellBlueprint *blueprint;
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic, readonly) id entity;
-@property (strong, nonatomic, readonly) NSString *destinationViewControllerIdentifier;
 
 @property (strong, nonatomic) OInputField *inputField;
 @property (strong, nonatomic) NSIndexPath *indexPath;
+@property (strong, nonatomic) NSString *destinationId;
 
+@property (nonatomic, readonly) BOOL selectableDuringInput;
 @property (nonatomic, readonly) BOOL selectable;
-@property (nonatomic, readonly) BOOL segueDuringInput;
 @property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL checked;
 
@@ -52,7 +52,6 @@ extern CGFloat const kCellAnimationDuration;
 - (BOOL)isListCell;
 - (BOOL)hasValueForKey:(NSString *)key;
 - (BOOL)hasValidValueForKey:(NSString *)key;
-- (BOOL)hasInvalidInputField;
 
 - (void)didLayoutSubviews;
 - (void)toggleEditMode;
@@ -60,13 +59,12 @@ extern CGFloat const kCellAnimationDuration;
 - (void)redrawIfNeeded;
 - (void)resumeFirstResponder;
 - (void)shakeCellVibrate:(BOOL)vibrate;
-- (void)setDestinationViewControllerIdentifier:(NSString *)identifier segueDuringInput:(BOOL)segueDuringInput;
 
 - (void)prepareForInput;
 - (void)processInput;
-
 - (void)readEntity;
-- (void)writeEntity;
-- (void)writeEntityDefaults;
+- (void)writeEntityInstantiate:(BOOL)insert;
+
+- (void)setDestinationId:(NSString *)identifier selectableDuringInput:(BOOL)selectableDuringInput;
 
 @end

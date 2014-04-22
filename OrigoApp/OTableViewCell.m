@@ -221,7 +221,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (OInputField *)nextInputField
 {
     OInputField *inputField = nil;
-    BOOL ignoreField = (_inputField != nil);
+    BOOL ignoreField = _inputField ? YES : NO;
     
     for (NSString *key in _blueprint.displayableInputFieldKeys) {
         if (ignoreField) {
@@ -263,19 +263,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (BOOL)hasValueForKey:(NSString *)key
 {
-    return ([self inputFieldForKey:key].value != nil);
+    return [self inputFieldForKey:key].value ? YES : NO;
 }
 
 
 - (BOOL)hasValidValueForKey:(NSString *)key
 {
     return [[self inputFieldForKey:key] hasValidValue];
-}
-
-
-- (BOOL)hasInvalidInputField
-{
-    return ([self nextInvalidInputField] != nil);
 }
 
 
@@ -390,33 +384,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)setDestinationViewControllerIdentifier:(NSString *)identifier segueDuringInput:(BOOL)segueDuringInput
-{
-    if (!_destinationViewControllerIdentifier) {
-        BOOL destinationIsEligible = ![_state actionIs:kActionInput] || segueDuringInput;
-        
-        if (destinationIsEligible) {
-            NSString *stateIdentifier = [OState stateIdentifierForViewControllerWithIdentifier:identifier target:[_state.viewController dataAtIndexPath:_indexPath]];
-            
-            destinationIsEligible = [_state isValidDestinationState:stateIdentifier];
-        }
-        
-        if (destinationIsEligible) {
-            _selectable = YES;
-            _segueDuringInput = segueDuringInput;
-            _destinationViewControllerIdentifier = identifier;
-            
-            self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        } else {
-            _selectable = NO;
-            
-            self.accessoryType = UITableViewCellAccessoryNone;
-        }
-    }
-}
-
-
-#pragma mark - Input handling
+#pragma mark - Detail cell content handling
 
 - (void)prepareForInput
 {
@@ -444,8 +412,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Content synchronising
-
 - (void)readEntity
 {
     if ([self isListCell]) {
@@ -460,41 +426,55 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)writeEntity
+- (void)writeEntityInstantiate:(BOOL)instantiate
 {
-    if (![_entity isInstantiated] && [_entity canBeInstantiated]) {
-        [_entity setInstance:[_inputDelegate inputEntity]];
-    }
-    
-    for (NSString *key in _blueprint.allInputFieldKeys) {
-        OInputField *inputField = [self inputFieldForKey:key];
+    if (instantiate && ![_entity isInstantiated]) {
+        [_entity instantiate];
         
-        if (!inputField.isHidden) {
-            [_entity setValue:inputField.value forKey:key];
+        if ([_inputDelegate respondsToSelector:@selector(didInstantiateEntity:)]) {
+            [_inputDelegate didInstantiateEntity:[_entity instance]];
         }
     }
     
-    for (NSString *key in _blueprint.indirectKeys) {
-        [_entity setValue:[_inputDelegate inputValueForIndirectKey:key] forKey:key];
-    }
-}
-
-
-- (void)writeEntityDefaults
-{
     for (NSString *key in _blueprint.displayableInputFieldKeys) {
-        if (![_entity valueForKey:key] && [OValidator isDefaultableKey:key]) {
-            OInputField *inputField = [self inputFieldForKey:key];
-            
-            if ([inputField.text isEqual:[OValidator defaultValueForKey:key]]) {
-                [_entity setValue:inputField.text forKey:key];
-            }
-        }
+        [_entity setValue:[self inputFieldForKey:key].value forKey:key];
     }
 }
 
 
 #pragma mark - Custom accessors
+
+- (void)setDestinationId:(NSString *)destinationId
+{
+    [self setDestinationId:destinationId selectableDuringInput:NO];
+}
+
+
+- (void)setDestinationId:(NSString *)destinationId selectableDuringInput:(BOOL)selectableDuringInput
+{
+    if (!_destinationId) {
+        BOOL destinationIsEligible = ![_state actionIs:kActionInput] || selectableDuringInput;
+        
+        if (destinationIsEligible) {
+            NSString *destinationStateId = [OState stateIdForViewControllerWithIdentifier:destinationId target:[_state.viewController dataAtIndexPath:_indexPath]];
+            
+            destinationIsEligible = [_state isValidDestinationStateId:destinationStateId];
+        }
+        
+        if (destinationIsEligible) {
+            _destinationId = destinationId;
+            _selectableDuringInput = selectableDuringInput;
+            _selectable = YES;
+            
+            self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        } else {
+            _selectable = NO;
+            
+            self.accessoryType = UITableViewCellAccessoryNone;
+        }
+    }
+}
+
 
 - (void)setInputField:(OInputField *)inputField
 {

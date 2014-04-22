@@ -176,14 +176,14 @@ static NSString * const kAspectDefault = @"d";
 }
 
 
-- (BOOL)isValidDestinationState:(NSString *)stateIdentifier
+- (BOOL)isValidDestinationStateId:(NSString *)stateId
 {
     BOOL isValid = YES;
     UINavigationController *navigationController = _viewController.navigationController;
     
     if (navigationController) {
         for (OTableViewController *viewController in navigationController.viewControllers) {
-            isValid = isValid && ![viewController.state.identifier isEqualToString:stateIdentifier];
+            isValid = isValid && ![viewController.state.identifier isEqualToString:stateId];
         }
     }
     
@@ -209,7 +209,7 @@ static NSString * const kAspectDefault = @"d";
 
 #pragma mark - State identifier generation
 
-+ (NSString *)stateIdentifierForViewControllerWithIdentifier:(NSString *)identifier target:(id)target
++ (NSString *)stateIdForViewControllerWithIdentifier:(NSString *)identifier target:(id)target
 {
     NSString *instanceQualifier = nil;
     
@@ -253,7 +253,7 @@ static NSString * const kAspectDefault = @"d";
         _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
     }
     
-    _identifier = [[self class] stateIdentifierForViewControllerWithIdentifier:_viewController.identifier target:target];
+    _identifier = [[self class] stateIdForViewControllerWithIdentifier:_viewController.identifier target:target];
 
     [[[self class] s] reflectState:self];
 }

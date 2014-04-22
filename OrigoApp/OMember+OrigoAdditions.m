@@ -312,7 +312,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (BOOL)isActive
 {
-    return (self.activeSince != nil);
+    return self.activeSince ? YES : NO;
 }
 
 

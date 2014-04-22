@@ -65,7 +65,7 @@
         [entities addObject:[entity toDictionary]];
     }
     
-    [OConnection replicateEntities:entities];
+    [[OConnection connectionWithDelegate:self] replicateEntities:entities];
 }
 
 

@@ -28,5 +28,7 @@
 @property (strong, nonatomic) NSString *mobilePhone;
 @property (strong, nonatomic) NSString *email;
 @property (strong, nonatomic) NSString *gender;
+@property (strong, nonatomic) NSString *fatherId;
+@property (strong, nonatomic) NSString *motherId;
 
 @end

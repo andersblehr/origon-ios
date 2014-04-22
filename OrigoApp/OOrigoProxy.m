@@ -94,7 +94,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 - (BOOL)hasAddress
 {
-    return ([self valueForKey:kPropertyKeyAddress] != nil);
+    return [self hasValueForKey:kPropertyKeyAddress];
 }
 
 

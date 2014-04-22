@@ -24,9 +24,6 @@ extern NSString * const kHTTPHeaderLocation;
 @private
     BOOL _requestIsValid;
     
-    NSString *_root;
-    NSString *_path;
-    
     NSMutableURLRequest *_URLRequest;
     NSMutableDictionary *_URLParameters;
     NSHTTPURLResponse *_HTTPResponse;
@@ -35,11 +32,13 @@ extern NSString * const kHTTPHeaderLocation;
     id<OConnectionDelegate> _delegate;
 }
 
-+ (void)signInWithEmail:(NSString *)email password:(NSString *)password;
-+ (void)activateWithEmail:(NSString *)email password:(NSString *)password;
-+ (void)sendActivationCodeToEmail:(NSString *)email;
++ (instancetype)connectionWithDelegate:(id)delegate;
 
-+ (void)replicateEntities:(NSArray *)entities;
-+ (void)lookupMemberWithIdentifier:(NSString *)identifier;
+- (void)signInWithEmail:(NSString *)email password:(NSString *)password;
+- (void)activateWithEmail:(NSString *)email password:(NSString *)password;
+- (void)sendActivationCodeToEmail:(NSString *)email;
+
+- (void)replicateEntities:(NSArray *)entities;
+- (void)lookupMemberWithIdentifier:(NSString *)identifier;
 
 @end

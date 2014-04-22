@@ -34,7 +34,6 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             _hasPhoto = YES;
             _titleKey = kPropertyKeyName;
             _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
-            _indirectKeys = @[kPropertyKeyGender, kPropertyKeyIsMinor, kPropertyKeyFatherId, kPropertyKeyMotherId];
         } else if ([_state.viewController.identifier isEqualToString:kIdentifierOrigo]) {
             _textViewKeys = @[kPropertyKeyAddress, kPropertyKeyDescriptionText];
             _hasPhoto = NO;

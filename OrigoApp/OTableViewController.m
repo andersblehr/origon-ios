@@ -210,7 +210,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _returnData = nil;
         [_dismisser dismissModalViewController:self reload:NO];
     } else if ([self actionIs:kActionEdit]) {
-        [_detailCell writeEntityDefaults];
         [_detailCell readEntity];
         [self toggleEditMode];
     }
@@ -737,8 +736,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if (_detailCell && _detailCell.editable && !_didResurface && !_isHidden) {
             [_detailCell prepareForInput];
             
-            if ([self actionIs:kActionRegister]) {
-                if (![_detailCell hasInvalidInputField] && !_wasHidden) {
+            if ([self actionIs:kActionRegister] && !_wasHidden) {
+                if (![_detailCell nextInvalidInputField]) {
                     [[_detailCell nextInputField] becomeFirstResponder];
                 }
             }
@@ -757,7 +756,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
 	[super viewWillDisappear:animated];
     
-    _isHidden = (self.presentedViewController != nil);
+    _isHidden = self.presentedViewController ? YES : NO;
     
     [[OMeta m].replicator replicateIfNeeded];
 }
@@ -1042,14 +1041,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     OTableViewCell *cell = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     
-    if (cell.destinationViewControllerIdentifier) {
-        if (![self actionIs:kActionInput] || cell.segueDuringInput) {
+    if (cell.destinationId) {
+        if (![self actionIs:kActionInput] || cell.selectableDuringInput) {
             _selectedIndexPath = indexPath;
             
-            if (![_identifier isEqualToString:cell.destinationViewControllerIdentifier]) {
-                [self performSegueWithIdentifier:[_identifier stringByAppendingString:cell.destinationViewControllerIdentifier separator:kSeparatorColon] sender:self];
+            if (![_identifier isEqualToString:cell.destinationId]) {
+                [self performSegueWithIdentifier:[_identifier stringByAppendingString:cell.destinationId separator:kSeparatorColon] sender:self];
             } else {
-                OTableViewController *destinationViewController = [self.storyboard instantiateViewControllerWithIdentifier:cell.destinationViewControllerIdentifier];
+                OTableViewController *destinationViewController = [self.storyboard instantiateViewControllerWithIdentifier:cell.destinationId];
                 
                 [self preparePushDestinationViewController:destinationViewController];
                 [self.navigationController pushViewController:destinationViewController animated:YES];

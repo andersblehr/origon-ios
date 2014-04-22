@@ -48,6 +48,8 @@ static NSString * const kClassSuffixProxy = @"Proxy";
         _valuesByKey = [NSMutableDictionary dictionary];
         _entityClass = entityClass;
         
+        [self setValue:[OCrypto generateUUID] forKeyPath:kPropertyKeyEntityId];
+        
         if (type) {
             [self setValue:type forKey:kPropertyKeyType];
         }
@@ -129,40 +131,22 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 - (BOOL)isInstantiated
 {
-    return (_instance != nil);
-}
-
-
-- (BOOL)canBeInstantiated
-{
-    return ![self isInstantiated] && (!_parent || [_parent isInstantiated]);
+    return _instance ? YES : NO;
 }
 
 
 - (id)instantiate
 {
-    NSString *entityId = nil;
-    
-    if ([self hasValueForKey:kPropertyKeyEntityId]) {
-        entityId = [self valueForKey:kPropertyKeyEntityId];
-    } else {
-        entityId = [OCrypto generateUUID];
-    }
-    
-    return [self instantiateWithId:entityId];
-}
-
-
-- (id)instantiateWithId:(NSString *)entityId
-{
-    _instance = [_entityClass instanceWithId:entityId];
-    
-    for (NSString *key in [_entityClass propertyKeys]) {
-        if (![key isEqualToString:kPropertyKeyEntityId]) {
-            id value = _valuesByKey[key];
-            
-            if (value) {
-                [_instance setValue:value forKey:key];
+    if (!_instance && (!_parent || [_parent isInstantiated])) {
+        _instance = [_entityClass instanceWithId:[self facade].entityId];
+        
+        for (NSString *key in [_entityClass propertyKeys]) {
+            if (![key isEqualToString:kPropertyKeyEntityId]) {
+                id value = _valuesByKey[key];
+                
+                if (value) {
+                    [_instance setValue:value forKey:key];
+                }
             }
         }
     }
@@ -185,6 +169,8 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {
+    key = [OValidator propertyKeyForKey:key];
+    
     if (_instance) {
         [_instance setValue:value forKey:key];
     } else if ([_propertyKeys containsObject:key]) {
@@ -195,6 +181,8 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 - (id)valueForKey:(NSString *)key
 {
+    key = [OValidator propertyKeyForKey:key];
+    
     return _instance ? [_instance valueForKey:key] : _valuesByKey[key];
 }
 

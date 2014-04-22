@@ -367,18 +367,6 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 #pragma mark - Display data
 
-- (NSString *)displayName
-{
-    NSString *displayName = self.name;
-    
-    if (!displayName && [self isOfType:kOrigoTypeResidence]) {
-        displayName = [OValidator defaultValueForKey:kInterfaceKeyResidenceName];
-    }
-    
-    return displayName;
-}
-
-
 - (NSString *)singleLineAddress
 {
     return [self.address stringByReplacingSubstring:kSeparatorNewline withString:kSeparatorComma];

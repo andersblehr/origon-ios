@@ -30,12 +30,12 @@
 
 @class OEntityProxy, OOrigoProxy;
 @class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
-@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, ORegistrantExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
+@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, OMemberExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
 
 #import "OConnectionDelegate.h"
 #import "OEntityObserver.h"
 #import "OLocatorDelegate.h"
-#import "ORegistrantExaminerDelegate.h"
+#import "OMemberExaminerDelegate.h"
 #import "OTableViewControllerInstance.h"
 #import "OTableViewInputDelegate.h"
 #import "OTableViewListDelegate.h"
@@ -87,7 +87,7 @@ typedef UIView<OTextInput> OInputField;
 #import "OLogging.h"
 #import "ONavigationController.h"
 #import "OPhoneNumberFormatter.h"
-#import "ORegistrantExaminer.h"
+#import "OMemberExaminer.h"
 #import "OMeta.h"
 #import "OReplicator.h"
 #import "OState.h"

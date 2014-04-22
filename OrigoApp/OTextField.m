@@ -62,8 +62,6 @@ static CGFloat const kTextInsetY = 1.2f;
         } else {
             self.text = _value;
         }
-    } else {
-        self.text = [OValidator defaultValueForKey:_key];
     }
 }
 
@@ -209,7 +207,7 @@ static CGFloat const kTextInsetY = 1.2f;
             ((UIDatePicker *)self.inputView).date = _value;
         }
         
-        if (_value || [OValidator isDefaultableKey:_key]) {
+        if (_value) {
             [self presentValue];
         } else {
             self.text = nil;

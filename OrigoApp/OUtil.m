@@ -45,7 +45,7 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
                 }
             } else if ([items[0] isKindOfClass:[OOrigo class]]) {
                 for (OOrigo *origo in items) {
-                    [stringItems addObject:[origo displayName]];
+                    [stringItems addObject:origo.name];
                 }
             }
         }
