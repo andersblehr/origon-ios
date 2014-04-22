@@ -139,7 +139,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             welcomeBackAlert.tag = kAlertTagWelcomeBack;
             [welcomeBackAlert show];
         } else if ([self targetIs:kTargetEmail]) {
-            [OConnection sendActivationCodeToEmail:self.target];
+            [[OConnection connectionWithDelegate:self] sendActivationCodeToEmail:self.target];
         }
     }
 }
@@ -251,10 +251,10 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 {
     if ([self actionIs:kActionSignIn]) {
         [OMeta m].userEmail = _emailField.value;
-        [OConnection signInWithEmail:[OMeta m].userEmail password:_passwordField.value];
+        [[OConnection connectionWithDelegate:self] signInWithEmail:[OMeta m].userEmail password:_passwordField.value];
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
-            [OConnection activateWithEmail:[OMeta m].userEmail password:_repeatPasswordField.value];
+            [[OConnection connectionWithDelegate:self] activateWithEmail:[OMeta m].userEmail password:_repeatPasswordField.value];
         } else if ([self targetIs:kTargetEmail]) {
             [OMeta m].userEmail = self.target;
             [self.dismisser dismissModalViewController:self reload:YES];

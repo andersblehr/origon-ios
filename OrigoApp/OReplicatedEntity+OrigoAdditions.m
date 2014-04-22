@@ -53,9 +53,9 @@
     id value = [self valueForKey:key];
     
     if ([value isKindOfClass:[NSString class]]) {
-        hasValue = ([value hasValue]);
+        hasValue = [value hasValue];
     } else {
-        hasValue = (value != nil);
+        hasValue = value ? YES : NO;
     }
     
     return hasValue;
@@ -212,7 +212,7 @@
 
 - (BOOL)isReplicated
 {
-    return (self.dateReplicated != nil);
+    return self.dateReplicated ? YES : NO;
 }
 
 

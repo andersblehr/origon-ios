@@ -55,7 +55,7 @@
 
 - (BOOL)didLocate
 {
-    return (_placemark != nil);
+    return _placemark ? YES : NO;
 }
 
 

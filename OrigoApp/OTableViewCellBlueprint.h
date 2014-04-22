@@ -33,7 +33,6 @@ extern CGFloat const kPhotoFrameWidth;
 @property (strong, nonatomic, readonly) NSArray *detailKeys;
 @property (strong, nonatomic, readonly) NSArray *displayableInputFieldKeys;
 @property (strong, nonatomic, readonly) NSArray *allInputFieldKeys;
-@property (strong, nonatomic, readonly) NSArray *indirectKeys;
 
 - (instancetype)initWithState:(OState *)state;
 - (instancetype)initWithState:(OState *)state reuseIdentifier:(NSString *)reuseIdentifier;

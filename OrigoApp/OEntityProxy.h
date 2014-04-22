@@ -18,7 +18,7 @@
     id _forwardSelectorArgument;
 }
 
-@property (strong, nonatomic) OReplicatedEntity *instance;
+@property (strong, nonatomic) id instance;
 @property (strong, nonatomic) OEntityProxy *parent;
 
 + (instancetype)proxyForEntity:(OReplicatedEntity *)entity;
@@ -32,8 +32,6 @@
 - (BOOL)hasValueForKey:(NSString *)key;
 
 - (BOOL)isInstantiated;
-- (BOOL)canBeInstantiated;
 - (id)instantiate;
-- (id)instantiateWithId:(NSString *)entityId;
 
 @end

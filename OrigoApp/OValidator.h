@@ -16,13 +16,11 @@
 + (BOOL)isEmailKey:(NSString *)key;
 + (BOOL)isPhoneNumberKey:(NSString *)key;
 + (BOOL)isPasswordKey:(NSString *)key;
-+ (BOOL)isDefaultableKey:(NSString *)key;
 + (BOOL)isAlternatingLabelKey:(NSString *)key;
 + (BOOL)isAlternatingInputFieldKey:(NSString *)key;
 
 + (NSDictionary *)keyMappings;
 + (NSString *)propertyKeyForKey:(NSString *)key;
-+ (NSString *)defaultValueForKey:(NSString *)key;
 
 + (BOOL)value:(id)value isValidForKey:(NSString *)key;
 + (BOOL)valueIsEmailAddress:(id)value;

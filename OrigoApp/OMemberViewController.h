@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OMemberViewController : OTableViewController<OTableViewControllerInstance, OTableViewListDelegate, OTableViewInputDelegate, ORegistrantExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate, OConnectionDelegate> {
+@interface OMemberViewController : OTableViewController<OTableViewControllerInstance, OTableViewListDelegate, OTableViewInputDelegate, OMemberExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate, OConnectionDelegate> {
 @private
     id _member;
     id _origo;
@@ -19,14 +19,12 @@
     OInputField *_mobilePhoneField;
     OInputField *_emailField;
     
-    OMember *_candidate;
-    NSDictionary *_candidateDictionary;
-    NSMutableArray *_candidateAddresses;
-    NSMutableArray *_candidateHomeNumbers;
+    NSMutableArray *_addressBookAddresses;
+    NSMutableArray *_addressBookHomeNumbers;
     NSMutableArray *_homeNumberMappings;
     NSArray *_candidateResidences;
     
-    ORegistrantExaminer *_examiner;
+    OMemberExaminer *_examiner;
 }
 
 @end

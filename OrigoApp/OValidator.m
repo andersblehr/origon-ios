@@ -13,7 +13,6 @@ static NSArray *_dateKeys = nil;
 static NSArray *_emailKeys = nil;
 static NSArray *_phoneNumberKeys = nil;
 static NSArray *_passwordKeys = nil;
-static NSArray *_defaultableKeys = nil;
 
 static NSDictionary *_keyMappings = nil;
 
@@ -81,16 +80,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-+ (BOOL)isDefaultableKey:(NSString *)key
-{
-    if (!_defaultableKeys) {
-        _defaultableKeys = @[kInterfaceKeyResidenceName];
-    }
-    
-    return [_defaultableKeys containsObject:key];
-}
-
-
 + (BOOL)isAlternatingLabelKey:(NSString *)key
 {
     return [self isAgeKey:key];
@@ -124,20 +113,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-#pragma mark - Default value for given key
-
-+ (NSString *)defaultValueForKey:(NSString *)key
-{
-    id defaultValue = nil;
-    
-    if ([self isDefaultableKey:key]) {
-        defaultValue = NSLocalizedString(key, kKeyPrefixDefault);
-    }
-    
-    return defaultValue;
-}
-
-
 #pragma mark - Validation
 
 + (BOOL)value:(id)value isValidForKey:(NSString *)key
@@ -158,8 +133,6 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
         } else if ([self isPasswordKey:propertyKey]) {
             valueIsValid = ([value length] >= kMinimumPassordLength);
         }
-    } else {
-        valueIsValid = [self isDefaultableKey:key];
     }
     
     return valueIsValid;

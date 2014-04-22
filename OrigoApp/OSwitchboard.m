@@ -73,7 +73,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
             if ([origo hasAddress]) {
                 [actionSheet addButtonWithTitle:[origo shortAddress]];
             } else {
-                [actionSheet addButtonWithTitle:[origo displayName]];
+                [actionSheet addButtonWithTitle:origo.name];
             }
         } else if (recipientTag == kRecipientTagMember) {
             [actionSheet addButtonWithTitle:[recipients[0] givenName]];

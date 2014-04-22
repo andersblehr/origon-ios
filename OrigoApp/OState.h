@@ -55,9 +55,9 @@ extern NSString * const kTargetSettings;
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
 - (BOOL)isCurrent;
-- (BOOL)isValidDestinationState:(NSString *)stateIdentifier;
+- (BOOL)isValidDestinationStateId:(NSString *)stateId;
 
 - (NSString *)asString;
-+ (NSString *)stateIdentifierForViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
++ (NSString *)stateIdForViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
 
 @end

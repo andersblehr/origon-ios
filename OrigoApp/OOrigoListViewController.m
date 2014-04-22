@@ -221,25 +221,24 @@ static NSInteger const kSectionKeyWards = 2;
         if ([_member isUser]) {
             OOrigo *residence = entity;
             
-            cell.textLabel.text = [residence displayName];
+            cell.textLabel.text = residence.name;
             cell.detailTextLabel.text = [residence singleLineAddress];
             cell.imageView.image = [residence smallImage];
-            
-            [cell setDestinationViewControllerIdentifier:kIdentifierOrigo segueDuringInput:NO];
+            cell.destinationId = kIdentifierOrigo;
         } else {
             OMember *member = entity;
             
             cell.textLabel.text = member.name;
             cell.detailTextLabel.text = [member shortDetails];
             cell.imageView.image = [member smallImage];
-            
-            [cell setDestinationViewControllerIdentifier:kIdentifierMember segueDuringInput:NO];
+            cell.destinationId = kIdentifierMember;
         }
     } else if (sectionKey == kSectionKeyWards) {
         OMember *ward = entity;
         
         cell.textLabel.text = [ward givenName];
         cell.imageView.image = [ward smallImage];
+        cell.destinationId = kIdentifierOrigoList;
         
         NSArray *origos = [ward origosIncludeResidences:NO];
         
@@ -250,13 +249,12 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.text = NSLocalizedString(@"(No origos)", @"");
             cell.detailTextLabel.textColor = [UIColor dimmedTextColour];
         }
-        
-        [cell setDestinationViewControllerIdentifier:kIdentifierOrigoList segueDuringInput:NO];
     } else if (sectionKey == kSectionKeyOrigos) {
         OOrigo *origo = entity;
 
-        cell.textLabel.text = [origo displayName];
+        cell.textLabel.text = origo.name;
         cell.imageView.image = [origo smallImage];
+        cell.destinationId = kIdentifierOrigo;
         
         if ([[origo membershipForMember:[OMeta m].user] isInvited]) {
             cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
@@ -265,8 +263,6 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.text = NSLocalizedString(origo.type, kKeyPrefixOrigoTitle);
             cell.detailTextLabel.textColor = [UIColor textColour];
         }
-        
-        [cell setDestinationViewControllerIdentifier:kIdentifierOrigo segueDuringInput:NO];
     }
 }
 

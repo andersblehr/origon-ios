@@ -66,30 +66,22 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 - (NSString *)serverURL
 {
+    NSString *protocol = [OMeta deviceIsSimulator] ? kProtocolHTTP : kProtocolHTTPS;
     NSString *origoServer = [OMeta deviceIsSimulator] ? kOrigoDevServer : kOrigoProdServer;
-    NSString *protocol = nil;
-    
-    if ([_root isEqualToString:kRootAuth] && ![OMeta deviceIsSimulator]) {
-        protocol = kProtocolHTTPS;
-    } else {
-        protocol = kProtocolHTTP;
-    }
     
     return [protocol stringByAppendingString:origoServer];
 }
 
 
-- (void)performHTTPMethod:(NSString *)HTTPMethod entities:(NSArray *)entities delegate:(id<OConnectionDelegate>)delegate
+- (void)performHTTPMethod:(NSString *)HTTPMethod withRoot:(NSString *)root path:(NSString *)path entities:(NSArray *)entities
 {
     if ([[OMeta m] internetConnectionIsAvailable]) {
-        _delegate = delegate;
-        
         [self setValue:[OMeta m].deviceId forURLParameter:kURLParameterDeviceId];
         [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
         [self setValue:[OMeta m].appVersion forURLParameter:kURLParameterVersion];
         
         _URLRequest.HTTPMethod = HTTPMethod;
-        _URLRequest.URL = [[[[NSURL URLWithString:[self serverURL]] URLByAppendingPathComponent:_root] URLByAppendingPathComponent:_path] URLByAppendingURLParameters:_URLParameters];
+        _URLRequest.URL = [[[[NSURL URLWithString:[self serverURL]] URLByAppendingPathComponent:root] URLByAppendingPathComponent:path] URLByAppendingURLParameters:_URLParameters];
         
         [self setValue:kMediaTypeJSONUTF8 forHTTPHeaderField:kHTTPHeaderContentType];
         [self setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
@@ -124,17 +116,14 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 - (void)authenticateWithPath:(NSString *)path email:(NSString *)email password:(NSString *)password
 {
-    _root = kRootAuth;
-    _path = path;
-    
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OCrypto basicAuthHeaderWithUserId:email password:password] forHTTPHeaderField:kHTTPHeaderAuthorization];
     
-    if ([_path isEqualToString:kPathSignIn]) {
+    if ([path isEqualToString:kPathSignIn]) {
         [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
     }
     
-    [self performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OState s].viewController];
+    [self performHTTPMethod:kHTTPMethodGET withRoot:kRootAuth path:path entities:nil];
 }
 
 
@@ -176,15 +165,15 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 #pragma mark - Initialisation
 
-- (instancetype)init
+- (instancetype)initWithDelegate:(id)delegate
 {
     self = [super init];
     
     if (self) {
+        _delegate = delegate;
         _URLRequest = [[NSMutableURLRequest alloc] init];
         _URLParameters = [NSMutableDictionary dictionary];
         _responseData = [NSMutableData data];
-        
         _requestIsValid = YES;
     }
     
@@ -192,63 +181,57 @@ static NSString * const kURLParameterIdentifier = @"id";
 }
 
 
-- (instancetype)initWithRoot:(NSString *)root path:(NSString *)path
+#pragma mark - Factory methods
+
++ (instancetype)connectionWithDelegate:(id)delegate
 {
-    self = [self init];
-    
-    if (self) {
-        _root = root;
-        _path = path;
-    }
-    
-    return self;
+    return [[self alloc] initWithDelegate:delegate];
 }
 
 
 #pragma mark - Authentication
 
-+ (void)signInWithEmail:(NSString *)email password:(NSString *)password
+- (void)signInWithEmail:(NSString *)email password:(NSString *)password
 {
-    [[[self alloc] init] authenticateWithPath:kPathSignIn email:email password:password];
+    [self authenticateWithPath:kPathSignIn email:email password:password];
 }
 
 
-+ (void)activateWithEmail:(NSString *)email password:(NSString *)password
+- (void)activateWithEmail:(NSString *)email password:(NSString *)password
 {
-    [[[self alloc] init] authenticateWithPath:kPathActivate email:email password:password];
+    [self authenticateWithPath:kPathActivate email:email password:password];
 }
 
 
-+ (void)sendActivationCodeToEmail:(NSString *)email
+- (void)sendActivationCodeToEmail:(NSString *)email
 {
-    [[[self alloc] init] authenticateWithPath:kPathSendCode email:email password:[OCrypto generateActivationCode]];
+    [self authenticateWithPath:kPathSendCode email:email password:[OCrypto generateActivationCode]];
 }
 
 
 #pragma mark - Entity replication
 
-+ (void)replicateEntities:(NSArray *)entities
+- (void)replicateEntities:(NSArray *)entities
 {
-    NSString *path = [entities count] ? kPathReplicate : kPathFetch;
-    NSString *HTTPMethod = [entities count] ? kHTTPMethodPOST : kHTTPMethodGET;
+    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
     
-    OConnection *connection = [[self alloc] initWithRoot:kRootModel path:path];
-    [connection setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
-    [connection setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince];
-    
-    [connection performHTTPMethod:HTTPMethod entities:entities delegate:[OMeta m].replicator];
+    if ([entities count]) {
+        [self performHTTPMethod:kHTTPMethodPOST withRoot:kRootModel path:kPathReplicate entities:entities];
+    } else {
+        [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathFetch entities:nil];
+    }
 }
 
 
 #pragma mark - Member lookup
 
-+ (void)lookupMemberWithIdentifier:(NSString *)identifier
+- (void)lookupMemberWithIdentifier:(NSString *)identifier
 {
-    OConnection *connection = [[self alloc] initWithRoot:kRootModel path:kPathLookup];
-    [connection setValue:identifier forURLParameter:kURLParameterIdentifier];
-    [connection setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
+    [self setValue:identifier forURLParameter:kURLParameterIdentifier];
+    [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     
-    [connection performHTTPMethod:kHTTPMethodGET entities:nil delegate:[OState s].viewController];
+    [self performHTTPMethod:kHTTPMethodGET withRoot:kRootModel path:kPathLookup entities:nil];
 }
 
 

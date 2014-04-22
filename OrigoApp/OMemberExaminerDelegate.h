@@ -1,5 +1,5 @@
 //
-//  ORegistreeExaminerDelegate.h
+//  OMemberExaminerDelegate.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol ORegistrantExaminerDelegate <NSObject>
+@protocol OMemberExaminerDelegate <NSObject>
 
 @required
 - (void)examinerDidFinishExamination;

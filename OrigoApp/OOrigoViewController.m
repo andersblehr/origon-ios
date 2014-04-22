@@ -109,17 +109,17 @@ static NSInteger const kButtonTagGuardian = 101;
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Show in map", @"") tag:kButtonTagShowInMap];
     }
     
-    NSString *origoDisplayName = nil;
+    NSString *displayName = nil;
     
     if (![_origo isOfType:kOrigoTypeResidence] || [self aspectIsHousehold]) {
-        origoDisplayName = [_origo displayName];
+        displayName = [_origo facade].name;
     } else if ([_origo hasAddress]) {
-        origoDisplayName = [_origo shortAddress];
+        displayName = [_origo shortAddress];
     } else {
-        origoDisplayName = NSLocalizedString(@"About this household", @"");
+        displayName = NSLocalizedString(@"About this household", @"");
     }
     
-    [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"About %@", @""), origoDisplayName] tag:kButtonTagAbout];
+    [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"About %@", @""), displayName] tag:kButtonTagAbout];
     
     [actionSheet show];
 }
@@ -168,7 +168,7 @@ static NSInteger const kButtonTagGuardian = 101;
         if ([_origo isOfType:kOrigoTypeResidence] && ![[OState s] aspectIsHousehold]) {
             self.title = NSLocalizedString(kOrigoTypeResidence, kKeyPrefixOrigoTitle);
         } else {
-            self.title = [_origo displayName];
+            self.title = [_origo facade].name;
         }
         
         if ([self actionIs:kActionDisplay]) {
@@ -239,6 +239,16 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
+- (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self actionIs:kActionRegister] && [_origo isOfType:kOrigoTypeResidence]) {
+        if ((cell == self.detailCell) && [_member isUser] && ![_member hasAddress]) {
+            [[cell inputFieldForKey:kInterfaceKeyResidenceName] setValue:NSLocalizedString(kInterfaceKeyResidenceName, kKeyPrefixDefault)];
+        }
+    }
+}
+
+
 - (BOOL)canDeleteRowAtIndexPath:(NSIndexPath *)indexPath
 {
     BOOL canDeleteRow = NO;
@@ -291,7 +301,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)processInput
 {
-    [self.detailCell writeEntity];
+    [self.detailCell writeEntityInstantiate:YES];
     
     if ([self actionIs:kActionRegister]) {
         if (!_membership) {
@@ -314,11 +324,9 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
-- (id)inputEntity
+- (void)didInstantiateEntity:(id)entity
 {
-    _origo = [_origo instantiate];
-    
-    return _origo;
+    _origo = entity;
 }
 
 
@@ -367,8 +375,7 @@ static NSInteger const kButtonTagGuardian = 101;
     cell.textLabel.text = member.name;
     cell.detailTextLabel.text = [member shortDetails];
     cell.imageView.image = [member smallImage];
-    
-    [cell setDestinationViewControllerIdentifier:kIdentifierMember segueDuringInput:NO];
+    cell.destinationId = kIdentifierMember;
 }
 
 
