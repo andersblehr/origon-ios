@@ -42,7 +42,7 @@ static NSInteger const kSectionKeyWards = 2;
             yourChild = NSLocalizedString(@"your child", @"");
         }
         
-        for (OMember *ward in [_member wards]) {
+        for (id<OMember> ward in [_member wards]) {
             allMale = allMale && [ward isMale];
             allFemale = allFemale && ![ward isMale];
         }
@@ -83,7 +83,7 @@ static NSInteger const kSectionKeyWards = 2;
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[prompt stringByAppendingString:@"?"] delegate:self tag:kActionSheetTagOrigoType];
     
     for (NSString *origoType in _origoTypes) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(origoType, kKeyPrefixOrigoTitle)];
+        [actionSheet addButtonWithTitle:NSLocalizedString(origoType, kStringPrefixOrigoTitle)];
     }
     
     [actionSheet show];
@@ -98,7 +98,7 @@ static NSInteger const kSectionKeyWards = 2;
 
     if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
         if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].user.entityId]) {
-            OMember *creator = [[OMeta m].context entityWithId:[OMeta m].user.createdBy];
+            id<OMember> creator = [[OMeta m].context entityWithId:[OMeta m].user.createdBy];
             
             [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origo", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Please verify your details and provide the information that %@ was not authorised to enter when %@ invited you.", @""), [creator givenName], [creator pronoun][nominative]]];
         } else if (![OMeta m].userDidJustSignUp) {
@@ -114,7 +114,7 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)loadState
 {
-    _member = [self.entityProxy facade];
+    _member = [self.entityProxy actingInstance];
     _origoTypes = [NSMutableArray array];
     
     if ([_member isUser]) {
@@ -219,14 +219,14 @@ static NSInteger const kSectionKeyWards = 2;
     
     if (sectionKey == kSectionKeyMember) {
         if ([_member isUser]) {
-            OOrigo *residence = entity;
+            id<OOrigo> residence = entity;
             
             cell.textLabel.text = residence.name;
             cell.detailTextLabel.text = [residence singleLineAddress];
             cell.imageView.image = [residence smallImage];
             cell.destinationId = kIdentifierOrigo;
         } else {
-            OMember *member = entity;
+            id<OMember> member = entity;
             
             cell.textLabel.text = member.name;
             cell.detailTextLabel.text = [member shortDetails];
@@ -234,7 +234,7 @@ static NSInteger const kSectionKeyWards = 2;
             cell.destinationId = kIdentifierMember;
         }
     } else if (sectionKey == kSectionKeyWards) {
-        OMember *ward = entity;
+        id<OMember> ward = entity;
         
         cell.textLabel.text = [ward givenName];
         cell.imageView.image = [ward smallImage];
@@ -250,7 +250,7 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.textColor = [UIColor dimmedTextColour];
         }
     } else if (sectionKey == kSectionKeyOrigos) {
-        OOrigo *origo = entity;
+        id<OOrigo> origo = entity;
 
         cell.textLabel.text = origo.name;
         cell.imageView.image = [origo smallImage];
@@ -260,7 +260,7 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
             cell.detailTextLabel.textColor = [UIColor notificationTextColour];
         } else {
-            cell.detailTextLabel.text = NSLocalizedString(origo.type, kKeyPrefixOrigoTitle);
+            cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
             cell.detailTextLabel.textColor = [UIColor textColour];
         }
     }

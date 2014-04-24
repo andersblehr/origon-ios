@@ -8,18 +8,22 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OReplicatedEntity (OrigoAdditions)
+@protocol OEntity <NSObject>
 
-+ (instancetype)instanceWithId:(NSString *)entityId;
+@required
+- (Class)entityClass;
+- (OEntityProxy *)proxy;
+- (BOOL)isInstantiated;
+- (id)instantiate;
+- (id)actingInstance;
 
 - (BOOL)hasValueForKey:(NSString *)key;
-- (id)serialisableValueForKey:(NSString *)key;
-- (void)setDeserialisedValue:(id)value forKey:(NSString *)key;
+- (void)setValue:(id)value forKey:(NSString *)key;
+- (id)valueForKey:(NSString *)key;
 
-- (NSDictionary *)toDictionary;
-- (NSString *)computeHashCode;
-- (void)internaliseRelationships;
-- (id)relationshipToEntity:(id)other;
+@optional
+@property (nonatomic, readonly) NSString *entityId;
+@property (nonatomic, readonly) NSString *createdBy;
 
 - (BOOL)userIsCreator;
 - (BOOL)isTransient;
@@ -32,6 +36,21 @@
 - (void)expire;
 - (void)unexpire;
 - (NSString *)expiresInTimeframe;
+
+@end
+
+
+@interface OReplicatedEntity (OrigoAdditions) <OEntity>
+
++ (instancetype)instanceWithId:(NSString *)entityId;
+
+- (id)serialisableValueForKey:(NSString *)key;
+- (void)setDeserialisedValue:(id)value forKey:(NSString *)key;
+
+- (NSDictionary *)toDictionary;
+- (NSString *)computeHashCode;
+- (void)internaliseRelationships;
+- (id)relationshipToEntity:(id)other;
 
 + (Class)proxyClass;
 + (NSArray *)propertyKeys;

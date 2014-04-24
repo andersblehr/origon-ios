@@ -10,9 +10,9 @@
 
 @interface OMemberViewController : OTableViewController<OTableViewControllerInstance, OTableViewListDelegate, OTableViewInputDelegate, OMemberExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate, OConnectionDelegate> {
 @private
-    id _member;
-    id _origo;
-    OMembership *_membership;
+    id<OMember> _member;
+    id<OOrigo> _origo;
+    id<OMembership> _membership;
     
     OInputField *_nameField;
     OInputField *_dateOfBirthField;
@@ -23,8 +23,6 @@
     NSMutableArray *_addressBookHomeNumbers;
     NSMutableArray *_homeNumberMappings;
     NSArray *_candidateResidences;
-    
-    OMemberExaminer *_examiner;
 }
 
 @end

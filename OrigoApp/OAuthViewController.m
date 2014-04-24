@@ -50,7 +50,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
         
         if (_authInfo) {
-            [ODefaults setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
+            [ODefaults removeGlobalDefaultForKey:kDefaultsKeyAuthInfo];
         }
     }
     
@@ -108,7 +108,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [[OMeta m] userDidSignUp];
         [[OMeta m].user residence];
         
-        [ODefaults setGlobalDefault:nil forKey:kDefaultsKeyAuthInfo];
+        [ODefaults removeGlobalDefaultForKey:kDefaultsKeyAuthInfo];
     }
     
     [self.dismisser dismissModalViewController:self reload:YES];

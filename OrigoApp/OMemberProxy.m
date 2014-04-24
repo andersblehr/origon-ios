@@ -24,13 +24,13 @@
 }
 
 
-#pragma mark - Informal OMember protocol conformance
+#pragma mark - OMember protocol conformance
 
 - (BOOL)isJuvenile
 {
     BOOL isJuvenile = NO;
     
-    if (self.instance) {
+    if ([self isInstantiated]) {
         isJuvenile = [self.instance isJuvenile];
     } else {
         NSDate *dateOfBirth = [self valueForKey:kPropertyKeyDateOfBirth];

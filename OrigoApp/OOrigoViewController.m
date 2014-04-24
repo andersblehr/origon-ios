@@ -33,14 +33,14 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)addNewMemberButtonsToActionSheet:(OActionSheet *)actionSheet
 {
-    [actionSheet addButtonWithTitle:NSLocalizedString([_origo facade].type, kKeyPrefixAddMemberButton) tag:kButtonTagAddMember];
+    [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
     
     if ([[[OState s].pivotMember peersNotInOrigo:_origo] count] > 0) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other origos", @"") tag:kButtonTagAddFromOrigo];
     }
     
     if ([_origo isOrganised]) {
-        [actionSheet addButtonWithTitle:NSLocalizedString([_origo facade].type, kKeyPrefixAddContactButton) tag:kButtonTagAddContact];
+        [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddContactButton) tag:kButtonTagAddContact];
         
         if ([_origo isJuvenile]) {
             [actionSheet addButtonWithTitle:NSLocalizedString(@"Add parent contact", @"") tag:kButtonTagAddParentContact];
@@ -60,7 +60,7 @@ static NSInteger const kButtonTagGuardian = 101;
     if (housemateCandidates && [housemateCandidates count]) {
         [self presentHousemateCandidatesSheet:housemateCandidates];
     } else {
-        id target = [_origo isJuvenile] ? kTargetJuvenile : [_origo facade].type;
+        id target = [_origo isJuvenile] ? kTargetJuvenile : _origo.type;
         
         [self presentModalViewControllerWithIdentifier:kIdentifierMember target:target];
     }
@@ -75,7 +75,7 @@ static NSInteger const kButtonTagGuardian = 101;
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagHousemate];
     
-    for (OMember *candidate in _housemateCandidates) {
+    for (id<OMember> candidate in _housemateCandidates) {
         [actionSheet addButtonWithTitle:candidate.name];
     }
     
@@ -112,7 +112,7 @@ static NSInteger const kButtonTagGuardian = 101;
     NSString *displayName = nil;
     
     if (![_origo isOfType:kOrigoTypeResidence] || [self aspectIsHousehold]) {
-        displayName = [_origo facade].name;
+        displayName = _origo.name;
     } else if ([_origo hasAddress]) {
         displayName = [_origo shortAddress];
     } else {
@@ -151,14 +151,14 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)loadState
 {
-    _origo = [self.entityProxy facade];
-    _member = [[self.entityProxy parentWithClass:[OMember class]] facade];
+    _origo = [self.entityProxy actingInstance];
+    _member = [[self.entityProxy parentWithClass:[OMember class]] actingInstance];
     
     if ([self actionIs:kActionRegister]) {
         if ([_origo isOfType:kOrigoTypeResidence] && ![_member hasAddress]) {
-            self.title = NSLocalizedString(kOrigoTypeResidence, kKeyPrefixOrigoTitle);
+            self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
         } else {
-            self.title = NSLocalizedString([_origo facade].type, kKeyPrefixNewOrigoTitle);
+            self.title = NSLocalizedString(_origo.type, kStringPrefixNewOrigoTitle);
         }
         
         self.cancelImpliesSkip = ([_origo isInstantiated] && ![self aspectIsHousehold]);
@@ -166,9 +166,9 @@ static NSInteger const kButtonTagGuardian = 101;
         _membership = [_origo membershipForMember:_member];
         
         if ([_origo isOfType:kOrigoTypeResidence] && ![[OState s] aspectIsHousehold]) {
-            self.title = NSLocalizedString(kOrigoTypeResidence, kKeyPrefixOrigoTitle);
+            self.title = NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle);
         } else {
-            self.title = [_origo facade].name;
+            self.title = _origo.name;
         }
         
         if ([self actionIs:kActionDisplay]) {
@@ -226,7 +226,7 @@ static NSInteger const kButtonTagGuardian = 101;
     if (sectionKey == kSectionKeyContacts) {
         text = [[OLanguage nouns][_contact_][pluralIndefinite] capitalizedString];
     } else if (sectionKey == kSectionKeyMembers) {
-        text = NSLocalizedString([_origo facade].type, kKeyPrefixMemberListTitle);
+        text = NSLocalizedString(_origo.type, kStringPrefixMemberListTitle);
     }
     
     return text;
@@ -235,7 +235,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    return NSLocalizedString([_origo facade].type, kKeyPrefixFooter);
+    return NSLocalizedString(_origo.type, kStringPrefixFooter);
 }
 
 
@@ -243,7 +243,7 @@ static NSInteger const kButtonTagGuardian = 101;
 {
     if ([self actionIs:kActionRegister] && [_origo isOfType:kOrigoTypeResidence]) {
         if ((cell == self.detailCell) && [_member isUser] && ![_member hasAddress]) {
-            [[cell inputFieldForKey:kInterfaceKeyResidenceName] setValue:NSLocalizedString(kInterfaceKeyResidenceName, kKeyPrefixDefault)];
+            [[cell inputFieldForKey:kInterfaceKeyResidenceName] setValue:NSLocalizedString(kInterfaceKeyResidenceName, kStringPrefixDefault)];
         }
     }
 }
@@ -269,7 +269,7 @@ static NSInteger const kButtonTagGuardian = 101;
 {
     if (viewController.returnData) {
         if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
-            for (OMember *member in viewController.returnData) {
+            for (id<OMember> member in viewController.returnData) {
                 [_origo addMember:member];
             }
             
@@ -348,8 +348,8 @@ static NSInteger const kButtonTagGuardian = 101;
 {
     NSComparisonResult result = NSOrderedSame;
     
-    OMember *member1 = object1;
-    OMember *member2 = object2;
+    id<OMember> member1 = object1;
+    id<OMember> member2 = object2;
     
     BOOL member1IsMinor = [member1 isJuvenile];
     BOOL member2IsMinor = [member2 isJuvenile];
@@ -370,7 +370,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    OMember *member = [self dataAtIndexPath:indexPath];
+    id<OMember> member = [self dataAtIndexPath:indexPath];
     
     cell.textLabel.text = member.name;
     cell.detailTextLabel.text = [member shortDetails];

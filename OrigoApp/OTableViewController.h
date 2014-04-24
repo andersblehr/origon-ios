@@ -82,9 +82,6 @@ extern NSString * const kCustomData;
 - (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber;
 - (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath;
 
-- (void)setHeaderText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey;
-- (void)setFooterText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey;
-
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target meta:(id)meta;
 - (void)dismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload;
@@ -96,6 +93,8 @@ extern NSString * const kCustomData;
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
+- (void)reloadHeaderForSectionWithKey:(NSInteger)sectionKey;
+- (void)reloadFooterForSectionWithKey:(NSInteger)sectionKey;
 
 - (void)signOut;
 

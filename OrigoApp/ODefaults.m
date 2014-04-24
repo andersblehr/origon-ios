@@ -49,7 +49,7 @@ static NSString *userId = nil;
 }
 
 
-#pragma mark - User defaults convenience methods
+#pragma mark - Global defaults convenience methods
 
 + (void)setGlobalDefault:(id)globalDefault forKey:(NSString *)key
 {
@@ -61,6 +61,20 @@ static NSString *userId = nil;
 }
 
 
++ (id)globalDefaultForKey:(NSString *)key
+{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:key];
+}
+
+
++ (void)removeGlobalDefaultForKey:(NSString *)key
+{
+    [self setGlobalDefault:nil forKey:key];
+}
+
+
+#pragma mark - User defaults convenience methods
+
 + (void)setUserDefault:(id)userDefault forKey:(NSString *)key
 {
     NSString *userKey = [self userKeyForKey:key];
@@ -71,17 +85,17 @@ static NSString *userId = nil;
 }
 
 
-+ (id)globalDefaultForKey:(NSString *)key
-{
-    return [[NSUserDefaults standardUserDefaults] objectForKey:key];
-}
-
-
 + (id)userDefaultForKey:(NSString *)key
 {
     NSString *userKey = [self userKeyForKey:key];
     
     return userKey ? [self globalDefaultForKey:userKey] : nil;
+}
+
+
++ (void)removeUserDefaultForKey:(NSString *)key
+{
+    [self setUserDefault:nil forKey:key];
 }
 
 

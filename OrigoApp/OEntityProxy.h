@@ -8,8 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OEntityProxy : NSObject {
+@interface OEntityProxy : NSObject<OEntity> {
 @private
+    id _instance;
     Class _entityClass;
     NSArray *_propertyKeys;
     NSMutableDictionary *_valuesByKey;
@@ -18,20 +19,13 @@
     id _forwardSelectorArgument;
 }
 
-@property (strong, nonatomic) id instance;
+@property (strong, nonatomic, readonly) id instance;
 @property (strong, nonatomic) OEntityProxy *parent;
 
 + (instancetype)proxyForEntity:(OReplicatedEntity *)entity;
 + (instancetype)proxyForEntityOfClass:(Class)entityClass type:(NSString *)type;
 + (instancetype)proxyForEntityWithJSONDictionary:(NSDictionary *)dictionary;
 
-- (Class)entityClass;
-- (OEntityProxy *)proxy;
-- (id<OEntityFacade>)facade;
 - (id)parentWithClass:(Class)parentClass;
-- (BOOL)hasValueForKey:(NSString *)key;
-
-- (BOOL)isInstantiated;
-- (id)instantiate;
 
 @end

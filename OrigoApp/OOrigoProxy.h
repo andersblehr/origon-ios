@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OOrigoProxy : OEntityProxy
+@interface OOrigoProxy : OEntityProxy<OOrigo>
 
 + (instancetype)proxyWithType:(NSString *)type;
 + (instancetype)proxyFromAddressBookEntry:(CFDictionaryRef)entry;

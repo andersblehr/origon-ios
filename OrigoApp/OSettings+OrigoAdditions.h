@@ -8,14 +8,22 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OSettings (OrigoAdditions)
+@protocol OSettings <OEntity>
 
-+ (instancetype)settings;
-
-- (NSArray *)settingKeys;
+@optional
+@property (nonatomic) NSNumber* useEnglish;
 
 - (void)setValue:(id)value forSettingKey:(NSString *)settingKey;
 - (id)valueForSettingKey:(NSString *)settingKey;
 - (id)displayValueForSettingKey:(NSString *)settingKey;
+
+@end
+
+
+@interface OSettings (OrigoAdditions) <OSettings>
+
++ (instancetype)settings;
+
+- (NSArray *)settingKeys;
 
 @end

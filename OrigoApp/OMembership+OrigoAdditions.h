@@ -14,7 +14,17 @@ extern NSString *kMembershipStatusActive;
 extern NSString *kMembershipStatusRejected;
 extern NSString *kMembershipStatusExpired;
 
-@interface OMembership (OrigoAdditions)
+
+@protocol OMembership <OEntity>
+
+@optional
+@property (nonatomic) id<OOrigo> origo;
+@property (nonatomic) id<OMember> member;
+@property (nonatomic) NSString *type;
+@property (nonatomic) NSString *status;
+@property (nonatomic) NSNumber *isAdmin;
+@property (nonatomic) NSString *contactRole;
+@property (nonatomic) NSString *contactType;
 
 - (BOOL)isInvited;
 - (BOOL)isActive;
@@ -29,5 +39,10 @@ extern NSString *kMembershipStatusExpired;
 - (void)promoteToFull;
 - (void)demoteToAssociate;
 - (void)alignWithOrigoIsAssociate:(BOOL)isAssociate;
+
+@end
+
+
+@interface OMembership (OrigoAdditions) <OMembership>
 
 @end

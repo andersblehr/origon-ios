@@ -12,7 +12,6 @@
 @private
     NSBundle *_localisedStringsBundle;
     
-    OMember *_user;
     OLocator *_locator;
     OReplicator *_replicator;
     OSwitchboard *_switchboard;
@@ -40,7 +39,7 @@
 @property (strong, nonatomic, readonly) NSString *language;
 @property (strong, nonatomic, readonly) NSBundle *localisedStringsBundle;
 
-@property (strong, nonatomic, readonly) OMember *user;
+@property (strong, nonatomic, readonly) id<OMember> user;
 @property (strong, nonatomic, readonly) OLocator *locator;
 @property (strong, nonatomic, readonly) OReplicator *replicator;
 @property (strong, nonatomic, readonly) OSwitchboard *switchboard;

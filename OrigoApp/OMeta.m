@@ -164,7 +164,7 @@ static CGFloat _screenScale = 0.f;
     [self.replicator saveUserReplicationState];
     [self.replicator resetUserReplicationState];
     
-    [ODefaults setUserDefault:nil forKey:kDefaultsKeyAuthExpiryDate];
+    [ODefaults removeUserDefaultForKey:kDefaultsKeyAuthExpiryDate];
     
     [self reset];
 }
@@ -298,7 +298,7 @@ static CGFloat _screenScale = 0.f;
     if ([[OState s] actionIs:kActionActivate] && [[OState s] targetIs:kTargetEmail]) {
         _user.email = userEmail;
         
-        [ODefaults setUserDefault:nil forKey:kDefaultsKeyUserId];
+        [ODefaults removeUserDefaultForKey:kDefaultsKeyUserId];
         [ODefaults resetUser];
     }
     

@@ -85,7 +85,25 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
-#pragma mark - Introspection
+#pragma mark - Parent proxy access
+
+- (id)parentWithClass:(Class)parentClass
+{
+    id parent = nil;
+    
+    if (_parent) {
+        if (_parent.entityClass == parentClass) {
+            parent = [_parent actingInstance];
+        } else {
+            parent = [_parent parentWithClass:parentClass];
+        }
+    }
+    
+    return parent;
+}
+
+
+#pragma mark - Required OEntity protocol conformance
 
 - (Class)entityClass
 {
@@ -99,36 +117,6 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
-- (id<OEntityFacade>)facade
-{
-    return _instance ? (id<OEntityFacade>)_instance : (id<OEntityFacade>)self;
-}
-
-
-- (id)parentWithClass:(Class)parentClass
-{
-    id parent = nil;
-    
-    if (_parent) {
-        if (_parent.entityClass == parentClass) {
-            parent = _parent.instance ? _parent.instance : _parent;
-        } else {
-            parent = [_parent parentWithClass:parentClass];
-        }
-    }
-    
-    return parent;
-}
-
-
-- (BOOL)hasValueForKey:(NSString *)key
-{
-    return _instance ? [_instance hasValueForKey:key] : [[_valuesByKey allKeys] containsObject:key];
-}
-
-
-#pragma mark - Entity instance handling
-
 - (BOOL)isInstantiated
 {
     return _instance ? YES : NO;
@@ -138,7 +126,7 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 - (id)instantiate
 {
     if (!_instance && (!_parent || [_parent isInstantiated])) {
-        _instance = [_entityClass instanceWithId:[self facade].entityId];
+        _instance = [_entityClass instanceWithId:self.entityId];
         
         for (NSString *key in [_entityClass propertyKeys]) {
             if (![key isEqualToString:kPropertyKeyEntityId]) {
@@ -155,17 +143,17 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
-#pragma mark - Custom accessors
-
-- (void)setInstance:(id)instance
+- (id)actingInstance
 {
-    _instance = ([instance class] == _entityClass) ? instance : nil;
-    
-    [_valuesByKey removeAllObjects];
+    return _instance ? _instance : self;
 }
 
 
-#pragma mark - Key value proxy methods
+- (BOOL)hasValueForKey:(NSString *)key
+{
+    return _instance ? [_instance hasValueForKey:key] : [[_valuesByKey allKeys] containsObject:key];
+}
+
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {
@@ -174,7 +162,11 @@ static NSString * const kClassSuffixProxy = @"Proxy";
     if (_instance) {
         [_instance setValue:value forKey:key];
     } else if ([_propertyKeys containsObject:key]) {
-        _valuesByKey[key] = value;
+        if (value) {
+            _valuesByKey[key] = value;
+        } else {
+            [_valuesByKey removeObjectForKey:key];
+        }
     }
 }
 

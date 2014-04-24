@@ -8,25 +8,37 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OMember (OrigoAdditions)
+@protocol OMember <OEntity>
+
+@optional
+@property (nonatomic) NSString *name;
+@property (nonatomic) NSDate *dateOfBirth;
+@property (nonatomic) NSString *mobilePhone;
+@property (nonatomic) NSString *email;
+@property (nonatomic) NSString *gender;
+@property (nonatomic) NSString *fatherId;
+@property (nonatomic) NSString *motherId;
+
+@property (nonatomic) NSString *passwordHash;
+@property (nonatomic) id<OSettings> settings;
 
 - (NSSet *)allMemberships;
 - (NSSet *)residencies;
 
-- (OOrigo *)root;
-- (OOrigo *)residence;
+- (id<OOrigo>)root;
+- (id<OOrigo>)residence;
 - (NSArray *)residences;
 - (NSArray *)origosIncludeResidences:(BOOL)includeResidences;
 
-- (OMember *)partner;
+- (id<OMember>)partner;
 - (NSSet *)wards;
 - (NSSet *)parents;
 - (NSSet *)siblings;
 - (NSSet *)guardians;
 - (NSSet *)peers;
-- (NSSet *)peersNotInOrigo:(OOrigo *)origo;
+- (NSSet *)peersNotInOrigo:(id<OOrigo>)origo;
 - (NSSet *)housemates;
-- (NSSet *)housematesNotInResidence:(OOrigo *)residence;
+- (NSSet *)housematesNotInResidence:(id<OOrigo>)residence;
 - (NSSet *)housemateResidences;
 
 - (BOOL)isActive;
@@ -42,7 +54,7 @@
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOlderThan:(NSInteger)age;
 - (BOOL)hasAddress;
-- (BOOL)hasParent:(OMember *)member;
+- (BOOL)hasParent:(id<OMember>)member;
 - (BOOL)hasParentWithGender:(NSString *)gender;
 - (BOOL)guardiansAreParents;
 
@@ -53,9 +65,14 @@
 - (NSString *)appellation;
 - (NSString *)givenName;
 - (NSString *)givenNameWithParentTitle;
-- (NSString *)givenNameWithContactRoleForOrigo:(OOrigo *)origo;
+- (NSString *)givenNameWithContactRoleForOrigo:(id<OOrigo>)origo;
 - (NSString *)shortAddress;
 - (NSString *)shortDetails;
 - (UIImage *)smallImage;
+
+@end
+
+
+@interface OMember (OrigoAdditions) <OMember>
 
 @end

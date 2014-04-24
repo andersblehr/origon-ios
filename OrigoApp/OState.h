@@ -40,7 +40,7 @@ extern NSString * const kTargetSettings;
 
 @property (strong, nonatomic, readonly) NSString *identifier;
 @property (weak, nonatomic, readonly) OTableViewController *viewController;
-@property (weak, nonatomic, readonly) OMember *pivotMember;
+@property (weak, nonatomic, readonly) id<OMember> pivotMember;
 @property (strong, nonatomic) NSString *action;
 @property (strong, nonatomic) id target;
 
