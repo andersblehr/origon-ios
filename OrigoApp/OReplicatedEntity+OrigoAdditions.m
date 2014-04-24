@@ -46,22 +46,6 @@
 
 #pragma mark - Key-value proxy methods
 
-- (BOOL)hasValueForKey:(NSString *)key
-{
-    BOOL hasValue = NO;
-    
-    id value = [self valueForKey:key];
-    
-    if ([value isKindOfClass:[NSString class]]) {
-        hasValue = [value hasValue];
-    } else {
-        hasValue = value ? YES : NO;
-    }
-    
-    return hasValue;
-}
-
-
 - (id)serialisableValueForKey:(NSString *)key
 {
     id value = [self valueForKey:key];
@@ -278,13 +262,15 @@
 }
 
 
+#pragma mark - State string representation
+
 - (NSString *)asTarget
 {
     return @"OVERRIDE IN SUBCLASS";
 }
 
 
-#pragma mark - OEntityProxy informal protocol conformance
+#pragma mark - Required OEntity protocol conformance
 
 - (Class)entityClass
 {
@@ -298,19 +284,39 @@
 }
 
 
-- (id<OEntityFacade>)facade
-{
-    return (id<OEntityFacade>)self;
-}
-
-
 - (BOOL)isInstantiated
 {
     return YES;
 }
 
 
-#pragma mark - NSManagedObject overrides
+- (id)instantiate
+{
+    return nil;
+}
+
+
+- (id)actingInstance
+{
+    return self;
+}
+
+
+- (BOOL)hasValueForKey:(NSString *)key
+{
+    BOOL hasValue = NO;
+    
+    id value = [self valueForKey:key];
+    
+    if ([value isKindOfClass:[NSString class]]) {
+        hasValue = [value hasValue];
+    } else {
+        hasValue = value ? YES : NO;
+    }
+    
+    return hasValue;
+}
+
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {

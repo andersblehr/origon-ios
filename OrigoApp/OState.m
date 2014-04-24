@@ -43,14 +43,14 @@ static NSString * const kAspectDefault = @"d";
 
 - (void)setAspectForTarget:(id)target
 {
-    if ([target isKindOfClass:[OMember class]]) {
+    if ([target conformsToProtocol:@protocol(OMember)]) {
         if ([target isHousemateOfUser]) {
             _pivotMember = target;
             _aspect = kAspectHousehold;
         } else {
             _aspect = kAspectDefault;
         }
-    } else if ([target isKindOfClass:[OOrigo class]]) {
+    } else if ([target conformsToProtocol:@protocol(OOrigo)]) {
         if ([target isOfType:kOrigoTypeResidence] && [target userIsMember]) {
             _aspect = kAspectHousehold;
         } else {
@@ -216,9 +216,9 @@ static NSString * const kAspectDefault = @"d";
     if ([target isKindOfClass:[NSString class]]) {
         instanceQualifier = target;
     } else if ([target isInstantiated]) {
-        instanceQualifier = [target facade].entityId;
+        instanceQualifier = [target valueForKey:kPropertyKeyEntityId];
     } else {
-        instanceQualifier = [target facade].type;
+        instanceQualifier = [target valueForKey:kPropertyKeyType];
     }
     
     return [identifier stringByAppendingString:instanceQualifier separator:kSeparatorColon];
@@ -239,9 +239,9 @@ static NSString * const kAspectDefault = @"d";
 {
     if ([target isKindOfClass:[OEntityProxy class]]) {
         if ([target isInstantiated]) {
-            target = [target proxy].instance;
+            target = [target instance];
         } else {
-            target = [target facade].type;
+            target = [target valueForKey:kPropertyKeyType];
         }
     }
     

@@ -51,8 +51,8 @@ static NSString * const kAddressTemplatesByCountryCode =
     address = [address stringByReplacingSubstring:kPlaceholderState withString:(NSString *)CFDictionaryGetValue(entry, kABPersonAddressStateKey)];
     address = [address stringByReplacingSubstring:kPlaceholderZip withString:(NSString *)CFDictionaryGetValue(entry, kABPersonAddressZIPKey)];
     
-    [self facade].address = address;
-    [self facade].countryCode = countryCode;
+    self.address = address;
+    self.countryCode = countryCode;
 }
 
 

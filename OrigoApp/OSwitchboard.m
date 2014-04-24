@@ -68,7 +68,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         NSInteger recipientTag = [recipientTags[candidateCount] integerValue];
         
         if (recipientTag == kRecipientTagOrigo) {
-            OOrigo *origo = recipients[0];
+            id<OOrigo> origo = recipients[0];
             
             if ([origo hasAddress]) {
                 [actionSheet addButtonWithTitle:[origo shortAddress]];
@@ -90,7 +90,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         } else if (recipientTag == kRecipientTagGuardians) {
             [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:recipients conjoinLastItem:YES]];
         } else if (recipientTag == kRecipientTagAllMembers) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kKeyPrefixAllMembersTitle)];
+            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAllMembersTitle)];
         } else if (recipientTag == kRecipientTagAllContacts) {
             [actionSheet addButtonWithTitle:NSLocalizedString(@"All contacts", @"")];
         } else if (recipientTag == kRecipientTagAllGuardians) {
@@ -167,7 +167,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         }
     } else {
         if (![candidates containsObject:[OMeta m].user] || !skipUser) {
-            for (OMember *candidate in candidates) {
+            for (id<OMember> candidate in candidates) {
                 if (![candidate isUser]) {
                     if ([candidate.email hasValue]) {
                         [emailRecipients addObject:candidate];
@@ -222,11 +222,11 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     }
     
     if ([_origo isOfType:kOrigoTypeResidence]) {
-        for (OMember *member in [_origo members]) {
+        for (id<OMember> member in [_origo members]) {
             [self addRecipientCandidates:@[member] skipUser:YES tag:kRecipientTagMember];
         }
     } else if ([_origo hasContacts]) {
-        for (OMember *contact in [_origo contacts]) {
+        for (id<OMember> contact in [_origo contacts]) {
             [self addRecipientCandidates:@[contact] skipUser:YES tag:kRecipientTagContact];
         }
     }
@@ -245,7 +245,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         if ([[_member parents] count]) {
             NSMutableArray *parents = [NSMutableArray array];
             
-            for (OMember *parent in [_member parents]) {
+            for (id<OMember> parent in [_member parents]) {
                 [parents insertObject:parent atIndex:[parent isUser] ? [parents count] : 0];
             }
             
@@ -253,24 +253,24 @@ static NSInteger const kRecipientTagAllGuardians = 8;
                 [self addRecipientCandidates:parents skipUser:YES tag:kRecipientTagParents];
             }
             
-            for (OMember *parent in parents) {
+            for (id<OMember> parent in parents) {
                 [self addRecipientCandidates:@[parent] skipUser:YES tag:kRecipientTagParent];
             }
             
-            for (OMember *parent in parents) {
-                OMember *partner = [parent partner];
+            for (id<OMember> parent in parents) {
+                id<OMember> partner = [parent partner];
                 
                 if (partner) {
                     [self addRecipientCandidates:@[parent, partner] skipUser:NO tag:kRecipientTagGuardians];
                 }
             }
         } else {
-            for (OOrigo *residence in [_member residences]) {
+            for (id<OOrigo> residence in [_member residences]) {
                 NSSet *elders = [residence elders];
                 
                 [self addRecipientCandidates:elders skipUser:YES tag:kRecipientTagGuardians];
                 
-                for (OMember *elder in elders) {
+                for (id<OMember> elder in elders) {
                     [self addRecipientCandidates:@[elder] skipUser:YES tag:kRecipientTagMember];
                 }
             }
@@ -281,7 +281,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         }
     }
     
-    for (OOrigo *residence in [_member residences]) {
+    for (id<OOrigo> residence in [_member residences]) {
         if ([residence.telephone hasValue]) {
             [self addRecipientCandidates:@[residence] skipUser:NO tag:kRecipientTagOrigo];
         }
@@ -358,7 +358,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 {
     NSMutableArray *recipientEmailAddresses = [NSMutableArray array];
     
-    for (OMember *recipient in recipients) {
+    for (id<OMember> recipient in recipients) {
         [recipientEmailAddresses addObject:recipient.email];
     }
     
@@ -375,7 +375,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 {
     NSMutableArray *recipientMobileNumbers = [NSMutableArray array];
     
-    for (OMember *recipient in recipients) {
+    for (id<OMember> recipient in recipients) {
         [recipientMobileNumbers addObject:recipient.mobilePhone];
     }
     
@@ -391,9 +391,9 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 {
     NSString *phoneNumber = nil;
     
-    if ([recipient isKindOfClass:[OMember class]]) {
+    if ([recipient conformsToProtocol:@protocol(OMember)]) {
         phoneNumber = [recipient mobilePhone];
-    } else if ([recipient isKindOfClass:[OOrigo class]]) {
+    } else if ([recipient conformsToProtocol:@protocol(OOrigo)]) {
         phoneNumber = [recipient telephone];
     }
     
@@ -439,7 +439,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 
 #pragma mark - Applicable toolbar items
 
-- (NSArray *)toolbarButtonsForOrigo:(OOrigo *)origo
+- (NSArray *)toolbarButtonsForOrigo:(id<OOrigo>)origo
 {
     [self reset];
     
@@ -451,7 +451,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 }
 
 
-- (NSArray *)toolbarButtonsForMember:(OMember *)member
+- (NSArray *)toolbarButtonsForMember:(id<OMember>)member
 {
     [self reset];
     

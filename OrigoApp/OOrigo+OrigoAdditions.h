@@ -28,9 +28,16 @@ extern NSString * const kContactRoleTreasurer;
 extern NSString * const kContactRoleCoach;
 extern NSString * const kContactRoleAssistantCoach;
 
-@interface OOrigo (OrigoAdditions)
 
-+ (instancetype)instanceWithId:(NSString *)entityId type:(NSString *)type;
+@protocol OOrigo <OEntity>
+
+@optional
+@property (nonatomic) NSString *name;
+@property (nonatomic) NSString *descriptionText;
+@property (nonatomic) NSString *address;
+@property (nonatomic) NSString *telephone;
+@property (nonatomic) NSString *countryCode;
+@property (nonatomic, readonly) NSString *type;
 
 - (NSSet *)allMemberships;
 - (NSSet *)residents;
@@ -40,10 +47,10 @@ extern NSString * const kContactRoleAssistantCoach;
 - (NSSet *)guardians;
 - (NSSet *)elders;
 
-- (OMembership *)addMember:(OMember *)member;
-- (OMembership *)addAssociateMember:(OMember *)member;
-- (OMembership *)membershipForMember:(OMember *)member;
-- (OMembership *)associateMembershipForMember:(OMember *)member;
+- (id<OMembership>)addMember:(id<OMember>)member;
+- (id<OMembership>)addAssociateMember:(id<OMember>)member;
+- (id<OMembership>)membershipForMember:(id<OMember>)member;
+- (id<OMembership>)associateMembershipForMember:(id<OMember>)member;
 
 - (BOOL)userCanEdit;
 - (BOOL)userIsAdmin;
@@ -56,15 +63,22 @@ extern NSString * const kContactRoleAssistantCoach;
 - (BOOL)hasAddress;
 - (BOOL)hasAdmin;
 - (BOOL)hasContacts;
-- (BOOL)hasMember:(OMember *)member;
-- (BOOL)hasContact:(OMember *)contact;
-- (BOOL)hasAssociateMember:(OMember *)associateMember;
-- (BOOL)knowsAboutMember:(OMember *)member;
-- (BOOL)indirectlyKnowsAboutMember:(OMember *)member;
-- (BOOL)hasResidentsInCommonWithResidence:(OOrigo *)residence;
+- (BOOL)hasMember:(id<OMember>)member;
+- (BOOL)hasContact:(id<OMember>)contact;
+- (BOOL)hasAssociateMember:(id<OMember>)associateMember;
+- (BOOL)knowsAboutMember:(id<OMember>)member;
+- (BOOL)indirectlyKnowsAboutMember:(id<OMember>)member;
+- (BOOL)hasResidentsInCommonWithResidence:(id<OOrigo>)residence;
 
 - (NSString *)singleLineAddress;
 - (NSString *)shortAddress;
 - (UIImage *)smallImage;
+
+@end
+
+
+@interface OOrigo (OrigoAdditions) <OOrigo>
+
++ (instancetype)instanceWithId:(NSString *)entityId type:(NSString *)type;
 
 @end

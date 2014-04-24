@@ -151,7 +151,6 @@
 		5C15BFF716386C6000BB5254 /* glyphicons_004_girl-as_boy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy.png"; sourceTree = "<group>"; };
 		5C15BFF816386C6000BB5254 /* glyphicons_004_girl-as_boy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy@2x.png"; sourceTree = "<group>"; };
 		5C15BFFD1638815300BB5254 /* 76-baby_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "76-baby_black.png"; sourceTree = "<group>"; };
-		5C1866A418EABDD300CB8FED /* OEntityFacade.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OEntityFacade.h; sourceTree = "<group>"; };
 		5C198B7016D63944002D3976 /* OTableViewListDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTableViewListDelegate.h; sourceTree = "<group>"; };
 		5C198B7116D76343002D3976 /* OTableViewCellBlueprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCellBlueprint.h; sourceTree = "<group>"; };
 		5C198B7216D76343002D3976 /* OTableViewCellBlueprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCellBlueprint.m; sourceTree = "<group>"; };
@@ -482,10 +481,9 @@
 			name = "Entity Categories";
 			sourceTree = "<group>";
 		};
-		5C7C4DCF18E57DDF00903989 /* Entity Façade & Proxies */ = {
+		5C7C4DCF18E57DDF00903989 /* Entity Proxies */ = {
 			isa = PBXGroup;
 			children = (
-				5C1866A418EABDD300CB8FED /* OEntityFacade.h */,
 				5C7C4DD018E57E1F00903989 /* OEntityProxy.h */,
 				5C7C4DD118E57E1F00903989 /* OEntityProxy.m */,
 				5C53A1F918F895510023BF8A /* OMemberProxy.h */,
@@ -493,7 +491,7 @@
 				5C7EDE3218DB2450003AFFAF /* OOrigoProxy.h */,
 				5C7EDE3318DB2450003AFFAF /* OOrigoProxy.m */,
 			);
-			name = "Entity Façade & Proxies";
+			name = "Entity Proxies";
 			sourceTree = "<group>";
 		};
 		5CB49DCD14881E98006EA2F8 /* Protocols */ = {
@@ -609,7 +607,7 @@
 				5CE85DA5157FF2940060B4DF /* Cocoa Subclasses */,
 				5C36BEA51471A05700DD3CEA /* Entities */,
 				5C5ED5CB14F2E95B006BBDFB /* Entity Categories */,
-				5C7C4DCF18E57DDF00903989 /* Entity Façade & Proxies */,
+				5C7C4DCF18E57DDF00903989 /* Entity Proxies */,
 				5CB49DCD14881E98006EA2F8 /* Protocols */,
 				5CB49DCE14881EC6006EA2F8 /* View Controllers */,
 				5CB49DD114882012006EA2F8 /* Third Party */,

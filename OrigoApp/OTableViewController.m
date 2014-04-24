@@ -206,12 +206,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)didCancelEditing
 {
-    if ([self actionIs:kActionRegister]) {
-        _returnData = nil;
-        [_dismisser dismissModalViewController:self reload:NO];
-    } else if ([self actionIs:kActionEdit]) {
+    if ([self actionIs:kActionEdit]) {
         [_detailCell readEntity];
         [self toggleEditMode];
+    } else {
+        _returnData = nil;
+        [_dismisser dismissModalViewController:self reload:NO];
     }
 }
 
@@ -409,20 +409,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Modifying header & footer text
-
-- (void)setHeaderText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey
-{
-    [_sectionHeaderLabels[@(sectionKey)] setText:text];
-}
-
-
-- (void)setFooterText:(NSString *)text forSectionWithKey:(NSInteger)sectionKey
-{
-    [_sectionFooterLabels[@(sectionKey)] setText:text];
-}
-
-
 #pragma mark - Modal view controller handling
 
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target
@@ -549,7 +535,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Utility methods
+#pragma mark - Reloading sections and/or section elements
 
 - (void)reloadSections
 {
@@ -620,6 +606,24 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
 }
 
+
+- (void)reloadHeaderForSectionWithKey:(NSInteger)sectionKey
+{
+    if ([_instance respondsToSelector:@selector(textForHeaderInSectionWithKey:)]) {
+        [_sectionHeaderLabels[@(sectionKey)] setText:[_instance textForHeaderInSectionWithKey:sectionKey]];
+    }
+}
+
+
+- (void)reloadFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    if ([_instance respondsToSelector:@selector(textForFooterInSectionWithKey:)]) {
+        [_sectionFooterLabels[@(sectionKey)] setText:[_instance textForFooterInSectionWithKey:sectionKey]];
+    }
+}
+
+
+#pragma mark - Signing out
 
 - (void)signOut
 {

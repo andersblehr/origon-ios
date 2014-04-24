@@ -67,7 +67,7 @@ static NSInteger const kSectionKeySignOut = 1;
     if (sectionKey == kSectionKeyValues) {
         NSString *key = [self dataAtIndexPath:indexPath];
         
-        cell.textLabel.text = NSLocalizedString(key, kKeyPrefixSettingLabel);
+        cell.textLabel.text = NSLocalizedString(key, kStringPrefixSettingLabel);
         cell.detailTextLabel.text = [[OSettings settings] displayValueForSettingKey:key];
     } else if (sectionKey == kSectionKeySignOut) {
         cell.accessoryType = UITableViewCellAccessoryNone;

@@ -39,12 +39,12 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
                 for (NSDate *date in items) {
                     [stringItems addObject:[date localisedDateString]];
                 }
-            } else if ([items[0] isKindOfClass:[OMember class]]) {
-                for (OMember *member in items) {
+            } else if ([items[0] conformsToProtocol:@protocol(OMember)]) {
+                for (id<OMember> member in items) {
                     [stringItems addObject:[member appellation]];
                 }
-            } else if ([items[0] isKindOfClass:[OOrigo class]]) {
-                for (OOrigo *origo in items) {
+            } else if ([items[0] conformsToProtocol:@protocol(OOrigo)]) {
+                for (id<OOrigo> origo in items) {
                     [stringItems addObject:origo.name];
                 }
             }

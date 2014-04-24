@@ -12,9 +12,9 @@
 
 #pragma mark - Auxiliary methods
 
-+ (CGFloat)widthWithKey:(NSString *)key keyPrefix:(NSString *)keyPrefix
++ (CGFloat)widthWithKey:(NSString *)key prefix:(NSString *)prefix
 {
-    return [NSLocalizedString(key, keyPrefix) sizeWithFont:[UIFont detailFont] maxWidth:CGFLOAT_MAX].width;
+    return [NSLocalizedString(key, prefix) sizeWithFont:[UIFont detailFont] maxWidth:CGFLOAT_MAX].width;
 }
 
 
@@ -25,10 +25,10 @@
     CGFloat width = 0.f;
     
     for (NSString *key in blueprint.detailKeys) {
-        width = MAX(width, [self widthWithKey:key keyPrefix:kKeyPrefixLabel]);
+        width = MAX(width, [self widthWithKey:key prefix:kStringPrefixLabel]);
         
         if ([OValidator isAlternatingLabelKey:key]) {
-            width = MAX(width, [self widthWithKey:key keyPrefix:kKeyPrefixAlternateLabel]);
+            width = MAX(width, [self widthWithKey:key prefix:kStringPrefixAlternateLabel]);
         }
     }
     
@@ -46,7 +46,7 @@
         self.backgroundColor = [UIColor clearColor];
         self.font = [UIFont detailFont];
         self.hidden = YES;
-        self.text = NSLocalizedString(key, kKeyPrefixLabel);
+        self.text = NSLocalizedString(key, kStringPrefixLabel);
         self.textAlignment = centred ? NSTextAlignmentCenter : NSTextAlignmentRight;
         self.textColor = [UIColor labelTextColour];
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -67,9 +67,9 @@
     
     if ([OValidator isAlternatingLabelKey:_key]) {
         if (_useAlternateText) {
-            self.text = NSLocalizedString(_key, kKeyPrefixAlternateLabel);
+            self.text = NSLocalizedString(_key, kStringPrefixAlternateLabel);
         } else {
-            self.text = NSLocalizedString(_key, kKeyPrefixLabel);
+            self.text = NSLocalizedString(_key, kStringPrefixLabel);
         }
     }
 }

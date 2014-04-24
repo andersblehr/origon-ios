@@ -58,7 +58,7 @@
             self.navigationItem.rightBarButtonItem.enabled = NO;
         }
     } else {
-        self.title = NSLocalizedString(_settingKey, kKeyPrefixSettingTitle);
+        self.title = NSLocalizedString(_settingKey, kStringPrefixSettingTitle);
         
         _settings = [OSettings settings];
         _settingKey = self.state.target;
@@ -133,7 +133,7 @@
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     if ([self targetIsMemberVariant]) {
-        OMember *peer = [self dataAtIndexPath:indexPath];
+        id<OMember> peer = [self dataAtIndexPath:indexPath];
         
         cell.textLabel.text = peer.name;
         cell.detailTextLabel.text = [peer shortAddress];

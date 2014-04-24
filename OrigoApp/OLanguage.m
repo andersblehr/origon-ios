@@ -68,7 +68,7 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
     
     if ([subject isKindOfClass:[NSString class]]) {
         subjectString = subject;
-    } else if ([subject isKindOfClass:[OMember class]]) {
+    } else if ([subject conformsToProtocol:@protocol(OMember)]) {
         if ([subject isUser]) {
             if (isQuestion) {
                 subjectString = [self pronouns][_you_][nominative];
@@ -93,7 +93,7 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
     
     if ([subject isKindOfClass:[NSString class]]) {
         verbString = verb[singular3];
-    } else if ([subject isKindOfClass:[OMember class]]) {
+    } else if ([subject conformsToProtocol:@protocol(OMember)]) {
         if ([subject isUser]) {
             verbString = isQuestion ? verb[singular2] : verb[singular1];
         } else {
@@ -186,7 +186,7 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
     
     if ([possessor isKindOfClass:[NSString class]]) {
         possessiveClause = [NSString stringWithFormat:noun[possessive3], possessor];
-    } else if ([possessor isKindOfClass:[OMember class]]) {
+    } else if ([possessor conformsToProtocol:@protocol(OMember)]) {
         if ([possessor isUser]) {
             possessiveClause = noun[possessive2];
         } else {

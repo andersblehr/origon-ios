@@ -76,22 +76,22 @@ extern NSString * const kRelationshipKeyMember;
 extern NSString * const kRelationshipKeyOrigo;
 
 // String key prefixes
-extern NSString * const kKeyPrefixDefault;
-extern NSString * const kKeyPrefixLabel;
-extern NSString * const kKeyPrefixAlternateLabel;
-extern NSString * const kKeyPrefixPlaceholder;
-extern NSString * const kKeyPrefixOrigoTitle;
-extern NSString * const kKeyPrefixNewOrigoTitle;
-extern NSString * const kKeyPrefixFooter;
-extern NSString * const kKeyPrefixAddMemberButton;
-extern NSString * const kKeyPrefixAddContactButton;
-extern NSString * const kKeyPrefixContactTitle;
-extern NSString * const kKeyPrefixMemberListTitle;
-extern NSString * const kKeyPrefixNewMemberTitle;
-extern NSString * const kKeyPrefixAllMembersTitle;
-extern NSString * const kKeyPrefixContactRole;
-extern NSString * const kKeyPrefixSettingTitle;
-extern NSString * const kKeyPrefixSettingLabel;
+extern NSString * const kStringPrefixDefault;
+extern NSString * const kStringPrefixLabel;
+extern NSString * const kStringPrefixAlternateLabel;
+extern NSString * const kStringPrefixPlaceholder;
+extern NSString * const kStringPrefixOrigoTitle;
+extern NSString * const kStringPrefixNewOrigoTitle;
+extern NSString * const kStringPrefixFooter;
+extern NSString * const kStringPrefixAddMemberButton;
+extern NSString * const kStringPrefixAddContactButton;
+extern NSString * const kStringPrefixContactTitle;
+extern NSString * const kStringPrefixMemberListTitle;
+extern NSString * const kStringPrefixNewMemberTitle;
+extern NSString * const kStringPrefixAllMembersTitle;
+extern NSString * const kStringPrefixContactRole;
+extern NSString * const kStringPrefixSettingTitle;
+extern NSString * const kStringPrefixSettingLabel;
 
 // Icon file names
 extern NSString * const kIconFileOrigo;

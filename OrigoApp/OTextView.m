@@ -135,7 +135,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
         _key = key;
         _blueprint = blueprint;
         _textWidth = [[self class] textWidthWithBlueprint:_blueprint];
-        _placeholder = NSLocalizedString(_key, kKeyPrefixPlaceholder);
+        _placeholder = NSLocalizedString(_key, kStringPrefixPlaceholder);
         _supportsMultiLineText = YES;
         
         if ([OMeta systemIs_iOS6x]) {

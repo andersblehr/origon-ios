@@ -76,22 +76,22 @@ NSString * const kRelationshipKeyMember = @"member";
 NSString * const kRelationshipKeyOrigo = @"origo";
 
 // String key prefixes
-NSString * const kKeyPrefixDefault = @"[default]";
-NSString * const kKeyPrefixLabel = @"[label]";
-NSString * const kKeyPrefixAlternateLabel = @"[alternate label]";
-NSString * const kKeyPrefixPlaceholder = @"[placeholder]";
-NSString * const kKeyPrefixOrigoTitle = @"[title]";
-NSString * const kKeyPrefixNewOrigoTitle = @"[registration title]";
-NSString * const kKeyPrefixFooter = @"[registration footer]";
-NSString * const kKeyPrefixAddMemberButton = @"[add member]";
-NSString * const kKeyPrefixAddContactButton = @"[add contact]";
-NSString * const kKeyPrefixContactTitle = @"[contact title]";
-NSString * const kKeyPrefixMemberListTitle = @"[member list]";
-NSString * const kKeyPrefixNewMemberTitle = @"[member registration]";
-NSString * const kKeyPrefixAllMembersTitle = @"[all members]";
-NSString * const kKeyPrefixContactRole = @"[contact role]";
-NSString * const kKeyPrefixSettingTitle = @"[setting title]";
-NSString * const kKeyPrefixSettingLabel = @"[setting label]";
+NSString * const kStringPrefixDefault = @"[default]";
+NSString * const kStringPrefixLabel = @"[label]";
+NSString * const kStringPrefixAlternateLabel = @"[alternate label]";
+NSString * const kStringPrefixPlaceholder = @"[placeholder]";
+NSString * const kStringPrefixOrigoTitle = @"[title]";
+NSString * const kStringPrefixNewOrigoTitle = @"[registration title]";
+NSString * const kStringPrefixFooter = @"[registration footer]";
+NSString * const kStringPrefixAddMemberButton = @"[add member]";
+NSString * const kStringPrefixAddContactButton = @"[add contact]";
+NSString * const kStringPrefixContactTitle = @"[contact title]";
+NSString * const kStringPrefixMemberListTitle = @"[member list]";
+NSString * const kStringPrefixNewMemberTitle = @"[member registration]";
+NSString * const kStringPrefixAllMembersTitle = @"[all members]";
+NSString * const kStringPrefixContactRole = @"[contact role]";
+NSString * const kStringPrefixSettingTitle = @"[setting title]";
+NSString * const kStringPrefixSettingLabel = @"[setting label]";
 
 // Icon file names
 NSString * const kIconFileOrigo = @"10-arrows-in_black.png";

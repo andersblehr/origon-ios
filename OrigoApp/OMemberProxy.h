@@ -8,6 +8,6 @@
 
 #import "OEntityProxy.h"
 
-@interface OMemberProxy : OEntityProxy
+@interface OMemberProxy : OEntityProxy<OMember>
 
 @end

@@ -104,7 +104,7 @@
             [_dirtyEntities addObject:[[OMeta m].context objectWithID:dirtyEntityID]];
         }
         
-        [ODefaults setUserDefault:nil forKey:kDefaultsKeyDirtyEntities];
+        [ODefaults removeUserDefaultForKey:kDefaultsKeyDirtyEntities];
     }
 }
 

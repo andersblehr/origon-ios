@@ -10,9 +10,9 @@
 
 @interface OMemberExaminer : NSObject<UIActionSheetDelegate> {
 @private
-    id _member;
-    OOrigo *_residence;
-    OMember *_currentCandidate;
+    id<OMember> _member;
+    id<OOrigo> _residence;
+    id<OMember> _currentCandidate;
     
     NSInteger _parentCandidateStatus;
     NSArray *_candidates;
@@ -22,7 +22,7 @@
     id<OMemberExaminerDelegate> _delegate;
 }
 
-+ (instancetype)examinerForResidence:(OOrigo *)residence delegate:(id)delegate;
++ (instancetype)examinerForResidence:(id<OOrigo>)residence delegate:(id)delegate;
 
 - (void)examineMember:(id)member;
 

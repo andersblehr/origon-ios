@@ -112,7 +112,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
             photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColour];
             photoPrompt.font = [UIFont detailFont];
-            photoPrompt.text = NSLocalizedString(kPropertyKeyPhoto, kKeyPrefixPlaceholder);
+            photoPrompt.text = NSLocalizedString(kPropertyKeyPhoto, kStringPrefixPlaceholder);
             photoPrompt.textAlignment = NSTextAlignmentCenter;
             photoPrompt.textColor = [UIColor imagePlaceholderTextColour];
             [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -339,12 +339,19 @@ static CGFloat const kShakeRepeatCount = 3.f;
                     [self layoutIfNeeded];
                 }
                 
+#if !CGFLOAT_IS_DOUBLE // Compiled for 32-bit
                 [_state.viewController.tableView beginUpdates];
                 [_state.viewController.tableView endUpdates];
+#endif
                 
                 CGRect frame = self.frame;
                 frame.size.height = desiredHeight + implicitFramePadding;
                 self.frame = frame;
+                
+#if CGFLOAT_IS_DOUBLE // Compiled for 64-bit
+                [_state.viewController.tableView beginUpdates];
+                [_state.viewController.tableView endUpdates];
+#endif
                 
                 if ([OMeta systemIs_iOS6x]) {
                     [self.backgroundView redrawSeparatorsForTableViewCell];

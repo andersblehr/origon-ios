@@ -31,7 +31,7 @@ static OMemberExaminer *_instance = nil;
 
 #pragma mark - Auxiliary methods
 
-- (NSInteger)parentCandidateStatusForMember:(OMember *)member
+- (NSInteger)parentCandidateStatusForMember:(id<OMember>)member
 {
     return [member isMale] ? kParentCandidateStatusFather : kParentCandidateStatusMother;
 }
@@ -41,7 +41,7 @@ static OMemberExaminer *_instance = nil;
 {
     NSMutableArray *candidates = [NSMutableArray array];
     
-    for (OMember *resident in [_residence residents]) {
+    for (id<OMember> resident in [_residence residents]) {
         if ([_member isJuvenile]) {
             if ([resident.dateOfBirth yearsBeforeDate:[_member dateOfBirth]] >= kAgeOfConsent) {
                 [candidates addObject:resident];
@@ -76,7 +76,7 @@ static OMemberExaminer *_instance = nil;
 }
 
 
-- (NSString *)candidate:(OMember *)candidate parentLabelWithOffspringGender:(NSString *)gender
+- (NSString *)candidate:(id<OMember>)candidate parentLabelWithOffspringGender:(NSString *)gender
 {
     NSString *parentLabel = nil;
     
@@ -94,7 +94,13 @@ static OMemberExaminer *_instance = nil;
 
 - (void)presentGenderSheet
 {
-    id subject = [[OState s] targetIs:kTargetUser] ? [OMeta m].user : [_member givenName];
+    id subject = nil;
+    
+    if ([[OState s] targetIs:kTargetUser]) {
+        subject = [OMeta m].user;
+    } else {
+        subject = [_member givenName];
+    }
     
     NSString *prompt = [OLanguage questionWithSubject:subject verb:_be_ argument:[_member isJuvenile] ? NSLocalizedString(@"a girl or a boy", @"") : NSLocalizedString(@"a woman or a man", @"")];
     
@@ -141,7 +147,7 @@ static OMemberExaminer *_instance = nil;
 }
 
 
-- (void)presentCandidateSheetForParentCandidate:(OMember *)candidate
+- (void)presentCandidateSheetForParentCandidate:(id<OMember>)candidate
 {
     NSString *prompt = [OLanguage questionWithSubject:candidate verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:[_member givenName] noun:[self parentNounForGender:candidate.gender]]];
     
@@ -153,7 +159,7 @@ static OMemberExaminer *_instance = nil;
 }
 
 
-- (void)presentCandidateSheetForOffspringCandidate:(OMember *)candidate
+- (void)presentCandidateSheetForOffspringCandidate:(id<OMember>)candidate
 {
     NSString *prompt = [OLanguage questionWithSubject:[_member givenName] verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:candidate noun:[self parentNounForGender:[_member gender]]]];
     
@@ -167,11 +173,11 @@ static OMemberExaminer *_instance = nil;
 
 #pragma mark - Examination loop
 
-- (OMember *)nextCandidate
+- (id<OMember>)nextCandidate
 {
-    OMember *nextCandidate = nil;
+    id<OMember> nextCandidate = nil;
     
-    for (OMember *candidate in _candidates) {
+    for (id<OMember> candidate in _candidates) {
         if (!nextCandidate && ![_examinedCandidates containsObject:candidate]) {
             nextCandidate = candidate;
         }
@@ -187,7 +193,7 @@ static OMemberExaminer *_instance = nil;
         [_delegate examinerDidCancelExamination];
     } else {
         if ([_registrantOffspring count]) {
-            for (OMember *offspring in _registrantOffspring) {
+            for (id<OMember> offspring in _registrantOffspring) {
                 if ([[_member gender] isEqualToString:kGenderMale]) {
                     offspring.fatherId = [_member entityId];
                 } else {
@@ -253,28 +259,9 @@ static OMemberExaminer *_instance = nil;
 }
 
 
-//- (void)examineRegistrantWithName:(NSString *)name isJuvenile:(BOOL)isJuvenile
-//{
-//    _isJuvenile = isJuvenile;
-//    _givenName = [OUtil givenNameFromFullName:name];
-//    _parentCandidateStatus = kParentCandidateStatusUndetermined;
-//    _candidates = nil;
-//    _examinedCandidates = [NSMutableSet set];
-//    _registrantOffspring = [NSMutableArray array];
-//    _motherId = nil;
-//    _fatherId = nil;
-//    
-//    if (_residence && (_dateOfBirth || [[OState s] targetIs:kTargetGuardian])) {
-//        [self assembleCandidates];
-//    }
-//    
-//    [self performExamination];
-//}
-
-
 #pragma mark - Initialisation
 
-- (instancetype)initWithResidence:(OOrigo *)residence delegate:(id)delegate
+- (instancetype)initWithResidence:(id<OOrigo>)residence delegate:(id)delegate
 {
     self = [super init];
     
@@ -289,7 +276,7 @@ static OMemberExaminer *_instance = nil;
 
 #pragma mark - Factory methods
 
-+ (instancetype)examinerForResidence:(OOrigo *)residence delegate:(id)delegate
++ (instancetype)examinerForResidence:(id<OOrigo>)residence delegate:(id)delegate
 {
     _instance = [[self alloc] initWithResidence:residence delegate:delegate];
     
@@ -312,33 +299,7 @@ static OMemberExaminer *_instance = nil;
     }
     
     [self performExamination];
-    
-    //_gender = [registrant facade].gender;
-    
-    //[self examineRegistrantWithName:[member facade].name isJuvenile:[member isJuvenile]];
 }
-
-
-//- (void)examineRegistrantWithName:(NSString *)name
-//{
-//    [self examineRegistrantWithName:name isJuvenile:NO];
-//}
-//
-//
-//- (void)examineRegistrantWithName:(NSString *)name gender:(NSString *)gender
-//{
-//    _gender = gender;
-//
-//    [self examineRegistrantWithName:name isJuvenile:NO];
-//}
-//
-//
-//- (void)examineRegistrantWithName:(NSString *)name dateOfBirth:(NSDate *)dateOfBirth
-//{
-//    _dateOfBirth = dateOfBirth;
-//    
-//    [self examineRegistrantWithName:name isJuvenile:[dateOfBirth isBirthDateOfMinor]];
-//}
 
 
 #pragma mark - UIActionSheetDelegate conformance
@@ -358,8 +319,8 @@ static OMemberExaminer *_instance = nil;
                 [_examinedCandidates addObjectsFromArray:_candidates];
                 
                 if (buttonTag == kButtonTagYes) {
-                    OMember *father = [_candidates[0] isMale] ? _candidates[0] : _candidates[1];
-                    OMember *mother = [_candidates[0] isMale] ? _candidates[1] : _candidates[0];
+                    id<OMember> father = [_candidates[0] isMale] ? _candidates[0] : _candidates[1];
+                    id<OMember> mother = [_candidates[0] isMale] ? _candidates[1] : _candidates[0];
                     
                     [_member setFatherId:father.entityId];
                     [_member setMotherId:mother.entityId];
@@ -396,7 +357,7 @@ static OMemberExaminer *_instance = nil;
                         [_member setMotherId:_currentCandidate.entityId];
                     }
                     
-                    for (OMember *candidate in _candidates) {
+                    for (id<OMember> candidate in _candidates) {
                         if ([candidate isMale] == [_currentCandidate isMale]) {
                             [_examinedCandidates addObject:candidate];
                         }

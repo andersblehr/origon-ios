@@ -33,9 +33,9 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 #pragma mark - Auxiliary methods
 
-- (OMembership *)addMember:(OMember *)member isAssociate:(BOOL)isAssociate
+- (id<OMembership>)addMember:(id<OMember>)member isAssociate:(BOOL)isAssociate
 {
-    OMembership *membership = [self membershipForMember:member];
+    id<OMembership> membership = [self membershipForMember:member];
     
     if (membership) {
         if ([membership isAssociate] && !isAssociate) {
@@ -58,7 +58,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 #pragma mark - Selector implementations
 
-- (NSComparisonResult)compare:(OOrigo *)other
+- (NSComparisonResult)compare:(id<OOrigo>)other
 {
     NSString *value = [self isOfType:kOrigoTypeResidence] ? self.address : self.name;
     NSString *comparisonValue = [other isOfType:kOrigoTypeResidence] ? other.address : other.name;
@@ -94,7 +94,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     NSMutableSet *memberships = [NSMutableSet set];
     
     if (![self isOfType:kOrigoTypeRoot]) {
-        for (OMembership *membership in self.memberships) {
+        for (id<OMembership> membership in self.memberships) {
             if (![membership hasExpired]) {
                 [memberships addObject:membership];
             }
@@ -111,7 +111,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     NSMutableSet *residents = [NSMutableSet set];
     
-    for (OMembership *membership in [self allMemberships]) {
+    for (id<OMembership> membership in [self allMemberships]) {
         if ([membership isResidency]) {
             [residents addObject:membership.member];
         }
@@ -125,7 +125,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     NSMutableSet *members = [NSMutableSet set];
     
-    for (OMembership *membership in [self allMemberships]) {
+    for (id<OMembership> membership in [self allMemberships]) {
         if ([membership isFull]) {
             [members addObject:membership.member];
         }
@@ -139,7 +139,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     NSMutableSet *contacts = [NSMutableSet set];
     
-    for (OMembership *membership in [self allMemberships]) {
+    for (id<OMembership> membership in [self allMemberships]) {
         if ([membership isFull] && [membership hasContactRole]) {
             [contacts addObject:membership.member];
         }
@@ -163,7 +163,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     NSMutableSet *guardians = [NSMutableSet set];
     
     if ([self isJuvenile]) {
-        for (OMember *member in [self regulars]) {
+        for (id<OMember> member in [self regulars]) {
             [guardians unionSet:[member guardians]];
         }
     }
@@ -177,7 +177,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     NSMutableSet *elders = [NSMutableSet set];
     
     if ([self isOfType:kOrigoTypeResidence]) {
-        for (OMember *resident in [self residents]) {
+        for (id<OMember> resident in [self residents]) {
             if (![resident isJuvenile]) {
                 [elders addObject:resident];
             }
@@ -190,11 +190,11 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 #pragma mark - Membership creation & access
 
-- (OMembership *)addMember:(OMember *)member
+- (id<OMembership>)addMember:(id<OMember>)member
 {
     BOOL isFirstMember = ![self.memberships count];
     
-    OMembership *membership = [self addMember:member isAssociate:NO];
+    id<OMembership> membership = [self addMember:member isAssociate:NO];
     
     if (isFirstMember && ![self isOfType:kOrigoTypeResidence] && [member isJuvenile]) {
         self.isForMinors = @YES;
@@ -204,17 +204,17 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 }
 
 
-- (OMembership *)addAssociateMember:(OMember *)member
+- (id<OMembership>)addAssociateMember:(id<OMember>)member
 {
     return [self addMember:member isAssociate:YES];
 }
 
 
-- (OMembership *)membershipForMember:(OMember *)member
+- (id<OMembership>)membershipForMember:(id<OMember>)member
 {
-    OMembership *membershipForMember = nil;
+    id<OMembership> membershipForMember = nil;
     
-    for (OMembership *membership in self.memberships) {
+    for (id<OMembership> membership in self.memberships) {
         if (!membershipForMember && ![membership isBeingDeleted] && (membership.member == member)) {
             membershipForMember = membership;
         }
@@ -224,9 +224,9 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 }
 
 
-- (OMembership *)associateMembershipForMember:(OMember *)member
+- (id<OMembership>)associateMembershipForMember:(id<OMember>)member
 {
-    OMembership *membership = [self membershipForMember:member];
+    id<OMembership> membership = [self membershipForMember:member];
     
     return [membership isAssociate] ? membership : nil;
 }
@@ -288,7 +288,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     BOOL hasAdmin = NO;
     
-    for (OMembership *membership in [self allMemberships]) {
+    for (id<OMembership> membership in [self allMemberships]) {
         hasAdmin = hasAdmin || [membership.isAdmin boolValue];
     }
     
@@ -302,43 +302,43 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 }
 
 
-- (BOOL)hasMember:(OMember *)member
+- (BOOL)hasMember:(id<OMember>)member
 {
-    OMembership *membership = [self membershipForMember:member];
+    id<OMembership> membership = [self membershipForMember:member];
     
     return ((membership != nil) && [membership isFull]);
 }
 
 
-- (BOOL)hasContact:(OMember *)contact
+- (BOOL)hasContact:(id<OMember>)contact
 {
     return [[self membershipForMember:contact] hasContactRole];
 }
 
 
-- (BOOL)hasAssociateMember:(OMember *)associateMember
+- (BOOL)hasAssociateMember:(id<OMember>)associateMember
 {
-    OMembership *membership = [self membershipForMember:associateMember];
+    id<OMembership> membership = [self membershipForMember:associateMember];
     
     return ((membership != nil) && [membership isAssociate]);
 }
 
 
-- (BOOL)knowsAboutMember:(OMember *)member
+- (BOOL)knowsAboutMember:(id<OMember>)member
 {
     return ([self hasMember:member] || [self indirectlyKnowsAboutMember:member]);
 }
 
 
-- (BOOL)indirectlyKnowsAboutMember:(OMember *)member
+- (BOOL)indirectlyKnowsAboutMember:(id<OMember>)member
 {
     BOOL knowsAboutMember = NO;
-    OMembership *directMembership = [self membershipForMember:member];
+    id<OMembership> directMembership = [self membershipForMember:member];
     
-    for (OMembership *membership in [self allMemberships]) {
+    for (id<OMembership> membership in [self allMemberships]) {
         if ([membership isFull]) {
             if ((membership != directMembership) && ![membership isBeingDeleted]) {
-                for (OMembership *residency in [membership.member residencies]) {
+                for (id<OMembership> residency in [membership.member residencies]) {
                     if ((residency.origo != self) && ![residency isBeingDeleted]) {
                         knowsAboutMember = knowsAboutMember || [residency.origo hasMember:member];
                     }
@@ -351,12 +351,12 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 }
 
 
-- (BOOL)hasResidentsInCommonWithResidence:(OOrigo *)residence
+- (BOOL)hasResidentsInCommonWithResidence:(id<OOrigo>)residence
 {
     BOOL hasResidentsInCommon = NO;
     
     if ([self isOfType:kOrigoTypeResidence] && [residence isOfType:kOrigoTypeResidence]) {
-        for (OMember *resident in [residence residents]) {
+        for (id<OMember> resident in [residence residents]) {
             hasResidentsInCommon = hasResidentsInCommon || [self hasMember:resident];
         }
     }

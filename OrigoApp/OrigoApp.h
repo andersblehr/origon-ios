@@ -28,7 +28,8 @@
 
 #import "Reachability.h"
 
-@class OEntityProxy, OOrigoProxy;
+@protocol OEntity, OMember, OMembership, OOrigo, OSettings;
+@class OEntityProxy, OMemberProxy, OOrigoProxy;
 @class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
 @class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, OMemberExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
 
@@ -40,11 +41,6 @@
 #import "OTableViewInputDelegate.h"
 #import "OTableViewListDelegate.h"
 #import "OTextInput.h"
-
-#import "OEntityFacade.h"
-#import "OEntityProxy.h"
-#import "OMemberProxy.h"
-#import "OOrigoProxy.h"
 
 #import "ODevice.h"
 #import "ODevice+OrigoAdditions.h"
@@ -59,6 +55,10 @@
 #import "OReplicatedEntityRef.h"
 #import "OSettings.h"
 #import "OSettings+OrigoAdditions.h"
+
+#import "OEntityProxy.h"
+#import "OMemberProxy.h"
+#import "OOrigoProxy.h"
 
 typedef UIView<OTextInput> OInputField;
 

@@ -10,7 +10,7 @@
 
 @interface OValuePickerViewController : OTableViewController<OTableViewControllerInstance, OTableViewListDelegate> {
 @private
-    OSettings *_settings;
+    id<OSettings> _settings;
     NSString *_settingKey;
 }
 
