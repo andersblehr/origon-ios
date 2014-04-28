@@ -32,7 +32,7 @@
 "[placeholder] repeatPassword" = "Repeat your password";
 "[placeholder] residenceName" = "Nickname for this address";
 "[placeholder] address" = "Street address\nPostal code and city/town";
-"[placeholder] purpose" = "The purpose of this origo";
+"[placeholder] purpose" = "The purpose of this group";
 "[placeholder] descriptionText" = "An optional description";
 "[placeholder] telephone" = "Telephone number";
 "[placeholder] name"  = "Name";
@@ -65,7 +65,7 @@
 "[registration title] organisation" = "New organisation";
 "[registration title] preschoolClass" = "New preschool class";
 "[registration title] schoolClass" = "New school class";
-"[registration title] other" = "New origo";
+"[registration title] other" = "New group";
 
 // Registration footers
 "[registration footer] residence" = "Tap [+] to add members to the household.";
@@ -91,7 +91,7 @@
 "[add contact] schoolClass" = "Add teacher";
 "[add contact] team" = "Add coach";
 
-// Contact titles
+// Origo contact titles
 "[contact title] preschoolClass" = "Teacher";
 "[contact title] schoolClass" = "Teacher";
 "[contact title] team" = "Coach";
@@ -157,22 +157,22 @@
 "questionTemplate" = "{verb} {subject} {argument}?";
 
 // Verbs
-"wordBe" = "am;are;is;are;are;are";
+"be" = "am;are;is;are;are;are";
 
 // Nouns
-"wordOrigo" = "-;-;-;-;my origos;%@'s origos";
-"wordFather" = "father;the father;-;-;your father;%@'s father";
-"wordMother" = "mother;the mother;-;-;your mother;%@'s mother";
-"wordParent" = "-;-;parents;the parents;your parents;%@'s parents";
-"wordGuardian" = "guardian;-;guardians;-;-;-";
-"wordContact" = "contact;-;contacts;-;-;-";
-"wordAddress" = "address;-;addresses;-;-;-";
+"group" = "-;-;-;-;my groups;%@'s groups";
+"father" = "father;the father;-;-;your father;%@'s father";
+"mother" = "mother;the mother;-;-;your mother;%@'s mother";
+"parent" = "-;-;parents;the parents;your parents;%@'s parents";
+"guardian" = "guardian;-;guardians;-;-;-";
+"contact" = "contact;-;contacts;-;-;-";
+"address" = "address;-;addresses;-;-;-";
 
 // Pronouns
-"wordI" = "I;me;me";
-"wordYou" = "you;you;you";
-"wordHe" = "he;him;him";
-"wordShe" = "she;her;her";
+"I" = "I;me;me";
+"you" = "you;you;you";
+"he" = "he;him;him";
+"she" = "she;her;her";
 
 
 /***
@@ -237,13 +237,12 @@
  ***/
 
 // Headers
-"My origos" = "My origos";
-"The kids' origos" = "The kids' origos";
+"The kids' groups" = "The kids' groups";
 
 // Footers
-"Tap [+] to create an origo" = "Tap [+] to create an origo";
-"Tap [+] to create a new origo" = "Tap [+] to create a new origo";
-"... for yourself. Select %@ to create an origo for %@" = "for yourself. Select %@ to create an origo for %@";
+"Tap [+] to create a group" = "Tap [+] to create a group";
+"Tap [+] to create a new group" = "Tap [+] to create a new group";
+"... for yourself. Select %@ to create a group for %@" = "for yourself. Select %@ to create a group for %@";
 
 // Alerts
 "Welcome to Origo" = "Welcome to Origo";
@@ -252,11 +251,11 @@
 "You must complete your registration before you can start using Origo." = "You must complete your registration before you can start using Origo.";
 
 // Prompts
-"What sort of origo du you want to create" = "What sort of origo du you want to create";
+"What sort of group du you want to create" = "What sort of group du you want to create";
 
 // Info
 "New listing" = "New listing";
-"(No origos)" = "(No origos)";
+"(No groups)" = "(No groups)";
 
 // Terms
 "your child" = "your child";
@@ -270,7 +269,7 @@
 
 // Buttons
 "Edit roles" = "Edit roles";
-"Add from other origos" = "Add from other origos";
+"Add from other groups" = "Add from other groups";
 "Add parent contact" = "Add parent contact";
 "Show in map" = "Show in map";
 "About %@" = "About %@";
@@ -301,7 +300,7 @@
 "All contacts" = "All contacts";
 "All guardians" = "All guardians";
 "Retrieve from Contacts"   = "Retrieve from Contacts";
-"Retrieve from Origo" = "Retrieve from other origo";
+"Retrieve from other groups" = "Retrieve from other groups";
 "A different number" = "A different number";
 "A different address" = "A different address";
 "Neither" = "Neither";

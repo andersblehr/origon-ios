@@ -166,6 +166,10 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             self.state.action = kActionSignIn;
         }
     }
+    
+    if (![self actionIs:kActionActivate] || ![self targetIs:kTargetEmail]) {
+        self.requiresSynchronousServerCalls = YES;
+    }
 }
 
 
@@ -222,12 +226,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         _activationCodeField = [cell inputFieldForKey:kInterfaceKeyActivationCode];
         _repeatPasswordField = [cell inputFieldForKey:kInterfaceKeyRepeatPassword];
     }
-}
-
-
-- (BOOL)serverRequestsAreSynchronous
-{
-    return ![self actionIs:kActionActivate] || ![self targetIs:kTargetEmail];
 }
 
 

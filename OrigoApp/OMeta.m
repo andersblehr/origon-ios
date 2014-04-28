@@ -8,12 +8,9 @@
 
 #import "OMeta.h"
 
-static NSString * const kLocalisedProject = @"lproj";
+static NSString * const kLocalisationTest = @"Localisation test";
 static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
-
-static CGFloat _systemVersion = 0.f;
-static CGFloat _screenScale = 0.f;
 
 
 @implementation OMeta
@@ -95,7 +92,6 @@ static CGFloat _screenScale = 0.f;
     self = [super init];
     
     if (self) {
-        _systemVersion = [[UIDevice currentDevice].systemVersion floatValue];
         _appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
         _appVersion = [[NSBundle mainBundle] infoDictionary][(id)kCFBundleVersionKey];
         _language = [NSLocale preferredLanguages][0];
@@ -231,21 +227,19 @@ static CGFloat _screenScale = 0.f;
 
 + (BOOL)systemIs_iOS6x
 {
-    if (!_systemVersion) {
-        _systemVersion = [[UIDevice currentDevice].systemVersion floatValue];
-    }
-    
-    return (_systemVersion < 7.f);
+    return [[UIDevice currentDevice].systemVersion hasPrefix:@"6"];
 }
 
 
 + (BOOL)screenIsRetina
 {
-    if (!_screenScale) {
-        _screenScale = [UIScreen mainScreen].scale;
-    }
-    
-    return (_screenScale >= 2.f);
+    return ([UIScreen mainScreen].scale >= 2.f);
+}
+
+
++ (CGFloat)screenWidth
+{
+    return [UIScreen mainScreen].applicationFrame.size.width;
 }
 
 
@@ -256,11 +250,11 @@ static CGFloat _screenScale = 0.f;
     if (!_localisedStringsBundle) {
         _localisedStringsBundle = [NSBundle mainBundle];
         
-        if (![_localisedStringsBundle pathForResource:[[self class] m].language ofType:kLocalisedProject]) {
-            NSString *testString = [_localisedStringsBundle localizedStringForKey:@"String test" value:@"" table:nil];
+        if (![_localisedStringsBundle pathForResource:[[self class] m].language ofType:@"lproj"]) {
+            NSString *testString = [_localisedStringsBundle localizedStringForKey:kLocalisationTest value:@"" table:nil];
             
-            if ([testString isEqualToString:@"String test"] || [OSettings settings].useEnglish) {
-                _localisedStringsBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:kLanguageCodeEnglish ofType:kLocalisedProject]];
+            if ([testString isEqualToString:kLocalisationTest] || [OSettings settings].useEnglish) {
+                _localisedStringsBundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:kLanguageCodeEnglish ofType:@"lproj"]];
             }
         }
     }

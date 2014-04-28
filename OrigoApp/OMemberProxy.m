@@ -30,8 +30,8 @@
 {
     BOOL isJuvenile = NO;
     
-    if ([self isInstantiated]) {
-        isJuvenile = [self.instance isJuvenile];
+    if ([self isCommitted]) {
+        isJuvenile = [[self instance] isJuvenile];
     } else {
         NSDate *dateOfBirth = [self valueForKey:kPropertyKeyDateOfBirth];
         

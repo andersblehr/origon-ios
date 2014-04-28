@@ -8,9 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-extern CGFloat const kScreenWidth;
-extern CGFloat const kContentWidth;
-
 @interface UITableView (OrigoAdditions)
 
 - (void)addLogoBanner;

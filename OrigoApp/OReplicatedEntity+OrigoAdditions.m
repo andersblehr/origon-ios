@@ -278,25 +278,31 @@
 }
 
 
-- (OEntityProxy *)proxy
+- (BOOL)isProxy
 {
-    return [OEntityProxy proxyForEntity:self];
+    return NO;
 }
 
 
-- (BOOL)isInstantiated
+- (BOOL)isCommitted
 {
     return YES;
 }
 
 
-- (id)instantiate
+- (id)proxy
+{
+    return [[[self entityClass] proxyClass] proxyForEntity:self];
+}
+
+
+- (id)commit
 {
     return nil;
 }
 
 
-- (id)actingInstance
+- (id)instance
 {
     return self;
 }

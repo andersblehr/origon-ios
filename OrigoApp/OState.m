@@ -45,7 +45,6 @@ static NSString * const kAspectDefault = @"d";
 {
     if ([target conformsToProtocol:@protocol(OMember)]) {
         if ([target isHousemateOfUser]) {
-            _pivotMember = target;
             _aspect = kAspectHousehold;
         } else {
             _aspect = kAspectDefault;
@@ -75,7 +74,6 @@ static NSString * const kAspectDefault = @"d";
         
         if ([[self class] s]) {
             _aspect = [[self class] s]->_aspect;
-            _pivotMember = [[self class] s].pivotMember;
         }
         
         if (viewController.target) {
@@ -107,7 +105,6 @@ static NSString * const kAspectDefault = @"d";
     if (state != self) {
         _identifier = state->_identifier;
         _viewController = state.viewController;
-        _pivotMember = state.pivotMember;
         _aspect = state->_aspect;
         _action = state.action;
         _target = state.target;
@@ -215,7 +212,7 @@ static NSString * const kAspectDefault = @"d";
     
     if ([target isKindOfClass:[NSString class]]) {
         instanceQualifier = target;
-    } else if ([target isInstantiated]) {
+    } else if ([target isCommitted]) {
         instanceQualifier = [target valueForKey:kPropertyKeyEntityId];
     } else {
         instanceQualifier = [target valueForKey:kPropertyKeyType];
@@ -238,7 +235,7 @@ static NSString * const kAspectDefault = @"d";
 - (void)setTarget:(id)target
 {
     if ([target isKindOfClass:[OEntityProxy class]]) {
-        if ([target isInstantiated]) {
+        if ([target isCommitted]) {
             target = [target instance];
         } else {
             target = [target valueForKey:kPropertyKeyType];
@@ -256,6 +253,18 @@ static NSString * const kAspectDefault = @"d";
     _identifier = [[self class] stateIdForViewControllerWithIdentifier:_viewController.identifier target:target];
 
     [[[self class] s] reflectState:self];
+}
+
+
+- (id<OTableViewInputDelegate>)inputDelegate
+{
+    return (id<OTableViewInputDelegate>)_viewController;
+}
+
+
+- (id<OTableViewListDelegate>)listDelegate
+{
+    return (id<OTableViewListDelegate>)_viewController;
 }
 
 @end

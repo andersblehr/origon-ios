@@ -38,7 +38,9 @@
     if ([self targetIs:kTargetElder]) {
         peers = [[OMeta m].user peersNotInOrigo:self.meta];
     } else {
-        peers = [[OState s].pivotMember peersNotInOrigo:self.meta];
+        id<OMember> pivotMember = [self.meta parentConformingToProtocol:@protocol(OMember)];
+        
+        peers = [pivotMember peersNotInOrigo:self.meta];
     }
     
     return [[peers allObjects] sortedArrayUsingSelector:@selector(compare:)];

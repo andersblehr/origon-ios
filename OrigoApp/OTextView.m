@@ -34,9 +34,10 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 + (CGFloat)textWidthWithBlueprint:(OTableViewCellBlueprint *)blueprint
 {
+    CGFloat contentWidth = [OMeta screenWidth] - 2 * kDefaultCellPadding;
     CGFloat widthAdjustment = [OMeta systemIs_iOS6x] ? kWidthAdjustment_iOS6x : kWidthAdjustment;
     
-    return kContentWidth - [OLabel widthWithBlueprint:blueprint] + widthAdjustment;
+    return contentWidth - [OLabel widthWithBlueprint:blueprint] + widthAdjustment;
 }
 
 

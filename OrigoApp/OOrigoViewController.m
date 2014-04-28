@@ -35,8 +35,8 @@ static NSInteger const kButtonTagGuardian = 101;
 {
     [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
     
-    if ([[[OState s].pivotMember peersNotInOrigo:_origo] count] > 0) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other origos", @"") tag:kButtonTagAddFromOrigo];
+    if (![_origo isOfType:kOrigoTypeResidence] && [[_member peersNotInOrigo:_origo] count]) {
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other groups", @"") tag:kButtonTagAddFromOrigo];
     }
     
     if ([_origo isOrganised]) {
@@ -151,8 +151,8 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)loadState
 {
-    _origo = [self.entityProxy actingInstance];
-    _member = [[self.entityProxy parentWithClass:[OMember class]] actingInstance];
+    _origo = [self.entity proxy];
+    _member = [self.entity parentConformingToProtocol:@protocol(OMember)];
     
     if ([self actionIs:kActionRegister]) {
         if ([_origo isOfType:kOrigoTypeResidence] && ![_member hasAddress]) {
@@ -161,7 +161,7 @@ static NSInteger const kButtonTagGuardian = 101;
             self.title = NSLocalizedString(_origo.type, kStringPrefixNewOrigoTitle);
         }
         
-        self.cancelImpliesSkip = ([_origo isInstantiated] && ![self aspectIsHousehold]);
+        self.cancelImpliesSkip = ([_origo isCommitted] && ![self aspectIsHousehold]);
     } else {
         _membership = [_origo membershipForMember:_member];
         
@@ -172,7 +172,7 @@ static NSInteger const kButtonTagGuardian = 101;
         }
         
         if ([self actionIs:kActionDisplay]) {
-            if ([_origo isInstantiated]) {
+            if ([_origo isCommitted]) {
                 self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButton];
             } else {
                 self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButton];
@@ -186,7 +186,7 @@ static NSInteger const kButtonTagGuardian = 101;
 {
     [self setDataForDetailSection];
     
-    if ([_member isInstantiated]) {
+    if ([_member isCommitted]) {
         if ([self actionIs:kActionRegister]) {
             [self setData:@[_member] forSectionWithKey:kSectionKeyMembers];
         } else {
@@ -203,7 +203,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (NSArray *)toolbarButtons
 {
-    return [_origo isInstantiated] ? [[OMeta m].switchboard toolbarButtonsForOrigo:_origo] : nil;
+    return [_origo isCommitted] ? [[OMeta m].switchboard toolbarButtonsForOrigo:_origo] : nil;
 }
 
 
@@ -257,7 +257,7 @@ static NSInteger const kButtonTagGuardian = 101;
         id member = [self dataAtIndexPath:indexPath];
         
         if ([member entityClass] == [OMember class]) {
-            canDeleteRow = [_origo isInstantiated] && [_origo userIsAdmin] && ![member isUser];
+            canDeleteRow = [_origo isCommitted] && [_origo userIsAdmin] && ![member isUser];
         }
     }
     
@@ -301,7 +301,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)processInput
 {
-    [self.detailCell writeEntityInstantiate:YES];
+    [self.detailCell writeEntityCommitIfNeeded:YES];
     
     if ([self actionIs:kActionRegister]) {
         if (!_membership) {
@@ -324,7 +324,19 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
-- (void)didInstantiateEntity:(id)entity
+- (BOOL)isVisibleFieldWithKey:(NSString *)key
+{
+    BOOL isVisible = ![key isEqualToString:kInterfaceKeyResidenceName];
+    
+    if (!isVisible && [_origo userIsMember]) {
+        isVisible = YES;
+    }
+    
+    return isVisible;
+}
+
+
+- (void)didCommitEntity:(id)entity
 {
     _origo = entity;
 }

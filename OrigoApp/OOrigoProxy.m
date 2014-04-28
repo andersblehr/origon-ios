@@ -86,6 +86,12 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 #pragma mark - Informal OOrigo protocol conformance
 
+- (BOOL)userIsMember
+{
+    return [[self parentConformingToProtocol:@protocol(OMember)] isUser];
+}
+
+
 - (BOOL)isOfType:(NSString *)type
 {
     return [[self valueForKey:kPropertyKeyType] isEqualToString:type];

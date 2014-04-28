@@ -19,7 +19,7 @@ static CGFloat const kTitleHeight = 24.f;
 
 - (void)setTitle:(NSString *)title withSubtitle:(NSString *)subtitle
 {
-    CGFloat titleViewWidth = kScreenWidth - 2 * kNavigationBarButtonWidth;
+    CGFloat titleViewWidth = [OMeta screenWidth] - 2 * kNavigationBarButtonWidth;
     
     CGRect titleFrame = CGRectMake(0.f, kTitleHeadroom, titleViewWidth, kTitleHeight);
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:titleFrame];
