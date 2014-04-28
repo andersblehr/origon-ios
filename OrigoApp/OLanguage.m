@@ -8,30 +8,28 @@
 
 #import "OLanguage.h"
 
-NSString * const _be_  = @"wordBe";
+NSString * const _be_  = @"be";
 
-NSString * const _origo_ = @"wordOrigo";
-NSString * const _father_ = @"wordFather";
-NSString * const _mother_ = @"wordMother";
-NSString * const _parent_ = @"wordParent";
-NSString * const _guardian_ = @"wordGuardian";
-NSString * const _contact_ = @"wordContact";
-NSString * const _address_ = @"wordAddress";
+NSString * const _group_ = @"group";
+NSString * const _father_ = @"father";
+NSString * const _mother_ = @"mother";
+NSString * const _parent_ = @"parent";
+NSString * const _guardian_ = @"guardian";
+NSString * const _contact_ = @"contact";
+NSString * const _address_ = @"address";
 
-NSString * const _I_   = @"wordI";
-NSString * const _you_ = @"wordYou";
-NSString * const _he_  = @"wordHe";
-NSString * const _she_ = @"wordShe";
+NSString * const _I_   = @"I";
+NSString * const _you_ = @"you";
+NSString * const _he_  = @"he";
+NSString * const _she_ = @"she";
 
 static NSString * const kPartOfSpeechVerbs = @"be";
-static NSString * const kPartOfSpeechNouns = @"origo;father;mother;parent;guardian;contact;address";
+static NSString * const kPartOfSpeechNouns = @"group;father;mother;parent;guardian;contact;address";
 static NSString * const kPartOfSpeechPronouns = @"I;you;he;she";
 
 static NSString * const kPlaceholderSubject = @"{subject}";
 static NSString * const kPlaceholderVerb = @"{verb}";
 static NSString * const kPlaceholderArgument = @"{argument}";
-
-static NSString * const kWordPrefix = @"word";
 static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
 
 
@@ -50,15 +48,13 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
 
 - (NSDictionary *)loadPartOfSpeech:(NSString *)partOfSpeech
 {
-    NSMutableDictionary *formsDictionary = [NSMutableDictionary dictionary];
+    NSMutableDictionary *forms = [NSMutableDictionary dictionary];
     
     for (NSString *word in [partOfSpeech componentsSeparatedByString:kSeparatorList]) {
-        NSString *wordKey = [kWordPrefix stringByAppendingCapitalisedString:word];
-        
-        formsDictionary[wordKey] = [NSLocalizedString(wordKey, @"") componentsSeparatedByString:kSeparatorList];
+        forms[word] = [NSLocalizedString(word, @"") componentsSeparatedByString:kSeparatorList];
     }
     
-    return formsDictionary;
+    return forms;
 }
 
 

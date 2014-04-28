@@ -15,9 +15,10 @@
 - (void)processInput;
 
 @optional
-- (void)didInstantiateEntity:(id)entity;
-- (BOOL)canEditInputFieldWithKey:(NSString *)key;
+- (BOOL)isVisibleFieldWithKey:(NSString *)key;
+- (BOOL)isEditableFieldWithKey:(NSString *)key;
 - (BOOL)willValidateInputForKey:(NSString *)key;
 - (BOOL)inputValue:(id)inputValue isValidForKey:(NSString *)key;
+- (void)didCommitEntity:(id)entity;
 
 @end

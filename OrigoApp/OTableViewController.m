@@ -152,8 +152,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     destinationViewController.target = [self dataAtIndexPath:_selectedIndexPath];
     destinationViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:_selectedIndexPath];
     
-    if (destinationViewController.entityProxy && _entityProxy) {
-        destinationViewController.entityProxy.parent = _entityProxy;
+    if (destinationViewController.entity && _entity) {
+        destinationViewController.entity.parent = _entity;
     }
 }
 
@@ -274,8 +274,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 self.target = data;
             }
             
-            if (_entityProxy) {
-                _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:_entityProxy];
+            if (_entity) {
+                _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:_entity];
             } else {
                 _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:data];
             }
@@ -297,7 +297,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     if (sectionKey == _detailSectionKey) {
         _detailSectionKey = NSNotFound;
-        _entityProxy = nil;
+        _entity = nil;
     }
     
     if ([data isKindOfClass:[NSArray class]] || [data isKindOfClass:[NSSet class]]) {
@@ -424,8 +424,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     viewController->_isModal = YES;
     viewController.target = target;
     
-    if (viewController.entityProxy && _entityProxy) {
-        viewController.entityProxy.parent = _entityProxy;
+    if (viewController.entity && _entity) {
+        viewController.entity.parent = _entity;
     }
     
     if ([meta isKindOfClass:[OTableViewController class]]) {
@@ -603,22 +603,21 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [_sectionKeys removeObject:@(sectionKey)];
             [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:sectionNumber] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
-    }
-}
+        
+        if (sectionNumber > 0) {
+            NSInteger precedingSectionKey = [self sectionKeyForSectionNumber:sectionNumber - 1];
+            BOOL hasPrecedingFooter = NO;
+            
+            if ([_instance respondsToSelector:@selector(hasFooterForSectionWithKey:)]) {
+                hasPrecedingFooter = [_instance hasFooterForSectionWithKey:precedingSectionKey];
+            }
 
-
-- (void)reloadHeaderForSectionWithKey:(NSInteger)sectionKey
-{
-    if ([_instance respondsToSelector:@selector(textForHeaderInSectionWithKey:)]) {
-        [_sectionHeaderLabels[@(sectionKey)] setText:[_instance textForHeaderInSectionWithKey:sectionKey]];
-    }
-}
-
-
-- (void)reloadFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    if ([_instance respondsToSelector:@selector(textForFooterInSectionWithKey:)]) {
-        [_sectionFooterLabels[@(sectionKey)] setText:[_instance textForFooterInSectionWithKey:sectionKey]];
+            if (hasPrecedingFooter) {
+                [_sectionFooterLabels[@(precedingSectionKey)] setText:[_instance textForFooterInSectionWithKey:precedingSectionKey]];
+            } else if ([_sectionFooterLabels[@(precedingSectionKey)] text]) {
+                [_sectionFooterLabels[@(precedingSectionKey)] setText:nil];
+            }
+        }
     }
 }
 
@@ -651,7 +650,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _sectionKeys = [NSMutableArray array];
     _sectionData = [NSMutableDictionary dictionary];
     _sectionCounts = [NSMutableDictionary dictionary];
-    _sectionHeaderLabels = [NSMutableDictionary dictionary];
     _sectionFooterLabels = [NSMutableDictionary dictionary];
     _sectionIndexTitles = [NSMutableArray array];
     _dirtySections = [NSMutableSet set];
@@ -823,21 +821,21 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _state.target = target;
     }
     
-    OEntityProxy *proxyParent = _entityProxy ? _entityProxy.parent : nil;
+    OEntityProxy *parent = _entity ? _entity.parent : nil;
     
     if ([target isKindOfClass:[OReplicatedEntity class]]) {
-        _entityProxy = [target proxy];
+        _entity = [target proxy];
     } else if ([target isKindOfClass:[OEntityProxy class]]) {
-        _entityProxy = target;
+        _entity = target;
     } else if ([self isEntityViewController]) {
-        _entityProxy = [[_implicitEntityClass proxyClass] proxyForEntityOfClass:_implicitEntityClass type:target];
+        _entity = [[_implicitEntityClass proxyClass] proxyForEntityOfClass:_implicitEntityClass type:target];
     }
     
-    if (_entityProxy) {
-        _target = _entityProxy;
+    if (_entity) {
+        _target = _entity;
         
-        if (proxyParent) {
-            _entityProxy.parent = proxyParent;
+        if (parent) {
+            _entity.parent = parent;
         }
     }
 }
@@ -881,9 +879,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
         if (_detailCell) {
-            height = [_detailCell.blueprint cellHeightWithEntity:_entityProxy cell:_detailCell];
-        } else if (_entityProxy) {
-            height = [[[OTableViewCellBlueprint alloc] initWithState:_state] cellHeightWithEntity:_entityProxy cell:nil];
+            height = [_detailCell.blueprint cellHeightWithEntity:_entity cell:_detailCell];
+        } else if (_entity) {
+            height = [[[OTableViewCellBlueprint alloc] initWithState:_state] cellHeightWithEntity:_entity cell:nil];
         } else if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
             height = [[[OTableViewCellBlueprint alloc] initWithState:_state reuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]] cellHeightWithEntity:nil cell:nil];
         }
@@ -907,7 +905,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if (customReuseIdentifier) {
             cell = [tableView cellForReuseIdentifier:customReuseIdentifier];
         } else {
-            cell = [tableView cellForEntity:_entityProxy];
+            cell = [tableView cellForEntity:_entity];
             cell.observer = self.observer;
         }
         
@@ -944,8 +942,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _sectionCounts[sectionKey] = @([_sectionCounts[sectionKey] integerValue] - 1);
         [sectionData removeObjectAtIndex:indexPath.row];
         
-        if ([_entityProxy isInstantiated] && [entity isInstantiated]) {
-            [[_entityProxy.instance relationshipToEntity:entity] expire];
+        if ([_entity isCommitted] && [entity isCommitted]) {
+            [[[_entity instance] relationshipToEntity:entity] expire];
             [[OMeta m].replicator replicateIfNeeded];
         }
         
@@ -1002,10 +1000,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         view = [tableView headerViewWithText:_sectionIndexTitles[section]];
     } else if ([self instanceHasHeaderForSectionWithKey:sectionKey]) {
         view = [tableView headerViewWithText:[_instance textForHeaderInSectionWithKey:sectionKey]];
-    }
-    
-    if (view) {
-        [_sectionHeaderLabels setObject:view.subviews[0] forKey:@(sectionKey)];
     }
     
     return view;
@@ -1120,13 +1114,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)willSendRequest:(NSURLRequest *)request
 {
-    BOOL requestIsSynchronous = NO;
-    
-    if ([_instance respondsToSelector:@selector(serverRequestsAreSynchronous)]) {
-        requestIsSynchronous = [_instance serverRequestsAreSynchronous];
-    }
-    
-    if (requestIsSynchronous) {
+    if (_requiresSynchronousServerCalls) {
         [self.activityIndicator startAnimating];
     }
 }

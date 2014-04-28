@@ -61,6 +61,7 @@
 + (BOOL)deviceIsSimulator;
 + (BOOL)systemIs_iOS6x;
 + (BOOL)screenIsRetina;
++ (CGFloat)screenWidth;
 
 - (NSBundle *)localisedStringsBundle;
 

@@ -23,11 +23,9 @@ extern NSString * const kCustomData;
     NSMutableArray *_sectionKeys;
     NSMutableDictionary *_sectionData;
     NSMutableDictionary *_sectionCounts;
+    NSMutableDictionary *_sectionFooterLabels;
     NSMutableArray *_sectionIndexTitles;
     NSMutableSet *_dirtySections;
-
-    NSMutableDictionary *_sectionHeaderLabels;
-    NSMutableDictionary *_sectionFooterLabels;
 
     NSNumber *_lastSectionKey;
     NSIndexPath *_selectedIndexPath;
@@ -43,13 +41,14 @@ extern NSString * const kCustomData;
 
 @property (strong, nonatomic, readonly) NSString *identifier;
 @property (strong, nonatomic, readonly) OState *state;
-@property (strong, nonatomic, readonly) OEntityProxy *entityProxy;
+@property (strong, nonatomic, readonly) OEntityProxy *entity;
 @property (strong, nonatomic, readonly) OActivityIndicator *activityIndicator;
 
 @property (nonatomic, readonly) BOOL isModal;
 @property (nonatomic, readonly) BOOL isPushed;
 @property (nonatomic, readonly) BOOL wasHidden;
 
+@property (nonatomic) BOOL requiresSynchronousServerCalls;
 @property (nonatomic) BOOL usesPlainTableViewStyle;
 @property (nonatomic) BOOL usesSectionIndexTitles;
 @property (nonatomic) BOOL cancelImpliesSkip;
@@ -93,8 +92,6 @@ extern NSString * const kCustomData;
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
-- (void)reloadHeaderForSectionWithKey:(NSInteger)sectionKey;
-- (void)reloadFooterForSectionWithKey:(NSInteger)sectionKey;
 
 - (void)signOut;
 

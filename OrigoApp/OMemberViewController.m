@@ -8,7 +8,6 @@
 
 #import "OMemberViewController.h"
 
-static NSInteger const kSectionKeyMember = 0;
 static NSInteger const kSectionKeyGuardian = 1;
 static NSInteger const kSectionKeyAddress = 2;
 
@@ -46,7 +45,6 @@ static NSInteger const kButtonTagContinue = 1;
         _candidateResidences = [NSArray array];
         
         [self reloadSectionWithKey:kSectionKeyAddress];
-        [self reloadFooterForSectionWithKey:kSectionKeyMember];
     }
 }
 
@@ -59,11 +57,11 @@ static NSInteger const kButtonTagContinue = 1;
 
 #pragma mark - Input validation
 
-- (BOOL)isEligibleMember:(id)registrant
+- (BOOL)isEligibleMember:(id<OMember>)member
 {
     BOOL isValid = YES;
     
-    if ([_origo hasMember:registrant]) {
+    if ([_origo hasMember:member]) {
         OInputField *identifierField = _emailField.value ? _emailField : _mobilePhoneField;
         
         identifierField.value = [NSString string];
@@ -73,7 +71,7 @@ static NSInteger const kButtonTagContinue = 1;
         
         isValid = NO;
     } else {
-        [self presentMember:registrant];
+        [self presentMember:member];
     }
     
     return isValid;
@@ -156,8 +154,13 @@ static NSInteger const kButtonTagContinue = 1;
     if (email && !_emailField.value) {
         _emailField.value = email;
     }
-    
-    _member = member;
+
+    if ([member isCommitted]) {
+        [_member useInstance:member];
+        _candidateResidences = [NSArray arrayWithArray:[member residences]];
+        
+        [self reloadSectionWithKey:kSectionKeyAddress];
+    }
 }
 
 
@@ -165,7 +168,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)examineMember
 {
-    [self.detailCell writeEntityInstantiate:NO];
+    [self.detailCell writeEntityCommitIfNeeded:NO];
     
     [[OMemberExaminer examinerForResidence:_origo delegate:self] examineMember:_member];
 }
@@ -173,7 +176,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)persistMember
 {
-    [self.detailCell writeEntityInstantiate:YES];
+    [self.detailCell writeEntityCommitIfNeeded:YES];
     
     if ([self actionIs:kActionRegister]) {
         id<OOrigo> residence = [_member residence];
@@ -369,7 +372,6 @@ static NSInteger const kButtonTagContinue = 1;
 {
     if ([_candidateResidences count]) {
         [self reloadSectionWithKey:kSectionKeyAddress];
-        [self reloadFooterForSectionWithKey:kSectionKeyMember];
     }
     
     OInputField *invalidInputField = [self.detailCell nextInvalidInputField];
@@ -528,11 +530,13 @@ static NSInteger const kButtonTagContinue = 1;
 {
     [self.view endEditing:YES];
     
-    if ([[[OState s].pivotMember peersNotInOrigo:_origo] count] > 0) {
+    id<OMember> pivotMember = [self.entity parentConformingToProtocol:@protocol(OMember)];
+    
+    if ([[pivotMember peersNotInOrigo:_origo] count] > 0) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
         
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"")];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Origo", @"")];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from other groups", @"")];
         
         [actionSheet show];
     } else {
@@ -575,10 +579,10 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)loadState
 {
-    _member = [self.entityProxy actingInstance];
-    _origo = [[self.entityProxy parentWithClass:[OOrigo class]] actingInstance];
+    _member = [self.entity proxy];
+    _origo = [self.entity parentConformingToProtocol:@protocol(OOrigo)];
     
-    if ([_origo isInstantiated] && [_member isInstantiated]) {
+    if ([_origo isCommitted] && [_member isCommitted]) {
         _membership = [_origo membershipForMember:_member];
     }
     
@@ -590,7 +594,7 @@ static NSInteger const kButtonTagContinue = 1;
         self.title = NSLocalizedString(_origo.type, kStringPrefixContactTitle);
     } else if ([self targetIs:kTargetParentContact]) {
         self.title = NSLocalizedString(@"Parent contact", @"");
-    } else if ([_member isInstantiated]) {
+    } else if ([_member isCommitted]) {
         self.title = [_member isHousemateOfUser] ? [_member givenName] : _member.name;
         self.navigationItem.backBarButtonItem = [UIBarButtonItem buttonWithTitle:[_member givenName]];
     } else {
@@ -604,6 +608,8 @@ static NSInteger const kButtonTagContinue = 1;
     } else if ([self actionIs:kActionRegister] && ![self targetIs:kTargetUser]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButton];
     }
+    
+    self.requiresSynchronousServerCalls = YES;
 }
 
 
@@ -627,7 +633,7 @@ static NSInteger const kButtonTagContinue = 1;
 {
     NSArray *toolbarButtons = nil;
     
-    if ([_member isInstantiated] && ![_member isUser]) {
+    if ([_member isCommitted] && ![_member isUser]) {
         toolbarButtons = [[OMeta m].switchboard toolbarButtonsForMember:_member];
     }
     
@@ -728,8 +734,7 @@ static NSInteger const kButtonTagContinue = 1;
         if ([_member.email isEqualToString:_emailField.value]) {
             [self persistMember];
         } else {
-            UIAlertView *failedEmailChangeAlert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Activation failed", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ could not be activated ...", @""), _emailField.value] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
-            [failedEmailChangeAlert show];
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Activation failed", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ could not be activated ...", @""), _emailField.value] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
             
             self.nextInputField = _emailField;
             [self toggleEditMode];
@@ -742,8 +747,12 @@ static NSInteger const kButtonTagContinue = 1;
 {
     if (viewController.returnData) {
         if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
-            if (![self aspectIsHousehold] && [self isEligibleMember:viewController.returnData]) {
-                [self endEditing];
+            if ([self isEligibleMember:viewController.returnData]) {
+                if ([self aspectIsHousehold]) {
+                    [[self.detailCell nextInvalidInputField] becomeFirstResponder];
+                } else {
+                    [self endEditing];
+                }
             }
         } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
             // TODO
@@ -751,12 +760,6 @@ static NSInteger const kButtonTagContinue = 1;
     } else if ([self actionIs:kActionRegister]) {
         [self.detailCell resumeFirstResponder];
     }
-}
-
-
-- (BOOL)serverRequestsAreSynchronous
-{
-    return YES;
 }
 
 
@@ -851,7 +854,7 @@ static NSInteger const kButtonTagContinue = 1;
     if (isValid && [self aspectIsHousehold]) {
         isValid = [_dateOfBirthField hasValidValue];
         
-        if ([_member isInstantiated] && ![_member isUser]) {
+        if ([_member isCommitted] && ![_member isUser]) {
             isValid = [_dateOfBirthField.value isEqual:_member.dateOfBirth];
             
             if (!isValid) {
@@ -887,7 +890,7 @@ static NSInteger const kButtonTagContinue = 1;
 - (void)processInput
 {
     if ([self actionIs:kActionRegister]) {
-        if ([_member isInstantiated] && ![_member isUser]) {
+        if ([_member instance] && ![_member isUser]) {
             if ([_origo isOfType:kOrigoTypeResidence]) {
                 [self examineMember];
             } else {
@@ -915,21 +918,7 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)didInstantiateEntity:(id)entity
-{
-    _member = entity;
-    
-    for (id residence in _candidateResidences) {
-        [[residence instantiate] addMember:_member];
-    }
-    
-    if (!_membership) {
-        _membership = [_origo addMember:_member];
-    }
-}
-
-
-- (BOOL)canEditInputFieldWithKey:(NSString *)key
+- (BOOL)isEditableFieldWithKey:(NSString *)key
 {
     BOOL canEdit = YES;
     
@@ -938,6 +927,22 @@ static NSInteger const kButtonTagContinue = 1;
     }
     
     return canEdit;
+}
+
+
+- (void)didCommitEntity:(id)entity
+{
+    _member = entity;
+    
+    for (id residence in _candidateResidences) {
+        if (![residence isCommitted]) {
+            [[residence commit] addMember:_member];
+        }
+    }
+    
+    if (!_membership) {
+        _membership = [_origo addMember:_member];
+    }
 }
 
 
@@ -1158,7 +1163,7 @@ static NSInteger const kButtonTagContinue = 1;
         for (NSDictionary *JSONDictionary in data) {
             if ([JSONDictionary[kJSONKeyEntityClass] isEqualToString:memberClassName]) {
                 if ([JSONDictionary[identifierKey] isEqualToString:identifier]) {
-                    id member = [OEntityProxy proxyForEntityWithJSONDictionary:JSONDictionary];
+                    id member = [OMemberProxy proxyForEntityWithJSONDictionary:JSONDictionary];
                     
                     if ([self inputMatchesRegisteredMember:member]) {
                         self.returnData = data;

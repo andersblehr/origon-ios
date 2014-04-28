@@ -11,6 +11,7 @@
 @interface OEntityProxy : NSObject<OEntity> {
 @private
     id _instance;
+    BOOL _isCommitted;
     Class _entityClass;
     NSArray *_propertyKeys;
     NSMutableDictionary *_valuesByKey;
@@ -19,13 +20,12 @@
     id _forwardSelectorArgument;
 }
 
-@property (strong, nonatomic, readonly) id instance;
 @property (strong, nonatomic) OEntityProxy *parent;
 
 + (instancetype)proxyForEntity:(OReplicatedEntity *)entity;
 + (instancetype)proxyForEntityOfClass:(Class)entityClass type:(NSString *)type;
 + (instancetype)proxyForEntityWithJSONDictionary:(NSDictionary *)dictionary;
 
-- (id)parentWithClass:(Class)parentClass;
+- (id)parentConformingToProtocol:(Protocol *)protocol;
 
 @end

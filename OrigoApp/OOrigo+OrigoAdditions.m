@@ -35,20 +35,25 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 - (id<OMembership>)addMember:(id<OMember>)member isAssociate:(BOOL)isAssociate
 {
-    id<OMembership> membership = [self membershipForMember:member];
+    OMembership *membership = nil;
     
-    if (membership) {
-        if ([membership isAssociate] && !isAssociate) {
-            [membership promoteToFull];
-        }
-    } else {
-        membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self];
-        membership.member = member;
+    if ([member isCommitted]) {
+        member = [member instance];
+        membership = [self membershipForMember:member];
         
-        [membership alignWithOrigoIsAssociate:isAssociate];
-        
-        if (![self isOfType:kOrigoTypeRoot]) {
-            [[OMeta m].context insertCrossReferencesForMembership:membership];
+        if (membership) {
+            if ([membership isAssociate] && !isAssociate) {
+                [membership promoteToFull];
+            }
+        } else {
+            membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self];
+            membership.member = member;
+            
+            [membership alignWithOrigoIsAssociate:isAssociate];
+            
+            if (![self isOfType:kOrigoTypeRoot]) {
+                [[OMeta m].context insertCrossReferencesForMembership:membership];
+            }
         }
     }
     
@@ -94,7 +99,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     NSMutableSet *memberships = [NSMutableSet set];
     
     if (![self isOfType:kOrigoTypeRoot]) {
-        for (id<OMembership> membership in self.memberships) {
+        for (OMembership *membership in self.memberships) {
             if (![membership hasExpired]) {
                 [memberships addObject:membership];
             }
@@ -111,7 +116,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     NSMutableSet *residents = [NSMutableSet set];
     
-    for (id<OMembership> membership in [self allMemberships]) {
+    for (OMembership *membership in [self allMemberships]) {
         if ([membership isResidency]) {
             [residents addObject:membership.member];
         }
@@ -125,7 +130,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     NSMutableSet *members = [NSMutableSet set];
     
-    for (id<OMembership> membership in [self allMemberships]) {
+    for (OMembership *membership in [self allMemberships]) {
         if ([membership isFull]) {
             [members addObject:membership.member];
         }
@@ -139,7 +144,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     NSMutableSet *contacts = [NSMutableSet set];
     
-    for (id<OMembership> membership in [self allMemberships]) {
+    for (OMembership *membership in [self allMemberships]) {
         if ([membership isFull] && [membership hasContactRole]) {
             [contacts addObject:membership.member];
         }
@@ -163,7 +168,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     NSMutableSet *guardians = [NSMutableSet set];
     
     if ([self isJuvenile]) {
-        for (id<OMember> member in [self regulars]) {
+        for (OMember *member in [self regulars]) {
             [guardians unionSet:[member guardians]];
         }
     }
@@ -177,7 +182,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
     NSMutableSet *elders = [NSMutableSet set];
     
     if ([self isOfType:kOrigoTypeResidence]) {
-        for (id<OMember> resident in [self residents]) {
+        for (OMember *resident in [self residents]) {
             if (![resident isJuvenile]) {
                 [elders addObject:resident];
             }
@@ -194,7 +199,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     BOOL isFirstMember = ![self.memberships count];
     
-    id<OMembership> membership = [self addMember:member isAssociate:NO];
+    OMembership *membership = [self addMember:member isAssociate:NO];
     
     if (isFirstMember && ![self isOfType:kOrigoTypeResidence] && [member isJuvenile]) {
         self.isForMinors = @YES;
@@ -212,11 +217,17 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 - (id<OMembership>)membershipForMember:(id<OMember>)member
 {
-    id<OMembership> membershipForMember = nil;
+    OMembership *membershipForMember = nil;
     
-    for (id<OMembership> membership in self.memberships) {
-        if (!membershipForMember && ![membership isBeingDeleted] && (membership.member == member)) {
-            membershipForMember = membership;
+    if ([member isCommitted]) {
+        member = [member instance];
+        
+        for (OMembership *membership in self.memberships) {
+            if (!membershipForMember) {
+                if (![membership isBeingDeleted] && (membership.member == member)) {
+                    membershipForMember = membership;
+                }
+            }
         }
     }
     
@@ -226,7 +237,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 - (id<OMembership>)associateMembershipForMember:(id<OMember>)member
 {
-    id<OMembership> membership = [self membershipForMember:member];
+    OMembership *membership = [self membershipForMember:member];
     
     return [membership isAssociate] ? membership : nil;
 }
@@ -288,7 +299,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     BOOL hasAdmin = NO;
     
-    for (id<OMembership> membership in [self allMemberships]) {
+    for (OMembership *membership in [self allMemberships]) {
         hasAdmin = hasAdmin || [membership.isAdmin boolValue];
     }
     
@@ -304,9 +315,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 - (BOOL)hasMember:(id<OMember>)member
 {
-    id<OMembership> membership = [self membershipForMember:member];
-    
-    return ((membership != nil) && [membership isFull]);
+    return [[self membershipForMember:member] isFull];
 }
 
 
@@ -318,9 +327,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 - (BOOL)hasAssociateMember:(id<OMember>)associateMember
 {
-    id<OMembership> membership = [self membershipForMember:associateMember];
-    
-    return ((membership != nil) && [membership isAssociate]);
+    return [[self membershipForMember:associateMember] isAssociate];
 }
 
 
@@ -332,22 +339,26 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 - (BOOL)indirectlyKnowsAboutMember:(id<OMember>)member
 {
-    BOOL knowsAboutMember = NO;
-    id<OMembership> directMembership = [self membershipForMember:member];
+    BOOL indirectlyKnows = NO;
     
-    for (id<OMembership> membership in [self allMemberships]) {
-        if ([membership isFull]) {
-            if ((membership != directMembership) && ![membership isBeingDeleted]) {
-                for (id<OMembership> residency in [membership.member residencies]) {
-                    if ((residency.origo != self) && ![residency isBeingDeleted]) {
-                        knowsAboutMember = knowsAboutMember || [residency.origo hasMember:member];
+    if ([member isCommitted]) {
+        member = [member instance];
+        OMembership *directMembership = [self membershipForMember:member];
+        
+        for (OMembership *membership in [self allMemberships]) {
+            if ([membership isFull]) {
+                if ((membership != directMembership) && ![membership isBeingDeleted]) {
+                    for (OMembership *residency in [membership.member residencies]) {
+                        if ((residency.origo != self) && ![residency isBeingDeleted]) {
+                            indirectlyKnows = indirectlyKnows || [residency.origo hasMember:member];
+                        }
                     }
                 }
             }
         }
     }
     
-    return knowsAboutMember;
+    return indirectlyKnows;
 }
 
 
@@ -355,9 +366,13 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 {
     BOOL hasResidentsInCommon = NO;
     
-    if ([self isOfType:kOrigoTypeResidence] && [residence isOfType:kOrigoTypeResidence]) {
-        for (id<OMember> resident in [residence residents]) {
-            hasResidentsInCommon = hasResidentsInCommon || [self hasMember:resident];
+    if ([residence isCommitted]) {
+        residence = [residence instance];
+        
+        if ([self isOfType:kOrigoTypeResidence] && [residence isOfType:kOrigoTypeResidence]) {
+            for (OMember *resident in [residence residents]) {
+                hasResidentsInCommon = hasResidentsInCommon || [self hasMember:resident];
+            }
         }
     }
     

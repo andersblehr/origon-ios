@@ -34,7 +34,7 @@ typedef NS_ENUM(NSInteger, OPersonNumber) {
 
 extern NSString * const _be_;
 
-extern NSString * const _origo_;
+extern NSString * const _group_;
 extern NSString * const _father_;
 extern NSString * const _mother_;
 extern NSString * const _parent_;

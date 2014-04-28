@@ -32,7 +32,7 @@
 "[placeholder] repeatPassword" = "Gjenta passordet ditt";
 "[placeholder] residenceName" = "Kallenavn for denne adressen";
 "[placeholder] address" = "Gateadresse\nPostnummer og -sted";
-"[placeholder] purpose" = "Formålet med dette origoet";
+"[placeholder] purpose" = "Formålet med denne gruppa";
 "[placeholder] descriptionText" = "En valgfri beskrivelse";
 "[placeholder] telephone" = "Telefonnummer";
 "[placeholder] name" = "Navn";
@@ -65,7 +65,7 @@
 "[registration title] organisation" = "Ny organisasjon";
 "[registration title] preschoolClass" = "Ny barnehageavdeling";
 "[registration title] schoolClass" = "Ny skoleklasse";
-"[registration title] other" = "Nytt origo";
+"[registration title] other" = "Ny gruppe";
 
 // Registration footers
 "[registration footer] residence" = "Trykk [+] for å legge til medlemmer i husstanden.";
@@ -157,22 +157,22 @@
 "questionTemplate" = "{verb} {subject} {argument}?";
 
 // Verbs
-"wordBe" = "er;er;er;er;er;er";
+"be" = "er;er;er;er;er;er";
 
 // Nouns
-"wordOrigo" = "-;-;-;-;mine origo;%@ sine origo";
-"wordFather" = "far;faren;-;-;faren din;faren til %@";
-"wordMother" = "mor;moren;-;-;moren din;moren til %@";
-"wordParent" = "-;-;foreldre;foreldrene;foreldrene dine;foreldrene til %@";
-"wordGuardian" = "foresatt;-;foresatte;-;-;-";
-"wordContact" = "kontaktperson;-;kontaktpersoner;-;-;-";
-"wordAddress" = "adresse;-;adresser;-;-;-";
+"group" = "-;-;-;-;mine grupper;%@ sine grupper";
+"father" = "far;faren;-;-;faren din;faren til %@";
+"mother" = "mor;moren;-;-;moren din;moren til %@";
+"parent" = "-;-;foreldre;foreldrene;foreldrene dine;foreldrene til %@";
+"guardian" = "foresatt;-;foresatte;-;-;-";
+"contact" = "kontaktperson;-;kontaktpersoner;-;-;-";
+"address" = "adresse;-;adresser;-;-;-";
 
 // Pronouns
-"wordI" = "jeg;meg;meg";
-"wordYou" = "du;deg;deg";
-"wordHe" = "han;ham;ham";
-"wordShe" = "hun;henne;henne";
+"I" = "jeg;meg;meg";
+"you" = "du;deg;deg";
+"he" = "han;ham;ham";
+"she" = "hun;henne;henne";
 
 
 /***
@@ -236,13 +236,12 @@
  ***/
 
 // Headers
-"My origos" = "Mine origo";
-"The kids' origos" = "Barnas origo";
+"The kids' groups" = "Barnas grupper";
 
 // Footers
-"Tap [+] to create an origo" = "Trykk [+] for å opprette et origo";
-"Tap [+] to create a new origo" = "Trykk [+] for å opprette et nytt origo";
-"... for yourself. Select %@ to create an origo for %@" = "for deg selv, eller velg %@ for å opprette et origo for %@";
+"Tap [+] to create a group" = "Trykk [+] for å opprette en gruppe";
+"Tap [+] to create a new group" = "Trykk [+] for å opprette en ny gruppe";
+"... for yourself. Select %@ to create a group for %@" = "for deg selv, eller velg %@ for å opprette en gruppe for %@";
 
 // Alerts
 "Welcome to Origo" = "Velkommen til Origo";
@@ -251,11 +250,11 @@
 "You must complete your registration before you can start using Origo." = "Du må fullføre registreringen før du kan begynne å bruke Origo.";
 
 // Prompts
-"What sort of origo du you want to create" = "Hva slags origo ønsker du å opprette";
+"What sort of group du you want to create" = "Hva slags gruppe ønsker du å opprette";
 
 // Info
 "New listing" = "Ny oppføring";
-"(No origos)" = "(Ingen origo)";
+"(No groups)" = "(Ingen grupper)";
 
 // Terms
 "your child" = "et av barna";
@@ -269,7 +268,7 @@
 
 // Buttons
 "Edit roles" = "Rediger roller";
-"Add from other origos" = "Legg til fra andre origo";
+"Add from other groups" = "Legg til fra andre grupper";
 "Add parent contact" = "Legg til foreldrekontakt";
 "Show in map" = "Vis på kart";
 "About %@" = "Om %@";
@@ -300,7 +299,7 @@
 "All guardians" = "Alle foresatte";
 "All contacts" = "Alle kontaktpersoner";
 "Retrieve from Contacts"   = "Hent fra Kontakter";
-"Retrieve from Origo" = "Hent fra annet origo";
+"Retrieve from other groups" = "Hent fra andre grupper";
 "A different number" = "Et annet nummer";
 "A different address" = "En annen adresse";
 "Neither" = "Ingen av dem";

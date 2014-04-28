@@ -34,7 +34,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (instancetype)initCommonsForReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
 {
-    id listDelegate = (id<OTableViewListDelegate>)[OState s].viewController;
+    id listDelegate = [OState s].listDelegate;
     UITableViewCellStyle style = UITableViewCellStyleSubtitle;
     
     if ([reuseIdentifier hasPrefix:kReuseIdentifierList]) {
@@ -77,7 +77,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             [_listDelegate loadListCell:self atIndexPath:_indexPath];
         } else {
             _views = [NSMutableDictionary dictionary];
-            _inputDelegate = (id<OTableViewInputDelegate>)_state.viewController;
+            _inputDelegate = _state.inputDelegate;
         }
     }
     
@@ -223,7 +223,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     OInputField *inputField = nil;
     BOOL ignoreField = _inputField ? YES : NO;
     
-    for (NSString *key in _blueprint.displayableInputFieldKeys) {
+    for (NSString *key in _blueprint.displayableInputKeys) {
         if (ignoreField) {
             ignoreField = ![key isEqualToString:_inputField.key];
         } else {
@@ -241,7 +241,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     OInputField *invalidInputField = nil;
     
-    for (NSString *key in _blueprint.displayableInputFieldKeys) {
+    for (NSString *key in _blueprint.displayableInputKeys) {
         OInputField *inputField = [self inputFieldForKey:key];
         
         if (!invalidInputField && ![inputField hasValidValue]) {
@@ -283,7 +283,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
         
         if (_editable) {
-            for (NSString *key in _blueprint.displayableInputFieldKeys) {
+            for (NSString *key in _blueprint.displayableInputKeys) {
                 OInputField *inputField = [self inputFieldForKey:key];
                 
                 if (!_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
@@ -314,7 +314,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)clearInputFields
 {
     if (![self isListCell] && _editable) {
-        for (NSString *key in _blueprint.displayableInputFieldKeys) {
+        for (NSString *key in _blueprint.displayableInputKeys) {
             [self inputFieldForKey:key].value = nil;
         }
     }
@@ -395,7 +395,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)prepareForInput
 {
-    for (NSString *key in _blueprint.allInputFieldKeys) {
+    for (NSString *key in _blueprint.inputKeys) {
         OInputField *inputField = [self inputFieldForKey:key];
         
         if ([inputField respondsToSelector:@selector(prepareForInput)]) {
@@ -424,7 +424,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if ([self isListCell]) {
         [_listDelegate loadListCell:self atIndexPath:_indexPath];
     } else {
-        for (NSString *key in _blueprint.allInputFieldKeys) {
+        for (NSString *key in _blueprint.inputKeys) {
             [self inputFieldForKey:key].value = [_entity valueForKey:key];
         }
         
@@ -433,17 +433,17 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)writeEntityInstantiate:(BOOL)instantiate
+- (void)writeEntityCommitIfNeeded:(BOOL)commitIfNeeded
 {
-    if (instantiate && ![_entity isInstantiated]) {
-        [_entity instantiate];
+    if (![_entity isCommitted] && commitIfNeeded) {
+        [_entity commit];
         
-        if ([_inputDelegate respondsToSelector:@selector(didInstantiateEntity:)]) {
-            [_inputDelegate didInstantiateEntity:[_entity instance]];
+        if ([_inputDelegate respondsToSelector:@selector(didCommitEntity:)]) {
+            [_inputDelegate didCommitEntity:[_entity instance]];
         }
     }
     
-    for (NSString *key in _blueprint.displayableInputFieldKeys) {
+    for (NSString *key in _blueprint.displayableInputKeys) {
         [_entity setValue:[self inputFieldForKey:key].value forKey:key];
     }
 }
@@ -505,7 +505,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     _editable = editable;
     
     if (![self isListCell]) {
-        for (NSString *key in _blueprint.allInputFieldKeys) {
+        for (NSString *key in _blueprint.inputKeys) {
             [self inputFieldForKey:key].editable = editable;
             
             if ([OValidator isAlternatingLabelKey:key]) {
@@ -555,7 +555,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     if ([OMeta systemIs_iOS6x] && !_state.viewController.usesPlainTableViewStyle) {
         frame.origin.x = -kDefaultCellPadding;
-        frame.size.width = kScreenWidth + 2.f * kDefaultCellPadding;
+        frame.size.width = [OMeta screenWidth] + 2.f * kDefaultCellPadding;
     }
     
     [super setFrame:frame];

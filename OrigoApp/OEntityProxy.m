@@ -28,6 +28,7 @@ static NSString * const kClassSuffixProxy = @"Proxy";
     
     if (self) {
         _instance = entity;
+        _isCommitted = YES;
     }
     
     return self;
@@ -63,7 +64,7 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 + (instancetype)proxyForEntity:(OReplicatedEntity *)entity
 {
-    return [[self alloc] initWithEntity:entity];
+    return [[[[entity class] proxyClass] alloc] initWithEntity:entity];
 }
 
 
@@ -87,19 +88,31 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 #pragma mark - Parent proxy access
 
-- (id)parentWithClass:(Class)parentClass
+- (id)parentConformingToProtocol:(Protocol *)protocol
 {
     id parent = nil;
     
     if (_parent) {
-        if (_parent.entityClass == parentClass) {
-            parent = [_parent actingInstance];
+        if ([_parent conformsToProtocol:protocol]) {
+            parent = _parent;
         } else {
-            parent = [_parent parentWithClass:parentClass];
+            parent = [_parent parentConformingToProtocol:protocol];
         }
     }
     
     return parent;
+}
+
+
+#pragma mark - Custom accessors
+
+- (void)setParent:(OEntityProxy *)parent
+{
+    if (parent != self) {
+        _parent = parent;
+    } else {
+        _parent = parent.parent;
+    }
 }
 
 
@@ -111,31 +124,43 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
-- (OEntityProxy *)proxy
+- (BOOL)isProxy
+{
+    return YES;
+}
+
+
+- (BOOL)isCommitted
+{
+    return _isCommitted;
+}
+
+
+- (id)proxy
 {
     return self;
 }
 
 
-- (BOOL)isInstantiated
+- (id)commit
 {
-    return _instance ? YES : NO;
-}
-
-
-- (id)instantiate
-{
-    if (!_instance && (!_parent || [_parent isInstantiated])) {
-        _instance = [_entityClass instanceWithId:self.entityId];
-        
-        for (NSString *key in [_entityClass propertyKeys]) {
-            if (![key isEqualToString:kPropertyKeyEntityId]) {
-                id value = _valuesByKey[key];
-                
-                if (value) {
-                    [_instance setValue:value forKey:key];
+    if (!_isCommitted) {
+        if (_instance) {
+            _isCommitted = YES;
+        } else if (!_parent || [_parent isCommitted]) {
+            _instance = [_entityClass instanceWithId:self.entityId];
+            
+            for (NSString *key in [_entityClass propertyKeys]) {
+                if (![key isEqualToString:kPropertyKeyEntityId]) {
+                    id value = _valuesByKey[key];
+                    
+                    if (value) {
+                        [_instance setValue:value forKey:key];
+                    }
                 }
             }
+            
+            _isCommitted = YES;
         }
     }
     
@@ -143,9 +168,19 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
-- (id)actingInstance
+- (void)useInstance:(id<OEntity>)instance
 {
-    return _instance ? _instance : self;
+    if (![instance isProxy]) {
+        _instance = instance;
+        
+        [_valuesByKey removeAllObjects];
+    }
+}
+
+
+- (id)instance
+{
+    return _instance;
 }
 
 

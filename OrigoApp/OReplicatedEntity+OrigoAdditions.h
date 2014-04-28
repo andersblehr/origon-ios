@@ -11,11 +11,13 @@
 @protocol OEntity <NSObject>
 
 @required
+
 - (Class)entityClass;
-- (OEntityProxy *)proxy;
-- (BOOL)isInstantiated;
-- (id)instantiate;
-- (id)actingInstance;
+- (BOOL)isProxy;
+- (BOOL)isCommitted;
+- (id)proxy;
+- (id)commit;
+- (id)instance;
 
 - (BOOL)hasValueForKey:(NSString *)key;
 - (void)setValue:(id)value forKey:(NSString *)key;
@@ -25,6 +27,7 @@
 @property (nonatomic, readonly) NSString *entityId;
 @property (nonatomic, readonly) NSString *createdBy;
 
+- (void)useInstance:(id<OEntity>)instance;
 - (BOOL)userIsCreator;
 - (BOOL)isTransient;
 - (BOOL)isDirty;

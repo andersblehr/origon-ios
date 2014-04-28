@@ -35,13 +35,13 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             _titleKey = kPropertyKeyName;
             _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
         } else if ([_state.viewController.identifier isEqualToString:kIdentifierOrigo]) {
-            _textViewKeys = @[kPropertyKeyAddress, kPropertyKeyDescriptionText];
             _hasPhoto = NO;
+            _multiLineTextKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
             
-            if ([_state aspectIsHousehold] && [_state.pivotMember isUser]) {
-                _titleKey = kInterfaceKeyResidenceName;
-            } else if (![_state targetIs:kOrigoTypeResidence]) {
+            if (![_state targetIs:kOrigoTypeResidence]) {
                 _titleKey = kPropertyKeyName;
+            } else if ([_state.inputDelegate isVisibleFieldWithKey:kInterfaceKeyResidenceName]) {
+                _titleKey = kInterfaceKeyResidenceName;
             }
             
             if ([_state targetIs:kOrigoTypeResidence]) {
@@ -91,7 +91,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 {
     OInputField *inputField = nil;
     
-    if ([_textViewKeys containsObject:[OValidator propertyKeyForKey:key]]) {
+    if ([_multiLineTextKeys containsObject:[OValidator propertyKeyForKey:key]]) {
         inputField = [[OTextView alloc] initWithKey:key blueprint:self delegate:delegate];
     } else {
         inputField = [[OTextField alloc] initWithKey:key delegate:delegate];
@@ -124,7 +124,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 {
     CGFloat height = 2 * kDefaultCellPadding;
     
-    for (NSString *key in self.displayableInputFieldKeys) {
+    for (NSString *key in self.displayableInputKeys) {
         if ([key isEqualToString:_titleKey]) {
             if (_fieldsAreLabeled) {
                 height += [UIFont titleFieldHeight] + kDefaultCellPadding;
@@ -132,7 +132,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
                 height += [UIFont detailFieldHeight] + kDefaultCellPadding;
             }
         } else if ([_state actionIs:kActionInput] || [entity hasValueForKey:key]) {
-            if ([_textViewKeys containsObject:[OValidator propertyKeyForKey:key]]) {
+            if ([_multiLineTextKeys containsObject:[OValidator propertyKeyForKey:key]]) {
                 if (cell) {
                     height += [[cell inputFieldForKey:key] height];
                 } else if ([entity hasValueForKey:key]) {
@@ -156,43 +156,43 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 #pragma mark - Custom accessors
 
-- (NSArray *)displayableInputFieldKeys
+- (NSArray *)inputKeys
 {
-    if (_displayableInputFieldKeys && ![_state.action isEqualToString:_stateAction]) {
-        _displayableInputFieldKeys = nil;
+    if (!_inputKeys) {
+        if (_titleKey) {
+            _inputKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
+        } else {
+            _inputKeys = _detailKeys;
+        }
+    }
+    
+    return _inputKeys;
+}
+
+
+- (NSArray *)displayableInputKeys
+{
+    if (_displayableInputKeys && ![_state.action isEqualToString:_stateAction]) {
+        _displayableInputKeys = nil;
         _stateAction = _state.action;
     }
     
-    if (!_displayableInputFieldKeys) {
-        _displayableInputFieldKeys = [self.allInputFieldKeys mutableCopy];
+    if (!_displayableInputKeys) {
+        _displayableInputKeys = [self.inputKeys mutableCopy];
         
         if ([_state.viewController.identifier isEqualToString:kIdentifierMember]) {
             if (![_state aspectIsHousehold]) {
-                [_displayableInputFieldKeys removeObject:kPropertyKeyDateOfBirth];
+                [_displayableInputKeys removeObject:kPropertyKeyDateOfBirth];
                 
                 if ([_state targetIs:kTargetJuvenile] && [_state actionIs:kActionInput]) {
-                    [_displayableInputFieldKeys removeObject:kPropertyKeyMobilePhone];
-                    [_displayableInputFieldKeys removeObject:kPropertyKeyEmail];
+                    [_displayableInputKeys removeObject:kPropertyKeyMobilePhone];
+                    [_displayableInputKeys removeObject:kPropertyKeyEmail];
                 }
             }
         }
     }
     
-    return _displayableInputFieldKeys;
-}
-
-
-- (NSArray *)allInputFieldKeys
-{
-    if (!_allInputFieldKeys) {
-        if (_titleKey) {
-            _allInputFieldKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
-        } else {
-            _allInputFieldKeys = _detailKeys;
-        }
-    }
-    
-    return _allInputFieldKeys;
+    return _displayableInputKeys;
 }
 
 @end

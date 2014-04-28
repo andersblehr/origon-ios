@@ -24,9 +24,9 @@ static NSInteger const kSectionKeyWards = 2;
     NSString *footerText = nil;
     
     if ([self hasSectionWithKey:kSectionKeyOrigos]) {
-        footerText = NSLocalizedString(@"Tap [+] to create a new origo", @"");
+        footerText = NSLocalizedString(@"Tap [+] to create a new group", @"");
     } else {
-        footerText = NSLocalizedString(@"Tap [+] to create an origo", @"");
+        footerText = NSLocalizedString(@"Tap [+] to create a group", @"");
     }
     
     if ([self targetIs:kTargetUser] && [self hasSectionWithKey:kSectionKeyWards]) {
@@ -55,7 +55,7 @@ static NSInteger const kSectionKeyWards = 2;
             himOrHer = NSLocalizedString(@"him or her", @"");
         }
         
-        footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"... for yourself. Select %@ to create an origo for %@", @""), yourChild, himOrHer] separator:kSeparatorSpace];
+        footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"... for yourself. Select %@ to create a group for %@", @""), yourChild, himOrHer] separator:kSeparatorSpace];
     } else if ([self targetIs:kTargetWard]) {
         footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"for %@", @""), [_member givenName]] separator:kSeparatorSpace];
     }
@@ -74,7 +74,7 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)addItem
 {
-    NSString *prompt = NSLocalizedString(@"What sort of origo du you want to create", @"");
+    NSString *prompt = NSLocalizedString(@"What sort of group du you want to create", @"");
     
     if ([self targetIs:kTargetWard]) {
         prompt = [prompt stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"for %@", @""), [_member givenName]] separator:kSeparatorSpace];
@@ -114,7 +114,7 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)loadState
 {
-    _member = [self.entityProxy actingInstance];
+    _member = [self.entity proxy];
     _origoTypes = [NSMutableArray array];
     
     if ([_member isUser]) {
@@ -128,7 +128,7 @@ static NSInteger const kSectionKeyWards = 2;
     if ([[OMeta m].user isTeenOrOlder]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButton];
         
-        if ([[OState s].pivotMember isJuvenile]) {
+        if ([_member isJuvenile]) {
             if (![_member isOlderThan:kAgeThresholdInSchool]) {
                 [_origoTypes addObject:kOrigoTypePreschoolClass];
             }
@@ -139,7 +139,7 @@ static NSInteger const kSectionKeyWards = 2;
         [_origoTypes addObject:kOrigoTypeFriends];
         [_origoTypes addObject:kOrigoTypeTeam];
         
-        if (![[OState s].pivotMember isJuvenile]) {
+        if (![_member isJuvenile]) {
             [_origoTypes addObject:kOrigoTypeOrganisation];
             [_origoTypes addObject:kOrigoTypeOther];
         }
@@ -179,9 +179,9 @@ static NSInteger const kSectionKeyWards = 2;
     NSString *text = nil;
     
     if (sectionKey == kSectionKeyWards) {
-        text = NSLocalizedString(@"The kids' origos", @"");
+        text = NSLocalizedString(@"The kids' groups", @"");
     } else if (sectionKey == kSectionKeyOrigos) {
-        text = [[OLanguage possessiveClauseWithPossessor:_member noun:_origo_] stringByCapitalisingFirstLetter];
+        text = [[OLanguage possessiveClauseWithPossessor:_member noun:_group_] stringByCapitalisingFirstLetter];
     }
     
     return text;
@@ -246,7 +246,7 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:origos conjoinLastItem:NO];
             cell.detailTextLabel.textColor = [UIColor textColour];
         } else {
-            cell.detailTextLabel.text = NSLocalizedString(@"(No origos)", @"");
+            cell.detailTextLabel.text = NSLocalizedString(@"(No groups)", @"");
             cell.detailTextLabel.textColor = [UIColor dimmedTextColour];
         }
     } else if (sectionKey == kSectionKeyOrigos) {

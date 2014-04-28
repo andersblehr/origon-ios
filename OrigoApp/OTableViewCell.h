@@ -63,7 +63,7 @@ extern CGFloat const kCellAnimationDuration;
 - (void)prepareForInput;
 - (void)processInput;
 - (void)readEntity;
-- (void)writeEntityInstantiate:(BOOL)insert;
+- (void)writeEntityCommitIfNeeded:(BOOL)commitIfNeeded;
 
 - (void)setDestinationId:(NSString *)identifier selectableDuringInput:(BOOL)selectableDuringInput;
 

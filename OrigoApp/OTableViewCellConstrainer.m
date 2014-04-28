@@ -41,7 +41,7 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
 
 - (BOOL)shouldDisplayElementsForKey:(NSString *)key
 {
-    BOOL shouldDisplayElements = [_blueprint.displayableInputFieldKeys containsObject:key];
+    BOOL shouldDisplayElements = [_blueprint.displayableInputKeys containsObject:key];
     
     if (shouldDisplayElements && _cell.entity) {
         id value = [_cell.entity valueForKey:key];
@@ -242,7 +242,7 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
     BOOL isTopmostElement = YES;
     BOOL isBelowLabel = NO;
     
-    for (NSString *key in _blueprint.allInputFieldKeys) {
+    for (NSString *key in _blueprint.inputKeys) {
         [self configureElementsForKey:key];
         
         if ([self shouldDisplayElementsForKey:key]) {
@@ -280,7 +280,7 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
 {
     NSMutableArray *constraints = [NSMutableArray array];
     
-    for (NSString *key in _blueprint.allInputFieldKeys) {
+    for (NSString *key in _blueprint.inputKeys) {
         [self configureElementsForKey:key];
         
         if ([self shouldDisplayElementsForKey:key]) {

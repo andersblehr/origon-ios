@@ -8,12 +8,10 @@
 
 #import "UITableView+OrigoAdditions.h"
 
-CGFloat const kScreenWidth = 320.f;
-CGFloat const kContentWidth = 300.f;
-
 static CGFloat const kLogoHeight = 110.f;
 static CGFloat const kLogoFontSize = 30.f;
 static CGFloat const kLineToHeaderHeightFactor = 1.5f;
+static CGFloat const kHeaderFooterInset = 14.f;
 static CGFloat const kFooterHeadRoom = 6.f;
 
 static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
@@ -43,11 +41,10 @@ static NSString * const kLogoText = @"..origo..";
 
 - (void)addLogoBanner
 {
-    CGFloat cellWidth = self.bounds.size.width;
-    CGRect containerViewFrame = CGRectMake(0.f, 0.f, cellWidth, kLogoHeight);
+    CGRect containerViewFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], kLogoHeight);
     UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
 
-    CGRect logoFrame = CGRectMake(0.f, 0.f, cellWidth, kLogoHeight);
+    CGRect logoFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], kLogoHeight);
     UILabel *logoLabel = [[UILabel alloc] initWithFrame:logoFrame];
     
     logoLabel.backgroundColor = [UIColor clearColor];
@@ -109,7 +106,7 @@ static NSString * const kLogoText = @"..origo..";
 - (CGFloat)footerHeightWithText:(NSString *)text
 {
     UIFont *footerFont = [UIFont footerFont];
-    CGFloat textHeight = [text lineCountWithFont:footerFont maxWidth:kContentWidth] * footerFont.lineHeight;
+    CGFloat textHeight = [text lineCountWithFont:footerFont maxWidth:[OMeta screenWidth] - 2 * kHeaderFooterInset] * footerFont.lineHeight;
     
     return textHeight + 2 * kDefaultCellPadding;
 }
@@ -121,8 +118,8 @@ static NSString * const kLogoText = @"..origo..";
 {
     self.sectionHeaderHeight = [self headerHeight];
     
-    CGRect headerFrame = CGRectMake(0.f, 0.f, self.bounds.size.width, self.sectionHeaderHeight);
-    CGRect labelFrame = CGRectMake(kDefaultCellPadding, 0.f, self.bounds.size.width - 2 * kDefaultCellPadding, self.sectionHeaderHeight);
+    CGRect headerFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], self.sectionHeaderHeight);
+    CGRect labelFrame = CGRectMake(kHeaderFooterInset, 0.f, [OMeta screenWidth] - 2 * kHeaderFooterInset, self.sectionHeaderHeight);
     
     UIView *headerView = [[UIView alloc] initWithFrame:headerFrame];
     UILabel *headerLabel = [[UILabel alloc] initWithFrame:labelFrame];
@@ -151,8 +148,8 @@ static NSString * const kLogoText = @"..origo..";
 {
     self.sectionFooterHeight = [self footerHeightWithText:text];
 
-    CGRect footerFrame = CGRectMake(0.f, 0.f, kScreenWidth, self.sectionFooterHeight);
-    CGRect labelFrame = CGRectMake(kDefaultCellPadding, 0.f, kContentWidth, self.sectionFooterHeight + kFooterHeadRoom);
+    CGRect footerFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], self.sectionFooterHeight);
+    CGRect labelFrame = CGRectMake(kHeaderFooterInset, 0.f, [OMeta screenWidth] - 2 * kHeaderFooterInset, self.sectionFooterHeight + kFooterHeadRoom);
     
     UIView *footerView = [[UIView alloc] initWithFrame:footerFrame];
     UILabel *footerLabel = [[UILabel alloc] initWithFrame:labelFrame];
