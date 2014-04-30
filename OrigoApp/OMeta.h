@@ -15,7 +15,7 @@
     OLocator *_locator;
     OReplicator *_replicator;
     OSwitchboard *_switchboard;
-    OPhoneNumberFormatter *_phoneNumberFormatter;
+    OActivityIndicator *_activityIndicator;
     
     NSNumber *_isSignedIn;
     NSString *_authToken;
@@ -43,6 +43,7 @@
 @property (strong, nonatomic, readonly) OLocator *locator;
 @property (strong, nonatomic, readonly) OReplicator *replicator;
 @property (strong, nonatomic, readonly) OSwitchboard *switchboard;
+@property (strong, nonatomic, readonly) OActivityIndicator *activityIndicator;
 
 @property (weak, nonatomic, readonly) NSManagedObjectContext *context;
 
@@ -50,7 +51,7 @@
 
 - (void)userDidSignUp;
 - (void)userDidSignIn;
-- (void)userDidSignOut;
+- (void)signOut;
 
 - (BOOL)userIsSignedIn;
 - (BOOL)userIsRegistered;

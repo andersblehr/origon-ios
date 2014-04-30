@@ -15,11 +15,7 @@ extern CGFloat const kPhotoFrameWidth;
 
 @interface OTableViewCellBlueprint : NSObject {
 @private
-    OState *_state;
-    NSString *_stateAction;
-    
     NSArray *_inputKeys;
-    NSArray *_multiLineTextKeys;
     NSMutableArray *_displayableInputKeys;
 }
 
@@ -30,12 +26,10 @@ extern CGFloat const kPhotoFrameWidth;
 @property (strong, nonatomic, readonly) NSString *titleKey;
 @property (strong, nonatomic, readonly) NSArray *detailKeys;
 @property (strong, nonatomic, readonly) NSArray *inputKeys;
-@property (strong, nonatomic, readonly) NSArray *displayableInputKeys;
+@property (strong, nonatomic, readonly) NSArray *multiLineTextKeys;
 
-- (instancetype)initWithState:(OState *)state;
-- (instancetype)initWithState:(OState *)state reuseIdentifier:(NSString *)reuseIdentifier;
+- (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 
 - (OInputField *)inputFieldWithKey:(NSString *)key delegate:(id)delegate;
-- (CGFloat)cellHeightWithEntity:(id)entity cell:(OTableViewCell *)cell;
 
 @end

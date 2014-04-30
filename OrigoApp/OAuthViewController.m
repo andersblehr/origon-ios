@@ -217,7 +217,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-- (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+- (void)willDisplayDetailCell:(OTableViewCell *)cell
 {
     if ([self actionIs:kActionSignIn]) {
         _emailField = [cell inputFieldForKey:kInterfaceKeyAuthEmail];
@@ -230,6 +230,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 
 #pragma mark - OTableViewInputDelegate conformance
+
+- (BOOL)isReceivingInput
+{
+    return YES;
+}
+
 
 - (BOOL)inputIsValid
 {
@@ -261,7 +267,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-- (BOOL)willValidateInputForKey:(NSString *)key
+- (BOOL)canValidateInputForKey:(NSString *)key
 {
     return [@[kInterfaceKeyActivationCode, kInterfaceKeyRepeatPassword] containsObject:key];
 }

@@ -27,18 +27,8 @@
 @property (nonatomic, readonly) NSString *entityId;
 @property (nonatomic, readonly) NSString *createdBy;
 
+- (NSString *)reuseIdentifier;
 - (void)useInstance:(id<OEntity>)instance;
-- (BOOL)userIsCreator;
-- (BOOL)isTransient;
-- (BOOL)isDirty;
-- (BOOL)isReplicated;
-- (BOOL)isBeingDeleted;
-
-- (BOOL)shouldReplicateOnExpiry;
-- (BOOL)hasExpired;
-- (void)expire;
-- (void)unexpire;
-- (NSString *)expiresInTimeframe;
 
 @end
 
@@ -54,6 +44,18 @@
 - (NSString *)computeHashCode;
 - (void)internaliseRelationships;
 - (id)relationshipToEntity:(id)other;
+
+- (BOOL)userIsCreator;
+- (BOOL)isTransient;
+- (BOOL)isDirty;
+- (BOOL)isReplicated;
+- (BOOL)isBeingDeleted;
+
+- (BOOL)shouldReplicateOnExpiry;
+- (BOOL)hasExpired;
+- (void)expire;
+- (void)unexpire;
+- (NSString *)expiresInTimeframe;
 
 + (Class)proxyClass;
 + (NSArray *)propertyKeys;

@@ -115,7 +115,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)signOutButton
 {
-    return [[self alloc] initWithTitle:NSLocalizedString(@"Log out", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(signOut)];
+    return [[self alloc] initWithTitle:NSLocalizedString(@"Log out", @"") style:UIBarButtonItemStylePlain target:[OMeta m] action:@selector(signOut)];
 }
 
 

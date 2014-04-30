@@ -123,3 +123,5 @@ extern NSInteger const kAgeThresholdTeen;
 extern NSInteger const kAgeOfConsent;
 extern NSInteger const kAgeOfMajority;
 
+// Misc constants
+extern NSString * const kCustomData;

@@ -11,13 +11,14 @@
 @protocol OTableViewInputDelegate <UITextFieldDelegate, UITextViewDelegate>
 
 @required
+- (BOOL)isReceivingInput;
 - (BOOL)inputIsValid;
 - (void)processInput;
 
 @optional
-- (BOOL)isVisibleFieldWithKey:(NSString *)key;
+- (BOOL)isDisplayableFieldWithKey:(NSString *)key;
 - (BOOL)isEditableFieldWithKey:(NSString *)key;
-- (BOOL)willValidateInputForKey:(NSString *)key;
+- (BOOL)canValidateInputForKey:(NSString *)key;
 - (BOOL)inputValue:(id)inputValue isValidForKey:(NSString *)key;
 - (void)didCommitEntity:(id)entity;
 

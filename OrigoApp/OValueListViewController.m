@@ -34,32 +34,6 @@ static NSInteger const kSectionKeySignOut = 1;
 }
 
 
-- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
-{
-    return NO;
-}
-
-
-- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    return NO;
-}
-
-
-- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
-    
-    if (sectionKey == kSectionKeyValues) {
-        [self performSegueWithIdentifier:kSegueToValuePickerView sender:self];
-    } else if (sectionKey == kSectionKeySignOut) {
-        [self signOut];
-    }
-}
-
-
-#pragma mark - OTableViewListDelegate conformance
-
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
@@ -77,9 +51,33 @@ static NSInteger const kSectionKeySignOut = 1;
 }
 
 
-- (UITableViewCellStyle)styleForIndexPath:(NSIndexPath *)indexPath
+- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
+{
+    return NO;
+}
+
+
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return NO;
+}
+
+
+- (UITableViewCellStyle)styleForListCellAtIndexPath:(NSIndexPath *)indexPath
 {
     return UITableViewCellStyleValue1;
+}
+
+
+- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    
+    if (sectionKey == kSectionKeyValues) {
+        [self performSegueWithIdentifier:kSegueToValuePickerView sender:self];
+    } else if (sectionKey == kSectionKeySignOut) {
+        [[OMeta m] signOut];
+    }
 }
 
 @end

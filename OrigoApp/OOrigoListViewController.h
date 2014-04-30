@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OOrigoListViewController : OTableViewController<OTableViewControllerInstance, OTableViewListDelegate, UIActionSheetDelegate> {
+@interface OOrigoListViewController : OTableViewController<OTableViewController, UIActionSheetDelegate> {
 @private
     id<OMember> _member;
     

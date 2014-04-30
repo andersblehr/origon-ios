@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OOrigoViewController : OTableViewController<OTableViewControllerInstance, OTableViewListDelegate, OTableViewInputDelegate, UIActionSheetDelegate> {
+@interface OOrigoViewController : OTableViewController<OTableViewController, OTableViewInputDelegate, UIActionSheetDelegate> {
 @private
     id<OOrigo> _origo;
     id<OMember> _member;

@@ -116,7 +116,7 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
-#pragma mark - Required OEntity protocol conformance
+#pragma mark - OEntity protocol conformance
 
 - (Class)entityClass
 {
@@ -211,6 +211,22 @@ static NSString * const kClassSuffixProxy = @"Proxy";
     key = [OValidator propertyKeyForKey:key];
     
     return _instance ? [_instance valueForKey:key] : _valuesByKey[key];
+}
+
+
+- (NSString *)reuseIdentifier
+{
+    NSString *reuseIdentifier = NSStringFromClass(_entityClass);
+    
+    if ([[_entityClass propertyKeys] containsObject:kPropertyKeyType]) {
+        NSString *type = [self valueForKey:kPropertyKeyType];
+        
+        if (type) {
+            reuseIdentifier = [reuseIdentifier stringByAppendingString:type separator:kSeparatorColon];
+        }
+    }
+    
+    return reuseIdentifier;
 }
 
 

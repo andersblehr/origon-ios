@@ -42,15 +42,13 @@ extern NSString * const kTargetSettings;
 @property (strong, nonatomic) NSString *action;
 @property (strong, nonatomic) id target;
 
-@property (weak, nonatomic, readonly) OTableViewController *viewController;
-@property (weak, nonatomic, readonly) id<OTableViewInputDelegate> inputDelegate;
-@property (weak, nonatomic, readonly) id<OTableViewListDelegate> listDelegate;
+@property (weak, nonatomic, readonly) id<OTableViewController> viewController;
 
-- (instancetype)initWithViewController:(OTableViewController *)viewController;
+- (instancetype)initWithViewController:(id<OTableViewController>)viewController;
 
 + (OState *)s;
 
-- (void)reflectState:(OState *)state;
+- (void)setActiveState:(OState *)state;
 - (void)toggleAction:(NSArray *)alternatingActions;
 
 - (BOOL)aspectIsHousehold;

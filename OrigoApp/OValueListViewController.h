@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OValueListViewController : OTableViewController<OTableViewControllerInstance, OTableViewListDelegate>
+@interface OValueListViewController : OTableViewController<OTableViewController>
 
 @end

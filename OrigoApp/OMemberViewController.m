@@ -629,6 +629,38 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
+- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    
+    if (sectionKey == kSectionKeyGuardian) {
+        id<OMember> guardian = [self dataAtIndexPath:indexPath];
+        
+        cell.imageView.image = [guardian smallImage];
+        cell.textLabel.text = guardian.name;
+        cell.destinationId = kIdentifierMember;
+        
+        if ([[_member residences] count] == 1) {
+            cell.detailTextLabel.text = [guardian shortDetails];
+        } else {
+            cell.detailTextLabel.text = [guardian shortAddress];
+        }
+        
+        if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
+            cell.detailTextLabel.text = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:cell.detailTextLabel.text separator:kSeparatorComma];
+        }
+    } else if (sectionKey == kSectionKeyAddress) {
+        id<OOrigo> residence = [self dataAtIndexPath:indexPath];
+        
+        cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
+        cell.textLabel.text = [residence shortAddress];
+        cell.detailTextLabel.text = [OPhoneNumberFormatter formatPhoneNumber:residence.telephone canonicalise:YES];
+        
+        [cell setDestinationId:kIdentifierOrigo selectableDuringInput:YES];
+    }
+}
+
+
 - (NSArray *)toolbarButtons
 {
     NSArray *toolbarButtons = nil;
@@ -702,7 +734,7 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (BOOL)canDeleteRowAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
     BOOL canDelete = NO;
     
@@ -714,70 +746,7 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController
-{
-    BOOL shouldRelayDismissal = NO;
-    
-    if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-        shouldRelayDismissal = !viewController.returnData;
-    } else if ([viewController.identifier isEqualToString:kIdentifierOrigo]) {
-        shouldRelayDismissal = YES;
-    }
-    
-    return shouldRelayDismissal;
-}
-
-
-- (void)willDismissModalViewController:(OTableViewController *)viewController
-{
-    if ([viewController.identifier isEqualToString:kIdentifierAuth]) {
-        if ([_member.email isEqualToString:_emailField.value]) {
-            [self persistMember];
-        } else {
-            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Activation failed", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ could not be activated ...", @""), _emailField.value] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
-            
-            self.nextInputField = _emailField;
-            [self toggleEditMode];
-        }
-    }
-}
-
-
-- (void)didDismissModalViewController:(OTableViewController *)viewController
-{
-    if (viewController.returnData) {
-        if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
-            if ([self isEligibleMember:viewController.returnData]) {
-                if ([self aspectIsHousehold]) {
-                    [[self.detailCell nextInvalidInputField] becomeFirstResponder];
-                } else {
-                    [self endEditing];
-                }
-            }
-        } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-            // TODO
-        }
-    } else if ([self actionIs:kActionRegister]) {
-        [self.detailCell resumeFirstResponder];
-    }
-}
-
-
-#pragma mark - OTableViewListDelegate conformance
-
-- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
-{
-    NSString *sortKey = nil;
-    
-    if (sectionKey == kSectionKeyAddress) {
-        sortKey = [OUtil sortKeyWithPropertyKey:kPropertyKeyAddress relationshipKey:kRelationshipKeyOrigo];
-    }
-    
-    return sortKey;
-}
-
-
-- (BOOL)willCompareObjectsInSectionWithKey:(NSInteger)sectionKey
+- (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey
 {
     return (sectionKey == kSectionKeyGuardian);
 }
@@ -809,39 +778,74 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
 {
-    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    NSString *sortKey = nil;
     
-    if (sectionKey == kSectionKeyGuardian) {
-        id<OMember> guardian = [self dataAtIndexPath:indexPath];
-        
-        cell.imageView.image = [guardian smallImage];
-        cell.textLabel.text = guardian.name;
-        cell.destinationId = kIdentifierMember;
+    if (sectionKey == kSectionKeyAddress) {
+        sortKey = [OUtil sortKeyWithPropertyKey:kPropertyKeyAddress relationshipKey:kRelationshipKeyOrigo];
+    }
+    
+    return sortKey;
+}
 
-        if ([[_member residences] count] == 1) {
-            cell.detailTextLabel.text = [guardian shortDetails];
+
+- (BOOL)shouldRelayDismissalOfModalViewController:(id<OTableViewController>)viewController
+{
+    BOOL shouldRelayDismissal = NO;
+    
+    if ([viewController.identifier isEqualToString:kIdentifierMember]) {
+        shouldRelayDismissal = !viewController.returnData;
+    } else if ([viewController.identifier isEqualToString:kIdentifierOrigo]) {
+        shouldRelayDismissal = YES;
+    }
+    
+    return shouldRelayDismissal;
+}
+
+
+- (void)willDismissModalViewController:(id<OTableViewController>)viewController
+{
+    if ([viewController.identifier isEqualToString:kIdentifierAuth]) {
+        if ([_member.email isEqualToString:_emailField.value]) {
+            [self persistMember];
         } else {
-            cell.detailTextLabel.text = [guardian shortAddress];
+            [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Activation failed", @"") message:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ could not be activated ...", @""), _emailField.value] delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil] show];
+            
+            self.nextInputField = _emailField;
+            [self toggleEditMode];
         }
-        
-        if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
-            cell.detailTextLabel.text = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:cell.detailTextLabel.text separator:kSeparatorComma];
+    }
+}
+
+
+- (void)didDismissModalViewController:(id<OTableViewController>)viewController
+{
+    if (viewController.returnData) {
+        if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
+            if ([self isEligibleMember:viewController.returnData]) {
+                if ([self aspectIsHousehold]) {
+                    [[self.detailCell nextInvalidInputField] becomeFirstResponder];
+                } else {
+                    [self endEditing];
+                }
+            }
+        } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
+            // TODO
         }
-    } else if (sectionKey == kSectionKeyAddress) {
-        id<OOrigo> residence = [self dataAtIndexPath:indexPath];
-        
-        cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
-        cell.textLabel.text = [residence shortAddress];
-        cell.detailTextLabel.text = [OPhoneNumberFormatter formatPhoneNumber:residence.telephone canonicalise:YES];
-        
-        [cell setDestinationId:kIdentifierOrigo selectableDuringInput:YES];
+    } else if ([self actionIs:kActionRegister]) {
+        [self.detailCell resumeFirstResponder];
     }
 }
 
 
 #pragma mark - OTableViewInputDelegate conformance
+
+- (BOOL)isReceivingInput
+{
+    return [self actionIs:kActionInput];
+}
+
 
 - (BOOL)inputIsValid
 {
@@ -918,15 +922,31 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (BOOL)isEditableFieldWithKey:(NSString *)key
+- (BOOL)isDisplayableFieldWithKey:(NSString *)key
 {
-    BOOL canEdit = YES;
+    BOOL isDisplayable = YES;
     
-    if ([key isEqualToString:kPropertyKeyEmail]) {
-        canEdit = ![self actionIs:kActionRegister] || ![self targetIs:kTargetUser];
+    if (![self aspectIsHousehold]) {
+        if ([key isEqualToString:kPropertyKeyDateOfBirth]) {
+            isDisplayable = NO;
+        } else if ([@[kPropertyKeyMobilePhone, kPropertyKeyEmail] containsObject:key]) {
+            isDisplayable = !([self targetIs:kTargetJuvenile] && [self actionIs:kActionInput]);
+        }
     }
     
-    return canEdit;
+    return isDisplayable;
+}
+
+
+- (BOOL)isEditableFieldWithKey:(NSString *)key
+{
+    BOOL isEditable = YES;
+    
+    if ([key isEqualToString:kPropertyKeyEmail]) {
+        isEditable = !([self actionIs:kActionRegister] && [self targetIs:kTargetUser]);
+    }
+    
+    return isEditable;
 }
 
 

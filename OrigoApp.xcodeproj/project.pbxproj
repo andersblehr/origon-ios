@@ -151,7 +151,6 @@
 		5C15BFF716386C6000BB5254 /* glyphicons_004_girl-as_boy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy.png"; sourceTree = "<group>"; };
 		5C15BFF816386C6000BB5254 /* glyphicons_004_girl-as_boy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy@2x.png"; sourceTree = "<group>"; };
 		5C15BFFD1638815300BB5254 /* 76-baby_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "76-baby_black.png"; sourceTree = "<group>"; };
-		5C198B7016D63944002D3976 /* OTableViewListDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTableViewListDelegate.h; sourceTree = "<group>"; };
 		5C198B7116D76343002D3976 /* OTableViewCellBlueprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCellBlueprint.h; sourceTree = "<group>"; };
 		5C198B7216D76343002D3976 /* OTableViewCellBlueprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCellBlueprint.m; sourceTree = "<group>"; };
 		5C1A81BB1645CE22003DCCAF /* UIBarButtonItem+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+OrigoAdditions.h"; sourceTree = "<group>"; };
@@ -242,7 +241,6 @@
 		5C9D3147151F1A0100DF6EB0 /* NSJSONSerialization+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSJSONSerialization+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CA10B9A16A7F49F00031D81 /* OTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewController.h; sourceTree = "<group>"; };
 		5CA10B9B16A7F49F00031D81 /* OTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewController.m; sourceTree = "<group>"; };
-		5CA10B9E16A7F9FD00031D81 /* OTableViewControllerInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTableViewControllerInstance.h; sourceTree = "<group>"; };
 		5CA94D9D15836BD9008CD9EC /* NSDate+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5CA94D9E15836BD9008CD9EC /* NSDate+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CAAD27D1751EBA7002AF8CF /* OUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUtil.h; sourceTree = "<group>"; };
@@ -501,9 +499,7 @@
 				5C39EC1C166632570083DFEB /* OEntityObserver.h */,
 				5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */,
 				5C3F9999178AC91100E31A44 /* OMemberExaminerDelegate.h */,
-				5CA10B9E16A7F9FD00031D81 /* OTableViewControllerInstance.h */,
 				5CDE879C176F185E00272909 /* OTableViewInputDelegate.h */,
-				5C198B7016D63944002D3976 /* OTableViewListDelegate.h */,
 				5CFD8E6D183CCEAF00DC3945 /* OTextInput.h */,
 			);
 			name = Protocols;

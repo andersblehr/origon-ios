@@ -20,7 +20,6 @@
     if (self && [self canLocate]) {
         _locationManager = [[CLLocationManager alloc] init];
         _locationManager.delegate = self;
-        _activityIndicator = [OState s].viewController.activityIndicator;
     }
     
     return self;
@@ -68,7 +67,7 @@
         
         if ([self isAuthorised]) {
             if (_blocking) {
-                [_activityIndicator startAnimating];
+                [[OMeta m].activityIndicator startAnimating];
             }
         } else {
             _awaitingAuthorisation = YES;
@@ -98,7 +97,7 @@
     
     if (_awaitingLocation) {
         if (_blocking) {
-            [_activityIndicator stopAnimating];
+            [[OMeta m].activityIndicator stopAnimating];
         }
         
         [[[CLGeocoder alloc] init] reverseGeocodeLocation:manager.location completionHandler:^(NSArray *placemarks, NSError *error) {
@@ -118,7 +117,7 @@
     if (_awaitingAuthorisation) {
         if (status == kCLAuthorizationStatusAuthorized) {
             if (_blocking) {
-                [_activityIndicator startAnimating];
+                [[OMeta m].activityIndicator startAnimating];
             }
         } else if (status == kCLAuthorizationStatusDenied) {
             [_delegate locatorCannotLocate];
@@ -136,7 +135,7 @@
     if (_awaitingLocation) {
         if ((error.code != kCLErrorLocationUnknown) || [OMeta deviceIsSimulator]) {
             if (_blocking) {
-                [_activityIndicator stopAnimating];
+                [[OMeta m].activityIndicator stopAnimating];
             }
             
             [_delegate locatorCannotLocate];

@@ -123,3 +123,5 @@ NSInteger const kAgeThresholdTeen = 13;
 NSInteger const kAgeOfConsent = 16;
 NSInteger const kAgeOfMajority = 18;
 
+// Misc constants
+NSString * const kCustomData = @"customData";

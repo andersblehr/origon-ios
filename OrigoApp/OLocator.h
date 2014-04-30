@@ -12,7 +12,6 @@
 @private
     CLLocationManager *_locationManager;
     CLPlacemark *_placemark;
-    OActivityIndicator *_activityIndicator;
     
     BOOL _awaitingAuthorisation;
     BOOL _awaitingLocation;

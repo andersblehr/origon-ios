@@ -29,6 +29,7 @@
 #import "Reachability.h"
 
 @protocol OEntity, OMember, OMembership, OOrigo, OSettings;
+@protocol OTableViewController;
 @class OEntityProxy, OMemberProxy, OOrigoProxy;
 @class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
 @class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, OMemberExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
@@ -37,9 +38,7 @@
 #import "OEntityObserver.h"
 #import "OLocatorDelegate.h"
 #import "OMemberExaminerDelegate.h"
-#import "OTableViewControllerInstance.h"
 #import "OTableViewInputDelegate.h"
-#import "OTableViewListDelegate.h"
 #import "OTextInput.h"
 
 #import "ODevice.h"

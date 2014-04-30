@@ -30,61 +30,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 @implementation OTableViewCell
 
-#pragma mark - Common initialisations
-
-- (instancetype)initCommonsForReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
-{
-    id listDelegate = [OState s].listDelegate;
-    UITableViewCellStyle style = UITableViewCellStyleSubtitle;
-    
-    if ([reuseIdentifier hasPrefix:kReuseIdentifierList]) {
-        
-        if ([listDelegate respondsToSelector:@selector(styleForIndexPath:)]) {
-            style = [listDelegate styleForIndexPath:indexPath];
-        }
-    }
-    
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    
-    if (self) {
-        _state = [OState s].viewController.state;
-        
-        if ([OMeta systemIs_iOS6x]) {
-            self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-            self.backgroundView.backgroundColor = [UIColor cellBackgroundColour];
-            self.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-            self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColour];
-            self.textLabel.backgroundColor = [UIColor clearColor];
-            self.textLabel.textColor = [UIColor textColour];
-            self.detailTextLabel.backgroundColor = [UIColor clearColor];
-            
-            if (style == UITableViewCellStyleSubtitle) {
-                self.textLabel.font = [UIFont listTextFont];
-                self.detailTextLabel.font = [UIFont listDetailTextFont];
-                self.detailTextLabel.textColor = [UIColor textColour];
-            } else if (style == UITableViewCellStyleValue1) {
-                self.textLabel.font = [UIFont alternateListTextFont];
-                self.detailTextLabel.font = [UIFont alternateListTextFont];
-                self.detailTextLabel.textColor = [UIColor lightGrayColor];
-            }
-        }
-        
-        if ([self isListCell]) {
-            _indexPath = indexPath;
-            _listDelegate = listDelegate;
-            _selectable = ![_state actionIs:kActionInput];
-
-            [_listDelegate loadListCell:self atIndexPath:_indexPath];
-        } else {
-            _views = [NSMutableDictionary dictionary];
-            _inputDelegate = _state.inputDelegate;
-        }
-    }
-    
-    return self;
-}
-
-
 #pragma mark - Adding elements
 
 - (void)addTitleField
@@ -96,7 +41,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [self.contentView addSubview:titleBannerView];
     [_views setObject:titleBannerView forKey:kViewKeyTitleBanner];
     
-    [self addInputFieldForKey:_blueprint.titleKey];
+    [self addInputFieldForKey:_constrainer.titleKey];
     
     if (_blueprint.hasPhoto) {
         UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
@@ -149,15 +94,17 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addCellElements
 {
-    if (_blueprint.titleKey) {
+    _views = [NSMutableDictionary dictionary];
+    
+    if (_constrainer.titleKey) {
         if (_blueprint.fieldsAreLabeled) {
             [self addTitleField];
         } else {
-            [self addLabelForKey:_blueprint.titleKey centred:YES];
+            [self addLabelForKey:_constrainer.titleKey centred:YES];
         }
     }
     
-    for (NSString *detailKey in _blueprint.detailKeys) {
+    for (NSString *detailKey in _constrainer.detailKeys) {
         if (_blueprint.fieldsAreLabeled) {
             [self addLabelForKey:detailKey centred:NO];
         }
@@ -171,13 +118,53 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Initialisation
 
-- (instancetype)initWithEntity:(id)entity
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
-    self = [self initCommonsForReuseIdentifier:NSStringFromClass([entity entityClass]) indexPath:nil];
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    
+    if (self) {
+        _state = [OState s];
+        _tableView = ((UITableViewController *)_state.viewController).tableView;
+        
+        if ([OMeta systemIs_iOS6x]) {
+            self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+            self.backgroundView.backgroundColor = [UIColor cellBackgroundColour];
+            self.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+            self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColour];
+            self.textLabel.backgroundColor = [UIColor clearColor];
+            self.textLabel.textColor = [UIColor textColour];
+            self.detailTextLabel.backgroundColor = [UIColor clearColor];
+            
+            if (style == UITableViewCellStyleSubtitle) {
+                self.textLabel.font = [UIFont listTextFont];
+                self.detailTextLabel.font = [UIFont listDetailTextFont];
+                self.detailTextLabel.textColor = [UIColor textColour];
+            } else if (style == UITableViewCellStyleValue1) {
+                self.textLabel.font = [UIFont alternateListTextFont];
+                self.detailTextLabel.font = [UIFont alternateListTextFont];
+                self.detailTextLabel.textColor = [UIColor lightGrayColor];
+            }
+        }
+        
+        if ([self isListCell]) {
+            _selectable = ![_state actionIs:kActionInput];
+        }
+    }
+    
+    return self;
+}
+
+
+- (instancetype)initWithEntity:(id<OEntity>)entity delegate:(id)delegate
+{
+    NSString *reuseIdentifier = [entity reuseIdentifier];
+    
+    self = [self initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     
     if (self) {
         _entity = entity;
-        _blueprint = [[OTableViewCellBlueprint alloc] initWithState:_state];
+        _inputDelegate = delegate;
+        _blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
         
         [self addCellElements];
@@ -188,12 +175,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
-    self = [self initCommonsForReuseIdentifier:reuseIdentifier indexPath:indexPath];
+    self = [self initWithStyle:style reuseIdentifier:reuseIdentifier];
     
     if (self && ![self isListCell]) {
-        _blueprint = [[OTableViewCellBlueprint alloc] initWithState:_state reuseIdentifier:reuseIdentifier];
+        _inputDelegate = delegate;
+        _blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
         _constrainer = [[OTableViewCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
         
         [self addCellElements];
@@ -223,7 +211,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     OInputField *inputField = nil;
     BOOL ignoreField = _inputField ? YES : NO;
     
-    for (NSString *key in _blueprint.displayableInputKeys) {
+    for (NSString *key in _constrainer.inputKeys) {
         if (ignoreField) {
             ignoreField = ![key isEqualToString:_inputField.key];
         } else {
@@ -241,7 +229,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     OInputField *invalidInputField = nil;
     
-    for (NSString *key in _blueprint.displayableInputKeys) {
+    for (NSString *key in _constrainer.inputKeys) {
         OInputField *inputField = [self inputFieldForKey:key];
         
         if (!invalidInputField && ![inputField hasValidValue]) {
@@ -283,7 +271,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
         
         if (_editable) {
-            for (NSString *key in _blueprint.displayableInputKeys) {
+            for (NSString *key in _constrainer.inputKeys) {
                 OInputField *inputField = [self inputFieldForKey:key];
                 
                 if (!_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
@@ -314,7 +302,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)clearInputFields
 {
     if (![self isListCell] && _editable) {
-        for (NSString *key in _blueprint.displayableInputKeys) {
+        for (NSString *key in _constrainer.inputKeys) {
             [self inputFieldForKey:key].value = nil;
         }
     }
@@ -325,7 +313,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     if (![self isListCell]) {
         CGFloat implicitFramePadding = [OMeta systemIs_iOS6x] ? kImplicitFramePadding_iOS6x : 0.f;
-        CGFloat desiredHeight = [_blueprint cellHeightWithEntity:_entity cell:self];
+        CGFloat desiredHeight = [_constrainer heightOfCell];
         
         if (abs(self.frame.size.height - (desiredHeight + implicitFramePadding)) > 0.5f) {
             [self setNeedsUpdateConstraints];
@@ -340,8 +328,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 }
                 
 #if !CGFLOAT_IS_DOUBLE // Compiled for 32-bit
-                [_state.viewController.tableView beginUpdates];
-                [_state.viewController.tableView endUpdates];
+                [_tableView beginUpdates];
+                [_tableView endUpdates];
 #endif
                 
                 CGRect frame = self.frame;
@@ -349,8 +337,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 self.frame = frame;
                 
 #if CGFLOAT_IS_DOUBLE // Compiled for 64-bit
-                [_state.viewController.tableView beginUpdates];
-                [_state.viewController.tableView endUpdates];
+                [_tableView beginUpdates];
+                [_tableView endUpdates];
 #endif
                 
                 if ([OMeta systemIs_iOS6x]) {
@@ -391,11 +379,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Detail cell content handling
+#pragma mark - Cell content handling
 
 - (void)prepareForInput
 {
-    for (NSString *key in _blueprint.inputKeys) {
+    for (NSString *key in _constrainer.inputKeys) {
         OInputField *inputField = [self inputFieldForKey:key];
         
         if ([inputField respondsToSelector:@selector(prepareForInput)]) {
@@ -422,9 +410,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)readEntity
 {
     if ([self isListCell]) {
-        [_listDelegate loadListCell:self atIndexPath:_indexPath];
+        [_state.viewController loadListCell:self atIndexPath:[_tableView indexPathForCell:self]];
     } else {
-        for (NSString *key in _blueprint.inputKeys) {
+        for (NSString *key in _constrainer.inputKeys) {
             [self inputFieldForKey:key].value = [_entity valueForKey:key];
         }
         
@@ -443,7 +431,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         }
     }
     
-    for (NSString *key in _blueprint.displayableInputKeys) {
+    for (NSString *key in _constrainer.inputKeys) {
         [_entity setValue:[self inputFieldForKey:key].value forKey:key];
     }
 }
@@ -463,7 +451,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         BOOL destinationIsEligible = ![_state actionIs:kActionInput] || selectableDuringInput;
         
         if (destinationIsEligible) {
-            NSString *destinationStateId = [OState stateIdForViewControllerWithIdentifier:destinationId target:[_state.viewController dataAtIndexPath:_indexPath]];
+            NSString *destinationStateId = [OState stateIdForViewControllerWithIdentifier:destinationId target:_entity];
             
             destinationIsEligible = [_state isValidDestinationStateId:destinationStateId];
         }
@@ -505,7 +493,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     _editable = editable;
     
     if (![self isListCell]) {
-        for (NSString *key in _blueprint.inputKeys) {
+        for (NSString *key in _constrainer.inputKeys) {
             [self inputFieldForKey:key].editable = editable;
             
             if ([OValidator isAlternatingLabelKey:key]) {
@@ -553,9 +541,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setFrame:(CGRect)frame
 {
-    if ([OMeta systemIs_iOS6x] && !_state.viewController.usesPlainTableViewStyle) {
-        frame.origin.x = -kDefaultCellPadding;
-        frame.size.width = [OMeta screenWidth] + 2.f * kDefaultCellPadding;
+    if ([OMeta systemIs_iOS6x]) {
+        if (!((OTableViewController *)_state.viewController).usesPlainTableViewStyle) {
+            frame.origin.x = -kDefaultCellPadding;
+            frame.size.width = [OMeta screenWidth] + 2.f * kDefaultCellPadding;
+        }
     }
     
     [super setFrame:frame];

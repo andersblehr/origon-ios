@@ -13,71 +13,74 @@ CGFloat const kDefaultCellPadding = 10.f;
 CGFloat const kMinimumCellPadding = 0.1f;
 CGFloat const kPhotoFrameWidth = 55.f;
 
-static CGFloat const kPaddedPhotoFrameHeight = 75.f;
-
 
 @implementation OTableViewCellBlueprint
 
+#pragma mark - Auxiliary methods
+
+- (Protocol *)entityProtocolFromReuseIdentifier:(NSString *)reuseIdentifier
+{
+    return NSProtocolFromString([reuseIdentifier componentsSeparatedByString:kSeparatorColon][0]);
+}
+
+
+- (NSString *)typeFromReuseIdentifier:(NSString *)reuseIdentifier
+{
+    NSArray *identifierComponents = [reuseIdentifier componentsSeparatedByString:kSeparatorColon];
+    
+    return ([identifierComponents count] == 2) ? identifierComponents[1] : nil;
+}
+
+
 #pragma mark - Initialisation
 
-- (instancetype)initWithState:(OState *)state
+- (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super init];
     
     if (self) {
-        _state = state;
-        _stateAction = _state.action;
-        _fieldsShouldDeemphasiseOnEndEdit = YES;
-        _fieldsAreLabeled = YES;
+        Protocol *entityProtocol = [self entityProtocolFromReuseIdentifier:reuseIdentifier];
+        NSString *type = [self typeFromReuseIdentifier:reuseIdentifier];
         
-        if ([_state.viewController.identifier isEqualToString:kIdentifierMember]) {
+        _hasPhoto = NO;
+        _fieldsAreLabeled = YES;
+        _fieldsShouldDeemphasiseOnEndEdit = YES;
+        
+        if (entityProtocol == @protocol(OMember)) {
             _hasPhoto = YES;
             _titleKey = kPropertyKeyName;
             _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
-        } else if ([_state.viewController.identifier isEqualToString:kIdentifierOrigo]) {
-            _hasPhoto = NO;
-            _multiLineTextKeys = @[kPropertyKeyDescriptionText, kPropertyKeyAddress];
-            
-            if (![_state targetIs:kOrigoTypeResidence]) {
-                _titleKey = kPropertyKeyName;
-            } else if ([_state.inputDelegate isVisibleFieldWithKey:kInterfaceKeyResidenceName]) {
+        } else if (entityProtocol == @protocol(OOrigo)) {
+            if ([type isEqualToString:kOrigoTypeResidence]) {
                 _titleKey = kInterfaceKeyResidenceName;
-            }
-            
-            if ([_state targetIs:kOrigoTypeResidence]) {
                 _detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
-            } else if ([_state targetIs:kOrigoTypeOrganisation]) {
+                _multiLineTextKeys = @[kPropertyKeyAddress];
+            } else if ([type isEqualToString:kOrigoTypeOrganisation]) {
+                _titleKey = kPropertyKeyName;
                 _detailKeys = @[kInterfaceKeyPurpose, kPropertyKeyAddress, kPropertyKeyTelephone];
+                _multiLineTextKeys = @[kInterfaceKeyPurpose, kPropertyKeyAddress];
             } else {
+                _titleKey = kPropertyKeyName;
                 _detailKeys = @[kPropertyKeyDescriptionText];
+                _multiLineTextKeys = @[kPropertyKeyDescriptionText];
             }
-        }
-    }
-    
-    return self;
-}
-
-
-- (instancetype)initWithState:(OState *)state reuseIdentifier:(NSString *)reuseIdentifier
-{
-    self = [self initWithState:state];
-    
-    if (self) {
-        BOOL isSigningIn = [reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn];
-        BOOL isActivating = [reuseIdentifier isEqualToString:kReuseIdentifierUserActivation];
-        
-        if (isSigningIn || isActivating) {
-            _fieldsShouldDeemphasiseOnEndEdit = NO;
+        } else {
             _fieldsAreLabeled = NO;
-            _hasPhoto = NO;
-        
-            if (isSigningIn) {
+            _fieldsShouldDeemphasiseOnEndEdit = NO;
+            
+            if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
                 _titleKey = kInterfaceKeySignIn;
                 _detailKeys = @[kInterfaceKeyAuthEmail, kInterfaceKeyPassword];
-            } else if (isActivating) {
+            } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
                 _titleKey = kInterfaceKeyActivate;
                 _detailKeys = @[kInterfaceKeyActivationCode, kInterfaceKeyRepeatPassword];
             }
+        }
+        
+        if (_titleKey) {
+            _inputKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
+        } else {
+            _inputKeys = _detailKeys;
         }
     }
     
@@ -91,9 +94,9 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 {
     OInputField *inputField = nil;
     
-    if ([_multiLineTextKeys containsObject:[OValidator propertyKeyForKey:key]]) {
+    if ([_multiLineTextKeys containsObject:key]) {
         inputField = [[OTextView alloc] initWithKey:key blueprint:self delegate:delegate];
-    } else {
+    } else if ([_inputKeys containsObject:key]) {
         inputField = [[OTextField alloc] initWithKey:key delegate:delegate];
     }
     
@@ -115,84 +118,6 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
     }
     
     return inputField;
-}
-
-
-#pragma mark - Cell height computation
-
-- (CGFloat)cellHeightWithEntity:(id)entity cell:(OTableViewCell *)cell
-{
-    CGFloat height = 2 * kDefaultCellPadding;
-    
-    for (NSString *key in self.displayableInputKeys) {
-        if ([key isEqualToString:_titleKey]) {
-            if (_fieldsAreLabeled) {
-                height += [UIFont titleFieldHeight] + kDefaultCellPadding;
-            } else {
-                height += [UIFont detailFieldHeight] + kDefaultCellPadding;
-            }
-        } else if ([_state actionIs:kActionInput] || [entity hasValueForKey:key]) {
-            if ([_multiLineTextKeys containsObject:[OValidator propertyKeyForKey:key]]) {
-                if (cell) {
-                    height += [[cell inputFieldForKey:key] height];
-                } else if ([entity hasValueForKey:key]) {
-                    height += [OTextView heightWithText:[entity valueForKey:key] blueprint:self];
-                } else {
-                    height += [OTextView heightWithText:NSLocalizedString(key, kStringPrefixPlaceholder) blueprint:self];
-                }
-            } else {
-                height += [UIFont detailFieldHeight];
-            }
-        }
-    }
-    
-    if (_hasPhoto) {
-        height = MAX(height, kPaddedPhotoFrameHeight);
-    }
-    
-    return height;
-}
-
-
-#pragma mark - Custom accessors
-
-- (NSArray *)inputKeys
-{
-    if (!_inputKeys) {
-        if (_titleKey) {
-            _inputKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
-        } else {
-            _inputKeys = _detailKeys;
-        }
-    }
-    
-    return _inputKeys;
-}
-
-
-- (NSArray *)displayableInputKeys
-{
-    if (_displayableInputKeys && ![_state.action isEqualToString:_stateAction]) {
-        _displayableInputKeys = nil;
-        _stateAction = _state.action;
-    }
-    
-    if (!_displayableInputKeys) {
-        _displayableInputKeys = [self.inputKeys mutableCopy];
-        
-        if ([_state.viewController.identifier isEqualToString:kIdentifierMember]) {
-            if (![_state aspectIsHousehold]) {
-                [_displayableInputKeys removeObject:kPropertyKeyDateOfBirth];
-                
-                if ([_state targetIs:kTargetJuvenile] && [_state actionIs:kActionInput]) {
-                    [_displayableInputKeys removeObject:kPropertyKeyMobilePhone];
-                    [_displayableInputKeys removeObject:kPropertyKeyEmail];
-                }
-            }
-        }
-    }
-    
-    return _displayableInputKeys;
 }
 
 @end

@@ -25,7 +25,9 @@ static CGFloat const kFadeAnimationDuration = 0.2f;
 
 - (instancetype)init
 {
-    self = [super initWithFrame:[OState s].viewController.view.window.frame];
+    UIViewController *viewController = (UIViewController *)[OState s].viewController;
+    
+    self = [super initWithFrame:viewController.view.window.frame];
     
     if (self) {
         self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:kAlphaDimmedBackground];
@@ -39,7 +41,7 @@ static CGFloat const kFadeAnimationDuration = 0.2f;
         activityView.color = [UIColor darkGrayColor];
         [activityView startAnimating];
         
-        [[OState s].viewController.view.window addSubview:self];
+        [viewController.view.window addSubview:self];
         [self addSubview:HUDView];
         [self addSubview:activityView];
         

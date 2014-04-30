@@ -80,6 +80,21 @@
 }
 
 
+- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self targetIsMemberVariant]) {
+        id<OMember> peer = [self dataAtIndexPath:indexPath];
+        
+        cell.textLabel.text = peer.name;
+        cell.detailTextLabel.text = [peer shortAddress];
+        cell.imageView.image = [peer smallImage];
+        cell.checked = [self.returnData containsObject:peer];
+    } else {
+        cell.checked = [[self dataAtIndexPath:indexPath] isEqual:[_settings valueForSettingKey:_settingKey]];
+    }
+}
+
+
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
 {
     return NO;
@@ -89,16 +104,6 @@
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
     return NO;
-}
-
-
-- (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    if ([self targetIsMemberVariant]) {
-        cell.checked = [self.returnData containsObject:[self dataAtIndexPath:indexPath]];
-    } else {
-        cell.checked = [[self dataAtIndexPath:indexPath] isEqual:[_settings valueForSettingKey:_settingKey]];
-    }
 }
 
 
@@ -126,20 +131,6 @@
     } else {
         [_settings setValue:pickedValue forSettingKey:_settingKey];
         [self.navigationController popViewControllerAnimated:YES];
-    }
-}
-
-
-#pragma mark - OTableViewListDelegate conformance
-
-- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    if ([self targetIsMemberVariant]) {
-        id<OMember> peer = [self dataAtIndexPath:indexPath];
-        
-        cell.textLabel.text = peer.name;
-        cell.detailTextLabel.text = [peer shortAddress];
-        cell.imageView.image = [peer smallImage];
     }
 }
 

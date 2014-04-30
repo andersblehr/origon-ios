@@ -17,6 +17,8 @@
     NSMutableArray *_recipientTagsByServiceType;
     NSMutableArray *_recipientCandidatesByServiceType;
     NSArray *_recipientCandidates;
+    
+    UIViewController *_presentingViewController;
 }
 
 @property (strong, nonatomic, readonly) CTCarrier *carrier;

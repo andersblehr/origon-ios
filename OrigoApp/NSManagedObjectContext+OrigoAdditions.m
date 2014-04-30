@@ -303,12 +303,12 @@
     
     for (OMembership *peerResidency in peerResidencies) {
         if (![origo knowsAboutMember:peerResidency.member]) {
-            [[origo associateMembershipForMember:peerResidency.member] expire];
+            [(OOrigo *)[origo associateMembershipForMember:peerResidency.member] expire];
         }
         
         if ([origo isOfType:kOrigoTypeResidence]) {
             if (![peerResidency.origo knowsAboutMember:member]) {
-                [[peerResidency.origo associateMembershipForMember:member] expire];
+                [(OOrigo *)[peerResidency.origo associateMembershipForMember:member] expire];
             }
         }
     }
@@ -359,7 +359,7 @@
     [self save];
     
     if (![OMeta m].deviceId) {
-        [[OState s].viewController signOut];
+        [[OMeta m] signOut];
     }
 }
 
