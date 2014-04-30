@@ -18,20 +18,18 @@ extern CGFloat const kCellAnimationDuration;
 @interface OTableViewCell : UITableViewCell<OEntityObserver> {
 @private
     OState *_state;
-    OTableViewCellConstrainer *_constrainer;
-    NSMutableDictionary *_views;
-    OInputField *_lastInputField;
+    OTableViewCellBlueprint *_blueprint;
     
-    id<OTableViewListDelegate> _listDelegate;
-    id<OTableViewInputDelegate> _inputDelegate;
+    NSMutableDictionary *_views;
+    UITableView *_tableView;
+    OInputField *_lastInputField;
 }
 
-@property (strong, nonatomic, readonly) OTableViewCellBlueprint *blueprint;
 @property (strong, nonatomic, readonly) OState *state;
-@property (strong, nonatomic, readonly) id entity;
+@property (strong, nonatomic, readonly) OTableViewCellConstrainer *constrainer;
 
+@property (strong, nonatomic) id entity;
 @property (strong, nonatomic) OInputField *inputField;
-@property (strong, nonatomic) NSIndexPath *indexPath;
 @property (strong, nonatomic) NSString *destinationId;
 
 @property (nonatomic, readonly) BOOL selectableDuringInput;
@@ -39,10 +37,11 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL checked;
 
+@property (weak, nonatomic) id<OTableViewInputDelegate> inputDelegate;
 @property (weak, nonatomic) id<OEntityObserver> observer;
 
-- (instancetype)initWithEntity:(id)entity;
-- (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath;
+- (instancetype)initWithEntity:(id<OEntity>)entity delegate:(id)delegate;
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 
 - (OLabel *)labelForKey:(NSString *)key;
 - (OInputField *)inputFieldForKey:(NSString *)key;

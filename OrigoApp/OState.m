@@ -36,6 +36,8 @@ NSString * const kTargetSettings = @"settings";
 static NSString * const kAspectHousehold = @"h";
 static NSString * const kAspectDefault = @"d";
 
+static OState *_activeState = nil;
+
 
 @implementation OState
 
@@ -65,7 +67,7 @@ static NSString * const kAspectDefault = @"d";
 
 #pragma mark - Instantiation & initialisation
 
-- (instancetype)initWithViewController:(OTableViewController *)viewController
+- (instancetype)initWithViewController:(id<OTableViewController>)viewController
 {
     self = [super init];
     
@@ -87,28 +89,19 @@ static NSString * const kAspectDefault = @"d";
 
 + (OState *)s
 {
-    static OState *activeState = nil;
-    static dispatch_once_t onceToken;
+    if (!_activeState) {
+        _activeState = [[self alloc] initWithViewController:nil];
+    }
     
-    dispatch_once(&onceToken, ^{
-        activeState = [[self allocWithZone:nil] initWithViewController:nil];
-    });
-    
-    return activeState;
+    return _activeState;
 }
 
 
 #pragma mark - State handling
 
-- (void)reflectState:(OState *)state
+- (void)setActiveState:(OState *)state
 {
-    if (state != self) {
-        _identifier = state->_identifier;
-        _viewController = state.viewController;
-        _aspect = state->_aspect;
-        _action = state.action;
-        _target = state.target;
-    }
+    _activeState = state;
 }
 
 
@@ -176,7 +169,7 @@ static NSString * const kAspectDefault = @"d";
 - (BOOL)isValidDestinationStateId:(NSString *)stateId
 {
     BOOL isValid = YES;
-    UINavigationController *navigationController = _viewController.navigationController;
+    UINavigationController *navigationController = ((UIViewController *)_viewController).navigationController;
     
     if (navigationController) {
         for (OTableViewController *viewController in navigationController.viewControllers) {
@@ -228,7 +221,7 @@ static NSString * const kAspectDefault = @"d";
 {
     _action = action;
     
-    [[[self class] s] reflectState:self];
+    [[[self class] s] setActiveState:self];
 }
 
 
@@ -252,19 +245,7 @@ static NSString * const kAspectDefault = @"d";
     
     _identifier = [[self class] stateIdForViewControllerWithIdentifier:_viewController.identifier target:target];
 
-    [[[self class] s] reflectState:self];
-}
-
-
-- (id<OTableViewInputDelegate>)inputDelegate
-{
-    return (id<OTableViewInputDelegate>)_viewController;
-}
-
-
-- (id<OTableViewListDelegate>)listDelegate
-{
-    return (id<OTableViewListDelegate>)_viewController;
+    [[[self class] s] setActiveState:self];
 }
 
 @end

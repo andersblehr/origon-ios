@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OMemberViewController : OTableViewController<OTableViewControllerInstance, OTableViewListDelegate, OTableViewInputDelegate, OMemberExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate, OConnectionDelegate> {
+@interface OMemberViewController : OTableViewController<OTableViewController, OTableViewInputDelegate, OMemberExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate, OConnectionDelegate> {
 @private
     id<OMember> _member;
     id<OOrigo> _origo;

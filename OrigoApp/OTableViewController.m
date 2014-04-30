@@ -8,8 +8,6 @@
 
 #import "OTableViewController.h"
 
-NSString * const kCustomData = @"customData";
-
 static NSString * const kViewControllerSuffixDefault = @"ViewController";
 static NSString * const kViewControllerSuffixList = @"ListViewController";
 static NSString * const kViewControllerSuffixPicker = @"PickerViewController";
@@ -25,6 +23,11 @@ static UIViewController * _reinstantiatedRootViewController;
 
 
 @implementation OTableViewController
+
+@synthesize identifier = _identifier;
+@synthesize target = _target;
+@synthesize returnData = _returnData;
+
 
 #pragma mark - Comparison delegation
 
@@ -93,27 +96,29 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     NSArray *unsortedArray = [data allObjects];
     NSArray *sortedArray = nil;
     
-    if ([_instance conformsToProtocol:@protocol(OTableViewListDelegate)]) {
-        id listDelegate = (id<OTableViewListDelegate>)_instance;
+    BOOL instanceCanCompare = NO;
+    
+    if ([_instance respondsToSelector:@selector(canCompareObjectsInSectionWithKey:)]) {
+        instanceCanCompare = [_instance canCompareObjectsInSectionWithKey:sectionKey];
+    }
+    
+    if (instanceCanCompare) {
+        sortedArray = [unsortedArray sortedArrayUsingFunction:compareObjects context:(__bridge void *)_instance];
+    } else if ([_instance respondsToSelector:@selector(sortKeyForSectionWithKey:)]) {
+        NSString *sortKey = [_instance sortKeyForSectionWithKey:sectionKey];
         
-        BOOL listDelegateWillCompare = NO;
-        
-        if ([listDelegate respondsToSelector:@selector(willCompareObjectsInSectionWithKey:)]) {
-            listDelegateWillCompare = [listDelegate willCompareObjectsInSectionWithKey:sectionKey];
-        }
-        
-        if (listDelegateWillCompare) {
-            sortedArray = [unsortedArray sortedArrayUsingFunction:compareObjects context:(__bridge void *)self];
-        } else if ([listDelegate respondsToSelector:@selector(sortKeyForSectionWithKey:)]) {
-            NSString *sortKey = [listDelegate sortKeyForSectionWithKey:sectionKey];
-            
-            if (sortKey) {
-                sortedArray = [unsortedArray sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:sortKey ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]]];
-            }
+        if (sortKey) {
+            sortedArray = [unsortedArray sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:sortKey ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]]];
         }
     }
     
     return sortedArray ? sortedArray : unsortedArray;
+}
+
+
+- (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber
+{
+    return [_sectionKeys[sectionNumber] integerValue];
 }
 
 
@@ -252,7 +257,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Setting section data
+#pragma mark - Managing section data
 
 - (void)setDataForDetailSection
 {
@@ -363,23 +368,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Accessing section data
-
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [self dataAtRow:indexPath.row inSectionWithKey:[self sectionKeyForIndexPath:indexPath]];
-}
-
-
-- (id)dataAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey
-{
-    return [self dataInSectionWithKey:sectionKey][row];
-}
-
-
-- (NSArray *)dataInSectionWithKey:(NSInteger)sectionKey
-{
-    return _sectionData[@(sectionKey)];
+    return _sectionData[@([self sectionKeyForIndexPath:indexPath])][indexPath.row];
 }
 
 
@@ -394,12 +385,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey
 {
     return [_sectionKeys containsObject:@(sectionKey)];
-}
-
-
-- (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber
-{
-    return [_sectionKeys[sectionNumber] integerValue];
 }
 
 
@@ -622,19 +607,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Signing out
-
-- (void)signOut
-{
-    [[OMeta m] userDidSignOut];
-    
-    _needsReinstantiateRootViewController = YES;
-    _reinstantiatedRootViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
-    
-    [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetUser meta:_reinstantiatedRootViewController];
-}
-
-
 #pragma mark - View lifecycle
 
 - (void)viewDidLoad
@@ -654,7 +626,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _sectionIndexTitles = [NSMutableArray array];
     _dirtySections = [NSMutableSet set];
     _detailSectionKey = NSNotFound;
-    _instance = (id<OTableViewControllerInstance>)self;
+    _instance = self;
     _state = [[OState alloc] initWithViewController:self];
     _canEdit = NO;
     
@@ -695,7 +667,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self initialiseInstance];
         }
         
-        [[OState s] reflectState:_state];
+        [[OState s] setActiveState:_state];
     }
     
     [super viewWillAppear:animated];
@@ -793,16 +765,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Custom accessors
 
-- (OActivityIndicator *)activityIndicator
-{
-    if (!_activityIndicator) {
-        _activityIndicator = [[OActivityIndicator alloc] init];
-    }
-    
-    return _activityIndicator;
-}
-
-
 - (void)setUsesSectionIndexTitles:(BOOL)usesSectionIndexTitles
 {
     _usesSectionIndexTitles = usesSectionIndexTitles;
@@ -859,6 +821,29 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+#pragma mark - OTableViewController conformance
+
+- (void)loadState
+{
+    [NSException raise:NSInternalInconsistencyException format:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)];
+}
+
+
+- (void)loadData
+{
+    [NSException raise:NSInternalInconsistencyException format:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)];
+}
+
+
+- (void)didSignOut
+{
+    _needsReinstantiateRootViewController = YES;
+    _reinstantiatedRootViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
+    
+    [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetUser meta:_reinstantiatedRootViewController];
+}
+
+
 #pragma mark - UITableViewDataSource conformance
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -879,11 +864,17 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
         if (_detailCell) {
-            height = [_detailCell.blueprint cellHeightWithEntity:_entity cell:_detailCell];
-        } else if (_entity) {
-            height = [[[OTableViewCellBlueprint alloc] initWithState:_state] cellHeightWithEntity:_entity cell:nil];
-        } else if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
-            height = [[[OTableViewCellBlueprint alloc] initWithState:_state reuseIdentifier:[_instance reuseIdentifierForIndexPath:indexPath]] cellHeightWithEntity:nil cell:nil];
+            height = [_detailCell.constrainer heightOfCell];
+        } else {
+            NSString *reuseIdentifier = nil;
+            
+            if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
+                reuseIdentifier = [_instance reuseIdentifierForIndexPath:indexPath];
+            } else {
+                reuseIdentifier = [_entity reuseIdentifier];
+            }
+            
+            height = [OTableViewCellConstrainer heightOfCellWithReuseIdentifier:reuseIdentifier entity:_entity delegate:_instance];
         }
     }
     
@@ -896,22 +887,28 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     OTableViewCell *cell = nil;
     
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
-        NSString *customReuseIdentifier = nil;
+        NSString *reuseIdentifier = nil;
         
         if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
-            customReuseIdentifier = [_instance reuseIdentifierForIndexPath:indexPath];
+            reuseIdentifier = [_instance reuseIdentifierForIndexPath:indexPath];
         }
         
-        if (customReuseIdentifier) {
-            cell = [tableView cellForReuseIdentifier:customReuseIdentifier];
+        if (reuseIdentifier) {
+            cell = [tableView detailCellWithReuseIdentifier:reuseIdentifier delegate:_instance];
         } else {
-            cell = [tableView cellForEntity:_entity];
+            cell = [tableView detailCellForEntity:_entity delegate:_instance];
             cell.observer = self.observer;
         }
         
         _detailCell = cell;
     } else {
-        cell = [tableView listCellForIndexPath:indexPath data:[self dataAtIndexPath:indexPath]];
+        UITableViewCellStyle style = UITableViewCellStyleSubtitle;
+        
+        if ([_instance respondsToSelector:@selector(styleForListCellAtIndexPath:)]) {
+            style = [_instance styleForListCellAtIndexPath:indexPath];
+        }
+        
+        cell = [tableView listCellWithStyle:style data:[self dataAtIndexPath:indexPath]];
     }
     
     return cell;
@@ -920,15 +917,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    BOOL canDeleteRow = NO;
+    BOOL canDeleteCell = NO;
     
-    if ([self.tableView cellForRowAtIndexPath:indexPath] != _detailCell) {
-        if ([_instance respondsToSelector:@selector(canDeleteRowAtIndexPath:)]) {
-            canDeleteRow = [_instance canDeleteRowAtIndexPath:indexPath];
+    if ([self sectionKeyForIndexPath:indexPath] != _detailSectionKey) {
+        if ([_instance respondsToSelector:@selector(canDeleteCellAtIndexPath:)]) {
+            canDeleteCell = [_instance canDeleteCellAtIndexPath:indexPath];
         }
     }
     
-    return canDeleteRow;
+    return canDeleteCell;
 }
 
 
@@ -1025,8 +1022,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([_instance respondsToSelector:@selector(willDisplayCell:atIndexPath:)]) {
-        [_instance willDisplayCell:cell atIndexPath:indexPath];
+    if (cell == _detailCell) {
+        if ([_instance respondsToSelector:@selector(willDisplayDetailCell:)]) {
+            [_instance willDisplayDetailCell:cell];
+        }
+    } else {
+        [_instance loadListCell:cell atIndexPath:indexPath];
     }
     
     if ([OMeta systemIs_iOS6x] && !_usesPlainTableViewStyle) {
@@ -1115,23 +1116,23 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)willSendRequest:(NSURLRequest *)request
 {
     if (_requiresSynchronousServerCalls) {
-        [self.activityIndicator startAnimating];
+        [[OMeta m].activityIndicator startAnimating];
     }
 }
 
 
 - (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
 {
-    if (self.activityIndicator.isAnimating) {
-        [self.activityIndicator stopAnimating];
+    if ([OMeta m].activityIndicator.isAnimating) {
+        [[OMeta m].activityIndicator stopAnimating];
     }
 }
 
 
 - (void)didFailWithError:(NSError *)error
 {
-    if (self.activityIndicator.isAnimating) {
-        [self.activityIndicator stopAnimating];
+    if ([OMeta m].activityIndicator.isAnimating) {
+        [[OMeta m].activityIndicator stopAnimating];
     }
     
     // TODO: Handle errors (-1001: Timeout, and others)

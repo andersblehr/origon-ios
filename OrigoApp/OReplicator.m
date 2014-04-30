@@ -182,7 +182,7 @@
         
         [self resetUserReplicationState];
     } else if (HTTPStatus == kHTTPStatusUnauthorized) {
-        [[OState s].viewController signOut];
+        [[OMeta m] signOut];
     }
     
     _isReplicating = NO;

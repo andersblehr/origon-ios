@@ -22,15 +22,14 @@ static NSString * const kLogoText = @"..origo..";
 
 #pragma mark - Auxiliary methods
 
-- (id)cellForReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath
+- (id)cellWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:reuseIdentifier];
     
-    if (cell) {
-        cell.indexPath = indexPath;
-        [cell readEntity];
-    } else {
-        cell = [[OTableViewCell alloc] initWithReuseIdentifier:reuseIdentifier indexPath:indexPath];
+    if (!cell) {
+        cell = [[OTableViewCell alloc] initWithStyle:style reuseIdentifier:reuseIdentifier delegate:delegate];
+    } else if (![cell isListCell]) {
+        cell.inputDelegate = delegate;
     }
     
     return cell;
@@ -61,29 +60,35 @@ static NSString * const kLogoText = @"..origo..";
 
 #pragma mark - Cell instantiation
 
-- (id)cellForEntity:(id)entity
+- (id)detailCellForEntity:(id<OEntity>)entity delegate:(id)delegate
 {
-    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:NSStringFromClass([entity entityClass])];
+    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:[entity reuseIdentifier]];
     
-    if (!cell) {
-        cell = [[OTableViewCell alloc] initWithEntity:entity];
+    if (cell) {
+        cell.inputDelegate = delegate;
+    } else {
+        cell = [[OTableViewCell alloc] initWithEntity:entity delegate:delegate];
     }
     
     return cell;
 }
 
 
-- (id)cellForReuseIdentifier:(NSString *)reuseIdentifier
+- (id)detailCellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
-    return [self cellForReuseIdentifier:reuseIdentifier indexPath:nil];
+    return [self cellWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier delegate:delegate];
 }
 
 
-- (id)listCellForIndexPath:(NSIndexPath *)indexPath data:(id)data
+- (id)listCellWithStyle:(UITableViewCellStyle)style data:(id)data
 {
-    NSString *reuseIdentifer = [kReuseIdentifierList stringByAppendingFormat:@":%@", data];
+    OTableViewCell *cell = [self cellWithStyle:style reuseIdentifier:[kReuseIdentifierList stringByAppendingFormat:@":%ld", style] delegate:nil];
     
-    return [self cellForReuseIdentifier:reuseIdentifer indexPath:indexPath];
+    if ([data conformsToProtocol:@protocol(OEntity)]) {
+        cell.entity = data;
+    }
+    
+    return cell;
 }
 
 

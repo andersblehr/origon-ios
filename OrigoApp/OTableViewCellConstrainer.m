@@ -34,16 +34,68 @@ static NSString * const kVConstraintsInputField        = @"[%@(%.f)]";
 static NSString * const kHConstraints                  = @"H:|-10-[%@(%.f)]-3-[%@]-6-|";
 static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%@]-6-[photoFrame]-10-|";
 
+static CGFloat const kPaddedPhotoFrameHeight = 75.f;
+
 
 @implementation OTableViewCellConstrainer
 
 #pragma mark - Auxiliary methods
 
++ (NSArray *)displayableKeysFromKeys:(NSArray *)keys delegate:(id)delegate
+{
+    NSMutableArray *displayableKeys = [keys mutableCopy];
+    
+    if ([delegate respondsToSelector:@selector(isDisplayableFieldWithKey:)]) {
+        for (NSString *key in keys) {
+            if (![delegate isDisplayableFieldWithKey:key]) {
+                [displayableKeys removeObject:key];
+            }
+        }
+    }
+    
+    return [displayableKeys count] ? displayableKeys : nil;
+}
+
+
++ (CGFloat)heightOfCell:(OTableViewCell *)cell withBlueprint:(OTableViewCellBlueprint *)blueprint entity:(id<OEntity>)entity inputKeys:(NSArray *)inputKeys titleKey:(NSString *)titleKey delegate:(id)delegate
+{
+    CGFloat height = 2 * kDefaultCellPadding;
+    
+    for (NSString *key in inputKeys) {
+        if ([key isEqualToString:titleKey]) {
+            if (blueprint.fieldsAreLabeled) {
+                height += [UIFont titleFieldHeight] + kDefaultCellPadding;
+            } else {
+                height += [UIFont detailFieldHeight] + kDefaultCellPadding;
+            }
+        } else if ([delegate isReceivingInput] || [entity hasValueForKey:key]) {
+            if ([blueprint.multiLineTextKeys containsObject:key]) {
+                if (cell) {
+                    height += [[cell inputFieldForKey:key] height];
+                } else if ([entity hasValueForKey:key]) {
+                    height += [OTextView heightWithText:[entity valueForKey:key] blueprint:blueprint];
+                } else {
+                    height += [OTextView heightWithText:NSLocalizedString(key, kStringPrefixPlaceholder) blueprint:blueprint];
+                }
+            } else {
+                height += [UIFont detailFieldHeight];
+            }
+        }
+    }
+    
+    if (blueprint.hasPhoto) {
+        height = MAX(height, kPaddedPhotoFrameHeight);
+    }
+    
+    return height;
+}
+
+
 - (BOOL)shouldDisplayElementsForKey:(NSString *)key
 {
-    BOOL shouldDisplayElements = [_blueprint.displayableInputKeys containsObject:key];
+    BOOL shouldDisplayElements = YES;
     
-    if (shouldDisplayElements && _cell.entity) {
+    if (_cell.entity) {
         id value = [_cell.entity valueForKey:key];
         
         if (value && [value isKindOfClass:[NSString class]]) {
@@ -52,7 +104,7 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
             shouldDisplayElements = NO;
         }
         
-        shouldDisplayElements = shouldDisplayElements || [_cell.state actionIs:kActionInput];
+        shouldDisplayElements = shouldDisplayElements || [_cell.inputDelegate isReceivingInput];
     }
     
     return shouldDisplayElements;
@@ -100,10 +152,10 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
 {
     NSMutableArray *constraints = [NSMutableArray array];
     
-    if (_blueprint.titleKey) {
-        NSString *titleName = [_blueprint.titleKey stringByAppendingString:kViewKeySuffixInputField];
+    if (_titleKey) {
+        NSString *titleName = [_titleKey stringByAppendingString:kViewKeySuffixInputField];
         
-        [self configureElementsForKey:_blueprint.titleKey];
+        [self configureElementsForKey:_titleKey];
         
         [constraints addObject:kHConstraintsTitleBanner];
         [constraints addObject:[OMeta systemIs_iOS6x] ? kVConstraintsTitleBanner_iOS6x : kVConstraintsTitleBanner];
@@ -129,12 +181,12 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
     BOOL isTopmostLabel = YES;
     OInputField *precedingInputField = nil;
 
-    for (NSString *key in _blueprint.detailKeys) {
+    for (NSString *key in _detailKeys) {
         [self configureElementsForKey:key];
         
         if ([self shouldDisplayElementsForKey:key]) {
             if (!constraints) {
-                if (_blueprint.titleKey) {
+                if (_titleKey) {
                     constraints = kVConstraintsInitialWithTitle;
                 } else {
                     constraints = [kVConstraintsInitial stringByAppendingString:kDelimitingSpace];
@@ -170,7 +222,7 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
 {
     NSString *constraints = nil;
     
-    if (_blueprint.titleKey) {
+    if (_titleKey) {
         NSString *titleName = [_blueprint.titleKey stringByAppendingString:kViewKeySuffixInputField];
         NSString *constraint = [NSString stringWithFormat:kVConstraintsTitle, titleName];
         
@@ -178,10 +230,10 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
         constraints = [constraints stringByAppendingString:constraint];
     }
     
-    if ([_blueprint.detailKeys count]) {
-        BOOL didInsertDelimiter = !_blueprint.titleKey;
+    if ([_detailKeys count]) {
+        BOOL didInsertDelimiter = !_titleKey;
         
-        for (NSString *key in _blueprint.detailKeys) {
+        for (NSString *key in _detailKeys) {
             [self configureElementsForKey:key];
             
             if ([self shouldDisplayElementsForKey:key]) {
@@ -213,7 +265,7 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
     
     NSInteger rowNumber = 0;
     
-    for (NSString *key in _blueprint.detailKeys) {
+    for (NSString *key in _detailKeys) {
         [self configureElementsForKey:key];
         
         if ([self shouldDisplayElementsForKey:key]) {
@@ -242,7 +294,7 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
     BOOL isTopmostElement = YES;
     BOOL isBelowLabel = NO;
     
-    for (NSString *key in _blueprint.inputKeys) {
+    for (NSString *key in _inputKeys) {
         [self configureElementsForKey:key];
         
         if ([self shouldDisplayElementsForKey:key]) {
@@ -280,7 +332,7 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
 {
     NSMutableArray *constraints = [NSMutableArray array];
     
-    for (NSString *key in _blueprint.inputKeys) {
+    for (NSString *key in _inputKeys) {
         [self configureElementsForKey:key];
         
         if ([self shouldDisplayElementsForKey:key]) {
@@ -304,13 +356,22 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
 
 #pragma mark - Initialisation
 
-- (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OTableViewCellBlueprint *)blueprint;
+- (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OTableViewCellBlueprint *)blueprint
 {
     self = [super init];
     
     if (self) {
         _cell = cell;
         _blueprint = blueprint;
+        
+        _titleKey = [[self class] displayableKeysFromKeys:@[_blueprint.titleKey] delegate:cell.inputDelegate][0];
+        _detailKeys = [[self class] displayableKeysFromKeys:_blueprint.detailKeys delegate:cell.inputDelegate];
+        
+        if (_titleKey) {
+            _inputKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
+        } else {
+            _inputKeys = _detailKeys;
+        }
         
         if (_blueprint.fieldsAreLabeled) {
             _labelWidth = [OLabel widthWithBlueprint:_blueprint];
@@ -361,6 +422,25 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
     }
     
     return constraints;
+}
+
+
+#pragma mark - Cell height computation
+
+- (CGFloat)heightOfCell
+{
+    return [[self class] heightOfCell:_cell withBlueprint:_blueprint entity:_cell.entity inputKeys:_inputKeys titleKey:_titleKey delegate:_cell.inputDelegate];
+}
+
+
++ (CGFloat)heightOfCellWithReuseIdentifier:(NSString *)reuseIdentifier entity:(id)entity delegate:(id)delegate
+{
+    OTableViewCellBlueprint *blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
+    
+    NSString *titleKey = [self displayableKeysFromKeys:@[blueprint.titleKey] delegate:delegate][0];
+    NSArray *inputKeys = [self displayableKeysFromKeys:blueprint.inputKeys delegate:delegate];
+    
+    return [self heightOfCell:nil withBlueprint:blueprint entity:entity inputKeys:inputKeys titleKey:titleKey delegate:delegate];
 }
 
 @end

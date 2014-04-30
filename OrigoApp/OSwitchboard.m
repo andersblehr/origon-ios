@@ -367,7 +367,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     [mailComposer setToRecipients:recipientEmailAddresses];
     [mailComposer setMessageBody:NSLocalizedString(@"Sent from Origo - http://origoapp.com", @"") isHTML:NO];
 
-    [[OState s].viewController presentViewController:mailComposer animated:YES completion:NULL];
+    [_presentingViewController presentViewController:mailComposer animated:YES completion:NULL];
 }
 
 
@@ -383,7 +383,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     messageComposer.messageComposeDelegate = self;
     messageComposer.recipients = recipientMobileNumbers;
     
-    [[OState s].viewController presentViewController:messageComposer animated:YES completion:NULL];
+    [_presentingViewController presentViewController:messageComposer animated:YES completion:NULL];
 }
 
 
@@ -430,6 +430,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     self = [super init];
     
     if (self) {
+        _presentingViewController = (UIViewController *)[OState s].viewController;
         _carrier = [[[CTTelephonyNetworkInfo alloc] init] subscriberCellularProvider];
     }
     
@@ -477,7 +478,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
-    [[OState s].viewController dismissViewControllerAnimated:YES completion:NULL];
+    [_presentingViewController dismissViewControllerAnimated:YES completion:NULL];
 }
 
 
@@ -485,7 +486,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
-    [[OState s].viewController dismissViewControllerAnimated:YES completion:NULL];
+    [_presentingViewController dismissViewControllerAnimated:YES completion:NULL];
 }
 
 @end

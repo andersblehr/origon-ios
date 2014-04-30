@@ -170,7 +170,7 @@
 
 - (id)relationshipToEntity:(id)other
 {
-    return nil; // Override in subclass
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:[NSString stringWithFormat:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)] userInfo:nil];
 }
 
 
@@ -266,11 +266,11 @@
 
 - (NSString *)asTarget
 {
-    return @"OVERRIDE IN SUBCLASS";
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:[NSString stringWithFormat:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)] userInfo:nil];
 }
 
 
-#pragma mark - Required OEntity protocol conformance
+#pragma mark - OEntity protocol conformance
 
 - (Class)entityClass
 {
@@ -333,6 +333,12 @@
 - (id)valueForKey:(NSString *)key
 {
     return [super valueForKey:[OValidator propertyKeyForKey:key]];
+}
+
+
+- (NSString *)reuseIdentifier
+{
+    return [[self proxy] reuseIdentifier];
 }
 
 @end

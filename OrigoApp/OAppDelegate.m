@@ -163,7 +163,7 @@ static void uncaughtExceptionHandler(NSException *exception)
     
     if (_didEnterBackground) {
         if ([[OState s].viewController respondsToSelector:@selector(didResumeFromBackground)]) {
-            [(id<OTableViewControllerInstance>)[OState s].viewController didResumeFromBackground];
+            [[OState s].viewController didResumeFromBackground];
         }
         
         _didEnterBackground = NO;

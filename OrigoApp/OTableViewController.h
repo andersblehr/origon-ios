@@ -8,9 +8,48 @@
 
 #import <UIKit/UIKit.h>
 
-extern NSString * const kCustomData;
+@protocol OTableViewController<NSObject>
 
-@interface OTableViewController : UITableViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OConnectionDelegate> {
+@required
+@property (strong, nonatomic, readonly) NSString *identifier;
+@property (strong, nonatomic) id target;
+@property (strong, nonatomic) id returnData;
+
+- (void)loadState;
+- (void)loadData;
+
+@optional
+- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+
+- (id)defaultTarget;
+- (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath;
+- (NSArray *)toolbarButtons;
+
+- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
+- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
+
+- (UITableViewCellStyle)styleForListCellAtIndexPath:(NSIndexPath *)indexPath;
+- (void)willDisplayDetailCell:(OTableViewCell *)cell;
+- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
+
+- (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey;
+- (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2;
+- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey;
+
+- (BOOL)shouldRelayDismissalOfModalViewController:(id<OTableViewController>)viewController;
+- (void)willDismissModalViewController:(id<OTableViewController>)viewController;
+- (void)didDismissModalViewController:(id<OTableViewController>)viewController;
+
+- (void)didResumeFromBackground;
+- (void)didSignOut;
+
+@end
+
+
+@interface OTableViewController : UITableViewController<OTableViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OConnectionDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
@@ -35,14 +74,11 @@ extern NSString * const kCustomData;
     UIBarButtonItem *_doneButton;
     UIBarButtonItem *_cancelButton;
     
-    id<OTableViewControllerInstance> _instance;
-    id _target;
+    id<OTableViewController> _instance;
 }
 
-@property (strong, nonatomic, readonly) NSString *identifier;
 @property (strong, nonatomic, readonly) OState *state;
 @property (strong, nonatomic, readonly) OEntityProxy *entity;
-@property (strong, nonatomic, readonly) OActivityIndicator *activityIndicator;
 
 @property (nonatomic, readonly) BOOL isModal;
 @property (nonatomic, readonly) BOOL isPushed;
@@ -54,7 +90,6 @@ extern NSString * const kCustomData;
 @property (nonatomic) BOOL cancelImpliesSkip;
 @property (nonatomic) BOOL canEdit;
 
-@property (strong, nonatomic) id target;
 @property (strong, nonatomic) id meta;
 @property (strong, nonatomic) id returnData;
 @property (strong, nonatomic) OTableViewCell *detailCell;
@@ -71,14 +106,10 @@ extern NSString * const kCustomData;
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey;
 - (void)setData:(NSArray *)data sectionIndexLabelKey:(NSString *)sectionIndexLabelKey;
-
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath;
-- (id)dataAtRow:(NSInteger)row inSectionWithKey:(NSInteger)sectionKey;
-- (NSArray *)dataInSectionWithKey:(NSInteger)sectionKey;
 
 - (BOOL)isLastSectionKey:(NSInteger)sectionKey;
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
-- (NSInteger)sectionKeyForSectionNumber:(NSInteger)sectionNumber;
 - (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath;
 
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
@@ -92,7 +123,5 @@ extern NSString * const kCustomData;
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
-
-- (void)signOut;
 
 @end

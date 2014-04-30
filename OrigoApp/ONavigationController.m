@@ -20,7 +20,7 @@
 
 - (NSUInteger)supportedInterfaceOrientations
 {
-    return [[OState s].viewController supportedInterfaceOrientations];
+    return [((UIViewController *)[OState s].viewController) supportedInterfaceOrientations];
 }
 
 @end

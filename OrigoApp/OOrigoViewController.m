@@ -201,6 +201,17 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
+- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    id<OMember> member = [self dataAtIndexPath:indexPath];
+    
+    cell.textLabel.text = member.name;
+    cell.detailTextLabel.text = [member shortDetails];
+    cell.imageView.image = [member smallImage];
+    cell.destinationId = kIdentifierMember;
+}
+
+
 - (NSArray *)toolbarButtons
 {
     return [_origo isCommitted] ? [[OMeta m].switchboard toolbarButtonsForOrigo:_origo] : nil;
@@ -239,33 +250,69 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
-- (void)willDisplayCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+- (void)willDisplayDetailCell:(OTableViewCell *)cell
 {
     if ([self actionIs:kActionRegister] && [_origo isOfType:kOrigoTypeResidence]) {
-        if ((cell == self.detailCell) && [_member isUser] && ![_member hasAddress]) {
+        if ([_member isUser] && ![_member hasAddress]) {
             [[cell inputFieldForKey:kInterfaceKeyResidenceName] setValue:NSLocalizedString(kInterfaceKeyResidenceName, kStringPrefixDefault)];
         }
     }
 }
 
 
-- (BOOL)canDeleteRowAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    BOOL canDeleteRow = NO;
+    BOOL canDeleteCell = NO;
     
     if (indexPath.section != kSectionKeyOrigo) {
         id member = [self dataAtIndexPath:indexPath];
         
         if ([member entityClass] == [OMember class]) {
-            canDeleteRow = [_origo isCommitted] && [_origo userIsAdmin] && ![member isUser];
+            canDeleteCell = [_origo isCommitted] && [_origo userIsAdmin] && ![member isUser];
         }
     }
     
-    return canDeleteRow;
+    return canDeleteCell;
 }
 
 
-- (void)didDismissModalViewController:(OTableViewController *)viewController
+- (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey
+{
+    return [self targetIs:kOrigoTypeResidence] && (sectionKey == kSectionKeyMembers);
+}
+
+
+- (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2
+{
+    NSComparisonResult result = NSOrderedSame;
+    
+    id<OMember> member1 = object1;
+    id<OMember> member2 = object2;
+    
+    BOOL member1IsMinor = [member1 isJuvenile];
+    BOOL member2IsMinor = [member2 isJuvenile];
+    
+    if (member1IsMinor != member2IsMinor) {
+        if (member1IsMinor && !member2IsMinor) {
+            result = NSOrderedDescending;
+        } else {
+            result = NSOrderedAscending;
+        }
+    } else {
+        result = [member1.name localizedCaseInsensitiveCompare:member2.name];
+    }
+    
+    return result;
+}
+
+
+- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
+{
+    return [OUtil sortKeyWithPropertyKey:kPropertyKeyName relationshipKey:nil];
+}
+
+
+- (void)didDismissModalViewController:(id<OTableViewController>)viewController
 {
     if (viewController.returnData) {
         if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
@@ -284,6 +331,12 @@ static NSInteger const kButtonTagGuardian = 101;
 
 
 #pragma mark - OTableViewInputDelegate conformance
+
+- (BOOL)isReceivingInput
+{
+    return [self actionIs:kActionInput];
+}
+
 
 - (BOOL)inputIsValid
 {
@@ -324,7 +377,7 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
-- (BOOL)isVisibleFieldWithKey:(NSString *)key
+- (BOOL)isDisplayableFieldWithKey:(NSString *)key
 {
     BOOL isVisible = ![key isEqualToString:kInterfaceKeyResidenceName];
     
@@ -333,61 +386,6 @@ static NSInteger const kButtonTagGuardian = 101;
     }
     
     return isVisible;
-}
-
-
-- (void)didCommitEntity:(id)entity
-{
-    _origo = entity;
-}
-
-
-#pragma mark - OTableViewListDelegate conformance
-
-- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
-{
-    return [OUtil sortKeyWithPropertyKey:kPropertyKeyName relationshipKey:nil];
-}
-
-
-- (BOOL)willCompareObjectsInSectionWithKey:(NSInteger)sectionKey
-{
-    return [self targetIs:kOrigoTypeResidence] && (sectionKey == kSectionKeyMembers);
-}
-
-
-- (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2
-{
-    NSComparisonResult result = NSOrderedSame;
-    
-    id<OMember> member1 = object1;
-    id<OMember> member2 = object2;
-    
-    BOOL member1IsMinor = [member1 isJuvenile];
-    BOOL member2IsMinor = [member2 isJuvenile];
-    
-    if (member1IsMinor != member2IsMinor) {
-        if (member1IsMinor && !member2IsMinor) {
-            result = NSOrderedDescending;
-        } else {
-            result = NSOrderedAscending;
-        }
-    } else {
-        result = [member1.name localizedCaseInsensitiveCompare:member2.name];
-    }
-    
-    return result;
-}
-
-
-- (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
-{
-    id<OMember> member = [self dataAtIndexPath:indexPath];
-    
-    cell.textLabel.text = member.name;
-    cell.detailTextLabel.text = [member shortDetails];
-    cell.imageView.image = [member smallImage];
-    cell.destinationId = kIdentifierMember;
 }
 
 

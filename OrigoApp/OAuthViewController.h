@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OAuthViewController : OTableViewController<OTableViewControllerInstance, OTableViewInputDelegate, UIAlertViewDelegate, OConnectionDelegate> {
+@interface OAuthViewController : OTableViewController<OTableViewController, OTableViewInputDelegate, UIAlertViewDelegate, OConnectionDelegate> {
 @private
     OInputField *_emailField;
     OInputField *_passwordField;

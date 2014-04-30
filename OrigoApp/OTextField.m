@@ -292,13 +292,13 @@ static CGFloat const kTextInsetY = 1.2f;
     BOOL hasValidValue = NO;
     
     if (![self hasMultiValue]) {
-        BOOL inputDelegateWillValidate = NO;
+        BOOL delegateCanValidate = NO;
         
-        if ([_inputDelegate respondsToSelector:@selector(willValidateInputForKey:)]) {
-            inputDelegateWillValidate = [_inputDelegate willValidateInputForKey:_key];
+        if ([_inputDelegate respondsToSelector:@selector(canValidateInputForKey:)]) {
+            delegateCanValidate = [_inputDelegate canValidateInputForKey:_key];
         }
         
-        if (inputDelegateWillValidate) {
+        if (delegateCanValidate) {
             hasValidValue = [_inputDelegate inputValue:_value isValidForKey:_key];
         } else {
             hasValidValue = [OValidator value:_value isValidForKey:_key];

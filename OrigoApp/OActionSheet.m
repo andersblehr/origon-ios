@@ -47,12 +47,13 @@
     [self addButtonWithTitle:NSLocalizedString(@"Cancel", @"")];
     self.cancelButtonIndex = self.numberOfButtons - 1;
     
+    UIViewController *viewController = (UIViewController *)[OState s].viewController;
     UIView *containerView = nil;
     
-    if ([OState s].viewController.navigationController) {
-        containerView = [OState s].viewController.navigationController.view;
+    if (viewController.navigationController) {
+        containerView = viewController.navigationController.view;
     } else {
-        containerView = [OState s].viewController.view;
+        containerView = viewController.view;
     }
     
     [self showInView:containerView];

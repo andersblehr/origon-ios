@@ -155,7 +155,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
-- (void)userDidSignOut
+- (void)signOut
 {
     [self.replicator saveUserReplicationState];
     [self.replicator resetUserReplicationState];
@@ -163,6 +163,10 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     [ODefaults removeUserDefaultForKey:kDefaultsKeyAuthExpiryDate];
     
     [self reset];
+    
+    if ([[OState s].viewController respondsToSelector:@selector(didSignOut)]) {
+        [[OState s].viewController didSignOut];
+    }
 }
 
 
@@ -365,6 +369,16 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     }
     
     return _switchboard;
+}
+
+
+- (OActivityIndicator *)activityIndicator
+{
+    if (!_activityIndicator) {
+        _activityIndicator = [[OActivityIndicator alloc] init];
+    }
+    
+    return _activityIndicator;
 }
 
 

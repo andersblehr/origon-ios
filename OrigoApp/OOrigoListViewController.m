@@ -37,7 +37,7 @@ static NSInteger const kSectionKeyWards = 2;
         BOOL allFemale = YES;
         
         if ([[_member wards] count] == 1) {
-            yourChild = [[self dataInSectionWithKey:kSectionKeyWards][0] givenName];
+            yourChild = [[[_member wards] anyObject] givenName];
         } else {
             yourChild = NSLocalizedString(@"your child", @"");
         }
@@ -162,56 +162,6 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-- (id)defaultTarget
-{
-    return [[OMeta m] userIsSignedIn] ? [OMeta m].user : nil;
-}
-
-
-- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    return ([self isLastSectionKey:sectionKey] && [[OMeta m].user isTeenOrOlder]);
-}
-
-
-- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
-{
-    NSString *text = nil;
-    
-    if (sectionKey == kSectionKeyWards) {
-        text = NSLocalizedString(@"The kids' groups", @"");
-    } else if (sectionKey == kSectionKeyOrigos) {
-        text = [[OLanguage possessiveClauseWithPossessor:_member noun:_group_] stringByCapitalisingFirstLetter];
-    }
-    
-    return text;
-}
-
-
-- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
-{
-    return [self footerText];
-}
-
-
-- (void)didDismissModalViewController:(OTableViewController *)viewController
-{
-    if ([[OMeta m] userIsSignedIn]) {
-        [self reloadSections];
-    }
-}
-
-
-#pragma mark - OTableViewListDelegate conformance
-
-- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
-{
-    NSString *relationshipKey = (sectionKey == kSectionKeyWards) ? nil : kRelationshipKeyOrigo;
-    
-    return [OUtil sortKeyWithPropertyKey:kPropertyKeyName relationshipKey:relationshipKey];
-}
-
-
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
@@ -251,7 +201,7 @@ static NSInteger const kSectionKeyWards = 2;
         }
     } else if (sectionKey == kSectionKeyOrigos) {
         id<OOrigo> origo = entity;
-
+        
         cell.textLabel.text = origo.name;
         cell.imageView.image = [origo smallImage];
         cell.destinationId = kIdentifierOrigo;
@@ -263,6 +213,54 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
             cell.detailTextLabel.textColor = [UIColor textColour];
         }
+    }
+}
+
+
+- (id)defaultTarget
+{
+    return [[OMeta m] userIsSignedIn] ? [OMeta m].user : nil;
+}
+
+
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return ([self isLastSectionKey:sectionKey] && [[OMeta m].user isTeenOrOlder]);
+}
+
+
+- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
+{
+    NSString *text = nil;
+    
+    if (sectionKey == kSectionKeyWards) {
+        text = NSLocalizedString(@"The kids' groups", @"");
+    } else if (sectionKey == kSectionKeyOrigos) {
+        text = [[OLanguage possessiveClauseWithPossessor:_member noun:_group_] stringByCapitalisingFirstLetter];
+    }
+    
+    return text;
+}
+
+
+- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+{
+    return [self footerText];
+}
+
+
+- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
+{
+    NSString *relationshipKey = (sectionKey == kSectionKeyWards) ? nil : kRelationshipKeyOrigo;
+    
+    return [OUtil sortKeyWithPropertyKey:kPropertyKeyName relationshipKey:relationshipKey];
+}
+
+
+- (void)didDismissModalViewController:(id<OTableViewController>)viewController
+{
+    if ([[OMeta m] userIsSignedIn]) {
+        [self reloadSections];
     }
 }
 
