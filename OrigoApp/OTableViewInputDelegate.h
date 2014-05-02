@@ -20,6 +20,7 @@
 - (BOOL)isEditableFieldWithKey:(NSString *)key;
 - (BOOL)canValidateInputForKey:(NSString *)key;
 - (BOOL)inputValue:(id)inputValue isValidForKey:(NSString *)key;
+- (BOOL)shouldCommitEntity:(id)entity;
 - (void)didCommitEntity:(id)entity;
 
 @end

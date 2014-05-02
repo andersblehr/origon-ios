@@ -8,6 +8,26 @@
 
 #import "OOrigoProxy.h"
 
+NSString * const kOrigoTypeRoot = @"~";
+NSString * const kOrigoTypeResidence = @"residence";
+NSString * const kOrigoTypeFriends = @"friends";
+NSString * const kOrigoTypeTeam = @"team";
+NSString * const kOrigoTypeOrganisation = @"organisation";
+NSString * const kOrigoTypeOther = @"other";
+NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
+NSString * const kOrigoTypeSchoolClass = @"schoolClass";
+
+NSString * const kContactRoleTeacher = @"teacher";
+NSString * const kContactRoleTopicTeacher = @"topicTeacher";
+NSString * const kContactRoleSpecialEducationTeacher = @"specialEducationTeacher";
+NSString * const kContactRoleAssistantTeacher = @"assistantTeacher";
+NSString * const kContactRoleHeadTeacher = @"headTeacher";
+NSString * const kContactRoleChair = @"chair";
+NSString * const kContactRoleDeputyChair = @"deputyChair";
+NSString * const kContactRoleTreasurer = @"treasurer";
+NSString * const kContactRoleCoach = @"coach";
+NSString * const kContactRoleAssistantCoach = @"assistantCoach";
+
 static NSString * const kPlaceholderStreet = @"{street}";
 static NSString * const kPlaceholderCity = @"{city}";
 static NSString * const kPlaceholderZip = @"{zip}";
@@ -56,6 +76,14 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
+#pragma mark - Selector implementations
+
+- (NSComparisonResult)compare:(id<OOrigo>)other
+{
+    return [OUtil compareOrigo:self withOrigo:other];
+}
+
+
 #pragma mark - Initialisation
 
 - (instancetype)initWithAddressBookEntry:(CFDictionaryRef)entry
@@ -84,11 +112,65 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
-#pragma mark - Informal OOrigo protocol conformance
+#pragma mark - OOrigo protocol conformance
+
+- (NSSet *)allMemberships
+{
+    NSSet *allMemberships = nil;
+    
+    if (self.instance) {
+        allMemberships = [self.instance allMemberships];
+    } else {
+        if (![self hasValueForKey:kRelationshipKeyMemberships]) {
+            [self setValue:[NSMutableSet set] forKey:kRelationshipKeyMemberships];
+        }
+        
+        allMemberships = [self valueForKey:kRelationshipKeyMemberships];
+    }
+    
+    return allMemberships;
+}
+
+
+- (id<OMembership>)addMember:(id<OMember>)member
+{
+    id<OMembership> membership = nil;
+    
+    if (self.instance) {
+        membership = [self.instance addMember:member];
+    } else {
+        membership = [self membershipForMember:member];
+        
+        if (!membership) {
+            membership = [OMembershipProxy proxyForMember:member inOrigo:self];
+        }
+    }
+    
+    return membership;
+}
+
+
+- (id<OMembership>)membershipForMember:(id<OMember>)member
+{
+    id<OMembership> membershipForMember = nil;
+    
+    if (self.instance) {
+        membershipForMember = [self.instance membershipForMember:member];
+    } else {
+        for (id<OMembership> membership in [self allMemberships]) {
+            if (!membership && [membership.member.entityId isEqualToString:member.entityId]) {
+                membershipForMember = membership;
+            }
+        }
+    }
+    
+    return membershipForMember;
+}
+
 
 - (BOOL)userIsMember
 {
-    return [[self parentConformingToProtocol:@protocol(OMember)] isUser];
+    return [[self ancestorConformingToProtocol:@protocol(OMember)] isUser];
 }
 
 

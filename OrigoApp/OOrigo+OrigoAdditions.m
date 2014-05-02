@@ -8,26 +8,6 @@
 
 #import "OOrigo+OrigoAdditions.h"
 
-NSString * const kOrigoTypeRoot = @"~";
-NSString * const kOrigoTypeResidence = @"residence";
-NSString * const kOrigoTypeFriends = @"friends";
-NSString * const kOrigoTypeTeam = @"team";
-NSString * const kOrigoTypeOrganisation = @"organisation";
-NSString * const kOrigoTypeOther = @"other";
-NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
-NSString * const kOrigoTypeSchoolClass = @"schoolClass";
-
-NSString * const kContactRoleTeacher = @"teacher";
-NSString * const kContactRoleTopicTeacher = @"topicTeacher";
-NSString * const kContactRoleSpecialEducationTeacher = @"specialEducationTeacher";
-NSString * const kContactRoleAssistantTeacher = @"assistantTeacher";
-NSString * const kContactRoleHeadTeacher = @"headTeacher";
-NSString * const kContactRoleChair = @"chair";
-NSString * const kContactRoleDeputyChair = @"deputyChair";
-NSString * const kContactRoleTreasurer = @"treasurer";
-NSString * const kContactRoleCoach = @"coach";
-NSString * const kContactRoleAssistantCoach = @"assistantCoach";
-
 
 @implementation OOrigo (OrigoAdditions)
 
@@ -65,10 +45,7 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 
 - (NSComparisonResult)compare:(id<OOrigo>)other
 {
-    NSString *value = [self isOfType:kOrigoTypeResidence] ? self.address : self.name;
-    NSString *comparisonValue = [other isOfType:kOrigoTypeResidence] ? other.address : other.name;
-    
-    return [value localizedCaseInsensitiveCompare:comparisonValue];
+    return [OUtil compareOrigo:self withOrigo:other];
 }
 
 
@@ -391,20 +368,6 @@ NSString * const kContactRoleAssistantCoach = @"assistantCoach";
 - (NSString *)shortAddress
 {
     return [self hasAddress] ? [self.address lines][0] : nil;
-}
-
-
-- (UIImage *)smallImage
-{
-    UIImage *image = nil;
-    
-    if ([self isOfType:kOrigoTypeResidence]) {
-        image = [UIImage imageNamed:kIconFileHousehold];
-    } else {
-        image = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?
-    }
-    
-    return image;
 }
 
 

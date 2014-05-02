@@ -8,31 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol OEntity <NSObject>
-
-@required
-
-- (Class)entityClass;
-- (BOOL)isProxy;
-- (BOOL)isCommitted;
-- (id)proxy;
-- (id)commit;
-- (id)instance;
-
-- (BOOL)hasValueForKey:(NSString *)key;
-- (void)setValue:(id)value forKey:(NSString *)key;
-- (id)valueForKey:(NSString *)key;
-
-@optional
-@property (nonatomic, readonly) NSString *entityId;
-@property (nonatomic, readonly) NSString *createdBy;
-
-- (NSString *)reuseIdentifier;
-- (void)useInstance:(id<OEntity>)instance;
-
-@end
-
-
 @interface OReplicatedEntity (OrigoAdditions) <OEntity>
 
 + (instancetype)instanceWithId:(NSString *)entityId;

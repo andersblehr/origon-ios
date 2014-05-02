@@ -96,7 +96,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)inputMatchesRegisteredMember:(id<OMember>)candidate
 {
-    BOOL inputMatches = [OUtil name:_nameField.value matchesName:candidate.name];
+    BOOL inputMatches = [OUtil fullName:_nameField.value fuzzyMatchesFullName:candidate.name];
     
     if (inputMatches && !_dateOfBirthField.isHidden) {
         inputMatches = [_dateOfBirthField.value isEqual:candidate.dateOfBirth];
@@ -530,7 +530,7 @@ static NSInteger const kButtonTagContinue = 1;
 {
     [self.view endEditing:YES];
     
-    id<OMember> pivotMember = [self.entity parentConformingToProtocol:@protocol(OMember)];
+    id<OMember> pivotMember = [self.entity ancestorConformingToProtocol:@protocol(OMember)];
     
     if ([[pivotMember peersNotInOrigo:_origo] count] > 0) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
@@ -580,7 +580,7 @@ static NSInteger const kButtonTagContinue = 1;
 - (void)loadState
 {
     _member = [self.entity proxy];
-    _origo = [self.entity parentConformingToProtocol:@protocol(OOrigo)];
+    _origo = [self.entity ancestorConformingToProtocol:@protocol(OOrigo)];
     
     if ([_origo isCommitted] && [_member isCommitted]) {
         _membership = [_origo membershipForMember:_member];
@@ -636,14 +636,14 @@ static NSInteger const kButtonTagContinue = 1;
     if (sectionKey == kSectionKeyGuardian) {
         id<OMember> guardian = [self dataAtIndexPath:indexPath];
         
-        cell.imageView.image = [guardian smallImage];
+        cell.imageView.image = [OUtil smallImageForMember:guardian];
         cell.textLabel.text = guardian.name;
         cell.destinationId = kIdentifierMember;
         
         if ([[_member residences] count] == 1) {
-            cell.detailTextLabel.text = [guardian shortDetails];
+            cell.detailTextLabel.text = [OUtil contactInfoForMember:guardian];
         } else {
-            cell.detailTextLabel.text = [guardian shortAddress];
+            cell.detailTextLabel.text = [[guardian residence] shortAddress];
         }
         
         if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
@@ -764,8 +764,8 @@ static NSInteger const kButtonTagContinue = 1;
     } else if (![_member hasParent:guardian1] && [_member hasParent:guardian2]) {
         result = NSOrderedDescending;
     } else {
-        NSString *address1 = [guardian1 shortAddress];
-        NSString *address2 = [guardian2 shortAddress];
+        NSString *address1 = [[guardian1 residence] shortAddress];
+        NSString *address2 = [[guardian2 residence] shortAddress];
         
         if ([address1 isEqualToString:address2]) {
             result = [guardian1.name localizedCompare:guardian2.name];
@@ -947,6 +947,12 @@ static NSInteger const kButtonTagContinue = 1;
     }
     
     return isEditable;
+}
+
+
+- (BOOL)shouldCommitEntity:(id)entity
+{
+    return ![self targetIs:kTargetGuardian];
 }
 
 

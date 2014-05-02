@@ -15,6 +15,58 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
 
 @implementation OUtil
 
+#pragma mark - Display strings
+
++ (NSString *)contactInfoForMember:(id<OMember>)member
+{
+    NSString *details = [member.mobilePhone hasValue] ? [OPhoneNumberFormatter formatPhoneNumber:member.mobilePhone canonicalise:YES] : member.email;
+    
+    if ([member isJuvenile]) {
+        NSString *age = [member.dateOfBirth localisedAgeString];
+        
+        if (details && age) {
+            details = [age stringByAppendingString:details separator:kSeparatorComma];
+        } else if (age) {
+            details = age;
+        }
+    }
+    
+    return details;
+}
+
+
++ (UIImage *)smallImageForMember:(id<OMember>)member
+{
+    UIImage *image = nil;
+    
+    if (member.photo) {
+        image = [UIImage imageWithData:member.photo];
+    } else {
+        if ([member isJuvenile]) {
+            image = [UIImage imageNamed:[member isMale] ? kIconFileBoy : kIconFileGirl];
+        } else {
+            image = [UIImage imageNamed:[member isMale] ? kIconFileMan : kIconFileWoman];
+        }
+    }
+    
+    return image;
+}
+
+
++ (UIImage *)smallImageForOrigo:(id<OOrigo>)origo
+{
+    UIImage *image = nil;
+    
+    if ([origo isOfType:kOrigoTypeResidence]) {
+        image = [UIImage imageNamed:kIconFileHousehold];
+    } else {
+        image = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?
+    }
+    
+    return image;
+}
+
+
 #pragma mark - Convenience methods
 
 + (NSString *)rootIdFromMemberId:(NSString *)memberId
@@ -107,9 +159,18 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
 }
 
 
-#pragma mark - Fuzzy matching
+#pragma mark - Object comparison
 
-+ (BOOL)name:(NSString *)fullName matchesName:(NSString *)otherFullName
++ (NSComparisonResult)compareOrigo:(id<OOrigo>)origo withOrigo:(id<OOrigo>)otherOrigo
+{
+    NSString *value = [origo isOfType:kOrigoTypeResidence] ? origo.address : origo.name;
+    NSString *otherValue = [otherOrigo isOfType:kOrigoTypeResidence] ? otherOrigo.address : otherOrigo.name;
+    
+    return [value localizedCaseInsensitiveCompare:otherValue];
+}
+
+
++ (BOOL)fullName:(NSString *)fullName fuzzyMatchesFullName:(NSString *)otherFullName
 {
     fullName = [[fullName removeRedundantWhitespace] lowercaseString];
     otherFullName = [[otherFullName removeRedundantWhitespace] lowercaseString];

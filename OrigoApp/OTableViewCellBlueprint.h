@@ -13,11 +13,7 @@ extern CGFloat const kDefaultCellPadding;
 extern CGFloat const kMinimumCellPadding;
 extern CGFloat const kPhotoFrameWidth;
 
-@interface OTableViewCellBlueprint : NSObject {
-@private
-    NSArray *_inputKeys;
-    NSMutableArray *_displayableInputKeys;
-}
+@interface OTableViewCellBlueprint : NSObject
 
 @property (nonatomic, readonly) BOOL hasPhoto;
 @property (nonatomic, readonly) BOOL fieldsAreLabeled;

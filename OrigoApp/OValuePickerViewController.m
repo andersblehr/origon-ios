@@ -38,7 +38,7 @@
     if ([self targetIs:kTargetElder]) {
         peers = [[OMeta m].user peersNotInOrigo:self.meta];
     } else {
-        id<OMember> pivotMember = [self.meta parentConformingToProtocol:@protocol(OMember)];
+        id<OMember> pivotMember = [self.meta ancestorConformingToProtocol:@protocol(OMember)];
         
         peers = [pivotMember peersNotInOrigo:self.meta];
     }
@@ -86,24 +86,12 @@
         id<OMember> peer = [self dataAtIndexPath:indexPath];
         
         cell.textLabel.text = peer.name;
-        cell.detailTextLabel.text = [peer shortAddress];
-        cell.imageView.image = [peer smallImage];
+        cell.detailTextLabel.text = [[peer residence] shortAddress];
+        cell.imageView.image = [OUtil smallImageForMember:peer];
         cell.checked = [self.returnData containsObject:peer];
     } else {
         cell.checked = [[self dataAtIndexPath:indexPath] isEqual:[_settings valueForSettingKey:_settingKey]];
     }
-}
-
-
-- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
-{
-    return NO;
-}
-
-
-- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    return NO;
 }
 
 

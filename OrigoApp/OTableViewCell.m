@@ -423,16 +423,24 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)writeEntityCommitIfNeeded:(BOOL)commitIfNeeded
 {
-    if (![_entity isCommitted] && commitIfNeeded) {
-        [_entity commit];
-        
-        if ([_inputDelegate respondsToSelector:@selector(didCommitEntity:)]) {
-            [_inputDelegate didCommitEntity:[_entity instance]];
-        }
-    }
-    
     for (NSString *key in _constrainer.inputKeys) {
         [_entity setValue:[self inputFieldForKey:key].value forKey:key];
+    }
+    
+    if (commitIfNeeded && ![_entity isCommitted]) {
+        BOOL shouldCommit = YES;
+        
+        if ([_inputDelegate respondsToSelector:@selector(shouldCommitEntity:)]) {
+            shouldCommit = [_inputDelegate shouldCommitEntity:_entity];
+        }
+        
+        if (shouldCommit) {
+            [_entity commit];
+            
+            if ([_inputDelegate respondsToSelector:@selector(didCommitEntity:)]) {
+                [_inputDelegate didCommitEntity:_entity];
+            }
+        }
     }
 }
 

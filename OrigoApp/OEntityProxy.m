@@ -86,32 +86,32 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
-#pragma mark - Parent proxy access
+#pragma mark - Ancestor proxy access
 
-- (id)parentConformingToProtocol:(Protocol *)protocol
+- (id)ancestorConformingToProtocol:(Protocol *)protocol
 {
-    id parent = nil;
+    id ancestor = nil;
     
-    if (_parent) {
-        if ([_parent conformsToProtocol:protocol]) {
-            parent = _parent;
+    if (_ancestor) {
+        if ([_ancestor conformsToProtocol:protocol]) {
+            ancestor = _ancestor;
         } else {
-            parent = [_parent parentConformingToProtocol:protocol];
+            ancestor = [_ancestor ancestorConformingToProtocol:protocol];
         }
     }
     
-    return parent;
+    return ancestor;
 }
 
 
 #pragma mark - Custom accessors
 
-- (void)setParent:(OEntityProxy *)parent
+- (void)setAncestor:(OEntityProxy *)ancestor
 {
-    if (parent != self) {
-        _parent = parent;
+    if (ancestor != self) {
+        _ancestor = ancestor;
     } else {
-        _parent = parent.parent;
+        [self setAncestor:ancestor.ancestor];
     }
 }
 
@@ -139,42 +139,6 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 - (id)proxy
 {
     return self;
-}
-
-
-- (id)commit
-{
-    if (!_isCommitted) {
-        if (_instance) {
-            _isCommitted = YES;
-        } else if (!_parent || [_parent isCommitted]) {
-            _instance = [_entityClass instanceWithId:self.entityId];
-            
-            for (NSString *key in [_entityClass propertyKeys]) {
-                if (![key isEqualToString:kPropertyKeyEntityId]) {
-                    id value = _valuesByKey[key];
-                    
-                    if (value) {
-                        [_instance setValue:value forKey:key];
-                    }
-                }
-            }
-            
-            _isCommitted = YES;
-        }
-    }
-    
-    return _instance;
-}
-
-
-- (void)useInstance:(id<OEntity>)instance
-{
-    if (![instance isProxy]) {
-        _instance = instance;
-        
-        [_valuesByKey removeAllObjects];
-    }
 }
 
 
@@ -227,6 +191,40 @@ static NSString * const kClassSuffixProxy = @"Proxy";
     }
     
     return reuseIdentifier;
+}
+
+
+- (void)useInstance:(id<OEntity>)instance
+{
+    if (![instance isProxy]) {
+        _instance = instance;
+        
+        [_valuesByKey removeAllObjects];
+    }
+}
+
+
+- (id)commit
+{
+    if (!_isCommitted) {
+        if (!_instance) {
+            _instance = [_entityClass instanceWithId:self.entityId];
+            
+            for (NSString *key in [_entityClass propertyKeys]) {
+                if (![key isEqualToString:kPropertyKeyEntityId]) {
+                    id value = _valuesByKey[key];
+                    
+                    if (value) {
+                        [_instance setValue:value forKey:key];
+                    }
+                }
+            }
+        }
+        
+        _isCommitted = YES;
+    }
+    
+    return _instance;
 }
 
 

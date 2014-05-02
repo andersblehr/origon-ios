@@ -116,6 +116,7 @@
 		5CF17E5417AE8D9400985255 /* glyphicons_010_envelope.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CF17E5217AE8D9400985255 /* glyphicons_010_envelope.png */; };
 		5CF17E5917AF84B600985255 /* OSwitchboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF17E5817AF84B600985255 /* OSwitchboard.m */; };
 		5CF3DE291775AD820068B2E7 /* ODefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF3DE281775AD810068B2E7 /* ODefaults.m */; };
+		5CFBC8D019124E1D00863F86 /* OMembershipProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CFBC8CF19124E1D00863F86 /* OMembershipProxy.m */; };
 		5CFD8E67183503D200DC3945 /* 01-magnify.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CFD8E65183503D200DC3945 /* 01-magnify.png */; };
 		5CFD8E68183503D200DC3945 /* 01-magnify@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CFD8E66183503D200DC3945 /* 01-magnify@2x.png */; };
 		5CFD8E70183CE27200DC3945 /* OPhoneNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD8E6F183CE27200DC3945 /* OPhoneNumberFormatter.m */; };
@@ -315,6 +316,8 @@
 		5CF17E5817AF84B600985255 /* OSwitchboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSwitchboard.m; sourceTree = "<group>"; };
 		5CF3DE271775AD810068B2E7 /* ODefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODefaults.h; sourceTree = "<group>"; };
 		5CF3DE281775AD810068B2E7 /* ODefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ODefaults.m; sourceTree = "<group>"; };
+		5CFBC8CE19124E1D00863F86 /* OMembershipProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembershipProxy.h; sourceTree = "<group>"; };
+		5CFBC8CF19124E1D00863F86 /* OMembershipProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMembershipProxy.m; sourceTree = "<group>"; };
 		5CFD8E65183503D200DC3945 /* 01-magnify.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "01-magnify.png"; sourceTree = "<group>"; };
 		5CFD8E66183503D200DC3945 /* 01-magnify@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "01-magnify@2x.png"; sourceTree = "<group>"; };
 		5CFD8E6D183CCEAF00DC3945 /* OTextInput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTextInput.h; sourceTree = "<group>"; };
@@ -486,6 +489,8 @@
 				5C7C4DD118E57E1F00903989 /* OEntityProxy.m */,
 				5C53A1F918F895510023BF8A /* OMemberProxy.h */,
 				5C53A1FA18F895510023BF8A /* OMemberProxy.m */,
+				5CFBC8CE19124E1D00863F86 /* OMembershipProxy.h */,
+				5CFBC8CF19124E1D00863F86 /* OMembershipProxy.m */,
 				5C7EDE3218DB2450003AFFAF /* OOrigoProxy.h */,
 				5C7EDE3318DB2450003AFFAF /* OOrigoProxy.m */,
 			);
@@ -872,6 +877,7 @@
 				5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OrigoAdditions.m in Sources */,
 				5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */,
 				5CBDF78C1659175000D4681C /* OTableViewCellConstrainer.m in Sources */,
+				5CFBC8D019124E1D00863F86 /* OMembershipProxy.m in Sources */,
 				5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */,
 				5C198B7316D76344002D3976 /* OTableViewCellBlueprint.m in Sources */,
 				5C7C4DD218E57E1F00903989 /* OEntityProxy.m in Sources */,

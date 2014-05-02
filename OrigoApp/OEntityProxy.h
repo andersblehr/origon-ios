@@ -8,6 +8,31 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol OEntity <NSObject>
+
+@required
+
+- (Class)entityClass;
+- (BOOL)isProxy;
+- (BOOL)isCommitted;
+- (id)proxy;
+- (id)instance;
+
+- (BOOL)hasValueForKey:(NSString *)key;
+- (void)setValue:(id)value forKey:(NSString *)key;
+- (id)valueForKey:(NSString *)key;
+
+@optional
+@property (nonatomic, readonly) NSString *entityId;
+@property (nonatomic, readonly) NSString *createdBy;
+
+- (NSString *)reuseIdentifier;
+- (void)useInstance:(id<OEntity>)instance;
+- (id)commit;
+
+@end
+
+
 @interface OEntityProxy : NSObject<OEntity> {
 @private
     id _instance;
@@ -20,12 +45,12 @@
     id _forwardSelectorArgument;
 }
 
-@property (strong, nonatomic) OEntityProxy *parent;
+@property (strong, nonatomic) OEntityProxy *ancestor;
 
 + (instancetype)proxyForEntity:(OReplicatedEntity *)entity;
 + (instancetype)proxyForEntityOfClass:(Class)entityClass type:(NSString *)type;
 + (instancetype)proxyForEntityWithJSONDictionary:(NSDictionary *)dictionary;
 
-- (id)parentConformingToProtocol:(Protocol *)protocol;
+- (id)ancestorConformingToProtocol:(Protocol *)protocol;
 
 @end

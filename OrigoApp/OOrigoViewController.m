@@ -152,7 +152,7 @@ static NSInteger const kButtonTagGuardian = 101;
 - (void)loadState
 {
     _origo = [self.entity proxy];
-    _member = [self.entity parentConformingToProtocol:@protocol(OMember)];
+    _member = [self.entity ancestorConformingToProtocol:@protocol(OMember)];
     
     if ([self actionIs:kActionRegister]) {
         if ([_origo isOfType:kOrigoTypeResidence] && ![_member hasAddress]) {
@@ -186,16 +186,14 @@ static NSInteger const kButtonTagGuardian = 101;
 {
     [self setDataForDetailSection];
     
-    if ([_member isCommitted]) {
-        if ([self actionIs:kActionRegister]) {
-            [self setData:@[_member] forSectionWithKey:kSectionKeyMembers];
+    if ([self actionIs:kActionRegister]) {
+        [self setData:@[_member] forSectionWithKey:kSectionKeyMembers];
+    } else {
+        if ([_member isJuvenile]) {
+            [self setData:[_origo contacts] forSectionWithKey:kSectionKeyContacts];
+            [self setData:[_origo regulars] forSectionWithKey:kSectionKeyMembers];
         } else {
-            if ([_member isJuvenile]) {
-                [self setData:[_origo contacts] forSectionWithKey:kSectionKeyContacts];
-                [self setData:[_origo regulars] forSectionWithKey:kSectionKeyMembers];
-            } else {
-                [self setData:[_origo members] forSectionWithKey:kSectionKeyMembers];
-            }
+            [self setData:[_origo members] forSectionWithKey:kSectionKeyMembers];
         }
     }
 }
@@ -206,8 +204,8 @@ static NSInteger const kButtonTagGuardian = 101;
     id<OMember> member = [self dataAtIndexPath:indexPath];
     
     cell.textLabel.text = member.name;
-    cell.detailTextLabel.text = [member shortDetails];
-    cell.imageView.image = [member smallImage];
+    cell.detailTextLabel.text = [OUtil contactInfoForMember:member];
+    cell.imageView.image = [OUtil smallImageForMember:member];
     cell.destinationId = kIdentifierMember;
 }
 
@@ -386,6 +384,12 @@ static NSInteger const kButtonTagGuardian = 101;
     }
     
     return isVisible;
+}
+
+
+- (BOOL)shouldCommitEntity:(id)entity
+{
+    return [self.entity.ancestor isCommitted];
 }
 
 

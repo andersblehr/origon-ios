@@ -16,22 +16,6 @@ CGFloat const kPhotoFrameWidth = 55.f;
 
 @implementation OTableViewCellBlueprint
 
-#pragma mark - Auxiliary methods
-
-- (Protocol *)entityProtocolFromReuseIdentifier:(NSString *)reuseIdentifier
-{
-    return NSProtocolFromString([reuseIdentifier componentsSeparatedByString:kSeparatorColon][0]);
-}
-
-
-- (NSString *)typeFromReuseIdentifier:(NSString *)reuseIdentifier
-{
-    NSArray *identifierComponents = [reuseIdentifier componentsSeparatedByString:kSeparatorColon];
-    
-    return ([identifierComponents count] == 2) ? identifierComponents[1] : nil;
-}
-
-
 #pragma mark - Initialisation
 
 - (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier
@@ -39,8 +23,9 @@ CGFloat const kPhotoFrameWidth = 55.f;
     self = [super init];
     
     if (self) {
-        Protocol *entityProtocol = [self entityProtocolFromReuseIdentifier:reuseIdentifier];
-        NSString *type = [self typeFromReuseIdentifier:reuseIdentifier];
+        NSArray *entityMetaElements = [reuseIdentifier componentsSeparatedByString:kSeparatorColon];
+        Protocol *entityProtocol = NSProtocolFromString(entityMetaElements[0]);
+        NSString *entityType = ([entityMetaElements count] == 2) ? entityMetaElements[1] : nil;
         
         _hasPhoto = NO;
         _fieldsAreLabeled = YES;
@@ -51,11 +36,11 @@ CGFloat const kPhotoFrameWidth = 55.f;
             _titleKey = kPropertyKeyName;
             _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
         } else if (entityProtocol == @protocol(OOrigo)) {
-            if ([type isEqualToString:kOrigoTypeResidence]) {
+            if ([entityType isEqualToString:kOrigoTypeResidence]) {
                 _titleKey = kInterfaceKeyResidenceName;
                 _detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
                 _multiLineTextKeys = @[kPropertyKeyAddress];
-            } else if ([type isEqualToString:kOrigoTypeOrganisation]) {
+            } else if ([entityType isEqualToString:kOrigoTypeOrganisation]) {
                 _titleKey = kPropertyKeyName;
                 _detailKeys = @[kInterfaceKeyPurpose, kPropertyKeyAddress, kPropertyKeyTelephone];
                 _multiLineTextKeys = @[kInterfaceKeyPurpose, kPropertyKeyAddress];
