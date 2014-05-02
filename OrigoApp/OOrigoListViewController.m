@@ -173,21 +173,21 @@ static NSInteger const kSectionKeyWards = 2;
             
             cell.textLabel.text = residence.name;
             cell.detailTextLabel.text = [residence singleLineAddress];
-            cell.imageView.image = [residence smallImage];
+            cell.imageView.image = [OUtil smallImageForOrigo:residence];
             cell.destinationId = kIdentifierOrigo;
         } else {
             id<OMember> member = entity;
             
             cell.textLabel.text = member.name;
-            cell.detailTextLabel.text = [member shortDetails];
-            cell.imageView.image = [member smallImage];
+            cell.detailTextLabel.text = [OUtil contactInfoForMember:member];
+            cell.imageView.image = [OUtil smallImageForMember:member];
             cell.destinationId = kIdentifierMember;
         }
     } else if (sectionKey == kSectionKeyWards) {
         id<OMember> ward = entity;
         
         cell.textLabel.text = [ward givenName];
-        cell.imageView.image = [ward smallImage];
+        cell.imageView.image = [OUtil smallImageForMember:ward];
         cell.destinationId = kIdentifierOrigoList;
         
         NSArray *origos = [ward origosIncludeResidences:NO];
@@ -203,7 +203,7 @@ static NSInteger const kSectionKeyWards = 2;
         id<OOrigo> origo = entity;
         
         cell.textLabel.text = origo.name;
-        cell.imageView.image = [origo smallImage];
+        cell.imageView.image = [OUtil smallImageForOrigo:origo];
         cell.destinationId = kIdentifierOrigo;
         
         if ([[origo membershipForMember:[OMeta m].user] isInvited]) {

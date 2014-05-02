@@ -158,7 +158,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     destinationViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:_selectedIndexPath];
     
     if (destinationViewController.entity && _entity) {
-        destinationViewController.entity.parent = _entity;
+        destinationViewController.entity.ancestor = _entity;
     }
 }
 
@@ -410,7 +410,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     viewController.target = target;
     
     if (viewController.entity && _entity) {
-        viewController.entity.parent = _entity;
+        viewController.entity.ancestor = _entity;
     }
     
     if ([meta isKindOfClass:[OTableViewController class]]) {
@@ -783,7 +783,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _state.target = target;
     }
     
-    OEntityProxy *parent = _entity ? _entity.parent : nil;
+    OEntityProxy *ancestor = _entity ? _entity.ancestor : nil;
     
     if ([target isKindOfClass:[OReplicatedEntity class]]) {
         _entity = [target proxy];
@@ -796,8 +796,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (_entity) {
         _target = _entity;
         
-        if (parent) {
-            _entity.parent = parent;
+        if (ancestor) {
+            _entity.ancestor = ancestor;
         }
     }
 }

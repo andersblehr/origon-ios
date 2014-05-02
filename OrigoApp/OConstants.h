@@ -73,6 +73,7 @@ extern NSString * const kPropertyKeyType;
 
 // Entity relationship keys
 extern NSString * const kRelationshipKeyMember;
+extern NSString * const kRelationshipKeyMemberships;
 extern NSString * const kRelationshipKeyOrigo;
 
 // String key prefixes

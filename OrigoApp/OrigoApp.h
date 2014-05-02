@@ -30,7 +30,7 @@
 
 @protocol OEntity, OMember, OMembership, OOrigo, OSettings;
 @protocol OTableViewController;
-@class OEntityProxy, OMemberProxy, OOrigoProxy;
+@class OEntityProxy, OMemberProxy, OMembershipProxy, OOrigoProxy;
 @class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
 @class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, ONavigationController, OPhoneNumberFormatter, OMemberExaminer, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
 
@@ -40,6 +40,11 @@
 #import "OMemberExaminerDelegate.h"
 #import "OTableViewInputDelegate.h"
 #import "OTextInput.h"
+
+#import "OEntityProxy.h"
+#import "OMemberProxy.h"
+#import "OMembershipProxy.h"
+#import "OOrigoProxy.h"
 
 #import "ODevice.h"
 #import "ODevice+OrigoAdditions.h"
@@ -54,10 +59,6 @@
 #import "OReplicatedEntityRef.h"
 #import "OSettings.h"
 #import "OSettings+OrigoAdditions.h"
-
-#import "OEntityProxy.h"
-#import "OMemberProxy.h"
-#import "OOrigoProxy.h"
 
 typedef UIView<OTextInput> OInputField;
 

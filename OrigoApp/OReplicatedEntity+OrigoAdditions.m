@@ -258,7 +258,12 @@
 
 + (NSArray *)propertyKeys
 {
-    return [[[NSEntityDescription entityForName:NSStringFromClass(self) inManagedObjectContext:[OMeta m].context] attributesByName] allKeys];
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass(self) inManagedObjectContext:[OMeta m].context];
+    
+    NSArray *attributeKeys = [[entityDescription attributesByName] allKeys];
+    NSArray *relationshipKeys = [[entityDescription relationshipsByName] allKeys];
+    
+    return [attributeKeys arrayByAddingObjectsFromArray:relationshipKeys];
 }
 
 
@@ -293,12 +298,6 @@
 - (id)proxy
 {
     return [[[self entityClass] proxyClass] proxyForEntity:self];
-}
-
-
-- (id)commit
-{
-    return nil;
 }
 
 

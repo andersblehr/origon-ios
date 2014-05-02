@@ -73,6 +73,7 @@ NSString * const kPropertyKeyType = @"type";
 
 // Entity relationship keys
 NSString * const kRelationshipKeyMember = @"member";
+NSString * const kRelationshipKeyMemberships = @"memberships";
 NSString * const kRelationshipKeyOrigo = @"origo";
 
 // String key prefixes

@@ -10,12 +10,17 @@
 
 @interface OUtil : NSObject
 
++ (NSString *)contactInfoForMember:(id<OMember>)member;
++ (UIImage *)smallImageForMember:(id<OMember>)member;
++ (UIImage *)smallImageForOrigo:(id<OOrigo>)origo;
+
 + (NSString *)rootIdFromMemberId:(NSString *)memberId;
 + (NSString *)commaSeparatedListOfItems:(NSArray *)items conjoinLastItem:(BOOL)conjoinLastItem;
 + (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode;
 + (NSString *)givenNameFromFullName:(NSString *)fullName;
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;
 
-+ (BOOL)name:(NSString *)name matchesName:(NSString *)otherName;
++ (NSComparisonResult)compareOrigo:(id<OOrigo>)origo withOrigo:(id<OOrigo>)otherOrigo;
++ (BOOL)fullName:(NSString *)fullName fuzzyMatchesFullName:(NSString *)otherFullName;
 
 @end

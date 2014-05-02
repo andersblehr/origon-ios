@@ -8,17 +8,6 @@
 
 #import "OMembership+OrigoAdditions.h"
 
-NSString *kMembershipStatusInvited = @"I";
-NSString *kMembershipStatusWaiting = @"W";
-NSString *kMembershipStatusActive = @"A";
-NSString *kMembershipStatusRejected = @"R";
-NSString *kMembershipStatusExpired = @"-";
-
-static NSString * const kMembershipTypeMemberRoot = @"~";
-static NSString * const kMembershipTypeResidency = @"R";
-static NSString * const kMembershipTypeParticipancy = @"P";
-static NSString * const kMembershipTypeAssociate = @"A";
-
 
 @implementation OMembership (OrigoAdditions)
 
@@ -168,6 +157,12 @@ static NSString * const kMembershipTypeAssociate = @"A";
             [[OMeta m].context deleteEntity:self.member];
         }
     }
+}
+
+
++ (Class)proxyClass
+{
+    return [OMembershipProxy class];
 }
 
 @end

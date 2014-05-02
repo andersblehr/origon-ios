@@ -506,12 +506,6 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 #pragma mark - Data formatting shorthands
 
-- (NSString *)age
-{
-    return [self.dateOfBirth localisedAgeString];
-}
-
-
 - (NSString *)appellation
 {
     return [self isUser] ? [OLanguage pronouns][_you_][nominative] : [self givenName];
@@ -539,52 +533,6 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     }
     
     return givenNameWithContactRole;
-}
-
-
-#pragma mark - Display data
-
-- (NSString *)shortAddress
-{
-    return [[self residence] shortAddress];
-}
-
-
-- (NSString *)shortDetails
-{
-    NSString *details = [self.mobilePhone hasValue] ? [OPhoneNumberFormatter formatPhoneNumber:self.mobilePhone canonicalise:YES] : self.email;
-    
-    if ([self isJuvenile]) {
-        if (details) {
-            details = [[self age] stringByAppendingString:details separator:kSeparatorComma];
-        } else {
-            details = [self age];
-        }
-    }
-    
-    return details;
-}
-
-
-- (UIImage *)smallImage
-{
-    UIImage *image = nil;
-    
-    if (self.photo) {
-        image = [UIImage imageWithData:self.photo];
-    } else {
-        if (self.dateOfBirth) {
-            if ([self isJuvenile]) {
-                image = [UIImage imageNamed:[self isMale] ? kIconFileBoy : kIconFileGirl];
-            } else {
-                image = [UIImage imageNamed:[self isMale] ? kIconFileMan : kIconFileWoman];
-            }
-        } else {
-            image = [UIImage imageNamed:[self isMale] ? kIconFileMan : kIconFileWoman];
-        }
-    }
-    
-    return image;
 }
 
 

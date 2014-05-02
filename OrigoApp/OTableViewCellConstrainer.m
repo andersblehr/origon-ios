@@ -41,19 +41,35 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 #pragma mark - Auxiliary methods
 
-+ (NSArray *)displayableKeysFromKeys:(NSArray *)keys delegate:(id)delegate
++ (id)displayableKeysFromKeys:(id)keys delegate:(id)delegate
 {
-    NSMutableArray *displayableKeys = [keys mutableCopy];
+    id displayableKeys = nil;
+    BOOL needsArray = YES;
     
-    if ([delegate respondsToSelector:@selector(isDisplayableFieldWithKey:)]) {
-        for (NSString *key in keys) {
-            if (![delegate isDisplayableFieldWithKey:key]) {
-                [displayableKeys removeObject:key];
+    if (keys) {
+        if ([keys isKindOfClass:[NSString class]]) {
+            keys = @[keys];
+            needsArray = NO;
+        }
+        
+        displayableKeys = [keys mutableCopy];
+        
+        if ([delegate respondsToSelector:@selector(isDisplayableFieldWithKey:)]) {
+            for (NSString *key in keys) {
+                if (![delegate isDisplayableFieldWithKey:key]) {
+                    [displayableKeys removeObject:key];
+                }
             }
         }
+        
+        if (([displayableKeys count] == 1) && !needsArray) {
+            displayableKeys = displayableKeys[0];
+        } else if (![displayableKeys count]) {
+            displayableKeys = nil;
+        }
     }
-    
-    return [displayableKeys count] ? displayableKeys : nil;
+
+    return displayableKeys;
 }
 
 
@@ -364,7 +380,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
         _cell = cell;
         _blueprint = blueprint;
         
-        _titleKey = [[self class] displayableKeysFromKeys:@[_blueprint.titleKey] delegate:cell.inputDelegate][0];
+        _titleKey = [[self class] displayableKeysFromKeys:_blueprint.titleKey delegate:cell.inputDelegate];
         _detailKeys = [[self class] displayableKeysFromKeys:_blueprint.detailKeys delegate:cell.inputDelegate];
         
         if (_titleKey) {
@@ -437,7 +453,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 {
     OTableViewCellBlueprint *blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
     
-    NSString *titleKey = [self displayableKeysFromKeys:@[blueprint.titleKey] delegate:delegate][0];
+    NSString *titleKey = [self displayableKeysFromKeys:blueprint.titleKey delegate:delegate];
     NSArray *inputKeys = [self displayableKeysFromKeys:blueprint.inputKeys delegate:delegate];
     
     return [self heightOfCell:nil withBlueprint:blueprint entity:entity inputKeys:inputKeys titleKey:titleKey delegate:delegate];
