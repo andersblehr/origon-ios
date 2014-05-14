@@ -8,6 +8,7 @@
 
 #import "OMemberProxy.h"
 
+
 @implementation OMemberProxy
 
 #pragma mark - OEntityProxy overrides
@@ -30,8 +31,8 @@
 {
     NSSet *allMemberships = nil;
     
-    if (self.instance) {
-        allMemberships = [self.instance allMemberships];
+    if ([self instance]) {
+        allMemberships = [[self instance] allMemberships];
     } else {
         if (![self hasValueForKey:kRelationshipKeyMemberships]) {
             [self setValue:[NSMutableSet set] forKey:kRelationshipKeyMemberships];
@@ -48,8 +49,8 @@
 {
     NSMutableSet *residencies = nil;
     
-    if (self.instance) {
-        residencies = [[self.instance residencies] mutableCopy];
+    if ([self instance]) {
+        residencies = [[[self instance] residencies] mutableCopy];
     } else {
         residencies = [NSMutableSet set];
         
@@ -68,13 +69,13 @@
 {
     id<OOrigo> residence = nil;
     
-    if (self.instance) {
-        residence = [self.instance residence];
+    if ([self instance]) {
+        residence = [[self instance] residence];
     } else {
         NSArray *residences = [self residences];
         
         if ([residences count]) {
-            residence = residence[0];
+            residence = residences[0];
         } else {
             residence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];
             [residence addMember:self];
@@ -89,8 +90,8 @@
 {
     NSMutableArray *residences = nil;
     
-    if (self.instance) {
-        residences = [[self.instance residences] mutableCopy];
+    if ([self instance]) {
+        residences = [[[self instance] residences] mutableCopy];
     } else {
         residences = [NSMutableArray array];
         
@@ -99,7 +100,55 @@
         }
     }
     
-    return self.instance ? residences : [residences sortedArrayUsingSelector:@selector(compare:)];
+    return [self instance] ? residences : [residences sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
+- (NSSet *)guardians
+{
+    NSMutableSet *guardians = nil;
+    
+    if ([self instance]) {
+        guardians = [[[self instance] guardians] mutableCopy];
+    } else {
+        guardians = [NSMutableSet set];
+        
+        for (id<OMember> housemate in [self housemates]) {
+            if (![housemate isJuvenile]) {
+                [guardians addObject:housemate];
+            }
+        }
+    }
+    
+    return guardians;
+}
+
+
+- (NSSet *)housemates
+{
+    NSMutableSet *housemates = nil;
+    
+    if ([self instance]) {
+        housemates = [[[self instance] housemates] mutableCopy];
+    } else {
+        housemates = [NSMutableSet set];
+        
+        for (id<OOrigo> residence in [self residences]) {
+            for (id<OMember> resident in [residence residents]) {
+                if (resident != self) {
+                    [housemates addObject:resident];
+                }
+            }
+        }
+    }
+    
+    return housemates;
+}
+
+
+- (BOOL)isMale
+{
+    return [self instance] ? [[self instance] isMale] : [self.gender isEqualToString:kGenderMale];
 }
 
 
@@ -107,15 +156,13 @@
 {
     BOOL isJuvenile = NO;
     
-    if (self.instance) {
-        isJuvenile = [self.instance isJuvenile];
+    if ([self instance]) {
+        isJuvenile = [[self instance] isJuvenile];
     } else {
-        NSDate *dateOfBirth = [self valueForKey:kPropertyKeyDateOfBirth];
-        
-        if (dateOfBirth) {
-            isJuvenile = [dateOfBirth isBirthDateOfMinor];
+        if (self.dateOfBirth) {
+            isJuvenile = [self.dateOfBirth isBirthDateOfMinor];
         } else {
-            isJuvenile = [[self valueForKey:kPropertyKeyIsMinor] boolValue];
+            isJuvenile = [self.isMinor boolValue];
         }
     }
     
@@ -123,9 +170,25 @@
 }
 
 
+- (BOOL)hasAddress
+{
+    BOOL hasAddress = NO;
+    
+    if ([self instance]) {
+        hasAddress = [[self instance] hasAddress];
+    } else {
+        for (id<OOrigo> residence in [self residences]) {
+            hasAddress = hasAddress || [residence hasAddress];
+        }
+    }
+    
+    return hasAddress;
+}
+
+
 - (NSString *)givenName
 {
-    return [OUtil givenNameFromFullName:[self valueForKey:kPropertyKeyName]];
+    return [OUtil givenNameFromFullName:self.name];
 }
 
 @end

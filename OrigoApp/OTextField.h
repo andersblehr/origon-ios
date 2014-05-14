@@ -11,10 +11,7 @@
 extern CGFloat const kBorderWidth;
 extern CGFloat const kBorderWidthNonRetina;
 
-@interface OTextField : UITextField<OTextInput> {
-@private
-    id<OTableViewInputDelegate> _inputDelegate;
-}
+@interface OTextField : UITextField<OTextInput>
 
 - (instancetype)initWithKey:(NSString *)key delegate:(id)delegate;
 

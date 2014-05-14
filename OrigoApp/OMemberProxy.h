@@ -16,6 +16,7 @@
 @property (nonatomic) NSString *mobilePhone;
 @property (nonatomic) NSString *email;
 @property (nonatomic) NSString *gender;
+@property (nonatomic) NSNumber *isMinor;
 @property (nonatomic) NSData *photo;
 @property (nonatomic) NSString *fatherId;
 @property (nonatomic) NSString *motherId;

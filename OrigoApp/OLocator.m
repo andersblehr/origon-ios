@@ -9,6 +9,20 @@
 #import "OLocator.h"
 
 
+@interface OLocator () <CLLocationManagerDelegate, UIAlertViewDelegate> {
+@private
+    CLLocationManager *_locationManager;
+    CLPlacemark *_placemark;
+    
+    BOOL _awaitingAuthorisation;
+    BOOL _awaitingLocation;
+    
+    id<OLocatorDelegate> _delegate;
+}
+
+@end
+
+
 @implementation OLocator
 
 #pragma mark - Initialisation

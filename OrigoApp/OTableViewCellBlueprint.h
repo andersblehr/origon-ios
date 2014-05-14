@@ -15,14 +15,14 @@ extern CGFloat const kPhotoFrameWidth;
 
 @interface OTableViewCellBlueprint : NSObject
 
-@property (nonatomic, readonly) BOOL hasPhoto;
-@property (nonatomic, readonly) BOOL fieldsAreLabeled;
-@property (nonatomic, readonly) BOOL fieldsShouldDeemphasiseOnEndEdit;
+@property (nonatomic, assign, readonly) BOOL hasPhoto;
+@property (nonatomic, assign, readonly) BOOL fieldsAreLabeled;
+@property (nonatomic, assign, readonly) BOOL fieldsShouldDeemphasiseOnEndEdit;
 
-@property (strong, nonatomic, readonly) NSString *titleKey;
-@property (strong, nonatomic, readonly) NSArray *detailKeys;
-@property (strong, nonatomic, readonly) NSArray *inputKeys;
-@property (strong, nonatomic, readonly) NSArray *multiLineTextKeys;
+@property (nonatomic, readonly) NSString *titleKey;
+@property (nonatomic, readonly) NSArray *detailKeys;
+@property (nonatomic, readonly) NSArray *inputKeys;
+@property (nonatomic, readonly) NSArray *multiLineTextKeys;
 
 - (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier;
 

@@ -33,28 +33,29 @@ extern NSString * const kTargetRelation;
 extern NSString * const kTargetSetting;
 extern NSString * const kTargetSettings;
 
-@interface OState : NSObject {
-@private
-    NSString *_aspect;
-}
+extern NSString * const kAspectHousehold;
+extern NSString * const kAspectJuvenile;
+extern NSString * const kAspectDefault;
 
-@property (strong, nonatomic, readonly) NSString *identifier;
-@property (strong, nonatomic) NSString *action;
-@property (strong, nonatomic) id target;
 
-@property (weak, nonatomic, readonly) id<OTableViewController> viewController;
+@interface OState : NSObject
+
+@property (nonatomic, readonly) NSString *identifier;
+@property (nonatomic) NSString *action;
+@property (nonatomic) id target;
+
+@property (nonatomic, weak, readonly) id<OTableViewController> viewController;
 
 - (instancetype)initWithViewController:(id<OTableViewController>)viewController;
 
 + (OState *)s;
 
-- (void)setActiveState:(OState *)state;
+- (void)makeActive;
 - (void)toggleAction:(NSArray *)alternatingActions;
 
-- (BOOL)aspectIsHousehold;
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
-- (BOOL)isCurrent;
+- (BOOL)aspectIs:(NSString *)aspect;
 - (BOOL)isValidDestinationStateId:(NSString *)stateId;
 
 - (NSString *)asString;

@@ -89,10 +89,10 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (id<OOrigo>)residence
 {
-    OOrigo *residence = [[NSSet setWithArray:[self residences]] anyObject];
+    id<OOrigo> residence = [[NSSet setWithArray:[self residences]] anyObject];
     
     if (!residence) {
-        residence = [OOrigo instanceWithId:[OCrypto generateUUID] type:kOrigoTypeResidence];
+        residence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];
         [residence addMember:self];
     }
     
@@ -558,26 +558,6 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 + (Class)proxyClass
 {
     return [OMemberProxy class];
-}
-
-
-- (NSString *)asTarget
-{
-    NSString *target = nil;
-    
-    if ([self isUser]) {
-        target = kTargetUser;
-    } else if ([self isWardOfUser]) {
-        target = kTargetWard;
-    } else if ([self isHousemateOfUser]) {
-        target = kTargetHousemate;
-    } else if ([self isJuvenile]) {
-        target = kTargetJuvenile;
-    } else {
-        target = kTargetMember;
-    }
-    
-    return target;
 }
 
 @end

@@ -8,13 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OOrigoViewController : OTableViewController<OTableViewController, OTableViewInputDelegate, UIActionSheetDelegate> {
-@private
-    id<OOrigo> _origo;
-    id<OMember> _member;
-    id<OMembership> _membership;
-    
-    NSArray *_housemateCandidates;
-}
+@interface OOrigoViewController : OTableViewController
 
 @end

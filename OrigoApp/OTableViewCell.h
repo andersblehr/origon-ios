@@ -15,30 +15,22 @@ extern NSString * const kViewKeySuffixInputField;
 
 extern CGFloat const kCellAnimationDuration;
 
-@interface OTableViewCell : UITableViewCell<OEntityObserver> {
-@private
-    OState *_state;
-    OTableViewCellBlueprint *_blueprint;
-    
-    NSMutableDictionary *_views;
-    UITableView *_tableView;
-    OInputField *_lastInputField;
-}
+@interface OTableViewCell : UITableViewCell<OEntityObserver>
 
-@property (strong, nonatomic, readonly) OState *state;
-@property (strong, nonatomic, readonly) OTableViewCellConstrainer *constrainer;
+@property (nonatomic, readonly) OState *state;
+@property (nonatomic, readonly) OTableViewCellConstrainer *constrainer;
 
-@property (strong, nonatomic) id entity;
-@property (strong, nonatomic) OInputField *inputField;
-@property (strong, nonatomic) NSString *destinationId;
+@property (nonatomic) id entity;
+@property (nonatomic) OInputField *inputField;
+@property (nonatomic) NSString *destinationId;
 
-@property (nonatomic, readonly) BOOL selectableDuringInput;
-@property (nonatomic, readonly) BOOL selectable;
-@property (nonatomic) BOOL editable;
-@property (nonatomic) BOOL checked;
+@property (nonatomic, assign, readonly) BOOL selectableDuringInput;
+@property (nonatomic, assign, readonly) BOOL selectable;
+@property (nonatomic, assign) BOOL editable;
+@property (nonatomic, assign) BOOL checked;
 
-@property (weak, nonatomic) id<OTableViewInputDelegate> inputDelegate;
-@property (weak, nonatomic) id<OEntityObserver> observer;
+@property (nonatomic, weak) id<OTableViewInputDelegate> inputDelegate;
+@property (nonatomic, weak) id<OEntityObserver> observer;
 
 - (instancetype)initWithEntity:(id<OEntity>)entity delegate:(id)delegate;
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
@@ -59,10 +51,10 @@ extern CGFloat const kCellAnimationDuration;
 - (void)resumeFirstResponder;
 - (void)shakeCellVibrate:(BOOL)vibrate;
 
+- (void)readData;
 - (void)prepareForInput;
 - (void)processInput;
-- (void)readEntity;
-- (void)writeEntityCommitIfNeeded:(BOOL)commitIfNeeded;
+- (void)writeInput;
 
 - (void)setDestinationId:(NSString *)identifier selectableDuringInput:(BOOL)selectableDuringInput;
 

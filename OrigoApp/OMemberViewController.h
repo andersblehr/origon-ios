@@ -8,21 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OMemberViewController : OTableViewController<OTableViewController, OTableViewInputDelegate, OMemberExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate, OConnectionDelegate> {
-@private
-    id<OMember> _member;
-    id<OOrigo> _origo;
-    id<OMembership> _membership;
-    
-    OInputField *_nameField;
-    OInputField *_dateOfBirthField;
-    OInputField *_mobilePhoneField;
-    OInputField *_emailField;
-    
-    NSMutableArray *_addressBookAddresses;
-    NSMutableArray *_addressBookHomeNumbers;
-    NSMutableArray *_homeNumberMappings;
-    NSArray *_candidateResidences;
-}
+@interface OMemberViewController : OTableViewController
 
 @end

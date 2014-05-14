@@ -15,6 +15,16 @@ static NSInteger const kSectionKeyOrigos = 1;
 static NSInteger const kSectionKeyWards = 2;
 
 
+@interface OOrigoListViewController () <OTableViewController, UIActionSheetDelegate> {
+@private
+    id<OMember> _member;
+    
+    NSMutableArray *_origoTypes;
+}
+
+@end
+
+
 @implementation OOrigoListViewController
 
 #pragma mark - Auxiliary methods
@@ -110,7 +120,7 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-#pragma mark - OTableViewControllerInstance conformance
+#pragma mark - OTableViewController protocol conformance
 
 - (void)loadState
 {
@@ -225,7 +235,7 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return ([self isLastSectionKey:sectionKey] && [[OMeta m].user isTeenOrOlder]);
+    return ([self isBottomSectionKey:sectionKey] && [[OMeta m].user isTeenOrOlder]);
 }
 
 

@@ -12,6 +12,22 @@ static NSString * const kAccessorPrefixSetter = @"set";
 static NSString * const kClassSuffixProxy = @"Proxy";
 
 
+@interface OEntityProxy () {
+@private
+    id _instance;
+    BOOL _isCommitted;
+    Class _entityClass;
+    NSArray *_propertyKeys;
+    NSArray *_relationshipKeys;
+    NSMutableDictionary *_valuesByKey;
+    
+    SEL _forwardSelector;
+    id _forwardSelectorArgument;
+}
+
+@end
+
+
 @implementation OEntityProxy
 
 #pragma mark - Initialisation
@@ -40,14 +56,15 @@ static NSString * const kClassSuffixProxy = @"Proxy";
     self = [super init];
     
     if (self) {
-        _propertyKeys = [entityClass propertyKeys];
+        _entityClass = entityClass;
+        _propertyKeys = [_entityClass propertyKeys];
+        _relationshipKeys = [_entityClass relationshipKeys];
         
         if (![_propertyKeys containsObject:kPropertyKeyType]) {
             _propertyKeys = [_propertyKeys arrayByAddingObject:kPropertyKeyType];
         }
         
         _valuesByKey = [NSMutableDictionary dictionary];
-        _entityClass = entityClass;
         
         [self setValue:[OCrypto generateUUID] forKeyPath:kPropertyKeyEntityId];
         
@@ -106,12 +123,12 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 #pragma mark - Custom accessors
 
-- (void)setAncestor:(OEntityProxy *)ancestor
+- (void)setAncestor:(id)ancestor
 {
     if (ancestor != self) {
         _ancestor = ancestor;
     } else {
-        [self setAncestor:ancestor.ancestor];
+        [self setAncestor:[ancestor ancestor]];
     }
 }
 
@@ -121,12 +138,6 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 - (Class)entityClass
 {
     return _entityClass;
-}
-
-
-- (BOOL)isProxy
-{
-    return YES;
 }
 
 
@@ -160,7 +171,7 @@ static NSString * const kClassSuffixProxy = @"Proxy";
     
     if (_instance) {
         [_instance setValue:value forKey:key];
-    } else if ([_propertyKeys containsObject:key]) {
+    } else if ([_propertyKeys containsObject:key] || [_relationshipKeys containsObject:key]) {
         if (value) {
             _valuesByKey[key] = value;
         } else {
@@ -196,10 +207,12 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 - (void)useInstance:(id<OEntity>)instance
 {
-    if (![instance isProxy]) {
-        _instance = instance;
-        
-        [_valuesByKey removeAllObjects];
+    _instance = [instance instance];
+    
+    [_valuesByKey removeAllObjects];
+    
+    if (!_instance) {
+        [self setValue:[OCrypto generateUUID] forKeyPath:kPropertyKeyEntityId];
     }
 }
 
@@ -222,6 +235,22 @@ static NSString * const kClassSuffixProxy = @"Proxy";
         }
         
         _isCommitted = YES;
+        
+        for (NSString *key in [_entityClass relationshipKeys]) {
+            id relationship = _valuesByKey[key];
+            
+            if (relationship) {
+                if ([relationship conformsToProtocol:@protocol(OEntity)]) {
+                    [relationship commit];
+                } else if ([relationship isKindOfClass:[NSSet class]]) {
+                    for (id relationshipItem in relationship) {
+                        [relationshipItem commit];
+                    }
+                }
+            }
+        }
+        
+        [_valuesByKey removeAllObjects];
     }
     
     return _instance;
@@ -252,16 +281,16 @@ static NSString * const kClassSuffixProxy = @"Proxy";
         _forwardSelector = @selector(forwardingFallbackForUninstantiatedEntities);
     } else {
         NSString *selectorName = NSStringFromSelector(selector);
-        NSString *propertyKey = [selectorName componentsSeparatedByString:kSeparatorColon][0];
+        NSString *key = [selectorName componentsSeparatedByString:kSeparatorColon][0];
         
-        BOOL isSetter = [propertyKey hasPrefix:kAccessorPrefixSetter];
+        BOOL isSetter = [key hasPrefix:kAccessorPrefixSetter];
         
         if (isSetter) {
-            propertyKey = [[propertyKey substringFromIndex:3] stringByLowercasingFirstLetter];
+            key = [[key substringFromIndex:3] stringByLowercasingFirstLetter];
         }
         
-        if ([_propertyKeys containsObject:propertyKey]) {
-            _forwardSelectorArgument = propertyKey;
+        if ([_propertyKeys containsObject:key] || [_relationshipKeys containsObject:key]) {
+            _forwardSelectorArgument = key;
             
             if (isSetter) {
                 _forwardSelector = @selector(setValue:forKey:);

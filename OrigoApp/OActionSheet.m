@@ -8,6 +8,15 @@
 
 #import "OActionSheet.h"
 
+
+@interface OActionSheet () {
+@private
+    NSMutableArray *_buttonTags;
+}
+
+@end
+
+
 @implementation OActionSheet
 
 #pragma mark - Initialisation

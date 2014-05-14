@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol OTableViewController<NSObject>
+@protocol OTableViewController<UITableViewDataSource, UITableViewDelegate>
 
 @required
 @property (strong, nonatomic, readonly) NSString *identifier;
@@ -49,58 +49,32 @@
 @end
 
 
-@interface OTableViewController : UITableViewController<OTableViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate, OConnectionDelegate> {
-@private
-    BOOL _didJustLoad;
-    BOOL _didInitialise;
-    BOOL _didResurface;
-    BOOL _isHidden;
-    BOOL _shouldReloadOnModalDismissal;
-    
-    Class _implicitEntityClass;
-    NSInteger _detailSectionKey;
-    NSMutableArray *_sectionKeys;
-    NSMutableDictionary *_sectionData;
-    NSMutableDictionary *_sectionCounts;
-    NSMutableDictionary *_sectionFooterLabels;
-    NSMutableArray *_sectionIndexTitles;
-    NSMutableSet *_dirtySections;
+@interface OTableViewController : UITableViewController<OTableViewController, OConnectionDelegate>
 
-    NSNumber *_lastSectionKey;
-    NSIndexPath *_selectedIndexPath;
-    OActivityIndicator *_activityIndicator;
-    
-    UIBarButtonItem *_nextButton;
-    UIBarButtonItem *_doneButton;
-    UIBarButtonItem *_cancelButton;
-    
-    id<OTableViewController> _instance;
-}
+@property (nonatomic, readonly) OState *state;
+@property (nonatomic, readonly) OEntityProxy *entity;
 
-@property (strong, nonatomic, readonly) OState *state;
-@property (strong, nonatomic, readonly) OEntityProxy *entity;
+@property (nonatomic, assign, readonly) BOOL isModal;
+@property (nonatomic, assign, readonly) BOOL isPushed;
+@property (nonatomic, assign, readonly) BOOL wasHidden;
 
-@property (nonatomic, readonly) BOOL isModal;
-@property (nonatomic, readonly) BOOL isPushed;
-@property (nonatomic, readonly) BOOL wasHidden;
+@property (nonatomic, assign) BOOL requiresSynchronousServerCalls;
+@property (nonatomic, assign) BOOL usesPlainTableViewStyle;
+@property (nonatomic, assign) BOOL usesSectionIndexTitles;
+@property (nonatomic, assign) BOOL cancelImpliesSkip;
+@property (nonatomic, assign) BOOL canEdit;
 
-@property (nonatomic) BOOL requiresSynchronousServerCalls;
-@property (nonatomic) BOOL usesPlainTableViewStyle;
-@property (nonatomic) BOOL usesSectionIndexTitles;
-@property (nonatomic) BOOL cancelImpliesSkip;
-@property (nonatomic) BOOL canEdit;
+@property (nonatomic) id meta;
+@property (nonatomic) id returnData;
+@property (nonatomic) OTableViewCell *detailCell;
+@property (nonatomic) OInputField *nextInputField;
 
-@property (strong, nonatomic) id meta;
-@property (strong, nonatomic) id returnData;
-@property (strong, nonatomic) OTableViewCell *detailCell;
-@property (strong, nonatomic) OInputField *nextInputField;
+@property (nonatomic, weak) OTableViewController *dismisser;
+@property (nonatomic, weak) id<OEntityObserver> observer;
 
-@property (weak, nonatomic) OTableViewController *dismisser;
-@property (weak, nonatomic) id<OEntityObserver> observer;
-
-- (BOOL)aspectIsHousehold;
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
+- (BOOL)aspectIs:(NSString *)aspect;
 
 - (void)setDataForDetailSection;
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
@@ -108,7 +82,7 @@
 - (void)setData:(NSArray *)data sectionIndexLabelKey:(NSString *)sectionIndexLabelKey;
 - (id)dataAtIndexPath:(NSIndexPath *)indexPath;
 
-- (BOOL)isLastSectionKey:(NSInteger)sectionKey;
+- (BOOL)isBottomSectionKey:(NSInteger)sectionKey;
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath;
 

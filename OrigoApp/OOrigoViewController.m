@@ -27,6 +27,18 @@ static NSInteger const kButtonTagHousemate = 100;
 static NSInteger const kButtonTagGuardian = 101;
 
 
+@interface OOrigoViewController () <OTableViewController, OTableViewInputDelegate, UIActionSheetDelegate> {
+@private
+    id<OOrigo> _origo;
+    id<OMember> _member;
+    id<OMembership> _membership;
+    
+    NSArray *_housemateCandidates;
+}
+
+@end
+
+
 @implementation OOrigoViewController
 
 #pragma mark - Auxiliary methods
@@ -60,7 +72,13 @@ static NSInteger const kButtonTagGuardian = 101;
     if (housemateCandidates && [housemateCandidates count]) {
         [self presentHousemateCandidatesSheet:housemateCandidates];
     } else {
-        id target = [_origo isJuvenile] ? kTargetJuvenile : _origo.type;
+        id target = kTargetMember;
+        
+        if ([_origo isJuvenile]) {
+            target = kTargetJuvenile;
+        } else if ([_origo isOfType:kOrigoTypeResidence] && [self aspectIs:kAspectJuvenile]) {
+            target = kTargetGuardian;
+        }
         
         [self presentModalViewControllerWithIdentifier:kIdentifierMember target:target];
     }
@@ -111,7 +129,7 @@ static NSInteger const kButtonTagGuardian = 101;
     
     NSString *displayName = nil;
     
-    if (![_origo isOfType:kOrigoTypeResidence] || [self aspectIsHousehold]) {
+    if (![_origo isOfType:kOrigoTypeResidence] || [self aspectIs:kAspectHousehold]) {
         displayName = _origo.name;
     } else if ([_origo hasAddress]) {
         displayName = [_origo shortAddress];
@@ -132,7 +150,11 @@ static NSInteger const kButtonTagGuardian = 101;
         
         [self addNewMemberButtonsToActionSheet:actionSheet];
         
-        [actionSheet show];
+        if ([actionSheet numberOfButtons] > 2) {
+            [actionSheet show];
+        } else {
+            [self addMember];
+        }
     } else {
         [self addMember];
     }
@@ -147,12 +169,13 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
-#pragma mark - OTableViewControllerInstance conformance
+#pragma mark - OTableViewController protocol conformance
 
 - (void)loadState
 {
     _origo = [self.entity proxy];
     _member = [self.entity ancestorConformingToProtocol:@protocol(OMember)];
+    _membership = [_origo membershipForMember:_member];
     
     if ([self actionIs:kActionRegister]) {
         if ([_origo isOfType:kOrigoTypeResidence] && ![_member hasAddress]) {
@@ -161,20 +184,18 @@ static NSInteger const kButtonTagGuardian = 101;
             self.title = NSLocalizedString(_origo.type, kStringPrefixNewOrigoTitle);
         }
         
-        self.cancelImpliesSkip = ([_origo isCommitted] && ![self aspectIsHousehold]);
+        self.cancelImpliesSkip = [_origo isOfType:kOrigoTypeResidence] && ![_member isHousemateOfUser] && ![self aspectIs:kAspectJuvenile];
     } else {
-        _membership = [_origo membershipForMember:_member];
-        
-        if ([_origo isOfType:kOrigoTypeResidence] && ![[OState s] aspectIsHousehold]) {
+        if ([_origo isOfType:kOrigoTypeResidence] && ![self aspectIs:kAspectHousehold]) {
             self.title = NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle);
         } else {
             self.title = _origo.name;
         }
         
         if ([self actionIs:kActionDisplay]) {
-            if ([_origo isCommitted]) {
+            if ([_origo isCommitted] && [_member isCommitted]) {
                 self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButton];
-            } else {
+            } else if (![_member instance]) {
                 self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButton];
             }
         }
@@ -221,7 +242,7 @@ static NSInteger const kButtonTagGuardian = 101;
     BOOL hasFooter = NO;
     
     if (self.isModal && ![self actionIs:kActionRegister]) {
-        hasFooter = [self isLastSectionKey:sectionKey] && [_origo userCanEdit];
+        hasFooter = [self isBottomSectionKey:sectionKey] && [_origo userCanEdit];
     }
     
     return hasFooter;
@@ -244,7 +265,15 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    return NSLocalizedString(_origo.type, kStringPrefixFooter);
+    NSString *text = nil;
+    
+    if ([_origo isOfType:kOrigoTypeResidence] && [self aspectIs:kAspectJuvenile]) {
+        text = NSLocalizedString(@"Tap [+] to add any additional guardians in the household", @"");
+    } else {
+        text = NSLocalizedString(_origo.type, kStringPrefixFooter);
+    }
+    
+    return text;
 }
 
 
@@ -352,7 +381,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (void)processInput
 {
-    [self.detailCell writeEntityCommitIfNeeded:YES];
+    [self.detailCell writeInput];
     
     if ([self actionIs:kActionRegister]) {
         if (!_membership) {
@@ -364,12 +393,11 @@ static NSInteger const kButtonTagGuardian = 101;
         }
         
         [self toggleEditMode];
-        [self.detailCell readEntity];
-        [self reloadSectionWithKey:kSectionKeyMembers];
+        [self.detailCell readData];
         
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButton];
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButton];
-    } else if ([self actionIs:kActionEdit]) {
+    } else {
         [self toggleEditMode];
     }
 }

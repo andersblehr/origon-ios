@@ -194,21 +194,21 @@
 
 - (id<OMembership>)membershipForMember:(id<OMember>)member
 {
-    OMembership *membershipForMember = nil;
+    OMembership *targetMembership = nil;
     
     if ([member isCommitted]) {
         member = [member instance];
         
         for (OMembership *membership in self.memberships) {
-            if (!membershipForMember) {
+            if (!targetMembership) {
                 if (![membership isBeingDeleted] && (membership.member == member)) {
-                    membershipForMember = membership;
+                    targetMembership = membership;
                 }
             }
         }
     }
     
-    return membershipForMember;
+    return targetMembership;
 }
 
 
@@ -394,12 +394,6 @@
 + (Class)proxyClass
 {
     return [OOrigoProxy class];
-}
-
-
-- (NSString *)asTarget
-{
-    return self.type;
 }
 
 @end

@@ -22,6 +22,37 @@ static BOOL _needsReinstantiateRootViewController;
 static UIViewController * _reinstantiatedRootViewController;
 
 
+@interface OTableViewController () <UITextFieldDelegate, UITextViewDelegate> {
+@private
+    BOOL _didJustLoad;
+    BOOL _didInitialise;
+    BOOL _didResurface;
+    BOOL _isHidden;
+    BOOL _shouldReloadOnModalDismissal;
+    
+    Class _entityClass;
+    NSInteger _detailSectionKey;
+    NSMutableArray *_sectionKeys;
+    NSMutableDictionary *_sectionData;
+    NSMutableDictionary *_sectionCounts;
+    NSMutableDictionary *_sectionFooterLabels;
+    NSMutableArray *_sectionIndexTitles;
+    NSMutableSet *_dirtySections;
+    
+    NSNumber *_bottomSectionKey;
+    NSIndexPath *_selectedIndexPath;
+    OActivityIndicator *_activityIndicator;
+    
+    UIBarButtonItem *_nextButton;
+    UIBarButtonItem *_doneButton;
+    UIBarButtonItem *_cancelButton;
+    
+    id<OTableViewController> _instance;
+}
+
+@end
+
+
 @implementation OTableViewController
 
 @synthesize identifier = _identifier;
@@ -41,14 +72,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (BOOL)isEntityViewController
 {
-    if (!_implicitEntityClass) {
+    if (!_entityClass) {
         if (![self isListViewController] && ![self isPickerViewController]) {
             NSString *viewControllerName = NSStringFromClass([self class]);
-            _implicitEntityClass = NSClassFromString([viewControllerName substringToIndex:[viewControllerName rangeOfString:kViewControllerSuffixDefault].location]);
+            _entityClass = NSClassFromString([viewControllerName substringToIndex:[viewControllerName rangeOfString:kViewControllerSuffixDefault].location]);
         }
     }
     
-    return (_implicitEntityClass != NULL);
+    return (_entityClass != NULL);
 }
 
 
@@ -82,7 +113,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             _sectionCounts[sectionKey] = @([_sectionData[sectionKey] count]);
         }
         
-        _lastSectionKey = [_sectionKeys lastObject];
+        _bottomSectionKey = [_sectionKeys lastObject];
         _didInitialise = YES;
     } else {
         _state.action = kActionLoad;
@@ -212,7 +243,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)didCancelEditing
 {
     if ([self actionIs:kActionEdit]) {
-        [_detailCell readEntity];
+        [_detailCell readData];
         [self toggleEditMode];
     } else {
         _returnData = nil;
@@ -225,6 +256,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     if ([self actionIs:kActionInput]) {
         [_detailCell processInput];
+        
+        if (_isModal && [self isEntityViewController]) {
+            _returnData = _entity;
+        }
     } else {
         [_dismisser dismissModalViewController:self reload:YES];
     }
@@ -239,12 +274,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - State introspection
 
-- (BOOL)aspectIsHousehold
-{
-    return [_state aspectIsHousehold];
-}
-
-
 - (BOOL)actionIs:(NSString *)action
 {
     return [_state actionIs:action];
@@ -254,6 +283,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (BOOL)targetIs:(NSString *)target
 {
     return [_state targetIs:target];
+}
+
+
+- (BOOL)aspectIs:(NSString *)aspect
+{
+    return [_state aspectIs:aspect];
 }
 
 
@@ -274,10 +309,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     } else if (data) {
         if (sectionKey == kDetailSectionKey) {
             _detailSectionKey = sectionKey;
-            
-            if (data != _target) {
-                self.target = data;
-            }
             
             if (_entity) {
                 _sectionData[@(sectionKey)] = [NSMutableArray arrayWithObject:_entity];
@@ -376,9 +407,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - View layout
 
-- (BOOL)isLastSectionKey:(NSInteger)sectionKey
+- (BOOL)isBottomSectionKey:(NSInteger)sectionKey
 {
-    return ([self sectionNumberForSectionKey:sectionKey] == [self.tableView numberOfSections] - 1);
+    return (sectionKey == [_bottomSectionKey integerValue]);
 }
 
 
@@ -446,9 +477,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if (shouldRelayDismissal) {
         if (!reload && viewController.cancelImpliesSkip) {
-            [_dismisser dismissModalViewController:viewController reload:YES];
+            [_dismisser dismissModalViewController:self reload:YES];
         } else {
-            [_dismisser dismissModalViewController:viewController reload:reload];
+            [_dismisser dismissModalViewController:self reload:reload];
         }
     } else {
         if ([_instance respondsToSelector:@selector(willDismissModalViewController:)]) {
@@ -548,12 +579,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _sectionCounts[sectionKey] = @(newCount);
     }
     
-    if ([_sectionKeys count] && ![_lastSectionKey isEqualToNumber:[_sectionKeys lastObject]]) {
-        if ([_sectionKeys containsObject:_lastSectionKey]) {
-            [sectionsToReload addIndex:[self sectionNumberForSectionKey:[_lastSectionKey integerValue]]];
+    if ([_sectionKeys count] && ![_bottomSectionKey isEqualToNumber:[_sectionKeys lastObject]]) {
+        if ([_sectionKeys containsObject:_bottomSectionKey]) {
+            [sectionsToReload addIndex:[self sectionNumberForSectionKey:[_bottomSectionKey integerValue]]];
         }
         
-        _lastSectionKey = [_sectionKeys lastObject];
+        _bottomSectionKey = [_sectionKeys lastObject];
     }
     
     if ([sectionsToInsert count]) {
@@ -571,6 +602,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)reloadSectionWithKey:(NSInteger)sectionKey
 {
     [_instance loadData];
+    
+    _bottomSectionKey = [_sectionKeys lastObject];
     
     BOOL sectionExists = ([_sectionCounts[@(sectionKey)] integerValue] > 0);
     BOOL sectionIsEmpty = (![_sectionData[@(sectionKey)] count]);
@@ -667,7 +700,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self initialiseInstance];
         }
         
-        [[OState s] setActiveState:_state];
+        [_state makeActive];
     }
     
     [super viewWillAppear:animated];
@@ -765,32 +798,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Custom accessors
 
-- (void)setUsesSectionIndexTitles:(BOOL)usesSectionIndexTitles
-{
-    _usesSectionIndexTitles = usesSectionIndexTitles;
-    
-    if (_usesSectionIndexTitles) {
-        _usesPlainTableViewStyle = YES;
-    }
-}
-
-
 - (void)setTarget:(id)target
 {
     _target = target;
     
-    if (_state) {
-        _state.target = target;
-    }
-    
     OEntityProxy *ancestor = _entity ? _entity.ancestor : nil;
     
-    if ([target isKindOfClass:[OReplicatedEntity class]]) {
+    if ([target conformsToProtocol:@protocol(OEntity)]) {
         _entity = [target proxy];
-    } else if ([target isKindOfClass:[OEntityProxy class]]) {
-        _entity = target;
     } else if ([self isEntityViewController]) {
-        _entity = [[_implicitEntityClass proxyClass] proxyForEntityOfClass:_implicitEntityClass type:target];
+        _entity = [[_entityClass proxyClass] proxyForEntityOfClass:_entityClass type:target];
     }
     
     if (_entity) {
@@ -799,6 +816,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if (ancestor) {
             _entity.ancestor = ancestor;
         }
+    }
+    
+    if (_state) {
+        _state.target = _target;
     }
 }
 
@@ -810,6 +831,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     return _target;
+}
+
+
+- (void)setUsesSectionIndexTitles:(BOOL)usesSectionIndexTitles
+{
+    _usesSectionIndexTitles = usesSectionIndexTitles;
+    
+    if (_usesSectionIndexTitles) {
+        _usesPlainTableViewStyle = YES;
+    }
 }
 
 

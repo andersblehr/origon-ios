@@ -9,6 +9,15 @@
 #import "OValuePickerViewController.h"
 
 
+@interface OValuePickerViewController () <OTableViewController> {
+@private
+    id<OSettings> _settings;
+    NSString *_settingKey;
+}
+
+@end
+
+
 @implementation OValuePickerViewController
 
 #pragma mark - Auxiliary methods
@@ -47,7 +56,7 @@
 }
 
 
-#pragma mark - OTableViewControllerInstance conformance
+#pragma mark - OTableViewController protocol conformance
 
 - (void)loadState
 {

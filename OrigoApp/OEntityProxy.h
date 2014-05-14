@@ -11,9 +11,7 @@
 @protocol OEntity <NSObject>
 
 @required
-
 - (Class)entityClass;
-- (BOOL)isProxy;
 - (BOOL)isCommitted;
 - (id)proxy;
 - (id)instance;
@@ -33,19 +31,9 @@
 @end
 
 
-@interface OEntityProxy : NSObject<OEntity> {
-@private
-    id _instance;
-    BOOL _isCommitted;
-    Class _entityClass;
-    NSArray *_propertyKeys;
-    NSMutableDictionary *_valuesByKey;
-    
-    SEL _forwardSelector;
-    id _forwardSelectorArgument;
-}
+@interface OEntityProxy : NSObject<OEntity>
 
-@property (strong, nonatomic) OEntityProxy *ancestor;
+@property (nonatomic) id ancestor;
 
 + (instancetype)proxyForEntity:(OReplicatedEntity *)entity;
 + (instancetype)proxyForEntityOfClass:(Class)entityClass type:(NSString *)type;

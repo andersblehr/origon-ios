@@ -28,6 +28,19 @@ static CGFloat const kShakeTranslationY = 0.f;
 static CGFloat const kShakeRepeatCount = 3.f;
 
 
+@interface OTableViewCell () {
+@private
+    OState *_state;
+    OTableViewCellBlueprint *_blueprint;
+    
+    NSMutableDictionary *_views;
+    UITableView *_tableView;
+    OInputField *_lastInputField;
+}
+
+@end
+
+
 @implementation OTableViewCell
 
 #pragma mark - Adding elements
@@ -44,15 +57,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [self addInputFieldForKey:_constrainer.titleKey];
     
     if (_blueprint.hasPhoto) {
-        UIButton *imageButton = [[UIButton alloc] initWithFrame:CGRectZero];
-        [imageButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+        UIButton *photoButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        [photoButton setTranslatesAutoresizingMaskIntoConstraints:NO];
         
         NSData *photo = [_entity valueForKey:kPropertyKeyPhoto];
         
         if (photo) {
-            [imageButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
+            [photoButton setImage:[UIImage imageWithData:photo] forState:UIControlStateNormal];
         } else {
-            imageButton.backgroundColor = [UIColor whiteColor];
+            photoButton.backgroundColor = [UIColor whiteColor];
             
             UILabel *photoPrompt = [[UILabel alloc] initWithFrame:CGRectZero];
             photoPrompt.backgroundColor = [UIColor imagePlaceholderBackgroundColour];
@@ -62,12 +75,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
             photoPrompt.textColor = [UIColor imagePlaceholderTextColour];
             [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
             
-            [imageButton addSubview:photoPrompt];
+            [photoButton addSubview:photoPrompt];
             [_views setObject:photoPrompt forKey:kViewKeyPhotoPrompt];
         }
         
-        [self.contentView addSubview:imageButton];
-        [_views setObject:imageButton forKey:kViewKeyPhotoFrame];
+        [self.contentView addSubview:photoButton];
+        [_views setObject:photoButton forKey:kViewKeyPhotoFrame];
     }
 }
 
@@ -379,7 +392,21 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Cell content handling
+#pragma mark - Data & input handling
+
+- (void)readData
+{
+    if ([self isListCell]) {
+        [_state.viewController loadListCell:self atIndexPath:[_tableView indexPathForCell:self]];
+    } else {
+        for (NSString *key in _constrainer.inputKeys) {
+            [self inputFieldForKey:key].value = [_entity valueForKey:key];
+        }
+        
+        [self redrawIfNeeded];
+    }
+}
+
 
 - (void)prepareForInput
 {
@@ -407,27 +434,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)readEntity
-{
-    if ([self isListCell]) {
-        [_state.viewController loadListCell:self atIndexPath:[_tableView indexPathForCell:self]];
-    } else {
-        for (NSString *key in _constrainer.inputKeys) {
-            [self inputFieldForKey:key].value = [_entity valueForKey:key];
-        }
-        
-        [self redrawIfNeeded];
-    }
-}
-
-
-- (void)writeEntityCommitIfNeeded:(BOOL)commitIfNeeded
+- (void)writeInput
 {
     for (NSString *key in _constrainer.inputKeys) {
         [_entity setValue:[self inputFieldForKey:key].value forKey:key];
     }
     
-    if (commitIfNeeded && ![_entity isCommitted]) {
+    if (![_entity isCommitted]) {
         BOOL shouldCommit = YES;
         
         if ([_inputDelegate respondsToSelector:@selector(shouldCommitEntity:)]) {
@@ -582,7 +595,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)observeEntity
 {
-    [self readEntity];
+    [self readData];
     [self redrawIfNeeded];
     
     if (_observer) {

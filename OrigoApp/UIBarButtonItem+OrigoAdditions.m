@@ -29,7 +29,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)cancelButtonWithTitle:(NSString *)title
 {
-    return [[self alloc] initWithTitle:NSLocalizedString(@"Cancel", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didCancelEditing)];
+    return [[self alloc] initWithTitle:title style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didCancelEditing)];
 }
 
 
@@ -73,10 +73,13 @@ static UIBarButtonItem *_flexibleSpace = nil;
 {
     UIBarButtonItem *button = nil;
     
+    id target = [OState s].viewController;
+    SEL action = @selector(performLookupAction);
+    
     if ([OMeta systemIs_iOS6x]) {
-        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileLookup] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(performLookup)];
+        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileLookup] style:UIBarButtonItemStylePlain target:target action:action];
     } else {
-        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:[OState s].viewController action:@selector(performLookup)];
+        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:target action:action];
     }
     
     return button;

@@ -20,17 +20,7 @@ extern NSInteger const kHTTPStatusInternalServerError;
 
 extern NSString * const kHTTPHeaderLocation;
 
-@interface OConnection : NSObject<NSURLConnectionDataDelegate, NSURLConnectionDelegate> {
-@private
-    BOOL _requestIsValid;
-    
-    NSMutableURLRequest *_URLRequest;
-    NSMutableDictionary *_URLParameters;
-    NSHTTPURLResponse *_HTTPResponse;
-	NSMutableData *_responseData;
-    
-    id<OConnectionDelegate> _delegate;
-}
+@interface OConnection : NSObject
 
 + (instancetype)connectionWithDelegate:(id)delegate;
 

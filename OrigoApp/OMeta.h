@@ -8,44 +8,30 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OMeta : NSObject {
-@private
-    NSBundle *_localisedStringsBundle;
-    
-    OLocator *_locator;
-    OReplicator *_replicator;
-    OSwitchboard *_switchboard;
-    OActivityIndicator *_activityIndicator;
-    
-    NSNumber *_isSignedIn;
-    NSString *_authToken;
-    NSDate *_authTokenExpiryDate;
-    
-    Reachability *_internetReachability;
-}
+@interface OMeta : NSObject
 
-@property (nonatomic, readonly) BOOL internetConnectionIsWiFi;
-@property (nonatomic, readonly) BOOL internetConnectionIsWWAN;
-@property (nonatomic, readonly) BOOL userDidJustSignUp;
+@property (nonatomic) NSString *userId;
+@property (nonatomic) NSString *userEmail;
+@property (nonatomic) NSString *deviceId;
+@property (nonatomic) NSString *lastReplicationDate;
 
-@property (strong, nonatomic) NSString *userId;
-@property (strong, nonatomic) NSString *userEmail;
-@property (strong, nonatomic) NSString *deviceId;
-@property (strong, nonatomic) NSString *lastReplicationDate;
+@property (nonatomic, readonly) NSString *appName;
+@property (nonatomic, readonly) NSString *appVersion;
+@property (nonatomic, readonly) NSString *authToken;
+@property (nonatomic, readonly) NSString *language;
+@property (nonatomic, readonly) NSBundle *localisedStringsBundle;
 
-@property (strong, nonatomic, readonly) NSString *appName;
-@property (strong, nonatomic, readonly) NSString *appVersion;
-@property (strong, nonatomic, readonly) NSString *authToken;
-@property (strong, nonatomic, readonly) NSString *language;
-@property (strong, nonatomic, readonly) NSBundle *localisedStringsBundle;
+@property (nonatomic, readonly) id<OMember> user;
+@property (nonatomic, readonly) OLocator *locator;
+@property (nonatomic, readonly) OReplicator *replicator;
+@property (nonatomic, readonly) OSwitchboard *switchboard;
+@property (nonatomic, readonly) OActivityIndicator *activityIndicator;
 
-@property (strong, nonatomic, readonly) id<OMember> user;
-@property (strong, nonatomic, readonly) OLocator *locator;
-@property (strong, nonatomic, readonly) OReplicator *replicator;
-@property (strong, nonatomic, readonly) OSwitchboard *switchboard;
-@property (strong, nonatomic, readonly) OActivityIndicator *activityIndicator;
+@property (nonatomic, assign, readonly) BOOL internetConnectionIsWiFi;
+@property (nonatomic, assign, readonly) BOOL internetConnectionIsWWAN;
+@property (nonatomic, assign, readonly) BOOL userDidJustSignUp;
 
-@property (weak, nonatomic, readonly) NSManagedObjectContext *context;
+@property (nonatomic, weak, readonly) NSManagedObjectContext *context;
 
 + (OMeta *)m;
 

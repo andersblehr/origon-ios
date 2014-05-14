@@ -9,6 +9,18 @@
 #import "OReplicator.h"
 
 
+@interface OReplicator () <OConnectionDelegate> {
+@private
+    BOOL _isReplicating;
+    
+    NSMutableSet *_dirtyEntities;
+    NSMutableDictionary *_stagedEntities;
+    NSMutableDictionary *_stagedRelationshipRefs;
+}
+
+@end
+
+
 @implementation OReplicator
 
 #pragma mark - Initialisation

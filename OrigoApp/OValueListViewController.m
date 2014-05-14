@@ -14,9 +14,14 @@ static NSInteger const kSectionKeyValues = 0;
 static NSInteger const kSectionKeySignOut = 1;
 
 
+@interface OValueListViewController () <OTableViewController>
+
+@end
+
+
 @implementation OValueListViewController
 
-#pragma mark - OTableViewControllerInstance conformance
+#pragma mark - OTableViewController protocol conformance
 
 - (void)loadState
 {

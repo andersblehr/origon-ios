@@ -8,10 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OValuePickerViewController : OTableViewController<OTableViewController> {
-@private
-    id<OSettings> _settings;
-    NSString *_settingKey;
-}
+@interface OValuePickerViewController : OTableViewController
 
 @end

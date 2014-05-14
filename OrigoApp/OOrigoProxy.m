@@ -44,10 +44,10 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 #pragma mark - Auxiliary methods
 
-- (void)formatAddressFromAddressBookEntry:(CFDictionaryRef)entry
+- (void)formatAddressFromAddressBookAddress:(CFDictionaryRef)address
 {
-    NSString *address = kDefaultAddressTemplate;
-    NSString *countryCode = [(NSString *)CFDictionaryGetValue(entry, kABPersonAddressCountryCodeKey) uppercaseString];
+    NSString *formattedAddress = kDefaultAddressTemplate;
+    NSString *countryCode = [(NSString *)CFDictionaryGetValue(address, kABPersonAddressCountryCodeKey) uppercaseString];
     
     if (!countryCode) {
         countryCode = [NSLocale countryCode];
@@ -60,18 +60,18 @@ static NSString * const kAddressTemplatesByCountryCode =
         NSArray *countryCodes = [keysAndValue[0] componentsSeparatedByString:kSeparatorAlternates];
         
         for (NSString *countryCode in countryCodes) {
-            if (!address && [countryCode isEqualToString:countryCode]) {
-                address = keysAndValue[1];
+            if (!formattedAddress && [countryCode isEqualToString:countryCode]) {
+                formattedAddress = keysAndValue[1];
             }
         }
     }
     
-    address = [address stringByReplacingSubstring:kPlaceholderStreet withString:(NSString *)CFDictionaryGetValue(entry, kABPersonAddressStreetKey)];
-    address = [address stringByReplacingSubstring:kPlaceholderCity withString:(NSString *)CFDictionaryGetValue(entry, kABPersonAddressCityKey)];
-    address = [address stringByReplacingSubstring:kPlaceholderState withString:(NSString *)CFDictionaryGetValue(entry, kABPersonAddressStateKey)];
-    address = [address stringByReplacingSubstring:kPlaceholderZip withString:(NSString *)CFDictionaryGetValue(entry, kABPersonAddressZIPKey)];
+    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderStreet withString:(NSString *)CFDictionaryGetValue(address, kABPersonAddressStreetKey)];
+    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderCity withString:(NSString *)CFDictionaryGetValue(address, kABPersonAddressCityKey)];
+    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderState withString:(NSString *)CFDictionaryGetValue(address, kABPersonAddressStateKey)];
+    formattedAddress = [formattedAddress stringByReplacingSubstring:kPlaceholderZip withString:(NSString *)CFDictionaryGetValue(address, kABPersonAddressZIPKey)];
     
-    self.address = address;
+    self.address = formattedAddress;
     self.countryCode = countryCode;
 }
 
@@ -86,12 +86,12 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 #pragma mark - Initialisation
 
-- (instancetype)initWithAddressBookEntry:(CFDictionaryRef)entry
+- (instancetype)initWithAddressBookAddress:(CFDictionaryRef)address
 {
     self = [[self class] proxyForEntityOfClass:[OOrigo class] type:kOrigoTypeResidence];
     
     if (self) {
-        [self formatAddressFromAddressBookEntry:entry];
+        [self formatAddressFromAddressBookAddress:address];
     }
     
     return self;
@@ -106,9 +106,9 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
-+ (instancetype)proxyFromAddressBookEntry:(CFDictionaryRef)entry
++ (instancetype)proxyFromAddressBookAddress:(CFDictionaryRef)address
 {
-    return [[self alloc] initWithAddressBookEntry:entry];
+    return [[self alloc] initWithAddressBookAddress:address];
 }
 
 
@@ -118,8 +118,8 @@ static NSString * const kAddressTemplatesByCountryCode =
 {
     NSSet *allMemberships = nil;
     
-    if (self.instance) {
-        allMemberships = [self.instance allMemberships];
+    if ([self instance]) {
+        allMemberships = [[self instance] allMemberships];
     } else {
         if (![self hasValueForKey:kRelationshipKeyMemberships]) {
             [self setValue:[NSMutableSet set] forKey:kRelationshipKeyMemberships];
@@ -132,12 +132,44 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
+- (NSSet *)residents
+{
+    NSSet *residents = nil;
+
+    if ([self isOfType:kOrigoTypeResidence]) {
+        if ([self instance]) {
+            residents = [[self instance] residents];
+        } else {
+            residents = [self members];
+        }
+    }
+    
+    return residents;
+}
+
+
+- (NSSet *)members
+{
+    NSMutableSet *members = [NSMutableSet set];
+    
+    if ([self instance]) {
+        members = [[[self instance] members] mutableCopy];
+    } else {
+        for (id<OMembership> membership in [self allMemberships]) {
+            [members addObject:membership.member];
+        }
+    }
+    
+    return members;
+}
+
+
 - (id<OMembership>)addMember:(id<OMember>)member
 {
     id<OMembership> membership = nil;
     
-    if (self.instance) {
-        membership = [self.instance addMember:member];
+    if ([self instance]) {
+        membership = [[self instance] addMember:member];
     } else {
         membership = [self membershipForMember:member];
         
@@ -152,43 +184,77 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 - (id<OMembership>)membershipForMember:(id<OMember>)member
 {
-    id<OMembership> membershipForMember = nil;
+    id<OMembership> targetMembership = nil;
     
-    if (self.instance) {
-        membershipForMember = [self.instance membershipForMember:member];
+    if ([self instance]) {
+        targetMembership = [[self instance] membershipForMember:member];
     } else {
         for (id<OMembership> membership in [self allMemberships]) {
-            if (!membership && [membership.member.entityId isEqualToString:member.entityId]) {
-                membershipForMember = membership;
+            if (!targetMembership && [membership.member.entityId isEqualToString:member.entityId]) {
+                targetMembership = membership;
             }
         }
     }
     
-    return membershipForMember;
+    return targetMembership;
+}
+
+
+- (BOOL)userCanEdit
+{
+    return [self instance] ? [[self instance] userCanEdit] : YES;
+}
+
+
+- (BOOL)userIsAdmin
+{
+    return [self instance] ? [[self instance] userIsAdmin] : YES;
 }
 
 
 - (BOOL)userIsMember
 {
-    return [[self ancestorConformingToProtocol:@protocol(OMember)] isUser];
+    BOOL userIsMember = NO;
+    
+    if ([self instance]) {
+        userIsMember = [[self instance] userIsMember];
+    } else {
+        userIsMember = [[self ancestorConformingToProtocol:@protocol(OMember)] isUser];
+    }
+    
+    return userIsMember;
 }
 
 
 - (BOOL)isOfType:(NSString *)type
 {
-    return [[self valueForKey:kPropertyKeyType] isEqualToString:type];
+    return [self.type isEqualToString:type];
+}
+
+
+- (BOOL)isJuvenile
+{
+    BOOL isJuvenile = NO;
+    
+    if ([self instance]) {
+        isJuvenile = [[self instance] isJuvenile];
+    } else {
+        isJuvenile = [[self ancestorConformingToProtocol:@protocol(OMember)] isJuvenile];
+    }
+    
+    return isJuvenile;
 }
 
 
 - (BOOL)hasAddress
 {
-    return [self hasValueForKey:kPropertyKeyAddress];
+    return [self.address hasValue];
 }
 
 
 - (NSString *)shortAddress
 {
-    return [[self valueForKey:kPropertyKeyAddress] lines][0];
+    return [self.address lines][0];
 }
 
 @end

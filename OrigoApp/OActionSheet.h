@@ -8,10 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OActionSheet : UIActionSheet {
-@private
-    NSMutableArray *_buttonTags;
-}
+@interface OActionSheet : UIActionSheet
 
 - (instancetype)initWithPrompt:(NSString *)prompt delegate:(id<UIActionSheetDelegate>)delegate tag:(NSInteger)tag;
 

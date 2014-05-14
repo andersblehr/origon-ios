@@ -13,6 +13,25 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 //static NSTimeInterval const kTimeInterval30Days = 30;
 
 
+@interface OMeta () {
+@private
+    NSBundle *_localisedStringsBundle;
+    
+    OLocator *_locator;
+    OReplicator *_replicator;
+    OSwitchboard *_switchboard;
+    OActivityIndicator *_activityIndicator;
+    
+    NSNumber *_isSignedIn;
+    NSString *_authToken;
+    NSDate *_authTokenExpiryDate;
+    
+    Reachability *_internetReachability;
+}
+
+@end
+
+
 @implementation OMeta
 
 #pragma mark - Auxiliary methods

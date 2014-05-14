@@ -16,6 +16,19 @@ static NSInteger const kAlertTagActivationFailed = 1;
 static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 
+@interface OAuthViewController () <OTableViewController, OTableViewInputDelegate, UIAlertViewDelegate, OConnectionDelegate> {
+@private
+    OInputField *_emailField;
+    OInputField *_passwordField;
+    OInputField *_activationCodeField;
+    OInputField *_repeatPasswordField;
+    
+    NSDictionary *_authInfo;
+}
+
+@end
+
+
 @implementation OAuthViewController
 
 #pragma mark - Auxiliary methods
@@ -145,7 +158,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-#pragma mark - OTableViewControllerInstance conformance
+#pragma mark - OTableViewController protocol conformance
 
 - (void)loadState
 {
