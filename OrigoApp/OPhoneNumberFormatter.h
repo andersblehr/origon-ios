@@ -8,17 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OPhoneNumberFormatter : NSObject {
-@private
-    NSInteger _optionalNestingLevel;
-    NSInteger _groupNestingLevel;
-    NSArray *_formats;
-    
-    NSString *_format;
-    NSInteger _tokenOffset;
-    NSInteger _canonicalOffset;
-    NSString *_formattedPhoneNumber;
-}
+@interface OPhoneNumberFormatter : NSObject
 
 + (NSString *)formatPhoneNumber:(NSString *)phoneNumber canonicalise:(BOOL)canonicalise;
 

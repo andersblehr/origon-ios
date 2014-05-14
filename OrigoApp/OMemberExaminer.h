@@ -8,19 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OMemberExaminer : NSObject<UIActionSheetDelegate> {
-@private
-    id<OMember> _member;
-    id<OOrigo> _residence;
-    id<OMember> _currentCandidate;
-    
-    NSInteger _parentCandidateStatus;
-    NSArray *_candidates;
-    NSMutableSet *_examinedCandidates;
-    NSMutableArray *_registrantOffspring;
-    
-    id<OMemberExaminerDelegate> _delegate;
-}
+@interface OMemberExaminer : NSObject
 
 + (instancetype)examinerForResidence:(id<OOrigo>)residence delegate:(id)delegate;
 

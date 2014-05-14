@@ -15,6 +15,14 @@ static CGFloat const kTextInsetX = 4.f;
 static CGFloat const kTextInsetY = 1.2f;
 
 
+@interface OTextField () {
+@private
+    id<OTableViewInputDelegate> _inputDelegate;
+}
+
+@end
+
+
 @implementation OTextField
 
 @synthesize key = _key;

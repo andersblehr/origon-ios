@@ -8,20 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OSwitchboard : NSObject<UIActionSheetDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate> {
-@private
-    id<OOrigo> _origo;
-    id<OMember> _member;
-    
-    NSInteger _requestType;
-    NSMutableArray *_recipientTagsByServiceType;
-    NSMutableArray *_recipientCandidatesByServiceType;
-    NSArray *_recipientCandidates;
-    
-    UIViewController *_presentingViewController;
-}
+@interface OSwitchboard : NSObject
 
-@property (strong, nonatomic, readonly) CTCarrier *carrier;
+@property (nonatomic, readonly) CTCarrier *carrier;
 
 - (NSArray *)toolbarButtonsForOrigo:(id<OOrigo>)origo;
 - (NSArray *)toolbarButtonsForMember:(id<OMember>)member;

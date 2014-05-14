@@ -8,17 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OTableViewCellConstrainer : NSObject {
-@private
-    OTableViewCellBlueprint *_blueprint;
-    OTableViewCell *_cell;
-    
-    CGFloat _labelWidth;
-}
+@interface OTableViewCellConstrainer : NSObject
 
-@property (strong, nonatomic, readonly) NSString *titleKey;
-@property (strong, nonatomic, readonly) NSArray *detailKeys;
-@property (strong, nonatomic, readonly) NSArray *inputKeys;
+@property (nonatomic, readonly) NSString *titleKey;
+@property (nonatomic, readonly) NSArray *detailKeys;
+@property (nonatomic, readonly) NSArray *inputKeys;
 
 - (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OTableViewCellBlueprint *)blueprint;
 

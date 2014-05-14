@@ -79,6 +79,6 @@ extern NSString * const kContactRoleAssistantCoach;
 @interface OOrigoProxy : OEntityProxy<OOrigo>
 
 + (instancetype)proxyWithType:(NSString *)type;
-+ (instancetype)proxyFromAddressBookEntry:(CFDictionaryRef)entry;
++ (instancetype)proxyFromAddressBookAddress:(CFDictionaryRef)address;
 
 @end

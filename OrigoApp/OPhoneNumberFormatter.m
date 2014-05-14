@@ -45,6 +45,20 @@ static NSMutableDictionary *_templatesByRegionIdentifier = nil;
 static NSMutableDictionary *_formattersByRegionIdentifier = nil;
 
 
+@interface OPhoneNumberFormatter () {
+@private
+    NSInteger _optionalNestingLevel;
+    NSInteger _groupNestingLevel;
+    NSArray *_formats;
+    
+    NSString *_format;
+    NSInteger _tokenOffset;
+    NSInteger _canonicalOffset;
+    NSString *_formattedPhoneNumber;
+}
+
+@end
+
 
 @implementation OPhoneNumberFormatter
 

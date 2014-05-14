@@ -25,6 +25,22 @@ static NSInteger const kRecipientTagAllContacts = 7;
 static NSInteger const kRecipientTagAllGuardians = 8;
 
 
+@interface OSwitchboard () <UIActionSheetDelegate, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate> {
+@private
+    id<OOrigo> _origo;
+    id<OMember> _member;
+    
+    NSInteger _requestType;
+    NSMutableArray *_recipientTagsByServiceType;
+    NSMutableArray *_recipientCandidatesByServiceType;
+    NSArray *_recipientCandidates;
+    
+    UIViewController *_presentingViewController;
+}
+
+@end
+
+
 @implementation OSwitchboard
 
 #pragma mark - Auxiliary methods
@@ -80,7 +96,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         } else if (recipientTag == kRecipientTagContact) {
             [actionSheet addButtonWithTitle:[recipients[0] givenNameWithContactRoleForOrigo:_origo]];
         } else if (recipientTag == kRecipientTagParent) {
-            if ([[OState s] aspectIsHousehold]) {
+            if ([[OState s] aspectIs:kAspectHousehold]) {
                 [actionSheet addButtonWithTitle:[recipients[0] givenName]];
             } else {
                 [actionSheet addButtonWithTitle:[recipients[0] givenNameWithParentTitle]];

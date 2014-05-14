@@ -8,6 +8,15 @@
 
 #import "OLabel.h"
 
+
+@interface OLabel () {
+@private
+    NSString *_key;
+}
+
+@end
+
+
 @implementation OLabel
 
 #pragma mark - Auxiliary methods

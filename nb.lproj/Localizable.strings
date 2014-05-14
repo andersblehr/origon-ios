@@ -266,6 +266,9 @@
  * OOrigoViewController strings
  ***/
 
+// Footers
+"Tap [+] to add any additional guardians in the household" = "Trykk [+] for å legge til andre foresatte i husstanden";
+
 // Buttons
 "Edit roles" = "Rediger roller";
 "Add from other groups" = "Legg til fra andre grupper";
@@ -327,9 +330,9 @@
 "%@ has more than one home phone number. Which number is valid for %@?" = "%@ har flere hjemmetelefonnummer. Hvilket nummer gjelder for %@?";
 "%@ has more than one home phone number. Which number do you want to provide?" = "%@ har flere hjemmetelefonnummer. Hvilket nummer vil du oppgi?";
 "%@ has only one home phone number, %@. Which address has this number?" = "%@ har bare ett hjemmetelefonnummer, %@. Hvilken adresse har dette nummeret?";
-"%@ has more than one home phone number. Which address has the number %@?" = "%@ har flere hjemmetelefonnummer. Hvilken adresse har nummeret %@?";
-"Which address has home phone number %@?" = "Hvilken adresse har hjemmetelefonnummeret %@?";
-"Does %@ have home phone number %@?" = "Har %@ hjemmetelefonnummeret %@?";
+"%@ has more than one home phone number. Which address has the number %@?" = "%@ har flere hjemmetelefonnummer. Hvilken adresse har telefonnummer %@?";
+"Which address has the number %@?" = "Hvilken adresse har telefonnummer %@?";
+"Is %@ the phone number for %@?" = "Er %@ telefonnummeret til %@?";
 
 // Question arguments
 "a woman or a man" = "kvinne eller mann";

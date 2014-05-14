@@ -8,11 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OOrigoListViewController : OTableViewController<OTableViewController, UIActionSheetDelegate> {
-@private
-    id<OMember> _member;
-    
-    NSMutableArray *_origoTypes;
-}
+@interface OOrigoListViewController : OTableViewController
 
 @end

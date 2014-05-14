@@ -258,20 +258,13 @@
 
 + (NSArray *)propertyKeys
 {
-    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass(self) inManagedObjectContext:[OMeta m].context];
-    
-    NSArray *attributeKeys = [[entityDescription attributesByName] allKeys];
-    NSArray *relationshipKeys = [[entityDescription relationshipsByName] allKeys];
-    
-    return [attributeKeys arrayByAddingObjectsFromArray:relationshipKeys];
+    return [[[NSEntityDescription entityForName:NSStringFromClass(self) inManagedObjectContext:[OMeta m].context] attributesByName] allKeys];
 }
 
 
-#pragma mark - State string representation
-
-- (NSString *)asTarget
++ (NSArray *)relationshipKeys
 {
-    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:[NSString stringWithFormat:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)] userInfo:nil];
+    return [[[NSEntityDescription entityForName:NSStringFromClass(self) inManagedObjectContext:[OMeta m].context] relationshipsByName] allKeys];
 }
 
 
@@ -280,12 +273,6 @@
 - (Class)entityClass
 {
     return [self class];
-}
-
-
-- (BOOL)isProxy
-{
-    return NO;
 }
 
 

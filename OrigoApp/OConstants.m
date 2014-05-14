@@ -53,6 +53,7 @@ NSString * const kInterfaceKeySignIn = @"signIn";
 NSString * const kPropertyKeyAddress = @"address";
 NSString * const kPropertyKeyCountryCode = @"countryCode";
 NSString * const kPropertyKeyDateOfBirth = @"dateOfBirth";
+NSString * const kPropertyKeyDateReplicated = @"dateReplicated";
 NSString * const kPropertyKeyDescriptionText = @"descriptionText";
 NSString * const kPropertyKeyEmail = @"email";
 NSString * const kPropertyKeyEntityId = @"entityId";

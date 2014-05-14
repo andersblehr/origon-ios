@@ -8,20 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OLocator : NSObject<CLLocationManagerDelegate, UIAlertViewDelegate> {
-@private
-    CLLocationManager *_locationManager;
-    CLPlacemark *_placemark;
-    
-    BOOL _awaitingAuthorisation;
-    BOOL _awaitingLocation;
-    
-    id<OLocatorDelegate> _delegate;
-}
+@interface OLocator : NSObject
 
-@property (nonatomic, readonly) BOOL blocking;
-
-@property (weak, nonatomic, readonly) NSString *countryCode;
+@property (nonatomic, assign, readonly) BOOL blocking;
+@property (nonatomic, weak, readonly) NSString *countryCode;
 
 - (BOOL)isAuthorised;
 - (BOOL)canLocate;

@@ -37,6 +37,17 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
 static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 
+@interface OTableViewCellConstrainer () {
+@private
+    OTableViewCellBlueprint *_blueprint;
+    OTableViewCell *_cell;
+    
+    CGFloat _labelWidth;
+}
+
+@end
+
+
 @implementation OTableViewCellConstrainer
 
 #pragma mark - Auxiliary methods

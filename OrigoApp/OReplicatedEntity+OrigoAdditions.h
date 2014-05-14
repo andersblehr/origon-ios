@@ -23,7 +23,6 @@
 - (BOOL)userIsCreator;
 - (BOOL)isTransient;
 - (BOOL)isDirty;
-- (BOOL)isReplicated;
 - (BOOL)isBeingDeleted;
 
 - (BOOL)shouldReplicateOnExpiry;
@@ -34,6 +33,6 @@
 
 + (Class)proxyClass;
 + (NSArray *)propertyKeys;
-- (NSString *)asTarget;
++ (NSArray *)relationshipKeys;
 
 @end

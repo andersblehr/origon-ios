@@ -24,7 +24,7 @@ NSString * const kTargetWard = @"ward";
 NSString * const kTargetHousemate = @"housemate";
 NSString * const kTargetJuvenile = @"juvenile";
 NSString * const kTargetElder = @"elder";
-NSString * const kTargetMember = @"member";
+NSString * const kTargetMember = @"regular";
 NSString * const kTargetMembers = @"members";
 NSString * const kTargetGuardian = @"guardian";
 NSString * const kTargetContact = @"contact";
@@ -33,37 +33,22 @@ NSString * const kTargetRelation = @"relation";
 NSString * const kTargetSetting = @"setting";
 NSString * const kTargetSettings = @"settings";
 
-static NSString * const kAspectHousehold = @"h";
-static NSString * const kAspectDefault = @"d";
+NSString * const kAspectHousehold = @"household";
+NSString * const kAspectJuvenile = @"juvenile";
+NSString * const kAspectDefault = @"default";
 
 static OState *_activeState = nil;
 
 
-@implementation OState
-
-#pragma mark - Auxiliary methods
-
-- (void)setAspectForTarget:(id)target
-{
-    if ([target conformsToProtocol:@protocol(OMember)]) {
-        if ([target isHousemateOfUser]) {
-            _aspect = kAspectHousehold;
-        } else {
-            _aspect = kAspectDefault;
-        }
-    } else if ([target conformsToProtocol:@protocol(OOrigo)]) {
-        if ([target isOfType:kOrigoTypeResidence] && [target userIsMember]) {
-            _aspect = kAspectHousehold;
-        } else {
-            _aspect = kAspectDefault;
-        }
-    } else if ([target isKindOfClass:[NSString class]]) {
-        if (![target isEqualToString:kOrigoTypeResidence] && ![target isEqualToString:kTargetMember]) {
-            _aspect = kAspectDefault;
-        }
-    }
+@interface OState () {
+@private
+    NSString *_aspect;
 }
 
+@end
+
+
+@implementation OState
 
 #pragma mark - Instantiation & initialisation
 
@@ -81,6 +66,8 @@ static OState *_activeState = nil;
         if (viewController.target) {
             self.target = viewController.target;
         }
+        
+        _activeState = self;
     }
     
     return self;
@@ -99,9 +86,9 @@ static OState *_activeState = nil;
 
 #pragma mark - State handling
 
-- (void)setActiveState:(OState *)state
+- (void)makeActive
 {
-    _activeState = state;
+    _activeState = self;
 }
 
 
@@ -118,12 +105,6 @@ static OState *_activeState = nil;
 
 
 #pragma mark - State inspection
-
-- (BOOL)aspectIsHousehold
-{
-    return [_aspect isEqualToString:kAspectHousehold];
-}
-
 
 - (BOOL)actionIs:(NSString *)action
 {
@@ -144,7 +125,7 @@ static OState *_activeState = nil;
 
 - (BOOL)targetIs:(NSString *)target
 {
-    BOOL isMatch = [_target isEqualToString:target];
+    BOOL isMatch = [_target isKindOfClass:[NSString class]] && [_target isEqualToString:target];
     
     if (!isMatch) {
         if ([target isEqualToString:kTargetJuvenile]) {
@@ -160,9 +141,9 @@ static OState *_activeState = nil;
 }
 
 
-- (BOOL)isCurrent
+- (BOOL)aspectIs:(NSString *)aspect
 {
-    return (self.viewController == [[self class] s].viewController);
+    return [_aspect isEqualToString:aspect];
 }
 
 
@@ -188,12 +169,14 @@ static OState *_activeState = nil;
     NSString *viewControllerIdentifier = [_viewController.identifier uppercaseString];
     NSString *action = [_action uppercaseString];
     NSString *target = [_target uppercaseString];
+    NSString *aspect = [_aspect uppercaseString];
     
     viewControllerIdentifier = viewControllerIdentifier ? viewControllerIdentifier : @"DEFAULT";
     action = action ? action : @"DEFAULT";
     target = target ? target : @"DEFAULT";
+    aspect = aspect ? aspect : @"DEFAULT";
     
-    return [NSString stringWithFormat:@"[%@][%@][%@]", action, viewControllerIdentifier, target];
+    return [NSString stringWithFormat:@"[%@][%@][%@][%@]", action, viewControllerIdentifier, target, aspect];
 }
 
 
@@ -205,10 +188,8 @@ static OState *_activeState = nil;
     
     if ([target isKindOfClass:[NSString class]]) {
         instanceQualifier = target;
-    } else if ([target isCommitted]) {
-        instanceQualifier = [target valueForKey:kPropertyKeyEntityId];
     } else {
-        instanceQualifier = [target valueForKey:kPropertyKeyType];
+        instanceQualifier = [target valueForKey:kPropertyKeyEntityId];
     }
     
     return [identifier stringByAppendingString:instanceQualifier separator:kSeparatorColon];
@@ -217,35 +198,44 @@ static OState *_activeState = nil;
 
 #pragma mark - Custom accessors
 
-- (void)setAction:(NSString *)action
-{
-    _action = action;
-    
-    [[[self class] s] setActiveState:self];
-}
-
-
 - (void)setTarget:(id)target
 {
-    if ([target isKindOfClass:[OEntityProxy class]]) {
-        if ([target isCommitted]) {
-            target = [target instance];
-        } else {
-            target = [target valueForKey:kPropertyKeyType];
+    if ([target conformsToProtocol:@protocol(OEntity)]) {
+        if ([target conformsToProtocol:@protocol(OMember)]) {
+            if (![target isCommitted]) {
+                _target = ((id<OOrigo>)target).type;
+            } else if ([target isUser]) {
+                _target = kTargetUser;
+                _aspect = kAspectHousehold;
+            } else if ([target isWardOfUser]) {
+                _target = kTargetWard;
+                _aspect = kAspectHousehold;
+            } else if ([target isHousemateOfUser]) {
+                _target = kTargetHousemate;
+                _aspect = kAspectHousehold;
+            } else if ([target isJuvenile]) {
+                _target = kTargetJuvenile;
+                _aspect = kAspectJuvenile;
+            } else {
+                _target = kTargetMember;
+                _aspect = kAspectDefault;
+            }
+        } else if ([target conformsToProtocol:@protocol(OOrigo)]) {
+            _target = ((id<OOrigo>)target).type;
+            
+            if ([target isJuvenile]) {
+                _aspect = kAspectJuvenile;
+            } else if ([target isOfType:kOrigoTypeResidence] && [target userIsMember]) {
+                _aspect = kAspectHousehold;
+            } else if (![self aspectIs:kAspectJuvenile]) {
+                _aspect = kAspectDefault;
+            }
         }
-    }
-    
-    [self setAspectForTarget:target];
-    
-    if ([target isKindOfClass:[OReplicatedEntity class]]) {
-        _target = [target asTarget];
     } else if ([target isKindOfClass:[NSString class]]) {
         _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
     }
     
     _identifier = [[self class] stateIdForViewControllerWithIdentifier:_viewController.identifier target:target];
-
-    [[[self class] s] setActiveState:self];
 }
 
 @end

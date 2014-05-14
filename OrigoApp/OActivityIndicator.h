@@ -10,7 +10,7 @@
 
 @interface OActivityIndicator : UIView
 
-@property (nonatomic, readonly) BOOL isAnimating;
+@property (nonatomic, assign, readonly) BOOL isAnimating;
 
 - (void)startAnimating;
 - (void)stopAnimating;

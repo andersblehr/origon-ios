@@ -60,6 +60,21 @@ static NSString * const kURLParameterVersion = @"version";
 static NSString * const kURLParameterIdentifier = @"id";
 
 
+@interface OConnection () <NSURLConnectionDataDelegate, NSURLConnectionDelegate> {
+@private
+    BOOL _requestIsValid;
+    
+    NSMutableURLRequest *_URLRequest;
+    NSMutableDictionary *_URLParameters;
+    NSHTTPURLResponse *_HTTPResponse;
+	NSMutableData *_responseData;
+    
+    id<OConnectionDelegate> _delegate;
+}
+
+@end
+
+
 @implementation OConnection
 
 #pragma mark - Auxiliary methods

@@ -8,16 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OTextView : UITextView<OTextInput, UITextViewDelegate> {
-@private
-    OTableViewCellBlueprint *_blueprint;
-    CGFloat _textWidth;
-    
-    UITextView *_placeholderView;
-    NSString *_placeholder;
-    NSString *_lastKnownText;
-    NSInteger _lastKnownLineCount;
-}
+@interface OTextView : UITextView<OTextInput>
 
 - (instancetype)initWithKey:(NSString *)key blueprint:(OTableViewCellBlueprint *)blueprint delegate:(id)delegate;
 

@@ -8,12 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OLabel : UILabel {
-@private
-    NSString *_key;
-}
+@interface OLabel : UILabel
 
-@property (nonatomic) BOOL useAlternateText;
+@property (nonatomic, assign) BOOL useAlternateText;
 
 + (CGFloat)widthWithBlueprint:(OTableViewCellBlueprint *)blueprint;
 

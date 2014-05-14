@@ -53,6 +53,7 @@ extern NSString * const kInterfaceKeySignIn;
 extern NSString * const kPropertyKeyAddress;
 extern NSString * const kPropertyKeyCountryCode;
 extern NSString * const kPropertyKeyDateOfBirth;
+extern NSString * const kPropertyKeyDateReplicated;
 extern NSString * const kPropertyKeyDescriptionText;
 extern NSString * const kPropertyKeyEmail;
 extern NSString * const kPropertyKeyEntityId;

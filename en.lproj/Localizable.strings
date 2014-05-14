@@ -267,6 +267,9 @@
  * OOrigoViewController strings
  ***/
 
+// Footers
+"Tap [+] to add any additional guardians in the household" = "Tap [+] to add any additional guardians in the household";
+
 // Buttons
 "Edit roles" = "Edit roles";
 "Add from other groups" = "Add from other groups";
@@ -330,8 +333,8 @@
 "%@ has more than one home phone number. Which number do you want to provide?" = "%@ has more than one home phone number. Which number do you want to provide?";
 "%@ has only one home phone number, %@. Which address has this number?" = "%@ has only one home phone number, %@. Which address has this number?";
 "%@ has more than one home phone number. Which address has the number %@?" = "%@ has more than one home phone number. Which address has the number %@?";
-"Which address has home phone number %@?" = "Which address has home phone number %@?";
-"Does %@ have home phone number %@?" = "Does %@ have home phone number %@?";
+"Which address has the number %@?" = "Which address has the number %@?";
+"Is %@ the phone number for %@?" = "Is %@ the phone number for %@?";
 
 // Question arguments
 "a woman or a man" = "a woman or a man";

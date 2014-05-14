@@ -27,6 +27,23 @@ static NSInteger const kButtonTagNo = 3;
 static OMemberExaminer *_instance = nil;
 
 
+@interface OMemberExaminer () <UIActionSheetDelegate> {
+@private
+    id<OMember> _member;
+    id<OOrigo> _residence;
+    id<OMember> _currentCandidate;
+    
+    NSInteger _parentCandidateStatus;
+    NSArray *_candidates;
+    NSMutableSet *_examinedCandidates;
+    NSMutableArray *_registrantOffspring;
+    
+    id<OMemberExaminerDelegate> _delegate;
+}
+
+@end
+
+
 @implementation OMemberExaminer
 
 #pragma mark - Auxiliary methods

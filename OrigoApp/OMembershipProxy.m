@@ -39,6 +39,32 @@ NSString *kMembershipStatusExpired = @"-";
 }
 
 
+#pragma mark - OEntityProxy overrides
+
+- (BOOL)isCommitted
+{
+    return ([self instance] != nil);
+}
+
+
+- (id)commit
+{
+    if (![self.member isCommitted]) {
+        [self.member commit];
+    }
+    
+    if (![self.origo isCommitted]) {
+        [self.origo commit];
+    }
+    
+    if (![self instance]) {
+        [self useInstance:[[self.origo instance] addMember:[self.member instance]]];
+    }
+    
+    return [self instance];
+}
+
+
 #pragma mark - OMembership protocol conformance
 
 - (BOOL)isResidency

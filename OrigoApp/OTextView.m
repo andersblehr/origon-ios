@@ -22,6 +22,20 @@ static CGFloat const kWidthAdjustment_iOS6x = -14.f;
 static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 
+@interface OTextView () <UITextViewDelegate> {
+@private
+    OTableViewCellBlueprint *_blueprint;
+    CGFloat _textWidth;
+    
+    UITextView *_placeholderView;
+    NSString *_placeholder;
+    NSString *_lastKnownText;
+    NSInteger _lastKnownLineCount;
+}
+
+@end
+
+
 @implementation OTextView
 
 @synthesize key = _key;
