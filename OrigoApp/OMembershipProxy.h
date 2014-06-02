@@ -8,7 +8,7 @@
 
 #import "OEntityProxy.h"
 
-extern NSString *kMembershipTypeMemberRoot;
+extern NSString *kMembershipTypeRoot;
 extern NSString *kMembershipTypeResidency;
 extern NSString *kMembershipTypeParticipancy;
 extern NSString *kMembershipTypeAssociate;

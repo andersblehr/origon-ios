@@ -8,7 +8,7 @@
 
 #import "OMembershipProxy.h"
 
-NSString *kMembershipTypeMemberRoot = @"~";
+NSString *kMembershipTypeRoot = @"~";
 NSString *kMembershipTypeResidency = @"R";
 NSString *kMembershipTypeParticipancy = @"P";
 NSString *kMembershipTypeAssociate = @"A";
@@ -26,28 +26,19 @@ NSString *kMembershipStatusExpired = @"-";
 
 + (instancetype)proxyForMember:(id<OMember>)member inOrigo:(id<OOrigo>)origo
 {
-    NSString *type = [origo isOfType:kOrigoTypeResidence] ? kMembershipTypeResidency : kMembershipTypeParticipancy;
+    NSString *meta = [origo isOfType:kOrigoTypeResidence] ? kMembershipTypeResidency : kMembershipTypeParticipancy;
     
-    OMembershipProxy *proxy = [self proxyForEntityOfClass:[OMembership class] type:type];
+    OMembershipProxy *proxy = [self proxyForEntityOfClass:[OMembership class] meta:meta];
     proxy.member = member;
     proxy.origo = origo;
-    
-    [(NSMutableSet *)[member allMemberships] addObject:proxy];
-    [(NSMutableSet *)[origo allMemberships] addObject:proxy];
     
     return proxy;
 }
 
 
-#pragma mark - OEntityProxy overrides
+#pragma mark - OEntity protocol conformance
 
-- (BOOL)isCommitted
-{
-    return ([self instance] != nil);
-}
-
-
-- (id)commit
+- (id)instantiate
 {
     if (![self.member isCommitted]) {
         [self.member commit];
@@ -57,19 +48,33 @@ NSString *kMembershipStatusExpired = @"-";
         [self.origo commit];
     }
     
-    if (![self instance]) {
-        [self useInstance:[[self.origo instance] addMember:[self.member instance]]];
-    }
-    
-    return [self instance];
+    return [[self.origo instance] addMember:[self.member instance]];
 }
 
 
 #pragma mark - OMembership protocol conformance
 
+- (BOOL)isFull
+{
+    return [self isParticipancy] || [self isResidency];
+}
+
+
+- (BOOL)isParticipancy
+{
+    return [[self valueForKey:kPropertyKeyType] isEqualToString:kMembershipTypeParticipancy];
+}
+
+
 - (BOOL)isResidency
 {
     return [[self valueForKey:kPropertyKeyType] isEqualToString:kMembershipTypeResidency];
+}
+
+
+- (BOOL)isAssociate
+{
+    return [[self valueForKey:kPropertyKeyType] isEqualToString:kMembershipTypeAssociate];
 }
 
 @end

@@ -14,8 +14,6 @@
     BOOL _isReplicating;
     
     NSMutableSet *_dirtyEntities;
-    NSMutableDictionary *_stagedEntities;
-    NSMutableDictionary *_stagedRelationshipRefs;
 }
 
 @end
@@ -31,8 +29,6 @@
     
     if (self) {
         _dirtyEntities = [NSMutableSet set];
-        _stagedEntities = [NSMutableDictionary dictionary];
-        _stagedRelationshipRefs = [NSMutableDictionary dictionary];
         
         if ([[OMeta m] userIsSignedIn]) {
             [self loadUserReplicationState];
@@ -124,45 +120,6 @@
 - (void)resetUserReplicationState
 {
     [_dirtyEntities removeAllObjects];
-    [_stagedEntities removeAllObjects];
-    [_stagedRelationshipRefs removeAllObjects];
-}
-
-
-#pragma mark - Replication staging
-
-- (void)stageEntity:(OReplicatedEntity *)entity
-{
-    if ([_stagedRelationshipRefs count] == 0) {
-        [_stagedEntities removeAllObjects];
-    }
-    
-    _stagedEntities[entity.entityId] = entity;
-}
-
-
-- (void)stageRelationshipRefs:(NSDictionary *)relationshipRefs forEntity:(OReplicatedEntity *)entity
-{
-    if ([_stagedRelationshipRefs count] == 0) {
-        [_stagedEntities removeAllObjects];
-    }
-    
-    _stagedRelationshipRefs[entity.entityId] = relationshipRefs;
-}
-
-
-- (OReplicatedEntity *)stagedEntityWithId:(NSString *)entityId
-{
-    return _stagedEntities[entityId];
-}
-
-
-- (NSDictionary *)stagedRelationshipRefsForEntity:(OReplicatedEntity *)entity
-{
-    NSDictionary *relationshipRefs = _stagedRelationshipRefs[entity.entityId];
-    [_stagedRelationshipRefs removeObjectForKey:entity.entityId];
-    
-    return relationshipRefs;
 }
 
 
@@ -173,7 +130,7 @@
     NSInteger HTTPStatus = response.statusCode;
     
     if (data) {
-        [[OMeta m].context saveServerReplicas:data];
+        [[OMeta m].context saveEntityDictionaries:data];
     }
     
     if ((HTTPStatus == kHTTPStatusCreated) || (HTTPStatus == kHTTPStatusMultiStatus)) {
@@ -186,7 +143,7 @@
                 [[OMeta m].context deleteEntity:entity];
             } else {
                 entity.dateReplicated = now;
-                entity.hashCode = [entity computeHashCode];
+                entity.hashCode = [entity SHA1HashCode];
             }
         }
         

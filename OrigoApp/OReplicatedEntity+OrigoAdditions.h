@@ -11,12 +11,9 @@
 @interface OReplicatedEntity (OrigoAdditions) <OEntity>
 
 + (instancetype)instanceWithId:(NSString *)entityId;
++ (instancetype)instanceFromDictionary:(NSDictionary *)dictionary;
 
-- (id)serialisableValueForKey:(NSString *)key;
-- (void)setDeserialisedValue:(id)value forKey:(NSString *)key;
-
-- (NSDictionary *)toDictionary;
-- (NSString *)computeHashCode;
+- (NSString *)SHA1HashCode;
 - (void)internaliseRelationships;
 - (id)relationshipToEntity:(id)other;
 
@@ -33,6 +30,7 @@
 
 + (Class)proxyClass;
 + (NSArray *)propertyKeys;
-+ (NSArray *)relationshipKeys;
++ (NSArray *)toOneRelationshipKeys;
++ (BOOL)isRelationshipClass;
 
 @end

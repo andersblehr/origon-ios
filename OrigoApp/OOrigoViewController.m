@@ -194,9 +194,9 @@ static NSInteger const kButtonTagGuardian = 101;
         
         if ([self actionIs:kActionDisplay]) {
             if ([_origo isCommitted] && [_member isCommitted]) {
-                self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButton];
+                self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
             } else if (![_member instance]) {
-                self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButton];
+                self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
             }
         }
     }
@@ -281,7 +281,7 @@ static NSInteger const kButtonTagGuardian = 101;
 {
     if ([self actionIs:kActionRegister] && [_origo isOfType:kOrigoTypeResidence]) {
         if ([_member isUser] && ![_member hasAddress]) {
-            [[cell inputFieldForKey:kInterfaceKeyResidenceName] setValue:NSLocalizedString(kInterfaceKeyResidenceName, kStringPrefixDefault)];
+            [[cell inputFieldForKey:kUnboundKeyResidenceName] setValue:NSLocalizedString(kUnboundKeyResidenceName, kStringPrefixDefault)];
         }
     }
 }
@@ -292,10 +292,8 @@ static NSInteger const kButtonTagGuardian = 101;
     BOOL canDeleteCell = NO;
     
     if (indexPath.section != kSectionKeyOrigo) {
-        id member = [self dataAtIndexPath:indexPath];
-        
-        if ([member entityClass] == [OMember class]) {
-            canDeleteCell = [_origo isCommitted] && [_origo userIsAdmin] && ![member isUser];
+        if ([_origo isCommitted] && [_origo userCanEdit]) {
+            canDeleteCell = ![[self dataAtIndexPath:indexPath] isUser];
         }
     }
     
@@ -339,9 +337,9 @@ static NSInteger const kButtonTagGuardian = 101;
 }
 
 
-- (void)didDismissModalViewController:(id<OTableViewController>)viewController
+- (void)didDismissModalViewController:(OTableViewController *)viewController
 {
-    if (viewController.returnData) {
+    if (!viewController.didCancel) {
         if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
             for (id<OMember> member in viewController.returnData) {
                 [_origo addMember:member];
@@ -384,9 +382,7 @@ static NSInteger const kButtonTagGuardian = 101;
     [self.detailCell writeInput];
     
     if ([self actionIs:kActionRegister]) {
-        if (!_membership) {
-            _membership = [_origo addMember:_member];
-        }
+        _membership = [_origo addMember:_member];
         
         if ([_member isUser] && ![_member isActive]) {
             [_member makeActive];
@@ -395,8 +391,8 @@ static NSInteger const kButtonTagGuardian = 101;
         [self toggleEditMode];
         [self.detailCell readData];
         
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButton];
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButton];
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
     } else {
         [self toggleEditMode];
     }
@@ -405,7 +401,7 @@ static NSInteger const kButtonTagGuardian = 101;
 
 - (BOOL)isDisplayableFieldWithKey:(NSString *)key
 {
-    BOOL isVisible = ![key isEqualToString:kInterfaceKeyResidenceName];
+    BOOL isVisible = ![key isEqualToString:kUnboundKeyResidenceName];
     
     if (!isVisible && [_origo userIsMember]) {
         isVisible = YES;

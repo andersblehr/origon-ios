@@ -95,7 +95,7 @@
         self.isAdmin = @NO;
     } else {
         if ([self.origo isOfType:kOrigoTypeRoot]) {
-            self.type = kMembershipTypeMemberRoot;
+            self.type = kMembershipTypeRoot;
         } else if ([self.origo isOfType:kOrigoTypeResidence]) {
             self.type = kMembershipTypeResidency;
         } else {
@@ -163,6 +163,12 @@
 + (Class)proxyClass
 {
     return [OMembershipProxy class];
+}
+
+
++ (BOOL)isRelationshipClass
+{
+    return YES;
 }
 
 @end

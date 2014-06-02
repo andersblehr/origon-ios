@@ -25,7 +25,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     NSComparisonResult result = NSOrderedSame;
     
-    if ([other isCommitted]) {
+    if ([other instance]) {
         other = [other instance];
         
         if ([[self appellation] isEqualToString:[OLanguage pronouns][_you_][nominative]]) {
@@ -92,7 +92,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     id<OOrigo> residence = [[NSSet setWithArray:[self residences]] anyObject];
     
     if (!residence) {
-        residence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];
+        residence = [OOrigo instanceWithId:[OCrypto generateUUID] type:kOrigoTypeResidence];
         [residence addMember:self];
     }
     
@@ -259,7 +259,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     NSMutableSet *peers = nil;
     
-    if ([origo isCommitted]) {
+    if ([origo instance]) {
         peers = [[self peers] mutableCopy];
         
         for (OMember *member in [[origo instance] members]) {
@@ -291,7 +291,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     NSMutableSet *housemates = nil;
     
-    if ([residence isCommitted]) {
+    if ([residence instance]) {
         housemates = [[self housemates] mutableCopy];
         
         for (OMember *resident in [[residence instance] residents]) {
@@ -341,7 +341,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         OOrigo *residence = residency.origo;
         
         if (![residence.name hasValue]) {
-            residence.name = NSLocalizedString(kInterfaceKeyResidenceName, kStringPrefixDefault);
+            residence.name = NSLocalizedString(kUnboundKeyResidenceName, kStringPrefixDefault);
         }
     }
     
@@ -450,7 +450,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     BOOL hasParent = NO;
     
-    if ([member isCommitted]) {
+    if ([member instance]) {
         member = [member instance];
         
         hasParent = hasParent || [self.fatherId isEqualToString:member.entityId];
@@ -528,7 +528,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     NSString *givenNameWithContactRole = nil;
     
-    if ([origo isCommitted]) {
+    if ([origo instance]) {
         givenNameWithContactRole = [NSString stringWithFormat:kAnnotatedNameFormat, [self givenName], [[origo instance] membershipForMember:self].contactRole];
     }
     

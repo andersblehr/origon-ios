@@ -13,12 +13,12 @@
 
 #pragma mark - OEntityProxy overrides
 
-+ (instancetype)proxyForEntityOfClass:(Class)entityClass type:(NSString *)type
++ (instancetype)proxyForEntityOfClass:(Class)entityClass meta:(NSString *)meta
 {
-    id proxy = [super proxyForEntityOfClass:entityClass type:type];
+    id proxy = [super proxyForEntityOfClass:entityClass meta:meta];
     
-    if ([type isEqualToString:kTargetJuvenile]) {
-        [proxy setValue:@YES forKeyPath:kPropertyKeyIsMinor];
+    if ([meta isEqualToString:kTargetJuvenile]) {
+        [proxy setValue:@YES forKey:kPropertyKeyIsMinor];
     }
     
     return proxy;
@@ -29,16 +29,16 @@
 
 - (NSSet *)allMemberships
 {
-    NSSet *allMemberships = nil;
+    NSMutableSet *allMemberships = [NSMutableSet set];
     
     if ([self instance]) {
-        allMemberships = [[self instance] allMemberships];
-    } else {
-        if (![self hasValueForKey:kRelationshipKeyMemberships]) {
-            [self setValue:[NSMutableSet set] forKey:kRelationshipKeyMemberships];
+        [allMemberships unionSet:[[self instance] allMemberships]];
+    }
+    
+    for (id<OMembership> membership in [self cachedProxiesForEntityClass:[OMembership class]]) {
+        if ([membership.member.entityId isEqualToString:self.entityId]) {
+            [allMemberships addObject:membership];
         }
-        
-        allMemberships = [self valueForKey:kRelationshipKeyMemberships];
     }
     
     return allMemberships;
@@ -47,10 +47,10 @@
 
 - (NSSet *)residencies
 {
-    NSMutableSet *residencies = nil;
+    id residencies = nil;
     
     if ([self instance]) {
-        residencies = [[[self instance] residencies] mutableCopy];
+        residencies = [[self instance] residencies];
     } else {
         residencies = [NSMutableSet set];
         
@@ -88,10 +88,10 @@
 
 - (NSArray *)residences
 {
-    NSMutableArray *residences = nil;
+    id residences = nil;
     
     if ([self instance]) {
-        residences = [[[self instance] residences] mutableCopy];
+        residences = [[self instance] residences];
     } else {
         residences = [NSMutableArray array];
         
@@ -106,10 +106,10 @@
 
 - (NSSet *)guardians
 {
-    NSMutableSet *guardians = nil;
+    id guardians = nil;
     
     if ([self instance]) {
-        guardians = [[[self instance] guardians] mutableCopy];
+        guardians = [[self instance] guardians];
     } else {
         guardians = [NSMutableSet set];
         
@@ -126,10 +126,10 @@
 
 - (NSSet *)housemates
 {
-    NSMutableSet *housemates = nil;
+    id housemates = nil;
     
     if ([self instance]) {
-        housemates = [[[self instance] housemates] mutableCopy];
+        housemates = [[self instance] housemates];
     } else {
         housemates = [NSMutableSet set];
         

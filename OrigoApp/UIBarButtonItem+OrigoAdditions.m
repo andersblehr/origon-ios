@@ -15,65 +15,64 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 #pragma mark - Auxiliary methods
 
-+ (instancetype)barButtonWithIcon:(NSString *)iconFile action:(SEL)action
++ (instancetype)barButtonWithIcon:(NSString *)iconFile target:(id)target action:(SEL)action
 {
     UIImage *image = [UIImage imageNamed:iconFile];
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.bounds = CGRectMake(0.f, 0.f, image.size.width, image.size.height);
     [button setImage:image forState:UIControlStateNormal];
-    [button addTarget:[OMeta m].switchboard action:action forControlEvents:UIControlEventTouchUpInside];
+    [button addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
     
     return [[self alloc] initWithCustomView:button];
 }
 
 
-+ (instancetype)cancelButtonWithTitle:(NSString *)title
++ (instancetype)cancelButtonWithTitle:(NSString *)title target:(id)target
 {
-    return [[self alloc] initWithTitle:title style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didCancelEditing)];
+    return [[self alloc] initWithTitle:title style:UIBarButtonItemStylePlain target:target action:@selector(didCancelEditing)];
 }
 
 
 #pragma mark - Navigation bar buttons
 
-+ (instancetype)settingsButton
++ (instancetype)settingsButtonWithTarget:(id)target
 {
-    return [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSettings] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(openSettings)];
+    return [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSettings] style:UIBarButtonItemStylePlain target:target action:@selector(openSettings)];
 }
 
 
-+ (instancetype)plusButton
++ (instancetype)plusButtonWithTarget:(id)target
 {
     UIBarButtonItem *button = nil;
     
     if ([OMeta systemIs_iOS6x]) {
-        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFilePlus] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(addItem)];
+        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFilePlus] style:UIBarButtonItemStylePlain target:target action:@selector(addItem)];
     } else {
-        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:[OState s].viewController action:@selector(addItem)];
+        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:@selector(addItem)];
     }
     
     return button;
 }
 
 
-+ (instancetype)actionButton
++ (instancetype)actionButtonWithTarget:(id)target
 {
     UIBarButtonItem *button = nil;
     
     if ([OMeta systemIs_iOS6x]) {
-        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileAction] style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(presentActionSheet)];
+        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileAction] style:UIBarButtonItemStylePlain target:target action:@selector(presentActionSheet)];
     } else {
-        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:[OState s].viewController action:@selector(presentActionSheet)];
+        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:target action:@selector(presentActionSheet)];
     }
     
     return button;
 }
 
 
-+ (instancetype)lookupButton
++ (instancetype)lookupButtonWithTarget:(id)target
 {
     UIBarButtonItem *button = nil;
     
-    id target = [OState s].viewController;
     SEL action = @selector(performLookupAction);
     
     if ([OMeta systemIs_iOS6x]) {
@@ -86,86 +85,86 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-+ (instancetype)nextButton
++ (instancetype)nextButtonWithTarget:(id)target
 {
-    return [[self alloc] initWithTitle:NSLocalizedString(@"Next", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(moveToNextInputField)];
+    return [[self alloc] initWithTitle:NSLocalizedString(@"Next", @"") style:UIBarButtonItemStylePlain target:target action:@selector(moveToNextInputField)];
 }
 
 
-+ (instancetype)editButton
++ (instancetype)editButtonWithTarget:(id)target
 {
-    return [[self alloc] initWithTitle:NSLocalizedString(@"Edit", @"") style:UIBarButtonItemStylePlain target:[OState s].viewController action:@selector(didBeginEditing)];
+    return [[self alloc] initWithTitle:NSLocalizedString(@"Edit", @"") style:UIBarButtonItemStylePlain target:target action:@selector(didBeginEditing)];
 }
 
 
-+ (instancetype)cancelButton
++ (instancetype)cancelButtonWithTarget:(id)target
 {
-    return [self cancelButtonWithTitle:NSLocalizedString(@"Cancel", @"")];
+    return [self cancelButtonWithTitle:NSLocalizedString(@"Cancel", @"") target:target];
 }
 
 
-+ (instancetype)skipButton
++ (instancetype)skipButtonWithTarget:(id)target
 {
-    return [self cancelButtonWithTitle:NSLocalizedString(@"Skip", @"")];
+    return [self cancelButtonWithTitle:NSLocalizedString(@"Skip", @"") target:target];
 }
 
 
-+ (instancetype)doneButton
++ (instancetype)doneButtonWithTarget:(id)target
 {
-    return [[self alloc] initWithTitle:NSLocalizedString(@"Done", @"") style:UIBarButtonItemStyleDone target:[OState s].viewController action:@selector(didFinishEditing)];
+    return [[self alloc] initWithTitle:NSLocalizedString(@"Done", @"") style:UIBarButtonItemStyleDone target:target action:@selector(didFinishEditing)];
 }
 
 
-+ (instancetype)signOutButton
++ (instancetype)signOutButtonWithTarget:(id)target
 {
-    return [[self alloc] initWithTitle:NSLocalizedString(@"Log out", @"") style:UIBarButtonItemStylePlain target:[OMeta m] action:@selector(signOut)];
+    return [[self alloc] initWithTitle:NSLocalizedString(@"Log out", @"") style:UIBarButtonItemStylePlain target:target action:@selector(signOut)];
 }
 
 
 #pragma mark - Toolbar buttons
 
-+ (instancetype)sendTextButton
++ (instancetype)sendTextButtonWithTarget:(id)target
 {
-    UIBarButtonItem *barButtonItem = nil;
+    UIBarButtonItem *button = nil;
     SEL action = @selector(processTextRequest);
     
     if ([OMeta systemIs_iOS6x]) {
-        barButtonItem = [self barButtonWithIcon:kIconFileSendText_iOS6x action:action];
+        button = [self barButtonWithIcon:kIconFileSendText_iOS6x target:target action:action];
     } else {
-        barButtonItem = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSendText] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
+        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSendText] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
     }
     
-    return barButtonItem;
+    return button;
 }
 
 
-+ (instancetype)phoneCallButton
++ (instancetype)phoneCallButtonWithTarget:(id)target
 {
-    UIBarButtonItem *barButtonItem = nil;
+    UIBarButtonItem *button = nil;
     SEL action = @selector(processCallRequest);
     
     if ([OMeta systemIs_iOS6x]) {
-        barButtonItem = [self barButtonWithIcon:kIconFilePlacePhoneCall_iOS6x action:action];
+        button = [self barButtonWithIcon:kIconFilePlacePhoneCall_iOS6x target:target action:action];
     } else {
-        barButtonItem = [[self alloc] initWithImage:[UIImage imageNamed:kIconFilePlacePhoneCall] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
+        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFilePlacePhoneCall] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
     }
     
-    return barButtonItem;
+    return button;
 }
 
 
-+ (instancetype)sendEmailButton
++ (instancetype)sendEmailButtonWithTarget:(id)target
 {
-    UIBarButtonItem *barButtonItem = nil;
+    UIBarButtonItem *button = nil;
     SEL action = @selector(processEmailRequest);
     
     if ([OMeta systemIs_iOS6x]) {
-        barButtonItem = [self barButtonWithIcon:kIconFileSendEmail_iOS6x action:action];
+        button = [self barButtonWithIcon:kIconFileSendEmail_iOS6x target:target action:action];
     } else {
-        barButtonItem = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSendEmail] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
+        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSendEmail] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
     }
     
-    return barButtonItem;
+    return button;
 }
 
 

@@ -8,8 +8,8 @@
 
 #import "OMemberViewController.h"
 
-static NSInteger const kSectionKeyGuardian = 1;
-static NSInteger const kSectionKeyAddress = 2;
+static NSInteger const kSectionKeyGuardians = 1;
+static NSInteger const kSectionKeyAddresses = 2;
 
 static NSInteger const kActionSheetTagAction = 0;
 static NSInteger const kButtonTagActionAddAddress = 0;
@@ -49,7 +49,6 @@ static NSInteger const kButtonTagContinue = 1;
     NSMutableArray *_addressBookHomeNumbers;
     NSMutableArray *_addressBookMappings;
     NSArray *_candidateResidences;
-    NSArray *_JSONData;
     
     BOOL _didPerformLocalLookup;
 }
@@ -68,12 +67,11 @@ static NSInteger const kButtonTagContinue = 1;
     self.detailCell.editable = YES;
     [self.detailCell clearInputFields];
     
-    if ([self hasSectionWithKey:kSectionKeyAddress]) {
-        [self reloadSectionWithKey:kSectionKeyAddress];
+    if ([self hasSectionWithKey:kSectionKeyAddresses]) {
+        [self reloadSectionWithKey:kSectionKeyAddresses];
     }
     
     _didPerformLocalLookup = NO;
-    _JSONData = nil;
 }
 
 
@@ -93,7 +91,7 @@ static NSInteger const kButtonTagContinue = 1;
         
         isValid = NO;
     } else {
-        [self presentMember:member];
+        [self reflectMember:member];
     }
     
     return isValid;
@@ -116,20 +114,25 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (BOOL)inputMatchesRegisteredMember:(id<OMember>)member
+- (BOOL)inputMatchesMemberWithDictionary:(NSDictionary *)dictionary
 {
-    BOOL inputMatches = [OUtil fullName:_nameField.value fuzzyMatchesFullName:member.name];
+    NSString *name = dictionary[kPropertyKeyName];
+    NSDate *dateOfBirth = [NSDate dateFromSerialisedDate:dictionary[kPropertyKeyDateOfBirth]];
+    NSString *mobilePhone = dictionary[kPropertyKeyMobilePhone];
+    NSString *email = dictionary[kPropertyKeyEmail];
     
-    if (inputMatches && !_dateOfBirthField.isHidden) {
-        inputMatches = [_dateOfBirthField.value isEqual:member.dateOfBirth];
+    BOOL inputMatches = [OUtil fullName:_nameField.value fuzzyMatchesFullName:name];
+    
+    if (inputMatches && _dateOfBirthField) {
+        inputMatches = [_dateOfBirthField.value isEqual:dateOfBirth];
     }
     
     if (inputMatches && _mobilePhoneField.value) {
-        inputMatches = [[OPhoneNumberFormatter formatPhoneNumber:_mobilePhoneField.value canonicalise:YES] isEqualToString:[OPhoneNumberFormatter formatPhoneNumber:member.mobilePhone canonicalise:YES]];
+        inputMatches = [[OPhoneNumberFormatter formatPhoneNumber:_mobilePhoneField.value canonicalise:YES] isEqualToString:[OPhoneNumberFormatter formatPhoneNumber:mobilePhone canonicalise:YES]];
     }
     
     if (inputMatches && _emailField.value) {
-        inputMatches = [_emailField.value isEqualToString:member.email];
+        inputMatches = [_emailField.value isEqualToString:email];
     }
     
     return inputMatches;
@@ -155,32 +158,37 @@ static NSInteger const kButtonTagContinue = 1;
     }
     
     if (member) {
-        [self presentMember:member];
+        [self reflectMember:member];
     }
     
     _didPerformLocalLookup = YES;
 }
 
 
-- (void)presentMember:(id<OMember>)member
+- (void)reflectMember:(id<OMember>)member
 {
-    if ([member isCommitted]) {
-        [_member useInstance:[member instance]];
-        [self endEditing];
-    }
-    
     _nameField.value = member.name;
     _mobilePhoneField.value = member.mobilePhone;
     _emailField.value = member.email;
     
-    [self reloadSectionWithKey:kSectionKeyAddress];
+    [self reloadSectionWithKey:kSectionKeyAddresses];
     
-    OInputField *invalidInputField = [self.detailCell nextInvalidInputField];
-    
-    if (invalidInputField) {
-        [invalidInputField becomeFirstResponder];
+    if ([member instance] || (member != _member)) {
+        if ([member instance]) {
+            [_member useInstance:[member instance]];
+        } else {
+            [_member reflectEntity:member];
+        }
+        
+        [self endEditing];
     } else {
-        [_emailField becomeFirstResponder];
+        OInputField *invalidInputField = [self.detailCell nextInvalidInputField];
+        
+        if (invalidInputField) {
+            [invalidInputField becomeFirstResponder];
+        } else {
+            [_emailField becomeFirstResponder];
+        }
     }
 }
 
@@ -200,17 +208,21 @@ static NSInteger const kButtonTagContinue = 1;
     [self.detailCell writeInput];
     
     if ([self actionIs:kActionRegister]) {
-        _membership = [_origo addMember:_member];
-        id<OOrigo> residence = [_member residence];
+        if (![_origo isJuvenile] || ![self targetIs:kTargetGuardian]) {
+            _membership = [_origo addMember:_member];
+        }
         
-        if ([residence hasAddress] && ![self aspectIs:kAspectJuvenile]) {
-            if ([_member isUser] && [_member isCommitted] && ![_member isActive]) {
+        id<OOrigo> residence = [_member residence];
+        NSInteger numberOfResidents = [[residence residents] count];
+        
+        if (![_member hasAddress] || ([self aspectIs:kAspectJuvenile] && (numberOfResidents == 1))) {
+            [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:residence];
+        } else {
+            if ([_member isUser] && ![_member isActive]) {
                 [_member makeActive];
             }
             
-            [self.dismisser dismissModalViewController:self reload:YES];
-        } else {
-            [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:residence];
+            [self.dismisser dismissModalViewController:self];
         }
     }
 }
@@ -552,7 +564,7 @@ static NSInteger const kButtonTagContinue = 1;
     
     id<OMember> pivotMember = [self.entity ancestorConformingToProtocol:@protocol(OMember)];
     
-    if ([[pivotMember peersNotInOrigo:_origo] count] > 0) {
+    if ([[pivotMember peersNotInOrigo:_origo] count]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
         
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"")];
@@ -582,13 +594,6 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    //if (!_nameField) {
-        _nameField = [self.detailCell inputFieldForKey:kPropertyKeyName];
-        _dateOfBirthField = [self.detailCell inputFieldForKey:kPropertyKeyDateOfBirth];
-        _mobilePhoneField = [self.detailCell inputFieldForKey:kPropertyKeyMobilePhone];
-        _emailField = [self.detailCell inputFieldForKey:kPropertyKeyEmail];
-    //}
-    
     if ([self actionIs:kActionRegister] && [self targetIs:kTargetJuvenile]) {
         if (_guardian) {
             [_nameField becomeFirstResponder];
@@ -636,11 +641,11 @@ static NSInteger const kButtonTagContinue = 1;
     
     if ([self actionIs:kActionRegister]) {
         if (![self targetIs:kTargetUser] && ![self targetIs:kTargetJuvenile]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButton];
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButtonWithTarget:self];
         }
     } else if ([self actionIs:kActionDisplay]) {
         if (self.canEdit) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButton];
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
         }
     }
     
@@ -653,10 +658,12 @@ static NSInteger const kButtonTagContinue = 1;
     [self setDataForDetailSection];
     
     if ([_member isJuvenile]) {
-        [self setData:[_member guardians] forSectionWithKey:kSectionKeyGuardian];
+        [self setData:[_member guardians] forSectionWithKey:kSectionKeyGuardians];
     }
     
-    [self setData:[_member residences] forSectionWithKey:kSectionKeyAddress];
+    if (![_member isUser] || [[OMeta m] userIsAllSet]) {
+        [self setData:[_member residences] forSectionWithKey:kSectionKeyAddresses];
+    }
 }
 
 
@@ -664,7 +671,7 @@ static NSInteger const kButtonTagContinue = 1;
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if (sectionKey == kSectionKeyGuardian) {
+    if (sectionKey == kSectionKeyGuardians) {
         id<OMember> guardian = [self dataAtIndexPath:indexPath];
         
         cell.imageView.image = [OUtil smallImageForMember:guardian];
@@ -680,7 +687,7 @@ static NSInteger const kButtonTagContinue = 1;
         if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
             cell.detailTextLabel.text = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:cell.detailTextLabel.text separator:kSeparatorComma];
         }
-    } else if (sectionKey == kSectionKeyAddress) {
+    } else if (sectionKey == kSectionKeyAddresses) {
         id<OOrigo> residence = [self dataAtIndexPath:indexPath];
         
         cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
@@ -690,6 +697,15 @@ static NSInteger const kButtonTagContinue = 1;
         [cell setDestinationId:kIdentifierOrigo selectableDuringInput:YES];
     }
 }
+
+
+//- (NSString *)reuseIdentifierForDetailSection
+//{
+//    NSString *reuseIdentifier = nil;
+//    
+//    
+//    return reuseIdentifier;
+//}
 
 
 - (NSArray *)toolbarButtons
@@ -719,7 +735,7 @@ static NSInteger const kButtonTagContinue = 1;
 {
     NSString *text = nil;
     
-    if (sectionKey == kSectionKeyGuardian) {
+    if (sectionKey == kSectionKeyGuardians) {
         NSSet *guardians = [_member guardians];
         
         if ([guardians count] == 1) {
@@ -737,7 +753,7 @@ static NSInteger const kButtonTagContinue = 1;
                 text = [OLanguage nouns][_guardian_][pluralIndefinite];
             }
         }
-    } else if (sectionKey == kSectionKeyAddress) {
+    } else if (sectionKey == kSectionKeyAddresses) {
         if ([[_member residences] count] == 1) {
             text = [OLanguage nouns][_address_][singularIndefinite];
         } else if ([[_member residences] count] > 1) {
@@ -765,11 +781,20 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
+- (void)willDisplayDetailCell:(OTableViewCell *)cell
+{
+    _nameField = [cell inputFieldForKey:kPropertyKeyName];
+    _dateOfBirthField = [cell inputFieldForKey:kPropertyKeyDateOfBirth];
+    _mobilePhoneField = [cell inputFieldForKey:kPropertyKeyMobilePhone];
+    _emailField = [cell inputFieldForKey:kPropertyKeyEmail];
+}
+
+
 - (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
     BOOL canDelete = NO;
     
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddress) {
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddresses) {
         canDelete = ([self tableView:self.tableView numberOfRowsInSection:indexPath.section] > 1);
     }
     
@@ -779,7 +804,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey
 {
-    return (sectionKey == kSectionKeyGuardian);
+    return (sectionKey == kSectionKeyGuardians);
 }
 
 
@@ -813,7 +838,7 @@ static NSInteger const kButtonTagContinue = 1;
 {
     NSString *sortKey = nil;
     
-    if (sectionKey == kSectionKeyAddress) {
+    if (sectionKey == kSectionKeyAddresses) {
         sortKey = [OUtil sortKeyWithPropertyKey:kPropertyKeyAddress relationshipKey:kRelationshipKeyOrigo];
     }
     
@@ -821,16 +846,24 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (BOOL)shouldRelayDismissalOfModalViewController:(id<OTableViewController>)viewController
+- (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController
 {
-    return [viewController.identifier isEqualToString:kIdentifierOrigo];
+    BOOL shouldRelay = NO;
+    
+    if ([viewController.identifier isEqualToString:kIdentifierOrigo]) {
+        shouldRelay = YES;
+    } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
+        shouldRelay = viewController.didCancel;
+    }
+    
+    return shouldRelay;
 }
 
 
-- (void)willDismissModalViewController:(id<OTableViewController>)viewController
+- (void)willDismissModalViewController:(OTableViewController *)viewController
 {
     if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-        if ([self targetIs:kTargetJuvenile] && viewController.returnData) {
+        if ([self targetIs:kTargetJuvenile] && !viewController.didCancel) {
             _guardian = viewController.returnData;
         }
     } else if ([viewController.identifier isEqualToString:kIdentifierAuth]) {
@@ -846,9 +879,9 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)didDismissModalViewController:(id<OTableViewController>)viewController
+- (void)didDismissModalViewController:(OTableViewController *)viewController
 {
-    if (viewController.returnData) {
+    if (!viewController.didCancel) {
         if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
             if ([self isEligibleMember:viewController.returnData]) {
                 if ([self aspectIs:kAspectHousehold]) {
@@ -881,7 +914,7 @@ static NSInteger const kButtonTagContinue = 1;
     if (isValid && [self aspectIs:kAspectHousehold]) {
         isValid = [_dateOfBirthField hasValidValue];
         
-        if ([_member isCommitted] && ![_member isUser]) {
+        if ([_member instance] && ![_member isUser]) {
             isValid = [_dateOfBirthField.value isEqual:_member.dateOfBirth];
             
             if (!isValid) {
@@ -983,10 +1016,6 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)examinerDidFinishExamination
 {
-    if (_JSONData) {
-        [[OMeta m].context saveServerReplicas:_JSONData];
-    }
-    
     [self persistMember];
 }
 
@@ -1059,7 +1088,7 @@ static NSInteger const kButtonTagContinue = 1;
                 }
                 
                 if (![_addressBookAddresses count] && ![_addressBookHomeNumbers count]) {
-                    [self presentMember:_member];
+                    [self reflectMember:_member];
                 }
             }
             
@@ -1179,7 +1208,7 @@ static NSInteger const kButtonTagContinue = 1;
                 [self refineAddressBookAddressInfo];
             }];
         } else {
-            [self presentMember:_member];
+            [self reflectMember:_member];
             [self dismissViewControllerAnimated:YES completion:NULL];
         }
     }
@@ -1211,29 +1240,32 @@ static NSInteger const kButtonTagContinue = 1;
     if (response.statusCode == kHTTPStatusOK) {
         NSString *identifier = _emailField.value ? _emailField.value : _mobilePhoneField.value;
         NSString *identifierKey = _emailField.value ? kPropertyKeyEmail : kPropertyKeyMobilePhone;
-        NSString *memberClassName = NSStringFromClass([OMember class]);
         
-        for (NSDictionary *JSONDictionary in data) {
-            if ([JSONDictionary[kJSONKeyEntityClass] isEqualToString:memberClassName]) {
-                if ([JSONDictionary[identifierKey] isEqualToString:identifier]) {
-                    id member = [OMemberProxy proxyForEntityWithJSONDictionary:JSONDictionary];
-                    
-                    if ([self inputMatchesRegisteredMember:member]) {
-                        _JSONData = data;
-                        
-                        [self presentMember:member];
-                        [self examineMember];
-                    } else {
-                        [OAlert showAlertWithTitle:NSLocalizedString(@"Incorrect details", @"") text:NSLocalizedString(@"The details you have provided do not match our records ...", @"")];
-                        
-                        [self.detailCell resumeFirstResponder];
+        id member = nil;
+        
+        for (NSDictionary *entityDictionary in data) {
+            if ([[entityDictionary allKeys] containsObject:identifierKey]) {
+                if ([entityDictionary[identifierKey] isEqualToString:identifier]) {
+                    if ([self inputMatchesMemberWithDictionary:entityDictionary]) {
+                        member = [OMemberProxy proxyForEntityWithDictionary:entityDictionary];
                     }
                     
                     break;
                 }
             }
         }
-    } else {
+        
+        if (member) {
+            [OEntityProxy cacheProxiesForEntitiesWithDictionaries:data];
+            
+            [self reflectMember:member];
+            [self examineMember];
+        } else {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Incorrect details", @"") text:NSLocalizedString(@"The details you have provided do not match our records ...", @"")];
+            
+            [self.detailCell resumeFirstResponder];
+        }
+    } else if (response.statusCode == kHTTPStatusNotFound) {
         [self examineMember];
     }
 }

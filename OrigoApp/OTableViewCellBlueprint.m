@@ -37,13 +37,13 @@ CGFloat const kPhotoFrameWidth = 55.f;
             _detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
         } else if (entityProtocol == @protocol(OOrigo)) {
             if ([entityType isEqualToString:kOrigoTypeResidence]) {
-                _titleKey = kInterfaceKeyResidenceName;
+                _titleKey = kUnboundKeyResidenceName;
                 _detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
                 _multiLineTextKeys = @[kPropertyKeyAddress];
             } else if ([entityType isEqualToString:kOrigoTypeOrganisation]) {
                 _titleKey = kPropertyKeyName;
-                _detailKeys = @[kInterfaceKeyPurpose, kPropertyKeyAddress, kPropertyKeyTelephone];
-                _multiLineTextKeys = @[kInterfaceKeyPurpose, kPropertyKeyAddress];
+                _detailKeys = @[kUnboundKeyPurpose, kPropertyKeyAddress, kPropertyKeyTelephone];
+                _multiLineTextKeys = @[kUnboundKeyPurpose, kPropertyKeyAddress];
             } else {
                 _titleKey = kPropertyKeyName;
                 _detailKeys = @[kPropertyKeyDescriptionText];
@@ -54,11 +54,11 @@ CGFloat const kPhotoFrameWidth = 55.f;
             _fieldsShouldDeemphasiseOnEndEdit = NO;
             
             if ([reuseIdentifier isEqualToString:kReuseIdentifierUserSignIn]) {
-                _titleKey = kInterfaceKeySignIn;
-                _detailKeys = @[kInterfaceKeyAuthEmail, kInterfaceKeyPassword];
+                _titleKey = kUnboundKeySignIn;
+                _detailKeys = @[kUnboundKeyAuthEmail, kUnboundKeyPassword];
             } else if ([reuseIdentifier isEqualToString:kReuseIdentifierUserActivation]) {
-                _titleKey = kInterfaceKeyActivate;
-                _detailKeys = @[kInterfaceKeyActivationCode, kInterfaceKeyRepeatPassword];
+                _titleKey = kUnboundKeyActivate;
+                _detailKeys = @[kUnboundKeyActivationCode, kUnboundKeyRepeatPassword];
             }
         }
         

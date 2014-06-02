@@ -8,31 +8,41 @@
 
 #import "OReplicatedEntity+OrigoAdditions.h"
 
+static NSMutableDictionary *_stagedEntities = nil;
+static NSMutableDictionary *_stagedRelationshipRefs = nil;
+
 
 @implementation OReplicatedEntity (OrigoAdditions)
 
 #pragma mark - Auxiliary methods
-
-- (NSDictionary *)relationshipRef
-{
-    NSMutableDictionary *relationshipRef = [NSMutableDictionary dictionary];
-    
-    relationshipRef[kPropertyKeyEntityId] = self.entityId;
-    relationshipRef[kJSONKeyEntityClass] = self.entity.name;
-    
-    if ([self isKindOfClass:[OMember class]] && [self valueForKey:kPropertyKeyEmail]) {
-        relationshipRef[kPropertyKeyEmail] = [self valueForKey:kPropertyKeyEmail];
-    }
-    
-    return relationshipRef;
-}
-
 
 - (BOOL)isTransientProperty:(NSString *)propertyKey
 {
     NSArray *transientPropertyKeys = @[kPropertyKeyPasswordHash, kPropertyKeyHashCode, kPropertyKeyIsAwaitingDeletion];
     
     return [transientPropertyKeys containsObject:propertyKey];
+}
+
+
+- (id)serialisedValueForKey:(NSString *)key
+{
+    id value = [self valueForKey:key];
+    
+    if (value && [OValidator isDateKey:key]) {
+        value = [value serialisedDate];
+    }
+    
+    return value;
+}
+
+
+- (void)setValueFromSerialisedValue:(id)value forKey:(NSString *)key
+{
+    if (value && [OValidator isDateKey:key]) {
+        value = [NSDate dateFromSerialisedDate:value];
+    }
+    
+    [self setValue:value forKey:key];
 }
 
 
@@ -44,118 +54,92 @@
 }
 
 
-#pragma mark - Key-value proxy methods
-
-- (id)serialisableValueForKey:(NSString *)key
++ (instancetype)instanceFromDictionary:(NSDictionary *)dictionary
 {
-    id value = [self valueForKey:key];
+    Class entityClass = NSClassFromString(dictionary[kUnboundKeyEntityClass]);
+    NSString *entityId = dictionary[kPropertyKeyEntityId];
+    OReplicatedEntity *entity = [[OMeta m].context entityWithId:entityId];
     
-    if (value && [value isKindOfClass:[NSDate class]]) {
-        value = [NSNumber numberWithLongLong:[value timeIntervalSince1970] * 1000];
+    if (!entity) {
+        entity = [[OMeta m].context insertEntityOfClass:entityClass entityId:entityId];
+        entity.origoId = dictionary[kPropertyKeyOrigoId];
     }
     
-    return value;
-}
-
-
-- (void)setDeserialisedValue:(id)value forKey:(NSString *)key
-{
-    NSAttributeDescription *attribute = [self.entity attributesByName][key];
-    
-    if (value && (attribute.attributeType == NSDateAttributeType)) {
-        value = [NSDate dateWithDeserialisedDate:value];
+    for (NSString *key in [entityClass propertyKeys]) {
+        [entity setValueFromSerialisedValue:dictionary[key] forKey:key];
     }
     
-    [super setValue:value forKey:key];
+    NSMutableDictionary *relationshipRefs = [NSMutableDictionary dictionary];
+    
+    for (NSString *key in [entityClass toOneRelationshipKeys]) {
+        NSDictionary *relationshipRef = dictionary[[OValidator referenceKeyForKey:key]];
+        
+        if (relationshipRef) {
+            relationshipRefs[key] = relationshipRef;
+        }
+    }
+    
+    if (!_stagedEntities) {
+        _stagedEntities = [NSMutableDictionary dictionary];
+        _stagedRelationshipRefs = [NSMutableDictionary dictionary];
+    } else if ([_stagedRelationshipRefs count] == 0) {
+        [_stagedEntities removeAllObjects];
+    }
+    
+    _stagedEntities[entity.entityId] = entity;
+    
+    if ([relationshipRefs count]) {
+        _stagedRelationshipRefs[entity.entityId] = relationshipRefs;
+    }
+    
+    return entity;
 }
 
 
 #pragma mark - Replication support
 
-- (NSDictionary *)toDictionary
+- (NSString *)SHA1HashCode
 {
-    NSMutableDictionary *entityDictionary = [NSMutableDictionary dictionary];
+    NSString *hashableString = [NSString string];
     
-    NSDictionary *attributes = [self.entity attributesByName];
-    NSDictionary *relationships = [self.entity relationshipsByName];
-    
-    entityDictionary[kJSONKeyEntityClass] = self.entity.name;
-    
-    for (NSString *attributeKey in [attributes allKeys]) {
-        if (![self isTransientProperty:attributeKey]) {
-            id attributeValue = [self serialisableValueForKey:attributeKey];
-            
-            if (attributeValue) {
-                entityDictionary[attributeKey] = attributeValue;
-            }
-        }
-    }
-    
-    for (NSString *relationshipKey in [relationships allKeys]) {
-        NSRelationshipDescription *relationship = relationships[relationshipKey];
-        
-        if (!relationship.isToMany && ![self isTransientProperty:relationshipKey]) {
-            OReplicatedEntity *entity = [self valueForKey:relationshipKey];
-            
-            if (entity) {
-                entityDictionary[relationshipKey] = [entity relationshipRef];
-            }
-        }
-    }
-    
-    return entityDictionary;
-}
-
-
-- (NSString *)computeHashCode
-{
-    NSDictionary *attributes = [self.entity attributesByName];
-    NSDictionary *relationships = [self.entity relationshipsByName];
-    
-    NSArray *attributeKeys = [[attributes allKeys] sortedArrayUsingSelector:@selector(compare:)];
-    NSArray *relationshipKeys = [[relationships allKeys] sortedArrayUsingSelector:@selector(compare:)];
-    
-    NSString *propertyString = [NSString string];
-    
-    for (NSString *attributeKey in attributeKeys) {
-        if (![self isTransientProperty:attributeKey]) {
-            id value = [self valueForKey:attributeKey];
+    for (NSString *key in [[self class] propertyKeys]) {
+        if (![self isTransientProperty:key]) {
+            id value = [self valueForKey:key];
             
             if (value) {
-                NSString *property = [NSString stringWithFormat:@"[%@:%@]", attributeKey, value];
-                propertyString = [propertyString stringByAppendingString:property];
+                NSString *property = [NSString stringWithFormat:@"[%@:%@]", key, value];
+                hashableString = [hashableString stringByAppendingString:property];
             }
         }
     }
     
-    for (NSString *relationshipKey in relationshipKeys) {
-        NSRelationshipDescription *relationship = relationships[relationshipKey];
-        
-        if (!relationship.isToMany && ![self isTransientProperty:relationshipKey]) {
-            OReplicatedEntity *entity = [self valueForKey:relationshipKey];
+    for (NSString *key in [[self class] toOneRelationshipKeys]) {
+        if (![self isTransientProperty:key]) {
+            OReplicatedEntity *entity = [self valueForKey:key];
             
             if (entity) {
-                NSString *property = [NSString stringWithFormat:@"[%@:%@]", relationshipKey, entity.entityId];
-                propertyString = [propertyString stringByAppendingString:property];
+                NSString *property = [NSString stringWithFormat:@"[%@:%@]", key, entity.entityId];
+                hashableString = [hashableString stringByAppendingString:property];
             }
         }
     }
     
-    return [OCrypto computeSHA1HashForString:propertyString];
+    return [OCrypto computeSHA1HashForString:hashableString];
 }
 
 
 - (void)internaliseRelationships
 {
-    self.hashCode = [self computeHashCode];
+    self.hashCode = [self SHA1HashCode];
     
-    NSDictionary *relationshipRefs = [[OMeta m].replicator stagedRelationshipRefsForEntity:self];
+    NSDictionary *relationshipRefs = _stagedRelationshipRefs[self.entityId];
+    [_stagedRelationshipRefs removeObjectForKey:self.entityId];
     
     for (NSString *relationshipKey in [relationshipRefs allKeys]) {
         NSDictionary *relationshipRef = relationshipRefs[relationshipKey];
         NSString *destinationId = relationshipRef[kPropertyKeyEntityId];
-        
-        OReplicatedEntity *entity = [[OMeta m].replicator stagedEntityWithId:destinationId];
+
+        OReplicatedEntity *entity = _stagedEntities[destinationId];
         
         if (!entity) {
             entity = [[OMeta m].context entityWithId:destinationId];
@@ -190,13 +174,7 @@
 
 - (BOOL)isDirty
 {
-    return ![self.hashCode isEqualToString:[self computeHashCode]];
-}
-
-
-- (BOOL)isReplicated
-{
-    return self.dateReplicated ? YES : NO;
+    return ![self.hashCode isEqualToString:[self SHA1HashCode]];
 }
 
 
@@ -258,13 +236,28 @@
 
 + (NSArray *)propertyKeys
 {
-    return [[[NSEntityDescription entityForName:NSStringFromClass(self) inManagedObjectContext:[OMeta m].context] attributesByName] allKeys];
+    return [[[[NSEntityDescription entityForName:NSStringFromClass(self) inManagedObjectContext:[OMeta m].context] attributesByName] allKeys] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
-+ (NSArray *)relationshipKeys
++ (NSArray *)toOneRelationshipKeys
 {
-    return [[[NSEntityDescription entityForName:NSStringFromClass(self) inManagedObjectContext:[OMeta m].context] relationshipsByName] allKeys];
+    NSMutableArray *toOneRelationshipKeys = [NSMutableArray array];
+    NSDictionary *relationships = [[NSEntityDescription entityForName:NSStringFromClass(self) inManagedObjectContext:[OMeta m].context] relationshipsByName];
+    
+    for (NSString *key in [relationships allKeys]) {
+        if (![relationships[key] isToMany]) {
+            [toOneRelationshipKeys addObject:key];
+        }
+    }
+    
+    return [toOneRelationshipKeys sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
++ (BOOL)isRelationshipClass
+{
+    return NO;
 }
 
 
@@ -284,13 +277,25 @@
 
 - (id)proxy
 {
-    return [[[self entityClass] proxyClass] proxyForEntity:self];
+    id proxy = [OEntityProxy cachedProxyForEntityWithId:self.entityId];
+    
+    if (!proxy) {
+        proxy = [[[self entityClass] proxyClass] proxyForEntity:self];
+    }
+    
+    return proxy;
 }
 
 
 - (id)instance
 {
     return self;
+}
+
+
+- (BOOL)isReplicated
+{
+    return self.dateReplicated ? YES : NO;
 }
 
 
@@ -319,6 +324,28 @@
 - (id)valueForKey:(NSString *)key
 {
     return [super valueForKey:[OValidator propertyKeyForKey:key]];
+}
+
+
+- (NSDictionary *)toDictionary
+{
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    
+    dictionary[kUnboundKeyEntityClass] = NSStringFromClass([self class]);
+    
+    for (NSString *key in [[self class] propertyKeys]) {
+        if ([self hasValueForKey:key] && ![self isTransientProperty:key]) {
+            dictionary[key] = [self serialisedValueForKey:key];
+        }
+    }
+    
+    for (NSString *key in [[self class] toOneRelationshipKeys]) {
+        if ([self hasValueForKey:key] && ![self isTransientProperty:key]) {
+            dictionary[key] = [OValidator referenceForEntity:[self valueForKey:key]];
+        }
+    }
+    
+    return dictionary;
 }
 
 

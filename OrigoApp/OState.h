@@ -44,9 +44,9 @@ extern NSString * const kAspectDefault;
 @property (nonatomic) NSString *action;
 @property (nonatomic) id target;
 
-@property (nonatomic, weak, readonly) id<OTableViewController> viewController;
+@property (nonatomic, weak, readonly) OTableViewController *viewController;
 
-- (instancetype)initWithViewController:(id<OTableViewController>)viewController;
+- (instancetype)initWithViewController:(OTableViewController *)viewController;
 
 + (OState *)s;
 

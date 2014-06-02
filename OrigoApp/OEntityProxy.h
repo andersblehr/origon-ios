@@ -16,16 +16,22 @@
 - (id)proxy;
 - (id)instance;
 
+- (BOOL)isReplicated;
 - (BOOL)hasValueForKey:(NSString *)key;
 - (void)setValue:(id)value forKey:(NSString *)key;
 - (id)valueForKey:(NSString *)key;
 
+- (NSDictionary *)toDictionary;
+
 @optional
 @property (nonatomic, readonly) NSString *entityId;
 @property (nonatomic, readonly) NSString *createdBy;
+@property (nonatomic, readonly) NSDate *dateReplicated;
 
 - (NSString *)reuseIdentifier;
+- (void)reflectEntity:(id<OEntity>)entity;
 - (void)useInstance:(id<OEntity>)instance;
+- (id)instantiate;
 - (id)commit;
 
 @end
@@ -34,11 +40,16 @@
 @interface OEntityProxy : NSObject<OEntity>
 
 @property (nonatomic) id ancestor;
+@property (nonatomic, readonly) NSString *meta;
 
 + (instancetype)proxyForEntity:(OReplicatedEntity *)entity;
-+ (instancetype)proxyForEntityOfClass:(Class)entityClass type:(NSString *)type;
-+ (instancetype)proxyForEntityWithJSONDictionary:(NSDictionary *)dictionary;
++ (instancetype)proxyForEntityOfClass:(Class)entityClass meta:(NSString *)meta;
++ (instancetype)proxyForEntityWithDictionary:(NSDictionary *)dictionary;
 
 - (id)ancestorConformingToProtocol:(Protocol *)protocol;
+
++ (void)cacheProxiesForEntitiesWithDictionaries:(NSArray *)entityDictionaries;
++ (id)cachedProxyForEntityWithId:(NSString *)entityId;
+- (NSArray *)cachedProxiesForEntityClass:(Class)entityClass;
 
 @end

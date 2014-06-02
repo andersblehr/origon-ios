@@ -314,7 +314,7 @@
 
 // Alerts
 "Incorrect details" = "Incorrect details";
-"The details you have provided do not match our records ..." = "The details you have provided do not match our records. You cannot add this person if you do not have the correct information.";
+"The details you have provided do not match our records ..." = "The details you have provided do not match our records. You can only add this person if you have accurate information.";
 "Already member" = "Already member";
 "%@ is already a member of %@." = "%@ is already a member of %@.";
 "New email address" = "New email address";

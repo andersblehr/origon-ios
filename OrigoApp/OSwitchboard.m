@@ -349,17 +349,17 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         [toolbarButtons addObject:[UIBarButtonItem flexibleSpace]];
         
         if (hasTextButton) {
-            [toolbarButtons addObject:[UIBarButtonItem sendTextButton]];
+            [toolbarButtons addObject:[UIBarButtonItem sendTextButtonWithTarget:self]];
             [toolbarButtons addObject:[UIBarButtonItem flexibleSpace]];
         }
         
         if (hasCallButton) {
-            [toolbarButtons addObject:[UIBarButtonItem phoneCallButton]];
+            [toolbarButtons addObject:[UIBarButtonItem phoneCallButtonWithTarget:self]];
             [toolbarButtons addObject:[UIBarButtonItem flexibleSpace]];
         }
         
         if (hasEmailButton) {
-            [toolbarButtons addObject:[UIBarButtonItem sendEmailButton]];
+            [toolbarButtons addObject:[UIBarButtonItem sendEmailButtonWithTarget:self]];
             [toolbarButtons addObject:[UIBarButtonItem flexibleSpace]];
         }
     }

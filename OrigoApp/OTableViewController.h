@@ -22,7 +22,7 @@
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 
 - (id)defaultTarget;
-- (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath;
+- (NSString *)reuseIdentifierForDetailSection;
 - (NSArray *)toolbarButtons;
 
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;
@@ -39,9 +39,9 @@
 - (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2;
 - (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey;
 
-- (BOOL)shouldRelayDismissalOfModalViewController:(id<OTableViewController>)viewController;
-- (void)willDismissModalViewController:(id<OTableViewController>)viewController;
-- (void)didDismissModalViewController:(id<OTableViewController>)viewController;
+- (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController;
+- (void)willDismissModalViewController:(OTableViewController *)viewController;
+- (void)didDismissModalViewController:(OTableViewController *)viewController;
 
 - (void)didResumeFromBackground;
 - (void)didSignOut;
@@ -57,6 +57,7 @@
 @property (nonatomic, assign, readonly) BOOL isModal;
 @property (nonatomic, assign, readonly) BOOL isPushed;
 @property (nonatomic, assign, readonly) BOOL wasHidden;
+@property (nonatomic, assign, readonly) BOOL didCancel;
 
 @property (nonatomic, assign) BOOL requiresSynchronousServerCalls;
 @property (nonatomic, assign) BOOL usesPlainTableViewStyle;
@@ -88,7 +89,7 @@
 
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target meta:(id)meta;
-- (void)dismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload;
+- (void)dismissModalViewController:(OTableViewController *)viewController;
 
 - (void)toggleEditMode;
 - (void)didCancelEditing;

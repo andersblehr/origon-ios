@@ -130,13 +130,13 @@ static NSInteger const kSectionKeyWards = 2;
     if ([_member isUser]) {
         self.title = [OMeta m].appName;
         [self.navigationItem setTitle:[OMeta m].appName withSubtitle:[OMeta m].user.name];
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButton];
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
     } else {
         self.title = [_member givenName];
     }
     
     if ([[OMeta m].user isTeenOrOlder]) {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButton];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
         
         if ([_member isJuvenile]) {
             if (![_member isOlderThan:kAgeThresholdInSchool]) {
@@ -267,7 +267,7 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-- (void)didDismissModalViewController:(id<OTableViewController>)viewController
+- (void)didDismissModalViewController:(OTableViewController *)viewController
 {
     if ([[OMeta m] userIsSignedIn]) {
         [self reloadSections];

@@ -25,7 +25,7 @@
 - (void)expireAdditionalCrossReferencesForFullMembership:(OMembership *)membership;
 
 - (void)save;
-- (void)saveServerReplicas:(NSArray *)replicaDictionaries;
+- (void)saveEntityDictionaries:(NSArray *)replicaDictionaries;
 
 - (NSSet *)dirtyEntities;
 
