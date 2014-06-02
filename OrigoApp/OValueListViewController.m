@@ -26,7 +26,7 @@ static NSInteger const kSectionKeySignOut = 1;
 - (void)loadState
 {
     self.title = NSLocalizedString(@"Settings", @"");
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
     
     self.state.target = kTargetUser;
 }

@@ -11,14 +11,18 @@
 static NSString * const kAccessorPrefixSetter = @"set";
 static NSString * const kClassSuffixProxy = @"Proxy";
 
+static NSMutableDictionary *_cachedProxiesByEntityId = nil;
+
 
 @interface OEntityProxy () {
 @private
     id _instance;
     BOOL _isCommitted;
     Class _entityClass;
+    
+    NSString *_meta;
     NSArray *_propertyKeys;
-    NSArray *_relationshipKeys;
+    NSArray *_toOneRelationshipKeys;
     NSMutableDictionary *_valuesByKey;
     
     SEL _forwardSelector;
@@ -30,20 +34,48 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 @implementation OEntityProxy
 
+#pragma mark - Auxiliary methods
+
+- (void)resetPropertyStore
+{
+    for (NSString *key in _propertyKeys) {
+        [_valuesByKey removeObjectForKey:key];
+    }
+}
+
+
 #pragma mark - Initialisation
+
+- (instancetype)initWithEntityClass:(Class)entityClass entityId:(NSString *)entityId isCommitted:(BOOL)isCommitted
+{
+    self = [super init];
+    
+    if (self) {
+        _entityClass = entityClass;
+        _propertyKeys = [_entityClass propertyKeys];
+        _toOneRelationshipKeys = [_entityClass toOneRelationshipKeys];
+        _valuesByKey = [NSMutableDictionary dictionaryWithObject:NSStringFromClass(_entityClass) forKey:kUnboundKeyEntityClass];
+
+        [self setValue:entityId forKey:kPropertyKeyEntityId];
+        
+        if (!_cachedProxiesByEntityId) {
+            _cachedProxiesByEntityId = [NSMutableDictionary dictionary];
+        }
+        
+        _cachedProxiesByEntityId[entityId] = self;
+    }
+    
+    return self;
+}
+
 
 - (instancetype)initWithEntity:(OReplicatedEntity *)entity
 {
-    NSString *type = nil;
-    
-    if ([[[entity class] propertyKeys] containsObject:kPropertyKeyType]) {
-        type = [entity valueForKey:kPropertyKeyType];
-    }
-    
-    self = [self initWithEntityClass:[entity class] type:type];
+    self = [self initWithEntityClass:[entity class] entityId:entity.entityId isCommitted:YES];
     
     if (self) {
-        _instance = entity;
+        [self useInstance:entity];
+        
         _isCommitted = YES;
     }
     
@@ -51,25 +83,42 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
-- (instancetype)initWithEntityClass:(Class)entityClass type:(NSString *)type
+- (instancetype)initWithEntityClass:(Class)entityClass meta:(NSString *)meta
 {
-    self = [super init];
+    self = [self initWithEntityClass:entityClass entityId:[OCrypto generateUUID] isCommitted:NO];
     
     if (self) {
-        _entityClass = entityClass;
-        _propertyKeys = [_entityClass propertyKeys];
-        _relationshipKeys = [_entityClass relationshipKeys];
+        _meta = meta;
         
-        if (![_propertyKeys containsObject:kPropertyKeyType]) {
-            _propertyKeys = [_propertyKeys arrayByAddingObject:kPropertyKeyType];
+        if ([_propertyKeys containsObject:kPropertyKeyType]) {
+            [self setValue:meta forKey:kPropertyKeyType];
+        }
+    }
+    
+    return self;
+}
+
+
+- (instancetype)initWithEntityWithDictionary:(NSDictionary *)dictionary
+{
+    self = [self initWithEntityClass:NSClassFromString(dictionary[kUnboundKeyEntityClass]) entityId:dictionary[kPropertyKeyEntityId] isCommitted:NO];
+    
+    if (self) {
+        for (NSString *key in _propertyKeys) {
+            id value = dictionary[key];
+            
+            if (value) {
+                [self setValue:value forKey:key];
+            }
         }
         
-        _valuesByKey = [NSMutableDictionary dictionary];
-        
-        [self setValue:[OCrypto generateUUID] forKeyPath:kPropertyKeyEntityId];
-        
-        if (type) {
-            [self setValue:type forKey:kPropertyKeyType];
+        for (NSString *key in _toOneRelationshipKeys) {
+            NSString *relationshipRefKey = [OValidator referenceKeyForKey:key];
+            id relationshipRef = dictionary[relationshipRefKey];
+            
+            if (relationshipRef) {
+                _valuesByKey[relationshipRefKey] = relationshipRef;
+            }
         }
     }
     
@@ -81,22 +130,30 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 + (instancetype)proxyForEntity:(OReplicatedEntity *)entity
 {
-    return [[[[entity class] proxyClass] alloc] initWithEntity:entity];
-}
-
-
-+ (instancetype)proxyForEntityOfClass:(Class)entityClass type:(NSString *)type
-{
-    return [[[entityClass proxyClass] alloc] initWithEntityClass:entityClass type:type];
-}
-
-
-+ (instancetype)proxyForEntityWithJSONDictionary:(NSDictionary *)dictionary
-{
-    id proxy = [self proxyForEntityOfClass:NSClassFromString(dictionary[kJSONKeyEntityClass]) type:dictionary[kPropertyKeyType]];
+    id proxy = _cachedProxiesByEntityId[entity.entityId];
     
-    for (NSString *key in [dictionary allKeys]) {
-        [proxy setValue:dictionary[key] forKeyPath:key];
+    if (!proxy) {
+        proxy = [[[[entity class] proxyClass] alloc] initWithEntity:entity];
+    }
+    
+    return proxy;
+}
+
+
++ (instancetype)proxyForEntityOfClass:(Class)entityClass meta:(NSString *)meta
+{
+    return [[[entityClass proxyClass] alloc] initWithEntityClass:entityClass meta:meta];
+}
+
+
++ (instancetype)proxyForEntityWithDictionary:(NSDictionary *)dictionary
+{
+    id proxy = _cachedProxiesByEntityId[dictionary[kPropertyKeyEntityId]];
+    
+    if (!proxy) {
+        Class entityClass = NSClassFromString(dictionary[kUnboundKeyEntityClass]);
+        
+        proxy = [[[entityClass proxyClass] alloc] initWithEntityWithDictionary:dictionary];
     }
     
     return proxy;
@@ -121,6 +178,42 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
+#pragma mark - Proxy caching
+
++ (void)cacheProxiesForEntitiesWithDictionaries:(NSArray *)entityDictionaries
+{
+    if (!_cachedProxiesByEntityId) {
+        _cachedProxiesByEntityId = [NSMutableDictionary dictionary];
+    }
+    
+    for (NSDictionary *entityDictionary in entityDictionaries) {
+        OEntityProxy *proxy = [OEntityProxy proxyForEntityWithDictionary:entityDictionary];
+        
+        _cachedProxiesByEntityId[proxy.entityId] = proxy;
+    }
+}
+
+
++ (id)cachedProxyForEntityWithId:(NSString *)entityId
+{
+    return _cachedProxiesByEntityId[entityId];
+}
+
+
+- (NSArray *)cachedProxiesForEntityClass:(Class)entityClass
+{
+    NSMutableArray *proxies = [NSMutableArray array];
+    
+    for (OEntityProxy *proxy in [_cachedProxiesByEntityId allValues]) {
+        if (proxy.entityClass == entityClass) {
+            [proxies addObject:proxy];
+        }
+    }
+    
+    return proxies;
+}
+
+
 #pragma mark - Custom accessors
 
 - (void)setAncestor:(id)ancestor
@@ -130,6 +223,16 @@ static NSString * const kClassSuffixProxy = @"Proxy";
     } else {
         [self setAncestor:[ancestor ancestor]];
     }
+}
+
+
+- (NSString *)meta
+{
+    if (!_meta && [_propertyKeys containsObject:kPropertyKeyType]) {
+        _meta = [self valueForKey:kPropertyKeyType];
+    }
+    
+    return _meta;
 }
 
 
@@ -159,6 +262,12 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
+- (BOOL)isReplicated
+{
+    return _instance ? [_instance isReplicated] : (self.dateReplicated != nil);
+}
+
+
 - (BOOL)hasValueForKey:(NSString *)key
 {
     return _instance ? [_instance hasValueForKey:key] : [[_valuesByKey allKeys] containsObject:key];
@@ -167,14 +276,18 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {
-    key = [OValidator propertyKeyForKey:key];
-    
-    if (_instance) {
+    if (_isCommitted) {
         [_instance setValue:value forKey:key];
-    } else if ([_propertyKeys containsObject:key] || [_relationshipKeys containsObject:key]) {
+    } else {
+        key = [OValidator propertyKeyForKey:key];
+        
         if (value) {
-            _valuesByKey[key] = value;
-        } else {
+            if ([_propertyKeys containsObject:key]) {
+                _valuesByKey[key] = [OValidator isDateKey:key] ? [value serialisedDate] : value;
+            } else if ([_toOneRelationshipKeys containsObject:key]) {
+                _valuesByKey[[OValidator referenceKeyForKey:key]] = [OValidator referenceForEntity:value];
+            }
+        } else if ([[_valuesByKey allKeys] containsObject:key]) {
             [_valuesByKey removeObjectForKey:key];
         }
     }
@@ -183,9 +296,36 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 
 - (id)valueForKey:(NSString *)key
 {
-    key = [OValidator propertyKeyForKey:key];
+    id value = nil;
     
-    return _instance ? [_instance valueForKey:key] : _valuesByKey[key];
+    if (_isCommitted) {
+        value = [_instance valueForKey:key];
+    } else {
+        key = [OValidator propertyKeyForKey:key];
+
+        if ([self hasValueForKey:key]) {
+            if ([_propertyKeys containsObject:key]) {
+                value = _valuesByKey[key];
+                
+                if ([OValidator isDateKey:key]) {
+                    value = [NSDate dateFromSerialisedDate:value];
+                }
+            } else if ([_toOneRelationshipKeys containsObject:key]) {
+                NSString *referenceKey = [OValidator referenceKeyForKey:key];
+                NSString *referencedEntityId = _valuesByKey[referenceKey][kPropertyKeyEntityId];
+                
+                value = _cachedProxiesByEntityId[referencedEntityId];
+            }
+        }
+    }
+    
+    return value;
+}
+
+
+- (NSDictionary *)toDictionary
+{
+    return [NSDictionary dictionaryWithDictionary:_valuesByKey];
 }
 
 
@@ -193,7 +333,7 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 {
     NSString *reuseIdentifier = NSStringFromClass(_entityClass);
     
-    if ([[_entityClass propertyKeys] containsObject:kPropertyKeyType]) {
+    if ([_propertyKeys containsObject:kPropertyKeyType]) {
         NSString *type = [self valueForKey:kPropertyKeyType];
         
         if (type) {
@@ -205,52 +345,116 @@ static NSString * const kClassSuffixProxy = @"Proxy";
 }
 
 
+- (void)reflectEntity:(id<OEntity>)entity
+{
+    if (_entityClass == entity.entityClass) {
+        if ([entity instance]) {
+            [self useInstance:[entity instance]];
+        } else {
+            for (NSString *key in _propertyKeys) {
+                if ([entity hasValueForKey:key]) {
+                    [self setValue:[entity valueForKey:key] forKey:key];
+                }
+            }
+            
+            for (NSString *key in _toOneRelationshipKeys) {
+                if ([entity hasValueForKey:key]) {
+                    [self setValue:[entity valueForKey:key] forKey:key];
+                }
+            }
+        }
+    }
+}
+
+
 - (void)useInstance:(id<OEntity>)instance
 {
     _instance = [instance instance];
     
-    [_valuesByKey removeAllObjects];
+    NSString *entityId = self.entityId;
+    
+    [self resetPropertyStore];
     
     if (!_instance) {
-        [self setValue:[OCrypto generateUUID] forKeyPath:kPropertyKeyEntityId];
+        [self setValue:entityId forKey:kPropertyKeyEntityId];
     }
 }
 
 
 - (id)commit
 {
-    if (!_isCommitted) {
-        if (!_instance) {
-            _instance = [_entityClass instanceWithId:self.entityId];
+    static BOOL isCommitting = NO;
+    
+    if (isCommitting) {
+        if (![self isReplicated] && !_instance) {
+            if ([self respondsToSelector:@selector(instantiate)]) {
+                _instance = [self instantiate];
+            } else {
+                _instance = [_entityClass instanceWithId:self.entityId];
+            }
             
-            for (NSString *key in [_entityClass propertyKeys]) {
+            for (NSString *key in _propertyKeys) {
                 if (![key isEqualToString:kPropertyKeyEntityId]) {
-                    id value = _valuesByKey[key];
+                    id value = [self valueForKey:key];
                     
                     if (value) {
                         [_instance setValue:value forKey:key];
                     }
                 }
             }
-        }
-        
-        _isCommitted = YES;
-        
-        for (NSString *key in [_entityClass relationshipKeys]) {
-            id relationship = _valuesByKey[key];
             
-            if (relationship) {
-                if ([relationship conformsToProtocol:@protocol(OEntity)]) {
-                    [relationship commit];
-                } else if ([relationship isKindOfClass:[NSSet class]]) {
-                    for (id relationshipItem in relationship) {
-                        [relationshipItem commit];
+            [self resetPropertyStore];
+            
+            if (![_entityClass isRelationshipClass]) {
+                for (NSString *key in _toOneRelationshipKeys) {
+                    id referencedEntity = [self valueForKey:key];
+                    
+                    if (referencedEntity) {
+                        if (![referencedEntity isCommitted]) {
+                            [referencedEntity commit];
+                        }
+                        
+                        [_instance setValue:[referencedEntity instance] forKey:key];
                     }
                 }
             }
         }
         
-        [_valuesByKey removeAllObjects];
+        _isCommitted = YES;
+    } else {
+        isCommitting = YES;
+        
+        NSMutableArray *replicatedProxies = [NSMutableArray array];
+        NSMutableArray *replicatedDictionaries = [NSMutableArray array];
+        NSMutableArray *pendingProxies = [NSMutableArray array];
+        
+        for (OEntityProxy *proxy in [_cachedProxiesByEntityId allValues]) {
+            if (![proxy isCommitted]) {
+                if ([proxy isReplicated] && ![proxy instance]) {
+                    [replicatedProxies addObject:proxy];
+                    [replicatedDictionaries addObject:[proxy toDictionary]];
+                } else {
+                    [pendingProxies addObject:proxy];
+                }
+            }
+        }
+        
+        if ([replicatedProxies count]) {
+            [[OMeta m].context saveEntityDictionaries:replicatedDictionaries];
+            
+            for (OEntityProxy *proxy in replicatedProxies) {
+                [proxy useInstance:[[OMeta m].context entityWithId:proxy.entityId]];
+                [proxy commit];
+            }
+        }
+        
+        for (OEntityProxy *proxy in pendingProxies) {
+            [proxy commit];
+        }
+        
+        [_cachedProxiesByEntityId removeAllObjects];
+        
+        isCommitting = NO;
     }
     
     return _instance;
@@ -289,7 +493,7 @@ static NSString * const kClassSuffixProxy = @"Proxy";
             key = [[key substringFromIndex:3] stringByLowercasingFirstLetter];
         }
         
-        if ([_propertyKeys containsObject:key] || [_relationshipKeys containsObject:key]) {
+        if ([_propertyKeys containsObject:key] || [_toOneRelationshipKeys containsObject:key]) {
             _forwardSelectorArgument = key;
             
             if (isSetter) {

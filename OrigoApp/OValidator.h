@@ -19,7 +19,8 @@
 + (BOOL)isAlternatingLabelKey:(NSString *)key;
 + (BOOL)isAlternatingInputFieldKey:(NSString *)key;
 
-+ (NSDictionary *)keyMappings;
++ (NSDictionary *)referenceForEntity:(id<OEntity>)entity;
++ (NSString *)referenceKeyForKey:(NSString *)key;
 + (NSString *)propertyKeyForKey:(NSString *)key;
 
 + (BOOL)value:(id)value isValidForKey:(NSString *)key;

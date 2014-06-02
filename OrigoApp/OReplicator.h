@@ -20,9 +20,4 @@
 - (void)loadUserReplicationState;
 - (void)resetUserReplicationState;
 
-- (void)stageEntity:(OReplicatedEntity *)entity;
-- (void)stageRelationshipRefs:(NSDictionary *)relationshipRefs forEntity:(OReplicatedEntity *)entity;
-- (OReplicatedEntity *)stagedEntityWithId:(NSString *)entityId;
-- (NSDictionary *)stagedRelationshipRefsForEntity:(OReplicatedEntity *)entity;
-
 @end

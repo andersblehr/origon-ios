@@ -8,6 +8,11 @@
 
 #import "OValidator.h"
 
+static NSInteger const kMinimumPassordLength = 6;
+static NSInteger const kMinimumPhoneNumberLength = 5;
+
+static NSString * const kReferenceKeyFormat = @"%@Ref";
+
 static NSArray *_nameKeys = nil;
 static NSArray *_dateKeys = nil;
 static NSArray *_emailKeys = nil;
@@ -15,9 +20,6 @@ static NSArray *_phoneNumberKeys = nil;
 static NSArray *_passwordKeys = nil;
 
 static NSDictionary *_keyMappings = nil;
-
-static NSInteger const kMinimumPassordLength = 6;
-static NSInteger const kMinimumPhoneNumberLength = 5;
 
 
 @implementation OValidator
@@ -27,7 +29,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 + (BOOL)isNameKey:(NSString *)key
 {
     if (!_nameKeys) {
-        _nameKeys = @[kPropertyKeyName, kInterfaceKeyResidenceName];
+        _nameKeys = @[kPropertyKeyName, kUnboundKeyResidenceName];
     }
     
     return [_nameKeys containsObject:key];
@@ -43,7 +45,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 + (BOOL)isDateKey:(NSString *)key
 {
     if (!_dateKeys) {
-        _dateKeys = [NSArray array];
+        _dateKeys = @[kPropertyKeyActiveSince, kPropertyKeyDateCreated, kPropertyKeyDateExpires, kPropertyKeyDateReplicated];
     }
     
     return [self isAgeKey:key] || [_dateKeys containsObject:key];
@@ -53,7 +55,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 + (BOOL)isEmailKey:(NSString *)key
 {
     if (!_emailKeys) {
-        _emailKeys = @[kInterfaceKeyAuthEmail, kPropertyKeyEmail];
+        _emailKeys = @[kUnboundKeyAuthEmail, kPropertyKeyEmail];
     }
     
     return [_emailKeys containsObject:key];
@@ -73,7 +75,7 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 + (BOOL)isPasswordKey:(NSString *)key
 {
     if (!_passwordKeys) {
-        _passwordKeys = @[kInterfaceKeyPassword, kInterfaceKeyRepeatPassword];
+        _passwordKeys = @[kUnboundKeyPassword, kUnboundKeyRepeatPassword];
     }
     
     return [_passwordKeys containsObject:key];
@@ -92,24 +94,44 @@ static NSInteger const kMinimumPhoneNumberLength = 5;
 }
 
 
-#pragma mark - Key mapping
+#pragma mark - Key indirection
 
-+ (NSDictionary *)keyMappings
++ (NSDictionary *)referenceForEntity:(id<OEntity>)entity
 {
-    if (!_keyMappings) {
-        _keyMappings = @{
-            kInterfaceKeyResidenceName : kPropertyKeyName,
-            kInterfaceKeyPurpose : kPropertyKeyDescriptionText
-        };
+    NSMutableDictionary *reference = [NSMutableDictionary dictionary];
+    
+    reference[kUnboundKeyEntityClass] = NSStringFromClass(entity.entityClass);
+    reference[kPropertyKeyEntityId] = entity.entityId;
+    
+    if ([entity conformsToProtocol:@protocol(OMember)]) {
+        NSString *email = [entity valueForKey:kPropertyKeyEmail];
+        
+        if (email) {
+            reference[kPropertyKeyEmail] = email;
+        }
     }
     
-    return _keyMappings;
+    return reference;
+}
+
+
++ (NSString *)referenceKeyForKey:(NSString *)key
+{
+    return [NSString stringWithFormat:kReferenceKeyFormat, key];
 }
 
 
 + (NSString *)propertyKeyForKey:(NSString *)key
 {
-    return [[[self keyMappings] allKeys] containsObject:key] ? _keyMappings[key] : key;
+    if (!_keyMappings) {
+        _keyMappings = @{
+            kUnboundKeyGivenName : kPropertyKeyName,
+            kUnboundKeyPurpose : kPropertyKeyDescriptionText,
+            kUnboundKeyResidenceName : kPropertyKeyName
+        };
+    }
+    
+    return [[_keyMappings allKeys] containsObject:key] ? _keyMappings[key] : key;
 }
 
 

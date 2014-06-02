@@ -13,41 +13,41 @@
 
 + (NSData *)serialise:(id)object
 {
-    NSData *serialisedObject = nil;
+    NSData *JSONSerialisation = nil;
     
     if (object) {
         NSError *error;
-        serialisedObject = [self dataWithJSONObject:object options:NSJSONWritingPrettyPrinted error:&error];
+        JSONSerialisation = [self dataWithJSONObject:object options:NSJSONWritingPrettyPrinted error:&error];
         
-        if (!serialisedObject) {
+        if (!JSONSerialisation) {
             OLogVerbose(@"Error serialising object to JSON: %@", object);
             OLogError(@"JSON serialisation error: %@", error);
         }
     }
     
-    OLogDebug(@"Produced JSON serialisation: %@", [[NSString alloc] initWithData:serialisedObject encoding:NSUTF8StringEncoding]);
+    OLogDebug(@"Produced JSON serialisation: %@", [[NSString alloc] initWithData:JSONSerialisation encoding:NSUTF8StringEncoding]);
     
-    return serialisedObject;
+    return JSONSerialisation;
 }
 
 
 + (id)deserialise:(NSData *)JSONData
 {
-    id deserialisedJSON = nil;
+    id deserialisedObjects = nil;
     
     if (JSONData) {
         NSError *error;
-        deserialisedJSON = [self JSONObjectWithData:JSONData options:kNilOptions error:&error];
+        deserialisedObjects = [self JSONObjectWithData:JSONData options:kNilOptions error:&error];
         
-        if (!deserialisedJSON) {
+        if (!deserialisedObjects) {
             OLogVerbose(@"Error deserialising JSON data: %@", [[NSString alloc] initWithData:JSONData encoding:NSUTF8StringEncoding]);
             OLogError(@"JSON deserialisation error: %@", error);
         }
     }
     
-    OLogDebug(@"Deserialised JSON: %@", deserialisedJSON);
+    OLogDebug(@"Deserialised objects: %@", deserialisedObjects);
     
-    return deserialisedJSON;
+    return deserialisedObjects;
 }
 
 @end

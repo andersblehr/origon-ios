@@ -10,20 +10,20 @@
 
 @interface UIBarButtonItem (OrigoAdditions)
 
-+ (instancetype)settingsButton;
-+ (instancetype)plusButton;
-+ (instancetype)actionButton;
-+ (instancetype)lookupButton;
-+ (instancetype)nextButton;
-+ (instancetype)editButton;
-+ (instancetype)cancelButton;
-+ (instancetype)skipButton;
-+ (instancetype)doneButton;
-+ (instancetype)signOutButton;
++ (instancetype)settingsButtonWithTarget:(id)target;
++ (instancetype)plusButtonWithTarget:(id)target;
++ (instancetype)actionButtonWithTarget:(id)target;
++ (instancetype)lookupButtonWithTarget:(id)target;
++ (instancetype)nextButtonWithTarget:(id)target;
++ (instancetype)editButtonWithTarget:(id)target;
++ (instancetype)cancelButtonWithTarget:(id)target;
++ (instancetype)skipButtonWithTarget:(id)target;
++ (instancetype)doneButtonWithTarget:(id)target;
++ (instancetype)signOutButtonWithTarget:(id)target;
 
-+ (instancetype)sendTextButton;
-+ (instancetype)phoneCallButton;
-+ (instancetype)sendEmailButton;
++ (instancetype)sendTextButtonWithTarget:(id)target;
++ (instancetype)phoneCallButtonWithTarget:(id)target;
++ (instancetype)sendEmailButtonWithTarget:(id)target;
 
 + (instancetype)flexibleSpace;
 + (instancetype)buttonWithTitle:(NSString *)title;

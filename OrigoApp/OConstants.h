@@ -32,26 +32,12 @@ extern NSString * const kLanguageCodeHungarian;
 extern NSString * const kDefaultsKeyAuthInfo;
 extern NSString * const kDefaultsKeyDirtyEntities;
 
-// JSON keys
-extern NSString * const kJSONKeyActivationCode;
-extern NSString * const kJSONKeyDeviceId;
-extern NSString * const kJSONKeyEmail;
-extern NSString * const kJSONKeyEntityClass;
-extern NSString * const kJSONKeyPasswordHash;
-
-// Autonomous interface keys
-extern NSString * const kInterfaceKeyActivate;
-extern NSString * const kInterfaceKeyActivationCode;
-extern NSString * const kInterfaceKeyAuthEmail;
-extern NSString * const kInterfaceKeyPassword;
-extern NSString * const kInterfaceKeyPurpose;
-extern NSString * const kInterfaceKeyRepeatPassword;
-extern NSString * const kInterfaceKeyResidenceName;
-extern NSString * const kInterfaceKeySignIn;
-
 // Entity property keys
+extern NSString * const kPropertyKeyActiveSince;
 extern NSString * const kPropertyKeyAddress;
 extern NSString * const kPropertyKeyCountryCode;
+extern NSString * const kPropertyKeyDateCreated;
+extern NSString * const kPropertyKeyDateExpires;
 extern NSString * const kPropertyKeyDateOfBirth;
 extern NSString * const kPropertyKeyDateReplicated;
 extern NSString * const kPropertyKeyDescriptionText;
@@ -74,8 +60,20 @@ extern NSString * const kPropertyKeyType;
 
 // Entity relationship keys
 extern NSString * const kRelationshipKeyMember;
-extern NSString * const kRelationshipKeyMemberships;
 extern NSString * const kRelationshipKeyOrigo;
+
+// Unbound keys
+extern NSString * const kUnboundKeyActivate;
+extern NSString * const kUnboundKeyActivationCode;
+extern NSString * const kUnboundKeyAuthEmail;
+extern NSString * const kUnboundKeyDeviceId;
+extern NSString * const kUnboundKeyEntityClass;
+extern NSString * const kUnboundKeyGivenName;
+extern NSString * const kUnboundKeyPassword;
+extern NSString * const kUnboundKeyPurpose;
+extern NSString * const kUnboundKeyRepeatPassword;
+extern NSString * const kUnboundKeyResidenceName;
+extern NSString * const kUnboundKeySignIn;
 
 // String key prefixes
 extern NSString * const kStringPrefixDefault;

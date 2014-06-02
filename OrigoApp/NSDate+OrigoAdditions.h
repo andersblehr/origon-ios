@@ -15,7 +15,9 @@ extern NSString * const kDateTimeFormatZulu;
 + (NSDate *)defaultDate;
 + (NSDate *)earliestValidBirthDate;
 + (NSDate *)latestValidBirthDate;
-+ (NSDate *)dateWithDeserialisedDate:(NSNumber *)deserialisedDate;
+
+- (NSNumber *)serialisedDate;
++ (NSDate *)dateFromSerialisedDate:(NSNumber *)deserialisedDate;
 
 - (NSString *)localisedDateString;
 - (NSString *)localisedAgeString;

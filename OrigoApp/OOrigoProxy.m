@@ -88,7 +88,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 - (instancetype)initWithAddressBookAddress:(CFDictionaryRef)address
 {
-    self = [[self class] proxyForEntityOfClass:[OOrigo class] type:kOrigoTypeResidence];
+    self = [[self class] proxyForEntityOfClass:[OOrigo class] meta:kOrigoTypeResidence];
     
     if (self) {
         [self formatAddressFromAddressBookAddress:address];
@@ -102,7 +102,7 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 + (instancetype)proxyWithType:(NSString *)type
 {
-    return [self proxyForEntityOfClass:[OOrigo class] type:type];
+    return [self proxyForEntityOfClass:[OOrigo class] meta:type];
 }
 
 
@@ -116,16 +116,16 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 - (NSSet *)allMemberships
 {
-    NSSet *allMemberships = nil;
+    NSMutableSet *allMemberships = [NSMutableSet set];
     
     if ([self instance]) {
-        allMemberships = [[self instance] allMemberships];
-    } else {
-        if (![self hasValueForKey:kRelationshipKeyMemberships]) {
-            [self setValue:[NSMutableSet set] forKey:kRelationshipKeyMemberships];
+        [allMemberships unionSet:[[self instance] allMemberships]];
+    }
+    
+    for (id<OMembership> membership in [self cachedProxiesForEntityClass:[OMembership class]]) {
+        if ([membership.origo.entityId isEqualToString:self.entityId]) {
+            [allMemberships addObject:membership];
         }
-        
-        allMemberships = [self valueForKey:kRelationshipKeyMemberships];
     }
     
     return allMemberships;
@@ -150,13 +150,15 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 - (NSSet *)members
 {
-    NSMutableSet *members = [NSMutableSet set];
+    id members = [NSMutableSet set];
     
     if ([self instance]) {
-        members = [[[self instance] members] mutableCopy];
+        members = [[self instance] members];
     } else {
         for (id<OMembership> membership in [self allMemberships]) {
-            [members addObject:membership.member];
+            if ([membership isFull]) {
+                [members addObject:membership.member];
+            }
         }
     }
     
@@ -168,9 +170,10 @@ static NSString * const kAddressTemplatesByCountryCode =
 {
     id<OMembership> membership = nil;
     
-    if ([self instance]) {
-        membership = [[self instance] addMember:member];
+    if ([self instance] && [member instance]) {
+        membership = [[self instance] addMember:[member instance]];
     } else {
+        member = [member proxy];
         membership = [self membershipForMember:member];
         
         if (!membership) {
@@ -186,8 +189,8 @@ static NSString * const kAddressTemplatesByCountryCode =
 {
     id<OMembership> targetMembership = nil;
     
-    if ([self instance]) {
-        targetMembership = [[self instance] membershipForMember:member];
+    if ([self instance] && [member instance]) {
+        targetMembership = [[self instance] membershipForMember:[member instance]];
     } else {
         for (id<OMembership> membership in [self allMemberships]) {
             if (!targetMembership && [membership.member.entityId isEqualToString:member.entityId]) {

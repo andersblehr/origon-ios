@@ -312,7 +312,7 @@
 
 // Alerts
 "Incorrect details" = "Uriktige opplysninger";
-"The details you have provided do not match our records ..." = "Opplysningene du har oppgitt, stemmer ikke med dem som er lagret hos oss. Du kan ikke legge til denne personen om du har uriktige opplysninger.";
+"The details you have provided do not match our records ..." = "Opplysningene du har oppgitt, stemmer ikke med dem som er lagret hos oss. Du kan bare legge til denne personen om du har riktige opplysninger.";
 "Already member" = "Allerede medlem";
 "%@ is already a member of %@." = "%@ er allerede medlem i %@.";
 "New email address" = "Ny epost-adresse";

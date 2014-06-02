@@ -52,7 +52,7 @@ static OState *_activeState = nil;
 
 #pragma mark - Instantiation & initialisation
 
-- (instancetype)initWithViewController:(id<OTableViewController>)viewController
+- (instancetype)initWithViewController:(OTableViewController *)viewController
 {
     self = [super init];
     
@@ -203,7 +203,7 @@ static OState *_activeState = nil;
     if ([target conformsToProtocol:@protocol(OEntity)]) {
         if ([target conformsToProtocol:@protocol(OMember)]) {
             if (![target isCommitted]) {
-                _target = ((id<OOrigo>)target).type;
+                _target = [target meta];
             } else if ([target isUser]) {
                 _target = kTargetUser;
                 _aspect = kAspectHousehold;

@@ -563,7 +563,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)setFrame:(CGRect)frame
 {
     if ([OMeta systemIs_iOS6x]) {
-        if (!((OTableViewController *)_state.viewController).usesPlainTableViewStyle) {
+        if (!_state.viewController.usesPlainTableViewStyle) {
             frame.origin.x = -kDefaultCellPadding;
             frame.size.width = [OMeta screenWidth] + 2.f * kDefaultCellPadding;
         }

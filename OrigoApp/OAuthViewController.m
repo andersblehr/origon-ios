@@ -85,7 +85,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         if ([self targetIs:kTargetUser]) {
             [OAlert showAlertWithTitle:NSLocalizedString(@"Activation failed", @"") text:NSLocalizedString(@"It looks like you may have lost the activation code ...", @"") tag:kAlertTagActivationFailed];
         } else if ([self targetIs:kTargetEmail]) {
-            [self.dismisser dismissModalViewController:self reload:YES];
+            [self.dismisser dismissModalViewController:self];
         }
     }
 }
@@ -108,7 +108,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)userDidAuthenticateWithData:(NSArray *)data
 {
     if (data) {
-        [[OMeta m].context saveServerReplicas:data];
+        [[OMeta m].context saveEntityDictionaries:data];
     }
     
     [[OMeta m] userDidSignIn];
@@ -116,7 +116,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     if ([self actionIs:kActionSignIn]) {
         [OMeta m].user.passwordHash = [OCrypto passwordHashWithPassword:_passwordField.value];
     } else if ([self actionIs:kActionActivate]) {
-        [OMeta m].user.passwordHash = _authInfo[kJSONKeyPasswordHash];
+        [OMeta m].user.passwordHash = _authInfo[kPropertyKeyPasswordHash];
         
         [[OMeta m] userDidSignUp];
         [[OMeta m].user residence];
@@ -124,7 +124,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [ODefaults removeGlobalDefaultForKey:kDefaultsKeyAuthInfo];
     }
     
-    [self.dismisser dismissModalViewController:self reload:YES];
+    [self.dismisser dismissModalViewController:self];
 }
 
 
@@ -133,7 +133,6 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     [self.tableView addLogoBanner];
 
     self.canEdit = YES;
@@ -171,8 +170,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         if (authInfoArchive) {
             _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
             
-            [OMeta m].userEmail = _authInfo[kJSONKeyEmail];
-            [OMeta m].deviceId = _authInfo[kJSONKeyDeviceId];
+            [OMeta m].userEmail = _authInfo[kPropertyKeyEmail];
+            [OMeta m].deviceId = _authInfo[kUnboundKeyDeviceId];
 
             self.state.action = kActionActivate;
         } else {
@@ -192,7 +191,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-- (NSString *)reuseIdentifierForIndexPath:(NSIndexPath *)indexPath
+- (NSString *)reuseIdentifierForDetailSection
 {
     NSString *reuseIdentifier = nil;
     
@@ -233,11 +232,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)willDisplayDetailCell:(OTableViewCell *)cell
 {
     if ([self actionIs:kActionSignIn]) {
-        _emailField = [cell inputFieldForKey:kInterfaceKeyAuthEmail];
-        _passwordField = [cell inputFieldForKey:kInterfaceKeyPassword];
+        _emailField = [cell inputFieldForKey:kUnboundKeyAuthEmail];
+        _passwordField = [cell inputFieldForKey:kUnboundKeyPassword];
     } else if ([self actionIs:kActionActivate]) {
-        _activationCodeField = [cell inputFieldForKey:kInterfaceKeyActivationCode];
-        _repeatPasswordField = [cell inputFieldForKey:kInterfaceKeyRepeatPassword];
+        _activationCodeField = [cell inputFieldForKey:kUnboundKeyActivationCode];
+        _repeatPasswordField = [cell inputFieldForKey:kUnboundKeyRepeatPassword];
     }
 }
 
@@ -274,7 +273,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             [[OConnection connectionWithDelegate:self] activateWithEmail:[OMeta m].userEmail password:_repeatPasswordField.value];
         } else if ([self targetIs:kTargetEmail]) {
             [OMeta m].userEmail = self.target;
-            [self.dismisser dismissModalViewController:self reload:YES];
+            [self.dismisser dismissModalViewController:self];
         }
     }
 }
@@ -282,7 +281,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (BOOL)canValidateInputForKey:(NSString *)key
 {
-    return [@[kInterfaceKeyActivationCode, kInterfaceKeyRepeatPassword] containsObject:key];
+    return [@[kUnboundKeyActivationCode, kUnboundKeyRepeatPassword] containsObject:key];
 }
 
 
@@ -290,17 +289,17 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 {
     BOOL isValid = NO;
     
-    if ([key isEqualToString:kInterfaceKeyActivationCode]) {
-        NSString *activationCode = _authInfo[kJSONKeyActivationCode];
+    if ([key isEqualToString:kUnboundKeyActivationCode]) {
+        NSString *activationCode = _authInfo[kUnboundKeyActivationCode];
         NSString *activationCodeAsEntered = [inputValue lowercaseString];
         
         isValid = [activationCodeAsEntered isEqualToString:activationCode];
-    } else if ([key isEqualToString:kInterfaceKeyRepeatPassword]) {
+    } else if ([key isEqualToString:kUnboundKeyRepeatPassword]) {
         NSString *passwordHashAsEntered = [OCrypto passwordHashWithPassword:inputValue];
         NSString *passwordHash = nil;
         
         if ([self targetIs:kTargetUser]) {
-            passwordHash = _authInfo[kJSONKeyPasswordHash];
+            passwordHash = _authInfo[kPropertyKeyPasswordHash];
         } else if ([self targetIs:kTargetEmail]) {
             passwordHash = [OMeta m].user.passwordHash;
         }

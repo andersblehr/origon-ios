@@ -246,8 +246,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [_detailCell readData];
         [self toggleEditMode];
     } else {
-        _returnData = nil;
-        [_dismisser dismissModalViewController:self reload:NO];
+        _didCancel = !_cancelImpliesSkip;
+        [_dismisser dismissModalViewController:self];
     }
 }
 
@@ -255,13 +255,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)didFinishEditing
 {
     if ([self actionIs:kActionInput]) {
-        [_detailCell processInput];
-        
         if (_isModal && [self isEntityViewController]) {
             _returnData = _entity;
         }
+        
+        [_detailCell processInput];
     } else {
-        [_dismisser dismissModalViewController:self reload:YES];
+        [_dismisser dismissModalViewController:self];
     }
 }
 
@@ -465,7 +465,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)dismissModalViewController:(OTableViewController *)viewController reload:(BOOL)reload
+- (void)dismissModalViewController:(OTableViewController *)viewController
 {
     BOOL shouldRelayDismissal = NO;
     
@@ -476,17 +476,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     if (shouldRelayDismissal) {
-        if (!reload && viewController.cancelImpliesSkip) {
-            [_dismisser dismissModalViewController:self reload:YES];
-        } else {
-            [_dismisser dismissModalViewController:self reload:reload];
-        }
+        [_dismisser dismissModalViewController:self];
     } else {
         if ([_instance respondsToSelector:@selector(willDismissModalViewController:)]) {
             [_instance willDismissModalViewController:viewController];
         }
         
-        _shouldReloadOnModalDismissal = [[OMeta m] userIsSignedIn] ? reload : NO;
+        if ([[OMeta m] userIsSignedIn]) {
+            _shouldReloadOnModalDismissal = !viewController.didCancel;
+        }
         
         [self dismissViewControllerAnimated:YES completion:^{
             _shouldReloadOnModalDismissal = NO;
@@ -513,9 +511,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         leftButton = self.navigationItem.leftBarButtonItem;
         
         if (!_cancelButton) {
-            _cancelButton = [UIBarButtonItem cancelButton];
-            _nextButton = [UIBarButtonItem nextButton];
-            _doneButton = [UIBarButtonItem doneButton];
+            _cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
+            _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
+            _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
         }
         
         self.navigationItem.leftBarButtonItem = _cancelButton;
@@ -671,18 +669,18 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     if ([self actionIs:kActionRegister]) {
-        _nextButton = [UIBarButtonItem nextButton];
-        _doneButton = [UIBarButtonItem doneButton];
+        _nextButton = [UIBarButtonItem nextButtonWithTarget:self];
+        _doneButton = [UIBarButtonItem doneButtonWithTarget:self];
         
         if (_isModal) {
             if ([[OMeta m].user isActive]) {
                 if (_cancelImpliesSkip) {
-                    self.navigationItem.leftBarButtonItem = [UIBarButtonItem skipButton];
+                    self.navigationItem.leftBarButtonItem = [UIBarButtonItem skipButtonWithTarget:self];
                 } else {
-                    self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
+                    self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
                 }
             } else {
-                self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButton];
+                self.navigationItem.leftBarButtonItem = [UIBarButtonItem signOutButtonWithTarget:[OMeta m]];
             }
         }
         
@@ -711,8 +709,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _didResurface = !_isPushed && !_wasHidden && (!_isModal || !_didJustLoad);
     _didJustLoad = NO;
     
-    if (!_isModal && (!self.toolbarItems || _didResurface || _wasHidden)) {
-        if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
+    if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
+        if (!_isModal && (!self.toolbarItems || _didResurface || _wasHidden)) {
             self.toolbarItems = [_instance toolbarButtons];
         }
     }
@@ -802,20 +800,17 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     _target = target;
     
-    OEntityProxy *ancestor = _entity ? _entity.ancestor : nil;
+    id ancestor = _entity.ancestor;
     
     if ([target conformsToProtocol:@protocol(OEntity)]) {
         _entity = [target proxy];
     } else if ([self isEntityViewController]) {
-        _entity = [[_entityClass proxyClass] proxyForEntityOfClass:_entityClass type:target];
+        _entity = [[_entityClass proxyClass] proxyForEntityOfClass:_entityClass meta:target];
     }
     
     if (_entity) {
         _target = _entity;
-        
-        if (ancestor) {
-            _entity.ancestor = ancestor;
-        }
+        _entity.ancestor = ancestor;
     }
     
     if (_state) {
@@ -899,8 +894,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         } else {
             NSString *reuseIdentifier = nil;
             
-            if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
-                reuseIdentifier = [_instance reuseIdentifierForIndexPath:indexPath];
+            if ([_instance respondsToSelector:@selector(reuseIdentifierForDetailSection)]) {
+                reuseIdentifier = [_instance reuseIdentifierForDetailSection];
             } else {
                 reuseIdentifier = [_entity reuseIdentifier];
             }
@@ -920,8 +915,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (indexPath.section == [self sectionNumberForSectionKey:_detailSectionKey]) {
         NSString *reuseIdentifier = nil;
         
-        if ([_instance respondsToSelector:@selector(reuseIdentifierForIndexPath:)]) {
-            reuseIdentifier = [_instance reuseIdentifierForIndexPath:indexPath];
+        if ([_instance respondsToSelector:@selector(reuseIdentifierForDetailSection)]) {
+            reuseIdentifier = [_instance reuseIdentifierForDetailSection];
         }
         
         if (reuseIdentifier) {
@@ -970,8 +965,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _sectionCounts[sectionKey] = @([_sectionCounts[sectionKey] integerValue] - 1);
         [sectionData removeObjectAtIndex:indexPath.row];
         
-        if ([_entity isCommitted] && [entity isCommitted]) {
-            [[[_entity instance] relationshipToEntity:entity] expire];
+        if ([_entity instance] && [entity instance]) {
+            [[[_entity instance] relationshipToEntity:[entity instance]] expire];
             [[OMeta m].replicator replicateIfNeeded];
         }
         

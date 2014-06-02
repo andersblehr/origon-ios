@@ -43,13 +43,14 @@
 - (NSArray *)sortedPeers
 {
     NSSet *peers = nil;
+    id<OOrigo> origo = self.meta;
     
     if ([self targetIs:kTargetElder]) {
-        peers = [[OMeta m].user peersNotInOrigo:self.meta];
+        peers = [[OMeta m].user peersNotInOrigo:origo];
     } else {
         id<OMember> pivotMember = [self.meta ancestorConformingToProtocol:@protocol(OMember)];
         
-        peers = [pivotMember peersNotInOrigo:self.meta];
+        peers = [pivotMember peersNotInOrigo:origo];
     }
     
     return [[peers allObjects] sortedArrayUsingSelector:@selector(compare:)];
@@ -62,10 +63,10 @@
 {
     if ([self targetIsMemberVariant]) {
         self.usesPlainTableViewStyle = YES;
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButton];
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
         
         if ([self isMultiValuePicker]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButton];
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
             self.navigationItem.rightBarButtonItem.enabled = NO;
         }
     } else {
@@ -123,7 +124,7 @@
         } else {
             self.returnData = pickedValue;
             
-            [self.dismisser dismissModalViewController:self reload:YES];
+            [self.dismisser dismissModalViewController:self];
         }
     } else {
         [_settings setValue:pickedValue forSettingKey:_settingKey];

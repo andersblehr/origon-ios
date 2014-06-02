@@ -61,52 +61,6 @@
 }
 
 
-#pragma mark - Merge/insert entity data from dictionary
-
-- (id)mergeEntityFromDictionary:(NSDictionary *)entityDictionary
-{
-    NSString *entityId = entityDictionary[kPropertyKeyEntityId];
-    OReplicatedEntity *entity = [self entityWithId:entityId];
-    
-    if (!entity) {
-        NSString *entityClass = entityDictionary[kJSONKeyEntityClass];
-        
-        entity = [self insertEntityOfClass:NSClassFromString(entityClass) entityId:entityId];
-        entity.origoId = entityDictionary[kPropertyKeyOrigoId];
-    }
-    
-    NSDictionary *attributes = [entity.entity attributesByName];
-    NSDictionary *relationships = [entity.entity relationshipsByName];
-    
-    for (NSString *attributeKey in [attributes allKeys]) {
-        [entity setDeserialisedValue:entityDictionary[attributeKey] forKey:attributeKey];
-    }
-    
-    NSMutableDictionary *relationshipRefs = [NSMutableDictionary dictionary];
-    
-    for (NSString *relationshipKey in [relationships allKeys]) {
-        NSRelationshipDescription *relationship = relationships[relationshipKey];
-        
-        if (!relationship.isToMany) {
-            NSString *relationshipRefName = [NSString stringWithFormat:@"%@Ref", relationshipKey];
-            NSDictionary *relationshipRef = entityDictionary[relationshipRefName];
-            
-            if (relationshipRef) {
-                relationshipRefs[relationshipKey] = relationshipRef;
-            }
-        }
-    }
-    
-    [[OMeta m].replicator stageEntity:entity];
-    
-    if ([relationshipRefs count]) {
-        [[OMeta m].replicator stageRelationshipRefs:relationshipRefs forEntity:entity];
-    }
-    
-    return entity;
-}
-
-
 #pragma mark - Preparing for entity replication
 
 - (NSSet *)pendingEntities
@@ -335,16 +289,16 @@
 }
 
 
-- (void)saveServerReplicas:(NSArray *)replicaDictionaries
+- (void)saveEntityDictionaries:(NSArray *)entityDictionaries
 {
     NSMutableSet *entities = [NSMutableSet set];
     
-    for (NSDictionary *replicaDictionary in replicaDictionaries) {
-        BOOL hasExpired = [replicaDictionary[kPropertyKeyIsExpired] boolValue];
-        NSString *entityId = replicaDictionary[kPropertyKeyEntityId];
+    for (NSDictionary *entityDictionary in entityDictionaries) {
+        BOOL hasExpired = [entityDictionary[kPropertyKeyIsExpired] boolValue];
+        NSString *entityId = entityDictionary[kPropertyKeyEntityId];
         
         if (!hasExpired || [self entityWithId:entityId]) {
-            [entities addObject:[self mergeEntityFromDictionary:replicaDictionary]];
+            [entities addObject:[OReplicatedEntity instanceFromDictionary:entityDictionary]];
         }
     }
     

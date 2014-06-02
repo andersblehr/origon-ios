@@ -15,9 +15,9 @@
 
 - (id<OMembership>)addMember:(id<OMember>)member isAssociate:(BOOL)isAssociate
 {
-    OMembership *membership = nil;
+    id<OMembership> membership = nil;
     
-    if ([member isCommitted]) {
+    if ([member instance]) {
         member = [member instance];
         membership = [self membershipForMember:member];
         
@@ -35,6 +35,8 @@
                 [[OMeta m].context insertCrossReferencesForMembership:membership];
             }
         }
+    } else {
+        membership = [[self proxy] addMember:member];
     }
     
     return membership;
@@ -196,7 +198,7 @@
 {
     OMembership *targetMembership = nil;
     
-    if ([member isCommitted]) {
+    if ([member instance]) {
         member = [member instance];
         
         for (OMembership *membership in self.memberships) {
@@ -318,7 +320,7 @@
 {
     BOOL indirectlyKnows = NO;
     
-    if ([member isCommitted]) {
+    if ([member instance]) {
         member = [member instance];
         OMembership *directMembership = [self membershipForMember:member];
         
@@ -343,7 +345,7 @@
 {
     BOOL hasResidentsInCommon = NO;
     
-    if ([residence isCommitted]) {
+    if ([residence instance]) {
         residence = [residence instance];
         
         if ([self isOfType:kOrigoTypeResidence] && [residence isOfType:kOrigoTypeResidence]) {

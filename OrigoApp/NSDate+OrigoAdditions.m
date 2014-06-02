@@ -78,9 +78,15 @@ static NSCalendar *_calendar = nil;
 
 #pragma mark - Converting from back-end date format
 
-+ (NSDate *)dateWithDeserialisedDate:(NSNumber *)deserialisedDate
+- (NSNumber *)serialisedDate
 {
-    return [self dateWithTimeIntervalSince1970:[deserialisedDate doubleValue] / 1000];
+    return [NSNumber numberWithLongLong:[self timeIntervalSince1970] * 1000];
+}
+
+
++ (NSDate *)dateFromSerialisedDate:(NSNumber *)serialisedDate
+{
+    return [self dateWithTimeIntervalSince1970:[serialisedDate doubleValue] / 1000];
 }
 
 

@@ -32,26 +32,12 @@ NSString * const kLanguageCodeHungarian = @"hu";
 NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
 NSString * const kDefaultsKeyDirtyEntities = @"origo.state.dirtyEntities";
 
-// JSON keys
-NSString * const kJSONKeyActivationCode = @"activationCode";
-NSString * const kJSONKeyDeviceId = @"deviceId";
-NSString * const kJSONKeyEmail = @"email";
-NSString * const kJSONKeyEntityClass = @"entityClass";
-NSString * const kJSONKeyPasswordHash = @"passwordHash";
-
-// Autonomous interface keys
-NSString * const kInterfaceKeyActivate = @"activate";
-NSString * const kInterfaceKeyActivationCode = @"activationCode";
-NSString * const kInterfaceKeyAuthEmail = @"authEmail";
-NSString * const kInterfaceKeyPassword = @"password";
-NSString * const kInterfaceKeyPurpose = @"purpose";
-NSString * const kInterfaceKeyResidenceName = @"residenceName";
-NSString * const kInterfaceKeyRepeatPassword = @"repeatPassword";
-NSString * const kInterfaceKeySignIn = @"signIn";
-
 // Entity property keys
+NSString * const kPropertyKeyActiveSince = @"activeSince";
 NSString * const kPropertyKeyAddress = @"address";
 NSString * const kPropertyKeyCountryCode = @"countryCode";
+NSString * const kPropertyKeyDateCreated = @"dateCreated";
+NSString * const kPropertyKeyDateExpires = @"dateExpires";
 NSString * const kPropertyKeyDateOfBirth = @"dateOfBirth";
 NSString * const kPropertyKeyDateReplicated = @"dateReplicated";
 NSString * const kPropertyKeyDescriptionText = @"descriptionText";
@@ -74,8 +60,20 @@ NSString * const kPropertyKeyType = @"type";
 
 // Entity relationship keys
 NSString * const kRelationshipKeyMember = @"member";
-NSString * const kRelationshipKeyMemberships = @"memberships";
 NSString * const kRelationshipKeyOrigo = @"origo";
+
+// Unbound keys
+NSString * const kUnboundKeyActivate = @"activate";
+NSString * const kUnboundKeyActivationCode = @"activationCode";
+NSString * const kUnboundKeyAuthEmail = @"authEmail";
+NSString * const kUnboundKeyDeviceId = @"deviceId";
+NSString * const kUnboundKeyEntityClass = @"entityClass";
+NSString * const kUnboundKeyGivenName = @"givenName";
+NSString * const kUnboundKeyPassword = @"password";
+NSString * const kUnboundKeyPurpose = @"purpose";
+NSString * const kUnboundKeyResidenceName = @"residenceName";
+NSString * const kUnboundKeyRepeatPassword = @"repeatPassword";
+NSString * const kUnboundKeySignIn = @"signIn";
 
 // String key prefixes
 NSString * const kStringPrefixDefault = @"[default]";
