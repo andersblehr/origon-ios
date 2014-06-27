@@ -160,7 +160,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     if ([recipients count] == 1) {
         for (NSArray *recipientList in recipientCandidates) {
             if (!isListed && [recipientList containsObject:recipients[0]]) {
-                isListed = ([recipientList count] == 1);
+                isListed = [recipientList count] == 1;
             }
         }
     }
@@ -208,7 +208,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         
         if ([phoneRecipients count] == 1) {
             [self addRecipients:phoneRecipients forServiceType:kServiceTypeCall tag:tag];
-        } else if (_member && ([phoneRecipients count] == 2)) {
+        } else if (_member && ([phoneRecipients count] == 2) && (tag != kRecipientTagParents)) {
             if ([_member hasParent:phoneRecipients[0]]) {
                 [self addRecipients:@[phoneRecipients[1]] forServiceType:kServiceTypeCall tag:tag];
             } else if ([_member hasParent:phoneRecipients[1]]) {
@@ -255,8 +255,6 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 
 - (void)assembleMemberRecipientCandidates
 {
-    [self addRecipientCandidates:@[_member] skipUser:YES tag:kRecipientTagMember];
-    
     if ([_member isJuvenile]) {
         if ([[_member parents] count]) {
             NSMutableArray *parents = [NSMutableArray array];
@@ -296,6 +294,8 @@ static NSInteger const kRecipientTagAllGuardians = 8;
             [self addRecipientCandidates:[_member guardians] skipUser:NO tag:kRecipientTagAllGuardians];
         }
     }
+    
+    [self addRecipientCandidates:@[_member] skipUser:YES tag:kRecipientTagMember];
     
     for (id<OOrigo> residence in [_member residences]) {
         if ([residence.telephone hasValue]) {
@@ -446,7 +446,6 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     self = [super init];
     
     if (self) {
-        _presentingViewController = (UIViewController *)[OState s].viewController;
         _carrier = [[[CTTelephonyNetworkInfo alloc] init] subscriberCellularProvider];
     }
     
@@ -456,11 +455,12 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 
 #pragma mark - Applicable toolbar items
 
-- (NSArray *)toolbarButtonsForOrigo:(id<OOrigo>)origo
+- (NSArray *)toolbarButtonsForOrigo:(id<OOrigo>)origo presenter:(UIViewController *)presenter
 {
     [self reset];
     
     _origo = origo;
+    _presentingViewController = presenter;
     
     [self assembleOrigoRecipientCandidates];
     
@@ -468,11 +468,12 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 }
 
 
-- (NSArray *)toolbarButtonsForMember:(id<OMember>)member
+- (NSArray *)toolbarButtonsForMember:(id<OMember>)member presenter:(UIViewController *)presenter
 {
     [self reset];
     
     _member = member;
+    _presentingViewController = presenter;
     
     [self assembleMemberRecipientCandidates];
     

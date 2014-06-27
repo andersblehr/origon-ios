@@ -16,7 +16,7 @@ static NSInteger const kAlertTagActivationFailed = 1;
 static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 
-@interface OAuthViewController () <OTableViewController, OTableViewInputDelegate, UIAlertViewDelegate, OConnectionDelegate> {
+@interface OAuthViewController () <OTableViewController, OInputCellDelegate, OConnectionDelegate, UIAlertViewDelegate> {
 @private
     OInputField *_emailField;
     OInputField *_passwordField;
@@ -133,9 +133,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     [self.tableView addLogoBanner];
-
-    self.canEdit = YES;
 }
 
 
@@ -161,7 +160,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)loadState
 {
-    if ([OValidator valueIsEmailAddress:self.target]) {
+    if ([OValidator isEmailValue:self.target]) {
         self.state.target = kTargetEmail;
         self.state.action = kActionActivate;
     } else {
@@ -171,7 +170,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             _authInfo = [NSKeyedUnarchiver unarchiveObjectWithData:authInfoArchive];
             
             [OMeta m].userEmail = _authInfo[kPropertyKeyEmail];
-            [OMeta m].deviceId = _authInfo[kUnboundKeyDeviceId];
+            [OMeta m].deviceId = _authInfo[kExternalKeyDeviceId];
 
             self.state.action = kActionActivate;
         } else {
@@ -187,11 +186,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)loadData
 {
-    [self setDataForDetailSection];
+    [self setDataForInputSection];
 }
 
 
-- (NSString *)reuseIdentifierForDetailSection
+- (NSString *)reuseIdentifierForInputSection
 {
     NSString *reuseIdentifier = nil;
     
@@ -229,19 +228,37 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-- (void)willDisplayDetailCell:(OTableViewCell *)cell
+- (void)willDisplayInputCell:(OTableViewCell *)cell
 {
     if ([self actionIs:kActionSignIn]) {
-        _emailField = [cell inputFieldForKey:kUnboundKeyAuthEmail];
-        _passwordField = [cell inputFieldForKey:kUnboundKeyPassword];
+        _emailField = [cell inputFieldForKey:kExternalKeyAuthEmail];
+        _passwordField = [cell inputFieldForKey:kExternalKeyPassword];
     } else if ([self actionIs:kActionActivate]) {
-        _activationCodeField = [cell inputFieldForKey:kUnboundKeyActivationCode];
-        _repeatPasswordField = [cell inputFieldForKey:kUnboundKeyRepeatPassword];
+        _activationCodeField = [cell inputFieldForKey:kExternalKeyActivationCode];
+        _repeatPasswordField = [cell inputFieldForKey:kExternalKeyRepeatPassword];
     }
 }
 
 
-#pragma mark - OTableViewInputDelegate conformance
+#pragma mark - OInputCellDelegate conformance
+
+- (OInputCellBlueprint *)inputCellBlueprint
+{
+    OInputCellBlueprint *blueprint = [[OInputCellBlueprint alloc] init];
+    blueprint.fieldsAreLabeled = NO;
+    blueprint.fieldsShouldDeemphasiseOnEndEdit = NO;
+    
+    if ([self actionIs:kActionSignIn]) {
+        blueprint.titleKey = kExternalKeySignIn;
+        blueprint.detailKeys = @[kExternalKeyAuthEmail, kExternalKeyPassword];
+    } else if ([self actionIs:kActionActivate]) {
+        blueprint.titleKey = kExternalKeyActivate;
+        blueprint.detailKeys = @[kExternalKeyActivationCode, kExternalKeyRepeatPassword];
+    }
+    
+    return blueprint;
+}
+
 
 - (BOOL)isReceivingInput
 {
@@ -279,9 +296,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-- (BOOL)canValidateInputForKey:(NSString *)key
+- (BOOL)willValidateInputForKey:(NSString *)key
 {
-    return [@[kUnboundKeyActivationCode, kUnboundKeyRepeatPassword] containsObject:key];
+    return [@[kExternalKeyActivationCode, kExternalKeyRepeatPassword] containsObject:key];
 }
 
 
@@ -289,12 +306,12 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 {
     BOOL isValid = NO;
     
-    if ([key isEqualToString:kUnboundKeyActivationCode]) {
-        NSString *activationCode = _authInfo[kUnboundKeyActivationCode];
+    if ([key isEqualToString:kExternalKeyActivationCode]) {
+        NSString *activationCode = _authInfo[kExternalKeyActivationCode];
         NSString *activationCodeAsEntered = [inputValue lowercaseString];
         
         isValid = [activationCodeAsEntered isEqualToString:activationCode];
-    } else if ([key isEqualToString:kUnboundKeyRepeatPassword]) {
+    } else if ([key isEqualToString:kExternalKeyRepeatPassword]) {
         NSString *passwordHashAsEntered = [OCrypto passwordHashWithPassword:inputValue];
         NSString *passwordHash = nil;
         
@@ -359,7 +376,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
             [self userDidAuthenticateWithData:data];
         }
     } else if (response.statusCode == kHTTPStatusUnauthorized) {
-        [self.detailCell shakeCellVibrate:YES];
+        [self.inputCell shakeCellVibrate:YES];
         [_passwordField becomeFirstResponder];
     }
 }

@@ -21,26 +21,108 @@ NSString * const kSeparatorMapping = @":";
 NSString * const kSeparatorSegments = @"|";
 NSString * const kSeparatorAlternates = @"|";
 
+static CGFloat kMatchingEditDistancePercentage = 0.4f;
+
 
 @implementation NSString (OrigoAdditions)
+
+#pragma mark - Auxiliary methods
+
+- (NSInteger)levenshteinDistanceToString:(NSString *)string
+{
+    // Borrowed from Rosetta Code: http://rosettacode.org/wiki/Levenshtein_distance#Objective-C
+    
+    NSInteger sl = [self length];
+    NSInteger tl = [string length];
+    NSInteger *d = calloc(sizeof(*d), (sl+1) * (tl+1));
+    
+#define d(i, j) d[((j) * sl) + (i)]
+    for (NSInteger i = 0; i <= sl; i++) {
+        d(i, 0) = i;
+    }
+    for (NSInteger j = 0; j <= tl; j++) {
+        d(0, j) = j;
+    }
+    for (NSInteger j = 1; j <= tl; j++) {
+        for (NSInteger i = 1; i <= sl; i++) {
+            if ([self characterAtIndex:i-1] == [string characterAtIndex:j-1]) {
+                d(i, j) = d(i-1, j-1);
+            } else {
+                d(i, j) = MIN(d(i-1, j), MIN(d(i, j-1), d(i-1, j-1))) + 1;
+            }
+        }
+    }
+    
+    NSInteger r = d(sl, tl);
+#undef d
+    
+    free(d);
+    
+    return r;
+}
+
 
 #pragma mark - Convenience methods
 
 - (BOOL)hasValue
 {
-    return ([self length] > 0);
+    return [self length] > 0;
 }
 
 
 - (BOOL)containsString:(NSString *)string
 {
-    return ([self rangeOfString:string].location != NSNotFound);
+    return [self rangeOfString:string].location != NSNotFound;
 }
 
 
 - (BOOL)containsCharacter:(const char)character
 {
     return [self containsString:[NSString stringWithFormat:@"%c", character]];
+}
+
+
+- (BOOL)fuzzyMatches:(NSString *)other
+{
+    NSString *string1 = [[self removeRedundantWhitespaceKeepNewlines:NO] lowercaseString];
+    NSString *string2 = [[other removeRedundantWhitespaceKeepNewlines:NO] lowercaseString];
+    
+    NSArray *words1 = [string1 componentsSeparatedByString:kSeparatorSpace];
+    NSArray *words2 = [string2 componentsSeparatedByString:kSeparatorSpace];
+    
+    if ([words1 count] > [words2 count]) {
+        id temp = words1;
+        
+        words1 = words2;
+        words2 = temp;
+    }
+    
+    NSMutableArray *matchableWords2 = [words2 mutableCopy];
+    BOOL wordsMatch = YES;
+    
+    for (NSString *word1 in words1) {
+        if (wordsMatch) {
+            NSInteger shortestEditDistance = NSIntegerMax;
+            NSString *matchedWord2 = nil;
+            
+            for (NSString *word2 in matchableWords2) {
+                NSInteger editDistance = [word1 levenshteinDistanceToString:word2];
+                
+                if (editDistance < shortestEditDistance) {
+                    shortestEditDistance = editDistance;
+                    matchedWord2 = word2;
+                }
+            }
+            
+            wordsMatch = (CGFloat)shortestEditDistance / (CGFloat)[word1 length] <= kMatchingEditDistancePercentage;
+            
+            if (wordsMatch) {
+                [matchableWords2 removeObject:matchedWord2];
+            }
+        }
+    }
+    
+    return wordsMatch;
 }
 
 
@@ -75,7 +157,7 @@ NSString * const kSeparatorAlternates = @"|";
 
 #pragma mark - String operations
 
-- (NSString *)removeRedundantWhitespace
+- (NSString *)removeRedundantWhitespaceKeepNewlines:(BOOL)keepNewlines
 {
     NSString *doubleSpace = [kSeparatorSpace stringByAppendingString:kSeparatorSpace];
     NSString *doubleNewline = [kSeparatorNewline stringByAppendingString:kSeparatorNewline];
@@ -89,9 +171,14 @@ NSString * const kSeparatorAlternates = @"|";
         copyBeforePass = copy;
         
         copy = [copy stringByReplacingSubstring:doubleSpace withString:kSeparatorSpace];
-        copy = [copy stringByReplacingSubstring:doubleNewline withString:kSeparatorNewline];
-        copy = [copy stringByReplacingSubstring:spaceNewline withString:kSeparatorNewline];
-        copy = [copy stringByReplacingSubstring:newlineSpace withString:kSeparatorNewline];
+        
+        if (keepNewlines) {
+            copy = [copy stringByReplacingSubstring:doubleNewline withString:kSeparatorNewline];
+            copy = [copy stringByReplacingSubstring:spaceNewline withString:kSeparatorNewline];
+            copy = [copy stringByReplacingSubstring:newlineSpace withString:kSeparatorNewline];
+        } else {
+            copy = [copy stringByReplacingSubstring:kSeparatorNewline withString:kSeparatorSpace];
+        }
         
         if ([copy hasPrefix:kSeparatorSpace] || [copy hasPrefix:kSeparatorNewline]) {
             copy = [copy substringFromIndex:1];
@@ -148,39 +235,32 @@ NSString * const kSeparatorAlternates = @"|";
 }
 
 
-#pragma mark - Edit distance to other string
+#pragma mark - Name conversions
 
-- (NSInteger)levenshteinDistanceToString:(NSString *)string
+- (NSString *)givenName
 {
-    // Borrowed from Rosetta Code: http://rosettacode.org/wiki/Levenshtein_distance#Objective-C
+    NSString *givenName = nil;
+    NSArray *names = [self componentsSeparatedByString:kSeparatorSpace];
     
-    NSInteger sl = [self length];
-    NSInteger tl = [string length];
-    NSInteger *d = calloc(sizeof(*d), (sl+1) * (tl+1));
-    
-#define d(i, j) d[((j) * sl) + (i)]
-    for (NSInteger i = 0; i <= sl; i++) {
-        d(i, 0) = i;
-    }
-    for (NSInteger j = 0; j <= tl; j++) {
-        d(0, j) = j;
-    }
-    for (NSInteger j = 1; j <= tl; j++) {
-        for (NSInteger i = 1; i <= sl; i++) {
-            if ([self characterAtIndex:i-1] == [string characterAtIndex:j-1]) {
-                d(i, j) = d(i-1, j-1);
-            } else {
-                d(i, j) = MIN(d(i-1, j), MIN(d(i, j-1), d(i-1, j-1))) + 1;
-            }
-        }
+    if ([names count] == 1) {
+        givenName = names[0];
+    } else if ([names count]) {
+        givenName = [OMeta usingEasternNameOrder] ? names[1] : names[0];
     }
     
-    NSInteger r = d(sl, tl);
-#undef d
+    return givenName;
+}
+
+
+- (NSString *)localisedCountryName
+{
+    NSString *countryName = nil;
     
-    free(d);
+    if ([[NSLocale ISOCountryCodes] containsObject:self]) {
+        countryName = [[NSLocale currentLocale] displayNameForKey:NSLocaleCountryCode value:self];
+    }
     
-    return r;
+    return countryName;
 }
 
 @end

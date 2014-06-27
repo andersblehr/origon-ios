@@ -17,7 +17,7 @@ static CGFloat const kTextInsetY = 1.2f;
 
 @interface OTextField () {
 @private
-    id<OTableViewInputDelegate> _inputDelegate;
+    id<OInputCellDelegate> _inputCellDelegate;
 }
 
 @end
@@ -40,7 +40,7 @@ static CGFloat const kTextInsetY = 1.2f;
         if ([OValidator isPhoneNumberKey:_key]) {
             _value = [OPhoneNumberFormatter formatPhoneNumber:_value canonicalise:NO];
         } else if (![OValidator isPasswordKey:_key]) {
-            _value = [_value removeRedundantWhitespace];
+            _value = [_value removeRedundantWhitespaceKeepNewlines:NO];
         }
         
         if (![_value hasValue]) {
@@ -66,6 +66,12 @@ static CGFloat const kTextInsetY = 1.2f;
                 self.text = [_value localisedDateString];
             } else {
                 self.text = [_value localisedAgeString];
+            }
+        } else if ([OValidator isGivenNameKey:_key]) {
+            if (self.editable) {
+                self.text = _value;
+            } else {
+                self.text = [_value givenName];
             }
         } else {
             self.text = _value;
@@ -152,7 +158,7 @@ static CGFloat const kTextInsetY = 1.2f;
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
         _key = key;
-        _inputDelegate = delegate;
+        _inputCellDelegate = delegate;
         _supportsMultiLineText = NO;
         
         [self addTarget:self action:@selector(textDidChange) forControlEvents:UIControlEventEditingChanged];
@@ -195,7 +201,7 @@ static CGFloat const kTextInsetY = 1.2f;
     BOOL canPerformAction = [super canPerformAction:action withSender:sender];
     
     if (canPerformAction && [OValidator isDateKey:_key]) {
-        canPerformAction = (action != @selector(paste:));
+        canPerformAction = action != @selector(paste:);
     }
     
     return canPerformAction;
@@ -234,8 +240,8 @@ static CGFloat const kTextInsetY = 1.2f;
 
 - (void)setEditable:(BOOL)editable
 {
-    if (editable && [_inputDelegate respondsToSelector:@selector(isEditableFieldWithKey:)]) {
-        editable = [_inputDelegate isEditableFieldWithKey:_key];
+    if (editable && [_inputCellDelegate respondsToSelector:@selector(isEditableFieldWithKey:)]) {
+        editable = [_inputCellDelegate isEditableFieldWithKey:_key];
     }
     
     self.enabled = editable;
@@ -300,14 +306,14 @@ static CGFloat const kTextInsetY = 1.2f;
     BOOL hasValidValue = NO;
     
     if (![self hasMultiValue]) {
-        BOOL delegateCanValidate = NO;
+        BOOL delegateWillValidate = NO;
         
-        if ([_inputDelegate respondsToSelector:@selector(canValidateInputForKey:)]) {
-            delegateCanValidate = [_inputDelegate canValidateInputForKey:_key];
+        if ([_inputCellDelegate respondsToSelector:@selector(willValidateInputForKey:)]) {
+            delegateWillValidate = [_inputCellDelegate willValidateInputForKey:_key];
         }
         
-        if (delegateCanValidate) {
-            hasValidValue = [_inputDelegate inputValue:_value isValidForKey:_key];
+        if (delegateWillValidate) {
+            hasValidValue = [_inputCellDelegate inputValue:_value isValidForKey:_key];
         } else {
             hasValidValue = [OValidator value:_value isValidForKey:_key];
         }

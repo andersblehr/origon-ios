@@ -10,8 +10,6 @@
 
 static NSString * const kRootIdFormat = @"~%@";
 
-static CGFloat kMatchingEditDistancePercentage = 0.4f;
-
 
 @implementation OUtil
 
@@ -75,11 +73,15 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
 }
 
 
-+ (NSString *)commaSeparatedListOfItems:(NSArray *)items conjoinLastItem:(BOOL)conjoinLastItem
++ (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem
 {
     NSMutableString *commaSeparatedList = nil;
     
     if ([items count]) {
+        if ([items isKindOfClass:[NSSet class]]) {
+            items = [[items allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        }
+        
         NSMutableArray *stringItems = nil;
         
         if ([items[0] isKindOfClass:[NSString class]]) {
@@ -104,7 +106,7 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
         
         for (NSString *stringItem in stringItems) {
             if (!commaSeparatedList) {
-                commaSeparatedList = [NSMutableString stringWithString:stringItem];
+                commaSeparatedList = [NSMutableString stringWithString:[stringItem stringByCapitalisingFirstLetter]];
             } else {
                 if (conjoinLastItem && (stringItem == [stringItems lastObject])) {
                     [commaSeparatedList appendString:NSLocalizedString(@" and ", @"")];
@@ -118,30 +120,6 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
     }
     
     return commaSeparatedList;
-}
-
-
-+ (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode
-{
-    return [[NSLocale currentLocale] displayNameForKey:NSLocaleCountryCode value:countryCode];
-}
-
-
-+ (NSString *)givenNameFromFullName:(NSString *)fullName
-{
-    NSString *givenName = nil;
-    
-    if ([OValidator valueIsName:fullName]) {
-        NSArray *names = [fullName componentsSeparatedByString:kSeparatorSpace];
-        
-        if ([OMeta usingEasternNameOrder]) {
-            givenName = names[1];
-        } else {
-            givenName = names[0];
-        }
-    }
-    
-    return givenName;
 }
 
 
@@ -159,58 +137,43 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
 }
 
 
++ (NSSet *)eligibleCandidatesForOrigo:(id<OOrigo>)origo isElder:(BOOL)isElder
+{
+    NSSet *eligibleMembers = nil;
+    
+    if (isElder) {
+        eligibleMembers = [[OMeta m].user peersNotInOrigo:origo];
+    } else {
+        id<OMember> pivotMember = nil;
+        
+        for (id<OMember> member in [origo members]) {
+            if (!pivotMember && [member isHousemateOfUser]) {
+                pivotMember = member;
+            }
+        }
+        
+        eligibleMembers = [pivotMember peersNotInOrigo:origo];
+    }
+    
+    return eligibleMembers;
+}
+
+
 #pragma mark - Object comparison
 
 + (NSComparisonResult)compareOrigo:(id<OOrigo>)origo withOrigo:(id<OOrigo>)otherOrigo
 {
-    NSString *value = [origo isOfType:kOrigoTypeResidence] ? origo.address : origo.name;
-    NSString *otherValue = [otherOrigo isOfType:kOrigoTypeResidence] ? otherOrigo.address : otherOrigo.name;
+    NSComparisonResult result = NSOrderedSame;
     
-    return [value localizedCaseInsensitiveCompare:otherValue];
-}
-
-
-+ (BOOL)fullName:(NSString *)fullName fuzzyMatchesFullName:(NSString *)otherFullName
-{
-    fullName = [[fullName removeRedundantWhitespace] lowercaseString];
-    otherFullName = [[otherFullName removeRedundantWhitespace] lowercaseString];
-    
-    NSArray *names = [fullName componentsSeparatedByString:kSeparatorSpace];
-    NSArray *otherNames = [otherFullName componentsSeparatedByString:kSeparatorSpace];
-    
-    if ([names count] > [otherNames count]) {
-        NSArray *temp = names;
-        
-        names = otherNames;
-        otherNames = temp;
-    }
-
-    NSMutableArray *matchableOtherNames = [otherNames mutableCopy];
-    BOOL namesMatch = YES;
-    
-    for (NSString *name in names) {
-        if (namesMatch) {
-            NSInteger shortestEditDistance = NSIntegerMax;
-            NSString *matchedOtherName = nil;
-            
-            for (NSString *otherName in matchableOtherNames) {
-                NSInteger editDistance = [name levenshteinDistanceToString:otherName];
-                
-                if (editDistance < shortestEditDistance) {
-                    shortestEditDistance = editDistance;
-                    matchedOtherName = otherName;
-                }
-            }
-            
-            namesMatch = ((CGFloat)shortestEditDistance / (CGFloat)[name length] <= kMatchingEditDistancePercentage);
-            
-            if (namesMatch) {
-                [matchableOtherNames removeObject:matchedOtherName];
-            }
+    if ([origo.type isEqualToString:otherOrigo.type]) {
+        if ([origo isOfType:kOrigoTypeResidence]) {
+            result = [origo.address localizedCaseInsensitiveCompare:otherOrigo.address];
+        } else {
+            result = [origo.name localizedCaseInsensitiveCompare:otherOrigo.name];
         }
     }
     
-    return namesMatch;
+    return result;
 }
 
 @end

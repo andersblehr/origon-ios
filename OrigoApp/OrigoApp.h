@@ -11,7 +11,7 @@
 
 #undef NSLocalizedString
 #define NSLocalizedString(key, prefix) \
-        [[OMeta m].localisedStringsBundle localizedStringForKey:([prefix length] ? [prefix stringByAppendingString:key separator:@" "] : key) value:@"" table:nil]
+        [[OMeta m].localisedStringsBundle localizedStringForKey:([prefix length] ? [prefix stringByAppendingString:key separator:@" "] : key) value:nil table:nil]
 
 #import <AddressBook/AddressBook.h>
 #import <AddressBookUI/AddressBookUI.h>
@@ -32,13 +32,13 @@
 @protocol OTableViewController;
 @class OEntityProxy, OMemberProxy, OMembershipProxy, OOrigoProxy;
 @class ODevice, OMember, OMembership, OOrigo, OReplicatedEntity, OReplicatedEntityRef, OSettings;
-@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, OMemberExaminer, ONavigationController, OPhoneNumberFormatter, OReplicator, OState, OSwitchboard, OTableViewCell, OTableViewCellBlueprint, OTableViewCellConstrainer, OTableViewController, OTextField, OTextView;
+@class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, OMemberExaminer, ONavigationController, OPhoneNumberFormatter, OReplicator, OState, OSwitchboard, OTableViewCell, OInputCellBlueprint, OInputCellConstrainer, OTableViewController, OTextField, OTextView;
 
 #import "OConnectionDelegate.h"
 #import "OEntityObserver.h"
+#import "OInputCellDelegate.h"
 #import "OLocatorDelegate.h"
 #import "OMemberExaminerDelegate.h"
-#import "OTableViewInputDelegate.h"
 #import "OTextInput.h"
 
 #import "OEntityProxy.h"
@@ -82,6 +82,8 @@ typedef UIView<OTextInput> OInputField;
 #import "OConstants.h"
 #import "OCrypto.h"
 #import "ODefaults.h"
+#import "OInputCellBlueprint.h"
+#import "OInputCellConstrainer.h"
 #import "OLabel.h"
 #import "OLanguage.h"
 #import "OLocator.h"
@@ -94,8 +96,6 @@ typedef UIView<OTextInput> OInputField;
 #import "OState.h"
 #import "OSwitchboard.h"
 #import "OTableViewCell.h"
-#import "OTableViewCellBlueprint.h"
-#import "OTableViewCellConstrainer.h"
 #import "OTableViewController.h"
 #import "OTextField.h"
 #import "OTextView.h"

@@ -12,34 +12,39 @@
  ***/
 
 // Labels
-"[label] signIn" = "Logg på eller registrer deg";
 "[label] activate" = "Oppgi aktiveringskode";
 "[label] address" = "Adresse";
-"[label] purpose" = "Formål";
-"[label] descriptionText" = "Beskrivelse";
-"[label] telephone" = "Telefon";
 "[label] dateOfBirth" = "Alder";
-"[label] mobilePhone" = "Mobil";
+"[label] descriptionText" = "Beskrivelse";
 "[label] email"  = "Epost";
+"[label] mobilePhone" = "Mobil";
+"[label] purpose" = "Formål";
+"[label] signIn" = "Logg på eller registrer deg";
+"[label] school" = "Skole";
+"[label] telephone" = "Telefon";
 
 // Alternate labels
 "[alternate label] dateOfBirth" = "Født";
 
 // Placeholders
-"[placeholder] authEmail" = "Epostadressen din";
-"[placeholder] password" = "Passordet ditt";
 "[placeholder] activationCode" = "Aktiveringskode fra epost";
+"[placeholder] address" = "Gateadresse\nPostnummer og -sted";
+"[placeholder] authEmail" = "Epostadressen din";
+"[placeholder] class" = "Klasse";
+"[placeholder] dateOfBirth" = "Fødselsdato";
+"[placeholder] descriptionText" = "En valgfri beskrivelse";
+"[placeholder] email" = "En gyldig epostadresse";
+"[placeholder] fullName" = "Fullt navn";
+"[placeholder] givenName" = "Navn";
+"[placeholder] mobilePhone" = "Mobilnummer";
+"[placeholder] name" = "Navn";
+"[placeholder] password" = "Passordet ditt";
+"[placeholder] photo" = "Bilde";
+"[placeholder] purpose" = "Formålet med denne gruppa";
 "[placeholder] repeatPassword" = "Gjenta passordet ditt";
 "[placeholder] residenceName" = "Kallenavn for denne adressen";
-"[placeholder] address" = "Gateadresse\nPostnummer og -sted";
-"[placeholder] purpose" = "Formålet med denne gruppa";
-"[placeholder] descriptionText" = "En valgfri beskrivelse";
+"[placeholder] school" = "Skolens navn";
 "[placeholder] telephone" = "Telefonnummer";
-"[placeholder] name" = "Navn";
-"[placeholder] photo" = "Bilde";
-"[placeholder] dateOfBirth" = "Fødselsdato";
-"[placeholder] mobilePhone" = "Mobilnummer";
-"[placeholder] email" = "En gyldig epostadresse";
 
 // Defaults
 "[default] residenceName" = "Min husstand";
@@ -50,7 +55,7 @@
  ***/
 
 // Origo titles
-"[title] residence" = "Adresse";
+"[title] residence" = "Husstand";
 "[title] friends" = "Vennegruppe";
 "[title] team" = "Lag, idrettsgruppe";
 "[title] organisation" = "Organisasjon, forening";
@@ -166,7 +171,7 @@
 "parent" = "-;-;foreldre;foreldrene;foreldrene dine;foreldrene til %@";
 "guardian" = "foresatt;-;foresatte;-;-;-";
 "contact" = "kontaktperson;-;kontaktpersoner;-;-;-";
-"address" = "adresse;-;adresser;-;-;-";
+"address" = "adresse;adressen;adresser;adressene;-;-";
 
 // Pronouns
 "I" = "jeg;meg;meg";
@@ -227,7 +232,7 @@
 
 // Alerts
 "Activation failed" = "Aktivering mislyktes";
-"It looks like you may have lost the activation code ..." = "Det ser ut til at du enten har mistet aktiveringskoden som vi sendte deg på epost, eller at du har glemt passordet ditt. La oss starte på nytt.";
+"It looks like you may have lost the activation code ..." = "Det ser ut til at du har mistet aktiveringskoden eller glemt passordet ditt. La oss starte på nytt.";
 "Welcome back!" = "Velkommen tilbake!";
 "If you have handy the activation code sent to %@ ..." = "Om du har aktiveringskoden som ble sendt til %@, så kan du aktivere medlemskapet ditt nå. Om ikke, kan du gå tilbake og starte på nytt.";
 
@@ -266,9 +271,6 @@
  * OOrigoViewController strings
  ***/
 
-// Footers
-"Tap [+] to add any additional guardians in the household" = "Trykk [+] for å legge til andre foresatte i husstanden";
-
 // Buttons
 "Edit roles" = "Rediger roller";
 "Add from other groups" = "Legg til fra andre grupper";
@@ -290,7 +292,8 @@
 
 // Footers
 "A notification will be sent to the email address you provide." = "Et varsel vil bli sendt til epostadressen du oppgir.";
-"Before you can register a minor, you must register his or her parents/guardians." = "Før du kan registrere en mindreårig, må du registrere hans eller hennes foresatte.";
+"Before you can register a minor, you must register his or her guardians." = "Før du kan registrere en mindreårig, må du registrere hans eller hennes foresatte.";
+"Tap [+] to add another guardian." = "Trykk [+] for å legge til en foresatt til.";
 
 // Buttons
 "To some of them" = "Til noen av dem";
@@ -312,13 +315,24 @@
 
 // Alerts
 "Incorrect details" = "Uriktige opplysninger";
-"The details you have provided do not match our records ..." = "Opplysningene du har oppgitt, stemmer ikke med dem som er lagret hos oss. Du kan bare legge til denne personen om du har riktige opplysninger.";
-"Already member" = "Allerede medlem";
-"%@ is already a member of %@." = "%@ er allerede medlem i %@.";
+"The details you have provided do not match our records ..." = "Opplysningene du har oppgitt, stemmer ikke med våre. Du kan bare legge til denne personen om du har riktige opplysninger.";
+"Unknown address" = "Ukjent adresse";
+"Unknown addresses" = "Ukjente adresser";
+"One of the addresses you provided did not match our records and was not saved." = "En av adressene du oppga, stemte ikke med våre opplysninger og ble ikke lagret.";
+"Some of the addresses you provided did not match our records and were not saved." = "Noen av adressene du oppga, stemte ikke med våre opplysninger og ble ikke lagret.";
+"The address you provided did not match our records and was not saved." = "Adressen du oppga, stemte ikke med våre opplysninger og ble ikke lagret.";
+"The addresses you provided did not match our records and were not saved." = "Adressene du oppga, stemte ikke med våre opplysninger og ble ikke lagret.";
+"%@ is already in %@." = "%@ er allerede med i %@.";
+"Unknown child" = "Ukjent barn";
+"%@ has not registered a child called %@." = "%@ har ikke registrert et barn som heter %@.";
+"Neither %@ nor %@ has registered a child called %@." = "Hverken %@ eller %@ har registrert et barn som heter %@.";
+"%@ has not registered a child called %@. %@ will only be added to %@'s household." = "%@ har ikke registrert noe barn som heter %@. %@ vil bare bli lagt til %@ sin husstand.";
 "New email address" = "Ny epost-adresse";
 "You are about to change your email address from %@ to %@ ..." = "Du er i ferd med å endre epost-adressen din fra %@ til %@. Du må ha tilgang til den nye adressen for å aktivere endringen. Ønsker du å fortsette?";
 "Activation failed" = "Aktivering mislyktes";
 "The email address %@ could not be activated ..." = "Aktivering av epost-adressen %@ mislyktes. Prøv igjen, eller trykk Avbryt for avbryte endringen.";
+"The email address %@ is already in use." = "Epost-addressen %@ er allerede i bruk.";
+"The mobile number %@ is already in use." = "Mobilnummeret %@ er allerede i bruk.";
 
 // Prompts
 "Who do you want to email?" = "Hvem vil du sende epost til?";
@@ -333,6 +347,8 @@
 "%@ has more than one home phone number. Which address has the number %@?" = "%@ har flere hjemmetelefonnummer. Hvilken adresse har telefonnummer %@?";
 "Which address has the number %@?" = "Hvilken adresse har telefonnummer %@?";
 "Is %@ the phone number for %@?" = "Er %@ telefonnummeret til %@?";
+"Does %@ live with %@?" = "Bor %@ med %@?";
+"Does %@ live with %@ or %@?" = "Bor %@ med %@ eller %@?";
 
 // Question arguments
 "a woman or a man" = "kvinne eller mann";

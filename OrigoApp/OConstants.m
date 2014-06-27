@@ -62,18 +62,23 @@ NSString * const kPropertyKeyType = @"type";
 NSString * const kRelationshipKeyMember = @"member";
 NSString * const kRelationshipKeyOrigo = @"origo";
 
+// Mapped keys
+NSString * const kMappedKeyClass = @"class";
+NSString * const kMappedKeyFullName = @"fullName";
+NSString * const kMappedKeyGivenName = @"givenName";
+NSString * const kMappedKeyPurpose = @"purpose";
+NSString * const kMappedKeyResidenceName = @"residenceName";
+NSString * const kMappedKeySchool = @"school";
+
 // Unbound keys
-NSString * const kUnboundKeyActivate = @"activate";
-NSString * const kUnboundKeyActivationCode = @"activationCode";
-NSString * const kUnboundKeyAuthEmail = @"authEmail";
-NSString * const kUnboundKeyDeviceId = @"deviceId";
-NSString * const kUnboundKeyEntityClass = @"entityClass";
-NSString * const kUnboundKeyGivenName = @"givenName";
-NSString * const kUnboundKeyPassword = @"password";
-NSString * const kUnboundKeyPurpose = @"purpose";
-NSString * const kUnboundKeyResidenceName = @"residenceName";
-NSString * const kUnboundKeyRepeatPassword = @"repeatPassword";
-NSString * const kUnboundKeySignIn = @"signIn";
+NSString * const kExternalKeyActivate = @"activate";
+NSString * const kExternalKeyActivationCode = @"activationCode";
+NSString * const kExternalKeyAuthEmail = @"authEmail";
+NSString * const kExternalKeyDeviceId = @"deviceId";
+NSString * const kExternalKeyEntityClass = @"entityClass";
+NSString * const kExternalKeyPassword = @"password";
+NSString * const kExternalKeyRepeatPassword = @"repeatPassword";
+NSString * const kExternalKeySignIn = @"signIn";
 
 // String key prefixes
 NSString * const kStringPrefixDefault = @"[default]";

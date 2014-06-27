@@ -29,7 +29,7 @@ static NSString * const kLogoText = @"..origo..";
     if (!cell) {
         cell = [[OTableViewCell alloc] initWithStyle:style reuseIdentifier:reuseIdentifier delegate:delegate];
     } else if (![cell isListCell]) {
-        cell.inputDelegate = delegate;
+        cell.inputCellDelegate = delegate;
     }
     
     return cell;
@@ -60,12 +60,24 @@ static NSString * const kLogoText = @"..origo..";
 
 #pragma mark - Cell instantiation
 
-- (id)detailCellForEntity:(id<OEntity>)entity delegate:(id)delegate
+- (id)listCellWithStyle:(UITableViewCellStyle)style data:(id)data delegate:(id)delegate
 {
-    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:[entity reuseIdentifier]];
+    OTableViewCell *cell = [self cellWithStyle:style reuseIdentifier:[kReuseIdentifierList stringByAppendingFormat:@":%ld", style] delegate:delegate];
+    
+    if ([data conformsToProtocol:@protocol(OEntity)]) {
+        cell.entity = data;
+    }
+    
+    return cell;
+}
+
+
+- (id)inputCellWithEntity:(id<OEntity>)entity delegate:(id)delegate
+{
+    OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:NSStringFromClass([entity entityClass])];
     
     if (cell) {
-        cell.inputDelegate = delegate;
+        cell.inputCellDelegate = delegate;
     } else {
         cell = [[OTableViewCell alloc] initWithEntity:entity delegate:delegate];
     }
@@ -74,21 +86,9 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-- (id)detailCellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
+- (id)inputCellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
     return [self cellWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier delegate:delegate];
-}
-
-
-- (id)listCellWithStyle:(UITableViewCellStyle)style data:(id)data
-{
-    OTableViewCell *cell = [self cellWithStyle:style reuseIdentifier:[kReuseIdentifierList stringByAppendingFormat:@":%ld", style] delegate:nil];
-    
-    if ([data conformsToProtocol:@protocol(OEntity)]) {
-        cell.entity = data;
-    }
-    
-    return cell;
 }
 
 

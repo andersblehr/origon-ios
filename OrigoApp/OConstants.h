@@ -62,18 +62,23 @@ extern NSString * const kPropertyKeyType;
 extern NSString * const kRelationshipKeyMember;
 extern NSString * const kRelationshipKeyOrigo;
 
+// Mapped keys
+extern NSString * const kMappedKeyClass;
+extern NSString * const kMappedKeyFullName;
+extern NSString * const kMappedKeyGivenName;
+extern NSString * const kMappedKeyPurpose;
+extern NSString * const kMappedKeyResidenceName;
+extern NSString * const kMappedKeySchool;
+
 // Unbound keys
-extern NSString * const kUnboundKeyActivate;
-extern NSString * const kUnboundKeyActivationCode;
-extern NSString * const kUnboundKeyAuthEmail;
-extern NSString * const kUnboundKeyDeviceId;
-extern NSString * const kUnboundKeyEntityClass;
-extern NSString * const kUnboundKeyGivenName;
-extern NSString * const kUnboundKeyPassword;
-extern NSString * const kUnboundKeyPurpose;
-extern NSString * const kUnboundKeyRepeatPassword;
-extern NSString * const kUnboundKeyResidenceName;
-extern NSString * const kUnboundKeySignIn;
+extern NSString * const kExternalKeyActivate;
+extern NSString * const kExternalKeyActivationCode;
+extern NSString * const kExternalKeyAuthEmail;
+extern NSString * const kExternalKeyDeviceId;
+extern NSString * const kExternalKeyEntityClass;
+extern NSString * const kExternalKeyPassword;
+extern NSString * const kExternalKeyRepeatPassword;
+extern NSString * const kExternalKeySignIn;
 
 // String key prefixes
 extern NSString * const kStringPrefixDefault;

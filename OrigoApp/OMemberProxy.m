@@ -25,6 +25,24 @@
 }
 
 
+- (void)expire
+{
+    for (id<OMembership> membership in [self allMemberships]) {
+        if ([membership isResidency] && ![membership.origo isReplicated]) {
+            for (id<OMembership> coResidency in [membership.origo allMemberships]) {
+                [[coResidency proxy] expire];
+            }
+            
+            [[membership.origo proxy] expire];
+        }
+        
+        [[membership proxy] expire];
+    }
+    
+    [super expire];
+}
+
+
 #pragma mark - OMember protocol conformance
 
 - (NSSet *)allMemberships
@@ -104,6 +122,26 @@
 }
 
 
+- (NSSet *)wards
+{
+    id wards = nil;
+    
+    if ([self instance]) {
+        wards = [[self instance] wards];
+    } else {
+        wards = [NSMutableSet set];
+        
+        for (id<OMember> housemate in [self housemates]) {
+            if ([housemate isJuvenile]) {
+                [wards addObject:housemate];
+            }
+        }
+    }
+    
+    return wards;
+}
+
+
 - (NSSet *)guardians
 {
     id guardians = nil;
@@ -124,14 +162,14 @@
 }
 
 
-- (NSSet *)housemates
+- (NSArray *)housemates
 {
     id housemates = nil;
     
     if ([self instance]) {
         housemates = [[self instance] housemates];
     } else {
-        housemates = [NSMutableSet set];
+        housemates = [NSMutableArray array];
         
         for (id<OOrigo> residence in [self residences]) {
             for (id<OMember> resident in [residence residents]) {
@@ -143,6 +181,18 @@
     }
     
     return housemates;
+}
+
+
+- (BOOL)isActive
+{
+    return self.activeSince ? YES : NO;
+}
+
+
+- (BOOL)isManagedByUser
+{
+    return [self instance] ? [[self instance] isManagedByUser] : ![self isReplicated];
 }
 
 
@@ -186,9 +236,21 @@
 }
 
 
+- (NSString *)appellation
+{
+    return [self givenName];
+}
+
+
 - (NSString *)givenName
 {
-    return [OUtil givenNameFromFullName:self.name];
+    return [self.name givenName];
+}
+
+
+- (NSString *)publicName
+{
+    return [self isJuvenile] ? [self givenName] : self.name;
 }
 
 @end

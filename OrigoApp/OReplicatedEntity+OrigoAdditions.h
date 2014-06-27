@@ -23,9 +23,6 @@
 - (BOOL)isBeingDeleted;
 
 - (BOOL)shouldReplicateOnExpiry;
-- (BOOL)hasExpired;
-- (void)expire;
-- (void)unexpire;
 - (NSString *)expiresInTimeframe;
 
 + (Class)proxyClass;

@@ -40,8 +40,8 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 {
     NetworkStatus internetStatus = [reachability currentReachabilityStatus];
     
-    _internetConnectionIsWiFi = (internetStatus == ReachableViaWiFi);
-    _internetConnectionIsWWAN = (internetStatus == ReachableViaWWAN);
+    _internetConnectionIsWiFi = internetStatus == ReachableViaWiFi;
+    _internetConnectionIsWWAN = internetStatus == ReachableViaWWAN;
     
     if (_internetConnectionIsWiFi) {
         OLogDebug(@"Connected to the internet via Wi-Fi.");
@@ -89,6 +89,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     _isSignedIn = @NO;
     
     [(OAppDelegate *)[UIApplication sharedApplication].delegate releasePersistentStore];
+    [OEntityProxy clearProxyCache];
 }
 
 
@@ -232,7 +233,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 
 - (BOOL)internetConnectionIsAvailable
 {
-    return (_internetConnectionIsWiFi || _internetConnectionIsWWAN);
+    return _internetConnectionIsWiFi || _internetConnectionIsWWAN;
 }
 
 
@@ -256,7 +257,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 
 + (BOOL)screenIsRetina
 {
-    return ([UIScreen mainScreen].scale >= 2.f);
+    return [UIScreen mainScreen].scale >= 2.f;
 }
 
 

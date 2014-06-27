@@ -220,9 +220,9 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     NSMutableSet *peers = [NSMutableSet set];
     
     for (OOrigo *origo in [self origosIncludeResidences:YES]) {
-        for (OMember *peer in [origo members]) {
-            if ([peer isJuvenile] == [self isJuvenile]) {
-                [peers addObject:peer];
+        for (OMember *candidate in [origo members]) {
+            if ([candidate isJuvenile] == [self isJuvenile]) {
+                [peers addObject:candidate];
             }
         }
     }
@@ -230,9 +230,9 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     if ([self isJuvenile]) {
         for (OMember *sibling in [self siblings]) {
             for (OOrigo *origo in [sibling origosIncludeResidences:YES]) {
-                for (OMember *peer in [origo members]) {
-                    if ([peer isJuvenile]) {
-                        [peers addObject:peer];
+                for (OMember *candidate in [origo members]) {
+                    if ([candidate isJuvenile]) {
+                        [peers addObject:candidate];
                     }
                 }
             }
@@ -240,16 +240,18 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     } else {
         for (OMember *ward in [self wards]) {
             for (OOrigo *origo in [ward origosIncludeResidences:YES]) {
-                for (OMember *peer in [origo members]) {
-                    if ([peer isJuvenile]) {
-                        [peers unionSet:[peer guardians]];
+                for (OMember *candidate in [origo members]) {
+                    if ([candidate isJuvenile]) {
+                        [peers unionSet:[candidate guardians]];
                     } else {
-                        [peers addObject:peer];
+                        [peers addObject:candidate];
                     }
                 }
             }
         }
     }
+    
+    [peers removeObject:self];
     
     return peers;
 }
@@ -257,11 +259,9 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (NSSet *)peersNotInOrigo:(id<OOrigo>)origo
 {
-    NSMutableSet *peers = nil;
+    NSMutableSet *peers = [[self peers] mutableCopy];
     
     if ([origo instance]) {
-        peers = [[self peers] mutableCopy];
-        
         for (OMember *member in [[origo instance] members]) {
             [peers removeObject:member];
         }
@@ -271,9 +271,9 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (NSSet *)housemates
+- (NSArray *)housemates
 {
-    NSMutableSet *housemates = [NSMutableSet set];
+    NSMutableArray *housemates = [NSMutableArray array];
     
     for (OOrigo *residence in [self residences]) {
         for (OMember *housemate in [residence residents]) {
@@ -283,17 +283,15 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         }
     }
     
-    return housemates;
+    return [housemates sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
-- (NSSet *)housematesNotInResidence:(id<OOrigo>)residence
+- (NSArray *)housematesNotInResidence:(id<OOrigo>)residence
 {
-    NSMutableSet *housemates = nil;
+    NSMutableArray *housemates = [[self housemates] mutableCopy];
     
     if ([residence instance]) {
-        housemates = [[self housemates] mutableCopy];
-        
         for (OMember *resident in [[residence instance] residents]) {
             [housemates removeObject:resident];
         }
@@ -303,10 +301,10 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (NSSet *)housemateResidences
+- (NSArray *)housemateResidences
 {
     NSArray *ownResidences = [self residences];
-    NSMutableSet *housemateResidences = [NSMutableSet set];
+    NSMutableArray *housemateResidences = [NSMutableArray array];
     
     for (OMember *housemate in [self housemates]) {
         for (OOrigo *residence in [housemate residences]) {
@@ -316,7 +314,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         }
     }
     
-    return housemateResidences;
+    return [housemateResidences sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -341,7 +339,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         OOrigo *residence = residency.origo;
         
         if (![residence.name hasValue]) {
-            residence.name = NSLocalizedString(kUnboundKeyResidenceName, kStringPrefixDefault);
+            residence.name = NSLocalizedString(kMappedKeyResidenceName, kStringPrefixDefault);
         }
     }
     
@@ -354,7 +352,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (BOOL)isUser
 {
-    return (self == [OMeta m].user || [self.email isEqualToString:[OMeta m].userEmail]);
+    return self == [OMeta m].user || [self.email isEqualToString:[OMeta m].userEmail];
 }
 
 
@@ -430,7 +428,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (BOOL)isOlderThan:(NSInteger)age
 {
-    return ([self.dateOfBirth yearsBeforeNow] >= age);
+    return [self.dateOfBirth yearsBeforeNow] >= age;
 }
 
 
@@ -463,14 +461,14 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (BOOL)hasParentWithGender:(NSString *)gender
 {
-    return [gender hasPrefix:kGenderMale] ? (self.fatherId != nil) : (self.motherId != nil);
+    return [gender hasPrefix:kGenderMale] ? self.fatherId != nil : self.motherId != nil;
 }
 
 
 - (BOOL)guardiansAreParents
 {
     NSSet *guardians = [self guardians];
-    BOOL guardiansAreParents = ([guardians count] > 0);
+    BOOL guardiansAreParents = [guardians count] > 0;
     
     if (guardiansAreParents) {
         for (OMember *guardian in guardians) {
@@ -514,7 +512,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (NSString *)givenName
 {
-    return [OUtil givenNameFromFullName:self.name];
+    return [self.name givenName];
 }
 
 
@@ -533,6 +531,12 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     }
     
     return givenNameWithContactRole;
+}
+
+
+- (NSString *)publicName
+{
+    return [self isJuvenile] ? [self givenName] : self.name;
 }
 
 

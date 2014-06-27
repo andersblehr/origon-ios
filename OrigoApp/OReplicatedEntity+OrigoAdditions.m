@@ -56,7 +56,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 + (instancetype)instanceFromDictionary:(NSDictionary *)dictionary
 {
-    Class entityClass = NSClassFromString(dictionary[kUnboundKeyEntityClass]);
+    Class entityClass = NSClassFromString(dictionary[kExternalKeyEntityClass]);
     NSString *entityId = dictionary[kPropertyKeyEntityId];
     OReplicatedEntity *entity = [[OMeta m].context entityWithId:entityId];
     
@@ -162,13 +162,13 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 - (BOOL)userIsCreator
 {
-    return ([self.createdBy isEqualToString:[OMeta m].userId]);
+    return [self.createdBy isEqualToString:[OMeta m].userId];
 }
 
 
 - (BOOL)isTransient
 {
-    return ([self isKindOfClass:[OReplicatedEntityRef class]] || [self hasExpired]);
+    return [self isKindOfClass:[OReplicatedEntityRef class]] || [self hasExpired];
 }
 
 
@@ -189,28 +189,6 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 - (BOOL)shouldReplicateOnExpiry
 {
     return ![self hasExpired] && [self isReplicated];
-}
-
-
-- (BOOL)hasExpired
-{
-    return [self.isExpired boolValue];
-}
-
-
-- (void)expire
-{
-    if ([self shouldReplicateOnExpiry]) {
-        self.isExpired = @YES;
-    } else {
-        [[OMeta m].context deleteEntity:self];
-    }
-}
-
-
-- (void)unexpire
-{
-    self.isExpired = @NO;
 }
 
 
@@ -317,13 +295,13 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {
-    [super setValue:value forKey:[OValidator propertyKeyForKey:key]];
+    [super setValue:value forKey:[OValidator keyMappingForKey:key]];
 }
 
 
 - (id)valueForKey:(NSString *)key
 {
-    return [super valueForKey:[OValidator propertyKeyForKey:key]];
+    return [super valueForKey:[OValidator keyMappingForKey:key]];
 }
 
 
@@ -331,7 +309,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
-    dictionary[kUnboundKeyEntityClass] = NSStringFromClass([self class]);
+    dictionary[kExternalKeyEntityClass] = NSStringFromClass([self class]);
     
     for (NSString *key in [[self class] propertyKeys]) {
         if ([self hasValueForKey:key] && ![self isTransientProperty:key]) {
@@ -349,9 +327,25 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 }
 
 
-- (NSString *)reuseIdentifier
+- (void)expire
 {
-    return [[self proxy] reuseIdentifier];
+    if ([self shouldReplicateOnExpiry]) {
+        self.isExpired = @YES;
+    } else {
+        [[OMeta m].context deleteEntity:self];
+    }
+}
+
+
+- (void)unexpire
+{
+    self.isExpired = @NO;
+}
+
+
+- (BOOL)hasExpired
+{
+    return [self.isExpired boolValue];
 }
 
 @end

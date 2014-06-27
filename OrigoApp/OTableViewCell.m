@@ -31,7 +31,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 @interface OTableViewCell () {
 @private
     OState *_state;
-    OTableViewCellBlueprint *_blueprint;
+    OInputCellBlueprint *_blueprint;
     
     NSMutableDictionary *_views;
     UITableView *_tableView;
@@ -96,7 +96,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addInputFieldForKey:(NSString *)key
 {
-    OInputField *inputField = [_blueprint inputFieldWithKey:key delegate:_inputDelegate];
+    OInputField *inputField = [_blueprint inputFieldWithKey:key delegate:_inputCellDelegate];
     
     [self.contentView addSubview:inputField];
     [_views setObject:inputField forKey:[key stringByAppendingString:kViewKeySuffixInputField]];
@@ -131,13 +131,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Initialisation
 
-- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier state:(OState *)state
 {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    self = [self initWithStyle:style reuseIdentifier:reuseIdentifier];
     
     if (self) {
-        _state = [OState s];
-        _tableView = ((UITableViewController *)_state.viewController).tableView;
+        _state = state;
+        _tableView = ((OTableViewController *)_state.viewController).tableView;
         
         if ([OMeta systemIs_iOS6x]) {
             self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -170,15 +170,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (instancetype)initWithEntity:(id<OEntity>)entity delegate:(id)delegate
 {
-    NSString *reuseIdentifier = [entity reuseIdentifier];
+    OState *state = ((OTableViewController *)delegate).state;
     
-    self = [self initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
+    self = [self initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:NSStringFromClass([entity entityClass]) state:state];
     
     if (self) {
         _entity = entity;
-        _inputDelegate = delegate;
-        _blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
-        _constrainer = [[OTableViewCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
+        _inputCellDelegate = delegate;
+        _blueprint = [_inputCellDelegate inputCellBlueprint];
+        _constrainer = [[OInputCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
         
         [self addCellElements];
         [self.contentView setNeedsUpdateConstraints];
@@ -190,12 +190,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate
 {
-    self = [self initWithStyle:style reuseIdentifier:reuseIdentifier];
+    OState *state = ((OTableViewController *)delegate).state;
+    
+    self = [self initWithStyle:style reuseIdentifier:reuseIdentifier state:state];
     
     if (self && ![self isListCell]) {
-        _inputDelegate = delegate;
-        _blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
-        _constrainer = [[OTableViewCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
+        _inputCellDelegate = delegate;
+        _blueprint = [_inputCellDelegate inputCellBlueprint];
+        _constrainer = [[OInputCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
         
         [self addCellElements];
         [self.contentView setNeedsUpdateConstraints];
@@ -326,7 +328,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     if (![self isListCell]) {
         CGFloat implicitFramePadding = [OMeta systemIs_iOS6x] ? kImplicitFramePadding_iOS6x : 0.f;
-        CGFloat desiredHeight = [_constrainer heightOfCell];
+        CGFloat desiredHeight = [_constrainer heightOfInputCell];
         
         if (abs(self.frame.size.height - (desiredHeight + implicitFramePadding)) > 0.5f) {
             [self setNeedsUpdateConstraints];
@@ -420,14 +422,16 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-- (void)processInput
+- (void)processInputShouldValidate:(BOOL)shouldValidate
 {
-    if ([_inputDelegate inputIsValid]) {
+    BOOL inputIsValid = !shouldValidate || [_inputCellDelegate inputIsValid];
+    
+    if (inputIsValid) {
         if (![_state actionIs:kActionEdit]) {
             [self endEditing:YES];
         }
         
-        [_inputDelegate processInput];
+        [_inputCellDelegate processInput];
     } else {
         [self shakeCellVibrate:NO];
     }
@@ -443,15 +447,15 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (![_entity isCommitted]) {
         BOOL shouldCommit = YES;
         
-        if ([_inputDelegate respondsToSelector:@selector(shouldCommitEntity:)]) {
-            shouldCommit = [_inputDelegate shouldCommitEntity:_entity];
+        if ([_inputCellDelegate respondsToSelector:@selector(shouldCommitEntity:)]) {
+            shouldCommit = [_inputCellDelegate shouldCommitEntity:_entity];
         }
         
         if (shouldCommit) {
             [_entity commit];
             
-            if ([_inputDelegate respondsToSelector:@selector(didCommitEntity:)]) {
-                [_inputDelegate didCommitEntity:_entity];
+            if ([_inputCellDelegate respondsToSelector:@selector(didCommitEntity:)]) {
+                [_inputCellDelegate didCommitEntity:_entity];
             }
         }
     }

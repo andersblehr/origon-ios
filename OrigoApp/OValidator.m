@@ -29,10 +29,16 @@ static NSDictionary *_keyMappings = nil;
 + (BOOL)isNameKey:(NSString *)key
 {
     if (!_nameKeys) {
-        _nameKeys = @[kPropertyKeyName, kUnboundKeyResidenceName];
+        _nameKeys = @[kPropertyKeyName, kMappedKeyFullName, kMappedKeyGivenName, kMappedKeyResidenceName];
     }
     
     return [_nameKeys containsObject:key];
+}
+
+
++ (BOOL)isGivenNameKey:(NSString *)key
+{
+    return [key isEqualToString:kMappedKeyGivenName];
 }
 
 
@@ -55,7 +61,7 @@ static NSDictionary *_keyMappings = nil;
 + (BOOL)isEmailKey:(NSString *)key
 {
     if (!_emailKeys) {
-        _emailKeys = @[kUnboundKeyAuthEmail, kPropertyKeyEmail];
+        _emailKeys = @[kExternalKeyAuthEmail, kPropertyKeyEmail];
     }
     
     return [_emailKeys containsObject:key];
@@ -75,7 +81,7 @@ static NSDictionary *_keyMappings = nil;
 + (BOOL)isPasswordKey:(NSString *)key
 {
     if (!_passwordKeys) {
-        _passwordKeys = @[kUnboundKeyPassword, kUnboundKeyRepeatPassword];
+        _passwordKeys = @[kExternalKeyPassword, kExternalKeyRepeatPassword];
     }
     
     return [_passwordKeys containsObject:key];
@@ -90,7 +96,7 @@ static NSDictionary *_keyMappings = nil;
 
 + (BOOL)isAlternatingInputFieldKey:(NSString *)key
 {
-    return [self isAlternatingLabelKey:key] || [self isPhoneNumberKey:key];
+    return [self isNameKey:key] || [self isAgeKey:key] || [self isPhoneNumberKey:key];
 }
 
 
@@ -100,7 +106,7 @@ static NSDictionary *_keyMappings = nil;
 {
     NSMutableDictionary *reference = [NSMutableDictionary dictionary];
     
-    reference[kUnboundKeyEntityClass] = NSStringFromClass(entity.entityClass);
+    reference[kExternalKeyEntityClass] = NSStringFromClass(entity.entityClass);
     reference[kPropertyKeyEntityId] = entity.entityId;
     
     if ([entity conformsToProtocol:@protocol(OMember)]) {
@@ -121,13 +127,16 @@ static NSDictionary *_keyMappings = nil;
 }
 
 
-+ (NSString *)propertyKeyForKey:(NSString *)key
++ (NSString *)keyMappingForKey:(NSString *)key
 {
     if (!_keyMappings) {
         _keyMappings = @{
-            kUnboundKeyGivenName : kPropertyKeyName,
-            kUnboundKeyPurpose : kPropertyKeyDescriptionText,
-            kUnboundKeyResidenceName : kPropertyKeyName
+            kMappedKeyClass : kPropertyKeyName,
+            kMappedKeyFullName : kPropertyKeyName,
+            kMappedKeyGivenName : kPropertyKeyName,
+            kMappedKeyPurpose : kPropertyKeyDescriptionText,
+            kMappedKeyResidenceName : kPropertyKeyName,
+            kMappedKeySchool : kPropertyKeyDescriptionText
         };
     }
     
@@ -142,18 +151,18 @@ static NSDictionary *_keyMappings = nil;
     BOOL valueIsValid = NO;
     
     if (value) {
-        NSString *propertyKey = [self propertyKeyForKey:key];
+        key = [self keyMappingForKey:key];
         
-        if ([self isNameKey:propertyKey]) {
-            valueIsValid = [self valueIsName:value];
-        } else if ([self isDateKey:propertyKey]) {
+        if ([self isNameKey:key]) {
+            valueIsValid = [self isNameValue:value];
+        } else if ([self isDateKey:key]) {
             valueIsValid = YES;
-        } else if ([self isPhoneNumberKey:propertyKey]) {
-            valueIsValid = ([value length] >= kMinimumPhoneNumberLength);
-        } else if ([self isEmailKey:propertyKey]) {
-            valueIsValid = [self valueIsEmailAddress:value];
-        } else if ([self isPasswordKey:propertyKey]) {
-            valueIsValid = ([value length] >= kMinimumPassordLength);
+        } else if ([self isPhoneNumberKey:key]) {
+            valueIsValid = [value length] >= kMinimumPhoneNumberLength;
+        } else if ([self isEmailKey:key]) {
+            valueIsValid = [self isEmailValue:value];
+        } else if ([self isPasswordKey:key]) {
+            valueIsValid = [value length] >= kMinimumPassordLength;
         }
     }
     
@@ -161,38 +170,38 @@ static NSDictionary *_keyMappings = nil;
 }
 
 
-+ (BOOL)valueIsEmailAddress:(id)value
++ (BOOL)isEmailValue:(id)value
 {
-    BOOL valueIsEmailAddress = NO;
+    BOOL isEmailValue = NO;
     
     if (value && [value isKindOfClass:[NSString class]]) {
         NSInteger atLocation = [value rangeOfString:@"@"].location;
         NSInteger dotLocation = [value rangeOfString:@"." options:NSBackwardsSearch].location;
         NSInteger spaceLocation = [value rangeOfString:@" "].location;
         
-        valueIsEmailAddress = (atLocation != NSNotFound);
-        valueIsEmailAddress = valueIsEmailAddress && (dotLocation != NSNotFound);
-        valueIsEmailAddress = valueIsEmailAddress && (dotLocation > atLocation);
-        valueIsEmailAddress = valueIsEmailAddress && (spaceLocation == NSNotFound);
+        isEmailValue = atLocation != NSNotFound;
+        isEmailValue = isEmailValue && (dotLocation != NSNotFound);
+        isEmailValue = isEmailValue && (dotLocation > atLocation);
+        isEmailValue = isEmailValue && (spaceLocation == NSNotFound);
     }
     
-    return valueIsEmailAddress;
+    return isEmailValue;
 }
 
 
-+ (BOOL)valueIsName:(id)value
++ (BOOL)isNameValue:(id)value
 {
-    BOOL valueIsName = NO;
+    BOOL isName = NO;
     
     if ([value isKindOfClass:[NSString class]]) {
-        valueIsName = [value hasValue];
+        isName = [value hasValue];
         
         if ([[OState s].viewController.identifier isEqualToString:kIdentifierMember]) {
-            valueIsName = valueIsName && ([value rangeOfString:kSeparatorSpace].location > 0);
+            isName = isName && ([value rangeOfString:kSeparatorSpace].location != NSNotFound);
         }
     }
     
-    return valueIsName;
+    return isName;
 }
 
 @end

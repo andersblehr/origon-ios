@@ -112,6 +112,18 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
+#pragma mark - OEntityProxy overrides
+
+- (void)expire
+{
+    for (id<OMembership> membership in [self allMemberships]) {
+        [[membership proxy] expire];
+    }
+    
+    [super expire];
+}
+
+
 #pragma mark - OOrigo protocol conformance
 
 - (NSSet *)allMemberships
@@ -163,6 +175,26 @@ static NSString * const kAddressTemplatesByCountryCode =
     }
     
     return members;
+}
+
+
+- (NSSet *)elders
+{
+    id elders = nil;
+    
+    if ([self instance]) {
+        elders = [[self instance] elders];
+    } else {
+        elders = [NSMutableSet set];
+        
+        for (id<OMember> resident in [self residents]) {
+            if (![resident isJuvenile]) {
+                [elders addObject:resident];
+            }
+        }
+    }
+    
+    return elders;
 }
 
 
@@ -241,7 +273,7 @@ static NSString * const kAddressTemplatesByCountryCode =
     
     if ([self instance]) {
         isJuvenile = [[self instance] isJuvenile];
-    } else {
+    } else if (![self isOfType:kOrigoTypeResidence]) {
         isJuvenile = [[self ancestorConformingToProtocol:@protocol(OMember)] isJuvenile];
     }
     

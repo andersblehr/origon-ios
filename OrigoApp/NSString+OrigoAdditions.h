@@ -26,19 +26,21 @@ extern NSString * const kSeparatorAlternates;
 - (BOOL)hasValue;
 - (BOOL)containsString:(NSString *)string;
 - (BOOL)containsCharacter:(const char)character;
+- (BOOL)fuzzyMatches:(NSString *)other;
 
 - (CGSize)sizeWithFont:(UIFont *)font maxWidth:(CGFloat)maxWidth;
 - (NSInteger)lineCountWithFont:(UIFont *)font maxWidth:(CGFloat)maxWidth;
 - (NSInteger)lineCount;
 - (NSArray *)lines;
 
-- (NSString *)removeRedundantWhitespace;
+- (NSString *)removeRedundantWhitespaceKeepNewlines:(BOOL)keepNewlines;
 - (NSString *)stringByReplacingSubstring:(NSString *)substring withString:(NSString *)string;
 - (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;
 - (NSString *)stringByAppendingCapitalisedString:(NSString *)string;
 - (NSString *)stringByCapitalisingFirstLetter;
 - (NSString *)stringByLowercasingFirstLetter;
 
-- (NSInteger)levenshteinDistanceToString:(NSString *)string;
+- (NSString *)givenName;
+- (NSString *)localisedCountryName;
 
 @end

@@ -8,6 +8,7 @@
 
 #import "OMemberViewController.h"
 
+static NSInteger const kSectionKeyMember = 0;
 static NSInteger const kSectionKeyGuardians = 1;
 static NSInteger const kSectionKeyAddresses = 2;
 
@@ -29,26 +30,35 @@ static NSInteger const kActionSheetTagAddressBookEntry = 3;
 static NSInteger const kButtonTagAddressBookEntryAllValues = 10;
 static NSInteger const kButtonTagAddressBookEntryNoValue = 11;
 
-static NSInteger const kAlertTagEmailChange = 0;
+static NSInteger const kActionSheetTagGuardianAddressYesNo = 4;
+static NSInteger const kButtonTagYes = 0;
+
+static NSInteger const kActionSheetTagGuardianAddress = 5;
+
+static NSInteger const kAlertTagUnknownChild = 0;
+static NSInteger const kButtonTagOK = 1;
+
+static NSInteger const kAlertTagEmailChange = 1;
 static NSInteger const kButtonTagContinue = 1;
 
 
-@interface OMemberViewController () <OTableViewController, OTableViewInputDelegate, OMemberExaminerDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate, OConnectionDelegate> {
+@interface OMemberViewController () <OTableViewController, OInputCellDelegate, OMemberExaminerDelegate, OConnectionDelegate, UIActionSheetDelegate, UIAlertViewDelegate, ABPeoplePickerNavigationControllerDelegate> {
 @private
     id<OMember> _member;
     id<OOrigo> _origo;
     id<OMembership> _membership;
-    id<OMember> _guardian;
     
     OInputField *_nameField;
     OInputField *_dateOfBirthField;
     OInputField *_mobilePhoneField;
     OInputField *_emailField;
-    
+
     NSMutableArray *_addressBookAddresses;
     NSMutableArray *_addressBookHomeNumbers;
     NSMutableArray *_addressBookMappings;
-    NSArray *_candidateResidences;
+    
+    NSArray *_cachedResidences;
+    NSMutableDictionary *_cachedResidencesById;
     
     BOOL _didPerformLocalLookup;
 }
@@ -60,12 +70,19 @@ static NSInteger const kButtonTagContinue = 1;
 
 #pragma mark - Auxiliary methods
 
+- (NSString *)nameKey
+{
+    return [self targetIs:kTargetJuvenile] ? kMappedKeyGivenName : kMappedKeyFullName;
+}
+
+
 - (void)resetInputState
 {
     [_member useInstance:nil];
     
-    self.detailCell.editable = YES;
-    [self.detailCell clearInputFields];
+    self.target = _member;
+    self.inputCell.editable = YES;
+    [self.inputCell clearInputFields];
     
     if ([self hasSectionWithKey:kSectionKeyAddresses]) {
         [self reloadSectionWithKey:kSectionKeyAddresses];
@@ -77,40 +94,47 @@ static NSInteger const kButtonTagContinue = 1;
 
 #pragma mark - Input validation
 
-- (BOOL)isEligibleMember:(id<OMember>)member
+- (BOOL)reflectIfEligibleMember:(id<OMember>)member
 {
-    BOOL isValid = YES;
+    BOOL isEligible = ![_origo hasMember:member];
     
-    if ([_origo hasMember:member]) {
-        OInputField *identifierField = _emailField.value ? _emailField : _mobilePhoneField;
-        
-        identifierField.value = [NSString string];
-        [identifierField becomeFirstResponder];
-        
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Already member", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ is already a member of %@.", @""), _member.name, _origo.name]];
-        
-        isValid = NO;
-    } else {
+    if (isEligible) {
         [self reflectMember:member];
+    } else {
+        [_nameField becomeFirstResponder];
+        
+        [OAlert showAlertWithTitle:nil text:[NSString stringWithFormat:NSLocalizedString(@"%@ is already in %@.", @""), [member publicName], _origo.name]];
     }
     
-    return isValid;
+    return isEligible;
 }
 
 
-- (BOOL)inputFieldHasValidValue:(OInputField *)inputField
+- (BOOL)identifierFieldHasUniqueValue:(OInputField *)identifierField
 {
-    BOOL hasValidValue = [inputField hasValidValue];
+    BOOL hasUniqueValue = [identifierField hasValidValue];
     
-    if (hasValidValue && [self actionIs:kActionRegister] && ![self targetIs:kTargetUser]) {
-        id registrant = [[OMeta m].context entityOfClass:[OMember class] withValue:inputField.value forKey:inputField.key];
+    if (hasUniqueValue && [self actionIs:kActionRegister] && ![self targetIs:kTargetUser]) {
+        id<OMember> registrant = [[OMeta m].context entityOfClass:[OMember class] withValue:identifierField.value forKey:identifierField.key];
         
         if (registrant) {
-            hasValidValue = [self isEligibleMember:registrant];
+            hasUniqueValue = [registrant.name fuzzyMatches:_nameField.value];
+            
+            if (hasUniqueValue) {
+                hasUniqueValue = [self reflectIfEligibleMember:registrant];
+            } else {
+                [identifierField becomeFirstResponder];
+                
+                if ([OValidator isEmailValue:identifierField.value]) {
+                    [OAlert showAlertWithTitle:nil text:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ is already in use.", @""), identifierField.value]];
+                } else {
+                    [OAlert showAlertWithTitle:nil text:[NSString stringWithFormat:NSLocalizedString(@"The mobile number %@ is already in use.", @""), identifierField.value]];
+                }
+            }
         }
     }
     
-    return hasValidValue;
+    return hasUniqueValue;
 }
 
 
@@ -121,7 +145,7 @@ static NSInteger const kButtonTagContinue = 1;
     NSString *mobilePhone = dictionary[kPropertyKeyMobilePhone];
     NSString *email = dictionary[kPropertyKeyEmail];
     
-    BOOL inputMatches = [OUtil fullName:_nameField.value fuzzyMatchesFullName:name];
+    BOOL inputMatches = [_nameField.value fuzzyMatches:name];
     
     if (inputMatches && _dateOfBirthField) {
         inputMatches = [_dateOfBirthField.value isEqual:dateOfBirth];
@@ -143,25 +167,44 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)performLocalLookup
 {
-    id<OMember> member = nil;
+    id<OMember> actualMember = nil;
     
     if (_emailField.value) {
-        member = [[OMeta m].context entityOfClass:[OMember class] withValue:_emailField.value forKey:kPropertyKeyEmail];
+        actualMember = [[OMeta m].context entityOfClass:[OMember class] withValue:_emailField.value forKey:kPropertyKeyEmail];
     }
     
-    if (!member && _mobilePhoneField.value) {
-        member = [[OMeta m].context entityOfClass:[OMember class] withValue:_mobilePhoneField.value forKey:kPropertyKeyMobilePhone];
+    if (!actualMember && _mobilePhoneField.value) {
+        actualMember = [[OMeta m].context entityOfClass:[OMember class] withValue:_mobilePhoneField.value forKey:kPropertyKeyMobilePhone];
         
-        if (member && member.email) {
-            member = nil;
+        if (actualMember && actualMember.email) {
+            actualMember = nil;
         }
     }
     
-    if (member) {
-        [self reflectMember:member];
+    if (actualMember) {
+        if ([self targetIs:kTargetGuardian]) {
+            [self expireCoGuardianIfAlreadyHousemateOfGuardian:actualMember];
+        }
+        
+        [self reflectMember:actualMember];
     }
     
     _didPerformLocalLookup = YES;
+}
+
+
+- (void)expireCoGuardianIfAlreadyHousemateOfGuardian:(id<OMember>)guardian
+{
+    id<OMember> ward = [self.entity ancestorConformingToProtocol:@protocol(OMember)];
+    id<OMember> coGuardian = [[ward guardians] anyObject];
+    
+    if (coGuardian && ![coGuardian instance]) {
+        for (id<OMember> housemate in [guardian housemates]) {
+            if (![housemate isJuvenile] && [housemate.name fuzzyMatches:coGuardian.name]) {
+                [coGuardian expire];
+            }
+        }
+    }
 }
 
 
@@ -170,8 +213,6 @@ static NSInteger const kButtonTagContinue = 1;
     _nameField.value = member.name;
     _mobilePhoneField.value = member.mobilePhone;
     _emailField.value = member.email;
-    
-    [self reloadSectionWithKey:kSectionKeyAddresses];
     
     if ([member instance] || (member != _member)) {
         if ([member instance]) {
@@ -182,7 +223,7 @@ static NSInteger const kButtonTagContinue = 1;
         
         [self endEditing];
     } else {
-        OInputField *invalidInputField = [self.detailCell nextInvalidInputField];
+        OInputField *invalidInputField = [self.inputCell nextInvalidInputField];
         
         if (invalidInputField) {
             [invalidInputField becomeFirstResponder];
@@ -190,14 +231,74 @@ static NSInteger const kButtonTagContinue = 1;
             [_emailField becomeFirstResponder];
         }
     }
+    
+    [self reloadSectionWithKey:kSectionKeyAddresses];
 }
 
 
 #pragma mark - Examine and persist new member
 
+- (void)examineJuvenile
+{
+    id<OMember> member = nil;
+    
+    NSArray *guardians = [[_member guardians] allObjects];
+    NSMutableArray *activeGuardians = [NSMutableArray array];
+    NSMutableArray *inactiveGuardians = [NSMutableArray array];
+    
+    for (id<OMember> guardian in guardians) {
+        if ([guardian isActive]) {
+            [activeGuardians addObject:guardian];
+        } else {
+            [inactiveGuardians addObject:guardian];
+        }
+        
+        for (id<OMember> ward in [guardian wards]) {
+            if (!member && (ward != _member)) {
+                if ([_nameField.value fuzzyMatches:[ward givenName]]) {
+                    member = ward;
+                }
+            }
+        }
+    }
+    
+    BOOL hasActiveGuardians = [activeGuardians count] > 0;
+    
+    if (member) {
+        for (id<OMembership> residency in [_member residencies]) {
+            [residency expire];
+        }
+        
+        if ([self reflectIfEligibleMember:member]) {
+            [self persistMember];
+        }
+    } else if (hasActiveGuardians && ([activeGuardians count] == [guardians count])) {
+        if ([activeGuardians count] == 1) {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown child", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ has not registered a child called %@.", @""), [activeGuardians[0] givenName], _nameField.value]];
+        } else {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown child", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Neither %@ nor %@ has registered a child called %@.", @""), [activeGuardians[0] givenName], [activeGuardians[1] givenName], _nameField.value]];
+            
+        }
+        
+        [self.inputCell resumeFirstResponder];
+    } else if (hasActiveGuardians && ![[guardians[0] housemates] containsObject:guardians[0]]) {
+        for (id<OMembership> residency in [_member residencies]) {
+            if ([residency.origo hasMember:activeGuardians[0]]) {
+                [residency expire];
+            }
+        }
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:[NSString stringWithFormat:NSLocalizedString(@"%@ has not registered a child called %@. %@ will only be added to %@'s household.", @""), [activeGuardians[0] givenName], _nameField.value, _nameField.value, [inactiveGuardians[0] givenName]] delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"OK", @""), nil];
+        alert.tag = kAlertTagUnknownChild;
+    } else {
+        [self examineMember];
+    }
+}
+
+
 - (void)examineMember
 {
-    [self.detailCell writeInput];
+    [self.inputCell writeInput];
     
     [[OMemberExaminer examinerForResidence:_origo delegate:self] examineMember:_member];
 }
@@ -205,24 +306,36 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)persistMember
 {
-    [self.detailCell writeInput];
+    [self.inputCell writeInput];
     
     if ([self actionIs:kActionRegister]) {
-        if (![_origo isJuvenile] || ![self targetIs:kTargetGuardian]) {
-            _membership = [_origo addMember:_member];
-        }
-        
-        id<OOrigo> residence = [_member residence];
-        NSInteger numberOfResidents = [[residence residents] count];
-        
-        if (![_member hasAddress] || ([self aspectIs:kAspectJuvenile] && (numberOfResidents == 1))) {
-            [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:residence];
-        } else {
-            if ([_member isUser] && ![_member isActive]) {
-                [_member makeActive];
-            }
+        if ([self targetIs:kTargetGuardian] && [self aspectIs:kAspectJuvenile]) {
+            id<OMember> ward = [self.entity ancestorConformingToProtocol:@protocol(OMember)];
             
-            [self.dismisser dismissModalViewController:self];
+            if ([[ward residences] count]) {
+                if ([ward hasAddress]) {
+                    [self presentGuardianAddressSheetForWard:ward];
+                } else {
+                    [[ward residence] addMember:_member];
+                    [self.dismisser dismissModalViewController:self];
+                }
+            } else if (![_member hasAddress]) {
+                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
+            } else {
+                [self.dismisser dismissModalViewController:self];
+            }
+        } else {
+            _membership = [_origo addMember:_member];
+            
+            if (![_member hasAddress]) {
+                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
+            } else {
+                if ([_member isUser] && ![_member isActive]) {
+                    [_member makeActive];
+                }
+                
+                [self.dismisser dismissModalViewController:self];
+            }
         }
     }
 }
@@ -230,13 +343,11 @@ static NSInteger const kButtonTagContinue = 1;
 
 #pragma mark - Action sheets & alerts
 
-- (void)presentCandidateResidencesSheet:(NSSet *)residences
+- (void)presentHousemateResidencesSheet
 {
-    _candidateResidences = [residences sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:kPropertyKeyAddress ascending:YES]]];
-    
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagResidence];
     
-    for (id<OOrigo> residence in _candidateResidences) {
+    for (id<OOrigo> residence in _cachedResidences) {
         [actionSheet addButtonWithTitle:[residence shortAddress]];
     }
     
@@ -246,22 +357,22 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)presentActionSheetForMultiValueField:(OInputField *)multiValueField
+- (void)presentMultiValueSheetForInputField:(OInputField *)inputField
 {
     NSString *promptFormat = nil;
     
-    if (multiValueField == _mobilePhoneField) {
+    if (inputField == _mobilePhoneField) {
         promptFormat = NSLocalizedString(@"%@ has more than one mobile phone number. Which number do you want to provide?", @"");
-    } else if (multiValueField == _emailField) {
+    } else if (inputField == _emailField) {
         promptFormat = NSLocalizedString(@"%@ has more than one email address. Which address do you want to provide?", @"");
     }
     
-    [multiValueField becomeFirstResponder];
+    [inputField becomeFirstResponder];
     
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:promptFormat, [OUtil givenNameFromFullName:_nameField.value]] delegate:self tag:kActionSheetTagAddressBookEntry];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:promptFormat, [_nameField.value givenName]] delegate:self tag:kActionSheetTagAddressBookEntry];
     
-    for (NSInteger i = 0; i < [multiValueField.value count]; i++) {
-        [actionSheet addButtonWithTitle:multiValueField.value[i]];
+    for (NSInteger i = 0; i < [inputField.value count]; i++) {
+        [actionSheet addButtonWithTitle:inputField.value[i]];
     }
     
     [actionSheet addButtonWithTitle:NSLocalizedString(@"None of them", @"") tag:kButtonTagAddressBookEntryNoValue];
@@ -270,9 +381,9 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)presentActionSheetForMultipleAddresses
+- (void)presentMultipleAddressesSheet
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"%@ has more than one home address. Which address do you want to provide?", @""), [OUtil givenNameFromFullName:_nameField.value]] delegate:self tag:kActionSheetTagAddressBookEntry];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"%@ has more than one home address. Which address do you want to provide?", @""), [_nameField.value givenName]] delegate:self tag:kActionSheetTagAddressBookEntry];
     
     for (NSInteger i = 0; i < [_addressBookAddresses count]; i++) {
         [actionSheet addButtonWithTitle:[_addressBookAddresses[i] shortAddress]];
@@ -299,7 +410,7 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
-- (void)presentActionSheetForMappingHomeNumbers
+- (void)presentHomeNumberMappingSheet
 {
     static NSInteger homeNumberCount = 0;
 
@@ -307,7 +418,7 @@ static NSInteger const kButtonTagContinue = 1;
         homeNumberCount = [_addressBookHomeNumbers count];
     }
     
-    NSString *givenName = [OUtil givenNameFromFullName:_nameField.value];
+    NSString *givenName = [_nameField.value givenName];
     NSString *prompt = nil;
     
     if ([[_member residences] count] == 1) {
@@ -362,6 +473,64 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
+- (void)presentGuardianAddressSheetForWard:(id<OMember>)ward
+{
+    _cachedResidences = [NSArray array];
+    
+    for (id<OOrigo> residence in [ward residences]) {
+        if ([residence hasAddress]) {
+            _cachedResidences = [_cachedResidences arrayByAddingObject:residence];
+        }
+    }
+    
+    OActionSheet *actionSheet = nil;
+    
+    if ([_cachedResidences count] == 1) {
+        NSString *guardians = [OUtil commaSeparatedListOfItems:[_cachedResidences[0] elders] conjoinLastItem:YES];
+
+        actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"Does %@ live with %@?", @""), [_member givenName], guardians] delegate:self tag:kActionSheetTagGuardianAddressYesNo];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"")];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"")];
+    } else {
+        NSString *guardians1 = [OUtil commaSeparatedListOfItems:[_cachedResidences[0] elders] conjoinLastItem:YES];
+        NSString *guardians2 = [OUtil commaSeparatedListOfItems:[_cachedResidences[1] elders] conjoinLastItem:YES];
+        
+        actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"Does %@ live with %@ or %@?", @""), [_member givenName], guardians1, guardians2] delegate:self tag:kActionSheetTagGuardianAddress];
+        [actionSheet addButtonWithTitle:guardians1];
+        [actionSheet addButtonWithTitle:guardians2];
+    }
+    
+    [actionSheet show];
+}
+
+
+- (void)presentAlertForNumberOfUmatchedResidences:(NSInteger)numberOfUnmatchedResidences
+{
+    NSString *title = nil;
+    NSString *text = nil;
+    
+    if (numberOfUnmatchedResidences == 1) {
+        title = NSLocalizedString(@"Unknown address", @"");
+    } else {
+        title = NSLocalizedString(@"Unknown addresses", @"");
+    }
+    
+    if (numberOfUnmatchedResidences < [[_member residences] count]) {
+        if (numberOfUnmatchedResidences == 1) {
+            text = NSLocalizedString(@"One of the addresses you provided did not match our records and was not saved.", @"");
+        } else {
+            text = NSLocalizedString(@"Some of the addresses you provided did not match our records and were not saved.", @"");
+        }
+    } else if (numberOfUnmatchedResidences == 1) {
+        text = NSLocalizedString(@"The address you provided did not match our records and was not saved.", @"");
+    } else {
+        text = NSLocalizedString(@"The addresses you provided did not match our records and were not saved.", @"");
+    }
+    
+    [OAlert showAlertWithTitle:title text:text];
+}
+
+
 - (void)presentUserEmailChangeAlert
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"New email address", @"") message:[NSString stringWithFormat:NSLocalizedString(@"You are about to change your email address from %@ to %@ ...", @""), _member.email, _emailField.value] delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"Continue", @""), nil];
@@ -382,9 +551,9 @@ static NSInteger const kButtonTagContinue = 1;
 - (void)refineAddressBookContactInfo
 {
     if ([_mobilePhoneField hasMultiValue]) {
-        [self presentActionSheetForMultiValueField:_mobilePhoneField];
+        [self presentMultiValueSheetForInputField:_mobilePhoneField];
     } else if ([_emailField hasMultiValue]) {
-        [self presentActionSheetForMultiValueField:_emailField];
+        [self presentMultiValueSheetForInputField:_emailField];
     }
 }
 
@@ -392,9 +561,13 @@ static NSInteger const kButtonTagContinue = 1;
 - (void)refineAddressBookAddressInfo
 {
     if ([_addressBookAddresses count]) {
-        [self presentActionSheetForMultipleAddresses];
+        [self presentMultipleAddressesSheet];
     } else if ([_addressBookHomeNumbers count]) {
-        [self presentActionSheetForMappingHomeNumbers];
+        if ([[_member residences] count]) {
+            [self presentHomeNumberMappingSheet];
+        } else {
+            [_addressBookHomeNumbers removeAllObjects];
+        }
     }
 }
 
@@ -482,7 +655,7 @@ static NSInteger const kButtonTagContinue = 1;
     for (CFIndex i = 0; i < ABMultiValueGetCount(multiValues); i++) {
         NSString *emailAddress = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(multiValues, i);
         
-        if ([OValidator valueIsEmailAddress:emailAddress]) {
+        if ([OValidator isEmailValue:emailAddress]) {
             [emailAddresses addObject:emailAddress];
         }
     }
@@ -562,9 +735,7 @@ static NSInteger const kButtonTagContinue = 1;
 {
     [self.view endEditing:YES];
     
-    id<OMember> pivotMember = [self.entity ancestorConformingToProtocol:@protocol(OMember)];
-    
-    if ([[pivotMember peersNotInOrigo:_origo] count]) {
+    if ([[OUtil eligibleCandidatesForOrigo:_origo isElder:[self targetIs:kTargetElder]] count]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
         
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"")];
@@ -578,15 +749,19 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
+- (void)addItem
+{
+    [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
+}
+
+
 #pragma mark - View lifecycle
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
-    if ([self actionIs:kActionRegister] && [self targetIs:kTargetJuvenile] && _guardian) {
-        [[_guardian residence] addMember:_member];
-        
+    if ([self actionIs:kActionRegister] && [[_member guardians] count]) {
         [self reloadSections];
     }
 }
@@ -595,7 +770,7 @@ static NSInteger const kButtonTagContinue = 1;
 - (void)viewDidAppear:(BOOL)animated
 {
     if ([self actionIs:kActionRegister] && [self targetIs:kTargetJuvenile]) {
-        if (_guardian) {
+        if ([[_member guardians] count]) {
             [_nameField becomeFirstResponder];
         } else {
             [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
@@ -633,18 +808,20 @@ static NSInteger const kButtonTagContinue = 1;
     } else if ([_member isCommitted]) {
         NSString *givenName = [_member givenName];
         
-        self.title = [_member isHousemateOfUser] ? givenName : _member.name;
+        self.title = [_member isHousemateOfUser] ? givenName : [_member publicName];
         self.navigationItem.backBarButtonItem = [UIBarButtonItem buttonWithTitle:givenName];
     } else {
         self.title = NSLocalizedString(_origo.type, kStringPrefixNewMemberTitle);
     }
     
     if ([self actionIs:kActionRegister]) {
-        if (![self targetIs:kTargetUser] && ![self targetIs:kTargetJuvenile]) {
+        if ([self targetIs:kTargetJuvenile]) {
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+        } else if (![self targetIs:kTargetUser]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButtonWithTarget:self];
         }
     } else if ([self actionIs:kActionDisplay]) {
-        if (self.canEdit) {
+        if ([_member isManagedByUser]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
         }
     }
@@ -655,14 +832,22 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)loadData
 {
-    [self setDataForDetailSection];
+    [self setDataForInputSection];
     
     if ([_member isJuvenile]) {
         [self setData:[_member guardians] forSectionWithKey:kSectionKeyGuardians];
     }
     
     if (![_member isUser] || [[OMeta m] userIsAllSet]) {
-        [self setData:[_member residences] forSectionWithKey:kSectionKeyAddresses];
+        NSMutableArray *addresses = [NSMutableArray array];
+        
+        for (id<OOrigo> residence in [_member residences]) {
+            if ([residence hasAddress]) {
+                [addresses addObject:residence];
+            }
+        }
+        
+        [self setData:addresses forSectionWithKey:kSectionKeyAddresses];
     }
 }
 
@@ -694,18 +879,9 @@ static NSInteger const kButtonTagContinue = 1;
         cell.textLabel.text = [residence shortAddress];
         cell.detailTextLabel.text = [OPhoneNumberFormatter formatPhoneNumber:residence.telephone canonicalise:YES];
         
-        [cell setDestinationId:kIdentifierOrigo selectableDuringInput:YES];
+        [cell setDestinationId:kIdentifierOrigo selectableDuringInput:![self targetIs:kTargetJuvenile]];
     }
 }
-
-
-//- (NSString *)reuseIdentifierForDetailSection
-//{
-//    NSString *reuseIdentifier = nil;
-//    
-//    
-//    return reuseIdentifier;
-//}
 
 
 - (NSArray *)toolbarButtons
@@ -713,7 +889,7 @@ static NSInteger const kButtonTagContinue = 1;
     NSArray *toolbarButtons = nil;
     
     if ([_member isCommitted] && ![_member isUser]) {
-        toolbarButtons = [[OMeta m].switchboard toolbarButtonsForMember:_member];
+        toolbarButtons = [[OMeta m].switchboard toolbarButtonsForMember:_member presenter:self];
     }
     
     return toolbarButtons;
@@ -722,10 +898,15 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    BOOL hasFooter = [self isBottomSectionKey:sectionKey] && [self actionIs:kActionRegister];
+    BOOL hasFooter = NO;
     
-    hasFooter = hasFooter && ![self targetIs:kTargetUser];
-    hasFooter = hasFooter && ![self targetIs:kTargetJuvenile];
+    if ([self actionIs:kActionRegister]) {
+        if ([self isBottomSectionKey:sectionKey]) {
+            hasFooter = ![_member isUser] && ![_member isJuvenile];
+        } else if (sectionKey == kSectionKeyMember) {
+            hasFooter = [_member isJuvenile];
+        }
+    }
     
     return hasFooter;
 }
@@ -769,21 +950,23 @@ static NSInteger const kButtonTagContinue = 1;
 {
     NSString *text = nil;
     
-    if ([self hasFooterForSectionWithKey:sectionKey]) {
+    if ([self isBottomSectionKey:sectionKey]) {
         text = NSLocalizedString(@"A notification will be sent to the email address you provide.", @"");
         
         if ([self targetIs:kTargetGuardian]) {
-            text = [NSString stringWithFormat:@"%@\n\n%@", NSLocalizedString(@"Before you can register a minor, you must register his or her parents/guardians.", @""), text];
+            text = [NSString stringWithFormat:@"%@\n\n%@", NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @""), text];
         }
+    } else if (sectionKey == kSectionKeyMember) {
+        text = NSLocalizedString(@"Tap [+] to add another guardian.", @"");
     }
     
     return text;
 }
 
 
-- (void)willDisplayDetailCell:(OTableViewCell *)cell
+- (void)willDisplayInputCell:(OTableViewCell *)cell
 {
-    _nameField = [cell inputFieldForKey:kPropertyKeyName];
+    _nameField = [cell inputFieldForKey:[self nameKey]];
     _dateOfBirthField = [cell inputFieldForKey:kPropertyKeyDateOfBirth];
     _mobilePhoneField = [cell inputFieldForKey:kPropertyKeyMobilePhone];
     _emailField = [cell inputFieldForKey:kPropertyKeyEmail];
@@ -795,7 +978,7 @@ static NSInteger const kButtonTagContinue = 1;
     BOOL canDelete = NO;
     
     if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddresses) {
-        canDelete = ([self tableView:self.tableView numberOfRowsInSection:indexPath.section] > 1);
+        canDelete = [self tableView:self.tableView numberOfRowsInSection:indexPath.section] > 1;
     }
     
     return canDelete;
@@ -804,7 +987,7 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey
 {
-    return (sectionKey == kSectionKeyGuardians);
+    return sectionKey == kSectionKeyGuardians;
 }
 
 
@@ -853,7 +1036,9 @@ static NSInteger const kButtonTagContinue = 1;
     if ([viewController.identifier isEqualToString:kIdentifierOrigo]) {
         shouldRelay = YES;
     } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-        shouldRelay = viewController.didCancel;
+        if ([_member isJuvenile]) {
+            shouldRelay = [[_member guardians] count] ? NO : viewController.didCancel;
+        }
     }
     
     return shouldRelay;
@@ -864,7 +1049,11 @@ static NSInteger const kButtonTagContinue = 1;
 {
     if ([viewController.identifier isEqualToString:kIdentifierMember]) {
         if ([self targetIs:kTargetJuvenile] && !viewController.didCancel) {
-            _guardian = viewController.returnData;
+            id<OOrigo> guardianResidence = [viewController.returnData residence];
+            
+            if (![guardianResidence hasMember:_member]) {
+                [guardianResidence addMember:_member];
+            }
         }
     } else if ([viewController.identifier isEqualToString:kIdentifierAuth]) {
         if ([_member.email isEqualToString:_emailField.value]) {
@@ -883,23 +1072,32 @@ static NSInteger const kButtonTagContinue = 1;
 {
     if (!viewController.didCancel) {
         if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
-            if ([self isEligibleMember:viewController.returnData]) {
+            if ([self reflectIfEligibleMember:viewController.returnData]) {
                 if ([self aspectIs:kAspectHousehold]) {
-                    [[self.detailCell nextInvalidInputField] becomeFirstResponder];
+                    [[self.inputCell nextInvalidInputField] becomeFirstResponder];
                 } else {
                     [self endEditing];
                 }
             }
-        } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-            // TODO
         }
     } else if ([self actionIs:kActionRegister]) {
-        [self.detailCell resumeFirstResponder];
+        [self.inputCell resumeFirstResponder];
     }
 }
 
 
-#pragma mark - OTableViewInputDelegate conformance
+#pragma mark - OInputCellDelegate conformance
+
+- (OInputCellBlueprint *)inputCellBlueprint
+{
+    OInputCellBlueprint *blueprint = [[OInputCellBlueprint alloc] init];
+    blueprint.titleKey = [self nameKey];
+    blueprint.detailKeys = @[kPropertyKeyDateOfBirth, kPropertyKeyMobilePhone, kPropertyKeyEmail];
+    blueprint.hasPhoto = _member.photo || ([self aspectIs:kAspectHousehold] && [_member isManagedByUser]);
+    
+    return blueprint;
+}
+
 
 - (BOOL)isReceivingInput
 {
@@ -910,6 +1108,10 @@ static NSInteger const kButtonTagContinue = 1;
 - (BOOL)inputIsValid
 {
     BOOL isValid = [_nameField hasValidValue];
+    
+    if (!isValid && [self targetIs:kTargetJuvenile]) {
+        isValid = [_nameField.value hasValue];
+    }
     
     if (isValid && [self aspectIs:kAspectHousehold]) {
         isValid = [_dateOfBirthField hasValidValue];
@@ -927,12 +1129,12 @@ static NSInteger const kButtonTagContinue = 1;
         if (_emailField.value) {
             isValid = [_mobilePhoneField hasValidValue];
         } else {
-            isValid = [self inputFieldHasValidValue:_mobilePhoneField];
+            isValid = [self identifierFieldHasUniqueValue:_mobilePhoneField];
         }
     }
     
     if (isValid && _emailField.value) {
-        isValid = [self inputFieldHasValidValue:_emailField];
+        isValid = [self identifierFieldHasUniqueValue:_emailField];
     }
     
     if (isValid && !([_dateOfBirthField.value isBirthDateOfMinor] || [_member isJuvenile])) {
@@ -963,6 +1165,8 @@ static NSInteger const kButtonTagContinue = 1;
         } else {
             if (![_member isUser] && (_emailField.value || _mobilePhoneField.value)) {
                 [[OConnection connectionWithDelegate:self] lookupMemberWithIdentifier:_emailField.value ? _emailField.value : _mobilePhoneField.value];
+            } else if ([self targetIs:kTargetJuvenile]) {
+                [self examineJuvenile];
             } else {
                 [self examineMember];
             }
@@ -984,10 +1188,10 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (BOOL)isDisplayableFieldWithKey:(NSString *)key
 {
-    BOOL isDisplayable = [key isEqualToString:kPropertyKeyName] || [self aspectIs:kAspectHousehold];
+    BOOL isDisplayable = [key isEqualToString:[self nameKey]] || [self aspectIs:kAspectHousehold];
     
     if (!isDisplayable && [@[kPropertyKeyMobilePhone, kPropertyKeyEmail] containsObject:key]) {
-        isDisplayable = !([self targetIs:kTargetJuvenile] && [self actionIs:kActionInput]);
+        isDisplayable = ![self targetIs:kTargetJuvenile];
     }
     
     return isDisplayable;
@@ -1012,6 +1216,22 @@ static NSInteger const kButtonTagContinue = 1;
 }
 
 
+- (void)didCommitEntity:(id)entity
+{
+    _member = entity;
+    
+    if ([_cachedResidencesById count] && ![_member isActive]) {
+        for (id<OOrigo> residence in [_member residences]) {
+            id<OOrigo> cachedResidence = _cachedResidencesById[residence.entityId];
+            
+            if (!residence.telephone && cachedResidence.telephone) {
+                residence.telephone = cachedResidence.telephone;
+            }
+        }
+    }
+}
+
+
 #pragma mark - OMemberExaminerDelegate conformance
 
 - (void)examinerDidFinishExamination
@@ -1022,7 +1242,73 @@ static NSInteger const kButtonTagContinue = 1;
 
 - (void)examinerDidCancelExamination
 {
-    [self.detailCell resumeFirstResponder];
+    [self.inputCell resumeFirstResponder];
+}
+
+
+#pragma mark - OConnectionDelegate conformance
+
+- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
+{
+    [super didCompleteWithResponse:response data:data];
+    
+    if (response.statusCode == kHTTPStatusOK) {
+        NSString *identifier = _emailField.value ? _emailField.value : _mobilePhoneField.value;
+        NSString *identifierKey = _emailField.value ? kPropertyKeyEmail : kPropertyKeyMobilePhone;
+        
+        id actualMember = nil;
+        
+        for (NSDictionary *entityDictionary in data) {
+            if ([[entityDictionary allKeys] containsObject:identifierKey]) {
+                if ([entityDictionary[identifierKey] isEqualToString:identifier]) {
+                    if ([self inputMatchesMemberWithDictionary:entityDictionary]) {
+                        actualMember = [OMemberProxy proxyForEntityWithDictionary:entityDictionary];
+                    }
+                    
+                    break;
+                }
+            }
+        }
+        
+        if (actualMember) {
+            [OEntityProxy cacheProxiesForEntitiesWithDictionaries:data];
+            
+            if ([self targetIs:kTargetGuardian]) {
+                [self expireCoGuardianIfAlreadyHousemateOfGuardian:actualMember];
+            }
+            
+            _cachedResidencesById = [NSMutableDictionary dictionary];
+            
+            if ([_member hasAddress] && [actualMember hasAddress]) {
+                NSMutableArray *residences = [[_member residences] mutableCopy];
+                NSMutableArray *unmatchedResidences = [residences mutableCopy];
+                
+                for (id<OOrigo> actualResidence in [actualMember residences]) {
+                    for (id<OOrigo> residence in residences) {
+                        if ([unmatchedResidences containsObject:residence]) {
+                            if ([actualResidence.address fuzzyMatches:residence.address]) {
+                                [unmatchedResidences removeObject:residence];
+                                _cachedResidencesById[actualResidence.entityId] = residence;
+                            }
+                        }
+                    }
+                }
+                
+                if ([unmatchedResidences count]) {
+                    [self presentAlertForNumberOfUmatchedResidences:[unmatchedResidences count]];
+                }
+            }
+            
+            [self reflectMember:actualMember];
+            [self persistMember];
+        } else {
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Incorrect details", @"") text:NSLocalizedString(@"The details you have provided do not match our records ...", @"")];
+            
+            [self.inputCell resumeFirstResponder];
+        }
+    } else if (response.statusCode == kHTTPStatusNotFound) {
+        [self examineMember];
+    }
 }
 
 
@@ -1094,6 +1380,28 @@ static NSInteger const kButtonTagContinue = 1;
             
             break;
             
+        case kActionSheetTagGuardianAddressYesNo:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                if (buttonTag == kButtonTagYes) {
+                    [_cachedResidences[0] addMember:_member];
+                    [self.dismisser dismissModalViewController:self];
+                }
+            } else {
+                [self.inputCell resumeFirstResponder];
+            }
+            
+            break;
+            
+        case kActionSheetTagGuardianAddress:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                [_cachedResidences[buttonIndex] addMember:_member];
+                [self.dismisser dismissModalViewController:self];
+            } else {
+                [self.inputCell resumeFirstResponder];
+            }
+            
+            break;
+            
         default:
             break;
     }
@@ -1107,10 +1415,10 @@ static NSInteger const kButtonTagContinue = 1;
     switch (actionSheet.tag) {
         case kActionSheetTagAction:
             if (buttonTag == kButtonTagActionAddAddress) {
-                NSSet *housemateResidences = [_member housemateResidences];
+                _cachedResidences = [_member housemateResidences];
                 
-                if ([housemateResidences count]) {
-                    [self presentCandidateResidencesSheet:housemateResidences];
+                if ([_cachedResidences count]) {
+                    [self presentHousemateResidencesSheet];
                 } else {
                     [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:kOrigoTypeResidence];
                 }
@@ -1121,8 +1429,8 @@ static NSInteger const kButtonTagContinue = 1;
         case kActionSheetTagResidence:
             if (buttonTag == kButtonTagResidenceNewAddress) {
                 [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:kOrigoTypeResidence];
-            } else if (buttonIndex < actionSheet.cancelButtonIndex) {
-                [_candidateResidences[buttonIndex] addMember:_member];
+            } else if (buttonIndex != actionSheet.cancelButtonIndex) {
+                [_cachedResidences[buttonIndex] addMember:_member];
                 [self reloadSections];
             }
             
@@ -1133,10 +1441,10 @@ static NSInteger const kButtonTagContinue = 1;
                 if (buttonTag == kButtonTagSourceAddressBook) {
                     [self pickFromAddressBook];
                 } else if (buttonTag == kButtonTagSourceOrigo) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMember meta:_origo];
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:self.target meta:_origo];
                 }
             } else {
-                [self.detailCell resumeFirstResponder];
+                [self.inputCell resumeFirstResponder];
             }
             
             break;
@@ -1153,6 +1461,15 @@ static NSInteger const kButtonTagContinue = 1;
                     }
                 } else if ([_addressBookHomeNumbers count]) {
                     [self refineAddressBookAddressInfo];
+                }
+            }
+            
+            break;
+            
+        case kActionSheetTagGuardianAddressYesNo:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                if (buttonTag != kButtonTagYes) {
+                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
                 }
             }
             
@@ -1178,6 +1495,15 @@ static NSInteger const kButtonTagContinue = 1;
             }
             
             break;
+        
+        case kAlertTagUnknownChild:
+            if (buttonIndex == kButtonTagOK) {
+                [self examineMember];
+            } else {
+                [self.inputCell resumeFirstResponder];
+            }
+            
+            break;
             
         default:
             break;
@@ -1192,24 +1518,29 @@ static NSInteger const kButtonTagContinue = 1;
     [self retrieveNameFromAddressBookPersonRecord:person];
     [self retrievePhoneNumbersFromAddressBookPersonRecord:person];
     [self retrieveEmailAddressesFromAddressBookPersonRecord:person];
-    [self retrieveAddressesFromAddressBookPersonRecord:person];
-
-    if ([_mobilePhoneField hasMultiValue] || [_emailField hasMultiValue]) {
-        [self dismissViewControllerAnimated:YES completion:^{
-            [self refineAddressBookContactInfo];
-        }];
-    } else {
+    
+    if (![_mobilePhoneField hasMultiValue] && ![_emailField hasMultiValue]) {
         [self performLocalLookup];
+    }
+    
+    if ([_member instance]) {
+        [self dismissViewControllerAnimated:YES completion:NULL];
+    } else {
+        [self retrieveAddressesFromAddressBookPersonRecord:person];
         
-        if ([_member instance]) {
-            [self dismissViewControllerAnimated:YES completion:NULL];
-        } else if ([_addressBookAddresses count] || [_addressBookHomeNumbers count]) {
+        if ([_mobilePhoneField hasMultiValue] || [_emailField hasMultiValue]) {
             [self dismissViewControllerAnimated:YES completion:^{
-                [self refineAddressBookAddressInfo];
+                [self refineAddressBookContactInfo];
             }];
         } else {
-            [self reflectMember:_member];
-            [self dismissViewControllerAnimated:YES completion:NULL];
+            if ([_addressBookAddresses count] || [_addressBookHomeNumbers count]) {
+                [self dismissViewControllerAnimated:YES completion:^{
+                    [self refineAddressBookAddressInfo];
+                }];
+            } else {
+                [self reflectMember:_member];
+                [self dismissViewControllerAnimated:YES completion:NULL];
+            }
         }
     }
     
@@ -1226,48 +1557,8 @@ static NSInteger const kButtonTagContinue = 1;
 - (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker
 {
     [self dismissViewControllerAnimated:YES completion:^{
-        [self.detailCell resumeFirstResponder];
+        [self.inputCell resumeFirstResponder];
     }];
-}
-
-
-#pragma mark - OConnectionDelegate conformance
-
-- (void)didCompleteWithResponse:(NSHTTPURLResponse *)response data:(id)data
-{
-    [super didCompleteWithResponse:response data:data];
-    
-    if (response.statusCode == kHTTPStatusOK) {
-        NSString *identifier = _emailField.value ? _emailField.value : _mobilePhoneField.value;
-        NSString *identifierKey = _emailField.value ? kPropertyKeyEmail : kPropertyKeyMobilePhone;
-        
-        id member = nil;
-        
-        for (NSDictionary *entityDictionary in data) {
-            if ([[entityDictionary allKeys] containsObject:identifierKey]) {
-                if ([entityDictionary[identifierKey] isEqualToString:identifier]) {
-                    if ([self inputMatchesMemberWithDictionary:entityDictionary]) {
-                        member = [OMemberProxy proxyForEntityWithDictionary:entityDictionary];
-                    }
-                    
-                    break;
-                }
-            }
-        }
-        
-        if (member) {
-            [OEntityProxy cacheProxiesForEntitiesWithDictionaries:data];
-            
-            [self reflectMember:member];
-            [self examineMember];
-        } else {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Incorrect details", @"") text:NSLocalizedString(@"The details you have provided do not match our records ...", @"")];
-            
-            [self.detailCell resumeFirstResponder];
-        }
-    } else if (response.statusCode == kHTTPStatusNotFound) {
-        [self examineMember];
-    }
 }
 
 @end

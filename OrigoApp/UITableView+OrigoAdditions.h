@@ -12,9 +12,9 @@
 
 - (void)addLogoBanner;
 
-- (id)detailCellForEntity:(id)entity delegate:(id)delegate;
-- (id)detailCellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
-- (id)listCellWithStyle:(UITableViewCellStyle)style data:(id)data;
+- (id)listCellWithStyle:(UITableViewCellStyle)style data:(id)data delegate:(id)delegate;
+- (id)inputCellWithEntity:(id<OEntity>)entity delegate:(id)delegate;
+- (id)inputCellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 
 - (CGFloat)headerHeight;
 - (CGFloat)footerHeightWithText:(NSString *)text;

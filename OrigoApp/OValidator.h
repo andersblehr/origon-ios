@@ -11,6 +11,7 @@
 @interface OValidator : NSObject
 
 + (BOOL)isNameKey:(NSString *)key;
++ (BOOL)isGivenNameKey:(NSString *)key;
 + (BOOL)isAgeKey:(NSString *)key;
 + (BOOL)isDateKey:(NSString *)key;
 + (BOOL)isEmailKey:(NSString *)key;
@@ -21,10 +22,10 @@
 
 + (NSDictionary *)referenceForEntity:(id<OEntity>)entity;
 + (NSString *)referenceKeyForKey:(NSString *)key;
-+ (NSString *)propertyKeyForKey:(NSString *)key;
++ (NSString *)keyMappingForKey:(NSString *)key;
 
 + (BOOL)value:(id)value isValidForKey:(NSString *)key;
-+ (BOOL)valueIsEmailAddress:(id)value;
-+ (BOOL)valueIsName:(id)value;
++ (BOOL)isEmailValue:(id)value;
++ (BOOL)isNameValue:(id)value;
 
 @end
