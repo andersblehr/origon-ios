@@ -15,12 +15,11 @@
 + (UIImage *)smallImageForOrigo:(id<OOrigo>)origo;
 
 + (NSString *)rootIdFromMemberId:(NSString *)memberId;
-+ (NSString *)commaSeparatedListOfItems:(NSArray *)items conjoinLastItem:(BOOL)conjoinLastItem;
-+ (NSString *)localisedCountryNameFromCountryCode:(NSString *)countryCode;
-+ (NSString *)givenNameFromFullName:(NSString *)fullName;
++ (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem;
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;
 
++ (NSSet *)eligibleCandidatesForOrigo:(id<OOrigo>)origo isElder:(BOOL)isElder;
+
 + (NSComparisonResult)compareOrigo:(id<OOrigo>)origo withOrigo:(id<OOrigo>)otherOrigo;
-+ (BOOL)fullName:(NSString *)fullName fuzzyMatchesFullName:(NSString *)otherFullName;
 
 @end

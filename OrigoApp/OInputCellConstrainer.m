@@ -1,12 +1,12 @@
 //
-//  OTableViewCellConstrainer.m
+//  OInputCellConstrainer.m
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
 //  Copyright (c) 2012 Rhelba Source. All rights reserved.
 //
 
-#import "OTableViewCellConstrainer.h"
+#import "OInputCellConstrainer.h"
 
 static NSString * const kDelimitingSpace               = @"-10-";
 
@@ -37,10 +37,10 @@ static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%
 static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 
-@interface OTableViewCellConstrainer () {
+@interface OInputCellConstrainer () {
 @private
-    OTableViewCellBlueprint *_blueprint;
-    OTableViewCell *_cell;
+    OTableViewCell *_inputCell;
+    OInputCellBlueprint *_blueprint;
     
     CGFloat _labelWidth;
 }
@@ -48,7 +48,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 @end
 
 
-@implementation OTableViewCellConstrainer
+@implementation OInputCellConstrainer
 
 #pragma mark - Auxiliary methods
 
@@ -84,7 +84,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 }
 
 
-+ (CGFloat)heightOfCell:(OTableViewCell *)cell withBlueprint:(OTableViewCellBlueprint *)blueprint entity:(id<OEntity>)entity inputKeys:(NSArray *)inputKeys titleKey:(NSString *)titleKey delegate:(id)delegate
++ (CGFloat)heightOfInputCell:(OTableViewCell *)inputCell withBlueprint:(OInputCellBlueprint *)blueprint entity:(id<OEntity>)entity inputKeys:(NSArray *)inputKeys titleKey:(NSString *)titleKey delegate:(id)delegate
 {
     CGFloat height = 2 * kDefaultCellPadding;
     
@@ -97,8 +97,8 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             }
         } else if ([delegate isReceivingInput] || [entity hasValueForKey:key]) {
             if ([blueprint.multiLineTextKeys containsObject:key]) {
-                if (cell) {
-                    height += [[cell inputFieldForKey:key] height];
+                if (inputCell) {
+                    height += [[inputCell inputFieldForKey:key] height];
                 } else if ([entity hasValueForKey:key]) {
                     height += [OTextView heightWithText:[entity valueForKey:key] blueprint:blueprint];
                 } else {
@@ -122,8 +122,8 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 {
     BOOL shouldDisplayElements = YES;
     
-    if (_cell.entity) {
-        id value = [_cell.entity valueForKey:key];
+    if (_inputCell.entity) {
+        id value = [_inputCell.entity valueForKey:key];
         
         if (value && [value isKindOfClass:[NSString class]]) {
             shouldDisplayElements = [value hasValue];
@@ -131,7 +131,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             shouldDisplayElements = NO;
         }
         
-        shouldDisplayElements = shouldDisplayElements || [_cell.inputDelegate isReceivingInput];
+        shouldDisplayElements = shouldDisplayElements || [_inputCell.inputCellDelegate isReceivingInput];
     }
     
     return shouldDisplayElements;
@@ -140,11 +140,11 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 - (void)configureElementsForKey:(NSString *)key
 {
-    OLabel *label = [_cell labelForKey:key];
-    OInputField *inputField = [_cell inputFieldForKey:key];
+    OLabel *label = [_inputCell labelForKey:key];
+    OInputField *inputField = [_inputCell inputFieldForKey:key];
     
     if (!inputField.value) {
-        inputField.value = [_cell.entity valueForKey:key];
+        inputField.value = [_inputCell.entity valueForKey:key];
     }
     
     if ([self shouldDisplayElementsForKey:key]) {
@@ -236,7 +236,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
                 constraint = [NSString stringWithFormat:kVConstraintsLabel, padding, labelName, [UIFont detailFieldHeight]];
             }
             
-            precedingInputField = [_cell inputFieldForKey:key];
+            precedingInputField = [_inputCell inputFieldForKey:key];
             constraints = [constraints stringByAppendingString:constraint];
         }
     }
@@ -271,7 +271,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
                     constraints = [kVConstraintsInitial stringByAppendingString:kDelimitingSpace];
                 }
                 
-                OInputField *inputField = [_cell inputFieldForKey:key];
+                OInputField *inputField = [_inputCell inputFieldForKey:key];
                 CGFloat inputFieldHeight = inputField.supportsMultiLineText ? [inputField height] : [UIFont detailFieldHeight];
                 
                 NSString *inputFieldName = [key stringByAppendingString:kViewKeySuffixInputField];
@@ -332,9 +332,9 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             NSString *constraint = nil;
             NSString *elementName = nil;
             
-            if ([_cell labelForKey:key]) {
+            if ([_inputCell labelForKey:key]) {
                 elementName = [key stringByAppendingString:kViewKeySuffixLabel];
-            } else if ([_cell inputFieldForKey:key]) {
+            } else if ([_inputCell inputFieldForKey:key]) {
                 elementName = [key stringByAppendingString:kViewKeySuffixInputField];
             }
             
@@ -365,7 +365,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
         if ([self shouldDisplayElementsForKey:key]) {
             NSString *constraint = nil;
             
-            if ([_cell labelForKey:key]) {
+            if ([_inputCell labelForKey:key]) {
                 NSString *elementName = [key stringByAppendingString:kViewKeySuffixLabel];
                 constraint = [NSString stringWithFormat:kHConstraintsCentredLabel, elementName];
             } else {
@@ -383,16 +383,16 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 #pragma mark - Initialisation
 
-- (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OTableViewCellBlueprint *)blueprint
+- (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OInputCellBlueprint *)blueprint
 {
     self = [super init];
     
     if (self) {
-        _cell = cell;
+        _inputCell = cell;
         _blueprint = blueprint;
         
-        _titleKey = [[self class] displayableKeysFromKeys:_blueprint.titleKey delegate:cell.inputDelegate];
-        _detailKeys = [[self class] displayableKeysFromKeys:_blueprint.detailKeys delegate:cell.inputDelegate];
+        _titleKey = [[self class] displayableKeysFromKeys:_blueprint.titleKey delegate:cell.inputCellDelegate];
+        _detailKeys = [[self class] displayableKeysFromKeys:_blueprint.detailKeys delegate:cell.inputCellDelegate];
         
         if (_titleKey) {
             _inputKeys = [@[_titleKey] arrayByAddingObjectsFromArray:_detailKeys];
@@ -454,20 +454,20 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 #pragma mark - Cell height computation
 
-- (CGFloat)heightOfCell
+- (CGFloat)heightOfInputCell
 {
-    return [[self class] heightOfCell:_cell withBlueprint:_blueprint entity:_cell.entity inputKeys:_inputKeys titleKey:_titleKey delegate:_cell.inputDelegate];
+    return [[self class] heightOfInputCell:_inputCell withBlueprint:_blueprint entity:_inputCell.entity inputKeys:_inputKeys titleKey:_titleKey delegate:_inputCell.inputCellDelegate];
 }
 
 
-+ (CGFloat)heightOfCellWithReuseIdentifier:(NSString *)reuseIdentifier entity:(id)entity delegate:(id)delegate
++ (CGFloat)heightOfInputCellWithEntity:(id)entity delegate:(id)delegate
 {
-    OTableViewCellBlueprint *blueprint = [[OTableViewCellBlueprint alloc] initWithReuseIdentifier:reuseIdentifier];
+    OInputCellBlueprint *blueprint = [delegate inputCellBlueprint];
     
     NSString *titleKey = [self displayableKeysFromKeys:blueprint.titleKey delegate:delegate];
     NSArray *inputKeys = [self displayableKeysFromKeys:blueprint.inputKeys delegate:delegate];
     
-    return [self heightOfCell:nil withBlueprint:blueprint entity:entity inputKeys:inputKeys titleKey:titleKey delegate:delegate];
+    return [self heightOfInputCell:nil withBlueprint:blueprint entity:entity inputKeys:inputKeys titleKey:titleKey delegate:delegate];
 }
 
 @end

@@ -22,7 +22,7 @@
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 
 - (id)defaultTarget;
-- (NSString *)reuseIdentifierForDetailSection;
+- (NSString *)reuseIdentifierForInputSection;
 - (NSArray *)toolbarButtons;
 
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;
@@ -31,7 +31,7 @@
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
 
 - (UITableViewCellStyle)styleForListCellAtIndexPath:(NSIndexPath *)indexPath;
-- (void)willDisplayDetailCell:(OTableViewCell *)cell;
+- (void)willDisplayInputCell:(OTableViewCell *)cell;
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
 
@@ -63,11 +63,10 @@
 @property (nonatomic, assign) BOOL usesPlainTableViewStyle;
 @property (nonatomic, assign) BOOL usesSectionIndexTitles;
 @property (nonatomic, assign) BOOL cancelImpliesSkip;
-@property (nonatomic, assign) BOOL canEdit;
 
 @property (nonatomic) id meta;
 @property (nonatomic) id returnData;
-@property (nonatomic) OTableViewCell *detailCell;
+@property (nonatomic) OTableViewCell *inputCell;
 @property (nonatomic) OInputField *nextInputField;
 
 @property (nonatomic, weak) OTableViewController *dismisser;
@@ -77,7 +76,7 @@
 - (BOOL)targetIs:(NSString *)target;
 - (BOOL)aspectIs:(NSString *)aspect;
 
-- (void)setDataForDetailSection;
+- (void)setDataForInputSection;
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;
 - (void)appendData:(id)data toSectionWithKey:(NSInteger)sectionKey;
 - (void)setData:(NSArray *)data sectionIndexLabelKey:(NSString *)sectionIndexLabelKey;

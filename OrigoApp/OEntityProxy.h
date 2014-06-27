@@ -28,11 +28,13 @@
 @property (nonatomic, readonly) NSString *createdBy;
 @property (nonatomic, readonly) NSDate *dateReplicated;
 
-- (NSString *)reuseIdentifier;
 - (void)reflectEntity:(id<OEntity>)entity;
 - (void)useInstance:(id<OEntity>)instance;
 - (id)instantiate;
 - (id)commit;
+- (void)expire;
+- (void)unexpire;
+- (BOOL)hasExpired;
 
 @end
 
@@ -51,5 +53,6 @@
 + (void)cacheProxiesForEntitiesWithDictionaries:(NSArray *)entityDictionaries;
 + (id)cachedProxyForEntityWithId:(NSString *)entityId;
 - (NSArray *)cachedProxiesForEntityClass:(Class)entityClass;
++ (void)clearProxyCache;
 
 @end

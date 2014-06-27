@@ -126,7 +126,7 @@ static NSCalendar *_calendar = nil;
 
 - (BOOL)isBirthDateOfMinor
 {
-    return ([self yearsBeforeNow] < kAgeOfMajority);
+    return [self yearsBeforeNow] < kAgeOfMajority;
 }
 
 @end

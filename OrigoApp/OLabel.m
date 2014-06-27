@@ -29,7 +29,7 @@
 
 #pragma mark - Width computation
 
-+ (CGFloat)widthWithBlueprint:(OTableViewCellBlueprint *)blueprint
++ (CGFloat)widthWithBlueprint:(OInputCellBlueprint *)blueprint
 {
     CGFloat width = 0.f;
     

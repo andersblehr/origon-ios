@@ -116,7 +116,7 @@
 
 - (BOOL)isTransient
 {
-    return ([super isTransient] || [self.origo isTransient]);
+    return [super isTransient] || [self.origo isTransient];
 }
 
 

@@ -24,7 +24,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 @interface OTextView () <UITextViewDelegate> {
 @private
-    OTableViewCellBlueprint *_blueprint;
+    OInputCellBlueprint *_blueprint;
     CGFloat _textWidth;
     
     UITextView *_placeholderView;
@@ -46,7 +46,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 #pragma mark - Auxiliary methods
 
-+ (CGFloat)textWidthWithBlueprint:(OTableViewCellBlueprint *)blueprint
++ (CGFloat)textWidthWithBlueprint:(OInputCellBlueprint *)blueprint
 {
     CGFloat contentWidth = [OMeta screenWidth] - 2 * kDefaultCellPadding;
     CGFloat widthAdjustment = [OMeta systemIs_iOS6x] ? kWidthAdjustment_iOS6x : kWidthAdjustment;
@@ -107,7 +107,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 - (NSString *)peelText
 {
     if ([self.text hasValue]) {
-        self.text = [self.text removeRedundantWhitespace];
+        self.text = [self.text removeRedundantWhitespaceKeepNewlines:YES];
     }
     
     return [self.text hasValue] ? self.text : nil;
@@ -124,7 +124,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 #pragma mark - Initialisation
 
-- (instancetype)initWithKey:(NSString *)key blueprint:(OTableViewCellBlueprint *)blueprint delegate:(id)delegate
+- (instancetype)initWithKey:(NSString *)key blueprint:(OInputCellBlueprint *)blueprint delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero];
     
@@ -168,7 +168,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 #pragma mark - Height computation
 
-+ (CGFloat)heightWithText:(NSString *)text blueprint:(OTableViewCellBlueprint *)blueprint
++ (CGFloat)heightWithText:(NSString *)text blueprint:(OInputCellBlueprint *)blueprint
 {
     NSInteger lineCount = [self lineCountWithText:text maxWidth:[self textWidthWithBlueprint:blueprint]];
     

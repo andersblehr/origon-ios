@@ -12,7 +12,7 @@
 
 @property (nonatomic, readonly) CTCarrier *carrier;
 
-- (NSArray *)toolbarButtonsForOrigo:(id<OOrigo>)origo;
-- (NSArray *)toolbarButtonsForMember:(id<OMember>)member;
+- (NSArray *)toolbarButtonsForOrigo:(id<OOrigo>)origo presenter:(UIViewController *)presenter;
+- (NSArray *)toolbarButtonsForMember:(id<OMember>)member presenter:(UIViewController *)presenter;
 
 @end

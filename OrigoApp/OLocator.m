@@ -47,7 +47,7 @@
     BOOL canLocate = NO;
     
     if ([CLLocationManager locationServicesEnabled]) {
-        canLocate = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized);
+        canLocate = [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized;
     }
     
     return canLocate;
@@ -59,7 +59,7 @@
     BOOL canLocate = [self isAuthorised];
     
     if (!canLocate && [CLLocationManager locationServicesEnabled]) {
-        canLocate = ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined);
+        canLocate = [CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined;
     }
     
     return canLocate;

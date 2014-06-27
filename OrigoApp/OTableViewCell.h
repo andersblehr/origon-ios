@@ -18,7 +18,7 @@ extern CGFloat const kCellAnimationDuration;
 @interface OTableViewCell : UITableViewCell<OEntityObserver>
 
 @property (nonatomic, readonly) OState *state;
-@property (nonatomic, readonly) OTableViewCellConstrainer *constrainer;
+@property (nonatomic, readonly) OInputCellConstrainer *constrainer;
 
 @property (nonatomic) id entity;
 @property (nonatomic) OInputField *inputField;
@@ -29,7 +29,7 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic, assign) BOOL editable;
 @property (nonatomic, assign) BOOL checked;
 
-@property (nonatomic, weak) id<OTableViewInputDelegate> inputDelegate;
+@property (nonatomic, weak) id<OInputCellDelegate> inputCellDelegate;
 @property (nonatomic, weak) id<OEntityObserver> observer;
 
 - (instancetype)initWithEntity:(id<OEntity>)entity delegate:(id)delegate;
@@ -53,7 +53,7 @@ extern CGFloat const kCellAnimationDuration;
 
 - (void)readData;
 - (void)prepareForInput;
-- (void)processInput;
+- (void)processInputShouldValidate:(BOOL)shouldValidate;
 - (void)writeInput;
 
 - (void)setDestinationId:(NSString *)identifier selectableDuringInput:(BOOL)selectableDuringInput;

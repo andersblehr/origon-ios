@@ -232,7 +232,7 @@ static OState *_activeState = nil;
             }
         }
     } else if ([target isKindOfClass:[NSString class]]) {
-        _target = [OValidator valueIsEmailAddress:target] ? kTargetEmail : target;
+        _target = [OValidator isEmailValue:target] ? kTargetEmail : target;
     }
     
     _identifier = [[self class] stateIdForViewControllerWithIdentifier:_viewController.identifier target:target];

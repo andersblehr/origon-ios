@@ -1,3 +1,4 @@
+
 //
 //  OEntityProxy.m
 //  OrigoApp
@@ -36,11 +37,9 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 #pragma mark - Auxiliary methods
 
-- (void)resetPropertyStore
+- (BOOL)instanceHoldsValueForKey:(NSString *)key
 {
-    for (NSString *key in _propertyKeys) {
-        [_valuesByKey removeObjectForKey:key];
-    }
+    return _isCommitted || (_instance && [_propertyKeys containsObject:key]);
 }
 
 
@@ -54,7 +53,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
         _entityClass = entityClass;
         _propertyKeys = [_entityClass propertyKeys];
         _toOneRelationshipKeys = [_entityClass toOneRelationshipKeys];
-        _valuesByKey = [NSMutableDictionary dictionaryWithObject:NSStringFromClass(_entityClass) forKey:kUnboundKeyEntityClass];
+        _valuesByKey = [NSMutableDictionary dictionaryWithObject:NSStringFromClass(_entityClass) forKey:kExternalKeyEntityClass];
 
         [self setValue:entityId forKey:kPropertyKeyEntityId];
         
@@ -101,7 +100,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 - (instancetype)initWithEntityWithDictionary:(NSDictionary *)dictionary
 {
-    self = [self initWithEntityClass:NSClassFromString(dictionary[kUnboundKeyEntityClass]) entityId:dictionary[kPropertyKeyEntityId] isCommitted:NO];
+    self = [self initWithEntityClass:NSClassFromString(dictionary[kExternalKeyEntityClass]) entityId:dictionary[kPropertyKeyEntityId] isCommitted:NO];
     
     if (self) {
         for (NSString *key in _propertyKeys) {
@@ -151,7 +150,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
     id proxy = _cachedProxiesByEntityId[dictionary[kPropertyKeyEntityId]];
     
     if (!proxy) {
-        Class entityClass = NSClassFromString(dictionary[kUnboundKeyEntityClass]);
+        Class entityClass = NSClassFromString(dictionary[kExternalKeyEntityClass]);
         
         proxy = [[[entityClass proxyClass] alloc] initWithEntityWithDictionary:dictionary];
     }
@@ -214,6 +213,12 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 }
 
 
++ (void)clearProxyCache
+{
+    [_cachedProxiesByEntityId removeAllObjects];
+}
+
+
 #pragma mark - Custom accessors
 
 - (void)setAncestor:(id)ancestor
@@ -264,26 +269,44 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 - (BOOL)isReplicated
 {
-    return _instance ? [_instance isReplicated] : (self.dateReplicated != nil);
+    return _instance ? [_instance isReplicated] : self.dateReplicated != nil;
 }
 
 
 - (BOOL)hasValueForKey:(NSString *)key
 {
-    return _instance ? [_instance hasValueForKey:key] : [[_valuesByKey allKeys] containsObject:key];
+    BOOL hasValue = NO;
+    
+    if ([self instanceHoldsValueForKey:key]) {
+        hasValue = [_instance hasValueForKey:key];
+    } else {
+        key = [OValidator keyMappingForKey:key];
+        
+        if ([_propertyKeys containsObject:key]) {
+            hasValue = [[_valuesByKey allKeys] containsObject:key];
+        } else {
+            hasValue = [[_valuesByKey allKeys] containsObject:[OValidator referenceKeyForKey:key]];
+        }
+    }
+    
+    return hasValue;
 }
 
 
 - (void)setValue:(id)value forKey:(NSString *)key
 {
-    if (_isCommitted) {
+    if ([self instanceHoldsValueForKey:key]) {
         [_instance setValue:value forKey:key];
     } else {
-        key = [OValidator propertyKeyForKey:key];
+        key = [OValidator keyMappingForKey:key];
         
         if (value) {
             if ([_propertyKeys containsObject:key]) {
-                _valuesByKey[key] = [OValidator isDateKey:key] ? [value serialisedDate] : value;
+                if ([value isKindOfClass:[NSDate class]]) {
+                    _valuesByKey[key] = [value serialisedDate];
+                } else {
+                    _valuesByKey[key] = value;
+                }
             } else if ([_toOneRelationshipKeys containsObject:key]) {
                 _valuesByKey[[OValidator referenceKeyForKey:key]] = [OValidator referenceForEntity:value];
             }
@@ -298,10 +321,10 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 {
     id value = nil;
     
-    if (_isCommitted) {
+    if ([self instanceHoldsValueForKey:key]) {
         value = [_instance valueForKey:key];
     } else {
-        key = [OValidator propertyKeyForKey:key];
+        key = [OValidator keyMappingForKey:key];
 
         if ([self hasValueForKey:key]) {
             if ([_propertyKeys containsObject:key]) {
@@ -329,25 +352,11 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 }
 
 
-- (NSString *)reuseIdentifier
-{
-    NSString *reuseIdentifier = NSStringFromClass(_entityClass);
-    
-    if ([_propertyKeys containsObject:kPropertyKeyType]) {
-        NSString *type = [self valueForKey:kPropertyKeyType];
-        
-        if (type) {
-            reuseIdentifier = [reuseIdentifier stringByAppendingString:type separator:kSeparatorColon];
-        }
-    }
-    
-    return reuseIdentifier;
-}
-
-
 - (void)reflectEntity:(id<OEntity>)entity
 {
     if (_entityClass == entity.entityClass) {
+        [self expire];
+        
         if ([entity instance]) {
             [self useInstance:[entity instance]];
         } else {
@@ -363,21 +372,25 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
                 }
             }
         }
+        
+        _cachedProxiesByEntityId[self.entityId] = self;
     }
 }
 
 
 - (void)useInstance:(id<OEntity>)instance
 {
+    [_cachedProxiesByEntityId removeObjectForKey:self.entityId];
+    [_valuesByKey removeAllObjects];
+    
     _instance = [instance instance];
     
-    NSString *entityId = self.entityId;
-    
-    [self resetPropertyStore];
-    
     if (!_instance) {
-        [self setValue:entityId forKey:kPropertyKeyEntityId];
+        _valuesByKey[kPropertyKeyEntityId] = [OCrypto generateUUID];
+        _valuesByKey[kExternalKeyEntityClass] = NSStringFromClass(_entityClass);
     }
+    
+    _cachedProxiesByEntityId[self.entityId] = self;
 }
 
 
@@ -387,10 +400,12 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
     
     if (isCommitting) {
         if (![self isReplicated] && !_instance) {
+            id instance = nil;
+            
             if ([self respondsToSelector:@selector(instantiate)]) {
-                _instance = [self instantiate];
+                instance = [self instantiate];
             } else {
-                _instance = [_entityClass instanceWithId:self.entityId];
+                instance = [_entityClass instanceWithId:self.entityId];
             }
             
             for (NSString *key in _propertyKeys) {
@@ -398,26 +413,12 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
                     id value = [self valueForKey:key];
                     
                     if (value) {
-                        [_instance setValue:value forKey:key];
+                        [instance setValue:value forKey:key];
                     }
                 }
             }
             
-            [self resetPropertyStore];
-            
-            if (![_entityClass isRelationshipClass]) {
-                for (NSString *key in _toOneRelationshipKeys) {
-                    id referencedEntity = [self valueForKey:key];
-                    
-                    if (referencedEntity) {
-                        if (![referencedEntity isCommitted]) {
-                            [referencedEntity commit];
-                        }
-                        
-                        [_instance setValue:[referencedEntity instance] forKey:key];
-                    }
-                }
-            }
+            [self useInstance:instance];
         }
         
         _isCommitted = YES;
@@ -461,6 +462,12 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 }
 
 
+- (void)expire
+{
+    [_cachedProxiesByEntityId removeObjectForKey:self.entityId];
+}
+
+
 #pragma mark - Message forwarding fallback
 
 - (void *)forwardingFallbackForUninstantiatedEntities
@@ -473,7 +480,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 - (id)forwardingTargetForSelector:(SEL)selector
 {
-    return (_instance && [_instance respondsToSelector:selector]) ? _instance : nil;
+    return _instance && [_instance respondsToSelector:selector] ? _instance : nil;
 }
 
 

@@ -24,7 +24,7 @@
 		5C15BFF916386C6100BB5254 /* glyphicons_004_girl-as_boy.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFF716386C6000BB5254 /* glyphicons_004_girl-as_boy.png */; };
 		5C15BFFA16386C6100BB5254 /* glyphicons_004_girl-as_boy@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFF816386C6000BB5254 /* glyphicons_004_girl-as_boy@2x.png */; };
 		5C15BFFE1638815300BB5254 /* 76-baby_black.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C15BFFD1638815300BB5254 /* 76-baby_black.png */; };
-		5C198B7316D76344002D3976 /* OTableViewCellBlueprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C198B7216D76343002D3976 /* OTableViewCellBlueprint.m */; };
+		5C198B7316D76344002D3976 /* OInputCellBlueprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C198B7216D76343002D3976 /* OInputCellBlueprint.m */; };
 		5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1A81BC1645CE22003DCCAF /* UIBarButtonItem+OrigoAdditions.m */; };
 		5C1D6CC6172E62F500479F7D /* OLocator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1D6CC5172E62F500479F7D /* OLocator.m */; };
 		5C1D6CCA1743C80900479F7D /* OSettings+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C1D6CC91743C80900479F7D /* OSettings+OrigoAdditions.m */; };
@@ -83,7 +83,7 @@
 		5CBB63C5146080DF00A9133A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C4146080DF00A9133A /* main.m */; };
 		5CBB63C9146080DF00A9133A /* OAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C8146080DF00A9133A /* OAppDelegate.m */; };
 		5CBB63E7146080E000A9133A /* OrigoAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63E6146080E000A9133A /* OrigoAppTests.m */; };
-		5CBDF78C1659175000D4681C /* OTableViewCellConstrainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBDF78B1659175000D4681C /* OTableViewCellConstrainer.m */; };
+		5CBDF78C1659175000D4681C /* OInputCellConstrainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBDF78B1659175000D4681C /* OInputCellConstrainer.m */; };
 		5CBE91A31599823000516C54 /* UIFont+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE91A21599823000516C54 /* UIFont+OrigoAdditions.m */; };
 		5CBE9C5314AB5160004FE2B7 /* NSString+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE9C5214AB515F004FE2B7 /* NSString+OrigoAdditions.m */; };
 		5CBFB738174B64D40021A8F6 /* OValuePickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBFB737174B64D40021A8F6 /* OValuePickerViewController.m */; };
@@ -152,8 +152,8 @@
 		5C15BFF716386C6000BB5254 /* glyphicons_004_girl-as_boy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy.png"; sourceTree = "<group>"; };
 		5C15BFF816386C6000BB5254 /* glyphicons_004_girl-as_boy@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_004_girl-as_boy@2x.png"; sourceTree = "<group>"; };
 		5C15BFFD1638815300BB5254 /* 76-baby_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "76-baby_black.png"; sourceTree = "<group>"; };
-		5C198B7116D76343002D3976 /* OTableViewCellBlueprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCellBlueprint.h; sourceTree = "<group>"; };
-		5C198B7216D76343002D3976 /* OTableViewCellBlueprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCellBlueprint.m; sourceTree = "<group>"; };
+		5C198B7116D76343002D3976 /* OInputCellBlueprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OInputCellBlueprint.h; sourceTree = "<group>"; };
+		5C198B7216D76343002D3976 /* OInputCellBlueprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OInputCellBlueprint.m; sourceTree = "<group>"; };
 		5C1A81BB1645CE22003DCCAF /* UIBarButtonItem+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5C1A81BC1645CE22003DCCAF /* UIBarButtonItem+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5C1D6CC4172E62F500479F7D /* OLocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLocator.h; sourceTree = "<group>"; };
@@ -262,8 +262,8 @@
 		5CBB63E1146080E000A9133A /* OrigoAppTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OrigoAppTests-Info.plist"; sourceTree = "<group>"; };
 		5CBB63E5146080E000A9133A /* OrigoAppTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OrigoAppTests.h; sourceTree = "<group>"; };
 		5CBB63E6146080E000A9133A /* OrigoAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OrigoAppTests.m; sourceTree = "<group>"; };
-		5CBDF78A1659175000D4681C /* OTableViewCellConstrainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCellConstrainer.h; sourceTree = "<group>"; };
-		5CBDF78B1659175000D4681C /* OTableViewCellConstrainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCellConstrainer.m; sourceTree = "<group>"; };
+		5CBDF78A1659175000D4681C /* OInputCellConstrainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OInputCellConstrainer.h; sourceTree = "<group>"; };
+		5CBDF78B1659175000D4681C /* OInputCellConstrainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OInputCellConstrainer.m; sourceTree = "<group>"; };
 		5CBE91A11599823000516C54 /* UIFont+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5CBE91A21599823000516C54 /* UIFont+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CBE9C5114AB515F004FE2B7 /* NSString+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+OrigoAdditions.h"; sourceTree = "<group>"; };
@@ -309,7 +309,7 @@
 		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CD5EC0B18D0768A0075D07E /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5CD7723B18D05DA40087E3F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		5CDE879C176F185E00272909 /* OTableViewInputDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTableViewInputDelegate.h; sourceTree = "<group>"; };
+		5CDE879C176F185E00272909 /* OInputCellDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OInputCellDelegate.h; sourceTree = "<group>"; };
 		5CF17E5117AE8D9400985255 /* glyphicons_010_envelope@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_010_envelope@2x.png"; sourceTree = "<group>"; };
 		5CF17E5217AE8D9400985255 /* glyphicons_010_envelope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_010_envelope.png; sourceTree = "<group>"; };
 		5CF17E5717AF84B500985255 /* OSwitchboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSwitchboard.h; sourceTree = "<group>"; };
@@ -455,10 +455,10 @@
 		5C50F2581779A6AD00B961BC /* Cell Layout */ = {
 			isa = PBXGroup;
 			children = (
-				5C198B7116D76343002D3976 /* OTableViewCellBlueprint.h */,
-				5C198B7216D76343002D3976 /* OTableViewCellBlueprint.m */,
-				5CBDF78A1659175000D4681C /* OTableViewCellConstrainer.h */,
-				5CBDF78B1659175000D4681C /* OTableViewCellConstrainer.m */,
+				5C198B7116D76343002D3976 /* OInputCellBlueprint.h */,
+				5C198B7216D76343002D3976 /* OInputCellBlueprint.m */,
+				5CBDF78A1659175000D4681C /* OInputCellConstrainer.h */,
+				5CBDF78B1659175000D4681C /* OInputCellConstrainer.m */,
 			);
 			name = "Cell Layout";
 			sourceTree = "<group>";
@@ -504,7 +504,7 @@
 				5C39EC1C166632570083DFEB /* OEntityObserver.h */,
 				5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */,
 				5C3F9999178AC91100E31A44 /* OMemberExaminerDelegate.h */,
-				5CDE879C176F185E00272909 /* OTableViewInputDelegate.h */,
+				5CDE879C176F185E00272909 /* OInputCellDelegate.h */,
 				5CFD8E6D183CCEAF00DC3945 /* OTextInput.h */,
 			);
 			name = Protocols;
@@ -876,10 +876,10 @@
 				5CCC3598181FC8200079DB55 /* UINavigationItem+OrigoAdditions.m in Sources */,
 				5C1A81BD1645CE22003DCCAF /* UIBarButtonItem+OrigoAdditions.m in Sources */,
 				5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */,
-				5CBDF78C1659175000D4681C /* OTableViewCellConstrainer.m in Sources */,
+				5CBDF78C1659175000D4681C /* OInputCellConstrainer.m in Sources */,
 				5CFBC8D019124E1D00863F86 /* OMembershipProxy.m in Sources */,
 				5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */,
-				5C198B7316D76344002D3976 /* OTableViewCellBlueprint.m in Sources */,
+				5C198B7316D76344002D3976 /* OInputCellBlueprint.m in Sources */,
 				5C7C4DD218E57E1F00903989 /* OEntityProxy.m in Sources */,
 				5C47155116E2231C000D8A86 /* OReplicator.m in Sources */,
 				5CD33ADC18F5288100A863F4 /* OReplicatedEntity.m in Sources */,

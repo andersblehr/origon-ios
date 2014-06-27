@@ -18,6 +18,7 @@
 @property (nonatomic) NSString *gender;
 @property (nonatomic) NSNumber *isMinor;
 @property (nonatomic) NSData *photo;
+@property (nonatomic) NSDate *activeSince;
 @property (nonatomic) NSString *fatherId;
 @property (nonatomic) NSString *motherId;
 
@@ -39,9 +40,9 @@
 - (NSSet *)guardians;
 - (NSSet *)peers;
 - (NSSet *)peersNotInOrigo:(id<OOrigo>)origo;
-- (NSSet *)housemates;
-- (NSSet *)housematesNotInResidence:(id<OOrigo>)residence;
-- (NSSet *)housemateResidences;
+- (NSArray *)housemates;
+- (NSArray *)housematesNotInResidence:(id<OOrigo>)residence;
+- (NSArray *)housemateResidences;
 
 - (BOOL)isActive;
 - (void)makeActive;
@@ -67,6 +68,7 @@
 - (NSString *)givenName;
 - (NSString *)givenNameWithParentTitle;
 - (NSString *)givenNameWithContactRoleForOrigo:(id<OOrigo>)origo;
+- (NSString *)publicName;
 
 @end
 

@@ -42,18 +42,7 @@
 
 - (NSArray *)sortedPeers
 {
-    NSSet *peers = nil;
-    id<OOrigo> origo = self.meta;
-    
-    if ([self targetIs:kTargetElder]) {
-        peers = [[OMeta m].user peersNotInOrigo:origo];
-    } else {
-        id<OMember> pivotMember = [self.meta ancestorConformingToProtocol:@protocol(OMember)];
-        
-        peers = [pivotMember peersNotInOrigo:origo];
-    }
-    
-    return [[peers allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    return [[[OUtil eligibleCandidatesForOrigo:self.meta isElder:[self targetIs:kTargetElder]] allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -120,7 +109,7 @@
                 [self.returnData removeObject:pickedValue];
             }
             
-            self.navigationItem.rightBarButtonItem.enabled = ([self.returnData count] > 0);
+            self.navigationItem.rightBarButtonItem.enabled = [self.returnData count] > 0;
         } else {
             self.returnData = pickedValue;
             

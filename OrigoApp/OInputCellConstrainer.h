@@ -1,5 +1,5 @@
 //
-//  OTableViewCellConstrainer.h
+//  OInputCellConstrainer.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
@@ -8,17 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OTableViewCellConstrainer : NSObject
+@interface OInputCellConstrainer : NSObject
 
 @property (nonatomic, readonly) NSString *titleKey;
 @property (nonatomic, readonly) NSArray *detailKeys;
 @property (nonatomic, readonly) NSArray *inputKeys;
 
-- (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OTableViewCellBlueprint *)blueprint;
+- (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OInputCellBlueprint *)blueprint;
 
 - (NSDictionary *)constraintsWithAlignmentOptions;
 
-- (CGFloat)heightOfCell;
-+ (CGFloat)heightOfCellWithReuseIdentifier:(NSString *)reuseIdentifier entity:(id<OEntity>)entity delegate:(id)delegate;
+- (CGFloat)heightOfInputCell;
++ (CGFloat)heightOfInputCellWithEntity:(id<OEntity>)entity delegate:(id)delegate;
 
 @end

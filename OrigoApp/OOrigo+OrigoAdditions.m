@@ -226,7 +226,7 @@
 
 - (BOOL)userCanEdit
 {
-    return ([self userIsAdmin] || (![self hasAdmin] && [self userIsCreator]));
+    return [self userIsAdmin] || (![self hasAdmin] && [self userIsCreator]);
 }
 
 
@@ -270,7 +270,7 @@
 
 - (BOOL)hasAddress
 {
-    return [self.address hasValue];
+    return [self.address hasValue] || [self.telephone hasValue];
 }
 
 
@@ -288,7 +288,7 @@
 
 - (BOOL)hasContacts
 {
-    return ([[self contacts] count] > 0);
+    return [[self contacts] count] > 0;
 }
 
 
@@ -312,7 +312,7 @@
 
 - (BOOL)knowsAboutMember:(id<OMember>)member
 {
-    return ([self hasMember:member] || [self indirectlyKnowsAboutMember:member]);
+    return [self hasMember:member] || [self indirectlyKnowsAboutMember:member];
 }
 
 
@@ -386,7 +386,7 @@
     BOOL isTransient = [super isTransient];
     
     if (!isTransient) {
-        isTransient = ([self isOfType:kOrigoTypeRoot] && (self != [[OMeta m].user root]));
+        isTransient = [self isOfType:kOrigoTypeRoot] && (self != [[OMeta m].user root]);
     }
     
     return isTransient;

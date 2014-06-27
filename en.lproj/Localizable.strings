@@ -12,34 +12,39 @@
  ***/
 
 // Labels
-"[label] signIn" = "Sign in or sign up";
 "[label] activate" = "Enter activation code";
 "[label] address" = "Address";
-"[label] purpose" = "Purpose";
-"[label] descriptionText" = "Description";
-"[label] telephone" = "Telephone";
 "[label] dateOfBirth" = "Age";
-"[label] mobilePhone" = "Mobile";
+"[label] descriptionText" = "Description";
 "[label] email" = "Email";
+"[label] mobilePhone" = "Mobile";
+"[label] purpose" = "Purpose";
+"[label] signIn" = "Sign in or sign up";
+"[label] school" = "School";
+"[label] telephone" = "Telephone";
 
 // Alternate labels
 "[alternate label] dateOfBirth" = "Born";
 
 // Placeholders
-"[placeholder] authEmail" = "Your email address";
-"[placeholder] password" = "Your password";
 "[placeholder] activationCode" = "Activation code from email";
+"[placeholder] address" = "Street address\nPostal code and city/town";
+"[placeholder] authEmail" = "Your email address";
+"[placeholder] class" = "Class";
+"[placeholder] dateOfBirth" = "Date of birth";
+"[placeholder] descriptionText" = "An optional description";
+"[placeholder] email" = "A valid email address";
+"[placeholder] fullName" = "Full name";
+"[placeholder] givenName" = "Name";
+"[placeholder] mobilePhone" = "Mobile phone number";
+"[placeholder] name"  = "Name";
+"[placeholder] password" = "Your password";
+"[placeholder] photo" = "Photo";
+"[placeholder] purpose" = "The purpose of this group";
 "[placeholder] repeatPassword" = "Repeat your password";
 "[placeholder] residenceName" = "Nickname for this address";
-"[placeholder] address" = "Street address\nPostal code and city/town";
-"[placeholder] purpose" = "The purpose of this group";
-"[placeholder] descriptionText" = "An optional description";
+"[placeholder] school" = "Name of school";
 "[placeholder] telephone" = "Telephone number";
-"[placeholder] name"  = "Name";
-"[placeholder] photo" = "Photo";
-"[placeholder] dateOfBirth" = "Date of birth";
-"[placeholder] mobilePhone" = "Mobile phone number";
-"[placeholder] email" = "A valid email address";
 
 // Defaults
 "[default] residenceName" = "My place";
@@ -50,7 +55,7 @@
  ***/
 
 // Origo titles
-"[title] residence" = "Address";
+"[title] residence" = "Household";
 "[title] friends" = "Party of friends";
 "[title] team" = "Team/sports group";
 "[title] organisation" = "Organisation";
@@ -166,7 +171,7 @@
 "parent" = "-;-;parents;the parents;your parents;%@'s parents";
 "guardian" = "guardian;-;guardians;-;-;-";
 "contact" = "contact;-;contacts;-;-;-";
-"address" = "address;-;addresses;-;-;-";
+"address" = "address;the address;addresses;the addresses;-;-";
 
 // Pronouns
 "I" = "I;me;me";
@@ -227,7 +232,7 @@
 
 // Alerts
 "Activation failed" = "Activation failed";
-"It looks like you may have lost the activation code ..." = "It looks like you may have lost the activation code that we emailed to you, or forgotten your password. Let's start over.";
+"It looks like you may have lost the activation code ..." = "It looks like you may have lost the activation code or forgotten your password. Let's start over.";
 "Welcome back!" = "Welcome back!";
 "If you have handy the activation code sent to %@ ..." = "If you have handy the activation code sent to %@, you can now activate your membership. If not, you may go back and start over.";
 
@@ -267,9 +272,6 @@
  * OOrigoViewController strings
  ***/
 
-// Footers
-"Tap [+] to add any additional guardians in the household" = "Tap [+] to add any additional guardians in the household";
-
 // Buttons
 "Edit roles" = "Edit roles";
 "Add from other groups" = "Add from other groups";
@@ -291,7 +293,8 @@
 
 // Footers
 "A notification will be sent to the email address you provide." = "A notification will be sent to the email address you provide.";
-"Before you can register a minor, you must register his or her parents/guardians." = "Before you can register a minor, you must register his or her parents/guardians.";
+"Before you can register a minor, you must register his or her guardians." = "Before you can register a minor, you must register his or her guardians.";
+"Tap [+] to add another guardian." = "Tap [+] to add another guardian.";
 
 // Buttons
 "To some of them" = "To some of them";
@@ -311,16 +314,26 @@
 "Both" = "Both";
 "All of them" = "All of them";
 
-
 // Alerts
 "Incorrect details" = "Incorrect details";
 "The details you have provided do not match our records ..." = "The details you have provided do not match our records. You can only add this person if you have accurate information.";
-"Already member" = "Already member";
-"%@ is already a member of %@." = "%@ is already a member of %@.";
+"Unknown address" = "Unknown address";
+"Unknown addresses" = "Unknown addresses";
+"One of the addresses you provided did not match our records and was not saved." = "One of the addresses you provided did not match our records and was not saved.";
+"Some of the addresses you provided did not match our records and were not saved." = "Some of the addresses you provided did not match our records and were not saved.";
+"The address you provided did not match our records and was not saved." = "The address you provided did not match our records and was not saved.";
+"The addresses you provided did not match our records and were not saved." = "The addresses you provided did not match our records and were not saved.";
+"%@ is already in %@." = "%@ is already in %@.";
+"Unknown child" = "Unknown child";
+"%@ has not registered a child called %@." = "%@ has not registered a child called %@.";
+"Neither %@ nor %@ has registered a child called %@." = "Neither %@ nor %@ has registered a child called %@.";
+"%@ has not registered a child called %@. %@ will only be added to %@'s household." = "%@ has not registered a child called %@. %@ will only be added to %@'s household.";
 "New email address" = "New email address";
 "You are about to change your email address from %@ to %@ ..." = "You are about to change your email address from %@ to %@. You need access to the new address to activate this change. Do you want to continue?";
 "Activation failed" = "Activation failed";
 "The email address %@ could not be activated ..." = "The email address %@ could not be activated. Please try again, or tap Cancel to cancel the change.";
+"The email address %@ is already in use." = "The email address %@ is already in use.";
+"The mobile number %@ is already in use." = "The mobile number %@ is already in use.";
 
 // Prompts
 "Who do you want to email?" = "Who do you want to email?";
@@ -335,6 +348,8 @@
 "%@ has more than one home phone number. Which address has the number %@?" = "%@ has more than one home phone number. Which address has the number %@?";
 "Which address has the number %@?" = "Which address has the number %@?";
 "Is %@ the phone number for %@?" = "Is %@ the phone number for %@?";
+"Does %@ live with %@?" = "Does %@ live with %@?";
+"Does %@ live with %@ or %@?" = "Does %@ live with %@ or %@?";
 
 // Question arguments
 "a woman or a man" = "a woman or a man";

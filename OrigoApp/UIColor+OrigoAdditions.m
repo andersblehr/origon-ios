@@ -160,7 +160,7 @@
 
 + (instancetype)notificationTextColour
 {
-    return [self redOrangeColour];
+    return [self windowTintColour];
 }
 
 

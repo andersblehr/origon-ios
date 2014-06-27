@@ -220,7 +220,7 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
             cell.detailTextLabel.textColor = [UIColor notificationTextColour];
         } else {
-            cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
+            cell.detailTextLabel.text = origo.descriptionText;
             cell.detailTextLabel.textColor = [UIColor textColour];
         }
     }
@@ -235,7 +235,7 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
-    return ([self isBottomSectionKey:sectionKey] && [[OMeta m].user isTeenOrOlder]);
+    return [self isBottomSectionKey:sectionKey] && [[OMeta m].user isTeenOrOlder];
 }
 
 
@@ -261,7 +261,7 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
 {
-    NSString *relationshipKey = (sectionKey == kSectionKeyWards) ? nil : kRelationshipKeyOrigo;
+    NSString *relationshipKey = sectionKey == kSectionKeyWards ? nil : kRelationshipKeyOrigo;
     
     return [OUtil sortKeyWithPropertyKey:kPropertyKeyName relationshipKey:relationshipKey];
 }

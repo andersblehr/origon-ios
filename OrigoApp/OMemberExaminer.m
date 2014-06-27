@@ -68,11 +68,11 @@ static OMemberExaminer *_instance = nil;
             if ([candidates count] > 2) {
                 _parentCandidateStatus = kParentCandidateStatusUndetermined;
             }
-        } else if ([resident isJuvenile] && ![resident hasParentWithGender:[_member gender]]) {
+        } else if ([resident isJuvenile] && ![resident hasParentWithGender:_member.gender]) {
             BOOL isParentCandidate = YES;
             
             if ([_member dateOfBirth] && resident.dateOfBirth) {
-                isParentCandidate = ([[_member dateOfBirth] yearsBeforeDate:resident.dateOfBirth] >= kAgeOfConsent);
+                isParentCandidate = [[_member dateOfBirth] yearsBeforeDate:resident.dateOfBirth] >= kAgeOfConsent;
             }
             
             if (isParentCandidate) {
@@ -135,8 +135,8 @@ static OMemberExaminer *_instance = nil;
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagBothParents];
     [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagYes];
-    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[0] predicate:[self candidate:_candidates[0] parentLabelWithOffspringGender:[_member gender]]]];
-    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[1] predicate:[self candidate:_candidates[1] parentLabelWithOffspringGender:[_member gender]]]];
+    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[0] predicate:[self candidate:_candidates[0] parentLabelWithOffspringGender:_member.gender]]];
+    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[1] predicate:[self candidate:_candidates[1] parentLabelWithOffspringGender:_member.gender]]];
     [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"") tag:kButtonTagNo];
     
     [actionSheet show];
@@ -145,7 +145,7 @@ static OMemberExaminer *_instance = nil;
 
 - (void)presentAllOffspringCandidatesSheet
 {
-    NSString *parentNoun = [self parentNounForGender:[_member gender]];
+    NSString *parentNoun = [self parentNounForGender:_member.gender];
     NSString *prompt = [OLanguage questionWithSubject:[_member givenName] verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_candidates noun:parentNoun]];
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAllOffspring];
@@ -178,7 +178,7 @@ static OMemberExaminer *_instance = nil;
 
 - (void)presentCandidateSheetForOffspringCandidate:(id<OMember>)candidate
 {
-    NSString *prompt = [OLanguage questionWithSubject:[_member givenName] verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:candidate noun:[self parentNounForGender:[_member gender]]]];
+    NSString *prompt = [OLanguage questionWithSubject:[_member givenName] verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:candidate noun:[self parentNounForGender:_member.gender]]];
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagOffspring];
     [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagYes];
@@ -211,7 +211,7 @@ static OMemberExaminer *_instance = nil;
     } else {
         if ([_registrantOffspring count]) {
             for (id<OMember> offspring in _registrantOffspring) {
-                if ([[_member gender] isEqualToString:kGenderMale]) {
+                if ([_member.gender isEqualToString:kGenderMale]) {
                     offspring.fatherId = [_member entityId];
                 } else {
                     offspring.motherId = [_member entityId];
@@ -262,7 +262,7 @@ static OMemberExaminer *_instance = nil;
 
 - (void)performExamination
 {
-    if (![_member gender]) {
+    if (!_member.gender) {
         [self presentGenderSheet];
     } else if (_candidates) {
         if (![_examinedCandidates count]) {
@@ -328,7 +328,7 @@ static OMemberExaminer *_instance = nil;
         
         switch (actionSheet.tag) {
             case kActionSheetTagGender:
-                [_member setGender:(buttonTag == kButtonTagFemale) ? kGenderFemale : kGenderMale];
+                [_member setGender:buttonTag == kButtonTagFemale ? kGenderFemale : kGenderMale];
                 
                 break;
                 

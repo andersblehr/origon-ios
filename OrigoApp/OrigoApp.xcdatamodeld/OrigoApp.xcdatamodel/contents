@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5063" systemVersion="13C64" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13D65" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="ODevice" representedClassName="ODevice" parentEntity="OReplicatedEntity" syncable="YES">
         <attribute name="displayName" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
@@ -33,8 +33,8 @@
         <attribute name="isAdmin" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
-        <relationship name="member" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="memberships" inverseEntity="OMember" syncable="YES"/>
-        <relationship name="origo" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OOrigo" inverseName="memberships" inverseEntity="OOrigo" syncable="YES"/>
+        <relationship name="member" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="memberships" inverseEntity="OMember" syncable="YES"/>
+        <relationship name="origo" maxCount="1" deletionRule="Nullify" destinationEntity="OOrigo" inverseName="memberships" inverseEntity="OOrigo" syncable="YES"/>
         <userInfo>
             <entry key="expires" value="no"/>
         </userInfo>

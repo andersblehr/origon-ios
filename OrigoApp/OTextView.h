@@ -10,8 +10,8 @@
 
 @interface OTextView : UITextView<OTextInput>
 
-- (instancetype)initWithKey:(NSString *)key blueprint:(OTableViewCellBlueprint *)blueprint delegate:(id)delegate;
+- (instancetype)initWithKey:(NSString *)key blueprint:(OInputCellBlueprint *)blueprint delegate:(id)delegate;
 
-+ (CGFloat)heightWithText:(NSString *)text blueprint:(OTableViewCellBlueprint *)blueprint;
++ (CGFloat)heightWithText:(NSString *)text blueprint:(OInputCellBlueprint *)blueprint;
 
 @end
