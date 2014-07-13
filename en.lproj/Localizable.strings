@@ -200,15 +200,22 @@
 // Alerts
 "No internet connection." = "No internet connection.";
 "An error has occurred. Please try again later. [%d: \"%@\"]" = "An error has occurred. Please try again later. [%d: \"%@\"]";
+"Cannot place call" = "Cannot place call";
+"Cannot place call to %@. It may not be a valid phone number." = "Cannot place call to %@. It may not be a valid phone number.";
 
 // Generic terms
 "Yes" = "Yes";
 "No" = "No";
-"Man" = "Man";
-"Boy" = "Boy";
-"Woman" = "Woman";
-"Girl" = "Girl";
-"Parent contact" = "Parent contact";
+"man" = "man";
+"boy" = "boy";
+"woman" = "woman";
+"girl" = "girl";
+"Home number" = "Home number";
+"Neither" = "Neither";
+"Both" = "Both";
+"All" = "All";
+"None of them" = "None of them";
+"All of them" = "All of them";
 
 // Formats
 "%d years" = "%d years";
@@ -290,6 +297,7 @@
 
 // View title
 "About me" = "About me";
+"Parent contact" = "Parent contact";
 
 // Footers
 "A notification will be sent to the email address you provide." = "A notification will be sent to the email address you provide.";
@@ -299,6 +307,8 @@
 // Buttons
 "To some of them" = "To some of them";
 "Add an address" = "Add an address";
+"Register address" = "Register address";
+"Register guardian" = "Register guardian";
 "Change password" = "Change password";
 "Edit relations" = "Edit relations";
 "Correct gender" = "Correct gender";
@@ -309,10 +319,6 @@
 "Retrieve from other groups" = "Retrieve from other groups";
 "A different number" = "A different number";
 "A different address" = "A different address";
-"Neither" = "Neither";
-"None of them" = "None of them";
-"Both" = "Both";
-"All of them" = "All of them";
 
 // Alerts
 "Incorrect details" = "Incorrect details";
@@ -339,6 +345,14 @@
 "Who do you want to email?" = "Who do you want to email?";
 "Who do you want to text?" = "Who do you want to text?";
 "Who do you want to call?" = "Who do you want to call?";
+"Should %@ be registered at the same address?" = "Should %@ be registered at the same address?";
+"Who else should be registered at the same address?" = "Who else should be registered at the same address?";
+"Are you a %@ or a @%?" = "Are you a %@ or a @%?";
+"Is %@ a %@ or a @%?" = "Is %@ a %@ or a @%?";
+"Are you a %@?" = "Are you a %@?";
+"Is %@ a %@?" = "Is %@ a %@?";
+"You are now registered as a %@." = "You are now registered as a %@.";
+"%@ is now registered as a %@." = "%@ is now registered as a %@.";
 "%@ has more than one mobile phone number. Which number do you want to provide?" = "%@ has more than one mobile phone number. Which number do you want to provide?";
 "%@ has more than one email address. Which address do you want to provide?" = "%@ has more than one email address. Which address do you want to provide?";
 "%@ has more than one home address. Which address do you want to provide?" = "%@ has more than one home address. Which address do you want to provide?";
@@ -350,10 +364,6 @@
 "Is %@ the phone number for %@?" = "Is %@ the phone number for %@?";
 "Does %@ live with %@?" = "Does %@ live with %@?";
 "Does %@ live with %@ or %@?" = "Does %@ live with %@ or %@?";
-
-// Question arguments
-"a woman or a man" = "a woman or a man";
-"a girl or a boy" = "a girl or a boy";
 
 // Terms
 "his father" = "his father";

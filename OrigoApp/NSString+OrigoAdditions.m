@@ -84,8 +84,8 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
 
 - (BOOL)fuzzyMatches:(NSString *)other
 {
-    NSString *string1 = [[self removeRedundantWhitespaceKeepNewlines:NO] lowercaseString];
-    NSString *string2 = [[other removeRedundantWhitespaceKeepNewlines:NO] lowercaseString];
+    NSString *string1 = [[self stringByRemovingRedundantWhitespaceKeepNewlines:NO] lowercaseString];
+    NSString *string2 = [[other stringByRemovingRedundantWhitespaceKeepNewlines:NO] lowercaseString];
     
     NSArray *words1 = [string1 componentsSeparatedByString:kSeparatorSpace];
     NSArray *words2 = [string2 componentsSeparatedByString:kSeparatorSpace];
@@ -155,9 +155,9 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
 }
 
 
-#pragma mark - String operations
+#pragma mark - Generic string operations
 
-- (NSString *)removeRedundantWhitespaceKeepNewlines:(BOOL)keepNewlines
+- (NSString *)stringByRemovingRedundantWhitespaceKeepNewlines:(BOOL)keepNewlines
 {
     NSString *doubleSpace = [kSeparatorSpace stringByAppendingString:kSeparatorSpace];
     NSString *doubleNewline = [kSeparatorNewline stringByAppendingString:kSeparatorNewline];
@@ -235,7 +235,7 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
 }
 
 
-#pragma mark - Name conversions
+#pragma mark - Specialised string operations
 
 - (NSString *)givenName
 {
@@ -261,6 +261,12 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
     }
     
     return countryName;
+}
+
+
+- (NSString *)callablePhoneNumber
+{
+    return [[self componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:kCallablePhoneNumberCharacters] invertedSet]] componentsJoinedByString:@""];
 }
 
 @end

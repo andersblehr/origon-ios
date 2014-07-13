@@ -200,15 +200,22 @@
 // Alerts
 "No internet connection." = "Ingen internettforbindelse.";
 "An error has occurred. Please try again later. [%d: \"%@\"]" = "Det har oppstått en feil, vennligst prøv igjen senere. [%d: \"%@\"]";
+"Cannot place call" = "Kan ikke ringe";
+"Cannot place call to %@. It may not be a valid phone number." = "Kan ikke ringe %@. Det er antakelig ikke et gyldig telefonnummer.";
 
 // Generic terms
 "Yes" = "Ja";
 "No" = "Nei";
-"Man" = "Mann";
-"Boy" = "Gutt";
-"Woman" = "Kvinne";
-"Girl" = "Jente";
-"Parent contact" = "Foreldrekontakt";
+"man" = "mann";
+"boy" = "gutt";
+"woman" = "kvinne";
+"girl" = "jente";
+"Home number" = "Hjemmenummer";
+"Neither" = "Ingen av dem";
+"Both" = "Begge";
+"All" = "Alle";
+"None of them" = "Ingen av dem";
+"All of them" = "Alle";
 
 // Formats
 "%d years" = "%d år";
@@ -289,6 +296,7 @@
 
 // View title
 "About me" = "Om meg";
+"Parent contact" = "Foreldrekontakt";
 
 // Footers
 "A notification will be sent to the email address you provide." = "Et varsel vil bli sendt til epostadressen du oppgir.";
@@ -298,6 +306,8 @@
 // Buttons
 "To some of them" = "Til noen av dem";
 "Add an address" = "Legg til en adresse";
+"Register address" = "Registrer adresse";
+"Register guardian" = "Registrer foresatt";
 "Change password" = "Endre passord";
 "Edit relations" = "Rediger relasjoner";
 "Correct gender" = "Korriger kjønn";
@@ -308,10 +318,6 @@
 "Retrieve from other groups" = "Hent fra andre grupper";
 "A different number" = "Et annet nummer";
 "A different address" = "En annen adresse";
-"Neither" = "Ingen av dem";
-"None of them" = "Ingen av dem";
-"Both" = "Begge";
-"All of them" = "Alle";
 
 // Alerts
 "Incorrect details" = "Uriktige opplysninger";
@@ -338,6 +344,14 @@
 "Who do you want to email?" = "Hvem vil du sende epost til?";
 "Who do you want to text?" = "Hvem vil du sende tekstmelding til?";
 "Who do you want to call?" = "Hvem vil du ringe?";
+"Should %@ be registered at the same address?" = "Skal %@ registreres på samme adresse?";
+"Who else should be registered at the same address?" = "Hvem flere skal registeres på samme adresse?";
+"Are you a %@ or a @%?" = "Er du %@ eller %@";
+"Is %@ a %@ or a @%?" = "Er %@ %@ eller %@";
+"Are you a %@?" = "Er du %@?";
+"Is %@ a %@?" = "Er %@ %@?";
+"You are now registered as a %@." = "Du er nå oppført som %@.";
+"%@ is now registered as a %@." = "%@ er nå oppført som %@.";
 "%@ has more than one mobile phone number. Which number do you want to provide?" = "%@ har flere mobilnummer. Hvilket nummer vil du oppgi?";
 "%@ has more than one email address. Which address do you want to provide?" = "%@ har flere epostadresser. Hvilken adresse vil du oppgi?";
 "%@ has more than one home address. Which address do you want to provide?" = "%@ har flere hjemmeadresser. Hvilken adresse vil du oppgi?";
@@ -349,10 +363,6 @@
 "Is %@ the phone number for %@?" = "Er %@ telefonnummeret til %@?";
 "Does %@ live with %@?" = "Bor %@ med %@?";
 "Does %@ live with %@ or %@?" = "Bor %@ med %@ eller %@?";
-
-// Question arguments
-"a woman or a man" = "kvinne eller mann";
-"a girl or a boy" = "jente eller gutt";
 
 // Terms
 "his father" = "faren hans";

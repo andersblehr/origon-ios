@@ -15,21 +15,53 @@ static NSString * const kRootIdFormat = @"~%@";
 
 #pragma mark - Display strings
 
++ (NSString *)genderStringForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile
+{
+    NSString *genderString = nil;
+    
+    if ([gender isEqualToString:kGenderMale]) {
+        genderString = isJuvenile ? NSLocalizedString(@"boy", @"") : NSLocalizedString(@"man", @"");
+    } else if ([gender isEqualToString:kGenderFemale]) {
+        genderString = isJuvenile ? NSLocalizedString(@"girl", @"") : NSLocalizedString(@"woman", @"");
+    }
+    
+    return genderString;
+}
+
+
 + (NSString *)contactInfoForMember:(id<OMember>)member
 {
-    NSString *details = [member.mobilePhone hasValue] ? [OPhoneNumberFormatter formatPhoneNumber:member.mobilePhone canonicalise:YES] : member.email;
+    NSString *contactInfo = [member.mobilePhone hasValue] ? [OPhoneNumberFormatter formatPhoneNumber:member.mobilePhone canonicalise:YES] : member.email;
     
     if ([member isJuvenile]) {
         NSString *age = [member.dateOfBirth localisedAgeString];
         
-        if (details && age) {
-            details = [age stringByAppendingString:details separator:kSeparatorComma];
+        if (contactInfo && age) {
+            contactInfo = [age stringByAppendingString:contactInfo separator:kSeparatorComma];
         } else if (age) {
-            details = age;
+            contactInfo = age;
         }
     }
     
-    return details;
+    return contactInfo;
+}
+
+
++ (NSString *)guardianInfoForMember:(id<OMember>)member
+{
+    NSString *guardianInfo = nil;
+    
+    if ([member isJuvenile]) {
+        NSSet *guardians = [member parents];
+        
+        if (![guardians count]) {
+            guardians = [member guardians];
+        }
+        
+        guardianInfo = [NSString stringWithFormat:@"(%@)", [self commaSeparatedListOfItems:guardians conjoinLastItem:NO]];
+    }
+    
+    return guardianInfo;
 }
 
 
@@ -137,25 +169,32 @@ static NSString * const kRootIdFormat = @"~%@";
 }
 
 
-+ (NSSet *)eligibleCandidatesForOrigo:(id<OOrigo>)origo isElder:(BOOL)isElder
++ (NSArray *)sortedArraysOfResidents:(id)residents excluding:(id<OMember>)excludedResident
 {
-    NSSet *eligibleMembers = nil;
+    NSMutableArray *elders = [NSMutableArray array];
+    NSMutableArray *minors = [NSMutableArray array];
     
-    if (isElder) {
-        eligibleMembers = [[OMeta m].user peersNotInOrigo:origo];
-    } else {
-        id<OMember> pivotMember = nil;
-        
-        for (id<OMember> member in [origo members]) {
-            if (!pivotMember && [member isHousemateOfUser]) {
-                pivotMember = member;
+    for (id<OMember> resident in residents) {
+        if (!excludedResident || ![excludedResident.entityId isEqualToString:resident.entityId]) {
+            if ([resident isJuvenile]) {
+                [minors addObject:resident];
+            } else {
+                [elders addObject:resident];
             }
         }
-        
-        eligibleMembers = [pivotMember peersNotInOrigo:origo];
     }
     
-    return eligibleMembers;
+    NSArray *sortedElders = [elders sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *sortedMinors = [minors sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *sortedResidents = nil;
+    
+    if ([sortedElders count] && [sortedMinors count]) {
+        sortedResidents = @[[sortedElders arrayByAddingObjectsFromArray:sortedMinors], sortedMinors];
+    } else {
+        sortedResidents = [sortedElders count] ? @[sortedElders] : @[sortedMinors];
+    }
+    
+    return sortedResidents;
 }
 
 
@@ -163,17 +202,10 @@ static NSString * const kRootIdFormat = @"~%@";
 
 + (NSComparisonResult)compareOrigo:(id<OOrigo>)origo withOrigo:(id<OOrigo>)otherOrigo
 {
-    NSComparisonResult result = NSOrderedSame;
+    NSString *value = [origo isOfType:kOrigoTypeResidence] ? origo.address : origo.name;
+    NSString *otherValue = [otherOrigo isOfType:kOrigoTypeResidence] ? otherOrigo.address : otherOrigo.name;
     
-    if ([origo.type isEqualToString:otherOrigo.type]) {
-        if ([origo isOfType:kOrigoTypeResidence]) {
-            result = [origo.address localizedCaseInsensitiveCompare:otherOrigo.address];
-        } else {
-            result = [origo.name localizedCaseInsensitiveCompare:otherOrigo.name];
-        }
-    }
-    
-    return result;
+    return [value localizedCaseInsensitiveCompare:otherValue];
 }
 
 @end

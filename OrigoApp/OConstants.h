@@ -13,7 +13,6 @@ extern NSString * const kIdentifierAuth;
 extern NSString * const kIdentifierCalendar;
 extern NSString * const kIdentifierMember;
 extern NSString * const kIdentifierMessageList;
-extern NSString * const kIdentifierOldOrigo;
 extern NSString * const kIdentifierOrigo;
 extern NSString * const kIdentifierOrigoList;
 extern NSString * const kIdentifierTaskList;

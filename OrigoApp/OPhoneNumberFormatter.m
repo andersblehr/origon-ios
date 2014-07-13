@@ -8,6 +8,8 @@
 
 #import "OPhoneNumberFormatter.h"
 
+NSString * const kCallablePhoneNumberCharacters = @"+0123456789";
+
 static NSString * const kRegionIdentifiersByCountryCallingCode = @"1:US|en_CA|fr_CA|AS|AI|AG|BS|BB|BM|VG|KY|DM|DO|GD|GU|JM|MS|MP|PR|KN|LC|VC|SX|TT|TC|VI;33:FR;34:ES;45:DK;46:SE;47:NO";
 static NSString * const kInternationalTemplate = @"+{1|20|21#|22#|23#|24#|25#|26#|27|29#|30|31|32|33|34|35#|36|37#|8#|39|40|41|42#|43|44|45|46|47|48|49|50#|51|52|53|54|55|56|57|58|59#|60|61|62|63|64|65|66|67#|68#|69#|7|80#|81|82|84|85#|86|878|88#|90|91|92|93|94|95|96#|97#|98|99#} #@";
 static NSString * const kTemplatesByRegionCode =
@@ -327,6 +329,10 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
             _formattedPhoneNumber = nil;
         }
     }
+    
+    //if (_tokenOffset < [_format length]) {
+    //    _formattedPhoneNumber = nil;
+    //}
     
     return _formattedPhoneNumber;
 }

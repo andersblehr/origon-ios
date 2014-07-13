@@ -62,7 +62,7 @@ static NSString * const kLogoText = @"..origo..";
 
 - (id)listCellWithStyle:(UITableViewCellStyle)style data:(id)data delegate:(id)delegate
 {
-    OTableViewCell *cell = [self cellWithStyle:style reuseIdentifier:[kReuseIdentifierList stringByAppendingFormat:@":%ld", style] delegate:delegate];
+    OTableViewCell *cell = [self cellWithStyle:style reuseIdentifier:[kReuseIdentifierList stringByAppendingFormat:@":%d", (short)style] delegate:delegate];
     
     if ([data conformsToProtocol:@protocol(OEntity)]) {
         cell.entity = data;

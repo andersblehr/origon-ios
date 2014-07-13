@@ -33,7 +33,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-#pragma mark - Navigation bar buttons
+#pragma mark - Navigation bar icon buttons
 
 + (instancetype)settingsButtonWithTarget:(id)target
 {
@@ -84,6 +84,8 @@ static UIBarButtonItem *_flexibleSpace = nil;
     return button;
 }
 
+
+#pragma mark - Navigation bar text buttons
 
 + (instancetype)nextButtonWithTarget:(id)target
 {
