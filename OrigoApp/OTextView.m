@@ -107,7 +107,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 - (NSString *)peelText
 {
     if ([self.text hasValue]) {
-        self.text = [self.text removeRedundantWhitespaceKeepNewlines:YES];
+        self.text = [self.text stringByRemovingRedundantWhitespaceKeepNewlines:YES];
     }
     
     return [self.text hasValue] ? self.text : nil;

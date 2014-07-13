@@ -33,7 +33,7 @@ extern NSString * const kSeparatorAlternates;
 - (NSInteger)lineCount;
 - (NSArray *)lines;
 
-- (NSString *)removeRedundantWhitespaceKeepNewlines:(BOOL)keepNewlines;
+- (NSString *)stringByRemovingRedundantWhitespaceKeepNewlines:(BOOL)keepNewlines;
 - (NSString *)stringByReplacingSubstring:(NSString *)substring withString:(NSString *)string;
 - (NSString *)stringByAppendingString:(NSString *)string separator:(NSString *)separator;
 - (NSString *)stringByAppendingCapitalisedString:(NSString *)string;
@@ -42,5 +42,6 @@ extern NSString * const kSeparatorAlternates;
 
 - (NSString *)givenName;
 - (NSString *)localisedCountryName;
+- (NSString *)callablePhoneNumber;
 
 @end

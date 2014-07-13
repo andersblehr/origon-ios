@@ -111,19 +111,21 @@ static OMemberExaminer *_instance = nil;
 
 - (void)presentGenderSheet
 {
-    id subject = nil;
+    BOOL isJuvenile = [_member isJuvenile];
     
-    if ([[OState s] targetIs:kTargetUser]) {
-        subject = [OMeta m].user;
+    NSString *femaleGender = [OUtil genderStringForGender:kGenderFemale isJuvenile:isJuvenile];
+    NSString *maleGender = [OUtil genderStringForGender:kGenderMale isJuvenile:isJuvenile];
+    NSString *prompt = nil;
+    
+    if ([_member isUser]) {
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"Are you a %@ or a @%?", @""), femaleGender, maleGender];
     } else {
-        subject = [_member givenName];
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"Is %@ a %@ or a @%?", @""), [_member givenName], femaleGender, maleGender];
     }
     
-    NSString *prompt = [OLanguage questionWithSubject:subject verb:_be_ argument:[_member isJuvenile] ? NSLocalizedString(@"a girl or a boy", @"") : NSLocalizedString(@"a woman or a man", @"")];
-    
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagGender];
-    [actionSheet addButtonWithTitle:[_member isJuvenile] ? NSLocalizedString(@"Girl", @"") : NSLocalizedString(@"Woman", @"") tag:kButtonTagFemale];
-    [actionSheet addButtonWithTitle:[_member isJuvenile] ? NSLocalizedString(@"Boy", @"") : NSLocalizedString(@"Man", @"")];
+    [actionSheet addButtonWithTitle:[femaleGender capitalizedString] tag:kButtonTagFemale];
+    [actionSheet addButtonWithTitle:[maleGender capitalizedString]];
     
     [actionSheet show];
 }

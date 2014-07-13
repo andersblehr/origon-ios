@@ -199,7 +199,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 }
 
 
-- (NSArray *)cachedProxiesForEntityClass:(Class)entityClass
++ (NSArray *)cachedProxiesForEntityClass:(Class)entityClass
 {
     NSMutableArray *proxies = [NSMutableArray array];
     

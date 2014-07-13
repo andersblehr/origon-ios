@@ -86,8 +86,12 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         if (recipientTag == kRecipientTagOrigo) {
             id<OOrigo> origo = recipients[0];
             
-            if ([origo hasAddress]) {
-                [actionSheet addButtonWithTitle:[origo shortAddress]];
+            if ([origo isOfType:kOrigoTypeResidence]) {
+                if ([_origo hasAddress]) {
+                    [actionSheet addButtonWithTitle:[origo shortAddress]];
+                } else {
+                    [actionSheet addButtonWithTitle:NSLocalizedString(@"Home number", @"")];
+                }
             } else {
                 [actionSheet addButtonWithTitle:origo.name];
             }
@@ -206,7 +210,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
             [self addRecipients:phoneRecipients forServiceType:kServiceTypeText tag:tag];
         }
         
-        if ([phoneRecipients count] == 1) {
+        if (([phoneRecipients count] == 1) && (tag != kRecipientTagAllMembers)) {
             [self addRecipients:phoneRecipients forServiceType:kServiceTypeCall tag:tag];
         } else if (_member && ([phoneRecipients count] == 2) && (tag != kRecipientTagParents)) {
             if ([_member hasParent:phoneRecipients[0]]) {
@@ -408,12 +412,18 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     NSString *phoneNumber = nil;
     
     if ([recipient conformsToProtocol:@protocol(OMember)]) {
-        phoneNumber = [recipient mobilePhone];
+        phoneNumber = [[recipient mobilePhone] callablePhoneNumber];
     } else if ([recipient conformsToProtocol:@protocol(OOrigo)]) {
-        phoneNumber = [recipient telephone];
+        phoneNumber = [[recipient telephone] callablePhoneNumber];
     }
     
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[kProtocolTel stringByAppendingString:phoneNumber]]];
+    NSURL *phoneURL = [NSURL URLWithString:[kProtocolTel stringByAppendingString:phoneNumber]];
+    
+    if ([[UIApplication sharedApplication] canOpenURL:phoneURL]) {
+        [[UIApplication sharedApplication] openURL:phoneURL];
+    } else {
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot place call", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Cannot place call to %@. It may not be a valid phone number.", @""), phoneNumber]];
+    }
 }
 
 

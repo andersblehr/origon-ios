@@ -21,7 +21,7 @@
 @property (nonatomic, readonly) NSString *language;
 @property (nonatomic, readonly) NSBundle *localisedStringsBundle;
 
-@property (nonatomic, readonly) id<OMember> user;
+@property (nonatomic, readonly) OMember *user;
 @property (nonatomic, readonly) OLocator *locator;
 @property (nonatomic, readonly) OReplicator *replicator;
 @property (nonatomic, readonly) OSwitchboard *switchboard;

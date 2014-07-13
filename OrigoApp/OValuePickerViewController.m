@@ -26,9 +26,11 @@
 {
     BOOL targetIsMemberVariant = NO;
     
-    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetElder];
     targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetMember];
     targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetMembers];
+    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetContact];
+    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetParentContact];
+    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetElder];
     
     return targetIsMemberVariant;
 }
@@ -37,12 +39,6 @@
 - (BOOL)isMultiValuePicker
 {
     return [self targetIs:kTargetMembers];
-}
-
-
-- (NSArray *)sortedPeers
-{
-    return [[[OUtil eligibleCandidatesForOrigo:self.meta isElder:[self targetIs:kTargetElder]] allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -59,10 +55,10 @@
             self.navigationItem.rightBarButtonItem.enabled = NO;
         }
     } else {
-        self.title = NSLocalizedString(_settingKey, kStringPrefixSettingTitle);
-        
         _settings = [OSettings settings];
-        _settingKey = self.state.target;
+        _settingKey = self.target;
+        
+        self.title = NSLocalizedString(_settingKey, kStringPrefixSettingTitle);
     }
 }
 
@@ -70,11 +66,15 @@
 - (void)loadData
 {
     if ([self targetIsMemberVariant]) {
-        [self setData:[self sortedPeers] sectionIndexLabelKey:kPropertyKeyName];
+        NSArray *candidates = nil;
         
-        if (!self.returnData) {
-            self.returnData = [NSMutableArray array];
+        if ([self.meta isKindOfClass:[NSSet class]]) {
+            candidates = [[self.meta allObjects] sortedArrayUsingSelector:@selector(compare:)];
+        } else if ([self.meta isKindOfClass:[NSArray class]]) {
+            candidates = [self.meta sortedArrayUsingSelector:@selector(compare:)];
         }
+        
+        [self setData:candidates sectionIndexLabelKey:kPropertyKeyName];
     }
 }
 
@@ -82,12 +82,22 @@
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     if ([self targetIsMemberVariant]) {
-        id<OMember> peer = [self dataAtIndexPath:indexPath];
+        id<OMember> candidate = [self dataAtIndexPath:indexPath];
         
-        cell.textLabel.text = peer.name;
-        cell.detailTextLabel.text = [[peer residence] shortAddress];
-        cell.imageView.image = [OUtil smallImageForMember:peer];
-        cell.checked = [self.returnData containsObject:peer];
+        cell.textLabel.text = [candidate publicName];
+        cell.imageView.image = [OUtil smallImageForMember:candidate];
+        
+        if ([self isMultiValuePicker]) {
+            cell.checked = [self.returnData containsObject:candidate];
+        }
+        
+        if ([candidate isJuvenile]) {
+            cell.detailTextLabel.text = [OUtil guardianInfoForMember:candidate];
+        } else if ([self targetIs:kTargetParentContact]) {
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[candidate wards] conjoinLastItem:NO];
+        } else {
+            cell.detailTextLabel.text = [[candidate residence] shortAddress];
+        }
     } else {
         cell.checked = [[self dataAtIndexPath:indexPath] isEqual:[_settings valueForSettingKey:_settingKey]];
     }
@@ -103,6 +113,10 @@
     
     if ([self targetIsMemberVariant]) {
         if ([self isMultiValuePicker]) {
+            if (!self.returnData) {
+                self.returnData = [NSMutableArray array];
+            }
+            
             if (cell.checked) {
                 [self.returnData addObject:pickedValue];
             } else {

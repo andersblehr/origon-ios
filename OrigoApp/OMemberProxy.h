@@ -36,13 +36,12 @@
 - (id<OMember>)partner;
 - (NSSet *)wards;
 - (NSSet *)parents;
-- (NSSet *)siblings;
 - (NSSet *)guardians;
 - (NSSet *)peers;
 - (NSSet *)peersNotInOrigo:(id<OOrigo>)origo;
 - (NSArray *)housemates;
-- (NSArray *)housematesNotInResidence:(id<OOrigo>)residence;
 - (NSArray *)housemateResidences;
+- (NSSet *)housematesNotInResidence:(id<OOrigo>)residence;
 
 - (BOOL)isActive;
 - (void)makeActive;

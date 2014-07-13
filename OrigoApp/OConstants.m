@@ -13,7 +13,6 @@ NSString * const kIdentifierAuth = @"auth";
 NSString * const kIdentifierCalendar = @"calendar";
 NSString * const kIdentifierMember = @"member";
 NSString * const kIdentifierMessageList = @"messages";
-NSString * const kIdentifierOldOrigo = @"old";
 NSString * const kIdentifierOrigo = @"origo";
 NSString * const kIdentifierOrigoList = @"origos";
 NSString * const kIdentifierTaskList = @"tasks";

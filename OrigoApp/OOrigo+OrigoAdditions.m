@@ -43,6 +43,39 @@
 }
 
 
+- (id<OMembership>)addResident:(id<OMember>)resident
+{
+    OMembership *residency = nil;
+    
+    if (![[resident residencies] count] || [resident hasAddress]) {
+        residency = [self addMember:resident isAssociate:NO];
+    } else if (![resident isJuvenile] || ![self hasMember:resident]) {
+        OOrigo *residence = [resident residence];
+        
+        residency = [self addMember:resident isAssociate:NO];
+        
+        if (![resident isJuvenile]) {
+            BOOL didMoveElders = YES;
+            
+            for (OMember *elder in [residence elders]) {
+                didMoveElders = didMoveElders && [self hasMember:elder];
+            }
+
+            if (didMoveElders) {
+                for (OMember *resident in [residence residents]) {
+                    [self addMember:resident isAssociate:NO];
+                    [[residence membershipForMember:resident] expire];
+                }
+                
+                [residence expire];
+            }
+        }
+    }
+    
+    return residency;
+}
+
+
 #pragma mark - Selector implementations
 
 - (NSComparisonResult)compare:(id<OOrigo>)other
@@ -95,9 +128,29 @@
 {
     NSMutableSet *residents = [NSMutableSet set];
     
-    for (OMembership *membership in [self allMemberships]) {
-        if ([membership isResidency]) {
-            [residents addObject:membership.member];
+    if ([self isOfType:kOrigoTypeResidence]) {
+        NSMutableSet *allMinors = [NSMutableSet set];
+        NSMutableSet *visibleMinors = [NSMutableSet set];
+        
+        for (OMembership *membership in [self allMemberships]) {
+            if ([membership isResidency]) {
+                if ([membership.member isJuvenile]) {
+                    [allMinors addObject:membership.member];
+                } else {
+                    [residents addObject:membership.member];
+                    [visibleMinors unionSet:[membership.member wards]];
+                }
+            }
+        }
+        
+        if ([residents count]) {
+            for (OMember *minor in allMinors) {
+                if ([visibleMinors containsObject:minor]) {
+                    [residents addObject:minor];
+                }
+            }
+        } else {
+            residents = allMinors;
         }
     }
     
@@ -176,12 +229,16 @@
 
 - (id<OMembership>)addMember:(id<OMember>)member
 {
-    BOOL isFirstMember = ![self.memberships count];
+    OMembership *membership = nil;
     
-    OMembership *membership = [self addMember:member isAssociate:NO];
-    
-    if (isFirstMember && ![self isOfType:kOrigoTypeResidence] && [member isJuvenile]) {
-        self.isForMinors = @YES;
+    if ([self isOfType:kOrigoTypeResidence]) {
+        membership = [self addResident:member];
+    } else {
+        if (![self.memberships count] && [member isJuvenile]) {
+            self.isForMinors = @YES;
+        }
+        
+        membership = [self addMember:member isAssociate:NO];
     }
     
     return membership;
@@ -270,7 +327,7 @@
 
 - (BOOL)hasAddress
 {
-    return [self.address hasValue] || [self.telephone hasValue];
+    return [self.address hasValue];
 }
 
 

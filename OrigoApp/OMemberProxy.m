@@ -53,7 +53,7 @@
         [allMemberships unionSet:[[self instance] allMemberships]];
     }
     
-    for (id<OMembership> membership in [self cachedProxiesForEntityClass:[OMembership class]]) {
+    for (id<OMembership> membership in [[self class] cachedProxiesForEntityClass:[OMembership class]]) {
         if ([membership.member.entityId isEqualToString:self.entityId]) {
             [allMemberships addObject:membership];
         }

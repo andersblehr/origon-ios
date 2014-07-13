@@ -27,7 +27,6 @@ static UIViewController * _reinstantiatedRootViewController;
     BOOL _didJustLoad;
     BOOL _didInitialise;
     BOOL _didResurface;
-    BOOL _isHidden;
     BOOL _shouldReloadOnModalDismissal;
     
     Class _entityClass;
@@ -284,6 +283,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _didCancel = !_cancelImpliesSkip;
         
         if (_didCancel) {
+            [self.entity expire];
             [_dismisser dismissModalViewController:self];
         } else {
             [_inputCell processInputShouldValidate:NO];
@@ -764,6 +764,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
     }
     
+    NSIndexPath *selectedIndexPath = [self.tableView indexPathForSelectedRow];
+    
+    if (selectedIndexPath) {
+        [self.tableView deselectRowAtIndexPath:selectedIndexPath animated:YES];
+    }
+    
     [self.navigationController setToolbarHidden:(!self.toolbarItems) animated:YES];
     
     if (![self actionIs:kActionInput] && (_didResurface || _shouldReloadOnModalDismissal)) {
@@ -814,7 +820,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     _isHidden = self.presentedViewController ? YES : NO;
     
-    [[OMeta m].replicator replicateIfNeeded];
+    if (!_isHidden) {
+        [[OMeta m].replicator replicateIfNeeded];
+    }
 }
 
 

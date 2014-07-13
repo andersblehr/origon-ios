@@ -52,7 +52,7 @@
 
 + (void)cacheProxiesForEntitiesWithDictionaries:(NSArray *)entityDictionaries;
 + (id)cachedProxyForEntityWithId:(NSString *)entityId;
-- (NSArray *)cachedProxiesForEntityClass:(Class)entityClass;
++ (NSArray *)cachedProxiesForEntityClass:(Class)entityClass;
 + (void)clearProxyCache;
 
 @end

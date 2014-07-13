@@ -134,7 +134,7 @@ static NSString * const kAddressTemplatesByCountryCode =
         [allMemberships unionSet:[[self instance] allMemberships]];
     }
     
-    for (id<OMembership> membership in [self cachedProxiesForEntityClass:[OMembership class]]) {
+    for (id<OMembership> membership in [[self class] cachedProxiesForEntityClass:[OMembership class]]) {
         if ([membership.origo.entityId isEqualToString:self.entityId]) {
             [allMemberships addObject:membership];
         }
@@ -167,10 +167,16 @@ static NSString * const kAddressTemplatesByCountryCode =
     if ([self instance]) {
         members = [[self instance] members];
     } else {
-        for (id<OMembership> membership in [self allMemberships]) {
-            if ([membership isFull]) {
-                [members addObject:membership.member];
+        NSSet *memberships = [self allMemberships];
+        
+        if ([memberships count]) {
+            for (id<OMembership> membership in memberships) {
+                if ([membership isFull]) {
+                    [members addObject:membership.member];
+                }
             }
+        } else {
+            [members addObject:[self ancestorConformingToProtocol:@protocol(OMember)]];
         }
     }
     
@@ -284,6 +290,20 @@ static NSString * const kAddressTemplatesByCountryCode =
 - (BOOL)hasAddress
 {
     return [self.address hasValue];
+}
+
+
+- (BOOL)hasMember:(id<OMember>)member
+{
+    BOOL hasMember = NO;
+    
+    if ([self instance]) {
+        hasMember = [[self instance] hasMember:member];
+    } else {
+        hasMember = [[self members] containsObject:member];
+    }
+    
+    return hasMember;
 }
 
 

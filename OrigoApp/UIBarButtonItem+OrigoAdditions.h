@@ -14,6 +14,7 @@
 + (instancetype)plusButtonWithTarget:(id)target;
 + (instancetype)actionButtonWithTarget:(id)target;
 + (instancetype)lookupButtonWithTarget:(id)target;
+
 + (instancetype)nextButtonWithTarget:(id)target;
 + (instancetype)editButtonWithTarget:(id)target;
 + (instancetype)cancelButtonWithTarget:(id)target;

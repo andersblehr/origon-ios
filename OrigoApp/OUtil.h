@@ -10,7 +10,9 @@
 
 @interface OUtil : NSObject
 
++ (NSString *)genderStringForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile;
 + (NSString *)contactInfoForMember:(id<OMember>)member;
++ (NSString *)guardianInfoForMember:(id<OMember>)member;
 + (UIImage *)smallImageForMember:(id<OMember>)member;
 + (UIImage *)smallImageForOrigo:(id<OOrigo>)origo;
 
@@ -18,7 +20,7 @@
 + (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem;
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;
 
-+ (NSSet *)eligibleCandidatesForOrigo:(id<OOrigo>)origo isElder:(BOOL)isElder;
++ (NSArray *)sortedArraysOfResidents:(id)residents excluding:(id<OMember>)excludedResident;
 
 + (NSComparisonResult)compareOrigo:(id<OOrigo>)origo withOrigo:(id<OOrigo>)otherOrigo;
 

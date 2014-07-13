@@ -40,7 +40,7 @@ static CGFloat const kTextInsetY = 1.2f;
         if ([OValidator isPhoneNumberKey:_key]) {
             _value = [OPhoneNumberFormatter formatPhoneNumber:_value canonicalise:NO];
         } else if (![OValidator isPasswordKey:_key]) {
-            _value = [_value removeRedundantWhitespaceKeepNewlines:NO];
+            _value = [_value stringByRemovingRedundantWhitespaceKeepNewlines:NO];
         }
         
         if (![_value hasValue]) {

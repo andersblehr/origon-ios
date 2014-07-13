@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const kCallablePhoneNumberCharacters;
+
 @interface OPhoneNumberFormatter : NSObject
 
 + (NSString *)formatPhoneNumber:(NSString *)phoneNumber canonicalise:(BOOL)canonicalise;
