@@ -28,6 +28,7 @@ static CGFloat const kTextInsetY = 1.2f;
 @synthesize key = _key;
 @synthesize value = _value;
 @synthesize hasEmphasis = _hasEmphasis;
+@synthesize didChange = _didChange;
 @synthesize isTitleField = _isTitleField;
 @synthesize supportsMultiLineText = _supportsMultiLineText;
 
@@ -124,6 +125,8 @@ static CGFloat const kTextInsetY = 1.2f;
 
 - (void)textDidChange
 {
+    _didChange = YES;
+    
     if ([OValidator isPhoneNumberKey:_key]) {
         [self phoneNumberDidChange];
     } else {
