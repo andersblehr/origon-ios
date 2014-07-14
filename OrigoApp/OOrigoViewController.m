@@ -270,10 +270,25 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     cell.imageView.image = [OUtil smallImageForMember:member];
     cell.destinationId = kIdentifierMember;
     
-    if ([member isJuvenile] && ![_origo isOfType:kOrigoTypeResidence]) {
-        cell.detailTextLabel.text = [OUtil guardianInfoForMember:member];
-    } else {
-        cell.detailTextLabel.text = [OUtil contactInfoForMember:member];
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyContacts) {
+        // TODO: Pick up here after summer!
+        
+        NSString *contactRole = nil;
+        id<OMembership> membership = [_origo membershipForMember:member];
+        
+        if ([membership.contactRole isEqualToString:@"Parent contact"]) {
+            contactRole = NSLocalizedString(@"Parent contact", @"");
+        } else {
+            contactRole = NSLocalizedString(_origo.type, kStringPrefixContactTitle);
+        }
+        
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@, %@", contactRole, [OUtil contactInfoForMember:member]];
+    } else if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyMembers) {
+        if ([member isJuvenile] && ![_origo isOfType:kOrigoTypeResidence]) {
+            cell.detailTextLabel.text = [OUtil guardianInfoForMember:member];
+        } else {
+            cell.detailTextLabel.text = [OUtil contactInfoForMember:member];
+        }
     }
 }
 
@@ -384,19 +399,18 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                 for (id<OMember> member in viewController.returnData) {
                     [_origo addMember:member];
                 }
-            } else { // TODO: Pick up here after summer holidays!
-                id<OMembership> membership = [_origo addMember:viewController.returnData];
-                
-                if ([viewController.target isEqualToString:kTargetContact]) {
-                    
-                } else if ([viewController.target isEqualToString:kTargetParentContact]) {
-                    membership.contactRole = @"Parent contact";
-                }
+            } else if ([viewController.target isEqualToString:kTargetParentContact]) {
+                // TODO: Pick up here after summer!
+                [_origo addMember:viewController.returnData].contactRole = @"Parent contact";
             }
-            
-            [[OMeta m].replicator replicate];
+        } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
+            // TODO: Pick up here after summer!
+            if ([viewController targetIs:kTargetContact]) {
+                [_origo membershipForMember:viewController.returnData].contactRole = @"Contact";
+            }
         }
         
+        [[OMeta m].replicator replicateIfNeeded];
         [self reloadSections];
     }
 }

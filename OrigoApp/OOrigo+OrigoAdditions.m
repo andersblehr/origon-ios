@@ -259,10 +259,8 @@
         member = [member instance];
         
         for (OMembership *membership in self.memberships) {
-            if (!targetMembership) {
-                if (![membership isBeingDeleted] && (membership.member == member)) {
-                    targetMembership = membership;
-                }
+            if (!targetMembership && (membership.member == member) && ![membership hasExpired]) {
+                targetMembership = membership;
             }
         }
     }

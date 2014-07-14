@@ -40,6 +40,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 @synthesize key = _key;
 @synthesize hasEmphasis = _hasEmphasis;
+@synthesize didChange = _didChange;
 @synthesize isTitleField = _isTitleField;
 @synthesize supportsMultiLineText = _supportsMultiLineText;
 
@@ -118,6 +119,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 - (void)textDidChange
 {
+    _didChange = YES;
     _placeholderView.hidden = [self.text hasValue];
 }
 

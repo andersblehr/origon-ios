@@ -17,6 +17,7 @@
 
 @property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL hasEmphasis;
+@property (nonatomic, readonly) BOOL didChange;
 @property (nonatomic, readonly) BOOL supportsMultiLineText;
 
 - (BOOL)hasMultiValue;

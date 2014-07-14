@@ -337,7 +337,10 @@ static NSInteger const kButtonTagContinue = 1;
         } else {
             _membership = [_origo addMember:_member];
             
-            if (![_member hasAddress] && ![_member isJuvenile]) {
+            // TODO: Pick up here after summer!
+            BOOL targetisContact = [self targetIs:kTargetContact] || [self targetIs:kTargetParentContact];
+            
+            if (!targetisContact && ![_member hasAddress] && ![_member isJuvenile]) {
                 [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
             } else {
                 if ([_member isUser] && ![_member isActive]) {

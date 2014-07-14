@@ -143,7 +143,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
     OLabel *label = [_inputCell labelForKey:key];
     OInputField *inputField = [_inputCell inputFieldForKey:key];
     
-    if (!inputField.value) {
+    if (!inputField.value && !inputField.didChange) {
         inputField.value = [_inputCell.entity valueForKey:key];
     }
     
