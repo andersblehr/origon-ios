@@ -46,7 +46,14 @@
 
 - (void)loadState
 {
-    if ([self targetIsMemberVariant]) {
+    if ([self targetIs:kTargetRole]) {
+        if (self.isModal) {
+            self.title = NSLocalizedString(@"Role owner", @"");
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+        } else {
+            
+        }
+    } else if ([self targetIsMemberVariant]) {
         self.usesPlainTableViewStyle = YES;
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
         
@@ -65,23 +72,24 @@
 
 - (void)loadData
 {
-    if ([self targetIsMemberVariant]) {
-        NSArray *candidates = nil;
-        
-        if ([self.meta isKindOfClass:[NSSet class]]) {
-            candidates = [[self.meta allObjects] sortedArrayUsingSelector:@selector(compare:)];
-        } else if ([self.meta isKindOfClass:[NSArray class]]) {
-            candidates = [self.meta sortedArrayUsingSelector:@selector(compare:)];
-        }
-        
-        [self setData:candidates sectionIndexLabelKey:kPropertyKeyName];
+    if ([self targetIsMemberVariant] || [self targetIs:kTargetRole]) {
+        [self setData:[self.meta regulars] sectionIndexLabelKey:kPropertyKeyName];
     }
 }
 
 
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self targetIsMemberVariant]) {
+    if ([self targetIs:kTargetRole]) {
+        id<OMember> candidate = [self dataAtIndexPath:indexPath];
+        
+        cell.textLabel.text = [candidate publicName];
+        cell.imageView.image = [OUtil smallImageForMember:candidate];
+        
+        if ([candidate isJuvenile]) {
+            cell.detailTextLabel.text = [OUtil guardianInfoForMember:candidate];
+        }
+    } else if ([self targetIsMemberVariant]) {
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         
         cell.textLabel.text = [candidate publicName];
@@ -111,7 +119,11 @@
     
     id pickedValue = [self dataAtIndexPath:indexPath];
     
-    if ([self targetIsMemberVariant]) {
+    if ([self targetIs:kTargetRole]) {
+        self.returnData = pickedValue;
+        
+        [self.dismisser dismissModalViewController:self];
+    } else if ([self targetIsMemberVariant]) {
         if ([self isMultiValuePicker]) {
             if (!self.returnData) {
                 self.returnData = [NSMutableArray array];

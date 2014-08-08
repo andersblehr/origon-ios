@@ -323,16 +323,27 @@ static NSInteger const kButtonIndexOK = 1;
     if (sectionKey == kSectionKeyOrganisers) {
         NSString *organiserRoles = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:member] organiserRoles] conjoinLastItem:NO];
         
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ – %@", organiserRoles, [OUtil contactInfoForMember:member]];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ – %@", [OUtil contactInfoForMember:member], organiserRoles];
     } else if (sectionKey == kSectionKeyParentContacts) {
         NSString *parentContactRoles = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:member] parentContactRoles] conjoinLastItem:NO];
         
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ – %@", parentContactRoles, [OUtil contactInfoForMember:member]];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ – %@", [OUtil contactInfoForMember:member], parentContactRoles];
     } else if (sectionKey == kSectionKeyMembers) {
+        id<OMembership> membership = [_origo membershipForMember:member];
+        NSString *details = nil;
+        
         if ([member isJuvenile] && ![_origo isOfType:kOrigoTypeResidence]) {
-            cell.detailTextLabel.text = [OUtil guardianInfoForMember:member];
+            details = [OUtil guardianInfoForMember:member];
         } else {
-            cell.detailTextLabel.text = [OUtil contactInfoForMember:member];
+            details = [OUtil contactInfoForMember:member];
+        }
+        
+        if ([membership hasRoleOfType:kRoleTypeMemberContact]) {
+            NSString *memberRoles = [OUtil commaSeparatedListOfItems:[membership memberRoles] conjoinLastItem:NO];
+            
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ – %@", details, memberRoles];
+        } else {
+            cell.detailTextLabel.text = details;
         }
     }
 }
@@ -453,14 +464,14 @@ static NSInteger const kButtonIndexOK = 1;
 {
     if (!viewController.didCancel) {
         if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
-            if ([viewController.target isEqualToString:kTargetMembers]) {
+            if ([viewController targetIs:kTargetMembers]) {
                 for (id<OMember> member in viewController.returnData) {
                     [_origo addMember:member];
                 }
                 
                 [[OMeta m].replicator replicateIfNeeded];
                 [self reloadSections];
-            } else if ([viewController.target isEqualToString:kTargetParentContact]) {
+            } else if ([viewController targetIs:kTargetParentContact]) {
                 _parentContact = viewController.returnData;
                 
                 [self presentParentContactRoleDialogue];
@@ -601,7 +612,9 @@ static NSInteger const kButtonIndexOK = 1;
     switch (actionSheet.tag) {
         case kActionSheetTagActionSheet:
             if (buttonIndex < actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagAdd) {
+                if (buttonTag == kButtonTagEditRoles) {
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetRoles meta:_origo];
+                } else if (buttonTag == kButtonTagAdd) {
                     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
                     
                     [self addNewMemberButtonsToActionSheet:actionSheet];

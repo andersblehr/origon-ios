@@ -114,6 +114,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="pPk-Kr-fAc"/>
+                    <connections>
+                        <segue destination="Lcb-OF-t33" kind="push" identifier="values:value" id="JDu-T6-EdF"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R31-Db-r3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -136,7 +139,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hCo-uL-u2D" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1104" y="-615"/>
+            <point key="canvasLocation" x="1558" y="28"/>
         </scene>
         <!--Navigation Controller - Origo-->
         <scene sceneID="0Xf-MH-Xiq">

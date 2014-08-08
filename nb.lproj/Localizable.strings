@@ -402,6 +402,10 @@
 
 // View title
 "Settings" = "Innstillinger";
+"Role owner" = "Rolleinnehaver";
+
+// Buttons
+"Add role" = "Legg til rolle";
 
 
 /***
