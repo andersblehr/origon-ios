@@ -98,7 +98,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         } else if (recipientTag == kRecipientTagMember) {
             [actionSheet addButtonWithTitle:[recipients[0] givenName]];
         } else if (recipientTag == kRecipientTagContact) {
-            [actionSheet addButtonWithTitle:[recipients[0] givenNameWithContactRoleForOrigo:_origo]];
+            [actionSheet addButtonWithTitle:[recipients[0] givenNameWithContactRolesForOrigo:_origo]];
         } else if (recipientTag == kRecipientTagParent) {
             if ([[OState s] aspectIs:kAspectHousehold]) {
                 [actionSheet addButtonWithTitle:[recipients[0] givenName]];
@@ -176,7 +176,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
 }
 
 
-- (void)addRecipientCandidates:(id)candidates skipUser:(BOOL)skipUser tag:(NSInteger)tag
+- (void)addRecipientCandidates:(NSArray *)candidates skipUser:(BOOL)skipUser tag:(NSInteger)tag
 {
     NSMutableArray *emailRecipients = [NSMutableArray array];
     NSMutableArray *phoneRecipients = [NSMutableArray array];
@@ -232,12 +232,12 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     if ([_origo isJuvenile]) {
         [self addRecipientCandidates:[_origo guardians] skipUser:NO tag:kRecipientTagAllGuardians];
         
-        if ([_origo userIsContact]) {
+        if ([_origo userIsOrganiser]) {
             [self addRecipientCandidates:[_origo members] skipUser:NO tag:kRecipientTagAllMembers];
         }
         
-        if ([_origo hasContacts]) {
-            [self addRecipientCandidates:[_origo contacts] skipUser:NO tag:kRecipientTagAllContacts];
+        if ([_origo hasOrganisers]) {
+            [self addRecipientCandidates:[_origo organisers] skipUser:NO tag:kRecipientTagAllContacts];
         }
     }
     
@@ -245,9 +245,13 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         for (id<OMember> member in [_origo members]) {
             [self addRecipientCandidates:@[member] skipUser:YES tag:kRecipientTagMember];
         }
-    } else if ([_origo hasContacts]) {
-        for (id<OMember> contact in [_origo contacts]) {
-            [self addRecipientCandidates:@[contact] skipUser:YES tag:kRecipientTagContact];
+    } else {
+        for (id<OMember> organiser in [_origo organisers]) {
+            [self addRecipientCandidates:@[organiser] skipUser:YES tag:kRecipientTagContact];
+        }
+        
+        for (id<OMember> parentContact in [_origo parentContacts]) {
+            [self addRecipientCandidates:@[parentContact] skipUser:YES tag:kRecipientTagContact];
         }
     }
     
@@ -284,7 +288,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
             }
         } else {
             for (id<OOrigo> residence in [_member residences]) {
-                NSSet *elders = [residence elders];
+                NSArray *elders = [residence elders];
                 
                 [self addRecipientCandidates:elders skipUser:YES tag:kRecipientTagGuardians];
                 

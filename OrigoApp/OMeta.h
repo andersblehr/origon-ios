@@ -44,7 +44,7 @@
 - (BOOL)userIsAllSet;
 
 - (BOOL)internetConnectionIsAvailable;
-+ (BOOL)usingEasternNameOrder;
++ (BOOL)usesEasternNameOrder;
 + (BOOL)deviceIsSimulator;
 + (BOOL)systemIs_iOS6x;
 + (BOOL)screenIsRetina;

@@ -8,16 +8,20 @@
 
 #import "OEntityProxy.h"
 
-extern NSString *kMembershipTypeRoot;
-extern NSString *kMembershipTypeResidency;
-extern NSString *kMembershipTypeParticipancy;
-extern NSString *kMembershipTypeAssociate;
+extern NSString * const kMembershipTypeRoot;
+extern NSString * const kMembershipTypeResidency;
+extern NSString * const kMembershipTypeParticipancy;
+extern NSString * const kMembershipTypeAssociate;
 
-extern NSString *kMembershipStatusInvited;
-extern NSString *kMembershipStatusWaiting;
-extern NSString *kMembershipStatusActive;
-extern NSString *kMembershipStatusRejected;
-extern NSString *kMembershipStatusExpired;
+extern NSString * const kMembershipStatusInvited;
+extern NSString * const kMembershipStatusWaiting;
+extern NSString * const kMembershipStatusActive;
+extern NSString * const kMembershipStatusRejected;
+extern NSString * const kMembershipStatusExpired;
+
+extern NSString * const kRoleTypeOrganiser;
+extern NSString * const kRoleTypeParentContact;
+extern NSString * const kRoleTypeMemberContact;
 
 
 @protocol OMembership <OEntity>
@@ -26,10 +30,9 @@ extern NSString *kMembershipStatusExpired;
 @property (nonatomic) id<OOrigo> origo;
 @property (nonatomic) id<OMember> member;
 @property (nonatomic) NSString *type;
-@property (nonatomic) NSString *status;
 @property (nonatomic) NSNumber *isAdmin;
-@property (nonatomic) NSString *contactRole;
-@property (nonatomic) NSString *contactType;
+@property (nonatomic) NSString *status;
+@property (nonatomic) NSString *roles;
 
 - (BOOL)isInvited;
 - (BOOL)isActive;
@@ -39,7 +42,14 @@ extern NSString *kMembershipStatusExpired;
 - (BOOL)isParticipancy;
 - (BOOL)isResidency;
 - (BOOL)isAssociate;
-- (BOOL)hasContactRole;
+
+- (BOOL)hasRoleOfType:(NSString *)type;
+- (void)addRole:(NSString *)role ofType:(NSString *)type;
+- (void)removeRole:(NSString *)role ofType:(NSString *)type;
+- (NSArray *)organiserRoles;
+- (NSArray *)parentContactRoles;
+- (NSArray *)memberContactRoles;
+- (NSArray *)allRoles;
 
 - (void)promoteToFull;
 - (void)demoteToAssociate;

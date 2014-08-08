@@ -178,6 +178,13 @@
         }
     }
     
+    if ([membership isResidency]) {
+        for (OMembership *participancy in [member participancies]) {
+            [self createEntityRefForEntity:membership inOrigo:participancy.origo];
+            [self createEntityRefForEntity:origo inOrigo:participancy.origo];
+        }
+    }
+    
     if ([membership isFull]) {
         [self insertAdditionalCrossReferencesForFullMembership:membership];
     }

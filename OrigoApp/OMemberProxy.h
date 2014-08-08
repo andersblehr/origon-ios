@@ -27,21 +27,23 @@
 
 - (NSSet *)allMemberships;
 - (NSSet *)residencies;
+- (NSSet *)participancies;
 
 - (id<OOrigo>)root;
 - (id<OOrigo>)residence;
 - (NSArray *)residences;
 - (NSArray *)origosIncludeResidences:(BOOL)includeResidences;
+- (NSArray *)addresses;
 
 - (id<OMember>)partner;
-- (NSSet *)wards;
-- (NSSet *)parents;
-- (NSSet *)guardians;
-- (NSSet *)peers;
-- (NSSet *)peersNotInOrigo:(id<OOrigo>)origo;
+- (NSArray *)wards;
+- (NSArray *)parents;
+- (NSArray *)guardians;
+- (NSArray *)peers;
+- (NSArray *)peersNotInOrigo:(id<OOrigo>)origo;
 - (NSArray *)housemates;
 - (NSArray *)housemateResidences;
-- (NSSet *)housematesNotInResidence:(id<OOrigo>)residence;
+- (NSArray *)housematesNotInResidence:(id<OOrigo>)residence;
 
 - (BOOL)isActive;
 - (void)makeActive;
@@ -66,7 +68,7 @@
 - (NSString *)appellation;
 - (NSString *)givenName;
 - (NSString *)givenNameWithParentTitle;
-- (NSString *)givenNameWithContactRoleForOrigo:(id<OOrigo>)origo;
+- (NSString *)givenNameWithContactRolesForOrigo:(id<OOrigo>)origo;
 - (NSString *)publicName;
 
 @end

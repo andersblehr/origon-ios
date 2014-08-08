@@ -280,7 +280,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
     if ([self instanceHoldsValueForKey:key]) {
         hasValue = [_instance hasValueForKey:key];
     } else {
-        key = [OValidator keyMappingForKey:key];
+        key = [OValidator unmappedKeyForKey:key];
         
         if ([_propertyKeys containsObject:key]) {
             hasValue = [[_valuesByKey allKeys] containsObject:key];
@@ -298,7 +298,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
     if ([self instanceHoldsValueForKey:key]) {
         [_instance setValue:value forKey:key];
     } else {
-        key = [OValidator keyMappingForKey:key];
+        key = [OValidator unmappedKeyForKey:key];
         
         if (value) {
             if ([_propertyKeys containsObject:key]) {
@@ -324,7 +324,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
     if ([self instanceHoldsValueForKey:key]) {
         value = [_instance valueForKey:key];
     } else {
-        key = [OValidator keyMappingForKey:key];
+        key = [OValidator unmappedKeyForKey:key];
 
         if ([self hasValueForKey:key]) {
             if ([_propertyKeys containsObject:key]) {

@@ -8,16 +8,20 @@
 
 #import "OMembershipProxy.h"
 
-NSString *kMembershipTypeRoot = @"~";
-NSString *kMembershipTypeResidency = @"R";
-NSString *kMembershipTypeParticipancy = @"P";
-NSString *kMembershipTypeAssociate = @"A";
+NSString * const kMembershipTypeRoot = @"~";
+NSString * const kMembershipTypeResidency = @"R";
+NSString * const kMembershipTypeParticipancy = @"P";
+NSString * const kMembershipTypeAssociate = @"A";
 
-NSString *kMembershipStatusInvited = @"I";
-NSString *kMembershipStatusWaiting = @"W";
-NSString *kMembershipStatusActive = @"A";
-NSString *kMembershipStatusRejected = @"R";
-NSString *kMembershipStatusExpired = @"-";
+NSString * const kMembershipStatusInvited = @"I";
+NSString * const kMembershipStatusWaiting = @"W";
+NSString * const kMembershipStatusActive = @"A";
+NSString * const kMembershipStatusRejected = @"R";
+NSString * const kMembershipStatusExpired = @"-";
+
+NSString * const kRoleTypeOrganiser = @"O";
+NSString * const kRoleTypeParentContact = @"P";
+NSString * const kRoleTypeMemberContact = @"M";
 
 
 @implementation OMembershipProxy

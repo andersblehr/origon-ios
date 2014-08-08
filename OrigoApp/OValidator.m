@@ -127,16 +127,23 @@ static NSDictionary *_keyMappings = nil;
 }
 
 
-+ (NSString *)keyMappingForKey:(NSString *)key
++ (NSString *)unmappedKeyForKey:(NSString *)key
 {
     if (!_keyMappings) {
         _keyMappings = @{
-            kMappedKeyClass : kPropertyKeyName,
             kMappedKeyFullName : kPropertyKeyName,
             kMappedKeyGivenName : kPropertyKeyName,
-            kMappedKeyPurpose : kPropertyKeyDescriptionText,
             kMappedKeyResidenceName : kPropertyKeyName,
-            kMappedKeySchool : kPropertyKeyDescriptionText
+            kMappedKeyPreschoolClass : kPropertyKeyName,
+            kMappedKeyPreschool : kPropertyKeyDescriptionText,
+            kMappedKeySchoolClass : kPropertyKeyName,
+            kMappedKeySchool : kPropertyKeyDescriptionText,
+            kMappedKeyOrganisation : kPropertyKeyName,
+            kMappedKeyOrganisationDescription : kPropertyKeyDescriptionText,
+            kMappedKeyTeam : kPropertyKeyName,
+            kMappedKeyClub : kPropertyKeyDescriptionText,
+            kMappedKeyStudentGroup : kPropertyKeyName,
+            kMappedKeyUniversity : kPropertyKeyDescriptionText,
         };
     }
     
@@ -151,7 +158,7 @@ static NSDictionary *_keyMappings = nil;
     BOOL valueIsValid = NO;
     
     if (value) {
-        key = [self keyMappingForKey:key];
+        key = [self unmappedKeyForKey:key];
         
         if ([self isNameKey:key]) {
             valueIsValid = [self isNameValue:value];

@@ -34,18 +34,24 @@ typedef NS_ENUM(NSInteger, OPersonNumber) {
 
 extern NSString * const _be_;
 
-extern NSString * const _group_;
+extern NSString * const _address_;
+extern NSString * const _coach_;
+extern NSString * const _contact_;
 extern NSString * const _father_;
+extern NSString * const _group_;
+extern NSString * const _guardian_;
+extern NSString * const _household_;
+extern NSString * const _lecturer_;
 extern NSString * const _mother_;
 extern NSString * const _parent_;
-extern NSString * const _guardian_;
-extern NSString * const _contact_;
-extern NSString * const _address_;
+extern NSString * const _parentContact_;
+extern NSString * const _preschoolTeacher_;
+extern NSString * const _teacher_;
 
-extern NSString * const _I_;
-extern NSString * const _you_;
 extern NSString * const _he_;
+extern NSString * const _I_;
 extern NSString * const _she_;
+extern NSString * const _you_;
 
 @interface OLanguage : NSObject
 

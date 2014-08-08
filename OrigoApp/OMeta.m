@@ -237,7 +237,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
-+ (BOOL)usingEasternNameOrder
++ (BOOL)usesEasternNameOrder
 {
     return [[self m].language isEqualToString:kLanguageCodeHungarian];
 }

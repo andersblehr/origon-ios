@@ -2,7 +2,7 @@
 //  OMembership.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 09.04.14.
+//  Created by Anders Blehr on 06.08.14.
 //  Copyright (c) 2014 Rhelba Source. All rights reserved.
 //
 
@@ -14,8 +14,7 @@
 
 @interface OMembership : OReplicatedEntity
 
-@property (nonatomic, retain) NSString * contactRole;
-@property (nonatomic, retain) NSString * contactType;
+@property (nonatomic, retain) NSString * roles;
 @property (nonatomic, retain) NSNumber * isAdmin;
 @property (nonatomic, retain) NSString * status;
 @property (nonatomic, retain) NSString * type;

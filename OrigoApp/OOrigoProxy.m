@@ -8,25 +8,15 @@
 
 #import "OOrigoProxy.h"
 
-NSString * const kOrigoTypeRoot = @"~";
-NSString * const kOrigoTypeResidence = @"residence";
 NSString * const kOrigoTypeFriends = @"friends";
-NSString * const kOrigoTypeTeam = @"team";
+NSString * const kOrigoTypeGeneral = @"general";
 NSString * const kOrigoTypeOrganisation = @"organisation";
-NSString * const kOrigoTypeOther = @"other";
 NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
+NSString * const kOrigoTypeResidence = @"residence";
+NSString * const kOrigoTypeRoot = @"~";
 NSString * const kOrigoTypeSchoolClass = @"schoolClass";
-
-NSString * const kContactRoleTeacher = @"teacher";
-NSString * const kContactRoleTopicTeacher = @"topicTeacher";
-NSString * const kContactRoleSpecialEducationTeacher = @"specialEducationTeacher";
-NSString * const kContactRoleAssistantTeacher = @"assistantTeacher";
-NSString * const kContactRoleHeadTeacher = @"headTeacher";
-NSString * const kContactRoleChair = @"chair";
-NSString * const kContactRoleDeputyChair = @"deputyChair";
-NSString * const kContactRoleTreasurer = @"treasurer";
-NSString * const kContactRoleCoach = @"coach";
-NSString * const kContactRoleAssistantCoach = @"assistantCoach";
+NSString * const kOrigoTypeStudentGroup = @"studentGroup";
+NSString * const kOrigoTypeTeam = @"team";
 
 static NSString * const kPlaceholderStreet = @"{street}";
 static NSString * const kPlaceholderCity = @"{city}";
@@ -144,25 +134,23 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
-- (NSSet *)residents
+- (NSArray *)residents
 {
-    NSSet *residents = nil;
+    NSArray *residents = nil;
 
-    if ([self isOfType:kOrigoTypeResidence]) {
-        if ([self instance]) {
-            residents = [[self instance] residents];
-        } else {
-            residents = [self members];
-        }
+    if ([self instance]) {
+        residents = [[self instance] residents];
+    } else if ([self isOfType:kOrigoTypeResidence]) {
+        residents = [self members];
     }
     
     return residents;
 }
 
 
-- (NSSet *)members
+- (NSArray *)members
 {
-    id members = [NSMutableSet set];
+    id members = [NSMutableArray array];
     
     if ([self instance]) {
         members = [[self instance] members];
@@ -178,20 +166,22 @@ static NSString * const kAddressTemplatesByCountryCode =
         } else {
             [members addObject:[self ancestorConformingToProtocol:@protocol(OMember)]];
         }
+        
+        members = [members sortedArrayUsingSelector:@selector(compare:)];
     }
     
     return members;
 }
 
 
-- (NSSet *)elders
+- (NSArray *)elders
 {
     id elders = nil;
     
     if ([self instance]) {
         elders = [[self instance] elders];
     } else {
-        elders = [NSMutableSet set];
+        elders = [NSMutableArray array];
         
         for (id<OMember> resident in [self residents]) {
             if (![resident isJuvenile]) {

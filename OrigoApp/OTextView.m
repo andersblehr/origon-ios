@@ -17,8 +17,8 @@ static CGFloat const kContentInsetLeft = -4.f;
 static CGFloat const kTextInsetTop = 3.5f;
 static CGFloat const kTextInsetLeft = -1.f;
 
-static CGFloat const kWidthAdjustment = -8.f;
-static CGFloat const kWidthAdjustment_iOS6x = -14.f;
+static CGFloat const kWidthAdjustment = 7.5f;
+static CGFloat const kWidthAdjustment_iOS6x = 14.f;
 static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 
@@ -52,7 +52,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
     CGFloat contentWidth = [OMeta screenWidth] - 2 * kDefaultCellPadding;
     CGFloat widthAdjustment = [OMeta systemIs_iOS6x] ? kWidthAdjustment_iOS6x : kWidthAdjustment;
     
-    return contentWidth - [OLabel widthWithBlueprint:blueprint] + widthAdjustment;
+    return contentWidth - [OLabel widthWithBlueprint:blueprint] - widthAdjustment;
 }
 
 
@@ -128,7 +128,11 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 - (instancetype)initWithKey:(NSString *)key blueprint:(OInputCellBlueprint *)blueprint delegate:(id)delegate
 {
-    self = [super initWithFrame:CGRectZero];
+    if ([OMeta systemIs_iOS6x]) {
+        self = [super initWithFrame:CGRectZero];
+    } else {
+        self = [super initWithFrame:CGRectZero textContainer:nil];
+    }
     
     if (self) {
         self.autocapitalizationType = UITextAutocapitalizationTypeSentences;
@@ -215,11 +219,17 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
     self.userInteractionEnabled = editable;
     
     if (editable && _placeholder && !_placeholderView) {
-        CGFloat frameAdjustment = [OMeta systemIs_iOS6x] ? kHeigthAdjustment_iOS6x : 0.f;
-        CGSize placeholderSize = CGSizeMake(_textWidth, [[self class] heightWithText:_placeholder blueprint:_blueprint]);
-        CGRect placeholderFrame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height + frameAdjustment);
+        CGFloat widthAdjustment = [OMeta systemIs_iOS6x] ? kWidthAdjustment_iOS6x : kWidthAdjustment;
+        CGFloat heightAdjustment = [OMeta systemIs_iOS6x] ? kHeigthAdjustment_iOS6x : 0.f;
+        CGSize placeholderSize = CGSizeMake(_textWidth + widthAdjustment, [[self class] heightWithText:_placeholder blueprint:_blueprint]);
+        CGRect placeholderFrame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height + heightAdjustment);
         
-        _placeholderView = [[UITextView alloc] initWithFrame:placeholderFrame];
+        if ([OMeta systemIs_iOS6x]) {
+            _placeholderView = [[UITextView alloc] initWithFrame:placeholderFrame];
+        } else {
+            _placeholderView = [[UITextView alloc] initWithFrame:placeholderFrame textContainer:nil];
+        }
+        
         _placeholderView.backgroundColor = [UIColor clearColor];
         _placeholderView.delegate = self;
         _placeholderView.font = [UIFont detailFont];

@@ -22,7 +22,7 @@
 
 + (NSDictionary *)referenceForEntity:(id<OEntity>)entity;
 + (NSString *)referenceKeyForKey:(NSString *)key;
-+ (NSString *)keyMappingForKey:(NSString *)key;
++ (NSString *)unmappedKeyForKey:(NSString *)key;
 
 + (BOOL)value:(id)value isValidForKey:(NSString *)key;
 + (BOOL)isEmailValue:(id)value;
