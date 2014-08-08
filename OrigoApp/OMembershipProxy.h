@@ -48,7 +48,7 @@ extern NSString * const kRoleTypeMemberContact;
 - (void)removeRole:(NSString *)role ofType:(NSString *)type;
 - (NSArray *)organiserRoles;
 - (NSArray *)parentContactRoles;
-- (NSArray *)memberContactRoles;
+- (NSArray *)memberRoles;
 - (NSArray *)allRoles;
 
 - (void)promoteToFull;

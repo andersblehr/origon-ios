@@ -1088,12 +1088,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = _usesPlainTableViewStyle ? 0.f : kEmptyHeaderHeight;
+    CGFloat height = 0.f;
     
-    if ([self instanceHasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
-        height = [tableView headerHeight];
-    } else if (section == 0) {
-        height = kInitialHeadroomHeight;
+    if (!_usesPlainTableViewStyle) {
+        if ([self instanceHasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
+            height = [tableView headerHeight];
+        } else if (section == 0) {
+            height = kInitialHeadroomHeight;
+        } else {
+            height = kEmptyHeaderHeight;
+        }
     }
     
     return height;

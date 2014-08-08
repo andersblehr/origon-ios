@@ -403,6 +403,10 @@
 
 // View title
 "Settings" = "Settings";
+"Role owner" = "Role owner";
+
+// Buttons
+"Add role" = "Add role";
 
 
 /***

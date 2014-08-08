@@ -200,6 +200,20 @@
 }
 
 
+- (NSArray *)memberContacts
+{
+    NSMutableArray *memberContacts = [NSMutableArray array];
+    
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isFull] && [membership hasRoleOfType:kRoleTypeMemberContact]) {
+            [memberContacts addObject:membership.member];
+        }
+    }
+    
+    return memberContacts;
+}
+
+
 - (NSArray *)regulars
 {
     NSMutableSet *regulars = [NSMutableSet setWithArray:[self members]];

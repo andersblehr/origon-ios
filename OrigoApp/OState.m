@@ -30,6 +30,8 @@ NSString * const kTargetGuardian = @"guardian";
 NSString * const kTargetContact = @"contact";
 NSString * const kTargetParentContact = @"parentContact";
 NSString * const kTargetRelation = @"relation";
+NSString * const kTargetRole = @"role";
+NSString * const kTargetRoles = @"roles";
 NSString * const kTargetSetting = @"setting";
 NSString * const kTargetSettings = @"settings";
 
