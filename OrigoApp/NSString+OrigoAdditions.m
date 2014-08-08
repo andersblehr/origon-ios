@@ -13,15 +13,17 @@ NSString * const kCharacters0_9 = @"0123456789";
 NSString * const kSeparatorColon = @":";
 NSString * const kSeparatorComma = @", ";
 NSString * const kSeparatorHash = @"#";
+NSString * const kSeparatorHat = @"^";
 NSString * const kSeparatorNewline = @"\n";
 NSString * const kSeparatorSpace = @" ";
+NSString * const kSeparatorTilde = @"~";
 
 NSString * const kSeparatorList = @";";
 NSString * const kSeparatorMapping = @":";
 NSString * const kSeparatorSegments = @"|";
 NSString * const kSeparatorAlternates = @"|";
 
-static CGFloat kMatchingEditDistancePercentage = 0.4f;
+static CGFloat const kMatchingEditDistancePercentage = 0.4f;
 
 
 @implementation NSString (OrigoAdditions)
@@ -133,13 +135,13 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:self attributes:@{NSFontAttributeName:font}];
     CGRect boundingRect = [attributedText boundingRectWithSize:CGSizeMake(maxWidth, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin context:nil];
     
-    return CGSizeMake(ceil(boundingRect.size.width), ceil(boundingRect.size.height));
+    return CGSizeMake(boundingRect.size.width, boundingRect.size.height);
 }
 
 
 - (NSInteger)lineCountWithFont:(UIFont *)font maxWidth:(CGFloat)maxWidth
 {
-    return round([self sizeWithFont:font maxWidth:maxWidth].height / font.lineHeight);
+    return lrintf([self sizeWithFont:font maxWidth:maxWidth].height / font.lineHeight);
 }
 
 
@@ -245,7 +247,7 @@ static CGFloat kMatchingEditDistancePercentage = 0.4f;
     if ([names count] == 1) {
         givenName = names[0];
     } else if ([names count]) {
-        givenName = [OMeta usingEasternNameOrder] ? names[1] : names[0];
+        givenName = [OMeta usesEasternNameOrder] ? names[1] : names[0];
     }
     
     return givenName;

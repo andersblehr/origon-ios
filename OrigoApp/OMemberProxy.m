@@ -122,14 +122,14 @@
 }
 
 
-- (NSSet *)wards
+- (NSArray *)wards
 {
     id wards = nil;
     
     if ([self instance]) {
         wards = [[self instance] wards];
     } else {
-        wards = [NSMutableSet set];
+        wards = [NSMutableArray array];
         
         for (id<OMember> housemate in [self housemates]) {
             if ([housemate isJuvenile]) {
@@ -142,14 +142,14 @@
 }
 
 
-- (NSSet *)guardians
+- (NSArray *)guardians
 {
     id guardians = nil;
     
     if ([self instance]) {
         guardians = [[self instance] guardians];
     } else {
-        guardians = [NSMutableSet set];
+        guardians = [NSMutableArray array];
         
         for (id<OMember> housemate in [self housemates]) {
             if (![housemate isJuvenile]) {
@@ -169,7 +169,7 @@
     if ([self instance]) {
         housemates = [[self instance] housemates];
     } else {
-        housemates = [NSMutableArray array];
+        housemates = [NSMutableSet set];
         
         for (id<OOrigo> residence in [self residences]) {
             for (id<OMember> resident in [residence residents]) {
@@ -178,6 +178,8 @@
                 }
             }
         }
+        
+        housemates = [[housemates allObjects] sortedArrayUsingSelector:@selector(compare:)];
     }
     
     return housemates;

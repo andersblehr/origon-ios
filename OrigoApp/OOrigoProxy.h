@@ -8,25 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString * const kOrigoTypeRoot;
-extern NSString * const kOrigoTypeResidence;
 extern NSString * const kOrigoTypeFriends;
-extern NSString * const kOrigoTypeTeam;
+extern NSString * const kOrigoTypeGeneral;
 extern NSString * const kOrigoTypeOrganisation;
-extern NSString * const kOrigoTypeOther;
 extern NSString * const kOrigoTypePreschoolClass;
+extern NSString * const kOrigoTypeResidence;
+extern NSString * const kOrigoTypeRoot;
 extern NSString * const kOrigoTypeSchoolClass;
-
-extern NSString * const kContactRoleTeacher;
-extern NSString * const kContactRoleTopicTeacher;
-extern NSString * const kContactRoleSpecialEducationTeacher;
-extern NSString * const kContactRoleAssistantTeacher;
-extern NSString * const kContactRoleHeadTeacher;
-extern NSString * const kContactRoleChair;
-extern NSString * const kContactRoleDeputyChair;
-extern NSString * const kContactRoleTreasurer;
-extern NSString * const kContactRoleCoach;
-extern NSString * const kContactRoleAssistantCoach;
+extern NSString * const kOrigoTypeStudentGroup;
+extern NSString * const kOrigoTypeTeam;
 
 
 @protocol OOrigo <OEntity>
@@ -40,12 +30,14 @@ extern NSString * const kContactRoleAssistantCoach;
 @property (nonatomic) NSString *type;
 
 - (NSSet *)allMemberships;
-- (NSSet *)residents;
-- (NSSet *)members;
-- (NSSet *)contacts;
-- (NSSet *)regulars;
-- (NSSet *)guardians;
-- (NSSet *)elders;
+
+- (NSArray *)residents;
+- (NSArray *)members;
+- (NSArray *)organisers;
+- (NSArray *)parentContacts;
+- (NSArray *)regulars;
+- (NSArray *)guardians;
+- (NSArray *)elders;
 
 - (id<OMembership>)addMember:(id<OMember>)member;
 - (id<OMembership>)addAssociateMember:(id<OMember>)member;
@@ -55,17 +47,19 @@ extern NSString * const kContactRoleAssistantCoach;
 - (BOOL)userCanEdit;
 - (BOOL)userIsAdmin;
 - (BOOL)userIsMember;
-- (BOOL)userIsContact;
+- (BOOL)userIsOrganiser;
+- (BOOL)userIsParentContact;
+- (BOOL)userIsMemberContact;
 
-- (BOOL)isOfType:(NSString *)origoType;
+- (BOOL)isOfType:(NSString *)type;
 - (BOOL)isOrganised;
 - (BOOL)isJuvenile;
 - (BOOL)hasAddress;
+- (BOOL)hasTelephone;
 - (BOOL)hasAdmin;
-- (BOOL)hasContacts;
+- (BOOL)hasOrganisers;
+- (BOOL)hasParentContacts;
 - (BOOL)hasMember:(id<OMember>)member;
-- (BOOL)hasContact:(id<OMember>)contact;
-- (BOOL)hasAssociateMember:(id<OMember>)associateMember;
 - (BOOL)knowsAboutMember:(id<OMember>)member;
 - (BOOL)indirectlyKnowsAboutMember:(id<OMember>)member;
 - (BOOL)hasResidentsInCommonWithResidence:(id<OOrigo>)residence;

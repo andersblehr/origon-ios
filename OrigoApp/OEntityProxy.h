@@ -24,9 +24,9 @@
 - (NSDictionary *)toDictionary;
 
 @optional
-@property (nonatomic, readonly) NSString *entityId;
-@property (nonatomic, readonly) NSString *createdBy;
-@property (nonatomic, readonly) NSDate *dateReplicated;
+@property (nonatomic) NSString *entityId;
+@property (nonatomic) NSString *createdBy;
+@property (nonatomic) NSDate *dateReplicated;
 
 - (void)reflectEntity:(id<OEntity>)entity;
 - (void)useInstance:(id<OEntity>)instance;

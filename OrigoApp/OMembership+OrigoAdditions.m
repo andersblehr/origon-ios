@@ -8,8 +8,75 @@
 
 #import "OMembership+OrigoAdditions.h"
 
+static NSString *_membershipId = nil;
+static NSMutableDictionary *_rolesByType = nil;
+
 
 @implementation OMembership (OrigoAdditions)
+
+#pragma mark - Auxiliary methods
+
+- (void)marshalRoles
+{
+    NSString *roles = nil;
+    
+    for (NSString *type in [_rolesByType allKeys]) {
+        if ([_rolesByType[type] count]) {
+            NSString *typeWithRoles = [type stringByAppendingString:[_rolesByType[type] componentsJoinedByString:kSeparatorTilde] separator:kSeparatorHat];
+            
+            if (roles) {
+                roles = [roles stringByAppendingString:typeWithRoles separator:kSeparatorHash];
+            } else {
+                roles = typeWithRoles;
+            }
+        }
+    }
+    
+    self.roles = roles;
+}
+
+
+- (void)unmarshalRoles
+{
+    NSArray *roleTypes = @[kRoleTypeOrganiser, kRoleTypeParentContact, kRoleTypeMemberContact];
+    
+    _membershipId = self.entityId;
+    
+    if (_rolesByType) {
+        for (NSString *type in roleTypes) {
+            [_rolesByType[type] removeAllObjects];
+        }
+    } else {
+        _rolesByType = [NSMutableDictionary dictionary];
+    }
+    
+    for (NSString *typeWithRoles in [self.roles componentsSeparatedByString:kSeparatorHash]) {
+        NSArray *typeAndRoles = [typeWithRoles componentsSeparatedByString:kSeparatorHat];
+        NSString *type = typeAndRoles[0];
+        NSArray *roles = [[typeAndRoles[1] componentsSeparatedByString:kSeparatorTilde] mutableCopy];
+        
+        _rolesByType[type] = roles;
+    }
+    
+    if ([_rolesByType count] < [roleTypes count]) {
+        for (NSString *type in roleTypes) {
+            if (!_rolesByType[type]) {
+                _rolesByType[type] = [NSMutableArray array];
+            }
+        }
+    }
+}
+
+
+- (NSArray *)rolesOfType:(NSString *)type
+{
+    if (![_membershipId isEqualToString:self.entityId]) {
+        [self unmarshalRoles];
+    }
+    
+    return [_rolesByType[type] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+}
+
 
 #pragma mark - Status information
 
@@ -57,9 +124,79 @@
 }
 
 
-- (BOOL)hasContactRole
+#pragma mark - Role handling
+
+- (BOOL)hasRoleOfType:(NSString *)type
 {
-    return [self.contactRole hasValue];
+    if (![_membershipId isEqualToString:self.entityId]) {
+        [self unmarshalRoles];
+    }
+    
+    return [_rolesByType[type] count] > 0;
+}
+
+
+- (void)addRole:(NSString *)role ofType:(NSString *)type
+{
+    if (![_membershipId isEqualToString:self.entityId]) {
+        [self unmarshalRoles];
+    }
+    
+    [_rolesByType[type] addObject:role];
+    [self marshalRoles];
+}
+
+
+- (void)removeRole:(NSString *)role ofType:(NSString *)type
+{
+    if (![_membershipId isEqualToString:self.entityId]) {
+        [self unmarshalRoles];
+    }
+    
+    [_rolesByType[type] removeObject:role];
+    [self marshalRoles];
+}
+
+
+- (NSArray *)organiserRoles
+{
+    return [self rolesOfType:kRoleTypeOrganiser];
+}
+
+
+- (NSArray *)parentContactRoles
+{
+    return [self rolesOfType:kRoleTypeParentContact];
+}
+
+
+- (NSArray *)memberRoles
+{
+    return [self rolesOfType:kRoleTypeMemberContact];
+}
+
+
+- (NSArray *)allRoles
+{
+    if (![_membershipId isEqualToString:self.entityId]) {
+        [self unmarshalRoles];
+    }
+    
+    NSMutableArray *roles = [NSMutableArray array];
+    
+    if ([self hasRoleOfType:kRoleTypeOrganiser]) {
+        [roles addObjectsFromArray:[self rolesOfType:kRoleTypeOrganiser]];
+    }
+    
+    if ([self hasRoleOfType:kRoleTypeParentContact]) {
+        [roles addObjectsFromArray:[self rolesOfType:kRoleTypeParentContact]];
+    }
+    
+    if ([self hasRoleOfType:kRoleTypeMemberContact]) {
+        [roles addObjectsFromArray:[self rolesOfType:kRoleTypeMemberContact]];
+    }
+    
+    return roles;
 }
 
 
@@ -89,10 +226,9 @@
 {
     if (isAssociate) {
         self.type = kMembershipTypeAssociate;
-        self.status = nil;
-        self.contactRole = nil;
-        self.contactType = nil;
         self.isAdmin = @NO;
+        self.status = nil;
+        self.roles = nil;
     } else {
         if ([self.origo isOfType:kOrigoTypeRoot]) {
             self.type = kMembershipTypeRoot;
@@ -128,10 +264,9 @@
         if ([self shouldReplicateOnExpiry]) {
             [super expire];
             
-            self.status = kMembershipStatusExpired;
-            self.contactRole = nil;
-            self.contactType = nil;
             self.isAdmin = @NO;
+            self.status = kMembershipStatusExpired;
+            self.roles = nil;
             
             [[OMeta m].context expireCrossReferencesForMembership:self];
         } else {

@@ -91,6 +91,7 @@
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target meta:(id)meta;
 - (void)dismissModalViewController:(OTableViewController *)viewController;
 
+- (void)scrollToTopAndToggleEditMode;
 - (void)toggleEditMode;
 - (void)didCancelEditing;
 - (void)didFinishEditing;

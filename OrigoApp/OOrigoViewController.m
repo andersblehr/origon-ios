@@ -9,18 +9,21 @@
 #import "OOrigoViewController.h"
 
 static NSInteger const kSectionKeyOrigo = 0;
-static NSInteger const kSectionKeyContacts = 1;
-static NSInteger const kSectionKeyMembers = 2;
+static NSInteger const kSectionKeyOrganisers = 1;
+static NSInteger const kSectionKeyParentContacts = 2;
+static NSInteger const kSectionKeyMembers = 3;
 
 static NSInteger const kActionSheetTagActionSheet = 0;
 static NSInteger const kButtonTagEdit = 0;
 static NSInteger const kButtonTagEditRoles = 1;
-static NSInteger const kButtonTagAddMember = 2;
-static NSInteger const kButtonTagAddFromGroups = 3;
-static NSInteger const kButtonTagAddContact = 4;
-static NSInteger const kButtonTagAddParentContact = 5;
-static NSInteger const kButtonTagShowInMap = 6;
-static NSInteger const kButtonTagAbout = 7;
+static NSInteger const kButtonTagEditSubgroups = 2;
+static NSInteger const kButtonTagAdd = 3;
+static NSInteger const kButtonTagAddMember = 4;
+static NSInteger const kButtonTagAddFromGroups = 5;
+static NSInteger const kButtonTagAddContact = 6;
+static NSInteger const kButtonTagAddParentContact = 7;
+static NSInteger const kButtonTagShowInMap = 8;
+static NSInteger const kButtonTagAbout = 9;
 
 static NSInteger const kActionSheetTagCoHabitants = 1;
 static NSInteger const kButtonTagCoHabitantsAll = 0;
@@ -28,12 +31,16 @@ static NSInteger const kButtonTagCoHabitantsWards = 1;
 static NSInteger const kButtonTagCoHabitantsNew = 2;
 static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
+static NSInteger const kAlertTagParentContactRole = 0;
+static NSInteger const kButtonIndexOK = 1;
 
-@interface OOrigoViewController () <OTableViewController, OInputCellDelegate, UIActionSheetDelegate> {
+
+@interface OOrigoViewController () <OTableViewController, OInputCellDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 @private
     id<OOrigo> _origo;
     id<OMember> _member;
     id<OMembership> _membership;
+    id<OMember> _parentContact;
     
     NSArray *_coHabitantCandidates;
     NSMutableDictionary *_candidatesByTag;
@@ -52,8 +59,16 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     
     if ([_origo isOfType:kOrigoTypeResidence]) {
         nameKey = kMappedKeyResidenceName;
+    } else if ([_origo isOfType:kOrigoTypeOrganisation]) {
+        nameKey = kMappedKeyOrganisation;
+    } else if ([_origo isOfType:kOrigoTypePreschoolClass]) {
+        nameKey = kMappedKeyPreschoolClass;
     } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
-        nameKey = kMappedKeyClass;
+        nameKey = kMappedKeySchoolClass;
+    } else if ([_origo isOfType:kOrigoTypeTeam]) {
+        nameKey = kMappedKeyTeam;
+    } else if ([_origo isOfType:kOrigoTypeStudentGroup]) {
+        nameKey = kMappedKeyStudentGroup;
     } else {
         nameKey = kPropertyKeyName;
     }
@@ -62,22 +77,27 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 }
 
 
-- (void)addNewMemberButtonsToActionSheet:(OActionSheet *)actionSheet
+- (void)assembleOrigoCandidates
 {
     _candidatesByTag = [NSMutableDictionary dictionary];
     
+    if ([_origo isOfType:kOrigoTypeResidence]) {
+        _candidatesByTag[@(kButtonTagAddFromGroups)] = [[OMeta m].user peersNotInOrigo:_origo];
+    } else {
+        _candidatesByTag[@(kButtonTagAddFromGroups)] = [[self.entity ancestorConformingToProtocol:@protocol(OMember)] peersNotInOrigo:_origo];
+    }
+}
+
+
+- (void)addNewMemberButtonsToActionSheet:(OActionSheet *)actionSheet
+{
     [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
     
-    NSSet *groupCandidates = nil;
-    
-    if ([_origo isOfType:kOrigoTypeResidence]) {
-        groupCandidates = [[OMeta m].user peersNotInOrigo:_origo];
-    } else {
-        groupCandidates = [[self.entity ancestorConformingToProtocol:@protocol(OMember)] peersNotInOrigo:_origo];
+    if (!_candidatesByTag) {
+        [self assembleOrigoCandidates];
     }
     
-    if ([groupCandidates count]) {
-        _candidatesByTag[@(kButtonTagAddFromGroups)] = groupCandidates;
+    if ([_candidatesByTag[@(kButtonTagAddFromGroups)] count]) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other groups", @"") tag:kButtonTagAddFromGroups];
     }
     
@@ -100,7 +120,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         coHabitantCandidates = [[_member housematesNotInResidence:_origo] mutableCopy];
         
         for (id<OMember> housemate in [_member housemates]) {
-            [coHabitantCandidates unionSet:[housemate housematesNotInResidence:_origo]];
+            [coHabitantCandidates unionSet:[NSSet setWithArray:[housemate housematesNotInResidence:_origo]]];
         }
     }
     
@@ -151,6 +171,28 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 }
 
 
+#pragma mark - Input dialogues
+
+- (void)presentParentContactRoleDialogue
+{
+    NSString *message = nil;
+    
+    if ([_parentContact isUser]) {
+        message = NSLocalizedString(@"What is your contact role?", @"");
+    } else {
+        message = [NSString stringWithFormat:NSLocalizedString(@"What is %@'s contact role?", @""), [_parentContact givenName]];
+    }
+    
+    UIAlertView *dialogueView = [[UIAlertView alloc] initWithTitle:@"" message:message delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"OK", @""), nil];
+    dialogueView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [dialogueView textFieldAtIndex:0].autocapitalizationType = UITextAutocapitalizationTypeSentences;
+    [dialogueView textFieldAtIndex:0].placeholder = NSLocalizedString(@"Contact role", @"");
+    dialogueView.tag = kAlertTagParentContactRole;
+    
+    [dialogueView show];
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)presentActionSheet
@@ -160,11 +202,18 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     if ([_origo userCanEdit]) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
         
-        if ([_origo isOrganised] && [_origo hasContacts]) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit roles", @"") tag:kButtonTagEditRoles];
+        if (![_origo isOfType:kOrigoTypeResidence]) {
+            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixEditRolesButton) tag:kButtonTagEditRoles];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit subgroups", @"") tag:kButtonTagEditSubgroups];
         }
         
-        [self addNewMemberButtonsToActionSheet:actionSheet];
+        [self assembleOrigoCandidates];
+
+        if ([_origo isOrganised] || [_candidatesByTag[@(kButtonTagAddFromGroups)] count]) {
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add...", @"") tag:kButtonTagAdd];
+        } else {
+            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
+        }
     }
         
     if ([_origo hasAddress]) {
@@ -178,7 +227,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     } else if ([_origo hasAddress]) {
         displayName = [_origo shortAddress];
     } else {
-        displayName = NSLocalizedString(@"About this household", @"");
+        displayName = [OLanguage nouns][_household_][singularDefinite];
     }
     
     [actionSheet addButtonWithTitle:[NSString stringWithFormat:NSLocalizedString(@"About %@", @""), displayName] tag:kButtonTagAbout];
@@ -252,11 +301,10 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     } else {
         if ([_origo isOfType:kOrigoTypeResidence] && ![_origo userIsMember]) {
             [self setData:[_origo residents] forSectionWithKey:kSectionKeyMembers];
-        } else if ([_origo isJuvenile]) {
-            [self setData:[_origo contacts] forSectionWithKey:kSectionKeyContacts];
-            [self setData:[_origo regulars] forSectionWithKey:kSectionKeyMembers];
         } else {
-            [self setData:[_origo members] forSectionWithKey:kSectionKeyMembers];
+            [self setData:[_origo organisers] forSectionWithKey:kSectionKeyOrganisers];
+            [self setData:[_origo parentContacts] forSectionWithKey:kSectionKeyParentContacts];
+            [self setData:[_origo regulars] forSectionWithKey:kSectionKeyMembers];
         }
     }
 }
@@ -264,26 +312,23 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    
     id<OMember> member = [self dataAtIndexPath:indexPath];
     
     cell.textLabel.text = [member publicName];
     cell.imageView.image = [OUtil smallImageForMember:member];
     cell.destinationId = kIdentifierMember;
     
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyContacts) {
-        // TODO: Pick up here after summer!
+    if (sectionKey == kSectionKeyOrganisers) {
+        NSString *organiserRoles = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:member] organiserRoles] conjoinLastItem:NO];
         
-        NSString *contactRole = nil;
-        id<OMembership> membership = [_origo membershipForMember:member];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ – %@", organiserRoles, [OUtil contactInfoForMember:member]];
+    } else if (sectionKey == kSectionKeyParentContacts) {
+        NSString *parentContactRoles = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:member] parentContactRoles] conjoinLastItem:NO];
         
-        if ([membership.contactRole isEqualToString:@"Parent contact"]) {
-            contactRole = NSLocalizedString(@"Parent contact", @"");
-        } else {
-            contactRole = NSLocalizedString(_origo.type, kStringPrefixContactTitle);
-        }
-        
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@, %@", contactRole, [OUtil contactInfoForMember:member]];
-    } else if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyMembers) {
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ – %@", parentContactRoles, [OUtil contactInfoForMember:member]];
+    } else if (sectionKey == kSectionKeyMembers) {
         if ([member isJuvenile] && ![_origo isOfType:kOrigoTypeResidence]) {
             cell.detailTextLabel.text = [OUtil guardianInfoForMember:member];
         } else {
@@ -314,9 +359,28 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
 {
     NSString *text = nil;
+    NSInteger number;
     
-    if (sectionKey == kSectionKeyContacts) {
-        text = [[OLanguage nouns][_contact_][pluralIndefinite] capitalizedString];
+    if (sectionKey == kSectionKeyOrganisers) {
+        NSString *contactTitle = nil;
+        
+        if ([_origo isOfType:kOrigoTypePreschoolClass]) {
+            contactTitle = _preschoolTeacher_;
+        } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
+            contactTitle = _teacher_;
+        } else if ([_origo isOfType:kOrigoTypeTeam]) {
+            contactTitle = _coach_;
+        } else if ([_origo isOfType:kOrigoTypeStudentGroup]) {
+            contactTitle = _lecturer_;
+        } else {
+            contactTitle = _contact_;
+        }
+        
+        number = ([[_origo organisers] count] > 1) ? pluralIndefinite : singularIndefinite;
+        text = [[OLanguage nouns][contactTitle][number] capitalizedString];
+    } else if (sectionKey == kSectionKeyParentContacts) {
+        number = ([[_origo parentContacts] count] > 1) ? pluralIndefinite : singularIndefinite;
+        text = [[OLanguage nouns][_parentContact_][number] capitalizedString];
     } else if (sectionKey == kSectionKeyMembers) {
         text = NSLocalizedString(_origo.type, kStringPrefixMemberListTitle);
     }
@@ -345,7 +409,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 {
     BOOL canDeleteCell = NO;
     
-    if (indexPath.section != kSectionKeyOrigo) {
+    if ([self sectionKeyForIndexPath:indexPath] != kSectionKeyOrigo) {
         if ([_origo isCommitted] && [_origo userCanEdit]) {
             canDeleteCell = ![[self dataAtIndexPath:indexPath] isUser];
         }
@@ -385,12 +449,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 }
 
 
-- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
-{
-    return [OUtil sortKeyWithPropertyKey:kPropertyKeyName relationshipKey:nil];
-}
-
-
 - (void)didDismissModalViewController:(OTableViewController *)viewController
 {
     if (!viewController.didCancel) {
@@ -399,19 +457,15 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                 for (id<OMember> member in viewController.returnData) {
                     [_origo addMember:member];
                 }
+                
+                [[OMeta m].replicator replicateIfNeeded];
+                [self reloadSections];
             } else if ([viewController.target isEqualToString:kTargetParentContact]) {
-                // TODO: Pick up here after summer!
-                [_origo addMember:viewController.returnData].contactRole = @"Parent contact";
-            }
-        } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-            // TODO: Pick up here after summer!
-            if ([viewController targetIs:kTargetContact]) {
-                [_origo membershipForMember:viewController.returnData].contactRole = @"Contact";
+                _parentContact = viewController.returnData;
+                
+                [self presentParentContactRoleDialogue];
             }
         }
-        
-        [[OMeta m].replicator replicateIfNeeded];
-        [self reloadSections];
     }
 }
 
@@ -421,18 +475,23 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 - (OInputCellBlueprint *)inputCellBlueprint
 {
     OInputCellBlueprint *blueprint = [[OInputCellBlueprint alloc] init];
+    
+    blueprint.titleKey = [self nameKey];
 
     if ([_origo isOfType:kOrigoTypeResidence]) {
-        blueprint.titleKey = kMappedKeyResidenceName;
         blueprint.detailKeys = @[kPropertyKeyAddress, kPropertyKeyTelephone];
         blueprint.multiLineTextKeys = @[kPropertyKeyAddress];
     } else if ([_origo isOfType:kOrigoTypeOrganisation]) {
-        blueprint.titleKey = kPropertyKeyName;
-        blueprint.detailKeys = @[kMappedKeyPurpose, kPropertyKeyAddress, kPropertyKeyTelephone];
-        blueprint.multiLineTextKeys = @[kMappedKeyPurpose, kPropertyKeyAddress];
+        blueprint.detailKeys = @[kMappedKeyOrganisationDescription, kPropertyKeyAddress, kPropertyKeyTelephone];
+        blueprint.multiLineTextKeys = @[kMappedKeyOrganisationDescription, kPropertyKeyAddress];
+    } else if ([_origo isOfType:kOrigoTypePreschoolClass]) {
+        blueprint.detailKeys = @[kMappedKeyPreschool];
     } else if ([_origo isOfType:kOrigoTypeSchoolClass]) {
-        blueprint.titleKey = kMappedKeyClass;
         blueprint.detailKeys = @[kMappedKeySchool];
+    } else if ([_origo isOfType:kOrigoTypeTeam]) {
+        blueprint.detailKeys = @[kMappedKeyClub];
+    } else if ([_origo isOfType:kOrigoTypeStudentGroup]) {
+        blueprint.detailKeys = @[kMappedKeyUniversity];
     } else {
         blueprint.titleKey = kPropertyKeyName;
         blueprint.detailKeys = @[kPropertyKeyDescriptionText];
@@ -524,7 +583,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     switch (actionSheet.tag) {
         case kActionSheetTagActionSheet:
             if ([actionSheet tagForButtonIndex:buttonIndex] == kButtonTagEdit) {
-                [self toggleEditMode];
+                [self scrollToTopAndToggleEditMode];
             }
             
             break;
@@ -542,7 +601,12 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     switch (actionSheet.tag) {
         case kActionSheetTagActionSheet:
             if (buttonIndex < actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagAddMember) {
+                if (buttonTag == kButtonTagAdd) {
+                    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagActionSheet];
+                    
+                    [self addNewMemberButtonsToActionSheet:actionSheet];
+                    [actionSheet show];
+                } else if (buttonTag == kButtonTagAddMember) {
                     [self addMember];
                 } else if (buttonTag == kButtonTagAddFromGroups) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMembers meta:_candidatesByTag[@(kButtonTagAddFromGroups)]];
@@ -580,6 +644,28 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                 }
                 
                 [self reloadSections];
+            }
+            
+            break;
+            
+        default:
+            break;
+    }
+}
+
+
+#pragma mark - UIAlertViewDelegate conformance
+
+- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (alertView.tag) {
+        case kAlertTagParentContactRole:
+            if (buttonIndex == kButtonIndexOK) {
+                id<OMembership> membership = [_origo addMember:_parentContact];
+                [membership addRole:[alertView textFieldAtIndex:0].text ofType:kRoleTypeParentContact];
+                
+                [[OMeta m].replicator replicate];
+                [self reloadSectionWithKey:kSectionKeyParentContacts];
             }
             
             break;

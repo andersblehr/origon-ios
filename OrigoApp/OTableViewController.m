@@ -12,8 +12,9 @@ static NSString * const kViewControllerSuffixDefault = @"ViewController";
 static NSString * const kViewControllerSuffixList = @"ListViewController";
 static NSString * const kViewControllerSuffixPicker = @"PickerViewController";
 
+static CGFloat const kInitialHeadroomHeight = 28.f;
+static CGFloat const kEmptyHeaderHeight = 14.f;
 static CGFloat const kEmptyFooterHeight = 14.f;
-static CGFloat const kSectionSpacing = 28.f;
 
 static NSInteger const kInputSectionKey = 0;
 static NSInteger const kMinimumSectionIndexTitles = 13;
@@ -39,6 +40,7 @@ static UIViewController * _reinstantiatedRootViewController;
     NSMutableArray *_sectionIndexTitles;
     NSMutableSet *_dirtySections;
     
+    CGPoint _preservedContentOffset;
     NSIndexPath *_selectedIndexPath;
     OActivityIndicator *_activityIndicator;
     
@@ -122,7 +124,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (NSArray *)sortedArrayWithData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
-    NSArray *unsortedArray = [data allObjects];
+    NSArray *unsortedArray = [data isKindOfClass:[NSSet class]] ? [data allObjects] : data;
     NSArray *sortedArray = nil;
     
     BOOL instanceCanCompare = NO;
@@ -228,6 +230,23 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+- (void)preserveContentOffset
+{
+    if (self.tableView.contentOffset.y > -self.tableView.contentInset.top) {
+        _preservedContentOffset = self.tableView.contentOffset;
+    }
+}
+
+
+- (void)restoreContentOffset
+{
+    if (_preservedContentOffset.y > 0.f) {
+        [self.tableView setContentOffset:_preservedContentOffset animated:NO];
+        _preservedContentOffset = CGPointZero;
+    }
+}
+
+
 #pragma mark - Header & footer handling & delegation
 
 - (BOOL)instanceHasHeaderForSectionWithKey:(NSInteger)sectionKey
@@ -270,7 +289,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)didBeginEditing
 {
-    [self toggleEditMode];
+    [self scrollToTopAndToggleEditMode];
 }
 
 
@@ -342,9 +361,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey
 {
-    if ([data isKindOfClass:[NSArray class]]) {
-        _sectionData[@(sectionKey)] = [data mutableCopy];
-    } else if ([data isKindOfClass:[NSSet class]]) {
+    if ([data isKindOfClass:[NSArray class]] || [data isKindOfClass:[NSSet class]]) {
         _sectionData[@(sectionKey)] = [[self sortedArrayWithData:data forSectionWithKey:sectionKey] mutableCopy];
     } else if (data) {
         if (sectionKey == kInputSectionKey) {
@@ -528,16 +545,35 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         [self dismissViewControllerAnimated:YES completion:^{
             _shouldReloadOnModalDismissal = NO;
+            
+            if ([_instance respondsToSelector:@selector(didDismissModalViewController:)]) {
+                [_instance didDismissModalViewController:viewController];
+            }
         }];
-        
-        if ([_instance respondsToSelector:@selector(didDismissModalViewController:)]) {
-            [_instance didDismissModalViewController:viewController];
-        }
     }
 }
 
 
 #pragma mark - Edit mode transitions
+
+- (void)scrollToTopAndToggleEditMode
+{
+    if ([self actionIs:kActionDisplay]) {
+        [CATransaction begin];
+        [CATransaction setCompletionBlock:^{
+            [self toggleEditMode];
+        }];
+        
+        [self.tableView beginUpdates];
+        [self.tableView setContentOffset:CGPointMake(0.f, 0.f - self.tableView.contentInset.top) animated:YES];
+        [self.tableView endUpdates];
+        
+        [CATransaction commit];
+    } else {
+        [self toggleEditMode];
+    }
+}
+
 
 - (void)toggleEditMode
 {
@@ -564,6 +600,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         } else {
             [[_inputCell nextInputField] becomeFirstResponder];
         }
+        
+        self.tableView.scrollEnabled = NO;
     } else if ([self actionIs:kActionDisplay]) {
         self.navigationItem.rightBarButtonItem = rightButton;
         self.navigationItem.leftBarButtonItem = leftButton;
@@ -572,6 +610,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [[OMeta m].replicator replicate];
             [self.observer observeEntity];
         }
+        
+        self.tableView.scrollEnabled = YES;
     }
     
     OLogState;
@@ -600,6 +640,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
     
     [self.tableView beginUpdates];
+    [self preserveContentOffset];
     
     for (NSNumber *sectionKey in [_sectionData allKeys]) {
         NSInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
@@ -631,6 +672,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [self.tableView reloadSections:sectionsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
     }
     
+    [self restoreContentOffset];
     [self.tableView endUpdates];
     [_dirtySections removeAllObjects];
     
@@ -675,6 +717,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self reloadFooterForSectionPrecedingSection:section];
         }
         
+        [self preserveContentOffset];
+        
         if (sectionExists && !sectionIsEmpty) {
             [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
         } else if (!sectionExists && !sectionIsEmpty) {
@@ -683,6 +727,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [_sectionKeys removeObject:@(sectionKey)];
             [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
+        
+        [self restoreContentOffset];
     }
 }
 
@@ -1042,10 +1088,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGFloat height = _usesPlainTableViewStyle ? 0.f : kSectionSpacing;
+    CGFloat height = _usesPlainTableViewStyle ? 0.f : kEmptyHeaderHeight;
     
     if ([self instanceHasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
         height = [tableView headerHeight];
+    } else if (section == 0) {
+        height = kInitialHeadroomHeight;
     }
     
     return height;

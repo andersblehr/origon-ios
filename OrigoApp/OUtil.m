@@ -52,7 +52,7 @@ static NSString * const kRootIdFormat = @"~%@";
     NSString *guardianInfo = nil;
     
     if ([member isJuvenile]) {
-        NSSet *guardians = [member parents];
+        NSArray *guardians = [member parents];
         
         if (![guardians count]) {
             guardians = [member guardians];

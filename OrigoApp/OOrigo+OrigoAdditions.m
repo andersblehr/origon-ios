@@ -124,12 +124,12 @@
 
 #pragma mark - Member filtering
 
-- (NSSet *)residents
+- (NSArray *)residents
 {
-    NSMutableSet *residents = [NSMutableSet set];
+    NSMutableArray *residents = [NSMutableArray array];
     
     if ([self isOfType:kOrigoTypeResidence]) {
-        NSMutableSet *allMinors = [NSMutableSet set];
+        NSMutableArray *allMinors = [NSMutableArray array];
         NSMutableSet *visibleMinors = [NSMutableSet set];
         
         for (OMembership *membership in [self allMemberships]) {
@@ -138,7 +138,7 @@
                     [allMinors addObject:membership.member];
                 } else {
                     [residents addObject:membership.member];
-                    [visibleMinors unionSet:[membership.member wards]];
+                    [visibleMinors unionSet:[NSSet setWithArray:[membership.member wards]]];
                 }
             }
         }
@@ -154,13 +154,13 @@
         }
     }
     
-    return residents;
+    return [residents sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
-- (NSSet *)members
+- (NSArray *)members
 {
-    NSMutableSet *members = [NSMutableSet set];
+    NSMutableArray *members = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
         if ([membership isFull]) {
@@ -168,50 +168,65 @@
         }
     }
     
-    return members;
+    return [members sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
-- (NSSet *)contacts
+- (NSArray *)organisers
 {
-    NSMutableSet *contacts = [NSMutableSet set];
+    NSMutableArray *organisers = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isFull] && [membership hasContactRole]) {
-            [contacts addObject:membership.member];
+        if ([membership isFull] && [membership hasRoleOfType:kRoleTypeOrganiser]) {
+            [organisers addObject:membership.member];
         }
     }
     
-    return contacts;
+    return [organisers sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
-- (NSSet *)regulars
+- (NSArray *)parentContacts
 {
-    NSMutableSet *regulars = [[self members] mutableCopy];
-    [regulars minusSet:[self contacts]];
+    NSMutableArray *parentContacts = [NSMutableArray array];
     
-    return regulars;
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isFull] && [membership hasRoleOfType:kRoleTypeParentContact]) {
+            [parentContacts addObject:membership.member];
+        }
+    }
+    
+    return [parentContacts sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
-- (NSSet *)guardians
+- (NSArray *)regulars
+{
+    NSMutableSet *regulars = [NSMutableSet setWithArray:[self members]];
+    [regulars minusSet:[NSSet setWithArray:[self organisers]]];
+    [regulars minusSet:[NSSet setWithArray:[self parentContacts]]];
+    
+    return [[regulars allObjects] sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
+- (NSArray *)guardians
 {
     NSMutableSet *guardians = [NSMutableSet set];
     
     if ([self isJuvenile]) {
         for (OMember *member in [self regulars]) {
-            [guardians unionSet:[member guardians]];
+            [guardians unionSet:[NSSet setWithArray:[member guardians]]];
         }
     }
     
-    return guardians;
+    return [[guardians allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
-- (NSSet *)elders
+- (NSArray *)elders
 {
-    NSMutableSet *elders = [NSMutableSet set];
+    NSMutableArray *elders = [NSMutableArray array];
     
     if ([self isOfType:kOrigoTypeResidence]) {
         for (OMember *resident in [self residents]) {
@@ -297,23 +312,42 @@
 }
 
 
-- (BOOL)userIsContact
+- (BOOL)userIsOrganiser
 {
-    return [self hasContact:[OMeta m].user];
+    return [[self membershipForMember:[OMeta m].user] hasRoleOfType:kRoleTypeOrganiser];
+}
+
+
+- (BOOL)userIsParentContact
+{
+    return [[self membershipForMember:[OMeta m].user] hasRoleOfType:kRoleTypeParentContact];
+}
+
+
+- (BOOL)userIsMemberContact
+{
+    return [[self membershipForMember:[OMeta m].user] hasRoleOfType:kRoleTypeMemberContact];
 }
 
 
 #pragma mark - Origo meta information
 
-- (BOOL)isOfType:(NSString *)origoType
+- (BOOL)isOfType:(NSString *)type
 {
-    return [self.type isEqualToString:origoType];
+    return [self.type isEqualToString:type];
 }
 
 
 - (BOOL)isOrganised
 {
-    return ![self isOfType:kOrigoTypeResidence] && ![self isOfType:kOrigoTypeFriends];
+    BOOL isOrganised = NO;
+    
+    isOrganised = isOrganised || [self isOfType:kOrigoTypePreschoolClass];
+    isOrganised = isOrganised || [self isOfType:kOrigoTypeSchoolClass];
+    isOrganised = isOrganised || [self isOfType:kOrigoTypeTeam];
+    isOrganised = isOrganised || [self isOfType:kOrigoTypeStudentGroup];
+    
+    return isOrganised;
 }
 
 
@@ -329,6 +363,12 @@
 }
 
 
+- (BOOL)hasTelephone
+{
+    return [self.telephone hasValue];
+}
+
+
 - (BOOL)hasAdmin
 {
     BOOL hasAdmin = NO;
@@ -341,27 +381,21 @@
 }
 
 
-- (BOOL)hasContacts
+- (BOOL)hasOrganisers
 {
-    return [[self contacts] count] > 0;
+    return [[self organisers] count] > 0;
+}
+
+
+- (BOOL)hasParentContacts
+{
+    return [[self parentContacts] count] > 0;
 }
 
 
 - (BOOL)hasMember:(id<OMember>)member
 {
     return [[self membershipForMember:member] isFull];
-}
-
-
-- (BOOL)hasContact:(id<OMember>)contact
-{
-    return [[self membershipForMember:contact] hasContactRole];
-}
-
-
-- (BOOL)hasAssociateMember:(id<OMember>)associateMember
-{
-    return [[self membershipForMember:associateMember] isAssociate];
 }
 
 

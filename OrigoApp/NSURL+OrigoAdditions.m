@@ -8,7 +8,7 @@
 
 #import "NSURL+OrigoAdditions.h"
 
-static NSString *kURLParameterFormat = @"%@%@=%@";
+static NSString * const kURLParameterFormat = @"%@%@=%@";
 
 
 @implementation NSURL (OrigoAdditions)

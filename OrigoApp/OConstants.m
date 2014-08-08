@@ -62,12 +62,19 @@ NSString * const kRelationshipKeyMember = @"member";
 NSString * const kRelationshipKeyOrigo = @"origo";
 
 // Mapped keys
-NSString * const kMappedKeyClass = @"class";
+NSString * const kMappedKeyClub = @"club";
 NSString * const kMappedKeyFullName = @"fullName";
 NSString * const kMappedKeyGivenName = @"givenName";
-NSString * const kMappedKeyPurpose = @"purpose";
+NSString * const kMappedKeyOrganisation = @"organisation";
+NSString * const kMappedKeyOrganisationDescription = @"organisationDescription";
+NSString * const kMappedKeyPreschool = @"preschool";
+NSString * const kMappedKeyPreschoolClass = @"preschoolClass";
 NSString * const kMappedKeyResidenceName = @"residenceName";
 NSString * const kMappedKeySchool = @"school";
+NSString * const kMappedKeySchoolClass = @"schoolClass";
+NSString * const kMappedKeyStudentGroup = @"studentGroup";
+NSString * const kMappedKeyTeam = @"team";
+NSString * const kMappedKeyUniversity = @"university";
 
 // Unbound keys
 NSString * const kExternalKeyActivate = @"activate";
@@ -83,25 +90,27 @@ NSString * const kExternalKeySignIn = @"signIn";
 NSString * const kStringPrefixDefault = @"[default]";
 NSString * const kStringPrefixLabel = @"[label]";
 NSString * const kStringPrefixAlternateLabel = @"[alternate label]";
+NSString * const kStringPrefixSettingLabel = @"[setting label]";
 NSString * const kStringPrefixPlaceholder = @"[placeholder]";
 NSString * const kStringPrefixOrigoTitle = @"[title]";
 NSString * const kStringPrefixNewOrigoTitle = @"[registration title]";
 NSString * const kStringPrefixFooter = @"[registration footer]";
 NSString * const kStringPrefixAddMemberButton = @"[add member]";
 NSString * const kStringPrefixAddContactButton = @"[add contact]";
+NSString * const kStringPrefixEditRolesButton = @"[edit roles]";
 NSString * const kStringPrefixContactTitle = @"[contact title]";
 NSString * const kStringPrefixMemberListTitle = @"[member list]";
 NSString * const kStringPrefixNewMemberTitle = @"[member registration]";
 NSString * const kStringPrefixAllMembersTitle = @"[all members]";
-NSString * const kStringPrefixContactRole = @"[contact role]";
+NSString * const kStringPrefixRolesTitle = @"[roles]";
 NSString * const kStringPrefixSettingTitle = @"[setting title]";
-NSString * const kStringPrefixSettingLabel = @"[setting label]";
 
 // Icon file names
 NSString * const kIconFileOrigo = @"10-arrows-in_black.png";
 NSString * const kIconFileHousehold = @"glyphicons_020_home.png";
 NSString * const kIconFileMan = @"glyphicons_003_user.png";
 NSString * const kIconFileWoman = @"glyphicons_035_woman.png";
+NSString * const kIconFileParents = @"glyphicons_024_parents.png";
 NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
 NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
 NSString * const kIconFileInfant = @"76-baby_black.png";

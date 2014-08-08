@@ -10,22 +10,28 @@
 
 NSString * const _be_  = @"be";
 
-NSString * const _group_ = @"group";
+NSString * const _address_ = @"address";
+NSString * const _coach_ = @"coach";
+NSString * const _contact_ = @"contact";
 NSString * const _father_ = @"father";
+NSString * const _group_ = @"group";
+NSString * const _guardian_ = @"guardian";
+NSString * const _household_ = @"household";
+NSString * const _lecturer_ = @"lecturer";
 NSString * const _mother_ = @"mother";
 NSString * const _parent_ = @"parent";
-NSString * const _guardian_ = @"guardian";
-NSString * const _contact_ = @"contact";
-NSString * const _address_ = @"address";
+NSString * const _parentContact_ = @"parentContact";
+NSString * const _preschoolTeacher_ = @"preschoolTeacher";
+NSString * const _teacher_ = @"teacher";
 
-NSString * const _I_   = @"I";
-NSString * const _you_ = @"you";
 NSString * const _he_  = @"he";
+NSString * const _I_   = @"I";
 NSString * const _she_ = @"she";
+NSString * const _you_ = @"you";
 
 static NSString * const kPartOfSpeechVerbs = @"be";
-static NSString * const kPartOfSpeechNouns = @"group;father;mother;parent;guardian;contact;address";
-static NSString * const kPartOfSpeechPronouns = @"I;you;he;she";
+static NSString * const kPartOfSpeechNouns = @"address;coach;contact;father;group;guardian;household;lecturer;mother;parent;parentContact;preschoolTeacher;teacher";
+static NSString * const kPartOfSpeechPronouns = @"he;I;she;you";
 
 static NSString * const kPlaceholderSubject = @"{subject}";
 static NSString * const kPlaceholderVerb = @"{verb}";

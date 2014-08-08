@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="a3K-AG-mMk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="a3K-AG-mMk">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -24,21 +24,6 @@
             </objects>
             <point key="canvasLocation" x="183" y="-615"/>
         </scene>
-        <!--Task List View Controller-->
-        <scene sceneID="FtR-nb-C3g">
-            <objects>
-                <viewController storyboardIdentifier="tasks" useStoryboardIdentifierAsRestorationIdentifier="YES" id="h9q-RG-XjV" customClass="OTaskListViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Oe6-hP-CNg">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="Acf-ca-xWd"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="10p-0d-4gv" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="642" y="665"/>
-        </scene>
         <!--Message List View Controller-->
         <scene sceneID="uXo-MS-8t7">
             <objects>
@@ -52,7 +37,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rK3-ud-Tj0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1104" y="665"/>
+            <point key="canvasLocation" x="183" y="673"/>
         </scene>
         <!--Origo View Controller-->
         <scene sceneID="5fB-zI-Tq9">
@@ -95,21 +80,6 @@
             </objects>
             <point key="canvasLocation" x="642" y="-615"/>
         </scene>
-        <!--Calendar View Controller-->
-        <scene sceneID="FF8-Hh-UBk">
-            <objects>
-                <viewController storyboardIdentifier="calendar" useStoryboardIdentifierAsRestorationIdentifier="YES" id="EMg-2y-k0H" customClass="OCalendarViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="a7X-Xm-nqx">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="Em8-Gl-OL3"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="1Oo-i8-eWm" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="183" y="665"/>
-        </scene>
         <!--Origo List View Controller-->
         <scene sceneID="SzQ-Uz-J3x">
             <objects>
@@ -144,13 +114,10 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="pPk-Kr-fAc"/>
-                    <connections>
-                        <segue destination="Lcb-OF-t33" kind="push" identifier="sequeFromValueListToValuePickerView" id="Ik1-Va-tcX"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R31-Db-r3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="183" y="-1274"/>
+            <point key="canvasLocation" x="1104" y="28"/>
         </scene>
         <!--Value Picker View Controller-->
         <scene sceneID="J4F-Wc-d9B">
@@ -169,7 +136,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hCo-uL-u2D" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="642" y="-1274"/>
+            <point key="canvasLocation" x="1104" y="-615"/>
         </scene>
         <!--Navigation Controller - Origo-->
         <scene sceneID="0Xf-MH-Xiq">
@@ -198,7 +165,7 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="pI9-dP-sfi"/>
         <segue reference="99F-61-IG0"/>
-        <segue reference="GXo-RZ-eB4"/>
     </inferredMetricsTieBreakers>
 </document>

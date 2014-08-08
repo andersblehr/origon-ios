@@ -47,7 +47,7 @@ static NSInteger const kSectionKeyWards = 2;
         BOOL allFemale = YES;
         
         if ([[_member wards] count] == 1) {
-            yourChild = [[[_member wards] anyObject] givenName];
+            yourChild = [[_member wards][0] givenName];
         } else {
             yourChild = NSLocalizedString(@"your child", @"");
         }
@@ -138,21 +138,22 @@ static NSInteger const kSectionKeyWards = 2;
     if ([[OMeta m].user isTeenOrOlder]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
         
+        [_origoTypes addObject:kOrigoTypeFriends];
+        
         if ([_member isJuvenile]) {
             if (![_member isOlderThan:kAgeThresholdInSchool]) {
                 [_origoTypes addObject:kOrigoTypePreschoolClass];
             }
             
             [_origoTypes addObject:kOrigoTypeSchoolClass];
-        }
-        
-        [_origoTypes addObject:kOrigoTypeFriends];
-        [_origoTypes addObject:kOrigoTypeTeam];
-        
-        if (![_member isJuvenile]) {
+            [_origoTypes addObject:kOrigoTypeTeam];
+        } else {
             [_origoTypes addObject:kOrigoTypeOrganisation];
-            [_origoTypes addObject:kOrigoTypeOther];
+            [_origoTypes addObject:kOrigoTypeTeam];
+            [_origoTypes addObject:kOrigoTypeStudentGroup];
         }
+        
+        [_origoTypes addObject:kOrigoTypeGeneral];
     }
 }
 
@@ -160,14 +161,14 @@ static NSInteger const kSectionKeyWards = 2;
 - (void)loadData
 {
     if (_member) {
-        [self setData:[_member origosIncludeResidences:NO] forSectionWithKey:kSectionKeyOrigos];
-        
         if ([_member isUser]) {
             [self setData:[_member residences] forSectionWithKey:kSectionKeyMember];
             [self setData:[_member wards] forSectionWithKey:kSectionKeyWards];
         } else {
             [self setData:@[_member] forSectionWithKey:kSectionKeyMember];
         }
+        
+        [self setData:[_member origosIncludeResidences:NO] forSectionWithKey:kSectionKeyOrigos];
     }
 }
 
@@ -211,17 +212,24 @@ static NSInteger const kSectionKeyWards = 2;
         }
     } else if (sectionKey == kSectionKeyOrigos) {
         id<OOrigo> origo = entity;
+        id<OMembership> userMembership = [origo membershipForMember:[OMeta m].user];
         
-        cell.textLabel.text = origo.name;
-        cell.imageView.image = [OUtil smallImageForOrigo:origo];
         cell.destinationId = kIdentifierOrigo;
+        cell.imageView.image = [OUtil smallImageForOrigo:origo];
         
-        if ([[origo membershipForMember:[OMeta m].user] isInvited]) {
-            cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
-            cell.detailTextLabel.textColor = [UIColor notificationTextColour];
+        if ([_member isUser] && ([origo userIsOrganiser] || [origo userIsParentContact])) {
+            cell.textLabel.text = [NSString stringWithFormat:@"%@, %@", origo.name, origo.descriptionText];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[userMembership allRoles] conjoinLastItem:NO];
         } else {
-            cell.detailTextLabel.text = origo.descriptionText;
-            cell.detailTextLabel.textColor = [UIColor textColour];
+            cell.textLabel.text = origo.name;
+        
+            if ([userMembership isInvited]) {
+                cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
+                cell.detailTextLabel.textColor = [UIColor notificationTextColour];
+            } else {
+                cell.detailTextLabel.text = origo.descriptionText;
+                cell.detailTextLabel.textColor = [UIColor textColour];
+            }
         }
     }
 }
@@ -256,14 +264,6 @@ static NSInteger const kSectionKeyWards = 2;
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
     return [self footerText];
-}
-
-
-- (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey
-{
-    NSString *relationshipKey = sectionKey == kSectionKeyWards ? nil : kRelationshipKeyOrigo;
-    
-    return [OUtil sortKeyWithPropertyKey:kPropertyKeyName relationshipKey:relationshipKey];
 }
 
 

@@ -62,12 +62,19 @@ extern NSString * const kRelationshipKeyMember;
 extern NSString * const kRelationshipKeyOrigo;
 
 // Mapped keys
-extern NSString * const kMappedKeyClass;
+extern NSString * const kMappedKeyClub;
 extern NSString * const kMappedKeyFullName;
 extern NSString * const kMappedKeyGivenName;
-extern NSString * const kMappedKeyPurpose;
+extern NSString * const kMappedKeyOrganisation;
+extern NSString * const kMappedKeyOrganisationDescription;
+extern NSString * const kMappedKeyPreschool;
+extern NSString * const kMappedKeyPreschoolClass;
 extern NSString * const kMappedKeyResidenceName;
 extern NSString * const kMappedKeySchool;
+extern NSString * const kMappedKeySchoolClass;
+extern NSString * const kMappedKeyStudentGroup;
+extern NSString * const kMappedKeyTeam;
+extern NSString * const kMappedKeyUniversity;
 
 // Unbound keys
 extern NSString * const kExternalKeyActivate;
@@ -83,25 +90,27 @@ extern NSString * const kExternalKeySignIn;
 extern NSString * const kStringPrefixDefault;
 extern NSString * const kStringPrefixLabel;
 extern NSString * const kStringPrefixAlternateLabel;
+extern NSString * const kStringPrefixSettingLabel;
 extern NSString * const kStringPrefixPlaceholder;
 extern NSString * const kStringPrefixOrigoTitle;
 extern NSString * const kStringPrefixNewOrigoTitle;
 extern NSString * const kStringPrefixFooter;
 extern NSString * const kStringPrefixAddMemberButton;
 extern NSString * const kStringPrefixAddContactButton;
+extern NSString * const kStringPrefixEditRolesButton;
 extern NSString * const kStringPrefixContactTitle;
 extern NSString * const kStringPrefixMemberListTitle;
 extern NSString * const kStringPrefixNewMemberTitle;
 extern NSString * const kStringPrefixAllMembersTitle;
-extern NSString * const kStringPrefixContactRole;
+extern NSString * const kStringPrefixRolesTitle;
 extern NSString * const kStringPrefixSettingTitle;
-extern NSString * const kStringPrefixSettingLabel;
 
 // Icon file names
 extern NSString * const kIconFileOrigo;
 extern NSString * const kIconFileHousehold;
 extern NSString * const kIconFileMan;
 extern NSString * const kIconFileWoman;
+extern NSString * const kIconFileParents;
 extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;

@@ -13,8 +13,10 @@ extern NSString * const kCharacters0_9;
 extern NSString * const kSeparatorColon;
 extern NSString * const kSeparatorComma;
 extern NSString * const kSeparatorHash;
+extern NSString * const kSeparatorHat;
 extern NSString * const kSeparatorNewline;
 extern NSString * const kSeparatorSpace;
+extern NSString * const kSeparatorTilde;
 
 extern NSString * const kSeparatorList;
 extern NSString * const kSeparatorMapping;

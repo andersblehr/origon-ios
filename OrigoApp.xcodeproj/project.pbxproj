@@ -57,6 +57,8 @@
 		5C6E6C131589AC820002FF84 /* UITableView+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E6C121589AC820002FF84 /* UITableView+OrigoAdditions.m */; };
 		5C7379FD1593111B0065AB4F /* OTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C7379FC1593111B0065AB4F /* OTextField.m */; };
 		5C752CB21827E29D004CEACD /* OActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C752CB11827E29D004CEACD /* OActivityIndicator.m */; };
+		5C75A5EF198EAAB900316E00 /* glyphicons_024_parents.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C75A5ED198EAAB900316E00 /* glyphicons_024_parents.png */; };
+		5C75A5F0198EAAB900316E00 /* glyphicons_024_parents@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C75A5EE198EAAB900316E00 /* glyphicons_024_parents@2x.png */; };
 		5C77067618549A2E0088C78D /* OLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C77067518549A2E0088C78D /* OLabel.m */; };
 		5C78695018116AD400020E08 /* OActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78694F18116AD400020E08 /* OActionSheet.m */; };
 		5C78FABA1654E77E009A4BCF /* OTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C78FAB91654E77E009A4BCF /* OTextView.m */; };
@@ -108,10 +110,10 @@
 		5CD33AD618F5288000A863F4 /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AD518F5288000A863F4 /* OOrigo.m */; };
 		5CD33AD918F5288000A863F4 /* OReplicatedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AD818F5288000A863F4 /* OReplicatedEntityRef.m */; };
 		5CD33ADC18F5288100A863F4 /* OReplicatedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33ADB18F5288100A863F4 /* OReplicatedEntity.m */; };
-		5CD33ADF18F5288100A863F4 /* OMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33ADE18F5288100A863F4 /* OMembership.m */; };
 		5CD33AE218F5288100A863F4 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AE118F5288100A863F4 /* OMember.m */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.m */; };
 		5CD5EC0C18D0768A0075D07E /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CD5EC0B18D0768A0075D07E /* MainStoryboard_iPhone.storyboard */; };
+		5CD89E1919926C7B00C62582 /* OMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD89E1819926C7B00C62582 /* OMembership.m */; };
 		5CF17E5317AE8D9400985255 /* glyphicons_010_envelope@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CF17E5117AE8D9400985255 /* glyphicons_010_envelope@2x.png */; };
 		5CF17E5417AE8D9400985255 /* glyphicons_010_envelope.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CF17E5217AE8D9400985255 /* glyphicons_010_envelope.png */; };
 		5CF17E5917AF84B600985255 /* OSwitchboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF17E5817AF84B600985255 /* OSwitchboard.m */; };
@@ -215,6 +217,8 @@
 		5C7379FC1593111B0065AB4F /* OTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTextField.m; sourceTree = "<group>"; };
 		5C752CB01827E29D004CEACD /* OActivityIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OActivityIndicator.h; sourceTree = "<group>"; };
 		5C752CB11827E29D004CEACD /* OActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OActivityIndicator.m; sourceTree = "<group>"; };
+		5C75A5ED198EAAB900316E00 /* glyphicons_024_parents.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_024_parents.png; sourceTree = "<group>"; };
+		5C75A5EE198EAAB900316E00 /* glyphicons_024_parents@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_024_parents@2x.png"; sourceTree = "<group>"; };
 		5C77067418549A2E0088C78D /* OLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OLabel.h; sourceTree = "<group>"; };
 		5C77067518549A2E0088C78D /* OLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OLabel.m; sourceTree = "<group>"; };
 		5C78694E18116AD400020E08 /* OActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OActionSheet.h; sourceTree = "<group>"; };
@@ -301,14 +305,14 @@
 		5CD33AD818F5288000A863F4 /* OReplicatedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntityRef.m; sourceTree = "<group>"; };
 		5CD33ADA18F5288100A863F4 /* OReplicatedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntity.h; sourceTree = "<group>"; };
 		5CD33ADB18F5288100A863F4 /* OReplicatedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntity.m; sourceTree = "<group>"; };
-		5CD33ADD18F5288100A863F4 /* OMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembership.h; sourceTree = "<group>"; };
-		5CD33ADE18F5288100A863F4 /* OMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMembership.m; sourceTree = "<group>"; };
 		5CD33AE018F5288100A863F4 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
 		5CD33AE118F5288100A863F4 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
 		5CD5B29B14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CD5EC0B18D0768A0075D07E /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5CD7723B18D05DA40087E3F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		5CD89E1719926C7B00C62582 /* OMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembership.h; sourceTree = "<group>"; };
+		5CD89E1819926C7B00C62582 /* OMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMembership.m; sourceTree = "<group>"; };
 		5CDE879C176F185E00272909 /* OInputCellDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OInputCellDelegate.h; sourceTree = "<group>"; };
 		5CF17E5117AE8D9400985255 /* glyphicons_010_envelope@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_010_envelope@2x.png"; sourceTree = "<group>"; };
 		5CF17E5217AE8D9400985255 /* glyphicons_010_envelope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_010_envelope.png; sourceTree = "<group>"; };
@@ -393,6 +397,8 @@
 				5CF17E5217AE8D9400985255 /* glyphicons_010_envelope.png */,
 				5C15BFF316385D4800BB5254 /* glyphicons_020_home.png */,
 				5C15BFF416385D4800BB5254 /* glyphicons_020_home@2x.png */,
+				5C75A5ED198EAAB900316E00 /* glyphicons_024_parents.png */,
+				5C75A5EE198EAAB900316E00 /* glyphicons_024_parents@2x.png */,
 				5C15BFB316350CCE00BB5254 /* glyphicons_035_woman.png */,
 				5C15BFB416350CCE00BB5254 /* glyphicons_035_woman@2x.png */,
 			);
@@ -407,8 +413,8 @@
 				5CD33AD218F5288000A863F4 /* ODevice.m */,
 				5CD33AE018F5288100A863F4 /* OMember.h */,
 				5CD33AE118F5288100A863F4 /* OMember.m */,
-				5CD33ADD18F5288100A863F4 /* OMembership.h */,
-				5CD33ADE18F5288100A863F4 /* OMembership.m */,
+				5CD89E1719926C7B00C62582 /* OMembership.h */,
+				5CD89E1819926C7B00C62582 /* OMembership.m */,
 				5CD33AD418F5288000A863F4 /* OOrigo.h */,
 				5CD33AD518F5288000A863F4 /* OOrigo.m */,
 				5CD33ADA18F5288100A863F4 /* OReplicatedEntity.h */,
@@ -765,6 +771,7 @@
 				5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */,
 				5C58AA8718CE028500778B9F /* Localizable.strings in Resources */,
 				5C15BFB016350CB300BB5254 /* glyphicons_003_user.png in Resources */,
+				5C75A5F0198EAAB900316E00 /* glyphicons_024_parents@2x.png in Resources */,
 				5C15BFB116350CB300BB5254 /* glyphicons_003_user@2x.png in Resources */,
 				5C15BFB516350CCE00BB5254 /* glyphicons_035_woman.png in Resources */,
 				5C15BFB616350CCE00BB5254 /* glyphicons_035_woman@2x.png in Resources */,
@@ -795,6 +802,7 @@
 				5CB61172175F531B006BAE92 /* 193-location-arrow@2x.png in Resources */,
 				5C98903E17F6B8D500D957F9 /* 735-phone.png in Resources */,
 				5C98903F17F6B8D500D957F9 /* 735-phone@2x.png in Resources */,
+				5C75A5EF198EAAB900316E00 /* glyphicons_024_parents.png in Resources */,
 				5CFD8E67183503D200DC3945 /* 01-magnify.png in Resources */,
 				5C98903C17F6B8D500D957F9 /* 734-chat.png in Resources */,
 				5CF17E5317AE8D9400985255 /* glyphicons_010_envelope@2x.png in Resources */,
@@ -838,7 +846,7 @@
 				5CBB63C5146080DF00A9133A /* main.m in Sources */,
 				5CBB63C9146080DF00A9133A /* OAppDelegate.m in Sources */,
 				5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */,
-				5CD33ADF18F5288100A863F4 /* OMembership.m in Sources */,
+				5CD89E1919926C7B00C62582 /* OMembership.m in Sources */,
 				5C2E11141469CDE5005BDE61 /* OConnection.m in Sources */,
 				5C36BE8A146E9DA100DD3CEA /* OMeta.m in Sources */,
 				5CD33AD618F5288000A863F4 /* OOrigo.m in Sources */,
