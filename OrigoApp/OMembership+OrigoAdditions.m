@@ -38,7 +38,7 @@ static NSMutableDictionary *_rolesByType = nil;
 
 - (void)unmarshalRoles
 {
-    NSArray *roleTypes = @[kRoleTypeOrganiser, kRoleTypeParentContact, kRoleTypeMemberContact];
+    NSArray *roleTypes = @[kRoleTypeOrganiser, kRoleTypeParentContact, kRoleTypeMemberRole];
     
     _membershipId = self.entityId;
     
@@ -142,8 +142,10 @@ static NSMutableDictionary *_rolesByType = nil;
         [self unmarshalRoles];
     }
     
-    [_rolesByType[type] addObject:role];
-    [self marshalRoles];
+    if (![_rolesByType[type] containsObject:role]) {
+        [_rolesByType[type] addObject:role];
+        [self marshalRoles];
+    }
 }
 
 
@@ -172,7 +174,7 @@ static NSMutableDictionary *_rolesByType = nil;
 
 - (NSArray *)memberRoles
 {
-    return [self rolesOfType:kRoleTypeMemberContact];
+    return [self rolesOfType:kRoleTypeMemberRole];
 }
 
 
@@ -192,11 +194,25 @@ static NSMutableDictionary *_rolesByType = nil;
         [roles addObjectsFromArray:[self rolesOfType:kRoleTypeParentContact]];
     }
     
-    if ([self hasRoleOfType:kRoleTypeMemberContact]) {
-        [roles addObjectsFromArray:[self rolesOfType:kRoleTypeMemberContact]];
+    if ([self hasRoleOfType:kRoleTypeMemberRole]) {
+        [roles addObjectsFromArray:[self rolesOfType:kRoleTypeMemberRole]];
     }
     
     return roles;
+}
+
+
+- (NSString *)roleTypeForRole:(NSString *)role
+{
+    NSString *roleType = nil;
+    
+    for (NSString *type in @[kRoleTypeOrganiser, kRoleTypeParentContact, kRoleTypeMemberRole]) {
+        if (!roleType && [[self rolesOfType:type] containsObject:role]) {
+            roleType = type;
+        }
+    }
+    
+    return roleType;
 }
 
 

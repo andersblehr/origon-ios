@@ -8,11 +8,21 @@
 
 #import "OValuePickerViewController.h"
 
+static NSInteger const kAlertTagParentContactRole = 0;
+static NSInteger const kAlertTagEditRole = 1;
+static NSInteger const kButtonIndexOK = 1;
 
-@interface OValuePickerViewController () <OTableViewController> {
+
+@interface OValuePickerViewController () <OTableViewController, UIAlertViewDelegate, UITextFieldDelegate> {
 @private
-    id<OSettings> _settings;
     NSString *_settingKey;
+    NSString *_role;
+    
+    id<OSettings> _settings;
+    id<OOrigo> _origo;
+    id<OMember> _roleHolder;
+    
+    OTableViewCell *_checkedCell;
 }
 
 @end
@@ -22,23 +32,33 @@
 
 #pragma mark - Auxiliary methods
 
-- (BOOL)targetIsMemberVariant
-{
-    BOOL targetIsMemberVariant = NO;
-    
-    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetMember];
-    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetMembers];
-    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetContact];
-    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetParentContact];
-    targetIsMemberVariant = targetIsMemberVariant || [self targetIs:kTargetElder];
-    
-    return targetIsMemberVariant;
-}
-
-
 - (BOOL)isMultiValuePicker
 {
     return [self targetIs:kTargetMembers];
+}
+
+
+#pragma mark - Input dialogues
+
+- (void)presentParentContactRoleDialogue
+{
+    NSString *prompt = nil;
+    
+    if ([_roleHolder isUser]) {
+        prompt = NSLocalizedString(@"What is your contact role?", @"");
+    } else {
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"What is %@'s contact role?", @""), [_roleHolder givenName]];
+    }
+    
+    [OAlert showInputDialogueWithPrompt:prompt placeholder:NSLocalizedString(@"Contact role", @"") text:nil delegate:self tag:kAlertTagParentContactRole];
+}
+
+
+#pragma mark - Selector implementations
+
+- (void)performEditAction
+{
+    [OAlert showInputDialogueWithPrompt:NSLocalizedString(@"Edit role", @"") placeholder:NSLocalizedString(@"Role designation", @"") text:_role delegate:self tag:kAlertTagEditRole];
 }
 
 
@@ -46,57 +66,72 @@
 
 - (void)loadState
 {
-    if ([self targetIs:kTargetRole]) {
-        if (self.isModal) {
-            self.title = NSLocalizedString(@"Role owner", @"");
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
-        } else {
-            
-        }
-    } else if ([self targetIsMemberVariant]) {
-        self.usesPlainTableViewStyle = YES;
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
-        
-        if ([self isMultiValuePicker]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-            self.navigationItem.rightBarButtonItem.enabled = NO;
-        }
-    } else {
-        _settings = [OSettings settings];
+    if ([self targetIs:kTargetSetting]) {
         _settingKey = self.target;
+        _settings = [OSettings settings];
         
         self.title = NSLocalizedString(_settingKey, kStringPrefixSettingTitle);
+    } else {
+        self.usesPlainTableViewStyle = YES;
+        
+        if ([self targetIs:kTargetParentContact]) {
+            _origo = self.meta;
+            
+            self.title = [[OLanguage nouns][_parentContact_][singularIndefinite] stringByCapitalisingFirstLetter];
+        } else if (![self targetIs:kTargetMembers]) {
+            _role = self.target;
+            
+            if ([self.meta conformsToProtocol:@protocol(OOrigo)]) {
+                _origo = self.meta;
+                _roleHolder = [_origo membersWithRole:_role][0];
+                
+                self.navigationItem.rightBarButtonItem = [UIBarButtonItem editButtonWithTarget:self];
+            }
+            
+            self.title = _role;
+        }
+    }
+    
+    if (self.isModal) {
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+    } else if ([self isMultiValuePicker]) {
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem.enabled = NO;
+        self.returnData = [NSMutableArray array];
     }
 }
 
 
 - (void)loadData
 {
-    if ([self targetIsMemberVariant] || [self targetIs:kTargetRole]) {
-        [self setData:[self.meta regulars] sectionIndexLabelKey:kPropertyKeyName];
+    if ([self targetIs:kTargetSetting]) {
+        // TODO
+    } else {
+        if (_origo) {
+            if ([self targetIs:kTargetParentContact]) {
+                [self setData:[_origo guardians] sectionIndexLabelKey:kPropertyKeyName];
+            } else {
+                [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
+            }
+        } else {
+            [self setData:self.meta sectionIndexLabelKey:kPropertyKeyName];
+        }
     }
 }
 
 
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self targetIs:kTargetRole]) {
+    if ([self targetIs:kTargetSetting]) {
+        cell.checked = [[self dataAtIndexPath:indexPath] isEqual:[_settings valueForSettingKey:_settingKey]];
+    } else {
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         
         cell.textLabel.text = [candidate publicName];
         cell.imageView.image = [OUtil smallImageForMember:candidate];
         
-        if ([candidate isJuvenile]) {
-            cell.detailTextLabel.text = [OUtil guardianInfoForMember:candidate];
-        }
-    } else if ([self targetIsMemberVariant]) {
-        id<OMember> candidate = [self dataAtIndexPath:indexPath];
-        
-        cell.textLabel.text = [candidate publicName];
-        cell.imageView.image = [OUtil smallImageForMember:candidate];
-        
-        if ([self isMultiValuePicker]) {
-            cell.checked = [self.returnData containsObject:candidate];
+        if (_origo) {
+            cell.checked = [[_origo membersWithRole:_role] containsObject:candidate];
         }
         
         if ([candidate isJuvenile]) {
@@ -106,8 +141,10 @@
         } else {
             cell.detailTextLabel.text = [[candidate residence] shortAddress];
         }
-    } else {
-        cell.checked = [[self dataAtIndexPath:indexPath] isEqual:[_settings valueForSettingKey:_settingKey]];
+    }
+    
+    if (cell.checked && ![self isMultiValuePicker]) {
+        _checkedCell = cell;
     }
 }
 
@@ -119,32 +156,91 @@
     
     id pickedValue = [self dataAtIndexPath:indexPath];
     
-    if ([self targetIs:kTargetRole]) {
-        self.returnData = pickedValue;
+    if ([self targetIs:kTargetSetting]) {
+        [_settings setValue:pickedValue forSettingKey:_settingKey];
+        [self.navigationController popViewControllerAnimated:YES];
+    } else if ([self isMultiValuePicker]) {
+        if (cell.checked) {
+            [self.returnData addObject:pickedValue];
+        } else {
+            [self.returnData removeObject:pickedValue];
+        }
         
-        [self.dismisser dismissModalViewController:self];
-    } else if ([self targetIsMemberVariant]) {
-        if ([self isMultiValuePicker]) {
-            if (!self.returnData) {
-                self.returnData = [NSMutableArray array];
-            }
+        self.navigationItem.rightBarButtonItem.enabled = [self.returnData count] > 0;
+    } else {
+        _checkedCell.checked = NO;
+        _checkedCell = cell;
+        _checkedCell.checked = YES;
+        
+        if ([self targetIs:kTargetParentContact]) {
+            _roleHolder = pickedValue;
             
-            if (cell.checked) {
-                [self.returnData addObject:pickedValue];
-            } else {
-                [self.returnData removeObject:pickedValue];
-            }
-            
-            self.navigationItem.rightBarButtonItem.enabled = [self.returnData count] > 0;
+            [self presentParentContactRoleDialogue];
         } else {
             self.returnData = pickedValue;
             
-            [self.dismisser dismissModalViewController:self];
+            if (self.isModal) {
+                [self.dismisser dismissModalViewController:self];
+            } else {
+                [[_origo membershipForMember:_roleHolder] removeRole:_role ofType:kRoleTypeMemberRole];
+                [[_origo membershipForMember:pickedValue] addRole:_role ofType:kRoleTypeMemberRole];
+                
+                [self.navigationController popViewControllerAnimated:YES];
+            }
         }
-    } else {
-        [_settings setValue:pickedValue forSettingKey:_settingKey];
-        [self.navigationController popViewControllerAnimated:YES];
     }
+}
+
+
+#pragma mark - UIAlertViewDelegate conformance
+
+- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (alertView.tag) {
+        case kAlertTagEditRole:
+            if (buttonIndex == kButtonIndexOK) {
+                NSString *role = [alertView textFieldAtIndex:0].text;
+                
+                for (id<OMember> roleHolder in [_origo membersWithRole:_role]) {
+                    id<OMembership> membership = [_origo membershipForMember:roleHolder];
+                    
+                    [membership removeRole:_role ofType:kRoleTypeMemberRole];
+                    [membership addRole:role ofType:kRoleTypeMemberRole];
+                }
+                
+                self.title = role;
+                _role = role;
+            }
+            
+            break;
+            
+        default:
+            break;
+    }
+}
+
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (alertView.tag) {
+        case kAlertTagParentContactRole:
+            if (buttonIndex == kButtonIndexOK) {
+                id<OMembership> membership = [_origo addMember:_roleHolder];
+                NSString *role = [alertView textFieldAtIndex:0].text;
+                
+                [membership addRole:role ofType:kRoleTypeParentContact];
+            } else {
+                self.didCancel = YES;
+            }
+            
+            [self.dismisser dismissModalViewController:self];
+            
+            break;
+            
+        default:
+            break;
+    }
+    
 }
 
 @end

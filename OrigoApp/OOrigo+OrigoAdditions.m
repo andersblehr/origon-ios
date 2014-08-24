@@ -200,17 +200,44 @@
 }
 
 
-- (NSArray *)memberContacts
+- (NSArray *)memberRoles
 {
-    NSMutableArray *memberContacts = [NSMutableArray array];
+    NSMutableSet *memberRoles = [NSMutableSet set];
+    
+    for (OMember *member in [self membersWithRoles]) {
+        [memberRoles addObjectsFromArray:[[self membershipForMember:member] memberRoles]];
+    }
+    
+    return [[memberRoles allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+}
+
+
+- (NSArray *)membersWithRoles
+{
+    NSMutableArray *membersWithRoles = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isFull] && [membership hasRoleOfType:kRoleTypeMemberContact]) {
-            [memberContacts addObject:membership.member];
+        if ([membership isFull] && [membership hasRoleOfType:kRoleTypeMemberRole]) {
+            [membersWithRoles addObject:membership.member];
         }
     }
     
-    return memberContacts;
+    return [membersWithRoles sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
+- (NSArray *)membersWithRole:(NSString *)role
+{
+    NSArray *membersWithRoles = [self membersWithRoles];
+    NSMutableArray *members = [NSMutableArray array];
+    
+    for (OMember *member in membersWithRoles) {
+        if ([[[self membershipForMember:member] memberRoles] containsObject:role]) {
+            [members addObject:member];
+        }
+    }
+    
+    return members;
 }
 
 
@@ -335,12 +362,6 @@
 - (BOOL)userIsParentContact
 {
     return [[self membershipForMember:[OMeta m].user] hasRoleOfType:kRoleTypeParentContact];
-}
-
-
-- (BOOL)userIsMemberContact
-{
-    return [[self membershipForMember:[OMeta m].user] hasRoleOfType:kRoleTypeMemberContact];
 }
 
 

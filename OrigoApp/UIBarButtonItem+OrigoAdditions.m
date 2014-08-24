@@ -46,12 +46,30 @@ static UIBarButtonItem *_flexibleSpace = nil;
     UIBarButtonItem *button = nil;
     
     if ([OMeta systemIs_iOS6x]) {
-        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFilePlus] style:UIBarButtonItemStylePlain target:target action:@selector(addItem)];
+        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFilePlus] style:UIBarButtonItemStylePlain target:target action:@selector(performAddAction)];
     } else {
-        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:@selector(addItem)];
+        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:@selector(performAddAction)];
     }
     
     return button;
+}
+
+
++ (instancetype)editButtonWithTarget:(id)target
+{
+    return  [[self alloc] initWithImage:[UIImage imageNamed:kIconFileEdit] style:UIBarButtonItemStylePlain target:target action:@selector(performEditAction)];
+}
+
+
++ (instancetype)mapButtonWithTarget:(id)target
+{
+    return  [[self alloc] initWithImage:[UIImage imageNamed:kIconFileMap] style:UIBarButtonItemStylePlain target:target action:@selector(showMap)];
+}
+
+
++ (instancetype)infoButtonWithTarget:(id)target
+{
+    return  [[self alloc] initWithImage:[UIImage imageNamed:kIconFileInfo] style:UIBarButtonItemStylePlain target:target action:@selector(showInfo)];
 }
 
 
@@ -90,12 +108,6 @@ static UIBarButtonItem *_flexibleSpace = nil;
 + (instancetype)nextButtonWithTarget:(id)target
 {
     return [[self alloc] initWithTitle:NSLocalizedString(@"Next", @"") style:UIBarButtonItemStylePlain target:target action:@selector(moveToNextInputField)];
-}
-
-
-+ (instancetype)editButtonWithTarget:(id)target
-{
-    return [[self alloc] initWithTitle:NSLocalizedString(@"Edit", @"") style:UIBarButtonItemStylePlain target:target action:@selector(didBeginEditing)];
 }
 
 

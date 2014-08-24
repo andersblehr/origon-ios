@@ -13,21 +13,21 @@ static NSString * const kViewControllerSuffixList = @"ListViewController";
 static NSString * const kViewControllerSuffixPicker = @"PickerViewController";
 
 static CGFloat const kInitialHeadroomHeight = 28.f;
+static CGFloat const kPlainTableViewHeaderHeight = 22.f;
 static CGFloat const kEmptyHeaderHeight = 14.f;
 static CGFloat const kEmptyFooterHeight = 14.f;
 
 static NSInteger const kInputSectionKey = 0;
-static NSInteger const kMinimumSectionIndexTitles = 13;
+static NSInteger const kMinimumSectionIndexTitles = 11;
 
 static BOOL _needsReinstantiateRootViewController;
 static UIViewController * _reinstantiatedRootViewController;
 
 
-@interface OTableViewController () <UITextFieldDelegate, UITextViewDelegate> {
+@interface OTableViewController () <UITextFieldDelegate, UITextViewDelegate, UIAlertViewDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
-    BOOL _didResurface;
     BOOL _shouldReloadOnModalDismissal;
     
     Class _entityClass;
@@ -40,7 +40,6 @@ static UIViewController * _reinstantiatedRootViewController;
     NSMutableArray *_sectionIndexTitles;
     NSMutableSet *_dirtySections;
     
-    CGPoint _preservedContentOffset;
     NSIndexPath *_selectedIndexPath;
     OActivityIndicator *_activityIndicator;
     
@@ -230,23 +229,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)preserveContentOffset
-{
-    if (self.tableView.contentOffset.y > -self.tableView.contentInset.top) {
-        _preservedContentOffset = self.tableView.contentOffset;
-    }
-}
-
-
-- (void)restoreContentOffset
-{
-    if (_preservedContentOffset.y > 0.f) {
-        [self.tableView setContentOffset:_preservedContentOffset animated:NO];
-        _preservedContentOffset = CGPointZero;
-    }
-}
-
-
 #pragma mark - Header & footer handling & delegation
 
 - (BOOL)instanceHasHeaderForSectionWithKey:(NSInteger)sectionKey
@@ -285,13 +267,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Selector implementations
-
-- (void)didBeginEditing
-{
-    [self scrollToTopAndToggleEditMode];
-}
-
+#pragma mark - Default selector implementations
 
 - (void)didCancelEditing
 {
@@ -579,12 +555,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [_inputCell toggleEditMode];
     
-    static UIBarButtonItem *rightButton = nil;
-    static UIBarButtonItem *leftButton = nil;
+    static UIBarButtonItem *leftBarButtonItem = nil;
+    static NSArray *rightBarButtonItems = nil;
     
     if ([self actionIs:kActionEdit]) {
-        rightButton = self.navigationItem.rightBarButtonItem;
-        leftButton = self.navigationItem.leftBarButtonItem;
+        leftBarButtonItem = self.navigationItem.leftBarButtonItem;
+        rightBarButtonItems = self.navigationItem.rightBarButtonItems;
         
         if (!_cancelButton) {
             _cancelButton = [UIBarButtonItem cancelButtonWithTarget:self];
@@ -593,6 +569,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         self.navigationItem.leftBarButtonItem = _cancelButton;
+        self.navigationItem.rightBarButtonItems = nil;
         
         if (_nextInputField) {
             [_nextInputField becomeFirstResponder];
@@ -600,18 +577,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         } else {
             [[_inputCell nextInputField] becomeFirstResponder];
         }
-        
-        self.tableView.scrollEnabled = NO;
     } else if ([self actionIs:kActionDisplay]) {
-        self.navigationItem.rightBarButtonItem = rightButton;
-        self.navigationItem.leftBarButtonItem = leftButton;
+        self.navigationItem.leftBarButtonItem = leftBarButtonItem;
+        self.navigationItem.rightBarButtonItems = rightBarButtonItems;
         
         if ([[OMeta m].replicator needsReplication]) {
             [[OMeta m].replicator replicate];
             [self.observer observeEntity];
         }
-        
-        self.tableView.scrollEnabled = YES;
     }
     
     OLogState;
@@ -639,8 +612,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
     NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
     
-    [self.tableView beginUpdates];
-    [self preserveContentOffset];
+    //[self.tableView beginUpdates];
     
     for (NSNumber *sectionKey in [_sectionData allKeys]) {
         NSInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
@@ -672,8 +644,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [self.tableView reloadSections:sectionsToReload withRowAnimation:UITableViewRowAnimationAutomatic];
     }
     
-    [self restoreContentOffset];
-    [self.tableView endUpdates];
+    //[self.tableView endUpdates];
     [_dirtySections removeAllObjects];
     
     [affectedSections addIndexes:sectionsToInsert];
@@ -717,8 +688,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self reloadFooterForSectionPrecedingSection:section];
         }
         
-        [self preserveContentOffset];
-        
         if (sectionExists && !sectionIsEmpty) {
             [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
         } else if (!sectionExists && !sectionIsEmpty) {
@@ -727,8 +696,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [_sectionKeys removeObject:@(sectionKey)];
             [self.tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
-        
-        [self restoreContentOffset];
     }
 }
 
@@ -779,7 +746,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             }
         }
         
-        [self.navigationItem appendRightBarButtonItem:_nextButton];
+        [self.navigationItem addRightBarButtonItem:_nextButton append:YES];
     }
     
     _didJustLoad = YES;
@@ -822,14 +789,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [self reloadSections];
     } else if ([self actionIs:kActionInput] && _didResurface) {
         [self.inputCell resumeFirstResponder];
-    }
-}
-
-
-- (void)viewDidLayoutSubviews
-{
-    if (_inputCell) {
-        [_inputCell didLayoutSubviews];
     }
 }
 
@@ -1055,6 +1014,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
+        if ([_instance respondsToSelector:@selector(willDeleteCellAtIndexPath:)]) {
+            [_instance willDeleteCellAtIndexPath:indexPath];
+        }
+        
         NSNumber *sectionKey = _sectionKeys[indexPath.section];
         NSMutableArray *sectionData = _sectionData[sectionKey];
         id entity = sectionData[indexPath.row];
@@ -1064,9 +1027,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         if ([_entity instance] && [entity instance]) {
             [[[_entity instance] relationshipToEntity:[entity instance]] expire];
-            [[OMeta m].replicator replicateIfNeeded];
         }
         
+        [[OMeta m].replicator replicateIfNeeded];
         [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
@@ -1090,7 +1053,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     CGFloat height = 0.f;
     
-    if (!_usesPlainTableViewStyle) {
+    if (_usesPlainTableViewStyle) {
+        height = kPlainTableViewHeaderHeight;
+    } else {
         if ([self instanceHasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
             height = [tableView headerHeight];
         } else if (section == 0) {
@@ -1156,6 +1121,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)tableView:(UITableView *)tableView willDisplayCell:(OTableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (cell == _inputCell) {
+        [_inputCell prepareForDisplay];
+        
         if ([_instance respondsToSelector:@selector(willDisplayInputCell:)]) {
             [_instance willDisplayInputCell:cell];
         }
@@ -1202,7 +1169,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    [self inputFieldDidBeginEditing:textField];
+    if ([textField isKindOfClass:[OTextField class]]) {
+        [self inputFieldDidBeginEditing:textField];
+    } else if (textField.text) {
+        [textField setSelectedTextRange:[textField textRangeFromPosition:textField.beginningOfDocument toPosition:textField.endOfDocument]];
+    }
 }
 
 
@@ -1241,6 +1212,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)textViewDidEndEditing:(OTextView *)textView
 {
     _inputCell.inputField = nil;
+}
+
+
+#pragma mark - UIAlertViewDelegate conformance
+
+- (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView
+{
+    UITextField *textField = [alertView textFieldAtIndex:0];
+    
+    return textField ? [textField.text hasValue] : YES;
 }
 
 

@@ -12,11 +12,13 @@
 
 + (instancetype)settingsButtonWithTarget:(id)target;
 + (instancetype)plusButtonWithTarget:(id)target;
++ (instancetype)editButtonWithTarget:(id)target;
++ (instancetype)mapButtonWithTarget:(id)target;
++ (instancetype)infoButtonWithTarget:(id)target;
 + (instancetype)actionButtonWithTarget:(id)target;
 + (instancetype)lookupButtonWithTarget:(id)target;
 
 + (instancetype)nextButtonWithTarget:(id)target;
-+ (instancetype)editButtonWithTarget:(id)target;
 + (instancetype)cancelButtonWithTarget:(id)target;
 + (instancetype)skipButtonWithTarget:(id)target;
 + (instancetype)doneButtonWithTarget:(id)target;

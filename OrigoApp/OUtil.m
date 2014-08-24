@@ -29,24 +29,6 @@ static NSString * const kRootIdFormat = @"~%@";
 }
 
 
-+ (NSString *)contactInfoForMember:(id<OMember>)member
-{
-    NSString *contactInfo = [member.mobilePhone hasValue] ? [OPhoneNumberFormatter formatPhoneNumber:member.mobilePhone canonicalise:YES] : member.email;
-    
-    if ([member isJuvenile]) {
-        NSString *age = [member.dateOfBirth localisedAgeString];
-        
-        if (contactInfo && age) {
-            contactInfo = [age stringByAppendingString:contactInfo separator:kSeparatorComma];
-        } else if (age) {
-            contactInfo = age;
-        }
-    }
-    
-    return contactInfo;
-}
-
-
 + (NSString *)guardianInfoForMember:(id<OMember>)member
 {
     NSString *guardianInfo = nil;

@@ -21,7 +21,7 @@ NSString * const kMembershipStatusExpired = @"-";
 
 NSString * const kRoleTypeOrganiser = @"O";
 NSString * const kRoleTypeParentContact = @"P";
-NSString * const kRoleTypeMemberContact = @"M";
+NSString * const kRoleTypeMemberRole = @"M";
 
 
 @implementation OMembershipProxy

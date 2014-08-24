@@ -36,7 +36,6 @@ extern NSString * const _be_;
 
 extern NSString * const _address_;
 extern NSString * const _coach_;
-extern NSString * const _contact_;
 extern NSString * const _father_;
 extern NSString * const _group_;
 extern NSString * const _guardian_;

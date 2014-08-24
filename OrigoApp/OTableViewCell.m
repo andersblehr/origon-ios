@@ -278,7 +278,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Cell behaviour
 
-- (void)didLayoutSubviews
+- (void)prepareForDisplay
 {
     if (![self isListCell]) {
         if (_blueprint.hasPhoto) {
@@ -475,7 +475,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (!_destinationId) {
         BOOL destinationIsEligible = ![_state actionIs:kActionInput] || selectableDuringInput;
         
-        if (destinationIsEligible) {
+        if (destinationIsEligible && _entity) {
             NSString *destinationStateId = [OState stateIdForViewControllerWithIdentifier:destinationId target:_entity];
             
             destinationIsEligible = [_state isValidDestinationStateId:destinationStateId];

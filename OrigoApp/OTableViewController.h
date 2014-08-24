@@ -31,9 +31,10 @@
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
 
 - (UITableViewCellStyle)styleForListCellAtIndexPath:(NSIndexPath *)indexPath;
-- (void)willDisplayInputCell:(OTableViewCell *)cell;
+- (void)willDisplayInputCell:(OTableViewCell *)inputCell;
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
+- (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
 
 - (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey;
 - (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2;
@@ -58,8 +59,9 @@
 @property (nonatomic, assign, readonly) BOOL isPushed;
 @property (nonatomic, assign, readonly) BOOL isHidden;
 @property (nonatomic, assign, readonly) BOOL wasHidden;
-@property (nonatomic, assign, readonly) BOOL didCancel;
+@property (nonatomic, assign, readonly) BOOL didResurface;
 
+@property (nonatomic, assign) BOOL didCancel;
 @property (nonatomic, assign) BOOL requiresSynchronousServerCalls;
 @property (nonatomic, assign) BOOL usesPlainTableViewStyle;
 @property (nonatomic, assign) BOOL usesSectionIndexTitles;

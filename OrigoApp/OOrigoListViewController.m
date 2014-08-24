@@ -82,7 +82,7 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-- (void)addItem
+- (void)performAddAction
 {
     NSString *prompt = NSLocalizedString(@"What sort of group du you want to create", @"");
     
@@ -127,12 +127,11 @@ static NSInteger const kSectionKeyWards = 2;
     _member = [self.entity proxy];
     _origoTypes = [NSMutableArray array];
     
+    self.title = [OMeta m].appName;
+    [self.navigationItem setTitle:[OMeta m].appName withSubtitle:_member.name];
+    
     if ([_member isUser]) {
-        self.title = [OMeta m].appName;
-        [self.navigationItem setTitle:[OMeta m].appName withSubtitle:[OMeta m].user.name];
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
-    } else {
-        self.title = [_member givenName];
     }
     
     if ([[OMeta m].user isTeenOrOlder]) {
@@ -189,8 +188,7 @@ static NSInteger const kSectionKeyWards = 2;
         } else {
             id<OMember> member = entity;
             
-            cell.textLabel.text = member.name;
-            cell.detailTextLabel.text = [OUtil contactInfoForMember:member];
+            cell.textLabel.text = [member publicName];
             cell.imageView.image = [OUtil smallImageForMember:member];
             cell.destinationId = kIdentifierMember;
         }
