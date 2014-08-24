@@ -30,6 +30,7 @@ static NSString * const kProtocolHTTPS = @"https://";
 
 static NSString * const kOrigoDevServer = @"localhost:8888";
 //static NSString * const kOrigoDevServer = @"enceladus.local:8888";
+//static NSString * const kOrigoDevServer = @"origoapp.appspot.com";
 static NSString * const kOrigoProdServer = @"origoapp.appspot.com";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";

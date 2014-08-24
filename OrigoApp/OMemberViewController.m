@@ -13,13 +13,13 @@ static NSInteger const kSectionKeyGuardians = 1;
 static NSInteger const kSectionKeyAddresses = 2;
 static NSInteger const kSectionKeyRoles = 3;
 
-static NSInteger const kActionSheetTagAction = 0;
-static NSInteger const kButtonTagActionAddAddress = 0;
-static NSInteger const kButtonTagActionAddGuardian = 1;
-static NSInteger const kButtonTagActionChangePassword = 2;
-static NSInteger const kButtonTagActionEdit = 3;
-static NSInteger const kButtonTagActionEditRelations = 4;
-static NSInteger const kButtonTagActionCorrectGender = 5;
+static NSInteger const kActionSheetTagEdit = 0;
+static NSInteger const kButtonTagEditAddAddress = 0;
+static NSInteger const kButtonTagEditAddGuardian = 1;
+static NSInteger const kButtonTagEditChangePassword = 2;
+static NSInteger const kButtonTagEditEdit = 3;
+static NSInteger const kButtonTagEditEditRelations = 4;
+static NSInteger const kButtonTagEditCorrectGender = 5;
 
 static NSInteger const kActionSheetTagResidence = 1;
 static NSInteger const kButtonTagResidenceNewAddress = 10;
@@ -41,15 +41,17 @@ static NSInteger const kActionSheetTagGuardianAddressYesNo = 5;
 static NSInteger const kButtonTagGuardianAddressYes = 0;
 
 static NSInteger const kActionSheetTagGuardianAddress = 6;
+static NSInteger const kActionSheetTagEditRole = 7;
 
-static NSInteger const kAlertTagContactRole = 0;
-static NSInteger const kAlertTagUnknownChild = 1;
+static NSInteger const kAlertTagOrganiserRole = 0;
+static NSInteger const kAlertTagEditRole = 1;
+static NSInteger const kAlertTagUnknownChild = 2;
 static NSInteger const kButtonIndexOK = 1;
 
-static NSInteger const kAlertTagToggleGender = 2;
+static NSInteger const kAlertTagToggleGender = 3;
 static NSInteger const kButtonIndexYes = 1;
 
-static NSInteger const kAlertTagEmailChange = 3;
+static NSInteger const kAlertTagEmailChange = 4;
 static NSInteger const kButtonIndexContinue = 1;
 
 
@@ -71,7 +73,7 @@ static NSInteger const kButtonIndexContinue = 1;
     NSMutableDictionary *_cachedResidencesById;
     NSArray *_cachedResidences;
     NSArray *_cachedCandidates;
-    NSString *_organiserRole;
+    NSString *_role;
     
     BOOL _didPerformLocalLookup;
 }
@@ -234,7 +236,9 @@ static NSInteger const kButtonIndexContinue = 1;
             [_member reflectEntity:member];
         }
         
-        [self endEditing];
+        if (![self aspectIs:kAspectHousehold]) {
+            [self endEditing];
+        }
     } else {
         OInputField *invalidInputField = [self.inputCell nextInvalidInputField];
         
@@ -319,14 +323,8 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)postProcessMember
 {
-    if ([self targetIs:kTargetContact]) {
-        if ([_origo isOfType:kOrigoTypeTeam]) {
-            _organiserRole = NSLocalizedString(kOrigoTypeTeam, kStringPrefixContactTitle);
-            
-            [self persistMember];
-        } else {
-            [self presentContactRoleDialogue];
-        }
+    if ([self targetIs:kTargetOrganiser]) {
+        [self presentOrganiserRoleDialogue];
     } else {
         [self persistMember];
     }
@@ -342,9 +340,9 @@ static NSInteger const kButtonIndexContinue = 1;
             id<OMember> ward = [self.entity ancestorConformingToProtocol:@protocol(OMember)];
             
             if ([[ward residences] count]) {
-                id ancestorEntity = self.entity.ancestor;
+                BOOL addingToResidence = [self.entity.ancestor conformsToProtocol:@protocol(OOrigo)];
                 
-                if ([ward hasAddress] && ![ancestorEntity conformsToProtocol:@protocol(OOrigo)]) {
+                if ([ward hasAddress] && !addingToResidence) {
                     [self presentGuardianAddressSheetForWard:ward];
                 } else {
                     [[ward residence] addMember:_member];
@@ -358,11 +356,11 @@ static NSInteger const kButtonIndexContinue = 1;
         } else {
             _membership = [_origo addMember:_member];
             
-            if (_organiserRole) {
-                [_membership addRole:_organiserRole ofType:kRoleTypeOrganiser];
+            if (_role) {
+                [_membership addRole:_role ofType:kRoleTypeOrganiser];
             }
             
-            if (![self targetIs:kTargetContact] && ![_member hasAddress] && ![_member isJuvenile]) {
+            if (![self targetIs:kTargetOrganiser] && ![_member hasAddress] && ![_member isJuvenile]) {
                 [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
             } else {
                 if ([_member isUser] && ![_member isActive]) {
@@ -564,31 +562,27 @@ static NSInteger const kButtonIndexContinue = 1;
 
 #pragma mark - Input dialogues
 
-- (void)presentContactRoleDialogue
+- (void)presentOrganiserRoleDialogue
 {
-    NSString *message = nil;
+    NSString *prompt = nil;
     
     if ([_origo isOfType:kOrigoTypeSchoolClass] || [_origo isOfType:kOrigoTypePreschoolClass]) {
         if ([_member isUser]) {
-            message = [NSString stringWithFormat:NSLocalizedString(@"What is your role in %@?", @""), _origo.name];
+            prompt = [NSString stringWithFormat:NSLocalizedString(@"What is your role in %@?", @""), _origo.name];
         } else {
-            message = [NSString stringWithFormat:NSLocalizedString(@"What is %@'s role in %@?", @""), [_member givenName], _origo.name];
+            prompt = [NSString stringWithFormat:NSLocalizedString(@"What is %@'s role in %@?", @""), [_member givenName], _origo.name];
         }
     } else {
         if ([_member isUser]) {
-            message = NSLocalizedString(@"What is your role?", @"");
+            prompt = NSLocalizedString(@"What is your role?", @"");
         } else {
-            message = [NSString stringWithFormat:NSLocalizedString(@"What is %@'s role?", @""), [_member givenName]];
+            prompt = [NSString stringWithFormat:NSLocalizedString(@"What is %@'s role?", @""), [_member givenName]];
         }
     }
     
-    UIAlertView *dialogueView = [[UIAlertView alloc] initWithTitle:@"" message:message delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"OK", @""), nil];
-    dialogueView.alertViewStyle = UIAlertViewStylePlainTextInput;
-    [dialogueView textFieldAtIndex:0].autocapitalizationType = UITextAutocapitalizationTypeSentences;
-    [dialogueView textFieldAtIndex:0].placeholder = [_origo isOfType:kOrigoTypeSchoolClass] ? NSLocalizedString(@"Teacher role", @"") : NSLocalizedString(@"Role", @"");
-    dialogueView.tag = kAlertTagContactRole;
+    NSString *defaultRole = [_origo isOfType:kOrigoTypeTeam] ? NSLocalizedString(_origo.type, kStringPrefixOrganiserTitle) : nil;
     
-    [dialogueView show];
+    [OAlert showInputDialogueWithPrompt:prompt placeholder:NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle) text:defaultRole delegate:self tag:kAlertTagOrganiserRole];
 }
 
 
@@ -820,33 +814,39 @@ static NSInteger const kButtonIndexContinue = 1;
 
 #pragma mark - Selector implementations
 
-- (void)presentActionSheet
+- (void)performEditAction
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAction];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
     
     if ([_member isUser]) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Change password", @"") tag:kButtonTagActionChangePassword];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Change password", @"") tag:kButtonTagEditChangePassword];
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagActionEdit];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEditEdit];
     
     if ([_member isWardOfUser]) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit relations", @"") tag:kButtonTagActionEditRelations];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit relations", @"") tag:kButtonTagEditEditRelations];
     }
     
     if (![_member isJuvenile] || [_member isWardOfUser]) {
         if ([_member hasAddress]) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add an address", @"") tag:kButtonTagActionAddAddress];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add an address", @"") tag:kButtonTagEditAddAddress];
         } else {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register address", @"") tag:kButtonTagActionAddAddress];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register address", @"") tag:kButtonTagEditAddAddress];
         }
     } else {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Register guardian", @"") tag:kButtonTagActionAddGuardian];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Register guardian", @"") tag:kButtonTagEditAddGuardian];
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Correct gender", @"") tag:kButtonTagActionCorrectGender];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Correct gender", @"") tag:kButtonTagEditCorrectGender];
     
     [actionSheet show];
+}
+
+
+- (void)showInfo
+{
+    
 }
 
 
@@ -873,7 +873,7 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)addItem
+- (void)performAddAction
 {
     [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
 }
@@ -913,32 +913,30 @@ static NSInteger const kButtonIndexContinue = 1;
     _origo = [self.entity ancestorConformingToProtocol:@protocol(OOrigo)];
     _membership = [_origo membershipForMember:_member];
     
-    if ([self targetIs:kTargetUser]) {
-        self.title = NSLocalizedString(@"About me", @"");
-    } else if ([self targetIs:kTargetGuardian]) {
-        self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
-    } else if ([self targetIs:kTargetContact]) {
-        self.title = NSLocalizedString(_origo.type, kStringPrefixContactTitle);
-    } else if ([self targetIs:kTargetParentContact]) {
-        self.title = [[OLanguage nouns][_parentContact_][singularIndefinite] capitalizedString];
-    } else if ([_member isCommitted]) {
-        NSString *givenName = [_member givenName];
-        
-        self.title = [_member isHousemateOfUser] ? givenName : [_member publicName];
-        self.navigationItem.backBarButtonItem = [UIBarButtonItem buttonWithTitle:givenName];
-    } else {
-        self.title = NSLocalizedString(_origo.type, kStringPrefixNewMemberTitle);
-    }
-    
     if ([self actionIs:kActionRegister]) {
+        if ([self targetIs:kTargetUser]) {
+            self.title = NSLocalizedString(@"About me", @"");
+        } else if ([self targetIs:kTargetGuardian]) {
+            self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
+        } else if ([self targetIs:kTargetOrganiser]) {
+            self.title = NSLocalizedString(_origo.type, kStringPrefixOrganiserTitle);
+        } else if ([self targetIs:kTargetParentContact]) {
+            self.title = [[OLanguage nouns][_parentContact_][singularIndefinite] capitalizedString];
+        } else {
+            self.title = NSLocalizedString(_origo.type, kStringPrefixNewMemberTitle);
+        }
+        
         if ([self targetIs:kTargetJuvenile]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
         } else if (![self targetIs:kTargetUser]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButtonWithTarget:self];
         }
     } else if ([self actionIs:kActionDisplay]) {
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem buttonWithTitle:[_member givenName]];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem infoButtonWithTarget:self];
+        
         if ([_member isManagedByUser]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem actionButtonWithTarget:self];
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
         }
     }
     
@@ -972,9 +970,7 @@ static NSInteger const kButtonIndexContinue = 1;
         cell.textLabel.text = guardian.name;
         cell.destinationId = kIdentifierMember;
         
-        if ([[_member residences] count] == 1) {
-            cell.detailTextLabel.text = [OUtil contactInfoForMember:guardian];
-        } else {
+        if ([[_member residences] count] > 1) {
             cell.detailTextLabel.text = [[guardian residence] shortAddress];
         }
         
@@ -991,6 +987,7 @@ static NSInteger const kButtonIndexContinue = 1;
         [cell setDestinationId:kIdentifierOrigo selectableDuringInput:![self targetIs:kTargetJuvenile]];
     } else if (sectionKey == kSectionKeyRoles) {
         cell.textLabel.text = [self dataAtIndexPath:indexPath];
+        cell.selectable = [_origo userCanEdit];
     }
 }
 
@@ -1071,7 +1068,9 @@ static NSInteger const kButtonIndexContinue = 1;
         text = NSLocalizedString(@"A notification will be sent to the email address you provide.", @"");
         
         if ([self targetIs:kTargetGuardian]) {
-            text = [NSString stringWithFormat:@"%@\n\n%@", NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @""), text];
+            if ([[self.entity ancestor] conformsToProtocol:@protocol(OMember)]) {
+                text = [NSString stringWithFormat:@"%@\n\n%@", NSLocalizedString(@"Before you can register a minor, you must register his or her guardian(s).", @""), text];
+            }
         }
     } else if (sectionKey == kSectionKeyMember) {
         text = NSLocalizedString(@"Tap [+] to add another guardian.", @"");
@@ -1081,12 +1080,24 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)willDisplayInputCell:(OTableViewCell *)cell
+- (void)willDisplayInputCell:(OTableViewCell *)inputCell
 {
-    _nameField = [cell inputFieldForKey:[self nameKey]];
-    _dateOfBirthField = [cell inputFieldForKey:kPropertyKeyDateOfBirth];
-    _mobilePhoneField = [cell inputFieldForKey:kPropertyKeyMobilePhone];
-    _emailField = [cell inputFieldForKey:kPropertyKeyEmail];
+    _nameField = [inputCell inputFieldForKey:[self nameKey]];
+    _dateOfBirthField = [inputCell inputFieldForKey:kPropertyKeyDateOfBirth];
+    _mobilePhoneField = [inputCell inputFieldForKey:kPropertyKeyMobilePhone];
+    _emailField = [inputCell inputFieldForKey:kPropertyKeyEmail];
+}
+
+
+- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles) {
+        _role = [self dataAtIndexPath:indexPath];
+        
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEditRole];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit role", @"")];
+        [actionSheet show];
+    }
 }
 
 
@@ -1420,9 +1431,9 @@ static NSInteger const kButtonIndexContinue = 1;
     NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
     
     switch (actionSheet.tag) {
-        case kActionSheetTagAction:
+        case kActionSheetTagEdit:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagActionEdit) {
+                if (buttonTag == kButtonTagEditEdit) {
                     [self scrollToTopAndToggleEditMode];
                 }
             }
@@ -1505,6 +1516,11 @@ static NSInteger const kButtonIndexContinue = 1;
             
             break;
             
+        case kActionSheetTagEditRole:
+            [self.tableView cellForRowAtIndexPath:[self.tableView indexPathForSelectedRow]].selected = NO;
+            
+            break;
+            
         default:
             break;
     }
@@ -1516,8 +1532,8 @@ static NSInteger const kButtonIndexContinue = 1;
     NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
     
     switch (actionSheet.tag) {
-        case kActionSheetTagAction:
-            if (buttonTag == kButtonTagActionAddAddress) {
+        case kActionSheetTagEdit:
+            if (buttonTag == kButtonTagEditAddAddress) {
                 _cachedResidences = [_member housemateResidences];
                 
                 if ([_cachedResidences count]) {
@@ -1531,9 +1547,9 @@ static NSInteger const kButtonIndexContinue = 1;
                 } else {
                     [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:kOrigoTypeResidence];
                 }
-            } else if (buttonTag == kButtonTagActionAddGuardian) {
+            } else if (buttonTag == kButtonTagEditAddGuardian) {
                 [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
-            } else if (buttonTag == kButtonTagActionCorrectGender) {
+            } else if (buttonTag == kButtonTagEditCorrectGender) {
                 [self presentToggleGenderAlert];
             }
             
@@ -1578,7 +1594,7 @@ static NSInteger const kButtonIndexContinue = 1;
                 if (buttonTag == kButtonTagSourceAddressBook) {
                     [self pickFromAddressBook];
                 } else if (buttonTag == kButtonTagSourceGroups) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:self.target meta:_cachedCandidates];
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMember meta:_cachedCandidates];
                 }
             } else {
                 [self.inputCell resumeFirstResponder];
@@ -1611,6 +1627,13 @@ static NSInteger const kButtonIndexContinue = 1;
             }
             
             break;
+        
+        case kActionSheetTagEditRole:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                [OAlert showInputDialogueWithPrompt:NSLocalizedString(@"Edit role", @"") placeholder:NSLocalizedString(@"Role designation", @"") text:_role delegate:self tag:kAlertTagEditRole];
+            }
+            
+            break;
             
         default:
             break;
@@ -1623,11 +1646,27 @@ static NSInteger const kButtonIndexContinue = 1;
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
-        case kAlertTagContactRole:
+        case kAlertTagOrganiserRole:
             if (buttonIndex == kButtonIndexOK) {
-                _organiserRole = [alertView textFieldAtIndex:0].text;
+                _role = [alertView textFieldAtIndex:0].text;
                 
                 [self persistMember];
+            } else {
+                [self.dismisser dismissModalViewController:self];
+            }
+            
+            break;
+            
+        case kAlertTagEditRole:
+            if (buttonIndex == kButtonIndexOK) {
+                NSString *roleType = [_membership roleTypeForRole:_role];
+                NSString *revisedRole = [alertView textFieldAtIndex:0].text;
+                
+                [_membership removeRole:_role ofType:roleType];
+                [_membership addRole:revisedRole ofType:roleType];
+                
+                [self reloadSectionWithKey:kSectionKeyRoles];
+                [[OMeta m].replicator replicateIfNeeded];
             }
             
             break;

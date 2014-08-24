@@ -11,16 +11,14 @@
 static NSInteger const kSectionKeyValues = 0;
 static NSInteger const kSectionKeySignOut = 1;
 
-static NSInteger const kSectionKeyRoles = 0;
-static NSInteger const kSectionKeyAddRole = 1;
-
 static NSInteger const kAlertTagMemberRole = 0;
 static NSInteger const kButtonIndexOK = 1;
 
 
 @interface OValueListViewController () <OTableViewController> {
     id<OOrigo> _origo;
-    id<OMember> _roleOwner;
+    
+    NSString *_addedRole;
 }
 
 @end
@@ -28,23 +26,33 @@ static NSInteger const kButtonIndexOK = 1;
 
 @implementation OValueListViewController
 
-- (void)presentMemberRoleDialogue
+#pragma mark - Selector implementations
+
+- (void)performAddAction
 {
-    NSString *message = nil;
+    [OAlert showInputDialogueWithPrompt:NSLocalizedString(@"What role do you want to create?", @"") placeholder:NSLocalizedString(_origo.type, kStringPrefixMemberRoleTitle) text:nil delegate:self tag:kAlertTagMemberRole];
+}
+
+
+#pragma mark - View lifecycle
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     
-    if ([_roleOwner isUser]) {
-        message = NSLocalizedString(@"What is your role?", @"");
-    } else {
-        message = [NSString stringWithFormat:NSLocalizedString(@"What is %@'s role?", @""), [_roleOwner givenName]];
+    if (self.didResurface) {
+        [self reloadSectionWithKey:kSectionKeyValues];
     }
+}
+
+
+#pragma mark - UIViewController overrides
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    [super prepareForSegue:segue sender:sender];
     
-    UIAlertView *dialogueView = [[UIAlertView alloc] initWithTitle:@"" message:message delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"OK", @""), nil];
-    dialogueView.alertViewStyle = UIAlertViewStylePlainTextInput;
-    [dialogueView textFieldAtIndex:0].autocapitalizationType = UITextAutocapitalizationTypeSentences;
-    [dialogueView textFieldAtIndex:0].placeholder = NSLocalizedString(@"Contact role", @"");
-    dialogueView.tag = kAlertTagMemberRole;
-    
-    [dialogueView show];
+    [segue.destinationViewController setMeta:_origo];
 }
 
 
@@ -58,9 +66,9 @@ static NSInteger const kButtonIndexOK = 1;
     } else if ([self targetIs:kTargetRoles]) {
         _origo = self.meta;
         
-        self.title = NSLocalizedString(_origo.type, kStringPrefixRolesTitle);
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+        self.title = NSLocalizedString(_origo.type, kStringPrefixMemberRolesTitle);
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
     }
 }
 
@@ -71,8 +79,7 @@ static NSInteger const kButtonIndexOK = 1;
         [self setData:[[OSettings settings] settingKeys] forSectionWithKey:kSectionKeyValues];
         [self setData:@[kCustomData] forSectionWithKey:kSectionKeySignOut];
     } else if ([self targetIs:kTargetRoles]) {
-        [self setData:[_origo memberContacts] forSectionWithKey:kSectionKeyRoles];
-        [self setData:kCustomData forSectionWithKey:kSectionKeyAddRole];
+        [self setData:[_origo memberRoles] forSectionWithKey:kSectionKeyValues];
     }
 }
 
@@ -88,19 +95,15 @@ static NSInteger const kButtonIndexOK = 1;
             cell.textLabel.text = NSLocalizedString(key, kStringPrefixSettingLabel);
             cell.detailTextLabel.text = [[OSettings settings] displayValueForSettingKey:key];
         } else if (sectionKey == kSectionKeySignOut) {
-            cell.accessoryType = UITableViewCellAccessoryNone;
             cell.textLabel.textColor = [UIColor redColor];
             cell.textLabel.text = [NSLocalizedString(@"Log out", @"") stringByAppendingString:[OMeta m].user.name separator:kSeparatorSpace];
         }
     } else if ([self targetIs:kTargetRoles]) {
-        if (sectionKey == kSectionKeyRoles) {
-            id<OMembership> membership = [_origo membershipForMember:[self dataAtIndexPath:indexPath]];
-            
-            cell.textLabel.text = [membership memberRoles][0];
-            cell.detailTextLabel.text = [membership.member publicName];
-        } else if (sectionKey == kSectionKeyAddRole) {
-            cell.textLabel.text = NSLocalizedString(@"Add role", @"");
-        }
+        NSString *role = [self dataAtIndexPath:indexPath];
+        
+        cell.textLabel.text = role;
+        cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[_origo membersWithRole:role] conjoinLastItem:NO];
+        cell.destinationId = kIdentifierValuePicker;
     }
 }
 
@@ -133,24 +136,38 @@ static NSInteger const kButtonIndexOK = 1;
         } else {
             // TODO;
         }
-    } else if ([self targetIs:kTargetRoles]) {
-        if (sectionKey == kSectionKeyRoles) {
-            
-        } else if (sectionKey == kSectionKeyAddRole) {
-            [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetRole meta:_origo];
+    }
+}
+
+
+- (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self targetIs:kTargetRoles];
+}
+
+
+- (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self targetIs:kTargetRoles]) {
+        NSString *role = [self dataAtIndexPath:indexPath];
+        
+        for (id<OMember> roleHolder in [_origo membersWithRole:role]) {
+            [[_origo membershipForMember:roleHolder] removeRole:role ofType:kRoleTypeMemberRole];
         }
     }
 }
 
 
-- (void)didDismissModalViewController:(OTableViewController *)viewController
+- (void)willDismissModalViewController:(OTableViewController *)viewController
 {
     if (!viewController.didCancel) {
         if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
-            if ([viewController targetIs:kTargetRole]) {
-                _roleOwner = viewController.returnData;
+            if ([viewController targetIs:_addedRole]) {
+                id<OMembership> membership = [_origo membershipForMember:viewController.returnData];
+                [membership addRole:_addedRole ofType:kRoleTypeMemberRole];
                 
-                [self presentMemberRoleDialogue];
+                [[OMeta m].replicator replicate];
+                [self reloadSectionWithKey:kSectionKeyValues];
             }
         }
     }
@@ -159,16 +176,14 @@ static NSInteger const kButtonIndexOK = 1;
 
 #pragma mark - UIAlertViewDelegateConformance
 
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
         case kAlertTagMemberRole:
             if (buttonIndex == kButtonIndexOK) {
-                id<OMembership> membership = [_origo membershipForMember:_roleOwner];
-                [membership addRole:[alertView textFieldAtIndex:0].text ofType:kRoleTypeMemberContact];
+                _addedRole = [alertView textFieldAtIndex:0].text;
                 
-                [[OMeta m].replicator replicate];
-                [self reloadSectionWithKey:kSectionKeyRoles];
+                [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:_addedRole meta:[_origo regulars]];
             }
             
             break;

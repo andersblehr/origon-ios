@@ -11,7 +11,6 @@
 @interface OUtil : NSObject
 
 + (NSString *)genderStringForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile;
-+ (NSString *)contactInfoForMember:(id<OMember>)member;
 + (NSString *)guardianInfoForMember:(id<OMember>)member;
 + (UIImage *)smallImageForMember:(id<OMember>)member;
 + (UIImage *)smallImageForOrigo:(id<OOrigo>)origo;

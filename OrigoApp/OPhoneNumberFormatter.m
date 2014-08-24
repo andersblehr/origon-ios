@@ -330,6 +330,8 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         }
     }
     
+    // TODO: Handle format/region mismatch
+    
     //if (_tokenOffset < [_format length]) {
     //    _formattedPhoneNumber = nil;
     //}

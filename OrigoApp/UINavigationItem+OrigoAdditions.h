@@ -11,8 +11,12 @@
 @interface UINavigationItem (OrigoAdditions)
 
 - (void)setTitle:(NSString *)title withSubtitle:(NSString *)subtitle;
+- (void)setSubtitle:(NSString *)subtitle;
+- (void)clearSubtitle;
+
 - (UISegmentedControl *)addSegmentedTitle:(NSString *)segmentedTitle;
 
-- (void)appendRightBarButtonItem:(UIBarButtonItem *)barButtonItem;
+- (void)addRightBarButtonItem:(UIBarButtonItem *)barButtonItem;
+- (void)addRightBarButtonItem:(UIBarButtonItem *)barButtonItem append:(BOOL)append;
 
 @end

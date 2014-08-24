@@ -95,7 +95,7 @@
 "[registration footer] general" = "Tap [+] to add members.";
 
 // Member registration button titles
-"[add member] residence" = "Add household member";
+"[add member] residence" = "New member";
 "[add member] friends" = "Add friend";
 "[add member] team" = "Add player";
 "[add member] organisation" = "Add member";
@@ -104,33 +104,53 @@
 "[add member] studentGroup" = "Add student";
 "[add member] general" = "Add member";
 
-// Contact registration button titles
-"[add contact] preschoolClass" = "Add teacher";
-"[add contact] schoolClass" = "Add teacher";
-"[add contact] studentGroup" = "Add lecturer";
-"[add contact] team" = "Add coach";
+// Organiser registration button titles
+"[add organiser] preschoolClass" = "Add teacher";
+"[add organiser] schoolClass" = "Add teacher";
+"[add organiser] studentGroup" = "Add lecturer";
+"[add organiser] team" = "Add coach";
 
-// Role editing button titles
-"[edit roles] team" = "Edit player roles";
-"[edit roles] organisation" = "Edit roles";
-"[edit roles] schoolClass" = "Edit student roles";
-"[edit roles] studentGroup" = "Edit student roles";
-"[edit roles] general" = "Edit roles";
+// Edit member roles button titles
+"[edit member roles] team" = "Edit player roles";
+"[edit member roles] organisation" = "Edit roles";
+"[edit member roles] schoolClass" = "Edit student roles";
+"[edit member roles] studentGroup" = "Edit student roles";
+"[edit member roles] general" = "Edit roles";
 
-// Origo contact titles
-"[contact title] preschoolClass" = "Teacher";
-"[contact title] schoolClass" = "Teacher";
-"[contact title] studentGroup" = "Lecturer";
-"[contact title] team" = "Coach";
+// Organiser titles
+"[organiser title] preschoolClass" = "Teacher";
+"[organiser title] schoolClass" = "Teacher";
+"[organiser title] studentGroup" = "Lecturer";
+"[organiser title] team" = "Coach";
+
+// Organiser roles
+"[organiser role] preschoolClass" = "Role";
+"[organiser role] schoolClass" = "Teacher role";
+"[organiser role] studentGroup" = "Role";
+"[organiser role] team" = "Coach role";
+
+// Member role titles
+"[member role] team" = "Player role";
+"[member role] organisation" = "Role";
+"[member role] schoolClass" = "Student role";
+"[member role] studentGroup" = "Student role";
+"[member role] general" = "Role";
+
+// Member roles titles
+"[member roles] team" = "Player roles";
+"[member roles] organisation" = "Roles";
+"[member roles] schoolClass" = "Student roles";
+"[member roles] studentGroup" = "Student roles";
+"[member roles] general" = "Roles";
 
 // Origo member list titles
 "[member list] residence" = "In the household";
 "[member list] friends" = "In the party";
-"[member list] team" = "Players on the team";
+"[member list] team" = "Players";
 "[member list] organisation" = "Members";
-"[member list] preschoolClass" = "In the class";
-"[member list] schoolClass" = "In the class";
-"[member list] studentGroup" = "In the group";
+"[member list] preschoolClass" = "Children";
+"[member list] schoolClass" = "Students";
+"[member list] studentGroup" = "Students";
 "[member list] general" = "Members";
 
 // Origo member registration titles
@@ -151,13 +171,6 @@
 "[all members] studentGroup" = "The whole group";
 "[all members] general" = "All members";
 
-// Role titles
-"[roles] team" = "Player roles";
-"[roles] organisation" = "Roles";
-"[roles] schoolClass" = "Student roles";
-"[roles] studentGroup" = "Student roles";
-"[roles] general" = "Roles";
-
 
 /***
  * Language strings
@@ -172,7 +185,6 @@
 // Nouns
 "address" = "address;the address;addresses;the addresses;-;-";
 "coach" = "coach;-;coaches;-;-;-";
-"contact" = "contact;-;contacts;-;-;-";
 "father" = "father;the father;-;-;your father;%@'s father";
 "group" = "-;-;-;-;my groups;%@'s groups";
 "guardian" = "guardian;-;guardians;-;-;-";
@@ -207,6 +219,9 @@
 "Cancel" = "Cancel";
 "Skip" = "Skip";
 "Log out" = "Log out";
+
+// Placeholders
+"Role designation" = "Role designation";
 
 // Alerts
 "No internet connection." = "No internet connection.";
@@ -297,7 +312,7 @@
 "Add parent contact" = "Add parent contact";
 "Show in map" = "Show in map";
 "About %@" = "About %@";
-"New housemate" = "New housemate";
+"Add household member" = "Add household member";
 "Other guardian" = "Other guardian";
 "Remove" = "Remove";
 
@@ -315,7 +330,7 @@
 
 // Footers
 "A notification will be sent to the email address you provide." = "A notification will be sent to the email address you provide.";
-"Before you can register a minor, you must register his or her guardians." = "Before you can register a minor, you must register his or her guardians.";
+"Before you can register a minor, you must register his or her guardian(s)." = "Before you can register a minor, you must register his or her guardian(s).";
 "Tap [+] to add another guardian." = "Tap [+] to add another guardian.";
 
 // Buttons
@@ -333,6 +348,7 @@
 "Retrieve from other groups" = "Retrieve from other groups";
 "A different number" = "A different number";
 "A different address" = "A different address";
+"Edit role" = "Edit role";
 
 // Alerts
 "Incorrect details" = "Incorrect details";
@@ -403,10 +419,9 @@
 
 // View title
 "Settings" = "Settings";
-"Role owner" = "Role owner";
 
-// Buttons
-"Add role" = "Add role";
+// Role strings
+"What role do you want to create?" = "What role do you want to create?";
 
 
 /***

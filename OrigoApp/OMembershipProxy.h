@@ -21,7 +21,7 @@ extern NSString * const kMembershipStatusExpired;
 
 extern NSString * const kRoleTypeOrganiser;
 extern NSString * const kRoleTypeParentContact;
-extern NSString * const kRoleTypeMemberContact;
+extern NSString * const kRoleTypeMemberRole;
 
 
 @protocol OMembership <OEntity>
@@ -50,6 +50,7 @@ extern NSString * const kRoleTypeMemberContact;
 - (NSArray *)parentContactRoles;
 - (NSArray *)memberRoles;
 - (NSArray *)allRoles;
+- (NSString *)roleTypeForRole:(NSString *)role;
 
 - (void)promoteToFull;
 - (void)demoteToAssociate;

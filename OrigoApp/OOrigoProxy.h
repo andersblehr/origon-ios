@@ -35,7 +35,9 @@ extern NSString * const kOrigoTypeTeam;
 - (NSArray *)members;
 - (NSArray *)organisers;
 - (NSArray *)parentContacts;
-- (NSArray *)memberContacts;
+- (NSArray *)memberRoles;
+- (NSArray *)membersWithRoles;
+- (NSArray *)membersWithRole:(NSString *)role;
 - (NSArray *)regulars;
 - (NSArray *)guardians;
 - (NSArray *)elders;
@@ -50,7 +52,6 @@ extern NSString * const kOrigoTypeTeam;
 - (BOOL)userIsMember;
 - (BOOL)userIsOrganiser;
 - (BOOL)userIsParentContact;
-- (BOOL)userIsMemberContact;
 
 - (BOOL)isOfType:(NSString *)type;
 - (BOOL)isOrganised;

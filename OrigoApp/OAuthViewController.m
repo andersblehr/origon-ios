@@ -228,14 +228,14 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-- (void)willDisplayInputCell:(OTableViewCell *)cell
+- (void)willDisplayInputCell:(OTableViewCell *)inputCell
 {
     if ([self actionIs:kActionSignIn]) {
-        _emailField = [cell inputFieldForKey:kExternalKeyAuthEmail];
-        _passwordField = [cell inputFieldForKey:kExternalKeyPassword];
+        _emailField = [inputCell inputFieldForKey:kExternalKeyAuthEmail];
+        _passwordField = [inputCell inputFieldForKey:kExternalKeyPassword];
     } else if ([self actionIs:kActionActivate]) {
-        _activationCodeField = [cell inputFieldForKey:kExternalKeyActivationCode];
-        _repeatPasswordField = [cell inputFieldForKey:kExternalKeyRepeatPassword];
+        _activationCodeField = [inputCell inputFieldForKey:kExternalKeyActivationCode];
+        _repeatPasswordField = [inputCell inputFieldForKey:kExternalKeyRepeatPassword];
     }
 }
 

@@ -27,7 +27,7 @@ NSString * const kTargetElder = @"elder";
 NSString * const kTargetMember = @"regular";
 NSString * const kTargetMembers = @"members";
 NSString * const kTargetGuardian = @"guardian";
-NSString * const kTargetContact = @"contact";
+NSString * const kTargetOrganiser = @"organiser";
 NSString * const kTargetParentContact = @"parentContact";
 NSString * const kTargetRelation = @"relation";
 NSString * const kTargetRole = @"role";
@@ -134,8 +134,10 @@ static OState *_activeState = nil;
             isMatch = isMatch || [_target isEqualToString:kTargetWard];
         } else if ([target isEqualToString:kTargetElder]) {
             isMatch = isMatch || [_target isEqualToString:kTargetGuardian];
-            isMatch = isMatch || [_target isEqualToString:kTargetContact];
+            isMatch = isMatch || [_target isEqualToString:kTargetOrganiser];
             isMatch = isMatch || [_target isEqualToString:kTargetParentContact];
+        } else if ([target isEqualToString:kTargetSetting]) {
+            // TODO: OR together all setting keys
         }
     }
     
@@ -220,7 +222,7 @@ static OState *_activeState = nil;
                 _aspect = kAspectJuvenile;
             } else {
                 _target = kTargetMember;
-                _aspect = kAspectDefault;
+                _aspect = [self aspectIs:kAspectJuvenile] ? _aspect : kAspectDefault;
             }
         } else if ([target conformsToProtocol:@protocol(OOrigo)]) {
             _target = ((id<OOrigo>)target).type;

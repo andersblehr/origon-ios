@@ -348,9 +348,13 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         for (OMember *member in [[origo instance] members]) {
             [peers removeObject:member];
         }
+        
+        if ([self isUser] && ![origo userIsMember]) {
+            [peers addObject:[OMeta m].user];
+        }
     }
     
-    return peers;
+    return [peers sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
