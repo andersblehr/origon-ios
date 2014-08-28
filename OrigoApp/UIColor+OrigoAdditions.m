@@ -8,6 +8,8 @@
 
 #import "UIColor+OrigoAdditions.h"
 
+static CGFloat const kAlphaDimmedBackground = 0.4f;
+
 
 @implementation UIColor (OrigoAdditions)
 
@@ -205,6 +207,14 @@
 + (instancetype)imagePlaceholderTextColour
 {
     return [self whiteColor];
+}
+
+
+#pragma mark - Dimmed view colour
+
++ (instancetype)dimmedViewColour
+{
+    return [[UIColor blackColor] colorWithAlphaComponent:kAlphaDimmedBackground];
 }
 
 @end

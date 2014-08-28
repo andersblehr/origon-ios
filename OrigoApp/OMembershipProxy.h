@@ -20,7 +20,7 @@ extern NSString * const kMembershipStatusRejected;
 extern NSString * const kMembershipStatusExpired;
 
 extern NSString * const kRoleTypeOrganiser;
-extern NSString * const kRoleTypeParentContact;
+extern NSString * const kRoleTypeParentRole;
 extern NSString * const kRoleTypeMemberRole;
 
 
@@ -47,7 +47,7 @@ extern NSString * const kRoleTypeMemberRole;
 - (void)addRole:(NSString *)role ofType:(NSString *)type;
 - (void)removeRole:(NSString *)role ofType:(NSString *)type;
 - (NSArray *)organiserRoles;
-- (NSArray *)parentContactRoles;
+- (NSArray *)parentRoles;
 - (NSArray *)memberRoles;
 - (NSArray *)allRoles;
 - (NSString *)roleTypeForRole:(NSString *)role;

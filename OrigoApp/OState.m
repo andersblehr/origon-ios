@@ -28,16 +28,21 @@ NSString * const kTargetMember = @"regular";
 NSString * const kTargetMembers = @"members";
 NSString * const kTargetGuardian = @"guardian";
 NSString * const kTargetOrganiser = @"organiser";
-NSString * const kTargetParentContact = @"parentContact";
+NSString * const kTargetParentContact = @"parent contact";
 NSString * const kTargetRelation = @"relation";
 NSString * const kTargetRole = @"role";
 NSString * const kTargetRoles = @"roles";
 NSString * const kTargetSetting = @"setting";
 NSString * const kTargetSettings = @"settings";
 
+NSString * const kAspectDefault = @"default";
 NSString * const kAspectHousehold = @"household";
 NSString * const kAspectJuvenile = @"juvenile";
-NSString * const kAspectDefault = @"default";
+NSString * const kAspectMembers = @"members";
+NSString * const kAspectParents = @"parents";
+NSString * const kAspectRole = @"role";
+NSString * const kAspectMemberRole = @"member role";
+NSString * const kAspectParentRole = @"parent role";
 
 static OState *_activeState = nil;
 
@@ -127,7 +132,7 @@ static OState *_activeState = nil;
 
 - (BOOL)targetIs:(NSString *)target
 {
-    BOOL isMatch = [_target isKindOfClass:[NSString class]] && [_target isEqualToString:target];
+    BOOL isMatch = [_target isEqualToString:target];
     
     if (!isMatch) {
         if ([target isEqualToString:kTargetJuvenile]) {
@@ -136,6 +141,9 @@ static OState *_activeState = nil;
             isMatch = isMatch || [_target isEqualToString:kTargetGuardian];
             isMatch = isMatch || [_target isEqualToString:kTargetOrganiser];
             isMatch = isMatch || [_target isEqualToString:kTargetParentContact];
+        } else if ([target isEqualToString:kTargetRole]) {
+            isMatch = isMatch || [self aspectIs:kAspectMemberRole];
+            isMatch = isMatch || [self aspectIs:kAspectParentRole];
         } else if ([target isEqualToString:kTargetSetting]) {
             // TODO: OR together all setting keys
         }
@@ -147,6 +155,15 @@ static OState *_activeState = nil;
 
 - (BOOL)aspectIs:(NSString *)aspect
 {
+    BOOL isMatch = [_aspect isEqualToString:aspect];
+    
+    if (!isMatch) {
+        if ([aspect isEqualToString:kAspectRole]) {
+            isMatch = isMatch || [_aspect isEqualToString:kAspectMemberRole];
+            isMatch = isMatch || [_aspect isEqualToString:kAspectParentRole];
+        }
+    }
+    
     return [_aspect isEqualToString:aspect];
 }
 
@@ -190,13 +207,15 @@ static OState *_activeState = nil;
 {
     NSString *instanceQualifier = nil;
     
-    if ([target isKindOfClass:[NSString class]]) {
-        instanceQualifier = target;
-    } else {
+    if ([target conformsToProtocol:@protocol(OEntity)]) {
         instanceQualifier = [target valueForKey:kPropertyKeyEntityId];
+    } else if ([target isKindOfClass:[NSDictionary class]]) {
+        instanceQualifier = [target allKeys][0];
+    } else if ([target isKindOfClass:[NSString class]]) {
+        instanceQualifier = target;
     }
     
-    return [identifier stringByAppendingString:instanceQualifier separator:kSeparatorColon];
+    return [identifier stringByAppendingString:instanceQualifier separator:kSeparatorHash];
 }
 
 
@@ -235,6 +254,9 @@ static OState *_activeState = nil;
                 _aspect = kAspectDefault;
             }
         }
+    } else if ([target isKindOfClass:[NSDictionary class]]) {
+        _target = [target allKeys][0];
+        _aspect = [target allValues][0];
     } else if ([target isKindOfClass:[NSString class]]) {
         _target = [OValidator isEmailValue:target] ? kTargetEmail : target;
     }

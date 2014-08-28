@@ -8,7 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+extern CGFloat const kFadeAnimationDuration;
+
 @interface UIView (OrigoAdditions)
+
+- (void)dim;
+- (void)undim;
 
 - (void)addSeparatorsForTableViewCell;
 - (void)redrawSeparatorsForTableViewCell;

@@ -17,11 +17,14 @@
 + (instancetype)infoButtonWithTarget:(id)target;
 + (instancetype)actionButtonWithTarget:(id)target;
 + (instancetype)lookupButtonWithTarget:(id)target;
++ (instancetype)multiRoleButtonWithTarget:(id)target selected:(BOOL)selected;
 
 + (instancetype)nextButtonWithTarget:(id)target;
 + (instancetype)cancelButtonWithTarget:(id)target;
++ (instancetype)cancelButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action;
 + (instancetype)skipButtonWithTarget:(id)target;
 + (instancetype)doneButtonWithTarget:(id)target;
++ (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action;
 + (instancetype)signOutButtonWithTarget:(id)target;
 
 + (instancetype)sendTextButtonWithTarget:(id)target;

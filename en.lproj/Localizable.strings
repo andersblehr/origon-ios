@@ -215,6 +215,7 @@
 "Edit" = "Edit";
 "Next" = "Next";
 "Done" = "Done";
+"Use" = "Use";
 "Continue" = "Continue";
 "Cancel" = "Cancel";
 "Skip" = "Skip";
@@ -306,8 +307,8 @@
  ***/
 
 // Buttons
+"Edit parent roles" = "Edit parent roles";
 "Edit subgroups" = "Edit subgroups";
-"Add..." = "Add...";
 "Add from other groups" = "Add from other groups";
 "Add parent contact" = "Add parent contact";
 "Show in map" = "Show in map";
@@ -404,7 +405,6 @@
 "What is %@'s contact role?" = "What is %@'s contact role?";
 "Role" = "Role";
 "Teacher role" = "Teacher role";
-"Contact role" = "Contact role";
 
 // Terms
 "his father" = "his father";
@@ -419,6 +419,7 @@
 
 // View title
 "Settings" = "Settings";
+"Parent roles" = "Parent roles";
 
 // Role strings
 "What role do you want to create?" = "What role do you want to create?";
@@ -430,6 +431,9 @@
 
 // View title
 "Adults|Minors" = "Adults|Minors";
+
+// Role strings
+"Contact role" = "Contact role";
 
 
 /***

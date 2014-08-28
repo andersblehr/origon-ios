@@ -621,8 +621,8 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
             [contactRoles addObjectsFromArray:[membership organiserRoles]];
         }
         
-        if ([membership hasRoleOfType:kRoleTypeParentContact]) {
-            [contactRoles addObjectsFromArray:[membership parentContactRoles]];
+        if ([membership hasRoleOfType:kRoleTypeParentRole]) {
+            [contactRoles addObjectsFromArray:[membership parentRoles]];
         }
         
         annotatedName = [NSString stringWithFormat:kAnnotatedNameFormat, [self givenName], [OUtil commaSeparatedListOfItems:contactRoles conjoinLastItem:NO]];

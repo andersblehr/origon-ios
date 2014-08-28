@@ -22,7 +22,8 @@ static NSInteger const kButtonTagAddParentContact = 3;
 static NSInteger const kActionSheetTagEdit = 1;
 static NSInteger const kButtonTagEditGroup = 0;
 static NSInteger const kButtonTagEditMemberRoles = 1;
-static NSInteger const kButtonTagEditSubgroups = 2;
+static NSInteger const kButtonTagEditParentRoles = 2;
+static NSInteger const kButtonTagEditSubgroups = 3;
 
 static NSInteger const kActionSheetTagCoHabitants = 2;
 static NSInteger const kButtonTagCoHabitantsAll = 0;
@@ -185,7 +186,15 @@ static NSInteger const kButtonIndexOK = 1;
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
         
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEditGroup];
-        [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixEditMemberRolesButton) tag:kButtonTagEditMemberRoles];
+        
+        if (![_origo isOfType:kOrigoTypeFriends]) {
+            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixEditMemberRolesButton) tag:kButtonTagEditMemberRoles];
+            
+            if ([_origo isJuvenile]) {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit parent roles", @"") tag:kButtonTagEditParentRoles];
+            }
+        }
+        
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit subgroups", @"") tag:kButtonTagEditSubgroups];
         
         [actionSheet show];
@@ -284,7 +293,7 @@ static NSInteger const kButtonIndexOK = 1;
     if (sectionKey == kSectionKeyOrganisers) {
         cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:member] organiserRoles] conjoinLastItem:NO];
     } else if (sectionKey == kSectionKeyParentContacts) {
-        cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:member] parentContactRoles] conjoinLastItem:NO];
+        cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:member] parentRoles] conjoinLastItem:NO];
     } else if (sectionKey == kSectionKeyMembers) {
         NSString *details = nil;
         id<OMembership> membership = [_origo membershipForMember:member];
@@ -573,7 +582,9 @@ static NSInteger const kButtonIndexOK = 1;
         switch (actionSheet.tag) {
             case kActionSheetTagEdit:
                 if (buttonTag == kButtonTagEditMemberRoles) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetRoles meta:_origo];
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:@{kTargetRoles: kAspectMembers} meta:_origo];
+                } else if (buttonTag == kButtonTagEditParentRoles) {
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:@{kTargetRoles: kAspectParents} meta:_origo];
                 }
                 
                 break;
@@ -637,7 +648,7 @@ static NSInteger const kButtonIndexOK = 1;
                 id<OMembership> membership = [_origo addMember:_parentContact];
                 NSString *parentContactRole = [alertView textFieldAtIndex:0].text;
                 
-                [membership addRole:parentContactRole ofType:kRoleTypeParentContact];
+                [membership addRole:parentContactRole ofType:kRoleTypeParentRole];
                 
                 [[OMeta m].replicator replicate];
                 [self reloadSectionWithKey:kSectionKeyParentContacts];

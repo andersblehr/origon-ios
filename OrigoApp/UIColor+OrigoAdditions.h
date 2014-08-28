@@ -44,4 +44,6 @@
 + (instancetype)labelTextColour;
 + (instancetype)imagePlaceholderTextColour;
 
++ (instancetype)dimmedViewColour;
+
 @end

@@ -128,16 +128,15 @@ static NSString * const kLogoText = @"..origo..";
     
     UIView *headerView = [[UIView alloc] initWithFrame:headerFrame];
     UILabel *headerLabel = [[UILabel alloc] initWithFrame:labelFrame];
+    headerLabel.backgroundColor = [UIColor clearColor];
+    headerLabel.textColor = [UIColor headerTextColour];
 
     if (self.style == UITableViewStylePlain) {
-        headerView.backgroundColor = [UIColor toolbarShadowColour];
-        headerLabel.backgroundColor = [UIColor clearColor];
+        headerView.backgroundColor = [UIColor tableViewBackgroundColour];
+        headerView.alpha = 0.98f;
         headerLabel.font = [UIFont listTextFont];
-        headerLabel.textColor = [UIColor textColour];
     } else {
-        headerLabel.backgroundColor = [UIColor clearColor];
         headerLabel.font = [UIFont headerFont];
-        headerLabel.textColor = [UIColor headerTextColour];
     }
 
     headerLabel.text = text;

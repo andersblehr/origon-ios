@@ -20,7 +20,7 @@ NSString * const kMembershipStatusRejected = @"R";
 NSString * const kMembershipStatusExpired = @"-";
 
 NSString * const kRoleTypeOrganiser = @"O";
-NSString * const kRoleTypeParentContact = @"P";
+NSString * const kRoleTypeParentRole = @"P";
 NSString * const kRoleTypeMemberRole = @"M";
 
 
