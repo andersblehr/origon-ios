@@ -1068,7 +1068,9 @@ static NSInteger const kButtonIndexContinue = 1;
         text = NSLocalizedString(@"A notification will be sent to the email address you provide.", @"");
         
         if ([self targetIs:kTargetGuardian]) {
-            if ([[self.entity ancestor] conformsToProtocol:@protocol(OMember)]) {
+            id<OEntity> ancestor = [self.entity ancestor];
+            
+            if ([ancestor conformsToProtocol:@protocol(OMember)] && ![ancestor isCommitted]) {
                 text = [NSString stringWithFormat:@"%@\n\n%@", NSLocalizedString(@"Before you can register a minor, you must register his or her guardian(s).", @""), text];
             }
         }

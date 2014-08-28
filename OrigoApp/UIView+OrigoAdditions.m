@@ -8,12 +8,16 @@
 
 #import "UIView+OrigoAdditions.h"
 
+CGFloat const kFadeAnimationDuration = 0.2f;
+
 static CGFloat const kCellShadowRadius = 1.f;
 static CGFloat const kCellShadowOffset = 0.f;
 static CGFloat const kImageShadowRadius = 1.f;
 static CGFloat const kImageShadowOffset = 1.5f;
 
 static NSString * const kKeyPathShadowPath = @"shadowPath";
+
+static UIView *_dimmerView = nil;
 
 
 @implementation UIView (OrigoAdditions)
@@ -29,6 +33,37 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
     self.layer.shadowOffset = CGSizeMake(0.f, offset);
     
     self.layer.masksToBounds = NO;
+}
+
+
+#pragma mark - Dimming & undimming
+
+- (void)dim
+{
+    _dimmerView = [[UIView alloc] initWithFrame:self.frame];
+    _dimmerView.backgroundColor = [UIColor dimmedViewColour];
+    _dimmerView.alpha = 0.f;
+    
+    [self addSubview:_dimmerView];
+    
+    [UIView animateWithDuration:kFadeAnimationDuration animations:^{
+        _dimmerView.alpha = 1.f;
+    } completion:^(BOOL finished) {
+        _dimmerView.userInteractionEnabled = YES;
+    }];
+}
+
+
+- (void)undim
+{
+    [UIView animateWithDuration:kFadeAnimationDuration animations:^{
+        _dimmerView.alpha = 0.f;
+    } completion:^(BOOL finished) {
+        _dimmerView.userInteractionEnabled = NO;
+    }];
+    
+    [_dimmerView removeFromSuperview];
+    _dimmerView = nil;
 }
 
 

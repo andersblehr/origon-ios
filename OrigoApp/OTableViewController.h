@@ -22,6 +22,7 @@
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 
 - (id)defaultTarget;
+- (id)destinationViewControllerTargetForIndexPath:(NSIndexPath *)indexPath;
 - (NSString *)reuseIdentifierForInputSection;
 - (NSArray *)toolbarButtons;
 

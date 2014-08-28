@@ -215,6 +215,7 @@
 "Edit" = "Rediger";
 "Next" = "Neste";
 "Done" = "Ferdig";
+"Use" = "Bruk";
 "Continue" = "Fortsett";
 "Skip" = "Hopp over";
 "Cancel" = "Avbryt";
@@ -305,8 +306,8 @@
  ***/
 
 // Buttons
+"Edit parent roles" = "Rediger foreldreroller";
 "Edit subgroups" = "Rediger undergrupper";
-"Add..." = "Legg til...";
 "Add from other groups" = "Legg til fra andre grupper";
 "Add parent contact" = "Legg til foreldrekontakt";
 "Show in map" = "Vis på kart";
@@ -403,7 +404,6 @@
 "What is %@'s contact role?" = "Hvilken kontaktrolle har %@?";
 "Role" = "Rolle";
 "Teacher role" = "Lærerrolle";
-"Contact role" = "Kontaktrolle";
 
 // Terms
 "his father" = "faren hans";
@@ -418,6 +418,7 @@
 
 // View title
 "Settings" = "Innstillinger";
+"Parent roles" = "Foreldreroller";
 
 // Role strings
 "What role do you want to create?" = "Hvilken rolle vil du opprette?";
@@ -429,6 +430,9 @@
 
 // View title
 "Adults|Minors" = "Voksne|Barn";
+
+// Role strings
+"Contact role" = "Kontaktrolle";
 
 
 /***

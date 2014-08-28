@@ -12,12 +12,6 @@ static CGFloat const kNavigationBarHeight = 72.f;
 static CGFloat const kHUDSideLength = 70.f;
 static CGFloat const kHUDCornerRadius = 5.f;
 
-static CGFloat const kAlphaDimmedBackground = 0.4f;
-static CGFloat const kAlphaInvisible = 0.f;
-static CGFloat const kAlphaVisible = 1.f;
-
-static CGFloat const kFadeAnimationDuration = 0.2f;
-
 
 @implementation OActivityIndicator
 
@@ -30,8 +24,8 @@ static CGFloat const kFadeAnimationDuration = 0.2f;
     self = [super initWithFrame:viewController.view.window.frame];
     
     if (self) {
-        self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:kAlphaDimmedBackground];
-        self.alpha = kAlphaInvisible;
+        self.backgroundColor = [UIColor dimmedViewColour];
+        self.alpha = 0.f;
         
         UIView *HUDView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, kHUDSideLength, kHUDSideLength)];
         HUDView.backgroundColor = [UIColor alertViewBackgroundColour];
@@ -57,9 +51,9 @@ static CGFloat const kFadeAnimationDuration = 0.2f;
 
 - (void)startAnimating
 {
-    if (self.alpha == kAlphaInvisible) {
+    if (self.alpha == 0.f) {
         [UIView animateWithDuration:kFadeAnimationDuration animations:^{
-            self.alpha = kAlphaVisible;
+            self.alpha = 1.f;
         } completion:^(BOOL finished) {
             self.userInteractionEnabled = YES;
         }];
@@ -71,9 +65,9 @@ static CGFloat const kFadeAnimationDuration = 0.2f;
 
 - (void)stopAnimating
 {
-    if (self.alpha == kAlphaVisible) {
+    if (self.alpha == 1.f) {
         [UIView animateWithDuration:kFadeAnimationDuration animations:^{
-            self.alpha = kAlphaInvisible;
+            self.alpha = 0.f;
         } completion:^(BOOL finished) {
             self.userInteractionEnabled = NO;
         }];

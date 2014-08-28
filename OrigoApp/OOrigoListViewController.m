@@ -128,7 +128,7 @@ static NSInteger const kSectionKeyWards = 2;
     _origoTypes = [NSMutableArray array];
     
     self.title = [OMeta m].appName;
-    [self.navigationItem setTitle:[OMeta m].appName withSubtitle:_member.name];
+    [self.navigationItem setTitle:[OMeta m].appName editable:NO withSubtitle:_member.name];
     
     if ([_member isUser]) {
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];

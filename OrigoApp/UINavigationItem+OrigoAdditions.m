@@ -11,66 +11,107 @@
 static CGFloat const kNavigationBarHeight = 44.f;
 static CGFloat const kNavigationBarButtonWidth = 80.f;
 
-static CGFloat const kTitleHeadroom = 2.f;
+static CGFloat const kTitleHeadroom = 10.5f;
+static CGFloat const kTitleSubtitleHeadrom = 2.f;
 static CGFloat const kTitleHeight = 24.f;
+
+static NSInteger const kViewTagTitleField = 10;
+static NSInteger const kViewTagSubtitleLabel = 11;
 
 
 @implementation UINavigationItem (OrigoAdditions)
 
-#pragma mark - Subtitle handling
+#pragma mark - Custom titles
 
-- (void)setTitle:(NSString *)title withSubtitle:(NSString *)subtitle
+- (id)setTitle:(NSString *)title editable:(BOOL)editable
 {
-    if (subtitle) {
-        CGFloat titleViewWidth = [OMeta screenWidth] - 2 * kNavigationBarButtonWidth;
+    return [self setTitle:title editable:editable withSubtitle:nil];
+}
+
+
+- (id)setTitle:(NSString *)title editable:(BOOL)editable withSubtitle:(NSString *)subtitle
+{
+    CGFloat titleViewWidth = [OMeta screenWidth] - 2 * kNavigationBarButtonWidth;
+    UITextField *titleField = nil;
+    UILabel *subtitleLabel = nil;
+    
+    BOOL needsAddTitleField = NO;
+    BOOL needsAddSubtitleLabel = NO;
+    
+    if (self.titleView) {
+        titleField = (UITextField *)[self.titleView viewWithTag:kViewTagTitleField];
+        subtitleLabel = (UILabel *)[self.titleView viewWithTag:kViewTagSubtitleLabel];
+    }
+    
+    if (titleField) {
+        titleField.text = title;
+    } else {
+        titleField = [[UITextField alloc] initWithFrame:CGRectZero];
+        titleField.adjustsFontSizeToFitWidth = YES;
+        titleField.backgroundColor = [UIColor clearColor];
+        titleField.font = [UIFont navigationBarTitleFont];
+        titleField.returnKeyType = UIReturnKeyDone;
+        titleField.tag = kViewTagTitleField;
+        titleField.text = title;
+        titleField.textAlignment = NSTextAlignmentCenter;
+        titleField.textColor = [UIColor blackColor];
         
-        CGRect titleFrame = CGRectMake(0.f, kTitleHeadroom, titleViewWidth, kTitleHeight);
-        UILabel *titleLabel = [[UILabel alloc] initWithFrame:titleFrame];
-        titleLabel.backgroundColor = [UIColor clearColor];
-        titleLabel.font = [UIFont navigationBarTitleFont];
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        titleLabel.textColor = [UIColor blackColor];
-        titleLabel.text = title;
-        titleLabel.adjustsFontSizeToFitWidth = YES;
-        
+        needsAddTitleField = YES;
+    }
+    
+    if (subtitle && subtitleLabel) {
+        subtitleLabel.text = subtitle;
+    } else if (subtitle) {
         CGFloat subtitleHeight = kNavigationBarHeight - kTitleHeight;
         CGRect subtitleFrame = CGRectMake(0.f, kTitleHeight, titleViewWidth, subtitleHeight);
-        UILabel *subtitleLabel = [[UILabel alloc] initWithFrame:subtitleFrame];
+        subtitleLabel = [[UILabel alloc] initWithFrame:subtitleFrame];
+        subtitleLabel.adjustsFontSizeToFitWidth = YES;
         subtitleLabel.backgroundColor = [UIColor clearColor];
         subtitleLabel.font = [UIFont navigationBarSubtitleFont];
+        subtitleLabel.tag = kViewTagSubtitleLabel;
+        subtitleLabel.text = subtitle;
         subtitleLabel.textAlignment = NSTextAlignmentCenter;
         subtitleLabel.textColor = [UIColor blackColor];
-        subtitleLabel.text = subtitle;
-        subtitleLabel.adjustsFontSizeToFitWidth = YES;
         
-        CGRect titleViewFrame = CGRectMake(0.f, 0.f, titleViewWidth, kNavigationBarHeight);
-        UIView* titleView = [[UIView alloc] initWithFrame:titleViewFrame];
-        titleView.backgroundColor = [UIColor clearColor];
-        [titleView addSubview:titleLabel];
-        [titleView addSubview:subtitleLabel];
-        
-        self.titleView = titleView;
-    } else {
-        [self clearSubtitle];
+        needsAddSubtitleLabel = YES;
+    } else if (subtitleLabel) {
+        [subtitleLabel removeFromSuperview];
+        subtitleLabel = nil;
     }
+    
+    CGFloat headroom = subtitle ? kTitleSubtitleHeadrom : kTitleHeadroom;
+    titleField.frame = CGRectMake(0.f, headroom, titleViewWidth, kTitleHeight);;
+    titleField.userInteractionEnabled = editable;
+    
+    if (!self.titleView) {
+        CGRect titleViewFrame = CGRectMake(0.f, 0.f, titleViewWidth, kNavigationBarHeight);
+        self.titleView = [[UIView alloc] initWithFrame:titleViewFrame];
+        self.titleView.backgroundColor = [UIColor clearColor];
+    }
+    
+    if (needsAddTitleField) {
+        [self.titleView addSubview:titleField];
+    }
+    
+    if (needsAddSubtitleLabel) {
+        [self.titleView addSubview:subtitleLabel];
+    }
+    
+    self.title = title;
+    
+    return titleField;
 }
 
 
 - (void)setSubtitle:(NSString *)subtitle
 {
-    [self setTitle:self.title withSubtitle:subtitle];
+    UITextField *titleField = (UITextField *)[self.titleView viewWithTag:kViewTagTitleField];
+    
+    [self setTitle:self.title editable:titleField.userInteractionEnabled withSubtitle:subtitle];
 }
 
 
-- (void)clearSubtitle
-{
-    self.titleView = nil;
-}
-
-
-#pragma mark - Segmented title control
-
-- (UISegmentedControl *)addSegmentedTitle:(NSString *)segmentedTitle
+- (UISegmentedControl *)setSegmentedTitle:(NSString *)segmentedTitle
 {
     NSArray *titleSegments = [segmentedTitle componentsSeparatedByString:kSeparatorSegments];
     UISegmentedControl *titleControl = [[UISegmentedControl alloc] initWithItems:titleSegments];

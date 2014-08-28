@@ -220,7 +220,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)preparePushDestinationViewController:(OTableViewController *)destinationViewController
 {
-    destinationViewController.target = [self dataAtIndexPath:_selectedIndexPath];
+    id target = nil;
+    
+    if ([_instance respondsToSelector:@selector(destinationViewControllerTargetForIndexPath:)]) {
+        target = [_instance destinationViewControllerTargetForIndexPath:_selectedIndexPath];
+    } else {
+        target = [self dataAtIndexPath:_selectedIndexPath];
+    }
+    
+    destinationViewController.target = target;
     destinationViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:_selectedIndexPath];
     
     if (destinationViewController.entity && _entity) {
@@ -878,7 +886,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     if (_state) {
-        _state.target = _target;
+        _state.target = target;
     }
 }
 
@@ -889,7 +897,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         self.target = [_instance defaultTarget];
     }
     
-    return _target;
+    return _state && [_target isKindOfClass:[NSDictionary class]] ? [_target allKeys][0] : _target;
 }
 
 
@@ -1054,7 +1062,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     CGFloat height = 0.f;
     
     if (_usesPlainTableViewStyle) {
-        height = kPlainTableViewHeaderHeight;
+        height = [_sectionIndexTitles count] ? kPlainTableViewHeaderHeight : 0.f;
     } else {
         if ([self instanceHasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section]]) {
             height = [tableView headerHeight];
@@ -1169,11 +1177,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    if ([textField isKindOfClass:[OTextField class]]) {
-        [self inputFieldDidBeginEditing:textField];
-    } else if (textField.text) {
-        [textField setSelectedTextRange:[textField textRangeFromPosition:textField.beginningOfDocument toPosition:textField.endOfDocument]];
-    }
+    [self inputFieldDidBeginEditing:textField];
 }
 
 
@@ -1182,7 +1186,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if ([_inputCell nextInputField]) {
         [self moveToNextInputField];
     } else {
-        [self performSelector:@selector(didFinishEditing)];
+        [self didFinishEditing];
     }
     
     return NO;

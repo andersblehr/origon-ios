@@ -35,9 +35,14 @@ extern NSString * const kTargetRoles;
 extern NSString * const kTargetSetting;
 extern NSString * const kTargetSettings;
 
+extern NSString * const kAspectDefault;
 extern NSString * const kAspectHousehold;
 extern NSString * const kAspectJuvenile;
-extern NSString * const kAspectDefault;
+extern NSString * const kAspectMembers;
+extern NSString * const kAspectParents;
+extern NSString * const kAspectRole;
+extern NSString * const kAspectMemberRole;
+extern NSString * const kAspectParentRole;
 
 
 @interface OState : NSObject

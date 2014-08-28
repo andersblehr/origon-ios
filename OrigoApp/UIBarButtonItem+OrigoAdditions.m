@@ -27,12 +27,6 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-+ (instancetype)cancelButtonWithTitle:(NSString *)title target:(id)target
-{
-    return [[self alloc] initWithTitle:title style:UIBarButtonItemStylePlain target:target action:@selector(didCancelEditing)];
-}
-
-
 #pragma mark - Navigation bar icon buttons
 
 + (instancetype)settingsButtonWithTarget:(id)target
@@ -87,6 +81,14 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
++ (instancetype)multiRoleButtonWithTarget:(id)target selected:(BOOL)selected
+{
+    NSString *iconFile = selected ? kIconFileMultiRoleSelected : kIconFileMultiRole;
+    
+    return  [[self alloc] initWithImage:[UIImage imageNamed:iconFile] style:UIBarButtonItemStylePlain target:target action:@selector(toggleMultiRole)];
+}
+
+
 + (instancetype)lookupButtonWithTarget:(id)target
 {
     UIBarButtonItem *button = nil;
@@ -113,19 +115,31 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)cancelButtonWithTarget:(id)target
 {
-    return [self cancelButtonWithTitle:NSLocalizedString(@"Cancel", @"") target:target];
+    return [self cancelButtonWithTitle:NSLocalizedString(@"Cancel", @"") target:target action:@selector(didCancelEditing)];
+}
+
+
++ (instancetype)cancelButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action
+{
+    return [[self alloc] initWithTitle:title style:UIBarButtonItemStylePlain target:target action:action];
 }
 
 
 + (instancetype)skipButtonWithTarget:(id)target
 {
-    return [self cancelButtonWithTitle:NSLocalizedString(@"Skip", @"") target:target];
+    return [self cancelButtonWithTitle:NSLocalizedString(@"Skip", @"") target:target action:@selector(didCancelEditing)];
 }
 
 
 + (instancetype)doneButtonWithTarget:(id)target
 {
-    return [[self alloc] initWithTitle:NSLocalizedString(@"Done", @"") style:UIBarButtonItemStyleDone target:target action:@selector(didFinishEditing)];
+    return [self doneButtonWithTitle:NSLocalizedString(@"Done", @"") target:target action:@selector(didFinishEditing)];
+}
+
+
++ (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action
+{
+    return [[self alloc] initWithTitle:title style:UIBarButtonItemStyleDone target:target action:action];
 }
 
 

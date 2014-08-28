@@ -115,6 +115,8 @@ extern NSString * const kIconFileWoman;
 extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
+extern NSString * const kIconFileMultiRole;
+extern NSString * const kIconFileMultiRoleSelected;
 extern NSString * const kIconFileSettings;
 extern NSString * const kIconFilePlus;
 extern NSString * const kIconFileEdit;
