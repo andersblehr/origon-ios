@@ -17,12 +17,24 @@ static CGFloat const kImageShadowOffset = 1.5f;
 
 static NSString * const kKeyPathShadowPath = @"shadowPath";
 
-static UIView *_dimmerView = nil;
-
 
 @implementation UIView (OrigoAdditions)
 
 #pragma mark - Auxiliary methods
+
+- (void)setHairlinesHidden:(BOOL)hidden inSubviewsOfView:(UIView *)view
+{
+    for (UIView *subview in view.subviews) {
+        if ([subview isMemberOfClass:[UIImageView class]]) {
+            if (subview.frame.size.height < 1.f) {
+                subview.hidden = hidden;
+            }
+        } else {
+            [self setHairlinesHidden:hidden inSubviewsOfView:subview];
+        }
+    }
+}
+
 
 - (void)addShadowWithPath:(UIBezierPath *)path colour:(UIColor *)colour radius:(CGFloat)radius offset:(CGFloat)offset
 {
@@ -36,34 +48,11 @@ static UIView *_dimmerView = nil;
 }
 
 
-#pragma mark - Dimming & undimming
+#pragma mark - Hiding hairline subviews
 
-- (void)dim
+- (void)setHairlinesHidden:(BOOL)hidden
 {
-    _dimmerView = [[UIView alloc] initWithFrame:self.frame];
-    _dimmerView.backgroundColor = [UIColor dimmedViewColour];
-    _dimmerView.alpha = 0.f;
-    
-    [self addSubview:_dimmerView];
-    
-    [UIView animateWithDuration:kFadeAnimationDuration animations:^{
-        _dimmerView.alpha = 1.f;
-    } completion:^(BOOL finished) {
-        _dimmerView.userInteractionEnabled = YES;
-    }];
-}
-
-
-- (void)undim
-{
-    [UIView animateWithDuration:kFadeAnimationDuration animations:^{
-        _dimmerView.alpha = 0.f;
-    } completion:^(BOOL finished) {
-        _dimmerView.userInteractionEnabled = NO;
-    }];
-    
-    [_dimmerView removeFromSuperview];
-    _dimmerView = nil;
+    [self setHairlinesHidden:hidden inSubviewsOfView:self];
 }
 
 

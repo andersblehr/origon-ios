@@ -28,7 +28,6 @@ NSString * const kTargetMember = @"regular";
 NSString * const kTargetMembers = @"members";
 NSString * const kTargetGuardian = @"guardian";
 NSString * const kTargetOrganiser = @"organiser";
-NSString * const kTargetParentContact = @"parent contact";
 NSString * const kTargetRelation = @"relation";
 NSString * const kTargetRole = @"role";
 NSString * const kTargetRoles = @"roles";
@@ -38,19 +37,15 @@ NSString * const kTargetSettings = @"settings";
 NSString * const kAspectDefault = @"default";
 NSString * const kAspectHousehold = @"household";
 NSString * const kAspectJuvenile = @"juvenile";
-NSString * const kAspectMembers = @"members";
-NSString * const kAspectParents = @"parents";
+NSString * const kAspectMemberRole = @"members";
+NSString * const kAspectOrganiserRole = @"organisers";
+NSString * const kAspectParentRole = @"parents";
 NSString * const kAspectRole = @"role";
-NSString * const kAspectMemberRole = @"member role";
-NSString * const kAspectParentRole = @"parent role";
 
 static OState *_activeState = nil;
 
 
-@interface OState () {
-@private
-    NSString *_aspect;
-}
+@interface OState ()
 
 @end
 
@@ -140,9 +135,9 @@ static OState *_activeState = nil;
         } else if ([target isEqualToString:kTargetElder]) {
             isMatch = isMatch || [_target isEqualToString:kTargetGuardian];
             isMatch = isMatch || [_target isEqualToString:kTargetOrganiser];
-            isMatch = isMatch || [_target isEqualToString:kTargetParentContact];
         } else if ([target isEqualToString:kTargetRole]) {
             isMatch = isMatch || [self aspectIs:kAspectMemberRole];
+            isMatch = isMatch || [self aspectIs:kAspectOrganiserRole];
             isMatch = isMatch || [self aspectIs:kAspectParentRole];
         } else if ([target isEqualToString:kTargetSetting]) {
             // TODO: OR together all setting keys

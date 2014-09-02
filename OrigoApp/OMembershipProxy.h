@@ -19,9 +19,9 @@ extern NSString * const kMembershipStatusActive;
 extern NSString * const kMembershipStatusRejected;
 extern NSString * const kMembershipStatusExpired;
 
-extern NSString * const kRoleTypeOrganiser;
-extern NSString * const kRoleTypeParentRole;
 extern NSString * const kRoleTypeMemberRole;
+extern NSString * const kRoleTypeOrganiserRole;
+extern NSString * const kRoleTypeParentRole;
 
 
 @protocol OMembership <OEntity>
@@ -46,9 +46,9 @@ extern NSString * const kRoleTypeMemberRole;
 - (BOOL)hasRoleOfType:(NSString *)type;
 - (void)addRole:(NSString *)role ofType:(NSString *)type;
 - (void)removeRole:(NSString *)role ofType:(NSString *)type;
+- (NSArray *)memberRoles;
 - (NSArray *)organiserRoles;
 - (NSArray *)parentRoles;
-- (NSArray *)memberRoles;
 - (NSArray *)allRoles;
 - (NSString *)roleTypeForRole:(NSString *)role;
 

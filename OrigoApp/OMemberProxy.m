@@ -122,6 +122,26 @@
 }
 
 
+- (NSArray *)addresses
+{
+    id addresses = nil;
+    
+    if ([self instance]) {
+        addresses = [[self instance] addresses];
+    } else {
+        addresses = [NSMutableArray array];
+        
+        for (OOrigo *residence in [self residences]) {
+            if ([residence hasAddress] || [residence hasTelephone]) {
+                [addresses addObject:residence];
+            }
+        }
+    }
+    
+    return [self instance] ? addresses : [addresses sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
 - (NSArray *)wards
 {
     id wards = nil;

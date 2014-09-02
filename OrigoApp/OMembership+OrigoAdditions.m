@@ -8,6 +8,8 @@
 
 #import "OMembership+OrigoAdditions.h"
 
+NSString * const kPlaceholderRole = @"placeholder";
+
 static NSString *_membershipId = nil;
 static NSMutableDictionary *_rolesByType = nil;
 
@@ -38,7 +40,7 @@ static NSMutableDictionary *_rolesByType = nil;
 
 - (void)unmarshalRoles
 {
-    NSArray *roleTypes = @[kRoleTypeOrganiser, kRoleTypeParentRole, kRoleTypeMemberRole];
+    NSArray *roleTypes = @[kRoleTypeOrganiserRole, kRoleTypeParentRole, kRoleTypeMemberRole];
     
     _membershipId = self.entityId;
     
@@ -74,7 +76,13 @@ static NSMutableDictionary *_rolesByType = nil;
         [self unmarshalRoles];
     }
     
-    return [_rolesByType[type] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    NSMutableArray *roles = [_rolesByType[type] mutableCopy];
+    
+    if ([type isEqualToString:kRoleTypeOrganiserRole]) {
+        [roles removeObject:kPlaceholderRole];
+    }
+    
+    return [roles sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
 }
 
 
@@ -142,7 +150,15 @@ static NSMutableDictionary *_rolesByType = nil;
         [self unmarshalRoles];
     }
     
+    if ([self isAssociate]) {
+        [self promoteToFull];
+    }
+    
     if (![_rolesByType[type] containsObject:role]) {
+        if ([_rolesByType[type] containsObject:kPlaceholderRole]) {
+            [_rolesByType[type] removeObject:kPlaceholderRole];
+        }
+        
         [_rolesByType[type] addObject:role];
         [self marshalRoles];
     }
@@ -156,25 +172,34 @@ static NSMutableDictionary *_rolesByType = nil;
     }
     
     [_rolesByType[type] removeObject:role];
+    
+    if (![_rolesByType[type] count] && [type isEqualToString:kRoleTypeOrganiserRole]) {
+        [_rolesByType[type] addObject:kPlaceholderRole];
+    }
+    
     [self marshalRoles];
-}
-
-
-- (NSArray *)organiserRoles
-{
-    return [self rolesOfType:kRoleTypeOrganiser];
-}
-
-
-- (NSArray *)parentRoles
-{
-    return [self rolesOfType:kRoleTypeParentRole];
+    
+    if (![self.roles hasValue] && ![type isEqualToString:kRoleTypeMemberRole]) {
+        [self expire];
+    }
 }
 
 
 - (NSArray *)memberRoles
 {
     return [self rolesOfType:kRoleTypeMemberRole];
+}
+
+
+- (NSArray *)organiserRoles
+{
+    return [self rolesOfType:kRoleTypeOrganiserRole];
+}
+
+
+- (NSArray *)parentRoles
+{
+    return [self rolesOfType:kRoleTypeParentRole];
 }
 
 
@@ -186,8 +211,8 @@ static NSMutableDictionary *_rolesByType = nil;
     
     NSMutableArray *roles = [NSMutableArray array];
     
-    if ([self hasRoleOfType:kRoleTypeOrganiser]) {
-        [roles addObjectsFromArray:[self rolesOfType:kRoleTypeOrganiser]];
+    if ([self hasRoleOfType:kRoleTypeOrganiserRole]) {
+        [roles addObjectsFromArray:[self rolesOfType:kRoleTypeOrganiserRole]];
     }
     
     if ([self hasRoleOfType:kRoleTypeParentRole]) {
@@ -206,7 +231,7 @@ static NSMutableDictionary *_rolesByType = nil;
 {
     NSString *roleType = nil;
     
-    for (NSString *type in @[kRoleTypeOrganiser, kRoleTypeParentRole, kRoleTypeMemberRole]) {
+    for (NSString *type in @[kRoleTypeOrganiserRole, kRoleTypeParentRole, kRoleTypeMemberRole]) {
         if (!roleType && [[self rolesOfType:type] containsObject:role]) {
             roleType = type;
         }

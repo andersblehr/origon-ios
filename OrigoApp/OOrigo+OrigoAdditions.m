@@ -231,7 +231,7 @@
     NSMutableArray *organisers = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isFull] && [membership hasRoleOfType:kRoleTypeOrganiser]) {
+        if ([membership isFull] && [membership hasRoleOfType:kRoleTypeOrganiserRole]) {
             [organisers addObject:membership.member];
         }
     }
@@ -277,6 +277,32 @@
     }
     
     return members;
+}
+
+
+- (NSArray *)organiserRoles
+{
+    NSMutableSet *organiserRoles = [NSMutableSet set];
+    
+    for (OMember *organiser in [self organisers]) {
+        [organiserRoles addObjectsFromArray:[[self membershipForMember:organiser] organiserRoles]];
+    }
+    
+    return [[organiserRoles allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+}
+
+
+- (NSArray *)organisersWithRole:(NSString *)role
+{
+    NSMutableArray *organisers = [NSMutableArray array];
+    
+    for (OMember *organiser in [self organisers]) {
+        if ([[[self membershipForMember:organiser] organiserRoles] containsObject:role]) {
+            [organisers addObject:organiser];
+        }
+    }
+    
+    return organisers;
 }
 
 
@@ -380,7 +406,7 @@
 
 - (BOOL)userIsOrganiser
 {
-    return [[self membershipForMember:[OMeta m].user] hasRoleOfType:kRoleTypeOrganiser];
+    return [[self membershipForMember:[OMeta m].user] hasRoleOfType:kRoleTypeOrganiserRole];
 }
 
 
@@ -392,9 +418,19 @@
 
 #pragma mark - Origo meta information
 
-- (BOOL)isOfType:(NSString *)type
+- (BOOL)isOfType:(id)type
 {
-    return [self.type isEqualToString:type];
+    BOOL isOfType = NO;
+    
+    if ([type isKindOfClass:[NSString class]]) {
+        isOfType = [self.type isEqualToString:type];
+    } else if ([type isKindOfClass:[NSArray class]]) {
+        for (NSString *origoType in type) {
+            isOfType = isOfType || [self isOfType:origoType];
+        }
+    }
+    
+    return isOfType;
 }
 
 
@@ -405,7 +441,7 @@
     isOrganised = isOrganised || [self isOfType:kOrigoTypePreschoolClass];
     isOrganised = isOrganised || [self isOfType:kOrigoTypeSchoolClass];
     isOrganised = isOrganised || [self isOfType:kOrigoTypeTeam];
-    isOrganised = isOrganised || [self isOfType:kOrigoTypeStudentGroup];
+    isOrganised = isOrganised || [self isOfType:kOrigoTypeStudyGroup];
     
     return isOrganised;
 }

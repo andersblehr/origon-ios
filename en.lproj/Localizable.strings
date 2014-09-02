@@ -24,7 +24,7 @@
 "[label] school" = "School";
 "[label] signIn" = "Sign in or sign up";
 "[label] telephone" = "Telephone";
-"[label] university" = "Uni/school";
+"[label] institution" = "Institution";
 
 // Alternate labels
 "[alternate label] dateOfBirth" = "Born";
@@ -51,10 +51,10 @@
 "[placeholder] residenceName" = "Moniker";
 "[placeholder] school" = "Name of school";
 "[placeholder] schoolClass" = "Class";
-"[placeholder] studentGroup" = "Group moniker";
+"[placeholder] studyGroup" = "Group moniker";
 "[placeholder] team" = "Name of team";
 "[placeholder] telephone" = "Telephone number";
-"[placeholder] university" = "Name of university or school";
+"[placeholder] institution" = "Name of university or school";
 
 // Defaults
 "[default] residenceName" = "My place";
@@ -71,7 +71,7 @@
 "[title] organisation" = "Organisation";
 "[title] preschoolClass" = "Preschool class";
 "[title] schoolClass" = "School class";
-"[title] studentGroup" = "Student group";
+"[title] studyGroup" = "Student group";
 "[title] general" = "General purpose";
 
 // Registration titles
@@ -81,7 +81,7 @@
 "[registration title] organisation" = "New organisation";
 "[registration title] preschoolClass" = "New preschool class";
 "[registration title] schoolClass" = "New school class";
-"[registration title] studentGroup" = "New student group";
+"[registration title] studyGroup" = "New student group";
 "[registration title] general" = "New group";
 
 // Registration footers
@@ -91,7 +91,7 @@
 "[registration footer] organisation" = "Tap [+] to add members.";
 "[registration footer] preschoolClass" = "Tap [+] to add children to the class.";
 "[registration footer] schoolClass" = "Tap [+] to add students to the class.";
-"[registration footer] studentGroup" = "Tap [+] to add students to the class.";
+"[registration footer] studyGroup" = "Tap [+] to add students to the class.";
 "[registration footer] general" = "Tap [+] to add members.";
 
 // Member registration button titles
@@ -101,66 +101,71 @@
 "[add member] organisation" = "Add member";
 "[add member] preschoolClass" = "Add child";
 "[add member] schoolClass" = "Add student";
-"[add member] studentGroup" = "Add student";
+"[add member] studyGroup" = "Add student";
 "[add member] general" = "Add member";
 
 // Organiser registration button titles
 "[add organiser] preschoolClass" = "Add teacher";
 "[add organiser] schoolClass" = "Add teacher";
-"[add organiser] studentGroup" = "Add lecturer";
+"[add organiser] studyGroup" = "Add lecturer";
 "[add organiser] team" = "Add coach";
 
-// Edit member roles button titles
-"[edit member roles] team" = "Edit player roles";
-"[edit member roles] organisation" = "Edit roles";
-"[edit member roles] schoolClass" = "Edit student roles";
-"[edit member roles] studentGroup" = "Edit student roles";
-"[edit member roles] general" = "Edit roles";
-
 // Organiser titles
-"[organiser title] preschoolClass" = "Teacher";
-"[organiser title] schoolClass" = "Teacher";
-"[organiser title] studentGroup" = "Lecturer";
-"[organiser title] team" = "Coach";
+"[organiser] preschoolClass" = "Teacher";
+"[organiser] schoolClass" = "Teacher";
+"[organiser] studyGroup" = "Lecturer";
+"[organiser] team" = "Coach";
+
+// Organiser list titles
+"[organisers] preschoolClass" = "Teachers";
+"[organisers] schoolClass" = "Teachers";
+"[organisers] studyGroup" = "Lecturers";
+"[organisers] team" = "Coaches";
 
 // Organiser roles
 "[organiser role] preschoolClass" = "Role";
 "[organiser role] schoolClass" = "Teacher role";
-"[organiser role] studentGroup" = "Role";
+"[organiser role] studyGroup" = "Topic";
 "[organiser role] team" = "Coach role";
+
+// Organiser role registration button titles
+"[add organiser role] preschoolClass" = "Add teacher role";
+"[add organiser role] schoolClass" = "Add teacher role";
+"[add organiser role] studyGroup" = "Add topic";
+"[add organiser role] team" = "Add coach role";
 
 // Member role titles
 "[member role] team" = "Player role";
 "[member role] organisation" = "Role";
 "[member role] schoolClass" = "Student role";
-"[member role] studentGroup" = "Student role";
+"[member role] studyGroup" = "Student role";
 "[member role] general" = "Role";
 
-// Member roles titles
+// Member role list titles
 "[member roles] team" = "Player roles";
 "[member roles] organisation" = "Roles";
 "[member roles] schoolClass" = "Student roles";
-"[member roles] studentGroup" = "Student roles";
+"[member roles] studyGroup" = "Student roles";
 "[member roles] general" = "Roles";
 
-// Origo member list titles
-"[member list] residence" = "In the household";
-"[member list] friends" = "In the party";
-"[member list] team" = "Players";
-"[member list] organisation" = "Members";
-"[member list] preschoolClass" = "Children";
-"[member list] schoolClass" = "Students";
-"[member list] studentGroup" = "Students";
-"[member list] general" = "Members";
+// Member list titles
+"[members] residence" = "In the household";
+"[members] friends" = "In the party";
+"[members] team" = "Players";
+"[members] organisation" = "Members";
+"[members] preschoolClass" = "Children";
+"[members] schoolClass" = "Students";
+"[members] studyGroup" = "Participants";
+"[members] general" = "Members";
 
-// Origo member registration titles
+// Member registration titles
 "[member registration] residence" = "In the household";
 "[member registration] friends" = "In the party";
 "[member registration] team" = "New participant";
 "[member registration] organisation" = "New member";
 "[member registration] preschoolClass" = "New child";
 "[member registration] schoolClass" = "New student";
-"[member registration] studentGroup" = "New student";
+"[member registration] studyGroup" = "New student";
 "[member registration] general" = "New member";
 
 // Origo collective titles
@@ -168,7 +173,7 @@
 "[all members] friends" = "The whole group";
 "[all members] team" = "The whole group";
 "[all members] organisation" = "All members";
-"[all members] studentGroup" = "The whole group";
+"[all members] studyGroup" = "The whole group";
 "[all members] general" = "All members";
 
 
@@ -307,7 +312,7 @@
  ***/
 
 // Buttons
-"Edit parent roles" = "Edit parent roles";
+"Edit roles" = "Edit roles";
 "Edit subgroups" = "Edit subgroups";
 "Add from other groups" = "Add from other groups";
 "Add parent contact" = "Add parent contact";
@@ -396,16 +401,6 @@
 "Does %@ live with %@?" = "Does %@ live with %@?";
 "Does %@ live with %@ or %@?" = "Does %@ live with %@ or %@?";
 
-// Role strings
-"What is your role?" = "What is your role?";
-"What is %@'s role?" = "What is %@'s role?";
-"What is your role in %@?" = "What is your role in %@?";
-"What is %@'s role in %@?" = "What is %@'s role in %@?";
-"What is your contact role?" = "What is your contact role?";
-"What is %@'s contact role?" = "What is %@'s contact role?";
-"Role" = "Role";
-"Teacher role" = "Teacher role";
-
 // Terms
 "his father" = "his father";
 "her father" = "her father";
@@ -417,12 +412,12 @@
  * OValueListViewController strings
  ***/
 
-// View title
+// View titles
 "Settings" = "Settings";
-"Parent roles" = "Parent roles";
+"Roles" = "Roles";
 
-// Role strings
-"What role do you want to create?" = "What role do you want to create?";
+// Buttons
+"Add role" = "Add role";
 
 
 /***

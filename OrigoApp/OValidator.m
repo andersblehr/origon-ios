@@ -142,8 +142,8 @@ static NSDictionary *_keyMappings = nil;
             kMappedKeyOrganisationDescription : kPropertyKeyDescriptionText,
             kMappedKeyTeam : kPropertyKeyName,
             kMappedKeyClub : kPropertyKeyDescriptionText,
-            kMappedKeyStudentGroup : kPropertyKeyName,
-            kMappedKeyUniversity : kPropertyKeyDescriptionText,
+            kMappedKeyStudyGroup : kPropertyKeyName,
+            kMappedKeyInstitution : kPropertyKeyDescriptionText,
         };
     }
     

@@ -27,24 +27,6 @@
 }
 
 
-#pragma mark - Input dialogues
-
-+ (void)showInputDialogueWithPrompt:(NSString *)prompt placeholder:(NSString *)placeholder text:(NSString *)text delegate:(id)delegate tag:(NSInteger)tag
-{
-    UIAlertView *dialogueView = [[UIAlertView alloc] initWithTitle:nil message:prompt delegate:delegate cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"OK", @""), nil];
-    dialogueView.alertViewStyle = UIAlertViewStylePlainTextInput;
-    dialogueView.tag = tag;
-    
-    UITextField *roleField = [dialogueView textFieldAtIndex:0];
-    roleField.autocapitalizationType = UITextAutocapitalizationTypeSentences;
-    roleField.delegate = delegate;
-    roleField.placeholder = placeholder;
-    roleField.text = text;
-    
-    [dialogueView show];
-}
-
-
 #pragma mark - Alerting shorthands
 
 + (void)showAlertWithTitle:(NSString *)title text:(NSString *)text

@@ -21,7 +21,8 @@
 + (instancetype)azureRadianceColour;
 + (instancetype)indigoColour;
 
-+ (instancetype)toolbarShadowColour;
++ (instancetype)toolbarColour;
++ (instancetype)toolbarHairlineColour;
 + (instancetype)tableViewBackgroundColour;
 + (instancetype)tableViewSeparatorColour;
 + (instancetype)cellBackgroundColour;

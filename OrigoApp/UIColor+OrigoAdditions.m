@@ -78,9 +78,15 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 #pragma mark - iOS 7 default colours
 
 
-+ (instancetype)toolbarShadowColour
++ (instancetype)toolbarColour
 {
-    return [self colorWithRed:248/255.f green:248/255.f blue:248/255.f alpha:1.f];
+    return [self colorWithRed:248/255.f green:248/255.f blue:248/255.f alpha:0.99f];
+}
+
+
++ (instancetype)toolbarHairlineColour
+{
+    return [self lightGrayColor];
 }
 
 

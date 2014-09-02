@@ -8,12 +8,11 @@
 
 #import "UINavigationItem+OrigoAdditions.h"
 
-static CGFloat const kNavigationBarHeight = 44.f;
-static CGFloat const kNavigationBarButtonWidth = 80.f;
+static CGFloat const kNavigationBarReservedWidth = 160.f;
 
-static CGFloat const kTitleHeadroom = 10.5f;
-static CGFloat const kTitleSubtitleHeadrom = 2.f;
 static CGFloat const kTitleHeight = 24.f;
+static CGFloat const kTitleHeadroom = 10.5f;
+static CGFloat const kTitleHeadroomWithSubtitle = 2.f;
 
 static NSInteger const kViewTagTitleField = 10;
 static NSInteger const kViewTagSubtitleLabel = 11;
@@ -21,17 +20,11 @@ static NSInteger const kViewTagSubtitleLabel = 11;
 
 @implementation UINavigationItem (OrigoAdditions)
 
-#pragma mark - Custom titles
-
-- (id)setTitle:(NSString *)title editable:(BOOL)editable
-{
-    return [self setTitle:title editable:editable withSubtitle:nil];
-}
-
+#pragma mark - Editable title with subtitle
 
 - (id)setTitle:(NSString *)title editable:(BOOL)editable withSubtitle:(NSString *)subtitle
 {
-    CGFloat titleViewWidth = [OMeta screenWidth] - 2 * kNavigationBarButtonWidth;
+    CGFloat titleViewWidth = [OMeta screenWidth] - kNavigationBarReservedWidth;
     UITextField *titleField = nil;
     UILabel *subtitleLabel = nil;
     
@@ -62,7 +55,7 @@ static NSInteger const kViewTagSubtitleLabel = 11;
     if (subtitle && subtitleLabel) {
         subtitleLabel.text = subtitle;
     } else if (subtitle) {
-        CGFloat subtitleHeight = kNavigationBarHeight - kTitleHeight;
+        CGFloat subtitleHeight = kToolbarBarHeight - kTitleHeight;
         CGRect subtitleFrame = CGRectMake(0.f, kTitleHeight, titleViewWidth, subtitleHeight);
         subtitleLabel = [[UILabel alloc] initWithFrame:subtitleFrame];
         subtitleLabel.adjustsFontSizeToFitWidth = YES;
@@ -79,12 +72,12 @@ static NSInteger const kViewTagSubtitleLabel = 11;
         subtitleLabel = nil;
     }
     
-    CGFloat headroom = subtitle ? kTitleSubtitleHeadrom : kTitleHeadroom;
+    CGFloat headroom = subtitle ? kTitleHeadroomWithSubtitle : kTitleHeadroom;
     titleField.frame = CGRectMake(0.f, headroom, titleViewWidth, kTitleHeight);;
     titleField.userInteractionEnabled = editable;
     
     if (!self.titleView) {
-        CGRect titleViewFrame = CGRectMake(0.f, 0.f, titleViewWidth, kNavigationBarHeight);
+        CGRect titleViewFrame = CGRectMake(0.f, 0.f, titleViewWidth, kToolbarBarHeight);
         self.titleView = [[UIView alloc] initWithFrame:titleViewFrame];
         self.titleView.backgroundColor = [UIColor clearColor];
     }
@@ -100,26 +93,6 @@ static NSInteger const kViewTagSubtitleLabel = 11;
     self.title = title;
     
     return titleField;
-}
-
-
-- (void)setSubtitle:(NSString *)subtitle
-{
-    UITextField *titleField = (UITextField *)[self.titleView viewWithTag:kViewTagTitleField];
-    
-    [self setTitle:self.title editable:titleField.userInteractionEnabled withSubtitle:subtitle];
-}
-
-
-- (UISegmentedControl *)setSegmentedTitle:(NSString *)segmentedTitle
-{
-    NSArray *titleSegments = [segmentedTitle componentsSeparatedByString:kSeparatorSegments];
-    UISegmentedControl *titleControl = [[UISegmentedControl alloc] initWithItems:titleSegments];
-    [titleControl addTarget:[OState s].viewController action:@selector(didSelectTitleSegment) forControlEvents:UIControlEventValueChanged];
-    
-    self.titleView = titleControl;
-    
-    return titleControl;
 }
 
 

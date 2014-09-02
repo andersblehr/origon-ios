@@ -8,26 +8,21 @@
 
 #import "OValuePickerViewController.h"
 
-static NSInteger const kAlertTagParentContactRole = 0;
-static NSInteger const kButtonIndexOK = 1;
 
-
-@interface OValuePickerViewController () <OTableViewController, UITextFieldDelegate> {
+@interface OValuePickerViewController () <OTableViewController> {
 @private
-    BOOL _isMultiValuePicker;
     OTableViewCell *_checkedCell;
+    NSMutableArray *_pickedValues;
+    BOOL _isMultiValuePicker;
     
     id<OSettings> _settings;
     NSString *_settingKey;
 
     id<OOrigo> _origo;
     NSString *_role;
-    UITextField *_roleField;
-    UIBarButtonItem *_multiRoleButton;
-    UIBarButtonItem *_multiRoleButtonSelected;
-    UIBarButtonItem *_leftBarButtonItem;
-    NSArray *_righBarButtonItems;
-    UIView *_dimmerView;
+    NSString *_roleType;
+    UIBarButtonItem *_multiRoleButtonOff;
+    UIBarButtonItem *_multiRoleButtonOn;
 }
 
 @end
@@ -35,19 +30,21 @@ static NSInteger const kButtonIndexOK = 1;
 
 @implementation OValuePickerViewController
 
-#pragma mark - Input dialogues
+#pragma mark - Auxiliary methods
 
-- (void)presentParentContactRoleDialogue
+- (NSArray *)roleHolders
 {
-    NSString *prompt = nil;
+    NSArray *roleHolders = nil;
     
-    if ([self.returnData[0] isUser]) {
-        prompt = NSLocalizedString(@"What is your contact role?", @"");
-    } else {
-        prompt = [NSString stringWithFormat:NSLocalizedString(@"What is %@'s contact role?", @""), [self.returnData[0] givenName]];
+    if ([self aspectIs:kAspectMemberRole]) {
+        roleHolders = [_origo membersWithRole:_role];
+    } else if ([self aspectIs:kAspectOrganiserRole]) {
+        roleHolders = [_origo organisersWithRole:_role];
+    } else if ([self aspectIs:kAspectParentRole]) {
+        roleHolders = [_origo parentsWithRole:_role];
     }
     
-    [OAlert showInputDialogueWithPrompt:prompt placeholder:NSLocalizedString(@"Contact role", @"") text:nil delegate:self tag:kAlertTagParentContactRole];
+    return roleHolders;
 }
 
 
@@ -55,86 +52,35 @@ static NSInteger const kButtonIndexOK = 1;
 
 - (void)toggleMultiRole
 {
-    if ([self.returnData count] < 2) {
-        UIBarButtonItem *currentButton;
-        UIBarButtonItem *toggledButton;
-        
+    if ([_pickedValues count] < 2) {
         if (_isMultiValuePicker) {
-            currentButton = _multiRoleButtonSelected;
-            toggledButton = _multiRoleButton;
+            self.navigationItem.rightBarButtonItem = _multiRoleButtonOff;
         } else {
-            currentButton = _multiRoleButton;
-            toggledButton = _multiRoleButtonSelected;
+            self.navigationItem.rightBarButtonItem = _multiRoleButtonOn;
         }
-        
-        NSMutableArray *rightBarButtonItems = [NSMutableArray array];
-        
-        for (UIBarButtonItem *button in self.navigationItem.rightBarButtonItems) {
-            if (button == currentButton) {
-                [rightBarButtonItems addObject:toggledButton];
-            } else {
-                [rightBarButtonItems addObject:button];
-            }
-        }
-        
-        self.navigationItem.rightBarButtonItems = rightBarButtonItems;
         
         _isMultiValuePicker = !_isMultiValuePicker;
     }
 }
 
 
-- (void)didCancelEditingRole
-{
-    if ([_role hasValue]) {
-        _roleField.text = _role;
-        [_roleField resignFirstResponder];
-        
-        self.navigationItem.leftBarButtonItem = _leftBarButtonItem;
-        self.navigationItem.rightBarButtonItems = _righBarButtonItems;
-        
-        [self.tableView undim];
-    }
-}
-
-
-- (void)didFinishEditingRole
-{
-    if ([_roleField.text hasValue]) {
-        [_roleField resignFirstResponder];
-        
-        if (_role) {
-            for (id<OMember> roleHolder in [_origo membersWithRole:_role]) {
-                id<OMembership> membership = [_origo membershipForMember:roleHolder];
-                
-                [membership removeRole:_role ofType:kRoleTypeMemberRole];
-                [membership addRole:_roleField.text ofType:kRoleTypeMemberRole];
-            }
-        } else {
-            [self.navigationItem setTitle:_roleField.text editable:YES];
-        }
-        
-        _role = _roleField.text;
-        
-        self.navigationItem.leftBarButtonItem = _leftBarButtonItem;
-        self.navigationItem.rightBarButtonItems = _righBarButtonItems;
-        
-        [self.tableView undim];
-    }
-}
-
-
 #pragma mark - View lifecycle
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewWillDisappear:(BOOL)animated
 {
-    [super viewDidAppear:animated];
-    
-    if ([self targetIs:kTargetRole]) {
-        if (!_role) {
-            [_roleField becomeFirstResponder];
+    if (self.isModal && _isMultiValuePicker) {
+        if (self.didCancel) {
+            if ([self targetIs:kTargetRole]) {
+                for (id<OMember> roleHolder in [self roleHolders]) {
+                    [[_origo membershipForMember:roleHolder] removeRole:_role ofType:_roleType];
+                }
+            }
+        } else {
+            self.returnData = _pickedValues;
         }
     }
+    
+    [super viewWillDisappear:animated];
 }
 
 
@@ -150,43 +96,38 @@ static NSInteger const kButtonIndexOK = 1;
     } else {
         self.usesPlainTableViewStyle = YES;
         
-        if ([self targetIs:kTargetParentContact]) {
-            _origo = self.meta;
-            
-            self.title = [[OLanguage nouns][_parentContact_][singularIndefinite] stringByCapitalisingFirstLetter];
-        } else if ([self targetIs:kTargetMembers]) {
+        if ([self targetIs:kTargetMembers]) {
             _isMultiValuePicker = YES;
         } else if ([self targetIs:kTargetRole]) {
-            _role = self.isModal ? nil : self.target;
+            _origo = self.meta;
+            _role = [self.target isEqualToString:kTargetRole] ? nil : self.target;
             
-            if ([self.meta conformsToProtocol:@protocol(OOrigo)]) {
-                _origo = self.meta;
-                
-                if (_role) {
-                    if ([self aspectIs:kAspectMemberRole]) {
-                        self.returnData = [[_origo membersWithRole:_role] mutableCopy];
-                    } else if ([self aspectIs:kAspectParentRole]) {
-                        self.returnData = [[_origo parentsWithRole:_role] mutableCopy];
-                    }
-                    
-                    _isMultiValuePicker = ([self.returnData count] > 1);
-                }
-            }
-            
-            _roleField = [self.navigationItem setTitle:_role editable:YES withSubtitle:[OUtil commaSeparatedListOfItems:self.returnData conjoinLastItem:NO]];
-            _roleField.delegate = self;
+            NSString *placeholder = nil;
             
             if ([self aspectIs:kAspectMemberRole]) {
-                _roleField.placeholder = NSLocalizedString(_origo.type, kStringPrefixMemberRoleTitle);
+                _roleType = kRoleTypeMemberRole;
+                _pickedValues = _role ? [[_origo membersWithRole:_role] mutableCopy] : nil;
+                placeholder = NSLocalizedString(_origo.type, kStringPrefixMemberRoleTitle);
+            } else if ([self aspectIs:kAspectOrganiserRole]) {
+                _roleType = kRoleTypeOrganiserRole;
+                _pickedValues = _role ? [[_origo organisersWithRole:_role] mutableCopy] : nil;
+                placeholder = NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle);
             } else if ([self aspectIs:kAspectParentRole]) {
-                _roleField.placeholder = NSLocalizedString(@"Contact role", @"");
+                _roleType = kRoleTypeParentRole;
+                _pickedValues = _role ? [[_origo parentsWithRole:_role] mutableCopy] : nil;
+                placeholder = NSLocalizedString(@"Contact role", @"");
             }
             
-            if (!_isMultiValuePicker && [self.returnData count] < 2) {
-                _multiRoleButton = [UIBarButtonItem multiRoleButtonWithTarget:self selected:NO];
-                _multiRoleButtonSelected = [UIBarButtonItem multiRoleButtonWithTarget:self selected:YES];
+            [self setEditableTitle:_role placeholder:placeholder];
+            [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoinLastItem:NO]];
+            
+            _isMultiValuePicker = ([_pickedValues count] > 1);
+            
+            if (!_isMultiValuePicker && ([_pickedValues count] < 2)) {
+                _multiRoleButtonOff = [UIBarButtonItem multiRoleButtonWithTarget:self selected:NO];
+                _multiRoleButtonOn = [UIBarButtonItem multiRoleButtonWithTarget:self selected:YES];
                 
-                [self.navigationItem addRightBarButtonItem:_multiRoleButton];
+                [self.navigationItem addRightBarButtonItem:_multiRoleButtonOff];
             }
         }
     }
@@ -200,8 +141,8 @@ static NSInteger const kButtonIndexOK = 1;
         }
     }
     
-    if (!self.returnData) {
-        self.returnData = [NSMutableArray array];
+    if (!_pickedValues) {
+        _pickedValues = [NSMutableArray array];
     }
 }
 
@@ -214,6 +155,8 @@ static NSInteger const kButtonIndexOK = 1;
         if ([self targetIs:kTargetRole]) {
             if ([self aspectIs:kAspectMemberRole]) {
                 [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
+            } else if ([self aspectIs:kAspectOrganiserRole]) {
+                [self setData:[_origo organisers] sectionIndexLabelKey:kPropertyKeyName];
             } else if ([self aspectIs:kAspectParentRole]) {
                 [self setData:[_origo guardians] sectionIndexLabelKey:kPropertyKeyName];
             }
@@ -234,13 +177,13 @@ static NSInteger const kButtonIndexOK = 1;
         cell.textLabel.text = [candidate publicName];
         cell.imageView.image = [OUtil smallImageForMember:candidate];
         
-        if ([self.returnData count]) {
-            cell.checked = [self.returnData containsObject:candidate];
+        if ([_pickedValues count]) {
+            cell.checked = [_pickedValues containsObject:candidate];
         }
         
         if ([candidate isJuvenile]) {
             cell.detailTextLabel.text = [OUtil guardianInfoForMember:candidate];
-        } else if ([self targetIs:kTargetRole]) {
+        } else if ([self aspectIs:kAspectParentRole]) {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[candidate wards] conjoinLastItem:NO];
         } else {
             cell.detailTextLabel.text = [[candidate residence] shortAddress];
@@ -267,15 +210,15 @@ static NSInteger const kButtonIndexOK = 1;
                 oldValue = [self dataAtIndexPath:[self.tableView indexPathForCell:_checkedCell]];
                 
                 _checkedCell.checked = NO;
-                [self.returnData removeAllObjects];
+                [_pickedValues removeAllObjects];
             }
             
             _checkedCell = cell;
         }
         
-        [self.returnData addObject:pickedValue];
+        [_pickedValues addObject:pickedValue];
     } else {
-        [self.returnData removeObject:pickedValue];
+        [_pickedValues removeObject:pickedValue];
     }
     
     if ([self targetIs:kTargetSetting]) {
@@ -284,32 +227,28 @@ static NSInteger const kButtonIndexOK = 1;
     } else if ([self targetIs:kTargetMember]) {
         self.returnData = pickedValue;
         [self.dismisser dismissModalViewController:self];
-    } else if ([self targetIs:kTargetParentContact]) {
-        [self presentParentContactRoleDialogue];
     } else if ([self targetIs:kTargetRole]) {
-        NSString *roleType = [self aspectIs:kAspectMemberRole] ? kRoleTypeMemberRole : kRoleTypeParentRole;
-        
         if (cell.checked) {
-            [[_origo membershipForMember:pickedValue] addRole:_role ofType:roleType];
+            [[_origo membershipForMember:pickedValue] addRole:_role ofType:_roleType];
             
             if (!_isMultiValuePicker) {
-                [[_origo membershipForMember:oldValue] removeRole:_role ofType:roleType];
+                [[_origo membershipForMember:oldValue] removeRole:_role ofType:_roleType];
             }
         } else {
-            [[_origo membershipForMember:pickedValue] removeRole:_role ofType:roleType];
+            [[_origo membershipForMember:pickedValue] removeRole:_role ofType:_roleType];
         }
         
-        [self.navigationItem setSubtitle:[OUtil commaSeparatedListOfItems:self.returnData conjoinLastItem:NO]];
+        [self setSubtitle:[OUtil commaSeparatedListOfItems:[_pickedValues sortedArrayUsingSelector:@selector(compare:)] conjoinLastItem:NO]];
         
         if (_isMultiValuePicker) {
             if (self.isModal) {
-                if ([self.returnData count]) {
-                    if (self.navigationItem.rightBarButtonItem == _multiRoleButtonSelected) {
+                if ([_pickedValues count]) {
+                    if (self.navigationItem.rightBarButtonItem == _multiRoleButtonOn) {
                         self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
                     }
                 }
                 
-                self.navigationItem.rightBarButtonItem.enabled = [self.returnData count] > 0;
+                self.navigationItem.rightBarButtonItem.enabled = ([_pickedValues count] > 0);
             }
         } else {
             if (self.isModal) {
@@ -323,67 +262,18 @@ static NSInteger const kButtonIndexOK = 1;
 }
 
 
-#pragma mark - UITextFieldDelegate conformance
-
-- (void)textFieldDidBeginEditing:(OTextField *)textField
+- (void)titleWillChange:(NSString *)newTitle
 {
-    if ([textField.text hasValue]) {
-        textField.selectedTextRange = [textField textRangeFromPosition:textField.beginningOfDocument toPosition:textField.endOfDocument];
-    }
-    
-    _leftBarButtonItem = self.navigationItem.leftBarButtonItem;
-    
-    if (!self.isModal) {
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTitle:NSLocalizedString(@"Cancel", @"") target:self action:@selector(didCancelEditingRole)];
-    }
-    
-    _righBarButtonItems = self.navigationItem.rightBarButtonItems;
-    
-    self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem doneButtonWithTitle:NSLocalizedString(@"Use", @"") target:self action:@selector(didFinishEditingRole)]];
-    
-    [self.tableView dim];
-}
-
-
-- (BOOL)textFieldShouldReturn:(OTextField *)textField
-{
-    if ([textField.text hasValue]) {
-        [textField resignFirstResponder];
-    }
-    
-    return NO;
-}
-
-
-- (void)textFieldDidEndEditing:(OTextField *)textField
-{
-    [self didFinishEditingRole];
-}
-
-
-#pragma mark - UIAlertViewDelegate conformance
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (alertView.tag) {
-        case kAlertTagParentContactRole:
-            if (buttonIndex == kButtonIndexOK) {
-                id<OMembership> membership = [_origo addMember:self.returnData[0]];
-                NSString *role = [alertView textFieldAtIndex:0].text;
-                
-                [membership addRole:role ofType:kRoleTypeParentRole];
-            } else {
-                self.didCancel = YES;
-            }
+    if (_role) {
+        for (id<OMember> roleHolder in [self roleHolders]) {
+            id<OMembership> membership = [_origo membershipForMember:roleHolder];
             
-            [self.dismisser dismissModalViewController:self];
-            
-            break;
-            
-        default:
-            break;
+            [membership addRole:newTitle ofType:_roleType];
+            [membership removeRole:_role ofType:_roleType];
+        }
     }
     
+    _role = newTitle;
 }
 
 @end

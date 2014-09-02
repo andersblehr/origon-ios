@@ -10,8 +10,6 @@
 
 @interface OAlert : NSObject
 
-+ (void)showInputDialogueWithPrompt:(NSString *)prompt placeholder:(NSString *)placeholder text:(NSString *)text delegate:(id)delegate tag:(NSInteger)tag;
-
 + (void)showAlertWithTitle:(NSString *)title text:(NSString *)text;
 + (void)showAlertWithTitle:(NSString *)title text:(NSString *)text tag:(NSInteger)tag;
 + (void)showAlertForError:(NSError *)error;

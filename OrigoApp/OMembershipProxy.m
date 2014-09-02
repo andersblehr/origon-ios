@@ -19,9 +19,9 @@ NSString * const kMembershipStatusActive = @"A";
 NSString * const kMembershipStatusRejected = @"R";
 NSString * const kMembershipStatusExpired = @"-";
 
-NSString * const kRoleTypeOrganiser = @"O";
-NSString * const kRoleTypeParentRole = @"P";
 NSString * const kRoleTypeMemberRole = @"M";
+NSString * const kRoleTypeOrganiserRole = @"O";
+NSString * const kRoleTypeParentRole = @"P";
 
 
 @implementation OMembershipProxy

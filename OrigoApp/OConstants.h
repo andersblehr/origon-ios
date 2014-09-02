@@ -72,9 +72,9 @@ extern NSString * const kMappedKeyPreschoolClass;
 extern NSString * const kMappedKeyResidenceName;
 extern NSString * const kMappedKeySchool;
 extern NSString * const kMappedKeySchoolClass;
-extern NSString * const kMappedKeyStudentGroup;
+extern NSString * const kMappedKeyStudyGroup;
 extern NSString * const kMappedKeyTeam;
-extern NSString * const kMappedKeyUniversity;
+extern NSString * const kMappedKeyInstitution;
 
 // Unbound keys
 extern NSString * const kExternalKeyActivate;
@@ -97,12 +97,13 @@ extern NSString * const kStringPrefixNewOrigoTitle;
 extern NSString * const kStringPrefixFooter;
 extern NSString * const kStringPrefixAddMemberButton;
 extern NSString * const kStringPrefixAddOrganiserButton;
-extern NSString * const kStringPrefixEditMemberRolesButton;
 extern NSString * const kStringPrefixOrganiserTitle;
-extern NSString * const kStringPrefixMemberListTitle;
+extern NSString * const kStringPrefixOrganisersTitle;
+extern NSString * const kStringPrefixMembersTitle;
 extern NSString * const kStringPrefixNewMemberTitle;
 extern NSString * const kStringPrefixAllMembersTitle;
 extern NSString * const kStringPrefixOrganiserRoleTitle;
+extern NSString * const kStringPrefixAddOrganiserRoleButton;
 extern NSString * const kStringPrefixMemberRoleTitle;
 extern NSString * const kStringPrefixMemberRolesTitle;
 extern NSString * const kStringPrefixSettingTitle;
@@ -141,6 +142,13 @@ extern NSInteger const kAgeThresholdInSchool;
 extern NSInteger const kAgeThresholdTeen;
 extern NSInteger const kAgeOfConsent;
 extern NSInteger const kAgeOfMajority;
+
+// Geometry constants
+extern CGFloat const kBorderWidth;
+extern CGFloat const kBorderWidthNonRetina;
+extern CGFloat const kToolbarBarHeight;
+extern CGFloat const kContentInset;
+extern CGFloat const kLineToHeaderHeightFactor;
 
 // Misc constants
 extern NSString * const kCustomData;

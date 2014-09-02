@@ -8,14 +8,16 @@
 
 #import "UITableView+OrigoAdditions.h"
 
+NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
+
 static CGFloat const kLogoHeight = 110.f;
 static CGFloat const kLogoFontSize = 30.f;
-static CGFloat const kLineToHeaderHeightFactor = 1.5f;
-static CGFloat const kHeaderFooterInset = 14.f;
-static CGFloat const kFooterHeadRoom = 6.f;
 
 static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
 static NSString * const kLogoText = @"..origo..";
+
+static UIView *_dimmerView = nil;
+static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
 
 
 @implementation UITableView (OrigoAdditions)
@@ -36,7 +38,7 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-#pragma mark - Appearance
+#pragma mark - Custom items
 
 - (void)addLogoBanner
 {
@@ -92,82 +94,50 @@ static NSString * const kLogoText = @"..origo..";
 }
 
 
-#pragma mark - Height computation
+#pragma mark - Dimming & undimming
 
-- (CGFloat)headerHeight
+- (void)dim
 {
-    CGFloat headerHeight = 0.f;
-    
-    if (self.style == UITableViewStylePlain) {
-        headerHeight = [UIFont plainHeaderFont].lineHeight;
-    } else {
-        headerHeight = kLineToHeaderHeightFactor * [UIFont headerFont].lineHeight;
+    if (self.sectionIndexMinimumDisplayRowCount) {
+        _sectionIndexMinimumDisplayRowCount = self.sectionIndexMinimumDisplayRowCount;
+        self.sectionIndexMinimumDisplayRowCount = NSIntegerMax;
+        [self reloadSectionIndexTitles];
     }
     
-    return headerHeight;
+    _dimmerView = [[UIView alloc] initWithFrame:self.bounds];
+    _dimmerView.backgroundColor = [UIColor dimmedViewColour];
+    _dimmerView.alpha = 0.f;
+    
+    [self addSubview:_dimmerView];
+    
+    [UIView animateWithDuration:kFadeAnimationDuration animations:^{
+        _dimmerView.alpha = 1.f;
+    } completion:^(BOOL finished) {
+        _dimmerView.userInteractionEnabled = YES;
+    }];
+    
+    self.scrollEnabled = NO;
 }
 
 
-- (CGFloat)footerHeightWithText:(NSString *)text
+- (void)undim
 {
-    UIFont *footerFont = [UIFont footerFont];
-    CGFloat textHeight = [text lineCountWithFont:footerFont maxWidth:[OMeta screenWidth] - 2 * kHeaderFooterInset] * footerFont.lineHeight;
-    
-    return textHeight + 2 * kDefaultCellPadding;
-}
-
-
-#pragma mark - Header & footer views
-
-- (UIView *)headerViewWithText:(NSString *)text
-{
-    self.sectionHeaderHeight = [self headerHeight];
-    
-    CGRect headerFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], self.sectionHeaderHeight);
-    CGRect labelFrame = CGRectMake(kHeaderFooterInset, 0.f, [OMeta screenWidth] - 2 * kHeaderFooterInset, self.sectionHeaderHeight);
-    
-    UIView *headerView = [[UIView alloc] initWithFrame:headerFrame];
-    UILabel *headerLabel = [[UILabel alloc] initWithFrame:labelFrame];
-    headerLabel.backgroundColor = [UIColor clearColor];
-    headerLabel.textColor = [UIColor headerTextColour];
-
-    if (self.style == UITableViewStylePlain) {
-        headerView.backgroundColor = [UIColor tableViewBackgroundColour];
-        headerView.alpha = 0.98f;
-        headerLabel.font = [UIFont listTextFont];
-    } else {
-        headerLabel.font = [UIFont headerFont];
+    if (_sectionIndexMinimumDisplayRowCount) {
+        self.sectionIndexMinimumDisplayRowCount = _sectionIndexMinimumDisplayRowCount;
+        [self reloadSectionIndexTitles];
     }
-
-    headerLabel.text = text;
-    headerLabel.textAlignment = NSTextAlignmentLeft;
     
-    [headerView addSubview:headerLabel];
+    [UIView animateWithDuration:kFadeAnimationDuration animations:^{
+        _dimmerView.alpha = 0.f;
+    } completion:^(BOOL finished) {
+        _dimmerView.userInteractionEnabled = NO;
+    }];
     
-    return headerView;
+    [_dimmerView removeFromSuperview];
+    _dimmerView = nil;
+    
+    self.scrollEnabled = YES;
 }
 
-
-- (UIView *)footerViewWithText:(NSString *)text
-{
-    self.sectionFooterHeight = [self footerHeightWithText:text];
-
-    CGRect footerFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], self.sectionFooterHeight);
-    CGRect labelFrame = CGRectMake(kHeaderFooterInset, 0.f, [OMeta screenWidth] - 2 * kHeaderFooterInset, self.sectionFooterHeight + kFooterHeadRoom);
-    
-    UIView *footerView = [[UIView alloc] initWithFrame:footerFrame];
-    UILabel *footerLabel = [[UILabel alloc] initWithFrame:labelFrame];
-    
-    footerLabel.backgroundColor = [UIColor clearColor];
-    footerLabel.font = [UIFont footerFont];
-    footerLabel.numberOfLines = 0;
-    footerLabel.text = text;
-    footerLabel.textAlignment = NSTextAlignmentCenter;
-    footerLabel.textColor = [UIColor footerTextColour];
-
-    [footerView addSubview:footerLabel];
-    
-    return footerView;
-}
 
 @end
