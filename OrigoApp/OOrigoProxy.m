@@ -15,7 +15,7 @@ NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
 NSString * const kOrigoTypeResidence = @"residence";
 NSString * const kOrigoTypeRoot = @"~";
 NSString * const kOrigoTypeSchoolClass = @"schoolClass";
-NSString * const kOrigoTypeStudentGroup = @"studentGroup";
+NSString * const kOrigoTypeStudyGroup = @"studyGroup";
 NSString * const kOrigoTypeTeam = @"team";
 
 static NSString * const kPlaceholderStreet = @"{street}";
@@ -257,9 +257,23 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
-- (BOOL)isOfType:(NSString *)type
+- (BOOL)isOfType:(id)type
 {
-    return [self.type isEqualToString:type];
+    BOOL isOfType = NO;
+    
+    if ([self instance]) {
+        isOfType = [[self instance] isOfType:type];
+    } else {
+        if ([type isKindOfClass:[NSString class]]) {
+            isOfType = [self.type isEqualToString:type];
+        } else if ([type isKindOfClass:[NSArray class]]) {
+            for (NSString *origoType in type) {
+                isOfType = isOfType || [self isOfType:origoType];
+            }
+        }
+    }
+    
+    return isOfType;
 }
 
 

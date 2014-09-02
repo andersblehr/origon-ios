@@ -149,7 +149,7 @@ static NSInteger const kSectionKeyWards = 2;
         } else {
             [_origoTypes addObject:kOrigoTypeOrganisation];
             [_origoTypes addObject:kOrigoTypeTeam];
-            [_origoTypes addObject:kOrigoTypeStudentGroup];
+            [_origoTypes addObject:kOrigoTypeStudyGroup];
         }
         
         [_origoTypes addObject:kOrigoTypeGeneral];

@@ -12,8 +12,7 @@ extern CGFloat const kFadeAnimationDuration;
 
 @interface UIView (OrigoAdditions)
 
-- (void)dim;
-- (void)undim;
+- (void)setHairlinesHidden:(BOOL)hide;
 
 - (void)addSeparatorsForTableViewCell;
 - (void)redrawSeparatorsForTableViewCell;

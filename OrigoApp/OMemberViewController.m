@@ -43,9 +43,8 @@ static NSInteger const kButtonTagGuardianAddressYes = 0;
 static NSInteger const kActionSheetTagGuardianAddress = 6;
 static NSInteger const kActionSheetTagEditRole = 7;
 
-static NSInteger const kAlertTagOrganiserRole = 0;
-static NSInteger const kAlertTagEditRole = 1;
-static NSInteger const kAlertTagUnknownChild = 2;
+static NSInteger const kAlertTagEditRole = 0;
+static NSInteger const kAlertTagUnknownChild = 1;
 static NSInteger const kButtonIndexOK = 1;
 
 static NSInteger const kAlertTagToggleGender = 3;
@@ -96,8 +95,8 @@ static NSInteger const kButtonIndexContinue = 1;
     [_member useInstance:nil];
     
     self.target = _member;
-    self.inputCell.editable = YES;
     [self.inputCell clearInputFields];
+    //[[self.inputCell nextInvalidInputField] becomeFirstResponder];
     
     if ([self hasSectionWithKey:kSectionKeyAddresses]) {
         [self reloadSectionWithKey:kSectionKeyAddresses];
@@ -321,16 +320,6 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)postProcessMember
-{
-    if ([self targetIs:kTargetOrganiser]) {
-        [self presentOrganiserRoleDialogue];
-    } else {
-        [self persistMember];
-    }
-}
-
-
 - (void)persistMember
 {
     [self.inputCell writeInput];
@@ -357,7 +346,7 @@ static NSInteger const kButtonIndexContinue = 1;
             _membership = [_origo addMember:_member];
             
             if (_role) {
-                [_membership addRole:_role ofType:kRoleTypeOrganiser];
+                [_membership addRole:_role ofType:kRoleTypeOrganiserRole];
             }
             
             if (![self targetIs:kTargetOrganiser] && ![_member hasAddress] && ![_member isJuvenile]) {
@@ -557,32 +546,6 @@ static NSInteger const kButtonIndexContinue = 1;
     }
     
     [actionSheet show];
-}
-
-
-#pragma mark - Input dialogues
-
-- (void)presentOrganiserRoleDialogue
-{
-    NSString *prompt = nil;
-    
-    if ([_origo isOfType:kOrigoTypeSchoolClass] || [_origo isOfType:kOrigoTypePreschoolClass]) {
-        if ([_member isUser]) {
-            prompt = [NSString stringWithFormat:NSLocalizedString(@"What is your role in %@?", @""), _origo.name];
-        } else {
-            prompt = [NSString stringWithFormat:NSLocalizedString(@"What is %@'s role in %@?", @""), [_member givenName], _origo.name];
-        }
-    } else {
-        if ([_member isUser]) {
-            prompt = NSLocalizedString(@"What is your role?", @"");
-        } else {
-            prompt = [NSString stringWithFormat:NSLocalizedString(@"What is %@'s role?", @""), [_member givenName]];
-        }
-    }
-    
-    NSString *defaultRole = [_origo isOfType:kOrigoTypeTeam] ? NSLocalizedString(_origo.type, kStringPrefixOrganiserTitle) : nil;
-    
-    [OAlert showInputDialogueWithPrompt:prompt placeholder:NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle) text:defaultRole delegate:self tag:kAlertTagOrganiserRole];
 }
 
 
@@ -885,8 +848,14 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     [super viewWillAppear:animated];
     
-    if ([self actionIs:kActionRegister] && [[_member guardians] count]) {
-        [self reloadSections];
+    if ([self actionIs:kActionRegister]) {
+        if ([[_member guardians] count]) {
+            [self reloadSections];
+        }
+        
+        if (self.wasHidden) {
+            [[self.inputCell nextInvalidInputField] becomeFirstResponder];
+        }
     }
 }
 
@@ -910,7 +879,13 @@ static NSInteger const kButtonIndexContinue = 1;
 - (void)loadState
 {
     _member = [self.entity proxy];
-    _origo = [self.entity ancestorConformingToProtocol:@protocol(OOrigo)];
+    
+    if ([self.meta conformsToProtocol:@protocol(OOrigo)]) {
+        _origo = self.meta;
+    } else {
+        _origo = [self.entity ancestorConformingToProtocol:@protocol(OOrigo)];
+    }
+    
     _membership = [_origo membershipForMember:_member];
     
     if ([self actionIs:kActionRegister]) {
@@ -919,16 +894,14 @@ static NSInteger const kButtonIndexContinue = 1;
         } else if ([self targetIs:kTargetGuardian]) {
             self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
         } else if ([self targetIs:kTargetOrganiser]) {
-            self.title = NSLocalizedString(_origo.type, kStringPrefixOrganiserTitle);
-        } else if ([self targetIs:kTargetParentContact]) {
-            self.title = [[OLanguage nouns][_parentContact_][singularIndefinite] capitalizedString];
+            [self setEditableTitle:nil placeholder:NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle)];
         } else {
             self.title = NSLocalizedString(_origo.type, kStringPrefixNewMemberTitle);
         }
         
         if ([self targetIs:kTargetJuvenile]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
-        } else if (![self targetIs:kTargetUser]) {
+        } else if (![self targetIs:kTargetUser] && ![self targetIs:kTargetOrganiser]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButtonWithTarget:self];
         }
     } else if ([self actionIs:kActionDisplay]) {
@@ -1106,9 +1079,10 @@ static NSInteger const kButtonIndexContinue = 1;
 - (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
     BOOL canDelete = NO;
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddresses) {
-        canDelete = [self tableView:self.tableView numberOfRowsInSection:indexPath.section] > 1;
+    if (sectionKey == kSectionKeyAddresses) {
+        canDelete = [self numberOfRowsInSectionWithKey:sectionKey] > 1;
     }
     
     return canDelete;
@@ -1182,14 +1156,22 @@ static NSInteger const kButtonIndexContinue = 1;
                 [guardianResidence addMember:_member];
             }
         }
+    } else if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
+        if (!viewController.didCancel) {
+            if ([viewController targetIs:kTargetMember]) {
+                [self reflectMember:viewController.returnData];
+            } else if ([viewController targetIs:kTargetRole]) {
+                [self reloadSectionWithKey:kSectionKeyRoles];
+            }
+        }
     }
 }
 
 
 - (void)didDismissModalViewController:(OTableViewController *)viewController
 {
-    if (!viewController.didCancel) {
-        if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
+    if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
+        if ([viewController targetIs:kTargetMember] && !viewController.didCancel) {
             if ([self reflectIfEligibleMember:viewController.returnData]) {
                 if ([self aspectIs:kAspectHousehold]) {
                     [[self.inputCell nextInvalidInputField] becomeFirstResponder];
@@ -1198,8 +1180,16 @@ static NSInteger const kButtonIndexContinue = 1;
                 }
             }
         }
-    } else if ([self actionIs:kActionRegister]) {
-        [self.inputCell resumeFirstResponder];
+    }
+}
+
+
+- (void)titleWillChange:(NSString *)newTitle
+{
+    _role = newTitle;
+    
+    if ([self actionIs:kActionRegister] && ([self.navigationItem.rightBarButtonItems count] < 2)) {
+        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem lookupButtonWithTarget:self]];
     }
 }
 
@@ -1280,7 +1270,7 @@ static NSInteger const kButtonIndexContinue = 1;
             if ([_origo isOfType:kOrigoTypeResidence]) {
                 [self examineMember];
             } else {
-                [self postProcessMember];
+                [self persistMember];
             }
         } else if ([self targetIs:kTargetJuvenile]) {
             [self examineJuvenile];
@@ -1328,7 +1318,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (BOOL)shouldCommitEntity:(id)entity
 {
-    return [_member.gender hasValue] && [self.entity.ancestor isCommitted];
+    return [_member.gender hasValue] && (!self.entity.ancestor || [self.entity.ancestor isCommitted]);
 }
 
 
@@ -1350,7 +1340,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)examinerDidFinishExamination
 {
-    [self postProcessMember];
+    [self persistMember];
 }
 
 
@@ -1414,7 +1404,7 @@ static NSInteger const kButtonIndexContinue = 1;
             }
             
             [self reflectMember:actualMember];
-            [self postProcessMember];
+            [self persistMember];
         } else {
             [OAlert showAlertWithTitle:NSLocalizedString(@"Incorrect details", @"") text:NSLocalizedString(@"The details you have provided do not match our records ...", @"")];
             
@@ -1632,7 +1622,18 @@ static NSInteger const kButtonIndexContinue = 1;
         
         case kActionSheetTagEditRole:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
-                [OAlert showInputDialogueWithPrompt:NSLocalizedString(@"Edit role", @"") placeholder:NSLocalizedString(@"Role designation", @"") text:_role delegate:self tag:kAlertTagEditRole];
+                NSString *roleType = [[_origo membershipForMember:_member] roleTypeForRole:_role];
+                NSString *aspect = nil;
+                
+                if ([roleType isEqualToString:kRoleTypeMemberRole]) {
+                    aspect = kAspectMemberRole;
+                } else if ([roleType isEqualToString:kRoleTypeOrganiserRole]) {
+                    aspect = kAspectOrganiserRole;
+                } else if ([roleType isEqualToString:kRoleTypeParentRole]) {
+                    aspect = kAspectParentRole;
+                }
+                
+                [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{_role: aspect} meta:_origo];
             }
             
             break;
@@ -1648,17 +1649,6 @@ static NSInteger const kButtonIndexContinue = 1;
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
-        case kAlertTagOrganiserRole:
-            if (buttonIndex == kButtonIndexOK) {
-                _role = [alertView textFieldAtIndex:0].text;
-                
-                [self persistMember];
-            } else {
-                [self.dismisser dismissModalViewController:self];
-            }
-            
-            break;
-            
         case kAlertTagEditRole:
             if (buttonIndex == kButtonIndexOK) {
                 NSString *roleType = [_membership roleTypeForRole:_role];

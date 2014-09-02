@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const kPlaceholderRole;
+
 @interface OMembership (OrigoAdditions) <OMembership>
 
 @end

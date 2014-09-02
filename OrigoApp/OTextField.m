@@ -8,9 +8,6 @@
 
 #import "OTextField.h"
 
-CGFloat const kBorderWidthNonRetina = 1.f;
-CGFloat const kBorderWidth = 0.5f;
-
 static CGFloat const kTextInsetX = 4.f;
 static CGFloat const kTextInsetY = 1.2f;
 

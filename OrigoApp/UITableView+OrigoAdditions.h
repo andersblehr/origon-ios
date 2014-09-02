@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSInteger const kSectionIndexMinimumDisplayRowCount;
+
 @interface UITableView (OrigoAdditions)
 
 - (void)addLogoBanner;
@@ -16,10 +18,7 @@
 - (id)inputCellWithEntity:(id<OEntity>)entity delegate:(id)delegate;
 - (id)inputCellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 
-- (CGFloat)headerHeight;
-- (CGFloat)footerHeightWithText:(NSString *)text;
-
-- (UIView *)headerViewWithText:(NSString *)text;
-- (UIView *)footerViewWithText:(NSString *)text;
+- (void)dim;
+- (void)undim;
 
 @end

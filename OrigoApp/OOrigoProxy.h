@@ -15,7 +15,7 @@ extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeResidence;
 extern NSString * const kOrigoTypeRoot;
 extern NSString * const kOrigoTypeSchoolClass;
-extern NSString * const kOrigoTypeStudentGroup;
+extern NSString * const kOrigoTypeStudyGroup;
 extern NSString * const kOrigoTypeTeam;
 
 
@@ -41,6 +41,8 @@ extern NSString * const kOrigoTypeTeam;
 
 - (NSArray *)memberRoles;
 - (NSArray *)membersWithRole:(NSString *)role;
+- (NSArray *)organiserRoles;
+- (NSArray *)organisersWithRole:(NSString *)role;
 - (NSArray *)parentRoles;
 - (NSArray *)parentsWithRole:(NSString *)role;
 
@@ -55,7 +57,7 @@ extern NSString * const kOrigoTypeTeam;
 - (BOOL)userIsOrganiser;
 - (BOOL)userIsParentContact;
 
-- (BOOL)isOfType:(NSString *)type;
+- (BOOL)isOfType:(id)type;
 - (BOOL)isOrganised;
 - (BOOL)isJuvenile;
 - (BOOL)hasAddress;

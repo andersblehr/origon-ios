@@ -617,7 +617,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         NSMutableArray *contactRoles = [NSMutableArray array];
         OMembership *membership = [[origo instance] membershipForMember:self];
         
-        if ([membership hasRoleOfType:kRoleTypeOrganiser]) {
+        if ([membership hasRoleOfType:kRoleTypeOrganiserRole]) {
             [contactRoles addObjectsFromArray:[membership organiserRoles]];
         }
         

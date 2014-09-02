@@ -8,9 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-extern CGFloat const kBorderWidth;
-extern CGFloat const kBorderWidthNonRetina;
-
 @interface OTextField : UITextField<OTextInput>
 
 - (instancetype)initWithKey:(NSString *)key delegate:(id)delegate;

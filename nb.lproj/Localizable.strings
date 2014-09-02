@@ -24,7 +24,7 @@
 "[label] school" = "Skole";
 "[label] signIn" = "Logg på eller registrer deg";
 "[label] telephone" = "Telefon";
-"[label] university" = "Univ./skole";
+"[label] institution" = "Lærested";
 
 // Alternate labels
 "[alternate label] dateOfBirth" = "Født";
@@ -51,10 +51,10 @@
 "[placeholder] residenceName" = "Merkelapp";
 "[placeholder] school" = "Skolens navn";
 "[placeholder] schoolClass" = "Klasse";
-"[placeholder] studentGroup" = "Benevnelse";
+"[placeholder] studyGroup" = "Benevnelse";
 "[placeholder] team" = "Lagets navn";
 "[placeholder] telephone" = "Telefonnummer";
-"[placeholder] university" = "Universitetets eller skolens navn";
+"[placeholder] institution" = "Universitetets eller skolens navn";
 
 // Defaults
 "[default] residenceName" = "Min husstand";
@@ -71,7 +71,7 @@
 "[title] organisation" = "Organisasjon";
 "[title] preschoolClass" = "Barnehageavdeling";
 "[title] schoolClass" = "Skoleklasse";
-"[title] studentGroup" = "Studiegruppe";
+"[title] studyGroup" = "Studiegruppe";
 "[title] general" = "Generell gruppe";
 
 // Registration titles
@@ -81,7 +81,7 @@
 "[registration title] organisation" = "Ny organisasjon";
 "[registration title] preschoolClass" = "Ny barnehageavdeling";
 "[registration title] schoolClass" = "Ny skoleklasse";
-"[registration title] studentGroup" = "Ny studiegruppe";
+"[registration title] studyGroup" = "Ny studiegruppe";
 "[registration title] general" = "Ny gruppe";
 
 // Registration footers
@@ -91,76 +91,81 @@
 "[registration footer] organisation" = "Trykk [+] for å legge til medlemmer.";
 "[registration footer] preschoolClass" = "Trykk [+] for å legge til barn i avdelingen.";
 "[registration footer] schoolClass" = "Trykk [+] for å legge til elever i klassen.";
-"[registration footer] studentGroup" = "Trykk [+] for å legge til studenter.";
+"[registration footer] studyGroup" = "Trykk [+] for å legge til studenter.";
 "[registration footer] general" = "Trykk [+] for å legge til medlemmer.";
 
 // Member registration button titles
-"[add member] residence" = "Nytt medlem";
+"[add member] residence" = "Legg til medlem";
 "[add member] friends"= "Legg til venn/venninne";
 "[add member] team" = "Legg til spiller";
 "[add member] organisation" = "Legg til medlem";
 "[add member] preschoolClass" = "Legg til barn";
 "[add member] schoolClass" = "Legg til elev";
-"[add member] studentGroup" = "Legg til student";
+"[add member] studyGroup" = "Legg til student";
 "[add member] general" = "Legg til medlem";
 
 // Organiser registration button titles
 "[add organiser] preschoolClass" = "Legg til personale";
 "[add organiser] schoolClass" = "Legg til lærer";
-"[add organiser] studentGroup" = "Legg til foreleser";
+"[add organiser] studyGroup" = "Legg til foreleser";
 "[add organiser] team" = "Legg til trener";
 
-// Edit member roles button titles
-"[edit member roles] team" = "Rediger spillerroller";
-"[edit member roles] organisation" = "Rediger roller";
-"[edit member roles] schoolClass" = "Rediger elevroller";
-"[edit member roles] studentGroup" = "Rediger studentroller";
-"[edit member roles] general" = "Rediger roller";
-
 // Organiser titles
-"[organiser title] preschoolClass" = "Personale";
-"[organiser title] schoolClass" = "Lærer";
-"[organiser title] studentGroup" = "Foreleser";
-"[organiser title] team" = "Trener";
+"[organiser] preschoolClass" = "Personale";
+"[organiser] schoolClass" = "Lærer";
+"[organiser] studyGroup" = "Foreleser";
+"[organiser] team" = "Trener";
+
+// Organiser list titles
+"[organisers] preschoolClass" = "Personale";
+"[organisers] schoolClass" = "Lærere";
+"[organisers] studyGroup" = "Forelesere";
+"[organisers] team" = "Trenere";
 
 // Organiser roles
-"[organiser role] preschoolClass" = "Rolle";
+"[organiser role] preschoolClass" = "Personalrolle";
 "[organiser role] schoolClass" = "Lærerrolle";
-"[organiser role] studentGroup" = "Rolle";
+"[organiser role] studyGroup" = "Fag";
 "[organiser role] team" = "Trenerrolle";
+
+// Organiser role registration button titles
+"[add organiser role] preschoolClass" = "Legg til personalrolle";
+"[add organiser role] schoolClass" = "Legg til lærerrolle";
+"[add organiser role] studyGroup" = "Legg til fag";
+"[add organiser role] team" = "Legg til trenerrolle";
 
 // Member role titles
 "[member role] team" = "Spillerrolle";
 "[member role] organisation" = "Rolle";
 "[member role] schoolClass" = "Elevrolle";
-"[member role] studentGroup" = "Studentrolle";
+"[member role] studyGroup" = "Studentrolle";
 "[member role] general" = "Rolle";
 
-// Member roles titles
+// Member role list titles
 "[member roles] team" = "Spillerroller";
 "[member roles] organisation" = "Roller";
 "[member roles] schoolClass" = "Elevroller";
-"[member roles] studentGroup" = "Studentroller";
+"[member roles] studyGroup" = "Studentroller";
 "[member roles] general" = "Roller";
 
-// Origo member list titles
-"[member list] residence" = "I husstanden";
-"[member list] friends" = "I gruppa";
-"[member list] team" = "Spillere";
-"[member list] organisation" = "Medlemmer";
-"[member list] preschoolClass" = "I avdelingen";
-"[member list] schoolClass" = "Elever";
-"[member list] studentGroup" = "Studenter";
-"[member list] general" = "Medlemmer";
+// Member list titles
+"[members] residence" = "I husstanden";
+"[members] friends" = "I gruppa";
+"[members] team" = "Spillere";
+"[members] organisation" = "Medlemmer";
+"[members] preschoolClass" = "I avdelingen";
+"[members] schoolClass" = "Elever";
+"[members] studyGroup" = "Deltakere";
+"[members] general" = "Medlemmer";
 
-// Origo member registration titles
+// Member registration titles
 "[member registration] residence" = "I husstanden";
 "[member registration] friends" = "I gruppa";
 "[member registration] team" = "Ny deltaker";
 "[member registration] organisation" = "Nytt medlem";
 "[member registration] preschoolClass" = "I avdelingen";
 "[member registration] schoolClass" = "Ny elev";
-"[member registration] studentGroup" = "Ny student";
+"[member registration] studyGroup" = "Ny student";
 "[member registration] general" = "Nytt medlem";
 
 // Origo collective titles
@@ -168,7 +173,7 @@
 "[all members] friends" = "Alle i gruppa";
 "[all members] team" = "Alle deltakere";
 "[all members] organisation" = "Alle medlemmer";
-"[all members] studentGroup" = "Alle i gruppa";
+"[all members] studyGroup" = "Alle i gruppa";
 "[all members] general" = "Alle medlemmer";
 
 
@@ -306,7 +311,7 @@
  ***/
 
 // Buttons
-"Edit parent roles" = "Rediger foreldreroller";
+"Edit roles" = "Rediger roller";
 "Edit subgroups" = "Rediger undergrupper";
 "Add from other groups" = "Legg til fra andre grupper";
 "Add parent contact" = "Legg til foreldrekontakt";
@@ -395,16 +400,6 @@
 "Does %@ live with %@?" = "Bor %@ med %@?";
 "Does %@ live with %@ or %@?" = "Bor %@ med %@ eller %@?";
 
-// Role strings
-"What is your role?" = "Hvilken rolle har du?";
-"What is %@'s role?" = "Hvilken rolle har %@?";
-"What is your role in %@?" = "Hvilken rolle har du i %@?";
-"What is %@'s role in %@?" = "Hvilken rolle har %@ i %@?";
-"What is your contact role?" = "Hvilken kontaktrolle har du?";
-"What is %@'s contact role?" = "Hvilken kontaktrolle har %@?";
-"Role" = "Rolle";
-"Teacher role" = "Lærerrolle";
-
 // Terms
 "his father" = "faren hans";
 "her father" = "faren hennes";
@@ -416,12 +411,12 @@
  * OValueListViewController strings
  ***/
 
-// View title
+// View titles
 "Settings" = "Innstillinger";
-"Parent roles" = "Foreldreroller";
+"Roles" = "Roller";
 
-// Role strings
-"What role do you want to create?" = "Hvilken rolle vil du opprette?";
+// Buttons
+"Add role" = "Legg til rolle";
 
 
 /***

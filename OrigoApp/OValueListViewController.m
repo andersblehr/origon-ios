@@ -11,13 +11,20 @@
 static NSInteger const kSectionKeyValues = 0;
 static NSInteger const kSectionKeySignOut = 1;
 
-static NSInteger const kAlertTagMemberRole = 0;
-static NSInteger const kButtonIndexOK = 1;
+static NSInteger const kSegmentParents = 0;
+static NSInteger const kSegmentOrganisers = 1;
+static NSInteger const kSegmentMembers = 2;
+
+static NSInteger const kActionSheetTagAdd = 0;
+static NSInteger const kButtonTagAddOrganiser = 0;
+static NSInteger const kButtonTagAddOrganiserRole = 1;
 
 
-@interface OValueListViewController () <OTableViewController, UIAlertViewDelegate> {
+@interface OValueListViewController () <OTableViewController, UIActionSheetDelegate> {
     id<OOrigo> _origo;
-    
+
+    UISegmentedControl *_titleSegments;
+    NSInteger _selectedSegment;
     NSString *_addedRole;
 }
 
@@ -26,15 +33,59 @@ static NSInteger const kButtonIndexOK = 1;
 
 @implementation OValueListViewController
 
+#pragma mark - Auxiliary methods
+
+- (void)inferSelectedSegment
+{
+    if ((_titleSegments.numberOfSegments == 3) || [_origo isJuvenile]) {
+        _selectedSegment = _titleSegments.selectedSegmentIndex;
+    } else {
+        _selectedSegment = _titleSegments.selectedSegmentIndex + 1;
+    }
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)performAddAction
 {
-    if ([self aspectIs:kAspectMembers]) {
-        [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectMemberRole} meta:_origo];
-    } else if ([self aspectIs:kAspectParents]) {
+    if (_selectedSegment == kSegmentParents) {
         [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectParentRole} meta:_origo];
+    } else if (_selectedSegment == kSegmentOrganisers) {
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAdd];
+        [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
+        [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserRoleButton) tag:kButtonTagAddOrganiserRole];
+        
+        [actionSheet show];
+    } else if (_selectedSegment == kSegmentMembers) {
+        [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectMemberRole} meta:_origo];
     }
+}
+
+
+- (void)didSelectTitleSegment
+{
+    NSInteger previousSegment = _selectedSegment;
+    
+    [self inferSelectedSegment];
+    
+    UITableViewRowAnimation rowAnimation = UITableViewRowAnimationNone;
+    
+    if ([self numberOfRowsInSectionWithKey:kSectionKeyValues]) {
+        if (_selectedSegment > previousSegment) {
+            rowAnimation = UITableViewRowAnimationLeft;
+        } else {
+            rowAnimation = UITableViewRowAnimationRight;
+        }
+    } else {
+        if (_selectedSegment > previousSegment) {
+            rowAnimation = UITableViewRowAnimationRight;
+        } else {
+            rowAnimation = UITableViewRowAnimationLeft;
+        }
+    }
+    
+    [self reloadSectionWithKey:kSectionKeyValues withRowAnimation:rowAnimation];
 }
 
 
@@ -70,10 +121,28 @@ static NSInteger const kButtonIndexOK = 1;
     } else if ([self targetIs:kTargetRoles]) {
         _origo = self.meta;
         
-        if ([self aspectIs:kAspectMembers]) {
-            self.title = NSLocalizedString(_origo.type, kStringPrefixMemberRolesTitle);
-        } else if ([self aspectIs:kAspectParents]) {
-            self.title = NSLocalizedString(@"Parent roles", @"");
+        NSMutableArray *titleSegments = [NSMutableArray array];
+        
+        self.title = NSLocalizedString(@"Roles", @"");
+        
+        if ([_origo isJuvenile] && ![_origo isOfType:kOrigoTypeFriends]) {
+            [titleSegments addObject:[[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
+        }
+        
+        if ([_origo isOrganised]) {
+            [titleSegments addObject:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle)];
+        }
+        
+        if ([_origo isOfType:@[kOrigoTypeTeam, kOrigoTypeSchoolClass, kOrigoTypeStudyGroup]]) {
+            [titleSegments addObject:NSLocalizedString(_origo.type, kStringPrefixMembersTitle)];
+        }
+        
+        if ([titleSegments count] > 1) {
+            _titleSegments = [self setTitleSegments:titleSegments];
+            
+            [self inferSelectedSegment];
+        } else {
+            _selectedSegment = kSegmentMembers;
         }
         
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
@@ -88,10 +157,12 @@ static NSInteger const kButtonIndexOK = 1;
         [self setData:[[OSettings settings] settingKeys] forSectionWithKey:kSectionKeyValues];
         [self setData:@[kCustomData] forSectionWithKey:kSectionKeySignOut];
     } else if ([self targetIs:kTargetRoles]) {
-        if ([self aspectIs:kAspectMembers]) {
-            [self setData:[_origo memberRoles] forSectionWithKey:kSectionKeyValues];
-        } else if ([self aspectIs:kAspectParents]) {
+        if (_selectedSegment == kSegmentParents) {
             [self setData:[_origo parentRoles] forSectionWithKey:kSectionKeyValues];
+        } else if (_selectedSegment == kSegmentOrganisers) {
+            [self setData:[_origo organiserRoles] forSectionWithKey:kSectionKeyValues];
+        } else if (_selectedSegment == kSegmentMembers) {
+            [self setData:[_origo memberRoles] forSectionWithKey:kSectionKeyValues];
         }
     }
 }
@@ -113,15 +184,19 @@ static NSInteger const kButtonIndexOK = 1;
         }
     } else if ([self targetIs:kTargetRoles]) {
         NSString *role = [self dataAtIndexPath:indexPath];
+        NSArray *roleHolders = nil;
+        
+        if (_selectedSegment == kSegmentParents) {
+            roleHolders = [_origo parentsWithRole:role];
+        } else if (_selectedSegment == kSegmentOrganisers) {
+            roleHolders = [_origo organisersWithRole:role];
+        } else if (_selectedSegment == kSegmentMembers) {
+            roleHolders = [_origo membersWithRole:role];
+        }
         
         cell.textLabel.text = role;
+        cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:roleHolders conjoinLastItem:NO];
         cell.destinationId = kIdentifierValuePicker;
-
-        if ([self aspectIs:kAspectMembers]) {
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[_origo membersWithRole:role] conjoinLastItem:NO];
-        } else if ([self aspectIs:kAspectParents]) {
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[_origo parentsWithRole:role] conjoinLastItem:NO];
-        }
     }
 }
 
@@ -131,10 +206,12 @@ static NSInteger const kButtonIndexOK = 1;
     id target = [self dataAtIndexPath:indexPath];
     
     if ([self targetIs:kTargetRoles]) {
-        if ([self aspectIs:kAspectMembers]) {
-            target = @{target: kAspectMemberRole};
-        } else if ([self aspectIs:kAspectParents]) {
+        if (_selectedSegment == kSegmentParents) {
             target = @{target: kAspectParentRole};
+        } else if (_selectedSegment == kSegmentOrganisers) {
+            target = @{target: kAspectOrganiserRole};
+        } else if (_selectedSegment == kSegmentMembers) {
+            target = @{target: kAspectMemberRole};
         }
     }
     
@@ -185,13 +262,17 @@ static NSInteger const kButtonIndexOK = 1;
     if ([self targetIs:kTargetRoles]) {
         NSString *role = [self dataAtIndexPath:indexPath];
 
-        if ([self aspectIs:kAspectMembers]) {
-            for (id<OMember> roleHolder in [_origo membersWithRole:role]) {
-                [[_origo membershipForMember:roleHolder] removeRole:role ofType:kRoleTypeMemberRole];
-            }
-        } else if ([self aspectIs:kAspectParents]) {
+        if (_selectedSegment == kSegmentParents) {
             for (id<OMember> roleHolder in [_origo parentsWithRole:role]) {
                 [[_origo membershipForMember:roleHolder] removeRole:role ofType:kRoleTypeParentRole];
+            }
+        } else if (_selectedSegment == kSegmentOrganisers) {
+            for (id<OMember> roleHolder in [_origo organisersWithRole:role]) {
+                [[_origo membershipForMember:roleHolder] removeRole:role ofType:kRoleTypeOrganiserRole];
+            }
+        } else if (_selectedSegment == kSegmentMembers) {
+            for (id<OMember> roleHolder in [_origo membersWithRole:role]) {
+                [[_origo membershipForMember:roleHolder] removeRole:role ofType:kRoleTypeMemberRole];
             }
         }
     }
@@ -214,16 +295,20 @@ static NSInteger const kButtonIndexOK = 1;
 }
 
 
-#pragma mark - UIAlertViewDelegate conformance
+#pragma mark - UIActionSheetDelegate conformance
 
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+- (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    switch (alertView.tag) {
-        case kAlertTagMemberRole:
-            if (buttonIndex == kButtonIndexOK) {
-                _addedRole = [alertView textFieldAtIndex:0].text;
-                
-                [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{_addedRole: kAspectMemberRole} meta:_origo];
+    NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+    
+    switch (actionSheet.tag) {
+        case kActionSheetTagAdd:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                if (buttonTag == kButtonTagAddOrganiserRole) {
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectOrganiserRole} meta:_origo];
+                } else if (buttonTag == kButtonTagAddOrganiser) {
+                    [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser meta:_origo];
+                }
             }
             
             break;

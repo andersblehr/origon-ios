@@ -28,7 +28,6 @@ extern NSString * const kTargetMember;
 extern NSString * const kTargetMembers;
 extern NSString * const kTargetGuardian;
 extern NSString * const kTargetOrganiser;
-extern NSString * const kTargetParentContact;
 extern NSString * const kTargetRelation;
 extern NSString * const kTargetRole;
 extern NSString * const kTargetRoles;
@@ -38,11 +37,10 @@ extern NSString * const kTargetSettings;
 extern NSString * const kAspectDefault;
 extern NSString * const kAspectHousehold;
 extern NSString * const kAspectJuvenile;
-extern NSString * const kAspectMembers;
-extern NSString * const kAspectParents;
-extern NSString * const kAspectRole;
 extern NSString * const kAspectMemberRole;
+extern NSString * const kAspectOrganiserRole;
 extern NSString * const kAspectParentRole;
+extern NSString * const kAspectRole;
 
 
 @interface OState : NSObject
@@ -50,6 +48,7 @@ extern NSString * const kAspectParentRole;
 @property (nonatomic, readonly) NSString *identifier;
 @property (nonatomic) NSString *action;
 @property (nonatomic) id target;
+@property (nonatomic) NSString *aspect;
 
 @property (nonatomic, weak, readonly) OTableViewController *viewController;
 

@@ -8,7 +8,6 @@
 
 #import "OActivityIndicator.h"
 
-static CGFloat const kNavigationBarHeight = 72.f;
 static CGFloat const kHUDSideLength = 70.f;
 static CGFloat const kHUDCornerRadius = 5.f;
 
@@ -39,7 +38,7 @@ static CGFloat const kHUDCornerRadius = 5.f;
         [self addSubview:HUDView];
         [self addSubview:activityView];
         
-        HUDView.center = CGPointMake(self.center.x, self.center.y - kNavigationBarHeight / 2);
+        HUDView.center = CGPointMake(self.center.x, self.center.y - kHUDSideLength / 2);
         activityView.center = HUDView.center;
     }
     

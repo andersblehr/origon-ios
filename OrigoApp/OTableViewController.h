@@ -45,6 +45,7 @@
 - (void)willDismissModalViewController:(OTableViewController *)viewController;
 - (void)didDismissModalViewController:(OTableViewController *)viewController;
 
+- (void)titleWillChange:(NSString *)newTitle;
 - (void)didResumeFromBackground;
 - (void)didSignOut;
 
@@ -62,10 +63,9 @@
 @property (nonatomic, assign, readonly) BOOL wasHidden;
 @property (nonatomic, assign, readonly) BOOL didResurface;
 
-@property (nonatomic, assign) BOOL didCancel;
 @property (nonatomic, assign) BOOL requiresSynchronousServerCalls;
 @property (nonatomic, assign) BOOL usesPlainTableViewStyle;
-@property (nonatomic, assign) BOOL usesSectionIndexTitles;
+@property (nonatomic, assign) BOOL didCancel;
 @property (nonatomic, assign) BOOL cancelImpliesSkip;
 
 @property (nonatomic) id meta;
@@ -88,6 +88,7 @@
 
 - (BOOL)isBottomSectionKey:(NSInteger)sectionKey;
 - (BOOL)hasSectionWithKey:(NSInteger)sectionKey;
+- (NSInteger)numberOfRowsInSectionWithKey:(NSInteger)sectionKey;
 - (NSInteger)sectionKeyForIndexPath:(NSIndexPath *)indexPath;
 
 - (void)presentModalViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
@@ -96,11 +97,14 @@
 
 - (void)scrollToTopAndToggleEditMode;
 - (void)toggleEditMode;
-- (void)didCancelEditing;
-- (void)didFinishEditing;
 - (void)endEditing;
+
+- (void)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder;
+- (void)setSubtitle:(NSString *)subtitle;
+- (UISegmentedControl *)setTitleSegments:(NSArray *)segments;
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
+- (void)reloadSectionWithKey:(NSInteger)sectionKey withRowAnimation:(UITableViewRowAnimation)rowAnimation;
 
 @end

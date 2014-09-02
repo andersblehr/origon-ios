@@ -72,9 +72,9 @@ NSString * const kMappedKeyPreschoolClass = @"preschoolClass";
 NSString * const kMappedKeyResidenceName = @"residenceName";
 NSString * const kMappedKeySchool = @"school";
 NSString * const kMappedKeySchoolClass = @"schoolClass";
-NSString * const kMappedKeyStudentGroup = @"studentGroup";
+NSString * const kMappedKeyStudyGroup = @"studyGroup";
 NSString * const kMappedKeyTeam = @"team";
-NSString * const kMappedKeyUniversity = @"university";
+NSString * const kMappedKeyInstitution = @"institution";
 
 // Unbound keys
 NSString * const kExternalKeyActivate = @"activate";
@@ -97,12 +97,13 @@ NSString * const kStringPrefixNewOrigoTitle = @"[registration title]";
 NSString * const kStringPrefixFooter = @"[registration footer]";
 NSString * const kStringPrefixAddMemberButton = @"[add member]";
 NSString * const kStringPrefixAddOrganiserButton = @"[add organiser]";
-NSString * const kStringPrefixEditMemberRolesButton = @"[edit member roles]";
-NSString * const kStringPrefixOrganiserTitle = @"[organiser title]";
-NSString * const kStringPrefixMemberListTitle = @"[member list]";
+NSString * const kStringPrefixOrganiserTitle = @"[organiser]";
+NSString * const kStringPrefixOrganisersTitle = @"[organisers]";
+NSString * const kStringPrefixMembersTitle = @"[members]";
 NSString * const kStringPrefixNewMemberTitle = @"[member registration]";
 NSString * const kStringPrefixAllMembersTitle = @"[all members]";
 NSString * const kStringPrefixOrganiserRoleTitle = @"[organiser role]";
+NSString * const kStringPrefixAddOrganiserRoleButton = @"[add organiser role]";
 NSString * const kStringPrefixMemberRoleTitle = @"[member role]";
 NSString * const kStringPrefixMemberRolesTitle = @"[member roles]";
 NSString * const kStringPrefixSettingTitle = @"[setting title]";
@@ -141,6 +142,14 @@ NSInteger const kAgeThresholdInSchool = 6;
 NSInteger const kAgeThresholdTeen = 13;
 NSInteger const kAgeOfConsent = 16;
 NSInteger const kAgeOfMajority = 18;
+
+// Geometry constant
+CGFloat const kBorderWidth = 0.5f;
+CGFloat const kBorderWidthNonRetina = 1.f;
+CGFloat const kToolbarBarHeight = 44.f;
+CGFloat const kContentInset = 14.f;
+CGFloat const kLineToHeaderHeightFactor = 1.5f;
+
 
 // Misc constants
 NSString * const kCustomData = @"customData";
