@@ -18,7 +18,6 @@ static NSString * const kVConstraintsElement           = @"-%.f-[%@(%.f)]";
 static NSString * const kHConstraintsCentredLabel      = @"H:|-25-[%@]-25-|";
 static NSString * const kHConstraintsCentredInputField = @"H:|-55-[%@]-55-|";
 
-static NSString * const kVConstraintsTitleBanner_iOS6x = @"V:|-(-1)-[titleBanner(39)]";
 static NSString * const kVConstraintsTitleBanner       = @"V:|-(0)-[titleBanner(39)]";
 static NSString * const kHConstraintsTitleBanner       = @"H:|-(0)-[titleBanner]-(0)-|";
 static NSString * const kVConstraintsTitle             = @"[%@(24)]";
@@ -154,10 +153,6 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
         
         if (inputField && inputField.isHidden) {
             inputField.hidden = NO;
-            
-            if (!inputField.supportsMultiLineText) {
-                [inputField protectAgainstUnwantedAutolayoutAnimation:YES]; // Bug workaround
-            }
         }
     } else {
         if (label && !label.isHidden) {
@@ -185,7 +180,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
         [self configureElementsForKey:_titleKey];
         
         [constraints addObject:kHConstraintsTitleBanner];
-        [constraints addObject:[OMeta systemIs_iOS6x] ? kVConstraintsTitleBanner_iOS6x : kVConstraintsTitleBanner];
+        [constraints addObject:kVConstraintsTitleBanner];
         
         if (_blueprint.hasPhoto) {
             [constraints addObject:[NSString stringWithFormat:kHConstraintsTitleWithPhoto, titleName, kPhotoFrameWidth]];

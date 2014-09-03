@@ -119,18 +119,13 @@ NSString * const kIconFileInfant = @"76-baby_black.png";
 NSString * const kIconFileMultiRole = @"779-users";
 NSString * const kIconFileMultiRoleSelected = @"779-users-selected";
 NSString * const kIconFileSettings = @"14-gear.png";
-NSString * const kIconFilePlus = @"05-plus.png";
 NSString * const kIconFileEdit = @"830-pencil.png";
 NSString * const kIconFileMap = @"852-map.png";
 NSString * const kIconFileInfo = @"724-info.png";
-NSString * const kIconFileAction = @"212-action2_centred.png";
 NSString * const kIconFileLookup = @"01-magnify.png";
 NSString * const kIconFilePlacePhoneCall = @"735-phone.png";
-NSString * const kIconFilePlacePhoneCall_iOS6x = @"735-phone_pizazz.png";
 NSString * const kIconFileSendText = @"734-chat.png";
-NSString * const kIconFileSendText_iOS6x = @"734-chat_pizazz.png";
 NSString * const kIconFileSendEmail = @"730-envelope.png";
-NSString * const kIconFileSendEmail_iOS6x = @"730-envelope_pizazz.png";
 NSString * const kIconFileLocationArrow = @"193-location-arrow.png";
 
 // Gender codes
@@ -145,7 +140,6 @@ NSInteger const kAgeOfMajority = 18;
 
 // Geometry constant
 CGFloat const kBorderWidth = 0.5f;
-CGFloat const kBorderWidthNonRetina = 1.f;
 CGFloat const kToolbarBarHeight = 44.f;
 CGFloat const kContentInset = 14.f;
 CGFloat const kLineToHeaderHeightFactor = 1.5f;

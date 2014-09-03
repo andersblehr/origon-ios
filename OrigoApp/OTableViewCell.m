@@ -19,8 +19,6 @@ static NSString * const kViewKeyTitleBanner = @"titleBanner";
 static NSString * const kViewKeyPhotoFrame = @"photoFrame";
 static NSString * const kViewKeyPhotoPrompt = @"photoPrompt";
 
-static CGFloat const kImplicitFramePadding_iOS6x = 2.f;
-
 static CGFloat const kShakeDuration = 0.05f;
 static CGFloat const kShakeDelay = 0.f;
 static CGFloat const kShakeTranslationX = 3.f;
@@ -138,26 +136,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (self) {
         _state = state;
         _tableView = ((OTableViewController *)_state.viewController).tableView;
-        
-        if ([OMeta systemIs_iOS6x]) {
-            self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-            self.backgroundView.backgroundColor = [UIColor cellBackgroundColour];
-            self.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-            self.selectedBackgroundView.backgroundColor = [UIColor selectedCellBackgroundColour];
-            self.textLabel.backgroundColor = [UIColor clearColor];
-            self.textLabel.textColor = [UIColor textColour];
-            self.detailTextLabel.backgroundColor = [UIColor clearColor];
-            
-            if (style == UITableViewCellStyleSubtitle) {
-                self.textLabel.font = [UIFont listTextFont];
-                self.detailTextLabel.font = [UIFont listDetailTextFont];
-                self.detailTextLabel.textColor = [UIColor textColour];
-            } else if (style == UITableViewCellStyleValue1) {
-                self.textLabel.font = [UIFont alternateListTextFont];
-                self.detailTextLabel.font = [UIFont alternateListTextFont];
-                self.detailTextLabel.textColor = [UIColor lightGrayColor];
-            }
-        }
         
         if ([self isListCell]) {
             _selectable = ![_state actionIs:kActionInput];
@@ -292,10 +270,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
                 if (!_blueprint.fieldsShouldDeemphasiseOnEndEdit) {
                     inputField.hasEmphasis = YES;
                 }
-                
-                if (!inputField.supportsMultiLineText) {
-                    [inputField protectAgainstUnwantedAutolayoutAnimation:NO]; // Bug workaround
-                }
             }
         }
     }
@@ -327,38 +301,26 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)redrawIfNeeded
 {
     if (![self isListCell]) {
-        CGFloat implicitFramePadding = [OMeta systemIs_iOS6x] ? kImplicitFramePadding_iOS6x : 0.f;
         CGFloat desiredHeight = [_constrainer heightOfInputCell];
         
-        if (abs(self.frame.size.height - (desiredHeight + implicitFramePadding)) > 0.5f) {
+        if (abs(self.frame.size.height - desiredHeight) > 0.5f) {
             [self setNeedsUpdateConstraints];
-            
-            if (![OMeta systemIs_iOS6x]) {
-                [self layoutIfNeeded];
-            }
+            [self layoutIfNeeded];
             
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
-                if ([OMeta systemIs_iOS6x]) {
-                    [self layoutIfNeeded];
-                }
-                
 #if !CGFLOAT_IS_DOUBLE // Compiled for 32-bit
                 [_tableView beginUpdates];
                 [_tableView endUpdates];
 #endif
                 
                 CGRect frame = self.frame;
-                frame.size.height = desiredHeight + implicitFramePadding;
+                frame.size.height = desiredHeight;
                 self.frame = frame;
                 
 #if CGFLOAT_IS_DOUBLE // Compiled for 64-bit
                 [_tableView beginUpdates];
                 [_tableView endUpdates];
 #endif
-                
-                if ([OMeta systemIs_iOS6x]) {
-                    [self.backgroundView redrawSeparatorsForTableViewCell];
-                }
             }];
         }
     }
@@ -561,19 +523,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
             }
         }
     }
-}
-
-
-- (void)setFrame:(CGRect)frame
-{
-    if ([OMeta systemIs_iOS6x]) {
-        if (!_state.viewController.usesPlainTableViewStyle) {
-            frame.origin.x = -kDefaultCellPadding;
-            frame.size.width = [OMeta screenWidth] + 2.f * kDefaultCellPadding;
-        }
-    }
-    
-    [super setFrame:frame];
 }
 
 

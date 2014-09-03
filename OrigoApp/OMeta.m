@@ -249,18 +249,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
-+ (BOOL)systemIs_iOS6x
-{
-    return [[UIDevice currentDevice].systemVersion hasPrefix:@"6"];
-}
-
-
-+ (BOOL)screenIsRetina
-{
-    return [UIScreen mainScreen].scale >= 2.f;
-}
-
-
 + (CGFloat)screenWidth
 {
     return [UIScreen mainScreen].applicationFrame.size.width;

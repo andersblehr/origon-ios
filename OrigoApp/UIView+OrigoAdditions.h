@@ -14,9 +14,6 @@ extern CGFloat const kFadeAnimationDuration;
 
 - (void)setHairlinesHidden:(BOOL)hide;
 
-- (void)addSeparatorsForTableViewCell;
-- (void)redrawSeparatorsForTableViewCell;
-
 - (void)addDropShadowForPhotoFrame;
 
 @end

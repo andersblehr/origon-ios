@@ -12,14 +12,9 @@ static NSInteger const kTextViewMaximumLines = 5;
 static NSInteger const kTextViewMinimumLines = 1;
 static NSInteger const kTextViewMinimumEditLines = 2;
 
-static CGFloat const kContentInsetTop = -6.f;
-static CGFloat const kContentInsetLeft = -4.f;
 static CGFloat const kTextInsetTop = 3.5f;
 static CGFloat const kTextInsetLeft = -1.f;
-
 static CGFloat const kWidthAdjustment = 7.5f;
-static CGFloat const kWidthAdjustment_iOS6x = 14.f;
-static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 
 @interface OTextView () <UITextViewDelegate> {
@@ -49,10 +44,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 + (CGFloat)textWidthWithBlueprint:(OInputCellBlueprint *)blueprint
 {
-    CGFloat contentWidth = [OMeta screenWidth] - 2 * kDefaultCellPadding;
-    CGFloat widthAdjustment = [OMeta systemIs_iOS6x] ? kWidthAdjustment_iOS6x : kWidthAdjustment;
-    
-    return contentWidth - [OLabel widthWithBlueprint:blueprint] - widthAdjustment;
+    return [OMeta screenWidth] - 2 * kDefaultCellPadding - [OLabel widthWithBlueprint:blueprint] - kWidthAdjustment;
 }
 
 
@@ -128,11 +120,7 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
 
 - (instancetype)initWithKey:(NSString *)key blueprint:(OInputCellBlueprint *)blueprint delegate:(id)delegate
 {
-    if ([OMeta systemIs_iOS6x]) {
-        self = [super initWithFrame:CGRectZero];
-    } else {
-        self = [super initWithFrame:CGRectZero textContainer:nil];
-    }
+    self = [super initWithFrame:CGRectZero textContainer:nil];
     
     if (self) {
         self.autocapitalizationType = UITextAutocapitalizationTypeSentences;
@@ -144,11 +132,12 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
         self.font = [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
+        self.layer.borderColor = [[UIColor clearColor] CGColor];
+        self.layer.borderWidth = kBorderWidth;
         self.returnKeyType = UIReturnKeyDefault;
         self.scrollEnabled = NO;
         self.textAlignment = NSTextAlignmentLeft;
-        self.layer.borderColor = [[UIColor clearColor] CGColor];
-        self.layer.borderWidth = [OMeta screenIsRetina] ? kBorderWidth : kBorderWidthNonRetina;
+        self.textContainerInset = UIEdgeInsetsMake(kTextInsetTop, kTextInsetLeft, 0.f, 0.f);
         
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
@@ -158,12 +147,6 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
         _textWidth = [[self class] textWidthWithBlueprint:_blueprint];
         _placeholder = NSLocalizedString(_key, kStringPrefixPlaceholder);
         _supportsMultiLineText = YES;
-        
-        if ([OMeta systemIs_iOS6x]) {
-            self.contentInset = UIEdgeInsetsMake(kContentInsetTop, kContentInsetLeft, 0.f, 0.f);
-        } else {
-            self.textContainerInset = UIEdgeInsetsMake(kTextInsetTop, kTextInsetLeft, 0.f, 0.f);
-        }
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:nil];
     }
@@ -219,27 +202,17 @@ static CGFloat const kHeigthAdjustment_iOS6x = 3.f;
     self.userInteractionEnabled = editable;
     
     if (editable && _placeholder && !_placeholderView) {
-        CGFloat widthAdjustment = [OMeta systemIs_iOS6x] ? kWidthAdjustment_iOS6x : kWidthAdjustment;
-        CGFloat heightAdjustment = [OMeta systemIs_iOS6x] ? kHeigthAdjustment_iOS6x : 0.f;
-        CGSize placeholderSize = CGSizeMake(_textWidth + widthAdjustment, [[self class] heightWithText:_placeholder blueprint:_blueprint]);
-        CGRect placeholderFrame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height + heightAdjustment);
+        CGSize placeholderSize = CGSizeMake(_textWidth + kWidthAdjustment, [[self class] heightWithText:_placeholder blueprint:_blueprint]);
+        CGRect placeholderFrame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height);
         
-        if ([OMeta systemIs_iOS6x]) {
-            _placeholderView = [[UITextView alloc] initWithFrame:placeholderFrame];
-        } else {
-            _placeholderView = [[UITextView alloc] initWithFrame:placeholderFrame textContainer:nil];
-        }
-        
+        _placeholderView = [[UITextView alloc] initWithFrame:placeholderFrame textContainer:nil];
         _placeholderView.backgroundColor = [UIColor clearColor];
         _placeholderView.delegate = self;
         _placeholderView.font = [UIFont detailFont];
         _placeholderView.text = _placeholder;
         _placeholderView.textColor = [UIColor placeholderTextColour];
         _placeholderView.hidden = [self hasText];
-        
-        if (![OMeta systemIs_iOS6x]) {
-            _placeholderView.textContainerInset = UIEdgeInsetsMake(kTextInsetTop, kTextInsetLeft, 0.f, 0.f);
-        }
+        _placeholderView.textContainerInset = UIEdgeInsetsMake(kTextInsetTop, kTextInsetLeft, 0.f, 0.f);
         
         [self addSubview:_placeholderView];
         
