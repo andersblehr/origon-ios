@@ -37,15 +37,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)plusButtonWithTarget:(id)target
 {
-    UIBarButtonItem *button = nil;
-    
-    if ([OMeta systemIs_iOS6x]) {
-        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFilePlus] style:UIBarButtonItemStylePlain target:target action:@selector(performAddAction)];
-    } else {
-        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:@selector(performAddAction)];
-    }
-    
-    return button;
+    return [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:target action:@selector(performAddAction)];;
 }
 
 
@@ -69,15 +61,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)actionButtonWithTarget:(id)target
 {
-    UIBarButtonItem *button = nil;
-    
-    if ([OMeta systemIs_iOS6x]) {
-        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileAction] style:UIBarButtonItemStylePlain target:target action:@selector(presentActionSheet)];
-    } else {
-        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:target action:@selector(presentActionSheet)];
-    }
-    
-    return button;
+    return [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:target action:@selector(presentActionSheet)];
 }
 
 
@@ -91,17 +75,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)lookupButtonWithTarget:(id)target
 {
-    UIBarButtonItem *button = nil;
-    
-    SEL action = @selector(performLookupAction);
-    
-    if ([OMeta systemIs_iOS6x]) {
-        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileLookup] style:UIBarButtonItemStylePlain target:target action:action];
-    } else {
-        button = [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:target action:action];
-    }
-    
-    return button;
+    return [[self alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSearch target:target action: @selector(performLookupAction)];
 }
 
 
@@ -153,46 +127,19 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)sendTextButtonWithTarget:(id)target
 {
-    UIBarButtonItem *button = nil;
-    SEL action = @selector(processTextRequest);
-    
-    if ([OMeta systemIs_iOS6x]) {
-        button = [self barButtonWithIcon:kIconFileSendText_iOS6x target:target action:action];
-    } else {
-        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSendText] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
-    }
-    
-    return button;
+    return [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSendText] style:UIBarButtonItemStylePlain target:target action:@selector(processTextRequest)];
 }
 
 
 + (instancetype)phoneCallButtonWithTarget:(id)target
 {
-    UIBarButtonItem *button = nil;
-    SEL action = @selector(processCallRequest);
-    
-    if ([OMeta systemIs_iOS6x]) {
-        button = [self barButtonWithIcon:kIconFilePlacePhoneCall_iOS6x target:target action:action];
-    } else {
-        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFilePlacePhoneCall] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
-    }
-    
-    return button;
+    return [[self alloc] initWithImage:[UIImage imageNamed:kIconFilePlacePhoneCall] style:UIBarButtonItemStylePlain target:target action:@selector(processCallRequest)];
 }
 
 
 + (instancetype)sendEmailButtonWithTarget:(id)target
 {
-    UIBarButtonItem *button = nil;
-    SEL action = @selector(processEmailRequest);
-    
-    if ([OMeta systemIs_iOS6x]) {
-        button = [self barButtonWithIcon:kIconFileSendEmail_iOS6x target:target action:action];
-    } else {
-        button = [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSendEmail] style:UIBarButtonItemStylePlain target:[OMeta m].switchboard action:action];
-    }
-    
-    return button;
+    return [[self alloc] initWithImage:[UIImage imageNamed:kIconFileSendEmail] style:UIBarButtonItemStylePlain target:target action:@selector(processEmailRequest)];
 }
 
 

@@ -30,7 +30,7 @@ static UIViewController * _reinstantiatedRootViewController;
     BOOL _didInitialise;
     BOOL _usesSectionIndexTitles;
     BOOL _shouldReloadOnModalDismissal;
-    BOOL _shouldFallThroughOnFinishEditingTitle;
+    BOOL _shouldDismissOnFinishEditingTitle;
     
     Class _entityClass;
     NSInteger _inputSectionKey;
@@ -357,7 +357,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _titleField.text = self.title;
         _didCancel = YES;
         
-        if (_shouldFallThroughOnFinishEditingTitle) {
+        if (_shouldDismissOnFinishEditingTitle) {
             [self.dismisser dismissModalViewController:self];
         } else {
             [self setEditingTitle:NO];
@@ -369,7 +369,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)didFinishEditingTitle
 {
     if ([_titleField.text hasValue]) {
-        if (!_shouldFallThroughOnFinishEditingTitle) {
+        if (!_shouldDismissOnFinishEditingTitle) {
             [self setEditingTitle:NO];
         }
         
@@ -382,7 +382,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             self.title = _titleField.text;
         }
         
-        if (_shouldFallThroughOnFinishEditingTitle) {
+        if (_shouldDismissOnFinishEditingTitle) {
             [self.dismisser dismissModalViewController:self];
         }
     }
@@ -836,11 +836,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     [super viewDidLoad];
     
-    if ([OMeta systemIs_iOS6x]) {
-        self.tableView.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-        self.tableView.backgroundColor = [UIColor tableViewBackgroundColour];
-    }
-    
     _identifier = self.restorationIdentifier;
     _sectionKeys = [NSMutableArray array];
     _sectionData = [NSMutableDictionary dictionary];
@@ -953,7 +948,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if (_titleField && _isModal) {
             [_titleField becomeFirstResponder];
             
-            _shouldFallThroughOnFinishEditingTitle = [_titleField.text hasValue];
+            _shouldDismissOnFinishEditingTitle = [_titleField.text hasValue];
         }
     } else if (![_identifier isEqualToString:kIdentifierAuth]) {
         [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetUser];
@@ -986,7 +981,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     if (_needsReinstantiateRootViewController) {
-        [self.navigationController setViewControllers:@[_reinstantiatedRootViewController]];
+        self.navigationController.viewControllers = @[_reinstantiatedRootViewController];
         _needsReinstantiateRootViewController = NO;
     }
 }
@@ -995,16 +990,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (NSUInteger)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskPortrait;
-}
-
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-    if ([OMeta systemIs_iOS6x]) {
-        for (OTableViewCell *cell in [self.tableView visibleCells]) {
-            [cell redrawSeparatorsForTableViewCell];
-        }
-    }
 }
 
 
@@ -1315,10 +1300,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
     } else {
         [_instance loadListCell:cell atIndexPath:indexPath];
-    }
-    
-    if ([OMeta systemIs_iOS6x] && !_usesPlainTableViewStyle) {
-        [cell.backgroundView addSeparatorsForTableViewCell];
     }
 }
 

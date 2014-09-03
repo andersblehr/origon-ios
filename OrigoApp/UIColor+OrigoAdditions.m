@@ -146,12 +146,6 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 }
 
 
-+ (instancetype)iOS6BarButtonItemColour
-{
-    return [self colorWithRed:255/255.f green:192/255.f blue:104/255.f alpha:1.f];
-}
-
-
 #pragma mark - Text colours
 
 + (instancetype)textColour
@@ -174,15 +168,7 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 
 + (instancetype)placeholderTextColour
 {
-    UIColor *placeholderTextColor = nil;
-    
-    if ([OMeta systemIs_iOS6x]) {
-        placeholderTextColor = [self lightGrayColor];
-    } else {
-        placeholderTextColor = [self colorWithRed:0/255.f green:0/255.f blue:25/255.f alpha:0.22f];
-    }
-    
-    return placeholderTextColor;
+    return [self colorWithRed:0/255.f green:0/255.f blue:25/255.f alpha:0.22f];
 }
 
 

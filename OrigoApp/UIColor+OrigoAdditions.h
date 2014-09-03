@@ -33,7 +33,6 @@
 + (instancetype)titleBackgroundColour;
 + (instancetype)titlePlaceholderColour;
 + (instancetype)imagePlaceholderBackgroundColour;
-+ (instancetype)iOS6BarButtonItemColour;
 
 + (instancetype)textColour;
 + (instancetype)dimmedTextColour;

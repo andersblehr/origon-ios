@@ -10,8 +10,6 @@
 
 CGFloat const kFadeAnimationDuration = 0.2f;
 
-static CGFloat const kCellShadowRadius = 1.f;
-static CGFloat const kCellShadowOffset = 0.f;
 static CGFloat const kImageShadowRadius = 1.f;
 static CGFloat const kImageShadowOffset = 1.5f;
 
@@ -57,27 +55,6 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 
 
 #pragma mark - Shadow effects
-
-- (void)addSeparatorsForTableViewCell
-{
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:self.bounds] colour:[UIColor tableViewSeparatorColour] radius:kCellShadowRadius offset:kCellShadowOffset];
-}
-
-
-- (void)redrawSeparatorsForTableViewCell
-{
-    CGPathRef redrawnShadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
-    
-    CABasicAnimation *redrawAnimation = [CABasicAnimation animationWithKeyPath:kKeyPathShadowPath];
-    redrawAnimation.duration = kCellAnimationDuration;
-    redrawAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    redrawAnimation.fromValue = (__bridge id)self.layer.shadowPath;
-    redrawAnimation.toValue = (__bridge id)redrawnShadowPath;
-    
-    [self.layer addAnimation:redrawAnimation forKey:nil];
-    self.layer.shadowPath = redrawnShadowPath;
-}
-
 
 - (void)addDropShadowForPhotoFrame
 {

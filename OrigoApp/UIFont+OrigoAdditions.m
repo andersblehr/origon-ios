@@ -20,9 +20,7 @@ static CGFloat const kDetailFontSize = 14.f;
 static CGFloat const kListTextFontSize = 18.f;
 static CGFloat const kListDetailFontSize = 12.f;
 static CGFloat const kAlternateListFontSize = 17.f;
-
 static CGFloat const kLineToFieldHeightFactor = 1.34f;
-static CGFloat const kLineToFieldHeightFactor_iOS6x = 1.22f;
 
 
 @implementation UIFont (OrigoAdditions)
@@ -127,9 +125,7 @@ static CGFloat const kLineToFieldHeightFactor_iOS6x = 1.22f;
 
 - (CGFloat)inputFieldHeight
 {
-    CGFloat lineToFieldHeightFactor = [OMeta systemIs_iOS6x] ? kLineToFieldHeightFactor_iOS6x : kLineToFieldHeightFactor;
-    
-    return lineToFieldHeightFactor * self.lineHeight;
+    return kLineToFieldHeightFactor * self.lineHeight;
 }
 
 @end

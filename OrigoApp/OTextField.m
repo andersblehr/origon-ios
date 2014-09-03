@@ -151,7 +151,7 @@ static CGFloat const kTextInsetY = 1.2f;
         self.placeholder = NSLocalizedString(key, kStringPrefixPlaceholder);
         self.returnKeyType = UIReturnKeyNext;
         self.textAlignment = NSTextAlignmentLeft;
-        self.layer.borderWidth = [OMeta screenIsRetina] ? kBorderWidth : kBorderWidthNonRetina;
+        self.layer.borderWidth = kBorderWidth;
         self.layer.borderColor = [[UIColor clearColor] CGColor];
         
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -284,10 +284,7 @@ static CGFloat const kTextInsetY = 1.2f;
     self.textColor = _isTitleField ? [UIColor titleTextColour] : [UIColor textColour];
     
     if (_isTitleField) {
-        if (![OMeta systemIs_iOS6x]) {
-            self.tintColor = [UIColor titlePlaceholderColour];
-        }
-        
+        self.tintColor = [UIColor titlePlaceholderColour];
         self.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.placeholder attributes:@{NSForegroundColorAttributeName:[UIColor titlePlaceholderColour]}];
     }
 }
@@ -346,25 +343,6 @@ static CGFloat const kTextInsetY = 1.2f;
         datePicker.date = _value ? _value : [NSDate defaultDate];
         
         self.inputView = datePicker;
-    }
-}
-
-
-#pragma mark - OTextInput conformance: Bug workaround
-
-- (void)protectAgainstUnwantedAutolayoutAnimation:(BOOL)shouldProtect
-{
-    // Setting empty text field to temporary value on creation and resetting before
-    // cell display, to avoid autolayout causing newly entered text to disappear and
-    // fly back in on end edit when next input field is an OTextView that resizes on
-    // begin edit in iOS 6.x.
-    
-    if ([OMeta systemIs_iOS6x] && [[OState s] actionIs:kActionRegister]) {
-        if (shouldProtect && !self.text) {
-            self.text = kSeparatorSpace;
-        } else if (!shouldProtect && [self.text isEqualToString:kSeparatorSpace]) {
-            self.text = [NSString string];
-        }
     }
 }
 

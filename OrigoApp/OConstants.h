@@ -119,18 +119,13 @@ extern NSString * const kIconFileInfant;
 extern NSString * const kIconFileMultiRole;
 extern NSString * const kIconFileMultiRoleSelected;
 extern NSString * const kIconFileSettings;
-extern NSString * const kIconFilePlus;
 extern NSString * const kIconFileEdit;
 extern NSString * const kIconFileMap;
 extern NSString * const kIconFileInfo;
-extern NSString * const kIconFileAction;
 extern NSString * const kIconFileLookup;
 extern NSString * const kIconFilePlacePhoneCall;
-extern NSString * const kIconFilePlacePhoneCall_iOS6x;
 extern NSString * const kIconFileSendText;
-extern NSString * const kIconFileSendText_iOS6x;
 extern NSString * const kIconFileSendEmail;
-extern NSString * const kIconFileSendEmail_iOS6x;
 extern NSString * const kIconFileLocationArrow;
 
 // Gender codes
@@ -145,7 +140,6 @@ extern NSInteger const kAgeOfMajority;
 
 // Geometry constants
 extern CGFloat const kBorderWidth;
-extern CGFloat const kBorderWidthNonRetina;
 extern CGFloat const kToolbarBarHeight;
 extern CGFloat const kContentInset;
 extern CGFloat const kLineToHeaderHeightFactor;

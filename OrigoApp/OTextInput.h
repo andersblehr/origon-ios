@@ -29,6 +29,4 @@
 - (CGFloat)height;
 - (void)prepareForInput;
 
-- (void)protectAgainstUnwantedAutolayoutAnimation:(BOOL)shouldProtect; // Bug workaround
-
 @end

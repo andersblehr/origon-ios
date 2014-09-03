@@ -35,24 +35,6 @@ static void uncaughtExceptionHandler(NSException *exception)
 }
 
 
-- (void)setUpAppearances
-{
-    if ([OMeta systemIs_iOS6x]) {
-        [[UINavigationBar appearance] setTintColor:[UIColor toolbarColour]];
-        [[UINavigationBar appearance] setTitleTextAttributes:@{UITextAttributeFont: [UIFont navigationBarTitleFont], UITextAttributeTextColor: [UIColor blackColor], UITextAttributeTextShadowColor: [UIColor clearColor]}];
-        
-        [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTintColor:[UIColor iOS6BarButtonItemColour]];
-        [[UIBarButtonItem appearanceWhenContainedIn:[UINavigationBar class], nil] setTitleTextAttributes:@{UITextAttributeTextShadowColor: [UIColor clearColor]} forState:UIControlStateNormal];
-        
-        [[UISegmentedControl appearanceWhenContainedIn:[UINavigationBar class], nil] setSegmentedControlStyle:UISegmentedControlStyleBar];
-        [[UISegmentedControl appearanceWhenContainedIn:[UINavigationBar class], nil] setTintColor:[UIColor whiteColor]];
-        [[UISegmentedControl appearanceWhenContainedIn:[UINavigationBar class], nil] setTitleTextAttributes:@{UITextAttributeTextColor:[UIColor iOS6BarButtonItemColour], UITextAttributeTextShadowColor: [UIColor clearColor]} forState:UIControlStateNormal];
-        
-        [[UIToolbar appearance] setTintColor:[UIColor toolbarColour]];
-    }
-}
-
-
 #pragma mark - Persistent store release
 
 - (void)releasePersistentStore
@@ -117,11 +99,7 @@ static void uncaughtExceptionHandler(NSException *exception)
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:kTimeZoneNameUTC]];
     
-    if ([OMeta systemIs_iOS6x]) {
-        [self setUpAppearances];
-    } else {
-        _window.tintColor = [UIColor windowTintColour];
-    }
+    _window.tintColor = [UIColor windowTintColour];
     
     OLogDebug(@"Device ID: %@", [OMeta m].deviceId);
     OLogDebug(@"Device model: %@.", [UIDevice currentDevice].model);
