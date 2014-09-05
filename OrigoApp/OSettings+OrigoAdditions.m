@@ -68,6 +68,18 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
 }
 
 
+- (NSArray *)settingListKeys
+{
+    NSMutableArray *settingListKeys = [NSMutableArray array];
+    
+    if ([[OMeta m].user.devices count] > 1) {
+        [settingListKeys addObject:kTargetDevices];
+    }
+    
+    return settingListKeys;
+}
+
+
 - (void)setValue:(id)value forSettingKey:(NSString *)settingKey
 {
     [self setValue:value forKey:[self normalisedKeyForSettingKey:settingKey]];

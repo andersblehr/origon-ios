@@ -24,6 +24,4 @@ extern CGFloat const kPhotoFrameWidth;
 @property (nonatomic) NSArray *inputKeys;
 @property (nonatomic) NSArray *multiLineTextKeys;
 
-- (OInputField *)inputFieldWithKey:(NSString *)key delegate:(id)delegate;
-
 @end

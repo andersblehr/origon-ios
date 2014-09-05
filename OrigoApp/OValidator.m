@@ -51,7 +51,7 @@ static NSDictionary *_keyMappings = nil;
 + (BOOL)isDateKey:(NSString *)key
 {
     if (!_dateKeys) {
-        _dateKeys = @[kPropertyKeyActiveSince, kPropertyKeyDateCreated, kPropertyKeyDateExpires, kPropertyKeyDateReplicated];
+        _dateKeys = @[kPropertyKeyActiveSince, kPropertyKeyDateCreated, kPropertyKeyDateExpires, kPropertyKeyDateReplicated, kPropertyKeyLastSeen];
     }
     
     return [self isAgeKey:key] || [_dateKeys containsObject:key];

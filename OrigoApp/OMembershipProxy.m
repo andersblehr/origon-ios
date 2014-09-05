@@ -8,22 +8,6 @@
 
 #import "OMembershipProxy.h"
 
-NSString * const kMembershipTypeRoot = @"~";
-NSString * const kMembershipTypeResidency = @"R";
-NSString * const kMembershipTypeParticipancy = @"P";
-NSString * const kMembershipTypeAssociate = @"A";
-
-NSString * const kMembershipStatusInvited = @"I";
-NSString * const kMembershipStatusWaiting = @"W";
-NSString * const kMembershipStatusActive = @"A";
-NSString * const kMembershipStatusRejected = @"R";
-NSString * const kMembershipStatusExpired = @"-";
-
-NSString * const kRoleTypeMemberRole = @"M";
-NSString * const kRoleTypeOrganiserRole = @"O";
-NSString * const kRoleTypeParentRole = @"P";
-
-
 @implementation OMembershipProxy
 
 #pragma mark - Factory methods

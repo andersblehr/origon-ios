@@ -166,6 +166,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     [self loadUser];
     
     ODevice *device = [ODevice device];
+    device.lastSeen = [NSDate date];
     
     if ([device hasExpired]) {
         [device unexpire];
@@ -214,6 +215,8 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 
         if (_user) {
             _isSignedIn = @YES;
+            
+            [ODevice device].lastSeen = [NSDate date];
         } else {
             [self reset];
         }

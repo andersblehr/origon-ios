@@ -33,6 +33,7 @@ extern NSString * const kTargetRole;
 extern NSString * const kTargetRoles;
 extern NSString * const kTargetSetting;
 extern NSString * const kTargetSettings;
+extern NSString * const kTargetDevices;
 
 extern NSString * const kAspectDefault;
 extern NSString * const kAspectHousehold;

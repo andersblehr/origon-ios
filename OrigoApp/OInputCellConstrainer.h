@@ -10,15 +10,21 @@
 
 @interface OInputCellConstrainer : NSObject
 
+@property (nonatomic, readonly) OInputCellBlueprint *blueprint;
+
 @property (nonatomic, readonly) NSString *titleKey;
 @property (nonatomic, readonly) NSArray *detailKeys;
 @property (nonatomic, readonly) NSArray *inputKeys;
 
-- (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OInputCellBlueprint *)blueprint;
+
+- (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OInputCellBlueprint *)blueprint delegate:(id<OInputCellDelegate>)delegate;
 
 - (NSDictionary *)constraintsWithAlignmentOptions;
 
+- (CGFloat)labeledTextWidth;
 - (CGFloat)heightOfInputCell;
 + (CGFloat)heightOfInputCellWithEntity:(id<OEntity>)entity delegate:(id)delegate;
+
+- (OInputField *)inputFieldWithKey:(NSString *)key;
 
 @end

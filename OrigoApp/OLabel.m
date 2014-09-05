@@ -19,31 +19,7 @@
 
 @implementation OLabel
 
-#pragma mark - Auxiliary methods
-
-+ (CGFloat)widthWithKey:(NSString *)key prefix:(NSString *)prefix
-{
-    return [NSLocalizedString(key, prefix) sizeWithFont:[UIFont detailFont] maxWidth:CGFLOAT_MAX].width;
-}
-
-
 #pragma mark - Width computation
-
-+ (CGFloat)widthWithBlueprint:(OInputCellBlueprint *)blueprint
-{
-    CGFloat width = 0.f;
-    
-    for (NSString *key in blueprint.detailKeys) {
-        width = MAX(width, [self widthWithKey:key prefix:kStringPrefixLabel]);
-        
-        if ([OValidator isAlternatingLabelKey:key]) {
-            width = MAX(width, [self widthWithKey:key prefix:kStringPrefixAlternateLabel]);
-        }
-    }
-    
-    return width + 1.f;
-}
-
 
 #pragma mark - Initialisation
 

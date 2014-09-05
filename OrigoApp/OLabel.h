@@ -12,8 +12,6 @@
 
 @property (nonatomic, assign) BOOL useAlternateText;
 
-+ (CGFloat)widthWithBlueprint:(OInputCellBlueprint *)blueprint;
-
 - (instancetype)initWithKey:(NSString *)key centred:(BOOL)centred;
 
 @end

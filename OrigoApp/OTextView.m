@@ -8,19 +8,19 @@
 
 #import "OTextView.h"
 
+CGFloat const kTextViewWidthAdjustment = 7.5f;
+
 static NSInteger const kTextViewMaximumLines = 5;
 static NSInteger const kTextViewMinimumLines = 1;
 static NSInteger const kTextViewMinimumEditLines = 2;
 
 static CGFloat const kTextInsetTop = 3.5f;
 static CGFloat const kTextInsetLeft = -1.f;
-static CGFloat const kWidthAdjustment = 7.5f;
 
 
 @interface OTextView () <UITextViewDelegate> {
 @private
-    OInputCellBlueprint *_blueprint;
-    CGFloat _textWidth;
+    OInputCellConstrainer *_constrainer;
     
     UITextView *_placeholderView;
     NSString *_placeholder;
@@ -42,12 +42,6 @@ static CGFloat const kWidthAdjustment = 7.5f;
 
 #pragma mark - Auxiliary methods
 
-+ (CGFloat)textWidthWithBlueprint:(OInputCellBlueprint *)blueprint
-{
-    return [OMeta screenWidth] - 2 * kDefaultCellPadding - [OLabel widthWithBlueprint:blueprint] - kWidthAdjustment;
-}
-
-
 + (CGFloat)heightWithLineCount:(NSInteger)lineCount
 {
     return [UIFont detailFieldHeight] + (lineCount - 1) * [UIFont detailLineHeight];
@@ -68,10 +62,11 @@ static CGFloat const kWidthAdjustment = 7.5f;
 - (NSInteger)lineCount
 {
     NSInteger lineCount = 0;
-
+    CGFloat textWidth = [_constrainer labeledTextWidth];
+    
     if ([self.text hasValue]) {
         if (self.window) {
-            lineCount = [self.text lineCountWithFont:self.font maxWidth:_textWidth];
+            lineCount = [self.text lineCountWithFont:self.font maxWidth:textWidth];
             
             if (_hasEmphasis) {
                 if ((lineCount > 1) && (lineCount < kTextViewMaximumLines)) {
@@ -84,10 +79,10 @@ static CGFloat const kWidthAdjustment = 7.5f;
                 }
             }
         } else {
-            lineCount = [[self class] lineCountWithText:self.text maxWidth:_textWidth];
+            lineCount = [[self class] lineCountWithText:self.text maxWidth:textWidth];
         }
     } else {
-        lineCount = [[self class] lineCountWithText:_placeholder maxWidth:_textWidth];
+        lineCount = [[self class] lineCountWithText:_placeholder maxWidth:textWidth];
     }
     
     _lastKnownLineCount = lineCount;
@@ -118,7 +113,7 @@ static CGFloat const kWidthAdjustment = 7.5f;
 
 #pragma mark - Initialisation
 
-- (instancetype)initWithKey:(NSString *)key blueprint:(OInputCellBlueprint *)blueprint delegate:(id)delegate
+- (instancetype)initWithKey:(NSString *)key constrainer:(OInputCellConstrainer *)constrainer delegate:(id)delegate
 {
     self = [super initWithFrame:CGRectZero textContainer:nil];
     
@@ -143,8 +138,7 @@ static CGFloat const kWidthAdjustment = 7.5f;
         [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
         
         _key = key;
-        _blueprint = blueprint;
-        _textWidth = [[self class] textWidthWithBlueprint:_blueprint];
+        _constrainer = constrainer;
         _placeholder = NSLocalizedString(_key, kStringPrefixPlaceholder);
         _supportsMultiLineText = YES;
         
@@ -157,11 +151,9 @@ static CGFloat const kWidthAdjustment = 7.5f;
 
 #pragma mark - Height computation
 
-+ (CGFloat)heightWithText:(NSString *)text blueprint:(OInputCellBlueprint *)blueprint
++ (CGFloat)heightWithText:(NSString *)text maxWidth:(CGFloat)maxWidth
 {
-    NSInteger lineCount = [self lineCountWithText:text maxWidth:[self textWidthWithBlueprint:blueprint]];
-    
-    return [self heightWithLineCount:lineCount];
+    return [self heightWithLineCount:[self lineCountWithText:text maxWidth:maxWidth]];
 }
 
 
@@ -202,7 +194,8 @@ static CGFloat const kWidthAdjustment = 7.5f;
     self.userInteractionEnabled = editable;
     
     if (editable && _placeholder && !_placeholderView) {
-        CGSize placeholderSize = CGSizeMake(_textWidth + kWidthAdjustment, [[self class] heightWithText:_placeholder blueprint:_blueprint]);
+        CGFloat textWidth = [_constrainer labeledTextWidth];
+        CGSize placeholderSize = CGSizeMake(textWidth + kTextViewWidthAdjustment, [[self class] heightWithText:_placeholder maxWidth:textWidth]);
         CGRect placeholderFrame = CGRectMake(0.f, 0.f, placeholderSize.width, placeholderSize.height);
         
         _placeholderView = [[UITextView alloc] initWithFrame:placeholderFrame textContainer:nil];
@@ -216,7 +209,7 @@ static CGFloat const kWidthAdjustment = 7.5f;
         
         [self addSubview:_placeholderView];
         
-        _lastKnownLineCount = [[self class] lineCountWithText:_placeholder maxWidth:_textWidth];
+        _lastKnownLineCount = [[self class] lineCountWithText:_placeholder maxWidth:textWidth];
     }
 }
 

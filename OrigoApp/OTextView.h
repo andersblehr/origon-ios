@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+extern CGFloat const kTextViewWidthAdjustment;
+
 @interface OTextView : UITextView<OTextInput>
 
-- (instancetype)initWithKey:(NSString *)key blueprint:(OInputCellBlueprint *)blueprint delegate:(id)delegate;
+- (instancetype)initWithKey:(NSString *)key constrainer:(OInputCellConstrainer *)constrainer delegate:(id)delegate;
 
-+ (CGFloat)heightWithText:(NSString *)text blueprint:(OInputCellBlueprint *)blueprint;
++ (CGFloat)heightWithText:(NSString *)text maxWidth:(CGFloat)maxWidth;
 
 @end

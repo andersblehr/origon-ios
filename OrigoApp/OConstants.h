@@ -48,6 +48,7 @@ extern NSString * const kPropertyKeyHashCode;
 extern NSString * const kPropertyKeyIsAwaitingDeletion;
 extern NSString * const kPropertyKeyIsExpired;
 extern NSString * const kPropertyKeyIsMinor;
+extern NSString * const kPropertyKeyLastSeen;
 extern NSString * const kPropertyKeyMobilePhone;
 extern NSString * const kPropertyKeyMotherId;
 extern NSString * const kPropertyKeyName;
@@ -86,11 +87,15 @@ extern NSString * const kExternalKeyPassword;
 extern NSString * const kExternalKeyRepeatPassword;
 extern NSString * const kExternalKeySignIn;
 
+// Button keys
+extern NSString * const kButtonKeyDeleteRow;
+
 // String key prefixes
 extern NSString * const kStringPrefixDefault;
 extern NSString * const kStringPrefixLabel;
 extern NSString * const kStringPrefixAlternateLabel;
 extern NSString * const kStringPrefixSettingLabel;
+extern NSString * const kStringPrefixSettingListLabel;
 extern NSString * const kStringPrefixPlaceholder;
 extern NSString * const kStringPrefixOrigoTitle;
 extern NSString * const kStringPrefixNewOrigoTitle;
@@ -110,15 +115,16 @@ extern NSString * const kStringPrefixSettingTitle;
 
 // Icon file names
 extern NSString * const kIconFileOrigo;
+extern NSString * const kIconFileSettings;
+extern NSString * const kIconFile_iPad;
+extern NSString * const kIconFile_iPhone;
+extern NSString * const kIconFile_iPodTouch;
 extern NSString * const kIconFileHousehold;
 extern NSString * const kIconFileMan;
 extern NSString * const kIconFileWoman;
 extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
 extern NSString * const kIconFileInfant;
-extern NSString * const kIconFileMultiRole;
-extern NSString * const kIconFileMultiRoleSelected;
-extern NSString * const kIconFileSettings;
 extern NSString * const kIconFileEdit;
 extern NSString * const kIconFileMap;
 extern NSString * const kIconFileInfo;
@@ -126,6 +132,9 @@ extern NSString * const kIconFileLookup;
 extern NSString * const kIconFilePlacePhoneCall;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;
+extern NSString * const kIconFileMultiRole;
+extern NSString * const kIconFileMultiRoleSelected;
+extern NSString * const kIconFileGroups;
 extern NSString * const kIconFileLocationArrow;
 
 // Gender codes

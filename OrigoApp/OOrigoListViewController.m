@@ -152,7 +152,7 @@ static NSInteger const kSectionKeyWards = 2;
             [_origoTypes addObject:kOrigoTypeStudyGroup];
         }
         
-        [_origoTypes addObject:kOrigoTypeGeneral];
+        [_origoTypes addObject:kOrigoTypeOther];
     }
 }
 
