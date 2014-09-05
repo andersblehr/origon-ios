@@ -30,16 +30,16 @@
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
-
-- (UITableViewCellStyle)styleForListCellAtIndexPath:(NSIndexPath *)indexPath;
-- (void)willDisplayInputCell:(OTableViewCell *)inputCell;
-- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
-- (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
-- (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
+- (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey;
 
 - (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey;
 - (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2;
 - (NSString *)sortKeyForSectionWithKey:(NSInteger)sectionKey;
+
+- (void)willDisplayInputCell:(OTableViewCell *)inputCell;
+- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
+- (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
 
 - (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController;
 - (void)willDismissModalViewController:(OTableViewController *)viewController;
@@ -65,6 +65,7 @@
 
 @property (nonatomic, assign) BOOL requiresSynchronousServerCalls;
 @property (nonatomic, assign) BOOL usesPlainTableViewStyle;
+@property (nonatomic, assign) BOOL usesSectionIndexTitles;
 @property (nonatomic, assign) BOOL didCancel;
 @property (nonatomic, assign) BOOL cancelImpliesSkip;
 

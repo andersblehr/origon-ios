@@ -8,8 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString *kDeviceType_iPhone;
+extern NSString *kDeviceType_iPad;
+extern NSString *kDeviceType_iPodTouch;
+
 @interface ODevice (OrigoAdditions)
 
 + (instancetype)device;
+
+- (BOOL)isOfType:(NSString *)deviceType;
 
 @end

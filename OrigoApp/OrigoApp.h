@@ -41,11 +41,6 @@
 #import "OMemberExaminerDelegate.h"
 #import "OTextInput.h"
 
-#import "OEntityProxy.h"
-#import "OMemberProxy.h"
-#import "OMembershipProxy.h"
-#import "OOrigoProxy.h"
-
 #import "ODevice.h"
 #import "ODevice+OrigoAdditions.h"
 #import "OMember.h"
@@ -59,6 +54,11 @@
 #import "OReplicatedEntityRef.h"
 #import "OSettings.h"
 #import "OSettings+OrigoAdditions.h"
+
+#import "OEntityProxy.h"
+#import "OMemberProxy.h"
+#import "OMembershipProxy.h"
+#import "OOrigoProxy.h"
 
 typedef UIView<OTextInput> OInputField;
 

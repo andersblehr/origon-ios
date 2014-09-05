@@ -8,16 +8,6 @@
 
 #import "OOrigoProxy.h"
 
-NSString * const kOrigoTypeFriends = @"friends";
-NSString * const kOrigoTypeGeneral = @"general";
-NSString * const kOrigoTypeOrganisation = @"organisation";
-NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
-NSString * const kOrigoTypeResidence = @"residence";
-NSString * const kOrigoTypeRoot = @"~";
-NSString * const kOrigoTypeSchoolClass = @"schoolClass";
-NSString * const kOrigoTypeStudyGroup = @"studyGroup";
-NSString * const kOrigoTypeTeam = @"team";
-
 static NSString * const kPlaceholderStreet = @"{street}";
 static NSString * const kPlaceholderCity = @"{city}";
 static NSString * const kPlaceholderZip = @"{zip}";

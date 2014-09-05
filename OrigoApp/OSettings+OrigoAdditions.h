@@ -25,5 +25,6 @@
 + (instancetype)settings;
 
 - (NSArray *)settingKeys;
+- (NSArray *)settingListKeys;
 
 @end

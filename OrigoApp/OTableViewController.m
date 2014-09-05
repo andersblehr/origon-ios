@@ -28,7 +28,6 @@ static UIViewController * _reinstantiatedRootViewController;
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
-    BOOL _usesSectionIndexTitles;
     BOOL _shouldReloadOnModalDismissal;
     BOOL _shouldDismissOnFinishEditingTitle;
     
@@ -171,7 +170,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         rightBarButtonItems = self.navigationItem.rightBarButtonItems;
         
         if (!self.isModal || [_titleField.text hasValue]) {
-            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTitle:NSLocalizedString(@"Cancel", @"") target:self action:@selector(didCancelEditingTitle)];
+            self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self action:@selector(didCancelEditingTitle)];
         }
         
         self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem doneButtonWithTitle:NSLocalizedString(@"Use", @"") target:self action:@selector(didFinishEditingTitle)]];
@@ -469,8 +468,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         [_sectionIndexTitles removeAllObjects];
         
-        if (_usesPlainTableViewStyle && ([data count] > kSectionIndexMinimumDisplayRowCount)) {
-            _usesSectionIndexTitles = YES;
+        if (_usesSectionIndexTitles) {
+            _usesSectionIndexTitles = ([data count] >= kSectionIndexMinimumDisplayRowCount);
+        }
+        
+        if (_usesSectionIndexTitles) {
             labelKey = sectionIndexLabelKey;
             
             [self setData:data sectionIndexLabelKey:nil];
@@ -914,6 +916,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         self.navigationController.navigationBar.barTintColor = [UIColor toolbarColour];
     }
     
+    if (_usesSectionIndexTitles) {
+        self.tableView.sectionIndexMinimumDisplayRowCount = kSectionIndexMinimumDisplayRowCount;
+    }
+    
     if (_segments) {
         [self.navigationController.navigationBar setHairlinesHidden:YES];
     }
@@ -941,8 +947,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                     [[_inputCell nextInputField] becomeFirstResponder];
                 }
             }
-        } else if (_usesSectionIndexTitles) {
-            self.tableView.sectionIndexMinimumDisplayRowCount = kSectionIndexMinimumDisplayRowCount;
         }
         
         if (_titleField && _isModal) {
@@ -994,6 +998,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 
 #pragma mark - Custom accessors
+
+- (void)setUsesSectionIndexTitles:(BOOL)usesSectionIndexTitles
+{
+    _usesSectionIndexTitles = usesSectionIndexTitles;
+    
+    if (_usesSectionIndexTitles) {
+        _usesPlainTableViewStyle = YES;
+    }
+}
+
 
 - (void)setTarget:(id)target
 {
@@ -1111,8 +1125,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     } else {
         UITableViewCellStyle style = UITableViewCellStyleSubtitle;
         
-        if ([_instance respondsToSelector:@selector(styleForListCellAtIndexPath:)]) {
-            style = [_instance styleForListCellAtIndexPath:indexPath];
+        if ([_instance respondsToSelector:@selector(listCellStyleForSectionWithKey:)]) {
+            style = [_instance listCellStyleForSectionWithKey:[self sectionKeyForIndexPath:indexPath]];
         }
         
         cell = [tableView listCellWithStyle:style data:[self dataAtIndexPath:indexPath] delegate:_instance];
@@ -1145,14 +1159,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         NSNumber *sectionKey = _sectionKeys[indexPath.section];
         NSMutableArray *sectionData = _sectionData[sectionKey];
-        id entity = sectionData[indexPath.row];
         
         _sectionCounts[sectionKey] = @([_sectionCounts[sectionKey] integerValue] - 1);
         [sectionData removeObjectAtIndex:indexPath.row];
-        
-        if ([_entity instance] && [entity instance]) {
-            [[[_entity instance] relationshipToEntity:[entity instance]] expire];
-        }
         
         [[OMeta m].replicator replicateIfNeeded];
         [tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationAutomatic];

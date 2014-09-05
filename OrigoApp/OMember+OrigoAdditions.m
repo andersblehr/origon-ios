@@ -651,12 +651,6 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (id)relationshipToEntity:(id)other
-{
-    return [other isKindOfClass:[OOrigo class]] ? [other membershipForMember:self] : nil;
-}
-
-
 + (Class)proxyClass
 {
     return [OMemberProxy class];

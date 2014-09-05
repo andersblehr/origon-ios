@@ -11,17 +11,18 @@
 @interface UIBarButtonItem (OrigoAdditions)
 
 + (instancetype)settingsButtonWithTarget:(id)target;
++ (instancetype)actionButtonWithTarget:(id)target;
 + (instancetype)plusButtonWithTarget:(id)target;
 + (instancetype)editButtonWithTarget:(id)target;
 + (instancetype)mapButtonWithTarget:(id)target;
 + (instancetype)infoButtonWithTarget:(id)target;
-+ (instancetype)actionButtonWithTarget:(id)target;
 + (instancetype)lookupButtonWithTarget:(id)target;
++ (instancetype)groupsButtonWithTarget:(id)target;
 + (instancetype)multiRoleButtonWithTarget:(id)target selected:(BOOL)selected;
 
 + (instancetype)nextButtonWithTarget:(id)target;
 + (instancetype)cancelButtonWithTarget:(id)target;
-+ (instancetype)cancelButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action;
++ (instancetype)cancelButtonWithTarget:(id)target action:(SEL)action;
 + (instancetype)skipButtonWithTarget:(id)target;
 + (instancetype)doneButtonWithTarget:(id)target;
 + (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action;

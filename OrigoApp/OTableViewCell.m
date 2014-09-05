@@ -94,7 +94,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)addInputFieldForKey:(NSString *)key
 {
-    OInputField *inputField = [_blueprint inputFieldWithKey:key delegate:_inputCellDelegate];
+    OInputField *inputField = [_constrainer inputFieldWithKey:key];
     
     [self.contentView addSubview:inputField];
     [_views setObject:inputField forKey:[key stringByAppendingString:kViewKeySuffixInputField]];
@@ -156,7 +156,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _entity = entity;
         _inputCellDelegate = delegate;
         _blueprint = [_inputCellDelegate inputCellBlueprint];
-        _constrainer = [[OInputCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
+        _constrainer = [[OInputCellConstrainer alloc] initWithCell:self blueprint:_blueprint delegate:delegate];
         
         [self addCellElements];
         [self.contentView setNeedsUpdateConstraints];
@@ -175,7 +175,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (self && ![self isListCell]) {
         _inputCellDelegate = delegate;
         _blueprint = [_inputCellDelegate inputCellBlueprint];
-        _constrainer = [[OInputCellConstrainer alloc] initWithCell:self blueprint:_blueprint];
+        _constrainer = [[OInputCellConstrainer alloc] initWithCell:self blueprint:_blueprint delegate:delegate];
         
         [self addCellElements];
         [self.contentView setNeedsUpdateConstraints];

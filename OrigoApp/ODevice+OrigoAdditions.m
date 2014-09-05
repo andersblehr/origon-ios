@@ -8,7 +8,26 @@
 
 #import "ODevice+OrigoAdditions.h"
 
+NSString *kDeviceType_iPhone = @"iPhone";
+NSString *kDeviceType_iPad = @"iPad";
+NSString *kDeviceType_iPodTouch = @"iPod";
+
+
 @implementation ODevice (OrigoAdditions)
+
+#pragma mark - Selector implementations
+
+- (NSComparisonResult)compare:(ODevice *)other
+{
+    NSComparisonResult result = [self.name localizedCaseInsensitiveCompare:other.name];
+    
+    if (result == NSOrderedSame) {
+        result = [other.lastSeen compare:self.lastSeen];
+    }
+    
+    return result;
+}
+
 
 #pragma mark - Instance access
 
@@ -25,11 +44,20 @@
     if (!device) {
         device = [[OMeta m].context insertEntityOfClass:[self class] inOrigo:[[OMeta m].user root] entityId:deviceId];
         device.type = [UIDevice currentDevice].model;
-        device.displayName = [UIDevice currentDevice].name;
+        device.name = [UIDevice currentDevice].name;
+        device.lastSeen = [NSDate date];
         device.user = [OMeta m].user;
     }
     
     return device;
+}
+
+
+#pragma mark - Type inference
+
+- (BOOL)isOfType:(NSString *)deviceType
+{
+    return [self.type hasPrefix:deviceType];
 }
 
 

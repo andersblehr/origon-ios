@@ -9,7 +9,8 @@
 #import "OValueListViewController.h"
 
 static NSInteger const kSectionKeyValues = 0;
-static NSInteger const kSectionKeySignOut = 1;
+static NSInteger const kSectionKeyLists = 1;
+static NSInteger const kSectionKeySignOut = 2;
 
 static NSInteger const kSegmentParents = 0;
 static NSInteger const kSegmentOrganisers = 1;
@@ -117,7 +118,10 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 {
     if ([self targetIs:kTargetSettings]) {
         self.title = NSLocalizedString(@"Settings", @"");
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem cancelButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+    } else if ([self targetIs:kTargetDevices]) {
+        self.title = NSLocalizedString(self.target, kStringPrefixSettingListLabel);
+        self.usesPlainTableViewStyle = YES;
     } else if ([self targetIs:kTargetRoles]) {
         _origo = self.meta;
         
@@ -155,7 +159,10 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 {
     if ([self targetIs:kTargetSettings]) {
         [self setData:[[OSettings settings] settingKeys] forSectionWithKey:kSectionKeyValues];
+        [self setData:[[OSettings settings] settingListKeys] forSectionWithKey:kSectionKeyLists];
         [self setData:@[kCustomData] forSectionWithKey:kSectionKeySignOut];
+    } else if ([self targetIs:kTargetDevices]) {
+        [self setData:[[[OMeta m].user.devices allObjects] sortedArrayUsingSelector:@selector(compare:)] forSectionWithKey:kSectionKeyValues];
     } else if ([self targetIs:kTargetRoles]) {
         if (_selectedSegment == kSegmentParents) {
             [self setData:[_origo parentRoles] forSectionWithKey:kSectionKeyValues];
@@ -173,14 +180,38 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if ([self targetIs:kTargetSettings]) {
+        NSString *key = [self dataAtIndexPath:indexPath];
+        
         if (sectionKey == kSectionKeyValues) {
-            NSString *key = [self dataAtIndexPath:indexPath];
-            
             cell.textLabel.text = NSLocalizedString(key, kStringPrefixSettingLabel);
             cell.detailTextLabel.text = [[OSettings settings] displayValueForSettingKey:key];
+            cell.destinationId = kIdentifierValuePicker;
+        } else if (sectionKey == kSectionKeyLists) {
+            cell.textLabel.text = NSLocalizedString(key, kStringPrefixSettingListLabel);
+            cell.destinationId = kIdentifierValueList;
         } else if (sectionKey == kSectionKeySignOut) {
             cell.textLabel.textColor = [UIColor redColor];
             cell.textLabel.text = [NSLocalizedString(@"Log out", @"") stringByAppendingString:[OMeta m].user.name separator:kSeparatorSpace];
+        }
+    } else if ([self targetIs:kTargetDevices]) {
+        ODevice *device = [self dataAtIndexPath:indexPath];
+        
+        cell.textLabel.text = device.name;
+        cell.selectable = NO;
+        
+        if ([device.entityId isEqualToString:[OMeta m].deviceId]) {
+            cell.detailTextLabel.text = NSLocalizedString(@"This device", @"");
+            cell.detailTextLabel.textColor = [UIColor windowTintColour];
+        } else {
+            cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Last seen %@", @""), [device.lastSeen localisedDateTimeString]];
+        }
+        
+        if ([device isOfType:kDeviceType_iPhone]) {
+            cell.imageView.image = [UIImage imageNamed:kIconFile_iPhone];
+        } else if ([device isOfType:kDeviceType_iPodTouch]) {
+            cell.imageView.image = [UIImage imageNamed:kIconFile_iPodTouch];
+        } else if ([device isOfType:kDeviceType_iPad]) {
+            cell.imageView.image = [UIImage imageNamed:kIconFile_iPad];
         }
     } else if ([self targetIs:kTargetRoles]) {
         NSString *role = [self dataAtIndexPath:indexPath];
@@ -231,9 +262,15 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 }
 
 
-- (UITableViewCellStyle)styleForListCellAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey
 {
-    return UITableViewCellStyleValue1;
+    UITableViewCellStyle style = UITableViewCellStyleValue1;
+    
+    if ([self targetIs:kTargetDevices]) {
+        style = UITableViewCellStyleSubtitle;
+    }
+    
+    return style;
 }
 
 
@@ -253,13 +290,25 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 
 - (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [self targetIs:kTargetRoles];
+    BOOL canDelete = NO;
+    
+    if ([self targetIs:kTargetDevices]) {
+        ODevice *device = [self dataAtIndexPath:indexPath];
+        
+        canDelete = ![device.entityId isEqualToString:[OMeta m].deviceId];
+    } else if ([self targetIs:kTargetRoles]) {
+        canDelete = YES;
+    }
+    
+    return canDelete;
 }
 
 
 - (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self targetIs:kTargetRoles]) {
+    if ([self targetIs:kTargetDevices]) {
+        [[self dataAtIndexPath:indexPath] expire];
+    } else if ([self targetIs:kTargetRoles]) {
         NSString *role = [self dataAtIndexPath:indexPath];
 
         if (_selectedSegment == kSegmentParents) {
@@ -292,6 +341,22 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             }
         }
     }
+}
+
+
+#pragma mark - UITableViewDataSource conformance
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *deleteTitle = nil;
+    
+    if ([self targetIs:kTargetDevices]) {
+        deleteTitle = NSLocalizedString(@"Not in use", @"");
+    } else {
+        deleteTitle = NSLocalizedString(kButtonKeyDeleteRow, kStringPrefixDefault);
+    }
+    
+    return deleteTitle;
 }
 
 

@@ -807,7 +807,7 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)showInfo
+- (void)performInfoAction
 {
     
 }
@@ -1055,6 +1055,38 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+- (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey
+{
+    return sectionKey == kSectionKeyGuardians;
+}
+
+
+- (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2
+{
+    NSComparisonResult result = NSOrderedSame;
+    
+    id<OMember> guardian1 = object1;
+    id<OMember> guardian2 = object2;
+    
+    if ([_member hasParent:guardian1] && ![_member hasParent:guardian2]) {
+        result = NSOrderedAscending;
+    } else if (![_member hasParent:guardian1] && [_member hasParent:guardian2]) {
+        result = NSOrderedDescending;
+    } else {
+        NSString *address1 = [[guardian1 residence] shortAddress];
+        NSString *address2 = [[guardian2 residence] shortAddress];
+        
+        if (!address1 || !address2 || [address1 isEqualToString:address2]) {
+            result = [guardian1.name localizedCaseInsensitiveCompare:guardian2.name];
+        } else {
+            result = [address1 localizedCaseInsensitiveCompare:address2];
+        }
+    }
+    
+    return result;
+}
+
+
 - (void)willDisplayInputCell:(OTableViewCell *)inputCell
 {
     _nameField = [inputCell inputFieldForKey:[self nameKey]];
@@ -1089,35 +1121,13 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey
+- (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    return sectionKey == kSectionKeyGuardians;
-}
-
-
-- (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2
-{
-    NSComparisonResult result = NSOrderedSame;
-    
-    id<OMember> guardian1 = object1;
-    id<OMember> guardian2 = object2;
-    
-    if ([_member hasParent:guardian1] && ![_member hasParent:guardian2]) {
-        result = NSOrderedAscending;
-    } else if (![_member hasParent:guardian1] && [_member hasParent:guardian2]) {
-        result = NSOrderedDescending;
-    } else {
-        NSString *address1 = [[guardian1 residence] shortAddress];
-        NSString *address2 = [[guardian2 residence] shortAddress];
-        
-        if (!address1 || !address2 || [address1 isEqualToString:address2]) {
-            result = [guardian1.name localizedCaseInsensitiveCompare:guardian2.name];
-        } else {
-            result = [address1 localizedCaseInsensitiveCompare:address2];
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddresses) {
+        if ([_origo isOfType:kOrigoTypeResidence]) {
+            [[_origo membershipForMember:_member] expire];
         }
     }
-    
-    return result;
 }
 
 

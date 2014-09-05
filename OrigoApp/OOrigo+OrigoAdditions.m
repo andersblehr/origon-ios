@@ -8,6 +8,16 @@
 
 #import "OOrigo+OrigoAdditions.h"
 
+NSString * const kOrigoTypeFriends = @"friends";
+NSString * const kOrigoTypeOther = @"other";
+NSString * const kOrigoTypeOrganisation = @"organisation";
+NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
+NSString * const kOrigoTypeResidence = @"residence";
+NSString * const kOrigoTypeRoot = @"~";
+NSString * const kOrigoTypeSchoolClass = @"schoolClass";
+NSString * const kOrigoTypeStudyGroup = @"studyGroup";
+NSString * const kOrigoTypeTeam = @"team";
+
 
 @implementation OOrigo (OrigoAdditions)
 
@@ -253,6 +263,8 @@
     return [parentContacts sortedArrayUsingSelector:@selector(compare:)];
 }
 
+
+#pragma mark - Role handling
 
 - (NSArray *)memberRoles
 {
@@ -559,12 +571,6 @@
 
 
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
-
-- (id)relationshipToEntity:(id)other
-{
-    return [other isKindOfClass:[OMember class]] ? [self membershipForMember:other] : nil;
-}
-
 
 - (BOOL)isTransient
 {

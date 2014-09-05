@@ -88,13 +88,15 @@
 
 - (void)loadState
 {
+    self.usesPlainTableViewStyle = YES;
+    
     if ([self targetIs:kTargetSetting]) {
         _settingKey = self.target;
         _settings = [OSettings settings];
         
         self.title = NSLocalizedString(_settingKey, kStringPrefixSettingTitle);
     } else {
-        self.usesPlainTableViewStyle = YES;
+        self.usesSectionIndexTitles = YES;
         
         if ([self targetIs:kTargetMembers]) {
             _isMultiValuePicker = YES;

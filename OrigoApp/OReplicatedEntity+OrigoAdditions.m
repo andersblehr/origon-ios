@@ -152,12 +152,6 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 }
 
 
-- (id)relationshipToEntity:(id)other
-{
-    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:[NSString stringWithFormat:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)] userInfo:nil];
-}
-
-
 #pragma mark - Meta information
 
 - (BOOL)userIsCreator

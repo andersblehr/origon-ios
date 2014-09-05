@@ -33,6 +33,7 @@ NSString * const kTargetRole = @"role";
 NSString * const kTargetRoles = @"roles";
 NSString * const kTargetSetting = @"setting";
 NSString * const kTargetSettings = @"settings";
+NSString * const kTargetDevices = @"devices";
 
 NSString * const kAspectDefault = @"default";
 NSString * const kAspectHousehold = @"household";
