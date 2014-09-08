@@ -119,8 +119,10 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 {
     [super viewDidAppear:animated];
     
-    if (![[_origo groups] count] && ![self aspectIs:kAspectEditable]) {
-        [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:@{kTargetGroups: kAspectEditable} meta:_origo];
+    if ([self targetIs:kTargetGroups]) {
+        if (![[_origo groups] count] && ![self aspectIs:kAspectEditable]) {
+            [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:@{kTargetGroups: kAspectEditable} meta:_origo];
+        }
     }
 }
 
