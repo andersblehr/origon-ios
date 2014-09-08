@@ -98,7 +98,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         } else if (recipientTag == kRecipientTagMember) {
             [actionSheet addButtonWithTitle:[recipients[0] givenName]];
         } else if (recipientTag == kRecipientTagContact) {
-            [actionSheet addButtonWithTitle:[recipients[0] givenNameWithContactRolesForOrigo:_origo]];
+            [actionSheet addButtonWithTitle:[recipients[0] givenNameWithRolesForOrigo:_origo]];
         } else if (recipientTag == kRecipientTagParent) {
             if ([[OState s] aspectIs:kAspectHousehold]) {
                 [actionSheet addButtonWithTitle:[recipients[0] givenName]];

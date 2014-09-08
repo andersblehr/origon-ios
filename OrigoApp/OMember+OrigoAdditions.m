@@ -340,18 +340,16 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (NSArray *)peersNotInOrigo:(id<OOrigo>)origo
+- (NSArray *)peersNotInSet:(id)set
 {
     NSMutableArray *peers = [[self peers] mutableCopy];
     
-    if ([origo instance]) {
-        for (OMember *member in [[origo instance] members]) {
-            [peers removeObject:member];
-        }
-        
-        if ([self isUser] && ![origo userIsMember]) {
-            [peers addObject:[OMeta m].user];
-        }
+    for (OMember *member in set) {
+        [peers removeObject:member];
+    }
+    
+    if ([self isUser] && ![set containsObject:[OMeta m].user]) {
+        [peers addObject:[OMeta m].user];
     }
     
     return [peers sortedArrayUsingSelector:@selector(compare:)];
@@ -609,23 +607,12 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (NSString *)givenNameWithContactRolesForOrigo:(id<OOrigo>)origo
+- (NSString *)givenNameWithRolesForOrigo:(id<OOrigo>)origo
 {
     NSString *annotatedName = nil;
     
     if ([origo instance]) {
-        NSMutableArray *contactRoles = [NSMutableArray array];
-        OMembership *membership = [[origo instance] membershipForMember:self];
-        
-        if ([membership hasRoleOfType:kRoleTypeOrganiserRole]) {
-            [contactRoles addObjectsFromArray:[membership organiserRoles]];
-        }
-        
-        if ([membership hasRoleOfType:kRoleTypeParentRole]) {
-            [contactRoles addObjectsFromArray:[membership parentRoles]];
-        }
-        
-        annotatedName = [NSString stringWithFormat:kAnnotatedNameFormat, [self givenName], [OUtil commaSeparatedListOfItems:contactRoles conjoinLastItem:NO]];
+        annotatedName = [NSString stringWithFormat:kAnnotatedNameFormat, [self givenName], [OUtil commaSeparatedListOfItems:[[origo membershipForMember:self] roles] conjoinLastItem:NO]];
     }
     
     return annotatedName;

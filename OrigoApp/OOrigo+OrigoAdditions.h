@@ -46,6 +46,9 @@ extern NSString * const kOrigoTypeTeam;
 - (NSArray *)parentRoles;
 - (NSArray *)parentsWithRole:(NSString *)role;
 
+- (NSArray *)groups;
+- (NSArray *)membersOfGroup:(NSString *)group;
+
 - (id<OMembership>)addMember:(id<OMember>)member;
 - (id<OMembership>)addAssociateMember:(id<OMember>)member;
 - (id<OMembership>)membershipForMember:(id<OMember>)member;

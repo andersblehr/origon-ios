@@ -40,7 +40,7 @@
 - (NSArray *)parents;
 - (NSArray *)guardians;
 - (NSArray *)peers;
-- (NSArray *)peersNotInOrigo:(id<OOrigo>)origo;
+- (NSArray *)peersNotInSet:(id)set;
 - (NSArray *)housemates;
 - (NSArray *)housemateResidences;
 - (NSArray *)housematesNotInResidence:(id<OOrigo>)residence;
@@ -68,7 +68,7 @@
 - (NSString *)appellation;
 - (NSString *)givenName;
 - (NSString *)givenNameWithParentTitle;
-- (NSString *)givenNameWithContactRolesForOrigo:(id<OOrigo>)origo;
+- (NSString *)givenNameWithRolesForOrigo:(id<OOrigo>)origo;
 - (NSString *)publicName;
 
 @end

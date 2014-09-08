@@ -22,7 +22,8 @@
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 
 - (id)defaultTarget;
-- (id)destinationViewControllerTargetForIndexPath:(NSIndexPath *)indexPath;
+- (id)destinationMetaForIndexPath:(NSIndexPath *)indexPath;
+- (NSString *)destinationAspectForIndexPath:(NSIndexPath *)indexPath;
 - (NSString *)reuseIdentifierForInputSection;
 - (NSArray *)toolbarButtons;
 
@@ -66,8 +67,10 @@
 @property (nonatomic, assign) BOOL requiresSynchronousServerCalls;
 @property (nonatomic, assign) BOOL usesPlainTableViewStyle;
 @property (nonatomic, assign) BOOL usesSectionIndexTitles;
+@property (nonatomic, assign) BOOL presentStealthilyOnce;
 @property (nonatomic, assign) BOOL didCancel;
 @property (nonatomic, assign) BOOL cancelImpliesSkip;
+@property (nonatomic, assign) UITableViewRowAnimation rowAnimation;
 
 @property (nonatomic) id meta;
 @property (nonatomic) id returnData;
@@ -106,6 +109,5 @@
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
-- (void)reloadSectionWithKey:(NSInteger)sectionKey withRowAnimation:(UITableViewRowAnimation)rowAnimation;
 
 @end

@@ -132,8 +132,8 @@ NSString * const kIconFileLookup = @"01-magnify.png";
 NSString * const kIconFilePlacePhoneCall = @"735-phone.png";
 NSString * const kIconFileSendText = @"734-chat.png";
 NSString * const kIconFileSendEmail = @"730-envelope.png";
-NSString * const kIconFileMultiRole = @"779-users";
-NSString * const kIconFileMultiRoleSelected = @"779-users-selected";
+NSString * const kIconFileMultiRoleOff = @"779-users";
+NSString * const kIconFileMultiRoleOn = @"779-users-selected";
 NSString * const kIconFileGroups = @"895-user-group.png";
 NSString * const kIconFileLocationArrow = @"193-location-arrow.png";
 

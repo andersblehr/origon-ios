@@ -61,6 +61,10 @@ static NSString * const kRootIdFormat = @"~%@";
         }
     }
     
+    if ([member isActive]) {
+        image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    }
+    
     return image;
 }
 

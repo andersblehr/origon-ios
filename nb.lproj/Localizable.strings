@@ -314,7 +314,6 @@
 
 // Buttons
 "Edit roles" = "Rediger roller";
-"Edit subgroups" = "Rediger undergrupper";
 "Add from other groups" = "Legg til fra andre grupper";
 "Add parent contact" = "Legg til foreldrekontakt";
 "Show in map" = "Vis på kart";
@@ -338,7 +337,7 @@
 // Footers
 "A notification will be sent to the email address you provide." = "Et varsel vil bli sendt til epostadressen du oppgir.";
 "Before you can register a minor, you must register his or her guardian(s)." = "Før du kan registrere en mindreårig, må du registrere hans eller hennes foresatte.";
-"Tap [+] to add another guardian." = "Trykk [+] for å legge til en foresatt til.";
+"Tap [+] to add another guardian." = "Trykk [+] for å legge til flere foresatte.";
 
 // Buttons
 "To some of them" = "Til noen av dem";
@@ -368,9 +367,7 @@
 "The addresses you provided did not match our records and were not saved." = "Adressene du oppga, stemte ikke med våre opplysninger og ble ikke lagret.";
 "%@ is already in %@." = "%@ er allerede med i %@.";
 "Unknown child" = "Ukjent barn";
-"%@ has not registered a child called %@." = "%@ har ikke registrert et barn som heter %@.";
-"Neither %@ nor %@ has registered a child called %@." = "Hverken %@ eller %@ har registrert et barn som heter %@.";
-"%@ has not registered a child called %@. %@ will only be added to %@'s household." = "%@ har ikke registrert noe barn som heter %@. %@ vil bare bli lagt til %@ sin husstand.";
+"No child named %@ has been registered by %@." = "Ingen barn ved navn %@ er registrert av %@.";
 "New email address" = "Ny epost-adresse";
 "You are about to change your email address from %@ to %@ ..." = "Du er i ferd med å endre epost-adressen din fra %@ til %@. Du må ha tilgang til den nye adressen for å aktivere endringen. Ønsker du å fortsette?";
 "Activation failed" = "Aktivering mislyktes";
@@ -416,6 +413,8 @@
 // View titles
 "Settings" = "Innstillinger";
 "Roles" = "Roller";
+"Groups" = "Grupper";
+"Edit groups" = "Rediger grupper";
 
 // List titles
 "[setting list label] devices" = "Registrerte enheter";
@@ -432,6 +431,7 @@
 "This device" = "Denne enheten";
 "Last seen %@" = "Sist sett %@";
 "Contact role" = "Kontaktrolle";
+"Name of group" = "Navn på gruppa";
 
 
 /***

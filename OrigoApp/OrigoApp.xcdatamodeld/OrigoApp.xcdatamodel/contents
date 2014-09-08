@@ -29,8 +29,8 @@
         </userInfo>
     </entity>
     <entity name="OMembership" representedClassName="OMembership" parentEntity="OReplicatedEntity" syncable="YES">
+        <attribute name="affiliations" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isAdmin" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
-        <attribute name="roles" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" syncable="YES"/>
         <relationship name="member" maxCount="1" deletionRule="Nullify" destinationEntity="OMember" inverseName="memberships" inverseEntity="OMember" syncable="YES"/>
@@ -83,7 +83,7 @@
     <elements>
         <element name="ODevice" positionX="0" positionY="0" width="128" height="105"/>
         <element name="OMember" positionX="0" positionY="0" width="128" height="255"/>
-        <element name="OMembership" positionX="0" positionY="0" width="128" height="133"/>
+        <element name="OMembership" positionX="0" positionY="0" width="128" height="135"/>
         <element name="OOrigo" positionX="0" positionY="0" width="128" height="210"/>
         <element name="OReplicatedEntity" positionX="0" positionY="0" width="128" height="180"/>
         <element name="OReplicatedEntityRef" positionX="0" positionY="0" width="128" height="75"/>

@@ -217,7 +217,7 @@ static NSInteger const kSectionKeyWards = 2;
         
         if ([_member isUser] && ([origo userIsOrganiser] || [origo userIsParentContact])) {
             cell.textLabel.text = [NSString stringWithFormat:@"%@, %@", origo.name, origo.descriptionText];
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[userMembership allRoles] conjoinLastItem:NO];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[userMembership roles] conjoinLastItem:NO];
         } else {
             cell.textLabel.text = origo.name;
         

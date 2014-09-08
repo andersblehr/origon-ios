@@ -8,34 +8,39 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString * const kActionLoad;
-extern NSString * const kActionSignIn;
 extern NSString * const kActionActivate;
-extern NSString * const kActionRegister;
-extern NSString * const kActionList;
-extern NSString * const kActionPick;
 extern NSString * const kActionDisplay;
 extern NSString * const kActionEdit;
 extern NSString * const kActionInput;
+extern NSString * const kActionList;
+extern NSString * const kActionLoad;
+extern NSString * const kActionPick;
+extern NSString * const kActionRegister;
+extern NSString * const kActionSignIn;
 
+extern NSString * const kTargetAffiliation;
+extern NSString * const kTargetDevices;
+extern NSString * const kTargetElder;
 extern NSString * const kTargetEmail;
-extern NSString * const kTargetUser;
-extern NSString * const kTargetWard;
+extern NSString * const kTargetGroup;
+extern NSString * const kTargetGroups;
+extern NSString * const kTargetGuardian;
 extern NSString * const kTargetHousemate;
 extern NSString * const kTargetJuvenile;
-extern NSString * const kTargetElder;
 extern NSString * const kTargetMember;
 extern NSString * const kTargetMembers;
-extern NSString * const kTargetGuardian;
 extern NSString * const kTargetOrganiser;
 extern NSString * const kTargetRelation;
 extern NSString * const kTargetRole;
 extern NSString * const kTargetRoles;
 extern NSString * const kTargetSetting;
 extern NSString * const kTargetSettings;
-extern NSString * const kTargetDevices;
+extern NSString * const kTargetUser;
+extern NSString * const kTargetWard;
 
 extern NSString * const kAspectDefault;
+extern NSString * const kAspectEditable;
+extern NSString * const kAspectGroup;
 extern NSString * const kAspectHousehold;
 extern NSString * const kAspectJuvenile;
 extern NSString * const kAspectMemberRole;
@@ -63,9 +68,11 @@ extern NSString * const kAspectRole;
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
 - (BOOL)aspectIs:(NSString *)aspect;
+
++ (NSString *)stateIdForViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
 - (BOOL)isValidDestinationStateId:(NSString *)stateId;
 
+- (NSArray *)eligibleCandidates;
 - (NSString *)asString;
-+ (NSString *)stateIdForViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
 
 @end

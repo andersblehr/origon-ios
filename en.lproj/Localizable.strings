@@ -315,7 +315,6 @@
 
 // Buttons
 "Edit roles" = "Edit roles";
-"Edit subgroups" = "Edit subgroups";
 "Add from other groups" = "Add from other groups";
 "Add parent contact" = "Add parent contact";
 "Show in map" = "Show in map";
@@ -369,9 +368,7 @@
 "The addresses you provided did not match our records and were not saved." = "The addresses you provided did not match our records and were not saved.";
 "%@ is already in %@." = "%@ is already in %@.";
 "Unknown child" = "Unknown child";
-"%@ has not registered a child called %@." = "%@ has not registered a child called %@.";
-"Neither %@ nor %@ has registered a child called %@." = "Neither %@ nor %@ has registered a child called %@.";
-"%@ has not registered a child called %@. %@ will only be added to %@'s household." = "%@ has not registered a child called %@. %@ will only be added to %@'s household.";
+"No child named %@ has been registered by %@." = "No child named %@ has been registered by %@.";
 "New email address" = "New email address";
 "You are about to change your email address from %@ to %@ ..." = "You are about to change your email address from %@ to %@. You need access to the new address to activate this change. Do you want to continue?";
 "Activation failed" = "Activation failed";
@@ -417,6 +414,8 @@
 // View titles
 "Settings" = "Settings";
 "Roles" = "Roles";
+"Groups" = "Groups";
+"Edit groups" = "Edit groups";
 
 // List titles
 "[setting list label] devices" = "Registered devices";
@@ -433,6 +432,7 @@
 "This device" = "This device";
 "Last seen %@" = "Last seen %@";
 "Contact role" = "Contact role";
+"Name of group" = "Name of group";
 
 
 /***

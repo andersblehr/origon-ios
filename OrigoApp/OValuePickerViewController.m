@@ -19,8 +19,8 @@
     NSString *_settingKey;
 
     id<OOrigo> _origo;
-    NSString *_role;
-    NSString *_roleType;
+    NSString *_affiliation;
+    NSString *_affiliationType;
     UIBarButtonItem *_multiRoleButtonOff;
     UIBarButtonItem *_multiRoleButtonOn;
 }
@@ -37,11 +37,11 @@
     NSArray *roleHolders = nil;
     
     if ([self aspectIs:kAspectMemberRole]) {
-        roleHolders = [_origo membersWithRole:_role];
+        roleHolders = [_origo membersWithRole:_affiliation];
     } else if ([self aspectIs:kAspectOrganiserRole]) {
-        roleHolders = [_origo organisersWithRole:_role];
+        roleHolders = [_origo organisersWithRole:_affiliation];
     } else if ([self aspectIs:kAspectParentRole]) {
-        roleHolders = [_origo parentsWithRole:_role];
+        roleHolders = [_origo parentsWithRole:_affiliation];
     }
     
     return roleHolders;
@@ -72,7 +72,7 @@
         if (self.didCancel) {
             if ([self targetIs:kTargetRole]) {
                 for (id<OMember> roleHolder in [self roleHolders]) {
-                    [[_origo membershipForMember:roleHolder] removeRole:_role ofType:_roleType];
+                    [[_origo membershipForMember:roleHolder] removeAffiliation:_affiliation ofType:_affiliationType];
                 }
             }
         } else {
@@ -100,36 +100,50 @@
         
         if ([self targetIs:kTargetMembers]) {
             _isMultiValuePicker = YES;
-        } else if ([self targetIs:kTargetRole]) {
+        } else if ([self targetIs:kTargetAffiliation]) {
             _origo = self.meta;
-            _role = [self.target isEqualToString:kTargetRole] ? nil : self.target;
+            
+            if ([@[kTargetRole, kTargetGroup] containsObject:self.target]) {
+                _affiliation = nil;
+            } else {
+                _affiliation = self.target;
+            }
             
             NSString *placeholder = nil;
             
             if ([self aspectIs:kAspectMemberRole]) {
-                _roleType = kRoleTypeMemberRole;
-                _pickedValues = _role ? [[_origo membersWithRole:_role] mutableCopy] : nil;
+                _affiliationType = kAffiliationTypeMemberRole;
+                _pickedValues = _affiliation ? [[_origo membersWithRole:_affiliation] mutableCopy] : nil;
                 placeholder = NSLocalizedString(_origo.type, kStringPrefixMemberRoleTitle);
             } else if ([self aspectIs:kAspectOrganiserRole]) {
-                _roleType = kRoleTypeOrganiserRole;
-                _pickedValues = _role ? [[_origo organisersWithRole:_role] mutableCopy] : nil;
+                _affiliationType = kAffiliationTypeOrganiserRole;
+                _pickedValues = _affiliation ? [[_origo organisersWithRole:_affiliation] mutableCopy] : nil;
                 placeholder = NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle);
             } else if ([self aspectIs:kAspectParentRole]) {
-                _roleType = kRoleTypeParentRole;
-                _pickedValues = _role ? [[_origo parentsWithRole:_role] mutableCopy] : nil;
+                _affiliationType = kAffiliationTypeParentRole;
+                _pickedValues = _affiliation ? [[_origo parentsWithRole:_affiliation] mutableCopy] : nil;
                 placeholder = NSLocalizedString(@"Contact role", @"");
+            } else if ([self aspectIs:kAspectGroup]) {
+                _affiliationType = kAffiliationTypeGroup;
+                _pickedValues = _affiliation ? [[_origo membersOfGroup:_affiliation] mutableCopy] : nil;
+                placeholder = NSLocalizedString(@"Name of group", @"");
             }
             
-            [self setEditableTitle:_role placeholder:placeholder];
-            [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoinLastItem:NO]];
+            [self setEditableTitle:_affiliation placeholder:placeholder];
             
-            _isMultiValuePicker = ([_pickedValues count] > 1);
-            
-            if (!_isMultiValuePicker && ([_pickedValues count] < 2)) {
-                _multiRoleButtonOff = [UIBarButtonItem multiRoleButtonWithTarget:self selected:NO];
-                _multiRoleButtonOn = [UIBarButtonItem multiRoleButtonWithTarget:self selected:YES];
+            if ([self targetIs:kTargetRole]) {
+                _isMultiValuePicker = ([_pickedValues count] > 1);
                 
-                [self.navigationItem addRightBarButtonItem:_multiRoleButtonOff];
+                [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoinLastItem:NO]];
+                
+                if (!_isMultiValuePicker && ([_pickedValues count] < 2)) {
+                    _multiRoleButtonOn = [UIBarButtonItem multiRoleButtonWithTarget:self on:YES];
+                    _multiRoleButtonOff = [UIBarButtonItem multiRoleButtonWithTarget:self on:NO];
+                    
+                    [self.navigationItem addRightBarButtonItem:_multiRoleButtonOff];
+                }
+            } else if ([self targetIs:kTargetGroup]) {
+                _isMultiValuePicker = YES;
             }
         }
     }
@@ -154,13 +168,15 @@
     if ([self targetIs:kTargetSetting]) {
         // TODO
     } else {
-        if ([self targetIs:kTargetRole]) {
+        if ([self targetIs:kTargetAffiliation]) {
             if ([self aspectIs:kAspectMemberRole]) {
                 [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
             } else if ([self aspectIs:kAspectOrganiserRole]) {
                 [self setData:[_origo organisers] sectionIndexLabelKey:kPropertyKeyName];
             } else if ([self aspectIs:kAspectParentRole]) {
                 [self setData:[_origo guardians] sectionIndexLabelKey:kPropertyKeyName];
+            } else if ([self aspectIs:kAspectGroup]) {
+                [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
             }
         } else {
             [self setData:self.meta sectionIndexLabelKey:kPropertyKeyName];
@@ -183,10 +199,12 @@
             cell.checked = [_pickedValues containsObject:candidate];
         }
         
-        if ([candidate isJuvenile]) {
-            cell.detailTextLabel.text = [OUtil guardianInfoForMember:candidate];
-        } else if ([self aspectIs:kAspectParentRole]) {
+        if ([self aspectIs:kAspectParentRole]) {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[candidate wards] conjoinLastItem:NO];
+        } else if ([self aspectIs:kAspectGroup]) {
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:candidate] groups] conjoinLastItem:NO];
+        } else if ([candidate isJuvenile]) {
+            cell.detailTextLabel.text = [OUtil guardianInfoForMember:candidate];
         } else {
             cell.detailTextLabel.text = [[candidate residence] shortAddress];
         }
@@ -229,15 +247,15 @@
     } else if ([self targetIs:kTargetMember]) {
         self.returnData = pickedValue;
         [self.dismisser dismissModalViewController:self];
-    } else if ([self targetIs:kTargetRole]) {
+    } else if ([self targetIs:kTargetAffiliation]) {
         if (cell.checked) {
-            [[_origo membershipForMember:pickedValue] addRole:_role ofType:_roleType];
+            [[_origo membershipForMember:pickedValue] addAffiliation:_affiliation ofType:_affiliationType];
             
             if (!_isMultiValuePicker) {
-                [[_origo membershipForMember:oldValue] removeRole:_role ofType:_roleType];
+                [[_origo membershipForMember:oldValue] removeAffiliation:_affiliation ofType:_affiliationType];
             }
         } else {
-            [[_origo membershipForMember:pickedValue] removeRole:_role ofType:_roleType];
+            [[_origo membershipForMember:pickedValue] removeAffiliation:_affiliation ofType:_affiliationType];
         }
         
         [self setSubtitle:[OUtil commaSeparatedListOfItems:[_pickedValues sortedArrayUsingSelector:@selector(compare:)] conjoinLastItem:NO]];
@@ -266,16 +284,16 @@
 
 - (void)titleWillChange:(NSString *)newTitle
 {
-    if (_role) {
+    if (_affiliation) {
         for (id<OMember> roleHolder in [self roleHolders]) {
             id<OMembership> membership = [_origo membershipForMember:roleHolder];
             
-            [membership addRole:newTitle ofType:_roleType];
-            [membership removeRole:_role ofType:_roleType];
+            [membership addAffiliation:newTitle ofType:_affiliationType];
+            [membership removeAffiliation:_affiliation ofType:_affiliationType];
         }
     }
     
-    _role = newTitle;
+    _affiliation = newTitle;
 }
 
 @end
