@@ -91,7 +91,7 @@ NSString * const kOrigoTypeTeam = @"team";
     NSMutableArray *membersWithRoles = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isFull] && [membership hasRoleOfType:kRoleTypeMemberRole]) {
+        if ([membership isFull] && [membership hasAffiliationOfType:kAffiliationTypeMemberRole]) {
             [membersWithRoles addObject:membership.member];
         }
     }
@@ -241,7 +241,7 @@ NSString * const kOrigoTypeTeam = @"team";
     NSMutableArray *organisers = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isFull] && [membership hasRoleOfType:kRoleTypeOrganiserRole]) {
+        if ([membership isFull] && [membership hasAffiliationOfType:kAffiliationTypeOrganiserRole]) {
             [organisers addObject:membership.member];
         }
     }
@@ -255,7 +255,7 @@ NSString * const kOrigoTypeTeam = @"team";
     NSMutableArray *parentContacts = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isFull] && [membership hasRoleOfType:kRoleTypeParentRole]) {
+        if ([membership isFull] && [membership hasAffiliationOfType:kAffiliationTypeParentRole]) {
             [parentContacts addObject:membership.member];
         }
     }
@@ -344,20 +344,52 @@ NSString * const kOrigoTypeTeam = @"team";
 }
 
 
+#pragma mark - Group handling
+
+- (NSArray *)groups
+{
+    NSMutableSet *groups = [NSMutableSet set];
+    
+    for (OMember *member in [self regulars]) {
+        [groups addObjectsFromArray:[[self membershipForMember:member] groups]];
+    }
+    
+    return [[groups allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+}
+
+
+- (NSArray *)membersOfGroup:(NSString *)group
+{
+    NSMutableArray *members = [NSMutableArray array];
+    
+    for (OMember *member in [self regulars]) {
+        if ([[[self membershipForMember:member] groups] containsObject:group]) {
+            [members addObject:member];
+        }
+    }
+    
+    return members;
+}
+
+
 #pragma mark - Membership creation & access
 
 - (id<OMembership>)addMember:(id<OMember>)member
 {
-    OMembership *membership = nil;
+    id<OMembership> membership = nil;
     
-    if ([self isOfType:kOrigoTypeResidence]) {
-        membership = [self addResident:member];
-    } else {
-        if (![self.memberships count] && [member isJuvenile]) {
-            self.isForMinors = @YES;
+    if ([member instance]) {
+        if ([self isOfType:kOrigoTypeResidence]) {
+            membership = [self addResident:member];
+        } else {
+            if (![self.memberships count] && [member isJuvenile]) {
+                self.isForMinors = @YES;
+            }
+            
+            membership = [self addMember:member isAssociate:NO];
         }
-        
-        membership = [self addMember:member isAssociate:NO];
+    } else {
+        membership = [[self proxy] addMember:member];
     }
     
     return membership;
@@ -372,7 +404,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (id<OMembership>)membershipForMember:(id<OMember>)member
 {
-    OMembership *targetMembership = nil;
+    id<OMembership> targetMembership = nil;
     
     if ([member instance]) {
         member = [member instance];
@@ -382,6 +414,8 @@ NSString * const kOrigoTypeTeam = @"team";
                 targetMembership = membership;
             }
         }
+    } else {
+        targetMembership = [[self proxy] membershipForMember:member];
     }
     
     return targetMembership;
@@ -418,13 +452,13 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (BOOL)userIsOrganiser
 {
-    return [[self membershipForMember:[OMeta m].user] hasRoleOfType:kRoleTypeOrganiserRole];
+    return [[self membershipForMember:[OMeta m].user] hasAffiliationOfType:kAffiliationTypeOrganiserRole];
 }
 
 
 - (BOOL)userIsParentContact
 {
-    return [[self membershipForMember:[OMeta m].user] hasRoleOfType:kRoleTypeParentRole];
+    return [[self membershipForMember:[OMeta m].user] hasAffiliationOfType:kAffiliationTypeParentRole];
 }
 
 

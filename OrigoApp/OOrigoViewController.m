@@ -22,7 +22,6 @@ static NSInteger const kButtonTagAddParentContact = 3;
 static NSInteger const kActionSheetTagEdit = 1;
 static NSInteger const kButtonTagEditGroup = 0;
 static NSInteger const kButtonTagEditRoles = 1;
-static NSInteger const kButtonTagEditSubgroups = 2;
 
 static NSInteger const kActionSheetTagCoHabitants = 2;
 static NSInteger const kButtonTagCoHabitantsAll = 0;
@@ -30,19 +29,14 @@ static NSInteger const kButtonTagCoHabitantsWards = 1;
 static NSInteger const kButtonTagCoHabitantsNew = 2;
 static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
-static NSInteger const kAlertTagParentContactRole = 0;
-static NSInteger const kButtonIndexOK = 1;
 
-
-@interface OOrigoViewController () <OTableViewController, OInputCellDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
+@interface OOrigoViewController () <OTableViewController, OInputCellDelegate, UIActionSheetDelegate> {
 @private
     id<OOrigo> _origo;
     id<OMember> _member;
     id<OMembership> _membership;
-    id<OMember> _parentContact;
     
-    NSArray *_coHabitantCandidates;
-    NSArray *_peerCandidates;
+    NSArray *_eligibleCandidates;
 }
 
 @end
@@ -76,16 +70,6 @@ static NSInteger const kButtonIndexOK = 1;
 }
 
 
-- (void)assemblePeerCandidates
-{
-    if ([_origo isOfType:kOrigoTypeResidence]) {
-        _peerCandidates = [[OMeta m].user peersNotInOrigo:_origo];
-    } else {
-        _peerCandidates = [[self.entity ancestorConformingToProtocol:@protocol(OMember)] peersNotInOrigo:_origo];
-    }
-}
-
-
 - (void)addMember
 {
     NSMutableSet *coHabitantCandidates = nil;
@@ -104,6 +88,8 @@ static NSInteger const kButtonIndexOK = 1;
         id target = kTargetMember;
         
         if ([_origo isJuvenile]) {
+            self.presentStealthilyOnce = YES;
+            
             target = kTargetJuvenile;
         } else if ([_origo isOfType:kOrigoTypeResidence] && [self aspectIs:kAspectJuvenile]) {
             target = kTargetGuardian;
@@ -120,19 +106,19 @@ static NSInteger const kButtonIndexOK = 1;
 {
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Add household member", @"") delegate:self tag:kActionSheetTagCoHabitants];
     
-    _coHabitantCandidates = [OUtil sortedArraysOfResidents:candidates excluding:nil];
+    _eligibleCandidates = [OUtil sortedArraysOfResidents:candidates excluding:nil];
     
-    if ([_coHabitantCandidates count] == 1) {
-        if ([_coHabitantCandidates[kButtonTagCoHabitantsAll][0] isJuvenile]) {
-            [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_coHabitantCandidates[kButtonTagCoHabitantsAll] conjoinLastItem:YES] tag:kButtonTagCoHabitantsAll];
+    if ([_eligibleCandidates count] == 1) {
+        if ([_eligibleCandidates[kButtonTagCoHabitantsAll][0] isJuvenile]) {
+            [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoinLastItem:YES] tag:kButtonTagCoHabitantsAll];
         } else {
-            for (id<OMember> candidate in _coHabitantCandidates[kButtonTagCoHabitantsAll]) {
+            for (id<OMember> candidate in _eligibleCandidates[kButtonTagCoHabitantsAll]) {
                 [actionSheet addButtonWithTitle:[candidate givenName]];
             }
         }
     } else {
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_coHabitantCandidates[kButtonTagCoHabitantsAll] conjoinLastItem:YES] tag:kButtonTagCoHabitantsAll];
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_coHabitantCandidates[kButtonTagCoHabitantsWards] conjoinLastItem:YES] tag:kButtonTagCoHabitantsWards];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoinLastItem:YES] tag:kButtonTagCoHabitantsAll];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsWards] conjoinLastItem:YES] tag:kButtonTagCoHabitantsWards];
     }
     
     if (![_origo userIsMember] && [_member isWardOfUser]) {
@@ -156,7 +142,9 @@ static NSInteger const kButtonIndexOK = 1;
         
         [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
         
-        if ([_peerCandidates count]) {
+        _eligibleCandidates = [self.state eligibleCandidates];
+        
+        if ([_eligibleCandidates count]) {
             [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other groups", @"") tag:kButtonTagAddFromGroups];
         }
         
@@ -186,7 +174,6 @@ static NSInteger const kButtonIndexOK = 1;
         
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEditGroup];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit roles", @"") tag:kButtonTagEditRoles];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit subgroups", @"") tag:kButtonTagEditSubgroups];
         
         [actionSheet show];
     }
@@ -195,7 +182,11 @@ static NSInteger const kButtonIndexOK = 1;
 
 - (void)performGroupsAction
 {
+    if (![[_origo groups] count]) {
+        self.presentStealthilyOnce = YES;
+    }
     
+    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetGroups meta:_origo];
 }
 
 
@@ -247,12 +238,13 @@ static NSInteger const kButtonIndexOK = 1;
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem mapButtonWithTarget:self]];
             }
             
-            if ([_origo userCanEdit]) {
-                if (![_origo isOfType:kOrigoTypeResidence]) {
+            if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeFriends]]) {
+                if ([[_origo groups] count] || [_origo userCanEdit]) {
                     [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
                 }
-                
-                [self assemblePeerCandidates];
+            }
+            
+            if ([_origo userCanEdit]) {
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
             }
@@ -303,7 +295,7 @@ static NSInteger const kButtonIndexOK = 1;
             [details appendString:[OUtil guardianInfoForMember:member]];
         }
         
-        if ([membership hasRoleOfType:kRoleTypeMemberRole]) {
+        if ([membership hasAffiliationOfType:kAffiliationTypeMemberRole]) {
             if ([details hasValue]) {
                 [details appendString:@" – "];
             }
@@ -607,7 +599,7 @@ static NSInteger const kButtonIndexOK = 1;
                 if (buttonTag == kButtonTagAddMember) {
                     [self addMember];
                 } else if (buttonTag == kButtonTagAddFromGroups) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMembers meta:_peerCandidates];
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:kTargetMembers meta:_eligibleCandidates];
                 } else if (buttonTag == kButtonTagAddOrganiser) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser];
                 } else if (buttonTag == kButtonTagAddParentContact) {
@@ -624,16 +616,16 @@ static NSInteger const kButtonIndexOK = 1;
                 } else {
                     NSArray *coHabitants = nil;
                     
-                    if ([_coHabitantCandidates count] == 1) {
-                        if ([_coHabitantCandidates[kButtonTagCoHabitantsAll][0] isJuvenile]) {
-                            coHabitants = _coHabitantCandidates[kButtonTagCoHabitantsAll];
+                    if ([_eligibleCandidates count] == 1) {
+                        if ([_eligibleCandidates[kButtonTagCoHabitantsAll][0] isJuvenile]) {
+                            coHabitants = _eligibleCandidates[kButtonTagCoHabitantsAll];
                         } else {
-                            coHabitants = @[_coHabitantCandidates[kButtonTagCoHabitantsAll][buttonIndex]];
+                            coHabitants = @[_eligibleCandidates[kButtonTagCoHabitantsAll][buttonIndex]];
                         }
                     } else if (buttonTag == kButtonTagCoHabitantsAll) {
-                        coHabitants = _coHabitantCandidates[kButtonTagCoHabitantsAll];
+                        coHabitants = _eligibleCandidates[kButtonTagCoHabitantsAll];
                     } else if (buttonTag == kButtonTagCoHabitantsWards) {
-                        coHabitants = _coHabitantCandidates[kButtonTagCoHabitantsWards];
+                        coHabitants = _eligibleCandidates[kButtonTagCoHabitantsWards];
                     }
                     
                     for (id<OMember> coHabitant in coHabitants) {
@@ -648,32 +640,6 @@ static NSInteger const kButtonIndexOK = 1;
             default:
                 break;
         }
-    }
-}
-
-
-#pragma mark - UIAlertViewDelegate conformance
-
-- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    switch (alertView.tag) {
-        case kAlertTagParentContactRole:
-            if (buttonIndex == kButtonIndexOK) {
-                id<OMembership> membership = [_origo addMember:_parentContact];
-                NSString *parentContactRole = [alertView textFieldAtIndex:0].text;
-                
-                [membership addRole:parentContactRole ofType:kRoleTypeParentRole];
-                
-                [[OMeta m].replicator replicate];
-                [self reloadSectionWithKey:kSectionKeyParentContacts];
-            } else {
-                [self.dismisser dismissModalViewController:self];
-            }
-            
-            break;
-            
-        default:
-            break;
     }
 }
 

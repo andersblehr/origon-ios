@@ -164,6 +164,12 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
+- (NSArray *)regulars
+{
+    return [self instance] ? [[self instance] regulars] : [self members];
+}
+
+
 - (NSArray *)elders
 {
     id elders = nil;

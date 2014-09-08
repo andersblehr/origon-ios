@@ -95,6 +95,7 @@
 		5CBE91A31599823000516C54 /* UIFont+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE91A21599823000516C54 /* UIFont+OrigoAdditions.m */; };
 		5CBE9C5314AB5160004FE2B7 /* NSString+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBE9C5214AB515F004FE2B7 /* NSString+OrigoAdditions.m */; };
 		5CBFB738174B64D40021A8F6 /* OValuePickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBFB737174B64D40021A8F6 /* OValuePickerViewController.m */; };
+		5CC1870219B9F5D200B6F02A /* OMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC1870119B9F5D200B6F02A /* OMembership.m */; };
 		5CC40C9B1772DC5E00DD850E /* OValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC40C9A1772DC5E00DD850E /* OValidator.m */; };
 		5CC9997719A4E583005E4932 /* 830-pencil.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CC9997519A4E583005E4932 /* 830-pencil.png */; };
 		5CC9997819A4E583005E4932 /* 830-pencil@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CC9997619A4E583005E4932 /* 830-pencil@2x.png */; };
@@ -116,7 +117,6 @@
 		5CD33AE218F5288100A863F4 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AE118F5288100A863F4 /* OMember.m */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.m */; };
 		5CD5EC0C18D0768A0075D07E /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CD5EC0B18D0768A0075D07E /* MainStoryboard_iPhone.storyboard */; };
-		5CD89E1919926C7B00C62582 /* OMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD89E1819926C7B00C62582 /* OMembership.m */; };
 		5CF17E5317AE8D9400985255 /* glyphicons_010_envelope@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CF17E5117AE8D9400985255 /* glyphicons_010_envelope@2x.png */; };
 		5CF17E5417AE8D9400985255 /* glyphicons_010_envelope.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CF17E5217AE8D9400985255 /* glyphicons_010_envelope.png */; };
 		5CF17E5917AF84B600985255 /* OSwitchboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF17E5817AF84B600985255 /* OSwitchboard.m */; };
@@ -284,6 +284,8 @@
 		5CBE9C5214AB515F004FE2B7 /* NSString+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CBFB736174B64D40021A8F6 /* OValuePickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OValuePickerViewController.h; sourceTree = "<group>"; };
 		5CBFB737174B64D40021A8F6 /* OValuePickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OValuePickerViewController.m; sourceTree = "<group>"; };
+		5CC1870019B9F5D200B6F02A /* OMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembership.h; sourceTree = "<group>"; };
+		5CC1870119B9F5D200B6F02A /* OMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMembership.m; sourceTree = "<group>"; };
 		5CC40C991772DC5E00DD850E /* OValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OValidator.h; sourceTree = "<group>"; };
 		5CC40C9A1772DC5E00DD850E /* OValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OValidator.m; sourceTree = "<group>"; };
 		5CC9997519A4E583005E4932 /* 830-pencil.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "830-pencil.png"; sourceTree = "<group>"; };
@@ -317,8 +319,6 @@
 		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CD5EC0B18D0768A0075D07E /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
 		5CD7723B18D05DA40087E3F6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
-		5CD89E1719926C7B00C62582 /* OMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembership.h; sourceTree = "<group>"; };
-		5CD89E1819926C7B00C62582 /* OMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMembership.m; sourceTree = "<group>"; };
 		5CDE879C176F185E00272909 /* OInputCellDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OInputCellDelegate.h; sourceTree = "<group>"; };
 		5CF17E5117AE8D9400985255 /* glyphicons_010_envelope@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glyphicons_010_envelope@2x.png"; sourceTree = "<group>"; };
 		5CF17E5217AE8D9400985255 /* glyphicons_010_envelope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glyphicons_010_envelope.png; sourceTree = "<group>"; };
@@ -417,13 +417,13 @@
 		5C36BEA51471A05700DD3CEA /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				5C36BE9A1470507700DD3CEA /* OrigoApp.xcdatamodeld */,
 				5C7513A519B719360071FD34 /* ODevice.h */,
 				5C7513A619B719360071FD34 /* ODevice.m */,
-				5C36BE9A1470507700DD3CEA /* OrigoApp.xcdatamodeld */,
+				5CC1870019B9F5D200B6F02A /* OMembership.h */,
+				5CC1870119B9F5D200B6F02A /* OMembership.m */,
 				5CD33AE018F5288100A863F4 /* OMember.h */,
 				5CD33AE118F5288100A863F4 /* OMember.m */,
-				5CD89E1719926C7B00C62582 /* OMembership.h */,
-				5CD89E1819926C7B00C62582 /* OMembership.m */,
 				5CD33AD418F5288000A863F4 /* OOrigo.h */,
 				5CD33AD518F5288000A863F4 /* OOrigo.m */,
 				5CD33ADA18F5288100A863F4 /* OReplicatedEntity.h */,
@@ -858,8 +858,8 @@
 				5CBB63C5146080DF00A9133A /* main.m in Sources */,
 				5CBB63C9146080DF00A9133A /* OAppDelegate.m in Sources */,
 				5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */,
+				5CC1870219B9F5D200B6F02A /* OMembership.m in Sources */,
 				5C7513A719B719360071FD34 /* ODevice.m in Sources */,
-				5CD89E1919926C7B00C62582 /* OMembership.m in Sources */,
 				5C2E11141469CDE5005BDE61 /* OConnection.m in Sources */,
 				5C36BE8A146E9DA100DD3CEA /* OMeta.m in Sources */,
 				5CD33AD618F5288000A863F4 /* OOrigo.m in Sources */,

@@ -8,34 +8,39 @@
 
 #import "OState.h"
 
-NSString * const kActionLoad = @"load";
-NSString * const kActionSignIn = @"sign-in";
 NSString * const kActionActivate = @"activate";
-NSString * const kActionRegister = @"register";
-NSString * const kActionList = @"list";
-NSString * const kActionPick = @"pick";
 NSString * const kActionDisplay = @"display";
 NSString * const kActionEdit = @"edit";
 NSString * const kActionInput = @"input";
+NSString * const kActionList = @"list";
+NSString * const kActionLoad = @"load";
+NSString * const kActionPick = @"pick";
+NSString * const kActionRegister = @"register";
+NSString * const kActionSignIn = @"signin";
 
+NSString * const kTargetAffiliation = @"affiliation";
+NSString * const kTargetDevices = @"devices";
+NSString * const kTargetElder = @"elder";
 NSString * const kTargetEmail = @"email";
-NSString * const kTargetUser = @"user";
-NSString * const kTargetWard = @"ward";
+NSString * const kTargetGroup = @"group";
+NSString * const kTargetGroups = @"groups";
+NSString * const kTargetGuardian = @"guardian";
 NSString * const kTargetHousemate = @"housemate";
 NSString * const kTargetJuvenile = @"juvenile";
-NSString * const kTargetElder = @"elder";
 NSString * const kTargetMember = @"regular";
 NSString * const kTargetMembers = @"members";
-NSString * const kTargetGuardian = @"guardian";
 NSString * const kTargetOrganiser = @"organiser";
 NSString * const kTargetRelation = @"relation";
 NSString * const kTargetRole = @"role";
 NSString * const kTargetRoles = @"roles";
 NSString * const kTargetSetting = @"setting";
 NSString * const kTargetSettings = @"settings";
-NSString * const kTargetDevices = @"devices";
+NSString * const kTargetUser = @"user";
+NSString * const kTargetWard = @"ward";
 
 NSString * const kAspectDefault = @"default";
+NSString * const kAspectEditable = @"editable";
+NSString * const kAspectGroup = @"group";
 NSString * const kAspectHousehold = @"household";
 NSString * const kAspectJuvenile = @"juvenile";
 NSString * const kAspectMemberRole = @"members";
@@ -46,7 +51,11 @@ NSString * const kAspectRole = @"role";
 static OState *_activeState = nil;
 
 
-@interface OState ()
+@interface OState () {
+@private
+    id<OOrigo> _pivotOrigo;
+    id<OMember> _pivotMember;
+}
 
 @end
 
@@ -62,8 +71,10 @@ static OState *_activeState = nil;
     if (self && viewController) {
         _viewController = viewController;
         
-        if ([[self class] s]) {
-            _aspect = [[self class] s]->_aspect;
+        if (_activeState) {
+            _aspect = _activeState->_aspect;
+            _pivotOrigo = _activeState->_pivotOrigo;
+            _pivotMember = _activeState->_pivotMember;
         }
         
         if (viewController.target) {
@@ -140,6 +151,11 @@ static OState *_activeState = nil;
             isMatch = isMatch || [self aspectIs:kAspectMemberRole];
             isMatch = isMatch || [self aspectIs:kAspectOrganiserRole];
             isMatch = isMatch || [self aspectIs:kAspectParentRole];
+        } else if ([target isEqualToString:kTargetGroup]) {
+            isMatch = isMatch || [self aspectIs:kAspectGroup];
+        } else if ([target isEqualToString:kTargetAffiliation]) {
+            isMatch = isMatch || [self targetIs:kTargetRole];
+            isMatch = isMatch || [self targetIs:kTargetGroup];
         } else if ([target isEqualToString:kTargetSetting]) {
             // TODO: OR together all setting keys
         }
@@ -164,6 +180,24 @@ static OState *_activeState = nil;
 }
 
 
+#pragma mark - State identifier handling
+
++ (NSString *)stateIdForViewControllerWithIdentifier:(NSString *)identifier target:(id)target
+{
+    NSString *instanceQualifier = nil;
+    
+    if ([target conformsToProtocol:@protocol(OEntity)]) {
+        instanceQualifier = [target valueForKey:kPropertyKeyEntityId];
+    } else if ([target isKindOfClass:[NSDictionary class]]) {
+        instanceQualifier = [target allKeys][0];
+    } else if ([target isKindOfClass:[NSString class]]) {
+        instanceQualifier = target;
+    }
+    
+    return [identifier stringByAppendingString:instanceQualifier separator:kSeparatorHash];
+}
+
+
 - (BOOL)isValidDestinationStateId:(NSString *)stateId
 {
     BOOL isValid = YES;
@@ -176,6 +210,42 @@ static OState *_activeState = nil;
     }
     
     return isValid;
+}
+
+
+#pragma mark - Eligible member candidates
+
+- (NSArray *)eligibleCandidates
+{
+    NSArray *canididates = nil;
+    
+    if ([_viewController.identifier isEqualToString:kIdentifierOrigo]) {
+        if ([_pivotOrigo isOfType:kOrigoTypeResidence]) {
+            canididates = [[OMeta m].user peersNotInSet:[_pivotOrigo regulars]];
+        } else {
+            id<OMember> pivotMember = nil;
+            
+            if ([_pivotOrigo isJuvenile] && ![_pivotMember isJuvenile]) {
+                for (id<OMember> ward in [_pivotMember wards]) {
+                    if (!pivotMember && [_pivotOrigo hasMember:ward]) {
+                        pivotMember = ward;
+                    }
+                }
+            } else {
+                pivotMember = _pivotMember;
+            }
+            
+            canididates = [pivotMember peersNotInSet:[_pivotOrigo regulars]];
+        }
+    } else if ([_viewController.identifier isEqualToString:kIdentifierMember]) {
+        if ([self targetIs:kTargetGuardian]) {
+            canididates = [[OMeta m].user peersNotInSet:[_pivotOrigo regulars]];
+        } else {
+            canididates = [_pivotMember peersNotInSet:[_pivotOrigo regulars]];
+        }
+    }
+    
+    return canididates;
 }
 
 
@@ -197,49 +267,36 @@ static OState *_activeState = nil;
 }
 
 
-#pragma mark - State identifier generation
-
-+ (NSString *)stateIdForViewControllerWithIdentifier:(NSString *)identifier target:(id)target
-{
-    NSString *instanceQualifier = nil;
-    
-    if ([target conformsToProtocol:@protocol(OEntity)]) {
-        instanceQualifier = [target valueForKey:kPropertyKeyEntityId];
-    } else if ([target isKindOfClass:[NSDictionary class]]) {
-        instanceQualifier = [target allKeys][0];
-    } else if ([target isKindOfClass:[NSString class]]) {
-        instanceQualifier = target;
-    }
-    
-    return [identifier stringByAppendingString:instanceQualifier separator:kSeparatorHash];
-}
-
-
 #pragma mark - Custom accessors
 
 - (void)setTarget:(id)target
 {
     if ([target conformsToProtocol:@protocol(OEntity)]) {
         if ([target conformsToProtocol:@protocol(OMember)]) {
-            if (![target isCommitted]) {
-                _target = [target meta];
-            } else if ([target isUser]) {
-                _target = kTargetUser;
-                _aspect = kAspectHousehold;
-            } else if ([target isWardOfUser]) {
-                _target = kTargetWard;
-                _aspect = kAspectHousehold;
-            } else if ([target isHousemateOfUser]) {
-                _target = kTargetHousemate;
-                _aspect = kAspectHousehold;
-            } else if ([target isJuvenile]) {
-                _target = kTargetJuvenile;
-                _aspect = kAspectJuvenile;
+            if ([target isCommitted]) {
+                _pivotMember = target;
+                
+                if ([target isUser]) {
+                    _target = kTargetUser;
+                    _aspect = kAspectHousehold;
+                } else if ([target isWardOfUser]) {
+                    _target = kTargetWard;
+                    _aspect = kAspectHousehold;
+                } else if ([target isHousemateOfUser]) {
+                    _target = kTargetHousemate;
+                    _aspect = kAspectHousehold;
+                } else if ([target isJuvenile]) {
+                    _target = kTargetJuvenile;
+                    _aspect = kAspectJuvenile;
+                } else {
+                    _target = kTargetMember;
+                    _aspect = [self aspectIs:kAspectJuvenile] ? _aspect : kAspectDefault;
+                }
             } else {
-                _target = kTargetMember;
-                _aspect = [self aspectIs:kAspectJuvenile] ? _aspect : kAspectDefault;
+                _target = [target meta];
             }
         } else if ([target conformsToProtocol:@protocol(OOrigo)]) {
+            _pivotOrigo = target;
             _target = ((id<OOrigo>)target).type;
             
             if ([target isJuvenile]) {

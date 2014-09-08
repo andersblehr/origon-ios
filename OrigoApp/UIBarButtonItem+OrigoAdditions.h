@@ -18,7 +18,7 @@
 + (instancetype)infoButtonWithTarget:(id)target;
 + (instancetype)lookupButtonWithTarget:(id)target;
 + (instancetype)groupsButtonWithTarget:(id)target;
-+ (instancetype)multiRoleButtonWithTarget:(id)target selected:(BOOL)selected;
++ (instancetype)multiRoleButtonWithTarget:(id)target on:(BOOL)on;
 
 + (instancetype)nextButtonWithTarget:(id)target;
 + (instancetype)cancelButtonWithTarget:(id)target;

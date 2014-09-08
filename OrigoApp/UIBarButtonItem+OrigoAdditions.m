@@ -83,9 +83,9 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-+ (instancetype)multiRoleButtonWithTarget:(id)target selected:(BOOL)selected
++ (instancetype)multiRoleButtonWithTarget:(id)target on:(BOOL)on
 {
-    NSString *iconFile = selected ? kIconFileMultiRoleSelected : kIconFileMultiRole;
+    NSString *iconFile = on ? kIconFileMultiRoleOn : kIconFileMultiRoleOff;
     
     return  [[self alloc] initWithImage:[UIImage imageNamed:iconFile] style:UIBarButtonItemStylePlain target:target action:@selector(toggleMultiRole)];
 }
@@ -119,13 +119,13 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)doneButtonWithTarget:(id)target
 {
-    return [self barButtonWithTitle:NSLocalizedString(@"Done", @"") target:target action:@selector(didFinishEditing)];
+    return [self doneButtonWithTitle:NSLocalizedString(@"Done", @"") target:target action:@selector(didFinishEditing)];
 }
 
 
 + (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action
 {
-    return [self barButtonWithTitle:title target:target action:action];
+    return [[self alloc] initWithTitle:title style:UIBarButtonItemStyleDone target:target action:action];
 }
 
 

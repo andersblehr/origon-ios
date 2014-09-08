@@ -43,14 +43,13 @@ static NSInteger const kButtonTagGuardianAddressYes = 0;
 static NSInteger const kActionSheetTagGuardianAddress = 6;
 static NSInteger const kActionSheetTagEditRole = 7;
 
-static NSInteger const kAlertTagEditRole = 0;
-static NSInteger const kAlertTagUnknownChild = 1;
+static NSInteger const kAlertTagUnknownChild = 0;
 static NSInteger const kButtonIndexOK = 1;
 
-static NSInteger const kAlertTagToggleGender = 3;
+static NSInteger const kAlertTagToggleGender = 1;
 static NSInteger const kButtonIndexYes = 1;
 
-static NSInteger const kAlertTagEmailChange = 4;
+static NSInteger const kAlertTagEmailChange = 2;
 static NSInteger const kButtonIndexContinue = 1;
 
 
@@ -259,12 +258,18 @@ static NSInteger const kButtonIndexContinue = 1;
     id<OMember> member = nil;
     
     NSArray *guardians = [_member guardians];
-    NSMutableArray *activeGuardians = [NSMutableArray array];
     NSMutableArray *inactiveGuardians = [NSMutableArray array];
+    NSMutableArray *activeGuardians = [NSMutableArray array];
+    NSMutableSet *activeResidences = [NSMutableSet set];
+    NSMutableSet *allResidences = [NSMutableSet set];
     
     for (id<OMember> guardian in guardians) {
+        NSArray *residences = [guardian residences];
+        [allResidences addObjectsFromArray:residences];
+        
         if ([guardian isActive]) {
             [activeGuardians addObject:guardian];
+            [activeResidences addObjectsFromArray:residences];
         } else {
             [inactiveGuardians addObject:guardian];
         }
@@ -278,8 +283,6 @@ static NSInteger const kButtonIndexContinue = 1;
         }
     }
     
-    BOOL hasActiveGuardians = [activeGuardians count] > 0;
-    
     if (member) {
         for (id<OMembership> residency in [_member residencies]) {
             [residency expire];
@@ -288,24 +291,18 @@ static NSInteger const kButtonIndexContinue = 1;
         if ([self reflectIfEligibleMember:member]) {
             [self persistMember];
         }
-    } else if (hasActiveGuardians && ([activeGuardians count] == [guardians count])) {
-        if ([activeGuardians count] == 1) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown child", @"") text:[NSString stringWithFormat:NSLocalizedString(@"%@ has not registered a child called %@.", @""), [activeGuardians[0] givenName], _nameField.value]];
-        } else {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown child", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Neither %@ nor %@ has registered a child called %@.", @""), [activeGuardians[0] givenName], [activeGuardians[1] givenName], _nameField.value]];
+    } else if ([activeResidences count]) {
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown child", @"") text:[NSString stringWithFormat:NSLocalizedString(@"No child named %@ has been registered by %@.", @""), _nameField.value, [OUtil commaSeparatedListOfItems:activeGuardians conjoinLastItem:YES]]];
+        
+        if ([allResidences count] > [activeResidences count]) {
+            for (id<OOrigo> activeResidence in activeResidences) {
+                [[activeResidence membershipForMember:_member] expire];
+            }
             
+            [self reloadSections];
         }
         
         [self.inputCell resumeFirstResponder];
-    } else if (hasActiveGuardians && ![[guardians[0] housemates] containsObject:guardians[0]]) {
-        for (id<OMembership> residency in [_member residencies]) {
-            if ([residency.origo hasMember:activeGuardians[0]]) {
-                [residency expire];
-            }
-        }
-        
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:[NSString stringWithFormat:NSLocalizedString(@"%@ has not registered a child called %@. %@ will only be added to %@'s household.", @""), [activeGuardians[0] givenName], _nameField.value, _nameField.value, [inactiveGuardians[0] givenName]] delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", @"") otherButtonTitles:NSLocalizedString(@"OK", @""), nil];
-        alert.tag = kAlertTagUnknownChild;
     } else {
         [self examineMember];
     }
@@ -328,7 +325,7 @@ static NSInteger const kButtonIndexContinue = 1;
         if ([self targetIs:kTargetGuardian] && [self aspectIs:kAspectJuvenile]) {
             id<OMember> ward = [self.entity ancestorConformingToProtocol:@protocol(OMember)];
             
-            if ([[ward residences] count]) {
+            if ([[ward residences] count] && ![[_member residences] count]) {
                 BOOL addingToResidence = [self.entity.ancestor conformsToProtocol:@protocol(OOrigo)];
                 
                 if ([ward hasAddress] && !addingToResidence) {
@@ -346,7 +343,7 @@ static NSInteger const kButtonIndexContinue = 1;
             _membership = [_origo addMember:_member];
             
             if (_role) {
-                [_membership addRole:_role ofType:kRoleTypeOrganiserRole];
+                [_membership addAffiliation:_role ofType:kAffiliationTypeOrganiserRole];
             }
             
             if (![self targetIs:kTargetOrganiser] && ![_member hasAddress] && ![_member isJuvenile]) {
@@ -817,11 +814,7 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     [self.view endEditing:YES];
     
-    if ([self targetIs:kTargetElder] || [_origo isOfType:kOrigoTypeResidence]) {
-        _cachedCandidates = [[OMeta m].user peersNotInOrigo:_origo];
-    } else {
-        _cachedCandidates = [[self.entity ancestorConformingToProtocol:@protocol(OMember)] peersNotInOrigo:_origo];
-    }
+    _cachedCandidates = [self.state eligibleCandidates];
 
     if ([_cachedCandidates count]) {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
@@ -927,7 +920,7 @@ static NSInteger const kButtonIndexContinue = 1;
     
     if (![_member isUser] || [[OMeta m] userIsAllSet]) {
         [self setData:[_member addresses] forSectionWithKey:kSectionKeyAddresses];
-        [self setData:[_membership allRoles] forSectionWithKey:kSectionKeyRoles];
+        [self setData:[_membership roles] forSectionWithKey:kSectionKeyRoles];
     }
 }
 
@@ -1022,7 +1015,7 @@ static NSInteger const kButtonIndexContinue = 1;
             text = [OLanguage nouns][_address_][pluralIndefinite];
         }
     } else if (sectionKey == kSectionKeyRoles) {
-        if ([[[_origo membershipForMember:_member] allRoles] count] > 1) {
+        if ([[[_origo membershipForMember:_member] roles] count] > 1) {
             text = [NSString stringWithFormat:NSLocalizedString(@"Roles in %@", @""), _origo.name];
         } else {
             text = [NSString stringWithFormat:NSLocalizedString(@"Role in %@", @""), _origo.name];
@@ -1141,6 +1134,11 @@ static NSInteger const kButtonIndexContinue = 1;
         if ([_member isJuvenile]) {
             shouldRelay = [[_member guardians] count] ? NO : viewController.didCancel;
         }
+    } else if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
+        if (!viewController.didCancel && [viewController.returnData instance]) {
+            self.returnData = viewController.returnData;
+            shouldRelay = YES;
+        }
     }
     
     return shouldRelay;
@@ -1160,10 +1158,8 @@ static NSInteger const kButtonIndexContinue = 1;
         }
     } else if ([viewController.identifier isEqualToString:kIdentifierMember]) {
         if (!viewController.didCancel && [self targetIs:kTargetJuvenile]) {
-            id<OOrigo> guardianResidence = [viewController.returnData residence];
-            
-            if (![guardianResidence hasMember:_member]) {
-                [guardianResidence addMember:_member];
+            for (id<OOrigo> residence in [viewController.returnData residences]) {
+                [residence addMember:_member];
             }
         }
     } else if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
@@ -1274,7 +1270,9 @@ static NSInteger const kButtonIndexContinue = 1;
 - (void)processInput
 {
     if ([self actionIs:kActionRegister]) {
-        if ([_member isUser] || !(_emailField.value || _mobilePhoneField.value)) {
+        if ([self targetIs:kTargetJuvenile]) {
+            [self examineJuvenile];
+        } else if ([_member isUser]) {
             [self examineMember];
         } else if ([_member instance]) {
             if ([_origo isOfType:kOrigoTypeResidence]) {
@@ -1282,8 +1280,6 @@ static NSInteger const kButtonIndexContinue = 1;
             } else {
                 [self persistMember];
             }
-        } else if ([self targetIs:kTargetJuvenile]) {
-            [self examineJuvenile];
         } else {
             [[OConnection connectionWithDelegate:self] lookupMemberWithIdentifier:_emailField.value ? _emailField.value : _mobilePhoneField.value];
         }
@@ -1632,14 +1628,14 @@ static NSInteger const kButtonIndexContinue = 1;
         
         case kActionSheetTagEditRole:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
-                NSString *roleType = [[_origo membershipForMember:_member] roleTypeForRole:_role];
+                NSString *roleType = [[_origo membershipForMember:_member] typeOfAffiliation:_role];
                 NSString *aspect = nil;
                 
-                if ([roleType isEqualToString:kRoleTypeMemberRole]) {
+                if ([roleType isEqualToString:kAffiliationTypeMemberRole]) {
                     aspect = kAspectMemberRole;
-                } else if ([roleType isEqualToString:kRoleTypeOrganiserRole]) {
+                } else if ([roleType isEqualToString:kAffiliationTypeOrganiserRole]) {
                     aspect = kAspectOrganiserRole;
-                } else if ([roleType isEqualToString:kRoleTypeParentRole]) {
+                } else if ([roleType isEqualToString:kAffiliationTypeParentRole]) {
                     aspect = kAspectParentRole;
                 }
                 
@@ -1659,20 +1655,6 @@ static NSInteger const kButtonIndexContinue = 1;
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
-        case kAlertTagEditRole:
-            if (buttonIndex == kButtonIndexOK) {
-                NSString *roleType = [_membership roleTypeForRole:_role];
-                NSString *revisedRole = [alertView textFieldAtIndex:0].text;
-                
-                [_membership removeRole:_role ofType:roleType];
-                [_membership addRole:revisedRole ofType:roleType];
-                
-                [self reloadSectionWithKey:kSectionKeyRoles];
-                [[OMeta m].replicator replicateIfNeeded];
-            }
-            
-            break;
-            
         case kAlertTagToggleGender:
             if (buttonIndex == kButtonIndexYes) {
                 _member.gender = [_member isMale] ? kGenderFemale : kGenderMale;

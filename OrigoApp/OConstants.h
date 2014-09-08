@@ -132,8 +132,8 @@ extern NSString * const kIconFileLookup;
 extern NSString * const kIconFilePlacePhoneCall;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;
-extern NSString * const kIconFileMultiRole;
-extern NSString * const kIconFileMultiRoleSelected;
+extern NSString * const kIconFileMultiRoleOff;
+extern NSString * const kIconFileMultiRoleOn;
 extern NSString * const kIconFileGroups;
 extern NSString * const kIconFileLocationArrow;
 

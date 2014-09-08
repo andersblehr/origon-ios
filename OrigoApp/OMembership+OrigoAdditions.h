@@ -19,11 +19,10 @@ extern NSString * const kMembershipStatusActive;
 extern NSString * const kMembershipStatusRejected;
 extern NSString * const kMembershipStatusExpired;
 
-extern NSString * const kRoleTypeMemberRole;
-extern NSString * const kRoleTypeOrganiserRole;
-extern NSString * const kRoleTypeParentRole;
-
-extern NSString * const kPlaceholderRole;
+extern NSString * const kAffiliationTypeMemberRole;
+extern NSString * const kAffiliationTypeOrganiserRole;
+extern NSString * const kAffiliationTypeParentRole;
+extern NSString * const kAffiliationTypeGroup;
 
 
 @protocol OMembership <OEntity>
@@ -34,7 +33,7 @@ extern NSString * const kPlaceholderRole;
 @property (nonatomic) NSString *type;
 @property (nonatomic) NSNumber *isAdmin;
 @property (nonatomic) NSString *status;
-@property (nonatomic) NSString *roles;
+@property (nonatomic) NSString *affiliations;
 
 - (BOOL)isInvited;
 - (BOOL)isActive;
@@ -45,14 +44,15 @@ extern NSString * const kPlaceholderRole;
 - (BOOL)isResidency;
 - (BOOL)isAssociate;
 
-- (BOOL)hasRoleOfType:(NSString *)type;
-- (void)addRole:(NSString *)role ofType:(NSString *)type;
-- (void)removeRole:(NSString *)role ofType:(NSString *)type;
+- (BOOL)hasAffiliationOfType:(NSString *)type;
+- (void)addAffiliation:(NSString *)affiliation ofType:(NSString *)type;
+- (void)removeAffiliation:(NSString *)affiliation ofType:(NSString *)type;
+- (NSString *)typeOfAffiliation:(NSString *)affiliation;
 - (NSArray *)memberRoles;
 - (NSArray *)organiserRoles;
 - (NSArray *)parentRoles;
-- (NSArray *)allRoles;
-- (NSString *)roleTypeForRole:(NSString *)role;
+- (NSArray *)roles;
+- (NSArray *)groups;
 
 - (void)promoteToFull;
 - (void)demoteToAssociate;

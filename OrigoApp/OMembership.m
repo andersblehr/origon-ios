@@ -2,7 +2,7 @@
 //  OMembership.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 06.08.14.
+//  Created by Anders Blehr on 05.09.14.
 //  Copyright (c) 2014 Rhelba Source. All rights reserved.
 //
 
@@ -13,10 +13,10 @@
 
 @implementation OMembership
 
-@dynamic roles;
 @dynamic isAdmin;
 @dynamic status;
 @dynamic type;
+@dynamic affiliations;
 @dynamic member;
 @dynamic origo;
 
