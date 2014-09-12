@@ -13,6 +13,8 @@
 - (id)setTitle:(NSString *)title editable:(BOOL)editable withSubtitle:(NSString *)subtitle;
 
 - (void)addRightBarButtonItem:(UIBarButtonItem *)barButtonItem;
-- (void)addRightBarButtonItem:(UIBarButtonItem *)barButtonItem append:(BOOL)append;
+- (void)insertRightBarButtonItem:(UIBarButtonItem *)barButtonItem atIndex:(NSInteger)index;
+- (void)removeRightBarButtonItem:(UIBarButtonItem *)barButtonItem;
+- (UIBarButtonItem *)rightBarButtonItemWithTag:(NSInteger)tag;
 
 @end

@@ -64,26 +64,6 @@
 }
 
 
-#pragma mark - View lifecycle
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    if (self.isModal && _isMultiValuePicker) {
-        if (self.didCancel) {
-            if ([self targetIs:kTargetRole]) {
-                for (id<OMember> roleHolder in [self roleHolders]) {
-                    [[_origo membershipForMember:roleHolder] removeAffiliation:_affiliation ofType:_affiliationType];
-                }
-            }
-        } else {
-            self.returnData = _pickedValues;
-        }
-    }
-    
-    [super viewWillDisappear:animated];
-}
-
-
 #pragma mark - OTableViewController protocol conformance
 
 - (void)loadState
@@ -193,7 +173,7 @@
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         
         cell.textLabel.text = [candidate publicName];
-        cell.imageView.image = [OUtil smallImageForMember:candidate];
+        [OUtil setImageForMember:candidate inTableViewCell:cell];
         
         if ([_pickedValues count]) {
             cell.checked = [_pickedValues containsObject:candidate];
@@ -259,30 +239,46 @@
         }
         
         [self setSubtitle:[OUtil commaSeparatedListOfItems:[_pickedValues sortedArrayUsingSelector:@selector(compare:)] conjoinLastItem:NO]];
-        
-        if (_isMultiValuePicker) {
-            if (self.isModal) {
-                if ([_pickedValues count]) {
-                    if (self.navigationItem.rightBarButtonItem == _multiRoleButtonOn) {
-                        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-                    }
+    }
+    
+    if (_isMultiValuePicker) {
+        if (self.isModal) {
+            if ([_pickedValues count]) {
+                if (self.navigationItem.rightBarButtonItem == _multiRoleButtonOn) {
+                    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
                 }
-                
-                self.navigationItem.rightBarButtonItem.enabled = ([_pickedValues count] > 0);
             }
-        } else {
-            if (self.isModal) {
-                [self.dismisser dismissModalViewController:self];
-            } else {
-                [self.navigationController popViewControllerAnimated:YES];
-            }
-        }
             
+            self.navigationItem.rightBarButtonItem.enabled = ([_pickedValues count] > 0);
+        }
+    } else {
+        if (self.isModal) {
+            self.returnData = _pickedValues;
+            [self.dismisser dismissModalViewController:self];
+        } else {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
     }
 }
 
 
-- (void)titleWillChange:(NSString *)newTitle
+- (void)viewWillBeDismissed
+{
+    if (self.isModal && _isMultiValuePicker) {
+        if (self.didCancel) {
+            if ([self targetIs:kTargetRole]) {
+                for (id<OMember> roleHolder in [self roleHolders]) {
+                    [[_origo membershipForMember:roleHolder] removeAffiliation:_affiliation ofType:_affiliationType];
+                }
+            }
+        } else {
+            self.returnData = _pickedValues;
+        }
+    }
+}
+
+
+- (void)viewWillGetNewTitle:(NSString *)newTitle
 {
     if (_affiliation) {
         for (id<OMember> roleHolder in [self roleHolders]) {

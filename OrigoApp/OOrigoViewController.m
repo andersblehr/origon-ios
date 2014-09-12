@@ -18,6 +18,7 @@ static NSInteger const kButtonTagAddMember = 0;
 static NSInteger const kButtonTagAddFromGroups = 1;
 static NSInteger const kButtonTagAddOrganiser = 2;
 static NSInteger const kButtonTagAddParentContact = 3;
+static NSInteger const kButtonTagAddSubgroups = 4;
 
 static NSInteger const kActionSheetTagEdit = 1;
 static NSInteger const kButtonTagEditGroup = 0;
@@ -156,6 +157,12 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             }
         }
         
+        if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeFriends]]) {
+            if (![[_origo groups] count]) {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Add subgroups", @"") tag:kButtonTagAddSubgroups];
+            }
+        }
+        
         if ([actionSheet numberOfButtons] > 1) {
             [actionSheet show];
         } else {
@@ -182,10 +189,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 - (void)performGroupsAction
 {
-    if (![[_origo groups] count]) {
-        self.presentStealthilyOnce = YES;
-    }
-    
     [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetGroups meta:_origo];
 }
 
@@ -226,9 +229,9 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         }
     } else if ([self actionIs:kActionDisplay]) {
         if ([_origo isOfType:kOrigoTypeResidence] && ![self aspectIs:kAspectHousehold]) {
-            self.navigationItem.backBarButtonItem = [UIBarButtonItem buttonWithTitle:NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle)];
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle)];
         } else {
-            self.navigationItem.backBarButtonItem = [UIBarButtonItem buttonWithTitle:_origo.name];
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_origo.name];
         }
         
         if ([_origo isCommitted] && [_member isCommitted]) {
@@ -238,10 +241,8 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem mapButtonWithTarget:self]];
             }
             
-            if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeFriends]]) {
-                if ([[_origo groups] count] || [_origo userCanEdit]) {
-                    [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
-                }
+            if ([[_origo groups] count]) {
+                [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
             }
             
             if ([_origo userCanEdit]) {
@@ -280,8 +281,8 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     id<OMember> member = [self dataAtIndexPath:indexPath];
     
     cell.textLabel.text = [member publicName];
-    cell.imageView.image = [OUtil smallImageForMember:member];
     cell.destinationId = kIdentifierMember;
+    [OUtil setImageForMember:member inTableViewCell:cell];
     
     if (sectionKey == kSectionKeyOrganisers) {
         cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:member] organiserRoles] conjoinLastItem:NO];
@@ -438,6 +439,15 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
             if ([viewController targetIs:kTargetRoles]) {
                 [self.tableView reloadData];
+            } else if ([viewController targetIs:kTargetGroups]) {
+                BOOL hasGroups = [[_origo groups] count] > 0;
+                UIBarButtonItem *groupsButton = [self.navigationItem rightBarButtonItemWithTag:kBarButtonTagGroups];
+                
+                if (!groupsButton && hasGroups) {
+                    [self.navigationItem insertRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self] atIndex:[_origo hasAddress] ? 2 : 1];
+                } else if (groupsButton && !hasGroups) {
+                    [self.navigationItem removeRightBarButtonItem:groupsButton];
+                }
             }
         } else if ([viewController.identifier isEqualToString:kIdentifierValuePicker]) {
             if ([viewController targetIs:kTargetMembers]) {
@@ -534,6 +544,16 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         }
     } else {
         [self toggleEditMode];
+
+        if ([self actionIs:kActionDisplay]) {
+            UIBarButtonItem *mapButton = [self.navigationItem rightBarButtonItemWithTag:kBarButtonTagMap];
+            
+            if (!mapButton && [_origo hasAddress]) {
+                [self.navigationItem insertRightBarButtonItem:[UIBarButtonItem mapButtonWithTarget:self] atIndex:1];
+            } else if (mapButton && ![_origo hasAddress]) {
+                [self.navigationItem removeRightBarButtonItem:mapButton];
+            }
+        }
     }
 }
 
@@ -604,6 +624,10 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                     [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser];
                 } else if (buttonTag == kButtonTagAddParentContact) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectParentRole} meta:_origo];
+                } else if (buttonTag == kButtonTagAddSubgroups) {
+                    self.presentStealthilyOnce = YES;
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetGroups meta:_origo];
+                    
                 }
                 
                 break;

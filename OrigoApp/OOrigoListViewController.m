@@ -29,6 +29,27 @@ static NSInteger const kSectionKeyWards = 2;
 
 #pragma mark - Auxiliary methods
 
+- (void)assembleOrigoTypes
+{
+    [_origoTypes addObject:kOrigoTypeFriends];
+    
+    if ([_member isJuvenile]) {
+        if (![_member isOlderThan:kAgeThresholdInSchool]) {
+            [_origoTypes addObject:kOrigoTypePreschoolClass];
+        }
+        
+        [_origoTypes addObject:kOrigoTypeSchoolClass];
+        [_origoTypes addObject:kOrigoTypeTeam];
+    } else {
+        [_origoTypes addObject:kOrigoTypeOrganisation];
+        [_origoTypes addObject:kOrigoTypeTeam];
+        [_origoTypes addObject:kOrigoTypeStudyGroup];
+    }
+    
+    [_origoTypes addObject:kOrigoTypeOther];
+}
+
+
 - (NSString *)footerText
 {
     NSString *footerText = nil;
@@ -128,7 +149,7 @@ static NSInteger const kSectionKeyWards = 2;
     _origoTypes = [NSMutableArray array];
     
     self.title = [OMeta m].appName;
-    [self.navigationItem setTitle:[OMeta m].appName editable:NO withSubtitle:_member.name];
+    [self setSubtitle:_member.name];
     
     if ([_member isUser]) {
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
@@ -136,23 +157,8 @@ static NSInteger const kSectionKeyWards = 2;
     
     if ([[OMeta m].user isTeenOrOlder]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
-        
-        [_origoTypes addObject:kOrigoTypeFriends];
-        
-        if ([_member isJuvenile]) {
-            if (![_member isOlderThan:kAgeThresholdInSchool]) {
-                [_origoTypes addObject:kOrigoTypePreschoolClass];
-            }
-            
-            [_origoTypes addObject:kOrigoTypeSchoolClass];
-            [_origoTypes addObject:kOrigoTypeTeam];
-        } else {
-            [_origoTypes addObject:kOrigoTypeOrganisation];
-            [_origoTypes addObject:kOrigoTypeTeam];
-            [_origoTypes addObject:kOrigoTypeStudyGroup];
-        }
-        
-        [_origoTypes addObject:kOrigoTypeOther];
+
+        [self assembleOrigoTypes];
     }
 }
 
@@ -183,21 +189,21 @@ static NSInteger const kSectionKeyWards = 2;
             
             cell.textLabel.text = residence.name;
             cell.detailTextLabel.text = [residence singleLineAddress];
-            cell.imageView.image = [OUtil smallImageForOrigo:residence];
             cell.destinationId = kIdentifierOrigo;
+            [OUtil setImageForOrigo:residence inTableViewCell:cell];
         } else {
             id<OMember> member = entity;
             
             cell.textLabel.text = [member publicName];
-            cell.imageView.image = [OUtil smallImageForMember:member];
             cell.destinationId = kIdentifierMember;
+            [OUtil setImageForMember:member inTableViewCell:cell];
         }
     } else if (sectionKey == kSectionKeyWards) {
         id<OMember> ward = entity;
         
         cell.textLabel.text = [ward givenName];
-        cell.imageView.image = [OUtil smallImageForMember:ward];
         cell.destinationId = kIdentifierOrigoList;
+        [OUtil setImageForMember:ward inTableViewCell:cell];
         
         NSArray *origos = [ward origosIncludeResidences:NO];
         
@@ -213,7 +219,7 @@ static NSInteger const kSectionKeyWards = 2;
         id<OMembership> userMembership = [origo membershipForMember:[OMeta m].user];
         
         cell.destinationId = kIdentifierOrigo;
-        cell.imageView.image = [OUtil smallImageForOrigo:origo];
+        [OUtil setImageForOrigo:origo inTableViewCell:cell];
         
         if ([_member isUser] && ([origo userIsOrganiser] || [origo userIsParentContact])) {
             cell.textLabel.text = [NSString stringWithFormat:@"%@, %@", origo.name, origo.descriptionText];

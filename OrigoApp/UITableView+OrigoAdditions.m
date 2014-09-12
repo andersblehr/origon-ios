@@ -28,11 +28,18 @@ static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
 {
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:reuseIdentifier];
     
-    if (!cell) {
+    if (cell) {
+        if ([cell isListCell]) {
+            for (UIView *subview in cell.imageView.subviews) {
+                [subview removeFromSuperview];
+            }
+        } else {
+            cell.inputCellDelegate = delegate;
+        }
+    } else {
         cell = [[OTableViewCell alloc] initWithStyle:style reuseIdentifier:reuseIdentifier delegate:delegate];
-    } else if (![cell isListCell]) {
-        cell.inputCellDelegate = delegate;
     }
+    
     
     return cell;
 }

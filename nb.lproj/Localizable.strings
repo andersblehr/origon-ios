@@ -413,13 +413,14 @@
 // View titles
 "Settings" = "Innstillinger";
 "Roles" = "Roller";
-"Groups" = "Grupper";
-"Edit groups" = "Rediger grupper";
+"Subgroups" = "Undergrupper";
+"Edit subgroups" = "Rediger undergrupper";
 
 // List titles
 "[setting list label] devices" = "Registrerte enheter";
 
 // Buttons
+"Add subgroups" = "Legg til undergrupper";
 "Not in use" = "Ikke i bruk";
 
 

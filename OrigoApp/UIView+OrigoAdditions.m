@@ -13,8 +13,6 @@ CGFloat const kFadeAnimationDuration = 0.2f;
 static CGFloat const kImageShadowRadius = 1.f;
 static CGFloat const kImageShadowOffset = 1.5f;
 
-static NSString * const kKeyPathShadowPath = @"shadowPath";
-
 
 @implementation UIView (OrigoAdditions)
 
@@ -34,15 +32,25 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 }
 
 
-- (void)addShadowWithPath:(UIBezierPath *)path colour:(UIColor *)colour radius:(CGFloat)radius offset:(CGFloat)offset
+- (void)dumpSubviewsFromView:(UIView *)view
 {
-    self.layer.shadowPath = path.CGPath;
-    self.layer.shadowColor = colour.CGColor;
-    self.layer.shadowOpacity = 1.f;
-    self.layer.shadowRadius = radius;
-    self.layer.shadowOffset = CGSizeMake(0.f, offset);
+    static NSInteger level = 0;
     
-    self.layer.masksToBounds = NO;
+    NSMutableString *padding = [NSMutableString string];
+    
+    for (NSInteger i = 0; i < level; i++) {
+        [padding appendString:@" "];
+    }
+    
+    NSLog(@"%@+%@", padding, view);
+    
+    level++;
+    
+    for (UIView *subview in view.subviews) {
+        [self dumpSubviewsFromView:subview];
+    }
+    
+    level--;
 }
 
 
@@ -58,7 +66,22 @@ static NSString * const kKeyPathShadowPath = @"shadowPath";
 
 - (void)addDropShadowForPhotoFrame
 {
-    [self addShadowWithPath:[UIBezierPath bezierPathWithRect:CGRectMake(0.f, 0.f, kPhotoFrameWidth, kPhotoFrameWidth)] colour:[UIColor darkGrayColor] radius:kImageShadowRadius offset:kImageShadowOffset];
+    self.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(0.f, 0.f, kPhotoFrameWidth, kPhotoFrameWidth)].CGPath;
+    self.layer.shadowColor = [UIColor darkGrayColor].CGColor;
+    self.layer.shadowOpacity = 1.f;
+    self.layer.shadowRadius = kImageShadowRadius;
+    self.layer.shadowOffset = CGSizeMake(0.f, kImageShadowOffset);
+    self.layer.masksToBounds = NO;
+}
+
+
+#pragma mark - DEBUG: Dumping subviews
+
+- (void)dumpSubviewsUsingTitle:(NSString *)title;
+{
+    NSLog(@"==== START DUMP: %@ ====", title);
+    [self dumpSubviewsFromView:self];
+    NSLog(@"===== END DUMP: %@ =====", title);
 }
 
 @end

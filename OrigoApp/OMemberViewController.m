@@ -894,11 +894,11 @@ static NSInteger const kButtonIndexContinue = 1;
         
         if ([self targetIs:kTargetJuvenile]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
-        } else if (![self targetIs:kTargetUser] && ![self targetIs:kTargetOrganiser]) {
+        } else if (![self targetIs:kTargetUser]) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem lookupButtonWithTarget:self];
         }
     } else if ([self actionIs:kActionDisplay]) {
-        self.navigationItem.backBarButtonItem = [UIBarButtonItem buttonWithTitle:[_member givenName]];
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_member givenName]];
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem infoButtonWithTarget:self];
         
         if ([_member isManagedByUser]) {
@@ -932,9 +932,9 @@ static NSInteger const kButtonIndexContinue = 1;
     if (sectionKey == kSectionKeyGuardians) {
         id<OMember> guardian = [self dataAtIndexPath:indexPath];
         
-        cell.imageView.image = [OUtil smallImageForMember:guardian];
         cell.textLabel.text = guardian.name;
         cell.destinationId = kIdentifierMember;
+        [OUtil setImageForMember:guardian inTableViewCell:cell];
         
         if ([[_member residences] count] > 1) {
             cell.detailTextLabel.text = [[guardian residence] shortAddress];
@@ -1190,13 +1190,9 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)titleWillChange:(NSString *)newTitle
+- (void)viewWillGetNewTitle:(NSString *)newTitle
 {
     _role = newTitle;
-    
-    if ([self actionIs:kActionRegister] && ([self.navigationItem.rightBarButtonItems count] < 2)) {
-        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem lookupButtonWithTarget:self]];
-    }
 }
 
 

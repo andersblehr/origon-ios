@@ -96,29 +96,51 @@ static NSInteger const kViewTagSubtitleLabel = 11;
 }
 
 
-#pragma mark - Additional right bar button items
+#pragma mark - Manipulating right bar button items
 
 - (void)addRightBarButtonItem:(UIBarButtonItem *)barButtonItem
 {
-    [self addRightBarButtonItem:barButtonItem append:NO];
+    if (!self.rightBarButtonItems) {
+        self.rightBarButtonItem = barButtonItem;
+    } else {
+        [self insertRightBarButtonItem:barButtonItem atIndex:[self.rightBarButtonItems count]];
+    }
 }
 
 
-- (void)addRightBarButtonItem:(UIBarButtonItem *)barButtonItem append:(BOOL)append
+- (void)insertRightBarButtonItem:(UIBarButtonItem *)barButtonItem atIndex:(NSInteger)index
 {
     NSMutableArray *rightBarButtonItems = [self.rightBarButtonItems mutableCopy];
     
-    if ([rightBarButtonItems count]) {
-        if (append) {
-            [rightBarButtonItems insertObject:barButtonItem atIndex:0];
-        } else {
-            [rightBarButtonItems addObject:barButtonItem];
+    if (rightBarButtonItems && (index <= [rightBarButtonItems count])) {
+        [rightBarButtonItems insertObject:barButtonItem atIndex:index];
+        [self setRightBarButtonItems:rightBarButtonItems animated:YES];
+    }
+}
+
+
+- (void)removeRightBarButtonItem:(UIBarButtonItem *)barButtonItem
+{
+    NSMutableArray *rightBarButtonItems = [self.rightBarButtonItems mutableCopy];
+    
+    if (rightBarButtonItems) {
+        [rightBarButtonItems removeObject:barButtonItem];
+        [self setRightBarButtonItems:rightBarButtonItems animated:YES];
+    }
+}
+
+
+- (UIBarButtonItem *)rightBarButtonItemWithTag:(NSInteger)tag
+{
+    UIBarButtonItem *barButtonItemWithTag = nil;
+    
+    for (UIBarButtonItem *barButtonItem in self.rightBarButtonItems) {
+        if (!barButtonItemWithTag && (barButtonItem.tag == tag)) {
+            barButtonItemWithTag = barButtonItem;
         }
-    } else {
-        rightBarButtonItems = [NSMutableArray arrayWithObject:barButtonItem];
     }
     
-    [self setRightBarButtonItems:rightBarButtonItems animated:YES];
+    return barButtonItemWithTag;
 }
 
 @end

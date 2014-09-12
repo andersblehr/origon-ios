@@ -240,6 +240,8 @@ static OState *_activeState = nil;
     } else if ([_viewController.identifier isEqualToString:kIdentifierMember]) {
         if ([self targetIs:kTargetGuardian]) {
             canididates = [[OMeta m].user peersNotInSet:[_pivotOrigo regulars]];
+        } if ([self targetIs:kTargetOrganiser]) {
+            canididates = [_pivotMember peersNotInSet:[_pivotOrigo organisers]];
         } else {
             canididates = [_pivotMember peersNotInSet:[_pivotOrigo regulars]];
         }

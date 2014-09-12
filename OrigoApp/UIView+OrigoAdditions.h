@@ -13,7 +13,8 @@ extern CGFloat const kFadeAnimationDuration;
 @interface UIView (OrigoAdditions)
 
 - (void)setHairlinesHidden:(BOOL)hide;
-
 - (void)addDropShadowForPhotoFrame;
+
+- (void)dumpSubviewsUsingTitle:(NSString *)title;
 
 @end

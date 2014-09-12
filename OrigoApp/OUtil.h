@@ -12,8 +12,9 @@
 
 + (NSString *)genderStringForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile;
 + (NSString *)guardianInfoForMember:(id<OMember>)member;
-+ (UIImage *)smallImageForMember:(id<OMember>)member;
-+ (UIImage *)smallImageForOrigo:(id<OOrigo>)origo;
+
++ (void)setImageForOrigo:(id<OOrigo>)origo inTableViewCell:(OTableViewCell *)cell;
++ (void)setImageForMember:(id<OMember>)member inTableViewCell:(OTableViewCell *)cell;
 
 + (NSString *)rootIdFromMemberId:(NSString *)memberId;
 + (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem;

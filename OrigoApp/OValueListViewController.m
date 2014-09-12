@@ -173,15 +173,15 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         
         if ([self aspectIs:kAspectEditable]) {
             if ([[_origo groups] count]) {
-                self.title = NSLocalizedString(@"Edit groups", @"");
+                self.title = NSLocalizedString(@"Edit subgroups", @"");
+                self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"Subgroups", @"")];
             } else {
-                self.title = NSLocalizedString(@"Groups", @"");
+                self.title = NSLocalizedString(@"Subgroups", @"");
             }
             
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
-            self.navigationItem.backBarButtonItem = [UIBarButtonItem buttonWithTitle:NSLocalizedString(@"Groups", @"")];
         } else {
-            self.title = NSLocalizedString(@"Groups", @"");
+            self.title = NSLocalizedString(@"Subgroups", @"");
             
             NSArray *groups = [_origo groups];
             
@@ -292,8 +292,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             id<OMember> member = [self dataAtIndexPath:indexPath];
             
             cell.textLabel.text = [member publicName];
-            cell.imageView.image = [OUtil smallImageForMember:member];
             cell.selectable = NO;
+            [OUtil setImageForMember:member inTableViewCell:cell];
             
             if ([member isJuvenile]) {
                 cell.detailTextLabel.text = [OUtil guardianInfoForMember:member];
