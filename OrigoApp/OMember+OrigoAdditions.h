@@ -51,8 +51,9 @@
 - (BOOL)isUser;
 - (BOOL)isWardOfUser;
 - (BOOL)isHousemateOfUser;
-- (BOOL)isManagedByUser;
 - (BOOL)isKnownByUser;
+- (BOOL)isManagedByUser;
+- (BOOL)isManaged;
 - (BOOL)isMale;
 - (BOOL)isJuvenile;
 - (BOOL)isTeenOrOlder;

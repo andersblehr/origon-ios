@@ -471,9 +471,7 @@ NSString * const kOrigoTypeTeam = @"team";
     if ([type isKindOfClass:[NSString class]]) {
         isOfType = [self.type isEqualToString:type];
     } else if ([type isKindOfClass:[NSArray class]]) {
-        for (NSString *origoType in type) {
-            isOfType = isOfType || [self isOfType:origoType];
-        }
+        isOfType = [type containsObject:self.type];
     }
     
     return isOfType;

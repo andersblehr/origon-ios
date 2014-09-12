@@ -379,8 +379,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         if (![_titleField.text isEqualToString:self.title]) {
-            if ([_instance respondsToSelector:@selector(titleWillChange:)]) {
-                [_instance titleWillChange:_titleField.text];
+            if ([_instance respondsToSelector:@selector(viewWillGetNewTitle:)]) {
+                [_instance viewWillGetNewTitle:_titleField.text];
             }
             
             self.navigationItem.title = _titleField.text;
@@ -623,6 +623,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (shouldRelayDismissal) {
         [_dismisser dismissModalViewController:self];
     } else {
+        if ([viewController respondsToSelector:@selector(viewWillBeDismissed)]) {
+            [viewController viewWillBeDismissed];
+        }
+        
         if ([_instance respondsToSelector:@selector(willDismissModalViewController:)]) {
             [_instance willDismissModalViewController:viewController];
         }
@@ -936,7 +940,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             }
         }
         
-        [self.navigationItem addRightBarButtonItem:_nextButton append:YES];
+        [self.navigationItem insertRightBarButtonItem:_nextButton atIndex:0];
     }
     
     _didJustLoad = YES;

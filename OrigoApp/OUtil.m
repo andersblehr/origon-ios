@@ -47,7 +47,17 @@ static NSString * const kRootIdFormat = @"~%@";
 }
 
 
-+ (UIImage *)smallImageForMember:(id<OMember>)member
++ (void)setImageForOrigo:(id<OOrigo>)origo inTableViewCell:(OTableViewCell *)cell
+{
+    if ([origo isOfType:kOrigoTypeResidence]) {
+        cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
+    } else {
+        cell.imageView.image = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?
+    }
+}
+
+
++ (void)setImageForMember:(id<OMember>)member inTableViewCell:(OTableViewCell *)cell
 {
     UIImage *image = nil;
     
@@ -61,25 +71,16 @@ static NSString * const kRootIdFormat = @"~%@";
         }
     }
     
-    if ([member isActive]) {
-        image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-    }
-    
-    return image;
-}
-
-
-+ (UIImage *)smallImageForOrigo:(id<OOrigo>)origo
-{
-    UIImage *image = nil;
-    
-    if ([origo isOfType:kOrigoTypeResidence]) {
-        image = [UIImage imageNamed:kIconFileHousehold];
+    if ([member isManaged]) {
+        cell.imageView.image = image;
+        
+        UIView *underline = [[UIView alloc] initWithFrame:CGRectMake(0.f, image.size.height + 1.f, image.size.width, 1.f)];
+        underline.backgroundColor = [UIColor windowTintColour];
+        [cell.imageView addSubview:underline];
     } else {
-        image = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?
+        cell.imageView.tintColor = [UIColor headerTextColour];
+        cell.imageView.image = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
-    
-    return image;
 }
 
 

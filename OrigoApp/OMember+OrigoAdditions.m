@@ -445,6 +445,24 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
+- (BOOL)isKnownByUser
+{
+    BOOL isKnownByUser = NO;
+    
+    NSMutableSet *knownOrigos = [NSMutableSet setWithArray:[[OMeta m].user origosIncludeResidences:YES]];
+    
+    for (OMember *ward in [[OMeta m].user wards]) {
+        [knownOrigos unionSet:[NSSet setWithArray:[ward origosIncludeResidences:YES]]];
+    }
+    
+    for (OOrigo *origo in knownOrigos) {
+        isKnownByUser = isKnownByUser || [origo knowsAboutMember:self];
+    }
+    
+    return isKnownByUser;
+}
+
+
 - (BOOL)isManagedByUser
 {
     BOOL isManagedByUser = [self isUser];
@@ -475,21 +493,17 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (BOOL)isKnownByUser
+- (BOOL)isManaged
 {
-    BOOL isKnownByUser = NO;
+    BOOL isManaged = [self isActive];
     
-    NSMutableSet *knownOrigos = [NSMutableSet setWithArray:[[OMeta m].user origosIncludeResidences:YES]];
-    
-    for (OMember *ward in [[OMeta m].user wards]) {
-        [knownOrigos unionSet:[NSSet setWithArray:[ward origosIncludeResidences:YES]]];
+    if (!isManaged) {
+        for (OMember *housemate in [self allHousemates]) {
+            isManaged = isManaged || [housemate isActive];
+        }
     }
     
-    for (OOrigo *origo in knownOrigos) {
-        isKnownByUser = isKnownByUser || [origo knowsAboutMember:self];
-    }
-    
-    return isKnownByUser;
+    return isManaged;
 }
 
 

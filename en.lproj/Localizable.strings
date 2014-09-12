@@ -414,13 +414,14 @@
 // View titles
 "Settings" = "Settings";
 "Roles" = "Roles";
-"Groups" = "Groups";
-"Edit groups" = "Edit groups";
+"Subgroups" = "Subgroups";
+"Edit subgroups" = "Edit subgroups";
 
 // List titles
 "[setting list label] devices" = "Registered devices";
 
 // Buttons
+"Add subgroups" = "Add subgroups";
 "Not in use" = "Not in use";
 
 

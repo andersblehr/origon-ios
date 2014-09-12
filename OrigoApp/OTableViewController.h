@@ -45,8 +45,9 @@
 - (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController;
 - (void)willDismissModalViewController:(OTableViewController *)viewController;
 - (void)didDismissModalViewController:(OTableViewController *)viewController;
+- (void)viewWillBeDismissed;
 
-- (void)titleWillChange:(NSString *)newTitle;
+- (void)viewWillGetNewTitle:(NSString *)newTitle;
 - (void)didResumeFromBackground;
 - (void)didSignOut;
 
