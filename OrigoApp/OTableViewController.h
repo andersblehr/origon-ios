@@ -22,8 +22,7 @@
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 
 - (id)defaultTarget;
-- (id)destinationMetaForIndexPath:(NSIndexPath *)indexPath;
-- (NSString *)destinationAspectForIndexPath:(NSIndexPath *)indexPath;
+- (id)destinationTargetForIndexPath:(NSIndexPath *)indexPath;
 - (NSString *)reuseIdentifierForInputSection;
 - (NSArray *)toolbarButtons;
 
@@ -47,7 +46,7 @@
 - (void)didDismissModalViewController:(OTableViewController *)viewController;
 - (void)viewWillBeDismissed;
 
-- (void)viewWillGetNewTitle:(NSString *)newTitle;
+- (void)maySetViewTitle:(NSString *)newTitle;
 - (void)didResumeFromBackground;
 - (void)didSignOut;
 
@@ -79,7 +78,9 @@
 @property (nonatomic) OInputField *nextInputField;
 
 @property (nonatomic, weak) OTableViewController *dismisser;
-@property (nonatomic, weak) id<OEntityObserver> observer;
+@property (nonatomic, weak) id<OTableViewDataObserver> observer;
+
+- (OTableViewController *)precedingViewController;
 
 - (BOOL)actionIs:(NSString *)action;
 - (BOOL)targetIs:(NSString *)target;
@@ -104,9 +105,9 @@
 - (void)toggleEditMode;
 - (void)endEditing;
 
-- (void)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder;
-- (void)setSubtitle:(NSString *)subtitle;
 - (UISegmentedControl *)setTitleSegments:(NSArray *)segments;
+- (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder;
+- (void)setSubtitle:(NSString *)subtitle;
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;

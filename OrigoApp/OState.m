@@ -51,15 +51,6 @@ NSString * const kAspectRole = @"role";
 static OState *_activeState = nil;
 
 
-@interface OState () {
-@private
-    id<OOrigo> _pivotOrigo;
-    id<OMember> _pivotMember;
-}
-
-@end
-
-
 @implementation OState
 
 #pragma mark - Instantiation & initialisation
@@ -72,9 +63,9 @@ static OState *_activeState = nil;
         _viewController = viewController;
         
         if (_activeState) {
-            _aspect = _activeState->_aspect;
-            _pivotOrigo = _activeState->_pivotOrigo;
-            _pivotMember = _activeState->_pivotMember;
+            _aspect = _activeState.aspect;
+            _pivotOrigo = _activeState.pivotOrigo;
+            _pivotMember = _activeState.pivotMember;
         }
         
         if (viewController.target) {
@@ -213,45 +204,46 @@ static OState *_activeState = nil;
 }
 
 
-#pragma mark - Eligible member candidates
+#pragma mark - Miscellaneous methods
 
 - (NSArray *)eligibleCandidates
 {
-    NSArray *canididates = nil;
+    NSArray *candidates = nil;
+    
+    id<OMember> pivotAgent = nil;
+    NSArray *pivotGuardians = [_pivotMember guardians];
+    
+    if ([_pivotMember isJuvenile] && [pivotGuardians count]) {
+        pivotAgent = [_pivotMember isWardOfUser] ? [OMeta m].user : pivotGuardians[0];
+    } else {
+        pivotAgent = _pivotMember;
+    }
     
     if ([_viewController.identifier isEqualToString:kIdentifierOrigo]) {
         if ([_pivotOrigo isOfType:kOrigoTypeResidence]) {
-            canididates = [[OMeta m].user peersNotInSet:[_pivotOrigo regulars]];
+            candidates = [pivotAgent peersNotInSet:[_pivotOrigo regulars]];
         } else {
-            id<OMember> pivotMember = nil;
-            
-            if ([_pivotOrigo isJuvenile] && ![_pivotMember isJuvenile]) {
-                for (id<OMember> ward in [_pivotMember wards]) {
-                    if (!pivotMember && [_pivotOrigo hasMember:ward]) {
-                        pivotMember = ward;
-                    }
-                }
-            } else {
-                pivotMember = _pivotMember;
-            }
-            
-            canididates = [pivotMember peersNotInSet:[_pivotOrigo regulars]];
+            candidates = [_pivotMember peersNotInSet:[_pivotOrigo regulars]];
         }
     } else if ([_viewController.identifier isEqualToString:kIdentifierMember]) {
         if ([self targetIs:kTargetGuardian]) {
-            canididates = [[OMeta m].user peersNotInSet:[_pivotOrigo regulars]];
+            candidates = [pivotAgent peersNotInSet:[_pivotOrigo regulars]];
         } if ([self targetIs:kTargetOrganiser]) {
-            canididates = [_pivotMember peersNotInSet:[_pivotOrigo organisers]];
+            candidates = [pivotAgent peersNotInSet:[_pivotOrigo organisers]];
         } else {
-            canididates = [_pivotMember peersNotInSet:[_pivotOrigo regulars]];
+            candidates = [_pivotMember peersNotInSet:[_pivotOrigo regulars]];
         }
     }
     
-    return canididates;
+    return candidates;
 }
 
 
-#pragma mark - String representation
+- (NSString *)roleTypeFromAspect
+{
+    return [self targetIs:kAspectRole] ? [[_aspect substringToIndex:1] uppercaseString] : nil;
+}
+
 
 - (NSString *)asString
 {
@@ -278,7 +270,15 @@ static OState *_activeState = nil;
             if ([target isCommitted]) {
                 _pivotMember = target;
                 
-                if ([target isUser]) {
+                id<OMembership> membership = [_pivotOrigo membershipForMember:_pivotMember];
+                
+                if ([membership hasAffiliationOfType:kAffiliationTypeOrganiserRole]) {
+                    _target = kTargetOrganiser;
+                    _aspect = kAspectOrganiserRole;
+                } else if ([membership hasAffiliationOfType:kAffiliationTypeParentRole]) {
+                    _target = kTargetGuardian;
+                    _aspect = kAspectParentRole;
+                } else if ([target isUser]) {
                     _target = kTargetUser;
                     _aspect = kAspectHousehold;
                 } else if ([target isWardOfUser]) {
@@ -299,7 +299,15 @@ static OState *_activeState = nil;
             }
         } else if ([target conformsToProtocol:@protocol(OOrigo)]) {
             _pivotOrigo = target;
-            _target = ((id<OOrigo>)target).type;
+            _target = _pivotOrigo.type;
+            
+            if ([_pivotOrigo isJuvenile] && ![_pivotMember isJuvenile]) {
+                for (id<OMember> ward in [_pivotMember wards]) {
+                    if ([_pivotOrigo hasMember:ward]) {
+                        _pivotMember = ward;
+                    }
+                }
+            }
             
             if ([target isJuvenile]) {
                 _aspect = kAspectJuvenile;

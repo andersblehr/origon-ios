@@ -55,7 +55,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 {
     if ([self targetIs:kTargetRoles]) {
         if (_selectedSegment == kSegmentParents) {
-            [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectParentRole} meta:_origo];
+            [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectParentRole}];
         } else if (_selectedSegment == kSegmentOrganisers) {
             OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAdd];
             [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
@@ -63,10 +63,10 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             
             [actionSheet show];
         } else if (_selectedSegment == kSegmentMembers) {
-            [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectMemberRole} meta:_origo];
+            [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectMemberRole}];
         }
     } else if ([self targetIs:kTargetGroups]) {
-        [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetGroup: kAspectGroup} meta:_origo];
+        [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetGroup: kAspectGroup}];
     }
 }
 
@@ -74,7 +74,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 - (void)performEditAction
 {
     if ([self targetIs:kTargetGroups]) {
-        [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:@{kTargetGroups: kAspectEditable} meta:_origo];
+        [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:@{kTargetGroups: kAspectEditable}];
     }
 }
 
@@ -110,6 +110,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     [super viewWillAppear:animated];
     
     if (self.didResurface) {
+        self.rowAnimation = UITableViewRowAnimationAutomatic;
+        
         [self reloadSectionWithKey:kSectionKeyValues];
     }
 }
@@ -121,7 +123,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     
     if ([self targetIs:kTargetGroups]) {
         if (![[_origo groups] count] && ![self aspectIs:kAspectEditable]) {
-            [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:@{kTargetGroups: kAspectEditable} meta:_origo];
+            [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:@{kTargetGroups: kAspectEditable}];
         }
     }
 }
@@ -131,18 +133,20 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 
 - (void)loadState
 {
+    _origo = self.state.pivotOrigo;
+    
     if ([self targetIs:kTargetSettings]) {
         self.title = NSLocalizedString(@"Settings", @"");
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
     } else if ([self targetIs:kTargetDevices]) {
         self.title = NSLocalizedString(self.target, kStringPrefixSettingListLabel);
         self.usesPlainTableViewStyle = YES;
+    } else if ([self targetIs:kTargetRole]) {
+        self.title = self.target;
     } else if ([self targetIs:kTargetRoles]) {
-        _origo = self.meta;
+        self.title = NSLocalizedString(@"Responsibilities", @"");
         
         NSMutableArray *roleCategories = [NSMutableArray array];
-        
-        self.title = NSLocalizedString(@"Roles", @"");
         
         if ([_origo isJuvenile] && ![_origo isOfType:kOrigoTypeFriends]) {
             [roleCategories addObject:[[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
@@ -167,8 +171,6 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
     } else if ([self targetIs:kTargetGroups]) {
-        _origo = self.meta;
-        
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         
         if ([self aspectIs:kAspectEditable]) {
@@ -206,6 +208,12 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         [self setData:@[kCustomData] forSectionWithKey:kSectionKeySignOut];
     } else if ([self targetIs:kTargetDevices]) {
         [self setData:[[[OMeta m].user.devices allObjects] sortedArrayUsingSelector:@selector(compare:)] forSectionWithKey:kSectionKeyValues];
+    } else if ([self targetIs:kTargetRole]) {
+        if ([self aspectIs:kAspectOrganiserRole]) {
+            [self setData:[_origo organisersWithRole:self.target] forSectionWithKey:kSectionKeyValues];
+        } else if ([self aspectIs:kAspectParentRole]) {
+            [self setData:[_origo parentsWithRole:self.target] forSectionWithKey:kSectionKeyValues];
+        }
     } else if ([self targetIs:kTargetRoles]) {
         if (_selectedSegment == kSegmentParents) {
             [self setData:[_origo parentRoles] forSectionWithKey:kSectionKeyValues];
@@ -266,6 +274,13 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         } else if ([device isOfType:kDeviceType_iPad]) {
             cell.imageView.image = [UIImage imageNamed:kIconFile_iPad];
         }
+    } else if ([self targetIs:kTargetRole]) {
+        id<OMember> roleHolder = [self dataAtIndexPath:indexPath];
+        
+        cell.textLabel.text = roleHolder.name;
+        [OUtil setImageForMember:roleHolder inTableViewCell:cell];
+        cell.destinationId = kIdentifierMember;
+        cell.destinationMeta = self.target;
     } else if ([self targetIs:kTargetRoles]) {
         NSString *role = [self dataAtIndexPath:indexPath];
         NSArray *roleHolders = nil;
@@ -305,35 +320,23 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 }
 
 
-- (id)destinationMetaForIndexPath:(NSIndexPath *)indexPath
+- (id)destinationTargetForIndexPath:(NSIndexPath *)indexPath
 {
-    id meta = nil;
-    
-    if ([self targetIs:kTargetRoles] || [self targetIs:kTargetGroups]) {
-        meta = _origo;
-    }
-    
-    return meta;
-}
-
-
-- (NSString *)destinationAspectForIndexPath:(NSIndexPath *)indexPath
-{
-    NSString *aspect = self.state.aspect;
+    id target = [self dataAtIndexPath:indexPath];
     
     if ([self targetIs:kTargetRoles]) {
         if (_selectedSegment == kSegmentParents) {
-            aspect = kAspectParentRole;
+            target = @{target: kAspectParentRole};
         } else if (_selectedSegment == kSegmentOrganisers) {
-            aspect = kAspectOrganiserRole;
+            target = @{target: kAspectOrganiserRole};
         } else if (_selectedSegment == kSegmentMembers) {
-            aspect = kAspectMemberRole;
+            target = @{target: kAspectMemberRole};
         }
     } else if ([self targetIs:kTargetGroups]) {
-        aspect = kAspectGroup;
+        target = @{target: kAspectGroup};
     }
     
-    return aspect;
+    return target;
 }
 
 
@@ -383,8 +386,10 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         ODevice *device = [self dataAtIndexPath:indexPath];
         
         canDelete = ![device.entityId isEqualToString:[OMeta m].deviceId];
-    } else if ([self targetIs:kTargetRoles] || [self targetIs:kTargetGroups]) {
-        canDelete = [_origo userCanEdit];
+    } else {
+        canDelete = canDelete || [self targetIs:kTargetRole];
+        canDelete = canDelete || [self targetIs:kTargetRoles];
+        canDelete = canDelete || [self targetIs:kTargetGroups];
     }
     
     return canDelete;
@@ -395,6 +400,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 {
     if ([self targetIs:kTargetDevices]) {
         [[self dataAtIndexPath:indexPath] expire];
+    } else if ([self targetIs:kTargetRole]) {
+        id<OMembership> membership = [_origo membershipForMember:[self dataAtIndexPath:indexPath]];
+        [membership removeAffiliation:self.target ofType:[self.state roleTypeFromAspect]];
     } else if ([self targetIs:kTargetRoles]) {
         NSString *role = [self dataAtIndexPath:indexPath];
 
@@ -437,20 +445,22 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 
 - (void)willDismissModalViewController:(OTableViewController *)viewController
 {
-    if (!viewController.didCancel) {
-        if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
-            NSArray *groups = [_origo groups];
-            
-            if ([groups count]) {
-                if (!_selectedSegment) {
-                    self.rowAnimation = UITableViewRowAnimationLeft;
-                }
+    if ([self targetIs:kTargetGroups]) {
+        if (!viewController.didCancel) {
+            if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
+                NSArray *groups = [_origo groups];
                 
-                _titleSegments = [self setTitleSegments:[_origo groups]];
-                _selectedSegment = _titleSegments.selectedSegmentIndex;
-            } else if (_titleSegments) {
-                _titleSegments = [self setTitleSegments:nil];
-                _selectedSegment = 0;
+                if ([groups count]) {
+                    if (!_selectedSegment) {
+                        self.rowAnimation = UITableViewRowAnimationLeft;
+                    }
+                    
+                    _titleSegments = [self setTitleSegments:[_origo groups]];
+                    _selectedSegment = _titleSegments.selectedSegmentIndex;
+                } else if (_titleSegments) {
+                    _titleSegments = [self setTitleSegments:nil];
+                    _selectedSegment = 0;
+                }
             }
         }
     }
@@ -465,6 +475,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     
     if ([self targetIs:kTargetDevices]) {
         deleteTitle = NSLocalizedString(@"Not in use", @"");
+    } else if ([self targetIs:kTargetRole]) {
+        deleteTitle = NSLocalizedString(@"Remove", @"");
     } else {
         deleteTitle = NSLocalizedString(kButtonKeyDeleteRow, kStringPrefixDefault);
     }
@@ -483,9 +495,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         case kActionSheetTagAdd:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 if (buttonTag == kButtonTagAddOrganiserRole) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectOrganiserRole} meta:_origo];
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectOrganiserRole}];
                 } else if (buttonTag == kButtonTagAddOrganiser) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser meta:_origo];
+                    [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser];
                 }
             }
             

@@ -32,7 +32,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     OInputCellBlueprint *_blueprint;
     
     NSMutableDictionary *_views;
-    UITableView *_tableView;
     OInputField *_lastInputField;
 }
 
@@ -135,7 +134,6 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     if (self) {
         _state = state;
-        _tableView = ((OTableViewController *)_state.viewController).tableView;
         
         if ([self isListCell]) {
             _selectable = ![_state actionIs:kActionInput];
@@ -309,17 +307,16 @@ static CGFloat const kShakeRepeatCount = 3.f;
             
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
 #if !CGFLOAT_IS_DOUBLE // Compiled for 32-bit
-                [_tableView beginUpdates];
-                [_tableView endUpdates];
+                [_state.viewController.tableView beginUpdates];
+                [_state.viewController.tableView endUpdates];
 #endif
-                
                 CGRect frame = self.frame;
                 frame.size.height = desiredHeight;
                 self.frame = frame;
                 
 #if CGFLOAT_IS_DOUBLE // Compiled for 64-bit
-                [_tableView beginUpdates];
-                [_tableView endUpdates];
+                [_state.viewController.tableView beginUpdates];
+                [_state.viewController.tableView endUpdates];
 #endif
             }];
         }
@@ -361,7 +358,10 @@ static CGFloat const kShakeRepeatCount = 3.f;
 - (void)readData
 {
     if ([self isListCell]) {
-        [_state.viewController loadListCell:self atIndexPath:[_tableView indexPathForCell:self]];
+        NSIndexPath *indexPath = [_state.viewController.tableView indexPathForCell:self];
+        NSInteger sectionKey = [_state.viewController sectionKeyForIndexPath:indexPath];
+        
+        [_state.viewController reloadSectionWithKey:sectionKey];
     } else {
         for (NSString *key in _constrainer.inputKeys) {
             [self inputFieldForKey:key].value = [_entity valueForKey:key];
@@ -434,7 +434,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setDestinationId:(NSString *)destinationId selectableDuringInput:(BOOL)selectableDuringInput
 {
-    if (!_destinationId) {
+    if (!_destinationId || ![destinationId isEqualToString:_destinationId]) {
         BOOL destinationIsEligible = ![_state actionIs:kActionInput] || selectableDuringInput;
         
         if (destinationIsEligible && _entity) {
@@ -546,13 +546,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - OEntityObserver conformance
 
-- (void)observeEntity
+- (void)observeData
 {
     [self readData];
     [self redrawIfNeeded];
     
     if (_observer) {
-        [_observer observeEntity];
+        [_observer observeData];
     }
 }
 

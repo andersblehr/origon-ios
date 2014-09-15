@@ -35,10 +35,10 @@
 @class OActionSheet, OActivityIndicator, OAlert, OConnection, OCrypto, ODefaults, OLabel, OLanguage, OLocator, OMemberExaminer, ONavigationController, OPhoneNumberFormatter, OReplicator, OState, OSwitchboard, OTableViewCell, OInputCellBlueprint, OInputCellConstrainer, OTableViewController, OTextField, OTextView;
 
 #import "OConnectionDelegate.h"
-#import "OEntityObserver.h"
 #import "OInputCellDelegate.h"
 #import "OLocatorDelegate.h"
 #import "OMemberExaminerDelegate.h"
+#import "OTableViewDataObserver.h"
 #import "OTextInput.h"
 
 #import "ODevice.h"

@@ -258,9 +258,9 @@
 }
 
 
-- (NSString *)appellation
+- (NSString *)appellationUseGivenName:(BOOL)useGivenName
 {
-    return [self givenName];
+    return useGivenName ? [self givenName] : [self publicName];
 }
 
 

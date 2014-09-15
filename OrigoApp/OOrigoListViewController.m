@@ -271,6 +271,28 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
+- (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL canDelete = NO;
+    
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyOrigos) {
+        id<OOrigo> origo = [self dataAtIndexPath:indexPath];
+        
+        if ([origo userCanEdit]) {
+            NSArray *members = [origo members];
+            
+            if ([members count] == 1) {
+                id<OMember> member = members[0];
+                
+                canDelete = [member isUser] || [member isWardOfUser];
+            }
+        }
+    }
+    
+    return canDelete;
+}
+
+
 - (void)didDismissModalViewController:(OTableViewController *)viewController
 {
     if ([[OMeta m] userIsSignedIn]) {

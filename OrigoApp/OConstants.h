@@ -109,8 +109,8 @@ extern NSString * const kStringPrefixNewMemberTitle;
 extern NSString * const kStringPrefixAllMembersTitle;
 extern NSString * const kStringPrefixOrganiserRoleTitle;
 extern NSString * const kStringPrefixAddOrganiserRoleButton;
+extern NSString * const kStringPrefixEditOrganiserRoleButton;
 extern NSString * const kStringPrefixMemberRoleTitle;
-extern NSString * const kStringPrefixMemberRolesTitle;
 extern NSString * const kStringPrefixSettingTitle;
 
 // Icon file names
@@ -130,6 +130,7 @@ extern NSString * const kIconFileMap;
 extern NSString * const kIconFileInfo;
 extern NSString * const kIconFileLookup;
 extern NSString * const kIconFilePlacePhoneCall;
+extern NSString * const kIconFileRoleHolders;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;
 extern NSString * const kIconFileMultiRoleOff;

@@ -1,5 +1,5 @@
 //
-//  OEntityObserver.h
+//  OTableViewDataObserver.h
 //  OrigoApp
 //
 //  Created by Anders Blehr on 17.10.12.
@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol OEntityObserver <NSObject>
+@protocol OTableViewDataObserver <NSObject>
 
 @required
-- (void)observeEntity;
+- (void)observeData;
 
 @end

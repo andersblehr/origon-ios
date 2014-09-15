@@ -45,6 +45,7 @@ extern NSString * const kOrigoTypeTeam;
 - (NSArray *)organisersWithRole:(NSString *)role;
 - (NSArray *)parentRoles;
 - (NSArray *)parentsWithRole:(NSString *)role;
+- (NSArray *)holdersOfRole:(NSString *)role ofType:(NSString *)roleType;
 
 - (NSArray *)groups;
 - (NSArray *)membersOfGroup:(NSString *)group;

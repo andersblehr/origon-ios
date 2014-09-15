@@ -70,18 +70,6 @@ static NSString * const kPlaceholderRole = @"placeholder";
 }
 
 
-- (NSArray *)affiliationsOfType:(NSString *)type
-{
-    NSArray *affiliations = [self unmarshalAffiliations][type];
-    
-    if (!affiliations) {
-        affiliations = [NSArray array];
-    }
-    
-    return [affiliations sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-}
-
-
 #pragma mark - Status information
 
 - (BOOL)isInvited
@@ -200,6 +188,18 @@ static NSString * const kPlaceholderRole = @"placeholder";
     }
     
     return affiliationType;
+}
+
+
+- (NSArray *)affiliationsOfType:(NSString *)type
+{
+    NSArray *affiliations = [self unmarshalAffiliations][type];
+    
+    if (!affiliations) {
+        affiliations = [NSArray array];
+    }
+    
+    return [affiliations sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
 }
 
 

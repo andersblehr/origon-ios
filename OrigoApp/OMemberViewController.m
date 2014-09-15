@@ -14,11 +14,11 @@ static NSInteger const kSectionKeyAddresses = 2;
 static NSInteger const kSectionKeyRoles = 3;
 
 static NSInteger const kActionSheetTagEdit = 0;
-static NSInteger const kButtonTagEditAddAddress = 0;
-static NSInteger const kButtonTagEditAddGuardian = 1;
-static NSInteger const kButtonTagEditChangePassword = 2;
-static NSInteger const kButtonTagEditEdit = 3;
-static NSInteger const kButtonTagEditEditRelations = 4;
+static NSInteger const kButtonTagEditChangePassword = 0;
+static NSInteger const kButtonTagEdit = 1;
+static NSInteger const kButtonTagEditRelations = 2;
+static NSInteger const kButtonTagEditAddAddress = 3;
+static NSInteger const kButtonTagEditAddGuardian = 4;
 static NSInteger const kButtonTagEditCorrectGender = 5;
 
 static NSInteger const kActionSheetTagResidence = 1;
@@ -95,7 +95,6 @@ static NSInteger const kButtonIndexContinue = 1;
     
     self.target = _member;
     [self.inputCell clearInputFields];
-    //[[self.inputCell nextInvalidInputField] becomeFirstResponder];
     
     if ([self hasSectionWithKey:kSectionKeyAddresses]) {
         [self reloadSectionWithKey:kSectionKeyAddresses];
@@ -380,7 +379,7 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     id<OOrigo> residence = [_member residence];
     
-    _cachedCandidates = [OUtil sortedArraysOfResidents:[residence residents] excluding:_member];
+    _cachedCandidates = [OUtil sortedGroupsOfResidents:[residence residents] excluding:_member];
     
     OActionSheet *actionSheet = nil;
     
@@ -782,10 +781,10 @@ static NSInteger const kButtonIndexContinue = 1;
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Change password", @"") tag:kButtonTagEditChangePassword];
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEditEdit];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
     
     if ([_member isWardOfUser]) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit relations", @"") tag:kButtonTagEditEditRelations];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit relations", @"") tag:kButtonTagEditRelations];
     }
     
     if (![_member isJuvenile] || [_member isWardOfUser]) {
@@ -872,13 +871,7 @@ static NSInteger const kButtonIndexContinue = 1;
 - (void)loadState
 {
     _member = [self.entity proxy];
-    
-    if ([self.meta conformsToProtocol:@protocol(OOrigo)]) {
-        _origo = self.meta;
-    } else {
-        _origo = [self.entity ancestorConformingToProtocol:@protocol(OOrigo)];
-    }
-    
+    _origo = self.state.pivotOrigo;
     _membership = [_origo membershipForMember:_member];
     
     if ([self actionIs:kActionRegister]) {
@@ -1016,9 +1009,9 @@ static NSInteger const kButtonIndexContinue = 1;
         }
     } else if (sectionKey == kSectionKeyRoles) {
         if ([[[_origo membershipForMember:_member] roles] count] > 1) {
-            text = [NSString stringWithFormat:NSLocalizedString(@"Roles in %@", @""), _origo.name];
+            text = [NSString stringWithFormat:NSLocalizedString(@"Responsibility in %@", @""), _origo.name];
         } else {
-            text = [NSString stringWithFormat:NSLocalizedString(@"Role in %@", @""), _origo.name];
+            text = [NSString stringWithFormat:NSLocalizedString(@"Responsibilities in %@", @""), _origo.name];
         }
     }
     
@@ -1095,7 +1088,7 @@ static NSInteger const kButtonIndexContinue = 1;
         _role = [self dataAtIndexPath:indexPath];
         
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEditRole];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit role", @"")];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit responsibility", @"")];
         [actionSheet show];
     }
 }
@@ -1167,7 +1160,18 @@ static NSInteger const kButtonIndexContinue = 1;
             if ([viewController targetIs:kTargetMember]) {
                 [self reflectMember:viewController.returnData];
             } else if ([viewController targetIs:kTargetRole]) {
-                [self reloadSectionWithKey:kSectionKeyRoles];
+                if (_role && ![viewController.title isEqualToString:_role]) {
+                    _role = viewController.title;
+                    
+                    OTableViewController *precedingViewController = [self precedingViewController];
+                    
+                    if ([precedingViewController targetIs:kTargetRole]) {
+                        precedingViewController.target = _role;
+                        precedingViewController.title = _role;
+                    }
+                    
+                    [self reloadSectionWithKey:kSectionKeyRoles];
+                }
             }
         }
     }
@@ -1190,9 +1194,11 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)viewWillGetNewTitle:(NSString *)newTitle
+- (void)maySetViewTitle:(NSString *)newTitle
 {
-    _role = newTitle;
+    if (newTitle) {
+        _role = newTitle;
+    }
 }
 
 
@@ -1427,7 +1433,7 @@ static NSInteger const kButtonIndexContinue = 1;
     switch (actionSheet.tag) {
         case kActionSheetTagEdit:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagEditEdit) {
+                if (buttonTag == kButtonTagEdit) {
                     [self scrollToTopAndToggleEditMode];
                 }
             }
@@ -1527,24 +1533,26 @@ static NSInteger const kButtonIndexContinue = 1;
     
     switch (actionSheet.tag) {
         case kActionSheetTagEdit:
-            if (buttonTag == kButtonTagEditAddAddress) {
-                _cachedResidences = [_member housemateResidences];
-                
-                if ([_cachedResidences count]) {
-                    [self presentHousemateResidencesSheet];
-                } else if (![_member hasAddress]) {
-                    if ([[_member housemates] count]) {
-                        [self presentCoHabitantsSheet];
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                if (buttonTag == kButtonTagEditAddAddress) {
+                    _cachedResidences = [_member housemateResidences];
+                    
+                    if ([_cachedResidences count]) {
+                        [self presentHousemateResidencesSheet];
+                    } else if (![_member hasAddress]) {
+                        if ([[_member housemates] count]) {
+                            [self presentCoHabitantsSheet];
+                        } else {
+                            [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
+                        }
                     } else {
-                        [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
+                        [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:kOrigoTypeResidence];
                     }
-                } else {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:kOrigoTypeResidence];
+                } else if (buttonTag == kButtonTagEditAddGuardian) {
+                    [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
+                } else if (buttonTag == kButtonTagEditCorrectGender) {
+                    [self presentToggleGenderAlert];
                 }
-            } else if (buttonTag == kButtonTagEditAddGuardian) {
-                [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
-            } else if (buttonTag == kButtonTagEditCorrectGender) {
-                [self presentToggleGenderAlert];
             }
             
             break;
@@ -1635,7 +1643,7 @@ static NSInteger const kButtonIndexContinue = 1;
                     aspect = kAspectParentRole;
                 }
                 
-                [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{_role: aspect} meta:_origo];
+                [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{_role: aspect}];
             }
             
             break;

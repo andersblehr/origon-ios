@@ -124,30 +124,29 @@
 "[organisers] team" = "Coaches";
 
 // Organiser roles
-"[organiser role] preschoolClass" = "Role";
-"[organiser role] schoolClass" = "Teacher role";
-"[organiser role] studyGroup" = "Topic";
+"[organiser role] preschoolClass" = "Responsibility";
+"[organiser role] schoolClass" = "Responsibility";
+"[organiser role] studyGroup" = "Responsibility";
 "[organiser role] team" = "Coach role";
 
-// Organiser role registration button titles
-"[add organiser role] preschoolClass" = "Add teacher role";
-"[add organiser role] schoolClass" = "Add teacher role";
-"[add organiser role] studyGroup" = "Add topic";
+// Register organiser role button titles
+"[add organiser role] preschoolClass" = "Add responsibility";
+"[add organiser role] schoolClass" = "Add responsibility";
+"[add organiser role] studyGroup" = "Add responsibility";
 "[add organiser role] team" = "Add coach role";
 
-// Member role titles
-"[member role] team" = "Player role";
-"[member role] organisation" = "Role";
-"[member role] schoolClass" = "Student role";
-"[member role] studyGroup" = "Student role";
-"[member role] other" = "Role";
+// Edit organiser role button titles
+"[edit organiser role] preschoolClass" = "Edit responsibility";
+"[edit organiser role] schoolClass" = "Edit responsibility";
+"[edit organiser role] studyGroup" = "Edit responsibility";
+"[edit organiser role] team" = "Edit coach role";
 
-// Member role list titles
-"[member roles] team" = "Player roles";
-"[member roles] organisation" = "Roles";
-"[member roles] schoolClass" = "Student roles";
-"[member roles] studyGroup" = "Student roles";
-"[member roles] other" = "Roles";
+// Member role titles
+"[member role] team" = "Position";
+"[member role] organisation" = "Responsibility";
+"[member role] schoolClass" = "Responsibility";
+"[member role] studyGroup" = "Responsibility";
+"[member role] other" = "Responsibility";
 
 // Member list titles
 "[members] residence" = "In the household";
@@ -314,7 +313,7 @@
  ***/
 
 // Buttons
-"Edit roles" = "Edit roles";
+"Edit responsibilities" = "Edit responsibilities";
 "Add from other groups" = "Add from other groups";
 "Add parent contact" = "Add parent contact";
 "Show in map" = "Show in map";
@@ -332,8 +331,8 @@
 "About me" = "About me";
 
 // Headers
-"Role in %@" = "Role in %@";
-"Roles in %@" = "Roles in %@";
+"Responsibility in %@" = "Responsibility in %@";
+"Responsibilities in %@" = "Responsibilities in %@";
 
 // Footers
 "A notification will be sent to the email address you provide." = "A notification will be sent to the email address you provide.";
@@ -355,7 +354,7 @@
 "Retrieve from other groups" = "Retrieve from other groups";
 "A different number" = "A different number";
 "A different address" = "A different address";
-"Edit role" = "Edit role";
+"Edit responsibility" = "Edit responsibility";
 
 // Alerts
 "Incorrect details" = "Incorrect details";
@@ -413,7 +412,7 @@
 
 // View titles
 "Settings" = "Settings";
-"Roles" = "Roles";
+"Responsibilities" = "Responsibilities";
 "Subgroups" = "Subgroups";
 "Edit subgroups" = "Edit subgroups";
 
@@ -430,10 +429,10 @@
  ***/
 
 // Miscellaneous strings
+"Responsibility" = "Responsibility";
+"Name of group" = "Name of group";
 "This device" = "This device";
 "Last seen %@" = "Last seen %@";
-"Contact role" = "Contact role";
-"Name of group" = "Name of group";
 
 
 /***

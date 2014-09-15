@@ -52,9 +52,13 @@ extern NSString * const kAspectRole;
 @interface OState : NSObject
 
 @property (nonatomic, readonly) NSString *identifier;
-@property (nonatomic) NSString *action;
+
+@property (nonatomic) id action;
 @property (nonatomic) id target;
-@property (nonatomic) NSString *aspect;
+@property (nonatomic) id aspect;
+
+@property (nonatomic, readonly) id<OOrigo> pivotOrigo;
+@property (nonatomic, readonly) id<OMember> pivotMember;
 
 @property (nonatomic, weak, readonly) OTableViewController *viewController;
 
@@ -73,6 +77,7 @@ extern NSString * const kAspectRole;
 - (BOOL)isValidDestinationStateId:(NSString *)stateId;
 
 - (NSArray *)eligibleCandidates;
+- (NSString *)roleTypeFromAspect;
 - (NSString *)asString;
 
 @end
