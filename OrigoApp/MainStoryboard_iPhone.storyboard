@@ -24,21 +24,6 @@
             </objects>
             <point key="canvasLocation" x="183" y="-615"/>
         </scene>
-        <!--Message List View Controller-->
-        <scene sceneID="uXo-MS-8t7">
-            <objects>
-                <viewController storyboardIdentifier="messages" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Obd-WC-JAQ" customClass="OMessageListViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="IPB-4W-cqx">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="Pce-tb-tLA"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="rK3-ud-Tj0" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="183" y="673"/>
-        </scene>
         <!--Origo View Controller-->
         <scene sceneID="5fB-zI-Tq9">
             <objects>
@@ -50,9 +35,6 @@
                         <sections/>
                     </tableView>
                     <navigationItem key="navigationItem" id="PZV-fj-ium"/>
-                    <connections>
-                        <segue destination="T87-Bh-GzL" kind="push" identifier="origo:member" id="pI9-dP-sfi"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W7Y-2S-hfd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -72,9 +54,6 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="uRg-zS-kRb"/>
-                    <connections>
-                        <segue destination="O0V-Ey-WLK" kind="push" identifier="member:origo" id="99F-61-IG0"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Br5-90-R22" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -91,10 +70,6 @@
                     </tableView>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="2TD-LP-teE"/>
-                    <connections>
-                        <segue destination="O0V-Ey-WLK" kind="push" identifier="origos:origo" id="gEQ-1g-oCH"/>
-                        <segue destination="T87-Bh-GzL" kind="push" identifier="origos:member" id="GXo-RZ-eB4"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nIi-HS-de2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -114,13 +89,10 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="pPk-Kr-fAc"/>
-                    <connections>
-                        <segue destination="Lcb-OF-t33" kind="push" identifier="values:value" id="JDu-T6-EdF"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="R31-Db-r3I" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1104" y="28"/>
+            <point key="canvasLocation" x="183" y="678"/>
         </scene>
         <!--Value Picker View Controller-->
         <scene sceneID="J4F-Wc-d9B">
@@ -139,7 +111,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hCo-uL-u2D" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1558" y="28"/>
+            <point key="canvasLocation" x="642" y="678"/>
         </scene>
         <!--Navigation Controller - Origo-->
         <scene sceneID="0Xf-MH-Xiq">
@@ -167,8 +139,4 @@
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
-    <inferredMetricsTieBreakers>
-        <segue reference="pI9-dP-sfi"/>
-        <segue reference="99F-61-IG0"/>
-    </inferredMetricsTieBreakers>
 </document>

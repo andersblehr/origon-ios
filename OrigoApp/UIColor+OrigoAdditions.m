@@ -202,7 +202,13 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 }
 
 
-#pragma mark - Dimmed view colour
+#pragma mark - Other colours
+
++ (instancetype)tonedDownIconColour
+{
+    return [self headerTextColour];
+}
+
 
 + (instancetype)dimmedViewColour
 {

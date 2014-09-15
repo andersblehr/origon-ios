@@ -66,11 +66,11 @@
 - (NSArray *)pronoun;
 - (NSArray *)parentNoun;
 
-- (NSString *)appellation;
 - (NSString *)givenName;
 - (NSString *)givenNameWithParentTitle;
 - (NSString *)givenNameWithRolesForOrigo:(id<OOrigo>)origo;
 - (NSString *)publicName;
+- (NSString *)appellationUseGivenName:(BOOL)useGivenName;
 
 @end
 

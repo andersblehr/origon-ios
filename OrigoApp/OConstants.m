@@ -109,8 +109,8 @@ NSString * const kStringPrefixNewMemberTitle = @"[member registration]";
 NSString * const kStringPrefixAllMembersTitle = @"[all members]";
 NSString * const kStringPrefixOrganiserRoleTitle = @"[organiser role]";
 NSString * const kStringPrefixAddOrganiserRoleButton = @"[add organiser role]";
+NSString * const kStringPrefixEditOrganiserRoleButton = @"[edit organiser role]";
 NSString * const kStringPrefixMemberRoleTitle = @"[member role]";
-NSString * const kStringPrefixMemberRolesTitle = @"[member roles]";
 NSString * const kStringPrefixSettingTitle = @"[setting title]";
 
 // Icon file names
@@ -130,6 +130,7 @@ NSString * const kIconFileMap = @"852-map.png";
 NSString * const kIconFileInfo = @"724-info.png";
 NSString * const kIconFileLookup = @"01-magnify.png";
 NSString * const kIconFilePlacePhoneCall = @"735-phone.png";
+NSString * const kIconFileRoleHolders = @"RoleHolders.png";
 NSString * const kIconFileSendText = @"734-chat.png";
 NSString * const kIconFileSendEmail = @"730-envelope.png";
 NSString * const kIconFileMultiRoleOff = @"779-users";

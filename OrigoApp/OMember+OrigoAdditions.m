@@ -134,19 +134,19 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (NSComparisonResult)appellationCompare:(id<OMember>)other
+- (NSComparisonResult)subjectiveCompare:(id<OMember>)other
 {
     NSComparisonResult result = NSOrderedSame;
     
     if ([other instance]) {
         other = [other instance];
         
-        if ([[self appellation] isEqualToString:[OLanguage pronouns][_you_][nominative]]) {
+        if ([self isUser]) {
             result = NSOrderedAscending;
-        } else if ([[other appellation] isEqualToString:[OLanguage pronouns][_you_][nominative]]) {
+        } else if ([other isUser]) {
             result = NSOrderedDescending;
         } else {
-            result = [[self appellation] localizedCompare:[other appellation]];
+            result = [self.name localizedCaseInsensitiveCompare:other.name];
         }
     }
     
@@ -603,12 +603,6 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 #pragma mark - Data formatting shorthands
 
-- (NSString *)appellation
-{
-    return [self isUser] ? [OLanguage pronouns][_you_][nominative] : [self givenName];
-}
-
-
 - (NSString *)givenName
 {
     return [self.name givenName];
@@ -636,6 +630,20 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 - (NSString *)publicName
 {
     return [self isJuvenile] ? [self givenName] : self.name;
+}
+
+
+- (NSString *)appellationUseGivenName:(BOOL)useGivenName
+{
+    NSString *appelation = nil;
+    
+    if ([self isUser]) {
+        appelation = [OLanguage pronouns][_you_][nominative];
+    } else {
+        appelation = useGivenName ? [self givenName] : [self publicName];
+    }
+    
+    return appelation;
 }
 
 

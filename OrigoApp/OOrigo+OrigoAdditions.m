@@ -86,20 +86,6 @@ NSString * const kOrigoTypeTeam = @"team";
 }
 
 
-- (NSArray *)membersWithRoles
-{
-    NSMutableArray *membersWithRoles = [NSMutableArray array];
-    
-    for (OMembership *membership in [self allMemberships]) {
-        if ([membership isFull] && [membership hasAffiliationOfType:kAffiliationTypeMemberRole]) {
-            [membersWithRoles addObject:membership.member];
-        }
-    }
-    
-    return [membersWithRoles sortedArrayUsingSelector:@selector(compare:)];
-}
-
-
 #pragma mark - Selector implementations
 
 - (NSComparisonResult)compare:(id<OOrigo>)other
@@ -241,7 +227,7 @@ NSString * const kOrigoTypeTeam = @"team";
     NSMutableArray *organisers = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isFull] && [membership hasAffiliationOfType:kAffiliationTypeOrganiserRole]) {
+        if ([membership hasAffiliationOfType:kAffiliationTypeOrganiserRole]) {
             [organisers addObject:membership.member];
         }
     }
@@ -255,7 +241,7 @@ NSString * const kOrigoTypeTeam = @"team";
     NSMutableArray *parentContacts = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isFull] && [membership hasAffiliationOfType:kAffiliationTypeParentRole]) {
+        if ([membership hasAffiliationOfType:kAffiliationTypeParentRole]) {
             [parentContacts addObject:membership.member];
         }
     }
@@ -270,8 +256,8 @@ NSString * const kOrigoTypeTeam = @"team";
 {
     NSMutableSet *memberRoles = [NSMutableSet set];
     
-    for (OMember *member in [self membersWithRoles]) {
-        [memberRoles addObjectsFromArray:[[self membershipForMember:member] memberRoles]];
+    for (OMembership *membership in [self allMemberships]) {
+        [memberRoles addObjectsFromArray:[membership memberRoles]];
     }
     
     return [[memberRoles allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
@@ -280,15 +266,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (NSArray *)membersWithRole:(NSString *)role
 {
-    NSMutableArray *members = [NSMutableArray array];
-    
-    for (OMember *member in [self membersWithRoles]) {
-        if ([[[self membershipForMember:member] memberRoles] containsObject:role]) {
-            [members addObject:member];
-        }
-    }
-    
-    return members;
+    return [self holdersOfRole:role ofType:kAffiliationTypeMemberRole];
 }
 
 
@@ -296,8 +274,8 @@ NSString * const kOrigoTypeTeam = @"team";
 {
     NSMutableSet *organiserRoles = [NSMutableSet set];
     
-    for (OMember *organiser in [self organisers]) {
-        [organiserRoles addObjectsFromArray:[[self membershipForMember:organiser] organiserRoles]];
+    for (OMembership *membership in [self allMemberships]) {
+        [organiserRoles addObjectsFromArray:[membership organiserRoles]];
     }
     
     return [[organiserRoles allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
@@ -306,15 +284,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (NSArray *)organisersWithRole:(NSString *)role
 {
-    NSMutableArray *organisers = [NSMutableArray array];
-    
-    for (OMember *organiser in [self organisers]) {
-        if ([[[self membershipForMember:organiser] organiserRoles] containsObject:role]) {
-            [organisers addObject:organiser];
-        }
-    }
-    
-    return organisers;
+    return [self holdersOfRole:role ofType:kAffiliationTypeOrganiserRole];
 }
 
 
@@ -322,8 +292,8 @@ NSString * const kOrigoTypeTeam = @"team";
 {
     NSMutableSet *parentRoles = [NSMutableSet set];
     
-    for (OMember *guardian in [self guardians]) {
-        [parentRoles addObjectsFromArray:[[self membershipForMember:guardian] parentRoles]];
+    for (OMembership *membership in [self allMemberships]) {
+        [parentRoles addObjectsFromArray:[membership parentRoles]];
     }
     
     return [[parentRoles allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
@@ -332,15 +302,23 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (NSArray *)parentsWithRole:(NSString *)role
 {
-    NSMutableArray *parents = [NSMutableArray array];
+    return [self holdersOfRole:role ofType:kAffiliationTypeParentRole];
+}
+
+
+- (NSArray *)holdersOfRole:(NSString *)role ofType:(NSString *)roleType
+{
+    NSMutableArray *roleHolders = [NSMutableArray array];
     
-    for (OMember *parent in [self guardians]) {
-        if ([[[self membershipForMember:parent] parentRoles] containsObject:role]) {
-            [parents addObject:parent];
+    for (OMembership *membership in [self allMemberships]) {
+        for (NSString *actualRole in [membership affiliationsOfType:roleType]) {
+            if ([actualRole isEqualToString:role]) {
+                [roleHolders addObject:membership.member];
+            }
         }
     }
     
-    return parents;
+    return [roleHolders sortedArrayUsingSelector:@selector(compare:)];
 }
 
 

@@ -30,24 +30,6 @@
 
 @implementation OValuePickerViewController
 
-#pragma mark - Auxiliary methods
-
-- (NSArray *)roleHolders
-{
-    NSArray *roleHolders = nil;
-    
-    if ([self aspectIs:kAspectMemberRole]) {
-        roleHolders = [_origo membersWithRole:_affiliation];
-    } else if ([self aspectIs:kAspectOrganiserRole]) {
-        roleHolders = [_origo organisersWithRole:_affiliation];
-    } else if ([self aspectIs:kAspectParentRole]) {
-        roleHolders = [_origo parentsWithRole:_affiliation];
-    }
-    
-    return roleHolders;
-}
-
-
 #pragma mark - Selector implementations
 
 - (void)toggleMultiRole
@@ -81,7 +63,7 @@
         if ([self targetIs:kTargetMembers]) {
             _isMultiValuePicker = YES;
         } else if ([self targetIs:kTargetAffiliation]) {
-            _origo = self.meta;
+            _origo = self.state.pivotOrigo;
             
             if ([@[kTargetRole, kTargetGroup] containsObject:self.target]) {
                 _affiliation = nil;
@@ -102,7 +84,7 @@
             } else if ([self aspectIs:kAspectParentRole]) {
                 _affiliationType = kAffiliationTypeParentRole;
                 _pickedValues = _affiliation ? [[_origo parentsWithRole:_affiliation] mutableCopy] : nil;
-                placeholder = NSLocalizedString(@"Contact role", @"");
+                placeholder = NSLocalizedString(@"Responsibility", @"");
             } else if ([self aspectIs:kAspectGroup]) {
                 _affiliationType = kAffiliationTypeGroup;
                 _pickedValues = _affiliation ? [[_origo membersOfGroup:_affiliation] mutableCopy] : nil;
@@ -133,7 +115,7 @@
         
         if (_isMultiValuePicker) {
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-            self.navigationItem.rightBarButtonItem.enabled = NO;
+            self.navigationItem.rightBarButtonItem.enabled = ([_pickedValues count] > 0);
         }
     }
     
@@ -158,7 +140,7 @@
             } else if ([self aspectIs:kAspectGroup]) {
                 [self setData:[_origo regulars] sectionIndexLabelKey:kPropertyKeyName];
             }
-        } else {
+        } else if ([self targetIs:kTargetMember] || [self targetIs:kTargetMembers]) {
             [self setData:self.meta sectionIndexLabelKey:kPropertyKeyName];
         }
     }
@@ -267,7 +249,10 @@
     if (self.isModal && _isMultiValuePicker) {
         if (self.didCancel) {
             if ([self targetIs:kTargetRole]) {
-                for (id<OMember> roleHolder in [self roleHolders]) {
+                NSString *roleType = [self.state roleTypeFromAspect];
+                NSArray *roleHolders = [_origo holdersOfRole:_affiliation ofType:roleType];
+                
+                for (id<OMember> roleHolder in roleHolders) {
                     [[_origo membershipForMember:roleHolder] removeAffiliation:_affiliation ofType:_affiliationType];
                 }
             }
@@ -278,10 +263,12 @@
 }
 
 
-- (void)viewWillGetNewTitle:(NSString *)newTitle
+- (void)maySetViewTitle:(NSString *)newTitle
 {
-    if (_affiliation) {
-        for (id<OMember> roleHolder in [self roleHolders]) {
+    if (_affiliation && newTitle) {
+        NSString *roleType = [self.state roleTypeFromAspect];
+        
+        for (id<OMember> roleHolder in [_origo holdersOfRole:_affiliation ofType:roleType]) {
             id<OMembership> membership = [_origo membershipForMember:roleHolder];
             
             [membership addAffiliation:newTitle ofType:_affiliationType];
@@ -289,7 +276,9 @@
         }
     }
     
-    _affiliation = newTitle;
+    if (newTitle) {
+        _affiliation = newTitle;
+    }
 }
 
 @end

@@ -124,30 +124,29 @@
 "[organisers] team" = "Trenere";
 
 // Organiser roles
-"[organiser role] preschoolClass" = "Personalrolle";
-"[organiser role] schoolClass" = "Lærerrolle";
-"[organiser role] studyGroup" = "Fag";
+"[organiser role] preschoolClass" = "Ansvarsområde";
+"[organiser role] schoolClass" = "Ansvarsområde";
+"[organiser role] studyGroup" = "Ansvarsområde";
 "[organiser role] team" = "Trenerrolle";
 
-// Organiser role registration button titles
-"[add organiser role] preschoolClass" = "Legg til personalrolle";
-"[add organiser role] schoolClass" = "Legg til lærerrolle";
-"[add organiser role] studyGroup" = "Legg til fag";
+// Register organiser role button titles
+"[add organiser role] preschoolClass" = "Legg til ansvarsområde";
+"[add organiser role] schoolClass" = "Legg til ansvarsområde";
+"[add organiser role] studyGroup" = "Legg til ansvarsområde";
 "[add organiser role] team" = "Legg til trenerrolle";
 
-// Member role titles
-"[member role] team" = "Spillerrolle";
-"[member role] organisation" = "Rolle";
-"[member role] schoolClass" = "Elevrolle";
-"[member role] studyGroup" = "Studentrolle";
-"[member role] other" = "Rolle";
+// Edit organiser role button titles
+"[edit organiser role] preschoolClass" = "Rediger ansvarsområde";
+"[edit organiser role] schoolClass" = "Rediger ansvarsområde";
+"[edit organiser role] studyGroup" = "Rediger ansvarsområde";
+"[edit organiser role] team" = "Rediger trenerrolle";
 
-// Member role list titles
-"[member roles] team" = "Spillerroller";
-"[member roles] organisation" = "Roller";
-"[member roles] schoolClass" = "Elevroller";
-"[member roles] studyGroup" = "Studentroller";
-"[member roles] other" = "Roller";
+// Member role titles
+"[member role] team" = "Posisjon";
+"[member role] organisation" = "Ansvarsområde";
+"[member role] schoolClass" = "Ansvarsområde";
+"[member role] studyGroup" = "Ansvarsområde";
+"[member role] other" = "Ansvarsområde";
 
 // Member list titles
 "[members] residence" = "I husstanden";
@@ -313,7 +312,7 @@
  ***/
 
 // Buttons
-"Edit roles" = "Rediger roller";
+"Edit responsibilities" = "Rediger ansvarsområder";
 "Add from other groups" = "Legg til fra andre grupper";
 "Add parent contact" = "Legg til foreldrekontakt";
 "Show in map" = "Vis på kart";
@@ -331,8 +330,8 @@
 "About me" = "Om meg";
 
 // Headers
-"Role in %@" = "Rolle i %@";
-"Roles in %@" = "Roller i %@";
+"Responsibility in %@" = "Ansvar i %@";
+"Responsibilities in %@" = "Ansvar i %@";
 
 // Footers
 "A notification will be sent to the email address you provide." = "Et varsel vil bli sendt til epostadressen du oppgir.";
@@ -354,7 +353,7 @@
 "Retrieve from other groups" = "Hent fra andre grupper";
 "A different number" = "Et annet nummer";
 "A different address" = "En annen adresse";
-"Edit role" = "Rediger rolle";
+"Edit responsibility" = "Rediger ansvarsområde";
 
 // Alerts
 "Incorrect details" = "Uriktige opplysninger";
@@ -412,7 +411,7 @@
 
 // View titles
 "Settings" = "Innstillinger";
-"Roles" = "Roller";
+"Responsibilities" = "Ansvarsområder";
 "Subgroups" = "Undergrupper";
 "Edit subgroups" = "Rediger undergrupper";
 
@@ -429,10 +428,10 @@
  ***/
 
 // Miscellaneous strings
+"Responsibility" = "Ansvarsområde";
+"Name of group" = "Navn på gruppa";
 "This device" = "Denne enheten";
 "Last seen %@" = "Sist sett %@";
-"Contact role" = "Kontaktrolle";
-"Name of group" = "Navn på gruppa";
 
 
 /***

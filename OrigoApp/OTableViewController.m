@@ -219,29 +219,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)preparePushDestinationViewController:(OTableViewController *)destinationViewController
-{
-    id target = [self dataAtIndexPath:_selectedIndexPath];
-    id meta = nil;
-    
-    if ([_instance respondsToSelector:@selector(destinationAspectForIndexPath:)]) {
-        target = @{target: [_instance destinationAspectForIndexPath:_selectedIndexPath]};
-    }
-    
-    if ([_instance respondsToSelector:@selector(destinationMetaForIndexPath:)]) {
-        meta = [_instance destinationMetaForIndexPath:_selectedIndexPath];
-    }
-    
-    destinationViewController.target = target;
-    destinationViewController.meta = meta;
-    destinationViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:_selectedIndexPath];
-    
-    if (destinationViewController.entity && _entity) {
-        destinationViewController.entity.ancestor = _entity;
-    }
-}
-
-
 - (void)reloadFooterForSectionPrecedingSection:(NSInteger)section
 {
     NSInteger precedingSectionKey = [self sectionKeyForSectionNumber:section - 1];
@@ -360,7 +337,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     if ([self.title hasValue]) {
         _titleField.text = self.title;
-        _didCancel = YES;
+        
+        if ([_instance respondsToSelector:@selector(maySetViewTitle:)]) {
+            [_instance maySetViewTitle:nil];
+        }
         
         if (_shouldDismissOnFinishEditingTitle) {
             [self.dismisser dismissModalViewController:self];
@@ -378,19 +358,35 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [self setEditingTitle:NO];
         }
         
-        if (![_titleField.text isEqualToString:self.title]) {
-            if ([_instance respondsToSelector:@selector(viewWillGetNewTitle:)]) {
-                [_instance viewWillGetNewTitle:_titleField.text];
-            }
-            
-            self.navigationItem.title = _titleField.text;
-            self.title = _titleField.text;
+        NSString *newTitle = ![_titleField.text isEqualToString:self.title] ? _titleField.text : nil;
+        
+        if ([_instance respondsToSelector:@selector(maySetViewTitle:)]) {
+            [_instance maySetViewTitle:newTitle];
+        }
+        
+        if (newTitle) {
+            self.navigationItem.title = newTitle;
+            self.title = newTitle;
         }
         
         if (_shouldDismissOnFinishEditingTitle) {
             [self.dismisser dismissModalViewController:self];
         }
     }
+}
+
+
+#pragma mark - Preceding view controller access
+
+- (OTableViewController *)precedingViewController
+{
+    OTableViewController *precedingViewController = nil;
+    
+    if (self.navigationController) {
+        precedingViewController = self.navigationController.viewControllers[[self.navigationController.viewControllers indexOfObject:self] - 1];
+    }
+    
+    return precedingViewController;
 }
 
 
@@ -699,7 +695,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         if ([[OMeta m].replicator needsReplication]) {
             [[OMeta m].replicator replicate];
-            [self.observer observeEntity];
+            [self.observer observeData];
         }
     }
     
@@ -719,22 +715,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 
 #pragma mark - Custom title elements
-
-- (void)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder
-{
-    _titleField = [self.navigationItem setTitle:title editable:YES withSubtitle:nil];
-    _titleField.placeholder = placeholder;
-    _titleField.delegate = self;
-    
-    self.title = title;
-}
-
-
-- (void)setSubtitle:(NSString *)subtitle
-{
-    _titleField = [self.navigationItem setTitle:self.title editable:_titleField.userInteractionEnabled withSubtitle:subtitle];
-}
-
 
 - (UISegmentedControl *)setTitleSegments:(NSArray *)segmentTitles
 {
@@ -801,6 +781,24 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     return _segments;
+}
+
+
+- (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder
+{
+    _titleField = [self.navigationItem setTitle:title editable:YES withSubtitle:nil];
+    _titleField.placeholder = placeholder;
+    _titleField.delegate = self;
+    
+    self.title = title;
+    
+    return _titleField;
+}
+
+
+- (void)setSubtitle:(NSString *)subtitle
+{
+    _titleField = [self.navigationItem setTitle:self.title editable:_titleField.userInteractionEnabled withSubtitle:subtitle];
 }
 
 
@@ -992,7 +990,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [self.navigationController.navigationBar setHairlinesHidden:YES];
     }
     
-    if (![self actionIs:kActionInput] && (_didResurface || _shouldReloadOnModalDismissal)) {
+    if (![self actionIs:kActionInput] && _shouldReloadOnModalDismissal) {
         [self reloadSections];
     } else if ([self actionIs:kActionInput] && _didResurface) {
         [self.inputCell resumeFirstResponder];
@@ -1031,7 +1029,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)viewWillDisappear:(BOOL)animated
 {
     if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
-        [self.observer observeEntity];
+        [self.observer observeData];
     }
     
 	[super viewWillDisappear:animated];
@@ -1107,14 +1105,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     return _state && [_target isKindOfClass:[NSDictionary class]] ? [_target allKeys][0] : _target;
-}
-
-
-#pragma mark - UIViewController overrides
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    [self preparePushDestinationViewController:segue.destinationViewController];
 }
 
 
@@ -1387,25 +1377,37 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if (cell.destinationId) {
         if (![self actionIs:kActionInput] || cell.selectableDuringInput) {
-            _selectedIndexPath = indexPath;
+            id target = nil;
             
-            if (![_identifier isEqualToString:cell.destinationId]) {
-                [self performSegueWithIdentifier:[_identifier stringByAppendingString:cell.destinationId separator:kSeparatorColon] sender:self];
-            } else {
-                OTableViewController *destinationViewController = [self.storyboard instantiateViewControllerWithIdentifier:cell.destinationId];
-                
-                [self preparePushDestinationViewController:destinationViewController];
-                [self.navigationController pushViewController:destinationViewController animated:YES];
+            if ([_instance respondsToSelector:@selector(destinationTargetForIndexPath:)]) {
+                target = [_instance destinationTargetForIndexPath:indexPath];
             }
+            
+            if (!target) {
+                target = [self dataAtIndexPath:indexPath];
+            }
+            
+            OTableViewController *destinationViewController = [self.storyboard instantiateViewControllerWithIdentifier:cell.destinationId];
+            destinationViewController.target = target;
+            destinationViewController.meta = cell.destinationMeta;
+            destinationViewController.observer = (OTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+            
+            if (destinationViewController.entity && _entity) {
+                destinationViewController.entity.ancestor = _entity;
+            }
+            
+            [self.navigationController pushViewController:destinationViewController animated:YES];
+            
+            _selectedIndexPath = indexPath;
         } else {
             cell.selected = NO;
         }
     } else if (cell.selectable) {
-        _selectedIndexPath = indexPath;
-        
         if ([_instance respondsToSelector:@selector(didSelectCell:atIndexPath:)]) {
             [_instance didSelectCell:cell atIndexPath:indexPath];
         }
+        
+        _selectedIndexPath = indexPath;
     }
 }
 
@@ -1494,16 +1496,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)textViewDidEndEditing:(OTextView *)textView
 {
     _inputCell.inputField = nil;
-}
-
-
-#pragma mark - UIAlertViewDelegate conformance
-
-- (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView
-{
-    UITextField *textField = [alertView textFieldAtIndex:0];
-    
-    return textField ? [textField.text hasValue] : YES;
 }
 
 

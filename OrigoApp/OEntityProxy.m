@@ -147,15 +147,9 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 + (instancetype)proxyForEntityWithDictionary:(NSDictionary *)dictionary
 {
-    id proxy = _cachedProxiesByEntityId[dictionary[kPropertyKeyEntityId]];
+    Class entityClass = NSClassFromString(dictionary[kExternalKeyEntityClass]);
     
-    if (!proxy) {
-        Class entityClass = NSClassFromString(dictionary[kExternalKeyEntityClass]);
-        
-        proxy = [[[entityClass proxyClass] alloc] initWithEntityWithDictionary:dictionary];
-    }
-    
-    return proxy;
+    return [[[entityClass proxyClass] alloc] initWithEntityWithDictionary:dictionary];
 }
 
 
@@ -186,9 +180,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
     }
     
     for (NSDictionary *entityDictionary in entityDictionaries) {
-        OEntityProxy *proxy = [OEntityProxy proxyForEntityWithDictionary:entityDictionary];
-        
-        _cachedProxiesByEntityId[proxy.entityId] = proxy;
+        [OEntityProxy proxyForEntityWithDictionary:entityDictionary];
     }
 }
 

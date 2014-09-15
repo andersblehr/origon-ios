@@ -82,7 +82,7 @@ static OMemberExaminer *_instance = nil;
     }
 
     if ([candidates count]) {
-        _candidates = [candidates sortedArrayUsingSelector:@selector(appellationCompare:)];
+        _candidates = [candidates sortedArrayUsingSelector:@selector(subjectiveCompare:)];
     }
 }
 

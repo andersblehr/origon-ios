@@ -48,6 +48,7 @@ extern NSString * const kAffiliationTypeGroup;
 - (void)addAffiliation:(NSString *)affiliation ofType:(NSString *)type;
 - (void)removeAffiliation:(NSString *)affiliation ofType:(NSString *)type;
 - (NSString *)typeOfAffiliation:(NSString *)affiliation;
+- (NSArray *)affiliationsOfType:(NSString *)type;
 - (NSArray *)memberRoles;
 - (NSArray *)organiserRoles;
 - (NSArray *)parentRoles;
