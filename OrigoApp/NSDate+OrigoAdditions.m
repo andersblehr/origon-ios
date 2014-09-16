@@ -95,9 +95,10 @@ static NSCalendar *_calendar = nil;
 - (NSString *)localisedDateString
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.doesRelativeDateFormatting = YES;
-    dateFormatter.dateStyle = NSDateFormatterLongStyle;
-    dateFormatter.timeStyle = NSDateFormatterNoStyle;
+    [dateFormatter setDoesRelativeDateFormatting:YES];
+    [dateFormatter setDateStyle:NSDateFormatterLongStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
+    [dateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     
     return [dateFormatter stringFromDate:self];
 }
@@ -106,9 +107,10 @@ static NSCalendar *_calendar = nil;
 - (NSString *)localisedDateTimeString
 {
     NSDateFormatter *timeFormatter = [[NSDateFormatter alloc] init];
-    timeFormatter.doesRelativeDateFormatting = YES;
-    timeFormatter.dateStyle = NSDateFormatterNoStyle;
-    timeFormatter.timeStyle = NSDateFormatterShortStyle;
+    [timeFormatter setDoesRelativeDateFormatting:YES];
+    [timeFormatter setDateStyle:NSDateFormatterNoStyle];
+    [timeFormatter setTimeStyle:NSDateFormatterShortStyle];
+    [timeFormatter setTimeZone:[NSTimeZone systemTimeZone]];
     
     return [NSString stringWithFormat:NSLocalizedString(@"%@ at %@", @""), [self localisedDateString], [timeFormatter stringFromDate:self]];
 }

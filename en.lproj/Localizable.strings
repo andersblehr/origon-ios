@@ -291,7 +291,7 @@
 
 // Alerts
 "Welcome to Origo" = "Welcome to Origo";
-"Please verify your details and provide the information that %@ was not authorised to enter when %@ invited you." = "Please verify your details and provide the information that %@ was not authorised to enter when %@ invited you.";
+"Please verify your details and provide any missing information." = "Please verify your details and provide any missing information.";
 "Incomplete registration" = "Incomplete registration";
 "You must complete your registration before you can start using Origo." = "You must complete your registration before you can start using Origo.";
 
@@ -311,6 +311,9 @@
 /***
  * OOrigoViewController strings
  ***/
+
+// Footers
+"Tap [+] to add another guardian in the household." = "Tap [+] to add another guardian in the houshold.";
 
 // Buttons
 "Edit responsibilities" = "Edit responsibilities";
@@ -358,7 +361,7 @@
 
 // Alerts
 "Incorrect details" = "Incorrect details";
-"The details you have provided do not match our records ..." = "The details you have provided do not match our records. You can only add this person if you have accurate information.";
+"The details you have provided do not match our records ..." = "The details you have provided do not match our records. Please verify that you have accurate information.";
 "Unknown address" = "Unknown address";
 "Unknown addresses" = "Unknown addresses";
 "One of the addresses you provided did not match our records and was not saved." = "One of the addresses you provided did not match our records and was not saved.";

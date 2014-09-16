@@ -9,9 +9,9 @@
 #import "OMemberViewController.h"
 
 static NSInteger const kSectionKeyMember = 0;
-static NSInteger const kSectionKeyGuardians = 1;
-static NSInteger const kSectionKeyAddresses = 2;
-static NSInteger const kSectionKeyRoles = 3;
+static NSInteger const kSectionKeyRoles = 1;
+static NSInteger const kSectionKeyGuardians = 2;
+static NSInteger const kSectionKeyAddresses = 3;
 
 static NSInteger const kActionSheetTagEdit = 0;
 static NSInteger const kButtonTagEditChangePassword = 0;
@@ -871,7 +871,7 @@ static NSInteger const kButtonIndexContinue = 1;
 - (void)loadState
 {
     _member = [self.entity proxy];
-    _origo = self.state.pivotOrigo;
+    _origo = self.state.currentOrigo;
     _membership = [_origo membershipForMember:_member];
     
     if ([self actionIs:kActionRegister]) {

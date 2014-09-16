@@ -57,8 +57,8 @@ extern NSString * const kAspectRole;
 @property (nonatomic) id target;
 @property (nonatomic) id aspect;
 
-@property (nonatomic, readonly) id<OOrigo> pivotOrigo;
-@property (nonatomic, readonly) id<OMember> pivotMember;
+@property (nonatomic, readonly) id<OOrigo> currentOrigo;
+@property (nonatomic, readonly) id<OMember> currentMember;
 
 @property (nonatomic, weak, readonly) OTableViewController *viewController;
 
