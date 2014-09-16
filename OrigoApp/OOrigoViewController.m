@@ -227,7 +227,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 - (void)loadState
 {
     _origo = [self.entity proxy];
-    _member = self.state.pivotMember;
+    _member = self.state.currentMember;
     _membership = [_origo membershipForMember:_member];
     
     if ([self actionIs:kActionRegister]) {
@@ -407,7 +407,15 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 - (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
 {
-    return NSLocalizedString(_origo.type, kStringPrefixFooter);
+    NSString *footerText = nil;
+    
+    if ([self aspectIs:kAspectJuvenile]) {
+        footerText = NSLocalizedString(@"Tap [+] to add another guardian in the household.", @"");
+    } else {
+        footerText = NSLocalizedString(_origo.type, kStringPrefixFooter);
+    }
+    
+    return footerText;
 }
 
 

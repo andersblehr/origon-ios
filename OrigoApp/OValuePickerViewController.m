@@ -63,7 +63,7 @@
         if ([self targetIs:kTargetMembers]) {
             _isMultiValuePicker = YES;
         } else if ([self targetIs:kTargetAffiliation]) {
-            _origo = self.state.pivotOrigo;
+            _origo = self.state.currentOrigo;
             
             if ([@[kTargetRole, kTargetGroup] containsObject:self.target]) {
                 _affiliation = nil;
@@ -254,6 +254,10 @@
                 
                 for (id<OMember> roleHolder in roleHolders) {
                     [[_origo membershipForMember:roleHolder] removeAffiliation:_affiliation ofType:_affiliationType];
+                }
+            } else if ([self targetIs:kTargetGroup]) {
+                for (id<OMember> groupMember in [_origo membersOfGroup:_affiliation]) {
+                    [[_origo membershipForMember:groupMember] removeAffiliation:_affiliation ofType:kAffiliationTypeGroup];
                 }
             }
         } else {

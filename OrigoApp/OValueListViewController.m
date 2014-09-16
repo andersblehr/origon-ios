@@ -133,7 +133,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 
 - (void)loadState
 {
-    _origo = self.state.pivotOrigo;
+    _origo = self.state.currentOrigo;
     
     if ([self targetIs:kTargetSettings]) {
         self.title = NSLocalizedString(@"Settings", @"");

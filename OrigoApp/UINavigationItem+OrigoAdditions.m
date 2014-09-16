@@ -58,7 +58,6 @@ static NSInteger const kViewTagSubtitleLabel = 11;
         CGFloat subtitleHeight = kToolbarBarHeight - kTitleHeight;
         CGRect subtitleFrame = CGRectMake(0.f, kTitleHeight, titleViewWidth, subtitleHeight);
         subtitleLabel = [[UILabel alloc] initWithFrame:subtitleFrame];
-        subtitleLabel.adjustsFontSizeToFitWidth = YES;
         subtitleLabel.backgroundColor = [UIColor clearColor];
         subtitleLabel.font = [UIFont navigationBarSubtitleFont];
         subtitleLabel.tag = kViewTagSubtitleLabel;

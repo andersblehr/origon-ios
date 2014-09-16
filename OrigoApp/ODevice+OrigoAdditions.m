@@ -19,13 +19,7 @@ NSString *kDeviceType_iPodTouch = @"iPod";
 
 - (NSComparisonResult)compare:(ODevice *)other
 {
-    NSComparisonResult result = [self.name localizedCaseInsensitiveCompare:other.name];
-    
-    if (result == NSOrderedSame) {
-        result = [other.lastSeen compare:self.lastSeen];
-    }
-    
-    return result;
+    return [other.lastSeen compare:self.lastSeen];
 }
 
 

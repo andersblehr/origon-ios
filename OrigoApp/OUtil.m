@@ -117,7 +117,7 @@ static NSString * const kRootIdFormat = @"~%@";
         NSString *roles = [self commaSeparatedListOfItems:memberRoles conjoinLastItem:NO];
         
         if ([details hasValue]) {
-            details = [details stringByAppendingString:roles separator:kSeparatorSpace];
+            details = [details stringByAppendingString:roles separator:@" – "];
         } else {
             details = roles;
         }

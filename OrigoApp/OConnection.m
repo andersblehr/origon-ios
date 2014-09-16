@@ -25,13 +25,10 @@ static NSString * const kHTTPMethodGET = @"GET";
 static NSString * const kHTTPMethodPOST = @"POST";
 static NSString * const kHTTPMethodDELETE = @"DELETE";
 
-static NSString * const kProtocolHTTP = @"http://";
-static NSString * const kProtocolHTTPS = @"https://";
-
-static NSString * const kOrigoDevServer = @"localhost:8888";
-//static NSString * const kOrigoDevServer = @"enceladus.local:8888";
-//static NSString * const kOrigoDevServer = @"origoapp.appspot.com";
-static NSString * const kOrigoProdServer = @"origoapp.appspot.com";
+//static NSString * const kOrigoDevServer = @"http://localhost:8888";
+//static NSString * const kOrigoDevServer = @"http://enceladus.local:8888";
+static NSString * const kOrigoDevServer = @"https://origoapp.appspot.com";
+static NSString * const kOrigoProdServer = @"https://origoapp.appspot.com";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";
 static NSString * const kHTTPHeaderAcceptCharset = @"Accept-Charset";
@@ -80,15 +77,6 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 #pragma mark - Auxiliary methods
 
-- (NSString *)serverURL
-{
-    NSString *protocol = [OMeta deviceIsSimulator] ? kProtocolHTTP : kProtocolHTTPS;
-    NSString *origoServer = [OMeta deviceIsSimulator] ? kOrigoDevServer : kOrigoProdServer;
-    
-    return [protocol stringByAppendingString:origoServer];
-}
-
-
 - (void)performHTTPMethod:(NSString *)HTTPMethod withRoot:(NSString *)root path:(NSString *)path entities:(NSArray *)entities
 {
     if ([[OMeta m] internetConnectionIsAvailable]) {
@@ -96,8 +84,10 @@ static NSString * const kURLParameterIdentifier = @"id";
         [self setValue:[UIDevice currentDevice].model forURLParameter:kURLParameterDevice];
         [self setValue:[OMeta m].appVersion forURLParameter:kURLParameterVersion];
         
+        NSString *serverURL = [OMeta deviceIsSimulator] ? kOrigoDevServer : kOrigoProdServer;
+        
         _URLRequest.HTTPMethod = HTTPMethod;
-        _URLRequest.URL = [[[[NSURL URLWithString:[self serverURL]] URLByAppendingPathComponent:root] URLByAppendingPathComponent:path] URLByAppendingURLParameters:_URLParameters];
+        _URLRequest.URL = [[[[NSURL URLWithString:serverURL] URLByAppendingPathComponent:root] URLByAppendingPathComponent:path] URLByAppendingURLParameters:_URLParameters];
         
         [self setValue:kMediaTypeJSONUTF8 forHTTPHeaderField:kHTTPHeaderContentType];
         [self setValue:kMediaTypeJSON forHTTPHeaderField:kHTTPHeaderAccept];
@@ -266,6 +256,7 @@ static NSString * const kURLParameterIdentifier = @"id";
             [OMeta m].lastReplicationDate = replicationDate;
         }
     } else if (response.statusCode != kHTTPStatusNotFound) {
+        [OAlert showAlertForHTTPStatus:response.statusCode];
         OLogError(@"Server error: %@", [NSHTTPURLResponse localizedStringForStatusCode:response.statusCode]);
     }
     
@@ -297,7 +288,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 
     id deserialisedData = nil;
     
-    if ([_responseData length]) {
+    if ((_HTTPResponse.statusCode < kHTTPStatusErrorRangeStart) && [_responseData length]) {
         deserialisedData = [NSJSONSerialization deserialise:_responseData];
     }
     
@@ -321,7 +312,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-	OLogError(@"Connection failed with error: %@ (%ld)", error.localizedDescription, (long)error.code);
+	OLogError(@"Connection failed with error: %@ (%ld)", [error localizedDescription], (long)[error code]);
     
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     

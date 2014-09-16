@@ -153,6 +153,8 @@ static NSInteger const kSectionKeyWards = 2;
     
     if ([_member isUser]) {
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
+    } else {
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_member givenName]];
     }
     
     if ([[OMeta m].user isTeenOrOlder]) {
