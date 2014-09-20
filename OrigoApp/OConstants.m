@@ -114,29 +114,27 @@ NSString * const kStringPrefixMemberRoleTitle = @"[member role]";
 NSString * const kStringPrefixSettingTitle = @"[setting title]";
 
 // Icon file names
-NSString * const kIconFileOrigo = @"10-arrows-in_black.png";
-NSString * const kIconFileSettings = @"14-gear.png";
-NSString * const kIconFile_iPad = @"iPad.png";
-NSString * const kIconFile_iPhone = @"iPhone.png";
-NSString * const kIconFile_iPodTouch = @"iPodTouch.png";
-NSString * const kIconFileHousehold = @"glyphicons_020_home.png";
-NSString * const kIconFileMan = @"glyphicons_003_user.png";
-NSString * const kIconFileWoman = @"glyphicons_035_woman.png";
-NSString * const kIconFileBoy = @"glyphicons_004_girl-as_boy.png";
-NSString * const kIconFileGirl = @"glyphicons_004_girl.png";
-NSString * const kIconFileInfant = @"76-baby_black.png";
-NSString * const kIconFileEdit = @"830-pencil.png";
-NSString * const kIconFileMap = @"852-map.png";
-NSString * const kIconFileInfo = @"724-info.png";
+NSString * const kIconFileOrigo = @"10-contract.png";
+NSString * const kIconFileSettings = @"740-gear-toolbar.png";
+NSString * const kIconFile_iPad = @"693-ipad.png";
+NSString * const kIconFile_iPhone = @"692-iphone-5.png";
+NSString * const kIconFile_iPodTouch = @"ro-ipod-touch-5.png";
+NSString * const kIconFileHousehold = @"750-home-toolbar-selected.png";
+NSString * const kIconFileMan = @"769-male-toolbar.png";
+NSString * const kIconFileWoman = @"768-female-toolbar.png";
+NSString * const kIconFileBoy = @"593-boy_shrunk.png";
+NSString * const kIconFileGirl = @"594-girl_shrunk.png";
+NSString * const kIconFileEdit = @"830-pencil-toolbar.png";
+NSString * const kIconFileMap = @"852-map-toolbar.png";
+NSString * const kIconFileInfo = @"724-info-toolbar.png";
 NSString * const kIconFileLookup = @"01-magnify.png";
 NSString * const kIconFilePlacePhoneCall = @"735-phone.png";
-NSString * const kIconFileRoleHolders = @"RoleHolders.png";
 NSString * const kIconFileSendText = @"734-chat.png";
 NSString * const kIconFileSendEmail = @"730-envelope.png";
-NSString * const kIconFileMultiRoleOff = @"779-users";
-NSString * const kIconFileMultiRoleOn = @"779-users-selected";
-NSString * const kIconFileGroups = @"895-user-group.png";
-NSString * const kIconFileLocationArrow = @"193-location-arrow.png";
+NSString * const kIconFileRoleHolders = @"ro-role-holders.png";
+NSString * const kIconFileMultiRoleOff = @"779-users-toolbar.png";
+NSString * const kIconFileMultiRoleOn = @"779-users-toolbar-selected.png";
+NSString * const kIconFileGroups = @"895-user-group-toolbar.png";
 
 // Gender codes
 NSString * const kGenderMale = @"M";

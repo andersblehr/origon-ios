@@ -303,9 +303,16 @@ static CGFloat const kShakeRepeatCount = 3.f;
         
         if (abs(self.frame.size.height - desiredHeight) > 0.5f) {
             [self setNeedsUpdateConstraints];
-            [self layoutIfNeeded];
+            
+            if ([[UIDevice currentDevice].systemVersion hasPrefix:@"7"]) {
+                [self layoutIfNeeded];
+            }
             
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
+                if (![[UIDevice currentDevice].systemVersion hasPrefix:@"7"]) {
+                    [self layoutIfNeeded];
+                }
+                
 #if !CGFLOAT_IS_DOUBLE // Compiled for 32-bit
                 [_state.viewController.tableView beginUpdates];
                 [_state.viewController.tableView endUpdates];
@@ -510,7 +517,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [super updateConstraints];
 
     if (![self isListCell]) {
-        [self.contentView removeConstraints:[self.contentView constraints]];
+        [self removeConstraints:[self constraints]];
         
         NSDictionary *alignedConstraints = [_constrainer constraintsWithAlignmentOptions];
         
@@ -519,7 +526,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
             NSArray *constraintsWithOptions = alignedConstraints[alignmentOptions];
             
             for (NSString *visualConstraints in constraintsWithOptions) {
-                [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:options metrics:nil views:_views]];
+                [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:options metrics:nil views:_views]];
             }
         }
     }

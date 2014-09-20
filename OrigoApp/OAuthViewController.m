@@ -215,7 +215,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     NSString *text = nil;
     
     if ([self actionIs:kActionSignIn]) {
-        text = NSLocalizedString(@"New users will receive an email with an activation code.", @"");
+        text = NSLocalizedString(@"If you are signing up, you will receive an email ...", @"");
     } else if ([self actionIs:kActionActivate]) {
         if ([self targetIs:kTargetUser]) {
             text = [NSString stringWithFormat:NSLocalizedString(@"The activation code has been sent to %@ ...", @""), _emailField.value];

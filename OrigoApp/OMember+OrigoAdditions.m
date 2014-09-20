@@ -126,7 +126,21 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-#pragma mark - Selector implementations
+- (NSArray *)origosIncludeResidences:(BOOL)includeResidences
+{
+    NSMutableArray *origos = [NSMutableArray array];
+    
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isParticipancy] || (includeResidences && [membership isResidency])) {
+            [origos addObject:membership.origo];
+        }
+    }
+    
+    return [origos sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
+#pragma mark - Object comparison
 
 - (NSComparisonResult)compare:(id<OMember>)other
 {
@@ -245,20 +259,6 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (NSArray *)origosIncludeResidences:(BOOL)includeResidences
-{
-    NSMutableArray *origos = [NSMutableArray array];
-    
-    for (OMembership *membership in [self allMemberships]) {
-        if ([membership isParticipancy] || (includeResidences && [membership isResidency])) {
-            [origos addObject:membership.origo];
-        }
-    }
-    
-    return [origos sortedArrayUsingSelector:@selector(compare:)];
-}
-
-
 - (NSArray *)addresses
 {
     NSMutableArray *addresses = [NSMutableArray array];
@@ -270,6 +270,12 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     }
     
     return addresses;
+}
+
+
+- (NSArray *)origos
+{
+    return [self origosIncludeResidences:NO];
 }
 
 
@@ -471,17 +477,17 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         isManagedByUser = [self isHousemateOfUser];
         
         if (!isManagedByUser) {
-            BOOL mayBeManagedByUser = YES;
+            BOOL mightBeManagedByUser = YES;
             
             for (OOrigo *residence in [self residences]) {
-                mayBeManagedByUser = mayBeManagedByUser && ![residence hasAdmin];
+                mightBeManagedByUser = mightBeManagedByUser && ![residence hasAdmin];
             }
             
-            if (mayBeManagedByUser) {
+            if (mightBeManagedByUser) {
                 isManagedByUser = [self userIsCreator];
                 
                 if (!isManagedByUser) {
-                    for (OOrigo *origo in [self origosIncludeResidences:NO]) {
+                    for (OOrigo *origo in [self origos]) {
                         isManagedByUser = isManagedByUser || [origo userIsAdmin];
                     }
                 }
@@ -527,7 +533,15 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 - (BOOL)isOlderThan:(NSInteger)age
 {
-    return [self.dateOfBirth yearsBeforeNow] >= age;
+    BOOL isOlder = YES;
+    
+    if (self.dateOfBirth) {
+        isOlder = [self.dateOfBirth yearsBeforeNow] >= age;
+    } else if ([self isJuvenile] && (age == kAgeOfMajority)) {
+        isOlder = NO;
+    }
+    
+    return isOlder;
 }
 
 

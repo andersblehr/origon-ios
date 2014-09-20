@@ -70,6 +70,14 @@ static NSString * const kPlaceholderRole = @"placeholder";
 }
 
 
+#pragma mark - Selector implementations
+
+- (NSComparisonResult)origoCompare:(id<OMembership>)other
+{
+    return [self.origo compare:other.origo];
+}
+
+
 #pragma mark - Status information
 
 - (BOOL)isInvited

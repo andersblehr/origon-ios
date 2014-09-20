@@ -21,19 +21,22 @@
 @property (nonatomic) NSDate *activeSince;
 @property (nonatomic) NSString *fatherId;
 @property (nonatomic) NSString *motherId;
-
 @property (nonatomic) NSString *passwordHash;
 @property (nonatomic) id<OSettings> settings;
 
-- (NSSet *)allMemberships;
+- (NSComparisonResult)compare:(id<OMember>)other;
+- (NSComparisonResult)subjectiveCompare:(id<OMember>)other;
+
 - (NSSet *)residencies;
 - (NSSet *)participancies;
+- (NSSet *)allMemberships;
 
 - (id<OOrigo>)root;
 - (id<OOrigo>)residence;
 - (NSArray *)residences;
-- (NSArray *)origosIncludeResidences:(BOOL)includeResidences;
 - (NSArray *)addresses;
+- (NSArray *)origos;
+//- (NSString *)association;
 
 - (id<OMember>)partner;
 - (NSArray *)wards;

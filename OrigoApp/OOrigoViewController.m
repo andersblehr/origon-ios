@@ -17,11 +17,11 @@ static NSInteger const kButtonTagAddMember = 0;
 static NSInteger const kButtonTagAddFromGroups = 1;
 static NSInteger const kButtonTagAddOrganiser = 2;
 static NSInteger const kButtonTagAddParentContact = 3;
-static NSInteger const kButtonTagAddSubgroups = 4;
 
 static NSInteger const kActionSheetTagEdit = 1;
 static NSInteger const kButtonTagEditGroup = 0;
 static NSInteger const kButtonTagEditRoles = 1;
+static NSInteger const kButtonTagEditSubgroups = 2;
 
 static NSInteger const kActionSheetTagCoHabitants = 2;
 static NSInteger const kButtonTagCoHabitantsAll = 0;
@@ -174,12 +174,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             }
         }
         
-        if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeFriends]]) {
-            if (![[_origo groups] count]) {
-                [actionSheet addButtonWithTitle:NSLocalizedString(@"Add subgroups", @"") tag:kButtonTagAddSubgroups];
-            }
-        }
-        
         if ([actionSheet numberOfButtons] > 1) {
             [actionSheet show];
         } else {
@@ -198,6 +192,12 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEditGroup];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit responsibilities", @"") tag:kButtonTagEditRoles];
+        
+        if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeFriends]]) {
+            if (![[_origo groups] count]) {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit subgroups", @"") tag:kButtonTagEditSubgroups];
+            }
+        }
         
         [actionSheet show];
     }
@@ -393,10 +393,10 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         }
         
         number = ([[_origo organisers] count] > 1) ? pluralIndefinite : singularIndefinite;
-        text = [[OLanguage nouns][contactTitle][number] capitalizedString];
+        text = [[OLanguage nouns][contactTitle][number] stringByCapitalisingFirstLetter];
     } else if (sectionKey == kSectionKeyParentContacts) {
         number = ([[_origo parentContacts] count] > 1) ? pluralIndefinite : singularIndefinite;
-        text = [[OLanguage nouns][_parentContact_][number] capitalizedString];
+        text = [[OLanguage nouns][_parentContact_][number] stringByCapitalisingFirstLetter];
     } else if (sectionKey == kSectionKeyMembers) {
         text = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
     }
@@ -689,6 +689,10 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             case kActionSheetTagEdit:
                 if (buttonTag == kButtonTagEditRoles) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetRoles];
+                } else if (buttonTag == kButtonTagEditSubgroups) {
+                    self.presentStealthilyOnce = YES;
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetGroups];
+                    
                 }
                 
                 break;
@@ -702,10 +706,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                     [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser];
                 } else if (buttonTag == kButtonTagAddParentContact) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectParentRole}];
-                } else if (buttonTag == kButtonTagAddSubgroups) {
-                    self.presentStealthilyOnce = YES;
-                    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetGroups];
-                    
                 }
                 
                 break;

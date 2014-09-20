@@ -577,7 +577,7 @@ static NSInteger const kButtonIndexContinue = 1;
 - (void)presentToggleGenderAlert
 {
     NSString *message = nil;
-    NSString *alternateGender = [OUtil genderStringForGender:[_member isMale] ? kGenderFemale : kGenderMale isJuvenile:[_member isJuvenile]];
+    NSString *alternateGender = [OUtil genderTermForGender:[_member isMale] ? kGenderFemale : kGenderMale isJuvenile:[_member isJuvenile]];
     
     if ([_member isUser]) {
         message = [NSString stringWithFormat:NSLocalizedString(@"Are you a %@?", @""), alternateGender];
@@ -1664,7 +1664,7 @@ static NSInteger const kButtonIndexContinue = 1;
                 _member.gender = [_member isMale] ? kGenderFemale : kGenderMale;
                 
                 NSString *message = nil;
-                NSString *gender = [OUtil genderStringForGender:_member.gender isJuvenile:[_member isJuvenile]];
+                NSString *gender = [OUtil genderTermForGender:_member.gender isJuvenile:[_member isJuvenile]];
                 
                 if ([_member isUser]) {
                     message = [NSString stringWithFormat:NSLocalizedString(@"You are now registered as a %@.", @""), gender];

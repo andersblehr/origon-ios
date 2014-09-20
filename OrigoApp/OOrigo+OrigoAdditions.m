@@ -86,7 +86,7 @@ NSString * const kOrigoTypeTeam = @"team";
 }
 
 
-#pragma mark - Selector implementations
+#pragma mark - Object comparison
 
 - (NSComparisonResult)compare:(id<OOrigo>)other
 {

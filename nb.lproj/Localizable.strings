@@ -242,6 +242,8 @@
 "boy" = "gutt";
 "woman" = "kvinne";
 "girl" = "jente";
+"friend [male]" = "venn";
+"friend [female]" = "venninne";
 "Home number" = "Hjemmenummer";
 "Neither" = "Ingen av dem";
 "Both" = "Begge";
@@ -252,6 +254,10 @@
 // Formats
 "%@ at %@" = "%@ kl %@";
 "%d years" = "%d år";
+"Member of %@" = "Medlem i %@";
+"Guardian of %@" = "Foresatt til %@";
+"%@ (%@ of %@)" = "%@ (%@ av %@)";
+"%@ in %@" = "%@ i %@";
 
 // Separators
 " and " = " og ";
@@ -262,7 +268,7 @@
  ***/
 
 // Footers
-"New users will receive an email with an activation code." = "Nye brukere vil motta en epost med en aktiveringskode.";
+"If you are signing up, you will receive an email ..." = "Om du skal registrere deg, vil du motta en epost med en aktiveringskode til bruk i neste steg.";
 "The activation code has been sent to %@ ..." = "Aktiveringskoden er sendt til %@. Du kan oppgi koden senere om du ikke har tilgang til eposten din her og nå.";
 "The activation code has been sent to %@." = "Aktiveringskoden er sendt til %@.";
 
@@ -422,7 +428,6 @@
 "[setting list label] devices" = "Registrerte enheter";
 
 // Buttons
-"Add subgroups" = "Legg til undergrupper";
 "Not in use" = "Ikke i bruk";
 
 

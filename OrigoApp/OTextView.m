@@ -135,7 +135,7 @@ static CGFloat const kTextInsetLeft = -1.f;
         self.textContainerInset = UIEdgeInsetsMake(kTextInsetTop, kTextInsetLeft, 0.f, 0.f);
         
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
+        [self setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
         
         _key = key;
         _constrainer = constrainer;

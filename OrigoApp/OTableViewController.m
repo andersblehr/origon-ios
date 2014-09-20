@@ -947,12 +947,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    if (!_didJustLoad) {
-        if (!_didInitialise && self.target) {
-            [self initialiseInstance];
-        }
-        
-        [_state makeActive];
+    if (!_didInitialise && self.target) {
+        [self initialiseInstance];
     }
     
     [super viewWillAppear:animated];
@@ -962,6 +958,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _isPushed = [self isMovingToParentViewController] || (_didJustLoad && !_isModal);
     _didResurface = !_isPushed && !_wasHidden && (!_isModal || !_didJustLoad);
     _didJustLoad = NO;
+    
+    [_state makeActive];
     
     if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
         if (!_isModal && (!self.toolbarItems || _didResurface || _wasHidden)) {
@@ -1077,23 +1075,25 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)setTarget:(id)target
 {
-    _target = target;
-    
-    id ancestor = _entity.ancestor;
-    
-    if ([target conformsToProtocol:@protocol(OEntity)]) {
-        _entity = [target proxy];
-    } else if ([self isEntityViewController]) {
-        _entity = [[_entityClass proxyClass] proxyForEntityOfClass:_entityClass meta:target];
-    }
-    
-    if (_entity) {
-        _target = _entity;
-        _entity.ancestor = ancestor;
-    }
-    
-    if (_state) {
-        _state.target = target;
+    if (target) {
+        _target = target;
+        
+        id ancestor = _entity.ancestor;
+        
+        if ([target conformsToProtocol:@protocol(OEntity)]) {
+            _entity = [target proxy];
+        } else if ([self isEntityViewController]) {
+            _entity = [[_entityClass proxyClass] proxyForEntityOfClass:_entityClass meta:target];
+        }
+        
+        if (_entity) {
+            _target = _entity;
+            _entity.ancestor = ancestor;
+        }
+        
+        if (_state) {
+            _state.target = target;
+        }
     }
 }
 
@@ -1126,6 +1126,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     _needsReinstantiateRootViewController = YES;
     _reinstantiatedRootViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
+    
+    OLogDebug(@"Reinstantiated view controller's view: %@", _reinstantiatedRootViewController.view);
     
     [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetUser meta:_reinstantiatedRootViewController];
 }
