@@ -68,20 +68,6 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 }
 
 
-- (instancetype)initWithEntity:(OReplicatedEntity *)entity
-{
-    self = [self initWithEntityClass:[entity class] entityId:entity.entityId isCommitted:YES];
-    
-    if (self) {
-        [self useInstance:entity];
-        
-        _isCommitted = YES;
-    }
-    
-    return self;
-}
-
-
 - (instancetype)initWithEntityClass:(Class)entityClass meta:(NSString *)meta
 {
     self = [self initWithEntityClass:entityClass entityId:[OCrypto generateUUID] isCommitted:NO];
@@ -98,7 +84,21 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 }
 
 
-- (instancetype)initWithEntityWithDictionary:(NSDictionary *)dictionary
+- (instancetype)initWithInstance:(OReplicatedEntity *)instance
+{
+    self = [self initWithEntityClass:[instance class] entityId:instance.entityId isCommitted:YES];
+    
+    if (self) {
+        [self useInstance:instance];
+        
+        _isCommitted = YES;
+    }
+    
+    return self;
+}
+
+
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary
 {
     self = [self initWithEntityClass:NSClassFromString(dictionary[kExternalKeyEntityClass]) entityId:dictionary[kPropertyKeyEntityId] isCommitted:NO];
     
@@ -132,7 +132,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
     id proxy = _cachedProxiesByEntityId[entity.entityId];
     
     if (!proxy) {
-        proxy = [[[[entity class] proxyClass] alloc] initWithEntity:entity];
+        proxy = [[[[entity class] proxyClass] alloc] initWithInstance:entity];
     }
     
     return proxy;
@@ -149,7 +149,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 {
     Class entityClass = NSClassFromString(dictionary[kExternalKeyEntityClass]);
     
-    return [[[entityClass proxyClass] alloc] initWithEntityWithDictionary:dictionary];
+    return [[[entityClass proxyClass] alloc] initWithDictionary:dictionary];
 }
 
 

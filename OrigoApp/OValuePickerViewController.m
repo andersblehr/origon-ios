@@ -92,11 +92,10 @@
             }
             
             [self setEditableTitle:_affiliation placeholder:placeholder];
+            [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoinLastItem:NO]];
             
             if ([self targetIs:kTargetRole]) {
                 _isMultiValuePicker = ([_pickedValues count] > 1);
-                
-                [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoinLastItem:NO]];
                 
                 if (!_isMultiValuePicker && ([_pickedValues count] < 2)) {
                     _multiRoleButtonOn = [UIBarButtonItem multiRoleButtonWithTarget:self on:YES];
@@ -162,13 +161,21 @@
         }
         
         if ([self aspectIs:kAspectParentRole]) {
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[candidate wards] conjoinLastItem:NO];
+            NSMutableArray *wardsInOrigo = [NSMutableArray array];
+            
+            for (id<OMember> ward in [candidate wards]) {
+                if ([_origo hasMember:ward]) {
+                    [wardsInOrigo addObject:ward];
+                }
+            }
+            
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"(%@)", [OUtil commaSeparatedListOfItems:wardsInOrigo conjoinLastItem:NO]];
         } else if ([self aspectIs:kAspectGroup]) {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:candidate] groups] conjoinLastItem:NO];
         } else if ([candidate isJuvenile]) {
             cell.detailTextLabel.text = [OUtil guardianInfoForMember:candidate];
         } else {
-            cell.detailTextLabel.text = [[candidate residence] shortAddress];
+            cell.detailTextLabel.text = [OUtil associationInfoForMember:candidate];
         }
     }
     
@@ -198,7 +205,7 @@
             _checkedCell = cell;
         }
         
-        [_pickedValues addObject:pickedValue];
+        [_pickedValues insertObject:pickedValue atIndex:0];
     } else {
         [_pickedValues removeObject:pickedValue];
     }
@@ -220,7 +227,7 @@
             [[_origo membershipForMember:pickedValue] removeAffiliation:_affiliation ofType:_affiliationType];
         }
         
-        [self setSubtitle:[OUtil commaSeparatedListOfItems:[_pickedValues sortedArrayUsingSelector:@selector(compare:)] conjoinLastItem:NO]];
+        [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoinLastItem:NO]];
     }
     
     if (_isMultiValuePicker) {

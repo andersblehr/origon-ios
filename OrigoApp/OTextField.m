@@ -155,7 +155,7 @@ static CGFloat const kTextInsetY = 1.2f;
         self.layer.borderColor = [[UIColor clearColor] CGColor];
         
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [self setContentHuggingPriority:0 forAxis:UILayoutConstraintAxisHorizontal];
+        [self setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
         
         _key = key;
         _inputCellDelegate = delegate;

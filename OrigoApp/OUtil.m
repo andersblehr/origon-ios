@@ -65,9 +65,11 @@ static NSString * const kRootIdFormat = @"~%@";
         if ([member isManaged]) {
             cell.imageView.image = [UIImage imageNamed:iconFileName];
             
-            UIView *underline = [[UIView alloc] initWithFrame:CGRectMake(0.f, cell.imageView.image.size.height + 1.f, cell.imageView.image.size.width, 1.f)];
-            underline.backgroundColor = [UIColor windowTintColour];
-            [cell.imageView addSubview:underline];
+            if (![member isJuvenile]) {
+                UIView *underline = [[UIView alloc] initWithFrame:CGRectMake(0.f, cell.imageView.image.size.height + 1.f, cell.imageView.image.size.width, 1.f)];
+                underline.backgroundColor = [UIColor windowTintColour];
+                [cell.imageView addSubview:underline];
+            }
         } else {
             [self setTonedDownIconWithFileName:iconFileName inTableViewCell:cell];
         }
@@ -82,7 +84,7 @@ static NSString * const kRootIdFormat = @"~%@";
 }
 
 
-#pragma mark - Display strings
+#pragma mark - String derivation
 
 + (NSString *)rootIdFromMemberId:(NSString *)memberId
 {
@@ -90,7 +92,7 @@ static NSString * const kRootIdFormat = @"~%@";
 }
 
 
-+ (NSString *)genderStringForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile
++ (NSString *)genderTermForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile
 {
     NSString *genderString = nil;
     
@@ -103,6 +105,8 @@ static NSString * const kRootIdFormat = @"~%@";
     return genderString;
 }
 
+
+#pragma mark - Info strings
 
 + (NSString *)memberInfoFromMembership:(id<OMembership>)membership
 {
@@ -127,6 +131,78 @@ static NSString * const kRootIdFormat = @"~%@";
 }
 
 
++ (NSString *)associationInfoForMember:(id<OMember>)member
+{
+    NSString *association = nil;
+    NSString *origoAssociation = nil;
+    NSMutableDictionary *associationsByWard = [NSMutableDictionary dictionary];
+    
+    NSArray *memberships = [[[member allMemberships] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
+    
+    for (OMembership *membership in memberships) {
+        if (![membership.origo isOfType:kOrigoTypeResidence]) {
+            OOrigo *origo = membership.origo;
+            OMember *member = membership.member;
+            
+            if ([membership isAssociate] || [[membership parentRoles] count]) {
+                for (OMember *memberWard in [member wards]) {
+                    if ([origo hasMember:memberWard] && ![memberWard isWardOfUser]) {
+                        if (!associationsByWard[memberWard.entityId]) {
+                            BOOL friendOnly = YES;
+                            
+                            for (OOrigo *wardOrigo in [memberWard origos]) {
+                                friendOnly = friendOnly && [wardOrigo isOfType:kOrigoTypeFriends];
+                            }
+                            
+                            if (friendOnly) {
+                                NSMutableArray *userWards = [NSMutableArray array];
+                                NSString *friendTerm = nil;
+                                
+                                for (OMember *userWard in [[OMeta m].user wards]) {
+                                    if ([origo hasMember:userWard]) {
+                                        [userWards addObject:userWard];
+                                    }
+                                }
+                                
+                                if ([memberWard isMale]) {
+                                    friendTerm = NSLocalizedString(@"friend [male]", @"");
+                                } else {
+                                    friendTerm = NSLocalizedString(@"friend [female]", @"");
+                                }
+                                
+                                associationsByWard[memberWard.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ (%@ of %@)", @""), [memberWard publicName], friendTerm, [self commaSeparatedListOfItems:userWards conjoinLastItem:YES]];
+                            } else if (![origo isOfType:kOrigoTypeFriends]) {
+                                associationsByWard[memberWard.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [memberWard publicName], origo.name];
+                            }
+                        }
+                    }
+                }
+            } else if (!origoAssociation && ![origo isOfType:kOrigoTypeFriends]) {
+                if ([[membership organiserRoles] count]) {
+                    origoAssociation = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixOrganiserTitle), origo.name];
+                } else {
+                    NSArray *memberRoles = [membership memberRoles];
+                    
+                    if ([memberRoles count]) {
+                        origoAssociation = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), memberRoles[0], origo.name];
+                    } else {
+                        origoAssociation = [NSString stringWithFormat:NSLocalizedString(@"Member of %@", @""), origo.name];
+                    }
+                }
+            }
+        }
+    }
+    
+    if ([associationsByWard count]) {
+        association = [NSString stringWithFormat:NSLocalizedString(@"Guardian of %@", @""), [self commaSeparatedListOfItems:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoinLastItem:YES]];
+    } else if (origoAssociation) {
+        association = origoAssociation;
+    }
+    
+    return association;
+}
+
+
 + (NSString *)guardianInfoForMember:(id<OMember>)member
 {
     NSString *guardianInfo = nil;
@@ -144,6 +220,8 @@ static NSString * const kRootIdFormat = @"~%@";
     return guardianInfo;
 }
 
+
+#pragma mark - List strings
 
 + (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem
 {

@@ -124,19 +124,17 @@ extern NSString * const kIconFileMan;
 extern NSString * const kIconFileWoman;
 extern NSString * const kIconFileBoy;
 extern NSString * const kIconFileGirl;
-extern NSString * const kIconFileInfant;
 extern NSString * const kIconFileEdit;
 extern NSString * const kIconFileMap;
 extern NSString * const kIconFileInfo;
 extern NSString * const kIconFileLookup;
 extern NSString * const kIconFilePlacePhoneCall;
-extern NSString * const kIconFileRoleHolders;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;
+extern NSString * const kIconFileRoleHolders;
 extern NSString * const kIconFileMultiRoleOff;
 extern NSString * const kIconFileMultiRoleOn;
 extern NSString * const kIconFileGroups;
-extern NSString * const kIconFileLocationArrow;
 
 // Gender codes
 extern NSString * const kGenderMale;

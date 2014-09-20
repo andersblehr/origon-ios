@@ -175,7 +175,7 @@ static NSInteger const kSectionKeyWards = 2;
             [self setData:@[_member] forSectionWithKey:kSectionKeyMember];
         }
         
-        [self setData:[_member origosIncludeResidences:NO] forSectionWithKey:kSectionKeyOrigos];
+        [self setData:[_member origos] forSectionWithKey:kSectionKeyOrigos];
     }
 }
 
@@ -191,23 +191,23 @@ static NSInteger const kSectionKeyWards = 2;
             
             cell.textLabel.text = residence.name;
             cell.detailTextLabel.text = [residence singleLineAddress];
-            cell.destinationId = kIdentifierOrigo;
             [OUtil setImageForOrigo:residence inTableViewCell:cell];
+            cell.destinationId = kIdentifierOrigo;
         } else {
             id<OMember> member = entity;
             
             cell.textLabel.text = [member publicName];
-            cell.destinationId = kIdentifierMember;
             [OUtil setImageForMember:member inTableViewCell:cell];
+            cell.destinationId = kIdentifierMember;
         }
     } else if (sectionKey == kSectionKeyWards) {
         id<OMember> ward = entity;
         
         cell.textLabel.text = [ward givenName];
-        cell.destinationId = kIdentifierOrigoList;
         [OUtil setImageForMember:ward inTableViewCell:cell];
+        cell.destinationId = kIdentifierOrigoList;
         
-        NSArray *origos = [ward origosIncludeResidences:NO];
+        NSArray *origos = [ward origos];
         
         if ([origos count]) {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:origos conjoinLastItem:NO];
@@ -220,8 +220,8 @@ static NSInteger const kSectionKeyWards = 2;
         id<OOrigo> origo = entity;
         id<OMembership> userMembership = [origo membershipForMember:[OMeta m].user];
         
-        cell.destinationId = kIdentifierOrigo;
         [OUtil setImageForOrigo:origo inTableViewCell:cell];
+        cell.destinationId = kIdentifierOrigo;
         
         if ([_member isUser] && ([origo userIsOrganiser] || [origo userIsParentContact])) {
             cell.textLabel.text = [NSString stringWithFormat:@"%@, %@", origo.name, origo.descriptionText];

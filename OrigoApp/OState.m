@@ -222,18 +222,34 @@ static OState *_activeState = nil;
     id<OMember> peerPivot = nil;
     
     if ([self aspectIs:kAspectJuvenile] && ![self targetIs:kTargetElder]) {
-        peerPivot = _pivotMember;
+        if ([_currentOrigo isJuvenile] && ![_pivotMember isJuvenile]) {
+            NSArray *pivotWards = [_pivotMember wards];
+            
+            for (id<OMember> pivotWard in pivotWards) {
+                if ([_currentOrigo hasMember:pivotWard]) {
+                    peerPivot = pivotWard;
+                }
+            }
+            
+            if (!peerPivot && [pivotWards count]) {
+                peerPivot = pivotWards[0];
+            }
+        } else {
+            peerPivot = _pivotMember;
+        }
     } else {
         peerPivot = [OMeta m].user;
     }
-    
-    if ([self targetIs:kTargetOrganiser]) {
-        candidates = [peerPivot peersNotInSet:[_currentOrigo organisers]];
-    } else {
-        candidates = [peerPivot peersNotInSet:[_currentOrigo regulars]];
+
+    if (peerPivot) {
+        if ([self targetIs:kTargetOrganiser]) {
+            candidates = [peerPivot peersNotInSet:[_currentOrigo organisers]];
+        } else {
+            candidates = [peerPivot peersNotInSet:[_currentOrigo regulars]];
+        }
     }
     
-    return candidates;
+    return candidates ? candidates : [NSArray array];
 }
 
 

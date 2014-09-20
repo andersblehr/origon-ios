@@ -29,8 +29,9 @@ extern NSString * const kOrigoTypeTeam;
 @property (nonatomic) NSString *countryCode;
 @property (nonatomic) NSString *type;
 
-- (NSSet *)allMemberships;
+- (NSComparisonResult)compare:(id<OOrigo>)other;
 
+- (NSSet *)allMemberships;
 - (NSArray *)residents;
 - (NSArray *)members;
 - (NSArray *)regulars;

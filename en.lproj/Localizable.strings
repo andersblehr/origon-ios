@@ -242,6 +242,8 @@
 "boy" = "boy";
 "woman" = "woman";
 "girl" = "girl";
+"friend [male]" = "friend";
+"friend [female]" = "friend";
 "Home number" = "Home number";
 "Neither" = "Neither";
 "Both" = "Both";
@@ -252,6 +254,10 @@
 // Formats
 "%@ at %@" = "%@ at %@";
 "%d years" = "%d years";
+"Member of %@" = "Member of %@";
+"Guardian of %@" = "Guardian of %@";
+"%@ (%@ of %@)" = "%@ (%@ of %@)";
+"%@ in %@" = "%@ in %@";
 
 // Separators
 " and " = " and ";
@@ -262,7 +268,7 @@
  ***/
 
 // Footers
-"New users will receive an email with an activation code." = "New users will receive an email with an activation code.";
+"If you are signing up, you will receive an email ..." = "If you are signing up, you will receive an email with an activation code to use in the next step.";
 "The activation code has been sent to %@ ..." = "The activation code has been sent to %@. You can enter the code later if you don't have access to your email at this time.";
 "The activation code has been sent to %@." = "The activation code has been sent to %@.";
 
@@ -423,7 +429,6 @@
 "[setting list label] devices" = "Registered devices";
 
 // Buttons
-"Add subgroups" = "Add subgroups";
 "Not in use" = "Not in use";
 
 
