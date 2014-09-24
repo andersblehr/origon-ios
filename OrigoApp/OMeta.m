@@ -71,6 +71,10 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
         _user = [OMember instanceWithId:_userId];
         _user.email = _userEmail;
     }
+    
+    if ([self userIsRegistered] && ![_user isActive]) {
+        [_user makeActive];
+    }
 }
 
 
@@ -88,7 +92,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     _userDidJustSignUp = NO;
     _isSignedIn = @NO;
     
-    [(OAppDelegate *)[UIApplication sharedApplication].delegate releasePersistentStore];
+    [self.appDelegate releasePersistentStore];
     [OEntityProxy clearProxyCache];
 }
 
@@ -393,9 +397,15 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
+- (OAppDelegate *)appDelegate
+{
+    return (OAppDelegate *)[UIApplication sharedApplication].delegate;
+}
+
+
 - (NSManagedObjectContext *)context
 {
-    return ((OAppDelegate *)[UIApplication sharedApplication].delegate).managedObjectContext;
+    return self.appDelegate.managedObjectContext;
 }
 
 @end

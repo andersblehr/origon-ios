@@ -125,7 +125,7 @@ static NSString * const kURLParameterIdentifier = @"id";
     [self setValue:[OMeta m].authToken forURLParameter:kURLParameterAuthToken];
     [self setValue:[OCrypto basicAuthHeaderWithUserId:email password:password] forHTTPHeaderField:kHTTPHeaderAuthorization];
     
-    if ([path isEqualToString:kPathSignIn]) {
+    if ([path isEqualToString:kPathSignIn] && [[OMeta m].appDelegate hasPersistentStore]) {
         [self setValue:[OMeta m].lastReplicationDate forHTTPHeaderField:kHTTPHeaderIfModifiedSince required:NO];
     }
     

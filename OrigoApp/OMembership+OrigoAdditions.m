@@ -86,6 +86,12 @@ static NSString * const kPlaceholderRole = @"placeholder";
 }
 
 
+- (BOOL)isWaiting
+{
+    return [self.status isEqualToString:kMembershipStatusWaiting];
+}
+
+
 - (BOOL)isActive
 {
     return [self.status isEqualToString:kMembershipStatusActive];
@@ -344,7 +350,10 @@ static NSString * const kPlaceholderRole = @"placeholder";
             [[OMeta m].context deleteEntity:self.origo];
         } else if (![self.member isKnownByUser]) {
             for (OMembership *membership in [self.member allMemberships]) {
-                [[OMeta m].context deleteEntity:membership.origo];
+                if ([membership isFull]) {
+                    [[OMeta m].context deleteEntity:membership.origo];
+                }
+                
                 [[OMeta m].context deleteEntity:membership];
             }
             

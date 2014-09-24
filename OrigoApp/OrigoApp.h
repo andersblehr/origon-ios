@@ -62,6 +62,8 @@
 
 typedef UIView<OTextInput> OInputField;
 
+#import "OAppDelegate.h"
+
 #import "NSDate+OrigoAdditions.h"
 #import "NSJSONSerialization+OrigoAdditions.h"
 #import "NSLocale+OrigoAdditions.h"
@@ -101,7 +103,5 @@ typedef UIView<OTextInput> OInputField;
 #import "OTextView.h"
 #import "OUtil.h"
 #import "OValidator.h"
-
-#import "OAppDelegate.h"
 
 #endif

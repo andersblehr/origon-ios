@@ -8,15 +8,16 @@
 
 #import "UIBarButtonItem+OrigoAdditions.h"
 
-NSInteger const kBarButtonTagAction = 10;
-NSInteger const kbarButtonTagEdit = 11;
-NSInteger const kBarButtonTagGroups = 12;
-NSInteger const kBarButtonTagInfo = 13;
-NSInteger const kBarButtonTagLookup = 14;
-NSInteger const kBarButtonTagMap = 15;
-NSInteger const kBarButtonTagMultiRole = 16;
-NSInteger const kBarButtonTagPlus = 17;
-NSInteger const kBarButtonTagSettings = 18;
+NSInteger const kBarButtonTagAcceptReject = 10;
+NSInteger const kBarButtonTagAction = 11;
+NSInteger const kbarButtonTagEdit = 12;
+NSInteger const kBarButtonTagGroups = 13;
+NSInteger const kBarButtonTagInfo = 14;
+NSInteger const kBarButtonTagLookup = 15;
+NSInteger const kBarButtonTagMap = 16;
+NSInteger const kBarButtonTagMultiRole = 17;
+NSInteger const kBarButtonTagPlus = 18;
+NSInteger const kBarButtonTagSettings = 19;
 
 NSInteger const kBarButtonTagBack = 20;
 NSInteger const kBarButtonTagCancel = 21;
@@ -54,6 +55,15 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 
 #pragma mark - Navigation bar icon buttons
+
++ (instancetype)acceptRejectButtonWithTarget:(id)target
+{
+    UIBarButtonItem *button = [self barButtonWithVisuals:[UIImage imageNamed:kIconFileAcceptReject] target:target action:@selector(performAcceptRejectAction) tag:kBarButtonTagAcceptReject];
+    button.tintColor = [UIColor supernovaColour];
+    
+    return button;
+}
+
 
 + (instancetype)actionButtonWithTarget:(id)target
 {

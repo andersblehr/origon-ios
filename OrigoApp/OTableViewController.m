@@ -1027,6 +1027,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)viewWillDisappear:(BOOL)animated
 {
     if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
+        _isPopped = YES;
+        
         [self.observer observeData];
     }
     
@@ -1043,6 +1045,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
+    
+    if (_isPopped) {
+        _isPopped = NO;
+    }
     
     if (_segments) {
         [self.navigationController.navigationBar setHairlinesHidden:NO];
@@ -1126,8 +1132,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     _needsReinstantiateRootViewController = YES;
     _reinstantiatedRootViewController = [self.storyboard instantiateViewControllerWithIdentifier:kIdentifierOrigoList];
-    
-    OLogDebug(@"Reinstantiated view controller's view: %@", _reinstantiatedRootViewController.view);
     
     [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetUser meta:_reinstantiatedRootViewController];
 }

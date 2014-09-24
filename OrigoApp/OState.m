@@ -201,11 +201,14 @@ static OState *_activeState = nil;
 - (BOOL)isValidDestinationStateId:(NSString *)stateId
 {
     BOOL isValid = YES;
-    UINavigationController *navigationController = ((UIViewController *)_viewController).navigationController;
     
-    if (navigationController) {
-        for (OTableViewController *viewController in navigationController.viewControllers) {
-            isValid = isValid && ![viewController.state.identifier isEqualToString:stateId];
+    if (![_activeState.identifier isEqualToString:stateId]) {
+        UINavigationController *navigationController = ((UIViewController *)_viewController).navigationController;
+        
+        if (navigationController) {
+            for (OTableViewController *viewController in navigationController.viewControllers) {
+                isValid = isValid && ![viewController.state.identifier isEqualToString:stateId];
+            }
         }
     }
     
@@ -330,10 +333,10 @@ static OState *_activeState = nil;
             _target = _currentOrigo.type;
             
             if ([_currentOrigo isJuvenile] && ![_currentMember isJuvenile]) {
-                for (id<OMember> ward in [_currentMember wards]) {
-                    if ([_currentOrigo hasMember:ward]) {
-                        _currentMember = ward;
-                    }
+                NSArray *wardsInOrigo = [_currentMember wardsInOrigo:_currentOrigo];
+                
+                if ([wardsInOrigo count]) {
+                    _currentMember = wardsInOrigo[0];
                 }
             }
             

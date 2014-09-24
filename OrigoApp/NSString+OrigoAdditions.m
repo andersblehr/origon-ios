@@ -265,10 +265,4 @@ static CGFloat const kMatchingEditDistancePercentage = 0.4f;
     return countryName;
 }
 
-
-- (NSString *)callablePhoneNumber
-{
-    return [[self componentsSeparatedByCharactersInSet:[[NSCharacterSet characterSetWithCharactersInString:kCallablePhoneNumberCharacters] invertedSet]] componentsJoinedByString:@""];
-}
-
 @end

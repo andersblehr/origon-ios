@@ -8,8 +8,6 @@
 
 #import "OPhoneNumberFormatter.h"
 
-NSString * const kCallablePhoneNumberCharacters = @"+0123456789";
-
 static NSString * const kRegionIdentifiersByCountryCallingCode = @"1:US|en_CA|fr_CA|AS|AI|AG|BS|BB|BM|VG|KY|DM|DO|GD|GU|JM|MS|MP|PR|KN|LC|VC|SX|TT|TC|VI;33:FR;34:ES;45:DK;46:SE;47:NO";
 static NSString * const kInternationalTemplate = @"+{1|20|21#|22#|23#|24#|25#|26#|27|29#|30|31|32|33|34|35#|36|37#|8#|39|40|41|42#|43|44|45|46|47|48|49|50#|51|52|53|54|55|56|57|58|59#|60|61|62|63|64|65|66|67#|68#|69#|7|80#|81|82|84|85#|86|878|88#|90|91|92|93|94|95|96#|97#|98|99#} #@";
 static NSString * const kTemplatesByRegionCode =
@@ -27,6 +25,8 @@ static NSString * const kWildcardTokens = @"*@";
 static NSString * const kCharacters2_9 = @"23456789";
 static NSString * const kWhitespaceCharacters = @"-()/ ";
 static NSString * const kPrintableCharacters = @"+0123456789-()/ ";
+static NSString * const kFlattenedPhoneNumberCharacters = @"+0123456789";
+
 
 static NSString * const kTokenCanonical = @"^";
 static NSString * const kTokenOptionalBegin = @"[";
@@ -53,10 +53,13 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
     NSInteger _groupNestingLevel;
     NSArray *_formats;
     
+    NSString *_regionIdentifier;
     NSString *_format;
     NSInteger _tokenOffset;
     NSInteger _canonicalOffset;
-    NSString *_formattedPhoneNumber;
+    NSString *_canonicalisedNumber;
+    
+    BOOL _isCompleteMatch;
 }
 
 @end
@@ -230,22 +233,6 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
 
 #pragma mark - Parsing and matching
 
-- (NSString *)flattenPhoneNumber:(NSString *)phoneNumber
-{
-    NSMutableString *digits = [NSMutableString string];
-    
-    for (NSInteger i = 0; i < [phoneNumber length]; i++) {
-        NSString *character = [phoneNumber substringWithRange:NSMakeRange(i, 1)];
-        
-        if ([kCharacters0_9 containsString:character] || [character isEqualToString:kTokenPlus]) {
-            [digits appendString:character];
-        }
-    }
-    
-    return digits;
-}
-
-
 - (NSString *)nextToken
 {
     NSString *token = nil;
@@ -271,7 +258,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
             if ([token isEqualToString:character] && ![kWildcardTokens containsString:token]) {
                 matchedCharacters = character;
             } else if ([token isEqualToString:kTokenCanonical]) {
-                _canonicalOffset = [_formattedPhoneNumber length];
+                _canonicalOffset = [_formattedNumber length];
                 matchedCharacters = [self matchCharacter:character];
             } else if ([kWildcardTokens containsString:token]) {
                 if ([kWhitespaceCharacters containsString:character]) {
@@ -317,38 +304,53 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
     _format = format;
     _tokenOffset = 0;
     _canonicalOffset = 0;
-    _formattedPhoneNumber = [NSString string];
+    _formattedNumber = [NSString string];
     
-    for (NSInteger i = 0; _formattedPhoneNumber && (i < [phoneNumber length]); i++) {
+    for (NSInteger i = 0; _formattedNumber && (i < [phoneNumber length]); i++) {
         NSString *character = [phoneNumber substringWithRange:NSMakeRange(i, 1)];
         NSString *segment = [self matchCharacter:character];
         
         if (segment) {
-            _formattedPhoneNumber = [_formattedPhoneNumber stringByAppendingString:segment];
+            _formattedNumber = [_formattedNumber stringByAppendingString:segment];
         } else {
-            _formattedPhoneNumber = nil;
+            _formattedNumber = nil;
         }
     }
     
-    // TODO: Handle format/region mismatch
+    _isCompleteMatch = _formattedNumber && (_tokenOffset == [_format length]);
     
-    //if (_tokenOffset < [_format length]) {
-    //    _formattedPhoneNumber = nil;
-    //}
-    
-    return _formattedPhoneNumber;
+    return _formattedNumber;
 }
 
 
-- (NSString *)formatPhoneNumber:(NSString *)phoneNumber
+- (void)formatPhoneNumber:(NSString *)phoneNumber
 {
-    NSString *formattedNumber = nil;
+    _formattedNumber = nil;
+    _canonicalisedNumber = nil;
+    _flattenedNumber = [NSString string];
     
-    for (NSInteger i = 0; !formattedNumber && (i < [_formats count]); i++) {
-        formattedNumber = [self matchPhoneNumber:phoneNumber toFormat:_formats[i]];
+    for (NSInteger i = 0; i < [phoneNumber length]; i++) {
+        NSString *character = [phoneNumber substringWithRange:NSMakeRange(i, 1)];
+        
+        if ([kFlattenedPhoneNumberCharacters containsString:character]) {
+            _flattenedNumber = [_flattenedNumber stringByAppendingString:character];
+        }
     }
     
-    return formattedNumber ? formattedNumber : [self flattenPhoneNumber:phoneNumber];
+    for (NSInteger i = 0; !_formattedNumber && (i < [_formats count]); i++) {
+        [self matchPhoneNumber:_flattenedNumber toFormat:_formats[i]];
+    }
+
+    if (_formattedNumber) {
+        if (_isCompleteMatch && [_regionIdentifier isEqualToString:[NSLocale regionIdentifier]]) {
+            _canonicalisedNumber = [_formattedNumber substringFromIndex:_canonicalOffset];
+        } else {
+            _canonicalisedNumber = _formattedNumber;
+        }
+    } else {
+        _formattedNumber = _flattenedNumber;
+        _canonicalisedNumber = _flattenedNumber;
+    }
 }
 
 
@@ -374,15 +376,16 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         }
         
         _formattersByRegionIdentifier[regionIdentifier] = self;
+        _regionIdentifier = regionIdentifier;
     }
     
     return self;
 }
 
 
-#pragma mark - Format or canonicalise phone number
+#pragma mark - Factory methods
 
-+ (NSString *)formatPhoneNumber:(NSString *)phoneNumber canonicalise:(BOOL)canonicalise
++ (instancetype)formatterForNumber:(NSString *)phoneNumber
 {
     OPhoneNumberFormatter *formatter = nil;
     NSString *regionIdentifier = [NSLocale regionIdentifier];
@@ -429,13 +432,25 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         }
     }
     
-    NSString *formattedNumber = [formatter formatPhoneNumber:phoneNumber];
+    [formatter formatPhoneNumber:phoneNumber];
     
-    if (canonicalise && [regionIdentifier isEqualToString:[NSLocale regionIdentifier]]) {
-        formattedNumber = [formattedNumber substringFromIndex:formatter->_canonicalOffset];
+    return formatter;
+}
+
+
+#pragma mark - Complete formatting/canonicalisation
+
+- (NSString *)completelyFormattedNumberCanonicalised:(BOOL)canonicalised
+{
+    NSString *completelyFormattedNumber = nil;
+    
+    if (_isCompleteMatch) {
+        completelyFormattedNumber = canonicalised ? _canonicalisedNumber : _formattedNumber;
+    } else {
+        completelyFormattedNumber = _flattenedNumber;
     }
     
-    return formattedNumber;
+    return completelyFormattedNumber;
 }
 
 @end

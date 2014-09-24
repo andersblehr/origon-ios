@@ -161,15 +161,7 @@
         }
         
         if ([self aspectIs:kAspectParentRole]) {
-            NSMutableArray *wardsInOrigo = [NSMutableArray array];
-            
-            for (id<OMember> ward in [candidate wards]) {
-                if ([_origo hasMember:ward]) {
-                    [wardsInOrigo addObject:ward];
-                }
-            }
-            
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"(%@)", [OUtil commaSeparatedListOfItems:wardsInOrigo conjoinLastItem:NO]];
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"(%@)", [OUtil commaSeparatedListOfItems:[candidate wardsInOrigo:_origo] conjoinLastItem:NO]];
         } else if ([self aspectIs:kAspectGroup]) {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:candidate] groups] conjoinLastItem:NO];
         } else if ([candidate isJuvenile]) {

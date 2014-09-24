@@ -31,6 +31,7 @@
 @property (nonatomic, assign, readonly) BOOL internetConnectionIsWWAN;
 @property (nonatomic, assign, readonly) BOOL userDidJustSignUp;
 
+@property (nonatomic, weak, readonly) OAppDelegate *appDelegate;
 @property (nonatomic, weak, readonly) NSManagedObjectContext *context;
 
 + (OMeta *)m;

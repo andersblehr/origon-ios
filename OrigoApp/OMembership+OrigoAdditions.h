@@ -36,6 +36,7 @@ extern NSString * const kAffiliationTypeGroup;
 @property (nonatomic) NSString *affiliations;
 
 - (BOOL)isInvited;
+- (BOOL)isWaiting;
 - (BOOL)isActive;
 - (BOOL)isRejected;
 

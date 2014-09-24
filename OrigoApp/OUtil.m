@@ -113,8 +113,10 @@ static NSString * const kRootIdFormat = @"~%@";
     NSString *details = nil;
     NSArray *memberRoles = [membership memberRoles];
     
-    if ([membership.member isJuvenile] && ![membership.origo isOfType:kOrigoTypeResidence]) {
-        details = [self guardianInfoForMember:membership.member];
+    if (![membership.origo isOfType:kOrigoTypeResidence]) {
+        if ([membership.member isJuvenile] && ![[OMeta m].user isJuvenile]) {
+            details = [self guardianInfoForMember:membership.member];
+        }
     }
     
     if ([memberRoles count]) {
@@ -145,35 +147,18 @@ static NSString * const kRootIdFormat = @"~%@";
             OMember *member = membership.member;
             
             if ([membership isAssociate] || [[membership parentRoles] count]) {
-                for (OMember *memberWard in [member wards]) {
-                    if ([origo hasMember:memberWard] && ![memberWard isWardOfUser]) {
-                        if (!associationsByWard[memberWard.entityId]) {
-                            BOOL friendOnly = YES;
-                            
-                            for (OOrigo *wardOrigo in [memberWard origos]) {
-                                friendOnly = friendOnly && [wardOrigo isOfType:kOrigoTypeFriends];
-                            }
-                            
-                            if (friendOnly) {
-                                NSMutableArray *userWards = [NSMutableArray array];
-                                NSString *friendTerm = nil;
-                                
-                                for (OMember *userWard in [[OMeta m].user wards]) {
-                                    if ([origo hasMember:userWard]) {
-                                        [userWards addObject:userWard];
-                                    }
-                                }
-                                
-                                if ([memberWard isMale]) {
-                                    friendTerm = NSLocalizedString(@"friend [male]", @"");
-                                } else {
-                                    friendTerm = NSLocalizedString(@"friend [female]", @"");
-                                }
-                                
-                                associationsByWard[memberWard.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ (%@ of %@)", @""), [memberWard publicName], friendTerm, [self commaSeparatedListOfItems:userWards conjoinLastItem:YES]];
-                            } else if (![origo isOfType:kOrigoTypeFriends]) {
-                                associationsByWard[memberWard.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [memberWard publicName], origo.name];
-                            }
+                for (OMember *ward in [member wardsInOrigo:origo]) {
+                    if (![ward isWardOfUser] && !associationsByWard[ward.entityId]) {
+                        BOOL friendOnly = YES;
+                        
+                        for (OOrigo *wardOrigo in [ward origos]) {
+                            friendOnly = friendOnly && [wardOrigo isOfType:kOrigoTypeFriends];
+                        }
+                        
+                        if (friendOnly) {
+                            associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ (%@ of %@)", @""), [ward publicName], [ward isMale] ? NSLocalizedString(@"friend [male]", @"") : NSLocalizedString(@"friend [female]", @""), [self commaSeparatedListOfItems:[[OMeta m].user wardsInOrigo:origo] conjoinLastItem:YES]];
+                        } else if (![origo isOfType:kOrigoTypeFriends]) {
+                            associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [ward publicName], origo.name];
                         }
                     }
                 }

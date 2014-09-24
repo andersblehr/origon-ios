@@ -233,7 +233,7 @@
 "No internet connection." = "No internet connection.";
 "An error has occurred. Please try again later. [%d: \"%@\"]" = "An error has occurred. Please try again later. [%d: \"%@\"]";
 "Cannot place call" = "Cannot place call";
-"Cannot place call to %@. It may not be a valid phone number." = "Cannot place call to %@. It may not be a valid phone number.";
+"Please verify that %@ is a valid phone number." = "Please verify that %@ is a valid phone number.";
 
 // Generic terms
 "Yes" = "Yes";
@@ -253,7 +253,7 @@
 
 // Formats
 "%@ at %@" = "%@ at %@";
-"%d years" = "%d years";
+"%d years" = "%d";
 "Member of %@" = "Member of %@";
 "Guardian of %@" = "Guardian of %@";
 "%@ (%@ of %@)" = "%@ (%@ of %@)";
@@ -290,11 +290,6 @@
 // Headers
 "The kids' groups" = "The kids' groups";
 
-// Footers
-"Tap [+] to create a group" = "Tap [+] to create a group";
-"Tap [+] to create a new group" = "Tap [+] to create a new group";
-"... for yourself. Select %@ to create a group for %@" = "for yourself. Select %@ to create a group for %@";
-
 // Alerts
 "Welcome to Origo" = "Welcome to Origo";
 "Please verify your details and provide any missing information." = "Please verify your details and provide any missing information.";
@@ -308,11 +303,6 @@
 "New listing" = "New listing";
 "(No groups)" = "(No groups)";
 
-// Terms
-"your child" = "your child";
-"him or her" = "him or her";
-"for %@" = "for %@";
-
 
 /***
  * OOrigoViewController strings
@@ -322,6 +312,9 @@
 "Tap [+] to add another guardian in the household." = "Tap [+] to add another guardian in the houshold.";
 
 // Buttons
+"Keep" = "Keep";
+"Decline" = "Decline";
+"Hide" = "Hide";
 "Edit responsibilities" = "Edit responsibilities";
 "Add from other groups" = "Add from other groups";
 "Add parent contact" = "Add parent contact";
@@ -330,6 +323,9 @@
 "Add household member" = "Add household member";
 "Other guardian" = "Other guardian";
 "Remove" = "Remove";
+
+// Prompts
+"Do you want to keep this listing?" = "Do you want to keep this listing?";
 
 
 /***

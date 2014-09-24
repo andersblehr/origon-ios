@@ -12,18 +12,22 @@ static NSInteger const kSectionKeyOrganisers = 1;
 static NSInteger const kSectionKeyParentContacts = 2;
 static NSInteger const kSectionKeyMembers = 3;
 
-static NSInteger const kActionSheetTagAdd = 0;
+static NSInteger const kActionSheetTagAcceptReject = 0;
+static NSInteger const kButtonTagAcceptRejectAccept = 0;
+static NSInteger const kButtonTagAcceptRejectReject = 1;
+
+static NSInteger const kActionSheetTagAdd = 1;
 static NSInteger const kButtonTagAddMember = 0;
 static NSInteger const kButtonTagAddFromGroups = 1;
 static NSInteger const kButtonTagAddOrganiser = 2;
 static NSInteger const kButtonTagAddParentContact = 3;
 
-static NSInteger const kActionSheetTagEdit = 1;
+static NSInteger const kActionSheetTagEdit = 2;
 static NSInteger const kButtonTagEditGroup = 0;
 static NSInteger const kButtonTagEditRoles = 1;
 static NSInteger const kButtonTagEditSubgroups = 2;
 
-static NSInteger const kActionSheetTagCoHabitants = 2;
+static NSInteger const kActionSheetTagCoHabitants = 3;
 static NSInteger const kButtonTagCoHabitantsAll = 0;
 static NSInteger const kButtonTagCoHabitantsWards = 1;
 static NSInteger const kButtonTagCoHabitantsNew = 2;
@@ -151,6 +155,21 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 #pragma mark - Selector implementations
 
+- (void)performAcceptRejectAction
+{
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Do you want to keep this listing?", @"") delegate:self tag:kActionSheetTagAcceptReject];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Keep", @"") tag:kButtonTagAcceptRejectAccept];
+    
+    if ([_origo isOfType:kOrigoTypeResidence]) {
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Decline", @"") tag:kButtonTagAcceptRejectReject];
+    } else {
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Hide", @"") tag:kButtonTagAcceptRejectReject];
+    }
+    
+    [actionSheet show];
+}
+
+
 - (void)performAddAction
 {
     if ([_origo isOfType:kOrigoTypeResidence]) {
@@ -252,7 +271,17 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         }
         
         if ([_origo isCommitted] && [_member isCommitted]) {
-            self.navigationItem.rightBarButtonItem = [UIBarButtonItem infoButtonWithTarget:self];
+            if (![_membership isActive]) {
+                [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptRejectButtonWithTarget:self]];
+                
+                if ([_membership isInvited]) {
+                    _membership.status = kMembershipStatusWaiting;
+                } else if ([_membership isWaiting]) {
+                    _membership.status = kMembershipStatusActive;
+                }
+            }
+            
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem infoButtonWithTarget:self]];
             
             if ([_origo hasAddress]) {
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem mapButtonWithTarget:self]];
@@ -262,7 +291,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
             }
             
-            if ([_origo userCanEdit]) {
+            if ([_membership isActive] && [_origo userCanEdit]) {
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
             }
@@ -310,11 +339,28 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         cell.textLabel.text = role;
         
         if ([roleHolders count] == 1) {
-            cell.detailTextLabel.text = [[roleHolders[0] appellationUseGivenName:NO] stringByCapitalisingFirstLetter];
+            id<OMember> roleHolder = roleHolders[0];
+            
+            if ([roleHolder isHousemateOfUser] || (sectionKey != kSectionKeyParentContacts)) {
+                cell.detailTextLabel.text = [[roleHolders[0] appellationUseGivenName:NO] stringByCapitalisingFirstLetter];
+            } else {
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%@)", roleHolder.name, [OUtil commaSeparatedListOfItems:[roleHolder wardsInOrigo:_origo] conjoinLastItem:NO]];
+            }
+            
             [OUtil setImageForMember:roleHolders[0] inTableViewCell:cell];
             cell.destinationId = kIdentifierMember;
         } else {
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:roleHolders conjoinLastItem:NO];
+            NSMutableArray *roleHolderStrings = [NSMutableArray array];
+            
+            for (id<OMember> roleHolder in roleHolders) {
+                if ([roleHolder isHousemateOfUser] || (sectionKey != kSectionKeyParentContacts)) {
+                    [roleHolderStrings addObject:[[roleHolder appellationUseGivenName:YES] stringByCapitalisingFirstLetter]];
+                } else {
+                    [roleHolderStrings addObject:[NSString stringWithFormat:@"%@ (%@)", [roleHolder givenName], [OUtil commaSeparatedListOfItems:[roleHolder wardsInOrigo:_origo] conjoinLastItem:NO]]];
+                }
+            }
+            
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:roleHolderStrings conjoinLastItem:NO];
             [OUtil setTonedDownIconWithFileName:kIconFileRoleHolders inTableViewCell:cell];
             cell.destinationId = kIdentifierValueList;
             cell.destinationMeta = role;
@@ -609,6 +655,8 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         
         if ([_member isUser] && ![_member isActive]) {
             [_member makeActive];
+            
+            _membership.status = kMembershipStatusActive;
         }
         
         if ([_origo isOfType:kOrigoTypeResidence] && ![_origo hasAddress]) {
@@ -666,16 +714,53 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 - (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    switch (actionSheet.tag) {
-        case kActionSheetTagEdit:
-            if ([actionSheet tagForButtonIndex:buttonIndex] == kButtonTagEditGroup) {
-                [self scrollToTopAndToggleEditMode];
-            }
-            
-            break;
-            
-        default:
-            break;
+    if (buttonIndex != actionSheet.cancelButtonIndex) {
+        NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+        
+        switch (actionSheet.tag) {
+            case kActionSheetTagAcceptReject:
+                if (buttonTag == kButtonTagAcceptRejectAccept) {
+                    id<OMembership> membership = [_origo membershipForMember:_member];
+                    membership.status = kMembershipStatusActive;
+                    
+                    NSMutableArray *rightBarButtonItems = [NSMutableArray array];
+                    
+                    for (UIBarButtonItem *button in self.navigationItem.rightBarButtonItems) {
+                        if (button.tag != kBarButtonTagAcceptReject) {
+                            [rightBarButtonItems addObject:button];
+                        }
+                    }
+                    
+                    [self.navigationItem setRightBarButtonItems:rightBarButtonItems animated:YES];
+                    
+                    if ([_origo userCanEdit]) {
+                        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
+                        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
+                    }
+                } else if (buttonTag == kButtonTagAcceptRejectReject) {
+                    id<OMembership> membership = [_origo membershipForMember:_member];
+                    
+                    if ([_origo isOfType:kOrigoTypeResidence]) {
+                        [membership expire];
+                    } else {
+                        membership.status = kMembershipStatusRejected;
+                    }
+                    
+                    [self.navigationController popViewControllerAnimated:YES];
+                }
+                
+                break;
+                
+            case kActionSheetTagEdit:
+                if (buttonTag == kButtonTagEditGroup) {
+                    [self scrollToTopAndToggleEditMode];
+                }
+                
+                break;
+                
+            default:
+                break;
+        }
     }
 }
 
