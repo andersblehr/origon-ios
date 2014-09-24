@@ -164,7 +164,7 @@ static NSInteger const kButtonIndexContinue = 1;
     }
     
     if (inputMatches && _mobilePhoneField.value) {
-        inputMatches = [[OPhoneNumberFormatter formatPhoneNumber:_mobilePhoneField.value canonicalise:YES] isEqualToString:[OPhoneNumberFormatter formatPhoneNumber:mobilePhone canonicalise:YES]];
+        inputMatches = [[OPhoneNumberFormatter formatterForNumber:_mobilePhoneField.value].flattenedNumber isEqualToString:[OPhoneNumberFormatter formatterForNumber:mobilePhone].flattenedNumber];
     }
     
     if (inputMatches && _emailField.value) {
@@ -345,7 +345,13 @@ static NSInteger const kButtonIndexContinue = 1;
                 [_membership addAffiliation:_role ofType:kAffiliationTypeOrganiserRole];
             }
             
-            if (![self targetIs:kTargetOrganiser] && ![_member hasAddress] && ![_member isJuvenile]) {
+            BOOL needsRegisterResidence = ![_member hasAddress];
+            
+            if ([self targetIs:kTargetOrganiser] || ([_member isJuvenile] && ![_member isUser])) {
+                needsRegisterResidence = NO;
+            }
+            
+            if (needsRegisterResidence) {
                 [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
             } else {
                 if ([_member isUser] && ![_member isActive]) {
@@ -929,19 +935,27 @@ static NSInteger const kButtonIndexContinue = 1;
         cell.destinationId = kIdentifierMember;
         [OUtil setImageForMember:guardian inTableViewCell:cell];
         
+        NSString *details = nil;
+        
         if ([[_member residences] count] > 1) {
-            cell.detailTextLabel.text = [[guardian residence] shortAddress];
+            details = [[guardian residence] shortAddress];
         }
         
         if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
-            cell.detailTextLabel.text = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:cell.detailTextLabel.text separator:kSeparatorComma];
+            if (details) {
+                details = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:details separator:kSeparatorComma];
+            } else {
+                details = [[guardian parentNoun][singularIndefinite] capitalizedString];
+            }
         }
+        
+        cell.detailTextLabel.text = details;
     } else if (sectionKey == kSectionKeyAddresses) {
         id<OOrigo> residence = [self dataAtIndexPath:indexPath];
         
         cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
         cell.textLabel.text = [residence shortAddress];
-        cell.detailTextLabel.text = [OPhoneNumberFormatter formatPhoneNumber:residence.telephone canonicalise:YES];
+        cell.detailTextLabel.text = [[OPhoneNumberFormatter formatterForNumber:residence.telephone] completelyFormattedNumberCanonicalised:YES];
         
         [cell setDestinationId:kIdentifierOrigo selectableDuringInput:![self targetIs:kTargetJuvenile]];
     } else if (sectionKey == kSectionKeyRoles) {
@@ -967,9 +981,9 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     BOOL hasFooter = NO;
     
-    if ([self actionIs:kActionRegister]) {
+    if ([self actionIs:kActionRegister] && ![_member isUser]) {
         if ([self isBottomSectionKey:sectionKey]) {
-            hasFooter = ![_member isUser] && ![_member isJuvenile];
+            hasFooter = ![_member isJuvenile];
         } else if (sectionKey == kSectionKeyMember) {
             hasFooter = [_member isJuvenile];
         }
@@ -994,12 +1008,10 @@ static NSInteger const kButtonIndexContinue = 1;
             } else {
                 text = [OLanguage nouns][_guardian_][singularIndefinite];
             }
+        } else if ([guardians count] == 2) {
+            text = [OLanguage nouns][_parent_][pluralIndefinite];
         } else {
-            if ([_member guardiansAreParents]) {
-                text = [OLanguage nouns][_parent_][pluralIndefinite];
-            } else {
-                text = [OLanguage nouns][_guardian_][pluralIndefinite];
-            }
+            text = [OLanguage nouns][_guardian_][pluralIndefinite];
         }
     } else if (sectionKey == kSectionKeyAddresses) {
         if ([[_member residences] count] == 1) {
@@ -1223,46 +1235,54 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (BOOL)inputIsValid
 {
-    BOOL isValid = [_nameField hasValidValue];
+    BOOL isValid = YES;
     
-    if (!isValid && [self targetIs:kTargetJuvenile]) {
-        isValid = [_nameField.value hasValue];
-    }
-    
-    if (isValid && [self aspectIs:kAspectHousehold]) {
-        isValid = [_dateOfBirthField hasValidValue];
+    if ([self targetIs:kTargetUser]) {
+        isValid = isValid && [_nameField hasValidValue];
+        isValid = isValid && [_mobilePhoneField hasValidValue];
+        isValid = isValid && [self identifierFieldHasUniqueValue:_emailField];
+    } else {
+        if ([self targetIs:kTargetJuvenile]) {
+            isValid = [_nameField.value hasValue];
+        } else {
+            isValid = [_nameField hasValidValue];
+        }
         
-        if ([_member instance] && ![_member isUser]) {
-            isValid = [_dateOfBirthField.value isEqual:_member.dateOfBirth];
+        if (isValid && [self aspectIs:kAspectHousehold]) {
+            isValid = [_dateOfBirthField hasValidValue];
             
-            if (!isValid) {
-                [_dateOfBirthField becomeFirstResponder];
+            if ([_member instance]) {
+                isValid = [_dateOfBirthField.value isEqual:_member.dateOfBirth];
+                
+                if (!isValid) {
+                    [_dateOfBirthField becomeFirstResponder];
+                }
             }
         }
-    }
-    
-    if (isValid && _mobilePhoneField.value) {
-        if (_emailField.value) {
-            isValid = [_mobilePhoneField hasValidValue];
-        } else {
-            isValid = [self identifierFieldHasUniqueValue:_mobilePhoneField];
+        
+        if (isValid && _mobilePhoneField.value) {
+            if (_emailField.value) {
+                isValid = [_mobilePhoneField hasValidValue];
+            } else {
+                isValid = [self identifierFieldHasUniqueValue:_mobilePhoneField];
+            }
         }
-    }
-    
-    if (isValid && _emailField.value) {
-        isValid = [self identifierFieldHasUniqueValue:_emailField];
-    }
-    
-    if (isValid && !([_dateOfBirthField.value isBirthDateOfMinor] || [_member isJuvenile])) {
-        if ([self aspectIs:kAspectHousehold]) {
-            isValid = [_mobilePhoneField hasValidValue] && [_emailField hasValidValue];
-        } else {
-            isValid = _emailField.value || [_mobilePhoneField hasValidValue];
+        
+        if (isValid && _emailField.value) {
+            isValid = [self identifierFieldHasUniqueValue:_emailField];
         }
-    }
-    
-    if (isValid && [self actionIs:kActionRegister] && ![self targetIs:kTargetUser]) {
-        [self performLocalLookup];
+        
+        if (isValid && !([_dateOfBirthField.value isBirthDateOfMinor] || [_member isJuvenile])) {
+            if ([self aspectIs:kAspectHousehold]) {
+                isValid = [_mobilePhoneField hasValidValue] && [_emailField hasValidValue];
+            } else {
+                isValid = _emailField.value || [_mobilePhoneField hasValidValue];
+            }
+        }
+        
+        if (isValid && [self actionIs:kActionRegister]) {
+            [self performLocalLookup];
+        }
     }
     
     return isValid;
@@ -1704,7 +1724,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 #pragma mark - ABPeoplePickerNavigationControllerDelegate conformance
 
-- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person
+- (void)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker didSelectPerson:(ABRecordRef)person
 {
     [self retrieveNameFromAddressBookPersonRecord:person];
     [self retrievePhoneNumbersFromAddressBookPersonRecord:person];
@@ -1734,14 +1754,6 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
     }
-    
-    return NO;
-}
-
-
-- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifier
-{
-    return NO;
 }
 
 
@@ -1750,6 +1762,16 @@ static NSInteger const kButtonIndexContinue = 1;
     [self dismissViewControllerAnimated:YES completion:^{
         [self.inputCell resumeFirstResponder];
     }];
+}
+
+
+#pragma mark - ABPeoplePickerNavigationControllerDelegate conformance (iOS 7.x)
+
+- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker shouldContinueAfterSelectingPerson:(ABRecordRef)person
+{
+    [self peoplePickerNavigationController:peoplePicker didSelectPerson:person];
+    
+    return NO;
 }
 
 @end

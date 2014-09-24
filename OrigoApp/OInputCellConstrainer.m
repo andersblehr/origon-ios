@@ -87,7 +87,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             }
         } else if ([delegate isReceivingInput] || [entity hasValueForKey:key]) {
             if ([constrainer.blueprint.multiLineTextKeys containsObject:key]) {
-                if (inputCell) {
+                if (inputCell && inputCell.constrainer.didConstrain) {
                     height += [[inputCell inputFieldForKey:key] height];
                 } else if ([entity hasValueForKey:key]) {
                     height += [OTextView heightWithText:[entity valueForKey:key] maxWidth:[constrainer labeledTextWidth]];
@@ -165,7 +165,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
     OLabel *label = [_inputCell labelForKey:key];
     OInputField *inputField = [_inputCell inputFieldForKey:key];
     
-    if (!inputField.value && !inputField.didChange) {
+    if (![inputField.text hasValue] && !inputField.didChange) {
         inputField.value = [_inputCell.entity valueForKey:key];
     }
     
@@ -453,6 +453,8 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             
             constraints[noAlignmentOption] = nonAlignedConstraints;
         }
+        
+        _didConstrain = YES;
         
 //        int i = 0;
 //        for (NSNumber *alignmentOptions in [constraints allKeys]) {

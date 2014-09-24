@@ -128,6 +128,7 @@ NSString * const kIconFileEdit = @"830-pencil-toolbar.png";
 NSString * const kIconFileMap = @"852-map-toolbar.png";
 NSString * const kIconFileInfo = @"724-info-toolbar.png";
 NSString * const kIconFileLookup = @"01-magnify.png";
+NSString * const kIconFileAcceptReject = @"739-question-selected.png";
 NSString * const kIconFilePlacePhoneCall = @"735-phone.png";
 NSString * const kIconFileSendText = @"734-chat.png";
 NSString * const kIconFileSendEmail = @"730-envelope.png";

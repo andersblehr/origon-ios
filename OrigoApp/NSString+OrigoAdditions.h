@@ -44,6 +44,5 @@ extern NSString * const kSeparatorAlternates;
 
 - (NSString *)givenName;
 - (NSString *)localisedCountryName;
-- (NSString *)callablePhoneNumber;
 
 @end

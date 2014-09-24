@@ -12,6 +12,18 @@ static NSString * const kTimeZoneNameUTC = @"UTC";
 static NSString * const kPersistentStoreURLFormat = @"OrigoApp^%@.sqlite";
 
 
+@interface OAppDelegate () {
+@private
+    NSManagedObjectModel *_managedObjectModel;
+    NSManagedObjectContext *_managedObjectContext;
+    NSPersistentStoreCoordinator *_persistentStoreCoordinator;
+    
+    BOOL _didEnterBackground;
+}
+
+@end
+
+
 @implementation OAppDelegate
 
 #pragma mark - Custom exception handler
@@ -25,6 +37,14 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 #pragma mark - Auxiliary methods
 
+- (NSURL *)persistentStoreURL
+{
+    NSURL *documentDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
+    
+    return [documentDirectory URLByAppendingPathComponent:[NSString stringWithFormat:kPersistentStoreURLFormat, [OMeta m].userId]];
+}
+
+
 - (void)saveApplicationState
 {
     if ([[OMeta m] userIsSignedIn]) {
@@ -35,7 +55,13 @@ static void uncaughtExceptionHandler(NSException *exception)
 }
 
 
-#pragma mark - Persistent store release
+#pragma mark - Persistent store handling
+
+- (BOOL)hasPersistentStore
+{
+    return [[NSFileManager defaultManager] fileExistsAtPath:[[self persistentStoreURL] path]];
+}
+
 
 - (void)releasePersistentStore
 {
@@ -49,7 +75,7 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (NSManagedObjectModel *)managedObjectModel
 {
-    if (_managedObjectModel == nil) {
+    if (!_managedObjectModel) {
         _managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil];
     }
     
@@ -59,10 +85,10 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (NSManagedObjectContext *)managedObjectContext
 {
-    if (_managedObjectContext == nil) {
+    if (!_managedObjectContext) {
         NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
         
-        if (coordinator != nil) {
+        if (coordinator) {
             _managedObjectContext = [[NSManagedObjectContext alloc] init];
             _managedObjectContext.persistentStoreCoordinator = coordinator;
         }
@@ -74,14 +100,11 @@ static void uncaughtExceptionHandler(NSException *exception)
 
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
-    if (_persistentStoreCoordinator == nil) {
-        NSURL *documentDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-        NSURL *persistentStoreURL = [documentDirectory URLByAppendingPathComponent: [NSString stringWithFormat:kPersistentStoreURLFormat, [OMeta m].userId]];
-        
+    if (!_persistentStoreCoordinator) {
         NSError *error = nil;
         _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
         
-        if(![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:persistentStoreURL options:nil error:&error]) {
+        if(![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:[self persistentStoreURL] options:nil error:&error]) {
             OLogError(@"Error initialising Core Data: %@", [error localizedDescription]);
         }
     }
@@ -96,19 +119,17 @@ static void uncaughtExceptionHandler(NSException *exception)
 {
     OLogDebug(@"Application did finish launching");
     
+    //NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
+    //[[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
+    
     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:kTimeZoneNameUTC]];
     
     _window.tintColor = [UIColor windowTintColour];
     
     OLogDebug(@"Device ID: %@", [OMeta m].deviceId);
-    OLogDebug(@"Device model: %@.", [UIDevice currentDevice].model);
-    OLogDebug(@"iOS version: %@.", [UIDevice currentDevice].systemVersion);
     OLogDebug(@"System language: %@", [OMeta m].language);
 
-    //NSString *appDomain = [[NSBundle mainBundle] bundleIdentifier];
-    //[[NSUserDefaults standardUserDefaults] removePersistentDomainForName:appDomain];
-    
     return YES;
 }
 							

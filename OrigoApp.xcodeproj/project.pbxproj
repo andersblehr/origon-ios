@@ -83,6 +83,9 @@
 		5CD33AD918F5288000A863F4 /* OReplicatedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AD818F5288000A863F4 /* OReplicatedEntityRef.m */; };
 		5CD33ADC18F5288100A863F4 /* OReplicatedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33ADB18F5288100A863F4 /* OReplicatedEntity.m */; };
 		5CD33AE218F5288100A863F4 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AE118F5288100A863F4 /* OMember.m */; };
+		5CD48F5319CDE8A500ECB761 /* 739-question-selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CD48F5019CDE8A500ECB761 /* 739-question-selected.png */; };
+		5CD48F5419CDE8A500ECB761 /* 739-question-selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CD48F5119CDE8A500ECB761 /* 739-question-selected@2x.png */; };
+		5CD48F5519CDE8A500ECB761 /* 739-question-selected@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CD48F5219CDE8A500ECB761 /* 739-question-selected@3x.png */; };
 		5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.m */; };
 		5CD5EC0C18D0768A0075D07E /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CD5EC0B18D0768A0075D07E /* MainStoryboard_iPhone.storyboard */; };
 		5CD6267619CAF221007DD29B /* 768-female-toolbar.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CD6267019CAF220007DD29B /* 768-female-toolbar.png */; };
@@ -295,6 +298,9 @@
 		5CD33ADB18F5288100A863F4 /* OReplicatedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntity.m; sourceTree = "<group>"; };
 		5CD33AE018F5288100A863F4 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
 		5CD33AE118F5288100A863F4 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
+		5CD48F5019CDE8A500ECB761 /* 739-question-selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "739-question-selected.png"; sourceTree = "<group>"; };
+		5CD48F5119CDE8A500ECB761 /* 739-question-selected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "739-question-selected@2x.png"; sourceTree = "<group>"; };
+		5CD48F5219CDE8A500ECB761 /* 739-question-selected@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "739-question-selected@3x.png"; sourceTree = "<group>"; };
 		5CD5B29B14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5CD5B29C14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CD5EC0B18D0768A0075D07E /* MainStoryboard_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
@@ -404,6 +410,9 @@
 				5C98903A17F6B8D500D957F9 /* 735-phone.png */,
 				5C98903B17F6B8D500D957F9 /* 735-phone@2x.png */,
 				5CD6269019CB08E7007DD29B /* 735-phone@3x.png */,
+				5CD48F5019CDE8A500ECB761 /* 739-question-selected.png */,
+				5CD48F5119CDE8A500ECB761 /* 739-question-selected@2x.png */,
+				5CD48F5219CDE8A500ECB761 /* 739-question-selected@3x.png */,
 				5CD626A419CB0C0D007DD29B /* 740-gear-toolbar.png */,
 				5CD626A519CB0C0D007DD29B /* 740-gear-toolbar@2x.png */,
 				5CD626A619CB0C0E007DD29B /* 740-gear-toolbar@3x.png */,
@@ -818,6 +827,7 @@
 				5CD6270119CB32F9007DD29B /* ro-role-holders.png in Resources */,
 				5CD626CC19CB1076007DD29B /* 779-users-toolbar@2x.png in Resources */,
 				5CD626CD19CB1076007DD29B /* 779-users-toolbar@3x.png in Resources */,
+				5CD48F5419CDE8A500ECB761 /* 739-question-selected@2x.png in Resources */,
 				5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */,
 				5C58AA8718CE028500778B9F /* Localizable.strings in Resources */,
 				5CD626DD19CB145C007DD29B /* 10-contract.png in Resources */,
@@ -836,6 +846,7 @@
 				5CD6268D19CB08AD007DD29B /* 730-envelope@3x.png in Resources */,
 				5C98903D17F6B8D500D957F9 /* 734-chat@2x.png in Resources */,
 				5CD626C519CB0EBD007DD29B /* 852-map-toolbar.png in Resources */,
+				5CD48F5319CDE8A500ECB761 /* 739-question-selected.png in Resources */,
 				5CD6268019CAF79F007DD29B /* ro-593-boy@2x.png in Resources */,
 				5CD6269119CB08E8007DD29B /* 735-phone@3x.png in Resources */,
 				5CC12A1619CC85F100A545F8 /* ro-ipod-touch-5@3x.png in Resources */,
@@ -866,6 +877,7 @@
 				5C98903C17F6B8D500D957F9 /* 734-chat.png in Resources */,
 				5CD626A819CB0C0E007DD29B /* 740-gear-toolbar@2x.png in Resources */,
 				5CD626FD19CB2501007DD29B /* ro-750-home-toolbar-selected@3x.png in Resources */,
+				5CD48F5519CDE8A500ECB761 /* 739-question-selected@3x.png in Resources */,
 				5CD626B919CB0E81007DD29B /* 724-info-toolbar.png in Resources */,
 				5CD626DE19CB145C007DD29B /* 10-contract@2x.png in Resources */,
 				5CC12A0219CC7B0E00A545F8 /* 693-ipad.png in Resources */,

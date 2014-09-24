@@ -233,7 +233,7 @@
 "No internet connection." = "Ingen internettforbindelse.";
 "An error has occurred. Please try again later. [%d: \"%@\"]" = "Det har oppstått en feil, vennligst prøv igjen senere. [%d: \"%@\"]";
 "Cannot place call" = "Kan ikke ringe";
-"Cannot place call to %@. It may not be a valid phone number." = "Kan ikke ringe %@. Det kan være at det ikke er et gyldig telefonnummer.";
+"Please verify that %@ is a valid phone number." = "Verifiser at %@ er et gyldig telefonnummer.";
 
 // Generic terms
 "Yes" = "Ja";
@@ -289,11 +289,6 @@
 // Headers
 "The kids' groups" = "Barnas grupper";
 
-// Footers
-"Tap [+] to create a group" = "Trykk [+] for å opprette en gruppe";
-"Tap [+] to create a new group" = "Trykk [+] for å opprette en ny gruppe";
-"... for yourself. Select %@ to create a group for %@" = "for deg selv, eller velg %@ for å opprette en gruppe for %@";
-
 // Alerts
 "Welcome to Origo" = "Velkommen til Origo";
 "Please verify your details and provide any missing information." = "Kontroller at opplysningene dine stemmer og fyll ut det som mangler.";
@@ -307,11 +302,6 @@
 "New listing" = "Ny oppføring";
 "(No groups)" = "(Ingen grupper)";
 
-// Terms
-"your child" = "et av barna";
-"him or her" = "ham eller henne";
-"for %@" = "for %@";
-
 
 /***
  * OOrigoViewController strings
@@ -321,6 +311,9 @@
 "Tap [+] to add another guardian in the household." = "Trykk [+] for å legge til flere foresatte i husstanden.";
 
 // Buttons
+"Keep" = "Behold";
+"Decline" = "Avvis";
+"Hide" = "Skjul";
 "Edit responsibilities" = "Rediger ansvarsområder";
 "Add from other groups" = "Legg til fra andre grupper";
 "Add parent contact" = "Legg til foreldrekontakt";
@@ -329,6 +322,9 @@
 "Add household member" = "Nytt medlem i husstanden";
 "Other guardian" = "Annen foresatt";
 "Remove" = "Meld ut";
+
+// Prompts
+"Do you want to keep this listing?" = "Vil du beholde denne oppføringen?";
 
 
 /***

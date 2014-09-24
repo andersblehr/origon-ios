@@ -60,6 +60,7 @@
 
 @property (nonatomic, assign, readonly) BOOL isModal;
 @property (nonatomic, assign, readonly) BOOL isPushed;
+@property (nonatomic, assign, readonly) BOOL isPopped;
 @property (nonatomic, assign, readonly) BOOL isHidden;
 @property (nonatomic, assign, readonly) BOOL wasHidden;
 @property (nonatomic, assign, readonly) BOOL didResurface;

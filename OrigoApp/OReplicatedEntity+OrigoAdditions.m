@@ -154,12 +154,6 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 #pragma mark - Meta information
 
-- (BOOL)userIsCreator
-{
-    return [self.createdBy isEqualToString:[OMeta m].userId];
-}
-
-
 - (BOOL)isTransient
 {
     return [self isKindOfClass:[OReplicatedEntityRef class]] || [self hasExpired];
@@ -318,6 +312,12 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
     }
     
     return dictionary;
+}
+
+
+- (BOOL)userIsCreator
+{
+    return [self.createdBy isEqualToString:[OMeta m].userId];
 }
 
 

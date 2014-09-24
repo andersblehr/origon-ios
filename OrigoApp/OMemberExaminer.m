@@ -118,9 +118,9 @@ static OMemberExaminer *_instance = nil;
     NSString *prompt = nil;
     
     if ([_member isUser]) {
-        prompt = [NSString stringWithFormat:NSLocalizedString(@"Are you a %@ or a @%?", @""), femaleGender, maleGender];
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"Are you a %@ or a %@?", @""), femaleGender, maleGender];
     } else {
-        prompt = [NSString stringWithFormat:NSLocalizedString(@"Is %@ a %@ or a @%?", @""), [_member givenName], femaleGender, maleGender];
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"Is %@ a %@ or a %@?", @""), [_member givenName], femaleGender, maleGender];
     }
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagGender];

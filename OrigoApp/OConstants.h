@@ -128,6 +128,7 @@ extern NSString * const kIconFileEdit;
 extern NSString * const kIconFileMap;
 extern NSString * const kIconFileInfo;
 extern NSString * const kIconFileLookup;
+extern NSString * const kIconFileAcceptReject;
 extern NSString * const kIconFilePlacePhoneCall;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;

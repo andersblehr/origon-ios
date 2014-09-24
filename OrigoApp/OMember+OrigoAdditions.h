@@ -36,14 +36,15 @@
 - (NSArray *)residences;
 - (NSArray *)addresses;
 - (NSArray *)origos;
-//- (NSString *)association;
 
 - (id<OMember>)partner;
 - (NSArray *)wards;
+- (NSArray *)wardsInOrigo:(id<OOrigo>)origo;
 - (NSArray *)parents;
 - (NSArray *)guardians;
 - (NSArray *)peers;
 - (NSArray *)peersNotInSet:(id)set;
+- (NSArray *)allHousemates;
 - (NSArray *)housemates;
 - (NSArray *)housemateResidences;
 - (NSArray *)housematesNotInResidence:(id<OOrigo>)residence;

@@ -227,7 +227,7 @@
         }
     }
     
-    for (OMember *housemate in [member housemates]) {
+    for (OMember *housemate in [member allHousemates]) {
         for (OMembership *peerResidency in [housemate residencies]) {
             [origo addAssociateMember:peerResidency.member];
             
@@ -256,7 +256,7 @@
     
     NSMutableSet *peerResidencies = [NSMutableSet set];
     
-    for (OMember *housemate in [member housemates]) {
+    for (OMember *housemate in [member allHousemates]) {
         for (OMembership *peerResidency in [housemate residencies]) {
             [peerResidencies addObject:peerResidency];
         }
@@ -264,12 +264,12 @@
     
     for (OMembership *peerResidency in peerResidencies) {
         if (![origo knowsAboutMember:peerResidency.member]) {
-            [(OOrigo *)[origo associateMembershipForMember:peerResidency.member] expire];
+            [[origo associateMembershipForMember:peerResidency.member] expire];
         }
         
         if ([origo isOfType:kOrigoTypeResidence]) {
             if (![peerResidency.origo knowsAboutMember:member]) {
-                [(OOrigo *)[peerResidency.origo associateMembershipForMember:member] expire];
+                [[peerResidency.origo associateMembershipForMember:member] expire];
             }
         }
     }

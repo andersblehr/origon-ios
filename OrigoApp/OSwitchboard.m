@@ -416,9 +416,9 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     NSString *phoneNumber = nil;
     
     if ([recipient conformsToProtocol:@protocol(OMember)]) {
-        phoneNumber = [[recipient mobilePhone] callablePhoneNumber];
+        phoneNumber = [recipient mobilePhone];
     } else if ([recipient conformsToProtocol:@protocol(OOrigo)]) {
-        phoneNumber = [[recipient telephone] callablePhoneNumber];
+        phoneNumber = [recipient telephone];
     }
     
     NSURL *phoneURL = [NSURL URLWithString:[kProtocolTel stringByAppendingString:phoneNumber]];
@@ -426,7 +426,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
     if ([[UIApplication sharedApplication] canOpenURL:phoneURL]) {
         [[UIApplication sharedApplication] openURL:phoneURL];
     } else {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot place call", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Cannot place call to %@. It may not be a valid phone number.", @""), phoneNumber]];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Cannot place call", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Please verify that %@ is a valid phone number.", @""), [OPhoneNumberFormatter formatterForNumber:phoneNumber].formattedNumber]];
     }
 }
 

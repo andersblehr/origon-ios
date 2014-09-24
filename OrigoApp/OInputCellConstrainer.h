@@ -16,6 +16,8 @@
 @property (nonatomic, readonly) NSArray *detailKeys;
 @property (nonatomic, readonly) NSArray *inputKeys;
 
+@property (nonatomic, assign, readonly) BOOL didConstrain;
+
 
 - (instancetype)initWithCell:(OTableViewCell *)cell blueprint:(OInputCellBlueprint *)blueprint delegate:(id<OInputCellDelegate>)delegate;
 

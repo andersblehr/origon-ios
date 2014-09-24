@@ -31,7 +31,10 @@ static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
     if (cell) {
         if ([cell isListCell]) {
             cell.textLabel.textColor = [UIColor textColour];
-            cell.detailTextLabel.textColor = [UIColor textColour];
+            
+            if (style == UITableViewCellStyleSubtitle) {
+                cell.detailTextLabel.textColor = [UIColor textColour];
+            }
             
             for (UIView *subview in cell.imageView.subviews) {
                 [subview removeFromSuperview];

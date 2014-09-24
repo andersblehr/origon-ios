@@ -36,7 +36,7 @@ static CGFloat const kTextInsetY = 1.2f;
 {
     if (_value && [_value isKindOfClass:[NSString class]]) {
         if ([OValidator isPhoneNumberKey:_key]) {
-            _value = [OPhoneNumberFormatter formatPhoneNumber:_value canonicalise:NO];
+            _value = [OPhoneNumberFormatter formatterForNumber:_value].flattenedNumber;
         } else if (![OValidator isPasswordKey:_key]) {
             _value = [_value stringByRemovingRedundantWhitespaceKeepNewlines:NO];
         }
@@ -54,10 +54,12 @@ static CGFloat const kTextInsetY = 1.2f;
 {
     if (_value) {
         if ([OValidator isPhoneNumberKey:_key]) {
+            OPhoneNumberFormatter *formatter = [OPhoneNumberFormatter formatterForNumber:_value];
+            
             if (self.editable) {
-                self.text = _value;
+                self.text = formatter.formattedNumber;
             } else {
-                self.text = [OPhoneNumberFormatter formatPhoneNumber:_value canonicalise:YES];
+                self.text = [formatter completelyFormattedNumberCanonicalised:YES];
             }
         } else if ([OValidator isAgeKey:_key]) {
             if (self.editable) {
@@ -80,7 +82,7 @@ static CGFloat const kTextInsetY = 1.2f;
 
 - (void)phoneNumberDidChange
 {
-    _value = [OPhoneNumberFormatter formatPhoneNumber:self.text canonicalise:NO];
+    _value = [OPhoneNumberFormatter formatterForNumber:self.text].formattedNumber;
     
     UITextRange *range = [self selectedTextRange];
     NSInteger offset = [self offsetFromPosition:self.endOfDocument toPosition:range.end];
@@ -269,8 +271,6 @@ static CGFloat const kTextInsetY = 1.2f;
             self.layer.borderColor = [[UIColor windowTintColour] CGColor];
         }
     } else {
-        [self peelValue];
-        
         self.layer.borderColor = [[UIColor clearColor] CGColor];
     }
 }
@@ -294,7 +294,7 @@ static CGFloat const kTextInsetY = 1.2f;
 
 - (BOOL)hasMultiValue
 {
-    return [[self peelValue] isKindOfClass:[NSArray class]];
+    return [_value isKindOfClass:[NSArray class]];
 }
 
 

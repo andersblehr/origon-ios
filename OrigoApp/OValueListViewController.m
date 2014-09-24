@@ -281,6 +281,10 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         [OUtil setImageForMember:roleHolder inTableViewCell:cell];
         cell.destinationId = kIdentifierMember;
         cell.destinationMeta = self.target;
+        
+        if ([self aspectIs:kAspectParentRole] && ![roleHolder isHousemateOfUser]) {
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"(%@)", [OUtil commaSeparatedListOfItems:[roleHolder wardsInOrigo:_origo] conjoinLastItem:NO]];
+        }
     } else if ([self targetIs:kTargetRoles]) {
         NSString *role = [self dataAtIndexPath:indexPath];
         NSArray *roleHolders = nil;
@@ -356,7 +360,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 {
     UITableViewCellStyle style = UITableViewCellStyleValue1;
     
-    if ([self targetIs:kTargetDevices]) {
+    if ([self targetIs:kTargetDevices] || [self targetIs:kTargetRole]) {
         style = UITableViewCellStyleSubtitle;
     }
     

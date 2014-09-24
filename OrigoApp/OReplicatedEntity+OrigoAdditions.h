@@ -28,6 +28,7 @@
 @property (nonatomic) NSString *createdBy;
 @property (nonatomic) NSDate *dateReplicated;
 
+- (BOOL)userIsCreator;
 - (void)reflectEntity:(id<OEntity>)entity;
 - (void)useInstance:(id<OEntity>)instance;
 - (id)instantiate;
@@ -47,7 +48,6 @@
 - (NSString *)SHA1HashCode;
 - (void)internaliseRelationships;
 
-- (BOOL)userIsCreator;
 - (BOOL)isTransient;
 - (BOOL)isDirty;
 - (BOOL)isBeingDeleted;
