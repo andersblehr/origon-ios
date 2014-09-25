@@ -386,7 +386,7 @@
 "Should %@ be registered at the same address?" = "Skal %@ registreres på samme adresse?";
 "Who else should be registered at the same address?" = "Hvem flere skal registeres på samme adresse?";
 "Are you a %@ or a @%?" = "Er du %@ eller %@";
-"Is %@ a %@ or a @%?" = "Er %@ %@ eller %@";
+"Is %@ a %@ or a %@?" = "Er %@ %@ eller %@";
 "Are you a %@?" = "Er du %@?";
 "Is %@ a %@?" = "Er %@ %@?";
 "You are now registered as a %@." = "Du er nå oppført som %@.";

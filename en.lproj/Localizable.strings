@@ -387,7 +387,7 @@
 "Should %@ be registered at the same address?" = "Should %@ be registered at the same address?";
 "Who else should be registered at the same address?" = "Who else should be registered at the same address?";
 "Are you a %@ or a @%?" = "Are you a %@ or a @%?";
-"Is %@ a %@ or a @%?" = "Is %@ a %@ or a @%?";
+"Is %@ a %@ or a %@?" = "Is %@ a %@ or a %@?";
 "Are you a %@?" = "Are you a %@?";
 "Is %@ a %@?" = "Is %@ a %@?";
 "You are now registered as a %@." = "You are now registered as a %@.";

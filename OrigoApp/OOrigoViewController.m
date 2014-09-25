@@ -271,7 +271,9 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         }
         
         if ([_origo isCommitted] && [_member isCommitted]) {
-            if (![_membership isActive]) {
+            BOOL isAwaitingActivation = ![_membership isActive] && ([_member isUser] || [_member isWardOfUser]);
+            
+            if (isAwaitingActivation) {
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptRejectButtonWithTarget:self]];
                 
                 if ([_membership isInvited]) {
@@ -291,7 +293,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem groupsButtonWithTarget:self]];
             }
             
-            if ([_membership isActive] && [_origo userCanEdit]) {
+            if ([_origo userCanEdit] && !isAwaitingActivation) {
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
                 [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
             }
@@ -547,12 +549,10 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 {
     if (!viewController.didCancel) {
         if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-            if ([viewController targetIs:kTargetMember]) {
-                [_origo addMember:viewController.returnData];
-                
-                [self reloadSectionWithKey:kSectionKeyMembers];
-            } else if ([viewController targetIs:kTargetOrganiser]) {
+            if ([viewController targetIs:kTargetOrganiser]) {
                 [self reloadSectionWithKey:kSectionKeyOrganisers];
+            } else {
+                [self reloadSectionWithKey:kSectionKeyMembers];
             }
         } if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
             if ([viewController targetIs:kTargetRoles]) {
