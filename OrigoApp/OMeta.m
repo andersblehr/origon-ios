@@ -256,6 +256,12 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
++ (BOOL)iOSVersionIs:(NSString *)majorVersionNumber
+{
+    return [[UIDevice currentDevice].systemVersion hasPrefix:majorVersionNumber];
+}
+
+
 + (CGFloat)screenWidth
 {
     return [UIScreen mainScreen].applicationFrame.size.width;

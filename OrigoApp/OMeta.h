@@ -47,6 +47,7 @@
 - (BOOL)internetConnectionIsAvailable;
 + (BOOL)usesEasternNameOrder;
 + (BOOL)deviceIsSimulator;
++ (BOOL)iOSVersionIs:(NSString *)majorVersionNumber;
 + (CGFloat)screenWidth;
 
 - (NSBundle *)localisedStringsBundle;

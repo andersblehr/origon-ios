@@ -10,12 +10,6 @@
 
 NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
 
-static CGFloat const kLogoHeight = 110.f;
-static CGFloat const kLogoFontSize = 30.f;
-
-static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
-static NSString * const kLogoText = @"..origo..";
-
 static UIView *_dimmerView = nil;
 static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
 
@@ -48,28 +42,6 @@ static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
     
     
     return cell;
-}
-
-
-#pragma mark - Custom items
-
-- (void)addLogoBanner
-{
-    CGRect containerViewFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], kLogoHeight);
-    UIView *containerView = [[UIView alloc] initWithFrame:containerViewFrame];
-
-    CGRect logoFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], kLogoHeight);
-    UILabel *logoLabel = [[UILabel alloc] initWithFrame:logoFrame];
-    
-    logoLabel.backgroundColor = [UIColor clearColor];
-    logoLabel.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
-    logoLabel.text = kLogoText;
-    logoLabel.textAlignment = NSTextAlignmentCenter;
-    logoLabel.textColor = [UIColor windowTintColour];
-    
-    [containerView addSubview:logoLabel];
-    
-    self.tableHeaderView = containerView;
 }
 
 

@@ -304,12 +304,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
         if (abs(self.frame.size.height - desiredHeight) > 0.5f) {
             [self setNeedsUpdateConstraints];
             
-            if ([[UIDevice currentDevice].systemVersion hasPrefix:@"7"]) {
+            if ([OMeta iOSVersionIs:@"7"]) {
                 [self layoutIfNeeded];
             }
             
             [UIView animateWithDuration:kCellAnimationDuration animations:^{
-                if (![[UIDevice currentDevice].systemVersion hasPrefix:@"7"]) {
+                if (![OMeta iOSVersionIs:@"7"]) {
                     [self layoutIfNeeded];
                 }
                 

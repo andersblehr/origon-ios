@@ -681,36 +681,40 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)retrievePhoneNumbersFromAddressBookPersonRecord:(ABRecordRef)person
 {
-    _addressBookHomeNumbers = [NSMutableArray array];
-    
-    NSMutableArray *mobilePhoneNumbers = [NSMutableArray array];
     ABMultiValueRef multiValues = ABRecordCopyValue(person, kABPersonPhoneProperty);
+    CFIndex multiValueCount = ABMultiValueGetCount(multiValues);
     
-    for (CFIndex i = 0; i < ABMultiValueGetCount(multiValues); i++) {
-        NSString *label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(multiValues, i);
+    if (multiValueCount) {
+        _addressBookHomeNumbers = [NSMutableArray array];
         
-        BOOL isMobilePhone = [label isEqualToString:(NSString *)kABPersonPhoneMobileLabel];
-        BOOL is_iPhone = [label isEqualToString:(NSString *)kABPersonPhoneIPhoneLabel];
-        BOOL isHomePhone = [label isEqualToString:(NSString *)kABHomeLabel];
+        NSMutableArray *mobilePhoneNumbers = [NSMutableArray array];
         
-        if (isMobilePhone || is_iPhone || isHomePhone) {
-            NSString *phoneNumber = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(multiValues, i);
+        for (CFIndex i = 0; i < multiValueCount; i++) {
+            NSString *label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(multiValues, i);
             
-            if (isMobilePhone || is_iPhone) {
-                [mobilePhoneNumbers addObject:phoneNumber];
-            } else {
-                [_addressBookHomeNumbers addObject:phoneNumber];
+            BOOL isMobilePhone = [label isEqualToString:(NSString *)kABPersonPhoneMobileLabel];
+            BOOL is_iPhone = [label isEqualToString:(NSString *)kABPersonPhoneIPhoneLabel];
+            BOOL isHomePhone = [label isEqualToString:(NSString *)kABHomeLabel];
+            
+            if (isMobilePhone || is_iPhone || isHomePhone) {
+                NSString *phoneNumber = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(multiValues, i);
+                
+                if (isMobilePhone || is_iPhone) {
+                    [mobilePhoneNumbers addObject:phoneNumber];
+                } else {
+                    [_addressBookHomeNumbers addObject:phoneNumber];
+                }
             }
         }
-    }
-    
-    CFRelease(multiValues);
-
-    if ([mobilePhoneNumbers count]) {
-        _mobilePhoneField.value = mobilePhoneNumbers;
         
-        if (![_mobilePhoneField hasMultiValue]) {
-            _member.mobilePhone = _mobilePhoneField.value;
+        CFRelease(multiValues);
+        
+        if ([mobilePhoneNumbers count]) {
+            _mobilePhoneField.value = mobilePhoneNumbers;
+            
+            if (![_mobilePhoneField hasMultiValue]) {
+                _member.mobilePhone = _mobilePhoneField.value;
+            }
         }
     }
 }
@@ -718,24 +722,28 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)retrieveEmailAddressesFromAddressBookPersonRecord:(ABRecordRef)person
 {
-    NSMutableArray *emailAddresses = [NSMutableArray array];
     ABMultiValueRef multiValues = ABRecordCopyValue(person, kABPersonEmailProperty);
+    CFIndex multiValueCount = ABMultiValueGetCount(multiValues);
     
-    for (CFIndex i = 0; i < ABMultiValueGetCount(multiValues); i++) {
-        NSString *emailAddress = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(multiValues, i);
+    if (multiValueCount) {
+        NSMutableArray *emailAddresses = [NSMutableArray array];
         
-        if ([OValidator isEmailValue:emailAddress]) {
-            [emailAddresses addObject:emailAddress];
+        for (CFIndex i = 0; i < multiValueCount; i++) {
+            NSString *emailAddress = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(multiValues, i);
+            
+            if ([OValidator isEmailValue:emailAddress]) {
+                [emailAddresses addObject:emailAddress];
+            }
         }
-    }
-    
-    CFRelease(multiValues);
-    
-    if ([emailAddresses count]) {
-        _emailField.value = emailAddresses;
         
-        if (![_emailField hasMultiValue]) {
-            _member.email = _emailField.value;
+        CFRelease(multiValues);
+        
+        if ([emailAddresses count]) {
+            _emailField.value = emailAddresses;
+            
+            if (![_emailField hasMultiValue]) {
+                _member.email = _emailField.value;
+            }
         }
     }
 }
@@ -743,35 +751,38 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)retrieveAddressesFromAddressBookPersonRecord:(ABRecordRef)person
 {
-    _addressBookAddresses = [NSMutableArray array];
-    
     ABMultiValueRef multiValues = ABRecordCopyValue(person, kABPersonAddressProperty);
+    CFIndex multiValueCount = ABMultiValueGetCount(multiValues);
     
-    for (CFIndex i = 0; i < ABMultiValueGetCount(multiValues); i++) {
-        NSString *label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(multiValues, i);
+    if (multiValueCount) {
+        _addressBookAddresses = [NSMutableArray array];
         
-        if ([label isEqualToString:(NSString *)kABHomeLabel]) {
-            [_addressBookAddresses addObject:[OOrigoProxy proxyFromAddressBookAddress:ABMultiValueCopyValueAtIndex(multiValues, i)]];
-        }
-    }
-    
-    CFRelease(multiValues);
-    
-    if ([_addressBookAddresses count] == 1) {
-        [_addressBookAddresses[0] addMember:_member];
-        [_addressBookAddresses removeAllObjects];
-    }
-    
-    if ([_addressBookHomeNumbers count]) {
-        if (![_addressBookAddresses count] && ![_member hasAddress]) {
-            if ([_addressBookHomeNumbers count] == 1) {
-                [[OOrigoProxy proxyWithType:kOrigoTypeResidence] addMember:_member];
+        for (CFIndex i = 0; i < multiValueCount; i++) {
+            NSString *label = (__bridge_transfer NSString *)ABMultiValueCopyLabelAtIndex(multiValues, i);
+            
+            if ([label isEqualToString:(NSString *)kABHomeLabel]) {
+                [_addressBookAddresses addObject:[OOrigoProxy proxyFromAddressBookAddress:ABMultiValueCopyValueAtIndex(multiValues, i)]];
             }
         }
         
-        if (([[_member residences] count] == 1) && ([_addressBookHomeNumbers count] == 1)) {
-            [_member residence].telephone = _addressBookHomeNumbers[0];
-            [_addressBookHomeNumbers removeAllObjects];
+        CFRelease(multiValues);
+        
+        if ([_addressBookAddresses count] == 1) {
+            [_addressBookAddresses[0] addMember:_member];
+            [_addressBookAddresses removeAllObjects];
+        }
+        
+        if ([_addressBookHomeNumbers count]) {
+            if (![_addressBookAddresses count] && ![_member hasAddress]) {
+                if ([_addressBookHomeNumbers count] == 1) {
+                    [[OOrigoProxy proxyWithType:kOrigoTypeResidence] addMember:_member];
+                }
+            }
+            
+            if (([[_member residences] count] == 1) && ([_addressBookHomeNumbers count] == 1)) {
+                [_member residence].telephone = _addressBookHomeNumbers[0];
+                [_addressBookHomeNumbers removeAllObjects];
+            }
         }
     }
 }
@@ -863,7 +874,7 @@ static NSInteger const kButtonIndexContinue = 1;
     if ([self actionIs:kActionRegister] && [self targetIs:kTargetJuvenile]) {
         if ([[_member guardians] count]) {
             [_nameField becomeFirstResponder];
-        } else {
+        } else if (!self.wasHidden) {
             [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
         }
     }
@@ -1042,7 +1053,7 @@ static NSInteger const kButtonIndexContinue = 1;
             id<OEntity> ancestor = [self.entity ancestor];
             
             if ([ancestor conformsToProtocol:@protocol(OMember)] && ![ancestor isCommitted]) {
-                text = [NSString stringWithFormat:@"%@\n\n%@", NSLocalizedString(@"Before you can register a minor, you must register his or her guardian(s).", @""), text];
+                text = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardian(s).", @"") stringByAppendingString:text separator:kSeparatorSpace];
             }
         }
     } else if (sectionKey == kSectionKeyMember) {

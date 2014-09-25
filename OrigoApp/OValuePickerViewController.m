@@ -204,10 +204,12 @@
     
     if ([self targetIs:kTargetSetting]) {
         [_settings setValue:pickedValue forSettingKey:_settingKey];
-        [self.navigationController popViewControllerAnimated:YES];
     } else if ([self targetIs:kTargetMember]) {
         self.returnData = pickedValue;
-        [self.dismisser dismissModalViewController:self];
+    } else if ([self targetIs:kTargetMembers]) {
+        if (self.isModal) {
+            self.returnData = _pickedValues;
+        }
     } else if ([self targetIs:kTargetAffiliation]) {
         if (cell.checked) {
             [[_origo membershipForMember:pickedValue] addAffiliation:_affiliation ofType:_affiliationType];
@@ -220,47 +222,40 @@
         }
         
         [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoinLastItem:NO]];
+        
+        if (self.isModal && _isMultiValuePicker && [_pickedValues count]) {
+            if (self.navigationItem.rightBarButtonItem == _multiRoleButtonOn) {
+                self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+            }
+        }
     }
     
-    if (_isMultiValuePicker) {
-        if (self.isModal) {
-            if ([_pickedValues count]) {
-                if (self.navigationItem.rightBarButtonItem == _multiRoleButtonOn) {
-                    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
-                }
-            }
-            
+    if (self.isModal) {
+        if (_isMultiValuePicker) {
             self.navigationItem.rightBarButtonItem.enabled = ([_pickedValues count] > 0);
-        }
-    } else {
-        if (self.isModal) {
-            self.returnData = _pickedValues;
-            [self.dismisser dismissModalViewController:self];
         } else {
-            [self.navigationController popViewControllerAnimated:YES];
+            [self.dismisser dismissModalViewController:self];
         }
+    } else if (!_isMultiValuePicker) {
+        [self.navigationController popViewControllerAnimated:YES];
     }
 }
 
 
 - (void)viewWillBeDismissed
 {
-    if (self.isModal && _isMultiValuePicker) {
-        if (self.didCancel) {
-            if ([self targetIs:kTargetRole]) {
-                NSString *roleType = [self.state roleTypeFromAspect];
-                NSArray *roleHolders = [_origo holdersOfRole:_affiliation ofType:roleType];
-                
-                for (id<OMember> roleHolder in roleHolders) {
-                    [[_origo membershipForMember:roleHolder] removeAffiliation:_affiliation ofType:_affiliationType];
-                }
-            } else if ([self targetIs:kTargetGroup]) {
-                for (id<OMember> groupMember in [_origo membersOfGroup:_affiliation]) {
-                    [[_origo membershipForMember:groupMember] removeAffiliation:_affiliation ofType:kAffiliationTypeGroup];
-                }
+    if (self.isModal && _isMultiValuePicker && self.didCancel) {
+        if ([self targetIs:kTargetRole]) {
+            NSString *roleType = [self.state roleTypeFromAspect];
+            NSArray *roleHolders = [_origo holdersOfRole:_affiliation ofType:roleType];
+            
+            for (id<OMember> roleHolder in roleHolders) {
+                [[_origo membershipForMember:roleHolder] removeAffiliation:_affiliation ofType:_affiliationType];
             }
-        } else {
-            self.returnData = _pickedValues;
+        } else if ([self targetIs:kTargetGroup]) {
+            for (id<OMember> groupMember in [_origo membersOfGroup:_affiliation]) {
+                [[_origo membershipForMember:groupMember] removeAffiliation:_affiliation ofType:kAffiliationTypeGroup];
+            }
         }
     }
 }

@@ -8,6 +8,12 @@
 
 #import "OAuthViewController.h"
 
+static CGFloat const kLogoHeight = 40.f;
+static CGFloat const kLogoFontSize = 26.f;
+
+static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
+static NSString * const kLogoText = @"..origo..";
+
 static NSInteger const kMaxActivationAttempts = 3;
 
 static NSInteger const kAlertTagWelcomeBack = 0;
@@ -32,6 +38,30 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 @implementation OAuthViewController
 
 #pragma mark - Auxiliary methods
+
+- (void)addLogoBanner
+{
+    CGFloat screenWidth = [OMeta screenWidth];
+    CGRect logoFrame = CGRectMake(0.f, kLogoHeight, screenWidth, kLogoHeight);
+    UILabel *logoBanner = [[UILabel alloc] initWithFrame:logoFrame];
+    logoBanner.backgroundColor = [UIColor toolbarColour];
+    logoBanner.font = [UIFont fontWithName:kLogoFontName size:kLogoFontSize];
+    logoBanner.text = kLogoText;
+    logoBanner.textAlignment = NSTextAlignmentCenter;
+    logoBanner.textColor = [UIColor windowTintColour];
+    
+    UIView *topHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, screenWidth, 0.5f)];
+    topHairline.backgroundColor = [UIColor toolbarHairlineColour];
+    [logoBanner addSubview:topHairline];
+    
+    UIView *bottomHairline = [[UIView alloc] initWithFrame:CGRectMake(0.f, kLogoHeight, screenWidth, 0.5f)];
+    bottomHairline.backgroundColor = [UIColor toolbarHairlineColour];
+    [logoBanner addSubview:bottomHairline];
+    
+    [self.view addSubview:logoBanner];
+    self.tableView.contentInset = UIEdgeInsetsMake(2.f * kLogoHeight, 0.f, 0.f, 0.f);
+}
+
 
 - (void)initialiseFields
 {
@@ -130,11 +160,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 #pragma mark - View lifecycle
 
-- (void)viewDidLoad
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super viewDidLoad];
+    [super viewWillAppear:animated];
     
-    [self.tableView addLogoBanner];
+    [self addLogoBanner];
 }
 
 

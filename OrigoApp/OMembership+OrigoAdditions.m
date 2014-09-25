@@ -306,6 +306,8 @@ static NSString * const kPlaceholderRole = @"placeholder";
         if ([self.member isUser]) {
             self.status = kMembershipStatusActive;
             self.isAdmin = @YES;
+        } else if ([self.member isWardOfUser]) {
+            self.status = kMembershipStatusActive;
         } else {
             self.status = kMembershipStatusInvited;
         }

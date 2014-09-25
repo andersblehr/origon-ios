@@ -547,7 +547,11 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 {
     if (!viewController.didCancel) {
         if ([viewController.identifier isEqualToString:kIdentifierMember]) {
-            if ([viewController targetIs:kTargetOrganiser]) {
+            if ([viewController targetIs:kTargetMember]) {
+                [_origo addMember:viewController.returnData];
+                
+                [self reloadSectionWithKey:kSectionKeyMembers];
+            } else if ([viewController targetIs:kTargetOrganiser]) {
                 [self reloadSectionWithKey:kSectionKeyOrganisers];
             }
         } if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
@@ -579,7 +583,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                     [_origo addMember:member];
                 }
                 
-                [self reloadSections];
+                [self reloadSectionWithKey:kSectionKeyMembers];
             } else if ([viewController aspectIs:kAspectParentRole]) {
                 [self reloadSectionWithKey:kSectionKeyParentContacts];
             }
