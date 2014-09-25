@@ -53,10 +53,11 @@
 @end
 
 
-@interface OTableViewController : UITableViewController<OTableViewController, OConnectionDelegate>
+@interface OTableViewController : UIViewController<OTableViewController, OConnectionDelegate>
 
 @property (nonatomic, readonly) OState *state;
 @property (nonatomic, readonly) OEntityProxy *entity;
+@property (nonatomic, readonly) UITableView *tableView;
 
 @property (nonatomic, assign, readonly) BOOL isModal;
 @property (nonatomic, assign, readonly) BOOL isPushed;

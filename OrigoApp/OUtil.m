@@ -114,8 +114,10 @@ static NSString * const kRootIdFormat = @"~%@";
     NSArray *memberRoles = [membership memberRoles];
     
     if (![membership.origo isOfType:kOrigoTypeResidence]) {
-        if ([membership.member isJuvenile] && ![[OMeta m].user isJuvenile]) {
-            details = [self guardianInfoForMember:membership.member];
+        id<OMember> member = membership.member;
+        
+        if ([member isJuvenile] && ![[OMeta m].user isJuvenile] && ![member isWardOfUser]) {
+            details = [self guardianInfoForMember:member];
         }
     }
     
