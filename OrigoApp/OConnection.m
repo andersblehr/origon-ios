@@ -133,7 +133,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 }
 
 
-#pragma mark - HTTP headers & URL parameters
+#pragma mark - Setting HTTP headers & URL parameters
 
 - (void)setValue:(NSString *)value forHTTPHeaderField:(NSString *)field
 {

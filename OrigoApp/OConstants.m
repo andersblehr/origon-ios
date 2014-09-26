@@ -148,8 +148,9 @@ NSInteger const kAgeOfConsent = 16;
 NSInteger const kAgeOfMajority = 18;
 
 // Geometry constant
-CGFloat const kBorderWidth = 0.5f;
+CGFloat const kNavigationBarHeight = 64.f;
 CGFloat const kToolbarBarHeight = 44.f;
+CGFloat const kBorderWidth = 0.5f;
 CGFloat const kContentInset = 14.f;
 CGFloat const kLineToHeaderHeightFactor = 1.5f;
 

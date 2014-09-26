@@ -148,8 +148,9 @@ extern NSInteger const kAgeOfConsent;
 extern NSInteger const kAgeOfMajority;
 
 // Geometry constants
-extern CGFloat const kBorderWidth;
+extern CGFloat const kNavigationBarHeight;
 extern CGFloat const kToolbarBarHeight;
+extern CGFloat const kBorderWidth;
 extern CGFloat const kContentInset;
 extern CGFloat const kLineToHeaderHeightFactor;
 
