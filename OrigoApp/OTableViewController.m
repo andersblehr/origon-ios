@@ -784,6 +784,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             [segmentsView addSubview:_segments];
             [segmentsView addSubview:segmentsHairline];
             [self.view addSubview:segmentsView];
+            
+            if (_tableView) {
+                UIEdgeInsets contentInset = _tableView.contentInset;
+                contentInset.top += kToolbarBarHeight;
+                _tableView.contentInset = contentInset;
+            }
         }
     } else if (_segments) {
         [_segments.superview removeFromSuperview];
