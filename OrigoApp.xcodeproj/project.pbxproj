@@ -561,9 +561,9 @@
 			isa = PBXGroup;
 			children = (
 				5C2E1133146ACFA9005BDE61 /* OConnectionDelegate.h */,
+				5CDE879C176F185E00272909 /* OInputCellDelegate.h */,
 				5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */,
 				5C3F9999178AC91100E31A44 /* OMemberExaminerDelegate.h */,
-				5CDE879C176F185E00272909 /* OInputCellDelegate.h */,
 				5C39EC1C166632570083DFEB /* OTableViewDataObserver.h */,
 				5CFD8E6D183CCEAF00DC3945 /* OTextInput.h */,
 			);
