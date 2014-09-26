@@ -459,7 +459,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
                         self.rowAnimation = UITableViewRowAnimationLeft;
                     }
                     
-                    _titleSegments = [self setTitleSegments:[_origo groups]];
+                    _titleSegments = [self setTitleSegments:groups];
                     _selectedSegment = _titleSegments.selectedSegmentIndex;
                 } else if (_titleSegments) {
                     _titleSegments = [self setTitleSegments:nil];

@@ -497,8 +497,8 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 {
     BOOL isManagedByUser = [self isUser];
     
-    if (!isManagedByUser && (![self isActive] || [self isJuvenile])) {
-        isManagedByUser = [self isHousemateOfUser];
+    if (!isManagedByUser && ![[OMeta m].user isJuvenile]) {
+        isManagedByUser = [self isHousemateOfUser] && (![self isActive] || [self isJuvenile]);
         
         if (!isManagedByUser) {
             BOOL mightBeManagedByUser = YES;

@@ -769,10 +769,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 _segments.selectedSegmentIndex = 0;
             }
         } else {
-            if (_tableView) {
-                _tableView.contentInset = UIEdgeInsetsMake(kToolbarBarHeight, 0.f, 0.f, 0.f);
-            }
-            
             _segmentTitles = [segmentTitles mutableCopy];
             _segments = [[UISegmentedControl alloc] initWithItems:segmentTitles];
             _segments.selectedSegmentIndex = 0;
@@ -787,14 +783,15 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             
             [segmentsView addSubview:_segments];
             [segmentsView addSubview:segmentsHairline];
-            
             [self.view addSubview:segmentsView];
         }
     } else if (_segments) {
-        _tableView.contentInset = UIEdgeInsetsZero;
-        
         [_segments.superview removeFromSuperview];
         _segments = nil;
+        
+        UIEdgeInsets contentInset = _tableView.contentInset;
+        contentInset.top -= kToolbarBarHeight;
+        _tableView.contentInset = contentInset;
     }
     
     return _segments;
@@ -940,20 +937,25 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     [self initialiseInstance];
     
+    CGRect tableViewFrame = self.view.frame;
+    tableViewFrame.size.height -= self.navigationController ? kNavigationBarHeight : 0.f;
+    
     if (_usesPlainTableViewStyle) {
-        _tableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStylePlain];
+        _tableView = [[UITableView alloc] initWithFrame:tableViewFrame style:UITableViewStylePlain];
         _tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     } else {
-        _tableView = [[UITableView alloc] initWithFrame:self.view.frame style:UITableViewStyleGrouped];
+        _tableView = [[UITableView alloc] initWithFrame:tableViewFrame style:UITableViewStyleGrouped];
     }
     
     _tableView.dataSource = self;
     _tableView.delegate = self;
     
     if (_segments) {
-        _tableView.contentInset = UIEdgeInsetsMake(kToolbarBarHeight, 0.f, 0.f, 0.f);
-        
         [self.view insertSubview:_tableView belowSubview:_segments.superview];
+        
+        UIEdgeInsets contentInset = _tableView.contentInset;
+        contentInset.top += kToolbarBarHeight;
+        _tableView.contentInset = contentInset;
     } else {
         [self.view addSubview:_tableView];
     }
@@ -999,7 +1001,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if ([_instance respondsToSelector:@selector(toolbarButtons)]) {
         if (!_isModal && (!self.toolbarItems || _didResurface || _wasHidden)) {
-            self.toolbarItems = [_instance toolbarButtons];
+            [self setToolbarItems:[_instance toolbarButtons] animated:YES];
         }
     }
     
@@ -1009,7 +1011,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [_tableView deselectRowAtIndexPath:selectedIndexPath animated:YES];
     }
     
-    [self.navigationController setToolbarHidden:(!self.toolbarItems) animated:YES];
+    [self.navigationController setToolbarHidden:!self.toolbarItems animated:YES];
     
     if (self.navigationController.navigationBar.translucent) {
         self.navigationController.navigationBar.translucent = NO;
