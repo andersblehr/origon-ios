@@ -12,20 +12,21 @@
 
 @required
 @property (strong, nonatomic) id value;
+@property (strong, nonatomic) NSString *placeholder;
 @property (strong, nonatomic, readonly) NSString *text;
 @property (strong, nonatomic, readonly) NSString *key;
 
 @property (nonatomic) BOOL editable;
 @property (nonatomic) BOOL hasEmphasis;
-@property (nonatomic, readonly) BOOL didChange;
+@property (nonatomic) BOOL isTitleField;
+@property (nonatomic, readonly) BOOL isEditableListCellField;
 @property (nonatomic, readonly) BOOL supportsMultiLineText;
+@property (nonatomic, readonly) BOOL didChange;
 
 - (BOOL)hasMultiValue;
 - (BOOL)hasValidValue;
 
 @optional
-@property (nonatomic) BOOL isTitleField;
-
 - (CGFloat)height;
 - (void)prepareForInput;
 

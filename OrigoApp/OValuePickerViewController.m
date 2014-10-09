@@ -166,7 +166,7 @@
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:candidate] groups] conjoinLastItem:NO];
         } else if ([candidate isJuvenile]) {
             cell.detailTextLabel.text = [OUtil guardianInfoForMember:candidate];
-        } else {
+        } else if ([self targetIs:kTargetMember] || [self targetIs:kTargetMembers]) {
             cell.detailTextLabel.text = [OUtil associationInfoForMember:candidate];
         }
     }

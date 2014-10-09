@@ -412,13 +412,9 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (BOOL)userCanEdit
 {
-    return [self userIsAdmin] || (![self hasAdmin] && [self userIsCreator]);
-}
-
-
-- (BOOL)userIsAdmin
-{
-    return [[[self membershipForMember:[OMeta m].user] isAdmin] boolValue];
+    OMembership *membership = [self membershipForMember:[OMeta m].user];
+    
+    return [[membership isAdmin] boolValue] || (![self hasAdmin] && [self userIsCreator]);
 }
 
 

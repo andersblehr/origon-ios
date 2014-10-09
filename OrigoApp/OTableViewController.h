@@ -46,6 +46,8 @@
 - (void)didDismissModalViewController:(OTableViewController *)viewController;
 - (void)viewWillBeDismissed;
 
+- (BOOL)isEditableListCellAtIndexPath:(NSIndexPath *)indexPath;
+- (void)didFinishEditingListCellField:(OInputField *)listCellField;
 - (void)maySetViewTitle:(NSString *)newTitle;
 - (void)didResumeFromBackground;
 - (void)didSignOut;

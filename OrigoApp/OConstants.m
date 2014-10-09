@@ -82,6 +82,7 @@ NSString * const kExternalKeyActivate = @"activate";
 NSString * const kExternalKeyActivationCode = @"activationCode";
 NSString * const kExternalKeyAuthEmail = @"authEmail";
 NSString * const kExternalKeyDeviceId = @"deviceId";
+NSString * const kExternalKeyEditableListCellContent = @"editableListCellContent";
 NSString * const kExternalKeyEntityClass = @"entityClass";
 NSString * const kExternalKeyPassword = @"password";
 NSString * const kExternalKeyRepeatPassword = @"repeatPassword";

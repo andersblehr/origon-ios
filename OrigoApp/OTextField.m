@@ -22,12 +22,13 @@ static CGFloat const kTextInsetY = 1.2f;
 
 @implementation OTextField
 
-@synthesize key = _key;
 @synthesize value = _value;
+@synthesize key = _key;
 @synthesize hasEmphasis = _hasEmphasis;
-@synthesize didChange = _didChange;
 @synthesize isTitleField = _isTitleField;
+@synthesize isEditableListCellField = _isEditableListCellField;
 @synthesize supportsMultiLineText = _supportsMultiLineText;
+@synthesize didChange = _didChange;
 
 
 #pragma mark - Auxiliary methods
@@ -141,27 +142,27 @@ static CGFloat const kTextInsetY = 1.2f;
     self = [super initWithFrame:CGRectZero];
     
     if (self) {
+        _key = key;
+        _inputCellDelegate = delegate;
+        _isEditableListCellField = [key isEqualToString:kExternalKeyEditableListCellContent];
+        _supportsMultiLineText = NO;
+        
         self.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.backgroundColor = [UIColor clearColor];
         self.contentMode = UIViewContentModeRedraw;
         self.delegate = delegate;
         self.enabled = NO;
-        self.font = [UIFont detailFont];
+        self.font = _isEditableListCellField ? [UIFont titleFont] : [UIFont detailFont];
         self.hidden = YES;
         self.keyboardType = UIKeyboardTypeDefault;
         self.placeholder = NSLocalizedString(key, kStringPrefixPlaceholder);
-        self.returnKeyType = UIReturnKeyNext;
+        self.returnKeyType = _isEditableListCellField ? UIReturnKeyDone : UIReturnKeyNext;
         self.textAlignment = NSTextAlignmentLeft;
         self.layer.borderWidth = kBorderWidth;
         self.layer.borderColor = [[UIColor clearColor] CGColor];
-        
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
-        
-        _key = key;
-        _inputCellDelegate = delegate;
-        _supportsMultiLineText = NO;
         
         [self addTarget:self action:@selector(textDidChange) forControlEvents:UIControlEventEditingChanged];
     }

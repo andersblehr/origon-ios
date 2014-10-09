@@ -13,6 +13,7 @@ extern NSInteger const kSectionIndexMinimumDisplayRowCount;
 @interface UITableView (OrigoAdditions)
 
 - (id)listCellWithStyle:(UITableViewCellStyle)style data:(id)data delegate:(id)delegate;
+- (id)editableListCellWithData:(id)data delegate:(id)delegate;
 - (id)inputCellWithEntity:(id<OEntity>)entity delegate:(id)delegate;
 - (id)inputCellWithReuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
 

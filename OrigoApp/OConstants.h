@@ -82,6 +82,7 @@ extern NSString * const kExternalKeyActivate;
 extern NSString * const kExternalKeyActivationCode;
 extern NSString * const kExternalKeyAuthEmail;
 extern NSString * const kExternalKeyDeviceId;
+extern NSString * const kExternalKeyEditableListCellContent;
 extern NSString * const kExternalKeyEntityClass;
 extern NSString * const kExternalKeyPassword;
 extern NSString * const kExternalKeyRepeatPassword;

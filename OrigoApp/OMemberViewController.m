@@ -71,7 +71,9 @@ static NSInteger const kButtonIndexContinue = 1;
     NSMutableDictionary *_cachedResidencesById;
     NSArray *_cachedResidences;
     NSArray *_cachedCandidates;
+    
     NSString *_role;
+    OTableViewCell *_roleCell;
     
     BOOL _didPerformLocalLookup;
 }
@@ -86,6 +88,19 @@ static NSInteger const kButtonIndexContinue = 1;
 - (NSString *)nameKey
 {
     return [self targetIs:kTargetJuvenile] ? kMappedKeyGivenName : kMappedKeyFullName;
+}
+
+
+- (void)cancelEditingListCellIfNeeded
+{
+    if (_roleCell && !_roleCell.selectable) {
+        OInputField *roleField = [_roleCell editableListCellField];
+        [roleField resignFirstResponder];
+        roleField.editable = NO;
+        roleField.value = _role;
+        
+        _roleCell.selectable = YES;
+    }
 }
 
 
@@ -792,6 +807,8 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)performEditAction
 {
+    [self cancelEditingListCellIfNeeded];
+    
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
     
     if ([_member isUser]) {
@@ -822,6 +839,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)performInfoAction
 {
+    [self cancelEditingListCellIfNeeded];
     
 }
 
@@ -847,6 +865,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)performAddAction
 {
+    [self cancelEditingListCellIfNeeded];
     [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
 }
 
@@ -966,12 +985,23 @@ static NSInteger const kButtonIndexContinue = 1;
         
         cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
         cell.textLabel.text = [residence shortAddress];
-        cell.detailTextLabel.text = [[OPhoneNumberFormatter formatterForNumber:residence.telephone] completelyFormattedNumberCanonicalised:YES];
+        
+        if ([residence.telephone hasValue]) {
+            cell.detailTextLabel.text = [[OPhoneNumberFormatter formatterForNumber:residence.telephone] completelyFormattedNumberCanonicalised:YES];
+        }
         
         [cell setDestinationId:kIdentifierOrigo selectableDuringInput:![self targetIs:kTargetJuvenile]];
     } else if (sectionKey == kSectionKeyRoles) {
-        cell.textLabel.text = [self dataAtIndexPath:indexPath];
-        cell.selectable = [_origo userCanEdit];
+        if ([_origo userCanEdit]) {
+            OInputField *roleField = [cell editableListCellField];
+            roleField.placeholder = NSLocalizedString(@"Responsibility", @"");
+            roleField.value = [self dataAtIndexPath:indexPath];
+            
+            cell.selectable = YES;
+        } else {
+            cell.textLabel.text = [self dataAtIndexPath:indexPath];
+            cell.selectable = NO;
+        }
     }
 }
 
@@ -1107,8 +1137,11 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
+    [self cancelEditingListCellIfNeeded];
+    
     if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles) {
         _role = [self dataAtIndexPath:indexPath];
+        _roleCell = cell;
         
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEditRole];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit responsibility", @"")];
@@ -1214,6 +1247,32 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
     }
+}
+
+
+- (BOOL)isEditableListCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    return ([self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles) && [_origo userCanEdit];
+}
+
+
+- (void)didFinishEditingListCellField:(OInputField *)listCellField
+{
+    NSString *editedRole = listCellField.value;
+    
+    if (![editedRole isEqualToString:_role]) {
+        NSString *roleType = [_membership typeOfAffiliation:_role];
+        
+        [_membership addAffiliation:editedRole ofType:roleType];
+        [_membership removeAffiliation:_role ofType:roleType];
+        
+        _role = editedRole;
+    }
+    
+    [listCellField resignFirstResponder];
+    listCellField.editable = NO;
+    
+    _roleCell.selectable = YES;
 }
 
 
@@ -1548,7 +1607,15 @@ static NSInteger const kButtonIndexContinue = 1;
             break;
             
         case kActionSheetTagEditRole:
-            [self.tableView cellForRowAtIndexPath:[self.tableView indexPathForSelectedRow]].selected = NO;
+            _roleCell.selected = NO;
+            
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                _roleCell.selectable = NO;
+                
+                OInputField *roleField = [_roleCell editableListCellField];
+                roleField.editable = YES;
+                [roleField becomeFirstResponder];
+            }
             
             break;
             
@@ -1657,24 +1724,6 @@ static NSInteger const kButtonIndexContinue = 1;
                 if (buttonTag != kButtonTagGuardianAddressYes) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
                 }
-            }
-            
-            break;
-        
-        case kActionSheetTagEditRole:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                NSString *roleType = [[_origo membershipForMember:_member] typeOfAffiliation:_role];
-                NSString *aspect = nil;
-                
-                if ([roleType isEqualToString:kAffiliationTypeMemberRole]) {
-                    aspect = kAspectMemberRole;
-                } else if ([roleType isEqualToString:kAffiliationTypeOrganiserRole]) {
-                    aspect = kAspectOrganiserRole;
-                } else if ([roleType isEqualToString:kAffiliationTypeParentRole]) {
-                    aspect = kAspectParentRole;
-                }
-                
-                [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{_role: aspect}];
             }
             
             break;

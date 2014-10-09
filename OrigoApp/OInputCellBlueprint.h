@@ -18,10 +18,13 @@ extern CGFloat const kPhotoFrameWidth;
 @property (nonatomic, assign) BOOL hasPhoto;
 @property (nonatomic, assign) BOOL fieldsAreLabeled;
 @property (nonatomic, assign) BOOL fieldsShouldDeemphasiseOnEndEdit;
+@property (nonatomic, assign) BOOL isEditableListCellBlueprint;
 
 @property (nonatomic) NSString *titleKey;
 @property (nonatomic) NSArray *detailKeys;
 @property (nonatomic) NSArray *inputKeys;
 @property (nonatomic) NSArray *multiLineTextKeys;
+
++ (OInputCellBlueprint *)editableListCellBlueprint;
 
 @end

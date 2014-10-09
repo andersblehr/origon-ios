@@ -25,8 +25,9 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic) NSString *destinationId;
 @property (nonatomic) id destinationMeta;
 
-@property (nonatomic, assign, readonly) BOOL selectableDuringInput;
+@property (nonatomic, assign, readonly) BOOL isInputCell;
 @property (nonatomic, assign) BOOL selectable;
+@property (nonatomic, assign) BOOL selectableDuringInput;
 @property (nonatomic, assign) BOOL editable;
 @property (nonatomic, assign) BOOL checked;
 
@@ -40,8 +41,9 @@ extern CGFloat const kCellAnimationDuration;
 - (OInputField *)inputFieldForKey:(NSString *)key;
 - (OInputField *)nextInputField;
 - (OInputField *)nextInvalidInputField;
+- (OInputField *)editableListCellField;
 
-- (BOOL)isListCell;
+- (BOOL)hasInputField:(id)inputField;
 - (BOOL)hasValueForKey:(NSString *)key;
 - (BOOL)hasValidValueForKey:(NSString *)key;
 
