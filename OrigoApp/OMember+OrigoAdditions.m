@@ -512,7 +512,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
                 
                 if (!isManagedByUser) {
                     for (OOrigo *origo in [self origos]) {
-                        isManagedByUser = isManagedByUser || [origo userIsAdmin];
+                        isManagedByUser = isManagedByUser || [origo userCanEdit];
                     }
                 }
             }

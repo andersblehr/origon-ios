@@ -30,6 +30,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 @private
     OState *_state;
     OInputCellBlueprint *_blueprint;
+    UITableViewCellStyle _style;
     
     NSMutableDictionary *_views;
     OInputField *_lastInputField;
@@ -48,8 +49,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
     titleBannerView.backgroundColor = [UIColor titleBackgroundColour];
     [titleBannerView setTranslatesAutoresizingMaskIntoConstraints:NO];
     
+    _views[kViewKeyTitleBanner] = titleBannerView;
     [self.contentView addSubview:titleBannerView];
-    [_views setObject:titleBannerView forKey:kViewKeyTitleBanner];
     
     [self addInputFieldForKey:_constrainer.titleKey];
     
@@ -72,12 +73,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
             photoPrompt.textColor = [UIColor imagePlaceholderTextColour];
             [photoPrompt setTranslatesAutoresizingMaskIntoConstraints:NO];
             
+            _views[kViewKeyPhotoPrompt] = photoPrompt;
             [photoButton addSubview:photoPrompt];
-            [_views setObject:photoPrompt forKey:kViewKeyPhotoPrompt];
         }
         
+        _views[kViewKeyPhotoFrame] = photoButton;
         [self.contentView addSubview:photoButton];
-        [_views setObject:photoButton forKey:kViewKeyPhotoFrame];
     }
 }
 
@@ -86,8 +87,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     OLabel *label = [[OLabel alloc] initWithKey:key centred:centred];
     
+    _views[[key stringByAppendingString:kViewKeySuffixLabel]] = label;
     [self.contentView addSubview:label];
-    [_views setObject:label forKey:[key stringByAppendingString:kViewKeySuffixLabel]];
 }
 
 
@@ -95,8 +96,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     OInputField *inputField = [_constrainer inputFieldWithKey:key];
     
+    _views[[key stringByAppendingString:kViewKeySuffixInputField]] = inputField;
     [self.contentView addSubview:inputField];
-    [_views setObject:inputField forKey:[key stringByAppendingString:kViewKeySuffixInputField]];
 }
 
 
@@ -106,23 +107,27 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     _views = [NSMutableDictionary dictionary];
     
-    if (_constrainer.titleKey) {
-        if (_blueprint.fieldsAreLabeled) {
-            [self addTitleField];
-        } else {
-            [self addLabelForKey:_constrainer.titleKey centred:YES];
-        }
-    }
-    
-    for (NSString *detailKey in _constrainer.detailKeys) {
-        if (_blueprint.fieldsAreLabeled) {
-            [self addLabelForKey:detailKey centred:NO];
+    if (_isInputCell) {
+        if (_constrainer.titleKey) {
+            if (_blueprint.fieldsAreLabeled) {
+                [self addTitleField];
+            } else {
+                [self addLabelForKey:_constrainer.titleKey centred:YES];
+            }
         }
         
-        [self addInputFieldForKey:detailKey];
+        for (NSString *detailKey in _constrainer.detailKeys) {
+            if (_blueprint.fieldsAreLabeled) {
+                [self addLabelForKey:detailKey centred:NO];
+            }
+            
+            [self addInputFieldForKey:detailKey];
+        }
+        
+        self.editable = [_state actionIs:kActionInput];
+    } else if (_editable) {
+        [self addInputFieldForKey:_constrainer.titleKey];
     }
-    
-    self.editable = [_state actionIs:kActionInput];
 }
 
 
@@ -134,8 +139,11 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     if (self) {
         _state = state;
+        _style = style;
+        _isInputCell = ![reuseIdentifier hasPrefix:kReuseIdentifierList];
         
-        if ([self isListCell]) {
+        if (!_isInputCell) {
+            _editable = (style == UITableViewCellStyleDefault);
             _selectable = ![_state actionIs:kActionInput];
         }
     }
@@ -170,9 +178,14 @@ static CGFloat const kShakeRepeatCount = 3.f;
     
     self = [self initWithStyle:style reuseIdentifier:reuseIdentifier state:state];
     
-    if (self && ![self isListCell]) {
-        _inputCellDelegate = delegate;
-        _blueprint = [_inputCellDelegate inputCellBlueprint];
+    if (self && (_isInputCell || _editable)) {
+        if (_isInputCell) {
+            _inputCellDelegate = delegate;
+            _blueprint = [_inputCellDelegate inputCellBlueprint];
+        } else if (_editable) {
+            _blueprint = [OInputCellBlueprint editableListCellBlueprint];
+        }
+        
         _constrainer = [[OInputCellConstrainer alloc] initWithCell:self blueprint:_blueprint delegate:delegate];
         
         [self addCellElements];
@@ -183,7 +196,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
-#pragma mark - Label & input view access
+#pragma mark - Label & input field access
 
 - (OLabel *)labelForKey:(NSString *)key
 {
@@ -232,11 +245,17 @@ static CGFloat const kShakeRepeatCount = 3.f;
 }
 
 
+- (OInputField *)editableListCellField
+{
+    return (!_isInputCell && _editable) ? [self inputFieldForKey:_constrainer.titleKey] : nil;
+}
+
+
 #pragma mark - Meta & validation
 
-- (BOOL)isListCell
+- (BOOL)hasInputField:(id)inputField
 {
-    return [self.reuseIdentifier hasPrefix:kReuseIdentifierList];
+    return [[_views allValues] containsObject:inputField];
 }
 
 
@@ -256,7 +275,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)prepareForDisplay
 {
-    if (![self isListCell]) {
+    if (_isInputCell) {
         if (_blueprint.hasPhoto) {
             [_views[kViewKeyPhotoFrame] addDropShadowForPhotoFrame];
         }
@@ -288,7 +307,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)clearInputFields
 {
-    if (![self isListCell] && _editable) {
+    if (_isInputCell && _editable) {
         for (NSString *key in _constrainer.inputKeys) {
             [self inputFieldForKey:key].value = nil;
         }
@@ -298,7 +317,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)redrawIfNeeded
 {
-    if (![self isListCell]) {
+    if (_isInputCell) {
         CGFloat desiredHeight = [_constrainer heightOfInputCell];
         
         if (abs(self.frame.size.height - desiredHeight) > 0.5f) {
@@ -364,17 +383,17 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)readData
 {
-    if ([self isListCell]) {
-        NSIndexPath *indexPath = [_state.viewController.tableView indexPathForCell:self];
-        NSInteger sectionKey = [_state.viewController sectionKeyForIndexPath:indexPath];
-        
-        [_state.viewController reloadSectionWithKey:sectionKey];
-    } else {
+    if (_isInputCell) {
         for (NSString *key in _constrainer.inputKeys) {
             [self inputFieldForKey:key].value = [_entity valueForKey:key];
         }
         
         [self redrawIfNeeded];
+    } else {
+        NSIndexPath *indexPath = [_state.viewController.tableView indexPathForCell:self];
+        NSInteger sectionKey = [_state.viewController sectionKeyForIndexPath:indexPath];
+        
+        [_state.viewController reloadSectionWithKey:sectionKey];
     }
 }
 
@@ -486,7 +505,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     _editable = editable;
     
-    if (![self isListCell]) {
+    if (_isInputCell) {
         for (NSString *key in _constrainer.inputKeys) {
             [self inputFieldForKey:key].editable = editable;
             
@@ -516,7 +535,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 {
     [super updateConstraints];
 
-    if (![self isListCell]) {
+    if (_isInputCell || _editable) {
         [self removeConstraints:[self constraints]];
         
         NSDictionary *alignedConstraints = [_constrainer constraintsWithAlignmentOptions];
@@ -528,6 +547,22 @@ static CGFloat const kShakeRepeatCount = 3.f;
             for (NSString *visualConstraints in constraintsWithOptions) {
                 [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualConstraints options:options metrics:nil views:_views]];
             }
+        }
+    }
+}
+
+
+- (void)prepareForReuse
+{
+    if (!_isInputCell && !_editable) {
+        self.textLabel.textColor = [UIColor textColour];
+        
+        if (_style == UITableViewCellStyleSubtitle) {
+            self.detailTextLabel.textColor = [UIColor textColour];
+        }
+        
+        for (UIView *subview in self.imageView.subviews) {
+            [subview removeFromSuperview];
         }
     }
 }

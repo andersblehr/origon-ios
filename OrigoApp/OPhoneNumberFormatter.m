@@ -240,7 +240,14 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
     if (_tokenOffset < [_format length]) {
         token = [_format substringWithRange:NSMakeRange(_tokenOffset, 1)];
         
-        _tokenOffset++;
+        if ([token isEqualToString:kTokenCanonical]) {
+            _canonicalOffset = _tokenOffset;
+            _tokenOffset++;
+            
+            token = [self nextToken];
+        } else {
+            _tokenOffset++;
+        }
     }
     
     return token;
@@ -257,9 +264,6 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         if (token) {
             if ([token isEqualToString:character] && ![kWildcardTokens containsString:token]) {
                 matchedCharacters = character;
-            } else if ([token isEqualToString:kTokenCanonical]) {
-                _canonicalOffset = [_formattedNumber length];
-                matchedCharacters = [self matchCharacter:character];
             } else if ([kWildcardTokens containsString:token]) {
                 if ([kWhitespaceCharacters containsString:character]) {
                     if ([token isEqualToString:kTokenWildcardStrict]) {
@@ -432,7 +436,9 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         }
     }
     
-    [formatter formatPhoneNumber:phoneNumber];
+    if (phoneNumber) {
+        [formatter formatPhoneNumber:phoneNumber];
+    }
     
     return formatter;
 }

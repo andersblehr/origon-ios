@@ -23,17 +23,7 @@ static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
     OTableViewCell *cell = [self dequeueReusableCellWithIdentifier:reuseIdentifier];
     
     if (cell) {
-        if ([cell isListCell]) {
-            cell.textLabel.textColor = [UIColor textColour];
-            
-            if (style == UITableViewCellStyleSubtitle) {
-                cell.detailTextLabel.textColor = [UIColor textColour];
-            }
-            
-            for (UIView *subview in cell.imageView.subviews) {
-                [subview removeFromSuperview];
-            }
-        } else {
+        if (cell.isInputCell) {
             cell.inputCellDelegate = delegate;
         }
     } else {
@@ -56,6 +46,12 @@ static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
     }
     
     return cell;
+}
+
+
+- (id)editableListCellWithData:(id)data delegate:(id)delegate
+{
+    return [self listCellWithStyle:UITableViewCellStyleDefault data:data delegate:delegate];
 }
 
 

@@ -654,6 +654,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             }
         }];
     }
+    
+    [viewController.view endEditing:YES];
 }
 
 
@@ -1231,13 +1233,24 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         _inputCell = cell;
     } else {
-        UITableViewCellStyle style = UITableViewCellStyleSubtitle;
+        id data = [self dataAtIndexPath:indexPath];
+        BOOL isEditableListCell = NO;
         
-        if ([_instance respondsToSelector:@selector(listCellStyleForSectionWithKey:)]) {
-            style = [_instance listCellStyleForSectionWithKey:[self sectionKeyForIndexPath:indexPath]];
+        if ([_instance respondsToSelector:@selector(isEditableListCellAtIndexPath:)]) {
+            isEditableListCell = [_instance isEditableListCellAtIndexPath:indexPath];
         }
         
-        cell = [tableView listCellWithStyle:style data:[self dataAtIndexPath:indexPath] delegate:_instance];
+        if (isEditableListCell) {
+            cell = [tableView editableListCellWithData:data delegate:_instance];
+        } else {
+            UITableViewCellStyle style = UITableViewCellStyleSubtitle;
+            
+            if ([_instance respondsToSelector:@selector(listCellStyleForSectionWithKey:)]) {
+                style = [_instance listCellStyleForSectionWithKey:[self sectionKeyForIndexPath:indexPath]];
+            }
+            
+            cell = [tableView listCellWithStyle:style data:data delegate:_instance];
+        }
     }
     
     return cell;
@@ -1472,29 +1485,33 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)textFieldDidBeginEditing:(OTextField *)textField
 {
-    if (textField == _titleField) {
+    if ([_inputCell hasInputField:textField]) {
+        [self inputFieldDidBecomeFirstResponder:textField];
+    } else if (textField == _titleField) {
         if ([_titleField.text hasValue]) {
             _titleField.selectedTextRange = [_titleField textRangeFromPosition:_titleField.beginningOfDocument toPosition:_titleField.endOfDocument];
         }
         
         [self setEditingTitle:YES];
-    } else {
-        [self inputFieldDidBecomeFirstResponder:textField];
     }
 }
 
 
 - (BOOL)textFieldShouldReturn:(OTextField *)textField
 {
-    if (textField == _titleField) {
-        if ([_titleField.text hasValue]) {
-            [_titleField resignFirstResponder];
-        }
-    } else {
+    if ([_inputCell hasInputField:textField]) {
         if ([_inputCell nextInputField]) {
             [self moveToNextInputField];
         } else {
             [self didFinishEditing];
+        }
+    } else if (textField == _titleField) {
+        if ([_titleField.text hasValue]) {
+            [_titleField resignFirstResponder];
+        }
+    } else if (textField.isEditableListCellField) {
+        if ([_instance respondsToSelector:@selector(didFinishEditingListCellField:)]) {
+            [_instance didFinishEditingListCellField:textField];
         }
     }
     
@@ -1504,14 +1521,14 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)textFieldDidEndEditing:(OTextField *)textField
 {
-    if (textField == _titleField) {
+    if ([_inputCell hasInputField:textField]) {
+        _inputCell.inputField = nil;
+    } else if (textField == _titleField) {
         if (_didCancel) {
             _didCancel = NO;
         } else {
             [self didFinishEditingTitle];
         }
-    } else {
-        _inputCell.inputField = nil;
     }
 }
 

@@ -233,12 +233,6 @@ static NSString * const kAddressTemplatesByCountryCode =
 }
 
 
-- (BOOL)userIsAdmin
-{
-    return [self instance] ? [[self instance] userIsAdmin] : YES;
-}
-
-
 - (BOOL)userIsMember
 {
     BOOL userIsMember = NO;

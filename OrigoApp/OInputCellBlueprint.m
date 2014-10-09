@@ -26,9 +26,23 @@ CGFloat const kPhotoFrameWidth = 55.f;
         _hasPhoto = NO;
         _fieldsAreLabeled = YES;
         _fieldsShouldDeemphasiseOnEndEdit = YES;
+        _isEditableListCellBlueprint = NO;
     }
     
     return self;
+}
+
+
+#pragma mark - Factory methods
+
++ (OInputCellBlueprint *)editableListCellBlueprint
+{
+    OInputCellBlueprint *blueprint = [[self alloc] init];
+    blueprint.titleKey = kExternalKeyEditableListCellContent;
+    blueprint.fieldsAreLabeled = NO;
+    blueprint.isEditableListCellBlueprint = YES;
+    
+    return blueprint;
 }
 
 

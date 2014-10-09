@@ -23,7 +23,6 @@ static CGFloat const kTextInsetLeft = -1.f;
     OInputCellConstrainer *_constrainer;
     
     UITextView *_placeholderView;
-    NSString *_placeholder;
     NSString *_lastKnownText;
     NSInteger _lastKnownLineCount;
 }
@@ -33,11 +32,13 @@ static CGFloat const kTextInsetLeft = -1.f;
 
 @implementation OTextView
 
+@synthesize placeholder = _placeholder;
 @synthesize key = _key;
 @synthesize hasEmphasis = _hasEmphasis;
-@synthesize didChange = _didChange;
 @synthesize isTitleField = _isTitleField;
+@synthesize isEditableListCellField = _isEditableListCellField;
 @synthesize supportsMultiLineText = _supportsMultiLineText;
+@synthesize didChange = _didChange;
 
 
 #pragma mark - Auxiliary methods
@@ -118,6 +119,12 @@ static CGFloat const kTextInsetLeft = -1.f;
     self = [super initWithFrame:CGRectZero textContainer:nil];
     
     if (self) {
+        _key = key;
+        _constrainer = constrainer;
+        _placeholder = NSLocalizedString(_key, kStringPrefixPlaceholder);
+        _isEditableListCellField = NO;
+        _supportsMultiLineText = YES;
+        
         self.autocapitalizationType = UITextAutocapitalizationTypeSentences;
         self.autocorrectionType = UITextAutocorrectionTypeNo;
         self.backgroundColor = [UIColor clearColor];
@@ -133,14 +140,8 @@ static CGFloat const kTextInsetLeft = -1.f;
         self.scrollEnabled = NO;
         self.textAlignment = NSTextAlignmentLeft;
         self.textContainerInset = UIEdgeInsetsMake(kTextInsetTop, kTextInsetLeft, 0.f, 0.f);
-        
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisHorizontal];
-        
-        _key = key;
-        _constrainer = constrainer;
-        _placeholder = NSLocalizedString(_key, kStringPrefixPlaceholder);
-        _supportsMultiLineText = YES;
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:nil];
     }

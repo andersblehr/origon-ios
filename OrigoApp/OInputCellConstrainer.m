@@ -13,6 +13,9 @@ static NSString * const kDelimitingSpace               = @"-10-";
 static NSString * const kVConstraintsInitial           = @"V:|";
 static NSString * const kVConstraintsInitialWithTitle  = @"V:|-44-";
 
+static NSString * const kVConstraintsEditableListCell  = @"V:|-10-[editableListCellContentField(25)]";
+static NSString * const kHConstraintsEditableListCell  = @"H:|-12-[editableListCellContentField]-12-|";
+
 static NSString * const kVConstraintsElementTopmost    = @"[%@(%.f)]";
 static NSString * const kVConstraintsElement           = @"-%.f-[%@(%.f)]";
 static NSString * const kHConstraintsCentredLabel      = @"H:|-25-[%@]-25-|";
@@ -192,6 +195,20 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 
 #pragma mark - Generating visual constraints strings
+
+- (NSArray *)editableListCellConstraints
+{
+    NSArray *constraints = nil;
+    
+    if (_titleKey) {
+        [self configureElementsForKey:_titleKey];
+        
+        constraints = @[kVConstraintsEditableListCell, kHConstraintsEditableListCell];
+    }
+    
+    return constraints ? constraints : [NSArray array];
+}
+
 
 - (NSArray *)titleConstraints
 {
@@ -435,7 +452,9 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
         NSNumber *allTrailingOption = @(NSLayoutFormatAlignAllTrailing);
         NSNumber *noAlignmentOption = @0;
         
-        if (_blueprint.fieldsAreLabeled) {
+        if (_blueprint.isEditableListCellBlueprint) {
+            constraints[noAlignmentOption] = [self editableListCellConstraints];
+        } else if (_blueprint.fieldsAreLabeled) {
             NSMutableArray *allTrailingConstraints = [NSMutableArray array];
             [allTrailingConstraints addObjectsFromArray:[self labeledVerticalLabelConstraints]];
             
@@ -508,7 +527,9 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
         inputField = [[OTextField alloc] initWithKey:key delegate:_delegate];
     }
     
-    inputField.isTitleField = [key isEqualToString:_titleKey];
+    if (!inputField.isEditableListCellField) {
+        inputField.isTitleField = [key isEqualToString:_titleKey];
+    }
     
     if ([OValidator isPhoneNumberKey:key]) {
         inputField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
