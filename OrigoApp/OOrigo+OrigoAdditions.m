@@ -8,8 +8,10 @@
 
 #import "OOrigo+OrigoAdditions.h"
 
+NSString * const kOrigoTypeAlumni = @"alumni";
+NSString * const kOrigoTypeCommunity = @"community";
 NSString * const kOrigoTypeFriends = @"friends";
-NSString * const kOrigoTypeOther = @"other";
+NSString * const kOrigoTypeGeneral = @"general";
 NSString * const kOrigoTypeOrganisation = @"organisation";
 NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
 NSString * const kOrigoTypeResidence = @"residence";
@@ -173,7 +175,9 @@ NSString * const kOrigoTypeTeam = @"team";
     NSMutableArray *members = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isFull]) {
+        BOOL isCommunityMembership = [self isOfType:kOrigoTypeCommunity] && ![membership.member isJuvenile];
+        
+        if ([membership isFull] || isCommunityMembership) {
             [members addObject:membership.member];
         }
     }
@@ -247,6 +251,48 @@ NSString * const kOrigoTypeTeam = @"team";
     }
     
     return [parentContacts sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
+- (NSArray *)admins
+{
+    NSMutableArray *admins = [NSMutableArray array];
+    
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership.isAdmin boolValue]) {
+            [admins addObject:membership.member];
+        }
+    }
+    
+    return [admins sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
+- (NSArray *)adminCandidates
+{
+    NSMutableArray *adminCandidates = [NSMutableArray array];
+    
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership.member isActive] && ([membership isFull] || [self isJuvenile])) {
+            [adminCandidates addObject:membership.member];
+        }
+    }
+    
+    return [adminCandidates sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
+#pragma mark - Member residences
+
+- (NSArray *)memberResidences
+{
+    NSMutableSet *residences = [NSMutableSet set];
+    
+    for (OMember *member in [self members]) {
+        [residences unionSet:[NSSet setWithArray:[member residences]]];
+    }
+    
+    return [[residences allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -388,7 +434,7 @@ NSString * const kOrigoTypeTeam = @"team";
         member = [member instance];
         
         for (OMembership *membership in self.memberships) {
-            if (!targetMembership && (membership.member == member) && ![membership hasExpired]) {
+            if (!targetMembership && membership.member == member && ![membership hasExpired]) {
                 targetMembership = membership;
             }
         }
@@ -414,7 +460,7 @@ NSString * const kOrigoTypeTeam = @"team";
 {
     OMembership *membership = [self membershipForMember:[OMeta m].user];
     
-    return [[membership isAdmin] boolValue] || (![self hasAdmin] && [self userIsCreator]);
+    return [membership.isAdmin boolValue] || (![self hasAdmin] && [self userIsCreator]);
 }
 
 
@@ -529,9 +575,9 @@ NSString * const kOrigoTypeTeam = @"team";
         
         for (OMembership *membership in [self allMemberships]) {
             if ([membership isFull]) {
-                if ((membership != directMembership) && ![membership isBeingDeleted]) {
+                if (membership != directMembership && ![membership isBeingDeleted]) {
                     for (OMembership *residency in [membership.member residencies]) {
-                        if ((residency.origo != self) && ![residency isBeingDeleted]) {
+                        if (residency.origo != self && ![residency isBeingDeleted]) {
                             indirectlyKnows = indirectlyKnows || [residency.origo hasMember:member];
                         }
                     }
@@ -576,6 +622,42 @@ NSString * const kOrigoTypeTeam = @"team";
 }
 
 
+#pragma mark - Community memberships expiration
+
+- (void)expireCommunityResidence:(id<OOrigo>)residence
+{
+    if ([self isOfType:kOrigoTypeCommunity]) {
+        for (OMember *resident in [residence residents]) {
+            OMembership *membership = [self membershipForMember:resident];
+            
+            if ([membership isFull]) {
+                [membership expire];
+            }
+        }
+    }
+}
+
+
+#pragma mark - Type conversion
+
+- (void)convertToType:(NSString *)type
+{
+    if (![type isEqualToString:self.type]) {
+        if ([self isOfType:kOrigoTypeCommunity]) {
+            for (id<OMember> member in [self members]) {
+                id<OMembership> membership = [self membershipForMember:member];
+                
+                if ([membership isAssociate]) {
+                    [membership promoteToFull];
+                }
+            }
+        }
+        
+        self.type = type;
+    }
+}
+
+
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
 
 - (BOOL)isTransient
@@ -583,7 +665,7 @@ NSString * const kOrigoTypeTeam = @"team";
     BOOL isTransient = [super isTransient];
     
     if (!isTransient) {
-        isTransient = [self isOfType:kOrigoTypeRoot] && (self != [[OMeta m].user root]);
+        isTransient = [self isOfType:kOrigoTypeRoot] && self != [[OMeta m].user root];
     }
     
     return isTransient;

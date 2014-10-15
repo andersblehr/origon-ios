@@ -70,7 +70,7 @@ static CGFloat const kTextInsetLeft = -1.f;
             lineCount = [self.text lineCountWithFont:self.font maxWidth:textWidth];
             
             if (_hasEmphasis) {
-                if ((lineCount > 1) && (lineCount < kTextViewMaximumLines)) {
+                if (lineCount > 1 && lineCount < kTextViewMaximumLines) {
                     lineCount++;
                 } else if (lineCount > kTextViewMaximumLines) {
                     lineCount = kTextViewMaximumLines;

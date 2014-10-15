@@ -240,7 +240,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 }
 
 
-- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+- (NSString *)footerContentForSectionWithKey:(NSInteger)sectionKey
 {
     NSString *text = nil;
     

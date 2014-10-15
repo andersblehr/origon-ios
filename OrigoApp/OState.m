@@ -18,10 +18,12 @@ NSString * const kActionPick = @"pick";
 NSString * const kActionRegister = @"register";
 NSString * const kActionSignIn = @"signin";
 
+NSString * const kTargetAdmin = @"admin";
 NSString * const kTargetAffiliation = @"affiliation";
 NSString * const kTargetDevices = @"devices";
 NSString * const kTargetElder = @"elder";
 NSString * const kTargetEmail = @"email";
+NSString * const kTargetGender = @"gender";
 NSString * const kTargetGroup = @"group";
 NSString * const kTargetGroups = @"groups";
 NSString * const kTargetGuardian = @"guardian";
@@ -30,6 +32,7 @@ NSString * const kTargetJuvenile = @"juvenile";
 NSString * const kTargetMember = @"regular";
 NSString * const kTargetMembers = @"members";
 NSString * const kTargetOrganiser = @"organiser";
+NSString * const kTargetOrigoType = @"origoType";
 NSString * const kTargetRelation = @"relation";
 NSString * const kTargetRole = @"role";
 NSString * const kTargetRoles = @"roles";
@@ -38,6 +41,7 @@ NSString * const kTargetSettings = @"settings";
 NSString * const kTargetUser = @"user";
 NSString * const kTargetWard = @"ward";
 
+NSString * const kAspectAdmin = @"admin";
 NSString * const kAspectDefault = @"default";
 NSString * const kAspectEditable = @"editable";
 NSString * const kAspectGroup = @"group";
@@ -72,8 +76,9 @@ static OState *_activeState = nil;
         
         if (_activeState) {
             _aspect = _activeState.aspect;
-            _currentOrigo = _activeState.currentOrigo;
             _currentMember = _activeState.currentMember;
+            _currentOrigo = _activeState.currentOrigo;
+            _baseOrigo = _activeState.baseOrigo;
             _pivotMember = _activeState->_pivotMember;
         }
         
@@ -153,9 +158,12 @@ static OState *_activeState = nil;
             isMatch = isMatch || [self aspectIs:kAspectParentRole];
         } else if ([target isEqualToString:kTargetGroup]) {
             isMatch = isMatch || [self aspectIs:kAspectGroup];
+        } else if ([target isEqualToString:kTargetAdmin]) {
+            isMatch = isMatch || [self aspectIs:kAspectAdmin];
         } else if ([target isEqualToString:kTargetAffiliation]) {
             isMatch = isMatch || [self targetIs:kTargetRole];
             isMatch = isMatch || [self targetIs:kTargetGroup];
+            isMatch = isMatch || [self targetIs:kTargetAdmin];
         } else if ([target isEqualToString:kTargetSetting]) {
             // TODO: OR together all setting keys
         }
@@ -167,15 +175,6 @@ static OState *_activeState = nil;
 
 - (BOOL)aspectIs:(NSString *)aspect
 {
-    BOOL isMatch = [_aspect isEqualToString:aspect];
-    
-    if (!isMatch) {
-        if ([aspect isEqualToString:kAspectRole]) {
-            isMatch = isMatch || [_aspect isEqualToString:kAspectMemberRole];
-            isMatch = isMatch || [_aspect isEqualToString:kAspectParentRole];
-        }
-    }
-    
     return [_aspect isEqualToString:aspect];
 }
 
@@ -331,6 +330,10 @@ static OState *_activeState = nil;
         } else if ([target conformsToProtocol:@protocol(OOrigo)]) {
             _currentOrigo = target;
             _target = _currentOrigo.type;
+            
+            if ([_currentOrigo isOfType:kOrigoTypeCommunity]) {
+                _baseOrigo = _currentOrigo;
+            }
             
             if ([_currentOrigo isJuvenile] && ![_currentMember isJuvenile]) {
                 NSArray *wardsInOrigo = [_currentMember wardsInOrigo:_currentOrigo];

@@ -8,6 +8,7 @@
 
 #import "OCrypto.h"
 
+//static NSString * const kDefaultSeasoning = @"RKPAAXYFRYDVM3";
 static NSString * const kDefaultSeasoning = @"socroilgao";
 
 static NSString * const kCredentialsFormat = @"%@:%@";
@@ -109,7 +110,7 @@ static NSInteger const kActivationCodeLength = 6;
             char buffer[3] = {0,0,0};
             short bufferLength = 0;
             
-            while ((bufferLength < 3) && (i < [data length])) {
+            while (bufferLength < 3 && i < [data length]) {
                 buffer[bufferLength++] = ((char *)[data bytes])[i++];
             }
             

@@ -14,7 +14,7 @@ static NSInteger const kParentCandidateStatusFather = 0x02;
 static NSInteger const kParentCandidateStatusBoth = 0x03;
 
 static NSInteger const kActionSheetTagGender = 0;
-static NSInteger const kButtonTagFemale = 0;
+static NSInteger const kButtonTagMale = 0;
 
 static NSInteger const kActionSheetTagBothParents = 1;
 static NSInteger const kActionSheetTagParent = 2;
@@ -113,19 +113,19 @@ static OMemberExaminer *_instance = nil;
 {
     BOOL isJuvenile = [_member isJuvenile];
     
-    NSString *femaleGender = [OUtil genderTermForGender:kGenderFemale isJuvenile:isJuvenile];
     NSString *maleGender = [OUtil genderTermForGender:kGenderMale isJuvenile:isJuvenile];
+    NSString *femaleGender = [OUtil genderTermForGender:kGenderFemale isJuvenile:isJuvenile];
     NSString *prompt = nil;
     
     if ([_member isUser]) {
-        prompt = [NSString stringWithFormat:NSLocalizedString(@"Are you a %@ or a %@?", @""), femaleGender, maleGender];
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"Are you a %@ or a %@?", @""), maleGender, femaleGender];
     } else {
-        prompt = [NSString stringWithFormat:NSLocalizedString(@"Is %@ a %@ or a %@?", @""), [_member givenName], femaleGender, maleGender];
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"Is %@ a %@ or a %@?", @""), [_member givenName], maleGender, femaleGender];
     }
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagGender];
-    [actionSheet addButtonWithTitle:[femaleGender capitalizedString] tag:kButtonTagFemale];
-    [actionSheet addButtonWithTitle:[maleGender capitalizedString]];
+    [actionSheet addButtonWithTitle:[maleGender stringByCapitalisingFirstLetter] tag:kButtonTagMale];
+    [actionSheet addButtonWithTitle:[femaleGender stringByCapitalisingFirstLetter]];
     
     [actionSheet show];
 }
@@ -330,7 +330,7 @@ static OMemberExaminer *_instance = nil;
         
         switch (actionSheet.tag) {
             case kActionSheetTagGender:
-                [_member setGender:buttonTag == kButtonTagFemale ? kGenderFemale : kGenderMale];
+                [_member setGender:buttonTag == kButtonTagMale ? kGenderMale : kGenderFemale];
                 
                 break;
                 

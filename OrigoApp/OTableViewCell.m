@@ -143,7 +143,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
         _isInputCell = ![reuseIdentifier hasPrefix:kReuseIdentifierList];
         
         if (!_isInputCell) {
-            _editable = (style == UITableViewCellStyleDefault);
+            _editable = style == UITableViewCellStyleDefault;
             _selectable = ![_state actionIs:kActionInput];
         }
     }
@@ -454,7 +454,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)setDestinationId:(NSString *)destinationId
 {
-    [self setDestinationId:destinationId selectableDuringInput:NO];
+    if (destinationId) {
+        [self setDestinationId:destinationId selectableDuringInput:NO];
+    } else {
+        _destinationId = nil;
+        
+        self.accessoryType = UITableViewCellAccessoryNone;
+    }
 }
 
 
@@ -554,15 +560,13 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (void)prepareForReuse
 {
+    [super prepareForReuse];
+    
     if (!_isInputCell && !_editable) {
         self.textLabel.textColor = [UIColor textColour];
         
         if (_style == UITableViewCellStyleSubtitle) {
             self.detailTextLabel.textColor = [UIColor textColour];
-        }
-        
-        for (UIView *subview in self.imageView.subviews) {
-            [subview removeFromSuperview];
         }
     }
 }

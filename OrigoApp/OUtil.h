@@ -22,8 +22,9 @@
 + (NSString *)guardianInfoForMember:(id<OMember>)member;
 
 + (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem;
-+ (NSString *)commaSeparatedListOfMembers:(id)members conjoinLastItem:(BOOL)conjoinLastItem;
++ (NSString *)commaSeparatedListOfMembers:(id)members withRolesInOrigo:(id<OOrigo>)origo;
 
++ (NSArray *)eligibleOrigoTypesForOrigo:(id<OOrigo>)origo;
 + (NSArray *)sortedGroupsOfResidents:(id)residents excluding:(id<OMember>)excludedResident;
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;
 

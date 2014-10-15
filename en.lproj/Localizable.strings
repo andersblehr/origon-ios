@@ -15,19 +15,25 @@
 "[label] activate" = "Enter activation code";
 "[label] address" = "Address";
 "[label] club" = "Club";
+"[label] createdBy" = "Created by";
 "[label] dateOfBirth" = "Age";
 "[label] descriptionText" = "Description";
 "[label] email" = "Email";
+"[label] gender" = "Gender";
 "[label] mobilePhone" = "Mobile";
+"[label] modifiedBy" = "Last modified by";
+"[label] name" = "Name";
 "[label] organisationDescription" = "Description";
 "[label] preschool" = "Preschool";
 "[label] school" = "School";
 "[label] signIn" = "Sign in or sign up";
 "[label] telephone" = "Telephone";
+"[label] type" = "Type";
 "[label] institution" = "Institution";
 
 // Alternate labels
 "[alternate label] dateOfBirth" = "Born";
+"[alternate label] createdBy" = "Registered by";
 
 // Placeholders
 "[placeholder] activationCode" = "Activation code from email";
@@ -48,7 +54,7 @@
 "[placeholder] preschool" = "Name of preschool";
 "[placeholder] preschoolClass" = "Class";
 "[placeholder] repeatPassword" = "Repeat your password";
-"[placeholder] residenceName" = "Moniker";
+"[placeholder] residenceName" = "Moniker for this address";
 "[placeholder] school" = "Name of school";
 "[placeholder] schoolClass" = "Class";
 "[placeholder] studyGroup" = "Group moniker";
@@ -66,50 +72,100 @@
  ***/
 
 // Origo titles
-"[title] residence" = "Household";
-"[title] friends" = "Party of friends";
-"[title] team" = "Team";
+"[title] alumni" = "Alumni group";
+"[title] community" = "Local community";
+"[title] friends" = "Private list of friends";
+"[title] general" = "Just a group";
 "[title] organisation" = "Organisation";
 "[title] preschoolClass" = "Preschool class";
+"[title] residence" = "Household";
 "[title] schoolClass" = "School class";
-"[title] studyGroup" = "Student group";
-"[title] other" = "Other group";
+"[title] studyGroup" = "Study group";
+"[title] team" = "Team";
 
 // Registration titles
-"[registration title] residence" = "New address";
-"[registration title] friends" = "New party of friends";
-"[registration title] team" = "New team";
+"[registration title] alumni" = "New alumni group";
+"[registration title] community" = "New local community";
+"[registration title] friends" = "New list";
+"[registration title] general" = "New group";
 "[registration title] organisation" = "New organisation";
 "[registration title] preschoolClass" = "New preschool class";
+"[registration title] residence" = "New address";
 "[registration title] schoolClass" = "New school class";
 "[registration title] studyGroup" = "New student group";
-"[registration title] other" = "New group";
+"[registration title] team" = "New team";
 
 // Registration footers
-"[registration footer] residence" = "Tap [+] to add members to the household.";
+"[registration footer] alumni" = "Tap [+] to add alums.";
+"[registration footer] community" = "Tap [+] to add households.";
 "[registration footer] friends" = "Tap [+] to add friends.";
-"[registration footer] team" = "Tap [+] to add players.";
+"[registration footer] general" = "Tap [+] to add members.";
 "[registration footer] organisation" = "Tap [+] to add members.";
 "[registration footer] preschoolClass" = "Tap [+] to add children to the class.";
+"[registration footer] residence" = "Tap [+] to add members to the household.";
 "[registration footer] schoolClass" = "Tap [+] to add students to the class.";
 "[registration footer] studyGroup" = "Tap [+] to add students to the class.";
-"[registration footer] other" = "Tap [+] to add members.";
+"[registration footer] team" = "Tap [+] to add players.";
 
 // Member registration button titles
-"[add member] residence" = "New member";
-"[add member] friends" = "Add friend";
-"[add member] team" = "Add player";
-"[add member] organisation" = "Add member";
-"[add member] preschoolClass" = "Add child";
-"[add member] schoolClass" = "Add student";
-"[add member] studyGroup" = "Add student";
-"[add member] other" = "Add member";
+"[add member] alumni" = "Register alum";
+"[add member] community" = "Register member";
+"[add member] friends" = "Register friend";
+"[add member] general" = "Register member";
+"[add member] organisation" = "Register member";
+"[add member] preschoolClass" = "Register child";
+"[add member] residence" = "Register member";
+"[add member] schoolClass" = "Register student";
+"[add member] studyGroup" = "Register student";
+"[add member] team" = "Register player";
+
+// Member role titles
+"[member role] alumni" = "Responsibility";
+"[member role] community" = "Responsibility";
+"[member role] general" = "Responsibility";
+"[member role] organisation" = "Responsibility";
+"[member role] schoolClass" = "Responsibility";
+"[member role] studyGroup" = "Responsibility";
+"[member role] team" = "Team role";
+
+// Member list titles
+"[members] alumni" = "Alumni";
+"[members] friends" = "Friends";
+"[members] general" = "Members";
+"[members] organisation" = "Members";
+"[members] preschoolClass" = "Children";
+"[members] residence" = "In the household";
+"[members] schoolClass" = "Students";
+"[members] studyGroup" = "Participants";
+"[members] team" = "Players";
+
+// Member registration titles
+"[member registration] alumni" = "New alum";
+"[member registration] community" = "New member";
+"[member registration] friends" = "On the list";
+"[member registration] general" = "New member";
+"[member registration] organisation" = "New member";
+"[member registration] preschoolClass" = "New child";
+"[member registration] residence" = "In the household";
+"[member registration] schoolClass" = "New student";
+"[member registration] studyGroup" = "New student";
+"[member registration] team" = "New participant";
+
+// Origo collective titles
+"[all members] alumni" = "All alumni";
+"[all members] community" = "All members";
+"[all members] friends" = "Everybody";
+"[all members] general" = "All members";
+"[all members] organisation" = "All members";
+"[all members] residence" = "The whole household";
+"[all members] studyGroup" = "The whole group";
+"[all members] team" = "The whole group";
 
 // Organiser registration button titles
-"[add organiser] preschoolClass" = "Add teacher";
-"[add organiser] schoolClass" = "Add teacher";
-"[add organiser] studyGroup" = "Add lecturer";
-"[add organiser] team" = "Add coach";
+"[add organiser] preschoolClass" = "Register teacher";
+"[add organiser] schoolClass" = "Register teacher";
+"[add organiser] studyGroup" = "Register lecturer";
+"[add organiser] team" = "Register coach";
 
 // Organiser titles
 "[organiser] preschoolClass" = "Teacher";
@@ -130,51 +186,16 @@
 "[organiser role] team" = "Coach role";
 
 // Register organiser role button titles
-"[add organiser role] preschoolClass" = "Add responsibility";
-"[add organiser role] schoolClass" = "Add responsibility";
-"[add organiser role] studyGroup" = "Add responsibility";
-"[add organiser role] team" = "Add coach role";
+"[add organiser role] preschoolClass" = "Register responsibility";
+"[add organiser role] schoolClass" = "Register responsibility";
+"[add organiser role] studyGroup" = "Register responsibility";
+"[add organiser role] team" = "Register coach role";
 
 // Edit organiser role button titles
 "[edit organiser role] preschoolClass" = "Edit responsibility";
 "[edit organiser role] schoolClass" = "Edit responsibility";
 "[edit organiser role] studyGroup" = "Edit responsibility";
 "[edit organiser role] team" = "Edit coach role";
-
-// Member role titles
-"[member role] team" = "Position";
-"[member role] organisation" = "Responsibility";
-"[member role] schoolClass" = "Responsibility";
-"[member role] studyGroup" = "Responsibility";
-"[member role] other" = "Responsibility";
-
-// Member list titles
-"[members] residence" = "In the household";
-"[members] friends" = "In the party";
-"[members] team" = "Players";
-"[members] organisation" = "Members";
-"[members] preschoolClass" = "Children";
-"[members] schoolClass" = "Students";
-"[members] studyGroup" = "Participants";
-"[members] other" = "Members";
-
-// Member registration titles
-"[member registration] residence" = "In the household";
-"[member registration] friends" = "In the party";
-"[member registration] team" = "New participant";
-"[member registration] organisation" = "New member";
-"[member registration] preschoolClass" = "New child";
-"[member registration] schoolClass" = "New student";
-"[member registration] studyGroup" = "New student";
-"[member registration] other" = "New member";
-
-// Origo collective titles
-"[all members] residence" = "The whole household";
-"[all members] friends" = "The whole group";
-"[all members] team" = "The whole group";
-"[all members] organisation" = "All members";
-"[all members] studyGroup" = "The whole group";
-"[all members] other" = "All members";
 
 
 /***
@@ -189,9 +210,10 @@
 
 // Nouns
 "address" = "address;the address;addresses;the addresses;-;-";
+"administrator" = "administrator;-;administrators;-;-;-";
 "coach" = "coach;-;coaches;-;-;-";
 "father" = "father;the father;-;-;your father;%@'s father";
-"group" = "-;-;-;-;my groups;%@'s groups";
+"group" = "group;-;-;-;my groups;%@'s groups";
 "guardian" = "guardian;-;guardians;-;-;-";
 "household" = "household;the household;-;-;-;-";
 "lecturer" = "lecturer;-;lecturers;-;-;-";
@@ -255,7 +277,7 @@
 "%@ at %@" = "%@ at %@";
 "%d years" = "%d";
 "Member of %@" = "Member of %@";
-"Guardian of %@" = "Guardian of %@";
+"Parent of %@" = "Parent of %@";
 "%@ (%@ of %@)" = "%@ (%@ of %@)";
 "%@ in %@" = "%@ in %@";
 
@@ -308,6 +330,10 @@
  * OOrigoViewController strings
  ***/
 
+// Headers
+"Households" = "Households";
+"Members" = "Members";
+
 // Footers
 "Tap [+] to add another guardian in the household." = "Tap [+] to add another guardian in the houshold.";
 
@@ -317,7 +343,7 @@
 "Hide" = "Hide";
 "Edit responsibilities" = "Edit responsibilities";
 "Add from other groups" = "Add from other groups";
-"Add parent contact" = "Add parent contact";
+"Register parent contact" = "Register parent contact";
 "Show in map" = "Show in map";
 "About %@" = "About %@";
 "Add household member" = "Add household member";
@@ -333,7 +359,7 @@
  ***/
 
 // View title
-"About me" = "About me";
+"About you" = "About you";
 
 // Headers
 "Responsibility in %@" = "Responsibility in %@";
@@ -346,12 +372,10 @@
 
 // Buttons
 "To some of them" = "To some of them";
-"Add an address" = "Add an address";
 "Register address" = "Register address";
 "Register guardian" = "Register guardian";
 "Change password" = "Change password";
 "Edit relations" = "Edit relations";
-"Correct gender" = "Correct gender";
 "New address" = "New address";
 "All contacts" = "All contacts";
 "All guardians" = "All guardians";
@@ -363,7 +387,7 @@
 
 // Alerts
 "Incorrect details" = "Incorrect details";
-"The details you have provided do not match our records ..." = "The details you have provided do not match our records. Please verify that you have accurate information.";
+"The details you have provided do not match our records ..." = "The details you have provided do not match our records. Please verify that your information is up to date.";
 "Unknown address" = "Unknown address";
 "Unknown addresses" = "Unknown addresses";
 "One of the addresses you provided did not match our records and was not saved." = "One of the addresses you provided did not match our records and was not saved.";
@@ -390,8 +414,6 @@
 "Is %@ a %@ or a %@?" = "Is %@ a %@ or a %@?";
 "Are you a %@?" = "Are you a %@?";
 "Is %@ a %@?" = "Is %@ a %@?";
-"You are now registered as a %@." = "You are now registered as a %@.";
-"%@ is now registered as a %@." = "%@ is now registered as a %@.";
 "%@ has more than one mobile phone number. Which number do you want to provide?" = "%@ has more than one mobile phone number. Which number do you want to provide?";
 "%@ has more than one email address. Which address do you want to provide?" = "%@ has more than one email address. Which address do you want to provide?";
 "%@ has more than one home address. Which address do you want to provide?" = "%@ has more than one home address. Which address do you want to provide?";
@@ -432,6 +454,9 @@
  * OValuePickerViewController strings
  ***/
 
+// View titles
+"Group type" = "Group type";
+
 // Miscellaneous strings
 "Responsibility" = "Responsibility";
 "Name of group" = "Name of group";
@@ -440,7 +465,25 @@
 
 
 /***
- * Self test strings
+ * OInfoViewController strings
  ***/
 
-"String test" = "This is a string in English";
+// View titles
+"About this group" = "About this group";
+"About this household" = "About this household";
+
+// Labels
+"Active" = "Active";
+
+// Footers
+"Created: %@." = "Created: %@.";
+"Registered: %@." = "Registered: %@.";
+"Last modified: %@." = "Last modified: %@.";
+"Active since: %@" = "Active since: %@";
+
+
+/***
+ * Localisation test string
+ ***/
+
+"Localisation test" = "This is a string in English";

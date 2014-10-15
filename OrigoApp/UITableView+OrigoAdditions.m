@@ -25,6 +25,15 @@ static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
     if (cell) {
         if (cell.isInputCell) {
             cell.inputCellDelegate = delegate;
+        } else if (!cell.editable) {
+            cell.textLabel.text = nil;
+            cell.detailTextLabel.text = nil;
+            cell.imageView.image = nil;
+            cell.destinationId = nil;
+            
+            for (UIView *subview in cell.imageView.subviews) {
+                [subview removeFromSuperview];
+            }
         }
     } else {
         cell = [[OTableViewCell alloc] initWithStyle:style reuseIdentifier:reuseIdentifier delegate:delegate];

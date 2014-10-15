@@ -19,7 +19,6 @@ static NSInteger const kButtonTagEdit = 1;
 static NSInteger const kButtonTagEditRelations = 2;
 static NSInteger const kButtonTagEditAddAddress = 3;
 static NSInteger const kButtonTagEditAddGuardian = 4;
-static NSInteger const kButtonTagEditCorrectGender = 5;
 
 static NSInteger const kActionSheetTagResidence = 1;
 static NSInteger const kButtonTagResidenceNewAddress = 10;
@@ -46,9 +45,6 @@ static NSInteger const kActionSheetTagEditRole = 7;
 static NSInteger const kAlertTagUnknownChild = 0;
 static NSInteger const kButtonIndexOK = 1;
 
-static NSInteger const kAlertTagToggleGender = 1;
-static NSInteger const kButtonIndexYes = 1;
-
 static NSInteger const kAlertTagEmailChange = 2;
 static NSInteger const kButtonIndexContinue = 1;
 
@@ -58,6 +54,7 @@ static NSInteger const kButtonIndexContinue = 1;
     id<OMember> _member;
     id<OOrigo> _origo;
     id<OMembership> _membership;
+    id<OMembership> _roleMembership;
     
     OInputField *_nameField;
     OInputField *_dateOfBirthField;
@@ -130,7 +127,7 @@ static NSInteger const kButtonIndexContinue = 1;
     } else {
         [_nameField becomeFirstResponder];
         
-        [OAlert showAlertWithTitle:nil text:[NSString stringWithFormat:NSLocalizedString(@"%@ is already in %@.", @""), [member publicName], _origo.name]];
+        [OAlert showAlertWithTitle:@"" text:[NSString stringWithFormat:NSLocalizedString(@"%@ is already in %@.", @""), [member publicName], _origo.name]];
     }
     
     return isEligible;
@@ -153,9 +150,9 @@ static NSInteger const kButtonIndexContinue = 1;
                 [identifierField becomeFirstResponder];
                 
                 if ([OValidator isEmailValue:identifierField.value]) {
-                    [OAlert showAlertWithTitle:nil text:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ is already in use.", @""), identifierField.value]];
+                    [OAlert showAlertWithTitle:@"" text:[NSString stringWithFormat:NSLocalizedString(@"The email address %@ is already in use.", @""), identifierField.value]];
                 } else {
-                    [OAlert showAlertWithTitle:nil text:[NSString stringWithFormat:NSLocalizedString(@"The mobile number %@ is already in use.", @""), identifierField.value]];
+                    [OAlert showAlertWithTitle:@"" text:[NSString stringWithFormat:NSLocalizedString(@"The mobile number %@ is already in use.", @""), identifierField.value]];
                 }
             }
         }
@@ -241,7 +238,7 @@ static NSInteger const kButtonIndexContinue = 1;
     _mobilePhoneField.value = member.mobilePhone;
     _emailField.value = member.email;
     
-    if ([member instance] || (member != _member)) {
+    if ([member instance] || member != _member) {
         if ([member instance]) {
             [_member useInstance:[member instance]];
         } else {
@@ -289,7 +286,7 @@ static NSInteger const kButtonIndexContinue = 1;
         }
         
         for (id<OMember> ward in [guardian wards]) {
-            if (!member && (ward != _member)) {
+            if (!member && ward != _member) {
                 if ([_nameField.value fuzzyMatches:[ward givenName]]) {
                     member = ward;
                 }
@@ -506,7 +503,7 @@ static NSInteger const kButtonIndexContinue = 1;
         } else if ([_addressBookHomeNumbers count] == homeNumberCount) {
             prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ has more than one home phone number. Which address has the number %@?", @""), givenName, _addressBookHomeNumbers[0]];
         } else {
-            if (([_addressBookHomeNumbers count] == 1) && ([_addressBookMappings count] == 1)) {
+            if ([_addressBookHomeNumbers count] == 1 && [_addressBookMappings count] == 1) {
                 prompt = [NSString stringWithFormat:NSLocalizedString(@"Is %@ the phone number for %@?", @""), _addressBookHomeNumbers[0], [_addressBookMappings[0] shortAddress]];
             } else {
                 prompt = [NSString stringWithFormat:NSLocalizedString(@"Which address has the number %@?", @""), _addressBookHomeNumbers[0]];
@@ -516,7 +513,7 @@ static NSInteger const kButtonIndexContinue = 1;
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAddressBookEntry];
     
-    if (([_addressBookHomeNumbers count] == 1) && ([_addressBookMappings count] == 1)) {
+    if ([_addressBookHomeNumbers count] == 1 && [_addressBookMappings count] == 1) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"")];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"") tag:kButtonTagAddressBookEntryNoValue];
     } else {
@@ -592,24 +589,6 @@ static NSInteger const kButtonIndexContinue = 1;
     }
     
     [OAlert showAlertWithTitle:title text:text];
-}
-
-
-- (void)presentToggleGenderAlert
-{
-    NSString *message = nil;
-    NSString *alternateGender = [OUtil genderTermForGender:[_member isMale] ? kGenderFemale : kGenderMale isJuvenile:[_member isJuvenile]];
-    
-    if ([_member isUser]) {
-        message = [NSString stringWithFormat:NSLocalizedString(@"Are you a %@?", @""), alternateGender];
-    } else {
-        message = [NSString stringWithFormat:NSLocalizedString(@"Is %@ a %@?", @""), [_member givenName], alternateGender];
-    }
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:message delegate:self cancelButtonTitle:NSLocalizedString(@"No", @"") otherButtonTitles:NSLocalizedString(@"Yes", @""), nil];
-    alert.tag = kAlertTagToggleGender;
-    
-    [alert show];
 }
 
 
@@ -794,7 +773,7 @@ static NSInteger const kButtonIndexContinue = 1;
                 }
             }
             
-            if (([[_member residences] count] == 1) && ([_addressBookHomeNumbers count] == 1)) {
+            if ([[_member residences] count] == 1 && [_addressBookHomeNumbers count] == 1) {
                 [_member residence].telephone = _addressBookHomeNumbers[0];
                 [_addressBookHomeNumbers removeAllObjects];
             }
@@ -810,28 +789,21 @@ static NSInteger const kButtonIndexContinue = 1;
     [self cancelEditingListCellIfNeeded];
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
     
     if ([_member isUser]) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Change password", @"") tag:kButtonTagEditChangePassword];
     }
-    
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
     
     if ([_member isWardOfUser]) {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit relations", @"") tag:kButtonTagEditRelations];
     }
     
     if (![_member isJuvenile] || [_member isWardOfUser]) {
-        if ([_member hasAddress]) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add an address", @"") tag:kButtonTagEditAddAddress];
-        } else {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register address", @"") tag:kButtonTagEditAddAddress];
-        }
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Register address", @"") tag:kButtonTagEditAddAddress];
     } else {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Register guardian", @"") tag:kButtonTagEditAddGuardian];
     }
-    
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Correct gender", @"") tag:kButtonTagEditCorrectGender];
     
     [actionSheet show];
 }
@@ -840,7 +812,7 @@ static NSInteger const kButtonIndexContinue = 1;
 - (void)performInfoAction
 {
     [self cancelEditingListCellIfNeeded];
-    
+    [self presentModalViewControllerWithIdentifier:kIdentifierInfo target:_member];
 }
 
 
@@ -909,10 +881,11 @@ static NSInteger const kButtonIndexContinue = 1;
     _member = [self.entity proxy];
     _origo = self.state.currentOrigo;
     _membership = [_origo membershipForMember:_member];
+    _roleMembership = self.state.baseOrigo ? [self.state.baseOrigo membershipForMember:_member] : _membership;
     
     if ([self actionIs:kActionRegister]) {
         if ([self targetIs:kTargetUser]) {
-            self.title = NSLocalizedString(@"About me", @"");
+            self.title = NSLocalizedString(@"About you", @"");
         } else if ([self targetIs:kTargetGuardian]) {
             self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
         } else if ([self targetIs:kTargetOrganiser]) {
@@ -949,7 +922,7 @@ static NSInteger const kButtonIndexContinue = 1;
     
     if (![_member isUser] || [[OMeta m] userIsAllSet]) {
         [self setData:[_member addresses] forSectionWithKey:kSectionKeyAddresses];
-        [self setData:[_membership roles] forSectionWithKey:kSectionKeyRoles];
+        [self setData:[_roleMembership roles] forSectionWithKey:kSectionKeyRoles];
     }
 }
 
@@ -1034,7 +1007,7 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
+- (id)headerContentForSectionWithKey:(NSInteger)sectionKey
 {
     NSString *text = nil;
     
@@ -1061,10 +1034,10 @@ static NSInteger const kButtonIndexContinue = 1;
             text = [OLanguage nouns][_address_][pluralIndefinite];
         }
     } else if (sectionKey == kSectionKeyRoles) {
-        if ([[[_origo membershipForMember:_member] roles] count] > 1) {
-            text = [NSString stringWithFormat:NSLocalizedString(@"Responsibility in %@", @""), _origo.name];
+        if ([[[_origo membershipForMember:_member] roles] count] == 1) {
+            text = [NSString stringWithFormat:NSLocalizedString(@"Responsibility in %@", @""), _roleMembership.origo.name];
         } else {
-            text = [NSString stringWithFormat:NSLocalizedString(@"Responsibilities in %@", @""), _origo.name];
+            text = [NSString stringWithFormat:NSLocalizedString(@"Responsibilities in %@", @""), _roleMembership.origo.name];
         }
     }
     
@@ -1072,7 +1045,7 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey
+- (NSString *)footerContentForSectionWithKey:(NSInteger)sectionKey
 {
     NSString *text = nil;
     
@@ -1252,7 +1225,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (BOOL)isEditableListCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    return ([self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles) && [_origo userCanEdit];
+    return [self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles && [_origo userCanEdit];
 }
 
 
@@ -1261,10 +1234,10 @@ static NSInteger const kButtonIndexContinue = 1;
     NSString *editedRole = listCellField.value;
     
     if (![editedRole isEqualToString:_role]) {
-        NSString *roleType = [_membership typeOfAffiliation:_role];
+        NSString *roleType = [_roleMembership typeOfAffiliation:_role];
         
-        [_membership addAffiliation:editedRole ofType:roleType];
-        [_membership removeAffiliation:_role ofType:roleType];
+        [_roleMembership addAffiliation:editedRole ofType:roleType];
+        [_roleMembership removeAffiliation:_role ofType:roleType];
         
         _role = editedRole;
     }
@@ -1648,8 +1621,6 @@ static NSInteger const kButtonIndexContinue = 1;
                     }
                 } else if (buttonTag == kButtonTagEditAddGuardian) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
-                } else if (buttonTag == kButtonTagEditCorrectGender) {
-                    [self presentToggleGenderAlert];
                 }
             }
             
@@ -1703,7 +1674,7 @@ static NSInteger const kButtonIndexContinue = 1;
             break;
             
         case kActionSheetTagAddressBookEntry:
-            if ((buttonIndex != actionSheet.cancelButtonIndex) && ![_member instance]) {
+            if (buttonIndex != actionSheet.cancelButtonIndex && ![_member instance]) {
                 if ([_emailField hasMultiValue]) {
                     [self refineAddressBookContactInfo];
                 } else if (!_didPerformLocalLookup) {
@@ -1739,24 +1710,6 @@ static NSInteger const kButtonIndexContinue = 1;
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     switch (alertView.tag) {
-        case kAlertTagToggleGender:
-            if (buttonIndex == kButtonIndexYes) {
-                _member.gender = [_member isMale] ? kGenderFemale : kGenderMale;
-                
-                NSString *message = nil;
-                NSString *gender = [OUtil genderTermForGender:_member.gender isJuvenile:[_member isJuvenile]];
-                
-                if ([_member isUser]) {
-                    message = [NSString stringWithFormat:NSLocalizedString(@"You are now registered as a %@.", @""), gender];
-                } else {
-                    message = [NSString stringWithFormat:NSLocalizedString(@"%@ is now registered as a %@.", @""), [_member givenName], gender];
-                }
-                
-                [OAlert showAlertWithTitle:nil text:message];
-            }
-            
-            break;
-            
         case kAlertTagEmailChange:
             if (buttonIndex == kButtonIndexContinue) {
                 [self toggleEditMode];

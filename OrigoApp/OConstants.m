@@ -10,12 +10,10 @@
 
 // View controller identifiers
 NSString * const kIdentifierAuth = @"auth";
-NSString * const kIdentifierCalendar = @"calendar";
+NSString * const kIdentifierInfo = @"info";
 NSString * const kIdentifierMember = @"member";
-NSString * const kIdentifierMessageList = @"messages";
 NSString * const kIdentifierOrigo = @"origo";
 NSString * const kIdentifierOrigoList = @"origos";
-NSString * const kIdentifierTaskList = @"tasks";
 NSString * const kIdentifierValueList = @"values";
 NSString * const kIdentifierValuePicker = @"value";
 
@@ -35,6 +33,7 @@ NSString * const kDefaultsKeyDirtyEntities = @"origo.state.dirtyEntities";
 NSString * const kPropertyKeyActiveSince = @"activeSince";
 NSString * const kPropertyKeyAddress = @"address";
 NSString * const kPropertyKeyCountryCode = @"countryCode";
+NSString * const kPropertyKeyCreatedBy = @"createdBy";
 NSString * const kPropertyKeyDateCreated = @"dateCreated";
 NSString * const kPropertyKeyDateExpires = @"dateExpires";
 NSString * const kPropertyKeyDateOfBirth = @"dateOfBirth";
@@ -50,6 +49,7 @@ NSString * const kPropertyKeyIsExpired = @"isExpired";
 NSString * const kPropertyKeyIsMinor = @"isMinor";
 NSString * const kPropertyKeyLastSeen = @"lastSeen";
 NSString * const kPropertyKeyMobilePhone = @"mobilePhone";
+NSString * const kPropertyKeyModifiedBy = @"modifiedBy";
 NSString * const kPropertyKeyMotherId = @"motherId";
 NSString * const kPropertyKeyName = @"name";
 NSString * const kPropertyKeyOrigoId = @"origoId";
@@ -102,12 +102,12 @@ NSString * const kStringPrefixOrigoTitle = @"[title]";
 NSString * const kStringPrefixNewOrigoTitle = @"[registration title]";
 NSString * const kStringPrefixFooter = @"[registration footer]";
 NSString * const kStringPrefixAddMemberButton = @"[add member]";
-NSString * const kStringPrefixAddOrganiserButton = @"[add organiser]";
-NSString * const kStringPrefixOrganiserTitle = @"[organiser]";
-NSString * const kStringPrefixOrganisersTitle = @"[organisers]";
 NSString * const kStringPrefixMembersTitle = @"[members]";
 NSString * const kStringPrefixNewMemberTitle = @"[member registration]";
 NSString * const kStringPrefixAllMembersTitle = @"[all members]";
+NSString * const kStringPrefixAddOrganiserButton = @"[add organiser]";
+NSString * const kStringPrefixOrganiserTitle = @"[organiser]";
+NSString * const kStringPrefixOrganisersTitle = @"[organisers]";
 NSString * const kStringPrefixOrganiserRoleTitle = @"[organiser role]";
 NSString * const kStringPrefixAddOrganiserRoleButton = @"[add organiser role]";
 NSString * const kStringPrefixEditOrganiserRoleButton = @"[edit organiser role]";
@@ -153,7 +153,6 @@ CGFloat const kNavigationBarHeight = 64.f;
 CGFloat const kToolbarBarHeight = 44.f;
 CGFloat const kBorderWidth = 0.5f;
 CGFloat const kContentInset = 14.f;
-CGFloat const kLineToHeaderHeightFactor = 1.5f;
 
 
 // Misc constants

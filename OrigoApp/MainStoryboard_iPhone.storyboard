@@ -128,6 +128,22 @@
             </objects>
             <point key="canvasLocation" x="-279" y="28"/>
         </scene>
+        <!--Info View Controller-->
+        <scene sceneID="4Nc-1g-caQ">
+            <objects>
+                <viewController storyboardIdentifier="info" useStoryboardIdentifierAsRestorationIdentifier="YES" id="meS-fC-wit" customClass="OInfoViewController" sceneMemberID="viewController">
+                    <tableView key="view" autoresizesSubviews="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="zHX-B3-hGi">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <sections/>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="mD6-tf-CXC"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jur-oq-HSj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1110" y="28"/>
+        </scene>
     </scenes>
     <resources>
         <image name="10-arrows-in.png" width="23" height="23"/>

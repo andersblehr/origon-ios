@@ -8,7 +8,6 @@
 
 #import "OConnection.h"
 
-
 NSInteger const kHTTPStatusOK = 200;
 NSInteger const kHTTPStatusCreated = 201;
 NSInteger const kHTTPStatusNoContent = 204;
@@ -26,8 +25,8 @@ static NSString * const kHTTPMethodPOST = @"POST";
 static NSString * const kHTTPMethodDELETE = @"DELETE";
 
 static NSString * const kOrigoDevServer = @"http://localhost:8888";
-//static NSString * const kOrigoDevServer = @"http://enceladus.local:8888";
 //static NSString * const kOrigoDevServer = @"https://origoapp.appspot.com";
+//static NSString * const kOrigoDevServer = @"http://enceladus.local:8888";
 static NSString * const kOrigoProdServer = @"https://origoapp.appspot.com";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";
@@ -288,7 +287,7 @@ static NSString * const kURLParameterIdentifier = @"id";
 
     id deserialisedData = nil;
     
-    if ((_HTTPResponse.statusCode < kHTTPStatusErrorRangeStart) && [_responseData length]) {
+    if (_HTTPResponse.statusCode < kHTTPStatusErrorRangeStart && [_responseData length]) {
         deserialisedData = [NSJSONSerialization deserialise:_responseData];
     }
     

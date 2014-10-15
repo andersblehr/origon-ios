@@ -41,6 +41,7 @@ extern NSString * const kSeparatorAlternates;
 - (NSString *)stringByAppendingCapitalisedString:(NSString *)string;
 - (NSString *)stringByCapitalisingFirstLetter;
 - (NSString *)stringByLowercasingFirstLetter;
+- (NSString *)stringByConditionallyLowercasingFirstLetter;
 
 - (NSString *)givenName;
 - (NSString *)localisedCountryName;

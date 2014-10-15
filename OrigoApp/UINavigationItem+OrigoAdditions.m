@@ -72,7 +72,7 @@ static NSInteger const kViewTagSubtitleLabel = 11;
     }
     
     CGFloat headroom = subtitle ? kTitleHeadroomWithSubtitle : kTitleHeadroom;
-    titleField.frame = CGRectMake(0.f, headroom, titleViewWidth, kTitleHeight);;
+    titleField.frame = CGRectMake(0.f, headroom, titleViewWidth, kTitleHeight);
     titleField.userInteractionEnabled = editable;
     
     if (!self.titleView) {
@@ -111,7 +111,7 @@ static NSInteger const kViewTagSubtitleLabel = 11;
 {
     NSMutableArray *rightBarButtonItems = [self.rightBarButtonItems mutableCopy];
     
-    if (rightBarButtonItems && (index <= [rightBarButtonItems count])) {
+    if (rightBarButtonItems && index <= [rightBarButtonItems count]) {
         [rightBarButtonItems insertObject:barButtonItem atIndex:index];
         [self setRightBarButtonItems:rightBarButtonItems animated:YES];
     }
@@ -134,7 +134,7 @@ static NSInteger const kViewTagSubtitleLabel = 11;
     UIBarButtonItem *barButtonItemWithTag = nil;
     
     for (UIBarButtonItem *barButtonItem in self.rightBarButtonItems) {
-        if (!barButtonItemWithTag && (barButtonItem.tag == tag)) {
+        if (!barButtonItemWithTag && barButtonItem.tag == tag) {
             barButtonItemWithTag = barButtonItem;
         }
     }

@@ -25,6 +25,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     id<OOrigo> _origo;
 
     UISegmentedControl *_titleSegments;
+    NSMutableArray *_segmentMappings;
     NSInteger _selectedSegment;
 }
 
@@ -35,14 +36,40 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 
 #pragma mark - Auxiliary methods
 
+- (void)setTitleSegments
+{
+    _segmentMappings = [NSMutableArray array];
+    NSMutableArray *titleSegments = [NSMutableArray array];
+    
+    if ([_origo isJuvenile] && ![_origo isOfType:kOrigoTypeGeneral]) {
+        [_segmentMappings addObject:@(kSegmentParents)];
+        [titleSegments addObject:[[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
+    }
+    
+    if ([_origo isOrganised]) {
+        [_segmentMappings addObject:@(kSegmentOrganisers)];
+        [titleSegments addObject:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle)];
+    }
+    
+    if (![_origo isOfType:kOrigoTypePreschoolClass]) {
+        [_segmentMappings addObject:@(kSegmentMembers)];
+        [titleSegments addObject:NSLocalizedString(_origo.type, kStringPrefixMembersTitle)];
+    }
+    
+    if ([titleSegments count] > 1) {
+        _titleSegments = [self setTitleSegments:titleSegments];
+        
+        [self inferSelectedSegment];
+    } else {
+        _selectedSegment = kSegmentMembers;
+    }
+}
+
+
 - (void)inferSelectedSegment
 {
     if ([self targetIs:kTargetRoles]) {
-        if ((_titleSegments.numberOfSegments == 3) || [_origo isJuvenile]) {
-            _selectedSegment = _titleSegments.selectedSegmentIndex;
-        } else {
-            _selectedSegment = _titleSegments.selectedSegmentIndex + 1;
-        }
+        _selectedSegment = [_segmentMappings[_titleSegments.selectedSegmentIndex] integerValue];
     } else {
         _selectedSegment = _titleSegments.selectedSegmentIndex;
     }
@@ -85,21 +112,23 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     
     [self inferSelectedSegment];
     
+    UITableViewRowAnimation rowAnimation = UITableViewRowAnimationNone;
+    
     if ([self numberOfRowsInSectionWithKey:kSectionKeyValues]) {
         if (_selectedSegment > previousSegment) {
-            self.rowAnimation = UITableViewRowAnimationLeft;
+            rowAnimation = UITableViewRowAnimationLeft;
         } else {
-            self.rowAnimation = UITableViewRowAnimationRight;
+            rowAnimation = UITableViewRowAnimationRight;
         }
     } else {
         if (_selectedSegment > previousSegment) {
-            self.rowAnimation = UITableViewRowAnimationRight;
+            rowAnimation = UITableViewRowAnimationRight;
         } else {
-            self.rowAnimation = UITableViewRowAnimationLeft;
+            rowAnimation = UITableViewRowAnimationLeft;
         }
     }
     
-    [self reloadSectionWithKey:kSectionKeyValues];
+    [self reloadSectionWithKey:kSectionKeyValues rowAnimation:rowAnimation];
 }
 
 
@@ -110,8 +139,6 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     [super viewWillAppear:animated];
     
     if (self.didResurface) {
-        self.rowAnimation = UITableViewRowAnimationAutomatic;
-        
         [self reloadSectionWithKey:kSectionKeyValues];
     }
 }
@@ -146,27 +173,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     } else if ([self targetIs:kTargetRoles]) {
         self.title = NSLocalizedString(@"Responsibilities", @"");
         
-        NSMutableArray *roleCategories = [NSMutableArray array];
-        
-        if ([_origo isJuvenile] && ![_origo isOfType:kOrigoTypeFriends]) {
-            [roleCategories addObject:[[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
-        }
-        
-        if ([_origo isOrganised]) {
-            [roleCategories addObject:NSLocalizedString(_origo.type, kStringPrefixOrganisersTitle)];
-        }
-        
-        if ([_origo isOfType:@[kOrigoTypeTeam, kOrigoTypeSchoolClass, kOrigoTypeStudyGroup]]) {
-            [roleCategories addObject:NSLocalizedString(_origo.type, kStringPrefixMembersTitle)];
-        }
-        
-        if ([roleCategories count] > 1) {
-            _titleSegments = [self setTitleSegments:roleCategories];
-            
-            [self inferSelectedSegment];
-        } else {
-            _selectedSegment = kSegmentMembers;
-        }
+        [self setTitleSegments];
+        [self inferSelectedSegment];
         
         self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
@@ -344,18 +352,6 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 }
 
 
-- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
-{
-    return NO;
-}
-
-
-- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
-{
-    return NO;
-}
-
-
 - (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey
 {
     UITableViewCellStyle style = UITableViewCellStyleValue1;
@@ -365,6 +361,18 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     }
     
     return style;
+}
+
+
+- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
+{
+    return NO;
+}
+
+
+- (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
+{
+    return NO;
 }
 
 

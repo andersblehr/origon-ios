@@ -21,9 +21,9 @@ static NSString * const kRootIdFormat = @"~%@";
     
     for (NSString *stringItem in stringItems) {
         if (!commaSeparatedList) {
-            commaSeparatedList = [NSMutableString stringWithString:[stringItem stringByCapitalisingFirstLetter]];
+            commaSeparatedList = [NSMutableString stringWithString:stringItem];
         } else {
-            if (conjoinLastItem && (stringItem == [stringItems lastObject])) {
+            if (conjoinLastItem && stringItem == [stringItems lastObject]) {
                 [commaSeparatedList appendString:NSLocalizedString(@" and ", @"")];
             } else {
                 [commaSeparatedList appendString:kSeparatorComma];
@@ -122,7 +122,7 @@ static NSString * const kRootIdFormat = @"~%@";
     }
     
     if ([memberRoles count]) {
-        NSString *roles = [self commaSeparatedListOfItems:memberRoles conjoinLastItem:NO];
+        NSString *roles = [[self commaSeparatedListOfItems:memberRoles conjoinLastItem:NO] stringByCapitalisingFirstLetter];
         
         if ([details hasValue]) {
             details = [details stringByAppendingString:roles separator:@" – "];
@@ -181,7 +181,7 @@ static NSString * const kRootIdFormat = @"~%@";
     }
     
     if ([associationsByWard count]) {
-        association = [NSString stringWithFormat:NSLocalizedString(@"Guardian of %@", @""), [self commaSeparatedListOfItems:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoinLastItem:YES]];
+        association = [NSString stringWithFormat:NSLocalizedString(@"Parent of %@", @""), [self commaSeparatedListOfStringItems:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoinLastItem:YES]];
     } else if (origoAssociation) {
         association = origoAssociation;
     }
@@ -212,28 +212,32 @@ static NSString * const kRootIdFormat = @"~%@";
 
 + (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem
 {
-    id stringItems = [NSMutableArray array];
+    NSMutableArray *stringItems = [NSMutableArray array];
     
     if ([items count]) {
         if ([items isKindOfClass:[NSSet class]]) {
-            items = [[items allObjects] sortedArrayUsingSelector:@selector(compare:)];
+            if ([[items anyObject] isKindOfClass:[NSString class]]) {
+                items = [[items allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+            } else {
+                items = [[items allObjects] sortedArrayUsingSelector:@selector(compare:)];
+            }
         }
         
         if ([items[0] isKindOfClass:[NSString class]]) {
-            stringItems = items;
-        } else {
-            if ([items[0] isKindOfClass:[NSDate class]]) {
-                for (NSDate *date in items) {
-                    [stringItems addObject:[date localisedDateString]];
-                }
-            } else if ([items[0] conformsToProtocol:@protocol(OMember)]) {
-                for (id<OMember> member in items) {
-                    [stringItems addObject:[member appellationUseGivenName:YES]];
-                }
-            } else if ([items[0] conformsToProtocol:@protocol(OOrigo)]) {
-                for (id<OOrigo> origo in items) {
-                    [stringItems addObject:origo.name];
-                }
+            for (NSString *item in items) {
+                [stringItems addObject:[item stringByConditionallyLowercasingFirstLetter]];
+            }
+        } else if ([items[0] isKindOfClass:[NSDate class]]) {
+            for (NSDate *date in items) {
+                [stringItems addObject:[date localisedDateString]];
+            }
+        } else if ([items[0] conformsToProtocol:@protocol(OMember)]) {
+            for (id<OMember> member in items) {
+                [stringItems addObject:[member appellationUseGivenName:YES]];
+            }
+        } else if ([items[0] conformsToProtocol:@protocol(OOrigo)]) {
+            for (id<OOrigo> origo in items) {
+                [stringItems addObject:origo.name];
             }
         }
     }
@@ -242,9 +246,9 @@ static NSString * const kRootIdFormat = @"~%@";
 }
 
 
-+ (NSString *)commaSeparatedListOfMembers:(id)members conjoinLastItem:(BOOL)conjoinLastItem
++ (NSString *)commaSeparatedListOfMembers:(id)members withRolesInOrigo:(id<OOrigo>)origo
 {
-    id stringItems = [NSMutableArray array];
+    NSMutableArray *stringItems = [NSMutableArray array];
     
     if ([members count]) {
         if ([members isKindOfClass:[NSSet class]]) {
@@ -253,12 +257,39 @@ static NSString * const kRootIdFormat = @"~%@";
         
         if ([members[0] conformsToProtocol:@protocol(OMember)]) {
             for (id<OMember> member in members) {
-                [stringItems addObject:[member appellationUseGivenName:NO]];
+                id<OMembership> membership = [origo membershipForMember:member];
+                NSArray *roles = [membership roles];
+                
+                if ([roles count]) {
+                    [stringItems addObject:[NSString stringWithFormat:@"%@ (%@)", [member shortName], [OUtil commaSeparatedListOfItems:roles conjoinLastItem:NO]]];
+                } else {
+                    [stringItems addObject:[member shortName]];
+                }
             }
         }
     }
     
-    return [self commaSeparatedListOfStringItems:stringItems conjoinLastItem:conjoinLastItem];
+    return [self commaSeparatedListOfStringItems:stringItems conjoinLastItem:NO];
+}
+
+
+#pragma mark - Miscellaneous
+
++ (NSArray *)eligibleOrigoTypesForOrigo:(id<OOrigo>)origo
+{
+    NSArray *eligibleOrigoTypes = nil;
+    
+    if ([origo isOfType:kOrigoTypeAlumni]) {
+        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeGeneral];
+    } else if ([origo isOfType:kOrigoTypeFriends]) {
+        eligibleOrigoTypes = @[kOrigoTypeFriends, kOrigoTypeGeneral];
+    } else if ([origo isJuvenile]) {
+        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeGeneral, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam];
+    } else {
+        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeCommunity, kOrigoTypeGeneral, kOrigoTypeOrganisation, kOrigoTypeStudyGroup, kOrigoTypeTeam];
+    }
+    
+    return eligibleOrigoTypes;
 }
 
 

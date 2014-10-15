@@ -70,6 +70,10 @@
     NSMutableArray *entities = [NSMutableArray array];
     
     for (OReplicatedEntity *entity in _dirtyEntities) {
+        if (entity.dateReplicated) {
+            entity.modifiedBy = [OMeta m].userEmail;
+        }
+        
         [entities addObject:[entity toDictionary]];
     }
     
@@ -133,7 +137,7 @@
         [[OMeta m].context saveEntityDictionaries:data];
     }
     
-    if ((HTTPStatus == kHTTPStatusCreated) || (HTTPStatus == kHTTPStatusMultiStatus)) {
+    if (HTTPStatus == kHTTPStatusCreated || HTTPStatus == kHTTPStatusMultiStatus) {
         OLogDebug(@"Entities successfully replicated to server.");
         
         NSDate *now = [NSDate date];

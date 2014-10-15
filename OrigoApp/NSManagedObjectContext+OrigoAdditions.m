@@ -90,7 +90,7 @@
     
     entity.entityId = entityId;
     entity.dateCreated = [NSDate date];
-    entity.createdBy = [OMeta m].userId;
+    entity.createdBy = [OMeta m].userEmail;
 
     if (class == [OOrigo class]) {
         entity.origoId = entityId;
@@ -126,6 +126,12 @@
 
 
 #pragma mark - Fetching entities
+
+- (id<OMember>)memberWithEmail:(NSString *)email
+{
+    return [self entityOfClass:[OMember class] withValue:email forKey:kPropertyKeyEmail];
+}
+
 
 - (id)entityWithId:(NSString *)entityId
 {
@@ -221,7 +227,7 @@
     OOrigo *origo = membership.origo;
     
     for (OMembership *residency in [member residencies]) {
-        if ((residency != membership) && [origo isOfType:kOrigoTypeResidence]) {
+        if (residency != membership && [origo isOfType:kOrigoTypeResidence]) {
             [self createEntityRefForEntity:membership inOrigo:residency.origo];
             [self createEntityRefForEntity:origo inOrigo:residency.origo];
         }
@@ -245,7 +251,7 @@
     OOrigo *origo = membership.origo;
     
     for (OMembership *residency in [member residencies]) {
-        if ((residency != membership) && [origo isOfType:kOrigoTypeResidence]) {
+        if (residency != membership && [origo isOfType:kOrigoTypeResidence]) {
             [self createExpiryRefForEntity:membership inOrigo:residency.origo];
             
             if (![residency.origo hasResidentsInCommonWithResidence:origo]) {
@@ -318,6 +324,7 @@
     }
     
     [self save];
+    [[OMeta m].replicator replicate];
     
     if (![OMeta m].deviceId) {
         [[OMeta m] signOut];

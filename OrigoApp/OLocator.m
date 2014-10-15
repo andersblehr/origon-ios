@@ -147,7 +147,7 @@
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
     if (_awaitingLocation) {
-        if ((error.code != kCLErrorLocationUnknown) || [OMeta deviceIsSimulator]) {
+        if (error.code != kCLErrorLocationUnknown || [OMeta deviceIsSimulator]) {
             if (_blocking) {
                 [[OMeta m].activityIndicator stopAnimating];
             }
