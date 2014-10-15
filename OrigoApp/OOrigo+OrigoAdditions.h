@@ -8,8 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const kOrigoTypeAlumni;
+extern NSString * const kOrigoTypeCommunity;
 extern NSString * const kOrigoTypeFriends;
-extern NSString * const kOrigoTypeOther;
+extern NSString * const kOrigoTypeGeneral;
 extern NSString * const kOrigoTypeOrganisation;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeResidence;
@@ -39,6 +41,9 @@ extern NSString * const kOrigoTypeTeam;
 - (NSArray *)elders;
 - (NSArray *)organisers;
 - (NSArray *)parentContacts;
+- (NSArray *)admins;
+- (NSArray *)adminCandidates;
+- (NSArray *)memberResidences;
 
 - (NSArray *)memberRoles;
 - (NSArray *)membersWithRole:(NSString *)role;
@@ -76,6 +81,9 @@ extern NSString * const kOrigoTypeTeam;
 
 - (NSString *)singleLineAddress;
 - (NSString *)shortAddress;
+
+- (void)expireCommunityResidence:(id<OOrigo>)residence;
+- (void)convertToType:(NSString *)type;
 
 @end
 

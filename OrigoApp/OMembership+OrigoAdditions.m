@@ -78,33 +78,13 @@ static NSString * const kPlaceholderRole = @"placeholder";
 }
 
 
-#pragma mark - Status information
-
-- (BOOL)isInvited
-{
-    return [self.status isEqualToString:kMembershipStatusInvited];
-}
-
-
-- (BOOL)isWaiting
-{
-    return [self.status isEqualToString:kMembershipStatusWaiting];
-}
-
+#pragma mark - Meta information
 
 - (BOOL)isActive
 {
     return [self.status isEqualToString:kMembershipStatusActive];
 }
 
-
-- (BOOL)isRejected
-{
-    return [self.status isEqualToString:kMembershipStatusRejected];
-}
-
-
-#pragma mark - Meta information
 
 - (BOOL)isFull
 {
@@ -291,7 +271,7 @@ static NSString * const kPlaceholderRole = @"placeholder";
 {
     if (isAssociate) {
         self.type = kMembershipTypeAssociate;
-        self.isAdmin = @NO;
+        self.isAdmin = [self.member isUser] && [self.origo userIsCreator] ? @YES : @NO;
         self.status = nil;
         self.affiliations = nil;
     } else {

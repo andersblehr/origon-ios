@@ -74,6 +74,7 @@
 - (NSString *)givenNameWithParentTitle;
 - (NSString *)givenNameWithRolesForOrigo:(id<OOrigo>)origo;
 - (NSString *)publicName;
+- (NSString *)shortName;
 - (NSString *)appellationUseGivenName:(BOOL)useGivenName;
 
 @end

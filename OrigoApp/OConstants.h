@@ -10,12 +10,10 @@
 
 // View controller identifiers
 extern NSString * const kIdentifierAuth;
-extern NSString * const kIdentifierCalendar;
+extern NSString * const kIdentifierInfo;
 extern NSString * const kIdentifierMember;
-extern NSString * const kIdentifierMessageList;
 extern NSString * const kIdentifierOrigo;
 extern NSString * const kIdentifierOrigoList;
-extern NSString * const kIdentifierTaskList;
 extern NSString * const kIdentifierValueList;
 extern NSString * const kIdentifierValuePicker;
 
@@ -35,6 +33,7 @@ extern NSString * const kDefaultsKeyDirtyEntities;
 extern NSString * const kPropertyKeyActiveSince;
 extern NSString * const kPropertyKeyAddress;
 extern NSString * const kPropertyKeyCountryCode;
+extern NSString * const kPropertyKeyCreatedBy;
 extern NSString * const kPropertyKeyDateCreated;
 extern NSString * const kPropertyKeyDateExpires;
 extern NSString * const kPropertyKeyDateOfBirth;
@@ -50,6 +49,7 @@ extern NSString * const kPropertyKeyIsExpired;
 extern NSString * const kPropertyKeyIsMinor;
 extern NSString * const kPropertyKeyLastSeen;
 extern NSString * const kPropertyKeyMobilePhone;
+extern NSString * const kPropertyKeyModifiedBy;
 extern NSString * const kPropertyKeyMotherId;
 extern NSString * const kPropertyKeyName;
 extern NSString * const kPropertyKeyOrigoId;
@@ -153,7 +153,6 @@ extern CGFloat const kNavigationBarHeight;
 extern CGFloat const kToolbarBarHeight;
 extern CGFloat const kBorderWidth;
 extern CGFloat const kContentInset;
-extern CGFloat const kLineToHeaderHeightFactor;
 
 // Misc constants
 extern NSString * const kCustomData;

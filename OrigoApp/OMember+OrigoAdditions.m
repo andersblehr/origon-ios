@@ -71,6 +71,12 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
         for (OMember *member in [origo members]) {
             if ([member isJuvenile] == [self isJuvenile]) {
                 [allPeers addObject:member];
+            
+                for (OMember *housemate in [member allHousemates]) {
+                    if ([housemate isJuvenile] == [self isJuvenile]) {
+                        [allPeers addObject:housemate];
+                    }
+                }
             }
         }
     }
@@ -120,7 +126,11 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     NSMutableArray *origos = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isParticipancy] || (includeResidences && [membership isResidency])) {
+        BOOL isParticipancy = [membership isParticipancy];
+        BOOL isIncludedResidency = [membership isResidency] && includeResidences;
+        BOOL isCommunityMembership = [membership.origo isOfType:kOrigoTypeCommunity] && ![self isJuvenile];
+        
+        if (isParticipancy || isIncludedResidency || isCommunityMembership) {
             [origos addObject:membership.origo];
         }
     }
@@ -164,10 +174,10 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     NSMutableSet *memberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
-        BOOL isIncluded = ![membership.origo isOfType:kOrigoTypeRoot];;
+        BOOL isIncluded = ![membership.origo isOfType:kOrigoTypeRoot];
         
-        isIncluded = isIncluded && ![membership isRejected];
         isIncluded = isIncluded && ![membership hasExpired];
+        isIncluded = isIncluded && membership.status != kMembershipStatusRejected;
         
         if (isIncluded) {
             [memberships addObject:membership];
@@ -377,7 +387,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     
     for (OOrigo *residence in [self residences]) {
         for (OMembership *membership in [residence allMemberships]) {
-            if ([membership isResidency] && (membership.member != self)) {
+            if ([membership isResidency] && membership.member != self) {
                 [allHousemates addObject:membership.member];
             }
         }
@@ -561,7 +571,7 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
     
     if (self.dateOfBirth) {
         isOlder = [self.dateOfBirth yearsBeforeNow] >= age;
-    } else if ([self isJuvenile] && (age == kAgeOfMajority)) {
+    } else if ([self isJuvenile] && age == kAgeOfMajority) {
         isOlder = NO;
     }
     
@@ -671,12 +681,27 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
+- (NSString *)shortName
+{
+    NSString *shortName = nil;
+    NSArray *names = [self.name componentsSeparatedByString:kSeparatorSpace];
+    
+    if ([names count] > 2) {
+        shortName = [[names firstObject] stringByAppendingString:[names lastObject] separator:kSeparatorSpace];
+    } else {
+        shortName = self.name;
+    }
+    
+    return shortName;
+}
+
+
 - (NSString *)appellationUseGivenName:(BOOL)useGivenName
 {
     NSString *appelation = nil;
     
     if ([self isUser]) {
-        appelation = [OLanguage pronouns][_you_][nominative];
+        appelation = [[OLanguage pronouns][_you_][nominative] stringByCapitalisingFirstLetter];
     } else {
         appelation = useGivenName ? [self givenName] : [self publicName];
     }

@@ -26,6 +26,8 @@
 @optional
 @property (nonatomic) NSString *entityId;
 @property (nonatomic) NSString *createdBy;
+@property (nonatomic) NSString *modifiedBy;
+@property (nonatomic) NSDate *dateCreated;
 @property (nonatomic) NSDate *dateReplicated;
 
 - (BOOL)userIsCreator;

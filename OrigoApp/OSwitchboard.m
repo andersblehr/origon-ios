@@ -210,9 +210,9 @@ static NSInteger const kRecipientTagAllGuardians = 8;
             [self addRecipients:phoneRecipients forServiceType:kServiceTypeText tag:tag];
         }
         
-        if (([phoneRecipients count] == 1) && (tag != kRecipientTagAllMembers)) {
+        if ([phoneRecipients count] == 1 && tag != kRecipientTagAllMembers) {
             [self addRecipients:phoneRecipients forServiceType:kServiceTypeCall tag:tag];
-        } else if (_member && ([phoneRecipients count] == 2) && (tag != kRecipientTagParents)) {
+        } else if (_member && [phoneRecipients count] == 2 && tag != kRecipientTagParents) {
             if ([_member hasParent:phoneRecipients[0]]) {
                 [self addRecipients:@[phoneRecipients[1]] forServiceType:kServiceTypeCall tag:tag];
             } else if ([_member hasParent:phoneRecipients[1]]) {

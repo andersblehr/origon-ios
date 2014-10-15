@@ -132,7 +132,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             }
         }
         
-        if (([displayableKeys count] == 1) && !needsArray) {
+        if ([displayableKeys count] == 1 && !needsArray) {
             displayableKeys = displayableKeys[0];
         } else if (![displayableKeys count]) {
             displayableKeys = nil;
@@ -336,7 +336,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
             NSString *inputFieldName = [key stringByAppendingString:kViewKeySuffixInputField];
             NSString *constraint = nil;
             
-            if (_blueprint.hasPhoto && (rowNumber++ < 2)) {
+            if (_blueprint.hasPhoto && rowNumber++ < 2) {
                 constraint = [NSString stringWithFormat:kHConstraintsWithPhoto, labelName, labelWidth, inputFieldName];
             } else {
                 constraint = [NSString stringWithFormat:kHConstraints, labelName, labelWidth, inputFieldName];

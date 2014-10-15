@@ -26,11 +26,13 @@
 - (NSString *)reuseIdentifierForInputSection;
 - (NSArray *)toolbarButtons;
 
+- (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey;
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey;
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey;
-- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey;
-- (NSString *)textForFooterInSectionWithKey:(NSInteger)sectionKey;
-- (UITableViewCellStyle)listCellStyleForSectionWithKey:(NSInteger)sectionKey;
+- (CGFloat)headerHeightForSectionWithKey:(NSInteger)sectionKey;
+- (CGFloat)footerHeightForSectionWithKey:(NSInteger)sectionKey;
+- (id)headerContentForSectionWithKey:(NSInteger)sectionKey;
+- (id)footerContentForSectionWithKey:(NSInteger)sectionKey;
 
 - (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey;
 - (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2;
@@ -63,7 +65,6 @@
 
 @property (nonatomic, assign, readonly) BOOL isModal;
 @property (nonatomic, assign, readonly) BOOL isPushed;
-@property (nonatomic, assign, readonly) BOOL isPopped;
 @property (nonatomic, assign, readonly) BOOL isHidden;
 @property (nonatomic, assign, readonly) BOOL wasHidden;
 @property (nonatomic, assign, readonly) BOOL didResurface;
@@ -115,5 +116,6 @@
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;
+- (void)reloadSectionWithKey:(NSInteger)sectionKey rowAnimation:(UITableViewRowAnimation)rowAnimation;
 
 @end

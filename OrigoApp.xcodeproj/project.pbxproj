@@ -74,6 +74,8 @@
 		5CC12A1519CC85F100A545F8 /* ro-ipod-touch-5.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CC12A1119CC85F100A545F8 /* ro-ipod-touch-5.png */; };
 		5CC12A1619CC85F100A545F8 /* ro-ipod-touch-5@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CC12A1219CC85F100A545F8 /* ro-ipod-touch-5@3x.png */; };
 		5CC1870219B9F5D200B6F02A /* OMembership.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC1870119B9F5D200B6F02A /* OMembership.m */; };
+		5CC307CE19E966E400373980 /* OInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC307CD19E966E400373980 /* OInfoViewController.m */; };
+		5CC307D419E97EEE00373980 /* OReplicatedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC307D319E97EEE00373980 /* OReplicatedEntity.m */; };
 		5CC40C9B1772DC5E00DD850E /* OValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CC40C9A1772DC5E00DD850E /* OValidator.m */; };
 		5CCC3598181FC8200079DB55 /* UINavigationItem+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCC3597181FC8200079DB55 /* UINavigationItem+OrigoAdditions.m */; };
 		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
@@ -81,7 +83,6 @@
 		5CD33AD018F5287F00A863F4 /* OSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33ACF18F5287F00A863F4 /* OSettings.m */; };
 		5CD33AD618F5288000A863F4 /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AD518F5288000A863F4 /* OOrigo.m */; };
 		5CD33AD918F5288000A863F4 /* OReplicatedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AD818F5288000A863F4 /* OReplicatedEntityRef.m */; };
-		5CD33ADC18F5288100A863F4 /* OReplicatedEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33ADB18F5288100A863F4 /* OReplicatedEntity.m */; };
 		5CD33AE218F5288100A863F4 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AE118F5288100A863F4 /* OMember.m */; };
 		5CD48F5319CDE8A500ECB761 /* 739-question-selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CD48F5019CDE8A500ECB761 /* 739-question-selected.png */; };
 		5CD48F5419CDE8A500ECB761 /* 739-question-selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CD48F5119CDE8A500ECB761 /* 739-question-selected@2x.png */; };
@@ -279,6 +280,10 @@
 		5CC12A1219CC85F100A545F8 /* ro-ipod-touch-5@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ro-ipod-touch-5@3x.png"; sourceTree = "<group>"; };
 		5CC1870019B9F5D200B6F02A /* OMembership.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembership.h; sourceTree = "<group>"; };
 		5CC1870119B9F5D200B6F02A /* OMembership.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMembership.m; sourceTree = "<group>"; };
+		5CC307CC19E966E400373980 /* OInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OInfoViewController.h; sourceTree = "<group>"; };
+		5CC307CD19E966E400373980 /* OInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OInfoViewController.m; sourceTree = "<group>"; };
+		5CC307D219E97EEE00373980 /* OReplicatedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntity.h; sourceTree = "<group>"; };
+		5CC307D319E97EEE00373980 /* OReplicatedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntity.m; sourceTree = "<group>"; };
 		5CC40C991772DC5E00DD850E /* OValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OValidator.h; sourceTree = "<group>"; };
 		5CC40C9A1772DC5E00DD850E /* OValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OValidator.m; sourceTree = "<group>"; };
 		5CCC3596181FC8200079DB55 /* UINavigationItem+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationItem+OrigoAdditions.h"; sourceTree = "<group>"; };
@@ -294,8 +299,6 @@
 		5CD33AD518F5288000A863F4 /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
 		5CD33AD718F5288000A863F4 /* OReplicatedEntityRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntityRef.h; sourceTree = "<group>"; };
 		5CD33AD818F5288000A863F4 /* OReplicatedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntityRef.m; sourceTree = "<group>"; };
-		5CD33ADA18F5288100A863F4 /* OReplicatedEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntity.h; sourceTree = "<group>"; };
-		5CD33ADB18F5288100A863F4 /* OReplicatedEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntity.m; sourceTree = "<group>"; };
 		5CD33AE018F5288100A863F4 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
 		5CD33AE118F5288100A863F4 /* OMember.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMember.m; sourceTree = "<group>"; };
 		5CD48F5019CDE8A500ECB761 /* 739-question-selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "739-question-selected.png"; sourceTree = "<group>"; };
@@ -471,8 +474,8 @@
 				5CD33AE118F5288100A863F4 /* OMember.m */,
 				5CD33AD418F5288000A863F4 /* OOrigo.h */,
 				5CD33AD518F5288000A863F4 /* OOrigo.m */,
-				5CD33ADA18F5288100A863F4 /* OReplicatedEntity.h */,
-				5CD33ADB18F5288100A863F4 /* OReplicatedEntity.m */,
+				5CC307D219E97EEE00373980 /* OReplicatedEntity.h */,
+				5CC307D319E97EEE00373980 /* OReplicatedEntity.m */,
 				5CD33AD718F5288000A863F4 /* OReplicatedEntityRef.h */,
 				5CD33AD818F5288000A863F4 /* OReplicatedEntityRef.m */,
 				5CD33ACE18F5287F00A863F4 /* OSettings.h */,
@@ -575,6 +578,8 @@
 			children = (
 				5C26291C158F27860012A74A /* OAuthViewController.h */,
 				5C26291D158F27860012A74A /* OAuthViewController.m */,
+				5CC307CC19E966E400373980 /* OInfoViewController.h */,
+				5CC307CD19E966E400373980 /* OInfoViewController.m */,
 				5C8B3AB415813DBB000B19FA /* OMemberViewController.h */,
 				5C8B3AB515813DBB000B19FA /* OMemberViewController.m */,
 				5C3D42801485678E009A68E0 /* OOrigoListViewController.h */,
@@ -947,6 +952,7 @@
 				5C26291E158F27860012A74A /* OAuthViewController.m in Sources */,
 				5C7379FD1593111B0065AB4F /* OTextField.m in Sources */,
 				5CBE91A31599823000516C54 /* UIFont+OrigoAdditions.m in Sources */,
+				5CC307D419E97EEE00373980 /* OReplicatedEntity.m in Sources */,
 				5CD33AE218F5288100A863F4 /* OMember.m in Sources */,
 				5C2E6B7E15A8501800638330 /* OMembership+OrigoAdditions.m in Sources */,
 				5CD3360E15C40A2F00ABBFE7 /* OState.m in Sources */,
@@ -962,10 +968,10 @@
 				5C198B7316D76344002D3976 /* OInputCellBlueprint.m in Sources */,
 				5C7C4DD218E57E1F00903989 /* OEntityProxy.m in Sources */,
 				5C47155116E2231C000D8A86 /* OReplicator.m in Sources */,
-				5CD33ADC18F5288100A863F4 /* OReplicatedEntity.m in Sources */,
 				5C1D6CC6172E62F500479F7D /* OLocator.m in Sources */,
 				5C1D6CCA1743C80900479F7D /* OSettings+OrigoAdditions.m in Sources */,
 				5C77067618549A2E0088C78D /* OLabel.m in Sources */,
+				5CC307CE19E966E400373980 /* OInfoViewController.m in Sources */,
 				5CBFB738174B64D40021A8F6 /* OValuePickerViewController.m in Sources */,
 				5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */,
 				5CC40C9B1772DC5E00DD850E /* OValidator.m in Sources */,

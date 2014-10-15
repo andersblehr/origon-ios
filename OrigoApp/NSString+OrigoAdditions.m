@@ -237,6 +237,14 @@ static CGFloat const kMatchingEditDistancePercentage = 0.4f;
 }
 
 
+- (NSString *)stringByConditionallyLowercasingFirstLetter
+{
+    BOOL shouldLowercase = [[NSCharacterSet lowercaseLetterCharacterSet] characterIsMember:[self characterAtIndex:1]];
+    
+    return shouldLowercase ? [self stringByLowercasingFirstLetter] : self;
+}
+
+
 #pragma mark - Specialised string operations
 
 - (NSString *)givenName

@@ -20,7 +20,9 @@ static CGFloat const kDetailFontSize = 14.f;
 static CGFloat const kListTextFontSize = 18.f;
 static CGFloat const kListDetailFontSize = 12.f;
 static CGFloat const kAlternateListFontSize = 17.f;
+
 static CGFloat const kLineToFieldHeightFactor = 1.34f;
+static CGFloat const kLineToHeaderHeightFactor = 1.5f;
 
 
 @implementation UIFont (OrigoAdditions)
@@ -121,7 +123,13 @@ static CGFloat const kLineToFieldHeightFactor = 1.34f;
 }
 
 
-#pragma mark - Text field height
+#pragma mark - Height computation
+
+- (CGFloat)headerHeight
+{
+    return kLineToHeaderHeightFactor * self.lineHeight;
+}
+
 
 - (CGFloat)inputFieldHeight
 {

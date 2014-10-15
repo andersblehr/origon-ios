@@ -107,7 +107,7 @@ static NSCalendar *_calendar = nil;
 - (NSString *)localisedDateTimeString
 {
     NSDateFormatter *timeFormatter = [[NSDateFormatter alloc] init];
-    [timeFormatter setDoesRelativeDateFormatting:YES];
+    [timeFormatter setDoesRelativeDateFormatting:NO];
     [timeFormatter setDateStyle:NSDateFormatterNoStyle];
     [timeFormatter setTimeStyle:NSDateFormatterShortStyle];
     [timeFormatter setTimeZone:[NSTimeZone systemTimeZone]];

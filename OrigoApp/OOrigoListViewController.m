@@ -31,8 +31,6 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)assembleOrigoTypes
 {
-    [_origoTypes addObject:kOrigoTypeFriends];
-    
     if ([_member isJuvenile]) {
         if (![_member isOlderThan:kAgeThresholdInSchool]) {
             [_origoTypes addObject:kOrigoTypePreschoolClass];
@@ -41,12 +39,15 @@ static NSInteger const kSectionKeyWards = 2;
         [_origoTypes addObject:kOrigoTypeSchoolClass];
         [_origoTypes addObject:kOrigoTypeTeam];
     } else {
+        [_origoTypes addObject:kOrigoTypeCommunity];
         [_origoTypes addObject:kOrigoTypeOrganisation];
         [_origoTypes addObject:kOrigoTypeTeam];
         [_origoTypes addObject:kOrigoTypeStudyGroup];
+        [_origoTypes addObject:kOrigoTypeAlumni];
     }
     
-    [_origoTypes addObject:kOrigoTypeOther];
+    [_origoTypes addObject:kOrigoTypeGeneral];
+    [_origoTypes addObject:kOrigoTypeFriends];
 }
 
 
@@ -167,7 +168,7 @@ static NSInteger const kSectionKeyWards = 2;
         } else {
             cell.textLabel.text = origo.name;
         
-            if ([membership isInvited]) {
+            if (membership.status == kMembershipStatusInvited) {
                 cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
                 cell.detailTextLabel.textColor = [UIColor notificationTextColour];
             } else {
@@ -190,7 +191,7 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-- (NSString *)textForHeaderInSectionWithKey:(NSInteger)sectionKey
+- (id)headerContentForSectionWithKey:(NSInteger)sectionKey
 {
     NSString *text = nil;
     

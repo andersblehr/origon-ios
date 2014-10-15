@@ -317,7 +317,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 - (BOOL)userIsCreator
 {
-    return [self.createdBy isEqualToString:[OMeta m].userId];
+    return [self.createdBy isEqualToString:[OMeta m].userEmail];
 }
 
 

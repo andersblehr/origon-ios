@@ -18,10 +18,12 @@ extern NSString * const kActionPick;
 extern NSString * const kActionRegister;
 extern NSString * const kActionSignIn;
 
+extern NSString * const kTargetAdmin;
 extern NSString * const kTargetAffiliation;
 extern NSString * const kTargetDevices;
 extern NSString * const kTargetElder;
 extern NSString * const kTargetEmail;
+extern NSString * const kTargetGender;
 extern NSString * const kTargetGroup;
 extern NSString * const kTargetGroups;
 extern NSString * const kTargetGuardian;
@@ -30,6 +32,7 @@ extern NSString * const kTargetJuvenile;
 extern NSString * const kTargetMember;
 extern NSString * const kTargetMembers;
 extern NSString * const kTargetOrganiser;
+extern NSString * const kTargetOrigoType;
 extern NSString * const kTargetRelation;
 extern NSString * const kTargetRole;
 extern NSString * const kTargetRoles;
@@ -38,6 +41,7 @@ extern NSString * const kTargetSettings;
 extern NSString * const kTargetUser;
 extern NSString * const kTargetWard;
 
+extern NSString * const kAspectAdmin;
 extern NSString * const kAspectDefault;
 extern NSString * const kAspectEditable;
 extern NSString * const kAspectGroup;
@@ -57,8 +61,9 @@ extern NSString * const kAspectRole;
 @property (nonatomic) id target;
 @property (nonatomic) id aspect;
 
-@property (nonatomic, readonly) id<OOrigo> currentOrigo;
 @property (nonatomic, readonly) id<OMember> currentMember;
+@property (nonatomic, readonly) id<OOrigo> currentOrigo;
+@property (nonatomic, readonly) id<OOrigo> baseOrigo;
 
 @property (nonatomic, weak, readonly) OTableViewController *viewController;
 

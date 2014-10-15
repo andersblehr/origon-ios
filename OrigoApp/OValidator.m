@@ -170,6 +170,8 @@ static NSDictionary *_keyMappings = nil;
             valueIsValid = [self isEmailValue:value];
         } else if ([self isPasswordKey:key]) {
             valueIsValid = [value length] >= kMinimumPassordLength;
+        } else {
+            valueIsValid = [value hasValue];
         }
     }
     
@@ -187,9 +189,9 @@ static NSDictionary *_keyMappings = nil;
         NSInteger spaceLocation = [value rangeOfString:@" "].location;
         
         isEmailValue = atLocation != NSNotFound;
-        isEmailValue = isEmailValue && (dotLocation != NSNotFound);
-        isEmailValue = isEmailValue && (dotLocation > atLocation);
-        isEmailValue = isEmailValue && (spaceLocation == NSNotFound);
+        isEmailValue = isEmailValue && dotLocation != NSNotFound;
+        isEmailValue = isEmailValue && dotLocation > atLocation;
+        isEmailValue = isEmailValue && spaceLocation == NSNotFound;
     }
     
     return isEmailValue;
@@ -204,7 +206,7 @@ static NSDictionary *_keyMappings = nil;
         isName = [value hasValue];
         
         if ([[OState s].viewController.identifier isEqualToString:kIdentifierMember]) {
-            isName = isName && ([value rangeOfString:kSeparatorSpace].location != NSNotFound);
+            isName = isName && [value rangeOfString:kSeparatorSpace].location != NSNotFound;
         }
     }
     

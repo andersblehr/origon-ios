@@ -122,7 +122,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
 
 - (NSMutableArray *)leafFormatsFromFormats:(NSMutableArray *)formats
 {
-    if (([formats count] == 1) && [formats[0] respondsToSelector:@selector(appendFormat:)]) {
+    if ([formats count] == 1 && [formats[0] respondsToSelector:@selector(appendFormat:)]) {
         [formats addObject:[NSMutableString stringWithString:formats[0]]];
     }
     
@@ -140,7 +140,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         for (NSInteger groupLevel = 0; groupLevel < _groupNestingLevel; groupLevel++) {
             nestedFormats = [nestedFormats lastObject];
             
-            if ((groupLevel == _groupNestingLevel - 1) && includedLeaves) {
+            if (groupLevel == _groupNestingLevel - 1 && includedLeaves) {
                 nestedFormats = [self leafFormatsFromFormats:nestedFormats];
             }
         }
@@ -310,7 +310,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
     _canonicalOffset = 0;
     _formattedNumber = [NSString string];
     
-    for (NSInteger i = 0; _formattedNumber && (i < [phoneNumber length]); i++) {
+    for (NSInteger i = 0; _formattedNumber && i < [phoneNumber length]; i++) {
         NSString *character = [phoneNumber substringWithRange:NSMakeRange(i, 1)];
         NSString *segment = [self matchCharacter:character];
         
@@ -321,7 +321,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         }
     }
     
-    _isCompleteMatch = _formattedNumber && (_tokenOffset == [_format length]);
+    _isCompleteMatch = _formattedNumber && _tokenOffset == [_format length];
     
     return _formattedNumber;
 }
@@ -341,7 +341,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         }
     }
     
-    for (NSInteger i = 0; !_formattedNumber && (i < [_formats count]); i++) {
+    for (NSInteger i = 0; !_formattedNumber && i < [_formats count]; i++) {
         [self matchPhoneNumber:_flattenedNumber toFormat:_formats[i]];
     }
 
@@ -400,7 +400,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         formatter = [[self alloc] initWithRegionIdentifier:regionIdentifier];
     }
     
-    if ([phoneNumber hasPrefix:kTokenPlus] && ([phoneNumber length] > 1)) {
+    if ([phoneNumber hasPrefix:kTokenPlus] && [phoneNumber length] > 1) {
         NSString *prefixedNumber = nil;
         
         for (NSString *format in _internationalFormats) {
@@ -412,7 +412,7 @@ static NSMutableDictionary *_formattersByRegionIdentifier = nil;
         if (prefixedNumber) {
             NSString *countryCallingCode = nil;
             
-            for (NSInteger i = 1; !countryCallingCode && (i < [prefixedNumber length]); i++) {
+            for (NSInteger i = 1; !countryCallingCode && i < [prefixedNumber length]; i++) {
                 if ([kWhitespaceCharacters containsCharacter:[prefixedNumber characterAtIndex:i]]) {
                     countryCallingCode = [prefixedNumber substringWithRange:NSMakeRange(1, i - 1)];
                 }
