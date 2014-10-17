@@ -247,7 +247,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 - (OInputField *)editableListCellField
 {
-    return (!_isInputCell && _editable) ? [self inputFieldForKey:_constrainer.titleKey] : nil;
+    return _editable && !_isInputCell ? [self inputFieldForKey:_constrainer.titleKey] : nil;
 }
 
 
@@ -567,6 +567,8 @@ static CGFloat const kShakeRepeatCount = 3.f;
         
         if (_style == UITableViewCellStyleSubtitle) {
             self.detailTextLabel.textColor = [UIColor textColour];
+        } else if (_style == UITableViewCellStyleValue1) {
+            self.detailTextLabel.textColor = [UIColor valueTextColour];
         }
     }
 }

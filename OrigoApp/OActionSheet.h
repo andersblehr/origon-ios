@@ -10,6 +10,8 @@
 
 @interface OActionSheet : UIActionSheet
 
++ (void)singleButtonActionSheetWithButtonTitle:(NSString *)buttonTitle action:(void (^)(void))action;
+
 - (instancetype)initWithPrompt:(NSString *)prompt delegate:(id<UIActionSheetDelegate>)delegate tag:(NSInteger)tag;
 
 - (NSInteger)addButtonWithTitle:(NSString *)title tag:(NSInteger)tag;

@@ -8,16 +8,30 @@
 
 #import "OActionSheet.h"
 
-
-@interface OActionSheet () {
+@interface OActionSheet () <UIActionSheetDelegate> {
 @private
     NSMutableArray *_buttonTags;
 }
+
+@property (nonatomic, strong) void (^action)(void);
 
 @end
 
 
 @implementation OActionSheet
+
+#pragma mark - Factory methods
+
++ (void)singleButtonActionSheetWithButtonTitle:(NSString *)buttonTitle action:(void (^)(void))action
+{
+    OActionSheet *actionSheet = [[self alloc] initWithPrompt:nil delegate:nil tag:0];
+    [actionSheet addButtonWithTitle:buttonTitle];
+    actionSheet.delegate = actionSheet;
+    actionSheet.action = action;
+    
+    [actionSheet show];
+}
+
 
 #pragma mark - Initialisation
 
@@ -74,6 +88,16 @@
 - (NSInteger)addButtonWithTitle:(NSString *)title
 {
     return [self addButtonWithTitle:title tag:[_buttonTags count]];
+}
+
+
+#pragma mark - UIActionSheetDelegate conformance
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex != actionSheet.cancelButtonIndex) {
+        _action();
+    }
 }
 
 @end

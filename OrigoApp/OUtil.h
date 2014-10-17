@@ -21,6 +21,7 @@
 + (NSString *)associationInfoForMember:(id<OMember>)member;
 + (NSString *)guardianInfoForMember:(id<OMember>)member;
 
++ (NSString *)commaSeparatedListOfStrings:(NSArray *)strings conjoinLastItem:(BOOL)conjoinLastItem;
 + (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem;
 + (NSString *)commaSeparatedListOfMembers:(id)members withRolesInOrigo:(id<OOrigo>)origo;
 

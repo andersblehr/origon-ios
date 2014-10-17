@@ -367,7 +367,7 @@
 
 // Footers
 "A notification will be sent to the email address you provide." = "A notification will be sent to the email address you provide.";
-"Before you can register a minor, you must register his or her guardian(s)." = "Before you can register a minor, you must register his or her guardian(s).";
+"Before you can register a minor, you must register his or her guardians." = "Before you can register a minor, you must register his or her guardians.";
 "Tap [+] to add another guardian." = "Tap [+] to add another guardian.";
 
 // Buttons

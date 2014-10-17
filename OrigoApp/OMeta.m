@@ -172,6 +172,10 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     ODevice *device = [ODevice device];
     device.lastSeen = [NSDate date];
     
+    if (![device.name isEqualToString:[UIDevice currentDevice].name]) {
+        device.name = [UIDevice currentDevice].name;
+    }
+    
     if ([device hasExpired]) {
         [device unexpire];
     }

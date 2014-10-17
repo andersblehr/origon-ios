@@ -13,30 +13,6 @@ static NSString * const kRootIdFormat = @"~%@";
 
 @implementation OUtil
 
-#pragma mark - Auxiliary methods
-
-+ (NSString *)commaSeparatedListOfStringItems:(NSArray *)stringItems conjoinLastItem:(BOOL)conjoinLastItem
-{
-    NSMutableString *commaSeparatedList = nil;
-    
-    for (NSString *stringItem in stringItems) {
-        if (!commaSeparatedList) {
-            commaSeparatedList = [NSMutableString stringWithString:stringItem];
-        } else {
-            if (conjoinLastItem && stringItem == [stringItems lastObject]) {
-                [commaSeparatedList appendString:NSLocalizedString(@" and ", @"")];
-            } else {
-                [commaSeparatedList appendString:kSeparatorComma];
-            }
-            
-            [commaSeparatedList appendString:stringItem];
-        }
-    }
-    
-    return commaSeparatedList;
-}
-
-
 #pragma mark - Setting table view cell images
 
 + (void)setImageForOrigo:(id<OOrigo>)origo inTableViewCell:(OTableViewCell *)cell
@@ -181,7 +157,7 @@ static NSString * const kRootIdFormat = @"~%@";
     }
     
     if ([associationsByWard count]) {
-        association = [NSString stringWithFormat:NSLocalizedString(@"Parent of %@", @""), [self commaSeparatedListOfStringItems:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoinLastItem:YES]];
+        association = [NSString stringWithFormat:NSLocalizedString(@"Parent of %@", @""), [self commaSeparatedListOfStrings:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoinLastItem:YES]];
     } else if (origoAssociation) {
         association = origoAssociation;
     }
@@ -209,6 +185,28 @@ static NSString * const kRootIdFormat = @"~%@";
 
 
 #pragma mark - List strings
+
++ (NSString *)commaSeparatedListOfStrings:(NSArray *)strings conjoinLastItem:(BOOL)conjoinLastItem
+{
+    NSMutableString *commaSeparatedList = nil;
+    
+    for (NSString *string in strings) {
+        if (!commaSeparatedList) {
+            commaSeparatedList = [NSMutableString stringWithString:string];
+        } else {
+            if (conjoinLastItem && string == [strings lastObject]) {
+                [commaSeparatedList appendString:NSLocalizedString(@" and ", @"")];
+            } else {
+                [commaSeparatedList appendString:kSeparatorComma];
+            }
+            
+            [commaSeparatedList appendString:string];
+        }
+    }
+    
+    return commaSeparatedList;
+}
+
 
 + (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem
 {
@@ -242,7 +240,7 @@ static NSString * const kRootIdFormat = @"~%@";
         }
     }
     
-    return [self commaSeparatedListOfStringItems:stringItems conjoinLastItem:conjoinLastItem];
+    return [self commaSeparatedListOfStrings:stringItems conjoinLastItem:conjoinLastItem];
 }
 
 
@@ -269,7 +267,7 @@ static NSString * const kRootIdFormat = @"~%@";
         }
     }
     
-    return [self commaSeparatedListOfStringItems:stringItems conjoinLastItem:NO];
+    return [self commaSeparatedListOfStrings:stringItems conjoinLastItem:NO];
 }
 
 

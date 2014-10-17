@@ -579,6 +579,12 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
+- (BOOL)isOutOfBounds
+{
+    return [self isJuvenile] && ![[OMeta m].user isJuvenile] && ![self isHousemateOfUser];
+}
+
+
 - (BOOL)hasAddress
 {
     BOOL hasAddress = NO;

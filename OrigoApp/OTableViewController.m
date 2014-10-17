@@ -24,12 +24,13 @@ static BOOL _needsReinstantiateRootViewController;
 static UIViewController * _reinstantiatedRootViewController;
 
 
-@interface OTableViewController () <UITextFieldDelegate, UITextViewDelegate, UIAlertViewDelegate> {
+@interface OTableViewController () <UITextFieldDelegate, UITextViewDelegate> {
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
     BOOL _shouldReloadOnModalDismissal;
     BOOL _shouldDismissOnFinishEditingTitle;
+    BOOL _titleFieldShouldBeginEditing;
     
     Class _entityClass;
     NSInteger _inputSectionKey;
@@ -825,6 +826,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _titleField = [self.navigationItem setTitle:title editable:YES withSubtitle:nil];
     _titleField.placeholder = placeholder;
     _titleField.delegate = self;
+    _titleFieldShouldBeginEditing = ![title hasValue];
     
     self.title = title;
     
@@ -1522,7 +1524,25 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (BOOL)textFieldShouldBeginEditing:(OTextField *)textField
 {
-    return (textField == _titleField) ? !_tableView.isDecelerating : YES;
+    BOOL shouldBeginEditing = YES;
+    
+    if (textField == _titleField) {
+        shouldBeginEditing = _titleFieldShouldBeginEditing;
+        
+        if (shouldBeginEditing) {
+            _titleFieldShouldBeginEditing = NO;
+        } else {
+            NSString *buttonTitle = [NSLocalizedString(@"Edit", @"") stringByAppendingString:[_titleField.placeholder stringByConditionallyLowercasingFirstLetter] separator:kSeparatorSpace];
+            
+            [OActionSheet singleButtonActionSheetWithButtonTitle:buttonTitle action:^{
+                _titleFieldShouldBeginEditing = YES;
+                
+                [_titleField becomeFirstResponder];
+            }];
+        }
+    }
+    
+    return shouldBeginEditing;
 }
 
 
@@ -1531,10 +1551,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if ([_inputCell hasInputField:textField]) {
         [self inputFieldDidBecomeFirstResponder:textField];
     } else if (textField == _titleField) {
-        if ([_titleField.text hasValue]) {
-            _titleField.selectedTextRange = [_titleField textRangeFromPosition:_titleField.beginningOfDocument toPosition:_titleField.endOfDocument];
-        }
-        
         [self setEditingTitle:YES];
     }
 }

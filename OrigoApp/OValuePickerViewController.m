@@ -214,6 +214,11 @@ static NSInteger const kSectionKeyValues = 0;
         } else if ([self targetIs:kTargetMember] || [self targetIs:kTargetMembers]) {
             cell.detailTextLabel.text = [OUtil associationInfoForMember:candidate];
         }
+        
+        if ([self aspectIs:kAspectAdmin] && ![candidate isActive]) {
+            cell.textLabel.textColor = [UIColor lightGrayColor];
+            cell.selectable = NO;
+        }
     }
     
     if (cell.checked && !_isMultiValuePicker) {
