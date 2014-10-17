@@ -42,6 +42,7 @@
 + (instancetype)footerTextColour;
 + (instancetype)titleTextColour;
 + (instancetype)labelTextColour;
++ (instancetype)valueTextColour;
 + (instancetype)imagePlaceholderTextColour;
 
 + (instancetype)tonedDownIconColour;

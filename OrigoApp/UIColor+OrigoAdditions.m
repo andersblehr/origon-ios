@@ -196,6 +196,12 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 }
 
 
++ (instancetype)valueTextColour
+{
+    return [self manateeColour];
+}
+
+
 + (instancetype)imagePlaceholderTextColour
 {
     return [self whiteColor];

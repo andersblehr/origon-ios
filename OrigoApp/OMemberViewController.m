@@ -1056,7 +1056,7 @@ static NSInteger const kButtonIndexContinue = 1;
             id<OEntity> ancestor = [self.entity ancestor];
             
             if ([ancestor conformsToProtocol:@protocol(OMember)] && ![ancestor isCommitted]) {
-                text = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardian(s).", @"") stringByAppendingString:text separator:kSeparatorSpace];
+                text = [NSLocalizedString(@"Before you can register a minor, you must register his or her guardians.", @"") stringByAppendingString:text separator:kSeparatorSpace];
             }
         }
     } else if (sectionKey == kSectionKeyMember) {

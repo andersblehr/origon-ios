@@ -426,7 +426,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                 }
             }
             
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:roleHolderStrings conjoinLastItem:NO];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:roleHolderStrings conjoinLastItem:NO];
             [OUtil setTonedDownIconWithFileName:kIconFileRoleHolders inTableViewCell:cell];
             cell.destinationId = kIdentifierValueList;
             cell.destinationMeta = role;

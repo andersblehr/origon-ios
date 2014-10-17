@@ -42,7 +42,6 @@ static NSInteger const kSectionKeyAdmins = 1;
             [propertyKeys addObject:kPropertyKeyType];
         }
     } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
-        [propertyKeys addObject:kPropertyKeyName];
         [propertyKeys addObject:kPropertyKeyGender];
     }
     
@@ -52,7 +51,7 @@ static NSInteger const kSectionKeyAdmins = 1;
         [propertyKeys addObject:kPropertyKeyModifiedBy];
     }
     
-    if ([_entity conformsToProtocol:@protocol(OMember)] && ![_entity isUser]) {
+    if ([_entity conformsToProtocol:@protocol(OMember)] && ![_entity isOutOfBounds]) {
         [propertyKeys addObject:kPropertyKeyActiveSince];
     }
     
@@ -108,12 +107,7 @@ static NSInteger const kSectionKeyAdmins = 1;
     } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
         id<OMember> member = _entity;
         
-        if ([member isUser]) {
-            self.title = NSLocalizedString(@"About you", @"");
-        } else {
-            self.title = [NSString stringWithFormat:NSLocalizedString(@"About %@", @""), [member givenName]];
-        }
-        
+        self.title = [member isManagedByUser] ? member.name : [member publicName];
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[member givenName]];
     }
     
@@ -174,13 +168,7 @@ static NSInteger const kSectionKeyAdmins = 1;
         } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
             id<OMember> member = _entity;
             
-            if ([propertyKey isEqualToString:kPropertyKeyName]) {
-                if ([member isManagedByUser]) {
-                    cell.detailTextLabel.text = member.name;
-                } else {
-                    cell.detailTextLabel.text = [member publicName];
-                }
-            } else if ([propertyKey isEqualToString:kPropertyKeyGender]) {
+            if ([propertyKey isEqualToString:kPropertyKeyGender]) {
                 cell.detailTextLabel.text = [[OUtil genderTermForGender:member.gender isJuvenile:[member isJuvenile]] stringByCapitalisingFirstLetter];
                 
                 if ([member isManagedByUser]) {
@@ -269,8 +257,10 @@ static NSInteger const kSectionKeyAdmins = 1;
             footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Last modified: %@.", @""), [[_entity dateReplicated] localisedDateTimeString]] separator:kSeparatorNewline];
         }
         
-        if ([_entity conformsToProtocol:@protocol(OMember)] && [_entity isActive]) {
-            footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Active since: %@", @""), [[_entity activeSince] localisedDateTimeString]] separator:kSeparatorNewline];
+        if ([_entity conformsToProtocol:@protocol(OMember)]) {
+            if ([_entity isActive] && ![_entity isOutOfBounds]) {
+                footerText = [footerText stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"Active since: %@", @""), [[_entity activeSince] localisedDateTimeString]] separator:kSeparatorNewline];
+            }
         }
     }
     

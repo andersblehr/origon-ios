@@ -62,6 +62,7 @@
 - (BOOL)isJuvenile;
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOlderThan:(NSInteger)age;
+- (BOOL)isOutOfBounds;
 - (BOOL)hasAddress;
 - (BOOL)hasParent:(id<OMember>)member;
 - (BOOL)hasParentWithGender:(NSString *)gender;
