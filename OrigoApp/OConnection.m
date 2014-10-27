@@ -26,7 +26,6 @@ static NSString * const kHTTPMethodDELETE = @"DELETE";
 
 static NSString * const kOrigoDevServer = @"http://localhost:8888";
 //static NSString * const kOrigoDevServer = @"https://origoapp.appspot.com";
-//static NSString * const kOrigoDevServer = @"http://enceladus.local:8888";
 static NSString * const kOrigoProdServer = @"https://origoapp.appspot.com";
 
 static NSString * const kHTTPHeaderAccept = @"Accept";

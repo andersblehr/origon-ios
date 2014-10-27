@@ -71,12 +71,11 @@
 - (NSArray *)pronoun;
 - (NSArray *)parentNoun;
 
+- (NSString *)shortName;
 - (NSString *)givenName;
 - (NSString *)givenNameWithParentTitle;
 - (NSString *)givenNameWithRolesForOrigo:(id<OOrigo>)origo;
-- (NSString *)publicName;
-- (NSString *)shortName;
-- (NSString *)appellationUseGivenName:(BOOL)useGivenName;
+- (NSString *)displayNameInOrigo:(id<OOrigo>)origo;
 
 @end
 

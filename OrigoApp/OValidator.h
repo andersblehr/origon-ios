@@ -11,7 +11,6 @@
 @interface OValidator : NSObject
 
 + (BOOL)isNameKey:(NSString *)key;
-+ (BOOL)isGivenNameKey:(NSString *)key;
 + (BOOL)isAgeKey:(NSString *)key;
 + (BOOL)isDateKey:(NSString *)key;
 + (BOOL)isEmailKey:(NSString *)key;

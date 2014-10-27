@@ -35,7 +35,7 @@
 + (instancetype)imagePlaceholderBackgroundColour;
 
 + (instancetype)textColour;
-+ (instancetype)dimmedTextColour;
++ (instancetype)tonedDownTextColour;
 + (instancetype)notificationTextColour;
 + (instancetype)placeholderTextColour;
 + (instancetype)headerTextColour;

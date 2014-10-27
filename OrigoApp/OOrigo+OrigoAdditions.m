@@ -275,7 +275,9 @@ NSString * const kOrigoTypeTeam = @"team";
     for (OMembership *membership in [self allMemberships]) {
         OMember *member = membership.member;
         
-        if (![member isJuvenile] || ([self isJuvenile] && [member isActive])) {
+        BOOL isEligibleCandidate = [self isJuvenile] && [self hasMember:member] && [member isActive];
+        
+        if (![member isJuvenile] || isEligibleCandidate) {
             [adminCandidates addObject:membership.member];
         }
     }

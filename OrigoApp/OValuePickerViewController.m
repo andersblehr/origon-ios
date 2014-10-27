@@ -100,7 +100,7 @@ static NSInteger const kSectionKeyValues = 0;
             } else if ([self aspectIs:kAspectGroup]) {
                 _affiliationType = kAffiliationTypeGroup;
                 _pickedValues = _affiliation ? [[_origo membersOfGroup:_affiliation] mutableCopy] : nil;
-                placeholder = NSLocalizedString(@"Name of group", @"");
+                placeholder = NSLocalizedString(@"Group name", @"");
             } else if ([self aspectIs:kAspectAdmin]) {
                 self.title = self.target;
                 _pickedValues = [[_origo admins] mutableCopy];
@@ -198,26 +198,21 @@ static NSInteger const kSectionKeyValues = 0;
     } else {
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         
-        cell.textLabel.text = [candidate publicName];
-        [OUtil setImageForMember:candidate inTableViewCell:cell];
+        [cell loadMember:candidate inOrigo:_origo includeRelations:YES];
+        
+        if ([self targetIs:kTargetMember] || [self targetIs:kTargetMembers]) {
+            cell.detailTextLabel.text = [OUtil associationInfoForMember:candidate];
+            cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
+        } else if ([self aspectIs:kAspectGroup]) {
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:[[_origo membershipForMember:candidate] groups] conjoinLastItem:NO];
+        } else if ([self aspectIs:kAspectAdmin] && ![candidate isActive]) {
+            cell.textLabel.textColor = [UIColor tonedDownTextColour];
+            cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
+            cell.selectable = NO;
+        }
         
         if ([_pickedValues count]) {
             cell.checked = [_pickedValues containsObject:candidate];
-        }
-        
-        if ([self aspectIs:kAspectParentRole] && ![candidate isHousemateOfUser]) {
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"(%@)", [OUtil commaSeparatedListOfItems:[candidate wardsInOrigo:_origo] conjoinLastItem:NO]];
-        } else if ([candidate isJuvenile] && ![candidate isHousemateOfUser]) {
-            cell.detailTextLabel.text = [OUtil guardianInfoForMember:candidate];
-        } else if ([self aspectIs:kAspectGroup]) {
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:candidate] groups] conjoinLastItem:NO];
-        } else if ([self targetIs:kTargetMember] || [self targetIs:kTargetMembers]) {
-            cell.detailTextLabel.text = [OUtil associationInfoForMember:candidate];
-        }
-        
-        if ([self aspectIs:kAspectAdmin] && ![candidate isActive]) {
-            cell.textLabel.textColor = [UIColor lightGrayColor];
-            cell.selectable = NO;
         }
     }
     

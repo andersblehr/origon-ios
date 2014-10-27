@@ -8,8 +8,6 @@
 
 #import "OMember+OrigoAdditions.h"
 
-NSString * const kAnnotatedNameFormat = @"%@ (%@)";
-
 
 @implementation OMember (OrigoAdditions)
 
@@ -657,36 +655,6 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 
 #pragma mark - Data formatting shorthands
 
-- (NSString *)givenName
-{
-    return [self.name givenName];
-}
-
-
-- (NSString *)givenNameWithParentTitle
-{
-    return [NSString stringWithFormat:kAnnotatedNameFormat, [self givenName], [self parentNoun][singularIndefinite]];
-}
-
-
-- (NSString *)givenNameWithRolesForOrigo:(id<OOrigo>)origo
-{
-    NSString *annotatedName = nil;
-    
-    if ([origo instance]) {
-        annotatedName = [NSString stringWithFormat:kAnnotatedNameFormat, [self givenName], [OUtil commaSeparatedListOfItems:[[origo membershipForMember:self] roles] conjoinLastItem:NO]];
-    }
-    
-    return annotatedName;
-}
-
-
-- (NSString *)publicName
-{
-    return [self isJuvenile] ? [self givenName] : self.name;
-}
-
-
 - (NSString *)shortName
 {
     NSString *shortName = nil;
@@ -702,17 +670,65 @@ NSString * const kAnnotatedNameFormat = @"%@ (%@)";
 }
 
 
-- (NSString *)appellationUseGivenName:(BOOL)useGivenName
+- (NSString *)givenName
 {
-    NSString *appelation = nil;
+    return [self.name givenName];
+}
+
+
+- (NSString *)givenNameWithParentTitle
+{
+    return [NSString stringWithFormat:@"%@ (%@)", [self givenName], [self parentNoun][singularIndefinite]];
+}
+
+
+- (NSString *)givenNameWithRolesForOrigo:(id<OOrigo>)origo
+{
+    NSString *annotatedName = nil;
     
-    if ([self isUser]) {
-        appelation = [[OLanguage pronouns][_you_][nominative] stringByCapitalisingFirstLetter];
-    } else {
-        appelation = useGivenName ? [self givenName] : [self publicName];
+    if ([origo instance]) {
+        annotatedName = [NSString stringWithFormat:@"%@ (%@)", [self givenName], [OUtil commaSeparatedListOfItems:[[origo membershipForMember:self] roles] conjoinLastItem:NO]];
     }
     
-    return appelation;
+    return annotatedName;
+}
+
+
+- (NSString *)displayNameInOrigo:(id<OOrigo>)origo
+{
+    NSString *displayName = nil;
+    
+    if (origo && [self isJuvenile] && ![[OMeta m].user isJuvenile]) {
+        static NSDictionary *isUniqueGivenNameByOrigoId = nil;
+        NSMutableDictionary *isUniqueGivenName = isUniqueGivenNameByOrigoId[origo.entityId];
+        
+        if (!isUniqueGivenName) {
+            isUniqueGivenName = [NSMutableDictionary dictionary];
+            isUniqueGivenNameByOrigoId = @{origo.entityId: isUniqueGivenName};
+            
+            for (id<OMember> member in [origo regulars]) {
+                NSString *givenName = [member givenName];
+                
+                if ([[isUniqueGivenName allKeys] containsObject:givenName]) {
+                    isUniqueGivenName[givenName] = @NO;
+                } else {
+                    isUniqueGivenName[givenName] = @YES;
+                }
+            }
+        }
+        
+        NSString *givenName = [self givenName];
+        
+        if ([isUniqueGivenName[givenName] boolValue]) {
+            displayName = givenName;
+        } else {
+            displayName = [self shortName];
+        }
+    } else {
+        displayName = self.name;
+    }
+    
+    return displayName;
 }
 
 

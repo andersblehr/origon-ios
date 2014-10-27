@@ -29,16 +29,10 @@ static NSDictionary *_keyMappings = nil;
 + (BOOL)isNameKey:(NSString *)key
 {
     if (!_nameKeys) {
-        _nameKeys = @[kPropertyKeyName, kMappedKeyFullName, kMappedKeyGivenName, kMappedKeyResidenceName];
+        _nameKeys = @[kPropertyKeyName, kMappedKeyFullName, kMappedKeyResidenceName];
     }
     
     return [_nameKeys containsObject:key];
-}
-
-
-+ (BOOL)isGivenNameKey:(NSString *)key
-{
-    return [key isEqualToString:kMappedKeyGivenName];
 }
 
 
@@ -132,7 +126,6 @@ static NSDictionary *_keyMappings = nil;
     if (!_keyMappings) {
         _keyMappings = @{
             kMappedKeyFullName : kPropertyKeyName,
-            kMappedKeyGivenName : kPropertyKeyName,
             kMappedKeyResidenceName : kPropertyKeyName,
             kMappedKeyPreschoolClass : kPropertyKeyName,
             kMappedKeyPreschool : kPropertyKeyDescriptionText,

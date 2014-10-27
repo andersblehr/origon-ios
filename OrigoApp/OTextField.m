@@ -68,12 +68,6 @@ static CGFloat const kTextInsetY = 1.2f;
             } else {
                 self.text = [_value localisedAgeString];
             }
-        } else if ([OValidator isGivenNameKey:_key]) {
-            if (self.editable) {
-                self.text = _value;
-            } else {
-                self.text = [_value givenName];
-            }
         } else {
             self.text = _value;
         }

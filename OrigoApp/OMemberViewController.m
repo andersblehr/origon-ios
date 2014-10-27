@@ -84,7 +84,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (NSString *)nameKey
 {
-    return [self targetIs:kTargetJuvenile] ? kMappedKeyGivenName : kMappedKeyFullName;
+    return [self targetIs:kTargetJuvenile] ? kPropertyKeyName : kMappedKeyFullName;
 }
 
 
@@ -127,7 +127,7 @@ static NSInteger const kButtonIndexContinue = 1;
     } else {
         [_nameField becomeFirstResponder];
         
-        [OAlert showAlertWithTitle:@"" text:[NSString stringWithFormat:NSLocalizedString(@"%@ is already in %@.", @""), [member publicName], _origo.name]];
+        [OAlert showAlertWithTitle:@"" text:[NSString stringWithFormat:NSLocalizedString(@"%@ is already in %@.", @""), [member givenName], _origo.name]];
     }
     
     return isEligible;
@@ -934,25 +934,26 @@ static NSInteger const kButtonIndexContinue = 1;
     if (sectionKey == kSectionKeyGuardians) {
         id<OMember> guardian = [self dataAtIndexPath:indexPath];
         
-        cell.textLabel.text = guardian.name;
+        [cell loadMember:guardian inOrigo:_origo includeRelations:NO];
         cell.destinationId = kIdentifierMember;
-        [OUtil setImageForMember:guardian inTableViewCell:cell];
         
-        NSString *details = nil;
-        
-        if ([[_member residences] count] > 1) {
-            details = [[guardian residence] shortAddress];
-        }
-        
-        if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
-            if (details) {
-                details = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:details separator:kSeparatorComma];
-            } else {
-                details = [[guardian parentNoun][singularIndefinite] capitalizedString];
+        if (![cell.detailTextLabel.text hasValue]) {
+            NSString *details = nil;
+            
+            if ([[_member residences] count] > 1) {
+                details = [[guardian residence] shortAddress];
             }
+            
+            if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
+                if (details) {
+                    details = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:details separator:kSeparatorComma];
+                } else {
+                    details = [[guardian parentNoun][singularIndefinite] capitalizedString];
+                }
+            }
+            
+            cell.detailTextLabel.text = details;
         }
-        
-        cell.detailTextLabel.text = details;
     } else if (sectionKey == kSectionKeyAddresses) {
         id<OOrigo> residence = [self dataAtIndexPath:indexPath];
         
@@ -1022,7 +1023,7 @@ static NSInteger const kButtonIndexContinue = 1;
             } else {
                 text = [OLanguage nouns][_guardian_][singularIndefinite];
             }
-        } else if ([guardians count] == 2) {
+        } else if ([_member guardiansAreParents]) {
             text = [OLanguage nouns][_parent_][pluralIndefinite];
         } else {
             text = [OLanguage nouns][_guardian_][pluralIndefinite];

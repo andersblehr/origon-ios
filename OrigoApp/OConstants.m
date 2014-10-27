@@ -65,7 +65,6 @@ NSString * const kRelationshipKeyOrigo = @"origo";
 // Mapped keys
 NSString * const kMappedKeyClub = @"club";
 NSString * const kMappedKeyFullName = @"fullName";
-NSString * const kMappedKeyGivenName = @"givenName";
 NSString * const kMappedKeyOrganisation = @"organisation";
 NSString * const kMappedKeyOrganisationDescription = @"organisationDescription";
 NSString * const kMappedKeyPreschool = @"preschool";
@@ -102,6 +101,7 @@ NSString * const kStringPrefixOrigoTitle = @"[title]";
 NSString * const kStringPrefixNewOrigoTitle = @"[registration title]";
 NSString * const kStringPrefixFooter = @"[registration footer]";
 NSString * const kStringPrefixAddMemberButton = @"[add member]";
+NSString * const kStringPrefixMemberTitle = @"[member]";
 NSString * const kStringPrefixMembersTitle = @"[members]";
 NSString * const kStringPrefixNewMemberTitle = @"[member registration]";
 NSString * const kStringPrefixAllMembersTitle = @"[all members]";
