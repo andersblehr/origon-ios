@@ -98,8 +98,8 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     headerSegments.frame = CGRectMake(kDefaultCellPadding - alignmentOffset, 0.f, headerSegments.frame.size.width, [[UIFont headerFont] headerHeight]);
     headerSegments.tintColor = [UIColor clearColor];
     headerSegments.selectedSegmentIndex = _isListingResidences ? 1 : 0;
-    [headerSegments setTitleTextAttributes:@{UITextAttributeTextColor: [UIColor headerTextColour], UITextAttributeFont: [UIFont headerFont]} forState:UIControlStateSelected];
-    [headerSegments setTitleTextAttributes:@{UITextAttributeTextColor: [UIColor lightGrayColor], UITextAttributeFont: [UIFont headerFont]} forState:UIControlStateNormal];
+    [headerSegments setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor headerTextColour], NSFontAttributeName: [UIFont headerFont]} forState:UIControlStateSelected];
+    [headerSegments setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor lightGrayColor], NSFontAttributeName: [UIFont headerFont]} forState:UIControlStateNormal];
     [headerSegments addTarget:self action:@selector(didSelectHeaderSegment) forControlEvents:UIControlEventValueChanged];
     
     UIView *segmentedHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenWidth], [[UIFont headerFont] headerHeight])];
@@ -386,16 +386,13 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             
             cell.textLabel.text = [residence shortAddress];
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[residence elders] withRolesInOrigo:_origo];
-            [OUtil setImageForOrigo:residence inTableViewCell:cell];
+            [cell loadImageForOrigo:residence];
             cell.destinationId = kIdentifierOrigo;
         } else {
             id<OOrigo> origo = self.state.baseOrigo ? self.state.baseOrigo : _origo;
             id<OMember> member = [self dataAtIndexPath:indexPath];
-            id<OMembership> membership = [origo membershipForMember:member];
             
-            cell.textLabel.text = [member publicName];
-            cell.detailTextLabel.text = [OUtil memberInfoFromMembership:membership];
-            [OUtil setImageForMember:member inTableViewCell:cell];
+            [cell loadMember:member inOrigo:origo includeRelations:![_origo isOfType:kOrigoTypeResidence]];
             cell.destinationId = kIdentifierMember;
         }
     } else {
@@ -407,27 +404,17 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         if ([roleHolders count] == 1) {
             id<OMember> roleHolder = roleHolders[0];
             
-            if ([roleHolder isHousemateOfUser] || sectionKey != kSectionKeyParentContacts) {
-                cell.detailTextLabel.text = [[roleHolders[0] appellationUseGivenName:NO] stringByCapitalisingFirstLetter];
+            if (sectionKey == kSectionKeyParentContacts) {
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%@)", roleHolder.name, [OUtil commaSeparatedListOfMembers:[roleHolder wardsInOrigo:_origo] inOrigo:_origo]];
             } else {
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%@)", roleHolder.name, [OUtil commaSeparatedListOfItems:[roleHolder wardsInOrigo:_origo] conjoinLastItem:NO]];
+                cell.detailTextLabel.text = roleHolder.name;
             }
             
-            [OUtil setImageForMember:roleHolders[0] inTableViewCell:cell];
+            [cell loadImageForMember:roleHolder];
             cell.destinationId = kIdentifierMember;
         } else {
-            NSMutableArray *roleHolderStrings = [NSMutableArray array];
-            
-            for (id<OMember> roleHolder in roleHolders) {
-                if ([roleHolder isHousemateOfUser] || sectionKey != kSectionKeyParentContacts) {
-                    [roleHolderStrings addObject:[[roleHolder appellationUseGivenName:YES] stringByCapitalisingFirstLetter]];
-                } else {
-                    [roleHolderStrings addObject:[NSString stringWithFormat:@"%@ (%@)", [roleHolder givenName], [OUtil commaSeparatedListOfItems:[roleHolder wardsInOrigo:_origo] conjoinLastItem:NO]]];
-                }
-            }
-            
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:roleHolderStrings conjoinLastItem:NO];
-            [OUtil setTonedDownIconWithFileName:kIconFileRoleHolders inTableViewCell:cell];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders];
+            [cell loadTonedDownIconWithFileName:kIconFileRoleHolders];
             cell.destinationId = kIdentifierValueList;
             cell.destinationMeta = role;
         }

@@ -10,10 +10,6 @@
 
 @interface OUtil : NSObject
 
-+ (void)setImageForOrigo:(id<OOrigo>)origo inTableViewCell:(OTableViewCell *)cell;
-+ (void)setImageForMember:(id<OMember>)member inTableViewCell:(OTableViewCell *)cell;
-+ (void)setTonedDownIconWithFileName:(NSString *)iconName inTableViewCell:(OTableViewCell *)cell;
-
 + (NSString *)rootIdFromMemberId:(NSString *)memberId;
 + (NSString *)genderTermForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile;
 
@@ -21,8 +17,10 @@
 + (NSString *)associationInfoForMember:(id<OMember>)member;
 + (NSString *)guardianInfoForMember:(id<OMember>)member;
 
-+ (NSString *)commaSeparatedListOfStrings:(NSArray *)strings conjoinLastItem:(BOOL)conjoinLastItem;
 + (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem;
++ (NSString *)commaSeparatedListOfStrings:(id)strings conjoinLastItem:(BOOL)conjoinLastItem;
++ (NSString *)commaSeparatedListOfMembers:(id)members;
++ (NSString *)commaSeparatedListOfMembers:(id)members inOrigo:(id<OOrigo>)origo;
 + (NSString *)commaSeparatedListOfMembers:(id)members withRolesInOrigo:(id<OOrigo>)origo;
 
 + (NSArray *)eligibleOrigoTypesForOrigo:(id<OOrigo>)origo;

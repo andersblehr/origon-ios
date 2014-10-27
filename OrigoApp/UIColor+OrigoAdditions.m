@@ -154,7 +154,7 @@ static CGFloat const kAlphaDimmedBackground = 0.4f;
 }
 
 
-+ (instancetype)dimmedTextColour
++ (instancetype)tonedDownTextColour
 {
     return [self lightGrayColor];
 }

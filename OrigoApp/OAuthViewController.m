@@ -59,7 +59,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     [logoBanner addSubview:bottomHairline];
     
     [self.view addSubview:logoBanner];
-    self.tableView.contentInset = UIEdgeInsetsMake(2.f * kLogoHeight, 0.f, 0.f, 0.f);
+    [self.tableView setTopContentInset:2.f * kLogoHeight];
 }
 
 

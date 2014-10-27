@@ -258,21 +258,9 @@
 }
 
 
-- (NSString *)appellationUseGivenName:(BOOL)useGivenName
-{
-    return useGivenName ? [self givenName] : [self publicName];
-}
-
-
 - (NSString *)givenName
 {
     return [self.name givenName];
-}
-
-
-- (NSString *)publicName
-{
-    return [self isJuvenile] ? [self givenName] : self.name;
 }
 
 @end

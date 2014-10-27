@@ -1,20 +1,28 @@
 //
-//  UITableView+OrigoAdditions.m
+//  OTableView.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 17.10.12.
-//  Copyright (c) 2012 Rhelba Source. All rights reserved.
+//  Created by Anders Blehr on 23/10/14.
+//  Copyright (c) 2014 Rhelba Source. All rights reserved.
 //
 
-#import "UITableView+OrigoAdditions.h"
+#import "OTableView.h"
 
 NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
 
-static UIView *_dimmerView = nil;
-static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
+
+@interface OTableView () {
+@private
+    BOOL _canSetZeroBottomContentInset;
+    
+    UIView *_dimmerView;
+    NSInteger _sectionIndexMinimumDisplayRowCount;
+}
+
+@end
 
 
-@implementation UITableView (OrigoAdditions)
+@implementation OTableView
 
 #pragma mark - Auxiliary methods
 
@@ -38,7 +46,6 @@ static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
     } else {
         cell = [[OTableViewCell alloc] initWithStyle:style reuseIdentifier:reuseIdentifier delegate:delegate];
     }
-    
     
     return cell;
 }
@@ -84,6 +91,32 @@ static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
 }
 
 
+#pragma mark - Adjusting content inset
+
+- (void)setTopContentInset:(CGFloat)topContentInset
+{
+    _canSetZeroBottomContentInset = YES;
+    
+    UIEdgeInsets contentInset = self.contentInset;
+    contentInset.top = topContentInset;
+    self.contentInset = contentInset;
+    
+    _canSetZeroBottomContentInset = NO;
+}
+
+
+- (void)setBottomContentInset:(CGFloat)bottomContentInset
+{
+    _canSetZeroBottomContentInset = YES;
+    
+    UIEdgeInsets contentInset = self.contentInset;
+    contentInset.bottom = bottomContentInset;
+    self.contentInset = contentInset;
+    
+    _canSetZeroBottomContentInset = NO;
+}
+
+
 #pragma mark - Dimming & undimming
 
 - (void)dim
@@ -91,6 +124,7 @@ static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
     if (self.sectionIndexMinimumDisplayRowCount) {
         _sectionIndexMinimumDisplayRowCount = self.sectionIndexMinimumDisplayRowCount;
         self.sectionIndexMinimumDisplayRowCount = NSIntegerMax;
+        
         [self reloadSectionIndexTitles];
     }
     
@@ -114,6 +148,7 @@ static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
 {
     if (_sectionIndexMinimumDisplayRowCount) {
         self.sectionIndexMinimumDisplayRowCount = _sectionIndexMinimumDisplayRowCount;
+        
         [self reloadSectionIndexTitles];
     }
     
@@ -129,5 +164,14 @@ static NSInteger _sectionIndexMinimumDisplayRowCount = 0;
     self.scrollEnabled = YES;
 }
 
+
+#pragma mark - UITableView overrides
+
+- (void)setContentInset:(UIEdgeInsets)contentInset
+{
+    if (contentInset.bottom != 0.f || _canSetZeroBottomContentInset) {
+        [super setContentInset:contentInset];
+    }
+}
 
 @end

@@ -283,16 +283,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             cell.imageView.image = [UIImage imageNamed:kIconFile_iPad];
         }
     } else if ([self targetIs:kTargetRole]) {
-        id<OMember> roleHolder = [self dataAtIndexPath:indexPath];
-        
-        cell.textLabel.text = roleHolder.name;
-        [OUtil setImageForMember:roleHolder inTableViewCell:cell];
+        [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:_origo includeRelations:YES];
         cell.destinationId = kIdentifierMember;
         cell.destinationMeta = self.target;
-        
-        if ([self aspectIs:kAspectParentRole] && ![roleHolder isHousemateOfUser]) {
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"(%@)", [OUtil commaSeparatedListOfItems:[roleHolder wardsInOrigo:_origo] conjoinLastItem:NO]];
-        }
     } else if ([self targetIs:kTargetRoles]) {
         NSString *role = [self dataAtIndexPath:indexPath];
         NSArray *roleHolders = nil;
@@ -316,17 +309,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[_origo membersOfGroup:group] conjoinLastItem:NO];
             cell.destinationId = kIdentifierValuePicker;
         } else {
-            id<OMember> member = [self dataAtIndexPath:indexPath];
-            
-            cell.textLabel.text = [member publicName];
+            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:_origo includeRelations:YES];
             cell.selectable = NO;
-            [OUtil setImageForMember:member inTableViewCell:cell];
-            
-            if ([member isJuvenile]) {
-                cell.detailTextLabel.text = [OUtil guardianInfoForMember:member];
-            } else {
-                cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[[_origo membershipForMember:member] roles] conjoinLastItem:NO];
-            }
         }
     }
 }
@@ -463,7 +447,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
                 NSArray *groups = [_origo groups];
                 
                 if ([groups count]) {
-                    if (!_selectedSegment) {
+                    if (_selectedSegment == UISegmentedControlNoSegment) {
                         self.rowAnimation = UITableViewRowAnimationLeft;
                     }
                     

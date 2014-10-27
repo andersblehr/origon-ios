@@ -143,7 +143,7 @@ static NSInteger const kSectionKeyWards = 2;
         id<OMember> ward = entity;
         
         cell.textLabel.text = [ward givenName];
-        [OUtil setImageForMember:ward inTableViewCell:cell];
+        [cell loadImageForMember:ward];
         cell.destinationId = kIdentifierOrigoList;
         
         NSArray *origos = [ward origos];
@@ -153,18 +153,18 @@ static NSInteger const kSectionKeyWards = 2;
             cell.detailTextLabel.textColor = [UIColor textColour];
         } else {
             cell.detailTextLabel.text = NSLocalizedString(@"(No groups)", @"");
-            cell.detailTextLabel.textColor = [UIColor dimmedTextColour];
+            cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
         }
     } else {
         id<OOrigo> origo = entity;
         id<OMembership> membership = [origo membershipForMember:_member];
         
-        [OUtil setImageForOrigo:origo inTableViewCell:cell];
+        [cell loadImageForOrigo:origo];
         cell.destinationId = kIdentifierOrigo;
         
         if ([_member isUser] && ([origo userIsOrganiser] || [origo userIsParentContact])) {
             cell.textLabel.text = [NSString stringWithFormat:@"%@, %@", origo.name, origo.descriptionText];
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[membership roles] conjoinLastItem:NO];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:[membership roles] conjoinLastItem:NO];
         } else {
             cell.textLabel.text = origo.name;
         

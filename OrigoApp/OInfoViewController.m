@@ -61,11 +61,11 @@ static NSInteger const kSectionKeyAdmins = 1;
 
 - (void)listCell:(OTableViewCell *)cell loadDetailsForInstigator:(id<OMember>)instigator
 {
-    if ([instigator isUser]) {
-        cell.detailTextLabel.text = [[OLanguage pronouns][_you_][accusative] stringByCapitalisingFirstLetter];
+    cell.detailTextLabel.text = [instigator shortName];
+    
+    if ([instigator isUser] || [[_entity entityId] isEqualToString:instigator.entityId]) {
         cell.selectable = NO;
     } else {
-        cell.detailTextLabel.text = [instigator shortName];
         cell.destinationId = kIdentifierMember;
     }
 }
@@ -107,7 +107,7 @@ static NSInteger const kSectionKeyAdmins = 1;
     } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
         id<OMember> member = _entity;
         
-        self.title = [member isManagedByUser] ? member.name : [member publicName];
+        self.title = member.name;
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[member givenName]];
     }
     
@@ -191,13 +191,10 @@ static NSInteger const kSectionKeyAdmins = 1;
         
         if ([origo userCanEdit]) {
             cell.textLabel.text = [self dataAtIndexPath:indexPath];
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[origo admins] conjoinLastItem:NO];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo];
             cell.destinationId = kIdentifierValuePicker;
         } else {
-            id<OMember> admin = [self dataAtIndexPath:indexPath];
-            
-            cell.textLabel.text = admin.name;
-            [OUtil setImageForMember:admin inTableViewCell:cell];
+            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:origo includeRelations:NO];
             cell.destinationId = kIdentifierMember;
         }
     }
