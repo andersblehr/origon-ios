@@ -114,7 +114,7 @@
 "[add member] general" = "Register member";
 "[add member] organisation" = "Register member";
 "[add member] preschoolClass" = "Register child";
-"[add member] residence" = "Register member";
+"[add member] residence" = "New member";
 "[add member] schoolClass" = "Register student";
 "[add member] studyGroup" = "Register student";
 "[add member] team" = "Register player";
@@ -129,15 +129,16 @@
 "[member role] team" = "Team role";
 
 // Member titles
-"[member] alumni" = "Alum";
-"[member] friends" = "Friend";
-"[member] general" = "Member";
-"[member] organisation" = "Member";
-"[member] preschoolClass" = "Child";
-"[member] residence" = "Resident";
-"[member] schoolClass" = "Student";
-"[member] studyGroup" = "Participant";
-"[member] team" = "Player";
+"[member] alumni" = "alum";
+"[member] community" = "member";
+"[member] friends" = "friend";
+"[member] general" = "member";
+"[member] organisation" = "member";
+"[member] preschoolClass" = "child";
+"[member] residence" = "resident";
+"[member] schoolClass" = "student";
+"[member] studyGroup" = "student";
+"[member] team" = "player";
 
 // Member list titles
 "[members] alumni" = "Alumni";
@@ -150,17 +151,28 @@
 "[members] studyGroup" = "Participants";
 "[members] team" = "Players";
 
-// Member registration titles
-"[member registration] alumni" = "New alum";
-"[member registration] community" = "New member";
-"[member registration] friends" = "On the list";
-"[member registration] general" = "New member";
-"[member registration] organisation" = "New member";
-"[member registration] preschoolClass" = "New child";
-"[member registration] residence" = "In the household";
-"[member registration] schoolClass" = "New student";
-"[member registration] studyGroup" = "New student";
-"[member registration] team" = "New participant";
+// New member titles
+"[new member] alumni" = "New alum";
+"[new member] community" = "New member";
+"[new member] friends" = "New friend";
+"[new member] general" = "New member";
+"[new member] organisation" = "New member";
+"[new member] preschoolClass" = "New child";
+"[new member] residence" = "In the household";
+"[new member] schoolClass" = "New student";
+"[new member] studyGroup" = "New student";
+"[new member] team" = "New player";
+
+// New members titles
+"[new members] alumni" = "New alums";
+"[new members] community" = "New members";
+"[new members] friends" = "New friends";
+"[new members] general" = "New members";
+"[new members] organisation" = "New members";
+"[new members] preschoolClass" = "New children";
+"[new members] schoolClass" = "New students";
+"[new members] studyGroup" = "New students";
+"[new members] team" = "New players";
 
 // Origo collective titles
 "[all members] alumni" = "All alumni";
@@ -170,7 +182,7 @@
 "[all members] organisation" = "All members";
 "[all members] residence" = "The whole household";
 "[all members] studyGroup" = "The whole group";
-"[all members] team" = "The whole group";
+"[all members] team" = "The whole team";
 
 // Organiser registration button titles
 "[add organiser] preschoolClass" = "Register teacher";
@@ -288,7 +300,8 @@
 "%@ at %@" = "%@ at %@";
 "%d years" = "%d";
 "Guardian of %@" = "Parent of %@";
-"%@ (%@ of %@)" = "%@ (%@ of %@)";
+"%@, %@ of %@" = "%@, %@ of %@";
+"%@ of %@" = "%@ of %@";
 "%@ in %@" = "%@ in %@";
 
 // Separators
@@ -352,11 +365,11 @@
 "Decline" = "Decline";
 "Hide" = "Hide";
 "Edit responsibilities" = "Edit responsibilities";
-"Add from other groups" = "Add from other groups";
+"Register from other group" = "Register from other group";
 "Register parent contact" = "Register parent contact";
 "Show in map" = "Show in map";
 "About %@" = "About %@";
-"Add household member" = "Add household member";
+"Register household member" = "Register household member";
 "Other guardian" = "Other guardian";
 "Remove" = "Remove";
 
@@ -386,11 +399,11 @@
 "Register guardian" = "Register guardian";
 "Change password" = "Change password";
 "Edit relations" = "Edit relations";
-"New address" = "New address";
+"Other address" = "Other address";
 "All contacts" = "All contacts";
 "All guardians" = "All guardians";
 "Retrieve from Contacts"   = "Retrieve from Contacts";
-"Retrieve from other groups" = "Retrieve from other groups";
+"Retrieve from other group" = "Retrieve from other group";
 "A different number" = "A different number";
 "A different address" = "A different address";
 "Edit responsibility" = "Edit responsibility";
@@ -418,8 +431,8 @@
 "Who do you want to email?" = "Who do you want to email?";
 "Who do you want to text?" = "Who do you want to text?";
 "Who do you want to call?" = "Who do you want to call?";
-"Should %@ be registered at the same address?" = "Should %@ be registered at the same address?";
-"Who else should be registered at the same address?" = "Who else should be registered at the same address?";
+"Should %@ also be registered at this address?" = "Should %@ also be registered at this address?";
+"Who else should be registered at this address?" = "Who else should be registered at this address?";
 "Are you a %@ or a @%?" = "Are you a %@ or a @%?";
 "Is %@ a %@ or a %@?" = "Is %@ a %@ or a %@?";
 "Are you a %@?" = "Are you a %@?";
@@ -466,6 +479,9 @@
 
 // View titles
 "Group type" = "Group type";
+
+// View subtitles
+"(None selected)" = "(None selected)";
 
 // Miscellaneous strings
 "Responsibility" = "Responsibility";

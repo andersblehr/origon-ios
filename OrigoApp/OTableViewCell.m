@@ -253,6 +253,12 @@ static CGFloat const kShakeRepeatCount = 3.f;
 
 #pragma mark - Meta & validation
 
+- (BOOL)styleIsSubtitle
+{
+    return _style == UITableViewCellStyleSubtitle;
+}
+
+
 - (BOOL)hasInputField:(id)inputField
 {
     return [[_views allValues] containsObject:inputField];
@@ -565,9 +571,9 @@ static CGFloat const kShakeRepeatCount = 3.f;
     if (!_isInputCell && !_editable) {
         self.textLabel.textColor = [UIColor textColour];
         
-        if (_style == UITableViewCellStyleSubtitle) {
+        if ([self styleIsSubtitle]) {
             self.detailTextLabel.textColor = [UIColor textColour];
-        } else if (_style == UITableViewCellStyleValue1) {
+        } else {
             self.detailTextLabel.textColor = [UIColor valueTextColour];
         }
     }

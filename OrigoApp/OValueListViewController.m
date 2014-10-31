@@ -283,7 +283,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             cell.imageView.image = [UIImage imageNamed:kIconFile_iPad];
         }
     } else if ([self targetIs:kTargetRole]) {
-        [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:_origo includeRelations:YES];
+        [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:_origo excludeRoles:YES excludeRelations:NO];
         cell.destinationId = kIdentifierMember;
         cell.destinationMeta = self.target;
     } else if ([self targetIs:kTargetRoles]) {
@@ -299,17 +299,17 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         }
         
         cell.textLabel.text = role;
-        cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:roleHolders conjoinLastItem:NO];
+        cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:roleHolders conjoin:NO];
         cell.destinationId = kIdentifierValuePicker;
     } else if ([self targetIs:kTargetGroups]) {
         if ([self aspectIs:kAspectEditable]) {
             NSString *group = [self dataAtIndexPath:indexPath];
             
             cell.textLabel.text = group;
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[_origo membersOfGroup:group] conjoinLastItem:NO];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:[_origo membersOfGroup:group] conjoin:NO];
             cell.destinationId = kIdentifierValuePicker;
         } else {
-            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:_origo includeRelations:YES];
+            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:_origo excludeRoles:YES excludeRelations:NO];
             cell.selectable = NO;
         }
     }

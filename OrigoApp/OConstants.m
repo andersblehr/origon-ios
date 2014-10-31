@@ -23,7 +23,6 @@ NSString * const kReuseIdentifierUserActivation = @"activate";
 
 // Language codes
 NSString * const kLanguageCodeEnglish = @"en";
-NSString * const kLanguageCodeHungarian = @"hu";
 
 // NSUserDefaults keys
 NSString * const kDefaultsKeyAuthInfo = @"origo.auth.info";
@@ -103,7 +102,8 @@ NSString * const kStringPrefixFooter = @"[registration footer]";
 NSString * const kStringPrefixAddMemberButton = @"[add member]";
 NSString * const kStringPrefixMemberTitle = @"[member]";
 NSString * const kStringPrefixMembersTitle = @"[members]";
-NSString * const kStringPrefixNewMemberTitle = @"[member registration]";
+NSString * const kStringPrefixNewMemberTitle = @"[new member]";
+NSString * const kStringPrefixNewMembersTitle = @"[new members]";
 NSString * const kStringPrefixAllMembersTitle = @"[all members]";
 NSString * const kStringPrefixAddOrganiserButton = @"[add organiser]";
 NSString * const kStringPrefixOrganiserTitle = @"[organiser]";

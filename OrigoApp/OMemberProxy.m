@@ -263,4 +263,10 @@
     return [self.name givenName];
 }
 
+
+- (NSString *)displayNameInOrigo:(id<OOrigo>)origo
+{
+    return self.name;
+}
+
 @end

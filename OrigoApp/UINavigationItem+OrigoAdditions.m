@@ -129,6 +129,8 @@ static NSInteger const kViewTagSubtitleLabel = 11;
 }
 
 
+#pragma mark - Accessing elements
+
 - (UIBarButtonItem *)rightBarButtonItemWithTag:(NSInteger)tag
 {
     UIBarButtonItem *barButtonItemWithTag = nil;
@@ -140,6 +142,12 @@ static NSInteger const kViewTagSubtitleLabel = 11;
     }
     
     return barButtonItemWithTag;
+}
+
+
+- (UILabel *)subtitleLabel
+{
+    return (UILabel *)[self.titleView viewWithTag:kViewTagSubtitleLabel];
 }
 
 @end

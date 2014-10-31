@@ -62,7 +62,7 @@ NSString * const kOrigoTypeTeam = @"team";
     if (![[resident residencies] count] || [resident hasAddress]) {
         residency = [self addMember:resident isAssociate:NO];
     } else if (![resident isJuvenile] || ![self hasMember:resident]) {
-        OOrigo *residence = [resident residence];
+        OOrigo *residence = [resident primaryResidence];
         
         residency = [self addMember:resident isAssociate:NO];
         
@@ -138,16 +138,16 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (NSArray *)residents
 {
-    NSMutableArray *residents = [NSMutableArray array];
+    NSMutableSet *residents = [NSMutableSet set];
     
     if ([self isOfType:kOrigoTypeResidence]) {
-        NSMutableArray *allMinors = [NSMutableArray array];
+        NSMutableSet *minors = [NSMutableSet set];
         NSMutableSet *visibleMinors = [NSMutableSet set];
         
         for (OMembership *membership in [self allMemberships]) {
             if ([membership isResidency]) {
                 if ([membership.member isJuvenile]) {
-                    [allMinors addObject:membership.member];
+                    [minors addObject:membership.member];
                 } else {
                     [residents addObject:membership.member];
                     [visibleMinors unionSet:[NSSet setWithArray:[membership.member wards]]];
@@ -156,23 +156,23 @@ NSString * const kOrigoTypeTeam = @"team";
         }
         
         if ([residents count]) {
-            for (OMember *minor in allMinors) {
+            for (OMember *minor in minors) {
                 if ([visibleMinors containsObject:minor]) {
                     [residents addObject:minor];
                 }
             }
         } else {
-            residents = allMinors;
+            residents = minors;
         }
     }
     
-    return [residents sortedArrayUsingSelector:@selector(compare:)];
+    return [[residents allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
 - (NSArray *)members
 {
-    NSMutableArray *members = [NSMutableArray array];
+    NSMutableSet *members = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
         BOOL isCommunityMembership = [self isOfType:kOrigoTypeCommunity] && ![membership.member isJuvenile];
@@ -182,7 +182,7 @@ NSString * const kOrigoTypeTeam = @"team";
         }
     }
     
-    return [members sortedArrayUsingSelector:@selector(compare:)];
+    return [[members allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -228,7 +228,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (NSArray *)organisers
 {
-    NSMutableArray *organisers = [NSMutableArray array];
+    NSMutableSet *organisers = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
         if ([membership hasAffiliationOfType:kAffiliationTypeOrganiserRole]) {
@@ -236,13 +236,13 @@ NSString * const kOrigoTypeTeam = @"team";
         }
     }
     
-    return [organisers sortedArrayUsingSelector:@selector(compare:)];
+    return [[organisers allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
 - (NSArray *)parentContacts
 {
-    NSMutableArray *parentContacts = [NSMutableArray array];
+    NSMutableSet *parentContacts = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
         if ([membership hasAffiliationOfType:kAffiliationTypeParentRole]) {
@@ -250,13 +250,13 @@ NSString * const kOrigoTypeTeam = @"team";
         }
     }
     
-    return [parentContacts sortedArrayUsingSelector:@selector(compare:)];
+    return [[parentContacts allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
 - (NSArray *)admins
 {
-    NSMutableArray *admins = [NSMutableArray array];
+    NSMutableSet *admins = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
         if ([membership.isAdmin boolValue]) {
@@ -264,7 +264,7 @@ NSString * const kOrigoTypeTeam = @"team";
         }
     }
     
-    return [admins sortedArrayUsingSelector:@selector(compare:)];
+    return [[admins allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -272,17 +272,21 @@ NSString * const kOrigoTypeTeam = @"team";
 {
     NSMutableArray *adminCandidates = [NSMutableArray array];
     
-    for (OMembership *membership in [self allMemberships]) {
-        OMember *member = membership.member;
-        
-        BOOL isEligibleCandidate = [self isJuvenile] && [self hasMember:member] && [member isActive];
-        
-        if (![member isJuvenile] || isEligibleCandidate) {
-            [adminCandidates addObject:membership.member];
+    for (OMember *member in [self members]) {
+        if ([member isJuvenile]) {
+            if (![self isOfType:kOrigoTypeResidence]) {
+                [adminCandidates addObjectsFromArray:[member guardians]];
+            }
+            
+            if ([member isActive]) {
+                [adminCandidates addObject:member];
+            }
+        } else {
+            [adminCandidates addObject:member];
         }
     }
     
-    return [adminCandidates sortedArrayUsingSelector:@selector(compare:)];
+    return adminCandidates;
 }
 
 
@@ -437,8 +441,8 @@ NSString * const kOrigoTypeTeam = @"team";
     if ([member instance]) {
         member = [member instance];
         
-        for (OMembership *membership in self.memberships) {
-            if (!targetMembership && membership.member == member && ![membership hasExpired]) {
+        for (OMembership *membership in [self allMemberships]) {
+            if (!targetMembership && membership.member == member) {
                 targetMembership = membership;
             }
         }
@@ -559,7 +563,9 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (BOOL)hasMember:(id<OMember>)member
 {
-    return [[self membershipForMember:member] isFull];
+    OMembership *membership = [self membershipForMember:member];
+    
+    return membership && ([membership isFull] || [self isOfType:kOrigoTypeCommunity]);
 }
 
 

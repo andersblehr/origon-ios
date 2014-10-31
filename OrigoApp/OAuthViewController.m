@@ -149,7 +149,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         [OMeta m].user.passwordHash = _authInfo[kPropertyKeyPasswordHash];
         
         [[OMeta m] userDidSignUp];
-        [[OMeta m].user residence];
+        [[OMeta m].user primaryResidence];
         
         [ODefaults removeGlobalDefaultForKey:kDefaultsKeyAuthInfo];
     }

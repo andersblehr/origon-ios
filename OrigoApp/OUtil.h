@@ -13,16 +13,13 @@
 + (NSString *)rootIdFromMemberId:(NSString *)memberId;
 + (NSString *)genderTermForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile;
 
-+ (NSString *)memberInfoFromMembership:(id<OMembership>)membership;
-+ (NSString *)associationInfoForMember:(id<OMember>)member;
-+ (NSString *)guardianInfoForMember:(id<OMember>)member;
-
-+ (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem;
-+ (NSString *)commaSeparatedListOfStrings:(id)strings conjoinLastItem:(BOOL)conjoinLastItem;
-+ (NSString *)commaSeparatedListOfMembers:(id)members;
-+ (NSString *)commaSeparatedListOfMembers:(id)members inOrigo:(id<OOrigo>)origo;
++ (NSString *)commaSeparatedListOfItems:(id)items conjoin:(BOOL)conjoin;
++ (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin;
++ (NSString *)commaSeparatedListOfMembers:(id)members conjoin:(BOOL)conjoin;
++ (NSString *)commaSeparatedListOfMembers:(id)members inOrigo:(id<OOrigo>)origo conjoin:(BOOL)conjoin;
 + (NSString *)commaSeparatedListOfMembers:(id)members withRolesInOrigo:(id<OOrigo>)origo;
 
++ (NSDictionary *)isUniqueByGivenNameFromMembers:(id)members;
 + (NSArray *)eligibleOrigoTypesForOrigo:(id<OOrigo>)origo;
 + (NSArray *)sortedGroupsOfResidents:(id)residents excluding:(id<OMember>)excludedResident;
 + (NSString *)sortKeyWithPropertyKey:(NSString *)propertyKey relationshipKey:(NSString *)relationshipKey;

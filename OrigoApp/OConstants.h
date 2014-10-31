@@ -23,7 +23,6 @@ extern NSString * const kReuseIdentifierUserActivation;
 
 // Language codes
 extern NSString * const kLanguageCodeEnglish;
-extern NSString * const kLanguageCodeHungarian;
 
 // NSUserDefaults keys
 extern NSString * const kDefaultsKeyAuthInfo;
@@ -104,6 +103,7 @@ extern NSString * const kStringPrefixAddMemberButton;
 extern NSString * const kStringPrefixMemberTitle;
 extern NSString * const kStringPrefixMembersTitle;
 extern NSString * const kStringPrefixNewMemberTitle;
+extern NSString * const kStringPrefixNewMembersTitle;
 extern NSString * const kStringPrefixAllMembersTitle;
 extern NSString * const kStringPrefixOrganiserRoleTitle;
 extern NSString * const kStringPrefixAddOrganiserButton;

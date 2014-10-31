@@ -35,111 +35,9 @@ static NSString * const kRootIdFormat = @"~%@";
 }
 
 
-#pragma mark - Info strings
+#pragma mark - Comma-separated lists
 
-+ (NSString *)memberInfoFromMembership:(id<OMembership>)membership
-{
-    NSString *details = nil;
-    NSArray *memberRoles = [membership memberRoles];
-    
-    if (![membership.origo isOfType:kOrigoTypeResidence]) {
-        id<OMember> member = membership.member;
-        
-        if ([member isJuvenile] && ![[OMeta m].user isJuvenile] && ![member isWardOfUser]) {
-            details = [self guardianInfoForMember:member];
-        }
-    }
-    
-    if ([memberRoles count]) {
-        NSString *roles = [[self commaSeparatedListOfItems:memberRoles conjoinLastItem:NO] stringByCapitalisingFirstLetter];
-        
-        if ([details hasValue]) {
-            details = [details stringByAppendingString:roles separator:@" – "];
-        } else {
-            details = roles;
-        }
-    }
-    
-    return details;
-}
-
-
-+ (NSString *)associationInfoForMember:(id<OMember>)member
-{
-    NSString *association = nil;
-    NSString *origoAssociation = nil;
-    NSMutableDictionary *associationsByWard = [NSMutableDictionary dictionary];
-    
-    NSArray *memberships = [[[member allMemberships] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
-    
-    for (OMembership *membership in memberships) {
-        if (![membership.origo isOfType:kOrigoTypeResidence]) {
-            OOrigo *origo = membership.origo;
-            OMember *member = membership.member;
-            
-            if ([membership isAssociate] || [[membership parentRoles] count]) {
-                for (OMember *ward in [member wardsInOrigo:origo]) {
-                    if (![ward isWardOfUser] && !associationsByWard[ward.entityId]) {
-                        BOOL friendOnly = YES;
-                        
-                        for (OOrigo *wardOrigo in [ward origos]) {
-                            friendOnly = friendOnly && [wardOrigo isOfType:kOrigoTypeFriends];
-                        }
-                        
-                        if (friendOnly) {
-                            associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ (%@ of %@)", @""), [ward givenName], [ward isMale] ? NSLocalizedString(@"friend [male]", @"") : NSLocalizedString(@"friend [female]", @""), [self commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo]];
-                        } else if (![origo isOfType:kOrigoTypeFriends]) {
-                            associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [ward displayNameInOrigo:origo], origo.name];
-                        }
-                    }
-                }
-            } else if (!origoAssociation && ![origo isOfType:kOrigoTypeFriends]) {
-                if ([[membership organiserRoles] count]) {
-                    origoAssociation = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixOrganiserTitle), origo.name];
-                } else {
-                    NSArray *memberRoles = [membership memberRoles];
-                    
-                    if ([memberRoles count]) {
-                        origoAssociation = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), memberRoles[0], origo.name];
-                    } else {
-                        origoAssociation = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [NSLocalizedString(origo.type, kStringPrefixMemberTitle) stringByCapitalisingFirstLetter], origo.name];
-                    }
-                }
-            }
-        }
-    }
-    
-    if ([associationsByWard count]) {
-        association = [NSString stringWithFormat:NSLocalizedString(@"Guardian of %@", @""), [self commaSeparatedListOfStrings:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoinLastItem:YES]];
-    } else if (origoAssociation) {
-        association = origoAssociation;
-    }
-    
-    return association;
-}
-
-
-+ (NSString *)guardianInfoForMember:(id<OMember>)member
-{
-    NSString *guardianInfo = nil;
-    
-    if ([member isJuvenile]) {
-        NSArray *guardians = [member parents];
-        
-        if (![guardians count]) {
-            guardians = [member guardians];
-        }
-        
-        guardianInfo = [self commaSeparatedListOfMembers:guardians];
-    }
-    
-    return guardianInfo;
-}
-
-
-#pragma mark - List strings
-
-+ (NSString *)commaSeparatedListOfItems:(id)items conjoinLastItem:(BOOL)conjoinLastItem
++ (NSString *)commaSeparatedListOfItems:(id)items conjoin:(BOOL)conjoin
 {
     NSMutableArray *stringItems = [NSMutableArray array];
     
@@ -167,26 +65,24 @@ static NSString * const kRootIdFormat = @"~%@";
         }
     }
     
-    return [self commaSeparatedListOfStrings:stringItems conjoinLastItem:conjoinLastItem];
+    return [self commaSeparatedListOfStrings:stringItems conjoin:conjoin];
 }
 
 
-+ (NSString *)commaSeparatedListOfStrings:(id)strings conjoinLastItem:(BOOL)conjoinLastItem
++ (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin
 {
     NSMutableString *commaSeparatedList = nil;
     
     if ([strings count]) {
         if ([strings isKindOfClass:[NSSet class]]) {
-            strings = [strings allObjects];
+            strings = [[strings allObjects] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         }
-        
-        strings = [strings sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         
         for (NSString *string in strings) {
             if (!commaSeparatedList) {
                 commaSeparatedList = [NSMutableString stringWithString:string];
             } else {
-                if (conjoinLastItem && string == [strings lastObject]) {
+                if (conjoin && string == [strings lastObject]) {
                     [commaSeparatedList appendString:NSLocalizedString(@" and ", @"")];
                 } else {
                     [commaSeparatedList appendString:kSeparatorComma];
@@ -201,27 +97,29 @@ static NSString * const kRootIdFormat = @"~%@";
 }
 
 
-+ (NSString *)commaSeparatedListOfMembers:(id)members
++ (NSString *)commaSeparatedListOfMembers:(id)members conjoin:(BOOL)conjoin
 {
     NSMutableArray *stringItems = [NSMutableArray array];
     
     if ([members count] && [members[0] conformsToProtocol:@protocol(OMember)]) {
-        BOOL useShortNames = [members count] > 1;
-        
         if ([members isKindOfClass:[NSSet class]]) {
             members = [members allObjects];
         }
         
         for (id<OMember> member in members) {
-            [stringItems addObject:useShortNames ? [member shortName] : member.name];
+            if ([members count] > 1) {
+                [stringItems addObject:[member shortName]];
+            } else {
+                [stringItems addObject:member.name];
+            }
         }
     }
     
-    return [self commaSeparatedListOfStrings:stringItems conjoinLastItem:NO];
+    return [self commaSeparatedListOfStrings:stringItems conjoin:conjoin];
 }
 
 
-+ (NSString *)commaSeparatedListOfMembers:(id)members inOrigo:(id<OOrigo>)origo
++ (NSString *)commaSeparatedListOfMembers:(id)members inOrigo:(id<OOrigo>)origo conjoin:(BOOL)conjoin
 {
     NSMutableArray *stringItems = [NSMutableArray array];
     
@@ -230,12 +128,36 @@ static NSString * const kRootIdFormat = @"~%@";
             members = [members allObjects];
         }
         
+        NSDictionary *isUniqueByGivenName = nil;
+        
         for (id<OMember> member in members) {
-            [stringItems addObject:[member displayNameInOrigo:origo]];
+            if ([origo isJuvenile]) {
+                if ([origo hasMember:member]) {
+                    [stringItems addObject:[member displayNameInOrigo:origo]];
+                } else {
+                    if (!isUniqueByGivenName) {
+                        isUniqueByGivenName = [self isUniqueByGivenNameFromMembers:members];
+                    }
+                    
+                    NSString *givenName = [member givenName];
+                    
+                    if ([isUniqueByGivenName[givenName] boolValue]) {
+                        [stringItems addObject:givenName];
+                    } else {
+                        [stringItems addObject:[member shortName]];
+                    }
+                }
+            } else {
+                if ([members count] > 1) {
+                    [stringItems addObject:[member shortName]];
+                } else {
+                    [stringItems addObject:member.name];
+                }
+            }
         }
     }
     
-    return [self commaSeparatedListOfStrings:stringItems conjoinLastItem:NO];
+    return [self commaSeparatedListOfStrings:stringItems conjoin:conjoin];
 }
 
 
@@ -253,18 +175,36 @@ static NSString * const kRootIdFormat = @"~%@";
             NSArray *roles = [membership roles];
             
             if ([roles count]) {
-                [stringItems addObject:[NSString stringWithFormat:@"%@ (%@)", [member shortName], [OUtil commaSeparatedListOfItems:roles conjoinLastItem:NO]]];
+                [stringItems addObject:[NSString stringWithFormat:@"%@ (%@)", [member shortName], [OUtil commaSeparatedListOfItems:roles conjoin:NO]]];
             } else {
                 [stringItems addObject:[member shortName]];
             }
         }
     }
     
-    return [self commaSeparatedListOfStrings:stringItems conjoinLastItem:NO];
+    return [self commaSeparatedListOfStrings:stringItems conjoin:NO];
 }
 
 
 #pragma mark - Miscellaneous
+
++ (NSDictionary *)isUniqueByGivenNameFromMembers:(id)members
+{
+    NSMutableDictionary *isUniqueByGivenName = [NSMutableDictionary dictionary];
+    
+    for (id<OMember> member in members) {
+        NSString *givenName = [member givenName];
+        
+        if ([[isUniqueByGivenName allKeys] containsObject:givenName]) {
+            isUniqueByGivenName[givenName] = @NO;
+        } else {
+            isUniqueByGivenName[givenName] = @YES;
+        }
+    }
+    
+    return isUniqueByGivenName;
+}
+
 
 + (NSArray *)eligibleOrigoTypesForOrigo:(id<OOrigo>)origo
 {

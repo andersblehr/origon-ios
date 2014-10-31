@@ -248,12 +248,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
 }
 
 
-+ (BOOL)usesEasternNameOrder
-{
-    return [[self m].language isEqualToString:kLanguageCodeHungarian];
-}
-
-
 + (BOOL)deviceIsSimulator
 {
     return [[UIDevice currentDevice].model containsString:@"Simulator"];

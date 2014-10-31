@@ -186,21 +186,21 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 - (void)presentCoHabitantsSheetWithCandidates:(NSArray *)candidates
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Add household member", @"") delegate:self tag:kActionSheetTagCoHabitants];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Register household member", @"") delegate:self tag:kActionSheetTagCoHabitants];
     
     _eligibleCandidates = [OUtil sortedGroupsOfResidents:candidates excluding:nil];
     
     if ([_eligibleCandidates count] == 1) {
         if ([_eligibleCandidates[kButtonTagCoHabitantsAll][0] isJuvenile]) {
-            [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoinLastItem:YES] tag:kButtonTagCoHabitantsAll];
+            [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoin:YES] tag:kButtonTagCoHabitantsAll];
         } else {
             for (id<OMember> candidate in _eligibleCandidates[kButtonTagCoHabitantsAll]) {
                 [actionSheet addButtonWithTitle:[candidate givenName]];
             }
         }
     } else {
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoinLastItem:YES] tag:kButtonTagCoHabitantsAll];
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsWards] conjoinLastItem:YES] tag:kButtonTagCoHabitantsWards];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoin:YES] tag:kButtonTagCoHabitantsAll];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsWards] conjoin:YES] tag:kButtonTagCoHabitantsWards];
     }
     
     if (![_origo userIsMember] && [_member isWardOfUser]) {
@@ -247,18 +247,18 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         
         [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
         
+        _eligibleCandidates = [self.state eligibleCandidates];
+        
+        if ([_eligibleCandidates count]) {
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register from other group", @"") tag:kButtonTagAddFromGroups];
+        }
+        
         if ([_origo isOrganised]) {
             [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
             
             if ([_origo isJuvenile]) {
                 [actionSheet addButtonWithTitle:NSLocalizedString(@"Register parent contact", @"") tag:kButtonTagAddParentContact];
             }
-        }
-        
-        _eligibleCandidates = [self.state eligibleCandidates];
-        
-        if ([_eligibleCandidates count]) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Add from other groups", @"") tag:kButtonTagAddFromGroups];
         }
         
         if ([actionSheet numberOfButtons] > 1) {
@@ -323,7 +323,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         self.title = NSLocalizedString(_origo.type, kStringPrefixNewOrigoTitle);
         
         if ([_origo isOfType:kOrigoTypeResidence]) {
-            id<OOrigo> residence = [_member residence];
+            id<OOrigo> residence = [_member primaryResidence];
             
             if (![residence hasAddress] || ![residence isCommitted]) {
                 self.title = NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle);
@@ -392,7 +392,12 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             id<OOrigo> origo = self.state.baseOrigo ? self.state.baseOrigo : _origo;
             id<OMember> member = [self dataAtIndexPath:indexPath];
             
-            [cell loadMember:member inOrigo:origo includeRelations:![_origo isOfType:kOrigoTypeResidence]];
+            if (origo == _origo || ([_origo isOfType:kOrigoTypeResidence] && [member isJuvenile])) {
+                [cell loadMember:member inOrigo:_origo];
+            } else {
+                [cell loadMember:member inOrigo:origo excludeRoles:NO excludeRelations:YES];
+            }
+            
             cell.destinationId = kIdentifierMember;
         }
     } else {
@@ -405,7 +410,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             id<OMember> roleHolder = roleHolders[0];
             
             if (sectionKey == kSectionKeyParentContacts) {
-                cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%@)", roleHolder.name, [OUtil commaSeparatedListOfMembers:[roleHolder wardsInOrigo:_origo] inOrigo:_origo]];
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ (%@)", roleHolder.name, [OUtil commaSeparatedListOfMembers:[roleHolder wardsInOrigo:_origo] inOrigo:_origo conjoin:NO]];
             } else {
                 cell.detailTextLabel.text = roleHolder.name;
             }
@@ -413,7 +418,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             [cell loadImageForMember:roleHolder];
             cell.destinationId = kIdentifierMember;
         } else {
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders conjoin:NO];
             [cell loadTonedDownIconWithFileName:kIconFileRoleHolders];
             cell.destinationId = kIdentifierValueList;
             cell.destinationMeta = role;

@@ -79,6 +79,8 @@
 
 @property (nonatomic) id meta;
 @property (nonatomic) id returnData;
+@property (nonatomic) NSString *subtitle;
+@property (nonatomic) UIColor *subtitleColour;
 @property (nonatomic) OTableViewCell *inputCell;
 @property (nonatomic) OInputField *nextInputField;
 

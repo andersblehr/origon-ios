@@ -73,6 +73,10 @@ static NSInteger const kSectionKeyValues = 0;
         self.usesSectionIndexTitles = YES;
         
         if ([self targetIs:kTargetMembers]) {
+            self.title = NSLocalizedString(self.state.currentOrigo.type, kStringPrefixNewMembersTitle);
+            self.subtitle = NSLocalizedString(@"(None selected)", @"");
+            self.subtitleColour = [UIColor tonedDownTextColour];
+            
             _isMultiValuePicker = YES;
         } else if ([self targetIs:kTargetAffiliation]) {
             _origo = self.state.currentOrigo;
@@ -110,7 +114,7 @@ static NSInteger const kSectionKeyValues = 0;
                 [self setEditableTitle:_affiliation placeholder:placeholder];
             }
             
-            [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoinLastItem:NO]];
+            [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoin:NO]];
             
             if ([self targetIs:kTargetRole]) {
                 _isMultiValuePicker = [_pickedValues count] > 1;
@@ -195,20 +199,23 @@ static NSInteger const kSectionKeyValues = 0;
         
         cell.textLabel.text = [gender stringByCapitalisingFirstLetter];
         cell.checked = [gender isEqualToString:[OUtil genderTermForGender:self.state.currentMember.gender isJuvenile:[self.state.currentMember isJuvenile]]];
+    } else if ([self aspectIs:kAspectAdmin]) {
+        id<OMember> candidate = [self dataAtIndexPath:indexPath];
+        
+        [cell loadMember:candidate inOrigo:_origo excludeRoles:NO excludeRelations:NO];
+        
+        if (![candidate isActive]) {
+            cell.textLabel.textColor = [UIColor valueTextColour];
+            cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
+            cell.selectable = NO;
+        }
     } else {
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         
-        [cell loadMember:candidate inOrigo:_origo includeRelations:YES];
+        [cell loadMember:candidate inOrigo:_origo excludeRoles:YES excludeRelations:YES];
         
-        if ([self targetIs:kTargetMember] || [self targetIs:kTargetMembers]) {
-            cell.detailTextLabel.text = [OUtil associationInfoForMember:candidate];
-            cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
-        } else if ([self aspectIs:kAspectGroup]) {
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:[[_origo membershipForMember:candidate] groups] conjoinLastItem:NO];
-        } else if ([self aspectIs:kAspectAdmin] && ![candidate isActive]) {
-            cell.textLabel.textColor = [UIColor tonedDownTextColour];
-            cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
-            cell.selectable = NO;
+        if ([self aspectIs:kAspectGroup]) {
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:[[_origo membershipForMember:candidate] groups] conjoin:NO];
         }
         
         if ([_pickedValues count]) {
@@ -260,12 +267,15 @@ static NSInteger const kSectionKeyValues = 0;
     } else if ([self targetIs:kTargetMember]) {
         self.returnData = pickedValue;
     } else if ([self targetIs:kTargetMembers]) {
+        self.subtitle = [OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo conjoin:NO];
+        self.subtitleColour = [UIColor textColour];
+        
         if (self.isModal) {
             self.returnData = _pickedValues;
         }
     } else if ([self aspectIs:kAspectAdmin]) {
         [_origo membershipForMember:pickedValue].isAdmin = @(cell.checked);
-        [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoinLastItem:NO]];
+        [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoin:NO]];
     } else if ([self targetIs:kTargetAffiliation]) {
         if (cell.checked) {
             [[_origo membershipForMember:pickedValue] addAffiliation:_affiliation ofType:_affiliationType];
@@ -277,7 +287,7 @@ static NSInteger const kSectionKeyValues = 0;
             [[_origo membershipForMember:pickedValue] removeAffiliation:_affiliation ofType:_affiliationType];
         }
         
-        [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoinLastItem:NO]];
+        [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoin:NO]];
         
         if (self.isModal && _isMultiValuePicker && [_pickedValues count]) {
             if (self.navigationItem.rightBarButtonItem == _multiRoleButtonOn) {

@@ -116,6 +116,22 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+- (void)prepareForResidenceRegistration
+{
+    id<OOrigo> primaryResidence = [_member primaryResidence];
+    NSArray *coHabitants = [primaryResidence residents];
+    NSArray *residences = [_member residences];
+    
+    if ([_member hasAddress] && [residences count] == 1 && [coHabitants count] > 1) {
+        [self presentCoHabitantsSheet];
+    } else if (![primaryResidence hasAddress]) {
+        [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:primaryResidence];
+    } else {
+        [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:kOrigoTypeResidence];
+    }
+}
+
+
 #pragma mark - Input validation
 
 - (BOOL)reflectIfEligibleMember:(id<OMember>)member
@@ -303,7 +319,7 @@ static NSInteger const kButtonIndexContinue = 1;
             [self persistMember];
         }
     } else if ([activeResidences count]) {
-        [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown child", @"") text:[NSString stringWithFormat:NSLocalizedString(@"No child named %@ has been registered by %@.", @""), _nameField.value, [OUtil commaSeparatedListOfItems:activeGuardians conjoinLastItem:YES]]];
+        [OAlert showAlertWithTitle:NSLocalizedString(@"Unknown child", @"") text:[NSString stringWithFormat:NSLocalizedString(@"No child named %@ has been registered by %@.", @""), _nameField.value, [OUtil commaSeparatedListOfItems:activeGuardians conjoin:YES]]];
         
         if ([allResidences count] > [activeResidences count]) {
             for (id<OOrigo> activeResidence in activeResidences) {
@@ -342,11 +358,11 @@ static NSInteger const kButtonIndexContinue = 1;
                 if ([ward hasAddress] && !addingToResidence) {
                     [self presentGuardianAddressSheetForWard:ward];
                 } else {
-                    [[ward residence] addMember:_member];
+                    [[ward primaryResidence] addMember:_member];
                     [self.dismisser dismissModalViewController:self];
                 }
             } else if (![_member instance] && ![_member hasAddress]) {
-                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
+                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
             } else {
                 [self.dismisser dismissModalViewController:self];
             }
@@ -364,7 +380,7 @@ static NSInteger const kButtonIndexContinue = 1;
             }
             
             if (needsRegisterResidence) {
-                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
+                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
             } else {
                 if ([_member isUser] && ![_member isActive]) {
                     [_member makeActive];
@@ -387,7 +403,7 @@ static NSInteger const kButtonIndexContinue = 1;
         [actionSheet addButtonWithTitle:[residence shortAddress]];
     }
     
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"New address", @"") tag:kButtonTagResidenceNewAddress];
+    [actionSheet addButtonWithTitle:NSLocalizedString(@"Other address", @"") tag:kButtonTagResidenceNewAddress];
     
     [actionSheet show];
 }
@@ -395,20 +411,18 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)presentCoHabitantsSheet
 {
-    id<OOrigo> residence = [_member residence];
-    
-    _cachedCandidates = [OUtil sortedGroupsOfResidents:[residence residents] excluding:_member];
+    _cachedCandidates = [OUtil sortedGroupsOfResidents:[[_member primaryResidence] residents] excluding:_member];
     
     OActionSheet *actionSheet = nil;
     
     if ([_cachedCandidates count] == 1) {
-        actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"Should %@ be registered at the same address?", @""), [OUtil commaSeparatedListOfItems:_cachedCandidates[kButtonTagCoHabitantsAll] conjoinLastItem:YES]] delegate:self tag:kActionSheetTagCoHabitants];
+        actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"Should %@ also be registered at this address?", @""), [OUtil commaSeparatedListOfItems:_cachedCandidates[kButtonTagCoHabitantsAll] conjoin:YES]] delegate:self tag:kActionSheetTagCoHabitants];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagCoHabitantsAll];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"") tag:kButtonTagCoHabitantsNone];
     } else {
-        actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who else should be registered at the same address?", @"") delegate:self tag:kActionSheetTagCoHabitants];
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_cachedCandidates[kButtonTagCoHabitantsAll] conjoinLastItem:YES] tag:kButtonTagCoHabitantsAll];
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_cachedCandidates[kButtonTagCoHabitantsWards] conjoinLastItem:YES] tag:kButtonTagCoHabitantsWards];
+        actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who else should be registered at this address?", @"") delegate:self tag:kActionSheetTagCoHabitants];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_cachedCandidates[kButtonTagCoHabitantsAll] conjoin:YES] tag:kButtonTagCoHabitantsAll];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_cachedCandidates[kButtonTagCoHabitantsWards] conjoin:YES] tag:kButtonTagCoHabitantsWards];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"None of them", @"") tag:kButtonTagCoHabitantsNone];
     }
     
@@ -482,10 +496,10 @@ static NSInteger const kButtonIndexContinue = 1;
     
     if ([[_member residences] count] == 1) {
         _addressBookMappings = _addressBookHomeNumbers;
-        id<OOrigo> residence = [_member residence];
+        id<OOrigo> primaryResidence = [_member primaryResidence];
         
-        if ([residence hasAddress]) {
-            prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ has more than one home phone number. Which number is valid for %@?", @""), givenName, [residence shortAddress]];
+        if ([primaryResidence hasAddress]) {
+            prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ has more than one home phone number. Which number is valid for %@?", @""), givenName, [primaryResidence shortAddress]];
         } else {
             prompt = [NSString stringWithFormat:NSLocalizedString(@"%@ has more than one home phone number. Which number do you want to provide?", @""), givenName];
         }
@@ -545,14 +559,14 @@ static NSInteger const kButtonIndexContinue = 1;
     OActionSheet *actionSheet = nil;
     
     if ([_cachedResidences count] == 1) {
-        NSString *guardians = [OUtil commaSeparatedListOfItems:[_cachedResidences[0] elders] conjoinLastItem:YES];
+        NSString *guardians = [OUtil commaSeparatedListOfItems:[_cachedResidences[0] elders] conjoin:YES];
 
         actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"Does %@ live with %@?", @""), [_member givenName], guardians] delegate:self tag:kActionSheetTagGuardianAddressYesNo];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"")];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"")];
     } else {
-        NSString *guardians1 = [OUtil commaSeparatedListOfItems:[_cachedResidences[0] elders] conjoinLastItem:YES];
-        NSString *guardians2 = [OUtil commaSeparatedListOfItems:[_cachedResidences[1] elders] conjoinLastItem:YES];
+        NSString *guardians1 = [OUtil commaSeparatedListOfItems:[_cachedResidences[0] elders] conjoin:YES];
+        NSString *guardians2 = [OUtil commaSeparatedListOfItems:[_cachedResidences[1] elders] conjoin:YES];
         
         actionSheet = [[OActionSheet alloc] initWithPrompt:[NSString stringWithFormat:NSLocalizedString(@"Does %@ live with %@ or %@?", @""), [_member givenName], guardians1, guardians2] delegate:self tag:kActionSheetTagGuardianAddress];
         [actionSheet addButtonWithTitle:guardians1];
@@ -652,23 +666,17 @@ static NSInteger const kButtonIndexContinue = 1;
     NSString *middleName = (__bridge_transfer NSString *)ABRecordCopyValue(person, kABPersonMiddleNameProperty);
     NSString *lastName = (__bridge_transfer NSString *)ABRecordCopyValue(person, kABPersonLastNameProperty);
     
-    NSString *fullName = [OMeta usesEasternNameOrder] ? lastName : firstName;
+    NSString *name = firstName;
     
-    if (fullName) {
-        NSString *nextName = [OMeta usesEasternNameOrder] ? firstName : middleName;
-        
-        if (nextName) {
-            fullName = [fullName stringByAppendingString:nextName separator:kSeparatorSpace];
-        }
-        
-        nextName = [OMeta usesEasternNameOrder] ? middleName : lastName;
-        
-        if (nextName) {
-            fullName = [fullName stringByAppendingString:nextName separator:kSeparatorSpace];
-        }
+    if (middleName) {
+        name = name ? [name stringByAppendingString:middleName separator:kSeparatorSpace] : middleName;
     }
     
-    _nameField.value = fullName;
+    if (lastName) {
+        name = name ? [name stringByAppendingString:lastName separator:kSeparatorSpace] : lastName;
+    }
+    
+    _nameField.value = name;
     _member.name = _nameField.value;
 }
 
@@ -774,7 +782,7 @@ static NSInteger const kButtonIndexContinue = 1;
             }
             
             if ([[_member residences] count] == 1 && [_addressBookHomeNumbers count] == 1) {
-                [_member residence].telephone = _addressBookHomeNumbers[0];
+                [_member primaryResidence].telephone = _addressBookHomeNumbers[0];
                 [_addressBookHomeNumbers removeAllObjects];
             }
         }
@@ -826,7 +834,7 @@ static NSInteger const kButtonIndexContinue = 1;
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
         
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"") tag:kButtonTagSourceAddressBook];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from other groups", @"") tag:kButtonTagSourceGroups];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from other group", @"") tag:kButtonTagSourceGroups];
         
         [actionSheet show];
     } else {
@@ -934,14 +942,14 @@ static NSInteger const kButtonIndexContinue = 1;
     if (sectionKey == kSectionKeyGuardians) {
         id<OMember> guardian = [self dataAtIndexPath:indexPath];
         
-        [cell loadMember:guardian inOrigo:_origo includeRelations:NO];
+        [cell loadMember:guardian inOrigo:_origo excludeRoles:NO excludeRelations:YES];
         cell.destinationId = kIdentifierMember;
         
         if (![cell.detailTextLabel.text hasValue]) {
             NSString *details = nil;
             
             if ([[_member residences] count] > 1) {
-                details = [[guardian residence] shortAddress];
+                details = [[guardian primaryResidence] shortAddress];
             }
             
             if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
@@ -1086,8 +1094,8 @@ static NSInteger const kButtonIndexContinue = 1;
     } else if (![_member hasParent:guardian1] && [_member hasParent:guardian2]) {
         result = NSOrderedDescending;
     } else {
-        NSString *address1 = [[guardian1 residence] shortAddress];
-        NSString *address2 = [[guardian2 residence] shortAddress];
+        NSString *address1 = [[guardian1 primaryResidence] shortAddress];
+        NSString *address2 = [[guardian2 primaryResidence] shortAddress];
         
         if (!address1 || !address2 || [address1 isEqualToString:address2]) {
             result = [guardian1.name localizedCaseInsensitiveCompare:guardian2.name];
@@ -1537,7 +1545,7 @@ static NSInteger const kButtonIndexContinue = 1;
                     if ([_addressBookMappings[0] isKindOfClass:[NSString class]]) {
                         if (buttonTag != kButtonTagAddressBookEntryNoValue) {
                             NSString *selectedNumber = _addressBookMappings[buttonIndex];
-                            [_member residence].telephone = selectedNumber;
+                            [_member primaryResidence].telephone = selectedNumber;
                         }
                         
                         [_addressBookHomeNumbers removeAllObjects];
@@ -1611,14 +1619,8 @@ static NSInteger const kButtonIndexContinue = 1;
                     
                     if ([_cachedResidences count]) {
                         [self presentHousemateResidencesSheet];
-                    } else if (![_member hasAddress]) {
-                        if ([[_member housemates] count]) {
-                            [self presentCoHabitantsSheet];
-                        } else {
-                            [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
-                        }
                     } else {
-                        [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:kOrigoTypeResidence];
+                        [self prepareForResidenceRegistration];
                     }
                 } else if (buttonTag == kButtonTagEditAddGuardian) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
@@ -1629,11 +1631,7 @@ static NSInteger const kButtonIndexContinue = 1;
             
         case kActionSheetTagResidence:
             if (buttonTag == kButtonTagResidenceNewAddress) {
-                if ([_member hasAddress]) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:kOrigoTypeResidence];
-                } else {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
-                }
+                [self prepareForResidenceRegistration];
             } else if (buttonIndex != actionSheet.cancelButtonIndex) {
                 [_cachedResidences[buttonIndex] addMember:_member];
                 [self reloadSections];
@@ -1643,20 +1641,30 @@ static NSInteger const kButtonIndexContinue = 1;
             
         case kActionSheetTagCoHabitants:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
-                id<OOrigo> residence = [_member residence];
+                id<OOrigo> primaryResidence = [_member primaryResidence];
                 
-                if (buttonTag != kButtonTagCoHabitantsAll) {
-                    residence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];
-                    [residence addMember:_member];
+                if ([_member hasAddress] || buttonTag != kButtonTagCoHabitantsAll) {
+                    primaryResidence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];
+                    [primaryResidence addMember:_member];
                     
-                    if (buttonTag == kButtonTagCoHabitantsWards) {
-                        for (id<OMember> ward in [_member wards]) {
-                            [residence addMember:ward];
+                    NSArray *coHabitants = nil;
+                    
+                    if ([_member hasAddress]) {
+                        if (buttonTag == kButtonTagCoHabitantsAll) {
+                            coHabitants = [primaryResidence residents];
+                        } else if (buttonTag == kButtonTagCoHabitantsWards) {
+                            coHabitants = [_member wards];
                         }
+                    } else if (buttonTag == kButtonTagCoHabitantsWards) {
+                        coHabitants = [_member wards];
+                    }
+                    
+                    for (id<OMember> coHabitant in coHabitants) {
+                        [primaryResidence addMember:coHabitant];
                     }
                 }
                 
-                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:residence];
+                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:primaryResidence];
             }
             
             break;
@@ -1694,7 +1702,7 @@ static NSInteger const kButtonIndexContinue = 1;
         case kActionSheetTagGuardianAddressYesNo:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
                 if (buttonTag != kButtonTagGuardianAddressYes) {
-                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member residence]];
+                    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
                 }
             }
             
