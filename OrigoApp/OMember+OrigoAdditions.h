@@ -32,7 +32,7 @@
 - (NSSet *)allMemberships;
 
 - (id<OOrigo>)root;
-- (id<OOrigo>)residence;
+- (id<OOrigo>)primaryResidence;
 - (NSArray *)residences;
 - (NSArray *)addresses;
 - (NSArray *)origos;
@@ -59,6 +59,7 @@
 - (BOOL)isManagedByUser;
 - (BOOL)isManaged;
 - (BOOL)isMale;
+- (BOOL)isFriendOnly;
 - (BOOL)isJuvenile;
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOlderThan:(NSInteger)age;
@@ -71,6 +72,7 @@
 - (NSArray *)pronoun;
 - (NSArray *)parentNoun;
 
+- (NSString *)lastName;
 - (NSString *)shortName;
 - (NSString *)givenName;
 - (NSString *)givenNameWithParentTitle;

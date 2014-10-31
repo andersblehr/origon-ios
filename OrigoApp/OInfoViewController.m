@@ -42,7 +42,9 @@ static NSInteger const kSectionKeyAdmins = 1;
             [propertyKeys addObject:kPropertyKeyType];
         }
     } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
-        [propertyKeys addObject:kPropertyKeyGender];
+        if ([_entity isManagedByUser]) {
+            [propertyKeys addObject:kPropertyKeyGender];
+        }
     }
     
     [propertyKeys addObject:kPropertyKeyCreatedBy];
@@ -191,10 +193,10 @@ static NSInteger const kSectionKeyAdmins = 1;
         
         if ([origo userCanEdit]) {
             cell.textLabel.text = [self dataAtIndexPath:indexPath];
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo conjoin:NO];
             cell.destinationId = kIdentifierValuePicker;
         } else {
-            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:origo includeRelations:NO];
+            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:origo];
             cell.destinationId = kIdentifierMember;
         }
     }

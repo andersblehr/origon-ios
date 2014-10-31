@@ -114,7 +114,7 @@
 "[add member] general" = "Registrer medlem";
 "[add member] organisation" = "Registrer medlem";
 "[add member] preschoolClass" = "Registrer barn";
-"[add member] residence" = "Registrer medlem";
+"[add member] residence" = "Nytt medlem";
 "[add member] schoolClass" = "Registrer elev";
 "[add member] studyGroup" = "Registrer student";
 "[add member] team" = "Registrer spiller";
@@ -129,15 +129,16 @@
 "[member role] team" = "Lagrolle";
 
 // Member titles
-"[member] alumni" = "Alumn";
-"[member] friends" = "Venn";
-"[member] general" = "Medlem";
-"[member] organisation" = "Medlem";
-"[member] preschoolClass" = "Barn";
-"[member] residence" = "Beboer";
-"[member] schoolClass" = "Elev";
-"[member] studyGroup" = "Deltaker";
-"[member] team" = "Spiller";
+"[member] alumni" = "alumn";
+"[member] community" = "medlem";
+"[member] friends" = "venn/venninne";
+"[member] general" = "medlem";
+"[member] organisation" = "medlem";
+"[member] preschoolClass" = "barn";
+"[member] residence" = "beboer";
+"[member] schoolClass" = "elev";
+"[member] studyGroup" = "student";
+"[member] team" = "spiller";
 
 // Member list titles
 "[members] alumni" = "Alumni";
@@ -150,17 +151,28 @@
 "[members] studyGroup" = "Deltakere";
 "[members] team" = "Spillere";
 
-// Member registration titles
-"[member registration] alumni" = "Ny alumn";
-"[member registration] community" = "Nytt medlem";
-"[member registration] friends" = "På lista";
-"[member registration] general" = "Nytt medlem";
-"[member registration] organisation" = "Nytt medlem";
-"[member registration] preschoolClass" = "I avdelingen";
-"[member registration] schoolClass" = "Ny elev";
-"[member registration] studyGroup" = "Ny student";
-"[member registration] residence" = "I husstanden";
-"[member registration] team" = "Ny deltaker";
+// New member titles
+"[new member] alumni" = "Ny alumn";
+"[new member] community" = "Nytt medlem";
+"[new member] friends" = "Ny venn/venninne";
+"[new member] general" = "Nytt medlem";
+"[new member] organisation" = "Nytt medlem";
+"[new member] preschoolClass" = "I avdelingen";
+"[new member] residence" = "I husstanden";
+"[new member] schoolClass" = "Ny elev";
+"[new member] studyGroup" = "Ny student";
+"[new member] team" = "Ny spiller";
+
+// New member titles
+"[new members] alumni" = "Nye alumni";
+"[new members] community" = "Nye medlemmer";
+"[new members] friends" = "Nye venner/venninner";
+"[new members] general" = "Nye medlemmer";
+"[new members] organisation" = "Nye medlemmer";
+"[new members] preschoolClass" = "Nye barn";
+"[new members] schoolClass" = "Nye elever";
+"[new members] studyGroup" = "Nye studenter";
+"[new members] team" = "Nye spillere";
 
 // Origo collective titles
 "[all members] alumni" = "Alle alumni";
@@ -170,7 +182,7 @@
 "[all members] organisation" = "Alle medlemmer";
 "[all members] residence" = "Alle i husstanden";
 "[all members] studyGroup" = "Alle i gruppa";
-"[all members] team" = "Alle deltakere";
+"[all members] team" = "Alle spillere";
 
 // Organiser registration button titles
 "[add organiser] preschoolClass" = "Registrer personale";
@@ -288,7 +300,8 @@
 "%@ at %@" = "%@ kl %@";
 "%d years" = "%d år";
 "Guardian of %@" = "Foresatt til %@";
-"%@ (%@ of %@)" = "%@ (%@ av %@)";
+"%@, %@ of %@" = "%@, %@ av %@";
+"%@ of %@" = "%@ av %@";
 "%@ in %@" = "%@ i %@";
 
 // Separators
@@ -351,11 +364,11 @@
 "Decline" = "Avvis";
 "Hide" = "Skjul";
 "Edit responsibilities" = "Rediger ansvarsområder";
-"Add from other groups" = "Legg til fra andre grupper";
+"Register from other group" = "Registrer fra annen gruppe";
 "Register parent contact" = "Registrer foreldrekontakt";
 "Show in map" = "Vis på kart";
 "About %@" = "Om %@";
-"Add household member" = "Nytt medlem i husstanden";
+"Register household member" = "Registrer medlem i husstanden";
 "Other guardian" = "Annen foresatt";
 "Remove" = "Meld ut";
 
@@ -385,11 +398,11 @@
 "Register guardian" = "Registrer foresatt";
 "Change password" = "Endre passord";
 "Edit relations" = "Rediger relasjoner";
-"New address" = "Ny adresse";
+"Other address" = "Annen adresse";
 "All guardians" = "Alle foresatte";
 "All contacts" = "Alle kontaktpersoner";
 "Retrieve from Contacts"   = "Hent fra Kontakter";
-"Retrieve from other groups" = "Hent fra andre grupper";
+"Retrieve from other group" = "Hent fra annen gruppe";
 "A different number" = "Et annet nummer";
 "A different address" = "En annen adresse";
 "Edit responsibility" = "Rediger ansvarsområde";
@@ -417,8 +430,8 @@
 "Who do you want to email?" = "Hvem vil du sende epost til?";
 "Who do you want to text?" = "Hvem vil du sende tekstmelding til?";
 "Who do you want to call?" = "Hvem vil du ringe?";
-"Should %@ be registered at the same address?" = "Skal %@ registreres på samme adresse?";
-"Who else should be registered at the same address?" = "Hvem flere skal registeres på samme adresse?";
+"Should %@ also be registered at this address?" = "Skal %@ også registreres på denne adressen?";
+"Who else should be registered at this address?" = "Hvem flere skal registeres på denne adressen?";
 "Are you a %@ or a @%?" = "Er du %@ eller %@";
 "Is %@ a %@ or a %@?" = "Er %@ %@ eller %@";
 "Are you a %@?" = "Er du %@?";
@@ -465,6 +478,9 @@
 
 // View titles
 "Group type" = "Type gruppe";
+
+// View subtitles
+"(None selected)" = "(Ingen valgt)";
 
 // Miscellaneous strings
 "Responsibility" = "Ansvarsområde";

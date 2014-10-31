@@ -249,16 +249,7 @@ static CGFloat const kMatchingEditDistancePercentage = 0.4f;
 
 - (NSString *)givenName
 {
-    NSString *givenName = nil;
-    NSArray *names = [self componentsSeparatedByString:kSeparatorSpace];
-    
-    if ([names count] == 1) {
-        givenName = names[0];
-    } else if ([names count]) {
-        givenName = [OMeta usesEasternNameOrder] ? names[1] : names[0];
-    }
-    
-    return givenName;
+    return [self componentsSeparatedByString:kSeparatorSpace][0];
 }
 
 

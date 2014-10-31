@@ -70,11 +70,11 @@
             if ([member isJuvenile] == [self isJuvenile]) {
                 [allPeers addObject:member];
             
-                for (OMember *housemate in [member allHousemates]) {
-                    if ([housemate isJuvenile] == [self isJuvenile]) {
-                        [allPeers addObject:housemate];
-                    }
-                }
+//                for (OMember *housemate in [member allHousemates]) {
+//                    if ([housemate isJuvenile] == [self isJuvenile]) {
+//                        [allPeers addObject:housemate];
+//                    }
+//                }
             }
         }
     }
@@ -230,22 +230,30 @@
 }
 
 
-- (id<OOrigo>)residence
+- (id<OOrigo>)primaryResidence
 {
-    OOrigo *residence = nil;
+    OOrigo *primaryResidence = nil;
+    NSInteger maxNumberOfResidents = 0;
     
-    for (OOrigo *registeredResidence in [self residences]) {
-        if (!residence || [registeredResidence hasAddress]) {
-            residence = registeredResidence;
+    for (OOrigo *residence in [self residences]) {
+        NSInteger numberOfResidents = [[residence residents] count];
+        
+        BOOL isFirst = !primaryResidence;
+        BOOL isFirstWithAddress = ![primaryResidence hasAddress] && [residence hasAddress];
+        BOOL hasMostResidents = numberOfResidents > maxNumberOfResidents;
+        
+        if (isFirst || isFirstWithAddress || hasMostResidents) {
+            primaryResidence = residence;
+            maxNumberOfResidents = numberOfResidents;
         }
     }
     
-    if (!residence) {
-        residence = [OOrigo instanceWithId:[OCrypto generateUUID] type:kOrigoTypeResidence];
-        [residence addMember:self];
+    if (!primaryResidence) {
+        primaryResidence = [OOrigo instanceWithId:[OCrypto generateUUID] type:kOrigoTypeResidence];
+        [primaryResidence addMember:self];
     }
     
-    return residence;
+    return primaryResidence;
 }
 
 
@@ -551,6 +559,18 @@
 }
 
 
+- (BOOL)isFriendOnly
+{
+    BOOL isFriendOnly = YES;
+    
+    for (OOrigo *origo in [self origos]) {
+        isFriendOnly = isFriendOnly && [origo isOfType:kOrigoTypeFriends];
+    }
+    
+    return isFriendOnly;
+}
+
+
 - (BOOL)isJuvenile
 {
     return self.dateOfBirth ? [self.dateOfBirth isBirthDateOfMinor] : [self.isMinor boolValue];
@@ -687,7 +707,7 @@
     NSString *annotatedName = nil;
     
     if ([origo instance]) {
-        annotatedName = [NSString stringWithFormat:@"%@ (%@)", [self givenName], [OUtil commaSeparatedListOfItems:[[origo membershipForMember:self] roles] conjoinLastItem:NO]];
+        annotatedName = [NSString stringWithFormat:@"%@ (%@)", [self givenName], [OUtil commaSeparatedListOfItems:[[origo membershipForMember:self] roles] conjoin:NO]];
     }
     
     return annotatedName;
@@ -699,27 +719,17 @@
     NSString *displayName = nil;
     
     if (origo && [self isJuvenile] && ![[OMeta m].user isJuvenile]) {
-        static NSDictionary *isUniqueGivenNameByOrigoId = nil;
-        NSMutableDictionary *isUniqueGivenName = isUniqueGivenNameByOrigoId[origo.entityId];
+        static NSDictionary *isUniqueByGivenNameByOrigoId = nil;
+        NSDictionary *isUniqueByGivenName = isUniqueByGivenNameByOrigoId[origo.entityId];
         
-        if (!isUniqueGivenName) {
-            isUniqueGivenName = [NSMutableDictionary dictionary];
-            isUniqueGivenNameByOrigoId = @{origo.entityId: isUniqueGivenName};
-            
-            for (id<OMember> member in [origo regulars]) {
-                NSString *givenName = [member givenName];
-                
-                if ([[isUniqueGivenName allKeys] containsObject:givenName]) {
-                    isUniqueGivenName[givenName] = @NO;
-                } else {
-                    isUniqueGivenName[givenName] = @YES;
-                }
-            }
+        if (!isUniqueByGivenName) {
+            isUniqueByGivenName = [OUtil isUniqueByGivenNameFromMembers:[origo regulars]];
+            isUniqueByGivenNameByOrigoId = @{origo.entityId: isUniqueByGivenName};
         }
         
         NSString *givenName = [self givenName];
         
-        if ([isUniqueGivenName[givenName] boolValue]) {
+        if ([isUniqueByGivenName[givenName] boolValue]) {
             displayName = givenName;
         } else {
             displayName = [self shortName];

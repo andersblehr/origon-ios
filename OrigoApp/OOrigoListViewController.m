@@ -149,7 +149,7 @@ static NSInteger const kSectionKeyWards = 2;
         NSArray *origos = [ward origos];
         
         if ([origos count]) {
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:origos conjoinLastItem:NO];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:origos conjoin:NO];
             cell.detailTextLabel.textColor = [UIColor textColour];
         } else {
             cell.detailTextLabel.text = NSLocalizedString(@"(No groups)", @"");
@@ -164,7 +164,7 @@ static NSInteger const kSectionKeyWards = 2;
         
         if ([_member isUser] && ([origo userIsOrganiser] || [origo userIsParentContact])) {
             cell.textLabel.text = [NSString stringWithFormat:@"%@, %@", origo.name, origo.descriptionText];
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:[membership roles] conjoinLastItem:NO];
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO];
         } else {
             cell.textLabel.text = origo.name;
         

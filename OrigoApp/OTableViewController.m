@@ -819,12 +819,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)setSubtitle:(NSString *)subtitle
-{
-    _titleField = [self.navigationItem setTitle:self.title editable:_titleField.userInteractionEnabled withSubtitle:subtitle];
-}
-
-
 #pragma mark - Reloading sections and/or section elements
 
 - (void)reloadSections
@@ -1167,6 +1161,19 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     return rowAnimation;
+}
+
+
+- (void)setSubtitle:(NSString *)subtitle
+{
+    _subtitle = subtitle;
+    _titleField = [self.navigationItem setTitle:self.title editable:_titleField.userInteractionEnabled withSubtitle:subtitle];
+}
+
+
+- (void)setSubtitleColour:(UIColor *)subtitleColour
+{
+    [self.navigationItem subtitleLabel].textColor = subtitleColour;
 }
 
 

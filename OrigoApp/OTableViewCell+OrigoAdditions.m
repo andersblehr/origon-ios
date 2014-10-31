@@ -11,31 +11,124 @@
 
 @implementation OTableViewCell (OrigoAdditions)
 
-#pragma mark - Loading member data
+#pragma mark - Auxiliary methods
 
-- (void)loadMember:(id<OMember>)member inOrigo:(id<OOrigo>)origo includeRelations:(BOOL)includeRelations
+- (NSString *)friendTermForMember:(id<OMember>)member
 {
-    self.textLabel.text = origo ? [member displayNameInOrigo:origo] : member.name;
+    NSString *friendTerm = nil;
     
-    NSArray *roles = [[origo membershipForMember:member] roles];
-    
-    if ([roles count]) {
-        self.detailTextLabel.text = [[OUtil commaSeparatedListOfItems:roles conjoinLastItem:NO] stringByCapitalisingFirstLetter];
+    if ([member isMale]) {
+        friendTerm = NSLocalizedString(@"friend [male]", @"");
     } else {
-        BOOL isCrossGenerational = [member isJuvenile] != [[OMeta m].user isJuvenile] || [member isJuvenile] != [[OState s].currentMember isJuvenile];
+        friendTerm = NSLocalizedString(@"friend [female]", @"");
+    }
+    
+    return friendTerm;
+}
+
+
+- (NSString *)guardianInfoForMember:(id<OMember>)member
+{
+    NSString *guardianInfo = nil;
+    
+    if ([member isJuvenile]) {
+        NSArray *guardians = [member parents];
         
-        if (isCrossGenerational && includeRelations) {
-            self.detailTextLabel.textColor = [UIColor tonedDownTextColour];
+        if (![guardians count]) {
+            guardians = [member guardians];
+        }
+        
+        if ([guardians count] == 2) {
+            NSString *lastName1 = [[[guardians[0] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
+            NSString *lastName2 = [[[guardians[1] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
             
-            if ([member isJuvenile]) {
-                self.detailTextLabel.text = [OUtil guardianInfoForMember:member];
-            } else {
-                self.detailTextLabel.text = origo ? [OUtil commaSeparatedListOfMembers:[member wardsInOrigo:origo] inOrigo:origo] : nil;
+            if ([lastName1 isEqualToString:lastName2]) {
+                guardianInfo = [NSString stringWithFormat:@"%@%@%@ %@", [guardians[0] givenName], NSLocalizedString(@" and ", @""), [guardians[1] givenName], lastName1];
+            }
+        }
+        
+        if (!guardianInfo) {
+            guardianInfo = [OUtil commaSeparatedListOfMembers:guardians conjoin:NO];
+        }
+    }
+    
+    return guardianInfo;
+}
+
+
+- (NSArray *)associationMembershipsForMember:(id<OMember>)member
+{
+    NSMutableArray *associationMemberships = [NSMutableArray array];
+    NSArray *origos = [member origos];
+    
+    if ([origos count]) {
+        if ([member isFriendOnly]) {
+            [associationMemberships addObject:[origos[0] membershipForMember:member]];
+        } else {
+            for (id<OOrigo> origo in origos) {
+                if (![associationMemberships count] && ![origo isOfType:kOrigoTypeFriends]) {
+                    [associationMemberships addObject:[origo membershipForMember:member]];
+                }
+            }
+        }
+    } else {
+        NSArray *memberships = [[[member allMemberships] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
+        
+        for (id<OMembership> membership in memberships) {
+            if ([membership isAssociate] && [membership.origo isJuvenile] != [member isJuvenile]) {
+                [associationMemberships addObject:membership];
             }
         }
     }
     
-    [self loadImageForMember:member];
+    return associationMemberships;
+}
+
+
+- (void)loadAssociationInfoForMember:(id<OMember>)member
+{
+    NSString *association = nil;
+    NSMutableDictionary *associationsByWard = [NSMutableDictionary dictionary];
+    
+    id<OOrigo> origo = nil;
+    
+    for (id<OMembership> membership in [self associationMembershipsForMember:member]) {
+        origo = membership.origo;
+        
+        if ([membership isAssociate] || [[membership parentRoles] count]) {
+            for (OMember *ward in [member wardsInOrigo:origo]) {
+                if (!associationsByWard[ward.entityId]) {
+                    if ([ward isFriendOnly]) {
+                        associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [OUtil commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo conjoin:YES]];
+                    } else if (![origo isOfType:kOrigoTypeFriends]) {
+                        associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [ward displayNameInOrigo:origo], origo.name];
+                    }
+                }
+            }
+        } else {
+            if ([member isJuvenile] && [member isFriendOnly]) {
+                association = [[NSString stringWithFormat:NSLocalizedString(@"%@ of %@", @""), [self friendTermForMember:member], [OUtil commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo conjoin:YES]] stringByCapitalisingFirstLetter];
+            } else if ([[membership organiserRoles] count]) {
+                association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixOrganiserTitle), origo.name];
+            } else if (![origo isOfType:kOrigoTypeFriends]) {
+                NSArray *memberRoles = [membership memberRoles];
+                
+                if ([memberRoles count]) {
+                    association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), memberRoles[0], origo.name];
+                } else {
+                    association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [NSLocalizedString(origo.type, kStringPrefixMemberTitle) stringByCapitalisingFirstLetter], origo.name];
+                }
+            }
+        }
+    }
+    
+    if ([associationsByWard count]) {
+        association = [NSString stringWithFormat:NSLocalizedString(@"Guardian of %@", @""), [OUtil commaSeparatedListOfStrings:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoin:YES]];
+    }
+    
+    self.textLabel.text = [member displayNameInOrigo:origo];
+    self.detailTextLabel.text = association;
+    self.detailTextLabel.textColor = [UIColor tonedDownTextColour];
 }
 
 
@@ -83,6 +176,50 @@
 {
     self.imageView.tintColor = [UIColor tonedDownIconColour];
     self.imageView.image = [[UIImage imageNamed:fileName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+}
+
+
+#pragma mark - Loading member data
+
+- (void)loadMember:(id<OMember>)member inOrigo:(id<OOrigo>)origo
+{
+    if ([origo isOfType:kOrigoTypeResidence]) {
+        [self loadMember:member inOrigo:origo excludeRoles:YES excludeRelations:YES];
+    } else {
+        [self loadMember:member inOrigo:origo excludeRoles:NO excludeRelations:NO];
+    }
+}
+
+
+- (void)loadMember:(id<OMember>)member inOrigo:(id<OOrigo>)origo excludeRoles:(BOOL)excludeRoles excludeRelations:(BOOL)excludeRelations
+{
+    if (origo) {
+        self.textLabel.text = [member displayNameInOrigo:origo];
+        
+        NSArray *roles = [[origo membershipForMember:member] roles];
+        
+        if ([roles count] && !excludeRoles) {
+            self.detailTextLabel.text = [[OUtil commaSeparatedListOfItems:roles conjoin:NO] stringByCapitalisingFirstLetter];
+        } else if (!excludeRelations) {
+            BOOL isCrossGenerational = [member isJuvenile] != [[OMeta m].user isJuvenile] || [member isJuvenile] != [[OState s].currentMember isJuvenile];
+            
+            if (isCrossGenerational) {
+                if ([self styleIsSubtitle]) {
+                    self.detailTextLabel.textColor = [UIColor tonedDownTextColour];
+                }
+                
+                if ([member isJuvenile]) {
+                    self.detailTextLabel.text = [self guardianInfoForMember:member];
+                } else {
+                    self.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[member wardsInOrigo:origo] inOrigo:origo conjoin:NO];
+                }
+            }
+        }
+    } else if (excludeRoles && excludeRelations) {
+        [self loadAssociationInfoForMember:member];
+    }
+    
+    [self loadImageForMember:member];
 }
 
 @end

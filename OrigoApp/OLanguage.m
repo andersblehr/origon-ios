@@ -81,7 +81,7 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
             subjectString = [subject givenName];
         }
     } else if ([subject isKindOfClass:[NSArray class]]) {
-        subjectString = [OUtil commaSeparatedListOfItems:subject conjoinLastItem:YES];
+        subjectString = [OUtil commaSeparatedListOfItems:subject conjoin:YES];
     }
     
     return subjectString;
@@ -195,7 +195,7 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
             possessiveClause = [NSString stringWithFormat:noun[possessive3], [possessor givenName]];
         }
     } else if ([possessor isKindOfClass:[NSArray class]]) {
-        possessiveClause = [NSString stringWithFormat:noun[possessive3], [OUtil commaSeparatedListOfItems:possessor conjoinLastItem:YES]];
+        possessiveClause = [NSString stringWithFormat:noun[possessive3], [OUtil commaSeparatedListOfItems:possessor conjoin:YES]];
     }
     
     return possessiveClause;

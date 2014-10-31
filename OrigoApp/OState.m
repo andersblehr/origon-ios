@@ -215,7 +215,7 @@ static OState *_activeState = nil;
 }
 
 
-#pragma mark - Miscellaneous methods
+#pragma mark - Miscellaneous
 
 - (NSArray *)eligibleCandidates
 {
@@ -331,7 +331,7 @@ static OState *_activeState = nil;
             _currentOrigo = target;
             _target = _currentOrigo.type;
             
-            if ([_currentOrigo isOfType:kOrigoTypeCommunity]) {
+            if (![_currentOrigo isOfType:kOrigoTypeResidence]) {
                 _baseOrigo = _currentOrigo;
             }
             

@@ -15,6 +15,8 @@
 - (void)addRightBarButtonItem:(UIBarButtonItem *)barButtonItem;
 - (void)insertRightBarButtonItem:(UIBarButtonItem *)barButtonItem atIndex:(NSInteger)index;
 - (void)removeRightBarButtonItem:(UIBarButtonItem *)barButtonItem;
+
 - (UIBarButtonItem *)rightBarButtonItemWithTag:(NSInteger)tag;
+- (UILabel *)subtitleLabel;
 
 @end
