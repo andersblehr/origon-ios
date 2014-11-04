@@ -503,7 +503,15 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         if ([_origo isOfType:kOrigoTypeCommunity]) {
             content = [self segmentedHeaderView];
         } else {
-            content = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
+            if ([self actionIs:kActionRegister] && [_origo isOfType:kOrigoTypeResidence]) {
+                if (![_member hasAddress] && [self aspectIs:kAspectJuvenile]) {
+                    content = NSLocalizedString(@"Guardians in the household", @"");
+                } else {
+                    content = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
+                }
+            } else {
+                content = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
+            }
         }
     }
     
@@ -516,7 +524,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     NSString *footerText = nil;
     
     if ([self aspectIs:kAspectJuvenile]) {
-        footerText = NSLocalizedString(@"Tap [+] to add another guardian in the household.", @"");
+        footerText = NSLocalizedString(@"Tap [+] to register additional guardians in the household.", @"");
     } else {
         footerText = NSLocalizedString(_origo.type, kStringPrefixFooter);
     }

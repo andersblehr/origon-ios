@@ -155,10 +155,18 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-+ (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action
++ (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target
 {
     UIBarButtonItem *doneButton = [self doneButtonWithTarget:target];
     doneButton.title = title;
+    
+    return doneButton;
+}
+
+
++ (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action
+{
+    UIBarButtonItem *doneButton = [self doneButtonWithTitle:title target:target];
     doneButton.action = action;
     
     return doneButton;

@@ -67,6 +67,7 @@
 - (BOOL)hasAddress;
 - (BOOL)hasParent:(id<OMember>)member;
 - (BOOL)hasParentWithGender:(NSString *)gender;
+- (BOOL)hasGuardian:(id<OMember>)member;
 - (BOOL)guardiansAreParents;
 
 - (NSArray *)pronoun;

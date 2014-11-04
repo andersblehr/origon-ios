@@ -47,6 +47,7 @@ extern NSInteger const kBarButtonTagSendText;
 + (instancetype)cancelButtonWithTarget:(id)target;
 + (instancetype)cancelButtonWithTarget:(id)target action:(SEL)action;
 + (instancetype)doneButtonWithTarget:(id)target;
++ (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target;
 + (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action;
 + (instancetype)nextButtonWithTarget:(id)target;
 + (instancetype)signOutButtonWithTarget:(id)target;
