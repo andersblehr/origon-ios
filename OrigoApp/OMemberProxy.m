@@ -83,24 +83,24 @@
 }
 
 
-- (id<OOrigo>)residence
+- (id<OOrigo>)primaryResidence
 {
-    id<OOrigo> residence = nil;
+    id<OOrigo> primaryResidence = nil;
     
     if ([self instance]) {
-        residence = [[self instance] residence];
+        primaryResidence = [[self instance] primaryResidence];
     } else {
         NSArray *residences = [self residences];
         
         if ([residences count]) {
-            residence = residences[0];
+            primaryResidence = residences[0];
         } else {
-            residence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];
-            [residence addMember:self];
+            primaryResidence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];
+            [primaryResidence addMember:self];
         }
     }
     
-    return residence;
+    return primaryResidence;
 }
 
 
@@ -266,7 +266,7 @@
 
 - (NSString *)displayNameInOrigo:(id<OOrigo>)origo
 {
-    return self.name;
+    return [self isJuvenile] ? [self givenName] : self.name;
 }
 
 @end

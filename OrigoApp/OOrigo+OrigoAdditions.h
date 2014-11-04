@@ -39,6 +39,7 @@ extern NSString * const kOrigoTypeTeam;
 - (NSArray *)regulars;
 - (NSArray *)guardians;
 - (NSArray *)elders;
+- (NSArray *)minors;
 - (NSArray *)organisers;
 - (NSArray *)parentContacts;
 - (NSArray *)admins;

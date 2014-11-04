@@ -353,11 +353,12 @@
  ***/
 
 // Headers
+"Guardians in the household" = "Foresatte i husstanden";
 "Households" = "Husstander";
 "Members" = "Medlemmer";
 
 // Footers
-"Tap [+] to add another guardian in the household." = "Trykk [+] for å legge til flere foresatte i husstanden.";
+"Tap [+] to register additional guardians in the household." = "Trykk [+] for å registrere flere foresatte i husstanden.";
 
 // Buttons
 "Keep" = "Behold";
@@ -390,11 +391,12 @@
 // Footers
 "A notification will be sent to the email address you provide." = "Et varsel vil bli sendt til epostadressen du oppgir.";
 "Before you can register a minor, you must register his or her guardians." = "Før du kan registrere en mindreårig, må du registrere hans eller hennes foresatte.";
-"Tap [+] to add another guardian." = "Trykk [+] for å legge til flere foresatte.";
+"Tap [+] to register additional guardians." = "Trykk [+] for å registrere flere foresatte.";
 
 // Buttons
 "To some of them" = "Til noen av dem";
 "Register address" = "Registrer adresse";
+"Register additional address" = "Registrer en adresse til";
 "Register guardian" = "Registrer foresatt";
 "Change password" = "Endre passord";
 "Edit relations" = "Rediger relasjoner";
@@ -432,7 +434,7 @@
 "Who do you want to call?" = "Hvem vil du ringe?";
 "Should %@ also be registered at this address?" = "Skal %@ også registreres på denne adressen?";
 "Who else should be registered at this address?" = "Hvem flere skal registeres på denne adressen?";
-"Are you a %@ or a @%?" = "Er du %@ eller %@";
+"Are you a %@ or a %@?" = "Er du %@ eller %@";
 "Is %@ a %@ or a %@?" = "Er %@ %@ eller %@";
 "Are you a %@?" = "Er du %@?";
 "Is %@ a %@?" = "Er %@ %@?";
@@ -477,7 +479,7 @@
  ***/
 
 // View titles
-"Group type" = "Type gruppe";
+"Type" = "Type";
 
 // View subtitles
 "(None selected)" = "(Ingen valgt)";
@@ -505,6 +507,9 @@
 "Registered: %@." = "Registrert: %@.";
 "Last modified: %@." = "Sist endret: %@.";
 "Active since: %@" = "Aktiv siden: %@";
+
+// Buttons
+"Close" = "Lukk";
 
 
 /***

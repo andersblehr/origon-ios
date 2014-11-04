@@ -64,7 +64,7 @@ static NSInteger const kSectionKeyValues = 0;
         _origo = self.state.currentOrigo;
         _valuesByKey = [NSMutableDictionary dictionary];
 
-        self.title = NSLocalizedString(@"Group type", @"");
+        self.title = NSLocalizedString(@"Type", @"");
     } else if ([self targetIs:kTargetGender]) {
         _valuesByKey = [NSMutableDictionary dictionary];
         
@@ -203,6 +203,7 @@ static NSInteger const kSectionKeyValues = 0;
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         
         [cell loadMember:candidate inOrigo:_origo excludeRoles:NO excludeRelations:NO];
+        cell.checked = [_pickedValues containsObject:candidate];
         
         if (![candidate isActive]) {
             cell.textLabel.textColor = [UIColor valueTextColour];

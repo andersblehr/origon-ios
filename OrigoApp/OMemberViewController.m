@@ -116,7 +116,7 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)prepareForResidenceRegistration
+- (void)continueResidenceRegistration
 {
     id<OOrigo> primaryResidence = [_member primaryResidence];
     NSArray *coHabitants = [primaryResidence residents];
@@ -808,7 +808,11 @@ static NSInteger const kButtonIndexContinue = 1;
     }
     
     if (![_member isJuvenile] || [_member isWardOfUser]) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Register address", @"") tag:kButtonTagEditAddAddress];
+        if ([_member hasAddress]) {
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register additional address", @"") tag:kButtonTagEditAddAddress];
+        } else {
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register address", @"") tag:kButtonTagEditAddAddress];
+        }
     } else {
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Register guardian", @"") tag:kButtonTagEditAddGuardian];
     }
@@ -944,32 +948,15 @@ static NSInteger const kButtonIndexContinue = 1;
         
         [cell loadMember:guardian inOrigo:_origo excludeRoles:NO excludeRelations:YES];
         cell.destinationId = kIdentifierMember;
-        
-        if (![cell.detailTextLabel.text hasValue]) {
-            NSString *details = nil;
-            
-            if ([[_member residences] count] > 1) {
-                details = [[guardian primaryResidence] shortAddress];
-            }
-            
-            if ([_member hasParent:guardian] && ![_member guardiansAreParents]) {
-                if (details) {
-                    details = [[[guardian parentNoun][singularIndefinite] capitalizedString] stringByAppendingString:details separator:kSeparatorComma];
-                } else {
-                    details = [[guardian parentNoun][singularIndefinite] capitalizedString];
-                }
-            }
-            
-            cell.detailTextLabel.text = details;
-        }
     } else if (sectionKey == kSectionKeyAddresses) {
         id<OOrigo> residence = [self dataAtIndexPath:indexPath];
         
-        cell.imageView.image = [UIImage imageNamed:kIconFileHousehold];
+        [cell loadImageForOrigo:residence];
         cell.textLabel.text = [residence shortAddress];
         
-        if ([residence.telephone hasValue]) {
-            cell.detailTextLabel.text = [[OPhoneNumberFormatter formatterForNumber:residence.telephone] completelyFormattedNumberCanonicalised:YES];
+        if ([[_member addresses] count] > 1) {
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[residence elders] conjoin:NO];
+            cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
         }
         
         [cell setDestinationId:kIdentifierOrigo selectableDuringInput:![self targetIs:kTargetJuvenile]];
@@ -1069,7 +1056,7 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
     } else if (sectionKey == kSectionKeyMember) {
-        text = NSLocalizedString(@"Tap [+] to add another guardian.", @"");
+        text = NSLocalizedString(@"Tap [+] to register additional guardians.", @"");
     }
     
     return text;
@@ -1567,22 +1554,14 @@ static NSInteger const kButtonIndexContinue = 1;
             break;
             
         case kActionSheetTagGuardianAddressYesNo:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (buttonTag == kButtonTagGuardianAddressYes) {
-                    [_cachedResidences[0] addMember:_member];
-                    [self.dismisser dismissModalViewController:self];
-                }
-            } else {
+            if (buttonIndex == actionSheet.cancelButtonIndex) {
                 [self.inputCell resumeFirstResponder];
             }
             
             break;
             
         case kActionSheetTagGuardianAddress:
-            if (buttonIndex != actionSheet.cancelButtonIndex) {
-                [_cachedResidences[buttonIndex] addMember:_member];
-                [self.dismisser dismissModalViewController:self];
-            } else {
+            if (buttonIndex == actionSheet.cancelButtonIndex) {
                 [self.inputCell resumeFirstResponder];
             }
             
@@ -1620,7 +1599,7 @@ static NSInteger const kButtonIndexContinue = 1;
                     if ([_cachedResidences count]) {
                         [self presentHousemateResidencesSheet];
                     } else {
-                        [self prepareForResidenceRegistration];
+                        [self continueResidenceRegistration];
                     }
                 } else if (buttonTag == kButtonTagEditAddGuardian) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
@@ -1631,7 +1610,7 @@ static NSInteger const kButtonIndexContinue = 1;
             
         case kActionSheetTagResidence:
             if (buttonTag == kButtonTagResidenceNewAddress) {
-                [self prepareForResidenceRegistration];
+                [self continueResidenceRegistration];
             } else if (buttonIndex != actionSheet.cancelButtonIndex) {
                 [_cachedResidences[buttonIndex] addMember:_member];
                 [self reloadSections];
@@ -1644,20 +1623,20 @@ static NSInteger const kButtonIndexContinue = 1;
                 id<OOrigo> primaryResidence = [_member primaryResidence];
                 
                 if ([_member hasAddress] || buttonTag != kButtonTagCoHabitantsAll) {
-                    primaryResidence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];
-                    [primaryResidence addMember:_member];
-                    
                     NSArray *coHabitants = nil;
                     
                     if ([_member hasAddress]) {
                         if (buttonTag == kButtonTagCoHabitantsAll) {
                             coHabitants = [primaryResidence residents];
                         } else if (buttonTag == kButtonTagCoHabitantsWards) {
-                            coHabitants = [_member wards];
+                            coHabitants = [primaryResidence minors];
                         }
                     } else if (buttonTag == kButtonTagCoHabitantsWards) {
-                        coHabitants = [_member wards];
+                        coHabitants = [primaryResidence minors];
                     }
+                    
+                    primaryResidence = [OOrigoProxy proxyWithType:kOrigoTypeResidence];
+                    [primaryResidence addMember:_member];
                     
                     for (id<OMember> coHabitant in coHabitants) {
                         [primaryResidence addMember:coHabitant];
@@ -1701,9 +1680,20 @@ static NSInteger const kButtonIndexContinue = 1;
             
         case kActionSheetTagGuardianAddressYesNo:
             if (buttonIndex != actionSheet.cancelButtonIndex) {
-                if (buttonTag != kButtonTagGuardianAddressYes) {
+                if (buttonTag == kButtonTagGuardianAddressYes) {
+                    [_cachedResidences[0] addMember:_member];
+                    [self.dismisser dismissModalViewController:self];
+                } else {
                     [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
                 }
+            }
+            
+            break;
+            
+        case kActionSheetTagGuardianAddress:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                [_cachedResidences[buttonIndex] addMember:_member];
+                [self.dismisser dismissModalViewController:self];
             }
             
             break;

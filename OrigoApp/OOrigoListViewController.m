@@ -84,7 +84,7 @@ static NSInteger const kSectionKeyWards = 2;
     [super viewDidAppear:animated];
 
     if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
-        if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].user.entityId]) {
+        if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].userEmail]) {
             id<OMember> creator = [[OMeta m].context entityWithId:[OMeta m].user.createdBy];
             
             [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origo", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Please verify your details and provide any missing information.", @""), [creator givenName], [creator pronoun][nominative]]];

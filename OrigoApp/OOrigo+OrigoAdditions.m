@@ -226,6 +226,22 @@ NSString * const kOrigoTypeTeam = @"team";
 }
 
 
+- (NSArray *)minors
+{
+    NSMutableArray *minors = [NSMutableArray array];
+    
+    if ([self isOfType:kOrigoTypeResidence]) {
+        for (OMember *resident in [self residents]) {
+            if ([resident isJuvenile]) {
+                [minors addObject:resident];
+            }
+        }
+    }
+    
+    return minors;
+}
+
+
 - (NSArray *)organisers
 {
     NSMutableSet *organisers = [NSMutableSet set];
@@ -270,7 +286,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (NSArray *)adminCandidates
 {
-    NSMutableArray *adminCandidates = [NSMutableArray array];
+    NSMutableSet *adminCandidates = [NSMutableSet set];
     
     for (OMember *member in [self members]) {
         if ([member isJuvenile]) {
@@ -286,7 +302,7 @@ NSString * const kOrigoTypeTeam = @"team";
         }
     }
     
-    return adminCandidates;
+    return [[adminCandidates allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 

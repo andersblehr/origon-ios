@@ -636,6 +636,12 @@
 }
 
 
+- (BOOL)hasGuardian:(id<OMember>)member
+{
+    return [[self guardians] containsObject:member];
+}
+
+
 - (BOOL)guardiansAreParents
 {
     NSArray *guardians = [self guardians];

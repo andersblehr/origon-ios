@@ -113,7 +113,7 @@ static NSInteger const kSectionKeyAdmins = 1;
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[member givenName]];
     }
     
-    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTitle:NSLocalizedString(@"Close", @"") target:self];
 }
 
 

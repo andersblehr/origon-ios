@@ -354,11 +354,12 @@
  ***/
 
 // Headers
+"Guardians in the household" = "Guardians in the household";
 "Households" = "Households";
 "Members" = "Members";
 
 // Footers
-"Tap [+] to add another guardian in the household." = "Tap [+] to add another guardian in the houshold.";
+"Tap [+] to register additional guardians in the household." = "Tap [+] to register additional guardians in the household.";
 
 // Buttons
 "Keep" = "Keep";
@@ -391,11 +392,12 @@
 // Footers
 "A notification will be sent to the email address you provide." = "A notification will be sent to the email address you provide.";
 "Before you can register a minor, you must register his or her guardians." = "Before you can register a minor, you must register his or her guardians.";
-"Tap [+] to add another guardian." = "Tap [+] to add another guardian.";
+"Tap [+] to register additional guardians." = "Tap [+] to register additional guardians.";
 
 // Buttons
 "To some of them" = "To some of them";
 "Register address" = "Register address";
+"Register additional address" = "Register additional address";
 "Register guardian" = "Register guardian";
 "Change password" = "Change password";
 "Edit relations" = "Edit relations";
@@ -433,7 +435,7 @@
 "Who do you want to call?" = "Who do you want to call?";
 "Should %@ also be registered at this address?" = "Should %@ also be registered at this address?";
 "Who else should be registered at this address?" = "Who else should be registered at this address?";
-"Are you a %@ or a @%?" = "Are you a %@ or a @%?";
+"Are you a %@ or a %@?" = "Are you a %@ or a %@?";
 "Is %@ a %@ or a %@?" = "Is %@ a %@ or a %@?";
 "Are you a %@?" = "Are you a %@?";
 "Is %@ a %@?" = "Is %@ a %@?";
@@ -478,7 +480,7 @@
  ***/
 
 // View titles
-"Group type" = "Group type";
+"Type" = "Type";
 
 // View subtitles
 "(None selected)" = "(None selected)";
@@ -506,6 +508,9 @@
 "Registered: %@." = "Registered: %@.";
 "Last modified: %@." = "Last modified: %@.";
 "Active since: %@" = "Active since: %@";
+
+// Buttons
+"Close" = "Close";
 
 
 /***
