@@ -196,7 +196,7 @@ static NSInteger const kSectionKeyAdmins = 1;
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[origo admins] inOrigo:origo conjoin:NO];
             cell.destinationId = kIdentifierValuePicker;
         } else {
-            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:origo];
+            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:origo excludeRoles:NO excludeRelations:YES];
             cell.destinationId = kIdentifierMember;
         }
     }

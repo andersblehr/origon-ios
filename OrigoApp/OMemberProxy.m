@@ -212,6 +212,12 @@
 }
 
 
+- (BOOL)isUser
+{
+    return [self instance] ? [[self instance] isUser] : NO;
+}
+
+
 - (BOOL)isManagedByUser
 {
     return [self instance] ? [[self instance] isManagedByUser] : ![self isReplicated];

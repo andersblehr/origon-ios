@@ -892,6 +892,11 @@ static NSInteger const kButtonIndexContinue = 1;
 {
     _member = [self.entity proxy];
     _origo = self.state.currentOrigo;
+    
+    if (!_origo && [_member isUser]) {
+        _origo = [_member primaryResidence];
+    }
+    
     _membership = [_origo membershipForMember:_member];
     _roleMembership = self.state.baseOrigo ? [self.state.baseOrigo membershipForMember:_member] : _membership;
     

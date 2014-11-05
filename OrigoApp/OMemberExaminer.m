@@ -148,7 +148,7 @@ static OMemberExaminer *_instance = nil;
 - (void)presentAllOffspringCandidatesSheet
 {
     NSString *parentNoun = [self parentNounForGender:_member.gender];
-    NSString *prompt = [OLanguage questionWithSubject:[_member givenName] verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_candidates noun:parentNoun]];
+    NSString *prompt = [OLanguage questionWithSubject:_member verb:_be_ argument:[OLanguage possessiveClauseWithPossessor:_candidates noun:parentNoun]];
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAllOffspring];
     [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagYes];
