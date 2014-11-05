@@ -34,7 +34,7 @@
     if ([member isJuvenile]) {
         NSArray *guardians = [member parents];
         
-        if (![guardians count]) {
+        if ([guardians count] < 2) {
             guardians = [member guardians];
         }
         

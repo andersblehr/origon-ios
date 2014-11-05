@@ -57,16 +57,22 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 - (void)loadNavigationBarItems
 {
     self.navigationItem.rightBarButtonItems = nil;
+
+    BOOL isAwaitingActivation = NO;
     
-    BOOL isAwaitingActivation = _membership && ![_membership isActive] && ([_member isUser] || [_member isWardOfUser]);
-    
-    if (isAwaitingActivation) {
-        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptRejectButtonWithTarget:self]];
-        
-        if (_membership.status == kMembershipStatusInvited) {
-            _membership.status = kMembershipStatusWaiting;
-        } else if (_membership.status == kMembershipStatusWaiting) {
+    if (_membership && ![_membership isActive] && ([_member isUser] || [_member isWardOfUser])) {
+        if ([_origo isOfType:kOrigoTypeResidence] && [[_member addresses] count] == 1) {
             _membership.status = kMembershipStatusActive;
+        } else {
+            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptRejectButtonWithTarget:self]];
+            
+            if (_membership.status == kMembershipStatusInvited) {
+                _membership.status = kMembershipStatusWaiting;
+            } else if (_membership.status == kMembershipStatusWaiting) {
+                _membership.status = kMembershipStatusActive;
+            }
+            
+            isAwaitingActivation = YES;
         }
     }
     
