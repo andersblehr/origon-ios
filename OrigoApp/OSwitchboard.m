@@ -108,7 +108,7 @@ static NSInteger const kRecipientTagAllGuardians = 8;
         } else if (recipientTag == kRecipientTagParents) {
             [actionSheet addButtonWithTitle:[[OLanguage possessiveClauseWithPossessor:_member noun:_parent_] stringByCapitalisingFirstLetter]];
         } else if (recipientTag == kRecipientTagGuardians) {
-            [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:recipients conjoin:YES]];
+            [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:recipients conjoin:YES subjective:YES]];
         } else if (recipientTag == kRecipientTagAllMembers) {
             [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAllMembersTitle)];
         } else if (recipientTag == kRecipientTagAllContacts) {

@@ -61,19 +61,15 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     BOOL isAwaitingActivation = NO;
     
     if (_membership && ![_membership isActive] && ([_member isUser] || [_member isWardOfUser])) {
-        if ([_origo isOfType:kOrigoTypeResidence] && [[_member addresses] count] == 1) {
+        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptRejectButtonWithTarget:self]];
+        
+        if (_membership.status == kMembershipStatusInvited) {
+            _membership.status = kMembershipStatusWaiting;
+        } else if (_membership.status == kMembershipStatusWaiting) {
             _membership.status = kMembershipStatusActive;
-        } else {
-            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptRejectButtonWithTarget:self]];
-            
-            if (_membership.status == kMembershipStatusInvited) {
-                _membership.status = kMembershipStatusWaiting;
-            } else if (_membership.status == kMembershipStatusWaiting) {
-                _membership.status = kMembershipStatusActive;
-            }
-            
-            isAwaitingActivation = YES;
         }
+        
+        isAwaitingActivation = YES;
     }
     
     [self.navigationItem addRightBarButtonItem:[UIBarButtonItem infoButtonWithTarget:self]];
@@ -198,15 +194,15 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     
     if ([_eligibleCandidates count] == 1) {
         if ([_eligibleCandidates[kButtonTagCoHabitantsAll][0] isJuvenile]) {
-            [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoin:YES] tag:kButtonTagCoHabitantsAll];
+            [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoin:YES subjective:YES] tag:kButtonTagCoHabitantsAll];
         } else {
             for (id<OMember> candidate in _eligibleCandidates[kButtonTagCoHabitantsAll]) {
-                [actionSheet addButtonWithTitle:[candidate givenName]];
+                [actionSheet addButtonWithTitle:[candidate shortName]];
             }
         }
     } else {
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoin:YES] tag:kButtonTagCoHabitantsAll];
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfItems:_eligibleCandidates[kButtonTagCoHabitantsWards] conjoin:YES] tag:kButtonTagCoHabitantsWards];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoin:YES subjective:YES] tag:kButtonTagCoHabitantsAll];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[kButtonTagCoHabitantsWards] conjoin:YES subjective:YES] tag:kButtonTagCoHabitantsWards];
     }
     
     if (![_origo userIsMember] && [_member isWardOfUser]) {

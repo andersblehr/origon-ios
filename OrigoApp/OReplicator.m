@@ -63,21 +63,23 @@
 
 - (void)replicate
 {
-    _isReplicating = YES;
-    
-    [_dirtyEntities unionSet:[[OMeta m].context dirtyEntities]];
-    
-    NSMutableArray *entities = [NSMutableArray array];
-    
-    for (OReplicatedEntity *entity in _dirtyEntities) {
-        if (entity.dateReplicated) {
-            entity.modifiedBy = [OMeta m].userEmail;
+    if (!_isReplicating) {
+        _isReplicating = YES;
+        
+        [_dirtyEntities unionSet:[[OMeta m].context dirtyEntities]];
+        
+        NSMutableArray *entities = [NSMutableArray array];
+        
+        for (OReplicatedEntity *entity in _dirtyEntities) {
+            if (entity.dateReplicated) {
+                entity.modifiedBy = [OMeta m].userEmail;
+            }
+            
+            [entities addObject:[entity toDictionary]];
         }
         
-        [entities addObject:[entity toDictionary]];
+        [[OConnection connectionWithDelegate:self] replicateEntities:entities];
     }
-    
-    [[OConnection connectionWithDelegate:self] replicateEntities:entities];
 }
 
 
@@ -159,6 +161,8 @@
     }
     
     _isReplicating = NO;
+    
+    [self replicateIfNeeded];
 }
 
 

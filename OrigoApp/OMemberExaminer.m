@@ -14,7 +14,7 @@ static NSInteger const kParentCandidateStatusFather = 0x02;
 static NSInteger const kParentCandidateStatusBoth = 0x03;
 
 static NSInteger const kActionSheetTagGender = 0;
-static NSInteger const kButtonTagMale = 0;
+static NSInteger const kButtonTagFemale = 0;
 
 static NSInteger const kActionSheetTagBothParents = 1;
 static NSInteger const kActionSheetTagParent = 2;
@@ -93,20 +93,6 @@ static OMemberExaminer *_instance = nil;
 }
 
 
-- (NSString *)candidate:(id<OMember>)candidate parentLabelWithOffspringGender:(NSString *)gender
-{
-    NSString *parentLabel = nil;
-    
-    if ([candidate isMale]) {
-        parentLabel = [gender isEqualToString:kGenderMale] ? NSLocalizedString(@"his father", @"") : NSLocalizedString(@"her father", @"");
-    } else {
-        parentLabel = [gender isEqualToString:kGenderMale] ? NSLocalizedString(@"his mother", @"") : NSLocalizedString(@"her mother", @"");
-    }
-    
-    return parentLabel;
-}
-
-
 #pragma mark - Action sheets
 
 - (void)presentGenderSheet
@@ -118,14 +104,14 @@ static OMemberExaminer *_instance = nil;
     NSString *prompt = nil;
     
     if ([_member isUser]) {
-        prompt = [NSString stringWithFormat:NSLocalizedString(@"Are you a %@ or a %@?", @""), maleGender, femaleGender];
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"Are you a %@ or a %@?", @""), femaleGender, maleGender];
     } else {
-        prompt = [NSString stringWithFormat:NSLocalizedString(@"Is %@ a %@ or a %@?", @""), [_member givenName], maleGender, femaleGender];
+        prompt = [NSString stringWithFormat:NSLocalizedString(@"Is %@ a %@ or a %@?", @""), [_member givenName], femaleGender, maleGender];
     }
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagGender];
-    [actionSheet addButtonWithTitle:[maleGender stringByCapitalisingFirstLetter] tag:kButtonTagMale];
-    [actionSheet addButtonWithTitle:[femaleGender stringByCapitalisingFirstLetter]];
+    [actionSheet addButtonWithTitle:[femaleGender stringByCapitalisingFirstLetter] tag:kButtonTagFemale];
+    [actionSheet addButtonWithTitle:[maleGender stringByCapitalisingFirstLetter]];
     
     [actionSheet show];
 }
@@ -137,8 +123,8 @@ static OMemberExaminer *_instance = nil;
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagBothParents];
     [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagYes];
-    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[0] predicate:[self candidate:_candidates[0] parentLabelWithOffspringGender:_member.gender]]];
-    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[1] predicate:[self candidate:_candidates[1] parentLabelWithOffspringGender:_member.gender]]];
+    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[0] predicate:[OLanguage labelForParentWithGender:[_candidates[0] gender] relativeToOffspringWithGender:_member.gender]]];
+    [actionSheet addButtonWithTitle:[OLanguage predicateClauseWithSubject:_candidates[1] predicate:[OLanguage labelForParentWithGender:[_candidates[1] gender] relativeToOffspringWithGender:_member.gender]]];
     [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"") tag:kButtonTagNo];
     
     [actionSheet show];
@@ -330,7 +316,7 @@ static OMemberExaminer *_instance = nil;
         
         switch (actionSheet.tag) {
             case kActionSheetTagGender:
-                [_member setGender:buttonTag == kButtonTagMale ? kGenderMale : kGenderFemale];
+                [_member setGender:buttonTag == kButtonTagFemale ? kGenderFemale : kGenderMale];
                 
                 break;
                 

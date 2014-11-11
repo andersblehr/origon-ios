@@ -33,6 +33,7 @@
 - (CGFloat)footerHeightForSectionWithKey:(NSInteger)sectionKey;
 - (id)headerContentForSectionWithKey:(NSInteger)sectionKey;
 - (id)footerContentForSectionWithKey:(NSInteger)sectionKey;
+- (NSString *)emptyTableViewFooterText;
 
 - (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey;
 - (NSComparisonResult)compareObject:(id)object1 toObject:(id)object2;
@@ -114,7 +115,6 @@
 
 - (UISegmentedControl *)setTitleSegments:(NSArray *)segments;
 - (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder;
-- (void)setSubtitle:(NSString *)subtitle;
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;

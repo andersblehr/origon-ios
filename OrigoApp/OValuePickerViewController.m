@@ -26,6 +26,10 @@ static NSInteger const kSectionKeyValues = 0;
     NSString *_affiliationType;
     UIBarButtonItem *_multiRoleButtonOff;
     UIBarButtonItem *_multiRoleButtonOn;
+    
+    id<OMember> _ward;
+    NSString *_parentGender;
+    NSArray *_parentCandidates;
 }
 
 @end
@@ -60,6 +64,16 @@ static NSInteger const kSectionKeyValues = 0;
         _settings = [OSettings settings];
         
         self.title = NSLocalizedString(_settingKey, kStringPrefixSettingTitle);
+    } else if ([self targetIs:kTargetParent]) {
+        _ward = self.meta;
+        _parentGender = [self.target isEqualToString:kPropertyKeyMotherId] ? kGenderFemale : kGenderMale;
+        _parentCandidates = [_ward parentCandidatesWithGender:_parentGender];
+        
+        if (![_parentCandidates count]) {
+            self.usesPlainTableViewStyle = NO;
+        }
+        
+        self.title = NSLocalizedString(self.target, kStringPrefixLabel);
     } else if ([self targetIs:kTargetOrigoType]) {
         _origo = self.state.currentOrigo;
         _valuesByKey = [NSMutableDictionary dictionary];
@@ -114,7 +128,7 @@ static NSInteger const kSectionKeyValues = 0;
                 [self setEditableTitle:_affiliation placeholder:placeholder];
             }
             
-            [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoin:NO]];
+            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:YES]];
             
             if ([self targetIs:kTargetRole]) {
                 _isMultiValuePicker = [_pickedValues count] > 1;
@@ -150,6 +164,10 @@ static NSInteger const kSectionKeyValues = 0;
 {
     if ([self targetIs:kTargetSetting]) {
         // TODO
+    } else if ([self targetIs:kTargetParent]) {
+        if ([_parentCandidates count]) {
+            [self setData:_parentCandidates forSectionWithKey:kSectionKeyValues];
+        }
     } else if ([self targetIs:kTargetOrigoType]) {
         for (NSString *origoType in [OUtil eligibleOrigoTypesForOrigo:_origo]) {
             _valuesByKey[origoType] = NSLocalizedString(origoType, kStringPrefixOrigoTitle);
@@ -186,6 +204,16 @@ static NSInteger const kSectionKeyValues = 0;
 {
     if ([self targetIs:kTargetSetting]) {
         cell.checked = [[self dataAtIndexPath:indexPath] isEqual:[_settings valueForSettingKey:_settingKey]];
+    } else if ([self targetIs:kTargetParent]) {
+        id<OMember> parentCandidate = [self dataAtIndexPath:indexPath];
+        
+        cell.textLabel.text = parentCandidate.name;
+        
+        if ([_parentGender isEqualToString:kGenderFemale]) {
+            cell.checked = [parentCandidate.entityId isEqualToString:_ward.motherId];
+        } else {
+            cell.checked = [parentCandidate.entityId isEqualToString:_ward.fatherId];
+        }
     } else if ([self targetIs:kTargetOrigoType]) {
         NSString *origoTitle = [self dataAtIndexPath:indexPath];
         
@@ -230,10 +258,24 @@ static NSInteger const kSectionKeyValues = 0;
 }
 
 
+- (NSString *)emptyTableViewFooterText
+{
+    NSString *footerText = nil;
+    
+    if ([self targetIs:kTargetParent] && ![_parentCandidates count]) {
+        NSString *hisHerParent = [OLanguage labelForParentWithGender:_parentGender relativeToOffspringWithGender:_ward.gender];
+        
+        footerText = [NSString stringWithFormat:NSLocalizedString(@"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@.", @""), [_ward givenName], hisHerParent, hisHerParent];
+    }
+    
+    return footerText;
+}
+
+
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     cell.selected = NO;
-    cell.checked = _isMultiValuePicker ? !cell.checked : YES;
+    cell.checked = _isMultiValuePicker || [self targetIs:kTargetParent] ? !cell.checked : YES;
     
     id oldValue = nil;
     id pickedValue = [self dataAtIndexPath:indexPath];
@@ -252,7 +294,7 @@ static NSInteger const kSectionKeyValues = 0;
         
         [_pickedValues insertObject:pickedValue atIndex:0];
     } else {
-        if ([_pickedValues count] > 1) {
+        if ([_pickedValues count] > 1 || [self targetIs:kTargetParent]) {
             [_pickedValues removeObject:pickedValue];
         } else {
             cell.checked = YES;
@@ -261,6 +303,12 @@ static NSInteger const kSectionKeyValues = 0;
     
     if ([self targetIs:kTargetSetting]) {
         [_settings setValue:pickedValue forSettingKey:_settingKey];
+    } else if ([self targetIs:kTargetParent]) {
+        if ([_parentGender isEqualToString:kGenderFemale]) {
+            _ward.motherId = cell.checked ? [pickedValue entityId] : nil;
+        } else {
+            _ward.fatherId = cell.checked ? [pickedValue entityId] : nil;
+        }
     } else if ([self targetIs:kTargetOrigoType]) {
         [_origo convertToType:[_valuesByKey allKeysForObject:pickedValue][0]];
     } else if ([self targetIs:kTargetGender]) {
@@ -276,7 +324,7 @@ static NSInteger const kSectionKeyValues = 0;
         }
     } else if ([self aspectIs:kAspectAdmin]) {
         [_origo membershipForMember:pickedValue].isAdmin = @(cell.checked);
-        [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoin:NO]];
+        [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:YES]];
     } else if ([self targetIs:kTargetAffiliation]) {
         if (cell.checked) {
             [[_origo membershipForMember:pickedValue] addAffiliation:_affiliation ofType:_affiliationType];
@@ -288,7 +336,7 @@ static NSInteger const kSectionKeyValues = 0;
             [[_origo membershipForMember:pickedValue] removeAffiliation:_affiliation ofType:_affiliationType];
         }
         
-        [self setSubtitle:[OUtil commaSeparatedListOfItems:_pickedValues conjoin:NO]];
+        [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:YES]];
         
         if (self.isModal && _isMultiValuePicker && [_pickedValues count]) {
             if (self.navigationItem.rightBarButtonItem == _multiRoleButtonOn) {
@@ -303,7 +351,7 @@ static NSInteger const kSectionKeyValues = 0;
         } else {
             [self.dismisser dismissModalViewController:self];
         }
-    } else if (!_isMultiValuePicker) {
+    } else if (!_isMultiValuePicker && (![self targetIs:kTargetParent] || cell.checked)) {
         [self.navigationController popViewControllerAnimated:YES];
     }
 }

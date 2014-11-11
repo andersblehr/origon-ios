@@ -81,7 +81,7 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
             subjectString = [subject givenName];
         }
     } else if ([subject isKindOfClass:[NSArray class]]) {
-        subjectString = [OUtil commaSeparatedListOfItems:subject conjoin:YES];
+        subjectString = [OUtil commaSeparatedListOfMembers:subject conjoin:YES subjective:YES];
     }
     
     return subjectString;
@@ -195,7 +195,7 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
             possessiveClause = [NSString stringWithFormat:noun[possessive3], [possessor givenName]];
         }
     } else if ([possessor isKindOfClass:[NSArray class]]) {
-        possessiveClause = [NSString stringWithFormat:noun[possessive3], [OUtil commaSeparatedListOfItems:possessor conjoin:YES]];
+        possessiveClause = [NSString stringWithFormat:noun[possessive3], [OUtil commaSeparatedListOfMembers:possessor conjoin:YES subjective:YES]];
     }
     
     return possessiveClause;
@@ -213,6 +213,22 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
     question = [question stringByReplacingSubstring:kPlaceholderArgument withString:argument];
     
     return [question stringByCapitalisingFirstLetter];
+}
+
+
+#pragma mark - Gender governed strings
+
++ (NSString *)labelForParentWithGender:(NSString *)parentGender relativeToOffspringWithGender:(NSString *)offspringGender
+{
+    NSString *parentLabel = nil;
+    
+    if ([parentGender isEqualToString:kGenderMale]) {
+        parentLabel = [offspringGender isEqualToString:kGenderMale] ? NSLocalizedString(@"his father", @"") : NSLocalizedString(@"her father", @"");
+    } else if ([parentGender isEqualToString:kGenderFemale]) {
+        parentLabel = [offspringGender isEqualToString:kGenderMale] ? NSLocalizedString(@"his mother", @"") : NSLocalizedString(@"her mother", @"");
+    }
+    
+    return parentLabel;
 }
 
 @end

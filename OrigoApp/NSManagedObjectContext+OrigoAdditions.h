@@ -21,8 +21,8 @@
 - (void)deleteEntity:(OReplicatedEntity *)entity;
 
 - (void)insertCrossReferencesForMembership:(OMembership *)membership;
-- (void)expireCrossReferencesForMembership:(OMembership *)membership;
 - (void)insertAdditionalCrossReferencesForFullMembership:(OMembership *)membership;
+- (void)expireCrossReferencesForMembership:(OMembership *)membership;
 - (void)expireAdditionalCrossReferencesForFullMembership:(OMembership *)membership;
 
 - (void)save;

@@ -289,7 +289,15 @@ static NSString * const kPlaceholderRole = @"placeholder";
         } else if ([self.member isWardOfUser]) {
             self.status = kMembershipStatusActive;
         } else {
-            self.status = kMembershipStatusInvited;
+            if (self.type == kMembershipTypeResidency) {
+                if (![self.member isJuvenile] && [[self.member addresses] count] > 1) {
+                    self.status = kMembershipStatusInvited;
+                } else {
+                    self.status = kMembershipStatusActive;
+                }
+            } else {
+                self.status = kMembershipStatusInvited;
+            }
         }
     }
 }

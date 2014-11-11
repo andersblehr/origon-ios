@@ -37,10 +37,13 @@
 - (NSArray *)addresses;
 - (NSArray *)origos;
 
+- (id<OMember>)mother;
+- (id<OMember>)father;
 - (id<OMember>)partner;
 - (NSArray *)wards;
 - (NSArray *)wardsInOrigo:(id<OOrigo>)origo;
 - (NSArray *)parents;
+- (NSArray *)parentCandidatesWithGender:(NSString *)gender;
 - (NSArray *)guardians;
 - (NSArray *)peers;
 - (NSArray *)peersNotInSet:(id)set;

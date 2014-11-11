@@ -8,6 +8,9 @@
 
 #import "OOrigoListViewController.h"
 
+static NSInteger const kActionSheetTagEditParents = 0;
+static NSInteger const kButtonTagEditParentsYes = 0;
+
 static NSInteger const kActionSheetTagOrigoType = 1;
 
 static NSInteger const kSectionKeyHouseholds = 0;
@@ -19,6 +22,7 @@ static NSInteger const kSectionKeyWards = 2;
 @private
     id<OMember> _member;
     
+    BOOL _needsEditParents;
     NSMutableArray *_origoTypes;
 }
 
@@ -83,11 +87,17 @@ static NSInteger const kSectionKeyWards = 2;
 {
     [super viewDidAppear:animated];
 
-    if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
+    if (_needsEditParents) {
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Your household includes minors. Would you like to provide parent relations?", @"") delegate:self tag:kActionSheetTagEditParents];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Yes", @"") tag:kButtonTagEditParentsYes];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"No", @"")];
+        
+        [actionSheet show];
+    } else if ([[OMeta m] userIsSignedIn] && ![[OMeta m] userIsRegistered]) {
         if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].userEmail]) {
-            id<OMember> creator = [[OMeta m].context entityWithId:[OMeta m].user.createdBy];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origo", @"") text:NSLocalizedString(@"Please verify your details and provide any missing information.", @"")];
             
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origo", @"") text:[NSString stringWithFormat:NSLocalizedString(@"Please verify your details and provide any missing information.", @""), [creator givenName], [creator pronoun][nominative]]];
+            _needsEditParents = [[[OMeta m].user wards] count] > 0;
         } else if (![OMeta m].userDidJustSignUp) {
             [OAlert showAlertWithTitle:NSLocalizedString(@"Incomplete registration", @"") text:NSLocalizedString(@"You must complete your registration before you can start using Origo.", @"")];
         }
@@ -149,7 +159,13 @@ static NSInteger const kSectionKeyWards = 2;
         NSArray *origos = [ward origos];
         
         if ([origos count]) {
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfItems:origos conjoin:NO];
+            NSMutableArray *origoNames = [NSMutableArray array];
+            
+            for (id<OOrigo> origo in origos) {
+                [origoNames addObject:origo.name];
+            }
+            
+            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:origoNames conjoin:NO];
             cell.detailTextLabel.textColor = [UIColor textColour];
         } else {
             cell.detailTextLabel.text = NSLocalizedString(@"(No groups)", @"");
@@ -164,7 +180,7 @@ static NSInteger const kSectionKeyWards = 2;
         
         if ([_member isUser] && ([origo userIsOrganiser] || [origo userIsParentContact])) {
             cell.textLabel.text = [NSString stringWithFormat:@"%@, %@", origo.name, origo.descriptionText];
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO];
+            cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
         } else {
             cell.textLabel.text = origo.name;
         
@@ -216,9 +232,7 @@ static NSInteger const kSectionKeyWards = 2;
             NSArray *members = [origo members];
             
             if ([members count] == 1) {
-                id<OMember> member = members[0];
-                
-                canDelete = [member isUser] || [member isWardOfUser];
+                canDelete = [members[0] isUser] || [members[0] isWardOfUser];
             }
         }
     }
@@ -241,6 +255,15 @@ static NSInteger const kSectionKeyWards = 2;
 {
     if (buttonIndex < actionSheet.cancelButtonIndex) {
         switch (actionSheet.tag) {
+            case kActionSheetTagEditParents:
+                if ([actionSheet tagForButtonIndex:buttonIndex] == kButtonTagEditParentsYes) {
+                    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetParents];
+                }
+                
+                _needsEditParents = NO;
+                
+                break;
+                
             case kActionSheetTagOrigoType:
                 [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:_origoTypes[buttonIndex]];
                 

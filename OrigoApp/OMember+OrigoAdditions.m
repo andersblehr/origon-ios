@@ -145,6 +145,18 @@
 }
 
 
+- (NSComparisonResult)ageCompare:(id<OMember>)other
+{
+    NSComparisonResult result = NSOrderedSame;
+    
+    if (self.dateOfBirth && other.dateOfBirth) {
+        result = [self.dateOfBirth compare:other.dateOfBirth];
+    }
+    
+    return result;
+}
+
+
 - (NSComparisonResult)subjectiveCompare:(id<OMember>)other
 {
     NSComparisonResult result = NSOrderedSame;
@@ -291,6 +303,38 @@
 
 #pragma mark - Household information
 
+- (id<OMember>)mother
+{
+    OMember *mother = nil;
+    
+    if ([self.motherId hasValue]) {
+        for (OMember *guardian in [self guardians]) {
+            if ([guardian.entityId isEqualToString:self.motherId]) {
+                mother = guardian;
+            }
+        }
+    }
+    
+    return mother;
+}
+
+
+- (id<OMember>)father
+{
+    OMember *father = nil;
+    
+    if ([self.fatherId hasValue]) {
+        for (OMember *guardian in [self guardians]) {
+            if ([guardian.entityId isEqualToString:self.fatherId]) {
+                father = guardian;
+            }
+        }
+    }
+    
+    return father;
+}
+
+
 - (id<OMember>)partner
 {
     OMember *partner = nil;
@@ -346,6 +390,26 @@
     }
     
     return parents;
+}
+
+
+- (NSArray *)parentCandidatesWithGender:(NSString *)gender
+{
+    NSMutableArray *parentCandidates = [NSMutableArray array];
+    
+    for (OMember *guardian in [self guardians]) {
+        if ([guardian.gender isEqualToString:gender]) {
+            if (self.dateOfBirth && guardian.dateOfBirth) {
+                if ([guardian.dateOfBirth yearsBeforeDate:self.dateOfBirth] >= kAgeOfConsent) {
+                    [parentCandidates addObject:guardian];
+                }
+            } else {
+                [parentCandidates addObject:guardian];
+            }
+        }
+    }
+    
+    return parentCandidates;
 }
 
 
@@ -713,7 +777,7 @@
     NSString *annotatedName = nil;
     
     if ([origo instance]) {
-        annotatedName = [NSString stringWithFormat:@"%@ (%@)", [self givenName], [OUtil commaSeparatedListOfItems:[[origo membershipForMember:self] roles] conjoin:NO]];
+        annotatedName = [NSString stringWithFormat:@"%@ (%@)", [self givenName], [OUtil commaSeparatedListOfStrings:[[origo membershipForMember:self] roles] conjoin:NO conditionallyLowercase:YES]];
     }
     
     return annotatedName;
@@ -725,15 +789,8 @@
     NSString *displayName = nil;
     
     if (origo && [self isJuvenile] && ![[OMeta m].user isJuvenile]) {
-        static NSDictionary *isUniqueByGivenNameByOrigoId = nil;
-        NSDictionary *isUniqueByGivenName = isUniqueByGivenNameByOrigoId[origo.entityId];
-        
-        if (!isUniqueByGivenName) {
-            isUniqueByGivenName = [OUtil isUniqueByGivenNameFromMembers:[origo regulars]];
-            isUniqueByGivenNameByOrigoId = @{origo.entityId: isUniqueByGivenName};
-        }
-        
         NSString *givenName = [self givenName];
+        NSDictionary *isUniqueByGivenName = [OUtil isUniqueByGivenNameFromMembers:[origo regulars]];
         
         if ([isUniqueByGivenName[givenName] boolValue]) {
             displayName = givenName;
