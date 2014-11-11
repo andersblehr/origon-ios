@@ -33,7 +33,8 @@ NSString * const kTargetMember = @"regular";
 NSString * const kTargetMembers = @"members";
 NSString * const kTargetOrganiser = @"organiser";
 NSString * const kTargetOrigoType = @"origoType";
-NSString * const kTargetRelation = @"relation";
+NSString * const kTargetParent = @"parent";
+NSString * const kTargetParents = @"parents";
 NSString * const kTargetRole = @"role";
 NSString * const kTargetRoles = @"roles";
 NSString * const kTargetSetting = @"setting";
@@ -50,6 +51,7 @@ NSString * const kAspectJuvenile = @"juvenile";
 NSString * const kAspectMemberRole = @"members";
 NSString * const kAspectOrganiserRole = @"organisers";
 NSString * const kAspectParentRole = @"parents";
+NSString * const kAspectParent = @"parent";
 NSString * const kAspectRole = @"role";
 
 static OState *_activeState = nil;
@@ -152,6 +154,8 @@ static OState *_activeState = nil;
         } else if ([target isEqualToString:kTargetElder]) {
             isMatch = isMatch || [_target isEqualToString:kTargetGuardian];
             isMatch = isMatch || [_target isEqualToString:kTargetOrganiser];
+        } else if ([target isEqualToString:kTargetParent]) {
+            isMatch = isMatch || [self aspectIs:kAspectParent];
         } else if ([target isEqualToString:kTargetRole]) {
             isMatch = isMatch || [self aspectIs:kAspectMemberRole];
             isMatch = isMatch || [self aspectIs:kAspectOrganiserRole];

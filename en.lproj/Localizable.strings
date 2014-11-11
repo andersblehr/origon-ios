@@ -19,9 +19,11 @@
 "[label] dateOfBirth" = "Age";
 "[label] descriptionText" = "Description";
 "[label] email" = "Email";
+"[label] fatherId" = "Father";
 "[label] gender" = "Gender";
 "[label] mobilePhone" = "Mobile";
 "[label] modifiedBy" = "Last modified by";
+"[label] motherId" = "Mother";
 "[label] name" = "Name";
 "[label] organisationDescription" = "Description";
 "[label] preschool" = "Preschool";
@@ -294,6 +296,7 @@
 "Both" = "Both";
 "All" = "All";
 "None of them" = "None of them";
+"None of you" = "None of you";
 "All of them" = "All of them";
 
 // Formats
@@ -342,6 +345,7 @@
 "You must complete your registration before you can start using Origo." = "You must complete your registration before you can start using Origo.";
 
 // Prompts
+"Your household includes minors. Would you like to provide parent relations?" = "Your household includes minors. Would you like to provide parent relations?";
 "What sort of group du you want to create" = "What sort of group du you want to create";
 
 // Info
@@ -397,10 +401,9 @@
 // Buttons
 "To some of them" = "To some of them";
 "Register address" = "Register address";
-"Register additional address" = "Register additional address";
+"Register an address" = "Register an address";
 "Register guardian" = "Register guardian";
 "Change password" = "Change password";
-"Edit relations" = "Edit relations";
 "Other address" = "Other address";
 "All contacts" = "All contacts";
 "All guardians" = "All guardians";
@@ -485,6 +488,9 @@
 // View subtitles
 "(None selected)" = "(None selected)";
 
+// Footers
+"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@.";
+
 // Miscellaneous strings
 "Responsibility" = "Responsibility";
 "Group name" = "Group name";
@@ -502,6 +508,7 @@
 
 // Labels
 "Active" = "Active";
+"Through household" = "Through household";
 
 // Footers
 "Created: %@." = "Created: %@.";

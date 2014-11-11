@@ -64,22 +64,24 @@ NSString * const kOrigoTypeTeam = @"team";
     } else if (![resident isJuvenile] || ![self hasMember:resident]) {
         OOrigo *residence = [resident primaryResidence];
         
-        residency = [self addMember:resident isAssociate:NO];
-        
-        if (![resident isJuvenile]) {
-            BOOL didMoveElders = YES;
+        if (residence != self) {
+            residency = [self addMember:resident isAssociate:NO];
             
-            for (OMember *elder in [residence elders]) {
-                didMoveElders = didMoveElders && [self hasMember:elder];
-            }
-
-            if (didMoveElders) {
-                for (OMember *resident in [residence residents]) {
-                    [self addMember:resident isAssociate:NO];
-                    [[residence membershipForMember:resident] expire];
+            if (![resident isJuvenile]) {
+                BOOL didMoveElders = YES;
+                
+                for (OMember *elder in [residence elders]) {
+                    didMoveElders = didMoveElders && [self hasMember:elder];
                 }
                 
-                [residence expire];
+                if (didMoveElders) {
+                    for (OMember *resident in [residence residents]) {
+                        [self addMember:resident isAssociate:NO];
+                        [[residence membershipForMember:resident] expire];
+                    }
+                    
+                    [residence expire];
+                }
             }
         }
     }

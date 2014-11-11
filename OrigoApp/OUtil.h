@@ -13,9 +13,10 @@
 + (NSString *)rootIdFromMemberId:(NSString *)memberId;
 + (NSString *)genderTermForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile;
 
-+ (NSString *)commaSeparatedListOfItems:(id)items conjoin:(BOOL)conjoin;
 + (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin;
++ (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin conditionallyLowercase:(BOOL)conditionallyLowercase;
 + (NSString *)commaSeparatedListOfMembers:(id)members conjoin:(BOOL)conjoin;
++ (NSString *)commaSeparatedListOfMembers:(id)members conjoin:(BOOL)conjoin subjective:(BOOL)subjective;
 + (NSString *)commaSeparatedListOfMembers:(id)members inOrigo:(id<OOrigo>)origo conjoin:(BOOL)conjoin;
 + (NSString *)commaSeparatedListOfMembers:(id)members withRolesInOrigo:(id<OOrigo>)origo;
 

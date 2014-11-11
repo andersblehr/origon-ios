@@ -33,7 +33,8 @@ extern NSString * const kTargetMember;
 extern NSString * const kTargetMembers;
 extern NSString * const kTargetOrganiser;
 extern NSString * const kTargetOrigoType;
-extern NSString * const kTargetRelation;
+extern NSString * const kTargetParent;
+extern NSString * const kTargetParents;
 extern NSString * const kTargetRole;
 extern NSString * const kTargetRoles;
 extern NSString * const kTargetSetting;
@@ -50,6 +51,7 @@ extern NSString * const kAspectJuvenile;
 extern NSString * const kAspectMemberRole;
 extern NSString * const kAspectOrganiserRole;
 extern NSString * const kAspectParentRole;
+extern NSString * const kAspectParent;
 extern NSString * const kAspectRole;
 
 

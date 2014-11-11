@@ -160,7 +160,7 @@
         if ([member isManaged]) {
             self.imageView.image = [UIImage imageNamed:iconFileName];
             
-            if (![member isJuvenile]) {
+            if ([member isActive] && ![member isJuvenile]) {
                 UIView *underline = [[UIView alloc] initWithFrame:CGRectMake(0.f, self.imageView.image.size.height + 1.f, self.imageView.image.size.width, 1.f)];
                 underline.backgroundColor = [UIColor windowTintColour];
                 [self.imageView addSubview:underline];
@@ -199,7 +199,7 @@
         NSArray *roles = [[origo membershipForMember:member] roles];
         
         if ([roles count] && !excludeRoles) {
-            self.detailTextLabel.text = [[OUtil commaSeparatedListOfItems:roles conjoin:NO] stringByCapitalisingFirstLetter];
+            self.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:roles conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
         } else if (!excludeRelations) {
             BOOL isCrossGenerational = [member isJuvenile] != [[OMeta m].user isJuvenile] || [member isJuvenile] != [[OState s].currentMember isJuvenile];
             

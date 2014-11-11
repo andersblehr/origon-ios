@@ -185,7 +185,13 @@
     }
     
     if ([membership isResidency]) {
-        for (OMembership *participancy in [member participancies]) {
+        NSMutableSet *participancies = [[member participancies] mutableCopy];
+        
+        for (OMember *housemate in [member housemates]) {
+            [participancies unionSet:[housemate participancies]];
+        }
+        
+        for (OMembership *participancy in participancies) {
             [self createEntityRefForEntity:membership inOrigo:participancy.origo];
             [self createEntityRefForEntity:origo inOrigo:participancy.origo];
         }
@@ -226,19 +232,25 @@
     OMember *member = membership.member;
     OOrigo *origo = membership.origo;
     
-    for (OMembership *residency in [member residencies]) {
-        if (residency != membership && [origo isOfType:kOrigoTypeResidence]) {
-            [self createEntityRefForEntity:membership inOrigo:residency.origo];
-            [self createEntityRefForEntity:origo inOrigo:residency.origo];
+    if ([membership isResidency]) {
+        for (OMembership *residency in [member residencies]) {
+            if (residency != membership) {
+                [self createEntityRefForEntity:membership inOrigo:residency.origo];
+                [self createEntityRefForEntity:origo inOrigo:residency.origo];
+            }
         }
     }
     
     for (OMember *housemate in [member allHousemates]) {
-        for (OMembership *peerResidency in [housemate residencies]) {
-            [origo addAssociateMember:peerResidency.member];
+        [origo addAssociateMember:housemate];
+        
+        if ([membership isResidency]) {
+            for (OMembership *housemateResidency in [housemate residencies]) {
+                [housemateResidency.origo addAssociateMember:member];
+            }
             
-            if ([origo isOfType:kOrigoTypeResidence]) {
-                [peerResidency.origo addAssociateMember:member];
+            for (OMembership *housemateParticipancy in [housemate participancies]) {
+                [housemateParticipancy.origo addAssociateMember:member];
             }
         }
     }
@@ -324,7 +336,6 @@
     }
     
     [self save];
-    [[OMeta m].replicator replicate];
     
     if (![OMeta m].deviceId) {
         [[OMeta m] signOut];

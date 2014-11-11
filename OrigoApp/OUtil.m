@@ -37,39 +37,13 @@ static NSString * const kRootIdFormat = @"~%@";
 
 #pragma mark - Comma-separated lists
 
-+ (NSString *)commaSeparatedListOfItems:(id)items conjoin:(BOOL)conjoin
++ (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin
 {
-    NSMutableArray *stringItems = [NSMutableArray array];
-    
-    if ([items count]) {
-        if ([items isKindOfClass:[NSSet class]]) {
-            items = [items allObjects];
-        }
-        
-        if ([items[0] isKindOfClass:[NSString class]]) {
-            for (NSString *item in items) {
-                [stringItems addObject:[item stringByConditionallyLowercasingFirstLetter]];
-            }
-        } else if ([items[0] isKindOfClass:[NSDate class]]) {
-            for (NSDate *date in items) {
-                [stringItems addObject:[date localisedDateString]];
-            }
-        } else if ([items[0] conformsToProtocol:@protocol(OMember)]) {
-            for (id<OMember> member in items) {
-                [stringItems addObject:[member givenName]];
-            }
-        } else if ([items[0] conformsToProtocol:@protocol(OOrigo)]) {
-            for (id<OOrigo> origo in items) {
-                [stringItems addObject:origo.name];
-            }
-        }
-    }
-    
-    return [self commaSeparatedListOfStrings:stringItems conjoin:conjoin];
+    return [self commaSeparatedListOfStrings:strings conjoin:conjoin conditionallyLowercase:NO];
 }
 
 
-+ (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin
++ (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin conditionallyLowercase:(BOOL)conditionallyLowercase
 {
     NSMutableString *commaSeparatedList = nil;
     
@@ -79,8 +53,10 @@ static NSString * const kRootIdFormat = @"~%@";
         }
         
         for (NSString *string in strings) {
+            NSString *stringItem = conditionallyLowercase ? [string stringByConditionallyLowercasingFirstLetter] : string;
+            
             if (!commaSeparatedList) {
-                commaSeparatedList = [NSMutableString stringWithString:string];
+                commaSeparatedList = [NSMutableString stringWithString:stringItem];
             } else {
                 if (conjoin && string == [strings lastObject]) {
                     [commaSeparatedList appendString:NSLocalizedString(@" and ", @"")];
@@ -88,7 +64,7 @@ static NSString * const kRootIdFormat = @"~%@";
                     [commaSeparatedList appendString:kSeparatorComma];
                 }
                 
-                [commaSeparatedList appendString:string];
+                [commaSeparatedList appendString:stringItem];
             }
         }
     }
@@ -99,6 +75,12 @@ static NSString * const kRootIdFormat = @"~%@";
 
 + (NSString *)commaSeparatedListOfMembers:(id)members conjoin:(BOOL)conjoin
 {
+    return [self commaSeparatedListOfMembers:members conjoin:conjoin subjective:NO];
+}
+
+
++ (NSString *)commaSeparatedListOfMembers:(id)members conjoin:(BOOL)conjoin subjective:(BOOL)subjective
+{
     NSMutableArray *stringItems = [NSMutableArray array];
     
     if ([members count] && [members[0] conformsToProtocol:@protocol(OMember)]) {
@@ -107,7 +89,13 @@ static NSString * const kRootIdFormat = @"~%@";
         }
         
         for (id<OMember> member in members) {
-            if ([members count] > 1) {
+            if (subjective) {
+                if ([member isUser]) {
+                    [stringItems addObject:[OLanguage pronouns][_you_][nominative]];
+                } else {
+                    [stringItems addObject:[member givenName]];
+                }
+            } else if ([members count] > 1) {
                 [stringItems addObject:[member shortName]];
             } else {
                 [stringItems addObject:member.name];
@@ -115,7 +103,7 @@ static NSString * const kRootIdFormat = @"~%@";
         }
     }
     
-    return [self commaSeparatedListOfStrings:stringItems conjoin:conjoin];
+    return [self commaSeparatedListOfStrings:stringItems conjoin:conjoin conditionallyLowercase:NO];
 }
 
 
@@ -148,16 +136,12 @@ static NSString * const kRootIdFormat = @"~%@";
                     }
                 }
             } else {
-                if ([members count] > 1) {
-                    [stringItems addObject:[member shortName]];
-                } else {
-                    [stringItems addObject:member.name];
-                }
+                [stringItems addObject:[member shortName]];
             }
         }
     }
     
-    return [self commaSeparatedListOfStrings:stringItems conjoin:conjoin];
+    return [self commaSeparatedListOfStrings:stringItems conjoin:conjoin conditionallyLowercase:NO];
 }
 
 
@@ -175,14 +159,14 @@ static NSString * const kRootIdFormat = @"~%@";
             NSArray *roles = [membership roles];
             
             if ([roles count]) {
-                [stringItems addObject:[NSString stringWithFormat:@"%@ (%@)", [member shortName], [OUtil commaSeparatedListOfItems:roles conjoin:NO]]];
+                [stringItems addObject:[NSString stringWithFormat:@"%@ (%@)", [member shortName], [OUtil commaSeparatedListOfStrings:roles conjoin:NO conditionallyLowercase:YES]]];
             } else {
                 [stringItems addObject:[member shortName]];
             }
         }
     }
     
-    return [self commaSeparatedListOfStrings:stringItems conjoin:NO];
+    return [self commaSeparatedListOfStrings:stringItems conjoin:NO conditionallyLowercase:NO];
 }
 
 
@@ -239,8 +223,8 @@ static NSString * const kRootIdFormat = @"~%@";
         }
     }
     
-    NSArray *sortedElders = [elders sortedArrayUsingSelector:@selector(compare:)];
-    NSArray *sortedMinors = [minors sortedArrayUsingSelector:@selector(compare:)];
+    NSArray *sortedElders = [elders sortedArrayUsingSelector:@selector(subjectiveCompare:)];
+    NSArray *sortedMinors = [minors sortedArrayUsingSelector:@selector(subjectiveCompare:)];
     NSArray *sortedResidents = nil;
     
     if ([sortedElders count] && [sortedMinors count]) {

@@ -201,6 +201,25 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+- (void)setEmptyTableViewFooterText:(NSString *)footerText
+{
+    if ([footerText hasValue]) {
+        UIView *tableFooterView = [self footerViewWithText:footerText];;
+        UILabel *tableFooterLabel = tableFooterView.subviews[0];
+        
+        CGRect tableFooterViewFrame = tableFooterView.frame;
+        tableFooterViewFrame.size.height += kEmptyHeaderHeight;
+        tableFooterView.frame = tableFooterViewFrame;
+        
+        CGRect tableFooterLabelFrame = tableFooterLabel.frame;
+        tableFooterLabelFrame.origin.y = kEmptyHeaderHeight;
+        tableFooterLabel.frame = tableFooterLabelFrame;
+        
+        _tableView.tableFooterView = tableFooterView;
+    }
+}
+
+
 - (void)inputFieldDidBecomeFirstResponder:(OInputField *)inputField
 {
     if ([self actionIs:kActionDisplay]) {
@@ -304,6 +323,36 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     return footer;
+}
+
+
+- (CGFloat)footerHeightWithText:(NSString *)footerText
+{
+    CGFloat textHeight = [footerText lineCountWithFont:[UIFont footerFont] maxWidth:[OMeta screenWidth] - 2 * kContentInset] * [UIFont footerFont].lineHeight;
+    
+    return textHeight + 2 * kDefaultCellPadding;
+}
+
+
+- (UIView *)footerViewWithText:(NSString *)footerText
+{
+    CGFloat footerHeight = [self footerHeightWithText:footerText];
+    CGRect footerFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], footerHeight);
+    CGRect labelFrame = CGRectMake(kContentInset, 0.f, [OMeta screenWidth] - 2 * kContentInset, footerHeight + kFooterHeadroom);
+    
+    UIView *footerView = [[UIView alloc] initWithFrame:footerFrame];
+    UILabel *footerLabel = [[UILabel alloc] initWithFrame:labelFrame];
+    
+    footerLabel.backgroundColor = [UIColor clearColor];
+    footerLabel.font = [UIFont footerFont];
+    footerLabel.numberOfLines = 0;
+    footerLabel.text = footerText;
+    footerLabel.textAlignment = NSTextAlignmentCenter;
+    footerLabel.textColor = [UIColor footerTextColour];
+    
+    [footerView addSubview:footerLabel];
+    
+    return footerView;
 }
 
 
@@ -634,7 +683,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     if (shouldRelayDismissal) {
-        self.didCancel = viewController.didCancel;
+        _didCancel = viewController.didCancel;
         
         [_dismisser dismissModalViewController:self];
     } else {
@@ -648,6 +697,23 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         if ([[OMeta m] userIsSignedIn]) {
             _shouldReloadOnModalDismissal = !viewController.didCancel;
+        }
+        
+        if ([OMeta iOSVersionIs:@"8"] && viewController.presentedViewController) {
+            // Dismissal of stacked modal view controllers does not work as documented in iOS 8.
+            // Instead of animating the dismissal of the topmost view controller while simply
+            // removing intermediate view controllers from the stack, all view controllers but
+            // the one immediately on top of the dismissing view controller are removed from the
+            // stack, thus making the latter suddenly appear and then be dismissed with an
+            // animation.
+            //
+            // This workaround (more or less) emulates the intended behaviour by superimposing
+            // a screenshot of the topmost view controller's view on top of the view of the view
+            // controller whose dismissal is animated.
+            
+            UIView *snapshot = [[UIScreen mainScreen] snapshotViewAfterScreenUpdates:NO];
+            [viewController.navigationController setNavigationBarHidden:YES animated:NO];
+            [viewController.view addSubview:snapshot];
         }
         
         [self dismissViewControllerAnimated:YES completion:^{
@@ -716,7 +782,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         if ([[OMeta m].replicator needsReplication]) {
             [[OMeta m].replicator replicate];
-            [self.observer observeData];
+            //[self.observer observeData];
         }
     }
     
@@ -735,7 +801,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Custom title elements
+#pragma mark - Custom title & footer elements
 
 - (UISegmentedControl *)setTitleSegments:(NSArray *)segmentTitles
 {
@@ -1028,9 +1094,17 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         _tableView.sectionIndexMinimumDisplayRowCount = kSectionIndexMinimumDisplayRowCount;
     }
     
-    if (![self actionIs:kActionInput] && _shouldReloadOnModalDismissal) {
+    if (![self numberOfSectionsInTableView:_tableView]) {
+        if ([_instance respondsToSelector:@selector(emptyTableViewFooterText)]) {
+            [self setEmptyTableViewFooterText:[_instance emptyTableViewFooterText]];
+        }
+    }
+    
+    if (_didResurface || _shouldReloadOnModalDismissal) {
         [self reloadSections];
-    } else if ([self actionIs:kActionInput] && _didResurface) {
+    }
+    
+    if (_didResurface && [self actionIs:kActionInput]) {
         [self.inputCell resumeFirstResponder];
     }
 }
@@ -1069,7 +1143,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)viewWillDisappear:(BOOL)animated
 {
     if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
-        [self.observer observeData];
+        //[self.observer observeData];
     }
     
 	[super viewWillDisappear:animated];
@@ -1370,11 +1444,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
         
         if (!height || height == kEmptyFooterHeight) {
-            UIFont *footerFont = [UIFont footerFont];
-            NSString *footerText = [self footerForSectionWithKey:sectionKey];
-            CGFloat textHeight = [footerText lineCountWithFont:footerFont maxWidth:[OMeta screenWidth] - 2 * kContentInset] * footerFont.lineHeight;
-            
-            height = textHeight + 2 * kDefaultCellPadding;
+            height = [self footerHeightWithText:[self footerForSectionWithKey:sectionKey]];
         }
     }
     
@@ -1434,22 +1504,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         id footer = [self footerForSectionWithKey:sectionKey];
         
         if ([footer isKindOfClass:[NSString class]]) {
-            CGFloat footerHeight = [self tableView:tableView heightForFooterInSection:section];
-            CGRect footerFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], footerHeight);
-            CGRect labelFrame = CGRectMake(kContentInset, 0.f, [OMeta screenWidth] - 2 * kContentInset, footerHeight + kFooterHeadroom);
+            footerView = [self footerViewWithText:footer];
             
-            footerView = [[UIView alloc] initWithFrame:footerFrame];
-            UILabel *footerLabel = [[UILabel alloc] initWithFrame:labelFrame];
-            
-            footerLabel.backgroundColor = [UIColor clearColor];
-            footerLabel.font = [UIFont footerFont];
-            footerLabel.numberOfLines = 0;
-            footerLabel.text = footer;
-            footerLabel.textAlignment = NSTextAlignmentCenter;
-            footerLabel.textColor = [UIColor footerTextColour];
-            
-            [footerView addSubview:footerLabel];
-            [_sectionFooterLabels setObject:footerLabel forKey:@(sectionKey)];
+            [_sectionFooterLabels setObject:footerView.subviews[0] forKey:@(sectionKey)];
         } else if ([footer isKindOfClass:[UIView class]]) {
             footerView = footer;
         }

@@ -606,7 +606,7 @@ static CGFloat const kShakeRepeatCount = 3.f;
     [self redrawIfNeeded];
     
     if (_observer) {
-        [_observer observeData];
+        //[_observer observeData];
     }
 }
 

@@ -9,7 +9,8 @@
 #import "OInfoViewController.h"
 
 static NSInteger const kSectionKeyGeneral = 0;
-static NSInteger const kSectionKeyAdmins = 1;
+static NSInteger const kSectionKeyParents = 1;
+static NSInteger const kSectionKeyAdmins = 2;
 
 @interface OInfoViewController () <OTableViewController> {
 @private
@@ -131,6 +132,11 @@ static NSInteger const kSectionKeyAdmins = 1;
                 [self setData:[origo admins] forSectionWithKey:kSectionKeyAdmins];
             }
         }
+    } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
+        if ([_entity isJuvenile] && [_entity isWardOfUser]) {
+            [self setData:@[kPropertyKeyMotherId, kPropertyKeyFatherId] forSectionWithKey:kSectionKeyParents];
+        }
+        
     }
 }
 
@@ -141,7 +147,7 @@ static NSInteger const kSectionKeyAdmins = 1;
     
     if (sectionKey == kSectionKeyGeneral) {
         NSString *propertyKey = [self dataAtIndexPath:indexPath];
-
+        
         cell.textLabel.text = NSLocalizedString(propertyKey, kStringPrefixLabel);
         cell.selectable = NO;
         
@@ -181,13 +187,27 @@ static NSInteger const kSectionKeyAdmins = 1;
                 
                 if ([member isActive]) {
                     cell.detailTextLabel.text = NSLocalizedString(@"Yes", @"");
-                    cell.detailTextLabel.textColor = [UIColor windowTintColour];
+                } else if ([member isManaged]) {
+                    cell.detailTextLabel.text = NSLocalizedString(@"Through household", @"");
                 } else {
                     cell.detailTextLabel.text = NSLocalizedString(@"No", @"");
-                    cell.detailTextLabel.textColor = [UIColor redOrangeColour];
                 }
             }
         }
+    } else if (sectionKey == kSectionKeyParents) {
+        NSString *propertyKey = [self dataAtIndexPath:indexPath];
+        
+        cell.textLabel.text = NSLocalizedString(propertyKey, kStringPrefixLabel);
+        cell.selectable = NO;
+        
+        if ([propertyKey isEqualToString:kPropertyKeyMotherId]) {
+            cell.detailTextLabel.text = [_entity mother].name;
+        } else {
+            cell.detailTextLabel.text = [_entity father].name;
+        }
+
+        cell.destinationId = kIdentifierValuePicker;
+        cell.destinationMeta = _entity;
     } else if (sectionKey == kSectionKeyAdmins) {
         id<OOrigo> origo = _entity;
         
@@ -200,6 +220,34 @@ static NSInteger const kSectionKeyAdmins = 1;
             cell.destinationId = kIdentifierMember;
         }
     }
+}
+
+
+- (id)destinationTargetForIndexPath:(NSIndexPath *)indexPath
+{
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    
+    id target = [self dataAtIndexPath:indexPath];
+    
+    if (sectionKey == kSectionKeyGeneral) {
+        if ([target isEqualToString:kPropertyKeyType]) {
+            target = kTargetOrigoType;
+        } else if ([target isEqualToString:kPropertyKeyGender]) {
+            target = kTargetGender;
+        } else if ([target isEqualToString:kPropertyKeyCreatedBy]) {
+            target = _createdBy;
+        } else if ([target isEqualToString:kPropertyKeyModifiedBy]) {
+            target = _modifiedBy;
+        }
+    } else if (sectionKey == kSectionKeyParents) {
+        target = @{target: kAspectParent};
+    } else if (sectionKey == kSectionKeyAdmins) {
+        if ([_entity conformsToProtocol:@protocol(OOrigo)] && [_entity userCanEdit]) {
+            target = @{target: kAspectAdmin};
+        }
+    }
+    
+    return target;
 }
 
 
@@ -264,32 +312,6 @@ static NSInteger const kSectionKeyAdmins = 1;
     }
     
     return footerText;
-}
-
-
-- (id)destinationTargetForIndexPath:(NSIndexPath *)indexPath
-{
-    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
-    
-    id target = [self dataAtIndexPath:indexPath];
-    
-    if (sectionKey == kSectionKeyGeneral) {
-        if ([target isEqualToString:kPropertyKeyType]) {
-            target = kTargetOrigoType;
-        } else if ([target isEqualToString:kPropertyKeyGender]) {
-            target = kTargetGender;
-        } else if ([target isEqualToString:kPropertyKeyCreatedBy]) {
-            target = _createdBy;
-        } else if ([target isEqualToString:kPropertyKeyModifiedBy]) {
-            target = _modifiedBy;
-        }
-    } else if (sectionKey == kSectionKeyAdmins) {
-        if ([_entity conformsToProtocol:@protocol(OOrigo)] && [_entity userCanEdit]) {
-            target = @{target: kAspectAdmin};
-        }
-    }
-    
-    return target;
 }
 
 
