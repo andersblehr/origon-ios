@@ -903,7 +903,7 @@ static NSInteger const kButtonIndexContinue = 1;
         } else if ([self targetIs:kTargetGuardian]) {
             self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
         } else if ([self targetIs:kTargetOrganiser]) {
-            [self setEditableTitle:nil placeholder:NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle)];
+            [self editableTitle:nil withPlaceholder:NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle)];
         } else {
             self.title = NSLocalizedString(_origo.type, kStringPrefixNewMemberTitle);
         }

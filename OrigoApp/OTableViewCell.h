@@ -15,7 +15,7 @@ extern NSString * const kViewKeySuffixInputField;
 
 extern CGFloat const kCellAnimationDuration;
 
-@interface OTableViewCell : UITableViewCell<OTableViewDataObserver>
+@interface OTableViewCell : UITableViewCell
 
 @property (nonatomic, readonly) OState *state;
 @property (nonatomic, readonly) OInputCellConstrainer *constrainer;
@@ -32,7 +32,6 @@ extern CGFloat const kCellAnimationDuration;
 @property (nonatomic, assign) BOOL checked;
 
 @property (nonatomic, weak) id<OInputCellDelegate> inputCellDelegate;
-@property (nonatomic, weak) id<OTableViewDataObserver> observer;
 
 - (instancetype)initWithEntity:(id<OEntity>)entity delegate:(id)delegate;
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier delegate:(id)delegate;
