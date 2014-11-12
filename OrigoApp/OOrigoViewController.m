@@ -12,6 +12,10 @@ static NSInteger const kSectionKeyOrganisers = 1;
 static NSInteger const kSectionKeyParentContacts = 2;
 static NSInteger const kSectionKeyMembers = 3;
 
+static NSInteger const kHeaderSegmentMembers = 0;
+static NSInteger const kHeaderSegmentParents = 1;
+static NSInteger const kHeaderSegmentResidences = 1;
+
 static NSInteger const kActionSheetTagAcceptReject = 0;
 static NSInteger const kButtonTagAcceptRejectAccept = 0;
 static NSInteger const kButtonTagAcceptRejectReject = 1;
@@ -43,7 +47,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     NSString *_origoType;
     NSArray *_eligibleCandidates;
     
-    BOOL _isListingResidences;
     BOOL _userCanEdit;
 }
 
@@ -86,29 +89,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
     }
-}
-
-
-- (UIView *)segmentedHeaderView
-{
-    NSArray *headers = @[NSLocalizedString(@"Members", @""), NSLocalizedString(@"Households", @"")];
-    CGFloat width0 = [headers[0] sizeWithFont:[UIFont headerFont] maxWidth:CGFLOAT_MAX].width;
-    CGFloat width1 = [headers[1] sizeWithFont:[UIFont headerFont] maxWidth:CGFLOAT_MAX].width;
-    CGFloat alignmentOffset = (MAX(width0, width1) - width0) / 2.f;
-    
-    UISegmentedControl *headerSegments = [[UISegmentedControl alloc] initWithItems:headers];
-    headerSegments.frame = CGRectMake(kDefaultCellPadding - alignmentOffset, 0.f, headerSegments.frame.size.width, [[UIFont headerFont] headerHeight]);
-    headerSegments.tintColor = [UIColor clearColor];
-    headerSegments.selectedSegmentIndex = _isListingResidences ? 1 : 0;
-    [headerSegments setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor headerTextColour], NSFontAttributeName: [UIFont headerFont]} forState:UIControlStateSelected];
-    [headerSegments setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor lightGrayColor], NSFontAttributeName: [UIFont headerFont]} forState:UIControlStateNormal];
-    [headerSegments addTarget:self action:@selector(didSelectHeaderSegment) forControlEvents:UIControlEventValueChanged];
-    
-    UIView *segmentedHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenWidth], [[UIFont headerFont] headerHeight])];
-    segmentedHeaderView.backgroundColor = [UIColor clearColor];
-    [segmentedHeaderView addSubview:headerSegments];
-    
-    return segmentedHeaderView;
 }
 
 
@@ -219,7 +199,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 - (void)didSelectHeaderSegment
 {
-    _isListingResidences = !_isListingResidences;
+    self.selectedHeaderSegment = self.segmentedHeader.selectedSegmentIndex;
     
     [self reloadSectionWithKey:kSectionKeyMembers];
 }
@@ -362,13 +342,20 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             [self setData:[_origo residents] forSectionWithKey:kSectionKeyMembers];
         } else {
             [self setData:[_origo organiserRoles] forSectionWithKey:kSectionKeyOrganisers];
-            [self setData:[_origo parentRoles] forSectionWithKey:kSectionKeyParentContacts];
             
-            if ([_origo isOfType:kOrigoTypeCommunity]) {
-                if (_isListingResidences) {
-                    [self setData:[_origo memberResidences] forSectionWithKey:kSectionKeyMembers];
-                } else {
+            if ([_origo isJuvenile]) {
+                [self setData:[_origo parentRoles] forSectionWithKey:kSectionKeyParentContacts];
+                
+                if (self.selectedHeaderSegment == kHeaderSegmentMembers) {
+                    [self setData:[_origo regulars] forSectionWithKey:kSectionKeyMembers];
+                } else if (self.selectedHeaderSegment == kHeaderSegmentParents) {
+                    [self setData:[_origo guardians] forSectionWithKey:kSectionKeyMembers];
+                }
+            } else if ([_origo isOfType:kOrigoTypeCommunity]) {
+                if (self.selectedHeaderSegment == kHeaderSegmentMembers) {
                     [self setData:[_origo members] forSectionWithKey:kSectionKeyMembers];
+                } else if (self.selectedHeaderSegment == kHeaderSegmentResidences) {
+                    [self setData:[_origo memberResidences] forSectionWithKey:kSectionKeyMembers];
                 }
             } else {
                 [self setData:[_origo regulars] forSectionWithKey:kSectionKeyMembers];
@@ -383,7 +370,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if (sectionKey == kSectionKeyMembers) {
-        if (_isListingResidences) {
+        if ([[self dataAtIndexPath:indexPath] conformsToProtocol:@protocol(OOrigo)]) {
             id<OOrigo> residence = [self dataAtIndexPath:indexPath];
             
             cell.textLabel.text = [residence shortAddress];
@@ -394,7 +381,9 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             id<OOrigo> origo = self.state.baseOrigo ? self.state.baseOrigo : _origo;
             id<OMember> member = [self dataAtIndexPath:indexPath];
             
-            if (origo == _origo || ([_origo isOfType:kOrigoTypeResidence] && [member isJuvenile])) {
+            if ([_origo isJuvenile] && self.selectedHeaderSegment == kHeaderSegmentParents) {
+                [cell loadMember:member inOrigo:origo excludeRoles:YES excludeRelations:NO];
+            } else if (origo == _origo || [member isJuvenile]) {
                 [cell loadMember:member inOrigo:_origo];
             } else {
                 [cell loadMember:member inOrigo:origo excludeRoles:NO excludeRelations:YES];
@@ -502,8 +491,10 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         number = [[_origo parentContacts] count] > 1 ? pluralIndefinite : singularIndefinite;
         content = [[OLanguage nouns][_parentContact_][number] stringByCapitalisingFirstLetter];
     } else if (sectionKey == kSectionKeyMembers) {
-        if ([_origo isOfType:kOrigoTypeCommunity]) {
-            content = [self segmentedHeaderView];
+        if ([_origo isJuvenile]) {
+            content = @[NSLocalizedString(_origo.type,kStringPrefixMembersTitle), [[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
+        } else if ([_origo isOfType:kOrigoTypeCommunity]) {
+            content = @[NSLocalizedString(@"Members", @""), NSLocalizedString(@"Households", @"")];
         } else {
             if ([self actionIs:kActionRegister] && [_origo isOfType:kOrigoTypeResidence]) {
                 if (![_member hasAddress] && [self aspectIs:kAspectJuvenile]) {
@@ -604,7 +595,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if (sectionKey == kSectionKeyMembers) {
-        if (_isListingResidences) {
+        if ([[self dataAtIndexPath:indexPath] conformsToProtocol:@protocol(OOrigo)]) {
             [_origo expireCommunityResidence:[self dataAtIndexPath:indexPath]];
         } else {
             [[_origo membershipForMember:[self dataAtIndexPath:indexPath]] expire];
@@ -659,7 +650,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             [[OMeta m].replicator replicateIfNeeded];
         } else if ([viewController.identifier isEqualToString:kIdentifierInfo]) {
             if (![_origoType isEqualToString:_origo.type]) {
-                _isListingResidences = NO;
+                self.selectedHeaderSegment = 0;
                 _origoType = _origo.type;
             }
             

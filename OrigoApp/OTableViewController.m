@@ -334,6 +334,38 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+- (UIView *)segmentedHeaderViewWithSegments:(NSArray *)segments
+{
+    CGFloat initialWidth = 0.f;
+    CGFloat maxWidth = 0.f;
+    
+    for (NSString *segment in segments) {
+        CGFloat segmentWidth = [segment sizeWithFont:[UIFont headerFont] maxWidth:CGFLOAT_MAX].width;
+        
+        if (!initialWidth) {
+            initialWidth = segmentWidth;
+            maxWidth = segmentWidth;
+        } else {
+            maxWidth = MAX(maxWidth, segmentWidth);
+        }
+    }
+    
+    _segmentedHeader = [[UISegmentedControl alloc] initWithItems:segments];
+    _segmentedHeader.frame = CGRectMake(kDefaultCellPadding - (maxWidth - initialWidth) / 2.f, 0.f, _segmentedHeader.frame.size.width, [[UIFont headerFont] headerHeight]);
+    _segmentedHeader.tintColor = [UIColor clearColor];
+    _segmentedHeader.selectedSegmentIndex = _selectedHeaderSegment;
+    [_segmentedHeader setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor headerTextColour], NSFontAttributeName: [UIFont headerFont]} forState:UIControlStateSelected];
+    [_segmentedHeader setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor lightGrayColor], NSFontAttributeName: [UIFont headerFont]} forState:UIControlStateNormal];
+    [_segmentedHeader addTarget:self action:@selector(didSelectHeaderSegment) forControlEvents:UIControlEventValueChanged];
+    
+    UIView *segmentedHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenWidth], [[UIFont headerFont] headerHeight])];
+    segmentedHeaderView.backgroundColor = [UIColor clearColor];
+    [segmentedHeaderView addSubview:_segmentedHeader];
+    
+    return segmentedHeaderView;
+}
+
+
 - (UIView *)footerViewWithText:(NSString *)footerText
 {
     CGFloat footerHeight = [self footerHeightWithText:footerText];
@@ -780,10 +812,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         self.navigationItem.leftBarButtonItem = leftBarButtonItem;
         self.navigationItem.rightBarButtonItems = rightBarButtonItems;
         
-        if ([[OMeta m].replicator needsReplication]) {
-            [[OMeta m].replicator replicate];
-            //[self.observer observeData];
-        }
+        [[OMeta m].replicator replicateIfNeeded];
     }
     
     OLogState;
@@ -803,7 +832,20 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Custom title & footer elements
 
-- (UISegmentedControl *)setTitleSegments:(NSArray *)segmentTitles
+- (UITextField *)editableTitle:(NSString *)title withPlaceholder:(NSString *)placeholder
+{
+    _titleField = [self.navigationItem setTitle:title editable:YES withSubtitle:nil];
+    _titleField.placeholder = placeholder;
+    _titleField.delegate = self;
+    _titleFieldShouldBeginEditing = ![title hasValue];
+    
+    self.title = title;
+    
+    return _titleField;
+}
+
+
+- (UISegmentedControl *)titleSubsegmentsWithSegments:(NSArray *)segmentTitles
 {
     if ([segmentTitles count]) {
         if (_segments) {
@@ -869,19 +911,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     return _segments;
-}
-
-
-- (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder
-{
-    _titleField = [self.navigationItem setTitle:title editable:YES withSubtitle:nil];
-    _titleField.placeholder = placeholder;
-    _titleField.delegate = self;
-    _titleFieldShouldBeginEditing = ![title hasValue];
-    
-    self.title = title;
-    
-    return _titleField;
 }
 
 
@@ -1142,10 +1171,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    if ([self.navigationController.viewControllers indexOfObject:self] == NSNotFound) {
-        //[self.observer observeData];
-    }
-    
 	[super viewWillDisappear:animated];
     
     _isHidden = self.presentedViewController ? YES : NO;
@@ -1319,7 +1344,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             cell = [tableView inputCellWithReuseIdentifier:reuseIdentifier delegate:_instance];
         } else {
             cell = [tableView inputCellWithEntity:_entity delegate:_instance];
-            cell.observer = self.observer;
         }
         
         _inputCell = cell;
@@ -1487,6 +1511,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [headerView addSubview:headerLabel];
         
         [_sectionHeaderLabels setObject:headerLabel forKey:@(sectionKey)];
+    } else if ([headerContent isKindOfClass:[NSArray class]]) {
+        headerView = [self segmentedHeaderViewWithSegments:headerContent];
     } else if ([headerContent isKindOfClass:[UIView class]]) {
         headerView = headerContent;
     }
@@ -1549,7 +1575,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             OTableViewController *destinationViewController = [self.storyboard instantiateViewControllerWithIdentifier:cell.destinationId];
             destinationViewController.target = target;
             destinationViewController.meta = cell.destinationMeta;
-            destinationViewController.observer = (OTableViewCell *)[_tableView cellForRowAtIndexPath:indexPath];
             
             if (destinationViewController.entity && _entity) {
                 destinationViewController.entity.ancestor = _entity;

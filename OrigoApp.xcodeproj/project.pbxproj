@@ -184,7 +184,6 @@
 		5C36BE88146E9DA100DD3CEA /* OMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMeta.h; sourceTree = "<group>"; };
 		5C36BE89146E9DA100DD3CEA /* OMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMeta.m; sourceTree = "<group>"; };
 		5C36BE9B1470507700DD3CEA /* OrigoApp.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OrigoApp.xcdatamodel; sourceTree = "<group>"; };
-		5C39EC1C166632570083DFEB /* OTableViewDataObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTableViewDataObserver.h; sourceTree = "<group>"; };
 		5C3C665A14F56D6800514C57 /* OCrypto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OCrypto.h; sourceTree = "<group>"; };
 		5C3C665B14F56D6800514C57 /* OCrypto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OCrypto.m; sourceTree = "<group>"; };
 		5C3D42801485678E009A68E0 /* OOrigoListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigoListViewController.h; sourceTree = "<group>"; };
@@ -572,7 +571,6 @@
 				5CDE879C176F185E00272909 /* OInputCellDelegate.h */,
 				5C1D6CC71743B22800479F7D /* OLocatorDelegate.h */,
 				5C3F9999178AC91100E31A44 /* OMemberExaminerDelegate.h */,
-				5C39EC1C166632570083DFEB /* OTableViewDataObserver.h */,
 				5CFD8E6D183CCEAF00DC3945 /* OTextInput.h */,
 			);
 			name = Protocols;

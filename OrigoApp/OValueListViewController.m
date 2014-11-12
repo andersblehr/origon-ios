@@ -24,7 +24,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 @interface OValueListViewController () <OTableViewController, UIActionSheetDelegate> {
     id<OOrigo> _origo;
 
-    UISegmentedControl *_titleSegments;
+    UISegmentedControl *_segments;
     NSMutableArray *_segmentMappings;
     NSInteger _selectedSegment;
     
@@ -59,7 +59,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     }
     
     if ([titleSegments count] > 1) {
-        _titleSegments = [self setTitleSegments:titleSegments];
+        _segments = [self titleSubsegmentsWithSegments:titleSegments];
         
         [self inferSelectedSegment];
     } else {
@@ -71,9 +71,9 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 - (void)inferSelectedSegment
 {
     if ([self targetIs:kTargetRoles]) {
-        _selectedSegment = [_segmentMappings[_titleSegments.selectedSegmentIndex] integerValue];
+        _selectedSegment = [_segmentMappings[_segments.selectedSegmentIndex] integerValue];
     } else {
-        _selectedSegment = _titleSegments.selectedSegmentIndex;
+        _selectedSegment = _segments.selectedSegmentIndex;
     }
 }
 
@@ -187,8 +187,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
                 [wardNames addObject:[ward givenName]];
             }
             
-            _titleSegments = [self setTitleSegments:wardNames];
-            _selectedSegment = _titleSegments.selectedSegmentIndex;
+            _segments = [self titleSubsegmentsWithSegments:wardNames];
+            _selectedSegment = _segments.selectedSegmentIndex;
         }
         
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
@@ -223,8 +223,8 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             NSArray *groups = [_origo groups];
             
             if ([groups count]) {
-                _titleSegments = [self setTitleSegments:groups];
-                _selectedSegment = _titleSegments.selectedSegmentIndex;
+                _segments = [self titleSubsegmentsWithSegments:groups];
+                _selectedSegment = _segments.selectedSegmentIndex;
             }
             
             if ([_origo userCanEdit]) {
@@ -496,10 +496,10 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
                         self.rowAnimation = UITableViewRowAnimationLeft;
                     }
                     
-                    _titleSegments = [self setTitleSegments:groups];
-                    _selectedSegment = _titleSegments.selectedSegmentIndex;
-                } else if (_titleSegments) {
-                    _titleSegments = [self setTitleSegments:nil];
+                    _segments = [self titleSubsegmentsWithSegments:groups];
+                    _selectedSegment = _segments.selectedSegmentIndex;
+                } else if (_segments) {
+                    _segments = [self titleSubsegmentsWithSegments:nil];
                     _selectedSegment = 0;
                 }
             }

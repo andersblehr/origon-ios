@@ -597,17 +597,4 @@ static CGFloat const kShakeRepeatCount = 3.f;
     }
 }
 
-
-#pragma mark - OEntityObserver conformance
-
-- (void)observeData
-{
-    [self readData];
-    [self redrawIfNeeded];
-    
-    if (_observer) {
-        //[_observer observeData];
-    }
-}
-
 @end

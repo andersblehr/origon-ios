@@ -125,7 +125,7 @@ static NSInteger const kSectionKeyValues = 0;
             }
             
             if (!self.title) {
-                [self setEditableTitle:_affiliation placeholder:placeholder];
+                [self editableTitle:_affiliation withPlaceholder:placeholder];
             }
             
             [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:YES]];

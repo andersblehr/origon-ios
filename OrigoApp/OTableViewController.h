@@ -63,6 +63,7 @@
 @property (nonatomic, readonly) OState *state;
 @property (nonatomic, readonly) OEntityProxy *entity;
 @property (nonatomic, readonly) OTableView *tableView;
+@property (nonatomic, readonly) UISegmentedControl *segmentedHeader;
 
 @property (nonatomic, assign, readonly) BOOL isModal;
 @property (nonatomic, assign, readonly) BOOL isPushed;
@@ -76,6 +77,8 @@
 @property (nonatomic, assign) BOOL presentStealthilyOnce;
 @property (nonatomic, assign) BOOL didCancel;
 @property (nonatomic, assign) BOOL cancelImpliesSkip;
+
+@property (nonatomic, assign) NSInteger selectedHeaderSegment;
 @property (nonatomic, assign) UITableViewRowAnimation rowAnimation;
 
 @property (nonatomic) id meta;
@@ -86,7 +89,6 @@
 @property (nonatomic) OInputField *nextInputField;
 
 @property (nonatomic, weak) OTableViewController *dismisser;
-@property (nonatomic, weak) id<OTableViewDataObserver> observer;
 
 - (OTableViewController *)precedingViewController;
 
@@ -113,8 +115,8 @@
 - (void)toggleEditMode;
 - (void)endEditing;
 
-- (UISegmentedControl *)setTitleSegments:(NSArray *)segments;
-- (UITextField *)setEditableTitle:(NSString *)title placeholder:(NSString *)placeholder;
+- (UITextField *)editableTitle:(NSString *)title withPlaceholder:(NSString *)placeholder;
+- (UISegmentedControl *)titleSubsegmentsWithSegments:(NSArray *)segments;
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;

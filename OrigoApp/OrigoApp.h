@@ -38,7 +38,6 @@
 #import "OInputCellDelegate.h"
 #import "OLocatorDelegate.h"
 #import "OMemberExaminerDelegate.h"
-#import "OTableViewDataObserver.h"
 #import "OTextInput.h"
 
 #import "ODevice.h"
@@ -97,7 +96,6 @@ typedef UIView<OTextInput> OInputField;
 #import "OState.h"
 #import "OSwitchboard.h"
 #import "OTableView.h"
-//#import "OTableViewCell.h"
 #import "OTableViewCell+OrigoAdditions.h"
 #import "OTableViewController.h"
 #import "OTextField.h"
