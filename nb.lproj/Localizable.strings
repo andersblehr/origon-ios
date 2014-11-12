@@ -283,6 +283,7 @@
 "Please verify that %@ is a valid phone number." = "Verifiser at %@ er et gyldig telefonnummer.";
 
 // Generic terms
+"Close" = "Lukk";
 "Yes" = "Ja";
 "No" = "Nei";
 "man" = "mann";
@@ -514,9 +515,6 @@
 "Registered: %@." = "Registrert: %@.";
 "Last modified: %@." = "Sist endret: %@.";
 "Active since: %@" = "Aktiv siden: %@";
-
-// Buttons
-"Close" = "Lukk";
 
 
 /***

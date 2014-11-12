@@ -166,7 +166,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     
     if ([self targetIs:kTargetSettings]) {
         self.title = NSLocalizedString(@"Settings", @"");
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
+        self.navigationItem.rightBarButtonItem = [UIBarButtonItem closeButtonWithTarget:self];
     } else if ([self targetIs:kTargetParents]) {
         if (self.meta) {
             _wards = @[self.meta];

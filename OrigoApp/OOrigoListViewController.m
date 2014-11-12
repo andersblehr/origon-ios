@@ -97,7 +97,9 @@ static NSInteger const kSectionKeyWards = 2;
         if (![[OMeta m].user.createdBy isEqualToString:[OMeta m].userEmail]) {
             [OAlert showAlertWithTitle:NSLocalizedString(@"Welcome to Origo", @"") text:NSLocalizedString(@"Please verify your details and provide any missing information.", @"")];
             
-            _needsEditParents = [[[OMeta m].user wards] count] > 0;
+            for (id<OMember> ward in [[OMeta m].user wards]) {
+                _needsEditParents = _needsEditParents || ![ward mother] || ![ward father];
+            }
         } else if (![OMeta m].userDidJustSignUp) {
             [OAlert showAlertWithTitle:NSLocalizedString(@"Incomplete registration", @"") text:NSLocalizedString(@"You must complete your registration before you can start using Origo.", @"")];
         }

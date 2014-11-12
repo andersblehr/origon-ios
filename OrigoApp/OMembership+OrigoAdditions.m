@@ -250,9 +250,9 @@ static NSString * const kPlaceholderRole = @"placeholder";
 - (void)promoteToFull
 {
     if ([self isAssociate]) {
-        [[OMeta m].context insertAdditionalCrossReferencesForFullMembership:self];
-        
         [self alignWithOrigoIsAssociate:NO];
+        
+        [[OMeta m].context insertAdditionalCrossReferencesForFullMembership:self];
     }
 }
 
@@ -260,9 +260,9 @@ static NSString * const kPlaceholderRole = @"placeholder";
 - (void)demoteToAssociate
 {
     if ([self isFull]) {
-        [[OMeta m].context expireAdditionalCrossReferencesForFullMembership:self];
-        
         [self alignWithOrigoIsAssociate:YES];
+        
+        [[OMeta m].context expireAdditionalCrossReferencesForFullMembership:self];
     }
 }
 
