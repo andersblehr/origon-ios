@@ -185,15 +185,15 @@
     }
     
     if ([membership isResidency]) {
-        NSMutableSet *participancies = [[member participancies] mutableCopy];
+        NSMutableSet *linkingOrigos = [NSMutableSet setWithArray:[member origos]];
         
         for (OMember *housemate in [member housemates]) {
-            [participancies unionSet:[housemate participancies]];
+            [linkingOrigos addObjectsFromArray:[housemate origos]];
         }
         
-        for (OMembership *participancy in participancies) {
-            [self createEntityRefForEntity:membership inOrigo:participancy.origo];
-            [self createEntityRefForEntity:origo inOrigo:participancy.origo];
+        for (OOrigo *linkingOrigo in linkingOrigos) {
+            [self createEntityRefForEntity:membership inOrigo:linkingOrigo];
+            [self createEntityRefForEntity:origo inOrigo:linkingOrigo];
         }
     }
     
@@ -233,10 +233,10 @@
     OOrigo *origo = membership.origo;
     
     if ([membership isResidency]) {
-        for (OMembership *residency in [member residencies]) {
-            if (residency != membership) {
-                [self createEntityRefForEntity:membership inOrigo:residency.origo];
-                [self createEntityRefForEntity:origo inOrigo:residency.origo];
+        for (OOrigo *residence in [member residences]) {
+            if (residence != origo) {
+                [self createEntityRefForEntity:membership inOrigo:residence];
+                [self createEntityRefForEntity:origo inOrigo:residence];
             }
         }
     }
@@ -244,13 +244,19 @@
     for (OMember *housemate in [member allHousemates]) {
         [origo addAssociateMember:housemate];
         
+        for (OOrigo *otherOrigo in [member origos]) {
+            if (otherOrigo != origo) {
+                [otherOrigo addAssociateMember:housemate];
+            }
+        }
+        
         if ([membership isResidency]) {
-            for (OMembership *housemateResidency in [housemate residencies]) {
-                [housemateResidency.origo addAssociateMember:member];
+            for (OOrigo *residence in [housemate residences]) {
+                [residence addAssociateMember:member];
             }
             
-            for (OMembership *housemateParticipancy in [housemate participancies]) {
-                [housemateParticipancy.origo addAssociateMember:member];
+            for (OOrigo *origo in [housemate origos]) {
+                [origo addAssociateMember:member];
             }
         }
     }

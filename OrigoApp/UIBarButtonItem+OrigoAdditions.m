@@ -146,6 +146,15 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
++ (instancetype)closeButtonWithTarget:(id)target
+{
+    UIBarButtonItem *button = [self doneButtonWithTarget:target];
+    button.title = NSLocalizedString(@"Close", @"");
+    
+    return button;
+}
+
+
 + (instancetype)doneButtonWithTarget:(id)target
 {
     UIBarButtonItem *button = [self barButtonWithVisuals:NSLocalizedString(@"Done", @"") target:target action:@selector(didFinishEditing) tag:kBarButtonTagDone];
@@ -155,21 +164,13 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-+ (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target
-{
-    UIBarButtonItem *doneButton = [self doneButtonWithTarget:target];
-    doneButton.title = title;
-    
-    return doneButton;
-}
-
-
 + (instancetype)doneButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action
 {
-    UIBarButtonItem *doneButton = [self doneButtonWithTitle:title target:target];
-    doneButton.action = action;
+    UIBarButtonItem *button = [self doneButtonWithTarget:target];
+    button.title = title;
+    button.action = action;
     
-    return doneButton;
+    return button;
 }
 
 

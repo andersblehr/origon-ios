@@ -532,7 +532,7 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
     }
     
     if ([OValidator isPhoneNumberKey:key]) {
-        inputField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+        inputField.keyboardType = UIKeyboardTypePhonePad;
     } else if ([OValidator isEmailKey:key]) {
         inputField.keyboardType = UIKeyboardTypeEmailAddress;
     } else {

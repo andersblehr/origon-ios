@@ -139,6 +139,8 @@
         [[OMeta m].context saveEntityDictionaries:data];
     }
     
+    _isReplicating = NO;
+    
     if (HTTPStatus == kHTTPStatusCreated || HTTPStatus == kHTTPStatusMultiStatus) {
         OLogDebug(@"Entities successfully replicated to server.");
         
@@ -156,13 +158,10 @@
         [[OMeta m].context save];
         
         [self resetUserReplicationState];
+        [self replicateIfNeeded];
     } else if (HTTPStatus == kHTTPStatusUnauthorized) {
         [[OMeta m] signOut];
     }
-    
-    _isReplicating = NO;
-    
-    [self replicateIfNeeded];
 }
 
 

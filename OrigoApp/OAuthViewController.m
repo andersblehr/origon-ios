@@ -14,6 +14,8 @@ static CGFloat const kLogoFontSize = 26.f;
 static NSString * const kLogoFontName = @"CourierNewPS-BoldMT";
 static NSString * const kLogoText = @"..origo..";
 
+static NSInteger const kSectionKeyAuth = 0;
+
 static NSInteger const kMaxActivationAttempts = 3;
 
 static NSInteger const kAlertTagWelcomeBack = 0;
@@ -88,9 +90,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     [self.state toggleAction:@[kActionSignIn, kActionActivate]];
     
     if ([self actionIs:kActionActivate]) {
-        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationLeft];
+        [self reloadSectionWithKey:kSectionKeyAuth rowAnimation:UITableViewRowAnimationLeft];
     } else if ([self actionIs:kActionSignIn]) {
-        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationRight];
+        [self reloadSectionWithKey:kSectionKeyAuth rowAnimation:UITableViewRowAnimationRight];
         
         if (_authInfo) {
             [ODefaults removeGlobalDefaultForKey:kDefaultsKeyAuthInfo];
@@ -113,7 +115,7 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         numberOfFailedAttempts = 0;
         
         if ([self targetIs:kTargetUser]) {
-            [OAlert showAlertWithTitle:NSLocalizedString(@"Activation failed", @"") text:NSLocalizedString(@"It looks like you may have lost the activation code ...", @"") tag:kAlertTagActivationFailed];
+            [OAlert showAlertWithTitle:NSLocalizedString(@"Activation failed", @"") text:NSLocalizedString(@"It looks like you may have lost the activation code ...", @"") delegate:self tag:kAlertTagActivationFailed];
         } else if ([self targetIs:kTargetEmail]) {
             [self.dismisser dismissModalViewController:self];
         }

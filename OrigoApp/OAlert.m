@@ -27,26 +27,28 @@
 }
 
 
-#pragma mark - Alerting shorthands
+#pragma mark - Alert shorthands
 
 + (void)showAlertWithTitle:(NSString *)title text:(NSString *)text
 {
-    [self showAlertWithTitle:title text:text tag:NSIntegerMax];
+    [self showAlertWithTitle:title text:text delegate:nil tag:NSIntegerMax];
 }
 
 
-+ (void)showAlertWithTitle:(NSString *)title text:(NSString *)text tag:(NSInteger)tag
++ (void)showAlertWithTitle:(NSString *)title text:(NSString *)text delegate:(id)delegate tag:(NSInteger)tag
 {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:title message:text delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", @"") otherButtonTitles:nil];
     
     if (tag != NSIntegerMax) {
-        alertView.delegate = [OState s].viewController;
+        alertView.delegate = delegate;
         alertView.tag = tag;
     }
     
     [alertView show];
 }
 
+
+#pragma mark - Error alert shorthands
 
 + (void)showAlertForError:(NSError *)error
 {

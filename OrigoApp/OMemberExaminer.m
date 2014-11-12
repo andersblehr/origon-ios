@@ -54,7 +54,7 @@ static OMemberExaminer *_instance = nil;
 }
 
 
-- (void)assembleCandidates
+- (NSArray *)assembleCandidates
 {
     NSMutableArray *candidates = [NSMutableArray array];
     
@@ -81,9 +81,7 @@ static OMemberExaminer *_instance = nil;
         }
     }
 
-    if ([candidates count]) {
-        _candidates = [candidates sortedArrayUsingSelector:@selector(subjectiveCompare:)];
-    }
+    return [candidates sortedArrayUsingSelector:@selector(subjectiveCompare:)];
 }
 
 
@@ -252,14 +250,22 @@ static OMemberExaminer *_instance = nil;
 {
     if (!_member.gender) {
         [self presentGenderSheet];
-    } else if (_candidates) {
-        if (![_examinedCandidates count]) {
-            [self performInitialExamination];
-        } else {
-            [self presentNextCandidateSheet];
-        }
     } else {
-        [self finishExaminationDidCancel:NO];
+        if (!_candidates) {
+            if (_residence && ([_member dateOfBirth] || [[OState s] targetIs:kTargetGuardian])) {
+                _candidates = [self assembleCandidates];
+            }
+        }
+        
+        if ([_candidates count]) {
+            if (![_examinedCandidates count]) {
+                [self performInitialExamination];
+            } else {
+                [self presentNextCandidateSheet];
+            }
+        } else {
+            [self finishExaminationDidCancel:NO];
+        }
     }
 }
 
@@ -298,10 +304,6 @@ static OMemberExaminer *_instance = nil;
     _candidates = nil;
     _examinedCandidates = [NSMutableSet set];
     _registrantOffspring = [NSMutableArray array];
-    
-    if (_residence && ([_member dateOfBirth] || [[OState s] targetIs:kTargetGuardian])) {
-        [self assembleCandidates];
-    }
     
     [self performExamination];
 }

@@ -622,10 +622,10 @@ NSString * const kOrigoTypeTeam = @"team";
 {
     BOOL hasResidentsInCommon = NO;
     
-    if ([residence instance]) {
-        residence = [residence instance];
+    if ([self isOfType:kOrigoTypeResidence] && [residence isOfType:kOrigoTypeResidence]) {
+        if ([residence instance]) {
+            residence = [residence instance];
         
-        if ([self isOfType:kOrigoTypeResidence] && [residence isOfType:kOrigoTypeResidence]) {
             for (OMember *resident in [residence residents]) {
                 hasResidentsInCommon = hasResidentsInCommon || [self hasMember:resident];
             }

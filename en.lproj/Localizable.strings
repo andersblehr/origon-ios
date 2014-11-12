@@ -283,6 +283,7 @@
 "Please verify that %@ is a valid phone number." = "Please verify that %@ is a valid phone number.";
 
 // Generic terms
+"Close" = "Close";
 "Yes" = "Yes";
 "No" = "No";
 "man" = "man";
@@ -515,9 +516,6 @@
 "Registered: %@." = "Registered: %@.";
 "Last modified: %@." = "Last modified: %@.";
 "Active since: %@" = "Active since: %@";
-
-// Buttons
-"Close" = "Close";
 
 
 /***
