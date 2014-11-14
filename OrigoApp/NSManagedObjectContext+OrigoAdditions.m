@@ -63,6 +63,26 @@
 
 #pragma mark - Preparing for entity replication
 
+- (NSSet *)entityRefsForPendingEntity:(OReplicatedEntity *)entity
+{
+    NSArray *pendingEntityRefs = nil;
+    
+    if ([entity isReplicated]) {
+        NSError *error = nil;
+        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass([OReplicatedEntityRef class])];
+        [request setPredicate:[NSPredicate predicateWithFormat:@"entityId like[c] %@", [entity.entityId stringByAppendingString:@"#*"]]];
+        
+        pendingEntityRefs = [self executeFetchRequest:request error:&error];
+        
+        if (pendingEntityRefs == nil) {
+            OLogError(@"Error fetching entity refs: %@", [error localizedDescription]);
+        }
+    }
+    
+    return pendingEntityRefs ? [NSSet setWithArray:pendingEntityRefs] : [NSSet set];
+}
+
+
 - (NSSet *)pendingEntities
 {
     NSMutableSet *unsavedEntities = [NSMutableSet set];
@@ -75,6 +95,7 @@
     for (OReplicatedEntity *entity in unsavedEntities) {
         if ([entity isDirty] || [entity isBeingDeleted]) {
             [pendingEntities addObject:entity];
+            [pendingEntities unionSet:[self entityRefsForPendingEntity:entity]];
         }
     }
     
@@ -175,14 +196,27 @@
     OMember *member = membership.member;
     OOrigo *origo = membership.origo;
     
+    // Reference member in membership origo
     [self createEntityRefForEntity:member inOrigo:origo];
     
+    // Reference all member residencies in membership origo
     for (OMembership *residency in [member residencies]) {
         if (residency != membership) {
             [self createEntityRefForEntity:residency inOrigo:origo];
             [self createEntityRefForEntity:residency.origo inOrigo:origo];
         }
     }
+    
+    if ([membership isFull]) {
+        [self insertAdditionalCrossReferencesForFullMembership:membership];
+    }
+}
+
+
+- (void)insertAdditionalCrossReferencesForFullMembership:(OMembership *)membership
+{
+    OMember *member = membership.member;
+    OOrigo *origo = membership.origo;
     
     if ([membership isResidency]) {
         NSMutableSet *linkingOrigos = [NSMutableSet setWithArray:[member origos]];
@@ -195,10 +229,35 @@
             [self createEntityRefForEntity:membership inOrigo:linkingOrigo];
             [self createEntityRefForEntity:origo inOrigo:linkingOrigo];
         }
+        
+        for (OOrigo *residence in [member residences]) {
+            if (residence != origo) {
+                [self createEntityRefForEntity:membership inOrigo:residence];
+                [self createEntityRefForEntity:origo inOrigo:residence];
+            }
+        }
     }
     
-    if ([membership isFull]) {
-        [self insertAdditionalCrossReferencesForFullMembership:membership];
+    for (OMember *housemate in [member allHousemates]) {
+        [origo addAssociateMember:housemate];
+        
+        for (OOrigo *otherOrigo in [member origos]) {
+            if (otherOrigo != origo) {
+                [otherOrigo addAssociateMember:housemate];
+            }
+        }
+        
+        if ([membership isResidency]) {
+            for (OOrigo *residence in [housemate residences]) {
+                if (residence != origo) {
+                    [residence addAssociateMember:member];
+                }
+            }
+            
+            for (OOrigo *origo in [housemate origos]) {
+                [origo addAssociateMember:member];
+            }
+        }
     }
 }
 
@@ -223,42 +282,6 @@
     
     if ([membership isFull]) {
         [self expireAdditionalCrossReferencesForFullMembership:membership];
-    }
-}
-
-
-- (void)insertAdditionalCrossReferencesForFullMembership:(OMembership *)membership
-{
-    OMember *member = membership.member;
-    OOrigo *origo = membership.origo;
-    
-    if ([membership isResidency]) {
-        for (OOrigo *residence in [member residences]) {
-            if (residence != origo) {
-                [self createEntityRefForEntity:membership inOrigo:residence];
-                [self createEntityRefForEntity:origo inOrigo:residence];
-            }
-        }
-    }
-    
-    for (OMember *housemate in [member allHousemates]) {
-        [origo addAssociateMember:housemate];
-        
-        for (OOrigo *otherOrigo in [member origos]) {
-            if (otherOrigo != origo) {
-                [otherOrigo addAssociateMember:housemate];
-            }
-        }
-        
-        if ([membership isResidency]) {
-            for (OOrigo *residence in [housemate residences]) {
-                [residence addAssociateMember:member];
-            }
-            
-            for (OOrigo *origo in [housemate origos]) {
-                [origo addAssociateMember:member];
-            }
-        }
     }
 }
 

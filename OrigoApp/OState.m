@@ -87,8 +87,6 @@ static OState *_activeState = nil;
         if (viewController.target) {
             self.target = viewController.target;
         }
-        
-        _activeState = self;
     }
     
     return self;

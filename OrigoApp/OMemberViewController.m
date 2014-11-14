@@ -112,6 +112,15 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+- (void)registerPrimaryResidence
+{
+    id<OOrigo> primaryResidence = [_member primaryResidence];
+    [primaryResidence resetDefaultResidenceNameIfApplicable];
+    
+    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:primaryResidence];
+}
+
+
 - (void)continueResidenceRegistration
 {
     id<OOrigo> primaryResidence = [_member primaryResidence];
@@ -358,7 +367,7 @@ static NSInteger const kButtonIndexContinue = 1;
                     [self.dismisser dismissModalViewController:self];
                 }
             } else if (![_member instance] && ![_member hasAddress]) {
-                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
+                [self registerPrimaryResidence];
             } else {
                 [self.dismisser dismissModalViewController:self];
             }
@@ -369,14 +378,14 @@ static NSInteger const kButtonIndexContinue = 1;
                 [_membership addAffiliation:_role ofType:kAffiliationTypeOrganiserRole];
             }
             
-            BOOL needsRegisterResidence = ![_member hasAddress];
+            BOOL needsRegisterPrimaryResidence = ![_member hasAddress];
             
             if ([self targetIs:kTargetOrganiser] || ([_member isJuvenile] && ![_member isUser])) {
-                needsRegisterResidence = NO;
+                needsRegisterPrimaryResidence = NO;
             }
             
-            if (needsRegisterResidence) {
-                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
+            if (needsRegisterPrimaryResidence) {
+                [self registerPrimaryResidence];
             } else {
                 if ([_member isUser] && ![_member isActive]) {
                     [_member makeActive];
@@ -1138,7 +1147,9 @@ static NSInteger const kButtonIndexContinue = 1;
     BOOL canDelete = NO;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if (sectionKey == kSectionKeyAddresses) {
+    if (sectionKey == kSectionKeyRoles) {
+        canDelete = [self.state.baseOrigo userCanEdit];
+    } else if (sectionKey == kSectionKeyAddresses) {
         canDelete = [self numberOfRowsInSectionWithKey:sectionKey] > 1;
     }
     
@@ -1148,10 +1159,16 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyAddresses) {
-        if ([_origo isOfType:kOrigoTypeResidence]) {
-            [[_origo membershipForMember:_member] expire];
-        }
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    
+    if (sectionKey == kSectionKeyRoles) {
+        id<OMembership> roleMembership = [self.state.baseOrigo membershipForMember:_member];
+        NSString *role = [self dataAtIndexPath:indexPath];
+        NSString *roleType = [roleMembership typeOfAffiliation:role];
+        
+        [roleMembership removeAffiliation:role ofType:roleType];
+    } else if (sectionKey == kSectionKeyAddresses) {
+        [[[self dataAtIndexPath:indexPath] membershipForMember:_member] expire];
     }
 }
 

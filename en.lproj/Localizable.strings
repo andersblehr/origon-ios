@@ -64,10 +64,6 @@
 "[placeholder] telephone" = "Telephone number";
 "[placeholder] institution" = "Name of university or school";
 
-// Defaults
-"[default] deleteRow" = "Delete";
-"[default] residenceName" = "My place";
-
 
 /***
  * Origo type derived strings
@@ -268,6 +264,7 @@
 "Next" = "Next";
 "Done" = "Done";
 "Use" = "Use";
+"Delete" = "Delete";
 "Continue" = "Continue";
 "Cancel" = "Cancel";
 "Skip" = "Skip";
@@ -381,6 +378,10 @@
 
 // Prompts
 "Do you want to keep this listing?" = "Do you want to keep this listing?";
+
+// Defaults
+"My place" = "My place";
+"Our place" = "Our place";
 
 
 /***

@@ -86,11 +86,15 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         if (_selectedSegment == kSegmentParents) {
             [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectParentRole}];
         } else if (_selectedSegment == kSegmentOrganisers) {
-            OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAdd];
-            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
-            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserRoleButton) tag:kButtonTagAddOrganiserRole];
-            
-            [actionSheet show];
+            if ([[_origo organisers] count]) {
+                OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAdd];
+                [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserButton) tag:kButtonTagAddOrganiser];
+                [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddOrganiserRoleButton) tag:kButtonTagAddOrganiserRole];
+                
+                [actionSheet show];
+            } else {
+                [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetOrganiser];
+            }
         } else if (_selectedSegment == kSegmentMembers) {
             [self presentModalViewControllerWithIdentifier:kIdentifierValuePicker target:@{kTargetRole: kAspectMemberRole}];
         }
@@ -352,7 +356,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[_origo membersOfGroup:group] conjoin:NO subjective:YES];
             cell.destinationId = kIdentifierValuePicker;
         } else {
-            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:_origo excludeRoles:YES excludeRelations:NO];
+            [cell loadMember:[self dataAtIndexPath:indexPath] inOrigo:_origo excludeRoles:NO excludeRelations:YES];
             cell.selectable = NO;
         }
     }
@@ -519,7 +523,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     } else if ([self targetIs:kTargetRole]) {
         deleteTitle = NSLocalizedString(@"Remove", @"");
     } else {
-        deleteTitle = NSLocalizedString(kButtonKeyDeleteRow, kStringPrefixDefault);
+        deleteTitle = NSLocalizedString(@"Delete", @"");
     }
     
     return deleteTitle;

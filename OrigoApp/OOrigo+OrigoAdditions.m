@@ -86,6 +86,8 @@ NSString * const kOrigoTypeTeam = @"team";
         }
     }
     
+    [residency.origo resetDefaultResidenceNameIfApplicable];
+    
     return residency;
 }
 
@@ -133,6 +135,20 @@ NSString * const kOrigoTypeTeam = @"team";
     }
     
     return memberships;
+}
+
+
+- (NSSet *)residencies
+{
+    NSMutableSet *residencies = [NSMutableSet set];
+    
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isResidency]) {
+            [residencies addObject:membership];
+        }
+    }
+    
+    return residencies;
 }
 
 
@@ -650,7 +666,26 @@ NSString * const kOrigoTypeTeam = @"team";
 }
 
 
-#pragma mark - Community memberships expiration
+#pragma mark - Miscellaneous
+
+- (void)resetDefaultResidenceNameIfApplicable
+{
+    BOOL applicable = ![self.name hasValue] && [self isOfType:kOrigoTypeResidence];
+    
+    if (!applicable && [self isOfType:kOrigoTypeResidence]) {
+        applicable = applicable || [self.name isEqualToString:NSLocalizedString(@"My place", @"")];
+        applicable = applicable || [self.name isEqualToString:NSLocalizedString(@"Our place", @"")];
+    }
+    
+    if (applicable) {
+        if ([self.residents count] == 1) {
+            self.name = NSLocalizedString(@"My place", @"");
+        } else {
+            self.name = NSLocalizedString(@"Our place", @"");
+        }
+    }
+}
+
 
 - (void)expireCommunityResidence:(id<OOrigo>)residence
 {
@@ -665,8 +700,6 @@ NSString * const kOrigoTypeTeam = @"team";
     }
 }
 
-
-#pragma mark - Type conversion
 
 - (void)convertToType:(NSString *)type
 {

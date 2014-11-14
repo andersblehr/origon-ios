@@ -522,12 +522,7 @@
     
     for (OMembership *residency in [self residencies]) {
         residency.isAdmin = @(![self isJuvenile] || [residency userIsCreator]);
-        
-        OOrigo *residence = residency.origo;
-        
-        if (![residence.name hasValue]) {
-            residence.name = NSLocalizedString(kMappedKeyResidenceName, kStringPrefixDefault);
-        }
+        [residency.origo resetDefaultResidenceNameIfApplicable];
     }
     
     self.settings = [OSettings settings];

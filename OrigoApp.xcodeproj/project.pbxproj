@@ -44,6 +44,7 @@
 		5C83DF81153F59B800BB0B29 /* OOrigo+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C83DF80153F59B800BB0B29 /* OOrigo+OrigoAdditions.m */; };
 		5C8B3AB615813DBB000B19FA /* OMemberViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB515813DBB000B19FA /* OMemberViewController.m */; };
 		5C8B3ABA1582493D000B19FA /* OTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C8B3AB91582493C000B19FA /* OTableViewCell.m */; };
+		5C93392C1A14C4ED008D0DB3 /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C93392B1A14C4ED008D0DB3 /* OOrigo.m */; };
 		5C93DC751628100C009A66C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C93DC741628100C009A66C4 /* Default-568h@2x.png */; };
 		5C98903617F6B8AD00D957F9 /* 730-envelope.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903417F6B8AD00D957F9 /* 730-envelope.png */; };
 		5C98903717F6B8AD00D957F9 /* 730-envelope@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C98903517F6B8AD00D957F9 /* 730-envelope@2x.png */; };
@@ -82,7 +83,6 @@
 		5CCF08FE1465D5D900D41AB0 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CCF08FD1465D5D900D41AB0 /* Reachability.m */; };
 		5CD3360E15C40A2F00ABBFE7 /* OState.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD3360D15C40A2F00ABBFE7 /* OState.m */; };
 		5CD33AD018F5287F00A863F4 /* OSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33ACF18F5287F00A863F4 /* OSettings.m */; };
-		5CD33AD618F5288000A863F4 /* OOrigo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AD518F5288000A863F4 /* OOrigo.m */; };
 		5CD33AD918F5288000A863F4 /* OReplicatedEntityRef.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AD818F5288000A863F4 /* OReplicatedEntityRef.m */; };
 		5CD33AE218F5288100A863F4 /* OMember.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CD33AE118F5288100A863F4 /* OMember.m */; };
 		5CD48F5319CDE8A500ECB761 /* 739-question-selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CD48F5019CDE8A500ECB761 /* 739-question-selected.png */; };
@@ -233,6 +233,8 @@
 		5C8B3AB515813DBB000B19FA /* OMemberViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMemberViewController.m; sourceTree = "<group>"; };
 		5C8B3AB81582493C000B19FA /* OTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTableViewCell.h; sourceTree = "<group>"; };
 		5C8B3AB91582493C000B19FA /* OTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTableViewCell.m; sourceTree = "<group>"; };
+		5C93392A1A14C4ED008D0DB3 /* OOrigo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigo.h; sourceTree = "<group>"; };
+		5C93392B1A14C4ED008D0DB3 /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
 		5C93DC741628100C009A66C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "./Default-568h@2x.png"; sourceTree = "<group>"; };
 		5C98903417F6B8AD00D957F9 /* 730-envelope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "730-envelope.png"; sourceTree = "<group>"; };
 		5C98903517F6B8AD00D957F9 /* 730-envelope@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "730-envelope@2x.png"; sourceTree = "<group>"; };
@@ -297,8 +299,6 @@
 		5CD3360D15C40A2F00ABBFE7 /* OState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OState.m; sourceTree = "<group>"; };
 		5CD33ACE18F5287F00A863F4 /* OSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSettings.h; sourceTree = "<group>"; };
 		5CD33ACF18F5287F00A863F4 /* OSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSettings.m; sourceTree = "<group>"; };
-		5CD33AD418F5288000A863F4 /* OOrigo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OOrigo.h; sourceTree = "<group>"; };
-		5CD33AD518F5288000A863F4 /* OOrigo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OOrigo.m; sourceTree = "<group>"; };
 		5CD33AD718F5288000A863F4 /* OReplicatedEntityRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OReplicatedEntityRef.h; sourceTree = "<group>"; };
 		5CD33AD818F5288000A863F4 /* OReplicatedEntityRef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OReplicatedEntityRef.m; sourceTree = "<group>"; };
 		5CD33AE018F5288100A863F4 /* OMember.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMember.h; sourceTree = "<group>"; };
@@ -478,8 +478,8 @@
 				5CC1870119B9F5D200B6F02A /* OMembership.m */,
 				5CD33AE018F5288100A863F4 /* OMember.h */,
 				5CD33AE118F5288100A863F4 /* OMember.m */,
-				5CD33AD418F5288000A863F4 /* OOrigo.h */,
-				5CD33AD518F5288000A863F4 /* OOrigo.m */,
+				5C93392A1A14C4ED008D0DB3 /* OOrigo.h */,
+				5C93392B1A14C4ED008D0DB3 /* OOrigo.m */,
 				5CC307D219E97EEE00373980 /* OReplicatedEntity.h */,
 				5CC307D319E97EEE00373980 /* OReplicatedEntity.m */,
 				5CD33AD718F5288000A863F4 /* OReplicatedEntityRef.h */,
@@ -938,7 +938,6 @@
 				5C7513A719B719360071FD34 /* ODevice.m in Sources */,
 				5C2E11141469CDE5005BDE61 /* OConnection.m in Sources */,
 				5C36BE8A146E9DA100DD3CEA /* OMeta.m in Sources */,
-				5CD33AD618F5288000A863F4 /* OOrigo.m in Sources */,
 				5C7EDE3418DB2450003AFFAF /* OOrigoProxy.m in Sources */,
 				5C36BE9C1470507700DD3CEA /* OrigoApp.xcdatamodeld in Sources */,
 				5C23431214812A3100164478 /* OConstants.m in Sources */,
@@ -962,6 +961,7 @@
 				5CA94D9F15836BD9008CD9EC /* NSDate+OrigoAdditions.m in Sources */,
 				5C26291E158F27860012A74A /* OAuthViewController.m in Sources */,
 				5C7379FD1593111B0065AB4F /* OTextField.m in Sources */,
+				5C93392C1A14C4ED008D0DB3 /* OOrigo.m in Sources */,
 				5CBE91A31599823000516C54 /* UIFont+OrigoAdditions.m in Sources */,
 				5CDE11B319FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.m in Sources */,
 				5CC307D419E97EEE00373980 /* OReplicatedEntity.m in Sources */,

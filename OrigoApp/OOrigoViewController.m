@@ -66,9 +66,9 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     if (_membership && ![_membership isActive] && ([_member isUser] || [_member isWardOfUser])) {
         [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptRejectButtonWithTarget:self]];
         
-        if (_membership.status == kMembershipStatusInvited) {
+        if ([_membership.status isEqualToString:kMembershipStatusInvited]) {
             _membership.status = kMembershipStatusWaiting;
-        } else if (_membership.status == kMembershipStatusWaiting) {
+        } else if ([_membership.status isEqualToString:kMembershipStatusWaiting]) {
             _membership.status = kMembershipStatusActive;
         }
         
@@ -516,7 +516,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 {
     NSString *footerText = nil;
     
-    if ([self aspectIs:kAspectJuvenile]) {
+    if ([_origo isOfType:kOrigoTypeResidence] && [self aspectIs:kAspectJuvenile]) {
         footerText = NSLocalizedString(@"Tap [+] to register additional guardians in the household.", @"");
     } else {
         footerText = NSLocalizedString(_origo.type, kStringPrefixFooter);
@@ -553,16 +553,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     }
     
     return result;
-}
-
-
-- (void)willDisplayInputCell:(OTableViewCell *)inputCell
-{
-    if ([self actionIs:kActionRegister] && [_origo isOfType:kOrigoTypeResidence]) {
-        if ([_member isUser] && ![_member hasAddress]) {
-            [[inputCell inputFieldForKey:kMappedKeyResidenceName] setValue:NSLocalizedString(kMappedKeyResidenceName, kStringPrefixDefault)];
-        }
-    }
 }
 
 

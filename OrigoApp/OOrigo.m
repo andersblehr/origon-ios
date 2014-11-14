@@ -2,13 +2,12 @@
 //  OOrigo.m
 //  OrigoApp
 //
-//  Created by Anders Blehr on 09.04.14.
+//  Created by Anders Blehr on 13/11/14.
 //  Copyright (c) 2014 Rhelba Source. All rights reserved.
 //
 
 #import "OOrigo.h"
 #import "OMembership.h"
-#import "OOrigo.h"
 
 
 @implementation OOrigo
@@ -22,7 +21,5 @@
 @dynamic telephone;
 @dynamic type;
 @dynamic memberships;
-@dynamic parentOrigo;
-@dynamic subOrigos;
 
 @end
