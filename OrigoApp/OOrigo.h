@@ -2,7 +2,7 @@
 //  OOrigo.h
 //  OrigoApp
 //
-//  Created by Anders Blehr on 09.04.14.
+//  Created by Anders Blehr on 13/11/14.
 //  Copyright (c) 2014 Rhelba Source. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 #import "OReplicatedEntity.h"
 
-@class OMembership, OOrigo;
+@class OMembership;
 
 @interface OOrigo : OReplicatedEntity
 
@@ -23,8 +23,6 @@
 @property (nonatomic, retain) NSString * telephone;
 @property (nonatomic, retain) NSString * type;
 @property (nonatomic, retain) NSSet *memberships;
-@property (nonatomic, retain) OOrigo *parentOrigo;
-@property (nonatomic, retain) NSSet *subOrigos;
 @end
 
 @interface OOrigo (CoreDataGeneratedAccessors)
@@ -33,10 +31,5 @@
 - (void)removeMembershipsObject:(OMembership *)value;
 - (void)addMemberships:(NSSet *)values;
 - (void)removeMemberships:(NSSet *)values;
-
-- (void)addSubOrigosObject:(OOrigo *)value;
-- (void)removeSubOrigosObject:(OOrigo *)value;
-- (void)addSubOrigos:(NSSet *)values;
-- (void)removeSubOrigos:(NSSet *)values;
 
 @end

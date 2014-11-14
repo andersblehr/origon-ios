@@ -86,9 +86,6 @@ extern NSString * const kExternalKeyPassword;
 extern NSString * const kExternalKeyRepeatPassword;
 extern NSString * const kExternalKeySignIn;
 
-// Button keys
-extern NSString * const kButtonKeyDeleteRow;
-
 // String key prefixes
 extern NSString * const kStringPrefixDefault;
 extern NSString * const kStringPrefixLabel;

@@ -115,7 +115,9 @@
         for (NSURL *dirtyEntityURI in dirtyEntityURIs) {
             NSManagedObjectID *dirtyEntityID = [[OMeta m].context.persistentStoreCoordinator managedObjectIDForURIRepresentation:dirtyEntityURI];
             
-            [_dirtyEntities addObject:[[OMeta m].context objectWithID:dirtyEntityID]];
+            if (dirtyEntityID) {
+                [_dirtyEntities addObject:[[OMeta m].context objectWithID:dirtyEntityID]];
+            }
         }
         
         [ODefaults removeUserDefaultForKey:kDefaultsKeyDirtyEntities];

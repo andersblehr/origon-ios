@@ -34,6 +34,8 @@ extern NSString * const kOrigoTypeTeam;
 - (NSComparisonResult)compare:(id<OOrigo>)other;
 
 - (NSSet *)allMemberships;
+- (NSSet *)residencies;
+
 - (NSArray *)residents;
 - (NSArray *)members;
 - (NSArray *)regulars;
@@ -83,6 +85,7 @@ extern NSString * const kOrigoTypeTeam;
 - (NSString *)singleLineAddress;
 - (NSString *)shortAddress;
 
+- (void)resetDefaultResidenceNameIfApplicable;
 - (void)expireCommunityResidence:(id<OOrigo>)residence;
 - (void)convertToType:(NSString *)type;
 

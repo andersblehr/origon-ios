@@ -86,9 +86,6 @@ NSString * const kExternalKeyPassword = @"password";
 NSString * const kExternalKeyRepeatPassword = @"repeatPassword";
 NSString * const kExternalKeySignIn = @"signIn";
 
-// Button keys
-NSString * const kButtonKeyDeleteRow = @"deleteRow";
-
 // String key prefixes
 NSString * const kStringPrefixDefault = @"[default]";
 NSString * const kStringPrefixLabel = @"[label]";

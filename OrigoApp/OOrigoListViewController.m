@@ -186,7 +186,7 @@ static NSInteger const kSectionKeyWards = 2;
         } else {
             cell.textLabel.text = origo.name;
         
-            if (membership.status == kMembershipStatusInvited) {
+            if ([membership.status isEqualToString:kMembershipStatusInvited]) {
                 cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
                 cell.detailTextLabel.textColor = [UIColor notificationTextColour];
             } else {

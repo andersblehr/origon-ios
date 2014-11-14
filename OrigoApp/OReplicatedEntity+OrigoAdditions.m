@@ -156,7 +156,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 - (BOOL)isTransient
 {
-    return [self isKindOfClass:[OReplicatedEntityRef class]] || [self hasExpired];
+    return [self hasExpired];
 }
 
 

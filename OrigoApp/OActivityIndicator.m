@@ -18,9 +18,7 @@ static CGFloat const kHUDCornerRadius = 5.f;
 
 - (instancetype)init
 {
-    UIViewController *viewController = (UIViewController *)[OState s].viewController;
-    
-    self = [super initWithFrame:viewController.view.window.frame];
+    self = [super initWithFrame:[UIScreen mainScreen].bounds];
     
     if (self) {
         self.backgroundColor = [UIColor dimmedViewColour];
@@ -34,7 +32,6 @@ static CGFloat const kHUDCornerRadius = 5.f;
         activityView.color = [UIColor darkGrayColor];
         [activityView startAnimating];
         
-        [viewController.view.window addSubview:self];
         [self addSubview:HUDView];
         [self addSubview:activityView];
         
@@ -50,6 +47,8 @@ static CGFloat const kHUDCornerRadius = 5.f;
 
 - (void)startAnimating
 {
+    [[OMeta m].appDelegate.window addSubview:self];
+    
     if (self.alpha == 0.f) {
         [UIView animateWithDuration:kFadeAnimationDuration animations:^{
             self.alpha = 1.f;

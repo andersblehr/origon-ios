@@ -64,10 +64,6 @@
 "[placeholder] telephone" = "Telefonnummer";
 "[placeholder] institution" = "Universitetets eller skolens navn";
 
-// Defaults
-"[default] deleteRow" = "Slett";
-"[default] residenceName" = "Min husstand";
-
 
 /***
  * Origo type derived strings
@@ -268,6 +264,7 @@
 "Next" = "Neste";
 "Done" = "Ferdig";
 "Use" = "Bruk";
+"Delete" = "Slett";
 "Continue" = "Fortsett";
 "Skip" = "Hopp over";
 "Cancel" = "Avbryt";
@@ -380,6 +377,11 @@
 
 // Prompts
 "Do you want to keep this listing?" = "Vil du beholde denne oppføringen?";
+
+
+// Defaults
+"My place" = "Min husstand";
+"Our place" = "Vår husstand";
 
 
 /***
