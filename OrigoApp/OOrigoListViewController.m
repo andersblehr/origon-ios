@@ -11,7 +11,10 @@
 static NSInteger const kActionSheetTagEditParents = 0;
 static NSInteger const kButtonTagEditParentsYes = 0;
 
-static NSInteger const kActionSheetTagOrigoType = 1;
+static NSInteger const kActionSheetTagNewOrigoParticipant = 1;
+static NSInteger const kButtonTagNewOrigoParticipantUser = 0;
+
+static NSInteger const kActionSheetTagOrigoType = 2;
 
 static NSInteger const kSectionKeyHouseholds = 0;
 static NSInteger const kSectionKeyOrigos = 1;
@@ -22,8 +25,10 @@ static NSInteger const kSectionKeyWards = 2;
 @private
     id<OMember> _member;
     
-    BOOL _needsEditParents;
+    NSArray *_wards;
     NSMutableArray *_origoTypes;
+    
+    BOOL _needsEditParents;
 }
 
 @end
@@ -35,6 +40,8 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)assembleOrigoTypes
 {
+    _origoTypes = [NSMutableArray array];
+    
     if ([_member isJuvenile]) {
         if (![_member isOlderThan:kAgeThresholdInSchool]) {
             [_origoTypes addObject:kOrigoTypePreschoolClass];
@@ -55,19 +62,13 @@ static NSInteger const kSectionKeyWards = 2;
 }
 
 
-#pragma mark - Selector implementations
-
-- (void)openSettings
+- (void)presentAddOrigoSheet
 {
-    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetSettings];
-}
-
-
-- (void)performAddAction
-{
-    NSString *prompt = NSLocalizedString(@"What sort of group du you want to create", @"");
+    [self assembleOrigoTypes];
     
-    if ([self targetIs:kTargetWard]) {
+    NSString *prompt = NSLocalizedString(@"What sort of list du you want to create", @"");
+    
+    if ([_member isWardOfUser]) {
         prompt = [prompt stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"for %@", @""), [_member givenName]] separator:kSeparatorSpace];
     }
     
@@ -78,6 +79,39 @@ static NSInteger const kSectionKeyWards = 2;
     }
     
     [actionSheet show];
+}
+
+
+#pragma mark - Selector implementations
+
+- (void)didSelectHeaderSegment
+{
+    self.selectedHeaderSegment = self.segmentedHeader.selectedSegmentIndex;
+    
+    [self reloadSectionWithKey:kSectionKeyWards];
+}
+
+
+- (void)openSettings
+{
+    [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetSettings];
+}
+
+
+- (void)performAddAction
+{
+    if ([_wards count]) {
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who will be included in the new list?", @"") delegate:self tag:kActionSheetTagNewOrigoParticipant];
+        [actionSheet addButtonWithTitle:[[OLanguage pronouns][_you_][nominative] stringByCapitalisingFirstLetter] tag:kButtonTagNewOrigoParticipantUser];
+        
+        for (id<OMember> ward in _wards) {
+            [actionSheet addButtonWithTitle:[ward givenName]];
+        }
+        
+        [actionSheet show];
+    } else {
+        [self presentAddOrigoSheet];
+    }
 }
 
 
@@ -113,22 +147,13 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)loadState
 {
-    _member = [self.entity proxy];
-    _origoTypes = [NSMutableArray array];
-    
     self.title = [OMeta m].appName;
-    [self setSubtitle:_member.name];
+    [self setSubtitle:[OMeta m].user.name];
     
-    if ([_member isUser]) {
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
-    } else {
-        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_member givenName]];
-    }
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
     
     if ([[OMeta m].user isTeenOrOlder]) {
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
-
-        [self assembleOrigoTypes];
     }
 }
 
@@ -136,12 +161,11 @@ static NSInteger const kSectionKeyWards = 2;
 - (void)loadData
 {
     if (_member) {
-        if ([_member isUser]) {
-            [self setData:[_member residences] forSectionWithKey:kSectionKeyHouseholds];
-            [self setData:[_member wards] forSectionWithKey:kSectionKeyWards];
-        }
+        _wards = [[OMeta m].user wards];
         
-        [self setData:[_member origos] forSectionWithKey:kSectionKeyOrigos];
+        [self setData:[[OMeta m].user residences] forSectionWithKey:kSectionKeyHouseholds];
+        [self setData:[_wards[self.selectedHeaderSegment] origos] forSectionWithKey:kSectionKeyWards];
+        [self setData:[[OMeta m].user origos] forSectionWithKey:kSectionKeyOrigos];
     }
 }
 
@@ -149,57 +173,39 @@ static NSInteger const kSectionKeyWards = 2;
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
-    id entity = [self dataAtIndexPath:indexPath];
     
-    if (sectionKey == kSectionKeyWards) {
-        id<OMember> ward = entity;
-        
-        cell.textLabel.text = [ward givenName];
-        [cell loadImageForMember:ward];
-        cell.destinationId = kIdentifierOrigoList;
-        
-        NSArray *origos = [ward origos];
-        
-        if ([origos count]) {
-            NSMutableArray *origoNames = [NSMutableArray array];
-            
-            for (id<OOrigo> origo in origos) {
-                [origoNames addObject:origo.name];
-            }
-            
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:origoNames conjoin:NO];
-            cell.detailTextLabel.textColor = [UIColor textColour];
-        } else {
-            cell.detailTextLabel.text = NSLocalizedString(@"(No groups)", @"");
-            cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
-        }
+    id<OOrigo> origo = [self dataAtIndexPath:indexPath];
+    id<OMember> member = sectionKey == kSectionKeyWards ? _wards[self.selectedHeaderSegment] : [OMeta m].user;
+    id<OMembership> membership = [origo membershipForMember:member];
+    
+    cell.textLabel.text = origo.name;
+    [cell loadImageForOrigo:origo];
+    cell.destinationId = kIdentifierOrigo;
+    
+    BOOL userIsOrigoElder = [origo userIsOrganiser] || [origo userIsParentContact];
+    
+    if (userIsOrigoElder && sectionKey == kSectionKeyOrigos) {
+        cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
     } else {
-        id<OOrigo> origo = entity;
-        id<OMembership> membership = [origo membershipForMember:_member];
-        
-        [cell loadImageForOrigo:origo];
-        cell.destinationId = kIdentifierOrigo;
-        
-        if ([_member isUser] && ([origo userIsOrganiser] || [origo userIsParentContact])) {
-            cell.textLabel.text = [NSString stringWithFormat:@"%@, %@", origo.name, origo.descriptionText];
-            cell.detailTextLabel.text = [[OUtil commaSeparatedListOfStrings:[membership roles] conjoin:NO conditionallyLowercase:YES] stringByCapitalisingFirstLetter];
+        if ([membership.status isEqualToString:kMembershipStatusInvited]) {
+            cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
+            cell.detailTextLabel.textColor = [UIColor notificationTextColour];
         } else {
-            cell.textLabel.text = origo.name;
-        
-            if ([membership.status isEqualToString:kMembershipStatusInvited]) {
-                cell.detailTextLabel.text = NSLocalizedString(@"New listing", @"");
-                cell.detailTextLabel.textColor = [UIColor notificationTextColour];
+            if ([origo isOfType:kOrigoTypeResidence]) {
+                cell.detailTextLabel.text = [origo singleLineAddress];
             } else {
-                if ([origo isOfType:kOrigoTypeResidence]) {
-                    cell.detailTextLabel.text = [origo singleLineAddress];
-                } else {
-                    cell.detailTextLabel.text = origo.descriptionText;
-                }
-                
-                cell.detailTextLabel.textColor = [UIColor textColour];
+                cell.detailTextLabel.text = origo.descriptionText;
             }
+            
+            cell.detailTextLabel.textColor = [UIColor textColour];
         }
     }
+}
+
+
+- (void)didSetEntity:(id)entity
+{
+    _member = entity;
 }
 
 
@@ -211,15 +217,35 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (id)headerContentForSectionWithKey:(NSInteger)sectionKey
 {
-    NSString *text = nil;
+    id headerContent = nil;
     
     if (sectionKey == kSectionKeyWards) {
-        text = NSLocalizedString(@"The kids' groups", @"");
+        if ([_wards count] > 1) {
+            NSMutableArray *wardGivenNames = [NSMutableArray array];
+            
+            for (id<OMember> ward in _wards) {
+                [wardGivenNames addObject:[ward givenName]];
+            }
+            
+            headerContent = wardGivenNames;
+        } else {
+            headerContent = [_wards[0] givenName];
+        }
     } else if (sectionKey == kSectionKeyOrigos) {
-        text = [[OLanguage possessiveClauseWithPossessor:_member noun:_group_] stringByCapitalisingFirstLetter];
+        headerContent = NSLocalizedString(@"My lists", @"");
     }
     
-    return text;
+    return headerContent;
+}
+
+
+- (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyWards) {
+        self.target = _wards[self.selectedHeaderSegment];
+    } else if (self.target != [OMeta m].user) {
+        self.target = [OMeta m].user;
+    }
 }
 
 
@@ -227,7 +253,7 @@ static NSInteger const kSectionKeyWards = 2;
 {
     BOOL canDelete = NO;
     
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyOrigos) {
+    if ([self sectionKeyForIndexPath:indexPath] != kSectionKeyHouseholds) {
         id<OOrigo> origo = [self dataAtIndexPath:indexPath];
         
         if ([origo userCanEdit]) {
@@ -253,16 +279,52 @@ static NSInteger const kSectionKeyWards = 2;
 
 #pragma mark - UIActionSheetDelegate conformance
 
+- (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex != actionSheet.cancelButtonIndex) {
+        NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+        
+        switch (actionSheet.tag) {
+            case kActionSheetTagNewOrigoParticipant:
+                if (buttonTag == kButtonTagNewOrigoParticipantUser) {
+                    self.target = [OMeta m].user;
+                } else {
+                    NSInteger selectedWardIndex = buttonIndex - 1;
+                    
+                    if ([_wards count] > 1 && self.selectedHeaderSegment != selectedWardIndex) {
+                        self.selectedHeaderSegment = selectedWardIndex;
+                        [self reloadSectionWithKey:kSectionKeyWards];
+                    }
+                    
+                    self.target = _wards[selectedWardIndex];
+                }
+                
+                break;
+                
+            default:
+                break;
+        }
+    }
+}
+
+
 - (void)actionSheet:(OActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex < actionSheet.cancelButtonIndex) {
+    if (buttonIndex != actionSheet.cancelButtonIndex) {
+        NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
+        
         switch (actionSheet.tag) {
             case kActionSheetTagEditParents:
-                if ([actionSheet tagForButtonIndex:buttonIndex] == kButtonTagEditParentsYes) {
+                if (buttonTag == kButtonTagEditParentsYes) {
                     [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetParents];
                 }
                 
                 _needsEditParents = NO;
+                
+                break;
+                
+            case kActionSheetTagNewOrigoParticipant:
+                [self presentAddOrigoSheet];
                 
                 break;
                 

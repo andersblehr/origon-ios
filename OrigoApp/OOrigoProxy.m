@@ -153,7 +153,7 @@ static NSString * const kAddressTemplatesByCountryCode =
                     [members addObject:membership.member];
                 }
             }
-        } else {
+        } else if (![self isOfType:kOrigoTypeFriends]) {
             [members addObject:[self ancestorConformingToProtocol:@protocol(OMember)]];
         }
         

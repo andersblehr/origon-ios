@@ -105,8 +105,10 @@ static NSInteger const kSectionKeyAdmins = 2;
         if ([origo isOfType:kOrigoTypeResidence]) {
             self.title = NSLocalizedString(@"About this household", @"");
         } else {
-            self.title = NSLocalizedString(@"About this group", @"");
+            self.title = NSLocalizedString(@"About this list", @"");
         }
+        
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"About", @"")];
     } else if ([_entity conformsToProtocol:@protocol(OMember)]) {
         id<OMember> member = _entity;
         
@@ -125,7 +127,7 @@ static NSInteger const kSectionKeyAdmins = 2;
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
         
-        if (![origo isOfType:kOrigoTypeResidence] || [self aspectIs:kAspectHousehold]) {
+        if (![origo isOfType:@[kOrigoTypeFriends, kOrigoTypeResidence]]) {
             if ([origo userCanEdit]) {
                 [self setData:@[[[OLanguage nouns][_administrator_][singularIndefinite] stringByCapitalisingFirstLetter]] forSectionWithKey:kSectionKeyAdmins];
             } else {

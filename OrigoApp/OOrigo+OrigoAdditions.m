@@ -193,10 +193,20 @@ NSString * const kOrigoTypeTeam = @"team";
     NSMutableSet *members = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
-        BOOL isCommunityMembership = [self isOfType:kOrigoTypeCommunity] && ![membership.member isJuvenile];
+        OMember *member = membership.member;
         
-        if ([membership isFull] || isCommunityMembership) {
-            [members addObject:membership.member];
+        if ([self isOfType:kOrigoTypeFriends]) {
+            if ([membership isFull] && member != [OState s].currentMember) {
+                [members addObject:member];
+            }
+        } else if ([self isOfType:kOrigoTypeCommunity]) {
+            if (![member isJuvenile]) {
+                [members addObject:member];
+            }
+        } else {
+            if ([membership isFull]) {
+                [members addObject:member];
+            }
         }
     }
     

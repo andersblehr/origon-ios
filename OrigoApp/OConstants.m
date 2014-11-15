@@ -117,6 +117,7 @@ NSString * const kIconFileSettings = @"740-gear-toolbar.png";
 NSString * const kIconFile_iPad = @"693-ipad.png";
 NSString * const kIconFile_iPhone = @"692-iphone-5.png";
 NSString * const kIconFile_iPodTouch = @"ro-ipod-touch-5.png";
+NSString * const kIconFileList = @"ro-854-list.png";
 NSString * const kIconFileHousehold = @"750-home-toolbar-selected.png";
 NSString * const kIconFileMan = @"769-male-toolbar.png";
 NSString * const kIconFileWoman = @"768-female-toolbar.png";

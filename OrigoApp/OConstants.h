@@ -117,6 +117,7 @@ extern NSString * const kIconFileSettings;
 extern NSString * const kIconFile_iPad;
 extern NSString * const kIconFile_iPhone;
 extern NSString * const kIconFile_iPodTouch;
+extern NSString * const kIconFileList;
 extern NSString * const kIconFileHousehold;
 extern NSString * const kIconFileMan;
 extern NSString * const kIconFileWoman;

@@ -56,7 +56,7 @@ static NSString * const kURLParameterVersion = @"version";
 static NSString * const kURLParameterIdentifier = @"id";
 
 
-@interface OConnection () <NSURLConnectionDataDelegate, NSURLConnectionDelegate> {
+@interface OConnection () <NSURLConnectionDataDelegate> {
 @private
     BOOL _requestIsValid;
     

@@ -844,7 +844,7 @@ static NSInteger const kButtonIndexContinue = 1;
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagSource];
         
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from Contacts", @"") tag:kButtonTagSourceAddressBook];
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from other group", @"") tag:kButtonTagSourceGroups];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Retrieve from other list", @"") tag:kButtonTagSourceGroups];
         
         [actionSheet show];
     } else {

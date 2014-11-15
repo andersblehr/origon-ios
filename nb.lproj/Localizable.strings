@@ -73,7 +73,7 @@
 "[title] alumni" = "Alumnigruppe";
 "[title] community" = "Lokalsamfunn";
 "[title] friends" = "Privat venneliste";
-"[title] general" = "Bare en gruppe";
+"[title] general" = "Bare en liste";
 "[title] organisation" = "Organisasjon";
 "[title] preschoolClass" = "Barnehageavdeling";
 "[title] residence" = "Husstand";
@@ -84,8 +84,8 @@
 // Registration titles
 "[registration title] alumni" = "Ny alumnigruppe";
 "[registration title] community" = "Nytt lokalsamfunn";
-"[registration title] friends" = "Ny venneliste";
-"[registration title] general" = "Ny gruppe";
+"[registration title] friends" = "Ny privat liste";
+"[registration title] general" = "Ny liste";
 "[registration title] organisation" = "Ny organisasjon";
 "[registration title] preschoolClass" = "Ny barnehageavdeling";
 "[registration title] residence" = "Ny adresse";
@@ -234,7 +234,6 @@
 "administrator" = "administrator;-;administratorer;-;-;-";
 "coach" = "trener;-;trenere;-;-;-";
 "father" = "far;faren;-;-;faren din;faren til %@";
-"group" = "gruppe;-;-;-;mine grupper;%@ sine grupper";
 "guardian" = "foresatt;-;foresatte;-;-;-";
 "household" = "husstand;husstanden;-;-;-;-";
 "lecturer" = "foreleser;-;forelesere;-;-;-";
@@ -333,7 +332,7 @@
  ***/
 
 // Headers
-"The kids' groups" = "Barnas grupper";
+"My lists" = "Mine lister";
 
 // Alerts
 "Welcome to Origo" = "Velkommen til Origo";
@@ -343,11 +342,11 @@
 
 // Prompts
 "Your household includes minors. Would you like to provide parent relations?" = "Husstanden din omfatter mindreårige. Vil du angi foreldrerelasjoner?";
-"What sort of group du you want to create" = "Hva slags gruppe ønsker du å opprette";
+"Who will be included in the new list?" = "Hvem skal være med i den nye lista?";
+"What sort of list du you want to create" = "Hva slags liste ønsker du å opprette";
 
 // Info
 "New listing" = "Ny oppføring";
-"(No groups)" = "(Ingen grupper)";
 
 
 /***
@@ -367,7 +366,7 @@
 "Decline" = "Avvis";
 "Hide" = "Skjul";
 "Edit responsibilities" = "Rediger ansvarsområder";
-"Register from other group" = "Registrer fra annen gruppe";
+"Register from other list" = "Registrer fra annen liste";
 "Register parent contact" = "Registrer foreldrekontakt";
 "Show in map" = "Vis på kart";
 "About %@" = "Om %@";
@@ -410,7 +409,7 @@
 "All guardians" = "Alle foresatte";
 "All contacts" = "Alle kontaktpersoner";
 "Retrieve from Contacts"   = "Hent fra Kontakter";
-"Retrieve from other group" = "Hent fra annen gruppe";
+"Retrieve from other list" = "Hent fra annen liste";
 "A different number" = "Et annet nummer";
 "A different address" = "En annen adresse";
 "Edit responsibility" = "Rediger ansvarsområde";
@@ -470,8 +469,8 @@
 // View titles
 "Settings" = "Innstillinger";
 "Responsibilities" = "Ansvarsområder";
-"Subgroups" = "Undergrupper";
-"Edit subgroups" = "Rediger undergrupper";
+"Groups" = "Grupper";
+"Edit groups" = "Rediger grupper";
 
 // List titles
 "[setting list label] devices" = "Registrerte enheter";
@@ -505,18 +504,21 @@
  ***/
 
 // View titles
-"About this group" = "Om denne gruppa";
+"About this list" = "Om denne lista";
 "About this household" = "Om denne husstanden";
-
-// Labels
-"Active" = "Aktiv";
-"Through household" = "Gjennom husstand";
 
 // Footers
 "Created: %@." = "Opprettet: %@.";
 "Registered: %@." = "Registrert: %@.";
 "Last modified: %@." = "Sist endret: %@.";
 "Active since: %@" = "Aktiv siden: %@";
+
+// Buttons
+"About" = "Om";
+
+// Labels
+"Active" = "Aktiv";
+"Through household" = "Gjennom husstand";
 
 
 /***
