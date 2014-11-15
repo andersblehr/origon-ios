@@ -20,6 +20,7 @@
 
 @optional
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
+- (void)didSetEntity:(id)entity;
 
 - (id)defaultTarget;
 - (id)destinationTargetForIndexPath:(NSIndexPath *)indexPath;

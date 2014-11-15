@@ -232,7 +232,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         _eligibleCandidates = [self.state eligibleCandidates];
         
         if ([_eligibleCandidates count]) {
-            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register from other group", @"") tag:kButtonTagAddFromGroups];
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Register from other list", @"") tag:kButtonTagAddFromGroups];
         }
         
         if ([_origo isOrganised]) {

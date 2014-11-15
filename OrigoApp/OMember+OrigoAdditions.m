@@ -297,7 +297,18 @@
 
 - (NSArray *)origos
 {
-    return [self origosIncludeResidences:NO];
+    NSMutableArray *friendLists = [NSMutableArray array];
+    NSMutableArray *origos = [NSMutableArray array];
+    
+    for (OOrigo *origo in [self origosIncludeResidences:NO]) {
+        if ([origo isOfType:kOrigoTypeFriends]) {
+            [friendLists addObject:origo];
+        } else {
+            [origos addObject:origo];
+        }
+    }
+    
+    return [friendLists arrayByAddingObjectsFromArray:origos];
 }
 
 

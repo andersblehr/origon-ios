@@ -136,7 +136,9 @@
 
 - (void)loadImageForOrigo:(id<OOrigo>)origo
 {
-    if ([origo isOfType:kOrigoTypeResidence]) {
+    if ([origo isOfType:kOrigoTypeFriends]) {
+        self.imageView.image = [UIImage imageNamed:kIconFileList];
+    } else if ([origo isOfType:kOrigoTypeResidence]) {
         self.imageView.image = [UIImage imageNamed:kIconFileHousehold];
     } else {
         self.imageView.image = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?

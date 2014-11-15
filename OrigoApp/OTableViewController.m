@@ -1231,6 +1231,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         if (_entity) {
             _target = _entity;
             _entity.ancestor = ancestor;
+            
+            if ([self respondsToSelector:@selector(didSetEntity:)]) {
+                [self didSetEntity:_entity];
+            }
         }
         
         if (_state) {
@@ -1560,6 +1564,10 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 {
     OTableViewCell *cell = (OTableViewCell *)[_tableView cellForRowAtIndexPath:indexPath];
     
+    if ([_instance respondsToSelector:@selector(didSelectCell:atIndexPath:)]) {
+        [_instance didSelectCell:cell atIndexPath:indexPath];
+    }
+    
     if (cell.destinationId) {
         if (![self actionIs:kActionInput] || cell.selectableDuringInput) {
             id target = nil;
@@ -1587,10 +1595,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             cell.selected = NO;
         }
     } else if (cell.selectable) {
-        if ([_instance respondsToSelector:@selector(didSelectCell:atIndexPath:)]) {
-            [_instance didSelectCell:cell atIndexPath:indexPath];
-        }
-        
         _selectedIndexPath = indexPath;
     }
 }

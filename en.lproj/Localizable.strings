@@ -73,7 +73,7 @@
 "[title] alumni" = "Alumni group";
 "[title] community" = "Local community";
 "[title] friends" = "Private list of friends";
-"[title] general" = "Just a group";
+"[title] general" = "Just a list";
 "[title] organisation" = "Organisation";
 "[title] preschoolClass" = "Preschool class";
 "[title] residence" = "Household";
@@ -84,8 +84,8 @@
 // Registration titles
 "[registration title] alumni" = "New alumni group";
 "[registration title] community" = "New local community";
-"[registration title] friends" = "New list";
-"[registration title] general" = "New group";
+"[registration title] friends" = "New private list";
+"[registration title] general" = "New list";
 "[registration title] organisation" = "New organisation";
 "[registration title] preschoolClass" = "New preschool class";
 "[registration title] residence" = "New address";
@@ -234,7 +234,6 @@
 "administrator" = "administrator;-;administrators;-;-;-";
 "coach" = "coach;-;coaches;-;-;-";
 "father" = "father;the father;-;-;your father;%@'s father";
-"group" = "group;-;-;-;my groups;%@'s groups";
 "guardian" = "guardian;-;guardians;-;-;-";
 "household" = "household;the household;-;-;-;-";
 "lecturer" = "lecturer;-;lecturers;-;-;-";
@@ -334,7 +333,7 @@
  ***/
 
 // Headers
-"The kids' groups" = "The kids' groups";
+"My lists" = "My lists";
 
 // Alerts
 "Welcome to Origo" = "Welcome to Origo";
@@ -344,11 +343,11 @@
 
 // Prompts
 "Your household includes minors. Would you like to provide parent relations?" = "Your household includes minors. Would you like to provide parent relations?";
-"What sort of group du you want to create" = "What sort of group du you want to create";
+"Who will be included in the new list?" = "Who will be included in the new list?";
+"What sort of list du you want to create" = "What sort of list du you want to create";
 
 // Info
 "New listing" = "New listing";
-"(No groups)" = "(No groups)";
 
 
 /***
@@ -368,7 +367,7 @@
 "Decline" = "Decline";
 "Hide" = "Hide";
 "Edit responsibilities" = "Edit responsibilities";
-"Register from other group" = "Register from other group";
+"Register from other list" = "Register from other list";
 "Register parent contact" = "Register parent contact";
 "Show in map" = "Show in map";
 "About %@" = "About %@";
@@ -410,7 +409,7 @@
 "All contacts" = "All contacts";
 "All guardians" = "All guardians";
 "Retrieve from Contacts"   = "Retrieve from Contacts";
-"Retrieve from other group" = "Retrieve from other group";
+"Retrieve from other list" = "Retrieve from other list";
 "A different number" = "A different number";
 "A different address" = "A different address";
 "Edit responsibility" = "Edit responsibility";
@@ -470,8 +469,8 @@
 // View titles
 "Settings" = "Settings";
 "Responsibilities" = "Responsibilities";
-"Subgroups" = "Subgroups";
-"Edit subgroups" = "Edit subgroups";
+"Groups" = "Groups";
+"Edit groups" = "Edit groups";
 
 // List titles
 "[setting list label] devices" = "Registered devices";
@@ -505,18 +504,21 @@
  ***/
 
 // View titles
-"About this group" = "About this group";
+"About this list" = "About this list";
 "About this household" = "About this household";
-
-// Labels
-"Active" = "Active";
-"Through household" = "Through household";
 
 // Footers
 "Created: %@." = "Created: %@.";
 "Registered: %@." = "Registered: %@.";
 "Last modified: %@." = "Last modified: %@.";
 "Active since: %@" = "Active since: %@";
+
+// Buttons
+"About" = "About";
+
+// Labels
+"Active" = "Active";
+"Through household" = "Through household";
 
 
 /***

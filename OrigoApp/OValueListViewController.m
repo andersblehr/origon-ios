@@ -214,15 +214,15 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         
         if ([self aspectIs:kAspectEditable]) {
             if ([[_origo groups] count]) {
-                self.title = NSLocalizedString(@"Edit subgroups", @"");
-                self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"Subgroups", @"")];
+                self.title = NSLocalizedString(@"Edit groups", @"");
+                self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(@"Groups", @"")];
             } else {
-                self.title = NSLocalizedString(@"Subgroups", @"");
+                self.title = NSLocalizedString(@"Groups", @"");
             }
             
             self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
         } else {
-            self.title = NSLocalizedString(@"Subgroups", @"");
+            self.title = NSLocalizedString(@"Groups", @"");
             
             NSArray *groups = [_origo groups];
             
