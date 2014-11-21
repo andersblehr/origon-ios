@@ -94,7 +94,6 @@ extern NSString * const kStringPrefixSettingLabel;
 extern NSString * const kStringPrefixSettingListLabel;
 extern NSString * const kStringPrefixPlaceholder;
 extern NSString * const kStringPrefixOrigoTitle;
-extern NSString * const kStringPrefixNewOrigoTitle;
 extern NSString * const kStringPrefixFooter;
 extern NSString * const kStringPrefixAddMemberButton;
 extern NSString * const kStringPrefixMemberTitle;

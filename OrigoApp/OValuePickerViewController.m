@@ -87,7 +87,9 @@ static NSInteger const kSectionKeyValues = 0;
         self.usesSectionIndexTitles = YES;
         
         if ([self targetIs:kTargetMembers]) {
-            self.title = NSLocalizedString(self.state.currentOrigo.type, kStringPrefixNewMembersTitle);
+            _origo = self.state.currentOrigo;
+            
+            self.title = NSLocalizedString(_origo.type, kStringPrefixNewMembersTitle);
             self.subtitle = NSLocalizedString(@"(None selected)", @"");
             self.subtitleColour = [UIColor tonedDownTextColour];
             
@@ -128,7 +130,7 @@ static NSInteger const kSectionKeyValues = 0;
                 [self editableTitle:_affiliation withPlaceholder:placeholder];
             }
             
-            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:YES]];
+            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:NO]];
             
             if ([self targetIs:kTargetRole]) {
                 _isMultiValuePicker = [_pickedValues count] > 1;
@@ -241,10 +243,14 @@ static NSInteger const kSectionKeyValues = 0;
     } else {
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         
-        [cell loadMember:candidate inOrigo:_origo excludeRoles:YES excludeRelations:YES];
-        
-        if ([self aspectIs:kAspectGroup]) {
-            cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:[[_origo membershipForMember:candidate] groups] conjoin:NO];
+        if ([self targetIs:kTargetMembers]) {
+            [cell loadMember:candidate inOrigo:nil excludeRoles:YES excludeRelations:YES];
+        } else {
+            [cell loadMember:candidate inOrigo:_origo excludeRoles:YES excludeRelations:YES];
+            
+            if ([self aspectIs:kAspectGroup]) {
+                cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:[[_origo membershipForMember:candidate] groups] conjoin:NO];
+            }
         }
         
         if ([_pickedValues count]) {
@@ -262,7 +268,7 @@ static NSInteger const kSectionKeyValues = 0;
 {
     NSString *footerText = nil;
     
-    if ([self targetIs:kTargetParent] && ![_parentCandidates count]) {
+    if ([self targetIs:kTargetParent]) {
         NSString *hisHerParent = [OLanguage labelForParentWithGender:_parentGender relativeToOffspringWithGender:_ward.gender];
         
         footerText = [NSString stringWithFormat:NSLocalizedString(@"%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@.", @""), [_ward givenName], hisHerParent, hisHerParent];
@@ -324,7 +330,7 @@ static NSInteger const kSectionKeyValues = 0;
         }
     } else if ([self aspectIs:kAspectAdmin]) {
         [_origo membershipForMember:pickedValue].isAdmin = @(cell.checked);
-        [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:YES]];
+        [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:NO]];
     } else if ([self targetIs:kTargetAffiliation]) {
         if (cell.checked) {
             [[_origo membershipForMember:pickedValue] addAffiliation:_affiliation ofType:_affiliationType];

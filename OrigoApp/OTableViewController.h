@@ -64,7 +64,6 @@
 @property (nonatomic, readonly) OState *state;
 @property (nonatomic, readonly) OEntityProxy *entity;
 @property (nonatomic, readonly) OTableView *tableView;
-@property (nonatomic, readonly) UISegmentedControl *segmentedHeader;
 
 @property (nonatomic, assign, readonly) BOOL isModal;
 @property (nonatomic, assign, readonly) BOOL isPushed;
@@ -117,7 +116,7 @@
 - (void)endEditing;
 
 - (UITextField *)editableTitle:(NSString *)title withPlaceholder:(NSString *)placeholder;
-- (UISegmentedControl *)titleSubsegmentsWithSegments:(NSArray *)segments;
+- (UISegmentedControl *)titleSubsegmentsWithTitles:(NSArray *)subsegmentTitles;
 
 - (void)reloadSections;
 - (void)reloadSectionWithKey:(NSInteger)sectionKey;

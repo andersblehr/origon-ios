@@ -120,7 +120,9 @@ static NSString * const kRootIdFormat = @"~%@";
         
         for (id<OMember> member in members) {
             if ([origo isJuvenile]) {
-                if ([origo hasMember:member]) {
+                if (![member isJuvenile]) {
+                    [stringItems addObject:[member shortName]];
+                } else if ([origo hasMember:member]) {
                     [stringItems addObject:[member displayNameInOrigo:origo]];
                 } else {
                     if (!isUniqueByGivenName) {
@@ -195,13 +197,13 @@ static NSString * const kRootIdFormat = @"~%@";
     NSArray *eligibleOrigoTypes = nil;
     
     if ([origo isOfType:kOrigoTypeAlumni]) {
-        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeGeneral];
-    } else if ([origo isOfType:kOrigoTypeFriends]) {
-        eligibleOrigoTypes = @[kOrigoTypeFriends, kOrigoTypeGeneral];
+        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeSimple];
+    } else if ([origo isOfType:kOrigoTypeList]) {
+        eligibleOrigoTypes = @[kOrigoTypeList, kOrigoTypeSimple];
     } else if ([origo isJuvenile]) {
-        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeGeneral, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam];
+        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeSimple, kOrigoTypePreschoolClass, kOrigoTypeSchoolClass, kOrigoTypeTeam];
     } else {
-        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeCommunity, kOrigoTypeGeneral, kOrigoTypeOrganisation, kOrigoTypeStudyGroup, kOrigoTypeTeam];
+        eligibleOrigoTypes = @[kOrigoTypeAlumni, kOrigoTypeCommunity, kOrigoTypeSimple, kOrigoTypeOrganisation, kOrigoTypeStudyGroup, kOrigoTypeTeam];
     }
     
     return eligibleOrigoTypes;

@@ -127,7 +127,7 @@ static NSInteger const kSectionKeyAdmins = 2;
     if ([_entity conformsToProtocol:@protocol(OOrigo)]) {
         id<OOrigo> origo = _entity;
         
-        if (![origo isOfType:@[kOrigoTypeFriends, kOrigoTypeResidence]]) {
+        if (![origo isOfType:@[kOrigoTypeList, kOrigoTypeResidence]]) {
             if ([origo userCanEdit]) {
                 [self setData:@[[[OLanguage nouns][_administrator_][singularIndefinite] stringByCapitalisingFirstLetter]] forSectionWithKey:kSectionKeyAdmins];
             } else {

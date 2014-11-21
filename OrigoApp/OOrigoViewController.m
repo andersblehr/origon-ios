@@ -197,14 +197,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 #pragma mark - Selector implementations
 
-- (void)didSelectHeaderSegment
-{
-    self.selectedHeaderSegment = self.segmentedHeader.selectedSegmentIndex;
-    
-    [self reloadSectionWithKey:kSectionKeyMembers];
-}
-
-
 - (void)performAcceptRejectAction
 {
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Do you want to keep this listing?", @"") delegate:self tag:kActionSheetTagAcceptReject];
@@ -227,7 +219,15 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     } else {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagAdd];
         
-        [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
+        if ([_origo isOfType:kOrigoTypeList]) {
+            if ([_member isJuvenile]) {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Register friend", @"") tag:kButtonTagAddMember];
+            } else {
+                [actionSheet addButtonWithTitle:NSLocalizedString(@"Register contact", @"") tag:kButtonTagAddMember];
+            }
+        } else {
+            [actionSheet addButtonWithTitle:NSLocalizedString(_origo.type, kStringPrefixAddMemberButton) tag:kButtonTagAddMember];
+        }
         
         _eligibleCandidates = [self.state eligibleCandidates];
         
@@ -254,7 +254,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 - (void)performEditAction
 {
-    if ([_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeFriends]]) {
+    if ([_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeList]]) {
         [self scrollToTopAndToggleEditMode];
     } else {
         OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
@@ -262,7 +262,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEditGroup];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit responsibilities", @"") tag:kButtonTagEditRoles];
         
-        if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeFriends]]) {
+        if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeList]]) {
             if (![[_origo groups] count]) {
                 [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit subgroups", @"") tag:kButtonTagEditSubgroups];
             }
@@ -302,15 +302,13 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     _userCanEdit = [_origo userCanEdit];
     
     if ([self actionIs:kActionRegister]) {
-        self.title = NSLocalizedString(_origo.type, kStringPrefixNewOrigoTitle);
+        self.title = NSLocalizedString(_origo.type, kStringPrefixOrigoTitle);
         
         if ([_origo isOfType:kOrigoTypeResidence]) {
-            id<OOrigo> residence = [_member primaryResidence];
+            id<OOrigo> primaryResidence = [_member primaryResidence];
             
-            if (![residence hasAddress] || ![residence isCommitted]) {
-                self.title = NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle);
-            } else {
-                self.title = NSLocalizedString(kOrigoTypeResidence, kStringPrefixNewOrigoTitle);
+            if ([primaryResidence hasAddress] && [primaryResidence isCommitted]) {
+                self.title = NSLocalizedString(kPropertyKeyAddress, kStringPrefixLabel);
             }
             
             self.cancelImpliesSkip = ![_member hasAddress] && ![_origo isReplicated] && ![[_member housemates] count];
@@ -455,12 +453,22 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 }
 
 
+- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
+{
+    return [_member isJuvenile] ? YES : ![_origo isOfType:kOrigoTypeList];
+}
+
+
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
     BOOL hasFooter = NO;
     
-    if (self.isModal && ![self actionIs:kActionRegister]) {
-        hasFooter = [self isBottomSectionKey:sectionKey] && [_origo userCanEdit];
+    if ([self isBottomSectionKey:sectionKey]) {
+        if (self.isModal && ![self actionIs:kActionRegister]) {
+            hasFooter = [_origo userCanEdit];
+        } else if ([_origo isOfType:kOrigoTypeList]) {
+            hasFooter = ![[_origo members] count];
+        }
     }
     
     return hasFooter;
@@ -491,19 +499,29 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         number = [[_origo parentContacts] count] > 1 ? pluralIndefinite : singularIndefinite;
         content = [[OLanguage nouns][_parentContact_][number] stringByCapitalisingFirstLetter];
     } else if (sectionKey == kSectionKeyMembers) {
+        NSString *membersTitle = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
+        
         if ([_origo isJuvenile]) {
-            content = @[NSLocalizedString(_origo.type,kStringPrefixMembersTitle), [[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
+            if ([self actionIs:kActionRegister]) {
+                content = membersTitle;
+            } else {
+                content = @[membersTitle, [[OLanguage nouns][_parent_][pluralIndefinite] stringByCapitalisingFirstLetter]];
+            }
         } else if ([_origo isOfType:kOrigoTypeCommunity]) {
-            content = @[NSLocalizedString(@"Members", @""), NSLocalizedString(@"Households", @"")];
+            if ([self actionIs:kActionRegister]) {
+                content = membersTitle;
+            } else {
+                content = @[membersTitle, NSLocalizedString(@"Households", @"")];
+            }
         } else {
             if ([self actionIs:kActionRegister] && [_origo isOfType:kOrigoTypeResidence]) {
                 if (![_member hasAddress] && [self aspectIs:kAspectJuvenile]) {
                     content = NSLocalizedString(@"Guardians in the household", @"");
                 } else {
-                    content = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
+                    content = membersTitle;
                 }
             } else {
-                content = NSLocalizedString(_origo.type, kStringPrefixMembersTitle);
+                content = membersTitle;
             }
         }
     }
@@ -518,6 +536,12 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     
     if ([_origo isOfType:kOrigoTypeResidence] && [self aspectIs:kAspectJuvenile]) {
         footerText = NSLocalizedString(@"Tap [+] to register additional guardians in the household.", @"");
+    } else if ([_origo isOfType:kOrigoTypeList]) {
+        if ([_member isJuvenile]) {
+            footerText = NSLocalizedString(@"Tap [+] to register friends.", @"");
+        } else {
+            footerText = NSLocalizedString(@"Tap [+] to register contacts.", @"");
+        }
     } else {
         footerText = NSLocalizedString(_origo.type, kStringPrefixFooter);
     }
@@ -728,6 +752,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         } else {
             [self toggleEditMode];
             [self.inputCell readData];
+            [self reloadSectionWithKey:kSectionKeyMembers];
             
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
             self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem plusButtonWithTarget:self]];
@@ -807,7 +832,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                     if ([_origo isOfType:kOrigoTypeResidence]) {
                         [membership expire];
                     } else {
-                        membership.status = kMembershipStatusRejected;
+                        membership.status = kMembershipStatusListed;
                     }
                     
                     [self.navigationController popViewControllerAnimated:YES];

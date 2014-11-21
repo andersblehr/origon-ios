@@ -221,8 +221,6 @@ static OState *_activeState = nil;
 
 - (NSArray *)eligibleCandidates
 {
-    NSArray *candidates = nil;
-    
     id<OMember> peerPivot = nil;
     
     if ([self aspectIs:kAspectJuvenile] && ![self targetIs:kTargetElder]) {
@@ -245,11 +243,18 @@ static OState *_activeState = nil;
         peerPivot = [OMeta m].user;
     }
 
+    id candidates = nil;
+    
     if (peerPivot) {
         if ([self targetIs:kTargetOrganiser]) {
             candidates = [peerPivot peersNotInSet:[_currentOrigo organisers]];
         } else {
             candidates = [peerPivot peersNotInSet:[_currentOrigo regulars]];
+        }
+        
+        if ([_currentOrigo isOfType:kOrigoTypeList]) {
+            candidates = [candidates mutableCopy];
+            [candidates removeObject:peerPivot];
         }
     }
     

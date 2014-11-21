@@ -18,7 +18,7 @@ static NSInteger const kActionSheetTagOrigoType = 2;
 
 static NSInteger const kSectionKeyHouseholds = 0;
 static NSInteger const kSectionKeyOrigos = 1;
-static NSInteger const kSectionKeyWards = 2;
+static NSInteger const kSectionKeyWardOrigos = 2;
 
 
 @interface OOrigoListViewController () <OTableViewController, UIActionSheetDelegate> {
@@ -42,6 +42,9 @@ static NSInteger const kSectionKeyWards = 2;
 {
     _origoTypes = [NSMutableArray array];
     
+    [_origoTypes addObject:kOrigoTypeList];
+    [_origoTypes addObject:kOrigoTypeSimple];
+    
     if ([_member isJuvenile]) {
         if (![_member isOlderThan:kAgeThresholdInSchool]) {
             [_origoTypes addObject:kOrigoTypePreschoolClass];
@@ -56,9 +59,6 @@ static NSInteger const kSectionKeyWards = 2;
         [_origoTypes addObject:kOrigoTypeStudyGroup];
         [_origoTypes addObject:kOrigoTypeAlumni];
     }
-    
-    [_origoTypes addObject:kOrigoTypeGeneral];
-    [_origoTypes addObject:kOrigoTypeFriends];
 }
 
 
@@ -66,7 +66,7 @@ static NSInteger const kSectionKeyWards = 2;
 {
     [self assembleOrigoTypes];
     
-    NSString *prompt = NSLocalizedString(@"What sort of list du you want to create", @"");
+    NSString *prompt = NSLocalizedString(@"What sort of list do you want to create", @"");
     
     if ([_member isWardOfUser]) {
         prompt = [prompt stringByAppendingString:[NSString stringWithFormat:NSLocalizedString(@"for %@", @""), [_member givenName]] separator:kSeparatorSpace];
@@ -84,14 +84,6 @@ static NSInteger const kSectionKeyWards = 2;
 
 #pragma mark - Selector implementations
 
-- (void)didSelectHeaderSegment
-{
-    self.selectedHeaderSegment = self.segmentedHeader.selectedSegmentIndex;
-    
-    [self reloadSectionWithKey:kSectionKeyWards];
-}
-
-
 - (void)openSettings
 {
     [self presentModalViewControllerWithIdentifier:kIdentifierValueList target:kTargetSettings];
@@ -101,8 +93,8 @@ static NSInteger const kSectionKeyWards = 2;
 - (void)performAddAction
 {
     if ([_wards count]) {
-        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who will be included in the new list?", @"") delegate:self tag:kActionSheetTagNewOrigoParticipant];
-        [actionSheet addButtonWithTitle:[[OLanguage pronouns][_you_][nominative] stringByCapitalisingFirstLetter] tag:kButtonTagNewOrigoParticipantUser];
+        OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Who do you want to create a list for?", @"") delegate:self tag:kActionSheetTagNewOrigoParticipant];
+        [actionSheet addButtonWithTitle:NSLocalizedString(@"Yourself", @"") tag:kButtonTagNewOrigoParticipantUser];
         
         for (id<OMember> ward in _wards) {
             [actionSheet addButtonWithTitle:[ward givenName]];
@@ -164,7 +156,11 @@ static NSInteger const kSectionKeyWards = 2;
         _wards = [[OMeta m].user wards];
         
         [self setData:[[OMeta m].user residences] forSectionWithKey:kSectionKeyHouseholds];
-        [self setData:[_wards[self.selectedHeaderSegment] origos] forSectionWithKey:kSectionKeyWards];
+        
+        if ([_wards count]) {
+            [self setData:[_wards[self.selectedHeaderSegment] origos] forSectionWithKey:kSectionKeyWardOrigos];
+        }
+        
         [self setData:[[OMeta m].user origos] forSectionWithKey:kSectionKeyOrigos];
     }
 }
@@ -175,10 +171,19 @@ static NSInteger const kSectionKeyWards = 2;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     id<OOrigo> origo = [self dataAtIndexPath:indexPath];
-    id<OMember> member = sectionKey == kSectionKeyWards ? _wards[self.selectedHeaderSegment] : [OMeta m].user;
+    id<OMember> member = sectionKey == kSectionKeyWardOrigos ? _wards[self.selectedHeaderSegment] : [OMeta m].user;
     id<OMembership> membership = [origo membershipForMember:member];
     
-    cell.textLabel.text = origo.name;
+    if ([origo isOfType:kOrigoTypeList] && [member isJuvenile]) {
+        if ([origo.name isEqualToString:NSLocalizedString(@"Friends", @"")]) {
+            cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), [member givenName]];
+        } else {
+            cell.textLabel.text = origo.name;
+        }
+    } else {
+        cell.textLabel.text = origo.name;
+    }
+    
     [cell loadImageForOrigo:origo];
     cell.destinationId = kIdentifierOrigo;
     
@@ -219,7 +224,9 @@ static NSInteger const kSectionKeyWards = 2;
 {
     id headerContent = nil;
     
-    if (sectionKey == kSectionKeyWards) {
+    if (sectionKey == kSectionKeyOrigos) {
+        headerContent = NSLocalizedString(@"My lists", @"");
+    } else if (sectionKey == kSectionKeyWardOrigos) {
         if ([_wards count] > 1) {
             NSMutableArray *wardGivenNames = [NSMutableArray array];
             
@@ -231,8 +238,6 @@ static NSInteger const kSectionKeyWards = 2;
         } else {
             headerContent = [_wards[0] givenName];
         }
-    } else if (sectionKey == kSectionKeyOrigos) {
-        headerContent = NSLocalizedString(@"My lists", @"");
     }
     
     return headerContent;
@@ -241,10 +246,14 @@ static NSInteger const kSectionKeyWards = 2;
 
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyWards) {
-        self.target = _wards[self.selectedHeaderSegment];
+    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyWardOrigos) {
+        id<OMember> ward = _wards[self.selectedHeaderSegment];
+        
+        self.target = ward;
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[ward givenName]];
     } else if (self.target != [OMeta m].user) {
         self.target = [OMeta m].user;
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[OMeta m].appName];
     }
 }
 
@@ -293,7 +302,7 @@ static NSInteger const kSectionKeyWards = 2;
                     
                     if ([_wards count] > 1 && self.selectedHeaderSegment != selectedWardIndex) {
                         self.selectedHeaderSegment = selectedWardIndex;
-                        [self reloadSectionWithKey:kSectionKeyWards];
+                        [self reloadSectionWithKey:kSectionKeyWardOrigos];
                     }
                     
                     self.target = _wards[selectedWardIndex];

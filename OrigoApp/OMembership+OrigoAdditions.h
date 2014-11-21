@@ -9,14 +9,15 @@
 #import <Foundation/Foundation.h>
 
 extern NSString * const kMembershipTypeRoot;
+extern NSString * const kMembershipTypeListing;
 extern NSString * const kMembershipTypeResidency;
 extern NSString * const kMembershipTypeParticipancy;
 extern NSString * const kMembershipTypeAssociate;
 
+extern NSString * const kMembershipStatusListed;
 extern NSString * const kMembershipStatusInvited;
 extern NSString * const kMembershipStatusWaiting;
 extern NSString * const kMembershipStatusActive;
-extern NSString * const kMembershipStatusRejected;
 extern NSString * const kMembershipStatusExpired;
 
 extern NSString * const kAffiliationTypeMemberRole;
@@ -37,8 +38,9 @@ extern NSString * const kAffiliationTypeGroup;
 
 - (BOOL)isActive;
 - (BOOL)isFull;
-- (BOOL)isParticipancy;
+- (BOOL)isListing;
 - (BOOL)isResidency;
+- (BOOL)isParticipancy;
 - (BOOL)isAssociate;
 
 - (BOOL)hasAffiliationOfType:(NSString *)type;
