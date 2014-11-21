@@ -104,6 +104,12 @@
 }
 
 
+- (id<OOrigo>)defaultContactList
+{
+    return [self instance] ? [[self instance] defaultContactList] : nil;
+}
+
+
 - (NSArray *)residences
 {
     id residences = nil;
@@ -215,6 +221,12 @@
 - (BOOL)isUser
 {
     return [self instance] ? [[self instance] isUser] : NO;
+}
+
+
+- (BOOL)isWardOfUser
+{
+    return [self instance] ? [[self instance] isWardOfUser] : [self.dateOfBirth isBirthDateOfMinor];
 }
 
 

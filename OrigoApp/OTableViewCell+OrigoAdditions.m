@@ -59,18 +59,13 @@
 - (NSArray *)associationMembershipsForMember:(id<OMember>)member
 {
     NSMutableArray *associationMemberships = [NSMutableArray array];
-    NSArray *origos = [member origos];
+    NSArray *participancies = [[[member participancies] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
+    NSArray *listings = [[[member listings] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
     
-    if ([origos count]) {
-        if ([member isFriendOnly]) {
-            [associationMemberships addObject:[origos[0] membershipForMember:member]];
-        } else {
-            for (id<OOrigo> origo in origos) {
-                if (![associationMemberships count] && ![origo isOfType:kOrigoTypeFriends]) {
-                    [associationMemberships addObject:[origo membershipForMember:member]];
-                }
-            }
-        }
+    if ([participancies count]) {
+        [associationMemberships addObject:participancies[0]];
+    } else if ([listings count]) {
+        [associationMemberships addObject:listings[0]];
     } else {
         NSArray *memberships = [[[member allMemberships] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
         
@@ -98,19 +93,21 @@
         if ([membership isAssociate] || [[membership parentRoles] count]) {
             for (OMember *ward in [member wardsInOrigo:origo]) {
                 if (!associationsByWard[ward.entityId]) {
-                    if ([ward isFriendOnly]) {
+                    if ([ward isListedOnly]) {
                         associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [OUtil commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo conjoin:YES]];
-                    } else if (![origo isOfType:kOrigoTypeFriends]) {
+                    } else if (![origo isOfType:kOrigoTypeList]) {
                         associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [ward displayNameInOrigo:origo], origo.name];
                     }
                 }
             }
         } else {
-            if ([member isJuvenile] && [member isFriendOnly]) {
+            if ([member isJuvenile] && ![member isWardOfUser] && [member isListedOnly]) {
                 association = [[NSString stringWithFormat:NSLocalizedString(@"%@ of %@", @""), [self friendTermForMember:member], [OUtil commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo conjoin:YES]] stringByCapitalisingFirstLetter];
             } else if ([[membership organiserRoles] count]) {
                 association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixOrganiserTitle), origo.name];
-            } else if (![origo isOfType:kOrigoTypeFriends]) {
+            } else if ([membership isListing]) {
+                association = [NSString stringWithFormat:NSLocalizedString(@"Listed in %@", @""), membership.origo.name];
+            } else {
                 NSArray *memberRoles = [membership memberRoles];
                 
                 if ([memberRoles count]) {
@@ -136,7 +133,7 @@
 
 - (void)loadImageForOrigo:(id<OOrigo>)origo
 {
-    if ([origo isOfType:kOrigoTypeFriends]) {
+    if ([origo isOfType:kOrigoTypeList]) {
         self.imageView.image = [UIImage imageNamed:kIconFileList];
     } else if ([origo isOfType:kOrigoTypeResidence]) {
         self.imageView.image = [UIImage imageNamed:kIconFileHousehold];

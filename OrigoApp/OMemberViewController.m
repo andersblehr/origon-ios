@@ -389,6 +389,8 @@ static NSInteger const kButtonIndexContinue = 1;
             } else {
                 if ([_member isUser] && ![_member isActive]) {
                     [_member makeActive];
+                } else if ([_member isWardOfUser]) {
+                    [_member defaultContactList];
                 }
                 
                 [self.dismisser dismissModalViewController:self];
@@ -913,6 +915,12 @@ static NSInteger const kButtonIndexContinue = 1;
             self.title = [[OLanguage nouns][_guardian_][singularIndefinite] capitalizedString];
         } else if ([self targetIs:kTargetOrganiser]) {
             [self editableTitle:nil withPlaceholder:NSLocalizedString(_origo.type, kStringPrefixOrganiserRoleTitle)];
+        } else if ([_origo isOfType:kOrigoTypeList]) {
+            if ([_member isJuvenile]) {
+                self.title = NSLocalizedString(@"New friend", @"");
+            } else {
+                self.title = NSLocalizedString(@"New contact", @"");
+            }
         } else {
             self.title = NSLocalizedString(_origo.type, kStringPrefixNewMemberTitle);
         }

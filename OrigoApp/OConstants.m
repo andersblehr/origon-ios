@@ -94,7 +94,6 @@ NSString * const kStringPrefixSettingLabel = @"[setting label]";
 NSString * const kStringPrefixSettingListLabel = @"[setting list label]";
 NSString * const kStringPrefixPlaceholder = @"[placeholder]";
 NSString * const kStringPrefixOrigoTitle = @"[title]";
-NSString * const kStringPrefixNewOrigoTitle = @"[registration title]";
 NSString * const kStringPrefixFooter = @"[registration footer]";
 NSString * const kStringPrefixAddMemberButton = @"[add member]";
 NSString * const kStringPrefixMemberTitle = @"[member]";

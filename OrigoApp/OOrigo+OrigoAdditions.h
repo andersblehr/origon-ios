@@ -10,13 +10,13 @@
 
 extern NSString * const kOrigoTypeAlumni;
 extern NSString * const kOrigoTypeCommunity;
-extern NSString * const kOrigoTypeFriends;
-extern NSString * const kOrigoTypeGeneral;
+extern NSString * const kOrigoTypeList;
 extern NSString * const kOrigoTypeOrganisation;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeResidence;
 extern NSString * const kOrigoTypeRoot;
 extern NSString * const kOrigoTypeSchoolClass;
+extern NSString * const kOrigoTypeSimple;
 extern NSString * const kOrigoTypeStudyGroup;
 extern NSString * const kOrigoTypeTeam;
 

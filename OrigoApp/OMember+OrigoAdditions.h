@@ -27,15 +27,18 @@
 - (NSComparisonResult)compare:(id<OMember>)other;
 - (NSComparisonResult)subjectiveCompare:(id<OMember>)other;
 
+- (NSSet *)allMemberships;
 - (NSSet *)residencies;
 - (NSSet *)participancies;
-- (NSSet *)allMemberships;
+- (NSSet *)listings;
 
 - (id<OOrigo>)root;
 - (id<OOrigo>)primaryResidence;
+- (id<OOrigo>)defaultContactList;
 - (NSArray *)residences;
 - (NSArray *)addresses;
 - (NSArray *)origos;
+- (NSArray *)lists;
 
 - (id<OMember>)mother;
 - (id<OMember>)father;
@@ -62,7 +65,7 @@
 - (BOOL)isManagedByUser;
 - (BOOL)isManaged;
 - (BOOL)isMale;
-- (BOOL)isFriendOnly;
+- (BOOL)isListedOnly;
 - (BOOL)isJuvenile;
 - (BOOL)isTeenOrOlder;
 - (BOOL)isOlderThan:(NSInteger)age;

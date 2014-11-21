@@ -71,114 +71,101 @@
 
 // Origo titles
 "[title] alumni" = "Alumni group";
-"[title] community" = "Local community";
-"[title] friends" = "Private list of friends";
-"[title] general" = "Just a list";
+"[title] community" = "Neighbourhood";
+"[title] list" = "Private list";
 "[title] organisation" = "Organisation";
 "[title] preschoolClass" = "Preschool class";
 "[title] residence" = "Household";
 "[title] schoolClass" = "School class";
+"[title] simple" = "Simple list";
 "[title] studyGroup" = "Study group";
 "[title] team" = "Team";
-
-// Registration titles
-"[registration title] alumni" = "New alumni group";
-"[registration title] community" = "New local community";
-"[registration title] friends" = "New private list";
-"[registration title] general" = "New list";
-"[registration title] organisation" = "New organisation";
-"[registration title] preschoolClass" = "New preschool class";
-"[registration title] residence" = "New address";
-"[registration title] schoolClass" = "New school class";
-"[registration title] studyGroup" = "New student group";
-"[registration title] team" = "New team";
 
 // Registration footers
 "[registration footer] alumni" = "Tap [+] to add alums.";
 "[registration footer] community" = "Tap [+] to add households.";
-"[registration footer] friends" = "Tap [+] to add friends.";
-"[registration footer] general" = "Tap [+] to add members.";
+"[registration footer] list" = "Tap [+] to add friends.";
 "[registration footer] organisation" = "Tap [+] to add members.";
 "[registration footer] preschoolClass" = "Tap [+] to add children to the class.";
 "[registration footer] residence" = "Tap [+] to add members to the household.";
 "[registration footer] schoolClass" = "Tap [+] to add students to the class.";
+"[registration footer] simple" = "Tap [+] to add members.";
 "[registration footer] studyGroup" = "Tap [+] to add students to the class.";
 "[registration footer] team" = "Tap [+] to add players.";
 
 // Member registration button titles
 "[add member] alumni" = "Register alum";
 "[add member] community" = "Register member";
-"[add member] friends" = "Register friend";
-"[add member] general" = "Register member";
 "[add member] organisation" = "Register member";
 "[add member] preschoolClass" = "Register child";
 "[add member] residence" = "New member";
 "[add member] schoolClass" = "Register student";
+"[add member] simple" = "Register member";
 "[add member] studyGroup" = "Register student";
 "[add member] team" = "Register player";
 
 // Member role titles
 "[member role] alumni" = "Responsibility";
 "[member role] community" = "Responsibility";
-"[member role] general" = "Responsibility";
 "[member role] organisation" = "Responsibility";
 "[member role] schoolClass" = "Responsibility";
+"[member role] simple" = "Responsibility";
 "[member role] studyGroup" = "Responsibility";
 "[member role] team" = "Team role";
 
 // Member titles
 "[member] alumni" = "alum";
 "[member] community" = "member";
-"[member] friends" = "friend";
-"[member] general" = "member";
+"[member] list" = "friend";
 "[member] organisation" = "member";
 "[member] preschoolClass" = "child";
 "[member] residence" = "resident";
 "[member] schoolClass" = "student";
+"[member] simple" = "member";
 "[member] studyGroup" = "student";
 "[member] team" = "player";
 
 // Member list titles
 "[members] alumni" = "Alumni";
-"[members] friends" = "Friends";
-"[members] general" = "Members";
+"[members] community" = "Members";
+"[members] list" = "Friends";
 "[members] organisation" = "Members";
 "[members] preschoolClass" = "Children";
 "[members] residence" = "In the household";
 "[members] schoolClass" = "Students";
+"[members] simple" = "Members";
 "[members] studyGroup" = "Participants";
 "[members] team" = "Players";
 
 // New member titles
 "[new member] alumni" = "New alum";
 "[new member] community" = "New member";
-"[new member] friends" = "New friend";
-"[new member] general" = "New member";
 "[new member] organisation" = "New member";
 "[new member] preschoolClass" = "New child";
 "[new member] residence" = "In the household";
 "[new member] schoolClass" = "New student";
+"[new member] simple" = "New member";
 "[new member] studyGroup" = "New student";
 "[new member] team" = "New player";
 
 // New members titles
 "[new members] alumni" = "New alums";
 "[new members] community" = "New members";
-"[new members] friends" = "New friends";
-"[new members] general" = "New members";
+"[new members] list" = "New friends";
 "[new members] organisation" = "New members";
 "[new members] preschoolClass" = "New children";
 "[new members] schoolClass" = "New students";
+"[new members] simple" = "New members";
 "[new members] studyGroup" = "New students";
 "[new members] team" = "New players";
 
 // Origo collective titles
 "[all members] alumni" = "All alumni";
 "[all members] community" = "All members";
-"[all members] friends" = "Everybody";
-"[all members] general" = "All members";
+"[all members] list" = "Everybody";
 "[all members] organisation" = "All members";
 "[all members] residence" = "The whole household";
+"[all members] simple" = "All members";
 "[all members] studyGroup" = "The whole group";
 "[all members] team" = "The whole team";
 
@@ -288,6 +275,8 @@
 "girl" = "girl";
 "friend [male]" = "friend";
 "friend [female]" = "friend";
+"Friends" = "Friends";
+"Contacts" = "Contacts";
 "Home number" = "Home number";
 "Neither" = "Neither";
 "Both" = "Both";
@@ -300,6 +289,7 @@
 "%@ at %@" = "%@ at %@";
 "%d years" = "%d";
 "Guardian of %@" = "Parent of %@";
+"Listed in %@" = "Listed in %@";
 "%@, %@ of %@" = "%@, %@ of %@";
 "%@ of %@" = "%@ of %@";
 "%@ in %@" = "%@ in %@";
@@ -335,6 +325,12 @@
 // Headers
 "My lists" = "My lists";
 
+// Labels
+"%@'s friends" = "%@'s friends";
+
+// Buttons
+"Yourself" = "Yourself";
+
 // Alerts
 "Welcome to Origo" = "Welcome to Origo";
 "Please verify your details and provide any missing information." = "Please verify your details and provide any missing information.";
@@ -343,8 +339,8 @@
 
 // Prompts
 "Your household includes minors. Would you like to provide parent relations?" = "Your household includes minors. Would you like to provide parent relations?";
-"Who will be included in the new list?" = "Who will be included in the new list?";
-"What sort of list du you want to create" = "What sort of list du you want to create";
+"Who do you want to create a list for?" = "Who do you want to create a list for?";
+"What sort of list do you want to create" = "What sort of list do you want to create";
 
 // Info
 "New listing" = "New listing";
@@ -355,14 +351,17 @@
  ***/
 
 // Headers
-"Guardians in the household" = "Guardians in the household";
 "Households" = "Households";
-"Members" = "Members";
+"Guardians in the household" = "Guardians in the household";
 
 // Footers
+"Tap [+] to register contacts." = "Tap [+] to register contacts.";
+"Tap [+] to register friends." = "Tap [+] to register friends.";
 "Tap [+] to register additional guardians in the household." = "Tap [+] to register additional guardians in the household.";
 
 // Buttons
+"Register contact" = "Register contact";
+"Register friend" = "Register friend";
 "Keep" = "Keep";
 "Decline" = "Decline";
 "Hide" = "Hide";
@@ -389,6 +388,8 @@
 
 // View title
 "About you" = "About you";
+"New contact" = "New contact";
+"New friend" = "New friend";
 
 // Headers
 "Responsibility in %@" = "Responsibility in %@";

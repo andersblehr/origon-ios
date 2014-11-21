@@ -196,10 +196,8 @@
     OMember *member = membership.member;
     OOrigo *origo = membership.origo;
     
-    // Reference member in membership origo
     [self createEntityRefForEntity:member inOrigo:origo];
     
-    // Reference all member residencies in membership origo
     for (OMembership *residency in [member residencies]) {
         if (residency != membership) {
             [self createEntityRefForEntity:residency inOrigo:origo];

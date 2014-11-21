@@ -142,6 +142,12 @@ static NSCalendar *_calendar = nil;
 }
 
 
+- (BOOL)isBeforeDate:(NSDate *)date
+{
+    return [self earlierDate:date] == self ? YES : NO;
+}
+
+
 - (BOOL)isBirthDateOfMinor
 {
     return [self yearsBeforeNow] < kAgeOfMajority;

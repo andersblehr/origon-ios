@@ -133,7 +133,7 @@
         }
     }
     
-    return [origos sortedArrayUsingSelector:@selector(compare:)];
+    return [[self lists] arrayByAddingObjectsFromArray:[origos sortedArrayUsingSelector:@selector(compare:)]];
 }
 
 
@@ -184,13 +184,10 @@
     NSMutableSet *memberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
-        BOOL isIncluded = ![membership.origo isOfType:kOrigoTypeRoot];
-        
-        isIncluded = isIncluded && ![membership hasExpired];
-        isIncluded = isIncluded && membership.status != kMembershipStatusRejected;
-        
-        if (isIncluded) {
-            [memberships addObject:membership];
+        if (![membership.origo isOfType:kOrigoTypeRoot] && ![membership hasExpired]) {
+            if (![membership.status isEqualToString:kMembershipStatusListed]) {
+                [memberships addObject:membership];
+            }
         }
     }
     
@@ -223,6 +220,20 @@
     }
     
     return participancies;
+}
+
+
+- (NSSet *)listings
+{
+    NSMutableSet *listings = [NSMutableSet set];
+    
+    for (OMembership *membership in self.memberships) {
+        if ([membership isListing]) {
+            [listings addObject:membership];
+        }
+    }
+    
+    return listings;
 }
 
 
@@ -269,6 +280,34 @@
 }
 
 
+- (id<OOrigo>)defaultContactList
+{
+    OOrigo *list = nil;
+    
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isListing]) {
+            if (!list || [membership.origo.dateCreated isBeforeDate:list.dateCreated]) {
+                list = membership.origo;
+            }
+        }
+    }
+    
+    if (!list) {
+        OOrigo *list = [OOrigo instanceWithId:[OCrypto generateUUID] type:kOrigoTypeList];
+        
+        if ([self isWardOfUser]) {
+            list.name = NSLocalizedString(@"Friends", @"");
+        } else {
+            list.name = NSLocalizedString(@"Contacts", @"");
+        }
+        
+        [list addMember:self];
+    }
+    
+    return list;
+}
+
+
 - (NSArray *)residences
 {
     NSMutableArray *residences = [NSMutableArray array];
@@ -297,18 +336,21 @@
 
 - (NSArray *)origos
 {
-    NSMutableArray *friendLists = [NSMutableArray array];
-    NSMutableArray *origos = [NSMutableArray array];
+    return [self origosIncludeResidences:NO];
+}
+
+
+- (NSArray *)lists
+{
+    NSMutableSet *lists = [NSMutableSet set];
     
-    for (OOrigo *origo in [self origosIncludeResidences:NO]) {
-        if ([origo isOfType:kOrigoTypeFriends]) {
-            [friendLists addObject:origo];
-        } else {
-            [origos addObject:origo];
+    for (OMembership *membership in [self allMemberships]) {
+        if ([membership isListing]) {
+            [lists addObject:membership.origo];
         }
     }
     
-    return [friendLists arrayByAddingObjectsFromArray:origos];
+    return [[lists allObjects] sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -532,8 +574,14 @@
     rootMembership.isAdmin = @YES;
     
     for (OMembership *residency in [self residencies]) {
-        residency.isAdmin = @(![self isJuvenile] || [residency userIsCreator]);
+        residency.isAdmin = [self isJuvenile] ? @(![residency.origo hasAdmin]) : @YES;
         [residency.origo resetDefaultResidenceNameIfApplicable];
+    }
+    
+    [self defaultContactList];
+    
+    for (OMember *ward in [self wards]) {
+        [ward defaultContactList];
     }
     
     self.settings = [OSettings settings];
@@ -629,15 +677,15 @@
 }
 
 
-- (BOOL)isFriendOnly
+- (BOOL)isListedOnly
 {
-    BOOL isFriendOnly = YES;
+    BOOL isListedOnly = YES;
     
     for (OOrigo *origo in [self origos]) {
-        isFriendOnly = isFriendOnly && [origo isOfType:kOrigoTypeFriends];
+        isListedOnly = isListedOnly && [origo isOfType:kOrigoTypeList];
     }
     
-    return isFriendOnly;
+    return isListedOnly;
 }
 
 
@@ -798,7 +846,7 @@
         NSString *givenName = [self givenName];
         NSDictionary *isUniqueByGivenName = [OUtil isUniqueByGivenNameFromMembers:[origo regulars]];
         
-        if ([isUniqueByGivenName[givenName] boolValue]) {
+        if ([isUniqueByGivenName[givenName] boolValue] || [origo isJuvenile]) {
             displayName = givenName;
         } else {
             displayName = [self shortName];

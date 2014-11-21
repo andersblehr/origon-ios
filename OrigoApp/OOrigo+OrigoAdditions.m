@@ -10,13 +10,13 @@
 
 NSString * const kOrigoTypeAlumni = @"alumni";
 NSString * const kOrigoTypeCommunity = @"community";
-NSString * const kOrigoTypeFriends = @"friends";
-NSString * const kOrigoTypeGeneral = @"general";
+NSString * const kOrigoTypeList = @"list";
 NSString * const kOrigoTypeOrganisation = @"organisation";
 NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
 NSString * const kOrigoTypeResidence = @"residence";
 NSString * const kOrigoTypeRoot = @"~";
 NSString * const kOrigoTypeSchoolClass = @"schoolClass";
+NSString * const kOrigoTypeSimple = @"simple";
 NSString * const kOrigoTypeStudyGroup = @"studyGroup";
 NSString * const kOrigoTypeTeam = @"team";
 
@@ -195,8 +195,8 @@ NSString * const kOrigoTypeTeam = @"team";
     for (OMembership *membership in [self allMemberships]) {
         OMember *member = membership.member;
         
-        if ([self isOfType:kOrigoTypeFriends]) {
-            if ([membership isFull] && member != [OState s].currentMember) {
+        if ([self isOfType:kOrigoTypeList]) {
+            if ([membership isListing] && member != [OState s].currentMember) {
                 [members addObject:member];
             }
         } else if ([self isOfType:kOrigoTypeCommunity]) {
