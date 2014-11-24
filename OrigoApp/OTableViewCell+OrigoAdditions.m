@@ -59,19 +59,33 @@
 - (NSArray *)associationMembershipsForMember:(id<OMember>)member
 {
     NSMutableArray *associationMemberships = [NSMutableArray array];
-    NSArray *participancies = [[[member participancies] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
-    NSArray *listings = [[[member listings] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
     
-    if ([participancies count]) {
-        [associationMemberships addObject:participancies[0]];
-    } else if ([listings count]) {
-        [associationMemberships addObject:listings[0]];
+    BOOL isGuardianOfUserWards = [[[OMeta m].user wards] count];
+    
+    for (id<OMember> ward in [[OMeta m].user wards]) {
+        isGuardianOfUserWards = isGuardianOfUserWards && [ward hasGuardian:member];
+    }
+    
+    if (isGuardianOfUserWards) {
+        [associationMemberships addObject:[[[OMeta m].user primaryResidence] membershipForMember:member]];
     } else {
-        NSArray *memberships = [[[member allMemberships] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
+        NSArray *participancies = [[[member participancies] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
         
-        for (id<OMembership> membership in memberships) {
-            if ([membership isAssociate] && [membership.origo isJuvenile] != [member isJuvenile]) {
-                [associationMemberships addObject:membership];
+        if ([participancies count]) {
+            [associationMemberships addObject:participancies[0]];
+        } else {
+            NSArray *listings = [[[member listings] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
+            
+            if ([listings count]) {
+                [associationMemberships addObject:listings[0]];
+            } else {
+                NSArray *associateMemberships = [[[member associateMemberships] allObjects] sortedArrayUsingSelector:@selector(origoCompare:)];
+                
+                for (id<OMembership> associateMembership in associateMemberships) {
+                    if ([associateMembership.origo isJuvenile] != [member isJuvenile]) {
+                        [associationMemberships addObject:associateMembership];
+                    }
+                }
             }
         }
     }
@@ -83,6 +97,7 @@
 - (void)loadAssociationInfoForMember:(id<OMember>)member
 {
     NSString *association = nil;
+    NSMutableDictionary *isParentByWard = [NSMutableDictionary dictionary];
     NSMutableDictionary *associationsByWard = [NSMutableDictionary dictionary];
     
     id<OOrigo> origo = nil;
@@ -93,16 +108,22 @@
         if ([membership isAssociate] || [[membership parentRoles] count]) {
             for (OMember *ward in [member wardsInOrigo:origo]) {
                 if (!associationsByWard[ward.entityId]) {
+                    isParentByWard[ward.entityId] = [ward hasParent:member] ? @YES : @NO;
+                    
                     if ([ward isListedOnly]) {
                         associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [OUtil commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo conjoin:YES]];
                     } else if (![origo isOfType:kOrigoTypeList]) {
-                        associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [ward displayNameInOrigo:origo], origo.name];
+                        if ([ward isWardOfUser]) {
+                            associationsByWard[ward.entityId] = [ward givenName];
+                        } else {
+                            associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [ward displayNameInOrigo:origo], origo.name];
+                        }
                     }
                 }
             }
         } else {
             if ([member isJuvenile] && ![member isWardOfUser] && [member isListedOnly]) {
-                association = [[NSString stringWithFormat:NSLocalizedString(@"%@ of %@", @""), [self friendTermForMember:member], [OUtil commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo conjoin:YES]] stringByCapitalisingFirstLetter];
+                association = [[NSString stringWithFormat:NSLocalizedString(@"%@ [friend of] %@", @""), [self friendTermForMember:member], [OUtil commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo conjoin:YES]] stringByCapitalisingFirstLetter];
             } else if ([[membership organiserRoles] count]) {
                 association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixOrganiserTitle), origo.name];
             } else if ([membership isListing]) {
@@ -120,7 +141,15 @@
     }
     
     if ([associationsByWard count]) {
-        association = [NSString stringWithFormat:NSLocalizedString(@"Guardian of %@", @""), [OUtil commaSeparatedListOfStrings:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoin:YES]];
+        BOOL isParentOfAll = YES;
+        
+        for (NSNumber *isParentOfWard in [isParentByWard allValues]) {
+            isParentOfAll = isParentOfAll && [isParentOfWard boolValue];
+        }
+        
+        NSString *parentLabel = isParentOfAll ? [member parentNoun][singularIndefinite] : [OLanguage nouns][_guardian_][singularIndefinite];
+        
+        association = [NSString stringWithFormat:NSLocalizedString(@"%@ [guardian of] %@", @""), [parentLabel stringByCapitalisingFirstLetter], [OUtil commaSeparatedListOfStrings:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoin:YES]];
     }
     
     self.textLabel.text = [member displayNameInOrigo:origo];
@@ -133,10 +162,12 @@
 
 - (void)loadImageForOrigo:(id<OOrigo>)origo
 {
-    if ([origo isOfType:kOrigoTypeList]) {
+    if ([origo isOfType:kOrigoTypeResidence]) {
+        self.imageView.image = [UIImage imageNamed:kIconFileResidence];
+    } else if ([origo isOfType:kOrigoTypeUserStash]) {
+        self.imageView.image = [UIImage imageNamed:kIconFileFavouriteYes];
+    } else if ([origo isOfType:kOrigoTypeList]) {
         self.imageView.image = [UIImage imageNamed:kIconFileList];
-    } else if ([origo isOfType:kOrigoTypeResidence]) {
-        self.imageView.image = [UIImage imageNamed:kIconFileHousehold];
     } else {
         self.imageView.image = [UIImage imageNamed:kIconFileOrigo]; // TODO: Origo specific icons?
     }
@@ -216,6 +247,8 @@
         }
     } else if (excludeRoles && excludeRelations) {
         [self loadAssociationInfoForMember:member];
+    } else {
+        self.textLabel.text = member.name;
     }
     
     [self loadImageForMember:member];

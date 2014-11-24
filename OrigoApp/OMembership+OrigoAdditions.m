@@ -8,7 +8,8 @@
 
 #import "OMembership+OrigoAdditions.h"
 
-NSString * const kMembershipTypeRoot = @"~";
+NSString * const kMembershipTypeOwner = @"~";
+NSString * const kMembershipTypeFavourite = @"F";
 NSString * const kMembershipTypeListing = @"L";
 NSString * const kMembershipTypeResidency = @"R";
 NSString * const kMembershipTypeParticipancy = @"P";
@@ -93,9 +94,21 @@ static NSString * const kPlaceholderRole = @"placeholder";
 }
 
 
+- (BOOL)isFavourite
+{
+    return [self.type isEqualToString:kMembershipTypeFavourite];
+}
+
+
 - (BOOL)isListing
 {
     return [self.type isEqualToString:kMembershipTypeListing];
+}
+
+
+- (BOOL)isOwner
+{
+    return [self.type isEqualToString:kMembershipTypeOwner];
 }
 
 
@@ -282,10 +295,18 @@ static NSString * const kPlaceholderRole = @"placeholder";
         self.status = nil;
         self.affiliations = nil;
     } else {
-        if ([self.origo isOfType:kOrigoTypeRoot]) {
-            self.type = kMembershipTypeRoot;
+        if ([self.origo isOfType:kOrigoTypeUserStash]) {
+            if ([self.member isUser]) {
+                self.type = kMembershipTypeOwner;
+            } else {
+                self.type = kMembershipTypeFavourite;
+            }
         } else if ([self.origo isOfType:kOrigoTypeList]) {
-            self.type = kMembershipTypeListing;
+            if ([self.member isUser] || [self.member isWardOfUser]) {
+                self.type = kMembershipTypeOwner;
+            } else {
+                self.type = kMembershipTypeListing;
+            }
         } else if ([self.origo isOfType:kOrigoTypeResidence]) {
             self.type = kMembershipTypeResidency;
         } else {
@@ -298,7 +319,7 @@ static NSString * const kPlaceholderRole = @"placeholder";
         } else if ([self.member isWardOfUser]) {
             self.status = kMembershipStatusActive;
         } else {
-            if ([self.type isEqualToString:kMembershipTypeListing]) {
+            if ([@[kMembershipTypeListing, kMembershipTypeFavourite] containsObject:self.type]) {
                 self.status = kMembershipStatusListed;
             } else if ([self.type isEqualToString:kMembershipTypeResidency]) {
                 if (![self.member isJuvenile] && [[self.member addresses] count] > 1) {

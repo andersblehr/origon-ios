@@ -236,6 +236,12 @@
 }
 
 
+- (BOOL)isFavourite
+{
+    return [self instance] ? [[self instance] isFavourite] : NO;
+}
+
+
 - (BOOL)isMale
 {
     return [self instance] ? [[self instance] isMale] : [self.gender isEqualToString:kGenderMale];

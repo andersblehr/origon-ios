@@ -291,7 +291,8 @@
 "Guardian of %@" = "Foresatt til %@";
 "Listed in %@" = "Oppført i %@";
 "%@, %@ of %@" = "%@, %@ av %@";
-"%@ of %@" = "%@ av %@";
+"%@ [friend of] %@" = "%@ av %@";
+"%@ [guardian of] %@" = "%@ til %@";
 "%@ in %@" = "%@ i %@";
 
 // Separators
@@ -325,6 +326,7 @@
 "My lists" = "Mine lister";
 
 // Labels
+"Favourites and others" = "Favoritter og andre";
 "%@'s friends" = "%@ sine venner";
 
 // Buttons
@@ -469,12 +471,18 @@
 
 // View titles
 "Settings" = "Innstillinger";
+"Favourites" = "Favoritter";
+"Others" = "Andre";
 "Responsibilities" = "Ansvarsområder";
 "Groups" = "Grupper";
 "Edit groups" = "Rediger grupper";
 
 // List titles
 "[setting list label] devices" = "Registrerte enheter";
+
+// Footers
+"All persons marked as favourites will be listed here ..." = "Alle personer markert som favoritter vil bli listet opp her. Trykk på ☆ i personbildet for å markere en person som favoritt.";
+"All who are not marked as favourites will be listed here." = "Alle som ikke er markert som favoritter vil bli listet opp her.";
 
 // Buttons
 "Not in use" = "Ikke i bruk";

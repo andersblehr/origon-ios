@@ -23,6 +23,7 @@ NSString * const kTargetAffiliation = @"affiliation";
 NSString * const kTargetDevices = @"devices";
 NSString * const kTargetElder = @"elder";
 NSString * const kTargetEmail = @"email";
+NSString * const kTargetFavourites = @"favourites";
 NSString * const kTargetGender = @"gender";
 NSString * const kTargetGroup = @"group";
 NSString * const kTargetGroups = @"groups";
@@ -125,16 +126,24 @@ static OState *_activeState = nil;
 
 #pragma mark - State inspection
 
-- (BOOL)actionIs:(NSString *)action
+- (BOOL)actionIs:(id)action
 {
-    BOOL isMatch = [_action isEqualToString:action];
+    BOOL isMatch = NO;
     
-    if (!isMatch) {
-        if ([action isEqualToString:kActionInput]) {
-            isMatch = isMatch || [_action isEqualToString:kActionSignIn];
-            isMatch = isMatch || [_action isEqualToString:kActionActivate];
-            isMatch = isMatch || [_action isEqualToString:kActionRegister];
-            isMatch = isMatch || [_action isEqualToString:kActionEdit];
+    if ([action isKindOfClass:[NSString class]]) {
+        isMatch = [_action isEqualToString:action];
+        
+        if (!isMatch) {
+            if ([action isEqualToString:kActionInput]) {
+                isMatch = isMatch || [_action isEqualToString:kActionSignIn];
+                isMatch = isMatch || [_action isEqualToString:kActionActivate];
+                isMatch = isMatch || [_action isEqualToString:kActionRegister];
+                isMatch = isMatch || [_action isEqualToString:kActionEdit];
+            }
+        }
+    } else if ([action isKindOfClass:[NSArray class]]) {
+        for (NSString *actionItem in action) {
+            isMatch = isMatch || [self actionIs:actionItem];
         }
     }
     
@@ -142,32 +151,40 @@ static OState *_activeState = nil;
 }
 
 
-- (BOOL)targetIs:(NSString *)target
+- (BOOL)targetIs:(id)target
 {
-    BOOL isMatch = [_target isEqualToString:target];
+    BOOL isMatch = NO;
     
-    if (!isMatch) {
-        if ([target isEqualToString:kTargetJuvenile]) {
-            isMatch = isMatch || [_target isEqualToString:kTargetWard];
-        } else if ([target isEqualToString:kTargetElder]) {
-            isMatch = isMatch || [_target isEqualToString:kTargetGuardian];
-            isMatch = isMatch || [_target isEqualToString:kTargetOrganiser];
-        } else if ([target isEqualToString:kTargetParent]) {
-            isMatch = isMatch || [self aspectIs:kAspectParent];
-        } else if ([target isEqualToString:kTargetRole]) {
-            isMatch = isMatch || [self aspectIs:kAspectMemberRole];
-            isMatch = isMatch || [self aspectIs:kAspectOrganiserRole];
-            isMatch = isMatch || [self aspectIs:kAspectParentRole];
-        } else if ([target isEqualToString:kTargetGroup]) {
-            isMatch = isMatch || [self aspectIs:kAspectGroup];
-        } else if ([target isEqualToString:kTargetAdmin]) {
-            isMatch = isMatch || [self aspectIs:kAspectAdmin];
-        } else if ([target isEqualToString:kTargetAffiliation]) {
-            isMatch = isMatch || [self targetIs:kTargetRole];
-            isMatch = isMatch || [self targetIs:kTargetGroup];
-            isMatch = isMatch || [self targetIs:kTargetAdmin];
-        } else if ([target isEqualToString:kTargetSetting]) {
-            // TODO: OR together all setting keys
+    if ([target isKindOfClass:[NSString class]]) {
+        isMatch = [_target isEqualToString:target];
+        
+        if (!isMatch) {
+            if ([target isEqualToString:kTargetJuvenile]) {
+                isMatch = isMatch || [_target isEqualToString:kTargetWard];
+            } else if ([target isEqualToString:kTargetElder]) {
+                isMatch = isMatch || [_target isEqualToString:kTargetGuardian];
+                isMatch = isMatch || [_target isEqualToString:kTargetOrganiser];
+            } else if ([target isEqualToString:kTargetParent]) {
+                isMatch = isMatch || [self aspectIs:kAspectParent];
+            } else if ([target isEqualToString:kTargetRole]) {
+                isMatch = isMatch || [self aspectIs:kAspectMemberRole];
+                isMatch = isMatch || [self aspectIs:kAspectOrganiserRole];
+                isMatch = isMatch || [self aspectIs:kAspectParentRole];
+            } else if ([target isEqualToString:kTargetGroup]) {
+                isMatch = isMatch || [self aspectIs:kAspectGroup];
+            } else if ([target isEqualToString:kTargetAdmin]) {
+                isMatch = isMatch || [self aspectIs:kAspectAdmin];
+            } else if ([target isEqualToString:kTargetAffiliation]) {
+                isMatch = isMatch || [self targetIs:kTargetRole];
+                isMatch = isMatch || [self targetIs:kTargetGroup];
+                isMatch = isMatch || [self targetIs:kTargetAdmin];
+            } else if ([target isEqualToString:kTargetSetting]) {
+                // TODO: OR together all setting keys
+            }
+        }
+    } else if ([target isKindOfClass:[NSArray class]]) {
+        for (NSString *targetItem in target) {
+            isMatch = isMatch || [self targetIs:targetItem];
         }
     }
     
@@ -175,9 +192,19 @@ static OState *_activeState = nil;
 }
 
 
-- (BOOL)aspectIs:(NSString *)aspect
+- (BOOL)aspectIs:(id)aspect
 {
-    return [_aspect isEqualToString:aspect];
+    BOOL isMatch = NO;
+    
+    if ([aspect isKindOfClass:[NSString class]]) {
+        isMatch = [_aspect isEqualToString:aspect];
+    } else if ([aspect isKindOfClass:[NSArray class]]) {
+        for (NSString *aspectItem in aspect) {
+            isMatch = isMatch || [self aspectIs:aspectItem];
+        }
+    }
+    
+    return isMatch;
 }
 
 
@@ -262,19 +289,21 @@ static OState *_activeState = nil;
 }
 
 
-- (NSString *)roleTypeFromAspect
+- (NSString *)affiliationTypeFromAspect
 {
-    NSString *roleType = nil;
+    NSString *affiliationType = nil;
     
     if ([self aspectIs:kAspectOrganiserRole]) {
-        roleType = kAffiliationTypeOrganiserRole;
+        affiliationType = kAffiliationTypeOrganiserRole;
     } else if ([self aspectIs:kAspectParentRole]) {
-        roleType = kAffiliationTypeParentRole;
+        affiliationType = kAffiliationTypeParentRole;
     } else if ([self aspectIs:kAspectMemberRole]) {
-        roleType = kAffiliationTypeMemberRole;
+        affiliationType = kAffiliationTypeMemberRole;
+    } else if ([self aspectIs:kAspectGroup]) {
+        affiliationType = kAffiliationTypeGroup;
     }
     
-    return roleType;
+    return affiliationType;
 }
 
 

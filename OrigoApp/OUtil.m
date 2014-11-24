@@ -8,16 +8,14 @@
 
 #import "OUtil.h"
 
-static NSString * const kRootIdFormat = @"~%@";
-
 
 @implementation OUtil
 
 #pragma mark - String derivation
 
-+ (NSString *)rootIdFromMemberId:(NSString *)memberId
++ (NSString *)stashIdFromMemberId:(NSString *)memberId
 {
-    return [NSString stringWithFormat:kRootIdFormat, memberId];
+    return [NSString stringWithFormat:@"~%@", memberId];
 }
 
 

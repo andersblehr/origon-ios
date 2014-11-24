@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString * const kMembershipTypeRoot;
+extern NSString * const kMembershipTypeOwner;
+extern NSString * const kMembershipTypeFavourite;
 extern NSString * const kMembershipTypeListing;
 extern NSString * const kMembershipTypeResidency;
 extern NSString * const kMembershipTypeParticipancy;
@@ -38,7 +39,9 @@ extern NSString * const kAffiliationTypeGroup;
 
 - (BOOL)isActive;
 - (BOOL)isFull;
+- (BOOL)isFavourite;
 - (BOOL)isListing;
+- (BOOL)isOwner;
 - (BOOL)isResidency;
 - (BOOL)isParticipancy;
 - (BOOL)isAssociate;

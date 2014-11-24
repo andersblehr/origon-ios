@@ -804,6 +804,28 @@ static NSInteger const kButtonIndexContinue = 1;
 
 #pragma mark - Selector implementations
 
+- (void)toggleFavouriteStatus
+{
+    BOOL isFavourite = [_member isFavourite];
+    id<OOrigo> stash = [[OMeta m].user stash];
+    
+    if (isFavourite) {
+        [[stash membershipForMember:_member] expire];
+    } else {
+        [stash addMember:_member];
+    }
+    
+    isFavourite = !isFavourite;
+    
+    NSMutableArray *rightBarButtonItems = [self.navigationItem.rightBarButtonItems mutableCopy];
+    NSInteger toggleIndex = [rightBarButtonItems indexOfObject:[self.navigationItem rightBarButtonItemWithTag:kBarButtonTagFavourite]];
+    
+    [rightBarButtonItems replaceObjectAtIndex:toggleIndex withObject:[UIBarButtonItem favouriteButtonWithTarget:self isFavourite:isFavourite]];
+    
+    self.navigationItem.rightBarButtonItems = rightBarButtonItems;
+}
+
+
 - (void)performEditAction
 {
     [self cancelEditingListCellIfNeeded];
@@ -933,6 +955,12 @@ static NSInteger const kButtonIndexContinue = 1;
     } else if ([self actionIs:kActionDisplay]) {
         self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_member givenName]];
         self.navigationItem.rightBarButtonItem = [UIBarButtonItem infoButtonWithTarget:self];
+        
+        if (![_member isUser] && ([_member.mobilePhone hasValue] || [_member.email hasValue])) {
+            if (![_member isJuvenile] || [_member isWardOfUser] || [[OMeta m].user isJuvenile]) {
+                [self.navigationItem addRightBarButtonItem:[UIBarButtonItem favouriteButtonWithTarget:self isFavourite:[_member isFavourite]]];
+            }
+        }
         
         if ([_member isManagedByUser]) {
             [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
@@ -1258,6 +1286,12 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+- (void)didFinishEditingViewTitleField:(UITextField *)viewTitleField
+{
+    _role = viewTitleField.text;
+}
+
+
 - (BOOL)isEditableListCellAtIndexPath:(NSIndexPath *)indexPath
 {
     return [self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles && [_origo userCanEdit];
@@ -1281,14 +1315,6 @@ static NSInteger const kButtonIndexContinue = 1;
     listCellField.editable = NO;
     
     _roleCell.selectable = YES;
-}
-
-
-- (void)maySetViewTitle:(NSString *)newTitle
-{
-    if (newTitle) {
-        _role = newTitle;
-    }
 }
 
 

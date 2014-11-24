@@ -51,7 +51,7 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
         settings = [OMeta m].user.settings;
     
         if (!settings) {
-            settings = [[OMeta m].context insertEntityOfClass:self inOrigo:[[OMeta m].user root]];
+            settings = [[OMeta m].context insertEntityOfClass:self inOrigo:[[OMeta m].user stash]];
             [OMeta m].user.settings = settings;
         }
     }

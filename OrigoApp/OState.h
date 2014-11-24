@@ -23,6 +23,7 @@ extern NSString * const kTargetAffiliation;
 extern NSString * const kTargetDevices;
 extern NSString * const kTargetElder;
 extern NSString * const kTargetEmail;
+extern NSString * const kTargetFavourites;
 extern NSString * const kTargetGender;
 extern NSString * const kTargetGroup;
 extern NSString * const kTargetGroups;
@@ -76,15 +77,15 @@ extern NSString * const kAspectRole;
 - (void)makeActive;
 - (void)toggleAction:(NSArray *)alternatingActions;
 
-- (BOOL)actionIs:(NSString *)action;
-- (BOOL)targetIs:(NSString *)target;
-- (BOOL)aspectIs:(NSString *)aspect;
+- (BOOL)actionIs:(id)action;
+- (BOOL)targetIs:(id)target;
+- (BOOL)aspectIs:(id)aspect;
 
 + (NSString *)stateIdForViewControllerWithIdentifier:(NSString *)identifier target:(id)target;
 - (BOOL)isValidDestinationStateId:(NSString *)stateId;
 
 - (NSArray *)eligibleCandidates;
-- (NSString *)roleTypeFromAspect;
+- (NSString *)affiliationTypeFromAspect;
 - (NSString *)asString;
 
 @end

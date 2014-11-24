@@ -50,9 +50,11 @@
 - (void)didDismissModalViewController:(OTableViewController *)viewController;
 - (void)viewWillBeDismissed;
 
+- (BOOL)shouldFinishEditingViewTitleField:(UITextField *)viewTitleField;
+- (void)didFinishEditingViewTitleField:(UITextField *)viewTitleField;
 - (BOOL)isEditableListCellAtIndexPath:(NSIndexPath *)indexPath;
 - (void)didFinishEditingListCellField:(OInputField *)listCellField;
-- (void)maySetViewTitle:(NSString *)newTitle;
+
 - (void)didResumeFromBackground;
 - (void)didSignOut;
 
@@ -92,9 +94,9 @@
 
 - (OTableViewController *)precedingViewController;
 
-- (BOOL)actionIs:(NSString *)action;
-- (BOOL)targetIs:(NSString *)target;
-- (BOOL)aspectIs:(NSString *)aspect;
+- (BOOL)actionIs:(id)action;
+- (BOOL)targetIs:(id)target;
+- (BOOL)aspectIs:(id)aspect;
 
 - (void)setDataForInputSection;
 - (void)setData:(id)data forSectionWithKey:(NSInteger)sectionKey;

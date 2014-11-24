@@ -262,10 +262,8 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEditGroup];
         [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit responsibilities", @"") tag:kButtonTagEditRoles];
         
-        if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeList]]) {
-            if (![[_origo groups] count]) {
-                [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit subgroups", @"") tag:kButtonTagEditSubgroups];
-            }
+        if (![_origo isOfType:@[kOrigoTypeResidence, kOrigoTypeList]] && ![[_origo groups] count]) {
+            [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit groups", @"") tag:kButtonTagEditSubgroups];
         }
         
         [actionSheet show];
@@ -463,8 +461,8 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 {
     BOOL hasFooter = NO;
     
-    if ([self isBottomSectionKey:sectionKey]) {
-        if (self.isModal && ![self actionIs:kActionRegister]) {
+    if ([self isBottomSectionKey:sectionKey] && ![self actionIs:kActionRegister]) {
+        if (self.isModal) {
             hasFooter = [_origo userCanEdit];
         } else if ([_origo isOfType:kOrigoTypeList]) {
             hasFooter = ![[_origo members] count];
