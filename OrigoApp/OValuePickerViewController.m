@@ -37,6 +37,22 @@ static NSInteger const kSectionKeyValues = 0;
 
 @implementation OValuePickerViewController
 
+#pragma mark - Auxiliary methods
+
+- (void)cell:(OTableViewCell *)cell loadGroupDetailsForMember:(id<OMember>)member
+{
+    NSArray *groups = [[_origo membershipForMember:member] groups];
+    
+    cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:groups conjoin:NO];
+    
+    if ([groups containsObject:_affiliation]) {
+        cell.detailTextLabel.textColor = [UIColor textColour];
+    } else {
+        cell.detailTextLabel.textColor = [UIColor tonedDownTextColour];
+    }
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)toggleMultiRole
@@ -130,7 +146,7 @@ static NSInteger const kSectionKeyValues = 0;
                 [self editableTitle:_affiliation withPlaceholder:placeholder];
             }
             
-            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:NO]];
+            [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo conjoin:NO]];
             
             if ([self targetIs:kTargetRole]) {
                 _isMultiValuePicker = [_pickedValues count] > 1;
@@ -141,7 +157,7 @@ static NSInteger const kSectionKeyValues = 0;
                     
                     [self.navigationItem addRightBarButtonItem:_multiRoleButtonOff];
                 }
-            } else if ([self targetIs:kTargetGroup] || [self targetIs:kTargetAdmin]) {
+            } else if ([self targetIs:@[kTargetGroup, kTargetAdmin]]) {
                 _isMultiValuePicker = YES;
             }
         }
@@ -196,7 +212,7 @@ static NSInteger const kSectionKeyValues = 0;
         } else if ([self aspectIs:kAspectAdmin]) {
             [self setData:[_origo adminCandidates] sectionIndexLabelKey:kPropertyKeyName];
         }
-    } else if ([self targetIs:kTargetMember] || [self targetIs:kTargetMembers]) {
+    } else if ([self targetIs:@[kTargetMember, kTargetMembers]]) {
         [self setData:self.meta sectionIndexLabelKey:kPropertyKeyName];
     }
 }
@@ -248,8 +264,8 @@ static NSInteger const kSectionKeyValues = 0;
         } else {
             [cell loadMember:candidate inOrigo:_origo excludeRoles:YES excludeRelations:YES];
             
-            if ([self aspectIs:kAspectGroup]) {
-                cell.detailTextLabel.text = [OUtil commaSeparatedListOfStrings:[[_origo membershipForMember:candidate] groups] conjoin:NO];
+            if ([self targetIs:kTargetGroup]) {
+                [self cell:cell loadGroupDetailsForMember:candidate];
             }
         }
         
@@ -342,7 +358,11 @@ static NSInteger const kSectionKeyValues = 0;
             [[_origo membershipForMember:pickedValue] removeAffiliation:_affiliation ofType:_affiliationType];
         }
         
-        [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues conjoin:NO subjective:YES]];
+        [self setSubtitle:[OUtil commaSeparatedListOfMembers:_pickedValues inOrigo:_origo conjoin:NO]];
+        
+        if ([self targetIs:kTargetGroup]) {
+            [self cell:cell loadGroupDetailsForMember:pickedValue];
+        }
         
         if (self.isModal && _isMultiValuePicker && [_pickedValues count]) {
             if (self.navigationItem.rightBarButtonItem == _multiRoleButtonOn) {
@@ -366,37 +386,48 @@ static NSInteger const kSectionKeyValues = 0;
 - (void)viewWillBeDismissed
 {
     if (self.isModal && _isMultiValuePicker && self.didCancel) {
-        if ([self targetIs:kTargetRole]) {
-            NSString *roleType = [self.state roleTypeFromAspect];
-            NSArray *roleHolders = [_origo holdersOfRole:_affiliation ofType:roleType];
+        if ([self targetIs:@[kTargetRole, kTargetGroup]]) {
+            NSString *affiliationType = [self.state affiliationTypeFromAspect];
+            NSArray *holders = [_origo holdersOfAffiliation:_affiliation ofType:affiliationType];
             
-            for (id<OMember> roleHolder in roleHolders) {
-                [[_origo membershipForMember:roleHolder] removeAffiliation:_affiliation ofType:_affiliationType];
-            }
-        } else if ([self targetIs:kTargetGroup]) {
-            for (id<OMember> groupMember in [_origo membersOfGroup:_affiliation]) {
-                [[_origo membershipForMember:groupMember] removeAffiliation:_affiliation ofType:kAffiliationTypeGroup];
+            for (id<OMember> holder in holders) {
+                [[_origo membershipForMember:holder] removeAffiliation:_affiliation ofType:_affiliationType];
             }
         }
     }
 }
 
 
-- (void)maySetViewTitle:(NSString *)newTitle
+- (BOOL)shouldFinishEditingViewTitleField:(UITextField *)viewTitleField
 {
-    if (_affiliation && newTitle) {
-        NSString *roleType = [self.state roleTypeFromAspect];
-        
-        for (id<OMember> roleHolder in [_origo holdersOfRole:_affiliation ofType:roleType]) {
-            id<OMembership> membership = [_origo membershipForMember:roleHolder];
-            
-            [membership addAffiliation:newTitle ofType:_affiliationType];
-            [membership removeAffiliation:_affiliation ofType:_affiliationType];
-        }
+    BOOL shouldFinishEditing = YES;
+    
+    if ([self targetIs:kTargetGroup] && ![viewTitleField.text isEqualToString:_affiliation]) {
+        shouldFinishEditing = ![[_origo groups] containsObject:viewTitleField.text];
     }
     
-    if (newTitle) {
-        _affiliation = newTitle;
+    return shouldFinishEditing;
+}
+
+
+- (void)didFinishEditingViewTitleField:(UITextField *)viewTitleField
+{
+    NSString *oldAffiliation = _affiliation;
+    _affiliation = viewTitleField.text;
+    
+    if (oldAffiliation && ![_affiliation isEqualToString:oldAffiliation]) {
+        NSArray *affiliationHolders = [_origo holdersOfAffiliation:oldAffiliation ofType:_affiliationType];
+        
+        for (id<OMember> affiliationHolder in affiliationHolders) {
+            id<OMembership> membership = [_origo membershipForMember:affiliationHolder];
+            
+            [membership addAffiliation:_affiliation ofType:_affiliationType];
+            [membership removeAffiliation:oldAffiliation ofType:_affiliationType];
+        }
+        
+        if ([self targetIs:kTargetGroup]) {
+            [self reloadSections];
+        }
     }
 }
 

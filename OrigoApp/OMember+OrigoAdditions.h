@@ -31,8 +31,9 @@
 - (NSSet *)residencies;
 - (NSSet *)participancies;
 - (NSSet *)listings;
+- (NSSet *)associateMemberships;
 
-- (id<OOrigo>)root;
+- (id<OOrigo>)stash;
 - (id<OOrigo>)primaryResidence;
 - (id<OOrigo>)defaultContactList;
 - (NSArray *)residences;
@@ -64,6 +65,7 @@
 - (BOOL)isKnownByUser;
 - (BOOL)isManagedByUser;
 - (BOOL)isManaged;
+- (BOOL)isFavourite;
 - (BOOL)isMale;
 - (BOOL)isListedOnly;
 - (BOOL)isJuvenile;

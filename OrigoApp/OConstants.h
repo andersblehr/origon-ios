@@ -111,13 +111,13 @@ extern NSString * const kStringPrefixMemberRoleTitle;
 extern NSString * const kStringPrefixSettingTitle;
 
 // Icon file names
+extern NSString * const kIconFileResidence;
+extern NSString * const kIconFileList;
 extern NSString * const kIconFileOrigo;
 extern NSString * const kIconFileSettings;
 extern NSString * const kIconFile_iPad;
 extern NSString * const kIconFile_iPhone;
 extern NSString * const kIconFile_iPodTouch;
-extern NSString * const kIconFileList;
-extern NSString * const kIconFileHousehold;
 extern NSString * const kIconFileMan;
 extern NSString * const kIconFileWoman;
 extern NSString * const kIconFileBoy;
@@ -126,6 +126,8 @@ extern NSString * const kIconFileEdit;
 extern NSString * const kIconFileMap;
 extern NSString * const kIconFileInfo;
 extern NSString * const kIconFileLookup;
+extern NSString * const kIconFileFavouriteNo;
+extern NSString * const kIconFileFavouriteYes;
 extern NSString * const kIconFileAcceptReject;
 extern NSString * const kIconFilePlacePhoneCall;
 extern NSString * const kIconFileSendText;

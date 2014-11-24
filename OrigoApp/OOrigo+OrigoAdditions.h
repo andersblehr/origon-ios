@@ -14,11 +14,11 @@ extern NSString * const kOrigoTypeList;
 extern NSString * const kOrigoTypeOrganisation;
 extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeResidence;
-extern NSString * const kOrigoTypeRoot;
 extern NSString * const kOrigoTypeSchoolClass;
 extern NSString * const kOrigoTypeSimple;
 extern NSString * const kOrigoTypeStudyGroup;
 extern NSString * const kOrigoTypeTeam;
+extern NSString * const kOrigoTypeUserStash;
 
 
 @protocol OOrigo <OEntity>
@@ -54,7 +54,7 @@ extern NSString * const kOrigoTypeTeam;
 - (NSArray *)organisersWithRole:(NSString *)role;
 - (NSArray *)parentRoles;
 - (NSArray *)parentsWithRole:(NSString *)role;
-- (NSArray *)holdersOfRole:(NSString *)role ofType:(NSString *)roleType;
+- (NSArray *)holdersOfAffiliation:(NSString *)affiliation ofType:(NSString *)affiliationType;
 
 - (NSArray *)groups;
 - (NSArray *)membersOfGroup:(NSString *)group;

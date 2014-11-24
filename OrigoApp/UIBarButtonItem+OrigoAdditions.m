@@ -11,23 +11,24 @@
 NSInteger const kBarButtonTagAcceptReject = 10;
 NSInteger const kBarButtonTagAction = 11;
 NSInteger const kbarButtonTagEdit = 12;
-NSInteger const kBarButtonTagGroups = 13;
-NSInteger const kBarButtonTagInfo = 14;
-NSInteger const kBarButtonTagLookup = 15;
-NSInteger const kBarButtonTagMap = 16;
-NSInteger const kBarButtonTagMultiRole = 17;
-NSInteger const kBarButtonTagPlus = 18;
-NSInteger const kBarButtonTagSettings = 19;
+NSInteger const kBarButtonTagFavourite = 13;
+NSInteger const kBarButtonTagGroups = 14;
+NSInteger const kBarButtonTagInfo = 15;
+NSInteger const kBarButtonTagLookup = 16;
+NSInteger const kBarButtonTagMap = 17;
+NSInteger const kBarButtonTagMultiRole = 18;
+NSInteger const kBarButtonTagPlus = 19;
+NSInteger const kBarButtonTagSettings = 20;
 
-NSInteger const kBarButtonTagBack = 20;
-NSInteger const kBarButtonTagCancel = 21;
-NSInteger const kBarButtonTagDone = 22;
-NSInteger const kBarButtonTagNext = 23;
-NSInteger const kBarButtonTagSignOut = 24;
+NSInteger const kBarButtonTagBack = 30;
+NSInteger const kBarButtonTagCancel = 31;
+NSInteger const kBarButtonTagDone = 32;
+NSInteger const kBarButtonTagNext = 33;
+NSInteger const kBarButtonTagSignOut = 34;
 
-NSInteger const kBarButtonTagPhoneCall = 30;
-NSInteger const kBarButtonTagSendEmail = 31;
-NSInteger const kBarButtonTagSendText = 32;
+NSInteger const kBarButtonTagPhoneCall = 40;
+NSInteger const kBarButtonTagSendEmail = 41;
+NSInteger const kBarButtonTagSendText = 42;
 
 static UIBarButtonItem *_flexibleSpace = nil;
 
@@ -95,6 +96,16 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
++ (instancetype)favouriteButtonWithTarget:(id)target isFavourite:(BOOL)isFavourite
+{
+    NSString *iconFileName = isFavourite ? kIconFileFavouriteYes : kIconFileFavouriteNo;
+    UIBarButtonItem *button = [[self alloc] initWithImage:[UIImage imageNamed:iconFileName] style:UIBarButtonItemStylePlain target:target action:@selector(toggleFavouriteStatus)];
+    button.tag = kBarButtonTagFavourite;
+    
+    return button;
+}
+
+
 + (instancetype)mapButtonWithTarget:(id)target
 {
     return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileMap] target:target action:@selector(performMapAction) tag:kBarButtonTagMap];
@@ -103,8 +114,8 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)multiRoleButtonWithTarget:(id)target on:(BOOL)on
 {
-    NSString *iconFile = on ? kIconFileMultiRoleOn : kIconFileMultiRoleOff;
-    UIBarButtonItem *button = [[self alloc] initWithImage:[UIImage imageNamed:iconFile] style:UIBarButtonItemStylePlain target:target action:@selector(toggleMultiRole)];
+    NSString *iconFileName = on ? kIconFileMultiRoleOn : kIconFileMultiRoleOff;
+    UIBarButtonItem *button = [[self alloc] initWithImage:[UIImage imageNamed:iconFileName] style:UIBarButtonItemStylePlain target:target action:@selector(toggleMultiRole)];
     button.tag = kBarButtonTagMultiRole;
     
     return button;

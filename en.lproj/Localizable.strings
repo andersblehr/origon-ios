@@ -291,7 +291,8 @@
 "Guardian of %@" = "Parent of %@";
 "Listed in %@" = "Listed in %@";
 "%@, %@ of %@" = "%@, %@ of %@";
-"%@ of %@" = "%@ of %@";
+"%@ [friend of] %@" = "%@ of %@";
+"%@ [guardian of] %@" = "%@ of %@";
 "%@ in %@" = "%@ in %@";
 
 // Separators
@@ -326,6 +327,7 @@
 "My lists" = "My lists";
 
 // Labels
+"Favourites and others" = "Favourites and others";
 "%@'s friends" = "%@'s friends";
 
 // Buttons
@@ -469,12 +471,18 @@
 
 // View titles
 "Settings" = "Settings";
+"Favourites" = "Favourites";
+"Others" = "Others";
 "Responsibilities" = "Responsibilities";
 "Groups" = "Groups";
 "Edit groups" = "Edit groups";
 
 // List titles
 "[setting list label] devices" = "Registered devices";
+
+// Footers
+"All persons marked as favourites will be listed here ..." = "All persons marked as favourites will be listed here. Tap ☆ in the person view to mark that person as favourite.";
+"All who are not marked as favourites will be listed here." = "All who are not marked as favourites will be listed here.";
 
 // Buttons
 "Not in use" = "Not in use";

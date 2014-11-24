@@ -10,7 +10,7 @@
 
 @interface OUtil : NSObject
 
-+ (NSString *)rootIdFromMemberId:(NSString *)memberId;
++ (NSString *)stashIdFromMemberId:(NSString *)memberId;
 + (NSString *)genderTermForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile;
 
 + (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin;

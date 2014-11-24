@@ -14,11 +14,11 @@ NSString * const kOrigoTypeList = @"list";
 NSString * const kOrigoTypeOrganisation = @"organisation";
 NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
 NSString * const kOrigoTypeResidence = @"residence";
-NSString * const kOrigoTypeRoot = @"~";
 NSString * const kOrigoTypeSchoolClass = @"schoolClass";
 NSString * const kOrigoTypeSimple = @"simple";
 NSString * const kOrigoTypeStudyGroup = @"studyGroup";
 NSString * const kOrigoTypeTeam = @"team";
+NSString * const kOrigoTypeUserStash = @"~";
 
 
 @implementation OOrigo (OrigoAdditions)
@@ -43,7 +43,7 @@ NSString * const kOrigoTypeTeam = @"team";
             
             [membership alignWithOrigoIsAssociate:isAssociate];
             
-            if (![self isOfType:kOrigoTypeRoot]) {
+            if (![self isOfType:kOrigoTypeUserStash]) {
                 [[OMeta m].context insertCrossReferencesForMembership:membership];
             }
         }
@@ -126,11 +126,9 @@ NSString * const kOrigoTypeTeam = @"team";
 {
     NSMutableSet *memberships = [NSMutableSet set];
     
-    if (![self isOfType:kOrigoTypeRoot]) {
-        for (OMembership *membership in self.memberships) {
-            if (![membership hasExpired]) {
-                [memberships addObject:membership];
-            }
+    for (OMembership *membership in self.memberships) {
+        if (![membership.type isEqualToString:kMembershipTypeOwner] && ![membership hasExpired]) {
+            [memberships addObject:membership];
         }
     }
     
@@ -195,8 +193,12 @@ NSString * const kOrigoTypeTeam = @"team";
     for (OMembership *membership in [self allMemberships]) {
         OMember *member = membership.member;
         
-        if ([self isOfType:kOrigoTypeList]) {
-            if ([membership isListing] && member != [OState s].currentMember) {
+        if ([self isOfType:kOrigoTypeUserStash]) {
+            if ([membership isFavourite]) {
+                [members addObject:member];
+            }
+        } else if ([self isOfType:kOrigoTypeList]) {
+            if ([membership isListing]) {
                 [members addObject:member];
             }
         } else if ([self isOfType:kOrigoTypeCommunity]) {
@@ -364,7 +366,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (NSArray *)membersWithRole:(NSString *)role
 {
-    return [self holdersOfRole:role ofType:kAffiliationTypeMemberRole];
+    return [self holdersOfAffiliation:role ofType:kAffiliationTypeMemberRole];
 }
 
 
@@ -382,7 +384,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (NSArray *)organisersWithRole:(NSString *)role
 {
-    return [self holdersOfRole:role ofType:kAffiliationTypeOrganiserRole];
+    return [self holdersOfAffiliation:role ofType:kAffiliationTypeOrganiserRole];
 }
 
 
@@ -400,23 +402,23 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (NSArray *)parentsWithRole:(NSString *)role
 {
-    return [self holdersOfRole:role ofType:kAffiliationTypeParentRole];
+    return [self holdersOfAffiliation:role ofType:kAffiliationTypeParentRole];
 }
 
 
-- (NSArray *)holdersOfRole:(NSString *)role ofType:(NSString *)roleType
+- (NSArray *)holdersOfAffiliation:(NSString *)affiliation ofType:(NSString *)affiliationType
 {
-    NSMutableArray *roleHolders = [NSMutableArray array];
+    NSMutableArray *affiliationHolders = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        for (NSString *actualRole in [membership affiliationsOfType:roleType]) {
-            if ([actualRole isEqualToString:role]) {
-                [roleHolders addObject:membership.member];
+        for (NSString *actualAffiliation in [membership affiliationsOfType:affiliationType]) {
+            if ([actualAffiliation isEqualToString:affiliation]) {
+                [affiliationHolders addObject:membership.member];
             }
         }
     }
     
-    return [roleHolders sortedArrayUsingSelector:@selector(compare:)];
+    return [affiliationHolders sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -607,9 +609,7 @@ NSString * const kOrigoTypeTeam = @"team";
 
 - (BOOL)hasMember:(id<OMember>)member
 {
-    OMembership *membership = [self membershipForMember:member];
-    
-    return membership && ([membership isFull] || [self isOfType:kOrigoTypeCommunity]);
+    return [[self members] containsObject:member];
 }
 
 
@@ -736,7 +736,7 @@ NSString * const kOrigoTypeTeam = @"team";
     BOOL isTransient = [super isTransient];
     
     if (!isTransient) {
-        isTransient = [self isOfType:kOrigoTypeRoot] && self != [[OMeta m].user root];
+        isTransient = [self isOfType:kOrigoTypeUserStash] && self != [[OMeta m].user stash];
     }
     
     return isTransient;

@@ -184,7 +184,7 @@
     NSMutableSet *memberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
-        if (![membership.origo isOfType:kOrigoTypeRoot] && ![membership hasExpired]) {
+        if (![membership.origo isOfType:kOrigoTypeUserStash] && ![membership hasExpired]) {
             if (![membership.status isEqualToString:kMembershipStatusListed]) {
                 [memberships addObject:membership];
             }
@@ -237,19 +237,33 @@
 }
 
 
-#pragma mark - Linked origos
-
-- (id<OOrigo>)root
+- (NSSet *)associateMemberships
 {
-    OOrigo *root = nil;
+    NSMutableSet *associateMemberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
-        if (!root && [membership.type isEqualToString:kOrigoTypeRoot]) {
-            root = membership.origo;
+        if ([membership isAssociate]) {
+            [associateMemberships addObject:membership];
         }
     }
     
-    return root;
+    return associateMemberships;
+}
+
+
+#pragma mark - Linked origos
+
+- (id<OOrigo>)stash
+{
+    OOrigo *stash = nil;
+    
+    for (OMembership *membership in self.memberships) {
+        if (!stash && [membership.origo isOfType:kOrigoTypeUserStash]) {
+            stash = membership.origo;
+        }
+    }
+    
+    return stash;
 }
 
 
@@ -345,7 +359,7 @@
     NSMutableSet *lists = [NSMutableSet set];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isListing]) {
+        if ([membership.origo isOfType:kOrigoTypeList] && [membership isOwner]) {
             [lists addObject:membership.origo];
         }
     }
@@ -569,16 +583,14 @@
 
 - (void)makeActive
 {
-    OMembership *rootMembership = [[self root] membershipForMember:self];
-    rootMembership.status = kMembershipStatusActive;
-    rootMembership.isAdmin = @YES;
+    OMembership *stashMembership = [[self stash] membershipForMember:self];
+    stashMembership.status = kMembershipStatusActive;
+    stashMembership.isAdmin = @YES;
     
     for (OMembership *residency in [self residencies]) {
         residency.isAdmin = [self isJuvenile] ? @(![residency.origo hasAdmin]) : @YES;
         [residency.origo resetDefaultResidenceNameIfApplicable];
     }
-    
-    [self defaultContactList];
     
     for (OMember *ward in [self wards]) {
         [ward defaultContactList];
@@ -599,7 +611,13 @@
 
 - (BOOL)isWardOfUser
 {
-    return [[[OMeta m].user wards] containsObject:self];
+    OMember *user = [OMeta m].user;
+
+    if (!user) {
+        user = [[OMeta m].context entityWithId:[OMeta m].userId];
+    }
+    
+    return [[user wards] containsObject:self];
 }
 
 
@@ -668,6 +686,12 @@
     }
     
     return isManaged;
+}
+
+
+- (BOOL)isFavourite
+{
+    return [[[OMeta m].user stash] hasMember:self];
 }
 
 
@@ -842,14 +866,14 @@
 {
     NSString *displayName = nil;
     
-    if (origo && [self isJuvenile] && ![[OMeta m].user isJuvenile]) {
+    if (origo && [self isJuvenile]) {
         NSString *givenName = [self givenName];
         NSDictionary *isUniqueByGivenName = [OUtil isUniqueByGivenNameFromMembers:[origo regulars]];
         
-        if ([isUniqueByGivenName[givenName] boolValue] || [origo isJuvenile]) {
-            displayName = givenName;
+        if (isUniqueByGivenName[givenName]) {
+            displayName = [isUniqueByGivenName[givenName] boolValue] ? givenName : [self shortName];
         } else {
-            displayName = [self shortName];
+            displayName = [origo isJuvenile] ? givenName : [self shortName];
         }
     } else {
         displayName = self.name;
@@ -863,10 +887,10 @@
 
 + (instancetype)instanceWithId:(NSString *)entityId
 {
-    OOrigo *root = [OOrigo instanceWithId:[OUtil rootIdFromMemberId:entityId] type:kOrigoTypeRoot];
-    OMember *instance = [[OMeta m].context insertEntityOfClass:self inOrigo:root entityId:entityId];
+    OOrigo *stash = [OOrigo instanceWithId:[OUtil stashIdFromMemberId:entityId] type:kOrigoTypeUserStash];
+    OMember *instance = [[OMeta m].context insertEntityOfClass:self inOrigo:stash entityId:entityId];
     
-    [root addMember:instance];
+    [stash addMember:instance];
     
     return instance;
 }

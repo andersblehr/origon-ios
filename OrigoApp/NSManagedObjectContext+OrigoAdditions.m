@@ -48,13 +48,13 @@
     OReplicatedEntityRef *expiryRef = nil;
     
     if ([membership.member isActive]) {
-        NSString *rootId = [OUtil rootIdFromMemberId:membership.member.entityId];
-        NSString *expiryRefId = [self entityRefIdForEntity:membership inOrigoWithId:rootId];
+        NSString *stashId = [OUtil stashIdFromMemberId:membership.member.entityId];
+        NSString *expiryRefId = [self entityRefIdForEntity:membership inOrigoWithId:stashId];
         
         expiryRef = [self insertEntityOfClass:[OReplicatedEntityRef class] entityId:expiryRefId];
         expiryRef.referencedEntityId = membership.entityId;
         expiryRef.referencedEntityOrigoId = membership.origoId;
-        expiryRef.origoId = rootId;
+        expiryRef.origoId = stashId;
     }
     
     return expiryRef;

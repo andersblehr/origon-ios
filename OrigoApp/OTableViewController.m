@@ -28,6 +28,7 @@ static UIViewController * _reinstantiatedRootViewController;
 @private
     BOOL _didJustLoad;
     BOOL _didInitialise;
+    BOOL _isUsingSectionIndexTitles;
     BOOL _shouldReloadOnModalDismissal;
     BOOL _titleFieldShouldBeginEditing;
     
@@ -300,7 +301,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         hasHeader = [_instance hasHeaderForSectionWithKey:sectionKey];
     }
     
-    return hasHeader || _usesSectionIndexTitles;
+    return hasHeader || _isUsingSectionIndexTitles;
 }
 
 
@@ -450,10 +451,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if ([self.title hasValue]) {
         _titleField.text = self.title;
         
-        if ([_instance respondsToSelector:@selector(maySetViewTitle:)]) {
-            [_instance maySetViewTitle:nil];
-        }
-        
         [self setEditingTitle:NO];
     }
 }
@@ -462,17 +459,23 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (void)didFinishEditingTitle
 {
     if ([_titleField.text hasValue]) {
-        [self setEditingTitle:NO];
+        BOOL shouldFinishEditing = YES;
         
-        NSString *newTitle = ![_titleField.text isEqualToString:self.title] ? _titleField.text : nil;
-        
-        if ([_instance respondsToSelector:@selector(maySetViewTitle:)]) {
-            [_instance maySetViewTitle:newTitle];
+        if ([_instance respondsToSelector:@selector(shouldFinishEditingViewTitleField:)]) {
+            shouldFinishEditing = [_instance shouldFinishEditingViewTitleField:_titleField];
         }
         
-        if (newTitle) {
-            self.navigationItem.title = newTitle;
-            self.title = newTitle;
+        if (shouldFinishEditing) {
+            [self setEditingTitle:NO];
+            
+            if (![_titleField.text isEqualToString:self.title]) {
+                self.title = _titleField.text;
+                self.navigationItem.title = _titleField.text;
+                
+                if ([_instance respondsToSelector:@selector(didFinishEditingViewTitleField:)]) {
+                    [_instance didFinishEditingViewTitleField:_titleField];
+                }
+            }
         }
     }
 }
@@ -494,19 +497,19 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - State introspection
 
-- (BOOL)actionIs:(NSString *)action
+- (BOOL)actionIs:(id)action
 {
     return [_state actionIs:action];
 }
 
 
-- (BOOL)targetIs:(NSString *)target
+- (BOOL)targetIs:(id)target
 {
     return [_state targetIs:target];
 }
 
 
-- (BOOL)aspectIs:(NSString *)aspect
+- (BOOL)aspectIs:(id)aspect
 {
     return [_state aspectIs:aspect];
 }
@@ -570,17 +573,28 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     if (sectionIndexLabelKey) {
         sectionKey = 0;
         
-        [_sectionIndexTitles removeAllObjects];
-        
         if (_usesSectionIndexTitles) {
-            _usesSectionIndexTitles = [data count] >= kSectionIndexMinimumDisplayRowCount;
+            _isUsingSectionIndexTitles = [data count] >= kSectionIndexMinimumDisplayRowCount;
         }
         
-        if (_usesSectionIndexTitles) {
+        if (_isUsingSectionIndexTitles) {
+            _sectionIndexTitles = [NSMutableArray array];
+            
             labelKey = sectionIndexLabelKey;
             
             [self setData:data sectionIndexLabelKey:nil];
         } else {
+            if ([_sectionIndexTitles count]) {
+                NSInteger numberOfSections = [_sectionKeys count];
+                
+                [_sectionKeys removeAllObjects];
+                [_sectionData removeAllObjects];
+                [_sectionCounts removeAllObjects];
+                [_sectionIndexTitles removeAllObjects];
+                
+                [_tableView deleteSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(sectionKey, numberOfSections)] withRowAnimation:_rowAnimation];
+            }
+            
             [self setData:data forSectionWithKey:sectionKey];
         }
     } else if (labelKey) {
@@ -924,16 +938,18 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-#pragma mark - Reloading sections and/or section elements
+#pragma mark - Reloading sections
 
 - (void)reloadSections
 {
+    [_tableView beginUpdates];
     [_instance loadData];
     
+    NSArray *sectionKeys = [[_sectionData allKeys] sortedArrayUsingSelector:@selector(compare:)];
     NSMutableIndexSet *affectedSections = [NSMutableIndexSet indexSet];
     NSMutableIndexSet *sectionsToInsert = [NSMutableIndexSet indexSet];
     NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
-    NSArray *sectionKeys = [[_sectionData allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    UITableViewRowAnimation rowAnimation = [self rowAnimation];
     
     for (NSNumber *sectionKey in sectionKeys) {
         NSInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
@@ -946,7 +962,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             } else {
                 [affectedSections addIndex:section];
                 [_sectionKeys removeObject:sectionKey];
-                [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:[self rowAnimation]];
+                [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
             }
         } else if (newCount) {
             [sectionsToInsert addIndex:section - [affectedSections count]];
@@ -956,11 +972,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     if ([sectionsToInsert count]) {
-        [_tableView insertSections:sectionsToInsert withRowAnimation:[self rowAnimation]];
+        [_tableView insertSections:sectionsToInsert withRowAnimation:rowAnimation];
     }
     
     if ([sectionsToReload count]) {
-        [_tableView reloadSections:sectionsToReload withRowAnimation:[self rowAnimation]];
+        [_tableView reloadSections:sectionsToReload withRowAnimation:rowAnimation];
     }
     
     if ([_sectionKeys count]) {
@@ -980,7 +996,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 [self reloadHeaderForSectionFollowingSection:bottomAffectedSection];
             }
         }
+        
+        _tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    } else if ([_instance respondsToSelector:@selector(emptyTableViewFooterText)]) {
+        [self setEmptyTableViewFooterText:[_instance emptyTableViewFooterText]];
     }
+    
+    [_tableView endUpdates];
 }
 
 
@@ -1042,7 +1064,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _sectionCounts = [NSMutableDictionary dictionary];
     _sectionHeaderLabels = [NSMutableDictionary dictionary];
     _sectionFooterLabels = [NSMutableDictionary dictionary];
-    _sectionIndexTitles = [NSMutableArray array];
     _inputSectionKey = NSNotFound;
     _instance = self;
     _state = [[OState alloc] initWithViewController:self];
@@ -1129,11 +1150,11 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         [self.navigationController.navigationBar setHairlinesHidden:YES];
     }
     
-    if (_usesSectionIndexTitles) {
+    if (_isUsingSectionIndexTitles) {
         _tableView.sectionIndexMinimumDisplayRowCount = kSectionIndexMinimumDisplayRowCount;
     }
     
-    if (![self numberOfSectionsInTableView:_tableView]) {
+    if (![_sectionKeys count]) {
         if ([_instance respondsToSelector:@selector(emptyTableViewFooterText)]) {
             [self setEmptyTableViewFooterText:[_instance emptyTableViewFooterText]];
         }
@@ -1197,7 +1218,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [super viewDidDisappear:animated];
     
     if (_titleSubsegments) {
-        [self.navigationController.navigationBar setHairlinesHidden:NO];
+        [[OState s].viewController.navigationController.navigationBar setHairlinesHidden:NO];
     }
     
     if (_needsReinstantiateRootViewController) {
@@ -1495,7 +1516,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     UIView *headerView = nil;
     id headerContent = nil;
     
-    if (_usesSectionIndexTitles) {
+    if (_isUsingSectionIndexTitles) {
         headerContent = _sectionIndexTitles[section];
     } else if ([self instanceHasHeaderForSectionWithKey:sectionKey]) {
         headerContent = [_instance headerContentForSectionWithKey:sectionKey];

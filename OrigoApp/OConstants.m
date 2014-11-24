@@ -111,13 +111,13 @@ NSString * const kStringPrefixMemberRoleTitle = @"[member role]";
 NSString * const kStringPrefixSettingTitle = @"[setting title]";
 
 // Icon file names
+NSString * const kIconFileResidence = @"750-home-toolbar-selected.png";
+NSString * const kIconFileList = @"ro-854-list.png";
 NSString * const kIconFileOrigo = @"10-contract.png";
 NSString * const kIconFileSettings = @"740-gear-toolbar.png";
 NSString * const kIconFile_iPad = @"693-ipad.png";
 NSString * const kIconFile_iPhone = @"692-iphone-5.png";
 NSString * const kIconFile_iPodTouch = @"ro-ipod-touch-5.png";
-NSString * const kIconFileList = @"ro-854-list.png";
-NSString * const kIconFileHousehold = @"750-home-toolbar-selected.png";
 NSString * const kIconFileMan = @"769-male-toolbar.png";
 NSString * const kIconFileWoman = @"768-female-toolbar.png";
 NSString * const kIconFileBoy = @"593-boy_shrunk.png";
@@ -126,6 +126,8 @@ NSString * const kIconFileEdit = @"830-pencil-toolbar.png";
 NSString * const kIconFileMap = @"852-map-toolbar.png";
 NSString * const kIconFileInfo = @"724-info-toolbar.png";
 NSString * const kIconFileLookup = @"01-magnify.png";
+NSString * const kIconFileFavouriteNo = @"726-star-toolbar.png";
+NSString * const kIconFileFavouriteYes = @"726-star-toolbar-selected.png";
 NSString * const kIconFileAcceptReject = @"739-question-selected.png";
 NSString * const kIconFilePlacePhoneCall = @"735-phone.png";
 NSString * const kIconFileSendText = @"734-chat.png";
