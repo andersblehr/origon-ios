@@ -57,6 +57,7 @@
 "[placeholder] preschoolClass" = "Class";
 "[placeholder] repeatPassword" = "Repeat your password";
 "[placeholder] residenceName" = "Moniker for this address";
+"[placeholder] listName" = "List name";
 "[placeholder] school" = "Name of school";
 "[placeholder] schoolClass" = "Class";
 "[placeholder] studyGroup" = "Group moniker";
@@ -77,21 +78,21 @@
 "[title] preschoolClass" = "Preschool class";
 "[title] residence" = "Household";
 "[title] schoolClass" = "School class";
-"[title] simple" = "Simple list";
+"[title] simple" = "Simple shared list";
 "[title] studyGroup" = "Study group";
 "[title] team" = "Team";
 
 // Registration footers
-"[registration footer] alumni" = "Tap [+] to add alums.";
-"[registration footer] community" = "Tap [+] to add households.";
-"[registration footer] list" = "Tap [+] to add friends.";
-"[registration footer] organisation" = "Tap [+] to add members.";
-"[registration footer] preschoolClass" = "Tap [+] to add children to the class.";
-"[registration footer] residence" = "Tap [+] to add members to the household.";
-"[registration footer] schoolClass" = "Tap [+] to add students to the class.";
-"[registration footer] simple" = "Tap [+] to add members.";
-"[registration footer] studyGroup" = "Tap [+] to add students to the class.";
-"[registration footer] team" = "Tap [+] to add players.";
+"[registration footer] alumni" = "Tap + to add alums.";
+"[registration footer] community" = "Tap + to add households.";
+"[registration footer] list" = "Tap + to add friends.";
+"[registration footer] organisation" = "Tap + to add members.";
+"[registration footer] preschoolClass" = "Tap + to add children to the class.";
+"[registration footer] residence" = "Tap + to add members to the household.";
+"[registration footer] schoolClass" = "Tap + to add students to the class.";
+"[registration footer] simple" = "Tap + to add members.";
+"[registration footer] studyGroup" = "Tap + to add students to the class.";
+"[registration footer] team" = "Tap + to add players.";
 
 // Member registration button titles
 "[add member] alumni" = "Register alum";
@@ -357,9 +358,10 @@
 "Guardians in the household" = "Guardians in the household";
 
 // Footers
-"Tap [+] to register contacts." = "Tap [+] to register contacts.";
-"Tap [+] to register friends." = "Tap [+] to register friends.";
-"Tap [+] to register additional guardians in the household." = "Tap [+] to register additional guardians in the household.";
+"Private lists are not shared and are not visible to others." = "Private lists are not shared and are not visible to others.";
+"Tap + to register contacts." = "Tap + to register contacts.";
+"Tap + to register friends." = "Tap + to register friends.";
+"Tap + to register additional guardians in the household." = "Tap + to register additional guardians in the household.";
 
 // Buttons
 "Register contact" = "Register contact";
@@ -400,7 +402,7 @@
 // Footers
 "A notification will be sent to the email address you provide." = "A notification will be sent to the email address you provide.";
 "Before you can register a minor, you must register his or her guardians." = "Before you can register a minor, you must register his or her guardians.";
-"Tap [+] to register additional guardians." = "Tap [+] to register additional guardians.";
+"Tap + to register additional guardians." = "Tap + to register additional guardians.";
 
 // Buttons
 "To some of them" = "To some of them";
@@ -494,9 +496,6 @@
 
 // View titles
 "Type" = "Type";
-
-// View subtitles
-"(None selected)" = "(None selected)";
 
 // Footers
 "%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@.";

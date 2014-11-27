@@ -37,6 +37,7 @@ static NSString * const kHConstraints                  = @"H:|-10-[%@(%.f)]-3-[%
 static NSString * const kHConstraintsWithPhoto         = @"H:|-10-[%@(%.f)]-3-[%@]-6-[photoFrame]-10-|";
 
 static CGFloat const kPaddedPhotoFrameHeight = 75.f;
+static CGFloat const kTitleOnlyInputCellOvershoot = 17.f;
 
 
 @interface OInputCellConstrainer () {
@@ -79,7 +80,8 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
 
 + (CGFloat)heightOfInputCell:(OTableViewCell *)inputCell withConstrainer:(OInputCellConstrainer *)constrainer entity:(id<OEntity>)entity inputKeys:(NSArray *)inputKeys titleKey:(NSString *)titleKey delegate:(id)delegate
 {
-    CGFloat height = 2 * kDefaultCellPadding;
+    CGFloat height = 2.f * kDefaultCellPadding;
+    BOOL displaysDetailKeys = NO;
     
     for (NSString *key in inputKeys) {
         if ([key isEqualToString:titleKey]) {
@@ -89,6 +91,8 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
                 height += [UIFont detailFieldHeight] + kDefaultCellPadding;
             }
         } else if ([delegate isReceivingInput] || [entity hasValueForKey:key]) {
+            displaysDetailKeys = YES;
+            
             if ([constrainer.blueprint.multiLineTextKeys containsObject:key]) {
                 if (inputCell && inputCell.constrainer.didConstrain) {
                     height += [[inputCell inputFieldForKey:key] height];
@@ -105,6 +109,8 @@ static CGFloat const kPaddedPhotoFrameHeight = 75.f;
     
     if (constrainer.blueprint.hasPhoto) {
         height = MAX(height, kPaddedPhotoFrameHeight);
+    } else if (constrainer.blueprint.fieldsAreLabeled && !displaysDetailKeys) {
+        height -= kTitleOnlyInputCellOvershoot;
     }
     
     return height;

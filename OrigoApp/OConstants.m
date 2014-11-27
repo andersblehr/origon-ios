@@ -64,6 +64,8 @@ NSString * const kRelationshipKeyOrigo = @"origo";
 // Mapped keys
 NSString * const kMappedKeyClub = @"club";
 NSString * const kMappedKeyFullName = @"fullName";
+NSString * const kMappedKeyInstitution = @"institution";
+NSString * const kMappedKeyListName = @"listName";
 NSString * const kMappedKeyOrganisation = @"organisation";
 NSString * const kMappedKeyOrganisationDescription = @"organisationDescription";
 NSString * const kMappedKeyPreschool = @"preschool";
@@ -73,7 +75,6 @@ NSString * const kMappedKeySchool = @"school";
 NSString * const kMappedKeySchoolClass = @"schoolClass";
 NSString * const kMappedKeyStudyGroup = @"studyGroup";
 NSString * const kMappedKeyTeam = @"team";
-NSString * const kMappedKeyInstitution = @"institution";
 
 // Unbound keys
 NSString * const kExternalKeyActivate = @"activate";

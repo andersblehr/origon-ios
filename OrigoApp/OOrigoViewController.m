@@ -96,7 +96,9 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 {
     NSString *nameKey = nil;
     
-    if ([_origo isOfType:kOrigoTypeResidence]) {
+    if ([_origo isOfType:kOrigoTypeList]) {
+        nameKey = kMappedKeyListName;
+    } else if ([_origo isOfType:kOrigoTypeResidence]) {
         nameKey = kMappedKeyResidenceName;
     } else if ([_origo isOfType:kOrigoTypeOrganisation]) {
         nameKey = kMappedKeyOrganisation;
@@ -461,11 +463,11 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 {
     BOOL hasFooter = NO;
     
-    if ([self isBottomSectionKey:sectionKey] && ![self actionIs:kActionRegister]) {
-        if (self.isModal) {
-            hasFooter = [_origo userCanEdit];
-        } else if ([_origo isOfType:kOrigoTypeList]) {
-            hasFooter = ![[_origo members] count];
+    if ([self isBottomSectionKey:sectionKey]) {
+        if ([self actionIs:kActionRegister]) {
+            hasFooter = [_origo isOfType:kOrigoTypeList];
+        } else {
+            hasFooter = self.isModal || ![[_origo members] count];
         }
     }
     
@@ -533,12 +535,14 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     NSString *footerText = nil;
     
     if ([_origo isOfType:kOrigoTypeResidence] && [self aspectIs:kAspectJuvenile]) {
-        footerText = NSLocalizedString(@"Tap [+] to register additional guardians in the household.", @"");
+        footerText = NSLocalizedString(@"Tap + to register additional guardians in the household.", @"");
     } else if ([_origo isOfType:kOrigoTypeList]) {
-        if ([_member isJuvenile]) {
-            footerText = NSLocalizedString(@"Tap [+] to register friends.", @"");
+        if ([self actionIs:kActionRegister]) {
+            footerText = NSLocalizedString(@"Private lists are not shared and are not visible to others.", @"");
+        } else if ([_member isJuvenile]) {
+            footerText = NSLocalizedString(@"Tap + to register friends.", @"");
         } else {
-            footerText = NSLocalizedString(@"Tap [+] to register contacts.", @"");
+            footerText = NSLocalizedString(@"Tap + to register contacts.", @"");
         }
     } else {
         footerText = NSLocalizedString(_origo.type, kStringPrefixFooter);
@@ -700,8 +704,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         blueprint.detailKeys = @[kMappedKeyClub];
     } else if ([_origo isOfType:kOrigoTypeStudyGroup]) {
         blueprint.detailKeys = @[kMappedKeyInstitution];
-    } else {
-        blueprint.titleKey = kPropertyKeyName;
+    } else if (![_origo isOfType:kOrigoTypeList]) {
         blueprint.detailKeys = @[kPropertyKeyDescriptionText];
         blueprint.multiLineTextKeys = @[kPropertyKeyDescriptionText];
     }
@@ -750,7 +753,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         } else {
             [self toggleEditMode];
             [self.inputCell readData];
-            [self reloadSectionWithKey:kSectionKeyMembers];
+            [self reloadSections];
             
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];
             self.navigationItem.rightBarButtonItems = @[[UIBarButtonItem plusButtonWithTarget:self]];
@@ -773,13 +776,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 - (BOOL)isDisplayableFieldWithKey:(NSString *)key
 {
-    BOOL isVisible = ![key isEqualToString:kMappedKeyResidenceName];
-    
-    if (!isVisible && [_origo userIsMember]) {
-        isVisible = YES;
-    }
-    
-    return isVisible;
+    return ![key isEqualToString:kMappedKeyResidenceName] || [_origo userIsMember];
 }
 
 

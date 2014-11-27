@@ -75,7 +75,15 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:[prompt stringByAppendingString:@"?"] delegate:self tag:kActionSheetTagOrigoType];
     
     for (NSString *origoType in _origoTypes) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(origoType, kStringPrefixOrigoTitle)];
+        if ([origoType isEqualToString:kOrigoTypeList]) {
+            if ([_member isJuvenile]) {
+                [actionSheet addButtonWithTitle:@"Privat venneliste"];
+            } else {
+                [actionSheet addButtonWithTitle:@"Privat kontaktliste"];
+            }
+        } else {
+            [actionSheet addButtonWithTitle:NSLocalizedString(origoType, kStringPrefixOrigoTitle)];
+        }
     }
     
     [actionSheet show];
@@ -288,7 +296,9 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         if ([origo userCanEdit]) {
             NSArray *members = [origo members];
             
-            if ([members count] == 1) {
+            if ([origo isOfType:kOrigoTypeList]) {
+                canDelete = YES;
+            } else if ([members count] == 1) {
                 canDelete = [members[0] isUser] || [members[0] isWardOfUser];
             }
         }
@@ -302,18 +312,16 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 {
     id<OOrigo> origo = [self dataAtIndexPath:indexPath];
     
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyWardOrigos) {
+    if ([origo isOfType:kOrigoTypeList]) {
+        for (id<OMembership> membership in [origo members]) {
+            [membership expire];
+        }
+        
+        [[origo membershipForMember:[origo owner]] expire];
+    } else if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyWardOrigos) {
         [[origo membershipForMember:_wards[self.selectedHeaderSegment]] expire];
     } else {
         [[origo membershipForMember:[OMeta m].user] expire];
-    }
-}
-
-
-- (void)didDismissModalViewController:(OTableViewController *)viewController
-{
-    if ([[OMeta m] userIsSignedIn]) {
-        [self reloadSections];
     }
 }
 

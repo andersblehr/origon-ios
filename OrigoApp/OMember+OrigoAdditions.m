@@ -277,9 +277,10 @@
         
         BOOL isFirst = !primaryResidence;
         BOOL isFirstWithAddress = ![primaryResidence hasAddress] && [residence hasAddress];
+        BOOL isUserAddress = [residence userIsMember];
         BOOL hasMostResidents = numberOfResidents > maxNumberOfResidents;
         
-        if (isFirst || isFirstWithAddress || hasMostResidents) {
+        if (isFirst || isFirstWithAddress || isUserAddress || hasMostResidents) {
             primaryResidence = residence;
             maxNumberOfResidents = numberOfResidents;
         }
@@ -605,7 +606,17 @@
 
 - (BOOL)isUser
 {
-    return self == [OMeta m].user || [self.email isEqualToString:[OMeta m].userEmail];
+    BOOL isUser = self == [OMeta m].user;
+    
+    if (!isUser) {
+        if (self.email) {
+            isUser = [self.email isEqualToString:[OMeta m].userEmail];
+        } else {
+            isUser = [self.entityId isEqualToString:[OMeta m].userId];
+        }
+    }
+    
+    return isUser;
 }
 
 

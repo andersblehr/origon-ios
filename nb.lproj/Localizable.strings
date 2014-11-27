@@ -57,6 +57,7 @@
 "[placeholder] preschoolClass" = "Navn på avdelingen";
 "[placeholder] repeatPassword" = "Gjenta passordet ditt";
 "[placeholder] residenceName" = "Kallenavn for denne adressen";
+"[placeholder] listName" = "Listens navn";
 "[placeholder] school" = "Skolens navn";
 "[placeholder] schoolClass" = "Klasse";
 "[placeholder] studyGroup" = "Benevnelse";
@@ -77,21 +78,21 @@
 "[title] preschoolClass" = "Barnehageavdeling";
 "[title] residence" = "Husstand";
 "[title] schoolClass" = "Skoleklasse";
-"[title] simple" = "Enkel liste";
+"[title] simple" = "Enkel delt liste";
 "[title] studyGroup" = "Studiegruppe";
 "[title] team" = "Lag";
 
 // Registration footers
-"[registration footer] alumni" = "Trykk [+] for å legge til alumner.";
-"[registration footer] community" = "Trykk [+] for å legge til husstander.";
-"[registration footer] list" = "Trykk [+] for å legge til venner.";
-"[registration footer] organisation" = "Trykk [+] for å legge til medlemmer.";
-"[registration footer] preschoolClass" = "Trykk [+] for å legge til barn i avdelingen.";
-"[registration footer] residence" = "Trykk [+] for å legge til medlemmer i husstanden.";
-"[registration footer] schoolClass" = "Trykk [+] for å legge til elever i klassen.";
-"[registration footer] simple" = "Trykk [+] for å legge til medlemmer.";
-"[registration footer] studyGroup" = "Trykk [+] for å legge til studenter.";
-"[registration footer] team" = "Trykk [+] for å legge til spillere.";
+"[registration footer] alumni" = "Trykk + for å legge til alumner.";
+"[registration footer] community" = "Trykk + for å legge til husstander.";
+"[registration footer] list" = "Trykk + for å legge til venner.";
+"[registration footer] organisation" = "Trykk + for å legge til medlemmer.";
+"[registration footer] preschoolClass" = "Trykk + for å legge til barn i avdelingen.";
+"[registration footer] residence" = "Trykk + for å legge til medlemmer i husstanden.";
+"[registration footer] schoolClass" = "Trykk + for å legge til elever i klassen.";
+"[registration footer] simple" = "Trykk + for å legge til medlemmer.";
+"[registration footer] studyGroup" = "Trykk + for å legge til studenter.";
+"[registration footer] team" = "Trykk + for å legge til spillere.";
 
 // Member registration button titles
 "[add member] alumni" = "Registrer alumn";
@@ -304,7 +305,7 @@
  ***/
 
 // Footers
-"If you are signing up, you will receive an email ..." = "Om du skal registrere deg, vil du motta en epost med en aktiveringskode til bruk i neste steg.";
+"If you are signing up, you will receive an email ..." = "Når du registrerer deg, vil du motta en epost med en aktiveringskode til bruk i neste steg.";
 "The activation code has been sent to %@ ..." = "Aktiveringskoden er sendt til %@. Du kan oppgi koden senere om du ikke har tilgang til eposten din her og nå.";
 "The activation code has been sent to %@." = "Aktiveringskoden er sendt til %@.";
 
@@ -356,9 +357,10 @@
 "Guardians in the household" = "Foresatte i husstanden";
 
 // Footers
-"Tap [+] to register contacts." = "Trykk [+] for å registrere kontakter.";
-"Tap [+] to register friends." = "Trykk [+] for å registrere venner/venninner.";
-"Tap [+] to register additional guardians in the household." = "Trykk [+] for å registrere flere foresatte i husstanden.";
+"Private lists are not shared and are not visible to others." = "Private lister deles ikke og er ikke synlige for andre.";
+"Tap + to register contacts." = "Trykk + for å registrere kontakter.";
+"Tap + to register friends." = "Trykk + for å registrere venner/venninner.";
+"Tap + to register additional guardians in the household." = "Trykk + for å registrere flere foresatte i husstanden.";
 
 // Buttons
 "Register contact" = "Registrer kontakt";
@@ -400,7 +402,7 @@
 // Footers
 "A notification will be sent to the email address you provide." = "Et varsel vil bli sendt til epostadressen du oppgir.";
 "Before you can register a minor, you must register his or her guardians." = "Før du kan registrere en mindreårig, må du registrere hans eller hennes foresatte.";
-"Tap [+] to register additional guardians." = "Trykk [+] for å registrere flere foresatte.";
+"Tap + to register additional guardians." = "Trykk + for å registrere flere foresatte.";
 
 // Buttons
 "To some of them" = "Til noen av dem";
@@ -494,9 +496,6 @@
 
 // View titles
 "Type" = "Type";
-
-// View subtitles
-"(None selected)" = "(Ingen valgt)";
 
 // Footers
 "%@ and %@ must be listed at the same address. You may register a separate address for them if you do not live with %@." = "%@ og %@ må være oppført på samme adresse. Du kan registrere en egen adresse for dem om du ikke bor sammen med %@.";

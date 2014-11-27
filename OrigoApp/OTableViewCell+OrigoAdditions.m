@@ -96,65 +96,70 @@
 
 - (void)loadAssociationInfoForMember:(id<OMember>)member
 {
-    NSString *association = nil;
-    NSMutableDictionary *isParentByWard = [NSMutableDictionary dictionary];
-    NSMutableDictionary *associationsByWard = [NSMutableDictionary dictionary];
-    
-    id<OOrigo> origo = nil;
-    
-    for (id<OMembership> membership in [self associationMembershipsForMember:member]) {
-        origo = membership.origo;
+    if ([member isHousemateOfUser]) {
+        self.textLabel.text = [member isJuvenile] ? [member givenName] : member.name;
+        self.textLabel.textColor = [UIColor windowTintColour];
+    } else {
+        NSString *association = nil;
+        NSMutableDictionary *isParentByWard = [NSMutableDictionary dictionary];
+        NSMutableDictionary *associationsByWard = [NSMutableDictionary dictionary];
         
-        if ([membership isAssociate] || [[membership parentRoles] count]) {
-            for (OMember *ward in [member wardsInOrigo:origo]) {
-                if (!associationsByWard[ward.entityId]) {
-                    isParentByWard[ward.entityId] = [ward hasParent:member] ? @YES : @NO;
-                    
-                    if ([ward isListedOnly]) {
-                        associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [OUtil commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo conjoin:YES]];
-                    } else if (![origo isOfType:kOrigoTypeList]) {
-                        if ([ward isWardOfUser]) {
-                            associationsByWard[ward.entityId] = [ward givenName];
-                        } else {
-                            associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [ward displayNameInOrigo:origo], origo.name];
+        id<OOrigo> origo = nil;
+        
+        for (id<OMembership> membership in [self associationMembershipsForMember:member]) {
+            origo = membership.origo;
+            
+            if ((![member isJuvenile] && [membership isAssociate]) || [[membership parentRoles] count]) {
+                for (OMember *ward in [member wardsInOrigo:origo]) {
+                    if (!associationsByWard[ward.entityId]) {
+                        isParentByWard[ward.entityId] = @([ward hasParent:member]);
+                        
+                        if ([ward isListedOnly]) {
+                            associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [OUtil commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo conjoin:YES]];
+                        } else if (![origo isOfType:kOrigoTypeList]) {
+                            if ([ward isWardOfUser]) {
+                                associationsByWard[ward.entityId] = [ward givenName];
+                            } else {
+                                associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [ward displayNameInOrigo:origo], origo.name];
+                            }
                         }
                     }
                 }
-            }
-        } else {
-            if ([member isJuvenile] && ![member isWardOfUser] && [member isListedOnly]) {
-                association = [[NSString stringWithFormat:NSLocalizedString(@"%@ [friend of] %@", @""), [self friendTermForMember:member], [OUtil commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo conjoin:YES]] stringByCapitalisingFirstLetter];
-            } else if ([[membership organiserRoles] count]) {
-                association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixOrganiserTitle), origo.name];
-            } else if ([membership isListing]) {
-                association = [NSString stringWithFormat:NSLocalizedString(@"Listed in %@", @""), membership.origo.name];
             } else {
-                NSArray *memberRoles = [membership memberRoles];
-                
-                if ([memberRoles count]) {
-                    association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), memberRoles[0], origo.name];
+                if ([member isJuvenile] && [member isListedOnly]) {
+                    association = [[NSString stringWithFormat:NSLocalizedString(@"%@ [friend of] %@", @""), [self friendTermForMember:member], [[origo owner] givenName]] stringByCapitalisingFirstLetter];
+                } else if ([[membership organiserRoles] count]) {
+                    association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixOrganiserTitle), origo.name];
+                } else if ([membership isListing]) {
+                    association = [NSString stringWithFormat:NSLocalizedString(@"Listed in %@", @""), membership.origo.name];
                 } else {
-                    association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [NSLocalizedString(origo.type, kStringPrefixMemberTitle) stringByCapitalisingFirstLetter], origo.name];
+                    NSArray *memberRoles = [membership memberRoles];
+                    
+                    if ([memberRoles count]) {
+                        association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), memberRoles[0], origo.name];
+                    } else {
+                        association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [NSLocalizedString(origo.type, kStringPrefixMemberTitle) stringByCapitalisingFirstLetter], origo.name];
+                    }
                 }
             }
         }
-    }
-    
-    if ([associationsByWard count]) {
-        BOOL isParentOfAll = YES;
         
-        for (NSNumber *isParentOfWard in [isParentByWard allValues]) {
-            isParentOfAll = isParentOfAll && [isParentOfWard boolValue];
+        if ([associationsByWard count]) {
+            BOOL isParentOfAll = YES;
+            
+            for (NSNumber *isParentOfWard in [isParentByWard allValues]) {
+                isParentOfAll = isParentOfAll && [isParentOfWard boolValue];
+            }
+            
+            NSString *parentLabel = isParentOfAll ? [member parentNoun][singularIndefinite] : [OLanguage nouns][_guardian_][singularIndefinite];
+            
+            association = [NSString stringWithFormat:NSLocalizedString(@"%@ [guardian of] %@", @""), [parentLabel stringByCapitalisingFirstLetter], [OUtil commaSeparatedListOfStrings:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoin:YES]];
         }
         
-        NSString *parentLabel = isParentOfAll ? [member parentNoun][singularIndefinite] : [OLanguage nouns][_guardian_][singularIndefinite];
-        
-        association = [NSString stringWithFormat:NSLocalizedString(@"%@ [guardian of] %@", @""), [parentLabel stringByCapitalisingFirstLetter], [OUtil commaSeparatedListOfStrings:[[associationsByWard allValues] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)] conjoin:YES]];
+        self.textLabel.text = [member displayNameInOrigo:origo];
+        self.detailTextLabel.text = association;
+        self.detailTextLabel.textColor = [UIColor tonedDownTextColour];
     }
-    
-    self.textLabel.text = [member displayNameInOrigo:origo];
-    self.detailTextLabel.text = association;
-    self.detailTextLabel.textColor = [UIColor tonedDownTextColour];
 }
 
 

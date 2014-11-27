@@ -1115,7 +1115,7 @@ static NSInteger const kButtonIndexContinue = 1;
             }
         }
     } else if (sectionKey == kSectionKeyMember) {
-        text = NSLocalizedString(@"Tap [+] to register additional guardians.", @"");
+        text = NSLocalizedString(@"Tap + to register additional guardians.", @"");
     }
     
     return text;

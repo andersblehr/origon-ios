@@ -106,8 +106,6 @@ static NSInteger const kSectionKeyValues = 0;
             _origo = self.state.currentOrigo;
             
             self.title = NSLocalizedString(_origo.type, kStringPrefixNewMembersTitle);
-            self.subtitle = NSLocalizedString(@"(None selected)", @"");
-            self.subtitleColour = [UIColor tonedDownTextColour];
             
             _isMultiValuePicker = YES;
         } else if ([self targetIs:kTargetAffiliation]) {
@@ -416,10 +414,10 @@ static NSInteger const kSectionKeyValues = 0;
     _affiliation = viewTitleField.text;
     
     if (oldAffiliation && ![_affiliation isEqualToString:oldAffiliation]) {
-        NSArray *affiliationHolders = [_origo holdersOfAffiliation:oldAffiliation ofType:_affiliationType];
+        NSArray *holders = [_origo holdersOfAffiliation:oldAffiliation ofType:_affiliationType];
         
-        for (id<OMember> affiliationHolder in affiliationHolders) {
-            id<OMembership> membership = [_origo membershipForMember:affiliationHolder];
+        for (id<OMember> holder in holders) {
+            id<OMembership> membership = [_origo membershipForMember:holder];
             
             [membership addAffiliation:_affiliation ofType:_affiliationType];
             [membership removeAffiliation:oldAffiliation ofType:_affiliationType];
