@@ -121,19 +121,24 @@
 
 - (NSArray *)origosIncludeResidences:(BOOL)includeResidences
 {
+    NSMutableArray *lists = [NSMutableArray array];
     NSMutableArray *origos = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        BOOL isParticipancy = [membership isParticipancy];
-        BOOL isIncludedResidency = [membership isResidency] && includeResidences;
-        BOOL isCommunityMembership = [membership.origo isOfType:kOrigoTypeCommunity] && ![self isJuvenile];
-        
-        if (isParticipancy || isIncludedResidency || isCommunityMembership) {
-            [origos addObject:membership.origo];
+        if ([membership.origo isOfType:kOrigoTypeList] && [membership isOwner]) {
+            [lists addObject:membership.origo];
+        } else {
+            BOOL isIncludedResidency = [membership isResidency] && includeResidences;
+            BOOL isParticipancy = [membership isParticipancy];
+            BOOL isCommunityMembership = [membership.origo isOfType:kOrigoTypeCommunity] && ![self isJuvenile];
+            
+            if (isParticipancy || isIncludedResidency || isCommunityMembership) {
+                [origos addObject:membership.origo];
+            }
         }
     }
     
-    return [[self lists] arrayByAddingObjectsFromArray:[origos sortedArrayUsingSelector:@selector(compare:)]];
+    return [[lists sortedArrayUsingSelector:@selector(compare:)] arrayByAddingObjectsFromArray:[origos sortedArrayUsingSelector:@selector(compare:)]];
 }
 
 
@@ -174,6 +179,22 @@
     }
     
     return result;
+}
+
+
+#pragma mark - Devices
+
+- (NSArray *)registeredDevices
+{
+    NSMutableArray *registeredDevices = [NSMutableArray array];
+    
+    for (ODevice *device in self.devices) {
+        if (![device hasExpired]) {
+            [registeredDevices addObject:device];
+        }
+    }
+    
+    return [registeredDevices sortedArrayUsingSelector:@selector(compare:)];
 }
 
 
@@ -355,17 +376,19 @@
 }
 
 
-- (NSArray *)lists
+- (NSArray *)hiddenOrigos
 {
-    NSMutableSet *lists = [NSMutableSet set];
+    NSMutableArray *hiddenOrigos = [NSMutableArray array];
     
-    for (OMembership *membership in [self allMemberships]) {
-        if ([membership.origo isOfType:kOrigoTypeList] && [membership isOwner]) {
-            [lists addObject:membership.origo];
+    for (OMembership *membership in self.memberships) {
+        if (![membership isListing] && ![membership hasExpired]) {
+            if ([membership.status isEqualToString:kMembershipStatusListed]) {
+                [hiddenOrigos addObject:membership.origo];
+            }
         }
     }
     
-    return [[lists allObjects] sortedArrayUsingSelector:@selector(compare:)];
+    return hiddenOrigos;
 }
 
 

@@ -43,6 +43,8 @@
 - (void)willDisplayInputCell:(OTableViewCell *)inputCell;
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath;
 - (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
+- (NSString *)deleteConfirmationButtonTitleForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (BOOL)shouldDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
 - (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
 
 - (BOOL)shouldRelayDismissalOfModalViewController:(OTableViewController *)viewController;

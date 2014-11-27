@@ -8,6 +8,7 @@
 
 #import "OOrigoViewController.h"
 
+static NSInteger const kSectionKeyOrigo = 0;
 static NSInteger const kSectionKeyOrganisers = 1;
 static NSInteger const kSectionKeyParentContacts = 2;
 static NSInteger const kSectionKeyMembers = 3;
@@ -16,9 +17,9 @@ static NSInteger const kHeaderSegmentMembers = 0;
 static NSInteger const kHeaderSegmentParents = 1;
 static NSInteger const kHeaderSegmentResidences = 1;
 
-static NSInteger const kActionSheetTagAcceptReject = 0;
-static NSInteger const kButtonTagAcceptRejectAccept = 0;
-static NSInteger const kButtonTagAcceptRejectReject = 1;
+static NSInteger const kActionSheetTagAcceptDecline = 0;
+static NSInteger const kButtonTagAcceptDeclineAccept = 0;
+static NSInteger const kButtonTagAcceptDeclineDecline = 1;
 
 static NSInteger const kActionSheetTagAdd = 1;
 static NSInteger const kButtonTagAddMember = 0;
@@ -64,7 +65,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     BOOL isAwaitingActivation = NO;
     
     if (_membership && ![_membership isActive] && ([_member isUser] || [_member isWardOfUser])) {
-        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptRejectButtonWithTarget:self]];
+        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem acceptDeclineButtonWithTarget:self]];
         
         if ([_membership.status isEqualToString:kMembershipStatusInvited]) {
             _membership.status = kMembershipStatusWaiting;
@@ -199,16 +200,25 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 #pragma mark - Selector implementations
 
-- (void)performAcceptRejectAction
+- (void)performAcceptDeclineAction
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Do you want to keep this listing?", @"") delegate:self tag:kActionSheetTagAcceptReject];
-    [actionSheet addButtonWithTitle:NSLocalizedString(@"Keep", @"") tag:kButtonTagAcceptRejectAccept];
+    NSString *prompt = nil;
+    NSString *acceptButtonTitle = nil;
+    NSString *declineButtonTitle = nil;
     
-    if ([_origo isOfType:kOrigoTypeResidence]) {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Decline", @"") tag:kButtonTagAcceptRejectReject];
+    if ([_membership.status isEqualToString:kMembershipStatusListed]) {
+        prompt = NSLocalizedString(@"Do you want to unhide this listing?", @"");
+        acceptButtonTitle = NSLocalizedString(@"Unhide", @"");
+        declineButtonTitle = NSLocalizedString(@"Keep hidden", @"");
     } else {
-        [actionSheet addButtonWithTitle:NSLocalizedString(@"Hide", @"") tag:kButtonTagAcceptRejectReject];
+        prompt = NSLocalizedString(@"Do you want to keep this listing?", @"");
+        acceptButtonTitle = NSLocalizedString(@"Keep", @"");
+        declineButtonTitle = [_origo isOfType:kOrigoTypeResidence] ? NSLocalizedString(@"Decline", @"") : NSLocalizedString(@"Hide", @"");
     }
+    
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagAcceptDecline];
+    [actionSheet addButtonWithTitle:acceptButtonTitle tag:kButtonTagAcceptDeclineAccept];
+    [actionSheet addButtonWithTitle:declineButtonTitle tag:kButtonTagAcceptDeclineDecline];
     
     [actionSheet show];
 }
@@ -366,6 +376,8 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
+    NSString *destinationId = nil;
+    NSString *destinationMeta = nil;
     
     if (sectionKey == kSectionKeyMembers) {
         if ([[self dataAtIndexPath:indexPath] conformsToProtocol:@protocol(OOrigo)]) {
@@ -374,7 +386,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             cell.textLabel.text = [residence shortAddress];
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[residence elders] withRolesInOrigo:_origo];
             [cell loadImageForOrigo:residence];
-            cell.destinationId = kIdentifierOrigo;
+            destinationId = kIdentifierOrigo;
         } else {
             id<OOrigo> origo = self.state.baseOrigo ? self.state.baseOrigo : _origo;
             id<OMember> member = [self dataAtIndexPath:indexPath];
@@ -387,7 +399,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                 [cell loadMember:member inOrigo:origo excludeRoles:NO excludeRelations:YES];
             }
             
-            cell.destinationId = kIdentifierMember;
+            destinationId = kIdentifierMember;
         }
     } else {
         NSString *role = [self dataAtIndexPath:indexPath];
@@ -405,13 +417,18 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             }
             
             [cell loadImageForMember:roleHolder];
-            cell.destinationId = kIdentifierMember;
+            destinationId = kIdentifierMember;
         } else {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders conjoin:NO];
             [cell loadTonedDownIconWithFileName:kIconFileRoleHolders];
-            cell.destinationId = kIdentifierValueList;
-            cell.destinationMeta = role;
+            destinationId = kIdentifierValueList;
+            destinationMeta = role;
         }
+    }
+    
+    if (![_membership.status isEqualToString:kMembershipStatusListed]) {
+        cell.destinationId = destinationId;
+        cell.destinationMeta = destinationMeta;
     }
 }
 
@@ -445,7 +462,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 {
     NSArray *toolbarButtons = nil;
     
-    if ([_origo isCommitted]) {
+    if ([_origo isCommitted] && ![_membership.status isEqualToString:kMembershipStatusListed]) {
         toolbarButtons = [[OMeta m].switchboard toolbarButtonsForOrigo:_origo presenter:self];
     }
     
@@ -455,7 +472,13 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 - (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
 {
-    return [_member isJuvenile] ? YES : ![_origo isOfType:kOrigoTypeList];
+    BOOL hasHeader = NO;
+    
+    if (sectionKey != kSectionKeyOrigo) {
+        hasHeader = [_member isJuvenile] ? YES : ![_origo isOfType:kOrigoTypeList];
+    }
+    
+    return hasHeader;
 }
 
 
@@ -604,6 +627,11 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     return canDeleteCell;
 }
 
+
+- (NSString *)deleteConfirmationButtonTitleForCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    return NSLocalizedString(@"Remove", @"");
+}
 
 
 - (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath
@@ -786,14 +814,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 }
 
 
-#pragma mark - UITableViewDataSource conformance
-
-- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return NSLocalizedString(@"Remove", @"");
-}
-
-
 #pragma mark - UIActionSheetDelegate conformance
 
 - (void)actionSheet:(OActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -802,35 +822,40 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         NSInteger buttonTag = [actionSheet tagForButtonIndex:buttonIndex];
         
         switch (actionSheet.tag) {
-            case kActionSheetTagAcceptReject:
-                if (buttonTag == kButtonTagAcceptRejectAccept) {
-                    id<OMembership> membership = [_origo membershipForMember:_member];
-                    membership.status = kMembershipStatusActive;
+            case kActionSheetTagAcceptDecline:
+                if (buttonTag == kButtonTagAcceptDeclineAccept) {
+                    BOOL wasHidden = [_membership.status isEqualToString:kMembershipStatusListed];
                     
-                    NSMutableArray *rightBarButtonItems = [NSMutableArray array];
+                    _membership.status = kMembershipStatusActive;
                     
-                    for (UIBarButtonItem *button in self.navigationItem.rightBarButtonItems) {
-                        if (button.tag != kBarButtonTagAcceptReject) {
-                            [rightBarButtonItems addObject:button];
+                    if (wasHidden) {
+                        [self.navigationController popViewControllerAnimated:YES];
+                    } else {
+                        NSMutableArray *rightBarButtonItems = [NSMutableArray array];
+                        
+                        for (UIBarButtonItem *button in self.navigationItem.rightBarButtonItems) {
+                            if (button.tag != kBarButtonTagAcceptDecline) {
+                                [rightBarButtonItems addObject:button];
+                            }
+                        }
+                        
+                        [self.navigationItem setRightBarButtonItems:rightBarButtonItems animated:YES];
+                        
+                        if ([_origo userCanEdit]) {
+                            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
+                            [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
                         }
                     }
-                    
-                    [self.navigationItem setRightBarButtonItems:rightBarButtonItems animated:YES];
-                    
-                    if ([_origo userCanEdit]) {
-                        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem editButtonWithTarget:self]];
-                        [self.navigationItem addRightBarButtonItem:[UIBarButtonItem plusButtonWithTarget:self]];
+                } else if (buttonTag == kButtonTagAcceptDeclineDecline) {
+                    if (![_membership.status isEqualToString:kMembershipStatusListed]) {
+                        if ([_origo isOfType:kOrigoTypeResidence]) {
+                            [_membership expire];
+                        } else {
+                            _membership.status = kMembershipStatusListed;
+                        }
+                        
+                        [self.navigationController popViewControllerAnimated:YES];
                     }
-                } else if (buttonTag == kButtonTagAcceptRejectReject) {
-                    id<OMembership> membership = [_origo membershipForMember:_member];
-                    
-                    if ([_origo isOfType:kOrigoTypeResidence]) {
-                        [membership expire];
-                    } else {
-                        membership.status = kMembershipStatusListed;
-                    }
-                    
-                    [self.navigationController popViewControllerAnimated:YES];
                 }
                 
                 break;

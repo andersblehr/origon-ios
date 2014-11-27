@@ -27,6 +27,8 @@
 - (NSComparisonResult)compare:(id<OMember>)other;
 - (NSComparisonResult)subjectiveCompare:(id<OMember>)other;
 
+- (NSArray *)registeredDevices;
+
 - (NSSet *)allMemberships;
 - (NSSet *)residencies;
 - (NSSet *)participancies;
@@ -39,7 +41,7 @@
 - (NSArray *)residences;
 - (NSArray *)addresses;
 - (NSArray *)origos;
-- (NSArray *)lists;
+- (NSArray *)hiddenOrigos;
 
 - (id<OMember>)mother;
 - (id<OMember>)father;

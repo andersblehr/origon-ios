@@ -72,7 +72,19 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
 {
     NSMutableArray *settingListKeys = [NSMutableArray array];
     
-    if ([[OMeta m].user.devices count] > 1) {
+    BOOL hasHiddenOrigos = [[[OMeta m].user hiddenOrigos] count] > 0;
+    
+    if (!hasHiddenOrigos) {
+        for (OMember *ward in [[OMeta m].user wards]) {
+            hasHiddenOrigos = hasHiddenOrigos || [[ward hiddenOrigos] count] > 0;
+        }
+    }
+    
+    if (hasHiddenOrigos) {
+        [settingListKeys addObject:kTargetHiddenOrigos];
+    }
+    
+    if ([[[OMeta m].user registeredDevices] count] > 1) {
         [settingListKeys addObject:kTargetDevices];
     }
     

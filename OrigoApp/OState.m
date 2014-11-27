@@ -28,6 +28,7 @@ NSString * const kTargetGender = @"gender";
 NSString * const kTargetGroup = @"group";
 NSString * const kTargetGroups = @"groups";
 NSString * const kTargetGuardian = @"guardian";
+NSString * const kTargetHiddenOrigos = @"hidden";
 NSString * const kTargetHousemate = @"housemate";
 NSString * const kTargetJuvenile = @"juvenile";
 NSString * const kTargetMember = @"regular";

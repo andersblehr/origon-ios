@@ -90,6 +90,27 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 }
 
 
+- (BOOL)canDeleteOrigoAtIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL canDelete = NO;
+    
+    if ([self sectionKeyForIndexPath:indexPath] != kSectionKeyUser) {
+        id<OOrigo> origo = [self dataAtIndexPath:indexPath];
+        id<OMember> keyMember = nil;
+        
+        if ([origo isOfType:kOrigoTypeList]) {
+            keyMember = [origo owner];
+        } else if ([[origo members] count] == 1) {
+            keyMember = [origo members][0];
+        }
+
+        canDelete = [keyMember isUser] || ([keyMember isWardOfUser] && ![keyMember isActive]);
+    }
+    
+    return canDelete;
+}
+
+
 #pragma mark - Selector implementations
 
 - (void)openSettings
@@ -147,27 +168,59 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 
 - (void)loadState
 {
-    self.title = [OMeta m].appName;
-    [self setSubtitle:[OMeta m].user.name];
-    
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
-    
-    if ([[OMeta m].user isTeenOrOlder]) {
-        self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+    if ([self targetIs:kTargetHiddenOrigos]) {
+        self.title = NSLocalizedString(self.target, kStringPrefixSettingListLabel);
+    } else {
+        self.title = [OMeta m].appName;
+        [self setSubtitle:[OMeta m].user.name];
+        
+        self.navigationItem.leftBarButtonItem = [UIBarButtonItem settingsButtonWithTarget:self];
+        
+        if ([[OMeta m].user isTeenOrOlder]) {
+            self.navigationItem.rightBarButtonItem = [UIBarButtonItem plusButtonWithTarget:self];
+        }
     }
 }
 
 
 - (void)loadData
 {
-    if (_member) {
+    if ([self targetIs:kTargetHiddenOrigos]) {
+        NSMutableArray *wardsWithHiddenOrigos = [NSMutableArray array];
+        
+        for (id<OMember> ward in [[OMeta m].user wards]) {
+            if ([[ward hiddenOrigos] count]) {
+                [wardsWithHiddenOrigos addObject:ward];
+            }
+        }
+        
+        _wards = wardsWithHiddenOrigos;
+        
+        if (self.selectedHeaderSegment > [_wards count] - 1) {
+            self.selectedHeaderSegment = [_wards count] - 1;
+        }
+        
+        if ([_wards count]) {
+            [self setData:[_wards[self.selectedHeaderSegment] hiddenOrigos] forSectionWithKey:kSectionKeyWardOrigos];
+        } else {
+            [self setData:[NSArray array] forSectionWithKey:kSectionKeyWardOrigos];
+        }
+        
+        [self setData:[[OMeta m].user hiddenOrigos] forSectionWithKey:kSectionKeyOrigos];
+    } else if (_member) {
         _wards = [[OMeta m].user wards];
         
         [self setData:[[OMeta m].user residences] forSectionWithKey:kSectionKeyUser];
         [self appendData:[[OMeta m].user stash] toSectionWithKey:kSectionKeyUser];
         
+        if (self.selectedHeaderSegment > [_wards count] - 1) {
+            self.selectedHeaderSegment = [_wards count] - 1;
+        }
+        
         if ([_wards count]) {
             [self setData:[_wards[self.selectedHeaderSegment] origos] forSectionWithKey:kSectionKeyWardOrigos];
+        } else {
+            [self setData:[NSArray array] forSectionWithKey:kSectionKeyWardOrigos];
         }
         
         [self setData:[[OMeta m].user origos] forSectionWithKey:kSectionKeyOrigos];
@@ -248,80 +301,111 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 }
 
 
+- (BOOL)hasHeaderForSectionWithKey:(NSInteger)sectionKey
+{
+    BOOL hasHeader = sectionKey != kSectionKeyUser;
+    
+    if ([self targetIs:kTargetHiddenOrigos]) {
+        hasHeader = hasHeader && sectionKey != kSectionKeyOrigos;
+    }
+    
+    return hasHeader;
+}
+
+
 - (id)headerContentForSectionWithKey:(NSInteger)sectionKey
 {
     id headerContent = nil;
     
-    if (sectionKey == kSectionKeyOrigos) {
+    if (sectionKey == kSectionKeyOrigos && ![self targetIs:kTargetHiddenOrigos]) {
         headerContent = NSLocalizedString(@"My lists", @"");
     } else if (sectionKey == kSectionKeyWardOrigos) {
-        if ([_wards count] > 1) {
-            NSMutableArray *wardGivenNames = [NSMutableArray array];
-            
-            for (id<OMember> ward in _wards) {
-                [wardGivenNames addObject:[ward givenName]];
-            }
-            
-            headerContent = wardGivenNames;
-        } else {
-            headerContent = [_wards[0] givenName];
+        NSMutableArray *wardGivenNames = [NSMutableArray array];
+        
+        for (id<OMember> ward in _wards) {
+            [wardGivenNames addObject:[ward givenName]];
         }
+        
+        headerContent = wardGivenNames;
     }
     
     return headerContent;
 }
 
 
+- (NSString *)emptyTableViewFooterText
+{
+    return [self targetIs:kTargetHiddenOrigos] ? NSLocalizedString(@"No hidden lists.", @"") : nil;
+}
+
+
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyWardOrigos) {
-        id<OMember> ward = _wards[self.selectedHeaderSegment];
-        
-        self.target = ward;
-        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[ward givenName]];
-    } else if (self.target != [OMeta m].user) {
-        self.target = [OMeta m].user;
-        self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[OMeta m].appName];
+    if (![self targetIs:kTargetHiddenOrigos]) {
+        if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyWardOrigos) {
+            id<OMember> ward = _wards[self.selectedHeaderSegment];
+            
+            self.target = ward;
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[ward givenName]];
+        } else if (self.target != [OMeta m].user) {
+            self.target = [OMeta m].user;
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[OMeta m].appName];
+        }
     }
 }
 
 
 - (BOOL)canDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    BOOL canDelete = NO;
+    return [self sectionKeyForIndexPath:indexPath] != kSectionKeyUser;
+}
+
+
+- (NSString *)deleteConfirmationButtonTitleForCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self canDeleteOrigoAtIndexPath:indexPath] ? nil : NSLocalizedString(@"Hide", @"");
+}
+
+
+- (BOOL)shouldDeleteCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    BOOL shouldDeleteCell = YES;
     
-    if ([self sectionKeyForIndexPath:indexPath] != kSectionKeyUser) {
-        id<OOrigo> origo = [self dataAtIndexPath:indexPath];
+    id<OOrigo> origo = [self dataAtIndexPath:indexPath];
+    
+    if ([[origo admins] count] == 1 && [origo userCanEdit]) {
+        [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") text:NSLocalizedString(@"You are the only administrator of this group ...", @"")];
         
-        if ([origo userCanEdit]) {
-            NSArray *members = [origo members];
-            
-            if ([origo isOfType:kOrigoTypeList]) {
-                canDelete = YES;
-            } else if ([members count] == 1) {
-                canDelete = [members[0] isUser] || [members[0] isWardOfUser];
-            }
-        }
+        shouldDeleteCell = NO;
     }
     
-    return canDelete;
+    return shouldDeleteCell;
 }
 
 
 - (void)willDeleteCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    id<OOrigo> origo = [self dataAtIndexPath:indexPath];
+    NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
-    if ([origo isOfType:kOrigoTypeList]) {
-        for (id<OMembership> membership in [origo members]) {
-            [membership expire];
+    id<OOrigo> origo = [self dataAtIndexPath:indexPath];
+    id<OMember> keyMember = nil;
+    
+    if (sectionKey == kSectionKeyOrigos) {
+        keyMember = [OMeta m].user;
+    } else if (sectionKey == kSectionKeyWardOrigos) {
+        keyMember = _wards[self.selectedHeaderSegment];
+    }
+    
+    if ([self canDeleteOrigoAtIndexPath:indexPath]) {
+        if ([origo isOfType:kOrigoTypeList]) {
+            for (id<OMember> member in [origo members]) {
+                [[origo membershipForMember:member] expire];
+            }
         }
         
-        [[origo membershipForMember:[origo owner]] expire];
-    } else if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyWardOrigos) {
-        [[origo membershipForMember:_wards[self.selectedHeaderSegment]] expire];
+        [[origo membershipForMember:keyMember] expire];
     } else {
-        [[origo membershipForMember:[OMeta m].user] expire];
+        [origo membershipForMember:keyMember].status = kMembershipStatusListed;
     }
 }
 
