@@ -90,7 +90,7 @@ static NSDictionary *_keyMappings = nil;
 
 + (BOOL)isAlternatingInputFieldKey:(NSString *)key
 {
-    return [self isNameKey:key] || [self isAgeKey:key] || [self isPhoneNumberKey:key];
+    return [self isAgeKey:key] || [self isPhoneNumberKey:key];
 }
 
 
@@ -125,18 +125,19 @@ static NSDictionary *_keyMappings = nil;
 {
     if (!_keyMappings) {
         _keyMappings = @{
+            kMappedKeyClub : kPropertyKeyDescriptionText,
             kMappedKeyFullName : kPropertyKeyName,
-            kMappedKeyResidenceName : kPropertyKeyName,
-            kMappedKeyPreschoolClass : kPropertyKeyName,
-            kMappedKeyPreschool : kPropertyKeyDescriptionText,
-            kMappedKeySchoolClass : kPropertyKeyName,
-            kMappedKeySchool : kPropertyKeyDescriptionText,
+            kMappedKeyInstitution : kPropertyKeyDescriptionText,
+            kMappedKeyListName : kPropertyKeyName,
             kMappedKeyOrganisation : kPropertyKeyName,
             kMappedKeyOrganisationDescription : kPropertyKeyDescriptionText,
-            kMappedKeyTeam : kPropertyKeyName,
-            kMappedKeyClub : kPropertyKeyDescriptionText,
+            kMappedKeyPreschoolClass : kPropertyKeyName,
+            kMappedKeyPreschool : kPropertyKeyDescriptionText,
+            kMappedKeyResidenceName : kPropertyKeyName,
+            kMappedKeySchool : kPropertyKeyDescriptionText,
+            kMappedKeySchoolClass : kPropertyKeyName,
             kMappedKeyStudyGroup : kPropertyKeyName,
-            kMappedKeyInstitution : kPropertyKeyDescriptionText,
+            kMappedKeyTeam : kPropertyKeyName,
         };
     }
     

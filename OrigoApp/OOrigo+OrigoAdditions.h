@@ -33,6 +33,8 @@ extern NSString * const kOrigoTypeUserStash;
 
 - (NSComparisonResult)compare:(id<OOrigo>)other;
 
+- (id<OMember>)owner;
+
 - (NSSet *)allMemberships;
 - (NSSet *)residencies;
 

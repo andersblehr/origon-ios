@@ -120,6 +120,22 @@ NSString * const kOrigoTypeUserStash = @"~";
 }
 
 
+#pragma mark - Owner
+
+- (id<OMember>)owner
+{
+    OMember *owner = nil;
+    
+    for (OMembership *membership in self.memberships) {
+        if (!owner && [membership.type isEqualToString:kMembershipTypeOwner]) {
+            owner = membership.member;
+        }
+    }
+    
+    return owner;
+}
+
+
 #pragma mark - Memberships
 
 - (NSSet *)allMemberships
@@ -127,7 +143,7 @@ NSString * const kOrigoTypeUserStash = @"~";
     NSMutableSet *memberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
-        if (![membership.type isEqualToString:kMembershipTypeOwner] && ![membership hasExpired]) {
+        if (![membership hasExpired]) {
             [memberships addObject:membership];
         }
     }

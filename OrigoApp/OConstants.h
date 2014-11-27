@@ -64,6 +64,8 @@ extern NSString * const kRelationshipKeyOrigo;
 // Mapped keys
 extern NSString * const kMappedKeyClub;
 extern NSString * const kMappedKeyFullName;
+extern NSString * const kMappedKeyInstitution;
+extern NSString * const kMappedKeyListName;
 extern NSString * const kMappedKeyOrganisation;
 extern NSString * const kMappedKeyOrganisationDescription;
 extern NSString * const kMappedKeyPreschool;
@@ -73,7 +75,6 @@ extern NSString * const kMappedKeySchool;
 extern NSString * const kMappedKeySchoolClass;
 extern NSString * const kMappedKeyStudyGroup;
 extern NSString * const kMappedKeyTeam;
-extern NSString * const kMappedKeyInstitution;
 
 // Unbound keys
 extern NSString * const kExternalKeyActivate;

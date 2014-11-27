@@ -17,6 +17,7 @@ static CGFloat const kPlainTableViewHeaderHeight = 22.f;
 static CGFloat const kFooterHeadroom = 6.f;
 static CGFloat const kEmptyHeaderHeight = 14.f;
 static CGFloat const kEmptyFooterHeight = 14.f;
+static CGFloat const kEliminatedHeaderFooterHeight = 0.01f;
 
 static NSInteger const kInputSectionKey = 0;
 
@@ -171,6 +172,38 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+- (BOOL)shouldEliminateSpaceBelowSection:(NSInteger)section
+{
+    BOOL shouldEliminate = NO;
+    
+    if ([self isEntityViewController] && [_sectionKeys count] > 1) {
+        if (section == [self sectionNumberForSectionKey:kInputSectionKey]) {
+            OInputCellBlueprint *blueprint = [(id<OInputCellDelegate>)_instance inputCellBlueprint];
+            
+            shouldEliminate = blueprint.titleKey && ![blueprint.detailKeys count] && ![_instance hasHeaderForSectionWithKey:[self sectionKeyForSectionNumber:section + 1]];
+        }
+    }
+    
+    return shouldEliminate;
+}
+
+
+- (BOOL)shouldEliminateSpaceAboveSection:(NSInteger)section
+{
+    BOOL shouldEliminate = NO;
+    
+    if ([self isEntityViewController]) {
+        NSInteger inputSection = [self sectionNumberForSectionKey:kInputSectionKey];
+        
+        if (section == inputSection + 1) {
+            shouldEliminate = [self shouldEliminateSpaceBelowSection:inputSection];
+        }
+    }
+    
+    return shouldEliminate;
+}
+
+
 - (void)setEditingTitle:(BOOL)editing
 {
     static UIBarButtonItem *leftBarButtonItem = nil;
@@ -204,21 +237,35 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (void)setEmptyTableViewFooterText:(NSString *)footerText
+- (void)setTableViewFooterViewIfNeeded
 {
-    if ([footerText hasValue]) {
-        UIView *tableFooterView = [self footerViewWithText:footerText];;
-        UILabel *tableFooterLabel = tableFooterView.subviews[0];
+    if ([_sectionKeys count]) {
+        _tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
         
-        CGRect tableFooterViewFrame = tableFooterView.frame;
-        tableFooterViewFrame.size.height += kEmptyHeaderHeight;
-        tableFooterView.frame = tableFooterViewFrame;
+        if (_usesPlainTableViewStyle) {
+            _tableView.backgroundColor = [UIColor whiteColor];
+        }
+    } else if ([_instance respondsToSelector:@selector(emptyTableViewFooterText)]) {
+        NSString *footerText = [_instance emptyTableViewFooterText];
+
+        if ([footerText hasValue]) {
+            UIView *tableFooterView = [self footerViewWithText:footerText];;
+            UILabel *tableFooterLabel = tableFooterView.subviews[0];
+            
+            CGRect tableFooterViewFrame = tableFooterView.frame;
+            tableFooterViewFrame.size.height += kEmptyHeaderHeight;
+            tableFooterView.frame = tableFooterViewFrame;
+            
+            CGRect tableFooterLabelFrame = tableFooterLabel.frame;
+            tableFooterLabelFrame.origin.y = kEmptyHeaderHeight;
+            tableFooterLabel.frame = tableFooterLabelFrame;
+            
+            _tableView.tableFooterView = tableFooterView;
+        }
         
-        CGRect tableFooterLabelFrame = tableFooterLabel.frame;
-        tableFooterLabelFrame.origin.y = kEmptyHeaderHeight;
-        tableFooterLabel.frame = tableFooterLabelFrame;
-        
-        _tableView.tableFooterView = tableFooterView;
+        if (_usesPlainTableViewStyle) {
+            _tableView.backgroundColor = [UIColor tableViewBackgroundColour];
+        }
     }
 }
 
@@ -996,11 +1043,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 [self reloadHeaderForSectionFollowingSection:bottomAffectedSection];
             }
         }
-        
-        _tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    } else if ([_instance respondsToSelector:@selector(emptyTableViewFooterText)]) {
-        [self setEmptyTableViewFooterText:[_instance emptyTableViewFooterText]];
     }
+    
+    [self setTableViewFooterViewIfNeeded];
     
     [_tableView endUpdates];
 }
@@ -1146,26 +1191,24 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         self.navigationController.navigationBar.barTintColor = [UIColor toolbarColour];
     }
     
-    if (_titleSubsegments) {
-        [self.navigationController.navigationBar setHairlinesHidden:YES];
-    }
-    
-    if (_isUsingSectionIndexTitles) {
-        _tableView.sectionIndexMinimumDisplayRowCount = kSectionIndexMinimumDisplayRowCount;
-    }
-    
-    if (![_sectionKeys count]) {
-        if ([_instance respondsToSelector:@selector(emptyTableViewFooterText)]) {
-            [self setEmptyTableViewFooterText:[_instance emptyTableViewFooterText]];
+    if ([[OMeta m] userIsAllSet]) {
+        if (_titleSubsegments) {
+            [self.navigationController.navigationBar setHairlinesHidden:YES];
         }
-    }
-    
-    if (_didResurface || _shouldReloadOnModalDismissal) {
-        [self reloadSections];
-    }
-    
-    if (_didResurface && [self actionIs:kActionInput]) {
-        [self.inputCell resumeFirstResponder];
+        
+        if (_isUsingSectionIndexTitles) {
+            _tableView.sectionIndexMinimumDisplayRowCount = kSectionIndexMinimumDisplayRowCount;
+        }
+        
+        [self setTableViewFooterViewIfNeeded];
+        
+        if (_didResurface || _shouldReloadOnModalDismissal) {
+            [self reloadSections];
+        }
+        
+        if (_didResurface && [self actionIs:kActionInput]) {
+            [self.inputCell resumeFirstResponder];
+        }
     }
 }
 
@@ -1465,6 +1508,8 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     
     if (_usesPlainTableViewStyle) {
         height = [_sectionIndexTitles count] ? kPlainTableViewHeaderHeight : 0.f;
+    } else if ([self shouldEliminateSpaceAboveSection:section]) {
+        height = kEliminatedHeaderFooterHeight;
     } else {
         NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
         
@@ -1494,15 +1539,20 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 - (CGFloat)tableView:(OTableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     CGFloat height = _usesPlainTableViewStyle ? 0.f : kEmptyFooterHeight;
-    NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
     
-    if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
-        if ([_instance respondsToSelector:@selector(footerHeightForSectionWithKey:)]) {
-            height = [_instance footerHeightForSectionWithKey:sectionKey];
-        }
+    if ([self shouldEliminateSpaceBelowSection:section]) {
+        height = kEliminatedHeaderFooterHeight;
+    } else {
+        NSInteger sectionKey = [self sectionKeyForSectionNumber:section];
         
-        if (!height || height == kEmptyFooterHeight) {
-            height = [self footerHeightWithText:[self footerForSectionWithKey:sectionKey]];
+        if ([self instanceHasFooterForSectionWithKey:sectionKey]) {
+            if ([_instance respondsToSelector:@selector(footerHeightForSectionWithKey:)]) {
+                height = [_instance footerHeightForSectionWithKey:sectionKey];
+            }
+            
+            if (!height || height == kEmptyFooterHeight) {
+                height = [self footerHeightWithText:[self footerForSectionWithKey:sectionKey]];
+            }
         }
     }
     
