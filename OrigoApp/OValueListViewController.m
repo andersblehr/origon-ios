@@ -291,7 +291,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     } else if ([self targetIs:kTargetParents]) {
         [self setData:@[kPropertyKeyMotherId, kPropertyKeyFatherId] forSectionWithKey:kSectionKeyValues];
     } else if ([self targetIs:kTargetDevices]) {
-        [self setData:[[[OMeta m].user.devices allObjects] sortedArrayUsingSelector:@selector(compare:)] forSectionWithKey:kSectionKeyValues];
+        [self setData:[[OMeta m].user registeredDevices] forSectionWithKey:kSectionKeyValues];
     } else if ([self targetIs:kTargetRole]) {
         if ([self aspectIs:kAspectOrganiserRole]) {
             [self setData:[_origo organisersWithRole:self.target] forSectionWithKey:kSectionKeyValues];
@@ -325,15 +325,22 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if ([self targetIs:kTargetSettings]) {
-        NSString *key = [self dataAtIndexPath:indexPath];
-        
         if (sectionKey == kSectionKeyValues) {
-            cell.textLabel.text = NSLocalizedString(key, kStringPrefixSettingLabel);
-            cell.detailTextLabel.text = [[OSettings settings] displayValueForSettingKey:key];
+            NSString *settingKey = [self dataAtIndexPath:indexPath];
+            
+            cell.textLabel.text = NSLocalizedString(settingKey, kStringPrefixSettingLabel);
+            cell.detailTextLabel.text = [[OSettings settings] displayValueForSettingKey:settingKey];
             cell.destinationId = kIdentifierValuePicker;
         } else if (sectionKey == kSectionKeyLists) {
-            cell.textLabel.text = NSLocalizedString(key, kStringPrefixSettingListLabel);
-            cell.destinationId = kIdentifierValueList;
+            NSString *target = [self dataAtIndexPath:indexPath];
+            
+            cell.textLabel.text = NSLocalizedString(target, kStringPrefixSettingListLabel);
+            
+            if ([target isEqualToString:kTargetDevices]) {
+                cell.destinationId = kIdentifierValueList;
+            } else if ([target isEqualToString:kTargetHiddenOrigos]) {
+                cell.destinationId = kIdentifierOrigoList;
+            }
         } else if (sectionKey == kSectionKeySignOut) {
             cell.textLabel.textColor = [UIColor redColor];
             cell.textLabel.text = [NSLocalizedString(@"Log out", @"") stringByAppendingString:[OMeta m].user.name separator:kSeparatorSpace];

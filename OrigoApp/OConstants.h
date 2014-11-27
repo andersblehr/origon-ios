@@ -129,7 +129,7 @@ extern NSString * const kIconFileInfo;
 extern NSString * const kIconFileLookup;
 extern NSString * const kIconFileFavouriteNo;
 extern NSString * const kIconFileFavouriteYes;
-extern NSString * const kIconFileAcceptReject;
+extern NSString * const kIconFileAcceptDecline;
 extern NSString * const kIconFilePlacePhoneCall;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;

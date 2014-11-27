@@ -28,6 +28,7 @@ extern NSString * const kTargetGender;
 extern NSString * const kTargetGroup;
 extern NSString * const kTargetGroups;
 extern NSString * const kTargetGuardian;
+extern NSString * const kTargetHiddenOrigos;
 extern NSString * const kTargetHousemate;
 extern NSString * const kTargetJuvenile;
 extern NSString * const kTargetMember;

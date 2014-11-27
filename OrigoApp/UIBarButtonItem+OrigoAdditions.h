@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSInteger const kBarButtonTagAcceptReject;
+extern NSInteger const kBarButtonTagAcceptDecline;
 extern NSInteger const kBarButtonTagAction;
 extern NSInteger const kbarButtonTagEdit;
 extern NSInteger const kBarButtonTagFavourite;
@@ -33,7 +33,7 @@ extern NSInteger const kBarButtonTagSendText;
 
 @interface UIBarButtonItem (OrigoAdditions)
 
-+ (instancetype)acceptRejectButtonWithTarget:(id)target;
++ (instancetype)acceptDeclineButtonWithTarget:(id)target;
 + (instancetype)actionButtonWithTarget:(id)target;
 + (instancetype)editButtonWithTarget:(id)target;
 + (instancetype)groupsButtonWithTarget:(id)target;

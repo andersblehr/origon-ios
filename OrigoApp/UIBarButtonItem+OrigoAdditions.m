@@ -8,7 +8,7 @@
 
 #import "UIBarButtonItem+OrigoAdditions.h"
 
-NSInteger const kBarButtonTagAcceptReject = 10;
+NSInteger const kBarButtonTagAcceptDecline = 10;
 NSInteger const kBarButtonTagAction = 11;
 NSInteger const kbarButtonTagEdit = 12;
 NSInteger const kBarButtonTagFavourite = 13;
@@ -57,9 +57,9 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 #pragma mark - Navigation bar icon buttons
 
-+ (instancetype)acceptRejectButtonWithTarget:(id)target
++ (instancetype)acceptDeclineButtonWithTarget:(id)target
 {
-    UIBarButtonItem *button = [self barButtonWithVisuals:[UIImage imageNamed:kIconFileAcceptReject] target:target action:@selector(performAcceptRejectAction) tag:kBarButtonTagAcceptReject];
+    UIBarButtonItem *button = [self barButtonWithVisuals:[UIImage imageNamed:kIconFileAcceptDecline] target:target action:@selector(performAcceptDeclineAction) tag:kBarButtonTagAcceptDecline];
     button.tintColor = [UIColor supernovaColour];
     
     return button;

@@ -342,10 +342,12 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (BOOL)instanceHasHeaderForSectionWithKey:(NSInteger)sectionKey
 {
-    BOOL hasHeader = [self sectionNumberForSectionKey:sectionKey] > 0;
+    BOOL hasHeader = NO;
     
     if ([_instance respondsToSelector:@selector(hasHeaderForSectionWithKey:)]) {
         hasHeader = [_instance hasHeaderForSectionWithKey:sectionKey];
+    } else {
+        hasHeader = [self sectionNumberForSectionKey:sectionKey] > 0;
     }
     
     return hasHeader || _isUsingSectionIndexTitles;
@@ -384,7 +386,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
-- (UIView *)segmentedHeaderViewWithSegmentTitles:(NSArray *)segmentTitles
+- (UIView *)segmentedHeaderViewWithSegmentTitles:(NSArray *)segmentTitles inSection:(NSInteger)section
 {
     CGFloat leftmostWidth = 0.f;
     CGFloat maxWidth = 0.f;
@@ -400,15 +402,19 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         }
     }
     
+    CGFloat headerViewHeight = [self tableView:_tableView heightForHeaderInSection:section];
+    CGFloat headerHeight = [[UIFont headerFont] headerHeight];
+    CGFloat headroom = headerViewHeight - headerHeight;
+    
     _segmentedHeader = [[UISegmentedControl alloc] initWithItems:segmentTitles];
-    _segmentedHeader.frame = CGRectMake(kDefaultCellPadding - (maxWidth - leftmostWidth) / 2.f, 0.f, _segmentedHeader.frame.size.width, [[UIFont headerFont] headerHeight]);
+    _segmentedHeader.frame = CGRectMake(kDefaultCellPadding - (maxWidth - leftmostWidth) / 2.f, headroom, _segmentedHeader.frame.size.width, headerHeight);
     _segmentedHeader.tintColor = [UIColor clearColor];
     _segmentedHeader.selectedSegmentIndex = _selectedHeaderSegment;
     [_segmentedHeader setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor headerTextColour], NSFontAttributeName: [UIFont headerFont]} forState:UIControlStateSelected];
     [_segmentedHeader setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor lightGrayColor], NSFontAttributeName: [UIFont headerFont]} forState:UIControlStateNormal];
     [_segmentedHeader addTarget:self action:@selector(didSelectHeaderSegment) forControlEvents:UIControlEventValueChanged];
     
-    UIView *segmentedHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenWidth], [[UIFont headerFont] headerHeight])];
+    UIView *segmentedHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, [OMeta screenWidth], headerViewHeight)];
     segmentedHeaderView.backgroundColor = [UIColor clearColor];
     [segmentedHeaderView addSubview:_segmentedHeader];
     
@@ -989,7 +995,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 - (void)reloadSections
 {
-    [_tableView beginUpdates];
     [_instance loadData];
     
     NSArray *sectionKeys = [[_sectionData allKeys] sortedArrayUsingSelector:@selector(compare:)];
@@ -998,24 +1003,29 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     NSMutableIndexSet *sectionsToReload = [NSMutableIndexSet indexSet];
     UITableViewRowAnimation rowAnimation = [self rowAnimation];
     
+    [_tableView beginUpdates];
+    
     for (NSNumber *sectionKey in sectionKeys) {
         NSInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
-        NSInteger oldCount = [_sectionCounts[sectionKey] integerValue];
-        NSInteger newCount = [_sectionData[sectionKey] count];
         
-        if (oldCount) {
-            if (newCount) {
-                [sectionsToReload addIndex:section - [affectedSections count]];
-            } else {
-                [affectedSections addIndex:section];
-                [_sectionKeys removeObject:sectionKey];
-                [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
+        if (section != NSNotFound) {
+            NSInteger oldCount = [_sectionCounts[sectionKey] integerValue];
+            NSInteger newCount = [_sectionData[sectionKey] count];
+            
+            if (oldCount) {
+                if (newCount) {
+                    [sectionsToReload addIndex:section + [affectedSections count]];
+                } else {
+                    [affectedSections addIndex:section];
+                    [_sectionKeys removeObject:sectionKey];
+                    [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
+                }
+            } else if (newCount) {
+                [sectionsToInsert addIndex:section + [affectedSections count]];
             }
-        } else if (newCount) {
-            [sectionsToInsert addIndex:section - [affectedSections count]];
+            
+            _sectionCounts[sectionKey] = @(newCount);
         }
-        
-        _sectionCounts[sectionKey] = @(newCount);
     }
     
     if ([sectionsToInsert count]) {
@@ -1279,16 +1289,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 
 #pragma mark - Custom accessors
 
-- (void)setUsesSectionIndexTitles:(BOOL)usesSectionIndexTitles
-{
-    _usesSectionIndexTitles = usesSectionIndexTitles;
-    
-    if (_usesSectionIndexTitles) {
-        _usesPlainTableViewStyle = YES;
-    }
-}
-
-
 - (void)setTarget:(id)target
 {
     if (target) {
@@ -1325,6 +1325,16 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     }
     
     return _state && [_target isKindOfClass:[NSDictionary class]] ? [_target allKeys][0] : _target;
+}
+
+
+- (void)setUsesSectionIndexTitles:(BOOL)usesSectionIndexTitles
+{
+    _usesSectionIndexTitles = usesSectionIndexTitles;
+    
+    if (_usesSectionIndexTitles) {
+        _usesPlainTableViewStyle = YES;
+    }
 }
 
 
@@ -1464,26 +1474,46 @@ static NSInteger compareObjects(id object1, id object2, void *context)
 }
 
 
+- (NSString *)tableView:(OTableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *buttonTitle = nil;
+    
+    if ([_instance respondsToSelector:@selector(deleteConfirmationButtonTitleForCellAtIndexPath:)]) {
+        buttonTitle = [_instance deleteConfirmationButtonTitleForCellAtIndexPath:indexPath];
+    }
+    
+    return buttonTitle ? buttonTitle : NSLocalizedString(@"Delete", @"");
+}
+
+
 - (void)tableView:(OTableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        if ([_instance respondsToSelector:@selector(willDeleteCellAtIndexPath:)]) {
-            [_instance willDeleteCellAtIndexPath:indexPath];
+        BOOL shouldDeleteCell = YES;
+        
+        if ([_instance respondsToSelector:@selector(shouldDeleteCellAtIndexPath:)]) {
+            shouldDeleteCell = [_instance shouldDeleteCellAtIndexPath:indexPath];
         }
         
-        NSNumber *sectionKey = _sectionKeys[indexPath.section];
-        NSMutableArray *sectionData = _sectionData[sectionKey];
-        
-        _sectionCounts[sectionKey] = @([_sectionCounts[sectionKey] integerValue] - 1);
-        [sectionData removeObjectAtIndex:indexPath.row];
-        
-        if (![sectionData count]) {
-            [_sectionKeys removeObject:sectionKey];
+        if (shouldDeleteCell) {
+            if ([_instance respondsToSelector:@selector(willDeleteCellAtIndexPath:)]) {
+                [_instance willDeleteCellAtIndexPath:indexPath];
+            }
+            
+            NSNumber *sectionKey = _sectionKeys[indexPath.section];
+            NSMutableArray *sectionData = _sectionData[sectionKey];
+            
+            _sectionCounts[sectionKey] = @([_sectionCounts[sectionKey] integerValue] - 1);
+            [sectionData removeObjectAtIndex:indexPath.row];
+            
+            if (![sectionData count]) {
+                [_sectionKeys removeObject:sectionKey];
+            }
+            
+            [self reloadSectionWithKey:[sectionKey integerValue]];
+            
+            [[OMeta m].replicator replicateIfNeeded];
         }
-        
-        [self reloadSectionWithKey:[sectionKey integerValue]];
-        
-        [[OMeta m].replicator replicateIfNeeded];
     }
 }
 
@@ -1522,7 +1552,9 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 if (_usesPlainTableViewStyle) {
                     height = [UIFont plainHeaderFont].lineHeight;
                 } else {
-                    height = [[UIFont headerFont] headerHeight];
+                    CGFloat headroom = section > 0 ? 0.f : kInitialHeadroomHeight / 2.f;
+                    
+                    height = [[UIFont headerFont] headerHeight] + headroom;
                 }
             }
         } else if (section == 0) {
@@ -1572,13 +1604,19 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         headerContent = [_instance headerContentForSectionWithKey:sectionKey];
     }
     
+    if ([headerContent isKindOfClass:[NSArray class]] && [headerContent count] == 1) {
+        headerContent = headerContent[0];
+    }
+    
     if ([headerContent isKindOfClass:[NSString class]]) {
-        CGFloat headerHeight = [self tableView:tableView heightForHeaderInSection:section];
-        CGRect headerFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], headerHeight);
-        headerView = [[UIView alloc] initWithFrame:headerFrame];
+        CGFloat headerViewHeight = [self tableView:tableView heightForHeaderInSection:section];
+        CGFloat headerHeight = [[UIFont headerFont] headerHeight];
+        CGFloat headroom = headerViewHeight - headerHeight;
+        CGRect headerViewFrame = CGRectMake(0.f, 0.f, [OMeta screenWidth], headerViewHeight);
+        headerView = [[UIView alloc] initWithFrame:headerViewFrame];
         
-        CGRect labelFrame = CGRectMake(kContentInset, 0.f, [OMeta screenWidth] - 2 * kContentInset, headerHeight);
-        UILabel *headerLabel = [[UILabel alloc] initWithFrame:labelFrame];
+        CGRect headerFrame = CGRectMake(kContentInset, headroom, [OMeta screenWidth] - 2 * kContentInset, headerHeight);
+        UILabel *headerLabel = [[UILabel alloc] initWithFrame:headerFrame];
         headerLabel.backgroundColor = [UIColor clearColor];
         headerLabel.textColor = [UIColor headerTextColour];
         
@@ -1596,7 +1634,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
         
         [_sectionHeaderLabels setObject:headerLabel forKey:@(sectionKey)];
     } else if ([headerContent isKindOfClass:[NSArray class]]) {
-        headerView = [self segmentedHeaderViewWithSegmentTitles:headerContent];
+        headerView = [self segmentedHeaderViewWithSegmentTitles:headerContent inSection:section];
         
         _segmentedHeaderSectionKey = sectionKey;
     } else if ([headerContent isKindOfClass:[UIView class]]) {
