@@ -195,35 +195,29 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         }
         
         _wards = wardsWithHiddenOrigos;
-        
-        if (self.selectedHeaderSegment > [_wards count] - 1) {
-            self.selectedHeaderSegment = [_wards count] - 1;
-        }
-        
-        if ([_wards count]) {
-            [self setData:[_wards[self.selectedHeaderSegment] hiddenOrigos] forSectionWithKey:kSectionKeyWardOrigos];
-        } else {
-            [self setData:[NSArray array] forSectionWithKey:kSectionKeyWardOrigos];
-        }
-        
-        [self setData:[[OMeta m].user hiddenOrigos] forSectionWithKey:kSectionKeyOrigos];
-    } else if (_member) {
+    } else {
         _wards = [[OMeta m].user wards];
         
         [self setData:[[OMeta m].user residences] forSectionWithKey:kSectionKeyUser];
         [self appendData:[[OMeta m].user stash] toSectionWithKey:kSectionKeyUser];
-        
+    }
+    
+    if ([_wards count]) {
         if (self.selectedHeaderSegment > [_wards count] - 1) {
             self.selectedHeaderSegment = [_wards count] - 1;
         }
         
-        if ([_wards count]) {
-            [self setData:[_wards[self.selectedHeaderSegment] origos] forSectionWithKey:kSectionKeyWardOrigos];
+        NSArray *wardOrigos = nil;
+        
+        if ([self targetIs:kTargetHiddenOrigos]) {
+            wardOrigos = [_wards[self.selectedHeaderSegment] hiddenOrigos];
         } else {
-            [self setData:[NSArray array] forSectionWithKey:kSectionKeyWardOrigos];
+            wardOrigos = [_wards[self.selectedHeaderSegment] origos];
         }
         
-        [self setData:[[OMeta m].user origos] forSectionWithKey:kSectionKeyOrigos];
+        [self setData:wardOrigos forSectionWithKey:kSectionKeyWardOrigos];
+    } else {
+        [self setData:[NSArray array] forSectionWithKey:kSectionKeyWardOrigos];
     }
 }
 

@@ -45,6 +45,7 @@ extern NSString * const kAffiliationTypeGroup;
 - (BOOL)isResidency;
 - (BOOL)isParticipancy;
 - (BOOL)isAssociate;
+- (BOOL)isHidden;
 
 - (BOOL)hasAffiliationOfType:(NSString *)type;
 - (void)addAffiliation:(NSString *)affiliation ofType:(NSString *)type;

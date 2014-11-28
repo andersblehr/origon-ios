@@ -130,6 +130,12 @@ static NSString * const kPlaceholderRole = @"placeholder";
 }
 
 
+- (BOOL)isHidden
+{
+    return ![self isListing] && [self.status isEqualToString:kMembershipStatusListed];
+}
+
+
 #pragma mark - Role handling
 
 - (BOOL)hasAffiliationOfType:(NSString *)type
@@ -337,6 +343,34 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
 
+- (void)markForDeletion
+{
+    [super markForDeletion];
+    
+    if ([self.member isUser]) {
+        for (OMembership *membership in [self.origo allMemberships]) {
+            if (![membership.member isKnownByUser]) {
+                [membership.member markForDeletion];
+            }
+            
+            membership.isAwaitingDeletion = @YES;
+        }
+        
+        [self.origo markForDeletion];
+    } else if (![self.member isKnownByUser]) {
+        for (OMembership *membership in [self.member allMemberships]) {
+            if ([membership isFull] || [membership isOwner]) {
+                [membership.origo markForDeletion];
+            }
+            
+            membership.isAwaitingDeletion = @YES;
+        }
+        
+        [self.member markForDeletion];
+    }
+}
+
+
 - (BOOL)isTransient
 {
     return [super isTransient] || [self.origo isTransient];
@@ -358,28 +392,6 @@ static NSString * const kPlaceholderRole = @"placeholder";
             [[OMeta m].context expireCrossReferencesForMembership:self];
         } else {
             [super expire];
-        }
-        
-        if ([self.member isUser]) {
-            for (OMembership *membership in [self.origo allMemberships]) {
-                if (![membership.member isKnownByUser]) {
-                    [[OMeta m].context deleteEntity:membership.member];
-                }
-                
-                [[OMeta m].context deleteEntity:membership];
-            }
-            
-            [[OMeta m].context deleteEntity:self.origo];
-        } else if (![self.member isKnownByUser]) {
-            for (OMembership *membership in [self.member allMemberships]) {
-                if ([membership isFull]) {
-                    [[OMeta m].context deleteEntity:membership.origo];
-                }
-                
-                [[OMeta m].context deleteEntity:membership];
-            }
-            
-            [[OMeta m].context deleteEntity:self.member];
         }
     }
 }

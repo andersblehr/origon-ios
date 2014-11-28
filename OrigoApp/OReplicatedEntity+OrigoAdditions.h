@@ -50,9 +50,10 @@
 - (NSString *)SHA1HashCode;
 - (void)internaliseRelationships;
 
+- (void)markForDeletion;
+- (BOOL)isMarkedForDeletion;
 - (BOOL)isTransient;
 - (BOOL)isDirty;
-- (BOOL)isBeingDeleted;
 
 - (BOOL)shouldReplicateOnExpiry;
 - (NSString *)expiresInTimeframe;

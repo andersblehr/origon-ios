@@ -93,7 +93,7 @@
     NSMutableSet *pendingEntities = [NSMutableSet set];
     
     for (OReplicatedEntity *entity in unsavedEntities) {
-        if ([entity isDirty] || [entity isBeingDeleted]) {
+        if ([entity isDirty] || [entity isMarkedForDeletion]) {
             [pendingEntities addObject:entity];
             [pendingEntities unionSet:[self entityRefsForPendingEntity:entity]];
         }
@@ -178,14 +178,6 @@
     }
     
     return entity;
-}
-
-
-#pragma mark - Deleting entities
-
-- (void)deleteEntity:(OReplicatedEntity *)entity
-{
-    entity.isAwaitingDeletion = @YES;
 }
 
 
@@ -326,7 +318,7 @@
 - (void)save
 {
     for (OReplicatedEntity *entity in [self pendingEntities]) {
-        if ([entity isBeingDeleted]) {
+        if ([entity isMarkedForDeletion]) {
             [self deleteObject:entity];
         }
     }
@@ -377,7 +369,7 @@
     NSMutableSet *dirtyEntities = [NSMutableSet set];
     
     for (OReplicatedEntity *entity in [self pendingEntities]) {
-        if (![entity isBeingDeleted]) {
+        if (![entity isMarkedForDeletion]) {
             [dirtyEntities addObject:entity];
         }
     }
