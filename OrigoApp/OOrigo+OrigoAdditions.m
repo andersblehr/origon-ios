@@ -127,7 +127,7 @@ NSString * const kOrigoTypeUserStash = @"~";
     OMember *owner = nil;
     
     for (OMembership *membership in self.memberships) {
-        if (!owner && [membership.type isEqualToString:kMembershipTypeOwner]) {
+        if (!owner && [membership isOwner]) {
             owner = membership.member;
         }
     }
@@ -645,9 +645,9 @@ NSString * const kOrigoTypeUserStash = @"~";
         
         for (OMembership *membership in [self allMemberships]) {
             if ([membership isFull]) {
-                if (membership != directMembership && ![membership isBeingDeleted]) {
+                if (membership != directMembership && ![membership isMarkedForDeletion]) {
                     for (OMembership *residency in [membership.member residencies]) {
-                        if (residency.origo != self && ![residency isBeingDeleted]) {
+                        if (residency.origo != self && ![residency isMarkedForDeletion]) {
                             indirectlyKnows = indirectlyKnows || [residency.origo hasMember:member];
                         }
                     }

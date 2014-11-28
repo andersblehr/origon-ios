@@ -206,7 +206,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
     NSString *acceptButtonTitle = nil;
     NSString *declineButtonTitle = nil;
     
-    if ([_membership.status isEqualToString:kMembershipStatusListed]) {
+    if ([_membership isHidden]) {
         prompt = NSLocalizedString(@"Do you want to unhide this listing?", @"");
         acceptButtonTitle = NSLocalizedString(@"Unhide", @"");
         declineButtonTitle = NSLocalizedString(@"Keep hidden", @"");
@@ -376,8 +376,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 - (void)loadListCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
-    NSString *destinationId = nil;
-    NSString *destinationMeta = nil;
     
     if (sectionKey == kSectionKeyMembers) {
         if ([[self dataAtIndexPath:indexPath] conformsToProtocol:@protocol(OOrigo)]) {
@@ -386,7 +384,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             cell.textLabel.text = [residence shortAddress];
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[residence elders] withRolesInOrigo:_origo];
             [cell loadImageForOrigo:residence];
-            destinationId = kIdentifierOrigo;
+            cell.destinationId = [_membership isHidden] ? nil : kIdentifierOrigo;
         } else {
             id<OOrigo> origo = self.state.baseOrigo ? self.state.baseOrigo : _origo;
             id<OMember> member = [self dataAtIndexPath:indexPath];
@@ -399,7 +397,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                 [cell loadMember:member inOrigo:origo excludeRoles:NO excludeRelations:YES];
             }
             
-            destinationId = kIdentifierMember;
+            cell.destinationId = [_membership isHidden] ? nil : kIdentifierMember;
         }
     } else {
         NSString *role = [self dataAtIndexPath:indexPath];
@@ -417,18 +415,16 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             }
             
             [cell loadImageForMember:roleHolder];
-            destinationId = kIdentifierMember;
+            cell.destinationId = [_membership isHidden] ? nil : kIdentifierMember;
         } else {
             cell.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:roleHolders conjoin:NO];
             [cell loadTonedDownIconWithFileName:kIconFileRoleHolders];
-            destinationId = kIdentifierValueList;
-            destinationMeta = role;
+            
+            if (![_membership isHidden]) {
+                cell.destinationId = kIdentifierValueList;
+                cell.destinationMeta = role;
+            }
         }
-    }
-    
-    if (![_membership.status isEqualToString:kMembershipStatusListed]) {
-        cell.destinationId = destinationId;
-        cell.destinationMeta = destinationMeta;
     }
 }
 
@@ -462,7 +458,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 {
     NSArray *toolbarButtons = nil;
     
-    if ([_origo isCommitted] && ![_membership.status isEqualToString:kMembershipStatusListed]) {
+    if ([_origo isCommitted] && ![_membership isHidden]) {
         toolbarButtons = [[OMeta m].switchboard toolbarButtonsForOrigo:_origo presenter:self];
     }
     
@@ -643,6 +639,12 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             [_origo expireCommunityResidence:[self dataAtIndexPath:indexPath]];
         } else {
             [[_origo membershipForMember:[self dataAtIndexPath:indexPath]] expire];
+            
+            if ([_origo isOfType:kOrigoTypeResidence] && [_origo userIsMember]) {
+                [_origo resetDefaultResidenceNameIfApplicable];
+                
+                [self.inputCell readData];
+            }
         }
     } else {
         NSString *role = [self dataAtIndexPath:indexPath];
@@ -824,7 +826,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         switch (actionSheet.tag) {
             case kActionSheetTagAcceptDecline:
                 if (buttonTag == kButtonTagAcceptDeclineAccept) {
-                    BOOL wasHidden = [_membership.status isEqualToString:kMembershipStatusListed];
+                    BOOL wasHidden = [_membership isHidden];
                     
                     _membership.status = kMembershipStatusActive;
                     
@@ -847,7 +849,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                         }
                     }
                 } else if (buttonTag == kButtonTagAcceptDeclineDecline) {
-                    if (![_membership.status isEqualToString:kMembershipStatusListed]) {
+                    if (![_membership isHidden]) {
                         if ([_origo isOfType:kOrigoTypeResidence]) {
                             [_membership expire];
                         } else {

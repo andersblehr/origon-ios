@@ -154,6 +154,18 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 
 #pragma mark - Meta information
 
+- (void)markForDeletion
+{
+    self.isAwaitingDeletion = @YES;
+}
+
+
+- (BOOL)isMarkedForDeletion
+{
+    return [self.isAwaitingDeletion boolValue];
+}
+
+
 - (BOOL)isTransient
 {
     return [self hasExpired];
@@ -163,12 +175,6 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 - (BOOL)isDirty
 {
     return ![self.hashCode isEqualToString:[self SHA1HashCode]];
-}
-
-
-- (BOOL)isBeingDeleted
-{
-    return [self.isAwaitingDeletion boolValue];
 }
 
 
@@ -326,7 +332,7 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
     if ([self shouldReplicateOnExpiry]) {
         self.isExpired = @YES;
     } else {
-        [[OMeta m].context deleteEntity:self];
+        [self markForDeletion];
     }
 }
 

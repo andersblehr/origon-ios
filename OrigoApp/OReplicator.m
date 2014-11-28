@@ -150,7 +150,7 @@
         
         for (OReplicatedEntity *entity in _dirtyEntities) {
             if ([entity isTransient]) {
-                [[OMeta m].context deleteEntity:entity];
+                [entity markForDeletion];
             } else {
                 entity.dateReplicated = now;
                 entity.hashCode = [entity SHA1HashCode];

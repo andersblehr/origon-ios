@@ -205,8 +205,8 @@
     NSMutableSet *memberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
-        if (![membership.origo isOfType:kOrigoTypeUserStash] && ![membership hasExpired]) {
-            if (![membership.status isEqualToString:kMembershipStatusListed]) {
+        if (![membership.origo isOfType:kOrigoTypeUserStash]) {
+            if (![membership isHidden] && ![membership hasExpired]) {
                 [memberships addObject:membership];
             }
         }
@@ -381,10 +381,8 @@
     NSMutableArray *hiddenOrigos = [NSMutableArray array];
     
     for (OMembership *membership in self.memberships) {
-        if (![membership isListing] && ![membership hasExpired]) {
-            if ([membership.status isEqualToString:kMembershipStatusListed]) {
-                [hiddenOrigos addObject:membership.origo];
-            }
+        if ([membership isHidden] && ![membership hasExpired]) {
+            [hiddenOrigos addObject:membership.origo];
         }
     }
     

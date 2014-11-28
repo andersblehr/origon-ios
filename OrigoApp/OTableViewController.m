@@ -1006,25 +1006,31 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     [_tableView beginUpdates];
     
     for (NSNumber *sectionKey in sectionKeys) {
-        NSInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
-        
-        if (section != NSNotFound) {
-            NSInteger oldCount = [_sectionCounts[sectionKey] integerValue];
-            NSInteger newCount = [_sectionData[sectionKey] count];
-            
-            if (oldCount) {
-                if (newCount) {
-                    [sectionsToReload addIndex:section + [affectedSections count]];
-                } else {
-                    [affectedSections addIndex:section];
-                    [_sectionKeys removeObject:sectionKey];
-                    [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
-                }
-            } else if (newCount) {
-                [sectionsToInsert addIndex:section + [affectedSections count]];
+        if ([self isEntityViewController] && [sectionKey integerValue] == _inputSectionKey) {
+            if (![self actionIs:kActionInput]) {
+                [_inputCell readData];
             }
+        } else {
+            NSInteger section = [self sectionNumberForSectionKey:[sectionKey integerValue]];
             
-            _sectionCounts[sectionKey] = @(newCount);
+            if (section != NSNotFound) {
+                NSInteger oldCount = [_sectionCounts[sectionKey] integerValue];
+                NSInteger newCount = [_sectionData[sectionKey] count];
+                
+                if (oldCount) {
+                    if (newCount) {
+                        [sectionsToReload addIndex:section + [affectedSections count]];
+                    } else {
+                        [affectedSections addIndex:section];
+                        [_sectionKeys removeObject:sectionKey];
+                        [_tableView deleteSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:rowAnimation];
+                    }
+                } else if (newCount) {
+                    [sectionsToInsert addIndex:section + [affectedSections count]];
+                }
+                
+                _sectionCounts[sectionKey] = @(newCount);
+            }
         }
     }
     
@@ -1511,8 +1517,6 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             }
             
             [self reloadSectionWithKey:[sectionKey integerValue]];
-            
-            [[OMeta m].replicator replicateIfNeeded];
         }
     }
 }
