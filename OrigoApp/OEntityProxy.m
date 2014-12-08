@@ -205,8 +205,18 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 }
 
 
+#pragma mark - Proxy cache reset
+
 + (void)clearProxyCache
 {
+    if (![[OMeta m].appDelegate hasPersistentStore]) {
+        for (OEntityProxy *proxy in [[_cachedProxiesByEntityId allValues] copy]) {
+            if ([proxy instance]) {
+                [proxy useInstance:nil];
+            }
+        }
+    }
+    
     [_cachedProxiesByEntityId removeAllObjects];
 }
 
@@ -372,7 +382,10 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 - (void)useInstance:(id<OEntity>)instance
 {
-    [_cachedProxiesByEntityId removeObjectForKey:self.entityId];
+    if ([[OMeta m].appDelegate hasPersistentStore]) {
+        [_cachedProxiesByEntityId removeObjectForKey:self.entityId];
+    }
+    
     [_valuesByKey removeAllObjects];
     
     _instance = [instance instance];
@@ -382,7 +395,9 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
         _valuesByKey[kExternalKeyEntityClass] = NSStringFromClass(_entityClass);
     }
     
-    _cachedProxiesByEntityId[self.entityId] = self;
+    if ([[OMeta m].appDelegate hasPersistentStore]) {
+        _cachedProxiesByEntityId[self.entityId] = self;
+    }
 }
 
 
@@ -391,7 +406,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
     static BOOL isCommitting = NO;
     
     if (isCommitting) {
-        if (![self isReplicated] && !_instance) {
+        if (!_instance && ![self isReplicated]) {
             id instance = nil;
             
             if ([self respondsToSelector:@selector(instantiate)]) {
@@ -419,6 +434,7 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
         
         NSMutableArray *replicatedProxies = [NSMutableArray array];
         NSMutableArray *replicatedDictionaries = [NSMutableArray array];
+        NSMutableArray *expiredProxies = [NSMutableArray array];
         NSMutableArray *pendingProxies = [NSMutableArray array];
         
         for (OEntityProxy *proxy in [_cachedProxiesByEntityId allValues]) {
@@ -426,6 +442,8 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
                 if ([proxy isReplicated] && ![proxy instance]) {
                     [replicatedProxies addObject:proxy];
                     [replicatedDictionaries addObject:[proxy toDictionary]];
+                } else if ([proxy instance] && [proxy hasExpired]) {
+                    [expiredProxies addObject:proxy];
                 } else {
                     [pendingProxies addObject:proxy];
                 }
@@ -445,6 +463,10 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
             [proxy commit];
         }
         
+        for (OEntityProxy *proxy in expiredProxies) {
+            [[proxy instance] expire];
+        }
+        
         [_cachedProxiesByEntityId removeAllObjects];
         
         isCommitting = NO;
@@ -456,7 +478,37 @@ static NSMutableDictionary *_cachedProxiesByEntityId = nil;
 
 - (void)expire
 {
-    [_cachedProxiesByEntityId removeObjectForKey:self.entityId];
+    if ([self instance]) {
+        _valuesByKey[kPropertyKeyIsExpired] = @YES;
+        _isCommitted = NO;
+    } else {
+        [_cachedProxiesByEntityId removeObjectForKey:self.entityId];
+    }
+}
+
+
+- (void)unexpire
+{
+    if ([self instance]) {
+        [_valuesByKey removeObjectForKey:kPropertyKeyIsExpired];
+        _isCommitted = YES;
+    } else {
+        _cachedProxiesByEntityId[self.entityId] = self;
+    }
+}
+
+
+- (BOOL)hasExpired
+{
+    BOOL hasExpired = NO;
+    
+    if ([self instance]) {
+        hasExpired = [_valuesByKey[kPropertyKeyIsExpired] boolValue];
+    } else {
+        hasExpired = ![[_valuesByKey allKeys] containsObject:self.entityId];
+    }
+    
+    return hasExpired;
 }
 
 

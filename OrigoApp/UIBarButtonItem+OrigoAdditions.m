@@ -193,7 +193,7 @@ static UIBarButtonItem *_flexibleSpace = nil;
 
 + (instancetype)signOutButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:NSLocalizedString(@"Log out", @"") target:target action:@selector(signOut) tag:kBarButtonTagSignOut];
+    return [self barButtonWithVisuals:NSLocalizedString(kExternalKeySignOut, kStringPrefixLabel) target:target action:@selector(signOut) tag:kBarButtonTagSignOut];
 }
 
 

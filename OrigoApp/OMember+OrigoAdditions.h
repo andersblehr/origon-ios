@@ -37,11 +37,12 @@
 
 - (id<OOrigo>)stash;
 - (id<OOrigo>)primaryResidence;
-- (id<OOrigo>)defaultContactList;
+- (id<OOrigo>)defaultFriendList;
 - (NSArray *)residences;
 - (NSArray *)addresses;
 - (NSArray *)origos;
 - (NSArray *)hiddenOrigos;
+- (NSArray *)mirroringOrigos;
 
 - (id<OMember>)mother;
 - (id<OMember>)father;

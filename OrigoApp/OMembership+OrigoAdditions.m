@@ -8,7 +8,7 @@
 
 #import "OMembership+OrigoAdditions.h"
 
-NSString * const kMembershipTypeOwner = @"~";
+NSString * const kMembershipTypeOwnership = @"~";
 NSString * const kMembershipTypeFavourite = @"F";
 NSString * const kMembershipTypeListing = @"L";
 NSString * const kMembershipTypeResidency = @"R";
@@ -80,6 +80,59 @@ static NSString * const kPlaceholderRole = @"placeholder";
 }
 
 
+#pragma mark - Type alignment
+
+- (void)alignWithOrigoIsAssociate:(BOOL)isAssociate
+{
+    if (isAssociate) {
+        self.type = kMembershipTypeAssociate;
+        self.status = nil;
+        self.affiliations = nil;
+        
+        if ([self isParticipancy]) {
+            self.isAdmin = [self.member isUser] && [self.origo userIsCreator] ? @YES : @NO;
+        }
+    } else {
+        if ([self.origo isOfType:kOrigoTypeStash]) {
+            if ([self.origo.entityId hasSuffix:self.member.entityId]) {
+                self.type = kMembershipTypeOwnership;
+            } else {
+                self.type = kMembershipTypeFavourite;
+            }
+        } else if ([self.origo isOfType:kOrigoTypeList]) {
+            if ([self.member isUser] || [self.member isWardOfUser]) {
+                self.type = kMembershipTypeOwnership;
+            } else {
+                self.type = kMembershipTypeListing;
+            }
+        } else if ([self.origo isOfType:kOrigoTypeResidence]) {
+            self.type = kMembershipTypeResidency;
+        } else {
+            self.type = kMembershipTypeParticipancy;
+        }
+        
+        if ([self.member isUser]) {
+            self.status = kMembershipStatusActive;
+            self.isAdmin = @YES;
+        } else if ([self.member isWardOfUser]) {
+            self.status = kMembershipStatusActive;
+        } else {
+            if ([@[kMembershipTypeListing, kMembershipTypeFavourite] containsObject:self.type]) {
+                self.status = kMembershipStatusListed;
+            } else if ([self.type isEqualToString:kMembershipTypeResidency]) {
+                if (![self.member isJuvenile] && [[self.member addresses] count] > 1) {
+                    self.status = kMembershipStatusInvited;
+                } else {
+                    self.status = kMembershipStatusActive;
+                }
+            } else {
+                self.status = kMembershipStatusInvited;
+            }
+        }
+    }
+}
+
+
 #pragma mark - Meta information
 
 - (BOOL)isActive
@@ -88,9 +141,29 @@ static NSString * const kPlaceholderRole = @"placeholder";
 }
 
 
-- (BOOL)isFull
+- (BOOL)isShared
 {
-    return [self isParticipancy] || [self isResidency];
+    return [self isResidency] || [self isParticipancy];
+}
+
+
+- (BOOL)isMirrored
+{
+    return [self isShared] || [self isListing] || [self.origo isOfType:kOrigoTypeList];
+}
+
+
+- (BOOL)isHidden
+{
+    return [self isShared] && [self.status isEqualToString:kMembershipStatusListed];
+}
+
+
+#pragma mark - Type shorthands
+
+- (BOOL)isOwnership
+{
+    return [self.type isEqualToString:kMembershipTypeOwnership];
 }
 
 
@@ -103,12 +176,6 @@ static NSString * const kPlaceholderRole = @"placeholder";
 - (BOOL)isListing
 {
     return [self.type isEqualToString:kMembershipTypeListing];
-}
-
-
-- (BOOL)isOwner
-{
-    return [self.type isEqualToString:kMembershipTypeOwner];
 }
 
 
@@ -130,12 +197,6 @@ static NSString * const kPlaceholderRole = @"placeholder";
 }
 
 
-- (BOOL)isHidden
-{
-    return ![self isListing] && [self.status isEqualToString:kMembershipStatusListed];
-}
-
-
 #pragma mark - Role handling
 
 - (BOOL)hasAffiliationOfType:(NSString *)type
@@ -154,7 +215,7 @@ static NSString * const kPlaceholderRole = @"placeholder";
         }
         
         if ([self isAssociate]) {
-            [self promoteToFull];
+            [self promote];
         }
         
         [affiliationsByType[type] addObject:affiliation];
@@ -273,70 +334,26 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 #pragma mark - Promoting & demoting
 
-- (void)promoteToFull
+- (void)promote
 {
     if ([self isAssociate]) {
         [self alignWithOrigoIsAssociate:NO];
         
-        [[OMeta m].context insertAdditionalCrossReferencesForFullMembership:self];
+        if ([self isMirrored]) {
+            [[OMeta m].context insertAdditionalCrossReferencesForMirroredMembership:self];
+        }
     }
 }
 
 
-- (void)demoteToAssociate
+- (void)demote
 {
-    if ([self isFull]) {
+    if (![self isAssociate]) {
+        if ([self isMirrored]) {
+            [[OMeta m].context expireAdditionalCrossReferencesForMirroredMembership:self];
+        }
+        
         [self alignWithOrigoIsAssociate:YES];
-        
-        [[OMeta m].context expireAdditionalCrossReferencesForFullMembership:self];
-    }
-}
-
-
-- (void)alignWithOrigoIsAssociate:(BOOL)isAssociate
-{
-    if (isAssociate) {
-        self.type = kMembershipTypeAssociate;
-        self.isAdmin = [self.member isUser] && [self.origo userIsCreator] ? @YES : @NO;
-        self.status = nil;
-        self.affiliations = nil;
-    } else {
-        if ([self.origo isOfType:kOrigoTypeUserStash]) {
-            if ([self.member isUser]) {
-                self.type = kMembershipTypeOwner;
-            } else {
-                self.type = kMembershipTypeFavourite;
-            }
-        } else if ([self.origo isOfType:kOrigoTypeList]) {
-            if ([self.member isUser] || [self.member isWardOfUser]) {
-                self.type = kMembershipTypeOwner;
-            } else {
-                self.type = kMembershipTypeListing;
-            }
-        } else if ([self.origo isOfType:kOrigoTypeResidence]) {
-            self.type = kMembershipTypeResidency;
-        } else {
-            self.type = kMembershipTypeParticipancy;
-        }
-        
-        if ([self.member isUser]) {
-            self.status = kMembershipStatusActive;
-            self.isAdmin = @YES;
-        } else if ([self.member isWardOfUser]) {
-            self.status = kMembershipStatusActive;
-        } else {
-            if ([@[kMembershipTypeListing, kMembershipTypeFavourite] containsObject:self.type]) {
-                self.status = kMembershipStatusListed;
-            } else if ([self.type isEqualToString:kMembershipTypeResidency]) {
-                if (![self.member isJuvenile] && [[self.member addresses] count] > 1) {
-                    self.status = kMembershipStatusInvited;
-                } else {
-                    self.status = kMembershipStatusActive;
-                }
-            } else {
-                self.status = kMembershipStatusInvited;
-            }
-        }
     }
 }
 
@@ -347,26 +364,28 @@ static NSString * const kPlaceholderRole = @"placeholder";
 {
     [super markForDeletion];
     
-    if ([self.member isUser]) {
-        for (OMembership *membership in [self.origo allMemberships]) {
-            if (![membership.member isKnownByUser]) {
-                [membership.member markForDeletion];
+    if (![self isMirrored] || ![self.origo indirectlyKnowsAboutMember:self.member]) {
+        if ([self.member isUser]) {
+            for (OMembership *membership in [self.origo allMemberships]) {
+                if (![membership.member isKnownByUser]) {
+                    [membership.member markForDeletion];
+                }
+                
+                membership.isAwaitingDeletion = @YES;
             }
             
-            membership.isAwaitingDeletion = @YES;
-        }
-        
-        [self.origo markForDeletion];
-    } else if (![self.member isKnownByUser]) {
-        for (OMembership *membership in [self.member allMemberships]) {
-            if ([membership isFull] || [membership isOwner]) {
-                [membership.origo markForDeletion];
+            [self.origo markForDeletion];
+        } else if (![self.member isKnownByUser]) {
+            for (OMembership *membership in [self.member allMemberships]) {
+                if ([membership isMirrored]) {
+                    [membership.origo markForDeletion];
+                }
+                
+                membership.isAwaitingDeletion = @YES;
             }
             
-            membership.isAwaitingDeletion = @YES;
+            [self.member markForDeletion];
         }
-        
-        [self.member markForDeletion];
     }
 }
 
@@ -379,8 +398,8 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 - (void)expire
 {
-    if ([self isFull] && [self.origo indirectlyKnowsAboutMember:self.member]) {
-        [self demoteToAssociate];
+    if (![self isAssociate] && [self.origo indirectlyKnowsAboutMember:self.member]) {
+        [self demote];
     } else {
         if ([self shouldReplicateOnExpiry]) {
             [super expire];

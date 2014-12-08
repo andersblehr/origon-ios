@@ -20,6 +20,7 @@ extern NSString * const kIdentifierValuePicker;
 // Reuse identifiers
 extern NSString * const kReuseIdentifierUserSignIn;
 extern NSString * const kReuseIdentifierUserActivation;
+extern NSString * const kReuseIdentifierPasswordChange;
 
 // Language codes
 extern NSString * const kLanguageCodeEnglish;
@@ -80,12 +81,17 @@ extern NSString * const kMappedKeyTeam;
 extern NSString * const kExternalKeyActivate;
 extern NSString * const kExternalKeyActivationCode;
 extern NSString * const kExternalKeyAuthEmail;
+extern NSString * const kExternalKeyChangePassword;
 extern NSString * const kExternalKeyDeviceId;
 extern NSString * const kExternalKeyEditableListCellContent;
 extern NSString * const kExternalKeyEntityClass;
+extern NSString * const kExternalKeyNewPassword;
+extern NSString * const kExternalKeyOldPassword;
 extern NSString * const kExternalKeyPassword;
+extern NSString * const kExternalKeyRepeatNewPassword;
 extern NSString * const kExternalKeyRepeatPassword;
 extern NSString * const kExternalKeySignIn;
+extern NSString * const kExternalKeySignOut;
 
 // String key prefixes
 extern NSString * const kStringPrefixDefault;

@@ -13,6 +13,7 @@
 
 // Labels
 "[label] activate" = "Oppgi aktiveringskode";
+"[label] changePassword" = "Bytt passord";
 "[label] address" = "Adresse";
 "[label] club" = "Klubb";
 "[label] createdBy" = "Opprettet av";
@@ -29,6 +30,7 @@
 "[label] preschool" = "Barnehage";
 "[label] school" = "Skole";
 "[label] signIn" = "Logg på eller registrer deg";
+"[label] signOut" = "Logg ut";
 "[label] telephone" = "Telefon";
 "[label] type" = "Type";
 "[label] institution" = "Lærested";
@@ -49,12 +51,15 @@
 "[placeholder] givenName" = "Navn";
 "[placeholder] mobilePhone" = "Mobilnummer";
 "[placeholder] name" = "Navn";
+"[placeholder] newPassword" = "Nytt passord";
+"[placeholder] oldPassword" = "Gammelt passord";
 "[placeholder] organisation" = "Organisasjonens navn";
 "[placeholder] organisationDescription" = "Kort beskrivelse av organisasjonen";
 "[placeholder] password" = "Passordet ditt";
 "[placeholder] photo" = "Bilde";
 "[placeholder] preschool" = "Barnehagens navn";
 "[placeholder] preschoolClass" = "Navn på avdelingen";
+"[placeholder] repeatNewPassword" = "Gjenta nytt passord";
 "[placeholder] repeatPassword" = "Gjenta passordet ditt";
 "[placeholder] residenceName" = "Kallenavn for denne adressen";
 "[placeholder] listName" = "Listens navn";
@@ -255,7 +260,6 @@
 "Continue" = "Fortsett";
 "Skip" = "Hopp over";
 "Cancel" = "Avbryt";
-"Log out" = "Logg ut";
 
 // Placeholders
 "Role designation" = "Rollebetegnelse";
@@ -343,7 +347,7 @@
 "Incomplete registration" = "Ufullstendig registrering";
 "You must complete your registration before you can start using Origo." = "Du må fullføre registreringen før du kan begynne å bruke Origo.";
 "You are administrator" = "Du er administrator";
-"You are the only administrator of this group ..." = "Du er eneste adminstrator av denne lista. Om du vil skjule den, må du først utpeke en annen administrator.";
+"You are the only administrator of this group ..." = "Du er eneste administrator av denne lista. Om du vil skjule den, må du først utpeke en annen administrator.";
 
 // Prompts
 "Your household includes minors. Would you like to provide parent relations?" = "Husstanden din omfatter mindreårige. Vil du angi foreldrerelasjoner?";
@@ -417,7 +421,6 @@
 "Register address" = "Registrer adresse";
 "Register an address" = "Registrer en adresse";
 "Register guardian" = "Registrer foresatt";
-"Change password" = "Endre passord";
 "Other address" = "Annen adresse";
 "All guardians" = "Alle foresatte";
 "All contacts" = "Alle kontaktpersoner";

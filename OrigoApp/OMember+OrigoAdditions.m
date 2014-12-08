@@ -125,7 +125,7 @@
     NSMutableArray *origos = [NSMutableArray array];
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership.origo isOfType:kOrigoTypeList] && [membership isOwner]) {
+        if ([membership.origo isOfType:kOrigoTypeList] && [membership isOwnership]) {
             [lists addObject:membership.origo];
         } else {
             BOOL isIncludedResidency = [membership isResidency] && includeResidences;
@@ -205,7 +205,7 @@
     NSMutableSet *memberships = [NSMutableSet set];
     
     for (OMembership *membership in self.memberships) {
-        if (![membership.origo isOfType:kOrigoTypeUserStash]) {
+        if (![membership.origo isOfType:kOrigoTypeStash]) {
             if (![membership isHidden] && ![membership hasExpired]) {
                 [memberships addObject:membership];
             }
@@ -279,7 +279,7 @@
     OOrigo *stash = nil;
     
     for (OMembership *membership in self.memberships) {
-        if (!stash && [membership.origo isOfType:kOrigoTypeUserStash]) {
+        if (!stash && [membership.origo isOfType:kOrigoTypeStash]) {
             stash = membership.origo;
         }
     }
@@ -316,12 +316,12 @@
 }
 
 
-- (id<OOrigo>)defaultContactList
+- (id<OOrigo>)defaultFriendList
 {
     OOrigo *list = nil;
     
     for (OMembership *membership in [self allMemberships]) {
-        if ([membership isListing]) {
+        if ([membership.origo isOfType:kOrigoTypeList] && [membership isOwnership]) {
             if (!list || [membership.origo.dateCreated isBeforeDate:list.dateCreated]) {
                 list = membership.origo;
             }
@@ -330,12 +330,7 @@
     
     if (!list) {
         OOrigo *list = [OOrigo instanceWithId:[OCrypto generateUUID] type:kOrigoTypeList];
-        
-        if ([self isWardOfUser]) {
-            list.name = NSLocalizedString(@"Friends", @"");
-        } else {
-            list.name = NSLocalizedString(@"Contacts", @"");
-        }
+        list.name = NSLocalizedString(@"Friends", @"");
         
         [list addMember:self];
     }
@@ -387,6 +382,20 @@
     }
     
     return hiddenOrigos;
+}
+
+
+- (NSArray *)mirroringOrigos
+{
+    NSMutableArray *mirroringOrigos = [NSMutableArray array];
+    
+    for (OMembership *membership in self.memberships) {
+        if ([membership isMirrored] && ![membership hasExpired]) {
+            [mirroringOrigos addObject:membership.origo];
+        }
+    }
+    
+    return mirroringOrigos;
 }
 
 
@@ -615,7 +624,7 @@
     }
     
     for (OMember *ward in [self wards]) {
-        [ward defaultContactList];
+        [ward defaultFriendList];
     }
     
     self.settings = [OSettings settings];
@@ -860,7 +869,9 @@
     NSString *shortName = nil;
     NSArray *names = [self.name componentsSeparatedByString:kSeparatorSpace];
     
-    if ([names count] > 2) {
+    if ([self isJuvenile]) {
+        shortName = [self givenName];
+    } else if ([names count] > 2) {
         shortName = [[names firstObject] stringByAppendingString:[names lastObject] separator:kSeparatorSpace];
     } else {
         shortName = self.name;
@@ -919,7 +930,7 @@
 
 + (instancetype)instanceWithId:(NSString *)entityId
 {
-    OOrigo *stash = [OOrigo instanceWithId:[OUtil stashIdFromMemberId:entityId] type:kOrigoTypeUserStash];
+    OOrigo *stash = [OOrigo instanceWithId:[OUtil stashIdFromMemberId:entityId] type:kOrigoTypeStash];
     OMember *instance = [[OMeta m].context insertEntityOfClass:self inOrigo:stash entityId:entityId];
     
     [stash addMember:instance];

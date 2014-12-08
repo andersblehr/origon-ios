@@ -29,6 +29,7 @@
 @property (nonatomic) NSString *modifiedBy;
 @property (nonatomic) NSDate *dateCreated;
 @property (nonatomic) NSDate *dateReplicated;
+@property (nonatomic) NSNumber *isExpired;
 
 - (BOOL)userIsCreator;
 - (void)reflectEntity:(id<OEntity>)entity;

@@ -13,6 +13,7 @@
 
 // Labels
 "[label] activate" = "Enter activation code";
+"[label] changePassword" = "Change password";
 "[label] address" = "Address";
 "[label] club" = "Club";
 "[label] createdBy" = "Created by";
@@ -29,6 +30,7 @@
 "[label] preschool" = "Preschool";
 "[label] school" = "School";
 "[label] signIn" = "Sign in or sign up";
+"[label] signOut" = "Sign out";
 "[label] telephone" = "Telephone";
 "[label] type" = "Type";
 "[label] institution" = "Institution";
@@ -49,12 +51,15 @@
 "[placeholder] givenName" = "Name";
 "[placeholder] mobilePhone" = "Mobile phone number";
 "[placeholder] name"  = "Name";
+"[placeholder] newPassword" = "New password";
+"[placeholder] oldPassword" = "Old password";
 "[placeholder] organisation" = "Name of organisation";
 "[placeholder] organisationDescription" = "Short description of the organisation";
 "[placeholder] password" = "Your password";
 "[placeholder] photo" = "Photo";
 "[placeholder] preschool" = "Name of preschool";
 "[placeholder] preschoolClass" = "Class";
+"[placeholder] repeatNewPassword" = "Repeat new password";
 "[placeholder] repeatPassword" = "Repeat your password";
 "[placeholder] residenceName" = "Moniker for this address";
 "[placeholder] listName" = "List name";
@@ -255,7 +260,6 @@
 "Continue" = "Continue";
 "Cancel" = "Cancel";
 "Skip" = "Skip";
-"Log out" = "Log out";
 
 // Placeholders
 "Role designation" = "Role designation";
@@ -418,7 +422,6 @@
 "Register address" = "Register address";
 "Register an address" = "Register an address";
 "Register guardian" = "Register guardian";
-"Change password" = "Change password";
 "Other address" = "Other address";
 "All contacts" = "All contacts";
 "All guardians" = "All guardians";
@@ -493,7 +496,7 @@
 "[setting list label] hidden" = "Hidden lists";
 
 // Footers
-"All persons marked as favourites will be listed here ..." = "All persons marked as favourites will be listed here. Tap ☆ in the person view to mark that person as favourite.";
+"All persons marked as favourites will be listed here ..." = "All persons marked as favourites will be listed here. Tap ☆ in the person view to mark a person as favourite.";
 "All who are not marked as favourites will be listed here." = "All who are not marked as favourites will be listed here.";
 
 // Buttons

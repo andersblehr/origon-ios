@@ -171,7 +171,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 - (void)presentCoHabitantsSheetWithCandidates:(NSArray *)candidates
 {
-    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:NSLocalizedString(@"Register household member", @"") delegate:self tag:kActionSheetTagCoHabitants];
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagCoHabitants];
     
     _eligibleCandidates = [OUtil sortedGroupsOfResidents:candidates excluding:nil];
     
@@ -184,8 +184,8 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             }
         }
     } else {
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoin:YES subjective:YES] tag:kButtonTagCoHabitantsAll];
-        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[kButtonTagCoHabitantsWards] conjoin:YES subjective:YES] tag:kButtonTagCoHabitantsWards];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[kButtonTagCoHabitantsAll] conjoin:YES subjective:NO] tag:kButtonTagCoHabitantsAll];
+        [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:_eligibleCandidates[kButtonTagCoHabitantsWards] conjoin:YES subjective:NO] tag:kButtonTagCoHabitantsWards];
     }
     
     if (![_origo userIsMember] && [_member isWardOfUser]) {
@@ -533,8 +533,8 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                 content = @[membersTitle, NSLocalizedString(@"Households", @"")];
             }
         } else {
-            if ([self actionIs:kActionRegister] && [_origo isOfType:kOrigoTypeResidence]) {
-                if (![_member hasAddress] && [self aspectIs:kAspectJuvenile]) {
+            if (![_origo isCommitted] && [_origo isOfType:kOrigoTypeResidence]) {
+                if (![_member isCommitted] && [self aspectIs:kAspectJuvenile]) {
                     content = NSLocalizedString(@"Guardians in the household", @"");
                 } else {
                     content = membersTitle;
@@ -638,9 +638,19 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         if ([[self dataAtIndexPath:indexPath] conformsToProtocol:@protocol(OOrigo)]) {
             [_origo expireCommunityResidence:[self dataAtIndexPath:indexPath]];
         } else {
-            [[_origo membershipForMember:[self dataAtIndexPath:indexPath]] expire];
+            id<OMember> member = [self dataAtIndexPath:indexPath];
+            
+            [[_origo membershipForMember:member] expire];
             
             if ([_origo isOfType:kOrigoTypeResidence] && [_origo userIsMember]) {
+                if (![[member residences] count]) {
+                    id<OOrigo> primaryResidence = [member primaryResidence];
+                    
+                    for (id<OMember> minor in [_origo minors]) {
+                        [primaryResidence addMember:minor];
+                    }
+                }
+                
                 [_origo resetDefaultResidenceNameIfApplicable];
                 
                 [self.inputCell readData];
