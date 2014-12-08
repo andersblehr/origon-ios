@@ -9,6 +9,7 @@
 #import "OState.h"
 
 NSString * const kActionActivate = @"activate";
+NSString * const kActionChange = @"change";
 NSString * const kActionDisplay = @"display";
 NSString * const kActionEdit = @"edit";
 NSString * const kActionInput = @"input";
@@ -37,6 +38,7 @@ NSString * const kTargetOrganiser = @"organiser";
 NSString * const kTargetOrigoType = @"origoType";
 NSString * const kTargetParent = @"parent";
 NSString * const kTargetParents = @"parents";
+NSString * const kTargetPassword = @"password";
 NSString * const kTargetRole = @"role";
 NSString * const kTargetRoles = @"roles";
 NSString * const kTargetSetting = @"setting";
@@ -80,10 +82,13 @@ static OState *_activeState = nil;
         
         if (_activeState) {
             _aspect = _activeState.aspect;
-            _currentMember = _activeState.currentMember;
-            _currentOrigo = _activeState.currentOrigo;
-            _baseOrigo = _activeState.baseOrigo;
-            _pivotMember = _activeState->_pivotMember;
+            
+            if ([[OMeta m].appDelegate hasPersistentStore]) {
+                _currentMember = _activeState.currentMember;
+                _currentOrigo = _activeState.currentOrigo;
+                _baseOrigo = _activeState.baseOrigo;
+                _pivotMember = _activeState->_pivotMember;
+            }
         }
         
         if (viewController.target) {
@@ -136,10 +141,11 @@ static OState *_activeState = nil;
         
         if (!isMatch) {
             if ([action isEqualToString:kActionInput]) {
-                isMatch = isMatch || [_action isEqualToString:kActionSignIn];
                 isMatch = isMatch || [_action isEqualToString:kActionActivate];
-                isMatch = isMatch || [_action isEqualToString:kActionRegister];
+                isMatch = isMatch || [_action isEqualToString:kActionChange];
                 isMatch = isMatch || [_action isEqualToString:kActionEdit];
+                isMatch = isMatch || [_action isEqualToString:kActionRegister];
+                isMatch = isMatch || [_action isEqualToString:kActionSignIn];
             }
         }
     } else if ([action isKindOfClass:[NSArray class]]) {

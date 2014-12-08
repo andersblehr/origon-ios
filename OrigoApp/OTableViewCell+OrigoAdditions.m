@@ -115,7 +115,7 @@
                         isParentByWard[ward.entityId] = @([ward hasParent:member]);
                         
                         if ([ward isListedOnly]) {
-                            associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [OUtil commaSeparatedListOfMembers:[[OMeta m].user wardsInOrigo:origo] inOrigo:origo conjoin:YES]];
+                            associationsByWard[ward.entityId] = [NSString stringWithFormat:NSLocalizedString(@"%@, %@ of %@", @""), [ward givenName], [self friendTermForMember:ward], [[origo owner] givenName]];
                         } else if (![origo isOfType:kOrigoTypeList]) {
                             if ([ward isWardOfUser]) {
                                 associationsByWard[ward.entityId] = [ward givenName];
@@ -169,7 +169,7 @@
 {
     if ([origo isOfType:kOrigoTypeResidence]) {
         self.imageView.image = [UIImage imageNamed:kIconFileResidence];
-    } else if ([origo isOfType:kOrigoTypeUserStash]) {
+    } else if ([origo isOfType:kOrigoTypeStash]) {
         self.imageView.image = [UIImage imageNamed:kIconFileFavouriteYes];
     } else if ([origo isOfType:kOrigoTypeList]) {
         self.imageView.image = [UIImage imageNamed:kIconFileList];

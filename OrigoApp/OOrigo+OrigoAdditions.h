@@ -16,9 +16,9 @@ extern NSString * const kOrigoTypePreschoolClass;
 extern NSString * const kOrigoTypeResidence;
 extern NSString * const kOrigoTypeSchoolClass;
 extern NSString * const kOrigoTypeSimple;
+extern NSString * const kOrigoTypeStash;
 extern NSString * const kOrigoTypeStudyGroup;
 extern NSString * const kOrigoTypeTeam;
-extern NSString * const kOrigoTypeUserStash;
 
 
 @protocol OOrigo <OEntity>
@@ -67,6 +67,8 @@ extern NSString * const kOrigoTypeUserStash;
 - (id<OMembership>)associateMembershipForMember:(id<OMember>)member;
 
 - (BOOL)userCanEdit;
+- (BOOL)userIsOwner;
+- (BOOL)userIsAdmin;
 - (BOOL)userIsMember;
 - (BOOL)userIsOrganiser;
 - (BOOL)userIsParentContact;

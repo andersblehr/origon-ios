@@ -92,6 +92,12 @@ static NSString * const kCodedSettingKeySuffix = @"Code";
 }
 
 
+- (NSArray *)accountKeys
+{
+    return @[kExternalKeyChangePassword, kExternalKeySignOut];
+}
+
+
 - (void)setValue:(id)value forSettingKey:(NSString *)settingKey
 {
     [self setValue:value forKey:[self normalisedKeyForSettingKey:settingKey]];

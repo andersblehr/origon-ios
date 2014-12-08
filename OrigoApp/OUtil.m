@@ -95,6 +95,8 @@
                 }
             } else if ([members count] > 1) {
                 [stringItems addObject:[member shortName]];
+            } else if ([member isJuvenile]) {
+                [stringItems addObject:[member givenName]];
             } else {
                 [stringItems addObject:member.name];
             }

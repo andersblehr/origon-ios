@@ -19,9 +19,9 @@
 - (id)entityOfClass:(Class)class withValue:(NSString *)value forKey:(NSString *)key;
 
 - (void)insertCrossReferencesForMembership:(OMembership *)membership;
-- (void)insertAdditionalCrossReferencesForFullMembership:(OMembership *)membership;
+- (void)insertAdditionalCrossReferencesForMirroredMembership:(OMembership *)membership;
 - (void)expireCrossReferencesForMembership:(OMembership *)membership;
-- (void)expireAdditionalCrossReferencesForFullMembership:(OMembership *)membership;
+- (void)expireAdditionalCrossReferencesForMirroredMembership:(OMembership *)membership;
 
 - (void)save;
 - (void)saveEntityDictionaries:(NSArray *)replicaDictionaries;

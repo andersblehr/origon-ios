@@ -104,9 +104,9 @@
 }
 
 
-- (id<OOrigo>)defaultContactList
+- (id<OOrigo>)defaultFriendList
 {
-    return [self instance] ? [[self instance] defaultContactList] : nil;
+    return [self instance] ? [[self instance] defaultFriendList] : nil;
 }
 
 

@@ -26,5 +26,6 @@
 
 - (NSArray *)settingKeys;
 - (NSArray *)settingListKeys;
+- (NSArray *)accountKeys;
 
 @end

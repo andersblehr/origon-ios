@@ -20,6 +20,7 @@ NSString * const kIdentifierValuePicker = @"value";
 // Reuse identifiers
 NSString * const kReuseIdentifierUserSignIn = @"signIn";
 NSString * const kReuseIdentifierUserActivation = @"activate";
+NSString * const kReuseIdentifierPasswordChange = @"passwordChange";
 
 // Language codes
 NSString * const kLanguageCodeEnglish = @"en";
@@ -80,12 +81,17 @@ NSString * const kMappedKeyTeam = @"team";
 NSString * const kExternalKeyActivate = @"activate";
 NSString * const kExternalKeyActivationCode = @"activationCode";
 NSString * const kExternalKeyAuthEmail = @"authEmail";
+NSString * const kExternalKeyChangePassword = @"changePassword";
 NSString * const kExternalKeyDeviceId = @"deviceId";
 NSString * const kExternalKeyEditableListCellContent = @"editableListCellContent";
 NSString * const kExternalKeyEntityClass = @"entityClass";
+NSString * const kExternalKeyNewPassword = @"newPassword";
+NSString * const kExternalKeyOldPassword = @"oldPassword";
 NSString * const kExternalKeyPassword = @"password";
+NSString * const kExternalKeyRepeatNewPassword = @"repeatNewPassword";
 NSString * const kExternalKeyRepeatPassword = @"repeatPassword";
 NSString * const kExternalKeySignIn = @"signIn";
+NSString * const kExternalKeySignOut = @"signOut";
 
 // String key prefixes
 NSString * const kStringPrefixDefault = @"[default]";

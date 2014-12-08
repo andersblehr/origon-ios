@@ -228,7 +228,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     
     id<OOrigo> origo = [self dataAtIndexPath:indexPath];
     
-    if ([origo isOfType:kOrigoTypeUserStash]) {
+    if ([origo isOfType:kOrigoTypeStash]) {
         cell.textLabel.text = NSLocalizedString(@"Favourites and others", @"");
         cell.destinationId = kIdentifierValueList;
     } else {
@@ -287,7 +287,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
 {
     id target = [self dataAtIndexPath:indexPath];
     
-    if ([target isOfType:kOrigoTypeUserStash]) {
+    if ([target isOfType:kOrigoTypeStash]) {
         target = kTargetFavourites;
     }
     
@@ -367,7 +367,7 @@ static NSInteger const kSectionKeyWardOrigos = 2;
     
     id<OOrigo> origo = [self dataAtIndexPath:indexPath];
     
-    if ([[origo admins] count] == 1 && [origo userCanEdit]) {
+    if ([origo userIsAdmin] && [[origo admins] count] == 1) {
         [OAlert showAlertWithTitle:NSLocalizedString(@"You are administrator", @"") text:NSLocalizedString(@"You are the only administrator of this group ...", @"")];
         
         shouldDeleteCell = NO;

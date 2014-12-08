@@ -16,9 +16,9 @@ NSString * const kOrigoTypePreschoolClass = @"preschoolClass";
 NSString * const kOrigoTypeResidence = @"residence";
 NSString * const kOrigoTypeSchoolClass = @"schoolClass";
 NSString * const kOrigoTypeSimple = @"simple";
+NSString * const kOrigoTypeStash = @"~";
 NSString * const kOrigoTypeStudyGroup = @"studyGroup";
 NSString * const kOrigoTypeTeam = @"team";
-NSString * const kOrigoTypeUserStash = @"~";
 
 
 @implementation OOrigo (OrigoAdditions)
@@ -27,7 +27,7 @@ NSString * const kOrigoTypeUserStash = @"~";
 
 - (id<OMembership>)addMember:(id<OMember>)member isAssociate:(BOOL)isAssociate
 {
-    id<OMembership> membership = nil;
+    OMembership *membership = nil;
     
     if ([member instance]) {
         member = [member instance];
@@ -35,7 +35,7 @@ NSString * const kOrigoTypeUserStash = @"~";
         
         if (membership) {
             if ([membership isAssociate] && !isAssociate) {
-                [membership promoteToFull];
+                [membership promote];
             }
         } else {
             membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self];
@@ -43,9 +43,7 @@ NSString * const kOrigoTypeUserStash = @"~";
             
             [membership alignWithOrigoIsAssociate:isAssociate];
             
-            if (![self isOfType:kOrigoTypeUserStash]) {
-                [[OMeta m].context insertCrossReferencesForMembership:membership];
-            }
+            [[OMeta m].context insertCrossReferencesForMembership:membership];
         }
     } else {
         membership = [[self proxy] addMember:member];
@@ -127,7 +125,7 @@ NSString * const kOrigoTypeUserStash = @"~";
     OMember *owner = nil;
     
     for (OMembership *membership in self.memberships) {
-        if (!owner && [membership isOwner]) {
+        if (!owner && [membership isOwnership]) {
             owner = membership.member;
         }
     }
@@ -209,7 +207,7 @@ NSString * const kOrigoTypeUserStash = @"~";
     for (OMembership *membership in [self allMemberships]) {
         OMember *member = membership.member;
         
-        if ([self isOfType:kOrigoTypeUserStash]) {
+        if ([self isOfType:kOrigoTypeStash]) {
             if ([membership isFavourite]) {
                 [members addObject:member];
             }
@@ -222,7 +220,7 @@ NSString * const kOrigoTypeUserStash = @"~";
                 [members addObject:member];
             }
         } else {
-            if ([membership isFull]) {
+            if ([membership isShared]) {
                 [members addObject:member];
             }
         }
@@ -528,9 +526,29 @@ NSString * const kOrigoTypeUserStash = @"~";
 
 - (BOOL)userCanEdit
 {
-    OMembership *membership = [self membershipForMember:[OMeta m].user];
+    BOOL userCanEdit = NO;
     
-    return [membership.isAdmin boolValue] || (![self hasAdmin] && [self userIsCreator]);
+    if ([self isOfType:kOrigoTypeList]) {
+        userCanEdit = [self userIsOwner] || [[self owner] isWardOfUser];
+    } else if ([self hasAdmin]) {
+        userCanEdit = [self userIsAdmin];
+    } else {
+        userCanEdit = [self userIsCreator];
+    }
+    
+    return userCanEdit;
+}
+
+
+- (BOOL)userIsOwner
+{
+    return [[self membershipForMember:[OMeta m].user] isOwnership];
+}
+
+
+- (BOOL)userIsAdmin
+{
+    return [[self membershipForMember:[OMeta m].user].isAdmin boolValue];
 }
 
 
@@ -644,7 +662,7 @@ NSString * const kOrigoTypeUserStash = @"~";
         OMembership *directMembership = [self membershipForMember:member];
         
         for (OMembership *membership in [self allMemberships]) {
-            if ([membership isFull]) {
+            if ([membership isMirrored]) {
                 if (membership != directMembership && ![membership isMarkedForDeletion]) {
                     for (OMembership *residency in [membership.member residencies]) {
                         if (residency.origo != self && ![residency isMarkedForDeletion]) {
@@ -719,7 +737,7 @@ NSString * const kOrigoTypeUserStash = @"~";
         for (OMember *resident in [residence residents]) {
             OMembership *membership = [self membershipForMember:resident];
             
-            if ([membership isFull]) {
+            if (![membership isAssociate]) {
                 [membership expire];
             }
         }
@@ -735,7 +753,7 @@ NSString * const kOrigoTypeUserStash = @"~";
                 id<OMembership> membership = [self membershipForMember:member];
                 
                 if ([membership isAssociate]) {
-                    [membership promoteToFull];
+                    [membership promote];
                 }
             }
         }
@@ -752,7 +770,7 @@ NSString * const kOrigoTypeUserStash = @"~";
     BOOL isTransient = [super isTransient];
     
     if (!isTransient) {
-        isTransient = [self isOfType:kOrigoTypeUserStash] && self != [[OMeta m].user stash];
+        isTransient = [self isOfType:kOrigoTypeStash] && self != [[OMeta m].user stash];
     }
     
     return isTransient;

@@ -195,6 +195,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     if ([OValidator isEmailValue:self.target]) {
         self.state.target = kTargetEmail;
         self.state.action = kActionActivate;
+    } else if ([self targetIs:kTargetPassword]) {
+        self.state.action = kActionChange;
     } else {
         NSData *authInfoArchive = [ODefaults globalDefaultForKey:kDefaultsKeyAuthInfo];
         
@@ -230,6 +232,8 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
         reuseIdentifier = kReuseIdentifierUserSignIn;
     } else if ([self actionIs:kActionActivate]) {
         reuseIdentifier = kReuseIdentifierUserActivation;
+    } else if ([self actionIs:kActionChange] && [self targetIs:kTargetPassword]) {
+        reuseIdentifier = kReuseIdentifierPasswordChange;
     }
     
     return reuseIdentifier;
@@ -286,6 +290,9 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
     } else if ([self actionIs:kActionActivate]) {
         blueprint.titleKey = kExternalKeyActivate;
         blueprint.detailKeys = @[kExternalKeyActivationCode, kExternalKeyRepeatPassword];
+    } else if ([self actionIs:kActionChange] && [self targetIs:kTargetPassword]) {
+        blueprint.titleKey = kExternalKeyChangePassword;
+        blueprint.detailKeys = @[kExternalKeyOldPassword, kExternalKeyNewPassword, kExternalKeyRepeatNewPassword];
     }
     
     return blueprint;

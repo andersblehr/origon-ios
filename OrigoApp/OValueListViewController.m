@@ -10,7 +10,7 @@
 
 static NSInteger const kSectionKeyValues = 0;
 static NSInteger const kSectionKeyLists = 1;
-static NSInteger const kSectionKeySignOut = 2;
+static NSInteger const kSectionKeyAccount = 2;
 
 static NSInteger const kTitleSubsegmentFavourites = 0;
 static NSInteger const kTitleSubsegmentOthers = 1;
@@ -264,9 +264,11 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
 - (void)loadData
 {
     if ([self targetIs:kTargetSettings]) {
-        [self setData:[[OSettings settings] settingKeys] forSectionWithKey:kSectionKeyValues];
-        [self setData:[[OSettings settings] settingListKeys] forSectionWithKey:kSectionKeyLists];
-        [self setData:@[kCustomData] forSectionWithKey:kSectionKeySignOut];
+        OSettings *settings = [OSettings settings];
+        
+        [self setData:[settings settingKeys] forSectionWithKey:kSectionKeyValues];
+        [self setData:[settings settingListKeys] forSectionWithKey:kSectionKeyLists];
+        [self setData:[settings accountKeys] forSectionWithKey:kSectionKeyAccount];
     } else if ([self targetIs:kTargetFavourites]) {
         NSArray *favourites = [[[OMeta m].user stash] members];
         
@@ -341,9 +343,15 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
             } else if ([target isEqualToString:kTargetHiddenOrigos]) {
                 cell.destinationId = kIdentifierOrigoList;
             }
-        } else if (sectionKey == kSectionKeySignOut) {
-            cell.textLabel.textColor = [UIColor redColor];
-            cell.textLabel.text = [NSLocalizedString(@"Log out", @"") stringByAppendingString:[OMeta m].user.name separator:kSeparatorSpace];
+        } else if (sectionKey == kSectionKeyAccount) {
+            NSString *accountKey = [self dataAtIndexPath:indexPath];
+            
+            if ([accountKey isEqualToString:kExternalKeySignOut]) {
+                cell.textLabel.textColor = [UIColor redColor];
+                cell.textLabel.text = [NSString stringWithFormat:@"%@ %@", NSLocalizedString(accountKey, kStringPrefixLabel), [OMeta m].user.name];
+            } else {
+                cell.textLabel.text = NSLocalizedString(accountKey, kStringPrefixLabel);
+            }
         }
     } else if ([self targetIs:kTargetFavourites]) {
         id<OMember> member = [self dataAtIndexPath:indexPath];
@@ -490,10 +498,16 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
     NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
     
     if ([self targetIs:kTargetSettings]) {
-        if (sectionKey == kSectionKeySignOut) {
-            [[OMeta m] signOut];
+        if (sectionKey == kSectionKeyAccount) {
+            NSString *actionKey = [self dataAtIndexPath:indexPath];
+            
+            if ([actionKey isEqualToString:kExternalKeyChangePassword]) {
+                [self presentModalViewControllerWithIdentifier:kIdentifierAuth target:kTargetPassword];
+            } else if ([actionKey isEqualToString:kExternalKeySignOut]) {
+                [[OMeta m] signOut];
+            }
         } else {
-            // TODO;
+            // TODO
         }
     }
 }

@@ -473,6 +473,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
             
             [_dismisser dismissModalViewController:self];
         } else {
+            [_inputCell clearInputFields];
             [_inputCell processInputShouldValidate:NO];
         }
     }
@@ -1266,9 +1267,7 @@ static NSInteger compareObjects(id object1, id object2, void *context)
     _isHidden = self.presentedViewController ? YES : NO;
     _wasHidden = NO;
     
-    if (!_isHidden) {
-        [[OMeta m].replicator replicateIfNeeded];
-    }
+    [[OMeta m].replicator replicateIfNeeded];
 }
 
 
@@ -1506,17 +1505,13 @@ static NSInteger compareObjects(id object1, id object2, void *context)
                 [_instance willDeleteCellAtIndexPath:indexPath];
             }
             
-            NSNumber *sectionKey = _sectionKeys[indexPath.section];
-            NSMutableArray *sectionData = _sectionData[sectionKey];
+            NSInteger sectionKey = [self sectionKeyForIndexPath:indexPath];
             
-            _sectionCounts[sectionKey] = @([_sectionCounts[sectionKey] integerValue] - 1);
-            [sectionData removeObjectAtIndex:indexPath.row];
-            
-            if (![sectionData count]) {
-                [_sectionKeys removeObject:sectionKey];
+            if ([self numberOfRowsInSectionWithKey:sectionKey] == 1) {
+                [self reloadSections];
+            } else {
+                [self reloadSectionWithKey:sectionKey];
             }
-            
-            [self reloadSectionWithKey:[sectionKey integerValue]];
         }
     }
 }

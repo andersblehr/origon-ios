@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString * const kMembershipTypeOwner;
+extern NSString * const kMembershipTypeOwnership;
 extern NSString * const kMembershipTypeFavourite;
 extern NSString * const kMembershipTypeListing;
 extern NSString * const kMembershipTypeResidency;
@@ -38,33 +38,37 @@ extern NSString * const kAffiliationTypeGroup;
 @property (nonatomic) NSString *affiliations;
 
 - (BOOL)isActive;
-- (BOOL)isFull;
+- (BOOL)isShared;
+- (BOOL)isMirrored;
+- (BOOL)isHidden;
+
+- (BOOL)isOwnership;
 - (BOOL)isFavourite;
 - (BOOL)isListing;
-- (BOOL)isOwner;
 - (BOOL)isResidency;
 - (BOOL)isParticipancy;
 - (BOOL)isAssociate;
-- (BOOL)isHidden;
 
 - (BOOL)hasAffiliationOfType:(NSString *)type;
 - (void)addAffiliation:(NSString *)affiliation ofType:(NSString *)type;
 - (void)removeAffiliation:(NSString *)affiliation ofType:(NSString *)type;
 - (NSString *)typeOfAffiliation:(NSString *)affiliation;
 - (NSArray *)affiliationsOfType:(NSString *)type;
+
 - (NSArray *)memberRoles;
 - (NSArray *)organiserRoles;
 - (NSArray *)parentRoles;
 - (NSArray *)roles;
 - (NSArray *)groups;
 
-- (void)promoteToFull;
-- (void)demoteToAssociate;
-- (void)alignWithOrigoIsAssociate:(BOOL)isAssociate;
+- (void)promote;
+- (void)demote;
 
 @end
 
 
 @interface OMembership (OrigoAdditions) <OMembership>
+
+- (void)alignWithOrigoIsAssociate:(BOOL)isAssociate;
 
 @end

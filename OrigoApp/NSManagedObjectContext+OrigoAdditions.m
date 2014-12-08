@@ -85,12 +85,11 @@
 
 - (NSSet *)pendingEntities
 {
+    NSMutableSet *pendingEntities = [NSMutableSet set];
     NSMutableSet *unsavedEntities = [NSMutableSet set];
     
     [unsavedEntities unionSet:[self insertedObjects]];
     [unsavedEntities unionSet:[self updatedObjects]];
-    
-    NSMutableSet *pendingEntities = [NSMutableSet set];
     
     for (OReplicatedEntity *entity in unsavedEntities) {
         if ([entity isDirty] || [entity isMarkedForDeletion]) {
@@ -185,39 +184,41 @@
 
 - (void)insertCrossReferencesForMembership:(OMembership *)membership
 {
-    OMember *member = membership.member;
-    OOrigo *origo = membership.origo;
-    
-    [self createEntityRefForEntity:member inOrigo:origo];
-    
-    for (OMembership *residency in [member residencies]) {
-        if (residency != membership) {
-            [self createEntityRefForEntity:residency inOrigo:origo];
-            [self createEntityRefForEntity:residency.origo inOrigo:origo];
+    if (![membership.origo isOfType:kOrigoTypeStash]) {
+        OMember *member = membership.member;
+        OOrigo *origo = membership.origo;
+        
+        [self createEntityRefForEntity:member inOrigo:origo];
+        
+        for (OMembership *residency in [member residencies]) {
+            if (residency != membership) {
+                [self createEntityRefForEntity:residency inOrigo:origo];
+                [self createEntityRefForEntity:residency.origo inOrigo:origo];
+            }
         }
-    }
-    
-    if ([membership isFull]) {
-        [self insertAdditionalCrossReferencesForFullMembership:membership];
+        
+        if ([membership isMirrored]) {
+            [self insertAdditionalCrossReferencesForMirroredMembership:membership];
+        }
     }
 }
 
 
-- (void)insertAdditionalCrossReferencesForFullMembership:(OMembership *)membership
+- (void)insertAdditionalCrossReferencesForMirroredMembership:(OMembership *)membership
 {
     OMember *member = membership.member;
     OOrigo *origo = membership.origo;
     
     if ([membership isResidency]) {
-        NSMutableSet *linkingOrigos = [NSMutableSet setWithArray:[member origos]];
+        NSMutableSet *mirroringOrigos = [NSMutableSet setWithArray:[member mirroringOrigos]];
         
         for (OMember *housemate in [member housemates]) {
-            [linkingOrigos addObjectsFromArray:[housemate origos]];
+            [mirroringOrigos addObjectsFromArray:[housemate mirroringOrigos]];
         }
         
-        for (OOrigo *linkingOrigo in linkingOrigos) {
-            [self createEntityRefForEntity:membership inOrigo:linkingOrigo];
-            [self createEntityRefForEntity:origo inOrigo:linkingOrigo];
+        for (OOrigo *mirroringOrigo in mirroringOrigos) {
+            [self createEntityRefForEntity:membership inOrigo:mirroringOrigo];
+            [self createEntityRefForEntity:origo inOrigo:mirroringOrigo];
         }
         
         for (OOrigo *residence in [member residences]) {
@@ -231,9 +232,9 @@
     for (OMember *housemate in [member allHousemates]) {
         [origo addAssociateMember:housemate];
         
-        for (OOrigo *otherOrigo in [member origos]) {
-            if (otherOrigo != origo) {
-                [otherOrigo addAssociateMember:housemate];
+        for (OOrigo *mirroringOrigo in [member mirroringOrigos]) {
+            if (mirroringOrigo != origo) {
+                [mirroringOrigo addAssociateMember:housemate];
             }
         }
         
@@ -244,8 +245,8 @@
                 }
             }
             
-            for (OOrigo *origo in [housemate origos]) {
-                [origo addAssociateMember:member];
+            for (OOrigo *mirroringOrigo in [housemate mirroringOrigos]) {
+                [mirroringOrigo addAssociateMember:member];
             }
         }
     }
@@ -254,29 +255,31 @@
 
 - (void)expireCrossReferencesForMembership:(OMembership *)membership
 {
-    OMember *member = membership.member;
-    OOrigo *origo = membership.origo;
-    
-    [self createExpiryRefForMembership:membership];
-    [self createExpiryRefForEntity:member inOrigo:origo];
-    
-    for (OMembership *residency in [member residencies]) {
-        if (residency != membership) {
-            [self createExpiryRefForEntity:residency inOrigo:origo];
-            
-            if (![residency.origo hasResidentsInCommonWithResidence:origo]) {
-                [self createExpiryRefForEntity:residency.origo inOrigo:origo];
+    if (![membership.origo isOfType:kOrigoTypeStash]) {
+        OMember *member = membership.member;
+        OOrigo *origo = membership.origo;
+        
+        [self createExpiryRefForMembership:membership];
+        [self createExpiryRefForEntity:member inOrigo:origo];
+        
+        for (OMembership *residency in [member residencies]) {
+            if (residency != membership) {
+                [self createExpiryRefForEntity:residency inOrigo:origo];
+                
+                if (![residency.origo hasResidentsInCommonWithResidence:origo]) {
+                    [self createExpiryRefForEntity:residency.origo inOrigo:origo];
+                }
             }
         }
-    }
-    
-    if ([membership isFull]) {
-        [self expireAdditionalCrossReferencesForFullMembership:membership];
+        
+        if ([membership isMirrored]) {
+            [self expireAdditionalCrossReferencesForMirroredMembership:membership];
+        }
     }
 }
 
 
-- (void)expireAdditionalCrossReferencesForFullMembership:(OMembership *)membership
+- (void)expireAdditionalCrossReferencesForMirroredMembership:(OMembership *)membership
 {
     OMember *member = membership.member;
     OOrigo *origo = membership.origo;
@@ -346,12 +349,18 @@
         }
     }
     
+    NSMutableArray *expiredEntities = [NSMutableArray array];
+    
     for (OReplicatedEntity *entity in entities) {
         [entity internaliseRelationships];
         
         if ([entity hasExpired]) {
-            [entity expire];
+            [expiredEntities addObject:entity];
         }
+    }
+    
+    for (OReplicatedEntity *expiredEntity in expiredEntities) {
+        [expiredEntity expire];
     }
     
     [self save];

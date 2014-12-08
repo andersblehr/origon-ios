@@ -149,7 +149,7 @@ static NSString * const kAddressTemplatesByCountryCode =
         
         if ([memberships count]) {
             for (id<OMembership> membership in memberships) {
-                if ([membership isFull]) {
+                if (![membership isAssociate]) {
                     [members addObject:membership.member];
                 }
             }

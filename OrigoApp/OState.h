@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 extern NSString * const kActionActivate;
+extern NSString * const kActionChange;
 extern NSString * const kActionDisplay;
 extern NSString * const kActionEdit;
 extern NSString * const kActionInput;
@@ -37,6 +38,7 @@ extern NSString * const kTargetOrganiser;
 extern NSString * const kTargetOrigoType;
 extern NSString * const kTargetParent;
 extern NSString * const kTargetParents;
+extern NSString * const kTargetPassword;
 extern NSString * const kTargetRole;
 extern NSString * const kTargetRoles;
 extern NSString * const kTargetSetting;

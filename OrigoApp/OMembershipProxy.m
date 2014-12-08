@@ -42,21 +42,27 @@
 
 #pragma mark - OMembership protocol conformance
 
-- (BOOL)isFull
+- (BOOL)isShared
 {
     return [self isParticipancy] || [self isResidency];
 }
 
 
-- (BOOL)isParticipancy
+- (BOOL)isListing
 {
-    return [[self valueForKey:kPropertyKeyType] isEqualToString:kMembershipTypeParticipancy];
+    return [[self valueForKey:kPropertyKeyType] isEqualToString:kMembershipTypeListing];
 }
 
 
 - (BOOL)isResidency
 {
     return [[self valueForKey:kPropertyKeyType] isEqualToString:kMembershipTypeResidency];
+}
+
+
+- (BOOL)isParticipancy
+{
+    return [[self valueForKey:kPropertyKeyType] isEqualToString:kMembershipTypeParticipancy];
 }
 
 
