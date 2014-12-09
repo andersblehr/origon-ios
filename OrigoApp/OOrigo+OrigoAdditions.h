@@ -84,12 +84,12 @@ extern NSString * const kOrigoTypeTeam;
 - (BOOL)hasMember:(id<OMember>)member;
 - (BOOL)knowsAboutMember:(id<OMember>)member;
 - (BOOL)indirectlyKnowsAboutMember:(id<OMember>)member;
-- (BOOL)hasResidentsInCommonWithResidence:(id<OOrigo>)residence;
+- (BOOL)hasMembersInCommonWithOrigo:(id<OOrigo>)residence;
 
+- (NSString *)displayName;
 - (NSString *)singleLineAddress;
 - (NSString *)shortAddress;
 
-- (void)resetDefaultResidenceNameIfApplicable;
 - (void)expireCommunityResidence:(id<OOrigo>)residence;
 - (void)convertToType:(NSString *)type;
 

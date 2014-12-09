@@ -17,6 +17,7 @@
 - (void)processInput;
 
 @optional
+- (id)targetEntity;
 - (BOOL)isDisplayableFieldWithKey:(NSString *)key;
 - (BOOL)isEditableFieldWithKey:(NSString *)key;
 - (BOOL)willValidateInputForKey:(NSString *)key;
