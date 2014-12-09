@@ -291,24 +291,23 @@
 - (id<OOrigo>)primaryResidence
 {
     OOrigo *primaryResidence = nil;
-    NSInteger maxNumberOfResidents = 0;
     
     for (OOrigo *residence in [self residences]) {
-        NSInteger numberOfResidents = [[residence residents] count];
-        
-        BOOL isFirst = !primaryResidence;
-        BOOL isFirstWithAddress = ![primaryResidence hasAddress] && [residence hasAddress];
-        BOOL isUserAddress = [residence userIsMember];
-        BOOL hasMostResidents = numberOfResidents > maxNumberOfResidents;
-        
-        if (isFirst || isFirstWithAddress || isUserAddress || hasMostResidents) {
+        if (!primaryResidence) {
             primaryResidence = residence;
-            maxNumberOfResidents = numberOfResidents;
+        } else if (![primaryResidence hasAddress] && [residence hasAddress]) {
+            primaryResidence = residence;
+        } else if ([residence userIsMember] && ![primaryResidence userIsMember]) {
+            primaryResidence = residence;
+        } else if ([[residence residents] count] > [[primaryResidence residents] count]) {
+            primaryResidence = residence;
         }
     }
     
     if (!primaryResidence) {
         primaryResidence = [OOrigo instanceWithId:[OCrypto generateUUID] type:kOrigoTypeResidence];
+        primaryResidence.name = kPlaceholderDefaultValue;
+        
         [primaryResidence addMember:self];
     }
     
@@ -330,7 +329,7 @@
     
     if (!list) {
         OOrigo *list = [OOrigo instanceWithId:[OCrypto generateUUID] type:kOrigoTypeList];
-        list.name = NSLocalizedString(@"Friends", @"");
+        list.name = kPlaceholderDefaultValue;
         
         [list addMember:self];
     }
@@ -620,7 +619,6 @@
     
     for (OMembership *residency in [self residencies]) {
         residency.isAdmin = [self isJuvenile] ? @(![residency.origo hasAdmin]) : @YES;
-        [residency.origo resetDefaultResidenceNameIfApplicable];
     }
     
     for (OMember *ward in [self wards]) {

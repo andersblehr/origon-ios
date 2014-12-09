@@ -149,7 +149,7 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 - (BOOL)isMirrored
 {
-    return [self isShared] || [self isListing] || [self.origo isOfType:kOrigoTypeList];
+    return [self isShared] || [self isListing] || ([self.origo isOfType:kOrigoTypeList] && ![self isAssociate]);
 }
 
 
@@ -362,29 +362,31 @@ static NSString * const kPlaceholderRole = @"placeholder";
 
 - (void)markForDeletion
 {
-    [super markForDeletion];
-    
-    if (![self isMirrored] || ![self.origo indirectlyKnowsAboutMember:self.member]) {
-        if ([self.member isUser]) {
-            for (OMembership *membership in [self.origo allMemberships]) {
-                if (![membership.member isKnownByUser]) {
-                    [membership.member markForDeletion];
+    if (![self isMarkedForDeletion]) {
+        [super markForDeletion];
+        
+        if (![self isMirrored] || ![self.origo indirectlyKnowsAboutMember:self.member]) {
+            if ([self.member isUser]) {
+                for (OMembership *membership in [self.origo allMemberships]) {
+                    if (![membership.member isKnownByUser]) {
+                        [membership.member markForDeletion];
+                    }
+                    
+                    [membership markForDeletion];
                 }
                 
-                membership.isAwaitingDeletion = @YES;
-            }
-            
-            [self.origo markForDeletion];
-        } else if (![self.member isKnownByUser]) {
-            for (OMembership *membership in [self.member allMemberships]) {
-                if ([membership isMirrored]) {
-                    [membership.origo markForDeletion];
+                [self.origo markForDeletion];
+            } else if (![self.member isKnownByUser]) {
+                for (OMembership *membership in [self.member allMemberships]) {
+                    if ([membership isMirrored]) {
+                        [membership.origo markForDeletion];
+                    }
+                    
+                    [membership markForDeletion];
                 }
                 
-                membership.isAwaitingDeletion = @YES;
+                [self.member markForDeletion];
             }
-            
-            [self.member markForDeletion];
         }
     }
 }

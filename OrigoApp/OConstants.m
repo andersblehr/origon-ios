@@ -77,7 +77,7 @@ NSString * const kMappedKeySchoolClass = @"schoolClass";
 NSString * const kMappedKeyStudyGroup = @"studyGroup";
 NSString * const kMappedKeyTeam = @"team";
 
-// Unbound keys
+// External keys
 NSString * const kExternalKeyActivate = @"activate";
 NSString * const kExternalKeyActivationCode = @"activationCode";
 NSString * const kExternalKeyAuthEmail = @"authEmail";
@@ -92,6 +92,9 @@ NSString * const kExternalKeyRepeatNewPassword = @"repeatNewPassword";
 NSString * const kExternalKeyRepeatPassword = @"repeatPassword";
 NSString * const kExternalKeySignIn = @"signIn";
 NSString * const kExternalKeySignOut = @"signOut";
+
+// Placeholders
+NSString * const kPlaceholderDefaultValue = @"defaultValue";
 
 // String key prefixes
 NSString * const kStringPrefixDefault = @"[default]";

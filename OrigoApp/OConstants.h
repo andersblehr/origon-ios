@@ -77,7 +77,7 @@ extern NSString * const kMappedKeySchoolClass;
 extern NSString * const kMappedKeyStudyGroup;
 extern NSString * const kMappedKeyTeam;
 
-// Unbound keys
+// External keys
 extern NSString * const kExternalKeyActivate;
 extern NSString * const kExternalKeyActivationCode;
 extern NSString * const kExternalKeyAuthEmail;
@@ -92,6 +92,9 @@ extern NSString * const kExternalKeyRepeatNewPassword;
 extern NSString * const kExternalKeyRepeatPassword;
 extern NSString * const kExternalKeySignIn;
 extern NSString * const kExternalKeySignOut;
+
+// Placeholders
+extern NSString * const kPlaceholderDefaultValue;
 
 // String key prefixes
 extern NSString * const kStringPrefixDefault;

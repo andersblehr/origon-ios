@@ -236,13 +236,13 @@ static NSInteger const kSectionKeyWardOrigos = 2;
         id<OMembership> membership = [origo membershipForMember:member];
         
         if ([origo isOfType:kOrigoTypeList] && ![member isUser] && [member isJuvenile]) {
-            if ([origo.name isEqualToString:NSLocalizedString(@"Friends", @"")]) {
+            if ([[origo displayName] isEqualToString:NSLocalizedString(@"Friends", @"")]) {
                 cell.textLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%@'s friends", @""), [member givenName]];
             } else {
-                cell.textLabel.text = origo.name;
+                cell.textLabel.text = [origo displayName];
             }
         } else {
-            cell.textLabel.text = origo.name;
+            cell.textLabel.text = [origo displayName];
         }
         
         cell.destinationId = kIdentifierOrigo;

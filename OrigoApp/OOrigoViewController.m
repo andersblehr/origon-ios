@@ -327,7 +327,7 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
         if ([_origo isOfType:kOrigoTypeResidence] && ![self aspectIs:kAspectHousehold]) {
             self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:NSLocalizedString(kOrigoTypeResidence, kStringPrefixOrigoTitle)];
         } else {
-            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:_origo.name];
+            self.navigationItem.backBarButtonItem = [UIBarButtonItem backButtonWithTitle:[_origo displayName]];
         }
         
         if ([_origo isCommitted] && [_member isCommitted]) {
@@ -642,18 +642,20 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             
             [[_origo membershipForMember:member] expire];
             
-            if ([_origo isOfType:kOrigoTypeResidence] && [_origo userIsMember]) {
-                if (![[member residences] count]) {
+            if ([_origo isOfType:kOrigoTypeResidence]) {
+                if ([member.email hasValue] && ![[member residences] count]) {
                     id<OOrigo> primaryResidence = [member primaryResidence];
                     
-                    for (id<OMember> minor in [_origo minors]) {
-                        [primaryResidence addMember:minor];
+                    if (![member isJuvenile]) {
+                        for (id<OMember> minor in [_origo minors]) {
+                            [primaryResidence addMember:minor];
+                        }
                     }
                 }
                 
-                [_origo resetDefaultResidenceNameIfApplicable];
-                
-                [self.inputCell readData];
+                if ([_origo userIsMember]) {
+                    [self.inputCell readData];
+                }
             }
         }
     } else {
@@ -678,6 +680,10 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
                 [self reloadSectionWithKey:kSectionKeyOrganisers];
             } else {
                 [self reloadSectionWithKey:kSectionKeyMembers];
+                
+                if ([_origo isOfType:kOrigoTypeResidence]) {
+                    [self.inputCell readData];
+                }
             }
         } if ([viewController.identifier isEqualToString:kIdentifierValueList]) {
             if ([viewController targetIs:kTargetRoles]) {
@@ -721,6 +727,12 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
 
 
 #pragma mark - OInputCellDelegate conformance
+
+- (id)targetEntity
+{
+    return _origo;
+}
+
 
 - (OInputCellBlueprint *)inputCellBlueprint
 {
@@ -792,7 +804,6 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             [self.dismisser dismissModalViewController:self];
         } else {
             [self toggleEditMode];
-            [self.inputCell readData];
             [self reloadSections];
             
             self.navigationItem.leftBarButtonItem = [UIBarButtonItem doneButtonWithTarget:self];

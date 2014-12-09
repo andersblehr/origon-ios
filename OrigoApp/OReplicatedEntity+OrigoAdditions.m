@@ -299,6 +299,14 @@ static NSMutableDictionary *_stagedRelationshipRefs = nil;
 }
 
 
+- (id)defaultValueForKey:(NSString *)key
+{
+    [NSException raise:NSInternalInconsistencyException format:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)];
+    
+    return nil;
+}
+
+
 - (NSDictionary *)toDictionary
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];

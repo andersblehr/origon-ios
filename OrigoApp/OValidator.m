@@ -11,13 +11,12 @@
 static NSInteger const kMinimumPassordLength = 6;
 static NSInteger const kMinimumPhoneNumberLength = 5;
 
-static NSString * const kReferenceKeyFormat = @"%@Ref";
-
 static NSArray *_nameKeys = nil;
 static NSArray *_dateKeys = nil;
 static NSArray *_emailKeys = nil;
 static NSArray *_phoneNumberKeys = nil;
 static NSArray *_passwordKeys = nil;
+static NSArray *_defaultableKeys = nil;
 
 static NSDictionary *_keyMappings = nil;
 
@@ -94,6 +93,16 @@ static NSDictionary *_keyMappings = nil;
 }
 
 
++ (BOOL)isDefaultableKey:(NSString *)key
+{
+    if (!_defaultableKeys) {
+        _defaultableKeys = @[kMappedKeyResidenceName, kMappedKeyListName];
+    }
+    
+    return [_defaultableKeys containsObject:key];
+}
+
+
 #pragma mark - Key indirection
 
 + (NSDictionary *)referenceForEntity:(id<OEntity>)entity
@@ -117,7 +126,7 @@ static NSDictionary *_keyMappings = nil;
 
 + (NSString *)referenceKeyForKey:(NSString *)key
 {
-    return [NSString stringWithFormat:kReferenceKeyFormat, key];
+    return [NSString stringWithFormat:@"%@Ref", key];
 }
 
 

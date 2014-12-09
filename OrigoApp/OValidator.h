@@ -18,6 +18,7 @@
 + (BOOL)isPasswordKey:(NSString *)key;
 + (BOOL)isAlternatingLabelKey:(NSString *)key;
 + (BOOL)isAlternatingInputFieldKey:(NSString *)key;
++ (BOOL)isDefaultableKey:(NSString *)key;
 
 + (NSDictionary *)referenceForEntity:(id<OEntity>)entity;
 + (NSString *)referenceKeyForKey:(NSString *)key;

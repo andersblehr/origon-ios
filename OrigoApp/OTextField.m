@@ -68,6 +68,8 @@ static CGFloat const kTextInsetY = 1.2f;
             } else {
                 self.text = [_value localisedAgeString];
             }
+        } else if ([_value isEqualToString:kPlaceholderDefaultValue]) {
+            self.text = [[_inputCellDelegate targetEntity] defaultValueForKey:_key];
         } else {
             self.text = _value;
         }
@@ -123,6 +125,14 @@ static CGFloat const kTextInsetY = 1.2f;
     
     if ([OValidator isPhoneNumberKey:_key]) {
         [self phoneNumberDidChange];
+    } else if ([OValidator isDefaultableKey:_key]) {
+        id defaultValue = [[_inputCellDelegate targetEntity] defaultValueForKey:_key];
+        
+        if ([self.text isEqualToString:defaultValue]) {
+            _value = kPlaceholderDefaultValue;
+        } else {
+            _value = self.text;
+        }
     } else {
         _value = self.text;
     }

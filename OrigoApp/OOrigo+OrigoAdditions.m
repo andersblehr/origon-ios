@@ -84,8 +84,6 @@ NSString * const kOrigoTypeTeam = @"team";
         }
     }
     
-    [residency.origo resetDefaultResidenceNameIfApplicable];
-    
     return residency;
 }
 
@@ -678,25 +676,37 @@ NSString * const kOrigoTypeTeam = @"team";
 }
 
 
-- (BOOL)hasResidentsInCommonWithResidence:(id<OOrigo>)residence
+- (BOOL)hasMembersInCommonWithOrigo:(id<OOrigo>)origo
 {
-    BOOL hasResidentsInCommon = NO;
+    BOOL hasMembersInCommon = NO;
     
-    if ([self isOfType:kOrigoTypeResidence] && [residence isOfType:kOrigoTypeResidence]) {
-        if ([residence instance]) {
-            residence = [residence instance];
+    if ([origo instance]) {
+        origo = [origo instance];
         
-            for (OMember *resident in [residence residents]) {
-                hasResidentsInCommon = hasResidentsInCommon || [self hasMember:resident];
-            }
+        for (OMember *member in [origo members]) {
+            hasMembersInCommon = hasMembersInCommon || [self hasMember:member];
         }
     }
     
-    return hasResidentsInCommon;
+    return hasMembersInCommon;
 }
 
 
-#pragma mark - Display data
+#pragma mark - Display strings
+
+- (NSString *)displayName
+{
+    NSString *displayName = nil;
+    
+    if ([self.name isEqualToString:kPlaceholderDefaultValue]) {
+        displayName = [self defaultValueForKey:kPropertyKeyName];
+    } else {
+        displayName = self.name;
+    }
+    
+    return displayName;
+}
+
 
 - (NSString *)singleLineAddress
 {
@@ -711,25 +721,6 @@ NSString * const kOrigoTypeTeam = @"team";
 
 
 #pragma mark - Miscellaneous
-
-- (void)resetDefaultResidenceNameIfApplicable
-{
-    BOOL applicable = ![self.name hasValue] && [self isOfType:kOrigoTypeResidence];
-    
-    if (!applicable && [self isOfType:kOrigoTypeResidence]) {
-        applicable = applicable || [self.name isEqualToString:NSLocalizedString(@"My place", @"")];
-        applicable = applicable || [self.name isEqualToString:NSLocalizedString(@"Our place", @"")];
-    }
-    
-    if (applicable) {
-        if ([self.residents count] == 1) {
-            self.name = NSLocalizedString(@"My place", @"");
-        } else {
-            self.name = NSLocalizedString(@"Our place", @"");
-        }
-    }
-}
-
 
 - (void)expireCommunityResidence:(id<OOrigo>)residence
 {
@@ -764,6 +755,32 @@ NSString * const kOrigoTypeTeam = @"team";
 
 
 #pragma mark - OReplicatedEntity (OrigoAdditions) overrides
+
+- (id)defaultValueForKey:(NSString *)key
+{
+    id defaultValue = nil;
+    
+    NSString *unmappedKey = [OValidator unmappedKeyForKey:key];
+    
+    if ([unmappedKey isEqualToString:kPropertyKeyName]) {
+        if ([self isOfType:kOrigoTypeResidence]) {
+            if ([[self residents] count] > 1) {
+                defaultValue = NSLocalizedString(@"Our place", @"");
+            } else {
+                defaultValue = NSLocalizedString(@"My place", @"");
+            }
+        } else if ([self isOfType:kOrigoTypeList]) {
+            OMember *owner = [self owner];
+            
+            if ([owner isUser] || [owner isWardOfUser]) {
+                defaultValue = NSLocalizedString(@"Friends", @"");
+            }
+        }
+    }
+    
+    return defaultValue;
+}
+
 
 - (BOOL)isTransient
 {

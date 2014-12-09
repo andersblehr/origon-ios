@@ -34,30 +34,12 @@
 }
 
 
-- (id)createExpiryRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo
+- (id)expireEntityRefForEntity:(OReplicatedEntity *)entity inOrigo:(OOrigo *)origo
 {
     OReplicatedEntityRef *entityRef = [self createEntityRefForEntity:entity inOrigo:origo];
     entityRef.isExpired = @YES;
     
     return entityRef;
-}
-
-
-- (id)createExpiryRefForMembership:(OMembership *)membership
-{
-    OReplicatedEntityRef *expiryRef = nil;
-    
-    if ([membership.member isActive]) {
-        NSString *stashId = [OUtil stashIdFromMemberId:membership.member.entityId];
-        NSString *expiryRefId = [self entityRefIdForEntity:membership inOrigoWithId:stashId];
-        
-        expiryRef = [self insertEntityOfClass:[OReplicatedEntityRef class] entityId:expiryRefId];
-        expiryRef.referencedEntityId = membership.entityId;
-        expiryRef.referencedEntityOrigoId = membership.origoId;
-        expiryRef.origoId = stashId;
-    }
-    
-    return expiryRef;
 }
 
 
@@ -217,8 +199,10 @@
         }
         
         for (OOrigo *mirroringOrigo in mirroringOrigos) {
-            [self createEntityRefForEntity:membership inOrigo:mirroringOrigo];
-            [self createEntityRefForEntity:origo inOrigo:mirroringOrigo];
+            if (mirroringOrigo != origo) {
+                [self createEntityRefForEntity:membership inOrigo:mirroringOrigo];
+                [self createEntityRefForEntity:origo inOrigo:mirroringOrigo];
+            }
         }
         
         for (OOrigo *residence in [member residences]) {
@@ -259,15 +243,14 @@
         OMember *member = membership.member;
         OOrigo *origo = membership.origo;
         
-        [self createExpiryRefForMembership:membership];
-        [self createExpiryRefForEntity:member inOrigo:origo];
+        [self expireEntityRefForEntity:member inOrigo:origo];
         
         for (OMembership *residency in [member residencies]) {
             if (residency != membership) {
-                [self createExpiryRefForEntity:residency inOrigo:origo];
+                [self expireEntityRefForEntity:residency inOrigo:origo];
                 
-                if (![residency.origo hasResidentsInCommonWithResidence:origo]) {
-                    [self createExpiryRefForEntity:residency.origo inOrigo:origo];
+                if (![residency.origo hasMembersInCommonWithOrigo:origo]) {
+                    [self expireEntityRefForEntity:residency.origo inOrigo:origo];
                 }
             }
         }
@@ -284,32 +267,58 @@
     OMember *member = membership.member;
     OOrigo *origo = membership.origo;
     
-    for (OMembership *residency in [member residencies]) {
-        if (residency != membership && [origo isOfType:kOrigoTypeResidence]) {
-            [self createExpiryRefForEntity:membership inOrigo:residency.origo];
+    NSMutableArray *housemates = [NSMutableArray arrayWithArray:[member allHousemates]];
+    
+    if ([membership isResidency]) {
+        [housemates addObjectsFromArray:[origo residents]];
+        
+        NSMutableSet *mirroringOrigos = [NSMutableSet setWithArray:[member mirroringOrigos]];
+        
+        for (OMember *housemate in housemates) {
+            [mirroringOrigos addObjectsFromArray:[housemate mirroringOrigos]];
+        }
+        
+        for (OOrigo *mirroringOrigo in mirroringOrigos) {
+            if (mirroringOrigo != origo) {
+                [self expireEntityRefForEntity:membership inOrigo:mirroringOrigo];
+                
+                if (![origo hasMembersInCommonWithOrigo:mirroringOrigo]) {
+                    [self expireEntityRefForEntity:origo inOrigo:mirroringOrigo];
+                }
+            }
+        }
+        
+        for (OOrigo *residence in [member residences]) {
+            [self expireEntityRefForEntity:membership inOrigo:residence];
             
-            if (![residency.origo hasResidentsInCommonWithResidence:origo]) {
-                [self createExpiryRefForEntity:origo inOrigo:residency.origo];
+            if (![origo hasMembersInCommonWithOrigo:residence]) {
+                [self expireEntityRefForEntity:origo inOrigo:residence];
             }
         }
     }
     
-    NSMutableSet *peerResidencies = [NSMutableSet set];
-    
-    for (OMember *housemate in [member allHousemates]) {
-        for (OMembership *peerResidency in [housemate residencies]) {
-            [peerResidencies addObject:peerResidency];
-        }
-    }
-    
-    for (OMembership *peerResidency in peerResidencies) {
-        if (![origo knowsAboutMember:peerResidency.member]) {
-            [[origo associateMembershipForMember:peerResidency.member] expire];
+    for (OMember *housemate in housemates) {
+        if (![origo knowsAboutMember:housemate]) {
+            [[origo associateMembershipForMember:housemate] expire];
         }
         
-        if ([origo isOfType:kOrigoTypeResidence]) {
-            if (![peerResidency.origo knowsAboutMember:member]) {
-                [[peerResidency.origo associateMembershipForMember:member] expire];
+        for (OOrigo *mirroringOrigo in [member mirroringOrigos]) {
+            if (mirroringOrigo != origo && ![mirroringOrigo knowsAboutMember:housemate]) {
+                [[mirroringOrigo associateMembershipForMember:housemate] expire];
+            }
+        }
+        
+        if ([membership isResidency]) {
+            for (OOrigo *residence in [housemate residences]) {
+                if (residence != origo && ![residence knowsAboutMember:member]) {
+                    [[residence associateMembershipForMember:member] expire];
+                }
+            }
+            
+            for (OOrigo *mirroringOrigo in [housemate mirroringOrigos]) {
+                if (![mirroringOrigo knowsAboutMember:member]) {
+                    [[mirroringOrigo associateMembershipForMember:member] expire];
+                }
             }
         }
     }

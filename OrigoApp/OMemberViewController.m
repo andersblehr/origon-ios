@@ -110,29 +110,20 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)registerPrimaryResidence
-{
-    id<OOrigo> primaryResidence = [_member primaryResidence];
-    [primaryResidence resetDefaultResidenceNameIfApplicable];
-    
-    [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:primaryResidence];
-}
-
-
 - (void)registerNewResidence
 {
     id<OOrigo> primaryResidence = [_member primaryResidence];
-    NSArray *coHabitants = [primaryResidence residents];
-    NSArray *residences = [_member residences];
+    NSInteger numberOfCoHabitants = [[primaryResidence residents] count];
+    NSInteger numberOfResidences = [[_member residences] count];
     
-    if (![_member isJuvenile] && [residences count] == 1 && [coHabitants count] > 1) {
+    if ([primaryResidence hasAddress] && numberOfResidences == 1 && numberOfCoHabitants > 1) {
+        [self presentCoHabitantsSheet];
+    } else if (![primaryResidence hasAddress]) {
         if ([[primaryResidence elders] count] == 1) {
             [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:primaryResidence];
         } else {
             [self presentCoHabitantsSheet];
         }
-    } else if (![primaryResidence hasAddress]) {
-        [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:primaryResidence];
     } else {
         [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:kOrigoTypeResidence];
     }
@@ -371,7 +362,7 @@ static NSInteger const kButtonIndexContinue = 1;
                     [self.dismisser dismissModalViewController:self];
                 }
             } else if (![_member hasAddress] && [_member isManagedByUser]) {
-                [self registerPrimaryResidence];
+                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
             } else {
                 [self.dismisser dismissModalViewController:self];
             }
@@ -389,7 +380,7 @@ static NSInteger const kButtonIndexContinue = 1;
             }
             
             if (needsRegisterPrimaryResidence) {
-                [self registerPrimaryResidence];
+                [self presentModalViewControllerWithIdentifier:kIdentifierOrigo target:[_member primaryResidence]];
             } else {
                 if ([_member isUser] && ![_member isActive]) {
                     [_member makeActive];

@@ -82,7 +82,13 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 + (instancetype)proxyWithType:(NSString *)type
 {
-    return [self proxyForEntityOfClass:[OOrigo class] meta:type];
+    OOrigoProxy *proxy = [self proxyForEntityOfClass:[OOrigo class] meta:type];
+    
+    if ([proxy isOfType:kOrigoTypeResidence]) {
+        proxy.name = kPlaceholderDefaultValue;
+    }
+    
+    return proxy;
 }
 
 
@@ -93,6 +99,12 @@ static NSString * const kAddressTemplatesByCountryCode =
 
 
 #pragma mark - OEntityProxy overrides
+
+- (id)defaultValueForKey:(NSString *)key
+{
+    return [self instance] ? [[self instance] defaultValueForKey:key] : kPlaceholderDefaultValue;
+}
+
 
 - (void)expire
 {

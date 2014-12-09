@@ -20,6 +20,7 @@
 - (BOOL)hasValueForKey:(NSString *)key;
 - (void)setValue:(id)value forKey:(NSString *)key;
 - (id)valueForKey:(NSString *)key;
+- (id)defaultValueForKey:(NSString *)key;
 
 - (NSDictionary *)toDictionary;
 
