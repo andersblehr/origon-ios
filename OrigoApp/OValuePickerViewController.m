@@ -194,7 +194,7 @@ static NSInteger const kSectionKeyValues = 0;
         BOOL isJuvenile = [self.state.currentMember isJuvenile];
         
         for (NSString *gender in @[kGenderFemale, kGenderMale]) {
-            _valuesByKey[gender] = [OUtil genderTermForGender:gender isJuvenile:isJuvenile];
+            _valuesByKey[gender] = [OLanguage genderTermForGender:gender isJuvenile:isJuvenile];
         }
         
         [self setData:@[_valuesByKey[kGenderMale], _valuesByKey[kGenderFemale]] forSectionWithKey:kSectionKeyValues];
@@ -242,7 +242,7 @@ static NSInteger const kSectionKeyValues = 0;
         NSString *gender = [self dataAtIndexPath:indexPath];
         
         cell.textLabel.text = [gender stringByCapitalisingFirstLetter];
-        cell.checked = [gender isEqualToString:[OUtil genderTermForGender:self.state.currentMember.gender isJuvenile:[self.state.currentMember isJuvenile]]];
+        cell.checked = [gender isEqualToString:[OLanguage genderTermForGender:self.state.currentMember.gender isJuvenile:[self.state.currentMember isJuvenile]]];
     } else if ([self aspectIs:kAspectAdmin]) {
         id<OMember> candidate = [self dataAtIndexPath:indexPath];
         

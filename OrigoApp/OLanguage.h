@@ -62,6 +62,7 @@ extern NSString * const _you_;
 + (NSString *)possessiveClauseWithPossessor:(id)possessor noun:(NSString *)nounKey;
 + (NSString *)questionWithSubject:(id)subject verb:(NSString *)verb argument:(NSString *)argument;
 
++ (NSString *)genderTermForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile;
 + (NSString *)labelForParentWithGender:(NSString *)gender relativeToOffspringWithGender:(NSString *)offspringGender;
 
 @end

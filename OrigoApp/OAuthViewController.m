@@ -139,11 +139,11 @@ static NSInteger const kAlertButtonWelcomeBackStartOver = 0;
 
 - (void)userDidAuthenticateWithData:(NSArray *)data
 {
+    [[OMeta m] userDidSignIn];
+    
     if (data) {
         [[OMeta m].context saveEntityDictionaries:data];
     }
-    
-    [[OMeta m] userDidSignIn];
     
     if ([self actionIs:kActionSignIn]) {
         [OMeta m].user.passwordHash = [OCrypto passwordHashWithPassword:_passwordField.value];

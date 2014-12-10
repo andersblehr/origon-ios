@@ -11,28 +11,6 @@
 
 @implementation OUtil
 
-#pragma mark - String derivation
-
-+ (NSString *)stashIdFromMemberId:(NSString *)memberId
-{
-    return [NSString stringWithFormat:@"~%@", memberId];
-}
-
-
-+ (NSString *)genderTermForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile
-{
-    NSString *genderString = nil;
-    
-    if ([gender isEqualToString:kGenderMale]) {
-        genderString = isJuvenile ? NSLocalizedString(@"boy", @"") : NSLocalizedString(@"man", @"");
-    } else if ([gender isEqualToString:kGenderFemale]) {
-        genderString = isJuvenile ? NSLocalizedString(@"girl", @"") : NSLocalizedString(@"woman", @"");
-    }
-    
-    return genderString;
-}
-
-
 #pragma mark - Comma-separated lists
 
 + (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin
@@ -257,8 +235,8 @@
 
 + (NSComparisonResult)compareOrigo:(id<OOrigo>)origo withOrigo:(id<OOrigo>)otherOrigo
 {
-    NSString *value = [origo isOfType:kOrigoTypeResidence] ? origo.address : origo.name;
-    NSString *otherValue = [otherOrigo isOfType:kOrigoTypeResidence] ? otherOrigo.address : otherOrigo.name;
+    NSString *value = [origo isOfType:kOrigoTypeResidence] ? origo.address : [origo displayName];
+    NSString *otherValue = [otherOrigo isOfType:kOrigoTypeResidence] ? otherOrigo.address : [otherOrigo displayName];
     
     return [value localizedCaseInsensitiveCompare:otherValue];
 }
