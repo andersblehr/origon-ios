@@ -141,7 +141,7 @@ static NSInteger const kButtonIndexContinue = 1;
     } else {
         [_nameField becomeFirstResponder];
         
-        [OAlert showAlertWithTitle:@"" text:[NSString stringWithFormat:NSLocalizedString(@"%@ is already in %@.", @""), [member givenName], _origo.name]];
+        [OAlert showAlertWithTitle:@"" text:[NSString stringWithFormat:NSLocalizedString(@"%@ is already in %@.", @""), [member givenName], [_origo displayName]]];
     }
     
     return isEligible;

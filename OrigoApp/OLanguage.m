@@ -217,6 +217,20 @@ static NSString * const kPredicateClauseFormat = @"%@ %@ %@";
 
 #pragma mark - Gender governed strings
 
++ (NSString *)genderTermForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile
+{
+    NSString *genderString = nil;
+    
+    if ([gender isEqualToString:kGenderMale]) {
+        genderString = isJuvenile ? NSLocalizedString(@"boy", @"") : NSLocalizedString(@"man", @"");
+    } else if ([gender isEqualToString:kGenderFemale]) {
+        genderString = isJuvenile ? NSLocalizedString(@"girl", @"") : NSLocalizedString(@"woman", @"");
+    }
+    
+    return genderString;
+}
+
+
 + (NSString *)labelForParentWithGender:(NSString *)parentGender relativeToOffspringWithGender:(NSString *)offspringGender
 {
     NSString *parentLabel = nil;

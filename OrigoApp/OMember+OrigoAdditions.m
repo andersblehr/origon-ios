@@ -305,9 +305,7 @@
     }
     
     if (!primaryResidence) {
-        primaryResidence = [OOrigo instanceWithId:[OCrypto generateUUID] type:kOrigoTypeResidence];
-        primaryResidence.name = kPlaceholderDefaultValue;
-        
+        primaryResidence = [OOrigo instanceWithType:kOrigoTypeResidence];
         [primaryResidence addMember:self];
     }
     
@@ -328,7 +326,7 @@
     }
     
     if (!list) {
-        OOrigo *list = [OOrigo instanceWithId:[OCrypto generateUUID] type:kOrigoTypeList];
+        OOrigo *list = [OOrigo instanceWithType:kOrigoTypeList];
         list.name = kPlaceholderDefaultValue;
         
         [list addMember:self];
@@ -928,7 +926,7 @@
 
 + (instancetype)instanceWithId:(NSString *)entityId
 {
-    OOrigo *stash = [OOrigo instanceWithId:[OUtil stashIdFromMemberId:entityId] type:kOrigoTypeStash];
+    OOrigo *stash = [OOrigo instanceWithId:[NSString stringWithFormat:@"~%@", entityId] type:kOrigoTypeStash];
     OMember *instance = [[OMeta m].context insertEntityOfClass:self inOrigo:stash entityId:entityId];
     
     [stash addMember:instance];

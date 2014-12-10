@@ -639,23 +639,23 @@ static NSInteger const kButtonTagCoHabitantsGuardian = 3;
             [_origo expireCommunityResidence:[self dataAtIndexPath:indexPath]];
         } else {
             id<OMember> member = [self dataAtIndexPath:indexPath];
+            id<OMembership> membership = [_origo membershipForMember:member];
             
-            [[_origo membershipForMember:member] expire];
-            
-            if ([_origo isOfType:kOrigoTypeResidence]) {
-                if ([member.email hasValue] && ![[member residences] count]) {
-                    id<OOrigo> primaryResidence = [member primaryResidence];
-                    
-                    if (![member isJuvenile]) {
-                        for (id<OMember> minor in [_origo minors]) {
-                            [primaryResidence addMember:minor];
-                        }
+            if ([membership isResidency] && member.email && [[member residencies] count] == 1) {
+                id<OOrigo> newPrimaryResidence = [OOrigo instanceWithType:kOrigoTypeResidence];
+                [newPrimaryResidence addMember:member];
+                
+                if (![member isJuvenile]) {
+                    for (id<OMember> minor in [_origo minors]) {
+                        [newPrimaryResidence addMember:minor];
                     }
                 }
-                
-                if ([_origo userIsMember]) {
-                    [self.inputCell readData];
-                }
+            }
+            
+            [membership expire];
+            
+            if ([_origo userIsMember]) {
+                [self.inputCell readData];
             }
         }
     } else {

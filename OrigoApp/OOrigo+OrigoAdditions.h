@@ -99,5 +99,6 @@ extern NSString * const kOrigoTypeTeam;
 @interface OOrigo (OrigoAdditions) <OOrigo>
 
 + (instancetype)instanceWithId:(NSString *)entityId type:(NSString *)type;
++ (instancetype)instanceWithType:(NSString *)type;
 
 @end

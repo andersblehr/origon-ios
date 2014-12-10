@@ -38,7 +38,7 @@ NSString * const kOrigoTypeTeam = @"team";
                 [membership promote];
             }
         } else {
-            membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self];
+            membership = [[OMeta m].context insertEntityOfClass:[OMembership class] inOrigo:self entityId:[NSString stringWithFormat:@"%@@%@", member.entityId, self.entityId]];
             membership.member = member;
             
             [membership alignWithOrigoIsAssociate:isAssociate];
@@ -112,7 +112,17 @@ NSString * const kOrigoTypeTeam = @"team";
     OOrigo *instance = [self instanceWithId:entityId];
     instance.type = type;
     
+    if ([instance isOfType:kOrigoTypeResidence]) {
+        instance.name = kPlaceholderDefaultValue;
+    }
+    
     return instance;
+}
+
+
++ (instancetype)instanceWithType:(NSString *)type
+{
+    return [self instanceWithId:[OCrypto generateUUID] type:type];
 }
 
 

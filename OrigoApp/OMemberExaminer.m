@@ -97,8 +97,8 @@ static OMemberExaminer *_instance = nil;
 {
     BOOL isJuvenile = [_member isJuvenile];
     
-    NSString *maleGender = [OUtil genderTermForGender:kGenderMale isJuvenile:isJuvenile];
-    NSString *femaleGender = [OUtil genderTermForGender:kGenderFemale isJuvenile:isJuvenile];
+    NSString *maleGender = [OLanguage genderTermForGender:kGenderMale isJuvenile:isJuvenile];
+    NSString *femaleGender = [OLanguage genderTermForGender:kGenderFemale isJuvenile:isJuvenile];
     NSString *prompt = nil;
     
     if ([_member isUser]) {

@@ -167,7 +167,7 @@ static NSInteger const kSectionKeyAdmins = 2;
             id<OOrigo> origo = _entity;
             
             if ([propertyKey isEqualToString:kPropertyKeyName]) {
-                cell.detailTextLabel.text = origo.name;
+                cell.detailTextLabel.text = [origo displayName];
             } else if ([propertyKey isEqualToString:kPropertyKeyType]) {
                 cell.detailTextLabel.text = NSLocalizedString(origo.type, kStringPrefixOrigoTitle);
                 
@@ -179,7 +179,7 @@ static NSInteger const kSectionKeyAdmins = 2;
             id<OMember> member = _entity;
             
             if ([propertyKey isEqualToString:kPropertyKeyGender]) {
-                cell.detailTextLabel.text = [[OUtil genderTermForGender:member.gender isJuvenile:[member isJuvenile]] stringByCapitalisingFirstLetter];
+                cell.detailTextLabel.text = [[OLanguage genderTermForGender:member.gender isJuvenile:[member isJuvenile]] stringByCapitalisingFirstLetter];
                 
                 if ([member isManagedByUser]) {
                     cell.destinationId = kIdentifierValuePicker;

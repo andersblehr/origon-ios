@@ -10,9 +10,6 @@
 
 @interface OUtil : NSObject
 
-+ (NSString *)stashIdFromMemberId:(NSString *)memberId;
-+ (NSString *)genderTermForGender:(NSString *)gender isJuvenile:(BOOL)isJuvenile;
-
 + (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin;
 + (NSString *)commaSeparatedListOfStrings:(id)strings conjoin:(BOOL)conjoin conditionallyLowercase:(BOOL)conditionallyLowercase;
 + (NSString *)commaSeparatedListOfMembers:(id)members conjoin:(BOOL)conjoin;
