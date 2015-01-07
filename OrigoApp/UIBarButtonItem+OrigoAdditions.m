@@ -49,7 +49,9 @@ static UIBarButtonItem *_flexibleSpace = nil;
         button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:[visuals integerValue] target:target action:action];
     }
     
-    button.tag = tag;
+    if (tag) {
+        button.tag = tag;
+    }
     
     return button;
 }
@@ -142,6 +144,12 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
++ (instancetype)textButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action
+{
+    return [self barButtonWithVisuals:title target:target action:action tag:0];
+}
+
+
 + (instancetype)cancelButtonWithTarget:(id)target
 {
     return [self barButtonWithVisuals:NSLocalizedString(@"Cancel", @"") target:target action:@selector(didCancelEditing) tag:kBarButtonTagCancel];
@@ -206,23 +214,23 @@ static UIBarButtonItem *_flexibleSpace = nil;
 }
 
 
-#pragma mark - Bottom toolbar buttons
+#pragma mark - Communications buttons
 
-+ (instancetype)phoneCallButtonWithTarget:(id)target
++ (instancetype)sendTextButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFilePlacePhoneCall] target:target action:@selector(processCallRequest) tag:kBarButtonTagPhoneCall];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSendText] target:target action:@selector(performTextAction) tag:kBarButtonTagSendText];
+}
+
+
++ (instancetype)callButtonWithTarget:(id)target
+{
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileCall] target:target action:@selector(performCallAction) tag:kBarButtonTagPhoneCall];
 }
 
 
 + (instancetype)sendEmailButtonWithTarget:(id)target
 {
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSendEmail] target:target action:@selector(processEmailRequest) tag:kBarButtonTagSendEmail];
-}
-
-
-+ (instancetype)sendTextButtonWithTarget:(id)target
-{
-    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSendText] target:target action:@selector(processTextRequest) tag:kBarButtonTagSendText];
+    return [self barButtonWithVisuals:[UIImage imageNamed:kIconFileSendEmail] target:target action:@selector(performEmailAction) tag:kBarButtonTagSendEmail];
 }
 
 

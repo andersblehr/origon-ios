@@ -270,7 +270,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         [self setData:[settings settingListKeys] forSectionWithKey:kSectionKeyLists];
         [self setData:[settings accountKeys] forSectionWithKey:kSectionKeyAccount];
     } else if ([self targetIs:kTargetFavourites]) {
-        NSArray *favourites = [[[OMeta m].user stash] members];
+        NSArray *favourites = [[OMeta m].user favourites];
         
         if (_selectedTitleSubsegment == kTitleSubsegmentFavourites) {
             [self setData:favourites sectionIndexLabelKey:kPropertyKeyName];
@@ -385,7 +385,7 @@ static NSInteger const kButtonTagAddOrganiserRole = 1;
         
         if ([device.entityId isEqualToString:[OMeta m].deviceId]) {
             cell.detailTextLabel.text = NSLocalizedString(@"This device", @"");
-            cell.detailTextLabel.textColor = [UIColor windowTintColour];
+            cell.detailTextLabel.textColor = [UIColor globalTintColour];
         } else {
             cell.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Last seen %@", @""), [device.lastSeen localisedDateTimeString]];
         }

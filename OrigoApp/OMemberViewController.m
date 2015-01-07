@@ -39,6 +39,8 @@ static NSInteger const kButtonTagGuardianAddressYes = 0;
 static NSInteger const kActionSheetTagGuardianAddress = 6;
 static NSInteger const kActionSheetTagEditRole = 7;
 
+static NSInteger const kActionSheetTagRecipients = 7;
+
 static NSInteger const kAlertTagEmailChange = 2;
 static NSInteger const kButtonIndexContinue = 1;
 
@@ -63,6 +65,9 @@ static NSInteger const kButtonIndexContinue = 1;
     NSArray *_cachedResidences;
     NSArray *_cachedCandidates;
     
+    NSInteger _recipientType;
+    NSArray *_recipientCandidates;
+    
     NSString *_role;
     OTableViewCell *_roleCell;
     
@@ -82,7 +87,7 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (void)cancelEditingListCellIfNeeded
+- (void)cancelEditingListCellIfOngoing
 {
     if (_roleCell && !_roleCell.selectable) {
         OInputField *roleField = [_roleCell editableListCellField];
@@ -578,6 +583,38 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+- (void)presentRecipientsSheet
+{
+    NSString *prompt = nil;
+
+    if ([_recipientCandidates count] > 1) {
+        if (_recipientType == kRecipientTypeText) {
+            prompt = NSLocalizedString(@"Who do you want to text?", @"");
+        } else if (_recipientType == kRecipientTypeCall) {
+            prompt = NSLocalizedString(@"Who do you want to call?", @"");
+        } else if (_recipientType == kRecipientTypeEmail) {
+            prompt = NSLocalizedString(@"Who do you want to email?", @"");
+        }
+    }
+    
+    OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:prompt delegate:self tag:kActionSheetTagRecipients];
+    
+    if ([_recipientCandidates count] > 1) {
+        for (id recipientCandidate in _recipientCandidates) {
+            if ([recipientCandidate isKindOfClass:[NSArray class]]) {
+                [actionSheet addButtonWithTitle:[OUtil commaSeparatedListOfMembers:recipientCandidate conjoin:YES subjective:YES]];
+            } else {
+                [actionSheet addButtonWithTitle:[recipientCandidate recipientLabel]];
+            }
+        }
+    } else {
+        [actionSheet addButtonWithTitle:[_recipientCandidates[0] recipientLabelForRecipientType:_recipientType]];
+    }
+    
+    [actionSheet show];
+}
+
+
 #pragma mark - Alerts
 
 - (void)presentAlertForNumberOfUmatchedResidences:(NSInteger)numberOfUnmatchedResidences
@@ -657,7 +694,7 @@ static NSInteger const kButtonIndexContinue = 1;
     ABPeoplePickerNavigationController *peoplePicker = [[ABPeoplePickerNavigationController alloc] init];
     peoplePicker.peoplePickerDelegate = self;
     
-    [self presentViewController:peoplePicker animated:YES completion:NULL];
+    [self presentViewController:peoplePicker animated:YES completion:nil];
 }
 
 
@@ -817,7 +854,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)performEditAction
 {
-    [self cancelEditingListCellIfNeeded];
+    [self cancelEditingListCellIfOngoing];
     
     OActionSheet *actionSheet = [[OActionSheet alloc] initWithPrompt:nil delegate:self tag:kActionSheetTagEdit];
     [actionSheet addButtonWithTitle:NSLocalizedString(@"Edit", @"") tag:kButtonTagEdit];
@@ -838,7 +875,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)performInfoAction
 {
-    [self cancelEditingListCellIfNeeded];
+    [self cancelEditingListCellIfOngoing];
     [self presentModalViewControllerWithIdentifier:kIdentifierInfo target:_member];
 }
 
@@ -864,8 +901,47 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)performAddAction
 {
-    [self cancelEditingListCellIfNeeded];
+    [self cancelEditingListCellIfOngoing];
     [self presentModalViewControllerWithIdentifier:kIdentifierMember target:kTargetGuardian];
+}
+
+
+- (void)performTextAction
+{
+    if ([_member isJuvenile]) {
+        _recipientType = kRecipientTypeText;
+        _recipientCandidates = [_member textRecipients];
+        
+        [self presentRecipientsSheet];
+    } else {
+        [self sendTextToRecipients:_member];
+    }
+}
+
+
+- (void)performCallAction
+{
+    if ([_member isJuvenile]) {
+        _recipientType = kRecipientTypeCall;
+        _recipientCandidates = [_member callRecipients];
+        
+        [self presentRecipientsSheet];
+    } else {
+        [self callRecipient:_member];
+    }
+}
+
+
+- (void)performEmailAction
+{
+    if ([_member isJuvenile]) {
+        _recipientType = kRecipientTypeEmail;
+        _recipientCandidates = [_member emailRecipients];
+        
+        [self presentRecipientsSheet];
+    } else {
+        [self sendEmailToRecipients:_member cc:nil];
+    }
 }
 
 
@@ -1019,18 +1095,6 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
-- (NSArray *)toolbarButtons
-{
-    NSArray *toolbarButtons = nil;
-    
-    if ([_member isCommitted] && ![_member isUser]) {
-        toolbarButtons = [[OMeta m].switchboard toolbarButtonsForMember:_member presenter:self];
-    }
-    
-    return toolbarButtons;
-}
-
-
 - (BOOL)hasFooterForSectionWithKey:(NSInteger)sectionKey
 {
     BOOL hasFooter = NO;
@@ -1109,6 +1173,24 @@ static NSInteger const kButtonIndexContinue = 1;
 }
 
 
+- (BOOL)toolbarHasSendTextButton
+{
+    return [[_member textRecipients] count] > 0;
+}
+
+
+- (BOOL)toolbarHasCallButton
+{
+    return [[_member callRecipients] count] > 0;
+}
+
+
+- (BOOL)toolbarHasSendEmailButton
+{
+    return [[_member emailRecipients] count] > 0;
+}
+
+
 - (BOOL)canCompareObjectsInSectionWithKey:(NSInteger)sectionKey
 {
     return sectionKey == kSectionKeyGuardians;
@@ -1152,7 +1234,7 @@ static NSInteger const kButtonIndexContinue = 1;
 
 - (void)didSelectCell:(OTableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath
 {
-    [self cancelEditingListCellIfNeeded];
+    [self cancelEditingListCellIfOngoing];
     
     if ([self sectionKeyForIndexPath:indexPath] == kSectionKeyRoles) {
         _role = [self dataAtIndexPath:indexPath];
@@ -1752,6 +1834,19 @@ static NSInteger const kButtonIndexContinue = 1;
             
             break;
             
+        case kActionSheetTagRecipients:
+            if (buttonIndex != actionSheet.cancelButtonIndex) {
+                if (_recipientType == kRecipientTypeText) {
+                    [self sendTextToRecipients:_recipientCandidates[buttonIndex]];
+                } else if (_recipientType == kRecipientTypeCall) {
+                    [self callRecipient:_recipientCandidates[buttonIndex]];
+                } else if (_recipientType == kRecipientTypeEmail) {
+                    [self sendEmailToRecipients:_recipientCandidates[buttonIndex] cc:nil];
+                }
+            }
+            
+            break;
+            
         default:
             break;
     }
@@ -1807,7 +1902,7 @@ static NSInteger const kButtonIndexContinue = 1;
     }
     
     if ([_member instance]) {
-        [self dismissViewControllerAnimated:YES completion:NULL];
+        [self dismissViewControllerAnimated:YES completion:nil];
     } else {
         [self retrieveAddressesFromAddressBookPersonRecord:person];
         
@@ -1822,7 +1917,7 @@ static NSInteger const kButtonIndexContinue = 1;
                 }];
             } else {
                 [self reflectMember:_member];
-                [self dismissViewControllerAnimated:YES completion:NULL];
+                [self dismissViewControllerAnimated:YES completion:nil];
             }
         }
     }

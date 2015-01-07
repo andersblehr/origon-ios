@@ -182,6 +182,14 @@
 }
 
 
+#pragma mark - Favourites
+
+- (NSArray *)favourites
+{
+    return [self isUser] ? [[self stash] members] : nil;
+}
+
+
 #pragma mark - Devices
 
 - (NSArray *)registeredDevices
@@ -195,6 +203,84 @@
     }
     
     return [registeredDevices sortedArrayUsingSelector:@selector(compare:)];
+}
+
+
+#pragma mark - Communication recipients
+
+- (NSArray *)recipientsForCommunicationsKey:(NSString *)key groupable:(BOOL)groupable
+{
+    NSMutableArray *recipients = [NSMutableArray array];
+    
+    if ([self isJuvenile]) {
+        NSMutableArray *parentRecipients = [NSMutableArray array];
+        NSMutableArray *guardianRecipients = [NSMutableArray array];
+        
+        NSArray *parents = [self parents];
+        NSArray *guardians = [self guardians];
+        
+        for (OMember *parent in parents) {
+            if ([parent hasValueForKey:key] && ![parent isUser]) {
+                [parentRecipients addObject:parent];
+            }
+        }
+        
+        for (OMember *guardian in guardians) {
+            if (![self hasParent:guardian] && [guardian hasValueForKey:key] && ![guardian isUser]) {
+                [guardianRecipients addObject:guardian];
+            }
+        }
+        
+        for (OMember *parentRecipient in parentRecipients) {
+            [recipients addObject:parentRecipient];
+        }
+        
+        for (OMember *guardianRecipient in guardianRecipients) {
+            [recipients addObject:guardianRecipient];
+        }
+        
+        if (groupable && [recipients count] > 1) {
+            if ([parentRecipients count] > 1) {
+                [recipients addObject:parentRecipients];
+            }
+            
+            if ([guardianRecipients count]) {
+                [recipients addObject:[parentRecipients arrayByAddingObjectsFromArray:guardianRecipients]];
+            }
+        }
+    }
+    
+    if ([self hasValueForKey:key] && ![self isUser]) {
+        [recipients addObject:self];
+    }
+    
+    return recipients;
+}
+
+
+- (NSArray *)textRecipients
+{
+    return [self recipientsForCommunicationsKey:kPropertyKeyMobilePhone groupable:YES];
+}
+
+
+- (NSArray *)callRecipients
+{
+    NSArray *callRecipients = [self recipientsForCommunicationsKey:kPropertyKeyMobilePhone groupable:NO];
+    
+    for (OOrigo *residence in [self residences]) {
+        if ([residence hasTelephone]) {
+            callRecipients = [callRecipients arrayByAddingObject:residence];
+        }
+    }
+    
+    return callRecipients;
+}
+
+
+- (NSArray *)emailRecipients
+{
+    return [self recipientsForCommunicationsKey:kPropertyKeyEmail groupable:YES];
 }
 
 
@@ -508,6 +594,18 @@
 }
 
 
+- (NSArray *)parentsOrGuardians
+{
+    NSArray *parentsOrGuardians = [self parents];
+    
+    if ([parentsOrGuardians count] < 2) {
+        parentsOrGuardians = [self guardians];
+    }
+    
+    return parentsOrGuardians;
+}
+
+
 - (NSArray *)guardians
 {
     NSMutableArray *guardians = [NSMutableArray array];
@@ -794,6 +892,20 @@
 }
 
 
+- (BOOL)hasTelephone
+{
+    BOOL hasTelephone = [self.mobilePhone hasValue];
+    
+    if (!hasTelephone) {
+        for (id<OOrigo> residence in [self residences]) {
+            hasTelephone = hasTelephone || [residence hasTelephone];
+        }
+    }
+    
+    return hasTelephone;
+}
+
+
 - (BOOL)hasParent:(id<OMember>)member
 {
     BOOL hasParent = NO;
@@ -858,16 +970,14 @@
 }
 
 
-#pragma mark - Data formatting shorthands
+#pragma mark - Display strings
 
 - (NSString *)shortName
 {
     NSString *shortName = nil;
     NSArray *names = [self.name componentsSeparatedByString:kSeparatorSpace];
     
-    if ([self isJuvenile]) {
-        shortName = [self givenName];
-    } else if ([names count] > 2) {
+    if ([names count] > 2) {
         shortName = [[names firstObject] stringByAppendingString:[names lastObject] separator:kSeparatorSpace];
     } else {
         shortName = self.name;
@@ -919,6 +1029,53 @@
     }
     
     return displayName;
+}
+
+
+- (NSString *)guardianInfo
+{
+    NSString *guardianInfo = nil;
+    
+    if ([self isJuvenile]) {
+        NSArray *guardians = [self parentsOrGuardians];
+        
+        if ([guardians count] == 2) {
+            NSString *lastName1 = [[[guardians[0] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
+            NSString *lastName2 = [[[guardians[1] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
+            
+            if ([lastName1 isEqualToString:lastName2]) {
+                guardianInfo = [NSString stringWithFormat:@"%@%@%@ %@", [guardians[0] givenName], NSLocalizedString(@" and ", @""), [guardians[1] givenName], lastName1];
+            }
+        }
+        
+        if (!guardianInfo) {
+            guardianInfo = [OUtil commaSeparatedListOfMembers:guardians conjoin:NO];
+        }
+    }
+    
+    return guardianInfo;
+}
+
+
+- (NSString *)recipientLabel
+{
+    return [self givenName];
+}
+
+
+- (NSString *)recipientLabelForRecipientType:(NSInteger)recipientType
+{
+    NSString *recipientLabelFormat = nil;
+    
+    if (recipientType == kRecipientTypeText) {
+        recipientLabelFormat = NSLocalizedString(@"Send text to %@", @"");
+    } else if (recipientType == kRecipientTypeCall) {
+        recipientLabelFormat = NSLocalizedString(@"Call %@", @"");
+    } else if (recipientType == kRecipientTypeEmail) {
+        recipientLabelFormat = NSLocalizedString(@"Send email to %@", @"");
+    }
+    
+    return [NSString stringWithFormat:recipientLabelFormat, [self recipientLabel]];
 }
 
 

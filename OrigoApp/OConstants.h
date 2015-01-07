@@ -14,6 +14,7 @@ extern NSString * const kIdentifierInfo;
 extern NSString * const kIdentifierMember;
 extern NSString * const kIdentifierOrigo;
 extern NSString * const kIdentifierOrigoList;
+extern NSString * const kIdentifierRecipientPicker;
 extern NSString * const kIdentifierValueList;
 extern NSString * const kIdentifierValuePicker;
 
@@ -139,7 +140,7 @@ extern NSString * const kIconFileLookup;
 extern NSString * const kIconFileFavouriteNo;
 extern NSString * const kIconFileFavouriteYes;
 extern NSString * const kIconFileAcceptDecline;
-extern NSString * const kIconFilePlacePhoneCall;
+extern NSString * const kIconFileCall;
 extern NSString * const kIconFileSendText;
 extern NSString * const kIconFileSendEmail;
 extern NSString * const kIconFileRoleHolders;
@@ -150,6 +151,11 @@ extern NSString * const kIconFileGroups;
 // Gender codes
 extern NSString * const kGenderMale;
 extern NSString * const kGenderFemale;
+
+// Recipient types
+extern NSInteger const kRecipientTypeText;
+extern NSInteger const kRecipientTypeCall;
+extern NSInteger const kRecipientTypeEmail;
 
 // Age thresholds
 extern NSInteger const kAgeThresholdInSchool;

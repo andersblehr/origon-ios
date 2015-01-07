@@ -19,7 +19,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     
     OLocator *_locator;
     OReplicator *_replicator;
-    OSwitchboard *_switchboard;
     OActivityIndicator *_activityIndicator;
     
     NSNumber *_isSignedIn;
@@ -119,6 +118,7 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
         _appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
         _appVersion = [[NSBundle mainBundle] infoDictionary][(id)kCFBundleVersionKey];
         _language = [NSLocale preferredLanguages][0];
+        _carrier = [[[CTTelephonyNetworkInfo alloc] init] subscriberCellularProvider];
         
         if ([ODefaults globalDefaultForKey:kDefaultsKeyUserEmail]) {
             self.userEmail = [ODefaults globalDefaultForKey:kDefaultsKeyUserEmail];
@@ -378,16 +378,6 @@ static NSTimeInterval const kTimeInterval30Days = 2592000;
     }
     
     return _replicator;
-}
-
-
-- (OSwitchboard *)switchboard
-{
-    if (!_switchboard) {
-        _switchboard = [[OSwitchboard alloc] init];
-    }
-    
-    return _switchboard;
 }
 
 

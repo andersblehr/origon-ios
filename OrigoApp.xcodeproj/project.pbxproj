@@ -66,6 +66,7 @@
 		5CA10B9C16A7F49F00031D81 /* OTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA10B9B16A7F49F00031D81 /* OTableViewController.m */; };
 		5CA94D9F15836BD9008CD9EC /* NSDate+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA94D9E15836BD9008CD9EC /* NSDate+OrigoAdditions.m */; };
 		5CAAD27F1751EBA7002AF8CF /* OUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAAD27E1751EBA7002AF8CF /* OUtil.m */; };
+		5CAD4F071A39B1910075DF00 /* ORecipientPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CAD4F061A39B1910075DF00 /* ORecipientPickerViewController.m */; };
 		5CB74EF117BB60BF003FAC28 /* ODevice+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB74EF017BB60BF003FAC28 /* ODevice+OrigoAdditions.m */; };
 		5CB7E94015F38C1200FD53DF /* OValueListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7E93F15F38C1200FD53DF /* OValueListViewController.m */; };
 		5CBB63C5146080DF00A9133A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CBB63C4146080DF00A9133A /* main.m */; };
@@ -149,7 +150,6 @@
 		5CD6270319CB3619007DD29B /* ro-role-holders@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CD6270219CB3619007DD29B /* ro-role-holders@3x.png */; };
 		5CDE11B019F8F92E005018F8 /* OTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CDE11AF19F8F92E005018F8 /* OTableView.m */; };
 		5CDE11B319FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.m */; };
-		5CF17E5917AF84B600985255 /* OSwitchboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF17E5817AF84B600985255 /* OSwitchboard.m */; };
 		5CF3DE291775AD820068B2E7 /* ODefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CF3DE281775AD810068B2E7 /* ODefaults.m */; };
 		5CFBC8D019124E1D00863F86 /* OMembershipProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CFBC8CF19124E1D00863F86 /* OMembershipProxy.m */; };
 		5CFD8E70183CE27200DC3945 /* OPhoneNumberFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD8E6F183CE27200DC3945 /* OPhoneNumberFormatter.m */; };
@@ -269,6 +269,8 @@
 		5CA94D9E15836BD9008CD9EC /* NSDate+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CAAD27D1751EBA7002AF8CF /* OUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OUtil.h; sourceTree = "<group>"; };
 		5CAAD27E1751EBA7002AF8CF /* OUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OUtil.m; sourceTree = "<group>"; };
+		5CAD4F051A39B1910075DF00 /* ORecipientPickerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORecipientPickerViewController.h; sourceTree = "<group>"; };
+		5CAD4F061A39B1910075DF00 /* ORecipientPickerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORecipientPickerViewController.m; sourceTree = "<group>"; };
 		5CB74EEF17BB60BF003FAC28 /* ODevice+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ODevice+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5CB74EF017BB60BF003FAC28 /* ODevice+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ODevice+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CB7E93E15F38C1200FD53DF /* OValueListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OValueListViewController.h; sourceTree = "<group>"; };
@@ -381,8 +383,6 @@
 		5CDE11B119FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OTableViewCell+OrigoAdditions.h"; sourceTree = "<group>"; };
 		5CDE11B219FE4AF5005018F8 /* OTableViewCell+OrigoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OTableViewCell+OrigoAdditions.m"; sourceTree = "<group>"; };
 		5CDE879C176F185E00272909 /* OInputCellDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OInputCellDelegate.h; sourceTree = "<group>"; };
-		5CF17E5717AF84B500985255 /* OSwitchboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSwitchboard.h; sourceTree = "<group>"; };
-		5CF17E5817AF84B600985255 /* OSwitchboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OSwitchboard.m; sourceTree = "<group>"; };
 		5CF3DE271775AD810068B2E7 /* ODefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ODefaults.h; sourceTree = "<group>"; };
 		5CF3DE281775AD810068B2E7 /* ODefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ODefaults.m; sourceTree = "<group>"; };
 		5CFBC8CE19124E1D00863F86 /* OMembershipProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMembershipProxy.h; sourceTree = "<group>"; };
@@ -616,6 +616,8 @@
 				5C3D42811485678F009A68E0 /* OOrigoListViewController.m */,
 				5C629FEE14C62038001DA01F /* OOrigoViewController.h */,
 				5C629FEF14C62038001DA01F /* OOrigoViewController.m */,
+				5CAD4F051A39B1910075DF00 /* ORecipientPickerViewController.h */,
+				5CAD4F061A39B1910075DF00 /* ORecipientPickerViewController.m */,
 				5CB7E93E15F38C1200FD53DF /* OValueListViewController.h */,
 				5CB7E93F15F38C1200FD53DF /* OValueListViewController.m */,
 				5CBFB736174B64D40021A8F6 /* OValuePickerViewController.h */,
@@ -654,8 +656,6 @@
 				5C47155016E2231C000D8A86 /* OReplicator.m */,
 				5CD3360C15C40A2F00ABBFE7 /* OState.h */,
 				5CD3360D15C40A2F00ABBFE7 /* OState.m */,
-				5CF17E5717AF84B500985255 /* OSwitchboard.h */,
-				5CF17E5817AF84B600985255 /* OSwitchboard.m */,
 				5CAAD27D1751EBA7002AF8CF /* OUtil.h */,
 				5CAAD27E1751EBA7002AF8CF /* OUtil.m */,
 				5CC40C991772DC5E00DD850E /* OValidator.h */,
@@ -981,6 +981,7 @@
 				5C4F977B1496AF88006E244F /* NSURL+OrigoAdditions.m in Sources */,
 				5CBE9C5314AB5160004FE2B7 /* NSString+OrigoAdditions.m in Sources */,
 				5C629FF014C62038001DA01F /* OOrigoViewController.m in Sources */,
+				5CAD4F071A39B1910075DF00 /* ORecipientPickerViewController.m in Sources */,
 				5C50581C14CAEC76000D6587 /* UIView+OrigoAdditions.m in Sources */,
 				5CD5B29D14D56F7A002021FB /* NSManagedObjectContext+OrigoAdditions.m in Sources */,
 				5C53A1FB18F895510023BF8A /* OMemberProxy.m in Sources */,
@@ -1027,7 +1028,6 @@
 				5C3F9998178AC15F00E31A44 /* OMemberExaminer.m in Sources */,
 				5C49FD41178DB96E009AD20B /* OLanguage.m in Sources */,
 				5CD33AD018F5287F00A863F4 /* OSettings.m in Sources */,
-				5CF17E5917AF84B600985255 /* OSwitchboard.m in Sources */,
 				5CD33AD918F5288000A863F4 /* OReplicatedEntityRef.m in Sources */,
 				5CB74EF117BB60BF003FAC28 /* ODevice+OrigoAdditions.m in Sources */,
 				5CFD8E70183CE27200DC3945 /* OPhoneNumberFormatter.m in Sources */,

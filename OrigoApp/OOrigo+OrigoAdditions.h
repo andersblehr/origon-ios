@@ -86,9 +86,16 @@ extern NSString * const kOrigoTypeTeam;
 - (BOOL)indirectlyKnowsAboutMember:(id<OMember>)member;
 - (BOOL)hasMembersInCommonWithOrigo:(id<OOrigo>)residence;
 
+- (NSArray *)recipientCandidates;
+- (NSArray *)textRecipients;
+- (NSArray *)callRecipients;
+- (NSArray *)emailRecipients;
+
 - (NSString *)displayName;
 - (NSString *)singleLineAddress;
 - (NSString *)shortAddress;
+- (NSString *)recipientLabel;
+- (NSString *)recipientLabelForRecipientType:(NSInteger)recipientType;
 
 - (void)expireCommunityResidence:(id<OOrigo>)residence;
 - (void)convertToType:(NSString *)type;

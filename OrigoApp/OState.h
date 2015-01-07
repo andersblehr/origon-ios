@@ -21,6 +21,7 @@ extern NSString * const kActionSignIn;
 
 extern NSString * const kTargetAdmin;
 extern NSString * const kTargetAffiliation;
+extern NSString * const kTargetCall;
 extern NSString * const kTargetDevices;
 extern NSString * const kTargetElder;
 extern NSString * const kTargetEmail;
@@ -43,12 +44,14 @@ extern NSString * const kTargetRole;
 extern NSString * const kTargetRoles;
 extern NSString * const kTargetSetting;
 extern NSString * const kTargetSettings;
+extern NSString * const kTargetText;
 extern NSString * const kTargetUser;
 extern NSString * const kTargetWard;
 
 extern NSString * const kAspectAdmin;
 extern NSString * const kAspectDefault;
 extern NSString * const kAspectEditable;
+extern NSString * const kAspectGlobal;
 extern NSString * const kAspectGroup;
 extern NSString * const kAspectHousehold;
 extern NSString * const kAspectJuvenile;

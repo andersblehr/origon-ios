@@ -120,16 +120,16 @@
 "[member role] team" = "Lagrolle";
 
 // Member titles
-"[member] alumni" = "alumn";
-"[member] community" = "medlem";
-"[member] list" = "venn/venninne";
-"[member] organisation" = "medlem";
-"[member] preschoolClass" = "barn";
-"[member] residence" = "beboer";
-"[member] schoolClass" = "elev";
-"[member] simple" = "medlem";
-"[member] studyGroup" = "student";
-"[member] team" = "spiller";
+"[member] alumni" = "Alumn";
+"[member] community" = "Medlem";
+"[member] list" = "Venn/venninne";
+"[member] organisation" = "Medlem";
+"[member] preschoolClass" = "Barn";
+"[member] residence" = "Beboer";
+"[member] schoolClass" = "Elev";
+"[member] simple" = "Medlem";
+"[member] studyGroup" = "Student";
+"[member] team" = "Spiller";
 
 // Member list titles
 "[members] alumni" = "Alumni";
@@ -228,7 +228,6 @@
 "coach" = "trener;-;trenere;-;-;-";
 "father" = "far;faren;-;-;faren din;faren til %@";
 "guardian" = "foresatt;-;foresatte;-;-;-";
-"household" = "husstand;husstanden;-;-;-;-";
 "lecturer" = "foreleser;-;forelesere;-;-;-";
 "mother" = "mor;moren;-;-;moren din;moren til %@";
 "parent" = "-;-;foreldre;foreldrene;foreldrene dine;foreldrene til %@";
@@ -247,9 +246,6 @@
  * Cross-view strings
  ***/
 
-// Email signature
-"Sent from Origo - http://origoapp.com" = "\n\nSendt fra Origo - http://origoapp.com";
-
 // Buttons
 "OK" = "OK";
 "Edit" = "Rediger";
@@ -260,9 +256,15 @@
 "Continue" = "Fortsett";
 "Skip" = "Hopp over";
 "Cancel" = "Avbryt";
+"Home: %@" = "Hjem: %@";
 
-// Placeholders
-"Role designation" = "Rollebetegnelse";
+// Prompts
+"Who do you want to text?" = "Hvem vil du sende melding til?";
+"Who do you want to call?" = "Hvem vil du ringe?";
+"Who do you want to email?" = "Hvem vil du sende epost til?";
+"Send text to %@" = "Send melding til %@";
+"Call %@" = "Ring %@";
+"Send email to %@" = "Send epost til %@";
 
 // Alerts
 "No internet connection." = "Ingen internettforbindelse.";
@@ -282,10 +284,12 @@
 "friend [female]" = "venninne";
 "Friends" = "Venner";
 "Contacts" = "Kontakter";
+"Households" = "Husstander";
 "Home number" = "Hjemmenummer";
 "Neither" = "Ingen av dem";
 "Both" = "Begge";
 "All" = "Alle";
+"Favourites" = "Favoritter";
 "None of them" = "Ingen av dem";
 "None of you" = "Ingen av dere";
 "All of them" = "Alle";
@@ -302,6 +306,9 @@
 
 // Separators
 " and " = " og ";
+
+// Email signature
+"Sent from Origo - http://origoapp.com" = "\n\nSendt fra Origo - http://origoapp.com";
 
 
 /***
@@ -363,7 +370,6 @@
  ***/
 
 // Headers
-"Households" = "Husstander";
 "Guardians in the household" = "Foresatte i husstanden";
 
 // Footers
@@ -450,9 +456,6 @@
 "The mobile number %@ is already in use." = "Mobilnummeret %@ er allerede i bruk.";
 
 // Prompts
-"Who do you want to email?" = "Hvem vil du sende epost til?";
-"Who do you want to text?" = "Hvem vil du sende tekstmelding til?";
-"Who do you want to call?" = "Hvem vil du ringe?";
 "Should %@ also be registered at this address?" = "Skal %@ også registreres på denne adressen?";
 "Who else should be registered at this address?" = "Hvem flere skal registeres på denne adressen?";
 "Are you a %@ or a %@?" = "Er du %@ eller %@";
@@ -484,7 +487,6 @@
 
 // View titles
 "Settings" = "Innstillinger";
-"Favourites" = "Favoritter";
 "Others" = "Andre";
 "Responsibilities" = "Ansvarsområder";
 "Groups" = "Grupper";
@@ -517,6 +519,25 @@
 "Group name" = "Gruppens navn";
 "This device" = "Denne enheten";
 "Last seen %@" = "Sist sett %@";
+
+
+/***
+ * ORecipientPickerViewController strings
+ ***/
+
+// View titles
+"Send text" = "Send melding";
+"Send email" = "Send epost";
+
+// Buttons
+"Select all" = "Velg alle";
+"Parents" = "Foreldre";
+"Parents, grouped" = "Foreldre, gruppert";
+"Parents and %@" = "Foreldre og %@";
+
+// Labels
+"To" = "Til";
+"Cc" = "Kopi";
 
 
 /***

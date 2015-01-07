@@ -226,7 +226,7 @@ static CGFloat const kTextInsetLeft = -1.f;
     _hasEmphasis = hasEmphasis;
     
     if (_hasEmphasis) {
-        self.layer.borderColor = [[UIColor windowTintColour] CGColor];
+        self.layer.borderColor = [[UIColor globalTintColour] CGColor];
     } else {
         [self peelText];
         

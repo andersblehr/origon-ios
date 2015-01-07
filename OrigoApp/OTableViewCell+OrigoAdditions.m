@@ -27,35 +27,6 @@
 }
 
 
-- (NSString *)guardianInfoForMember:(id<OMember>)member
-{
-    NSString *guardianInfo = nil;
-    
-    if ([member isJuvenile]) {
-        NSArray *guardians = [member parents];
-        
-        if ([guardians count] < 2) {
-            guardians = [member guardians];
-        }
-        
-        if ([guardians count] == 2) {
-            NSString *lastName1 = [[[guardians[0] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
-            NSString *lastName2 = [[[guardians[1] name] componentsSeparatedByString:kSeparatorSpace] lastObject];
-            
-            if ([lastName1 isEqualToString:lastName2]) {
-                guardianInfo = [NSString stringWithFormat:@"%@%@%@ %@", [guardians[0] givenName], NSLocalizedString(@" and ", @""), [guardians[1] givenName], lastName1];
-            }
-        }
-        
-        if (!guardianInfo) {
-            guardianInfo = [OUtil commaSeparatedListOfMembers:guardians conjoin:NO];
-        }
-    }
-    
-    return guardianInfo;
-}
-
-
 - (NSArray *)associationMembershipsForMember:(id<OMember>)member
 {
     NSMutableArray *associationMemberships = [NSMutableArray array];
@@ -98,7 +69,7 @@
 {
     if ([member isHousemateOfUser]) {
         self.textLabel.text = [member isJuvenile] ? [member givenName] : member.name;
-        self.textLabel.textColor = [UIColor windowTintColour];
+        self.textLabel.textColor = [UIColor globalTintColour];
     } else {
         NSString *association = nil;
         NSMutableDictionary *isParentByWard = [NSMutableDictionary dictionary];
@@ -138,7 +109,7 @@
                     if ([memberRoles count]) {
                         association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), memberRoles[0], origo.name];
                     } else {
-                        association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), [NSLocalizedString(origo.type, kStringPrefixMemberTitle) stringByCapitalisingFirstLetter], origo.name];
+                        association = [NSString stringWithFormat:NSLocalizedString(@"%@ in %@", @""), NSLocalizedString(origo.type, kStringPrefixMemberTitle), origo.name];
                     }
                 }
             }
@@ -197,7 +168,7 @@
             
             if ([member isActive] && ![member isJuvenile]) {
                 UIView *underline = [[UIView alloc] initWithFrame:CGRectMake(0.f, self.imageView.image.size.height + 1.f, self.imageView.image.size.width, 1.f)];
-                underline.backgroundColor = [UIColor windowTintColour];
+                underline.backgroundColor = [UIColor globalTintColour];
                 [self.imageView addSubview:underline];
             }
         } else {
@@ -244,7 +215,7 @@
                 }
                 
                 if ([member isJuvenile]) {
-                    self.detailTextLabel.text = [self guardianInfoForMember:member];
+                    self.detailTextLabel.text = [member guardianInfo];
                 } else {
                     self.detailTextLabel.text = [OUtil commaSeparatedListOfMembers:[member wardsInOrigo:origo] inOrigo:origo conjoin:NO];
                 }

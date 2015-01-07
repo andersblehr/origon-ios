@@ -27,7 +27,12 @@
 - (NSComparisonResult)compare:(id<OMember>)other;
 - (NSComparisonResult)subjectiveCompare:(id<OMember>)other;
 
+- (NSArray *)favourites;
 - (NSArray *)registeredDevices;
+
+- (NSArray *)textRecipients;
+- (NSArray *)callRecipients;
+- (NSArray *)emailRecipients;
 
 - (NSSet *)allMemberships;
 - (NSSet *)residencies;
@@ -51,6 +56,7 @@
 - (NSArray *)wardsInOrigo:(id<OOrigo>)origo;
 - (NSArray *)parents;
 - (NSArray *)parentCandidatesWithGender:(NSString *)gender;
+- (NSArray *)parentsOrGuardians;
 - (NSArray *)guardians;
 - (NSArray *)peers;
 - (NSArray *)peersNotInSet:(id)set;
@@ -76,6 +82,7 @@
 - (BOOL)isOlderThan:(NSInteger)age;
 - (BOOL)isOutOfBounds;
 - (BOOL)hasAddress;
+- (BOOL)hasTelephone;
 - (BOOL)hasParent:(id<OMember>)member;
 - (BOOL)hasParentWithGender:(NSString *)gender;
 - (BOOL)hasGuardian:(id<OMember>)member;
@@ -90,6 +97,9 @@
 - (NSString *)givenNameWithParentTitle;
 - (NSString *)givenNameWithRolesForOrigo:(id<OOrigo>)origo;
 - (NSString *)displayNameInOrigo:(id<OOrigo>)origo;
+- (NSString *)guardianInfo;
+- (NSString *)recipientLabel;
+- (NSString *)recipientLabelForRecipientType:(NSInteger)recipientType;
 
 @end
 

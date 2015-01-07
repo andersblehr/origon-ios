@@ -46,6 +46,7 @@ extern NSInteger const kBarButtonTagSendText;
 + (instancetype)settingsButtonWithTarget:(id)target;
 
 + (instancetype)backButtonWithTitle:(NSString *)title;
++ (instancetype)textButtonWithTitle:(NSString *)title target:(id)target action:(SEL)action;
 + (instancetype)cancelButtonWithTarget:(id)target;
 + (instancetype)cancelButtonWithTarget:(id)target action:(SEL)action;
 + (instancetype)closeButtonWithTarget:(id)target;
@@ -56,7 +57,7 @@ extern NSInteger const kBarButtonTagSendText;
 + (instancetype)skipButtonWithTarget:(id)target;
 
 + (instancetype)sendTextButtonWithTarget:(id)target;
-+ (instancetype)phoneCallButtonWithTarget:(id)target;
++ (instancetype)callButtonWithTarget:(id)target;
 + (instancetype)sendEmailButtonWithTarget:(id)target;
 
 + (instancetype)flexibleSpace;

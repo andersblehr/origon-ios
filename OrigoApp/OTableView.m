@@ -37,6 +37,9 @@ NSInteger const kSectionIndexMinimumDisplayRowCount = 11;
             cell.textLabel.text = nil;
             cell.detailTextLabel.text = nil;
             cell.imageView.image = nil;
+            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.accessoryView = nil;
+            cell.tintColor = [UIColor globalTintColour];
             cell.destinationId = nil;
             
             for (UIView *subview in cell.imageView.subviews) {
